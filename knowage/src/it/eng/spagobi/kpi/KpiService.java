@@ -21,6 +21,7 @@ import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTr
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -62,6 +63,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.kpi.bo.Alias;
 import it.eng.spagobi.kpi.bo.Cardinality;
@@ -668,7 +670,19 @@ public class KpiService {
 			JSONObject kpiValue = requestVal.getJSONObject("valueSeries");
 			String comment = kpiValue.getString("manualNote");
 
-			comment = comment.concat("\n" + profile.getUserId() + " " + new Date());
+			String[] checkComment = comment.split("\n");
+
+			SimpleDateFormat dateFormat = new SimpleDateFormat();
+			dateFormat.applyPattern(GeneralUtilities.getServerTimeStampFormat());
+			Date creationDate = new Date();
+			String creationDateStr = dateFormat.format(creationDate);
+
+			if (!checkComment[checkComment.length - 1].startsWith(profile.getUserId().toString())) {
+				comment = comment.concat("\n" + profile.getUserId() + " " + creationDateStr);
+			} else {
+				comment.replaceAll(checkComment[checkComment.length - 1], profile.getUserId() + " " + creationDateStr);
+			}
+
 			DAOFactory.getNewKpiDAO().editKpiValue(kpiValue.getInt("id"), requestVal.getDouble("manualValue"), comment);
 			// return Response.ok(array.toString()).build();
 		} catch (Throwable e)

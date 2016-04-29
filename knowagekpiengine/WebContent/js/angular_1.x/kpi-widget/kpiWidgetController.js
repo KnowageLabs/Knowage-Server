@@ -190,7 +190,7 @@
 			$mdDialog.cancel();
 			$scope.kpiValueToSave = {};
 			$scope.kpiValueToSave["manualValue"] = $scope.value;
-			$scope.kpiValueToSave["manualNote"] = $scope.valueSeries.comment;
+			$scope.kpiValueToSave["manualNote"] = $scope.valueSeries.manualNote;
 			$scope.kpiValueToSave["valueSeries"] = $scope.valueSeries;
 			sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
 			sbiModule_restServices.promisePost("1.0/kpi", 'editKpiValue',$scope.kpiValueToSave)

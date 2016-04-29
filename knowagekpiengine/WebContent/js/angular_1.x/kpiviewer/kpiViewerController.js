@@ -70,6 +70,8 @@
 						console.log("Error Scheduler non eseguito");
 					})
 		}
+		
+		//$scope.executeSchedulerTemp();
 
 		$scope.init = function(){
 			sbiModule_restServices.promisePost("1.0/jsonKpiTemplate", "readKpiTemplate", $scope.documentData.template)
@@ -144,8 +146,13 @@
 				
 				return deferred.resolve($scope.selectedFunctionalities);
 			}, function() {
-				$scope.loadKpiValue();
-				
+				//$scope.loadKpiValue();
+				if(deferred.promise.$$state.value!=undefined){
+					kpiItem.value = deferred.promise.$$state.value.value;
+				}
+				if(deferred.promise.$$state.comment!=undefined){
+					kpiItem.valueSeries[$scope.valueSeries.length-1].manualNote = deferred.promise.$$state.value.comment;
+				}
 				$scope.status = 'You cancelled the dialog.';
 			});
 			
@@ -182,12 +189,15 @@
 			$mdDialog.cancel();
 			$scope.kpiValueToSave = {};
 			$scope.kpiValueToSave["manualValue"] = $scope.value;
-			$scope.kpiValueToSave["manualNote"] = $scope.valueSeries.comment;
+			$scope.kpiValueToSave["manualNote"] = $scope.valueSeries.manualNote;
 			$scope.kpiValueToSave["valueSeries"] = $scope.valueSeries;
 			sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
 			sbiModule_restServices.promisePost("1.0/kpi", 'editKpiValue',$scope.kpiValueToSave)
 			.then(function(response){ 
-				items.resolve($scope.value);
+				var obj = {};
+				obj["value"] = $scope.value;
+				obj["comment"] = $scope.kpiValueToSave["manualNote"];
+				items.resolve(obj);
 				console.log("Saved");
 			},function(response){
 				$scope.errorHandler(response.data,"");
