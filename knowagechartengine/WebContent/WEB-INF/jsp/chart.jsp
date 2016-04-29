@@ -183,7 +183,7 @@ author:
 
 <% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) {%>
 	<jsp:include
-		page="<%=ChartEngineUtil.getLibraryInitializerPath(template)%>" >
+		page="<%=ChartEngineUtil.getLibraryInitializerPath(template,docLabel, profile)%>" >
 		<jsp:param name="template" value="<%=template%>" />
 	</jsp:include>
 	
