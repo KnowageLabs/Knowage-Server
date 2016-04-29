@@ -35,6 +35,7 @@ import it.eng.spagobi.metadata.metadata.SbiMetaTableBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaTableBcId;
 import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -51,6 +52,7 @@ import org.hibernate.Transaction;
 public class ImportMetadata extends AbstractHibernateDAO {
 
 	static private Logger logger = Logger.getLogger(ImportMetadata.class);
+	private boolean existElement = false;
 	public static final String FILE_SOURCE_TYPE = "file";
 
 	public void importETLMetadata(String jobName, ETLMetadata etlMetadata) throws EMFUserError {
@@ -203,17 +205,16 @@ public class ImportMetadata extends AbstractHibernateDAO {
 
 			Set<SbiMetaTable> metaTbs = aMetaSource.getSbiMetaTables();
 			for (SbiMetaTable metaTb : metaTbs) {
-				boolean exist = false;
 				// SBI_META_TABLE
 				metaTb.setSbiMetaSource(aMetaSource);
-				tableId = saveTable(aSession, metaTb, exist);
+				tableId = saveTable(aSession, metaTb);
 				metaTb.setTableId(tableId);
 				tablesMap.put(metaTb.getName(), metaTb);
 
 				Set<SbiMetaTableColumn> metaTbCols = metaTb.getSbiMetaTableColumns();
 				HashMap<String, SbiMetaTableColumn> originalColumnsMap = null;
 
-				if (exist) {
+				if (isExistElement()) {
 					// if the phisical table already exists,
 					// get the previous version of the table columns
 					originalColumnsMap = getColumnsAsMap(aSession, tableId);
@@ -225,21 +226,22 @@ public class ImportMetadata extends AbstractHibernateDAO {
 					metaTbCol.setSbiMetaTable(metaTb);
 					Integer idTbCol = saveTableColumn(aSession, metaTbCol);
 					metaTbCol.setColumnId(idTbCol);
-					columnsMap.put(metaTb.getName(), metaTbCol);
+					columnsMap.put(metaTbCol.getName(), metaTbCol);
 
 				}
 
-				if (exist) {
+				if (isExistElement()) {
 					// if the phisical table already exists,
 					// manage logical delete on columns that don't exist anymore
-					HashMap<String, SbiMetaTableColumn> newColumnsMap = getColumnsAsMap(aSession, tableId);
+
 					Iterator iter = originalColumnsMap.keySet().iterator();
 					while (iter.hasNext()) {
 						String key = (String) iter.next();
 						SbiMetaTableColumn origTbCol = originalColumnsMap.get(key);
-						if (newColumnsMap.get(key) == null) {
+						if (columnsMap.get(key) == null) {
 							// delete logically the column that doesn't exist anymore
 							origTbCol.setDeleted(true);
+							origTbCol.getCommonInfo().setTimeDe(new Date());
 							saveTableColumn(aSession, origTbCol);
 						}
 					}
@@ -264,7 +266,8 @@ public class ImportMetadata extends AbstractHibernateDAO {
 				for (SbiMetaBcAttribute metaAttr : metaAttrs) {
 
 					// set phisical table column id
-					SbiMetaTableColumn tableColumn = columnsMap.get(metaAttr.getSbiMetaTableColumn().getSbiMetaTable().getName());
+					// SbiMetaTableColumn tableColumn = columnsMap.get(metaAttr.getSbiMetaTableColumn().getSbiMetaTable().getName());
+					SbiMetaTableColumn tableColumn = columnsMap.get(metaAttr.getSbiMetaTableColumn().getName());
 					metaAttr.setSbiMetaTableColumn(tableColumn);
 					metaAttr.setSbiMetaBc(aMetaBc);
 					// SBI_META_BC_ATTRIBUTES
@@ -482,7 +485,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 		}
 	}
 
-	private int saveTable(Session session, SbiMetaTable newTable, boolean tableExists) throws Exception {
+	private int saveTable(Session session, SbiMetaTable newTable) throws Exception {
 		logger.debug("IN");
 
 		ISbiMetaTableDAO msDao = DAOFactory.getSbiMetaTableDAO();
@@ -494,13 +497,13 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			if (sbm == null) {
 				// insert the new one...
 				idTable = msDao.insertTable(session, newTable);
-				tableExists = false;
+				setExistElement(false);
 			} else {
 				// update the existing...
 				idTable = sbm.getTableId();
 				newTable.setTableId(idTable);
 				msDao.modifyTable(session, newTable);
-				tableExists = true;
+				setExistElement(true);
 			}
 			return idTable;
 
@@ -614,6 +617,21 @@ public class ImportMetadata extends AbstractHibernateDAO {
 		}
 		return toReturn;
 
+	}
+
+	/**
+	 * @return the existElement
+	 */
+	public boolean isExistElement() {
+		return existElement;
+	}
+
+	/**
+	 * @param existElement
+	 *            the existElement to set
+	 */
+	public void setExistElement(boolean existElement) {
+		this.existElement = existElement;
 	}
 
 }
