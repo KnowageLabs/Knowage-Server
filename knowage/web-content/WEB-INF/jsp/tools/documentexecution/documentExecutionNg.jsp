@@ -69,11 +69,12 @@ try{
 	</style>
 	<style type="text/css">
 		.topsidenav {min-width:100% !important; max-width:100% !important; min-height:40%;}
+		.lateralsidenav {min-width:350px !important; max-width:350px !important;}
 	</style>
 </head>
 
 <body class="kn-documentExecution" ng-app="documentExecutionModule" ng-controller="documentExecutionController" layout="row" >
-	<md-sidenav class="md-sidenav-right md-whiteframe-4dp" ng-if="'<%=obj.getParametersRegion() %>' == 'west'" md-component-id="parametersPanelSideNav" layout="column" md-is-locked-open="showParametersPanel.status" ng-include="'/knowage/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.html'">		
+	<md-sidenav class="md-sidenav-right md-whiteframe-4dp lateralsidenav" ng-if="'<%=obj.getParametersRegion() %>' == 'west'" md-component-id="parametersPanelSideNav" layout="column" md-is-locked-open="showParametersPanel.status" ng-include="'/knowage/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.html'">		
 	</md-sidenav>
 	
 	<div layout="column"  ng-init="initSelectedRole()" ng-cloak layout-fill>
@@ -232,7 +233,7 @@ try{
 		 										
 	</div>
 	
-	<md-sidenav class="md-sidenav-right md-whiteframe-4dp"  ng-if="'<%=obj.getParametersRegion() %>' == 'east'" md-component-id="parametersPanelSideNav" layout="column" md-is-locked-open="showParametersPanel.status" ng-include="'/knowage/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.html'">
+	<md-sidenav class="md-sidenav-left md-whiteframe-4dp lateralsidenav"  ng-if="'<%=obj.getParametersRegion() %>' == 'east'" md-component-id="parametersPanelSideNav" layout="column" md-is-locked-open="showParametersPanel.status" ng-include="'/knowage/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.html'">
 	</md-sidenav>
 		
 	<script type="text/javascript">

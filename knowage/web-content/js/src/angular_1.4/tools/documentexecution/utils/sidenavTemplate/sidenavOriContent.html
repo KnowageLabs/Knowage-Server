@@ -1,4 +1,4 @@
-		<div id="sidenavContent">
+
 		<md-toolbar class="header secondaryToolbar" ng-hide="isParameterPanelDisabled()">
 			<div layout="row" layout-align="center left ">	
 				<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
@@ -19,7 +19,6 @@
 		<md-content ng-show="showSelectRoles" ng-cloak>
 			<md-input-container class="small counter" flex>
 				<label>{{::translate.load("sbi.users.roles")}}</label>
-
 					<md-select aria-label="aria-label" ng-model="selectedRole.name" ng-disabled="::crossNavigationScope.isNavigationInProgress()" >
 						<md-option ng-click="changeRole(role)" ng-repeat="role in roles" value="{{role}}">
 							{{::role|uppercase}}
@@ -46,4 +45,3 @@
 				ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
 			{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
 		</md-button>
-		</div>
