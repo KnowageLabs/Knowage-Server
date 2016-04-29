@@ -42,10 +42,25 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		icon:'fa fa-trash' ,
 		backgroundColor:'transparent',	
 		action : function(item,event) {
-			$scope.removeEngine(item);
+			$scope.deleteMeasure(item);
 		}
 	}];
+	$scope.deleteMeasure=function(item,event){
+		var confirm = $mdDialog.confirm()
+		.title($scope.translate.load("sbi.kpi.measure.delete.title"))
+		.content($scope.translate.load("sbi.kpi.measure.delete.content"))
+		.ariaLabel('delete scheduler') 
+		.ok($scope.translate.load("sbi.general.yes"))
+		.cancel($scope.translate.load("sbi.general.No"));
+		$mdDialog.show(confirm).then(function() {
 
+
+			$scope.removeEngine(item);
+
+
+		}, function() {
+		});
+	}
 	
 	
 	$scope.clearAllData = function(){
@@ -154,9 +169,9 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 					break;
 				}
 			}
-			alert("Item ID " + item.id + " removal sucess.");
+			//alert("Item ID " + item.id + " removal sucess.");
 		}, function(response) {
-			alert("Removal failed. Item: " + JSON.stringify(item));
+			//alert("Removal failed. Item: " + JSON.stringify(item));
 		});
 	}
 	

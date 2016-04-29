@@ -16,13 +16,13 @@
      	<div layout="row">
 			<div flex>
 				<md-input-container class="small counter" class="small counter" >
-					<label>Target Value</label>
+					<label>{{translate.load("sbi.kpi.widget.target")}}</label>
 					<input class="input_class" ng-model="targetValue" disabled> 
 				</md-input-container>
 			</div>
 			<div flex>
 					<md-input-container class="small counter" class="small counter" >
-						<label>Kpi Value</label>
+						<label>{{translate.load("sbi.kpi.widget.kpi")}}</label>
 						<input class="input_class" ng-model="value" required> 
 					</md-input-container>
 			</div>	
@@ -30,7 +30,7 @@
 		
 		<div layout="row">
 		  <md-input-container flex class="md-block">
-          <label>Comment</label>
+          <label>{{translate.load("sbi.kpi.widget.comment")}}</label>
           <textarea ng-model="valueSeries.manualNote" md-maxlength="150" rows="5" md-select-on-focus required></textarea>
         </md-input-container>
 		
@@ -46,13 +46,13 @@
 	     <div layout="row">
 			<div flex>
 				<md-input-container class="small counter" class="small counter" >
-					<label>Day</label>
+					<label>{{translate.load("sbi.kpi.widget.day")}}</label>
 					<input class="input_class" ng-model="valueSeries.theDay" disabled> 
 				</md-input-container>
 			</div>
 			<div flex>
 				<md-input-container class="small counter" class="small counter" >
-					<label>Month</label>
+					<label>{{translate.load("sbi.kpi.widget.month")}}</label>
 					<input class="input_class" ng-model="valueSeries.theMonth" disabled> 
 				</md-input-container>
 			</div>
@@ -60,13 +60,13 @@
 		<div layout="row">
 			<div flex>
 				<md-input-container class="small counter" class="small counter" >
-					<label>Quarter</label>
+					<label>{{translate.load("sbi.kpi.widget.quarter")}}</label>
 					<input class="input_class" ng-model="valueSeries.theQuarter" disabled> 
 				</md-input-container>
 			</div>
 			<div flex>
 				<md-input-container class="small counter" class="small counter" >
-					<label>Year</label>
+					<label>{{translate.load("sbi.kpi.widget.year")}}</label>
 					<input class="input_class" ng-model="valueSeries.theYear" disabled> 
 				</md-input-container>
 			</div>
@@ -76,7 +76,7 @@
 	</div>
 		<div class="footer" layout="row">
 		<span flex></span>
-		<md-button class="dialogButton" ng-click="apply()"  md-autofocus>Save <md-icon md-font-icon="fa fa-check buttonIcon" aria-label="apply"></md-icon></md-button>
+		<md-button class="dialogButton" ng-click="apply()"  md-autofocus>{{translate.load("sbi.general.save")}} <md-icon md-font-icon="fa fa-check buttonIcon" aria-label="apply"></md-icon></md-button>
 		</div>
    	 </md-dialog-content>
   </md-whiteframe>       

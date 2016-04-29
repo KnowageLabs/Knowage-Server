@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Template build</title>
+<title>{{translate.load("sbi.kpidocumentdesigner.tempbuild")}}</title>
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
@@ -51,17 +51,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </md-toolbar>
 <md-whiteframe class="md-whiteframe-2dp relative" layout-fill layout-margin flex  >
 	<md-radio-group layout="row" ng-model="typeChart">
-	     		<md-radio-button  value='kpi' >Kpi</md-radio-button>
-	     		<md-radio-button  value='scorecard'> Scorecard </md-radio-button>
+	     		<md-radio-button  value='kpi' >{{translate.load("sbi.kpi.kpi")}}</md-radio-button>
+	     		<md-radio-button  value='scorecard'>{{translate.load("sbi.kpi.scorecard")}} </md-radio-button>
    	</md-radio-group>
    	<md-toolbar  class="miniheadimportexport" layout="row" ng-if="typeChart=='kpi'">
 	<div class="md-toolbar-tools" flex>
-		<h2 class="md-flex" >Type of Document</h2>
+		<h2 class="md-flex" >{{translate.load("sbi.kpi.type")}}</h2>
 	</div>
 	</md-toolbar>
 	<md-radio-group layout="row" ng-model="typeDocument" ng-show="typeChart=='kpi'">
-	     		<md-radio-button  value='list' >List</md-radio-button>
-	     		<md-radio-button  value='widget'> Widget </md-radio-button>
+	     		<md-radio-button  value='list' >{{translate.load("sbi.kpi.list")}}</md-radio-button>
+	     		<md-radio-button  value='widget'>{{translate.load("sbi.kpi.widget")}} </md-radio-button>
    	</md-radio-group>
 
 	<expander-box id="Info" color="white" ng-if="typeChart=='scorecard'" expanded="true" title="'Scorecard List'">
@@ -76,7 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<queue-table>
 			<div layout="row"> 
 				<span flex></span>
-				<md-button ng-click="scopeFunctions.loadListScorecard()">Add Scorecard Association</md-button>
+				<md-button ng-click="scopeFunctions.loadListScorecard()">Add Scorecard Association </md-button>
 			</div>
 		</queue-table> 
 		</angular-table>	
@@ -122,7 +122,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-input-container>
 			</span>
 			<span layout="row">
-				<h4 flex=15>Units</h4>
+				<h4 flex=15>{{translate.load("sbi.kpidocumentdesigner.units")}}</h4>
 				<md-select aria-label="aria-label" flex=30 ng-model="options.history.units">
 					<md-option ng-repeat="unit in units" value="{{unit}}">{{unit}}</md-option>
 				</md-select>

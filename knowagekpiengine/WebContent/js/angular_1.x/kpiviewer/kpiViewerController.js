@@ -2,9 +2,9 @@
 	var kpiViewerModule = angular.module('kpiViewerModule');
 
 	kpiViewerModule.controller('kpiViewerController', 
-			['$scope', 'documentData', 'sbiModule_restServices','sbiModule_config', 'kpiViewerServices','$q','$mdDialog', kpiViewerControllerFn]);
+			['$scope', 'documentData', 'sbiModule_restServices','sbiModule_translate','sbiModule_config', 'kpiViewerServices','$q','$mdDialog', kpiViewerControllerFn]);
 
-	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices, sbiModule_config, kpiViewerServices,$q,$mdDialog) {
+	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices,sbiModule_translate, sbiModule_config, kpiViewerServices,$q,$mdDialog) {
 		$scope.documentData = documentData;
 		$scope.kpiOptions = documentData.template.chart.options;
 
@@ -19,6 +19,7 @@
 		$scope.gaugeTargetValue = 0;
 		$scope.thresholdStops = documentData.kpiValue.threshold;
 		$scope.percentage=0;
+		$scope.translate = sbiModule_translate;
 
 		$scope.loadKpiValue = function(){
 			if($scope.documentData.template.chart.data.kpi != undefined){
@@ -139,7 +140,13 @@
 				templateUrl: '/knowagekpiengine/js/angular_1.x/kpi-widget/template/kpi-widget-editValue.jsp',
 				clickOutsideToClose:true,
 				preserveScope:true,
-				locals: {items: deferred,label:kpiItem.name,value:kpiItem.value, targetValue:kpiItem.targetValue,valueSeries:kpiItem.valueSeries[kpiItem.valueSeries.length-1] }
+				locals: {
+					items: deferred,
+					label:kpiItem.name,
+					value:kpiItem.value,
+					targetValue:kpiItem.targetValue,
+					valueSeries:kpiItem.valueSeries[kpiItem.valueSeries.length-1]
+				}
 			})
 			.then(function(answer) {
 				
@@ -160,12 +167,13 @@
 		
 	};
 	
-	function DialogController($scope,$mdDialog,sbiModule_restServices,sbiModule_config,items,label,value,targetValue,valueSeries){
+	function DialogController($scope,$mdDialog,sbiModule_restServices,sbiModule_config,sbiModule_translate,items,label,value,targetValue,valueSeries){
 		$scope.label = label;
 		$scope.value = value;
 		$scope.targetValue =targetValue;
 		$scope.valueSeries = valueSeries;
 		$scope.array = [];
+		$scope.translate = sbiModule_translate;
 		
 		$scope.parseLogicalKey = function(){
 			var string  = $scope.valueSeries.logicalKey;
