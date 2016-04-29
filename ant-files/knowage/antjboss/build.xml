@@ -265,6 +265,19 @@
 		<touch file="${jboss.home}/standalone/deployments/knowagechartengine.war.dodeploy"/>
 		
 	</target>
+
+	<target name="create.knowagekpiengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowagekpiengine/ant" />
+	</target>
+	
+	<target name="jboss.deploy.knowagekpiengine.war" depends="create.knowage.utils.jar,create.knowagekpiengine.war">
+		<delete dir="${jboss.home}/standalone/tmp/work/jboss.web/default-host/knowagekpiengine" />
+		<delete dir="${jboss.home}/standalone/deployments/knowagekpiengine.war" />
+		<mkdir dir="${jboss.home}/standalone/deployments/knowagekpiengine.war" />
+		<unzip src="../../../knowagekpiengine/dist/knowagekpiengine.war" dest="${jboss.home}/standalone/deployments/knowagekpiengine.war" />
+		<touch file="${jboss.home}/standalone/deployments/knowagekpiengine.war.dodeploy"/>
+		
+	</target>
 	
 	<target name="jboss.deploy.highcharts-export-web.war" depends="">
 		<delete dir="${jboss.home}/standalone/tmp/work/jboss.web/default-host/highcharts-export-web" />
@@ -352,6 +365,10 @@
 -->
 		<antcall target="create.knowagechartengine.war" />
 		<copy file="../../../knowagechartengine/dist/knowagechartengine.war" 
+        todir="../../../dist" overwrite="true" />
+
+		<antcall target="create.knowagekpiengine.war" />
+		<copy file="../../../knowagekpiengine/dist/knowagekpiengine.war" 
         todir="../../../dist" overwrite="true" />
 
 		<antcall target="create.knowage.war" />
@@ -453,6 +470,7 @@
 			<antcall target="jboss.deploy.knowagecommonjengine.war" />
 			<!-- antcall target="deploy.SpagoBIConsoleEngine.war" /-->
 			<antcall target="jboss.deploy.knowagechartengine.war" />
+			<antcall target="jboss.deploy.knowagekpiengine.war" />
 			<!-- antcall target="deploy.SpagoBIMobileEngine.war" /-->
 			<antcall target="jboss.deploy.knowagenetworkengine.war" />
 			<!-- antcall target="deploy.SpagoBIWhatIfEngine.war" /-->
@@ -525,6 +543,9 @@
 		-->
 		<delete dir="../../../knowagechartengine/ant-build"/>
 		<delete dir="../../../knowagechartengine/dist"/>
+
+		<delete dir="../../../knowagekpiengine/ant-build"/>
+		<delete dir="../../../knowagekpiengine/dist"/>
 		<!--
 		<delete dir="../../../SpagoBIMobileEngine/ant-build"/>
 		<delete dir="../../../SpagoBIMobileEngine/dist"/>
@@ -630,6 +651,7 @@
 		<ant dir="../SpagoBIConsoleEngine/ant" target="javadoc"/>
 		-->
 		<ant dir="../knowagechartengine/ant" target="javadoc"/>
+		<ant dir="../knowagekpiengine/ant" target="javadoc"/>
 		<!-- 
 		<ant dir="../SpagoBIMobileEngine/ant" target="javadoc"/>
 		-->
@@ -664,6 +686,7 @@
 		<ant dir="../SpagoBIConsoleEngine/ant" target="package"/>
 		-->
 		<ant dir="../knowagechartengine/ant" target="package"/>
+		<ant dir="../knowagekpiengine/ant" target="package"/>
 		<!--
 		<ant dir="../SpagoBIMobileEngine/ant" target="package"/>
 		-->
