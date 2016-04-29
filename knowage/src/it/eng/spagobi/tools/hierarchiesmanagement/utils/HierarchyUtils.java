@@ -1119,13 +1119,13 @@ public class HierarchyUtils {
 				preparedRelStatement.setBoolean(5, false);
 
 				preparedRelStatement.executeUpdate();
-				preparedRelStatement.closeOnCompletion();
+				preparedRelStatement.close();
 				// duplicate original record for don't loose relations in the new version (insert from select)
 				preparedSelRelStatement.setString(1, newHierName);
 				preparedSelRelStatement.setBoolean(2, true);
 
 				ResultSet rs = preparedSelRelStatement.executeQuery();
-				preparedSelRelStatement.closeOnCompletion();
+				preparedSelRelStatement.close();
 				int countId = HierarchyUtils.getCountId(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID, HierarchyConstants.REL_MASTER_TECH_TABLE_NAME,
 						databaseConnection, dataSource);
 				while (rs.next()) {
@@ -1141,7 +1141,7 @@ public class HierarchyUtils {
 					PreparedStatement preparedInsRelStatement = databaseConnection.prepareStatement(insertOrigRelQuery);
 					setParameterPropagationInsertQuery(preparedInsRelStatement, rs, countId);
 					preparedInsRelStatement.executeUpdate();
-					preparedInsRelStatement.closeOnCompletion();
+					preparedInsRelStatement.close();
 				}
 
 				logger.debug("Insert original relations query successfully executed");
