@@ -26,15 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
-<%
-// check for user profile autorization
-// 		IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		boolean canSee=UserUtilities.haveRoleAndAuthorization(userProfile, SpagoBIConstants.ROLE_TYPE_USER, new String[]{SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS});
-		
-%>
-
- <% if(canSee ){ %>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="glossaryWordManager">
 
@@ -550,7 +541,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 </body>
 </html>
-
-<%}else{ %>
-NOT AUTHORIZED
-<%} %>
