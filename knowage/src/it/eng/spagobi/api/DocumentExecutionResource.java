@@ -165,7 +165,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			resultAsMap.put("engineLabel", obj.getEngine().getLabel());
 
 		} catch (DocumentExecutionException e) {
-			logger.error("Error while getting the document execution url", e);
 			JSONObject err = new JSONObject();
 			err.put("message", e.getMessage());
 			err.put("type", "missingRole");
