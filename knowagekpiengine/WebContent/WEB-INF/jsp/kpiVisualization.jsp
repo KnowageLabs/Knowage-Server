@@ -174,16 +174,6 @@ author:
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/js/angular_1.x/kpi-widget/css/kpiWidgetStyle.css">
 <!-- Scripts -->
-<%--
-<script type="text/javascript" 
-		src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/adapters/standalone-framework.js"></script>
-<script type="text/javascript" 
-		src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/highcharts.src.js"></script>
-<script type="text/javascript" 
-		src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/highcharts-more.js"></script>
-<script type="text/javascript" 
-		src="${pageContext.request.contextPath}/js/lib/gaugeJs/gauge.js"></script>
---%>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/js/lib/d3/3.5.5/d3.js"></script>
 
@@ -203,10 +193,9 @@ author:
 
 	<%--
 	<div style="padding:2em; font-size: 0.7em">kpiListValue: {{documentData.kpiListValue | json}}</div>
-	<div style="padding:2em; font-size: 0.7em">kpiValue: {{documentData.kpiValue | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">template: {{documentData.template | json}}</div>
 	
-	<div style="padding:2em; font-size: 0.7em">kpiItems: {{kpiItems | json}}</div>
+	<div style="padding:2em; font-size: 0.7em">kpiValue: {{documentData.kpiValue | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">kpiItems: {{kpiItems | json}}</div>
 	--%>
 	<%
@@ -254,6 +243,9 @@ author:
 	<%
 		} else if(model.equalsIgnoreCase("list")) {
 	%>
+	<%--
+	<div style="padding:2em; font-size: 0.7em">kpiItems: {{kpiItems | json}}</div>
+	--%>
 	<kpi-list-document kpi-items="kpiItems"> </kpi-list-document>
 	<%
 		}

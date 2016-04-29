@@ -335,7 +335,7 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 	
 	var gaugeNgDirectiveApp = angular.module('gaugeNgDirectiveApp', 
-			['ngMaterial', 'ngSanitize', 'ngAnimate', 'sbiModule', 'angular_table']);
+			['ngMaterial', 'ngSanitize', 'ngAnimate', 'sbiModule', 'angular_table', 'kpi_semaphore_indicator']);
 	
 	gaugeNgDirectiveApp.directive("kpiGauge", ['$compile', '$timeout' , function($compile, $timeout){
 		return {
@@ -562,6 +562,13 @@
 	function kpiListDocumentCtrl($scope, $compile, sbiModule_translate){
 		$scope.LINEAR_GAUGE_SIZE = 250;
 		
+		$scope.severityPriority = {
+				'urgent' : 4, 
+				'high' : 3, 
+				'medium' : 2, 
+				'low' : 1
+		};
+		
 		$scope.dataToShow = [];
 		
 		$scope.columns = 
@@ -573,17 +580,30 @@
 				name: "value"
 			},{
 				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.semaphore"),
-				name: "semaphore"
+				name: "semaphore",
+				comparatorFunction:function(a, b){
+					var aSeverity = a.severity.toLowerCase().trim(); 
+					var bSeverity = b.severity.toLowerCase().trim(); 
+					
+					var aValue = aSeverity=='' ? 0 : $scope.severityPriority[aSeverity];
+					var bValue = bSeverity=='' ? 0 : $scope.severityPriority[bSeverity];
+					
+					return (bValue - aValue);
+				}
+			},{
+				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.severity"),
+				name: "severity"
 			},{
 				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.trend"),
-				name: "trend"
+				name: "trend",
+				size: 200
 			},{
 				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.lineargauge"),
 				name: "lineargauge",
 				size: $scope.LINEAR_GAUGE_SIZE
 			}];
 		
-		$scope.linearGaugeTemplate = function(kpiItem) {
+		$scope.getLinearGaugeTemplate = function(kpiItem) {
 			var template = 
 				'<kpi-linear-gauge '
 					+ 'gauge-id="' + kpiItem.id + '" '
@@ -605,19 +625,102 @@
 			return template;
 		};
 		
+		$scope.getLineChartChartStaticConf = function() {
+			var conf = {
+					chart: {
+						type: 'lineChart',
+						height: 50,
+						width: $scope.LINEAR_GAUGE_SIZE,
+						duration: 100,
+						color:['#C4DCF3'],
+						showXAxis: false,
+						showYAxis: false,
+						showLegend: false,
+						useInteractiveGuideline: false,
+						interactive: false,
+						showVoronoi: false,
+						useVoronoi: false,
+						margin : {
+							top: 10,
+							bottom: 0,
+							right: 30,
+							left: 0
+						},
+					},
+			};
+			return conf;
+		};
+		
+		$scope.getKpiLineChartData = function(kpiItem) {
+			var lineChartData = [];
+			
+			for(var i = 0; i < kpiItem.valueSeries.length; i++) {
+				var kpiValueItem = kpiItem.valueSeries[i];
+				
+				lineChartData.push( {x: kpiValueItem.timeRun , y: kpiValueItem.computedValue });
+			}
+			
+			var data = [{
+				values : lineChartData,
+				area: true
+			}];
+			
+			return data;
+		};
+		
+		$scope.getCurrentThresholdData = function(kpiItem) {
+			var color = '';
+			var severity = '';
+			
+			for(var i = 0; i < kpiItem.thresholdStops.length; i++) {
+				var threshold = kpiItem.thresholdStops[i];
+				
+				if((kpiItem.value > threshold.from && kpiItem.value < threshold.to) 
+						|| (threshold.includeMin == true && kpiItem.value == threshold.from)
+						|| (threshold.includeMax == true && kpiItem.value == threshold.to)
+						) {
+					color = threshold.color;
+					severity = threshold.severity;
+					break;
+				}
+			}
+			
+			return {
+				color : color,
+				severity : severity
+			};
+		};
+		
+		$scope.getLineChartTemplate = function(kpiItem) {
+			var template = 
+				'<nvd3 id="nvd3_kpi_' + kpiItem.id + '" ' 
+					+ 'data=\'' + JSON.stringify($scope.getKpiLineChartData(kpiItem)) +'\' ' 
+					+ 'options=\'' + JSON.stringify($scope.getLineChartChartStaticConf()) + '\'' 
+				+ '></nvd3>'
+				+ '<style>' 
+					+ '#nvd3_kpi_' + kpiItem.id + ' {}' 
+				+ '</style>'
+				;
+			
+			return template;
+		};
+		
 		$scope.getDataToShow = function() {
 			var result = [];
 			
 			for(var i = 0; i < $scope.kpiItems.length; i++) {
 				var kpiItem = $scope.kpiItems[i];
 				
+				var thresholdData = $scope.getCurrentThresholdData(kpiItem);
 				var obj = {};
 				
 				obj.name = kpiItem.name;
 				obj.value = kpiItem.value;
-				obj.semaphore = "MOCK semaphore";
-				obj.trend = "MOCK trend";
-				obj.lineargauge = $scope.linearGaugeTemplate(kpiItem);
+				obj.semaphore = '<kpi-semaphore-indicator indicator-color=\'' 
+					+ JSON.stringify(thresholdData.color) + '\'></kpi-semaphore-indicator>';
+				obj.severity = thresholdData.severity;
+				obj.trend = $scope.getLineChartTemplate(kpiItem);
+				obj.lineargauge = $scope.getLinearGaugeTemplate(kpiItem);
 				
 				result.push(obj)
 			}

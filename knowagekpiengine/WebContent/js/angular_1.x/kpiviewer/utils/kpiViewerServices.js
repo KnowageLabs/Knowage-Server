@@ -35,8 +35,6 @@
 				conf.units = templateOptions.history && templateOptions.history.units ?
 						templateOptions.history.units : null;
 				
-				conf.dataSeries = [];
-				
 				if(kpiValue.threshold && kpiValue.threshold != null) {
 					var limits = {
 						min: conf.minValue,
@@ -123,8 +121,8 @@
 						}
 						
 						stopConf.to = threshold.maxValue;
-						
 					}
+					
 					// last threshold
 					else if (i == thresholdsQuantity - 1) {
 						if(threshold.maxValue == null || threshold.maxValue > highestLimit) {
@@ -142,6 +140,10 @@
 						stopConf.from = threshold.minValue;
 					}
 					
+					
+					stopConf.includeMin = threshold.includeMin;
+					stopConf.includeMax = threshold.includeMax;
+					stopConf.severity = threshold.severityCd;
 					
 					stopConf.color = threshold.color;
 					

@@ -7,7 +7,10 @@
 	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices, sbiModule_config, kpiViewerServices,$q,$mdDialog) {
 		$scope.documentData = documentData;
 		$scope.kpiOptions = documentData.template.chart.options;
+
 		$scope.kpiItems = [];
+
+
 		$scope.GAUGE_DEFAULT_SIZE = 250;
 		$scope.LINEAR_GAUGE_DEFAULT_SIZE= 400;
 		$scope.gaugeMinValue = 0;
@@ -16,7 +19,7 @@
 		$scope.gaugeTargetValue = 0;
 		$scope.thresholdStops = documentData.kpiValue.threshold;
 		$scope.percentage=0;
-		
+
 		$scope.loadKpiValue = function(){
 			if($scope.documentData.template.chart.data.kpi != undefined){
 				var object = {
@@ -27,36 +30,34 @@
 				};
 				
 				sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
-				sbiModule_restServices.promisePost("1.0/kpi", 'loadKpiValue',object).then(
-						function(response) {
-							var array =response.data;
+				sbiModule_restServices
+				.promisePost("1.0/kpi", 'loadKpiValue',object)
+				.then(function(response) {
+					var array =response.data;
+					
+					for(var j = 0; j < $scope.kpiItems.length; j++){
+						var kpiItem = $scope.kpiItems[j];
 							
-						for(var j = 0; j < $scope.kpiItems.length; j++){
-									var kpiItem = $scope.kpiItems[j];
-									
-									for(var i = 0; i < array.length; i++){
-										var kpiArray = JSON.parse(array[i])
-										
-										if(kpiArray[kpiArray.length-1].kpiId == kpiItem.id 
-												&& kpiArray[kpiArray.length-1].kpiVersion == kpiItem.version){
-											if(kpiArray[kpiArray.length-1].manualValue!=undefined)
-												kpiItem.value = kpiArray[kpiArray.length-1].manualValue;
-											else
-												kpiItem.value = kpiArray[kpiArray.length-1].computedValue;
-									
-											for(var k = 0; k < kpiArray.length; k++) {
-												kpiItem.valueSeries.push(kpiArray[k]);
-											}
-										}
-										
-										
+						for(var i = 0; i < array.length; i++){
+							var kpiArray = JSON.parse(array[i])
+							
+							if(kpiArray.length > 0 && kpiArray[kpiArray.length-1].kpiId == kpiItem.id 
+									&& kpiArray[kpiArray.length-1].kpiVersion == kpiItem.version){
+								if(kpiArray[kpiArray.length-1].manualValue!=undefined)
+									kpiItem.value = kpiArray[kpiArray.length-1].manualValue;
+								else
+									kpiItem.value = kpiArray[kpiArray.length-1].computedValue;
+						
+								for(var k = 0; k < kpiArray.length; k++) {
+									kpiItem.valueSeries.push(kpiArray[k]);
 								}
-							}
-							
+							}										
+						}
+					}
 
-						},function(response) {
-							console.log("Error get Kpi Value");
-						})
+				},function(response) {
+					console.log("Error get Kpi Value");
+				});
 			}
 		};
 
@@ -70,8 +71,6 @@
 						console.log("Error Scheduler non eseguito");
 					})
 		}
-		
-		//$scope.executeSchedulerTemp();
 
 		$scope.init = function(){
 			sbiModule_restServices.promisePost("1.0/jsonKpiTemplate", "readKpiTemplate", $scope.documentData.template)

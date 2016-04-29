@@ -6,12 +6,12 @@ angular.module('kpi_semaphore_indicator', ['ngMaterial'])
 					'<i class="fa  fa-stack-1x scorecardSemaphoreBackIcon" ng-class="getClass(indicatorColor,true)" style="color : black"></i>'+
 					'<i class="fa  fa-stack-1x scorecardSemaphoreFrontIcon" ng-class="getClass(indicatorColor,false)" style="color : {{indicatorColor || \'GRAY\'}}"></i>'+
 				'</span>'+
-				'<span>{{indicatorValue}}</span>'+
+				'<span ng-if="indicatorValue">{{indicatorValue}}</span>'+
 			'</span>',
 			replace:true,
 		scope: {
 			indicatorColor:"=",
-			indicatorValue:"="
+			indicatorValue:"=?"
 		},
 		link: function(scope, element, attrs, ctrl, transclude) {
 			scope.getClass=function(type,isBack){
