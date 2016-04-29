@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.commons.dao;
 
-import org.apache.log4j.Logger;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectRating;
@@ -73,8 +71,8 @@ import it.eng.spagobi.metadata.dao.ISbiJobSourceDAO;
 import it.eng.spagobi.metadata.dao.ISbiJobTableDAO;
 import it.eng.spagobi.metadata.dao.ISbiMetaBCAttributeDAO;
 import it.eng.spagobi.metadata.dao.ISbiMetaBCDAO;
-import it.eng.spagobi.metadata.dao.ISbiMetaDsTabRel;
 import it.eng.spagobi.metadata.dao.ISbiMetaDocTabRelDAO;
+import it.eng.spagobi.metadata.dao.ISbiMetaDsTabRel;
 import it.eng.spagobi.metadata.dao.ISbiMetaJobDAO;
 import it.eng.spagobi.metadata.dao.ISbiMetaSourceDAO;
 import it.eng.spagobi.metadata.dao.ISbiMetaTableColumnDAO;
@@ -105,6 +103,8 @@ import it.eng.spagobi.tools.udp.dao.IUdpValueDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.wapp.dao.IMenuDAO;
 import it.eng.spagobi.wapp.dao.IMenuRolesDAO;
+
+import org.apache.log4j.Logger;
 
 /**
  * Contains all the data access object for all the BO objects defined into it.eng.spagobi.bo package.
@@ -998,7 +998,7 @@ public class DAOFactory {
 	 *             the EMF user error
 	 */
 	public static ISbiMetaTableColumnDAO getSbiMetaTableColumnDAO() throws EMFUserError {
-		return (ISbiMetaTableColumnDAO) createDAOInstance("ISbiMetaTableColumnDAOSbiMetaSourceDAO");
+		return (ISbiMetaTableColumnDAO) createDAOInstance("ISbiMetaTableColumnDAO");
 	}
 
 	/**
@@ -1136,16 +1136,16 @@ public class DAOFactory {
 	public static ISbiMetaDsTabRel getDsTableRelDAO() throws EMFUserError {
 		return (ISbiMetaDsTabRel) createDAOInstance("ISbiMetaDsTabRel");
 	}
-	
+
 	public static ISbiMetaDocTabRelDAO getSbiMetaDocTabRelDAO() throws EMFUserError {
 		return (ISbiMetaDocTabRelDAO) createDAOInstance("ISbiMetaDocTabRelDAO");
 	}
 
 	/**
 	 * Gets the AlertDAO dao.
-	 * 
+	 *
 	 * @return the AlertDAO dao
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
