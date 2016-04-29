@@ -481,6 +481,30 @@
 		};
 		
 		
+		
+		
+		serviceScope.getSchedulers = function() {
+			execProperties.currentView.status = 'PARAMETERS';
+			execProperties.parameterView.status='SCHEDULER';
+			sbiModule_restServices.get(
+					"1.0/documentsnapshot", 
+					"getSnapshots",
+					"id=" + execProperties.executionInstance.OBJECT_ID)
+			.success(function(data, status, headers, config) {	
+				console.log('data scheduler '  ,  data.schedulers);
+				serviceScope.gvpCtrlSchedulers = data.schedulers;
+				console.log('url path ' + data.urlPath);
+				serviceScope.snapshotUrlPath=data.urlPath;
+				
+				if($mdSidenav('parametersPanelSideNav').isOpen()) {
+					docExecute_paramRolePanelService.toggleParametersPanel(false);
+				}
+			})
+			.error(function(data, status, headers, config) {});																	
+		};
+		
+		
+		
 	
 		serviceScope.getParametersForExecution = function(role, buildCorrelation,crossParameters) {
 		 
