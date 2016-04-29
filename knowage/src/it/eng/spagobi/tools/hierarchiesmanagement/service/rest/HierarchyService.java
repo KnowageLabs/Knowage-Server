@@ -843,8 +843,7 @@ public class HierarchyService {
 			// 6 - Execution of insert prepared statement
 			// -----------------------------------------------
 			hierPreparedStatement.execute();
-			hierPreparedStatement.getUpdateCount();
-			hierPreparedStatement.closeOnCompletion();
+			hierPreparedStatement.close();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure", t.getMessage());
 		}
