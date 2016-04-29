@@ -1125,7 +1125,6 @@ public class HierarchyUtils {
 				preparedSelRelStatement.setBoolean(2, true);
 
 				ResultSet rs = preparedSelRelStatement.executeQuery();
-				preparedSelRelStatement.close();
 				int countId = HierarchyUtils.getCountId(HierarchyConstants.REL_MASTER_TECH_TABLE_NAME_ID, HierarchyConstants.REL_MASTER_TECH_TABLE_NAME,
 						databaseConnection, dataSource);
 				while (rs.next()) {
@@ -1143,6 +1142,7 @@ public class HierarchyUtils {
 					preparedInsRelStatement.executeUpdate();
 					preparedInsRelStatement.close();
 				}
+				preparedSelRelStatement.close();
 
 				logger.debug("Insert original relations query successfully executed");
 
