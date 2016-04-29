@@ -1,11 +1,12 @@
-angular.module('documentBrowserModule').controller( 'documentBrowserController', ['$mdMedia', '$scope', '$http', '$mdSidenav', '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus','$timeout',documentBrowserFunction]);
+angular.module('documentBrowserModule').controller( 'documentBrowserController', ['$mdMedia', '$scope', '$http', '$mdSidenav', '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus','$timeout', '$cookies',documentBrowserFunction]);
 
-function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus,$timeout){
+function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus,$timeout,$cookies){
 	$scope.translate=sbiModule_translate;
 	$scope.folders = [];
 	$scope.folderDocuments = [];
 	$scope.searchDocuments = [];
 	$scope.breadCrumbControl; 
+	$scope.breadModel=[];
 	$scope.selectedFolder;
 	$scope.selectedDocument = undefined;
 	$scope.lastDocumentSelected = null;
@@ -56,12 +57,22 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 		}		
 	};
  
+	
+	
+	
+	
 	$scope.loadFolderDocuments=function(folderId){
 		$scope.hideProgressCircular=false;
 		sbiModule_restServices.promiseGet("2.0","documents/getDocumentsByFolder?folderId=" +folderId)
 		.then(function(response) {
 			angular.copy(response.data,$scope.folderDocuments);
 			$scope.hideProgressCircular=true;
+			//PUT bread crumb in cookies 
+			var foldersId = [];
+			for(var i=0; i<$scope.breadModel.length; i++){
+				foldersId[i] = $scope.breadModel[i].id;
+			}
+			$cookies.putObject('breadCrumb', foldersId);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
@@ -70,7 +81,31 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 		sbiModule_restServices.promiseGet("2.0/folders", "")
 		.then(function(response) {
 			if(response.data && response.data.length>0){
-				response.data[0].expanded=true;
+				//check cookies configuration tree
+				if($cookies.getObject('breadCrumb') && $cookies.getObject('breadCrumb').length>0){
+					$scope.hideProgressCircular=false;
+					var breadIdx = 0;
+					var folderToOpen=0;
+					for(var i=0; i<response.data.length; i++){
+						if(breadIdx<$cookies.getObject('breadCrumb').length){
+							if(response.data[i].id==$cookies.getObject('breadCrumb')[breadIdx]){
+								response.data[i].expanded=true;	 
+								$scope.breadCrumbControl.insertBread(response.data[i]);
+								breadIdx++;
+								folderToOpen=response.data[i];
+							}							
+						}else{
+							break;
+						}
+					}
+				//load folder 
+				$timeout(function(){
+					$scope.loadFolderDocuments(folderToOpen.id);
+				},0,true);
+				
+				}else{
+					response.data[0].expanded=true;					
+				}
 				response.data[0].name='Root';
 			}
 			angular.copy(response.data,$scope.folders);
@@ -78,6 +113,7 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
+		
 	$scope.loadFolders();
 	  
 	$scope.isSelectedFolderValid = function() {

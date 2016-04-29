@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/documentbrowser/directive/document-view/documentView.js"></script>
 	
 	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/documentbrowser/documentBrowserNavigation.js"></script>
+	
 	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/documentbrowser/documentBrowser.js"></script>
 	
 	

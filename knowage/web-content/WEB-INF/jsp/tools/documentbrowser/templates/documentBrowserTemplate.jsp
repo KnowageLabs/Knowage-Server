@@ -108,13 +108,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- 		       			<h3 class="md-toolbar-tools">{{translate.load("sbi.browser.filtrpanel.filtergroup.opt.folders")}}</h3> -->
 <!-- 	     			</md-toolbar> -->
 	     			<md-content layout-margin>
-	     				<document-tree ng-model="folders" highlights-selected-item="true" create-tree="true" selected-item="selectedFolder"  click-function="setSelectedFolder(item)"  ></document-tree>
+	     				<document-tree ng-model="folders" highlights-selected-item="true" create-tree="true" selected-item="selectedFolder"  
+	     					click-function="setSelectedFolder(item)"  ></document-tree>
 					</md-content>
 				</md-sidenav>
 	
 				<md-content layout-margin flex layout="column"> 
 				
-				<bread-crumb item-name='name' selected-item="selectedFolder" control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb>
+				<bread-crumb item-name='name' ng-model="breadModel" selected-item="selectedFolder" control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb>
 				 <md-input-container ng-show='showDocumentGridView'>
 			        <label>{{translate.load("sbi.ds.orderComboLabel")}}</label>
 			        <md-select ng-model="selectedOrder" ng-model-option="trackBy:'$value.id'">

@@ -128,8 +128,18 @@ try{
 			                	<md-icon class="{{exportationFormat.iconClass}}"></md-icon><md-button ng-click="exportationFormat.func()">{{exportationFormat.description}}</md-button>
 				            </md-menu-item>
 				            
-				           
-				            
+				          
+<!-- 				          <md-menu-item> -->
+<!-- 			                <md-menu md-position-mode="target-right target"> -->
+<!-- 			                  <md-button ng-if="urlViewPointService.exportation.length>0" ng-click="$mdOpenMenu()">Export</md-button> -->
+<!-- 			                  <md-menu-content> -->
+<!-- 			                   <md-menu-item class="md-indent" ng-repeat="exportationFormat in urlViewPointService.exportation"> -->
+<!-- 			                		<md-icon class="{{exportationFormat.iconClass}}"></md-icon><md-button ng-click="exportationFormat.func()">{{exportationFormat.description}}</md-button> -->
+<!-- 				           		</md-menu-item> -->
+<!-- 			                  </md-menu-content> -->
+<!-- 			                </md-menu> -->
+<!-- 			              </md-menu-item> -->
+				          
 				            
 				            <span class="divider">{{translate.load("sbi.generic.info")}}</span>
 				            <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_METADATA_FUNCTIONALITY)) { %>
@@ -182,7 +192,7 @@ try{
 				            
 				            <md-menu-item class="md-indent">
 				            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}" class="toolbar-button-custom"
-                                	ng-click="alert('TODO')">{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}
+                                	ng-click="urlViewPointService.getSchedulers()">{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}
 				                </md-button> 
 				            </md-menu-item>
 					    </md-menu-content>
@@ -215,7 +225,12 @@ try{
 				<div ng-if="parameterView.status == 'FILTER_SAVED'" layout flex>
 					<parameter-view-point-handler flex layout="column"/>
 				</div>
-			</div>	 
+				<div ng-if="parameterView.status == 'SCHEDULER'" layout flex>
+					<document-scheduler flex layout="column"/>
+				</div>
+			</div>
+			
+				 
 		</div>	
 		 										
 	</div>
@@ -268,6 +283,8 @@ try{
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/documentExecutionFactories.js")%>"></script>
 	<script type="text/javascript" 
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/parameterViewPointHandler/parameterViewPointHandlerController.js")%>"></script>
+	<script type="text/javascript" 
+		src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentScheduler/documentSchedulerController.js")%>"></script>
 	<script type="text/javascript" 
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentParamenterElement/documentParamenterElementController.js")%>"></script>
 	<script type="text/javascript" 
