@@ -338,7 +338,7 @@ public class WhatIfEngineConfig {
 		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute(DEPTHLIMIT_TAG);
 		if (sb != null) {
 			String dpth = (String) sb.getAttribute("value");
-			System.out.println(dpth);
+			//System.out.println(dpth);
 			return Integer.parseInt(dpth);
 			// return Integer.parseInt(sb.getAttribute("value").toString());
 		}
@@ -349,7 +349,7 @@ public class WhatIfEngineConfig {
 		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute(DRILLTROUGH_MAX_ROWS_TAG);
 		if (sb != null) {
 			String max = (String) sb.getAttribute("value");
-			System.out.println(max);
+			//System.out.println(max);
 			return Integer.parseInt(max);
 		}
 		return -1;

@@ -204,12 +204,12 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		}
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss.SSS");
 		String time = "Serilize start " + format.format(new Date());
-		System.out.println(time);
+		//System.out.println(time);
 		renderer.render(value, callback);
 		time = "Serilize end " + format.format(new Date());
-		System.out.println(time);
+		//System.out.println(time);
 
-		System.out.println();
+		//System.out.println();
 		try {
 			writer.flush();
 			writer.close();
@@ -360,7 +360,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 		jgen.writeEndArray();
 		String name = MDXFormula.class.getDeclaredFields()[0].getName();
-		System.out.println(name);
+		//System.out.println(name);
 	}
 
 	private void serializeFilters(String field, JsonGenerator jgen, List<Hierarchy> hierarchies, PivotModelImpl model) throws JSONException,

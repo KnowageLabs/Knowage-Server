@@ -322,7 +322,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 		List<NodeFilter> nodes = new ArrayList<HierarchyResource.NodeFilter>();
 		Level l = hierarchy.getLevels().get(0);
-		System.out.println(hierarchy.getLevels().size());
+		////System.out.println(hierarchy.getLevels().size());
 		try {
 			list = l.getMembers();
 			for (int i = 0; i < list.size(); i++) {

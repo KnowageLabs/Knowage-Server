@@ -76,7 +76,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		Map<String, String> attributes = super.getCellAttributes(context);
 		// initializeInternal(context);
 		if (context.getCellType() == CellTypes.AGG_VALUE) {
-			System.out.println(context.getCell());
+			//System.out.println(context.getCell());
 		}
 
 		if (context.getCellType() == CellTypes.VALUE && context.getCell() != null) {
@@ -529,7 +529,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 					attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString()
 							+ "' ) ;$event.stopPropagation();");
-					System.out.println(context.getMember() + " has sorting " + context.getModel().getSortCriteria());
+					//System.out.println(context.getMember() + " has sorting " + context.getModel().getSortCriteria());
 					startElement("img", attributes);
 					endElement("img");
 				} else if (context.getModel().getSortCriteria().equals(SortCriteria.DESC) || context.getModel().getSortCriteria().equals(SortCriteria.BDESC)
@@ -543,7 +543,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 					attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString()
 							+ "' ) ;$event.stopPropagation();");
-					System.out.println(context.getMember() + " has sorting " + context.getModel().getSortCriteria());
+					//System.out.println(context.getMember() + " has sorting " + context.getModel().getSortCriteria());
 					startElement("img", attributes);
 					endElement("img");
 				}
@@ -588,7 +588,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
 				DecimalFormat df = (DecimalFormat) nf;
 				df.applyPattern(pattern);
-				System.out.println(df.format(value) + "-" + pattern);
+				//System.out.println(df.format(value) + "-" + pattern);
 				return df.format(value);
 			}
 		}

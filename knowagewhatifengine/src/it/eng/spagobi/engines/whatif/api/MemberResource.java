@@ -83,11 +83,11 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			@PathParam("memberUniqueName") String memberUniqueName) {
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
 		String time = "Drilldown start " + format.format(new Date());
-		System.out.println(time);
+		//System.out.println(time);
 		init();
 
 		model.removeSubset();
-		System.out.println(model.getCurrentMdx());
+		//System.out.println(model.getCurrentMdx());
 		// The ROWS axis
 		CellSetAxis rowsOrColumns = getAxis(axisPos);
 
@@ -130,9 +130,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 
 		time = "Drilldown end " + format.format(new Date());
-		System.out.println(time);
-		System.out.println();
-		System.out.println();
+		//System.out.println(time);
+		//System.out.println();
+		//System.out.println();
 		String table = renderModel(model);
 
 		return table;
@@ -148,7 +148,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
 		String time = "Drillup start " + format.format(new Date());
-		System.out.println(time);
+		//System.out.println(time);
 		List<Member> m = null;
 		Member m2 = null;
 		Hierarchy hierarchy = null;
@@ -213,9 +213,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 
 		time = "Drillup end " + format.format(new Date());
-		System.out.println(time);
-		System.out.println();
-		System.out.println();
+		//System.out.println(time);
+		//System.out.println();
+		//System.out.println();
 		return renderModel(model);
 	}
 
@@ -293,7 +293,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 			set = transform.drillThrough(cell);
 			array = ResultSetConverter.convertResultSetIntoJSON(set);
-			// System.out.println(array);
+			// //System.out.println(array);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -329,7 +329,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			DrillThrough transform = model.getTransform(DrillThrough.class);
 			set = transform.drillThrough(cell, selection, max);
 			array = ResultSetConverter.convertResultSetIntoJSON(set);
-			// System.out.println(array);
+			// //System.out.println(array);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -346,10 +346,10 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		SortCriteria nextSortCriteria = SortMode.fromName(sortMode).nextMode(model.getSortCriteria());
 		model.setSortCriteria(nextSortCriteria);
 		sortModel(axisToSortpos, axis, positionUniqueName, sortMode);
-		System.out.println(model.getSortCriteria());
+		//System.out.println(model.getSortCriteria());
 		model.setSorting(true);
 		String table = renderModel(model);
-		System.out.println(model.getSortCriteria() + "memberResource 341");
+		//System.out.println(model.getSortCriteria() + "memberResource 341");
 		return table;
 	}
 
@@ -450,14 +450,14 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	public String startFrom(@PathParam("x") Integer x, @PathParam("y") Integer y) {
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
 		String time = "Start from start " + format.format(new Date());
-		System.out.println(time);
+		//System.out.println(time);
 		init();
 
 		model.startFrom(x, y);
 		time = "Start from end " + format.format(new Date());
-		System.out.println(time);
-		System.out.println();
-		System.out.println();
+		//System.out.println(time);
+		//System.out.println();
+		//System.out.println();
 		return renderModel(model);
 	}
 

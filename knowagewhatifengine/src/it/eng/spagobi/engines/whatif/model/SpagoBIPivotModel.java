@@ -394,7 +394,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 		Integer rowCount = getCellSet().getAxes().get(1).getPositionCount();
 		Integer columnCount = getCellSet().getAxes().get(0).getPositionCount();
-		System.out.println(rowCount + " x " + columnCount);
+		//System.out.println(rowCount + " x " + columnCount);
 		if (y < rowCount - 1) {
 			subsetRows.getArgs().set(1, Literal.create(y));
 		} else {
@@ -464,7 +464,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		Exp exp = f.getArgs().get(0);
 		qa.setExp(exp);
 		fireModelChanged();
-		System.out.println(getCellSet().getAxes().get(1).getPositionCount());
+		//System.out.println(getCellSet().getAxes().get(1).getPositionCount());
 		if (getCellSet().getAxes().get(1).getPositionCount() > step) {
 			start = start + step;
 		}
