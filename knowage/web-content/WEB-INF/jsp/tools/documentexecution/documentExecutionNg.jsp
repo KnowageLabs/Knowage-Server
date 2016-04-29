@@ -25,14 +25,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
 <%
-BIObject obj;
-Integer objId;
-String objLabel;
-IEngUserProfile profile;
+BIObject obj = null;
+Integer objId = null;
+String objLabel = null;
+IEngUserProfile profile = null;
 List<String> executionRoleNames = new ArrayList();
 
 try{
 	profile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	
+	obj = (BIObject) aServiceResponse.getAttribute(SpagoBIConstants.OBJECT);
 	objId = new Integer(request.getParameter("OBJECT_ID"));
 	objLabel = request.getParameter("OBJECT_LABEL");
 	
@@ -65,10 +67,19 @@ try{
 		.requiredField {color: red!important; font-weight: bold;}
 		.norequiredField {}
 	</style>
+	<style type="text/css">
+		.topsidenav {min-width:100% !important; max-width:100% !important; min-height:40%;}
+	</style>
 </head>
 
 <body class="kn-documentExecution" ng-app="documentExecutionModule" ng-controller="documentExecutionController" layout="row" >
+	<md-sidenav class="md-sidenav-right md-whiteframe-4dp" ng-if="'<%=obj.getParametersRegion() %>' == 'west'" md-component-id="parametersPanelSideNav" layout="column" md-is-locked-open="showParametersPanel.status" ng-include="'/knowage/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.html'">		
+	</md-sidenav>
+	
 	<div layout="column"  ng-init="initSelectedRole()" ng-cloak layout-fill>
+	        
+	    <md-sidenav id="sidenavOri" class="md-sidenav-right md-whiteframe-4dp topsidenav" ng-if="'<%=obj.getParametersRegion() %>' == 'north'" md-component-id="parametersPanelSideNav" layout="column" md-is-locked-open="showParametersPanel.status" ng-include="'/knowage/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavOriContent.html'">
+		</md-sidenav>
 		<md-toolbar class="documentExecutionToolbar secondaryToolbar" flex="nogrow">
             <div class="md-toolbar-tools" layout="row" layout-align="center center">
                 <i class="fa fa-file-text-o fa-2x"></i>
@@ -183,7 +194,7 @@ try{
 				</md-button>
 			</div>
         </md-toolbar>
-        
+       
         <div layout="row" flex="grow" ng-switch on="currentView.status">
  		
 	 		<md-content id="documentFrameContainer" layout="row" flex="grow" ng-switch-when="DOCUMENT">  
@@ -209,63 +220,11 @@ try{
 		 										
 	</div>
 	
-	<md-sidenav class="md-sidenav-right md-whiteframe-4dp" md-component-id="parametersPanelSideNav" layout="column" md-is-locked-open="showParametersPanel.status">
-							
-		<md-toolbar class="header secondaryToolbar" ng-hide="isParameterPanelDisabled()">
-			<div layout="row" layout-align="center center">	
-				<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
-						ng-click="clearListParametersForm();">
-					<i class="fa fa-eraser" style="color:white"></i>
-				</md-button>						
-				<md-button title="Open Saved" aria-label="Open Saved Parameters" class="toolbar-button-custom" 
-						ng-click="urlViewPointService.getViewpoints();">
-					<i class="fa fa-pencil" style="color:white"></i>
-				</md-button>						
-				<md-button title="Save" aria-label="Save Parameters" class="toolbar-button-custom" 
-						ng-click="urlViewPointService.createNewViewpoint();">
-					<i class="fa fa-floppy-o" style="color:white"></i>
-				</md-button>
-			</div>
-		</md-toolbar>
-		
-		<md-content ng-show="showSelectRoles" ng-cloak>
-			<md-input-container class="small counter" flex>
-				<label>{{::translate.load("sbi.users.roles")}}</label>
-				<md-select aria-label="aria-label" ng-model="selectedRole.name" ng-disabled="::crossNavigationScope.isNavigationInProgress()" >
-					<md-option ng-click="changeRole(role)" ng-repeat="role in roles" value="{{role}}">
-						{{::role|uppercase}}
-					</md-option>
-				</md-select>
-			</md-input-container>
-		</md-content>
-		
-		<%--
-		<span style="font-size: 8px;">
-			{{documentParameters|json}}
-		</span>
-		--%>
-		<md-content flex>
-			<md-list ng-hide="isParameterPanelDisabled()" layout="column">
-				<md-list-item ng-repeat="parameter in documentParameters"
-						layout="row" aria-label="" class="md-3-line">
-
-					<document-paramenter-element parameter="parameter" 
-							layout="row" flex layout-align="start" ng-show="parameter.visible"/>
-					
-				</md-list-item>
-			</md-list>
-		</md-content>
-		
-		<!-- execute button -->
-		<md-button ng-cloak class="toolbar-button-custom md-raised" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()"
-				title="{{::translate.load('sbi.execution.parametersselection.executionbutton.message')}}"  
-				ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
-			{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
-		</md-button>				
+	<md-sidenav class="md-sidenav-right md-whiteframe-4dp"  ng-if="'<%=obj.getParametersRegion() %>' == 'east'" md-component-id="parametersPanelSideNav" layout="column" md-is-locked-open="showParametersPanel.status" ng-include="'/knowage/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.html'">
 	</md-sidenav>
 		
 	<script type="text/javascript">
-	//Module creation
+	///Module creation
 	(function() {
 		
 		angular.module('documentExecutionModule', 

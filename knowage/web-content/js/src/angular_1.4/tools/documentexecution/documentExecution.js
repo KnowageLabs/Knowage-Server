@@ -59,6 +59,12 @@
 		$scope.crossNavigationScope=$crossNavigationScope;
 		$scope.firstExecutionProcessRestV1=true;
 		$scope.download=sbiModule_download;
+		$scope.sidenavToShow = 'east';
+
+		$scope.getSidenavType = function(){
+			var xx = execProperties;
+			return $scope.sidenavToShow;
+		}
 		
 		$scope.openInfoMetadata = function() {
 			infoMetadataService.openInfoMetadata();
@@ -106,9 +112,29 @@
 			docExecute_dependencyService.buildDataDependenciesMap(parameters);
 		};
 				
-		
-		
-		
+//		
+//		  $scope.$watch(function () {
+//        	  var elem = angular.element(document.querySelector('#sidenavContent'))[0];
+//        	  return elem == undefined ? null : elem.offsetHeight;
+//        }, function (newValue, oldValue) {
+//        	if(newValue > 50){
+//        		var elem2 = angular.element(document.querySelector('#sidenavOri'))[0];
+//        		var newHeight = newValue  + 50;
+//        		var str = newHeight.toString() + 'px';
+//        		var class1 = angular.element(document.querySelector('#sidenavOri'))[0].classList[2];
+//        		elem2.scrollHeight = 0 ;
+//        		elem2.offsetHeight = 2 * newValue  + 50 ;
+//        		elem2.clientHeight = 2 * newValue  + 50 ;
+//	       		// angular.element(document.querySelector('#sidenavOri'))[0].offsetHeight = newValue  + 50 ;
+//        		elem2.style.height = str ;
+//        		angular.element(document.querySelector('#sidenavOri'))[0].scrollHeight = 0 ;
+//        		 angular.element(document.querySelector('#sidenavOri'))[0].offsetHeight = 2 * newValue  + 50 ;
+//        		 angular.element(document.querySelector('#sidenavOri'))[0].clientHeight = 2 * newValue  + 50 ;
+//        		// angular.element(document.querySelector('#sidenavOri'))[0].offsetHeight = newValue  + 50 ;
+//        		 angular.element(document.querySelector('#sidenavOri'))[0].style.height = str ;
+//        	}
+//        }, true);
+//		
 		
 	 /*
 	  * WATCH ON VISUAL DEPENDENCIES PARAMETER OBJECT
