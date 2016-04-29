@@ -62,7 +62,6 @@
 		<ENGINE label="knowagesmartfilteren" />
 		<ENGINE label="knowagegisengine" />
 		<ENGINE label="knowageconsoleengine" />
-		<ENGINE label="knowageworksheeteng" />
 		<ENGINE label="knowagechartengine" />
 		<ENGINE label="knowagetablemobileen" />
 		<ENGINE label="knowagechartmobileen" />
@@ -87,7 +86,6 @@
 		<ENGINE label="knowagesmartfilteren" />
 		<ENGINE label="knowagegisengine" />
 		<ENGINE label="knowageconsoleengine" />
-		<ENGINE label="knowageworksheeteng" />
 		<ENGINE label="knowagechartengine" />
 		<ENGINE label="knowagetablemobileen" />
 		<ENGINE label="knowagechartmobileen" />
