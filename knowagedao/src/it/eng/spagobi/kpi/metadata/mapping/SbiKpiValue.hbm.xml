@@ -69,8 +69,6 @@
 		<property name="state" type="char">
 			<column name="STATE" length="1" not-null="true" default="0"/>
 		</property>
-		<property name="manualNote" type="string">
-			<column name="MANUAL_NOTE" length="1000" not-null="false" />
-		</property>
+	
 	</class>
 </hibernate-mapping>
