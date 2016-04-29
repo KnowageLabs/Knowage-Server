@@ -54,7 +54,7 @@
   </init-param> 
   <init-param>
 	<param-name>proxyCallbackUrl</param-name>
-	<param-value>https://spagobitest:48081/knowagechartengine/proxyCallback</param-value>
+	<param-value>https://spagobitest:48081/knowagekpiengine/proxyCallback</param-value>
   </init-param>  
 </filter>
 
