@@ -3,6 +3,7 @@ package it.eng.spagobi.kpi.job;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -115,17 +116,21 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 		protected String aggregateMeasureName;
 		protected String aggregateMeasureFunction;
 		protected Set<String> attributesNames = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+		protected List<String> orderByAttributesNames;
 		protected Map<String, String> quotedParameters = new HashMap<>();
 		protected IMetaData preloadedMetaData = null;
-		protected List<LinkedHashMap<String, Comparable>> preloadedData = null; // This could be moved elsewhere, e.g. into a local db table
+
+		// This could be moved elsewhere, e.g. into a local db table
+		protected List<LinkedHashMap<String, Comparable>> preloadedData = null;
 
 		public AggregateMeasureQuery(int dataSourceId, String innerSql, String aggregateMeasureName, String aggregateMeasureFunction,
-				Set<String> attributesNames, Map<String, String> placeholders) {
+				Set<String> attributesNames, List<String> orderByAttributesNames, Map<String, String> placeholders) {
 			this.dataSourceId = dataSourceId;
 			this.innerSql = innerSql;
 			this.aggregateMeasureName = aggregateMeasureName;
 			this.aggregateMeasureFunction = aggregateMeasureFunction;
 			this.attributesNames.addAll(attributesNames);
+			this.orderByAttributesNames = orderByAttributesNames;
 
 			// Placeholders -> Quoted parameters
 			if (placeholders != null) {
@@ -139,7 +144,8 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 				}
 			}
 
-			// Replacing parameters from "@name" to "$P{name}" notation as expected by IDataSet
+			// Replacing parameters from "@name" to "$P{name}" notation as
+			// expected by IDataSet
 			for (String paramName : quotedParameters.keySet()) {
 				innerSql = innerSql.replaceAll("\\@\\b" + paramName + "\\b", "\\$P{" + paramName + "}");
 			}
@@ -167,7 +173,13 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 			do {
 				derivedTableAlias = "dtable" + (++i);
 			} while (sqlPart1.contains(derivedTableAlias));
-			String sqlPart2 = (groupByColumns.length() != 0) ? " GROUP BY " + groupByColumns + " ORDER BY " + groupByColumns : "";
+			StringBuffer orderByColumns = new StringBuffer();
+			for (String attributeName : orderByAttributesNames) {
+				if (orderByColumns.length() > 0)
+					orderByColumns.append(", ");
+				orderByColumns.append(attributeName);
+			}
+			String sqlPart2 = (groupByColumns.length() != 0) ? " GROUP BY " + groupByColumns + " ORDER BY " + orderByColumns : "";
 			String sql = sqlPart1 + " AS " + derivedTableAlias + sqlPart2;
 			if (replacePlaceholders) {
 				for (String paramName : quotedParameters.keySet()) {
@@ -179,7 +191,8 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 
 		@Override
 		public boolean equals(Object o) {
-			// Alternative equals criteria: ruleId|measureName|aggregateFunction|placeholders
+			// Alternative equals criteria:
+			// ruleId|measureName|aggregateFunction|placeholders
 			if (!(o instanceof AggregateMeasureQuery))
 				return false;
 			AggregateMeasureQuery amq = (AggregateMeasureQuery) o;
@@ -326,7 +339,6 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		int kpiSchedulerId = Integer.parseInt(arg0.getJobDetail().getJobDataMap().getString("kpiSchedulerId"));
-		// TODO: uncomment after debug
 		computeKpis(kpiSchedulerId);
 	}
 
@@ -347,7 +359,8 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 			boolean replaceMode = !kpiScheduler.getDelta();
 			List<KpiComputationUnit> kpiComputationUnits = new ArrayList<KpiComputationUnit>();
 
-			// For each kpi, prepare the queries and find the main measure (i.e. the one with highest cardinality)
+			// For each kpi, prepare the queries and find the main measure (i.e.
+			// the one with highest cardinality)
 			Map<AggregateMeasureQuery, AggregateMeasureQuery> queriesCache = new HashMap<AggregateMeasureQuery, AggregateMeasureQuery>();
 			for (Kpi kpi : kpiScheduler.getKpis()) {
 				// Prepare placeholders
@@ -381,6 +394,31 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 				// Parse the KPI
 				ParsedKpi parsedKpi = new ParsedKpi(kpi);
 
+				// For the "order by" section of the query, sort the attributes
+				// by their number of occurrences among the measures
+				// (from the most used attributes to the least used ones)
+				Map<String, Integer> attributesOccurrences = new HashMap<String, Integer>();
+				for (ParsedMeasure measure : parsedKpi.measures) {
+					for (String attribute : measure.attributes) {
+						Integer count = attributesOccurrences.get(attribute);
+						attributesOccurrences.put(attribute, count == null ? 1 : count + 1);
+					}
+				}
+				Map<Integer, Set<String>> attributesByOccurrency = new TreeMap<Integer, Set<String>>(Collections.reverseOrder());
+				for (String attribute : attributesOccurrences.keySet()) {
+					Integer count = attributesOccurrences.get(attribute);
+					Set<String> attributes = attributesByOccurrency.get(count);
+					if (attributes == null) {
+						attributes = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+						attributesByOccurrency.put(count, attributes);
+					}
+					attributes.add(attribute);
+				}
+				List<String> orderByAttributes = new ArrayList<String>();
+				for (Set<String> attributes : attributesByOccurrency.values()) {
+					orderByAttributes.addAll(attributes);
+				}
+
 				// Iterate over non-temporal attibutes combinations
 				List<String> ntAttributesAll = new ArrayList<String>();
 				long ntComb = 0;
@@ -394,8 +432,10 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 					// Iterate over temporal types
 					int minTemporalTypePriority = 5;
 					while (minTemporalTypePriority >= 1) {
-						// Create a query for each measure and find the main measure
-						// (the highest cardinality, i.e. the one with most attributes in the group-by section)
+						// Create a query for each measure and find the main
+						// measure
+						// (the highest cardinality, i.e. the one with most
+						// attributes in the group-by section)
 						List<AggregateMeasureQuery> queries = new ArrayList<AggregateMeasureQuery>();
 						List<Map<String, String>> queriesAttributesTemporalTypes = new ArrayList<Map<String, String>>();
 						List<Set<String>> queriesIgnoredAttributes = new ArrayList<Set<String>>();
@@ -418,7 +458,10 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 							for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
 								if ("TEMPORAL_ATTRIBUTE".equals(ruleOutput.getType())) {
 									String attributeName = ruleOutput.getAlias();
-									String attributeTemporalType = ruleOutput.getHierarchy().getValueCd(); // YEAR, QUARTER, MONTH, WEEK, DAY
+
+									// YEAR, QUARTER, MONTH, WEEK, DAY
+									String attributeTemporalType = ruleOutput.getHierarchy().getValueCd();
+
 									Integer priority = temporalTypesPriorities.get(attributeTemporalType);
 									if (priority != null && priority <= minTemporalTypePriority) {
 										attributesTemporalTypes.put(attributeName, attributeTemporalType);
@@ -436,15 +479,24 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 							String ruleSql = rule.getDefinition();
 							String aggregateMeasureName = parsedKpi.measuresNames.get(m);
 							String aggregateMeasureFunction = parsedKpi.measuresFunctions.get(m);
+							List<String> queryOrderByAttributes = new ArrayList<String>();
+							for (String attribute : orderByAttributes) {
+								if (groupByAttributes.contains(attribute))
+									queryOrderByAttributes.add(attribute);
+							}
 							AggregateMeasureQuery query = new AggregateMeasureQuery(rule.getDataSourceId(), ruleSql, aggregateMeasureName,
-									aggregateMeasureFunction, groupByAttributes, placeholdersMap);
+									aggregateMeasureFunction, groupByAttributes, queryOrderByAttributes, placeholdersMap);
 							if (queriesCache.containsKey(query)) {
 								// The query will be used more than once:
-								// reuse the previous instance of the query, discarding the new one
+								// reuse the previous instance of the query,
+								// discarding the new one
 								// and preload all the tuples
-								query = queriesCache.get(query); // The previous instance cannot be retrieved efficiently via a Set, so we are forced to use a
-																	// Map
-								query.preload(); // This will have no effect after the first call
+
+								// The previous instance cannot be retrieved efficiently via a Set, so we are forced to use a Map
+								query = queriesCache.get(query);
+
+								// This will have no effect after the first call
+								query.preload();
 							} else {
 								// Add the query instance to the cache
 								queriesCache.put(query, query);
@@ -550,18 +602,7 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 				}
 			}
 
-			// sb.append("|Formulae:" + new ObjectMapper().writeValueAsString(rowsFormulae));
-			// TODO run INSERT/UPDATE queries based on formulae
-
-			/*
-			 * TODO Replace sbi_kpi_value after debug: CREATE TABLE SBI_KPI_VALUE ( id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, kpi_id INTEGER NOT NULL,
-			 * kpi_version INTEGER NOT NULL, logical_key VARCHAR(4096) NOT NULL, time_run DATETIME NOT NULL, computed_value DOUBLE NOT NULL, manual_value DOUBLE
-			 * NULL NULL, the_day VARCHAR(3) NOT NULL, the_week VARCHAR(3) NOT NULL, the_month VARCHAR(3) NOT NULL, the_quarter VARCHAR(3) NOT NULL, the_year
-			 * VARCHAR(4) NOT NULL )
-			 */
-
 			Date now = new Date();
-			// DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ");
 			df.setTimeZone(TimeZone.getTimeZone("UTC"));
 			String isoNow = df.format(now);
@@ -585,7 +626,8 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 					if (temporalType != null) {
 						temporalValues.put(attributeName, rowAttributesValues.get(a).toString().replaceAll("'", "''"));
 						if (EXCLUDE_TEMPORAL_ATTRIBUTES_FROM_KPI_VALUE_LOGICAL_KEY) {
-							logicalKeyPairs.remove(attributesNames.get(a).toUpperCase()); // The "ALL" value is removed if present
+							// Any "ALL" value is removed if present
+							logicalKeyPairs.remove(attributesNames.get(a).toUpperCase());
 							continue;
 						}
 					}
@@ -607,8 +649,7 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 						+ "' AND the_year = '" + ifNull(temporalValues.get("YEAR"), "ALL") + "'";
 				String deleteSql = "DELETE SBI_KPI_VALUE WHERE " + whereCondition;
 				String updateSql = "UPDATE SBI_KPI_VALUE SET computed_value = " + (value.toLowerCase().contains("null") ? "0" : value) + ", time_run = '"
-						+ isoNow + "', state='" + (value.toLowerCase().contains("null") ? '1' : '0') + "' WHERE " + whereCondition; // Currently
-				// unused
+						+ isoNow + "', state='" + (value.toLowerCase().contains("null") ? '1' : '0') + "' WHERE " + whereCondition; // Currently unused
 				sb.append(insertSql + "|" + deleteSql + "|" + updateSql);
 
 				session.beginTransaction();
