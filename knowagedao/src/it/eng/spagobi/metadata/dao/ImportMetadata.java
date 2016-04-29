@@ -472,7 +472,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			return idBcAttribute;
 
 		} catch (Exception e) {
-			logger.error("An error occurred while trying to save metadata information for source [" + aMetaBCAttribute.getName() + "]", e);
+			logger.error("An error occurred while trying to save metadata information for attribute [" + aMetaBCAttribute.getName() + "]", e);
 			throw new Exception(e);
 
 		} finally {
