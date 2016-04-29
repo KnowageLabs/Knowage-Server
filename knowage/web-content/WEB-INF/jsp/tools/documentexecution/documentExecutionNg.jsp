@@ -125,7 +125,10 @@ try{
 								<span class="divider" >Export</span>
 								<md-menu-item>
 				                <md-menu>
+				                <md-menu-item class="md-indent">
+				                  <md-icon class="fa fa-download"></md-icon>
 				                  <md-button ng-click="$mdOpenMenu()">Export</md-button>
+				                </md-menu-item>
 				                  <md-menu-content>                    
 				                    <md-menu-item class="md-indent" ng-repeat="exportationFormat in urlViewPointService.exportation">
 				                    	<md-icon class="{{exportationFormat.iconClass}}"></md-icon>
