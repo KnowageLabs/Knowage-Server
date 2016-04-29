@@ -21,6 +21,8 @@ public class SbiMetaSource extends SbiHibernateModel {
 	private String location;
 	private String sourceSchema;
 	private String sourceCatalogue;
+	private String role;
+
 	@JsonIgnore
 	private Set sbiMetaJobSources = new HashSet(0);
 	@JsonIgnore
@@ -34,14 +36,15 @@ public class SbiMetaSource extends SbiHibernateModel {
 		this.type = type;
 	}
 
-	public SbiMetaSource(String name, String type, String url, String location, String sourceSchema, String sourceCatalogue, Set sbiMetaJobSources,
-			Set sbiMetaTables) {
+	public SbiMetaSource(String name, String type, String url, String location, String sourceSchema, String sourceCatalogue, String role,
+			Set sbiMetaJobSources, Set sbiMetaTables) {
 		this.name = name;
 		this.type = type;
 		this.url = url;
 		this.location = location;
 		this.sourceSchema = sourceSchema;
 		this.sourceCatalogue = sourceCatalogue;
+		this.role = role;
 		this.sbiMetaJobSources = sbiMetaJobSources;
 		this.sbiMetaTables = sbiMetaTables;
 	}
@@ -100,6 +103,14 @@ public class SbiMetaSource extends SbiHibernateModel {
 
 	public void setSourceCatalogue(String sourceCatalogue) {
 		this.sourceCatalogue = sourceCatalogue;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	public Set getSbiMetaJobSources() {

@@ -30,6 +30,9 @@
         <property name="sourceCatalogue" type="string">
             <column name="SOURCE_CATALOGUE" length="100" />
         </property>        
+        <property name="role" type="string">
+            <column name="ROLE" length="100" />
+        </property>         
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />

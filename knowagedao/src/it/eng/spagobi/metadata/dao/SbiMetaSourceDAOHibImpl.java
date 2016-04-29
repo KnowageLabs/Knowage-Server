@@ -80,6 +80,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			toReturn.setUrl(hibSource.getUrl());
 			toReturn.setSourceSchema(hibSource.getSourceSchema());
 			toReturn.setSourceCatalogue(hibSource.getSourceCatalogue());
+			toReturn.setRole(hibSource.getRole());
 
 			tx.commit();
 
@@ -289,6 +290,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			hibMeta.setLocation(aMetaSource.getLocation());
 			hibMeta.setSourceSchema(aMetaSource.getSourceSchema());
 			hibMeta.setSourceCatalogue(aMetaSource.getSourceCatalogue());
+			hibMeta.setRole(aMetaSource.getRole());
 
 			updateSbiCommonInfo4Update(hibMeta);
 			tx.commit();
@@ -332,16 +334,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			SbiMetaSource hibMeta = new SbiMetaSource();
-			hibMeta.setName(aMetaSource.getName());
-			hibMeta.setType(aMetaSource.getType());
-			hibMeta.setUrl(aMetaSource.getUrl());
-			hibMeta.setLocation(aMetaSource.getLocation());
-			hibMeta.setSourceSchema(aMetaSource.getSourceSchema());
-			hibMeta.setSourceCatalogue(aMetaSource.getSourceCatalogue());
-
-			updateSbiCommonInfo4Insert(hibMeta);
-			idToReturn = (Integer) tmpSession.save(hibMeta);
+			idToReturn = insertSource(tmpSession, aMetaSource);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -547,6 +540,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			hibMeta.setLocation(aMetaSource.getLocation());
 			hibMeta.setSourceSchema(aMetaSource.getSourceSchema());
 			hibMeta.setSourceCatalogue(aMetaSource.getSourceCatalogue());
+			hibMeta.setRole(aMetaSource.getRole());
 
 			updateSbiCommonInfo4Update(hibMeta);
 
@@ -574,6 +568,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			hibMeta.setLocation(aMetaSource.getLocation());
 			hibMeta.setSourceSchema(aMetaSource.getSourceSchema());
 			hibMeta.setSourceCatalogue(aMetaSource.getSourceCatalogue());
+			hibMeta.setRole(aMetaSource.getRole());
 
 			updateSbiCommonInfo4Insert(hibMeta);
 			idToReturn = (Integer) tmpSession.save(hibMeta);

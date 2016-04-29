@@ -287,6 +287,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 					MultivaluedMap<String, String> header = inputPart.getHeaders();
 					if (getFileName(header) != null) {
 						fileName = getFileName(header);
+						logger.debug("File uploaded is named: " + fileName);
 						inputStream = inputPart.getBody(InputStream.class, null);
 					}
 				}
@@ -332,13 +333,12 @@ public class MetadataResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		// TODO: add the support for zip file containing multiple .item files
-
+		String fileName = null;
 		try {
 
 			// 1- Retrieve uploaded file data
 			Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 			InputStream inputStream = null;
-			String fileName = null;
 
 			for (String key : uploadForm.keySet()) {
 				List<InputPart> inputParts = uploadForm.get(key);
@@ -354,17 +354,19 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			Document xmlDocument = inputStreamToDocument(inputStream);
 			ETLParser etlParser = new ETLParser(xmlDocument);
 			ETLMetadata etlMetadata = etlParser.getETLMetadata(contextName);
-			// etlParser.extractAll();
+			logger.debug("Etl metadata extracted for: " + fileName + " with context: " + contextName);
+			logger.debug(etlMetadata.toString());
 
-			// TODO: 3 - Write informations on db
+			// 3 - Write informations on db
 			ImportMetadata im = new ImportMetadata();
 			im.importETLMetadata(fileName, etlMetadata);
 
 			return Response.ok(etlMetadata).build();
 
 		} catch (Exception e) {
-			logger.error("An error occurred while trying to extract metadata information from file:", e);
-			throw new SpagoBIRestServiceException("An error occurred while trying to extract metadata information from file:", buildLocaleFromSession(), e);
+			logger.error("An error occurred while trying to extract metadata information from file: " + fileName, e);
+			throw new SpagoBIRestServiceException("An error occurred while trying to extract metadata information from file: " + fileName,
+					buildLocaleFromSession(), e);
 
 		} finally {
 			logger.debug("OUT");

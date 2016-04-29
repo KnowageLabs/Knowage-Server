@@ -54,7 +54,7 @@ public class ETLParser {
 		this.document = document;
 	}
 
-	public ETLMetadata getETLMetadata(String contextName) {
+	public ETLMetadata getETLMetadata(String contextName) throws XPathExpressionException {
 
 		// Get RDBMS Data Sources
 		Set<ETLRDBMSSource> rdbmsDataSources = getRDBMSDataSourcesObjects(contextName);
@@ -80,15 +80,15 @@ public class ETLParser {
 		return metadata;
 	}
 
-	// used for debugging purpose
-	public void extractAll() {
+	// used just for debugging purpose
+	@Deprecated
+	public void extractAll(String contextName) throws XPathExpressionException {
 		Set<String> contextNames = getContextNames();
-		// TODO: The context name is not a fixed value and must be selected by the user
-		Set<ETLRDBMSSource> rdbmsDataSources = getRDBMSDataSourcesObjects("Default");
+		Set<ETLRDBMSSource> rdbmsDataSources = getRDBMSDataSourcesObjects(contextName);
 		Set<ETLComponent> rdbmsSourceTables = getRDBMSSourceComponentsTables();
 		Set<ETLComponent> rdbmsTargetTables = getRDBMSTargetComponentsTables();
-		Set<String> fileSourceTables = getFileSourceComponentsLocations("Default");
-		Set<String> fileTargetTables = getFileTargetComponentsLocations("Default");
+		Set<String> fileSourceTables = getFileSourceComponentsLocations(contextName);
+		Set<String> fileTargetTables = getFileTargetComponentsLocations(contextName);
 		Set<ETLComponent> rdbmsMixedSourceTables = getRDBMSSourceMixedComponentsTables();
 		Set<ETLComponent> rdbmsMixedTargetTables = getRDBMSTargetMixedComponentsTables();
 
@@ -105,8 +105,10 @@ public class ETLParser {
 
 	/**
 	 * Get all tables of Source Components of type RDBMS
+	 *
+	 * @throws XPathExpressionException
 	 */
-	public Set<ETLComponent> getRDBMSSourceComponentsTables() {
+	public Set<ETLComponent> getRDBMSSourceComponentsTables() throws XPathExpressionException {
 		Set<ETLComponent> tables = new HashSet<ETLComponent>();
 		for (int i = 0; i < rdbmsSourceComponents.length; i++) {
 			tables.addAll(getRDBMSComponentTables(rdbmsSourceComponents[i]));
@@ -116,8 +118,10 @@ public class ETLParser {
 
 	/**
 	 * Get all tables of Target Components of type RDBMS
+	 *
+	 * @throws XPathExpressionException
 	 */
-	public Set<ETLComponent> getRDBMSTargetComponentsTables() {
+	public Set<ETLComponent> getRDBMSTargetComponentsTables() throws XPathExpressionException {
 		Set<ETLComponent> tables = new HashSet<ETLComponent>();
 		for (int i = 0; i < rdbmsTargetComponents.length; i++) {
 			tables.addAll(getRDBMSComponentTables(rdbmsTargetComponents[i]));
@@ -127,8 +131,10 @@ public class ETLParser {
 
 	/**
 	 * Get all SOURCE tables of Mixed Components of type RDBMS
+	 *
+	 * @throws XPathExpressionException
 	 */
-	public Set<ETLComponent> getRDBMSTargetMixedComponentsTables() {
+	public Set<ETLComponent> getRDBMSTargetMixedComponentsTables() throws XPathExpressionException {
 		Set<ETLComponent> tables = new HashSet<ETLComponent>();
 		for (int i = 0; i < rdbmsMixedComponents.length; i++) {
 			tables.addAll(getMixedComponentInformations(rdbmsMixedComponents[i], "DBTABLE", "TABLE", "TARGET"));
@@ -138,8 +144,10 @@ public class ETLParser {
 
 	/**
 	 * Get all TARGET tables of Mixed Components of type RDBMS
+	 *
+	 * @throws XPathExpressionException
 	 */
-	public Set<ETLComponent> getRDBMSSourceMixedComponentsTables() {
+	public Set<ETLComponent> getRDBMSSourceMixedComponentsTables() throws XPathExpressionException {
 		Set<ETLComponent> tables = new HashSet<ETLComponent>();
 		for (int i = 0; i < rdbmsMixedComponents.length; i++) {
 			tables.addAll(getMixedComponentInformations(rdbmsMixedComponents[i], "DBTABLE", "TABLE", "SOURCE"));
@@ -149,8 +157,10 @@ public class ETLParser {
 
 	/**
 	 * Get all locations of Source Components of type File
+	 * 
+	 * @throws XPathExpressionException
 	 */
-	public Set<String> getFileSourceComponentsLocations(String contextName) {
+	public Set<String> getFileSourceComponentsLocations(String contextName) throws XPathExpressionException {
 		Set<String> locations = new HashSet<String>();
 		for (int i = 0; i < fileSourceComponents.length; i++) {
 			locations.addAll(getFileComponentLocations(fileSourceComponents[i], contextName));
@@ -160,8 +170,10 @@ public class ETLParser {
 
 	/**
 	 * Get all locations of Target Components of type File
+	 * 
+	 * @throws XPathExpressionException
 	 */
-	public Set<String> getFileTargetComponentsLocations(String contextName) {
+	public Set<String> getFileTargetComponentsLocations(String contextName) throws XPathExpressionException {
 		Set<String> locations = new HashSet<String>();
 		for (int i = 0; i < fileTargetComponents.length; i++) {
 			locations.addAll(getFileComponentLocations(fileTargetComponents[i], contextName));
@@ -171,168 +183,169 @@ public class ETLParser {
 
 	/**
 	 * Get all the tables used by a specific RDBMS component type
+	 *
+	 * @throws XPathExpressionException
 	 */
-	public Set<ETLComponent> getRDBMSComponentTables(String componentType) {
+	public Set<ETLComponent> getRDBMSComponentTables(String componentType) throws XPathExpressionException {
 		return getExtendedComponentInformations(componentType, "DBTABLE", "TABLE");
 	}
 
 	/**
 	 * Get all the tables used by a specific FILE component type
+	 * 
+	 * @throws XPathExpressionException
 	 */
-	public Set<String> getFileComponentLocations(String componentType, String contextName) {
+	public Set<String> getFileComponentLocations(String componentType, String contextName) throws XPathExpressionException {
 		return getComponentInformations(componentType, "FILE", "FILENAME", contextName);
 	}
 
 	/**
 	 * Get the values used by a specific component type for a specific field and name
+	 * 
+	 * @throws XPathExpressionException
 	 */
-	public Set<String> getComponentInformations(String componentTypeName, String fieldValue, String nameValue, String contextName) {
+	public Set<String> getComponentInformations(String componentTypeName, String fieldValue, String nameValue, String contextName)
+			throws XPathExpressionException {
 
 		Set<String> informations = new HashSet<String>();
 
 		XPathFactory xPathfactory = XPathFactory.newInstance();
 		XPath xpath = xPathfactory.newXPath();
 		XPathExpression expr;
-		try {
-			expr = xpath.compile("//node[@componentName='" + componentTypeName + "']");
-			NodeList nList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
-			for (int i = 0; i < nList.getLength(); i++) {
-				Node node = nList.item(i);
-				String componentValue = xpath.evaluate("elementParameter[@field='" + fieldValue + "' and @name='" + nameValue + "']/@value", node);
-				if (!componentValue.isEmpty()) {
-					componentValue = componentValue.replaceAll("\"", "");
-					if (fieldValue.equalsIgnoreCase("FILE")) {
-						if (componentValue.contains("context")) {
-							// File name contains context references
-							StringBuilder sb = new StringBuilder();
-							String[] tokens = componentValue.split("\\+");
-							for (String token : tokens) {
-								if (token.contains("context")) {
-									token = token.replace("context.", "");
-									token = getContextParameter(contextName, token);
-								}
-								sb.append(token);
-							}
-							componentValue = sb.toString();
-						}
-					}
 
-					informations.add(componentValue);
+		expr = xpath.compile("//node[@componentName='" + componentTypeName + "']");
+		NodeList nList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
+		for (int i = 0; i < nList.getLength(); i++) {
+			Node node = nList.item(i);
+			String componentValue = xpath.evaluate("elementParameter[@field='" + fieldValue + "' and @name='" + nameValue + "']/@value", node);
+			if (!componentValue.isEmpty()) {
+				componentValue = componentValue.replaceAll("\"", "");
+				if (fieldValue.equalsIgnoreCase("FILE")) {
+					if (componentValue.contains("context")) {
+						// File name contains context references
+						StringBuilder sb = new StringBuilder();
+						String[] tokens = componentValue.split("\\+");
+						for (String token : tokens) {
+							if (token.contains("context")) {
+								token = token.replace("context.", "");
+								token = getContextParameter(contextName, token);
+							}
+							sb.append(token);
+						}
+						componentValue = sb.toString();
+					}
 				}
 
+				informations.add(componentValue);
 			}
 
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+
 		return informations;
 
 	}
 
 	/**
 	 * Get the values and the connection used by a specific component type for a specific field and name
+	 *
+	 * @throws XPathExpressionException
 	 */
-	public Set<ETLComponent> getExtendedComponentInformations(String componentTypeName, String fieldValue, String nameValue) {
+	public Set<ETLComponent> getExtendedComponentInformations(String componentTypeName, String fieldValue, String nameValue) throws XPathExpressionException {
 
 		Set<ETLComponent> informations = new HashSet<ETLComponent>();
 
 		XPathFactory xPathfactory = XPathFactory.newInstance();
 		XPath xpath = xPathfactory.newXPath();
 		XPathExpression expr;
-		try {
-			expr = xpath.compile("//node[@componentName='" + componentTypeName + "']");
-			NodeList nList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
-			for (int i = 0; i < nList.getLength(); i++) {
-				Node node = nList.item(i);
-				ETLComponent etlComponent = new ETLComponent();
-				String componentValue = xpath.evaluate("elementParameter[@field='" + fieldValue + "' and @name='" + nameValue + "']/@value", node);
-				if (!componentValue.isEmpty()) {
-					etlComponent.setValue(componentValue.replaceAll("\"", ""));
-				}
-				String connectionValue = xpath.evaluate("elementParameter[@field='COMPONENT_LIST' and @name='CONNECTION']/@value", node);
-				if (!connectionValue.isEmpty()) {
-					etlComponent.setConnectionComponentName(connectionValue);
-				}
 
-				if (!etlComponent.getValue().isEmpty()) {
-					informations.add(etlComponent);
-				}
+		expr = xpath.compile("//node[@componentName='" + componentTypeName + "']");
+		NodeList nList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
+		for (int i = 0; i < nList.getLength(); i++) {
+			Node node = nList.item(i);
+			ETLComponent etlComponent = new ETLComponent();
+			String componentValue = xpath.evaluate("elementParameter[@field='" + fieldValue + "' and @name='" + nameValue + "']/@value", node);
+			if (!componentValue.isEmpty()) {
+				etlComponent.setValue(componentValue.replaceAll("\"", ""));
+			}
+			String connectionValue = xpath.evaluate("elementParameter[@field='COMPONENT_LIST' and @name='CONNECTION']/@value", node);
+			if (!connectionValue.isEmpty()) {
+				etlComponent.setConnectionComponentName(connectionValue);
 			}
 
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (!etlComponent.getValue().isEmpty()) {
+				informations.add(etlComponent);
+			}
 		}
-		return informations;
 
+		return informations;
 	}
 
 	/**
 	 * Get the values used by a specific Mixed component type for a specific field,name and role (target or source)
+	 *
+	 * @throws XPathExpressionException
 	 */
-	public Set<ETLComponent> getMixedComponentInformations(String componentTypeName, String fieldValue, String nameValue, String role) {
+	public Set<ETLComponent> getMixedComponentInformations(String componentTypeName, String fieldValue, String nameValue, String role)
+			throws XPathExpressionException {
 
 		Set<ETLComponent> informations = new HashSet<ETLComponent>();
 
 		XPathFactory xPathfactory = XPathFactory.newInstance();
 		XPath xpath = xPathfactory.newXPath();
 		XPathExpression expr;
-		try {
-			expr = xpath.compile("//node[@componentName='" + componentTypeName + "']");
-			NodeList nList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
-			for (int i = 0; i < nList.getLength(); i++) {
-				Node node = nList.item(i);
-				ETLComponent etlComponent = new ETLComponent();
-				String componentValue = xpath.evaluate("elementParameter[@field='" + fieldValue + "' and @name='" + nameValue + "']/@value", node);
-				if (!componentValue.isEmpty()) {
-					componentValue = componentValue.replaceAll("\"", "");
-				}
 
-				String queryText = xpath.evaluate("elementParameter[@field='MEMO_SQL' and @name='QUERY']/@value", node);
-				if (!queryText.isEmpty()) {
-					// check if query text contains INSERT, UPDATE, DELETE or MERGE
-					if (queryText.toLowerCase().contains("insert") || queryText.toLowerCase().contains("update") || queryText.toLowerCase().contains("delete")
-							|| queryText.toLowerCase().contains("merge")) {
-						// It's a TARGET
-						if (role.equalsIgnoreCase("target")) {
-							if (!componentValue.isEmpty()) {
-								etlComponent.setValue(componentValue);
-							}
+		expr = xpath.compile("//node[@componentName='" + componentTypeName + "']");
+		NodeList nList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
+		for (int i = 0; i < nList.getLength(); i++) {
+			Node node = nList.item(i);
+			ETLComponent etlComponent = new ETLComponent();
+			String componentValue = xpath.evaluate("elementParameter[@field='" + fieldValue + "' and @name='" + nameValue + "']/@value", node);
+			if (!componentValue.isEmpty()) {
+				componentValue = componentValue.replaceAll("\"", "");
+			}
+
+			String queryText = xpath.evaluate("elementParameter[@field='MEMO_SQL' and @name='QUERY']/@value", node);
+			if (!queryText.isEmpty()) {
+				// check if query text contains INSERT, UPDATE, DELETE or MERGE
+				if (queryText.toLowerCase().contains("insert") || queryText.toLowerCase().contains("update") || queryText.toLowerCase().contains("delete")
+						|| queryText.toLowerCase().contains("merge")) {
+					// It's a TARGET
+					if (role.equalsIgnoreCase("target")) {
+						if (!componentValue.isEmpty()) {
+							etlComponent.setValue(componentValue);
 						}
+					}
 
-					} else if (queryText.toLowerCase().contains("select")) {
-						// if only contains SELECT, it' a SOURCE
-						if (role.equalsIgnoreCase("source")) {
-							if (!componentValue.isEmpty()) {
-								etlComponent.setValue(componentValue);
-							}
+				} else if (queryText.toLowerCase().contains("select")) {
+					// if only contains SELECT, it' a SOURCE
+					if (role.equalsIgnoreCase("source")) {
+						if (!componentValue.isEmpty()) {
+							etlComponent.setValue(componentValue);
 						}
 					}
 				}
-				String connectionValue = xpath.evaluate("elementParameter[@field='COMPONENT_LIST' and @name='CONNECTION']/@value", node);
-				if (!connectionValue.isEmpty()) {
-					etlComponent.setConnectionComponentName(connectionValue);
-				}
-
-				if (etlComponent.getValue() != null && !etlComponent.getValue().isEmpty()) {
-					informations.add(etlComponent);
-				}
-
+			}
+			String connectionValue = xpath.evaluate("elementParameter[@field='COMPONENT_LIST' and @name='CONNECTION']/@value", node);
+			if (!connectionValue.isEmpty()) {
+				etlComponent.setConnectionComponentName(connectionValue);
 			}
 
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (etlComponent.getValue() != null && !etlComponent.getValue().isEmpty()) {
+				informations.add(etlComponent);
+			}
+
 		}
+
 		return informations;
 
 	}
 
 	/**
 	 * Get RDBMS Sources
+	 *
+	 * @throws XPathExpressionException
 	 */
-	public Set<ETLRDBMSSource> getRDBMSDataSourcesObjects(String contextName) {
+	public Set<ETLRDBMSSource> getRDBMSDataSourcesObjects(String contextName) throws XPathExpressionException {
 		Set<ETLRDBMSSource> sources = new HashSet<ETLRDBMSSource>();
 		for (int i = 0; i < rdbmsDataSourceComponents.length; i++) {
 			sources.addAll(getRDBSMSDataSource(rdbmsDataSourceComponents[i], contextName));
@@ -341,74 +354,67 @@ public class ETLParser {
 
 	}
 
-	public Set<ETLRDBMSSource> getRDBSMSDataSource(String componentType, String contextName) {
+	public Set<ETLRDBMSSource> getRDBSMSDataSource(String componentType, String contextName) throws XPathExpressionException {
 		Set<ETLRDBMSSource> sources = new HashSet<ETLRDBMSSource>();
 		XPathFactory xPathfactory = XPathFactory.newInstance();
 		XPath xpath = xPathfactory.newXPath();
-		try {
-			XPathExpression expr = xpath.compile("//node[@componentName='" + componentType + "']");
-			NodeList nList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
-			for (int i = 0; i < nList.getLength(); i++) {
-				Node node = nList.item(i);
-				String componentName = xpath.evaluate("elementParameter[@name='UNIQUE_NAME']/@value", node);
-				String label = xpath.evaluate("elementParameter[@name='LABEL']/@value", node);
-				String hostRef = xpath.evaluate("elementParameter[@name='HOST']/@value", node);
-				String schemaRef = xpath.evaluate("elementParameter[@name='SCHEMA_DB']/@value", node);
-				String dbNameRef = xpath.evaluate("elementParameter[@name='DBNAME']/@value", node);
-				String jdbcUrl = xpath.evaluate("elementParameter[@name='JDBC_URL']/@value", node);
-				String uniqueName = xpath.evaluate("elementParameter[@name='PROPERTY:REPOSITORY_PROPERTY_TYPE']/@value", node);
-				String host = null, schema = null, dbName = null;
-				if (hostRef != null) {
-					if (hostRef.contains("context")) {
-						host = getContextParameter(contextName, hostRef.replaceFirst("context.", ""));
-					} else {
-						host = hostRef.replaceAll("\"", "");
-					}
-				}
-				if (schemaRef != null) {
-					if (schemaRef.contains("context")) {
-						schema = getContextParameter(contextName, schemaRef.replaceFirst("context.", ""));
-					} else {
-						schema = schemaRef.replaceAll("\"", "");
-					}
-				}
-				if (dbNameRef != null) {
-					if (dbNameRef.contains("context")) {
-						dbName = getContextParameter(contextName, dbNameRef.replaceFirst("context.", ""));
-					} else {
-						dbName = dbNameRef.replaceAll("\"", "");
-					}
-				}
 
-				ETLRDBMSSource source = new ETLRDBMSSource(componentName, label, host, schema, dbName, jdbcUrl, uniqueName);
-				sources.add(source);
+		XPathExpression expr = xpath.compile("//node[@componentName='" + componentType + "']");
+		NodeList nList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
+		for (int i = 0; i < nList.getLength(); i++) {
+			Node node = nList.item(i);
+			String componentName = xpath.evaluate("elementParameter[@name='UNIQUE_NAME']/@value", node);
+			String label = xpath.evaluate("elementParameter[@name='LABEL']/@value", node);
+			String hostRef = xpath.evaluate("elementParameter[@name='HOST']/@value", node);
+			String schemaRef = xpath.evaluate("elementParameter[@name='SCHEMA_DB']/@value", node);
+			String dbNameRef = xpath.evaluate("elementParameter[@name='DBNAME']/@value", node);
+			String jdbcUrl = xpath.evaluate("elementParameter[@name='JDBC_URL']/@value", node);
+			String uniqueName = xpath.evaluate("elementParameter[@name='PROPERTY:REPOSITORY_PROPERTY_TYPE']/@value", node);
+			String host = null, schema = null, dbName = null;
+			if (hostRef != null) {
+				if (hostRef.contains("context")) {
+					host = getContextParameter(contextName, hostRef.replaceFirst("context.", ""));
+				} else {
+					host = hostRef.replaceAll("\"", "");
+				}
 			}
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (schemaRef != null) {
+				if (schemaRef.contains("context")) {
+					schema = getContextParameter(contextName, schemaRef.replaceFirst("context.", ""));
+				} else {
+					schema = schemaRef.replaceAll("\"", "");
+				}
+			}
+			if (dbNameRef != null) {
+				if (dbNameRef.contains("context")) {
+					dbName = getContextParameter(contextName, dbNameRef.replaceFirst("context.", ""));
+				} else {
+					dbName = dbNameRef.replaceAll("\"", "");
+				}
+			}
+
+			ETLRDBMSSource source = new ETLRDBMSSource(componentName, label, host, schema, dbName, jdbcUrl, uniqueName);
+			sources.add(source);
 		}
 		return sources;
 	}
 
-	public String getComponentElementParameter(String componentType, String elementParameterName) {
-		try {
-			XPathFactory xPathfactory = XPathFactory.newInstance();
-			XPath xpath = xPathfactory.newXPath();
-			XPathExpression expr = xpath.compile("//node[@componentName='" + componentType + "']/elementParameter[@name='" + elementParameterName + "']");
+	public String getComponentElementParameter(String componentType, String elementParameterName) throws XPathExpressionException {
 
-			NodeList nList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
-			for (int i = 0; i < nList.getLength(); i++) {
-				Node node = nList.item(i);
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element nodeElement = (Element) node;
-					String parameterValue = nodeElement.getAttribute("value");
-					return parameterValue;
-				}
+		XPathFactory xPathfactory = XPathFactory.newInstance();
+		XPath xpath = xPathfactory.newXPath();
+		XPathExpression expr = xpath.compile("//node[@componentName='" + componentType + "']/elementParameter[@name='" + elementParameterName + "']");
+
+		NodeList nList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
+		for (int i = 0; i < nList.getLength(); i++) {
+			Node node = nList.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element nodeElement = (Element) node;
+				String parameterValue = nodeElement.getAttribute("value");
+				return parameterValue;
 			}
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+
 		return null;
 	}
 
@@ -429,25 +435,19 @@ public class ETLParser {
 		return contextNames;
 	}
 
-	public String getContextParameter(String contextName, String parameterName) {
+	public String getContextParameter(String contextName, String parameterName) throws XPathExpressionException {
+		XPathFactory xPathfactory = XPathFactory.newInstance();
+		XPath xpath = xPathfactory.newXPath();
+		XPathExpression expr = xpath.compile("//context[@name='" + contextName + "']/contextParameter[@name='" + parameterName + "']");
 
-		try {
-			XPathFactory xPathfactory = XPathFactory.newInstance();
-			XPath xpath = xPathfactory.newXPath();
-			XPathExpression expr = xpath.compile("//context[@name='" + contextName + "']/contextParameter[@name='" + parameterName + "']");
-
-			NodeList nList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
-			for (int i = 0; i < nList.getLength(); i++) {
-				Node node = nList.item(i);
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element nodeElement = (Element) node;
-					String parameterValue = nodeElement.getAttribute("value");
-					return parameterValue;
-				}
+		NodeList nList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
+		for (int i = 0; i < nList.getLength(); i++) {
+			Node node = nList.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element nodeElement = (Element) node;
+				String parameterValue = nodeElement.getAttribute("value");
+				return parameterValue;
 			}
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return null;
 	}

@@ -140,7 +140,6 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 		Session tmpSession = session;
 
 		try {
-			tmpSession = getSession();
 			Criterion labelCriterrion = Expression.eq("name", name);
 			Criteria criteria = tmpSession.createCriteria(SbiMetaJob.class);
 			criteria.add(labelCriterrion);

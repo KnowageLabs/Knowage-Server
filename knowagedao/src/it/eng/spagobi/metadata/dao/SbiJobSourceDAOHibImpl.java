@@ -141,8 +141,6 @@ public class SbiJobSourceDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		Query hqlQuery = null;
 
 		try {
-			aSession = getSession();
-
 			hqlQuery = aSession.createQuery(" from SbiMetaJobSource as db where db.id.jobId = ? and db.id.sourceId = ? ");
 			hqlQuery.setInteger(0, jobId);
 			hqlQuery.setInteger(1, sourceId);

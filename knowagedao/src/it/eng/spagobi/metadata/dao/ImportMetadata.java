@@ -35,6 +35,7 @@ import it.eng.spagobi.metadata.metadata.SbiMetaTableBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaTableBcId;
 import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
 
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -54,6 +55,8 @@ public class ImportMetadata extends AbstractHibernateDAO {
 	static private Logger logger = Logger.getLogger(ImportMetadata.class);
 	private boolean existElement = false;
 	public static final String FILE_SOURCE_TYPE = "file";
+	public static final String ROLE_SOURCE = "source";
+	public static final String ROLE_TARGET = "target";
 
 	public void importETLMetadata(String jobName, ETLMetadata etlMetadata) throws EMFUserError {
 		logger.debug("IN");
@@ -64,13 +67,6 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			ISbiMetaSourceDAO msDao = DAOFactory.getSbiMetaSourceDAO();
-
-			// TODO: to remove, just test
-			SbiMetaSource aMetaSource = new SbiMetaSource();
-			aMetaSource.setName("ENAV_AIDA");
-			aMetaSource.setType("database");
-			Integer id = saveSource(aSession, aMetaSource);
-			// ************
 
 			// 1 - Create or update Job (SBI_META_JOB)
 			SbiMetaJob aJob = new SbiMetaJob(jobName, false);
@@ -115,7 +111,7 @@ public class ImportMetadata extends AbstractHibernateDAO {
 				SbiMetaSource sbiSource = sourcesMap.get(sourceName);
 				if (sbiSource != null) {
 					String tableName = sourceTable.getValue();
-					saveJobTable(aSession, sbiSource, tableName, "source", aJob);
+					saveJobTable(aSession, sbiSource, tableName, ROLE_SOURCE, aJob);
 				}
 			}
 
@@ -133,39 +129,38 @@ public class ImportMetadata extends AbstractHibernateDAO {
 				SbiMetaSource sbiSource = sourcesMap.get(sourceName);
 				if (sbiSource != null) {
 					String tableName = targetTable.getValue();
-					saveJobTable(aSession, sbiSource, tableName, "target", aJob);
+					saveJobTable(aSession, sbiSource, tableName, ROLE_TARGET, aJob);
 				}
 			}
 			// 5 - Retrieve source files
-			// TODO: add also the role for the source
 			Set<String> sourceFiles = etlMetadata.getSourceFiles();
 			for (String sourceFile : sourceFiles) {
 				SbiMetaSource sbiMetaSource = new SbiMetaSource();
-				sbiMetaSource.setName(sourceFile);
+				String fileName = Paths.get(sourceFile).getFileName().toString();
+				sbiMetaSource.setName(fileName);
 				sbiMetaSource.setLocation(sourceFile);
 				sbiMetaSource.setType(FILE_SOURCE_TYPE);
+				sbiMetaSource.setRole(ROLE_SOURCE);
 				// save to db SBI_META_SOURCE
 				Integer sourceId = saveSource(aSession, sbiMetaSource);
 				sbiMetaSource.setSourceId(sourceId);
 			}
 
 			// 5 - Retrieve target files
-			// TODO: add also the role for the source
 			Set<String> targetFiles = etlMetadata.getTargetFiles();
 			for (String targetFile : targetFiles) {
 				SbiMetaSource sbiMetaSource = new SbiMetaSource();
-				sbiMetaSource.setName(targetFile);
+				String fileName = Paths.get(targetFile).getFileName().toString();
+				sbiMetaSource.setName(fileName);
 				sbiMetaSource.setLocation(targetFile);
 				sbiMetaSource.setType(FILE_SOURCE_TYPE);
+				sbiMetaSource.setRole(ROLE_TARGET);
 				// save to db SBI_META_SOURCE
 				Integer sourceId = saveSource(aSession, sbiMetaSource);
 				sbiMetaSource.setSourceId(sourceId);
 			}
-
-			// TODO: save files in SBI_META_SOURCE (target and source)
-
 			tx.commit();
-			logger.debug("Import etl metadata ended correctly!");
+			logger.debug("Import etl metadata [" + jobName + "] ended correctly!");
 
 		} catch (Exception e) {
 			logException(e);

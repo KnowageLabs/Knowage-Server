@@ -31,7 +31,8 @@ public class ETLRDBMSSource {
 	String schema;
 	String databaseName;
 	String jdbcUrl;
-	String uniqueName; // key name used in the connection definition (repository)
+	// key name used in the connection definition (repository)
+	String uniqueName;
 
 	public ETLRDBMSSource(String componentName, String label, String host, String schema, String databaseName, String jdbcUrl, String uniqueName) {
 		super();
