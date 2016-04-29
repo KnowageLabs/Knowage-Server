@@ -111,8 +111,8 @@
 		<section ng-if="parameter.selectionType=='LIST' && !parameter.multivalue">
 			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label>
 			<md-radio-group ng-model="parameter.parameterValue" ng-required="::parameter.mandatory">
-				<md-radio-button class="md-primary" ng-repeat="defaultParameter in parameter.defaultValues" value="{{::defaultParameter.value}}">
-					{{::defaultParameter.label}}
+				<md-radio-button class="md-primary" ng-repeat="defaultParameter in parameter.defaultValues" ng-if="defaultParameter.isEnabled" value="{{::defaultParameter.value}}">
+					{{::defaultParameter.label}} 
 				</md-radio-button>
 			</md-radio-group>
 		</section>
@@ -121,7 +121,7 @@
 		<section ng-if="parameter.selectionType=='LIST' && parameter.multivalue">
 			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">{{parameter.label}}</label>
 			<div ng-repeat="defaultParameter in parameter.defaultValues">
-				<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" 
+				<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled"
 						ng-checked="checkboxParameterExists(defaultParameter.value, parameter)" ng-click="toggleCheckboxParameter(defaultParameter.value, parameter)" >
 					{{::defaultParameter.label}}
 				</md-checkbox>
