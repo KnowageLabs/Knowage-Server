@@ -121,26 +121,20 @@ try{
 				                	{{translate.load("sbi.execution.executionpage.toolbar.print")}}
 				                </md-button>
 				            </md-menu-item>
-				            
-				            
-				            <span class="divider" ng-if="urlViewPointService.exportation.length>0">Export</span>
-						    <md-menu-item class="md-indent" ng-repeat="exportationFormat in urlViewPointService.exportation">
-			                	<md-icon class="{{exportationFormat.iconClass}}"></md-icon><md-button ng-click="exportationFormat.func()">{{exportationFormat.description}}</md-button>
-				            </md-menu-item>
-				            
+				            				     				          
+								<span class="divider" >Export</span>
+								<md-menu-item>
+				                <md-menu>
+				                  <md-button ng-click="$mdOpenMenu()">Export</md-button>
+				                  <md-menu-content>                    
+				                    <md-menu-item class="md-indent" ng-repeat="exportationFormat in urlViewPointService.exportation">
+				                    	<md-icon class="{{exportationFormat.iconClass}}"></md-icon>
+				                    	<md-button ng-click="exportationFormat.func()">{{exportationFormat.description}}</md-button>
+				                     </md-menu-item>
+				                  </md-menu-content>
+				                </md-menu>
+				              </md-menu-item>
 				          
-<!-- 				          <md-menu-item> -->
-<!-- 			                <md-menu md-position-mode="target-right target"> -->
-<!-- 			                  <md-button ng-if="urlViewPointService.exportation.length>0" ng-click="$mdOpenMenu()">Export</md-button> -->
-<!-- 			                  <md-menu-content> -->
-<!-- 			                   <md-menu-item class="md-indent" ng-repeat="exportationFormat in urlViewPointService.exportation"> -->
-<!-- 			                		<md-icon class="{{exportationFormat.iconClass}}"></md-icon><md-button ng-click="exportationFormat.func()">{{exportationFormat.description}}</md-button> -->
-<!-- 				           		</md-menu-item> -->
-<!-- 			                  </md-menu-content> -->
-<!-- 			                </md-menu> -->
-<!-- 			              </md-menu-item> -->
-				          
-				            
 				            <span class="divider">{{translate.load("sbi.generic.info")}}</span>
 				            <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_METADATA_FUNCTIONALITY)) { %>
 				            <md-menu-item class="md-indent">
