@@ -40,6 +40,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
@@ -1732,6 +1733,23 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return mockListKpiWithResult();
 	}
 
+	@Override
+	public void editKpiValue(Integer id, double value, String comment) {
+		Session tmpSession = getSession();
+		Transaction tx = tmpSession.beginTransaction();
+
+		String hql = " from SbiKpiValue WHERE id =?";
+		Query q = tmpSession.createQuery(hql);
+		q.setInteger(0, id);
+		SbiKpiValue kpiValue = (SbiKpiValue) tmpSession.load(SbiKpiValue.class, id);
+		kpiValue.setManualValue(value);
+		kpiValue.setManualNote(comment);
+		tmpSession.save(kpiValue);
+
+		tx.commit();
+
+	}
+
 	// TODO: test and debug
 	@Override
 	public List<KpiValue> findKpiValues(final Integer kpiId, final Integer kpiVersion, final Date computedAfter, final Date computedBefore,
@@ -1844,7 +1862,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			kpiValue.setKpiVersion(sbiKpiValue.getKpiVersion());
 			kpiValue.setLogicalKey(sbiKpiValue.getLogicalKey());
 			kpiValue.setTimeRun(sbiKpiValue.getTimeRun());
+			kpiValue.setManualValue(sbiKpiValue.getManualValue());
 			kpiValue.setComputedValue(sbiKpiValue.getComputedValue());
+			kpiValue.setManualNote(sbiKpiValue.getManualNote());
 			kpiValue.setTheDay(sbiKpiValue.getTheDay());
 			kpiValue.setTheMonth(sbiKpiValue.getTheMonth());
 			kpiValue.setTheQuarter(sbiKpiValue.getTheQuarter());

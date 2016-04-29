@@ -2,9 +2,9 @@
 	var kpiViewerModule = angular.module('kpiViewerModule');
 
 	kpiViewerModule.controller('kpiViewerController', 
-			['$scope', 'documentData', 'sbiModule_restServices','sbiModule_config', 'kpiViewerServices', kpiViewerControllerFn]);
+			['$scope', 'documentData', 'sbiModule_restServices','sbiModule_config', 'kpiViewerServices','$q','$mdDialog', kpiViewerControllerFn]);
 
-	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices, sbiModule_config, kpiViewerServices) {
+	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices, sbiModule_config, kpiViewerServices,$q,$mdDialog) {
 		$scope.documentData = documentData;
 		$scope.kpiOptions = documentData.template.chart.options;
 		$scope.kpiItems = [];
@@ -39,10 +39,11 @@
 										
 										if(kpiArray[kpiArray.length-1].kpiId == kpiItem.id 
 												&& kpiArray[kpiArray.length-1].kpiVersion == kpiItem.version){
-											
-											kpiItem.value = kpiArray[kpiArray.length-1].computedValue;
-//											kpiItem["valueSeries"] = kpiArray;
-											
+											if(kpiArray[kpiArray.length-1].manualValue!=undefined)
+												kpiItem.value = kpiArray[kpiArray.length-1].manualValue;
+											else
+												kpiItem.value = kpiArray[kpiArray.length-1].computedValue;
+									
 											for(var k = 0; k < kpiArray.length; k++) {
 												kpiItem.valueSeries.push(kpiArray[k]);
 											}
@@ -58,18 +59,7 @@
 						})
 			}
 		};
-	/*	$scope.parseValuesSeries = function(arrKpi){
-		//	var array = [];
-			if(arrKpi!=undefined){
-				for(var i=0;i<arrKpi.length;i++){
-					var arrTemp = [];
-					arrTemp.push(arrKpi[i].timeRun,arrKpi[i].computedValue);
-					$scope.dataSeries.push(arrTemp);
-					console.log("Result", $scope.dataSeries);
-				}
-			}
-	
-		}*/
+
 		$scope.executeSchedulerTemp = function(){
 			sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
 			sbiModule_restServices.promiseGet("1.0/kpi", 'executeKpiScheduler/'+2).then(
@@ -140,5 +130,72 @@
 				}
 			});
 		};
+		
+		$scope.openEdit = function(kpiItem){
+			var deferred = $q.defer();
+			$mdDialog.show({
+				controller: DialogController,
+				templateUrl: '/knowagekpiengine/js/angular_1.x/kpi-widget/template/kpi-widget-editValue.jsp',
+				clickOutsideToClose:true,
+				preserveScope:true,
+				locals: {items: deferred,label:kpiItem.name,value:kpiItem.value, targetValue:kpiItem.targetValue,valueSeries:kpiItem.valueSeries[kpiItem.valueSeries.length-1] }
+			})
+			.then(function(answer) {
+				
+				return deferred.resolve($scope.selectedFunctionalities);
+			}, function() {
+				$scope.loadKpiValue();
+				
+				$scope.status = 'You cancelled the dialog.';
+			});
+			
+			return deferred.promise;
+		}
+		
 	};
+	
+	function DialogController($scope,$mdDialog,sbiModule_restServices,sbiModule_config,items,label,value,targetValue,valueSeries){
+		$scope.label = label;
+		$scope.value = value;
+		$scope.targetValue =targetValue;
+		$scope.valueSeries = valueSeries;
+		$scope.array = [];
+		
+		$scope.parseLogicalKey = function(){
+			var string  = $scope.valueSeries.logicalKey;
+			var char = string.split(",");
+			$scope.array = [];
+			for(var i=0;i<char.length;i++){
+				var values = char[i].split("=")
+				var obj = {};
+				obj["label"] = values[0];
+				obj["value"] = values[1];
+				$scope.array.push(obj);
+			}
+		}
+		$scope.parseLogicalKey();
+		$scope.close = function(){
+			$mdDialog.cancel();
+
+		}
+		$scope.apply = function(){
+			$mdDialog.cancel();
+			$scope.kpiValueToSave = {};
+			$scope.kpiValueToSave["manualValue"] = $scope.value;
+			$scope.kpiValueToSave["manualNote"] = $scope.valueSeries.comment;
+			$scope.kpiValueToSave["valueSeries"] = $scope.valueSeries;
+			sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
+			sbiModule_restServices.promisePost("1.0/kpi", 'editKpiValue',$scope.kpiValueToSave)
+			.then(function(response){ 
+				items.resolve($scope.value);
+				console.log("Saved");
+			},function(response){
+				$scope.errorHandler(response.data,"");
+			});
+
+		}
+
+		
+
+	}
 })();

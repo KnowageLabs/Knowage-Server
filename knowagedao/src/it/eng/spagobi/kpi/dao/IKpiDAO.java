@@ -260,4 +260,6 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 * @return status
 	 */
 	public String evaluateScorecardStatus(Integer criterionId, List<ScorecardStatus> scorecardStatusLst);
+
+	public void editKpiValue(Integer id, double value, String comment);
 }

@@ -42,6 +42,7 @@ author:
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@page import="org.json.JSONObject"%>
+<%@page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -51,41 +52,7 @@ author:
 <%@include file="commons/angular/angularImport.jsp"%>
 
 <%
-	/*
-	KpiEngineInstance engineInstance;
-	IEngUserProfile profile;
-	String profileJSONStr;
-	Map env;
-	String contextName;
-	String environment;
-	String executionRole;
-	Locale locale;
-	String template;
-	String docId;
-	String docLabel;
-	String docVersion;
-	String docAuthor;
-	String docName;
-	String docDescription;
-	String docIsPublic;
-	String docIsVisible;
-	String docPreviewFile;
-	String[] docCommunities;
-	String docCommunity;
-	List docFunctionalities;
-	String userId;
-	String isTechnicalUser;
-	List<String> includes;
-	String datasetLabel;
-	//String kpiValue = "";
-	//from cockpit
-	boolean isCockpit = false;
-	String aggregations = "";
-	String selections = "";
-	String associations = "";
-	String widgetId = "";
-	String metaData = "";
-	*/
+
 
 	engineInstance = (KpiEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
@@ -167,7 +134,16 @@ author:
 	*/
 %>
 
+<%
+// check for user profile autorization
+// 		IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		boolean canSee=false,canSeeAdmin=false;
+		if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})){
+			canSee=true;
+		 canSeeAdmin=UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[]{SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL});
+		}
 
+%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
@@ -240,12 +216,21 @@ author:
 		if(model.equalsIgnoreCase("widget")) {
 	%>
 
+
 	<div layout="row" layout-align="center center" layout-wrap>
 		<div ng-repeat="kpiItem in kpiItems" layout-margin layout-padding>
 			<%--
 			<div style="padding:2em; font-size: 0.7em">kpiItem: {{kpiItem | json}}</div>
 			--%>
-		
+			<div flex ng-if="kpiItem.viewAs=='speedometer'">
+			<%if(canSee){ %>
+			<div layout="row">
+				<span flex=70></span>
+				<md-button  class=" md-icon-button " >
+	         		 <md-icon md-font-icon="fa fa-pencil" aria-label="Edit Value" ng-click="openEdit(kpiItem)"></md-icon>
+	        	</md-button>
+        	</div>
+			<%} %>
 			<kpi-gauge ng-if="kpiItem.viewAs=='speedometer'" layout="column"
 					gauge-id="kpiItem.id" label="kpiItem.name" size="kpiItem.size"
 					min-value="kpiItem.minValue" max-value="kpiItem.maxValue"
@@ -254,14 +239,16 @@ author:
 					show-value="kpiItem.showValue" show-target="kpiItem.showTarget"
 					show-thresholds="kpiItem.showThreshold"
 					value-precision="kpiItem.precision" font-conf="kpiItem.fontConf"></kpi-gauge>
-	
-			<kpi-widget ng-if="kpiItem.viewAs=='kpicard'" widget-id="kpiItem.id"
+			</div>
+			<kpi-widget ng-if="kpiItem.viewAs=='kpicard'" widget-id="kpiItem.id" 
 					label="kpiItem.name" font-conf="kpiItem.fontConf"
 					show-target-percentage="kpiItem.showTargetPercentage"
 					show-thresholds="kpiItem.showThreshold" min-value="kpiItem.minValue"
 					max-value="kpiItem.maxValue" value="kpiItem.value"
 					target-value="kpiItem.targetValue" precision="kpiItem.precision"
-					gauge-size="kpiItem.size" threshold-stops="kpiItem.thresholdStops" value-series="kpiItem.valueSeries"></kpi-widget>
+					gauge-size="kpiItem.size" threshold-stops="kpiItem.thresholdStops" value-series="kpiItem.valueSeries"
+					<%= canSee? " can-see=true ":"" %> 
+					></kpi-widget>
 		</div>
 	</div>
 	<%
@@ -306,6 +293,7 @@ author:
 				driverMap: '<%=engineInstance.getAnalyticalDrivers()%>',
 				kpiValue : [],
 				kpiListValue : [],
+				
 			};
 			return obj;
 		});

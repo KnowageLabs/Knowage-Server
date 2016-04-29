@@ -1,8 +1,12 @@
 <md-whiteframe  class="md-whiteframe-4dp " layout="column" layout layout-margin  > 
- 	<md-toolbar	class="miniheadimportexport ternaryToolbar">
+ 	<md-toolbar	class="miniheadimportexport ternaryToolbar" layout="row">
 		<div class="md-toolbar-tools">
 			<h1  style="font-size: {{fontConf.size}}em;">{{label}}</h1>
 		</div>
+		<span flex></span>
+		<md-button ng-show="canSee" class="md-icon-button"  ng-click="openEdit()">
+          <md-icon md-font-icon="fa fa-pencil" aria-label="Edit Value"></md-icon>
+        </md-button>
 	</md-toolbar>
  	<div layout-padding layout="column"> 
 		<div layout="row">

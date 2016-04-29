@@ -32,6 +32,7 @@ public class SbiKpiValue extends SbiHibernateModel implements java.io.Serializab
 	private Date timeRun;
 	private double computedValue;
 	private Double manualValue;
+
 	private String theDay;
 	private String theWeek;
 	private String theMonth;

@@ -58,6 +58,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
@@ -652,6 +653,29 @@ public class KpiService {
 		{
 			logger.error(req.getPathInfo(), e);
 			return Response.ok(new JSError().addErrorKey("sbi.rememberme.errorWhileSaving")).build();
+		}
+
+	}
+
+	@POST
+	@Path("/editKpiValue")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public void editKpiValue(@Context HttpServletRequest req) throws EMFUserError {
+		JSONArray array = new JSONArray();
+		UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		try {
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+			JSONObject kpiValue = requestVal.getJSONObject("valueSeries");
+			String comment = kpiValue.getString("manualNote");
+
+			comment = comment.concat("\n" + profile.getUserId() + " " + new Date());
+			DAOFactory.getNewKpiDAO().editKpiValue(kpiValue.getInt("id"), requestVal.getDouble("manualValue"), comment);
+			// return Response.ok(array.toString()).build();
+		} catch (Throwable e)
+
+		{
+			logger.error(req.getPathInfo(), e);
+			// return Response.ok(new JSError().addErrorKey("sbi.rememberme.errorWhileSaving")).build();
 		}
 
 	}

@@ -48,6 +48,9 @@
 		<property name="manualValue" type="double">
 			<column name="MANUAL_VALUE" not-null="false" />
 		</property>
+		<property name="manualNote" type="string">
+			<column name="MANUAL_NOTE" length="1000" not-null="false" />
+		</property>
 		<property name="theDay" type="string">
 			<column name="THE_DAY" length="4" not-null="true" />
 		</property>

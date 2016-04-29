@@ -12,13 +12,14 @@ public class KpiValue implements Cloneable {
 	private Date timeRun;
 	private double computedValue;
 	private Double manualValue;
+	private String manualNote;
+
 	private String theDay;
 	private String theWeek;
 	private String theMonth;
 	private String theQuarter;
 	private String theYear;
 	private char state;
-	private String manualNote;
 
 	public int getId() {
 		return id;
