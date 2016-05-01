@@ -4,6 +4,7 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.alert.bo.Alert;
 import it.eng.spagobi.tools.alert.bo.AlertAction;
 import it.eng.spagobi.tools.alert.bo.AlertListener;
+import it.eng.spagobi.tools.alert.metadata.SbiAlertLog;
 
 import java.util.List;
 
@@ -26,5 +27,7 @@ public interface IAlertDAO extends ISpagoBIDao {
 	public Alert loadAlert(Integer id);
 
 	public void remove(Integer id);
+
+	public void insertAlertLog(SbiAlertLog alertLog);
 
 }

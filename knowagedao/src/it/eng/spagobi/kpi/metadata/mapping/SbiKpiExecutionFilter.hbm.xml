@@ -21,7 +21,7 @@
         	<column name="KPI_ID" />
         </many-to-one>
         
-        <property name="typeId" column="TYPE" type="integer" />
+        <property name="typeId" column="TYPE_ID" type="integer" />
         <many-to-one name="type" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" insert="false" update="false">
             <column name="TYPE_ID" />
         </many-to-one>

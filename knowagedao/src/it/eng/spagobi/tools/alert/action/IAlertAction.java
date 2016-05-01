@@ -2,6 +2,8 @@ package it.eng.spagobi.tools.alert.action;
 
 public interface IAlertAction {
 
-	public void execute(String jsonParams);
+	public String ACTION_PARAMS = "ACTION_PARAMS";
+
+	public void execute(String jsonOptions);
 
 }

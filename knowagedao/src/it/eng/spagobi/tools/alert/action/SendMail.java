@@ -28,8 +28,8 @@ public class SendMail implements IAlertAction {
 	final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
 
 	@Override
-	public void execute(String jsonParams) {
-		InputParam params = (InputParam) JsonConverter.jsonToObject(jsonParams, InputParam.class);
+	public void execute(String jsonOptions) {
+		InputParam params = (InputParam) JsonConverter.jsonToObject(jsonOptions, InputParam.class);
 		String subject = params.getSubject();
 		String[] recipients = params.getMailTo();
 		StringBuilder body = params.getBody() != null ? new StringBuilder(params.getBody()) : new StringBuilder();

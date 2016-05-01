@@ -15,7 +15,6 @@ public class SbiKpiExecution extends SbiHibernateModel {
 	private Character delta;
 
 	private Set<SbiKpiKpi> sbiKpiKpis = new HashSet<>();
-
 	private Set<SbiKpiExecutionFilter> sbiKpiExecutionFilters = new HashSet<>();
 
 	/**

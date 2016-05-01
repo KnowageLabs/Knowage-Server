@@ -19,70 +19,89 @@ package it.eng.spagobi.tools.scheduler.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tools.scheduler.bo.Frequency;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
 
 import java.util.List;
+import java.util.Map;
 
 import org.quartz.JobDetail;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public interface ISchedulerDAO {
-	
+
 	void setTenant(String tenant);
-	
+
 	Tenant findTenant(JobDetail jobDetail);
-	
-	boolean jobGroupExists(String jobGroupName) ;
+
+	boolean jobGroupExists(String jobGroupName);
+
 	boolean jobExists(String jobGroupName, String jobName);
-	List<String> getJobGroupNames() ;
-	
+
+	List<String> getJobGroupNames();
+
 	/**
 	 * @return all jobs. If there are no jobs already stored it returns an empty list
 	 */
-	List<Job> loadJobs() ;
-	
+	List<Job> loadJobs();
+
 	/**
-	 * @param jobGroupNames the list of group names in which to look for jobs. It can be empty but it cannot be null. 
-	 * If it is an empty list an empty list of jobs will be returned.
+	 * @param jobGroupNames
+	 *            the list of group names in which to look for jobs. It can be empty but it cannot be null. If it is an empty list an empty list of jobs will be
+	 *            returned.
 	 * 
-	 * @return the jobs contained in the specified groups. Never returns null. If there are no jobs in the specified groups
-	 * it returns an empty list of jobs
+	 * @return the jobs contained in the specified groups. Never returns null. If there are no jobs in the specified groups it returns an empty list of jobs
 	 */
 	List<Job> loadJobs(List<String> jobGroupNames);
-	
+
 	/**
-	 * @param jobGroupName the name of the group in which to look for jobs. It it cannot be empty.
+	 * @param jobGroupName
+	 *            the name of the group in which to look for jobs. It it cannot be empty.
 	 * 
-	 * @return the jobs contained in the specified group. Never returns null. If there are no jobs in the specified group
-	 * it returns an empty list of jobs
+	 * @return the jobs contained in the specified group. Never returns null. If there are no jobs in the specified group it returns an empty list of jobs
 	 */
 	List<Job> loadJobs(String jobGroupName);
-	
+
 	/**
-	 * @param jobGroupName the name of the group in which to look up. It it cannot be empty.
-	 * @param jobName the name of the job to load. It it cannot be empty.
+	 * @param jobGroupName
+	 *            the name of the group in which to look up. It it cannot be empty.
+	 * @param jobName
+	 *            the name of the job to load. It it cannot be empty.
 	 * 
 	 * @return the job if exists a job named jobName in group jobGroupName. null otherwise
 	 */
 	Job loadJob(String jobGroupName, String jobName);
+
 	void deleteJob(String jobName, String jobGroupName);
+
 	void insertJob(Job spagobiJob);
-	
-	boolean triggerExists(Trigger spagobiTrigger) ;
+
+	boolean triggerExists(Trigger spagobiTrigger);
+
 	Trigger loadTrigger(String triggerGroupName, String triggerName);
-	List<Trigger> loadTriggers(String jobGroupName, String jobName);	
-	void deleteTrigger(String triggerName, String triggerGroupName);	
-	boolean saveTrigger(Trigger spagobiTrigger);	
-	void insertTrigger(Trigger spagobiTrigger);	
+
+	List<Trigger> loadTriggers(String jobGroupName, String jobName);
+
+	void deleteTrigger(String triggerName, String triggerGroupName);
+
+	boolean saveTrigger(Trigger spagobiTrigger);
+
+	void insertTrigger(Trigger spagobiTrigger);
+
 	void updateTrigger(Trigger spagobiTrigger);
-	
+
 	void pauseTrigger(TriggerPaused triggerPaused) throws EMFUserError;
+
 	boolean resumeTrigger(String triggerGroup, String triggerName, String jobGroup, String jobName);
+
 	boolean isTriggerPaused(String triggerGroup, String triggerName, String jobGroup, String jobName);
 
+	void createOrUpdateJobAndTrigger(String jobName, Class jobClass, String groupName, String triggerGroup, Frequency frequency, Map<String, String> parameters);
+
+	Job createOrUpdateJob(String name, String groupName, Class jobClass, Map<String, String> parameters);
 }

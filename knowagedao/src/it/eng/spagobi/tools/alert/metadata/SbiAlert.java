@@ -8,6 +8,22 @@ public class SbiAlert extends SbiHibernateModel {
 	private String name;
 	private SbiAlertListener sbiAlertListener;
 	private Integer listenerId;
+	private String listenerOptions;
+
+	/**
+	 * @return the listenerOptions
+	 */
+	public String getListenerOptions() {
+		return listenerOptions;
+	}
+
+	/**
+	 * @param listenerOptions
+	 *            the listenerOptions to set
+	 */
+	public void setListenerOptions(String listenerOptions) {
+		this.listenerOptions = listenerOptions;
+	}
 
 	/**
 	 * @return the id

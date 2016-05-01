@@ -18,18 +18,20 @@ public class Majority implements IScorecardCriterion {
 		int countGreen = 0;
 
 		for (ScorecardStatus ss : statusList) {
-			switch (ss.getStatus()) {
-			case GREEN:
-				countGreen++;
-				break;
-			case RED:
-				countRed++;
-				break;
-			case YELLOW:
-				countYellow++;
-				break;
-			case GRAY:
-				// Nothing to do
+			if (ss.getStatus() != null) {
+				switch (ss.getStatus()) {
+				case GREEN:
+					countGreen++;
+					break;
+				case RED:
+					countRed++;
+					break;
+				case YELLOW:
+					countYellow++;
+					break;
+				case GRAY:
+					// Nothing to do
+				}
 			}
 		}
 		STATUS ret;

@@ -1,4 +1,4 @@
-package it.eng.spagobi.tools.alert.bo;
+package it.eng.spagobi.tools.scheduler.bo;
 
 public class Frequency {
 
@@ -9,6 +9,17 @@ public class Frequency {
 	// startTime and endTime are in format mm:ss
 	private String startTime;
 	private String endTime;
+
+	public Frequency(String cron, Long startDate, Long endDate, String startTime, String endTime) {
+		this.cron = cron;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.startTime = startTime;
+		this.endTime = endTime;
+	}
+
+	public Frequency() {
+	}
 
 	/**
 	 * @return the cron

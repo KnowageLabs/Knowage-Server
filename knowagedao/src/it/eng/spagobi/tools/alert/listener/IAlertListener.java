@@ -2,7 +2,8 @@ package it.eng.spagobi.tools.alert.listener;
 
 public interface IAlertListener {
 
-	public void execute(String jsonParameters);
+	public String LISTENER_PARAMS = "LISTENER_PARAMS";
 
-	public void saveResult(Integer idListener);
+	public void execute(String jsonOptions);
+
 }

@@ -15,7 +15,6 @@ public class ScorecardTarget extends ScorecardSubview {
 	}
 
 	public void countKpi(KpiExecution kpi) {
-		System.out.println("name: " + this.getName());
 		Integer count = getGroupedKpiMap().get(kpi.getStatus());
 		if (count == null) {
 			getGroupedKpiMap().put(kpi.getStatus(), 1);

@@ -1,29 +1,5 @@
 package it.eng.spagobi.kpi.job;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import org.hibernate.Session;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -50,6 +26,30 @@ import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import org.hibernate.Session;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
 @SuppressWarnings("rawtypes")
 public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 	// Only SQL is supported.
@@ -67,8 +67,8 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 	}
 
 	private static class ParsedKpi {
-		private int id;
-		private int version;
+		private final int id;
+		private final int version;
 		public String formula;
 		public List<String> measuresNames;
 		public List<String> measuresFunctions;
@@ -126,7 +126,6 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 		public AggregateMeasureQuery(int dataSourceId, String innerSql, String aggregateMeasureName, String aggregateMeasureFunction,
 				Set<String> attributesNames, List<String> orderByAttributesNames, Map<String, String> placeholders) {
 			this.dataSourceId = dataSourceId;
-			this.innerSql = innerSql;
 			this.aggregateMeasureName = aggregateMeasureName;
 			this.aggregateMeasureFunction = aggregateMeasureFunction;
 			this.attributesNames.addAll(attributesNames);
@@ -149,6 +148,10 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 			for (String paramName : quotedParameters.keySet()) {
 				innerSql = innerSql.replaceAll("\\@\\b" + paramName + "\\b", "\\$P{" + paramName + "}");
 			}
+			innerSql = innerSql.trim();
+			if (innerSql.endsWith(";"))
+				innerSql = innerSql.substring(0, innerSql.length() - 1);
+			this.innerSql = innerSql;
 		}
 
 		@Override
@@ -183,7 +186,7 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 			String sql = sqlPart1 + " AS " + derivedTableAlias + sqlPart2;
 			if (replacePlaceholders) {
 				for (String paramName : quotedParameters.keySet()) {
-					sql = sql.replaceAll("\\$P{" + paramName + "}", quotedParameters.get(paramName));
+					sql = sql.replaceAll("\\$P\\{" + paramName + "\\}", quotedParameters.get(paramName));
 				}
 			}
 			return sql;
@@ -224,8 +227,8 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 			return executeQuery(dataSourceId, toString(), quotedParameters);
 		}
 
-		private static QueryResult executeQuery(int dataSourceId, String sql, Map<String, String> quotedParameters)
-				throws JSONException, EMFUserError, EMFInternalError {
+		private static QueryResult executeQuery(int dataSourceId, String sql, Map<String, String> quotedParameters) throws JSONException, EMFUserError,
+				EMFInternalError {
 			// Read measure value
 			int maxItem = 0;
 			IEngUserProfile profile = null;
@@ -266,8 +269,8 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 	}
 
 	private static class DataStoreIterator implements Iterator<LinkedHashMap<String, Comparable>> {
-		private IMetaData metaData;
-		private Iterator<IRecord> iterator;
+		private final IMetaData metaData;
+		private final Iterator<IRecord> iterator;
 
 		public DataStoreIterator(IMetaData metaData, Iterator<IRecord> iterator) {
 			this.metaData = metaData;
@@ -338,6 +341,7 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
+		System.out.println("starting " + this.getClass());
 		int kpiSchedulerId = Integer.parseInt(arg0.getJobDetail().getJobDataMap().getString("kpiSchedulerId"));
 		computeKpis(kpiSchedulerId);
 	}
@@ -368,12 +372,13 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 				for (SchedulerFilter schedulerFilter : kpiScheduler.getFilters()) {
 					if (!kpi.getName().equalsIgnoreCase(schedulerFilter.getKpiName()))
 						continue;
-					if ("FIXED_VALUE".equals(schedulerFilter.getType())) {
+					String type = schedulerFilter.getType().getValueCd();
+					if ("FIXED_VALUE".equals(type)) {
 						placeholdersMap.put(schedulerFilter.getPlaceholderName(), schedulerFilter.getValue());
-					} else if ("LOV".equals(schedulerFilter.getType())) {
+					} else if ("LOV".equals(type)) {
 						ModalitiesValue modalitiesvalue = modalitiesValueDAO.loadModalitiesValueByLabel(schedulerFilter.getValue());
 						placeholdersMap.put(schedulerFilter.getPlaceholderName(), "1"); // TODO
-					} else if ("TEMPORAL_FUNCTIONS".equals(schedulerFilter.getType())) {
+					} else if ("TEMPORAL_FUNCTIONS".equals(type)) {
 						if ("EXECUTION_DAY".equals(schedulerFilter.getValue())) {
 							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + (new Date().getDate()));
 						} else if ("EXECUTION_MONTH".equals(schedulerFilter.getValue())) {
@@ -456,7 +461,7 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 							// Find temporal attributes (if any)
 							Map<String, String> attributesTemporalTypes = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 							for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
-								if ("TEMPORAL_ATTRIBUTE".equals(ruleOutput.getType())) {
+								if ("TEMPORAL_ATTRIBUTE".equals(ruleOutput.getType().getValueCd())) {
 									String attributeName = ruleOutput.getAlias();
 
 									// YEAR, QUARTER, MONTH, WEEK, DAY
@@ -512,8 +517,8 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 								}
 							}
 						}
-						kpiComputationUnits.add(
-								new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes, mainMeasure, replaceMode));
+						kpiComputationUnits.add(new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes,
+								mainMeasure, replaceMode));
 						Integer nextPriority = 0;
 						for (String temporalType : queriesAttributesTemporalTypes.get(mainMeasure).values()) {
 							Integer priority = temporalTypesPriorities.get(temporalType);

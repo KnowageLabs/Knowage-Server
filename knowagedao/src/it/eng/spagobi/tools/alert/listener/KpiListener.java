@@ -8,53 +8,74 @@ import it.eng.spagobi.kpi.metadata.SbiKpiValue;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.alert.action.IAlertAction;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertAction;
-import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
-public class KpiListener extends AbstractSpagoBIJob implements Job {
+public class KpiListener extends AbstractAlertListener {
 
 	private static Logger logger = Logger.getLogger(KpiListener.class);
 
-	private final Map<ThresholdValue, List<Action>> thresholdMap = new HashMap<ThresholdValue, List<Action>>();
-	private final Map<Integer, SbiAlertAction> actionMap = new HashMap<Integer, SbiAlertAction>();
+	private final Set<ThresholdValue> thresholds = new HashSet<>();
+	private final Map<Integer, List<SbiKpiValue>> valueMap = new HashMap<>();
+	private final Map<Integer, SbiAlertAction> actionMap = new HashMap<>();
 
 	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
+	public void execute(String jsonParameters) {
 		logger.info("KpiListener running...");
-		String jsonParameters = context.getJobDetail().getJobDataMap().getString("listenerParams");
 		InputParameter par = (InputParameter) JsonConverter.jsonToObject(jsonParameters, InputParameter.class);
 
 		Session session = HibernateSessionManager.getCurrentSession();
+		loadThresholdMap(par, session);
+
 		List<SbiKpiValue> resultSet = loadResults(par.getKpi().getId());
 		if (resultSet != null) {
 			for (SbiKpiValue sbiKpiValue : resultSet) {
-				Integer id = selectThreshold(sbiKpiValue);
-				if (id != null) {
-					// Value of this sbiKpiValue is in a threshold
+				Integer thresholdId = selectThreshold(sbiKpiValue);
+				if (thresholdId != null) {
+					// In this case the value of this sbiKpiValue is in a threshold
 					// so we have to execute related actions
-					executeActions(id, session);
-					// TODO save result on SBI_ALERT_LOG table
-					// TODO or log error (same table) if something goes wrong
+					addValueToThresholdMap(thresholdId, sbiKpiValue);
 				}
 			}
+			executeActions(par, session);
+			// TODO save result on SBI_ALERT_LOG table
+			// TODO or log error (same table) if something goes wrong
 		} else {
 			// TODO log null result to SBI_ALERT_LOG table
 		}
 
 		logger.info("KpiListener ended");
+	}
+
+	private void loadThresholdMap(InputParameter par, Session session) {
+		for (Action action : par.getActions()) {
+			for (Integer thresholdId : action.getThresholdValues()) {
+				if (!thresholds.contains(new ThresholdValue(thresholdId))) {
+					SbiKpiThresholdValue sbiThreshold = (SbiKpiThresholdValue) session.load(SbiKpiThresholdValue.class, thresholdId);
+					thresholds.add(from(sbiThreshold));
+				}
+			}
+		}
+
+	}
+
+	private void addValueToThresholdMap(Integer thresholdId, SbiKpiValue sbiKpiValue) {
+		List<SbiKpiValue> lst = valueMap.get(thresholdId);
+		if (lst == null) {
+			valueMap.put(thresholdId, new ArrayList<SbiKpiValue>());
+		}
+		valueMap.get(thresholdId).add(sbiKpiValue);
 	}
 
 	private SbiAlertAction loadAction(Integer actionId, Session session) {
@@ -65,27 +86,29 @@ public class KpiListener extends AbstractSpagoBIJob implements Job {
 		return actionMap.get(actionId);
 	}
 
-	private List<Action> getActionsByThreshold(Integer thresholdId, Session session) {
-		ThresholdValue thresholdValue = new ThresholdValue(thresholdId);
-		if (!thresholdMap.containsKey(thresholdValue)) {
-			SbiKpiThresholdValue sbiThreshold = (SbiKpiThresholdValue) session.load(SbiKpiThresholdValue.class, thresholdId);
-			thresholdMap.put(from(sbiThreshold), new ArrayList<Action>());
-		}
-		return thresholdMap.get(thresholdValue);
-	}
-
-	private void executeActions(Integer id, Session session) {
-		List<Action> actions = getActionsByThreshold(id, session);
-		for (Action action : actions) {
-			SbiAlertAction sbiAction = loadAction(action.getIdAction(), session);
-			try {
-				IAlertAction alertAction = (IAlertAction) Class.forName(sbiAction.getClassName()).newInstance();
-				alertAction.execute(action.getJsonActionParameters());
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-				// TODO rise exception or return false
-				logger.error("Error execution action class[" + sbiAction.getClassName() + "]", e);
+	private void executeActions(InputParameter par, Session session) {
+		for (Action action : par.getActions()) {
+			if (hasValues(action)) {
+				SbiAlertAction sbiAction = loadAction(action.getIdAction(), session);
+				try {
+					IAlertAction alertAction = (IAlertAction) Class.forName(sbiAction.getClassName()).newInstance();
+					alertAction.execute(action.getJsonActionParameters());
+				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+					// TODO rise exception or return false
+					logger.error("Error execution action class[" + sbiAction.getClassName() + "]", e);
+				}
 			}
 		}
+	}
+
+	private boolean hasValues(Action action) {
+		for (Integer thresholdId : action.getThresholdValues()) {
+			List<SbiKpiValue> values = valueMap.get(thresholdId);
+			if (values != null && !values.isEmpty()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private ThresholdValue from(SbiKpiThresholdValue sbiValue) {
@@ -106,11 +129,12 @@ public class KpiListener extends AbstractSpagoBIJob implements Job {
 		if (lastTimeRun != null) {
 			lst = session.createCriteria(SbiKpiValue.class).add(Restrictions.eq("kpiId", id)).add(Restrictions.eq("timeRun", lastTimeRun)).list();
 		}
+		session.close();
 		return lst;
 	}
 
 	private Integer selectThreshold(SbiKpiValue kpiValue) {
-		for (ThresholdValue threshold : thresholdMap.keySet()) {
+		for (ThresholdValue threshold : thresholds) {
 			double value = kpiValue.getComputedValue();
 			if ((threshold.getMinValue() == null || value >= threshold.getMinValue().doubleValue())
 					&& (threshold.getMaxValue() == null || value <= threshold.getMaxValue().doubleValue())

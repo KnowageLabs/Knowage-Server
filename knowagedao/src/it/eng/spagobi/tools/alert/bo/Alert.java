@@ -1,5 +1,7 @@
 package it.eng.spagobi.tools.alert.bo;
 
+import it.eng.spagobi.tools.scheduler.bo.Frequency;
+
 public class Alert {
 
 	private Integer id;

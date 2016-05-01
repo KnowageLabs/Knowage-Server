@@ -20,7 +20,16 @@ public class ScorecardStatus {
 	 * @param status
 	 *            the status to set
 	 */
-	public void setStatus(STATUS status) {
+	public void setStatus(String status) {
+		this.status = STATUS.GRAY;
+		for (int i = 0; i < STATUS.values().length; i++) {
+			if (STATUS.values()[i].name().equals(status)) {
+				this.status = STATUS.values()[i];
+			}
+		}
+	}
+
+	public void setStatusEnum(STATUS status) {
 		this.status = status;
 	}
 

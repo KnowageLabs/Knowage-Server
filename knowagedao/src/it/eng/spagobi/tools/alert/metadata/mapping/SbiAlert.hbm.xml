@@ -19,6 +19,7 @@
         
         <property name="name" column="NAME" type="string" length="40" />
         <property name="listenerId" column="LISTENER_ID" type="int" />
+        <property name="listenerOptions" column="LISTENER_OPTIONS" type="string" />
         <many-to-one name="sbiAlertListener" class="it.eng.spagobi.tools.alert.metadata.SbiAlertListener" column="LISTENER_ID" 
         	lazy="false" insert="false" update="false"/>
         
