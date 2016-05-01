@@ -17,19 +17,19 @@
  */
 package it.eng.spagobi.commons.initializers.metadata;
 
+import it.eng.spago.base.SourceBean;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
-import it.eng.spago.base.SourceBean;
-
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
- *
+ * 
  *         This class initializes SpagoBI metadata repository, if it is empty, with predefined:
- *
+ * 
  *         - domains, - checks, - lovs, - engines, - user functionalities
  **/
 public class MetadataInitializer extends SpagoBIInitializer {
@@ -52,6 +52,8 @@ public class MetadataInitializer extends SpagoBIInitializer {
 		metadataInitializers.add(new FunctionalitiesInitializer());
 		metadataInitializers.add(new ExportersInitializer());
 		metadataInitializers.add(new ConfigurationsInitializer());
+		metadataInitializers.add(new AlertListenerInitializer());
+		metadataInitializers.add(new AlertActionInitializer());
 		// metadataInitializers.add(new KpiPeriodicityInitializer());
 		// metadataInitializers.add(new UnitGrantInitializer());
 	}

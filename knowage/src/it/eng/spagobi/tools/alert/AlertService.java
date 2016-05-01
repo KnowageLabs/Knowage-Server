@@ -1,17 +1,22 @@
 package it.eng.spagobi.tools.alert;
 
+import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.kpi.utils.JSError;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.alert.bo.Alert;
 import it.eng.spagobi.tools.alert.bo.AlertAction;
 import it.eng.spagobi.tools.alert.bo.AlertListener;
 import it.eng.spagobi.tools.alert.dao.IAlertDAO;
+import it.eng.spagobi.tools.scheduler.bo.Frequency;
+import it.eng.spagobi.tools.scheduler.to.JobTrigger;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +40,7 @@ import org.json.JSONObject;
 public class AlertService {
 
 	private static Logger logger = Logger.getLogger(AlertService.class);
+	private static final String ALERT_JOB_GROUP = "ALERT_JOB_GROUP";
 
 	@GET
 	@Path("/listListener")
@@ -53,19 +59,26 @@ public class AlertService {
 	}
 
 	@GET
-	@Path("/{idListener}/loadListenerTemplate")
-	public Response loadListenerTemplate(@PathParam("idListener") Integer idListener, @Context HttpServletRequest req) throws EMFUserError {
+	@Path("/{id}/load")
+	public Response load(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
 		IAlertDAO dao = getDao(req);
-		AlertListener alertListener = dao.loadListener(idListener);
-		return Response.ok(alertListener.getTemplate()).build();
-	}
-
-	@GET
-	@Path("/{idAction}/loadActionTemplate")
-	public Response loadActionTemplate(@PathParam("idListener") Integer idListener, @Context HttpServletRequest req) throws EMFUserError {
-		IAlertDAO dao = getDao(req);
-		AlertAction alertAction = dao.loadAction(idListener);
-		return Response.ok(alertAction.getTemplate()).build();
+		Alert alert = dao.loadAlert(id);
+		// loading trigger
+		try {
+			JobTrigger triggerInfo = getJobTriggerInfo("" + id, ALERT_JOB_GROUP, "" + id, ALERT_JOB_GROUP);
+			Frequency frequency = new Frequency();
+			frequency.setStartTime(triggerInfo.getStartTime());
+			frequency.setEndTime(triggerInfo.getEndTime());
+			frequency.setCron(triggerInfo.getChrono() != null ? new JSONObject(triggerInfo.getChrono()).toString() : null);
+			SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+			frequency.setStartDate(df.parse(triggerInfo.getStartDate()).getTime());
+			frequency.setEndDate(df.parse(triggerInfo.getEndDate()).getTime());
+			alert.setFrequency(frequency);
+			return Response.ok(JsonConverter.objectToJson(alert, Alert.class)).build();
+		} catch (Throwable e) {
+			logger.error(req.getPathInfo(), e);
+		}
+		return Response.ok().build();
 	}
 
 	@POST
@@ -74,18 +87,44 @@ public class AlertService {
 		try {
 			String str = RestUtilities.readBody(req);
 			Alert alert = (Alert) JsonConverter.jsonToObject(str, Alert.class);
-			IAlertDAO dao = getDao(req);
-			Integer id = alert.getId();
-			if (id == null) {
-				id = dao.insert(alert);
+			JSError jsError = new JSError();
+			check(alert, jsError);
+			if (!jsError.hasErrors()) {
+				IAlertDAO dao = getDao(req);
+				Integer id = alert.getId();
+				if (id == null) {
+					id = dao.insert(alert);
+				} else {
+					dao.update(alert);
+				}
+				return Response.ok(new JSONObject().put("id", id).toString()).build();
 			} else {
-				dao.update(alert);
+				return Response.ok(jsError.toString()).build();
 			}
-			return Response.ok(new JSONObject().put("id", id).toString()).build();
 		} catch (IOException | JSONException e) {
 			logger.error(req.getPathInfo(), e);
 		}
 		return Response.ok().build();
+	}
+
+	private void check(Alert alert, JSError jsError) {
+		AlertListener alertListener = alert.getAlertListener();
+		if (alertListener == null) {
+			jsError.addError("Listener is mandatory");
+		} else {
+			if (alertListener.getClassName() == null) {
+				jsError.addError("Listener error");
+				logger.error("Listener name[" + alertListener.getName() + "] has null class");
+			} else {
+				try {
+					Class.forName(alertListener.getClassName());
+				} catch (ClassNotFoundException e) {
+					logger.error("Listener name[" + alertListener.getName() + "] has not valid class", e);
+					jsError.addError("Listener error");
+				}
+			}
+		}
+
 	}
 
 	private IAlertDAO getDao(HttpServletRequest req) throws EMFUserError {

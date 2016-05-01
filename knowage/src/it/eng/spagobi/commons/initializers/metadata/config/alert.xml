@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ALERT>
+	<ACTION name="Send mail" className="it.eng.spagobi.tools.alert.action.SendMail"
+		template="/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/alert/actions/sendMail.jsp" />
+	<LISTENER name="KPI Listener" className="it.eng.spagobi.tools.alert.listener.KpiListener"
+		template="/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/alert/listeners/kpiListener.jsp" />
+</ALERT>
