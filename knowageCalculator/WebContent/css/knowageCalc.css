@@ -33,3 +33,84 @@ table{
 {
 	width:14% !important;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+	display: none !important;
+}
+md-toolbar.md-kn-theme.md-hue-1:not(.md-menu-toolbar) {
+	background-color: #3B678C;
+	color: rgba(255,255,255,0.87);
+	text-transform: uppercase;
+}
+md-toolbar.md-kn-theme h2{
+	font-size:16px;
+}
+md-content.md-kn-theme {
+	background-color: #efefef;
+}
+md-list.md-kn-theme {
+	text-align: center;
+}
+md-list.md-kn-theme md-list-item span{
+	font-size: 12px;
+}
+md-list.md-kn-theme .layout-padding{
+	padding-bottom:0px;
+	padding-top:0px;
+}
+md-card.md-kn-theme {
+	padding:0 !important;
+}
+.list-toolbar {
+	font-weight: bold;
+	color: white;
+	background-color: #3B678C;
+}
+.list-odd {}
+.list-even {
+	background-color: #dee7ef;
+}
+.md-button.md-kn-theme.md-primary.md-raised {
+	background-color: #3B678C;
+	color: rgba(255,255,255,0.87);
+}
+.md-kn-theme .layout-padding {
+	padding-right:0;
+	padding-left:0;
+}
+.md-headline {
+	text-transform: uppercase;
+	font-size: 16px;
+}
+.kn-product-logo {
+	transition:all 0.3s ease;
+	-webkit-filter: grayscale(100%); /* Chrome, Safari, Opera */
+	filter: grayscale(100%);
+	opacity: .8;
+}
+.kn-product-logo:hover {
+	-webkit-filter: grayscale(0%); /* Chrome, Safari, Opera */
+	filter: grayscale(0%);
+	opacity: .8;
+}
+.kn-product-logo.selected {
+	-webkit-filter: grayscale(0%); /* Chrome, Safari, Opera */
+	filter: grayscale(0%);
+	opacity: 1;
+}
+
+
+
+
+

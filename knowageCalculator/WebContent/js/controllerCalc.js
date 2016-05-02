@@ -1,6 +1,15 @@
 var app = angular.module('calcManager', ['ngMaterial','ngMessages'/*,'angular_table'*/]);
 
 
+//IMPORTANTE inserisci questa configurazione, in modo da abilitare il mio tema
+app.config(function($mdThemingProvider) {
+  $mdThemingProvider.theme('kn')
+  .primaryPalette('indigo');
+  $mdThemingProvider.setDefaultTheme('kn');
+});
+
+
+
 app.controller('calculatorRuntimeCtrl', ["$scope","$log","$mdDialog","$http","$location",calcRuntimeManagerFunction]);
 
 function calcRuntimeManagerFunction($scope,$log,$mdDialog,$http,$location)
@@ -37,6 +46,19 @@ function calcRuntimeManagerFunction($scope,$log,$mdDialog,$http,$location)
     };
 
 
+
+    self.arrayContains = function (a, obj) {
+        var i = a.length;
+        while (i--) {
+           if (a[i] === obj) {
+               return true;
+           }
+        }
+        return false;
+    };
+
+
+
    /* var urlParam = function(name, w){
         w = w || window;
         var rx = new RegExp('[\&|\?]'+name+'=([^\&\#]+)'),
@@ -45,10 +67,43 @@ function calcRuntimeManagerFunction($scope,$log,$mdDialog,$http,$location)
     }*/
 
 
+
+
+  //AGGIUNTE DI DAVIDE
+	self.selected = [];
+	self.addProduct = function(product){
+		var i = self.selected.indexOf(product);
+		if( i == -1){
+			self.selected.push(product);
+			var itemDet=self.itemDetail[product];
+			itemDet["selected"]="selected";
+		}else{
+			self.selected.splice(i,1);
+			var itemDet=self.itemDetail[product];
+			itemDet["selected"]="";
+		}
+		$log.info("Selected products: ",self.selected);
+
+	}
+
+
+
+
 //-------------------------Utility variables definition--------------------------
 
 	self.items=["BD","SI","ER","LI","PM","PA","OD","EI"];
-	self.selected=[];
+	self.itemTooltip={"BD":"Big Data", "SI":"Smart Intelligence", "ER":"Enterprise Reporting", "LI":"Location Intelligence", "PM":"Performance Management", "PA":"Predictive Analisys","OD":"Open Data","EI":"Embedded Intelligence"}
+	self.itemDetail={
+		"BD":	{ "name":"Big Data","selected" : "" },
+		"SI":	{ "name":"Smart Intelligence","selected" : "" },
+		"ER":	{ "name":"Enterprise Reporting","selected" : "" },
+		"LI":	{ "name":"Location Intelligence","selected" : "" },
+		"PM":	{ "name":"Performance Management","selected" : "" },
+		"PA":	{ "name":"Predictive Analisys","selected" : "" },
+		"OD":	{ "name":"Open Data","selected" : "" },
+		"EI":	{ "name":"Embedded Intelligence","selected" : "" }
+	}
+
 
     self.cores=['4','8','12','16','20','24'];
     self.selectedNumCores="8";
@@ -187,6 +242,9 @@ function calcRuntimeManagerFunction($scope,$log,$mdDialog,$http,$location)
 						self.showCalculate=false;
 						self.showOEMintResults=true;
 						self.productsOEMintDataResults=true;
+
+						$log.info("Silver products saved: ",self.productsOEMintDataSilver);
+
 			    	});
     }
 

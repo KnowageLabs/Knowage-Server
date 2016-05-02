@@ -119,6 +119,10 @@ public class CostInformations {
 				for (int cat : categories) {
 					costWithSubscriptionGold = calculatePrice(numCores, products, "SUBSCRIPTION").get(1) * (1 - minSaleForOEM) * cat;
 					costWithSubscriptionSilver = calculatePrice(numCores, products, "SUBSCRIPTION").get(0) * (1 - minSaleForOEM) * cat;
+
+					costWithSubscriptionGold = calculatePrice(numCores, products, "SUBSCRIPTION").get(1) * (1 - minSaleForOEM) * cat;
+					costWithSubscriptionSilver = calculatePrice(numCores, products, "SUBSCRIPTION").get(0) * (1 - minSaleForOEM) * cat;
+
 					jsonObject = new JSONObject();
 					if (cat == 300) {
 						jsonObject.put("Category", "Unlimited");
