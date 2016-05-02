@@ -60,6 +60,14 @@ public class AlertService {
 	}
 
 	@GET
+	@Path("/listAlert")
+	public Response listAlert(@Context HttpServletRequest req) throws EMFUserError {
+		IAlertDAO dao = getDao(req);
+		List<Alert> alert = dao.listAlert();
+		return Response.ok(JsonConverter.objectToJson(alert, alert.getClass())).build();
+	}
+
+	@GET
 	@Path("/{id}/load")
 	public Response load(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
 		IAlertDAO dao = getDao(req);
