@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -104,6 +105,14 @@ public class AlertService {
 		} catch (IOException | JSONException e) {
 			logger.error(req.getPathInfo(), e);
 		}
+		return Response.ok().build();
+	}
+
+	@DELETE
+	@Path("/{id}/delete")
+	public Response delete(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		IAlertDAO dao = getDao(req);
+		dao.remove(id);
 		return Response.ok().build();
 	}
 
