@@ -17,14 +17,17 @@
 	
 	var documentParamenterElementCtrl = function(
 			$scope, sbiModule_config, sbiModule_restServices, sbiModule_translate, 
-			execProperties, documentExecuteServices, $mdDialog, $mdMedia) {
+			execProperties, documentExecuteServices, $mdDialog, $mdMedia,execProperties) {
 		
 		$scope.documentExecuteServices = documentExecuteServices;
 		$scope.sbiModule_translate = sbiModule_translate;
 		
 		$scope.getTreeParameterValue = function(innerNode) {
-			var treeLovNode = (innerNode != undefined && innerNode != null)? innerNode.id : 'lovroot';
+			if (typeof innerNode === 'undefined'){
+				execProperties.hideProgressCircular.status=false;
+			}
 			
+			var treeLovNode = (innerNode != undefined && innerNode != null)? innerNode.id : 'lovroot';
 			var templateUrl = sbiModule_config.contextName
 				+ '/js/src/angular_1.4/tools/documentexecution/templates/popupTreeParameterDialogTemplate.jsp';
 			
@@ -60,6 +63,7 @@
 //					$scope.updateAddToParameterInnerValuesMap($scope.parameter, $scope.parameter.children);
 					
 					$scope.popupParameterDialog($scope.parameter, templateUrl);
+					
 				})
 				.error(function(response, status, headers, config) {
 					console.log('parametervalues response ERROR -> ', response);
@@ -110,6 +114,9 @@
 		};
 		
 		$scope.popupLookupParameterDialog = function(parameter) {
+			
+				execProperties.hideProgressCircular.status=false;
+			
 			var templateUrl = sbiModule_config.contextName
 				+ '/js/src/angular_1.4/tools/documentexecution/templates/popupLookupParameterDialogTemplate.htm';
 			
@@ -134,7 +141,9 @@
 				openFrom: '#' + parameter.urlName,
 				closeTo: '#' + parameter.urlName,
 				templateUrl : templateUrl,
-				
+				onComplete : function() {
+								execProperties.hideProgressCircular.status=true;
+								},
 				locals : {
 					parameter: parameter,
 					toggleCheckboxParameter: $scope.toggleCheckboxParameter,

@@ -132,22 +132,14 @@
 		<label ng-if="parameter.selectionType=='COMBOBOX'" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">
 			{{parameter.label}}</label>
 		<!-- multiple -->
-		
-		<%--
- 		<md-select ng-model="parameter.parameterValue" multiple ng-model-options="{trackBy: '$value.id'}"
- 		--%>
-		<md-select ng-model="parameter.parameterValue" multiple
+		<md-select ng-model="parameter.parameterValue" multiple ng-model-options="{trackBy: '$index'}"
 			 	ng-if="parameter.selectionType=='COMBOBOX' && parameter.multivalue"> 
 			<md-option ng-repeat="defaultParameter in parameter.defaultValues" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled">
 				{{::defaultParameter.label}}
 			</md-option>
 		</md-select>
 		<!-- single -->
-		
-		<%--
- 		<md-select ng-model="parameter.parameterValue" ng-model-options="{trackBy: '$value.value'}"
- 		--%>
-		<md-select ng-model="parameter.parameterValue"
+		<md-select ng-model="parameter.parameterValue"  ng-model-options="{trackBy: '$index'}"
 			 	ng-if="parameter.selectionType=='COMBOBOX' && !parameter.multivalue"> 
 			<md-option></md-option>
 			<md-option ng-repeat="defaultParameter in parameter.defaultValues" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled">
