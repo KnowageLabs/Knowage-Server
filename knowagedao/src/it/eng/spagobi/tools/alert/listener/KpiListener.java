@@ -170,10 +170,11 @@ public class KpiListener extends AbstractAlertListener {
 	private Integer selectThreshold(SbiKpiValue kpiValue) {
 		for (ThresholdValue threshold : thresholds) {
 			double value = kpiValue.getComputedValue();
-			if ((threshold.getMinValue() == null || value >= threshold.getMinValue().doubleValue())
-					&& (threshold.getMaxValue() == null || value <= threshold.getMaxValue().doubleValue())
-					&& (threshold.isIncludeMin() || value != threshold.getMinValue().doubleValue())
-					&& (threshold.isIncludeMax() || value != threshold.getMaxValue().doubleValue())) {
+			boolean minValueOk = threshold.getMinValue() == null || value > threshold.getMinValue().doubleValue() || threshold.isIncludeMin()
+					&& value == threshold.getMinValue().doubleValue();
+			boolean maxValueOk = threshold.getMaxValue() == null || value < threshold.getMaxValue().doubleValue() || threshold.isIncludeMax()
+					&& value == threshold.getMaxValue().doubleValue();
+			if (minValueOk && maxValueOk) {
 				return threshold.getId();
 			}
 		}
