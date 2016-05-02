@@ -614,6 +614,7 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 			// long tsNow = now.getTime();
 
 			Session session = HibernateSessionManager.getCurrentSession();
+			int lastId = reserveIds(session, "SBI_KPI_VALUE", rowsFormulae.size());
 			for (int r = 0; r < rowsFormulae.size(); r++) {
 				String value = rowsFormulae.get(r);
 				StringBuffer logicalKey = new StringBuffer();
@@ -643,9 +644,9 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 						logicalKey.append(",");
 					logicalKey.append(attributeName).append("=").append(logicalKeyPairs.get(attributeName));
 				}
-				String insertSql = "INSERT INTO SBI_KPI_VALUE (kpi_id, kpi_version, logical_key, time_run, computed_value,"
-						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (" + parsedKpi.id + "," + parsedKpi.version + ",'"
-						+ logicalKey.toString().replaceAll("'", "''") + "','" + isoNow + "'," + (value.toLowerCase().contains("null") ? "0" : value)
+				String insertSql = "INSERT INTO SBI_KPI_VALUE (id, kpi_id, kpi_version, logical_key, time_run, computed_value,"
+						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (" + (++lastId) + ", " + parsedKpi.id + "," + parsedKpi.version
+						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "','" + isoNow + "'," + (value.toLowerCase().contains("null") ? "0" : value)
 						+ ",'ALL','ALL','ALL','ALL','ALL','" + (value.toLowerCase().contains("null") ? '1' : '0') + "')";
 				String whereCondition = "kpi_id = " + parsedKpi.id + " AND kpi_version = " + parsedKpi.version + " AND logical_key = '"
 						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + ifNull(temporalValues.get("DAY"), "ALL")
@@ -671,6 +672,24 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 			throw new JobExecutionException(e);
 		}
 		return sb.toString();
+	}
+
+	synchronized private static int reserveIds(Session session, String tableName, int newRowsCount) {
+		String escapedSequenceName = tableName.toUpperCase().replaceAll("'", "''");
+		session.beginTransaction();
+		Integer lastId = (Integer) session.createSQLQuery("SELECT NEXT_VAL FROM HIBERNATE_SEQUENCES WHERE SEQUENCE_NAME = '" + escapedSequenceName + "'")
+				.uniqueResult();
+		if (lastId == null) {
+			session.createSQLQuery("INSERT INTO HIBERNATE_SEQUENCES (SEQUENCE_NAME, NEXT_VAL) VALUES ('" + escapedSequenceName + "', " + newRowsCount + ")")
+					.executeUpdate();
+			lastId = 0;
+		} else {
+			session.createSQLQuery(
+					"UPDATE HIBERNATE_SEQUENCES SET NEXT_VAL = NEXT_VAL + " + newRowsCount + " WHERE SEQUENCE_NAME = '" + escapedSequenceName + "'")
+					.executeUpdate();
+		}
+		session.getTransaction().commit();
+		return lastId;
 	}
 
 	private static int compareAttributes(List<Comparable> firstRowAttributesValues, List<String> firstRowAttributesNames,
