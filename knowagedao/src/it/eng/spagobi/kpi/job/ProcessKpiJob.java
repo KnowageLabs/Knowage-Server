@@ -1,5 +1,29 @@
 package it.eng.spagobi.kpi.job;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import org.hibernate.Session;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -25,30 +49,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import org.hibernate.Session;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 @SuppressWarnings("rawtypes")
 public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
@@ -227,8 +227,8 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 			return executeQuery(dataSourceId, toString(), quotedParameters);
 		}
 
-		private static QueryResult executeQuery(int dataSourceId, String sql, Map<String, String> quotedParameters) throws JSONException, EMFUserError,
-				EMFInternalError {
+		private static QueryResult executeQuery(int dataSourceId, String sql, Map<String, String> quotedParameters)
+				throws JSONException, EMFUserError, EMFInternalError {
 			// Read measure value
 			int maxItem = 0;
 			IEngUserProfile profile = null;
@@ -509,7 +509,7 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 							queries.add(query);
 
 							// Update the current main measure
-							if (queries.size() == 0 || query.attributesNames.size() > queries.get(mainMeasure).attributesNames.size()) {
+							if (queries.size() <= 1 || query.attributesNames.size() > queries.get(mainMeasure).attributesNames.size()) {
 								mainMeasure = m;
 								if (ntComb == 0) {
 									ntAttributesAll.clear();
@@ -517,8 +517,8 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 								}
 							}
 						}
-						kpiComputationUnits.add(new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes,
-								mainMeasure, replaceMode));
+						kpiComputationUnits.add(
+								new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes, mainMeasure, replaceMode));
 						Integer nextPriority = 0;
 						for (String temporalType : queriesAttributesTemporalTypes.get(mainMeasure).values()) {
 							Integer priority = temporalTypesPriorities.get(temporalType);
