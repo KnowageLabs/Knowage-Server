@@ -3,8 +3,10 @@ package it.eng.spagobi.kpi.job;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -384,7 +386,7 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 						} else if ("EXECUTION_MONTH".equals(schedulerFilter.getValue())) {
 							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + (new Date().getMonth() + 1));
 						} else if ("EXECUTION_WEEK".equals(schedulerFilter.getValue())) {
-							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "1"); // TODO
+							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + GregorianCalendar.getInstance().get(Calendar.WEEK_OF_YEAR));
 						} else if ("EXECUTION_QUARTER".equals(schedulerFilter.getValue())) {
 							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + (new Date().getMonth() / 4 + 1));
 						} else if ("EXECUTION_YEAR".equals(schedulerFilter.getValue())) {
