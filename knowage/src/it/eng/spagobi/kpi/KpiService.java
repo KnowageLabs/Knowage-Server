@@ -18,76 +18,6 @@
 package it.eng.spagobi.kpi;
 
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
-
-import java.io.IOException;
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.List;
-import java.util.Map;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-import java.util.TreeMap;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptEngineManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONObject;
-import org.quartz.JobExecutionException;
-import org.quartz.JobExecutionException;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -134,9 +64,48 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.quartz.JobExecutionException;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- *
+ * 
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -304,7 +273,7 @@ public class KpiService {
 	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
 	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
 	 * "1"},...]}
-	 *
+	 * 
 	 * @param req
 	 * @return
 	 * @throws EMFUserError
@@ -812,10 +781,22 @@ public class KpiService {
 		if (target.getValues() == null || target.getValues().isEmpty()) {
 			e.addError("Values are mandatory");
 		}
-		// Targets' start/end validity dates cannot overlap
-		List<Target> ll = dao.listTarget(target.getStartValidity(), target.getEndValidity());
-		if (ll.size() > 1 || ll.size() == 1 && ll.get(0).getId() != target.getId()) {
-			e.addErrorKey("newKpi.target.alreadyExistingPeriod");
+		// start/end validity dates of targets with same kpis cannot overlap
+		Set<String> kpis = new HashSet<>();
+		for (TargetValue targetValue : target.getValues()) {
+			kpis.add(targetValue.getKpi().getName());
+		}
+		List<Target> ll = dao.listOverlappingTargets(target.getId(), target.getStartValidity(), target.getEndValidity(), kpis);
+		String names = "";
+		for (int i = 0; i < ll.size(); i++) {
+			if (i != 0) {
+				names += ", ";
+			}
+			Target sameDateTarget = ll.get(i);
+			names += sameDateTarget.getName();
+		}
+		if (!names.isEmpty()) {
+			e.addErrorKey("newKpi.target.alreadyExistingPeriod", names);
 		}
 		return e;
 	}
@@ -979,7 +960,7 @@ public class KpiService {
 
 	/**
 	 * Check if placeholders with default value are a subset of placeholders linked to measures used in kpi definition (ie kpi formula)
-	 *
+	 * 
 	 * @param servlet
 	 *            request
 	 * @param placeholder
