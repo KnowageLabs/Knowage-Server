@@ -199,7 +199,7 @@ author:
 	<div style="padding:2em; font-size: 0.7em">kpiItems: {{kpiItems | json}}</div>
 	--%>
 	<%
-		if(type.equalsIgnoreCase("kpi")) {
+	if(type.equalsIgnoreCase("kpi")) {
 		String model = (String)chartObj.get("model");
 		
 		if(model.equalsIgnoreCase("widget")) {
@@ -221,8 +221,6 @@ author:
 			       
 				</md-toolbar>
 				
-	
-	        
 				<kpi-gauge ng-if="kpiItem.viewAs=='speedometer'" layout="column"
 						gauge-id="kpiItem.id" label="kpiItem.name" size="kpiItem.size"
 						min-value="kpiItem.minValue" max-value="kpiItem.maxValue"
@@ -232,6 +230,7 @@ author:
 						show-thresholds="kpiItem.showThreshold"
 					value-precision="kpiItem.precision" font-conf="kpiItem.fontConf"></kpi-gauge>
 			</md-whiteframe>
+	        
 			<kpi-widget ng-if="kpiItem.viewAs=='kpicard'" widget-id="kpiItem.id" 
 					label="kpiItem.name" font-conf="kpiItem.fontConf"
 					show-target-percentage="kpiItem.showTargetPercentage"
@@ -246,9 +245,6 @@ author:
 	<%
 		} else if(model.equalsIgnoreCase("list")) {
 	%>
-	<%--
-	<div style="padding:2em; font-size: 0.7em">kpiItems: {{kpiItems | json}}</div>
-	--%>
 	<kpi-list-document kpi-items="kpiItems"> </kpi-list-document>
 	<%
 		}
@@ -258,7 +254,7 @@ author:
 	<!-- SCORECARD -->
 
 	<%
-		}
+	}
 	%>
 
 	<%-- kpi document angular imports --%>

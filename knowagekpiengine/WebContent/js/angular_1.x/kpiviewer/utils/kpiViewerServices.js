@@ -8,8 +8,10 @@
 			
 			gauge : null,
 			
-			createWidgetConfiguration : function(templateKpi, kpiValue, templateOptions, templateStyle) {
+			createWidgetConfiguration : function(templateKpi, kpiValue, template) {
 
+				var templateOptions = template.options;
+				var templateStyle = template.style;
 				
 				var conf = {};
 				
@@ -42,7 +44,7 @@
 					};
 					
 					var stopsConf = kpiViewerServices.generateStopsConf(
-							kpiValue.threshold, limits, conf.viewAs);
+							kpiValue.threshold, limits, template.model ,conf.viewAs);
 					
 					conf.thresholdStops = stopsConf.stops;
 					
@@ -74,7 +76,7 @@
 			 *  	max: Number
 			 *  }
 			 */
-			generateStopsConf : function(threshold, limits, vieweas) {
+			generateStopsConf : function(threshold, limits, model, vieweas) {
 				vieweas = (vieweas || 'speedometer').toLowerCase();
 				var thresholdsQuantity = threshold.thresholdValues.length;
 				
@@ -127,7 +129,9 @@
 					else if (i == thresholdsQuantity - 1) {
 						if(threshold.maxValue == null || threshold.maxValue > highestLimit) {
 //							stopConf.to = highestLimit;
-							stopConf.to = (vieweas == 'kpicard') ? highestLimit * 1.5 : highestLimit;
+							// for linear gauge the upper bound reaches 150%
+							stopConf.to = (model == 'list' || model == 'widget' && vieweas == 'kpicard') ? 
+									highestLimit * 1.5 : highestLimit;
 						} else {
 							stopConf.to = threshold.maxValue;
 						}
@@ -139,7 +143,6 @@
 						stopConf.to = threshold.maxValue;
 						stopConf.from = threshold.minValue;
 					}
-					
 					
 					stopConf.includeMin = threshold.includeMin;
 					stopConf.includeMax = threshold.includeMax;
@@ -153,7 +156,8 @@
 				return {
 					stops: stops,
 					newMin: lowestLimit,
-					newMax: highestLimit
+					newMax: (model == 'list') ? 
+								highestLimit * 1.5 : highestLimit
 				};
 			},
 		};

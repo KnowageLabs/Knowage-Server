@@ -573,13 +573,8 @@
 		
 		$scope.columns = 
 			[{
-				label: sbiModule_translate.load("sbi.generic.name"),
-				name: "name"
-			},{
-				label: sbiModule_translate.load("sbi.generic.value"),
-				name: "value"
-			},{
-				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.semaphore"),
+//				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.semaphore"),
+				label: " ",
 				name: "semaphore",
 				comparatorFunction:function(a, b){
 					var aSeverity = a.severity.toLowerCase().trim(); 
@@ -589,18 +584,25 @@
 					var bValue = bSeverity=='' ? 0 : $scope.severityPriority[bSeverity];
 					
 					return (bValue - aValue);
-				}
+				},
+				size: 30
 			},{
 				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.severity"),
 				name: "severity"
 			},{
-				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.trend"),
-				name: "trend",
-				size: 200
+				label: sbiModule_translate.load("sbi.generic.name"),
+				name: "name"
+			},{
+				label: sbiModule_translate.load("sbi.generic.value"),
+				name: "value"
 			},{
 				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.lineargauge"),
 				name: "lineargauge",
 				size: $scope.LINEAR_GAUGE_SIZE
+			},{
+				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.trend"),
+				name: "trend",
+				size: 200
 			}];
 		
 		$scope.getLinearGaugeTemplate = function(kpiItem) {
@@ -714,13 +716,17 @@
 				var thresholdData = $scope.getCurrentThresholdData(kpiItem);
 				var obj = {};
 				
-				obj.name = kpiItem.name;
-				obj.value = kpiItem.value;
 				obj.semaphore = '<kpi-semaphore-indicator indicator-color=\'' 
 					+ JSON.stringify(thresholdData.color) + '\'></kpi-semaphore-indicator>';
+				
 				obj.severity = thresholdData.severity;
-				obj.trend = $scope.getLineChartTemplate(kpiItem);
+				obj.name = kpiItem.name;
+				
+				obj.value = (kpiItem.precision && kpiItem.precision != '')? 
+						kpiItem.value.toFixed(kpiItem.precision) : kpiItem.value;
+						
 				obj.lineargauge = $scope.getLinearGaugeTemplate(kpiItem);
+				obj.trend = $scope.getLineChartTemplate(kpiItem);
 				
 				result.push(obj)
 			}

@@ -96,7 +96,7 @@
 
 								if(templateKpiItem.id == responseItemKpi.id) {
 									var conf = kpiViewerServices.createWidgetConfiguration(
-											templateKpiItem, responseItemKpi, templateOptions, templateStyle);
+											templateKpiItem, responseItemKpi, chart);
 
 									/* MOCK */
 									if(!conf.value) {
@@ -213,8 +213,8 @@
 					$scope.errorHandler(response.data,"");
 				});
 			}
-
 		};
+
 		$scope.showAction = function(text) {
 			var toast = $mdToast.simple()
 			.content(text)
@@ -232,7 +232,5 @@
 			});
 		};
 
-
-	
-	}
+	};
 })();
