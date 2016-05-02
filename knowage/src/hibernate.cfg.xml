@@ -126,6 +126,10 @@
 		<mapping resource="it/eng/spagobi/wapp/metadata/mapping/SbiMenu.hbm.xml" />
 		<mapping resource="it/eng/spagobi/wapp/metadata/mapping/SbiMenuRole.hbm.xml" />
 
+		<!-- Alarm -->
+		<mapping resource="it/eng/spagobi/tools/alert/metadata/mapping/SbiAlertAction.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/alert/metadata/mapping/SbiAlertListener.hbm.xml" />
+
 		<!-- Kpi.alarm -->
 		<!-- 
 		<mapping resource="it/eng/spagobi/kpi/alarm/metadata/mapping/SbiAlarm.hbm.xml" />
