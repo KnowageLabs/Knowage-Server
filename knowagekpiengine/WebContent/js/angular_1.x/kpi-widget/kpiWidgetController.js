@@ -38,7 +38,7 @@
 			$scope.value = $scope.value.toFixed($scope.precision);
 			$scope.targetValue = $scope.targetValue.toFixed($scope.precision);
 		}
-		
+
 
 		$scope.options = {
 				chart: {
@@ -98,20 +98,23 @@
 					}else{
 						arrTemp.push(arrKpi[i].timeRun,arrKpi[i].computedValue);
 					}
-					
+
 					array.push(arrTemp);
 
 				}
-			
+
 				return array;
 			}
-			//return [];
+
 		},
 
-		$scope.data = [{
-			"values" : [ [ 1025409600000 , 9.3433263069351] , [ 1028088000000 , 8.4583069475546]]
-		}];
+//		$scope.data = [{
+//			"values" : [ [ 1025409600000 , 9.3433263069351] , [ 1028088000000 , 8.4583069475546]]
+//		}];
 
+		$scope.data = [{
+			"values" : []
+		}];
 		$scope.getValueToShow = function(){
 
 			if($scope.value>=1000){
@@ -165,7 +168,7 @@
 		}
 	};
 
-	function DialogController($scope,$mdDialog,sbiModule_restServices,sbiModule_config,sbiModule_translate,items,label,value,targetValue,valueSeries){
+	function DialogController($scope,$mdDialog,$mdToast,sbiModule_restServices,sbiModule_config,sbiModule_translate,items,label,value,targetValue,valueSeries){
 		debugger;
 		$scope.label = label;
 		$scope.value = value;
@@ -187,33 +190,60 @@
 				$scope.array.push(obj);
 			}
 		}
+		
 		$scope.parseLogicalKey();
 		$scope.close = function(){
 			$mdDialog.cancel();
 
 		}
 		$scope.apply = function(){
-			$mdDialog.cancel();
-			$scope.kpiValueToSave = {};
-			$scope.kpiValueToSave["manualValue"] = $scope.value;
-			$scope.kpiValueToSave["manualNote"] = $scope.valueSeries.manualNote;
-			$scope.kpiValueToSave["valueSeries"] = $scope.valueSeries;
-			sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
-			sbiModule_restServices.promisePost("1.0/kpi", 'editKpiValue',$scope.kpiValueToSave)
-			
-			.then(function(response){ 
-				var obj = {};
-				obj["value"] = $scope.value;
-				obj["comment"] = $scope.kpiValueToSave["manualNote"];
-				items.resolve(obj);
-				console.log("Saved");
-			},function(response){
-				$scope.errorHandler(response.data,"");
+			if($scope.valueSeries.manualNote==null || $scope.valueSeries.manualNote.trim()==""){
+				$scope.showAction($scope.translate.load("sbi.kpi.widget.missingcomment"));
+				$scope.value = $scope.oldValue;
+			}else{
+				if($scope.value==undefined){
+					$scope.value = null;
+				}
+				$mdDialog.cancel();
+				$scope.kpiValueToSave = {};
+				$scope.kpiValueToSave["manualValue"] = $scope.value;
+				$scope.kpiValueToSave["manualNote"] = $scope.valueSeries.manualNote;
+				$scope.kpiValueToSave["valueSeries"] = $scope.valueSeries;
+				sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
+				sbiModule_restServices.promisePost("1.0/kpi", 'editKpiValue',$scope.kpiValueToSave)
+	
+				.then(function(response){ 
+					var obj = {};
+					if($scope.value==null){
+						$scope.value =$scope.valueSeries.computedValue;
+					}
+					obj["value"] = $scope.value;
+					obj["comment"] = $scope.kpiValueToSave["manualNote"];
+					items.resolve(obj);
+					console.log("Saved");
+				},function(response){
+					$scope.errorHandler(response.data,"");
+				});
+			}
+
+		};
+		$scope.showAction = function(text) {
+			var toast = $mdToast.simple()
+			.content(text)
+			.action('OK')
+			.highlightAction(false)
+			.hideDelay(3000)
+			.position('top')
+
+			$mdToast.show(toast).then(function(response) {
+
+				if ( response == 'ok' ) {
+
+
+				}
 			});
+		};
 
-		}
-
-		
 
 	}
 

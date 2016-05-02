@@ -23,7 +23,7 @@
 			<div flex>
 					<md-input-container class="small counter" class="small counter" >
 						<label>{{translate.load("sbi.kpi.widget.kpi")}}</label>
-						<input class="input_class" ng-model="value" required> 
+						<input class="input_class" ng-model="value" type="number"> 
 					</md-input-container>
 			</div>	
 		</div>
