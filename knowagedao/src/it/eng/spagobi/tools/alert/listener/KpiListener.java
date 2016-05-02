@@ -7,6 +7,8 @@ import it.eng.spagobi.kpi.bo.ThresholdValue;
 import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
 import it.eng.spagobi.kpi.metadata.SbiKpiValue;
 import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.alert.action.IAlertAction;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertAction;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertLog;
@@ -25,7 +27,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.quartz.JobExecutionException;
 
 public class KpiListener extends AbstractAlertListener {
 
@@ -77,21 +78,14 @@ public class KpiListener extends AbstractAlertListener {
 			alertLog.setActionId(action.getIdAction());
 			alertLog.setActionParams(action.getJsonActionParameters());
 		}
-		Integer listenerId = getListenerId();
-		if (listenerId != null) {
-			alertLog.setListenerId(listenerId);
-		}
+		alertLog.setListenerId(getListenerId());
 		alertLog.setDetail(errorMsg);
 		alertLog.setListenerParams(JsonConverter.objectToJson(par, par.getClass()));
 		alertLog.getCommonInfo().setTimeIn(new Date());
 		alertLog.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
-		try {
-			String tenantId = getTenant();
-			if (tenantId != null) {
-				alertLog.getCommonInfo().setOrganization(tenantId);
-			}
-		} catch (JobExecutionException e) {
-			logger.error("Unable to get tenant info", e);
+		Tenant tenant = TenantManager.getTenant();
+		if (tenant != null) {
+			alertLog.getCommonInfo().setOrganization(tenant.getName());
 		}
 		session.save(alertLog);
 	}
