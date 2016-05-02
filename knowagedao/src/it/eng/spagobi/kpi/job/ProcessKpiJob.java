@@ -56,7 +56,7 @@ import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
 public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 	// Only SQL is supported.
 	// Getters/setters omitted are from inner classes for readability.
-	// TODO: handle LOV and EXECUTION_WEEK placeholders, test and debug
+	// TODO: handle LOV placeholders, test and debug
 
 	// =============================
 	// ======= INNER CLASSES =======
