@@ -19,8 +19,11 @@
 package it.eng.spagobi.engines.network.services;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.InputStream;
+
+import org.apache.log4j.Logger;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -28,6 +31,8 @@ import java.io.InputStream;
  */
 public class NetworkExportAction extends AbstractNetworkEngineAction{
 
+	/** Logger component. */
+	public static transient Logger logger = Logger.getLogger(NetworkExportAction.class);
 
 	private static final long serialVersionUID = 7229174935514794865L;
 	private static final String EXPORTED_FILE_NAME = "ExportedNetwork";
@@ -44,8 +49,8 @@ public class NetworkExportAction extends AbstractNetworkEngineAction{
 			
 			
 		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println("eeee");
+			logger.error("Error exporting the network",e);
+			throw new SpagoBIRuntimeException("Error exporting the network",e);
 		}
 
 		

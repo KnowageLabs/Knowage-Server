@@ -150,53 +150,27 @@ Ext.define('Sbi.network.NetworkObject', {
 		
 
 		if(networkLink!=null && networkLink!=undefined){
-			this.networkSwf.addListener("dbclick", "edges", function(evt) {
+			this.networkSwf.addListener("dblclick", "edges", function(evt) {
 	
 	            var edge = evt.target;
-	            var parametersString="";
+	            var parameter={};
 	
-	            var fixedParameters = networkLink.fixedParameters;
-	            if(fixedParameters!=null && fixedParameters!=undefined){
-	            	for(var parameter in fixedParameters){
-	            		parametersString = parametersString+"&"+parameter+'='+fixedParameters[parameter];
-	            	}
-	            }
-	
-	            var dynamicParameters = networkLink.dynamicParameters;
-	            if(dynamicParameters!=null && dynamicParameters!=undefined){
-	            	var edgeParameters = dynamicParameters.EDGE; 
-	                if(edgeParameters!=null && edgeParameters!=undefined){
-	                	for(var parameter in edgeParameters){
-	                		parametersString = parametersString+"&"+edgeParameters[parameter]+'='+edge.data[parameter];
-	                	}
-	                }
+	            for(var prop in edge.data){
+	            	parameter["edge."+prop]=edge.data[prop];
 	            }
 	  
-	            eval("javascript:parent.execCrossNavigation(this.name,  '" +networkLink.document+"','"+parametersString + "','','','"+networkLink.target+"');");
+	            eval("javascript:parent.execExternalCrossNavigation("+JSON.stringify(parameter)+")");
 	        });
-			this.networkSwf.addListener("dbclick", "nodes", function(evt) {
+			this.networkSwf.addListener("dblclick", "nodes", function(evt) {
 				
 	            var edge = evt.target;
-	            var parametersString="";
-	
-	            var fixedParameters = networkLink.fixedParameters;
-	            if(fixedParameters!=null && fixedParameters!=undefined){
-	            	for(var parameter in fixedParameters){
-	            		parametersString = parametersString+"&"+parameter+'='+fixedParameters[parameter];
-	            	}
+	            var parameter={};
+	            
+	            for(var prop in edge.data){
+	            	parameter["node."+prop]=edge.data[prop];
 	            }
-	
-	            var dynamicParameters = networkLink.dynamicParameters;
-	            if(dynamicParameters!=null && dynamicParameters!=undefined){
-	            	var edgeParameters = dynamicParameters.NODE; 
-	                if(edgeParameters!=null && edgeParameters!=undefined){
-	                	for(var parameter in edgeParameters){
-	                		parametersString = parametersString+"&"+edgeParameters[parameter]+'='+edge.data[parameter];
-	                	}
-	                }
-	            }
-	  
-	            eval("javascript:parent.execCrossNavigation(this.name,  '" +networkLink.document+"','"+parametersString + "','','','"+networkLink.target+"');");
+	            
+	            eval("javascript:parent.execExternalCrossNavigation("+JSON.stringify(parameter)+")");
 	        });
 		}
 	}
@@ -220,7 +194,7 @@ Ext.define('Sbi.network.NetworkObject', {
             }
 
             
-            alert(tooltipText);
+            Sbi.exception.ExceptionHandler.showInfoMessage(tooltipText);
             
         };
 		if(this.networkOptions.visualStyle.nodes.tooltip){

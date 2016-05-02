@@ -86,6 +86,19 @@ Ext.define('Sbi.exception.ExceptionHandler', {
        		});
         }
         
+        , showInfoMessage : function(errMessage, title, config) {
+        	var m = errMessage || 'Info';
+        	var t = title || 'Info';
+
+        	Ext.MessageBox.show(Ext.apply({
+           		title: t
+           		, msg: m
+           		, buttons: Ext.MessageBox.OK
+           		, icon: Ext.MessageBox.INFO
+           		, modal: false
+       		},config||{}));
+        }
+        
        , onStoreLoadException : function(proxy, type, action, options, response, arg) {
         	Sbi.exception.ExceptionHandler.handleFailure(response, options);
         }
