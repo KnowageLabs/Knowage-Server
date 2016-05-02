@@ -677,15 +677,15 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 	synchronized private static int reserveIds(Session session, String tableName, int newRowsCount) {
 		String escapedSequenceName = tableName.toUpperCase().replaceAll("'", "''");
 		session.beginTransaction();
-		Integer lastId = (Integer) session.createSQLQuery("SELECT NEXT_VAL FROM HIBERNATE_SEQUENCES WHERE SEQUENCE_NAME = '" + escapedSequenceName + "'")
+		Integer lastId = (Integer) session.createSQLQuery("SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME = '" + escapedSequenceName + "'")
 				.uniqueResult();
 		if (lastId == null) {
-			session.createSQLQuery("INSERT INTO HIBERNATE_SEQUENCES (SEQUENCE_NAME, NEXT_VAL) VALUES ('" + escapedSequenceName + "', " + newRowsCount + ")")
+			session.createSQLQuery("INSERT INTO hibernate_sequences (SEQUENCE_NAME, NEXT_VAL) VALUES ('" + escapedSequenceName + "', " + newRowsCount + ")")
 					.executeUpdate();
 			lastId = 0;
 		} else {
 			session.createSQLQuery(
-					"UPDATE HIBERNATE_SEQUENCES SET NEXT_VAL = NEXT_VAL + " + newRowsCount + " WHERE SEQUENCE_NAME = '" + escapedSequenceName + "'")
+					"UPDATE hibernate_sequences SET NEXT_VAL = NEXT_VAL + " + newRowsCount + " WHERE SEQUENCE_NAME = '" + escapedSequenceName + "'")
 					.executeUpdate();
 		}
 		session.getTransaction().commit();
