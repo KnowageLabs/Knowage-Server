@@ -7,9 +7,7 @@ angular.module('angular_time_picker', ['ngMaterial'])
     	ngModel:'=',
     	id:"@"
     	},
-      link: function (scope, elm, attrs) { 
-    	  console.log("Inizializzo angularTimePicker con id "+scope.id);
-    	  
+      link: function (scope, elm, attrs) {   
 	    	  if(!attrs.id){
 	    		  scope.id= (new Date()).getTime();
 	    	  }
@@ -79,8 +77,7 @@ function angularTimePickerFunction($scope){
 	$scope.$watch(
 			function() {
 				return s.ngModel;
-			}, function(newValue, oldValue) {
-				console.log("$watch",oldValue,newValue)
+			}, function(newValue, oldValue) { 
 				if (newValue != oldValue) {
 					s.hours=s.getHours();
 					s.minutes=s.getMinutes();
@@ -95,8 +92,7 @@ function angularTimePickerFunction($scope){
 				return elem==undefined? null:  elem.valueAsNumber;
 			}, function(newValue, oldValue) {
 				
-				if (newValue != oldValue) {
-					console.log("$watch elem",oldValue,newValue);
+				if (newValue != oldValue) { 
 					if(newValue>59 || newValue<0){
 						angular.element(document.querySelector('angular-time-picker #minInput-'+$scope.id))[0].value=oldValue;
 					}else{
@@ -113,7 +109,6 @@ function angularTimePickerFunction($scope){
 			}, function(newValue, oldValue) {
 				
 				if (newValue != oldValue) {
-					console.log("$watch elem",oldValue,newValue);
 					if(newValue>23 || newValue<0){
 						angular.element(document.querySelector('angular-time-picker #hoursInput-'+$scope.id))[0].value=oldValue;
 					}else{

@@ -14,7 +14,6 @@ angular.module('bread_crumb', ['ngMaterial'])
 			disableGoBack:"=?"
 		},
 		link: function (scope, elm, attrs) { 
-			console.log("Inizializzo bread_crumb ");
 			scope.control = scope.control || {};
 			scope.ngModel= scope.ngModel || [];
 			if(scope.control.insertBread==undefined){

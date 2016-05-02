@@ -8,7 +8,7 @@
         {{translate.load("cancel**")}}
       </md-button>
       
-      <md-button ng-click="save()"  >
+      <md-button ng-disabled="!isValidAction.status || currentAction.thresholdValues==undefined || currentAction.thresholdValues.length==0" ng-click="save()"  >
        {{translate.load("save**")}}
       </md-button>
         
@@ -18,16 +18,15 @@
       <div class="md-dialog-content" flex layout="column"> 
        <md-input-container>
         <label>{{translate.load("Type**")}}</label>
-        <md-select ng-model="currentAction.type">
-          <md-option ng-repeat="type in actionType" value="{{type.name}}">{{type.label}}</md-option>
+        <md-select ng-model="currentAction.idAction" >
+          <md-option ng-repeat="type in actionType" value="{{type.id}}" ng-click="changeCurrentActionType(type)">{{type.name}}</md-option>
         </md-select>
       </md-input-container> 
       
-      <md-content ng-if="currentAction.type=='mail'" layout="column" flex>
-      	<md-input-container>
+      <md-input-container>
 	    	<label>{{translate.load("threshold **")}}</label>
-	        <md-select ng-model="currentAction.threshold" multiple>
-	          <md-option ng-repeat="threshVal in kpi.threshold.thresholdValues" ng-value="threshVal">
+	        <md-select ng-model="currentAction.thresholdValues" multiple >
+	          <md-option ng-repeat="threshVal in kpi.threshold.thresholdValues" value="{{threshVal.id}}">
 		          <div layout="row">
 		          	<div style="width:20px; height:20px; margin-right: 5px;" ng-style="{'background-color':threshVal.color}"></div>
 		          	<span flex>{{threshVal.label}}</span>
@@ -35,27 +34,9 @@
 	          </md-option>
 	        </md-select>
 	    </md-input-container> 
-	      
-	    <div class="md-whiteframe-4dp" style="overflow:scroll;" layout-margin layout-padding layout="column" flex ng-init="currentAction.jsonTemplate=currentAction.jsonTemplate==undefined ? {mailTo:[]} : currentAction.jsonTemplate">
-			 <div layout="row"   layout-align="center end"  >
-			      <label >{{translate.load("Mail to**")}}</label>
-			       <md-chips flex ng-model="currentAction.jsonTemplate.mailTo" ></md-chips>
-			 </div>
-			 
-			 
-			<md-input-container  class="md-block" >
-			      <label>{{translate.load("Subobject**")}}</label>
-			      <input ng-model="currentAction.jsonTemplate.subObject">
-			</md-input-container>
-			
-			<div style="position:relative">
-				<wysiwyg-edit style="position:absolute" content="currentAction.jsonTemplate.mailBody"></wysiwyg-edit>
-			</div>
-			
-    		
-  		</div>
-	      
-      </md-content>
+	     
+       <action-maker flex ng-if="currentActionType.id!=undefined"  ng-model="currentAction.jsonActionParameters" template-url="currentActionType.template" is-valid="isValidAction"></action-maker>
+      
       </div>
     </md-dialog-content>
    

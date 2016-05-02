@@ -97,6 +97,15 @@ sbiM.config(function($mdDateLocaleProvider) {
 		if (!date){
 			return null;
 		}
+		
+		if(!angular.isDate(date)){
+			try{
+				date=new Date(date);
+			}catch(e){
+				return null;
+			}
+		}
+		
 		var formats = localizedDateFormat.split('/');
 		var dateResult='';
 		for (var time in formats){

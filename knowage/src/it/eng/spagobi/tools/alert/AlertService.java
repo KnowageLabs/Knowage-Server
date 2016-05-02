@@ -37,7 +37,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- * 
+ *
  */
 @Path("/1.0/alert")
 @ManageAuthorization
@@ -100,10 +100,10 @@ public class AlertService {
 			frequency.setEndTime(triggerInfo.getEndTime());
 			frequency.setCron(triggerInfo.getChrono() != null ? new JSONObject(triggerInfo.getChrono()).toString() : null);
 			SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-			if (triggerInfo.getStartDate() != null) {
+			if (triggerInfo.getStartDate() != null && !"".equals(triggerInfo.getStartDate())) {
 				frequency.setStartDate(df.parse(triggerInfo.getStartDate()).getTime());
 			}
-			if (triggerInfo.getEndDate() != null) {
+			if (triggerInfo.getEndDate() != null && !"".equals(triggerInfo.getEndDate())) {
 				frequency.setEndDate(df.parse(triggerInfo.getEndDate()).getTime());
 			}
 			alert.setFrequency(frequency);

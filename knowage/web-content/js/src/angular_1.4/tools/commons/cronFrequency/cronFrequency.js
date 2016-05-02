@@ -7,58 +7,133 @@ var scriptsCF = document.getElementsByTagName("script");
 var currentScriptPathCF = scriptsCF[scriptsCF.length - 1].src;
 
 angular.module('cron_frequency', [ 'ngMaterial','sbiModule','angular_time_picker'])
+.service('$cronFrequency',function(){ 
+	this.parseForBackend=function(item){
+		if(angular.isDate(item.frequency.startDate)){
+			item.frequency.startDate=item.frequency.startDate.getTime();
+		}else{
+			item.frequency.startDate=(new Date(item.frequency.startDate)).getTime();
+		}
+		
+		if(item.frequency.endDate!=undefined && item.frequency.endDate!=null){
+			if(angular.isDate(item.frequency.endDate)){
+				item.frequency.endDate=item.frequency.endDate.getTime();
+			}else{
+				item.frequency.endDate=(new Date(item.frequency.endDate)).getTime();
+			}
+		}
+		
+		item.frequency.cron=JSON.stringify(item.frequency.cron);
+		 
+	}
+
+}) 
 .directive('cronFrequency', function() {
 	  return {
 	    templateUrl: currentScriptPathCF.substring(0, currentScriptPathCF.lastIndexOf('/') + 1) +'/template/cronFrequencyTemplate.html',
 	    controller: cronFrequencyFunction,
 	    scope: {
 	    	ngModel:'=',
-	    	id:"@"
+	    	id:"@",
+	    	isValid:"=?"
 	    	},
-	      link: function (scope, elm, attrs) { 
-	    	  console.log("Inizializzo Crone");
+	      link: function (scope, elm, attrs) {  
+	    	  var cronoIsValid=function(newVal){
+	    		  if(!angular.isDate(newVal.startDate)) return false;
+    			  
+    			  if(newVal.endDate!=undefined && newVal.endDate!=null && !angular.isDate(newVal.endDate)) return false;
+    			  
+    			  if(newVal.endDate!=undefined && newVal.endDate!=null && angular.isDate(newVal.endDate)){
+    				  var startMills= newVal.startDate.getTime();
+    				  var dateTime=new Date();
+    				  var arrST=newVal.startTime.split(":");
+    				  dateTime.setHours(arrST[0]);
+    				  dateTime.setMinutes(arrST[1]);
+    				  startMills+=dateTime.getTime();
+    				  
+    				  var endMills= newVal.endDate.getTime();
+    				  var dateEndTime=new Date();
+    				  var arrET=newVal.endTime.split(":");
+    				  dateEndTime.setHours(arrET[0]);
+    				  dateEndTime.setMinutes(arrET[1]);
+    				  endMills+=dateEndTime.getTime();
+    				  
+    				  if(endMills<startMills)return false; 
+    			  }
+				  
+				  return true
+	    	  }
+	    	  scope.$watch(function(){
+	    		  return scope.ngModel;
+	    	  },function(newVal,oldVal){
+	    		  if(newVal!=oldVal){  
+	    			  if( scope.isValid!=undefined){
+	    				  scope.isValid.status=cronoIsValid(newVal);
+    				  
+	    			  }
+	    		  }
+	    	  },true)
+	    	  
 	    	  function initNgModel(){
 	    		  //convert string date to Date object
-	    		  	scope.ngModel.startDate = new Date(scope.ngModel.startDate);
+	    		  if(scope.ngModel.startDate==undefined){
+		    		  	scope.ngModel.startDate = new Date();
+	    		  }else{
+	    			  if(!angular.isDate(scope.ngModel.startDate)){
+	    				  scope.ngModel.startDate = new Date(scope.ngModel.startDate);
+	    			  }  
+	    		  }
+	    		  
 	    		  	if(scope.ngModel.endDate != undefined && scope.ngModel.endDate != "") {
-	    		  		scope.ngModel.endDate = new Date(scope.ngModel.endDate);
+	    		  		if(!angular.isDate(scope.ngModel.endDate)){
+		    				  scope.ngModel.endDate = new Date(scope.ngModel.endDate);
+		    			  }   
 					}
 	    		  
-	    		  	//load crono structure
-	    		  	scope.eventSched.repetitionKind=scope.ngModel.crono.type
-	    		  
-					if(scope.eventSched.repetitionKind == 'minute'){
-						scope.eventSched.minute_repetition_n=scope.ngModel.crono.parameter.numRepetition;
-					} else if(scope.eventSched.repetitionKind == 'hour'){
-						scope.eventSched.hour_repetition_n=scope.ngModel.crono.parameter.numRepetition;
-					} else if(scope.eventSched.repetitionKind == 'day'){
-						scope.eventSched.day_repetition_n=scope.ngModel.crono.parameter.numRepetition;
-					} else if(scope.eventSched.repetitionKind == 'week') {	
-						scope.selectedWeek = scope.ngModel.crono.parameter.days;
-					} else if(scope.eventSched.repetitionKind== 'month') {
-						if(scope.ngModel.crono.parameter.hasOwnProperty("months")) {
-							scope.typeMonth = false;
-							scope.month_repetition = scope.ngModel.crono.parameter.months;
-						} else {
-							scope.typeMonth = true;
-							scope.monthrep_n = scope.ngModel.crono.parameter.numRepetition;
-							scope.month_week_number_repetition = scope.ngModel.crono.parameter.weeks;
-							scope.month_week_repetition = scope.ngModel.crono.parameter.days;
+	    		  	//load cron structure
+	    		  	if(scope.ngModel.cron!=undefined){
+		    		  	scope.eventSched.repetitionKind=scope.ngModel.cron.type
+		    		  
+						if(scope.eventSched.repetitionKind == 'minute'){
+							scope.eventSched.minute_repetition_n=scope.ngModel.cron.parameter.numRepetition;
+						} else if(scope.eventSched.repetitionKind == 'hour'){
+							scope.eventSched.hour_repetition_n=scope.ngModel.cron.parameter.numRepetition;
+						} else if(scope.eventSched.repetitionKind == 'day'){
+							scope.eventSched.day_repetition_n=scope.ngModel.cron.parameter.numRepetition;
+						} else if(scope.eventSched.repetitionKind == 'week') {	
+							scope.selectedWeek = scope.ngModel.cron.parameter.days;
+						} else if(scope.eventSched.repetitionKind== 'month') {
+							if(scope.ngModel.cron.parameter.hasOwnProperty("months")) {
+								scope.typeMonth = false;
+								scope.month_repetition = scope.ngModel.cron.parameter.months;
+							} else {
+								scope.typeMonth = true;
+								scope.monthrep_n = scope.ngModel.cron.parameter.numRepetition;
+								scope.month_week_number_repetition = scope.ngModel.cron.parameter.weeks;
+								scope.month_week_repetition = scope.ngModel.cron.parameter.days;
+							}
+							
+							if(scope.ngModel.cron.parameter.hasOwnProperty("days")) {
+								scope.typeMonthWeek = false;
+								scope.month_week_number_repetition = scope.ngModel.cron.parameter.weeks;
+								scope.month_week_repetition = scope.ngModel.cron.parameter.days;
+							} else {
+								scope.typeMonthWeek = true;
+								scope.dayinmonthrep_week = scope.ngModel.cron.parameter.dayRepetition;
+							}
 						}
-						
-						if(scope.ngModel.crono.parameter.hasOwnProperty("days")) {
-							scope.typeMonthWeek = false;
-							scope.month_week_number_repetition = scope.ngModel.crono.parameter.weeks;
-							scope.month_week_repetition = scope.ngModel.crono.parameter.days;
-						} else {
-							scope.typeMonthWeek = true;
-							scope.dayinmonthrep_week = scope.ngModel.crono.parameter.dayRepetition;
-						}
-					}
-				
+	    		  	}
 	    		  
 	    	  }
+	    	  
 	    	  initNgModel();
+	    	  
+	    	  scope.$watch(function(){
+	    		  return scope.ngModel},
+	    		  function(newVal,oldVal){
+	    			  if(newVal!=oldVal){
+	    				  initNgModel();
+	    			  }},true)
 		    	  
 	    	  }
 	  }
@@ -134,7 +209,7 @@ angular.module('cron_frequency', [ 'ngMaterial','sbiModule','angular_time_picker
 		        }
 			}
 		
-			$scope.ngModel.crono = {
+			$scope.ngModel.cron = {
 	    		"type": "week", 
 	    		"parameter": {
 	    			"days": []
@@ -142,12 +217,12 @@ angular.module('cron_frequency', [ 'ngMaterial','sbiModule','angular_time_picker
 	        };
 	        
 	        for(var k in $scope.selectedWeek ) {
-	        	$scope.ngModel.crono.parameter.days.push($scope.selectedWeek[k]);
+	        	$scope.ngModel.cron.parameter.days.push($scope.selectedWeek[k]);
 	        }
 		};
 		
 		$scope.weekIsChecked = function (item) {
-			return 	($scope.ngModel.crono==undefined  || $scope.ngModel.crono.parameter==undefined || $scope.ngModel.crono.parameter.days == undefined)? false : 	$scope.ngModel.crono.parameter.days.indexOf(item) > -1;
+			return 	($scope.ngModel.cron==undefined  || $scope.ngModel.cron.parameter==undefined || $scope.ngModel.cron.parameter.days == undefined)? false : 	$scope.ngModel.cron.parameter.days.indexOf(item) > -1;
 		};
 		
 		$scope.changeTypeFrequency = function() {
@@ -157,7 +232,7 @@ angular.module('cron_frequency', [ 'ngMaterial','sbiModule','angular_time_picker
 				switch(tip) {
 					
 					case 'minute': 
-						$scope.ngModel.crono = {
+						$scope.ngModel.cron = {
 							"type": "minute", 
 							"parameter": {
 								"numRepetition": $scope.eventSched.minute_repetition_n
@@ -167,7 +242,7 @@ angular.module('cron_frequency', [ 'ngMaterial','sbiModule','angular_time_picker
 						break;
 						
 					case 'hour': 
-						$scope.ngModel.crono = {
+						$scope.ngModel.cron = {
 							"type": "hour", 
 							"parameter": {
 								"numRepetition": $scope.eventSched.hour_repetition_n
@@ -177,7 +252,7 @@ angular.module('cron_frequency', [ 'ngMaterial','sbiModule','angular_time_picker
 						break;
 						
 					case 'day': 
-						$scope.ngModel.crono = {
+						$scope.ngModel.cron = {
 							"type": "day", 
 							"parameter": {
 								"numRepetition": $scope.eventSched.day_repetition_n
@@ -202,22 +277,22 @@ angular.module('cron_frequency', [ 'ngMaterial','sbiModule','angular_time_picker
 		
 		
 		$scope.toggleMonthScheduler = function() {
-			$scope.ngModel.crono = {
+			$scope.ngModel.cron = {
 				"type": "month", 
 				"parameter": {}
 			};
 			 
 			if($scope.eventSched.typeMonth == true) {
-				$scope.ngModel.crono.parameter.numRepetition = $scope.eventSched.monthrep_n;
+				$scope.ngModel.cron.parameter.numRepetition = $scope.eventSched.monthrep_n;
 			} else {
-				$scope.ngModel.crono.parameter.months = [];
+				$scope.ngModel.cron.parameter.months = [];
 				for(var k in $scope.eventSched.month_repetition) {
-					$scope.ngModel.crono.parameter.months.push($scope.eventSched.month_repetition[k]);
+					$scope.ngModel.cron.parameter.months.push($scope.eventSched.month_repetition[k]);
 				}
 			}
 				
 			if($scope.eventSched.typeMonthWeek == true) {
-				$scope.ngModel.crono.parameter.dayRepetition = $scope.eventSched.dayinmonthrep_week;
+				$scope.ngModel.cron.parameter.dayRepetition = $scope.eventSched.dayinmonthrep_week;
 			} else {
 				var mwnr = $scope.eventSched.month_week_number_repetition;
 				
@@ -225,11 +300,11 @@ angular.module('cron_frequency', [ 'ngMaterial','sbiModule','angular_time_picker
 					mwnr = '1';
 				}
 				
-				$scope.ngModel.crono.parameter.weeks = mwnr;
-				$scope.ngModel.crono.parameter.days = [];
+				$scope.ngModel.cron.parameter.weeks = mwnr;
+				$scope.ngModel.cron.parameter.days = [];
 				
 				for(var k in $scope.eventSched.month_week_repetition) {
-					$scope.ngModel.crono.parameter.days.push($scope.eventSched.month_week_repetition[k]);
+					$scope.ngModel.cron.parameter.days.push($scope.eventSched.month_week_repetition[k]);
 				}
 			}
 		};

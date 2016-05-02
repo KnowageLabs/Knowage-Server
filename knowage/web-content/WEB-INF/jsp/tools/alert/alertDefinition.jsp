@@ -35,39 +35,69 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <title>Alert definition</title>
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+
+
+
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/alert/alertDefinitionController.js"></script>
 
-	<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>	
-	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/editor.min.css")%>"> 
+
+<%@include file="/WEB-INF/jsp/tools/alert/include/actions/actionsInclude.jsp"%>
+<%@include file="/WEB-INF/jsp/tools/alert/include/listeners/listenersInclude.jsp"%>
+
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>	
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/editor.min.css")%>"> 
 	
 <!-- cronFrequency -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/cronFrequency/cronFrequency.js"></script>
   
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/alert/listeners/kpiListener/alertKpiListenerController.js"></script>
 
-<script type="text/javascript"  src="http://code.angularjs.org/1.2.14/angular-route.js"></script>
+
+<!-- <script type="text/javascript"  src="http://code.angularjs.org/1.2.14/angular-route.js"></script> -->
 </head>
 
-<body ng-controller="alertDefinitionController" layout="row" >
-	<md-content layout="column" layout-fill > 
-		<md-toolbar class="md-hue-2" >
-      		<div class="md-toolbar-tools"> 
-        		<h2> 
-        			<span>{{translate.load("Alarms definition **")}}</span>
-        		</h2>  
-      		</div>
-      	</md-toolbar>
-       	<md-select layout-margin ng-model="alert.selectedListener" placeholder="Select a listener" ng-change="changeListener()" >
-			<md-option ng-value="listener" ng-repeat="listener in listeners">{{ listener.name }}</md-option>
-		</md-select>  
-	 	<md-whiteframe ng-if="alert.selectedListener!=undefined" class="md-whiteframe-1dp"> 
-    		<cron-frequency ng-model=alert.frequency></cron-frequency>
-  		</md-whiteframe>
+<body >
+
+<angular-list-detail ng-controller="alertDefinitionController"  full-screen="true">
+		
+		<list label="translate.load('alarm list**')" ng-controller="alertDefinitionListController" new-function="newAlertFunction" layout-column>
+		 	<angular-table flex id='alertListTable' ng-model=listAlert
+				columns='alertColumnsList'
+			 	 show-search-bar=true
+				 click-function="alertClickEditFunction(item, index);" > </angular-table>
+		</list>
+		
+<!-- 			 	 speed-menu-option = alertListAction -->
+		
+				
+		<detail label="translate.load('Alarms definition **')" ng-controller="alertDefinitionDetailController"
+		 save-function="saveAlertFunction"
+		 cancel-function="cancelAlertFunction"
+		 disable-save-button="isValidListener.status!=true || isValidListenerCrono.status!=true || alert.name == undefined || alert.name.length==0"
+		 layout="column" >
+
+  
+      	<div layout="row" layout-margin>
+			<md-input-container flex class="md-block">
+				<label>{{translate.load("name**")}}</label>
+			    <input ng-model="alert.name" >
+			</md-input-container>
+         
+			<md-input-container flex>
+				<label>{{translate.load("Listener**")}}</label>
+				<md-select  ng-model="alert.alertListener" ng-model-options="{trackBy: '$value.id'}"  >
+					<md-option ng-value="listener" ng-repeat="listener in listeners" >{{ listener.name }}</md-option>
+				</md-select>  
+			</md-input-container>
+      	</div>
+      	
+	 	<cron-frequency ng-if="alert.frequency!=undefined" is-valid="isValidListenerCrono" ng-model=alert.frequency></cron-frequency> 
   		
-  		<div ng-view ng-if="listenerIsSelected()" flex layout class="md-whiteframe-1dp" layout-margin ></div>
-  		 						  
-	</md-content>
+  		<action-maker flex ng-if="listenerIsSelected()"   ng-model="alert.jsonOptions" template-url="alert.alertListener.template" is-valid="isValidListener"></action-maker>
+       				 
+	
+			 </detail>
+</angular-list-detail>
 </body>
  
 </html>

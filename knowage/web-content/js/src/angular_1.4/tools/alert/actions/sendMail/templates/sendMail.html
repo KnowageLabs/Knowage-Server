@@ -1,0 +1,22 @@
+<md-content layout="column" ng-controller="sendMailController" flex action-maker-validator="{model:ngModel,validator:validate}" ng-init="initNgModel()">
+
+
+	<div class="md-whiteframe-4dp" style="overflow:scroll;" layout-margin layout-padding layout="column" flex >
+			 <div layout="row"   layout-align="center end" ng-if="ngModel.mailTo!=undefined" >
+			      <label >{{translate.load("Mail to**")}}</label>
+			       <md-chips flex   ng-model="ngModel.mailTo" ></md-chips>
+			 </div>
+			 
+			<md-input-container  class="md-block" >
+			      <label>{{translate.load("subject**")}}</label>
+			      <input ng-model="ngModel.subject"  >
+			</md-input-container>
+			
+			<div style="position:relative">
+				<wysiwyg-edit style="position:absolute" content="ngModel.body"></wysiwyg-edit>
+			</div>
+			
+    		
+  		</div>
+	      
+      </md-content>

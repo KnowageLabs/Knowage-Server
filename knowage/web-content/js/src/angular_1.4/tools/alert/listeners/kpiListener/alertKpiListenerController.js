@@ -1,23 +1,62 @@
-angular.module('alertDefinitionManager').controller('alertKpiDefinitionController', ['$scope','sbiModule_translate', 'sbiModule_restServices','sbiModule_config','$mdDialog','$window','$timeout',alertKpiDefinitionControllerFunction ]);
+angular.module('alertDefinitionManager').controller('alertKpiDefinitionController', ['$scope','sbiModule_translate', 'sbiModule_restServices','sbiModule_config','$mdDialog','$window','$timeout','alertDefinition_actions',alertKpiDefinitionControllerFunction ]);
 
-function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_config,$mdDialog,$window,$timeout){
-	$scope.translate=sbiModule_translate;
-	$scope.kpiList=[];
-	$scope.emptyKpiAlarm={action:[]};
-	$scope.currentKpiAlarm=angular.extend({},$scope.emptyKpiAlarm);
+function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_config,$mdDialog,$window,$timeout,alertDefinition_actions){
+ $scope.translate=sbiModule_translate;
+ $scope.kpiList=[];
+
+	if(!$scope.ngModel.hasOwnProperty("actions")){
+		$scope.ngModel.actions=[];
+	} 
+	
+	 
+	
+	$scope.loadKpiList=function(loadFullSelectedKpi){
+		sbiModule_restServices.promiseGet('1.0/kpi','listKpi')
+		.then(
+				function(response){
+					$scope.kpiList=response.data;
+					
+					if(loadFullSelectedKpi==true){ 
+						for(var i=0;i<$scope.kpiList.length;i++){
+							if(angular.equals($scope.kpiList[i].id,$scope.ngModel.kpi.id)){
+								angular.extend($scope.kpiList[i],$scope.ngModel.kpi);
+								break;
+							}
+						}
+					}
+					},
+				function(response){
+						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("Errore nel caricare la lista di kpi **"))
+						}
+					);
+	}
+	//if is an alter of saved alert, load the information of the kpi
+	$scope.loadKpiList($scope.ngModel.hasOwnProperty("kpi"));
 	
 	
-	$scope.currentKpiAlarm.action=[{"type":"mail","jsonTemplate":{"mailTo":["gianlucaulivo@hotmail.it"],"subObject":"MinimoErrore","mailBody":"Questo è un test"},"threshold":[{"id":30,"position":1,"label":"Minimo","color":"#3DFF00","severityId":86,"severityCd":"LOW","minValue":0,"includeMin":true,"maxValue":10,"includeMax":false}]},{"type":"mail","jsonTemplate":{"mailTo":["gianlucaulivo@hotmail.it"],"subObject":"medio errore","mailBody":"test"},"threshold":[{"id":30,"position":1,"label":"Minimo","color":"#3DFF00","severityId":86,"severityCd":"LOW","minValue":0,"includeMin":true,"maxValue":10,"includeMax":false},{"id":31,"position":2,"label":"medio","color":"#FFEB00","severityId":85,"severityCd":"MEDIUM","minValue":10,"includeMin":true,"maxValue":100,"includeMax":false}]},{"type":"mail","jsonTemplate":{"mailTo":["gianlucaulivo@hotmail.it"],"subObject":"errore estremo","mailBody":"terst"},"threshold":[{"id":33,"position":4,"label":"allerta","color":"#FF0000","severityId":83,"severityCd":"URGENT","minValue":1000,"includeMin":true,"maxValue":null,"includeMax":false},{"id":32,"position":3,"label":"alto","color":"#FF8500","severityId":84,"severityCd":"HIGH","minValue":100,"includeMin":true,"maxValue":1000,"includeMax":false}]}];
 	
-	$scope.loadSelectedKpi=function(kpi){
+	$scope.validate=function(){ 
+		return ($scope.ngModel.actions!=undefined && $scope.ngModel.actions.length>0);
+	}
+	 
+	$scope.getActionLabel=function(idAction){
+		for(var i=0;i<alertDefinition_actions.length;i++){
+			if(alertDefinition_actions[i].id==idAction){
+				return alertDefinition_actions[i].name;
+			}
+		}
+		return "";
+	}
+	
+	$scope.loadKpi=function(kpi){
 		// load kpi only if arent already loaded
-		if(kpi.threshold!=undefined && kpi.threshold!=null){
+		if(kpi.thresholdValues!=undefined && kpi.thresholdValues!=null){
 			return;
 		}
 		sbiModule_restServices.promiseGet('1.0/kpi',kpi.id+"/"+kpi.version+"/loadKpi")
 		.then(
 				function(response){
-					angular.extend($scope.currentKpiAlarm.kpi,response.data);
+					angular.extend($scope.ngModel.kpi,response.data);
 					},
 				function(response){
 						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("Errore nel caricare la lista di kpi **"))
@@ -25,21 +64,43 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 					);
 	}
 	
-	$scope.loadKpiList=function(){
-		sbiModule_restServices.promiseGet('1.0/kpi','listKpi')
-		.then(
-				function(response){
-					$scope.kpiList=response.data
-					},
-				function(response){
-						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("Errore nel caricare la lista di kpi **"))
-						}
-					);
+	$scope.loadSelectedKpi=function(oldKpi,kpi){
+		if($scope.ngModel.actions.length>0){
+			 var confirm = $mdDialog.confirm()
+	          .title('Modifica kpi**')
+	          .content('il kpi corrente ha della action associate che vetrranno rimosse. Continuare?**')
+	          .ariaLabel('change kpi') 
+	          .ok('Continue**')
+	          .cancel('Annulla**');
+	    $mdDialog.show(confirm).then(function() {
+	    	$scope.loadKpi(kpi);
+	    	$scope.ngModel.actions=[];
+	    }, function() {
+	    	$scope.ngModel.kpi=oldKpi;
+	    });
+		}else{
+			$scope.loadKpi(kpi);
+		}
+		
+		
 	}
-	$scope.loadKpiList();
 	
-	$scope.addAction=function(){  
-		 
+	
+	$scope.deleteAction=function(item,index){
+		 var confirm = $mdDialog.confirm()
+         .title('Cancellazione action**')
+         .content('Sei sicuro di voler cancellare la action corrente?**')
+         .ariaLabel('cancel action') 
+         .ok('Continue**')
+         .cancel('Annulla**');
+		   $mdDialog.show(confirm).then(function() {
+			   $scope.ngModel.actions.splice(index,1);
+		   }, function() { 
+		   });
+		   
+	}
+	
+	$scope.addAction=function(item){   
 		$mdDialog.show({ 
 		      controller: addActionDialogController, 
 		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/alert/listeners/kpiListener/templates/addKpiActionTemplate.html',  
@@ -47,21 +108,58 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 		      preserveScope:true, 
 		      locals:{
 		    	  translate: sbiModule_translate,
-		    	  kpi:$scope.currentKpiAlarm.kpi
+		    	  kpi:$scope.ngModel.kpi,
+		    	  actionToEdit:item
 		    	  }
 		    })
 		    .then(function(act) {
-		    	$scope.currentKpiAlarm.action.push(act); 
+		    	if(item!=undefined){
+		    		angular.copy(act,item);
+		    	}else{
+		    		$scope.ngModel.actions.push(act); 
+		    	}
 		    }, function() { 
 		    });
 		 
 	}
 	
-	function addActionDialogController($scope,translate,kpi,$mdDialog){
+	$scope.getThresholdItem=function(Tarr){
+		console.log("getThresholdItem")
+		var TObjArr=[];
+		for(var i=0;i<$scope.ngModel.kpi.threshold.thresholdValues.length;i++){
+			if(Tarr.indexOf(""+$scope.ngModel.kpi.threshold.thresholdValues[i].id)!=-1){
+				TObjArr.push($scope.ngModel.kpi.threshold.thresholdValues[i]);
+			}
+		}
+		return TObjArr;
+	}
+	
+	function addActionDialogController($scope,translate,kpi,$mdDialog,alertDefinition_actions,actionToEdit){
 	 	$scope.translate=translate;
 		$scope.kpi=kpi;
 		$scope.currentAction={};
-		$scope.actionType=[{name:"mail",label:translate.load("mail**")}];
+		$scope.currentActionType={};
+
+		$scope.changeCurrentActionType = function(actionType){
+			$scope.currentActionType=actionType;
+		} 
+		
+		if(actionToEdit!=undefined){
+			angular.copy(actionToEdit,$scope.currentAction);
+			//load action
+			for(var i=0;i<alertDefinition_actions.length;i++){
+				if(angular.equals($scope.currentAction.idAction,""+alertDefinition_actions[i].id)){
+					$scope.changeCurrentActionType(alertDefinition_actions[i]);
+					break;
+				}
+			}
+		}else{
+			$scope.currentAction.jsonActionParameters={};
+		}
+		$scope.actionType=alertDefinition_actions;
+		$scope.isValidAction={status:false};
+  
+		
 		
 		$scope.cancel = function() {
 		    $mdDialog.cancel();
@@ -73,3 +171,4 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 	}
 	
 }
+

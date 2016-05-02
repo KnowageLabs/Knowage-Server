@@ -1,0 +1,77 @@
+
+	<md-content flex layout="column" ng-controller="alertKpiDefinitionController" action-maker-validator="{model:ngModel,validator:validate}">
+	
+		<md-input-container>
+		      <label>{{translate.load("select kpi***")}}</label>
+		      <md-select ng-model="ngModel.kpi"  ng-model-options="{trackBy: '$value.id'}">
+		        <md-option ng-repeat="kpi in kpiList" ng-value="kpi" ng-click="loadSelectedKpi(ngModel.kpi,kpi)">
+		          {{kpi.name}}
+		        </md-option>
+		      </md-select>
+	    </md-input-container> 
+	 
+
+  		
+  		<md-content ng-if="ngModel.kpi!=undefined"  layout="column" layout-margin flex class="md-whiteframe-1dp noPadding"> 
+			<md-toolbar class="md-hue-2">
+	      		<div class="md-toolbar-tools"> 
+	        		<h2> 
+	        			<span>{{translate.load("List action **")}}</span>
+	        		</h2>  
+	        		<span flex></span>
+	        		  <md-button ng-click="addAction()">
+	        		  	{{translate.load("Add action**")}}
+	        		  </md-button>
+	      		</div>
+	      	</md-toolbar>
+	       	<md-content   layout="row" layout-wrap>
+	       	<md-whiteframe class="md-whiteframe-3dp actionTabs" layout-margin ng-repeat=" action in ngModel.actions ">
+			 	<md-toolbar>
+			    	<div class="md-toolbar-tools" > 
+				        <span>{{getActionLabel(action.idAction)}}</span>
+				          	<md-menu>
+						      <md-button aria-label="Menu List" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+						        <md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
+						      </md-button>
+						      <md-menu-content width="4">
+						        <md-menu-item>
+						          <md-button ng-click="addAction(action)">
+						            <md-icon md-font-icon="fa fa-pencil-square-o" md-menu-align-target></md-icon>
+						            {{translate.load('sbi.generic.modify')}}
+						          </md-button>
+						        </md-menu-item>
+						        <md-menu-item>
+						          <md-button ng-click="deleteAction(action, $index)">
+						            <md-icon md-font-icon="fa fa-trash"></md-icon>
+						            {{translate.load('sbi.generic.delete')}}
+						          </md-button>
+						        </md-menu-item>
+						   </md-menu-content>
+						    </md-menu>
+					</div>
+			    </md-toolbar> 
+			<md-content layout-margin layout="column">
+				<div layout="row" ng-repeat="threshVal in getThresholdItem(action.thresholdValues)">
+					<div style="width:20px; height:20px; margin-right: 5px;" ng-style="{'background-color':threshVal.color}"></div>
+		          	<span flex>{{threshVal.label}}</span>
+		          	<span ng-if="threshVal.severityCd!=undefined">({{threshVal.severityCd}})</span>
+				</div>
+				
+			</md-content>
+			</md-whiteframe>
+	       	 
+	       	</md-content>
+				 					
+		</md-content>
+  
+	</md-content>
+
+
+
+<style>
+.noPadding{
+padding: 0px!important;}
+
+.actionTabs{
+width: 200px}
+</style>
