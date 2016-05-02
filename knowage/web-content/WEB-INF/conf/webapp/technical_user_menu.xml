@@ -140,15 +140,12 @@
 					functionality="GeoLayersManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/layer/layerCatalogue.jsp" />		
 		
-		
-		<!--  TODO: fix permissions!!! -->
 			<ITEM	title="#menu.glossary.business"
-					functionality="Glossary"
+					functionality="ManageGlossaryBusiness"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/businessuser/glossaryBusiness.jsp" />			
 
-		<!--  TODO: fix permissions!!! -->
 			<ITEM	title="#menu.glossary.technical"
-					functionality="Glossary"
+					functionality="ManageGlossaryTechnical"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp" />
 					
 			<ITEM	title="#menu.timespan"
