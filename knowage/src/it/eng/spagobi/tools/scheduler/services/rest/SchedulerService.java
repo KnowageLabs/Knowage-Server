@@ -86,6 +86,9 @@ import org.json.JSONObject;
 
 @Path("/scheduler")
 public class SchedulerService {
+	private static final String ALERT_JOB_GROUP = "ALERT_JOB_GROUP";
+	private static final String KPI_SCHEDULER_GROUP = "KPI_SCHEDULER_GROUP";
+	
 	static private Logger logger = Logger.getLogger(SchedulerService.class);
 	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
 
@@ -133,9 +136,20 @@ public class SchedulerService {
 		}
 		List<Job> jobs = schedulerDAO.loadJobs();
 
+		List<Job> nonKpiSchedulerJobs = new ArrayList<Job>();
+		
+		for (Job job : jobs) {
+			if(!job.getGroupName().equals(ALERT_JOB_GROUP) 
+					&& !job.getGroupName().equals(KPI_SCHEDULER_GROUP)) {
+				
+				nonKpiSchedulerJobs.add(job);
+			}
+		}
+		
 		JSONSerializer jsonSerializer = (JSONSerializer) SerializerFactory.getSerializer("application/json");
 		try {
-			jobsJSONArray = (JSONArray) jsonSerializer.serialize(jobs, null);
+//			jobsJSONArray = (JSONArray) jsonSerializer.serialize(jobs, null);
+			jobsJSONArray = (JSONArray) jsonSerializer.serialize(nonKpiSchedulerJobs, null);
 
 			// add the triggers part for each job
 
@@ -145,7 +159,8 @@ public class SchedulerService {
 				String jobName = jobJSONObject.getString(JobJSONSerializer.JOB_NAME);
 				String jobGroup = jobJSONObject.getString(JobJSONSerializer.JOB_GROUP);
 
-				for (Job job : jobs) {
+//				for (Job job : jobs) {
+				for (Job job : nonKpiSchedulerJobs) {
 					if ((job.getName().equals(jobName)) && (job.getGroupName().equals(jobGroup))) {
 						String triggersSerialized = getJobTriggers(job);
 						JSONObject triggersJSONObject = new JSONObject(triggersSerialized);
@@ -154,7 +169,6 @@ public class SchedulerService {
 						jobJSONObject.put("triggers", triggersJSONArray);
 					}
 				}
-
 			}
 
 		} catch (SerializationException e) {
