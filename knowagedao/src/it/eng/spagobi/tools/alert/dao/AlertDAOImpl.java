@@ -21,7 +21,6 @@ import java.util.Map;
 
 public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 
-	static final List<Alert> mockAlerts = new ArrayList<>();
 	private static final String ALERT_JOB_GROUP = "ALERT_JOB_GROUP";
 
 	@Override
@@ -79,6 +78,7 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 			String name = "" + id;
 			Map<String, String> parameters = new HashMap<>();
 			parameters.put(IAlertListener.LISTENER_PARAMS, alert.getJsonOptions());
+			parameters.put(IAlertListener.LISTENER_ID, "" + alert.getAlertListener().getId());
 			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
 			schedulerDAO.createOrUpdateJobAndTrigger(name, Class.forName(alert.getAlertListener().getClassName()), ALERT_JOB_GROUP, ALERT_JOB_GROUP,
 					alert.getFrequency(), parameters);

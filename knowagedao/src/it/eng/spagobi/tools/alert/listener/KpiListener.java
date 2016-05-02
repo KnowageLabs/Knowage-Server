@@ -77,8 +77,10 @@ public class KpiListener extends AbstractAlertListener {
 			alertLog.setActionId(action.getIdAction());
 			alertLog.setActionParams(action.getJsonActionParameters());
 		}
-		// TODO setListenerId
-		alertLog.setListenerId(2);
+		Integer listenerId = getListenerId();
+		if (listenerId != null) {
+			alertLog.setListenerId(listenerId);
+		}
 		alertLog.setDetail(errorMsg);
 		alertLog.setListenerParams(JsonConverter.objectToJson(par, par.getClass()));
 		alertLog.getCommonInfo().setTimeIn(new Date());

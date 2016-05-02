@@ -31,4 +31,13 @@ public abstract class AbstractAlertListener implements Job, IAlertListener {
 		return tenant != null ? tenant.getName() : null;
 	}
 
+	public Integer getListenerId() {
+		String listenerId = this.jobDetail.getJobDataMap().getString(LISTENER_ID);
+		if (listenerId != null && listenerId.matches("\\d+")) {
+			return new Integer(listenerId);
+		} else {
+			return null;
+		}
+	}
+
 }
