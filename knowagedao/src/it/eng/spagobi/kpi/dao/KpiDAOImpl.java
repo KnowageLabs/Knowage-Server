@@ -1141,7 +1141,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public List<Target> listTarget(final Date startDate, final Date endDate) {
+	public List<Target> listOverlappingTargets(final Integer targetId, final Date startDate, final Date endDate, final Set<String> kpiNames) {
 		return executeOnTransaction(new IExecuteOnTransaction<List<Target>>() {
 			@Override
 			public List<Target> execute(Session session) throws Exception {
@@ -1153,7 +1153,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				d.add(Restrictions.conjunction()
 						.add(Restrictions.disjunction().add(Restrictions.le("startValidity", endDate)).add(Restrictions.isNull("startValidity")))
 						.add(Restrictions.disjunction().add(Restrictions.ge("endValidity", endDate)).add(Restrictions.isNull("endValidity"))));
-				c.add(d);
+				c.createAlias("sbiKpiTargetValues", "_targetValues").createAlias("_targetValues.sbiKpiKpi", "_kpi").add(d)
+						.add(Restrictions.in("_kpi.name", kpiNames)).add(Restrictions.ne("_kpi.sbiKpiKpiId.id", targetId));
 				List<SbiKpiTarget> lst = c.list();
 				List<Target> targetList = new ArrayList<>();
 				for (SbiKpiTarget sbiKpiTarget : lst) {

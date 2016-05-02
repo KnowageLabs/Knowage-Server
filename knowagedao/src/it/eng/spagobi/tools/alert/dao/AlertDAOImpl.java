@@ -132,14 +132,19 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 
 	@Override
 	public Alert loadAlert(Integer id) {
-		int i = mockAlerts.indexOf(new Alert(id));
-		return mockAlerts.get(i);
+		SbiAlert sbiAlert = load(SbiAlert.class, id);
+		return from(sbiAlert);
 	}
 
 	@Override
 	public void remove(Integer id) {
-		int i = mockAlerts.indexOf(new Alert(id));
-		mockAlerts.remove(i);
+		try {
+			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+			schedulerDAO.deleteJob("" + id, ALERT_JOB_GROUP);
+		} catch (EMFUserError e) {
+			throw new SpagoBIDOAException(e);
+		}
+		delete(SbiAlert.class, id);
 	}
 
 	@Override

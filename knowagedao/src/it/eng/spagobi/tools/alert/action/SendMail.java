@@ -3,6 +3,7 @@ package it.eng.spagobi.tools.alert.action;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
 import java.security.Security;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class SendMail implements IAlertAction {
 	final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
 
 	@Override
-	public void execute(String jsonOptions) {
+	public void execute(String jsonOptions) throws SpagoBIException {
 		InputParam params = (InputParam) JsonConverter.jsonToObject(jsonOptions, InputParam.class);
 		String subject = params.getSubject();
 		String[] recipients = params.getMailTo();
@@ -122,7 +123,7 @@ public class SendMail implements IAlertAction {
 		} catch (MessagingException e) {
 			// TODO rise specific exception
 			logger.error("Send mail failed", e);
-			throw new RuntimeException("Send mail failed", e);
+			throw new SpagoBIException("Send mail failed", e);
 		}
 
 	}

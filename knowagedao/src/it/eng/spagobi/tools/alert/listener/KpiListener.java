@@ -1,5 +1,6 @@
 package it.eng.spagobi.tools.alert.listener;
 
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.ThresholdValue;
@@ -8,6 +9,8 @@ import it.eng.spagobi.kpi.metadata.SbiKpiValue;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.alert.action.IAlertAction;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertAction;
+import it.eng.spagobi.tools.alert.metadata.SbiAlertLog;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,8 +22,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.quartz.JobExecutionException;
 
 public class KpiListener extends AbstractAlertListener {
 
@@ -48,14 +53,45 @@ public class KpiListener extends AbstractAlertListener {
 					addValueToThresholdMap(thresholdId, sbiKpiValue);
 				}
 			}
-			executeActions(par, session);
-			// TODO save result on SBI_ALERT_LOG table
-			// TODO or log error (same table) if something goes wrong
+			for (Action action : par.getActions()) {
+				try {
+					executeAction(action, session);
+					writeActionLog(par, action, session, null);
+				} catch (SpagoBIException e) {
+					logger.error("Error executing action: \"" + action.getIdAction() + "\"");
+					writeActionLog(par, action, session, "Error executing action: \"" + action.getIdAction() + "\"");
+				}
+			}
 		} else {
-			// TODO log null result to SBI_ALERT_LOG table
+			writeActionLog(par, null, session, "No results on SbiKpiValue");
 		}
-
+		Transaction tx = session.beginTransaction();
+		tx.commit();
+		session.close();
 		logger.info("KpiListener ended");
+	}
+
+	private void writeActionLog(InputParameter par, Action action, Session session, String errorMsg) {
+		SbiAlertLog alertLog = new SbiAlertLog();
+		if (action != null) {
+			alertLog.setActionId(action.getIdAction());
+			alertLog.setActionParams(action.getJsonActionParameters());
+		}
+		// TODO setListenerId
+		alertLog.setListenerId(2);
+		alertLog.setDetail(errorMsg);
+		alertLog.setListenerParams(JsonConverter.objectToJson(par, par.getClass()));
+		alertLog.getCommonInfo().setTimeIn(new Date());
+		alertLog.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+		try {
+			String tenantId = getTenant();
+			if (tenantId != null) {
+				alertLog.getCommonInfo().setOrganization(tenantId);
+			}
+		} catch (JobExecutionException e) {
+			logger.error("Unable to get tenant info", e);
+		}
+		session.save(alertLog);
 	}
 
 	private void loadThresholdMap(InputParameter par, Session session) {
@@ -86,17 +122,15 @@ public class KpiListener extends AbstractAlertListener {
 		return actionMap.get(actionId);
 	}
 
-	private void executeActions(InputParameter par, Session session) {
-		for (Action action : par.getActions()) {
-			if (hasValues(action)) {
-				SbiAlertAction sbiAction = loadAction(action.getIdAction(), session);
-				try {
-					IAlertAction alertAction = (IAlertAction) Class.forName(sbiAction.getClassName()).newInstance();
-					alertAction.execute(action.getJsonActionParameters());
-				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-					// TODO rise exception or return false
-					logger.error("Error execution action class[" + sbiAction.getClassName() + "]", e);
-				}
+	private void executeAction(Action action, Session session) throws SpagoBIException {
+		if (hasValues(action)) {
+			SbiAlertAction sbiAction = loadAction(action.getIdAction(), session);
+			try {
+				IAlertAction alertAction = (IAlertAction) Class.forName(sbiAction.getClassName()).newInstance();
+				alertAction.execute(action.getJsonActionParameters());
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+				logger.error("Error executing action class[" + sbiAction.getClassName() + "]", e);
+				throw new SpagoBIException("Error executing action class[" + sbiAction.getClassName() + "]", e);
 			}
 		}
 	}
