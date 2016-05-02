@@ -125,6 +125,7 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 	private Alert from(SbiAlert sbiAlert) {
 		Alert alert = new Alert();
 		alert.setId(sbiAlert.getId());
+		alert.setName(sbiAlert.getName());
 		alert.setJsonOptions(sbiAlert.getListenerOptions());
 		alert.setAlertListener(from(sbiAlert.getSbiAlertListener()));
 		return alert;
