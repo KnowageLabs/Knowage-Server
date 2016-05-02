@@ -206,29 +206,32 @@ author:
 	%>
 
 
-	<div layout="row" layout-align="center center" layout-wrap>
+	<div layout="row"  layout-wrap>
 		<div ng-repeat="kpiItem in kpiItems" layout-margin layout-padding>
-			<%--
-			<div style="padding:2em; font-size: 0.7em">kpiItem: {{kpiItem | json}}</div>
-			--%>
-			<div flex ng-if="kpiItem.viewAs=='speedometer'">
-			<%if(canSee){ %>
-			<div layout="row">
-				<span flex=70></span>
-				<md-button  class=" md-icon-button " >
-	         		 <md-icon md-font-icon="fa fa-pencil" aria-label="Edit Value" ng-click="openEdit(kpiItem)"></md-icon>
-	        	</md-button>
-        	</div>
-			<%} %>
-			<kpi-gauge ng-if="kpiItem.viewAs=='speedometer'" layout="column"
-					gauge-id="kpiItem.id" label="kpiItem.name" size="kpiItem.size"
-					min-value="kpiItem.minValue" max-value="kpiItem.maxValue"
-					value="kpiItem.value" target-value="kpiItem.targetValue"
-					threshold-stops="kpiItem.thresholdStops"
-					show-value="kpiItem.showValue" show-target="kpiItem.showTarget"
-					show-thresholds="kpiItem.showThreshold"
+			<md-whiteframe  class="md-whiteframe-4dp " layout="column" layout layout-margin ng-if="kpiItem.viewAs=='speedometer'" > 
+			 	<md-toolbar	class="miniheadimportexport ternaryToolbar" layout="row">
+					<div class="md-toolbar-tools">
+						<h1  style="font-size: {{fontConf.size}}em;">{{kpiItem.name}}</h1>
+					</div>
+					<span flex></span>
+					
+							<md-button <%= canSee? " ng-show=true ":"ng-show=false" %>  class=" md-icon-button " ng-click="openEdit(kpiItem)">
+				         		 <md-icon md-font-icon="fa fa-pencil" aria-label="Edit Value" ></md-icon>
+				        	</md-button>
+			       
+				</md-toolbar>
+				
+	
+	        
+				<kpi-gauge ng-if="kpiItem.viewAs=='speedometer'" layout="column"
+						gauge-id="kpiItem.id" label="kpiItem.name" size="kpiItem.size"
+						min-value="kpiItem.minValue" max-value="kpiItem.maxValue"
+						value="kpiItem.value" target-value="kpiItem.targetValue"
+						threshold-stops="kpiItem.thresholdStops"
+						show-value="kpiItem.showValue" show-target="kpiItem.showTarget"
+						show-thresholds="kpiItem.showThreshold"
 					value-precision="kpiItem.precision" font-conf="kpiItem.fontConf"></kpi-gauge>
-			</div>
+			</md-whiteframe>
 			<kpi-widget ng-if="kpiItem.viewAs=='kpicard'" widget-id="kpiItem.id" 
 					label="kpiItem.name" font-conf="kpiItem.fontConf"
 					show-target-percentage="kpiItem.showTargetPercentage"

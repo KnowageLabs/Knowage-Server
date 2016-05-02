@@ -91,7 +91,7 @@
 					.attr("y", this.config.cy / 2 + fontSize / 2)
 					.attr("dy", fontSize / 2)
 					.attr("text-anchor", "middle")
-					.text(this.config.label)
+					.text("")
 					.style("font-size", fontSize + "px")
 					.style("fill", this.config.fontConf.color)
 					.style("font-family", this.config.fontConf.fontFamily)

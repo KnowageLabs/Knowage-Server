@@ -38,7 +38,7 @@
 			$scope.value = $scope.value.toFixed($scope.precision);
 			$scope.targetValue = $scope.targetValue.toFixed($scope.precision);
 		}
-
+		
 
 		$scope.options = {
 				chart: {
@@ -172,7 +172,9 @@
 		$scope.targetValue =targetValue;
 		$scope.valueSeries = valueSeries;
 		$scope.array = [];
+		$scope.oldValue=value;
 		$scope.translate =sbiModule_translate;
+		//angular.copy($scope.value,$scope.oldValue);
 		$scope.parseLogicalKey = function(){
 			var string  = $scope.valueSeries.logicalKey;
 			var char = string.split(",");

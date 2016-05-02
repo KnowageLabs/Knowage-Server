@@ -124,7 +124,7 @@
 						}
 					}
 					
-//					$scope.executeSchedulerTemp();
+			//		$scope.executeSchedulerTemp();
 					
 					$scope.loadKpiValue();
 				} else { //scorecard

@@ -18,6 +18,44 @@
 package it.eng.spagobi.kpi;
 
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
+
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.quartz.JobExecutionException;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -617,6 +655,8 @@ public class KpiService {
 			Map<String, String> attributesValues = new TreeMap<String, String>();
 			JSONObject objTemp = new JSONObject();
 			List<KpiValue> kpiValues;
+			Calendar startDate = Calendar.getInstance();
+			startDate.add(Calendar.MONTH, -1);
 			if (requestVal.get("kpi") instanceof JSONObject) {
 				objTemp = requestVal.getJSONObject("kpi");
 				String s = requestVal.getString("driverMap");
@@ -628,7 +668,9 @@ public class KpiService {
 					}
 
 				}
-				kpiValues = DAOFactory.getNewKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), null, null, attributesValues);
+
+				kpiValues = DAOFactory.getNewKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), startDate.getTime(), new Date(),
+						attributesValues);
 				String result = new ObjectMapper().writeValueAsString(kpiValues);
 				array.put(result);
 			} else {
@@ -645,7 +687,8 @@ public class KpiService {
 						}
 
 					}
-					kpiValues = DAOFactory.getNewKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), null, null, attributesValues);
+					kpiValues = DAOFactory.getNewKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), startDate.getTime(), new Date(),
+							attributesValues);
 					String result = new ObjectMapper().writeValueAsString(kpiValues);
 					array.put(result);
 				}

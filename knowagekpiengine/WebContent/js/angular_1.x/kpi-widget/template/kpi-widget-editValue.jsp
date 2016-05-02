@@ -16,8 +16,8 @@
      	<div layout="row">
 			<div flex>
 				<md-input-container class="small counter" class="small counter" >
-					<label>{{translate.load("sbi.kpi.widget.target")}}</label>
-					<input class="input_class" ng-model="targetValue" disabled> 
+					<label>{{translate.load("sbi.kpi.widget.oldkpi")}}</label>
+					<input class="input_class" ng-model="oldValue" readonly> 
 				</md-input-container>
 			</div>
 			<div flex>
@@ -39,7 +39,7 @@
 			<div flex>
 				<md-input-container class="small counter" class="small counter" >
 					<label>{{item.label}}</label>
-					<input class="input_class" ng-model="item.value" disabled> 
+					<input class="input_class" ng-model="item.value" readonly> 
 				</md-input-container>
 			</div>
 		</div>
@@ -47,13 +47,13 @@
 			<div flex>
 				<md-input-container class="small counter" class="small counter" >
 					<label>{{translate.load("sbi.kpi.widget.day")}}</label>
-					<input class="input_class" ng-model="valueSeries.theDay" disabled> 
+					<input class="input_class" ng-model="valueSeries.theDay" readonly> 
 				</md-input-container>
 			</div>
 			<div flex>
 				<md-input-container class="small counter" class="small counter" >
 					<label>{{translate.load("sbi.kpi.widget.month")}}</label>
-					<input class="input_class" ng-model="valueSeries.theMonth" disabled> 
+					<input class="input_class" ng-model="valueSeries.theMonth" readonly> 
 				</md-input-container>
 			</div>
 			</div>
@@ -61,13 +61,13 @@
 			<div flex>
 				<md-input-container class="small counter" class="small counter" >
 					<label>{{translate.load("sbi.kpi.widget.quarter")}}</label>
-					<input class="input_class" ng-model="valueSeries.theQuarter" disabled> 
+					<input class="input_class" ng-model="valueSeries.theQuarter" readonly> 
 				</md-input-container>
 			</div>
 			<div flex>
 				<md-input-container class="small counter" class="small counter" >
 					<label>{{translate.load("sbi.kpi.widget.year")}}</label>
-					<input class="input_class" ng-model="valueSeries.theYear" disabled> 
+					<input class="input_class" ng-model="valueSeries.theYear" readonly> 
 				</md-input-container>
 			</div>
 			</div>
