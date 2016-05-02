@@ -10,7 +10,7 @@
 				svg-style="fill: {{stop.color}}" 
 				svg-width="{{getThresholdWidth(stop)}}" svg-height="{{mini==true? '20' : '40'}}"/>
 			
-			<rect class="measure" svg-width="{{value * sizeScaleFactor}}" 
+			<rect class="measure" svg-width="{{value>0 ? value * sizeScaleFactor : 0}}" 
 				svg-height="{{mini==true? '6.666' : '13.333'}}" x="0" 
 				svg-y="{{mini==true? '6.666' : '13.333'}}"/>
 			
