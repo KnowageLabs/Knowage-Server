@@ -17,12 +17,9 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.security.IEngUserProfile;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.meta.model.Model;
 import it.eng.spagobi.meta.model.ModelProperty;
@@ -40,13 +37,13 @@ import it.eng.spagobi.metadata.cwm.ICWMMapper;
 import it.eng.spagobi.metadata.dao.ImportMetadata;
 import it.eng.spagobi.metadata.etl.ETLMetadata;
 import it.eng.spagobi.metadata.etl.ETLParser;
+import it.eng.spagobi.metadata.etl.NonClosingZipInputStream;
 import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaBcAttribute;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
 import it.eng.spagobi.metamodel.MetaModelLoader;
-import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
@@ -54,7 +51,6 @@ import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -72,6 +68,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -87,10 +84,10 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
@@ -100,6 +97,9 @@ import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -140,7 +140,8 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			Content modelContent = businessModelsDAO.loadActiveMetaModelContentById(businessModelId);
 			byte[] metamodelTemplateBytes = getModelFileFromJar(modelContent);
 			if (metamodelTemplateBytes == null) {
-				return Response.serverError().build();
+				logger.error("Metamodel file not found inside datamart.jar");
+				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(), "Metamodel file not found inside datamart.jar");
 			}
 
 			// 2 - Read the metamodel and convert to object
@@ -324,7 +325,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * POST: Extract and insert new ETL metadata informations from uploaded file
+	 * POST: Extract and insert new ETL metadata informations from uploaded file (single .item file or .zip file containing multiple .item)
 	 **/
 	@POST
 	@Path("/{contextName}/ETLExtract")
@@ -332,8 +333,8 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	public Response extractETLMetadataInformation(@PathParam("contextName") String contextName, @MultipartForm MultipartFormDataInput input) {
 		logger.debug("IN");
 
-		// TODO: add the support for zip file containing multiple .item files
 		String fileName = null;
+		boolean isZipFile = false;
 		try {
 
 			// 1- Retrieve uploaded file data
@@ -346,22 +347,43 @@ public class MetadataResource extends AbstractSpagoBIResource {
 					MultivaluedMap<String, String> header = inputPart.getHeaders();
 					if (getFileName(header) != null) {
 						fileName = getFileName(header);
+						if (fileName.endsWith("zip")) {
+							isZipFile = true;
+						}
 						inputStream = inputPart.getBody(InputStream.class, null);
 					}
 				}
 			}
+
+			if (isZipFile) {
+				// zip file with multiple .item files
+				// (using non closing zip input stream to prevent DocumentBuilder from closing inputstream after first zipEntry parsing)
+				NonClosingZipInputStream zis = new NonClosingZipInputStream(inputStream);
+				ZipEntry ze = null;
+				// get Next Entry will position the ZipInputStream to the next entry file
+				while ((ze = zis.getNextEntry()) != null) {
+					if (ze.getName().endsWith("item")) {
+						parseAndExtract(zis, contextName, ze.getName());
+					}
+				}
+				zis.reallyClose();
+			} else {
+				// single .item file
+				parseAndExtract(inputStream, contextName, fileName);
+			}
+
 			// 2 - Parse xml inputStream
-			Document xmlDocument = inputStreamToDocument(inputStream);
-			ETLParser etlParser = new ETLParser(xmlDocument);
-			ETLMetadata etlMetadata = etlParser.getETLMetadata(contextName);
-			logger.debug("Etl metadata extracted for: " + fileName + " with context: " + contextName);
-			logger.debug(etlMetadata.toString());
+			// Document xmlDocument = inputStreamToDocument(inputStream);
+			// ETLParser etlParser = new ETLParser(xmlDocument);
+			// ETLMetadata etlMetadata = etlParser.getETLMetadata(contextName);
+			// logger.debug("Etl metadata extracted for: " + fileName + " with context: " + contextName);
+			// logger.debug(etlMetadata.toString());
+			//
+			// // 3 - Write informations on db
+			// ImportMetadata im = new ImportMetadata();
+			// im.importETLMetadata(fileName, etlMetadata);
 
-			// 3 - Write informations on db
-			ImportMetadata im = new ImportMetadata();
-			im.importETLMetadata(fileName, etlMetadata);
-
-			return Response.ok(etlMetadata).build();
+			return Response.ok().build();
 
 		} catch (Exception e) {
 			logger.error("An error occurred while trying to extract metadata information from file: " + fileName, e);
@@ -446,7 +468,29 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	 * Utility methods
 	 *
 	 * -------------------------------------------------------------------------------------
+	 *
+	 * @throws XPathExpressionException
+	 * @throws EMFUserError
 	 */
+
+	private void parseAndExtract(InputStream inputStream, String contextName, String fileName) throws XPathExpressionException, EMFUserError,
+			JsonGenerationException, JsonMappingException, IOException {
+		Document xmlDocument = inputStreamToDocument(inputStream);
+		ETLParser etlParser = new ETLParser(xmlDocument);
+		ETLMetadata etlMetadata = etlParser.getETLMetadata(contextName);
+		logger.debug("Etl metadata extracted for: " + fileName + " with context: " + contextName);
+		logger.debug(etlMetadata.toString());
+
+		// Uncomment this line just for debug
+		// System.out.println("Etl metadata extracted for: " + fileName + " with context: " + contextName);
+		// ObjectMapper mapper = new ObjectMapper();
+		// mapper.writeValueAsString(etlMetadata);
+		// System.out.println(mapper.writeValueAsString(etlMetadata));
+
+		// 3 - Write informations on db
+		ImportMetadata im = new ImportMetadata();
+		im.importETLMetadata(fileName, etlMetadata);
+	}
 
 	private byte[] getModelFileFromJar(Content content) {
 		logger.debug("IN");

@@ -144,6 +144,11 @@ public class ImportMetadata extends AbstractHibernateDAO {
 				// save to db SBI_META_SOURCE
 				Integer sourceId = saveSource(aSession, sbiMetaSource);
 				sbiMetaSource.setSourceId(sourceId);
+				// save association job-source to SBI_META_JOB_SOURCE
+				SbiMetaJobSource jobSource = new SbiMetaJobSource();
+				jobSource.setSbiMetaJob(aJob);
+				jobSource.setSbiMetaSource(sbiMetaSource);
+				saveJobSource(aSession, jobSource);
 			}
 
 			// 5 - Retrieve target files
@@ -158,6 +163,11 @@ public class ImportMetadata extends AbstractHibernateDAO {
 				// save to db SBI_META_SOURCE
 				Integer sourceId = saveSource(aSession, sbiMetaSource);
 				sbiMetaSource.setSourceId(sourceId);
+				// save association job-source to SBI_META_JOB_SOURCE
+				SbiMetaJobSource jobSource = new SbiMetaJobSource();
+				jobSource.setSbiMetaJob(aJob);
+				jobSource.setSbiMetaSource(sbiMetaSource);
+				saveJobSource(aSession, jobSource);
 			}
 			tx.commit();
 			logger.debug("Import etl metadata [" + jobName + "] ended correctly!");

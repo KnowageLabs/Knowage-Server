@@ -157,7 +157,7 @@ public class ETLParser {
 
 	/**
 	 * Get all locations of Source Components of type File
-	 * 
+	 *
 	 * @throws XPathExpressionException
 	 */
 	public Set<String> getFileSourceComponentsLocations(String contextName) throws XPathExpressionException {
@@ -170,7 +170,7 @@ public class ETLParser {
 
 	/**
 	 * Get all locations of Target Components of type File
-	 * 
+	 *
 	 * @throws XPathExpressionException
 	 */
 	public Set<String> getFileTargetComponentsLocations(String contextName) throws XPathExpressionException {
@@ -192,7 +192,7 @@ public class ETLParser {
 
 	/**
 	 * Get all the tables used by a specific FILE component type
-	 * 
+	 *
 	 * @throws XPathExpressionException
 	 */
 	public Set<String> getFileComponentLocations(String componentType, String contextName) throws XPathExpressionException {
@@ -201,7 +201,7 @@ public class ETLParser {
 
 	/**
 	 * Get the values used by a specific component type for a specific field and name
-	 * 
+	 *
 	 * @throws XPathExpressionException
 	 */
 	public Set<String> getComponentInformations(String componentTypeName, String fieldValue, String nameValue, String contextName)
@@ -272,7 +272,7 @@ public class ETLParser {
 				etlComponent.setConnectionComponentName(connectionValue);
 			}
 
-			if (!etlComponent.getValue().isEmpty()) {
+			if (!etlComponent.getValue().isEmpty() && !connectionValue.isEmpty()) {
 				informations.add(etlComponent);
 			}
 		}
