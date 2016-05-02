@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ALERT>
 	<ACTION name="Send mail" className="it.eng.spagobi.tools.alert.action.SendMail"
-		template="/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/alert/actions/sendMail.jsp" />
+		template="js/src/angular_1.4/tools/alert/actions/sendMail/templates/sendMail.html" />
 	<LISTENER name="KPI Listener" className="it.eng.spagobi.tools.alert.listener.KpiListener"
-		template="/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/alert/listeners/kpiListener.jsp" />
+		template="js/src/angular_1.4/tools/alert/listeners/kpiListener/templates/kpiListener.html" />
 </ALERT>
