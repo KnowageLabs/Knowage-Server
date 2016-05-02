@@ -121,7 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 <body class="kn-schedulerKpi">
 	<angular-list-detail ng-controller="schedulerKpiController" full-screen=true >
-		<list label="translate.load('sbi.kpi.list')"  ng-controller="listSchedulerController" new-function="addScheduler" >
+		<list label="translate.load('sbi.kpi.listscheduler')"  ng-controller="listSchedulerController" new-function="addScheduler" >
 		<angular-table flex
 		id='targetListTable' ng-model=engines
 		columns='tableColumn'
