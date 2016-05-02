@@ -363,7 +363,7 @@ public class DocumentExecutionUtils {
 
 		try {
 
-			if (treeLovNodeValue.equalsIgnoreCase("lovroot")) {// root node
+			if (treeLovNodeValue!=null && treeLovNodeValue.equalsIgnoreCase("lovroot")) {// root node
 				treeLovNodeName = (String) lovProvDet.getTreeLevelsColumns().get(0);
 				treeLovParentNodeName = "lovroot";
 				treeLovNodeLevel = -1;

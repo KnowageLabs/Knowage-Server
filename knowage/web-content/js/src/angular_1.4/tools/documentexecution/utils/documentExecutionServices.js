@@ -503,7 +503,63 @@
 			.error(function(data, status, headers, config) {});																	
 		};
 		
-		
+		/*
+		 * Fill Parameters Panel 
+		 */
+		serviceScope.fillParametersPanel = function(params){
+			console.log('Load filter params : ' , params);
+			if(execProperties.parametersData.documentParameters.length > 0){
+				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++){
+					var parameter = execProperties.parametersData.documentParameters[i];
+					
+					if(!params[parameter.urlName]) {
+						documentExecuteServices.resetParameter(parameter);
+					} else {
+						//console.log('parametro ' , parameter);
+//						if(parameter.valueSelection=='lov' 
+////							&& parameter.multivalue==true
+//							&& parameter.selectionType.toLowerCase() == "tree"
+//						) {
+						if(parameter.valueSelection=='lov') {
+							if(parameter.selectionType.toLowerCase() == "tree") {
+								parameter.parameterValue = JSON.parse(params[parameter.urlName]);
+							} else {
+								parameter.parameterValue = parameter.multivalue? 
+									JSON.parse(params[parameter.urlName])
+									: params[parameter.urlName];
+							}
+							
+						} else if(parameter.valueSelection.toLowerCase() == 'map_in') {
+							var valueToBeCleanedByQuotes = params[parameter.urlName].replace(/^'(.*)'$/g, '$1');
+							var valueToBeSplitted = valueToBeCleanedByQuotes.split("','");
+							
+							parameter.parameterValue = (parameter.multivalue)? valueToBeSplitted : valueToBeCleanedByQuotes;
+						} else {
+							if(parameter.type=='NUM'){
+								parameter.parameterValue = parseFloat(params[parameter.urlName],10);
+							}else if(parameter.type=='STRING'){
+								parameter.parameterValue = params[parameter.urlName];
+								if(parameter.defaultValues && parameter.defaultValues.length > 0) {
+									var parameterValues = parameter.parameterValue;
+									var parArr = parameterValues.split(';');
+									for(var j = 0; j < parameter.defaultValues.length; j++) {
+										var defaultValue = parameter.defaultValues[j];
+										for(var k = 0; k < parArr.length; k++) {
+											if(defaultValue.value == parArr[k]) {
+												defaultValue.isSelected = true;
+												break;
+											} else {
+												defaultValue.isSelected = false;
+											}											
+										}
+									}
+								}
+							}							
+						}												
+					}
+				}
+			}			
+		};
 		
 	
 		serviceScope.getParametersForExecution = function(role, buildCorrelation,crossParameters) {
@@ -519,12 +575,28 @@
 				console.log('getParametersForExecution response OK -> ', response);
 				//check if document has parameters 
 				if(response && response.data.filterStatus && response.data.filterStatus.length>0) {					
-//					execProperties.showParametersPanel.status = true;
-//					if(!($mdSidenav('parametersPanelSideNav').isOpen())) {
-//						$mdSidenav('parametersPanelSideNav').open();
-//					}
+								
 					//build documentParameters
 					angular.copy(response.data.filterStatus, execProperties.parametersData.documentParameters);
+					//setting default value				
+					for(var i=0; i<response.data.filterStatus.length; i++){
+						if(response.data.filterStatus[i].parameterValue && response.data.filterStatus[i].parameterValue.length>0){
+							var arrDefToFill = []; 
+							if(response.data.filterStatus[i].defaultValues && response.data.filterStatus[i].defaultValues.length>0){
+								arrDefToFill=response.data.filterStatus[i].defaultValues;
+							}
+							for(var k=0;k<response.data.filterStatus[i].parameterValue.length;k++){
+								arrDefToFill.push(response.data.filterStatus[i].parameterValue[k].value);
+							}	
+								
+							var fillObj = {};
+							fillObj[response.data.filterStatus[i].urlName] = JSON.stringify(arrDefToFill);
+							fillObj[response.data.filterStatus[i].urlName+'_field_visible_description'] = JSON.stringify(arrDefToFill);
+							//console.log('fillObj ' , fillObj);
+							serviceScope.fillParametersPanel(fillObj);
+						}
+					}
+					//correlation
 					buildCorrelation(execProperties.parametersData.documentParameters);
 					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
 				}else{
@@ -643,7 +715,7 @@
 		 * BUILD DATA DEPENDENCIES 
 		 */
 			this.buildDataDependenciesMap = function(parameters){
-			//console.log('parameters ' , parameters);
+			console.log('parameters ' , parameters);
 			for(var i=0; i<parameters.length ; i++){
 				if(parameters[i].dataDependencies && parameters[i].dataDependencies.length>0){						
 					for(var k=0; k<parameters[i].dataDependencies.length; k++){ 
@@ -670,14 +742,16 @@
 				var documentParamDependence = execProperties.parametersData.documentParameters[this.getRowIdfromUrlName(key)];
 				serviceScope.observableDataDependenciesArray.push(documentParamDependence);	
 			}
+			
+			console.log('observableDataDependenciesArray ' , serviceScope.observableDataDependenciesArray);
 		}
 		
 		
 		
 			 this.dataDependenciesCorrelationWatch = function(value){
 				
-				 //console.log('modify dependency : ' , value);
-				//console.log('element key '+ value.urlName , serviceScope.dataDependenciesMap[value.urlName]);
+				console.log('modify dependency : ' , value);
+				console.log('element key '+ value.urlName , serviceScope.dataDependenciesMap[value.urlName]);
 				for(var k=0; k<serviceScope.dataDependenciesMap[value.urlName].length; k++){
 					var dataDependenciesElementMap = serviceScope.dataDependenciesMap[value.urlName][k];
 					//objPost.MODE= (dataDependenciesElementMap.lovParameterMode!='TREE' ) ? 'simple' : 'complete';
@@ -713,13 +787,14 @@
 								   //set to enabled the correct default value 
 								   if(data.result.root && data.result.root.length>0){
 									   for(var p=0; p<data.result.root.length;p++){   
-										   //console.log("parameter ID : " + data.idParam + " set value " + data.result.root[p].value);
+										   console.log("parameter ID : " + data.idParam + " set value " + data.result.root[p].value);
 										   for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
 											   if(execProperties.parametersData.documentParameters[z].urlName==data.idParam){
 												   if(execProperties.parametersData.documentParameters[z].defaultValues &&
 															  execProperties.parametersData.documentParameters[z].defaultValues.length>0){
 													   for(var y=0;y<execProperties.parametersData.documentParameters[z].defaultValues.length;y++){
 															if( execProperties.parametersData.documentParameters[z].defaultValues[y].value==data.result.root[p].value){
+																console.log("enabled for : " ,  execProperties.parametersData.documentParameters[z].defaultValues[y]);
 																execProperties.parametersData.documentParameters[z].defaultValues[y].isEnabled=true;
 															}	  
 														   } 
@@ -739,7 +814,7 @@
 						console.log('IS TREE .... CLEAR PARAM ID ' + dataDependenciesElementMap.parameterToChangeUrlName);
 						for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
 							if(execProperties.parametersData.documentParameters[z].urlName==dataDependenciesElementMap.parameterToChangeUrlName){
-								//console.log('reset ... ' + execProperties.parametersData.documentParameters[z].urlName);
+								console.log('reset ... ' + execProperties.parametersData.documentParameters[z].urlName);
 								execProperties.parametersData.documentParameters[z].children = [];
 								documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[z]);
 								break;

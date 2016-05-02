@@ -69,9 +69,6 @@
 					 docExecute_urlViewPointService.snapshotUrl=docExecute_urlViewPointService.snapshotUrlPath+
 					   "&ACTION_NAME=GET_SNAPSHOT_CONTENT"+"&SNAPSHOT_ID=" + item.id+"&OBJECT_ID=" + item.biobjId+
 					   "&LIGHT_NAVIGATOR_DISABLED=TRUE";
-					 
-					 console.log('URL FINALE ' +  docExecute_urlViewPointService.snapshotUrl);
-					 
 					 $mdDialog.show({
 							templateUrl: 'dialog1.tmpl.html',
 							scope:$scope,
@@ -80,11 +77,7 @@
 							//parent: angular.element(document.body),
 							clickOutsideToClose:true
 						})
-					 
-					 
-					 
-					 
-					 
+					 					 
 				 }	
 			 }
 			 ,{   //Delete Action

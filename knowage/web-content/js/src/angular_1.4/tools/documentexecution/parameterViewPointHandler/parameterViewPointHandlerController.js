@@ -25,7 +25,7 @@
 					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 					 //console.log('item ' , item); 
 					 var params = documentExecuteServices.decodeRequestStringToJson(item.vpValueParams);
-					 $scope.fillParametersPanel(params);
+					 docExecute_urlViewPointService.fillParametersPanel(params);
 					 docExecute_paramRolePanelService.returnToDocument();
 				 }	
 			 },
@@ -37,7 +37,7 @@
 					 //decodeURIComponent						 		               		
 					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 					 var params = documentExecuteServices.decodeRequestStringToJson(item.vpValueParams);
-					 $scope.fillParametersPanel(params);
+					 docExecute_urlViewPointService.fillParametersPanel(params);
 					 docExecute_urlViewPointService.frameLoaded = false;
 					 docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, stringfyFromGetUrlParameters(params));
 					 docExecute_paramRolePanelService.returnToDocument();
@@ -103,59 +103,59 @@
 		/*
 		 * Fill Parameters Panel 
 		 */
-		$scope.fillParametersPanel = function(params){
-			console.log('Load filter params : ' , params);
-			if(execProperties.parametersData.documentParameters.length > 0){
-				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++){
-					var parameter = execProperties.parametersData.documentParameters[i];
-					
-					if(!params[parameter.urlName]) {
-						documentExecuteServices.resetParameter(parameter);
-					} else {
-						//console.log('parametro ' , parameter);
-//						if(parameter.valueSelection=='lov' 
-////							&& parameter.multivalue==true
-//							&& parameter.selectionType.toLowerCase() == "tree"
-//						) {
-						if(parameter.valueSelection=='lov') {
-							if(parameter.selectionType.toLowerCase() == "tree") {
-								parameter.parameterValue = JSON.parse(params[parameter.urlName]);
-							} else {
-								parameter.parameterValue = parameter.multivalue? 
-									JSON.parse(params[parameter.urlName])
-									: params[parameter.urlName];
-							}
-							
-						} else if(parameter.valueSelection.toLowerCase() == 'map_in') {
-							var valueToBeCleanedByQuotes = params[parameter.urlName].replace(/^'(.*)'$/g, '$1');
-							var valueToBeSplitted = valueToBeCleanedByQuotes.split("','");
-							
-							parameter.parameterValue = (parameter.multivalue)? valueToBeSplitted : valueToBeCleanedByQuotes;
-						} else {
-							if(parameter.type=='NUM'){
-								parameter.parameterValue = parseFloat(params[parameter.urlName],10);
-							}else if(parameter.type=='STRING'){
-								parameter.parameterValue = params[parameter.urlName];
-								if(parameter.defaultValues && parameter.defaultValues.length > 0) {
-									var parameterValues = parameter.parameterValue;
-									var parArr = parameterValues.split(';');
-									for(var j = 0; j < parameter.defaultValues.length; j++) {
-										var defaultValue = parameter.defaultValues[j];
-										for(var k = 0; k < parArr.length; k++) {
-											if(defaultValue.value == parArr[k]) {
-												defaultValue.isSelected = true;
-												break;
-											} else {
-												defaultValue.isSelected = false;
-											}											
-										}
-									}
-								}
-							}							
-						}												
-					}
-				}
-			}			
-		};
+//		$scope.fillParametersPanel = function(params){
+//			console.log('Load filter params : ' , params);
+//			if(execProperties.parametersData.documentParameters.length > 0){
+//				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++){
+//					var parameter = execProperties.parametersData.documentParameters[i];
+//					
+//					if(!params[parameter.urlName]) {
+//						documentExecuteServices.resetParameter(parameter);
+//					} else {
+//						//console.log('parametro ' , parameter);
+////						if(parameter.valueSelection=='lov' 
+//////							&& parameter.multivalue==true
+////							&& parameter.selectionType.toLowerCase() == "tree"
+////						) {
+//						if(parameter.valueSelection=='lov') {
+//							if(parameter.selectionType.toLowerCase() == "tree") {
+//								parameter.parameterValue = JSON.parse(params[parameter.urlName]);
+//							} else {
+//								parameter.parameterValue = parameter.multivalue? 
+//									JSON.parse(params[parameter.urlName])
+//									: params[parameter.urlName];
+//							}
+//							
+//						} else if(parameter.valueSelection.toLowerCase() == 'map_in') {
+//							var valueToBeCleanedByQuotes = params[parameter.urlName].replace(/^'(.*)'$/g, '$1');
+//							var valueToBeSplitted = valueToBeCleanedByQuotes.split("','");
+//							
+//							parameter.parameterValue = (parameter.multivalue)? valueToBeSplitted : valueToBeCleanedByQuotes;
+//						} else {
+//							if(parameter.type=='NUM'){
+//								parameter.parameterValue = parseFloat(params[parameter.urlName],10);
+//							}else if(parameter.type=='STRING'){
+//								parameter.parameterValue = params[parameter.urlName];
+//								if(parameter.defaultValues && parameter.defaultValues.length > 0) {
+//									var parameterValues = parameter.parameterValue;
+//									var parArr = parameterValues.split(';');
+//									for(var j = 0; j < parameter.defaultValues.length; j++) {
+//										var defaultValue = parameter.defaultValues[j];
+//										for(var k = 0; k < parArr.length; k++) {
+//											if(defaultValue.value == parArr[k]) {
+//												defaultValue.isSelected = true;
+//												break;
+//											} else {
+//												defaultValue.isSelected = false;
+//											}											
+//										}
+//									}
+//								}
+//							}							
+//						}												
+//					}
+//				}
+//			}			
+//		};
 	};
 })();

@@ -74,6 +74,15 @@ try{
 </head>
 
 <body class="kn-documentExecution" ng-app="documentExecutionModule" ng-controller="documentExecutionController" layout="row" >
+	
+	<div  layout-fill ng-hide="hideProgressCircular.status" style="z-index: 10000; position: absolute; background-color: rgba(0, 0, 0, 0.21);">
+			      		<md-progress-circular 
+        				md-mode="indeterminate" 
+        				md-diameter="60" 
+        				style="left: 50%;top: 50%;margin-left: -30px;margin-top: -30px;"   
+        				>
+      					</md-progress-circular>
+    </div>
 	<md-sidenav class="md-sidenav-right md-whiteframe-4dp lateralsidenav" ng-if="'<%=obj.getParametersRegion() %>' == 'west'" md-component-id="parametersPanelSideNav" layout="column" md-is-locked-open="showParametersPanel.status" ng-include="'/knowage/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.html'">		
 	</md-sidenav>
 	
@@ -267,7 +276,8 @@ try{
  				currentView :  {status : "DOCUMENT"},
  				parameterView : {status : ""},
  				isParameterRolePanelDisabled : {status : false},
- 				showParametersPanel : {status : false}
+ 				showParametersPanel : {status : false},
+ 				hideProgressCircular : {status : true}
  				
 			};
 			return obj;

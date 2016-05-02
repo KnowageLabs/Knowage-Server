@@ -26,6 +26,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
@@ -149,7 +150,33 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			// displayToolbar
 			// modality
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(label, executingRole);
-			// List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, executingRole, locale, modality);
+			IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
+			// DEF VALUE
+			List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null);
+			for (DocumentParameters objParameter : parameters) {
+				// DEFAULT VALUE
+				for (DefaultValue defValue : objParameter.getDefaultValues()) {
+					if (jsonParameters.isNull(objParameter.getId())) {
+						jsonParameters.put(objParameter.getId(), defValue.getValue());
+						jsonParameters.put(objParameter.getId() + "_field_visible_description", defValue.getValue());
+					}
+				}
+				// LOV SINGLE MANDATORY PARAMETER
+				if (objParameter.isMandatory()) {
+					Integer paruseId = objParameter.getParameterUseId();
+					ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
+					if ("lov".equalsIgnoreCase(parameterUse.getValueSelection()) && !objParameter.getSelectionType().equalsIgnoreCase("tree")) {
+						ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(role, obj,
+								objParameter.getAnalyticalDocumentParameter(), req);
+						if (defaultValues != null && defaultValues.size() == 1) {
+							jsonParameters.put(objParameter.getId(), defaultValues.get(0).get("value"));
+							jsonParameters.put(objParameter.getId() + "_field_visible_description", defaultValues.get(0).get("value"));
+
+						}
+					}
+				}
+			}
+
 			String url = DocumentExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 					executingRole, modality, jsonParameters, locale);
 			errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
@@ -202,7 +229,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String role = requestVal.getString("role");
 		JSONObject jsonParameters = requestVal.getJSONObject("parameters");
 
-		String toBeReturned = "{}";
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 
 		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
@@ -240,11 +266,17 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				documentUrlManager.refreshParameterForFilters(objParameter.getAnalyticalDocumentParameter(), jsonParameters);
 				parameterAsMap.put("parameterValue", objParameter.getAnalyticalDocumentParameter().getParameterValues());
 			}
+
+			boolean showParameterLov = true;
+
 			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection()) && !objParameter.getSelectionType().equalsIgnoreCase("tree")) {
 				ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
 						objParameter.getAnalyticalDocumentParameter(), req);
 				parameterAsMap.put("defaultValues", defaultValues);
-
+				// hide the parameter if is mandatory and have one value in lov
+				if (defaultValues != null && defaultValues.size() == 1 && objParameter.isMandatory()) {
+					showParameterLov = false;
+				}
 				// if parameterValue is not null and is array, check if all element are present in lov
 				Object o = parameterAsMap.get("parameterValue");
 				if (o != null) {
@@ -272,13 +304,19 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("dataDependencies", objParameter.getDataDependencies());
 			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
 
-			// load, if present, the json parameters
+			// DEFAULT VALUE
+			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
+				parameterAsMap.put("parameterValue", objParameter.getDefaultValues());
+			}
 
+			// load, if present, the json parameters
 			// if (jsonParameters.has(objParameter.getId())) {
 			// parameterAsMap.put("parameterValue", jsonParameters.getString(objParameter.getId()));
 			// }
 
-			parametersArrayList.add(parameterAsMap);
+			if (showParameterLov) {
+				parametersArrayList.add(parameterAsMap);
+			}
 		}
 		if (parameters.size() > 0) {
 			resultAsMap.put("filterStatus", parametersArrayList);

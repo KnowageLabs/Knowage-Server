@@ -61,6 +61,8 @@
 		$scope.download=sbiModule_download;
 		$scope.sidenavToShow = 'east';
 
+		$scope.hideProgressCircular = execProperties.hideProgressCircular;
+		
 		$scope.getSidenavType = function(){
 			var xx = execProperties;
 			return $scope.sidenavToShow;
