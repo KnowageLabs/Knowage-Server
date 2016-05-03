@@ -55,9 +55,10 @@
 						conf.maxValue = stopsConf.newMax;
 					}
 					
-					if(conf.viewAs == 'kpicard' && conf.size < (conf.maxValue - conf.minValue)) {
-						conf.size = (conf.maxValue - conf.minValue)
-					}
+					//(b.milazzo) i don't remember why i added the following check
+//					if(conf.viewAs == 'kpicard' && conf.size < (conf.maxValue - conf.minValue)) {
+//						conf.size = (conf.maxValue - conf.minValue)
+//					}
 				}
 				
 				//console.log('createWidgetConfiguration -> ' ,conf);

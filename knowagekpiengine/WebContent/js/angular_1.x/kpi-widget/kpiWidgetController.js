@@ -11,7 +11,6 @@
 			templateUrl: currentScriptPath + 'template/kpi-widget.jsp',
 			controller: kpiWidgetController,
 			scope: {
-//				ngModel: '=',
 				gaugeSize:'=',
 				minValue:'=',
 				maxValue:'=',

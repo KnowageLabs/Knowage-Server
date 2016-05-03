@@ -721,8 +721,8 @@
 				obj.severity = thresholdData.severity;
 				obj.name = kpiItem.name;
 				
-				obj.value = (kpiItem.precision && kpiItem.precision != '')? 
-						kpiItem.value.toFixed(kpiItem.precision) : kpiItem.value;
+				obj.value = (kpiItem.value && kpiItem.precision && kpiItem.precision != '')? 
+						kpiItem.value.toFixed(kpiItem.precision) : null;
 						
 				obj.lineargauge = $scope.getLinearGaugeTemplate(kpiItem);
 				obj.trend = $scope.getLineChartTemplate(kpiItem);
