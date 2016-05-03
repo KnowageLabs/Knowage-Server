@@ -602,6 +602,8 @@ public class KpiService {
 				dao.updateScheduler(scheduler);
 			}
 			return Response.ok(new JSONObject().put("id", id).toString()).build();
+		} catch (SpagoBIException e) {
+			return Response.ok(new JSError().addErrorKey("newKpi.kpi.jobOrTriggerError").toString()).build();
 		} catch (Throwable e) {
 			logger.error(req.getPathInfo(), e);
 			return Response.ok(new JSError().addErrorKey("sbi.rememberme.errorWhileSaving")).build();
@@ -804,13 +806,13 @@ public class KpiService {
 	private void checkValidity(KpiScheduler scheduler) throws SpagoBIException {
 		String fieldValue = null;
 		String fieldName = null;
-		if (!scheduler.getStartTime().matches("\\d{2}:\\d{2}")) {
+		if (!scheduler.getFrequency().getStartTime().matches("\\d{2}:\\d{2}")) {
 			fieldName = "StartTime";
-			fieldValue = scheduler.getStartTime();
+			fieldValue = scheduler.getFrequency().getStartTime();
 		}
-		if (scheduler.getEndTime() != null && !scheduler.getEndTime().matches("\\d{2}:\\d{2}")) {
+		if (scheduler.getFrequency().getEndTime() != null && !scheduler.getFrequency().getEndTime().matches("\\d{2}:\\d{2}")) {
 			fieldName = "EndTime";
-			fieldValue = scheduler.getEndTime();
+			fieldValue = scheduler.getFrequency().getEndTime();
 		}
 		if (fieldName != null) {
 			throw new SpagoBIException("Field error: " + fieldName + "[" + fieldValue + "]");
@@ -850,9 +852,9 @@ public class KpiService {
 		// loading trigger
 		try {
 			JobTrigger triggerInfo = getJobTriggerInfo("" + id, KPI_SCHEDULER_GROUP, "" + id, KPI_SCHEDULER_GROUP);
-			t.setStartTime(triggerInfo.getStartTime());
-			t.setEndTime(triggerInfo.getEndTime());
-			t.setCrono(triggerInfo.getChrono() != null ? new JSONObject(triggerInfo.getChrono()).toString() : null);
+			t.getFrequency().setStartTime(triggerInfo.getStartTime());
+			t.getFrequency().setEndTime(triggerInfo.getEndTime());
+			t.getFrequency().setCron(triggerInfo.getChrono() != null ? new JSONObject(triggerInfo.getChrono()).toString() : null);
 		} catch (Throwable e) {
 			logger.error(req.getPathInfo(), e);
 		}
@@ -927,17 +929,19 @@ public class KpiService {
 		String fieldName = null;
 		if (scheduler.getName() == null) {
 			fieldName = "Name";
+		} else if (scheduler.getFrequency() == null) {
+			fieldName = "Frequency";
 		} else if (scheduler.getDelta() == null) {
 			fieldName = "Delta";
-		} else if (scheduler.getStartDate() == null) {
+		} else if (scheduler.getFrequency().getStartDate() == null) {
 			fieldName = "StartDate";
-		} else if (scheduler.getCrono() == null) {
+		} else if (scheduler.getFrequency().getCron() == null) {
 			fieldName = "Crono";
 		} else if (scheduler.getDelta() == null) {
 			fieldName = "Delta";
 		} else if (scheduler.getKpis() == null || scheduler.getKpis().isEmpty()) {
 			fieldName = "Kpi list";
-		} else if (scheduler.getStartTime() == null) {
+		} else if (scheduler.getFrequency().getStartTime() == null) {
 			fieldName = "StartTime";
 		}
 		if (scheduler.getFilters() != null && !scheduler.getFilters().isEmpty()) {
