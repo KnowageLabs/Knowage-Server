@@ -16,7 +16,7 @@ app.factory("alertDefinition_listeners",function(){
 
 app.controller('alertDefinitionController', ['$scope', alertDefinitionControllerFunction ]);
 app.controller('alertDefinitionDetailController', ['$scope','$angularListDetail','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout','sbiModule_config','alertDefinition_actions','alertDefinition_listeners','$cronFrequency','$mdToast',alertDefinitionDetailControllerFunction ]);
-app.controller('alertDefinitionListController', ['$scope','$angularListDetail','sbiModule_translate','sbiModule_restServices','$mdToast','$mdDialog',alertDefinitionListControllerFunction ]);
+app.controller('alertDefinitionListController', ['$scope','$angularListDetail','sbiModule_translate','sbiModule_restServices','$mdToast','$mdDialog','$timeout',alertDefinitionListControllerFunction ]);
 
 function alertDefinitionControllerFunction($scope){
 	$scope.listAlert=[];
@@ -30,12 +30,27 @@ function alertDefinitionControllerFunction($scope){
 			jsonOptions:{},
 			frequency:{}
 	};
+	$scope.temporaneyAlert={};
+		
+	$scope.loadBroadcastLoadListAlert=function(){
+		$scope.$broadcast("loadListAlert");
+	}
 }
 	
 	
-function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModule_translate,sbiModule_restServices,$mdToast,$mdDialog){
-	$scope.alertColumnsList=[{label:sbiModule_translate.load("name"),name:"name"}];
-	$scope.alertListAction=[{
+function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModule_translate,sbiModule_restServices,$mdToast,$mdDialog,$timeout){
+	$scope.alertColumnsList=[{label:sbiModule_translate.load("sbi.generic.name"),name:"name"},{label:sbiModule_translate.load("sbi.generic.state"),name:"jobStatus"}];
+	
+	$scope.alertListAction=[
+	                        {label : sbiModule_translate.load('sbi.generic.delete'),
+		icon:'fa fa-trash' ,
+		backgroundColor:'transparent',
+		action : function(item,event) {}
+		},{label : sbiModule_translate.load('sbi.generic.delete'),
+			icon:'fa fa-trash' ,
+			backgroundColor:'transparent',
+			action : function(item,event) {}
+			},{
 		label : sbiModule_translate.load('sbi.generic.delete'),
 		icon:'fa fa-trash' ,
 		backgroundColor:'transparent',
@@ -59,7 +74,21 @@ function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModu
 			
 			}
 	
-		}];
+		},
+		{
+//			label :  1==1 ? sbiModule_translate.load('metti in play**') : sbiModule_translate.load('metti in pausa**'),
+			dynamicLabel: function(row){
+				return angular.equals(row.jobStatus.toUpperCase(),"SUSPENDED") ? sbiModule_translate.load('metti in play**') : sbiModule_translate.load('metti in pausa**');
+			},
+			dynamicIcon: function(row){
+				return angular.equals(row.jobStatus.toUpperCase(),"SUSPENDED") ? 'fa fa-play' : 'fa fa-pause';
+			}, 
+			backgroundColor:'transparent',
+			action : function(item,event) {
+				 
+				}
+		
+			}];
 	
 	
 	$scope.alertClickEditFunction=function(item,index){
@@ -72,9 +101,11 @@ function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModu
 			} 
 			
 			response.data.frequency.cron=JSON.parse(response.data.frequency.cron);
-			
-			console.log("response.dat",response.data)
-			angular.copy(response.data,$scope.alert)
+			 
+			angular.copy(response.data,$scope.alert);
+			$timeout(function(){
+				angular.copy($scope.alert,$scope.temporaneyAlert);
+			},500)
 			$angularListDetail.goToDetail();
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,"Errore durante il download delle alert**");
@@ -86,28 +117,32 @@ function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModu
 	
 	$scope.newAlertFunction=function(){
 		angular.copy($scope.emptyAlert,$scope.alert);
+		$timeout(function(){
+			angular.copy($scope.alert,$scope.temporaneyAlert);
+		},500)
 		$angularListDetail.goToDetail();
 	}
 	
-	$scope.newAlertFunction=function(){
-		angular.copy($scope.emptyAlert,$scope.alert)
-		$angularListDetail.goToDetail();
-	}
 	
-	sbiModule_restServices.promiseGet("1.0/alert", 'listAlert')
-	.then(function(response){  
-		angular.copy(response.data,$scope.listAlert);
-	},function(response){
-		sbiModule_restServices.errorHandler(response.data,"Errore durante il download delle alert**");
-	});
+	
+	$scope.loadListAlert=function(){
+		sbiModule_restServices.promiseGet("1.0/alert", 'listAlert')
+		.then(function(response){  
+			angular.copy(response.data,$scope.listAlert);
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,"Errore durante il download delle alert**");
+		});
+	};
+	$scope.loadListAlert();
+	
+	$scope.$on('loadListAlert', function() {
+ 		$scope.loadListAlert();
+ 	});
 	
 }
 
 function alertDefinitionDetailControllerFunction($scope,$angularListDetail,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast,$timeout,sbiModule_config,alertDefinition_actions,alertDefinition_listeners,$cronFrequency,$mdToast){
-	$scope.translate=sbiModule_translate; 
-	
-
-	
+	$scope.translate=sbiModule_translate;  
 	$scope.isValidListener={status:false};
 	$scope.isValidListenerCrono={status:false};
 	$scope.listeners=alertDefinition_listeners; 
@@ -116,7 +151,7 @@ function alertDefinitionDetailControllerFunction($scope,$angularListDetail,sbiMo
 	$scope.saveAlertFunction=function(){ 
 		var itemToSave={};
 		angular.copy($scope.alert,itemToSave); 
-		$cronFrequency.parseForBackend(itemToSave);
+		$cronFrequency.parseForBackend(itemToSave.frequency);
 		
 		for(var i=0;i<itemToSave.jsonOptions.actions.length;i++){
 			itemToSave.jsonOptions.actions[i].jsonActionParameters=JSON.stringify(itemToSave.jsonOptions.actions[i].jsonActionParameters);
@@ -129,16 +164,39 @@ function alertDefinitionDetailControllerFunction($scope,$angularListDetail,sbiMo
 				$scope.alert.id=response.data.id;
 			}
 			$mdToast.show($mdToast.simple().content(sbiModule_translate.load("alert salvato con successo**")).position('top').action($scope.translate.load("sbi.general.yes")).highlightAction(false).hideDelay(2000))
-			
+			$scope.loadBroadcastLoadListAlert();
+			angular.copy($scope.alert,$scope.temporaneyAlert);
 		}
 		,function(response){
 			sbiModule_restServices.errorHandler(response.data,"Error while attempt to save alert**");
 			})
 	}
 	$scope.cancelAlertFunction=function(){
-		console.log("cancellao")
-		angular.copy($scope.emptyAlert,$scope.alert);
-		$angularListDetail.goToList();
+
+ 		if(!angular.equals($scope.temporaneyAlert,$scope.alert)){
+	 		var confirm = $mdDialog.confirm()
+	        .title(sbiModule_translate.load("sbi.layer.modify.progress"))
+	        .content(sbiModule_translate.load("sbi.layer.modify.progress.message.modify"))
+	        .ariaLabel('cancel metadata') 
+			.ok(sbiModule_translate.load("sbi.general.yes"))
+			.cancel(sbiModule_translate.load("sbi.general.No"));
+			  $mdDialog.show(confirm).then(function() {
+				  angular.copy($scope.emptyAlert,$scope.alert); 
+					$angularListDetail.goToList();
+			  }, function() {
+			   return;
+			  });
+ 		}else{
+ 			angular.copy($scope.emptyAlert,$scope.alert);
+ 			$angularListDetail.goToList();
+ 		} 
+ 	
+
+		
+		
+		
+		
+		
 	}
 	$scope.listenerIsSelected=function(){
 		return !angular.equals({},$scope.alert.alertListener);
