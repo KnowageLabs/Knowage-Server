@@ -555,41 +555,21 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
     
     
     
-    $scope.cellClickCreateCrossNavigationMenu = function(id, ordinal){
-    	$scope.ordinal = ordinal;
-    	var targets = $scope.modelConfig.crossNavigation.targets;
-    	if(targets.length==1){
-    		 $scope.openSelectedCrossNavigationDocument(targets[0]);
-    	}else{
-    		$mdDialog
-    		.show({
-    			scope : $scope,
-    			preserveScope : true,
-    			controllerAs : 'olapCtrl',
-    			templateUrl : '/knowagewhatifengine/html/template/main/olap/crossNavigationMenu.html',
-    			//targetEvent : ev,
-    			clickOutsideToClose : false,
-    			hasBackdrop:false
-    		});
-    	}
-	}
-    
-    $scope.selectCrossNavigationDocument = function (target) {
-		$scope.selectedCrossNavigationDocument = target;
-	}
-    
-    $scope.openSelectedCrossNavigationDocument = function (targetDocument) {
-    	var targetIndex = $scope.modelConfig.crossNavigation.targets.indexOf(targetDocument);
-    	var encoded = encodeURI('/calculatedmembers/execute/'+$scope.selectedMDXFunction.label+'/'+$scope.finalFormula+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+    $scope.cellClickCreateCrossNavigationMenu = function(ordinal){
+    	var encoded = encodeURI('/crossnavigation/getCrossNavigationUrl/'+ordinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID);
     	sbiModule_restServices.promisePost
 		("1.0",encoded)
 		.then(function(response) {
 			$scope.handleResponse(response);
-			eval(response.data)
+			try{
+				eval(response.data);
+			}catch ( e){
+				sbiModule_messaging.showErrorMessage("error", 'Error');
+			}
+			
 		 }, function(response) {
 			sbiModule_messaging.showErrorMessage("error", 'Error');
 		});
-		$scope.closeDialog();
     }
     
     $scope.checkValidityCrossNav = function(){
