@@ -34,6 +34,9 @@ public class KpiListener extends AbstractAlertListener {
 
 	private static Logger logger = Logger.getLogger(KpiListener.class);
 
+	private static final String VALUE_TABLE_PLACEHOLDER = "*VALUE_TABLE*";
+	private static final String ALL = "ALL";
+
 	private final Set<ThresholdValue> thresholds = new HashSet<>();
 	private final Map<Integer, List<SbiKpiValue>> valueMap = new HashMap<>();
 	private final Map<Integer, SbiAlertAction> actionMap = new HashMap<>();
@@ -127,12 +130,106 @@ public class KpiListener extends AbstractAlertListener {
 			SbiAlertAction sbiAction = loadAction(action.getIdAction(), session);
 			try {
 				IAlertAction alertAction = (IAlertAction) Class.forName(sbiAction.getClassName()).newInstance();
-				alertAction.execute(action.getJsonActionParameters());
+				Map<String, String> parameters = new HashMap<>();
+				parameters.put(VALUE_TABLE_PLACEHOLDER, makeHtmlValueTable(action.getThresholdValues()));
+				alertAction.execute(action.getJsonActionParameters(), parameters);
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 				logger.error("Error executing action class[" + sbiAction.getClassName() + "]", e);
 				throw new SpagoBIException("Error executing action class[" + sbiAction.getClassName() + "]", e);
 			}
 		}
+	}
+
+	private String makeHtmlValueTable(List<Integer> thresholdValues) {
+		for (Integer thresholdId : thresholdValues) {
+			List<SbiKpiValue> values = valueMap.get(thresholdId);
+			boolean showYear = false;
+			boolean showQuarter = false;
+			boolean showMonth = false;
+			boolean showWeek = false;
+			boolean showDay = false;
+			for (SbiKpiValue sbiKpiValue : values) {
+				if (!ALL.equals(sbiKpiValue.getTheYear())) {
+					showYear = true;
+				}
+				if (!ALL.equals(sbiKpiValue.getTheQuarter())) {
+					showQuarter = true;
+				}
+				if (!ALL.equals(sbiKpiValue.getTheMonth())) {
+					showMonth = true;
+				}
+				if (!ALL.equals(sbiKpiValue.getTheWeek())) {
+					showWeek = true;
+				}
+				if (!ALL.equals(sbiKpiValue.getTheDay())) {
+					showDay = true;
+				}
+			}
+			if (values != null && !values.isEmpty()) {
+				StringBuffer sb = new StringBuffer();
+				for (ThresholdValue tValue : thresholds) {
+					if (tValue.getId().equals(thresholdId)) {
+						sb.append("<table></tr>");
+						sb.append("<th>Threshold label</th>");
+						sb.append("<th>Color</th>");
+						sb.append("<th>Severity</th>");
+						sb.append("<th>Min value</th>");
+						sb.append("<th>Max value</th>");
+						sb.append("</tr><tr>");
+						sb.append("<td>" + clean(tValue.getLabel()) + "</td>");
+						sb.append(clean(tValue.getColor()).isEmpty() ? "<td></td>" : "<td style=\"background-color:" + clean(tValue.getColor()) + ";\"></td>");
+						sb.append("<td>" + clean(tValue.getSeverityCd()) + "</td>");
+						sb.append("<td>" + clean(tValue.getMinValue()) + "</td>");
+						sb.append("<td>" + clean(tValue.getMaxValue()) + "</td>");
+						sb.append("</tr></table>");
+						break;
+					}
+				}
+				sb.append("<table><tr>");
+				sb.append("<th>Logical Key</th>");
+				if (showYear) {
+					sb.append("<th>The Year</th>");
+				}
+				if (showQuarter) {
+					sb.append("<th>The Quarter</th>");
+				}
+				if (showMonth) {
+					sb.append("<th>The Month</th>");
+				}
+				if (showWeek) {
+					sb.append("<th>The Week</th>");
+				}
+				if (showDay) {
+					sb.append("<th>The Day</th>");
+				}
+				sb.append("<th>Computed Value</th>");
+				sb.append("</tr>");
+				for (SbiKpiValue sbiKpiValue : values) {
+					sb.append("<tr>");
+					sb.append("<td>" + clean(sbiKpiValue.getLogicalKey()) + "</td>");
+					if (showYear) {
+						sb.append("<td>" + sbiKpiValue.getTheYear() + "</td>");
+					}
+					if (showQuarter) {
+						sb.append("<td>" + sbiKpiValue.getTheQuarter() + "</td>");
+					}
+					if (showMonth) {
+						sb.append("<td>" + sbiKpiValue.getTheMonth() + "</td>");
+					}
+					if (showWeek) {
+						sb.append("<td>" + sbiKpiValue.getTheWeek() + "</td>");
+					}
+					if (showDay) {
+						sb.append("<td>" + sbiKpiValue.getTheDay() + "</td>");
+					}
+					sb.append("<td>" + clean(sbiKpiValue.getComputedValue()) + "</td>");
+					sb.append("</tr>");
+				}
+				sb.append("</table>");
+				return sb.toString();
+			}
+		}
+		return null;
 	}
 
 	private boolean hasValues(Action action) {
@@ -146,13 +243,20 @@ public class KpiListener extends AbstractAlertListener {
 	}
 
 	private ThresholdValue from(SbiKpiThresholdValue sbiValue) {
-		ThresholdValue ret = new ThresholdValue();
-		ret.setId(sbiValue.getId());
-		ret.setIncludeMin('T' == sbiValue.getIncludeMin());
-		ret.setIncludeMax('T' == sbiValue.getIncludeMax());
-		ret.setMinValue(sbiValue.getMinValue());
-		ret.setMaxValue(sbiValue.getMaxValue());
-		return ret;
+		ThresholdValue tv = new ThresholdValue();
+		tv.setColor(sbiValue.getColor());
+		tv.setId(sbiValue.getId());
+		tv.setIncludeMin(sbiValue.getIncludeMin() != null && sbiValue.getIncludeMin().charValue() == 'T');
+		tv.setMinValue(sbiValue.getMinValue());
+		tv.setIncludeMax(sbiValue.getIncludeMax() != null && sbiValue.getIncludeMax().charValue() == 'T');
+		tv.setMaxValue(sbiValue.getMaxValue());
+		tv.setLabel(sbiValue.getLabel());
+		tv.setPosition(sbiValue.getPosition());
+		if (sbiValue.getSeverity() != null) {
+			tv.setSeverityId(sbiValue.getSeverity().getValueId());
+			tv.setSeverityCd(sbiValue.getSeverity().getValueCd());
+		}
+		return tv;
 	}
 
 	public static List<SbiKpiValue> loadResults(Integer id) {
@@ -179,6 +283,10 @@ public class KpiListener extends AbstractAlertListener {
 			}
 		}
 		return null;
+	}
+
+	private String clean(Object o) {
+		return o != null ? o.toString() : "";
 	}
 }
 

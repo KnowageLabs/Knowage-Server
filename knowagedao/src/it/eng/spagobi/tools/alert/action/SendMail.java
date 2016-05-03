@@ -21,7 +21,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
 
-public class SendMail implements IAlertAction {
+public class SendMail extends AbstractAlertAction {
 
 	private static Logger logger = Logger.getLogger(SendMail.class);
 
@@ -29,13 +29,13 @@ public class SendMail implements IAlertAction {
 	final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
 
 	@Override
-	public void execute(String jsonOptions) throws SpagoBIException {
+	public void execute(String jsonOptions, Map<String, String> externalParameters) throws SpagoBIException {
 		InputParam params = (InputParam) JsonConverter.jsonToObject(jsonOptions, InputParam.class);
 		String subject = params.getSubject();
 		String[] recipients = params.getMailTo();
 		StringBuilder body = params.getBody() != null ? new StringBuilder(params.getBody()) : new StringBuilder();
-		if (body.length() > 0 && params.getParameterMap() != null && !params.getParameterMap().isEmpty()) {
-			for (Entry<String, String> entry : params.getParameterMap().entrySet()) {
+		if (body.length() > 0 && externalParameters != null && !externalParameters.isEmpty()) {
+			for (Entry<String, String> entry : externalParameters.entrySet()) {
 				int start = body.indexOf(entry.getKey());
 				int end = start + entry.getKey().length();
 				body.replace(start, end, entry.getValue());
@@ -147,20 +147,6 @@ public class SendMail implements IAlertAction {
 		return SingletonConfig.getInstance().getConfigValue(key);
 	}
 
-	public static void main(String[] args) {
-		String jsonParams = "{\"parameterMap\":{\"@{verbo}\":\"era\"}}";
-		InputParam params = (InputParam) JsonConverter.jsonToObject(jsonParams, InputParam.class);
-		StringBuilder sb = params.getBody() != null ? new StringBuilder(params.getBody()) : new StringBuilder();
-		if (sb.length() > 0 && params.getParameterMap() != null && !params.getParameterMap().isEmpty()) {
-			for (Entry<String, String> entry : params.getParameterMap().entrySet()) {
-				// body = sb.replace(entry.getKey(), entry.getValue());
-				int start = sb.indexOf(entry.getKey());
-				int end = start + entry.getKey().length();
-				sb.replace(start, end, entry.getValue());
-			}
-		}
-		System.out.println("> " + sb.toString());
-	}
 }
 
 class InputParam {
@@ -170,8 +156,9 @@ class InputParam {
 	private String subject;
 	// Html e-mail body
 	private String body;
+
 	// At runtime values will replace keys in body content
-	private Map<String, String> parameterMap;
+	// private Map<String, String> parameterMap;
 
 	/**
 	 * @return the mailTo
@@ -221,16 +208,16 @@ class InputParam {
 	/**
 	 * @return the parameterMap
 	 */
-	public Map<String, String> getParameterMap() {
-		return parameterMap;
-	}
+	// public Map<String, String> getParameterMap() {
+	// return parameterMap;
+	// }
 
 	/**
 	 * @param parameterMap
 	 *            the parameterMap to set
 	 */
-	public void setParameterMap(Map<String, String> parameterMap) {
-		this.parameterMap = parameterMap;
-	}
+	// public void setParameterMap(Map<String, String> parameterMap) {
+	// this.parameterMap = parameterMap;
+	// }
 
 }
