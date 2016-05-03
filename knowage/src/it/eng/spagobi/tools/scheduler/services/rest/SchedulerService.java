@@ -94,20 +94,12 @@ import org.json.JSONObject;
 
 @Path("/scheduler")
 public class SchedulerService {
-<<<<<<< .mine
-	static final Logger logger = Logger.getLogger(SchedulerService.class);
-	static final String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
-	static final String JOB_GROUP = "BIObjectExecutions";
-||||||| .r4620
-	static private Logger logger = Logger.getLogger(SchedulerService.class);
-	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
-=======
 	private static final String ALERT_JOB_GROUP = "ALERT_JOB_GROUP";
 	private static final String KPI_SCHEDULER_GROUP = "KPI_SCHEDULER_GROUP";
+	private static final String JOB_GROUP = "BIObjectExecutions";
 	
 	static private Logger logger = Logger.getLogger(SchedulerService.class);
 	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
->>>>>>> .r4785
 
 	@GET
 	@Path("/getJob")
