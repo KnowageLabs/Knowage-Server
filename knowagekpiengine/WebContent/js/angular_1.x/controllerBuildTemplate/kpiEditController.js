@@ -13,6 +13,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.typeDocument = 'widget';
 	$scope.style = {};
 	$scope.options = {"showvalue": true, "showtarget":true, "showtargetpercentage":false,"showlineargauge":true, "showthreshold":true,"vieweas":"Speedometer"};
+	$scope.options.history = {"units": 'month'};
 	$scope.units = ['day', 'week', 'month', 'quarter', 'year'];
 	$scope.typeOfWiew = [{'label':'speedometer','value':'Speedometer'},{'label':'kpicard','value':'Kpi Card'}];
 	$scope.style.color = "rgb(14, 13, 13)";

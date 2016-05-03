@@ -17,13 +17,12 @@
  */
 package it.eng.spagobi.kpi.bo;
 
-import it.eng.spagobi.commons.bo.Domain;
-
 import java.io.Serializable;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import it.eng.spagobi.commons.bo.Domain;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Kpi implements Serializable {
@@ -222,7 +221,7 @@ public class Kpi implements Serializable {
 	 * @param dateCreation
 	 *            the dateCreation to set
 	 */
-	@JsonIgnore
+
 	public void setDateCreation(Date dateCreation) {
 		this.dateCreation = dateCreation;
 	}

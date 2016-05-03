@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,22 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.services.content.service;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -34,21 +45,10 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.chart.ChartDriver;
+import it.eng.spagobi.engines.drivers.kpi.KpiDriver;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 import sun.misc.BASE64Encoder;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 public class ContentServiceImplSupplier {
 	static private Logger logger = Logger.getLogger(ContentServiceImplSupplier.class);
@@ -108,7 +108,8 @@ public class ContentServiceImplSupplier {
 			ObjTemplate temp = tempdao.getBIObjectActiveTemplate(biobj.getId());
 			if (temp == null) {
 				logger.warn("The template dor document [" + id + "] is NULL");
-				if (biobj.getEngine().getDriverName().equals(ChartDriver.class.getName())) {
+				if (biobj.getEngine().getDriverName().equals(ChartDriver.class.getName())
+						|| biobj.getEngine().getDriverName().equals(KpiDriver.class.getName())) {
 					temp = new ObjTemplate();
 				} else {
 					throw new SecurityException("The template for document [" + id + "] is NULL");
@@ -132,8 +133,7 @@ public class ContentServiceImplSupplier {
 					}
 					logger.warn("Calling elaborateTemplate method defined into the driver ... ");
 
-					if (biobj.getEngine().getDriverName().equals(ChartDriver.class.getName()) 
-							&& template == null) {
+					if (biobj.getEngine().getDriverName().equals(ChartDriver.class.getName()) && template == null) {
 						String emptyString = "";
 						template = emptyString.getBytes();
 					}
@@ -400,8 +400,8 @@ public class ContentServiceImplSupplier {
 				logger.debug("Execution role specified: " + roleName);
 				if (!correctRoles.contains(roleName)) {
 					if (correctRoles == null || correctRoles.size() == 0) {
-						logger.error("Role [] is not a valid role for the execution of document with id = [" + biobj.getId() + "], label = ["
-								+ biobj.getLabel() + "]");
+						logger.error("Role [] is not a valid role for the execution of document with id = [" + biobj.getId() + "], label = [" + biobj.getLabel()
+								+ "]");
 						throw new SecurityException("Role [] is not a valid role for the execution of document with id = [" + biobj.getId() + "], label = ["
 								+ biobj.getLabel() + "]");
 					}
