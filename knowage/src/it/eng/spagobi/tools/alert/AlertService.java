@@ -12,7 +12,6 @@ import it.eng.spagobi.tools.alert.bo.AlertAction;
 import it.eng.spagobi.tools.alert.bo.AlertListener;
 import it.eng.spagobi.tools.alert.dao.IAlertDAO;
 import it.eng.spagobi.tools.scheduler.bo.Frequency;
-import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.tools.scheduler.to.JobTrigger;
@@ -37,7 +36,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- *
+ * 
  */
 @Path("/1.0/alert")
 @ManageAuthorization
@@ -49,16 +48,31 @@ public class AlertService {
 	@GET
 	@Path("/{id}/pause")
 	public Response pause(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
-		// TODO fake code: this has to be developed
 		ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
-		IAlertDAO dao = getDao(req);
-		Alert alert = dao.loadAlert(id);
-		String name = "" + alert.getId();
-		Trigger trigger = schedulerDAO.loadTrigger(ALERT_JOB_GROUP, name);
+		String name = "" + id;
 		if (!schedulerDAO.isTriggerPaused(ALERT_JOB_GROUP, name, ALERT_JOB_GROUP, name)) {
 			TriggerPaused triggerPaused = new TriggerPaused();
-			triggerPaused.setId(id);
+			triggerPaused.setJobGroup(ALERT_JOB_GROUP);
+			triggerPaused.setJobName(name);
+			triggerPaused.setTriggerGroup(ALERT_JOB_GROUP);
+			triggerPaused.setTriggerName(name);
 			schedulerDAO.pauseTrigger(triggerPaused);
+		}
+		return Response.ok().build();
+	}
+
+	@GET
+	@Path("/{id}/resume")
+	public Response resume(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+		ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+		String name = "" + id;
+		if (schedulerDAO.isTriggerPaused(ALERT_JOB_GROUP, name, ALERT_JOB_GROUP, name)) {
+			TriggerPaused triggerPaused = new TriggerPaused();
+			triggerPaused.setJobGroup(ALERT_JOB_GROUP);
+			triggerPaused.setJobName(name);
+			triggerPaused.setTriggerGroup(ALERT_JOB_GROUP);
+			triggerPaused.setTriggerName(name);
+			schedulerDAO.resumeTrigger(ALERT_JOB_GROUP, name, ALERT_JOB_GROUP, name);
 		}
 		return Response.ok().build();
 	}
