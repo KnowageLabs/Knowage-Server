@@ -64,10 +64,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 	<angular-table flex id='alertListTable' ng-model=listAlert
 				columns='alertColumnsList'
 			 	 show-search-bar=true
+			 	 speed-menu-option = alertListAction
 				 click-function="alertClickEditFunction(item, index);" > </angular-table>
 		</list>
 		
-<!-- 			 	 speed-menu-option = alertListAction -->
 		
 				
 		<detail label="translate.load('Alarms definition **')" ng-controller="alertDefinitionDetailController"

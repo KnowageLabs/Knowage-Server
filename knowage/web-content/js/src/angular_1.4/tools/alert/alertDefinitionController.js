@@ -16,7 +16,7 @@ app.factory("alertDefinition_listeners",function(){
 
 app.controller('alertDefinitionController', ['$scope', alertDefinitionControllerFunction ]);
 app.controller('alertDefinitionDetailController', ['$scope','$angularListDetail','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout','sbiModule_config','alertDefinition_actions','alertDefinition_listeners','$cronFrequency','$mdToast',alertDefinitionDetailControllerFunction ]);
-app.controller('alertDefinitionListController', ['$scope','$angularListDetail','sbiModule_translate','sbiModule_restServices',alertDefinitionListControllerFunction ]);
+app.controller('alertDefinitionListController', ['$scope','$angularListDetail','sbiModule_translate','sbiModule_restServices','$mdToast','$mdDialog',alertDefinitionListControllerFunction ]);
 
 function alertDefinitionControllerFunction($scope){
 	$scope.listAlert=[];
@@ -33,8 +33,34 @@ function alertDefinitionControllerFunction($scope){
 }
 	
 	
-function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModule_translate,sbiModule_restServices){
+function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModule_translate,sbiModule_restServices,$mdToast,$mdDialog){
 	$scope.alertColumnsList=[{label:sbiModule_translate.load("name"),name:"name"}];
+	$scope.alertListAction=[{
+		label : sbiModule_translate.load('sbi.generic.delete'),
+		icon:'fa fa-trash' ,
+		backgroundColor:'transparent',
+		action : function(item,event) {
+			
+			 var confirm = $mdDialog.confirm()
+	         .title($scope.translate.load("sbi.kpi.measure.delete.title**"))
+	         .content($scope.translate.load("sbi.kpi.measure.delete.content**"))
+	         .ariaLabel('delete measure') 
+	         .ok($scope.translate.load("sbi.general.yes"))
+	         .cancel($scope.translate.load("sbi.general.No"));
+			   $mdDialog.show(confirm).then(function() { 		 
+			sbiModule_restServices.promiseDelete("1.0/alert",item.id+'/delete')
+			.then(function(response){  
+				$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.catalogues.toast.deleted")).position('top').action(
+				'OK').highlightAction(false).hideDelay(2000))
+				 $scope.listAlert.splice($scope.listAlert.indexOf(item),1);
+			},function(response){sbiModule_restServices.errorHandler(response.data,"Errore nella cancellazione**")})
+			   });
+			
+			
+			}
+	
+		}];
+	
 	
 	$scope.alertClickEditFunction=function(item,index){
 		sbiModule_restServices.promiseGet("1.0/alert",item.id+'/load')
