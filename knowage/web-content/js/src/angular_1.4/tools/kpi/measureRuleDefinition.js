@@ -510,7 +510,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
          .ok($scope.translate.load("sbi.general.yes"))
          .cancel($scope.translate.load("sbi.general.No"));
 		   $mdDialog.show(confirm).then(function() { 
-			   sbiModule_restServices.promiseDelete("1.0/kpi",item.ruleId+"/deleteRule").then(
+			   sbiModule_restServices.promiseDelete("1.0/kpi", item.ruleId + "/" + item.ruleVersion + "/deleteRule").then(
 					   function(response){
 						   $mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.catalogues.toast.deleted")).position('top').action(
 							'OK').highlightAction(false).hideDelay(2000))
