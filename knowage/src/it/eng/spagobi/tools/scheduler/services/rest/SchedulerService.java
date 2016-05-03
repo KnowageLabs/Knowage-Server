@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -28,9 +28,11 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.JSONSerializer;
 import it.eng.spagobi.commons.serializer.JobJSONSerializer;
@@ -43,10 +45,14 @@ import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
 import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
+import it.eng.spagobi.tools.scheduler.Formula;
+import it.eng.spagobi.tools.scheduler.FormulaParameterValuesRetriever;
+import it.eng.spagobi.tools.scheduler.RuntimeLoadingParameterValuesRetriever;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.tools.scheduler.jobs.ExecuteBIDocumentJob;
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
 import it.eng.spagobi.tools.scheduler.to.JobTrigger;
@@ -59,6 +65,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -81,16 +89,25 @@ import org.json.JSONObject;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
- * 
+ *
  */
 
 @Path("/scheduler")
 public class SchedulerService {
+<<<<<<< .mine
+	static final Logger logger = Logger.getLogger(SchedulerService.class);
+	static final String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
+	static final String JOB_GROUP = "BIObjectExecutions";
+||||||| .r4620
+	static private Logger logger = Logger.getLogger(SchedulerService.class);
+	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
+=======
 	private static final String ALERT_JOB_GROUP = "ALERT_JOB_GROUP";
 	private static final String KPI_SCHEDULER_GROUP = "KPI_SCHEDULER_GROUP";
 	
 	static private Logger logger = Logger.getLogger(SchedulerService.class);
 	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
+>>>>>>> .r4785
 
 	@GET
 	@Path("/getJob")
@@ -311,8 +328,7 @@ public class SchedulerService {
 			}
 			// fill response
 			updateAudit(req, profile, "SCHEDULER.DELETE", logParam, "OK");
-
-			return ("{resp:'ok'}");
+			return new JSONObject().put("resp", "ok").toString();
 		} catch (Exception ex) {
 			updateAudit(req, profile, "SCHEDULER.DELETE", logParam, "KO");
 			logger.error("Error while deleting job", ex);
@@ -361,9 +377,7 @@ public class SchedulerService {
 				}
 			}
 			updateAudit(req, profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
-
-			return ("{resp:'ok'}");
-
+			return new JSONObject().put("resp", "ok").toString();
 		} catch (Exception e) {
 			updateAudit(req, profile, "SCHEDULER.DELETE", logParam, "KO");
 			logger.error("Error while deleting schedule (trigger) ", e);
@@ -416,8 +430,7 @@ public class SchedulerService {
 				}
 			}
 			updateAudit(req, profile, "SCHED_TRIGGER.RUN", logParam, "OK");
-			return ("{resp:'ok'}");
-
+			return new JSONObject().put("resp", "ok").toString();
 		} catch (Exception e) {
 			updateAudit(req, profile, "SCHED_TRIGGER.RUN", logParam, "KO");
 			logger.error("Error while create immediate trigger ", e);
@@ -460,7 +473,7 @@ public class SchedulerService {
 			schedulerDAO.pauseTrigger(triggerPaused);
 
 			updateAudit(req, profile, "SCHED_TRIGGER.PAUSE", logParam, "OK");
-			return ("{resp:'ok'}");
+			return new JSONObject().put("resp", "ok").toString();
 		} catch (Exception e) {
 			updateAudit(req, profile, "SCHED_TRIGGER.PAUSE", logParam, "KO");
 			logger.error("Error while pausing trigger ", e);
@@ -496,7 +509,7 @@ public class SchedulerService {
 			schedulerDAO.resumeTrigger(triggerGroup, triggerName, jobGroup, jobName);
 
 			updateAudit(req, profile, "SCHED_TRIGGER.RESUME", logParam, "OK");
-			return ("{resp:'ok'}");
+			return new JSONObject().put("resp", "ok").toString();
 		} catch (Exception e) {
 			updateAudit(req, profile, "SCHED_TRIGGER.RESUME", logParam, "KO");
 			logger.error("Error while resuming trigger ", e);
@@ -586,24 +599,20 @@ public class SchedulerService {
 				jo.put("Status", "NON OK");
 				jo.put("Errors", errorH);
 				return jo.toString();
-
 			}
+
 			// JSONObject valid = isValidJobTrigger(jobTrigger);
 			// if (!valid.getString("Status").equals("OK")) {
 			// return valid.toString();
 			// }
 
 			StringBuffer message = getSchedulingMessage(jobTrigger, false, profile);
-
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
-
 			JSONObject jo;
 			jo = new JSONObject(schedulerService.scheduleJob(message.toString()));
-
 			if (jo.has("Status") && jo.getString("Status").equals("OK")) {
 				jo = JobTriggerToJson(jobTrigger);
 			}
-
 			return jo.toString();
 		} catch (Exception e) {
 			updateAudit(req, profile, "SCHED_TRIGGER.GET_TRIGGER_SAVE_OPTION", logParam, "KO");
@@ -1108,4 +1117,230 @@ public class SchedulerService {
 	// }
 	// }
 
+	@POST
+	@Path("/saveJob")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String saveJob(@Context HttpServletRequest req) {
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		HashMap<String, String> logParam = new HashMap<String, String>();
+
+		try {
+			IBIObjectDAO documentDAO = DAOFactory.getBIObjectDAO();
+			IBIObjectParameterDAO documentParameterDAO = DAOFactory.getBIObjectParameterDAO();
+
+			JSONObject jsonJob = RestUtilities.readBodyAsJSONObject(req);
+			JSONArray jsonDocs = jsonJob.getJSONArray("documents");
+
+			List<BIObject> biObjects = new ArrayList<BIObject>();
+			for (int docIndex = 0; docIndex < jsonDocs.length(); docIndex++) {
+				JSONObject jsonDoc = jsonDocs.getJSONObject(docIndex);
+				BIObject biObject = documentDAO.loadBIObjectByLabel(jsonDoc.getString("name"));
+
+				JSONArray jsonParams = jsonDoc.getJSONArray("parameters");
+				List<BIObjectParameter> biObjParams = new ArrayList<BIObjectParameter>();
+				List<BIObjectParameter> params = documentParameterDAO.loadBIObjectParametersById(biObject.getId());
+
+				for (int paramIndex = 0; paramIndex < jsonParams.length(); paramIndex++) {
+					JSONObject jsonParam = jsonParams.getJSONObject(paramIndex);
+					String name = jsonParam.getString("name");
+					String type = jsonParam.getString("type");
+					String value = jsonParam.getString("value");
+					boolean isIterative = jsonParam.getBoolean("iterative");
+
+					BIObjectParameter biObjParam = null;
+					for (BIObjectParameter param : params) {
+						if (param.getParameterUrlName().equalsIgnoreCase(name)) {
+							biObjParam = param;
+							break;
+						}
+					}
+
+					if (type.equalsIgnoreCase("formula")) {
+						Formula formula = Formula.getFormula(value);
+						FormulaParameterValuesRetriever parameterValuesRetriever = new FormulaParameterValuesRetriever();
+						parameterValuesRetriever.setFormula(formula);
+						biObjParam.setParameterValuesRetriever(parameterValuesRetriever);
+					} else if (type.equalsIgnoreCase("loadAtRuntime")) {
+						RuntimeLoadingParameterValuesRetriever parameterValuesRetriever = new RuntimeLoadingParameterValuesRetriever();
+						parameterValuesRetriever.setUserIndentifierToBeUsed(profile.getUserUniqueIdentifier().toString());
+						parameterValuesRetriever.setRoleToBeUsed(value.split("\\|")[1]);
+						biObjParam.setParameterValuesRetriever(parameterValuesRetriever);
+					} else if (type.equalsIgnoreCase("fixed")) {
+						if (value.trim().equals("")) {
+							biObjParam.setParameterValues(new ArrayList<String>());
+						} else {
+							biObjParam.setParameterValues(Arrays.asList(value.split(";")));
+						}
+					}
+					biObjParam.setIterative(isIterative);
+					biObjParams.add(biObjParam);
+				}
+				biObject.setBiObjectParameters(biObjParams);
+				biObjects.add(biObject);
+			}
+
+			JobInfo jobInfo = new JobInfo();
+			jobInfo.setJobGroupName(JOB_GROUP);
+			jobInfo.setJobName(jsonJob.getString("jobName"));
+			jobInfo.setJobDescription(jsonJob.getString("jobDescription"));
+			jobInfo.setSchedulerAdminstratorIdentifier(profile.getUserUniqueIdentifier().toString());
+			jobInfo.setDocuments(biObjects);
+
+			Map<String, Float> documentToCombinationsMap = new HashMap<String, Float>();
+			float totalCombinations = calculateTotalIterativeCombinations(jobInfo.getDocuments(), documentToCombinationsMap);
+			if (totalCombinations > 10) {
+				return new JSONObject().put("Status", "NON OK").put("Errors", "EXCEEDING CONFIGURATIONS").toString();
+			}
+			saveJob(jobInfo, req, profile);
+			return new JSONObject().put("resp", "ok").toString();
+		} catch (Exception e) {
+			updateAudit(req, profile, "SCHED_JOB.GET_JOB_SAVE_OPTION", logParam, "KO");
+			logger.error("Error while saving job", e);
+			logger.debug(canNotFillResponseError);
+			try {
+				return (ExceptionUtilities.serializeException("Error while saving job", null));
+			} catch (Exception ex) {
+				logger.debug("Error in ExceptionUtilities.serializeException.");
+				throw new SpagoBIRuntimeException("ExceptionUtilities.serializeException", ex);
+			}
+		}
+	}
+
+	private void saveJob(JobInfo jobInfo, HttpServletRequest req, IEngUserProfile profile) throws EMFUserError {
+		HashMap<String, String> logParam = new HashMap<String, String>();
+		try {
+			logParam.put("JOB NAME", jobInfo.getJobName());
+			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+
+			// create message to define the new job
+			StringBuilder message = new StringBuilder();
+			message.append("<SERVICE_REQUEST ");
+			message.append(" jobName=\"" + jobInfo.getJobName() + "\" ");
+			message.append(" jobDescription=\"" + jobInfo.getJobDescription() + "\" ");
+			message.append(" jobGroupName=\"" + JOB_GROUP + "\" ");
+			message.append(" jobRequestRecovery=\"false\" ");
+			message.append(" jobClass=\"" + ExecuteBIDocumentJob.class.getName() + "\" ");
+			message.append(">");
+			message.append("   <PARAMETERS>");
+
+			StringBuilder docLabels = new StringBuilder();
+			int index = 0;
+			for (BIObject biobj : jobInfo.getDocuments()) {
+				StringBuilder fixedParameters = new StringBuilder();
+				StringBuilder iterativeParameters = new StringBuilder();
+				StringBuilder loadAtRuntimeParameters = new StringBuilder();
+				StringBuilder useFormulaParameters = new StringBuilder();
+				index++;
+
+				for (BIObjectParameter biobjpar : biobj.getBiObjectParameters()) {
+					if (biobjpar.isIterative()) {
+						iterativeParameters.append(biobjpar.getParameterUrlName() + ";");
+					}
+
+					Object strategyObj = biobjpar.getParameterValuesRetriever();
+					if (strategyObj != null && strategyObj instanceof RuntimeLoadingParameterValuesRetriever) {
+						RuntimeLoadingParameterValuesRetriever strategy = (RuntimeLoadingParameterValuesRetriever) strategyObj;
+						String user = strategy.getUserIndentifierToBeUsed();
+						String role = strategy.getRoleToBeUsed();
+						loadAtRuntimeParameters.append(biobjpar.getParameterUrlName() + "(" + user + "|" + role + ");");
+					} else if (strategyObj != null && strategyObj instanceof FormulaParameterValuesRetriever) {
+						FormulaParameterValuesRetriever strategy = (FormulaParameterValuesRetriever) strategyObj;
+						String formulaName = strategy.getFormula().getName();
+						useFormulaParameters.append(biobjpar.getParameterUrlName() + "(" + formulaName + ");");
+					} else {
+						StringBuilder concatenatedValue = new StringBuilder();
+						List<String> values = biobjpar.getParameterValues();
+						if (values != null && !values.isEmpty()) {
+							for (String value : values) {
+								concatenatedValue.append(value + ";");
+							}
+							if (concatenatedValue.length() > 0) {
+								concatenatedValue = concatenatedValue.deleteCharAt(concatenatedValue.length() - 1);
+							}
+						}
+						if (concatenatedValue.length() > 0) {
+							fixedParameters.append(biobjpar.getParameterUrlName() + "=" + concatenatedValue + "%26");
+						}
+					}
+				}
+
+				if (fixedParameters.length() > 0) {
+					fixedParameters = fixedParameters.delete(fixedParameters.length() - 1, fixedParameters.length() - 1);
+				}
+				message.append("<PARAMETER name=\"" + biobj.getLabel() + "__" + index + "\" value=\"" + fixedParameters + "\" />");
+
+				if (iterativeParameters.length() > 0) {
+					iterativeParameters.deleteCharAt(iterativeParameters.length() - 1);
+					message.append("<PARAMETER name=\"" + biobj.getLabel() + "__" + index + "_iterative\" value=\"" + iterativeParameters + "\" />");
+				}
+
+				if (loadAtRuntimeParameters.length() > 0) {
+					loadAtRuntimeParameters.deleteCharAt(loadAtRuntimeParameters.length() - 1);
+					message.append("<PARAMETER name=\"" + biobj.getLabel() + "__" + index + "_loadAtRuntime\" value=\"" + loadAtRuntimeParameters + "\" />");
+				}
+
+				if (useFormulaParameters.length() > 0) {
+					useFormulaParameters.deleteCharAt(useFormulaParameters.length() - 1);
+					message.append("<PARAMETER name=\"" + biobj.getLabel() + "__" + index + "_useFormula\" value=\"" + useFormulaParameters + "\" />");
+				}
+
+				docLabels.append(biobj.getLabel() + "__" + index + ",");
+			}
+
+			if (docLabels.length() > 0) {
+				docLabels.deleteCharAt(docLabels.length() - 1);
+			}
+
+			logParam.put("DOC LABELS", docLabels.toString());
+			message.append("   	   <PARAMETER name=\"documentLabels\" value=\"" + docLabels + "\" />");
+			message.append("   </PARAMETERS>");
+			message.append("</SERVICE_REQUEST>");
+
+			// call the web service
+			String servoutStr = schedulerService.defineJob(message.toString());
+			SourceBean schedModRespSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
+			if (schedModRespSB == null) {
+				updateAudit(req, profile, "SCHEDULER.SAVE", logParam, "KO");
+				throw new SpagoBIRuntimeException("Imcomplete response returned by the web service during job creation");
+			}
+			if (!SchedulerUtilities.checkResultOfWSCall(schedModRespSB)) {
+				updateAudit(req, profile, "SCHEDULER.SAVE", logParam, "KO");
+				throw new SpagoBIRuntimeException("Job not created by the web service");
+			}
+			updateAudit(req, profile, "SCHEDULER.SAVE", logParam, "OK");
+		} catch (Exception e) {
+			updateAudit(req, profile, "SCHEDULER.SAVE", logParam, "KO");
+			logger.error("Error while saving job", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "errors.1004", "component_scheduler_messages");
+		}
+	}
+
+	private float calculateTotalIterativeCombinations(Collection<BIObject> documents, Map<String, Float> documentToCombinationsMap) {
+		float totalCombinations = 0;
+		for (BIObject document : documents) {
+			String biObjectName = document.getName();
+			float combinations = calculateIterativeCombinations(document);
+			if (documentToCombinationsMap.containsKey(biObjectName)) {
+				float previousCombinations = documentToCombinationsMap.get(biObjectName).floatValue();
+				documentToCombinationsMap.put(biObjectName, previousCombinations + combinations);
+			} else {
+				documentToCombinationsMap.put(biObjectName, combinations);
+			}
+			totalCombinations += combinations;
+		}
+		return totalCombinations;
+	}
+
+	private float calculateIterativeCombinations(BIObject biobj) {
+		float combinations = 1;
+		for (BIObjectParameter parameter : biobj.getBiObjectParameters()) {
+			if (parameter.isIterative()) {
+				List<String> values = parameter.getParameterValues();
+				if (values != null && values.size() > 1) {
+					combinations *= values.size();
+				}
+			}
+		}
+		return combinations;
+	}
 }

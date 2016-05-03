@@ -1,0 +1,42 @@
+<md-dialog aria-label="{{translate.load('sbi.scheduler.schedulation.info')}}" style="width: 80%; height: 80%; overflow-y: visible;">
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2 style="font-size: 20px; text-align: center; width: 100%;">
+				{{translate.load('sbi.scheduler.schedulation.info')}}
+			</h2>
+		</div>
+	</md-toolbar>
+	<md-content style="height: 100%;" layout="column">
+		<md-tabs class="mozScroll hideTabs h100" md-border-bottom md-dynamic-height flex >
+			<md-tab label="{{document.label}}" ng-repeat="document in triggerInfoCtrl.triggerInfo.documents track by $index" layout="column">
+				<md-content layout-padding>
+					<div layout="row" style="align-items: center;" >
+						<h4>{{translate.load("sbi.scheduler.schedulation.mailto")}}:&nbsp;</h4>
+						<p>{{document.mailtos}}</p>
+					</div>
+					<div layout="row" style="align-items: center;">
+						<h4>{{translate.load("sbi.scheduler.schedulation.attachedzip")}}:&nbsp;</h4>
+						<p>{{document.zipMailName}}</p>
+					</div>
+					<div layout="row" style="align-items: center;">
+						<h4>{{translate.load("sbi.scheduler.schedulation.mailsubject")}}:&nbsp;</h4>
+						<p>{{document.mailsubj}}</p>
+					</div>
+					<div layout="row" style="align-items: center;">
+						<h4>{{translate.load("sbi.scheduler.schedulation.containedfilename")}}:&nbsp;</h4>
+						<p>{{document.containedFileName}}</p>
+					</div>
+					<div layout="row" style="align-items: center;">
+						<h4>{{translate.load("sbi.scheduler.schedulation.mailtext")}}:&nbsp;</h4>
+						<p>{{document.mailtxt}}</p>
+					</div>
+				</md-content>
+			</md-tab>
+		</md-tabs>
+		<div class="md-actions" layout="row">
+			<md-button ng-click="triggerInfoCtrl.cancel()" class="md-primary">
+				{{translate.load("sbi.general.close");}} 
+			</md-button>
+		</div>
+	</md-content>
+</md-dialog>

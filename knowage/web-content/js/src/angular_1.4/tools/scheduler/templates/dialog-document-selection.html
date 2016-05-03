@@ -1,0 +1,21 @@
+<md-dialog aria-label="{{translate.load('sbi.crossnavigation.selectDocument')}}" style="width: 80%; height: 80%; overflow-y: visible;">
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2 style="font-size: 20px; text-align: center; width: 100%;">
+				{{translate.load("sbi.crossnavigation.selectDocument")}}
+			</h2>
+		</div>
+	</md-toolbar>
+	<md-content style="height: 100%;" layout="column">
+		<document-tree ng-model="docCtrl.folders" highlights-selected-item="true" create-tree="true" selected-item="docCtrl.selectedDocument" click-function="docCtrl.setSelectedDocument(item)" showFiles="true"></document-tree>
+		<div flex></div>
+		<div class="md-actions" layout="row">
+			<md-button ng-click="docCtrl.cancel()" class="md-primary">
+				{{translate.load("sbi.ds.wizard.cancel");}} 
+			</md-button>
+			<md-button ng-click="docCtrl.submit()" class="md-primary" ng-disabled="docCtrl.selectedDocument.engine == undefined">
+	 				{{translate.load("sbi.generic.select");}}
+			</md-button>
+		</div>
+	</md-content>
+</md-dialog>

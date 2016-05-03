@@ -1,0 +1,35 @@
+md-select-menu.md-knowage-theme md-option[selected] {
+    background-color: #a9c3db;
+}
+
+md-toolbar md-select.md-knowage-theme .md-select-value {
+	border-bottom-color:white;
+	color:white;
+}
+
+md-toolbar md-select.md-knowage-theme .md-select-value .md-select-icon {
+	color:white;
+}
+
+md-toolbar md-select.md-knowage-theme:focus:not([disabled]) .md-select-value {
+	color:white;
+}
+
+.flex-40, .layout-row>.flex-40 {
+    flex: 1 1 30%;
+    max-width: 30%;
+}
+
+.borderBox {
+	border: 1px solid;
+}
+
+.detailBody .checkboxRow {
+	padding-left: 10px !important;
+}
+.checkboxRow label {
+	line-height: 53px;
+}
+.checkboxRow {
+	height: 53px;
+}
