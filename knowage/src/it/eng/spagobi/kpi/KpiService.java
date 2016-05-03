@@ -782,9 +782,9 @@ public class KpiService {
 			e.addError("Values are mandatory");
 		}
 		// start/end validity dates of targets with same kpis cannot overlap
-		Set<String> kpis = new HashSet<>();
+		Set<Kpi> kpis = new HashSet<>();
 		for (TargetValue targetValue : target.getValues()) {
-			kpis.add(targetValue.getKpi().getName());
+			kpis.add(new Kpi(targetValue.getKpiId(), targetValue.getKpiVersion()));
 		}
 		List<Target> ll = dao.listOverlappingTargets(target.getId(), target.getStartValidity(), target.getEndValidity(), kpis);
 		String names = "";
