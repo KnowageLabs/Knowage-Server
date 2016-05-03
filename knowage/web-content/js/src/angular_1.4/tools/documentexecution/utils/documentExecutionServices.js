@@ -524,7 +524,7 @@
 							if(parameter.selectionType.toLowerCase() == "tree") {
 								parameter.parameterValue = JSON.parse(params[parameter.urlName]);
 							} else {
-								parameter.parameterValue = parameter.multivalue? 
+								parameter.parameterValue = parameter.multivalue ? 
 									JSON.parse(params[parameter.urlName])
 									: params[parameter.urlName];
 							}
@@ -582,17 +582,22 @@
 					for(var i=0; i<response.data.filterStatus.length; i++){
 						if(response.data.filterStatus[i].parameterValue && response.data.filterStatus[i].parameterValue.length>0){
 							var arrDefToFill = []; 
-							if(response.data.filterStatus[i].defaultValues && response.data.filterStatus[i].defaultValues.length>0){
-								arrDefToFill=response.data.filterStatus[i].defaultValues;
-							}
-							for(var k=0;k<response.data.filterStatus[i].parameterValue.length;k++){
-								arrDefToFill.push(response.data.filterStatus[i].parameterValue[k].value);
-							}	
-								
 							var fillObj = {};
-							fillObj[response.data.filterStatus[i].urlName] = JSON.stringify(arrDefToFill);
-							fillObj[response.data.filterStatus[i].urlName+'_field_visible_description'] = JSON.stringify(arrDefToFill);
-							//console.log('fillObj ' , fillObj);
+							//MULTIVALUE
+							if(response.data.filterStatus[i].multivalue){
+								if(response.data.filterStatus[i].defaultValues && response.data.filterStatus[i].defaultValues.length>0){
+									arrDefToFill=response.data.filterStatus[i].defaultValues;
+								}
+								for(var k=0;k<response.data.filterStatus[i].parameterValue.length;k++){
+									arrDefToFill.push(response.data.filterStatus[i].parameterValue[k].value);
+								}	
+								fillObj[response.data.filterStatus[i].urlName] = JSON.stringify(arrDefToFill);
+								fillObj[response.data.filterStatus[i].urlName+'_field_visible_description'] = JSON.stringify(arrDefToFill);
+							}else{
+								//SINGLE VALUE
+								fillObj[response.data.filterStatus[i].urlName] = response.data.filterStatus[i].parameterValue[0].value;
+								fillObj[response.data.filterStatus[i].urlName+'_field_visible_description'] = response.data.filterStatus[i].parameterValue[0].value;	
+							}
 							serviceScope.fillParametersPanel(fillObj);
 						}
 					}
