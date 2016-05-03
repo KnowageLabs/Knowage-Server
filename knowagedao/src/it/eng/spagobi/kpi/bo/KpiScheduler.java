@@ -1,5 +1,7 @@
 package it.eng.spagobi.kpi.bo;
 
+import it.eng.spagobi.tools.scheduler.bo.Frequency;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,18 +13,25 @@ public class KpiScheduler {
 	private List<SchedulerFilter> filters = new ArrayList<>();
 	private Boolean delta;
 	private List<Kpi> kpis = new ArrayList<>();
-	private Long startDate;
-	private Long endDate;
 	private String kpiNames;
 	private String author;
 
-	private String crono;
+	private Frequency frequency = new Frequency();
 
-	// TODO remove this field
-	private boolean runImmediately;
+	/**
+	 * @return the frequency
+	 */
+	public Frequency getFrequency() {
+		return frequency;
+	}
 
-	private String startTime;
-	private String endTime;
+	/**
+	 * @param frequency
+	 *            the frequency to set
+	 */
+	public void setFrequency(Frequency frequency) {
+		this.frequency = frequency;
+	}
 
 	/**
 	 * @return the id
@@ -84,36 +93,6 @@ public class KpiScheduler {
 	}
 
 	/**
-	 * @return the startDate
-	 */
-	public Long getStartDate() {
-		return startDate;
-	}
-
-	/**
-	 * @param startDate
-	 *            the startDate to set
-	 */
-	public void setStartDate(Long startDate) {
-		this.startDate = startDate;
-	}
-
-	/**
-	 * @return the endDate
-	 */
-	public Long getEndDate() {
-		return endDate;
-	}
-
-	/**
-	 * @param endDate
-	 *            the endDate to set
-	 */
-	public void setEndDate(Long endDate) {
-		this.endDate = endDate;
-	}
-
-	/**
 	 * @return the kpiNames
 	 */
 	public String getKpiNames() {
@@ -141,66 +120,6 @@ public class KpiScheduler {
 	 */
 	public void setAuthor(String author) {
 		this.author = author;
-	}
-
-	/**
-	 * @return the crono
-	 */
-	public String getCrono() {
-		return crono;
-	}
-
-	/**
-	 * @param crono
-	 *            the crono to set
-	 */
-	public void setCrono(String crono) {
-		this.crono = crono;
-	}
-
-	/**
-	 * @return the runImmediately
-	 */
-	public boolean isRunImmediately() {
-		return runImmediately;
-	}
-
-	/**
-	 * @param runImmediately
-	 *            the runImmediately to set
-	 */
-	public void setRunImmediately(boolean runImmediately) {
-		this.runImmediately = runImmediately;
-	}
-
-	/**
-	 * @return the startTime
-	 */
-	public String getStartTime() {
-		return startTime;
-	}
-
-	/**
-	 * @param startTime
-	 *            the startTime to set
-	 */
-	public void setStartTime(String startTime) {
-		this.startTime = startTime;
-	}
-
-	/**
-	 * @return the endTime
-	 */
-	public String getEndTime() {
-		return endTime;
-	}
-
-	/**
-	 * @param endTime
-	 *            the endTime to set
-	 */
-	public void setEndTime(String endTime) {
-		this.endTime = endTime;
 	}
 
 	/**

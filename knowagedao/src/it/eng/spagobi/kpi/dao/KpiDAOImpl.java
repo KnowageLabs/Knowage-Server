@@ -70,7 +70,6 @@ import it.eng.spagobi.kpi.metadata.SbiKpiThreshold;
 import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
 import it.eng.spagobi.kpi.metadata.SbiKpiValue;
 import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tools.scheduler.bo.Frequency;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
@@ -1485,10 +1484,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		scd.setId(sbi.getId());
 		scd.setName(sbi.getName());
 		scd.setAuthor(sbi.getCommonInfo().getUserIn());
-		scd.setStartDate(sbi.getStartDate().getTime());
+		scd.getFrequency().setStartDate(sbi.getStartDate().getTime());
 		scd.setDelta(sbi.getDelta() != null && sbi.getDelta().charValue() == 'T' ? Boolean.TRUE : Boolean.FALSE);
 		if (sbi.getEndDate() != null)
-			scd.setEndDate(sbi.getEndDate().getTime());
+			scd.getFrequency().setEndDate(sbi.getEndDate().getTime());
 		scd.setDelta(Character.valueOf('T').equals(sbi.getDelta()));
 		if (full) {
 			for (SbiKpiExecutionFilter sbiFilter : sbi.getSbiKpiExecutionFilters()) {
@@ -1939,7 +1938,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	private static final Random RANDOM = new Random();
 
 	@Override
-	public Integer insertScheduler(final KpiScheduler scheduler) {
+	public Integer insertScheduler(final KpiScheduler scheduler) throws SpagoBIException {
 		Integer id = executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) throws Exception {
@@ -1947,22 +1946,27 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				return sbiKpiExecution.getId();
 			}
 		});
-
+		ISchedulerDAO schedulerDAO = null;
 		try {
-			String name = "" + id;
-			Map<String, String> parameters = new HashMap<>();
-			parameters.put("kpiSchedulerId", name);
-			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
-			schedulerDAO.createOrUpdateJobAndTrigger(name, ProcessKpiJob.class, KPI_SCHEDULER_GROUP, KPI_SCHEDULER_GROUP, new Frequency(scheduler.getCrono(),
-					scheduler.getStartDate(), scheduler.getEndDate(), scheduler.getStartTime(), scheduler.getEndTime()), parameters);
+			schedulerDAO = DAOFactory.getSchedulerDAO();
 		} catch (EMFUserError e) {
 			throw new SpagoBIDOAException(e);
+		}
+		String name = "" + id;
+		Map<String, String> parameters = new HashMap<>();
+		parameters.put("kpiSchedulerId", name);
+		// This try/catch is needed to trace errors coming from quartz, because they must be sent to user
+		try {
+			schedulerDAO.createOrUpdateJobAndTrigger(name, ProcessKpiJob.class, KPI_SCHEDULER_GROUP, KPI_SCHEDULER_GROUP, scheduler.getFrequency(), parameters);
+		} catch (SpagoBIDOAException e) {
+			logger.error(e);
+			throw new SpagoBIException("Error inserting scheduler", e);
 		}
 		return id;
 	}
 
 	@Override
-	public Integer updateScheduler(final KpiScheduler scheduler) {
+	public Integer updateScheduler(final KpiScheduler scheduler) throws SpagoBIException {
 		Integer id = executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) throws Exception {
@@ -1976,10 +1980,16 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			Map<String, String> parameters = new HashMap<>();
 			parameters.put("kpiSchedulerId", name);
 			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
-			schedulerDAO.createOrUpdateJobAndTrigger(name, ProcessKpiJob.class, KPI_SCHEDULER_GROUP, KPI_SCHEDULER_GROUP, new Frequency(scheduler.getCrono(),
-					scheduler.getStartDate(), scheduler.getEndDate(), scheduler.getStartTime(), scheduler.getEndTime()), parameters);
+			// This try/catch is needed to trace errors coming from quartz, because they must be sent to user
+			try {
+				schedulerDAO.createOrUpdateJobAndTrigger(name, ProcessKpiJob.class, KPI_SCHEDULER_GROUP, KPI_SCHEDULER_GROUP, scheduler.getFrequency(),
+						parameters);
+			} catch (SpagoBIDOAException e) {
+				logger.error(e);
+				throw new SpagoBIException("Error creating or updating job or trigger");
+			}
 		} catch (EMFUserError e) {
-			throw new SpagoBIDOAException(e);
+			throw new SpagoBIDOAException("Error updating scheduler", e);
 		}
 		return id;
 	}
@@ -1995,12 +2005,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		sbiKpiExecution.setDelta(Boolean.TRUE.equals(scheduler.getDelta()) ? 'T' : 'F');
 
 		Calendar startDate = Calendar.getInstance();
-		startDate.setTimeInMillis(scheduler.getStartDate());
+		startDate.setTimeInMillis(scheduler.getFrequency().getStartDate());
 		sbiKpiExecution.setStartDate(startDate.getTime());
 
-		if (scheduler.getEndDate() != null) {
+		if (scheduler.getFrequency().getEndDate() != null) {
 			Calendar endDate = Calendar.getInstance();
-			endDate.setTimeInMillis(scheduler.getEndDate());
+			endDate.setTimeInMillis(scheduler.getFrequency().getEndDate());
 			sbiKpiExecution.setEndDate(endDate.getTime());
 		}
 

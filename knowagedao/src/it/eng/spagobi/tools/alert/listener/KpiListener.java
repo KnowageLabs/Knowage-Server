@@ -14,6 +14,8 @@ import it.eng.spagobi.tools.alert.metadata.SbiAlertAction;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertLog;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,8 +61,10 @@ public class KpiListener extends AbstractAlertListener {
 					executeAction(action, session);
 					writeActionLog(par, action, session, null);
 				} catch (SpagoBIException e) {
-					logger.error("Error executing action: \"" + action.getIdAction() + "\"");
-					writeActionLog(par, action, session, "Error executing action: \"" + action.getIdAction() + "\"");
+					logger.error("Error executing action: \"" + action.getIdAction() + "\"", e);
+					StringWriter sw = new StringWriter();
+					e.printStackTrace(new PrintWriter(sw));
+					writeActionLog(par, action, session, "Error executing action. " + sw.toString());
 				}
 			}
 		} else {

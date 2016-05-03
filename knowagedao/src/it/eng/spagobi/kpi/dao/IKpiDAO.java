@@ -251,9 +251,9 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public void removeScorecard(Integer id);
 
-	public Integer insertScheduler(KpiScheduler scheduler);
+	public Integer insertScheduler(KpiScheduler scheduler) throws SpagoBIException;
 
-	public Integer updateScheduler(KpiScheduler scheduler);
+	public Integer updateScheduler(KpiScheduler scheduler) throws SpagoBIException;
 
 	public String valueTargetbyKpi(Kpi kpi);
 
