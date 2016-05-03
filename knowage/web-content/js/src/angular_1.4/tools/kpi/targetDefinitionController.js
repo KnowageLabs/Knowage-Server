@@ -44,28 +44,45 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			label: sbiModule_translate.load('sbi.generic.delete'),
 			icon: 'fa fa-trash',
 			action: function(removedTarget) {
-				for (var i = 0; i < $scope.targets.length; i++) {
-					if (typeof $scope.targets[i].id == 'undefined' || $scope.targets[i].id == null) continue;
-					if ($scope.targets[i].id == removedTarget.id) {
-						sbiModule_restServices
-							.delete("1.0/kpi", removedTarget.id + "/deleteTarget")
-							.success(
-								function(data, status, headers, config) {
-									$scope.targets.splice(i, 1);
-									$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.resultMsg')).position('top')
-											.action('OK').highlightAction(false).hideDelay(3000));
-								}
-							).error(
-								function(data, status, headers, config) {
-									$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.savingItemError')).position('top')
-											.action('OK').highlightAction(false).hideDelay(5000));
-								}
-							);
-						return;
+				var confirm = $mdDialog.confirm()
+				.title($scope.translate.load("sbi.kpi.measure.delete.title"))
+				.content($scope.translate.load("sbi.kpi.measure.delete.content"))
+				.ariaLabel('delete kpi') 
+				.ok($scope.translate.load("sbi.general.yes"))
+				.cancel($scope.translate.load("sbi.general.No"));
+				$mdDialog.show(confirm).then(function() {
+					for (var i = 0; i < $scope.targets.length; i++) {
+						if (typeof $scope.targets[i].id == 'undefined' || $scope.targets[i].id == null) continue;
+						if ($scope.targets[i].id == removedTarget.id) {
+							sbiModule_restServices
+								.delete("1.0/kpi", removedTarget.id + "/deleteTarget")
+								.success(
+									function(data, status, headers, config) {
+										$scope.targets.splice(i, 1);
+										$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.resultMsg')).position('top')
+												.action('OK').highlightAction(false).hideDelay(3000));
+									}
+								).error(
+									function(data, status, headers, config) {
+										$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.savingItemError')).position('top')
+												.action('OK').highlightAction(false).hideDelay(5000));
+									}
+								);
+							return;
+						}
 					}
-				}
+				})
+			, function() {
+			};
+		}},{
+			label : sbiModule_translate.load('sbi.generic.clone'),
+			icon:'fa fa-copy' ,	 
+			backgroundColor:'transparent',	 
+			action : function(item,event) {
+				$scope.cloneTarget(item,event);
 			}
-		} /*,
+
+		}/*,
 		{
 			label: sbiModule_translate.load('sbi.generic.edit'),
 			icon: 'fa fa-pencil',
@@ -104,6 +121,56 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 		}
 	};
 	
+	$scope.cloneTarget = function(item,event){
+		var confirm = $mdDialog.confirm()
+		.title($scope.translate.load("sbi.generic.confirmClone"))
+		.ariaLabel('clone measure') 
+		.ok($scope.translate.load("sbi.general.yes"))
+		.cancel($scope.translate.load("sbi.general.No"));
+		$mdDialog.show(confirm).then(function() {
+			sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/loadTarget")
+			.then(function(response){ 
+
+				angular.copy(response.data,$scope.target);
+				$scope.target.name = "Copy of "+$scope.target.name;
+				$scope.target.startValidityDate= new Date(response.data.startValidity),
+				$scope.target.startValidity= this.formatDate(response.data.startValidity),
+				$scope.target.endValidityDate= new Date(response.data.endValidity),
+				$scope.target.endValidity= this.formatDate(response.data.endValidity),
+				sbiModule_restServices.get("1.0/kpi", $scope.target.id + "/listKpiWithTarget")
+				.success(
+					function(data, status, headers, config) {
+						$scope.kpis.length = 0;
+						for (var i = 0; i < data.length; i++) {
+							$scope.kpis.push({
+								id: data[i].kpiId,
+								version: data[i].kpiVersion,
+								name: data[i].kpi.name,
+								category: null,
+								date: this.formatDate(data[i].kpi.dateCreation),
+								author: data[i].kpi.author,
+								value: data[i].value
+							});
+						}
+						$scope.target.id = undefined;
+					}
+					
+				).error(
+					function(data, status, headers, config) {
+						
+					}
+				);
+				$angularListDetail.goToDetail();
+			},function(response){
+			});
+		}, function() {
+			console.log("annulla")
+		});
+		
+		
+		
+
+	}
 	$scope.showDialog = function($event) {
 		var kpiIdToIdx = {};
 		for (var i = 0; i < $scope.kpis.length; i++) {

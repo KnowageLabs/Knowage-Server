@@ -1,0 +1,28 @@
+<md-dialog aria-label="Select Function"  ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h1>KPI List</h1>
+        <span flex></span>
+		<md-button class="md-primary" ng-click="addKPIToCheck()">
+          	Save
+        </md-button>
+		<md-button class="md-primary" ng-click="close()">
+			Close    
+        </md-button>
+      </div>
+	
+    </md-toolbar>
+    <md-dialog-content layout="column" style ="height: 80%;">
+     <div class="md-dialog-content" layout="column" flex>
+		<angular-table class="cssTable" flex
+		id='listKpiTable' ng-model="kpiAllList"
+		columns='[{"label":"KPI Name","name":"name"},{"label":"Category","name":"valueCd"},{"label":"Date","name":"datacreation"},{"label":"Author","name":"author"},{"label":" ","name":"icon","size":"30px"}]'
+		columns-search='["name"]' show-search-bar=true
+		multi-select= multiSelect selected-item="selectedItem" comparison-column="'id'"
+		scope-functions=tableFunction highlights-selected-item="true"
+		> </angular-table>
+		</div>
+   	 </md-dialog-content>
+  </form>
+</md-dialog>

@@ -119,7 +119,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<extra-button>
 			  <md-button class="md-flat" ng-click="showAliasTab=!showAliasTab;" >{{translate.load("sbi.kpi.alias")}}</md-button>
 		</extra-button>
-		<detail save-function="parseFormula" cancel-function="cancel">
+		<detail save-function="parseFormula" cancel-function="cancel" label="getKpiName()">
  		<div layout="row" class="absolute" layout-fill>
 		<md-tabs flex md-selected='selectedTab.tab'>
 				<md-tab id="tab1" >

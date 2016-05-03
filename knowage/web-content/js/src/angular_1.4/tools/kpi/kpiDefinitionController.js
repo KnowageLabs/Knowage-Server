@@ -31,8 +31,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	//variables cardinality
 	//$scope.cardinality={"measureList":[],"checkedAttribute":{}};
 	$scope.countAccessCardinality = 0;
-
-
+	
 	//methods formula
 	sbiModule_restServices.promiseGet("2.0/domains","listByCode/KPI_KPI_CATEGORY")
 	.then(function(response){ 
@@ -48,7 +47,13 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		$scope.errorHandler(response.data,"");
 	});
 
-
+	$scope.getKpiName = function(){
+		if($scope.kpi.name!=""){
+			return $scope.kpi.name;
+		} else{
+			return 'New Kpi';
+		}
+	}
 	$scope.parseFormula = function(){
 		$scope.$broadcast ('parseEvent');
 

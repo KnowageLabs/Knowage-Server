@@ -125,7 +125,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-whiteframe class="md-whiteframe-4dp layout-padding" layout-margin layout="column" flex>
 					<md-toolbar>
 						<div class="md-toolbar-tools" layout="row" class="headerNote">
-							<h5>{{translate.load("sbi.target.headerkpi")}}</h5>
+							<h1>{{translate.load("sbi.target.headerkpi")}}</h1>
 						</div>
 					</md-toolbar>
 					<angular-table flex 
