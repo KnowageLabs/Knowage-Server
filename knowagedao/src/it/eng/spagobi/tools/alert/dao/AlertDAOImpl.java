@@ -111,6 +111,7 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 			String name = "" + alert.getId();
 			Map<String, String> parameters = new HashMap<>();
 			parameters.put(IAlertListener.LISTENER_PARAMS, name);
+			parameters.put(IAlertListener.LISTENER_ID, "" + alert.getAlertListener().getId());
 			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
 			schedulerDAO.createOrUpdateJobAndTrigger(name, Class.forName(alert.getAlertListener().getClassName()), ALERT_JOB_GROUP, ALERT_JOB_GROUP,
 					alert.getFrequency(), parameters);
