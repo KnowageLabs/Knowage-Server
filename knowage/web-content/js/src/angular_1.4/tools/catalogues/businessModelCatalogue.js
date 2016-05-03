@@ -115,6 +115,19 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	}
 	
+	$scope.downloadCWMFile= function(id){
+		
+		 sbiModule_restServices.promiseGet("2.0/metadata/"+id+"/exportCWM","")
+			.then(function(response) {
+				sbiModule_download.getBlob(response.data,"exportCWM",'application/xml','xmi');
+
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});	 
+		
+	}	
+	
 	 $scope.bmSpeedMenu= [
 		                      {
 		                    	  label:sbiModule_translate.load("sbi.generic.delete"),

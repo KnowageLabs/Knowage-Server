@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.jmi.model.ModelPackage;
 import javax.jmi.model.MofPackage;
@@ -92,8 +93,8 @@ public class SpagoBICWMJMIImpl implements ICWM {
 		sqlSimpleTypes = new HashMap<String, CwmSqlsimpleType>();
 		try {
 			repository = getRepositoryInstance();
-
-			this.name = modelName;
+			// create unique name every time to prevent collision
+			this.name = modelName + UUID.randomUUID().toString();
 
 			/*
 			 * Load the M3 CWM model
@@ -298,7 +299,8 @@ public class SpagoBICWMJMIImpl implements ICWM {
 	// -----------------------------------------------------------------------------
 
 	private synchronized static final MDRepository getRepositoryInstance() {
-		// if (repository != null) return repository;
+		if (repository != null)
+			return repository;
 		repository = getRepository();
 		return repository;
 	}

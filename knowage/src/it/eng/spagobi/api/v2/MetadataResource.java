@@ -421,6 +421,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	 **/
 	@GET
 	@Path("/{bmId}/exportCWM")
+	@Produces(MediaType.APPLICATION_XML + "; charset=UTF-8")
 	public Response exportMetamodelToCWM(@PathParam("bmId") int businessModelId) {
 		logger.debug("IN");
 
@@ -454,7 +455,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			logger.error("An error occurred while trying to export metamodel with id " + businessModelId + "to CWM", e);
-			throw new SpagoBIRestServiceException("An error occurred while trying to export metamodel with id " + businessModelId + "to CWM",
+			throw new SpagoBIRestServiceException("An error occurred while trying to export metamodel with id " + businessModelId + " to CWM",
 					buildLocaleFromSession(), e);
 
 		} finally {
@@ -547,7 +548,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			}
 			logger.debug("OUT");
 		}
-		logger.debug("the model file could not be taken by datamart.jar");
+		logger.error("the model file could not be taken by datamart.jar");
 		return null;
 	}
 

@@ -229,6 +229,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			      				</md-progress-circular>
 			      			</div> 
       					</div>
+      					<div layout="row" layout-wrap>
+      						<md-button ng-click="downloadCWMFile(selectedBusinessModel.id)"  class="md-raised md-ExtraMini" >Export CWM</md-button>
+      					</div>
       				
      					     				
      					<!--<div layout="row" layout-wrap>
