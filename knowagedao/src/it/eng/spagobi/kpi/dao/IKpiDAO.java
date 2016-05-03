@@ -219,7 +219,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 */
 	public Map<Kpi, List<String>> listPlaceholderByKpiList(List<Kpi> kpis);
 
-	public List<Target> listOverlappingTargets(Integer targetId, Date startDate, Date endDate, Set<String> kpiNames);
+	public List<Target> listOverlappingTargets(Integer targetId, Date startDate, Date endDate, Set<Kpi> kpis);
 
 	public List<Target> listTarget();
 
