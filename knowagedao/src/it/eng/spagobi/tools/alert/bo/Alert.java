@@ -4,10 +4,15 @@ import it.eng.spagobi.tools.scheduler.bo.Frequency;
 
 public class Alert {
 
+	public enum JOB_STATUS {
+		SUSPENDED, ACTIVE
+	};
+
 	private Integer id;
 	private String name;
 	private String jsonOptions;
 	private AlertListener alertListener;
+	private JOB_STATUS jobStatus;
 
 	private Frequency frequency;
 
@@ -91,6 +96,21 @@ public class Alert {
 	 */
 	public void setJsonOptions(String jsonOptions) {
 		this.jsonOptions = jsonOptions;
+	}
+
+	/**
+	 * @return the jobStatus
+	 */
+	public JOB_STATUS getJobStatus() {
+		return jobStatus;
+	}
+
+	/**
+	 * @param jobStatus
+	 *            the jobStatus to set
+	 */
+	public void setJobStatus(JOB_STATUS jobStatus) {
+		this.jobStatus = jobStatus;
 	}
 
 	/*

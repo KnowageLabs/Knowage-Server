@@ -3,8 +3,10 @@ package it.eng.spagobi.tools.alert.dao;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.tools.alert.bo.Alert;
+import it.eng.spagobi.tools.alert.bo.Alert.JOB_STATUS;
 import it.eng.spagobi.tools.alert.bo.AlertAction;
 import it.eng.spagobi.tools.alert.bo.AlertListener;
 import it.eng.spagobi.tools.alert.listener.IAlertListener;
@@ -13,11 +15,16 @@ import it.eng.spagobi.tools.alert.metadata.SbiAlertAction;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertListener;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertLog;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.tools.scheduler.metadata.SbiTriggerPaused;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.hibernate.Session;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
 
 public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 
@@ -77,7 +84,7 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 		try {
 			String name = "" + id;
 			Map<String, String> parameters = new HashMap<>();
-			parameters.put(IAlertListener.LISTENER_PARAMS, alert.getJsonOptions());
+			parameters.put(IAlertListener.LISTENER_PARAMS, name);
 			parameters.put(IAlertListener.LISTENER_ID, "" + alert.getAlertListener().getId());
 			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
 			schedulerDAO.createOrUpdateJobAndTrigger(name, Class.forName(alert.getAlertListener().getClassName()), ALERT_JOB_GROUP, ALERT_JOB_GROUP,
@@ -103,7 +110,7 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 		try {
 			String name = "" + alert.getId();
 			Map<String, String> parameters = new HashMap<>();
-			parameters.put(IAlertListener.LISTENER_PARAMS, alert.getJsonOptions());
+			parameters.put(IAlertListener.LISTENER_PARAMS, name);
 			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
 			schedulerDAO.createOrUpdateJobAndTrigger(name, Class.forName(alert.getAlertListener().getClassName()), ALERT_JOB_GROUP, ALERT_JOB_GROUP,
 					alert.getFrequency(), parameters);
@@ -114,27 +121,59 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 
 	@Override
 	public List<Alert> listAlert() {
-		List<SbiAlert> sbiLst = list(SbiAlert.class);
-		List<Alert> ret = new ArrayList<>();
-		for (SbiAlert sbiAlert : sbiLst) {
-			ret.add(from(sbiAlert));
-		}
-		return ret;
+		return executeOnTransaction(new IExecuteOnTransaction<List<Alert>>() {
+			@Override
+			public List<Alert> execute(Session session) throws Exception {
+				List<String> suspendedTriggers = session.createCriteria(SbiTriggerPaused.class).add(Restrictions.eq("triggerGroup", ALERT_JOB_GROUP))
+						.add(Restrictions.eq("jobGroup", ALERT_JOB_GROUP)).setProjection(Property.forName("triggerName")).list();
+
+				List<SbiAlert> alertList = session.createCriteria(SbiAlert.class).list();
+
+				List<Alert> ret = new ArrayList<>();
+				for (SbiAlert sbiAlert : alertList) {
+					JOB_STATUS status = JOB_STATUS.ACTIVE;
+					for (String triggerName : suspendedTriggers) {
+						if ((sbiAlert.getId() + "").equals(triggerName)) {
+							status = JOB_STATUS.SUSPENDED;
+							break;
+						}
+					}
+					ret.add(from(sbiAlert, status));
+				}
+				return ret;
+			}
+		});
 	}
 
-	private Alert from(SbiAlert sbiAlert) {
+	private Alert from(SbiAlert sbiAlert, JOB_STATUS jobStatus) {
 		Alert alert = new Alert();
 		alert.setId(sbiAlert.getId());
 		alert.setName(sbiAlert.getName());
 		alert.setJsonOptions(sbiAlert.getListenerOptions());
 		alert.setAlertListener(from(sbiAlert.getSbiAlertListener()));
+		alert.setJobStatus(jobStatus);
 		return alert;
 	}
 
 	@Override
 	public Alert loadAlert(Integer id) {
 		SbiAlert sbiAlert = load(SbiAlert.class, id);
-		return from(sbiAlert);
+		ISchedulerDAO schedulerDao;
+		try {
+			schedulerDao = DAOFactory.getSchedulerDAO();
+		} catch (EMFUserError e) {
+			throw new SpagoBIDOAException(e);
+		}
+		// TODO set correct values
+		String triggerGroup = "";
+		String jobName = "";
+		String triggerName = "";
+		String jobGroup = "";
+		if (schedulerDao.isTriggerPaused(triggerGroup, triggerName, jobGroup, jobName)) {
+			return from(sbiAlert, JOB_STATUS.SUSPENDED);
+		} else {
+			return from(sbiAlert, JOB_STATUS.ACTIVE);
+		}
 	}
 
 	@Override

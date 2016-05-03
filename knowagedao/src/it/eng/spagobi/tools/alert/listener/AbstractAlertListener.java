@@ -4,6 +4,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.alert.bo.Alert;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 
 import org.apache.log4j.Logger;
@@ -32,14 +33,25 @@ public abstract class AbstractAlertListener implements Job, IAlertListener {
 		}
 		// Execute internal only if trigger isn't paused
 		if (!isTriggerPaused(context)) {
-			execute(dataMap.getString(LISTENER_PARAMS));
+			String alertId = dataMap.getString(LISTENER_PARAMS);
+			Alert alert;
+			try {
+				alert = DAOFactory.getAlertDAO().loadAlert(Integer.valueOf(alertId));
+			} catch (NumberFormatException e) {
+				logger.error("Alert id not valid [" + alertId + "]", e);
+				throw new JobExecutionException("Alert id not valid [" + alertId + "]", e);
+			} catch (EMFUserError e) {
+				logger.error("Alert DAO error", e);
+				throw new JobExecutionException("Alert DAO error", e);
+			}
+			execute(alert.getJsonOptions());
 		}
 		TenantManager.unset();
 	}
 
 	public Integer getListenerId() {
 		try {
-			return listenerId != null ? Integer.decode(listenerId) : null;
+			return listenerId != null ? Integer.valueOf(listenerId) : null;
 		} catch (NumberFormatException e) {
 			return null;
 		}
