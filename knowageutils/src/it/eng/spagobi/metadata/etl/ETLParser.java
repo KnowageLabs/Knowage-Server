@@ -221,6 +221,9 @@ public class ETLParser {
 			if (!componentValue.isEmpty()) {
 				componentValue = componentValue.replaceAll("\"", "");
 				if (fieldValue.equalsIgnoreCase("FILE")) {
+					if (componentValue.contains("System.getProperty(file.separator)")) {
+						componentValue = componentValue.replace("System.getProperty(file.separator)", "\\");
+					}
 					if (componentValue.contains("context")) {
 						// File name contains context references
 						StringBuilder sb = new StringBuilder();
@@ -229,11 +232,16 @@ public class ETLParser {
 							if (token.contains("context")) {
 								token = token.replace("context.", "");
 								token = getContextParameter(contextName, token);
+
+							}
+							if (token != null) {
+								token = token.trim();
 							}
 							sb.append(token);
 						}
 						componentValue = sb.toString();
 					}
+
 				}
 
 				informations.add(componentValue);

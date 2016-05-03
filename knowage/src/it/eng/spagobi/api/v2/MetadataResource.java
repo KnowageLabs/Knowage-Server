@@ -19,6 +19,7 @@ package it.eng.spagobi.api.v2;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.meta.model.Model;
@@ -45,6 +46,7 @@ import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
 import it.eng.spagobi.metamodel.MetaModelLoader;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
@@ -129,6 +131,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	 **/
 	@POST
 	@Path("/{bmId}/bmExtract")
+	@UserConstraint(functionalities = { SpagoBIConstants.META_MODELS_CATALOGUE_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response extractBusinessModelMetadataInformation(@PathParam("bmId") int businessModelId) {
 		logger.debug("IN");
@@ -329,12 +332,14 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	 **/
 	@POST
 	@Path("/{contextName}/ETLExtract")
+	@UserConstraint(functionalities = { SpagoBIConstants.META_MODELS_CATALOGUE_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response extractETLMetadataInformation(@PathParam("contextName") String contextName, @MultipartForm MultipartFormDataInput input) {
 		logger.debug("IN");
 
 		String fileName = null;
 		boolean isZipFile = false;
+		boolean isItemFile = false;
 		try {
 
 			// 1- Retrieve uploaded file data
@@ -349,6 +354,8 @@ public class MetadataResource extends AbstractSpagoBIResource {
 						fileName = getFileName(header);
 						if (fileName.endsWith("zip")) {
 							isZipFile = true;
+						} else if (fileName.endsWith("item")) {
+							isItemFile = true;
 						}
 						inputStream = inputPart.getBody(InputStream.class, null);
 					}
@@ -367,21 +374,14 @@ public class MetadataResource extends AbstractSpagoBIResource {
 					}
 				}
 				zis.reallyClose();
-			} else {
+			} else if (isItemFile) {
 				// single .item file
 				parseAndExtract(inputStream, contextName, fileName);
-			}
+			} else {
+				// wrong file extension
+				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(), "Wrong file extension. Cannot continue.");
 
-			// 2 - Parse xml inputStream
-			// Document xmlDocument = inputStreamToDocument(inputStream);
-			// ETLParser etlParser = new ETLParser(xmlDocument);
-			// ETLMetadata etlMetadata = etlParser.getETLMetadata(contextName);
-			// logger.debug("Etl metadata extracted for: " + fileName + " with context: " + contextName);
-			// logger.debug(etlMetadata.toString());
-			//
-			// // 3 - Write informations on db
-			// ImportMetadata im = new ImportMetadata();
-			// im.importETLMetadata(fileName, etlMetadata);
+			}
 
 			return Response.ok().build();
 

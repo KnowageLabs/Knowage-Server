@@ -116,7 +116,7 @@
 	        <ITEM   title="#menu.MetaModelsCatalogue"
 	                functionality="MetaModelsCatalogueManagement"
 	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/businessModelCatalogue.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />
+	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />	                
 			<ITEM   title="Mondrian schemas catalog Old"
 	                functionality="ArtifactCatalogueManagement"
 	                url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ARTIFACTS_CATALOGUE_ACTION&amp;type=MONDRIAN_SCHEMA&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
@@ -169,6 +169,10 @@
 			url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/definition/crossDefinition.jsp" />
 			<ITEM	title="#menu.Alert" functionality="AlertManagement" 
 			url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/alert/alertDefinition.jsp" />
+	        <ITEM   title="#menu.ETLMetadata"
+	                functionality="MetaModelsCatalogueManagement"
+	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/etlMetadataExtraction.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />			
 		</ITEM>
 		
 		<ITEM	code="server_settings" 
