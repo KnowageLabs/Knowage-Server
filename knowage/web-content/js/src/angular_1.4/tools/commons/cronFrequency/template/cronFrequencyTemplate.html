@@ -16,12 +16,15 @@
 			<div layout="row" layout-padding >
 				<div layout="column" layout-align="space-around start">
 					<label>{{translate.load("scheduler.starttime","component_scheduler_messages")}}:</label>
-					<label>{{translate.load("scheduler.endtime","component_scheduler_messages")}}: </label>
+					<label>
+						<span ng-if="ngModel.endDate!=undefined && ngModel.endDate!=null && ngModel.endDate!=''"> {{translate.load("scheduler.endtime","component_scheduler_messages")}}:</span>
+						 &nbsp;
+						 </label>
 				</div>
 				
 				<div layout="column">
 					<angular-time-picker id="myTimePicker1"  ng-model="ngModel.startTime"></angular-time-picker>
-					<angular-time-picker id="myTimePicker2" ng-model="ngModel.endTime"></angular-time-picker>
+					<angular-time-picker ng-if="ngModel.endDate!=undefined && ngModel.endDate!=null && ngModel.endDate!=''" id="myTimePicker2" ng-model="ngModel.endTime"></angular-time-picker>
 				</div>
 			</div>
 		</div>		

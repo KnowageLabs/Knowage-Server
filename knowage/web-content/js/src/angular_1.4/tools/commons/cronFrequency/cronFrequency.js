@@ -8,22 +8,22 @@ var currentScriptPathCF = scriptsCF[scriptsCF.length - 1].src;
 
 angular.module('cron_frequency', [ 'ngMaterial','sbiModule','angular_time_picker'])
 .service('$cronFrequency',function(){ 
-	this.parseForBackend=function(item){
-		if(angular.isDate(item.frequency.startDate)){
-			item.frequency.startDate=item.frequency.startDate.getTime();
+	this.parseForBackend=function(frequency){
+		if(angular.isDate(frequency.startDate)){
+			frequency.startDate=frequency.startDate.getTime();
 		}else{
-			item.frequency.startDate=(new Date(item.frequency.startDate)).getTime();
+			frequency.startDate=(new Date(frequency.startDate)).getTime();
 		}
 		
-		if(item.frequency.endDate!=undefined && item.frequency.endDate!=null){
-			if(angular.isDate(item.frequency.endDate)){
-				item.frequency.endDate=item.frequency.endDate.getTime();
+		if(frequency.endDate!=undefined && frequency.endDate!=null){
+			if(angular.isDate(frequency.endDate)){
+				frequency.endDate=frequency.endDate.getTime();
 			}else{
-				item.frequency.endDate=(new Date(item.frequency.endDate)).getTime();
+				frequency.endDate=(new Date(frequency.endDate)).getTime();
 			}
 		}
 		
-		item.frequency.cron=JSON.stringify(item.frequency.cron);
+		frequency.cron=JSON.stringify(frequency.cron);
 		 
 	}
 
@@ -122,6 +122,9 @@ angular.module('cron_frequency', [ 'ngMaterial','sbiModule','angular_time_picker
 								scope.dayinmonthrep_week = scope.ngModel.cron.parameter.dayRepetition;
 							}
 						}
+	    		  	}else{
+	    		  		scope.eventSched.repetitionKind = 'minute';
+	    		  		scope.eventSched.minute_repetition_n=1;
 	    		  	}
 	    		  
 	    	  }
