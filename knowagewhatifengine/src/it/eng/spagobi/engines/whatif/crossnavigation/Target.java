@@ -31,8 +31,6 @@ import java.util.List;
 public class Target implements Serializable{
 	
 	private static final long serialVersionUID = -4036176618363112988L;
-	String documentLabel;
-	String customizedView;
 	String title;
 	String description;
 	String targetCross;
@@ -43,14 +41,11 @@ public class Target implements Serializable{
 	}
 
 	public Target(SourceBean sb) {		
-		documentLabel = (String) sb.getAttribute(WhatIfXMLTemplateParser.TAG_TG_DOCUMENT_LABEL);
-		customizedView = (String) sb.getAttribute(WhatIfXMLTemplateParser.TAG_TG_CUSTOMIZED_VIEW);		
+		
 		List list= sb.getAttributeAsList(WhatIfXMLTemplateParser.TAG_TG_TITLE);
 		targetCross = (String) sb.getAttribute(WhatIfXMLTemplateParser.TAG_TG_TARGET);
 		titleCross = (String) list.get(0);
-		if (customizedView != null && customizedView.trim().equals("")) {
-			customizedView = null;
-		}
+
 		SourceBean descrSB = (SourceBean) sb.getAttribute(WhatIfXMLTemplateParser.TAG_CN_DESCRIPTION);
 		description = descrSB.getCharacters();
 		SourceBean titleSB = (SourceBean) list.get(1);
@@ -69,22 +64,6 @@ public class Target implements Serializable{
 			}
 		}
 		
-	}
-
-	public String getDocumentLabel() {
-		return documentLabel;
-	}
-
-	public void setDocumentLabel(String documentLabel) {
-		this.documentLabel = documentLabel;
-	}
-
-	public String getCustomizedView() {
-		return customizedView;
-	}
-
-	public void setCustomizedView(String customizedView) {
-		this.customizedView = customizedView;
 	}
 
 	public String getTitle() {

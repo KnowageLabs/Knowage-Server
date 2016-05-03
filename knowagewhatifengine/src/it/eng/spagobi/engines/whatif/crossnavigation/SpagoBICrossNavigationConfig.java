@@ -18,15 +18,18 @@
 
 package it.eng.spagobi.engines.whatif.crossnavigation;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.whatif.template.WhatIfXMLTemplateParser;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 
 
 public class SpagoBICrossNavigationConfig {
 	private static transient Logger logger = Logger.getLogger(SpagoBICrossNavigationConfig.class);
 	
-	private List<Target> targets = null;
+	private List<TargetParameter> parameters = null;
 	
 	public static final String ID = "cross_navigation_config"; 
 	
@@ -48,16 +51,23 @@ public class SpagoBICrossNavigationConfig {
 	}
 
 	private void init(SourceBean node){
-		targets = new ArrayList<Target>();
-		List targetNodes = node.getAttributeAsList("TARGET");
-		if (targetNodes != null && !targetNodes.isEmpty()) {
-			for (int i = 0; i < targetNodes.size(); i++) {
-				Target target = new Target((SourceBean) targetNodes.get(i));
-				if (target != null) {
-					targets.add(target);
+		parameters = new ArrayList<TargetParameter>();
+		List parametersSB = node.getAttributeAsList(WhatIfXMLTemplateParser.TAG_TN_PARAMETERS);
+		List parameterSB = ((SourceBean) parametersSB.get(0)).getAttributeAsList(WhatIfXMLTemplateParser.TAG_TN_PARAMETER);
+		
+		boolean hasParameters = parameterSB != null && !parameterSB.isEmpty();
+		
+		if (hasParameters) {
+			for (int i = 0; i < parameterSB.size(); i++) {
+				SourceBean temp = (SourceBean) parameterSB.get(i);
+				TargetParameter aParameter = new TargetParameter(temp);
+				if (aParameter != null) {
+					parameters.add(aParameter);
 				}
 			}
 		}
+		
+
 	}
 		
 
@@ -77,14 +87,17 @@ public class SpagoBICrossNavigationConfig {
 		this.modelStatus = modelStatus;
 	}
 
-	public List<Target> getTargets() {
-		return targets;
+
+	public List<TargetParameter> getParameters() {
+		return parameters;
 	}
 
-	public void setTargets(List<Target> targets) {
-		this.targets = targets;
+
+	public void setParameters(List<TargetParameter> parameters) {
+		this.parameters = parameters;
 	}
-	
+
+
 	
 	
 

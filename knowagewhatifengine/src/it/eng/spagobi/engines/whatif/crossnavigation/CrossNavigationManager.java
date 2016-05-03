@@ -42,39 +42,34 @@ import org.olap4j.metadata.Property;
 public class CrossNavigationManager {
 	public static transient Logger logger = Logger.getLogger(CrossNavigationManager.class);
 
-	public static String buildCrossNavigationUrl(int targetIndex, SpagoBICellWrapper cellWrapper, WhatIfEngineInstance ei) throws Exception {
+	public static String buildCrossNavigationUrl(SpagoBICellWrapper cellWrapper, WhatIfEngineInstance ei) throws Exception {
 		logger.debug("IN");
 		SpagoBIPivotModel modelWrapper = ei.getSpagoBIPivotModel();
-		Target target = modelWrapper.getCrossNavigation().getTargets().get(targetIndex);
-		List<TargetParameter> parameters = target.getParameters();
-		StringBuffer buffer = new StringBuffer("parent.execCrossNavigation(window.name, '" + StringEscapeUtils.escapeJavaScript(target.documentLabel) + "', '");
+		List<TargetParameter> parameters = modelWrapper.getCrossNavigation().getParameters();
+		
+		StringBuffer buffer = new StringBuffer("parent.execExternalCrossNavigation({");
 		if (!parameters.isEmpty()) {
 			for (int i = 0; i < parameters.size(); i++) {
 				TargetParameter aParameter = parameters.get(i);
-				String parameterName = aParameter.name;
-				String parameterValue = getParameterValue(aParameter, ei, cellWrapper);
-				if (parameterValue != null) {
-					buffer.append(StringEscapeUtils.escapeJavaScript(parameterName + "=" + parameterValue + "&"));
+				if(!aParameter.isAbsolute()){//absolute will be managed from external cross navigation
+					String parameterName = aParameter.name;
+					String parameterValue = getParameterValue(aParameter, ei, cellWrapper);
+					parameterValue = "'"+StringEscapeUtils.escapeJavaScript(parameterValue)+"'";
+					if (parameterValue != null) {
+						buffer.append(parameterName + ":" + parameterValue + ",");
+					}
 				}
 			}
 		}
+		
 
-		if (buffer.charAt(buffer.length() - 1) == '&') {
+		if (buffer.charAt(buffer.length() - 1) == ',') {
 			buffer.deleteCharAt(buffer.length() - 1);
 		}
-		if (target.customizedView != null) {
-			buffer.append("', '" + StringEscapeUtils.escapeJavaScript(target.customizedView) + "'");
-		} else {
-			buffer.append("', ''");
-		}
 
-		if (target.titleCross != null && target.targetCross != null && target.targetCross.equalsIgnoreCase("tab")) {
-			buffer.append(",'" + target.titleCross + "','tab'");
-		} else if (target.titleCross != null) {
-			buffer.append(",'" + target.titleCross + "'");
-		}
 
-		buffer.append(");");
+
+		buffer.append("});");
 		String toReturn = buffer.toString();
 		logger.debug("OUT: returning [" + toReturn + "]");
 		return toReturn;
@@ -180,25 +175,34 @@ public class CrossNavigationManager {
 		String url = new String();
 		for (TargetClickable tc : targetsClickable) {
 			if (tc.getUniqueName().equalsIgnoreCase(level.getUniqueName())) {
-				String targetDocumentParameters = "";
+				StringBuffer targetDocumentParameters =new StringBuffer();
 				for (Map.Entry<String, String> entry : tc.getParametersList().entrySet()) {
 					String key = entry.getKey();
 					String value = entry.getValue();
-					targetDocumentParameters += key + "=" + value + "&";
+					targetDocumentParameters.append(key);
+					targetDocumentParameters.append(":");
+					targetDocumentParameters.append(value);
+					targetDocumentParameters.append(",");
 				}
-				url = "javascript:parent.execCrossNavigation(window.name, ''" + tc.getTargetDocument() + "'', ''" + targetDocumentParameters + "''";
-				if (tc.getTitle() != null && tc.getTarget() != null && tc.getTarget().equalsIgnoreCase("tab")) {
-					url += ",null,''" + tc.getTitle() + "'',''tab''";
-				} else if (tc.getTitle() != null) {
-					url += ",null,''" + tc.getTitle() + "''";
+				
+				if(targetDocumentParameters.length()>0){
+					int index = targetDocumentParameters.lastIndexOf(",");
+					targetDocumentParameters.setLength(index);
 				}
-				url += ");";
-				// int lastIndex=member.getUniqueName().lastIndexOf("].[");
-				// String newName=member.getUniqueName().substring(lastIndex+3,
-				// member.getUniqueName().length()-1);
+				
+				
+				String documentParametersUnformatted = (targetDocumentParameters.toString());
+				
+				logger.debug("Composing cross nav url. Parameters unformatted = "+documentParametersUnformatted);
 				String newName = getLevelValue(member, tc.getUniqueName());
+				newName = "'"+StringEscapeUtils.escapeJavaScript(newName)+"'";
 				Object[] args = new Object[] { newName };
-				url = MessageFormat.format(url, args);
+				url = MessageFormat.format(documentParametersUnformatted, args);
+				logger.debug("Composing cross nav url. Parameters formatted = "+url);
+				
+				url = "javascript:parent.execExternalCrossNavigation({"+(url)+"});";
+
+
 				return url;
 			} else {
 				url = null;

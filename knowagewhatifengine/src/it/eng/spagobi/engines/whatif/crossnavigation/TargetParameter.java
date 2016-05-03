@@ -51,14 +51,9 @@ public class TargetParameter implements Serializable{
 
 	TargetParameter(SourceBean sb) {
 		name = (String) sb.getAttribute(TAG_NAME);
-		isAbsolute = ((String) sb.getAttribute(TAG_SCOPE)).trim().equalsIgnoreCase(ABSOLUTE);
-		if (isAbsolute) {
-			value = (String) sb.getAttribute(TAG_VALUE);
-		} else {
-			dimension = (String) sb.getAttribute(TAG_DIMENSION);
-			hierarchy = (String) sb.getAttribute(TAG_HIERARCHY);
-			level = (String) sb.getAttribute(TAG_LEVEL);
-		}
+		dimension = (String) sb.getAttribute(TAG_DIMENSION);
+		hierarchy = (String) sb.getAttribute(TAG_HIERARCHY);
+		level = (String) sb.getAttribute(TAG_LEVEL);
 		property = (String) sb.getAttribute(TAG_PROPERTY);
 	}
 	
