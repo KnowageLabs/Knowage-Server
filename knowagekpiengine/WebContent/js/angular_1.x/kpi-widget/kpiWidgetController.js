@@ -11,7 +11,7 @@
 			templateUrl: currentScriptPath + 'template/kpi-widget.jsp',
 			controller: kpiWidgetController,
 			scope: {
-				//			ngModel: '=',
+//				ngModel: '=',
 				gaugeSize:'=',
 				minValue:'=',
 				maxValue:'=',
@@ -28,17 +28,16 @@
 				showThresholds: '=?',
 				canSee:'='
 			},
-
 		};
 	});
 
 	function kpiWidgetController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_restServices,sbiModule_translate,sbiModule_config){
-		//	$scope.documentData = $scope.ngModel;
-		if($scope.precision){
+		$scope.translate = sbiModule_translate;
+		
+		if($scope.precision) {
 			$scope.value = $scope.value.toFixed($scope.precision);
 			$scope.targetValue = $scope.targetValue.toFixed($scope.precision);
 		}
-
 
 		$scope.options = {
 				chart: {
@@ -46,9 +45,7 @@
 					height: 250,
 					width:400,
 					margin : {
-						//  top: 20,
 						right: 0,
-						//   bottom: 30,
 						left: 0
 					},
 					color:['#C4DCF3'],
@@ -72,12 +69,8 @@
 							return d3.format(',.2f')(d);
 						}
 					},
-
 				}
 		};
-
-
-
 
 		$scope.$watch('valueSeries',function (newValue, oldValue) {
 			if(newValue!=oldValue){
@@ -100,47 +93,61 @@
 					}
 
 					array.push(arrTemp);
-
 				}
 
 				return array;
 			}
-
-		},
-
-//		$scope.data = [{
-//			"values" : [ [ 1025409600000 , 9.3433263069351] , [ 1028088000000 , 8.4583069475546]]
-//		}];
+		};
 
 		$scope.data = [{
 			"values" : []
 		}];
+		
 		$scope.getValueToShow = function(){
-
-			if($scope.value>=1000){
+			if($scope.value >= 1000){
 				return ((Number($scope.value)/1000).toFixed($scope.precision))+"K";
 
 			}else{
 				return Number($scope.value).toFixed($scope.precision);
 			}
-		}
+		};
+		
 		$scope.getTargetToShow = function(){
-			if($scope.targetValue>=1000){
-				return (Number($scope.targetValue)/1000).toFixed($scope.precision)+"K";
-
-			}else{
-				return $scope.targetValue;
+			var targetToShow = '-';
+			
+			if($scope.targetValue != null) {
+				targetToShow = $scope.targetValue;
+				
+				if(targetToShow >= 1000){
+					targetToShow = (Number(targetToShow)/1000);
+					
+					if($scope.precision) {
+						targetToShow = (targetToShow).toFixed($scope.precision);
+					}
+					
+					targetToShow += "K";
+					
+				} else {
+					if($scope.precision) {
+						targetToShow = Number(targetToShow).toFixed($scope.precision);
+					}
+				}
 			}
-		}
+			
+			return targetToShow;
+		};
 
 		$scope.getPercentage = function(){
-			if($scope.targetValue!=0){
-				return (($scope.value / $scope.targetValue)*100).toFixed($scope.precision);
-			}else{
-				return 0;
+			if($scope.targetValue != null){
+				if($scope.targetValue != 0) {
+					return (($scope.value / $scope.targetValue)*100).toFixed($scope.precision) + ' %';
+				}else{
+					return 0 + ' %';
+				}
+			} else {
+				return '-';
 			}
-		}
-
+		};
 
 		$scope.openEdit = function(){
 			var deferred = $q.defer();
@@ -165,7 +172,7 @@
 				$scope.getValueToShow();
 			});
 			return deferred.promise;
-		}
+		};
 	};
 
 	function DialogController($scope,$mdDialog,$mdToast,sbiModule_restServices,sbiModule_config,sbiModule_translate,items,label,value,targetValue,valueSeries){
@@ -176,9 +183,9 @@
 		$scope.valueSeries = valueSeries;
 		$scope.array = [];
 		$scope.oldValue=value;
-		$scope.translate =sbiModule_translate;
-		//angular.copy($scope.value,$scope.oldValue);
-		$scope.parseLogicalKey = function(){
+		$scope.translate = sbiModule_translate;
+		
+		$scope.parseLogicalKey = function() {
 			var string  = $scope.valueSeries.logicalKey;
 			var char = string.split(",");
 			$scope.array = [];
@@ -189,19 +196,20 @@
 				obj["value"] = values[1];
 				$scope.array.push(obj);
 			}
-		}
+		};
 		
 		$scope.parseLogicalKey();
+		
 		$scope.close = function(){
 			$mdDialog.cancel();
-
-		}
+		};
+		
 		$scope.apply = function(){
 			if($scope.valueSeries.manualNote==null || $scope.valueSeries.manualNote.trim()==""){
 				$scope.showAction($scope.translate.load("sbi.kpi.widget.missingcomment"));
 				$scope.value = $scope.oldValue;
-			}else{
-				if($scope.value==undefined){
+			} else {
+				if(!$scope.value){
 					$scope.value = null;
 				}
 				$mdDialog.cancel();
@@ -225,8 +233,8 @@
 					$scope.errorHandler(response.data,"");
 				});
 			}
-
 		};
+		
 		$scope.showAction = function(text) {
 			var toast = $mdToast.simple()
 			.content(text)
@@ -236,16 +244,10 @@
 			.position('top')
 
 			$mdToast.show(toast).then(function(response) {
-
 				if ( response == 'ok' ) {
-
 
 				}
 			});
 		};
-
-
-	}
-
-
+	};
 })();

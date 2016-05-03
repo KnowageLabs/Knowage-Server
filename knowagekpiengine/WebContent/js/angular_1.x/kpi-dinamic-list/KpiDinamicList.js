@@ -35,7 +35,6 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 				});
 			},
 			checkValue: function(item){
-				console.log(item);
 				if(isNaN(item.rangeMinValue) || isNaN(item.rangeMaxValue)){
 					return true;
 				}else{

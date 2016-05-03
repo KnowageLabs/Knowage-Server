@@ -11,10 +11,10 @@
 				svg-width="{{getThresholdWidth(stop)}}" svg-height="{{mini==true? '20' : '40'}}"/>
 			
 			<rect class="measure" svg-width="{{value>0 ? value * sizeScaleFactor : 0}}" 
-				svg-height="{{mini==true? '6.666' : '13.333'}}" x="0" 
+				svg-height="{{mini==true? '6.666' : '13.333'}}" svg-x="{{minValue}}" 
 				svg-y="{{mini==true? '6.666' : '13.333'}}"/>
 			
-			<line ng-if="showTarget" class="target" svg-y1="{{mini==true? '3' : '5'}}" svg-y2="{{mini==true? '17' : '35'}}" 
+			<line ng-if="showTarget && targetValue != null" class="target" svg-y1="{{mini==true? '3' : '5'}}" svg-y2="{{mini==true? '17' : '35'}}" 
 					svg-x1="{{targetValue * sizeScaleFactor || 0}}" svg-x2="{{targetValue * sizeScaleFactor || 0}}"></line>
 			
 		</g>

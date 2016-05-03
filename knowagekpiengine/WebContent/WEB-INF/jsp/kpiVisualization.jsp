@@ -215,9 +215,9 @@ author:
 					</div>
 					<span flex></span>
 					
-							<md-button <%= canSee? " ng-show=true ":"ng-show=false" %>  class=" md-icon-button " ng-click="openEdit(kpiItem)">
-				         		 <md-icon md-font-icon="fa fa-pencil" aria-label="Edit Value" ></md-icon>
-				        	</md-button>
+					<md-button <%= canSee? " ng-show=true ":"ng-show=false" %>  class=" md-icon-button " ng-click="openEdit(kpiItem)">
+		         		 <md-icon md-font-icon="fa fa-pencil" aria-label="Edit Value" ></md-icon>
+		        	</md-button>
 			       
 				</md-toolbar>
 				
@@ -228,7 +228,7 @@ author:
 						threshold-stops="kpiItem.thresholdStops"
 						show-value="kpiItem.showValue" show-target="kpiItem.showTarget"
 						show-thresholds="kpiItem.showThreshold"
-					value-precision="kpiItem.precision" font-conf="kpiItem.fontConf"></kpi-gauge>
+						value-precision="kpiItem.precision" font-conf="kpiItem.fontConf"></kpi-gauge>
 			</md-whiteframe>
 	        
 			<kpi-widget ng-if="kpiItem.viewAs=='kpicard'" widget-id="kpiItem.id" 
@@ -245,12 +245,12 @@ author:
 	<%
 		} else if(model.equalsIgnoreCase("list")) {
 	%>
-	<kpi-list-document kpi-items="kpiItems"> </kpi-list-document>
+	<kpi-list-document kpi-items="kpiItems"></kpi-list-document>
 	<%
 		}
 	} else if(type.equalsIgnoreCase("scorecard")) {
 	%>
-	<kpi-scorecard scorecard="documentData"> </kpi-scorecard>
+	<kpi-scorecard scorecard="documentData"></kpi-scorecard>
 	<!-- SCORECARD -->
 
 	<%

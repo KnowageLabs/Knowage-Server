@@ -150,11 +150,13 @@
 			// line.target
 			this.targetLine = this.body.append("svg:line")
 				.attr("class", 'target')
-				.style("visibility", this.config.showTarget ? "visible" : "hidden")
 				.attr("x1", targetPoint1.x)
 				.attr("y1", targetPoint1.y)
 				.attr("x2", targetPoint2.x)
 				.attr("y2", targetPoint2.y)
+				
+				.style("visibility", this.config.showTarget ? 
+						"visible" : "hidden")
 				.style("stroke", "#AC0A08")
 				.style("stroke-width", "3px");
 			
@@ -293,16 +295,22 @@
 		};
 		
 		this.redrawTarget = function (value, transitionDuration){
-			var targetPoint1 = this.valueToPoint(value, 0.55);
-			var targetPoint2 = this.valueToPoint(value, 0.85);
 			
 			var targetPointer = this.targetLine;
-			
-			targetPointer
+
+			if(value != null) {
+				var targetPoint1 = this.valueToPoint(value, 0.55);
+				var targetPoint2 = this.valueToPoint(value, 0.85);
+				
+				targetPointer
+				.style("visibility", "visible")
 				.attr("x1", targetPoint1.x)
 				.attr("y1", targetPoint1.y)
 				.attr("x2", targetPoint2.x)
 				.attr("y2", targetPoint2.y);
+			} else {
+				targetPointer.style("visibility", "hidden");
+			}
 		};
 
 		this.valueToDegrees = function (value) {
@@ -370,7 +378,7 @@
 						scope.gaugeSvg.redraw(scope.value);
 					}
 					
-					if(scope.targetValue) {
+					if(scope.targetValue && scope.targetValue != null) {
 						scope.gaugeSvg.redrawTarget(scope.targetValue);
 					}
 				}, 0);
@@ -434,9 +442,6 @@
 		};
 		
 		$scope.$watch('thresholdStops', function(newValue, oldValue) {
-			console.log('thresholdStops old: ', oldValue);
-			console.log('thresholdStops new: ', newValue);
-			
 			$scope.thresholdStops = newValue;
 			$scope.initialConfig.stops = $scope.thresholdStops;
 			
@@ -447,22 +452,16 @@
 				$scope.gaugeSvg.redraw($scope.value);
 			}
 			
-			if($scope.targetValue) {
+			if($scope.targetValue && scope.targetValue != null) {
 				$scope.gaugeSvg.redrawTarget($scope.targetValue);
 			}
 		});
 		
 		$scope.$watch('value', function(newValue, oldValue) {
-			console.log('value old: ', oldValue);
-			console.log('value new: ', newValue);
-			
 			$scope.updateGauge(newValue, 1000);
 		});
 		
 		$scope.$watch('targetValue', function(newValue, oldValue) {
-			console.log('targetValue old: ', oldValue);
-			console.log('targetValue new: ', newValue);
-
 			if(newValue != oldValue) {
 				$scope.updateGaugeTarget(newValue, 500);
 			}

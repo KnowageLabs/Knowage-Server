@@ -1,4 +1,9 @@
 (function() {
+	
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	
 	var kpiViewerModule = angular.module('kpiViewerModule');
 
 	kpiViewerModule.controller('kpiViewerController', 
@@ -9,7 +14,6 @@
 		$scope.kpiOptions = documentData.template.chart.options;
 
 		$scope.kpiItems = [];
-
 
 		$scope.GAUGE_DEFAULT_SIZE = 250;
 		$scope.LINEAR_GAUGE_DEFAULT_SIZE= 400;
@@ -69,8 +73,8 @@
 			.then(function(response){ 
 				var chart = $scope.documentData.template.chart;
 
-				$scope.gaugeValue = -1;
-				$scope.gaugeTargetValue = -1;
+				$scope.gaugeValue = null;
+				$scope.gaugeTargetValue = null;
 				
 				if(chart.type == "kpi") {
 					if(Array.isArray(response.data)) {
@@ -98,15 +102,6 @@
 									var conf = kpiViewerServices.createWidgetConfiguration(
 											templateKpiItem, responseItemKpi, chart);
 
-									/* MOCK */
-									if(!conf.value) {
-										conf.value = $scope.gaugeValue;
-									}
-									if(!conf.targetValue) {
-										conf.targetValue = $scope.gaugeTargetValue;
-									}
-									/* MOCK */
-
 									$scope.kpiItems.push(conf);
 
 									break;
@@ -126,8 +121,8 @@
 		$scope.openEdit = function(kpiItem){
 			var deferred = $q.defer();
 			$mdDialog.show({
-				controller: DialogController,
-				templateUrl: '/knowagekpiengine/js/angular_1.x/kpi-widget/template/kpi-widget-editValue.jsp',
+				controller: dialogController,
+				templateUrl: currentScriptPath + '../kpi-widget/template/kpi-widget-editValue.jsp',
 				clickOutsideToClose:true,
 				preserveScope:true,
 				locals: {
@@ -157,7 +152,7 @@
 		
 	};
 	
-	function DialogController($scope,$mdDialog,sbiModule_restServices,$mdToast,sbiModule_config,sbiModule_translate,items,label,value,targetValue,valueSeries){
+	function dialogController($scope,$mdDialog,sbiModule_restServices,$mdToast,sbiModule_config,sbiModule_translate,items,label,value,targetValue,valueSeries){
 		$scope.label = label;
 		$scope.value = value;
 		$scope.targetValue =targetValue;
@@ -226,7 +221,6 @@
 			$mdToast.show(toast).then(function(response) {
 
 				if ( response == 'ok' ) {
-
 
 				}
 			});
