@@ -109,12 +109,27 @@
 		}];
 		
 		$scope.getValueToShow = function(){
-			if($scope.value >= 1000){
-				return ((Number($scope.value)/1000).toFixed($scope.precision))+"K";
-
-			}else{
-				return Number($scope.value).toFixed($scope.precision);
+			var valueToShow = '-';
+			
+			if($scope.value != null) {
+				valueToShow = $scope.value;
+				
+				if($scope.value >= 1000){
+					valueToShow = (Number(valueToShow)/1000);
+					
+					if($scope.precision) {
+						valueToShow = (valueToShow).toFixed($scope.precision);
+					}
+					
+					valueToShow += " K";
+				}else{
+					if($scope.precision) {
+						valueToShow = Number(valueToShow).toFixed($scope.precision);
+					}
+				}
 			}
+			
+			return valueToShow;
 		};
 		
 		$scope.getTargetToShow = function(){
@@ -143,7 +158,7 @@
 		};
 
 		$scope.getPercentage = function(){
-			if($scope.targetValue != null){
+			if($scope.value != null && $scope.targetValue != null){
 				if($scope.targetValue != 0) {
 					return (($scope.value / $scope.targetValue)*100).toFixed($scope.precision) + ' %';
 				}else{
