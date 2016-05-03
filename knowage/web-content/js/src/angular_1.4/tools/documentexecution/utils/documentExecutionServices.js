@@ -579,11 +579,14 @@
 					//build documentParameters
 					angular.copy(response.data.filterStatus, execProperties.parametersData.documentParameters);
 					//setting default value				
+					var fillObj = {};
+					var hasDefVal = false;
 					for(var i=0; i<response.data.filterStatus.length; i++){
 						if(response.data.filterStatus[i].parameterValue && response.data.filterStatus[i].parameterValue.length>0){
 							var arrDefToFill = []; 
-							var fillObj = {};
+							//var fillObj = {};
 							//MULTIVALUE
+							hasDefVal= true;
 							if(response.data.filterStatus[i].multivalue){
 								if(response.data.filterStatus[i].defaultValues && response.data.filterStatus[i].defaultValues.length>0){
 									arrDefToFill=response.data.filterStatus[i].defaultValues;
@@ -598,9 +601,10 @@
 								fillObj[response.data.filterStatus[i].urlName] = response.data.filterStatus[i].parameterValue[0].value;
 								fillObj[response.data.filterStatus[i].urlName+'_field_visible_description'] = response.data.filterStatus[i].parameterValue[0].value;	
 							}
-							serviceScope.fillParametersPanel(fillObj);
+							//serviceScope.fillParametersPanel(fillObj);
 						}
 					}
+					if(hasDefVal){serviceScope.fillParametersPanel(fillObj);}
 					//correlation
 					buildCorrelation(execProperties.parametersData.documentParameters);
 					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
