@@ -46,8 +46,8 @@ public class AlertService {
 	private static final String ALERT_JOB_GROUP = "ALERT_JOB_GROUP";
 
 	@GET
-	@Path("/{id}/pause")
-	public Response pause(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
+	@Path("/{id}/suspend")
+	public Response suspend(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
 		ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
 		String name = "" + id;
 		if (!schedulerDAO.isTriggerPaused(ALERT_JOB_GROUP, name, ALERT_JOB_GROUP, name)) {
