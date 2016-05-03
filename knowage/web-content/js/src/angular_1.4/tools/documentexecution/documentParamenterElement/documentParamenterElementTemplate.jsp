@@ -134,7 +134,7 @@
 		<!-- multiple -->
 		<md-select ng-model="parameter.parameterValue" multiple 
 			 	ng-if="parameter.selectionType=='COMBOBOX' && parameter.multivalue"> 
-			<md-option ng-repeat="defaultParameter in parameter.defaultValues" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled">
+			<md-option ng-repeat="defaultParameter in parameter.defaultValues track by $index" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled">
 				{{::defaultParameter.label}}
 			</md-option>
 		</md-select>
@@ -142,7 +142,7 @@
 		<md-select ng-model="parameter.parameterValue"  
 			 	ng-if="parameter.selectionType=='COMBOBOX' && !parameter.multivalue"> 
 			<md-option></md-option>
-			<md-option ng-repeat="defaultParameter in parameter.defaultValues" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled">
+			<md-option ng-repeat="defaultParameter in parameter.defaultValues track by $index" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled">
 				{{::defaultParameter.label}}
 			</md-option>
 		</md-select>
