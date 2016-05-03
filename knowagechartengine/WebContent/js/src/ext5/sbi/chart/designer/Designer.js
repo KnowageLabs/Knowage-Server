@@ -3003,9 +3003,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 			});			
 			
 			// crossNavigation should be disabled when in Cockpit 
-			if(isCockpit){
+//			if(isCockpit){
+				// Daniele Davì: Cross navigation always hidden: now is externally defined.
 				this.crossNavigationPanel.hide();
-			}
+//			}
 						
 			// Creating Advanced Editor step
 			this.advancedEditor = Ext.create('Sbi.chart.designer.AdvancedEditor', {
