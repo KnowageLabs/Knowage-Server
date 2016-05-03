@@ -75,7 +75,7 @@
  			<md-tooltip ng-if="menuItem.label!=undefined" md-direction="top">{{menuItem.label}}</md-tooltip>	
  			<md-tooltip ng-if="menuItem.dynamicLabel!=undefined && menuItem.label==undefined" md-direction="top">{{menuItem.dynamicLabel(row)}}</md-tooltip>	
        	 	<md-icon ng-if="menuItem.icon!=undefined" md-font-icon="{{menuItem.icon}}" aria-label="{{menuItem.label}}" action-color={{menuItem.color}}></md-icon>
-       	 	<md-icon ng-if="menuItem.dynamicIcon!=undefined && menuItem.icon==undefined" md-font-icon="{{menuItem.dynamicIcon(row)}}" aria-label="{{menuItem.label}}" action-color={{menuItem.color}}></md-icon>
+       	 	<md-icon ng-if="menuItem.dynamicIcon!=undefined && menuItem.icon==undefined" ng-class="menuItem.dynamicIcon(row)" aria-label="{{menuItem.label}}" action-color={{menuItem.color}}></md-icon>
       	</md-button>
 
 		<md-menu  ng-if="column.name=='--SPEEDMENU--' &&  speedMenuOption.length>3 ">
@@ -86,7 +86,7 @@
         <md-menu-item ng-repeat="menuItem in speedMenuOption"> 
           <md-button ng-click="$event.stopPropagation();menuItem.action(row,$event);" action-background-color={{menuItem.backgroundColor}}>
 		   <md-icon  ng-if="menuItem.icon!=undefined" action-color="{{menuItem.color}}" md-font-icon="{{menuItem.icon}}" aria-label="{{menuItem.label}}" md-menu-align-target></md-icon>
-		   <md-icon  ng-if="menuItem.dynamicIcon!=undefined && menuItem.icon==undefined" action-color="{{menuItem.color}}" md-font-icon="{{menuItem.dynamicIcon(row)}}" aria-label="{{menuItem.label}}" md-menu-align-target></md-icon>
+		   <md-icon  ng-if="menuItem.dynamicIcon!=undefined && menuItem.icon==undefined" action-color="{{menuItem.color}}" ng-class="menuItem.dynamicIcon(row)" aria-label="{{menuItem.label}}" md-menu-align-target></md-icon>
            <span ng-if="menuItem.label!=undefined">{{menuItem.label}}</span>
            <span ng-if="menuItem.dynamicLabel!=undefined && menuItem.label==undefined" >{{menuItem.dynamicLabel(row)}}</span>
           </md-button>

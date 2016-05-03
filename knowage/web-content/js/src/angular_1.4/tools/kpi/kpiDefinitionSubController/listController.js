@@ -34,6 +34,7 @@ function KPIDefinitionListControllerFunction($scope,$filter,sbiModule_config,sbi
 			$scope.flagActivateBrother('loadedEvent');
 
 		},function(response){
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.load.error"));
 		});
 
 	}
@@ -72,6 +73,7 @@ function KPIDefinitionListControllerFunction($scope,$filter,sbiModule_config,sbi
 				$scope.kpiList.push(obj);
 			}
 		},function(response){
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.list.load.error"));
 		});
 	};
 	$scope.getListKPI();

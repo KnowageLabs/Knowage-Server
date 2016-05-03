@@ -3,12 +3,12 @@
 
 	<div class="md-whiteframe-4dp" style="overflow:scroll;" layout-margin layout-padding layout="column" flex >
 			 <div layout="row"   layout-align="center end" ng-if="ngModel.mailTo!=undefined" >
-			      <label >{{translate.load("Mail to**")}}</label>
+			      <label >{{translate.load("sbi.scheduler.schedulation.mailto")}}</label>
 			       <md-chips flex   ng-model="ngModel.mailTo" md-on-append="addMailAddressCallBack($chip)"></md-chips>
 			 </div>
 			 
 			<md-input-container  class="md-block" >
-			      <label>{{translate.load("subject**")}}</label>
+			      <label>{{translate.load("sbi.scheduler.schedulation.mailsubject")}}</label>
 			      <input ng-model="ngModel.subject"  >
 			</md-input-container>
 			

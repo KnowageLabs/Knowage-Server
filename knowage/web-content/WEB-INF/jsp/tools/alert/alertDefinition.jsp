@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <angular-list-detail ng-controller="alertDefinitionController"  full-screen="true">
 		
-		<list label="translate.load('alarm list**')" ng-controller="alertDefinitionListController" new-function="newAlertFunction" layout-column>
+		<list label="translate.load('sbi.alert.list')" ng-controller="alertDefinitionListController" new-function="newAlertFunction" layout-column>
 		 	<angular-table flex id='alertListTable' ng-model=listAlert
 				columns='alertColumnsList'
 			 	 show-search-bar=true
@@ -70,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		
 				
-		<detail label="translate.load('Alarms definition **')" ng-controller="alertDefinitionDetailController"
+		<detail label="(alert.name==undefined || alert.name=='') ? translate.load('sbi.alert.definition') : alert.name" ng-controller="alertDefinitionDetailController"
 		 save-function="saveAlertFunction"
 		 cancel-function="cancelAlertFunction"
 		 disable-save-button="isValidListener.status!=true || isValidListenerCrono.status!=true || alert.name == undefined || alert.name.length==0"
@@ -79,12 +79,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
       	<div layout="row" layout-margin>
 			<md-input-container flex class="md-block">
-				<label>{{translate.load("name**")}}</label>
+				<label>{{translate.load("sbi.generic.name")}}</label>
 			    <input ng-model="alert.name" >
 			</md-input-container>
          
 			<md-input-container flex>
-				<label>{{translate.load("Listener**")}}</label>
+				<label>{{translate.load("sbi.alert.listener")}}</label>
 				<md-select  ng-model="alert.alertListener" ng-model-options="{trackBy: '$value.id'}"  >
 					<md-option ng-value="listener" ng-repeat="listener in listeners" >{{ listener.name }}</md-option>
 				</md-select>  

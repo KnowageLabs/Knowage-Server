@@ -42,23 +42,15 @@ function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModu
 	$scope.alertColumnsList=[{label:sbiModule_translate.load("sbi.generic.name"),name:"name"},{label:sbiModule_translate.load("sbi.generic.state"),name:"jobStatus"}];
 	
 	$scope.alertListAction=[
-	                        {label : sbiModule_translate.load('sbi.generic.delete'),
-		icon:'fa fa-trash' ,
-		backgroundColor:'transparent',
-		action : function(item,event) {}
-		},{label : sbiModule_translate.load('sbi.generic.delete'),
-			icon:'fa fa-trash' ,
-			backgroundColor:'transparent',
-			action : function(item,event) {}
-			},{
+	                        {
 		label : sbiModule_translate.load('sbi.generic.delete'),
 		icon:'fa fa-trash' ,
 		backgroundColor:'transparent',
 		action : function(item,event) {
 			
 			 var confirm = $mdDialog.confirm()
-	         .title($scope.translate.load("sbi.kpi.measure.delete.title**"))
-	         .content($scope.translate.load("sbi.kpi.measure.delete.content**"))
+	         .title($scope.translate.load("sbi.kpi.measure.delete.title"))
+	         .content($scope.translate.load("sbi.kpi.measure.delete.content"))
 	         .ariaLabel('delete measure') 
 	         .ok($scope.translate.load("sbi.general.yes"))
 	         .cancel($scope.translate.load("sbi.general.No"));
@@ -68,24 +60,29 @@ function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModu
 				$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.catalogues.toast.deleted")).position('top').action(
 				'OK').highlightAction(false).hideDelay(2000))
 				 $scope.listAlert.splice($scope.listAlert.indexOf(item),1);
-			},function(response){sbiModule_restServices.errorHandler(response.data,"Errore nella cancellazione**")})
+			},function(response){sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.deletingItemError"))});
 			   });
 			
 			
 			}
 	
 		},
-		{
-//			label :  1==1 ? sbiModule_translate.load('metti in play**') : sbiModule_translate.load('metti in pausa**'),
+		{ 
 			dynamicLabel: function(row){
-				return angular.equals(row.jobStatus.toUpperCase(),"SUSPENDED") ? sbiModule_translate.load('metti in play**') : sbiModule_translate.load('metti in pausa**');
+				return angular.equals(row.jobStatus.toUpperCase(),"SUSPENDED") ? sbiModule_translate.load('sbi.alert.resume') : sbiModule_translate.load('sbi.alert.suspend');
 			},
 			dynamicIcon: function(row){
 				return angular.equals(row.jobStatus.toUpperCase(),"SUSPENDED") ? 'fa fa-play' : 'fa fa-pause';
 			}, 
 			backgroundColor:'transparent',
-			action : function(item,event) {
-				 
+			action : function(item,event) { 
+				sbiModule_restServices.promiseGet("1.0/alert",item.id+'/'+(angular.equals(item.jobStatus.toUpperCase(),"SUSPENDED") ? 'resume' : 'suspend'))
+				.then(function(response){  
+//					$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.catalogues.toast.deleted")).position('top').action(
+//					'OK').highlightAction(false).hideDelay(2000)) ;
+					item.jobStatus=angular.equals(item.jobStatus.toUpperCase(),"SUSPENDED") ? 'ACTIVE' : 'SUSPENDED';
+				},function(response){
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.deletingItemError"))});
 				}
 		
 			}];
@@ -108,7 +105,7 @@ function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModu
 			},500)
 			$angularListDetail.goToDetail();
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,"Errore durante il download delle alert**");
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.alert.load.error"));
 		});
 		
 
@@ -130,7 +127,7 @@ function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModu
 		.then(function(response){  
 			angular.copy(response.data,$scope.listAlert);
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,"Errore durante il download delle alert**");
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.alert.load.error"));
 		});
 	};
 	$scope.loadListAlert();
@@ -163,12 +160,12 @@ function alertDefinitionDetailControllerFunction($scope,$angularListDetail,sbiMo
 			if($scope.alert.id==undefined){
 				$scope.alert.id=response.data.id;
 			}
-			$mdToast.show($mdToast.simple().content(sbiModule_translate.load("alert salvato con successo**")).position('top').action($scope.translate.load("sbi.general.yes")).highlightAction(false).hideDelay(2000))
+			$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.alert.save.success")).position('top').action($scope.translate.load("sbi.general.yes")).highlightAction(false).hideDelay(2000))
 			$scope.loadBroadcastLoadListAlert();
 			angular.copy($scope.alert,$scope.temporaneyAlert);
 		}
 		,function(response){
-			sbiModule_restServices.errorHandler(response.data,"Error while attempt to save alert**");
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.alert.save.error"));
 			})
 	}
 	$scope.cancelAlertFunction=function(){

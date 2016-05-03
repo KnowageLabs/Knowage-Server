@@ -1,15 +1,15 @@
 <md-dialog aria-label="addKpiAction" class="addKpiAction"  style=" min-width:95%; min-height:95%; " ng-cloak>
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>{{translate.load("Add new Action**");}}</h2>
+        <h2>{{translate.load("sbi.alert.listener.kpi.action.add.new");}}</h2>
         <span flex></span>
         
         <md-button ng-click="cancel()"  >
-        {{translate.load("cancel**")}}
+        {{translate.load("sbi.general.cancel")}}
       </md-button>
       
       <md-button ng-disabled="!isValidAction.status || currentAction.thresholdValues==undefined || currentAction.thresholdValues.length==0" ng-click="save()"  >
-       {{translate.load("save**")}}
+       {{translate.load("sbi.generic.update")}}
       </md-button>
         
       </div>
@@ -17,14 +17,14 @@
     <md-dialog-content flex layout >
       <div class="md-dialog-content" flex layout="column"> 
        <md-input-container>
-        <label>{{translate.load("Type**")}}</label>
+        <label>{{translate.load("sbi.generic.type")}}</label>
         <md-select ng-model="currentAction.idAction" >
           <md-option ng-repeat="type in actionType" value="{{type.id}}" ng-click="changeCurrentActionType(type)">{{type.name}}</md-option>
         </md-select>
       </md-input-container> 
       
       <md-input-container>
-	    	<label>{{translate.load("threshold **")}}</label>
+	    	<label>{{translate.load("sbi.kpis.threshold")}}</label>
 	        <md-select ng-model="currentAction.thresholdValues" multiple >
 	          <md-option ng-repeat="threshVal in kpi.threshold.thresholdValues" value="{{threshVal.id}}">
 		          <div layout="row">

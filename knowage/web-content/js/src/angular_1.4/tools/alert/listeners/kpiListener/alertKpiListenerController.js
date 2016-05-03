@@ -26,7 +26,7 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 					}
 					},
 				function(response){
-						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("Errore nel caricare la lista di kpi **"))
+						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.list.load.error"))
 						}
 					);
 	}
@@ -59,7 +59,7 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 					angular.extend($scope.ngModel.kpi,response.data);
 					},
 				function(response){
-						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("Errore nel caricare la lista di kpi **"))
+						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.load.error"));
 						}
 					);
 	}
@@ -67,11 +67,11 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 	$scope.loadSelectedKpi=function(oldKpi,kpi){
 		if($scope.ngModel.actions.length>0){
 			 var confirm = $mdDialog.confirm()
-	          .title('Modifica kpi**')
-	          .content('il kpi corrente ha della action associate che vetrranno rimosse. Continuare?**')
+	          .title(sbiModule_translate.load("sbi.alert.listener.kpi.edit.title"))
+	          .content(sbiModule_translate.load("sbi.alert.listener.kpi.edit.messagge"))
 	          .ariaLabel('change kpi') 
-	          .ok('Continue**')
-	          .cancel('Annulla**');
+	          .ok(sbiModule_translate.load("sbi.general.continue"))
+	          .cancel(sbiModule_translate.load("sbi.general.cancel"));
 	    $mdDialog.show(confirm).then(function() {
 	    	$scope.loadKpi(kpi);
 	    	$scope.ngModel.actions=[];
@@ -88,11 +88,11 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 	
 	$scope.deleteAction=function(item,index){
 		 var confirm = $mdDialog.confirm()
-         .title('Cancellazione action**')
-         .content('Sei sicuro di voler cancellare la action corrente?**')
+         .title(sbiModule_translate.load("sbi.alert.listener.kpi.action.delete.title"))
+         .content(sbiModule_translate.load("sbi.alert.listener.kpi.action.delete.messagge"))
          .ariaLabel('cancel action') 
-         .ok('Continue**')
-         .cancel('Annulla**');
+         .ok(sbiModule_translate.load("sbi.general.continue"))
+         .cancel(sbiModule_translate.load("sbi.general.cancel"));
 		   $mdDialog.show(confirm).then(function() {
 			   $scope.ngModel.actions.splice(index,1);
 		   }, function() { 
@@ -124,7 +124,6 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 	}
 	
 	$scope.getThresholdItem=function(Tarr){
-		console.log("getThresholdItem")
 		var TObjArr=[];
 		for(var i=0;i<$scope.ngModel.kpi.threshold.thresholdValues.length;i++){
 			if(Tarr.indexOf(""+$scope.ngModel.kpi.threshold.thresholdValues[i].id)!=-1){
