@@ -452,7 +452,7 @@
 				$scope.gaugeSvg.redraw($scope.value);
 			}
 			
-			if($scope.targetValue && scope.targetValue != null) {
+			if($scope.targetValue && $scope.targetValue != null) {
 				$scope.gaugeSvg.redrawTarget($scope.targetValue);
 			}
 		});

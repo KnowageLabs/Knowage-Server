@@ -35,8 +35,13 @@
 		$scope.translate = sbiModule_translate;
 		
 		if($scope.precision) {
-			$scope.value = $scope.value.toFixed($scope.precision);
-			$scope.targetValue = $scope.targetValue.toFixed($scope.precision);
+			if($scope.value) {
+				$scope.value = $scope.value.toFixed($scope.precision);
+			}
+			
+			if($scope.targetValue) {
+				$scope.targetValue = $scope.targetValue.toFixed($scope.precision);
+			}
 		}
 
 		$scope.options = {
