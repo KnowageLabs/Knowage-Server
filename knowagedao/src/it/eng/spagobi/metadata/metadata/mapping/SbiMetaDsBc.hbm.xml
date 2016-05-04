@@ -8,6 +8,12 @@
             <key-property name="dsId" type="int">
                 <column name="DS_ID" />
             </key-property>
+            <key-property name="versionNum" type="int">
+                <column name="VERSION_NUM" />
+            </key-property>
+            <key-property name="organization" type="string">
+                <column name="ORGANIZATION" length="20" />
+            </key-property>
             <key-property name="bcId" type="int">
                 <column name="BC_ID" />
             </key-property>
@@ -49,9 +55,6 @@
 	            <column name="META_VERSION" length="100" />
 	        </property>
 	         -->
-	        <property name="organization" type="string">
-	            <column name="ORGANIZATION" length="20" />
-	        </property>
 	    </component>
         <filter name="tenantFilter" condition="organization=:tenant"/> 
     </class>

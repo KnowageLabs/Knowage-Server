@@ -144,6 +144,8 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			SbiMetaDsBcId hibId = new SbiMetaDsBcId();
 			hibId.setBcId(aMeta.getId().getBcId());
 			hibId.setDsId(aMeta.getId().getDsId());
+			hibId.setOrganization(aMeta.getId().getOrganization());
+			hibId.setVersionNum(aMeta.getId().getVersionNum());
 
 			updateSbiCommonInfo4Update(hibId);
 			tx.commit();
@@ -175,12 +177,6 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiMetaDsBc hib = new SbiMetaDsBc();
-
-			SbiMetaDsBcId hibId = new SbiMetaDsBcId();
-			hibId.setBcId(aMeta.getId().getBcId());
-			hibId.setDsId(aMeta.getId().getDsId());
-			aMeta.setId(hibId);
 
 			updateSbiCommonInfo4Insert(aMeta);
 			aSession.save(aMeta);
@@ -213,6 +209,8 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			SbiMetaDsBcId hibId = new SbiMetaDsBcId();
 			hibId.setBcId(aMeta.getId().getBcId());
 			hibId.setDsId(aMeta.getId().getDsId());
+			hibId.setOrganization(aMeta.getId().getOrganization());
+			hibId.setVersionNum(aMeta.getId().getVersionNum());
 
 			SbiMetaDsBc hib = (SbiMetaDsBc) aSession.load(SbiMetaDsBc.class, hibId);
 

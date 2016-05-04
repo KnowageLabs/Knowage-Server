@@ -21,7 +21,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.metadata.metadata.SbiMetaObjDs;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.metadata.metadata.SbiMetaObjDsId;
 
 import java.util.List;
 
@@ -31,13 +31,17 @@ import java.util.List;
  */
 public interface ISbiObjDsDAO extends ISpagoBIDao {
 
-	public List<BIObject> loadObjByDsId(Integer dsId) throws EMFUserError;
+	public List<SbiMetaObjDs> loadObjByDsId(Integer dsId) throws EMFUserError;
 
-	public List<SbiDataSet> loadDsByObjId(Integer objId) throws EMFUserError;
+	public List<SbiMetaObjDs> loadDsByObjId(Integer objId) throws EMFUserError;
+
+	public SbiMetaObjDs loadDsObjByKey(SbiMetaObjDsId objDsId) throws EMFUserError;
 
 	public void modifyObjDs(SbiMetaObjDs aMetaObjDs) throws EMFUserError;
 
 	public void insertObjDs(SbiMetaObjDs aMetaObjDs) throws EMFUserError;
+
+	public void insertUniqueRelationFromObj(BIObject biObj) throws EMFUserError;
 
 	public void deleteObjDs(SbiMetaObjDs aMetaObjDs) throws EMFUserError;
 

@@ -21,7 +21,6 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.metadata.metadata.SbiMetaDsBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaDsTable;
 import it.eng.spagobi.metadata.metadata.SbiMetaDsTableId;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
@@ -145,6 +144,8 @@ public class SbiDsTableDAOHibImpl extends AbstractHibernateDAO implements ISbiDs
 			SbiMetaDsTableId hibId = new SbiMetaDsTableId();
 			hibId.setTableId(aMetaDsTable.getId().getTableId());
 			hibId.setDsId(aMetaDsTable.getId().getDsId());
+			hibId.setOrganization(aMetaDsTable.getId().getOrganization());
+			hibId.setVersionNum(aMetaDsTable.getId().getVersionNum());
 
 			updateSbiCommonInfo4Update(hibId);
 			tx.commit();
@@ -176,12 +177,6 @@ public class SbiDsTableDAOHibImpl extends AbstractHibernateDAO implements ISbiDs
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiMetaDsBc hib = new SbiMetaDsBc();
-
-			SbiMetaDsTableId hibId = new SbiMetaDsTableId();
-			hibId.setTableId(aMetaDsTable.getId().getTableId());
-			hibId.setDsId(aMetaDsTable.getId().getDsId());
-			aMetaDsTable.setId(hibId);
 
 			updateSbiCommonInfo4Insert(aMetaDsTable);
 			aSession.save(aMetaDsTable);
@@ -214,6 +209,8 @@ public class SbiDsTableDAOHibImpl extends AbstractHibernateDAO implements ISbiDs
 			SbiMetaDsTableId hibId = new SbiMetaDsTableId();
 			hibId.setTableId(aMetaDsTable.getId().getTableId());
 			hibId.setDsId(aMetaDsTable.getId().getDsId());
+			hibId.setOrganization(aMetaDsTable.getId().getOrganization());
+			hibId.setVersionNum(aMetaDsTable.getId().getVersionNum());
 
 			SbiMetaDsTable hib = (SbiMetaDsTable) aSession.load(SbiMetaDsTable.class, hibId);
 

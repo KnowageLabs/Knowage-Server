@@ -61,8 +61,11 @@ import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.DefaultOutputParameter.TYPE;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
+import it.eng.spagobi.metadata.metadata.SbiMetaObjDs;
+import it.eng.spagobi.metadata.metadata.SbiMetaObjDsId;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
 import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
@@ -755,13 +758,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setSbiObjFuncs(hibObjFunc);
 
 			// update detail dataset relationship
-
 			DAOFactory.getBIObjDataSetDAO().updateObjectDetailDataset(id, obj.getDataSetId(), aSession);
 
 			// we must close transaction before saving ObjTemplate,
 			// since ObjTemplateDAO opens a new transaction and it would fail in Ingres
 			tx.commit();
 			obj.setId(id);
+
+			// insert relation with ds for data lienage
+			DAOFactory.getSbiObjDsDAO().insertUniqueRelationFromObj(obj);
 
 			if (objTemp != null) {
 				objTemp.setBiobjId(id);
@@ -927,6 +932,20 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				ISubreportDAO subrptdao = DAOFactory.getSubreportDAO();
 				subrptdao.eraseSubreportByMasterRptId(obj.getId());
 				subrptdao.eraseSubreportBySubRptId(obj.getId());
+
+				// delete relation between document and dataset if it exists
+				Integer dsId = obj.getDataSetId();
+				if (dsId != null) {
+					VersionedDataSet ds = ((VersionedDataSet) DAOFactory.getDataSetDAO().loadDataSetById(dsId));
+					SbiMetaObjDs metaObjDs = new SbiMetaObjDs();
+					SbiMetaObjDsId metaObjDsId = new SbiMetaObjDsId();
+					metaObjDsId.setObjId(obj.getId());
+					metaObjDsId.setDsId(ds.getId());
+					metaObjDsId.setOrganization(ds.getOrganization());
+					metaObjDsId.setVersionNum(ds.getVersionNum());
+					metaObjDs.setId(metaObjDsId);
+					DAOFactory.getSbiObjDsDAO().deleteObjDs(metaObjDs);
+				}
 
 				// delete object
 				aSession.delete(hibBIObject);
@@ -1344,7 +1363,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects()
 	 */
 	@Override
@@ -1494,7 +1513,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects(java.lang.String)
 	 */
 	@Override
@@ -1537,7 +1556,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects()
 	 */
 	@Override
@@ -1610,7 +1629,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjectsFromInitialPath(java.lang.String)
 	 */
 	@Override
@@ -1663,7 +1682,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjectsFromInitialPath(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -1715,7 +1734,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectForDetail(java.lang.String)
 	 */
 	@Override
