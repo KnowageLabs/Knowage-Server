@@ -29,9 +29,9 @@
 				</md-input-container>
 				<md-select aria-label="aria-label" ng-model="filter.value"  ng-if="filter.type.valueCd=='TEMPORAL_FUNCTIONS'">
 						<md-option ng-repeat="type in funcTemporal" value="{{type.VALUE_CD}}">{{type.VALUE_CD}}</md-option>
-				</md-select> 
+				</md-select>
 				<md-select aria-label="aria-label" ng-model="filter.value" ng-if="filter.type.valueCd=='LOV'">
-						<md-option ng-repeat="type in lov" value="{{type.name}}">{{type.name}}</md-option>
+						<md-option ng-repeat="type in lov" value="{{type.label}}">{{type.name}}</md-option>
 				</md-select> 
 			</div>
 			</div>
