@@ -107,110 +107,111 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 						</div>
 					</div>
 				</md-tab>
-			<md-tab label="{{translate.load('sbi.generic.details')}}" md-on-select="ctrl.selectDetailTab()" md-active="!ctrl.isOverviewTabActive">
-				<md-card>
-					<md-card-content layout="column">
-						<form name="jobDetailForm" class="wordForm md-padding" novalidate>
-							<div>
-								<div flex="100">
-									<md-input-container class="small counter" ng-show="ctrl.selectedJob.NEWJOB">
-										<label>{{translate.load("sbi.generic.name")}}</label>
-										<input class="input_class" name="name" ng-model="ctrl.selectedJob.jobName" required maxlength="80" ng-maxlength="80" md-maxlength="80">
-										<div ng-messages="jobDetailForm.name.$error">
-											<div ng-message="required">{{translate.load("sbi.federationdefinition.required")}}</div>
-								        </div>
-									</md-input-container>
-									<md-input-container class="small counter">
-										<label>{{translate.load("sbi.generic.descr")}}</label>
-										<input class="input_class" ng-model="ctrl.selectedJob.jobDescription" maxlength="120" ng-maxlength="120" md-maxlength="120">
-									</md-input-container>
+				<md-tab label="{{translate.load('sbi.generic.details')}}" md-on-select="ctrl.selectDetailTab()" md-active="!ctrl.isOverviewTabActive">
+					<md-card>
+						<md-card-content layout="column">
+							<form name="jobDetailForm" class="wordForm md-padding" novalidate>
+								<div>
+									<div flex="100">
+										<md-input-container class="small counter" ng-show="ctrl.selectedJob.NEWJOB">
+											<label>{{translate.load("sbi.generic.name")}}</label>
+											<input class="input_class" name="name" ng-model="ctrl.selectedJob.jobName" required maxlength="80" ng-maxlength="80" md-maxlength="80">
+											<div ng-messages="jobDetailForm.name.$error">
+												<div ng-message="required">{{translate.load("sbi.federationdefinition.required")}}</div>
+									        </div>
+										</md-input-container>
+										<md-input-container class="small counter">
+											<label>{{translate.load("sbi.generic.descr")}}</label>
+											<input class="input_class" ng-model="ctrl.selectedJob.jobDescription" maxlength="120" ng-maxlength="120" md-maxlength="120">
+										</md-input-container>
+									</div>
 								</div>
-							</div>
-							<md-toolbar class="md-blue minihead" layout="row">
-								<div class="md-toolbar-tools layout-wrap layout-row">
-									<h2>{{translate.load("sbi.scheduler.documents");}}</h2>
-									<div flex></div>
-									<md-button ng-click="ctrl.addDocument()" class="md-fab" aria-label="Add document" style="top:0px;">
-										<md-icon style="height: auto;" md-font-icon="fa fa-plus" style="margin-top: 6px; color: white;"></md-icon> 
-									</md-button>
-									<md-button ng-click="ctrl.deleteDocument()" class="md-icon-button actionButton" aria-label="Delete document" ng-show='ctrl.selectedDocumentIndex >= 0'>
-										<md-icon style="height: auto;" md-font-icon="fa fa-trash" style="margin-top: 6px; color: white;"></md-icon> 
-									</md-button>
-									<md-button ng-click="ctrl.cloneDocument()" class="md-icon-button actionButton" aria-label="Clone document" ng-show='ctrl.selectedDocumentIndex >= 0'>
-										<md-icon style="height: auto;" md-font-icon="fa fa-clone" style="margin-top: 6px; color: white;"></md-icon> 
-									</md-button>
-								</div>
-							</md-toolbar>
-							<md-tabs class="mozScroll hideTabs h100" md-selected="ctrl.selectedDocumentIndex" md-border-bottom md-dynamic-height flex>
-								<md-tab ng-repeat="document in ctrl.selectedJob.documents track by $index" label="{{document.name}}">
-									<md-list>
-										<md-list-item ng-repeat="parameter in document.parameters" layout="row" layout-align="start">
-											<md-subheader flex="40">{{parameter.name}}</md-subheader>
-											<md-content layout="column" flex>
-												<!-- <span>{{parameter.value}}</span> -->
-												<md-input-container class="small counter" ng-show="parameter.temporal">
-													<label>{{translate.load("scheduler.parameterValuesStrategyQuestion","component_scheduler_messages")}}</label>
-													<md-select aria-label="aria-label" ng-model="parameter.type" ng-change="ctrl.setDefaultValue(parameter)">
-														<md-option ng-repeat="strategy in ctrl.triggerStrategies" value="{{strategy.value}}">{{strategy.label}}</md-option>
-													</md-select>
-												</md-input-container>
-												
-												<md-input-container class="small counter" ng-hide="parameter.temporal">
-													<label>{{translate.load("scheduler.parameterValuesStrategyQuestion","component_scheduler_messages")}}</label>
-													<md-select aria-label="aria-label" ng-model="parameter.type" ng-change="ctrl.setDefaultValue(parameter)">
-														<md-option ng-repeat="strategy in ctrl.triggerStrategiesNoFormula" value="{{strategy.value}}">{{strategy.label}}</md-option>
-													</md-select>
-												</md-input-container>
-												
-												<md-input-container ng-show="parameter.type == 'fixed'">
-													<label>{{translate.load("sbi.execution.roleselection.fieldlabel")}}</label>
-													<md-select aria-label="aria-label" ng-model="parameter.role"> 
-														<md-option ng-repeat="role in ctrl.selectedDocumentRoles" value="{{role.role}}">{{role.role}}</md-option>
-													</md-select>
-												</md-input-container>
-												
-												<md-input-container class="small counter" ng-show="parameter.type == 'fixed' && parameter.values.length > 0 && !parameter.manualInput">
-													<label>{{translate.load("sbi.thresholds.values")}}</label>
-													<md-select ng-model="parameter.selectedValues" ng-disabled="!parameter.role || parameter.role == ''" md-on-close="ctrl.saveParameterValues(parameter)" multiple>
-														<md-option ng-value="value" ng-repeat="value in parameter.values">{{value}}</md-option>
-													</md-select>
-												</md-input-container>
-												
-												<md-input-container class="small counter" ng-show="parameter.type == 'fixed' && (parameter.values.length == 0 || parameter.manualInput)">
-													<label>{{translate.load("sbi.thresholds.values")}}</label>
-													<input class="input_class" ng-model="parameter.value">
-												</md-input-container>
-												
-												<md-input-container ng-show="parameter.type == 'loadAtRuntime'">
-													<label>{{translate.load("sbi.execution.roleselection.fieldlabel")}}</label>
-													<md-select aria-label="aria-label" ng-model="parameter.value"> 
-														<md-option ng-repeat="role in ctrl.selectedDocumentRoles" value="{{role.userAndRole}}">{{role.role}}</md-option>
-													</md-select>
-												</md-input-container>
-												
-												<md-input-container ng-show="parameter.type == 'formula'">
-													<label>{{translate.load("scheduler.formulaName","component_scheduler_messages")}}</label>
-													<md-select aria-label="aria-label" ng-model="parameter.value"> 
-														<md-option ng-repeat="formula in ctrl.formulas" value="{{formula.name}}">{{formula.description}}</md-option>
-													</md-select>
-												</md-input-container>
-												
-												<md-input-container class="small counter">
-													<md-select aria-label="aria-label" ng-model="parameter.iterative">
-														<md-option ng-repeat="iteration in ctrl.triggerIterations" value="{{iteration.value}}">{{iteration.label}}</md-option>
-													</md-select>
-												</md-input-container>
-											</md-content>
-											<md-divider ng-if="!$last"></md-divider>
-										</md-list-item>
-									</md-list>
-									<p></p>
-								</md-tab>
-							</md-tabs>
-						</form>
-					</md-card-content>
-				</md-card>
-			</md-tab>
+								<md-toolbar class="md-blue minihead" layout="row">
+									<div class="md-toolbar-tools layout-wrap layout-row">
+										<h2>{{translate.load("sbi.scheduler.documents");}}</h2>
+										<div flex></div>
+										<md-button ng-click="ctrl.addDocument()" class="md-fab" aria-label="Add document" style="top:0px;">
+											<md-icon style="height: auto;" md-font-icon="fa fa-plus" style="margin-top: 6px; color: white;"></md-icon> 
+										</md-button>
+										<md-button ng-click="ctrl.deleteDocument()" class="md-icon-button actionButton" aria-label="Delete document" ng-show='ctrl.selectedDocumentIndex >= 0'>
+											<md-icon style="height: auto;" md-font-icon="fa fa-trash" style="margin-top: 6px; color: white;"></md-icon> 
+										</md-button>
+										<md-button ng-click="ctrl.cloneDocument()" class="md-icon-button actionButton" aria-label="Clone document" ng-show='ctrl.selectedDocumentIndex >= 0'>
+											<md-icon style="height: auto;" md-font-icon="fa fa-clone" style="margin-top: 6px; color: white;"></md-icon> 
+										</md-button>
+									</div>
+								</md-toolbar>
+								<md-tabs class="mozScroll hideTabs h100" md-selected="ctrl.selectedDocumentIndex" md-border-bottom md-dynamic-height flex>
+									<md-tab ng-repeat="document in ctrl.selectedJob.documents track by $index" label="{{document.name}}">
+										<md-list>
+											<md-list-item ng-repeat="parameter in document.parameters" layout="row" layout-align="start">
+												<md-subheader flex="40">{{parameter.name}}</md-subheader>
+												<md-content layout="column" flex>
+													<!-- <span>{{parameter.value}}</span> -->
+													<md-input-container class="small counter" ng-show="parameter.temporal">
+														<label>{{translate.load("scheduler.parameterValuesStrategyQuestion","component_scheduler_messages")}}</label>
+														<md-select aria-label="aria-label" ng-model="parameter.type" ng-change="ctrl.setDefaultValue(parameter)">
+															<md-option ng-repeat="strategy in ctrl.triggerStrategies" value="{{strategy.value}}">{{strategy.label}}</md-option>
+														</md-select>
+													</md-input-container>
+													
+													<md-input-container class="small counter" ng-hide="parameter.temporal">
+														<label>{{translate.load("scheduler.parameterValuesStrategyQuestion","component_scheduler_messages")}}</label>
+														<md-select aria-label="aria-label" ng-model="parameter.type" ng-change="ctrl.setDefaultValue(parameter)">
+															<md-option ng-repeat="strategy in ctrl.triggerStrategiesNoFormula" value="{{strategy.value}}">{{strategy.label}}</md-option>
+														</md-select>
+													</md-input-container>
+													
+													<md-input-container ng-show="parameter.type == 'fixed'">
+														<label>{{translate.load("sbi.execution.roleselection.fieldlabel")}}</label>
+														<md-select aria-label="aria-label" ng-model="parameter.role"> 
+															<md-option ng-repeat="role in ctrl.selectedDocumentRoles" value="{{role.role}}">{{role.role}}</md-option>
+														</md-select>
+													</md-input-container>
+													
+													<md-input-container class="small counter" ng-show="parameter.type == 'fixed' && parameter.values.length > 0 && !parameter.manualInput">
+														<label>{{translate.load("sbi.thresholds.values")}}</label>
+														<md-select ng-model="parameter.selectedValues" ng-disabled="!parameter.role || parameter.role == ''" md-on-close="ctrl.saveParameterValues(parameter)" multiple>
+															<md-option ng-value="value" ng-repeat="value in parameter.values">{{value}}</md-option>
+														</md-select>
+													</md-input-container>
+													
+													<md-input-container class="small counter" ng-show="parameter.type == 'fixed' && (parameter.values.length == 0 || parameter.manualInput)">
+														<label>{{translate.load("sbi.thresholds.values")}}</label>
+														<input class="input_class" ng-model="parameter.value">
+													</md-input-container>
+													
+													<md-input-container ng-show="parameter.type == 'loadAtRuntime'">
+														<label>{{translate.load("sbi.execution.roleselection.fieldlabel")}}</label>
+														<md-select aria-label="aria-label" ng-model="parameter.value"> 
+															<md-option ng-repeat="role in ctrl.selectedDocumentRoles" value="{{role.userAndRole}}">{{role.role}}</md-option>
+														</md-select>
+													</md-input-container>
+													
+													<md-input-container ng-show="parameter.type == 'formula'">
+														<label>{{translate.load("scheduler.formulaName","component_scheduler_messages")}}</label>
+														<md-select aria-label="aria-label" ng-model="parameter.value"> 
+															<md-option ng-repeat="formula in ctrl.formulas" value="{{formula.name}}">{{formula.description}}</md-option>
+														</md-select>
+													</md-input-container>
+													
+													<md-input-container class="small counter">
+														<md-select aria-label="aria-label" ng-model="parameter.iterative">
+															<md-option ng-repeat="iteration in ctrl.triggerIterations" value="{{iteration.value}}">{{iteration.label}}</md-option>
+														</md-select>
+													</md-input-container>
+												</md-content>
+												<md-divider ng-if="!$last"></md-divider>
+											</md-list-item>
+										</md-list>
+										<p></p>
+									</md-tab>
+								</md-tabs>
+							</form>
+						</md-card-content>
+					</md-card>
+				</md-tab>
+			<</md-tabs>
 		</detail>
 	</angular-list-detail>
 </body>
