@@ -22,10 +22,8 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 	$scope.listType = [];
 	$scope.funcTemporal = [];
 	$scope.lov = [];
-	//chron parameters
-	$scope.typeMonth = true;
-	$scope.typeMonthWeek = true;
-	//$scope.frequency ={value:{'minute':'','hour':'','day':''}};
+	
+
 	$scope.selectedTab={'tab':0};
 	$scope.engineMenuOptionList = [	{
 		label : sbiModule_translate.load('sbi.generic.clone'),
@@ -168,9 +166,9 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 					break;
 				}
 			}
-			//alert("Item ID " + item.id + " removal sucess.");
+		
 		}, function(response) {
-			//alert("Removal failed. Item: " + JSON.stringify(item));
+			
 		});
 	}
 	
@@ -213,8 +211,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		for(var i=0;i<item.filters.length;i++){
 			delete item.filters[i].executionId;
 		}
-		
-	//	$scope.addPlaceHolderMissing();
+
 		item.name = sbiModule_translate.load("sbi.generic.copyof") + " " + item.name;
 		$scope.fixDataAfterLoad(item);
 		$scope.addScheduler(true);
@@ -228,28 +225,10 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 			if($scope.selectedScheduler.filters!=undefined){
 				var index = $scope.indexInList(keys[i],$scope.selectedScheduler.filters,"kpiName");
 				
-				if(index !=-1){// && ($scope.selectedScheduler.filters[index].value=="" || $scope.selectedScheduler.filters[index].value==null) ){
-					
-						var tmp_filter = $scope.selectedScheduler.filters[index];
-						$scope.selectedScheduler.filters.splice(index,1);
-						var array = JSON.parse($scope.placeHolder[keys[i]])
-						for(var v=0;v<array.length;v++){
-							var obj = {};
-							obj.kpiName = keys[i];
-							obj.placeholderName = Object.keys(array[v])[0];
-							obj.value=array[v][obj.placeholderName];
-							obj.type = tmp_filter.type;
-							obj.kpiId = tmp_filter.kpiId;
-							obj.kpiVersion = tmp_filter.kpiVersion;
+				if(index !=-1){
+						
 
-							$scope.selectedScheduler.filters.push(obj);
-						}
-					
-					
-				}
-				if(index==-1 ){
-
-					
+				}else{
 					var objType = {"valueCd":"FIXED_VALUE","valueId":355};
 					var array = JSON.parse($scope.placeHolder[keys[i]])
 					for(var v=0;v<array.length;v++){
@@ -259,8 +238,8 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 						obj.value=array[v][obj.placeholderName];
 						obj.type = objType;
 						var index2 = $scope.indexInList(keys[i],$scope.kpiAllList,"name");
-						obj.kpiId = $scope.kpiAllList[index2].kpiId;
-						obj.kpiVersion = $scope.kpiAllList[index2].kpiVersion;
+						obj.kpiId = $scope.kpiAllList[index2].id;
+						obj.kpiVersion = $scope.kpiAllList[index2].version;
 
 						$scope.selectedScheduler.filters.push(obj);
 					}
@@ -364,7 +343,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 	};
 	
 	$scope.saveSc=function(){
-		if ($scope.validateScheduler()){
+		if ($scope.validateScheduler() && $scope.completeDomain() && $scope.checkFiltersValue()){
 			
 			$scope.showSaveGUI().then(function(response){
 				{}
@@ -379,7 +358,48 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		}
 	}
 	
-	$scope.getNameForBar = function(){
+	
+	$scope.completeDomain = function(){
+		for(var i=0;i<$scope.selectedScheduler.filters.length;i++){
+			var index = $scope.indexInList($scope.selectedScheduler.filters[i].type.valueCd,$scope.listType,"VALUE_CD");
+			
+			if(index!=-1){
+				var obj = $scope.listType[index];
+				$scope.selectedScheduler.filters[i].type.valueId = obj["VALUE_ID"]
+				
+			}
+		}
+		return true;
+	}
+	
+	$scope.checkFiltersValue = function(){
+		for(var i=0;i<$scope.selectedScheduler.filters.length;i++){
+			if($scope.selectedScheduler.filters[i].value==undefined || $scope.selectedScheduler.filters[i].value.trim() == ""){
+				$scope.showAction($scope.translate.load("sbi.schedulerkpi.missingfiltervalue"));
+				return false
+			}
+			
+		}
+		return true;
+	}
+	
+	$scope.showAction = function(text) {
+		var toast = $mdToast.simple()
+		.content(text)
+		.action('OK')
+		.highlightAction(false)
+		.hideDelay(3000)
+		.position('top')
+
+		$mdToast.show(toast).then(function(response) {
+
+			if ( response == 'ok' ) {
+
+
+			}
+		});
+	}
+		$scope.getNameForBar = function(){
 		return $scope.selectedScheduler.name != undefined ? $scope.selectedScheduler.name : $scope.translate.load('sbi.kpi.skeduler.new');
 	}
 	
