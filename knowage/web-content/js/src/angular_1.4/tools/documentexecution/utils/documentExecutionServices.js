@@ -507,6 +507,7 @@
 		 * Fill Parameters Panel 
 		 */
 		serviceScope.fillParametersPanel = function(params){
+				
 			console.log('Load filter params : ' , params);
 			if(execProperties.parametersData.documentParameters.length > 0){
 				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++){
@@ -586,7 +587,7 @@
 							//var fillObj = {};
 							//MULTIVALUE
 							hasDefVal= true;
-							if(response.data.filterStatus[i].multivalue){
+							if(response.data.filterStatus[i].multivalue || response.data.filterStatus[i].selectionType=='TREE'){
 								if(response.data.filterStatus[i].defaultValues && response.data.filterStatus[i].defaultValues.length>0){
 									arrDefToFill=response.data.filterStatus[i].defaultValues;
 								}
@@ -594,7 +595,20 @@
 									arrDefToFill.push(response.data.filterStatus[i].parameterValue[k].value);
 								}	
 								fillObj[response.data.filterStatus[i].urlName] = JSON.stringify(arrDefToFill);
-								fillObj[response.data.filterStatus[i].urlName+'_field_visible_description'] = JSON.stringify(arrDefToFill);
+								//TREE
+								if(response.data.filterStatus[i].selectionType=='TREE'){
+									var strDefToFillDescription ='';
+									for(var z=0; z<arrDefToFill.length; z++){
+										strDefToFillDescription=strDefToFillDescription+arrDefToFill[z];
+										if(z<arrDefToFill.length-1){
+											strDefToFillDescription=strDefToFillDescription+';';
+										}
+									}
+									fillObj[response.data.filterStatus[i].urlName+'_field_visible_description'] = strDefToFillDescription;
+								}else{
+									fillObj[response.data.filterStatus[i].urlName+'_field_visible_description'] = JSON.stringify(arrDefToFill);
+								}
+								
 							}else{
 								//SINGLE VALUE
 								fillObj[response.data.filterStatus[i].urlName] = response.data.filterStatus[i].parameterValue[0].value;
@@ -604,9 +618,6 @@
 						}
 					}
 					if(hasDefVal){serviceScope.fillParametersPanel(fillObj);}
-					
-					
-					
 					//correlation
 					buildCorrelation(execProperties.parametersData.documentParameters);
 					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
