@@ -51,17 +51,11 @@ public class MetaDsRelationResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	public List<SbiMetaDsTabRel> getAll() {
 		List<SbiMetaDsTabRel> relations = null;
-		try {
-			sbiMetaDsTabRelDAO = DAOFactory.getDsTableRelDAO();
 
-		} catch (EMFUserError e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		try {
 			relations = sbiMetaDsTabRelDAO.loadAllRelations();
 		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		return relations;
@@ -83,7 +77,7 @@ public class MetaDsRelationResource extends AbstractSpagoBIResource {
 				tables.add(table);
 			}
 		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		return tables;
@@ -117,7 +111,7 @@ public class MetaDsRelationResource extends AbstractSpagoBIResource {
 			sbiMetaDsTabRelDAO.deleteRelation(relation);
 
 		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 	}

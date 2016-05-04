@@ -68,10 +68,14 @@ function linkDatasetFunction(sbiModule_translate, sbiModule_restServices, $scope
 		
 		var index = $scope.tablesList.indexOf(item);
 		if($scope.selectedTables.indexOf(item)===-1){
-			$scope.selectedTables.push(item);
-			$scope.forAdding.push(item);
+			if(!$scope.arrayContains($scope.selectedTables,'tableId',item)){
+				$scope.selectedTables.push(item);
+				$scope.forAdding.push(item);
+			}
 			
 		}
+		console.log($scope.selectedTables);
+		console.log($scope.forAdding);
 	}
 	$scope.arrayContains = function(array,property,item) {
 		for (var i = 0; i < array.length; i++) {
@@ -102,18 +106,16 @@ $scope.getTablesByDatasetID = function(id){
 		$scope.selectedTables = response.data;
 		$scope.markDeleted(selectedTables_id);
 	}, function(response) {
-		sbiModule_messaging.showErrorMessage('aaaaaaaaa', 'Error');
+		sbiModule_messaging.showErrorMessage('error getting saved', 'Error');
 		
 	});	
 }
 
 $scope.deleteRelations = function(dsId,item){
 	sbiModule_restServices.promiseDelete("2.0/metaDsRelationResource/"+dsId,item.tableId)
-	.then(function(response) {
-		
-		$scope.getTablesByDatasetID(dsId);
+	.then(function(response) {	
 	}, function(response) {
-		sbiModule_messaging.showErrorMessage('aaaaaaaaa', 'Error');
+		sbiModule_messaging.showErrorMessage('error deleting', 'Error');
 		
 	});	
 }
@@ -121,10 +123,8 @@ $scope.deleteRelations = function(dsId,item){
 $scope.insertRelations = function(dsId,item){	
 	sbiModule_restServices.promisePost("2.0/metaDsRelationResource/"+dsId, "",angular.toJson(item))
 	.then(function(response) {
-		
-		$scope.getTablesByDatasetID(dsId);
 	}, function(response) {
-		sbiModule_messaging.showErrorMessage('aaaaaaaaa', 'Error');
+		sbiModule_messaging.showErrorMessage('error inserting', 'Error');
 		
 	});	
 }
@@ -132,12 +132,31 @@ $scope.insertRelations = function(dsId,item){
 
 
 $scope.saveRelation = function(dsId){
+	
+	if($scope.forDeletion.length > 0){
+	console.log("deleting")	
 	for (var i = 0; i < $scope.forDeletion.length; i++) {
 		$scope.deleteRelations(dsId,$scope.forDeletion[i]);
 	}
+}
+	else if($scope.forAdding.length > 0){
+	console.log("adding");	
 	for (var i = 0; i < $scope.forAdding.length; i++) {
 		$scope.insertRelations(dsId,$scope.forAdding[i]);
 	}
+	}
+	else{
+		console.log("no data to save!!");
+		sbiModule_messaging.showErrorMessage('no data to save!!', 'Error');
+	}
+	$scope.forDeletion = [];
+	$scope.forAdding = [];
+	
+	$timeout(function(){								
+		$scope.getTablesByDatasetID(dsId);
+	}, 1000);
+	
+	//$scope.goBack();
 	
 }
 

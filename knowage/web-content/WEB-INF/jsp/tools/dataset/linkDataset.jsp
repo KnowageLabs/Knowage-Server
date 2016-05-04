@@ -80,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       		<md-option ng-value="source" ng-repeat="source in sourceList" ng-click="getTablesBySourceID(source.sourceId)">{{source.name}}</md-option>
     		</md-select>
 			
-				<div ng-show="showme == true" layout="row" >
+				<div ng-show="showme == true" layout="row" style="height:680px">
 					
 					<!-- Avaliable tables -->
 					<div flex class="datasetBox">
@@ -103,7 +103,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							item-name="name"
 							show-search-bar=true
 							click-function="moveToSelected(item)"
-							style="overflow:hidden"	
 							>					
 							</angular-list>
 						</md-content>
