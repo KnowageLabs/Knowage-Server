@@ -16,6 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+.BUTTON_HIDE_SPANS_CLICKED{
+	background-image: url(../img/hide_spans_clicked.png);
+}
+
+.BUTTON_SHOW_PROPERTIES_CLICKED{
+	background-image: url(../img/show_props_clicked.png);	
+}
+.BUTTON_SHOW_COMPACT_PROPERTIES_CLICKED{
+	background-image: url(../img/show_compact_props_clicked.png);	
+}
+
+.BUTTON_FATHER_MEMBERS_CLICKED{
+	background-image: url(../img/show_parent_members_clicked.png);
+}
+
+.BUTTON_HIDE_EMPTY{
+	background-image: url(../img/empty_rows_clicked.png);
+}
+
 .knowage-blue {
 	background-color: #3b678c !important;
     min-height: 0px !important;
@@ -646,24 +665,7 @@ md-option[selected], md-select-menu md-option[selected]{
 		margin-top:20%;
 	}
 
-.BUTTON_HIDE_SPANS_CLICKED{
-	background-image: url(../img/hide_spans_clicked.png);
-}
 
-.BUTTON_SHOW_PROPERTIES_CLICKED{
-	background-image: url(../img/show_props_clicked.png);	
-}
-.BUTTON_SHOW_COMPACT_PROPERTIES_CLICKED{
-	background-image: url(../img/show_compact_props_clicked.png);	
-}
-
-.BUTTON_FATHER_MEMBERS_CLICKED{
-	background-image: url(../img/show_parent_members_clicked.png);
-}
-
-.BUTTON_HIDE_EMPTY{
-	background-image: url(../img/empty_rows_clicked.png);
-}
 
 .tree-item-padding{
 	padding-left:10px;
