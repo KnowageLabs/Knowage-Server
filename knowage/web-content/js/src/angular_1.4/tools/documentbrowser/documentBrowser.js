@@ -1,6 +1,6 @@
-angular.module('documentBrowserModule').controller( 'documentBrowserController', ['$mdMedia', '$scope', '$http', '$mdSidenav', '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus','$timeout', '$cookies',documentBrowserFunction]);
+angular.module('documentBrowserModule').controller( 'documentBrowserController', ['$mdMedia', '$scope', '$http', '$mdSidenav', '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus','$timeout', '$cookies', 'sbiModule_user',documentBrowserFunction]);
 
-function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus,$timeout,$cookies){
+function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus,$timeout,$cookies,sbiModule_user){
 	$scope.translate=sbiModule_translate;
 	$scope.folders = [];
 	$scope.folderDocuments = [];
@@ -72,7 +72,7 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 			for(var i=0; i<$scope.breadModel.length; i++){
 				foldersId[i] = $scope.breadModel[i].id;
 			}
-			$cookies.putObject('breadCrumb', foldersId);
+			$cookies.putObject('breadCrumb_'+sbiModule_user.userId, foldersId);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
@@ -82,13 +82,14 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 		.then(function(response) {
 			if(response.data && response.data.length>0){
 				//check cookies configuration tree
-				if($cookies.getObject('breadCrumb') && $cookies.getObject('breadCrumb').length>0){
+				var cookiesObj = 'breadCrumb_'+sbiModule_user.userId;
+				if($cookies.getObject(cookiesObj) && $cookies.getObject(cookiesObj).length>0){
 					$scope.hideProgressCircular=false;
 					var breadIdx = 0;
 					var folderToOpen=0;
 					for(var i=0; i<response.data.length; i++){
-						if(breadIdx<$cookies.getObject('breadCrumb').length){
-							if(response.data[i].id==$cookies.getObject('breadCrumb')[breadIdx]){
+						if(breadIdx<$cookies.getObject(cookiesObj).length){
+							if(response.data[i].id==$cookies.getObject(cookiesObj)[breadIdx]){
 								response.data[i].expanded=true;	 
 								$scope.breadCrumbControl.insertBread(response.data[i]);
 								breadIdx++;
