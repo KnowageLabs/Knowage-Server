@@ -141,6 +141,10 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			// 1 - Retrieve Metamodel file from datamart.jar
 			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 			Content modelContent = businessModelsDAO.loadActiveMetaModelContentById(businessModelId);
+			if (modelContent == null) {
+				logger.error("datamart.jar not found for metamodel with id " + businessModelId);
+				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(), "datamart.jar not found for metamodel with id " + businessModelId);
+			}
 			byte[] metamodelTemplateBytes = getModelFileFromJar(modelContent);
 			if (metamodelTemplateBytes == null) {
 				logger.error("Metamodel file not found inside datamart.jar");
@@ -429,9 +433,14 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			// 1 - Retrieve Metamodel file from datamart.jar
 			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 			Content modelContent = businessModelsDAO.loadActiveMetaModelContentById(businessModelId);
+			if (modelContent == null) {
+				logger.error("datamart.jar not found for metamodel with id " + businessModelId);
+				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(), "datamart.jar not found for metamodel with id " + businessModelId);
+			}
 			byte[] metamodelTemplateBytes = getModelFileFromJar(modelContent);
 			if (metamodelTemplateBytes == null) {
-				return Response.serverError().build();
+				logger.error("Metamodel file not found inside datamart.jar");
+				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(), "Metamodel file not found inside datamart.jar");
 			}
 
 			// 2 - Read the metamodel and convert to object
