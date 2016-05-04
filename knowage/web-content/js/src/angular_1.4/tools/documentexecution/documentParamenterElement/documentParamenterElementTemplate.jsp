@@ -131,18 +131,21 @@
 		<!-- lov combobox single and multiple input -->
 		<label ng-if="parameter.selectionType=='COMBOBOX'" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">
 			{{parameter.label}}</label>
+		
+		
 		<!-- multiple -->
-		<md-select ng-model="parameter.parameterValue" multiple 
+		<md-select ng-model="parameter.parameterValue" multiple
 			 	ng-if="parameter.selectionType=='COMBOBOX' && parameter.multivalue"> 
-			<md-option ng-repeat="defaultParameter in parameter.defaultValues track by $index" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled">
+			<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value"
+				  ng-if="defaultParameter.isEnabled">
 				{{::defaultParameter.label}}
 			</md-option>
 		</md-select>
 		<!-- single -->
-		<md-select ng-model="parameter.parameterValue"  
+		<md-select ng-model="parameter.parameterValue" 
 			 	ng-if="parameter.selectionType=='COMBOBOX' && !parameter.multivalue"> 
 			<md-option></md-option>
-			<md-option ng-repeat="defaultParameter in parameter.defaultValues track by $index" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled">
+			<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
 				{{::defaultParameter.label}}
 			</md-option>
 		</md-select>
