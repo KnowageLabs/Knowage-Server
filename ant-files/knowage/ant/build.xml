@@ -1,78 +1,78 @@
 <project name="knowage" default="create.all" basedir=".">
 
-    <property file="build.properties"/>
+	<property file="build.properties"/>
 
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!--   PATH PER ANT-SVN                                                                     -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
-
-    <path id="catalina.ant.classpath">
-        <fileset dir="catalina-ant">
-            <include name="**/*.jar"/>
-        </fileset>
-    </path>
-    <taskdef name="install"   classname="org.apache.catalina.ant.InstallTask" classpathref="catalina.ant.classpath" />
-    <taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask" classpathref="catalina.ant.classpath" />
-    <taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask" classpathref="catalina.ant.classpath" />
-    <taskdef name="start"     classname="org.apache.catalina.ant.StartTask" classpathref="catalina.ant.classpath" />
-    <taskdef name="stop"      classname="org.apache.catalina.ant.StopTask" classpathref="catalina.ant.classpath" />
-    <taskdef name="reload"    classname="org.apache.catalina.ant.ReloadTask" classpathref="catalina.ant.classpath" />
-    <taskdef name="remove"    classname="org.apache.catalina.ant.RemoveTask" classpathref="catalina.ant.classpath" />
-
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!--   SDK Management                                                                 -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
-    <!--
-    <target name="clean.sdk">
-        <ant dir="../knowagesdk/ant" target="clean"/>
-    </target>
-    <target name="create.knowagesdk.war" depends="create.knowage.utils.jar">
-        <ant dir="../knowagesdk/ant" />
-    </target>
-    <target name="deploy.knowagesdk.war" depends="create.knowage.utils.jar,create.knowagesdk.war">
-        <delete dir="${tomcat.home}/webapps/knowagesdk" />
-        <mkdir dir="${tomcat.home}/webapps/knowagesdk" />
-        <unzip src="../../../knowagesdk/dist/knowagesdk.war" dest="${tomcat.home}/webapps/knowagesdk" />
-    </target>
-    <target name="package.sdk">
-        <ant dir="../knowagesdk/ant" target="package.sdk"/>
-    </target>
-    <target name="javadoc.sdk">
-        <ant dir="../knowagesdk/ant" target="javadoc.sdk"/>
-    </target>
-    <target name="create.sdk.src">
-        <ant dir="../knowagesdk/ant" target="create.sdk.src"/>
-    </target>
-    -->
-
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   PATH PER ANT-SVN					                                                    -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
 
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!--   WAR CREATION FOR DEMO ALL IN ONE : CALLS DEFAULT makeDist                    -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <target name="create.knowage.war" depends="create.qbe.core.jar">
-        <ant dir="../knowage/ant" />
-    </target>
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!--   WAR CREATION FOR SINGLE PACKAGES                                             -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <target name="create-bin.knowage.war" depends="create.qbe.core.jar">
-        <ant dir="../knowage/ant" target="create-bin.war" />
-    </target>
-    <!--<target name="deploy.knowage.war" depends="create.knowage.utils.jar,create.knowage.dao.jar,create.knowage.oauth.security.jar,create.exo.security.jar,create.xlm.security.jar,create.ldap.security.jar,create.liferay.security.jar,create.knowage.war">-->
-    <target name="deploy.knowage.war" depends="create.knowage.utils.jar,create.knowage.dao.jar,create.knowage.war">
-        <delete dir="${tomcat.home}/webapps/knowage" />
-        <mkdir dir="${tomcat.home}/webapps/knowage" />
-        <unzip src="../../../knowage/dist/knowage.war" dest="${tomcat.home}/webapps/knowage" />
-        <!--
+	<path id="catalina.ant.classpath">
+		<fileset dir="catalina-ant">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	<taskdef name="install"   classname="org.apache.catalina.ant.InstallTask" classpathref="catalina.ant.classpath" />
+	<taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask" classpathref="catalina.ant.classpath" />
+	<taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask" classpathref="catalina.ant.classpath" />
+	<taskdef name="start"     classname="org.apache.catalina.ant.StartTask" classpathref="catalina.ant.classpath" />
+	<taskdef name="stop"      classname="org.apache.catalina.ant.StopTask" classpathref="catalina.ant.classpath" />
+	<taskdef name="reload"    classname="org.apache.catalina.ant.ReloadTask" classpathref="catalina.ant.classpath" />
+	<taskdef name="remove"    classname="org.apache.catalina.ant.RemoveTask" classpathref="catalina.ant.classpath" />
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   SDK Management					                                              -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+	<!--
+	<target name="clean.sdk">
+		<ant dir="../knowagesdk/ant" target="clean"/>
+	</target>
+	<target name="create.knowagesdk.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowagesdk/ant" />
+	</target>
+	<target name="deploy.knowagesdk.war" depends="create.knowage.utils.jar,create.knowagesdk.war">
+		<delete dir="${tomcat.home}/webapps/knowagesdk" />
+		<mkdir dir="${tomcat.home}/webapps/knowagesdk" />
+		<unzip src="../../../knowagesdk/dist/knowagesdk.war" dest="${tomcat.home}/webapps/knowagesdk" />
+	</target>
+	<target name="package.sdk">
+		<ant dir="../knowagesdk/ant" target="package.sdk"/>
+	</target>
+	<target name="javadoc.sdk">
+		<ant dir="../knowagesdk/ant" target="javadoc.sdk"/>
+	</target>
+	<target name="create.sdk.src">
+		<ant dir="../knowagesdk/ant" target="create.sdk.src"/>
+	</target>
+	-->
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   WAR CREATION FOR DEMO ALL IN ONE : CALLS DEFAULT makeDist                    -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="create.knowage.war" depends="create.qbe.core.jar">
+		<ant dir="../knowage/ant" />
+	</target>
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   WAR CREATION FOR SINGLE PACKAGES                                             -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="create-bin.knowage.war" depends="create.qbe.core.jar">
+		<ant dir="../knowage/ant" target="create-bin.war" />
+	</target>
+	<!--<target name="deploy.knowage.war" depends="create.knowage.utils.jar,create.knowage.dao.jar,create.knowage.oauth.security.jar,create.exo.security.jar,create.xlm.security.jar,create.ldap.security.jar,create.liferay.security.jar,create.knowage.war">-->
+	<target name="deploy.knowage.war" depends="create.knowage.utils.jar,create.knowage.dao.jar,create.knowage.war">
+		<delete dir="${tomcat.home}/webapps/knowage" />
+		<mkdir dir="${tomcat.home}/webapps/knowage" />
+		<unzip src="../../../knowage/dist/knowage.war" dest="${tomcat.home}/webapps/knowage" />
+		<!--
     <copy todir="${tomcat.home}/webapps/knowage/WEB-INF/conf" filtering="true" overwrite="true">
       <fileset dir="${tomcat.home}/webapps/knowage/WEB-INF/conf" />
     </copy>
     -->
-        <!--
+		<!--
     <stop url="${manager.url}" username="${username}" password="${password}" path="/knowage"/>
     <undeploy url="${manager.url}" username="${username}" password="${password}" path="/knowage"/>
     <deploy url="${manager.url}" username="${username}" password="${password}" path="/knowage"
@@ -82,638 +82,647 @@
 
 
 
-    </target>
+	</target>
 
-    <target name="create.knowage.utils.jar" >
-        <ant dir="../jdbccore/ant" />
-        <ant dir="../knowageutilsjson/ant" />
-        <ant dir="../knowageutils/ant" />
-    </target>
+	<target name="create.knowage.utils.jar" >
+		<ant dir="../jdbccore/ant" />
+		<ant dir="../knowageutilsjson/ant" />
+		<ant dir="../knowageutils/ant" />
+	</target>
 
-    <target name="create.qbe.core.jar" depends="create.knowage.utils.jar">
-        <ant dir="../qbecore/ant" />
-    </target>
+	<target name="create.qbe.core.jar" depends="create.knowage.utils.jar">
+		<ant dir="../qbecore/ant" />
+	</target>
 
-    <target name="create.knowage.dao.jar" depends="create.knowage.utils.jar,create.qbe.core.jar">
-        <ant dir="../knowagedao/ant" />
-    </target>
-    
-    <target name="create.knowage.servermanager.jar" depends="create.knowage.dao.jar">
-        <ant dir="../knowageservermanager/ant" />
-    </target>
-    
-    <!--
-    <target name="create.knowage.oauth.security.jar" depends="create.knowage.utils.jar,create.knowage.dao.jar">
-        <ant dir="../SpagoBIOAuth2SecurityProvider/ant" />
-    </target>
-    
-    <target name="create.exo.security.jar" >
-        <ant dir="../SpagoBIExoSecurityProvider/ant" />
-    </target>
-    <target name="create.liferay.security.jar" >
-        <ant dir="../SpagoBILiferaySecurityProvider/ant" />
-    </target>
-    <target name="create.xlm.security.jar" >
-        <ant dir="../SpagoBIXmlSecurityProvider/ant" />
-    </target>
-    <target name="create.ldap.security.jar" >
-        <ant dir="../SpagoBILdapSecurityProvider/ant" />
-    </target>
-    -->
-    <target name="create.knowagebirtreportengine.war" depends="create.knowage.utils.jar">
-        <ant dir="../knowagebirtreportengine/ant" />
-    </target>
-    <target name="deploy.knowagebirtreportengine.war" depends="create.knowage.utils.jar,create.knowagebirtreportengine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/knowagebirtreportengine" />
-        <delete dir="${tomcat.home}/webapps/knowagebirtreportengine" />
-        <mkdir dir="${tomcat.home}/webapps/knowagebirtreportengine" />
-        <unzip src="../../../knowagebirtreportengine/dist/knowagebirtreportengine.war" dest="${tomcat.home}/webapps/knowagebirtreportengine" />
-    </target>
+	<target name="create.knowage.dao.jar" depends="create.knowage.utils.jar,create.qbe.core.jar">
+		<ant dir="../knowagedao/ant" />
+	</target>
+	
+	<target name="create.knowage.servermanager.jar" depends="create.knowage.dao.jar">
+		<ant dir="../knowageservermanager/ant" />
+	</target>
+	
+	<!--
+	<target name="create.knowage.oauth.security.jar" depends="create.knowage.utils.jar,create.knowage.dao.jar">
+		<ant dir="../SpagoBIOAuth2SecurityProvider/ant" />
+	</target>
+	
+	<target name="create.exo.security.jar" >
+		<ant dir="../SpagoBIExoSecurityProvider/ant" />
+	</target>
+	<target name="create.liferay.security.jar" >
+		<ant dir="../SpagoBILiferaySecurityProvider/ant" />
+	</target>
+	<target name="create.xlm.security.jar" >
+		<ant dir="../SpagoBIXmlSecurityProvider/ant" />
+	</target>
+	<target name="create.ldap.security.jar" >
+		<ant dir="../SpagoBILdapSecurityProvider/ant" />
+	</target>
+	-->
+	<target name="create.knowagebirtreportengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowagebirtreportengine/ant" />
+	</target>
+	<target name="deploy.knowagebirtreportengine.war" depends="create.knowage.utils.jar,create.knowagebirtreportengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowagebirtreportengine" />
+		<delete dir="${tomcat.home}/webapps/knowagebirtreportengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowagebirtreportengine" />
+		<unzip src="../../../knowagebirtreportengine/dist/knowagebirtreportengine.war" dest="${tomcat.home}/webapps/knowagebirtreportengine" />
+	</target>
 
-    <!--
-    <target name="create.SpagoBIGeoEngine.war" depends="create.knowage.utils.jar">
-        <ant dir="../SpagoBIGeoEngine/ant" />
-    </target>
-    <target name="deploy.SpagoBIGeoEngine.war" depends="create.knowage.utils.jar,create.SpagoBIGeoEngine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIGeoEngine" />
-        <delete dir="${tomcat.home}/webapps/SpagoBIGeoEngine" />
-        <mkdir dir="${tomcat.home}/webapps/SpagoBIGeoEngine" />
-        <unzip src="../../../SpagoBIGeoEngine/dist/SpagoBIGeoEngine.war" dest="${tomcat.home}/webapps/SpagoBIGeoEngine" />
-    </target>
-     -->
+	<!--
+	<target name="create.SpagoBIGeoEngine.war" depends="create.knowage.utils.jar">
+		<ant dir="../SpagoBIGeoEngine/ant" />
+	</target>
+	<target name="deploy.SpagoBIGeoEngine.war" depends="create.knowage.utils.jar,create.SpagoBIGeoEngine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIGeoEngine" />
+		<delete dir="${tomcat.home}/webapps/SpagoBIGeoEngine" />
+		<mkdir dir="${tomcat.home}/webapps/SpagoBIGeoEngine" />
+		<unzip src="../../../SpagoBIGeoEngine/dist/SpagoBIGeoEngine.war" dest="${tomcat.home}/webapps/SpagoBIGeoEngine" />
+	</target>
+	 -->
 
-    <target name="create.knowagegeoreportengine.war" depends="create.knowage.utils.jar">
-        <ant dir="../knowagegeoreportengine/ant" />
+	<target name="create.knowagegeoreportengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowagegeoreportengine/ant" />
+	</target>
+	<target name="deploy.knowagegeoreportengine.war" depends="create.knowage.utils.jar,create.knowagegeoreportengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowagegeoreportengine" />
+		<delete dir="${tomcat.home}/webapps/knowagegeoreportengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowagegeoreportengine" />
+		<unzip src="../../../knowagegeoreportengine/dist/knowagegeoreportengine.war" dest="${tomcat.home}/webapps/knowagegeoreportengine" />
+	</target>
+
+
+
+	<target name="create.knowagecockpitengine.war" depends="create.knowage.utils.jar,create.knowage.dao.jar,create.qbe.core.jar">
+		<ant dir="../knowagecockpitengine/ant" />
+	</target>
+
+	<target name="deploy.knowagecockpitengine.war" depends="create.knowage.utils.jar,create.knowagecockpitengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowagecockpitengine" />
+		<delete dir="${tomcat.home}/webapps/knowagecockpitengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowagecockpitengine" />
+		<unzip src="../../../knowagecockpitengine/dist/knowagecockpitengine.war" dest="${tomcat.home}/webapps/knowagecockpitengine" />
+	</target>
+
+	
+   <target name="create.knowagejasperreportengine.war" depends="create.knowage.utils.jar">
+        <ant dir="../knowagejasperreportengine/ant" />
+	    </target>
+	    <target name="deploy.knowagejasperreportengine.war" depends="create.knowage.utils.jar,create.knowagejasperreportengine.war">
+	        <delete dir="${tomcat.home}/work/Catalina/localhost/knowagejasperreportengine" />
+	        <delete dir="${tomcat.home}/webapps/knowagejasperreportengine" />
+	        <mkdir dir="${tomcat.home}/webapps/knowagejasperreportengine" />
+	        <unzip src="../../../knowagejasperreportengine/dist/knowagejasperreportengine.war" dest="${tomcat.home}/webapps/knowagejasperreportengine" />
     </target>
-    <target name="deploy.knowagegeoreportengine.war" depends="create.knowage.utils.jar,create.knowagegeoreportengine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/knowagegeoreportengine" />
-        <delete dir="${tomcat.home}/webapps/knowagegeoreportengine" />
-        <mkdir dir="${tomcat.home}/webapps/knowagegeoreportengine" />
-        <unzip src="../../../knowagegeoreportengine/dist/knowagegeoreportengine.war" dest="${tomcat.home}/webapps/knowagegeoreportengine" />
-    </target>
-
-
-
-    <target name="create.knowagecockpitengine.war" depends="create.knowage.utils.jar,create.knowage.dao.jar,create.qbe.core.jar">
-        <ant dir="../knowagecockpitengine/ant" />
-    </target>
-
-    <target name="deploy.knowagecockpitengine.war" depends="create.knowage.utils.jar,create.knowagecockpitengine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/knowagecockpitengine" />
-        <delete dir="${tomcat.home}/webapps/knowagecockpitengine" />
-        <mkdir dir="${tomcat.home}/webapps/knowagecockpitengine" />
-        <unzip src="../../../knowagecockpitengine/dist/knowagecockpitengine.war" dest="${tomcat.home}/webapps/knowagecockpitengine" />
-    </target>
-
+	
 <!--
 
-    <target name="create.SpagoBIJasperReportEngine.war" depends="create.knowage.utils.jar">
-        <ant dir="../SpagoBIJasperReportEngine/ant" />
-    </target>
-    <target name="deploy.SpagoBIJasperReportEngine.war" depends="create.knowage.utils.jar,create.SpagoBIJasperReportEngine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIJasperReportEngine" />
-        <delete dir="${tomcat.home}/webapps/SpagoBIJasperReportEngine" />
-        <mkdir dir="${tomcat.home}/webapps/SpagoBIJasperReportEngine" />
-        <unzip src="../../../SpagoBIJasperReportEngine/dist/SpagoBIJasperReportEngine.war" dest="${tomcat.home}/webapps/SpagoBIJasperReportEngine" />
-    </target>
-
-    <target name="create.SpagoBIJPivotEngine.war" depends="create.knowage.utils.jar">
-        <ant dir="../SpagoBIJPivotEngine/ant" />
-    </target>
-    <target name="deploy.SpagoBIJPivotEngine.war" depends="create.knowage.utils.jar,create.SpagoBIJPivotEngine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIJPivotEngine" />
-        <delete dir="${tomcat.home}/webapps/SpagoBIJPivotEngine" />
-        <mkdir dir="${tomcat.home}/webapps/SpagoBIJPivotEngine" />
-        <unzip src="../../../SpagoBIJPivotEngine/dist/SpagoBIJPivotEngine.war" dest="${tomcat.home}/webapps/SpagoBIJPivotEngine" />
-    </target>
+	<target name="create.SpagoBIJPivotEngine.war" depends="create.knowage.utils.jar">
+		<ant dir="../SpagoBIJPivotEngine/ant" />
+	</target>
+	<target name="deploy.SpagoBIJPivotEngine.war" depends="create.knowage.utils.jar,create.SpagoBIJPivotEngine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIJPivotEngine" />
+		<delete dir="${tomcat.home}/webapps/SpagoBIJPivotEngine" />
+		<mkdir dir="${tomcat.home}/webapps/SpagoBIJPivotEngine" />
+		<unzip src="../../../SpagoBIJPivotEngine/dist/SpagoBIJPivotEngine.war" dest="${tomcat.home}/webapps/SpagoBIJPivotEngine" />
+	</target>
 -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!--   WAR CREATION FOR DEMO ALL IN ONE : CALLS DEFAULT makeDist                    -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <target name="create.knowageqbeengine.war" depends="create.knowage.utils.jar">
-        <ant dir="../knowageqbeengine/ant" />
-    </target>
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!--   WAR CREATION FOR SINGLE PACKAGES                                             -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <target name="create-bin.knowageqbeengine.war" depends="create.knowage.utils.jar">
-        <ant dir="../knowageqbeengine/ant" target="create-bin.war"/>
-    </target>
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   WAR CREATION FOR DEMO ALL IN ONE : CALLS DEFAULT makeDist                    -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="create.knowageqbeengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowageqbeengine/ant" />
+	</target>
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   WAR CREATION FOR SINGLE PACKAGES                                             -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="create-bin.knowageqbeengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowageqbeengine/ant" target="create-bin.war"/>
+	</target>
 
-    <target name="deploy.knowageqbeengine.war" depends="create.knowage.utils.jar,create.qbe.core.jar,create.knowageqbeengine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/knowageqbeengine" />
-        <delete dir="${tomcat.home}/webapps/knowageqbeengine" />
-        <mkdir dir="${tomcat.home}/webapps/knowageqbeengine" />
-        <unzip src="../../../knowageqbeengine/dist/knowageqbeengine.war" dest="${tomcat.home}/webapps/knowageqbeengine" />
-    </target>
+	<target name="deploy.knowageqbeengine.war" depends="create.knowage.utils.jar,create.qbe.core.jar,create.knowageqbeengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowageqbeengine" />
+		<delete dir="${tomcat.home}/webapps/knowageqbeengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowageqbeengine" />
+		<unzip src="../../../knowageqbeengine/dist/knowageqbeengine.war" dest="${tomcat.home}/webapps/knowageqbeengine" />
+	</target>
 
-    <target name="create.knowagetalendengine.war" depends="create.knowage.utils.jar">
-        <ant dir="../knowagetalendengine/ant" />
-    </target>
-    <target name="deploy.knowagetalendengine.war" depends="create.knowage.utils.jar,create.knowagetalendengine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/knowagetalendengine" />
-        <delete dir="${tomcat.home}/webapps/knowagetalendengine" />
-        <mkdir dir="${tomcat.home}/webapps/knowagetalendengine" />
-        <unzip src="../../../knowagetalendengine/dist/knowagetalendengine.war" dest="${tomcat.home}/webapps/knowagetalendengine" />
-    </target>
+	<target name="create.knowagetalendengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowagetalendengine/ant" />
+	</target>
+	<target name="deploy.knowagetalendengine.war" depends="create.knowage.utils.jar,create.knowagetalendengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowagetalendengine" />
+		<delete dir="${tomcat.home}/webapps/knowagetalendengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowagetalendengine" />
+		<unzip src="../../../knowagetalendengine/dist/knowagetalendengine.war" dest="${tomcat.home}/webapps/knowagetalendengine" />
+	</target>
 
-    <target name="create.knowagedataminingengine.war" depends="create.knowage.utils.jar">
-        <ant dir="../knowagedataminingengine/ant" />
-    </target>
-    <target name="deploy.knowagedataminingengine.war" depends="create.knowage.utils.jar,create.knowagedataminingengine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/knowagedataminingengine" />
-        <delete dir="${tomcat.home}/webapps/knowagedataminingengine" />
-        <mkdir dir="${tomcat.home}/webapps/knowagedataminingengine" />
-        <unzip src="../../../knowagedataminingengine/dist/knowagedataminingengine.war" dest="${tomcat.home}/webapps/knowagedataminingengine" />
-    </target>
+	<target name="create.knowagedataminingengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowagedataminingengine/ant" />
+	</target>
+	<target name="deploy.knowagedataminingengine.war" depends="create.knowage.utils.jar,create.knowagedataminingengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowagedataminingengine" />
+		<delete dir="${tomcat.home}/webapps/knowagedataminingengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowagedataminingengine" />
+		<unzip src="../../../knowagedataminingengine/dist/knowagedataminingengine.war" dest="${tomcat.home}/webapps/knowagedataminingengine" />
+	</target>
+
+	<target name="create.knowageaccessibilityengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowageaccessibilityengine/ant" />
+	</target>
+	<target name="deploy.knowageaccessibilityengine.war" depends="create.knowage.utils.jar,create.knowageaccessibilityengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowageaccessibilityengine" />
+		<delete dir="${tomcat.home}/webapps/knowageaccessibilityengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowageaccessibilityengine" />
+		<unzip src="../../../knowageaccessibilityengine/dist/knowageaccessibilityengine.war" dest="${tomcat.home}/webapps/knowageaccessibilityengine" />
+	</target>
+
+	<target name="create.knowagecommonjengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowagecommonjengine/ant" />
+	</target>
+	<target name="deploy.knowagecommonjengine.war" depends="create.knowage.utils.jar,create.knowagecommonjengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowagecommonjengine" />
+		<delete dir="${tomcat.home}/webapps/knowagecommonjengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowagecommonjengine" />
+		<unzip src="../../../knowagecommonjengine/dist/knowagecommonjengine.war" dest="${tomcat.home}/webapps/knowagecommonjengine" />
+	</target>
 <!--
-    <target name="create.SpagoBIAccessibilityEngine.war" depends="create.knowage.utils.jar">
-        <ant dir="../SpagoBIAccessibilityEngine/ant" />
-    </target>
-    <target name="deploy.SpagoBIAccessibilityEngine.war" depends="create.knowage.utils.jar,create.SpagoBIAccessibilityEngine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIAccessibilityEngine" />
-        <delete dir="${tomcat.home}/webapps/SpagoBIAccessibilityEngine" />
-        <mkdir dir="${tomcat.home}/webapps/SpagoBIAccessibilityEngine" />
-        <unzip src="../../../SpagoBIAccessibilityEngine/dist/SpagoBIAccessibilityEngine.war" dest="${tomcat.home}/webapps/SpagoBIAccessibilityEngine" />
-    </target>
+	<target name="create.SpagoBIConsoleEngine.war" depends="create.knowage.utils.jar">
+		<ant dir="../SpagoBIConsoleEngine/ant" />
+	</target>
+	
+	<target name="deploy.SpagoBIConsoleEngine.war" depends="create.knowage.utils.jar,create.SpagoBIConsoleEngine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIConsoleEngine" />
+		<delete dir="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
+		<mkdir dir="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
+		<unzip src="../../../SpagoBIConsoleEngine/dist/SpagoBIConsoleEngine.war" dest="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
+	</target>
 -->
-    <target name="create.knowagecommonjengine.war" depends="create.knowage.utils.jar">
-        <ant dir="../knowagecommonjengine/ant" />
-    </target>
-    <target name="deploy.knowagecommonjengine.war" depends="create.knowage.utils.jar,create.knowagecommonjengine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/knowagecommonjengine" />
-        <delete dir="${tomcat.home}/webapps/knowagecommonjengine" />
-        <mkdir dir="${tomcat.home}/webapps/knowagecommonjengine" />
-        <unzip src="../../../knowagecommonjengine/dist/knowagecommonjengine.war" dest="${tomcat.home}/webapps/knowagecommonjengine" />
-    </target>
+	<target name="create.knowagechartengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowagechartengine/ant" />
+	</target>
+	<target name="deploy.knowagechartengine.war" depends="create.knowage.utils.jar,create.knowagechartengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowagechartengine" />
+		<delete dir="${tomcat.home}/webapps/knowagechartengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowagechartengine" />
+		<unzip src="../../../knowagechartengine/dist/knowagechartengine.war" dest="${tomcat.home}/webapps/knowagechartengine" />
+	</target>
+	
+	<target name="create.knowagekpiengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowagekpiengine/ant" />
+	</target>
+	<target name="deploy.knowagekpiengine.war" depends="create.knowage.utils.jar,create.knowagekpiengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowagekpiengine" />
+		<delete dir="${tomcat.home}/webapps/knowagekpiengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowagekpiengine" />
+		<unzip src="../../../knowagekpiengine/dist/knowagekpiengine.war" dest="${tomcat.home}/webapps/knowagekpiengine" />
+	</target>
+	
+	<target name="deploy.highcharts-export-web.war" depends="">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/highcharts-export-web" />
+		<delete dir="${tomcat.home}/webapps/highcharts-export-web" />
+		<mkdir dir="${tomcat.home}/webapps/highcharts-export-web" />
+		<unzip src="../../../highcharts-export/highcharts-export-web/target/highcharts-export-web.war" dest="${tomcat.home}/webapps/highcharts-export-web" />
+		
+		<chmod file="${tomcat.home}/webapps/highcharts-export-web/WEB-INF/classes/phantomjs/bin/phantomjs" perm="774"/>
+		
+	</target>
+
+
+	<!-- MOBILE ENGINE -->
 <!--
-    <target name="create.SpagoBIConsoleEngine.war" depends="create.knowage.utils.jar">
-        <ant dir="../SpagoBIConsoleEngine/ant" />
-    </target>
-    
-    <target name="deploy.SpagoBIConsoleEngine.war" depends="create.knowage.utils.jar,create.SpagoBIConsoleEngine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIConsoleEngine" />
-        <delete dir="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
-        <mkdir dir="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
-        <unzip src="../../../SpagoBIConsoleEngine/dist/SpagoBIConsoleEngine.war" dest="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
-    </target>
+	<target name="create.SpagoBIMobileEngine.war" depends="create.knowage.utils.jar,create.knowage.oauth.security.jar,create.knowage.war">
+		<ant dir="../SpagoBIMobileEngine/ant" />
+	</target>
+	<target name="deploy.SpagoBIMobileEngine.war" depends="create.SpagoBIMobileEngine.war">
+		<delete dir="${tomcat.home}/webapps/SpagoBIMobileEngine" />
+		<mkdir dir="${tomcat.home}/webapps/SpagoBIMobileEngine" />
+		<unzip src="../../../SpagoBIMobileEngine/dist/SpagoBIMobileEngine.war" dest="${tomcat.home}/webapps/SpagoBIMobileEngine" />
+	</target>
 -->
-    <target name="create.knowagechartengine.war" depends="create.knowage.utils.jar">
-        <ant dir="../knowagechartengine/ant" />
-    </target>
-    <target name="deploy.knowagechartengine.war" depends="create.knowage.utils.jar,create.knowagechartengine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/knowagechartengine" />
-        <delete dir="${tomcat.home}/webapps/knowagechartengine" />
-        <mkdir dir="${tomcat.home}/webapps/knowagechartengine" />
-        <unzip src="../../../knowagechartengine/dist/knowagechartengine.war" dest="${tomcat.home}/webapps/knowagechartengine" />
-    </target>
-    
-    <target name="create.knowagekpiengine.war" depends="create.knowage.utils.jar">
-        <ant dir="../knowagekpiengine/ant" />
-    </target>
-    <target name="deploy.knowagekpiengine.war" depends="create.knowage.utils.jar,create.knowagekpiengine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/knowagekpiengine" />
-        <delete dir="${tomcat.home}/webapps/knowagekpiengine" />
-        <mkdir dir="${tomcat.home}/webapps/knowagekpiengine" />
-        <unzip src="../../../knowagekpiengine/dist/knowagekpiengine.war" dest="${tomcat.home}/webapps/knowagekpiengine" />
-    </target>
-    
-    <target name="deploy.highcharts-export-web.war" depends="">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/highcharts-export-web" />
-        <delete dir="${tomcat.home}/webapps/highcharts-export-web" />
-        <mkdir dir="${tomcat.home}/webapps/highcharts-export-web" />
-        <unzip src="../../../highcharts-export/highcharts-export-web/target/highcharts-export-web.war" dest="${tomcat.home}/webapps/highcharts-export-web" />
-        
-        <chmod file="${tomcat.home}/webapps/highcharts-export-web/WEB-INF/classes/phantomjs/bin/phantomjs" perm="774"/>
-        
-    </target>
+	<!-- NETWORK ENGINE -->
+	<target name="create.knowagenetworkengine.war" depends="create.knowage.utils.jar,create.knowage.war">
+		<ant dir="../knowagenetworkengine/ant" />
+	</target>
+	<target name="deploy.knowagenetworkengine.war" depends="create.knowagenetworkengine.war">
+		<delete dir="${tomcat.home}/webapps/knowagenetworkengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowagenetworkengine" />
+		<unzip src="../../../knowagenetworkengine/dist/knowagenetworkengine.war" dest="${tomcat.home}/webapps/knowagenetworkengine" />
+	</target>
+	
+	<!-- WHATIF ENGINE -->
 
-
-    <!-- MOBILE ENGINE -->
+	<target name="create.knowagewhatifengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowagewhatifengine/ant" />
+	</target>
+	<target name="deploy.knowagewhatifengine.war" depends="create.knowage.utils.jar,create.knowagewhatifengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowagewhatifengine" />
+		<delete dir="${tomcat.home}/webapps/knowagewhatifengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowagewhatifengine" />
+		<unzip src="../../../knowagewhatifengine/dist/knowagewhatifengine.war" dest="${tomcat.home}/webapps/knowagewhatifengine" />
+	</target>
+	
+	
+	
+	<!-- SOCIAL ENGINE -->
 <!--
-    <target name="create.SpagoBIMobileEngine.war" depends="create.knowage.utils.jar,create.knowage.oauth.security.jar,create.knowage.war">
-        <ant dir="../SpagoBIMobileEngine/ant" />
-    </target>
-    <target name="deploy.SpagoBIMobileEngine.war" depends="create.SpagoBIMobileEngine.war">
-        <delete dir="${tomcat.home}/webapps/SpagoBIMobileEngine" />
-        <mkdir dir="${tomcat.home}/webapps/SpagoBIMobileEngine" />
-        <unzip src="../../../SpagoBIMobileEngine/dist/SpagoBIMobileEngine.war" dest="${tomcat.home}/webapps/SpagoBIMobileEngine" />
-    </target>
--->
-    <!-- NETWORK ENGINE -->
-    <target name="create.knowagenetworkengine.war" depends="create.knowage.utils.jar,create.knowage.war">
-        <ant dir="../knowagenetworkengine/ant" />
-    </target>
-    <target name="deploy.knowagenetworkengine.war" depends="create.knowagenetworkengine.war">
-        <delete dir="${tomcat.home}/webapps/knowagenetworkengine" />
-        <mkdir dir="${tomcat.home}/webapps/knowagenetworkengine" />
-        <unzip src="../../../knowagenetworkengine/dist/knowagenetworkengine.war" dest="${tomcat.home}/webapps/knowagenetworkengine" />
-    </target>
-    
-    <!-- WHATIF ENGINE -->
-
-    <target name="create.knowagewhatifengine.war" depends="create.knowage.utils.jar">
-        <ant dir="../knowagewhatifengine/ant" />
-    </target>
-    <target name="deploy.knowagewhatifengine.war" depends="create.knowage.utils.jar,create.knowagewhatifengine.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/knowagewhatifengine" />
-        <delete dir="${tomcat.home}/webapps/knowagewhatifengine" />
-        <mkdir dir="${tomcat.home}/webapps/knowagewhatifengine" />
-        <unzip src="../../../knowagewhatifengine/dist/knowagewhatifengine.war" dest="${tomcat.home}/webapps/knowagewhatifengine" />
-    </target>
-    
-    
-    
-    <!-- SOCIAL ENGINE -->
-<!--
-    <target name="create.SpagoBISocialAnalysis.war" depends="create.knowage.utils.jar">
-        <ant dir="../SpagoBISocialAnalysis/ant" />
-    </target>
-    <target name="deploy.SpagoBISocialAnalysis.war" depends="create.knowage.utils.jar,create.SpagoBISocialAnalysis.war">
-        <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBISocialAnalysis" />
-        <delete dir="${tomcat.home}/webapps/SpagoBISocialAnalysis" />
-        <mkdir dir="${tomcat.home}/webapps/SpagoBISocialAnalysis" />
-        <unzip src="../../../SpagoBISocialAnalysis/dist/SpagoBISocialAnalysis.war" dest="${tomcat.home}/webapps/SpagoBISocialAnalysis" />
-    </target>
+	<target name="create.SpagoBISocialAnalysis.war" depends="create.knowage.utils.jar">
+		<ant dir="../SpagoBISocialAnalysis/ant" />
+	</target>
+	<target name="deploy.SpagoBISocialAnalysis.war" depends="create.knowage.utils.jar,create.SpagoBISocialAnalysis.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBISocialAnalysis" />
+		<delete dir="${tomcat.home}/webapps/SpagoBISocialAnalysis" />
+		<mkdir dir="${tomcat.home}/webapps/SpagoBISocialAnalysis" />
+		<unzip src="../../../SpagoBISocialAnalysis/dist/SpagoBISocialAnalysis.war" dest="${tomcat.home}/webapps/SpagoBISocialAnalysis" />
+	</target>
 -->
 
-    <!--   TO BE EXECUTED FIRST FOR ALL IN ONE DEMO WARS CREATION  -->
-    <target name="create.all" depends="clean.all">
+	<!--   TO BE EXECUTED FIRST FOR ALL IN ONE DEMO WARS CREATION  -->
+	<target name="create.all" depends="clean.all">
 
-        <antcall target="create.knowage.utils.jar" />
-        <antcall target="create.qbe.core.jar" />
-        <antcall target="create.knowage.dao.jar" />
-        <!--
-        <antcall target="create.knowage.oauth.security.jar" />
-        <antcall target="create.exo.security.jar" />
-        <antcall target="create.liferay.security.jar" />
-        <antcall target="create.xlm.security.jar" />
-        <antcall target="create.ldap.security.jar" />
-        -->
+		<antcall target="create.knowage.utils.jar" />
+		<antcall target="create.qbe.core.jar" />
+		<antcall target="create.knowage.dao.jar" />
+		<!--
+		<antcall target="create.knowage.oauth.security.jar" />
+		<antcall target="create.exo.security.jar" />
+		<antcall target="create.liferay.security.jar" />
+		<antcall target="create.xlm.security.jar" />
+		<antcall target="create.ldap.security.jar" />
+		-->
 
-        <antcall target="create.knowagecommonjengine.war" />
-        <copy file="../../../knowagecommonjengine/dist/knowagecommonjengine.war" 
+		<antcall target="create.knowagecommonjengine.war" />
+		<copy file="../../../knowagecommonjengine/dist/knowagecommonjengine.war" 
         todir="../../../dist" overwrite="true" />
 <!--
-        <antcall target="create.SpagoBIConsoleEngine.war" />
-        <copy file="../../../SpagoBIConsoleEngine/dist/SpagoBIConsoleEngine.war" 
+		<antcall target="create.SpagoBIConsoleEngine.war" />
+		<copy file="../../../SpagoBIConsoleEngine/dist/SpagoBIConsoleEngine.war" 
         todir="../../../dist" overwrite="true" />
 -->
-        <antcall target="create.knowagechartengine.war" />
-        <copy file="../../../knowagechartengine/dist/knowagechartengine.war" 
+		<antcall target="create.knowagechartengine.war" />
+		<copy file="../../../knowagechartengine/dist/knowagechartengine.war" 
         todir="../../../dist" overwrite="true" />
-        
-        <antcall target="create.knowagekpiengine.war" />
-        <copy file="../../../knowagekpiengine/dist/knowagekpiengine.war" 
-        todir="../../../dist" overwrite="true" />
-
-        <antcall target="create.knowage.war" />
-        <copy file="../../../knowage/dist/knowage.war" 
+		
+		<antcall target="create.knowagekpiengine.war" />
+		<copy file="../../../knowagekpiengine/dist/knowagekpiengine.war" 
         todir="../../../dist" overwrite="true" />
 
-
-        <antcall target="create.knowagebirtreportengine.war" />
-        <copy file="../../../knowagebirtreportengine/dist/knowagebirtreportengine.war" 
-        todir="../../../dist" overwrite="true" />
-<!--
-        <antcall target="create.SpagoBIGeoEngine.war" />
-        <copy file="../../../SpagoBIGeoEngine/dist/SpagoBIGeoEngine.war" 
-        todir="../../../dist" overwrite="true" />
--->
-        <antcall target="create.knowagegeoreportengine.war" />
-        <copy file="../../../knowagegeoreportengine/dist/knowagegeoreportengine.war" todir="../../../dist" overwrite="true" />
-
-        <antcall target="create.knowagecockpitengine.war" />
-        <copy file="../../../knowagecockpitengine/dist/knowagecockpitengine.war" todir="../../../dist" overwrite="true" />
-
-        <antcall target="create.knowagetalendengine.war" />
-        <copy file="../../../knowagetalendengine/dist/knowagetalendengine.war" 
+		<antcall target="create.knowage.war" />
+		<copy file="../../../knowage/dist/knowage.war" 
         todir="../../../dist" overwrite="true" />
 
-        <antcall target="create.knowagedataminingengine.war" />
-        <copy file="../../../knowagedataminingengine/dist/knowagedataminingengine.war" 
-        todir="../../../dist" overwrite="true" />
-<!--
-        <antcall target="create.SpagoBIJasperReportEngine.war" />
-        <copy file="../../../SpagoBIJasperReportEngine/dist/SpagoBIJasperReportEngine.war" 
+
+		<antcall target="create.knowagebirtreportengine.war" />
+		<copy file="../../../knowagebirtreportengine/dist/knowagebirtreportengine.war" 
         todir="../../../dist" overwrite="true" />
 
-        <antcall target="create.SpagoBIJPivotEngine.war" />
-        <copy file="../../../SpagoBIJPivotEngine/dist/SpagoBIJPivotEngine.war" 
+	    <antcall target="knowagejasperreportengine.war" />
+	    <copy file="../../../knowagejasperreportengine/dist/knowagejasperreportengine.war" 
+	    todir="../../../dist" overwrite="true" />
+
+		
+		<!--
+		<antcall target="create.SpagoBIGeoEngine.war" />
+		<copy file="../../../SpagoBIGeoEngine/dist/SpagoBIGeoEngine.war" 
         todir="../../../dist" overwrite="true" />
 -->
+		<antcall target="create.knowagegeoreportengine.war" />
+		<copy file="../../../knowagegeoreportengine/dist/knowagegeoreportengine.war" todir="../../../dist" overwrite="true" />
 
-        <antcall target="create.knowageqbeengine.war" />
-        <copy file="../../../knowageqbeengine/dist/knowageqbeengine.war" 
-        todir="../../../dist" overwrite="true" />
-<!--        
-        <antcall target="create.SpagoBIAccessibilityEngine.war" />
-        <copy file="../../../SpagoBIAccessibilityEngine/dist/SpagoBIAccessibilityEngine.war" 
+		<antcall target="create.knowagecockpitengine.war" />
+		<copy file="../../../knowagecockpitengine/dist/knowagecockpitengine.war" todir="../../../dist" overwrite="true" />
+
+		<antcall target="create.knowagetalendengine.war" />
+		<copy file="../../../knowagetalendengine/dist/knowagetalendengine.war" 
         todir="../../../dist" overwrite="true" />
 
-        <antcall target="create.SpagoBIMobileEngine.war" />
-        <copy file="../../../SpagoBIMobileEngine/dist/SpagoBIMobileEngine.war" 
-            todir="../../../dist" overwrite="true" />
--->
-        <antcall target="create.knowagenetworkengine.war" />
-        <copy file="../../../knowagenetworkengine/dist/knowagenetworkengine.war" 
-            todir="../../../dist" overwrite="true" />
-    
-        <antcall target="create.knowagewhatifengine.war" />
-        <copy file="../../../knowagewhatifengine/dist/knowagewhatifengine.war" 
+		<antcall target="create.knowagedataminingengine.war" />
+		<copy file="../../../knowagedataminingengine/dist/knowagedataminingengine.war" 
         todir="../../../dist" overwrite="true" />
-<!--            
-        <antcall target="create.SpagoBISocialAnalysis.war" />
-        <copy file="../../../SpagoBISocialAnalysis/dist/SpagoBISocialAnalysis.war" 
+
+		<!--
+		<antcall target="create.SpagoBIJPivotEngine.war" />
+		<copy file="../../../SpagoBIJPivotEngine/dist/SpagoBIJPivotEngine.war" 
         todir="../../../dist" overwrite="true" />
 -->
-    </target>
 
-    <!-- NEW: 22/05/2012 -->
-    <!--   TO BE EXECUTED IN A SECOND STEP FOR SINGLE PACKAGES CREATION -->
-    <target name="create-bin.all" depends="clean-bin.all">
+		<antcall target="create.knowageqbeengine.war" />
+		<copy file="../../../knowageqbeengine/dist/knowageqbeengine.war" 
+        todir="../../../dist" overwrite="true" />
+	
+		<antcall target="create.knowageaccessibilityengine.war" />
+		<copy file="../../../knowageaccessibilityengine/dist/knowageaccessibilityengine.war" 
+        todir="../../../dist" overwrite="true" />
 
-        <antcall target="create.knowage.utils.jar" />
-        <antcall target="create.qbe.core.jar" />
-        <antcall target="create.knowage.dao.jar" />
-        <!--
-        <antcall target="create.knowage.oauth.security.jar" />
-        <antcall target="create.exo.security.jar" />
-        <antcall target="create.liferay.security.jar" />
-        <antcall target="create.xlm.security.jar" />
-        <antcall target="create.ldap.security.jar" />
-        -->
-        <antcall target="create-bin.knowage.war" />
-        <copy file="../../../knowage/dist/knowage.war" 
-            todir="../../../dist" overwrite="true" />
-        <antcall target="create-bin.knowageqbeengine.war" />
-        <copy file="../../../knowageqbeengine/dist/knowageqbeengine.war" 
-            todir="../../../dist" overwrite="true" />
-    </target>
+		<!--    
+		<antcall target="create.SpagoBIMobileEngine.war" />
+		<copy file="../../../SpagoBIMobileEngine/dist/SpagoBIMobileEngine.war" 
+  	        todir="../../../dist" overwrite="true" />
+-->
+		<antcall target="create.knowagenetworkengine.war" />
+		<copy file="../../../knowagenetworkengine/dist/knowagenetworkengine.war" 
+  	        todir="../../../dist" overwrite="true" />
+	
+		<antcall target="create.knowagewhatifengine.war" />
+		<copy file="../../../knowagewhatifengine/dist/knowagewhatifengine.war" 
+        todir="../../../dist" overwrite="true" />
+<!--			
+		<antcall target="create.SpagoBISocialAnalysis.war" />
+		<copy file="../../../SpagoBISocialAnalysis/dist/SpagoBISocialAnalysis.war" 
+        todir="../../../dist" overwrite="true" />
+-->
+	</target>
 
+	<!-- NEW: 22/05/2012 -->
+	<!--   TO BE EXECUTED IN A SECOND STEP FOR SINGLE PACKAGES CREATION -->
+	<target name="create-bin.all" depends="clean-bin.all">
 
-    <target name="deploy.all" >
-        <antcall target="deploy.knowage.war" />
-        <antcall target="deploy.knowagebirtreportengine.war" />
-        <!-- antcall target="deploy.SpagoBIGeoEngine.war" /-->
-        <antcall target="deploy.knowagegeoreportengine.war" />
-        <antcall target="deploy.knowagecockpitengine.war" />
-        <!-- antcall target="deploy.SpagoBIJasperReportEngine.war" /-->
-        <!-- antcall target="deploy.SpagoBIJPivotEngine.war" / -->
-        <antcall target="deploy.knowageqbeengine.war" />
-        <antcall target="deploy.knowagetalendengine.war" />
-        <antcall target="deploy.knowagedataminingengine.war" />
-        <!-- antcall target="deploy.SpagoBIAccessibilityEngine.war" /-->
-        <antcall target="deploy.knowagecommonjengine.war" />
-        <!-- antcall target="deploy.SpagoBIConsoleEngine.war" /-->
-        <antcall target="deploy.knowagechartengine.war" />
-        <antcall target="deploy.knowagekpiengine.war" />
-        <!-- antcall target="deploy.SpagoBIMobileEngine.war" /-->
-        <antcall target="deploy.knowagenetworkengine.war" />
-        <antcall target="deploy.knowagewhatifengine.war" />
-        <!-- antcall target="deploy.SpagoBISocialAnalysis.war" /-->
-        <antcall target="deploy.highcharts-export-web.war" />
-    </target>
-
-
-    <target name="deploy.all.with.server.manager" depends="deploy.all" >
-        <antcall target="add.server.manager" />
-    </target>
-    
-    <target name="add.server.manager">
-        <antcall target="create.knowage.servermanager.jar" />
-        <delete file="${tomcat.home}/webapps/knowage/WEB-INF/lib/knowage.servermanager-*.jar" />
-        <copy file="../../../knowageservermanager/dist/knowage.servermanager-${project.version}.jar" todir="${tomcat.home}/webapps/knowage/WEB-INF/lib" overwrite="true" />
-    </target>
-
-    <target name="clean-bin.all" >
-        <delete file="../../../dist/knowage.war"/>
-        <delete file="../../../dist/knowageqbeengine.war"/>
-        <delete dir="../../../knowageqbeengine/ant-build"/>
-        <delete dir="../../../knowageqbeengine/dist"/>
-        <delete dir="../../../knowage/ant-build"/>
-        <delete dir="../../../knowage/dist"/>
-    </target>
-
-    <target name="clean.all" >
-        <delete dir="../../../dist"/>
-        <delete dir="../../../qbecore/ant-build"/>
-        <delete dir="../../../qbecore/dist"/>
-        <delete dir="../../../knowagebirtreportengine/ant-build"/>
-        <delete dir="../../../knowagebirtreportengine/dist"/>
-        <!--
-        <delete dir="../../../SpagoBIOAuth2SecurityProvider/ant-build"/>
-        <delete dir="../../../SpagoBIOAuth2SecurityProvider/dist"/>
-        <delete dir="../../../SpagoBIExoSecurityProvider/ant-build"/>
-        <delete dir="../../../SpagoBIExoSecurityProvider/dist"/>
-        <delete dir="../../../SpagoBILiferaySecurityProvider/ant-build"/>
-        <delete dir="../../../SpagoBILiferaySecurityProvider/dist"/>
-        <delete dir="../../../SpagoBIXMLSecurityProvider/ant-build"/>
-        <delete dir="../../../SpagoBIXMLSecurityProvider/dist"/>
-        <delete dir="../../../SpagoBILdapSecurityProvider/ant-build"/>
-        <delete dir="../../../SpagoBILdapSecurityProvider/dist"/>
-        <delete dir="../../../SpagoBIGeoEngine/ant-build"/>
-        <delete dir="../../../SpagoBIGeoEngine/dist"/>
-        -->
-        <delete dir="../../../knowagegeoreportengine/ant-build"/>
-        <delete dir="../../../knowagecockpitengine/ant-build"/>
-        <delete dir="../../../knowagegeoreportengine/dist"/>
-        <delete dir="../../../knowagecockpitengine/dist"/>
-        <!--
-        <delete dir="../../../SpagoBIJasperReportEngine/ant-build"/>
-        <delete dir="../../../SpagoBIJasperReportEngine/dist"/>
-        <delete dir="../../../SpagoBIJPivotEngine/ant-build"/>
-        <delete dir="../../../SpagoBIJPivotEngine/dist"/>
-        -->
-        <delete dir="../../../knowageqbeengine/ant-build"/>
-        <delete dir="../../../knowageqbeengine/dist"/>
-        <delete dir="../../../knowagetalendengine/ant-build"/>
-        <delete dir="../../../knowagetalendengine/dist"/>
-        <delete dir="../../../knowage/ant-build"/>
-        <delete dir="../../../knowage/dist"/>
-        <delete dir="../../../knowagedao/ant-build"/>
-        <delete dir="../../../knowagedao/dist"/>
-        <delete dir="../../../knowageutils/ant-build"/>
-        <delete dir="../../../knowageutils/dist"/>
-        <delete dir="../../../knowageutilsJSON/ant-build"/>
-        <delete dir="../../../knowageutilsJSON/dist"/>
-        <delete dir="../../../knowageservermanager/ant-build"/>
-        <delete dir="../../../knowageservermanager/dist"/>
-        <delete dir="../../../knowagedataminingengine/ant-build"/>
-        <delete dir="../../../knowagedataminingengine/dist"/>
-        <!--
-        <delete dir="../../../SpagoBIAccessibilityEngine/ant-build"/>
-        <delete dir="../../../SpagoBIAccessibilityEngine/dist"/>
-        -->
-        <delete dir="../../../knowagecommonjengine/ant-build"/>
-        <delete dir="../../../knowagecommonjengine/dist"/>
-        <!--
-        <delete dir="../../../SpagoBIConsoleEngine/ant-build"/>
-        <delete dir="../../../SpagoBIConsoleEngine/dist"/>
-        -->
-        <delete dir="../../../knowagechartengine/ant-build"/>
-        <delete dir="../../../knowagechartengine/dist"/>
-        <delete dir="../../../knowagekpiengine/ant-build"/>
-        <delete dir="../../../knowagekpiengine/dist"/>
-        <!--
-        <delete dir="../../../SpagoBIMobileEngine/ant-build"/>
-        <delete dir="../../../SpagoBIMobileEngine/dist"/>
-        -->
-        <delete dir="../../../knowagenetworkengine/ant-build"/>
-        <delete dir="../../../knowagenetworkengine/dist"/>
-        
-        <delete dir="../../../knowagewhatifengine/ant-build"/>
-        <delete dir="../../../knowagewhatifengine/dist"/>
-        <!--
-        <delete dir="../../../SpagoBISocialAnalysis/ant-build"/>
-        <delete dir="../../../SpagoBISocialAnalysis/dist"/>
-        -->
-        <delete dir="../../../jdbccore/ant-build"/>
-        <delete dir="../../../jdbccore/dist"/>
-
-    </target>
-
-    <target name="copy.ss" >
-        <copy todir="${apache.dir}/knowage/js" >
-            <fileset dir="${tomcat.home}/webapps/knowage/js">
-            </fileset>
-        </copy>
-        <copy todir="${apache.dir}/knowage/themes/sbi_default/css" >
-            <fileset dir="${tomcat.home}/webapps/knowage/themes/sbi_default/css">
-            </fileset>
-        </copy>
-        <copy todir="${apache.dir}/knowage/themes/sbi_default/img" >
-            <fileset dir="${tomcat.home}/webapps/knowage/themes/sbi_default/img">
-            </fileset>
-        </copy>
-        <copy todir="${apache.dir}/knowage/themes/sbi_default/html" >
-            <fileset dir="${tomcat.home}/webapps/knowage/themes/sbi_default/html">
-            </fileset>
-        </copy>
-        
-        
-        <copy todir="${apache.dir}/knowagecockpitengine/js" >
-            <fileset dir="${tomcat.home}/webapps/knowagecockpitengine/js">
-            </fileset>
-        </copy>
-        <copy todir="${apache.dir}/knowagecockpitengine/css" >
-            <fileset dir="${tomcat.home}/webapps/knowagecockpitengine/css">
-            </fileset>
-        </copy>
-        <copy todir="${apache.dir}/knowagecockpitengine/img" >
-            <fileset dir="${tomcat.home}/webapps/knowagecockpitengine/img">
-            </fileset>
-        </copy>
-        <copy todir="${apache.dir}/knowagecockpitengine/html" >
-            <fileset dir="${tomcat.home}/webapps/knowagecockpitengine/html">
-            </fileset>
-        </copy> 
-
-        <copy todir="${apache.dir}/knowageqbeengine/js" >
-            <fileset dir="${tomcat.home}/webapps/knowageqbeengine/js">
-            </fileset>
-        </copy>
-        <copy todir="${apache.dir}/knowageqbeengine/css" >
-            <fileset dir="${tomcat.home}/webapps/knowageqbeengine/css">
-            </fileset>
-        </copy>
-        <copy todir="${apache.dir}/knowageqbeengine/img" >
-            <fileset dir="${tomcat.home}/webapps/knowageqbeengine/img">
-            </fileset>
-        </copy>
-        <copy todir="${apache.dir}/knowageqbeengine/html" >
-            <fileset dir="${tomcat.home}/webapps/knowageqbeengine/html">
-            </fileset>
-        </copy>
-    </target>
+		<antcall target="create.knowage.utils.jar" />
+		<antcall target="create.qbe.core.jar" />
+		<antcall target="create.knowage.dao.jar" />
+		<!--
+		<antcall target="create.knowage.oauth.security.jar" />
+		<antcall target="create.exo.security.jar" />
+		<antcall target="create.liferay.security.jar" />
+		<antcall target="create.xlm.security.jar" />
+		<antcall target="create.ldap.security.jar" />
+		-->
+		<antcall target="create-bin.knowage.war" />
+		<copy file="../../../knowage/dist/knowage.war" 
+	        todir="../../../dist" overwrite="true" />
+		<antcall target="create-bin.knowageqbeengine.war" />
+		<copy file="../../../knowageqbeengine/dist/knowageqbeengine.war" 
+	        todir="../../../dist" overwrite="true" />
+	</target>
 
 
-    <target name="javadoc" >
-        <ant dir="../qbecore/ant" target="javadoc"/>
-        <ant dir="../knowagebirtreportengine/ant" target="javadoc"/>
-        <!--
-        <ant dir="../SpagoBIExoSecurityProvider/ant" target="javadoc"/>
-        <ant dir="../SpagoBIOAuth2SecurityProvider/ant" target="javadoc"/>
-        <ant dir="../SpagoBIGeoEngine/ant" target="javadoc"/>
-        -->
-        <ant dir="../knowagegeoreportengine/ant" target="javadoc"/>
-        <ant dir="../knowagecockpitengine/ant" target="javadoc"/>
-        <!-- 
-        <ant dir="../SpagoBIJasperReportEngine/ant" target="javadoc"/>
-        <ant dir="../SpagoBIJPivotEngine/ant" target="javadoc"/>
-        -->
-        <ant dir="../knowage/ant" target="javadoc"/>
-        <ant dir="../knowageqbeengine/ant" target="javadoc"/>
-        <ant dir="../knowagetalendengine/ant" target="javadoc"/>
-        <ant dir="../knowagedao/ant" target="javadoc"/>
-        <ant dir="../knowageutils/ant" target="javadoc"/>
-        <ant dir="../knowageutilsJSON/ant" target="javadoc"/>
-        <ant dir="../knowagedataminingengine/ant" target="javadoc"/>
-        <!-- 
-        <ant dir="../SpagoBIXmlSecurityProvider/ant" target="javadoc"/>
-        <ant dir="../SpagoBILiferaySecurityProvider/ant" target="javadoc"/>
-        <ant dir="../SpagoBILdapSecurityProvider/ant" target="javadoc"/>
-        <ant dir="../SpagoBIAccessibilityEngine/ant" target="javadoc"/>
-        -->
-        <ant dir="../knowagecommonjengine/ant" target="javadoc"/>
-        <!--
-        <ant dir="../SpagoBIConsoleEngine/ant" target="javadoc"/>
-        -->
-        <ant dir="../knowagechartengine/ant" target="javadoc"/>
-        <ant dir="../knowagekpiengine/ant" target="javadoc"/>
-        <!-- 
-        <ant dir="../SpagoBIMobileEngine/ant" target="javadoc"/>
-        -->
-        <ant dir="../knowagenetworkengine/ant" target="javadoc"/>
-        
-        <ant dir="../knowagewhatifengine/ant" target="javadoc"/>
-        
+	<target name="deploy.all" >
+		<antcall target="deploy.knowage.war" />
+		<antcall target="deploy.knowagebirtreportengine.war" />
+		<!-- antcall target="deploy.SpagoBIGeoEngine.war" /-->
+		<antcall target="deploy.knowagegeoreportengine.war" />
+		<antcall target="deploy.knowagecockpitengine.war" />
+		<antcall target="deploy.knowagejasperreportengine.war" />
+		<!-- antcall target="deploy.SpagoBIJPivotEngine.war" / -->
+		<antcall target="deploy.knowageqbeengine.war" />
+		<antcall target="deploy.knowagetalendengine.war" />
+		<antcall target="deploy.knowagedataminingengine.war" />
+		<antcall target="deploy.knowageaccessibilityengine.war" />
+		<antcall target="deploy.knowagecommonjengine.war" />
+		<!-- antcall target="deploy.SpagoBIConsoleEngine.war" /-->
+		<antcall target="deploy.knowagechartengine.war" />
+		<antcall target="deploy.knowagekpiengine.war" />
+		<!-- antcall target="deploy.SpagoBIMobileEngine.war" /-->
+		<antcall target="deploy.knowagenetworkengine.war" />
+		<antcall target="deploy.knowagewhatifengine.war" />
+		<!-- antcall target="deploy.SpagoBISocialAnalysis.war" /-->
+		<antcall target="deploy.highcharts-export-web.war" />
+	</target>
 
-    </target>
 
-    <target name="package.all" >
-        <ant dir="../knowage/ant" target="package"/>
-        <ant dir="../knowagebirtreportengine/ant" target="package"/>
-        <!--
-        <ant dir="../SpagoBIGeoEngine/ant" target="package"/>
-        -->
-        <ant dir="../knowagegeoreportengine/ant" target="package"/>
-        <ant dir="../knowagecockpitengine/ant" target="package"/>
-        <!--
-        <ant dir="../SpagoBIJasperReportEngine/ant" target="package"/>
-        <ant dir="../SpagoBIJPivotEngine/ant" target="package"/>
-        -->
-        <ant dir="../knowageqbeengine/ant" target="package"/>
-        <ant dir="../knowagetalendengine/ant" target="package"/>
-        <ant dir="../knowagedataminingengine/ant" target="package"/>
-        <!--
-        <ant dir="../SpagoBIDatabaseScripts" target="package"/>
-        <ant dir="../SpagoBIAccessibilityEngine/ant" target="package"/>
-        -->
-        <ant dir="../knowagecommonjengine/ant" target="package"/>
-        <!--
-        <ant dir="../SpagoBIConsoleEngine/ant" target="package"/>
-        -->
-        <ant dir="../knowagechartengine/ant" target="package"/>
-        <ant dir="../knowagekpiengine/ant" target="package"/>
-        <!--
-        <ant dir="../SpagoBIMobileEngine/ant" target="package"/>
-        -->
-        <ant dir="../knowagenetworkengine/ant" target="package"/>
-        
-        <ant dir="../knowagewhatifengine/ant" target="package"/>
-        <!--
-        <ant dir="../SpagoBISocialAnalysis/ant" target="package"/>
-        -->
-        
-    </target>
+	<target name="deploy.all.with.server.manager" depends="deploy.all" >
+		<antcall target="add.server.manager" />
+	</target>
+	
+	<target name="add.server.manager">
+		<antcall target="create.knowage.servermanager.jar" />
+		<delete file="${tomcat.home}/webapps/knowage/WEB-INF/lib/knowage.servermanager-*.jar" />
+		<copy file="../../../knowageservermanager/dist/knowage.servermanager-${project.version}.jar" todir="${tomcat.home}/webapps/knowage/WEB-INF/lib" overwrite="true" />
+	</target>
 
-    <target name="package.all.src" depends="clean.all">
-        <mkdir dir="../../../dist" />
-        <zip destfile="../../../dist/knowage-src-${project.version}_${project.date}.zip"
+	<target name="clean-bin.all" >
+		<delete file="../../../dist/knowage.war"/>
+		<delete file="../../../dist/knowageqbeengine.war"/>
+		<delete dir="../../../knowageqbeengine/ant-build"/>
+		<delete dir="../../../knowageqbeengine/dist"/>
+		<delete dir="../../../knowage/ant-build"/>
+		<delete dir="../../../knowage/dist"/>
+	</target>
+
+	<target name="clean.all" >
+		<delete dir="../../../dist"/>
+		<delete dir="../../../qbecore/ant-build"/>
+		<delete dir="../../../qbecore/dist"/>
+		<delete dir="../../../knowagebirtreportengine/ant-build"/>
+		<delete dir="../../../knowagebirtreportengine/dist"/>
+		<!--
+		<delete dir="../../../SpagoBIOAuth2SecurityProvider/ant-build"/>
+		<delete dir="../../../SpagoBIOAuth2SecurityProvider/dist"/>
+		<delete dir="../../../SpagoBIExoSecurityProvider/ant-build"/>
+		<delete dir="../../../SpagoBIExoSecurityProvider/dist"/>
+		<delete dir="../../../SpagoBILiferaySecurityProvider/ant-build"/>
+		<delete dir="../../../SpagoBILiferaySecurityProvider/dist"/>
+		<delete dir="../../../SpagoBIXMLSecurityProvider/ant-build"/>
+		<delete dir="../../../SpagoBIXMLSecurityProvider/dist"/>
+		<delete dir="../../../SpagoBILdapSecurityProvider/ant-build"/>
+		<delete dir="../../../SpagoBILdapSecurityProvider/dist"/>
+		<delete dir="../../../SpagoBIGeoEngine/ant-build"/>
+		<delete dir="../../../SpagoBIGeoEngine/dist"/>
+		-->
+		<delete dir="../../../knowagegeoreportengine/ant-build"/>
+		<delete dir="../../../knowagecockpitengine/ant-build"/>
+		<delete dir="../../../knowagegeoreportengine/dist"/>
+		<delete dir="../../../knowagecockpitengine/dist"/>
+		
+	    <delete dir="../../../knowagejasperreportengine/ant-build"/>
+	    <delete dir="../../../knowagejasperreportengine/dist"/>
+		
+		<!--
+		<delete dir="../../../SpagoBIJPivotEngine/ant-build"/>
+		<delete dir="../../../SpagoBIJPivotEngine/dist"/>
+		-->
+		<delete dir="../../../knowageqbeengine/ant-build"/>
+		<delete dir="../../../knowageqbeengine/dist"/>
+		<delete dir="../../../knowagetalendengine/ant-build"/>
+		<delete dir="../../../knowagetalendengine/dist"/>
+		<delete dir="../../../knowage/ant-build"/>
+		<delete dir="../../../knowage/dist"/>
+		<delete dir="../../../knowagedao/ant-build"/>
+		<delete dir="../../../knowagedao/dist"/>
+		<delete dir="../../../knowageutils/ant-build"/>
+		<delete dir="../../../knowageutils/dist"/>
+		<delete dir="../../../knowageutilsJSON/ant-build"/>
+		<delete dir="../../../knowageutilsJSON/dist"/>
+		<delete dir="../../../knowageservermanager/ant-build"/>
+		<delete dir="../../../knowageservermanager/dist"/>
+		<delete dir="../../../knowagedataminingengine/ant-build"/>
+		<delete dir="../../../knowagedataminingengine/dist"/>
+		<delete dir="../../../knowageaccessibilityengine/ant-build"/>
+		<delete dir="../../../knowageaccessibilityengine/dist"/>
+		<delete dir="../../../knowagecommonjengine/ant-build"/>
+		<delete dir="../../../knowagecommonjengine/dist"/>
+		<!--
+		<delete dir="../../../SpagoBIConsoleEngine/ant-build"/>
+		<delete dir="../../../SpagoBIConsoleEngine/dist"/>
+		-->
+		<delete dir="../../../knowagechartengine/ant-build"/>
+		<delete dir="../../../knowagechartengine/dist"/>
+		<delete dir="../../../knowagekpiengine/ant-build"/>
+		<delete dir="../../../knowagekpiengine/dist"/>
+		<!--
+		<delete dir="../../../SpagoBIMobileEngine/ant-build"/>
+		<delete dir="../../../SpagoBIMobileEngine/dist"/>
+		-->
+		<delete dir="../../../knowagenetworkengine/ant-build"/>
+		<delete dir="../../../knowagenetworkengine/dist"/>
+		
+		<delete dir="../../../knowagewhatifengine/ant-build"/>
+		<delete dir="../../../knowagewhatifengine/dist"/>
+		<!--
+		<delete dir="../../../SpagoBISocialAnalysis/ant-build"/>
+		<delete dir="../../../SpagoBISocialAnalysis/dist"/>
+		-->
+		<delete dir="../../../jdbccore/ant-build"/>
+		<delete dir="../../../jdbccore/dist"/>
+
+	</target>
+
+	<target name="copy.ss" >
+		<copy todir="${apache.dir}/knowage/js" >
+			<fileset dir="${tomcat.home}/webapps/knowage/js">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/knowage/themes/sbi_default/css" >
+			<fileset dir="${tomcat.home}/webapps/knowage/themes/sbi_default/css">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/knowage/themes/sbi_default/img" >
+			<fileset dir="${tomcat.home}/webapps/knowage/themes/sbi_default/img">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/knowage/themes/sbi_default/html" >
+			<fileset dir="${tomcat.home}/webapps/knowage/themes/sbi_default/html">
+			</fileset>
+		</copy>
+		
+		
+		<copy todir="${apache.dir}/knowagecockpitengine/js" >
+			<fileset dir="${tomcat.home}/webapps/knowagecockpitengine/js">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/knowagecockpitengine/css" >
+			<fileset dir="${tomcat.home}/webapps/knowagecockpitengine/css">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/knowagecockpitengine/img" >
+			<fileset dir="${tomcat.home}/webapps/knowagecockpitengine/img">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/knowagecockpitengine/html" >
+			<fileset dir="${tomcat.home}/webapps/knowagecockpitengine/html">
+			</fileset>
+		</copy>	
+
+		<copy todir="${apache.dir}/knowageqbeengine/js" >
+			<fileset dir="${tomcat.home}/webapps/knowageqbeengine/js">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/knowageqbeengine/css" >
+			<fileset dir="${tomcat.home}/webapps/knowageqbeengine/css">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/knowageqbeengine/img" >
+			<fileset dir="${tomcat.home}/webapps/knowageqbeengine/img">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/knowageqbeengine/html" >
+			<fileset dir="${tomcat.home}/webapps/knowageqbeengine/html">
+			</fileset>
+		</copy>
+	</target>
+
+
+	<target name="javadoc" >
+		<ant dir="../qbecore/ant" target="javadoc"/>
+		<ant dir="../knowagebirtreportengine/ant" target="javadoc"/>
+		<!--
+		<ant dir="../SpagoBIExoSecurityProvider/ant" target="javadoc"/>
+		<ant dir="../SpagoBIOAuth2SecurityProvider/ant" target="javadoc"/>
+		<ant dir="../SpagoBIGeoEngine/ant" target="javadoc"/>
+		-->
+		<ant dir="../knowagegeoreportengine/ant" target="javadoc"/>
+		<ant dir="../knowagecockpitengine/ant" target="javadoc"/>
+
+		<ant dir="../knowagejasperreportengine/ant" target="javadoc"/>
+		<!--<ant dir="../knowagejpivotengine/ant" target="javadoc"/>-->
+
+		<ant dir="../knowage/ant" target="javadoc"/>
+		<ant dir="../knowageqbeengine/ant" target="javadoc"/>
+		<ant dir="../knowagetalendengine/ant" target="javadoc"/>
+		<ant dir="../knowagedao/ant" target="javadoc"/>
+		<ant dir="../knowageutils/ant" target="javadoc"/>
+		<ant dir="../knowageutilsJSON/ant" target="javadoc"/>
+		<ant dir="../knowagedataminingengine/ant" target="javadoc"/>
+		<!-- 
+		<ant dir="../SpagoBIXmlSecurityProvider/ant" target="javadoc"/>
+		<ant dir="../SpagoBILiferaySecurityProvider/ant" target="javadoc"/>
+		<ant dir="../SpagoBILdapSecurityProvider/ant" target="javadoc"/>
+		-->
+		<ant dir="../knowageaccessibilityengine/ant" target="javadoc"/>
+
+		<ant dir="../knowagecommonjengine/ant" target="javadoc"/>
+		<!--
+		<ant dir="../SpagoBIConsoleEngine/ant" target="javadoc"/>
+		-->
+		<ant dir="../knowagechartengine/ant" target="javadoc"/>
+		<ant dir="../knowagekpiengine/ant" target="javadoc"/>
+		<!-- 
+		<ant dir="../SpagoBIMobileEngine/ant" target="javadoc"/>
+		-->
+		<ant dir="../knowagenetworkengine/ant" target="javadoc"/>
+		
+		<ant dir="../knowagewhatifengine/ant" target="javadoc"/>
+		
+
+	</target>
+
+	<target name="package.all" >
+		<ant dir="../knowage/ant" target="package"/>
+		<ant dir="../knowagebirtreportengine/ant" target="package"/>
+		<!--
+		<ant dir="../SpagoBIGeoEngine/ant" target="package"/>
+		-->
+		<ant dir="../knowagegeoreportengine/ant" target="package"/>
+		<ant dir="../knowagecockpitengine/ant" target="package"/>
+		
+		
+		<ant dir="../knowagejasperreportengine/ant" target="package"/>
+		
+		<!--
+			<ant dir="../SpagoBIJPivotEngine/ant" target="package"/>
+		-->
+		<ant dir="../knowageqbeengine/ant" target="package"/>
+		<ant dir="../knowagetalendengine/ant" target="package"/>
+		<ant dir="../knowagedataminingengine/ant" target="package"/>
+		<!--
+		<ant dir="../SpagoBIDatabaseScripts" target="package"/>
+-->
+		<ant dir="../knowageaccessibilityengine/ant" target="package"/>
+		<ant dir="../knowagecommonjengine/ant" target="package"/>
+		<!--
+		<ant dir="../SpagoBIConsoleEngine/ant" target="package"/>
+		-->
+		<ant dir="../knowagechartengine/ant" target="package"/>
+		<ant dir="../knowagekpiengine/ant" target="package"/>
+		<!--
+		<ant dir="../SpagoBIMobileEngine/ant" target="package"/>
+		-->
+		<ant dir="../knowagenetworkengine/ant" target="package"/>
+		
+		<ant dir="../knowagewhatifengine/ant" target="package"/>
+		<!--
+		<ant dir="../SpagoBISocialAnalysis/ant" target="package"/>
+		-->
+		
+	</target>
+
+	<target name="package.all.src" depends="clean.all">
+		<mkdir dir="../../../dist" />
+		<zip destfile="../../../dist/knowage-src-${project.version}_${project.date}.zip"
         excludes="**/*.svn"  
-        basedir="../../../">
-        </zip>
-    </target>
+   		basedir="../../../">
+		</zip>
+	</target>
 
 </project>
