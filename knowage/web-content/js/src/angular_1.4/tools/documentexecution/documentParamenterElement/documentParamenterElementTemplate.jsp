@@ -74,11 +74,8 @@
 			-->
 			<span ng-class="{'layout-padding': parameter.parameterValue && parameter.parameterValue.length > 0}"
 					ng-show="parameter.parameterValue && parameter.parameterValue.length > 0">
-				<md-chips>
-					<md-chip ng-repeat="paramVal in parameter.parameterValue">
-<!-- 						{{paramVal.value}} -->
-						{{paramVal}}
-					</md-chip>
+				
+				<md-chips ng-model="parameter.parameterValue" readonly="true">
 				</md-chips>
 			</span>
 			<!--
@@ -98,6 +95,11 @@
 		<input class="input_class" ng-model="parameter.parameterValue" 
 				ng-required="::parameter.mandatory" type="number"
 				ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" >	
+		
+	
+		
+		
+			 
 		
 		<!-- manual text input -->
 		<label ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" 
@@ -149,6 +151,10 @@
 				{{::defaultParameter.label}}
 			</md-option>
 		</md-select>
+		
+		
+		
+		
 		
 		
 	</md-input-container>
