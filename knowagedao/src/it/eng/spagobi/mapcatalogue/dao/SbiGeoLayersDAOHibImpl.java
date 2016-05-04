@@ -38,6 +38,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -52,6 +53,13 @@ import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+
+import it.eng.spago.error.EMFInternalError;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
+
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
 
@@ -726,6 +734,21 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		return obj;
 	}
 
+	@Override
+	public List<SbiGeoLayersRoles> getListRolesById(Integer id) {
+		Session tmpSession = getSession();
+		List<SbiGeoLayersRoles> roles = new ArrayList<>();
+
+		String hql = " from SbiGeoLayersRoles WHERE layer.layerId =? ";
+		Query q = tmpSession.createQuery(hql);
+		q.setInteger(0, id);
+		roles = q.list();
+		if (roles.size() == 0) {
+			return null;
+		}
+		return roles;
+	}
+
 	/**
 	 * Load all layers.
 	 *
@@ -740,7 +763,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public List<GeoLayer> loadAllLayers(String[] listLabel) throws EMFUserError, JSONException, UnsupportedEncodingException {
+	public List<GeoLayer> loadAllLayers(String[] listLabel, IEngUserProfile profile) throws EMFUserError, JSONException, UnsupportedEncodingException {
 		Session tmpSession = null;
 		Transaction tx = null;
 		List<GeoLayer> realResult = new ArrayList<GeoLayer>();
@@ -764,7 +787,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				hibLayer = (SbiGeoLayers) it.next();
 				if (hibLayer != null) {
 					final GeoLayer bilayer = hibLayer.toGeoLayer();
-
+					List<SbiGeoLayersRoles> roles = getListRolesById(hibLayer.getLayerId());
+					if (!userIsAbilited(roles, profile)) {
+						continue;
+					}
 					String str = new String(hibLayer.getLayerDef(), "UTF-8");
 					JSONObject layerDef = new JSONObject(str);
 
@@ -830,6 +856,29 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		}
 		return realResult;
+	}
+
+	private boolean userIsAbilited(List<SbiGeoLayersRoles> roles, IEngUserProfile profile) {
+		for (SbiGeoLayersRoles r : roles) {
+			Collection rolesProfile;
+			try {
+				rolesProfile = profile.getRoles();
+
+				Iterator it = rolesProfile.iterator();
+				while (it.hasNext()) {
+					String roleName = (String) it.next();
+					if (roleName.equals(r.getRole().getName())) {
+						return true;
+					}
+				}
+
+			} catch (EMFInternalError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return false;
 	}
 
 	@Override

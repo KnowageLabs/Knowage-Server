@@ -65,6 +65,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+
 @ManageAuthorization
 @Path("/layers")
 public class LayerCRUD {
@@ -79,8 +80,10 @@ public class LayerCRUD {
 	public String loadLayers(@Context HttpServletRequest req) throws JSONException, UnsupportedEncodingException {
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		List<GeoLayer> layers = null;
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+
 		try {
-			layers = dao.loadAllLayers(null);
+			layers = dao.loadAllLayers(null, profile);
 		} catch (EMFUserError e) {
 			logger.error("Error loading the layers", e);
 			throw new SpagoBIRuntimeException("Error loading the layers", e);
@@ -591,8 +594,8 @@ public class LayerCRUD {
 	@POST
 	@Path("/getLayerFromList")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getLayerFromList(@Context HttpServletRequest req) throws JSONException, EMFUserError, JsonGenerationException, JsonMappingException,
-			IOException {
+	public String getLayerFromList(@Context HttpServletRequest req)
+			throws JSONException, EMFUserError, JsonGenerationException, JsonMappingException, IOException {
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		// TODO check if profile is null
@@ -616,7 +619,7 @@ public class LayerCRUD {
 
 			if (layList != null && layList.length > 0) {
 				try {
-					layers = dao.loadAllLayers(layList);
+					layers = dao.loadAllLayers(layList, profile);
 				} catch (EMFUserError e) {
 					logger.error("Error loading the layers", e);
 					throw new SpagoBIRuntimeException("Error loading the layers", e);

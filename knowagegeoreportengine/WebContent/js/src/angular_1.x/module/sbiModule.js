@@ -55,7 +55,7 @@ sbiM.service('sbiModule_translate', function() {
 	};
 });
 
-sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModule_logger) {
+sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModule_logger,$mdDialog) {
 	var alteredContextPath=null;
 
 	this.alterContextPath=function(cpat){
@@ -95,5 +95,28 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 		sbiModule_logger.trace("PUT: "+endP_path+"/"+req_Path,item,conf);
 		return $http.put(getBaseUrl(endP_path) + "" + req_Path, item, conf);
 	};
+	
+	this.errorHandler=function(text,title){
+		var titleFin=title || "";
+		var textFin=text;
+		if(angular.isObject(text)){
+			if(text.hasOwnProperty("errors")){
+				textFin="";
+				for(var i=0;i<text.errors.length;i++){
+					textFin+=text.errors[i].message+" <br> ";
+				}
+			}else{
+				textFin=JSON.stringify(text)
+			}
+		}
+		
+		var alert = $mdDialog.alert()
+		.title(titleFin)
+		.content(textFin)
+		.ariaLabel('error') 
+		.ok('OK') 
+		return $mdDialog.show(alert); //can use the finally function
+	};
+	
 
 });

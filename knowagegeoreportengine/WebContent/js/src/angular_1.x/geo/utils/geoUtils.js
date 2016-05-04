@@ -80,7 +80,7 @@ geoM.service('geoReportCompatibility',function($map){
  * Set of method to manage 
  * 
  * */
-geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$map,sbiModule_config,sbiModule_restServices,$q,sbiModule_logger,geoModule_template,geoModule_indicators,geoModule_filters,geoModule_dataset,geModule_datasetJoinColumnsItem,geoModule_layerServices){
+geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$map,sbiModule_config,sbiModule_restServices,$q,sbiModule_logger,geoModule_template,geoModule_indicators,geoModule_filters,geoModule_dataset,geModule_datasetJoinColumnsItem,geoModule_layerServices, sbiModule_translate){
 	var gru=this;
 	this.osm_getTileURL= function(bounds) {
 		var res = $map.getResolution();
@@ -133,23 +133,28 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
 		sbiModule_restServices.post("layers", 'getLayerFromList',{items: [geoModule_template.targetLayerConf.label]}).success(
 				function(data, status, headers, config) {
-
+	
 					sbiModule_logger.trace("TargetLayer caricato",data);
 					if (data.hasOwnProperty("errors")) {
+						sbiModule_restServices.errorHandler(data, sbiModule_translate.load("gisengine.errorLayer.error"));
 						sbiModule_logger.log("TargetLayer non Ottenuti",data.errors);
 					} else {
-
-						data=data.root[0];
-
-						if(data.type=='WMS'){
-							//if is a WMS
-
-							geoModule_layerServices.setTemplateLayer(data); 
-
+						if(data.root[0]==undefined){
+							sbiModule_restServices.errorHandler(sbiModule_translate.load("gisengine.errorLayer.errorrole"), sbiModule_translate.load("gisengine.errorLayer.error"));
 						}else{
-							//if is a WFS or file 
-							gru.getGEOJsonFromFileOrWfs();
+							data=data.root[0];
+
+							if(data.type=='WMS'){
+								//if is a WMS
+
+								geoModule_layerServices.setTemplateLayer(data); 
+
+							}else{
+								//if is a WFS or file 
+								gru.getGEOJsonFromFileOrWfs();
+							}
 						}
+						
 					}
 
 				}).error(function(data, status, headers, config) {
