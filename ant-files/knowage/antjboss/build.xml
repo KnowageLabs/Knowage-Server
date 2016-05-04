@@ -151,17 +151,18 @@
 			<touch file="${jboss.home}/standalone/deployments/knowagecockpitengine.war.dodeploy"/>
 	</target>
 
-<!--
 
-	<target name="create.SpagoBIJasperReportEngine.war" depends="create.knowage.utils.jar">
-		<ant dir="../SpagoBIJasperReportEngine/ant" />
+	<target name="create.knowagejasperreportengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowagejasperreportengine/ant" />
 	</target>
-	<target name="deploy.SpagoBIJasperReportEngine.war" depends="create.knowage.utils.jar,create.SpagoBIJasperReportEngine.war">
-		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIJasperReportEngine" />
-		<delete dir="${tomcat.home}/webapps/SpagoBIJasperReportEngine" />
-		<mkdir dir="${tomcat.home}/webapps/SpagoBIJasperReportEngine" />
-		<unzip src="../../../SpagoBIJasperReportEngine/dist/SpagoBIJasperReportEngine.war" dest="${tomcat.home}/webapps/SpagoBIJasperReportEngine" />
+	<target name="deploy.knowagejasperreportengine.war" depends="create.knowage.utils.jar,create.knowagejasperreportengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowagejasperreportengine" />
+		<delete dir="${tomcat.home}/webapps/knowagejasperreportengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowagejasperreportengine" />
+		<unzip src="../../../knowagejasperreportengine/dist/knowagejasperreportengine.war" dest="${tomcat.home}/webapps/knowagejasperreportengine" />
 	</target>
+
+	<!--
 
 	<target name="create.SpagoBIJPivotEngine.war" depends="create.knowage.utils.jar">
 		<ant dir="../SpagoBIJPivotEngine/ant" />
@@ -218,17 +219,17 @@
 		<touch file="${jboss.home}/standalone/deployments/knowagedataminingengine.war.dodeploy"/>
 	</target>
 	
-<!--
-	<target name="create.SpagoBIAccessibilityEngine.war" depends="create.knowage.utils.jar">
-		<ant dir="../SpagoBIAccessibilityEngine/ant" />
+	<target name="create.knowageaccessibilityengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowageaccessibilityengine/ant" />
 	</target>
-	<target name="deploy.SpagoBIAccessibilityEngine.war" depends="create.knowage.utils.jar,create.SpagoBIAccessibilityEngine.war">
-		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIAccessibilityEngine" />
-		<delete dir="${tomcat.home}/webapps/SpagoBIAccessibilityEngine" />
-		<mkdir dir="${tomcat.home}/webapps/SpagoBIAccessibilityEngine" />
-		<unzip src="../../../SpagoBIAccessibilityEngine/dist/SpagoBIAccessibilityEngine.war" dest="${tomcat.home}/webapps/SpagoBIAccessibilityEngine" />
+	
+	<target name="deploy.knowageaccessibilityengine.war" depends="create.knowage.utils.jar,create.knowageaccessibilityengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowageaccessibilityengine" />
+		<delete dir="${tomcat.home}/webapps/knowageaccessibilityengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowageaccessibilityengine" />
+		<unzip src="../../../knowageaccessibilityengine/dist/knowageaccessibilityengine.war" dest="${tomcat.home}/webapps/knowageaccessibilityengine" />
 	</target>
--->
+
 	<target name="create.knowagecommonjengine.war" depends="create.knowage.utils.jar">
 		<ant dir="../knowagecommonjengine/ant" />
 	</target>
@@ -397,11 +398,12 @@
 		<antcall target="create.knowagedataminingengine.war" />
 		<copy file="../../../knowagedataminingengine/dist/knowagedataminingengine.war" 
         todir="../../../dist" overwrite="true" />
-<!--
-		<antcall target="create.SpagoBIJasperReportEngine.war" />
-		<copy file="../../../SpagoBIJasperReportEngine/dist/SpagoBIJasperReportEngine.war" 
+
+		<antcall target="create.knowagejasperreportengine.war" />
+		<copy file="../../../knowagejasperreportengine/dist/knowagejasperreportengine.war" 
         todir="../../../dist" overwrite="true" />
 
+		<!--
 		<antcall target="create.SpagoBIJPivotEngine.war" />
 		<copy file="../../../SpagoBIJPivotEngine/dist/SpagoBIJPivotEngine.war" 
         todir="../../../dist" overwrite="true" />
@@ -410,11 +412,12 @@
 		<antcall target="create.knowageqbeengine.war" />
 		<copy file="../../../knowageqbeengine/dist/knowageqbeengine.war" 
         todir="../../../dist" overwrite="true" />
-<!--		
-		<antcall target="create.SpagoBIAccessibilityEngine.war" />
-		<copy file="../../../SpagoBIAccessibilityEngine/dist/SpagoBIAccessibilityEngine.war" 
+		
+		<antcall target="create.knowageaccessibilityengine.war" />
+		<copy file="../../../knowageaccessibilityengine/dist/knowageaccessibilityengine.war" 
         todir="../../../dist" overwrite="true" />
-
+		
+<!--
 		<antcall target="create.SpagoBIMobileEngine.war" />
 		<copy file="../../../SpagoBIMobileEngine/dist/SpagoBIMobileEngine.war" 
   	        todir="../../../dist" overwrite="true" />
@@ -461,12 +464,12 @@
 			<!-- antcall target="deploy.SpagoBIGeoEngine.war" /-->
 			<antcall target="jboss.deploy.knowagegeoreportengine.war" />
 			<antcall target="jboss.deploy.knowagecockpitengine.war" />
-			<!-- antcall target="deploy.SpagoBIJasperReportEngine.war" /-->
+			<antcall target="deploy.knowagejasperreportengine.war" />
 			<!-- antcall target="deploy.SpagoBIJPivotEngine.war" / -->
 			<antcall target="jboss.deploy.knowageqbeengine.war" />
 			<antcall target="jboss.deploy.knowagetalendengine.war" />
 			<antcall target="jboss.deploy.knowagedataminingengine.war" />
-			<!-- antcall target="deploy.SpagoBIAccessibilityEngine.war" /-->
+			<antcall target="deploy.knowageaccessibilityengine.war" />
 			<antcall target="jboss.deploy.knowagecommonjengine.war" />
 			<!-- antcall target="deploy.SpagoBIConsoleEngine.war" /-->
 			<antcall target="jboss.deploy.knowagechartengine.war" />
@@ -511,9 +514,10 @@
 		<delete dir="../../../knowagecockpitengine/ant-build"/>
 		<delete dir="../../../knowagegeoreportengine/dist"/>
 		<delete dir="../../../knowagecockpitengine/dist"/>
+	
+		<delete dir="../../../knowagejasperreportengine/ant-build"/>
+		<delete dir="../../../knowagejasperreportengine/dist"/>
 		<!--
-		<delete dir="../../../SpagoBIJasperReportEngine/ant-build"/>
-		<delete dir="../../../SpagoBIJasperReportEngine/dist"/>
 		<delete dir="../../../SpagoBIJPivotEngine/ant-build"/>
 		<delete dir="../../../SpagoBIJPivotEngine/dist"/>
 		-->
@@ -531,10 +535,8 @@
 		<delete dir="../../../knowageutilsJSON/dist"/>
 		<delete dir="../../../knowagedataminingengine/ant-build"/>
 		<delete dir="../../../knowagedataminingengine/dist"/>
-		<!--
-		<delete dir="../../../SpagoBIAccessibilityEngine/ant-build"/>
-		<delete dir="../../../SpagoBIAccessibilityEngine/dist"/>
-		-->
+		<delete dir="../../../knowageaccessibilityengine/ant-build"/>
+		<delete dir="../../../knowageaccessibilityengine/dist"/>
 		<delete dir="../../../knowagecommonjengine/ant-build"/>
 		<delete dir="../../../knowagecommonjengine/dist"/>
 		<!--
@@ -629,8 +631,9 @@
 		-->
 		<ant dir="../knowagegeoreportengine/ant" target="javadoc"/>
 		<ant dir="../knowagecockpitengine/ant" target="javadoc"/>
-		<!-- 
-		<ant dir="../SpagoBIJasperReportEngine/ant" target="javadoc"/>
+	
+		<ant dir="../knowagejasperreportengine/ant" target="javadoc"/>
+		  <!-- 
 		<ant dir="../SpagoBIJPivotEngine/ant" target="javadoc"/>
 		-->
 		<ant dir="../knowage/ant" target="javadoc"/>
@@ -644,8 +647,9 @@
 		<ant dir="../SpagoBIXmlSecurityProvider/ant" target="javadoc"/>
 		<ant dir="../SpagoBILiferaySecurityProvider/ant" target="javadoc"/>
 		<ant dir="../SpagoBILdapSecurityProvider/ant" target="javadoc"/>
-		<ant dir="../SpagoBIAccessibilityEngine/ant" target="javadoc"/>
 		-->
+		<ant dir="../knowageaccessibilityengine/ant" target="javadoc"/>
+		
 		<ant dir="../knowagecommonjengine/ant" target="javadoc"/>
 		<!--
 		<ant dir="../SpagoBIConsoleEngine/ant" target="javadoc"/>
@@ -670,17 +674,19 @@
 		-->
 		<ant dir="../knowagegeoreportengine/ant" target="package"/>
 		<ant dir="../knowagecockpitengine/ant" target="package"/>
-		<!--
-		<ant dir="../SpagoBIJasperReportEngine/ant" target="package"/>
-		<ant dir="../SpagoBIJPivotEngine/ant" target="package"/>
+
+		<ant dir="../knowagejasperreportengine/ant" target="package"/>
+        <!--
+        		<ant dir="../SpagoBIJPivotEngine/ant" target="package"/>
 		-->
 		<ant dir="../knowageqbeengine/ant" target="package"/>
 		<ant dir="../knowagetalendengine/ant" target="package"/>
 		<ant dir="../knowagedataminingengine/ant" target="package"/>
 		<!--
 		<ant dir="../SpagoBIDatabaseScripts" target="package"/>
-		<ant dir="../SpagoBIAccessibilityEngine/ant" target="package"/>
-		-->
+-->
+		<ant dir="../knowageaccessibilityengine/ant" target="package"/>
+
 		<ant dir="../knowagecommonjengine/ant" target="package"/>
 		<!--
 		<ant dir="../SpagoBIConsoleEngine/ant" target="package"/>
