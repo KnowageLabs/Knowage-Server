@@ -28,8 +28,21 @@ md-toolbar md-select.md-knowage-theme:focus:not([disabled]) .md-select-value {
 	padding-left: 10px !important;
 }
 .checkboxRow label {
-	line-height: 53px;
+	align-items: center;
 }
 .checkboxRow {
-	height: 53px;
+	align-items: center;
+}
+
+.validation-messages {
+	color: #c70751;
+	font-size: 12px;
+	line-height: 14px;
+	margin: 0 auto;
+}
+
+.bottomButtonsBox {
+	right: 4px;
+	top: 2px;
+	position: fixed;
 }

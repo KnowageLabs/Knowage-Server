@@ -19,6 +19,8 @@ package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.tools.glossary.util.Util.fromDocumentLight;
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -28,8 +30,19 @@ import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IOutputParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ParameterDAOHibImpl;
+import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.JavaClassDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ScriptDetail;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.CriteriaParameter;
 import it.eng.spagobi.commons.bo.CriteriaParameter.Match;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -138,11 +151,9 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
 			return Response.ok(toBeReturned).build();
 		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -151,11 +162,31 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getRolesByDocumentId(@PathParam("id") Integer id) {
 		try {
-			List<String> lst = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id);
-			return JsonConverter.objectToJson(lst, lst.getClass());// SbiExtRoles.class
+			List<String> list = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id);
+			return JsonConverter.objectToJson(list, list.getClass()); // SbiExtRoles.class
 		} catch (EMFUserError e) {
-			logger.error("Error while try to retrieve the specified parameter", e);
+			logger.error("Error while try to retrieve roles by document id [" + id + "]", e);
 			throw new SpagoBIRuntimeException("Error while try to retrieve roles by document id [" + id + "]", e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path("/{id}/userroles")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getUserRolesByDocumentId(@PathParam("id") Integer id) {
+		try {
+			UserProfile userProfile = getUserProfile();
+			List<String> roles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id, userProfile);
+			String userName = (String) userProfile.getUserId();
+			List<String> userRoles = new ArrayList<String>();
+			for (String role : roles) {
+				userRoles.add(userName + "|" + role);
+			}
+			return JsonConverter.objectToJson(userRoles, userRoles.getClass());
+		} catch (EMFUserError e) {
+			logger.error("Error while try to retrieve user roles by document id [" + id + "]", e);
+			throw new SpagoBIRuntimeException("Error while try to retrieve user roles by document id [" + id + "]", e);
 		}
 	}
 
@@ -686,5 +717,68 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		parameterDAO.removeParameter(id);
 
 		return Response.ok().build();
+	}
+
+	@GET
+	@Path("/{label}/parameters/{id}/values")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getDocumentParameterValues(@PathParam("label") String label, @PathParam("id") Integer id, @QueryParam("role") String role) {
+		logger.debug("IN");
+
+		List<String> values = new ArrayList<String>();
+		String columnName = null;
+		boolean manualInput = false;
+
+		try {
+			IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
+			ParameterUse parameterUse = parameterUseDAO.loadByParameterIdandRole(id, role);
+
+			values = new ArrayList<String>();
+			columnName = null;
+			manualInput = parameterUse.getManualInput().intValue() == 1;
+
+			IParameterDAO parameterDAO = DAOFactory.getParameterDAO();
+			Parameter parameter = parameterDAO.loadForExecutionByParameterIDandRoleName(id, role);
+			ModalitiesValue modVal = parameter.getModalityValue();
+			String lovProvider = modVal.getLovProvider();
+			String lovType = LovDetailFactory.getLovTypeCode(lovProvider);
+
+			ILovDetail lovDetail = null;
+			if (lovType.equalsIgnoreCase("QUERY")) {
+				lovDetail = QueryDetail.fromXML(lovProvider);
+			} else if (lovType.equalsIgnoreCase("FIXED_LIST")) {
+				lovDetail = FixedListDetail.fromXML(lovProvider);
+			} else if (lovType.equalsIgnoreCase("SCRIPT")) {
+				lovDetail = ScriptDetail.fromXML(lovProvider);
+			} else if (lovType.equalsIgnoreCase("JAVA_CLASS")) {
+				lovDetail = JavaClassDetail.fromXML(lovProvider);
+			}
+			columnName = lovDetail.getValueColumnName();
+			if (!manualInput) {
+				String result = lovDetail.getLovResult(getUserProfile(), null, null, null);
+				SourceBean rowsSourceBean = SourceBean.fromXMLString(result);
+
+				if (rowsSourceBean != null) {
+					List rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
+					for (int i = 0; i < rows.size(); i++) {
+						SourceBean row = (SourceBean) rows.get(i);
+						String value = row.getAttribute(columnName).toString();
+						values.add(value);
+					}
+				}
+			}
+
+			JSONObject jo = new JSONObject();
+			jo.put("values", values);
+			jo.put("manualInput", manualInput);
+			jo.put("columnName", columnName);
+			return jo.toString();
+		} catch (Exception e) {
+			String error = "Error while getting the list of parameter values by document [" + label + "], parameter [" + id + "] and role [" + role + "]";
+			logger.error(error, e);
+			throw new SpagoBIRuntimeException(error, e);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 }

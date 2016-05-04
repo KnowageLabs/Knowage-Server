@@ -1,7 +1,7 @@
 var app = angular.module('jobManager', [ 'ngMaterial', 'ui.tree',
                                          'angularUtils.directives.dirPagination', 'ng-context-menu',
                                          'angular_list', 'angular_table' ,'sbiModule', 'angular-list-detail','document_tree',
-                                         'angular_time_picker', 'ngMessages']);
+                                         'angular_time_picker', 'ngMessages', 'ngSanitize']);
 
 var EmptyJob = {
 	NEWJOB: true,
@@ -982,6 +982,18 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					{label: sbiModule_translate.load("scheduler.fourthweek", "component_scheduler_messages"), value: '4'}, 
 					{label: sbiModule_translate.load("scheduler.lastweek", "component_scheduler_messages"), value: '5'}, 
 				];
+				
+				activityEventCtrl.useFixedFolderInfo = sbiModule_translate.load("scheduler.help.useFixedFolder", "component_scheduler_messages");
+				activityEventCtrl.useFolderDatasetInfo = sbiModule_translate.load("scheduler.help.useFolderDataset", "component_scheduler_messages");
+				activityEventCtrl.useFixedRecipientsInfo = sbiModule_translate.load("scheduler.help.useFixedRecipients", "component_scheduler_messages");
+				activityEventCtrl.useDatasetInfo = sbiModule_translate.load("scheduler.help.useDataset", "component_scheduler_messages");
+				activityEventCtrl.useExpressionInfo = sbiModule_translate.load("scheduler.help.useExpression", "component_scheduler_messages");
+				
+				activityEventCtrl.useFixedFolderFlag = false;
+				activityEventCtrl.useFolderDatasetFlag = false;
+				activityEventCtrl.useFixedRecipientsFlag = false;
+				activityEventCtrl.useDatasetFlag = false;
+				activityEventCtrl.useExpressionFlag = false;
 				
 				activityEventCtrl.event = {};
 				activityEventCtrl.disableName=false;
