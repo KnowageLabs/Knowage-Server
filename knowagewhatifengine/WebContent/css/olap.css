@@ -31,7 +31,7 @@
 	background-image: url(../img/show_parent_members_clicked.png);
 }
 
-.BUTTON_HIDE_EMPTY{
+.BUTTON_HIDE_EMPTY_CLICKED{
 	background-image: url(../img/empty_rows_clicked.png);
 }
 
@@ -666,11 +666,9 @@ md-option[selected], md-select-menu md-option[selected]{
 	}
 
 
-
 .tree-item-padding{
 	padding-left:10px;
 }
 .tree-item-padding-leaf{
 	padding-left:35px;
-}
 }

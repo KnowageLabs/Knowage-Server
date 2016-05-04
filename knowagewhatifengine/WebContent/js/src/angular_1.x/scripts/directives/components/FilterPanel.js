@@ -52,10 +52,22 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		}
 	}
 	
+	getVisibleService = function(un,axis){
+		var encoded = encodeURI('/hierarchy/'+ un+ '/getvisible/'+axis+'?SBI_EXECUTION_ID='+ JSsbiExecutionID);
+		sbiModule_restServices.promiseGet
+		("1.0",encoded)
+		.then(function(response) {
+			visibleSelected = response.data;
+		}, function(response) {
+			//sbiModule_messaging.showErrorMessage("An error occured during search for filter", 'Error');
+		});
+	}
+	
 	/**
 	 * Dialogs  
 	 **/
 	$scope.openFiltersDialogAsync = function(ev, filter, node) {
+		
 		$scope.clearLoadedData(filter.uniqueName);
 		visibleSelected = [];//check it
 		visibleSelectedTracker = [];//check it
@@ -64,6 +76,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		var x = {name:'Waiting...'};
 		$scope.data = [];
 		$scope.data.push(x);
+		
+		if(filter.axis > -1)
+			getVisibleService(filter.uniqueName,filter.axis);
 		
 		$scope.filterDialogToolbarName = filter.name;
 		$scope.filterAxisPosition = filter.positionInAxis;
@@ -92,6 +107,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			$scope.getHierarchyMembersAsynchronus(filterFather, filter.axis, null,filter.id);
 			$scope.dataPointers.push(filterFather);
 		}
+		
 		$scope.showDialog(ev,$scope.filterDial);
 		
 		$scope.loadingFilter = false;
@@ -101,8 +117,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 *Tree functionalities 
 	 **/
 	$scope.expandTreeAsync = function(item){
-		$scope.getHierarchyMembersAsynchronus(filterFather,$scope.activeaxis,item.uniqueName,item.id);
-		console.log($scope.data);		
+		$scope.getHierarchyMembersAsynchronus(filterFather,$scope.activeaxis,item.uniqueName,item.id);	
 	}
 	
 	expandAsyncTree = function(d,dput,id){		
@@ -129,9 +144,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		 (encoded,"",member)
 			.then(function(response) {
 				$scope.handleResponse(response);
-				
-				
-				
+				checkShift();
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("An error occured while placing member on axis", 'Error');
 				
@@ -427,21 +440,11 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 				if ($scope.draggedFrom == 'left' && leftLength == 1){
 					sbiModule_messaging.showErrorMessage("Column", 'Error');
-
-				}
-					
+				}					
 				else {
-					if ($scope.draggedFrom == 'left') {
-						$scope.rows.splice($scope.dragIndex, 1);
-						$scope.columns.push(data);
-					}
-					if ($scope.draggedFrom == 'filter') {
-						$scope.filterCardList.splice($scope.dragIndex, 1);
-						$scope.columns.push(data);
-					}
+					$scope.putMemberOnAxis(fromAxis,data);
 				}
-				$scope.putMemberOnAxis(fromAxis,data);
-				checkShift();
+				
 				fixAxisPosition("left");
 				fixAxisPosition("filter");
 				fixFilterSelectedList(fromAxis, pa );
@@ -480,18 +483,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				if ($scope.draggedFrom == 'top' && topLength == 1)
 					sbiModule_messaging.showErrorMessage("Row", 'Error');
 				else {
-					if ($scope.draggedFrom == 'top') {
-						$scope.columns.splice($scope.dragIndex, 1);
-						$scope.rows.push(data);
-					}
-					if ($scope.draggedFrom == 'filter') {
-						$scope.filterCardList.splice($scope.dragIndex, 1);
-						$scope.rows.push(data);
-					}
+					$scope.putMemberOnAxis(fromAxis,data);
 				}
-
-				$scope.putMemberOnAxis(fromAxis,data);
-				checkShift();
+				
 				fixAxisPosition("top");
 				fixAxisPosition("filter");
 				
@@ -523,18 +517,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				else if ($scope.draggedFrom == 'top' && topLength == 1)
 					sbiModule_messaging.showErrorMessage("Row", 'Error');
 				else {
-					if ($scope.draggedFrom == 'top') {
-						$scope.columns.splice($scope.dragIndex, 1);
-						$scope.filterCardList.push(data);
-					}
-					if ($scope.draggedFrom == 'left') {
-						$scope.rows.splice($scope.dragIndex, 1);
-						$scope.filterCardList.push(data);
-					}
+					$scope.putMemberOnAxis(fromAxis,data);
 				}
 
-				$scope.putMemberOnAxis(fromAxis,data);
-				checkShift();
 				fixAxisPosition("top");
 				fixAxisPosition("left");
 				

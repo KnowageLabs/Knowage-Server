@@ -322,7 +322,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 		List<NodeFilter> nodes = new ArrayList<HierarchyResource.NodeFilter>();
 		Level l = hierarchy.getLevels().get(0);
-		////System.out.println(hierarchy.getLevels().size());
+		//// System.out.println(hierarchy.getLevels().size());
 		try {
 			list = l.getMembers();
 			for (int i = 0; i < list.size(); i++) {
@@ -351,6 +351,46 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			throw new SpagoBIRuntimeException("Error serializing the MemberEntry", e);
 		}
 
+	}
+
+	@GET
+	@Path("/{hierarchy}/getvisible/{axis}")
+	public String getVisibleMembers(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
+			@PathParam("axis") int axis) {
+
+		Hierarchy hierarchy = null;
+
+		List<Member> list = new ArrayList<Member>();
+		List<Member> visibleMembers = null;
+		String memberDescription;
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		PivotModel model = ei.getPivotModel();
+
+		// if not a filter axis
+		if (axis >= 0) {
+			PlaceMembersOnAxes pm = model.getTransform(PlaceMembersOnAxes.class);
+			visibleMembers = pm.findVisibleMembers(CubeUtilities.getAxis(axis));
+		}
+
+		JSONArray ja = new JSONArray();
+
+		for (int i = 0; i < visibleMembers.size(); i++) {
+			try {
+				ja.put(serializeVisibleObject(visibleMembers.get(i)));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		try {
+
+			return ja.toString();
+		} catch (Exception e) {
+			logger.error("Error serializing visible members", e);
+			throw new SpagoBIRuntimeException("Error serializing visible members", e);
+		}
 	}
 
 	private class NodeFilter {
@@ -518,6 +558,17 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			logger.debug("Closed the connection used to get the versions");
 		}
 		return versions;
+	}
+
+	private JSONObject serializeVisibleObject(Member m) throws JSONException {
+		JSONObject obj = new JSONObject();
+		obj.put("id", m.getUniqueName());
+		obj.put("name", m.getName());
+		obj.put("uniqueName", m.getUniqueName());
+		obj.put("text", m.getName());
+		obj.put("visible", true);
+
+		return obj;
 	}
 
 }
