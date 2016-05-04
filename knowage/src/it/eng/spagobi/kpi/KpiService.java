@@ -18,51 +18,6 @@
 package it.eng.spagobi.kpi;
 
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.kpi.bo.Alias;
-import it.eng.spagobi.kpi.bo.Cardinality;
-import it.eng.spagobi.kpi.bo.Kpi;
-import it.eng.spagobi.kpi.bo.KpiExecution;
-import it.eng.spagobi.kpi.bo.KpiScheduler;
-import it.eng.spagobi.kpi.bo.KpiValue;
-import it.eng.spagobi.kpi.bo.Placeholder;
-import it.eng.spagobi.kpi.bo.Rule;
-import it.eng.spagobi.kpi.bo.RuleOutput;
-import it.eng.spagobi.kpi.bo.SchedulerFilter;
-import it.eng.spagobi.kpi.bo.Scorecard;
-import it.eng.spagobi.kpi.bo.ScorecardStatus;
-import it.eng.spagobi.kpi.bo.Target;
-import it.eng.spagobi.kpi.bo.TargetValue;
-import it.eng.spagobi.kpi.bo.Threshold;
-import it.eng.spagobi.kpi.dao.IKpiDAO;
-import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
-import it.eng.spagobi.kpi.job.ProcessKpiJob;
-import it.eng.spagobi.kpi.utils.JSError;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
-import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.scheduler.to.JobTrigger;
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -103,9 +58,56 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.kpi.bo.Alias;
+import it.eng.spagobi.kpi.bo.Cardinality;
+import it.eng.spagobi.kpi.bo.Kpi;
+import it.eng.spagobi.kpi.bo.KpiExecution;
+import it.eng.spagobi.kpi.bo.KpiScheduler;
+import it.eng.spagobi.kpi.bo.KpiValue;
+import it.eng.spagobi.kpi.bo.KpiValueExecLog;
+import it.eng.spagobi.kpi.bo.Placeholder;
+import it.eng.spagobi.kpi.bo.Rule;
+import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.SchedulerFilter;
+import it.eng.spagobi.kpi.bo.Scorecard;
+import it.eng.spagobi.kpi.bo.ScorecardStatus;
+import it.eng.spagobi.kpi.bo.Target;
+import it.eng.spagobi.kpi.bo.TargetValue;
+import it.eng.spagobi.kpi.bo.Threshold;
+import it.eng.spagobi.kpi.dao.IKpiDAO;
+import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
+import it.eng.spagobi.kpi.job.ProcessKpiJob;
+import it.eng.spagobi.kpi.utils.JSError;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
+import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.scheduler.to.JobTrigger;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- * 
+ *
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -273,7 +275,7 @@ public class KpiService {
 	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
 	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
 	 * "1"},...]}
-	 * 
+	 *
 	 * @param req
 	 * @return
 	 * @throws EMFUserError
@@ -311,7 +313,12 @@ public class KpiService {
 	@GET
 	@Path("/executeKpiScheduler/{schedulerId}")
 	public Response executeKpiScheduler(@PathParam("schedulerId") String schedulerId) throws JobExecutionException {
-		return Response.ok(ProcessKpiJob.computeKpis(Integer.parseInt(schedulerId))).build();
+		try {
+			KpiValueExecLog result = ProcessKpiJob.computeKpis(Integer.parseInt(schedulerId), new Date(), true);
+			return Response.ok(new ObjectMapper().writeValueAsString(result)).build();
+		} catch (Exception e) {
+			throw new JobExecutionException(e);
+		}
 	}
 
 	@GET
@@ -964,7 +971,7 @@ public class KpiService {
 
 	/**
 	 * Check if placeholders with default value are a subset of placeholders linked to measures used in kpi definition (ie kpi formula)
-	 * 
+	 *
 	 * @param servlet
 	 *            request
 	 * @param placeholder

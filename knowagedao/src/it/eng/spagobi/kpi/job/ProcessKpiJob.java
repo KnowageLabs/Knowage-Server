@@ -1,5 +1,37 @@
 package it.eng.spagobi.kpi.job;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
+import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
+import it.eng.spagobi.kpi.bo.Kpi;
+import it.eng.spagobi.kpi.bo.KpiScheduler;
+import it.eng.spagobi.kpi.bo.KpiValueExecLog;
+import it.eng.spagobi.kpi.bo.Rule;
+import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.SchedulerFilter;
+import it.eng.spagobi.kpi.dao.IKpiDAO;
+import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
+import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +50,7 @@ import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.Session;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,37 +59,11 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
-import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.HibernateSessionManager;
-import it.eng.spagobi.kpi.bo.Kpi;
-import it.eng.spagobi.kpi.bo.KpiScheduler;
-import it.eng.spagobi.kpi.bo.Rule;
-import it.eng.spagobi.kpi.bo.RuleOutput;
-import it.eng.spagobi.kpi.bo.SchedulerFilter;
-import it.eng.spagobi.kpi.dao.IKpiDAO;
-import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
-import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
-
 @SuppressWarnings("rawtypes")
 public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 	// Only SQL is supported.
 	// Getters/setters omitted are from inner classes for readability.
-	// TODO: handle LOV placeholders, test and debug
+	// TODO: test and debug
 
 	// =============================
 	// ======= INNER CLASSES =======
@@ -342,14 +349,64 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 	// =======================
 
 	@Override
-	public void execute(JobExecutionContext arg0) throws JobExecutionException {
+	public void execute(JobExecutionContext job) throws JobExecutionException {
 		System.out.println("starting " + this.getClass());
-		int kpiSchedulerId = Integer.parseInt(arg0.getJobDetail().getJobDataMap().getString("kpiSchedulerId"));
-		computeKpis(kpiSchedulerId);
+		Date timeRun = new Date();
+		computeKpis(job, timeRun, true);
 	}
 
-	public static String computeKpis(Integer kpiSchedulerId) throws JobExecutionException {
-		StringBuffer sb = new StringBuffer(); // For debug only
+	public static KpiValueExecLog computeKpis(JobExecutionContext job, Date timeRun, boolean logToDb) throws JobExecutionException {
+		return computeKpis(job, null, timeRun, logToDb);
+	}
+
+	public static KpiValueExecLog computeKpis(Integer kpiSchedulerId, Date timeRun, boolean logToDb) throws JobExecutionException {
+		return computeKpis(null, kpiSchedulerId, timeRun, logToDb);
+	}
+
+	private static KpiValueExecLog computeKpis(JobExecutionContext job, Integer kpiSchedulerId, Date timeRun, boolean logToDb) throws JobExecutionException {
+		try {
+			KpiValueExecLog result = null;
+			String stacktrace = "";
+			try {
+				// Parse the job
+				if (kpiSchedulerId == null) {
+					// This is unlikely to throw any exception.
+					// Nevertheless, it's safer to parse the job instance here.
+					kpiSchedulerId = Integer.parseInt(job.getJobDetail().getJobDataMap().getString("kpiSchedulerId"));
+				}
+				// Compute the KPIs values
+				result = computeKpis(kpiSchedulerId, timeRun);
+			} catch (Exception e) {
+				// Convert the stacktrace to string (including nested exceptions)
+				stacktrace = ExceptionUtils.getFullStackTrace(e);
+				throw e;
+			} finally {
+				// Log the results
+				if (logToDb) {
+					IKpiDAO kpiDao = DAOFactory.getNewKpiDAO();
+					if (result == null) {
+						// An error occurred
+						result = new KpiValueExecLog();
+						result.setSchedulerId(kpiSchedulerId);
+						result.setTimeRun(timeRun);
+						result.setErrorCount(1);
+						result.setSuccessCount(0);
+						result.setTotalCount(1);
+						result.setOutput(stacktrace);
+					}
+					kpiDao.insertKpiValueExecLog(result);
+				}
+			}
+			return result;
+		} catch (Exception e) {
+			throw new JobExecutionException(e);
+		}
+	}
+
+	public static KpiValueExecLog computeKpis(Integer kpiSchedulerId, Date timeRun) throws JobExecutionException {
+		KpiValueExecLog result = new KpiValueExecLog();
+		result.setSchedulerId(kpiSchedulerId);
+		result.setTimeRun(timeRun);
 		Map<String, Integer> temporalTypesPriorities = new TreeMap<String, Integer>(String.CASE_INSENSITIVE_ORDER);
 		temporalTypesPriorities.put("YEAR", 1);
 		temporalTypesPriorities.put("QUARTER", 2);
@@ -378,19 +435,32 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 					if ("FIXED_VALUE".equals(type)) {
 						placeholdersMap.put(schedulerFilter.getPlaceholderName(), schedulerFilter.getValue());
 					} else if ("LOV".equals(type)) {
+						// TODO: test
 						ModalitiesValue modalitiesvalue = modalitiesValueDAO.loadModalitiesValueByLabel(schedulerFilter.getValue());
-						placeholdersMap.put(schedulerFilter.getPlaceholderName(), "1"); // TODO
+						UserProfile schedulerUserProfile = UserProfile.createSchedulerUserProfile();
+						ILovDetail lovDetail = getLovDetail(modalitiesvalue);
+						String lovResult = lovDetail.getLovResult(schedulerUserProfile, null, null, null);
+						LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
+						List<Map<String, String>> rows = lovResultHandler.getRows();
+						if (rows != null && rows.size() != 0) {
+							String firstValue = rows.get(0).values().iterator().next();
+							if (firstValue == null)
+								throw new RuntimeException("Null value for LOV: " + schedulerFilter.getValue());
+							placeholdersMap.put(schedulerFilter.getPlaceholderName(), firstValue);
+						} else {
+							throw new RuntimeException("No value for LOV: " + schedulerFilter.getValue());
+						}
 					} else if ("TEMPORAL_FUNCTIONS".equals(type)) {
 						if ("EXECUTION_DAY".equals(schedulerFilter.getValue())) {
-							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + (new Date().getDate()));
+							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + GregorianCalendar.getInstance().get(Calendar.DAY_OF_MONTH));
 						} else if ("EXECUTION_MONTH".equals(schedulerFilter.getValue())) {
-							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + (new Date().getMonth() + 1));
+							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + GregorianCalendar.getInstance().get(Calendar.MONTH));
 						} else if ("EXECUTION_WEEK".equals(schedulerFilter.getValue())) {
 							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + GregorianCalendar.getInstance().get(Calendar.WEEK_OF_YEAR));
 						} else if ("EXECUTION_QUARTER".equals(schedulerFilter.getValue())) {
-							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + (new Date().getMonth() / 4 + 1));
+							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + ((GregorianCalendar.getInstance().get(Calendar.MONTH) - 1) / 4 + 1));
 						} else if ("EXECUTION_YEAR".equals(schedulerFilter.getValue())) {
-							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + (new Date().getYear() + 1900));
+							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + GregorianCalendar.getInstance().get(Calendar.YEAR));
 						}
 					}
 				}
@@ -535,19 +605,23 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 
 			// For each kpi, compute values and save them
 			for (KpiComputationUnit kpiComputationUnit : kpiComputationUnits) {
-				String result = computeKpi(kpiComputationUnit.parsedKpi, kpiComputationUnit.queries, kpiComputationUnit.mainMeasure,
-						kpiComputationUnit.replaceMode, kpiComputationUnit.queriesAttributesTemporalTypes, kpiComputationUnit.queriesIgnoredAttributes);
-				sb.append(result).append("@@@");
+				KpiValueExecLog subResult = computeKpi(kpiComputationUnit.parsedKpi, kpiComputationUnit.queries, kpiComputationUnit.mainMeasure,
+						kpiComputationUnit.replaceMode, kpiComputationUnit.queriesAttributesTemporalTypes, kpiComputationUnit.queriesIgnoredAttributes,
+						timeRun);
+				result.setErrorCount(result.getErrorCount() + subResult.getErrorCount());
+				result.setSuccessCount(result.getSuccessCount() + subResult.getSuccessCount());
+				result.setTotalCount(result.getTotalCount() + subResult.getTotalCount());
 			}
 		} catch (Exception e) {
 			throw new JobExecutionException(e);
 		}
-		return sb.toString();
+
+		return result;
 	}
 
-	private static String computeKpi(ParsedKpi parsedKpi, List<AggregateMeasureQuery> queries, Integer mainMeasure, boolean replaceMode,
-			List<Map<String, String>> queriesAttributesTemporalTypes, List<Set<String>> queriesIgnoredAttributes) throws JobExecutionException {
-		StringBuffer sb = new StringBuffer(); // For debug only
+	private static KpiValueExecLog computeKpi(ParsedKpi parsedKpi, List<AggregateMeasureQuery> queries, Integer mainMeasure, boolean replaceMode,
+			List<Map<String, String>> queriesAttributesTemporalTypes, List<Set<String>> queriesIgnoredAttributes, Date timeRun) throws JobExecutionException {
+		KpiValueExecLog result = new KpiValueExecLog();
 		try {
 			System.out.println(DateFormat.getInstance().format(new Date()) + " Processing Kpi Job...");
 
@@ -609,11 +683,10 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 				}
 			}
 
-			Date now = new Date();
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ");
 			df.setTimeZone(TimeZone.getTimeZone("UTC"));
-			String isoNow = df.format(now);
-			// long tsNow = now.getTime();
+			String isoNow = df.format(timeRun);
+			// long tsNow = date.getTime();
 
 			Session session = HibernateSessionManager.getCurrentSession();
 			int lastId = reserveIds(session, "SBI_KPI_VALUE", rowsFormulae.size());
@@ -646,26 +719,28 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 						logicalKey.append(",");
 					logicalKey.append(attributeName).append("=").append(logicalKeyPairs.get(attributeName));
 				}
+				boolean nullValue = value.toLowerCase().contains("null");
+				result.setErrorCount(result.getErrorCount() + (nullValue ? 1 : 0));
+				result.setSuccessCount(result.getSuccessCount() + (nullValue ? 0 : 1));
+				result.setTotalCount(result.getTotalCount() + 1);
 				String insertSql = "INSERT INTO SBI_KPI_VALUE (id, kpi_id, kpi_version, logical_key, time_run, computed_value,"
 						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (" + (++lastId) + ", " + parsedKpi.id + "," + parsedKpi.version
-						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "','" + isoNow + "'," + (value.toLowerCase().contains("null") ? "0" : value)
-						+ ",'ALL','ALL','ALL','ALL','ALL','" + (value.toLowerCase().contains("null") ? '1' : '0') + "')";
+						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "','" + isoNow + "'," + (nullValue ? "0" : value)
+						+ ",'ALL','ALL','ALL','ALL','ALL','" + (nullValue ? '1' : '0') + "')";
 				String whereCondition = "kpi_id = " + parsedKpi.id + " AND kpi_version = " + parsedKpi.version + " AND logical_key = '"
 						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + ifNull(temporalValues.get("DAY"), "ALL")
 						+ "' AND the_week = '" + ifNull(temporalValues.get("WEEK"), "ALL") + "'" + " AND the_month = '"
 						+ ifNull(temporalValues.get("MONTH"), "ALL") + "' AND the_quarter = '" + ifNull(temporalValues.get("QUARTER"), "ALL")
 						+ "' AND the_year = '" + ifNull(temporalValues.get("YEAR"), "ALL") + "'";
 				String deleteSql = "DELETE SBI_KPI_VALUE WHERE " + whereCondition;
-				String updateSql = "UPDATE SBI_KPI_VALUE SET computed_value = " + (value.toLowerCase().contains("null") ? "0" : value) + ", time_run = '"
-						+ isoNow + "', state='" + (value.toLowerCase().contains("null") ? '1' : '0') + "' WHERE " + whereCondition; // Currently unused
-				sb.append(insertSql + "|" + deleteSql + "|" + updateSql);
+				String updateSql = "UPDATE SBI_KPI_VALUE SET computed_value = " + (nullValue ? "0" : value) + ", time_run = '" + isoNow + "', state='"
+						+ (nullValue ? '1' : '0') + "' WHERE " + whereCondition; // Currently unused
 
 				session.beginTransaction();
 				if (replaceMode)
 					session.createSQLQuery(deleteSql).executeUpdate();
 				session.createSQLQuery(insertSql).executeUpdate();
 				session.getTransaction().commit();
-				sb.append(" ### INSERT EXECUTED!");
 				// break; // TODO remove after debug
 			}
 			session.close();
@@ -673,7 +748,7 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 		} catch (Exception e) {
 			throw new JobExecutionException(e);
 		}
-		return sb.toString();
+		return result;
 	}
 
 	synchronized private static int reserveIds(Session session, String tableName, int newRowsCount) {
@@ -692,6 +767,17 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 		}
 		session.getTransaction().commit();
 		return lastId;
+	}
+
+	private static ILovDetail getLovDetail(ModalitiesValue lov) {
+		String lovProv = lov.getLovProvider();
+		ILovDetail lovDetail = null;
+		try {
+			lovDetail = LovDetailFactory.getLovFromXML(lovProv);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to get lov detail associated to input BIObjectParameter", e);
+		}
+		return lovDetail;
 	}
 
 	private static int compareAttributes(List<Comparable> firstRowAttributesValues, List<String> firstRowAttributesNames,

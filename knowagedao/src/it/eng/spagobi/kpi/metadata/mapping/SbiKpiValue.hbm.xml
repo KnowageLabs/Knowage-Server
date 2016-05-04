@@ -4,9 +4,8 @@
 <hibernate-mapping>
 	<class name="it.eng.spagobi.kpi.metadata.SbiKpiValue" table="SBI_KPI_VALUE">
 		<!-- 
-			*** TODO: Replace sbi_kpi_value after debug ***
-			CREATE TABLE sbi_kpi_value_new ( 
-			id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+			CREATE TABLE sbi_kpi_value ( 
+			id INTEGER NOT NULL PRIMARY KEY, 
 			kpi_id INTEGER NOT NULL,
 			kpi_version INTEGER NOT NULL,
 			logical_key VARCHAR(4096) NOT NULL,
@@ -26,7 +25,7 @@
 			<column name="id" />
 			<generator class="org.hibernate.id.enhanced.TableGenerator">
 				<param name="optimizer">none</param>
-				<param name="segment_value">SBI_KPI_VALUE_NEW</param>
+				<param name="segment_value">SBI_KPI_VALUE</param>
 				<param name="initial_value">1</param>
 			</generator>
 		</id>

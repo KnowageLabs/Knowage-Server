@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="it.eng.spagobi.kpi.metadata.SbiKpiValueExecLog" table="SBI_KPI_VALUE_EXEC_LOG">
+		<!-- 
+			CREATE TABLE SBI_KPI_VALUE_EXEC_LOG ( 
+			ID INTEGER NOT NULL PRIMARY KEY, 
+			SCHEDULER_ID INTEGER NOT NULL,
+			TIME_RUN TIMESTAMP NOT NULL,
+			OUTPUT BLOB NULL NULL,
+			ERROR_COUNT INTEGER NOT NULL,
+			SUCCESS_COUNT INTEGER NOT NULL,
+			TOTAL_COUNT INTEGER NOT NULL
+			)
+		 -->
+		<id name="id" type="integer">
+			<column name="id" />
+			<generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_KPI_VALUE_EXEC_LOG</param>
+				<param name="initial_value">1</param>
+			</generator>
+		</id>
+		<property name="schedulerId" type="integer">
+			<column name="SCHEDULER_ID" not-null="true" />
+		</property>
+		<property name="timeRun" type="timestamp">
+			<column name="TIME_RUN" not-null="true" />
+		</property>
+		<property name="output" type="binary">
+			<column name="OUTPUT" sql-type="longvarbinary" not-null="false" />
+		</property>
+		<property name="errorCount" type="integer">
+			<column name="ERROR_COUNT" not-null="true" />
+		</property>
+		<property name="successCount" type="integer">
+			<column name="SUCCESS_COUNT" not-null="true" />
+		</property>
+		<property name="totalCount" type="integer">
+			<column name="TOTAL_COUNT" not-null="true" />
+		</property>
+	</class>
+</hibernate-mapping>
