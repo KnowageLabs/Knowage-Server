@@ -22,7 +22,7 @@ Ext.define('Sbi.chart.rest.WebService', {
     
     ,
     getUrl: function() {
-        return this.getProtocol() + '://' + this.getHostName() + ':' + this.getTcpPort() + this.getContext() + this.getWsPrefix() + this.getService();
+        return this.getProtocol() + '//' + this.getHostName() + ':' + this.getTcpPort() + this.getContext() + this.getWsPrefix() + this.getService();
     }
 
     ,

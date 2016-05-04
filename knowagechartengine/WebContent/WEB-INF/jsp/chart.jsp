@@ -178,7 +178,7 @@ author:
 	var userId = '<%=userId%>';
 	var hostName = '<%=request.getServerName()%>';
 	var serverPort = '<%=request.getServerPort()%>';
-	var protocol = '<%=request.getScheme()%>';
+	var protocol = window.location.protocol;
 </script>
 
 <% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) {%>
@@ -400,7 +400,7 @@ author:
 				         	form.elements[3].value = '600';
 				         	form.elements[4].value = 'Chart';
 				         	form.elements[5].value = 'false';
-							form.action = protocol + '://'+ hostName + ':' + serverPort + '/highcharts-export-web/';
+							form.action = protocol + '//'+ hostName + ':' + serverPort + '/highcharts-export-web/';
 				         	form.target = '_blank'; // result into a new browser tab
 				         	form.submit();
 				         	document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'none';
@@ -509,7 +509,7 @@ author:
          	form.elements[5].value = 'false';
          	form.elements[6].value = chartHeight;
          	form.elements[7].value = chartWidth;
-			form.action = protocol + '://'+ hostName + ':' + serverPort + '/highcharts-export-web/';
+			form.action = protocol + '//'+ hostName + ':' + serverPort + '/highcharts-export-web/';
          	form.target = '_blank'; // result into a new browser tab
          	form.submit();
 		};
@@ -603,9 +603,9 @@ author:
  	 			Sbi.chart.viewer.ChartTemplateContainer.widgetId = '<%=widgetId%>';
  	 			Sbi.chart.viewer.ChartTemplateContainer.metaData = '<%=metaData%>';
  				
- 	 			console.log("CHART.JS line 499");
- 	 			console.log("jsonTemplate: ");
- 	 			console.log(Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate);
+ 	 			//console.log("CHART.JS line 499");
+ 	 			//console.log("jsonTemplate: ");
+ 	 			//console.log(Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate);
  	 			
 				parameters = {
 					jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
