@@ -377,7 +377,7 @@
 		<copy file="../../../knowagebirtreportengine/dist/knowagebirtreportengine.war" 
         todir="../../../dist" overwrite="true" />
 
-	    <antcall target="knowagejasperreportengine.war" />
+	    <antcall target="create.knowagejasperreportengine.war" />
 	    <copy file="../../../knowagejasperreportengine/dist/knowagejasperreportengine.war" 
 	    todir="../../../dist" overwrite="true" />
 
