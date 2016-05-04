@@ -79,7 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<input class="input_class" ng-model="selectedScheduler.name" required maxlength="40" ng-maxlength="40" md-maxlength="40">
 		 </md-input-container>
 		<div class="footer">
-	<md-button class="dialogButton" ng-disabled="(selectedScheduler.name == undefined || (selectedScheduler.name.trim()).length == 0)" ng-click="apply()" ng-disable="selectedScheduler.name.length==0" md-autofocus>Apply <md-icon md-font-icon="fa fa-check buttonIcon" aria-label="apply"></md-icon></md-button>
+	<md-button class="dialogButton" ng-disabled="(selectedScheduler.name == undefined || (selectedScheduler.name.trim()).length == 0)" ng-click="apply()" ng-disable="selectedScheduler.name.length==0" md-autofocus>Save <md-icon md-font-icon="fa fa-check buttonIcon" aria-label="apply"></md-icon></md-button>
 	</div>
    	 </md-dialog-content>
   </form>

@@ -82,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 			<div class="footer">
 				<md-button class="dialogButton" ng-click="apply()" md-autofocus>
-					Apply<md-icon md-font-icon="fa fa-check buttonIcon" aria-label={{translate.load('sbi.generic.apply')}}></md-icon>
+					Save<md-icon md-font-icon="fa fa-check buttonIcon" aria-label={{translate.load('sbi.generic.apply')}}></md-icon>
 				</md-button>
 			</div>
 		</md-dialog-content>
