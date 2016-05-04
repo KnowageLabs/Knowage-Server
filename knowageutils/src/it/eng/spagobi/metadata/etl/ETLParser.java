@@ -446,7 +446,8 @@ public class ETLParser {
 	public String getContextParameter(String contextName, String parameterName) throws XPathExpressionException {
 		XPathFactory xPathfactory = XPathFactory.newInstance();
 		XPath xpath = xPathfactory.newXPath();
-		XPathExpression expr = xpath.compile("//context[@name='" + contextName + "']/contextParameter[@name='" + parameterName + "']");
+		XPathExpression expr = xpath.compile("//context[translate(@name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='"
+				+ contextName.toLowerCase() + "']/contextParameter[@name='" + parameterName + "']");
 
 		NodeList nList = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
 		for (int i = 0; i < nList.getLength(); i++) {
