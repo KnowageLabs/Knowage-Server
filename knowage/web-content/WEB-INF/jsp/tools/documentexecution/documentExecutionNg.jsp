@@ -66,6 +66,7 @@ try{
 	<style type="text/css">
 		.requiredField {color: red!important; font-weight: bold;}
 		.norequiredField {}
+		md-select.requiredField > md-select-value{color: red!important;}
 	</style>
 	<style type="text/css">
 		.topsidenav {min-width:100% !important; max-width:100% !important; min-height:40%;}

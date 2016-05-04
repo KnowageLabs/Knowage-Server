@@ -129,21 +129,21 @@
 		</section>
 		
 		<!-- lov combobox single and multiple input -->
-		<label ng-if="parameter.selectionType=='COMBOBOX'" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">
+		<label ng-if="parameter.selectionType=='COMBOBOX'">
 			{{parameter.label}}</label>
 		
 		
 		<!-- multiple -->
-		<md-select ng-model="parameter.parameterValue" multiple
-			 	ng-if="parameter.selectionType=='COMBOBOX' && parameter.multivalue"> 
+		<md-select ng-model="parameter.parameterValue" multiple ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
+			 	ng-if="showDefaultValueAreValid(parameter) && parameter.selectionType=='COMBOBOX' && parameter.multivalue" > 
 			<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value"
 				  ng-if="defaultParameter.isEnabled">
 				{{::defaultParameter.label}}
 			</md-option>
 		</md-select>
 		<!-- single -->
-		<md-select ng-model="parameter.parameterValue" 
-			 	ng-if="parameter.selectionType=='COMBOBOX' && !parameter.multivalue"> 
+		<md-select ng-model="parameter.parameterValue" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
+			 	ng-if="showDefaultValueAreValid(parameter) && parameter.selectionType=='COMBOBOX' && !parameter.multivalue"> 
 			<md-option></md-option>
 			<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
 				{{::defaultParameter.label}}
@@ -153,9 +153,9 @@
 		
 	</md-input-container>
 	
-	<!-- "required" message -->
-<!-- 	<div ng-if="showRequiredFieldMessage(parameter)"> -->
-<!-- 	 	<div ng-message="required">{{sbiModule_translate.load("sbi.execution.parametersselection.parameterRequired")}}</div> -->
-<!-- 	</div> -->
+	<!-- "DEFAULT VALID MESSAGE " message -->
+	<div ng-if="!showDefaultValueAreValid(parameter)">
+	 	<div ng-message="required">{{sbiModule_translate.load("sbi.execution.parametersselection.defaulLovDuplicateVaue")}}</div>
+	</div>
 </div>
 <md-divider></md-divider>

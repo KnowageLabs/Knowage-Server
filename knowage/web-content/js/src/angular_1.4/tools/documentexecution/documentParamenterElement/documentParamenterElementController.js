@@ -133,6 +133,18 @@
 				) == true;
 		};	
 		
+		
+		$scope.showDefaultValueAreValid = function(parameter) {
+			if(parameter.defaultValues && parameter.defaultValues.length>0 && parameter.defaultValues[0].error){
+					return false;
+				}else{
+					return true;
+				}
+		};
+		
+		
+		
+		
 		$scope.popupParameterDialog = function(parameter, templateUrl) {
 			$mdDialog.show({
 				$type: "confirm",

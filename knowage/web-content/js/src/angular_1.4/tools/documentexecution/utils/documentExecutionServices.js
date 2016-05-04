@@ -563,13 +563,11 @@
 		
 	
 		serviceScope.getParametersForExecution = function(role, buildCorrelation,crossParameters) {
-		 
 			var params = {
 					label:execProperties.executionInstance.OBJECT_LABEL,
 					role:role,
 					parameters:crossParameters
 				};
-			 
 			sbiModule_restServices.promisePost("1.0/documentexecution", "filters", params)
 			.then(function(response, status, headers, config) {
 				console.log('getParametersForExecution response OK -> ', response);
@@ -578,6 +576,7 @@
 								
 					//build documentParameters
 					angular.copy(response.data.filterStatus, execProperties.parametersData.documentParameters);
+					
 					//setting default value				
 					var fillObj = {};
 					var hasDefVal = false;
@@ -605,6 +604,9 @@
 						}
 					}
 					if(hasDefVal){serviceScope.fillParametersPanel(fillObj);}
+					
+					
+					
 					//correlation
 					buildCorrelation(execProperties.parametersData.documentParameters);
 					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();

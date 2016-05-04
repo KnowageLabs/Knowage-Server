@@ -340,7 +340,29 @@ public class DocumentExecutionUtils {
 					itemAsMap.put("description", item.get("description"));
 					itemAsMap.put("isEnabled", true);
 
-					defaultValues.add(itemAsMap);
+					// CHECH VALID DEFAULT PARAM
+					boolean defaultParameterAlreadyExist = false;
+					for (HashMap<String, Object> defVal : defaultValues) {
+						if (defVal.get("value").equals(item.get("value"))) {
+							if (defVal.get("label").equals(item.get("label")) && defVal.get("description").equals(item.get("description"))) {
+								defaultParameterAlreadyExist = true;
+								break;
+							} else {
+								ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<HashMap<String, Object>>();
+								HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
+								itemErrorMap.put("error", true);
+								itemErrorMap.put("value", defVal.get("value"));
+								itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
+								itemErrorMap.put("labelSameValue", item.get("label"));
+								defaultErrorValues.add(itemErrorMap);
+								return defaultErrorValues;
+							}
+						}
+					}
+					if (!defaultParameterAlreadyExist) {
+						defaultValues.add(itemAsMap);
+					}
+
 				}
 			}
 
@@ -363,7 +385,7 @@ public class DocumentExecutionUtils {
 
 		try {
 
-			if (treeLovNodeValue!=null && treeLovNodeValue.equalsIgnoreCase("lovroot")) {// root node
+			if (treeLovNodeValue != null && treeLovNodeValue.equalsIgnoreCase("lovroot")) {// root node
 				treeLovNodeName = (String) lovProvDet.getTreeLevelsColumns().get(0);
 				treeLovParentNodeName = "lovroot";
 				treeLovNodeLevel = -1;
