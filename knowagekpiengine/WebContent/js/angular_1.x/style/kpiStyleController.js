@@ -20,7 +20,9 @@
 		$scope.measure = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1];
 		$scope.fontFamily = ['Times New Roman','Georgia', 'Serif'];
 		$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
-		
+		if($scope.ngModel.fontWeight==undefined){
+			$scope.ngModel.fontWeight ='normal';
+		}
 		if($scope.ngModel.size==undefined){
 			$scope.ngModel.size =1;
 		}

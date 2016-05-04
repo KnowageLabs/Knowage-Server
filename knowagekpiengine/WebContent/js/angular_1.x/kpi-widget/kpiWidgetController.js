@@ -80,7 +80,7 @@
 			if(newValue!=oldValue){
 				var values = $scope.convertToStackedAreaChartData(newValue);
 				$scope.data = [{"values" :	values}];
-				console.log("Guarda:",values);
+				
 			}
 		}
 		, true);
@@ -188,6 +188,7 @@
 				if(deferred.promise.$$state.comment!=undefined){
 					$scope.valueSeries[$scope.valueSeries.length-1].manualNote = deferred.promise.$$state.value.comment;
 				}
+				
 				$scope.getValueToShow();
 			});
 			return deferred.promise;
@@ -195,13 +196,13 @@
 	};
 
 	function DialogController($scope,$mdDialog,$mdToast,sbiModule_restServices,sbiModule_config,sbiModule_translate,items,label,value,targetValue,valueSeries){
-		debugger;
+
 		$scope.label = label;
 		$scope.value = value;
 		$scope.targetValue =targetValue;
 		$scope.valueSeries = valueSeries;
 		$scope.array = [];
-		$scope.oldValue=value;
+		$scope.oldValue=valueSeries.computedValue;
 		$scope.translate = sbiModule_translate;
 		
 		$scope.parseLogicalKey = function() {
@@ -226,12 +227,13 @@
 		$scope.apply = function(){
 			if($scope.valueSeries.manualNote==null || $scope.valueSeries.manualNote.trim()==""){
 				$scope.showAction($scope.translate.load("sbi.kpi.widget.missingcomment"));
-				$scope.value = $scope.oldValue;
+			
 			} else {
 				if(!$scope.value){
 					$scope.value = null;
 				}
 				$mdDialog.cancel();
+				
 				$scope.kpiValueToSave = {};
 				$scope.kpiValueToSave["manualValue"] = $scope.value;
 				$scope.kpiValueToSave["manualNote"] = $scope.valueSeries.manualNote;
@@ -246,6 +248,8 @@
 					}
 					obj["value"] = $scope.value;
 					obj["comment"] = $scope.kpiValueToSave["manualNote"];
+					$scope.valueSeries.manualValue = $scope.value;
+					//obj["valueSeries"] = $scope.valueSeries;
 					items.resolve(obj);
 					console.log("Saved");
 				},function(response){

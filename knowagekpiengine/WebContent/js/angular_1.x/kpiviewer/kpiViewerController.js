@@ -157,6 +157,7 @@
 		$scope.value = value;
 		$scope.targetValue =targetValue;
 		$scope.valueSeries = valueSeries;
+		$scope.oldValue=valueSeries.computedValue;
 		$scope.array = [];
 		$scope.translate = sbiModule_translate;
 		
@@ -182,7 +183,6 @@
 		$scope.apply = function(){
 			if($scope.valueSeries.manualNote==null || $scope.valueSeries.manualNote.trim()==""){
 				$scope.showAction($scope.translate.load("sbi.kpi.widget.missingcomment"));
-				$scope.value = $scope.oldValue;
 			}else{
 				if($scope.value==undefined){
 					$scope.value = null;

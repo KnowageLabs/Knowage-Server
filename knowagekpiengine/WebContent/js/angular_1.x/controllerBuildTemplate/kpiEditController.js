@@ -13,7 +13,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.typeDocument = 'widget';
 	$scope.style = {};
 	$scope.options = {"showvalue": true, "showtarget":true, "showtargetpercentage":false,"showlineargauge":true, "showthreshold":true,"vieweas":"Speedometer"};
-	$scope.options.history = {"units": 'month'};
+	$scope.options.history = {"units": 'month',"size": 1};
 	$scope.units = ['day', 'week', 'month', 'quarter', 'year'];
 	$scope.typeOfWiew = [{'label':'speedometer','value':'Speedometer'},{'label':'kpicard','value':'Kpi Card'}];
 	$scope.style.color = "rgb(14, 13, 13)";
@@ -326,7 +326,6 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		var obj = {};
 		obj["chart"] = {};
 		obj.chart["type"]=$scope.typeChart;
-
 		obj.chart["data"]={};
 		if($scope.typeChart=="kpi"){
 			obj.chart["model"]=$scope.typeDocument;
@@ -351,8 +350,6 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 			scoreObject["id"] = $scope.scorecardSelected[0].id;
 			obj.chart.data["scorecard"]=scoreObject;
 		}
-
-
 		obj.chart["style"] ={};
 		obj.chart.style["font"] = $scope.style;
 
