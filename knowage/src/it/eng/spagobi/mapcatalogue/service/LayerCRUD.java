@@ -22,6 +22,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
 import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONDeserializer;
@@ -51,6 +52,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
@@ -393,11 +395,10 @@ public class LayerCRUD {
 
 			// get File
 			List<InputPart> inputParts = formDataMap.get("layerFile");
-			LayerServices layerServices = new LayerServices();
 			for (InputPart inputPart : inputParts) {
 
 				byte[] data = inputPart.getBodyAsString().replace("data:;base64,", "").getBytes(Charset.forName("UTF-8"));
-				data = layerServices.decode64(data);
+				data = Base64.decodeBase64(data);
 
 				// String path = layerServices.getResourcePath(data);
 				aLayer.setPathFile("");
@@ -467,13 +468,12 @@ public class LayerCRUD {
 			// load File
 
 			List<InputPart> inputParts = formDataMap.get("layerFile");
-			LayerServices layerServices = new LayerServices();
 			for (InputPart inputPart : inputParts) {
 
 				byte[] data = inputPart.getBodyAsString().replace("data:;base64,", "").getBytes(Charset.forName("UTF-8"));
-				data = layerServices.decode64(data);
+				data = Base64.decodeBase64(data);
 
-				String path = layerServices.getResourcePath(data);
+				String path = SpagoBIUtilities.getResourcePath();
 				aLayer.setPathFile(path);
 				aLayer.setFilebody(data);
 

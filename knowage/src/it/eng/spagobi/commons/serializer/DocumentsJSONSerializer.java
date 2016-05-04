@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.serializer;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
@@ -74,6 +73,7 @@ public class DocumentsJSONSerializer implements Serializer {
 
 	public static final Integer SHORT_NAME_CHARACTERS_LIMIT = 60;
 
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
 
@@ -130,9 +130,7 @@ public class DocumentsJSONSerializer implements Serializer {
 			result.put(PARAMETERS_REGION, obj.getParametersRegion());
 
 			if (obj.getPreviewFile() != null) {
-				SingletonConfig configSingleton = SingletonConfig.getInstance();
-				String path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-				String resourcePath = SpagoBIUtilities.readJndiResource(path);
+				String resourcePath = SpagoBIUtilities.getResourcePath();
 				result.put(PATH_RESOURCES, resourcePath);
 				result.put(PREVIEWFILE, obj.getPreviewFile());
 			}

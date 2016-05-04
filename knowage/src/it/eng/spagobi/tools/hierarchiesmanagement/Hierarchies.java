@@ -19,15 +19,12 @@ package it.eng.spagobi.tools.hierarchiesmanagement;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Dimension;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Filter;
 import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
 import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,7 +57,8 @@ public class Hierarchies {
 
 	public void loadDefinitionFile() {
 		// Load the XML file definition used for the hierarchies
-		File definitionFile = new File(getResourcePath() + File.separator + "hierarchies" + File.separator + HierarchyConstants.HIERARCHIES_FILE_NAME + ".xml");
+		File definitionFile = new File(SpagoBIUtilities.getResourcePath() + File.separator + "hierarchies" + File.separator
+				+ HierarchyConstants.HIERARCHIES_FILE_NAME + ".xml");
 		boolean fileExists = definitionFile.exists();
 		Assert.assertTrue("The model with the definition of the hierarchies must be uploaded in the server. ", fileExists);
 
@@ -506,31 +504,4 @@ public class Hierarchies {
 
 		return toReturn;
 	}
-
-	// *************************************************
-	// Utilities
-	// *************************************************
-
-	/**
-	 * Gets the path to the model with the hierarchies
-	 *
-	 * @return
-	 */
-
-	private String getResourcePath() {
-		String resPath;
-		try {
-			String jndiName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			resPath = SpagoBIUtilities.readJndiResource(jndiName);
-		} catch (Throwable t) {
-			logger.debug(t);
-			resPath = EnginConf.getInstance().getResourcePath();
-		}
-
-		if (resPath == null) {
-			throw new SpagoBIRuntimeException("Resource path not found.");
-		}
-		return resPath;
-	}
-
 }

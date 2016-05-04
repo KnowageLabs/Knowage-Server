@@ -571,10 +571,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<select name="staticpage" size="1" class='portlet-form-input-field'>
 				<option value=""> </option>
 					<%//Insert all options (only HTML files) 
-					SingletonConfig configSingleton = SingletonConfig.getInstance();
-					String path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-					String resourcePath= SpagoBIUtilities.readJndiResource(path);
-					resourcePath+="/static_menu";
+					String resourcePath = SpagoBIUtilities.getResourcePath() + File.separatorChar + "static_menu";
 					String currentStaticPage=menu.getStaticPage();
 					File dir=new File(resourcePath);
 					if (dir!=null && dir.isDirectory()){

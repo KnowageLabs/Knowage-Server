@@ -24,7 +24,6 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
@@ -619,10 +618,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			List scopeCdList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.DS_SCOPE);
 			getSessionContainer().setAttribute("scopeCdList", scopeCdList);
 
-			SingletonConfig configSingleton = SingletonConfig.getInstance();
-			String pathh = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			String filePath = SpagoBIUtilities.readJndiResource(pathh);
-			filePath += "/dataset/files";
+			String filePath = SpagoBIUtilities.getResourcePath();
+			filePath += File.separator + "dataset" + File.separator + "files";
 			File dir = new File(filePath);
 			String[] fileNames = dir.list();
 			getSessionContainer().setAttribute("fileNames", fileNames);
@@ -1163,11 +1160,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					configuration = new JSONObject(DAOFactory.getDataSetDAO().loadDataSetById(id_ds).getConfiguration());
 					String realName = configuration.getString("fileName");
 					if (!realName.equals(dsLabel)) {
-						File source = new File(SpagoBIUtilities.getResourcePath() + File.pathSeparator + "dataset" + File.pathSeparator + "files"
-								+ File.pathSeparator + realName);
+						File source = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files"
+								+ File.separatorChar + realName);
 
-						File dest = new File(SpagoBIUtilities.getResourcePath() + File.pathSeparator + "dataset" + File.pathSeparator + "files"
-								+ File.pathSeparator + dsLabel + "." + configuration.getString("fileType"));
+						File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files"
+								+ File.separatorChar + dsLabel + "." + configuration.getString("fileType"));
 						FileUtils.copyFile(source, dest);
 						FileUtils.forceDeleteOnExit(source);
 					}

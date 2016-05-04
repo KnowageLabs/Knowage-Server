@@ -18,12 +18,10 @@
 package it.eng.spagobi.engines.birt;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engines.birt.exceptions.ConnectionDefinitionException;
 import it.eng.spagobi.engines.birt.exceptions.ConnectionParameterNotValidException;
 import it.eng.spagobi.engines.birt.utilities.ParameterConverter;
@@ -93,7 +91,6 @@ import org.eclipse.birt.report.utility.BirtUtility;
 import org.eclipse.birt.report.utility.DataExtractionParameterUtil;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
-import org.xml.sax.InputSource;
 
 import sun.misc.BASE64Decoder;
 
@@ -115,7 +112,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
 	 */
 	@Override
@@ -128,7 +125,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see javax.servlet.GenericServlet#destroy()
 	 */
 	@Override
@@ -139,7 +136,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest , javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
@@ -316,25 +313,13 @@ public class BirtReportServlet extends HttpServlet {
 			}
 
 		} else {
-
-			SourceBean engineConfig = null;
-			if (getClass().getResource("/engine-config.xml") != null) {
-				InputSource source = new InputSource(getClass().getResourceAsStream("/engine-config.xml"));
-				try {
-					engineConfig = SourceBean.fromXMLStream(source);
-				} catch (SourceBeanException e) {
-					logger.error("SourceBean exception for engine config", e);
-					e.printStackTrace();
-				}
-			}
-
-			SourceBean sb = (SourceBean) engineConfig.getAttribute("RESOURCE_PATH_JNDI_NAME");
-			String path = sb.getCharacters();
-			String resPath = SpagoBIUtilities.readJndiResource(path);
-			resPath += "/birt_messages/";
-
+			String resPath = BirtEngineConfig.getEngineResourcePath();
 			if (resPath != null) {
+				logger.debug("Resource path is [" + resPath + "]");
 				this.birtReportEngine.getConfig().setResourcePath(resPath);
+			} else {
+				logger.debug("Resource path is null");
+				// TODO: should I throw an exception here?
 			}
 		}
 
@@ -566,11 +551,11 @@ public class BirtReportServlet extends HttpServlet {
 
 		// gets static resources with SBI_RESOURCE_PATH system's parameter
 		String resPathJNDI = EnginConf.getInstance().getResourcePath();
-		String resourcePath = resPathJNDI + "/img/";
+		String resourcePath = resPathJNDI + File.separatorChar + "img" + File.separatorChar;
 		String entity = (String) reportParams.get(SpagoBIConstants.SBI_ENTITY);
 		// IF exist an ENTITY parameter concat to resourcePath
 		if (entity != null && entity.length() > 0) {
-			resourcePath = resourcePath.concat(entity + "/");
+			resourcePath = resourcePath.concat(entity + File.separatorChar);
 		}
 		logger.debug("SetUp resourcePath:" + resourcePath);
 		reportParams.put("SBI_RESOURCE_PATH", resourcePath);
@@ -695,7 +680,7 @@ public class BirtReportServlet extends HttpServlet {
 		logger.debug("OUT");
 
 	}
-	
+
 	private IRenderOption getExcelRenderOption(String output) {
 		IRenderOption renderOption = new EXCELRenderOption();
 		// change emitter according to engine-config.xml

@@ -20,7 +20,11 @@ package it.eng.spagobi.services.common;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.File;
 import java.io.InputStream;
 
 import org.apache.log4j.Logger;
@@ -96,7 +100,7 @@ public class EnginConf {
 	}
 
 	/**
-	 * @return the resourcePath
+	 * @return the resourcePath from config
 	 */
 	private void setResourcePath() {
 		logger.debug("IN");
@@ -122,6 +126,14 @@ public class EnginConf {
 	}
 
 	public String getResourcePath() {
+		Tenant tenant = TenantManager.getTenant();
+		if (tenant == null) {
+			throw new SpagoBIRuntimeException("Tenant is not set. Impossible to get the tenant resource path.");
+		}
+		return resourcePath + File.separatorChar + tenant.getName();
+	}
+
+	public String getRootResourcePath() {
 		return resourcePath;
 	}
 

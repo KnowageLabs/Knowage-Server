@@ -30,7 +30,6 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ParameterDAOHibImpl;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.CriteriaParameter;
 import it.eng.spagobi.commons.bo.CriteriaParameter.Match;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -86,7 +85,7 @@ import org.json.JSONObject;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
- * 
+ *
  */
 @Path("/2.0/documents")
 public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
@@ -485,12 +484,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 				}
 			}
 
-			String indexBasePath = "";
-			String jndiBeanName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			if (jndiBeanName != null) {
-				indexBasePath = SpagoBIUtilities.readJndiResource(jndiBeanName);
-			}
-			String indexFolderPath = indexBasePath + "/idx";
+			String indexFolderPath = SpagoBIUtilities.getRootResourcePath() + "/idx";
 
 			HashMap hashMap = null;
 			List<BIObject> objects = new ArrayList<BIObject>();

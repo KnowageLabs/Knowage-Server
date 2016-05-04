@@ -18,6 +18,18 @@
 
 package it.eng.spagobi.engines.whatif;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
+import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,20 +45,10 @@ import org.apache.log4j.Logger;
 import org.olap4j.OlapDataSource;
 import org.pivot4j.datasource.SimpleOlapDataSource;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
-import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import sun.misc.BASE64Encoder;
 
 /**
- * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin
- *         (alberto.ghedin@eng.it)
+ * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
  */
 public class WhatIfEngineConfig {
 
@@ -373,7 +375,8 @@ public class WhatIfEngineConfig {
 		if (getEngineConfig().getResourcePath() != null) {
 			path = getEngineConfig().getResourcePath() + System.getProperty("file.separator");
 		} else {
-			path = ConfigSingleton.getRootPath() + System.getProperty("file.separator") + "resources";
+			path = ConfigSingleton.getRootPath() + System.getProperty("file.separator") + "resources" + File.separatorChar
+					+ TenantManager.getTenant().getName();
 		}
 		return path;
 	}

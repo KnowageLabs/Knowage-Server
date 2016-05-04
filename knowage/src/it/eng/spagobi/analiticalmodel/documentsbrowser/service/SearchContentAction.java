@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -55,7 +54,7 @@ import org.json.JSONObject;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
- * 
+ *
  */
 public class SearchContentAction extends AbstractSpagoBIAction {
 
@@ -115,12 +114,7 @@ public class SearchContentAction extends AbstractSpagoBIAction {
 			boolean similar = getAttributeAsBoolean(SIMILAR);
 
 			logger.debug("Parameter [" + SpagoBIConstants.VALUE_FILTER + "] is equal to [" + valueFilter + "]");
-			String indexBasePath = "";
-			String jndiBean = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			if (jndiBean != null) {
-				indexBasePath = SpagoBIUtilities.readJndiResource(jndiBean);
-			}
-			String index = indexBasePath + "/idx";
+			String index = SpagoBIUtilities.getRootResourcePath() + File.separatorChar + "idx";
 			IndexReader reader;
 			HashMap returned = null;
 			try {
@@ -224,7 +218,7 @@ public class SearchContentAction extends AbstractSpagoBIAction {
 
 	/**
 	 * Creates a json array with children document informations
-	 * 
+	 *
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -241,7 +235,7 @@ public class SearchContentAction extends AbstractSpagoBIAction {
 
 	/**
 	 * Creates a json array with children document informations
-	 * 
+	 *
 	 * @param rows
 	 * @return
 	 * @throws JSONException

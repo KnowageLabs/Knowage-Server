@@ -460,7 +460,7 @@ public class UserUtilities {
 			superadminFunctionalities.add(SpagoBIConstants.CACHE_MANAGEMENT);
 			superadminFunctionalities.add(SpagoBIConstants.DATASOURCE_MANAGEMENT);
 			superadminFunctionalities.add(SpagoBIConstants.DATASOURCE_READ);
-			superadminFunctionalities.add(SpagoBIConstants.READ_ENGINES_MANAGEMENT);
+			// superadminFunctionalities.add(SpagoBIConstants.READ_ENGINES_MANAGEMENT);
 		}
 		return superadminFunctionalities;
 	}
@@ -804,7 +804,7 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
-	 * 
+	 *
 	 * is this method in the right place?
 	 */
 

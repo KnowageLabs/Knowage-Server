@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,20 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.service;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,16 +36,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 
@@ -53,8 +52,7 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 		// String url =
 		// "http://localhost:8080/knowage/restful-services/1.0/Mytest/test";
 		// http://localhost:8080/knowage/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id=2
-		String contextPath = it.eng.spagobi.commons.utilities.GeneralUtilities.getSpagoBiHost()
-				+ getHttpRequest().getContextPath();
+		String contextPath = it.eng.spagobi.commons.utilities.GeneralUtilities.getSpagoBiHost() + getHttpRequest().getContextPath();
 
 		try {
 			Integer id = this.getAttributeAsInteger(VERSION_ID);
@@ -68,13 +66,10 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 			String url = contextPath + "/restful-services/selfservicedataset/export/" + dataSet.getLabel();
 
 			freezeHttpResponse();
-			getHttpResponse().setHeader("Content-Disposition",
-					"attachment" + "; filename=\"" + dataSet.getName() + ".xlsm" + "\";");
+			getHttpResponse().setHeader("Content-Disposition", "attachment" + "; filename=\"" + dataSet.getName() + ".xlsm" + "\";");
 			getHttpResponse().setContentType("application/vnd.ms-excel");
 			// create WB
-			SingletonConfig configSingleton = SingletonConfig.getInstance();
-			String path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			String resourcePath = SpagoBIUtilities.readJndiResource(path);
+			String resourcePath = SpagoBIUtilities.getResourcePath();
 			XSSFWorkbook wb = null;
 			InputStream fileInputStream = Thread.currentThread().getContextClassLoader()
 					.getResourceAsStream("it/eng/spagobi/tools/dataset/service/export_dataset_template.xlsm");
@@ -82,8 +77,7 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 				wb = new XSSFWorkbook(fileInputStream);
 			} catch (IOException e) {
 				logger.error("Input Output Exception " + e.getMessage());
-				throw new SpagoBIServiceException(this.getActionName(), "Impossible to get xlsm export template file ",
-						e);
+				throw new SpagoBIServiceException(this.getActionName(), "Impossible to get xlsm export template file ", e);
 			}
 
 			if (wb != null) {
@@ -138,16 +132,14 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 						getHttpResponse().getOutputStream().close();
 					} catch (IOException e) {
 						logger.error("write output file stream error " + e.getMessage());
-						throw new SpagoBIServiceException(this.getActionName(),
-								"Impossible to write output file xls error", e);
+						throw new SpagoBIServiceException(this.getActionName(), "Impossible to write output file xls error", e);
 					}
 				}
 			}
 
 		} catch (EMFUserError e) {
 			logger.error("write output stream error " + e.getMessage());
-			throw new SpagoBIServiceException(this.getActionName(),
-					"Impossible to write back the responce to the client", e);
+			throw new SpagoBIServiceException(this.getActionName(), "Impossible to write back the responce to the client", e);
 		}
 
 	}
