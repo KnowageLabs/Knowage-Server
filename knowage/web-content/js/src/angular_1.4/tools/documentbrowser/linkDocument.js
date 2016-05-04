@@ -8,11 +8,17 @@ app.controller("linkDocumentCTRL",linkDocumentFunction);
 linkDocumentFunction.$inject = ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging"];
 function linkDocumentFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,sbiModule_messaging){
 	
+	//VARIABLES
+	
+	
 	$scope.translate = sbiModule_translate;
 	$scope.showme = true;
 	$scope.sourceList = [];
 	$scope.tablesList = [];
 	$scope.selectedTables = [];
+	$scope.forAdding = [];
+	$scope.forDeletion = [];
+	
 	
 	
 	$scope.removeFromSelected = [ 			 		               	
@@ -22,6 +28,7 @@ function linkDocumentFunction(sbiModule_translate, sbiModule_restServices, $scop
 	 		 		               		backgroundColor:'red',
 	 		 		               		action : function(item) {
 	 		 		               				$scope.remove(item);
+	 		 		               				console.log($scope.forDeletion);
 	 		 		               			}
 	 		 		               	}
 	 		 		             ];
@@ -30,7 +37,9 @@ function linkDocumentFunction(sbiModule_translate, sbiModule_restServices, $scop
 	//FUNCTIONS	
 		 
 	angular.element(document).ready(function () { // on page load function
+				$scope.getTablesByDocumentID(documentID);
 				$scope.getSources();
+				
 		    });
 	
 
@@ -38,7 +47,6 @@ function linkDocumentFunction(sbiModule_translate, sbiModule_restServices, $scop
 	$scope.getSources = function(){ // service that gets predefined list GET		
 		sbiModule_restServices.promiseGet("2.0/metaSourceResource", "")
 		.then(function(response) {
-			console.log(response.data);
 			$scope.sourceList = response.data;
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -49,7 +57,6 @@ function linkDocumentFunction(sbiModule_translate, sbiModule_restServices, $scop
 	$scope.getTablesBySourceID = function(id){	
 		sbiModule_restServices.promiseGet("2.0/metaSourceResource/"+id+"/metatables", "")
 		.then(function(response) {
-			console.log(response.data);
 			$scope.tablesList = response.data;
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -61,9 +68,22 @@ function linkDocumentFunction(sbiModule_translate, sbiModule_restServices, $scop
 		
 		var index = $scope.tablesList.indexOf(item);
 		if($scope.selectedTables.indexOf(item)===-1){
-			$scope.selectedTables.push(item);
+			if(!$scope.arrayContains($scope.selectedTables,'tableId',item)){
+				$scope.selectedTables.push(item);
+				$scope.forAdding.push(item);
+			}
 			
 		}
+		console.log($scope.selectedTables);
+		console.log($scope.forAdding);
+	}
+	$scope.arrayContains = function(array,property,item) {
+		for (var i = 0; i < array.length; i++) {
+			if(array[i][property] == item[property]){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 $scope.remove = function(item){	
@@ -71,18 +91,103 @@ $scope.remove = function(item){
 	var index = $scope.selectedTables.indexOf(item);
 		if($scope.selectedTables.indexOf(item)>-1){
 			$scope.selectedTables.splice(index,1);
+			if(!$scope.arrayContains($scope.forDeletion,'tableId',item)){
+				$scope.forDeletion.push(item);
+			}
+			
 			
 		} 
 	}
-	
-$scope.getTablesByDatasetID = function(id){	
-	sbiModule_restServices.promiseGet("2.0/metaDsRelationResource/dataset/"+id, "")
+
+$scope.getTablesByDocumentID = function(id){	
+	sbiModule_restServices.promiseGet("2.0/metaDocumetRelationResource/document/"+id, "")
 	.then(function(response) {
+		
 		$scope.selectedTables = response.data;
+		$scope.markDeleted(selectedTables_id);
 	}, function(response) {
-		sbiModule_messaging.showErrorMessage('aaaaaaaaa', 'Error');
+		sbiModule_messaging.showErrorMessage('error getting saved', 'Error');
 		
 	});	
+}
+
+$scope.deleteRelations = function(docId,item){
+	sbiModule_restServices.promiseDelete("2.0/metaDocumetRelationResource/"+docId,item.tableId)
+	.then(function(response) {	
+	}, function(response) {
+		sbiModule_messaging.showErrorMessage('error deleting', 'Error');
+		
+	});	
+}
+
+$scope.insertRelations = function(docId,item){	
+	sbiModule_restServices.promisePost("2.0/metaDocumetRelationResource/"+docId, "",angular.toJson(item))
+	.then(function(response) {
+	}, function(response) {
+		sbiModule_messaging.showErrorMessage('error inserting', 'Error');
+		
+	});	
+}
+
+$scope.checkSave = function(){
+	if($scope.forDeletion.length == 0 && $scope.forAdding.length == 0){
+		return true;
+	}else{
+		return false;
+	}
+	
+}
+
+
+
+$scope.saveRelation = function(docId){
+	
+	if($scope.forDeletion.length > 0){
+	console.log("deleting")	
+	for (var i = 0; i < $scope.forDeletion.length; i++) {
+		$scope.deleteRelations(docId,$scope.forDeletion[i]);
+	}
+}
+	else if($scope.forAdding.length > 0){
+	console.log("adding");	
+	for (var i = 0; i < $scope.forAdding.length; i++) {
+		$scope.insertRelations(docId,$scope.forAdding[i]);
+	}
+	}
+	sbiModule_messaging.showSuccessMessage('Successfully saved', 'Success!');
+	
+	$scope.forDeletion = [];
+	$scope.forAdding = [];
+	
+	$timeout(function(){
+		
+		$scope.getTablesByDocumentID(docId);
+	}, 1000);
+	
+	//$scope.goBack();
+	
+}
+
+$scope.goBack = function(){
+	history.go(-1);
+	
+}
+
+$scope.markDeleted = function(listId){
+	for (var i = 0; i < $scope.selectedTables.length; i++) {
+		console.log(listId);
+		if($scope.selectedTables[i].deleted){
+			console.log($scope.selectedTables[i]);
+			$timeout(function() {
+				
+				
+				//document.getElementsByClassName("angularListRowItem").style.backgroundColor = "red";
+				//document.getElementById('listItemTemplate').style.color  = "red";
+			
+		    }, 250);
+			
+		}
+	}
 }
 
 

@@ -18,6 +18,7 @@ function linkDatasetFunction(sbiModule_translate, sbiModule_restServices, $scope
 	$scope.selectedTables = [];
 	$scope.forAdding = [];
 	$scope.forDeletion = [];
+
 	
 	
 	
@@ -129,6 +130,15 @@ $scope.insertRelations = function(dsId,item){
 	});	
 }
 
+$scope.checkSave = function(){
+	if($scope.forDeletion.length == 0 && $scope.forAdding.length == 0){
+		return true;
+	}else{
+		return false;
+	}
+	
+}
+
 
 
 $scope.saveRelation = function(dsId){
@@ -145,14 +155,13 @@ $scope.saveRelation = function(dsId){
 		$scope.insertRelations(dsId,$scope.forAdding[i]);
 	}
 	}
-	else{
-		console.log("no data to save!!");
-		sbiModule_messaging.showErrorMessage('no data to save!!', 'Error');
-	}
+	sbiModule_messaging.showSuccessMessage('Successfully saved', 'Success!');
+	
 	$scope.forDeletion = [];
 	$scope.forAdding = [];
 	
-	$timeout(function(){								
+	$timeout(function(){
+		
 		$scope.getTablesByDatasetID(dsId);
 	}, 1000);
 	
@@ -166,14 +175,16 @@ $scope.goBack = function(){
 }
 
 $scope.markDeleted = function(listId){
-	console.log(listId);
 	for (var i = 0; i < $scope.selectedTables.length; i++) {
-
+		console.log(listId);
 		if($scope.selectedTables[i].deleted){
 			console.log($scope.selectedTables[i]);
 			$timeout(function() {
-				//document.getElementById("listItemTemplate").style.color = "red";
 				
+				
+				//document.getElementsByClassName("angularListRowItem").style.backgroundColor = "red";
+				//document.getElementById('listItemTemplate').style.color  = "red";
+			
 		    }, 250);
 			
 		}

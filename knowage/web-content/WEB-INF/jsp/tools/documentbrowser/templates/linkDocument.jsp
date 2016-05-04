@@ -58,7 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 		</head>
 
-	<body class="federatedDataset" ng-app="linkDocumentModule" id="ng-app">
+	<body class="federatedDataset linkDocument" ng-app="linkDocumentModule" id="ng-app">
 		
 		<div ng-controller="linkDocumentCTRL" layout-fill class="contentdemoBasicUsage">		
 		  <div class ="md-container" >
@@ -79,7 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       		<md-option ng-value="source" ng-repeat="source in sourceList" ng-click="getTablesBySourceID(source.sourceId)">{{source.name}}</md-option>
     		</md-select>
 			
-				<div ng-show="showme == true" layout="row" >
+				<div ng-show="showme == true" layout="row" style="height:680px">
 					
 					<!-- Avaliable tables -->
 					<div flex class="datasetBox">
@@ -102,7 +102,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							item-name="name"
 							show-search-bar=true
 							click-function="moveToSelected(item)"
-							style="overflow:hidden"	
 							>					
 							</angular-list>
 						</md-content>
@@ -132,15 +131,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-card>
 				</div>
 				
+				<div>
+				
+				<div>
+				<md-button class="md-raised buttonLeft" aria-label="btn_cancel"
+						ng-click="goBack()">Cancel
+				</md-button> 
 				</div>
-			
-				<md-button class="md-raised buttonR" aria-label="btn_save"
-						ng-click="saveRelations()">Save
+				<div>
+				<md-button class="md-raised buttonRight" aria-label="btn_save"
+						ng-click="saveRelation(<%= documentID %>)" ng-disabled="checkSave()">Save
 				</md-button>
-
+				</div>
+				</div>
+				
+				
+				
 			</md-content>
-		 <!-- end div container -->
-		 </div>	
+			
+		 </div>		 	
 		</div>
 	
 	</body>

@@ -1,18 +1,5 @@
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
-import it.eng.spagobi.metadata.dao.ISbiMetaSourceDAO;
-import it.eng.spagobi.metadata.dao.ISbiMetaTableDAO;
-import it.eng.spagobi.metadata.metadata.SbiMetaSource;
-import it.eng.spagobi.metadata.metadata.SbiMetaTable;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
 import java.util.List;
 
 import javax.validation.Valid;
@@ -25,6 +12,19 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.metadata.dao.ISbiMetaSourceDAO;
+import it.eng.spagobi.metadata.dao.ISbiMetaTableDAO;
+import it.eng.spagobi.metadata.metadata.SbiMetaSource;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("2.0/metaSourceResource")
 @ManageAuthorization
@@ -87,7 +87,6 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(metaTables);
 		return metaTables;
 	}
 

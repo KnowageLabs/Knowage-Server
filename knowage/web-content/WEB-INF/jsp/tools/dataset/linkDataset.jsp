@@ -141,7 +141,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 				<div>
 				<md-button class="md-raised buttonRight" aria-label="btn_save"
-						ng-click="saveRelation(<%= datasetID %>)">Save
+						ng-click="saveRelation(<%= datasetID %>)" ng-disabled="checkSave()">Save
 				</md-button>
 				</div>
 				</div>

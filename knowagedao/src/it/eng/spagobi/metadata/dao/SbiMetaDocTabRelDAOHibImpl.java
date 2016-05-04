@@ -29,6 +29,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -56,14 +57,76 @@ public class SbiMetaDocTabRelDAOHibImpl extends AbstractHibernateDAO implements 
 	}
 
 	@Override
-	public Integer insertDocRelation(SbiMetaDocTabRel sbiMetaDocTabRel) throws EMFUserError {
-		// TODO Auto-generated method stub
-		return null;
+	public void insertDocRelation(SbiMetaDocTabRel sbiMetaDocTabRel) throws EMFUserError {
+		logger.debug("IN");
+
+		Session tmpSession = null;
+		Transaction tx = null;
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			SbiMetaDocTabRel hibMeta = new SbiMetaDocTabRel();
+			hibMeta.setDocumentId(sbiMetaDocTabRel.getDocumentId());
+			hibMeta.setTableId(sbiMetaDocTabRel.getTableId());
+			hibMeta.setRelationId(sbiMetaDocTabRel.getRelationId());
+
+			updateSbiCommonInfo4Insert(hibMeta);
+			tmpSession.save(hibMeta);
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+
+			}
+
+		}
+		logger.debug("OUT");
 	}
 
 	@Override
 	public void deleteDocRelation(SbiMetaDocTabRel sbiMetaDocTabRel) throws EMFUserError {
-		// TODO Auto-generated method stub
+		logger.debug("IN");
+
+		Session tmpSession = null;
+		Transaction tx = null;
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			SbiMetaDocTabRel hibMeta = (SbiMetaDocTabRel) tmpSession.load(SbiMetaDocTabRel.class, new Integer(sbiMetaDocTabRel.getRelationId()));
+
+			tmpSession.delete(hibMeta);
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+
+		}
+		logger.debug("OUT");
 
 	}
 
@@ -125,6 +188,46 @@ public class SbiMetaDocTabRelDAOHibImpl extends AbstractHibernateDAO implements 
 			criteria.add(labelCriterrion);
 
 			toReturn = criteria.list();
+			if (toReturn == null)
+				return null;
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+
+	}
+
+	@Override
+	public SbiMetaDocTabRel loadDocIdandTableId(Integer documentId, Integer tableId) throws EMFUserError {
+
+		logger.debug("IN");
+
+		SbiMetaDocTabRel toReturn = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			// Criterion labelCriterrion1 = Expression.eq("datasetId",
+			// datasetId);
+			// Criterion labelCriterrion2 = Expression.eq("tableId", tableId);
+			List<SbiMetaDocTabRel> relations = tmpSession.createCriteria(SbiMetaDocTabRel.class).add(Restrictions.eq("documentId", documentId))
+					.add(Restrictions.eq("tableId", tableId)).list();
+			toReturn = relations.get(0);
 			if (toReturn == null)
 				return null;
 			tx.commit();

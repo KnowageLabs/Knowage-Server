@@ -33,12 +33,14 @@ public interface ISbiMetaDocTabRelDAO extends ISpagoBIDao {
 
 	public void modifyDocRelation(SbiMetaDocTabRel sbiMetaDocTabRel) throws EMFUserError;
 
-	public Integer insertDocRelation(SbiMetaDocTabRel sbiMetaDocTabRel) throws EMFUserError;
+	public void insertDocRelation(SbiMetaDocTabRel sbiMetaDocTabRel) throws EMFUserError;
 
 	public void deleteDocRelation(SbiMetaDocTabRel sbiMetaDocTabRel) throws EMFUserError;
 
 	public List<SbiMetaDocTabRel> loadAllDocRelations() throws EMFUserError;
 
 	List<SbiMetaDocTabRel> loadByDocumentId(Integer documentId) throws EMFUserError;
+
+	SbiMetaDocTabRel loadDocIdandTableId(Integer documentId, Integer tableId) throws EMFUserError;
 
 }
