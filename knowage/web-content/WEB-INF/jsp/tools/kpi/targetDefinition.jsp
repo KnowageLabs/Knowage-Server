@@ -61,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<h1>Save Target</h1>
 				<span flex></span>
 				<md-button class="md-icon-button" ng-click="close()">
-					<md-icon md-font-icon="fa fa-times closeIcon" aria-label="Close dialog"></md-icon>
+					<md-icon md-font-icon="fa fa-times closeIcon" aria-label="translate.load('sbi.general.close.dialog')"></md-icon>
 				</md-button>
 			</div>
 		</md-toolbar>
@@ -73,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						md-search-text="searchText" 
 						md-items="item in querySearchCategory(searchText)"
 						md-item-text="item.valueCd" 
-						md-floating-label="Categoria"
+						md-floating-label={{translate.load('sbi.generic.category')}}
 						md-autoselect="true">
 					<md-item-template>
 						<span md-highlight-text="searchText">{{item.valueCd}}</span>
@@ -82,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 			<div class="footer">
 				<md-button class="dialogButton" ng-click="apply()" md-autofocus>
-					Apply<md-icon md-font-icon="fa fa-check buttonIcon" aria-label="apply"></md-icon>
+					Apply<md-icon md-font-icon="fa fa-check buttonIcon" aria-label={{translate.load('sbi.generic.apply')}}></md-icon>
 				</md-button>
 			</div>
 		</md-dialog-content>
@@ -93,7 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 <body>
 	<angular-list-detail ng-controller="targetDefinitionController" full-screen="true">
-		<list ng-controller="listController" new-function="addTarget">
+		<list label="translate.load('sbi.target.list')" ng-controller="listController" new-function="addTarget">
 			<angular-table  flex
 				id='targetListTable' ng-model=targets
 				columns='targetsColumns'
@@ -102,7 +102,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				speed-menu-option="targetsActions"
 				click-function="loadTarget(item);"> </angular-table>
 		</list>
-		<detail save-function="showSaveTargetDialog" cancel-function="cancel">
+		<detail label="getLabelForBar()" save-function="showSaveTargetDialog" cancel-function="cancel">
 			<div id="contentWhiteFrame" class="overflow" flex layout="column">
 				<md-whiteframe class="md-whiteframe-4dp layout-padding" layout-margin>
 					<div>

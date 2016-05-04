@@ -68,8 +68,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			  <md-button class="md-flat" ng-click="showPlaceholdersTab=!showPlaceholdersTab">{{translate.load("sbi.kpi.placeholder")}}</md-button>
 		</extra-button>
 		
-		<detail ng-controller="measureDetailController" save-function="saveMeasureFunction" disable-save-button="!detailProperty.dataSourcesIsSelected || (detailProperty.dataSourcesIsSelected && currentRule.definition=='')" cancel-function="cancelMeasureFunction"  >
-		
+<!-- 		<detail ng-controller="measureDetailController" save-function="saveMeasureFunction" disable-save-button="!detailProperty.dataSourcesIsSelected || (detailProperty.dataSourcesIsSelected && currentRule.definition=='')" cancel-function="cancelMeasureFunction"  > -->
+				
+		<detail label="getLabelToBar()" ng-controller="measureDetailController" save-function="saveMeasureFunction" disable-save-button="!detailProperty.dataSourcesIsSelected || (detailProperty.dataSourcesIsSelected && currentRule.definition=='')" cancel-function="cancelMeasureFunction"  >
+
 		<div layout="row" class="absolute" layout-fill>
 		 
 			<md-tabs flex md-selected='selectedTab.tab' >

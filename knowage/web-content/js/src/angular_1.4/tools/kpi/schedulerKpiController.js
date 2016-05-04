@@ -379,6 +379,10 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		}
 	}
 	
+	$scope.getNameForBar = function(){
+		return $scope.selectedScheduler.name != undefined ? $scope.selectedScheduler.name : $scope.translate.load('sbi.kpi.skeduler.new');
+	}
+	
 	$scope.showSaveGUI= function(){
 		var deferred = $q.defer();
 

@@ -124,6 +124,11 @@ function DialogSaveController($scope, $mdDialog,$mdToast,currentRule,originalRul
 		  };
 		}
 function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,sbiModule_restServices,sbiModule_config,$q,$angularListDetail){
+	$scope.translate = sbiModule_translate;
+	
+	$scope.getLabelToBar = function (){
+		return $scope.currentRule.name == undefined ? $scope.translate.load('sbi.kpi.measure.new') : $scope.currentRule.name;
+	}
 	
 	$scope.loadMetadata=function(){
 		var deferred = $q.defer();

@@ -7,6 +7,8 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 app.controller('targetDefinitionController', ['$scope', 'sbiModule_config', 'sbiModule_translate', 'sbiModule_restServices', '$mdDialog', '$filter', '$q', '$mdToast', '$angularListDetail', '$timeout', targetDefinitionControllerFunction]);
 
 function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_translate, sbiModule_restServices, $mdDialog, $filter, $q, $mdToast, $angularListDetail, $timeout) {
+	$scope.translate = sbiModule_translate;
+	
 	this.formatDate = function(dts) {
 		this.convertDateFormat = function(date) {
 			result = "";
@@ -121,7 +123,11 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 		}
 	};
 	
-	$scope.cloneTarget = function(item,event){
+	$scope.getLabelForBar = function (){
+		return $scope.target.name == undefined ? $scope.translate.load('sbi.target.list.new') : $scope.target.name;
+	}
+	
+		$scope.cloneTarget = function(item,event){
 		var confirm = $mdDialog.confirm()
 		.title($scope.translate.load("sbi.generic.confirmClone"))
 		.ariaLabel('clone measure') 
@@ -166,11 +172,8 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 		}, function() {
 			console.log("annulla")
 		});
-		
-		
-		
-
 	}
+	
 	$scope.showDialog = function($event) {
 		var kpiIdToIdx = {};
 		for (var i = 0; i < $scope.kpis.length; i++) {
@@ -383,7 +386,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					$angularListDetail.goToList();
 				},
 				function(response) {
-					sbiModule_restServices.errorHandler(response.data, "Errors occurred while saving Target")
+					sbiModule_restServices.errorHandler(response.data, sbiModule_translate.load('sbi.target.error.save'))
 				}
 			);
 	}
@@ -391,7 +394,8 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 	$scope.showSaveTargetDialog = function() {
 		$mdDialog.show({
 			controller:
-				function ($scope, $mdDialog, targetCategories, targetCategory) {
+				function ($scope, $mdDialog, targetCategories, targetCategory, sbiModule_translate) {
+					$scope.translate = sbiModule_translate;
 					$scope.targetCategory = targetCategory;
 					$scope.targetCategories = targetCategories;
 					$scope.close = function() {

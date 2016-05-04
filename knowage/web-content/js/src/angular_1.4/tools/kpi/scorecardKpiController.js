@@ -192,11 +192,7 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
  		}else{
  			$angularListDetail.goToList();
  			angular.copy({},$scope.currentScorecard);
- 		} 
- 	
-		
-		
-		
+ 		} 	
 	}
 	$scope.loadScorecardList=function(){
 		sbiModule_restServices.promiseGet("1.0/kpi","listScorecard")
@@ -206,6 +202,10 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.scorecard.load.error"));
 		});
 	};
+	$scope.getNameForBar = function(){
+		return ((typeof $scope.currentScorecard.name == "undefined" || $scope.currentScorecard.name !== '' ) ? $scope.currentScorecard.name : $scope.translate.load('sbi.kpi.scorecard.scorecard.new'));
+	}
+		
 	$scope.saveScorecardFunction=function(){
 		if($scope.currentScorecard.name.trim()==""){
 			$scope.showToast(sbiModule_translate.load("sbi.kbi.scorecard.alert.name.missing")); 

@@ -130,7 +130,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		speed-menu-option=engineMenuOptionList 
 		initial-sorting="'name'"> </angular-table>
 		</list>
-		<detail save-function="saveSc" cancel-function="cancel">
+		<detail label="getNameForBar()" save-function="saveSc" cancel-function="cancel">
 		
 		<md-tabs flex md-selected='selectedTab.tab'>
 				<md-tab id="tab1" >
