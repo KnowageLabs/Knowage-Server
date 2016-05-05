@@ -1,5 +1,7 @@
 package it.eng.spagobi.kpi.job;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -63,7 +65,6 @@ import org.quartz.JobExecutionException;
 public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 	// Only SQL is supported.
 	// Getters/setters omitted are from inner classes for readability.
-	// TODO: test and debug
 
 	// =============================
 	// ======= INNER CLASSES =======
@@ -435,15 +436,15 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 					if ("FIXED_VALUE".equals(type)) {
 						placeholdersMap.put(schedulerFilter.getPlaceholderName(), schedulerFilter.getValue());
 					} else if ("LOV".equals(type)) {
-						// TODO: test
 						ModalitiesValue modalitiesvalue = modalitiesValueDAO.loadModalitiesValueByLabel(schedulerFilter.getValue());
 						UserProfile schedulerUserProfile = UserProfile.createSchedulerUserProfile();
 						ILovDetail lovDetail = getLovDetail(modalitiesvalue);
 						String lovResult = lovDetail.getLovResult(schedulerUserProfile, null, null, null);
 						LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
-						List<Map<String, String>> rows = lovResultHandler.getRows();
+						List<SourceBean> rows = lovResultHandler.getRows();
 						if (rows != null && rows.size() != 0) {
-							String firstValue = rows.get(0).values().iterator().next();
+							SourceBeanAttribute firstAttribute = (SourceBeanAttribute) rows.get(0).getContainedAttributes().get(0);
+							String firstValue = (String) firstAttribute.getValue();
 							if (firstValue == null)
 								throw new RuntimeException("Null value for LOV: " + schedulerFilter.getValue());
 							placeholdersMap.put(schedulerFilter.getPlaceholderName(), firstValue);
