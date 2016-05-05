@@ -39,6 +39,9 @@ public class KpiResource extends AbstractFullKpiEngineResource {
 			JSONObject request = RestUtilities.readBodyAsJSONObject(req);
 
 			template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(request.getInt("id"));
+			if (template == null) {
+				return new JSONObject().toString();
+			}
 
 		} catch (Exception e) {
 			logger.error("Error converting JSON Template to XML...", e);
