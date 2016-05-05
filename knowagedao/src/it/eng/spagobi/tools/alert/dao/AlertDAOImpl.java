@@ -120,6 +120,7 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Alert> listAlert() {
 		return executeOnTransaction(new IExecuteOnTransaction<List<Alert>>() {
@@ -132,49 +133,38 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 
 				List<Alert> ret = new ArrayList<>();
 				for (SbiAlert sbiAlert : alertList) {
-					JOB_STATUS status = JOB_STATUS.ACTIVE;
-					for (String triggerName : suspendedTriggers) {
-						if ((sbiAlert.getId() + "").equals(triggerName)) {
-							status = JOB_STATUS.SUSPENDED;
-							break;
-						}
-					}
-					ret.add(from(sbiAlert, status));
+					Alert alert = from(sbiAlert, false);
+					alert.setJobStatus(suspendedTriggers.contains("" + sbiAlert.getId()) ? JOB_STATUS.SUSPENDED : JOB_STATUS.ACTIVE);
+					ret.add(alert);
 				}
 				return ret;
 			}
 		});
 	}
 
-	private Alert from(SbiAlert sbiAlert, JOB_STATUS jobStatus) {
+	private Alert from(SbiAlert sbiAlert, boolean checkStatus) {
 		Alert alert = new Alert();
 		alert.setId(sbiAlert.getId());
 		alert.setName(sbiAlert.getName());
 		alert.setJsonOptions(sbiAlert.getListenerOptions());
 		alert.setAlertListener(from(sbiAlert.getSbiAlertListener()));
-		alert.setJobStatus(jobStatus);
-		return alert;
-	}
-
-	@Override
-	public Alert loadAlert(Integer id) {
-		SbiAlert sbiAlert = load(SbiAlert.class, id);
 		ISchedulerDAO schedulerDao;
 		try {
 			schedulerDao = DAOFactory.getSchedulerDAO();
 		} catch (EMFUserError e) {
 			throw new SpagoBIDOAException(e);
 		}
-		// TODO set correct values
-		String triggerGroup = "";
-		String jobName = "";
-		String triggerName = "";
-		String jobGroup = "";
-		if (schedulerDao.isTriggerPaused(triggerGroup, triggerName, jobGroup, jobName)) {
-			return from(sbiAlert, JOB_STATUS.SUSPENDED);
-		} else {
-			return from(sbiAlert, JOB_STATUS.ACTIVE);
+		if (checkStatus) {
+			String name = "" + sbiAlert.getId();
+			alert.setJobStatus(schedulerDao.isTriggerPaused(ALERT_JOB_GROUP, name, ALERT_JOB_GROUP, name) ? JOB_STATUS.SUSPENDED : JOB_STATUS.ACTIVE);
 		}
+		return alert;
+	}
+
+	@Override
+	public Alert loadAlert(Integer id) {
+		SbiAlert sbiAlert = load(SbiAlert.class, id);
+		return from(sbiAlert, true);
 	}
 
 	@Override

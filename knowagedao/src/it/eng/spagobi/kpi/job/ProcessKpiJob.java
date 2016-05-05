@@ -21,6 +21,7 @@ import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
 import it.eng.spagobi.kpi.bo.SchedulerFilter;
 import it.eng.spagobi.kpi.dao.IKpiDAO;
+import it.eng.spagobi.tools.alert.listener.AbstractSuspendableJob;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
@@ -31,7 +32,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.text.DateFormat;
@@ -57,12 +57,11 @@ import org.hibernate.Session;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 @SuppressWarnings("rawtypes")
-public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
+public class ProcessKpiJob extends AbstractSuspendableJob {
 	// Only SQL is supported.
 	// Getters/setters omitted are from inner classes for readability.
 
@@ -237,8 +236,8 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 			return executeQuery(dataSourceId, toString(), quotedParameters);
 		}
 
-		private static QueryResult executeQuery(int dataSourceId, String sql, Map<String, String> quotedParameters)
-				throws JSONException, EMFUserError, EMFInternalError {
+		private static QueryResult executeQuery(int dataSourceId, String sql, Map<String, String> quotedParameters) throws JSONException, EMFUserError,
+				EMFInternalError {
 			// Read measure value
 			int maxItem = 0;
 			IEngUserProfile profile = null;
@@ -350,7 +349,7 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 	// =======================
 
 	@Override
-	public void execute(JobExecutionContext job) throws JobExecutionException {
+	public void internalExecute(JobExecutionContext job) throws JobExecutionException {
 		System.out.println("starting " + this.getClass());
 		Date timeRun = new Date();
 		computeKpis(job, timeRun, true);
@@ -590,8 +589,8 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 								}
 							}
 						}
-						kpiComputationUnits.add(
-								new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes, mainMeasure, replaceMode));
+						kpiComputationUnits.add(new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes,
+								mainMeasure, replaceMode));
 						Integer nextPriority = 0;
 						for (String temporalType : queriesAttributesTemporalTypes.get(mainMeasure).values()) {
 							Integer priority = temporalTypesPriorities.get(temporalType);
@@ -607,8 +606,7 @@ public class ProcessKpiJob extends AbstractSpagoBIJob implements Job {
 			// For each kpi, compute values and save them
 			for (KpiComputationUnit kpiComputationUnit : kpiComputationUnits) {
 				KpiValueExecLog subResult = computeKpi(kpiComputationUnit.parsedKpi, kpiComputationUnit.queries, kpiComputationUnit.mainMeasure,
-						kpiComputationUnit.replaceMode, kpiComputationUnit.queriesAttributesTemporalTypes, kpiComputationUnit.queriesIgnoredAttributes,
-						timeRun);
+						kpiComputationUnit.replaceMode, kpiComputationUnit.queriesAttributesTemporalTypes, kpiComputationUnit.queriesIgnoredAttributes, timeRun);
 				result.setErrorCount(result.getErrorCount() + subResult.getErrorCount());
 				result.setSuccessCount(result.getSuccessCount() + subResult.getSuccessCount());
 				result.setTotalCount(result.getTotalCount() + subResult.getTotalCount());
