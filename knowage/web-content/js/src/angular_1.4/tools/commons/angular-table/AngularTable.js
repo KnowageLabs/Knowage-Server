@@ -345,8 +345,20 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                 for (var item in items) {
                     if (columnsSearch != undefined && columnsSearch.length != 0) {
                         for (var cols in columnsSearch) {
-                            if (items[item][columnsSearch[cols]] != undefined) {
-                                if (items[item][columnsSearch[cols]].toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
+                        	var tmpSearchItem=""
+                        	if(angular.isObject(columnsSearch[cols])){
+                        		if(columnsSearch[cols].transformer!=undefined){
+                        			tmpSearchItem=columnsSearch[cols].transformer(items[item],columnsSearch[cols].name);
+                        		}else{
+                        			tmpSearchItem=items[item][columnsSearch[cols].name];
+                        		}
+                        	}else{
+                        		tmpSearchItem=items[item][columnsSearch[cols]]
+                        	}
+                        	
+                        	
+                            if (tmpSearchItem!= undefined) {
+                                if (tmpSearchItem.toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
                                     filtered.push(items[item]);
                                     break;
                                 }
@@ -424,7 +436,11 @@ function TableControllerFunction($scope, $timeout) {
     $scope.internal_column_ordering;
     $scope.internal_reverse_col_ord = false;
 
-
+    $scope.getDynamicValue=function(item,row,column){
+    	if(item==null || item==undefined) return ;
+    	
+    	return angular.isFunction(item) ? item(row,column) : item;
+    }
     
     $scope.searchItem = function (searchVal) {
         if ($scope.localSearch) {

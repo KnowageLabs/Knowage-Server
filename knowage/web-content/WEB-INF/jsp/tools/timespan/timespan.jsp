@@ -30,82 +30,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html ng-app="timespanManager">
 <head>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-	<link rel="stylesheet" type="text/css" href="/knowage/themes/timespan/css/timespanStyle.css">
+	<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 	
-	<!-- time picker -->
-	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
-
+	<link rel="stylesheet" type="text/css" href="/knowage/themes/timespan/css/timespanStyle.css">
 	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/timespan/timespan.js"></script>
 	
 </head>
 
 
-<body class="bodyStyle">
-
-	<div ng-controller="Controller as ctrl" layout="row" layout-wrap layout-fill>
-		
-		<div flex="20" layout-fill class="leftBox">
-			
-			<md-toolbar class="md-blue minihead ">
-				<div class="md-toolbar-tools">
-					<div>{{translate.load("sbi.timespan");}}</div>
-					<md-button ng-click="ctrl.newTs()" aria-label="new ts"
-						class="md-fab md-ExtraMini addButton" 
-						style="position:absolute; right:11px; top:0px;"> 
-						<md-icon md-font-icon="fa fa-plus"
-							style=" margin-top: 6px ; color: white;">
-						</md-icon> 
-					</md-button>
-				</div>
-			</md-toolbar>
-			
-			<md-content layout-padding class="ToolbarBox miniToolbar noBorder leftListbox">
-				<angular-list layout-fill 
+<body ng-cloak>
+	<angular-list-detail ng-controller="Controller as ctrl">
+		<list label="translate.load('sbi.timespan')"  new-function="ctrl.newTs" >
+			<angular-table flex 
 					id='ts' 
                		ng-model=ctrl.tsList
-               		item-name='name'
-               		show-search-bar=true
-               		highlights-selected-item=true
+               		columns='ctrl.TSTableColumns'
+               		columns-search="ctrl.TSTableColumnsSearch"
+               		show-search-bar=true 
                		click-function="ctrl.loadTimespan(item)"
-               		menu-option=ctrl.menuTs>
-              	</angular-list>
-			</md-content>
-		</div>
-		
-		
-		<md-tabs flex md-dynamic-height class="hideTabs h100" md-border-bottom > 
-		
-			<md-tab label="empty" style="margin:10px;" md-on-select="ctrl.activeTab='empty'" md-active="ctrl.activeTab=='empty'">
-				<p style="padding: 10px;">{{translate.load("sbi.timespan.empty.message");}}</p>
-			</md-tab>
-			
-			<md-tab label="details" style="margin:10px;" md-on-select="ctrl.activeTab='details'" md-active="ctrl.activeTab=='details'">
-				
-				<div layout="column" style=" padding: 10px; height: calc(100% - 20px); ">
-				<!--  div flex layout-fill-->
-		
-					<md-toolbar class="md-blue minihead">
-						<div class="md-toolbar-tools h100">
-							<div style="text-align: center; font-size: 30px;"></div>
-							<div style="position: absolute; right: 0px" class="h100">
-								<md-button type="button" tabindex="-1" aria-label="cancel ts"
-									class="md-raised md-ExtraMini " style=" margin-top: 2px;"
-									ng-click="ctrl.cancel()">
-									{{translate.load("sbi.browser.defaultRole.cancel");}} 
-								</md-button>
-								<md-button type="button" ng-click="ctrl.saveTimespan()" aria-label="save ts"
-									class="md-raised md-ExtraMini " style=" margin-top: 2px;"
-									ng-disabled="ctrl.selectedItem.name.length === 0 || ctrl.selectedItem.type.length === 0">
-									{{translate.load("sbi.browser.defaultRole.save");}}
-								</md-button>
-							</div>
-						</div>
-					</md-toolbar>
-		
-					<md-content flex style="margin-left:20px;">
-		
-						<form name="tsForm" novalidate >
-			
+               		speed-menu-option=ctrl.menuTs>
+              	</angular-table>
+		</list>
+		<detail label="ctrl.selectedItem.name" save-function="ctrl.saveTimespan" cancel-function="ctrl.cancel">
 							<div layout="row" layout-wrap>
 								<div flex="50">
 									<md-input-container > <label>{{translate.load("sbi.generic.name");}}</label>
@@ -136,59 +82,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									</md-input-container>
 								</div>
 							</div>
-							
-							<md-divider ></md-divider>
-							
-							<div ng-if="ctrl.selectedItem.type" layout="row" layout-align="center center" >
-								<table style="width: 70%; font-size: 10pt; table-layout: fixed; text-align: center;">
-									<tr>
-										<th>
-											<label >{{translate.load("sbi.timespan.from");}}</label>
-											<md-datepicker ng-if="ctrl.selectedItem.type=='temporal'" ng-model="ctrl.from" md-placeholder="Enter date" style="display: block;"></md-datepicker>
-											<div ng-if="ctrl.selectedItem.type=='time'" style="width: 65px; margin: auto;">
-												<angular-time-picker ng-model="ctrl.from" />
+							<div ng-if="ctrl.selectedItem.type!=undefined && ctrl.selectedItem.type!=''" class="md-whiteframe-2dp" flex layout>
+								<angular-table  flex layout-padding style="background-color: white;"
+									id='newTimespanIntervals' 
+				               		ng-model=ctrl.selectedItem.definition
+				               		no-pagination=true
+				               		columns='[{label:translate.load("sbi.timespan.from") , name:"from"},{label:translate.load("sbi.timespan.to") , name:"to"}]'
+				               		speed-menu-option=ctrl.timespanIntervalAction
+				               		scope-functions="ctrl.newtimespanTableFunction" 
+				               	  >
+				               		 <queue-table>
+											<div layout="row" layout-align="space-around center" > 
+												<md-datepicker flex ng-if="scopeFunctions.selectedItem.type=='temporal'" ng-model="scopeFunctions.from" md-placeholder="Enter date"></md-datepicker>
+												<angular-time-picker id="fromTP" flex ng-if="scopeFunctions.selectedItem.type=='time'"  ng-model="scopeFunctions.from" ></angular-time-picker>
+												
+												<md-datepicker flex ng-if="scopeFunctions.selectedItem.type=='temporal'" ng-model="scopeFunctions.to" md-placeholder="Enter date" ></md-datepicker>
+												<angular-time-picker id="toTP" flex ng-if="scopeFunctions.selectedItem.type=='time'"  ng-model="scopeFunctions.to" ></angular-time-picker>
+												<md-button class="md-raised absoluteToRight" ng-disabled="scopeFunctions.from=='' || scopeFunctions.to==''" ng-click="scopeFunctions.addInterval(scopeFunctions.from,scopeFunctions.to)">add</md-button>
+												
 											</div>
-										</th>
-										<th>
-											<label >{{translate.load("sbi.timespan.to");}}</label>
-											<md-datepicker ng-if="ctrl.selectedItem.type=='temporal'" ng-model="ctrl.to" md-placeholder="Enter date" style="display: block;"></md-datepicker>
-											<div ng-if="ctrl.selectedItem.type=='time'" style="width: 65px; margin: auto;">
-												<angular-time-picker  ng-model="ctrl.to" />
-											</div>
-										</th>
-										<th style="width:15%;">
-											<md-button ng-click="ctrl.addInterval(ctrl.from,ctrl.to)" class="md-fab md-MiniList blue" aria-label="add interval"> 
-												<md-icon md-font-icon="fa fa-plus" ></md-icon> 
-											</md-button>
-										</th>
-										<th style="width:20%">
-											<md-input-container ng-if="ctrl.selectedItem.type=='temporal'" style="padding-bottom:0px;">
-												<label>{{translate.load("sbi.timespan.delay");}}</label>
-												<input type="number" ng-model="ctrl.delay" >
-											</md-input-container>
-										</th>
-									</tr>
-									<tr ng-repeat="span in ctrl.selectedItem.definition">
-										<td>{{span.from}}</td>
-										<td>{{span.to}}</td>
-										<td>
-											<md-button ng-click="ctrl.removeInterval(span)" class="md-fab md-MiniList" aria-label="remove interval">
-												<md-icon md-font-icon="fa fa-times"></md-icon>
-											</md-button>
-										</td>
-									</tr>
-								</table>
-								
+										</queue-table> 
+				              	</angular-table>
+							
 							</div>
-							<div ng-if="ctrl.selectedItem.definition.length==0" class="divNoData">
-								<label>{{translate.load("sbi.timespan.nointerval.message");}}</label>
-							</div>
-							<md-divider ></md-divider>
-						</form>
-					</md-content>
-				</div>
-			</md-tab>
-		</md-tabs>
-	</div>
+							
+						 
+		</detail>
+	</angular-list-detail>
+
+
+
 </body>
 </html>

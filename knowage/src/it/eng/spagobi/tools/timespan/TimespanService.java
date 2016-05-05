@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -51,7 +51,7 @@ public class TimespanService {
 	@GET
 	@Path("/listDynTimespan")
 	@Produces(MediaType.APPLICATION_JSON)
-//	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_TIMESPAN })
+	// @UserConstraint(functionalities = { SpagoBIConstants.CREATE_TIMESPAN })
 	public String listDynTimespan(@Context HttpServletRequest req) {
 		try {
 			ITimespanDAO dao = DAOFactory.getTimespanDAO();
@@ -75,10 +75,8 @@ public class TimespanService {
 	@GET
 	@Path("/listTimespan")
 	@Produces(MediaType.APPLICATION_JSON)
-//	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_TIMESPAN })
-	public String listAllTimespan(
-			@QueryParam("types") String types ,
-			@Context HttpServletRequest req) {
+	// @UserConstraint(functionalities = { SpagoBIConstants.CREATE_TIMESPAN })
+	public String listAllTimespan(@QueryParam("types") String types, @Context HttpServletRequest req) {
 		try {
 			ITimespanDAO dao = DAOFactory.getTimespanDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -87,16 +85,15 @@ public class TimespanService {
 			List<SbiTimespan> lst = dao.listTimespan();
 			JSONArray ja = new JSONArray();
 			List<String> tlist = new ArrayList<String>();
-			if(types!=null && !types.isEmpty()){
+			if (types != null && !types.isEmpty()) {
 				tlist = Arrays.asList(types.split(","));
 			}
 			if (lst != null) {
 				for (Iterator<SbiTimespan> iterator = lst.iterator(); iterator.hasNext();) {
 					SbiTimespan sbiTimespan = iterator.next();
-					if(sbiTimespan.getType().equals("temporal") &&
-							sbiTimespan.getStaticFilter()){
+					if (sbiTimespan.getType().equals("temporal") && sbiTimespan.getStaticFilter()) {
 						JSONObject desc = new JSONObject(sbiTimespan.getDefinition());
-						if(!tlist.isEmpty() && !tlist.contains(desc.getString("leftOperandDescription"))){
+						if (!tlist.isEmpty() && !tlist.contains(desc.getString("leftOperandDescription"))) {
 							continue;
 						}
 					}
@@ -111,11 +108,10 @@ public class TimespanService {
 		}
 	}
 
-
 	@GET
 	@Path("/loadTimespan")
 	@Produces(MediaType.APPLICATION_JSON)
-//	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_TIMESPAN })
+	// @UserConstraint(functionalities = { SpagoBIConstants.CREATE_TIMESPAN })
 	public String loadTimespan(@Context HttpServletRequest req) {
 		ITimespanDAO dao = null;
 		try {
@@ -132,11 +128,10 @@ public class TimespanService {
 		}
 	}
 
-
 	@POST
 	@Path("/saveTimespan")
 	@Produces(MediaType.APPLICATION_JSON)
-//	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_TIMESPAN })
+	// @UserConstraint(functionalities = { SpagoBIConstants.CREATE_TIMESPAN })
 	public String saveTimespan(@Context HttpServletRequest req) {
 		JSONObject jo = new JSONObject();
 		try {
@@ -151,7 +146,7 @@ public class TimespanService {
 			ts.setCategory((String) requestVal.opt("category"));
 			ts.setDefinition(((JSONArray) requestVal.opt("definition")).toString());
 
-			if ((Boolean) requestVal.opt("isnew")) {
+			if (requestVal.optBoolean("isnew")) {
 				Integer id = dao.insertTimespan(ts);
 				jo.put("id", id);
 			} else {
@@ -165,8 +160,12 @@ public class TimespanService {
 			// throw new SpagoBIServiceException(req.getPathInfo(),
 			// "An unexpected error occured while executing service", t);
 			try {
-				jo.put("Status", "KO");
-				jo.put("Message", t.getCause().getCause().getMessage());
+
+				JSONArray ja = new JSONArray();
+				JSONObject errMess = new JSONObject();
+				errMess.put("message", t.getCause().getMessage() == null ? t.getCause().getCause().getMessage() : t.getCause().getMessage());
+				ja.put(errMess);
+				jo.put("errors", ja);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -178,7 +177,7 @@ public class TimespanService {
 	@POST
 	@Path("/deleteTimespan")
 	@Produces(MediaType.APPLICATION_JSON)
-//	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_TIMESPAN })
+	// @UserConstraint(functionalities = { SpagoBIConstants.CREATE_TIMESPAN })
 	public String deleteTimespan(@Context HttpServletRequest req) {
 		try {
 			ITimespanDAO dao = DAOFactory.getTimespanDAO();

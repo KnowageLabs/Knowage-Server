@@ -68,15 +68,17 @@ function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModu
 	
 		},
 		{ 
-			dynamicLabel: function(row){
+			label: function(row){
 				return angular.equals(row.jobStatus.toUpperCase(),"SUSPENDED") ? sbiModule_translate.load('sbi.alert.resume') : sbiModule_translate.load('sbi.alert.suspend');
 			},
-			dynamicIcon: function(row){
+			icon: function(row){
 				return angular.equals(row.jobStatus.toUpperCase(),"SUSPENDED") ? 'fa fa-play' : 'fa fa-pause';
 			}, 
 			backgroundColor:'transparent',
 			action : function(item,event) { 
-				sbiModule_restServices.promiseGet("1.0/alert",item.id+'/'+(angular.equals(item.jobStatus.toUpperCase(),"SUSPENDED") ? 'resume' : 'suspend'))
+				var data="?jobGroup=KPI_SCHEDULER_GROUP&triggerGroup=KPI_SCHEDULER_GROUP&jobName="+item.id+"&triggerName="+item.id;
+				
+				sbiModule_restServices.promisePost("scheduler",(angular.equals(item.jobStatus.toUpperCase(),"SUSPENDED") ? 'resumeTrigger' : 'pauseTrigger')+""+data)
 				.then(function(response){  
 //					$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.catalogues.toast.deleted")).position('top').action(
 //					'OK').highlightAction(false).hideDelay(2000)) ;

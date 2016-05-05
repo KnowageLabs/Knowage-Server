@@ -1,375 +1,389 @@
-.minihead {
-	height: 29px !important;
-	color: black !important;
+#queueTableContent md-datepicker > div{
+	top: 10px;
 }
 
-.leftBox {
-	z-index: 3;
-	box-shadow: 10px 0px 39px -20px rgba(0, 0, 0, 0.75);
-	height: 100%;
-	overflow: auto;
-	background-color: rgb(236, 236, 236);
+#queueTableContent md-datepicker > div > input{
+	    margin-left: 17px;
 }
 
-.leftListbox md-content {
-	background-color: transparent;
-}
-
-.xs-head {
-	height: 16px !important;
-	color: black !important;
-}
-
-.xs-head .md-title, .md-toolbar-tools {
-	font-size: 12px !important;
-}
-
-.xs-head .md-title, .md-toolbar-tools md-progress-circular {
-	font-size: 12px !important;
+.absoluteToRight{
 	position: absolute;
-	top: -26px;
 	right: 0;
-	margin-top: -17px;
-	margin-right: -11px;
 }
 
-md-content.xs-head-max-content {
-	height: calc(100% - 16px);
-}
 
-.md-button.md-ExtraMini {
-	line-height: 25px;
-	width: 25px;
-	height: 25px;
-	min-height: 0;
-}
+/* .minihead { */
+/* 	height: 29px !important; */
+/* 	color: black !important; */
+/* } */
 
-.md-button.md-ExtraMini span {
-	margin-top: 5px;
-}
+/* .leftBox { */
+/* 	z-index: 3; */
+/* 	box-shadow: 10px 0px 39px -20px rgba(0, 0, 0, 0.75); */
+/* 	height: 100%; */
+/* 	overflow: auto; */
+/* 	background-color: rgb(236, 236, 236); */
+/* } */
 
-.md-button.md-MiniList {
-	width: 20px;
-	height: 20px;
-	padding-left: 4px;
-	padding-top: 3px;
-	min-height: 0;
-}
+/* .leftListbox md-content { */
+/* 	background-color: transparent; */
+/* } */
 
-.bodyStyle {
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size: 10pt;
-	font-weight: normal;
-	color: black;
-	overflow: auto !important;
-}
+/* .xs-head { */
+/* 	height: 16px !important; */
+/* 	color: black !important; */
+/* } */
 
-md-toolbar.minihead {
-	background-color: rgb(176, 190, 197);
-	color: rgb(255, 255, 255);
-	height: 50px;
-	min-height: 0px;
-}
+/* .xs-head .md-title, .md-toolbar-tools { */
+/* 	font-size: 12px !important; */
+/* } */
 
-md-toolbar.xs-head {
-	background-color: rgb(232, 232, 232);
-	color: rgb(255, 255, 255);
-	height: 29px;
-	min-height: 16px;
-}
+/* .xs-head .md-title, .md-toolbar-tools md-progress-circular { */
+/* 	font-size: 12px !important; */
+/* 	position: absolute; */
+/* 	top: -26px; */
+/* 	right: 0; */
+/* 	margin-top: -17px; */
+/* 	margin-right: -11px; */
+/* } */
 
-.box_pagination {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	margin-bottom: 3px;
-	left: 0;
-}
+/* md-content.xs-head-max-content { */
+/* 	height: calc(100% - 16px); */
+/* } */
 
-[layout-padding] .box_pagination {
-	margin-left: -8px !important;
-}
+/* .md-button.md-ExtraMini { */
+/* 	line-height: 25px; */
+/* 	width: 25px; */
+/* 	height: 25px; */
+/* 	min-height: 0; */
+/* } */
 
-.pagination>li, .pagination>li>span {
-	position: relative;
-	float: left;
-	margin-left: -1px;
-	text-decoration: none !important;
-	background-color: #fff;
-	border: 1px solid #ddd;
-	display: block;
-	width: 20px;
-	height: 16px;
-	text-align: center;
-	line-height: 16px;
-}
+/* .md-button.md-ExtraMini span { */
+/* 	margin-top: 5px; */
+/* } */
 
-.pagination {
-	margin: 0px !important;
-	padding: 0px !important;
-}
+/* .md-button.md-MiniList { */
+/* 	width: 20px; */
+/* 	height: 20px; */
+/* 	padding-left: 4px; */
+/* 	padding-top: 3px; */
+/* 	min-height: 0; */
+/* } */
 
-.pagination>li>a {
-	text-decoration: none !important;
-}
+/* .bodyStyle { */
+/* 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; */
+/* 	font-size: 10pt; */
+/* 	font-weight: normal; */
+/* 	color: black; */
+/* 	overflow: auto !important; */
+/* } */
 
-.pagination>.active, .pagination>.active>a, .pagination>.active>a:focus,
-	.pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus,
-	.pagination>.active>span:hover {
-	z-index: 2;
-	color: #000;
-	cursor: default;
-	background-color: rgb(232, 232, 232);
-	border-color: rgb(232, 232, 232);
-}
+/* md-toolbar.minihead { */
+/* 	background-color: rgb(176, 190, 197); */
+/* 	color: rgb(255, 255, 255); */
+/* 	height: 50px; */
+/* 	min-height: 0px; */
+/* } */
 
-.pagination>.disabled>a, .pagination>.disabled>a:focus, .pagination>.disabled>a:hover,
-	.pagination>.disabled>span, .pagination>.disabled>span:focus,
-	.pagination>.disabled>span:hover {
-	color: #777;
-	cursor: not-allowed;
-	background-color: #fff;
-	border-color: #ddd;
-}
+/* md-toolbar.xs-head { */
+/* 	background-color: rgb(232, 232, 232); */
+/* 	color: rgb(255, 255, 255); */
+/* 	height: 29px; */
+/* 	min-height: 16px; */
+/* } */
 
-.hidden {
-	display: none !important;
-	visibility: hidden !important;
-}
+/* .box_pagination { */
+/* 	position: absolute; */
+/* 	bottom: 0; */
+/* 	width: 100%; */
+/* 	margin-bottom: 3px; */
+/* 	left: 0; */
+/* } */
 
-.smallListItem, .smallListItem button, .smallListItem .md-list-item-inner
-	{
-	min-height: 15px !important;
-}
+/* [layout-padding] .box_pagination { */
+/* 	margin-left: -8px !important; */
+/* } */
 
-.smallListItem p {
-	line-height: 15px;
-	margin: 3px;
-}
+/* .pagination>li, .pagination>li>span { */
+/* 	position: relative; */
+/* 	float: left; */
+/* 	margin-left: -1px; */
+/* 	text-decoration: none !important; */
+/* 	background-color: #fff; */
+/* 	border: 1px solid #ddd; */
+/* 	display: block; */
+/* 	width: 20px; */
+/* 	height: 16px; */
+/* 	text-align: center; */
+/* 	line-height: 16px; */
+/* } */
 
-md-list.bottomBorder md-list-item button {
-	border-bottom: 1px solid rgb(176, 190, 197);
-	padding: 0;
-	margin-left: 8px;
-	margin-right: 8px;
-	border-radius: 0;
-}
+/* .pagination { */
+/* 	margin: 0px !important; */
+/* 	padding: 0px !important; */
+/* } */
 
-.noPadding {
-	padding: 0 !important;
-}
+/* .pagination>li>a { */
+/* 	text-decoration: none !important; */
+/* } */
 
-.noTBPadding {
-	padding-top: 0 !important;
-	padding-bottom: 0 !important;
-}
+/* .pagination>.active, .pagination>.active>a, .pagination>.active>a:focus, */
+/* 	.pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, */
+/* 	.pagination>.active>span:hover { */
+/* 	z-index: 2; */
+/* 	color: #000; */
+/* 	cursor: default; */
+/* 	background-color: rgb(232, 232, 232); */
+/* 	border-color: rgb(232, 232, 232); */
+/* } */
 
-.noBorder {
-	border: none !important;
-}
+/* .pagination>.disabled>a, .pagination>.disabled>a:focus, .pagination>.disabled>a:hover, */
+/* 	.pagination>.disabled>span, .pagination>.disabled>span:focus, */
+/* 	.pagination>.disabled>span:hover { */
+/* 	color: #777; */
+/* 	cursor: not-allowed; */
+/* 	background-color: #fff; */
+/* 	border-color: #ddd; */
+/* } */
 
-md-toast {
-	position: fixed !important;
-	top: 0px !important;
-}
+/* .hidden { */
+/* 	display: none !important; */
+/* 	visibility: hidden !important; */
+/* } */
 
-.preloader {
-	position: absolute;
-	height: 100%;
-	width: 100%;
-	z-index: 99999;
-	background-color: rgba(0, 0, 0, 0.12);
-}
+/* .smallListItem, .smallListItem button, .smallListItem .md-list-item-inner */
+/* 	{ */
+/* 	min-height: 15px !important; */
+/* } */
 
-.preloader md-progress-circular {
-	top: 50%;
-	margin-top: -25px;
-	left: 50%;
-	margin-left: -25px;
-}
+/* .smallListItem p { */
+/* 	line-height: 15px; */
+/* 	margin: 3px; */
+/* } */
 
-p.wrapText {
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
-}
+/* md-list.bottomBorder md-list-item button { */
+/* 	border-bottom: 1px solid rgb(176, 190, 197); */
+/* 	padding: 0; */
+/* 	margin-left: 8px; */
+/* 	margin-right: 8px; */
+/* 	border-radius: 0; */
+/* } */
 
-.SecondaryOnLeft .md-secondary-container {
-	left: 0px !important;
-}
+/* .noPadding { */
+/* 	padding: 0 !important; */
+/* } */
 
-.SecondaryOnLeft .expandericon {
-	position: absolute;
-	left: 0px;
-	top: 3px;
-	margin-left: 24px;
-}
+/* .noTBPadding { */
+/* 	padding-top: 0 !important; */
+/* 	padding-bottom: 0 !important; */
+/* } */
 
-md-input-container.search-input input {
-	height: 20px;
-	margin-left: 15px;
-}
+/* .noBorder { */
+/* 	border: none !important; */
+/* } */
 
-md-input-container.search-input md-icon {
-	color: black;
-	margin-top: 2px;
-}
+/* md-toast { */
+/* 	position: fixed !important; */
+/* 	top: 0px !important; */
+/* } */
 
-.searchBar {
-	padding: 0;
-	background-color: white;
-	margin-top: 3px;
-	height: 22px;
-}
+/* .preloader { */
+/* 	position: absolute; */
+/* 	height: 100%; */
+/* 	width: 100%; */
+/* 	z-index: 99999; */
+/* 	background-color: rgba(0, 0, 0, 0.12); */
+/* } */
 
-.navig-tab-content .searchBar {
-	margin-top: -2px !important;
-	margin-bottom: 4px !important;;
-}
+/* .preloader md-progress-circular { */
+/* 	top: 50%; */
+/* 	margin-top: -25px; */
+/* 	left: 50%; */
+/* 	margin-left: -25px; */
+/* } */
 
-.searchBar md-icon {
-	color: rgb(177, 169, 174);
-	height: 100%;
-	top: 50%;
-	margin-top: -5px;
-}
+/* p.wrapText { */
+/* 	text-overflow: ellipsis; */
+/* 	white-space: nowrap; */
+/* 	overflow: hidden; */
+/* } */
 
-.searchBar md-icon.filter-icon {
-	left: 100%;
-	margin-left: -10px;
-	display: none;
-}
+/* .SecondaryOnLeft .md-secondary-container { */
+/* 	left: 0px !important; */
+/* } */
 
-.searchBar md-icon.filter-icon.not_empty {
-	color: red;
-	display: block;
-}
+/* .SecondaryOnLeft .expandericon { */
+/* 	position: absolute; */
+/* 	left: 0px; */
+/* 	top: 3px; */
+/* 	margin-left: 24px; */
+/* } */
 
-.searchBar input {
-	margin: 0px;
-	margin-left: 15px;
-	height: 18px;
-}
+/* md-input-container.search-input input { */
+/* 	height: 20px; */
+/* 	margin-left: 15px; */
+/* } */
 
-.blue {
-	background-color: rgb(0, 148, 255) !important;
-}
+/* md-input-container.search-input md-icon { */
+/* 	color: black; */
+/* 	margin-top: 2px; */
+/* } */
 
-.addButton {
-	position: absolute;
-	right: 11px;
-	background-color: rgb(0, 148, 255) !important;
-}
+/* .searchBar { */
+/* 	padding: 0; */
+/* 	background-color: white; */
+/* 	margin-top: 3px; */
+/* 	height: 22px; */
+/* } */
 
-.addButtonBody {
-	position: absolute;
-	background-color: rgb(0, 148, 255) !important;
-}
+/* .navig-tab-content .searchBar { */
+/* 	margin-top: -2px !important; */
+/* 	margin-bottom: 4px !important;; */
+/* } */
 
-.md-toolbar-tools h4 {
-	color: white;
-	padding: 0;
-	margin: 0;
-	font-size: large;
-	width: 100%;
-	text-align: center;
-}
+/* .searchBar md-icon { */
+/* 	color: rgb(177, 169, 174); */
+/* 	height: 100%; */
+/* 	top: 50%; */
+/* 	margin-top: -5px; */
+/* } */
 
-md-content.ToolbarBox {
-	height: calc(100% - 66px) !important;
-	border: 1px solid #B0BEC5;
-	padding: 0px 4px;
-}
+/* .searchBar md-icon.filter-icon { */
+/* 	left: 100%; */
+/* 	margin-left: -10px; */
+/* 	display: none; */
+/* } */
 
-md-content.ToolbarBox.miniToolbar {
-	height: calc(100% - 31px) !important;
-}
+/* .searchBar md-icon.filter-icon.not_empty { */
+/* 	color: red; */
+/* 	display: block; */
+/* } */
 
-md-content.ToolbarBox.xsToolbar {
-	height: calc(100% - 16px) !important;
-}
+/* .searchBar input { */
+/* 	margin: 0px; */
+/* 	margin-left: 15px; */
+/* 	height: 18px; */
+/* } */
 
-.dragged-icon i, i.dragged-icon {
-	font-size: 15px;
-	float: left;
-	color: rgb(176, 190, 197);
-	cursor: move;
-	margin-top: 4px;
-}
+/* .blue { */
+/* 	background-color: rgb(0, 148, 255) !important; */
+/* } */
 
-.dragged-icon  p {
-	margin-left: 20px !important;
-	line-height: 20px !important;
-}
+/* .addButton { */
+/* 	position: absolute; */
+/* 	right: 11px; */
+/* 	background-color: rgb(0, 148, 255) !important; */
+/* } */
 
-.dropdown {
-	margin-top: -25px;
-}
+/* .addButtonBody { */
+/* 	position: absolute; */
+/* 	background-color: rgb(0, 148, 255) !important; */
+/* } */
 
-.dropdown md-list {
-	position: absolute;
-	top: 100%;
-	left: 0;
-	z-index: 1000;
-	display: none;
-	float: left;
-	min-width: 160px;
-	padding: 5px 0;
-	margin: 2px 0 0;
-	font-size: 14px;
-	text-align: left;
-	list-style: none;
-	background-color: #fff;
-	background-clip: padding-box;
-	border: 1px solid #ccc;
-	border: 1px solid rgba(0, 0, 0, .15);
-	border-radius: 4px;
-	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
-}
+/* .md-toolbar-tools h4 { */
+/* 	color: white; */
+/* 	padding: 0; */
+/* 	margin: 0; */
+/* 	font-size: large; */
+/* 	width: 100%; */
+/* 	text-align: center; */
+/* } */
 
-.dropdown.open md-list {
-	display: block;
-}
+/* md-content.ToolbarBox { */
+/* 	height: calc(100% - 66px) !important; */
+/* 	border: 1px solid #B0BEC5; */
+/* 	padding: 0px 4px; */
+/* } */
 
-md-tabs.mini-tabs {
-	height: 100%;
-}
+/* md-content.ToolbarBox.miniToolbar { */
+/* 	height: calc(100% - 31px) !important; */
+/* } */
 
-md-tabs.mini-tabs md-tabs-canvas, md-tabs.mini-tabs md-pagination-wrapper {
-	height: 23px !important;
-}
+/* md-content.ToolbarBox.xsToolbar { */
+/* 	height: calc(100% - 16px) !important; */
+/* } */
 
-md-tabs.mini-tabs md-tab-item {
-	padding: 0 24px;
-}
+/* .dragged-icon i, i.dragged-icon { */
+/* 	font-size: 15px; */
+/* 	float: left; */
+/* 	color: rgb(176, 190, 197); */
+/* 	cursor: move; */
+/* 	margin-top: 4px; */
+/* } */
 
-md-tabs.mini-tabs  md-tabs-content-wrapper {
-	top: 24px !important;
-}
+/* .dragged-icon  p { */
+/* 	margin-left: 20px !important; */
+/* 	line-height: 20px !important; */
+/* } */
 
-md-divider {
-	margin: 20px;
-}
+/* .dropdown { */
+/* 	margin-top: -25px; */
+/* } */
 
-.md-datepicker-input-container {
-	margin-left: 0px !important;
-	margin-right: 25px;
-}
+/* .dropdown md-list { */
+/* 	position: absolute; */
+/* 	top: 100%; */
+/* 	left: 0; */
+/* 	z-index: 1000; */
+/* 	display: none; */
+/* 	float: left; */
+/* 	min-width: 160px; */
+/* 	padding: 5px 0; */
+/* 	margin: 2px 0 0; */
+/* 	font-size: 14px; */
+/* 	text-align: left; */
+/* 	list-style: none; */
+/* 	background-color: #fff; */
+/* 	background-clip: padding-box; */
+/* 	border: 1px solid #ccc; */
+/* 	border: 1px solid rgba(0, 0, 0, .15); */
+/* 	border-radius: 4px; */
+/* 	box-shadow: 0 6px 12px rgba(0, 0, 0, .175); */
+/* } */
 
-.md-datepicker-input {
-	max-width: 100px;
-}
+/* .dropdown.open md-list { */
+/* 	display: block; */
+/* } */
 
-.divNoData {
-	width: 400px;
-    margin: auto;
-    margin-top: 15px;
-}
+/* md-tabs.mini-tabs { */
+/* 	height: 100%; */
+/* } */
 
-.divNoData label {
-	color: rgba(0,0,0,0.26);
-}
+/* md-tabs.mini-tabs md-tabs-canvas, md-tabs.mini-tabs md-pagination-wrapper { */
+/* 	height: 23px !important; */
+/* } */
 
-md-tabs.hideTabs md-tabs-wrapper {
-	display: none;
-}
+/* md-tabs.mini-tabs md-tab-item { */
+/* 	padding: 0 24px; */
+/* } */
+
+/* md-tabs.mini-tabs  md-tabs-content-wrapper { */
+/* 	top: 24px !important; */
+/* } */
+
+/* md-divider { */
+/* 	margin: 20px; */
+/* } */
+
+/* .md-datepicker-input-container { */
+/* 	margin-left: 0px !important; */
+/* 	margin-right: 25px; */
+/* } */
+
+/* .md-datepicker-input { */
+/* 	max-width: 100px; */
+/* } */
+
+/* .divNoData { */
+/* 	width: 400px; */
+/*     margin: auto; */
+/*     margin-top: 15px; */
+/* } */
+
+/* .divNoData label { */
+/* 	color: rgba(0,0,0,0.26); */
+/* } */
+
+/* md-tabs.hideTabs md-tabs-wrapper { */
+/* 	display: none; */
+/* } */

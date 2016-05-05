@@ -25,7 +25,7 @@
 	      		</div>
 	      	</md-toolbar>
 	       	<md-content   layout="row" layout-wrap>
-	       	<md-whiteframe class="md-whiteframe-3dp actionTabs" layout-margin ng-repeat=" action in ngModel.actions ">
+	       	<md-whiteframe class="md-whiteframe-3dp actionTabs" style="width: 200px;" layout-margin ng-repeat=" action in ngModel.actions ">
 			 	<md-toolbar>
 			    	<div class="md-toolbar-tools" > 
 				        <span>{{getActionLabel(action.idAction)}}</span>
@@ -68,10 +68,4 @@
 
 
 
-<style>
-.noPadding{
-padding: 0px!important;}
-
-.actionTabs{
-width: 200px}
-</style>
+ 

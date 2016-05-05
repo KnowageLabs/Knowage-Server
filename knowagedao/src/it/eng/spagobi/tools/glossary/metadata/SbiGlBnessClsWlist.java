@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,42 +11,40 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.glossary.metadata;
 
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 
 public class SbiGlBnessClsWlist extends SbiHibernateModel {
 
 	private static final long serialVersionUID = -7917478737232664376L;
 
 	private SbiGlBnessClsWlistId id;
-	
+
 	private SbiGlWord word;
-	private SbiGlBnessCls bness_cls;
-	
+	private SbiMetaBc bness_cls;
+
 	private String column_name;
 
 	public SbiGlBnessClsWlist() {
 
 	}
 
-
 	/**
 	 * @param word
 	 * @param bness_cls
 	 */
-	public SbiGlBnessClsWlist(SbiGlWord word, SbiGlBnessCls bness_cls,String column_name) {
+	public SbiGlBnessClsWlist(SbiGlWord word, SbiMetaBc bness_cls, String column_name) {
 		super();
 		this.word = word;
 		this.bness_cls = bness_cls;
-		this.column_name=column_name;
+		this.column_name = column_name;
 	}
-
 
 	/**
 	 * @return the id
@@ -55,14 +53,13 @@ public class SbiGlBnessClsWlist extends SbiHibernateModel {
 		return id;
 	}
 
-
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(SbiGlBnessClsWlistId id) {
 		this.id = id;
 	}
-
 
 	/**
 	 * @return the word
@@ -71,30 +68,28 @@ public class SbiGlBnessClsWlist extends SbiHibernateModel {
 		return word;
 	}
 
-
 	/**
-	 * @param word the word to set
+	 * @param word
+	 *            the word to set
 	 */
 	public void setWord(SbiGlWord word) {
 		this.word = word;
 	}
 
-
 	/**
 	 * @return the bness_cls
 	 */
-	public SbiGlBnessCls getBness_cls() {
+	public SbiMetaBc getBness_cls() {
 		return bness_cls;
 	}
 
-
 	/**
-	 * @param bness_cls the bness_cls to set
+	 * @param bness_cls
+	 *            the bness_cls to set
 	 */
-	public void setBness_cls(SbiGlBnessCls bness_cls) {
+	public void setBness_cls(SbiMetaBc bness_cls) {
 		this.bness_cls = bness_cls;
 	}
-
 
 	/**
 	 * @return the column_name
@@ -103,15 +98,12 @@ public class SbiGlBnessClsWlist extends SbiHibernateModel {
 		return column_name;
 	}
 
-
 	/**
-	 * @param column_name the column_name to set
+	 * @param column_name
+	 *            the column_name to set
 	 */
 	public void setColumn_name(String column_name) {
 		this.column_name = column_name;
 	}
-
-	
-
 
 }

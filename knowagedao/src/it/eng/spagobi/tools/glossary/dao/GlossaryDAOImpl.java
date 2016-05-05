@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -479,208 +479,6 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	public List<SbiGlWord> listWordFiltered(String word, Integer page, Integer item_per_page, Integer gloss_id) {
 		return list(new SearchWordByWord(word, page, item_per_page, gloss_id));
 	}
-
-	// @Override
-	// public Integer insertWordOld(final SbiGlWord word,
-	// final List<SbiGlWord> objLink, final List<SbiGlAttribute> objAttr,
-	// final Map<Integer, JSONObject> MapAttr,
-	// final Map<Integer, JSONObject> MapLink, final boolean modify) {
-	// return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
-	// @Override
-	// public Integer execute(Session session) {
-	//
-	// Integer wordId;
-	//
-	// Boolean doUpdate = false;
-	// if (modify) {
-	// doUpdate = true;
-	//
-	// wordId = word.getWordId();
-	// } else {
-	// updateSbiCommonInfo4Insert(word);
-	// wordId = (Integer) session.save(word);
-	// }
-	//
-	// if (objLink != null) {
-	// doUpdate = true;
-	// Set<SbiGlReferences> references = new HashSet<SbiGlReferences>();
-	// if (word.getReferences() == null) {
-	// word.setReferences(new HashSet<SbiGlReferences>());
-	// }
-	//
-	// for (SbiGlWord w : objLink) {
-	//
-	// if (modify) {
-	// // check if user modify value or order of presents
-	// // link
-	// boolean pres = false;
-	// for (SbiGlReferences at : word.getReferences()) {
-	// if (at.getId().getRefWordId() == w.getWordId()) {
-	// pres = true;
-	// try {
-	// if (at.getSequence() != MapLink.get(
-	// w.getWordId()).getInt("ORDER")) {
-	// // alter index
-	// at.setSequence(MapLink.get(
-	// w.getWordId()).getInt(
-	// "ORDER"));
-	// updateSbiCommonInfo4Update(at);
-	// }
-	// } catch (JSONException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	//
-	// }
-	// references.add(at);
-	// break;
-	// }
-	//
-	// }
-	//
-	// if (pres) {
-	// continue;
-	// }
-	// }
-	//
-	// // if references link there isn't, create it;
-	//
-	// SbiGlReferences tmp = new SbiGlReferences();
-	// tmp.setId(new SbiGlReferencesId(wordId, w.getWordId()));
-	// tmp.setWord(word);
-	// tmp.setRefWord(w);
-	//
-	// try {
-	// tmp.setSequence(MapLink.get(w.getWordId()).getInt(
-	// "ORDER"));
-	//
-	// } catch (JSONException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	//
-	// updateSbiCommonInfo4Insert(tmp);
-	// references.add(tmp);
-	// word.getReferences().add(tmp);
-	//
-	// }
-	//
-	// // remove the references link not present in new list
-	// word.getReferences().retainAll(references);
-	//
-	// } else {
-	//
-	// if (word.getReferences() != null
-	// && word.getReferences().size() != 0) {
-	// word.getReferences().clear();
-	// doUpdate = true;
-	// }
-	//
-	// }
-	//
-	// if (objAttr != null) {
-	// Set<SbiGlWordAttr> SbiGlWordAttr = new HashSet<SbiGlWordAttr>();
-	// if (word.getAttributes() == null) {
-	// word.setAttributes(new HashSet<SbiGlWordAttr>());
-	// }
-	//
-	// doUpdate = true;
-	//
-	// for (SbiGlAttribute w : objAttr) {
-	//
-	// if (modify) {
-	// // check if user modify value or order of presents
-	// // attribute
-	// boolean pres = false;
-	// for (SbiGlWordAttr at : word.getAttributes()) {
-	// if (at.getId().getAttributeId() == w
-	// .getAttributeId()
-	// && at.getId().getWordId() == wordId) {
-	//
-	// pres = true;
-	// try {
-	// boolean alterAttr = false;
-	// if (at.getValue().compareTo(
-	// MapAttr.get(w.getAttributeId())
-	// .getString("VALUE")) != 0) {
-	// // alter value
-	// at.setValue(MapAttr.get(
-	// w.getAttributeId())
-	// .getString("VALUE"));
-	// alterAttr = true;
-	// }
-	// if (at.getOrder() != MapAttr.get(
-	// w.getAttributeId()).getInt(
-	// "ORDER")) {
-	// // alter index
-	// at.setOrder(MapAttr.get(
-	// w.getAttributeId()).getInt(
-	// "ORDER"));
-	// alterAttr = true;
-	// }
-	// if (alterAttr) {
-	// updateSbiCommonInfo4Update(at);
-	// }
-	// } catch (JSONException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	//
-	// }
-	//
-	// SbiGlWordAttr.add(at);
-	// break;
-	// }
-	// }
-	// if (pres) {
-	// continue;
-	// }
-	// }
-	//
-	// // if attribute there isn't, create it;
-	//
-	// SbiGlWordAttr tmp = new SbiGlWordAttr();
-	// tmp.setId(new SbiGlWordAttrId(wordId, w
-	// .getAttributeId()));
-	// tmp.setWord(word);
-	// tmp.setAttribute(w);
-	//
-	// try {
-	// tmp.setValue(MapAttr.get(w.getAttributeId())
-	// .getString("VALUE"));
-	//
-	// tmp.setOrder(MapAttr.get(w.getAttributeId())
-	// .getInt("ORDER"));
-	//
-	// } catch (JSONException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	//
-	// updateSbiCommonInfo4Insert(tmp);
-	// SbiGlWordAttr.add(tmp);
-	// word.getAttributes().add(tmp);
-	//
-	// }
-	//
-	// // remove the attribute not present in new list
-	// word.getAttributes().retainAll(SbiGlWordAttr);
-	//
-	// } else {
-	// // remove all attribute if there aren't in new list
-	// if (word.getAttributes() != null
-	// && word.getAttributes().size() != 0) {
-	// word.getAttributes().clear();
-	// doUpdate = true;
-	// }
-	// }
-	//
-	// if (doUpdate) {
-	// updateSbiCommonInfo4Update(word);
-	// session.update(word);
-	// }
-	// return wordId;
-	// }
-	// });
-	// }
 
 	@Override
 	public Integer insertWord(final SbiGlWord word, final List<SbiGlWord> objLink, final List<SbiUdp> objAttr, final Map<Integer, JSONObject> MapAttr,
@@ -1305,20 +1103,20 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 					tmpPage = elem.getJSONObject("bness_cls").getInt("page");
 					tmp_item_count = elem.getJSONObject("bness_cls").getInt("item_number");
 					if (sizeW > 0) {
-						hql = "SELECT  " + "	dw.bness_cls.bcId AS bcId  ," + "	dw.bness_cls.datamart AS datamart  ,"
-								+ "	dw.bness_cls.unique_identifier AS unique_identifier  " + "FROM " + "	SbiGlBnessClsWlist dw " + "WHERE "
-								+ "	dw.id.wordId IN (" + listid + ") " + "	" + "AND (" + " dw.bness_cls.unique_identifier LIKE :searchName  " + "OR "
-								+ " dw.bness_cls.datamart LIKE:searchName" + ")" + "GROUP BY " + "	dw.bness_cls.bcId HAVING COUNT(dw.id.wordId) =  " + sizeW;
+						hql = "SELECT  " + "	dw.bness_cls.bcId AS bcId  ," + "	dw.bness_cls.sbiMetaModel.name AS datamart  ,"
+								+ "	dw.bness_cls.name AS unique_identifier  " + "FROM " + "	SbiGlBnessClsWlist dw " + "WHERE " + "	dw.id.wordId IN (" + listid
+								+ ") " + "	" + "AND (" + " dw.bness_cls.name LIKE :searchName  " + "OR " + " dw.bness_cls.sbiMetaModel.name LIKE:searchName"
+								+ ")" + "GROUP BY " + "	dw.bness_cls.bcId HAVING COUNT(dw.id.wordId) =  " + sizeW;
 
 						countHql = "SELECT" + " COUNT(*)  " + "FROM" + " SbiGlBnessClsWlist dw " + "WHERE" + " dw.id.wordId in (" + listid + ")"
-								+ " AND ( dw.bness_cls.unique_identifier like :searchName OR dw.bness_cls.datamart LIKE:searchName ) "
+								+ " AND ( dw.bness_cls.name like :searchName OR dw.bness_cls.sbiMetaModel.name LIKE:searchName ) "
 								+ "GROUP BY dw.bness_cls.bcId  " + "HAVING COUNT(dw.id.wordId) =  " + sizeW;
 						v = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
 					} else {
-						hql = "select distinct dw.bness_cls.bcId as bcId ,dw.bness_cls.datamart as datamart ,dw.bness_cls.unique_identifier as unique_identifier "
-								+ "FROM SbiGlBnessClsWlist dw where ( dw.bness_cls.unique_identifier like :searchName OR dw.bness_cls.datamart LIKE:searchName ) ";
+						hql = "select distinct dw.bness_cls.bcId as bcId ,dw.bness_cls.sbiMetaModel.name as datamart ,dw.bness_cls.name as unique_identifier "
+								+ "FROM SbiGlBnessClsWlist dw where ( dw.bness_cls.name like :searchName OR dw.bness_cls.sbiMetaModel.name LIKE:searchName ) ";
 						countHql = "select count(distinct dw.bness_cls.bcId) "
-								+ "FROM SbiGlBnessClsWlist dw where ( dw.bness_cls.unique_identifier like :searchName OR dw.bness_cls.datamart LIKE:searchName ) ";
+								+ "FROM SbiGlBnessClsWlist dw where ( dw.bness_cls.name like :searchName OR dw.bness_cls.sbiMetaModel.name LIKE:searchName ) ";
 						v = ((Long) session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").uniqueResult()).intValue();
 					}
 					Query q = session.createQuery(hql);
@@ -1349,17 +1147,17 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 					tmpPage = elem.getJSONObject("table").getInt("page");
 					tmp_item_count = elem.getJSONObject("table").getInt("item_number");
 					if (sizeW > 0) {
-						hql = "SELECT  " + "	dw.table.tableId AS tableId  ," + "	dw.table.label AS label  " + "FROM " + "	SbiGlTableWlist dw " + "WHERE "
-								+ "	dw.id.wordId IN (" + listid + ") " + "	AND dw.table.label LIKE :searchName  " + "GROUP BY "
+						hql = "SELECT  " + "	dw.table.tableId AS tableId  ," + "	dw.table.name AS label  " + "FROM " + "	SbiGlTableWlist dw " + "WHERE "
+								+ "	dw.id.wordId IN (" + listid + ") " + "	AND dw.table.name LIKE :searchName  " + "GROUP BY "
 								+ "	dw.table.tableId HAVING COUNT(dw.id.wordId) =  " + sizeW;
 
 						countHql = "SELECT" + " COUNT(*)  " + "FROM" + " SbiGlTableWlist dw " + "WHERE" + " dw.id.wordId in (" + listid + ")"
-								+ " AND dw.table.label like :searchName " + "GROUP BY dw.table.tableId  " + "HAVING COUNT(dw.id.wordId) =  " + sizeW;
+								+ " AND dw.table.name like :searchName " + "GROUP BY dw.table.tableId  " + "HAVING COUNT(dw.id.wordId) =  " + sizeW;
 						v = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
 					} else {
-						hql = "select distinct dw.table.tableId as tableId  ,dw.table.label as label "
-								+ "FROM SbiGlTableWlist dw where dw.table.label like :searchName";
-						countHql = "select count(distinct dw.table.tableId) " + "FROM SbiGlTableWlist dw where dw.table.label like :searchName";
+						hql = "select distinct dw.table.tableId as tableId  ,dw.table.name as label "
+								+ "FROM SbiGlTableWlist dw where dw.table.name like :searchName";
+						countHql = "select count(distinct dw.table.tableId) " + "FROM SbiGlTableWlist dw where dw.table.name like :searchName";
 						v = ((Long) session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").uniqueResult()).intValue();
 					}
 					Query q = session.createQuery(hql);

@@ -26,19 +26,66 @@ angular.module('alertDefinitionManager').controller('sendMailController', functi
 	  }
 	  
 	  $scope.addMailAddressCallBack=function(chip){
-		  
 		  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-		  if(re.test(chip)){
-			  return chip;
-		  }else{
-			  var errorEmailMessages=sbiModule_translate.load("sbi.alert.action.sendMail.invalidMailAddress");
+		  var errorEmailMessages=sbiModule_translate.load("sbi.alert.action.sendMail.invalidMailAddress");
+		  var multipleEmailMessages=sbiModule_translate.load("sbi.alert.action.sendMail.multipleMailAddress");
+		  var duplicatedEmailMessages=sbiModule_translate.load("sbi.alert.action.sendMail.duplicatedMailAddress");
+		  var arrChip=chip.split(";");
+		  if(arrChip.length>1){
+			 //multiple email added
 			  $timeout(function(){ 
-				  var index=$scope.ngModel.mailTo.indexOf(errorEmailMessages);
+				  var index=$scope.ngModel.mailTo.indexOf(multipleEmailMessages);
 				  if(index!=-1){
 					  $scope.ngModel.mailTo.splice(index,1);
 				  }
+				  var errEmail=0;
+				  var duplicateEmail=0;
+				  for(var i=0;i<arrChip.length;i++){
+					  if(re.test(arrChip[i])){
+						  if($scope.ngModel.mailTo.indexOf(arrChip[i])!=-1){
+							  duplicateEmail++;
+						  }else{
+							  $scope.ngModel.mailTo.push(arrChip[i]);							  
+						  }
+					  }else{ 
+						  errEmail++;
+					  }
+				  }
+				  
+				  if(errEmail>0){
+					  $scope.ngModel.mailTo.push(errEmail+" "+errorEmailMessages);
+					  $timeout(function(){ 
+						  var index=$scope.ngModel.mailTo.indexOf(errEmail+" "+errorEmailMessages);
+						  $scope.ngModel.mailTo.splice(index,1);
+						  },1000)  
+				  }
+				  if(duplicateEmail>0){
+					  $scope.ngModel.mailTo.push(duplicateEmail+" "+duplicatedEmailMessages);
+					  $timeout(function(){ 
+						  var index=$scope.ngModel.mailTo.indexOf(duplicateEmail+" "+duplicatedEmailMessages);
+						  $scope.ngModel.mailTo.splice(index,1);
+					  },1000)  
+				  }
+				  
 				  },1000)
-			  return errorEmailMessages;
-		  }
+				  
+			  return multipleEmailMessages;
+		 }else{
+			 //single email added
+			 if(re.test(chip)){
+				  return chip;
+			  }else{
+				  
+				  $timeout(function(){ 
+					  var index=$scope.ngModel.mailTo.indexOf(errorEmailMessages);
+					    $scope.ngModel.mailTo.splice(index,1); 
+					  },1000)
+				  return errorEmailMessages;
+			  }
+		 }
+		  
+		  
+		  
+		 
 	  }
 	});

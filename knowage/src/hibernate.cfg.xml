@@ -260,6 +260,9 @@
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaDocumentTableRelation.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaDatasetTableRelation.hbm.xml" />
          
+         <!-- NON COMMITTARE -->
+        <mapping resource="it/eng/spagobi/tools/alert/metadata/mapping/SbiAlert.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/alert/metadata/mapping/SbiAlertLog.hbm.xml" />
          
          
         <!-- end mapping -->

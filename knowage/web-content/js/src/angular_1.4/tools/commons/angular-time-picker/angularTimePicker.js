@@ -66,8 +66,8 @@ function angularTimePickerFunction($scope){
 				s.hours=date.getHours()%24;
 				s.minutes=date.getMinutes();
 			}
-		var h=s.hours;
-		var m=s.minutes;
+		var h=s.hours!=undefined ? s.hours : s.getHours();
+		var m=s.minutes!=undefined ? s.minutes : s.getMinutes();
 		s.ngModel=(h<10? '0'+h : h)+":"+(m<10? '0'+m : m);
 	}
 	s.alterNgModel();
