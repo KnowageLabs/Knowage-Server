@@ -125,7 +125,7 @@ public class AlertService {
 		} catch (Throwable e) {
 			logger.error(req.getPathInfo(), e);
 		}
-		return Response.ok().build();
+		return Response.ok(new JSError().addErrorKey("100")).build();
 	}
 
 	@POST
