@@ -101,26 +101,7 @@
 		<mapping resource="it/eng/spagobi/tools/dataset/metadata/mapping/SbiDataSet.hbm.xml" />
         <mapping  resource="it/eng/spagobi/tools/dataset/metadata/mapping/SbiObjDataSet.hbm.xml" />
             
-		<!-- KPI Engine -->
-		<!-- 
-		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpi.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiDocuments.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiInstance.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiInstPeriod.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiInstanceHistory.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/model/metadata/mapping/SbiKpiModel.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/model/metadata/mapping/SbiKpiModelInst.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/model/metadata/mapping/SbiKpiModelResources.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiPeriodicity.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiRole.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiValue.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiMeasureUnit.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/model/metadata/mapping/SbiResources.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/threshold/metadata/mapping/SbiThreshold.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/threshold/metadata/mapping/SbiThresholdValue.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiRel.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiError.hbm.xml" />
-		  -->
+		
 
 		<!-- Menu -->
 		<mapping resource="it/eng/spagobi/wapp/metadata/mapping/SbiMenu.hbm.xml" />
@@ -132,12 +113,7 @@
 		<mapping resource="it/eng/spagobi/tools/alert/metadata/mapping/SbiAlertAction.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/alert/metadata/mapping/SbiAlertListener.hbm.xml" />
 
-		<!-- Kpi.alarm -->
-		<!-- 
-		<mapping resource="it/eng/spagobi/kpi/alarm/metadata/mapping/SbiAlarm.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/alarm/metadata/mapping/SbiAlarmEvent.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/alarm/metadata/mapping/SbiAlarmContact.hbm.xml" />
-		 -->
+
 
 		<!-- Obj Metadata -->
 		<mapping resource="it/eng/spagobi/tools/objmetadata/metadata/mapping/SbiObjMetadata.hbm.xml" />
@@ -153,20 +129,6 @@
 		<mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdp.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdpValue.hbm.xml" />
 
-
-		<!-- Kpi Organizational Units
-		<mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnit.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitHierarchies.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitNodes.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitGrant.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitGrantNodes.hbm.xml" />
- 		-->
-
-		<!-- Kpi Goal 
-		<mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoal.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoalKpi.hbm.xml" />
-		<mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoalHierarchy.hbm.xml" />
-		-->
 		
 		<!-- messages -->
 		<mapping resource="it/eng/spagobi/i18n/metadata/mapping/SbiI18NMessages.hbm.xml" />
@@ -175,9 +137,6 @@
 		<!-- -->
 		<mapping resource="it/eng/spagobi/tools/massiveExport/metadata/mapping/SbiProgressThread.hbm.xml" />
 
-<!-- 
-		<mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiComments.hbm.xml" />
- -->
 
 		<!-- tools: Meta-models catalogue -->
 		<mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModel.hbm.xml" />
@@ -260,7 +219,11 @@
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaDocumentTableRelation.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaDatasetTableRelation.hbm.xml" />
          
-      
+         <!-- NON COMMITTARE -->
+        <mapping resource="it/eng/spagobi/tools/alert/metadata/mapping/SbiAlert.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/alert/metadata/mapping/SbiAlertLog.hbm.xml" />
+         
+         
         <!-- end mapping -->
         
         <class-cache class="it.eng.spagobi.commons.metadata.SbiDomains" usage="read-only"/>
