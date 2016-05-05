@@ -631,10 +631,8 @@ author:
  			
  			chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
 
- 				
  				var chartConf = Ext.JSON.decode(response.responseText, true);	
-
-								
+ 				
 				var typeChart = chartConf.chart.type.toUpperCase();		 				
 				var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
 				
@@ -654,7 +652,6 @@ author:
 				var mainPanelTemp = Ext.getCmp("mainPanel");
 				
 				mainPanelTemp.setStyle("overflow","auto");	
-
 				
 				if (!heightChart)
 				{

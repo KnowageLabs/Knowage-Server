@@ -684,9 +684,7 @@ function prepareChartConfForHeatmap(chartConf) {
       };
     
     }
-    
-    
-    
+        
     var toReturn = {
        
     	chart: chartObject,
@@ -782,19 +780,12 @@ function prepareChartConfForHeatmap(chartConf) {
             reversed: false
         },
         
-//        legend: {
-//            layout: 'vertical',
-//            align: chartConf.legend.style.align, 
-//            symbolWidth: Number(20)	// modified by: (danilo.ristovski@mht.net)
-//        },
-        
         /**
          * Vertical legend of the HEATMAP will be positioned on the right side of the chart 
          * always (fixed values). Dynamic values are ones that user specifies for the height
          * of the legend and its position relative to the vertical orientation (top, middle,
          * bottom). 
-         * 
-         * @author: danristo (danilo.ristovski@mht.net)
+         * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
          */
         legend: 
         {
@@ -802,7 +793,26 @@ function prepareChartConfForHeatmap(chartConf) {
             layout: 'vertical',
             verticalAlign: chartConf.legend.style.align,
             //y: (Number(chartHeight)-Number(chartConf.legend.symbolHeight))/2,
-            symbolHeight: Number(chartConf.legend.symbolHeight)
+            symbolHeight: Number(chartConf.legend.symbolHeight),
+            
+            /**
+             * Title for the HEATMAP legend (KNOWAGE-835 JIRA issue).
+             * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+             */
+            title: {
+            	
+            	text: chartConf.legend.title.text,
+            	
+            	style: {
+            		
+            		color: chartConf.legend.title.style.color,
+            		fontFamily: chartConf.legend.title.style.fontFamily,
+            		fontSize: chartConf.legend.title.style.fontSize,
+            		fontWeight: chartConf.legend.title.style.fontWeight
+            		
+            	}
+            	
+            }
         },
         
         tooltip: tooltipObject,
