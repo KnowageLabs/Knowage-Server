@@ -143,8 +143,6 @@
 		};
 		
 		
-		
-		
 		$scope.popupParameterDialog = function(parameter, templateUrl) {
 			$mdDialog.show({
 				$type: "confirm",
@@ -198,6 +196,20 @@
 					};
 					
 					paramDialogCtrl.save = function() {
+						if(paramDialogCtrl.tempParameter.multivalue) {
+							var parameterValueArray = [];
+
+							for(var i = 0; i < paramDialogCtrl.selectedTableItems.length; i++) {
+								var selectedTableItem = paramDialogCtrl.selectedTableItems[i];
+
+								parameterValueArray.push(selectedTableItem.value);
+							}
+
+							paramDialogCtrl.tempParameter.parameterValue = parameterValueArray;
+						} else {
+							paramDialogCtrl.tempParameter.parameterValue = paramDialogCtrl.selectedTableItems.value;
+						}
+						
 						angular.copy(paramDialogCtrl.tempParameter, paramDialogCtrl.initialParameterState);
 						
 						if(paramDialogCtrl.initialParameterState.selectionType == 'TREE'){
@@ -240,6 +252,55 @@
 								)
 							);
 					};
+					
+					paramDialogCtrl.tableColumns = [];
+					for(var i = 0 ; i < paramDialogCtrl.tempParameter.defaultValuesMeta.length; i++) {
+						var columnName = paramDialogCtrl.tempParameter.defaultValuesMeta[i];
+						
+						paramDialogCtrl.tableColumns.push(columnName.toUpperCase());
+					};
+					
+					paramDialogCtrl.tableData = paramDialogCtrl.tempParameter.defaultValues;
+					
+					paramDialogCtrl.initSelectedTableItems = function() {
+						var isMultivalue = paramDialogCtrl.tempParameter.multivalue;
+						var defaultValues = paramDialogCtrl.tempParameter.defaultValues;
+						
+						if(paramDialogCtrl.tempParameter.parameterValue 
+								&& paramDialogCtrl.tempParameter.parameterValue != null) {
+							
+							var parameterValue = paramDialogCtrl.tempParameter.parameterValue;
+							
+							var selectedTableItemsArray = [];
+							
+							for (var i = 0; i < defaultValues.length; i++) {
+								var defaultValue = defaultValues[i];
+								
+								if(isMultivalue) {
+									for (var j = 0; j < parameterValue.length; j++) {
+										var parameterValueItem = parameterValue[j];
+										
+										if(parameterValueItem == defaultValue.value) {
+											selectedTableItemsArray.push(defaultValue);
+											break;
+										}
+									}
+								} else {
+									if(parameterValue == defaultValue.value) {
+										return defaultValue;
+									}
+								}
+							}
+							
+							if(isMultivalue) {
+								return selectedTableItemsArray;
+							}
+						} else {
+							return isMultivalue? [] : {};
+						}
+					};
+					
+					paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
 				}
 			});
 		};

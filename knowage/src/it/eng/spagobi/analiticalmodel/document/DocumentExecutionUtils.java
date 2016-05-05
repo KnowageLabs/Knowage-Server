@@ -54,6 +54,8 @@ public class DocumentExecutionUtils {
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static String MASSIVE_EXPORT = "massiveExport";
+	public static String DEFAULT_VALUES = "defaultValues";
+	public static String DEFAULT_VALUES_METADATA = "defaultValuesMetadata";
 
 	public static ILovDetail getLovDetail(BIObjectParameter parameter) {
 		Parameter par = parameter.getParameter();
@@ -233,19 +235,23 @@ public class DocumentExecutionUtils {
 		return errors;
 	}
 
-	public static ArrayList<HashMap<String, Object>> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter,
+//	public static ArrayList<HashMap<String, Object>> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter,
+	public static HashMap<String, Object> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter,
 			HttpServletRequest req) {
 
 		return getLovDefaultValues(executionRole, biObject, objParameter, null, null, null, req);
 	}
 
-	public static ArrayList<HashMap<String, Object>> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter,
+//	public static ArrayList<HashMap<String, Object>> getLovDefaultValues(
+	public static HashMap<String, Object> getLovDefaultValues(
+			String executionRole, BIObject biObject, BIObjectParameter objParameter,
 			JSONObject requestVal, Integer treeLovNodeLevel, String treeLovNodeValue, HttpServletRequest req) {
 
 		ArrayList<HashMap<String, Object>> defaultValues = new ArrayList<HashMap<String, Object>>();
 		String lovResult = null;
 		ILovDetail lovProvDet = null;
 		List rows = null;
+		HashMap<String, Object> result = new HashMap<String, Object>();
 
 		List<ObjParuse> biParameterExecDependencies = null;
 		try {
@@ -324,11 +330,23 @@ public class DocumentExecutionUtils {
 				JSONObject valuesJSON = buildJSONForLOV(lovProvDet, rows, MODE_SIMPLE);
 				valuesJSONArray = valuesJSON.getJSONArray("root");
 			}
+			
+			List defaultValuesMetadata = lovProvDet.getVisibleColumnNames();
+			result.put(DEFAULT_VALUES_METADATA, defaultValuesMetadata);
 
 			for (int i = 0; i < valuesJSONArray.length(); i++) {
 				JSONObject item = valuesJSONArray.getJSONObject(i);
 				if (item.length() > 0) {
 					HashMap<String, Object> itemAsMap = new HashMap<String, Object>();
+					
+					for(int j = 0; j < defaultValuesMetadata.size(); j++) {
+						String key = ((String) defaultValuesMetadata.get(j)).toUpperCase();
+						
+						if (item.has(key)) {
+							itemAsMap.put(key, item.get(key));
+						}
+					}
+					
 					itemAsMap.put("value", item.get("value"));
 					itemAsMap.put("label", item.has("label") ? item.get("label") : item.get("value"));
 					if (item.has("id")) {
@@ -341,32 +359,35 @@ public class DocumentExecutionUtils {
 					itemAsMap.put("isEnabled", true);
 
 					// CHECH VALID DEFAULT PARAM
+					ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<HashMap<String, Object>>();
 					boolean defaultParameterAlreadyExist = false;
+
 					for (HashMap<String, Object> defVal : defaultValues) {
 						if (defVal.get("value").equals(item.get("value"))) {
 							if (defVal.get("label").equals(item.get("label")) && defVal.get("description").equals(item.get("description"))) {
 								defaultParameterAlreadyExist = true;
 								break;
 							} else {
-								ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<HashMap<String, Object>>();
 								HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
 								itemErrorMap.put("error", true);
 								itemErrorMap.put("value", defVal.get("value"));
 								itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
 								itemErrorMap.put("labelSameValue", item.get("label"));
 								defaultErrorValues.add(itemErrorMap);
-								return defaultErrorValues;
+//								return defaultErrorValues;
 							}
 						}
 					}
 					if (!defaultParameterAlreadyExist) {
 						defaultValues.add(itemAsMap);
+						result.put(DEFAULT_VALUES, defaultValues);
+					} else {
+						result.put(DEFAULT_VALUES, defaultErrorValues);
 					}
-
 				}
 			}
-
-			return defaultValues;
+//			return defaultValues;
+			return result;
 
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Impossible to get parameter's values", e);
@@ -529,8 +550,8 @@ public class DocumentExecutionUtils {
 		String valueColumn;
 		String descriptionColumn;
 		JSONObject valuesJSON;
-		Integer start;
-		Integer limit;
+//		Integer start;
+//		Integer limit;
 		String displayColumn;
 
 		// START building JSON object to be returned
@@ -551,26 +572,32 @@ public class DocumentExecutionUtils {
 				SourceBean row = (SourceBean) rows.get(q);
 				JSONObject valueJSON = new JSONObject();
 
-				if (MODE_COMPLETE.equalsIgnoreCase(mode)) {
+				if (MODE_COMPLETE.equalsIgnoreCase(mode) || MODE_SIMPLE.equalsIgnoreCase(mode)) {
 					List columns = row.getContainedAttributes();
 					for (int i = 0; i < columns.size(); i++) {
 						SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
 						valueJSON.put(attribute.getKey().toUpperCase(), attribute.getValue());
 					}
-				} else {
-					String value = (String) row.getAttribute(valueColumn);
-					String description = (String) row.getAttribute(descriptionColumn);
-					valueJSON.put("value", value);
-					valueJSON.put("label", description);
-					valueJSON.put("description", description);
+//				} else {
+//					String value = (String) row.getAttribute(valueColumn);
+//					String description = (String) row.getAttribute(descriptionColumn);
+//					valueJSON.put("value", value);
+//					valueJSON.put("label", description);
+//					valueJSON.put("description", description);
 				}
+				
+				String value = (String) row.getAttribute(valueColumn);
+				String description = (String) row.getAttribute(descriptionColumn);
+				valueJSON.put("value", value);
+				valueJSON.put("label", description);
+				valueJSON.put("description", description);
 
 				valuesDataJSON.put(valueJSON);
 			}
 
 			String[] visiblecolumns;
 
-			if (MODE_COMPLETE.equalsIgnoreCase(mode)) {
+			if (MODE_COMPLETE.equalsIgnoreCase(mode) || MODE_SIMPLE.equalsIgnoreCase(mode)) {
 				visiblecolumns = (String[]) lovProvDet.getVisibleColumnNames().toArray(new String[0]);
 				for (int j = 0; j < visiblecolumns.length; j++) {
 					visiblecolumns[j] = visiblecolumns[j].toUpperCase();

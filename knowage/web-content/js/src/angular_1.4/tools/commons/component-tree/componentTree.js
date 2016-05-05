@@ -48,9 +48,7 @@
 
 			compile: function (tElement, tAttrs, transclude) {
 				return {
-					pre: function (scope, element, attrs, ctrl, transclud) { 
-
-					},
+					pre: function (scope, element, attrs, ctrl, transclud) {},
 
 					post: function (scope, element, attrs, ctrl, transclud) {
 						//Customize the keys to use different JSON 

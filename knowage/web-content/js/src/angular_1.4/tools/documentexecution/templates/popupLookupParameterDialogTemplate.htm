@@ -8,38 +8,48 @@
 		</div>
 	</md-toolbar>
 		
-	<md-dialog-content class="md-dialog-content" role="document" tabIndex="-1" flex>
-		<div class="md-dialog-content-body"	md-template="::paramDialogCtrl.mdContent"></div>
-
+	<md-dialog-content class="md-dialog-content" role="document" 
+			tabIndex="-1" layout flex>
 		<!--
-		<md-input-container>
-			<md-content>{{paramDialogCtrl.tempParameter|json}}</md-content>	
-		</md-input-container>
+		<md-content>{{paramDialogCtrl.tempParameter|json}}</md-content>	
+		<md-content>{{paramDialogCtrl.selectedTableItems | json}}</md-content>	
 		-->
 
-
+		<section layout flex>
+			<angular-table id="{{paramDialogCtrl.tempParameter.urlName}}" flex
+					ng-model="paramDialogCtrl.tableData" 
+					columns="paramDialogCtrl.tableColumns"
+					highlights-selected-item="true"
+					multi-select="paramDialogCtrl.tempParameter.multivalue"
+					selected-item="paramDialogCtrl.selectedTableItems"
+					show-search-bar="true"
+			></angular-table>
+		</section>
+				
+		
 		<!-- lov list single input -->
+		<!--
 		<section ng-if="!paramDialogCtrl.tempParameter.multivalue">
-			<!--
-			<label>{{paramDialogCtrl.tempParameter.label}}</label>
-			-->
 			<md-radio-group ng-model="paramDialogCtrl.tempParameter.parameterValue" ng-required="paramDialogCtrl.tempParameter.mandatory">
-				<md-radio-button class="md-primary" ng-repeat="defaultParameter in paramDialogCtrl.tempParameter.defaultValues" value="{{::defaultParameter.value}}">
+				<md-radio-button ng-repeat="defaultParameter in paramDialogCtrl.tempParameter.defaultValues" 
+						value="{{::defaultParameter.value}}" class="md-primary">
 					{{::defaultParameter.label}}
 				</md-radio-button>
 			</md-radio-group>
 		</section>
 		
 		<!-- lov list multiple input -->
+		<!--
 		<section ng-if="paramDialogCtrl.tempParameter.multivalue">
 			<div ng-repeat="defaultParameter in paramDialogCtrl.tempParameter.defaultValues">
 				<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" 
-				ng-checked="checkboxParameterExists(defaultParameter.value, paramDialogCtrl.tempParameter)" 
-				ng-click="toggleCheckboxParameter(defaultParameter.value, paramDialogCtrl.tempParameter)" >
+						ng-checked="checkboxParameterExists(defaultParameter.value, paramDialogCtrl.tempParameter)" 
+						ng-click="toggleCheckboxParameter(defaultParameter.value, paramDialogCtrl.tempParameter)" >
 					{{::defaultParameter.label}}
 				</md-checkbox>
 			</div>
 		</section>	
+		-->
 	</md-dialog-content>
 	
 	

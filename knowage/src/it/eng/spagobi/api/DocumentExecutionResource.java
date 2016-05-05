@@ -166,8 +166,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					Integer paruseId = objParameter.getParameterUseId();
 					ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
 					if ("lov".equalsIgnoreCase(parameterUse.getValueSelection()) && !objParameter.getSelectionType().equalsIgnoreCase("tree")) {
-						ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(role, obj,
-								objParameter.getAnalyticalDocumentParameter(), req);
+//						ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(
+//								role, obj, objParameter.getAnalyticalDocumentParameter(), req);
+
+						HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(
+								role, obj, objParameter.getAnalyticalDocumentParameter(), req);
+						
+						ArrayList<HashMap<String, Object>> defaultValues = 
+								(ArrayList<HashMap<String, Object>>) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES);
+						
 						if (defaultValues != null && defaultValues.size() == 1) {
 							jsonParameters.put(objParameter.getId(), defaultValues.get(0).get("value"));
 							jsonParameters.put(objParameter.getId() + "_field_visible_description", defaultValues.get(0).get("value"));
@@ -177,10 +184,13 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				}
 			}
 
-			String url = DocumentExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
+			String url = DocumentExecutionUtils.handleNormalExecutionUrl(
+					this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 					executingRole, modality, jsonParameters, locale);
-			errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
+			errorList = DocumentExecutionUtils.handleNormalExecutionError(
+					this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 					executingRole, modality, jsonParameters, locale);
+			
 			// resultAsMap.put("parameters", parameters);
 			resultAsMap.put("url", url + "&SBI_EXECUTION_ID=" + sbiExecutionId);
 			if (!errorList.isEmpty()) {
@@ -270,9 +280,20 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			boolean showParameterLov = true;
 
 			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection()) && !objParameter.getSelectionType().equalsIgnoreCase("tree")) {
-				ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
-						objParameter.getAnalyticalDocumentParameter(), req);
+//				ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(
+//						role, biObject, objParameter.getAnalyticalDocumentParameter(), req);
+				
+				HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(
+						role, biObject, objParameter.getAnalyticalDocumentParameter(), req);
+				
+				ArrayList<HashMap<String, Object>> defaultValues = 
+						(ArrayList<HashMap<String, Object>>) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES);
+				
+				List defaultValuesMetadata = (List) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES_METADATA);
+				
 				parameterAsMap.put("defaultValues", defaultValues);
+				parameterAsMap.put("defaultValuesMeta", defaultValuesMetadata);
+				
 				// hide the parameter if is mandatory and have one value in lov
 				if (defaultValues != null && defaultValues.size() == 1 && objParameter.isMandatory()) {
 					showParameterLov = false;
@@ -284,14 +305,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						List<String> valList = (ArrayList) o;
 						for (int k = 0; k < valList.size(); k++) {
 							String itemVal = valList.get(k);
-							boolean finded = false;
+							boolean found = false;
 							for (HashMap<String, Object> parHashVal : defaultValues) {
 								if (parHashVal.containsKey("value") && parHashVal.get("value").equals(itemVal)) {
-									finded = true;
+									found = true;
 									break;
 								}
 							}
-							if (!finded) {
+							if (!found) {
 								valList.remove(k);
 								k--;
 							}
@@ -379,8 +400,13 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			treeLovNodeLevel = new Integer(splittedNode[1]);
 		}
 
-		ArrayList<HashMap<String, Object>> result = DocumentExecutionUtils.getLovDefaultValues(role, biObject, biObjectParameter, requestVal, treeLovNodeLevel,
-				treeLovNodeValue, req);
+//		ArrayList<HashMap<String, Object>> result = DocumentExecutionUtils.getLovDefaultValues(
+//				role, biObject, biObjectParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, req);
+		HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(
+				role, biObject, biObjectParameter, req);
+		
+		ArrayList<HashMap<String, Object>> result = 
+				(ArrayList<HashMap<String, Object>>) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES);
 
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 
