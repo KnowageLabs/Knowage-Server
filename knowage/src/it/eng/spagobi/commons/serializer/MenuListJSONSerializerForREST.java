@@ -315,6 +315,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		if (isAbleTo(SpagoBIConstants.SEE_DOCUMENT_BROWSER, funcs)) {
 			JSONObject browser = createMenuItem("folder_open", HREF_DOC_BROWSER, messageBuilder.getMessage("menu.Browser", locale), true, null);
 			tempMenuList.put(browser);
+
+			JSONObject browserAngular = createMenuItem("folder_open", HREF_DOC_BROWSER_ANGULAR, messageBuilder.getMessage("menu.Browser", locale), true, null);
+			tempMenuList.put(browserAngular);
 		}
 		if (isAbleTo(SpagoBIConstants.SEE_FAVOURITES, funcs)) {
 			JSONObject favourites = createMenuItem("bookmark", HREF_BOOKMARK, messageBuilder.getMessage("menu.MyFavorites", locale), true, null);
