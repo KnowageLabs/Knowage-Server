@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons.initializers.metadata;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertListener;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -41,8 +42,18 @@ public class AlertListenerInitializer extends SpagoBIInitializer {
 		configurationFileName = "it/eng/spagobi/commons/initializers/metadata/config/alert.xml";
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void init(SourceBean config, Session session) {
+		List<SbiTenant> tenants = session.createCriteria(SbiTenant.class).list();
+		for (SbiTenant tenant : tenants) {
+			setTenant(tenant.getName());
+			init(session);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void init(Session session) {
 		logger.debug("IN");
 		try {
 			List<SbiAlertListener> lst = session.createCriteria(SbiAlertListener.class).list();
