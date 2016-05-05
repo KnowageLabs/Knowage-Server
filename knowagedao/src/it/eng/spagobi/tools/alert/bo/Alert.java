@@ -1,12 +1,9 @@
 package it.eng.spagobi.tools.alert.bo;
 
+import it.eng.spagobi.tools.alert.listener.AbstractSuspendableJob.JOB_STATUS;
 import it.eng.spagobi.tools.scheduler.bo.Frequency;
 
 public class Alert {
-
-	public enum JOB_STATUS {
-		SUSPENDED, ACTIVE
-	};
 
 	private Integer id;
 	private String name;

@@ -6,16 +6,15 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.tools.alert.bo.Alert;
-import it.eng.spagobi.tools.alert.bo.Alert.JOB_STATUS;
 import it.eng.spagobi.tools.alert.bo.AlertAction;
 import it.eng.spagobi.tools.alert.bo.AlertListener;
+import it.eng.spagobi.tools.alert.listener.AbstractSuspendableJob.JOB_STATUS;
 import it.eng.spagobi.tools.alert.listener.IAlertListener;
 import it.eng.spagobi.tools.alert.metadata.SbiAlert;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertAction;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertListener;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertLog;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
-import it.eng.spagobi.tools.scheduler.metadata.SbiTriggerPaused;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Session;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
 
 public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 
@@ -123,23 +120,26 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Alert> listAlert() {
-		return executeOnTransaction(new IExecuteOnTransaction<List<Alert>>() {
-			@Override
-			public List<Alert> execute(Session session) throws Exception {
-				List<String> suspendedTriggers = session.createCriteria(SbiTriggerPaused.class).add(Restrictions.eq("triggerGroup", ALERT_JOB_GROUP))
-						.add(Restrictions.eq("jobGroup", ALERT_JOB_GROUP)).setProjection(Property.forName("triggerName")).list();
+		try {
+			final List<String> suspendedTriggers = DAOFactory.getSchedulerDAO().listTriggerPausedByGroup(ALERT_JOB_GROUP, ALERT_JOB_GROUP);
+			return executeOnTransaction(new IExecuteOnTransaction<List<Alert>>() {
+				@Override
+				public List<Alert> execute(Session session) throws Exception {
 
-				List<SbiAlert> alertList = session.createCriteria(SbiAlert.class).list();
+					List<SbiAlert> alertList = session.createCriteria(SbiAlert.class).list();
 
-				List<Alert> ret = new ArrayList<>();
-				for (SbiAlert sbiAlert : alertList) {
-					Alert alert = from(sbiAlert, false);
-					alert.setJobStatus(suspendedTriggers.contains("" + sbiAlert.getId()) ? JOB_STATUS.SUSPENDED : JOB_STATUS.ACTIVE);
-					ret.add(alert);
+					List<Alert> ret = new ArrayList<>();
+					for (SbiAlert sbiAlert : alertList) {
+						Alert alert = from(sbiAlert, false);
+						alert.setJobStatus(suspendedTriggers.contains("" + sbiAlert.getId()) ? JOB_STATUS.SUSPENDED : JOB_STATUS.ACTIVE);
+						ret.add(alert);
+					}
+					return ret;
 				}
-				return ret;
-			}
-		});
+			});
+		} catch (EMFUserError e) {
+			throw new SpagoBIDOAException(e);
+		}
 	}
 
 	private Alert from(SbiAlert sbiAlert, boolean checkStatus) {

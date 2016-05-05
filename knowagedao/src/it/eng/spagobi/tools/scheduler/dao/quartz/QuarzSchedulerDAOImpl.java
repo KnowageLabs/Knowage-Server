@@ -21,6 +21,7 @@ import it.eng.qbe.datasource.configuration.dao.DAOException;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tenant.Tenant;
@@ -48,6 +49,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
@@ -862,6 +865,18 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 			insertJob(job);
 		}
 		return job;
+	}
+
+	@Override
+	public List<String> listTriggerPausedByGroup(final String triggerGroup, final String jobGroup) {
+		return executeOnTransaction(new IExecuteOnTransaction<List<String>>() {
+			@Override
+			public List<String> execute(Session session) throws Exception {
+				List<String> suspendedTriggers = session.createCriteria(SbiTriggerPaused.class).add(Restrictions.eq("triggerGroup", triggerGroup))
+						.add(Restrictions.eq("jobGroup", jobGroup)).setProjection(Property.forName("triggerName")).list();
+				return suspendedTriggers;
+			}
+		});
 	}
 
 }

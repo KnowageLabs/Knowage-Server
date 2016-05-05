@@ -1,5 +1,6 @@
 package it.eng.spagobi.kpi.bo;
 
+import it.eng.spagobi.tools.alert.listener.AbstractSuspendableJob.JOB_STATUS;
 import it.eng.spagobi.tools.scheduler.bo.Frequency;
 
 import java.util.ArrayList;
@@ -15,8 +16,24 @@ public class KpiScheduler {
 	private List<Kpi> kpis = new ArrayList<>();
 	private String kpiNames;
 	private String author;
+	private JOB_STATUS jobStatus;
 
 	private Frequency frequency = new Frequency();
+
+	/**
+	 * @return the jobStatus
+	 */
+	public JOB_STATUS getJobStatus() {
+		return jobStatus;
+	}
+
+	/**
+	 * @param jobStatus
+	 *            the jobStatus to set
+	 */
+	public void setJobStatus(JOB_STATUS jobStatus) {
+		this.jobStatus = jobStatus;
+	}
 
 	/**
 	 * @return the frequency

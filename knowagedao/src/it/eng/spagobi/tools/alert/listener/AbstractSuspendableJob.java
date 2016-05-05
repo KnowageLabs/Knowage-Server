@@ -13,6 +13,10 @@ import org.quartz.Trigger;
 
 public abstract class AbstractSuspendableJob extends AbstractSpagoBIJob implements Job {
 
+	public enum JOB_STATUS {
+		SUSPENDED, ACTIVE
+	};
+
 	private static Logger logger = Logger.getLogger(AbstractSuspendableJob.class);
 
 	@Override

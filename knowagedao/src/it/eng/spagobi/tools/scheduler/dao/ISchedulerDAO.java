@@ -104,4 +104,6 @@ public interface ISchedulerDAO {
 	void createOrUpdateJobAndTrigger(String jobName, Class jobClass, String groupName, String triggerGroup, Frequency frequency, Map<String, String> parameters);
 
 	Job createOrUpdateJob(String name, String groupName, Class jobClass, Map<String, String> parameters);
+
+	List<String> listTriggerPausedByGroup(String triggerGroup, String jobGroup);
 }
