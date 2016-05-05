@@ -667,8 +667,8 @@ md-option[selected], md-select-menu md-option[selected]{
 
 
 .tree-item-padding{
-	padding-left:10px;
+	padding-left:10px !important;
 }
 .tree-item-padding-leaf{
-	padding-left:35px;
+	padding-left:35px !important;
 }

@@ -1,6 +1,6 @@
 <ul ng-model="item.children" ng-show="item.collapsed">
 
-	<li ng-repeat="item in item.children"  >
+	<li ng-repeat="item in item.children">
 	<div>
 		<md-icon md-font-icon="fa fa-list-alt" ng-show="item.leaf && activeaxis == -1" ng-click=""> 
 		</md-icon>
@@ -17,7 +17,14 @@
 			<md-icon md-font-icon="fa fa-check-circle-o" style="color:green;" ng-show="item.uniqueName == filterSelected[filterAxisPosition].uniqueName"> 
 			</md-icon>
 		</span>
-		<span ng-click="" ng-show="activeaxis >= 0" ng-class="item.leaf ? 'tree-item-padding-leaf':'tree-item-padding'">
+		<span ng-click="" ng-show="activeaxis >= 0 && !item.leaf" ng-style="{padding-left: }">
+			<md-checkbox ng-checked="item.visible" ng-click="checkboxSelected(item)">
+			<span ng-class="highlight(item.name)?'highlight-filter-result':''">
+				{{item.name}}
+			</span>
+			</md-checkbox>
+		</span>
+		<span ng-click="" ng-show="activeaxis >= 0 && item.leaf" style="padding-left:35px">
 			<md-checkbox ng-checked="item.visible" ng-click="checkboxSelected(item)">
 			<span ng-class="highlight(item.name)?'highlight-filter-result':''">
 				{{item.name}}
