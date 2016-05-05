@@ -44,7 +44,26 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		action : function(item,event) {
 			$scope.deleteMeasure(item);
 		}
-	}];
+	},
+	{ 
+		label: function(row){
+			return angular.equals(row.jobStatus.toUpperCase(),"SUSPENDED") ? sbiModule_translate.load('sbi.alert.resume') : sbiModule_translate.load('sbi.alert.suspend');
+		},
+		icon: function(row){
+			return angular.equals(row.jobStatus.toUpperCase(),"SUSPENDED") ? 'fa fa-play' : 'fa fa-pause';
+		}, 
+		backgroundColor:'transparent',
+		action : function(item,event) { 
+			var data="?jobGroup=KPI_SCHEDULER_GROUP&triggerGroup=KPI_SCHEDULER_GROUP&jobName="+item.id+"&triggerName="+item.id; 
+			sbiModule_restServices.promisePost("scheduler",(angular.equals(item.jobStatus.toUpperCase(),"SUSPENDED") ? 'resumeTrigger' : 'pauseTrigger')+""+data)
+			.then(function(response){   
+				item.jobStatus=angular.equals(item.jobStatus.toUpperCase(),"SUSPENDED") ? 'ACTIVE' : 'SUSPENDED';
+			},function(response){
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.deletingItemError"))});
+			}
+	
+		}
+	];
 	$scope.deleteMeasure=function(item,event){
 		var confirm = $mdDialog.confirm()
 		.title($scope.translate.load("sbi.kpi.measure.delete.title"))
@@ -427,7 +446,8 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 	                    {label:"KPI",name:"kpiNames"},
 	                    {label:"Start Date",name:"frequency.startDate"},
 	                    {label:"End Date",name:"frequency.endDate",comparatorFunction:function(a,b){return 1}},
-	                    {label:"Author",name:"author"}]
+	                    {label:"Author",name:"author"},
+	                    {label:"Status",name:"jobStatus"}]
 	
 }
 

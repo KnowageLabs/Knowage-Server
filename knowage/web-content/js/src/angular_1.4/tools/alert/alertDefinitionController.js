@@ -39,7 +39,9 @@ function alertDefinitionControllerFunction($scope){
 	
 	
 function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModule_translate,sbiModule_restServices,$mdToast,$mdDialog,$timeout){
-	$scope.alertColumnsList=[{label:sbiModule_translate.load("sbi.generic.name"),name:"name"},{label:sbiModule_translate.load("sbi.generic.state"),name:"jobStatus"}];
+	$scope.alertColumnsList=[
+	                         {label:sbiModule_translate.load("sbi.generic.name"),name:"name"},
+	                         {label:sbiModule_translate.load("sbi.generic.state"),name:"jobStatus"}];
 	
 	$scope.alertListAction=[
 	                        {
@@ -76,7 +78,7 @@ function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModu
 			}, 
 			backgroundColor:'transparent',
 			action : function(item,event) { 
-				var data="?jobGroup=KPI_SCHEDULER_GROUP&triggerGroup=KPI_SCHEDULER_GROUP&jobName="+item.id+"&triggerName="+item.id;
+				var data="?jobGroup=ALERT_JOB_GROUP&triggerGroup=ALERT_JOB_GROUP&jobName="+item.id+"&triggerName="+item.id;
 				
 				sbiModule_restServices.promisePost("scheduler",(angular.equals(item.jobStatus.toUpperCase(),"SUSPENDED") ? 'resumeTrigger' : 'pauseTrigger')+""+data)
 				.then(function(response){  
