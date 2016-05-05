@@ -148,7 +148,12 @@ public class ContentServiceImplSupplier {
 			}
 
 			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			content.setContent(bASE64Encoder.encode(template));
+			if (template != null) {
+				content.setContent(bASE64Encoder.encode(template));
+			} else {
+				content.setContent("");
+			}
+
 			logger.debug("template read");
 			content.setFileName(temp.getName());
 		} catch (NumberFormatException e) {

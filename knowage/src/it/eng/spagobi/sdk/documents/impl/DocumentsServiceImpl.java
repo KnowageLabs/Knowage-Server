@@ -17,6 +17,33 @@
  */
 package it.eng.spagobi.sdk.documents.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -52,10 +79,7 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.engines.InternalEngineIFace;
 import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.engines.exporters.KpiExporter;
 import it.eng.spagobi.engines.exporters.ReportExporter;
-import it.eng.spagobi.engines.kpi.SpagoBIKpiInternalEngine;
-import it.eng.spagobi.engines.kpi.bo.KpiResourceBlock;
 import it.eng.spagobi.sdk.AbstractSDKService;
 import it.eng.spagobi.sdk.documents.DocumentsService;
 import it.eng.spagobi.sdk.documents.bo.SDKDocument;
@@ -81,33 +105,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.file.FileUtils;
 import it.eng.spagobi.utilities.mime.MimeUtils;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 public class DocumentsServiceImpl extends AbstractSDKService implements DocumentsService {
 
@@ -648,45 +645,12 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			return null;
 		}
 
-		// result of the Kpi
-		List<KpiResourceBlock> blocksList = null;
-		try {
-			blocksList = ((SpagoBIKpiInternalEngine) internalEngine).executeCode(reqContainer, biobj, resp, userId);
-			if (blocksList == null) {
-				logger.error("No result returned by kpi execution");
-				return null;
-			} else {
-				logger.debug("Kpi executed and result returned");
-			}
-		} catch (EMFUserError e) {
-			logger.error("Error during engine execution", e);
-			return null;
-		} catch (Exception e) {
-			logger.error("Error while engine execution", e);
-			return null;
-		}
-
 		File tmpFile = null;
 		String mimeType = "application/pdf";
 		logger.debug("setting object to return of type SDKExecuteDocumentContent");
 		toReturn = new SDKExecutedDocumentContent();
 		// call exporter!
-		try {
-			KpiExporter exporter = new KpiExporter();
-			if (ouputType.equals("PDF")) {
-				logger.debug("call PDF Exporter");
-				tmpFile = exporter.getKpiReportPDF(blocksList, biobj, userId);
-				toReturn.setFileName(biobj.getLabel() + ".pdf");
-			} else if (ouputType.equals("XML")) {
-				mimeType = "text/xml";
-				logger.debug("call XML Exporter");
-				tmpFile = exporter.getKpiExportXML(blocksList, biobj, userId);
-				toReturn.setFileName(biobj.getLabel() + ".xml");
-			}
-		} catch (Exception e) {
-			logger.error("error while exporting", e);
-			return null;
-		}
+
 		if (tmpFile == null) {
 			logger.error("file not created");
 			return null;
@@ -753,9 +717,12 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	/**
 	 * Executes a document and return an object containing the result
 	 *
-	 * @param: document : the document
-	 * @param: parameters: ana array of SDKDocumentParameters, already filled with values
-	 * @param: roleName : name of the role
+	 * @param: document
+	 *             : the document
+	 * @param: parameters:
+	 *             ana array of SDKDocumentParameters, already filled with values
+	 * @param: roleName
+	 *             : name of the role
 	 */
 
 	@Override
@@ -1415,8 +1382,8 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				throw new SDKException("1001", "Error while uploading schema. Schema file is null.");
 				// return;
 			}
-			logger.debug("schema name = [" + schema.getSchemaName() + "] - schema description = [" + schema.getSchemaDescription()
-					+ "] - schema datasource = [" + schema.getSchemaDataSourceLbl() + "] ");
+			logger.debug("schema name = [" + schema.getSchemaName() + "] - schema description = [" + schema.getSchemaDescription() + "] - schema datasource = ["
+					+ schema.getSchemaDataSourceLbl() + "] ");
 			UserProfile userProfile = (UserProfile) this.getUserProfile();
 			try {
 				boolean isNewSchema = true;
@@ -1435,7 +1402,8 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				// checks if the artifact already exists. In this case doesn't
 				// create the new one!
 				if (artifact != null) {
-					logger.info("The schema with name " + schema.getSchemaName() + " is already been inserted in SpagoBI catalogue. Artifact will be updated! ");
+					logger.info(
+							"The schema with name " + schema.getSchemaName() + " is already been inserted in SpagoBI catalogue. Artifact will be updated! ");
 					isNewSchema = false;
 					artID = artifact.getId();
 				}
