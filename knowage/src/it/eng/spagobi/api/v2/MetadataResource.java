@@ -36,9 +36,6 @@ import it.eng.spagobi.metadata.cwm.CWMMapperFactory;
 import it.eng.spagobi.metadata.cwm.ICWM;
 import it.eng.spagobi.metadata.cwm.ICWMMapper;
 import it.eng.spagobi.metadata.dao.ImportMetadata;
-import it.eng.spagobi.metadata.etl.ETLMetadata;
-import it.eng.spagobi.metadata.etl.ETLParser;
-import it.eng.spagobi.metadata.etl.NonClosingZipInputStream;
 import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaBcAttribute;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
@@ -59,20 +56,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -80,28 +72,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -274,132 +254,6 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * POST: get ETL Contexts from the uploaded file
-	 **/
-	@POST
-	@Path("/getETLContexts")
-	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getETLContexts(@MultipartForm MultipartFormDataInput input) {
-		logger.debug("IN");
-
-		try {
-
-			// 1- Retrieve uploaded file data
-			Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-			InputStream inputStream = null;
-			String fileName = null;
-			for (String key : uploadForm.keySet()) {
-				List<InputPart> inputParts = uploadForm.get(key);
-				for (InputPart inputPart : inputParts) {
-					MultivaluedMap<String, String> header = inputPart.getHeaders();
-					if (getFileName(header) != null) {
-						fileName = getFileName(header);
-						logger.debug("File uploaded is named: " + fileName);
-						inputStream = inputPart.getBody(InputStream.class, null);
-					}
-				}
-			}
-
-			// save to temporary folder
-			File tmpFile = new File(System.getProperty("java.io.tmpdir"), fileName + ".tmp");
-			OutputStream outStream = new FileOutputStream(tmpFile);
-
-			byte[] buffer = new byte[8 * 1024];
-			int bytesRead;
-			while ((bytesRead = inputStream.read(buffer)) != -1) {
-				outStream.write(buffer, 0, bytesRead);
-			}
-
-			// 2 - Parse xml file
-			// Document xmlDocument = inputStreamToDocument(inputStream);
-			Document xmlDocument = xmlToDocument(tmpFile);
-			ETLParser etlParser = new ETLParser(xmlDocument);
-			Set<String> contexts = etlParser.getContextNames();
-
-			IOUtils.closeQuietly(inputStream);
-			IOUtils.closeQuietly(outStream);
-			return Response.ok(contexts).build();
-
-		} catch (Exception e) {
-			logger.error("An error occurred while trying to extract metadata information from file:", e);
-			throw new SpagoBIRestServiceException("An error occurred while trying to extract metadata information from file:", buildLocaleFromSession(), e);
-
-		} finally {
-
-			logger.debug("OUT");
-		}
-	}
-
-	/**
-	 * POST: Extract and insert new ETL metadata informations from uploaded file (single .item file or .zip file containing multiple .item)
-	 **/
-	@POST
-	@Path("/{contextName}/ETLExtract")
-	@UserConstraint(functionalities = { SpagoBIConstants.META_MODELS_CATALOGUE_MANAGEMENT })
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response extractETLMetadataInformation(@PathParam("contextName") String contextName, @MultipartForm MultipartFormDataInput input) {
-		logger.debug("IN");
-
-		String fileName = null;
-		boolean isZipFile = false;
-		boolean isItemFile = false;
-		try {
-
-			// 1- Retrieve uploaded file data
-			Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-			InputStream inputStream = null;
-
-			for (String key : uploadForm.keySet()) {
-				List<InputPart> inputParts = uploadForm.get(key);
-				for (InputPart inputPart : inputParts) {
-					MultivaluedMap<String, String> header = inputPart.getHeaders();
-					if (getFileName(header) != null) {
-						fileName = getFileName(header);
-						if (fileName.endsWith("zip")) {
-							isZipFile = true;
-						} else if (fileName.endsWith("item")) {
-							isItemFile = true;
-						}
-						inputStream = inputPart.getBody(InputStream.class, null);
-					}
-				}
-			}
-
-			if (isZipFile) {
-				// zip file with multiple .item files
-				// (using non closing zip input stream to prevent DocumentBuilder from closing inputstream after first zipEntry parsing)
-				NonClosingZipInputStream zis = new NonClosingZipInputStream(inputStream);
-				ZipEntry ze = null;
-				// get Next Entry will position the ZipInputStream to the next entry file
-				while ((ze = zis.getNextEntry()) != null) {
-					if (ze.getName().endsWith("item")) {
-						parseAndExtract(zis, contextName, ze.getName());
-					}
-				}
-				zis.reallyClose();
-			} else if (isItemFile) {
-				// single .item file
-				parseAndExtract(inputStream, contextName, fileName);
-			} else {
-				// wrong file extension
-				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(), "Wrong file extension. Cannot continue.");
-
-			}
-
-			return Response.ok().build();
-
-		} catch (Exception e) {
-			logger.error("An error occurred while trying to extract metadata information from file: " + fileName, e);
-			throw new SpagoBIRestServiceException("An error occurred while trying to extract metadata information from file: " + fileName,
-					buildLocaleFromSession(), e);
-
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	/**
 	 * Update existing business model metadata information with specified id PUT
 	 **/
 	@PUT
@@ -407,16 +261,6 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response updateBusinessModelMetadataInformation(@PathParam("bmId") int businessModelId) {
 		// TODO:
-		return null;
-	}
-
-	/**
-	 * Update existing ETL metadata information with specified id PUT
-	 **/
-	@POST
-	@Path("/{etlId}/ETLExtract")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response updateETLMetadataInformation(@PathParam("etlId") int etlId) {
 		return null;
 	}
 
@@ -483,25 +327,6 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	 * @throws EMFUserError
 	 */
 
-	private void parseAndExtract(InputStream inputStream, String contextName, String fileName) throws XPathExpressionException, EMFUserError,
-			JsonGenerationException, JsonMappingException, IOException {
-		Document xmlDocument = inputStreamToDocument(inputStream);
-		ETLParser etlParser = new ETLParser(xmlDocument);
-		ETLMetadata etlMetadata = etlParser.getETLMetadata(contextName);
-		logger.debug("Etl metadata extracted for: " + fileName + " with context: " + contextName);
-		logger.debug(etlMetadata.toString());
-
-		// Uncomment this line just for debug
-		// System.out.println("Etl metadata extracted for: " + fileName + " with context: " + contextName);
-		// ObjectMapper mapper = new ObjectMapper();
-		// mapper.writeValueAsString(etlMetadata);
-		// System.out.println(mapper.writeValueAsString(etlMetadata));
-
-		// 3 - Write informations on db
-		ImportMetadata im = new ImportMetadata();
-		im.importETLMetadata(fileName, etlMetadata);
-	}
-
 	private byte[] getModelFileFromJar(Content content) {
 		logger.debug("IN");
 
@@ -561,21 +386,6 @@ public class MetadataResource extends AbstractSpagoBIResource {
 		return null;
 	}
 
-	private String getFileName(MultivaluedMap<String, String> header) {
-		String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
-
-		for (String filename : contentDisposition) {
-			if ((filename.trim().startsWith("filename"))) {
-
-				String[] name = filename.split("=");
-
-				String finalFileName = name[1].trim().replaceAll("\"", "");
-				return finalFileName;
-			}
-		}
-		return null;
-	}
-
 	private String getProperty(PhysicalModel physicalModel, String propertyName) {
 		ModelProperty property = physicalModel.getProperties().get(propertyName);
 		return property != null ? property.getValue() : null;
@@ -584,48 +394,6 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	private String getProperty(BusinessColumn businessColumn, String propertyName) {
 		ModelProperty property = businessColumn.getProperties().get(propertyName);
 		return property != null ? property.getValue() : null;
-	}
-
-	public static Document xmlToDocument(File xmlfile) {
-		Document doc = null;
-		try {
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder;
-			dBuilder = dbFactory.newDocumentBuilder();
-			doc = dBuilder.parse(xmlfile);
-			// optional, but recommended
-			doc.getDocumentElement().normalize();
-
-		} catch (ParserConfigurationException e) {
-			logger.error("ParserConfigurationException for " + xmlfile.getName());
-		} catch (SAXException e) {
-			logger.error("SAXException for " + xmlfile.getName());
-		} catch (IOException e) {
-			logger.error("IOException for " + xmlfile.getName());
-		}
-		return doc;
-
-	}
-
-	public static Document inputStreamToDocument(InputStream inputStream) {
-		Document doc = null;
-		try {
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder;
-			dBuilder = dbFactory.newDocumentBuilder();
-			doc = dBuilder.parse(inputStream);
-			// optional, but recommended
-			doc.getDocumentElement().normalize();
-
-		} catch (ParserConfigurationException e) {
-			logger.error("ParserConfigurationException for " + inputStream);
-		} catch (SAXException e) {
-			logger.error("SAXException for " + inputStream);
-		} catch (IOException e) {
-			logger.error("IOException for " + inputStream);
-		}
-		return doc;
-
 	}
 
 	private SbiMetaModel getSbiMetaModel(String BusinessModelName) {

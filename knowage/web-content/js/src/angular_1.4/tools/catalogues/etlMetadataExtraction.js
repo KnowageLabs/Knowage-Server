@@ -56,7 +56,7 @@ function controllerFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		if($scope.contextName!== undefined && $scope.contextName.length > 0 && $scope.fileObj.fileName !== undefined){
 			$scope.bmImportingShow = true;
 			//Upload file
-			multipartForm.post("2.0/metadata/"+$scope.contextName+"/ETLExtract",$scope.fileObj).success(
+			multipartForm.post("1.0/etl/"+$scope.contextName+"/ETLExtract",$scope.fileObj).success(
 					
 					function(data,status,headers,config){
 						if(data.hasOwnProperty("errors")){						
