@@ -17,6 +17,14 @@
  */
 package it.eng.spagobi.commons.serializer;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+
+import org.json.JSONArray;
+
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
@@ -37,24 +45,6 @@ import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.hotlink.rememberme.bo.RememberMe;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
-import it.eng.spagobi.kpi.config.bo.Kpi;
-import it.eng.spagobi.kpi.config.bo.Periodicity;
-import it.eng.spagobi.kpi.config.metadata.SbiKpiComments;
-import it.eng.spagobi.kpi.goal.metadata.bo.Goal;
-import it.eng.spagobi.kpi.goal.metadata.bo.GoalNode;
-import it.eng.spagobi.kpi.model.bo.Model;
-import it.eng.spagobi.kpi.model.bo.ModelExtended;
-import it.eng.spagobi.kpi.model.bo.ModelInstance;
-import it.eng.spagobi.kpi.model.bo.ModelResourcesExtended;
-import it.eng.spagobi.kpi.model.bo.Resource;
-import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
-import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
-import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
-import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNodeWithGrant;
-import it.eng.spagobi.kpi.threshold.bo.Threshold;
-import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bo.UserBO;
@@ -80,14 +70,6 @@ import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-
-import org.json.JSONArray;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -118,9 +100,6 @@ public class JSONSerializer implements Serializer {
 		mappings.put(SbiUser.class, new SbiUserJSONSerializer());
 		mappings.put(UserBO.class, new UserJSONSerializer());
 		mappings.put(SbiAttribute.class, new AttributeJSONSerializer());
-		mappings.put(SbiAlarm.class, new AlarmJSONSerializer());
-		mappings.put(SbiAlarmContact.class, new AlarmContactJSONSerializer());
-		mappings.put(ThresholdValue.class, new ThresholdValueJSONSerializer());
 		mappings.put(SbiDataSet.class, new SbiDataSetJSONSerializer());
 		mappings.put(VersionedDataSet.class, new DataSetJSONSerializer());
 		mappings.put(CustomDataSet.class, new DataSetJSONSerializer());
@@ -135,30 +114,12 @@ public class JSONSerializer implements Serializer {
 
 		mappings.put(RoleMetaModelCategory.class, new RoleMetaModelCategoryJSONSerializer());
 
-		mappings.put(Resource.class, new ResourceJSONSerializer());
-		mappings.put(Threshold.class, new ThresholdJSONSerializer());
-		mappings.put(Kpi.class, new KpiJSONSerializer());
-		mappings.put(Periodicity.class, new PeriodicityJSONSerializer());
-
-		mappings.put(Model.class, new ModelNodeJSONSerializer());
-		mappings.put(ModelInstance.class, new ModelInstanceNodeJSONSerializer());
-		mappings.put(ModelResourcesExtended.class, new ModelResourcesExtendedJSONSerializer());
-		mappings.put(ModelExtended.class, new ModelExtendedJSONSerializer());
-
 		mappings.put(GetParametersForExecutionAction.ParameterForExecution.class, new ParameterForExecutionJSONSerializer());
 		// mappings.put(ParameterForExecution.class, new ParameterForExecutionJSONSerializer());
 		mappings.put(DocumentParameters.class, new DocumentParameterForExecutionJSONSerializer());
 		mappings.put(SbiUdp.class, new UdpJSONSerializer());
 		mappings.put(SbiUdpValue.class, new UdpValueJSONSerializer());
 
-		mappings.put(OrganizationalUnitGrant.class, new OrganizationalUnitGrantJSONSerializer());
-		mappings.put(OrganizationalUnit.class, new OrganizationalUnitJSONSerializer());
-		mappings.put(OrganizationalUnitHierarchy.class, new OrganizationalUnitHierarchyJSONSerializer());
-		mappings.put(OrganizationalUnitNodeWithGrant.class, new OrganizationalUnitNodeWithGrantJSONSerializer());
-
-		mappings.put(GoalNode.class, new GoalNodeJSONSerializer());
-		mappings.put(Goal.class, new GoalJSONSerializer());
-		mappings.put(SbiKpiComments.class, new SbiKpiCommentSerializer());
 		mappings.put(MetaModel.class, new MetaModelJSONSerializer());
 		mappings.put(Artifact.class, new ArtifactJSONSerializer());
 		mappings.put(Content.class, new ContentJSONSerializer());
