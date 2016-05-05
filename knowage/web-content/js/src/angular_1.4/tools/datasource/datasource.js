@@ -18,11 +18,11 @@ var emptyDataSource = {
 	schemaSttribute: "",
 	multiSchema: false,
 	readOnly: false,
-	writeDefault: false	
+	writeDefault: false
 };
 
 function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging){
-	
+
 	//DECLARING VARIABLES
 	$scope.showMe=false;
 	$scope.translate = sbiModule_translate;
@@ -34,55 +34,55 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.forms = {};
 	$scope.isSuperAdmin = superadmin;
 	$scope.jdbcOrJndi = {};
-	
-	$scope.isSuperAdminFunction=function(){               
+
+	$scope.isSuperAdminFunction=function(){
         return !superadmin;
 	};
-	
+
 	angular.element(document).ready(function () {
         $scope.getDataSources();
     });
-	
+
 	$scope.setDirty = function () {
 		$scope.isDirty = true;
 	}
 
 	//REST
 	$scope.getDataSources = function(){
-		
+
 		//GET DATA SOURCES
 		sbiModule_restServices.promiseGet("2.0/datasources", "")
 		.then(function(response) {
 			$scope.dataSourceList = response.data;
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			
-		});		
-		
+
+		});
+
 		//GET DIALECT TYPES
-		
+
 		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=DIALECT_HIB")
 		.then(function(response) {
 			$scope.dialects = response.data;
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			
-		});	
-		
+
+		});
+
 	};
-	
+
 	//REST
 	$scope.saveOrUpdateDataSource = function(){
-		
+
 		delete $scope.jdbcOrJndi.type;
-		
+
 		if($scope.selectedDataSource.hasOwnProperty("dsId")){
-			
+
 
 			var errorU = "Error updating the datasource!"
-			
+
 			//MODIFY DATA SOURCE
-				
+
 				sbiModule_restServices.promisePut('2.0/datasources','',angular.toJson($scope.selectedDataSource))
 				.then(function(response) {
 					console.log("[PUT]: SUCCESS!");
@@ -92,14 +92,14 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-					
-				});		
+
+				});
 		} else {
-			
+
 			var errorS = "Error saving the datasource!";
-			
+
 			//CREATE NEW DATA SOURCE
-			sbiModule_restServices.promiseGet('2.0/datasources','', angular.toJson($scope.selectedDataSource))
+			sbiModule_restServices.promisePost('2.0/datasources','', angular.toJson($scope.selectedDataSource))
 			.then(function(response) {
 				console.log("[POST]: SUCCESS!");
 				$scope.dataSourceList = [];
@@ -108,18 +108,18 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-				
-			});	
-			
-		}		
+
+			});
+
+		}
 	};
-	
+
 	//REST
 	$scope.deleteDataSource = function() {
-		
+
 		//DELETE SEVERAL DATA SORUCES
 		if($scope.selectedDataSourceItems.length > 1) {
-			
+
 			sbiModule_restServices.delete("2.0/datasources",queryParamDataSourceIdsToDelete()).success(
 					function(data, status, headers, config) {
 						console.log(data);
@@ -136,11 +136,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					}).error(function(data, status, headers, config) {
 						console.log("[DELETE MULTIPLE]: FAIL!"+status)
 					})
-			
+
 		} else {
-			
+
 			//DELETE  ONE DATA SOURCE
-			
+
 			sbiModule_restServices.promiseDelete("2.0/datasources", $scope.selectedDataSource.dsId)
 			.then(function(response) {
 				console.log("[DELETE]: SUCCESS!");
@@ -150,14 +150,14 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-				
-			});	
+
+			});
 		}
 	};
-	
+
 	//SHOW RIGHT-COLUMN
-	$scope.createNewForm = function () {
-		
+	$scope.createNewDatasource = function () {
+
 		if($scope.isDirty==false) {
 			$scope.showMe=true;
 			$scope.jdbcOrJndi = {type:"JDBC"};
@@ -175,9 +175,9 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					driver: "",
 					jndi: ""
 			};
-			
+
 		} else {
-			
+
 			$mdDialog.show($scope.confirm).then(function() {
 				$scope.showMe=true;
 				$scope.selectedDataSource = {
@@ -190,9 +190,9 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 						urlConnection: "",
 						user: "",
 						pwd: "",
-						driver: ""				
+						driver: ""
 				};
-				
+
 				$scope.isDirty = false;
 
 
@@ -200,26 +200,26 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 				$scope.showMe = true;
 			});
 		}
-		
+
 	};
-	
+
 	//LOAD SELECTED SOURCE
 	$scope.loadSelectedDataSource = function(item) {
-		
+
 		$scope.jdbcOrJndi.type = null;
 		$scope.showMe=true;
-			
+
 			if($scope.isDirty==false) {
-				
+
 				$scope.selectedDataSource = angular.copy(item);
-				
+
 			} else {
-				
-				
+
+
 
 				$mdDialog.show($scope.confirm).then(function() {
-					
-					
+
+
 					$scope.selectedDataSource = angular.copy(item);
 					$scope.isDirty = false;
 
@@ -228,30 +228,30 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					$scope.showMe = true;
 				});
 			}
-			
+
 			$scope.connectionType();
 	};
-	
+
 	$scope.connectionType = function () {
-		
+
 		 if($scope.selectedDataSource.driver){
 			 $scope.jdbcOrJndi.type = "JDBC";
-		 } 
+		 }
 		 if($scope.selectedDataSource.jndi!="") {
 			 $scope.jdbcOrJndi.type = "JNDI";
 		 }
-		 
+
 	}
-	
+
 	//CLOSE RIGHT-COLUMN AND SET SELECTED DATA SORUCE TO AN EMPTY OBJECT
 	$scope.closeForm = function(){
-		$scope.forms.dataSourceForm.$setPristine();
-		$scope.forms.dataSourceForm.$setUntouched();
+		$scope.dataSourceForm.$setPristine();
+		$scope.dataSourceForm.$setUntouched();
 		$scope.showMe=false;
 		$scope.isDirty = false;
 		$scope.selectedDataSource = {};
 	};
-	
+
 	//CONFIRM DELETE
 	$scope.showActionDelete = function() {
 		var toast = $mdToast.simple()
@@ -266,7 +266,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			}
 		});
 	};
-	
+
 	//CONFIRM MULTIPLE DELETE
 	$scope.showActionMultiDelete = function() {
 		var toast = $mdToast.simple()
@@ -281,7 +281,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			}
 		});
 	};
-	
+
 	//CONFIRM OK
 	$scope.showActionOK = function() {
 		var toast = $mdToast.simple()
@@ -297,7 +297,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			}
 		});
 	};
-	
+
 	//TEST SUCCEEDED
 	$scope.showActionTestOK = function() {
 		var toast = $mdToast.simple()
@@ -311,7 +311,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			}
 		});
 	};
-	
+
 	//TEST FAILED
 	$scope.showActionTestKO = function(e) {
 		var toast = $mdToast.simple()
@@ -325,20 +325,20 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			}
 		});
 	};
-	
+
 	//CREATING PATH FOR DELETING MULTIPLE DATA SOURCES
 	queryParamDataSourceIdsToDelete = function(){
-		
+
 		   var q="?";
-		   
+
 		   for(var i=0; i<$scope.selectedDataSourceItems.length;i++){
 			   q+="id="+$scope.selectedDataSourceItems[i].dsId+"&";
 		   }
-		   
+
 		   return q;
-		   
+
 	};
-	
+
 	$scope.deleteItem = function (item) {
 		console.log(item)
 		sbiModule_restServices.promiseDelete("2.0/datasources", item.dsId)
@@ -350,42 +350,45 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			
-		});	
+
+		});
 	}
-	
+
 	//REST
 	$scope.testDataSource = function () {
-		
+
 		//TEST DATA SOURCE
 		var testJSON = angular.copy($scope.selectedDataSource);
-		
+
 		if(testJSON.hasOwnProperty("dsId")){
 			delete testJSON.dsId;
 		}
-		
+
 		if(testJSON.hasOwnProperty("userIn")) {
 			delete testJSON.userIn;
 		}
-		
+
 		console.log(angular.toJson(testJSON));
-		
+
 		sbiModule_restServices.promisePost('2.0/datasources/test','',testJSON)
 		.then(function(response) {
 			sbiModule_messaging.showInfoMessage("Test is ok", 'Information!');
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			
+			if (response.data.errors[0].message=="") {
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.ds.error.testing.datasource"), 'Error');
+			} else {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			}
 		});
 	}
-	
+
 	//Get user
 	$scope.getUser = function() {
 		console.log("is super admin - "+$scope.isSuperAdmin);
-		
+
 	}
 	$scope.getUser();
-	
+
 	//SPEED MENU TRASH ITEM
 	$scope.dsSpeedMenu= [
 	                     {
@@ -393,12 +396,12 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	                    	icon:'fa fa-trash-o fa-lg',
 	                    	color:'#153E7E',
 	                    	action:function(item,event){
-	                    		
+
 	                    		$scope.deleteItem(item);
 	                    	}
 	                     }
 	                    ];
-	
+
 	//INFO ABOUT THE JNDI INPUT FORM
 	$scope.showJdniInfo = function(ev){
 		$mdDialog.show(
@@ -415,11 +418,10 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	.title(sbiModule_translate.load("sbi.catalogues.generic.modify"))
 	.content(
 			sbiModule_translate
-			.load("sbi.catalogues.generic.modify.msg"))
-			.ariaLabel('Lucky day').ok(
+			.load("sbi.catalogues.generic.modify.msg")).ok(
 					sbiModule_translate.load("sbi.general.yes")).cancel(
 							sbiModule_translate.load("sbi.general.No"));
-	
+
 };
 
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
