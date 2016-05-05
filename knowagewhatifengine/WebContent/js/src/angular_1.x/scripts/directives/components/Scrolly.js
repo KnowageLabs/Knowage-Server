@@ -7,9 +7,9 @@ angular.module('scrolly_directive',[])
 	        	
 	            var raw = element[0];
 	            scope.$watch('tableHeight', function() {
-	                console.log("table height is "+scope.tableHeight);
+	                
 	            });
-	            console.log('visina'+raw.parentElement.offsetHeight);
+	           
 	            scope.tableHeight = raw.offsetHeight;
 	            console.log(scope.tableHeight);
 	            scope.scrollTo = function(posX,posY) {
@@ -147,8 +147,7 @@ angular.module('scrolly_directive',[])
 	                
 	            element.bind('scroll', function () {
 	                
-	                console.log(raw.scrollTop+"gore");
-	                console.log(raw.scrollLeft+"levo");
+	              
 	                
 	                var startRow = Math.round((raw.scrollTop)/100);
 	                var startColumn =  Math.round(raw.scrollLeft/100);
