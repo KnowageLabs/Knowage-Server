@@ -37,20 +37,10 @@
 	</div>
 	<div style="width: calc(100% - 32px);color:#3b678c" layout="column";>
 	
-	<div layout-align="space-around" layout="row" ng-show="dtLoadingShow">
-					
-						<md-progress-circular 
-							
-					 	 	class=" md-hue-4"
-					 		md-mode="indeterminate" 
-					 		md-diameter="70"
-					 	
-					 		style="height:100%;">
-						</md-progress-circular>
-					
-	</div>
+	
 	
 	<md-content scrolly style="height:100%;width:100%" >
+	<md-progress-circular loading ng-show="showEl" md-mode="indeterminate" md-diameter="100%" style="position:fixed;top:50%;left:50%;z-index: 500;background:rgba(255, 255, 255, 0);"></md-progress-circular>
 	 <div   ng-style="{'height':modelConfig.rowCount*100+tableHeight-120,'width':modelConfig.columnCount*100+tableWeight-120}" ></div>	<!-- background-color: #3b678c; -->
 	 	</md-content>
 	 	<div ng-bind-html="table" compile-template style="position:absolute;top:0;max-width: calc(100% - 52px);" >
