@@ -27,7 +27,7 @@
 					<span>{{translate.load('sbi.kpi.scorecard.perspective.goal.list')}}</span>
 				</h2>
 				<span flex></span>
-				<md-button class="md-raised" ng-click="addTarget()" aria-label="Aggiungi Obiettivo">
+				<md-button class="ng-scope" ng-click="addTarget()" aria-label="Aggiungi Obiettivo">
 					{{translate.load('sbi.kpi.scorecard.perspective.goal.add')}}
 				</md-button>
 			</div>
@@ -66,7 +66,7 @@
 		    	</md-toolbar>
 		    	<md-content layout-padding layout="row" >
 		    		
-		    			<b layout-padding class="lh30">KPI</b>
+		    			<b layout-padding class="lh30">{{translate.load('sbi.generic.kpi')}}</b>
 		    			<kpi-semaphore-indicator flex ng-repeat="groupedKpi in target.groupedKpis" indicator-color="groupedKpi.status" indicator-value="groupedKpi.count"></kpi-semaphore-indicator>
 
 		    	</md-content>

@@ -58,7 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<form>
 		<md-toolbar>
 			<div class="md-toolbar-tools">
-				<h1>Save Target</h1>
+				<h1>{{translate.load("sbi.target.save")}}</h1>
 				<span flex></span>
 				<md-button class="md-icon-button" ng-click="close()">
 					<md-icon md-font-icon="fa fa-times closeIcon" aria-label="translate.load('sbi.general.close.dialog')"></md-icon>
@@ -82,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 			<div class="footer">
 				<md-button class="dialogButton" ng-click="apply()" md-autofocus>
-					Save<md-icon md-font-icon="fa fa-check buttonIcon" aria-label={{translate.load('sbi.generic.apply')}}></md-icon>
+				{{translate.load('sbi.generic.apply')}}<md-icon md-font-icon="fa fa-check buttonIcon" aria-label={{translate.load('sbi.generic.apply')}}></md-icon>
 				</md-button>
 			</div>
 		</md-dialog-content>
@@ -141,7 +141,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<queue-table>
 							<div layout="row"> 
 								<span flex></span>
-								<md-button type="button" id="add-kpi" ng-click="scopeFunctions.openShowDialog($event);">Add KPI association</md-button>
+								<md-button type="button" id="add-kpi" ng-click="scopeFunctions.openShowDialog($event);">{{scopeFunctions.translate.load("sbi.kpi.addkpiassociation.single")}}</md-button>
 							</div>
 						</queue-table> 
 					</angular-table>

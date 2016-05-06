@@ -9,7 +9,7 @@
 					<span>{{translate.load('sbi.kpi.scorecard.perspective.list')}}</span>
 				</h2>
 				<span flex></span>
-				<md-button class="md-raised" ng-click="addPerspective()" aria-label="Aggiungi Prospettiva">
+				<md-button class="ng-scope" ng-click="addPerspective()" aria-label="Aggiungi Prospettiva">
 					{{translate.load('sbi.kpi.scorecard.perspective.add')}}
 				</md-button>
 			</div>

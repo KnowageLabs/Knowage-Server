@@ -2,10 +2,10 @@
 	<form >
 		<md-toolbar>
 			<div class="md-toolbar-tools">
-				<h1>Add KPI association</h1>
+				<h1>{{translate.load("sbi.kpi.addkpiassociation")}}</h1>
 				<span flex></span>
-				<md-button class="md-primary" ng-click="ok()">Save</md-button>
-				<md-button class="md-primary" ng-click="close()">Close</md-button>
+				<md-button class="md-primary" ng-click="ok()">{{translate.load("sbi.generic.update")}}</md-button>
+				<md-button class="md-primary" ng-click="close()">{{translate.load("sbi.general.close")}}</md-button>
 			</div>
 		</md-toolbar>
 		<md-dialog-content >

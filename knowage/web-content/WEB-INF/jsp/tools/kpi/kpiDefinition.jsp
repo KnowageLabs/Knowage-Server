@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <form>
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h1>Save new KPI</h1>
+        <h1>{{translate.load('sbi.kpi.addkpiassociation')}}</h1>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="close()">
           <md-icon md-font-icon="fa fa-times closeIcon" aria-label="Close dialog"></md-icon>
@@ -75,7 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </md-item-template> 
       </md-autocomplete>  
 
-	<md-checkbox ng-model="kpi.enableVersioning">Enable Versioning</md-checkbox>  
+	<md-checkbox ng-model="kpi.enableVersioning">{{translate.load('sbi.kpi.edit.enable.versioning')}}</md-checkbox>  
      </div>
     
 	<div class="footer">

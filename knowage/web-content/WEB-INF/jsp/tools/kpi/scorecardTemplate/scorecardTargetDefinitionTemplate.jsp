@@ -25,7 +25,7 @@
 					<span>{{translate.load('sbi.kpi.scorecard.perspective.kpi.list')}}</span>
 				</h2>
 				<span flex></span>
-				<md-button class="md-raised" ng-click="addKpiToTarget();" aria-label="load kpi">
+				<md-button class="ng-scope" ng-click="addKpiToTarget();" aria-label="load kpi">
 					{{translate.load('sbi.kpi.scorecard.goal.load.kpi')}}
 				</md-button>
 			</div>

@@ -4,7 +4,7 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 	$scope.translate=sbiModule_translate;
 
 	$scope.tableFunction={
-
+			translate:sbiModule_translate,
 			loadListKPI: function(item,evt){
 				var promise = $scope.loadListKPI();
 				promise.then(function(result){
@@ -54,7 +54,7 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 			templateUrl: 'templatesaveKPI.html',
 			clickOutsideToClose:true,
 			preserveScope:true,
-			locals: {items: deferred,kpi:$scope.kpi,kpiAllList:$scope.kpiAllList,engine:$scope.selectedScheduler, kpiSelected: $scope.kpiSelected}
+			locals: {items: deferred,kpi:$scope.kpi,kpiAllList:$scope.kpiAllList,engine:$scope.selectedScheduler, kpiSelected: $scope.kpiSelected, translate:sbiModule_translate}
 		})
 		.then(function(answer) {
 			$scope.status = 'You said the information was "' + answer + '".';
@@ -84,8 +84,9 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 
 }
 
-function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,engine,kpiSelected){
+function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,engine,kpiSelected, translate){
 	//controller mdDialog to select kpi 
+	$scope.translate=translate;
 	$scope.tableFunction={
 			exists: function(item,evt){
 				return $scope.exists(item);

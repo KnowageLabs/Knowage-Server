@@ -10,7 +10,7 @@
 		<queue-table >
 			<div layout="row"> 
 				<span flex></span>
-				<md-button ng-click="scopeFunctions.loadListKPI()">Add KPI associations</md-button>
+				<md-button ng-click="scopeFunctions.loadListKPI()">{{scopeFunctions.translate.load('sbi.kpi.addkpiassociation')}}</md-button>
 			</div>
 		</queue-table> 
 		</angular-table>

@@ -64,7 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <form>
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h1>Save Scheduler</h1>
+        <h1>{{translate.load("sbi.kpi.scheduler.save")}}</h1>
         <span flex></span>
          <md-button class="md-icon-button" ng-click="close()">
           <md-icon md-font-icon="fa fa-times closeIcon" aria-label="Close dialog"></md-icon>
@@ -75,7 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <md-dialog-content >
      <div class="md-dialog-content">
 		<md-input-container class="small counter" class="small counter">
-			<label>Name</label>
+			<label>{{translate.load("sbi.generic.name")}}</label>
 			<input class="input_class" ng-model="selectedScheduler.name" required maxlength="40" ng-maxlength="40" md-maxlength="40">
 		 </md-input-container>
 		<div class="footer">
@@ -91,13 +91,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <form>
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h1>Save new KPI</h1>
+        <h1>{{translate.load("sbi.kpi.edit.save")}}</h1>
         <span flex></span>
 		<md-button class="md-primary" ng-click="addKPIToCheck()">
-          	Save
+          	{{translate.load("sbi.generic.update")}}
         </md-button>
 		<md-button class="md-primary" ng-click="close()">
-			Close    
+			{{translate.load("sbi.general.close")}}    
         </md-button>
       </div>
 	

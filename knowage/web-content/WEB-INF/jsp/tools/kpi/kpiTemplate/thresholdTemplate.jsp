@@ -42,7 +42,7 @@
 			<queue-table >
 				<div layout="row"> 
 					<span flex></span>
-					<md-button   ng-click="scopeFunctions.addNewThreshold()">Add new Threshold item</md-button>
+					<md-button   ng-click="scopeFunctions.addNewThreshold()">{{translate.load("sbi.kpi.threshold.add")}}</md-button>
 				</div>
 			</queue-table> 
 		

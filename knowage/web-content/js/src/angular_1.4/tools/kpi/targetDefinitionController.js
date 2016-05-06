@@ -120,7 +120,8 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 	$scope.kpisFunctions = {
 		openShowDialog: function($event) {
 			$scope.showDialog($event);
-		}
+		},
+		translate:sbiModule_translate
 	};
 	
 	$scope.getLabelForBar = function (){
@@ -184,8 +185,10 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			templateUrl: sbiModule_config.contextName + '//js/src/angular_1.4/tools/kpi/template/targetKpiAddDialog.jsp',
 			hasBackdrop: true,
 			clickOutsideToClose: false,
-			controller: ['$scope', function($scope) {
+			locals:{translate:sbiModule_translate},
+			controller: ['$scope','translate', function($scope,translate) {
 				$scope.selectedKpis = [];
+				$scope.translate=translate;
 				$scope.foundActions = [
 				//	{
 				//		label: sbiModule_translate.load('sbi.generic.edit'),
@@ -394,7 +397,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 	$scope.showSaveTargetDialog = function() {
 		$mdDialog.show({
 			controller:
-				function ($scope, $mdDialog, targetCategories, targetCategory, sbiModule_translate) {
+				function ($scope, $mdDialog, targetCategories, targetCategory, translate) {
 					$scope.translate = sbiModule_translate;
 					$scope.targetCategory = targetCategory;
 					$scope.targetCategories = targetCategories;
@@ -428,7 +431,8 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			preserveScope: true,
 			locals: {
 				targetCategories: $scope.targetCategories,
-				targetCategory: typeof $scope.target.category != 'undefined' ? $scope.target.category : null
+				targetCategory: typeof $scope.target.category != 'undefined' ? $scope.target.category : null,
+				translate:sbiModule_translate
 			}
 		})
 		.then(function(targetCategory) {
