@@ -407,7 +407,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 //		ArrayList<HashMap<String, Object>> result = DocumentExecutionUtils.getLovDefaultValues(
 //				role, biObject, biObjectParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, req);
 		HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(
-				role, biObject, biObjectParameter, req);
+				role, biObject, biObjectParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, req);
 		
 		ArrayList<HashMap<String, Object>> result = 
 				(ArrayList<HashMap<String, Object>>) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES);

@@ -196,18 +196,22 @@
 					};
 					
 					paramDialogCtrl.save = function() {
-						if(paramDialogCtrl.tempParameter.multivalue) {
-							var parameterValueArray = [];
-
-							for(var i = 0; i < paramDialogCtrl.selectedTableItems.length; i++) {
-								var selectedTableItem = paramDialogCtrl.selectedTableItems[i];
-
-								parameterValueArray.push(selectedTableItem.value);
+						
+						// Lov parameters NON tree
+						if(paramDialogCtrl.tempParameter.defaultValues && paramDialogCtrl.tempParameter.defaultValuesMeta) {
+							if(paramDialogCtrl.tempParameter.multivalue) {
+								var parameterValueArray = [];
+	
+								for(var i = 0; i < paramDialogCtrl.selectedTableItems.length; i++) {
+									var selectedTableItem = paramDialogCtrl.selectedTableItems[i];
+	
+									parameterValueArray.push(selectedTableItem.value);
+								}
+	
+								paramDialogCtrl.tempParameter.parameterValue = parameterValueArray;
+							} else {
+								paramDialogCtrl.tempParameter.parameterValue = paramDialogCtrl.selectedTableItems.value;
 							}
-
-							paramDialogCtrl.tempParameter.parameterValue = parameterValueArray;
-						} else {
-							paramDialogCtrl.tempParameter.parameterValue = paramDialogCtrl.selectedTableItems.value;
 						}
 						
 						angular.copy(paramDialogCtrl.tempParameter, paramDialogCtrl.initialParameterState);
@@ -253,54 +257,57 @@
 							);
 					};
 					
-					paramDialogCtrl.tableColumns = [];
-					for(var i = 0 ; i < paramDialogCtrl.tempParameter.defaultValuesMeta.length; i++) {
-						var columnName = paramDialogCtrl.tempParameter.defaultValuesMeta[i];
+					// Lov parameters NON tree
+					if(paramDialogCtrl.tempParameter.defaultValues && paramDialogCtrl.tempParameter.defaultValuesMeta) {
+						paramDialogCtrl.tableColumns = [];
+						for(var i = 0 ; i < paramDialogCtrl.tempParameter.defaultValuesMeta.length; i++) {
+							var columnName = paramDialogCtrl.tempParameter.defaultValuesMeta[i];
+							
+							paramDialogCtrl.tableColumns.push(columnName.toUpperCase());
+						};
 						
-						paramDialogCtrl.tableColumns.push(columnName.toUpperCase());
-					};
-					
-					paramDialogCtrl.tableData = paramDialogCtrl.tempParameter.defaultValues;
-					
-					paramDialogCtrl.initSelectedTableItems = function() {
-						var isMultivalue = paramDialogCtrl.tempParameter.multivalue;
-						var defaultValues = paramDialogCtrl.tempParameter.defaultValues;
+						paramDialogCtrl.tableData = paramDialogCtrl.tempParameter.defaultValues;
 						
-						if(paramDialogCtrl.tempParameter.parameterValue 
-								&& paramDialogCtrl.tempParameter.parameterValue != null) {
+						paramDialogCtrl.initSelectedTableItems = function() {
+							var isMultivalue = paramDialogCtrl.tempParameter.multivalue;
+							var defaultValues = paramDialogCtrl.tempParameter.defaultValues;
 							
-							var parameterValue = paramDialogCtrl.tempParameter.parameterValue;
-							
-							var selectedTableItemsArray = [];
-							
-							for (var i = 0; i < defaultValues.length; i++) {
-								var defaultValue = defaultValues[i];
+							if(paramDialogCtrl.tempParameter.parameterValue 
+									&& paramDialogCtrl.tempParameter.parameterValue != null) {
 								
-								if(isMultivalue) {
-									for (var j = 0; j < parameterValue.length; j++) {
-										var parameterValueItem = parameterValue[j];
-										
-										if(parameterValueItem == defaultValue.value) {
-											selectedTableItemsArray.push(defaultValue);
-											break;
+								var parameterValue = paramDialogCtrl.tempParameter.parameterValue;
+								
+								var selectedTableItemsArray = [];
+								
+								for (var i = 0; i < defaultValues.length; i++) {
+									var defaultValue = defaultValues[i];
+									
+									if(isMultivalue) {
+										for (var j = 0; j < parameterValue.length; j++) {
+											var parameterValueItem = parameterValue[j];
+											
+											if(parameterValueItem == defaultValue.value) {
+												selectedTableItemsArray.push(defaultValue);
+												break;
+											}
+										}
+									} else {
+										if(parameterValue == defaultValue.value) {
+											return defaultValue;
 										}
 									}
-								} else {
-									if(parameterValue == defaultValue.value) {
-										return defaultValue;
-									}
 								}
+								
+								if(isMultivalue) {
+									return selectedTableItemsArray;
+								}
+							} else {
+								return isMultivalue? [] : {};
 							}
-							
-							if(isMultivalue) {
-								return selectedTableItemsArray;
-							}
-						} else {
-							return isMultivalue? [] : {};
-						}
-					};
-					
-					paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
+						};
+						
+						paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
+					}
 				}
 			});
 		};
