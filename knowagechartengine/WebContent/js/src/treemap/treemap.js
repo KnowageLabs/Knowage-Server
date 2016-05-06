@@ -354,7 +354,7 @@ function prepareChartConfForTreemap(chartConf) {
 			data: points,
 			events:{
 				click: function(event){
-					console.log(event.point);
+//					console.log(event.point);
 			        if(chartConf.chart.isCockpit==true){
 			        	if(chartConf.chart.outcomingEventsEnabled){
 			        	handleCockpitSelection(event);
@@ -823,7 +823,7 @@ function prepareChartConfForHeatmap(chartConf) {
             data:points,
             events: {
             click: function(event){
-            	console.log(event.point);
+//            	console.log(event.point);
             	if(chartConf.chart.isCockpit==true){
             		if(chartConf.chart.outcomingEventsEnabled){
             		var selectParams=getSelectionParammsForHeatmap(event.point);
