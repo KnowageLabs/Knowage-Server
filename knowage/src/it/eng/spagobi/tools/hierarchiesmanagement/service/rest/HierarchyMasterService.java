@@ -561,7 +561,7 @@ public class HierarchyMasterService {
 			 * in this section we add columns and values related to hierarchy general fields specified in request JSON*
 			 **********************************************************************************************************/
 
-			manageGeneralFieldsSection(dataSource, generalFields, fieldsMap, typeMap, requestVal, columnsClause, valuesClause, sep);
+			manageGeneralFieldsSection(dataSource, generalFields, record, metatadaFieldsMap, fieldsMap, typeMap, requestVal, columnsClause, valuesClause, sep);
 
 			/****************************************************************************************
 			 * in this section we add columns and values related to levels specified in request JSON*
@@ -654,8 +654,9 @@ public class HierarchyMasterService {
 		logger.debug("END");
 	}
 
-	private void manageGeneralFieldsSection(IDataSource dataSource, List<Field> generalFields, Map<Integer, Object> fieldsMap, Map<Integer, String> typesMap,
-			JSONObject requestVal, StringBuffer columnsClause, StringBuffer valuesClause, String sep) throws JSONException, ParseException {
+	private void manageGeneralFieldsSection(IDataSource dataSource, List<Field> generalFields, IRecord record, Map<String, Integer> metatadaFieldsMap,
+			Map<Integer, Object> fieldsMap, Map<Integer, String> typesMap, JSONObject requestVal, StringBuffer columnsClause, StringBuffer valuesClause,
+			String sep) throws JSONException, ParseException {
 
 		int index = fieldsMap.size();
 
@@ -687,38 +688,43 @@ public class HierarchyMasterService {
 
 		}
 
+		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
+		String beginDtValue = null;
+
 		if (!requestVal.isNull(HierarchyConstants.BEGIN_DT)) {
-
-			String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
-			String beginDtValue = requestVal.getString(HierarchyConstants.BEGIN_DT);
-
-			// updating sql clauses for columns and values
-			columnsClause.append(beginDtColumn + sep);
-			valuesClause.append("?" + sep);
-			String beginDtValueServerFormat = HierarchyUtils.getConvertedDate(beginDtValue, dataSource);
-			// updating values and types maps
-			// fieldsMap.put(index, beginDtValueServerFormat);
-			fieldsMap.put(index, beginDtValue);
-			typesMap.put(index, "date");
-			index++;
-
+			beginDtValue = requestVal.getString(HierarchyConstants.BEGIN_DT);
+		} else {
+			Date dt = (Date) record.getFieldAt(metatadaFieldsMap.get(HierarchyConstants.BEGIN_DT)).getValue();
+			beginDtValue = dt.toString();
 		}
+		// updating sql clauses for columns and values
+		columnsClause.append(beginDtColumn + sep);
+		valuesClause.append("?" + sep);
+		String beginDtValueServerFormat = HierarchyUtils.getConvertedDate(beginDtValue, dataSource);
+		// updating values and types maps
+		// fieldsMap.put(index, beginDtValueServerFormat);
+		fieldsMap.put(index, beginDtValue);
+		typesMap.put(index, "date");
+		index++;
+
+		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
+		String endDtValue = null;
 
 		if (!requestVal.isNull(HierarchyConstants.END_DT)) {
-
-			String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
-			String endDtValue = requestVal.getString(HierarchyConstants.END_DT);
-
-			// updating sql clauses for columns and values
-			columnsClause.append(endDtColumn + sep);
-			valuesClause.append("?" + sep);
-			String endDtValueServerFormat = HierarchyUtils.getConvertedDate(endDtValue, dataSource);
-			// updating values and types maps
-			// fieldsMap.put(index, endDtValueServerFormat);
-			fieldsMap.put(index, endDtValue);
-			typesMap.put(index, "date");
-
+			endDtValue = requestVal.getString(HierarchyConstants.END_DT);
+		} else {
+			Date dt = (Date) record.getFieldAt(metatadaFieldsMap.get(HierarchyConstants.END_DT)).getValue();
+			endDtValue = dt.toString();
 		}
+
+		// updating sql clauses for columns and values
+		columnsClause.append(endDtColumn + sep);
+		valuesClause.append("?" + sep);
+		String endDtValueServerFormat = HierarchyUtils.getConvertedDate(endDtValue, dataSource);
+		// updating values and types maps
+		// fieldsMap.put(index, endDtValueServerFormat);
+		fieldsMap.put(index, endDtValue);
+		typesMap.put(index, "date");
 
 	}
 
