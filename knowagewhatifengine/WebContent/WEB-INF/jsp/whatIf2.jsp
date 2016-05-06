@@ -22,6 +22,14 @@
 </script>
 </head>
 <body ng-controller="olapController" >
+
+<div loading ng-show="showEl" ng-class="showLoadingMask ? 'loadingMask' : 'loadingNoMask'">
+
+	<md-progress-circular  style="top:50%;left:50%;z-index: 501;" md-mode="indeterminate" md-diameter="100%" ></md-progress-circular>
+	
+</div>
+
+ 
 	<div layout="row">
 		
 		<div layout="column" flex=100>
