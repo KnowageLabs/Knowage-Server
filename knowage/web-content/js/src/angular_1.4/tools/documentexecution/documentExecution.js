@@ -17,12 +17,12 @@
 			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices','sbiModule_user', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService','infoMetadataService','sbiModule_download','$crossNavigationScope',
-			 'docExecute_dependencyService','$timeout','docExecute_exportService',documentExecutionControllerFn]);
+			 'docExecute_dependencyService','$timeout','docExecute_exportService','$filter',documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices,sbiModule_user, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine,documentExecuteServices
-			,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download,$crossNavigationScope,docExecute_dependencyService,$timeout,docExecute_exportService) {
+			,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download,$crossNavigationScope,docExecute_dependencyService,$timeout,docExecute_exportService,$filter) {
 
 		console.log("documentExecutionControllerFn IN ");
 		$scope.executionInstance = execProperties.executionInstance || {};

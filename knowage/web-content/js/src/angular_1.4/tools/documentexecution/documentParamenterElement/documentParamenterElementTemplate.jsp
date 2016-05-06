@@ -86,6 +86,21 @@
 			-->
 		</section>
 				
+				
+		<!-- Date -->
+		<section ng-if="parameter.type=='DATE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column">
+			<div layout="row" layout-align="start">
+				<label 	ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >
+					{{parameter.label}}
+					</label>
+			</div>
+				<span style="padding-top: 12;">
+					<md-datepicker ng-model="parameter.parameterValue"  md-placeholder="{{parameter.label}}"
+						>
+					</md-datepicker>
+				</span>
+		</section>		
+				
 	
 		<!-- manual number input -->
 		<label ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" 
@@ -96,7 +111,7 @@
 				ng-required="::parameter.mandatory" type="number"
 				ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" >	
 		
-	
+		
 		
 		
 			 

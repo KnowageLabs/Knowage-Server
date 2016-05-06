@@ -27,6 +27,7 @@ import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
@@ -44,6 +45,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -327,14 +330,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			// DEFAULT VALUE
 			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
-				parameterAsMap.put("parameterValue", objParameter.getDefaultValues());
+				DefaultValuesList valueList = buildDefaultValueList(objParameter);
+				if (valueList != null) {
+					parameterAsMap.put("parameterValue", valueList);
+				}
 			}
-
 			// load, if present, the json parameters
 			// if (jsonParameters.has(objParameter.getId())) {
 			// parameterAsMap.put("parameterValue", jsonParameters.getString(objParameter.getId()));
 			// }
-
 			if (showParameterLov) {
 				parametersArrayList.add(parameterAsMap);
 			}
@@ -624,6 +628,29 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 
 		return role;
+	}
+
+	private DefaultValuesList buildDefaultValueList(DocumentParameters objParameter) {
+		if (objParameter.getParType() != null && objParameter.getParType().equals("DATE")) {
+			String valueDate = objParameter.getDefaultValues().get(0).getValue().toString();
+			String[] date = valueDate.split("#");
+			SimpleDateFormat format = new SimpleDateFormat(date[1]);
+			DefaultValuesList valueList = new DefaultValuesList();
+			DefaultValue valueDef = new DefaultValue();
+			try {
+				Date d = format.parse(date[0]);
+				valueDef.setValue(d);
+				valueDef.setDescription(objParameter.getDefaultValues().get(0).getDescription());
+				valueList.add(valueDef);
+				return valueList;
+			} catch (ParseException e) {
+				logger.error("Error while building defalt Value List Date Type ", e);
+				return null;
+			}
+		} else {
+			return objParameter.getDefaultValues();
+		}
+
 	}
 
 }

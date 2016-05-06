@@ -104,11 +104,19 @@
 								jsonDatumDesc = jsonDatumValue;
 							}
 						} else {
-							
-							jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
-							
-							
-							jsonDatumDesc = jsonDatumValue;
+							//DATE
+							if(parameter.type='DATE'){
+								console.log('build date : ' , parameter.parameterValue);
+								var d = new Date(parameter.parameterValue);
+								var month = '' + (d.getMonth() + 1);
+								console.log(month + '/'+d.getDate()+'/'+d.getFullYear());
+								jsonDatumValue=month + '/'+d.getDate()+'/'+d.getFullYear();
+								jsonDatumDesc=month + '/'+d.getDate()+'/'+d.getFullYear();
+								
+							}else{
+								jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+								jsonDatumDesc = jsonDatumValue;
+							}							
 						}
 						jsonDatum[valueKey] = jsonDatumValue;
 						jsonDatum[descriptionKey] = jsonDatumDesc;
@@ -412,7 +420,7 @@
 	
 	documentExecutionModule.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config,docExecute_exportService
-			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories,$q
+			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories,$q,$filter
 			) {
 		
 		var serviceScope = this;	
@@ -538,6 +546,9 @@
 						} else {
 							if(parameter.type=='NUM'){
 								parameter.parameterValue = parseFloat(params[parameter.urlName],10);
+							}else if(parameter.type=='DATE'){
+								//console.log('Date to fill ' , params[parameter.urlName]);
+								parameter.parameterValue= new Date(params[parameter.urlName]);
 							}else if(parameter.type=='STRING'){
 								parameter.parameterValue = params[parameter.urlName];
 								if(parameter.defaultValues && parameter.defaultValues.length > 0) {
@@ -579,45 +590,8 @@
 					angular.copy(response.data.filterStatus, execProperties.parametersData.documentParameters);
 					
 					//setting default value				
-					var fillObj = {};
-					var hasDefVal = false;
-					for(var i=0; i<response.data.filterStatus.length; i++){
-						if(response.data.filterStatus[i].parameterValue && response.data.filterStatus[i].parameterValue.length>0){
-							var arrDefToFill = []; 
-							//var fillObj = {};
-							//MULTIVALUE
-							hasDefVal= true;
-							if(response.data.filterStatus[i].multivalue || response.data.filterStatus[i].selectionType=='TREE'){
-								if(response.data.filterStatus[i].defaultValues && response.data.filterStatus[i].defaultValues.length>0){
-									arrDefToFill=response.data.filterStatus[i].defaultValues;
-								}
-								for(var k=0;k<response.data.filterStatus[i].parameterValue.length;k++){
-									arrDefToFill.push(response.data.filterStatus[i].parameterValue[k].value);
-								}	
-								fillObj[response.data.filterStatus[i].urlName] = JSON.stringify(arrDefToFill);
-								//TREE
-								if(response.data.filterStatus[i].selectionType=='TREE'){
-									var strDefToFillDescription ='';
-									for(var z=0; z<arrDefToFill.length; z++){
-										strDefToFillDescription=strDefToFillDescription+arrDefToFill[z];
-										if(z<arrDefToFill.length-1){
-											strDefToFillDescription=strDefToFillDescription+';';
-										}
-									}
-									fillObj[response.data.filterStatus[i].urlName+'_field_visible_description'] = strDefToFillDescription;
-								}else{
-									fillObj[response.data.filterStatus[i].urlName+'_field_visible_description'] = JSON.stringify(arrDefToFill);
-								}
-								
-							}else{
-								//SINGLE VALUE
-								fillObj[response.data.filterStatus[i].urlName] = response.data.filterStatus[i].parameterValue[0].value;
-								fillObj[response.data.filterStatus[i].urlName+'_field_visible_description'] = response.data.filterStatus[i].parameterValue[0].value;	
-							}
-							//serviceScope.fillParametersPanel(fillObj);
-						}
-					}
-					if(hasDefVal){serviceScope.fillParametersPanel(fillObj);}
+					serviceScope.buildObjForFillParameterPanel(response.data.filterStatus);
+					
 					//correlation
 					buildCorrelation(execProperties.parametersData.documentParameters);
 					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
@@ -632,6 +606,54 @@
 				sbiModule_restServices.errorHandler(response.data,"error while attempt to load filters")   
 			}); 
 		};
+		
+		
+		
+		serviceScope.buildObjForFillParameterPanel = function(filterStatus){
+			var fillObj = {};
+			var hasDefVal = false;
+			for(var i=0; i<filterStatus.length; i++){
+				if(filterStatus[i].parameterValue && filterStatus[i].parameterValue.length>0){
+					var arrDefToFill = []; 
+					//var fillObj = {};
+					//MULTIVALUE
+					hasDefVal= true;
+					if(filterStatus[i].multivalue || filterStatus[i].selectionType=='TREE'){
+						if(filterStatus[i].defaultValues && filterStatus[i].defaultValues.length>0){
+							arrDefToFill=filterStatus[i].defaultValues;
+						}
+						for(var k=0;k<filterStatus[i].parameterValue.length;k++){
+							arrDefToFill.push(filterStatus[i].parameterValue[k].value);
+						}	
+						fillObj[filterStatus[i].urlName] = JSON.stringify(arrDefToFill);
+						//TREE
+						if(filterStatus[i].selectionType=='TREE'){
+							var strDefToFillDescription ='';
+							for(var z=0; z<arrDefToFill.length; z++){
+								strDefToFillDescription=strDefToFillDescription+arrDefToFill[z];
+								if(z<arrDefToFill.length-1){
+									strDefToFillDescription=strDefToFillDescription+';';
+								}
+							}
+							fillObj[filterStatus[i].urlName+'_field_visible_description'] = strDefToFillDescription;
+						}else{
+							fillObj[filterStatus[i].urlName+'_field_visible_description'] = JSON.stringify(arrDefToFill);
+						}
+						
+					}else{
+						//SINGLE VALUE
+						fillObj[filterStatus[i].urlName] = filterStatus[i].parameterValue[0].value;
+						fillObj[filterStatus[i].urlName+'_field_visible_description'] =filterStatus[i].parameterValue[0].value;	
+					}
+					//serviceScope.fillParametersPanel(fillObj);
+				}
+			}
+			if(hasDefVal){serviceScope.fillParametersPanel(fillObj);}
+		}
+		
+		
+		
+		
 		
 		serviceScope.createNewViewpoint = function() {
 			$mdDialog.show({
