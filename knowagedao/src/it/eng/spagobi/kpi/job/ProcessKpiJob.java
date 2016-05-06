@@ -53,6 +53,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,6 +63,8 @@ import org.quartz.JobExecutionException;
 
 @SuppressWarnings("rawtypes")
 public class ProcessKpiJob extends AbstractSuspendableJob {
+	static private Logger logger = Logger.getLogger(ProcessKpiJob.class);
+
 	// Only SQL is supported.
 	// Getters/setters omitted are from inner classes for readability.
 
@@ -350,7 +353,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 
 	@Override
 	public void internalExecute(JobExecutionContext job) throws JobExecutionException {
-		System.out.println("starting " + this.getClass());
+		logger.info("Starting job " + this.getClass());
 		Date timeRun = new Date();
 		computeKpis(job, timeRun, true);
 	}
@@ -621,8 +624,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 	private static KpiValueExecLog computeKpi(ParsedKpi parsedKpi, List<AggregateMeasureQuery> queries, Integer mainMeasure, boolean replaceMode,
 			List<Map<String, String>> queriesAttributesTemporalTypes, List<Set<String>> queriesIgnoredAttributes, Date timeRun) throws JobExecutionException {
 		KpiValueExecLog result = new KpiValueExecLog();
+		Session session = HibernateSessionManager.getCurrentSession();
 		try {
-			System.out.println(DateFormat.getInstance().format(new Date()) + " Processing Kpi Job...");
+			logger.info(DateFormat.getInstance().format(new Date()) + " Processing Kpi Job...");
 
 			// Read main measure data, preparing a formula for each future insert/update
 			QueryResult mqr = queries.get(mainMeasure).execute();
@@ -687,7 +691,6 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			String isoNow = df.format(timeRun);
 			// long tsNow = date.getTime();
 
-			Session session = HibernateSessionManager.getCurrentSession();
 			int lastId = reserveIds(session, "SBI_KPI_VALUE", rowsFormulae.size());
 			for (int r = 0; r < rowsFormulae.size(); r++) {
 				String value = rowsFormulae.get(r);
@@ -742,10 +745,12 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				session.getTransaction().commit();
 				// break; // TODO remove after debug
 			}
-			session.close();
-			System.out.println(DateFormat.getInstance().format(new Date()) + "...KPI Job PROCESSED");
+
+			logger.info(DateFormat.getInstance().format(new Date()) + "...KPI Job PROCESSED");
 		} catch (Exception e) {
 			throw new JobExecutionException(e);
+		} finally {
+			session.close();
 		}
 		return result;
 	}
