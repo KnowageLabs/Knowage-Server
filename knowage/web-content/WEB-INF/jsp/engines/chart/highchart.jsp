@@ -181,7 +181,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           }          
           // putting the chart data into hidden input
           //form.elements[0].value = Ext.encode(svg);       
-          debugger;
           form.elements[0].value = svg;
           form.action = urlExporter;
           form.target = '_blank'; // result into a new browser tab

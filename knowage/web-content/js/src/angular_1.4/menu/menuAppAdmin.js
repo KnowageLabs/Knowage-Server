@@ -183,7 +183,6 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
 			$scope.languageSelection = function languageSelection(){
         		$scope.toggleMenu();
         		
-        		debugger;
 	 			var languages = [];
 
     	 		for (var j = 0; j < Sbi.config.supportedLocales.length ; j++) {

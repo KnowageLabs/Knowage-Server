@@ -135,7 +135,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	}
 	$scope.showSaveGUI= function(){
 		var deferred = $q.defer();
-		debugger;
 		$mdDialog.show({
 			controller: DialogControllerKPI,
 			templateUrl: 'templatesaveKPI.html',
@@ -144,13 +143,11 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			locals: {items: deferred,AttributeCategoryList: $scope.AttributeCategoryList,kpi:$scope.kpi, translate:sbiModule_translate}
 		})
 		.then(function(answer) {
-			debugger;
 			$scope.status = 'You said the information was "' + answer + '".';
 			return deferred.resolve($scope.selectedFunctionalities);
 		}, function() {
 			$scope.status = 'You cancelled the dialog.';
 		});
-		debugger;
 		return deferred.promise;
 	}
 
