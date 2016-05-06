@@ -486,10 +486,10 @@ $scope.sbiModule_messaging = sbiModule_messaging;
 		function(response) {
 			loadEngineKpi();
 			$scope.selectedScheduler.id = response.data.id;
-			$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.glossary.success.save")).position('top').action('OK'));
+			$mdToast.show($mdToast.simple().content(translate.load("sbi.glossary.success.save")).position('top').action('OK'));
 		},
 		function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.glossary.error.save"));
+			sbiModule_restServices.errorHandler(response.data,translate.load("sbi.glossary.error.save"));
 
 		});	
 	}
