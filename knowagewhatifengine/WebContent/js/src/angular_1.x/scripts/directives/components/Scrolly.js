@@ -24,9 +24,12 @@ angular.module('scrolly_directive',[])
 	        		
 	        		
 	            	 var table = document.getElementsByClassName("x-pivot-table")[0];
-	            	 var thead = table.getElementsByTagName("thead")[0];
-	            	 var bodyRows = table.getElementsByTagName("tbody")[0].children;
-	            	 var bodyColumns = bodyRows[0].children;
+	            	 if(table){
+	            		 var thead = table.getElementsByTagName("thead")[0];
+		            	 var bodyRows = table.getElementsByTagName("tbody")[0].children;
+		            	 var bodyColumns = bodyRows[0].children;
+	            	 
+	            	 
 	            	 
 	            	 var newRowSet = scope.modelConfig.rowsSet;
 	            	 var newColumnSet = scope.modelConfig.columnSet; 
@@ -99,13 +102,15 @@ angular.module('scrolly_directive',[])
 		            	 }
 		            	 
 	            	 
-	            	 
+	        	} 
 	        	}
 	           
 	        	scope.interval = $interval(
 	        			function(){
+	        				if(scope.ready){
+	        					scope.resize();
+	        				}
 	        				
-	        				scope.resize();
 	        				scope.scroll();
 	        				
 	        			
@@ -114,12 +119,12 @@ angular.module('scrolly_directive',[])
 	        	scope.scroll = function () {
 	                
 	              
-	                
+	        		
 	                var startRow = Math.round((raw.scrollTop)/100);
 	                var startColumn =  Math.round(raw.scrollLeft/100);
 	               if(scope.modelConfig.startRow!=startRow){
 	            	   scope.modelConfig.startRow = startRow;
-	            	  
+	            	   scope.showLoadingMask = false;
 	           	    	
 	           	    
 	           	    scope.sendModelConfig(scope.modelConfig);
@@ -128,7 +133,7 @@ angular.module('scrolly_directive',[])
 	            	
 	            	   scope.modelConfig.startColumn = startColumn;
 	           	    	
-	           	   
+	            	   scope.showLoadingMask = false;
 	           	    scope.sendModelConfig(scope.modelConfig);
 	               }
 	   
