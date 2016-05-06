@@ -83,7 +83,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		h = filter.uniqueName;
 		var exist = false;
 		
-		for(var i = 0; i< $scope.dataPointers.length;i++){
+		/*for(var i = 0; i< $scope.dataPointers.length;i++){
 			if($scope.dataPointers[i] == filterFather){
 				exist = true;
 				$scope.data= $scope.loadedData[i];
@@ -98,7 +98,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 					if(!existsInTracker)
 						getVisible($scope.data, h);				}
 			}
-		}
+		}*/
 		if(!exist){
 			$scope.getHierarchyMembersAsynchronus(filterFather, filter.axis, null,filter.id);
 			$scope.dataPointers.push(filterFather);
@@ -175,8 +175,11 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				}
 			}
 		}
-		if(!exist)
+		if(!exist){
+			$scope.data= $scope.loadedData[i];
 			$scope.dataPointers.push(filterFather);
+		}
+			
 	};
 	
 	$scope.getHierarchyMembersAsynchronus = function(hierarchy,axis,node,id){
