@@ -43,7 +43,9 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             hideTableHead: "=?",
                             fullWidth:"=?",
                             comparisonColumn:"=?",
-                            initialSorting:"=?"
+                            initialSorting:"=?",
+                            initialSortingAsc:"=?",
+                            visibleRowFunction:"&"
                         },
                         compile: function (tElement, tAttrs, transclude) {
                             return {
@@ -378,7 +380,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
         })
         .filter('customOrdering', function ($filter) {
         
-	        return function(items, column , reverse, tableColumns ,initialSorting) {
+	        return function(items, column , reverse, tableColumns ,initialSorting,initialSortingAsc) {
 	        	function getfiltered(){
 	        		var tmp=[];
 	        		angular.forEach(items, function(item) {
@@ -391,6 +393,11 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
 	        		for(var i=0;i<tableColumns.length;i++){
 	        			if(tableColumns[i].name== initialSorting){
 	        				column=tableColumns[i];
+	        				if(initialSortingAsc!=undefined){
+	        					if(initialSortingAsc==true){
+	        						reverse=true;
+	        					}
+	        				}
 	        				break;
 	        			}
 	        		}
@@ -551,7 +558,15 @@ $scope.loadTheadColumn=function(width){
 
 }
  
-
+	$scope.isVisibleRowFunction=function(row){
+		
+		if(row==undefined){
+			return true;
+		}
+		var isVisible =$scope.visibleRowFunction({item:row}) ;
+		
+		return isVisible == undefined ? true : isVisible;
+	}
 }
 
 function TableBodyControllerFunction($scope) {

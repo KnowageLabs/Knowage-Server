@@ -34,12 +34,11 @@ function behavior(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog
 	listTimespan();
 	loadCategories();
 	
+	
+	
 	ctrl.TSTableColumns=[{label:sbiModule_translate.load("sbi.generic.name") , name:"name"},{label:sbiModule_translate.load("sbi.generic.category") , name:"category",
 		transformer:function(row){
 			return (row==undefined || angular.equals("",row) )? "" : ctrl.objCat[row].VALUE_NM;
-		},
-		comparatorFunction:function(row,col){
-			debugger
 		}
 		}]
 	

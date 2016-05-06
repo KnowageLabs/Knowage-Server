@@ -48,7 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                		columns-search="ctrl.TSTableColumnsSearch"
                		show-search-bar=true 
                		click-function="ctrl.loadTimespan(item)"
-               		speed-menu-option=ctrl.menuTs>
+               		speed-menu-option=ctrl.menuTs >
               	</angular-table>
 		</list>
 		<detail label="ctrl.selectedItem.name" save-function="ctrl.saveTimespan" cancel-function="ctrl.cancel">
