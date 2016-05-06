@@ -122,9 +122,11 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.showMdxVar = source.mdxFormatted;
 		$scope.formulasData = source.formulas;
 		$scope.ready = true;
-		$timeout(function() {
-				$scope.resize();
-		    }, 500);
+
+		
+
+		
+
 
 	}
 
@@ -138,8 +140,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 						$scope.table = $sce.trustAsHtml(response.data.table);
 						$scope.modelConfig = response.data.modelConfig;
 						$scope.ready = true;
-						$scope.scrollTo($scope.modelConfig.startRow,
-								$scope.modelConfig.startColumn);
+						
 								
 					},
 					function(response) {
