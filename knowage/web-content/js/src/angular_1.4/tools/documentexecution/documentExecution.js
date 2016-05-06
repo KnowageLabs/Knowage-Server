@@ -326,6 +326,9 @@
 		$scope.closeDocument = function() {
 			$crossNavigationScope.closeDocument($scope.executionInstance.OBJECT_ID);  
 		};
+		$scope.isCloseDocumentButtonVisible=function(){
+			return $crossNavigationScope.documentNavigationScope.closeDocument!=undefined
+		}
 
 		$scope.iframeOnload = function(){
 			docExecute_urlViewPointService.frameLoaded = true;

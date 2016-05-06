@@ -1,11 +1,14 @@
 angular.module('documentExecutionMasterModule',  [ 'ngMaterial', 'sbiModule','cross_navigation'])
 .factory('$documentNavigationScope', function($window) {
-	    return $window.parent.angular.element($window.frameElement).scope().$parent;;
+	var docNavFrameScope=$window.parent.angular.element($window.frameElement).scope();
+	
+	    return docNavFrameScope==undefined ? {} : docNavFrameScope.$parent;
 })
 .controller('docExMasterController',['$scope','sbiModule_translate','$timeout','sourceDocumentExecProperties','sbiModule_config','$crossNavigationHelper','$documentNavigationScope','$mdDialog',docExMasterControllerFunction]);
 
 function docExMasterControllerFunction($scope,sbiModule_translate,$timeout,sourceDocumentExecProperties,sbiModule_config,$crossNavigationHelper,$documentNavigationScope,$mdDialog){
 	$scope.crossNavigationHelper=$crossNavigationHelper;
+	$scope.documentNavigationScope=$documentNavigationScope;
 //	$scope.sourceDocumentUrl="";
 $scope.executeSourceDocument = function() { 
 		var params = {};  
@@ -44,7 +47,7 @@ $scope.executeSourceDocument = function() {
 	         .cancel(sbiModule_translate.load("sbi.general.cancel"));
 			   $mdDialog.show(confirm)
 			   .then(function() {
-				    $crossNavigationHelper;
+//				    $crossNavigationHelper;
 				   $documentNavigationScope.closeDocument($crossNavigationHelper.crossNavigationSteps.stepItem[0].id);
 			   } );
 		}else{

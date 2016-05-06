@@ -198,6 +198,8 @@
         		<!-- PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ExecuteBIObjectPage" />
                 <PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="EXEC_PHASE_CREATE_PAGE" /-->
                 <PARAMETER name="OBJECT_ID" type="RELATIVE" scope="SERVICE_RESPONSE" value="OBJECT_ID" />
+                <PARAMETER name="OBJECT_LABEL" type="RELATIVE" scope="SERVICE_RESPONSE" value="OBJECT_LABEL" />
+                <PARAMETER name="OBJECT_NAME" type="RELATIVE" scope="SERVICE_RESPONSE" value="OBJECT_NAME" />
                 <PARAMETER name="TOOLBAR_VISIBLE" type="RELATIVE" scope="SERVICE_RESPONSE" value="TOOLBAR_VISIBLE" />
                 <PARAMETER name="SLIDERS_VISIBLE" type="RELATIVE" scope="SERVICE_RESPONSE" value="SLIDERS_VISIBLE" />
         		<PARAMETER name="MODALITY" type="ABSOLUTE" scope="" value="SINGLE_OBJECT_EXECUTION_MODALITY" />

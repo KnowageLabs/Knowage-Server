@@ -207,7 +207,7 @@ try{
                 	</md-menu>
                 </md-menu-bar>
                 
-               	<md-button class="md-icon-button" title="close" aria-label="Clear"  ng-click="closeDocument()">
+               	<md-button class="md-icon-button" title="close" aria-label="Clear"  ng-if="isCloseDocumentButtonVisible()" ng-click="closeDocument()">
 					   <md-icon md-font-icon="fa fa-times"></md-icon>
 				</md-button>
 			</div>
