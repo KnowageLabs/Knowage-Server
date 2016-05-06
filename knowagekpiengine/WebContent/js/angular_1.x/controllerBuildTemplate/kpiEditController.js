@@ -1,3 +1,5 @@
+(function() {
+
 var app = angular.module('templateBuild', [ 'ngMaterial', 'angular_table', 'sbiModule', 'expander-box','dinamic-list','kpi-style']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
@@ -34,8 +36,8 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 				});
 			},
 			vieweAs: [{'label':'speedometer','value':'Speedometer'},{'label':'kpicard','value':'Kpi Card'}]
+	};
 
-	}
 	$scope.parseDate = function(date){
 		result = "";
 		if(date == "d/m/Y"){
@@ -46,7 +48,8 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		}
 		return result;
 	};
-	$scope.loadListScorecardDialog = function(){
+	
+	$scope.loadListScorecardDialog = function() {
 		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
 		sbiModule_restServices.promiseGet("1.0/kpi","listScorecard")
 		.then(function(response){ 
@@ -64,10 +67,10 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 				$scope.allScorecard.push(obj);
 			}
 		});
-
-	}
+	};
 
 	$scope.loadListScorecardDialog();
+	
 	$scope.loadListScorecard = function(){
 		var deferred = $q.defer();
 
@@ -85,7 +88,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 			$scope.status = 'You cancelled the dialog.';
 		});
 		return deferred.promise;
-	}
+	};
 
 	$scope.measureMenuOption= [{
 		label : sbiModule_translate.load('sbi.generic.delete'),
@@ -94,13 +97,15 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		action : function(item,event) {
 			$scope.removeScorecard();
 		}
-
 	}];
+	
 	$scope.removeScorecard = function(){
 		$scope.scorecardSelected =[];
-	}
+	};
+	
 	$scope.saveTemplate = function(){
 		var obj = $scope.createJSONFromInfo();
+		
 		if(obj==null){
 			$scope.showAction(sbiModule_translate.load('sbi.kpidocumentdesigner.errorrange'));
 			return;
@@ -115,13 +120,16 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		sbiModule_restServices.promisePost("1.0/documents", 'saveKpiTemplate', 
 				$httpParamSerializer({jsonTemplate:JSON.stringify(obj), docLabel:sbiModule_config.docLabel}), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(
 						function(response) {
+//							console.log(response.data);
 
-							console.log(response.data);
-							$scope.showAction("Template saved");
+//							$scope.showAction("Template saved");
+							var saveSuccessMsg = sbiModule_translate.load("sbi.kpidocumentdesigner.save.success");
+							$scope.showAction(saveSuccessMsg);
 						},function(response) {
 							$scope.errorHandler(response.data,"");
 						});
-	}
+	};
+	
 	$scope.showAction = function(text) {
 		var toast = $mdToast.simple()
 		.content(text)
@@ -137,7 +145,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 
 			}
 		});
-	}
+	};
 
 	$scope.loadAllKpis = function(){
 		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
@@ -171,11 +179,13 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 			}
 		},function(response){
 		});
-	}
+	};
+	
 	$scope.loadAllKpis();
 
 	$scope.loadTemplateIfExist = function(){
 		var obj={"id": sbiModule_config.docLabel};
+		
 		sbiModule_restServices.promisePost("1.0/kpisTemplate", 'getKpiTemplate',obj).then(
 				function(response) {
 
@@ -188,14 +198,14 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 						}else{
 							$scope.loadScorecardTemplate(template);
 						}
-
 					}
-				},function(response) {
+
+				}, function(response) {
 					console.log("No template");
 				});
-	}
+	};
 
-	$scope.loadScorecardTemplate = function(template){
+	$scope.loadScorecardTemplate = function(template) {
 		if(template.chart.style!=undefined){
 			$scope.style = template.chart.style.font;
 		}
@@ -211,13 +221,13 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 			obj["creationDate"]=$filter('date')( response.data.creationDate, dateFormat);
 			obj["author"]=response.data.author;
 
-
 			$scope.scorecardSelected.push(obj);
 
 		},function(response){
 		});
-	}
-	$scope.loadKpiTemplate = function(template){
+	};
+	
+	$scope.loadKpiTemplate = function(template) {
 		$scope.typeDocument = template.chart.model;
 
 		if(Array.isArray(template.chart.data.kpi)){
@@ -229,6 +239,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		if(template.chart.style!=undefined){
 			$scope.style = template.chart.style.font;
 		}
+		
 		if(template.chart.options!=undefined){
 			if(template.chart.options.showlineargauge=="true"){
 				$scope.options.showlineargauge=true;
@@ -265,12 +276,11 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 			$scope.options.history.units = template.chart.options.history.units;
 		}
 		$scope.completeInfoKPI();
-	}
-
+	};
 
 	$scope.loadTemplateIfExist();
 
-	$scope.completeInfoKPI = function(){
+	$scope.completeInfoKPI = function() {
 		var arr= [];
 		var flagList = false;
 		for(var i=0;i<$scope.selectedKpis.length;i++){
@@ -307,11 +317,9 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		}
 
 		angular.copy(arr,$scope.selectedKpis);
+	};
 
-	}
-
-	$scope.indexInList=function(item, list) {
-
+	$scope.indexInList = function(item, list) {
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
 			if(object.id==item.id){
@@ -322,7 +330,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		return -1;
 	};
 
-	$scope.createJSONFromInfo = function(){
+	$scope.createJSONFromInfo = function() {
 		var obj = {};
 		obj["chart"] = {};
 		obj.chart["type"]=$scope.typeChart;
@@ -354,10 +362,8 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		obj.chart.style["font"] = $scope.style;
 
 		return obj;
-	}
-
-
-}
+	};
+};
 
 function DialogControllerScorecard($scope,$mdDialog,items,allScorecard,scorecardSelected){
 	$scope.scorecardSelected = scorecardSelected;
@@ -365,12 +371,12 @@ function DialogControllerScorecard($scope,$mdDialog,items,allScorecard,scorecard
 	$scope.selectedItem={};
 	$scope.close = function(){
 		$mdDialog.cancel();
-	}
+	};
+	
 	$scope.apply = function(){
 		$mdDialog.cancel();
 		items.resolve($scope.selectedItem);
-	}
+	};
+};
 
-
-}
-
+})();

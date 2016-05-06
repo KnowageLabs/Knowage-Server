@@ -37,7 +37,7 @@ author:
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
-<%@page import="it.eng.spagobi.kpi.config.bo.KpiValue"%>
+<%@page import="it.eng.spagobi.kpi.bo.KpiValue"%>
 <%@page import="it.eng.knowage.engine.kpi.KpiEngineInstance"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
@@ -289,6 +289,7 @@ author:
 			return obj;
 		});
 	})();
+	
 	</script>
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/template/kpiSemaphoreIndicator/kpiSemaphoreIndicator.js">
