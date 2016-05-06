@@ -1,5 +1,6 @@
 <div ng-controller="hierMasterController" id="hierMasterController">
 	<md-content layout="row" layout-wrap>
+		<!-- Table - Left side of master tab -->		
 		<div class="div-container" flex style="margin-right: 20px;" >
 			<md-toolbar class="miniheadhiersmall" style="border-bottom: 2px solid grey;">
 				<div class="md-toolbar-tools">
@@ -10,10 +11,10 @@
 			</md-toolbar>
 			<md-content id='hierMasterDim' layout-padding layout='column' layout-align='space-around stretch'>
 		        <md-content id='dimensionsSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
-		        	<md-datepicker required ng-model="dateDim" ng-change='getDimensionsTable(dateFilterDim,seeHideLeafDim,false,false,false)' md-placeholder="{{translate.load('sbi.hierarchies.date');}}" required></md-datepicker>
+		        	<md-datepicker ng-model="dateDim" ng-change='getDimensionsTable(dateFilterDim,seeHideLeafDim,false,false,false)' md-placeholder="{{translate.load('sbi.hierarchies.date');}}" required></md-datepicker>
 					<md-input-container flex flex-sm='90'>
 						<label>{{translate.load("sbi.hierarchies.dimensions");}}</label>
-			        	<md-select ng-model='dim' ng-disabled='!dateDim' md-on-close='getDimensionsTable(undefined,undefined,true,true,false);getHierarchies();getFilters()'>
+			        	<md-select ng-model='dim' md-on-close='getDimensionsTable(undefined,undefined,true,true,false);getHierarchies();getFilters()'>
 			        		<md-option ng-value="dim" ng-repeat="dim in dimensions">{{ dim.DIMENSION_NM }}</md-option>
 			        	</md-select>
 					</md-input-container>
@@ -85,11 +86,13 @@
 					<h4>{{translate.load("sbi.hierarchies.nodata");}}</h4>
 				</md-content> 	  	
 				<md-content layout="row" layout-align="start start">	
-					<md-button ng-click="createMasterHier()" ng-disabled="!dim || !dateDim" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.hierarchies.new.create.master");}}</md-button>
+					<md-button ng-click="createMasterHier()" ng-disabled="!dim || (!dateDim && !checkDateFilterDim(dimFilters))" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.hierarchies.new.create.master");}}</md-button>
 					<md-button ng-click="synchronizeMaster()" ng-disabled="dimensionsTable.length==0 ||  hierType.toUpperCase()!='MASTER' || !hierTree || hierTree.length == 0" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.hierarchies.synchronize");}}</md-button>
 				</md-content>
 			</md-content>
-		</div>													    
+		</div>
+		
+		<!-- Tree - Right side of master tab -->													    
 		<div  class="div-container" flex>
 			<md-toolbar class="miniheadhiersmall" style="border-bottom: 2px solid grey;" >
 				<div class="md-toolbar-tools">

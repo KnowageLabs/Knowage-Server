@@ -151,13 +151,13 @@ public class HierarchyMasterService {
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
 			String dimensionLabel = requestVal.getString("dimension");
-			String validityDate = requestVal.getString("validityDate");
+			String validityDate = (requestVal.isNull("validityDate")) ? null : requestVal.getString("validityDate");
 			String filterDate = (requestVal.isNull("filterDate")) ? null : requestVal.getString("filterDate");
 			String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null : requestVal.getString("filterHierarchy");
 			String filterHierType = (requestVal.isNull("filterHierType")) ? null : requestVal.getString("filterHierType");
 			String optionalFilters = (requestVal.isNull("optionalFilters")) ? null : requestVal.getString("optionalFilters");
 
-			if ((dimensionLabel == null) || (validityDate == null)) {
+			if (dimensionLabel == null) {
 				throw new SpagoBIServiceException("An unexpected error occured while creating hierarchy master", "wrong request parameters");
 			}
 
@@ -267,8 +267,8 @@ public class HierarchyMasterService {
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
 			String dimensionLabel = requestVal.getString("dimension");
-			String validityDate = requestVal.getString("validityDate");
 			String validityTreeDate = requestVal.getString("validityTreeDate");
+			String validityDate = (requestVal.isNull("validityDate")) ? null : requestVal.getString("validityDate");
 			String filterDate = (requestVal.isNull("filterDate")) ? null : requestVal.getString("filterDate");
 			String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null : requestVal.getString("filterHierarchy");
 			String filterHierType = (requestVal.isNull("filterHierType")) ? null : requestVal.getString("filterHierType");
@@ -277,7 +277,7 @@ public class HierarchyMasterService {
 			String optionHierarchy = (requestVal.isNull("optionHierarchy")) ? null : requestVal.getString("optionHierarchy");
 			String optionHierType = (requestVal.isNull("optionHierType")) ? null : requestVal.getString("optionHierType");
 
-			if ((dimensionLabel == null) || (validityDate == null)) {
+			if (dimensionLabel == null) {
 				throw new SpagoBIServiceException("An unexpected error occured while syncronize hierarchy master", "wrong request parameters");
 			}
 
@@ -1100,10 +1100,13 @@ public class HierarchyMasterService {
 		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
 		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
 
-		String vDateConverted = HierarchyUtils.getConvertedDate(validityDate, dataSource);
-
-		String vDateWhereClause = vDateConverted + " >= " + beginDtColumn + " AND " + vDateConverted + " <= " + endDtColumn;
-
+		String vDateWhereClause = null;
+		if (validityDate == null) {
+			vDateWhereClause = "1 = 1";
+		} else {
+			String vDateConverted = HierarchyUtils.getConvertedDate(validityDate, dataSource);
+			vDateWhereClause = vDateConverted + ">= " + beginDtColumn + " AND " + vDateConverted + " <= " + endDtColumn;
+		}
 		String recursiveSelectClause = cdRecursiveColumn + "," + nmRecursiveColumn + "," + cdParentColumn + "," + nmParentColumn;
 
 		String recurisveSelect = "SELECT " + recursiveSelectClause + " FROM " + dimensionName + " WHERE " + cdRecursiveColumn + " = ? AND " + nmRecursiveColumn

@@ -214,7 +214,11 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		});
 	/* When selected a dimension, get the JSON to create the table */
 	$scope.getDimensionsTable = function(filterDate, filterHierarchy, removeFilter, resetTree, optionalFilter) {
-		if ($scope.dateDim && $scope.dim) {
+		if (removeFilter == true){
+			$scope.removeFilters($scope.dimFilters);
+			$scope.dimensionsTable = undefined;
+		}
+		if ($scope.dim && ($scope.dateDim || $scope.checkDateFilterDim($scope.dimFilters) )){
 			var hier = $scope.hierMaster;
 			var dateFormatted = $scope.formatDate($scope.dateDim);
 			var config = {};
@@ -837,7 +841,8 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 
 	/*Visualize the create new master hierarchy dialog. If confirmed save the new element*/
 	$scope.createMasterHier = function(filterDate, filterHierarchy) {
-		if ($scope.dim && $scope.dateDim) {
+		//TODO add feature for date
+		if ($scope.dim && ($scope.dateDim || $scope.checkDateFilterDim($scope.dimFilters)) ) {
 			var dialog = $scope.showCreateMaster();
 			dialog.then(function(newHier) {
 					var dateFormatted = $scope.formatDate($scope.dateDim);
@@ -895,11 +900,12 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 		var date = $scope.dateDim;
 		var hier = $scope.hierMaster;
 		var hierTree = $scope.hierTree;
-		if (date && dim && hier && hierTree && hierTree.length > 0 && type && type.toUpperCase() == 'MASTER'){
+		if ((date || $scope.checkDateFilterDim($scope.dimFilters)) && dim && hier && hierTree && hierTree.length > 0 && type && type.toUpperCase() == 'MASTER'){
 			$scope.toggleLoading("master", true);
+			var dateFormatted = $scope.formatDate(date);
 			var item = {
 				    dimension: dim.DIMENSION_NM,
-				    validityDate: $scope.formatDate(date),
+				    validityDate: dateFormatted,
 				    validityTreeDate: $scope.formatDate($scope.dateTree),
 				    filterHierarchy: hier.HIER_NM,
 				    filterHierType: hier.HIER_TP,
@@ -931,7 +937,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 
 	/* Dialog to create the master hierarchy */
 	$scope.showCreateMaster = function() {
-		if ($scope.dim && $scope.dateDim) {
+		if ($scope.dim) {
 			var dimName = $scope.dim.DIMENSION_NM;
 			if (!$scope.metadataTreeMap[dimName]) {
 				$scope.getTreeMetadata($scope.dim);
@@ -1338,7 +1344,6 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	$scope.convertFiltersDim = function(filtersArray){
 		if (filtersArray.length > 0){
 			 var optionalFilter = angular.copy(filtersArray);
-//			 for (var k in optionalFilter){
 			 for (var k=0; k<optionalFilter.length;k++){
 				 if (optionalFilter[k].TYPE.toUpperCase()=='DATE'){
 					 optionalFilter[k].VALUE = $scope.formatDate(optionalFilter[k].VALUE); 
@@ -1347,6 +1352,28 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			 return optionalFilter;
 		}
 		return undefined;
+	}
+	
+	$scope.checkDateFilterDim = function(filtersArray){
+		if (filtersArray && filtersArray.length > 0){
+			 for (var k=0; k<filtersArray.length;k++){
+				 if (filtersArray[k].TYPE.toUpperCase()=='DATE'){
+					 if ($scope.formatDate(filtersArray[k].VALUE) != undefined) {
+						 return true;
+					 } 
+				 }
+			 }
+			 return false;
+		}
+		return false;
+	}
+	
+	$scope.removeFilters = function(filtersArray){
+		if (filtersArray && filtersArray.length > 0){
+			 for (var k=0; k<filtersArray.length;k++){
+				filtersArray[k].VALUE = undefined;
+			} 
+		}
 	}
 	
 	$scope.formatDate = function(date) {

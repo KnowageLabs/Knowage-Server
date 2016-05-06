@@ -583,9 +583,13 @@ public class HierarchyUtils {
 		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
 		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
 
-		String vDateConverted = HierarchyUtils.getConvertedDate(validityDate, dataSource);
-		String vDateWhereClause = vDateConverted + ">= " + beginDtColumn + " AND " + vDateConverted + " <= " + endDtColumn;
-
+		String vDateWhereClause = null;
+		if (validityDate == null) {
+			vDateWhereClause = "1 = 1";
+		} else {
+			String vDateConverted = HierarchyUtils.getConvertedDate(validityDate, dataSource);
+			vDateWhereClause = vDateConverted + ">= " + beginDtColumn + " AND " + vDateConverted + " <= " + endDtColumn;
+		}
 		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + dimensionName + " WHERE " + vDateWhereClause);
 
 		if (optionalFilter != null) {
@@ -1059,10 +1063,14 @@ public class HierarchyUtils {
 		calendar.setTime(calendar.getTime());
 		long timestamp = calendar.getTimeInMillis();
 		String newHierName = (String) paramsMap.get("hierTargetName") + "_" + timestamp;
-
-		Date vDateConverted = Date.valueOf((String) paramsMap.get("validityDate"));
-
-		String vDateWhereClause = " ? >= " + beginDtColumn + " AND ? <= " + endDtColumn;
+		String vDateWhereClause = null;
+		Date vDateConverted = new Date(0L);
+		if (paramsMap.containsKey("validityDate") && paramsMap.get("validityDate") != null) {
+			vDateConverted = Date.valueOf((String) paramsMap.get("validityDate"));
+			vDateWhereClause = " ? >= " + beginDtColumn + " AND ? <= " + endDtColumn;
+		} else {
+			vDateWhereClause = "? = ?";
+		}
 
 		String updateQuery = "UPDATE " + (String) paramsMap.get("hierarchyTable") + " SET " + hierNameColumn + "= ?, " + bkpColumn + " = ?, "
 				+ bkpTimestampColumn + "= ? WHERE " + hierNameColumn + "=? AND " + hierTypeColumn + "= ? AND " + vDateWhereClause;
