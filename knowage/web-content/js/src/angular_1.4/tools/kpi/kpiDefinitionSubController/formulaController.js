@@ -70,7 +70,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 
 
 		_editor.on("mousedown", function(cm,event){
-
+			event.srcElement = event.target || event.srcElement;
 			for(var i=0;i<event.srcElement.classList.length;i++){
 				$scope.token = event.srcElement.innerHTML;
 				if(event.srcElement.classList[i]=="cm-m-max"){
