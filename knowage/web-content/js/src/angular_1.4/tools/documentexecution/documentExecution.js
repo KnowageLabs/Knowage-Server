@@ -112,6 +112,10 @@
 		$scope.buildCorrelation = function(parameters){			
 			docExecute_dependencyService.buildVisualCorrelationMap(parameters);
 			docExecute_dependencyService.buildDataDependenciesMap(parameters);
+			//INIT VISUAL CORRELATION PARAMS
+			for(var i=0; i<parameters.length; i++){
+				docExecute_dependencyService.visualCorrelationWatch(parameters[i]);
+			}
 		};
 				
 //		

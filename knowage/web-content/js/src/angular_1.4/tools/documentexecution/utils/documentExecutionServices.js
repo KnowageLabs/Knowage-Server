@@ -1,7 +1,7 @@
 (function() {
 	var documentExecutionModule = angular.module('documentExecutionModule');
 	
-	documentExecutionModule.service('documentExecuteServices', function($mdToast,execProperties,sbiModule_restServices) {
+	documentExecutionModule.service('documentExecuteServices', function($mdToast,execProperties,sbiModule_restServices,sbiModule_config,$filter) {
 		var documentExecuteServicesObj = {
 //			decodeRequestStringToJson: function (str) {
 //				var hash;
@@ -107,11 +107,22 @@
 							//DATE
 							if(parameter.type=='DATE'){
 								console.log('build date : ' , parameter.parameterValue);
+								console.log('format date local ' + sbiModule_config.localizedDateFormat);
+								
+								console.log('DATE TO SUB  ' + $filter('date')(parameter.parameterValue, sbiModule_config.localizedDateFormat));
+								//var dateToSubmit = $filter('date')(parameter.parameterValue, sbiModule_config.localizedDateFormat);
+								
+								
 								var d = new Date(parameter.parameterValue);
 								var month = '' + (d.getMonth() + 1);
 								console.log(month + '/'+d.getDate()+'/'+d.getFullYear());
-								jsonDatumValue=month + '/'+d.getDate()+'/'+d.getFullYear();
-								jsonDatumDesc=month + '/'+d.getDate()+'/'+d.getFullYear();
+								dateToSubmit = month + '/'+d.getDate()+'/'+d.getFullYear();
+								
+								jsonDatumValue=dateToSubmit;
+								jsonDatumDesc=dateToSubmit;
+								
+								
+								//console.log('aaa ' , sbiModule_config.$mdDateLocaleProvider);
 								
 							}else{
 								jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
@@ -906,7 +917,8 @@
 		}
 	
 		this.visualCorrelationWatch = function(value){
-			  for(var k=0; k<serviceScope.visualCorrelationMap[value.urlName].length; k++){
+			if(serviceScope.visualCorrelationMap[value.urlName]){
+				for(var k=0; k<serviceScope.visualCorrelationMap[value.urlName].length; k++){
 					var visualDependency=serviceScope.visualCorrelationMap[value.urlName][k];
 				    //id document Parameter to control 
 					var idDocumentParameter = visualDependency.parameterToChangeId;
@@ -914,19 +926,35 @@
 					var compareValueArr = visualDependency.compareValue.split(",");
 					for(var z=0; z<compareValueArr.length; z++){
 						var newValueStr = value.parameterValue;
-						//conditions								
-						var condition = (visualDependency.operation=='contains') 
-							? (compareValueArr[z]==newValueStr) : condition=(compareValueArr[z]!=newValueStr); 
+						//conditions
+						var condition = false;
+						if( Object.prototype.toString.call( newValueStr ) === '[object Array]' ) {
+						   for(var l=0; l<newValueStr.length; l++){
+							   if(compareValueArr[z]==newValueStr[l]){
+								   condition=true; 
+							   }
+						   }
+						}else{
+							condition = (visualDependency.operation=='contains') ? 
+									(compareValueArr[z]==newValueStr) : condition=(compareValueArr[z]!=newValueStr);
+						}
+												
+//						var condition = (visualDependency.operation=='contains') 
+//							? (compareValueArr[z]==newValueStr) : condition=(compareValueArr[z]!=newValueStr); 
+							
 						if(condition){
 							execProperties.parametersData.documentParameters[idDocumentParameter].label=visualDependency.viewLabel;
 							execProperties.parametersData.documentParameters[idDocumentParameter].visible=true;
-							//Exit if one conditions is verify 
+							//Exit if one conditions is verify
+							documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[idDocumentParameter]);
 							break;
 						}else{
 							execProperties.parametersData.documentParameters[idDocumentParameter].visible=false;
 						}								
 					}
 				}
+			}  
+			
 		  }
 	
 		//GET ROW ID FROM URL NAME
