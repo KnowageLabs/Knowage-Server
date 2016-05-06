@@ -39,10 +39,10 @@
 		speed-menu-option= thresholdTableActionButton
 		>
 		
-			<queue-table >
+			<queue-table>
 				<div layout="row"> 
 					<span flex></span>
-					<md-button   ng-click="scopeFunctions.addNewThreshold()">{{translate.load("sbi.kpi.threshold.add")}}</md-button>
+					<md-button   ng-click="scopeFunctions.addNewThreshold()">{{scopeFunctions.translate.load("sbi.kpi.threshold.add")}}</md-button>
 				</div>
 			</queue-table> 
 		

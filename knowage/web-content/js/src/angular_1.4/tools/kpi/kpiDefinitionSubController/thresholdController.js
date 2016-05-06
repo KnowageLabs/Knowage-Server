@@ -2,7 +2,7 @@ app.controller('kpiDefinitionThresholdController', ['$scope','sbiModule_translat
 
 function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdSidenav,$mdDialog,$timeout){
 	$scope.thresholdList=[];
-	
+	$scope.translate = sbiModule_translate;
 	
 	$scope.loadThresholdList=function(){
  		sbiModule_restServices.promiseGet("1.0/kpi","listThreshold")
@@ -124,6 +124,7 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 	
 	
 	$scope.thresholdFunction={ 
+			translate:sbiModule_translate,
 			severityType:[],
 			moveUp: function(evt,index){
 				evt.stopPropagation();
