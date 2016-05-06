@@ -11,9 +11,9 @@ angular.module('scrolly_directive',[])
 	            });
 	           
 	            scope.tableHeight = raw.offsetHeight;
-	            console.log(scope.tableHeight);
+	            scope.tableWeight = raw.offsetWidth;
+	            
 	            scope.scrollTo = function(posX,posY) {
-		    		console.log(scope.modelConfig);
 	        		raw.scrollTop = posX*100;
 	        		raw.scrollLeft = posY*100;
 	        	 
@@ -23,54 +23,48 @@ angular.module('scrolly_directive',[])
 	        	scope.resize = function(){
 	        		
 	        		
-	        		
-	        		
-	        		 scope.tableHeight = raw.offsetHeight;
-	        		 scope.tableWeight = raw.offsetWidth;
-	            	 var corner = document.getElementsByClassName("x-pivot-corner")[0];
-	            	 var headers = document.getElementsByClassName("pv-row-hdr");
-	            	 var thead = document.getElementsByTagName("thead")[0];
-	            	 var header = headers[headers.length - 1];
-	            	
-	            	 var newRowSet=scope.modelConfig.rowsSet;
-	            	 var newColumnSet=scope.modelConfig.columnSet;
+	            	 var table = document.getElementsByClassName("x-pivot-table")[0];
+	            	 var thead = table.getElementsByTagName("thead")[0];
+	            	 var bodyRows = table.getElementsByTagName("tbody")[0].children;
+	            	 var bodyColumns = bodyRows[0].children;
 	            	 
-	            	 var bodyRows = document.getElementsByTagName("tbody")[0].children;
-	            	 var bodyColumns = document.getElementsByTagName("tbody")[0].children[0].children;
-	            	 var rowSize = document.getElementsByTagName("tbody")[0].children[0].offsetHeight;//28;
-	            	 
-	            	 var colunmSize = 90;
+	            	 var newRowSet = scope.modelConfig.rowsSet;
+	            	 var newColumnSet = scope.modelConfig.columnSet; 
 	            	
 	            	
-	            	if(document.getElementsByClassName("x-pivot-table")[0].offsetHeight>raw.parentElement.offsetHeight-35){
+	            	//Setting new number of rows if table height is bigger than div 
+	            	if(table.offsetHeight>raw.offsetHeight-35){
 	            		
+	            		console.log('table height is larger that parent div');
 	            		newRowSet = 0;
-	            		var ajSize = thead.offsetHeight;
-	            		while(bodyRows[newRowSet]!=undefined&&(ajSize+bodyRows[newRowSet].offsetHeight)<(raw.parentElement.offsetHeight-35)){
-	            			ajSize = ajSize+bodyRows[newRowSet].offsetHeight;
-	            			newRowSet++;
+	            		var newTableHeight = thead.offsetHeight;
+	            		
+	            		while(bodyRows[newRowSet]!=undefined&&(newTableHeight+bodyRows[newRowSet].offsetHeight)<(raw.offsetHeight-35)){
 	            			
+	            			newTableHeight = newTableHeight+bodyRows[newRowSet].offsetHeight;
+	            			newRowSet++;
 	            		}
 	            		
 	            	}	
-	            	if(document.getElementsByClassName("x-pivot-table")[0].offsetHeight<raw.parentElement.offsetHeight-70&&
+	            	if(table.offsetHeight<raw.offsetHeight-70&&
 	            			scope.modelConfig.rowCount>newRowSet){
+	            		console.log('table height is smaller than parent div and rowCount is greater than rowSet');
 	            		
-	            			newRowSet++;
+	            			newRowSet = 50;
 	            			
 	            		
 	            	}	
 	            	
-	            	if(document.getElementsByClassName("x-pivot-table")[0].offsetWidth<raw.parentElement.offsetWidth-70&&
+	            	if(table.offsetWidth<raw.offsetWidth-70&&
 	            			scope.modelConfig.columnCount>newColumnSet-1){
 	            		
-	            		newColumnSet++;
+	            		newColumnSet= 50;
 	            			
 	            		
 	            	}	
 	            	
-	            		if(document.getElementsByClassName("x-pivot-table")[0].offsetWidth>raw.parentElement.offsetWidth-70){
-	            			 var bodyColumns = document.getElementsByTagName("tbody")[0].children[0].children;
+	            		if(table.offsetWidth>raw.parentElement.offsetWidth-70){
+	            			
 	            			newColumnSet = 0;
 		            		var ajSize = 0;
 		            		var headerCount = 0;
@@ -81,35 +75,7 @@ angular.module('scrolly_directive',[])
 		            				headerCount++;
 		            		}
 		            		newColumnSet = newColumnSet-headerCount;
-	        		}else{
-	        			/*
-	        				if(thead){
-		            			newRowSet = Math.round((raw.offsetHeight-thead.offsetHeight-35)/rowSize)-1;
-		            		
-		            			if(corner){
-		            				newColumnSet = Math.round((raw.offsetWidth-corner.offsetWidth)/colunmSize)-1;
-		            			}
-			            	}else{
-			            		newRowSet =Math.round(raw.offsetHeight/rowSize)-2;
-			            		newColumnSet =Math.round(raw.offsetWidth/colunmSize)-2;
-			            	}
-	        				
-	        			*/
-	        			
-	        			
-	        			
-	        			
 	        		}
-	            	 
-	            	
-	            /*		 if(corner){
-		            		 scope.modelConfig.rowsSet = Math.round((raw.offsetHeight-corner.offsetHeight)/rowSize)-1;
-		            		 scope.modelConfig.columnSet = Math.round((raw.offsetWidth-corner.offsetWidth)/colunmSize)-1;
-		            		 console.log(corner.offsetHeight/rowSize);
-		            		 if(header){
-			            		 scope.modelConfig.rowsSet =scope.modelConfig.rowsSet - Math.round(header.offsetHeight/rowSize);
-			            		 console.log("header"+header.offsetHeight/rowSize);
-			            	}*/
 	            		
 		            	
 		            	
@@ -127,6 +93,7 @@ angular.module('scrolly_directive',[])
 		            			 scope.modelConfig.rowsSet=newRowSet;
 			            		 scope.modelConfig.columnSet=newColumnSet;
 			            		 scope.sendModelConfig(scope.modelConfig);
+			            		 console.log("sending modelconfig from resize!!!!!!!!!!!!");
 		            		 }
 		            		 
 		            	 }
@@ -139,13 +106,12 @@ angular.module('scrolly_directive',[])
 	        			function(){
 	        				
 	        				scope.resize();
-	        				
+	        				scope.scroll();
 	        				
 	        			
-	        			},10);
+	        			},100);
 	               
-	                
-	            element.bind('scroll', function () {
+	        	scope.scroll = function () {
 	                
 	              
 	                
@@ -154,22 +120,24 @@ angular.module('scrolly_directive',[])
 	               if(scope.modelConfig.startRow!=startRow){
 	            	   scope.modelConfig.startRow = startRow;
 	            	  
-	           	    	scope.$apply();
+	           	    	
 	           	    
 	           	    scope.sendModelConfig(scope.modelConfig);
 	               }
 	               if(scope.modelConfig.startColumn!=startColumn){
 	            	
 	            	   scope.modelConfig.startColumn = startColumn;
-	           	    	scope.$apply();
-	           	    
+	           	    	
+	           	   
 	           	    scope.sendModelConfig(scope.modelConfig);
 	               }
 	   
 	    
 	    
 	               
-	            });
+	            }
+	                
+	          
 	        }
 	    };
 	}]);
