@@ -87,8 +87,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -690,7 +692,9 @@ public class SchedulerService {
 			@QueryParam("end") @DateFormat("yyyy-MM-dd'T'HH:mm:ss") Date end) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		if (profile == null) {
-			throw new SpagoBIRuntimeException("The request has no user profile associated, but [null]");
+			throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED).entity("The request has no user profile associated, but [null]")
+					.build());
+
 		}
 
 		UserProfile userProfile = (UserProfile) profile;
@@ -698,7 +702,8 @@ public class SchedulerService {
 		JSONArray jobsJSONArray = new JSONArray();
 
 		if (end == null) {
-			throw new SpagoBIRuntimeException("The request has the end date equals to null, but a valid value is mandatory");
+			throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+					.entity("The request has the end date equals to null, but a valid value is mandatory").build());
 		}
 
 		ISchedulerDAO schedulerDAO;
@@ -871,7 +876,7 @@ public class SchedulerService {
 
 				// Get date for next execution
 				DateTime nextExecution = executionTime.nextExecution(start);
-				while (nextExecution != null && nextExecution.isBefore(end) && nextExecutionsCount <= NEXT_EXECUTION_LIMIT) {
+				while (nextExecution != null && nextExecution.isBefore(end) && nextExecutionsCount < NEXT_EXECUTION_LIMIT) {
 					nextExecutions.add(nextExecution.toDate());
 					nextExecution = executionTime.nextExecution(nextExecution);
 					nextExecutionsCount++;
