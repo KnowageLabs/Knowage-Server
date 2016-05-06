@@ -23,6 +23,7 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
@@ -859,7 +860,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	}
 
 	private boolean userIsAbilited(List<SbiGeoLayersRoles> roles, IEngUserProfile profile) {
-		if (roles == null) {
+		if (UserUtilities.isAdministrator(profile) || roles == null) {
 			return true;
 		}
 		for (SbiGeoLayersRoles r : roles) {
