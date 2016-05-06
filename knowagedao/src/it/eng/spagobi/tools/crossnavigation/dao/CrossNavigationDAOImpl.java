@@ -23,6 +23,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
@@ -266,7 +267,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				// JSONArray inputParametersList = new JSONArray();
 				// JSONArray outputParametersList = new JSONArray();
 
-				Map<Integer, String> documentIOParams = new HashMap<Integer, String>();
+				Map<Integer, crossNavigationParameters> documentIOParams = new HashMap<Integer, crossNavigationParameters>();
 
 				List<Integer> inputId = new ArrayList<>();
 				List<Integer> outputId = new ArrayList<>();
@@ -285,7 +286,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					// paramJSON.put("url", param.getParameterUrlName());
 					// inputParametersList.put(paramJSON);
 					inputId.add(param.getId());
-					documentIOParams.put(param.getId(), param.getLabel());
+					documentIOParams.put(param.getId(), new crossNavigationParameters(param.getLabel()));
 				}
 
 				// Load Output Parameter
@@ -294,7 +295,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				for (OutputParameter upitem : lst) {
 					// inputParametersList.put(JsonConverter.objectToJson(upitem, upitem.getClass()));
 					outputId.add(upitem.getId());
-					documentIOParams.put(upitem.getId(), upitem.getName());
+					documentIOParams.put(upitem.getId(), new crossNavigationParameters(upitem.getName(), upitem.getType(), upitem.getFormatValue()));
 				}
 
 				// if (!inputId.isEmpty() || !outputId.isEmpty()) {
@@ -333,7 +334,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						fromItem.put("value", cnItem.getFixedValue());
 						fromItem.put("fixed", true);
 					} else {
-						fromItem.put("value", documentIOParams.get(cnItem.getFromKeyId()));
+						fromItem.put("value",
+								new JSONObject(JsonConverter.objectToJson(documentIOParams.get(cnItem.getFromKeyId()), crossNavigationParameters.class)));
 						fromItem.put("fixed", false);
 					}
 
@@ -379,4 +381,87 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		cnp.setSbiCrossNavigation(cn);
 		return cnp;
 	}
+}
+
+class crossNavigationParameters {
+	String label;
+	Domain type;
+	String dateFormat;
+
+	/**
+	 * @param label
+	 * @param type
+	 * @param dateFormat
+	 */
+	public crossNavigationParameters(String label, Domain type, String dateFormat) {
+		super();
+		this.label = label;
+		this.type = type;
+		this.dateFormat = dateFormat;
+	}
+
+	/**
+	 * @param label
+	 * @param type
+	 */
+	public crossNavigationParameters(String label, Domain type) {
+		super();
+		this.label = label;
+		this.type = type;
+	}
+
+	/**
+	 * @param label
+	 * @param type
+	 */
+	public crossNavigationParameters(String label) {
+		super();
+		this.label = label;
+	}
+
+	/**
+	 * @return the label
+	 */
+	public String getLabel() {
+		return label;
+	}
+
+	/**
+	 * @param label
+	 *            the label to set
+	 */
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public Domain getType() {
+		return type;
+	}
+
+	/**
+	 * @param type
+	 *            the type to set
+	 */
+	public void setType(Domain type) {
+		this.type = type;
+	}
+
+	/**
+	 * @return the dateFormat
+	 */
+	public String getDateFormat() {
+		return dateFormat;
+	}
+
+	/**
+	 * @param dateFormat
+	 *            the dateFormat to set
+	 */
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
+	}
+
 }

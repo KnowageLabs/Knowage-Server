@@ -509,13 +509,13 @@
 	<DOMAIN valueCd="DEFAULT" valueNm="sbidomains.nm.defaultValue"
 		domainCd="DATE_FORMAT" domainNm="Date Format domain" valueDs="" />
 		
-	<DOMAIN valueCd="DDMMYYYY" valueNm="DD/MM/YYYY"
+	<DOMAIN valueCd="DDMMYYYY" valueNm="dd/MM/yyyy"
 		domainCd="DATE_FORMAT" domainNm="Date Format domain" valueDs="" />
 		
-	<DOMAIN valueCd="MMDDYYYY" valueNm="MM/DD/YYYY"
+	<DOMAIN valueCd="MMDDYYYY" valueNm="MM/dd/yyyy"
 		domainCd="DATE_FORMAT" domainNm="Date Format domain" valueDs="" />
 		
-	<DOMAIN valueCd="YYYYMMDD" valueNm="YYYY-MM-DD"
+	<DOMAIN valueCd="YYYYMMDD" valueNm="yyyy-MM-dd"
 		domainCd="DATE_FORMAT" domainNm="Date Format domain" valueDs="" />
 		
 	<DOMAIN valueCd="CUSTOM" valueNm="sbidomains.nm.customValue"

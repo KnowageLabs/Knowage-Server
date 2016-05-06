@@ -562,3 +562,8 @@ sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModu
 	};
 });
 </script>
+
+
+<!-- sbiModule_dateServices -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/sbiModule_services/sbiModule_dateServices.js"></script>
+	 

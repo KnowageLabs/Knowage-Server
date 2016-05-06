@@ -4,7 +4,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 	$mdThemingProvider.setDefaultTheme('knowage');
 }])
 .service('$crossNavigationHelper',
-		function($crossNavigationSteps,sbiModule_restServices,sbiModule_config,$mdDialog,sbiModule_translate){ 
+		function($crossNavigationSteps,sbiModule_restServices,sbiModule_config,$mdDialog,sbiModule_translate,sbiModule_dateServices,$filter){ 
 		var cns=this;
 		var selectedRole={};
 		this.crossNavigationSteps=$crossNavigationSteps;
@@ -133,8 +133,8 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 					if(parVal.fixed){
 						respStr[key]=parVal.value;
 					}else{
-						if(navData.hasOwnProperty(parVal.value) && navData[parVal.value]!=undefined && navData[parVal.value]!=null){ 
-							respStr[key]=navData[parVal.value];
+						if(navData.hasOwnProperty(parVal.value.label) && navData[parVal.value.label]!=undefined && navData[parVal.value.label]!=null){ 
+							respStr[key]=parseParameterValue(parVal.value,navData[parVal.value.label]);
 						}
 					}
 				}
@@ -143,6 +143,26 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			respStr = jsonToURI(respStr); 
 			
 			return respStr;
+		};
+		
+		function parseParameterValue(param,value){
+			//TO-DO verificare i tuipi numerici se sono interi o double 
+			//mettere i try catch
+			
+			if(param.type==undefined){
+				return value;
+			}
+			if(param.type.valueCd=="DATE"){
+				return sbiModule_dateServices.getDateFromFormat(value, param.dateFormat)
+				
+//				return $filter('date')(value, param.dateFormat);				
+			}
+			if(param.type.valueCd=="NUM"){
+				return parseInt("value")
+			}
+			if(param.type.valueCd=="STRING"){
+				return value;
+			}
 		};
 		
 		function jsonToURI(jsonObj){
