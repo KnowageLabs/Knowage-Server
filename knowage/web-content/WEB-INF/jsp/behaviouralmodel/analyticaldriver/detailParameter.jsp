@@ -81,7 +81,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 	List<GeoLayer> layers = null;
 	try {
-		layers = dao.loadAllLayers(null);
+		layers = dao.loadAllLayers(null, UserUtilities.getUserProfile());
 	} catch (EMFUserError e) {
 		throw new SpagoBIRuntimeException("Error loading the layers", e);
 	}
