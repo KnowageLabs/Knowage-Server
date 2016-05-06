@@ -148,7 +148,7 @@ $scope.saveRelation = function(docId){
 		$scope.deleteRelations(docId,$scope.forDeletion[i]);
 	}
 }
-	else if($scope.forAdding.length > 0){
+	if($scope.forAdding.length > 0){
 	console.log("adding");	
 	for (var i = 0; i < $scope.forAdding.length; i++) {
 		$scope.insertRelations(docId,$scope.forAdding[i]);
@@ -161,7 +161,7 @@ $scope.saveRelation = function(docId){
 	
 	$timeout(function() {
 		$scope.goBack();
-    }, 3000);
+    }, 2000);
 	
 //	$timeout(function(){
 //		

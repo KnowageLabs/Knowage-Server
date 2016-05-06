@@ -155,6 +155,31 @@ sbiM.factory('sbiModule_user',function(){
 	return user;
 });
 
+sbiM.directive('loading',   ['$http' ,function ($http)
+                             {
+                                 return {
+                                     restrict: 'A',
+                                     
+                                     link: function (scope, elm, attrs)
+                                     {
+                                         scope.isLoading = function () {
+                                             return $http.pendingRequests.length > 0;
+                                         };
+
+                                         scope.$watch(scope.isLoading, function (v)
+                                         {
+                                             if(v){
+                                             	scope.showEl = true;
+                                             }else{
+                                             	scope.showEl = false;
+                                             }
+                                         });
+                                     }
+                                 };
+
+                             }]);
+
+
 sbiM.service('sbiModule_logger',function(){
 	this.exec=true;
 	this.log = function(val1,val2,val3){

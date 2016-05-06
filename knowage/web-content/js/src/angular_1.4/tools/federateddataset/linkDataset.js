@@ -75,8 +75,8 @@ function linkDatasetFunction(sbiModule_translate, sbiModule_restServices, $scope
 			}
 			
 		}
-		console.log($scope.selectedTables);
-		console.log($scope.forAdding);
+		console.log("selektovani" + $scope.selectedTables);
+		console.log("za dodavanje" + $scope.forAdding);
 	}
 	$scope.arrayContains = function(array,property,item) {
 		for (var i = 0; i < array.length; i++) {
@@ -95,9 +95,9 @@ $scope.remove = function(item){
 			if(!$scope.arrayContains($scope.forDeletion,'tableId',item)){
 				$scope.forDeletion.push(item);
 			}
-			
-			
 		} 
+		console.log("selektovani" + $scope.selectedTables);
+		console.log("za brisanje" + $scope.forDeletion);
 	}
 
 $scope.getTablesByDatasetID = function(id){	
@@ -148,20 +148,23 @@ $scope.saveRelation = function(dsId){
 	for (var i = 0; i < $scope.forDeletion.length; i++) {
 		$scope.deleteRelations(dsId,$scope.forDeletion[i]);
 	}
+	console.log($scope.forDeletion);
 }
-	else if($scope.forAdding.length > 0){
+	if($scope.forAdding.length > 0){
 	console.log("adding");	
 	for (var i = 0; i < $scope.forAdding.length; i++) {
 		$scope.insertRelations(dsId,$scope.forAdding[i]);
 	}
+	console.log($scope.forAdding);
 	}
+	
 	sbiModule_messaging.showSuccessMessage('Successfully saved', 'Success!');
 	$scope.forDeletion = [];
 	$scope.forAdding = [];
 	
 	$timeout(function() {
 		$scope.goBack();
-    }, 3000);
+    }, 2000);
 	
 	
 	
@@ -177,12 +180,12 @@ $scope.saveRelation = function(dsId){
 $scope.goBack = function(){
 	//document.location.href = sbiModule_config.contextName + "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_DATASETS_ACTION&amp;LIGHT_NAVIGATOR_DISABLED=TRUE";
 	history.go(-1);
-	
+	$scope.forDeletion = [];
+	$scope.forAdding = [];
 }
 
 $scope.markDeleted = function(listId){
 	for (var i = 0; i < $scope.selectedTables.length; i++) {
-		console.log(listId);
 		if($scope.selectedTables[i].deleted){
 			console.log($scope.selectedTables[i]);
 			$timeout(function() {
@@ -198,5 +201,6 @@ $scope.markDeleted = function(listId){
 }
 
 };
+
 
 
