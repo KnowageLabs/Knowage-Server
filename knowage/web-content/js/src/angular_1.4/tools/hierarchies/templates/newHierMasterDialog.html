@@ -20,7 +20,7 @@
 									<input type="number" ng-model="hierNew[mt.ID]" ng-disabled='!mt.EDITABLE' ng-required='true'></input>
 								</md-input-container>
 								<div ng-if="mt.VISIBLE && mt.EDITABLE && mt.TYPE == 'Date'">
-									<md-datepicker ng-model="hierNew[mt.ID]" ng-change="" ng-disabled='!mt.EDITABLE' ng-required='true'></md-datepicker> {{mt.NAME}}
+									<md-datepicker ng-model="hierNew[mt.ID]" ng-change="" ng-disabled='!mt.EDITABLE' ng-required='false'></md-datepicker> {{mt.NAME}}
 								</div>
 							</div>
 						</md-grid-tile>
