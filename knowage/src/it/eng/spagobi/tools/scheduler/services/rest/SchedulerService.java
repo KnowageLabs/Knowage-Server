@@ -33,6 +33,8 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.JSONSerializer;
 import it.eng.spagobi.commons.serializer.JobJSONSerializer;
@@ -41,6 +43,8 @@ import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.services.rest.annotations.DateFormat;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
 import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
@@ -48,6 +52,7 @@ import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.scheduler.Formula;
 import it.eng.spagobi.tools.scheduler.FormulaParameterValuesRetriever;
 import it.eng.spagobi.tools.scheduler.RuntimeLoadingParameterValuesRetriever;
+import it.eng.spagobi.tools.scheduler.bo.CronExpression;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
@@ -69,6 +74,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -79,13 +85,23 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.cronutils.model.Cron;
+import com.cronutils.model.CronType;
+import com.cronutils.model.definition.CronDefinition;
+import com.cronutils.model.definition.CronDefinitionBuilder;
+import com.cronutils.model.time.ExecutionTime;
+import com.cronutils.parser.CronParser;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -97,7 +113,15 @@ public class SchedulerService {
 	private static final String ALERT_JOB_GROUP = "ALERT_JOB_GROUP";
 	private static final String KPI_SCHEDULER_GROUP = "KPI_SCHEDULER_GROUP";
 	private static final String JOB_GROUP = "BIObjectExecutions";
-	
+	private static final String DOC_PARAM_PREFIX = "biobject";
+	private static final String PARAM_NAME_SPLIT_CHAR = "_";
+
+	// private static final String SINGLE_TYPE = "Single";
+	// private static final String CUSTOM_TYPE_PREFIX = "Scheduler";
+	private static final String EVENT_TYPE_PREFIX = "Event";
+
+	private static final int NEXT_EXECUTION_LIMIT = 100;
+
 	static private Logger logger = Logger.getLogger(SchedulerService.class);
 	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
 
@@ -146,18 +170,17 @@ public class SchedulerService {
 		List<Job> jobs = schedulerDAO.loadJobs();
 
 		List<Job> nonKpiSchedulerJobs = new ArrayList<Job>();
-		
+
 		for (Job job : jobs) {
-			if(!job.getGroupName().equals(ALERT_JOB_GROUP) 
-					&& !job.getGroupName().equals(KPI_SCHEDULER_GROUP)) {
-				
+			if (!job.getGroupName().equals(ALERT_JOB_GROUP) && !job.getGroupName().equals(KPI_SCHEDULER_GROUP)) {
+
 				nonKpiSchedulerJobs.add(job);
 			}
 		}
-		
+
 		JSONSerializer jsonSerializer = (JSONSerializer) SerializerFactory.getSerializer("application/json");
 		try {
-//			jobsJSONArray = (JSONArray) jsonSerializer.serialize(jobs, null);
+			// jobsJSONArray = (JSONArray) jsonSerializer.serialize(jobs, null);
 			jobsJSONArray = (JSONArray) jsonSerializer.serialize(nonKpiSchedulerJobs, null);
 
 			// add the triggers part for each job
@@ -168,7 +191,7 @@ public class SchedulerService {
 				String jobName = jobJSONObject.getString(JobJSONSerializer.JOB_NAME);
 				String jobGroup = jobJSONObject.getString(JobJSONSerializer.JOB_GROUP);
 
-//				for (Job job : jobs) {
+				// for (Job job : jobs) {
 				for (Job job : nonKpiSchedulerJobs) {
 					if ((job.getName().equals(jobName)) && (job.getGroupName().equals(jobGroup))) {
 						String triggersSerialized = getJobTriggers(job);
@@ -656,6 +679,197 @@ public class SchedulerService {
 				throw new SpagoBIRuntimeException("Cannot fill response container", ex);
 			}
 		}
+	}
+
+	@GET
+	@Path("/nextExecutions")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SCHEDULER_MANAGEMENT })
+	public String nextExecutions(@Context HttpServletRequest req, @QueryParam("start") @DateFormat("yyyy-MM-dd'T'HH:mm:ss") Date start,
+			@QueryParam("end") @DateFormat("yyyy-MM-dd'T'HH:mm:ss") Date end) {
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		if (profile == null) {
+			throw new SpagoBIRuntimeException("The request has no user profile associated, but [null]");
+		}
+
+		UserProfile userProfile = (UserProfile) profile;
+		JSONObject rootJSONObject = new JSONObject();
+		JSONArray jobsJSONArray = new JSONArray();
+
+		if (end == null) {
+			throw new SpagoBIRuntimeException("The request has the end date equals to null, but a valid value is mandatory");
+		}
+
+		ISchedulerDAO schedulerDAO;
+		try {
+			schedulerDAO = DAOFactory.getSchedulerDAO();
+			schedulerDAO.setTenant(userProfile.getOrganization());
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Impossible to load scheduler DAO", t);
+		}
+
+		try {
+			logger.debug("Loading jobs with group name [" + JOB_GROUP + "]");
+			List<Job> jobs = schedulerDAO.loadJobs(JOB_GROUP);
+			logger.debug("Loaded [" + jobs.size() + "] jobs with group name [" + JOB_GROUP + "]");
+			for (Job job : jobs) {
+				List<Trigger> triggers = schedulerDAO.loadTriggers(job.getGroupName(), job.getName());
+				JSONArray triggersJSONArray = new JSONArray();
+				for (Trigger trigger : triggers) {
+					if (!trigger.getChronType().startsWith(EVENT_TYPE_PREFIX)) {
+						logger.debug("The trigger is not event-based. It is possible to calculate next executions");
+						Set<String> biObjectsLabel = getBIObject(trigger, userProfile);
+						if (!biObjectsLabel.isEmpty()) {
+							Set<Date> nextExecutions = getNextExecutions(trigger, start, end);
+							if (!nextExecutions.isEmpty()) {
+								JSONArray nextExecutionsJSONArray = new JSONArray(nextExecutions);
+								JSONArray biObjectsLabelJSONArray = new JSONArray(biObjectsLabel);
+								JSONObject triggerJSONObject = new JSONObject();
+								triggerJSONObject.put("name", trigger.getName());
+								triggerJSONObject.put("group", trigger.getGroupName());
+								triggerJSONObject.put("description", trigger.getDescription());
+								triggerJSONObject.put("type", trigger.getChronType());
+								triggerJSONObject.put("start", trigger.getStartTime().toString());
+								triggerJSONObject.put("end", trigger.getEndTime() == null ? null : trigger.getEndTime().toString());
+								triggerJSONObject.put("documents", biObjectsLabelJSONArray);
+								triggerJSONObject.put("limited", nextExecutions.size() == NEXT_EXECUTION_LIMIT ? true : false);
+								triggerJSONObject.put("executions", nextExecutionsJSONArray);
+								triggersJSONArray.put(triggerJSONObject);
+							}
+						}
+					}
+				}
+				if (triggersJSONArray.length() != 0) {
+					logger.debug("The job [" + job.getName() + " has [" + triggersJSONArray.length() + "] valid triggers which can be monitored");
+					JSONObject jobJSONObject = new JSONObject();
+					jobJSONObject.put("name", job.getName());
+					jobJSONObject.put("group", job.getGroupName());
+					jobJSONObject.put("description", job.getDescription());
+					jobJSONObject.put("triggers", triggersJSONArray);
+					jobsJSONArray.put(jobJSONObject);
+				}
+			}
+			rootJSONObject.put("root", jobsJSONArray);
+		} catch (JSONException e) {
+			throw new SpagoBIRuntimeException("Error while generating JSON", e);
+		}
+		return rootJSONObject.toString();
+	}
+
+	private Set<String> getBIObject(Trigger trigger, UserProfile userProfile) {
+		logger.debug("IN");
+		logger.debug("Getting document parameters for job [" + trigger.getJob().getName() + "] and trigger [" + trigger.getName() + "]");
+		Set<String> biObjectsLabel = new HashSet<String>();
+
+		IBIObjectDAO biObjectDAO;
+		try {
+			biObjectDAO = DAOFactory.getBIObjectDAO();
+			biObjectDAO.setUserProfile(userProfile);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to load BIObject DAO", e);
+		}
+
+		Map<String, String> jobParameters = trigger.getJob().getParameters();
+		Set<String> jobParametersName = jobParameters.keySet();
+		for (String jobParameterName : jobParametersName) {
+			logger.debug("Job parameter name equals to [" + jobParameterName + "]");
+			if (jobParameterName.startsWith(DOC_PARAM_PREFIX)) {
+				String jobParameterValue = jobParameters.get(jobParameterName);
+				logger.debug("Job parameter value equals to [" + jobParameterValue + "]");
+				if (jobParameterValue != null && !jobParameterValue.isEmpty()) {
+					logger.debug("Found a valid value for the job [" + jobParameterName + "]");
+
+					// splitting the name to obtain the id
+					// e.g. biobject_id_N__M, where N is the ID that we need
+					String[] splittedJobName = jobParameterName.split(PARAM_NAME_SPLIT_CHAR);
+					if (splittedJobName != null && splittedJobName.length == 5) {
+						try {
+							int biObjectID = Integer.parseInt(splittedJobName[2]);
+							logger.debug("BIObject has ID equals to [" + biObjectID + "]");
+							BIObject biObject = biObjectDAO.loadBIObjectById(biObjectID);
+							if (biObject == null) {
+								throw new SpagoBIRuntimeException("Impossibile to load BIObject with ID [" + biObjectID + "]");
+							}
+							biObjectsLabel.add(biObject.getLabel());
+						} catch (NumberFormatException ne) {
+							throw new SpagoBIRuntimeException("Impossibile to parse the parameter name [" + jobParameterName + "]: unexpected format", ne);
+						} catch (EMFUserError e) {
+							throw new SpagoBIRuntimeException("Impossibile to load BIObject", e);
+
+						}
+					} else {
+						throw new SpagoBIRuntimeException("Impossibile to parse the parameter name [" + jobParameterName + "]: unexpected format");
+					}
+				}
+			}
+		}
+		return biObjectsLabel;
+	}
+
+	private Set<Date> getNextExecutions(Trigger trigger, Date startRequest, Date endRequest) {
+		// list of fires for the current trigger
+		Set<Date> nextExecutions = new HashSet<Date>();
+
+		// Get start parameter in Joda class (start date is optional for the rest service)
+		DateTime startTime = (startRequest == null ? DateTime.now() : new DateTime(startRequest));
+		logger.debug("Start time to revieve fires is [" + startTime + "]");
+		// Get end parameter in Joda class
+		DateTime endTime = new DateTime(endRequest);
+		logger.debug("End time to revieve fires is [" + endTime + "]");
+
+		// Get the trigger start time
+		Date startTrigger = trigger.getStartTime();
+		if (startTrigger == null) {
+			throw new SpagoBIRuntimeException("The start time for the trigger [" + trigger.getName() + "] is null, but it cannot be null");
+		}
+		DateTime startTimeTrigger = new DateTime(startTrigger);
+		logger.debug("Trigger start time is [" + startTimeTrigger + "]");
+		// Get the trigger end time (can be null)
+		Date endTrigger = trigger.getEndTime();
+		logger.debug("Trigger end time is [" + endTrigger + "]");
+		DateTime endTimeTrigger = (endTrigger == null ? endTime : new DateTime(endTrigger));
+		logger.debug("Trigger end time is now set to [" + endTimeTrigger + "]");
+
+		Interval requestInterval = new Interval(startTime, endTime);
+		Interval triggerInterval = new Interval(startTimeTrigger, endTimeTrigger);
+		if (requestInterval.overlaps(triggerInterval)) {
+			logger.debug("The trigger and request intervals have an overlap.");
+			Interval overlapInterval = requestInterval.overlap(triggerInterval);
+			DateTime start = overlapInterval.getStart();
+			logger.debug("Start time to calculate next executions is [" + start + "]");
+			DateTime end = overlapInterval.getEnd();
+			logger.debug("End time to calculate next executions is [" + start + "]");
+
+			if (trigger.getChronExpression().isSimpleExpression()) {
+				nextExecutions.add(startTrigger);
+			} else {
+				// get a predefined instance
+				CronDefinition cronDefinition = CronDefinitionBuilder.instanceDefinitionFor(CronType.QUARTZ);
+
+				// create a parser based on provided definition
+				CronParser parser = new CronParser(cronDefinition);
+				CronExpression cronExpression = trigger.getChronExpression();
+				if (cronExpression == null) {
+					throw new SpagoBIRuntimeException("Impossible to get cron expression from the trigger [" + trigger.getName() + "]");
+				}
+				logger.debug("Cron expression for trigger [" + trigger.getName() + "] is [" + cronExpression.getExpression() + "]");
+				Cron quartzCron = parser.parse(cronExpression.getExpression());
+				ExecutionTime executionTime = ExecutionTime.forCron(quartzCron);
+
+				// counter to see to avoid infinite or too long loop
+				int nextExecutionsCount = 0;
+
+				// Get date for next execution
+				DateTime nextExecution = executionTime.nextExecution(start);
+				while (nextExecution.isBefore(end) && nextExecutionsCount <= NEXT_EXECUTION_LIMIT) {
+					nextExecutions.add(nextExecution.toDate());
+					nextExecution = executionTime.nextExecution(nextExecution);
+					nextExecutionsCount++;
+				}
+			}
+		}
+
+		return nextExecutions;
 	}
 
 	// TODO To remove asap. This mustn't be a service.
