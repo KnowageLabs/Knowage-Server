@@ -235,17 +235,15 @@ public class DocumentExecutionUtils {
 		return errors;
 	}
 
-//	public static ArrayList<HashMap<String, Object>> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter,
-	public static HashMap<String, Object> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter,
-			HttpServletRequest req) {
+	// public static ArrayList<HashMap<String, Object>> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter,
+	public static HashMap<String, Object> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter, HttpServletRequest req) {
 
 		return getLovDefaultValues(executionRole, biObject, objParameter, null, null, null, req);
 	}
 
-//	public static ArrayList<HashMap<String, Object>> getLovDefaultValues(
-	public static HashMap<String, Object> getLovDefaultValues(
-			String executionRole, BIObject biObject, BIObjectParameter objParameter,
-			JSONObject requestVal, Integer treeLovNodeLevel, String treeLovNodeValue, HttpServletRequest req) {
+	// public static ArrayList<HashMap<String, Object>> getLovDefaultValues(
+	public static HashMap<String, Object> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter, JSONObject requestVal,
+			Integer treeLovNodeLevel, String treeLovNodeValue, HttpServletRequest req) {
 
 		ArrayList<HashMap<String, Object>> defaultValues = new ArrayList<HashMap<String, Object>>();
 		String lovResult = null;
@@ -330,7 +328,7 @@ public class DocumentExecutionUtils {
 				JSONObject valuesJSON = buildJSONForLOV(lovProvDet, rows, MODE_SIMPLE);
 				valuesJSONArray = valuesJSON.getJSONArray("root");
 			}
-			
+
 			List defaultValuesMetadata = lovProvDet.getVisibleColumnNames();
 			result.put(DEFAULT_VALUES_METADATA, defaultValuesMetadata);
 
@@ -338,15 +336,15 @@ public class DocumentExecutionUtils {
 				JSONObject item = valuesJSONArray.getJSONObject(i);
 				if (item.length() > 0) {
 					HashMap<String, Object> itemAsMap = new HashMap<String, Object>();
-					
-					for(int j = 0; j < defaultValuesMetadata.size(); j++) {
+
+					for (int j = 0; j < defaultValuesMetadata.size(); j++) {
 						String key = ((String) defaultValuesMetadata.get(j)).toUpperCase();
-						
+
 						if (item.has(key)) {
 							itemAsMap.put(key, item.get(key));
 						}
 					}
-					
+
 					itemAsMap.put("value", item.get("value"));
 					itemAsMap.put("label", item.has("label") ? item.get("label") : item.get("value"));
 					if (item.has("id")) {
@@ -374,19 +372,22 @@ public class DocumentExecutionUtils {
 								itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
 								itemErrorMap.put("labelSameValue", item.get("label"));
 								defaultErrorValues.add(itemErrorMap);
-//								return defaultErrorValues;
+								// return defaultErrorValues;
+								result.put(DEFAULT_VALUES, defaultErrorValues);
+								return result;
 							}
 						}
 					}
 					if (!defaultParameterAlreadyExist) {
 						defaultValues.add(itemAsMap);
 						result.put(DEFAULT_VALUES, defaultValues);
-					} else {
-						result.put(DEFAULT_VALUES, defaultErrorValues);
+						// } else {
+						// result.put(DEFAULT_VALUES, defaultErrorValues);
+						// return result;
 					}
 				}
 			}
-//			return defaultValues;
+			// return defaultValues;
 			return result;
 
 		} catch (Exception e) {
@@ -550,8 +551,8 @@ public class DocumentExecutionUtils {
 		String valueColumn;
 		String descriptionColumn;
 		JSONObject valuesJSON;
-//		Integer start;
-//		Integer limit;
+		// Integer start;
+		// Integer limit;
 		String displayColumn;
 
 		// START building JSON object to be returned
@@ -578,14 +579,14 @@ public class DocumentExecutionUtils {
 						SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
 						valueJSON.put(attribute.getKey().toUpperCase(), attribute.getValue());
 					}
-//				} else {
-//					String value = (String) row.getAttribute(valueColumn);
-//					String description = (String) row.getAttribute(descriptionColumn);
-//					valueJSON.put("value", value);
-//					valueJSON.put("label", description);
-//					valueJSON.put("description", description);
+					// } else {
+					// String value = (String) row.getAttribute(valueColumn);
+					// String description = (String) row.getAttribute(descriptionColumn);
+					// valueJSON.put("value", value);
+					// valueJSON.put("label", description);
+					// valueJSON.put("description", description);
 				}
-				
+
 				String value = (String) row.getAttribute(valueColumn);
 				String description = (String) row.getAttribute(descriptionColumn);
 				valueJSON.put("value", value);
