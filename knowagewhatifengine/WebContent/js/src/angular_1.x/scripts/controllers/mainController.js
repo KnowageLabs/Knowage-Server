@@ -1,5 +1,10 @@
 var olapMod = angular.module('olap.controllers', [ 'olap.configuration',
 		'olap.directives', 'olap.settings' ])
+		
+olapMod.config(['$mdThemingProvider', function($mdThemingProvider) {
+    $mdThemingProvider.theme('knowage')
+    $mdThemingProvider.setDefaultTheme('knowage');
+ }]);
 
 olapMod.controller("olapController", [ "$scope", "$timeout", "$window",
 		"$mdDialog", "$http", '$sce', '$mdToast', '$mdSidenav',

@@ -5,8 +5,8 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
 app.controller("linkDatasetCTRL",linkDatasetFunction);
-linkDatasetFunction.$inject = ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging"];
-function linkDatasetFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,sbiModule_messaging){
+linkDatasetFunction.$inject = ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging","$document","sbiModule_config"];
+function linkDatasetFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,sbiModule_messaging,$document,sbiModule_config){
 	
 	//VARIABLES
 	
@@ -156,20 +156,26 @@ $scope.saveRelation = function(dsId){
 	}
 	}
 	sbiModule_messaging.showSuccessMessage('Successfully saved', 'Success!');
-	
 	$scope.forDeletion = [];
 	$scope.forAdding = [];
 	
-	$timeout(function(){
-		
-		$scope.getTablesByDatasetID(dsId);
-	}, 1000);
+	$timeout(function() {
+		$scope.goBack();
+    }, 3000);
+	
+	
+	
+//	$timeout(function(){
+//		
+//		$scope.getTablesByDatasetID(dsId);
+//	}, 1000);
 	
 	//$scope.goBack();
 	
 }
 
 $scope.goBack = function(){
+	//document.location.href = sbiModule_config.contextName + "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_DATASETS_ACTION&amp;LIGHT_NAVIGATOR_DISABLED=TRUE";
 	history.go(-1);
 	
 }

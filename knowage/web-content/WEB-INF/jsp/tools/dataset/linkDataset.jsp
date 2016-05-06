@@ -16,7 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-
+<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.HashMap"%>
@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
  <%
-		 	
+ 			String contextName = ChannelUtilities.getSpagoBIContextName(request);
 			String datasetID = "";
  			String datasetLabel = "";
 			if(request.getParameter("id")!=null){
@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<script>
 			var datasetId = '<%= datasetID %>';
 			var datasetLabel = '<%= datasetLabel  %>';
+			var contextName = '<%=contextName %>';
 		</script> 
 
 

@@ -159,10 +159,14 @@ $scope.saveRelation = function(docId){
 	$scope.forDeletion = [];
 	$scope.forAdding = [];
 	
-	$timeout(function(){
-		
-		$scope.getTablesByDocumentID(docId);
-	}, 1000);
+	$timeout(function() {
+		$scope.goBack();
+    }, 3000);
+	
+//	$timeout(function(){
+//		
+//		$scope.getTablesByDocumentID(docId);
+//	}, 1000);
 	
 	//$scope.goBack();
 	
