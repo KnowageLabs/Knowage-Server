@@ -2677,3 +2677,5 @@ CREATE TABLE SBI_OBJ_DATA_SET (
 -- 23.02.2015 Francesco Lucchi Athena_pg_drop.sql: added file.
 
 -- 23.02.2015 Francesco Lucchi: removed SBI_DOSSIER_* tables.
+
+-- 06.05.2016 Alessandro Portosa: Renamed HIBERNATE_SEQUENCES and its fields with lowercase. It must be lowercase for Unix compatibility
