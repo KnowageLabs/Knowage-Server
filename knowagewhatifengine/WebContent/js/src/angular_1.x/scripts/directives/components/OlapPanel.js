@@ -1,3 +1,4 @@
+
 angular.module('olap_panel',[])
 .directive('olapPanel',function(){
 	return{
@@ -31,7 +32,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		.then(function(response) {
 			$scope.handleResponse(response);
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage("An error occured by drill down functionality", 'Error');
+			sbiModule_messaging.showErrorMessage("An error occured by drill up functionality", 'Error');
 			
 		});		
 	}
@@ -542,14 +543,11 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
       
     $scope.checkValidity = function(){
     	
-    	if($scope.selectedMDXFunction == null){
+    	if($scope.selectedMDXFunction == null || $scope.selectedMDXFunction.label == undefined){
     		return true;
     	}else{
-    		if($scope.selectedMDXFunction.label == ""){
-    			return true;
-    		}else{
-    			return false;
-    		}
+    
+    		return false;
     	}
     }
     
