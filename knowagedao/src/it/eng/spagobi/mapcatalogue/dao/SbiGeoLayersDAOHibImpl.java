@@ -859,8 +859,11 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	}
 
 	private boolean userIsAbilited(List<SbiGeoLayersRoles> roles, IEngUserProfile profile) {
+		if (roles == null) {
+			return true;
+		}
 		for (SbiGeoLayersRoles r : roles) {
-			Collection rolesProfile;
+			Collection<String> rolesProfile;
 			try {
 				rolesProfile = profile.getRoles();
 
@@ -873,9 +876,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				}
 
 			} catch (EMFInternalError e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return false;
 			}
 		}
 		return false;
