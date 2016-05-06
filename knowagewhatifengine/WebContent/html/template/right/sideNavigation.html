@@ -16,7 +16,7 @@
     
     >
 <md-toolbar class='md-toolbar-tools knowage-blue'>
-	Customization
+	Menu<!-- Customization later -->
 	<md-button class="md-icon-button" ng-click="closeSideNav('right')" style="right: 0px;position: absolute;top: 0px;">
     	<md-icon class="fa fa-times" style="color:white;" aria-label="Close dialog"></md-icon>
     </md-button>
@@ -40,7 +40,7 @@
 		</md-button>
 	</div>
 </div>
-<md-toolbar class='md-toolbar-tools knowage-blue'>Menu</md-toolbar>
+<md-toolbar class='md-toolbar-tools knowage-blue' ng-hide="true">Menu</md-toolbar>
 	<sbi-table-toolbar ng-show="tableIcon && !chartIcon"></sbi-table-toolbar>
 	<sbi-chart-toolbar ng-show="!tableIcon && chartIcon"></sbi-chart-toolbar>
 </md-sidenav>

@@ -21,10 +21,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$scope.loadingFilter = true;
 	angular.element(document).ready(function() {
 		$scope.sendMdxQuery('null');
-		
-		console.log("getting screen");
-		console.log(window.innerHeight);
-		console.log(window.innerWidth);
 	});
 	
 	$scope.clearLoadedData = function(name){
@@ -283,8 +279,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	}
 	
 	filterSlice = function(){
-		if(h != undefined && m!= undefined){
-			var encoded = encodeURI('/hierarchy/'+ h+ '/slice/'+ m + '/'+ false + '?SBI_EXECUTION_ID='+ JSsbiExecutionID);
+		if(filterFather != undefined && m!= undefined){
+			var encoded = encodeURI('/hierarchy/'+ filterFather+ '/slice/'+ m + '/'+ false + '?SBI_EXECUTION_ID='+ JSsbiExecutionID);
 			sbiModule_restServices.promiseGet
 			("1.0",encoded)
 			.then(function(response) {
@@ -629,7 +625,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	}
 	
 	//Initializing array filterSelected that is following selected dimension in filters 
-	initFilterList = function (){
+	$scope.initFilterList = function (){
 		for(var i = 0; i < $scope.filterCardList.length;i++){
 			var x ={
 					name:"...",
@@ -648,7 +644,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			checkShift();
 			$mdDialog.hide();
 			$scope.mdxQuery = "";
-			initFilterList();
+			$scope.initFilterList();
 			
 			$scope.sendModelConfig($scope.modelConfig);
 			if($scope.modelConfig.whatIfScenario)
@@ -681,6 +677,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			}
 		}
 	};
+	
 
 };
 
