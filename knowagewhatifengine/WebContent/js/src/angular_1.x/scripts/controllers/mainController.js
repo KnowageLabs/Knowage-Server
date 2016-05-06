@@ -123,11 +123,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.formulasData = source.formulas;
 		$scope.ready = true;
 
-		
-
-		
-
-
+		$scope.wiGridNeeded = response.data.modelConfig.whatIfScenario; //arsenije	
 	}
 
 	$scope.sendModelConfig = function(modelConfig) {

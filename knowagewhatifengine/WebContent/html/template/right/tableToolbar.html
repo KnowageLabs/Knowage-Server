@@ -113,9 +113,11 @@
     
 </md-grid-list>
 
-<div class="menu-text">What If</div>
+<div class="menu-text" ng-show="wiGridNeeded">What If</div>
 <md-grid-list
-        md-cols="3" md-row-height="50px">
+        md-cols="3" 
+        md-row-height="50px"
+         ng-show="wiGridNeeded">
     <md-grid-tile>
     	<md-button class="right-toolbar-menu {{lockerClass}}"  ng-click="lockFunction()">
     		<md-tooltip md-direction="bottom">

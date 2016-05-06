@@ -29,6 +29,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.showFile = false;
 	$scope.showTable = false;
 	$scope.showOVDescription = false;
+	$scope.wiGridNeeded=false;
 	var exportBtn = {};
 	var result;
 	
@@ -62,7 +63,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		var regEx = /([A-Z]+_*)+/g;
 		var i;
 		result = res;
-
+		
 		while (i = regEx.exec(res)){
 			var btn = {};
 			btn.tooltip = sbiModule_translate.load("sbi.olap.toolbar."+ i[0]);// messageResource.get("sbi.olap.toolbar."+ i[0], 'messages');
@@ -273,7 +274,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  $scope.showFile = false;
 		  $scope.showTable = false;
 		  $scope.showOVDescription = false;
-	  }
+	  };
 	  
 	  $scope.isOkBtnDisabled = function(){
 		  if(!$scope.showFile && !$scope.showTable || $scope.showOVDescription)
@@ -285,7 +286,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  else
 			  return false;
 		  
-	  }
+	  };
 	  
 	  changeIcon = function(name){
 		  for(var i=0; i < $scope.tableToolbarButtons.length;i++){
