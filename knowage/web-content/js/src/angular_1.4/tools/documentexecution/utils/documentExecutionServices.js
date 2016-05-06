@@ -105,7 +105,7 @@
 							}
 						} else {
 							//DATE
-							if(parameter.type='DATE'){
+							if(parameter.type=='DATE'){
 								console.log('build date : ' , parameter.parameterValue);
 								var d = new Date(parameter.parameterValue);
 								var month = '' + (d.getMonth() + 1);
