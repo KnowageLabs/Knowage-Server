@@ -60,6 +60,8 @@ sbiM.directive('loading',   ['$http' ,function ($http)
                 scope.isLoading = function () {
                     return $http.pendingRequests.length > 0;
                 };
+                
+                scope.showLoadingMask = true;
 
                 scope.$watch(scope.isLoading, function (v)
                 {
@@ -67,6 +69,7 @@ sbiM.directive('loading',   ['$http' ,function ($http)
                     	scope.showEl = true;
                     }else{
                     	scope.showEl = false;
+                    	scope.showLoadingMask = true;
                     }
                 });
             }
