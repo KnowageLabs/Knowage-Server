@@ -16,6 +16,7 @@ function linkDocumentFunction(sbiModule_translate, sbiModule_restServices, $scop
 	$scope.sourceList = [];
 	$scope.tablesList = [];
 	$scope.selectedTables = [];
+	$scope.savedTables = [];
 	$scope.forAdding = [];
 	$scope.forDeletion = [];
 	
@@ -86,24 +87,37 @@ function linkDocumentFunction(sbiModule_translate, sbiModule_restServices, $scop
 		return false;
 	}
 	
-$scope.remove = function(item){	
+	$scope.remove = function(item){	
 		
-	var index = $scope.selectedTables.indexOf(item);
-		if($scope.selectedTables.indexOf(item)>-1){
-			$scope.selectedTables.splice(index,1);
-			if(!$scope.arrayContains($scope.forDeletion,'tableId',item)){
-				$scope.forDeletion.push(item);
+		var index = $scope.selectedTables.indexOf(item);
+		var index1 = $scope.forAdding.indexOf(item);
+		if($scope.forAdding.indexOf(item)>-1){
+			console.log("aaaa");
+			$scope.forAdding.splice(index1,1);
+		}
+		
+			if($scope.selectedTables.indexOf(item)>-1){
+				$scope.selectedTables.splice(index,1);
+				
+				if(!$scope.arrayContains($scope.forDeletion,'tableId',item) && $scope.arrayContains($scope.savedTables,'tableId',item) ){
+					
+					$scope.forDeletion.push(item);
+					
+				}
+				
 			}
 			
 			
-		} 
-	}
+			console.log("selektovani" + $scope.selectedTables);
+			console.log("za brisanje" + $scope.forDeletion);
+		}
 
 $scope.getTablesByDocumentID = function(id){	
 	sbiModule_restServices.promiseGet("2.0/metaDocumetRelationResource/document/"+id, "")
 	.then(function(response) {
 		
 		$scope.selectedTables = response.data;
+		$scope.savedTables = angular.copy(response.data);
 		$scope.markDeleted(selectedTables_id);
 	}, function(response) {
 		sbiModule_messaging.showErrorMessage('error getting saved', 'Error');
