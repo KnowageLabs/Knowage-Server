@@ -57,6 +57,7 @@ import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.tools.scheduler.dao.quartz.QuartzNativeObjectsConverter;
 import it.eng.spagobi.tools.scheduler.jobs.ExecuteBIDocumentJob;
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
@@ -730,7 +731,7 @@ public class SchedulerService {
 								triggerJSONObject.put("description", trigger.getDescription());
 								triggerJSONObject.put("type", trigger.getChronType());
 								triggerJSONObject.put("start", trigger.getStartTime().toString());
-								triggerJSONObject.put("end", trigger.getEndTime() == null ? null : trigger.getEndTime().toString());
+								triggerJSONObject.put("end", trigger.getEndTime() == null ? "" : trigger.getEndTime().toString());
 								triggerJSONObject.put("documents", biObjectsLabelJSONArray);
 								triggerJSONObject.put("limited", nextExecutions.size() == NEXT_EXECUTION_LIMIT ? true : false);
 								triggerJSONObject.put("executions", nextExecutionsJSONArray);
@@ -852,8 +853,17 @@ public class SchedulerService {
 				if (cronExpression == null) {
 					throw new SpagoBIRuntimeException("Impossible to get cron expression from the trigger [" + trigger.getName() + "]");
 				}
-				logger.debug("Cron expression for trigger [" + trigger.getName() + "] is [" + cronExpression.getExpression() + "]");
-				Cron quartzCron = parser.parse(cronExpression.getExpression());
+				logger.debug("Knowage custom cron expression for trigger [" + trigger.getName() + "] is [" + cronExpression.getExpression() + "]");
+
+				// here the we only have a custom Knowage CronExpression
+				// we need to convert it to a standard Cron format
+				String standardCronExpression = QuartzNativeObjectsConverter.convertCronExpressionToNativeObject(cronExpression, startTrigger);
+				logger.debug("Quartz default cron expression for trigger [" + trigger.getName() + "] is [" + standardCronExpression + "]");
+				if (standardCronExpression == null) {
+					throw new SpagoBIRuntimeException("Impossible to calculate a Quartz default cron expression from the Knowage custom cron expression ["
+							+ cronExpression.getExpression() + "]. The calculated expression is [null]");
+				}
+				Cron quartzCron = parser.parse(standardCronExpression);
 				ExecutionTime executionTime = ExecutionTime.forCron(quartzCron);
 
 				// counter to see to avoid infinite or too long loop
@@ -861,7 +871,7 @@ public class SchedulerService {
 
 				// Get date for next execution
 				DateTime nextExecution = executionTime.nextExecution(start);
-				while (nextExecution.isBefore(end) && nextExecutionsCount <= NEXT_EXECUTION_LIMIT) {
+				while (nextExecution != null && nextExecution.isBefore(end) && nextExecutionsCount <= NEXT_EXECUTION_LIMIT) {
 					nextExecutions.add(nextExecution.toDate());
 					nextExecution = executionTime.nextExecution(nextExecution);
 					nextExecutionsCount++;
