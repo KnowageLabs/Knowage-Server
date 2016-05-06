@@ -106,24 +106,12 @@
 						} else {
 							//DATE
 							if(parameter.type=='DATE'){
-								console.log('build date : ' , parameter.parameterValue);
-								console.log('format date local ' + sbiModule_config.localizedDateFormat);
-								
-								console.log('DATE TO SUB  ' + $filter('date')(parameter.parameterValue, sbiModule_config.localizedDateFormat));
-								//var dateToSubmit = $filter('date')(parameter.parameterValue, sbiModule_config.localizedDateFormat);
-								
-								
-								var d = new Date(parameter.parameterValue);
-								var month = '' + (d.getMonth() + 1);
-								console.log(month + '/'+d.getDate()+'/'+d.getFullYear());
-								dateToSubmit = month + '/'+d.getDate()+'/'+d.getFullYear();
-								
+								//TODO : parse method !!
+								dateToSubmit = $filter('date')(parameter.parameterValue, 
+										this.parseDateTemp(sbiModule_config.localizedDateFormat));
+								console.log('date to sub ' + dateToSubmit);
 								jsonDatumValue=dateToSubmit;
-								jsonDatumDesc=dateToSubmit;
-								
-								
-								//console.log('aaa ' , sbiModule_config.$mdDateLocaleProvider);
-								
+								jsonDatumDesc=dateToSubmit;							
 							}else{
 								jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
 								jsonDatumDesc = jsonDatumValue;
@@ -137,10 +125,20 @@
 				return jsonDatum;
 			},
 
+			
+			parseDateTemp : function(date){
+				result = "";
+				if(date == "d/m/Y"){
+					result = "dd/MM/yyyy";
+				}
+				if(date =="m/d/Y"){
+					result = "MM/dd/yyyy"
+				}
+				return result;
+			},
 					
 			recursiveChildrenChecks : function(parameterValue, childrenArray) {
 				childrenArray = childrenArray || [];
-				
 				for(var i = 0; i < childrenArray.length; i++) {
 					var childItem = childrenArray[i];
 					if(childItem.checked && childItem.checked == true) {
@@ -918,7 +916,11 @@
 	
 		this.visualCorrelationWatch = function(value){
 			if(serviceScope.visualCorrelationMap[value.urlName]){
+				var forceExit=false;
 				for(var k=0; k<serviceScope.visualCorrelationMap[value.urlName].length; k++){
+					if(forceExit){
+						break;
+					}
 					var visualDependency=serviceScope.visualCorrelationMap[value.urlName][k];
 				    //id document Parameter to control 
 					var idDocumentParameter = visualDependency.parameterToChangeId;
@@ -929,9 +931,21 @@
 						//conditions
 						var condition = false;
 						if( Object.prototype.toString.call( newValueStr ) === '[object Array]' ) {
-						   for(var l=0; l<newValueStr.length; l++){
-							   if(compareValueArr[z]==newValueStr[l]){
-								   condition=true; 
+						   if(visualDependency.operation=='contains') {
+							   for(var l=0; l<newValueStr.length; l++){
+								   if(compareValueArr[z]==newValueStr[l]){
+									   condition=true;
+									   break;
+								   }
+							   }
+						   }
+						   else { //not contains
+							   condition=true; 
+							   for(var l=0; l<newValueStr.length; l++){
+								   if(compareValueArr[z]==newValueStr[l]){
+									   condition=false;
+									   break;
+								   }
 							   }
 						   }
 						}else{
@@ -947,6 +961,7 @@
 							execProperties.parametersData.documentParameters[idDocumentParameter].visible=true;
 							//Exit if one conditions is verify
 							documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[idDocumentParameter]);
+							forceExit = true;
 							break;
 						}else{
 							execProperties.parametersData.documentParameters[idDocumentParameter].visible=false;

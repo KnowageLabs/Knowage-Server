@@ -310,8 +310,12 @@
 				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++) {
 					var parameter = execProperties.parametersData.documentParameters[i];
 					documentExecuteServices.resetParameter(parameter);
+					//INIT VISUAL CORRELATION PARAMS
+					docExecute_dependencyService.visualCorrelationWatch(parameter);
 				}
 			}
+			
+			
 		};
 
 		$scope.printDocument = function() {
