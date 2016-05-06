@@ -17,6 +17,9 @@
  */
 package it.eng.spagobi.metadata.cwm.jmi;
 
+import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.core.CwmClassifier;
+import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.core.CwmNamespace;
+import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.keysindexes.CwmUniqueKey;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.relational.CwmCatalog;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.relational.CwmColumn;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.relational.CwmForeignKey;
@@ -61,11 +64,127 @@ public class SpagoBICWMMapperJMIImpl extends ICWMMapper {
 		// TODO: incomplete implementation
 
 		PhysicalModel model = FACTORY.createPhysicalModel();
+		// set model name
 		model.setName(cwm.getName());
-
+		// set catalog and schema
 		model.setCatalog(cwm.getCatalog().getName());
+		model.setSchema(cwm.getSchema().getName());
+
+		// Table creation
+		Collection<CwmTable> tables = cwm.getTables();
+		for (CwmTable table : tables) {
+			// create a physical table
+			PhysicalTable physicalTable = FACTORY.createPhysicalTable();
+			physicalTable.setModel(model);
+			physicalTable.setName(table.getName());
+			// add columns of this table
+			addColumns(cwm, table, model, physicalTable);
+		}
+
+		// Primary Keys creation
+		Collection<CwmPrimaryKey> primaryKeys = cwm.getPrimaryKeys();
+		for (CwmPrimaryKey primaryKey : primaryKeys) {
+			PhysicalPrimaryKey physicalPK = FACTORY.createPhysicalPrimaryKey();
+			String name = primaryKey.getName();
+			physicalPK.setName(name);
+			List features = primaryKey.getFeature();
+			CwmNamespace parent = primaryKey.getNamespace();
+			if (parent instanceof CwmTable) {
+				CwmTable cwmTable = (CwmTable) parent;
+				PhysicalTable physicalTable = model.getTable(cwmTable.getName());
+				if (physicalTable != null) {
+					// set the physical table of the pk
+					physicalPK.setTable(physicalTable);
+
+					// find the columns part of the pk
+					for (Object feature : features) {
+						if (feature instanceof CwmColumn) {
+							CwmColumn cwmColumn = (CwmColumn) feature;
+							PhysicalColumn physicalColumn = physicalTable.getColumn(cwmColumn.getName());
+							if (physicalColumn != null) {
+								// add column to pk
+								physicalPK.getColumns().add(physicalColumn);
+							}
+						}
+					}
+				}
+			}
+			model.getPrimaryKeys().add(physicalPK);
+
+		}
+
+		// Foreign Keys creation
+		Collection<CwmForeignKey> foreignKeys = cwm.getForeignKeys();
+		for (CwmForeignKey foreignKey : foreignKeys) {
+			PhysicalForeignKey physicalForeignKey = FACTORY.createPhysicalForeignKey();
+			physicalForeignKey.setName(physicalForeignKey.getName());
+			physicalForeignKey.setSourceName(physicalForeignKey.getName());
+			CwmNamespace cwmNamespace = foreignKey.getNamespace();
+			// set source table of fk
+			if (cwmNamespace instanceof CwmTable) {
+				CwmTable cwmSourceTable = (CwmTable) cwmNamespace;
+				PhysicalTable physicalTable = model.getTable(cwmSourceTable.getName());
+				if (physicalTable != null) {
+					physicalForeignKey.setSourceTable(physicalTable);
+				}
+				// get source columns
+				List features = foreignKey.getFeature();
+				for (Object feature : features) {
+					if (feature instanceof CwmColumn) {
+						CwmColumn cwmColumn = (CwmColumn) feature;
+						PhysicalColumn physicalColumn = physicalTable.getColumn(cwmColumn.getName());
+						if (physicalColumn != null) {
+							physicalForeignKey.getSourceColumns().add(physicalColumn);
+						}
+					}
+				}
+			}
+
+			// set target table of fk
+			CwmUniqueKey cwmUniqueKey = foreignKey.getUniqueKey();
+			if (cwmUniqueKey instanceof CwmPrimaryKey) {
+				CwmPrimaryKey cwmPrimaryKey = (CwmPrimaryKey) cwmUniqueKey;
+				physicalForeignKey.setDestinationName(cwmPrimaryKey.getName());
+				CwmNamespace cwmNamespacePK = cwmPrimaryKey.getNamespace();
+				if (cwmNamespacePK instanceof CwmTable) {
+					CwmTable cwmTable = (CwmTable) cwmNamespacePK;
+					PhysicalTable pkPhysicalTable = model.getTable(cwmTable.getName());
+					physicalForeignKey.setDestinationTable(pkPhysicalTable);
+					// set target columns
+					List features = cwmTable.getFeature();
+					for (Object feature : features) {
+						if (feature instanceof CwmColumn) {
+							CwmColumn cwmColumn = (CwmColumn) feature;
+							PhysicalColumn pkPhysicalColumn = pkPhysicalTable.getColumn(cwmColumn.getName());
+							if (pkPhysicalColumn != null) {
+								physicalForeignKey.getDestinationColumns().add(pkPhysicalColumn);
+							}
+						}
+					}
+				}
+				model.getForeignKeys().add(physicalForeignKey);
+			}
+		}
 
 		return model;
+	}
+
+	public void addColumns(SpagoBICWMJMIImpl cwm, CwmTable cwmTable, PhysicalModel model, PhysicalTable physicalTable) {
+		Collection<CwmColumn> cwmColumns = cwm.getColumns(cwmTable);
+		for (CwmColumn cwmColumn : cwmColumns) {
+			PhysicalColumn physicalColumn = FACTORY.createPhysicalColumn();
+			physicalColumn.setName(cwmColumn.getName());
+			physicalColumn.setSize(cwmColumn.getLength());
+			CwmClassifier cwmClassifer = cwmColumn.getType();
+			if (cwmClassifer instanceof CwmSqlsimpleType) {
+				CwmSqlsimpleType cwmType = ((CwmSqlsimpleType) cwmClassifer);
+				String typeName = cwmType.getName();
+				physicalColumn.setDataType(typeName);
+			}
+
+			// add column to physical table
+			physicalTable.getColumns().add(physicalColumn);
+		}
 	}
 
 	// -----------------------------------------------------------------------------
@@ -121,7 +240,7 @@ public class SpagoBICWMMapperJMIImpl extends ICWMMapper {
 			for (PhysicalColumn column : columns) {
 				CwmColumn cwmColumn = encodeColumn(cwm, column);
 				cwmColumn.setLength(column.getSize());
-				cwmColumn.setType(encodeSQLSimpleType(cwm, column.getTypeName()));
+				cwmColumn.setType(encodeSQLSimpleType(cwm, column.getDataType()));
 				cwmColumn.setOwner(cwmTable);
 				cwmTable.getFeature().add(cwmColumn);
 

@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -56,15 +55,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -72,14 +74,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
@@ -317,15 +322,66 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	}
 
 	/**
+	 * Import CWM Model into Knowage Metamodel with the specified id
+	 **/
+	@POST
+	@Path("/{bmId}/importCWM")
+	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response importCWMToMetamodel(@PathParam("bmId") int businessModelId, @MultipartForm MultipartFormDataInput input) {
+		// TODO: to complete
+
+		logger.debug("IN");
+		String fileName;
+		try {
+			// 1- Retrieve uploaded file data
+			Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+			InputStream inputStream = null;
+
+			for (String key : uploadForm.keySet()) {
+				List<InputPart> inputParts = uploadForm.get(key);
+				for (InputPart inputPart : inputParts) {
+					MultivaluedMap<String, String> header = inputPart.getHeaders();
+					if (getFileName(header) != null) {
+						fileName = getFileName(header);
+						inputStream = inputPart.getBody(InputStream.class, null);
+					}
+				}
+			}
+			return Response.ok().build();
+
+		} catch (Exception e) {
+			logger.error("An error occurred while trying to import CWM metamodel into metamodel with id " + businessModelId, e);
+			throw new SpagoBIRestServiceException("An error occurred while trying to import CWM metamodel into metamodel with id " + businessModelId,
+					buildLocaleFromSession(), e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	/**
 	 * -------------------------------------------------------------------------------------
 	 *
 	 * Utility methods
 	 *
 	 * -------------------------------------------------------------------------------------
 	 *
-	 * @throws XPathExpressionException
-	 * @throws EMFUserError
 	 */
+
+	private String getFileName(MultivaluedMap<String, String> header) {
+		String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
+
+		for (String filename : contentDisposition) {
+			if ((filename.trim().startsWith("filename"))) {
+
+				String[] name = filename.split("=");
+
+				String finalFileName = name[1].trim().replaceAll("\"", "");
+				return finalFileName;
+			}
+		}
+		return null;
+	}
 
 	private byte[] getModelFileFromJar(Content content) {
 		logger.debug("IN");

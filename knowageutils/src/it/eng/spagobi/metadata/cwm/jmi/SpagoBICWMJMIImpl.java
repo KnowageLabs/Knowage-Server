@@ -22,6 +22,7 @@ import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.MetaPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.behavioral.BehavioralPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.businessinformation.BusinessInformationPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.core.CorePackage;
+import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.core.CwmClassifier;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.datatypes.DataTypesPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.instance.InstancePackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.keysindexes.KeysIndexesPackage;
@@ -43,9 +44,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
@@ -213,10 +216,33 @@ public class SpagoBICWMJMIImpl implements ICWM {
 		return foreignKey;
 	}
 
+	public CwmSchema getSchema() {
+		Collection<CwmSchema> schemas = relationalPackage.getCwmSchema().refAllOfClass();
+		CwmSchema[] s = schemas.toArray(new CwmSchema[schemas.size()]);
+		return (s.length > 0 ? s[0] : null);
+	}
+
 	public CwmCatalog getCatalog() {
 		Collection<CwmCatalog> catalogs = relationalPackage.getCwmCatalog().refAllOfClass();
 		CwmCatalog[] c = catalogs.toArray(new CwmCatalog[catalogs.size()]);
 		return (c.length > 0 ? c[0] : null);
+	}
+
+	public Collection<CwmTable> getTables() {
+		Collection<CwmTable> tables = relationalPackage.getCwmTable().refAllOfClass();
+		return tables;
+	}
+
+	public Collection<CwmColumn> getColumns(CwmTable table) {
+		List<CwmColumn> columns = new ArrayList<CwmColumn>();
+		List<CwmClassifier> cwmClassifiers = table.getFeature();
+		for (CwmClassifier cwmClassifier : cwmClassifiers) {
+			if (cwmClassifier instanceof CwmColumn) {
+				columns.add((CwmColumn) cwmClassifier);
+			}
+		}
+		return columns;
+
 	}
 
 	public Collection<CwmForeignKey> getForeignKeys() {
