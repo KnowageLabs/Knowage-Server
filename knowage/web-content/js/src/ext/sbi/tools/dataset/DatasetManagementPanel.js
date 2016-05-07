@@ -4195,8 +4195,8 @@ console.log(this.manageDatasetFieldMetadataGrid);
 							Ext.MessageBox
 							.show({
 								title : LN('sbi.generic.error'),
-								msg : "Please save first",
-								width : 150,
+								msg : "Please create the dataset and save before creating links",
+								width : 250,
 								buttons : Ext.MessageBox.OK
 							});
 					return;
