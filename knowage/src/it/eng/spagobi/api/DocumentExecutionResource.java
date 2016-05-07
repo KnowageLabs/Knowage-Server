@@ -343,11 +343,35 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
 
 			// DEFAULT VALUE
-			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0 && jsonParameters.isNull(objParameter.getId())) {
-				DefaultValuesList valueList = buildDefaultValueList(objParameter);
-				if (valueList != null) {
-					parameterAsMap.put("parameterValue", valueList);
+
+			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
+				DefaultValuesList valueList = null;
+				if (jsonParameters.isNull(objParameter.getId())) {
+					valueList = buildDefaultValueList(objParameter);
+					if (valueList != null) {
+						parameterAsMap.put("parameterValue", valueList);
+					}
+				} else {
+					valueList = new DefaultValuesList();
+					if (objParameter.isMultivalue()) {
+						JSONArray paramValArr = (JSONArray) jsonParameters.get(objParameter.getId());
+						for (int i = 0; i < paramValArr.length(); i++) {
+							DefaultValue defValue = new DefaultValue();
+							defValue.setValue(paramValArr.get(i));
+							defValue.setDescription(paramValArr.get(i));
+							valueList.add(defValue);
+						}
+						parameterAsMap.put("parameterValue", valueList);
+					} else {
+
+						DefaultValue defValue = new DefaultValue();
+						defValue.setValue(jsonParameters.get(objParameter.getId()));
+						defValue.setDescription(jsonParameters.get(objParameter.getId()));
+						valueList.add(defValue);
+						parameterAsMap.put("parameterValue", valueList);
+					}
 				}
+
 			}
 
 			// load, if present, the json parameters
