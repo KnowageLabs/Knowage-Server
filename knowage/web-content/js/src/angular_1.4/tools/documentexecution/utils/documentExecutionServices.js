@@ -928,12 +928,13 @@
 					var compareValueArr = visualDependency.compareValue.split(",");
 					for(var z=0; z<compareValueArr.length; z++){
 						var newValueStr = value.parameterValue;
+						var compareValueStr=compareValueArr[z].trim();
 						//conditions
 						var condition = false;
 						if( Object.prototype.toString.call( newValueStr ) === '[object Array]' ) {
 						   if(visualDependency.operation=='contains') {
 							   for(var l=0; l<newValueStr.length; l++){
-								   if(compareValueArr[z]==newValueStr[l]){
+								   if(compareValueStr==newValueStr[l]){
 									   condition=true;
 									   break;
 								   }
@@ -942,7 +943,7 @@
 						   else { //not contains
 							   condition=true; 
 							   for(var l=0; l<newValueStr.length; l++){
-								   if(compareValueArr[z]==newValueStr[l]){
+								   if(compareValueStr==newValueStr[l]){
 									   condition=false;
 									   break;
 								   }
@@ -950,11 +951,11 @@
 						   }
 						}else{
 							condition = (visualDependency.operation=='contains') ? 
-									(compareValueArr[z]==newValueStr) : condition=(compareValueArr[z]!=newValueStr);
+									(compareValueStr==newValueStr) : condition=(compareValueStr!=newValueStr);
 						}
 												
 //						var condition = (visualDependency.operation=='contains') 
-//							? (compareValueArr[z]==newValueStr) : condition=(compareValueArr[z]!=newValueStr); 
+//							? (compareValueStr==newValueStr) : condition=(compareValueStr!=newValueStr); 
 							
 						if(condition){
 							execProperties.parametersData.documentParameters[idDocumentParameter].label=visualDependency.viewLabel;
