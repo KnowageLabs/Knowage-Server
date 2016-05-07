@@ -115,8 +115,8 @@
 		
 		$scope.popupLookupParameterDialog = function(parameter) {
 			
-				execProperties.hideProgressCircular.status=false;
-			
+			execProperties.hideProgressCircular.status=false;
+			parameter.PARAMETERS=documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
 			var templateUrl = sbiModule_config.contextName
 				+ '/js/src/angular_1.4/tools/documentexecution/templates/popupLookupParameterDialogTemplate.htm';
 			
@@ -265,8 +265,32 @@
 							
 							paramDialogCtrl.tableColumns.push(columnName.toUpperCase());
 						};
+						// defaultValues are filtered occording to dataDependencies
+						var _dataDependencies = paramDialogCtrl.tempParameter.dataDependencies;
+						paramDialogCtrl.tableData = [];
+						if(_dataDependencies){
+							var _defaultValues = paramDialogCtrl.tempParameter.defaultValues;
+							var _urlName = paramDialogCtrl.tempParameter.urlName;
+							for(var rowIndex in _defaultValues){
+								var item = _defaultValues[rowIndex];
+								var toKeep = true;
+								for(var depIndex in _dataDependencies){
+									var currDep = _dataDependencies[depIndex];
+									if(currDep.parameterToChangeUrlName == _urlName){
+										if(!testCondition(item[currDep.filterColumn.toUpperCase()], currDep.filterOperation, paramDialogCtrl.tempParameter.PARAMETERS[currDep.objParFatherUrlName])){
+											toKeep = false;
+											break;
+										}
+									}
+								}
+								if(toKeep){
+									paramDialogCtrl.tableData.push(item);
+								}
+							}
+						}else{
+							paramDialogCtrl.tableData = paramDialogCtrl.tempParameter.defaultValues;
+						}
 						
-						paramDialogCtrl.tableData = paramDialogCtrl.tempParameter.defaultValues;
 						
 						paramDialogCtrl.initSelectedTableItems = function() {
 							var isMultivalue = paramDialogCtrl.tempParameter.multivalue;
@@ -391,6 +415,41 @@
 					parameter.innerValuesMap[parameterValueId] = parameterValue;
 				}
 			}
+		}
+		
+		var testCondition = function(fieldA, condition, fieldB){
+			var ret = false;
+			try{
+				switch (condition){
+					case 'start':
+						ret = fieldA.startsWith(fieldB);
+						break;
+					case 'end':
+						ret = fieldA.endssWith(fieldB);
+						break;
+					case 'contains':
+						ret = fieldA.indexOf(fieldB)>-1;
+						break;
+					case 'equal':
+						ret = fieldA == fieldB;
+						break;
+					case 'less':
+						ret = fieldA < fieldB;
+						break;
+					case 'lessequal':
+						ret = fieldA <= fieldB;
+						break;
+					case 'greater':
+						ret = fieldA > fieldB;
+						break;
+					case 'greaterequal':
+						ret = fieldA >= fieldB;
+						break;
+				}
+			}catch(e){
+				console.error(e.message, e);
+			}
+			return ret;
 		}
 	};
 })();
