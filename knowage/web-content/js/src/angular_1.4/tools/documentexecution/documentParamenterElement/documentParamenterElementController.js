@@ -277,7 +277,14 @@
 								for(var depIndex in _dataDependencies){
 									var currDep = _dataDependencies[depIndex];
 									if(currDep.parameterToChangeUrlName == _urlName){
-										if(!testCondition(item[currDep.filterColumn.toUpperCase()], currDep.filterOperation, paramDialogCtrl.tempParameter.PARAMETERS[currDep.objParFatherUrlName])){
+										var filterParam = paramDialogCtrl.tempParameter.PARAMETERS[currDep.objParFatherUrlName];
+										if(Array.isArray(filterParam)){
+											var testMultiCond = false;
+											for(var parIndex in filterParam){
+												testMultiCond = testMultiCond || testCondition(item[currDep.filterColumn.toUpperCase()], currDep.filterOperation, filterParam[parIndex]);
+											}
+											toKeep = testMultiCond;
+										}else if(!testCondition(item[currDep.filterColumn.toUpperCase()], currDep.filterOperation, filterParam)){
 											toKeep = false;
 											break;
 										}
