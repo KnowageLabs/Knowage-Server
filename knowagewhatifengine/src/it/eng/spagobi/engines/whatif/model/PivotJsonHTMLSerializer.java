@@ -73,7 +73,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
-public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
+public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRendering> {
 
 	public static transient Logger logger = Logger.getLogger(PivotJsonHTMLSerializer.class);
 
@@ -94,17 +94,15 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	private static final String SLICERS = "slicers";
 	private static final String FORMULAS = "formulas";
 
-	private final OlapConnection connection;
-	private final ModelConfig modelConfig;
-
-	public PivotJsonHTMLSerializer(OlapConnection connection, ModelConfig modelConfig) {
-		this.connection = connection;
-		this.modelConfig = modelConfig;
-	}
+	public PivotJsonHTMLSerializer() {}
 
 	@Override
-	public void serialize(PivotModel value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+	public void serialize(PivotObjectForRendering pivotobject, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
 
+		PivotModel value = pivotobject.getModel();
+		ModelConfig modelConfig = pivotobject.getConfig();
+		OlapConnection connection = pivotobject.getConnection();
+		
 		logger.debug("IN");
 
 		String table = "";
@@ -237,12 +235,12 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			/***********************************************/
 			serializeFunctions(FORMULAS, jgen);
 			/***********************************************/
-			serializeAxis(ROWS, jgen, axis, Axis.ROWS);
-			serializeAxis(COLUMNS, jgen, axis, Axis.COLUMNS);
+			serializeAxis(ROWS, jgen, axis, Axis.ROWS, connection, modelConfig);
+			serializeAxis(COLUMNS, jgen, axis, Axis.COLUMNS, connection, modelConfig);
 			List<Hierarchy> hierarchy = value.getCube().getHierarchies();
 			// serializeFilters(FILTERS, jgen, hierarchy, (PivotModelImpl)
 			// value);
-			serializeDimensions(jgen, otherHDimensions, FILTERS_AXIS_POS, FILTERS, true, (PivotModelImpl) value);
+			serializeDimensions(jgen, otherHDimensions, FILTERS_AXIS_POS, FILTERS, true, (PivotModelImpl) value, connection, modelConfig);
 			jgen.writeNumberField(COLUMNSAXISORDINAL, Axis.COLUMNS.axisOrdinal());
 			jgen.writeNumberField(ROWSAXISORDINAL, Axis.ROWS.axisOrdinal());
 			jgen.writeObjectField(MODELCONFIG, modelConfig);
@@ -265,7 +263,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 	}
 
-	private void serializeAxis(String field, JsonGenerator jgen, List<CellSetAxis> axis, Axis type) throws JSONException, JsonGenerationException, IOException {
+	private void serializeAxis(String field, JsonGenerator jgen, List<CellSetAxis> axis, Axis type, OlapConnection connection, ModelConfig modelConfig) throws JSONException, JsonGenerationException, IOException {
 		CellSetAxis aAxis = axis.get(0);
 		int axisPos = 0;
 		if (!aAxis.getAxisOrdinal().equals(type)) {
@@ -275,11 +273,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		List<Hierarchy> hierarchies = aAxis.getAxisMetaData().getHierarchies();
 		if (hierarchies != null) {
 			List<Dimension> dimensions = CubeUtilities.getDimensions(hierarchies);
-			serializeDimensions(jgen, dimensions, axisPos, field, false, null);
+			serializeDimensions(jgen, dimensions, axisPos, field, false, null,  connection,  modelConfig);
 		}
 	}
 
-	private void serializeDimensions(JsonGenerator jgen, List<Dimension> dimensions, int axis, String field, boolean withSlicers, PivotModelImpl model)
+	private void serializeDimensions(JsonGenerator jgen, List<Dimension> dimensions, int axis, String field, boolean withSlicers, PivotModelImpl model, OlapConnection connection, ModelConfig modelConfig)
 			throws JSONException, JsonGenerationException, IOException {
 
 		QueryAdapter qa = null;
@@ -363,7 +361,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		//System.out.println(name);
 	}
 
-	private void serializeFilters(String field, JsonGenerator jgen, List<Hierarchy> hierarchies, PivotModelImpl model) throws JSONException,
+/*	private void serializeFilters(String field, JsonGenerator jgen, List<Hierarchy> hierarchies, PivotModelImpl model, OlapConnection connection, ModelConfig modelConfig) throws JSONException,
 			JsonGenerationException, IOException {
 
 		QueryAdapter qa = new QueryAdapter(model);
@@ -397,7 +395,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			}
 		}
 		jgen.writeEndArray();
-	}
+	}*/
 
 	public String formatQueryString(String queryString) {
 		String formattedQuery;

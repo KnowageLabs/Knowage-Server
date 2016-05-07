@@ -20,6 +20,7 @@ package it.eng.spagobi.engines.whatif.common;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.member.SbiMember;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.PivotObjectForRendering;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.serializer.SerializationException;
 import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
@@ -62,14 +63,16 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 	public String renderModel(PivotModel model) {
 		logger.debug("IN");
 
+		
 		String serializedModel = null;
 
 		try {
 			SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) model;
 
+			
 			// adds the calculated fields before rendering the model
 			sbiModel.applyCal();
-			serializedModel = serialize(sbiModel);
+			serializedModel = serialize(new PivotObjectForRendering(getWhatIfEngineInstance().getOlapConnection(), sbiModel, getWhatIfEngineInstance().getModelConfig()));
 			SortCriteria sortCriteria = model.getSortCriteria();
 
 			// restore the query without calculated fields

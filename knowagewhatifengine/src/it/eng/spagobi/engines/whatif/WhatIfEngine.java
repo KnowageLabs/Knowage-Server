@@ -63,7 +63,7 @@ public class WhatIfEngine {
 		logger.debug("IN");
 		try {
 			whatIfEngineInstance = new WhatIfEngineInstance(template, env);
-			initSerializers(whatIfEngineInstance.getOlapConnection(), whatIfEngineInstance.getModelConfig());
+			initSerializers();
 		} catch (Exception e) {
 			logger.error("OUT", e);
 			throw new SpagoBIEngineRuntimeException("error", e);
@@ -73,8 +73,8 @@ public class WhatIfEngine {
 		return whatIfEngineInstance;
 	}
 
-	private static void initSerializers(OlapConnection connection, ModelConfig config) {
-		PivotJsonSerializer pjs = new PivotJsonSerializer(connection, config);
+	private static void initSerializers() {
+		PivotJsonSerializer pjs = new PivotJsonSerializer();
 		SerializationManager.registerSerializer(pjs.getFormat(), pjs);
 	}
 }

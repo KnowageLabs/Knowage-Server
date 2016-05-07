@@ -23,8 +23,6 @@ import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import org.apache.log4j.Logger;
-import org.olap4j.OlapConnection;
-import org.pivot4j.PivotModel;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -38,11 +36,11 @@ public class PivotJsonSerializer implements ISerializer {
 
 	ObjectMapper mapper;
 
-	public PivotJsonSerializer(OlapConnection connection, ModelConfig config) {
+	public PivotJsonSerializer() {
 		mapper = new ObjectMapper();
 		SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1, 0, 0, null));
 		// simpleModule.addSerializer(Member.class, new MemberJsonSerializer());
-		simpleModule.addSerializer(PivotModel.class, new PivotJsonHTMLSerializer(connection, config));
+		simpleModule.addSerializer(PivotObjectForRendering.class, new PivotJsonHTMLSerializer());
 		mapper.registerModule(simpleModule);
 	}
 
