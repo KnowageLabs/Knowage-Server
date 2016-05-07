@@ -15,6 +15,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+ .loadingMask{
+ position: fixed;
+ z-index:500;
+ height: 100%;
+ width: 100%;
+ background-color: black;
+ opacity :0.5;
+ }
+ 
+ .loadingNoMask{
+ position: fixed;
+ z-index:500;
+ height: 100%;
+ width: 100%;
+ 
+ }
 
 .BUTTON_HIDE_SPANS_CLICKED{
 	background-image: url(../img/hide_spans_clicked.png);
