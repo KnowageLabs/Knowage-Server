@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="java.util.List"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.Map"%>
-
+<%@page import="it.eng.spago.navigation.LightNavigationManager"%>
 
 <%@page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
@@ -36,11 +36,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  			if(request.getParameter("LABEL")!=null){
  				documentLabel = request.getParameter("LABEL");
 			}
+ 			
+ 			Map backUrlPars = new HashMap();
+ 			backUrlPars.put("PAGE", "detailBIObjectPage");
+ 			backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO,"1");
+ 			backUrlPars.put("MESSAGEDET", "DETAIL_SELECT");
+ 			String backUrl = urlBuilder.getUrl(request, backUrlPars);
+ 			
 		%>
 		
 		<script>
 			var documentID = '<%= documentID %>';
 			var documentLabel = '<%= documentLabel %>';
+			var backUrl =  '<%= backUrl %>';
 		</script> 
 
 

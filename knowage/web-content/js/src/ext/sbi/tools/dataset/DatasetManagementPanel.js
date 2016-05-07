@@ -4190,9 +4190,26 @@ console.log(this.manageDatasetFieldMetadataGrid);
 					
 					linkDataset : function() {
 						
-						var id = this.manageDatasetFieldMetadataGrid.record.json.id;
-						var label = this.manageDatasetFieldMetadataGrid.record.json.label;
-						document.location.href = "/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/linkDataset.jsp&id="+id+"&label="+label
+						if (this.manageDatasetFieldMetadataGrid.record.json == undefined) {
+							
+							Ext.MessageBox
+							.show({
+								title : LN('sbi.generic.error'),
+								msg : "Please save first",
+								width : 150,
+								buttons : Ext.MessageBox.OK
+							});
+					return;
+							
+						} else {
+							
+							var id = this.manageDatasetFieldMetadataGrid.record.json.id;
+							var label = this.manageDatasetFieldMetadataGrid.record.json.label;
+							document.location.href = "/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/linkDataset.jsp&id="+id+"&label="+label
+
+						}
+						
+						
 						
 						
 						

@@ -187,7 +187,9 @@ $scope.saveRelation = function(docId){
 }
 
 $scope.goBack = function(){
-	history.go(-1);
+	console.log(backUrl);
+	document.location.href = backUrl;
+	//history.go(-1);
 	
 }
 

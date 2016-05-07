@@ -714,9 +714,7 @@ $scope.sendCC = function() {
 	$scope.addCC();
 	toastr.info('Click ok to save also<br /><br /><md-button class="md-raised">OK</md-button>' , { 
 		  allowHtml: true,
-		  timeOut: 10000,
-		  extendedTimeOut: 3000,
-		  
+		  timeOut: 3000, 
 		  onTap: function() {
 			 
 			  
@@ -767,7 +765,7 @@ $scope.sendCC = function() {
 		$cookies.putObject('data',$scope.cookieArray);
 		sbiModule_messaging.showSuccessMessage("Set is saved", 'Success');
 	}
-	//$scope.selectedMDXFunction = null;
+	$scope.selectedMDXFunction = {}; // TODO
 	$mdDialog.hide();
 	}
 	
