@@ -343,12 +343,13 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
 
 			// DEFAULT VALUE
-			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
+			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0 && jsonParameters.isNull(objParameter.getId())) {
 				DefaultValuesList valueList = buildDefaultValueList(objParameter);
 				if (valueList != null) {
 					parameterAsMap.put("parameterValue", valueList);
 				}
 			}
+
 			// load, if present, the json parameters
 			// if (jsonParameters.has(objParameter.getId())) {
 			// parameterAsMap.put("parameterValue", jsonParameters.getString(objParameter.getId()));
