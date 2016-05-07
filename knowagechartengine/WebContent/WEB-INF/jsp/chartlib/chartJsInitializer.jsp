@@ -293,7 +293,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				groupingCategoryValue = e.point.group.value;
 			}
 
-			  if(parent.execExternalCrossNavigation){
+			if(parent.execExternalCrossNavigation){
 	            	var navData={
 	            			chartType:	"CHARTJS",
 	            			documentName:e.point.crossNavigationDocumentName,

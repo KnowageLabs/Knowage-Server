@@ -323,7 +323,7 @@
 			
             // fisrt parameter is string chart type 
 //              if(window.parent.angular && window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper!=undefined){
-	 
+	 debugger;
              if(parent.execExternalCrossNavigation){
             	var navData={
             			chartType:	"HIGHCHART",

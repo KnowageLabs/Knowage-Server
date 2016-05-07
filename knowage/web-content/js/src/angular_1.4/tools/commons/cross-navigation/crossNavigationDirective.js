@@ -114,12 +114,13 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 								respStr[key].push(parVal.value);
 							}
 						}else{
-							if(navData[dataKey].hasOwnProperty(parVal.value) && navData[dataKey][parVal.value]!=undefined && navData[dataKey][parVal.value]!=null){ 
+							if(navData[dataKey].hasOwnProperty(parVal.value.label) && navData[dataKey][parVal.value.label]!=undefined && navData[dataKey][parVal.value.label]!=null){ 
 								if(!respStr.hasOwnProperty(key)){
 									respStr[key]=[];
 								}
 								
-								respStr[key].push(navData[dataKey][parVal.value]);
+								respStr[key].push(parseParameterValue(parVal.value,navData[dataKey][parVal.value.label]));
+//								respStr[key].push(navData[dataKey][parVal.value]);
 							}
 						}
 						

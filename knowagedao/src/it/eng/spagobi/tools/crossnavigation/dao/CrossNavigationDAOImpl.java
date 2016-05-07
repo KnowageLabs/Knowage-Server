@@ -364,6 +364,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				JSONArray ja = loadNavigationByDocument(docLabel);
 				return ja.length() > 0;
 			} catch (Exception e) {
+				e.printStackTrace();
 				return false;
 			}
 		}
