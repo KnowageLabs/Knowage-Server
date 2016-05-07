@@ -18,8 +18,8 @@
 	#set($enableDrilldown = true)
 #end
 
-#set($crossNavigation = '')
-#set($crossNavigation = $chart.DRILL)
+##set($crossNavigation = '')
+##set($crossNavigation = $chart.DRILL)
 
 #set($series = $chart.VALUES.SERIE) ## metadata related to series
 
