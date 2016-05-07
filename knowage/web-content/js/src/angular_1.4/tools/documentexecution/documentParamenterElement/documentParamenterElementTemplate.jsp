@@ -3,7 +3,7 @@
 	<i class="fa fa-eraser"></i>
 </md-button>
 <div flex layout-align="start">
-	<md-input-container>
+	
 	
 		<%--
 		<md-content style="font-size:8px;" ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in'">{{parameter|json}}</md-content>
@@ -12,7 +12,7 @@
 		
 		<!-- Map input -->
 		<section ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in'" layout="column">
-			<div layout="row" layout-align="start">
+		 	<div layout="row" layout-align="start">
 				<md-button ng-click="popupMapParameterDialog(parameter)" ng-required="::parameter.mandatory"
 						id="{{::parameter.urlName}}" aria-label="{{parameter.label}}">
 					<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label>
@@ -31,7 +31,7 @@
 			<span ng-class="{'layout-padding': !parameter.multivalue && parameter.parameterValue && parameter.parameterValue != ''}"
 					ng-show="(!parameter.multivalue && parameter.parameterValue && parameter.parameterValue != '')">
 				<md-chips><md-chip>{{parameter.parameterValue}}</md-chip></md-chips>
-			</span>
+			</span> 
 		</section>
 	
 		<!-- lov LOOKUP single and multiple input -->
@@ -86,43 +86,33 @@
 			-->
 		</section>
 				
-				
 		<!-- Date -->
 		<section ng-if="parameter.type=='DATE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column">
-			<div layout="row" layout-align="start">
+<!-- 			<div layout="row" layout-align="start"> -->
 				<label 	ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >
 					{{parameter.label}}
 					</label>
-			</div>
-				<span style="padding-top: 12;">
-					<md-datepicker ng-model="parameter.parameterValue"  md-placeholder="{{parameter.label}}"
-						>
+<!-- 			</div> -->
+<!-- 				<span style="padding-top: 12;"> -->
+					<md-datepicker ng-model="parameter.parameterValue"  md-placeholder="{{parameter.label}}" >
 					</md-datepicker>
-				</span>
+<!-- 				</span> -->
 		</section>		
-				
 	
 		<!-- manual number input -->
-		<label ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" 
-			ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">
-			{{parameter.label}}
+		<md-input-container class="md-block" ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'">
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">
+				{{parameter.label}}
 			</label>
-		<input class="input_class" ng-model="parameter.parameterValue" 
-				ng-required="::parameter.mandatory" type="number"
-				ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" >	
-		
-		
-		
-		
-			 
+			<input class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" type="number">	
+		</md-input-container>
 		
 		<!-- manual text input -->
-		<label ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" 
-			ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">
-			{{parameter.label}}</label>
-		<input class="input_class" ng-model="parameter.parameterValue" 
-				ng-required="::parameter.mandatory"
-				ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'">
+		<md-input-container class="md-block" ng-if="parameter.type=='STRING' && parameter.selectionType=='' && parameter.valueSelection=='man_in'">
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">
+				{{parameter.label}}</label>
+			<input class="input_class" ng-model="parameter.parameterValue"  ng-required="::parameter.mandatory" >
+		</md-input-container>
 		
 		<!-- lov list single input -->
 		<section ng-if="parameter.selectionType=='LIST' && !parameter.multivalue">
@@ -146,33 +136,28 @@
 		</section>
 		
 		<!-- lov combobox single and multiple input -->
-		<label ng-if="parameter.selectionType=='COMBOBOX'">
-			{{parameter.label}}</label>
+		<md-input-container class="md-block">
+			<label ng-if="parameter.selectionType=='COMBOBOX'"> {{parameter.label}}</label>
 		
 		
-		<!-- multiple -->
-		<md-select ng-model="parameter.parameterValue" multiple ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
-			 	ng-if="showDefaultValueAreValid(parameter) && parameter.selectionType=='COMBOBOX' && parameter.multivalue" > 
-			<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value"
-				  ng-if="defaultParameter.isEnabled">
-				{{::defaultParameter.label}}
-			</md-option>
-		</md-select>
-		<!-- single -->
-		<md-select ng-model="parameter.parameterValue" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
-			 	ng-if="showDefaultValueAreValid(parameter) && parameter.selectionType=='COMBOBOX' && !parameter.multivalue"> 
-			<md-option></md-option>
-			<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
-				{{::defaultParameter.label}}
-			</md-option>
-		</md-select>
+			<!-- multiple -->
+			<md-select ng-model="parameter.parameterValue" multiple ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
+				 	ng-if="showDefaultValueAreValid(parameter) && parameter.selectionType=='COMBOBOX' && parameter.multivalue" > 
+				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value"
+					  ng-if="defaultParameter.isEnabled">
+					{{::defaultParameter.label}}
+				</md-option>
+			</md-select>
+			<!-- single -->
+			<md-select ng-model="parameter.parameterValue" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
+				 	ng-if="showDefaultValueAreValid(parameter) && parameter.selectionType=='COMBOBOX' && !parameter.multivalue"> 
+				<md-option></md-option>
+				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
+					{{::defaultParameter.label}}
+				</md-option>
+			</md-select>
 		
-		
-		
-		
-		
-		
-	</md-input-container>
+		</md-input-container>
 	
 	<!-- "DEFAULT VALID MESSAGE " message -->
 	<div ng-if="!showDefaultValueAreValid(parameter)">

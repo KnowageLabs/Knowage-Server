@@ -158,7 +158,8 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 //				return $filter('date')(value, param.dateFormat);				
 			}
 			if(param.type.valueCd=="NUM"){
-				return parseInt("value")
+				var res=parseFloat(value);
+				return isNaN(res) ? undefined : res;
 			}
 			if(param.type.valueCd=="STRING"){
 				return value;
