@@ -7,7 +7,7 @@
 		ng-mouseleave="node.isHover = undefined"
 >
 -->
-<div layout="row" layout-align="start center" class="customTreeNode">
+<div layout="row" layout-align="start center" class="customTreeNode" >
 
 	<div layout="row" layout-align="start center">
 		<!--
@@ -33,7 +33,7 @@
 			<md-icon ng-if="node.sortDirection=='desc'"
 				ng-click="toogleSort(node)" class="fa fa-sort-desc"></md-icon>
 		</div>
-		<div ng-click="openFolder(node)" class="line-container">
+		<div ng-click="openFolder(node)" class="line-container" ng-class="{'selectedNode': selectedItem.id == node.id}">
 			<span> &nbsp;{{node[label]}}</span>
 		</div>
 	</div>
@@ -205,6 +205,7 @@ md-toolbar.minihead-tree-small {
 
 .customTreeNode .selectedNode {
 	font-weight: bold;
+	background: rgb(224,224,224);
 }
 
 .customTreeNode:hover {
