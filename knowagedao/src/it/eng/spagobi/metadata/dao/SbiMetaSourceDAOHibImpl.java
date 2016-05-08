@@ -40,6 +40,9 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  *
@@ -405,12 +408,11 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 
 	@Override
 	public List<SbiMetaTable> loadMetaTables(Integer sourceId) throws EMFUserError {
-
+		Monitor monitorGeneral = MonitorFactory.start("metasource.dao.loadMetaTables.invoker.all");
 		LogMF.debug(logger, "IN: id = [{0}]", sourceId);
 
 		List<SbiMetaTable> toReturn = new ArrayList<SbiMetaTable>();
 		Session session = null;
-		Transaction transaction = null;
 
 		try {
 			if (sourceId == null) {
@@ -420,22 +422,17 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			try {
 				session = getSession();
 				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
-
+			
 			toReturn = loadMetaTables(session, sourceId);
 
-			transaction.rollback();
 		} catch (Throwable t) {
 			logException(t);
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
 			throw new SpagoBIDOAException("An unexpected error occured while loading meta tables of meta source with sourceId [" + sourceId + "]", t);
 		} finally {
+			monitorGeneral.stop();
 			if (session != null && session.isOpen()) {
 				session.close();
 			}
@@ -447,7 +444,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 
 	@Override
 	public List<SbiMetaTable> loadMetaTables(Session aSession, Integer sourceId) throws EMFUserError {
-
+		Monitor monitorGeneral = MonitorFactory.start("metasource.dao.loadMetaTables.business.all");
 		LogMF.debug(logger, "IN: id = [{0}]", sourceId);
 
 		List<SbiMetaTable> toReturn = new ArrayList<SbiMetaTable>();
@@ -456,13 +453,6 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 		try {
 			if (sourceId == null) {
 				throw new IllegalArgumentException("Input parameter [sourceId] cannot be null");
-			}
-
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 
 			Query query = session.createQuery(" from SbiMetaTable smt where smt.sbiMetaSource.sourceId = ? ");
@@ -479,6 +469,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 
 			throw new SpagoBIDOAException("An unexpected error occured while loading meta tables of meta source with sourceId [" + sourceId + "]", t);
 		} finally {
+			monitorGeneral.stop();
 			LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
 		}
 
