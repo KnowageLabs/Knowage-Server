@@ -367,8 +367,13 @@ function hierarchyBackupFunction($timeout,sbiModule_config,sbiModule_translate,s
 		}
 	};
 	
-	$scope.formatDate = function (date){
-		return date.getFullYear() + '-' + date.getMonth()+'-'+ date.getDate();
+	$scope.formatDate = function(date) {
+		if (date){
+			var mm = (date.getMonth()+1) < 10 ? '0' + (date.getMonth() + 1) : ''+ (date.getMonth() + 1);
+			var dd = date.getDate() < 10 ? '0' + date.getDate() : '' + date.getDate();
+			return date.getFullYear() + '-' + mm + '-' + dd;
+		}
+		return undefined;
 	}
 	
 	$scope.toggleLoading = function(forceValue){
