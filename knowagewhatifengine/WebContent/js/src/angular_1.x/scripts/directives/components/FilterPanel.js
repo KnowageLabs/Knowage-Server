@@ -81,28 +81,10 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$scope.activeaxis = filter.axis;
 		filterFather = filter.selectedHierarchyUniqueName;
 		h = filter.uniqueName;
-		var exist = false;
-		
-		/*for(var i = 0; i< $scope.dataPointers.length;i++){
-			if($scope.dataPointers[i] == filterFather){
-				exist = true;
-				$scope.data= $scope.loadedData[i];
-				if($scope.activeaxis >= 0){
-					var existsInTracker = false;
-					for(var i=0; i<visibleSelectedTracker.length;i++){
-						if(visibleSelectedTracker[i].id == filter.uniqueName){
-							visibleSelected = visibleSelectedTracker[i].selected;
-							existsInTracker = true;
-						}						
-					}
-					if(!existsInTracker)
-						getVisible($scope.data, h);				}
-			}
-		}*/
-		if(!exist){
+
 			$scope.getHierarchyMembersAsynchronus(filterFather, filter.axis, null,filter.id);
 			$scope.dataPointers.push(filterFather);
-		}
+
 		
 		$scope.showDialog(ev,$scope.filterDial);
 		
@@ -141,6 +123,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			.then(function(response) {
 				$scope.handleResponse(response);
 				checkShift();
+				updateFilterTracker();
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("An error occured while placing member on axis", 'Error');
 				
@@ -244,13 +227,11 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	$scope.selectFilter = function(item){
 		selectedFlag = true;
-		console.log("In old selected[select]:"+oldSelectedFilter)
 		oldSelectedFilter = $scope.filterSelected[$scope.filterAxisPosition];
 		h = $scope.filterCardList[$scope.filterAxisPosition].uniqueName;
 		m = item.uniqueName;
 		$scope.filterSelected[$scope.filterAxisPosition].name = item.name;
 		$scope.filterSelected[$scope.filterAxisPosition].uniqueName = item.uniqueName;
-		console.log("End old selected[select]:"+oldSelectedFilter)
 	};
 	
 	$scope.closeFiltersDialog = function() {
@@ -354,39 +335,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$scope.showSearchInput = !$scope.showSearchInput;		
 	};
 	
-	/**
-	 *This is not in use right now but maybe will be used in the future (synchronus tree)
-	 **/
-	/********************************START*******************************************************/
-	$scope.expandTree = function(item) {
-		var id = item.id;
-
-		for (var i = 0; i < $scope.data.length; i++) {
-			if ($scope.data[i].id == id && $scope.data[i].children.length > 0) {
-				$scope.data[i].collapsed = !$scope.data[i].collapsed;
-				break;
-			} else {
-				if ($scope.data[i].children.length > 0)
-					
-					levelDrop(id, $scope.data[i].children);
-			}
-		}
-	}
-
-	levelDrop = function(id, nodes) {
-		for (var i = 0; i < nodes.length; i++) {
-			if (nodes[i].id == id && nodes[i].children.length > 0) {
-				nodes[i].collapsed = !nodes[i].collapsed;
-			} else {
-				if (nodes[i].children.length > 0) {
-					levelDrop(id, nodes[i].children);
-				}
-			}
-		}
-	}
-	/********************************End************************************************************/
-	
-
 	$scope.hideAsyncTree = function(item){
 		item.collapsed = false;
 	}
@@ -446,21 +394,12 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				
 				fixAxisPosition("left");
 				fixAxisPosition("filter");
-				fixFilterSelectedList(fromAxis, pa );
 			}
 		}
 		if(data!= null)
 			$scope.clearLoadedData(data.uniqueName);
 	};
 
-	function fixFilterSelectedList(fa, pa){
-		var size = $scope.filterSelected.length;
-		for(var i = pa;i<size;i++){
-			$scope.filterSelected[i] = $scope.filterSelected[i+1];
-		}
-		$scope.filterSelected = $scope.filterSelected.slice(0,size-1);
-		
-	}
 	
 	$scope.dropLeft = function(data, ev) {
 		var leftLength = $scope.rows.length;
@@ -629,10 +568,12 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	//Initializing array filterSelected that is following selected dimension in filters 
 	$scope.initFilterList = function (){
+		$scope.filterSelected = [];
 		for(var i = 0; i < $scope.filterCardList.length;i++){
 			var x ={
 					name:"...",
 					uniqueName:"",
+					//filterUniqueName:"",
 					visible:false
 					};
 			$scope.filterSelected[i] = x;
@@ -681,6 +622,17 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		}
 	};
 	
-
+	updateFilterTracker = function(){
+		var oldSelected = $scope.filterSelected;
+		$scope.initFilterList();
+		for(var i=0; i<oldSelected.length;i++){			
+			for(var j=0; j<$scope.filterCardList.length;j++){
+				if(oldSelected[i].uniqueName.indexOf($scope.filterCardList[j].uniqueName)>-1){
+					$scope.filterSelected[j] = oldSelected[i];
+				}
+			}
+			
+		}
+	};
 };
 
