@@ -520,7 +520,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,s
 		  $mdDialog.cancel();
 		  $scope.dtData = [];
 		  $scope.dtAssociatedLevels = [];
-		  $scope.selectedMDXFunction = null;
+		  $scope.selectedMDXFunction = {};
 		  $scope.selectedCrossNavigation = null;
       }; 
      
@@ -794,14 +794,18 @@ $scope.sendCC = function() {
 		$scope.openArgumentsdialog();
 	}
 	
-	$scope.deleteSet = function(index,set) {
+	$scope.deleteSet = function(index,item) {
 		
+		$scope.selectedMDXFunction = item.formula;
+		$scope.selectedMDXFunction.label = item.name;
 		$scope.cookieArray = $cookies.getObject('data');
 		$scope.cookieArray.splice(index,1);
 		$cookies.putObject('data',$scope.cookieArray);
 		$scope.cookieArray = $cookies.getObject('data');
 		$scope.deleteCC($scope.selectedMDXFunction.label);
+		$scope.selectedMDXFunction = {};
 		sbiModule_messaging.showSuccessMessage("Set is deleted", 'Success');
+		
 		}
 
 
