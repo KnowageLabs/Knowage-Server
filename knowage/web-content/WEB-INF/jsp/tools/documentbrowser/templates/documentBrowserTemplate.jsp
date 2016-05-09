@@ -16,7 +16,12 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-	
+<%@page import="it.eng.spago.security.IEngUserProfile"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%
+	IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);;
+		
+	%>	
 	
 	<md-content ng-controller="documentBrowserController" layout="column"  ng-cloak layout-fill>
 		<div  layout-fill ng-hide="hideProgressCircular" style="z-index: 10000; position: absolute; background-color: rgba(0, 0, 0, 0.21);">
@@ -78,6 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				 
 					
 					<!-- New Document -->
+					 <% if (UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.CREATE_DOCUMENT})) { %>			
 					<md-menu style="padding: 0;">
 				      <md-button aria-label="Create new document" class="md-fab md-mini" style="top: 0;" ng-click="$mdOpenMenu($event)">
 				        <md-icon md-menu-origin  md-font-icon="fa fa-plus" class="md-primary"></md-icon>
@@ -97,6 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				        </md-menu-item>
 					</md-menu-content>
 					</md-menu>
+					 <%} %>
 				</div>
 			</md-toolbar>
 		

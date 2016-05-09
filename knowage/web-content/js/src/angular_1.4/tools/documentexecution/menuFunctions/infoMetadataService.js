@@ -25,6 +25,7 @@
 		    	controllerAs: "metadataDlgCtrl",
 		    	controller : function($mdDialog, sbiModule_translate, sbiModule_config, executionInstance) {
 		    		var metadataDlgCtrl = this;
+		    		metadataDlgCtrl.selectedTab={'tab':0};
 		    		metadataDlgCtrl.lblTitle = lblTitle;
 		    		metadataDlgCtrl.lblCancel = lblCancel;
 		    		metadataDlgCtrl.lblClose = lblClose;
@@ -37,6 +38,14 @@
 		    		metadataDlgCtrl.shortText = [];
 		    		metadataDlgCtrl.longText = [];
 		    		var params = null;
+		    		
+		    		metadataDlgCtrl.setTab = function(Tab){
+		    			metadataDlgCtrl.selectedTab.tab = Tab;
+		    		}
+		    		metadataDlgCtrl.isSelectedTab = function(Tab){
+		    			return (Tab == metadataDlgCtrl.selectedTab.tab) ;
+		    		}
+		    		
 		    		if(executionInstance.SUBOBJECT_ID){
 		    			params = {subobjectId: executionInstance.SUBOBJECT_ID};
 		    		}
@@ -60,9 +69,9 @@
 		    			sbiModule_restServices.promisePost('1.0/documentexecution', 'saveDocumentMetadata', saveObj)
 		    			.then(function(response){
 		    				//documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
-		    				documentExecuteServices.showToast("Salvataggio OK", 1000);
+		    				documentExecuteServices.showToast("Salvataggio OK", 1);
 		    			},function(response){
-		    				documentExecuteServices.showToast(response.data.errors[0].message, 5000);
+		    				documentExecuteServices.showToast(response.data.errors[0].message, 5);
 		    			});
 		    		}
 		    	}

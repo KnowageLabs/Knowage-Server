@@ -74,7 +74,7 @@ try{
 			.lateralsidenav {min-width:350px !important; max-width:350px !important;}
 		</style>
 	</head>
-	
+
 	<body class="kn-documentExecution" ng-app="documentExecutionModule" ng-controller="documentExecutionController" layout="row" >
 		<div  layout-fill ng-hide="hideProgressCircular.status" style="z-index: 10000; position: absolute; background-color: rgba(0, 0, 0, 0.21);">
 	   		<md-progress-circular md-mode="indeterminate" md-diameter="60" 
@@ -84,14 +84,14 @@ try{
 		<md-sidenav class="md-sidenav-right md-whiteframe-4dp lateralsidenav" 
 				ng-if="'<%=obj.getParametersRegion() %>' == 'west'" md-component-id="parametersPanelSideNav" 
 				layout="column" md-is-locked-open="showParametersPanel.status" 
-				ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.html")%>'">		
+				ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.jsp")%>'">		
 		</md-sidenav>
-		
+	
 		<div layout="column"  ng-init="initSelectedRole()" ng-cloak layout-fill>
 		    <md-sidenav id="sidenavOri" class="md-sidenav-right md-whiteframe-4dp topsidenav" 
 		    		ng-if="'<%=obj.getParametersRegion() %>' == 'north'" md-component-id="parametersPanelSideNav" 
 		    		layout="column" md-is-locked-open="showParametersPanel.status" 
-		    		ng-include="'${pageContext.request.contextPath}/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavOriContent.html'">
+		    		ng-include="'${pageContext.request.contextPath}/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavOriContent.jsp'">
 			</md-sidenav>
 			
 			<md-toolbar class="documentExecutionToolbar secondaryToolbar" flex="nogrow">
@@ -151,49 +151,30 @@ try{
 					                  	</md-menu-content>
 					                </md-menu>
 				              	</md-menu-item>
-					          
-					            <span class="divider">{{translate.load("sbi.generic.info")}}</span>
+				          
+				                <span class="divider">{{translate.load("sbi.generic.info")}}</span>
 					            <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_METADATA_FUNCTIONALITY)) { %>
 					            <md-menu-item class="md-indent">
 					            	<md-icon class="fa fa-info-circle"></md-icon>
 			                    	<md-button ng-click="openInfoMetadata()">{{translate.load("sbi.execution.executionpage.toolbar.metadata")}}</md-button>
 					            </md-menu-item>
 					            <%} %>
-					            <md-menu-item class="md-indent">
+				                <md-menu-item class="md-indent">
 					            	<md-icon class="fa fa-star"></md-icon>
 					            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.rating')}}" class="toolbar-button-custom"
 	                                	ng-click="rankDocument()">{{translate.load('sbi.execution.executionpage.toolbar.rating')}}
 					                </md-button>
 					            </md-menu-item>
-					            <md-menu-item class="md-indent">
+								<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_NOTES_FUNCTIONALITY)) { %>
+				                <md-menu-item class="md-indent">
 					            	<md-icon class="fa fa-sticky-note-o"></md-icon>
 					            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" class="toolbar-button-custom"
 	                                		ng-click="noteDocument()">{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}
 					                </md-button>
 					            </md-menu-item>
-					            <span class="divider">{{translate.load("sbi.execution.executionpage.toolbar.shortcuts")}}</span>
-					           <!--
-					            <md-menu-item class="md-indent">
-					            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showbookmark')}}" class="toolbar-button-custom"
-	                                	ng-click="alert('TODO')">{{translate.load('sbi.execution.executionpage.toolbar.showbookmark')}}
-					                </md-button>
-					            </md-menu-item>
-					            <md-menu-item class="md-indent">
-					            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.addbookmark')}}" class="toolbar-button-custom"
-	                                	ng-click="alert('TODO')">{{translate.load('sbi.execution.executionpage.toolbar.addbookmark')}}
-					                </md-button>
-					            </md-menu-item>
-					            <md-menu-item class="md-indent">
-					            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showview')}}" class="toolbar-button-custom"
-	                                	ng-click="alert('TODO')">{{translate.load('sbi.execution.executionpage.toolbar.showview')}}
-					                </md-button>
-					            </md-menu-item>
-					            <md-menu-item class="md-indent">
-					            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}" class="toolbar-button-custom"
-	                                	ng-click="alert('TODO')">{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}
-					                </md-button>
-					            </md-menu-item>
-					            -->
+								<%} %>
+								
+								<span class="divider">{{translate.load("sbi.execution.executionpage.toolbar.shortcuts")}}</span>
 					            
 					            <md-menu-item class="md-indent">
 					            	<md-button ng-disabled="true" class="toolbar-button-custom"
@@ -201,24 +182,26 @@ try{
 				            			{{translate.load('sbi.execution.executionpage.toolbar.savemyworkspace')}}
 					                </md-button>
 					            </md-menu-item>
-					            
-					            <md-menu-item class="md-indent">
+				           
+								<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_SNAPSHOTS_FUNCTIONALITY)) { %>
+				                <md-menu-item class="md-indent">
 					            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}"
 					            			class="toolbar-button-custom" ng-click="urlViewPointService.getSchedulers()">
 	                                	{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}
 					                </md-button>
 					            </md-menu-item>
-						    </md-menu-content>
-	                	</md-menu>
-	                </md-menu-bar>
-	                
-	               	<md-button class="md-icon-button" title="close" aria-label="Clear"  ng-if="isCloseDocumentButtonVisible()" ng-click="closeDocument()">
+								<%} %>
+							</md-menu-content>
+						</md-menu>
+					</md-menu-bar>
+                
+               	   	<md-button class="md-icon-button" title="close" aria-label="Clear"  ng-if="isCloseDocumentButtonVisible()" ng-click="closeDocument()">
 				   		<md-icon md-font-icon="fa fa-times"></md-icon>
 					</md-button>
 				</div>
 	        </md-toolbar>
-	       
-	        <div layout="row" flex="grow" ng-switch on="currentView.status">
+       
+            <div layout="row" flex="grow" ng-switch on="currentView.status">
 		 		<md-content id="documentFrameContainer" layout="row" flex="grow" ng-switch-when="DOCUMENT">  
 		      		<div layout="row" flex layout-align="center center" ng-hide="urlViewPointService.frameLoaded">
 			      		<md-progress-circular md-mode="indeterminate" md-diameter="70" ></md-progress-circular>
@@ -227,7 +210,7 @@ try{
 							iframe-set-dimensions-onload flex="grow" ng-show="urlViewPointService.frameLoaded">
 					</iframe>
 				</md-content>
-
+										
 				<div flex layout ng-switch-when="PARAMETERS"> 
 					<div ng-if="parameterView.status == 'FILTER_SAVED'" layout flex>
 						<parameter-view-point-handler flex layout="column"/>
@@ -236,13 +219,13 @@ try{
 						<document-scheduler flex layout="column"/>
 					</div>
 				</div>
-			</div>
+	        </div>
 		</div>
 		
 		<md-sidenav class="md-sidenav-left md-whiteframe-4dp lateralsidenav"  
 				ng-if="'<%=obj.getParametersRegion() %>' == 'east'" md-component-id="parametersPanelSideNav" 
 				layout="column" md-is-locked-open="showParametersPanel.status" 
-				ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.html")%>'">
+				ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.jsp")%>'">
 		</md-sidenav>
 
 		<script type="text/javascript">

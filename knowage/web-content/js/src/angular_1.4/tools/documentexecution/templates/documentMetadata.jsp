@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
 <md-dialog id="metadataDlg" aria-label="{{::metadataDlgCtrl.lblTitle}}" style="width: 80%; height: 90%; overflow-y: visible;" layout="column">
+		<md-dialog-content layout="column" flex>
 	
 		<md-toolbar class="secondaryToolbar">
 			<div class="md-toolbar-tools">
@@ -11,8 +12,7 @@
 		        </md-button>
 	       	</div>
 	  	</md-toolbar>
- 
-		<md-dialog-content flex layout-margin>
+ 		<md-content  flex layout-margin>
 			<expander-box id="generalMetadata" expanded="true" title="metadataDlgCtrl.lblGeneralMeta" toolbar-class="ternaryToolbar"> 
 				<md-list flex>
 		     		<md-list-item ng-repeat="item in metadataDlgCtrl.generalMetadata">
@@ -29,23 +29,21 @@
 					</div>
 	        	</md-list-item>
 			</expander-box>
-			<expander-box id="longMetadata" color="white" background-color="rgb(63,81,181)" expanded="false" title="metadataDlgCtrl.lblLongMeta" toolbar-class="ternaryToolbar"> 
-				<md-tabs md-border-bottom md-dynamic-height >
-					<md-tab ng-repeat="item in metadataDlgCtrl.longText" label="{{::item.name}}">
-					 <md-tab-body>
-					<wysiwyg-edit content="item.value"></wysiwyg-edit>
+			<expander-box  id="longMetadata" color="white" background-color="rgb(63,81,181)" expanded="false" title="metadataDlgCtrl.lblLongMeta" toolbar-class="ternaryToolbar"> 
+				<md-tabs  layout="column" md-border-bottom md-dynamic-height >
+					<md-tab flex=200  ng-repeat="item in metadataDlgCtrl.longText" label="{{::item.name}}" md-on-select="metadataDlgCtrl.setTab($index)">
+					 <md-tab-body >
+					<wysiwyg-edit ng-if="metadataDlgCtrl.isSelectedTab($index)" content="item.value"></wysiwyg-edit>
 					</md-tab-body>
 						
 					</md-tab>
 				</md-tabs>
 			</expander-box>
-			  	<div class="footer" layout="row">
-			  	<span flex></span>
-<!-- 				<md-button aria-label="{{::metadataDlgCtrl.lblCancel}}" class="md-raised"  -->
-<!-- 							ng-click="metadataDlgCtrl.close()"> -->
-<!-- 							{{metadataDlgCtrl.lblCancel}} -->
-<!-- 				</md-button> -->
-			 	 <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY)) { %>
+			  </md-content>
+
+	<div layout="row">
+	<span flex></span>
+		<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY)) { %>
 		      	<md-button aria-label="{{::metadataDlgCtrl.lblSave}}" class="md-raised" 
 					ng-click="metadataDlgCtrl.save()">
 					{{::metadataDlgCtrl.lblSave}}
@@ -53,7 +51,6 @@
 			 	<%} %>
 	</div>
 	  	</md-dialog-content>
-
 </md-dialog>
 			<!-- 
 			<md-tabs md-dynamic-height md-border-bottom>
