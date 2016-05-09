@@ -9,7 +9,7 @@ olapMod.config(['$mdThemingProvider', function($mdThemingProvider) {
 olapMod.controller("olapController", [ "$scope", "$timeout", "$window",
 		"$mdDialog", "$http", '$sce', '$mdToast', '$mdSidenav',
 		'sbiModule_messaging', 'sbiModule_restServices', 'sbiModule_translate','sbiModule_docInfo',
-		'olapSharedSettings', olapFunction ]);
+		'olapSharedSettings' ,olapFunction ]);
 
 function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$mdToast, $mdSidenav, sbiModule_messaging, sbiModule_restServices,

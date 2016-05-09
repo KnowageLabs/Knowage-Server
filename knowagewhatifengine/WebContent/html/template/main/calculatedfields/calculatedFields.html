@@ -68,11 +68,11 @@
          ng-class="{selected:(selectedMDXFunction.name == item.name)}"
           ng-click="selectMDXFunction(item.formula);">
           <div class="md-list-item-text" layout="column" >
-            <h3>{{ item.name }}</h3>
-            <h4>{{  item.type }}</h4>
+            <h3>Name : {{ item.name }}</h3>
+            <h4>Type : {{  item.type }}</h4>
             <div layout="row">
-             <md-button ng-click="edit()">Edit</md-button>
-             <md-button class="md-secondary" ng-click="deleteSet($index,set)">Delete</md-button>
+             <md-button  ng-click="edit(item); $event.stopPropagation();">Edit</md-button>
+             <md-button  ng-click="deleteSet($index,item)">Delete</md-button>
             </div>
             
           </div>

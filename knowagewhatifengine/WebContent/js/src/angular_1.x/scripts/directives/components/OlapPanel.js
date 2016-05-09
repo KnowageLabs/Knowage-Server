@@ -9,7 +9,7 @@ angular.module('olap_panel',[])
 	}
 });
 
-function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate,toastr,$cookies,sbiModule_docInfo,sbiModule_docInfo) {
+function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,sbiModule_messaging, sbiModule_restServices, sbiModule_translate,toastr,$cookies,sbiModule_docInfo,sbiModule_docInfo) {
 	
 	
 	
@@ -742,6 +742,12 @@ $scope.sendCC = function() {
 		    
 		}
 		
+		for (var i = 0; i < $scope.cookieArray.length; i++) {
+			if(namedSet.name === $scope.cookieArray[i].name){
+				console.log("same one")
+				$scope.cookieArray.splice($scope.cookieArray[i],1);
+			}
+		}
 		$scope.cookieArray.push(namedSet);
 		console.log(namedSet);
 		$cookies.putObject('data',$scope.cookieArray);
@@ -775,8 +781,16 @@ $scope.sendCC = function() {
 	$scope.edit = function(item){
 		console.log("editing...");
 		
-		//$scope.selectedMDXFunction = item
-		console.log("opening the arguments dialog...");
+		for (var i = 0; i < $scope.cookieArray.length; i++) {
+			if(item.name === $scope.cookieArray[i].name){
+				console.log("same one")
+				$scope.selectedMDXFunction = item.formula;
+				$scope.selectedMDXFunction.label = item.name;
+				console.log($scope.selectedMDXFunction);
+			}
+		}
+		
+		console.log($scope.selectedMDXFunction);
 		$scope.openArgumentsdialog();
 	}
 	
@@ -787,7 +801,7 @@ $scope.sendCC = function() {
 		$cookies.putObject('data',$scope.cookieArray);
 		$scope.cookieArray = $cookies.getObject('data');
 		$scope.deleteCC($scope.selectedMDXFunction.label);
-		
+		sbiModule_messaging.showSuccessMessage("Set is deleted", 'Success');
 		}
 
 
