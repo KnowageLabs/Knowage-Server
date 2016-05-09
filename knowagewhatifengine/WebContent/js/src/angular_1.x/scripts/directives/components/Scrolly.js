@@ -22,7 +22,8 @@ angular.module('scrolly_directive',[])
 	        	
 	        	scope.resize = function(){
 	        		
-	        		
+	        		scope.tableHeight = raw.offsetHeight;
+		            scope.tableWeight = raw.offsetWidth;
 	            	 var table = document.getElementsByClassName("x-pivot-table")[0];
 	            	 if(table){
 	            		 var thead = table.getElementsByTagName("thead")[0];
@@ -36,18 +37,26 @@ angular.module('scrolly_directive',[])
 	            	
 	            	
 	            	//Setting new number of rows if table height is bigger than div 
-	            	if(table.offsetHeight>raw.offsetHeight-35){
+	            	if(table.offsetHeight>raw.offsetHeight-25){
 	            		
-	            		console.log('table height is larger that parent div');
-	            		newRowSet = 0;
+	            		
+	            		
 	            		var newTableHeight = thead.offsetHeight;
 	            		
-	            		while(bodyRows[newRowSet]!=undefined&&(newTableHeight+bodyRows[newRowSet].offsetHeight)<(raw.offsetHeight-35)){
+	            		for ( newRowSet = 0; newRowSet < bodyRows.length; newRowSet++) {
+							
 	            			
-	            			newTableHeight = newTableHeight+bodyRows[newRowSet].offsetHeight;
-	            			newRowSet++;
-	            		}
+	            			
+	            			if((newTableHeight+bodyRows[newRowSet].offsetHeight)>(raw.parentElement.offsetHeight-25)){
+	            					            				
+	            				break;
+	            			}else{
+	            				newTableHeight = newTableHeight+bodyRows[newRowSet].offsetHeight;
+	            			}
+	            				
+						}
 	            		
+	            	
 	            	}	
 	            	if(table.offsetHeight<raw.offsetHeight-70&&
 	            			scope.modelConfig.rowCount>newRowSet){
@@ -66,17 +75,26 @@ angular.module('scrolly_directive',[])
 	            		
 	            	}	
 	            	
-	            		if(table.offsetWidth>raw.parentElement.offsetWidth-70){
+	            		if(table.offsetWidth>raw.parentElement.offsetWidth-25){
 	            			
-	            			newColumnSet = 0;
+	            			
 		            		var ajSize = 0;
 		            		var headerCount = 0;
-		            		while(bodyColumns[newColumnSet]!=undefined&&(ajSize+bodyColumns[newColumnSet].offsetWidth)<(raw.parentElement.offsetWidth-70)){
-		            			ajSize = ajSize+bodyColumns[newColumnSet].offsetWidth;
-		            			newColumnSet++;
-		            			if(bodyColumns[newColumnSet].nodeName==='TH')
+		            		
+		            		for ( newColumnSet = 0; newColumnSet < bodyColumns.length; newColumnSet++) {
+								
+	
+		            			if(bodyColumns[newColumnSet].nodeName==='TH'){
 		            				headerCount++;
-		            		}
+		            			}
+		            			if((ajSize+bodyColumns[newColumnSet].offsetWidth)>(raw.parentElement.offsetWidth-25)){
+		            					            				
+		            				break;
+		            			}else{
+		            				ajSize = ajSize+bodyColumns[newColumnSet].offsetWidth;
+		            			}
+		            				
+							}
 		            		newColumnSet = newColumnSet-headerCount;
 	        		}
 	            		
@@ -122,7 +140,12 @@ angular.module('scrolly_directive',[])
 	        		
 	                var startRow = Math.round((raw.scrollTop)/100);
 	                var startColumn =  Math.round(raw.scrollLeft/100);
+	                if(scope.modelConfig){
+	                	
+	                
+	               
 	               if(scope.modelConfig.startRow!=startRow){
+	            	   
 	            	   scope.modelConfig.startRow = startRow;
 	            	   scope.showLoadingMask = false;
 	           	    	
@@ -138,7 +161,7 @@ angular.module('scrolly_directive',[])
 	               }
 	   
 	    
-	    
+	        	}
 	               
 	            }
 	                
