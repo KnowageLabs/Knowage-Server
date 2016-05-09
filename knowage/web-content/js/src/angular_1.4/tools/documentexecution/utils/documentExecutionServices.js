@@ -614,7 +614,7 @@
 					
 					//setting default value				
 					serviceScope.buildObjForFillParameterPanel(response.data.filterStatus);
-					
+					// Enable visualcorrelation
 					execProperties.initResetFunctionDependency.status=true;
 					
 					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
@@ -642,9 +642,9 @@
 					//MULTIVALUE
 					hasDefVal= true;
 					if(filterStatus[i].multivalue || filterStatus[i].selectionType=='TREE'){
-						if(filterStatus[i].defaultValues && filterStatus[i].defaultValues.length>0){
-							arrDefToFill=filterStatus[i].defaultValues;
-						}
+						//if(filterStatus[i].defaultValues && filterStatus[i].defaultValues.length>0){
+							//arrDefToFill=filterStatus[i].defaultValues;
+						//}
 						for(var k=0;k<filterStatus[i].parameterValue.length;k++){
 							arrDefToFill.push(filterStatus[i].parameterValue[k].value);
 						}	
@@ -888,6 +888,7 @@
 						})
 						.error(function(data, status, headers, config) {});
 						//END REST CALL
+					
 					}else{
 						console.log('IS TREE .... CLEAR PARAM ID ' + dataDependenciesElementMap.parameterToChangeUrlName);
 						for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
@@ -899,9 +900,6 @@
 								break;
 							}
 						}
-						
-						
-						
 					}
 				}	
 			 }//check undefined	
@@ -943,9 +941,7 @@
 		}
 	
 		this.visualCorrelationWatch = function(value){
-			
-			console.log('visual correlation : ' , value);
-			
+			//console.log('visual correlation : ' , value);
 			if(serviceScope.visualCorrelationMap[value.urlName]){
 				var forceExit=false;
 				for(var k=0; k<serviceScope.visualCorrelationMap[value.urlName].length; k++){
@@ -992,8 +988,10 @@
 							execProperties.parametersData.documentParameters[idDocumentParameter].label=visualDependency.viewLabel;
 							execProperties.parametersData.documentParameters[idDocumentParameter].visible=true;
 							//Exit if one conditions is verify
-							/* BUG FIX LOAD DEFAULT AND VIEWPOIN PARAMS */
-							console.log('reset for ' , execProperties.parametersData.documentParameters[idDocumentParameter]);
+							/* BUG FIX LOAD DEFAULT AND VIEWPOIN PARAMS
+							 No resetParameter for DEFAULT and Viewpoin  
+							 */
+							//console.log('reset for ' , execProperties.parametersData.documentParameters[idDocumentParameter]);
 							if(execProperties.initResetFunctionDependency.status){
 								documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[idDocumentParameter]);
 							}
