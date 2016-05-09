@@ -589,7 +589,8 @@
 					docExecute_dependencyService.visualCorrelationWatch(parameter);
 					docExecute_dependencyService.dataDependenciesCorrelationWatch(parameter);
 				}
-			}			
+			}
+			
 		};
 		
 	
@@ -614,6 +615,7 @@
 					//setting default value				
 					serviceScope.buildObjForFillParameterPanel(response.data.filterStatus);
 					
+					execProperties.initResetFunctionDependency.status=true;
 					
 					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
 				}else{
@@ -740,7 +742,7 @@
 			execProperties.currentView.status = 'DOCUMENT';
 			execProperties.parameterView.status='';
 			execProperties.isParameterRolePanelDisabled.status = this.checkParameterRolePanelDisabled();
-			
+			execProperties.returnFromViewpoint.status = true;
 		};
 		
 		this.isExecuteParameterDisabled = function() {
@@ -839,7 +841,7 @@
 								"getParameters", objPost)
 						   .success(function(data, status, headers, config) {  
 							  
-							   console.log('rest service success get parameters');
+							   
 							   
 							   if(data.status=="OK"){
 								   //from root only visibled element !!! 
@@ -860,14 +862,14 @@
 								   //set to enabled the correct default value 
 								   if(data.result.root && data.result.root.length>0){
 									   for(var p=0; p<data.result.root.length;p++){   
-										   console.log("parameter ID : " + data.idParam + " set value " + data.result.root[p].value);
+										   //console.log("parameter ID : " + data.idParam + " set value " + data.result.root[p].value);
 										   for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
 											   if(execProperties.parametersData.documentParameters[z].urlName==data.idParam){
 												   if(execProperties.parametersData.documentParameters[z].defaultValues &&
 															  execProperties.parametersData.documentParameters[z].defaultValues.length>0){
 													   for(var y=0;y<execProperties.parametersData.documentParameters[z].defaultValues.length;y++){
 															if( execProperties.parametersData.documentParameters[z].defaultValues[y].value==data.result.root[p].value){
-																console.log("enabled for : " ,  execProperties.parametersData.documentParameters[z].defaultValues[y]);
+																//console.log("enabled for : " ,  execProperties.parametersData.documentParameters[z].defaultValues[y]);
 																execProperties.parametersData.documentParameters[z].defaultValues[y].isEnabled=true;
 															}	  
 														   } 
@@ -893,6 +895,7 @@
 								console.log('reset ... ' + execProperties.parametersData.documentParameters[z].urlName);
 								execProperties.parametersData.documentParameters[z].children = [];
 								documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[z]);
+															
 								break;
 							}
 						}
@@ -990,7 +993,11 @@
 							execProperties.parametersData.documentParameters[idDocumentParameter].visible=true;
 							//Exit if one conditions is verify
 							/* BUG FIX LOAD DEFAULT AND VIEWPOIN PARAMS */
-							//documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[idDocumentParameter]);
+							console.log('reset for ' , execProperties.parametersData.documentParameters[idDocumentParameter]);
+							if(execProperties.initResetFunctionDependency.status){
+								documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[idDocumentParameter]);
+							}
+						
 							forceExit = true;
 							break;
 						}else{
@@ -999,6 +1006,15 @@
 					}
 				}
 			}  
+			
+			//if return to viewpoin enable visual correlation 
+			if(execProperties.returnFromViewpoint.status){
+				execProperties.initResetFunctionDependency.status=true;
+				execProperties.returnFromViewpoint.status = false;
+			}
+			
+			
+			
 			
 		  }
 	

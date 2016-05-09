@@ -282,7 +282,9 @@ try{
  				parameterView : {status : ""},
  				isParameterRolePanelDisabled : {status : false},
  				showParametersPanel : {status : false},
- 				hideProgressCircular : {status : true}
+ 				hideProgressCircular : {status : true},
+ 				initResetFunctionDependency : {status : false},
+ 				returnFromViewpoint : {status : false}
  				
 			};
 			return obj;

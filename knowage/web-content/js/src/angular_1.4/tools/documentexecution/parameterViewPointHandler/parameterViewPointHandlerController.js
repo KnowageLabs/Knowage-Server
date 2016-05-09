@@ -25,8 +25,12 @@
 					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 					 //console.log('item ' , item); 
 					 var params = documentExecuteServices.decodeRequestStringToJson(item.vpValueParams);
+					 //disable visual correlation
+					 execProperties.initResetFunctionDependency.status=false;
 					 docExecute_urlViewPointService.fillParametersPanel(params);
 					 docExecute_paramRolePanelService.returnToDocument();
+					 
+					 
 				 }	
 			 },
 			 { //Execute Url
@@ -37,6 +41,8 @@
 					 //decodeURIComponent						 		               		
 					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 					 var params = documentExecuteServices.decodeRequestStringToJson(item.vpValueParams);
+					//disable visual correlation
+					 execProperties.initResetFunctionDependency.status=false;
 					 docExecute_urlViewPointService.fillParametersPanel(params);
 					 docExecute_urlViewPointService.frameLoaded = false;
 					 docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, stringfyFromGetUrlParameters(params));
