@@ -9,7 +9,7 @@ angular.module('olap_panel',[])
 	}
 });
 
-function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,sbiModule_messaging, sbiModule_restServices, sbiModule_translate,toastr,$cookies,sbiModule_docInfo,sbiModule_docInfo) {
+function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate,toastr,$cookies,sbiModule_docInfo,sbiModule_docInfo) {
 	
 	
 	
@@ -558,13 +558,11 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,s
     	sbiModule_restServices.promisePost
 		("1.0",encoded)
 		.then(function(response) {
-			$scope.handleResponse(response);
 			try{
 				eval(response.data);
 			}catch ( e){
 				sbiModule_messaging.showErrorMessage("error", 'Error');
 			}
-			
 		 }, function(response) {
 			sbiModule_messaging.showErrorMessage("error", 'Error');
 		});
