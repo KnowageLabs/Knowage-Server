@@ -429,7 +429,7 @@
 	
 	documentExecutionModule.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config,docExecute_exportService
-			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories,$q,$filter
+			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories,$q,$filter,$timeout
 			) {
 		
 		var serviceScope = this;	
@@ -527,6 +527,12 @@
 				
 			console.log('Load filter params : ' , params);
 			if(execProperties.parametersData.documentParameters.length > 0){
+				
+				//var readyParams //-> su questi parametri è stato settato il valore (o non ho nessun valore da settarvi) 
+				//var dependingOnParameters //-> lista dei parametri dai quali dipendono altri parametri
+				//var savedParamtersToSet //-> lista che scorro finchè non vuota, ogni volta che riesco a settarne uno, lo levo dalla lista
+				//riesco a settare una valore quando tutti i paramteri (se ce ne sono) da cui dipende sono presenti in readyParams
+				
 				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++){
 					var parameter = execProperties.parametersData.documentParameters[i];
 					
@@ -542,9 +548,11 @@
 							if(parameter.selectionType.toLowerCase() == "tree") {
 								parameter.parameterValue = JSON.parse(params[parameter.urlName]);
 							} else {
+								//console.log('setting param ' + params[parameter.urlName]);
+								//console.log('setting param in ' , parameter);
 								parameter.parameterValue = parameter.multivalue ? 
-									JSON.parse(params[parameter.urlName])
-									: params[parameter.urlName];
+											JSON.parse(params[parameter.urlName])
+											: params[parameter.urlName];	
 							}
 							
 						} else if(parameter.valueSelection.toLowerCase() == 'map_in') {
@@ -802,7 +810,7 @@
 		
 		
 			 this.dataDependenciesCorrelationWatch = function(value){
-				
+				 
 				console.log('modify dependency : ' , value);
 				console.log('element key '+ value.urlName , serviceScope.dataDependenciesMap[value.urlName]);
 				for(var k=0; k<serviceScope.dataDependenciesMap[value.urlName].length; k++){
@@ -821,6 +829,9 @@
 								"1.0/documentExeParameters",
 								"getParameters", objPost)
 						   .success(function(data, status, headers, config) {  
+							  
+							   console.log('rest service success get parameters');
+							   
 							   if(data.status=="OK"){
 								   //from root only visibled element !!! 
 								   //set to disabled all default value parameter 
@@ -858,7 +869,10 @@
 									   }
 								   }else{
 									   //if no element in root hide the row component
-								   }  									   
+								   }  
+								   // set parameter ready
+								   
+								   
 							   }
 						})
 						.error(function(data, status, headers, config) {});
@@ -961,7 +975,8 @@
 							execProperties.parametersData.documentParameters[idDocumentParameter].label=visualDependency.viewLabel;
 							execProperties.parametersData.documentParameters[idDocumentParameter].visible=true;
 							//Exit if one conditions is verify
-							documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[idDocumentParameter]);
+							/* BUG FIX LOAD DEFAULT AND VIEWPOIN PARAMS */
+							//documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[idDocumentParameter]);
 							forceExit = true;
 							break;
 						}else{
