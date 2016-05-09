@@ -61,16 +61,33 @@ angular.module('scrolly_directive',[])
 	            	if(table.offsetHeight<raw.offsetHeight-70&&
 	            			scope.modelConfig.rowCount>newRowSet){
 	            		console.log('table height is smaller than parent div and rowCount is greater than rowSet');
-	            		
+	            		if(scope.modelConfig.suppressEmpty){
+	            			newRowSet++;
+	            			scope.showLoadingMask = false;
+	            		}else{
 	            			newRowSet = 50;
+	            		}
+	            			
 	            			
 	            		
 	            	}	
 	            	
-	            	if(table.offsetWidth<raw.offsetWidth-70&&
-	            			scope.modelConfig.columnCount>newColumnSet-1){
+	            	if(table.offsetWidth<raw.offsetWidth-50&&
+	            			scope.modelConfig.columnCount>newColumnSet){
+	            		if(bodyColumns[newColumnSet]){
+	            			
 	            		
-	            		newColumnSet= 50;
+	            		if(table.offsetWidth+bodyColumns[newColumnSet].offsetWidth<raw.offsetWidth-50){
+	            			if(scope.modelConfig.suppressEmpty){
+	            				newColumnSet++;
+		            			scope.showLoadingMask = false;
+	            			}else{
+		            			newColumnSet = 50;
+		            		}
+	            			
+	            		}
+	            		
+	            		}
 	            			
 	            		
 	            	}	
