@@ -41,8 +41,14 @@ public interface ISbiObjDsDAO extends ISpagoBIDao {
 
 	public void insertObjDs(SbiMetaObjDs aMetaObjDs) throws EMFUserError;
 
+	public void insertRelationsFromObj(BIObject biObj) throws EMFUserError;
+
 	public void insertUniqueRelationFromObj(BIObject biObj) throws EMFUserError;
 
+	public void insertRelationFromCockpit(BIObject biObj) throws EMFUserError;
+
 	public void deleteObjDs(SbiMetaObjDs aMetaObjDs) throws EMFUserError;
+
+	public void deleteObjDsbyObjId(Integer objId) throws EMFUserError;
 
 }

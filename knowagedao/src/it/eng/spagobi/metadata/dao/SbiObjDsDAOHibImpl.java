@@ -35,6 +35,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -295,8 +297,90 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 		logger.debug("OUT");
 	}
 
+	/**
+	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS
+	 *
+	 * @param biObj
+	 *            the document object
+	 */
+	@Override
+	public void insertRelationFromCockpit(BIObject obj) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			// 0. get template with configuration
+			String template = new String(obj.getActiveTemplate().getContent());
+			JSONObject configJSON = new JSONObject(template);
+			// 1. search used datasets
+			JSONObject storeConfJSON = configJSON.getJSONObject("storesConf");
+			if (storeConfJSON != null) {
+
+				JSONArray lstStoresJSON = storeConfJSON.getJSONArray("stores");
+
+				// 2. delete all relations between document and datasets if exist
+				DAOFactory.getSbiObjDsDAO().deleteObjDsbyObjId(obj.getId());
+				// 3. insert the new relations between document and datasets
+				for (int i = 0; i < lstStoresJSON.length(); i++) {
+					JSONObject storeJSON = lstStoresJSON.getJSONObject(i);
+					String dsLabel = storeJSON.getString("storeId");
+					logger.debug("Insert relation for dataset with label [" + dsLabel + "]");
+					VersionedDataSet ds = ((VersionedDataSet) DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel));
+					String dsOrganization = ds.getOrganization();
+					logger.debug("Dataset organization used for insert relation is: " + dsOrganization);
+					Integer dsVersion = ds.getVersionNum();
+					logger.debug("Dataset version used for insert relation is: " + dsVersion);
+
+					// creating relation object
+					SbiMetaObjDs relObjDs = new SbiMetaObjDs();
+					SbiMetaObjDsId relObjDsId = new SbiMetaObjDsId();
+					relObjDsId.setDsId(ds.getId());
+					relObjDsId.setOrganization(dsOrganization);
+					relObjDsId.setVersionNum(dsVersion);
+					relObjDsId.setObjId(obj.getId());
+					relObjDs.setId(relObjDsId);
+
+					DAOFactory.getSbiObjDsDAO().insertObjDs(relObjDs);
+				}
+			} else {
+				logger.debug("The document doesn't use any dataset! ");
+			}
+		} catch (Exception e) {
+			logger.error("An error occured while inserting relation between cockpit document and its datasets. Error:  " + e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		}
+
+		logger.debug("OUT");
+	}
+
+	/**
+	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS (Only objects with UNIQUE relation 1 to 1 with the dataset: NO
+	 * COCKPIT, CONSOLE, DOCUMENT COMPOSITION )
+	 *
+	 * @param biObj
+	 *            the document object
+	 */
+	@Override
+	public void insertRelationsFromObj(BIObject biObj) throws EMFUserError {
+		logger.debug("IN");
+
+		try {
+			Engine engineObj = biObj.getEngine();
+
+			if (engineObj.getLabel().toLowerCase().contains("cockpit")) {
+				insertRelationFromCockpit(biObj);
+			} else if (!engineObj.getLabel().toLowerCase().contains("console") && !engineObj.getLabel().toLowerCase().contains("composit")) {
+				insertUniqueRelationFromObj(biObj);
+			}
+		} catch (Exception e) {
+			logger.error("An error occured while storing relation between dataset and docuemnt. Error: " + e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		}
+		logger.debug("OUT");
+	}
+
 	@Override
 	public void deleteObjDs(SbiMetaObjDs aMetaObjDs) throws EMFUserError {
+		logger.debug("IN");
+
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -332,7 +416,51 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 					aSession.close();
 			}
 		}
+		logger.debug("OUT");
+	}
 
+	@Override
+	public void deleteObjDsbyObjId(Integer objId) throws EMFUserError {
+		logger.debug("IN");
+
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			List<SbiMetaObjDs> lstRel = loadDsByObjId(objId);
+
+			if (lstRel == null)
+				return;
+
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			for (SbiMetaObjDs r : lstRel) {
+				SbiMetaObjDsId hibId = new SbiMetaObjDsId();
+				hibId.setObjId(r.getId().getObjId());
+				hibId.setDsId(r.getId().getDsId());
+				hibId.setOrganization(r.getId().getOrganization());
+				hibId.setVersionNum(r.getId().getVersionNum());
+
+				SbiMetaObjDs hib = (SbiMetaObjDs) aSession.load(SbiMetaObjDs.class, hibId);
+
+				aSession.delete(hib);
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
 	}
 
 }
