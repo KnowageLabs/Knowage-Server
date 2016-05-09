@@ -38,8 +38,11 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
+import it.eng.spagobi.metadata.metadata.SbiMetaObjDs;
+import it.eng.spagobi.metadata.metadata.SbiMetaObjDsId;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -193,6 +196,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		try {
 			JSONObject documentJSON = request.optJSONObject("document");
 			JSONObject customDataJSON = request.optJSONObject("customData");
+
 			Assert.assertNotNull(customDataJSON, "Custom data object cannot be null");
 
 			// Load existing document
@@ -223,6 +227,11 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			String templateContent = customDataJSON.optString("templateContent");
 			ObjTemplate template = buildDocumentTemplate(tempalteName, templateContent, document, null, null, null, null);
 			documentManagementAPI.saveDocument(document, template);
+
+			// save relations between document and datasets (only for cockpit engine)
+			if (MODIFY_COCKPIT.equalsIgnoreCase(action)) {
+				insertCockpitRelationsWithDataset(customDataJSON, document);
+			}
 
 		} catch (SpagoBIServiceException e) {
 			throw e;
@@ -337,6 +346,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			ObjTemplate template = buildDocumentTemplate("template.sbicockpit", customDataJSON, null);
 
 			documentManagementAPI.saveDocument(document, template);
+
+			// insert relations between document and datasets
+			insertCockpitRelationsWithDataset(customDataJSON, document);
 
 		} catch (SpagoBIServiceException e) {
 			throw e;
@@ -937,7 +949,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			if (query != null)
 				customData.put("query", query);
 
-			String templateContent = getAttributeAsString(TEMPLATE);
+			// String templateContent = getAttributeAsString(TEMPLATE);
+			JSONObject templateContent = getAttributeAsJSONObject(TEMPLATE);
 			if (templateContent != null)
 				customData.put("templateContent", templateContent);
 
@@ -1106,4 +1119,53 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		}
 		return toReturn;
 	}
+
+	private static void insertCockpitRelationsWithDataset(JSONObject configJSON, BIObject obj) throws Exception {
+
+		// 0. Get the engine. Only engines with 1:N relation with datasets are managed.
+		// 09.05.2016 : for the moment only the cockpit engine is multidatasets.
+		Engine engineObj = obj.getEngine();
+		if (!engineObj.getLabel().toLowerCase().contains("cockpit")) {
+			logger.debug("The engine [" + engineObj.getLabel() + "] cannot use multiple datasets.");
+			return;
+		}
+
+		// 1. search used datasets
+		JSONObject storeConfJSON = configJSON.getJSONObject("templateContent").getJSONObject("storesConf");
+		if (storeConfJSON != null) {
+			try {
+				JSONArray lstStoresJSON = storeConfJSON.getJSONArray("stores");
+
+				// 2. delete all relations between document and datasets if exist
+				DAOFactory.getSbiObjDsDAO().deleteObjDsbyObjId(obj.getId());
+				// 3. insert the new relations between document and datasets
+				for (int i = 0; i < lstStoresJSON.length(); i++) {
+					JSONObject storeJSON = lstStoresJSON.getJSONObject(i);
+					String dsLabel = storeJSON.getString("storeId");
+					logger.debug("Insert relation for dataset with label [" + dsLabel + "]");
+					VersionedDataSet ds = ((VersionedDataSet) DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel));
+					String dsOrganization = ds.getOrganization();
+					logger.debug("Dataset organization used for insert relation is: " + dsOrganization);
+					Integer dsVersion = ds.getVersionNum();
+					logger.debug("Dataset version used for insert relation is: " + dsVersion);
+
+					// creating relation object
+					SbiMetaObjDs relObjDs = new SbiMetaObjDs();
+					SbiMetaObjDsId relObjDsId = new SbiMetaObjDsId();
+					relObjDsId.setDsId(ds.getId());
+					relObjDsId.setOrganization(dsOrganization);
+					relObjDsId.setVersionNum(dsVersion);
+					relObjDsId.setObjId(obj.getId());
+					relObjDs.setId(relObjDsId);
+
+					DAOFactory.getSbiObjDsDAO().insertObjDs(relObjDs);
+				}
+			} catch (Exception e) {
+				throw new Exception(e);
+			}
+		} else {
+			logger.debug("The document doesn't use any dataset! ");
+		}
+	}
+
 }
