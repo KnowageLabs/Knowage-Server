@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %>
 
 <script>
-	var superadmin = '<%= superadmin %>';
+	var superadmin = <%= superadmin %>;
 </script>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -156,7 +156,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div layout="row" layout-wrap>
 										<md-radio-group ng-model="jdbcOrJndi.type"> Type:
 					      					<md-radio-button value="JDBC">JDBC</md-radio-button>
-					      					<md-radio-button value="JNDI" ng-disabled="isSuperAdminFunction()">JNDI</md-radio-button>
+					      					<md-radio-button value="JNDI" ng-disabled="!isSuperAdminFunction()">JNDI</md-radio-button>
 					    				</md-radio-group>
 									</div>
 

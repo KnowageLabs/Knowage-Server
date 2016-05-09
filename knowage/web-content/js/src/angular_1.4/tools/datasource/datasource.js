@@ -36,7 +36,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.jdbcOrJndi = {};
 
 	$scope.isSuperAdminFunction=function(){
-        return !superadmin;
+        return superadmin;
 	};
 
 	angular.element(document).ready(function () {
