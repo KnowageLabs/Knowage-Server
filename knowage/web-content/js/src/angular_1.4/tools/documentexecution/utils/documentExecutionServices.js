@@ -446,7 +446,7 @@
 					label: execProperties.executionInstance.OBJECT_LABEL,
 					role:role,
 					SBI_EXECUTION_ID:execProperties.executionInstance.SBI_EXECUTION_ID,
-					parameters: params
+					parameters: params,
 			}; 		
 			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
 			sbiModule_restServices.promisePost("1.0/documentexecution", 'url',dataPost)
@@ -723,6 +723,10 @@
 					+ '/js/src/angular_1.4/tools/documentexecution/templates/dialog-new-parameters-document-execution.html'
 			});
 		};
+		
+		this.buildParameterForFirstExecution=function(navParam,menuParam){
+			return angular.extend({},navParam,menuParam);
+		}
 	});
 	
 	documentExecutionModule.service('docExecute_paramRolePanelService', function(execProperties,$mdSidenav,$timeout) {

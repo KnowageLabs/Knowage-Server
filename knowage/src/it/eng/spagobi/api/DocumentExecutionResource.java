@@ -133,6 +133,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String subObjectID = requestVal.optString("subObjectID");
 		String sbiExecutionId = requestVal.optString("SBI_EXECUTION_ID");
 		JSONObject jsonParameters = requestVal.optJSONObject("parameters");
+		JSONObject menuParameters = requestVal.optJSONObject("menuParameters"); // parameters setted when open document from menu
 
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 		List errorList = new ArrayList<>();

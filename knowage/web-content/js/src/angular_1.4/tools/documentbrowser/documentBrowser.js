@@ -1,6 +1,6 @@
-angular.module('documentBrowserModule').controller( 'documentBrowserController', ['$mdMedia', '$scope', '$http', '$mdSidenav', '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus','$timeout', '$cookies', 'sbiModule_user',documentBrowserFunction]);
+angular.module('documentBrowserModule').controller( 'documentBrowserController', ['$mdMedia', '$scope', '$http', '$mdSidenav', '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus','$timeout', '$cookies', 'sbiModule_user','$interval',documentBrowserFunction]);
 
-function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus,$timeout,$cookies,sbiModule_user){
+function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus,$timeout,$cookies,sbiModule_user,$interval){
 	$scope.translate=sbiModule_translate;
 	$scope.folders = [];
 	$scope.folderDocuments = [];
@@ -115,7 +115,19 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 		});
 	}
 		
-	$scope.loadFolders();
+	
+	 
+	var initLoadFolders= $interval(function() {
+        if ($scope.breadCrumbControl.insertBread==undefined) {
+          } else {
+        	  if (angular.isDefined(initLoadFolders)) {
+        		  $interval.cancel(initLoadFolders);
+                  initLoadFolders = undefined;
+                  $scope.loadFolders();
+                }
+          }
+        }, 500,10); 
+	
 	  
 	$scope.isSelectedFolderValid = function() {
 		return $scope.selectedFolder !== null;

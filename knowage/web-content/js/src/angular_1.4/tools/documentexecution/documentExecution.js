@@ -73,7 +73,7 @@
 		};
 
 		$scope.initSelectedRole = function() {
-			console.log("initSelectedRole IN "); 
+			console.log("initSelectedRole IN ");  
 			if(execProperties.roles && execProperties.roles.length > 0) {
 				 if(execProperties.roles.length==1 || (execProperties.roles.length>1 && !angular.equals(execProperties.selectedRole.name,'')) ) {
 					execProperties.selectedRole.name = execProperties.roles[0];
@@ -81,12 +81,12 @@
 					$scope.showSelectRoles = false;					
 					//loads parameters if role is selected
 					execProperties.isParameterRolePanelDisabled.status = true;
-					docExecute_urlViewPointService.getParametersForExecution(execProperties.selectedRole.name, $scope.buildCorrelation,execProperties.executionInstance.CROSS_PARAMETER);
+					docExecute_urlViewPointService.getParametersForExecution(execProperties.selectedRole.name, $scope.buildCorrelation,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
 				}else{ 
 					docExecute_paramRolePanelService.toggleParametersPanel(true);
 				}
 				docExecute_urlViewPointService.frameLoaded=false;
-				docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name,execProperties.executionInstance.CROSS_PARAMETER);
+				docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
 				$scope.firstExecutionProcessRestV1=false;
 				 
 			}
@@ -274,10 +274,10 @@
 			console.log("changeRole IN ");
 			if(role != execProperties.selectedRole.name) {  
 				$crossNavigationScope.changeNavigationRole(execProperties.selectedRole);
-				docExecute_urlViewPointService.getParametersForExecution(role,$scope.buildCorrelation,execProperties.executionInstance.CROSS_PARAMETER)
+				docExecute_urlViewPointService.getParametersForExecution(role,$scope.buildCorrelation,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
 				docExecute_urlViewPointService.frameLoaded=false;
 				if($scope.firstExecutionProcessRestV1){
-					docExecute_urlViewPointService.executionProcesRestV1(role, execProperties.executionInstance.CROSS_PARAMETER);
+					docExecute_urlViewPointService.executionProcesRestV1(role,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
 					$scope.firstExecutionProcessRestV1=false;
 				}else{
 					docExecute_urlViewPointService.executionProcesRestV1(role, documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters));

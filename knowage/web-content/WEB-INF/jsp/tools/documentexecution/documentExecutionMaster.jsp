@@ -41,9 +41,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'OBJECT_LABEL' : 		'<%= request.getParameter("OBJECT_LABEL") != null ? request.getParameter("OBJECT_LABEL") : aRequestContainer.getServiceRequest().getAttribute("OBJECT_LABEL") %>',
 				'OBJECT_NAME' : 		'<%= request.getParameter("OBJECT_NAME") != null ? request.getParameter("OBJECT_NAME") : aRequestContainer.getServiceRequest().getAttribute("OBJECT_NAME") %>',
 				'isSourceDocument' : 	'<%= request.getParameter("IS_SOURCE_DOCUMENT") != null ? request.getParameter("IS_SOURCE_DOCUMENT") : aRequestContainer.getServiceRequest().getAttribute("IS_SOURCE_DOCUMENT") %>',
-				'isFromCross' : false, 
-				'isPossibleToComeBackToRolePage' : false,
-				'SBI_EXECUTION_ID' : ''
+				'SBI_EXECUTION_ID' : '',
+				'MENU_PARAMETERS' : 	'<%= aRequestContainer.getServiceRequest().getAttribute("PARAMETERS") %>'
+				
 			  	
 		};
 		return obj;

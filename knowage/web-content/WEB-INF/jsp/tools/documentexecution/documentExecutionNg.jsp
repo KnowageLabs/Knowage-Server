@@ -254,9 +254,11 @@ try{
 				['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list','cross_navigation']);
 		
 		angular.module('documentExecutionModule').factory('execProperties', function() {
-			 
 			var selRole= '<%= request.getParameter("SELECTED_ROLE") %>'=='null' ? '' : '<%= request.getParameter("SELECTED_ROLE") %>';
+			//parameters from cross navigation
 			var crossParams= <%= request.getParameter("CROSS_PARAMETER") %>==null ? {} : <%= request.getParameter("CROSS_PARAMETER") %>;
+			//parameters from menu
+			var menuParams= <%= request.getParameter("MENU_PARAMETERS") %> ==null ? {} : <%= request.getParameter("MENU_PARAMETERS") %>;
 			
 			 var obj = {
 				roles: [<%for(Object roleObj : executionRoleNames) out.print("'" + (String)roleObj + "',");%>],
@@ -268,7 +270,9 @@ try{
 					'isPossibleToComeBackToRolePage' : false,
 					'SBI_EXECUTION_ID' : '',
 					'CROSS_PARAMETER' : crossParams,
-					'ENGINE_LABEL' : ''
+					'MENU_PARAMETER' : menuParams,
+					'ENGINE_LABEL' : '',
+					
 				},
 				parametersData: {
 					documentParameters: []

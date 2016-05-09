@@ -11,11 +11,22 @@ function docExMasterControllerFunction($scope,sbiModule_translate,$timeout,sourc
 	$scope.documentNavigationScope=$documentNavigationScope;
 //	$scope.sourceDocumentUrl="";
 $scope.executeSourceDocument = function() { 
-		var params = {};  
+		var menuParams = {};
+		try{
+			var splittedMenuParams=sourceDocumentExecProperties.MENU_PARAMETERS==undefined? [] : sourceDocumentExecProperties.MENU_PARAMETERS.split("&");
+			for(var i=0;i<splittedMenuParams.length;i++){
+				var splittedItem=splittedMenuParams[i].split("=");
+				menuParams[splittedItem[0]]=splittedItem[1];
+			}
+		}catch(e){
+			console.error(e);
+		}
+		
 		var url = sbiModule_config.contextName 
 			+ '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp'
 			+ '&OBJECT_ID=' + sourceDocumentExecProperties.OBJECT_ID
 			+ '&OBJECT_LABEL=' + sourceDocumentExecProperties.OBJECT_LABEL
+			+ '&MENU_PARAMETERS=' + encodeURIComponent(JSON.stringify(menuParams)).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&")
 			+ '&LIGHT_NAVIGATOR_DISABLED=TRUE'
 			+ '&SBI_EXECUTION_ID=null'
 			+ '&OBJECT_NAME=' + sourceDocumentExecProperties.OBJECT_NAME;
