@@ -152,7 +152,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the id.
-	 *
+	 * 
 	 * @return Returns the id.
 	 */
 	public Integer getId() {
@@ -161,7 +161,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the id.
-	 *
+	 * 
 	 * @param businessObjectID
 	 *            The id to set.
 	 */
@@ -171,7 +171,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the bi object parameters.
-	 *
+	 * 
 	 * @return Returns the biObjectParameters.
 	 */
 	@JsonIgnore
@@ -181,7 +181,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the bi object parameters.
-	 *
+	 * 
 	 * @param businessObjectParameters
 	 *            The biObjectParameters to set.
 	 */
@@ -191,7 +191,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the description.
-	 *
+	 * 
 	 * @return Returns the description.
 	 */
 	public String getDescription() {
@@ -200,7 +200,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the description.
-	 *
+	 * 
 	 * @param description
 	 *            The description to set.
 	 */
@@ -210,7 +210,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the encrypt.
-	 *
+	 * 
 	 * @return Returns the encrypt.
 	 */
 	@JsonIgnore
@@ -220,7 +220,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the encrypt.
-	 *
+	 * 
 	 * @param encrypt
 	 *            The encrypt to set.
 	 */
@@ -230,7 +230,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the visible.
-	 *
+	 * 
 	 * @return the visible
 	 */
 	@JsonIgnore
@@ -240,7 +240,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the visible.
-	 *
+	 * 
 	 * @param visible
 	 *            the new visible
 	 */
@@ -260,7 +260,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the engine.
-	 *
+	 * 
 	 * @return Returns the engine.
 	 */
 	@JsonIgnore
@@ -275,7 +275,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the engine.
-	 *
+	 * 
 	 * @param engine
 	 *            The engine to set.
 	 */
@@ -299,7 +299,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the data source id.
-	 *
+	 * 
 	 * @return Returns the datasource.
 	 */
 	@JsonIgnore
@@ -309,7 +309,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the data source id.
-	 *
+	 * 
 	 * @param dataSourceId
 	 *            the data source id
 	 */
@@ -335,7 +335,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the label.
-	 *
+	 * 
 	 * @return Returns the label.
 	 */
 	public String getLabel() {
@@ -344,7 +344,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the label.
-	 *
+	 * 
 	 * @param label
 	 *            The label to set.
 	 */
@@ -354,7 +354,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the rel name.
-	 *
+	 * 
 	 * @return Returns the relName.
 	 */
 	@JsonIgnore
@@ -364,7 +364,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the rel name.
-	 *
+	 * 
 	 * @param relName
 	 *            The relName to set.
 	 */
@@ -375,7 +375,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the bi object type code.
-	 *
+	 * 
 	 * @return Returns the biObjectTypeCode.
 	 */
 	@JsonProperty(value = "typeCode")
@@ -385,7 +385,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the bi object type code.
-	 *
+	 * 
 	 * @param businessObjectTypeCD
 	 *            The biObjectTypeCode to set.
 	 */
@@ -396,7 +396,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the bi object type code and update the type id.
-	 *
+	 * 
 	 * @param businessObjectTypeCD
 	 *            The biObjectTypeCode to set.
 	 * @throws EMFUserError
@@ -411,7 +411,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the bi object type id.
-	 *
+	 * 
 	 * @return Returns the biObjectTypeID.
 	 */
 	@JsonIgnore
@@ -421,7 +421,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the bi object type id.
-	 *
+	 * 
 	 * @param biObjectTypeID
 	 *            The biObjectTypeID to set.
 	 */
@@ -431,7 +431,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the state code.
-	 *
+	 * 
 	 * @return Returns the stateCode.
 	 */
 	@JsonGetter
@@ -441,7 +441,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the state code.
-	 *
+	 * 
 	 * @param stateCD
 	 *            The stateCode to set.
 	 */
@@ -452,7 +452,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the state code and update the state id.
-	 *
+	 * 
 	 * @param stateCD
 	 *            The stateCode to set.
 	 * @throws EMFUserError
@@ -467,7 +467,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the state id.
-	 *
+	 * 
 	 * @return Returns the stateID.
 	 */
 	@JsonIgnore
@@ -477,7 +477,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the state id.
-	 *
+	 * 
 	 * @param stateID
 	 *            The stateID to set.
 	 */
@@ -487,7 +487,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the path.
-	 *
+	 * 
 	 * @return Returns the path.
 	 */
 	@JsonIgnore
@@ -497,7 +497,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the path.
-	 *
+	 * 
 	 * @param path
 	 *            The path to set.
 	 */
@@ -507,7 +507,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the name.
-	 *
+	 * 
 	 * @return the name
 	 */
 	public String getName() {
@@ -516,7 +516,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the name.
-	 *
+	 * 
 	 * @param name
 	 *            the new name
 	 */
@@ -526,7 +526,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the uuid.
-	 *
+	 * 
 	 * @return the uuid
 	 */
 	@JsonIgnore
@@ -536,7 +536,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the uuid.
-	 *
+	 * 
 	 * @param uuid
 	 *            the new uuid
 	 */
@@ -546,7 +546,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the functionalities.
-	 *
+	 * 
 	 * @return the functionalities
 	 */
 	@JsonIgnore
@@ -556,7 +556,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the functionalities.
-	 *
+	 * 
 	 * @param functionalities
 	 *            the new functionalities
 	 */
@@ -587,7 +587,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the active template.
-	 *
+	 * 
 	 * @return the active template
 	 */
 	@JsonIgnore
@@ -604,7 +604,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the template list.
-	 *
+	 * 
 	 * @return the template list
 	 */
 	@JsonIgnore
@@ -621,7 +621,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the creation date.
-	 *
+	 * 
 	 * @return the creation date
 	 */
 	@JsonIgnore
@@ -636,7 +636,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the creation date.
-	 *
+	 * 
 	 * @param creationDate
 	 *            the new creation date
 	 */
@@ -646,7 +646,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the creation user.
-	 *
+	 * 
 	 * @return the creation user
 	 */
 	@JsonGetter
@@ -656,7 +656,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the creation user.
-	 *
+	 * 
 	 * @param creationUser
 	 *            the new creation user
 	 */
@@ -667,7 +667,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the data set id.
-	 *
+	 * 
 	 * @return the data set id
 	 */
 	// @JsonIgnore
@@ -677,7 +677,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the data set id.
-	 *
+	 * 
 	 * @param dataSetId
 	 *            the new data set id
 	 */
@@ -704,7 +704,7 @@ public class BIObject implements Serializable, Cloneable {
 	// }
 	/**
 	 * Gets refresh Seconds.
-	 *
+	 * 
 	 * @return refresh Seconds
 	 */
 	@JsonIgnore
@@ -714,7 +714,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets refresh Seconds.
-	 *
+	 * 
 	 * @param refreshSeconds
 	 */
 
