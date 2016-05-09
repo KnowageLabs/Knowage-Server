@@ -235,7 +235,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	};
 	
 	$scope.closeFiltersDialog = function() {
-		console.log("In old selected[close]:"+oldSelectedFilter)
+		
 		if(selectedFlag){
 			if(oldSelectedFilter.name != "..."){
 				$scope.filterSelected[$scope.filterAxisPosition].name = oldSelectedFilter.name;
@@ -386,7 +386,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				data.axis = 0;
 
 				if ($scope.draggedFrom == 'left' && leftLength == 1){
-					sbiModule_messaging.showErrorMessage("Column", 'Error');
+					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), 'Warning');
 				}					
 				else {
 					$scope.putMemberOnAxis(fromAxis,data);
@@ -419,7 +419,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				data.axis = 1;
 				
 				if ($scope.draggedFrom == 'top' && topLength == 1)
-					sbiModule_messaging.showErrorMessage("Row", 'Error');
+					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), 'Warning');
 				else {
 					$scope.putMemberOnAxis(fromAxis,data);
 				}
@@ -442,7 +442,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			fromAxis = data.axis;
 			
 			if(data.measure){
-				sbiModule_messaging.showErrorMessage("Measures can not be used as a filters!", 'Error');
+				sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.filter.no.measure'), 'Warning');
 				return null;
 			}
 			
@@ -451,9 +451,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				data.axis = -1;
 				
 				if ($scope.draggedFrom == 'left' && leftLength == 1)
-					sbiModule_messaging.showErrorMessage("Column", 'Error');
+					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), 'Warning');
 				else if ($scope.draggedFrom == 'top' && topLength == 1)
-					sbiModule_messaging.showErrorMessage("Row", 'Error');
+					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), 'Warning');
 				else {
 					$scope.putMemberOnAxis(fromAxis,data);
 				}
