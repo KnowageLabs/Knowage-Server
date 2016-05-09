@@ -146,6 +146,8 @@ public class BIObject implements Serializable, Cloneable {
 
 	private String parametersRegion = null;
 
+	private String lockedByUser = null;
+
 	private List<OutputParameter> outputParameters = new ArrayList();
 
 	private String stateCodeStr = null;
@@ -815,6 +817,14 @@ public class BIObject implements Serializable, Cloneable {
 		this.parametersRegion = parametersRegion;
 	}
 
+	public String getLockedByUser() {
+		return lockedByUser;
+	}
+
+	public void setLockedByUser(String lockedByUser) {
+		this.lockedByUser = lockedByUser;
+	}
+
 	/**
 	 * Clone the object.. NOTE: it does not clone the id property
 	 */
@@ -849,6 +859,7 @@ public class BIObject implements Serializable, Cloneable {
 		clone.setDocVersion(docVersion);
 		clone.setParametersRegion(parametersRegion);
 		clone.setOutputParameters(outputParameters);
+		clone.setLockedByUser(lockedByUser);
 		return clone;
 	}
 
