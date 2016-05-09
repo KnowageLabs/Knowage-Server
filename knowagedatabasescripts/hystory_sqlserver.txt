@@ -9,3 +9,7 @@ Every items must have:
 -- 23.02.2015 Francesco Lucchi: removed SBI_DOSSIER_* tables.
 
 -- 06.05.2016 Alessandro Portosa: Renamed HIBERNATE_SEQUENCES and its fields with lowercase. It must be lowercase for Unix compatibility
+
+--09.05.2016 Giulio Gavardi
+ALTER TABLE SBI_OBJECTS ADD COLUMN LOCKED_BY_USER VARCHAR(100) NULL;
+
