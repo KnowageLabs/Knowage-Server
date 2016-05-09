@@ -21,6 +21,7 @@ import it.eng.spagobi.metadata.cwm.CWMImplType;
 import it.eng.spagobi.metadata.cwm.ICWM;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -67,6 +68,12 @@ public class CWMEMFImpl implements ICWM {
 	public ByteArrayOutputStream exportStreamToXMI() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void importFromXMI(InputStream inputStream) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

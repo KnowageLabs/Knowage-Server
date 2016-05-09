@@ -22,6 +22,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.meta.model.Model;
+import it.eng.spagobi.meta.model.ModelObject;
 import it.eng.spagobi.meta.model.ModelProperty;
 import it.eng.spagobi.meta.model.business.BusinessColumn;
 import it.eng.spagobi.meta.model.business.BusinessModel;
@@ -30,10 +31,13 @@ import it.eng.spagobi.meta.model.business.SimpleBusinessColumn;
 import it.eng.spagobi.meta.model.physical.PhysicalColumn;
 import it.eng.spagobi.meta.model.physical.PhysicalModel;
 import it.eng.spagobi.meta.model.physical.PhysicalTable;
+import it.eng.spagobi.meta.model.serializer.EmfXmiSerializer;
+import it.eng.spagobi.meta.model.serializer.IModelSerializer;
 import it.eng.spagobi.metadata.cwm.CWMImplType;
 import it.eng.spagobi.metadata.cwm.CWMMapperFactory;
 import it.eng.spagobi.metadata.cwm.ICWM;
 import it.eng.spagobi.metadata.cwm.ICWMMapper;
+import it.eng.spagobi.metadata.cwm.jmi.SpagoBICWMJMIImpl;
 import it.eng.spagobi.metadata.dao.ImportMetadata;
 import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaBcAttribute;
@@ -41,6 +45,7 @@ import it.eng.spagobi.metadata.metadata.SbiMetaSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
 import it.eng.spagobi.metamodel.MetaModelLoader;
+import it.eng.spagobi.metamodel.MetaModelUpdater;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.catalogue.bo.Content;
@@ -56,7 +61,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,8 +90,14 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
@@ -327,14 +345,14 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/{bmId}/importCWM")
 	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Produces(MediaType.APPLICATION_XML)
 	public Response importCWMToMetamodel(@PathParam("bmId") int businessModelId, @MultipartForm MultipartFormDataInput input) {
 		// TODO: to complete
 
 		logger.debug("IN");
 		String fileName;
 		try {
-			// 1- Retrieve uploaded file data
+			// Retrieve uploaded file data
 			Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 			InputStream inputStream = null;
 
@@ -348,7 +366,73 @@ public class MetadataResource extends AbstractSpagoBIResource {
 					}
 				}
 			}
-			return Response.ok().build();
+			// Convert CWM XMI File to Physical Metamodel
+			ModelObject modelFromCWM;
+			if (inputStream != null) {
+				ICWM cwm;
+				ICWMMapper modelMapper = CWMMapperFactory.getMapper(CWMImplType.JMI);
+				cwm = new SpagoBICWMJMIImpl("importCWM");
+				cwm.importFromXMI(inputStream);
+
+				modelFromCWM = modelMapper.decodeModel(cwm);
+			} else {
+				logger.error("Cannot retrieve CWM file while trying to import cwm model inside metamodel");
+				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(),
+						"Cannot retrieve CWM file while trying to import cwm model inside metamodel");
+			}
+
+			// ********************
+			// Retrieve Metamodel file from datamart.jar
+			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+			Content modelContent = businessModelsDAO.loadActiveMetaModelContentById(businessModelId);
+			if (modelContent == null) {
+				logger.error("datamart.jar not found for metamodel with id " + businessModelId);
+				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(), "datamart.jar not found for metamodel with id " + businessModelId);
+			}
+			byte[] metamodelTemplateBytes = getModelFileFromJar(modelContent);
+			if (metamodelTemplateBytes == null) {
+				logger.error("Metamodel file not found inside datamart.jar");
+				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(), "Metamodel file not found inside datamart.jar");
+			}
+			// Read the metamodel and convert to object
+			ByteArrayInputStream bis = new ByteArrayInputStream(metamodelTemplateBytes);
+			Model originalModel = MetaModelLoader.load(bis);
+
+			// ********************
+			// Update original physical model with new tables from cwm metamodel
+
+			MetaModelUpdater modelUpdater = new MetaModelUpdater();
+			if (modelFromCWM instanceof PhysicalModel) {
+				modelUpdater.updateModelfromCWM(originalModel.getPhysicalModels().get(0), (PhysicalModel) modelFromCWM);
+			}
+
+			// Save new model to file, update jar and save it to db
+			replaceModelInDatamart(originalModel, businessModelsDAO, businessModelId);
+
+			// TODO: to remove, just for test ---------------------------
+			// Create a resource set.
+			ResourceSet resourceSet = new ResourceSetImpl();
+
+			// Register the default resource factory -- only needed for stand-alone!
+			resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
+
+			// Get the URI of the model file.
+			// URI uri = URI.createFileURI(new File("mylibrary.xmi").getAbsolutePath());
+			URI uri = URI.createURI("it.eng.spagobi");
+
+			// Create a resource for this file.
+			Resource resource = resourceSet.createResource(uri);
+
+			// Add the book and writer objects to the contents.
+			resource.getContents().add(modelFromCWM);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			resource.save(oos, Collections.EMPTY_MAP);
+			byte[] b = baos.toByteArray();
+			// --------------------------------------------------------
+
+			ResponseBuilder response = Response.ok(b);
+			return response.build();
 
 		} catch (Exception e) {
 			logger.error("An error occurred while trying to import CWM metamodel into metamodel with id " + businessModelId, e);
@@ -366,7 +450,99 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	 *
 	 * -------------------------------------------------------------------------------------
 	 *
+	 * @throws IOException
+	 *
 	 */
+
+	private void replaceModelInDatamart(Model model, IMetaModelsDAO businessModelsDAO, int businessModelId) {
+		// read jar
+		JarFile jar = null;
+		FileOutputStream output = null;
+		java.io.InputStream is = null;
+
+		try {
+			// ** save updated model to temp .sbimodel file
+			IModelSerializer serializer = new EmfXmiSerializer();
+			File newModelTempFile = File.createTempFile("tempModel", ".sbimodel");
+			serializer.serialize(model, newModelTempFile);
+
+			// ** replace .sbimodel inside jar with the new one
+			Content modelContent = businessModelsDAO.loadActiveMetaModelContentById(businessModelId);
+			// read jar
+			byte[] contentBytes = modelContent.getContent();
+			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
+			UUID uuidObj = uuidGen.generateTimeBasedUUID();
+			String idCas = uuidObj.toString().replaceAll("-", "");
+			logger.debug("create temp file for jar");
+			String path = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + idCas + ".jar";
+			logger.debug("temp file for jar " + path);
+			File filee = new File(path);
+			output = new FileOutputStream(filee);
+			IOUtils.write(contentBytes, output);
+			jar = new JarFile(filee);
+			logger.debug("jar file created ");
+
+			Enumeration enumEntries = jar.entries();
+			FileSystem fs = null;
+			while (enumEntries.hasMoreElements()) {
+				JarEntry fileEntry = (java.util.jar.JarEntry) enumEntries.nextElement();
+				logger.debug("jar content " + fileEntry.getName());
+
+				if (fileEntry.getName().endsWith("sbimodel")) {
+					logger.debug("found model file " + fileEntry.getName());
+
+					String originalFileName = fileEntry.getName();
+
+					java.nio.file.Path myFilePath = Paths.get(newModelTempFile.getAbsolutePath());
+					java.nio.file.Path jarFilePath = Paths.get(path);
+
+					fs = FileSystems.newFileSystem(jarFilePath, null);
+					java.nio.file.Path fileInsideZipPath = fs.getPath("/" + originalFileName);
+					Files.deleteIfExists(fileInsideZipPath);
+					Files.copy(myFilePath, fileInsideZipPath);
+
+					// fs.close();
+					break;
+				}
+
+			}
+
+			if (jar != null)
+				jar.close();
+			if (output != null)
+				output.close();
+			if (is != null)
+				is.close();
+			if (fs != null)
+				fs.close();
+
+			// ** get the modified jar and save it to the database
+			Content content = new Content();
+			byte[] bytes = FileUtils.readFileToByteArray(filee);
+			content.setFileName("datamart.jar");
+			content.setContent(bytes);
+			content.setCreationDate(new Date());
+			content.setCreationUser(getUserProfile().getUserName().toString());
+			// TODO: uncomment this
+			businessModelsDAO.insertMetaModelContent(businessModelId, content);
+		} catch (IOException e1) {
+			logger.error("the model file could not be taken by datamart.jar due to error ", e1);
+		} finally {
+			try {
+
+				if (jar != null)
+					jar.close();
+				if (output != null)
+					output.close();
+				if (is != null)
+					is.close();
+			} catch (IOException e) {
+				logger.error("error in closing streams");
+			}
+			logger.debug("OUT");
+		}
+
+	}
 
 	private String getFileName(MultivaluedMap<String, String> header) {
 		String[] contentDisposition = header.getFirst("Content-Disposition").split(";");

@@ -22,7 +22,6 @@ import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.MetaPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.behavioral.BehavioralPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.businessinformation.BusinessInformationPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.core.CorePackage;
-import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.core.CwmClassifier;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.datatypes.DataTypesPackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.instance.InstancePackage;
 import it.eng.spagobi.meta.cwm.jmi.spagobi.meta.keysindexes.KeysIndexesPackage;
@@ -235,8 +234,10 @@ public class SpagoBICWMJMIImpl implements ICWM {
 
 	public Collection<CwmColumn> getColumns(CwmTable table) {
 		List<CwmColumn> columns = new ArrayList<CwmColumn>();
-		List<CwmClassifier> cwmClassifiers = table.getFeature();
-		for (CwmClassifier cwmClassifier : cwmClassifiers) {
+		List cwmClassifiers = table.getFeature();
+		Iterator classifiersIterator = cwmClassifiers.iterator();
+		while (classifiersIterator.hasNext()) {
+			Object cwmClassifier = classifiersIterator.next();
 			if (cwmClassifier instanceof CwmColumn) {
 				columns.add((CwmColumn) cwmClassifier);
 			}
@@ -309,6 +310,7 @@ public class SpagoBICWMJMIImpl implements ICWM {
 		}
 	}
 
+	@Override
 	public void importFromXMI(InputStream inputStream) {
 		try {
 			XMIReaderFactory factory = XMIReaderFactory.getDefault();

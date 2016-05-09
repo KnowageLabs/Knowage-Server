@@ -61,8 +61,6 @@ public class SpagoBICWMMapperJMIImpl extends ICWMMapper {
 	}
 
 	public PhysicalModel decodeModel(SpagoBICWMJMIImpl cwm) {
-		// TODO: incomplete implementation
-
 		PhysicalModel model = FACTORY.createPhysicalModel();
 		// set model name
 		model.setName(cwm.getName());
@@ -117,8 +115,8 @@ public class SpagoBICWMMapperJMIImpl extends ICWMMapper {
 		Collection<CwmForeignKey> foreignKeys = cwm.getForeignKeys();
 		for (CwmForeignKey foreignKey : foreignKeys) {
 			PhysicalForeignKey physicalForeignKey = FACTORY.createPhysicalForeignKey();
-			physicalForeignKey.setName(physicalForeignKey.getName());
-			physicalForeignKey.setSourceName(physicalForeignKey.getName());
+			physicalForeignKey.setName(foreignKey.getName());
+			physicalForeignKey.setSourceName(foreignKey.getName());
 			CwmNamespace cwmNamespace = foreignKey.getNamespace();
 			// set source table of fk
 			if (cwmNamespace instanceof CwmTable) {
@@ -151,7 +149,7 @@ public class SpagoBICWMMapperJMIImpl extends ICWMMapper {
 					PhysicalTable pkPhysicalTable = model.getTable(cwmTable.getName());
 					physicalForeignKey.setDestinationTable(pkPhysicalTable);
 					// set target columns
-					List features = cwmTable.getFeature();
+					List features = cwmPrimaryKey.getFeature();
 					for (Object feature : features) {
 						if (feature instanceof CwmColumn) {
 							CwmColumn cwmColumn = (CwmColumn) feature;
