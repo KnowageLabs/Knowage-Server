@@ -521,6 +521,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		  $scope.dtData = [];
 		  $scope.dtAssociatedLevels = [];
 		  $scope.selectedMDXFunction = {};
+		  $scope.selectedMDXFunctionName ="";
 		  $scope.selectedCrossNavigation = null;
       }; 
      
@@ -543,7 +544,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
       
     $scope.checkValidity = function(){
     	
-    	if($scope.selectedMDXFunction == null || $scope.selectedMDXFunction.label == undefined || $scope.selectedMDXFunction.label == ""){
+    	if($scope.selectedMDXFunction == null || $scope.selectedMDXFunctionName == ""){
     		return true;
     	}else{
     
@@ -558,11 +559,13 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
     	sbiModule_restServices.promisePost
 		("1.0",encoded)
 		.then(function(response) {
+			$scope.handleResponse(response);
 			try{
 				eval(response.data);
 			}catch ( e){
 				sbiModule_messaging.showErrorMessage("error", 'Error');
 			}
+			
 		 }, function(response) {
 			sbiModule_messaging.showErrorMessage("error", 'Error');
 		});
@@ -583,7 +586,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 
 	$scope.selectMDXFunction = function(obj) {
 		$scope.selectedMDXFunction = obj;
-		$scope.selectedMDXFunction.label =""; // TODO
+		//$scope.selectedMDXFunction.label =$scope.selectedMDXFunctionName;
 		console.log($scope.selectedMDXFunction);
 	}
 		
@@ -691,49 +694,35 @@ $scope.sendCC = function() {
 	value +=")";
 	$scope.finalFormula = value;
 	if($scope.selectedMDXFunction.output != "Set"){
-	$scope.addCC();
-	toastr.info('Click ok to save also<br /><br /><md-button class="md-raised">OK</md-button>' , { 
-		  allowHtml: true,
-		  timeOut: 3000, 
-		  onTap: function() {
-			 
-			  
-			  console.log("NAMED MEMBER");
-				var namedMember = {
-						'docName': sbiModule_docInfo.label,
-						'name':$scope.selectedMDXFunction.label,
-					    'value': $scope.finalFormula,
-					    'type': 'Member',
-					    'formula': 	$scope.selectedMDXFunction
-					}
-				
-				
-				for (var i = 0; i < $scope.cookieArray.length; i++) {
-					if(namedMember.name === $scope.cookieArray[i].name){
-						console.log("same one")
-						$scope.cookieArray.splice($scope.cookieArray[i],1);
-					}
-				}
-				$scope.cookieArray.push(namedMember);
-				console.log(namedMember);
-				$cookies.putObject('data',$scope.cookieArray);
-				sbiModule_messaging.showSuccessMessage("Member is saved", 'Success');
-				toastr.clear();
-			  
-		  }
-		  
-		});
+	
+		var namedMember = {
+				'docName': sbiModule_docInfo.label,
+				'name':$scope.selectedMDXFunctionName,
+			    'value': $scope.finalFormula,
+			    'type': 'Member',
+			    'formula': 	$scope.selectedMDXFunction
+			}
 		
 		
-	//	$scope.addCC();
-			
-		
-	}else{
-		console.log("NAMED SET");
+		for (var i = 0; i < $scope.cookieArray.length; i++) {
+			if(namedMember.name === $scope.cookieArray[i].name){
+				console.log("same one")
+				$scope.cookieArray.splice($scope.cookieArray[i],1);
+			}
+		}
+		$scope.cookieArray.push(namedMember);
+		console.log(namedMember);
+		$cookies.putObject('data',$scope.cookieArray);
+		sbiModule_messaging.showSuccessMessage("Member is saved", 'Success');
+	
+		$scope.addCC();
+	}
+	
+	if($scope.selectedMDXFunction.output == "Set"){
 		
 		var namedSet = {
 			'docName': sbiModule_docInfo.label,	
-			'name':$scope.selectedMDXFunction.label,
+			'name':$scope.selectedMDXFunctionName,
 		    'value': $scope.finalFormula,
 		    'type': 'Set',
 		    'formula': 	$scope.selectedMDXFunction
@@ -751,7 +740,9 @@ $scope.sendCC = function() {
 		$cookies.putObject('data',$scope.cookieArray);
 		sbiModule_messaging.showSuccessMessage("Set is saved", 'Success');
 	}
+	
 	$scope.selectedMDXFunction = {}; // TODO
+	$scope.selectedMDXFunctionName ="";
 	$mdDialog.hide();
 	}
 	
@@ -783,7 +774,7 @@ $scope.sendCC = function() {
 			if(item.name === $scope.cookieArray[i].name){
 				console.log("same one")
 				$scope.selectedMDXFunction = item.formula;
-				$scope.selectedMDXFunction.label = item.name;
+				$scope.selectedMDXFunctionName = item.name;
 				console.log($scope.selectedMDXFunction);
 			}
 		}
@@ -812,7 +803,7 @@ $scope.sendCC = function() {
 	 * */
 	
 $scope.addCC = function() {
-		var encoded = encodeURI('/calculatedmembers/execute/'+$scope.selectedMDXFunction.label+'/'+$scope.finalFormula+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+		var encoded = encodeURI('/calculatedmembers/execute/'+$scope.selectedMDXFunctionName+'/'+$scope.finalFormula+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 		sbiModule_restServices.promisePost
 		("1.0",encoded)
 		.then(function(response) {

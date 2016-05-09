@@ -56,7 +56,8 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.dtAssociatedLevels = [];
 	$scope.formulasData = [];
 	$scope.valuesArray = [];
-	$scope.selectedMDXFunction = null;
+	$scope.selectedMDXFunction = {};
+	$scope.selectedMDXFunctionName = "";
 	$scope.olapDocName = sbiModule_docInfo.label;
 	$scope.selectedCrossNavigationDocument = null;
 	$scope.cookieArray = [];
