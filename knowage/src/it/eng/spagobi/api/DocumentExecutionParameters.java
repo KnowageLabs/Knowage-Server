@@ -56,6 +56,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 	public static String NODE = "node";
 	public static String MODE_SIMPLE = "simple";
 	public static String MODE_COMPLETE = "complete";
+	public static String MODE_EXTRA = "extra";
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	// in massive export case
@@ -400,7 +401,18 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 				SourceBean row = (SourceBean) rows.get(q);
 				JSONObject valueJSON = new JSONObject();
 
-				if (MODE_COMPLETE.equalsIgnoreCase(mode)) {
+				if (MODE_EXTRA.equalsIgnoreCase(mode)) {
+					List columns = row.getContainedAttributes();
+					String value = (String) row.getAttribute(valueColumn);
+					String description = (String) row.getAttribute(descriptionColumn);
+					for (int i = 0; i < columns.size(); i++) {
+						SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
+						valueJSON.put(attribute.getKey().toUpperCase(), attribute.getValue());
+						valueJSON.put("value", value);
+						valueJSON.put("label", description);
+						valueJSON.put("description", description);
+					}
+				} else if (MODE_COMPLETE.equalsIgnoreCase(mode)) {
 					List columns = row.getContainedAttributes();
 					for (int i = 0; i < columns.size(); i++) {
 						SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
