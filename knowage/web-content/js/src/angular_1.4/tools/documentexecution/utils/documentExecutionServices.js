@@ -430,7 +430,7 @@
 	documentExecutionModule.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config,docExecute_exportService
 			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories,$q,$filter,$timeout
-			) {
+			,docExecute_dependencyService) {
 		
 		var serviceScope = this;	
 		serviceScope.documentUrl = '';
@@ -586,6 +586,7 @@
 							}							
 						}												
 					}
+					docExecute_dependencyService.visualCorrelationWatch(parameter);
 				}
 			}			
 		};
@@ -901,6 +902,7 @@
 		 * BUILD VISUAL DEPENDENCIES
 		 */
 		this.buildVisualCorrelationMap = function(parameters){
+			
 			for(var i=0; i<parameters.length ; i++){
 				if(parameters[i].visualDependencies && parameters[i].visualDependencies.length>0){						
 					for(var k=0; k<parameters[i].visualDependencies.length; k++){
@@ -929,6 +931,9 @@
 		}
 	
 		this.visualCorrelationWatch = function(value){
+			
+			console.log('visual correlation : ' , value);
+			
 			if(serviceScope.visualCorrelationMap[value.urlName]){
 				var forceExit=false;
 				for(var k=0; k<serviceScope.visualCorrelationMap[value.urlName].length; k++){
