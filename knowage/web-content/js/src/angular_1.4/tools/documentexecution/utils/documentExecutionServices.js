@@ -587,6 +587,7 @@
 						}												
 					}
 					docExecute_dependencyService.visualCorrelationWatch(parameter);
+					docExecute_dependencyService.dataDependenciesCorrelationWatch(parameter);
 				}
 			}			
 		};
@@ -607,11 +608,13 @@
 					//build documentParameters
 					angular.copy(response.data.filterStatus, execProperties.parametersData.documentParameters);
 					
+					//correlation
+					buildCorrelation(execProperties.parametersData.documentParameters);
+					
 					//setting default value				
 					serviceScope.buildObjForFillParameterPanel(response.data.filterStatus);
 					
-					//correlation
-					buildCorrelation(execProperties.parametersData.documentParameters);
+					
 					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
 				}else{
 //					execProperties.showParametersPanel.status = false;
@@ -814,6 +817,7 @@
 				 
 				console.log('modify dependency : ' , value);
 				console.log('element key '+ value.urlName , serviceScope.dataDependenciesMap[value.urlName]);
+				if(serviceScope.dataDependenciesMap[value.urlName]){
 				for(var k=0; k<serviceScope.dataDependenciesMap[value.urlName].length; k++){
 					var dataDependenciesElementMap = serviceScope.dataDependenciesMap[value.urlName][k];
 					//objPost.MODE= (dataDependenciesElementMap.lovParameterMode!='TREE' ) ? 'simple' : 'complete';
@@ -892,7 +896,8 @@
 						
 						
 					}
-				}			
+				}	
+			 }//check undefined	
 		  }
 		
 		
