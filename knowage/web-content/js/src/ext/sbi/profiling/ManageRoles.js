@@ -142,6 +142,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                        	          , 'manageUsers'
 	                        	          , 'manageGlossaryBusiness'
 	                        	          , 'manageGlossaryTechnical'
+	                        	          , 'manageKpiValue'
 	                        	          , 'editWorksheet'
 	                        	          , 'seeDocBrowser'
 	                        	          , 'seeFavourites'
@@ -182,6 +183,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 											manageUsers:false,
 											manageGlossaryBusiness:false,
 											manageGlossaryTechnical:false,
+											manageKpiValue:false,
 											editWorksheet: false,
 											seeDocBrowser:false,
 		                        	        seeFavourites:false,
@@ -573,8 +575,10 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		                {boxLabel: LN('sbi.roles.manageUsers'), name: 'manageUsers',id: 'manageUsers', checked:'manageUsers',inputValue: 1},
 
 		                {boxLabel: LN('sbi.roles.manageGlossaryBusiness'), name: 'manageGlossaryBusiness', id: 'manageGlossaryBusiness', id:'manageGlossaryBusiness', checked:'manageGlossaryBusiness',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.manageGlossaryTechnical'), name: 'manageGlossaryTechnical', id: 'manageGlossaryTechnical', id:'manageGlossaryTechnical', checked:'manageGlossaryTechnical',inputValue: 1}
-		            ]
+		                {boxLabel: LN('sbi.roles.manageGlossaryTechnical'), name: 'manageGlossaryTechnical', id: 'manageGlossaryTechnical', id:'manageGlossaryTechnical', checked:'manageGlossaryTechnical',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.manageKpiValue'), name: 'manageKpiValue', id: 'manageKpiValue',  checked:'manageKpiValue',inputValue: 1}
+
+		                ]
 		        },
 		        {
 		            xtype: 'checkboxgroup',
@@ -702,6 +706,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
             		  item.setValue('manageUsers', rec.get('manageUsers'));
             		  item.setValue('manageGlossaryBusiness', rec.get('manageGlossaryBusiness'));
             		  item.setValue('manageGlossaryTechnical', rec.get('manageGlossaryTechnical'));
+            		  item.setValue('manageKpiValue', rec.get('manageKpiValue'));
         		  }else if(item.getItemId() == 'isAbleToEditWorksheet'){
             		  item.setValue('editWorksheet', rec.get('editWorksheet'));
         		  }else if(item.getItemId() == 'isAbleTokpiCommentDelete'){
@@ -771,7 +776,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 			dsCheckBoxes = datasetsCategoriesCheckGroup.items.items
 		}
 		
-		if ((dsCheckBoxes != null) && (dsCheckBoxes !== undefined)){
+		if (dsCategoriesArray && (dsCheckBoxes != null) && (dsCheckBoxes !== undefined)){
 			dsCheckBoxes.forEach(function(item){
 		    	//set default to false
 				item.setValue('false');
@@ -817,6 +822,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 								manageUsers:false,
 								manageGlossaryBusiness:false,
 								manageGlossaryTechnical:false,
+								manageKpiValue:false,
 								editWorksheet: this.isVisible('editWorksheet'),
 								seeDocBrowser:this.isVisible('seeDocBrowser'),
                     	        seeFavourites:this.isVisible('seeFavourites'),
@@ -862,6 +868,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         var manageUsers =values['manageUsers'];  
         var manageGlossaryBusiness =values['manageGlossaryBusiness'];  
         var manageGlossaryTechnical =values['manageGlossaryTechnical'];  
+        var manageKpiValue = values['manageKpiValue'];
         var editWorksheet =values['editWorksheet'];
         var seeDocBrowser =values['seeDocBrowser'];  
         var seeMyData =values['seeMyData'];  
@@ -947,6 +954,11 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         	record.set('manageGlossaryBusiness', true);
         }else{
         	record.set('manageGlossaryBusiness', false);
+        }
+        if(manageKpiValue == 1){
+        	record.set('manageKpiValue', true);
+        }else{
+        	record.set('manageKpiValue', false);
         }
         if(manageGlossaryTechnical == 1){
         	record.set('manageGlossaryTechnical', true);
@@ -1121,6 +1133,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 			manageUsers:newRec.data.manageUsers,
 			manageGlossaryBusiness:newRec.data.manageGlossaryBusiness,
 			manageGlossaryTechnical:newRec.data.manageGlossaryTechnical,
+			manageKpiValue:newRec.data.manageKpiValue,
 			editWorksheet: newRec.data.editWorksheet,
 			seeDocBrowser: newRec.data.seeDocBrowser,
 			seeMyData: newRec.data.seeMyData,

@@ -137,7 +137,7 @@
 		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
-		
+		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>
 		<!-- Authorizations for KnowageER -->
 		<AUTHORIZATION productType="KnowageER" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
@@ -166,7 +166,7 @@
 		<AUTHORIZATION productType="KnowageER" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
 		<AUTHORIZATION productType="KnowageER" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
-	
+		<AUTHORIZATION productType="KnowageER" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>
 		<!-- Authorizations for KnowagePA -->
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
@@ -195,7 +195,7 @@
 		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
 		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
-	
+		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>
 		<!-- Authorizations for KnowageLI -->
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
@@ -224,7 +224,7 @@
 		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
 		<AUTHORIZATION productType="KnowageLI" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
-	
+		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>	
 		<!-- Authorizations for KnowagePM -->
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
@@ -253,7 +253,7 @@
 		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
 		<AUTHORIZATION productType="KnowagePM" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
-	
+		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>	
 		<!-- Authorizations for KnowageEI -->
 		<AUTHORIZATION productType="KnowageEI" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageEI" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
@@ -282,7 +282,7 @@
 		<AUTHORIZATION productType="KnowageEI" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageEI" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
 		<AUTHORIZATION productType="KnowageEI" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
-	
+		<AUTHORIZATION productType="KnowageEI" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>	
 		<!-- Authorizations for KnowageOD -->
 		<AUTHORIZATION productType="KnowageOD" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageOD" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
@@ -311,5 +311,6 @@
 		<AUTHORIZATION productType="KnowageOD" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageOD" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
 		<AUTHORIZATION productType="KnowageOD" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageOD" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>
 	</DEFAULT_AUTHORIZATIONS>
 </INTERNAL_PROFILING_INITIALIZER>

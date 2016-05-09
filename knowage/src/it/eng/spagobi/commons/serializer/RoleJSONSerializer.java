@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -73,6 +73,9 @@ public class RoleJSONSerializer implements Serializer {
 	public static final String MANAGE_GLOSSARY_BUSINESS = "manageGlossaryBusiness";
 	public static final String MANAGE_GLOSSARY_TECHNICAL = "manageGlossaryTechnical";
 
+	public static final String MANAGE_KPI_VALUE = "manageKpiValue";
+
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
 
@@ -119,6 +122,7 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(HIERARCHIES_MANAGEMENT, role.isAbleToHierarchiesManagement());
 			result.put(MANAGE_GLOSSARY_BUSINESS, role.isAbleToManageGlossaryBusiness());
 			result.put(MANAGE_GLOSSARY_TECHNICAL, role.isAbleToManageGlossaryTechnical());
+			result.put(MANAGE_KPI_VALUE, role.isAbleToManageKpiValue());
 			result.put(ENABLE_DATASET_PERSISTENCE, role.isAbleToEnableDatasetPersistence());
 			result.put(ENABLE_FEDERATED_DATASET, role.isAbleToEnableFederatedDataset());
 

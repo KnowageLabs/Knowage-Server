@@ -73,6 +73,8 @@ public class Role implements Serializable {
 	private boolean isAbleToManageGlossaryBusiness;
 	private boolean isAbleToManageGlossaryTechnical;
 
+	private boolean isAbleToManageKpiValue;
+
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
@@ -651,8 +653,16 @@ public class Role implements Serializable {
 		return isAbleToManageGlossaryTechnical;
 	}
 
+	public boolean isAbleToManageKpiValue() {
+		return isAbleToManageKpiValue;
+	}
+
 	public void setAbleToManageGlossaryTechnical(boolean isAbleToManageGlossaryTechnical) {
 		this.isAbleToManageGlossaryTechnical = isAbleToManageGlossaryTechnical;
+	}
+
+	public void setAbleToManageKpiValue(boolean isAbleToManageKpiValue) {
+		this.isAbleToManageKpiValue = isAbleToManageKpiValue;
 	}
 
 	public boolean isAbleToEnableFederatedDataset() {

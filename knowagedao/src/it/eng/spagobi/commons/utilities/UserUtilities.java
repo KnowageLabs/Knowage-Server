@@ -17,6 +17,22 @@
  */
 package it.eng.spagobi.commons.utilities;
 
+import java.lang.reflect.Method;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import javax.portlet.PortletRequest;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
@@ -39,22 +55,6 @@ import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.lang.reflect.Method;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.portlet.PortletRequest;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
 
 public class UserUtilities {
 
@@ -568,6 +568,9 @@ public class UserUtilities {
 			if (virtualRole.isAbleToManageGlossaryTechnical()) {
 				roleFunctionalities.add(SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL);
 			}
+			if (virtualRole.isAbleToManageKpiValue()) {
+				roleFunctionalities.add(SpagoBIConstants.MANAGE_KPI_VALUE);
+			}
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
 				roleFunctionalities.addAll(roleTypeFunctionalities);
@@ -778,6 +781,10 @@ public class UserUtilities {
 						logger.debug("User has role " + roleName + " that is able to manage glossary technical.");
 						virtualRole.setAbleToManageGlossaryTechnical(true);
 					}
+					if (anotherRole.isAbleToManageKpiValue()) {
+						logger.debug("User has role " + roleName + " that is able to manage glossary technical.");
+						virtualRole.setAbleToManageKpiValue(true);
+					}
 				}
 			}
 		}
@@ -793,8 +800,8 @@ public class UserUtilities {
 				throw new SpagoBIRuntimeException("No tenants found on database");
 			}
 			if (tenants.size() > 1) {
-				throw new SpagoBIRuntimeException("Tenants are more than one, cannot associate input user profile [" + profile.getUserId()
-						+ "] to a single tenant!!!");
+				throw new SpagoBIRuntimeException(
+						"Tenants are more than one, cannot associate input user profile [" + profile.getUserId() + "] to a single tenant!!!");
 			}
 			SbiTenant tenant = tenants.get(0);
 			logger.warn("Associating user profile [" + profile.getUserId() + "] to tenant [" + tenant.getName() + "]");

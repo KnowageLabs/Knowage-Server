@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,21 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.profiling.services;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
@@ -33,16 +43,6 @@ import it.eng.spagobi.security.RoleSynchronizer;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class ManageRolesAction extends AbstractSpagoBIAction {
 	/**
@@ -99,6 +99,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 	private final String MANAGE_GLOSSARY_BUSINESS = "manageGlossaryBusiness";
 	private final String MANAGE_GLOSSARY_TECHNICAL = "manageGlossaryTechnical";
+
+	private final String MANAGE_KPI_VALUE = "manageKpiValue";
 
 	private final String BM_CATEGORY_ID = "bmCategoryId";
 	private final String BM_CATEGORIES = "bmCategories";
@@ -198,6 +200,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 			Boolean manageGlossaryBusiness = getAttributeAsBoolean(MANAGE_GLOSSARY_BUSINESS);
 			Boolean manageGlossaryTechnical = getAttributeAsBoolean(MANAGE_GLOSSARY_TECHNICAL);
 
+			Boolean manageKpiValue = getAttributeAsBoolean(MANAGE_KPI_VALUE);
 			List<String> bmCategoryIds = getAttributeAsList(BM_CATEGORIES);
 			if (bmCategoryIds.size() == 1) {
 				if (bmCategoryIds.get(0).equals("")) {
@@ -289,6 +292,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 				role.setAbleToManageGlossaryBusiness(manageGlossaryBusiness);
 				role.setAbleToManageGlossaryTechnical(manageGlossaryTechnical);
+
+				role.setAbleToManageKpiValue(manageKpiValue);
 
 				try {
 					String id = getAttributeAsString(ID);

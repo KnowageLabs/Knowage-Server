@@ -17,13 +17,13 @@
  */
 package it.eng.spagobi.commons.bo;
 
-import it.eng.spagobi.services.validation.Xss;
-
 import java.io.Serializable;
 import java.util.List;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+
+import it.eng.spagobi.services.validation.Xss;
 
 /**
  * Defines a <code>Role</code> object.
@@ -98,6 +98,7 @@ public class RoleBO implements Serializable {
 	private boolean ableToManageGlossaryBusiness;
 	private boolean ableToManageGlossaryTechnical;
 
+	private boolean ableToManageKpiValue;
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
@@ -492,8 +493,16 @@ public class RoleBO implements Serializable {
 		return ableToManageGlossaryTechnical;
 	}
 
+	public boolean isAbleToManageKpiValue() {
+		return ableToManageKpiValue;
+	}
+
 	public void setAbleToManageGlossaryTechnical(boolean ableToManageGlossaryTechnical) {
 		this.ableToManageGlossaryTechnical = ableToManageGlossaryTechnical;
+	}
+
+	public void setAbleToManageKpiValue(boolean ableToManageKpiValue) {
+		this.ableToManageKpiValue = ableToManageKpiValue;
 	}
 
 	public List<RoleMetaModelCategory> getRoleMetaModelCategories() {
