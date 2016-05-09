@@ -502,7 +502,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			hibBIObject.setRefreshSeconds(biObject.getRefreshSeconds());
 			hibBIObject.setParametersRegion(biObject.getParametersRegion());
-
+			hibBIObject.setLockedByUser(biObject.getLockedByUser());
 			hibBIObject.setPreviewFile(biObject.getPreviewFile());
 
 			// functionalities erasing
@@ -1272,7 +1272,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		}
 
 		aBIObject.setParametersRegion(region);
-
+		aBIObject.setLockedByUser(hibBIObject.getLockedByUser());
 		// put dataset
 		if (session != null) {
 			BIObjDataSet biObjDataSet = DAOFactory.getBIObjDataSetDAO().getObjectDetailDataset(aBIObject.getId(), session);
