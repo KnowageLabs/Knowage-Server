@@ -270,6 +270,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 		var numMeasures=0;
 
 		FORFirst: for(var i=0;i<cm.lineCount();i++){
+			var line = i+1;
 			var array = $scope.removeSpace(cm.getLineTokens(i));
 			for(var j=0;j<array.length;j++){
 				var token = array[j];
@@ -280,7 +281,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 							var token_before = array[j-1];
 							if(token_before.type=="keyword" || token_before.type=="variable-2"){
 								if(token.type=="keyword" || token.type=="number" || token.type=="variable-2" || token.string=="("){
-									var line = i+1;
+								//	var line = i+1;
 									flag=false;
 									$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.missingoperator")+line);
 									$scope.reset();
@@ -291,7 +292,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 							}
 							if(token_before.type=="operator" ){
 								if(token.type=="operator" || token.string==")"){
-									var line = i+1;
+									
 									flag=false;
 									$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.malformed")+line);
 									$scope.reset();
@@ -301,7 +302,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 							}
 							if(token_before.type=="number" ){
 								if(token.type=="number" || token.string=="(" || token.type=="keyword" || token.type=="variable-2"){
-									var line = i+1;
+							//		var line = i+1;
 									flag=false;
 									$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.malformed")+line);
 									$scope.reset();
@@ -310,7 +311,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 								}
 							}
 							if(token_before.type=="bracket" ){
-								var line = i+1;
+							//	var line = i+1;
 								if((token.string==")" && token_before.string=="(")||(token.string=="(" && token_before.string==")") ){
 									flag=false;
 									$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.malformed")+line);
@@ -350,7 +351,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 						if(token.type=="operator"){
 							//operator
 							if(j==0){
-								var line = i+1;
+							//	var line = i+1;
 								$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.malformed")+line);
 								$scope.reset();
 								flag=false;
@@ -389,7 +390,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 						if(j-1>=0){
 							var token_before = array[j-1];
 							if(token_before.type=="number" || token_before.type=="keyword" || token_before.type=="variable-2"){
-								var line = i+1;
+						//		var line = i+1;
 								flag=false;
 								$scope.showAction($scope.translate.load("sbi.generic.kpi.errorformula.missingoperator")+line);
 								$scope.reset();

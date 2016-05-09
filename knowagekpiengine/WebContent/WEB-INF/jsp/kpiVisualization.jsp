@@ -138,9 +138,9 @@ author:
 // check for user profile autorization
 // 		IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		boolean canSee=false,canSeeAdmin=false;
-		if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})){
+		if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.MANAGE_KPI_VALUE})){
 			canSee=true;
-		 canSeeAdmin=UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[]{SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL});
+		 canSeeAdmin=UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[]{SpagoBIConstants.MANAGE_KPI_VALUE});
 		}
 
 %>

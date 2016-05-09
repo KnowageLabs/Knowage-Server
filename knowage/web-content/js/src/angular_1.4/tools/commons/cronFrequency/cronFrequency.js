@@ -52,12 +52,13 @@ angular.module('cron_frequency', [ 'ngMaterial','sbiModule','angular_time_picker
     				  startMills+=dateTime.getTime();
     				  
     				  var endMills= newVal.endDate.getTime();
-    				  var dateEndTime=new Date();
-    				  var arrET=newVal.endTime.split(":");
-    				  dateEndTime.setHours(arrET[0]);
-    				  dateEndTime.setMinutes(arrET[1]);
-    				  endMills+=dateEndTime.getTime();
-    				  
+    				  if(newVal.endTime!=undefined){
+	    				  var dateEndTime=new Date();
+	    				  var arrET=newVal.endTime.split(":");
+	    				  dateEndTime.setHours(arrET[0]);
+	    				  dateEndTime.setMinutes(arrET[1]);
+	    				  endMills+=dateEndTime.getTime();
+    				  }
     				  if(endMills<startMills)return false; 
     			  }
 				  
