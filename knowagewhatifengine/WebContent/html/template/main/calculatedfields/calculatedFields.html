@@ -64,7 +64,7 @@
     <md-content class="md-padding">
       <md-list flex>
         <md-list-item class="md-2-line"
-         ng-repeat="item in cookieArray"
+         ng-repeat="item in cookieArray | filter: {'docName': olapDocName}"
          ng-class="{selected:(selectedMDXFunction.name == item.name)}"
           ng-click="selectMDXFunction(item.formula);">
           <div class="md-list-item-text" layout="column" >

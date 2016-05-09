@@ -8,7 +8,8 @@
 	 </div> 
   <md-dialog-content  layout-padding ng-cloak>
     
-     <md-list-item class="secondary-button-padding" ng-click="setIt($index,set)" ng-repeat="set in cookieArray">
+     <md-list-item class="secondary-button-padding" ng-click="setIt($index,set)" 
+     ng-repeat="set in cookieArray | filter: {'docName': olapDocName}">
     <p>{{set.name}}</p>
     <p>{{set.type}}</p>
    

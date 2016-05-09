@@ -8,12 +8,12 @@ olapMod.config(['$mdThemingProvider', function($mdThemingProvider) {
 
 olapMod.controller("olapController", [ "$scope", "$timeout", "$window",
 		"$mdDialog", "$http", '$sce', '$mdToast', '$mdSidenav',
-		'sbiModule_messaging', 'sbiModule_restServices', 'sbiModule_translate',
+		'sbiModule_messaging', 'sbiModule_restServices', 'sbiModule_translate','sbiModule_docInfo',
 		'olapSharedSettings', olapFunction ]);
 
 function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$mdToast, $mdSidenav, sbiModule_messaging, sbiModule_restServices,
-		sbiModule_translate, olapSharedSettings) {
+		sbiModule_translate,sbiModule_docInfo, olapSharedSettings) {
 
 	//VARIABLES
 
@@ -57,6 +57,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.formulasData = [];
 	$scope.valuesArray = [];
 	$scope.selectedMDXFunction = null;
+	$scope.olapDocName = sbiModule_docInfo.label;
 	$scope.selectedCrossNavigationDocument = null;
 	$scope.cookieArray = [];
 	$scope.propertiesArray = [];

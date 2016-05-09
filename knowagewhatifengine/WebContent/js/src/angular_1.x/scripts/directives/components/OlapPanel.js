@@ -526,7 +526,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
      
       $scope.showCCWizard = function(){
     	  
-    	
+    	console.log($scope.olapDocName);
     		$mdDialog
     			.show({
     				scope : $scope,
@@ -543,7 +543,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
       
     $scope.checkValidity = function(){
     	
-    	if($scope.selectedMDXFunction == null || $scope.selectedMDXFunction.label == undefined){
+    	if($scope.selectedMDXFunction == null || $scope.selectedMDXFunction.label == undefined || $scope.selectedMDXFunction.label == ""){
     		return true;
     	}else{
     
@@ -582,27 +582,10 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
     		}
     	}
     }
-    /*
-    $scope. = function(){
-    	
-    	if($scope.selectedMDXFunction != null){
-    		for (var i = 1; i < $scope.selectedMDXFunction.argument.length; i++) {
-        		if($scope.selectedMDXFunction.argument[i].default_value == undefined || $scope.selectedMDXFunction.argument[i].default_value =="" ){
-        			return true;
-        		}else{
-            		return false;
-            	}
-        	} 	
-	
-    	}
-    		return false;
-    	
-    }
-    */
-      
+
 	$scope.selectMDXFunction = function(obj) {
 		$scope.selectedMDXFunction = obj;
-		//$scope.selectedMDXFunction.label ="";
+		$scope.selectedMDXFunction.label =""; // TODO
 		console.log($scope.selectedMDXFunction);
 	}
 		
@@ -631,7 +614,6 @@ $scope.openSavedSets = function(){
 				parent: angular.element(document.body),
 				controllerAs : 'olapCtrl',
 				templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/savedSets.html',
-				//targetEvent : ev,
 				clickOutsideToClose : true,
 				hasBackdrop:false
 			});

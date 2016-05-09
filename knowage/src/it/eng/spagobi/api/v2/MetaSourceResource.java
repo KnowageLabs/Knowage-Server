@@ -43,8 +43,7 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 			sbiMetaSourceDAO = DAOFactory.getSbiMetaSourceDAO();
 			sbiMetaTableDAO = DAOFactory.getSbiMetaTableDAO();
 		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug(e.getMessage());
 		}
 	}
 
@@ -84,8 +83,7 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 			metaTables = sbiMetaSourceDAO.loadMetaTables(sourceId);
 
 		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug(e.getMessage());
 		}
 		return metaTables;
 	}
@@ -105,8 +103,7 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 				}
 			}
 		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug(e.getMessage());
 		}
 		return null;
 	}
