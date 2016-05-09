@@ -1,8 +1,9 @@
 
-angular.module("sbiModule").service("sbiModule_dateServices",function(){
-	
+angular.module("sbiModule").service("sbiModule_dateServices",function(sbiModule_config){
+	 
 	this.getDateFromFormat=function(value,pattern){
-		var dateTime=getDateFromFormat(value,pattern);
+		var tmpPattern= pattern==undefined? sbiModule_config.dateFormat : pattern
+		var dateTime=getDateFromFormat(value,tmpPattern);
 		return dateTime==0 ? undefined : new Date(dateTime);
 	}
 	

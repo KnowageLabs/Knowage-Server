@@ -286,7 +286,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					// paramJSON.put("url", param.getParameterUrlName());
 					// inputParametersList.put(paramJSON);
 					inputId.add(param.getId());
-					documentIOParams.put(param.getId(), new crossNavigationParameters(param.getLabel()));
+					documentIOParams.put(param.getId(), new crossNavigationParameters(param.getParameterUrlName(), param.getParameter().getType()));
 				}
 
 				// Load Output Parameter
@@ -387,6 +387,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 class crossNavigationParameters {
 	String label;
 	Domain type;
+	String inputParameterType;
 	String dateFormat;
 
 	/**
@@ -409,6 +410,16 @@ class crossNavigationParameters {
 		super();
 		this.label = label;
 		this.type = type;
+	}
+
+	/**
+	 * @param label
+	 * @param inputParameterType
+	 */
+	public crossNavigationParameters(String label, String inputParameterType) {
+		super();
+		this.label = label;
+		this.inputParameterType = inputParameterType;
 	}
 
 	/**
@@ -463,6 +474,21 @@ class crossNavigationParameters {
 	 */
 	public void setDateFormat(String dateFormat) {
 		this.dateFormat = dateFormat;
+	}
+
+	/**
+	 * @return the inputParameterType
+	 */
+	public String getInputParameterType() {
+		return inputParameterType;
+	}
+
+	/**
+	 * @param inputParameterType
+	 *            the inputParameterType to set
+	 */
+	public void setInputParameterType(String inputParameterType) {
+		this.inputParameterType = inputParameterType;
 	}
 
 }

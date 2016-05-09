@@ -14,7 +14,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 		};
 		
 		//chartType,documentName, documentParameters, categoryName, categoryValue, serieName, serieValue, groupingCategoryName, groupingCategoryValue, stringParameters
-		this.navigateTo=function(navData){
+		this.navigateTo=function(outputParameter,inputParameter){
 			 
 			sbiModule_restServices.promiseGet("1.0/crossNavigation",this.crossNavigationSteps.currentDocument.name+"/loadCrossNavigationByDocument")
 			.then(function(response){
@@ -25,7 +25,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 					alert("non ci sono documenti di destinazione");
 					return;
 				}else if(navObj.length==1){
-					execCross(navObj[0],navData,true); 
+					execCross(navObj[0],outputParameter,inputParameter,true); 
 				}
 				else if(navObj.length>=1){
 				 
@@ -60,7 +60,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 					    	  translate:sbiModule_translate}
 					    })
 					    .then(function(doc) {
-					    	execCross(doc,navData,true);
+					    	execCross(doc,outputParameter,inputParameter,true);
 					    }, function() {
 					     return;
 					    });
@@ -78,12 +78,12 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			 
 		};
 		
-		function execCross(doc,navData,externalCross){
+		function execCross(doc,outputParameter,inputParameter,externalCross){
 			var parameterStr="";
 			if(externalCross){
-				parameterStr=cns.responseToStringParameter(doc,navData);
+				parameterStr=cns.responseToStringParameter(doc,outputParameter,inputParameter);
 			}else{
-				parameterStr=jsonToURI(navData);
+				parameterStr=jsonToURI(outputParameter);
 			}
 			targetUrl= sbiModule_config.contextName 
 			+ '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp'
@@ -97,12 +97,13 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			cns.crossNavigationSteps.stepControl.insertBread({name:doc.document.label,id:doc.document.id,url:targetUrl});
 		};
 		
-		this.responseToStringParameter=function(navObj,navData){
+		this.responseToStringParameter=function(navObj,outputParameter,inputParameter){
 			var respStr={};
 			
-			if(angular.isArray(navData)){
+			//check for output parameters
+			if(angular.isArray(outputParameter)){
 				respStr={};
-				for(var dataKey in navData){  
+				for(var dataKey in outputParameter){  
 					for(var key in navObj.navigationParams){
 						var parVal=navObj.navigationParams[key];
 						if(parVal.fixed){
@@ -114,13 +115,13 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 								respStr[key].push(parVal.value);
 							}
 						}else{
-							if(navData[dataKey].hasOwnProperty(parVal.value.label) && navData[dataKey][parVal.value.label]!=undefined && navData[dataKey][parVal.value.label]!=null){ 
+							if(outputParameter[dataKey].hasOwnProperty(parVal.value.label) && outputParameter[dataKey][parVal.value.label]!=undefined && outputParameter[dataKey][parVal.value.label]!=null){ 
 								if(!respStr.hasOwnProperty(key)){
 									respStr[key]=[];
 								}
 								
-								respStr[key].push(parseParameterValue(parVal.value,navData[dataKey][parVal.value.label]));
-//								respStr[key].push(navData[dataKey][parVal.value]);
+								respStr[key].push(parseParameterValue(parVal.value,outputParameter[dataKey][parVal.value.label]));
+//								respStr[key].push(outputParameter[dataKey][parVal.value]);
 							}
 						}
 						
@@ -134,8 +135,22 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 					if(parVal.fixed){
 						respStr[key]=parVal.value;
 					}else{
-						if(navData.hasOwnProperty(parVal.value.label) && navData[parVal.value.label]!=undefined && navData[parVal.value.label]!=null){ 
-							respStr[key]=parseParameterValue(parVal.value,navData[parVal.value.label]);
+						if(outputParameter.hasOwnProperty(parVal.value.label) && outputParameter[parVal.value.label]!=undefined && outputParameter[parVal.value.label]!=null){ 
+							respStr[key]=parseParameterValue(parVal.value,outputParameter[parVal.value.label]);
+						}
+					}
+				}
+			}
+			
+			//check for input parameters
+			if(inputParameter!=undefined){
+				for(var key in navObj.navigationParams){
+					var parVal=navObj.navigationParams[key];
+					if(parVal.fixed){
+						respStr[key]=parVal.value;
+					}else{
+						if(respStr[key]==undefined && inputParameter.hasOwnProperty(parVal.value.label) && inputParameter[parVal.value.label]!=undefined && inputParameter[parVal.value.label]!=null){ 
+							respStr[key]=parseParameterValue(parVal.value,inputParameter[parVal.value.label]);
 						}
 					}
 				}
@@ -150,20 +165,21 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			//TO-DO verificare i tuipi numerici se sono interi o double 
 			//mettere i try catch
 			
-			if(param.type==undefined){
+			if(param.type==undefined && param.inputParameterType==undefined){
 				return value;
 			}
-			if(param.type.valueCd=="DATE"){
-				return sbiModule_dateServices.getDateFromFormat(value, param.dateFormat)
-				
-//				return $filter('date')(value, param.dateFormat);				
+
+			if(param.inputParameterType=="STRING" || (param.type!=undefined && param.type.valueCd=="STRING")){
+				return value;
 			}
-			if(param.type.valueCd=="NUM"){
+			
+			if(param.inputParameterType=="DATE" || (param.type!=undefined && param.type.valueCd=="DATE")){
+				  return sbiModule_dateServices.getDateFromFormat(value, param.dateFormat)
+				 			
+			}
+			if(param.inputParameterType=="NUM" || (param.type!=undefined && param.type.valueCd=="NUM")){
 				var res=parseFloat(value);
 				return isNaN(res) ? undefined : res;
-			}
-			if(param.type.valueCd=="STRING"){
-				return value;
 			}
 		};
 		
@@ -178,7 +194,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 		this.internalNavigateTo=function(params,targetDocLabel){
 			 sbiModule_restServices.promiseGet("1.0/documents",targetDocLabel)
 			.then(function(response){ 
-				execCross({document:response.data},params,false); 
+				execCross({document:response.data},params,undefined,false); 
 			},function(response){
 				sbiModule_restServices.errorHandler(response.data,"Cross navigation error")
 			});

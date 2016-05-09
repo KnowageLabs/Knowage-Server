@@ -316,34 +316,53 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					showParameterLov = false;
 				}
 				// if parameterValue is not null and is array, check if all element are present in lov
-				DefaultValuesList crossValueList = new DefaultValuesList();
 				Object o = parameterAsMap.get("parameterValue");
 				if (o != null) {
 					if (o instanceof List) {
 						List<String> valList = (ArrayList) o;
 						for (int k = 0; k < valList.size(); k++) {
 							String itemVal = valList.get(k);
+							boolean found = false;
 							for (HashMap<String, Object> parHashVal : defaultValues) {
 								if (parHashVal.containsKey("value") && parHashVal.get("value").equals(itemVal)) {
-									DefaultValue defValue = new DefaultValue();
-									defValue.setValue(parHashVal.get("value"));
-									defValue.setDescription(parHashVal.get("value"));
-									crossValueList.add(defValue);
+									found = true;
 									break;
 								}
 							}
+							if (!found) {
+								valList.remove(k);
+								k--;
+							}
 						}
-						parameterAsMap.put("parameterValue", crossValueList);
 					}
 				}
 
 			}
+
+			// convert the parameterValue from array of string in array of object
+			DefaultValuesList parameterValueList = new DefaultValuesList();
+			Object o = parameterAsMap.get("parameterValue");
+			if (o != null) {
+				if (o instanceof List) {
+					List<String> valList = (ArrayList) o;
+					for (int k = 0; k < valList.size(); k++) {
+						String itemVal = valList.get(k);
+
+						DefaultValue defValue = new DefaultValue();
+						defValue.setValue(itemVal);
+						defValue.setDescription(itemVal);
+						parameterValueList.add(defValue);
+
+					}
+					parameterAsMap.put("parameterValue", parameterValueList);
+				}
+			}
+
 			parameterAsMap.put("dependsOn", objParameter.getDependencies());
 			parameterAsMap.put("dataDependencies", objParameter.getDataDependencies());
 			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
 
-			// DEFAULT VALUE
-
+			// load DEFAULT VALUE if present and if the parameter value is empty
 			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
 				DefaultValuesList valueList = null;
 				if (jsonParameters.isNull(objParameter.getId())) {
@@ -352,33 +371,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						parameterAsMap.put("parameterValue", valueList);
 					}
 				}
-				// else {
-				// valueList = new DefaultValuesList();
-				// if (objParameter.isMultivalue()) {
-				// JSONArray paramValArr = (JSONArray) jsonParameters.get(objParameter.getId());
-				// for (int i = 0; i < paramValArr.length(); i++) {
-				// DefaultValue defValue = new DefaultValue();
-				// defValue.setValue(paramValArr.get(i));
-				// defValue.setDescription(paramValArr.get(i));
-				// valueList.add(defValue);
-				// }
-				// parameterAsMap.put("parameterValue", valueList);
-				// } else {
-				//
-				// DefaultValue defValue = new DefaultValue();
-				// defValue.setValue(jsonParameters.get(objParameter.getId()));
-				// defValue.setDescription(jsonParameters.get(objParameter.getId()));
-				// valueList.add(defValue);
-				// parameterAsMap.put("parameterValue", valueList);
-				// }
-				// }
-
 			}
 
-			// load, if present, the json parameters
-			// if (jsonParameters.has(objParameter.getId())) {
-			// parameterAsMap.put("parameterValue", jsonParameters.getString(objParameter.getId()));
-			// }
 			if (showParameterLov) {
 				parametersArrayList.add(parameterAsMap);
 			}

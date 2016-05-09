@@ -18,6 +18,7 @@ sbiM.factory('sbiModule_config',function(){
     	<%-- 		loginUrl: '<%= GeneralUtilities.getSpagoBiContext() %>', // login url, used when session is expired --%>
     	<%--     	currTheme: '<%= currTheme %>', --%>
 		<%-- 	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>, --%>
+ 		dateFormat: '<%= GeneralUtilities.getLocaleDateFormat(permanentSession) %>',  // the date format localized according to user language and country 
  		localizedDateFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %>',  // the date format localized according to user language and country 
 		localizedTimestampFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %> H:i:s',  // the timestamp format localized according to user language and country
 		clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',  // the date format to be used when communicating with server

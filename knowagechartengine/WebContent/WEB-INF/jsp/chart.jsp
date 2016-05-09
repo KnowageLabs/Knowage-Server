@@ -179,6 +179,7 @@ author:
 	var hostName = '<%=request.getServerName()%>';
 	var serverPort = '<%=request.getServerPort()%>';
 	var protocol = window.location.protocol;
+	var driverParams = '<%=driverParams%>';
 </script>
 
 <% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) {%>

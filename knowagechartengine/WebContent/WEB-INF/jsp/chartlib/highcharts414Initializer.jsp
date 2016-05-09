@@ -299,8 +299,7 @@
 		if (!e.seriesOptions) {
 			var chart = this;
 			//chart.showLoading('Loading...');
-
-			var categoryName = null;
+ 			var categoryName = null;
 			var categoryValue = e.point.name;
 
 			if (e.point.hasOwnProperty('category')) {
@@ -323,8 +322,7 @@
 			
             // fisrt parameter is string chart type 
 //              if(window.parent.angular && window.parent.parent.angular.element(window.parent.frameElement).scope().crossNavigationHelper!=undefined){
-	 debugger;
-             if(parent.execExternalCrossNavigation){
+	  if(parent.execExternalCrossNavigation){
             	var navData={
             			chartType:	"HIGHCHART",
             			documentName:e.point.crossNavigationDocumentName,
@@ -337,7 +335,7 @@
             			GROUPING_VALUE:groupingCategoryValue,
             			stringParameters:null
             	}; 
-            	parent.execExternalCrossNavigation(navData)
+            	parent.execExternalCrossNavigation(navData,JSON.parse(driverParams))
 //             	parent.angular.element(frameElement).scope().navigateTo(navData); 
             }else{
             	Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
