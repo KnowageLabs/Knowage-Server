@@ -81,6 +81,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			"true");
 	backUrlPars.put("MESSAGEDET", "EXIT_FROM_DETAIL");
 	String backUrl = urlBuilder.getUrl(request, backUrlPars);
+	
+    boolean isLocked = (obj.getLockedByUser() != null && !obj.getLockedByUser().equals("")) ? true : false;
+    boolean isCurrentUserLocking = false;
+
+    String userLocker = null;
+
+    if(isLocked == true){
+        userLocker = obj.getLockedByUser();
+        userId= userProfile.getUserUniqueIdentifier().toString();
+        if(userLocker.equals(userId)){
+            isCurrentUserLocking = true;
+            }
+      }
 
 	//boolean flgLoadParDC = moduleResponse.getAttribute(DetailBIObjectModule.LOADING_PARS_DC);
 %>
@@ -259,6 +272,11 @@ function saveDocument(goBack) {
 		<%
 			}
 		%>
+		
+            <%
+                if (!(isLocked && !isCurrentUserLocking)) { // LOCKED BY ANOTHER USER
+                %>
+		
 		<td class='header-button-column-portlet-section'>
 		<input type="hidden" name="" value="" id="loadParsDC" />
 			<a href='javascript:saveDocument("false");'> 
@@ -293,6 +311,8 @@ function saveDocument(goBack) {
 			/> 
 			-->
 		</td>
+		
+		<%} // ENd locked by another user case%>
 		
 		<script> 
 		//if this page is open from angular page, hide this button to prevent a incorrect result
@@ -934,10 +954,56 @@ function saveDocument(goBack) {
 				</div>
 			</div>
 			
-			
-			
-			
 			<%} %>
+
+
+    <!-- DISPLAY RADIO BUTTON FOR LOCKING -->
+                <div class='div_detail_label'>
+                
+                
+                <%
+                if (isLocked && !isCurrentUserLocking) { // LOCKED BY ANOTHER USER
+                %>
+                     <span class='portlet-form-field-label-locked'>
+                        <spagobi:message key = "SBIDev.docConf.docDet.lockedByAnotherUserField" />
+                    </span>
+               
+                <%} 
+                else{%>
+                    <span class='portlet-form-field-label'>
+                        <spagobi:message key = "SBIDev.docConf.docDet.lockedByUserField" />
+                    </span>
+
+                <%} %>
+                </div>
+                <div class='div_detail_form'>
+
+                    <input type="radio" name="lockedByUser" value="<%=userId%>" 
+                        <%
+                            if (isLocked) {
+                            	   out.println(" checked='checked' ");
+                            }
+                            if (isLocked && !isCurrentUserLocking) {
+                                   out.println(" disabled='disabled' ");
+                            }
+                            %>>
+                            
+                            <span class="portlet-font">True</span>
+                    </input>
+                    <input type="radio" name="lockedByUser" value="" 
+                        <%
+                            if (!isLocked) {
+                                       out.println(" checked='checked' ");
+                             }
+                            if (isLocked && !isCurrentUserLocking) {
+                                   out.println(" disabled='disabled' ");
+                            }
+                             %>>
+                            <span class="portlet-font">False</span>
+                    </input>
+                </div>
+            
+        
 
         <script>
         <% if(obj.getPreviewFile()!= null){ %>
