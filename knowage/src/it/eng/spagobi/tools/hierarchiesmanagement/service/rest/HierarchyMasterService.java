@@ -626,7 +626,8 @@ public class HierarchyMasterService {
 
 				logger.debug("Set the insert prepared statement with a field value [" + fieldValue + "]");
 				if (type != null && type.equals("date")) {
-					insertPs.setObject(i + 1, fieldValue, java.sql.Types.DATE);
+					Date dt = Date.valueOf((String) fieldValue);
+					insertPs.setDate(i + 1, new java.sql.Date(dt.getTime()));
 				} else {
 					insertPs.setObject(i + 1, fieldValue);
 				}
