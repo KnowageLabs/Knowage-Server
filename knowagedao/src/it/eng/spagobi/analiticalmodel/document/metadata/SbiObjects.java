@@ -64,6 +64,7 @@ public class SbiObjects extends SbiHibernateModel {
 	// private Integer dataSet=null;
 	private String parametersRegion = null;
 	private String organization;
+	private String lockedByUser = null;
 
 	private Set<SbiOutputParameter> sbiOutputParameters = new HashSet<SbiOutputParameter>();
 
@@ -71,7 +72,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the creation date.
-	 *
+	 * 
 	 * @return the creation date
 	 */
 	public Date getCreationDate() {
@@ -93,9 +94,17 @@ public class SbiObjects extends SbiHibernateModel {
 		this.organization = organization;
 	}
 
+	public String getLockedByUser() {
+		return lockedByUser;
+	}
+
+	public void setLockedByUser(String lockedByUser) {
+		this.lockedByUser = lockedByUser;
+	}
+
 	/**
 	 * Sets the creation date.
-	 *
+	 * 
 	 * @param creationDate
 	 *            the new creation date
 	 */
@@ -105,7 +114,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the creation user.
-	 *
+	 * 
 	 * @return the creation user
 	 */
 	public String getCreationUser() {
@@ -114,7 +123,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the creation user.
-	 *
+	 * 
 	 * @param creationUser
 	 *            the new creation user
 	 */
@@ -131,7 +140,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * constructor with id.
-	 *
+	 * 
 	 * @param biobjId
 	 *            the biobj id
 	 */
@@ -143,7 +152,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the uuid.
-	 *
+	 * 
 	 * @return the uuid
 	 */
 	public String getUuid() {
@@ -152,7 +161,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the uuid.
-	 *
+	 * 
 	 * @param uuid
 	 *            the new uuid
 	 */
@@ -162,7 +171,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the biobj id.
-	 *
+	 * 
 	 * @return the biobj id
 	 */
 	public Integer getBiobjId() {
@@ -171,7 +180,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the biobj id.
-	 *
+	 * 
 	 * @param biobjId
 	 *            the new biobj id
 	 */
@@ -181,7 +190,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi engines.
-	 *
+	 * 
 	 * @return the sbi engines
 	 */
 	public SbiEngines getSbiEngines() {
@@ -190,7 +199,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi engines.
-	 *
+	 * 
 	 * @param sbiEngines
 	 *            the new sbi engines
 	 */
@@ -200,7 +209,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the state consideration.
-	 *
+	 * 
 	 * @return the state consideration
 	 */
 	public SbiDomains getStateConsideration() {
@@ -209,7 +218,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the state consideration.
-	 *
+	 * 
 	 * @param sbiDomains
 	 *            the new state consideration
 	 */
@@ -219,7 +228,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the state.
-	 *
+	 * 
 	 * @return the state
 	 */
 	public SbiDomains getState() {
@@ -228,7 +237,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the state.
-	 *
+	 * 
 	 * @param sbiDomains_1
 	 *            the new state
 	 */
@@ -238,7 +247,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the exec mode.
-	 *
+	 * 
 	 * @return the exec mode
 	 */
 	public SbiDomains getExecMode() {
@@ -247,7 +256,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the exec mode.
-	 *
+	 * 
 	 * @param sbiDomains_2
 	 *            the new exec mode
 	 */
@@ -257,7 +266,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the object type.
-	 *
+	 * 
 	 * @return the object type
 	 */
 	public SbiDomains getObjectType() {
@@ -266,7 +275,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the object type.
-	 *
+	 * 
 	 * @param sbiDomains_3
 	 *            the new object type
 	 */
@@ -276,7 +285,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the object type code.
-	 *
+	 * 
 	 * @return the object type code
 	 */
 	public String getObjectTypeCode() {
@@ -285,7 +294,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the object type code.
-	 *
+	 * 
 	 * @param biobjTypeCd
 	 *            the new object type code
 	 */
@@ -295,7 +304,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the encrypt.
-	 *
+	 * 
 	 * @return the encrypt
 	 */
 	public Short getEncrypt() {
@@ -304,7 +313,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the encrypt.
-	 *
+	 * 
 	 * @param encrypt
 	 *            the new encrypt
 	 */
@@ -314,7 +323,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the visible.
-	 *
+	 * 
 	 * @return the visible
 	 */
 	public Short getVisible() {
@@ -323,7 +332,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the visible.
-	 *
+	 * 
 	 * @param visible
 	 *            the new visible
 	 */
@@ -333,7 +342,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the state code.
-	 *
+	 * 
 	 * @return the state code
 	 */
 	public String getStateCode() {
@@ -342,7 +351,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the state code.
-	 *
+	 * 
 	 * @param stateCd
 	 *            the new state code
 	 */
@@ -352,7 +361,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the sched fl.
-	 *
+	 * 
 	 * @return the sched fl
 	 */
 	public Short getSchedFl() {
@@ -361,7 +370,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the sched fl.
-	 *
+	 * 
 	 * @param schedFl
 	 *            the new sched fl
 	 */
@@ -371,7 +380,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the exec mode code.
-	 *
+	 * 
 	 * @return the exec mode code
 	 */
 	public String getExecModeCode() {
@@ -380,7 +389,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the exec mode code.
-	 *
+	 * 
 	 * @param execModeCd
 	 *            the new exec mode code
 	 */
@@ -390,7 +399,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the state consideration code.
-	 *
+	 * 
 	 * @return the state consideration code
 	 */
 	public String getStateConsiderationCode() {
@@ -399,7 +408,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the state consideration code.
-	 *
+	 * 
 	 * @param stateConsCd
 	 *            the new state consideration code
 	 */
@@ -409,7 +418,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the label.
-	 *
+	 * 
 	 * @return the label
 	 */
 	public String getLabel() {
@@ -418,7 +427,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the label.
-	 *
+	 * 
 	 * @param label
 	 *            the new label
 	 */
@@ -428,7 +437,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the descr.
-	 *
+	 * 
 	 * @return the descr
 	 */
 	public String getDescr() {
@@ -437,7 +446,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the descr.
-	 *
+	 * 
 	 * @param descr
 	 *            the new descr
 	 */
@@ -447,7 +456,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the path.
-	 *
+	 * 
 	 * @return the path
 	 */
 	public String getPath() {
@@ -456,7 +465,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the path.
-	 *
+	 * 
 	 * @param path
 	 *            the new path
 	 */
@@ -466,7 +475,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the rel name.
-	 *
+	 * 
 	 * @return the rel name
 	 */
 	public String getRelName() {
@@ -475,7 +484,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the rel name.
-	 *
+	 * 
 	 * @param relName
 	 *            the new rel name
 	 */
@@ -485,7 +494,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi obj pars.
-	 *
+	 * 
 	 * @return the sbi obj pars
 	 */
 	public Set getSbiObjPars() {
@@ -494,7 +503,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi obj pars.
-	 *
+	 * 
 	 * @param sbiObjPars
 	 *            the new sbi obj pars
 	 */
@@ -504,7 +513,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi obj funcs.
-	 *
+	 * 
 	 * @return the sbi obj funcs
 	 */
 	public Set getSbiObjFuncs() {
@@ -513,7 +522,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi obj funcs.
-	 *
+	 * 
 	 * @param sbiObjFuncs
 	 *            the new sbi obj funcs
 	 */
@@ -523,7 +532,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the sbi obj states.
-	 *
+	 * 
 	 * @return the sbi obj states
 	 */
 	public Set getSbiObjStates() {
@@ -532,7 +541,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the sbi obj states.
-	 *
+	 * 
 	 * @param sbiObjStates
 	 *            the new sbi obj states
 	 */
@@ -542,7 +551,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the data source.
-	 *
+	 * 
 	 * @return the data source
 	 */
 	public SbiDataSource getDataSource() {
@@ -551,7 +560,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the data source.
-	 *
+	 * 
 	 * @param sbiDataSource
 	 *            the new data source
 	 */
@@ -561,7 +570,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the name.
-	 *
+	 * 
 	 * @return the name
 	 */
 	public String getName() {
@@ -570,7 +579,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the name.
-	 *
+	 * 
 	 * @param name
 	 *            the new name
 	 */
@@ -580,24 +589,20 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Gets the data set.
-	 *
-	 * @return the data set
-	 *
-	 *         public SbiDataSet getDataSet() { return dataSet; }
+	 * 
+	 * @return the data set public SbiDataSet getDataSet() { return dataSet; }
 	 */
 
 	/**
 	 * Sets the data set.
-	 *
+	 * 
 	 * @param dataSet
-	 *            the new data set
-	 *
-	 *            public void setDataSet(SbiDataSet dataSet) { this.dataSet = dataSet; }
+	 *            the new data set public void setDataSet(SbiDataSet dataSet) { this.dataSet = dataSet; }
 	 */
 
 	/**
 	 * Gets the refresh Seconds.
-	 *
+	 * 
 	 * @return the refresh Seconds
 	 */
 
@@ -622,7 +627,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/**
 	 * Sets the refresh Seconds.
-	 *
+	 * 
 	 * @param Integer
 	 *            the refreshSeconds
 	 */
@@ -657,7 +662,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -670,7 +675,7 @@ public class SbiObjects extends SbiHibernateModel {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
