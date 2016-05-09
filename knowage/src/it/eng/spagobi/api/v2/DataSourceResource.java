@@ -17,25 +17,14 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -50,7 +39,22 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 @Path("/2.0/datasources")
 @ManageAuthorization
@@ -261,23 +265,17 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
 			dataSource = dataSourceDAO.loadDataSourceByID(dsId);
-
 			Connection conn = dataSource.getConnection();
-			DatabaseMetaData md = conn.getMetaData();
-			ResultSet rs = md.getTables(null, null, "%", null);
-			while (rs.next()) {
-				JSONObject column = new JSONObject();
-				ResultSet tabCol = md.getColumns(rs.getString(1), rs.getString(2), rs.getString(3), "%");
-				while (tabCol.next()) {
-					column.put(tabCol.getString(4), "null");
-				}
-				tableContent.put(rs.getString(3), column);
-			}
+
+			tableContent = getTableMetadata(conn);
+
+			System.out.println(tableContent.toString());
 
 		} catch (Exception e) {
 
 			logger.error("Error while loading a single data set", e);
-			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(),
+					e);
 
 		} finally {
 
@@ -288,4 +286,64 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		return tableContent.toString();
 	}
 
+	private static ConcurrentMap<String, JSONObject> metadataCache = new ConcurrentHashMap<>();
+
+	private JSONObject getTableMetadata(Connection conn) throws HibernateException, JSONException {
+		String metadataCacheKey = null;
+		JSONObject tableContent = new JSONObject();
+
+		try {
+			DatabaseMetaData meta = conn.getMetaData();
+			String userName = meta.getUserName();
+			String url = meta.getURL();
+			metadataCacheKey = url + "|" + userName;
+			if (metadataCache.get(metadataCacheKey) != null) {
+				return metadataCache.get(metadataCacheKey);
+			}
+
+			ResultSet rs = null;
+			try {
+				if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("oracle")) {
+					String q = "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM ALL_TAB_COLUMNS WHERE OWNER = '"
+							+ userName + "'";
+					Statement stmt = conn.createStatement();
+					rs = stmt.executeQuery(q);
+					while (rs.next()) {
+						if (!tableContent.has(rs.getString(1))) {
+							tableContent.put(rs.getString(1), new JSONObject());
+						}
+						tableContent.getJSONObject(rs.getString(1)).put(rs.getString(2), rs.getString(3));
+					}
+					rs.close();
+				} else {
+					final String[] TYPES = { "TABLE", "VIEW" };
+					final String tableNamePattern = "%";
+					final String catalog = null;
+					rs = meta.getTables(catalog, null, tableNamePattern, TYPES);
+					while (rs.next()) {
+						String tableName = rs.getString(3);
+
+						JSONObject column = new JSONObject();
+						ResultSet tabCol = meta.getColumns(rs.getString(1), rs.getString(2), tableName, "%");
+						while (tabCol.next()) {
+							column.put(tabCol.getString(4), "null");
+						}
+						tabCol.close();
+						tableContent.put(tableName, column);
+					}
+				}
+			} finally {
+				if (rs != null) {
+					rs.close();
+				}
+				if (!conn.isClosed()) {
+					conn.close();
+				}
+			}
+		} catch (SQLException sqlException) {
+			sqlException.printStackTrace();
+		}
+		metadataCache.put(metadataCacheKey, tableContent);
+		return tableContent;
+	}
 }
