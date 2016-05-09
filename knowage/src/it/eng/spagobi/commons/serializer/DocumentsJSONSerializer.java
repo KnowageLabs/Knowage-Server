@@ -70,6 +70,7 @@ public class DocumentsJSONSerializer implements Serializer {
 	public static final String IS_PUBLIC = "isPublic";
 	public static final String DOC_VERSION = "docVersion";
 	public static final String PARAMETERS_REGION = "parametersRegion";
+	public static final String LOCKED_BY_USER = "lockedByUser";
 
 	public static final Integer SHORT_NAME_CHARACTERS_LIMIT = 60;
 
@@ -128,6 +129,7 @@ public class DocumentsJSONSerializer implements Serializer {
 			result.put(CREATIONUSER, obj.getCreationUser());
 			result.put(REFRESHSECONDS, obj.getRefreshSeconds());
 			result.put(PARAMETERS_REGION, obj.getParametersRegion());
+			result.put(LOCKED_BY_USER, obj.getLockedByUser());
 
 			if (obj.getPreviewFile() != null) {
 				String resourcePath = SpagoBIUtilities.getResourcePath();
