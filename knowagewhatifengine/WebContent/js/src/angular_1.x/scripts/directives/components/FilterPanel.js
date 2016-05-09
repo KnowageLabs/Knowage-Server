@@ -159,7 +159,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			}
 		}
 		if(!exist){
-			$scope.data= $scope.loadedData[i];
+			$scope.data= data;
 			$scope.dataPointers.push(filterFather);
 		}
 			
