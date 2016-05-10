@@ -44,21 +44,25 @@ angular.module('cron_frequency', [ 'ngMaterial','sbiModule','angular_time_picker
     			  if(newVal.endDate!=undefined && newVal.endDate!=null && !angular.isDate(newVal.endDate)) return false;
     			  
     			  if(newVal.endDate!=undefined && newVal.endDate!=null && angular.isDate(newVal.endDate)){
-    				  var startMills= newVal.startDate.getTime();
-    				  var dateTime=new Date();
+    				  var startDate = newVal.startDate;
     				  var arrST=newVal.startTime.split(":");
-    				  dateTime.setHours(arrST[0]);
-    				  dateTime.setMinutes(arrST[1]);
-    				  startMills+=dateTime.getTime();
-    				  
-    				  var endMills= newVal.endDate.getTime();
-    				  if(newVal.endTime!=undefined){
-	    				  var dateEndTime=new Date();
-	    				  var arrET=newVal.endTime.split(":");
-	    				  dateEndTime.setHours(arrET[0]);
-	    				  dateEndTime.setMinutes(arrET[1]);
-	    				  endMills+=dateEndTime.getTime();
+    				  startDate.setHours(arrST[0]);
+    				  startDate.setMinutes(arrST[1]);
+    				  var now=new Date();
+    				  if(startDate.getTime() < now.getTime()) {
+    					  startDate = now;
     				  }
+    				  var startMills = startDate.getTime();
+    				  
+    				  var endDate = newVal.endDate;
+    				  var arrET=newVal.endTime.split(":");
+    				  endDate.setHours(arrET[0]);
+    				  endDate.setMinutes(arrET[1]);
+    				  if(endDate.getTime() < now.getTime()) {
+    					  return false;
+    				  }
+    				  endMills=endDate.getTime();
+    				  
     				  if(endMills<startMills)return false; 
     			  }
 				  

@@ -355,6 +355,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		}
 		
 		if($scope.isValidCronFrequency.status==false){
+			$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.kbi.scheduler.error.wrong.cron.interval")).position('top').action('OK'));
 			return false;	
 		}
 		
