@@ -195,7 +195,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				orderByColumns.append(attributeName);
 			}
 			String sqlPart2 = (groupByColumns.length() != 0) ? " GROUP BY " + groupByColumns + " ORDER BY " + orderByColumns : "";
-			String sql = sqlPart1 + " AS " + derivedTableAlias + sqlPart2;
+			String sql = sqlPart1 + " " + derivedTableAlias + sqlPart2;
 			if (replacePlaceholders) {
 				for (String paramName : quotedParameters.keySet()) {
 					sql = sql.replaceAll("\\$P\\{" + paramName + "\\}", quotedParameters.get(paramName));
