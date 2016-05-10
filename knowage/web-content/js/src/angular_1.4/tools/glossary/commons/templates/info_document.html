@@ -14,6 +14,11 @@
 		<ul><li  ng-repeat="lnk in infCtrl.info.access ">{{lnk}}</li></ul>
 </li>
 </ul>
+	<div layout="row">
+		<span flex></span> 
+		<md-button ng-click="infCtrl.runDocument()">{{translate.load("sbi.generic.run")}}</md-button>
+	</div>
+			
 </div>
 </md-dialog-content>
 </md-dialog>

@@ -48,26 +48,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 
 <!-- glossary tree -->
-<link rel="stylesheet" type="text/css"
-	href="/knowage/themes/glossary/css/tree-style.css">
-<script type="text/javascript"
-	src="/knowage/js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js"></script>
+<link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/tree-style.css">
+<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js"></script>
 
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
-	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/glossary/glossaryTecCustomStyle.css", currTheme)%>">
-	<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/glossary/generalStyle.css", currTheme)%>">
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/glossary/glossaryTecCustomStyle.css", currTheme)%>">
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/glossary/generalStyle.css", currTheme)%>">
 	
-<script type="text/javascript"
-	src="/knowage/js/src/angular_1.4/tools/glossary/technicaluser/glossaryTec.js"></script>
+<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/technicaluser/glossaryTec.js"></script>
 
 </head>
 
-<body class="bodyStyle" style="overflow: hidden !important;">
-	<div ng-controller="Controller_tec as global" class="h100">
+<body >
+	<div ng-controller="Controller_tec as global" layout-fill>
 		<md-content class="glossaryTec"> 
-			<md-tabs md-border-bottom class="mini-tabs" style="  min-height: 40px;">
+			<md-tabs md-border-bottom>
 				<md-tab label='{{translate.load("sbi.glossary.glossary");}}'
 						md-on-select="global.init('glossTreePage')"> 
 					<md-content class="abs100">

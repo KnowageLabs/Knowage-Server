@@ -284,8 +284,8 @@ p.wrapText {
 
 .angularListTemplate button.singleActionButton {
 	position: absolute;
-	right: -5px;
-	top: 0;
+    right: -5px;
+    top: 5px;
 }
 
 .angularListTemplate md-fab-speed-dial md-fab-actions button {
