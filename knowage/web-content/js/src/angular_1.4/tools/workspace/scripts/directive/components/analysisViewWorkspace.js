@@ -6,7 +6,7 @@
 angular
 	.module('analysis_view_workspace', [])
 	/**
-	 * The HTML content of the Recent view (recent documents).
+	 * The HTML content of the Analysis view (analysis documents).
 	 */
 	.directive('analysisViewWorkspace', function () {		
 		 return {			 
@@ -45,12 +45,23 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate){
 							
 							switch(tempDocumentType.toUpperCase()) {	
 							
+								/**
+								 * KNOWAGE-859: Remove AD HOC reports option (tab).
+								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+								 */
 								case "WORKSHEET": 
-									$scope.adhocReportAnalysisDocs.push($scope.allAnalysisDocs[i]); 
+//									$scope.adhocReportAnalysisDocs.push($scope.allAnalysisDocs[i]); 
+									/**
+									 * Remove all AD HOC reports available in analysis documents from an
+									 * array of all documents for Analysis perspective.
+									 */
+									$scope.allAnalysisDocs.splice(i,1);
 									break;
+									
 								case "MAP": 
 									$scope.geoAnalysisDocs.push($scope.allAnalysisDocs[i]); 
 									break;
+									
 								case "DOCUMENT_COMPOSITE": 
 									$scope.cockpitAnalysisDocs.push($scope.allAnalysisDocs[i]); 
 									break;	

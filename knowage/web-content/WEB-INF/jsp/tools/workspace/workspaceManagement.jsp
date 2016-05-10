@@ -24,11 +24,11 @@
 			Directive that will render the left main menu of the Workspace web page. 
 			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		-->
-		<md-content  flex=15 class="leftRightPanelHeight">
+		<md-content flex=15 class="leftRightPanelHeight">
 			<left-main-menu-workspace></left-main-menu-workspace>
 		</md-content>
 		
-		<md-content  flex class="leftRightPanelHeight">
+		<md-content flex class="leftRightPanelHeight">
 				<customize-view-workspace>													</customize-view-workspace>						
 				<recent-view-workspace 		ng-show="currentOptionMainMenu.length==0 
 				|| currentOptionMainMenu=='recent'">										</recent-view-workspace>	

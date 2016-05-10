@@ -31,7 +31,16 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 	$scope.adhocReportAnalysisDocs = [];
 	$scope.geoAnalysisDocs = [];
 	
+	/**
+	 * currentOptionMainMenu - 	which of all available perspectives (options) from the left menu is selected (picked) 
+	 * 							by the user.
+	 * activeTabAnalysis - 		which of all three available tabs for Analysis perspective (option) is active at the moment
+	 * 							(ALL, COCKPIT, GEO).
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
 	$scope.currentOptionMainMenu = "";
+	$scope.activeTabAnalysis = null;	
+	
 	$scope.isDocumentFavorite = false;
 	
 	/**
@@ -85,16 +94,25 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 	}
 	
 	$scope.addToFavorites= function(doc,index){
-		console.log(index);
+//		console.log(index);
 		for (var i = 0; i < $scope.allDocuments.length; i++) {
 			if($scope.allDocuments[i].id==doc.id) {
 				$scope.isDocumentFavorite = !$scope.isDocumentFavorite;
 			}
 		}
 		$scope.selectedRow = index;
-		console.log(doc)
-		console.log(doc.label)
-		console.log(doc.creationUser)
+//		console.log(doc)
+//		console.log(doc.label)
+//		console.log(doc.creationUser)
 	}
 	
+	/**
+	 * Set the currently active tab of the Analysis perspective in order to
+	 * enable managing of visibility of "Add analysis document" button. This
+	 * button should not be visible if the user is seeing all the documents.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.setActiveTabState = function(item) {		
+		$scope.activeTabAnalysis = item.toUpperCase();
+	};
 }

@@ -8,7 +8,7 @@
 	<md-tabs flex layout="column" layout-fill class="rightPanelDocuments" >
 
 		<!-- Tab that will give user a preview of all Analysis documents placed in the Workspace. -->
-	    <md-tab label='All' md-active=true >
+	    <md-tab label='All' md-active=true ng-click="setActiveTabState('all')">
       		
       		<md-tab-content flex layout-fill>
       			
@@ -23,7 +23,7 @@
 	    </md-tab>
     
     	<!-- Tab that will give user a preview of all Analysis documents of type Cockpit placed in the Workspace. -->
-		<md-tab label='Cockpit' md-active=false >
+		<md-tab label='Cockpit' md-active=false ng-click="setActiveTabState('cockpit')">
 		
 			<md-tab-content flex layout-fill>
 			
@@ -37,8 +37,12 @@
 			
 		</md-tab>
 		
+		<!-- 
+			KNOWAGE-859: Remove AD HOC reports option (tab).
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+		-->
 		<!-- Tab that will give user a preview of all Analysis documents of type Ad hoc placed in the Workspace. -->
-		<md-tab label='Ad hoc' md-active=false >
+		<!-- <md-tab label='Ad hoc' md-active=false ng-click="setActiveTabState('geo')">
 		
 			<md-tab-content flex layout-fill>
 		
@@ -50,10 +54,10 @@
 				
 			</md-tab-content>
 				
-		</md-tab>
+		</md-tab> -->
 		
 		<!-- Tab that will give user a preview of all Analysis documents of type Geo placed in the Workspace. -->
-		<md-tab label='Geo' md-active=false >
+		<md-tab label='Geo' md-active=false ng-click="setActiveTabState('geo')">
 		
 			<md-tab-content flex layout-fill>
 		
