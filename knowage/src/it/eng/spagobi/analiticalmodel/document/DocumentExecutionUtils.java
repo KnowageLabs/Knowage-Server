@@ -363,25 +363,30 @@ public class DocumentExecutionUtils {
 					// CHECH VALID DEFAULT PARAM
 					ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<HashMap<String, Object>>();
 					boolean defaultParameterAlreadyExist = false;
+					if (objParameter.getParameter() != null && objParameter.getParameter().getModalityValue() != null
+							&& objParameter.getParameter().getModalityValue().getSelectionType() != null
+							&& !objParameter.getParameter().getModalityValue().getSelectionType().equals("LOOKUP")) {
 
-					for (HashMap<String, Object> defVal : defaultValues) {
-						if (defVal.get("value").equals(item.get("value"))) {
-							if (defVal.get("label").equals(item.get("label")) && defVal.get("description").equals(item.get("description"))) {
-								defaultParameterAlreadyExist = true;
-								break;
-							} else {
-								HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
-								itemErrorMap.put("error", true);
-								itemErrorMap.put("value", defVal.get("value"));
-								itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
-								itemErrorMap.put("labelSameValue", item.get("label"));
-								defaultErrorValues.add(itemErrorMap);
-								// return defaultErrorValues;
-								result.put(DEFAULT_VALUES, defaultErrorValues);
-								return result;
+						for (HashMap<String, Object> defVal : defaultValues) {
+							if (defVal.get("value").equals(item.get("value"))) {
+								if (defVal.get("label").equals(item.get("label")) && defVal.get("description").equals(item.get("description"))) {
+									defaultParameterAlreadyExist = true;
+									break;
+								} else {
+									HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
+									itemErrorMap.put("error", true);
+									itemErrorMap.put("value", defVal.get("value"));
+									itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
+									itemErrorMap.put("labelSameValue", item.get("label"));
+									defaultErrorValues.add(itemErrorMap);
+									// return defaultErrorValues;
+									result.put(DEFAULT_VALUES, defaultErrorValues);
+									return result;
+								}
 							}
 						}
 					}
+
 					if (!defaultParameterAlreadyExist) {
 						defaultValues.add(itemAsMap);
 						result.put(DEFAULT_VALUES, defaultValues);
