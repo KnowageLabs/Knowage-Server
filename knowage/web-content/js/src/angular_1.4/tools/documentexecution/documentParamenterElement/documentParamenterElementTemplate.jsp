@@ -46,14 +46,14 @@
 			<span ng-class="{'layout-padding': parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0}"
 					ng-show="(parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0)">
 				<md-chips>
-					<md-chip ng-repeat="paramVal in parameter.parameterValue">
+					<md-chip ng-repeat="paramVal in parameter.parameterValueToShow">
 						{{paramVal}}
 					</md-chip>
 				</md-chips>
 			</span>
 			<span ng-class="{'layout-padding': !parameter.multivalue && parameter.parameterValue && parameter.parameterValue != ''}"
 					ng-show="(!parameter.multivalue && parameter.parameterValue && parameter.parameterValue != '')">
-				<md-chips><md-chip>{{parameter.parameterValue}}</md-chip></md-chips>
+				<md-chips><md-chip>{{parameter.parameterValueToShow}}</md-chip></md-chips>
 			</span>
 		</section>
 		

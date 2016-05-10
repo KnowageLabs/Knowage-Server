@@ -311,6 +311,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 				parameterAsMap.put("defaultValues", defaultValues);
 				parameterAsMap.put("defaultValuesMeta", defaultValuesMetadata);
+				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, defaultValuesData.get(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA));
+				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA,
+						defaultValuesData.get(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA));
 
 				// hide the parameter if is mandatory and have one value in lov
 				if (defaultValues != null && defaultValues.size() == 1 && objParameter.isMandatory()) {

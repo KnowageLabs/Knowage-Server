@@ -196,21 +196,25 @@
 					};
 					
 					paramDialogCtrl.save = function() {
-						
 						// Lov parameters NON tree
 						if(paramDialogCtrl.tempParameter.defaultValues && paramDialogCtrl.tempParameter.defaultValuesMeta) {
 							if(paramDialogCtrl.tempParameter.multivalue) {
 								var parameterValueArray = [];
+								var parameterValueArrayToShow = [];
 	
 								for(var i = 0; i < paramDialogCtrl.selectedTableItems.length; i++) {
 									var selectedTableItem = paramDialogCtrl.selectedTableItems[i];
 	
-									parameterValueArray.push(selectedTableItem.value);
+									parameterValueArrayToShow.push(selectedTableItem[paramDialogCtrl.tempParameter.descriptionColumnNameMetadata.toUpperCase()]);
+									parameterValueArray.push(selectedTableItem[paramDialogCtrl.tempParameter.valueColumnNameMetadata.toUpperCase()]);
 								}
 	
+								paramDialogCtrl.tempParameter.parameterValueToShow = parameterValueArrayToShow;
 								paramDialogCtrl.tempParameter.parameterValue = parameterValueArray;
 							} else {
-								paramDialogCtrl.tempParameter.parameterValue = paramDialogCtrl.selectedTableItems.value;
+								paramDialogCtrl.tempParameter.parameterValueToShow = paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.descriptionColumnNameMetadata.toUpperCase()];
+								paramDialogCtrl.tempParameter.parameterValue = paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.valueColumnNameMetadata.toUpperCase()];
+//								paramDialogCtrl.tempParameter.parameterValue = paramDialogCtrl.selectedTableItems.value;
 							}
 						}
 						

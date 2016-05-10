@@ -12,14 +12,28 @@ function docExMasterControllerFunction($scope,sbiModule_translate,$timeout,sourc
 //	$scope.sourceDocumentUrl="";
 $scope.executeSourceDocument = function() { 
 		var menuParams = {};
+		var err=false;
 		try{
-			var splittedMenuParams=sourceDocumentExecProperties.MENU_PARAMETERS==undefined? [] : sourceDocumentExecProperties.MENU_PARAMETERS.split("&");
+			var splittedMenuParams=sourceDocumentExecProperties.MENU_PARAMETERS=='null'? [] : sourceDocumentExecProperties.MENU_PARAMETERS.split("&");
 			for(var i=0;i<splittedMenuParams.length;i++){
 				var splittedItem=splittedMenuParams[i].split("=");
+				if(splittedItem[1]==undefined){err=true;}
 				menuParams[splittedItem[0]]=splittedItem[1];
 			}
 		}catch(e){
+			err=true
 			console.error(e);
+		}finally{
+			if(err){ 
+			 $mdDialog.show(
+				      $mdDialog.alert()
+				         .clickOutsideToClose(true)
+				        .title(sbiModule_translate.load("sbi.execution.menu.parameter.title"))
+				        .content(sbiModule_translate.load("sbi.execution.menu.parameter.messages"))
+				        .ariaLabel('Alert Dialog Demo')
+				        .ok(sbiModule_translate.load("sbi.general.continue"))
+				    );
+			}
 		}
 		
 		var url = sbiModule_config.contextName 

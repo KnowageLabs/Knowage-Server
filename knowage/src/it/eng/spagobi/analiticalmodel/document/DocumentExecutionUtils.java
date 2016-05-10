@@ -56,6 +56,8 @@ public class DocumentExecutionUtils {
 	public static String MASSIVE_EXPORT = "massiveExport";
 	public static String DEFAULT_VALUES = "defaultValues";
 	public static String DEFAULT_VALUES_METADATA = "defaultValuesMetadata";
+	public static String DESCRIPTION_COLUMN_NAME_METADATA = "descriptionColumnNameMetadata";
+	public static String VALUE_COLUMN_NAME_METADATA = "valueColumnNameMetadata";
 
 	public static ILovDetail getLovDetail(BIObjectParameter parameter) {
 		Parameter par = parameter.getParameter();
@@ -331,6 +333,8 @@ public class DocumentExecutionUtils {
 
 			List defaultValuesMetadata = lovProvDet.getVisibleColumnNames();
 			result.put(DEFAULT_VALUES_METADATA, defaultValuesMetadata);
+			result.put(DESCRIPTION_COLUMN_NAME_METADATA, lovProvDet.getDescriptionColumnName());
+			result.put(VALUE_COLUMN_NAME_METADATA, lovProvDet.getValueColumnName());
 
 			for (int i = 0; i < valuesJSONArray.length(); i++) {
 				JSONObject item = valuesJSONArray.getJSONObject(i);
