@@ -269,8 +269,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 			tableContent = getTableMetadata(conn);
 
-			System.out.println(tableContent.toString());
-
 		} catch (Exception e) {
 
 			logger.error("Error while loading a single data set", e);
