@@ -163,8 +163,10 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 					$scope.errorHandler(response.data,"");
 				})
 	}
+	
 
 	$scope.checkFilterParams = function(){
+		$scope.loadAllInformationForKpi();
 		if($scope.selectedScheduler.filters)
 		for(var i=0;i<$scope.selectedScheduler.filters.length;i++){
 			if($scope.selectedScheduler.filters[i].value=="" || $scope.selectedScheduler.filters[i].value==null){
@@ -242,12 +244,9 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		var keys = Object.keys($scope.placeHolder);
 		for(var i=0;i<keys.length;i++){
 			if($scope.selectedScheduler.filters!=undefined){
-				var index = $scope.indexInList(keys[i],$scope.selectedScheduler.filters,"kpiName");
-				
+				var index = $scope.indexInList(keys[i],$scope.selectedScheduler.filters,"kpiName");	
 				if(index !=-1){
-						
-
-				}else{
+			}else{
 					var objType = {"valueCd":"FIXED_VALUE","valueId":355};
 					var array = JSON.parse($scope.placeHolder[keys[i]])
 					for(var v=0;v<array.length;v++){
@@ -363,6 +362,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 	};
 	
 	$scope.saveSc=function(){
+		
 		if ($scope.validateScheduler() && $scope.completeDomain() && $scope.checkFiltersValue()){
 			
 			$scope.showSaveGUI().then(function(response){
@@ -375,30 +375,45 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 			}
 	
 			});
+		}else{
+			$scope.showAction($scope.translate.load("sbi.schedulerkpi.missingfiltervalue"));
 		}
 	}
 	
 	
 	$scope.completeDomain = function(){
-		for(var i=0;i<$scope.selectedScheduler.filters.length;i++){
-			var index = $scope.indexInList($scope.selectedScheduler.filters[i].type.valueCd,$scope.listType,"VALUE_CD");
-			
-			if(index!=-1){
-				var obj = $scope.listType[index];
-				$scope.selectedScheduler.filters[i].type.valueId = obj["VALUE_ID"]
+		if($scope.selectedScheduler.filters!=undefined){
+			for(var i=0;i<$scope.selectedScheduler.filters.length;i++){
+				var index = $scope.indexInList($scope.selectedScheduler.filters[i].type.valueCd,$scope.listType,"VALUE_CD");
 				
+				if(index!=-1){
+					var obj = $scope.listType[index];
+					$scope.selectedScheduler.filters[i].type.valueId = obj["VALUE_ID"]
+					
+				}
 			}
+			return true;
+		}else{
+			for(var j=0;j<$scope.selectedScheduler.kpis.length;j++){
+				if(JSON.parse($scope.placeHolder[$scope.selectedScheduler.kpis[j].name]).length>=1){
+					return false;
+				}
+			}
+			return true;
 		}
-		return true;
+		
 	}
 	
 	$scope.checkFiltersValue = function(){
-		for(var i=0;i<$scope.selectedScheduler.filters.length;i++){
-			if($scope.selectedScheduler.filters[i].value==undefined || $scope.selectedScheduler.filters[i].value.trim() == ""){
-				$scope.showAction($scope.translate.load("sbi.schedulerkpi.missingfiltervalue"));
-				return false
+		if($scope.selectedScheduler.filters!=undefined){
+			for(var i=0;i<$scope.selectedScheduler.filters.length;i++){
+				if($scope.selectedScheduler.filters[i].value==undefined || $scope.selectedScheduler.filters[i].value.trim() == ""){
+					$scope.showAction($scope.translate.load("sbi.schedulerkpi.missingfiltervalue"));
+					return false
+				}
+				
 			}
-			
+			return true;
 		}
 		return true;
 	}
