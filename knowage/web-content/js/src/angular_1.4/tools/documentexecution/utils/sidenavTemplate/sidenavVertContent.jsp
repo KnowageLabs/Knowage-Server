@@ -8,7 +8,7 @@
 	
 
 	<md-toolbar class="header secondaryToolbar" ng-hide="isParameterPanelDisabled()">
-			<div layout="row" layout-align="center center">	
+			<div layout="row" layout-align="{{sidenavCenter}}">	
 				<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
 						ng-click="clearListParametersForm();">
 					<i class="fa fa-eraser" style="color:white"></i>
@@ -40,7 +40,7 @@
 		</md-content>
 
 		<md-content flex>
-			<md-list ng-hide="isParameterPanelDisabled()" layout="column">
+			<md-list ng-hide="isParameterPanelDisabled()" layout="{{filterDropping}}">
 				<md-list-item ng-repeat="parameter in documentParameters"
 						layout="row" aria-label="" class="md-3-line">
 

@@ -60,6 +60,18 @@
 		$scope.firstExecutionProcessRestV1=true;
 		$scope.download=sbiModule_download;
 		$scope.sidenavToShow = 'east';
+		$scope.sidenavCenter = null;
+		$scope.filterDropping = null; 
+		
+		if ($scope.executionInstance.SidenavOri === 'north'){
+			$scope.sidenavCenter = "center left";
+			$scope.filterDropping = "row"; 
+		}
+			
+		else{
+			$scope.sidenavCenter = "center center";
+			$scope.filterDropping = "column";
+		}
 
 		$scope.hideProgressCircular = execProperties.hideProgressCircular;
 		
