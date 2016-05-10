@@ -61,6 +61,10 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 		LIGHT_NAVIGATOR_DISABLED : 'TRUE',
 		MESSAGE_DET : "DATASET_DELETE"
 	};
+	
+	this.isFromSaveNoMetadata = false;
+	
+	this.isFromSaveWithMetadata = false;
 
 	this.configurationObject = {};
 
@@ -1061,6 +1065,15 @@ Ext
 							scope : this
 						});
 						tbButtonsArray.push(this.tbDatasetLinkButton);
+						
+						this.saveNoMetadataButton = new Ext.Toolbar.Button({
+							text : LN('sbi.ds.save.no.metadata'),
+							iconCls : 'icon-save',
+							handler : this.saveNoMetadata,
+							width : 30,
+							scope : this
+						});
+						tbButtonsArray.push(this.saveNoMetadataButton);
 
 						this.tbProfAttrsButton = new Ext.Toolbar.Button({
 							text : LN('sbi.ds.pars'),
@@ -3372,6 +3385,7 @@ Ext
 							pivotColValue : values['pivotColValue'],
 							pivotRowName : values['pivotRowName'],
 							pivotIsNumRows : values['pivotIsNumRows'],
+							isFromSaveNoMetadata : values['isFromSaveNoMetadata'],
 							isPersisted : values['isPersisted'],
 							persistTableName : values['persistTableName'],
 							isScheduled : values['isScheduled'],
@@ -3598,6 +3612,7 @@ Ext
 					// OVERRIDING save method
 					,
 					save : function() {
+						
 						this.setSchedulingCronLine();
 						var values = this.getValues();
 						if (values['dsTypeCd']==='REST') {
@@ -3681,8 +3696,12 @@ Ext
 						}
 					},
 					doSave : function(recalculateMetadata) {
+						
 						var values = this.getValues();
-
+						if(this.isFromSaveNoMetadata){
+							values.isFromSaveNoMetadata = this.isFromSaveNoMetadata;
+							Ext.Ajax.on('beforerequest', this.hideMask, this);
+						}
 						var idRec = values['id'];
 						var newRec;
 						var newDsVersion;
@@ -3939,13 +3958,30 @@ Ext
 													thisPanel.fileUploaded = false // reset
 																					// to
 																					// default
-													Ext.MessageBox
-															.show({
-																title : LN('sbi.generic.result'),
-																msg : LN('sbi.generic.resultMsg'),
-																width : 200,
-																buttons : Ext.MessageBox.OK
-															});
+													
+													if(this.isFromSaveNoMetadata){
+														Ext.MessageBox
+														.show({
+															title : LN('sbi.generic.result'),
+															msg : LN('sbi.ds.saved.no.meta'),
+															width : 200,
+															buttons : Ext.MessageBox.OK
+														});
+														
+														var values = this.getValues();
+														this.isFromSaveNoMetadata = false;
+														this.doSave();
+													}
+													else if(this.isFromSaveWithMetadata){
+														this.isFromSaveWithMetadata = false;
+														Ext.MessageBox
+														.show({
+															title : LN('sbi.generic.result'),
+															msg : LN('sbi.generic.resultMsg'),
+															width : 200,
+															buttons : Ext.MessageBox.OK
+														});
+													}
 												}
 
 											} else {
@@ -4213,6 +4249,29 @@ console.log(this.manageDatasetFieldMetadataGrid);
 						
 						
 						
+					}
+					,
+					
+					saveNoMetadata : function() {
+						var values = this.getValues();
+						
+						var isPersisted = values['isPersisted'];
+						var isScheduled = values['isScheduled'];
+			
+						var params = this.buildParamsToSendToServer(values);
+						
+						if(isPersisted && isScheduled){
+							this.isFromSaveNoMetadata = true;
+							this.doSave();
+						} else {
+							Ext.MessageBox.show({
+			                	title: LN('sbi.generic.error'),
+			                    msg: LN('sbi.ds.save.no.metadata.warning'),
+			                    width: 350,
+			                    height: 200,
+			                    buttons: Ext.MessageBox.OK
+			               });						
+						}
 					}
 					,
 					profileAttrs : function() {

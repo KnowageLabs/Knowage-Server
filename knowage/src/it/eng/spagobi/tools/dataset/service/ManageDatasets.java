@@ -107,6 +107,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	// logger component
 	public static Logger logger = Logger.getLogger(ManageDatasets.class);
+	public static transient Logger auditlogger = Logger.getLogger("audit.dataset");
 
 	public static final String JOB_GROUP = "PersistDatasetExecutions";
 	public static final String TRIGGER_GROUP = "DEFAULT";
@@ -114,6 +115,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	public static final String PUBLIC = "PUBLIC";
 	protected IEngUserProfile profile;
+
+	// Boolean isFromSaveNoMetadata =
+	// getAttributeAsBoolean(DataSetConstants.IS_FROM_SAVE_NO_METADATA);
 
 	@Override
 	public void doService() {
@@ -241,6 +245,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 	}
 
+	protected void saveMetadataAfterSaving() {
+		IDataSet ds = getGuiGenericDatasetToInsert();
+	}
+
 	protected void datasetInsert(IDataSetDAO dsDao, Locale locale) {
 		IDataSet ds = getGuiGenericDatasetToInsert();
 		datasetInsert(ds, dsDao, locale);
@@ -287,9 +295,13 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					}
 				}
 				String operation = (id != null && !id.equals("") && !id.equals("0")) ? "DATA_SET.MODIFY" : "DATA_SET.ADD";
-
+				Boolean isFromSaveNoMetadata = getAttributeAsBoolean(DataSetConstants.IS_FROM_SAVE_NO_METADATA);
 				// handle insert of persistence and scheduling
-				insertPersistenceAndScheduling(ds, logParam);
+				if (!isFromSaveNoMetadata) {
+					auditlogger.debug("STARTED INSERTING PERISISTING AND SCHEDULING");
+					insertPersistenceAndScheduling(ds, logParam);
+					auditlogger.debug("FINISHED INSERTING PERISISTING AND SCHEDULING");
+				}
 
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, operation, logParam, "OK");
 				writeBackToClient(new JSONSuccess(attributesResponseSuccessJSON));
@@ -325,22 +337,26 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	public void insertPersistenceAndScheduling(IDataSet ds, HashMap<String, String> logParam) throws Exception {
 		logger.debug("IN");
+		auditlogger.debug("IN");
 		if (ds.isPersisted()) {
 			// Manage persistence of dataset if required. On modify it
 			// will drop and create the destination table!
 			logger.debug("Start persistence...");
+			auditlogger.debug("Start persistence...");
 			// gets the dataset object informations
 
 			IDataSetDAO iDatasetDao = DAOFactory.getDataSetDAO();
 			iDatasetDao.setUserProfile(profile);
 			IDataSet dataset = iDatasetDao.loadDataSetByLabel(ds.getLabel());
-			// checkQbeDataset(((VersionedDataSet) dataset).getWrappedDataset());
+			// checkQbeDataset(((VersionedDataSet)
+			// dataset).getWrappedDataset());
 			checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
 
 			if (getRequestContainer() != null) {
 				JSONArray parsListJSON = getAttributeAsJSONArray(DataSetConstants.PARS);
 				if (parsListJSON.length() > 0) {
 					logger.error("The dataset cannot be persisted because uses parameters!");
+					auditlogger.error("The dataset cannot be persisted because uses parameters!");
 					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsCannotPersist");
 				}
 			}
@@ -354,6 +370,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			// }
 
 			logger.debug("Persistence ended succesfully!");
+			auditlogger.debug("Persistence ended succesfully!");
 			if (ds.isScheduled()) {
 				DatasetPersistenceUtils dspu = new DatasetPersistenceUtils(profile, null, SERVICE_NAME, ds);
 				String jobName = dspu.saveDatasetJob(ds, logParam);
@@ -361,6 +378,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					dspu.saveTriggerForDatasetJob(jobName, getSpagoBIRequestContainer());
 				} else {
 					logger.error("The job is not saved correctly!");
+					auditlogger.error("The job is not saved correctly!");
 					throw new SpagoBIServiceException(SERVICE_NAME, "The job is not saved correctly!");
 				}
 			} else {
@@ -386,6 +404,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			}
 		}
 		logger.debug("OUT");
+		auditlogger.debug("OUT");
 	}
 
 	public void modifyPersistenceAndScheduling(IDataSet ds, HashMap<String, String> logParam) throws Exception {
@@ -678,6 +697,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		String description = getAttributeAsString(DataSetConstants.DESCRIPTION);
 		String datasetTypeCode = getAttributeAsString(DataSetConstants.DS_TYPE_CD);
 		String datasetTypeName = getDatasetTypeName(datasetTypeCode);
+		Boolean isFromSaveNoMetadata = getAttributeAsBoolean(DataSetConstants.IS_FROM_SAVE_NO_METADATA);
 
 		try {
 			if (name != null && label != null && datasetTypeName != null && !datasetTypeName.equals("")) {
@@ -760,7 +780,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 							}
 							String recalculateMetadata = this.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA);
 							String dsMetadata = null;
-							if (recalculateMetadata == null || recalculateMetadata.trim().equals("yes") || recalculateMetadata.trim().equals("true")) {
+							if ((recalculateMetadata == null || recalculateMetadata.trim().equals("yes") || recalculateMetadata.trim().equals("true"))
+									&& (!isFromSaveNoMetadata)) {
 								// recalculate metadata
 								logger.debug("Recalculating dataset's metadata: executing the dataset...");
 								HashMap parametersMap = new HashMap();
@@ -781,13 +802,15 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 								dsMetadata = dsp.metadataToXML(currentMetadata);
 								LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
 
-								// compare current metadata with previous metadata if dataset is in use
+								// compare current metadata with previous
+								// metadata if dataset is in use
 								String previousId = getAttributeAsString(DataSetConstants.ID);
 								if (previousId != null) {
 									Integer previousIdInteger = Integer.valueOf(previousId);
 									if (previousIdInteger != 0) {
 
-										// Check if dataset is used by objects or by federations
+										// Check if dataset is used by objects
+										// or by federations
 
 										ArrayList<BIObject> objectsUsing = null;
 										try {
@@ -796,12 +819,15 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 											logger.error("Error while getting dataset metadataa", e);
 											throw e;
 										}
-										// check if dataset is used by document by querying SBI_OBJ_DATA_SET table
+										// check if dataset is used by document
+										// by querying SBI_OBJ_DATA_SET table
 										List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO().loadFederationsUsingDataset(
 												previousIdInteger);
 
-										// if (!objectsUsing.isEmpty() || !federationsAssociated.isEmpty()) {
-										// block save action ONLY for federations (if metadata are changed)
+										// if (!objectsUsing.isEmpty() ||
+										// !federationsAssociated.isEmpty()) {
+										// block save action ONLY for
+										// federations (if metadata are changed)
 										if (!federationsAssociated.isEmpty()) {
 											logger.debug("dataset " + ds.getLabel() + " is used by some " + objectsUsing.size() + "objects or some "
 													+ federationsAssociated.size() + " federations");
@@ -817,7 +843,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 											IMetaData previousMetadata = dataSet.getMetadata();
 											boolean isRemoving = isRemovingMetadataFields(previousMetadata, currentMetadata);
 											if (isRemoving) {
-												// TODO: better would be not to have log tracing of this warning
+												// TODO: better would be not to
+												// have log tracing of this
+												// warning
 												throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.deleteOrRenameMetadata");
 
 											}
@@ -843,9 +871,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 									dsMetadata = existingDataSet.getDsMetadata();
 									LogMF.debug(logger, "Reloaded metadata : [{0}]", dsMetadata);
 								} else {
-									throw new Exception("Missing dataset id, cannot retrieve its metadata");
+									// when saving a NEW dataset without
+									// metadata, and there is no ID
+									dsMetadata = "";
 								}
-
 							}
 							ds.setDsMetadata(dsMetadata);
 						}
@@ -908,100 +937,186 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	}
 
 	/*
-	 * private GuiDataSetDetail constructDataSetDetail(String dsType){ GuiDataSetDetail dsActiveDetail = instantiateCorrectDsDetail(dsType);
+	 * private GuiDataSetDetail constructDataSetDetail(String dsType){
+	 * GuiDataSetDetail dsActiveDetail = instantiateCorrectDsDetail(dsType);
 	 * 
 	 * if(dsActiveDetail!=null){ dsActiveDetail.setDsType(dsType);
 	 * 
-	 * String catTypeCd = getAttributeAsString(DataSetConstants.CATEGORY_TYPE_VN);
+	 * String catTypeCd =
+	 * getAttributeAsString(DataSetConstants.CATEGORY_TYPE_VN);
 	 * 
-	 * String meta = getAttributeAsString(DataSetConstants.METADATA); String trasfTypeCd = getAttributeAsString(DataSetConstants.TRASFORMER_TYPE_CD);
+	 * String meta = getAttributeAsString(DataSetConstants.METADATA); String
+	 * trasfTypeCd = getAttributeAsString(DataSetConstants.TRASFORMER_TYPE_CD);
 	 * 
-	 * List<Domain> domainsCat = (List<Domain>)getSessionContainer().getAttribute("catTypesList"); HashMap<String, Integer> domainIds = new HashMap<String,
-	 * Integer> (); if(domainsCat != null){ for(int i=0; i< domainsCat.size(); i++){ domainIds.put(domainsCat.get(i).getValueName(),
-	 * domainsCat.get(i).getValueId()); } } Integer catTypeID = domainIds.get(catTypeCd); if(catTypeID!=null){ dsActiveDetail.setCategoryValueName(catTypeCd);
+	 * List<Domain> domainsCat =
+	 * (List<Domain>)getSessionContainer().getAttribute("catTypesList");
+	 * HashMap<String, Integer> domainIds = new HashMap<String, Integer> ();
+	 * if(domainsCat != null){ for(int i=0; i< domainsCat.size(); i++){
+	 * domainIds.put(domainsCat.get(i).getValueName(),
+	 * domainsCat.get(i).getValueId()); } } Integer catTypeID =
+	 * domainIds.get(catTypeCd); if(catTypeID!=null){
+	 * dsActiveDetail.setCategoryValueName(catTypeCd);
 	 * dsActiveDetail.setCategoryId(catTypeID); }
 	 * 
-	 * if(meta != null && !meta.equals("")){ dsActiveDetail.setDsMetadata(meta); }
+	 * if(meta != null && !meta.equals("")){ dsActiveDetail.setDsMetadata(meta);
+	 * }
 	 * 
 	 * 
-	 * String pars = getDataSetParametersAsString(); if(pars != null) { dsActiveDetail.setParameters(pars); }
+	 * String pars = getDataSetParametersAsString(); if(pars != null) {
+	 * dsActiveDetail.setParameters(pars); }
 	 * 
-	 * if(trasfTypeCd!=null && !trasfTypeCd.equals("")){ dsActiveDetail = setTransformer(dsActiveDetail, trasfTypeCd); }
+	 * if(trasfTypeCd!=null && !trasfTypeCd.equals("")){ dsActiveDetail =
+	 * setTransformer(dsActiveDetail, trasfTypeCd); }
 	 * 
-	 * Boolean isPersisted = getAttributeAsBoolean(DataSetConstants.IS_PERSISTED); if(isPersisted != null){
-	 * dsActiveDetail.setPersisted(isPersisted.booleanValue()); } if (isPersisted){ String dataSourcePersist =
-	 * getAttributeAsString(DataSetConstants.DATA_SOURCE_PERSIST); if(dataSourcePersist != null && !dataSourcePersist.equals("")){
-	 * dsActiveDetail.setDataSourcePersist(dataSourcePersist); } }else{ dsActiveDetail.setDataSourcePersist(""); } Boolean isFlatDataset =
-	 * getAttributeAsBoolean(DataSetConstants.IS_FLAT_DATASET); if(isFlatDataset != null){ dsActiveDetail.setFlatDataset(isFlatDataset.booleanValue()); } if
-	 * (isFlatDataset){ String dataSourceFlat = getAttributeAsString(DataSetConstants.DATA_SOURCE_FLAT); if(dataSourceFlat != null &&
-	 * !dataSourceFlat.equals("")){ dsActiveDetail.setDataSourceFlat(dataSourceFlat); } String flatTableName =
-	 * getAttributeAsString(DataSetConstants.FLAT_TABLE_NAME); if(flatTableName != null && !flatTableName.equals("")){
-	 * dsActiveDetail.setFlatTableName(flatTableName); } }else{ dsActiveDetail.setDataSourceFlat(""); dsActiveDetail.setFlatTableName(""); } IDataSet ds = null;
-	 * try { if (dsType != null && !dsType.equals("")) { ds = getDataSet(dsType); if (ds != null) { if (trasfTypeCd != null && !trasfTypeCd.equals("")) { ds =
-	 * setTransformer(ds, trasfTypeCd); } String recalculateMetadata = this.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA); String dsMetadata =
-	 * null; if (recalculateMetadata == null || recalculateMetadata.trim().equals("yes")) { // recalculate metadata logger .debug(
-	 * "Recalculating dataset's metadata: executing the dataset..."); HashMap parametersMap = new HashMap(); parametersMap = getDataSetParametersAsMap();
+	 * Boolean isPersisted =
+	 * getAttributeAsBoolean(DataSetConstants.IS_PERSISTED); if(isPersisted !=
+	 * null){ dsActiveDetail.setPersisted(isPersisted.booleanValue()); } if
+	 * (isPersisted){ String dataSourcePersist =
+	 * getAttributeAsString(DataSetConstants.DATA_SOURCE_PERSIST);
+	 * if(dataSourcePersist != null && !dataSourcePersist.equals("")){
+	 * dsActiveDetail.setDataSourcePersist(dataSourcePersist); } }else{
+	 * dsActiveDetail.setDataSourcePersist(""); } Boolean isFlatDataset =
+	 * getAttributeAsBoolean(DataSetConstants.IS_FLAT_DATASET); if(isFlatDataset
+	 * != null){ dsActiveDetail.setFlatDataset(isFlatDataset.booleanValue()); }
+	 * if (isFlatDataset){ String dataSourceFlat =
+	 * getAttributeAsString(DataSetConstants.DATA_SOURCE_FLAT);
+	 * if(dataSourceFlat != null && !dataSourceFlat.equals("")){
+	 * dsActiveDetail.setDataSourceFlat(dataSourceFlat); } String flatTableName
+	 * = getAttributeAsString(DataSetConstants.FLAT_TABLE_NAME);
+	 * if(flatTableName != null && !flatTableName.equals("")){
+	 * dsActiveDetail.setFlatTableName(flatTableName); } }else{
+	 * dsActiveDetail.setDataSourceFlat("");
+	 * dsActiveDetail.setFlatTableName(""); } IDataSet ds = null; try { if
+	 * (dsType != null && !dsType.equals("")) { ds = getDataSet(dsType); if (ds
+	 * != null) { if (trasfTypeCd != null && !trasfTypeCd.equals("")) { ds =
+	 * setTransformer(ds, trasfTypeCd); } String recalculateMetadata =
+	 * this.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA); String
+	 * dsMetadata = null; if (recalculateMetadata == null ||
+	 * recalculateMetadata.trim().equals("yes")) { // recalculate metadata
+	 * logger .debug(
+	 * "Recalculating dataset's metadata: executing the dataset..."); HashMap
+	 * parametersMap = new HashMap(); parametersMap =
+	 * getDataSetParametersAsMap();
 	 * 
-	 * IEngUserProfile profile = getUserProfile(); dsMetadata = getDatasetTestMetadata(ds, parametersMap, profile, meta); LogMF.debug(logger,
-	 * "Dataset executed, metadata are [{0}]", dsMetadata); } else { // load existing metadata logger.debug("Loading existing dataset..."); String id =
-	 * getAttributeAsString(DataSetConstants.ID); if (id != null && !id.equals("") && !id.equals("0")) { IDataSet existingDataSet =
-	 * DAOFactory.getDataSetDAO().loadActiveIDataSetByID(new Integer(id)); dsMetadata = existingDataSet.getDsMetadata(); LogMF.debug(logger,
-	 * "Reloaded metadata : [{0}]", dsMetadata); } else { throw new SpagoBIServiceException(SERVICE_NAME, "Missing dataset id, cannot retrieve its metadata"); }
+	 * IEngUserProfile profile = getUserProfile(); dsMetadata =
+	 * getDatasetTestMetadata(ds, parametersMap, profile, meta);
+	 * LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
+	 * } else { // load existing metadata
+	 * logger.debug("Loading existing dataset..."); String id =
+	 * getAttributeAsString(DataSetConstants.ID); if (id != null &&
+	 * !id.equals("") && !id.equals("0")) { IDataSet existingDataSet =
+	 * DAOFactory.getDataSetDAO().loadActiveIDataSetByID(new Integer(id));
+	 * dsMetadata = existingDataSet.getDsMetadata(); LogMF.debug(logger,
+	 * "Reloaded metadata : [{0}]", dsMetadata); } else { throw new
+	 * SpagoBIServiceException(SERVICE_NAME,
+	 * "Missing dataset id, cannot retrieve its metadata"); }
 	 * 
-	 * } dsActiveDetail.setDsMetadata(dsMetadata); } } else { logger.error("DataSet type is not existent"); throw new SpagoBIServiceException(SERVICE_NAME,
-	 * "sbi.ds.dsTypeError"); } } catch (Exception e) { logger.error("Error while getting dataset metadataa", e); } } return dsActiveDetail; }
+	 * } dsActiveDetail.setDsMetadata(dsMetadata); } } else {
+	 * logger.error("DataSet type is not existent"); throw new
+	 * SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypeError"); } } catch
+	 * (Exception e) { logger.error("Error while getting dataset metadataa", e);
+	 * } } return dsActiveDetail; }
 	 * 
-	 * private GuiDataSetDetail instantiateCorrectDsDetail(String dsType){ GuiDataSetDetail dsActiveDetail = null;
+	 * private GuiDataSetDetail instantiateCorrectDsDetail(String dsType){
+	 * GuiDataSetDetail dsActiveDetail = null;
 	 * 
-	 * if(dsType.equalsIgnoreCase(DataSetConstants.DS_FILE)){ dsActiveDetail = new FileDataSetDetail(); String fileName =
-	 * getAttributeAsString(DataSetConstants.FILE_NAME); if(fileName!=null && !fileName.equals("")){ ((FileDataSetDetail)dsActiveDetail).setFileName(fileName);
-	 * } }else if(dsType.equalsIgnoreCase(DataSetConstants.DS_JCLASS)){ dsActiveDetail = new JClassDataSetDetail(); String jclassName =
-	 * getAttributeAsString(DataSetConstants.JCLASS_NAME); if(jclassName!=null && !jclassName.equals("")){
-	 * ((JClassDataSetDetail)dsActiveDetail).setJavaClassName(jclassName); } }else if(dsType.equalsIgnoreCase(DataSetConstants.DS_QUERY)){ dsActiveDetail = new
-	 * QueryDataSetDetail(); String dataSourceLabel = getAttributeAsString(DataSetConstants.DATA_SOURCE); String query =
-	 * getAttributeAsString(DataSetConstants.QUERY); String queryScript = getAttributeAsString(DataSetConstants.QUERY_SCRIPT); String queryScriptLanguage =
+	 * if(dsType.equalsIgnoreCase(DataSetConstants.DS_FILE)){ dsActiveDetail =
+	 * new FileDataSetDetail(); String fileName =
+	 * getAttributeAsString(DataSetConstants.FILE_NAME); if(fileName!=null &&
+	 * !fileName.equals("")){
+	 * ((FileDataSetDetail)dsActiveDetail).setFileName(fileName); } }else
+	 * if(dsType.equalsIgnoreCase(DataSetConstants.DS_JCLASS)){ dsActiveDetail =
+	 * new JClassDataSetDetail(); String jclassName =
+	 * getAttributeAsString(DataSetConstants.JCLASS_NAME); if(jclassName!=null
+	 * && !jclassName.equals("")){
+	 * ((JClassDataSetDetail)dsActiveDetail).setJavaClassName(jclassName); }
+	 * }else if(dsType.equalsIgnoreCase(DataSetConstants.DS_QUERY)){
+	 * dsActiveDetail = new QueryDataSetDetail(); String dataSourceLabel =
+	 * getAttributeAsString(DataSetConstants.DATA_SOURCE); String query =
+	 * getAttributeAsString(DataSetConstants.QUERY); String queryScript =
+	 * getAttributeAsString(DataSetConstants.QUERY_SCRIPT); String
+	 * queryScriptLanguage =
 	 * getAttributeAsString(DataSetConstants.QUERY_SCRIPT_LANGUAGE);
 	 * 
 	 * 
-	 * if( StringUtilities.isNotEmpty(dataSourceLabel) ){ ((QueryDataSetDetail)dsActiveDetail).setDataSourceLabel(dataSourceLabel); }
+	 * if( StringUtilities.isNotEmpty(dataSourceLabel) ){
+	 * ((QueryDataSetDetail)dsActiveDetail).setDataSourceLabel(dataSourceLabel);
+	 * }
 	 * 
-	 * if( StringUtilities.isNotEmpty(query) ){ ((QueryDataSetDetail)dsActiveDetail).setQuery(query); }
+	 * if( StringUtilities.isNotEmpty(query) ){
+	 * ((QueryDataSetDetail)dsActiveDetail).setQuery(query); }
 	 * 
-	 * if( StringUtilities.isNotEmpty(queryScript) ){ ((QueryDataSetDetail)dsActiveDetail).setQueryScript(queryScript); }
+	 * if( StringUtilities.isNotEmpty(queryScript) ){
+	 * ((QueryDataSetDetail)dsActiveDetail).setQueryScript(queryScript); }
 	 * 
-	 * if( StringUtilities.isNotEmpty(queryScriptLanguage) ){ ((QueryDataSetDetail )dsActiveDetail).setQueryScriptLanguage(queryScriptLanguage); }
+	 * if( StringUtilities.isNotEmpty(queryScriptLanguage) ){
+	 * ((QueryDataSetDetail
+	 * )dsActiveDetail).setQueryScriptLanguage(queryScriptLanguage); }
 	 * 
-	 * }else if(dsType.equalsIgnoreCase(DataSetConstants.DS_QBE)){ dsActiveDetail = new QbeDataSetDetail(); String sqlQuery =
-	 * getAttributeAsString(DataSetConstants.QBE_SQL_QUERY); String jsonQuery = getAttributeAsString(DataSetConstants.QBE_JSON_QUERY); String dataSourceLabel =
-	 * getAttributeAsString(DataSetConstants.QBE_DATA_SOURCE); String datamarts = getAttributeAsString(DataSetConstants.QBE_DATAMARTS); ((QbeDataSetDetail)
-	 * dsActiveDetail).setSqlQuery(sqlQuery); ((QbeDataSetDetail) dsActiveDetail).setJsonQuery(jsonQuery); ((QbeDataSetDetail)
-	 * dsActiveDetail).setDataSourceLabel(dataSourceLabel); ((QbeDataSetDetail) dsActiveDetail).setDatamarts(datamarts); }else
-	 * if(dsType.equalsIgnoreCase(DataSetConstants.DS_SCRIPT)){ dsActiveDetail = new ScriptDataSetDetail(); String script =
-	 * getAttributeAsString(DataSetConstants.SCRIPT); String scriptLanguage = getAttributeAsString(DataSetConstants.SCRIPT_LANGUAGE); if(scriptLanguage!=null &&
-	 * !scriptLanguage.equals("")){ ((ScriptDataSetDetail)dsActiveDetail).setLanguageScript(scriptLanguage); } if(script!=null && !script.equals("")){
-	 * ((ScriptDataSetDetail)dsActiveDetail).setScript(script); } }else if(dsType.equalsIgnoreCase(DataSetConstants.DS_WS)){ dsActiveDetail = new
-	 * WSDataSetDetail(); String wsAddress = getAttributeAsString(DataSetConstants.WS_ADDRESS); String wsOperation =
-	 * getAttributeAsString(DataSetConstants.WS_OPERATION); if(wsOperation!=null && !wsOperation.equals("")){
-	 * ((WSDataSetDetail)dsActiveDetail).setOperation(wsOperation); } if(wsAddress!=null && !wsAddress.equals("")){
-	 * ((WSDataSetDetail)dsActiveDetail).setAddress(wsAddress); } } else if(dsType.equalsIgnoreCase(DataSetConstants.DS_CUSTOM)){ dsActiveDetail = new
-	 * CustomDataSetDetail(); String customData = getAttributeAsString(DataSetConstants.CUSTOM_DATA); if(customData!=null && !customData.equals("")){
-	 * ((CustomDataSetDetail)dsActiveDetail).setCustomData(customData); } String jClassName = getAttributeAsString(DataSetConstants.JCLASS_NAME);
-	 * if(jClassName!=null && !jClassName.equals("")){ ((CustomDataSetDetail)dsActiveDetail).setJavaClassName(jClassName); } } return dsActiveDetail; }
+	 * }else if(dsType.equalsIgnoreCase(DataSetConstants.DS_QBE)){
+	 * dsActiveDetail = new QbeDataSetDetail(); String sqlQuery =
+	 * getAttributeAsString(DataSetConstants.QBE_SQL_QUERY); String jsonQuery =
+	 * getAttributeAsString(DataSetConstants.QBE_JSON_QUERY); String
+	 * dataSourceLabel = getAttributeAsString(DataSetConstants.QBE_DATA_SOURCE);
+	 * String datamarts = getAttributeAsString(DataSetConstants.QBE_DATAMARTS);
+	 * ((QbeDataSetDetail) dsActiveDetail).setSqlQuery(sqlQuery);
+	 * ((QbeDataSetDetail) dsActiveDetail).setJsonQuery(jsonQuery);
+	 * ((QbeDataSetDetail) dsActiveDetail).setDataSourceLabel(dataSourceLabel);
+	 * ((QbeDataSetDetail) dsActiveDetail).setDatamarts(datamarts); }else
+	 * if(dsType.equalsIgnoreCase(DataSetConstants.DS_SCRIPT)){ dsActiveDetail =
+	 * new ScriptDataSetDetail(); String script =
+	 * getAttributeAsString(DataSetConstants.SCRIPT); String scriptLanguage =
+	 * getAttributeAsString(DataSetConstants.SCRIPT_LANGUAGE);
+	 * if(scriptLanguage!=null && !scriptLanguage.equals("")){
+	 * ((ScriptDataSetDetail)dsActiveDetail).setLanguageScript(scriptLanguage);
+	 * } if(script!=null && !script.equals("")){
+	 * ((ScriptDataSetDetail)dsActiveDetail).setScript(script); } }else
+	 * if(dsType.equalsIgnoreCase(DataSetConstants.DS_WS)){ dsActiveDetail = new
+	 * WSDataSetDetail(); String wsAddress =
+	 * getAttributeAsString(DataSetConstants.WS_ADDRESS); String wsOperation =
+	 * getAttributeAsString(DataSetConstants.WS_OPERATION); if(wsOperation!=null
+	 * && !wsOperation.equals("")){
+	 * ((WSDataSetDetail)dsActiveDetail).setOperation(wsOperation); }
+	 * if(wsAddress!=null && !wsAddress.equals("")){
+	 * ((WSDataSetDetail)dsActiveDetail).setAddress(wsAddress); } } else
+	 * if(dsType.equalsIgnoreCase(DataSetConstants.DS_CUSTOM)){ dsActiveDetail =
+	 * new CustomDataSetDetail(); String customData =
+	 * getAttributeAsString(DataSetConstants.CUSTOM_DATA); if(customData!=null
+	 * && !customData.equals("")){
+	 * ((CustomDataSetDetail)dsActiveDetail).setCustomData(customData); } String
+	 * jClassName = getAttributeAsString(DataSetConstants.JCLASS_NAME);
+	 * if(jClassName!=null && !jClassName.equals("")){
+	 * ((CustomDataSetDetail)dsActiveDetail).setJavaClassName(jClassName); } }
+	 * return dsActiveDetail; }
 	 */
 	/*
-	 * private GuiDataSetDetail setTransformer(GuiDataSetDetail dsActiveDetail, String trasfTypeCd){ List<Domain> domainsTrasf =
-	 * (List<Domain>)getSessionContainer().getAttribute("trasfTypesList"); HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer> ();
-	 * if(domainsTrasf != null){ for(int i=0; i< domainsTrasf.size(); i++){ domainTrasfIds.put(domainsTrasf.get(i).getValueCd(),
-	 * domainsTrasf.get(i).getValueId()); } } Integer transformerId = domainTrasfIds.get(trasfTypeCd); dsActiveDetail.setTransformerId(transformerId);
+	 * private GuiDataSetDetail setTransformer(GuiDataSetDetail dsActiveDetail,
+	 * String trasfTypeCd){ List<Domain> domainsTrasf =
+	 * (List<Domain>)getSessionContainer().getAttribute("trasfTypesList");
+	 * HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer>
+	 * (); if(domainsTrasf != null){ for(int i=0; i< domainsTrasf.size(); i++){
+	 * domainTrasfIds.put(domainsTrasf.get(i).getValueCd(),
+	 * domainsTrasf.get(i).getValueId()); } } Integer transformerId =
+	 * domainTrasfIds.get(trasfTypeCd);
+	 * dsActiveDetail.setTransformerId(transformerId);
 	 * dsActiveDetail.setTransformerCd(trasfTypeCd);
 	 * 
-	 * String pivotColName = getAttributeAsString(DataSetConstants.PIVOT_COL_NAME); String pivotColValue =
-	 * getAttributeAsString(DataSetConstants.PIVOT_COL_VALUE); String pivotRowName = getAttributeAsString(DataSetConstants.PIVOT_ROW_NAME); Boolean
-	 * pivotIsNumRows = getAttributeAsBoolean(DataSetConstants.PIVOT_IS_NUM_ROWS);
+	 * String pivotColName =
+	 * getAttributeAsString(DataSetConstants.PIVOT_COL_NAME); String
+	 * pivotColValue = getAttributeAsString(DataSetConstants.PIVOT_COL_VALUE);
+	 * String pivotRowName =
+	 * getAttributeAsString(DataSetConstants.PIVOT_ROW_NAME); Boolean
+	 * pivotIsNumRows =
+	 * getAttributeAsBoolean(DataSetConstants.PIVOT_IS_NUM_ROWS);
 	 * 
-	 * if(pivotColName != null && !pivotColName.equals("")){ dsActiveDetail.setPivotColumnName(pivotColName); } if(pivotColValue != null &&
-	 * !pivotColValue.equals("")){ dsActiveDetail.setPivotColumnValue(pivotColValue); } if(pivotRowName != null && !pivotRowName.equals("")){
-	 * dsActiveDetail.setPivotRowName(pivotRowName); } if(pivotIsNumRows != null){ dsActiveDetail.setNumRows(pivotIsNumRows); } return dsActiveDetail; }
+	 * if(pivotColName != null && !pivotColName.equals("")){
+	 * dsActiveDetail.setPivotColumnName(pivotColName); } if(pivotColValue !=
+	 * null && !pivotColValue.equals("")){
+	 * dsActiveDetail.setPivotColumnValue(pivotColValue); } if(pivotRowName !=
+	 * null && !pivotRowName.equals("")){
+	 * dsActiveDetail.setPivotRowName(pivotRowName); } if(pivotIsNumRows !=
+	 * null){ dsActiveDetail.setNumRows(pivotIsNumRows); } return
+	 * dsActiveDetail; }
 	 */
 
 	private JSONObject getDataSetResultsAsJSON() {
@@ -1152,7 +1267,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			} else {
 				// reading or modifying a existing dataset
 
-				// if change the label then the name of the file should be changed
+				// if change the label then the name of the file should be
+				// changed
 
 				JSONObject configuration;
 				try {
@@ -1398,7 +1514,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, dataSourceLabel);
 			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
 
-			// START -> This code should work instead of CheckQbeDataSets around the projects
+			// START -> This code should work instead of CheckQbeDataSets around
+			// the projects
 			SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
 			Map parameters = qbeDataSet.getParamsMap();
 			if (parameters == null) {
@@ -1487,8 +1604,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
 		if (originalDatasetFile.exists()) {
 			/*
-			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
-			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to
+			 * the specified destination file. The directory holding the
+			 * destination file is created if it does not exist. If the
+			 * destination file exists, then this method will overwrite it.
 			 */
 			try {
 				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
@@ -1644,7 +1763,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					type = obj.getString("type");
 				}
 
-				// check if has value, if has not a valid value then use default value
+				// check if has value, if has not a valid value then use default
+				// value
 				boolean hasVal = obj.has(PARAM_VALUE_NAME) && !obj.getString(PARAM_VALUE_NAME).isEmpty();
 				String tempVal = "";
 				if (hasVal) {
@@ -1744,13 +1864,16 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return toReturn;
 	}
 
-	// public String getDatasetTestMetadataAsString(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile, String metadata) throws Exception {
+	// public String getDatasetTestMetadataAsString(IDataSet dataSet, HashMap
+	// parametersFilled, IEngUserProfile profile, String metadata) throws
+	// Exception {
 	// logger.debug("IN");
 	// String toReturn = null;
 	// try {
 	// DatasetMetadataParser dsp = new DatasetMetadataParser();
 	// toReturn = dsp.metadataToXML(metaData);
-	// IMetaData metaData = getDatasetTestMetadata(dataSet, parametersFilled, profile, metadata);
+	// IMetaData metaData = getDatasetTestMetadata(dataSet, parametersFilled,
+	// profile, metadata);
 	//
 	// if (metaData == null)
 	// return null;
@@ -1888,13 +2011,15 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	// private void checkQbeDataset(IDataSet dataSet) {
 	// if (dataSet instanceof QbeDataSet) {
-	// SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+	// SpagoBICoreDatamartRetriever retriever = new
+	// SpagoBICoreDatamartRetriever();
 	// Map parameters = dataSet.getParamsMap();
 	// if (parameters == null) {
 	// parameters = new HashMap();
 	// dataSet.setParamsMap(parameters);
 	// }
-	// dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+	// dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER,
+	// retriever);
 	// }
 	// }
 
