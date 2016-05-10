@@ -30,7 +30,7 @@
 	        	</md-list-item>
 			</expander-box>
 			<expander-box  id="longMetadata" color="white" background-color="rgb(63,81,181)" expanded="false" title="metadataDlgCtrl.lblLongMeta" toolbar-class="ternaryToolbar"> 
-				<md-tabs  layout="column" md-border-bottom md-dynamic-height >
+				<md-tabs class="removeTransition" layout="column" md-border-bottom md-dynamic-height >
 					<md-tab flex=200  ng-repeat="item in metadataDlgCtrl.longText" label="{{::item.name}}" md-on-select="metadataDlgCtrl.setTab($index)">
 					 <md-tab-body >
 					<wysiwyg-edit ng-if="metadataDlgCtrl.isSelectedTab($index)" content="item.value"></wysiwyg-edit>
