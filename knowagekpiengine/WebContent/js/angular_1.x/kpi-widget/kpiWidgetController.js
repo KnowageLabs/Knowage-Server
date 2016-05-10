@@ -30,7 +30,7 @@
 		};
 	});
 
-	function kpiWidgetController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_restServices,sbiModule_translate,sbiModule_config){
+	function kpiWidgetController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_restServices,sbiModule_translate,sbiModule_config,$interval){
 		$scope.translate = sbiModule_translate;
 		
 		if($scope.precision) {
@@ -76,14 +76,17 @@
 				}
 		};
 
-		$scope.$watch('valueSeries',function (newValue, oldValue) {
-			if(newValue!=oldValue){
-				var values = $scope.convertToStackedAreaChartData(newValue);
-				$scope.data = [{"values" :	values}];
-				
-			}
-		}
-		, true);
+		
+		var initValueSeries= $interval(function() {
+		       if ($scope.valueSeries!=undefined) {
+		             if (angular.isDefined(initValueSeries)) {
+		                 $interval.cancel(initValueSeries);
+		                 initValueSeries = undefined;
+		                 var values = $scope.convertToStackedAreaChartData($scope.valueSeries);
+		 				$scope.data = [{"values" :	values}];
+		               }
+		         }
+		       }, 500,10);
 
 		$scope.convertToStackedAreaChartData= function(arrKpi){
 			var array = [];

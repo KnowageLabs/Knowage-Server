@@ -140,7 +140,7 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 				}
 			}
 			JSONObject objectResult = new JSONObject();
-			objectResult.put("loadKpiValue", array);
+			objectResult.put("loadKpiValue", array.toString());
 			objectResult.put("info", result);
 			return objectResult.toString();
 

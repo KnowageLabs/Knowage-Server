@@ -29,7 +29,7 @@
 		$scope.loadKpiValue = function(){
 			if($scope.documentData.template.chart.data.kpi != undefined){
 
-					var array =$scope.loadKpiValues;
+					var array =JSON.parse($scope.loadKpiValues);
 					
 					for(var j = 0; j < $scope.kpiItems.length; j++){
 						var kpiItem = $scope.kpiItems[j];
