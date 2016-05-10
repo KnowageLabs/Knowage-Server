@@ -451,7 +451,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 
-		if (result.size() > 0) {
+		if (result != null && result.size() > 0) {
 			resultAsMap.put("filterValues", result);
 			resultAsMap.put("errors", new ArrayList<>());
 		} else {

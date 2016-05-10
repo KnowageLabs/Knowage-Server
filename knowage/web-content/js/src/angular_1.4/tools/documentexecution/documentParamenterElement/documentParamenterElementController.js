@@ -62,6 +62,15 @@
 					angular.copy(response.filterValues, $scope.parameter.children);
 //					$scope.updateAddToParameterInnerValuesMap($scope.parameter, $scope.parameter.children);
 					
+					//check parameters selected field
+					if($scope.parameter.parameterValue && $scope.parameter.parameterValue.length>0){
+						for(var z=0;z<$scope.parameter.children.length;z++){
+							if($scope.parameter.parameterValue.indexOf($scope.parameter.children[z].value)!==-1){
+								$scope.parameter.children[z].checked= true;
+							}
+						}
+					}
+					
 					$scope.popupParameterDialog($scope.parameter, templateUrl);
 					
 				})
@@ -78,8 +87,16 @@
 					sbiModule_restServices.post("1.0/documentexecution", "parametervalues", params)
 					.success(function(response, status, headers, config) {
 						console.log('parametervalues response OK -> ', response);
-						
 						angular.copy(response.filterValues, innerNode.children);
+						//check parameters selected field
+						if($scope.parameter.parameterValue && $scope.parameter.parameterValue.length>0){
+							for(var z=0;z<innerNode.children.length;z++){
+								if($scope.parameter.parameterValue.indexOf(innerNode.children[z].value)!==-1){
+									innerNode.children[z].checked= true;
+								}
+							}
+						}
+						
 //						$scope.updateAddToParameterInnerValuesMap($scope.parameter, innerNode.children);
 					})
 					.error(function(response, status, headers, config) {
