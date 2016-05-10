@@ -549,7 +549,16 @@
 //						) {
 						if(parameter.valueSelection=='lov') {
 							if(parameter.selectionType.toLowerCase() == "tree") {
-								parameter.parameterValue = JSON.parse(params[parameter.urlName]);
+								//TREE DESC FOR LABEL
+								var ArrValue = JSON.parse(params[parameter.urlName]);
+								var ArrDesc = params[parameter.urlName+'_field_visible_description'].split(';');
+								if (typeof parameter.parameterDescription === 'undefined'){
+									parameter.parameterDescription = {};
+								}
+								for(var w=0; w<ArrValue.length; w++){
+									parameter.parameterDescription[ArrValue[w]] =ArrDesc[w];
+								}
+								parameter.parameterValue = ArrValue;
 							} else {
 								//console.log('setting param ' + params[parameter.urlName]);
 								//console.log('setting param in ' , parameter);
@@ -640,7 +649,8 @@
 			var hasDefVal = false;
 			for(var i=0; i<filterStatus.length; i++){
 				if(filterStatus[i].parameterValue && filterStatus[i].parameterValue.length>0){
-					var arrDefToFill = []; 
+					var arrDefToFill = [];
+					var arrDefToFillDescription = []; //TREE
 					//var fillObj = {};
 					//MULTIVALUE
 					hasDefVal= true;
@@ -650,13 +660,14 @@
 						//}
 						for(var k=0;k<filterStatus[i].parameterValue.length;k++){
 							arrDefToFill.push(filterStatus[i].parameterValue[k].value);
+							arrDefToFillDescription.push(filterStatus[i].parameterValue[k].description);
 						}	
 						fillObj[filterStatus[i].urlName] = JSON.stringify(arrDefToFill);
 						//TREE
 						if(filterStatus[i].selectionType=='TREE'){
 							var strDefToFillDescription ='';
-							for(var z=0; z<arrDefToFill.length; z++){
-								strDefToFillDescription=strDefToFillDescription+arrDefToFill[z];
+							for(var z=0; z<arrDefToFillDescription.length; z++){
+								strDefToFillDescription=strDefToFillDescription+arrDefToFillDescription[z];
 								if(z<arrDefToFill.length-1){
 									strDefToFillDescription=strDefToFillDescription+';';
 								}
