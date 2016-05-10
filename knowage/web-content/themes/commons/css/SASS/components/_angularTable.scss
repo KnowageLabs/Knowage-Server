@@ -143,11 +143,16 @@ table>thead>tr>th>div {
 }
 
 table>tbody>tr>td button.actionButton{	
-height: 25px !important;
-    width: 25px!important;
+	height: 30px !important;
+    width: 30px!important;
     min-height: 25px!important;
+    margin: 0!important;
     }
-    
+   
+   table>tbody>tr>td button.actionButton:hover{	
+	background-color: #C0C9D0!important;
+    }
+     
     table>tbody>tr>td button.actionButton md-icon{	
    line-height: 25px!important;
     }
