@@ -60,7 +60,11 @@
 //										paramArrayTree[z] = parameter.parameterValue[z].value;
 //										paramStrTree += parameter.parameterValue[z].value;
 										paramArrayTree[z] = parameter.parameterValue[z];
-										paramStrTree += parameter.parameterValue[z];
+										//old
+										//paramStrTree += parameter.parameterValue[z];
+										//modify description tree
+										paramStrTree += parameter.parameterDescription[parameter.parameterValue[z]];
+										
 									}
 									
 									jsonDatumValue = paramArrayTree;
