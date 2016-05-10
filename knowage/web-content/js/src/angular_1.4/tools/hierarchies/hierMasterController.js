@@ -212,8 +212,13 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				$scope.showAlert($scope.translate.load("sbi.generic.error"), message);
 
 		});
-	/* When selected a dimension, get the JSON to create the table */
-	$scope.getDimensionsTable = function(filterDate, filterHierarchy, removeFilter, resetTree, optionalFilter) {
+	/* When selected a dimension, get the JSON to create the table 
+	 * filterHierarchy is the checkbox boolean value of 'show missing elements'
+	 * remove filter is a boolean value used to reset all the filter applied
+	 * reset tree is boolean value used to remove the tree and the combo values of the right side
+	 * option filter is a boolean value used to understand if use also the filter in the rest service 
+	 * */
+	$scope.getDimensionsTable = function(filterHierarchy, removeFilter, resetTree, optionalFilter) {
 		if (removeFilter == true){
 			$scope.removeFilters($scope.dimFilters);
 			$scope.dimensionsTable = undefined;
@@ -227,11 +232,11 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 				validityDate : dateFormatted
 			}
 			if (optionalFilter == true && $scope.dimFilters.length > 0){
-				config.params.optionalFilters = [];
-				config.params.optionalFilters.push($scope.convertFiltersDim($scope.dimFilters));
-			}
-			if (filterDate !== undefined && filterDate !== null && filterDate.toString().length > 0) {
-				config.params.filterDate = $scope.formatDate(filterDate);
+				var convertedFilters = $scope.convertFiltersDim($scope.dimFilters);
+				if (convertedFilters != undefined && convertedFilters.length > 0){
+					config.params.optionalFilters = [];
+					config.params.optionalFilters.push(convertedFilters);
+				}
 			}
 			if (hier && (filterHierarchy=="true" || filterHierarchy==true)) {
 				config.params.filterDate = $scope.formatDate($scope.dateTree);
@@ -1343,11 +1348,16 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 
 	$scope.convertFiltersDim = function(filtersArray){
 		if (filtersArray.length > 0){
-			 var optionalFilter = angular.copy(filtersArray);
-			 for (var k=0; k<optionalFilter.length;k++){
-				 if (optionalFilter[k].TYPE.toUpperCase()=='DATE'){
-					 optionalFilter[k].VALUE = $scope.formatDate(optionalFilter[k].VALUE); 
+			 var optionalFilter = [];
+			 for (var k=0; k<filtersArray.length;k++){
+				 if (filtersArray[k].VALUE == undefined || filtersArray[k].VALUE == null || (filtersArray[k].VALUE.length != undefined && filtersArray[k].VALUE.length == 0)){
+					 continue;
 				 }
+				 var el = angular.copy(filtersArray[k]);
+				 if (el.TYPE.toUpperCase()=='DATE'){
+					 el.VALUE = $scope.formatDate(el.VALUE); 
+				 }
+				 optionalFilter.push(el);
 			 }
 			 return optionalFilter;
 		}

@@ -11,10 +11,10 @@
 			</md-toolbar>
 			<md-content id='hierMasterDim' layout-padding layout='column' layout-align='space-around stretch'>
 		        <md-content id='dimensionsSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
-		        	<md-datepicker ng-model="dateDim" ng-change='getDimensionsTable(dateFilterDim,seeHideLeafDim,false,false,false)' md-placeholder="{{translate.load('sbi.hierarchies.date');}}" required></md-datepicker>
+		        	<md-datepicker ng-model="dateDim" ng-change='getDimensionsTable(seeHideLeafDim,false,false,true)' md-placeholder="{{translate.load('sbi.hierarchies.date');}}" required></md-datepicker>
 					<md-input-container flex flex-sm='90'>
 						<label>{{translate.load("sbi.hierarchies.dimensions");}}</label>
-			        	<md-select ng-model='dim' md-on-close='getDimensionsTable(undefined,undefined,true,true,false);getHierarchies();getFilters()'>
+			        	<md-select ng-model='dim' md-on-close='getDimensionsTable(seeHideLeafDim,true,true,false);getHierarchies();getFilters()'>
 			        		<md-option ng-value="dim" ng-repeat="dim in dimensions">{{ dim.DIMENSION_NM }}</md-option>
 			        	</md-select>
 					</md-input-container>
@@ -48,12 +48,9 @@
 				        		</md-content>
 				        	</md-content>
 				        	<md-content layout='row' class="force-100width" layout-align='space-between center'>
-					        	<!--  <md-content layout='row' class="force-100width" layout-align='start center'>
-					        		After Date: <md-datepicker ng-model="dateFilterDim" ng-disabled="!dim"></md-datepicker>
-					        	</md-content> -->
 				        		 <md-content layout="row">
-					        		 <md-icon class="fa fa-check" ng-click="getDimensionsTable(dateFilterDim,seeHideLeafDim,false,false,true)"></md-icon>
-							         <md-icon class="fa fa-trash" ng-click="getDimensionsTable(undedined,undefined,true,false)"></md-icon>
+					        		 <md-icon class="fa fa-check" ng-click="getDimensionsTable(seeHideLeafDim,false,false,true)"></md-icon>
+							         <md-icon class="fa fa-trash" ng-click="getDimensionsTable(undedined,true,false,false)"></md-icon>
 						         </md-content>
 			        		</md-content>
 			        	</div>
