@@ -16,6 +16,7 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 	$scope.showDocumentGridView = ($mdMedia('gt-sm') ? $scope.showDocumentGridView = false : $scope.showDocumentGridView = true);
 	$scope.smallScreen = false;
 	$scope.hideProgressCircular=true;
+	$scope.searchingDocuments=false;
 	
 	$scope.$watch(function() { return !$mdMedia('gt-sm'); }, function(big) {
 	    $scope.smallScreen = big;
@@ -203,9 +204,11 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 		$timeout(function(){
 			if (newSearchInput == $scope.searchInput) {
 				if (newSearchInput.length > 0){
+					$scope.searchingDocuments=true;
 					sbiModule_restServices.promiseGet("2.0/documents", "searchDocument?attributes=all&value=" + newSearchInput + "*", null)
 					.then(function(response) {
 						$scope.searchDocuments = response.data;
+						$scope.searchingDocuments=false;
 					},function(response){
 						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.search.error'))
 						.finally(function(){
@@ -433,6 +436,17 @@ function DialogNewDocumentController($scope,$mdDialog,$mdBottomSheet,sbiModule_c
 		
 }
 
+//directive for Enter keypress
+angular.module('documentBrowserModule').directive('keyEnter', function () {
+    return function (scope, element, attrs) {
+        element.bind("keydown keypress", function (event) {
+            if(event.which === 13) {
+                scope.$apply(function (){
+                    scope.$eval(attrs.keyEnter);
+                });
 
-
-
+                event.preventDefault();
+            }
+        });
+    };
+});

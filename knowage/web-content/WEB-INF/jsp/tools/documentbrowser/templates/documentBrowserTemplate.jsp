@@ -42,22 +42,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-button>
 					
 					<!-- Title -->
-					
-					<!-- Search clear -->
-					<md-button class="md-icon-button" title="Clear" aria-label="back" ng-show="showSearchView" ng-click="toggleSearchView()">
-						   <md-icon md-font-icon="fa fa-arrow-left"></md-icon>
-					</md-button>
-					 
 					<h1 ng-hide="showSearchView">{{translate.load("sbi.browser.title")}}</h1>
 					<h1 ng-show="showSearchView">{{translate.load("sbi.browser.document.searchDocuments")}}</h1>
-					
-					<span flex=""></span>
-					
-				    
+
+					<!-- Search view back button -->
+					<md-button class="md-icon-button" title="Back" aria-label="back" ng-show="showSearchView" ng-click="toggleSearchView()">
+						   <md-icon md-font-icon="fa fa-arrow-left"></md-icon>
+					</md-button>
+									    
 				    <!-- Search input -->
 				    <md-input-container ng-show="showSearchView" class="searchInput">
-						<label>{{translate.load("sbi.generic.search.title")}}</label>
-						<input   type="text" id="searchInput" ng-model="searchInput" ng-change="setSearchInput(searchInput)" focus-on="searchInput">
+						<label>{{translate.load("sbi.generic.search.msg")}}</label>
+						<input type="text" id="searchInput" ng-model="searchInput" focus-on="searchInput" key-enter="setSearchInput(searchInput)">
 					</md-input-container>
 					
 					<!-- Search clear -->
@@ -66,7 +62,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-button>
 					
 					<!--  Search button -->
-					<md-button class="md-icon-button" title="Search" aria-label="Search" ng-class="{'selectedButton':showSearchView}" ng-click="toggleSearchView()">
+					<md-button class="md-icon-button" title="Search" aria-label="Search" ng-show="showSearchView" ng-click="setSearchInput(searchInput)">
+						  <md-icon md-font-icon="fa fa-search"></md-icon>
+					</md-button>
+					
+					<span flex=""></span>
+					
+					<!--  Search view button -->
+					<md-button class="md-icon-button" title="Search" aria-label="Search" ng-hide="showSearchView" ng-click="toggleSearchView()">
 						  <md-icon md-font-icon="fa fa-search"></md-icon>
 					</md-button>
 					
@@ -138,28 +141,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				 	
 				 	
 				 	<document-view flex style='overflow:auto' ng-model="folderDocuments" ng-show="hideProgressCircular"
-						show-grid-view="showDocumentGridView"
-						table-speed-menu-option="documentTableButton"
-						selected-document=selectedDocument
-						select-document-action="selectDocument(doc);"
-						edit-document-action="editDocument(doc)"
-						clone-document-action="cloneDocument(doc)"
-						delete-document-action="deleteDocument(doc)"
-						execute-document-action="executeDocument(doc)"
-						ordering-document-cards=selectedOrder
-				 	  ></document-view>
+							show-grid-view="showDocumentGridView"
+							table-speed-menu-option="documentTableButton"
+							selected-document=selectedDocument
+							select-document-action="selectDocument(doc);"
+							edit-document-action="editDocument(doc)"
+							clone-document-action="cloneDocument(doc)"
+							delete-document-action="deleteDocument(doc)"
+							execute-document-action="executeDocument(doc)"
+							ordering-document-cards=selectedOrder>
+				 	  </document-view>
 		   	</md-content>
 			</md-content>
-				<md-content layout="column" flex ng-show="showSearchView">
-					<h3 class="md-title" ng-show="searchInput.length==0 || searchInput==undefined " >{{translate.load("sbi.browser.document.noDocument")}}</h3>
-					<h3 class="md-title" ng-show="searchInput.length>0">{{searchDocuments.length || 0}} {{translate.load("sbi.browser.document.found")}}</h3>
+				<md-content ng-show="searchingDocuments">
+					<md-progress-circular loading
+							md-mode="indeterminate"
+							md-diameter="75%"
+							style="position:fixed; top:50%; left:50%; z-index:500; background:rgba(255, 255, 255, 0);">
+					</md-progress-circular>
+				</md-content>
+				<md-content layout="column" flex ng-show="showSearchView && !searchingDocuments">
+					<h3 class="md-title" ng-show="searchDocuments.length == 0" >{{translate.load("sbi.browser.document.noDocument")}}</h3>
+					<h3 class="md-title" ng-show="searchDocuments.length > 0">{{searchDocuments.length || 0}} {{translate.load("sbi.browser.document.found")}}</h3>
 		 
-			 		<document-view  flex ng-model="searchDocuments"
-				 	 show-grid-view="showDocumentGridView"
-				 	  table-speed-menu-option="documentTableButton"
-				 	  selected-document=selectedDocument
-				 	  select-document-action="selectDocument(doc);"
-				 	  ></document-view>
+			 		<document-view flex ng-model="searchDocuments"
+							show-grid-view="showDocumentGridView"
+							table-speed-menu-option="documentTableButton"
+							selected-document=selectedDocument
+							select-document-action="selectDocument(doc);">
+					</document-view>
   
 				</md-content>
 			
