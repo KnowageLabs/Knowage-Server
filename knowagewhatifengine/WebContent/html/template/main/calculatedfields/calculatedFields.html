@@ -7,14 +7,14 @@
     
     
     
-       <div style="margin-left: 20px;">
+       <div style="margin-left: 20px;" ng-hide="selectedTab == 3">
       <md-input-container class="md-block">
           <label>Name</label>
-          <input ng-model="selectedMDXFunctionName" ng-disabled="selectedMDXFunction == null">
+          <input ng-model="selectedMDXFunctionName" >
         </md-input-container>
       </div>
   <md-dialog-content ng-cloak>
-    <md-tabs md-dynamic-height md-border-bottom>
+    <md-tabs md-dynamic-height  md-selected="selectedTab" md-border-bottom>
       <md-tab label="Aggregation">
     <md-content class="md-padding">
       <md-list flex>
@@ -72,7 +72,7 @@
             <h4>Type : {{  item.type }}</h4>
             <div layout="row">
              <md-button  ng-click="edit(item); $event.stopPropagation();">Edit</md-button>
-             <md-button  ng-click="deleteSet($index,item)">Delete</md-button>
+             <md-button  ng-click="deleteFromCookie($index,item)">Delete</md-button>
             </div>
             
           </div>
