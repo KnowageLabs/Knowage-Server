@@ -576,11 +576,11 @@
 				label: " ",
 				name: "semaphore",
 				comparatorFunction:function(a, b){
-					var aSeverity = a.severity.toLowerCase().trim(); 
-					var bSeverity = b.severity.toLowerCase().trim(); 
+					var aSeverity = a.severity != null? a.severity.toLowerCase().trim() : ''; 
+					var bSeverity = b.severity != null? b.severity.toLowerCase().trim() : ''; 
 					
-					var aValue = aSeverity=='' ? 0 : $scope.severityPriority[aSeverity];
-					var bValue = bSeverity=='' ? 0 : $scope.severityPriority[bSeverity];
+					var aValue = aSeverity == '' ? 0 : $scope.severityPriority[aSeverity];
+					var bValue = bSeverity == '' ? 0 : $scope.severityPriority[bSeverity];
 					
 					return (bValue - aValue);
 				},
