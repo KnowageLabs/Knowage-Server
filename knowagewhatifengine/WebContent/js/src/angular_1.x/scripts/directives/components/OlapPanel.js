@@ -828,6 +828,18 @@ $scope.deleteCC = function(calculateMemberName) {
 		sbiModule_messaging.showErrorMessage("error", 'Error');
 		
 			});
+	};
+	
+	$scope.hideSwitchIcon = function(position,axis){
+		var lastRow = $scope.maxRows + $scope.leftStart -1; 
+		if(axis == 1){
+			if(position == $scope.rows.length-1)
+				return true;
+			if($scope.rows.length > $scope.maxRows && lastRow == position)
+				return true;
+		}
+		return false;
+		
 	}
 	
 };

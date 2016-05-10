@@ -1,5 +1,6 @@
 <div class="central-panel" layout="row" >
 	<div class='knowage-blue dimension-left-toolbar' layout="column" ng-drop="true" ng-drop-success="dropLeft($data,$event)">
+		
 		<div style="min-width:32px; min-height:32px; margin-bottom: 2%;">
 			<md-button style="right:10px" class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('up')" ng-show="leftSliderNeeded">
 				<md-icon style="color:white" md-font-icon="fa fa-arrow-circle-o-up fa-2x" ></md-icon>
@@ -7,49 +8,52 @@
 		</div>	
 		
 		<div style="height:calc(100% - 64px);">
-		<div  ng-repeat="row in rows|limitTo:maxRows:leftStart">
-		<div class="filter-toolbar-element-left"  ng-drag="true" ng-drag-data="row" ng-drag-success="dragSuccess('left',$index)" id="left-{{row.name}}">
-			<md-button class="multi-hierarachy-btn"  ng-click="showMultiHierDialog(e,row)" ng-show="row.hierarchies.length > 1">
-				<md-icon class="fa fa-sitemap" style="color:white;"></md-icon>
-			</md-button>
-			<div class="name">
-				<div ng-class="row.hierarchies.length > 1 ? 'rotate-text-nop' : 'rotate-text'">{{row.name}}</div>
-			</div>	
-			<div class="action">
-				<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, row, null)">
-					<md-icon md-font-icon="fa fa-filter"></md-icon>
-				</md-button>
+			<div  ng-repeat="row in rows|limitTo:maxRows:leftStart">
+				<div class="filter-toolbar-element-left"  
+					 ng-drag="true" 
+					 ng-drag-data="row" 
+					 ng-drag-success="dragSuccess('left',$index)" 
+					 id="left-{{row.name}}">
+					 
+					<md-button class="multi-hierarachy-btn"  ng-click="showMultiHierDialog(e,row)" ng-show="row.hierarchies.length > 1">
+						<md-icon class="fa fa-sitemap" style="color:white;"></md-icon>
+					</md-button>
+					
+					<div class="name">
+						<div ng-class="row.hierarchies.length > 1 ? 'rotate-text-nop' : 'rotate-text'">{{row.name}}</div>
+					</div>	
+					
+					<div class="action">
+						<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, row, null)">
+							<md-icon md-font-icon="fa fa-filter"></md-icon>
+						</md-button>
+					</div>
+				</div>
+				<div ng-hide="hideSwitchIcon(row.positionInAxis,1)"><!-- row.positionInAxis == rows.length-1 -->
+					<md-button class="md-icon-button" style="width:0px" ng-click="switchPosition(row)">
+						<md-icon md-font-icon="fa fa-arrows-v" style="color:white;"></md-icon>	
+					</md-button>
+				</div>
 			</div>
-		</div>
-		<div ng-hide="row.positionInAxis == rows.length-1">
-			<md-button class="md-icon-button" style="width:0px" ng-click="switchPosition(row)">
-				<md-icon md-font-icon="fa fa-arrows-v" style="color:white;"></md-icon>	
-			</md-button>
-		</div>
-		</div>
 		</div>
 	
 		<div style="min-width:32px;min-height:32px;margin-top: 2%">
-			<md-button style="right:10px;"class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('down')" ng-show="leftSliderNeeded">
-			<md-icon style="color:white" md-font-icon="fa fa-arrow-circle-o-down fa-2x"></md-icon>
-		</md-button>
+			<md-button style="right:10px;"
+					   class="md-icon-button" 
+					   aria-label="Favorite" 
+					   ng-click="dimensionShift('down')" 
+					   ng-show="leftSliderNeeded">
+				<md-icon style="color:white" md-font-icon="fa fa-arrow-circle-o-down fa-2x"></md-icon>
+			</md-button>
 		</div>
 	</div>
+	
 	<div style="width: calc(100% - 32px);color:#3b678c" layout="column";>
+		<md-content scrolly style="height:100%;width:100%" >
 	
-	
-	
-	<md-content scrolly style="height:100%;width:100%" >
-	
-	 <div   ng-style="{'height':modelConfig.rowCount*100+tableHeight-120,'width':modelConfig.columnCount*100+tableWeight-120}" ></div>	<!-- background-color: #3b678c; -->
-	 	</md-content>
-	 	<div ng-bind-html="table" compile-template style="position:absolute;top:0;max-width: calc(100% - 52px);" >
-	
-	
-	 </div>
-	
-	
-	
-		
+	 		<div   ng-style="{'height':modelConfig.rowCount*100+tableHeight-120,'width':modelConfig.columnCount*100+tableWeight-120}" ></div>	<!-- background-color: #3b678c; -->
+	 			</md-content>
+	 		<div ng-bind-html="table" compile-template style="position:absolute;top:0;max-width: calc(100% - 52px);" >
+	 		</div>
 	</div>	
 </div>
