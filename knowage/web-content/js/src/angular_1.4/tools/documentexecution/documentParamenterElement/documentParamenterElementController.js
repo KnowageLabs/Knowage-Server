@@ -19,6 +19,7 @@
 			$scope, sbiModule_config, sbiModule_restServices, sbiModule_translate, 
 			execProperties, documentExecuteServices, $mdDialog, $mdMedia,execProperties) {
 		
+		$scope.execProperties = execProperties;
 		$scope.documentExecuteServices = documentExecuteServices;
 		$scope.sbiModule_translate = sbiModule_translate;
 		
@@ -175,7 +176,7 @@
 					parameter: parameter,
 					toggleCheckboxParameter: $scope.toggleCheckboxParameter,
 					checkboxParameterExists: $scope.checkboxParameterExists,
-					sbiModule_translate: $scope.sbiModule_translate,
+					sbiModule_translate: $scope.sbiModule_translate
 				},
 				
 				controllerAs: "paramDialogCtrl",
@@ -286,40 +287,23 @@
 							
 							paramDialogCtrl.tableColumns.push(columnName.toUpperCase());
 						};
-						// defaultValues are filtered occording to dataDependencies
-						var _dataDependencies = paramDialogCtrl.tempParameter.dataDependencies;
-						paramDialogCtrl.tableData = [];
-						if(_dataDependencies){
-							var _defaultValues = paramDialogCtrl.tempParameter.defaultValues;
-							var _urlName = paramDialogCtrl.tempParameter.urlName;
-							for(var rowIndex in _defaultValues){
-								var item = _defaultValues[rowIndex];
-								var toKeep = true;
-								for(var depIndex in _dataDependencies){
-									var currDep = _dataDependencies[depIndex];
-									if(currDep.parameterToChangeUrlName == _urlName){
-										var filterParam = paramDialogCtrl.tempParameter.PARAMETERS[currDep.objParFatherUrlName];
-										if(Array.isArray(filterParam)){
-											var testMultiCond = false;
-											for(var parIndex in filterParam){
-												testMultiCond = testMultiCond || testCondition(item[currDep.filterColumn.toUpperCase()], currDep.filterOperation, filterParam[parIndex]);
-											}
-											toKeep = testMultiCond;
-										}else if(!testCondition(item[currDep.filterColumn.toUpperCase()], currDep.filterOperation, filterParam)){
-											toKeep = false;
-											break;
-										}
-									}
-								}
-								if(toKeep){
-									paramDialogCtrl.tableData.push(item);
-								}
-							}
-						}else{
-							paramDialogCtrl.tableData = paramDialogCtrl.tempParameter.defaultValues;
-						}
-						
-						
+						// BACKEND FILTERING
+						var objPost = {};
+						objPost.OBJECT_LABEL = $scope.execProperties.executionInstance.OBJECT_LABEL;
+						objPost.ROLE = $scope.execProperties.selectedRole.name;
+						objPost.PARAMETER_ID = paramDialogCtrl.tempParameter.urlName;
+						objPost.MODE = 'extra';
+						objPost.PARAMETERS = paramDialogCtrl.tempParameter.PARAMETERS;
+
+						sbiModule_restServices.post(
+								"1.0/documentExeParameters",
+								"getParameters", objPost)
+						   .success(function(data, status, headers, config) {  
+							   if(data.status=="OK"){
+								   paramDialogCtrl.tableData = data.result.root;
+							   }
+						   });
+						   
 						paramDialogCtrl.initSelectedTableItems = function() {
 							var isMultivalue = paramDialogCtrl.tempParameter.multivalue;
 							var defaultValues = paramDialogCtrl.tempParameter.defaultValues;
