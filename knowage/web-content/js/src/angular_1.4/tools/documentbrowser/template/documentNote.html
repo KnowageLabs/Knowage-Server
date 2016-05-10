@@ -1,5 +1,5 @@
 <md-dialog id="dialogNote" layout="column" aria-label="Select type of download" ng-controller="noteController" ng-cloak>
-    <md-toolbar>
+    <md-toolbar class="secondaryToolbar">
       <div class="md-toolbar-tools">
         <h1>{{translate.load("sbi.execution.executionpage.toolbar.annotate")}}</h1>
         <span flex></span>
@@ -15,7 +15,7 @@
 			<md-tab>
 				<md-tab-label >Note</md-tab-label>
 				<md-tab-body>
-					<expander-box id="Info" color="white" background-color="rgb(63,81,181)" expanded="false" title="note.info">
+					<expander-box id="Info" color="white" expanded="false" title="'Info'" toolbar-class="ternaryToolbar">
 						<div layout="row" class="headerNote">
 				    		<span flex><h5>Owner:  {{noteLoaded.owner}} </h5></span>
 				    		<span flex><h5>Creation date:  {{noteLoaded.creationDate | asDate | date:'yyyy/MM/dd HH:mm:ss'}}</h5></span>
@@ -46,7 +46,7 @@
 				<div id="contentWhiteFrame" class="overflow" flex layout="column">
 					 <md-whiteframe class="md-whiteframe-4dp" layout-margin  ng-repeat = "nota in notesList" >
 			   					<div class="listNotes">
-			   					 <md-toolbar>
+			   					 <md-toolbar class="ternaryToolbar">
 								     <div class="md-toolbar-tools" layout="row" class="headerNote">
 							    		<span flex><h5>Owner:  {{nota.owner}} </h5></span>
 							    		<span flex><h5>Creation date:  {{nota.creationDate | asDate | date:'yyyy/MM/dd HH:mm:ss'}}</h5></span>
