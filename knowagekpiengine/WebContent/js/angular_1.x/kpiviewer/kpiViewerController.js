@@ -24,22 +24,12 @@
 		$scope.thresholdStops = documentData.kpiValue.threshold;
 		$scope.percentage=0;
 		$scope.translate = sbiModule_translate;
-
+		$scope.loadKpiValues = [];
+	
 		$scope.loadKpiValue = function(){
 			if($scope.documentData.template.chart.data.kpi != undefined){
-				var object = {
-						"kpi": $scope.documentData.template.chart.data.kpi,
-						"driverMap": $scope.documentData.driverMap,
-						"startValidity":"",
-						"endValidity":"",
-						"historicalSeries":$scope.documentData.template.chart.options.history.units,
-				};
-				
-				sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
-				sbiModule_restServices
-				.promisePost("1.0/kpi", 'loadKpiValue',object)
-				.then(function(response) {
-					var array =response.data;
+
+					var array =$scope.loadKpiValues;
 					
 					for(var j = 0; j < $scope.kpiItems.length; j++){
 						var kpiItem = $scope.kpiItems[j];
@@ -61,9 +51,7 @@
 						}
 					}
 
-				},function(response) {
-					console.log("Error get Kpi Value");
-				});
+			
 			}
 		};
 		
@@ -75,9 +63,9 @@
 
 				$scope.gaugeValue = null;
 				$scope.gaugeTargetValue = null;
-				
+				$scope.loadKpiValues = response.data.loadKpiValue;
 				if(chart.type == "kpi") {
-					if(Array.isArray(response.data)) {
+					if(Array.isArray(JSON.parse(response.data.info))) {
 						var templateKpi = $scope.documentData.template.chart.data.kpi;
 						if(!Array.isArray(templateKpi)) {
 							var array = [templateKpi];
@@ -87,8 +75,8 @@
 						var templateOptions = $scope.documentData.template.chart.options;
 						var templateStyle = $scope.documentData.template.chart.style;
 
-						for(var i = 0; i < response.data.length; i++) {
-							var responseItem = response.data[i];
+						for(var i = 0; i < JSON.parse(response.data.info).length; i++) {
+							var responseItem = JSON.parse(response.data.info)[i];
 
 							var responseItemKpi = responseItem.kpi;
 
@@ -113,7 +101,7 @@
 					
 					$scope.loadKpiValue();
 				} else { //scorecard
-					$scope.documentData.scorecard = response.data[0].scorecard;
+					$scope.documentData.scorecard = JSON.parse(response.data.info)[0].scorecard;
 				}
 			});
 		};
@@ -203,7 +191,6 @@
 					obj["value"] = $scope.value;
 					obj["comment"] = $scope.kpiValueToSave["manualNote"];
 					items.resolve(obj);
-					console.log("Saved");
 				},function(response){
 					$scope.errorHandler(response.data,"");
 				});

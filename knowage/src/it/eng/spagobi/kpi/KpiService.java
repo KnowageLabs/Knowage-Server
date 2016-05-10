@@ -18,6 +18,44 @@
 package it.eng.spagobi.kpi;
 
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
+
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.quartz.JobExecutionException;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -65,48 +103,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.quartz.JobExecutionException;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- * 
+ *
  */
 @Path("/1.0/kpi")
 @ManageAuthorization
@@ -274,7 +273,7 @@ public class KpiService {
 	 * Executes a given query over a given datasource (dataSourceId) limited by maxItem param. It uses existing backend to retrieve data and metadata, but the
 	 * resulting json is lightened in order to give back something like this: {"columns": [{"name": "column_1", "label": "order_id"},...], "rows": [{"column_1":
 	 * "1"},...]}
-	 * 
+	 *
 	 * @param req
 	 * @return
 	 * @throws EMFUserError
@@ -617,81 +616,6 @@ public class KpiService {
 	}
 
 	@POST
-	@Path("/loadKpiValue")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public Response loadKpiValue(@Context HttpServletRequest req) throws EMFUserError {
-		JSONArray array = new JSONArray();
-
-		try {
-
-			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
-			String historycalSeries = requestVal.getString("historicalSeries");
-			Map<String, String> attributesValues = new TreeMap<String, String>();
-			JSONObject objTemp = new JSONObject();
-			List<KpiValue> kpiValues;
-			Calendar startDate = Calendar.getInstance();
-			if (historycalSeries.equals("day")) {
-				startDate.add(Calendar.DAY_OF_MONTH, -1);
-			} else if (historycalSeries.equals("week")) {
-				startDate.add(Calendar.DAY_OF_MONTH, -7);
-			} else if (historycalSeries.equals("month")) {
-				startDate.add(Calendar.MONTH, -1);
-			} else if (historycalSeries.equals("quarter")) {
-				startDate.add(Calendar.MONTH, -3);
-			} else if (historycalSeries.equals("year")) {
-				startDate.add(Calendar.YEAR, -1);
-			}
-
-			if (requestVal.get("kpi") instanceof JSONObject) {
-				objTemp = requestVal.getJSONObject("kpi");
-				String s = requestVal.getString("driverMap");
-				String[] couples = s.replace("{", "").replace("}", "").split(",");
-				for (String c : couples) {
-					String[] keyvalue = c.split("=");
-					if (keyvalue.length != 1) {
-						attributesValues.put(keyvalue[0].trim(), keyvalue[1].trim());
-					}
-
-				}
-
-				kpiValues = DAOFactory.getNewKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), startDate.getTime(), new Date(),
-						attributesValues);
-				String result = new ObjectMapper().writeValueAsString(kpiValues);
-				array.put(result);
-			} else {
-				kpiValues = new ArrayList<>();
-				for (int i = 0; i < requestVal.getJSONArray("kpi").length(); i++) {
-					objTemp = requestVal.getJSONArray("kpi").getJSONObject(i);
-
-					String s = requestVal.getString("driverMap");
-					String[] couples = s.replace("{", "").replace("}", "").split(",");
-					for (String c : couples) {
-						String[] keyvalue = c.split("=");
-						if (keyvalue.length != 1) {
-							attributesValues.put(keyvalue[0].trim(), keyvalue[1].trim());
-						}
-
-					}
-					kpiValues = DAOFactory.getNewKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), startDate.getTime(), new Date(),
-							attributesValues);
-					String result = new ObjectMapper().writeValueAsString(kpiValues);
-					array.put(result);
-				}
-			}
-
-			return Response.ok(array.toString()).build();
-		} catch (
-
-		Throwable e)
-
-		{
-			logger.error(req.getPathInfo(), e);
-			return Response.ok(new JSError().addErrorKey("sbi.rememberme.errorWhileSaving")).build();
-		}
-
-	}
-
-	@POST
 	@Path("/editKpiValue")
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public void editKpiValue(@Context HttpServletRequest req) throws EMFUserError {
@@ -971,7 +895,7 @@ public class KpiService {
 
 	/**
 	 * Check if placeholders with default value are a subset of placeholders linked to measures used in kpi definition (ie kpi formula)
-	 * 
+	 *
 	 * @param servlet
 	 *            request
 	 * @param placeholder

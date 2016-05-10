@@ -135,14 +135,14 @@ author:
 %>
 
 <%
-// check for user profile autorization
-// 		IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		boolean canSee=false,canSeeAdmin=false;
-		if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.MANAGE_KPI_VALUE})){
-			canSee=true;
-		 canSeeAdmin=UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[]{SpagoBIConstants.MANAGE_KPI_VALUE});
-		}
+	// check for user profile autorization
+	// 		IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	boolean canSee = false;
 
+	if (UserUtilities.haveRoleAndAuthorization(profile, null, new String[] { SpagoBIConstants.MANAGE_KPI_VALUE })
+			|| UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0])) {
+		canSee = true;
+	}
 %>
 
 <%-- ---------------------------------------------------------------------- --%>
