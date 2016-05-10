@@ -47,7 +47,7 @@ function measureRuleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
 			previewData:{rows:[],metaData:{fields:[]}},
 	};
 	
-	$scope.errorHandler=function(text,title){
+	sbiModule_restServices.errorHandler=function(text,title){
 		var titleFin=title || "";
 		var textFin=text;
 		if(angular.isObject(text)){
@@ -119,7 +119,7 @@ function DialogSaveController($scope, $mdDialog,$mdToast,currentRule,originalRul
 						})
 					
 				},function(response){
-					$scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.save.success"));
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.save.error"));
 				});
 		  };
 		}
@@ -142,7 +142,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 			$scope.columnToRuleOutputs(response.data.columns);
 			deferred.resolve();
 		},function(response){
-			$scope.errorHandler(response.data,""+sbiModule_translate.load("sbi.kpi.rule.load.metadata.error")+""+sbiModule_translate.load("sbi.kpi.rule.query.wrong"));
+			sbiModule_restServices.errorHandler(response.data,""+sbiModule_translate.load("sbi.kpi.rule.load.metadata.error")+""+sbiModule_translate.load("sbi.kpi.rule.query.wrong"));
 			$scope.clearPreviewAndMetadata(true,true);
 			deferred.reject();
 		});
@@ -166,7 +166,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 				$scope.columnToRuleOutputs(response.data.columns);
 				angular.copy(response.data,$scope.detailProperty.previewData);
 			},function(response){
-				$scope.errorHandler(response.data,""+sbiModule_translate.load("sbi.kpi.rule.load.preview.error")+""+sbiModule_translate.load("sbi.kpi.rule.query.wrong"));
+				sbiModule_restServices.errorHandler(response.data,""+sbiModule_translate.load("sbi.kpi.rule.load.preview.error")+""+sbiModule_translate.load("sbi.kpi.rule.query.wrong"));
 				$scope.clearPreviewAndMetadata(true,false);
 				
 			});
@@ -239,9 +239,9 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
  	 		       });
  		},function(response){
  			if(response.hasOwnProperty("data")){
-				$scope.errorHandler(response.data); 
+				sbiModule_restServices.errorHandler(response.data); 
  			}else if(response.hasOwnProperty("text") || response.hasOwnProperty("title")){
- 				$scope.errorHandler(response.text,response.title); 
+ 				sbiModule_restServices.errorHandler(response.text,response.title); 
  			}
  			return;
  		})
@@ -304,7 +304,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 				deferred.resolve();
 			}
 		},function(response){
-			$scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.alias.error"));
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.alias.error"));
 			if(deferred){
 				deferred.reject();
 			}
@@ -321,7 +321,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 		.then(function(response){ 
 			angular.copy(response.data,$scope.placeholderList);
 		},function(response){
-			$scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.placeholder.error"));
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.placeholder.error"));
 		});
  	};
 // 	$scope.loadAliasList();
@@ -467,7 +467,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 							angular.element(document.getElementsByClassName("CodeMirror")[0])[0].CodeMirror.refresh();
 						},0)
 					},function(response){
-						$scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.rule.error"));
+						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.rule.error"));
 					});  
 				});
 	};
@@ -496,7 +496,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 			}
 			$scope.measureRuleList=response.data;
 			},function(response){
-				$scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.rule.list.error"));
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.rule.list.error"));
 		});
  	};
  	$scope.loadmeasureRuleList();
@@ -522,7 +522,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 						   $scope.loadmeasureRuleList();
 					   },
 					   function(response){
-						   $scope.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.remove.ko")); 
+						   sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.remove.ko")); 
 					   }); }, function() {
 		    console.log("annulla")
 		   });

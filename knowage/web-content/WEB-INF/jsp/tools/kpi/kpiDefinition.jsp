@@ -69,6 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           md-item-text="item.valueCd" 
           md-floating-label="Categoria"
           md-autoselect	="true"
+		  md-search-text-change="searchTextChange(kpi,searchText)"
          >
 		<md-item-template>
           <span md-highlight-text="searchText">{{item.valueCd}}</span>

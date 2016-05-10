@@ -535,14 +535,27 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	}
 
 };
-function DialogControllerKPI($scope,$mdDialog,items,AttributeCategoryList,kpi, translate){
+function DialogControllerKPI($scope,$mdDialog,items,AttributeCategoryList,kpi, translate,$timeout){
 	$scope.translate = translate;
 	$scope.AttributeCategoryList=AttributeCategoryList;
 	$scope.kpi=kpi;
+	$scope.tmpcategory;
 	$scope.close = function(){
 		$mdDialog.cancel();
 
 	}
+	
+	$scope.searchTextChange=function(kpi,searchTerm){
+		if((kpi.category==undefined || kpi.category=="") && searchTerm!=""){
+			$scope.tmpSearchterm=searchTerm; 
+			$timeout(function(){
+				if($scope.tmpSearchterm==searchTerm){
+					kpi.category={valueCd:angular.uppercase(searchTerm)}; 
+				}
+			},500)
+		}
+	}
+	
 	$scope.apply = function(){
 		$mdDialog.cancel();
 		items.resolve($scope.kpi);

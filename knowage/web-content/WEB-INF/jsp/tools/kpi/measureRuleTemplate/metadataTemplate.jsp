@@ -60,8 +60,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           md-items="item in querySearchCategory(searchText)"
           md-item-text="item.valueCd" 
           md-floating-label="{{translate.load('sbi.generic.category')}}"
-          md-autoselect	="true"
-          md-select-on-match="true"
+          md-autoselect	=true
+          md-select-on-match=true
+          md-search-text-change="searchTextChange(mtdValue,searchText)"
          >
         <md-item-template>
           <span md-highlight-text="searchText">{{item.valueCd}}</span>
