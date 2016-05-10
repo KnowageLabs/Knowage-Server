@@ -83,7 +83,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				 
 					
 					<!-- New Document -->
-					 <% if (UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.CREATE_DOCUMENT})) { %>			
+					 <% boolean canSee=false,canSeeAdmin=false;
+						if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.CREATE_DOCUMENT}) || 
+								UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0])){
+					%>			
 					<md-menu style="padding: 0;">
 				      <md-button aria-label="Create new document" class="md-fab md-mini" style="top: 0;" ng-click="$mdOpenMenu($event)">
 				        <md-icon md-menu-origin  md-font-icon="fa fa-plus" class="md-primary"></md-icon>
