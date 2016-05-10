@@ -84,7 +84,7 @@
 				</md-content> 	  	
 				<md-content layout="row" layout-align="start start">	
 					<md-button ng-click="createMasterHier()" ng-disabled="!dim || (!dateDim && !checkDateFilterDim(dimFilters))" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.hierarchies.new.create.master");}}</md-button>
-					<md-button ng-click="synchronizeMaster()" ng-disabled="dimensionsTable.length==0 ||  hierType.toUpperCase()!='MASTER' || !hierTree || hierTree.length == 0" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.hierarchies.synchronize");}}</md-button>
+					<md-button ng-click="synchronizeMaster()" ng-disabled="dimensionsTable.length==0 ||  hierType.toUpperCase()!='MASTER' || !hierTree || hierTree.length == 0 || (!dateDim && !checkDateFilterDim(dimFilters))" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.hierarchies.synchronize");}}</md-button>
 				</md-content>
 			</md-content>
 		</div>
