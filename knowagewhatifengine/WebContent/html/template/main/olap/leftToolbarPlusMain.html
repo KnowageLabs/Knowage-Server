@@ -1,5 +1,5 @@
 <div class="central-panel" layout="row" >
-	<div class='knowage-blue dimension-left-toolbar' layout="column" ng-drop="true" ng-drop-success="dropLeft($data,$event)">
+	<div id="leftaxis" class='knowage-blue dimension-left-toolbar' layout="column" ng-drop="true" ng-drop-success="dropLeft($data,$event)">
 		
 		<div style="min-width:32px; min-height:32px; margin-bottom: 2%;">
 			<md-button style="right:10px" class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('up')" ng-show="leftSliderNeeded">
@@ -19,7 +19,7 @@
 						<md-icon class="fa fa-sitemap" style="color:white;"></md-icon>
 					</md-button>
 					
-					<div class="name">
+					<div ng-class="row.hierarchies.length == 1 ? 'name':'name-multi'" title="{{row.name}}">
 						<div ng-class="row.hierarchies.length > 1 ? 'rotate-text-nop' : 'rotate-text'">{{row.name}}</div>
 					</div>	
 					

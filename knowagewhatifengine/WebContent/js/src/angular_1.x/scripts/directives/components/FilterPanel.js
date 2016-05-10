@@ -22,7 +22,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	angular.element(document).ready(function() {
 		$scope.sendMdxQuery('null');
+		
 	});
+	
 	
 	$scope.clearLoadedData = function(name){
 		for(var i=0; i< $scope.dataPointers.length; i++){
@@ -576,6 +578,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			$scope.sendModelConfig($scope.modelConfig);
 			if($scope.modelConfig.whatIfScenario)
 				$scope.getVersions();
+			axisSizeSetup();
+			
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("An error occured while sending MDX query", 'Error');
 			
@@ -616,6 +620,12 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			}
 			
 		}
+	};
+	axisSizeSetup = function(){
+		var taw = document.getElementById("topaxis").offsetWidth - 66;
+		var lah = document.getElementById("leftaxis").offsetHeight - 66;
+		$scope.maxCols = Math.round(taw/200);
+		$scope.maxRows = Math.round(lah/165);
 	};
 };
 

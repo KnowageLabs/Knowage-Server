@@ -1,12 +1,12 @@
 <div layout="row" class="top-axis">
 
-	<md-toolbar class='md-toolbar-tools knowage-blue swapaxes swap-axis-area' ng-click="swapAxis()">
+	<md-toolbar class='md-toolbar-tools knowage-blue swapaxes swap-axis-area' ng-click="swapAxis()" style="width:33px">
 		&nbsp;
 	</md-toolbar>
 	
-	<md-toolbar class='md-toolbar-tools knowage-blue dimension-top-toolbar' ng-drop="true" ng-drop-success="dropTop($data,$event)" style="width:95%" layout="column">
+	<md-toolbar id="topaxis" class='md-toolbar-tools knowage-blue dimension-top-toolbar' ng-drop="true" ng-drop-success="dropTop($data,$event)" style="width:95%" layout="column">
 
-		<div class="top-shift">
+		<div class="top-shift" style="min-width:32px">
 			<md-button class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('left')" ng-show="topSliderNeeded"><!-- topSliderNeeded -->
 				<md-icon md-font-icon="fa fa-arrow-circle-o-left fa-2x" ></md-icon>
 			</md-button>
@@ -19,7 +19,7 @@
 				<md-icon class="fa fa-sitemap" style="color:white;"></md-icon>
 			</md-button>
 			
-			<div class="name">{{column.name}}</div>
+			<div class="name" title="{{column.name}}">{{column.name}}</div>
 			
 			<div class="action">
 				<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, column, null)">
