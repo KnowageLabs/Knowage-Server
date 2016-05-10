@@ -116,13 +116,9 @@
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="SAVE_REMEMBER_ME" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="DO_MASSIVE_EXPORT" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="EDIT_WORKSHEET" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_FAVOURITES" organization="DEFAULT_TENANT"/>
@@ -130,14 +126,11 @@
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_TODO_LIST" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="CREATE_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="VIEW_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="HIERARCHIES_MANAGEMENT" organization="DEFAULT_TENANT"/>		
 		<AUTHORIZATION productType="KnowageSI" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>
 		<!-- Authorizations for KnowageER -->
 		<AUTHORIZATION productType="KnowageER" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
@@ -146,12 +139,9 @@
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageER" authorizationName="SAVE_REMEMBER_ME" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageER" authorizationName="DO_MASSIVE_EXPORT" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageER" authorizationName="EDIT_WORKSHEET" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_FAVOURITES" organization="DEFAULT_TENANT"/>
@@ -159,158 +149,10 @@
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_TODO_LIST" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageER" authorizationName="CREATE_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageER" authorizationName="VIEW_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="HIERARCHIES_MANAGEMENT" organization="DEFAULT_TENANT"/>		
 		<AUTHORIZATION productType="KnowageER" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
 		<AUTHORIZATION productType="KnowageER" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageER" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>
-		<!-- Authorizations for KnowagePA -->
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_REMEMBER_ME" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="DO_MASSIVE_EXPORT" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="EDIT_WORKSHEET" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_FAVOURITES" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_SUBSCRIPTIONS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_TODO_LIST" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="CREATE_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="VIEW_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="HIERARCHIES_MANAGEMENT" organization="DEFAULT_TENANT"/>		
-		<AUTHORIZATION productType="KnowagePA" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
-		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>
-		<!-- Authorizations for KnowageLI -->
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SAVE_REMEMBER_ME" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="DO_MASSIVE_EXPORT" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="EDIT_WORKSHEET" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_FAVOURITES" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_SUBSCRIPTIONS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_TODO_LIST" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="CREATE_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="VIEW_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="HIERARCHIES_MANAGEMENT" organization="DEFAULT_TENANT"/>		
-		<AUTHORIZATION productType="KnowageLI" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
-		<AUTHORIZATION productType="KnowageLI" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>	
-		<!-- Authorizations for KnowagePM -->
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_REMEMBER_ME" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="DO_MASSIVE_EXPORT" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="EDIT_WORKSHEET" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_FAVOURITES" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_SUBSCRIPTIONS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_TODO_LIST" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="CREATE_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="VIEW_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="HIERARCHIES_MANAGEMENT" organization="DEFAULT_TENANT"/>		
-		<AUTHORIZATION productType="KnowagePM" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
-		<AUTHORIZATION productType="KnowagePM" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>	
-		<!-- Authorizations for KnowageEI -->
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SAVE_REMEMBER_ME" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="DO_MASSIVE_EXPORT" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="EDIT_WORKSHEET" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SEE_FAVOURITES" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SEE_SUBSCRIPTIONS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="SEE_TODO_LIST" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="CREATE_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="VIEW_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="HIERARCHIES_MANAGEMENT" organization="DEFAULT_TENANT"/>		
-		<AUTHORIZATION productType="KnowageEI" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
-		<AUTHORIZATION productType="KnowageEI" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageEI" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>	
-		<!-- Authorizations for KnowageOD -->
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SAVE_REMEMBER_ME" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="DO_MASSIVE_EXPORT" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="EDIT_WORKSHEET" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SEE_FAVOURITES" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SEE_SUBSCRIPTIONS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="SEE_TODO_LIST" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="CREATE_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="VIEW_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="HIERARCHIES_MANAGEMENT" organization="DEFAULT_TENANT"/>		
-		<AUTHORIZATION productType="KnowageOD" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
-		<AUTHORIZATION productType="KnowageOD" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageOD" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>
 	</DEFAULT_AUTHORIZATIONS>
 </INTERNAL_PROFILING_INITIALIZER>
