@@ -831,13 +831,15 @@ $scope.deleteCC = function(calculateMemberName) {
 	};
 	
 	$scope.hideSwitchIcon = function(position,axis){
-		var lastRow = $scope.maxRows + $scope.leftStart -1; 
-		if(axis == 1){
-			if(position == $scope.rows.length-1)
-				return true;
-			if($scope.rows.length > $scope.maxRows && lastRow == position)
-				return true;
-		}
+		var max = axis == 1 ? $scope.maxRows : $scope.maxCols;
+		var last = axis == 1 ?  $scope.maxRows + $scope.leftStart -1 : $scope.maxCols + $scope.topStart -1
+		var length = axis == 1 ? $scope.rows.length : $scope.columns.length;
+
+		if(position == length-1)
+			return true;
+		if(length > max && last == position)
+			return true;
+
 		return false;
 		
 	}

@@ -702,3 +702,16 @@ md-option[selected], md-select-menu md-option[selected]{
 		height:20%;
 		width: 100%;
 }
+
+.swap-axis-area{
+	 background-color:white!important;
+	 width:33px; 
+	 cursor:pointer;
+}
+
+.top-shift{
+	min-width:32px;
+	min-height:32px;
+	/*margin-right:1%;*/
+	padding-bottom: 5px;
+}

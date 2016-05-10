@@ -1,13 +1,13 @@
 <div layout="row" class="top-axis">
 
-	<md-toolbar class='md-toolbar-tools knowage-blue swapaxes' style='background-color:white!important;width:33px; cursor:pointer;' ng-click="swapAxis()">
+	<md-toolbar class='md-toolbar-tools knowage-blue swapaxes swap-axis-area' ng-click="swapAxis()">
 		&nbsp;
 	</md-toolbar>
 	
 	<md-toolbar class='md-toolbar-tools knowage-blue dimension-top-toolbar' ng-drop="true" ng-drop-success="dropTop($data,$event)" style="width:95%" layout="column">
 
-		<div style="min-width:32px;min-height:32px; margin-right:1%;">
-			<md-button class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('left')" ng-show="topSliderNeeded"><!--  -->
+		<div class="top-shift">
+			<md-button class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('left')" ng-show="topSliderNeeded"><!-- topSliderNeeded -->
 				<md-icon md-font-icon="fa fa-arrow-circle-o-left fa-2x" ></md-icon>
 			</md-button>
 		</div >
@@ -27,7 +27,7 @@
 				</md-button>
 			</div>
 		</div>
-		<div ng-hide="column.positionInAxis == columns.length-1">
+		<div ng-hide="hideSwitchIcon(column.positionInAxis,0)"> <!-- column.positionInAxis == columns.length-1 -->
 			<md-button class="md-icon-button" style="margin-left:0px!important;margin-right:0px!important;" ng-click="switchPosition(column)">
 				<md-icon md-font-icon="fa fa-arrows-h" style="color:white;"></md-icon>	
 			</md-button>
@@ -35,7 +35,7 @@
 		</div>
 		</div>
 		
-		<div style="min-width:32px;min-height:32px;margin-left:1%">
+		<div class="top-shift">
 			<md-button class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('right')"  ng-show="topSliderNeeded"><!--  -->
 				<md-icon md-font-icon="fa fa-arrow-circle-o-right fa-2x" ></md-icon>
 			</md-button>
