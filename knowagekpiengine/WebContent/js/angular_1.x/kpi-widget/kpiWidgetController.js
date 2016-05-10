@@ -32,14 +32,17 @@
 
 	function kpiWidgetController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_restServices,sbiModule_translate,sbiModule_config,$interval){
 		$scope.translate = sbiModule_translate;
+		$scope.data = [{
+			"values" : []
+		}];
 		
 		if($scope.precision) {
 			if($scope.value) {
-				$scope.value = $scope.value.toFixed($scope.precision);
+				$scope.value = Number($scope.value.toFixed($scope.precision));
 			}
 			
 			if($scope.targetValue) {
-				$scope.targetValue = $scope.targetValue.toFixed($scope.precision);
+				$scope.targetValue = Number($scope.targetValue.toFixed($scope.precision));
 			}
 		}
 
@@ -77,17 +80,28 @@
 		};
 
 		
-		var initValueSeries= $interval(function() {
+		$scope.$watch('valueSeries',function (newValue, oldValue) {
+		
+				var values = $scope.convertToStackedAreaChartData(newValue);
+				$scope.data = [{"values" :	values}];
+				console.log(values);
+			
+		}
+		, true);
+	/*	var initValueSeries= $interval(function() {
 		       if ($scope.valueSeries!=undefined) {
 		             if (angular.isDefined(initValueSeries)) {
 		                 $interval.cancel(initValueSeries);
 		                 initValueSeries = undefined;
-		                 var values = $scope.convertToStackedAreaChartData($scope.valueSeries);
-		 				$scope.data = [{"values" :	values}];
+		                 if($scope.data[0].values!=undefined){
+		                	 var values = $scope.convertToStackedAreaChartData($scope.valueSeries);
+				 			$scope.data = [{"values" :	values}];
+		                 }
+		                
 		               }
 		         }
 		       }, 500,10);
-
+*/
 		$scope.convertToStackedAreaChartData= function(arrKpi){
 			var array = [];
 			if(arrKpi!=undefined){
@@ -98,17 +112,14 @@
 					}else{
 						arrTemp.push(arrKpi[i].timeRun,arrKpi[i].computedValue);
 					}
-
+					
 					array.push(arrTemp);
 				}
-
+				
 				return array;
 			}
 		};
 
-		$scope.data = [{
-			"values" : []
-		}];
 		
 		$scope.getValueToShow = function(){
 			var valueToShow = '-';
@@ -201,7 +212,7 @@
 	function DialogController($scope,$mdDialog,$mdToast,sbiModule_restServices,sbiModule_config,sbiModule_translate,items,label,value,targetValue,valueSeries){
 
 		$scope.label = label;
-		$scope.value = value;
+		$scope.value =value;
 		$scope.targetValue =targetValue;
 		$scope.valueSeries = valueSeries;
 		$scope.array = [];
@@ -254,7 +265,6 @@
 					$scope.valueSeries.manualValue = $scope.value;
 					//obj["valueSeries"] = $scope.valueSeries;
 					items.resolve(obj);
-					console.log("Saved");
 				},function(response){
 					$scope.errorHandler(response.data,"");
 				});
