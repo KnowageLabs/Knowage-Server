@@ -517,12 +517,14 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		});
 	  };
 	  $scope.closeDialog = function(ev) {
-		  $mdDialog.cancel();
+		  
 		  $scope.dtData = [];
 		  $scope.dtAssociatedLevels = [];
 		  $scope.selectedMDXFunction = {};
 		  $scope.selectedMDXFunctionName ="";
 		  $scope.selectedCrossNavigation = null;
+		  $scope.selectedTab= 0;
+		  $mdDialog.cancel();
       }; 
      
       $scope.showCCWizard = function(){
@@ -534,7 +536,6 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
     				preserveScope : true,
     				controllerAs : 'olapCtrl',
     				templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/calculatedFields.html',
-    				//targetEvent : ev,
     				clickOutsideToClose : false,
     				hasBackdrop:false
     			});
@@ -701,6 +702,8 @@ $scope.sendCC = function() {
 	
 	if($scope.selectedMDXFunction.output != "Set"){
 	
+		$scope.addCC();
+		
 		var namedMember = {
 				'docName': sbiModule_docInfo.label,
 				'name':$scope.selectedMDXFunctionName,
@@ -721,7 +724,7 @@ $scope.sendCC = function() {
 		$cookies.putObject('data',$scope.cookieArray);
 		sbiModule_messaging.showSuccessMessage("Member is saved", 'Success');
 	
-		$scope.addCC();
+		
 	}
 	
 	if($scope.selectedMDXFunction.output == "Set"){
@@ -749,6 +752,7 @@ $scope.sendCC = function() {
 	
 	$scope.selectedMDXFunction = {}; 
 	$scope.selectedMDXFunctionName ="";
+	$scope.selectedTab= 0;
 	$mdDialog.hide();
 	}
 	
@@ -809,7 +813,7 @@ $scope.addCC = function() {
 			$scope.handleResponse(response);
 		    }, function(response) {
 			sbiModule_messaging.showErrorMessage("Error adding Calculated Field", 'Error');
-			
+			$scope.selectedMDXFunction = {};
 				});
 		}
 
