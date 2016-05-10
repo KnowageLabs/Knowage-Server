@@ -16,7 +16,7 @@
 		<div class="md-dialog-content-body"	md-template="::paramDialogCtrl.mdContent"></div>
 		
 		<component-tree ng-model="paramDialogCtrl.tempParameter.children" subnode-key="children" 
-				text-to-show-key="value" drag-enabled="false"
+				text-to-show-key="description" drag-enabled="false"
 				multi-select="::paramDialogCtrl.tempParameter.multivalue"
 				click-function="paramDialogCtrl.setTreeParameterValue(node)"
 				is-folder-fn="paramDialogCtrl.isFolderFn(node)"

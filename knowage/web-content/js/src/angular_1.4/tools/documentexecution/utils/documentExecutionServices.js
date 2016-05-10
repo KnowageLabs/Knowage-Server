@@ -137,17 +137,18 @@
 				return result;
 			},
 					
-			recursiveChildrenChecks : function(parameterValue, childrenArray) {
+			recursiveChildrenChecks : function(parameterValue,parameterDescription,childrenArray) {
 				childrenArray = childrenArray || [];
 				for(var i = 0; i < childrenArray.length; i++) {
 					var childItem = childrenArray[i];
 					if(childItem.checked && childItem.checked == true) {
 //						parameterValue.push(childItem);
 						parameterValue.push(childItem.value);
+						parameterDescription[childItem.value]=childItem.description;
 					}
 					
 					if(!childItem.leaf) {
-						documentExecuteServicesObj.recursiveChildrenChecks(parameterValue, childItem.children);
+						documentExecuteServicesObj.recursiveChildrenChecks(parameterValue,parameterDescription,childItem.children);
 					}
 				}
 			},
@@ -195,12 +196,12 @@
 			setParameterValueResult: function(parameter) {	
 				if(parameter.selectionType.toLowerCase() == 'tree') {
 					if(parameter.multivalue) {
-						
 						var toReturn = '';
 						
 						parameter.parameterValue =  [];
+						parameter.parameterDescription =  {};
 						
-						documentExecuteServicesObj.recursiveChildrenChecks(parameter.parameterValue, parameter.children);
+						documentExecuteServicesObj.recursiveChildrenChecks(parameter.parameterValue,parameter.parameterDescription, parameter.children);
 						
 						for(var i = 0; i < parameter.parameterValue.length; i++) {
 							var parameterValueItem = parameter.parameterValue[i];
@@ -217,6 +218,8 @@
 					} else {
 						parameter.parameterValue = (parameter.parameterValue)?
 								[parameter.parameterValue] : []
+						parameter.parameterDescription = (parameter.parameterDescription)?
+								[parameter.parameterDescription] : {}
 								
 						return (parameter.parameterValue && parameter.parameterValue.value)?
 								parameter.parameterValue.value : '';

@@ -76,6 +76,9 @@
 					ng-show="parameter.parameterValue && parameter.parameterValue.length > 0">
 				
 				<md-chips ng-model="parameter.parameterValue" readonly="true">
+					 <md-chip-template>
+				          <strong>{{parameter.parameterDescription[$chip]}}</strong>
+			        </md-chip-template>
 				</md-chips>
 			</span>
 			<!--
