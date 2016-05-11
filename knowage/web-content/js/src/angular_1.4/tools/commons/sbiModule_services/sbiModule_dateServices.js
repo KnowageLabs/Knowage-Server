@@ -7,6 +7,10 @@ angular.module("sbiModule").service("sbiModule_dateServices",function(sbiModule_
 		return dateTime==0 ? undefined : new Date(dateTime);
 	}
 	
+	this.formatDate=function(value,pattern){
+		return formatDate(value,pattern);
+	}
+	
 	// ===================================================================
 	// Author: Matt Kruse <matt@mattkruse.com>
 	// WWW: http://www.mattkruse.com/
