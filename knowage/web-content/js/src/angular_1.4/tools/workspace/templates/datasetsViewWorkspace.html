@@ -1,11 +1,11 @@
 
 <md-content layout="row" flex>
- <md-content  flex>
+ <md-content flex layout="column" layout-fill class="rightPanelDocuments">
   <md-tabs md-dynamic-height="true">
   
     <md-tab label="My data set" flex ng-click="switchTab('myDataSet')">
        <md-tab-body>
- 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="myDatasets"
+ 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="myDatasets"
 		show-grid-view="showGridView"
 		show-qbe-enabled="true"
 		show-detail-dataset-enabled="true"
@@ -20,7 +20,7 @@
  	</md-tab>  
  	<md-tab label="Enterprise data set" flex ng-click="switchTab('enterpriseDataSet')">
      <md-tab-body>
- 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="enterpriseDatasets"
+ 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="enterpriseDatasets"
 		show-grid-view="showGridView"
 		show-qbe-enabled="true"
 		show-detail-dataset-enabled="true"
@@ -34,7 +34,7 @@
  	</md-tab>  
  	<md-tab label="Shared data set" flex ng-click="switchTab('sharedDataSet')">
       <md-tab-body>
- 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="sharedDatasets"
+ 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="sharedDatasets"
 		show-grid-view="showGridView"
 		show-qbe-enabled="true"
 		show-detail-dataset-enabled="false"
@@ -49,7 +49,7 @@
  	
  	<md-tab label="All data set" flex ng-click="switchTab('allDataSet')">
       <md-tab-body>
- 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto; position: absolute;' ng-model="datasets"
+ 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="datasets"
 		show-grid-view="showGridView"
 		show-qbe-enabled="true"
 		show-detail-dataset-enabled="true"
@@ -75,7 +75,7 @@
 									<md-icon md-font-icon="fa fa-share-alt" ></md-icon>
 							</md-button>
 							
-							<md-button title="Preview Dataset" aria-label="Preview Dataset" class="md-icon-button" ng-click="">
+							<md-button title="Preview Dataset" aria-label="Preview Dataset" class="md-icon-button" ng-click="previewDataset(selectedDataset)">
 									<md-icon md-font-icon="fa fa-eye"></md-icon>
 							</md-button>
 							
@@ -86,7 +86,7 @@
 							<md-button title="Help Online" aria-label="Help Online" class="md-icon-button" ng-click="showHelpOnline(selectedDataset)">
 									<md-icon md-font-icon="fa fa-question-circle"></md-icon>
 							</md-button>
-		                    <md-button title="Open qbe" aria-label="Open qbe" class="md-icon-button" ng-click="">
+		                    <md-button title="Open qbe" aria-label="Open qbe" class="md-icon-button" ng-click="showQbeDataset(selectedDataset)">
 									<md-icon md-font-icon="fa fa-search"></md-icon>
 							</md-button>
 							 <md-button title="Show Detail" aria-label="Show detail" class="md-icon-button" ng-click="">

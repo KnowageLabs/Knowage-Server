@@ -2,22 +2,30 @@
  <md-content flex>
   <md-tabs md-dynamic-height="true">
     
-        <md-tab label="Business Models" flex>
+        <md-tab label="Business Models" ng-click="switchTab('businessModels')" flex>
 	   <md-content>
  	  <federation-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="businessModels"
 		show-grid-view="showGridView"
+		edit-enabled=false
+		delete-enabled=false
+		showQbeFromBM
+		show-federation-action="showQbeFromBM(fed)"
+		show-business-models=true
  	  ></federation-view>	
  	 </md-content>
  	</md-tab> 
    
-	<md-tab label="Federation definitions" flex>
+	<md-tab label="Federation definitions" ng-click="switchTab('federations')" flex>
         <md-content>
  	<federation-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="federationDefinitions"
 		show-grid-view="showGridView"
 		selected-federation=selectedFederation
+		edit-enabled=true
 		edit-federation-action="editFederation(fed)"
+		delete-enabled=true
 		delete-federation-action="deleteFederation(fed)"
 		show-federation-action="showQbeFederation(fed)"
+		show-business-models=false
  	  ></federation-view>	
         </md-content>
  	</md-tab>  

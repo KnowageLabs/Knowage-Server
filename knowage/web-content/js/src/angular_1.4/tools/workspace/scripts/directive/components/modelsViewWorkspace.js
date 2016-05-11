@@ -53,7 +53,8 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		
 		var url= sbiModule_config.engineUrls.worksheetServiceUrl
 		         +'&ACTION_NAME='+actionName
-		         +'&FEDERATION_ID='+federationId;
+		         +'&FEDERATION_ID='+federationId
+		         + '&label='+federation.label;
 		        // +'&DATASOURCE_FOR_CACHE=knowage';
 		 $window.location.href=url;
 		
@@ -107,13 +108,49 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		});
 	}
 	
+	$scope.createFederation=function(){
+		
+		$mdDialog.show({
+			  scope:$scope,
+			  preserveScope: true,
+		      controller: DialogEditFederationController,
+		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',  
+		      clickOutsideToClose:true,
+		      escapeToClose :true,
+		      fullscreen: true,
+		      locals:{federation:undefined}
+		    })
+	}
+	
+	$scope.showQbeFromBM=function(businessModel){
+		console.log(businessModel);
+		var actionName= 'QBE_ENGINE_START_ACTION_FROM_BM';
+		var modelName= businessModel.name;
+		var dataSource=businessModel.dataSourceLabel;
+		
+		var url= sbiModule_config.engineUrls.worksheetServiceUrl
+		         +'&ACTION_NAME='+actionName
+		         +'&MODEL_NAME='+modelName
+		         +'&isWorksheetEnabled=true'
+		         +'&DATA_SOURCE_LABEL='+ dataSource;
+		       
+		 $window.location.href=url;
+	}
+	
 	function DialogEditFederationController($scope,$mdDialog,sbiModule_config,federation){
+	
 		$scope.closeDialogFromExt=function(){
 			 $mdDialog.cancel();	 
-			 //$scope.loadFederations();
+			
 		}
-		var id = federation.federation_id;
+		if(federation!==undefined){
+		var id =federation.federation_id;
 		var label = federation.label;
 		$scope.iframeUrl=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp&id="+id+"&label="+label;
-	}
+		}else{
+			
+		$scope.iframeUrl=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp";	
+		}
+		
+		}
 }

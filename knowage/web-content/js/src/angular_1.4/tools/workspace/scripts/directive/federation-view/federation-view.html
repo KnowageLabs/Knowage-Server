@@ -22,7 +22,8 @@
 				            </md-tooltip>
 				          </md-card-title-text>
 				    </md-card-title>
-				    <div class="md-card-image workspace_image_federation"></div>
+				    <div class="md-card-image workspace_image_federation" ng-if="!showBusinessModels"></div>
+				    <div class="md-card-image workspace_image_metamodel" ng-if="showBusinessModels"></div>
 <!--  			        <img src="/knowage/themes/sbi_default/img/metamodel/federation.png" class="md-card-image" alt="image caption">  -->
 			        <md-card-actions layout="row" layout-align="space-around end">
 			          <md-button class="md-icon-button" aria-label="showQbe" ng-click="showFederationAction({fed:federation});">
@@ -32,7 +33,7 @@
 				            </md-tooltip>
 			          </md-button>
 			          
-			          <md-button class="md-icon-button" aria-label="edit" ng-click="editFederationAction({fed:federation});">
+			          <md-button class="md-icon-button" aria-label="edit" ng-show="editEnabled" ng-click="editFederationAction({fed:federation});">
 			            <md-icon md-font-icon="fa  fa-pencil fa-2x"></md-icon>
 			            <md-tooltip md-delay="1000">
 				              edit
@@ -47,7 +48,7 @@
 <!-- 			            <md-icon md-font-icon="fa fa-clone fa-2x"></md-icon> -->
 <!-- 			          </md-button> -->
 			          
-			          <md-button class="md-icon-button" aria-label="delete" ng-if="deleteFederationAction != undefined" ng-click="deleteFederationAction({fed:federation});">
+			          <md-button class="md-icon-button" aria-label="delete" ng-show="deleteEnabled" ng-click="deleteFederationAction({fed:federation});">
 			            <md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
 			            <md-tooltip md-delay="1000">
 				              delete

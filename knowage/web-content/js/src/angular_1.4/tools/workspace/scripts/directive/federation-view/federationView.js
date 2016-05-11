@@ -11,11 +11,14 @@ angular.module('federation_view', ['ngMaterial'])
 			selectedFederation:"=?",
 			selectFederationAction:"&",
 			showFederationAction:"&",
+			editEnabled:"=?",
 			editFederationAction:"&",
 			//cloneDocumentAction:"&",
+			deleteEnabled:"=?",
 			deleteFederationAction:"&",
 			//executeDocumentAction:"&",
 			orderingFederationCards:"=?",
+			showBusinessModels:"=?",
 		},
 		
 		link: function (scope, elem, attrs) { 

@@ -1,5 +1,5 @@
-<md-dialog flex style="height:100%; width:100%; max-width: 100%;  max-height: 100%;" ng-cloak>
-
+<md-dialog  flex style="height:100%; width:100%; max-height:100%; max-width:100%" ng-cloak>
+    <md-content flex>
     	<md-toolbar>
     	
       <div class="md-toolbar-tools">
@@ -11,31 +11,33 @@
       </div>   
     </md-toolbar>
     
-<!--     <md-toolbar class="documentBrowserToolbar secondaryToolbar" > -->
-<!-- 				<div class="md-toolbar-tools" layout="row" layout-align="center center"> -->
-<!-- 				   <md-button class="md-fab md-mini" aria-label="backPagination" ng-click="getBackPreviewSet()"> -->
-<!--           <md-icon class="fa fa-angle-double-left"></md-icon> -->
-<!--         </md-button> -->
-<!--         <span flex></span> -->
-<!--         <div> 1-15/100 </div> -->
-<!--         <span flex></span> -->
-<!--              <md-button class="md-fab md-mini" aria-label="forwardPagination" ng-click="getNextPreviewSet()"> -->
-<!--           <md-icon class="fa fa-angle-double-right"></md-icon> -->
-<!--         </md-button> -->
-<!--     </div> -->
-<!--     </md-toolbar> -->
-<!--     <br> -->
- <md-content flex>
+    <md-toolbar class="documentBrowserToolbar secondaryToolbar" ng-show="previewPaginationEnabled" >
+				<div class="md-toolbar-tools" layout="row" layout-align="center center">
+				   <md-button class="md-fab md-mini" aria-label="backPagination" ng-click="getBackPreviewSet()">
+          <md-icon class="fa fa-angle-double-left"></md-icon>
+        </md-button>
+        <span flex></span>
+        <div>{{startPreviewIndex+1 +'&nbsp-&nbsp'+ endPreviewIndex + '&nbsp/&nbsp'+totalItemsInPreview}} </div>
+        <span flex></span>
+             <md-button class="md-fab md-mini" aria-label="forwardPagination" ng-click="getNextPreviewSet()">
+          <md-icon class="fa fa-angle-double-right"></md-icon>
+        </md-button>
+    </div>
+    </md-toolbar>
+    <br>
+
+ <md-content flex style="height:85%">
 	<angular-table 
-	            style='position: relative;'
-	            layout-fill
+	            flex
+	            style="position:absolute;"
 	            ng-model="previewDatasetModel"
 				columns="previewDatasetColumns" 
-				no-pagination="false" 
+				no-pagination="true" 
 				show-search-bar=false
 				full-width
 				>
 	</angular-table>
 	
  </md-content>
+</md-content>
 </md-dialog>
