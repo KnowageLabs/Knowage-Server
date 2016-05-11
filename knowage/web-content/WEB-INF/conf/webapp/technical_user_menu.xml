@@ -155,8 +155,14 @@
 		</ITEM>		
 		<ITEM code="menu_tools" title="#menu.ToolsMenu" groupingMenu="true"	iconCls="build">
 
-			<ITEM title="#menu.Scheduler" functionality="SchedulerManagement"
+			<ITEM title="Scheduler Old" functionality="SchedulerManagement"
 			url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_SCHEDULER_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+			iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/scheduleIcon16.png" />
+			<ITEM title="#menu.Scheduler" functionality="SchedulerManagement"
+			url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_SCHEDULER_ACTION_ANGULARJS&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+			iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/scheduleIcon16.png" />
+			<ITEM title="#menu.SchedulerMonitor" functionality="SchedulerManagement"
+			url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_SCHEDULER_MONITOR_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 			iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/scheduleIcon16.png" />
 			<!--url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=JobManagementPage&amp;MESSAGEDET=MESSAGE_GET_ALL_JOBS&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" -->
 			<ITEM title="#menu.HierarchiesEditor" functionality="HierarchiesManagement"

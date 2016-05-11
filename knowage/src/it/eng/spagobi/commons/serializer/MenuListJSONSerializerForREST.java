@@ -140,7 +140,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			List filteredMenuList = (List) o;
 			JSONArray tempFirstLevelMenuList = new JSONArray();
 			JSONArray userMenu = new JSONArray();
-			if (filteredMenuList != null && !filteredMenuList.isEmpty()) {
+			if (!UserUtilities.isTechnicalUser(this.getUserProfile())) {
+				userMenu = createEndUserMenu(locale, 1, new JSONArray());
+			} else if (filteredMenuList != null && !filteredMenuList.isEmpty()) {
 				result = new JSONObject();
 
 				JSONArray menuUserList = new JSONArray();
@@ -255,22 +257,14 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							}
 
 							if (menuElem.getHasChildren()) {
-
 								List lstChildrenLev2 = menuElem.getLstChildren();
 								JSONArray tempMenuList = (JSONArray) getChildren(lstChildrenLev2, 1, locale);
 								temp.put(MENU, tempMenuList);
 							}
 							userMenu.put(temp);
 						}
-
 					}
 				}
-
-			}
-
-			if (!UserUtilities.isTechnicalUser(this.getUserProfile())) {
-				userMenu = createEndUserMenu(locale, 1, new JSONArray());
-
 			}
 
 			JSONArray fixedMenuPart = createFixedMenu(locale, 1, new JSONArray());
@@ -617,7 +611,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		MessageBuilder messageBuilder = new MessageBuilder();
 
-		JSONObject spacer = new JSONObject();
 		JSONObject lang = createMenuItem("flag", "", messageBuilder.getMessage("menu.Languages", locale), false, "LANG");
 
 		JSONObject roles = createMenuItem("assignment_ind", "", messageBuilder.getMessage("menu.RoleSelection", locale), false, "ROLE");
@@ -676,12 +669,16 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			if (childElem.getName().startsWith("#")) {
 				String titleCode = childElem.getName().substring(1);
 
-				if (titleCode.equals("menu.ServerManager")) {
-					try {
+				try {
+					switch (titleCode) {
+					case "menu.ServerManager":
+					case "menu.SchedulerMonitor":
+					case "menu.CacheManagement":
 						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
-					} catch (ClassNotFoundException e) {
-						return tempMenuList;
+						break;
 					}
+				} catch (ClassNotFoundException e) {
+					return tempMenuList;
 				}
 
 				text = msgBuild.getMessage(titleCode, locale);

@@ -4,6 +4,11 @@
  <ACTION name="MANAGE_SCHEDULER_ACTION" class="it.eng.spagobi.tools.scheduler.services.ManageSchedulerAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
- 
+ <ACTION name="MANAGE_SCHEDULER_ACTION_ANGULARJS" class="it.eng.spagobi.tools.scheduler.services.ManageSchedulerAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="MANAGE_SCHEDULER_MONITOR_ACTION" class="it.eng.spagobi.tools.scheduler.services.ManageSchedulerAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
 
 </ACTIONS>

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <BUSINESS_MAP>
 	<MAP_ACTIONS>
-		<MAP_ACTION actionName="MANAGE_SCHEDULER_ACTION"  businessProcess="SchedulerManagement"/>
+		<MAP_ACTION actionName="MANAGE_SCHEDULER_ACTION" businessProcess="SchedulerManagement"/>
+		<MAP_ACTION actionName="MANAGE_SCHEDULER_ACTION_ANGULARJS" businessProcess="SchedulerManagement"/>
+		<MAP_ACTION actionName="MANAGE_SCHEDULER_MONITOR_ACTION" businessProcess="SchedulerManagement"/>
 	</MAP_ACTIONS>
 	
 	<MAP_PAGE_MODULES>
