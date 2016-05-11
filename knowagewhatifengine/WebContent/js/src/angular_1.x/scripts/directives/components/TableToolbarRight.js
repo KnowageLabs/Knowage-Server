@@ -62,7 +62,6 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	filterXMLResult = function(res) {
 		var regEx = /([A-Z]+_*)+/g;
 		var i;
-		result = res;
 		
 		while (i = regEx.exec(res)){
 			var btn = {};
@@ -110,6 +109,12 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			break;
 		case "BUTTON_FLUSH_CACHE":
 			flushCache();
+			break;
+		case "BUTTON_MDX":
+			$scope.showDialog(null,$scope.showMdxDial);
+			break;
+		case "BUTTON_EDIT_MDX":
+			$scope.showDialog(null,$scope.sendMdxDial);
 			break;	
 		default:
 			console.log("something else clicked");
