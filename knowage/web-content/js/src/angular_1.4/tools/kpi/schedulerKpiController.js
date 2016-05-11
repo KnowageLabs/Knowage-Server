@@ -446,7 +446,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 			templateUrl: 'templatesaveKPIScheduler.html',
 			clickOutsideToClose:true,
 			preserveScope:true,
-			locals: {selectedScheduler: $scope.selectedScheduler, sbiModule_restServices: sbiModule_restServices, sbiModule_messaging: sbiModule_messaging , loadEngineKpi:$scope.loadEngineKpi, $mdToast, translate:sbiModule_translate, engines:$scope.engines,cron : $cronFrequency}
+			locals: {selectedScheduler: $scope.selectedScheduler, sbiModule_restServices: sbiModule_restServices, sbiModule_messaging: sbiModule_messaging , loadEngineKpi:$scope.loadEngineKpi, toast:$mdToast, translate:sbiModule_translate, engines:$scope.engines,cron : $cronFrequency}
 		})
 		.then(function(answer) {
 			$scope.status = 'You said the information was "' + answer + '".';
@@ -468,7 +468,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 }
 
 
-function DialogControllerKPIScheduler($scope,$mdDialog,selectedScheduler, sbiModule_restServices, sbiModule_messaging,loadEngineKpi, $mdToast, translate, engines,cron){
+function DialogControllerKPIScheduler($scope,$mdDialog,selectedScheduler, sbiModule_restServices, sbiModule_messaging,loadEngineKpi, toast, translate, engines,cron){
 $scope.selectedScheduler = selectedScheduler;
 $scope.translate = translate;
 $scope.sbiModule_messaging = sbiModule_messaging;
@@ -489,7 +489,7 @@ $scope.sbiModule_messaging = sbiModule_messaging;
 	$scope.saveSchedulerOnDataB = function(){
 		
 		if ($scope.selectedScheduler.name.length > 40){
-			$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.kbi.scheduler.error.save.name.toolong")).position('top').action('OK'));
+			toast.show(toast.simple().content(sbiModule_translate.load("sbi.kbi.scheduler.error.save.name.toolong")).position('top').action('OK'));
 			return;
 			}
 		var tmpScheduler = {};
@@ -502,7 +502,7 @@ $scope.sbiModule_messaging = sbiModule_messaging;
 		function(response) {
 			loadEngineKpi();
 			$scope.selectedScheduler.id = response.data.id;
-			$mdToast.show($mdToast.simple().content(translate.load("sbi.glossary.success.save")).position('top').action('OK'));
+			toast.show(toast.simple().content(translate.load("sbi.glossary.success.save")).position('top').action('OK'));
 		},
 		function(response){
 			sbiModule_restServices.errorHandler(response.data,translate.load("sbi.glossary.error.save"));
