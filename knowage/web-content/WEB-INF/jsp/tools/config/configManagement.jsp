@@ -33,33 +33,77 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/config/configManagement.js"></script>
-	
+	<link rel="stylesheet" type="text/css"    href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
 </head>
 
-<body>
-	<div ng-controller="Controller as ctrl" layout="column" layout-wrap layout-fill>
-		<md-toolbar class="md-blue">
-		    <div class="md-toolbar-tools">
-		      <h2 class="md-flex">Configuration Management</h2>
-		    </div>
-		 </md-toolbar>
-		 
-		 <div layout="row" layoput-wrap>
-				<md-button class="md-raised md-ExtraMini" ng-click="addRow()">{{translate.load("sbi.generic.add")}}</md-button>
-				<md-button 	class="md-raised md-ExtraMini" ng-click="deleteRow()">{{translate.load("sbi.generic.delete")}}</md-button>
-				<md-button 	class="md-raised md-ExtraMini" ng-click="editRow()">{{translate.load("sbi.generic.update2")}}</md-button>
-		 </div>
-		<md-content flex >
-			<angular-table 
+<body  ng-controller="Controller as ctr" >
+	<angular-list-detail full-screen=true layout-column>
+		<list label="translate.load('sbi.config.manageconfig')" new-function="addConfig" >
+			 <angular-table flex 
 				id="table" ng-model="data" 
 				columns='["label","name","valueCheck","valueTypeId","category","active"]'
 				columns-search='["label","name","valueCheck","valueTypeId","category","active"]'
 				highlights-selected-item = "true"
 				show-search-bar="true"
-				no-pagination="true"
 				selected-item="itemSelected"
-			></angular-table>
-		</md-content>
-	</div>
+				speed-menu-option="configSpeedMenu"
+			></angular-table>	
+		</list>
+		<detail label="labelDetailFunction()" save-function="saveRow" cancel-function="closeDetail">
+			<md-content layout="row" layout-align="center center" class="config-content-detail">
+				<md-card flex="50" layout="column" layout-align="center center">
+					<md-content layout="row" layout-align="center center">
+						<md-input-container flex="80" > 
+							<label>{{translate.load("sbi.config.manageconfig.fields.label")}}</label> 
+							<input ng-model="config.label" required type="text"> 
+						</md-input-container>
+					</md-content>
+					<md-content layout="row" layout-align="center center">
+					<md-input-container flex="80"> 
+						<label>{{translate.load("sbi.config.manageconfig.fields.name")}}</label> 
+						<input ng-model="config.name" required type="text"> 
+					</md-input-container>
+					</md-content>
+					<md-content layout="row" layout-align="center center">
+					<md-input-container flex="80"> 
+						<label>{{translate.load("sbi.config.manageconfig.fields.description")}}</label> 
+						<input ng-model="config.description" type="text"> 
+					</md-input-container>
+					</md-content>
+					<md-content layout="row" layout-align="center center">
+					<md-input-container flex="80"> 
+						<md-select	placeholder="{{translate.load('sbi.config.manageconfig.fields.isactive')}}" ng-model="config.active" required> 
+							<md-option value="true">True</md-option> 
+							<md-option value="false">False</md-option>
+						</md-select> 
+					</md-input-container>
+					</md-content>
+					<md-content layout="row" layout-align="center center">
+					<md-input-container flex="80">
+						<label>{{translate.load("sbi.config.manageconfig.fields.valuecheck")}}</label> 
+						<input ng-model="config.valueCheck" type="text"> 
+					</md-input-container>
+					</md-content>
+					<md-content layout="row" layout-align="center center">
+					<md-input-container flex="80"> 
+						<md-select placeholder="{{translate.load('sbi.config.manageconfig.fields.valuetype')}}" ng-model="config.valueTypeId"> 
+							<md-option value="407">NUM</md-option> 
+							<md-option value="408">STRING</md-option>
+						</md-select> 
+					</md-input-container>
+					</md-content>
+					<md-content layout="row" layout-align="center center">
+					<md-input-container flex="80"> 
+						<md-select placeholder="{{translate.load('sbi.config.manageconfig.fields.category')}}" ng-model="config.category" required>
+							<md-option ng-value="cnf.value" ng-repeat="cnf in filterCategory">
+							{{cnf.value }}
+							</md-option> 
+						</md-select> 
+					</md-input-container>
+					</md-content>
+				</md-card>
+			</md-content>
+		</detail>
+	</angular-list-detail>
 </body>
 </html>

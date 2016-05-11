@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,13 +11,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -27,12 +26,9 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -50,7 +46,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 @Path("/2.0/configs")
@@ -117,7 +112,6 @@ public class ConfigResource extends AbstractSpagoBIResource {
 		return null;
 	}
 
-	
 	@GET
 	@Path("/label/{label}")
 	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
@@ -125,14 +119,13 @@ public class ConfigResource extends AbstractSpagoBIResource {
 	public Config getSingleConfigByLabel(@PathParam("label") String label) {
 		logger.debug("IN");
 		IConfigDAO configsDao = null;
-		//List<Config> allObjects = null;
-		Config dm=null;
+		// List<Config> allObjects = null;
+		Config dm = null;
 		try {
 			configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
-			dm=configsDao.loadConfigParametersByLabel(label);
-			if (dm.getName().equals(label))
-			{
+			dm = configsDao.loadConfigParametersByLabel(label);
+			if (dm.getName().equals(label)) {
 				return dm;
 			}
 		} catch (Exception e) {
@@ -143,10 +136,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 		}
 		return null;
 	}
-	
-	
-	
-	
+
 	@POST
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
@@ -169,7 +159,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			List<Config> configsList = configsDao.loadAllConfigParameters();
 			configsDao.saveConfig(config);
 			String encodedConfig = URLEncoder.encode("" + config.getId(), "UTF-8");
-			return Response.created(new URI("1.0/configs/" + encodedConfig)).build();
+			return Response.created(new URI("1.0/configs/" + encodedConfig)).entity(encodedConfig).build();
 		} catch (Exception e) {
 			Response.notModified().build();
 			logger.error("Error while creating url of the new resource", e);
@@ -206,26 +196,24 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Error while updating url of the new resource", e);
 		}
 	}
-	
-	
+
 	@PUT
 	@Path("/conf")
 	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateConfig(String body) {	//JSON obj
+	public Response updateConfig(String body) { // JSON obj
 
-		JSONObject jsonobject=null;
-		JSONArray jsonArray=null;
-		URI uri=null;
-		
+		JSONObject jsonobject = null;
+		JSONArray jsonArray = null;
+		URI uri = null;
+
 		try {
 			jsonobject = new JSONObject(body);
 			jsonArray = jsonobject.getJSONArray("configurations");
 
-			for (int i = 0; i < jsonArray.length(); i++)
-			{
-					JSONObject configObject = jsonArray.getJSONObject(i);
-					saveReceivedConfig(configObject);
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject configObject = jsonArray.getJSONObject(i);
+				saveReceivedConfig(configObject);
 			}
 
 			uri = new URI("2.0/conf");
@@ -236,15 +224,12 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			return Response.notModified(e.getMessage()).build();
 		}
 
-	
 	}
-	
-	
-	private void saveReceivedConfig(JSONObject configObject)
-	{
-		Config c=null;
-		IConfigDAO configsDao=null;
-		String label=null,value=null;
+
+	private void saveReceivedConfig(JSONObject configObject) {
+		Config c = null;
+		IConfigDAO configsDao = null;
+		String label = null, value = null;
 		try {
 			label = configObject.getString("label");
 			value = configObject.getString("value");
@@ -258,9 +243,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Error while saving received configuration", e);
 		}
 
-	}	
-
-		
+	}
 
 	@DELETE
 	@Path("/{id}")
