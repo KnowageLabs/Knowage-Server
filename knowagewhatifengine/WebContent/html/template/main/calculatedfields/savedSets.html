@@ -1,7 +1,7 @@
 
 <md-dialog style='width:50%;'>
       <md-toolbar class="knowage-blue dialog-toolbar">
-		<h2 flex="flex" class="md-title">Saved</h2>
+		<h2 flex="flex" class="md-title">Open saved</h2>
 	</md-toolbar>
 	 <div ng-show="cookieArray.length == 0" >
 	 <p>There is no saved items </p>
@@ -13,7 +13,7 @@
      <img alt="{{ set.name }}" ng-src="{{ set.img }}" class="md-avatar" />
     <p>{{set.name}}</p>
 <!--     <p>{{set.type}}</p> -->
-   
+   	<md-divider ></md-divider>
   	</md-list-item>
     
   </md-dialog-content>
