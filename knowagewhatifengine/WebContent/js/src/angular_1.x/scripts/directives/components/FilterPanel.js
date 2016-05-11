@@ -18,7 +18,10 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	var oldSelectedFilter="";
 	var hlght = false;
 	var selectedFlag = false;
+	
+	var typeMsgWarn =sbiModule_translate.load('sbi.common.warning');
 	$scope.loadingFilter = true;
+	$scope.filterPanelEmpty = sbiModule_translate.load('sbi.olap.execution.table.filter.empty');
 	
 	angular.element(document).ready(function() {
 		$scope.sendMdxQuery('null');
@@ -395,7 +398,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				data.axis = 0;
 
 				if ($scope.draggedFrom == 'left' && leftLength == 1){
-					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), 'Warning');
+					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), typeMsgWarn);
 				}					
 				else {
 					$scope.putMemberOnAxis(fromAxis,data);
@@ -425,7 +428,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				data.axis = 1;
 				
 				if ($scope.draggedFrom == 'top' && topLength == 1)
-					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), 'Warning');
+					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), typeMsgWarn);
 				else {
 					$scope.putMemberOnAxis(fromAxis,data);
 				}
@@ -445,7 +448,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			fromAxis = data.axis;
 			
 			if(data.measure){
-				sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.filter.no.measure'), 'Warning');
+				sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.filter.no.measure'), typeMsgWarn);
 				return null;
 			}
 			
@@ -454,9 +457,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				data.axis = -1;
 				
 				if ($scope.draggedFrom == 'left' && leftLength == 1)
-					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), 'Warning');
+					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), typeMsgWarn);
 				else if ($scope.draggedFrom == 'top' && topLength == 1)
-					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), 'Warning');
+					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), typeMsgWarn);
 				else {
 					$scope.putMemberOnAxis(fromAxis,data);
 				}
@@ -621,11 +624,15 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			
 		}
 	};
+	
 	axisSizeSetup = function(){
 		var taw = document.getElementById("topaxis").offsetWidth - 66;
 		var lah = document.getElementById("leftaxis").offsetHeight - 66;
+		var faw = document.getElementById("filterpanel").offsetWidth - 80;
 		$scope.maxCols = Math.round(taw/200);
 		$scope.maxRows = Math.round(lah/165);
+		$scope.numVisibleFilters = Math.round(faw/200);
+
 	};
 };
 

@@ -726,3 +726,8 @@ md-option[selected], md-select-menu md-option[selected]{
 	/*margin-right:1%;*/
 	padding-bottom: 5px;
 }
+
+.filter-shift-arrow{
+	margin-top:1%;
+	max-width:40px;
+}
