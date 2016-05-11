@@ -1,3 +1,4 @@
+
 @font-face {
     font-family: 'Roboto';
     src: url("../fonts/roboto/Roboto-Regular-webfont.eot");
@@ -127,6 +128,11 @@
 
 .kn-detail .angularListTemplate {
     font-family: Roboto, Verdana, Geneva, Arial, Helvetica, sans-serif
+}
+
+md-list.md-knowage-theme.flex {
+	
+	padding: 5px !important;
 }
 
 angular-table table>tbody>tr>td {
