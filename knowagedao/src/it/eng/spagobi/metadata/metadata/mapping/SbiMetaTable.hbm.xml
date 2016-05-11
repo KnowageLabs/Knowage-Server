@@ -67,19 +67,7 @@
                 <column name="TABLE_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaTableColumn" />
-        </set>
-        <set name="sbiMetaObjTables" table="sbi_meta_obj_table" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="TABLE_ID" not-null="true" />
-            </key>
-            <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaObjTable" />
-        </set>
-        <set name="sbiMetaDsTables" table="sbi_meta_ds_table" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="TABLE_ID" not-null="true" />
-            </key>
-            <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaDsTable" />
-        </set>
+        </set>        
         <set name="sbiMetaJobTables" table="sbi_meta_job_table" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="TABLE_ID" not-null="true" />

@@ -22,10 +22,6 @@ public class SbiMetaTable extends SbiHibernateModel {
 	@JsonIgnore
 	private Set sbiMetaTableColumns = new HashSet(0);
 	@JsonIgnore
-	private Set sbiMetaObjTables = new HashSet(0);
-	@JsonIgnore
-	private Set sbiMetaDsTables = new HashSet(0);
-	@JsonIgnore
 	private Set sbiMetaJobTables = new HashSet(0);
 	@JsonIgnore
 	private Set sbiMetaTableBcs = new HashSet(0);
@@ -45,8 +41,6 @@ public class SbiMetaTable extends SbiHibernateModel {
 		this.name = name;
 		this.deleted = deleted;
 		this.sbiMetaTableColumns = sbiMetaTableColumns;
-		this.sbiMetaObjTables = sbiMetaObjTables;
-		this.sbiMetaDsTables = sbiMetaDsTables;
 		this.sbiMetaJobTables = sbiMetaJobTables;
 		this.sbiMetaTableBcs = sbiMetaTableBcs;
 	}
@@ -89,22 +83,6 @@ public class SbiMetaTable extends SbiHibernateModel {
 
 	public void setSbiMetaTableColumns(Set sbiMetaTableColumns) {
 		this.sbiMetaTableColumns = sbiMetaTableColumns;
-	}
-
-	public Set getSbiMetaObjTables() {
-		return this.sbiMetaObjTables;
-	}
-
-	public void setSbiMetaObjTables(Set sbiMetaObjTables) {
-		this.sbiMetaObjTables = sbiMetaObjTables;
-	}
-
-	public Set getSbiMetaDsTables() {
-		return this.sbiMetaDsTables;
-	}
-
-	public void setSbiMetaDsTables(Set sbiMetaDsTables) {
-		this.sbiMetaDsTables = sbiMetaDsTables;
 	}
 
 	public Set getSbiMetaJobTables() {
