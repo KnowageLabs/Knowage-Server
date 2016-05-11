@@ -58,7 +58,6 @@ md-toolbar.md-knowage-theme .md-toolbar-tools .md-button {
             color: $baseColor;
         }
 }
-​
 md-toolbar.md-knowage-theme .md-toolbar-tools .md-button:hover {
     background-color: $secondaryColor;
     color: $baseColor;
@@ -262,3 +261,11 @@ a.md-button.md-knowage-theme.md-primary, .md-button.md-knowage-theme.md-primary 
 .removeTransition{
 		transition	:none !important;
 	}
+
+//CUSTOM PAGES CLASSES    
+md-content.md-knowage-theme.config-content-detail {
+   background-color: transparent !important;
+}
+.buttonLabel{
+    line-height: $browseButtonLineHeight;
+}

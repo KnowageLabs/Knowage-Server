@@ -4,6 +4,7 @@ $headerFontWeight: 600;
 $pageBackground: #eceff1;
 $lightTextColor:	white;		
 $fabPrimaryColor: #c70751;
+$bordersColor: #ccc;
 $fabTop: 10px;
 $secondaryColor: #a9c3db;
 $ternaryColor: #C4DCF3;
@@ -16,7 +17,6 @@ $listBackground: #eceff1;
 $listRightBorder: 2px solid gray;
 $detailBackground: #f6f6f6;
 $tabBackground: white;
-$tabPadding: 8px;
 $tableFontSize: 16px;
 $tableLineSeparator: #c3d4df;
 $tableSelectedElementColor: $secondaryColor;
@@ -28,7 +28,19 @@ $importExportBackground: #eceff1;
 $calendarHeaderBackground: $baseColor;
 $calendarHeaderTextColor: white;
 
-/* Fonts & Icons */
-//------------------------
-$fabIconSize: 18px ;
-$headerFontSize: 15px;
+/* FONTS & ICONS */
+$headerFontWeight: 	600;
+$tabFontWeight: 	$headerFontWeight;
+$fabIconSize: 		18px;
+$smallFontSize:		12px;
+$headerFontSize: 	15px;
+$tableFontSize: 	16px;
+
+/* PADDINGS */
+$standardPadding: 	10px;
+$tabPadding: 		8px;
+
+
+/* DIMENSIONS */
+$toolbarHeight: 40px;
+$browseButtonLineHeight : 4em;
