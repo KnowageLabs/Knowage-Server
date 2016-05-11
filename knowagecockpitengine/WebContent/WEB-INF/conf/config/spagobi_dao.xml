@@ -105,11 +105,9 @@
 		<DAO name="ISbiMetaBCAttributeDAO" implementation="it.eng.spagobi.metadata.dao.SbiMetaBcAttributeDAOHibImpl"/>
 		<DAO name="ISbiMetaJobDAO" implementation="it.eng.spagobi.metadata.dao.SbiMetaJobDAOHibImpl"/>
 		<DAO name="ISbiDsBcDAO" implementation="it.eng.spagobi.metadata.dao.SbiDsBcDAOHibimpl"/>
-		<DAO name="ISbiDsTableDAO" implementation="it.eng.spagobi.metadata.dao.SbiDsTableDAOHibImpl"/>
 		<DAO name="ISbiJobSourceDAO" implementation="it.eng.spagobi.metadata.dao.SbiJobSourceDAOHibImpl"/>
 		<DAO name="ISbiJobTableDAO" implementation="it.eng.spagobi.metadata.dao.SbiJobTableDAOHibImpl"/>
 		<DAO name="ISbiObjDsDAO" implementation="it.eng.spagobi.metadata.dao.SbiObjDsDAOHibImpl"/>
-		<DAO name="ISbiObjTableDAO" implementation="it.eng.spagobi.metadata.dao.SbiObjTableDAOHibImpl"/>
 		<DAO name="ISbiTableBcDAO" implementation="it.eng.spagobi.metadata.dao.SbiTableBcDAOHibImpl"/>
 		<DAO name="ISbiDsBcDAO" implementation="it.eng.spagobi.metadata.dao.SbiDsBcDAOImpl"/>
 		
