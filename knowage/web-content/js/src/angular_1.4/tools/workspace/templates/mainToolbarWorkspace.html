@@ -12,7 +12,6 @@
 			<md-icon md-font-icon="fa fa-plus"></md-icon> 
 		</md-button>
 		
-		
 		<!-- 
 			KNOWAGE-861: Change the icon for creation of analysis in the main toolbar.
 			Provide the Plus button for adding the new analysis document inside the Analysis perspective if the 
@@ -21,7 +20,8 @@
 			document of such a type (respectively to the tab which user selected).
 			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		-->
-		<md-button ng-show="currentOptionMainMenu=='analysis' && activeTabAnalysis!='ALL'" ng-click="" class="md-fab md-fab-top-right md-button ng-scope md-knowage-theme md-ink-ripple"> 
+		<md-button ng-show="currentOptionMainMenu=='analysis' && activeTabAnalysis!='ALL'" ng-click="addNewAnalysisDocument()" 
+					class="md-fab md-fab-top-right md-button ng-scope md-knowage-theme md-ink-ripple"> 
 			<md-icon md-font-icon="fa fa-plus"></md-icon>
 		</md-button>
 		

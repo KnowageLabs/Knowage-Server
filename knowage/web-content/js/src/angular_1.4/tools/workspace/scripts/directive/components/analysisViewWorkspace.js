@@ -15,9 +15,20 @@ angular
 		      templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/analysisViewWorkspace.html',
 		      controller: analysisController
 		  };	  
+	})
+	.filter("asDate", function () {
+		
+	    return function (input) {
+	        return new Date(input);
+	    }
+	    
 	});
 
-function analysisController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog){
+function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,$mdDialog,$mdSidenav) {
+	
+	$scope.selectedDocument = undefined;
+	$scope.showDocumentInfo = false;
+	$scope.translate = sbiModule_translate;
 	
 	$scope.loadAllMyAnalysisDocuments = function() {
 		
@@ -81,9 +92,25 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,$m
 	$scope.loadAllMyAnalysisDocuments();
 		
 	/**
+	 * TODO: 
+	 * Preview (execute) a particular Analysis document.
+	 */
+	$scope.executeDocument = function(document) {
+		
+		console.info("[EXECUTION]: Execution of Analysis document with the label '" + document.label + "' is started.");
+		
+		window.location.href = 	sbiModule_config.adapterPath 
+								+ "?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=" + document.label 
+								+ "&OBJECT_ID=" + document.id 
+								+ "&MYANALYSIS=TRUE";
+		
+	}
+	
+	/**
+	 * TODO:
 	 * Clone a particular Analysis document.
 	 */
-	$scope.cloneDocument = function(doc) {		
+	$scope.cloneDocument = function(document) {		
 		alert("This will fire a call for service that CLONES a document");		
 	}
 	
@@ -92,6 +119,8 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,$m
 	 */
 	$scope.deleteDocument = function(document) {
 				
+		console.info("[DELETE START]: Delete of Analysis document with the label '" + document.label + "' is started.");
+		
 		var confirm = $mdDialog
 						.confirm()
 						.title(sbiModule_translate.load("sbi.browser.document.delete.ask.title"))
@@ -113,6 +142,7 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,$m
 									function(response) {
 										$scope.allAnalysisDocs.splice(index,1);
 										$scope.selectedDocument = undefined;	// TODO: Create and define the role of this property
+										console.info("[DELETE END]: Delete of Analysis document with the label '" + document.label + "' is done successfully.");
 									},
 								
 									function(response) {
@@ -122,5 +152,55 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,$m
 					}
 				);
 	
-	}	
+	}
+	
+	/**
+	 * TODO:
+	 * Create a new Analysis document.
+	 */
+	$scope.addNewAnalysisDocument = function() {
+		alert("This button will CREATE NEW s analysis document");
+	}
+	
+	$scope.showDocumentDetails = function() {
+		$scope.selectedDocument ? console.log($scope.selectedDocument) : null;
+		return $scope.showDocumentInfo && $scope.isSelectedDocumentValid();
+	};
+	
+	
+	$scope.isSelectedDocumentValid = function() {
+		return $scope.selectedDocument !== undefined;
+	};
+	
+	$scope.setDocumentDetailOpen = function(isOpen) {
+		
+		if (isOpen && !$mdSidenav('rightDoc').isLockedOpen() && !$mdSidenav('rightDoc').isOpen()) {
+			$scope.toggleDocumentDetail();
+		}
+
+		$scope.showDocumentInfo = isOpen;
+	};
+	
+	$scope.toggleDocumentDetail = function() {
+		$mdSidenav('rightDoc').toggle();
+	};
+	
+	$scope.selectDocument= function ( document ) { 
+		
+		if (document !== undefined) {
+			$scope.lastDocumentSelected = document;
+		}
+		
+		var alreadySelected = (document !== undefined && $scope.selectedDocument === document);
+		
+		$scope.selectedDocument = document;
+		
+		if (alreadySelected) {
+			$scope.selectedDocument=undefined;
+			$scope.setDocumentDetailOpen(!$scope.showDocumentDetail);
+		} else {
+			$scope.setDocumentDetailOpen(document !== undefined);
+		}
+	};
+	
 }

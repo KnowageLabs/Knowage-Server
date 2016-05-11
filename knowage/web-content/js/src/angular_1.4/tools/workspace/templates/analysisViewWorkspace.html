@@ -1,130 +1,195 @@
-<md-content>
+<md-content layout="row" flex>
 	
-	<!-- 
-		The view of the Analysis view of the Workspace.
-		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-	-->
-	
-	<md-tabs flex layout="column" layout-fill class="rightPanelDocuments" >
-
-		<!-- Tab that will give user a preview of all Analysis documents placed in the Workspace. -->
-	    <md-tab label='All' md-active=true ng-click="setActiveTabState('all')">
-      		
-      		<md-tab-content flex layout-fill>      			
-				
-				<!-- 				
-					<document-view 	class="kn-documentBrowser" flex 
-	 							style='overflow:auto;' 
-	 							ng-model=allAnalysisDocs
-	 							show-grid-view=showGridView >
-					</document-view>				
-				 -->
-				
-				<workspace-document-view 
-						class="kn-documentBrowser" flex 
-	 					style='overflow:auto;' 
-	 					ng-model=allAnalysisDocs
-	 					show-grid-view=showGridView
-	 					show-add-to-organizer=false
-	 					favorites-enabled=false
-	 					clone-enabled=true
-	 					selected-row=selectedRow
-	 					selected-document=selectedDocument
-	 					execute-document-action="executeDocument(doc)"
-	 					select-document-action="selectDocument(doc)"
-	 					clone-document-action="cloneDocument(doc)"
-	 					delete-document-action="deleteDocument(doc)" >
-				</workspace-document-view>	
-				
-			</md-tab-content>
-			
-	    </md-tab>
-    
-    	<!-- Tab that will give user a preview of all Analysis documents of type Cockpit placed in the Workspace. -->
-		<md-tab label='Cockpit' md-active=false ng-click="setActiveTabState('cockpit')">
-		
-			<md-tab-content flex layout-fill>
-			
-			  	<!-- 
-			  		<document-view 	class="kn-documentBrowser" flex 
- 								style='overflow:auto;' 
- 								ng-model=cockpitAnalysisDocs
- 								show-grid-view=showGridView >
-					</document-view>
-			  	 -->
-				
-				<workspace-document-view 
-						class="kn-documentBrowser" flex 
-	 					style='overflow:auto;' 
-	 					ng-model=cockpitAnalysisDocs
-	 					show-grid-view=showGridView
-	 					show-add-to-organizer=false
-	 					favorites-enabled=false
-	 					clone-enabled=true
-	 					selected-row=selectedRow
-	 					selected-document=selectedDocument
-	 					execute-document-action="executeDocument(doc)"
-	 					select-document-action="selectDocument(doc)"
-	 					clone-document-action="cloneDocument(doc)"
-	 					delete-document-action="deleteDocument(doc)" >
-				</workspace-document-view>		
-							
-			</md-tab-content>
-			
-		</md-tab>
+	<md-content  flex>
 		
 		<!-- 
-			KNOWAGE-859: Remove AD HOC reports option (tab).
+			The view of the Analysis view of the Workspace.
 			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 		-->
-		<!-- Tab that will give user a preview of all Analysis documents of type Ad hoc placed in the Workspace. -->
-		<!-- <md-tab label='Ad hoc' md-active=false ng-click="setActiveTabState('geo')">
 		
-			<md-tab-content flex layout-fill>
-		
-			  	<document-view 	class="kn-documentBrowser" flex 
- 								style='overflow:auto;' 
- 								ng-model=adhocReportAnalysisDocs
- 								show-grid-view=showGridView >
-				</document-view>
+		<md-tabs flex layout="column" layout-fill class="rightPanelDocuments" >
+	
+			<!-- Tab that will give user a preview of all Analysis documents placed in the Workspace. -->
+		    <md-tab label='All' md-active=true ng-click="setActiveTabState('all')">
+	      		
+	      		<md-tab-content flex layout-fill>      			
+					
+					<!-- 				
+						<document-view 	class="kn-documentBrowser" flex 
+		 							style='overflow:auto;' 
+		 							ng-model=allAnalysisDocs
+		 							show-grid-view=showGridView >
+						</document-view>				
+					 -->
+					
+					<workspace-document-view 
+							class="kn-documentBrowser" flex 
+		 					style='overflow:auto;' 
+		 					ng-model=allAnalysisDocs
+		 					show-grid-view=showGridView
+		 					show-add-to-organizer=false
+		 					favorites-enabled=false
+		 					clone-enabled=true
+		 					selected-row=selectedRow
+		 					selected-document=selectedDocument
+		 					execute-document-action="executeDocument(doc)"
+		 					select-document-action="selectDocument(doc)"
+		 					clone-document-action="cloneDocument(doc)"
+		 					delete-document-action="deleteDocument(doc)" >
+					</workspace-document-view>	
+					
+				</md-tab-content>
 				
-			</md-tab-content>
+		    </md-tab>
+	    
+	    	<!-- Tab that will give user a preview of all Analysis documents of type Cockpit placed in the Workspace. -->
+			<md-tab label='Cockpit' md-active=false ng-click="setActiveTabState('cockpit')">
+			
+				<md-tab-content flex layout-fill>
 				
-		</md-tab> -->
-		
-		<!-- Tab that will give user a preview of all Analysis documents of type Geo placed in the Workspace. -->
-		<md-tab label='Geo' md-active=false ng-click="setActiveTabState('geo')">
-		
-			<md-tab-content flex layout-fill>
-		
-			  	<!-- 
+				  	<!-- 
+				  		<document-view 	class="kn-documentBrowser" flex 
+	 								style='overflow:auto;' 
+	 								ng-model=cockpitAnalysisDocs
+	 								show-grid-view=showGridView >
+						</document-view>
+				  	 -->
+					
+					<workspace-document-view 
+							class="kn-documentBrowser" flex 
+		 					style='overflow:auto;' 
+		 					ng-model=cockpitAnalysisDocs
+		 					show-grid-view=showGridView
+		 					show-add-to-organizer=false
+		 					favorites-enabled=false
+		 					clone-enabled=true
+		 					selected-row=selectedRow
+		 					selected-document=selectedDocument
+		 					execute-document-action="executeDocument(doc)"
+		 					select-document-action="selectDocument(doc)"
+		 					clone-document-action="cloneDocument(doc)"
+		 					delete-document-action="deleteDocument(doc)" >
+					</workspace-document-view>		
+								
+				</md-tab-content>
+				
+			</md-tab>
+			
+			<!-- 
+				KNOWAGE-859: Remove AD HOC reports option (tab).
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+			-->
+			<!-- Tab that will give user a preview of all Analysis documents of type Ad hoc placed in the Workspace. -->
+			<!-- <md-tab label='Ad hoc' md-active=false ng-click="setActiveTabState('geo')">
+			
+				<md-tab-content flex layout-fill>
+			
 				  	<document-view 	class="kn-documentBrowser" flex 
 	 								style='overflow:auto;' 
-	 								ng-model=geoAnalysisDocs
+	 								ng-model=adhocReportAnalysisDocs
 	 								show-grid-view=showGridView >
-					</document-view> 
-				-->
+					</document-view>
+					
+				</md-tab-content>
+					
+			</md-tab> -->
+			
+			<!-- Tab that will give user a preview of all Analysis documents of type Geo placed in the Workspace. -->
+			<md-tab label='Geo' md-active=false ng-click="setActiveTabState('geo')">
+			
+				<md-tab-content flex layout-fill>
+			
+				  	<!-- 
+					  	<document-view 	class="kn-documentBrowser" flex 
+		 								style='overflow:auto;' 
+		 								ng-model=geoAnalysisDocs
+		 								show-grid-view=showGridView >
+						</document-view> 
+					-->
+					
+					<workspace-document-view 
+							class="kn-documentBrowser" flex 
+		 					style='overflow:auto;' 
+		 					ng-model=geoAnalysisDocs
+		 					show-grid-view=showGridView
+		 					show-add-to-organizer=false
+		 					favorites-enabled=false
+		 					clone-enabled=true
+		 					selected-row=selectedRow
+		 					selected-document=selectedDocument
+		 					execute-document-action="executeDocument(doc)"
+		 					select-document-action="selectDocument(doc)"
+		 					clone-document-action="cloneDocument(doc)"
+		 					delete-document-action="deleteDocument(doc)" >
+					</workspace-document-view>	
+					
+				</md-tab-content>
+					
+			</md-tab>
+	    
+	  </md-tabs>
+	
+	</md-content>
+	
+	<!-- TODO: add comment -->
+	<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" 
+				md-component-id="rightDoc" md-is-locked-open="$mdMedia('gt-md')"  
+				ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDocumentDetails()">
+		
+		<md-toolbar class="ternaryToolbar">
+			
+			<div layout="row" layout-align="space-around center">
 				
-				<workspace-document-view 
-						class="kn-documentBrowser" flex 
-	 					style='overflow:auto;' 
-	 					ng-model=geoAnalysisDocs
-	 					show-grid-view=showGridView
-	 					show-add-to-organizer=false
-	 					favorites-enabled=false
-	 					clone-enabled=true
-	 					selected-row=selectedRow
-	 					selected-document=selectedDocument
-	 					execute-document-action="executeDocument(doc)"
-	 					select-document-action="selectDocument(doc)"
-	 					clone-document-action="cloneDocument(doc)"
-	 					delete-document-action="deleteDocument(doc)" >
-				</workspace-document-view>	
+				<md-button ng-if="smallScreen" title="Execute Document" aria-label="Close panel" class="md-icon-button" ng-click="selectDocument(); toggleDocumentDetail();">
+									<md-icon md-font-icon="fa fa-times" ></md-icon>
+							</md-button>
+							
+							<md-button title="Execute Document" aria-label="Execute Document" class="md-icon-button" ng-click="executeDocument(selectedDocument)">
+									<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
+							</md-button>
+							
+							<md-button title="Clone Document" aria-label="Clone Document" class="md-icon-button" ng-click="cloneDocument(selectedDocument)">
+									<md-icon md-font-icon="fa fa-clone"></md-icon>
+							</md-button>
+							
+							<md-button title="Delete Document" aria-label="Delete Document" class="md-icon-button" ng-click="deleteDocument(selectedDocument)">
+									<md-icon md-font-icon="fa fa-trash-o"></md-icon>
+							</md-button>
 				
-			</md-tab-content>
-				
-		</md-tab>
-    
-  </md-tabs>
-
+			</div>
+			
+		</md-toolbar>
+		
+		<!-- The content of the right side navigation panel, i.e. details for the currently selected document. -->
+		<md-content layout-margin>
+			
+			<md-list>
+				 
+				 <md-list-item class="md-2-line">
+				          <div class="md-list-item-text">
+				            <h3><b>{{translate.load("sbi.generic.descr")}}</b></h3>
+				            <p>{{selectedDocument.description}}</p>
+				          </div>
+				 </md-list-item>				 
+				 
+				 <md-list-item class="md-2-line">
+				          <div class="md-list-item-text">
+				            <h3><b>{{translate.load("sbi.generic.type")}}</b></h3>
+				            <p>{{selectedDocument.typeCode}}</p>
+				          </div>
+				 </md-list-item>
+				 
+				 <md-list-item class="md-2-line">
+				          <div class="md-list-item-text">
+				            <h3><b>{{translate.load("sbi.generic.creationdate")}}</b></h3>
+				            <p>{{selectedDocument.creationDate | asDate | date:'yyyy/MM/dd HH:mm:ss' }}</p>
+				          </div>
+				 </md-list-item>
+				 
+			</md-list>
+			
+		</md-content>
+		
+	</md-sidenav>
+	
 </md-content>
