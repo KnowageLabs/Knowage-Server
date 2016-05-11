@@ -61,13 +61,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -93,11 +91,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
@@ -340,15 +333,13 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Import CWM Model into Knowage Metamodel with the specified id
+	 * Import CWM Model into Knowage Metamodel with the specified id (Update the physical model with the tables from the imported CWM Model)
 	 **/
 	@POST
 	@Path("/{bmId}/importCWM")
 	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
 	@Produces(MediaType.APPLICATION_XML)
 	public Response importCWMToMetamodel(@PathParam("bmId") int businessModelId, @MultipartForm MultipartFormDataInput input) {
-		// TODO: to complete
-
 		logger.debug("IN");
 		String fileName;
 		try {
@@ -369,12 +360,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			// Convert CWM XMI File to Physical Metamodel
 			ModelObject modelFromCWM;
 			if (inputStream != null) {
-				ICWM cwm;
-				ICWMMapper modelMapper = CWMMapperFactory.getMapper(CWMImplType.JMI);
-				cwm = new SpagoBICWMJMIImpl("importCWM");
-				cwm.importFromXMI(inputStream);
-
-				modelFromCWM = modelMapper.decodeModel(cwm);
+				modelFromCWM = cwmToMetamodel(inputStream);
 			} else {
 				logger.error("Cannot retrieve CWM file while trying to import cwm model inside metamodel");
 				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(),
@@ -409,29 +395,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			// Save new model to file, update jar and save it to db
 			replaceModelInDatamart(originalModel, businessModelsDAO, businessModelId);
 
-			// TODO: to remove, just for test ---------------------------
-			// Create a resource set.
-			ResourceSet resourceSet = new ResourceSetImpl();
-
-			// Register the default resource factory -- only needed for stand-alone!
-			resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
-
-			// Get the URI of the model file.
-			// URI uri = URI.createFileURI(new File("mylibrary.xmi").getAbsolutePath());
-			URI uri = URI.createURI("it.eng.spagobi");
-
-			// Create a resource for this file.
-			Resource resource = resourceSet.createResource(uri);
-
-			// Add the book and writer objects to the contents.
-			resource.getContents().add(modelFromCWM);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			resource.save(oos, Collections.EMPTY_MAP);
-			byte[] b = baos.toByteArray();
-			// --------------------------------------------------------
-
-			ResponseBuilder response = Response.ok(b);
+			ResponseBuilder response = Response.ok();
 			return response.build();
 
 		} catch (Exception e) {
@@ -453,9 +417,17 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	 * @throws IOException
 	 *
 	 */
+	private ModelObject cwmToMetamodel(InputStream inputStream) {
+		ICWM cwm;
+		ICWMMapper modelMapper = CWMMapperFactory.getMapper(CWMImplType.JMI);
+		cwm = new SpagoBICWMJMIImpl("importCWM");
+		cwm.importFromXMI(inputStream);
+
+		ModelObject modelFromCWM = modelMapper.decodeModel(cwm);
+		return modelFromCWM;
+	}
 
 	private void replaceModelInDatamart(Model model, IMetaModelsDAO businessModelsDAO, int businessModelId) {
-		// read jar
 		JarFile jar = null;
 		FileOutputStream output = null;
 		java.io.InputStream is = null;
@@ -490,15 +462,18 @@ public class MetadataResource extends AbstractSpagoBIResource {
 
 				if (fileEntry.getName().endsWith("sbimodel")) {
 					logger.debug("found model file " + fileEntry.getName());
-
+					// get .sbimodel file name
 					String originalFileName = fileEntry.getName();
 
 					java.nio.file.Path myFilePath = Paths.get(newModelTempFile.getAbsolutePath());
 					java.nio.file.Path jarFilePath = Paths.get(path);
 
 					fs = FileSystems.newFileSystem(jarFilePath, null);
+					// path inside the zip
 					java.nio.file.Path fileInsideZipPath = fs.getPath("/" + originalFileName);
+					// delete original .sbimodel file
 					Files.deleteIfExists(fileInsideZipPath);
+					// copy the updated .sbimodel file inside the jar
 					Files.copy(myFilePath, fileInsideZipPath);
 
 					// fs.close();
@@ -506,6 +481,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 				}
 
 			}
+			// close to apply jar modifications
 
 			if (jar != null)
 				jar.close();
@@ -523,7 +499,6 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			content.setContent(bytes);
 			content.setCreationDate(new Date());
 			content.setCreationUser(getUserProfile().getUserName().toString());
-			// TODO: uncomment this
 			businessModelsDAO.insertMetaModelContent(businessModelId, content);
 		} catch (IOException e1) {
 			logger.error("the model file could not be taken by datamart.jar due to error ", e1);

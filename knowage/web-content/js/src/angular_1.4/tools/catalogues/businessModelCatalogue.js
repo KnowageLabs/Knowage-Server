@@ -14,10 +14,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	//variables
 	///////////////////////////////////////////////////////////
 	$scope.isDirty = false;
+	$scope.isCWMDirty = false;
 	$scope.showMe = false;				//boolean
 	$scope.versionLoadingShow;
 	$scope.bmLoadingShow;
 	$scope.bmImportingShow;
+	$scope.bmCWMProcessingShow;
 	$scope.isNew;
 	
 	$scope.translate = sbiModule_translate;
@@ -31,8 +33,11 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.bmVersionsRadio;
 	$scope.bmVersionsActive;
 	$scope.fileObj ={};
+	$scope.fileObjCWM ={};
 
 	$scope.fileClicked =false;
+	$scope.fileCWMClicked =false;
+
 
 	angular.element(document).ready(function () {
         $scope.getData();
@@ -55,8 +60,10 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		$scope.isNew = true;
 		$scope.showMe = true;
 		$scope.fileClicked = false;
+		$scope.fileCWMClicked = false;
 		
 		$scope.isDirty=false;
+		$scope.isCWMDirty = false;
 	}
 	
 	
@@ -64,6 +71,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.cancel = function(){
 		$scope.showMe = false;
 		$scope.isDirty = false;
+		$scope.isCWMDirty = false;
 		$scope.selectedBusinessModel = {};
 		$scope.bmVersions=[];
 	}
@@ -91,6 +99,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		if($scope.isDirty){
 		    $mdDialog.show($scope.confirm).then(function(){
 		    	$scope.isDirty=false;   
+		    	$scope.isCWMDirty = false;
 		    	$scope.selectedBusinessModel=angular.copy(item);
 		    	$scope.showMe=true;
 		    },
@@ -114,15 +123,18 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					sbiModule_download.getLink(link);
 
 	}
-	
+	//Export Metamodel as a CWM Metamodel
 	$scope.downloadCWMFile= function(id){
-		
+		$scope.bmCWMProcessingShow = true;
+
 		 sbiModule_restServices.promiseGet("2.0/metadata/"+id+"/exportCWM","")
 			.then(function(response) {
 				sbiModule_download.getBlob(response.data,"exportCWM",'application/xml','xmi');
+				$scope.bmCWMProcessingShow = false;
 
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				$scope.bmCWMProcessingShow = false;
 				
 			});	 
 		
@@ -268,7 +280,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.selectedBusinessModel.id = response.data.id;
 					$scope.businessModelList.push(response.data);
 					$scope.selectedVersions=[];
-					$scope.isDirty = false;							
+					$scope.isDirty = false;			
+					$scope.isCWMDirty = false;
 					
 					if($scope.fileObj.fileName !== undefined)
 						$scope.saveBusinessModelFile();
@@ -462,6 +475,10 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			$scope.fileClicked = true;  // tells that file input has been clicked
 		}
 		
+		$scope.fileCWMChange = function(){
+			$scope.fileCWMClicked = true;  // tells that file input has been clicked
+		}
+		
 		//check if is name dirty 
 		$scope.checkChange = function(){
 
@@ -475,6 +492,18 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			}
 			//$scope.isDirty = true;
 		}
+		
+		//check if is name dirty 
+		$scope.checkCWMChange = function(){
+
+			// if file is new check also file has been added
+			if( $scope.fileCWMClicked === false) {
+					$scope.isCWMDirty = false;
+			}
+			else{
+				$scope.isCWMDirty = true;
+			}
+		}		
 		
 		//get item by id
 		getItemById = function(id){
@@ -522,6 +551,48 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	
 			});
 
+		}
+		
+		//import CWM Metamodel informations
+		$scope.importCWMFile = function(bmId) {		
+			var confirm = $mdDialog
+			.confirm()
+			.title(sbiModule_translate.load("sbi.metadata.cwm.import"))
+			.content(
+					sbiModule_translate
+					.load("sbi.metadata.cwm.import.msg")) 
+					.ariaLabel('ImportMetadata').ok(
+							sbiModule_translate.load("sbi.general.continue")).cancel(
+									sbiModule_translate.load("sbi.general.cancel"));
+
+				
+			if( $scope.fileObjCWM.fileName !== undefined){
+				$mdDialog.show(confirm).then(function() {
+					$scope.bmCWMProcessingShow = true;
+					//Upload file
+					multipartForm.post("2.0/metadata/"+bmId+"/importCWM",$scope.fileObjCWM).success(
+
+							function(data,status,headers,config){
+								if(data.hasOwnProperty("errors")){						
+									console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");		
+									sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.metadata.cwm.error")+":"+data.errors[0].message, 'Error');  
+
+								}else{
+									sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.metadata.cwm.success"), 'Success!'); 
+									console.log("[UPLOAD]: SUCCESS!");
+									$scope.fileObjCWM.fileName = "";
+									$scope.fileObjCWM = {};
+								}
+								$scope.bmCWMProcessingShow = false;
+
+							}).error(function(data, status, headers, config) {
+								console.log("[UPLOAD]: FAIL!"+status);
+								sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.ds.failedToUpload"), 'Error');
+								$scope.bmCWMProcessingShow = false;
+							});
+				});
+
+			}
 		}
 		
 		 $scope.confirm = $mdDialog

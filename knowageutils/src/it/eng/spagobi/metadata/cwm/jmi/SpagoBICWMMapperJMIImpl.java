@@ -52,7 +52,7 @@ public class SpagoBICWMMapperJMIImpl extends ICWMMapper {
 	static public PhysicalModelFactory FACTORY = PhysicalModelFactory.eINSTANCE;
 
 	// -----------------------------------------------------------------------------
-	// DECODE
+	// DECODE - From CWM Metamodel to SpagoBI Metamodel
 	// -----------------------------------------------------------------------------
 
 	@Override
@@ -186,7 +186,7 @@ public class SpagoBICWMMapperJMIImpl extends ICWMMapper {
 	}
 
 	// -----------------------------------------------------------------------------
-	// ENCODE
+	// ENCODE - From SpagoBI Metamodel to CWM Metamodel
 	// -----------------------------------------------------------------------------
 
 	@Override

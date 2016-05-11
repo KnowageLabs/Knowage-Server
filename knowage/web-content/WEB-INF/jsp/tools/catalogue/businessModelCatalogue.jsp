@@ -230,7 +230,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			      			</div> 
       					</div>
       					<div layout="row" layout-wrap>
-      						<md-button ng-click="downloadCWMFile(selectedBusinessModel.id)"  class="md-raised md-ExtraMini" >Export CWM</md-button>
+      						 <p flex="10" layout-align="center center">{{translate.load("sbi.metadata.cwm.import.file.upload")}}:</p>
+                                <file-upload flex="40" ng-model="fileObjCWM" id="cwmFile" ng-click="fileCWMChange();checkCWMChange()"></file-upload>
+                                	<div flex="20">
+                                   		 <md-button  ng-click="importCWMFile(selectedBusinessModel.id)" ng-show="!bmCWMProcessingShow" class="md-raised">{{translate.load("sbi.metadata.cwm.import.button")}}</md-button>
+                                	</div>
+                                	<div flex="20">
+                                		<md-button ng-click="downloadCWMFile(selectedBusinessModel.id)" ng-show="!bmCWMProcessingShow" class="md-raised" >{{translate.load("sbi.metadata.cwm.export.button")}}</md-button>		
+                                	</div>
+                                    <div layout="row" flex="10" layout-align="space-around">
+                                       <md-progress-circular  ng-show="bmCWMProcessingShow" class=" md-hue-4" md-mode="indeterminate" md-diameter="70"> </md-progress-circular>                                   
+                                    </div>     
+                                     						 
       					</div>
       				
      					     				
