@@ -17,7 +17,7 @@ angular
 		  };	  
 	});
 
-function analysisController($scope,sbiModule_restServices,sbiModule_translate){
+function analysisController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog){
 	
 	$scope.loadAllMyAnalysisDocuments = function() {
 		
