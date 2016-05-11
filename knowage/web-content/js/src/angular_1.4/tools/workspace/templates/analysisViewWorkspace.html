@@ -10,13 +10,31 @@
 		<!-- Tab that will give user a preview of all Analysis documents placed in the Workspace. -->
 	    <md-tab label='All' md-active=true ng-click="setActiveTabState('all')">
       		
-      		<md-tab-content flex layout-fill>
-      			
-      			<document-view 	class="kn-documentBrowser" flex 
+      		<md-tab-content flex layout-fill>      			
+				
+				<!-- 				
+					<document-view 	class="kn-documentBrowser" flex 
 	 							style='overflow:auto;' 
 	 							ng-model=allAnalysisDocs
 	 							show-grid-view=showGridView >
-				</document-view>
+					</document-view>				
+				 -->
+				
+				<workspace-document-view 
+						class="kn-documentBrowser" flex 
+	 					style='overflow:auto;' 
+	 					ng-model=allAnalysisDocs
+	 					show-grid-view=showGridView
+	 					show-add-to-organizer=false
+	 					favorites-enabled=false
+	 					clone-enabled=true
+	 					selected-row=selectedRow
+	 					selected-document=selectedDocument
+	 					execute-document-action="executeDocument(doc)"
+	 					select-document-action="selectDocument(doc)"
+	 					clone-document-action="cloneDocument(doc)"
+	 					delete-document-action="deleteDocument(doc)" >
+				</workspace-document-view>	
 				
 			</md-tab-content>
 			
@@ -27,11 +45,29 @@
 		
 			<md-tab-content flex layout-fill>
 			
-			  	<document-view 	class="kn-documentBrowser" flex 
+			  	<!-- 
+			  		<document-view 	class="kn-documentBrowser" flex 
  								style='overflow:auto;' 
  								ng-model=cockpitAnalysisDocs
  								show-grid-view=showGridView >
-				</document-view>	
+					</document-view>
+			  	 -->
+				
+				<workspace-document-view 
+						class="kn-documentBrowser" flex 
+	 					style='overflow:auto;' 
+	 					ng-model=cockpitAnalysisDocs
+	 					show-grid-view=showGridView
+	 					show-add-to-organizer=false
+	 					favorites-enabled=false
+	 					clone-enabled=true
+	 					selected-row=selectedRow
+	 					selected-document=selectedDocument
+	 					execute-document-action="executeDocument(doc)"
+	 					select-document-action="selectDocument(doc)"
+	 					clone-document-action="cloneDocument(doc)"
+	 					delete-document-action="deleteDocument(doc)" >
+				</workspace-document-view>		
 							
 			</md-tab-content>
 			
@@ -61,11 +97,29 @@
 		
 			<md-tab-content flex layout-fill>
 		
-			  	<document-view 	class="kn-documentBrowser" flex 
- 								style='overflow:auto;' 
- 								ng-model=geoAnalysisDocs
- 								show-grid-view=showGridView >
-				</document-view>
+			  	<!-- 
+				  	<document-view 	class="kn-documentBrowser" flex 
+	 								style='overflow:auto;' 
+	 								ng-model=geoAnalysisDocs
+	 								show-grid-view=showGridView >
+					</document-view> 
+				-->
+				
+				<workspace-document-view 
+						class="kn-documentBrowser" flex 
+	 					style='overflow:auto;' 
+	 					ng-model=geoAnalysisDocs
+	 					show-grid-view=showGridView
+	 					show-add-to-organizer=false
+	 					favorites-enabled=false
+	 					clone-enabled=true
+	 					selected-row=selectedRow
+	 					selected-document=selectedDocument
+	 					execute-document-action="executeDocument(doc)"
+	 					select-document-action="selectDocument(doc)"
+	 					clone-document-action="cloneDocument(doc)"
+	 					delete-document-action="deleteDocument(doc)" >
+				</workspace-document-view>	
 				
 			</md-tab-content>
 				

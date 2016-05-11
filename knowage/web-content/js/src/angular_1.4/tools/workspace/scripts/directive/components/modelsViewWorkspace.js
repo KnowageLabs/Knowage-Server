@@ -21,7 +21,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		sbiModule_restServices.promiseGet("2.0/federateddataset", "")
 		.then(function(response) {
 			angular.copy(response.data,$scope.federationDefinitions);
-			console.log($scope.federationDefinitions);
+//			console.log($scope.federationDefinitions);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
@@ -35,7 +35,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
     	sbiModule_restServices.promiseGet("2.0/businessmodels", "")
 		.then(function(response) {
 			angular.copy(response.data,$scope.businessModels);
-			console.log($scope.businessModels);
+//			console.log($scope.businessModels);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
@@ -43,10 +43,10 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	$scope.loadBusinessModels();
 	
 	$scope.showQbeFederation= function(federation){
-		console.log(federation);
-		console.log(sbiModule_config.contextName);
-		console.log(sbiModule_config.adapterPath);
-		console.log(sbiModule_config.engineUrls);
+//		console.log(federation);
+//		console.log(sbiModule_config.contextName);
+//		console.log(sbiModule_config.adapterPath);
+//		console.log(sbiModule_config.engineUrls);
 		var actionName= 'QBE_ENGINE_FROM_FEDERATION_START_ACTION';
 		var federationId= federation.federation_id;
 		
@@ -70,7 +70,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	}
 	
 	$scope.editFederation=function(federation){
-		console.log(federation);
+//		console.log(federation);
 		var id = federation.federation_id;
 		var label = federation.label;
 		//$window.location.href=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp&id="+id+"&label="+label;
@@ -87,7 +87,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	}
 	
 	$scope.deleteFederation=function(federation){
-		console.log("in delete");
+//		console.log("in delete");
 		var confirm = $mdDialog.confirm()
 		.title(sbiModule_translate.load("sbi.browser.document.delete.ask.title"))
 		.content(sbiModule_translate.load("sbi.browser.document.delete.ask"))

@@ -79,5 +79,48 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate){
 	}
 
 	$scope.loadAllMyAnalysisDocuments();
+		
+	/**
+	 * Clone a particular Analysis document.
+	 */
+	$scope.cloneDocument = function(doc) {		
+		alert("This will fire a call for service that CLONES a document");		
+	}
 	
+	/**
+	 * Delete particular Analysis document from the Workspace.
+	 */
+	$scope.deleteDocument = function(document) {
+				
+		var confirm = $mdDialog
+						.confirm()
+						.title(sbiModule_translate.load("sbi.browser.document.delete.ask.title"))
+						.content(sbiModule_translate.load("sbi.browser.document.delete.ask"))
+						.ariaLabel('delete Document') 
+						.ok(sbiModule_translate.load("sbi.general.yes"))
+						.cancel(sbiModule_translate.load("sbi.general.No"));
+		
+		$mdDialog
+			.show(confirm)
+			.then(
+					function() {
+						
+						var index = $scope.allAnalysisDocs.indexOf(document);
+					
+						sbiModule_restServices
+							.promiseDelete("1.0/documents", document.label)
+							.then(
+									function(response) {
+										$scope.allAnalysisDocs.splice(index,1);
+										$scope.selectedDocument = undefined;	// TODO: Create and define the role of this property
+									},
+								
+									function(response) {
+										sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.delete.error'));
+									}
+								);
+					}
+				);
+	
+	}	
 }

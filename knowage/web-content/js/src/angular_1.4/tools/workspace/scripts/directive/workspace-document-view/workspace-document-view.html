@@ -33,9 +33,18 @@
 			            <md-icon  md-font-icon="fa fa-plus-circle fa-2x"></md-icon>
 			          </md-button>
 			          
-			          <md-button class="md-icon-button" aria-label="Favorite" ng-click="addToFavoritesAction({doc:document, index:$index});">
+			          <md-button ng-if="favoritesEnabled" class="md-icon-button" aria-label="Favorite" ng-click="addToFavoritesAction({doc:document, index:$index});">
 			            <md-icon md-font-icon="fa fa-star fa-2x" ng-class="{'yesFav':$index == selectedRow}"></md-icon>
 			          </md-button>
+			          
+			          	<!-- 
+			          		Providing the Clone button that is needed for e.g. Analysis documents. 
+			          		- cloneEnabled: flag that will indicate if we will be able to see this button (option) for documents.
+			          		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		          		-->
+		          		<md-button ng-if="cloneEnabled" class="md-icon-button" aria-label="Clone" ng-click="cloneDocumentAction({doc:document});">
+			            	<md-icon md-font-icon="fa fa-clone fa-2x"></md-icon>
+			          	</md-button>
 			          
 			          <md-button class="md-icon-button" aria-label="Delete" ng-click="deleteDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>

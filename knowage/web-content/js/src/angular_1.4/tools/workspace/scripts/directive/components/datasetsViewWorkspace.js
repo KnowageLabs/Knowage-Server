@@ -29,7 +29,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		sbiModule_restServices.promiseGet("2.0/datasets/mydata", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.datasets);
-			console.log($scope.datasets);
+//			console.log($scope.datasets);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
@@ -41,7 +41,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		sbiModule_restServices.promiseGet("2.0/datasets/owned", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.myDatasets);
-			console.log($scope.myDatasets);
+//			console.log($scope.myDatasets);
 			
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
@@ -53,8 +53,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		sbiModule_restServices.promiseGet("2.0/datasets/enterprise", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.enterpriseDatasets);
-			console.log("enterprise");
-			console.log($scope.enterpriseDatasets);
+//			console.log("enterprise");
+//			console.log($scope.enterpriseDatasets);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
@@ -76,8 +76,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		sbiModule_restServices.promiseGet("2.0/datasets/listNotDerivedDataset", "")
 		.then(function(response) {
 			angular.copy(response.data,$scope.notDerivedDatasets);
-			console.log("not derivated");
-			console.log($scope.notDerivedDatasets);
+//			console.log("not derivated");
+//			console.log($scope.notDerivedDatasets);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
@@ -122,9 +122,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	
     $scope.shareDataset=function(dataset){
     	//console.log("in share");
-    	console.log(dataset);
+//    	console.log(dataset);
     	var id=dataset.id;
-    	console.log(id);
+//    	console.log(id);
         params={};
     	params.id=id;
     	config={};
@@ -132,7 +132,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	
     	sbiModule_restServices.promisePost("selfservicedataset/share","","",config)
 		.then(function(response) {
-			          console.log(response);
+//			          console.log(response);
 			          // binds changed value to object
 			          dataset.isPublic=response.data.isPublic;
 			          sbiModule_messaging.showSuccessMessage("dataset is shared successfuly","shared success");
@@ -187,8 +187,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			
 		    angular.copy(response.data.rows,$scope.previewDatasetModel);
 			$scope.createColumnsForPreview(response.data.metaData.fields);
-			console.log($scope.previewDatasetModel);
-			console.log($scope.previewDatasetColumns);
+//			console.log($scope.previewDatasetModel);
+//			console.log($scope.previewDatasetColumns);
 			$mdDialog.show({
 				  scope:$scope,
 				  preserveScope: true,

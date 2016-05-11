@@ -18,6 +18,9 @@ angular.module('workspace_document_view', ['ngMaterial'])
 			addToOrganizerAction:"&",
 			addToFavoritesAction:"&",
 			orderingDocumentCards:"=?",
+			favoritesEnabled:"=?",
+			cloneEnabled:"=?",
+			cloneDocumentAction:"&"
 		},
 		link: function (scope, elem, attrs) { 
 			elem.css("position","relative")
