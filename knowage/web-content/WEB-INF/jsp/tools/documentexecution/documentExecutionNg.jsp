@@ -91,7 +91,7 @@ try{
 		    <md-sidenav id="sidenavOri" class="md-sidenav-right md-whiteframe-4dp topsidenav" 
 		    		ng-if="'<%=obj.getParametersRegion() %>' == 'north'" md-component-id="parametersPanelSideNav" 
 		    		layout="column" md-is-locked-open="showParametersPanel.status" 
-		    		ng-include="'${pageContext.request.contextPath}/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavOriContent.jsp'">
+		    		ng-include="'${pageContext.request.contextPath}/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.jsp'">
 			</md-sidenav>
 			
 			<md-toolbar class="documentExecutionToolbar secondaryToolbar" flex="nogrow">
@@ -250,7 +250,8 @@ try{
 						'isPossibleToComeBackToRolePage' : false,
 						'SBI_EXECUTION_ID' : '',
 						'CROSS_PARAMETER' : crossParams,
-						'ENGINE_LABEL' : ''
+						'ENGINE_LABEL' : '',
+						'SidenavOri': '<%=obj.getParametersRegion() %>'
 					},
 					parametersData: {
 						documentParameters: []
