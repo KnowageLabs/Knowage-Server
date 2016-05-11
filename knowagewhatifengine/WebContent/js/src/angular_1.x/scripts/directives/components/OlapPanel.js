@@ -560,7 +560,6 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
     	sbiModule_restServices.promisePost
 		("1.0",encoded)
 		.then(function(response) {
-			$scope.handleResponse(response);
 			try{
 				eval(response.data);
 			}catch ( e){
