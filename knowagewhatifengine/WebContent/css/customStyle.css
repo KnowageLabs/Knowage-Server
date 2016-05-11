@@ -1,304 +1,132 @@
 @font-face {
     font-family: 'Roboto';
-    src: url("../../sbi_default/fonts/roboto/Roboto-Regular-webfont.eot");
-    src: url("../../sbi_default/fonts/roboto/Roboto-Regular-webfont.eot?#iefix") format("embedded-opentype"), url("../../sbi_default/fonts/roboto/Roboto-Regular-webfont.woff") format("woff"), url("../../sbi_default/fonts/roboto/Roboto-Regular-webfont.ttf") format("truetype"), url("../../sbi_default/fonts/roboto/Roboto-Regular-webfont.svg#RobotoRegular") format("svg")
+    src: url("../fonts/roboto/Roboto-Regular-webfont.eot");
+    src: url("../fonts/roboto/Roboto-Regular-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/roboto/Roboto-Regular-webfont.woff") format("woff"), url("../fonts/roboto/Roboto-Regular-webfont.ttf") format("truetype"), url("../fonts/roboto/Roboto-Regular-webfont.svg#RobotoRegular") format("svg")
 }
 
 @font-face {
     font-family: 'Roboto';
-    src: url("../../sbi_default/fonts/roboto/Roboto-Italic-webfont.eot");
-    src: url("../../sbi_default/fonts/roboto/Roboto-Italic-webfont.eot?#iefix") format("embedded-opentype"), url("../../sbi_default/fonts/roboto/Roboto-Italic-webfont.woff") format("woff"), url("../../sbi_default/fonts/roboto/Roboto-Italic-webfont.ttf") format("truetype"), url("../../sbi_default/fonts/roboto/Roboto-Italic-webfont.svg#RobotoItalic") format("svg");
+    src: url("../fonts/roboto/Roboto-Italic-webfont.eot");
+    src: url("../fonts/roboto/Roboto-Italic-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/roboto/Roboto-Italic-webfont.woff") format("woff"), url("../fonts/roboto/Roboto-Italic-webfont.ttf") format("truetype"), url("../fonts/roboto/Roboto-Italic-webfont.svg#RobotoItalic") format("svg");
     font-weight: normal;
     font-style: italic
 }
 
 @font-face {
     font-family: 'Roboto';
-    src: url("../../sbi_default/fonts/roboto/Roboto-Bold-webfont.eot");
-    src: url("../../sbi_default/fonts/roboto/Roboto-Bold-webfont.eot?#iefix") format("embedded-opentype"), url("../../sbi_default/fonts/roboto/Roboto-Bold-webfont.woff") format("woff"), url("../../sbi_default/fonts/roboto/Roboto-Bold-webfont.ttf") format("truetype"), url("../../sbi_default/fonts/roboto/Roboto-Bold-webfont.svg#RobotoBold") format("svg");
+    src: url("../fonts/roboto/Roboto-Bold-webfont.eot");
+    src: url("../fonts/roboto/Roboto-Bold-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/roboto/Roboto-Bold-webfont.woff") format("woff"), url("../fonts/roboto/Roboto-Bold-webfont.ttf") format("truetype"), url("../fonts/roboto/Roboto-Bold-webfont.svg#RobotoBold") format("svg");
     font-weight: bold;
     font-style: normal
 }
 
 @font-face {
     font-family: 'Roboto';
-    src: url("../../sbi_default/fonts/roboto/Roboto-BoldItalic-webfont.eot");
-    src: url("../../sbi_default/fonts/roboto/Roboto-BoldItalic-webfont.eot?#iefix") format("embedded-opentype"), url("../../sbi_default/fonts/roboto/Roboto-BoldItalic-webfont.woff") format("woff"), url("../../sbi_default/fonts/roboto/Roboto-BoldItalic-webfont.ttf") format("truetype"), url("../../sbi_default/fonts/roboto/Roboto-BoldItalic-webfont.svg#RobotoBoldItalic") format("svg");
+    src: url("../fonts/roboto/Roboto-BoldItalic-webfont.eot");
+    src: url("../fonts/roboto/Roboto-BoldItalic-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/roboto/Roboto-BoldItalic-webfont.woff") format("woff"), url("../fonts/roboto/Roboto-BoldItalic-webfont.ttf") format("truetype"), url("../fonts/roboto/Roboto-BoldItalic-webfont.svg#RobotoBoldItalic") format("svg");
     font-weight: bold;
     font-style: italic
 }
 
 @font-face {
     font-family: 'Roboto';
-    src: url("../../sbi_default/fonts/roboto/Roboto-Thin-webfont.eot");
-    src: url("../../sbi_default/fonts/roboto/Roboto-Thin-webfont.eot?#iefix") format("embedded-opentype"), url("../../sbi_default/fonts/roboto/Roboto-Thin-webfont.woff") format("woff"), url("../../sbi_default/fonts/roboto/Roboto-Thin-webfont.ttf") format("truetype"), url("../../sbi_default/fonts/roboto/Roboto-Thin-webfont.svg#RobotoThin") format("svg");
+    src: url("../fonts/roboto/Roboto-Thin-webfont.eot");
+    src: url("../fonts/roboto/Roboto-Thin-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/roboto/Roboto-Thin-webfont.woff") format("woff"), url("../fonts/roboto/Roboto-Thin-webfont.ttf") format("truetype"), url("../fonts/roboto/Roboto-Thin-webfont.svg#RobotoThin") format("svg");
     font-weight: 200;
     font-style: normal
 }
 
 @font-face {
     font-family: 'Roboto';
-    src: url("../../sbi_default/fonts/roboto/Roboto-ThinItalic-webfont.eot");
-    src: url("../../sbi_default/fonts/roboto/Roboto-ThinItalic-webfont.eot?#iefix") format("embedded-opentype"), url("../../sbi_default/fonts/roboto/Roboto-ThinItalic-webfont.woff") format("woff"), url("../../sbi_default/fonts/roboto/Roboto-ThinItalic-webfont.ttf") format("truetype"), url("../../sbi_default/fonts/roboto/Roboto-ThinItalic-webfont.svg#RobotoThinItalic") format("svg");
+    src: url("../fonts/roboto/Roboto-ThinItalic-webfont.eot");
+    src: url("../fonts/roboto/Roboto-ThinItalic-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/roboto/Roboto-ThinItalic-webfont.woff") format("woff"), url("../fonts/roboto/Roboto-ThinItalic-webfont.ttf") format("truetype"), url("../fonts/roboto/Roboto-ThinItalic-webfont.svg#RobotoThinItalic") format("svg");
     font-weight: 200;
     font-style: italic
 }
 
 @font-face {
     font-family: 'Roboto';
-    src: url("../../sbi_default/fonts/roboto/Roboto-Light-webfont.eot");
-    src: url("../../sbi_default/fonts/roboto/Roboto-Light-webfont.eot?#iefix") format("embedded-opentype"), url("../../sbi_default/fonts/roboto/Roboto-Light-webfont.woff") format("woff"), url("../../sbi_default/fonts/roboto/Roboto-Light-webfont.ttf") format("truetype"), url("../../sbi_default/fonts/roboto/Roboto-Light-webfont.svg#RobotoLight") format("svg");
+    src: url("../fonts/roboto/Roboto-Light-webfont.eot");
+    src: url("../fonts/roboto/Roboto-Light-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/roboto/Roboto-Light-webfont.woff") format("woff"), url("../fonts/roboto/Roboto-Light-webfont.ttf") format("truetype"), url("../fonts/roboto/Roboto-Light-webfont.svg#RobotoLight") format("svg");
     font-weight: 100;
     font-style: normal
 }
 
 @font-face {
     font-family: 'Roboto';
-    src: url("../../sbi_default/fonts/roboto/Roboto-LightItalic-webfont.eot");
-    src: url("../../sbi_default/fonts/roboto/Roboto-LightItalic-webfont.eot?#iefix") format("embedded-opentype"), url("../../sbi_default/fonts/roboto/Roboto-LightItalic-webfont.woff") format("woff"), url("../../sbi_default/fonts/roboto/Roboto-LightItalic-webfont.ttf") format("truetype"), url("../../sbi_default/fonts/roboto/Roboto-LightItalic-webfont.svg#RobotoLightItalic") format("svg");
+    src: url("../fonts/roboto/Roboto-LightItalic-webfont.eot");
+    src: url("../fonts/roboto/Roboto-LightItalic-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/roboto/Roboto-LightItalic-webfont.woff") format("woff"), url("../fonts/roboto/Roboto-LightItalic-webfont.ttf") format("truetype"), url("../fonts/roboto/Roboto-LightItalic-webfont.svg#RobotoLightItalic") format("svg");
     font-weight: 100;
     font-style: italic
 }
 
 @font-face {
     font-family: 'Roboto';
-    src: url("../../sbi_default/fonts/roboto/Roboto-Medium-webfont.eot");
-    src: url("../../sbi_default/fonts/roboto/Roboto-Medium-webfont.eot?#iefix") format("embedded-opentype"), url("../../sbi_default/fonts/roboto/Roboto-Medium-webfont.woff") format("woff"), url("../../sbi_default/fonts/roboto/Roboto-Medium-webfont.ttf") format("truetype"), url("../../sbi_default/fonts/roboto/Roboto-Medium-webfont.svg#RobotoMedium") format("svg");
+    src: url("../fonts/roboto/Roboto-Medium-webfont.eot");
+    src: url("../fonts/roboto/Roboto-Medium-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/roboto/Roboto-Medium-webfont.woff") format("woff"), url("../fonts/roboto/Roboto-Medium-webfont.ttf") format("truetype"), url("../fonts/roboto/Roboto-Medium-webfont.svg#RobotoMedium") format("svg");
     font-weight: 300;
     font-style: normal
 }
 
 @font-face {
     font-family: 'Roboto';
-    src: url("../../sbi_default/fonts/roboto/Roboto-MediumItalic-webfont.eot");
-    src: url("../../sbi_default/fonts/roboto/Roboto-MediumItalic-webfont.eot?#iefix") format("embedded-opentype"), url("../../sbi_default/fonts/roboto/Roboto-MediumItalic-webfont.woff") format("woff"), url("../../sbi_default/fonts/roboto/Roboto-MediumItalic-webfont.ttf") format("truetype"), url("../../sbi_default/fonts/roboto/Roboto-MediumItalic-webfont.svg#RobotoMediumItalic") format("svg");
+    src: url("../fonts/roboto/Roboto-MediumItalic-webfont.eot");
+    src: url("../fonts/roboto/Roboto-MediumItalic-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/roboto/Roboto-MediumItalic-webfont.woff") format("woff"), url("../fonts/roboto/Roboto-MediumItalic-webfont.ttf") format("truetype"), url("../fonts/roboto/Roboto-MediumItalic-webfont.svg#RobotoMediumItalic") format("svg");
     font-weight: 300;
     font-style: italic
 }
 
-.md-button.md-knowage-theme.md-fab {
-    top: 10px
+.kn-list {
+    background: #eceff1;
+    border-right: 2px solid gray
 }
 
-.md-button.md-knowage-theme.md-fab:not([disabled]) {
-    background-color: #c70751 !important
+.kn-list md-icon.fa {
+    padding-left: 2px;
+    display: inline
 }
 
-.md-button.md-knowage-theme.md-fab md-icon {
-    font-size: 18px;
-    padding-top: 4px
-}
-
-md-toolbar.md-knowage-theme .md-toolbar-tools .md-button {
-    color: #fff
-}
-
-md-toolbar.md-knowage-theme .md-toolbar-tools .md-button:hover {
-    background-color: #a9c3db;
-    color: #3b678c
-}
-
-md-toolbar.md-knowage-theme .md-toolbar-tools .md-button:hover {
-    background-color: #a9c3db;
-    color: #3b678c
-}
-
-md-input-container.md-knowage-theme .md-input {
-    border-color: #3b678c
-}
-
-md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused .md-input {
-    border-color: #3b678c
-}
-
-md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused md-icon {
-    color: #3b678c
-}
-
-md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-has-value label {
-    color: #a9c3db
-}
-
-md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused label {
-    color: #3b678c
-}
-
-md-input-container.md-knowage-theme ng-messages:not(.md-char-counter),
-md-input-container.md-knowage-theme [ng-messages]:not(.md-char-counter),
-md-input-container.md-knowage-theme ng-message:not(.md-char-counter),
-md-input-container.md-knowage-theme data-ng-message:not(.md-char-counter),
-md-input-container.md-knowage-theme x-ng-message:not(.md-char-counter),
-md-input-container.md-knowage-theme [ng-message]:not(.md-char-counter),
-md-input-container.md-knowage-theme [data-ng-message]:not(.md-char-counter),
-md-input-container.md-knowage-theme [x-ng-message]:not(.md-char-counter),
-md-input-container.md-knowage-theme [ng-message-exp]:not(.md-char-counter),
-md-input-container.md-knowage-theme [data-ng-message-exp]:not(.md-char-counter),
-md-input-container.md-knowage-theme [x-ng-message-exp]:not(.md-char-counter) {
-    color: #c70751
-}
-
-md-input-container.md-knowage-theme.md-input-invalid .md-input {
-    border-color: #c70751
-}
-
-md-input-container.md-knowage-theme.md-input-invalid.md-input-focused label {
-    color: #c70751
-}
-
-md-checkbox.md-knowage-theme.md-checked .md-icon {
-    background-color: #3b678c
-}
-
-md-checkbox.md-knowage-theme .md-icon {
-    border-color: #3b678c
-}
-
-md-radio-button.md-knowage-theme .md-on {
-    background-color: #3b678c
-}
-
-md-radio-button.md-knowage-theme .md-off {
-    border-color: #a9c3db
-}
-
-md-radio-button.md-knowage-theme.md-checked .md-off {
-    border-color: #a9c3db
-}
-
-md-select.md-knowage-theme .md-select-value {
-    border-bottom-color: #3b678c
-}
-
-md-select.md-knowage-theme .md-select-value .md-select-icon {
-    color: #3b678c
-}
-
-md-select.md-knowage-theme:not([disabled]):focus .md-select-value {
-    border-bottom-color: #3b678c
-}
-
-md-select-menu.md-knowage-theme md-option[selected] {
-    color: #3b678c
-}
-
-md-select-menu.md-knowage-theme md-option[selected]:focus {
-    color: #3b678c
-}
-
-md-tabs.md-knowage-theme .md-tab.md-active,
-md-tabs.md-knowage-theme .md-tab.md-active md-icon,
-md-tabs.md-knowage-theme .md-tab.md-focused,
-md-tabs.md-knowage-theme .md-tab.md-focused md-icon {
-    color: #3b678c;
-    font-weight: 500
-}
-
-md-tabs.md-knowage-theme md-ink-bar {
-    color: #3b678c;
-    background: #3b678c
-}
-
-
-md-tab-content md-content.md-knowage-theme {
+.kn-list md-content.md-knowage-theme {
     background-color: transparent
 }
 
-a.md-button.md-knowage-theme.md-primary,
-.md-button.md-knowage-theme.md-primary {
-    color: #3b678c
+.kn-detail {
+    background: #f6f6f6
 }
 
-md-card.md-knowage-theme {
-    background-color: #fff;
-    display: block;
-    padding: 8px
+.kn-detail .kn-detail-content {
+    background: transparent
 }
 
-
-.md-button.md-knowage-theme.md-raised {
-    color: #3b678c;
-    background-color: #a9c3db
+.kn-detail .containerDiv {
+    position: absolute
 }
 
-.md-button.md-knowage-theme.md-raised:not([disabled]):hover {
-    background-color: #3b678c;
-    color: white
+.kn-detail .layerFilter {
+    padding: 10px
 }
 
-.md-knowage-theme .md-calendar-date.md-calendar-selected-date .md-calendar-date-selection-indicator,
-.md-knowage-theme .md-calendar-date.md-focus.md-calendar-selected-date .md-calendar-date-selection-indicator {
-    background: #3b678c;
-    color: #fff;
-    border-color: transparent
+.kn-detail md-content .layerFilterContent {
+    overflow: hidden
 }
 
-.md-knowage-theme .md-calendar-date-selection-indicator:hover {
-    background: #a9c3db
+.kn-detail .angularListTemplate .searchBarList input {
+    margin: 0px;
+    padding-left: 18px;
+    height: initial
 }
 
-.md-knowage-theme .md-datepicker-input-container {
-    border-bottom-color: #3b678c
+.kn-detail .md-button.md-knowage-theme.md-fab {
+    top: 0px
 }
 
-.md-knowage-theme .md-datepicker-input-container.md-datepicker-focused {
-    border-bottom-color: #3b678c
+.kn-detail .md-button.md-knowage-theme.md-fab md-icon {
+    font-size: inherit;
+    padding-top: inherit
 }
 
-.md-knowage-theme .md-datepicker-input {
-    color: #3b678c
-}
-
-.md-knowage-theme .md-datepicker-triangle-button .md-datepicker-expand-triangle {
-    border-top-color: #3b678c
-}
-
-.md-knowage-theme .md-datepicker-triangle-button:hover .md-datepicker-expand-triangle {
-    border-top-color: #3b678c
-}
-
-.md-knowage-theme .md-calendar-day-header {
-    background: #3b678c;
-    color: #fff
-}
-
-.md-knowage-theme .md-calendar-date.md-calendar-date-today .md-calendar-date-selection-indicator {
-    border: 1px solid #3b678c
-}
-
-.md-knowage-theme .md-calendar-date.md-focus .md-calendar-date-selection-indicator {
-    background: #a9c3db
-}
-
-.kn-info {
-    margin: 10px;
-    border: 1px dashed #3b678c;
-    padding: 10px;
-    text-align: center;
-    position: relative
-}
-
-.kn-close-Info {
-    position: absolute;
-    right: 5px;
-    top: 5px
-}
-
-.ellipsis {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap
-}
-
-.noMargin {
-    margin: 0px
-}
-
-.noPadding {
-    padding: 0px
-}
-
-.noBorder {
-    border: 0px
+.kn-detail .angularListTemplate {
+    font-family: Roboto, Verdana, Geneva, Arial, Helvetica, sans-serif
 }
 
 angular-table table>tbody>tr>td {
@@ -427,9 +255,14 @@ angular-table table>thead>tr>th>div {
 }
 
 angular-table table>tbody>tr>td button.actionButton {
-    height: 25px !important;
-    width: 25px !important;
-    min-height: 25px !important
+    height: 30px !important;
+    width: 30px !important;
+    min-height: 25px !important;
+    margin: 0 !important
+}
+
+angular-table table>tbody>tr>td button.actionButton:hover {
+    background-color: #C0C9D0 !important
 }
 
 angular-table table>tbody>tr>td button.actionButton md-icon {
@@ -624,4 +457,217 @@ angular-table .principalTable>thead>tr>th>md-checkbox {
 angular-table .principalTable>thead>tr>th {
     padding-top: 0px !important;
     padding-bottom: 0px !important
+}
+
+.md-button.md-knowage-theme.md-fab {
+    top: 10px
+}
+
+.md-button.md-knowage-theme.md-fab:not([disabled]) {
+    background-color: #c70751 !important
+}
+
+.md-button.md-knowage-theme.md-fab md-icon {
+    font-size: 18px;
+    padding-top: 4px
+}
+
+md-input-container.md-knowage-theme .md-input {
+    border-color: #3b678c
+}
+
+md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused .md-input {
+    border-color: #3b678c
+}
+
+md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused md-icon {
+    color: #3b678c
+}
+
+md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-has-value label {
+    color: #a9c3db
+}
+
+md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused label {
+    color: #3b678c
+}
+
+md-input-container.md-knowage-theme ng-messages:not(.md-char-counter),
+md-input-container.md-knowage-theme [ng-messages]:not(.md-char-counter),
+md-input-container.md-knowage-theme ng-message:not(.md-char-counter),
+md-input-container.md-knowage-theme data-ng-message:not(.md-char-counter),
+md-input-container.md-knowage-theme x-ng-message:not(.md-char-counter),
+md-input-container.md-knowage-theme [ng-message]:not(.md-char-counter),
+md-input-container.md-knowage-theme [data-ng-message]:not(.md-char-counter),
+md-input-container.md-knowage-theme [x-ng-message]:not(.md-char-counter),
+md-input-container.md-knowage-theme [ng-message-exp]:not(.md-char-counter),
+md-input-container.md-knowage-theme [data-ng-message-exp]:not(.md-char-counter),
+md-input-container.md-knowage-theme [x-ng-message-exp]:not(.md-char-counter) {
+    color: #c70751
+}
+
+md-input-container.md-knowage-theme.md-input-invalid .md-input {
+    border-color: #c70751
+}
+
+md-input-container.md-knowage-theme.md-input-invalid.md-input-focused label {
+    color: #c70751
+}
+
+md-checkbox.md-knowage-theme.md-checked .md-icon {
+    background-color: #3b678c
+}
+
+md-checkbox.md-knowage-theme .md-icon {
+    border-color: #3b678c
+}
+
+md-radio-button.md-knowage-theme .md-on {
+    background-color: #3b678c
+}
+
+md-radio-button.md-knowage-theme .md-off {
+    border-color: #a9c3db
+}
+
+md-radio-button.md-knowage-theme.md-checked .md-off {
+    border-color: #a9c3db
+}
+
+md-select.md-knowage-theme .md-select-value {
+    border-bottom-color: #3b678c
+}
+
+md-select.md-knowage-theme .md-select-value .md-select-icon {
+    color: #3b678c
+}
+
+md-select.md-knowage-theme:not([disabled]):focus .md-select-value {
+    border-bottom-color: #3b678c
+}
+
+md-select-menu.md-knowage-theme md-option[selected] {
+    color: #3b678c
+}
+
+md-select-menu.md-knowage-theme md-option[selected]:focus {
+    color: #3b678c
+}
+
+md-tabs.md-knowage-theme .md-tab.md-active,
+md-tabs.md-knowage-theme .md-tab.md-active md-icon,
+md-tabs.md-knowage-theme .md-tab.md-focused,
+md-tabs.md-knowage-theme .md-tab.md-focused md-icon {
+    color: #3b678c;
+    font-weight: 500
+}
+
+md-tabs.md-knowage-theme md-ink-bar {
+    color: #3b678c;
+    background: #3b678c
+}
+
+md-card.md-knowage-theme {
+    background-color: #fff;
+    display: block;
+    padding: 8px
+}
+
+md-tab-content md-content.md-knowage-theme {
+    background-color: transparent
+}
+
+a.md-button.md-knowage-theme.md-primary,
+.md-button.md-knowage-theme.md-primary {
+    color: #3b678c
+}
+
+.md-button.md-knowage-theme.md-raised {
+    color: #3b678c;
+    background-color: #a9c3db
+}
+
+.md-button.md-knowage-theme.md-raised:not([disabled]):hover {
+    background-color: #3b678c;
+    color: white
+}
+
+.md-knowage-theme .md-calendar-date.md-calendar-selected-date .md-calendar-date-selection-indicator,
+.md-knowage-theme .md-calendar-date.md-focus.md-calendar-selected-date .md-calendar-date-selection-indicator {
+    background: #3b678c;
+    color: #fff;
+    border-color: transparent
+}
+
+.md-knowage-theme .md-calendar-date-selection-indicator:hover {
+    background: #a9c3db
+}
+
+.md-knowage-theme .md-datepicker-input-container {
+    border-bottom-color: #3b678c
+}
+
+.md-knowage-theme .md-datepicker-input-container.md-datepicker-focused {
+    border-bottom-color: #3b678c
+}
+
+.md-knowage-theme .md-datepicker-input {
+    color: #3b678c
+}
+
+.md-knowage-theme .md-datepicker-triangle-button .md-datepicker-expand-triangle {
+    border-top-color: #3b678c
+}
+
+.md-knowage-theme .md-datepicker-triangle-button:hover .md-datepicker-expand-triangle {
+    border-top-color: #3b678c
+}
+
+.md-knowage-theme .md-calendar-day-header {
+    background: #3b678c;
+    color: #fff
+}
+
+.md-knowage-theme .md-calendar-date.md-calendar-date-today .md-calendar-date-selection-indicator {
+    border: 1px solid #3b678c
+}
+
+.md-knowage-theme .md-calendar-date.md-focus .md-calendar-date-selection-indicator {
+    background: #a9c3db
+}
+
+.kn-info {
+    margin: 10px;
+    border: 1px dashed #3b678c;
+    padding: 10px;
+    text-align: center;
+    position: relative
+}
+
+.kn-close-Info {
+    position: absolute;
+    right: 5px;
+    top: 5px
+}
+
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.noMargin {
+    margin: 0px
+}
+
+.noPadding {
+    padding: 0px
+}
+
+.noBorder {
+    border: 0px
+}
+
+.removeTransition {
+    transition: none !important
 }

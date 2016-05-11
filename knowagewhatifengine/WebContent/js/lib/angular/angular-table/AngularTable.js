@@ -43,7 +43,9 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             hideTableHead: "=?",
                             fullWidth:"=?",
                             comparisonColumn:"=?",
-                            initialSorting:"=?"
+                            initialSorting:"=?",
+                            initialSortingAsc:"=?",
+                            visibleRowFunction:"&"
                         },
                         compile: function (tElement, tAttrs, transclude) {
                             return {
@@ -90,9 +92,8 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                     scope.initializeColumns = function (noCompile) {
                                         //create the column of the table. If attrs.column is present load only this column, else load all the columns
                                         scope.tableColumns = [];
-
-
-                                        if (attrs.multiSelect && (attrs.multiSelect = true || attrs.multiSelect == "true")) {
+ 
+                                        if ((attrs.multiSelect && (attrs.multiSelect == true || attrs.multiSelect == "true")) || scope.multiSelect == true){
                                             scope.tableColumns.push({label: "--MULTISELECT--", name: "--MULTISELECT--", size: "30px"});
                                             thead.attr('multi-select', true);
                                             tbody.attr('multi-select', true);
@@ -345,8 +346,20 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                 for (var item in items) {
                     if (columnsSearch != undefined && columnsSearch.length != 0) {
                         for (var cols in columnsSearch) {
-                            if (items[item][columnsSearch[cols]] != undefined) {
-                                if (items[item][columnsSearch[cols]].toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
+                        	var tmpSearchItem=""
+                        	if(angular.isObject(columnsSearch[cols])){
+                        		if(columnsSearch[cols].transformer!=undefined){
+                        			tmpSearchItem=columnsSearch[cols].transformer(items[item],columnsSearch[cols].name);
+                        		}else{
+                        			tmpSearchItem=items[item][columnsSearch[cols].name];
+                        		}
+                        	}else{
+                        		tmpSearchItem=items[item][columnsSearch[cols]]
+                        	}
+                        	
+                        	
+                            if (tmpSearchItem!= undefined) {
+                                if (tmpSearchItem.toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
                                     filtered.push(items[item]);
                                     break;
                                 }
@@ -367,7 +380,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
         })
         .filter('customOrdering', function ($filter) {
         
-	        return function(items, column , reverse, tableColumns ,initialSorting) {
+	        return function(items, column , reverse, tableColumns ,initialSorting,initialSortingAsc) {
 	        	function getfiltered(){
 	        		var tmp=[];
 	        		angular.forEach(items, function(item) {
@@ -380,6 +393,11 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
 	        		for(var i=0;i<tableColumns.length;i++){
 	        			if(tableColumns[i].name== initialSorting){
 	        				column=tableColumns[i];
+	        				if(initialSortingAsc!=undefined){
+	        					if(initialSortingAsc==true){
+	        						reverse=true;
+	        					}
+	        				}
 	        				break;
 	        			}
 	        		}
@@ -424,7 +442,11 @@ function TableControllerFunction($scope, $timeout) {
     $scope.internal_column_ordering;
     $scope.internal_reverse_col_ord = false;
 
-
+    $scope.getDynamicValue=function(item,row,column){
+    	if(item==null || item==undefined) return ;
+    	
+    	return angular.isFunction(item) ? item(row,column) : item;
+    }
     
     $scope.searchItem = function (searchVal) {
         if ($scope.localSearch) {
@@ -536,7 +558,15 @@ $scope.loadTheadColumn=function(width){
 
 }
  
-
+	$scope.isVisibleRowFunction=function(row){
+		
+		if(row==undefined){
+			return true;
+		}
+		var isVisible =$scope.visibleRowFunction({item:row}) ;
+		
+		return isVisible == undefined ? true : isVisible;
+	}
 }
 
 function TableBodyControllerFunction($scope) {

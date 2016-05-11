@@ -58,11 +58,12 @@
 
 <script type="text/ng-template" id="bodyTemplate.html">
 
-<tr ui-tree-node dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| customOrdering:internal_column_ordering:internal_reverse_col_ord:tableColumns:initialSorting | itemsPerPage:	itemsPerPage" 
+<tr ui-tree-node dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| customOrdering:internal_column_ordering:internal_reverse_col_ord:tableColumns:initialSorting:initialSortingAsc | itemsPerPage:	itemsPerPage" 
 	pagination-id='id+"PaginationTable"' total-items='totalItemCount' current-page=currentPageNumber
-	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) )}"  class="animate-repeat-tablerow">
+	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) )}"  class="animate-repeat-tablerow"
+ 	ng-if="isVisibleRowFunction(row)">
 
-<td ng-repeat="column in tableColumns" ng-click="clickItem(row,getColumnValue(row,column.name),$event,$parent.$index)" ng-dblclick="startEdit(row,column,getColumnValue(row,column.name),$event)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}">
+<td ng-repeat="column in tableColumns"  ng-click="clickItem(row,getColumnValue(row,column.name),$event,$parent.$index)" ng-dblclick="startEdit(row,column,getColumnValue(row,column.name),$event)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}">
 		<span ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--'" dynamichtml="getColumnValue(row,column.name,column.transformer)"   ng-show="!allowEdit || (allowEdit && !row.editing) || (allowEdit && row.editing && !column.editable)"></span>
 		<input ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--'" ng-show="allowEdit && row.editing && column.editable" ng-model="row[column.name]" ng-blur="doneEdit(row,column,getColumnValue(row,column.name),$event)" autofocus />
 		
@@ -70,22 +71,27 @@
 
 		<md-checkbox ng-if="column.name=='--MULTISELECT--'" ng-checked="isSelected(row)" ng-click="clickItem(row,getColumnValue(row,column.name),$event)" aria-label="selected item checked"> </md-checkbox>
 		
-		<md-button ng-if="column.name=='--SPEEDMENU--' && speedMenuOption.length<=3" ng-repeat="menuItem in speedMenuOption"  ng-click='$event.stopPropagation();menuItem.action(row,$event);' class="md-icon-button actionButton" aria-label="More" 
-		action-background-color={{menuItem.backgroundColor}}>
- 			<md-tooltip ng-if="menuItem.label!=undefined" md-direction="top">{{menuItem.label}}</md-tooltip>	
-       	 <md-icon md-font-icon="{{menuItem.icon}}" aria-label="{{menuItem.label}}" action-color={{menuItem.color}}></md-icon>
-      	</md-button>
+		<span layout="row" ng-if="column.name=='--SPEEDMENU--' && speedMenuOption.length<=3">
+			<md-button ng-if="getDynamicValue(menuItem.visible,row,column)!=false" 
+				ng-repeat="menuItem in speedMenuOption" 
+			 	ng-click='$event.stopPropagation();menuItem.action(row,$event);'
+			 	class="md-icon-button actionButton" aria-label="More" 
+			 	action-background-color={{menuItem.backgroundColor}} >
+				<md-tooltip ng-if="menuItem.label!=undefined" md-direction="top">{{getDynamicValue(menuItem.label,row,column)}}</md-tooltip>	 
+  	     	 	<md-icon ng-if="menuItem.icon!=undefined" ng-class="getDynamicValue(menuItem.icon,row,column)" aria-label="{{getDynamicValue(menuItem.label,row,column)}}" action-color={{getDynamicValue(menuItem.color,row,column)}}></md-icon>
+ 	      	</md-button>
+		</span>
 
 		<md-menu  ng-if="column.name=='--SPEEDMENU--' &&  speedMenuOption.length>3 ">
-      <md-button aria-label="row interactions menu" class="md-icon-button" ng-click="$event.stopPropagation();$mdOpenMenu($event)">
-        <md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
-      </md-button>
-      <md-menu-content width="4" >
-        <md-menu-item ng-repeat="menuItem in speedMenuOption"> 
-          <md-button ng-click="$event.stopPropagation();menuItem.action(row,$event);" action-background-color={{menuItem.backgroundColor}}>
-		   <md-icon action-color="{{menuItem.color}}" md-font-icon="{{menuItem.icon}}" aria-label="{{menuItem.label}}" md-menu-align-target></md-icon>
-           {{menuItem.label}}
-          </md-button>
+      		<md-button aria-label="row interactions menu" class="md-icon-button" ng-click="$event.stopPropagation();$mdOpenMenu($event)">
+      			<md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
+      		</md-button>
+     		<md-menu-content width="4" >
+        		<md-menu-item ng-repeat="menuItem in speedMenuOption" ng-if="getDynamicValue(menuItem.visible,row,column)!=false"> 
+          			<md-button ng-click="$event.stopPropagation();menuItem.action(row,$event);" action-background-color={{menuItem.backgroundColor}}>
+		   				<md-icon  ng-if="menuItem.icon!=undefined" action-color="{{getDynamicValue(menuItem.color,row,column)}}" ng-class="getDynamicValue(menuItem.icon,row,column)" aria-label="{{getDynamicValue(menuItem.label,row,column)}}" md-menu-align-target></md-icon>
+		    			<span ng-if="menuItem.label!=undefined">{{getDynamicValue(menuItem.label,row,column)}}</span> 
+          			</md-button>
         </md-menu-item>
       </md-menu-content>
     </md-menu>
