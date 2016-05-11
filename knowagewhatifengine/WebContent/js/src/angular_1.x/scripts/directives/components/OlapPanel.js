@@ -9,7 +9,7 @@ angular.module('olap_panel',[])
 	}
 });
 
-function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate,toastr,$cookies,sbiModule_docInfo,sbiModule_docInfo) {
+function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate,toastr,$cookies,sbiModule_docInfo,sbiModule_config) {
 	
 	
 	
@@ -696,63 +696,96 @@ $scope.openSavedSets = function(){
 		
 	}
 	
+	var cleanCC = function() {
+		
+		$scope.selectedMDXFunction = {}; 
+		$scope.selectedMDXFunctionName ="";
+		$scope.selectedTab= 0;
+		
+	}
+	
+var checkForDuplicates = function(type) {
+		
+	for (var i = 0; i < $scope.cookieArray.length; i++) {
+		if(type.name === $scope.cookieArray[i].name){
+			console.log("same item replacing");
+			$scope.cookieArray.splice(i,1);
+		
+		}
+	}	
+		
+	}
+	
+	var doMemberSaving = function() {
+		
+		var encoded = encodeURI('/calculatedmembers/execute/'+$scope.selectedMDXFunctionName+'/'+$scope.finalFormula+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+		sbiModule_restServices.promisePost
+		("1.0",encoded)
+		.then(function(response) {
+			$scope.handleResponse(response);
+			
+			var namedMember = {
+					'docName': sbiModule_docInfo.label,
+					'name':$scope.selectedMDXFunctionName,
+				    'value': $scope.finalFormula,
+				    'type': 'Member',
+				    'formula': 	$scope.selectedMDXFunction,
+				    'img' : sbiModule_config.contextName + "/img/m.png"
+				}
+			
+			checkForDuplicates(namedMember);
+			
+			$scope.cookieArray.push(namedMember);
+			$cookies.putObject('data',$scope.cookieArray);
+			cleanCC();
+			sbiModule_messaging.showSuccessMessage("Member is saved", 'Success');
+			
+			
+			
+		    }, function(response) {
+			sbiModule_messaging.showErrorMessage("Error adding Calculated Field", 'Error');
+			cleanCC()
+				});
+	
+	}
+	
+	var doSetSaving = function() {
+		
+		var namedSet = {
+				'docName': sbiModule_docInfo.label,	
+				'name':$scope.selectedMDXFunctionName,
+			    'value': $scope.finalFormula,
+			    'type': 'Set',
+			    'formula': 	$scope.selectedMDXFunction,
+			    'img' : sbiModule_config.contextName + "/img/s.png"
+			    
+			}
+			
+			checkForDuplicates(namedSet);
+		
+			$scope.cookieArray.push(namedSet);
+			$cookies.putObject('data',$scope.cookieArray);
+			cleanCC();
+			sbiModule_messaging.showSuccessMessage("Set is saved", 'Success');
+			
+	
+	}
+	
 $scope.sendCC = function() {
 	
 	formatFormulaforSending();
 	
 	if($scope.selectedMDXFunction.output != "Set"){
 	
-		$scope.addCC();
-		
-		var namedMember = {
-				'docName': sbiModule_docInfo.label,
-				'name':$scope.selectedMDXFunctionName,
-			    'value': $scope.finalFormula,
-			    'type': 'Member',
-			    'formula': 	$scope.selectedMDXFunction
-			}
-		
-		
-		for (var i = 0; i < $scope.cookieArray.length; i++) {
-			if(namedMember.name === $scope.cookieArray[i].name){
-				console.log("same one")
-				$scope.cookieArray.splice($scope.cookieArray[i],1);
-			}
-		}
-		$scope.cookieArray.push(namedMember);
-		console.log(namedMember);
-		$cookies.putObject('data',$scope.cookieArray);
-		sbiModule_messaging.showSuccessMessage("Member is saved", 'Success');
-	
+		doMemberSaving();
 		
 	}
 	
 	if($scope.selectedMDXFunction.output == "Set"){
 		
-		var namedSet = {
-			'docName': sbiModule_docInfo.label,	
-			'name':$scope.selectedMDXFunctionName,
-		    'value': $scope.finalFormula,
-		    'type': 'Set',
-		    'formula': 	$scope.selectedMDXFunction
-		    
-		}
-		
-		for (var i = 0; i < $scope.cookieArray.length; i++) {
-			if(namedSet.name === $scope.cookieArray[i].name){
-				console.log("same one")
-				$scope.cookieArray.splice($scope.cookieArray[i],1);
-			}
-		}
-		$scope.cookieArray.push(namedSet);
-		console.log(namedSet);
-		$cookies.putObject('data',$scope.cookieArray);
-		sbiModule_messaging.showSuccessMessage("Set is saved", 'Success');
+		doSetSaving();	
 	}
-	
-	$scope.selectedMDXFunction = {}; 
-	$scope.selectedMDXFunctionName ="";
-	$scope.selectedTab= 0;
+
 	$mdDialog.hide();
 	}
 	
@@ -782,7 +815,7 @@ $scope.sendCC = function() {
 		
 		for (var i = 0; i < $scope.cookieArray.length; i++) {
 			if(item.name === $scope.cookieArray[i].name){
-				console.log("same one")
+				console.log("same one in editing")
 				$scope.selectedMDXFunction = item.formula;
 				$scope.selectedMDXFunctionName = item.name;
 				console.log($scope.selectedMDXFunction);
@@ -798,30 +831,22 @@ $scope.sendCC = function() {
 		$scope.cookieArray.splice(index,1);
 		$cookies.putObject('data',$scope.cookieArray);
 		$scope.cookieArray = $cookies.getObject('data');
-		$scope.deleteCC(item.name);
-		$scope.selectedMDXFunction = {};
-		sbiModule_messaging.showSuccessMessage("Item is deleted", 'Success');
-		
-		}
-	
-$scope.addCC = function() {
-		var encoded = encodeURI('/calculatedmembers/execute/'+$scope.selectedMDXFunctionName+'/'+$scope.finalFormula+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID);
-		sbiModule_restServices.promisePost
-		("1.0",encoded)
-		.then(function(response) {
-			console.log(response);
-			$scope.handleResponse(response);
-		    }, function(response) {
-			sbiModule_messaging.showErrorMessage("Error adding Calculated Field", 'Error');
+		if (item.name != null) {
+			$scope.deleteCC(item.name);
 			$scope.selectedMDXFunction = {};
-				});
+			sbiModule_messaging.showSuccessMessage("Item is deleted", 'Success');
+		} else {
+			console.log("cant delete name is null");
+		}
+		
+		
 		}
 
 $scope.deleteCC = function(calculateMemberName) {
 	sbiModule_restServices.promiseDelete
 	("1.0",'/calculatedmembers/'+calculateMemberName+'?SBI_EXECUTION_ID=' + JSsbiExecutionID)
 	.then(function(response) {
-		console.log(response);
+		
 		$scope.handleResponse(response);
 	    }, function(response) {
 		sbiModule_messaging.showErrorMessage("Error deleting Calculated Field", 'Error');

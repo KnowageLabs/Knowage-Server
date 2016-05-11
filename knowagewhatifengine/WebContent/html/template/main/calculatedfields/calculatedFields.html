@@ -27,6 +27,7 @@
             <h4>{{  formula.syntax }}</h4>
             <p>{{  formula.description }}</p>
           </div>
+          <md-divider ></md-divider>
         </md-list-item>
     </md-content>      
       </md-tab>
@@ -42,6 +43,7 @@
             <h4>{{  formula.syntax }}</h4>
             <p>{{  formula.description }}</p>
           </div>
+          <md-divider ></md-divider>
         </md-list-item>
     </md-content>      
       </md-tab>
@@ -57,6 +59,7 @@
             <h4>{{  formula.syntax }}</h4>
             <p>{{  formula.description }}</p>
           </div>
+          <md-divider ></md-divider>
         </md-list-item>
     </md-content>      
       </md-tab>
@@ -65,10 +68,11 @@
       <md-list flex>
         <md-list-item class="secondary-button-padding" ng-click="edit(item)"
          ng-repeat="item in cookieArray | filter: {'docName': olapDocName}">
-<!--         	<img alt="{{ item.name }}" ng-src="{{ person.img }}" class="md-avatar" /> -->
+    	<img alt="{{ item.name }}" ng-src="{{ item.img }}" class="md-avatar" />
             <p>{{ item.name }}</p>
-			<p>{{item.type}}</p>
+<!-- 			<p>{{item.type}}</p> -->
            <md-button class="md-secondary" ng-click="deleteFromCookie($index,item)">Delete</md-button>
+           <md-divider ></md-divider>
         </md-list-item>
     </md-content>      
       </md-tab>

@@ -10,8 +10,9 @@
     
      <md-list-item class="secondary-button-padding" ng-click="setIt($index,set)" 
      ng-repeat="set in cookieArray | filter: {'docName': olapDocName}">
+     <img alt="{{ set.name }}" ng-src="{{ set.img }}" class="md-avatar" />
     <p>{{set.name}}</p>
-    <p>{{set.type}}</p>
+<!--     <p>{{set.type}}</p> -->
    
   	</md-list-item>
     
