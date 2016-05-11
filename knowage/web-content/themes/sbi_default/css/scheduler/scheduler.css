@@ -46,3 +46,16 @@ md-toolbar md-select.md-knowage-theme:focus:not([disabled]) .md-select-value {
 	top: 2px;
 	position: fixed;
 }
+
+md-tabs[md-border-bottom]:not(.md-dynamic-height) md-tabs md-tabs-content-wrapper {
+    top: 0px;
+}
+
+md-toolbar md-checkbox.md-knowage-theme .md-icon {
+    border-color: rgb(238,238,238);
+}
+
+.md-block{
+	align-items: center;
+	padding: 5px;
+}

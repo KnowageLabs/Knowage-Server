@@ -17,30 +17,21 @@ var EmptyJob = {
 	triggers: []
 }
 
-app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "sbiModule_logger", "$scope", "$mdDialog", "$mdToast", "$timeout", mainFunction ]);
+app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "sbiModule_logger", "$scope", "$mdDialog", "$mdToast", "$timeout", "$location", mainFunction ]);
 
-function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger, $scope, $mdDialog, $mdToast, $timeout) {
+function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger, $scope, $mdDialog, $mdToast, $timeout, $location) {
 	var ctrl = this;
 	sbiModule_translate.addMessageFile("component_scheduler_messages");
+	
+	var jobNameFromUrl = $location.search().JOB_NAME;
 	
 	//variables
 	ctrl.isOverviewTabActive = true;
 	ctrl.emptyJob = JSON.parse(JSON.stringify(EmptyJob));
 	ctrl.showDetail = false;
-	$scope.pathFileCheck = false;
 	ctrl.isRequired = true;
-	$scope.flagtype = true;
-	$scope.flag = false;
-	$scope.translate = sbiModule_translate;
-	$scope.download = sbiModule_download;
-	$scope.layerList = [];
 	ctrl.object_temp = {};
-	$scope.roles = [];
-	$scope.rolesItem = [];
-	$scope.filter = [];
-	$scope.filter_set = [];
 	ctrl.forms = {};
-	$scope.selectedDocumentIndex = 0;
 	
 	ctrl.triggerStrategies = [
    		{value : 'fixed', label : sbiModule_translate.load("scheduler.fixedValuesStrategy", "component_scheduler_messages")},
@@ -79,7 +70,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	}
 	ctrl.loadFormulas();
 
-	ctrl.loadJobs = function(selectedIndex){
+	ctrl.loadJobs = function(selectedJobName){
 		sbiModule_restServices.get("scheduler/listAllJobs", '')
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
@@ -117,18 +108,14 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							}
 						}
 					}
-					// select job
-					if(selectedIndex != null && selectedIndex != undefined && selectedIndex >= 0 && selectedIndex < ctrl.jobList.length){
-						var job = ctrl.jobList[selectedIndex];
-						ctrl.loadJob(job);
-					}
+					ctrl.selectJobByName(selectedJobName);
 				}
 			})
 			.error(function(data, status, headers, config) {
 				console.log("unable to get jobs " + status);
 			})
 	}
-	ctrl.loadJobs();
+	ctrl.loadJobs(jobNameFromUrl);
 	
 	ctrl.addJob = function(){
 		ctrl.selectedJob = angular.copy(ctrl.emptyJob);
@@ -136,10 +123,18 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	}
 	
 	ctrl.reloadJob = function(){
-		for(var i=0; i<ctrl.jobList.length; i++){
-			var job = ctrl.jobList[i];
-			if(job.jobName == ctrl.selectedJob.jobName && job.jobGroup == ctrl.selectedJob.jobGroup){
-				ctrl.loadJobs(i);
+		var jobName = ctrl.selectedJob.jobName;
+		ctrl.loadJobs();
+		ctrl.selectJobByName(jobName);
+	}
+	
+	ctrl.selectJobByName = function(jobName){
+		if(jobName != null && jobName != undefined && jobName != ""){
+			for(var i=0; i<ctrl.jobList.length; i++){
+				var job = ctrl.jobList[i];
+				if(job.jobName == jobName){
+					ctrl.loadJob(job);
+				}
 			}
 		}
 	}
@@ -178,18 +173,16 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		sbiModule_restServices.post("scheduler", "saveJob", ctrl.selectedJob)
 		.success(function(data, status, headers, config) {
 			if (data.hasOwnProperty("errors")) {
-				console.log("unable to save job");
-//				$scope.showActionError();
+				console.log("unable to save job ", data.errors);
+				ctrl.showToastError(sbiModule_translate.load("sbi.glossary.error.save") + " " + data.errors);
 			} else {
-				
-//				$scope.showActionOK();
+				ctrl.showToastOk(sbiModule_translate.load("sbi.glossary.success.save"));
+				ctrl.closeDetail();
 			}
-			ctrl.closeDetail();
 		})
 		.error(function(data, status, headers, config) {
 			console.log("unable to save job " + status);
-			ctrl.closeDetail();
-//			$scope.showActionError();
+			ctrl.showToastError(sbiModule_translate.load("sbi.glossary.error.save"));
 		})
 	}
 
@@ -248,7 +241,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		},{
 			label: sbiModule_translate.load('sbi.scheduler.schedulation.pause'),
 			icon: 'fa fa-lock',
-			showItem: function(item,event){
+			visible: function(item,event){
 				return item !== undefined && item.triggerIsPaused == false;
 			},
 			action: function(item,event){
@@ -268,7 +261,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		},{
 			label: sbiModule_translate.load('sbi.scheduler.schedulation.resume'),
 			icon: 'fa fa-unlock',
-			showItem: function(item,event){
+			visible: function(item,event){
 				return item !== undefined && item.triggerIsPaused == true;
 			},
 			action: function(item,event){
@@ -434,223 +427,32 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			})
 	}
 	
-//	$scope.loadCategory = function() {
-//		sbiModule_restServices.get("domains", "listValueDescriptionByType",
-//		"DOMAIN_TYPE=GEO_CATEGORY").success(
-//				function(data, status, headers, config) {
-//					if (data.hasOwnProperty("errors")) {
-//						//change sbi.glossary.load.error
-//						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
-//								3000);
-//					} else {
-//
-//						$scope.category = data;
-//						$scope.category.push({});
-//
-//
-//					}
-//				}).error(function(data, status, headers, config) {
-//					showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-//
-//				})
-//	}
-//	$scope.loadCategory();
+	ctrl.showToastOk = function(message) {
+		var toast = $mdToast.simple()
+			.content(message)
+			.action('OK')
+			.highlightAction(false)
+			.hideDelay(3000)
+			.position('top right')
 
-//	$scope.showRoles=function(){
-//		sbiModule_restServices.get("layers", "getroles","").success(
-//				function(data, status, headers, config) {
-//					if (data.hasOwnProperty("errors")) {
-//						//change sbi.glossary.load.error
-//						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
-//					} else {
-//						//show all roles
-//						$scope.roles = data;
-//
-//
-//					}
-//				}).error(function(data, status, headers, config) {
-//					console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-//
-//				})
-//
-//
-//	}
-//	$scope.showRoles();
-//
-//
-//	$scope.toggle = function (item, list) {
-//		var index = $scope.indexInList(item, list);
-//
-//		if(index != -1){
-//			$scope.rolesItem.splice(index,1);
-//		}else{
-//			$scope.rolesItem.push(item);
-//		}
-//
-//	};
-//
-//	$scope.exists = function (item, list){
-//		if(list==undefined){
-//			return false;
-//		}
-//		return $scope.indexInList(item, list) > -1;
-//	};
-//
-//	$scope.indexInList=function(item, list){
-//		for(var i = 0; i < list.length; i++){
-//			var object = list[i];
-//			if(object.id == item.id){
-//				return i;
-//			}
-//		}
-//		return -1;
-//	};
-//	
-//	$scope.filterInList=function(item, list) {
-//
-//		for (var i = 0; i < list.length; i++) {
-//			var object = list[i];
-//			if(object.property==item.property){
-//				return i;
-//			}
-//		}
-//
-//		return -1;
-//	};
+		$mdToast.show(toast).then(function(response) {
+			if ( response == 'ok' ) {
+			}
+		});
+	};
 
+	ctrl.showToastError = function(message) {
+		var toast = $mdToast.simple()
+			.content(message)
+			.action('OK')
+			.highlightAction(true)
+			.position('top right')
 
-//	$scope.showActionOK = function() {
-//		var toast = $mdToast.simple()
-//			.content(sbiModule_translate.load("sbi.scheduler.save"))
-//			.action('OK')
-//			.highlightAction(false)
-//			.hideDelay(3000)
-//			.position('top')
-//
-//		$mdToast.show(toast).then(function(response) {
-//			if ( response == 'ok' ) {
-//			}
-//		});
-//	};
-//
-//	$scope.showActionError = function() {
-//		var toast = $mdToast.simple()
-//			.content(sbiModule_translate.load("sbi.scheduler.problem"))
-//			.action('OK')
-//			.highlightAction(false)
-//			.hideDelay(3000)
-//			.position('top')
-//
-//		$mdToast.show(toast).then(function(response) {
-//			if ( response == 'ok' ) {
-//			}
-//		});
-//	};
-//
-//	$scope.showActionDelete = function() {
-//		var toast = $mdToast.simple()
-//			.content(sbiModule_translate.load("sbi.scheduler.job.deleted"))
-//			.action('OK')
-//			.highlightAction(false)
-//			.hideDelay(3000)
-//			.position('top')
-//
-//		$mdToast.show(toast).then(function(response) {
-//			if ( response == 'ok' ) {
-//
-//			}
-//		});
-//	};
-	
-//	$scope.demo = {
-//			showTooltip : false,
-//			tipDirection : 'buttom'
-//
-//	};
-//	
-//	$scope.$watch('demo.tipDirection',function(val) {
-//		if (val && val.length ) {
-//			$scope.demo.showTooltip = true;
-//		}
-//	})
-	
-//	$scope.closeForm = function(){
-//		$scope.flagtype=true;
-//		$scope.showDetail = false;
-//		$scope.flag=false;
-//		$scope.selectedJob=null;
-//		$scope.rolesItem=[];
-//		$scope.filter_set=[];
-//		$scope.filter =[];
-//	}
-
-//	$scope.getDownload=function(item){
-//		sbiModule_restServices.get("layers","getDownload","id="+item.layerId+",typeWFS="+$scope.typeWFS).success(
-//				function(data, status, headers, config) {
-//					if (data.hasOwnProperty("errors")) {
-//						console.log("layer non Ottenuti");
-//					} else {
-//						var text ;						
-//
-//						if($scope.typeWFS == 'geojson'){
-//							$scope.download.getPlain(data, item.label, 'text/json', 'json');
-//						} else if($scope.typeWFS == 'kml' || $scope.typeWFS == 'shp'){
-//							$scope.download.getLink(data.url);
-//						}
-//						$scope.closeFilter();
-//					}
-//				}).error(function(data, status, headers, config) {
-//					console.log("layer non Ottenuti " + status);
-//
-//				});
-//	}
-//
-//	$scope.showAdvanced = function(ev) {
-//		$mdDialog.show({
-//			templateUrl: 'dialog1.tmpl.html',
-//			scope:$scope,
-//			preserveScope: true,
-//			parent: angular.element(document.body),
-//			targetEvent: ev,
-//			clickOutsideToClose:true
-//		})
-//		.then(function(answer) {
-//			$scope.status = 'You said the information was "' + answer + '".';
-//		}, function() {
-//			$scope.status = 'You cancelled the dialog.';
-//		});
-//	};
-//	
-//	$scope.closeFilter = function(){
-//		$mdDialog.cancel();
-//	}
-//	
-//	$scope.addFilter = function(item){
-//		if( $scope.filter_set.indexOf(item)>-1){
-//			//if it present no action
-//		} else{
-//			$scope.filter_set.push(item);
-//			var index = $scope.filter.indexOf(item);
-//
-//			$scope.filter.splice(index,1);
-//
-//		}
-//	}
-//	
-//	$scope.removeFilter = function(item){
-//		var index = $scope.filter_set.indexOf(item);
-//		$scope.filter_set.splice(index,1);
-//		$scope.filter.push(item);
-//	}
-//	
-//	$scope.removeIcon = [{
-//		label: sbiModule_translate.load("sbi.federationdefinition.delete"),
-//		icon:"fa fa-trash-o",
-//		backgroundColor:'red',
-//		action : function(ev) {
-//			$scope.removeFilter(ev);
-//		}
-//	}];
+		$mdToast.show(toast).then(function(response) {
+			if ( response == 'ok' ) {
+			}
+		});
+	};
 	
 	ctrl.selectDocument = function(documentIndex){
 		ctrl.selectedDocumentIndex = documentIndex;
@@ -1121,7 +923,6 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 								activityEventCtrl.event.triggerName = d.triggerName;
 								activityEventCtrl.event.triggerDescription = 
 									(d.triggerDescription && d.triggerDescription != null) ? d.triggerDescription : "";
-			//					activityEventCtrl.event.startDate = new Date(d.startDate);
 								activityEventCtrl.event.startDate = new Date(d.startDateRFC3339);
 								activityEventCtrl.event.startTime = d.startTime;
 								
@@ -1132,7 +933,6 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 								}
 								
 								if(d.endDate != undefined && d.endDate != "") {
-			//						activityEventCtrl.event.endDate = new Date(d.endDate);
 									activityEventCtrl.event.endDate = new Date(d.endDateRFC3339);
 								}
 								
@@ -1242,21 +1042,19 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							if (data.hasOwnProperty("errors")) {
 								console.error(sbiModule_translate.load("sbi.glossary.error.save"));
 							} else if (data.Status == "NON OK") {
-								console.error("errori salvataggio",data.Errors);
-								$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.glossary.error.save")+" "+data.Errors).position('top').action('OK').highlightAction(true));
-							 } else {
-								 activityEventCtrl.disableName=true;
-								$mdToast.show($mdToast.simple().content("SALVATO").position('top').action('OK').highlightAction(false).hideDelay(3000));
+								console.error("errori salvataggio",data.errors);
+								ctrl.showToastError(sbiModule_translate.load("sbi.glossary.error.save") + " " + data.errors);
+							} else {
+								ctrl.showToastOk(sbiModule_translate.load("sbi.glossary.success.save"));
+								activityEventCtrl.disableName=true;
 								ctrl.reloadJob();
 								if(saveAndReturn){
-									$timeout(function() {
-										$mdDialog.hide();
-									}, 3000);
+									$mdDialog.hide();
 								}
 							}
 						})
 						.error(function(data, status, headers, config) {
-							console.error(sbiModule_translate.load("sbi.glossary.error.save"));
+							ctrl.showToastError(sbiModule_translate.load("sbi.glossary.error.save"));
 							return false;
 						});
 				};

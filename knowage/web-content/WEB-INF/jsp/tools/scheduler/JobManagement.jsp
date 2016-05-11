@@ -16,17 +16,13 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-
 <%@ page language="java" pageEncoding="utf-8" session="true"%>
-
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
 
-
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
-
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="jobManager">
@@ -42,7 +38,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/scheduler/jobManagement.js")%>"></script>
 
 </head>
-<body class="bodyStyle kn-jobManagement">
+<body class="bodyStyle">
 	<angular-list-detail ng-controller="Controller as ctrl" show-detail="ctrl.showDetail" id="angularListDetail">
 		<list label='Scheduler' new-function="ctrl.addJob">
 			<angular-table flex
@@ -109,8 +105,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				</md-tab>
 				<md-tab label="{{translate.load('sbi.generic.details')}}" md-on-select="ctrl.selectDetailTab()" md-active="!ctrl.isOverviewTabActive">
 					<md-card>
-						<md-card-content layout="column">
-							<form name="jobDetailForm" class="wordForm md-padding" novalidate>
+						<md-card-content layout="column" style="padding: 0px;">
+							<form name="jobDetailForm" class="wordForm" novalidate>
 								<div>
 									<div flex="100">
 										<md-input-container class="small counter" ng-show="ctrl.selectedJob.NEWJOB">
@@ -204,7 +200,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 												<md-divider ng-if="!$last"></md-divider>
 											</md-list-item>
 										</md-list>
-										<p></p>
 									</md-tab>
 								</md-tabs>
 							</form>
