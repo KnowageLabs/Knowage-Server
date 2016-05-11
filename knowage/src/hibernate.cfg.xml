@@ -206,12 +206,10 @@
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaBc.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaBcAttribute.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaDsBc.hbm.xml" />
-         <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaDsTable.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaJob.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaJobSource.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaJobTable.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaObjDs.hbm.xml" />
-         <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaObjTable.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaSource.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaTable.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaTableBc.hbm.xml" />
