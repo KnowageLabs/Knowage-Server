@@ -61,6 +61,33 @@ $scope.executeSourceDocument = function() {
 	};
 	$scope.executeSourceDocument();
 	
+	
+	$scope.isCloseDocumentButtonVisible=function(){
+		var visible=false;
+		//if document is open from dodument browser
+		if($scope.documentNavigationScope.closeDocument!=undefined){
+			visible=true;
+		}
+		
+		//if document is open from documentViewer directive
+		var docViewScope=window.parent.angular.element(window.frameElement).scope();
+		 if(docViewScope!=undefined && docViewScope.closeDocument!=undefined){
+			 visible=true
+		 } 
+		return visible;
+	}
+	
+	function closeDoc(id){
+		if($scope.documentNavigationScope.closeDocument!=undefined){
+			$documentNavigationScope.closeDocument(id);
+		}else if(window.parent.angular.element(window.frameElement).scope()!=undefined && window.parent.angular.element(window.frameElement).scope().closeDocument!=undefined){
+			//close dialog of documentViewer
+			window.parent.angular.element(window.frameElement).scope().closeDocument()
+		}else{
+			sbiModule_restServices.errorHandler("","Unable to close document")
+		}
+	}
+	
 	$scope.closeDocument=function(docId){
 		
 		if($scope.isNavigationInProgress()){
@@ -73,10 +100,11 @@ $scope.executeSourceDocument = function() {
 			   $mdDialog.show(confirm)
 			   .then(function() {
 //				    $crossNavigationHelper;
+				   closeDoc($crossNavigationHelper.crossNavigationSteps.stepItem[0].id)
 				   $documentNavigationScope.closeDocument($crossNavigationHelper.crossNavigationSteps.stepItem[0].id);
 			   } );
 		}else{
-			$documentNavigationScope.closeDocument(docId);
+			closeDoc(docId);
 		}
 		
 		 

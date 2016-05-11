@@ -322,7 +322,7 @@ try{
 					    .content(errorMessage)
 					    .ariaLabel(errorMessage)
 					    .ok(okMessage)
-				).then(function() {
+				).then(function() { 
 					$documentBrowserScope.closeDocument(<%= request.getParameter("OBJECT_ID") %>);
 				}, function() {});
 			};

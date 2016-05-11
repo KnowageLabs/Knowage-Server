@@ -343,7 +343,7 @@
 			$crossNavigationScope.closeDocument($scope.executionInstance.OBJECT_ID);  
 		};
 		$scope.isCloseDocumentButtonVisible=function(){
-			return $crossNavigationScope.documentNavigationScope.closeDocument!=undefined
+			return $crossNavigationScope.isCloseDocumentButtonVisible();  
 		}
 
 		$scope.iframeOnload = function(){

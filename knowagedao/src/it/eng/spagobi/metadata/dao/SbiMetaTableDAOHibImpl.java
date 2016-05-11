@@ -36,6 +36,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -207,6 +210,56 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				toReturn.add(hibMeta);
 			}
 			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	/**
+	 * Load paginated tables.
+	 *
+	 * @return List of meta tables
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableDAOHibImpl#loadAllTables()
+	 */
+	@Override
+	public List<SbiMetaTable> loadPaginatedTables(Integer page, Integer item_per_page, String search) throws EMFUserError {
+		logger.debug("IN");
+
+		Session tmpSession = null;
+		Transaction tx = null;
+		List<SbiMetaTable> toReturn = new ArrayList();
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			Criteria c = tmpSession.createCriteria(SbiMetaTable.class);
+			c.addOrder(Order.asc("name"));
+
+			c.setFirstResult((page - 1) * item_per_page);
+			c.setMaxResults(item_per_page);
+
+			c.add(Restrictions.like("name", search == null ? "" : search, MatchMode.ANYWHERE).ignoreCase());
+			tx.commit();
+			toReturn = c.list();
 		} catch (HibernateException he) {
 			logException(he);
 
@@ -676,6 +729,38 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			logger.debug("OUT");
 		}
 		return idToReturn;
+	}
+
+	@Override
+	public Integer countSbiMetaTable(String search) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			String hql = "select count(*) from SbiMetaTable where name like '%" + search + "%'";
+			Query hqlQuery = aSession.createQuery(hql);
+			Long temp = (Long) hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of SbiMetaTable", he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return resultNumber;
 	}
 
 }

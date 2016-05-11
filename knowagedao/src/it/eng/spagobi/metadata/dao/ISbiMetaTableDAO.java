@@ -45,6 +45,8 @@ public interface ISbiMetaTableDAO extends ISpagoBIDao {
 
 	public List<SbiMetaTable> loadAllTables() throws EMFUserError;
 
+	public List<SbiMetaTable> loadPaginatedTables(Integer page, Integer item_per_page, String search) throws EMFUserError;
+
 	public List<SbiMetaTable> loadTablesFromSource(int sourceId) throws EMFUserError;
 
 	public boolean hasBcAssociated(Integer id) throws EMFUserError;
@@ -62,5 +64,7 @@ public interface ISbiMetaTableDAO extends ISpagoBIDao {
 	public void modifyTable(Session session, SbiMetaTable aMetaTable) throws EMFUserError;
 
 	public Integer insertTable(Session session, SbiMetaTable aMetaTable) throws EMFUserError;
+
+	public Integer countSbiMetaTable(String searchText) throws EMFUserError;
 
 }

@@ -1,4 +1,4 @@
-var app = angular.module('glossaryTecnicalFunctionality', [ 'ngMaterial','ui.tree', 'sbiModule','angularUtils.directives.dirPagination','glossary_tree','angular_list']);
+var app = angular.module('glossaryTecnicalFunctionality', [ 'ngMaterial','ui.tree', 'sbiModule','angularUtils.directives.dirPagination','glossary_tree','angular_list','document_viewer']);
 
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
@@ -10,7 +10,7 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
 app.controller('ControllerDataSet', [ "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_dataset ]);
 app.controller('Controller', [ "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_documenti ]);
-app.controller('Controller_navigation', [ "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast","$window","sbiModule_config", funzione_navigazione ]);
+app.controller('Controller_navigation', [ "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast","$window","sbiModule_config",'$documentViewer', funzione_navigazione ]);
 app.controller('Controller_tec', [ "$scope","sbiModule_translate","sbiModule_restServices","$mdToast","$timeout", funzione_tec ]);
 
 
@@ -1046,7 +1046,7 @@ function hidePreloader(pre) {
 
 //--------------------------------------------------------------------------navigazione--------------------------------------------------------
 
-function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast,$window,sbiModule_config) {
+function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast,$window,sbiModule_config,$documentViewer) {
 	navi=this;
 	global.initializer.navigation={state:false,scope:navi};
 	navi.pagination={};
@@ -1283,12 +1283,13 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 				var idctrl = this;
 				
 				idctrl.runDocument=function(){ 
-					var pathUrl="";
-					pathUrl+="&OBJECT_ID="+idctrl.info.id;
-					pathUrl+="&OBJECT_LABEL="+idctrl.info.label;
-					pathUrl+="&OBJECT_NAME="+idctrl.info.name;
-					
-					$window.location.href=sbiModule_config.adapterPath+'?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&IS_SOURCE_DOCUMENT=true&SBI_EXECUTION_ID=null'+pathUrl
+					$documentViewer.openDocument(idctrl.info.id,idctrl.info.label,idctrl.info.name);
+//					var pathUrl="";
+//					pathUrl+="&OBJECT_ID="+idctrl.info.id;
+//					pathUrl+="&OBJECT_LABEL="+idctrl.info.label;
+//					pathUrl+="&OBJECT_NAME="+idctrl.info.name;
+//					
+//					$window.location.href=sbiModule_config.adapterPath+'?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&IS_SOURCE_DOCUMENT=true&SBI_EXECUTION_ID=null'+pathUrl
 //						$window.location.href='/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&OBJECT_ID=35&OBJECT_LABEL=start%20doc&IS_SOURCE_DOCUMENT=true&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=null&OBJECT_NAME=start%20doc'
 				}
 				

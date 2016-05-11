@@ -1,0 +1,47 @@
+<div ng-controller="GTBusinessClassController" layout-fill layout="row">
+
+	<div flex="20" layout="column" class="boxItemGlo">
+		<md-toolbar class=" xs-head">
+			<div class="md-toolbar-tools">
+				<div>{{translate.load("sbi.glossary.businessclass");}}</div>
+			</div>
+		</md-toolbar>
+		<md-content flex layout >
+			<angular-list style="position: absolute;" flex id='businessClass' ng-model=listBusinessClass
+							item-name='label ' click-function="loadBusinessClassInfo(item)"
+							show-search-bar=true
+							search-function="businessClassLike(searchValue,itemsPerPage)"
+							show-search-preloader="showSearchBusinessClassPreloader"
+							page-canged-function="changeBusinessClassPage(newPageNumber,itemsPerPage,searchValue)"
+							total-item-count=sizeBusinessClass
+							selected-item=selectedBusinessClass highlights-selected-item=true></angular-list>
+		</md-content>
+	</div>
+	
+	<div flex="25" layout="column" class="boxItemGlo">
+		<md-toolbar class=" xs-head">
+			<div class="md-toolbar-tools">
+				<div>{{translate.load("sbi.glossary.businessclass");}} / {{translate.load("sbi.glossary.word");}}</div>
+			</div>
+		</md-toolbar>
+		<md-content flex>
+		gnegne
+		</md-content>
+	</div>
+	
+	<div flex class="boxItemGlo">
+		<md-toolbar class=" xs-head">
+			<div class="md-toolbar-tools">
+				<div>{{translate.load("sbi.glossary.glossary");}}</div>
+			</div>
+		</md-toolbar>
+
+		<md-content flex>
+			<glossary-tree
+					tree-id="GlossTreeDS" tree-options=ctrl.TreeOptions show-root=false
+					glossary={} show-select-glossary="ctrl.selectedDataset==undefined"
+					show-search-bar=true drag-word-node=true clone-item=true></glossary-tree>
+		</md-content>
+	</div>
+
+</div>
