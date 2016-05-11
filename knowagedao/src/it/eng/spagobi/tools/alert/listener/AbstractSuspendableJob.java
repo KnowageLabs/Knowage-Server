@@ -1,20 +1,20 @@
 package it.eng.spagobi.tools.alert.listener;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
-import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
-
 import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.Trigger;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.tools.scheduler.jobs.AbstractSpagoBIJob;
+
 public abstract class AbstractSuspendableJob extends AbstractSpagoBIJob implements Job {
 
 	public enum JOB_STATUS {
-		SUSPENDED, ACTIVE
+		SUSPENDED, ACTIVE, EXPIRED
 	};
 
 	private static Logger logger = Logger.getLogger(AbstractSuspendableJob.class);
