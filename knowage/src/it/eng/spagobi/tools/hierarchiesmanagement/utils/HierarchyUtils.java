@@ -979,11 +979,11 @@ public class HierarchyUtils {
 			if (orderField != null) {
 				column = AbstractJDBCDataset.encapsulateColumnName(orderField + o, dataSource);
 				// DESC is used to order the row placing the NULL fields at the end. Is used in combination with negative order fields to reach ascending sort
-				orderClauseBuffer.append(column + " DESC" + sep);
-			} else {
-				column = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + o, dataSource);
-				orderClauseBuffer.append(column + sep);
+				orderClauseBuffer.append(column + " DESC, ");
 			}
+			column = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + o, dataSource);
+			orderClauseBuffer.append(column + sep);
+
 		}
 
 		// leaf fields:
