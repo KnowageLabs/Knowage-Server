@@ -1,13 +1,6 @@
 <md-content layout="row" flex>
 	<md-content flex layout="column" layout-fill class="rightPanelDocuments">
 
-		<!-- 
-			favorites-enabled: 	flag for keeping information about the visibility of Favorites option
-								for documents.
-			clone-enabled:		flag for keeping information about the visibility of Clone option
-								for documents.	
-			@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)				
-		 -->
 	 	<workspace-document-view 	class="kn-documentBrowser" flex 
 	 					style='overflow:auto;' 
 	 					ng-model=allDocuments
@@ -17,9 +10,7 @@
 	 					selected-row=selectedRow
 	 					selected-document=selectedDocument
 	 					execute-document-action="executeDocument(doc)"
-	 					add-to-favorites-action="addToFavorites(doc,index)"
-	 					select-document-action="selectDocument(doc);"
-	 					favorites-enabled=true
+	 					select-document-action="selectDocument(doc)"
 	 					clone-enabled=false
 	 					 >
 		</workspace-document-view>		

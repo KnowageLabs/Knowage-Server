@@ -1,13 +1,14 @@
 angular
 	.module('workspace.controller', ['workspace.directive', 'workspace.configuration'])
-	.controller('workspaceController', ["$scope", "$http", "$mdDialog", "sbiModule_translate", "sbiModule_restServices", workspaceFunction]);
+	.controller('workspaceController', ["$scope", "$http", "$mdDialog", "sbiModule_translate", "sbiModule_restServices","sbiModule_config", workspaceFunction]);
 
-function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_restServices) {
-	
+function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_restServices,sbiModule_config) {
+
 	$scope.allDocuments = [];
 	$scope.federationDefinitions=[];
 	$scope.businessModels=[];
-	
+	$scope.favoriteDocumetnsList = [];
+
 	/**
 	 * variables for data management
 	 */
@@ -16,11 +17,11 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 	$scope.enterpriseDatasets=[];
 	$scope.sharedDatasets=[];
 	$scope.notDerivedDatasets=[];
-	
+
 	$scope.searchInput = "";
-	
+
 	/**
-	 * Variables for Analysis view of the Workspace (option):	  
+	 * Variables for Analysis view of the Workspace (option):
 	 * 		allAnalysisDocs - array of all Analysis documents available in user's workspace (Cockpit, Geo and Ad hoc)
 	 * 		cockpitAnalysisDocs - array of all Analysis documents of type Cockpit available in user's workspace
 	 * 		adhocReportAnalysisDocs - array of all Analysis documents of type Ad hoc available in user's workspace
@@ -30,7 +31,7 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 	$scope.cockpitAnalysisDocs = [];
 	$scope.adhocReportAnalysisDocs = [];
 	$scope.geoAnalysisDocs = [];
-	
+
 	/**
 	 * currentOptionMainMenu - 	which of all available perspectives (options) from the left menu is selected (picked) 
 	 * 							by the user.
@@ -42,22 +43,22 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 	$scope.activeTabAnalysis = null;	
 	
 	$scope.isDocumentFavorite = false;
-	
+
 	/**
 	 * Flag that servers as indicator for toggling between grid and list view of documents.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.showGridView = true;
-	
+
 	/**
 	 * On-click listener function for the left main menu of the Workspace web page.
 	 * We will keep the lastly chosen option from this menu inside scope variable.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	$scope.showInfo = function(item) {		
-		$scope.currentOptionMainMenu = item.name.toLowerCase();		
+	$scope.showInfo = function(item) {
+		$scope.currentOptionMainMenu = item.name.toLowerCase();
 	}
-	
+
 	/**
 	 * Function for toggling grid/list view by changing the responsible flag (showGridView).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -65,11 +66,11 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 	$scope.toogleGridListViewOfDocs = function() {
 		$scope.showGridView = !$scope.showGridView;
 	}
-	
+
 //	$scope.setSearchInput = function(searchInput) {
 //		console.log(searchInput);
 //	}
-	
+
 	$scope.setSearchInput = function (newSearchInput) {
 		$scope.searchInput = newSearchInput;
 		setFocus("searchInput");
@@ -92,20 +93,7 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 			}
 		}, 400);
 	}
-	
-	$scope.addToFavorites= function(doc,index){
-//		console.log(index);
-		for (var i = 0; i < $scope.allDocuments.length; i++) {
-			if($scope.allDocuments[i].id==doc.id) {
-				$scope.isDocumentFavorite = !$scope.isDocumentFavorite;
-			}
-		}
-		$scope.selectedRow = index;
-//		console.log(doc)
-//		console.log(doc.label)
-//		console.log(doc.creationUser)
-	}
-	
+
 	/**
 	 * Set the currently active tab of the Analysis perspective in order to
 	 * enable managing of visibility of "Add analysis document" button. This
@@ -115,4 +103,5 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 	$scope.setActiveTabState = function(item) {		
 		$scope.activeTabAnalysis = item.toUpperCase();
 	};
+
 }

@@ -8,19 +8,17 @@ angular.module('workspace_document_view', ['ngMaterial'])
 			ngModel:"=",
 			showGridView:"=?",
 			showAddToOrganizer:"=?",
-			isDocFavorite: "=?",
 			selectedRow:"=?",
 			tableSpeedMenuOption:"=?",
 			selectedDocument:"=?",
 			selectDocumentAction:"&",
 			deleteDocumentAction:"&",
 			executeDocumentAction:"&",
+			cloneDocumentAction:"&",
 			addToOrganizerAction:"&",
 			addToFavoritesAction:"&",
 			orderingDocumentCards:"=?",
-			favoritesEnabled:"=?",
-			cloneEnabled:"=?",
-			cloneDocumentAction:"&"
+			cloneEnabled:"=?"
 		},
 		link: function (scope, elem, attrs) { 
 			elem.css("position","relative")

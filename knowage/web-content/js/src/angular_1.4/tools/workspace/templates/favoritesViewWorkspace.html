@@ -2,13 +2,14 @@
 
  	<workspace-document-view 	class="kn-documentBrowser" flex 
  					style='overflow:auto;' 
- 					ng-model=allDocuments
+ 					ng-model=favoriteDocumetnsList
  					show-grid-view=showGridView
  					show-add-to-organizer="true"
- 					is-doc-favorite=isDocumentFavorite
  					selected-row=selectedRow
  					execute-document-action="executeDocument(doc)"
- 					add-to-favorites-action="addToFavorites(doc,index)" >
+ 					select-document-action="selectDocument(doc)"
+ 					delete-document-action="deleteFavorite(doc)"
+ 					 >
 	</workspace-document-view>	
 
 </md-content>
