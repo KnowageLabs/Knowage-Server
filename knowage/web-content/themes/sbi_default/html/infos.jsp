@@ -17,8 +17,9 @@
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
 	%>
 	
-<md-dialog id="infosDialog">
-	<md-dialog-content flex>
+<md-dialog id="infosDialog" layout="column">
+<form>
+	<!--  md-dialog-content flex >
 		<md-toolbar class="minihead">
 			<div class="md-toolbar-tools">
 				  <md-content style="float:left;background-color: inherit;">&nbsp;
@@ -47,5 +48,29 @@
 				<md-button type="button" class="md-ExtraMini"	ng-click="closeDialog()">{{okMessage}}</md-button>
 			</md-content>
 		</md-content>
+	</md-dialog-content-->
+
+	<md-dialog-content layout="column" layout-padding layout-margin>
+		 	 <img src="<%=contextName %>/themes/sbi_default/img/wapp/logoKnowage.png" width="234" layout-margin />
+		 	 <div layout-padding>
+				<p>Version: 1.0.0</p>
+				<p >
+					Logged User: <%= userName %>
+				</p>
+				<p  >
+					Source code available at <a href="http://www.knowage-suite.com" target="_blank">www.knowage-suite.com</a>
+				</p>
+				
+				<p layout-align ="center center" > 
+					<i>&#169; 2016 Engineering Ingegneria Informatica S.p.A.</i>
+				</p>
+			</div>
 	</md-dialog-content>
+	<div class="md-actions">
+		<md-button ng-click="closeDialog()" >
+			{{okMessage}}
+        </md-button>
+     </div>
+     </form>
+	
 </md-dialog>
