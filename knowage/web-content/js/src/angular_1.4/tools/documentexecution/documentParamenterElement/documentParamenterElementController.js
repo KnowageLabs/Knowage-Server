@@ -200,6 +200,8 @@
 						if(!paramDialogCtrl.tempParameter.multivalue) {
 //							paramDialogCtrl.tempParameter.parameterValue = node;
 							paramDialogCtrl.tempParameter.parameterValue = node.value;
+							paramDialogCtrl.tempParameter.parameterDescription = {};
+							paramDialogCtrl.tempParameter.parameterDescription[node.value] = node.description;
 						}
 						
 						// in case the node is not a leaf the rest service is invoked in order

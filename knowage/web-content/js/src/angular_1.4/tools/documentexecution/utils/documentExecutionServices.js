@@ -223,7 +223,7 @@
 						parameter.parameterValue = (parameter.parameterValue)?
 								[parameter.parameterValue] : []
 						parameter.parameterDescription = (parameter.parameterDescription)?
-								[parameter.parameterDescription] : {}
+								parameter.parameterDescription : {}
 								
 						return (parameter.parameterValue && parameter.parameterValue.value)?
 								parameter.parameterValue.value : '';
