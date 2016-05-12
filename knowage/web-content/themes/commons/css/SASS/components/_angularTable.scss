@@ -191,52 +191,53 @@ angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
 /* pagination */
 
 
-  .pagination>li,   .pagination>li>span
-	{
-	position: relative;
-	float: left;
-	margin-left: -1px;
-	text-decoration: none !important;
-	background-color: #fff;
-/* 	border: 1px solid #ddd; */
-	display: block;
-	width: 20px;
-	height: 16px;
-	text-align: center;
-	line-height: 16px;
-}
+.pagination > li, .pagination > li > span {
+        position: relative;
+        float: left;
+        margin-left: -1px;
+        text-decoration: none !important;
+        background-color: #fff;
+        border: 1px solid $bordersColor;
+        display: block;
+        width: 30px;
+        height: 28px;
+        text-align: center;
+        line-height: 28px;
+    }
 
-  .pagination {
-	margin: 0px !important;
-	padding: 0px !important;
-}
+    .pagination {
+        margin: 0px !important;
+        padding: 0px !important;
+    }
 
-  .pagination>li>a {
-	text-decoration: none !important;
-	width: 100%;
-    display: block;
-}
+    .pagination > li > a {
+        text-decoration: none !important;
+        width: 100%;
+        display: block;
+        font-size: $smallFontSize;
+    	color: $baseColor;
+    }
 
-  .pagination>.active,   .pagination>.active>a,
-	  .pagination>.active>a:focus,   .pagination>.active>a:hover,
-	  .pagination>.active>span,   .pagination>.active>span:focus,
-	  .pagination>.active>span:hover {
-	z-index: 2;
-	color: #000;
-	cursor: default;
-	background-color: rgb(232, 232, 232);
-	border-color: rgb(232, 232, 232);
-}
+    .pagination > .active, .pagination > .active > a,
+    .pagination > .active > a:focus, .pagination > .active > a:hover,
+    .pagination > .active > span, .pagination > .active > span:focus,
+    .pagination > .active > span:hover {
+        z-index: 2;
+        color: #000;
+        cursor: default;
+        background-color: $secondaryColor;
+        border-color: $secondaryColor;
+    }
 
-  .pagination>.disabled>a,   .pagination>.disabled>a:focus,
-	  .pagination>.disabled>a:hover,
-	  .pagination>.disabled>span,   .pagination>.disabled>span:focus,
-	  .pagination>.disabled>span:hover {
-	color: #777;
-	cursor: not-allowed;
-	background-color: #fff;
-	border-color: #ddd;
-}
+    .pagination > .disabled > a, .pagination > .disabled > a:focus,
+    .pagination > .disabled > a:hover,
+    .pagination > .disabled > span, .pagination > .disabled > span:focus,
+    .pagination > .disabled > span:hover {
+        color: #777;
+        cursor: not-allowed;
+        background-color: #fff;
+        border-color: #ddd;
+    }
 
 
   .dropdown_menu_list {
