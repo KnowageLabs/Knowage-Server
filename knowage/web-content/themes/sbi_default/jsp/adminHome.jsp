@@ -116,7 +116,7 @@ Ext.onReady(function () {
 <menu-aside></menu-aside>
 <div id="divContainer" class="overlayButtonBar ">
 	<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons md-24">menu</i></a>
-	<a href="#" class="logoKnowage"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>" width="120"/></a>
+	<a href="#" class="logoKnowage"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>"/></a>
 </div>
 </div>
 

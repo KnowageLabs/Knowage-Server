@@ -102,7 +102,7 @@ Ext.onReady(function () {
 <div data-ng-controller="menuCtrl" ng-app="menuApp">
 <div id="divContainer" class="overlayButtonBar ">
 	<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons md-24">menu</i></a>
-	<a href="#" aria-hidden="true" class="logoKnowage"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>" width="120"/></a>
+	<a href="#" aria-hidden="true" class="logoKnowage"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>" /></a>
 	
 </div>
 <menu-aside></menu-aside>
