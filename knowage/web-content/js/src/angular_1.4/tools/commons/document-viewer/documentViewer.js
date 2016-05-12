@@ -1,5 +1,17 @@
 angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
-.service('$documentViewer',function($mdDialog,sbiModule_config){ 
+.service('$documentViewer',function($mdDialog,sbiModule_config,sbiModule_restServices){ 
+	 
+	var dwS=this;
+	this.openDocumentByLabel=function(docLabel){
+		sbiModule_restServices.promiseGet("1.0/documents",docLabel).then(
+		function(response){
+			dwS.openDocument(response.data.id,response.data.label,response.data.name);
+		},
+		function(response){
+			sbiModule_restServices.errorHandler(response.data,"");
+		});
+	}
+	
 	this.openDocument=function(documentId,documentLabel,documentName){
 
 		$mdDialog.show({
