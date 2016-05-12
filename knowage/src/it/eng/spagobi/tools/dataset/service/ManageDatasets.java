@@ -107,7 +107,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	// logger component
 	public static Logger logger = Logger.getLogger(ManageDatasets.class);
-	public static transient Logger auditlogger = Logger.getLogger("audit.dataset");
+	public static Logger auditlogger = Logger.getLogger("dataset.audit");
 
 	public static final String JOB_GROUP = "PersistDatasetExecutions";
 	public static final String TRIGGER_GROUP = "DEFAULT";
@@ -298,9 +298,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				Boolean isFromSaveNoMetadata = getAttributeAsBoolean(DataSetConstants.IS_FROM_SAVE_NO_METADATA);
 				// handle insert of persistence and scheduling
 				if (!isFromSaveNoMetadata) {
-					auditlogger.debug("STARTED INSERTING PERISISTING AND SCHEDULING");
+					auditlogger.info("[START PERSISTING]");
 					insertPersistenceAndScheduling(ds, logParam);
-					auditlogger.debug("FINISHED INSERTING PERISISTING AND SCHEDULING");
+					auditlogger.info("[END PERSISTING] Saved metadata!");
 				}
 
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, operation, logParam, "OK");
@@ -337,12 +337,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	public void insertPersistenceAndScheduling(IDataSet ds, HashMap<String, String> logParam) throws Exception {
 		logger.debug("IN");
-		auditlogger.debug("IN");
 		if (ds.isPersisted()) {
 			// Manage persistence of dataset if required. On modify it
 			// will drop and create the destination table!
 			logger.debug("Start persistence...");
-			auditlogger.debug("Start persistence...");
 			// gets the dataset object informations
 
 			IDataSetDAO iDatasetDao = DAOFactory.getDataSetDAO();
@@ -356,7 +354,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				JSONArray parsListJSON = getAttributeAsJSONArray(DataSetConstants.PARS);
 				if (parsListJSON.length() > 0) {
 					logger.error("The dataset cannot be persisted because uses parameters!");
-					auditlogger.error("The dataset cannot be persisted because uses parameters!");
 					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsCannotPersist");
 				}
 			}
@@ -370,7 +367,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			// }
 
 			logger.debug("Persistence ended succesfully!");
-			auditlogger.debug("Persistence ended succesfully!");
 			if (ds.isScheduled()) {
 				DatasetPersistenceUtils dspu = new DatasetPersistenceUtils(profile, null, SERVICE_NAME, ds);
 				String jobName = dspu.saveDatasetJob(ds, logParam);
@@ -378,7 +374,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					dspu.saveTriggerForDatasetJob(jobName, getSpagoBIRequestContainer());
 				} else {
 					logger.error("The job is not saved correctly!");
-					auditlogger.error("The job is not saved correctly!");
 					throw new SpagoBIServiceException(SERVICE_NAME, "The job is not saved correctly!");
 				}
 			} else {
@@ -404,7 +399,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			}
 		}
 		logger.debug("OUT");
-		auditlogger.debug("OUT");
 	}
 
 	public void modifyPersistenceAndScheduling(IDataSet ds, HashMap<String, String> logParam) throws Exception {
