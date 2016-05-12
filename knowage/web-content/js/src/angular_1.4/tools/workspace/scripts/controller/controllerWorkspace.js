@@ -6,7 +6,7 @@
  * 		execute the document).
  */
 angular
-	.module('workspace.controller', ['workspace.directive','workspace.configuration','document_viewer'])
+	.module('workspace.controller', ['workspace.directive','workspace.configuration'])
 	.controller('workspaceController', ["$scope","$http","$mdDialog","$timeout","$documentViewer","sbiModule_translate","sbiModule_restServices","sbiModule_config", workspaceFunction]);
 
 function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiModule_translate,sbiModule_restServices,sbiModule_config) {
@@ -84,7 +84,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 		$scope.showGridView = !$scope.showGridView;
 	}
 
-//	$scope.setSearchInput = function (newSearchInput) {
+//	$scope.setSearchInput = function(newSearchInput) {
 //
 //		$scope.searchInput = newSearchInput;
 //		
