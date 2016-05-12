@@ -217,7 +217,7 @@ public class CalculatedMemberManager {
 			for (int i = 0; i < args.size(); i++) {
 				ParseTreeNode aNode = args.get(i);
 				if (insertCalculatedInParentNode(node, i, aNode, calculatedFieldTree, parentNodeUniqueName)) {
-					return true;
+					// return true;
 				}
 			}
 		} else if (parseNode instanceof DimensionNode) {
@@ -227,7 +227,7 @@ public class CalculatedMemberManager {
 		} else if (parseNode instanceof IdentifierNode) {
 			IdentifierNode node = (IdentifierNode) parseNode;
 			String name = getIdentifierUniqueName(node);
-			if (parentNodeUniqueName.equals(name)) {
+			if (parentNodeUniqueName.equals(name) && !parentCallNode.getOperatorName().equalsIgnoreCase("children")) {
 				parentCallNode.getArgList().add(positionInParentCallNode + 1, calculatedFieldTree);// The
 				// new
 				// calculated
@@ -242,7 +242,20 @@ public class CalculatedMemberManager {
 		} else if (parseNode instanceof LevelNode) {
 
 		} else if (parseNode instanceof MemberNode) {
-
+			MemberNode node = (MemberNode) parseNode;
+			String name = node.getMember().getUniqueName();
+			if (parentNodeUniqueName.equals(name)) {
+				parentCallNode.getArgList().add(positionInParentCallNode + 1, calculatedFieldTree);// The
+				// new
+				// calculated
+				// member
+				// goes
+				// next
+				// its
+				// parent
+				// node
+				return true;
+			}
 		}
 		return false;
 
