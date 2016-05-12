@@ -16,6 +16,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -27,9 +28,9 @@ import org.apache.log4j.Logger;
 
 @Path("/2.0/analyticalmodel")
 @ManageAuthorization
-public class GetFavouritesResource extends AbstractSpagoBIAction {
+public class FavouritesResource extends AbstractSpagoBIAction {
 
-	static protected Logger logger = Logger.getLogger(GetFavouritesResource.class);
+	static protected Logger logger = Logger.getLogger(FavouritesResource.class);
 
 	RememberMe rememberMe = null;
 	List<RememberMe> rememberMeList;
@@ -62,6 +63,19 @@ public class GetFavouritesResource extends AbstractSpagoBIAction {
 			logger.debug("OUT");
 		}
 		return rememberMeList;
+	}
+
+	@DELETE
+	@Path("/{id}")
+	public void deleteFavoriteById(@PathParam("id") Integer id) {
+		logger.debug("IN");
+		try {
+			DAOFactory.getRememberMeDAO().delete(id);
+		} catch (Exception e) {
+			logger.error("Error deleting a favorite documetn execution", e);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 	@POST

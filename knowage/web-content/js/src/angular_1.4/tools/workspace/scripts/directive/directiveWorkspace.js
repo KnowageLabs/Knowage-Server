@@ -11,5 +11,6 @@ angular
 	                                'federation_view',
 	                                'workspace_document_view',
 	                                'dataset_view',
-	                                'models_view_workspace'
+	                                'models_view_workspace',
+	                                'favorite_view'
 	                                ]);

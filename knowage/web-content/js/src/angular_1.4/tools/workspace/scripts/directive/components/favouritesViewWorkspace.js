@@ -14,19 +14,27 @@ angular
 		  };
 	})
 
-function favouritesController($scope,sbiModule_restServices,sbiModule_translate){
-	
-	$scope.selectedDocument = undefined;
+function favouritesController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_user){
+
 	$scope.showDocumentInfo = false;
 
-	$scope.loadFavoriteDocumentsForUser =function(){
-		sbiModule_restServices.promiseGet("2.0/analyticalmodel/getmyrememberme", "biadmin")
+	$scope.loadFavoriteDocumentExecutionsForUser =function(){
+		sbiModule_restServices.promiseGet("2.0/analyticalmodel/getmyrememberme", sbiModule_user.userId)
 		.then(function(response) {
 			angular.copy(response.data,$scope.favoriteDocumetnsList);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
-	$scope.loadFavoriteDocumentsForUser();
-	
+	$scope.loadFavoriteDocumentExecutionsForUser();
+
+	$scope.deleteFavoriteDocumentExecutionById = function(doc) {
+		sbiModule_restServices.promiseDelete("2.0/analyticalmodel",doc.id)
+		.then(function(response) {
+			$scope.loadFavoriteDocumentExecutionsForUser();
+		},function(response) {
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+		});
+	}
+
 }
