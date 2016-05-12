@@ -104,31 +104,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				 </form>
 			</detail>
 		</angular-list-detail>
-<!-- 		<md-content layout="row" layout-fill> -->
-<!-- 		  <md-content flex = "45" layout-padding> -->
-<!-- 		  	<md-content layout="column"> -->
-<!-- 			  	<md-toolbar class="md-knowage-theme"> -->
-<!-- 				    <h1 class="md-toolbar-tools"> -->
-<!-- 						{{}} -->
-<!-- 				    </h1> -->
-<!-- 				</md-toolbar> -->
-<!-- 				<md-content layout-padding> -->
-<!-- 				    <md-button 	class="md-raised md-ExtraMini" ng-click="deleteRow()"> {{translate.load("sbi.generic.delete")}}</md-button> -->
-<!-- 				 </md-content>   -->
-<!-- 			    <md-content flex="90"> -->
-<!-- 				    <angular-table  -->
-<!-- 						id="table" ng-model="data"  -->
-<!-- 						columns='["label","name","type","family"]' -->
-<!-- 						columns-search='["label","name","type","family"]' -->
-<!-- 						highlights-selected-item = "true" -->
-<!-- 						show-search-bar="true" -->
-<!-- 						no-pagination="true" -->
-<!-- 						selected-item="itemSelected" -->
-<!-- 						click-function = "copyRowInForm(item,cell,listId)" -->
-<!-- 					></angular-table> -->
-<!-- 				</md-content> -->
-<!-- 			 </md-content> -->
-<!-- 		  </md-content> -->
 	</div>
 </body>
 </html>
