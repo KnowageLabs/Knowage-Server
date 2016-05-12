@@ -128,263 +128,133 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		cancel-function="cancel"
 		disable-save-button="!isDirty"
 		show-save-button="showMe" show-cancel-button="showMe">
-
-			
-				<form  class="detailBody md-whiteframe-z1" id="businessModelForm">
-					<div layout-fill class="containerDiv">
-<!-- 					<md-toolbar class="header">
-<!-- 						<div class="md-toolbar-tools h100"> -->
-<!-- 							<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue");}}</div> -->
-<!-- 								<div style="position: absolute; right: 0px" class="h100"> -->
-									
-<!-- 								<md-button id="cancel" type="button" -->
-<!-- 								aria-label="cancel" class="md-raised md-ExtraMini rightHeaderButtonBackground" -->
-<!-- 								style=" margin-top: 2px;" -->
-<!-- 								ng-click="cancel()"> -->
-<!-- 								{{translate.load("sbi.generic.cancel");}}  -->
-<!-- 								</md-button> -->
-									
-<!-- 									<md-button  type="submit" ng-disabled="!isDirty" -->
-<!-- 										aria-label="save layer" class="md-raised md-ExtraMini " -->
-<!-- 										style=" margin-top: 2px;" ng-click="saveBusinessModel()" -->
-<!-- 									> -->
-<!-- 										{{translate.load("sbi.browser.defaultRole.save");}}  -->
-<!-- 									</md-button> -->
-									
-<!-- 									<md-button  type="submit" ng-disabled="!isDirty" -->
-<!-- 										aria-label="save layer" class="md-raised md-ExtraMini " -->
-<!-- 										style=" margin-top: 2px;" ng-click="saveBusinessModelFile()" -->
-<!-- 									> -->
-<!-- 										test -->
-<!-- 									</md-button> -->
-									
-<!-- 								</div> -->
-<!-- 						</div> -->
-<!-- 					</md-toolbar> -->
-					
-					<md-content flex class="ToolbarBox miniToolbar noBorder" >
-					
-						<div layout="row" layout-wrap>
-      						<div flex=100>
-       							<md-input-container class="small counter">
-       								<label>{{translate.load("sbi.ds.name")}}</label>
-       								<input ng-change="checkChange()" ng-model="selectedBusinessModel.name" required
-        								 ng-maxlength="100"> 
-        						</md-input-container>
-      						</div>
-     					</div>
-     					
-     					<div layout="row" layout-wrap>
-      						<div flex=100>
-       							<md-input-container class="small counter">
-       								<label>{{translate.load("sbi.ds.description")}}</label>
-       								<input ng-model="selectedBusinessModel.description"
-        								ng-maxlength="100" ng-change="checkChange()"> 
-        						</md-input-container>
-      						</div>
-     					</div>
-     					
-     					<div layout="row" layout-wrap>
-      						<div flex=100>
-       							<md-input-container class="small counter"> 
-       								<label>{{translate.load("sbi.ds.catType")}}</label>
-							       <md-select  aria-label="aria-label"
-							        ng-model="selectedBusinessModel.category" ng-change="checkChange()"> <md-option
-							        ng-repeat="c in listOfCategories" value="{{c.VALUE_ID}}">{{c.VALUE_NM}} </md-option>
-							       </md-select> 
-       							</md-input-container>
-      						</div>
-     					</div>
-     					
-     					<div layout="row" layout-wrap>
-      						<div flex=100>
-       							<md-input-container class="small counter"> 
-       								<label>{{translate.load("sbi.ds.dataSource")}}</label>
-							       <md-select  aria-label="aria-label"
-							        ng-model="selectedBusinessModel.dataSourceLabel" ng-change="checkChange()"> <md-option
-							        ng-repeat="d in listOfDatasources" value="{{d.DATASOURCE_LABEL}}">{{d.DATASOURCE_LABEL}} </md-option>
-							       </md-select> 
-       							</md-input-container>
-      						</div>
-     					</div>
-     					
-     					<div layout="row" layout-wrap>
-     						<div flex=3 style="line-height: 40px; margin-top:17px" >
-       							<label>{{translate.load("sbi.ds.file.upload.button")}}:</label>
-      						</div>
-      						
-      						<!--<md-input-container > 
-       							<input id="businessModelFile" file-model="bmWithFile.file" type="file" ng-click="checkChange()"/> 
-      						</md-input-container>-->
-      						<file-upload style="height:15px" ng-model="fileObj" id="businessModelFile" ng-click="fileChange();checkChange()"></file-upload>
-      						<div flex=3 style="line-height: 40px; margin-top:17px" >
-       							<md-button ng-click="importMetadata(selectedBusinessModel.id)" ng-show="!bmImportingShow" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue.import.metadata");}}</md-button>
-      						</div>
-      						<div layout-align="space-around" layout="row" style="height:100%" ng-show="bmImportingShow">
-			     				<md-progress-circular 
-			        	 			class=" md-hue-4"
-			        				md-mode="indeterminate" 
-			        				md-diameter="70"       
-			        				style="height:100%;">
-			      				</md-progress-circular>
-			      			</div> 
-      					</div>
-      					<div layout="row" layout-wrap>
-      						 <p flex="10" layout-align="center center">{{translate.load("sbi.metadata.cwm.import.file.upload")}}:</p>
-                                <file-upload flex="40" ng-model="fileObjCWM" id="cwmFile" ng-click="fileCWMChange();checkCWMChange()"></file-upload>
-                                	<div flex="20">
-                                   		 <md-button  ng-click="importCWMFile(selectedBusinessModel.id)" ng-show="!bmCWMProcessingShow" class="md-raised">{{translate.load("sbi.metadata.cwm.import.button")}}</md-button>
-                                	</div>
-                                	<div flex="20">
-                                		<md-button ng-click="downloadCWMFile(selectedBusinessModel.id)" ng-show="!bmCWMProcessingShow" class="md-raised" >{{translate.load("sbi.metadata.cwm.export.button")}}</md-button>		
-                                	</div>
-                                    <div layout="row" flex="10" layout-align="space-around">
-                                       <md-progress-circular  ng-show="bmCWMProcessingShow" class=" md-hue-4" md-mode="indeterminate" md-diameter="70"> </md-progress-circular>                                   
-                                    </div>     
-                                     						 
-      					</div>
+		
+		
+		
+          <form id="businessModelForm">
+          <md-card>
+	        <md-card-content>
+		        <md-input-container class="small counter">
+					<label>{{translate.load("sbi.ds.name")}}</label>
+					<input ng-change="checkChange()" ng-model="selectedBusinessModel.name" required
+						 ng-maxlength="100"> 
+				</md-input-container>
+				
+				<md-input-container class="small counter">
+					<label>{{translate.load("sbi.ds.description")}}</label>
+					<input ng-model="selectedBusinessModel.description"
+						ng-maxlength="100" ng-change="checkChange()"> 
+				</md-input-container>
+				
+				<md-input-container class="small counter"> 
+					<label>{{translate.load("sbi.ds.catType")}}</label>
+				   <md-select  aria-label="aria-label"
+				    ng-model="selectedBusinessModel.category" ng-change="checkChange()"> <md-option
+				    ng-repeat="c in listOfCategories" value="{{c.VALUE_ID}}">{{c.VALUE_NM}} </md-option>
+				   </md-select> 
+				</md-input-container>
+				
+				<md-input-container class="small counter"> 
+					<label>{{translate.load("sbi.ds.dataSource")}}</label>
+				       <md-select  aria-label="aria-label"
+				        ng-model="selectedBusinessModel.dataSourceLabel" ng-change="checkChange()"> <md-option
+				        ng-repeat="d in listOfDatasources" value="{{d.DATASOURCE_LABEL}}">{{d.DATASOURCE_LABEL}} </md-option>
+				       </md-select> 
+				</md-input-container>
+				
+				<div layout="row" layout-wrap>
+						<label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.file.upload.button")}}:</label>
+      				<file-upload  ng-model="fileObj" id="businessModelFile" ng-click="fileChange();checkChange()"></file-upload>
       				
-     					     				
-     					<!--<div layout="row" layout-wrap>
-      						<div flex=3 style="line-height: 40px">
-       							<label>{{translate.load("sbi.bm.isLocked")}}:</label>
-      						</div>
- 
-      						<md-input-container class="small counter"> 
-      							<md-icon md-font-icon="fa fa-lock fa-2x" ng-show="selectedBusinessModel.modelLocked" 
-      								style="margin-top: 1px; color:#3b668c;">
-      							</md-icon>
-      							<md-icon md-font-icon="fa fa-unlock-alt fa-2x" ng-show="!selectedBusinessModel.modelLocked" 
-      								style="margin-top: 1px; color:#3b668c;">
-      							</md-icon>  
-      						</md-input-container>
-     					</div>-->
-     					
-     					<div layout="row" layout-wrap >
-     						
-     						<md-button class="md-fab md-Mini" style="left:0px; background-color:#3b678c" ng-click="businessModelLock()">
-       								<md-tooltip md-direction="bottom">
-       									{{ selectedBusinessModel.modelLocked && translate.load("sbi.bm.unlockModel") || translate.load("sbi.bm.lockModel")}}
-       								</md-tooltip>
-       								<md-icon
-       									ng-show="selectedBusinessModel.modelLocked"
-										md-font-icon="fa fa-unlock-alt fa-lg" 
-										style="color: white; ">
-									</md-icon>
-									<md-icon
-										ng-show="!selectedBusinessModel.modelLocked"
-										md-font-icon="fa fa-lock fa-lg" 
-										style="color: white; ">
-									</md-icon>  
-       						</md-button>
-     						
-      						<div flex=3 style="line-height: 40px">
-      							<label ng-show="selectedBusinessModel.modelLocked">
-       								{{translate.load("sbi.bm.lockedBy")}}&nbsp
-       								{{selectedBusinessModel.modelLocker}}
-       								 to unlock click button
-       							</label>	
-      							
-      							<label ng-show="!selectedBusinessModel.modelLocked">
-       								Selected model is not locked, to lock click button
-       							</label>	
-					
-      						</div>      						
- 
-     					</div>
+				</div>
+				
+			</md-card-content>
+	      </md-card>
+	      <md-card>
+	      <md-card-title>
+	      	<md-card-title-text>
+            	<span class="md-headline">Metadata</span>
+          	</md-card-title-text>
+	      </md-card-title>
+	      <md-card-content>
+	      	<div layout="column" layout-margin>
+		      	<div  layout="row">
+					<md-button ng-click="importMetadata(selectedBusinessModel.id)"  ng-disabled="bmImportingShow" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue.import.metadata");}}</md-button>
+					<md-button ng-click="downloadCWMFile(selectedBusinessModel.id)" ng-disabled="bmCWMProcessingShow" class="md-raised" >{{translate.load("sbi.metadata.cwm.export.button")}}</md-button></div>
+				</div>
+				<div   ng-show="bmImportingShow" >
+    				<md-progress-linear md-mode="indeterminate"></md-progress-linear>
+    				<div class="bottom-block">
+				      <span>Importing metadata</span>
+				    </div>
+      			</div> 
+      			<div   ng-show="bmCWMProcessingShow" >
+    				<md-progress-linear md-mode="indeterminate"></md-progress-linear>
+    				<div class="bottom-block">
+				      <span>Exporting CWM</span>
+				    </div>
+      			</div> 
+	      	</div>
+	      	 
+	      	 <md-divider layout-margin></md-divider>
+	      	<div layout="row" layout-wrap>
+				<label flex="20" layout-align="center center" class="buttonLabel">{{translate.load("sbi.metadata.cwm.import.file.upload")}}:</label>
+		        <file-upload flex="50" ng-model="fileObjCWM" id="cwmFile" ng-click="fileCWMChange();checkCWMChange()"></file-upload>
+            	<div flex="30">
+               		 <md-button  ng-click="importCWMFile(selectedBusinessModel.id)" ng-disabled="bmCWMImportingShow" class="md-raised">{{translate.load("sbi.metadata.cwm.import.button")}}</md-button>
+            	</div>
+               	
 
-     					<!--<div layout="row" layout-wrap>
-      						<div flex=3 style="line-height: 40px">
-       							<md-button type="button" class="md-raised " ng-disabled="selectedBusinessModel.modelLocked" ng-click="lockBusinessModel()" >
-       								{{translate.load("sbi.bm.lockModel")}}
-       							</md-button>
-      						</div>
-     					</div>
+                                     						 
+      		</div>
+      		<div   ng-show="bmCWMImportingShow" >
+    				<md-progress-linear md-mode="indeterminate"></md-progress-linear>
+    				<div class="bottom-block">
+				      <span>Importing CWM</span>
+				    </div>
+      			</div> 
+	      </md-card-content>
+	      </md-card>
+	      
+	      
+	      <md-card>
+	      <md-card-title>
+	      	<md-card-title-text>
+            	<span class="md-headline">{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}</span>
+          	</md-card-title-text>
+	      </md-card-title>
+	      <md-card-content>
+	      	
+				<md-radio-group ng-model="bmVersionsActive" ng-change="checkChange()">
+				<angular-table flex
+					ng-show="!versionLoadingShow"
+					id="bmVersions_id"
+					ng-model="bmVersions"
+					columns='[
+						{"label":"ACTIVE","name":"ACTION", "size":"60px"},
+						{"label":"FILE NAME","name":"fileName"},
+						{"label":"CREATOR","name":"creationUser"},
+						{"label":"CREATION DATE","name":"creationDate"}
+						]'
+					columns-search='["creationUser","creationDate"]'
+					show-search-bar=false
+					selected-item="selectedVersions"
+					highlights-selected-item=true
+					speed-menu-option="bmSpeedMenu2"	
+					no-pagination=false	
+					click-function="clickRightTable(item)"								
+				>						
+				</angular-table>
+				</md-radio-group>		
+	      </md-card-content>
+	      </md-card>
+	      </form>
      					
-     					<div layout="row" layout-wrap>
-      						<div flex=3 style="line-height: 40px">
-       							<md-button type="button" class="md-raised " ng-disabled="!selectedBusinessModel.modelLocked" ng-click="unlockBusinessModel()">
-       								{{translate.load("sbi.bm.unlockModel")}}
-       							</md-button>
-      						</div>
-     					</div>  -->
 
-     					<!-- <div layout="row" layout-wrap>
-      						<div flex=3 style="line-height: 40px">
-       							<md-button class="md-fab md-Mini" style="left:0px; background-color:#3b678c" ng-click="businessModelLock()" ng-disabled="lockButtonEnabled">
-       									<md-tooltip md-direction="right">
-       										{{ selectedBusinessModel.modelLocked && translate.load("sbi.bm.unlockModel") || translate.load("sbi.bm.lockModel")}}
-       									</md-tooltip>
-       									<md-icon
-       										ng-show="selectedBusinessModel.modelLocked"
-											md-font-icon="fa fa-unlock-alt fa-lg" 
-											style="color: white; ">
-										</md-icon>
-										<md-icon
-											ng-show="!selectedBusinessModel.modelLocked"
-											md-font-icon="fa fa-lock fa-lg" 
-											style="color: white; ">
-										</md-icon>  
-       							</md-button>
-      						</div>
-     					</div> -->
-     					 
-     					<div style="height:50%; padding-top:20px;">     						
-     						<md-content flex style="background-color: rgb(236, 236, 236);height:100%;overflow:hidden;"
-     						class="ToolbarBox miniToolbar noBorder leftListbox"  >
+        
+
 			
-     							<md-toolbar class="header md-toolbar-tools">
-     								<!-- <md-button 
-    									ng-disabled=false
-    									class="md-fab md-ExtraMini"
-    									style="position:absolute; right:26px; top:0px; background-color:#E91E63"
-    									ng-click="deleteBusinessModelVersions()">
-    						
-    									<md-icon
-        									md-font-icon="fa fa-trash" 
-        									style=" margin-top: 6px ; color: white;" >
-       									</md-icon> 
-									</md-button>  -->
-     								{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}
-     							</md-toolbar>
-     							<div layout-align="space-around" layout="row" style="height:100%" ng-show="versionLoadingShow">
-     								<md-progress-circular 
-        	 							class=" md-hue-4"
-        								md-mode="indeterminate" 
-        								md-diameter="70"       
-        								style="height:100%;">
-      								</md-progress-circular>
-      							</div>
-     							<md-radio-group ng-model="bmVersionsActive" ng-change="checkChange()">
-     							<angular-table
-     							    layout-fill
-     								ng-show="!versionLoadingShow"
-	     							
-									
-									id="bmVersions_id"
-									ng-model="bmVersions"
-									columns='[
-										{"label":"ACTIVE","name":"ACTION","size":"60px"},
-										{"label":"FILE NAME","name":"fileName","size":"200px"},
-										{"label":"CREATOR","name":"creationUser","size":"150px"},
-										{"label":"CREATION DATE","name":"creationDate","size":"200px"}
-										]'
-									columns-search='["creationUser","creationDate"]'
-									show-search-bar=false
-									selected-item="selectedVersions"
-									highlights-selected-item=true
-									speed-menu-option="bmSpeedMenu2"	
-									no-pagination=false	
-									click-function="clickRightTable(item)"								
-								>						
-								</angular-table>
-								</md-radio-group>								
-     						</md-content>
-     					</div>
-     					
-					</md-content>
-				 </div>	
-				</form>
+				
 			
 		</detail>
 	</angular-list-detail>

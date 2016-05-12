@@ -20,6 +20,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.bmLoadingShow;
 	$scope.bmImportingShow;
 	$scope.bmCWMProcessingShow;
+	$scope.bmCWMImportingShow;
 	$scope.isNew;
 	
 	$scope.translate = sbiModule_translate;
@@ -553,8 +554,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 		}
 		
+		
 		//import CWM Metamodel informations
-		$scope.importCWMFile = function(bmId) {		
+		$scope.importCWMFile = function(bmId) {	
 			var confirm = $mdDialog
 			.confirm()
 			.title(sbiModule_translate.load("sbi.metadata.cwm.import"))
@@ -568,7 +570,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				
 			if( $scope.fileObjCWM.fileName !== undefined){
 				$mdDialog.show(confirm).then(function() {
-					$scope.bmCWMProcessingShow = true;
+					$scope.bmCWMImportingShow = true;
 					//Upload file
 					multipartForm.post("2.0/metadata/"+bmId+"/importCWM",$scope.fileObjCWM).success(
 
@@ -583,12 +585,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 									$scope.fileObjCWM.fileName = "";
 									$scope.fileObjCWM = {};
 								}
-								$scope.bmCWMProcessingShow = false;
+								$scope.bmCWMImportingShow = false;
 
 							}).error(function(data, status, headers, config) {
 								console.log("[UPLOAD]: FAIL!"+status);
 								sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.ds.failedToUpload"), 'Error');
-								$scope.bmCWMProcessingShow = false;
+								$scope.bmCWMImportingShow = false;
 							});
 				});
 
