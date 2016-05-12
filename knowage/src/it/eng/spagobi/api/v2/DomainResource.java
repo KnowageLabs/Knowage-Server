@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -124,7 +124,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 			List<Domain> domainsList = domainsDao.loadListDomains();
 			domainsDao.saveDomain(domain);
 			String encodedDomain = URLEncoder.encode("" + domain.getValueId(), "UTF-8");
-			return Response.created(new URI("1.0/domains/" + encodedDomain)).build();
+			return Response.created(new URI("1.0/domains/" + encodedDomain)).entity(encodedDomain).build();
 		} catch (Exception e) {
 			Response.notModified().build();
 			logger.error("Error while creating url of the new resource", e);

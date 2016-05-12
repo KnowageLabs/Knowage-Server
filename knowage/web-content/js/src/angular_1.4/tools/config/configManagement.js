@@ -77,6 +77,8 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	
 	$scope.closeDetail = function(){
 		$angularListDetail.goToList();
+		$scope.configForm.$setPristine();
+		$scope.configForm.$setUntouched();
 	}
 	
 	$scope.editRow = function(item) {
@@ -92,6 +94,8 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 		}else{
 			$scope.saveNewRow(rowSelected);
 		}
+		$scope.configForm.$setPristine();
+		$scope.configForm.$setUntouched();
 	};
 	
 	$scope.saveModifiedRow = function(item){
@@ -154,13 +158,13 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	  			if (rowsSelected.id !== undefined) {
 	  				var idx = $scope.indexOf($scope.data, rowsSelected);
 	  				if (idx>=0){
-	  					$oldValue = $scope.data.splice(idx, 1);
 	  					sbiModule_restServices.delete(path, rowsSelected.id)
 	  						.then(function(response){
 	  							if (response.data.errors != undefined){
 	  								sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
 	  								return;
 	  							}
+	  							$scope.oldValue = $scope.data.splice(idx, 1);
 	  							$scope.message.showSuccessMessage($scope.translate.load('sbi.generic.operationSucceded'));
 	  						},function(data,status){
 	  							$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + data);

@@ -1,23 +1,23 @@
 
-var app = angular.module('domainManagementApp', ['angular_table','ngMaterial', 'ui.tree', 'angularUtils.directives.dirPagination', 'ng-context-menu',
-                                                     'sbiModule']);
+var app = angular.module('domainManagementApp', ['angular_table','ngMaterial', 'ui.tree', 'angularUtils.directives.dirPagination', 'angular_list', 'angular-list-detail', 'sbiModule']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller('Controller', ['sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog',"sbiModule_config", manageDomainFucntion ]);
+app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging', 'sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog',"sbiModule_config", manageDomainFucntion ]);
 
 
-function manageDomainFucntion(sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog,sbiModule_config) {
+function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog,sbiModule_config) {
 	
-	var s = $scope;
-	
-	s.vers="2.0";
-	s.path = s.vers + "/domains";
-	s.translate = sbiModule_translate;
-	s.data=[]
-	s.itemSelected= {};
+	$scope.path = "2.0/domains";
+	var headers = {
+			'Content-Type': 'application/json'
+	};
+	$scope.translate = sbiModule_translate;
+	$scope.message = sbiModule_messaging;
+	$scope.data=[]
+	$scope.itemSelected= {};
 	 
 	
 	var rowDefault = {
@@ -29,13 +29,219 @@ function manageDomainFucntion(sbiModule_translate, sbiModule_restServices, $scop
 		valueDescription : "Description Default"
 	};
 	
-	
-	sbiModule_restServices.get(s.path, "", null).success(function(data) {
-		$scope.data = data;
-	});
+	$scope.domainSpeedMenu = [{
+    	label: $scope.translate.load('sbi.generic.edit'),
+    	icon:'fa fa-pencil',
+    	color:'#153E7E',
+    	action:function(item,event){
+    		$scope.editRow(item);
+    	}
+	},{
+    	label: $scope.translate.load('sbi.generic.delete'),
+    	icon:'fa fa-trash',
+    	color:'#153E7E',
+    	action:function(item,event){
+    		$scope.deleteRow(item);
+    	}
+	}];
 
+	
+	sbiModule_restServices.promiseGet($scope.path, "", null)
+		.then(function(response) {
+			if (response.data.errors != undefined){
+				sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
+				return;
+			}
+			$scope.data = response.data;
+			}, function(data, status, headers, config){
+				$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + data);
+		});
+	
+	$scope.addDomain = function(){
+		$scope.domain = {};
+		$angularListDetail.goToDetail();
+	}
+	
+	$scope.closeDetail = function(){
+		$angularListDetail.goToList();
+		$scope.domainForm.$setPristine();
+		$scope.domainForm.$setUntouched();
+	}
+	
+	$scope.editRow = function(item) {
+		$scope.domain = angular.copy(item);
+		$angularListDetail.goToDetail();
+	}
+	
+	$scope.saveRow = function(){
+		var rowSelected = angular.copy($scope.domain);
+		if (rowSelected.id !== undefined) {
+			$scope.saveModifiedRow(rowSelected);
+		}else{
+			$scope.saveNewRow(rowSelected);
+		}
+		$scope.domainForm.$setPristine();
+		$scope.domainForm.$setUntouched();
+	};
+	
+	$scope.saveModifiedRow = function(item){
+		var idx = $scope.indexOf($scope.data, item);
+		sbiModule_restServices
+			.put($scope.path,item.id, angular.toJson(item), headers)
+				.then(function(response){
+					if (response.data.errors != undefined){
+						sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
+						return;
+					}
+					$scope.data[idx]=item;
+					$angularListDetail.goToList();
+					$scope.domain = {};
+					$scope.message.showSuccessMessage($scope.translate.load('sbi.generic.operationSucceded'));
+				},function(){
+					$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
+				});
+	}
+	
+	
+	$scope.saveNewRow = function(item){
+		sbiModule_restServices
+		.post($scope.path,"",angular.toJson(item),headers)
+		.then(function successCallback(response) {
+			if (response.status == 201){
+				item.id = response.data;
+				$scope.data.splice(0, 0, item);
+				$angularListDetail.goToList();
+				$scope.domain = {};
+				$scope.message.showSuccessMessage($scope.translate.load('sbi.generic.operationSucceded'));
+			}
+			else {
+				item.id = "";
+				if (response.data.errors != undefined){
+					sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
+				}else{
+					$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
+				}
+			}
+		},
+		function errorCallback(response) {
+			item.id = "";
+			$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
+		});	
+	}
+	
+//	// insert row
+//	$scope.addRow = function() {
+//		$mdDialog.show({
+//			controller: $scope.dialogController ,
+//			templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/domain/templates/domainDialogForm.html',
+//			parent: angular.element(document.body),
+//			locals : {
+//				translate : $scope.translate,
+//				itemToEdit : undefined
+//			},
+//			preserveScope : true,
+//			clickOutsideToClose:false
+//		})
+//		.then(function(newRow) {
+//			//form is correct, updating grid and db
+//			headers = {
+//					'Content-Type': 'application/json'
+//			};
+//			sbiModule_restServices
+//			.post($scope.path,"",angular.toJson(newRow),headers)
+//			.then(function successCallback(response) {
+//				if (response.status == 201){
+//					var arrayLocation = response.headers('Location').split('/');
+//					newRow.valueId = arrayLocation[arrayLocation.length -1];
+//					$scope.data.splice(0, 0, newRow);
+//				}
+//				else {
+//					newRow.valueId = "";
+//				}
+//			},
+//			function errorCallback(response) {
+//				newRow.valueId = "";
+//			});
+//		}, function() {
+//			//form was cancelled, nothing to do 
+//		});
+//	};
+
+	
+	
+//	$scope.editRow = function() {
+//		var rowSelected = $scope.itemSelected;
+//		if (rowSelected.valueId !== undefined) {
+//			var idx = $scope.indexOf($scope.data, rowSelected);
+//			$mdDialog.show({
+//				controller: $scope.dialogController ,
+//				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/domain/templates/domainDialogForm.html',
+//				parent: angular.element(document.body),
+//				locals : {
+//					translate : $scope.translate,
+//					itemToEdit : rowSelected
+//				},
+//				preserveScope : true,
+//				clickOutsideToClose:false
+//			}).then( function(editRow){
+//				headers = {
+//						'Content-Type': 'application/json'
+//				};
+//				sbiModule_restServices
+//				.put($scope.path,editRow.valueId, angular.toJson(editRow), headers)
+//				.success(function(data){
+//					$scope.data[idx]=editRow;
+//				});
+//			},function(){
+//				//nothing to do, the request was cancelled
+//			});
+//		}
+//	};
+	
+	
+	$scope.deleteRow = function(item) {
+		var confirm = $mdDialog.confirm()
+				        .title($scope.translate.load('sbi.generic.delete'))
+				        .content($scope.translate.load('sbi.generic.confirmDelete'))
+				        .ok($scope.translate.load('sbi.general.yes'))
+				        .cancel($scope.translate.load('sbi.general.No'));
+  	  	
+        $mdDialog
+	  	  	.show(confirm)		      
+	  	  	.then(function(){
+  	  			var rowsSelected = item;
+  	  			if (rowsSelected.id !== undefined) {
+  	  				var idx = $scope.indexOf($scope.data, rowsSelected);
+  	  				if (idx>=0){
+  	  					sbiModule_restServices.delete($scope.path, rowsSelected.id)
+  	  						.then(function(response){
+  	  							if (response.data.errors != undefined){
+  	  								sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
+  	  								return;
+  	  							}
+  	  							$scope.oldValue = $scope.data.splice(idx, 1);
+  	  							$scope.message.showSuccessMessage($scope.translate.load('sbi.generic.operationSucceded'));
+  	  						},function(data,status){
+  	  							$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + data);
+  	  						});
+  	  				}
+  	  			}
+  	  		},function(){});
+	};
+	
+	$scope.labelDetailFunction = function(){
+		if ($scope.domain){
+			if ($scope.domain.id == undefined){
+				return $scope.translate.load('sbi.generic.new');
+			}else{
+				return $scope.translate.load('sbi.generic.edit');
+			}
+		}
+		return '';
+	}
+	
 	//search function for data array
-	s.indexOf = function(myArray, myElement) {
+	$scope.indexOf = function(myArray, myElement) {
 		for (var i = 0; i < myArray.length; i++) {
 			if (myArray[i].valueId == myElement.valueId) {
 				return i;
@@ -43,99 +249,4 @@ function manageDomainFucntion(sbiModule_translate, sbiModule_restServices, $scop
 		}
 		return -1;
 	};
-
-	// insert row
-	s.addRow = function() {
-		$mdDialog.show({
-			controller: s.dialogController ,
-			templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/domain/templates/domainDialogForm.html',
-			parent: angular.element(document.body),
-			locals : {
-				translate : s.translate,
-				itemToEdit : undefined
-			},
-			preserveScope : true,
-			clickOutsideToClose:false
-		})
-		.then(function(newRow) {
-			//form is correct, updating grid and db
-			headers = {
-					'Content-Type': 'application/json'
-			};
-			sbiModule_restServices
-			.post(s.path,"",angular.toJson(newRow),headers)
-			.then(function successCallback(response) {
-				if (response.status == 201){
-					var arrayLocation = response.headers('Location').split('/');
-					newRow.valueId = arrayLocation[arrayLocation.length -1];
-					s.data.splice(0, 0, newRow);
-				}
-				else {
-					newRow.valueId = "";
-				}
-			},
-			function errorCallback(response) {
-				newRow.valueId = "";
-			});
-		}, function() {
-			//form was cancelled, nothing to do 
-		});
-	};
-
-	
-	
-	s.editRow = function() {
-		var rowSelected = s.itemSelected;
-		if (rowSelected.valueId !== undefined) {
-			var idx = s.indexOf(s.data, rowSelected);
-			$mdDialog.show({
-				controller: s.dialogController ,
-				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/domain/templates/domainDialogForm.html',
-				parent: angular.element(document.body),
-				locals : {
-					translate : s.translate,
-					itemToEdit : rowSelected
-				},
-				preserveScope : true,
-				clickOutsideToClose:false
-			}).then( function(editRow){
-				headers = {
-						'Content-Type': 'application/json'
-				};
-				sbiModule_restServices
-				.put(s.path,editRow.valueId, angular.toJson(editRow), headers)
-				.success(function(data){
-					s.data[idx]=editRow;
-				});
-			},function(){
-				//nothing to do, the request was cancelled
-			});
-		}
-	};
-	
-	
-	s.deleteRow = function() {
-		var rowsSelected = s.itemSelected;
-		if (rowsSelected.valueId !== undefined) {
-				var idx = s.indexOf(s.data, rowsSelected);
-				if (idx>=0){
-					$oldValue = s.data.splice(idx, 1);
-					sbiModule_restServices.delete(s.path, rowsSelected.valueId);
-				}
-		}
-	};
-
-	
-	s.dialogController =function ($scope, $mdDialog, translate,itemToEdit) {
-		 $scope.translate = translate; 
-		 $scope.domain = itemToEdit !== undefined ? itemToEdit : undefined;
-		 $scope.cancel = function() {
-		    $mdDialog.cancel();
-		  };
-		  $scope.saveDomain = function(domain) {
-			domain.valueId = domain.valueId !== undefined ? domain.valueId : "";
-			var newRow = JSON.parse(JSON.stringify(domain));
-		    $mdDialog.hide(newRow);
-		  };
-	}
 };
