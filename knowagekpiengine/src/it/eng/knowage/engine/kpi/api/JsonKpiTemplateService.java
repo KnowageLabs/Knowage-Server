@@ -87,43 +87,26 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 			if (StringUtilities.isEmpty(result)) {
 				result = KpiEngineDataUtil.loadJsonData(jsonTemplate);
 			}
-
-			Calendar startDate = Calendar.getInstance();
-			JSONObject objTemp = new JSONObject();
-			List<KpiValue> kpiValues;
-			Map<String, String> attributesValues = new TreeMap<String, String>();
-			String historycalSeries = jsonTemplate.getJSONObject("chart").getJSONObject("options").getJSONObject("history").getString("units");
-			if (historycalSeries.equals("day")) {
-				startDate.add(Calendar.DAY_OF_MONTH, -1);
-			} else if (historycalSeries.equals("week")) {
-				startDate.add(Calendar.DAY_OF_MONTH, -7);
-			} else if (historycalSeries.equals("month")) {
-				startDate.add(Calendar.MONTH, -1);
-			} else if (historycalSeries.equals("quarter")) {
-				startDate.add(Calendar.MONTH, -3);
-			} else if (historycalSeries.equals("year")) {
-				startDate.add(Calendar.YEAR, -1);
-			}
-
-			if (jsonTemplate.getJSONObject("chart").getJSONObject("data").get("kpi") instanceof JSONObject) {
-				objTemp = jsonTemplate.getJSONObject("chart").getJSONObject("data").getJSONObject("kpi");
-				String s = parameterMap.toString();
-				String[] couples = s.replace("{", "").replace("}", "").split(",");
-				for (String c : couples) {
-					String[] keyvalue = c.split("=");
-					if (keyvalue.length != 1) {
-						attributesValues.put(keyvalue[0].trim(), keyvalue[1].trim());
-					}
-
+			if (jsonTemplate.getJSONObject("chart").getString("type") == "kpi") {
+				Calendar startDate = Calendar.getInstance();
+				JSONObject objTemp = new JSONObject();
+				List<KpiValue> kpiValues;
+				Map<String, String> attributesValues = new TreeMap<String, String>();
+				String historycalSeries = jsonTemplate.getJSONObject("chart").getJSONObject("options").getJSONObject("history").getString("units");
+				if (historycalSeries.equals("day")) {
+					startDate.add(Calendar.DAY_OF_MONTH, -1);
+				} else if (historycalSeries.equals("week")) {
+					startDate.add(Calendar.DAY_OF_MONTH, -7);
+				} else if (historycalSeries.equals("month")) {
+					startDate.add(Calendar.MONTH, -1);
+				} else if (historycalSeries.equals("quarter")) {
+					startDate.add(Calendar.MONTH, -3);
+				} else if (historycalSeries.equals("year")) {
+					startDate.add(Calendar.YEAR, -1);
 				}
-				kpiValues = DAOFactory.getNewKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), startDate.getTime(), new Date(),
-						attributesValues);
-				String result2 = new ObjectMapper().writeValueAsString(kpiValues);
-				array.put(result2);
-			} else {
-				kpiValues = new ArrayList<>();
-				for (int i = 0; i < jsonTemplate.getJSONObject("chart").getJSONObject("data").getJSONArray("kpi").length(); i++) {
-					objTemp = jsonTemplate.getJSONObject("chart").getJSONObject("data").getJSONArray("kpi").getJSONObject(i);
+
+				if (jsonTemplate.getJSONObject("chart").getJSONObject("data").get("kpi") instanceof JSONObject) {
+					objTemp = jsonTemplate.getJSONObject("chart").getJSONObject("data").getJSONObject("kpi");
 					String s = parameterMap.toString();
 					String[] couples = s.replace("{", "").replace("}", "").split(",");
 					for (String c : couples) {
@@ -137,8 +120,27 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 							attributesValues);
 					String result2 = new ObjectMapper().writeValueAsString(kpiValues);
 					array.put(result2);
+				} else {
+					kpiValues = new ArrayList<>();
+					for (int i = 0; i < jsonTemplate.getJSONObject("chart").getJSONObject("data").getJSONArray("kpi").length(); i++) {
+						objTemp = jsonTemplate.getJSONObject("chart").getJSONObject("data").getJSONArray("kpi").getJSONObject(i);
+						String s = parameterMap.toString();
+						String[] couples = s.replace("{", "").replace("}", "").split(",");
+						for (String c : couples) {
+							String[] keyvalue = c.split("=");
+							if (keyvalue.length != 1) {
+								attributesValues.put(keyvalue[0].trim(), keyvalue[1].trim());
+							}
+
+						}
+						kpiValues = DAOFactory.getNewKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), startDate.getTime(), new Date(),
+								attributesValues);
+						String result2 = new ObjectMapper().writeValueAsString(kpiValues);
+						array.put(result2);
+					}
 				}
 			}
+
 			JSONObject objectResult = new JSONObject();
 			objectResult.put("loadKpiValue", array.toString());
 			objectResult.put("info", result);
