@@ -853,7 +853,7 @@ $scope.deleteCC = function(calculateMemberName) {
 			});
 	};
 	
-	$scope.hideSwitchIcon = function(position,axis){
+	$scope.hideSwitchIcon = function(position, axis){
 		var max = axis == 1 ? $scope.maxRows : $scope.maxCols;
 		var last = axis == 1 ?  $scope.maxRows + $scope.leftStart -1 : $scope.maxCols + $scope.topStart -1
 		var length = axis == 1 ? $scope.rows.length : $scope.columns.length;

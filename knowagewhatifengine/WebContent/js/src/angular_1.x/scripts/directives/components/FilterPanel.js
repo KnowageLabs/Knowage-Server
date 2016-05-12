@@ -394,13 +394,13 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			}				
 			
 			if(fromAxis!=0){
-				data.positionInAxis = topLength;
-				data.axis = 0;
-
 				if ($scope.draggedFrom == 'left' && leftLength == 1){
 					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), typeMsgWarn);
 				}					
 				else {
+					data.positionInAxis = topLength;
+					data.axis = 0;
+
 					$scope.putMemberOnAxis(fromAxis,data);
 				}
 			}
@@ -423,13 +423,12 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				$scope.filterSelected[data.positionInAxis].visible =false;
 			}	
 			
-			if(fromAxis != 1){
-				data.positionInAxis = leftLength;
-				data.axis = 1;
-				
+			if(fromAxis != 1){				
 				if ($scope.draggedFrom == 'top' && topLength == 1)
 					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), typeMsgWarn);
 				else {
+					data.positionInAxis = leftLength;
+					data.axis = 1;
 					$scope.putMemberOnAxis(fromAxis,data);
 				}
 				
@@ -452,15 +451,16 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				return null;
 			}
 			
-			if(fromAxis!=-1){
-				data.positionInAxis = $scope.filterCardList.length;
-				data.axis = -1;
+			if(fromAxis!=-1){			
 				
 				if ($scope.draggedFrom == 'left' && leftLength == 1)
 					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), typeMsgWarn);
 				else if ($scope.draggedFrom == 'top' && topLength == 1)
 					sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.execution.table.dimension.no.enough'), typeMsgWarn);
 				else {
+					data.positionInAxis = $scope.filterCardList.length;
+					data.axis = -1;
+					
 					$scope.putMemberOnAxis(fromAxis,data);
 				}
 				
@@ -635,4 +635,3 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 	};
 };
-
