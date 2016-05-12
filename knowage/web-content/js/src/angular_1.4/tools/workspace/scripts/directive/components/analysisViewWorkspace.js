@@ -99,11 +99,40 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	}
 	
 	/**
-	 * TODO:
 	 * Clone a particular Analysis document.
+	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.cloneAnalysisDocument = function(document) {		
-		alert("This will fire a call for service that CLONES a document");		
+		
+		console.info("[CLONE START]: The cloning of a selected '" + document.label + "' has started.");	
+		
+		var confirm = $mdDialog
+						.confirm()
+						.title($scope.translate.load("sbi.browser.document.clone.ask.title"))
+						.content($scope.translate.load("sbi.browser.document.clone.ask"))
+						.ariaLabel('delete Document') 
+						.ok($scope.translate.load("sbi.general.yes"))
+						.cancel($scope.translate.load("sbi.general.No"));
+			
+		$mdDialog
+			.show(confirm)
+			.then(				
+					function() {
+		
+					sbiModule_restServices
+						.promisePost("documents","clone?docId="+document.id)
+						.then(
+								function(response) {
+									$scope.allAnalysisDocs.push(response.data);
+									console.info("[CLONE END]: The cloning of a selected '" + document.label + "' went successfully.");	
+								},
+								
+								function(response) {
+									sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.clone.error'));
+								}
+							);
+					}
+			);			
 	}
 	
 	/**
