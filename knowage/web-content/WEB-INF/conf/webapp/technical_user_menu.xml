@@ -214,11 +214,7 @@
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/objmetadata/document-meta.gif" />
 		</ITEM>
 	</ITEM>
-	<ITEM code="doc_admin" 	title="#menu.DocumentDev"
-			functionality="DocumentDevManagement"
-			url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION"
-			iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png" 
-			iconCls="folder_open"/>
+	
 	<!-- angular temp test start-->  
 	<ITEM code="doc_admin_angular" 	title="#menu.DocumentDev"
 			functionality="DocumentDevManagement"
