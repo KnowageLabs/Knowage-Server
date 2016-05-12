@@ -405,10 +405,6 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		}else{
 			if(!$scope.completeDomain() || !$scope.checkFiltersValue()){
 				$scope.showAction($scope.translate.load("sbi.schedulerkpi.missingfiltervalue"));
-			}else{
-				$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.kbi.scheduler.error.wrong.cron.interval")).position('top').action('OK'));
-
-				
 			}
 			
 		}
