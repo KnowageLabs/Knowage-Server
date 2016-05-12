@@ -101,7 +101,7 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	$scope.saveModifiedRow = function(item){
 		var idx = $scope.indexOf($scope.data, item);
 		sbiModule_restServices
-			.put(path,item.id, angular.toJson(item), headers)
+			.promisePut(path,item.id, angular.toJson(item), headers)
 				.then(function(response){
 					if (response.data.errors != undefined){
 						sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
@@ -119,29 +119,29 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	
 	$scope.saveNewRow = function(item){
 		sbiModule_restServices
-		.post(path,"",angular.toJson(item),headers)
-		.then(function successCallback(response) {
-			if (response.status == 201){
-				item.id = response.data;
-				item.valueTypeId = item.valueTypeId == 407 ? 'NUM' : 'STRING';
-				$scope.data.splice(0, 0, item);
-				$angularListDetail.goToList();
-				$scope.config = {};
-				$scope.message.showSuccessMessage($scope.translate.load('sbi.generic.operationSucceded'));
-			}
-			else {
-				item.id = "";
-				if (response.data.errors != undefined){
-					sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
-				}else{
-					$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
+			.promisePost(path,"",angular.toJson(item),headers)
+			.then(function successCallback(response) {
+				if (response.status == 201){
+					item.id = response.data;
+					item.valueTypeId = item.valueTypeId == 407 ? 'NUM' : 'STRING';
+					$scope.data.splice(0, 0, item);
+					$angularListDetail.goToList();
+					$scope.config = {};
+					$scope.message.showSuccessMessage($scope.translate.load('sbi.generic.operationSucceded'));
 				}
-			}
-		},
-		function errorCallback(response) {
-			item.id = "";
-			$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
-		});	
+				else {
+					item.id = "";
+					if (response.data.errors != undefined){
+						sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
+					}else{
+						$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
+					}
+				}
+			},
+			function errorCallback(response) {
+				item.id = "";
+				$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
+			});	
 	}
 	
 	
@@ -158,7 +158,7 @@ function manageConfigFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	  			if (rowsSelected.id !== undefined) {
 	  				var idx = $scope.indexOf($scope.data, rowsSelected);
 	  				if (idx>=0){
-	  					sbiModule_restServices.delete(path, rowsSelected.id)
+	  					sbiModule_restServices.promiseDelete(path, rowsSelected.id)
 	  						.then(function(response){
 	  							if (response.data.errors != undefined){
 	  								sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));

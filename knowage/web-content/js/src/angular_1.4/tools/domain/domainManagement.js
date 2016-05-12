@@ -48,11 +48,11 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	
 	sbiModule_restServices.promiseGet($scope.path, "", null)
 		.then(function(response) {
-			if (response.data.errors != undefined){
-				sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
-				return;
-			}
-			$scope.data = response.data;
+				if (response.data.errors != undefined){
+					sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
+					return;
+				}
+				$scope.data = response.data;
 			}, function(data, status, headers, config){
 				$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + data);
 		});
@@ -87,7 +87,7 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	$scope.saveModifiedRow = function(item){
 		var idx = $scope.indexOf($scope.data, item);
 		sbiModule_restServices
-			.put($scope.path,item.id, angular.toJson(item), headers)
+			.promisePut($scope.path,item.id, angular.toJson(item), headers)
 				.then(function(response){
 					if (response.data.errors != undefined){
 						sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
@@ -129,76 +129,6 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 		});	
 	}
 	
-//	// insert row
-//	$scope.addRow = function() {
-//		$mdDialog.show({
-//			controller: $scope.dialogController ,
-//			templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/domain/templates/domainDialogForm.html',
-//			parent: angular.element(document.body),
-//			locals : {
-//				translate : $scope.translate,
-//				itemToEdit : undefined
-//			},
-//			preserveScope : true,
-//			clickOutsideToClose:false
-//		})
-//		.then(function(newRow) {
-//			//form is correct, updating grid and db
-//			headers = {
-//					'Content-Type': 'application/json'
-//			};
-//			sbiModule_restServices
-//			.post($scope.path,"",angular.toJson(newRow),headers)
-//			.then(function successCallback(response) {
-//				if (response.status == 201){
-//					var arrayLocation = response.headers('Location').split('/');
-//					newRow.valueId = arrayLocation[arrayLocation.length -1];
-//					$scope.data.splice(0, 0, newRow);
-//				}
-//				else {
-//					newRow.valueId = "";
-//				}
-//			},
-//			function errorCallback(response) {
-//				newRow.valueId = "";
-//			});
-//		}, function() {
-//			//form was cancelled, nothing to do 
-//		});
-//	};
-
-	
-	
-//	$scope.editRow = function() {
-//		var rowSelected = $scope.itemSelected;
-//		if (rowSelected.valueId !== undefined) {
-//			var idx = $scope.indexOf($scope.data, rowSelected);
-//			$mdDialog.show({
-//				controller: $scope.dialogController ,
-//				templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/domain/templates/domainDialogForm.html',
-//				parent: angular.element(document.body),
-//				locals : {
-//					translate : $scope.translate,
-//					itemToEdit : rowSelected
-//				},
-//				preserveScope : true,
-//				clickOutsideToClose:false
-//			}).then( function(editRow){
-//				headers = {
-//						'Content-Type': 'application/json'
-//				};
-//				sbiModule_restServices
-//				.put($scope.path,editRow.valueId, angular.toJson(editRow), headers)
-//				.success(function(data){
-//					$scope.data[idx]=editRow;
-//				});
-//			},function(){
-//				//nothing to do, the request was cancelled
-//			});
-//		}
-//	};
-	
-	
 	$scope.deleteRow = function(item) {
 		var confirm = $mdDialog.confirm()
 				        .title($scope.translate.load('sbi.generic.delete'))
@@ -213,7 +143,7 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
   	  			if (rowsSelected.id !== undefined) {
   	  				var idx = $scope.indexOf($scope.data, rowsSelected);
   	  				if (idx>=0){
-  	  					sbiModule_restServices.delete($scope.path, rowsSelected.id)
+  	  					sbiModule_restServices.promiseDelete($scope.path, rowsSelected.id)
   	  						.then(function(response){
   	  							if (response.data.errors != undefined){
   	  								sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
