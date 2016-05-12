@@ -41,8 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<list label="translate.load('sbi.config.manageconfig')" new-function="addConfig" >
 			 <angular-table flex 
 				id="table" ng-model="data" 
-				columns='["label","name","valueCheck","valueTypeId","category","active"]'
-				columns-search='["label","name","valueCheck","valueTypeId","category","active"]'
+				columns='["label","name","valueCheck","category"]'
+				columns-search='["label","name","valueCheck","category"]'
 				highlights-selected-item = "true"
 				show-search-bar="true"
 				selected-item="itemSelected"
@@ -73,6 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-content>
 						<md-content layout="row" layout-align="center center">
 						<md-input-container flex="80"> 
+							<label>{{translate.load('sbi.config.manageconfig.fields.isactive')}}</label>
 							<md-select	placeholder="{{translate.load('sbi.config.manageconfig.fields.isactive')}}" ng-model="config.active" required> 
 								<md-option value="true">True</md-option> 
 								<md-option value="false">False</md-option>
@@ -86,7 +87,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-input-container>
 						</md-content>
 						<md-content layout="row" layout-align="center center">
-						<md-input-container flex="80"> 
+						<md-input-container flex="80">
+							<label>{{translate.load('sbi.config.manageconfig.fields.valuetype')}}</label>
 							<md-select placeholder="{{translate.load('sbi.config.manageconfig.fields.valuetype')}}" ng-model="config.valueTypeId"> 
 								<md-option value="407">NUM</md-option> 
 								<md-option value="408">STRING</md-option>
@@ -95,6 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-content>
 						<md-content layout="row" layout-align="center center">
 						<md-input-container flex="80"> 
+							<label>{{translate.load('sbi.config.manageconfig.fields.category')}}</label>
 							<md-select placeholder="{{translate.load('sbi.config.manageconfig.fields.category')}}" ng-model="config.category" required>
 								<md-option ng-value="cnf.value" ng-repeat="cnf in filterCategory">
 								{{cnf.value }}

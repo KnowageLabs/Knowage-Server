@@ -127,7 +127,7 @@ function manageUdpFucntion($angularListDetail,sbiModule_messaging, sbiModule_dev
 				$scope.property = {};
 				$scope.showMe = false;
 				$scope.message.showSuccessMessage($scope.translate.load('sbi.generic.operationSucceded'));
-			},function(){
+			},function(response){
 				$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
 			});
 	};

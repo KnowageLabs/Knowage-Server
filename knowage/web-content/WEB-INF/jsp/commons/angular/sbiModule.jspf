@@ -253,7 +253,7 @@ sbiM.service('sbiModule_translate', function() {
 	
 });
 
-sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiModule_logger,$mdDialog) {
+sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, sbiModule_config,sbiModule_logger,$mdDialog) {
 	
 	var alteredContextPath=null;
 
@@ -426,17 +426,19 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiM
 	
 	
 	this.errorHandler=function(text,title){
-		var titleFin=title || "";
+		var titleFin=sbiModule_translate.load(title) || "";
 		var textFin=text;
 		if(angular.isObject(text)){
 			if(text.hasOwnProperty("errors")){
 				textFin="";
 				for(var i=0;i<text.errors.length;i++){
-					textFin+=text.errors[i].message+" <br> ";
+					textFin+=sbiModule_translate.load(text.errors[i].message)+" <br> ";
 				}
 			}else{
-				textFin=JSON.stringify(text)
+				textFin=sbiModule_translate.load(JSON.stringify(text));
 			}
+		}else{
+			textFin=sbiModule_translate.load(text);
 		}
 		
 		var alert = $mdDialog.alert()
