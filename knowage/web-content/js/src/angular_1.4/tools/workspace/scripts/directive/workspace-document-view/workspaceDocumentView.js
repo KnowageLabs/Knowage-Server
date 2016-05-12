@@ -21,7 +21,14 @@ angular.module('workspace_document_view', ['ngMaterial'])
 			cloneEnabled:"=?"
 		},
 		link: function (scope, elem, attrs) { 
-			elem.css("position","relative")
+			
+			/**
+			 * Changed from 'relative' to 'static' so the Grid/List toggling button could 
+			 * work for the Analysis option as well.
+			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			elem.css("position","static")
+			
 			 if(!attrs.tableSpeedMenuOption){
 				 scope.tableSpeedMenuOption=[];
 			 }

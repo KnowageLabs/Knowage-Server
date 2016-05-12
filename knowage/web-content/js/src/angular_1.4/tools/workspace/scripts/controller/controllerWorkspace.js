@@ -1,6 +1,13 @@
+/**
+ * Dependencies for the Workspace main controller:
+ * 		- document_viewer: Directive that provides possibility to execute a document in separate
+ * 		iframe (window) that has a button for closing the executed document. When user do that,
+ * 		the iframe closes and we are having the initial page (the one from which we wished to
+ * 		execute the document).
+ */
 angular
-	.module('workspace.controller', ['workspace.directive', 'workspace.configuration'])
-	.controller('workspaceController', ["$scope", "$http", "$mdDialog", "sbiModule_translate", "sbiModule_restServices","sbiModule_config", workspaceFunction]);
+	.module('workspace.controller', ['workspace.directive','workspace.configuration','document_viewer'])
+	.controller('workspaceController', ["$scope","$http","$mdDialog","sbiModule_translate","sbiModule_restServices","sbiModule_config", workspaceFunction]);
 
 function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_restServices,sbiModule_config) {
 

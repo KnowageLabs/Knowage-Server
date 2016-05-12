@@ -7,9 +7,10 @@
 		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 -->
 	<md-list ng-cloak>
-		<md-list-item ng-repeat="option in leftMainMenu" ng-click="showInfo(option)">
+		<md-list-item class="md-2-line" ng-repeat="option in leftMainMenu" ng-click="showInfo(option)">
     		<md-icon md-font-icon="{{option.icon}}"></md-icon>
 	   	 	<p> {{ option.name }} </p>
 	  	</md-list-item>
 	</md-list>
+	
 </div>

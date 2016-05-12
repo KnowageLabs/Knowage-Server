@@ -18,3 +18,5 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/workspace-document-view/workspaceDocumentView.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/dataset-view/datasetView.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/components/modelsViewWorkspace.js"></script>
+<!-- document-viewer -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/document-viewer/documentViewer.js"></script>

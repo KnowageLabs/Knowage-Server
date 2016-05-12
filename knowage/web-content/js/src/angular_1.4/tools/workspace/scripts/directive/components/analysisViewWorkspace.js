@@ -24,7 +24,7 @@ angular
 	    
 	});
 
-function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,$mdDialog,$mdSidenav) {
+function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,$mdDialog,$mdSidenav,$documentViewer) {
 		
 	$scope.loadAllMyAnalysisDocuments = function() {
 		
@@ -93,12 +93,8 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	 */
 	$scope.executeAnalysisDocument = function(document) {
 		
-		console.info("[EXECUTION]: Execution of Analysis document with the label '" + document.label + "' is started.");
-		
-		window.location.href = 	sbiModule_config.adapterPath 
-								+ "?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=" + document.label 
-								+ "&OBJECT_ID=" + document.id 
-								+ "&MYANALYSIS=TRUE";
+		console.info("[EXECUTION]: Execution of Analysis document with the label '" + document.label + "' is started.");		
+		$documentViewer.openDocument(document.id, document.label, document.name);
 		
 	}
 	
