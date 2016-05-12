@@ -116,24 +116,25 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
 			}
 			
 			$scope.info = function info(){
-				if(!win_info_1){
-
-					win_info_1= new Ext.Window({
-						frame: false,
-						style:"background-color: white",
-						id:'win_info_1',
-						autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/infos.jsp'},             				
-						layout:'fit',
-						width:210,
-						height:180,
-						closeAction:'hide',
-						//closeAction:'close',
-						buttonAlign : 'left',
-						plain: true,
-						title: LN('sbi.home.Info')
-					});
-				}		
-				win_info_1.show();
+				$scope.toggleMenu();
+				var parentEl = angular.element(document.body);
+				$mdDialog.show({
+					parent: parentEl,
+					templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/infos.jsp',
+					locals: {
+						title : LN('sbi.home.Info'),
+						okMessage : LN('sbi.general.ok')
+					},
+					controller: infoDialogController
+				});
+				
+				function infoDialogController(scope, $mdDialog, title, okMessage) {
+	        	        scope.title = title;
+	        	        scope.okMessage = okMessage;
+	        	        scope.closeDialog = function() {
+	        	          $mdDialog.hide();
+	        	        }
+        	      }
 			}
 			
 			$scope.callExternalApp = function callExternalApp(url){
