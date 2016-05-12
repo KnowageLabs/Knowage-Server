@@ -239,8 +239,8 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			return executeQuery(dataSourceId, toString(), quotedParameters);
 		}
 
-		private static QueryResult executeQuery(int dataSourceId, String sql, Map<String, String> quotedParameters) throws JSONException, EMFUserError,
-				EMFInternalError {
+		private static QueryResult executeQuery(int dataSourceId, String sql, Map<String, String> quotedParameters)
+				throws JSONException, EMFUserError, EMFInternalError {
 			// Read measure value
 			int maxItem = 0;
 			IEngUserProfile profile = null;
@@ -510,7 +510,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 						}
 					}
 					// Iterate over temporal types
-					int minTemporalTypePriority = 5;
+					Integer minTemporalTypePriority = 5;
 					while (minTemporalTypePriority >= 1) {
 						// Create a query for each measure and find the main
 						// measure
@@ -529,6 +529,8 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 							Set<String> groupByAttributes = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 							groupByAttributes.addAll(measure.attributes);
 							groupByAttributes.removeAll(ntAttributesToIgnore);
+							Set<String> ntGroupByAttributes = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+							ntGroupByAttributes.addAll(groupByAttributes);
 							Set<String> ignoredAttributes = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 							// ignoredAttributes.addAll(measure.ignoredAttributes);
 							ignoredAttributes.addAll(ntAttributesToIgnore);
@@ -542,10 +544,11 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 									// YEAR, QUARTER, MONTH, WEEK, DAY
 									String attributeTemporalType = ruleOutput.getHierarchy().getValueCd();
 
+									ntGroupByAttributes.remove(attributeName);
+									attributesTemporalTypes.put(attributeName, attributeTemporalType);
 									Integer priority = temporalTypesPriorities.get(attributeTemporalType);
 									if (priority != null && priority <= minTemporalTypePriority) {
-										attributesTemporalTypes.put(attributeName, attributeTemporalType);
-										realMinTemporalTypePriority = Math.max(realMinTemporalTypePriority, minTemporalTypePriority);
+										realMinTemporalTypePriority = Math.max(realMinTemporalTypePriority, priority);
 									} else {
 										groupByAttributes.remove(attributeName);
 										ignoredAttributes.add(attributeName);
@@ -588,12 +591,12 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 								mainMeasure = m;
 								if (ntComb == 0) {
 									ntAttributesAll.clear();
-									ntAttributesAll.addAll(groupByAttributes);
+									ntAttributesAll.addAll(ntGroupByAttributes);
 								}
 							}
 						}
-						kpiComputationUnits.add(new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes,
-								mainMeasure, replaceMode));
+						kpiComputationUnits.add(
+								new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes, mainMeasure, replaceMode));
 						Integer nextPriority = 0;
 						for (String temporalType : queriesAttributesTemporalTypes.get(mainMeasure).values()) {
 							Integer priority = temporalTypesPriorities.get(temporalType);
@@ -609,7 +612,8 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			// For each kpi, compute values and save them
 			for (KpiComputationUnit kpiComputationUnit : kpiComputationUnits) {
 				KpiValueExecLog subResult = computeKpi(kpiComputationUnit.parsedKpi, kpiComputationUnit.queries, kpiComputationUnit.mainMeasure,
-						kpiComputationUnit.replaceMode, kpiComputationUnit.queriesAttributesTemporalTypes, kpiComputationUnit.queriesIgnoredAttributes, timeRun);
+						kpiComputationUnit.replaceMode, kpiComputationUnit.queriesAttributesTemporalTypes, kpiComputationUnit.queriesIgnoredAttributes,
+						timeRun);
 				result.setErrorCount(result.getErrorCount() + subResult.getErrorCount());
 				result.setSuccessCount(result.getSuccessCount() + subResult.getSuccessCount());
 				result.setTotalCount(result.getTotalCount() + subResult.getTotalCount());
@@ -698,19 +702,29 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				List<Comparable> rowAttributesValues = rowsAttributesValues.get(r);
 				Map<String, Comparable> temporalValues = new HashMap<String, Comparable>();
 				Map<String, Comparable> logicalKeyPairs = new TreeMap<String, Comparable>();
-				if (INCLUDE_IGNORED_NON_TEMPORAL_ATTRIBUTES_INTO_KPI_VALUE_LOGICAL_KEY) {
-					for (String attributeName : queriesIgnoredAttributes.get(mainMeasure)) {
-						logicalKeyPairs.put(attributeName.toUpperCase(), "ALL");
+				// Ignored attributes
+				for (String attributeName : queriesIgnoredAttributes.get(mainMeasure)) {
+					String temporalType = queriesAttributesTemporalTypes.get(mainMeasure).get(attributeName);
+					if (temporalType != null) {
+						// Temporal attribute
+						if (!EXCLUDE_TEMPORAL_ATTRIBUTES_FROM_KPI_VALUE_LOGICAL_KEY) {
+							logicalKeyPairs.put(attributeName.toUpperCase(), "ALL");
+						}
+					} else {
+						// Non-temporal attribute
+						if (INCLUDE_IGNORED_NON_TEMPORAL_ATTRIBUTES_INTO_KPI_VALUE_LOGICAL_KEY) {
+							logicalKeyPairs.put(attributeName.toUpperCase(), "ALL");
+						}
 					}
 				}
+				// Non-ignored attributes
 				for (int a = 0; a < attributesNames.size(); a++) {
 					String attributeName = attributesNames.get(a);
 					String temporalType = queriesAttributesTemporalTypes.get(mainMeasure).get(attributeName);
 					if (temporalType != null) {
-						temporalValues.put(attributeName, rowAttributesValues.get(a).toString().replaceAll("'", "''"));
+						// Temporal attribute
+						temporalValues.put(temporalType, rowAttributesValues.get(a).toString().replaceAll("'", "''"));
 						if (EXCLUDE_TEMPORAL_ATTRIBUTES_FROM_KPI_VALUE_LOGICAL_KEY) {
-							// Any "ALL" value is removed if present
-							logicalKeyPairs.remove(attributesNames.get(a).toUpperCase());
 							continue;
 						}
 					}
@@ -725,22 +739,26 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				result.setErrorCount(result.getErrorCount() + (nullValue ? 1 : 0));
 				result.setSuccessCount(result.getSuccessCount() + (nullValue ? 0 : 1));
 				result.setTotalCount(result.getTotalCount() + 1);
+				Object theDay = ifNull(temporalValues.get("DAY"), "ALL");
+				Object theWeek = ifNull(temporalValues.get("WEEK"), "ALL");
+				Object theMonth = ifNull(temporalValues.get("MONTH"), "ALL");
+				Object theQuarter = ifNull(temporalValues.get("QUARTER"), "ALL");
+				Object theYear = ifNull(temporalValues.get("YEAR"), "ALL");
 				String insertSql = "INSERT INTO SBI_KPI_VALUE (id, kpi_id, kpi_version, logical_key, time_run, computed_value,"
 						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (" + (++lastId) + ", " + parsedKpi.id + "," + parsedKpi.version
-						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "','" + isoNow + "'," + (nullValue ? "0" : value)
-						+ ",'ALL','ALL','ALL','ALL','ALL','" + (nullValue ? '1' : '0') + "')";
+						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "','" + isoNow + "'," + (nullValue ? "0" : value) + ",'" + theDay + "','"
+						+ theWeek + "','" + theMonth + "','" + theQuarter + "','" + theYear + "','" + (nullValue ? '1' : '0') + "')";
 				String whereCondition = "kpi_id = " + parsedKpi.id + " AND kpi_version = " + parsedKpi.version + " AND logical_key = '"
-						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + ifNull(temporalValues.get("DAY"), "ALL")
-						+ "' AND the_week = '" + ifNull(temporalValues.get("WEEK"), "ALL") + "'" + " AND the_month = '"
-						+ ifNull(temporalValues.get("MONTH"), "ALL") + "' AND the_quarter = '" + ifNull(temporalValues.get("QUARTER"), "ALL")
-						+ "' AND the_year = '" + ifNull(temporalValues.get("YEAR"), "ALL") + "'";
-				String deleteSql = "DELETE SBI_KPI_VALUE WHERE " + whereCondition;
+						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + theDay + "' AND the_week = '" + theWeek + "'"
+						+ " AND the_month = '" + theMonth + "' AND the_quarter = '" + theQuarter + "' AND the_year = '" + theYear + "'";
+				String deleteSql = "DELETE FROM SBI_KPI_VALUE WHERE " + whereCondition;
 				String updateSql = "UPDATE SBI_KPI_VALUE SET computed_value = " + (nullValue ? "0" : value) + ", time_run = '" + isoNow + "', state='"
 						+ (nullValue ? '1' : '0') + "' WHERE " + whereCondition; // Currently unused
 
 				session.beginTransaction();
-				if (replaceMode)
+				if (replaceMode) {
 					session.createSQLQuery(deleteSql).executeUpdate();
+				}
 				session.createSQLQuery(insertSql).executeUpdate();
 				session.getTransaction().commit();
 				// break; // TODO remove after debug
