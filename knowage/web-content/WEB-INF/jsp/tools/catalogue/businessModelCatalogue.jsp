@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
 </head>
-<body  class="bodyStyle" ng-controller="businessModelCatalogueController as ctrl">
+<body  class="bodyStyle businessModelCatalog" ng-controller="businessModelCatalogueController as ctrl">
 	<angular-list-detail show-detail="showMe">
 		<list label='translate.load("sbi.tools.catalogue.metaModelsCatalogue")' new-function="createBusinessModel"> 
 			
@@ -173,7 +173,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      <md-card>
 	      <md-card-title>
 	      	<md-card-title-text>
-            	<span class="md-headline">Metadata</span>
+	      	<md-toolbar>
+		      <div class="md-toolbar-tools">
+		        <h2>
+		          <span>Metadata</span>
+		        </h2>
+		   
+		      </div>
+		    </md-toolbar>
           	</md-card-title-text>
 	      </md-card-title>
 	      <md-card-content>
@@ -220,7 +227,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      <md-card>
 	      <md-card-title>
 	      	<md-card-title-text>
-            	<span class="md-headline">{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}</span>
+	      	<md-toolbar>
+		      <div class="md-toolbar-tools">
+		        <h2>
+		          <span>{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}</span>
+		        </h2>
+		   
+		      </div>
+		    </md-toolbar>
           	</md-card-title-text>
 	      </md-card-title>
 	      <md-card-content>
