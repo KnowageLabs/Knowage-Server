@@ -83,7 +83,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		.then(function(response) {
 			angular.copy(response.data,$scope.notDerivedDatasets);
 //			console.log("not derivated");
-		console.log($scope.notDerivedDatasets);
+//		console.log($scope.notDerivedDatasets);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});

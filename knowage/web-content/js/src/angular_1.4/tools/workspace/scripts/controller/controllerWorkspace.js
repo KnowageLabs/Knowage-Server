@@ -51,6 +51,15 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 	$scope.showGridView = true;
 
 	/**
+	 * Scope variables needed for showing details about the currently selected document in
+	 * the Workspace. Details will be shown inside the right side navigation panel.
+	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.selectedDocument = undefined;
+	$scope.showDocumentInfo = false;	
+	$scope.translate = sbiModule_translate;
+	
+	/**
 	 * On-click listener function for the left main menu of the Workspace web page.
 	 * We will keep the lastly chosen option from this menu inside scope variable.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -104,4 +113,54 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 		$scope.activeTabAnalysis = item.toUpperCase();
 	};
 
+	/**
+	 * [START] Block of functions responsible for showing the details for 
+	 * currently selected document. Details will be shown inside the right 
+	 * side navigation panel.
+	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.showDocumentDetails = function() {
+		$scope.selectedDocument ? console.log($scope.selectedDocument) : null;
+		return $scope.showDocumentInfo && $scope.isSelectedDocumentValid();
+	};	
+	
+	$scope.isSelectedDocumentValid = function() {
+		return $scope.selectedDocument !== undefined;
+	};
+	
+	$scope.setDocumentDetailOpen = function(isOpen) {
+		
+		if (isOpen && !$mdSidenav('rightDoc').isLockedOpen() && !$mdSidenav('rightDoc').isOpen()) {
+			$scope.toggleDocumentDetail();
+		}
+
+		$scope.showDocumentInfo = isOpen;
+	};
+	
+	$scope.toggleDocumentDetail = function() {
+		$mdSidenav('rightDoc').toggle();
+	};
+	
+	$scope.selectDocument= function ( document ) { 
+		
+		if (document !== undefined) {
+			$scope.lastDocumentSelected = document;
+		}
+		
+		var alreadySelected = (document !== undefined && $scope.selectedDocument === document);
+		
+		$scope.selectedDocument = document;
+		
+		if (alreadySelected) {
+			$scope.selectedDocument=undefined;
+			$scope.setDocumentDetailOpen(!$scope.showDocumentDetail);
+		} else {
+			$scope.setDocumentDetailOpen(document !== undefined);
+		}
+	};
+	/**
+	 * [END] Block of functions responsible for showing the details for 
+	 * currently selected document. Details will be shown inside the right 
+	 * side navigation panel.
+	 */
 }

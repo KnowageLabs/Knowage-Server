@@ -25,11 +25,7 @@ angular
 	});
 
 function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,$mdDialog,$mdSidenav) {
-	
-	$scope.selectedDocument = undefined;
-	$scope.showDocumentInfo = false;
-	$scope.translate = sbiModule_translate;
-	
+		
 	$scope.loadAllMyAnalysisDocuments = function() {
 		
 		sbiModule_restServices
@@ -95,7 +91,7 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	 * TODO: 
 	 * Preview (execute) a particular Analysis document.
 	 */
-	$scope.executeDocument = function(document) {
+	$scope.executeAnalysisDocument = function(document) {
 		
 		console.info("[EXECUTION]: Execution of Analysis document with the label '" + document.label + "' is started.");
 		
@@ -110,14 +106,14 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	 * TODO:
 	 * Clone a particular Analysis document.
 	 */
-	$scope.cloneDocument = function(document) {		
+	$scope.cloneAnalysisDocument = function(document) {		
 		alert("This will fire a call for service that CLONES a document");		
 	}
 	
 	/**
 	 * Delete particular Analysis document from the Workspace.
 	 */
-	$scope.deleteDocument = function(document) {
+	$scope.deleteAnalysisDocument = function(document) {
 				
 		console.info("[DELETE START]: Delete of Analysis document with the label '" + document.label + "' is started.");
 		
@@ -161,46 +157,5 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	$scope.addNewAnalysisDocument = function() {
 		alert("This button will CREATE NEW s analysis document");
 	}
-	
-	$scope.showDocumentDetails = function() {
-		$scope.selectedDocument ? console.log($scope.selectedDocument) : null;
-		return $scope.showDocumentInfo && $scope.isSelectedDocumentValid();
-	};
-	
-	
-	$scope.isSelectedDocumentValid = function() {
-		return $scope.selectedDocument !== undefined;
-	};
-	
-	$scope.setDocumentDetailOpen = function(isOpen) {
-		
-		if (isOpen && !$mdSidenav('rightDoc').isLockedOpen() && !$mdSidenav('rightDoc').isOpen()) {
-			$scope.toggleDocumentDetail();
-		}
-
-		$scope.showDocumentInfo = isOpen;
-	};
-	
-	$scope.toggleDocumentDetail = function() {
-		$mdSidenav('rightDoc').toggle();
-	};
-	
-	$scope.selectDocument= function ( document ) { 
-		
-		if (document !== undefined) {
-			$scope.lastDocumentSelected = document;
-		}
-		
-		var alreadySelected = (document !== undefined && $scope.selectedDocument === document);
-		
-		$scope.selectedDocument = document;
-		
-		if (alreadySelected) {
-			$scope.selectedDocument=undefined;
-			$scope.setDocumentDetailOpen(!$scope.showDocumentDetail);
-		} else {
-			$scope.setDocumentDetailOpen(document !== undefined);
-		}
-	};
 	
 }
