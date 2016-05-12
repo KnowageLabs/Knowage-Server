@@ -7,9 +7,9 @@
  */
 angular
 	.module('workspace.controller', ['workspace.directive','workspace.configuration','document_viewer'])
-	.controller('workspaceController', ["$scope","$http","$mdDialog","sbiModule_translate","sbiModule_restServices","sbiModule_config", workspaceFunction]);
+	.controller('workspaceController', ["$scope","$http","$mdDialog","$timeout","$documentViewer","sbiModule_translate","sbiModule_restServices","sbiModule_config", workspaceFunction]);
 
-function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_restServices,sbiModule_config) {
+function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiModule_translate,sbiModule_restServices,sbiModule_config) {
 
 	$scope.allDocuments = [];
 	$scope.federationDefinitions=[];
@@ -38,6 +38,7 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 	$scope.cockpitAnalysisDocs = [];
 	$scope.adhocReportAnalysisDocs = [];
 	$scope.geoAnalysisDocs = [];
+	$scope.allAnaylticsDocsTypes = ["MAP","DOCUMENT_COMPOSITE"];
 
 	/**
 	 * currentOptionMainMenu - 	which of all available perspectives (options) from the left menu is selected (picked) 
@@ -83,43 +84,52 @@ function workspaceFunction($scope,$http,$mdDialog,sbiModule_translate,sbiModule_
 		$scope.showGridView = !$scope.showGridView;
 	}
 
-//	$scope.setSearchInput = function(searchInput) {
-//		console.log(searchInput);
+//	$scope.setSearchInput = function (newSearchInput) {
+//
+//		$scope.searchInput = newSearchInput;
+//		
+//		if ($scope.currentOptionMainMenu == "analysis") {
+//			
+//			if (newSearchInput.length > 0) {
+//				
+//				$scope.allAnalysisDocs = [];
+//				$scope.geoAnalysisDocs = [];
+//				$scope.cockpitAnalysisDocs = [];
+//				
+//				for (i=0; i<allAnalysisDocs.length; i++) {
+//																		
+//					console.log(searchDocuments[i].typeCode);
+//					if (searchDocuments[i].typeCode == "DOCUMENT_COMPOSITE") {
+//						$scope.allAnalysisDocs.push(searchDocuments[i]);
+//						$scope.cockpitAnalysisDocs.push(searchDocuments[i]);
+//					}
+//					else if (searchDocuments[i].typeCode == "MAP") {
+//						$scope.allAnalysisDocs.push(searchDocuments[i]);
+//						$scope.geoAnalysisDocs.push(searchDocuments[i]);
+//					}
+//					
+//				}
+//				
+//			}
+//			else {
+//				$scope.allAnalysisDocs = $scope.allAnalysisDocsInitial;
+//			}
+//			
+//		}
+//		
 //	}
 
-	$scope.setSearchInput = function (newSearchInput) {
-		$scope.searchInput = newSearchInput;
-		setFocus("searchInput");
-
-		$timeout(function(){
-			if (newSearchInput == $scope.searchInput) {
-				if (newSearchInput.length > 0){
-					sbiModule_restServices.promiseGet("2.0/documents", "searchDocument?attributes=all&value=" + newSearchInput + "*", null)
-					.then(function(response) {
-						$scope.searchDocuments = response.data;
-					},function(response){
-						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.search.error'))
-						.finally(function(){
-							$scope.searchDocuments = [];
-						})
-					});
-				}else{
-					$scope.searchDocuments = [];
-				}
-			}
-		}, 400);
-	}
-
 	/**
-	 * Set the currently active tab of the Analysis perspective in order to
-	 * enable managing of visibility of "Add analysis document" button. This
-	 * button should not be visible if the user is seeing all the documents.
-	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 * TODO: 
+	 * Preview (execute) a particular Analysis document.
 	 */
-	$scope.setActiveTabState = function(item) {		
-		$scope.activeTabAnalysis = item.toUpperCase();
-	};
-
+	$scope.executeDocument = function(document) {
+		
+		console.info("[EXECUTION]: Execution of Analysis document with the label '" + document.label + "' is started.");		
+		$documentViewer.openDocument(document.id, document.label, document.name);
+		
+	}
+	
 	/**
 	 * [START] Block of functions responsible for showing the details for 
 	 * currently selected document. Details will be shown inside the right 

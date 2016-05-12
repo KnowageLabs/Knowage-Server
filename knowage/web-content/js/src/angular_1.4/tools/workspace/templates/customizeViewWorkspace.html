@@ -9,9 +9,13 @@
 		
 		<!-- Search input -->
 	    <md-input-container ng-show=true class="searchInput">
-			<label>{{translate.load("sbi.generic.search.title")}}</label>
 			<input type="text" id="searchInput" ng-model="searchInput" ng-change="setSearchInput(searchInput)" focus-on="searchInput">
 		</md-input-container>
+		
+		<!-- Search clear -->
+		<md-button class="md-icon-button" title="Clear" aria-label="Clear" ng-show=true ng-click="setSearchInput('')">
+			   <md-icon md-font-icon="fa fa-times"></md-icon>
+		</md-button>
 		
 		<!-- Document view buttons -->		
 		<md-button 	class="md-icon-button"  ng-click="toogleGridListViewOfDocs()" 
@@ -20,7 +24,7 @@
 					
 			 <md-icon md-font-icon="fa" ng-class="showGridView ? 'fa-th-list' : 'fa-th'" ></md-icon>
 			 
-		</md-button>
+		</md-button>		
 		
 	</div>
 	

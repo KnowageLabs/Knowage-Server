@@ -26,6 +26,8 @@ angular
 
 function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,$mdDialog,$mdSidenav,$documentViewer) {
 		
+	$scope.activeTabAnalysis = null;
+	
 	$scope.loadAllMyAnalysisDocuments = function() {
 		
 		sbiModule_restServices
@@ -77,6 +79,7 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 							
 						}
 						
+						$scope.allAnalysisDocsInitial = $scope.allAnalysisDocs;
 					},
 					
 					function(response) {
@@ -86,17 +89,16 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	}
 
 	$scope.loadAllMyAnalysisDocuments();
-		
+	
 	/**
-	 * TODO: 
-	 * Preview (execute) a particular Analysis document.
+	 * Set the currently active tab of the Analysis perspective in order to
+	 * enable managing of visibility of "Add analysis document" button. This
+	 * button should not be visible if the user is seeing all the documents.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	$scope.executeAnalysisDocument = function(document) {
-		
-		console.info("[EXECUTION]: Execution of Analysis document with the label '" + document.label + "' is started.");		
-		$documentViewer.openDocument(document.id, document.label, document.name);
-		
-	}
+	$scope.setActiveTabState = function(item) {		
+		$scope.activeTabAnalysis = item.toUpperCase();
+	};
 	
 	/**
 	 * Clone a particular Analysis document.
