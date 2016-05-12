@@ -13,7 +13,6 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
 	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon"];
 	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS"]
-	//var alwaysVisibleBtns = ["BUTTON_EXPORT_OUTPUT"];
 	$scope.outputWizardDescription = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.description');
 	$scope.outputWizardTitle = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.title');
 	$scope.outputWizardTypeLabel = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type');
@@ -87,39 +86,44 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	filterXMLResult(toolbarVisibleBtns);
 			
 	$scope.btnFunctions = function(name){
+		var sendModelConfig = true;
+		
 		switch(name){
-		case "BUTTON_FATHER_MEMBERS":
-			$scope.modelConfig.showParentMembers = !$scope.modelConfig.showParentMembers;
-			changeIcon(name);
-			break;
-		case "BUTTON_HIDE_SPANS":
-			$scope.modelConfig.hideSpans = !$scope.modelConfig.hideSpans;
-			changeIcon(name);
-			break;
-		case "BUTTON_SHOW_PROPERTIES":
-			$scope.modelConfig.showProperties = !$scope.modelConfig.showProperties;
-			changeIcon(name);
-			break;
-		case "BUTTON_HIDE_EMPTY":
-			$scope.modelConfig.suppressEmpty = !$scope.modelConfig.suppressEmpty;
-			changeIcon(name);
-			break;
-		case "BUTTON_EXPORT_OUTPUT":
-			$scope.showExportDialog(null);
-			break;
-		case "BUTTON_FLUSH_CACHE":
-			flushCache();
-			break;
-		case "BUTTON_MDX":
-			$scope.showDialog(null,$scope.showMdxDial);
-			break;
-		case "BUTTON_EDIT_MDX":
-			$scope.showDialog(null,$scope.sendMdxDial);
-			break;	
-		default:
-			console.log("something else clicked");
+			case "BUTTON_FATHER_MEMBERS":
+				$scope.modelConfig.showParentMembers = !$scope.modelConfig.showParentMembers;
+				changeIcon(name);
+				break;
+			case "BUTTON_HIDE_SPANS":
+				$scope.modelConfig.hideSpans = !$scope.modelConfig.hideSpans;
+				changeIcon(name);
+				break;
+			case "BUTTON_SHOW_PROPERTIES":
+				$scope.modelConfig.showProperties = !$scope.modelConfig.showProperties;
+				changeIcon(name);
+				break;
+			case "BUTTON_HIDE_EMPTY":
+				$scope.modelConfig.suppressEmpty = !$scope.modelConfig.suppressEmpty;
+				changeIcon(name);
+				break;
+			case "BUTTON_EXPORT_OUTPUT":
+				$scope.showExportDialog(null);
+				break;
+			case "BUTTON_FLUSH_CACHE":
+				flushCache();
+				sendModelConfig = false;
+				break;
+			case "BUTTON_MDX":
+				$scope.showDialog(null,$scope.showMdxDial);
+				break;
+			case "BUTTON_EDIT_MDX":
+				$scope.showDialog(null,$scope.sendMdxDial);
+				break;	
+			default:
+				console.log("something else clicked");
 		}
-		$scope.sendModelConfig($scope.modelConfig);
+		
+		if(sendModelConfig)
+			$scope.sendModelConfig($scope.modelConfig);
 	}
 
 	$scope.enableDisableSorting = function(){
