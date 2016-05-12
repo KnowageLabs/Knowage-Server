@@ -15,6 +15,7 @@
   'components/angularTable',
   'components/workspace',
   'components/linkDocument',
+  'components/businessModelCatalog',
   'components/etlMetadata';
    
  
@@ -159,7 +160,7 @@ md-tabs.md-knowage-theme md-ink-bar {
 md-card.md-knowage-theme {
     background-color: $tabBackground;
     display: block; 
-    padding: $tabPadding;
+    //padding: $tabPadding;
 }
 
 md-tab-content md-content.md-knowage-theme {

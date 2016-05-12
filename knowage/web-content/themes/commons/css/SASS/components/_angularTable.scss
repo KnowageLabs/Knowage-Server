@@ -186,6 +186,15 @@ angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
     margin-left: -15px;
 }
 
+.fakeTable th div:first-child {
+    padding-left: $standardPadding;
+}
+
+.principalTable tr td:first-child span {
+    padding-left: $standardPadding;
+}
+
+
 
 
 /* pagination */
@@ -216,6 +225,9 @@ angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
         display: block;
         font-size: $smallFontSize;
     	color: $baseColor;
+    	&:hover {
+    		background-color: lighten($secondaryColor,20%);
+    	}
     }
 
     .pagination > .active, .pagination > .active > a,
@@ -235,10 +247,9 @@ angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
     .pagination > .disabled > span:hover {
         color: #777;
         cursor: not-allowed;
-        background-color: #fff;
+        background-color: #ddd;
         border-color: #ddd;
     }
-
 
   .dropdown_menu_list {
 	position: fixed !important;
