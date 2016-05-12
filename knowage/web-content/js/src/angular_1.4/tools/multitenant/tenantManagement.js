@@ -27,7 +27,7 @@ function manageTenantFunction($angularListDetail,sbiModule_messaging, $timeout,s
 	$scope.datasourcesSelected = [];
 	$scope.productsSelected = [];
 	$scope.loadinMessage = false;
-	$scope.idx_tab = 0;
+	$scope.selectedIndex = {idx : 0};
 	$scope.showMe = false;
 	
 	/********************************************************
@@ -126,7 +126,7 @@ function manageTenantFunction($angularListDetail,sbiModule_messaging, $timeout,s
 		$scope.tenantSelected = undefined;
 		$scope.tenantForm.$setUntouched();
 		$scope.tenantForm.$setPristine();
-		$scope.idx_tab = 0;
+		$scope.selectedIndex.idx = undefined;
 		$scope.showMe= false;
 	};
 	
@@ -141,6 +141,7 @@ function manageTenantFunction($angularListDetail,sbiModule_messaging, $timeout,s
 		});
 		$scope.tenant.MULTITENANT_THEME = themeDefault ? themeDefault.VALUE_CHECK : "sbi_default";
 		$scope.showMe = true;
+		$scope.selectedIndex.idx = 0;
 	}
 	
 	$scope.deleteItem = function(item){

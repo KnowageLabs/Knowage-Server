@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<link rel="stylesheet" type="text/css"   href="<%=urlBuilder.getResourceLinkByTheme(request, "/themes/commons/css/customStyle.css", currTheme)%>">
 </head>
 
-<body>
+<body ng-cloak>
 	<div ng-controller="Controller as ctrl"  layout="row" layout-wrap layout-fill>
 		<angular-list-detail layout-column show-detail="showMe">
 			<list label="translate.load('sbi.multitenant')" new-function="addTenant" >				  	
@@ -60,23 +60,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<md-progress-circular loading ng-show="loadinMessage" md-mode="indeterminate" md-diameter="75%" style="position:fixed;top:50%;left:50%;z-index: 500;background:rgba(255, 255, 255, 0);"></md-progress-circular>
 						<span class="">{{translate.load("sbi.generic.wait");}}</span>
 					</div> 
-					<md-tabs ng-if="!loadinMessage" md-dynamic-height md-selected="idx_tab" flex>
+					<md-tabs md-selected="selectedIndex.idx" ng-if="!loadinMessage" md-dynamic-height>
 						<md-tab>
 							<md-tab-label>
 								{{translate.load("sbi.generic.details")}}
 							</md-tab-label>
 							<md-tab-body>
 								<md-card>
-									 <md-input-container>
-									 	<label>{{translate.load("sbi.generic.name")}}</label>
-									 	<input type="text" ng-model="tenant.MULTITENANT_NAME" md-maxlength="200" required ng-disabled = "tenant.MULTITENANT_ID">
-									 </md-input-container>
-									 <md-input-container>
-									 	<label>{{translate.load("sbi.multitenant.theme")}}</label>
-									 	<md-select ng-model="tenant.MULTITENANT_THEME" required>
-											<md-option ng-value="theme.VALUE_CHECK" ng-repeat="theme in themes">{{ theme.VALUE_CHECK }}</md-option>
-									 	</md-select>
-									 </md-input-container>
+									<md-content layout="row" layout-align="center center">
+										<md-input-container flex="90">
+										 	<label>{{translate.load("sbi.generic.name")}}</label>
+										 	<input type="text" ng-model="tenant.MULTITENANT_NAME" md-maxlength="200" required ng-disabled = "tenant.MULTITENANT_ID">
+									 	</md-input-container>
+									 </md-content>
+									 <md-content layout="row" layout-align="center center">
+										 <md-input-container flex="90">
+										 	<label>{{translate.load("sbi.multitenant.theme")}}</label>
+										 	<md-select ng-model="tenant.MULTITENANT_THEME" required>
+												<md-option ng-value="theme.VALUE_CHECK" ng-repeat="theme in themes">{{ theme.VALUE_CHECK }}</md-option>
+										 	</md-select>
+										 </md-input-container>
+									 </md-content>
 								 </md-card>
 					 		</md-tab-body>
 						 </md-tab>
