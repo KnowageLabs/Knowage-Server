@@ -1,5 +1,6 @@
 $baseColor: 		#3b678c;
 $headerBackground: $baseColor;
+$contentBackground: #fafafa;
 $headerFontWeight: 600;
 $pageBackground: #eceff1;
 $lightTextColor:	white;		
@@ -7,9 +8,9 @@ $fabPrimaryColor: #c70751;
 $bordersColor: #ccc;
 $fabTop: 10px;
 $secondaryColor: #a9c3db;
-$ternaryColor: #C4DCF3;
+$ternaryColor: #ccc;
 $inputLineColor: $baseColor;
-$inactiveLabelColor: #a9c3db;
+$inactiveLabelColor: $secondaryColor;
 $activeLabelColor: $baseColor;
 $tabFontWeight: $headerFontWeight;
 $toolbarButtonColor: white;
@@ -44,3 +45,4 @@ $tabPadding: 		8px;
 /* DIMENSIONS */
 $toolbarHeight: 40px;
 $browseButtonLineHeight : 4em;
+$angularTableTRHeight: 2em;

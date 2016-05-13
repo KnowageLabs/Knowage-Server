@@ -121,7 +121,7 @@ margin-top: 9px;
 }
 
 table>tbody>tr {
-    height: 48px;
+    height: $angularTableTRHeight;
     transition: background-color .2s;
 }
 
@@ -185,16 +185,6 @@ angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
     left: 100%;
     margin-left: -15px;
 }
-
-.fakeTable th div:first-child {
-    padding-left: $standardPadding;
-}
-
-.principalTable tr td:first-child span {
-    padding-left: $standardPadding;
-}
-
-
 
 
 /* pagination */

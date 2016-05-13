@@ -13,6 +13,7 @@
   'components/scorecardKpiDefinition',
   'components/schedulerKpi',
   'components/angularTable',
+  'components/breadcrumb',
   'components/workspace',
   'components/linkDocument',
   'components/businessModelCatalog',
@@ -262,6 +263,34 @@ a.md-button.md-knowage-theme.md-primary, .md-button.md-knowage-theme.md-primary 
 .removeTransition{
 		transition	:none !important;
 	}
+md-content.md-knowage-theme.mainContent {
+    background-color: $contentBackground;
+}
+
+//TOASTS
+md-toast.md-knowage-theme {
+    position: fixed;
+    &.kn-toast-success {
+        background-color: green;
+    }
+    &.md-knowage-theme.kn-toast-error {
+        background-color: red;
+    }
+     height:auto;
+     max-height: 400px;
+     max-width: 100%;
+     overflow:hidden;
+     span {
+        white-space: nowrap;
+     }
+}
+md-toast.md-knowage-theme.kn-toast-success {
+    background-color: green;
+}
+md-toast.md-knowage-theme.kn-toast-error {
+    background-color: red;
+}
+
 
 //CUSTOM PAGES CLASSES    
 md-content.md-knowage-theme.config-content-detail {

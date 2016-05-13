@@ -28,6 +28,10 @@
 	md-sidenav.selectedDocumentSidenav>md-content>md-list>md-list-item>div {
 		width: 100%;
 	}
+
+	md-sidenav.selectedDocumentSidenav button md-icon {
+		color: $baseColor;
+	}
 	
 	md-sidenav.selectedDocumentSidenav>md-content>md-list>md-list-item>div>p
 		{
@@ -89,7 +93,7 @@
 	}
 	
 	md-tabs.documentNavigationToolbar>md-tabs-wrapper {
-		background-color:$baseColor;
+		background-color:$secondaryColor;
 		margin-left: 80px;
 		margin-right: 35px;
 	}
@@ -151,7 +155,7 @@
 	    z-index: 2; 
 	    font-size: 27px;
 	    transition: all .5s cubic-bezier(.35,0,.25,1);
-	    background-color: $baseColor;
+	    background-color: $secondaryColor;
 	    border-radius: 0px;
 	}
 	
@@ -281,7 +285,35 @@
 	.preferiteDocumentIcon{
 	color: #E4A400;
 	}
-	
+	angular-table {
+		padding: 0;
+		.fakeTable {
+			md-icon {
+				padding-right: .5em;
+				color: white;
+			}
+			th:first-child {
+				div {
+					padding-left: 1em;
+				}
+			}
+		}
+		.principalTable {
+			tr {
+				td:first-child {
+					span {
+						span {
+							padding-left: 1em;
+						}
+					}
+				}
+			}
+		}
+		th {
+			background-color: $baseColor;
+			color: white;
+		}
+	}
 
 	
 	
