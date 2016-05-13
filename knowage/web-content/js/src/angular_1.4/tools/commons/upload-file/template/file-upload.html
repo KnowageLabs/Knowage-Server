@@ -4,7 +4,7 @@
 		<span >{{textButton}}</span>
 	</label>
 	<input  ng-disabled='ngDisabled' id="{{id}}_input" type="file" class="ng-hide" onchange='angular.element(this).scope().setFile(this)'>
-	<md-input-container flex='ngDisabled' style="height : 30px;bottom : 0px;">
+	<md-input-container flex='ngDisabled' >
 		<input type='text' disabled ng-model="fileName" aria-label="file name"/>
 	</md-input-container>
 </md-content>
