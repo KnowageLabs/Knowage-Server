@@ -257,7 +257,7 @@
 	
 	
 	documentExecutionModule.service('docExecute_exportService', function(sbiModule_translate,sbiModule_config,
-			execProperties,sbiModule_user,$http) {
+			execProperties,sbiModule_user,$http,sbiModule_dateServices) {
 		
 		var dee = this;
 		
@@ -271,7 +271,7 @@
 				var idDocument = '&document='+ execProperties.executionInstance.OBJECT_ID;
 				var language = '&SBI_LANGUAGE='+sbiModule_config.curr_language;
 				var host = '&SBI_HOST='+sbiModule_config.host;
-				var dataFormat = 'dataformat='+localizedDateFormat;
+				var dataFormat = 'dataformat='+sbiModule_config.serverDateFormat;
 				var controller ='&SBI_SPAGO_CONTROLLER='+sbiModule_config.adapterPathNoContext;
 				var userID = '&user_id='+sbiModule_user.userId;
 				var sbiExeId= '&SBI_EXECUTION_ID=' + execProperties.executionInstance.SBI_EXECUTION_ID;
@@ -283,8 +283,16 @@
 					var paramsArr = execProperties.parametersData.documentParameters;
 					for(var i=0; i<paramsArr.length; i++){
 						if(paramsArr[i].parameterValue && paramsArr[i].parameterValue!=''){
-							paramsFilter=paramsFilter+'&'+paramsArr[i].urlName+'='+paramsArr[i].parameterValue;
-							//paramsFilter=paramsFilter+'&'+paramsArr[i].urlName+'_description=';
+							//date
+							if(paramsArr[i].type=="DATE"){
+								var dateParam = sbiModule_dateServices.formatDate(paramsArr[i].parameterValue, sbiModule_config.serverDateFormat);
+								paramsFilter=paramsFilter+'&'+paramsArr[i].urlName+'='+dateParam;
+							}else{
+								paramsFilter=paramsFilter+'&'+paramsArr[i].urlName+'='+paramsArr[i].parameterValue;
+								//paramsFilter=paramsFilter+'&'+paramsArr[i].urlName+'_description=';
+							}
+							
+							
 						}
 					}
 				}

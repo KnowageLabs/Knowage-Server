@@ -24,6 +24,7 @@ sbiM.factory('sbiModule_config',function(){
 		clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',  // the date format to be used when communicating with server
 		clientServerTimestampFormat: '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>',   // the timestamp format to be used when communicating with server
 		engineUrls:<%= aServiceResponse.getAttribute("engineUrls") %>,
+		serverDateFormat: '<%= GeneralUtilities.getServerDateFormat() %>',
 		<%-- <%if(parametersStatePersistenceEnabled != null) {%> --%>
 		<%-- isParametersStatePersistenceEnabled: <%= Boolean.valueOf(parametersStatePersistenceEnabled) %>, --%>
 		<%-- <%}%> --%>
