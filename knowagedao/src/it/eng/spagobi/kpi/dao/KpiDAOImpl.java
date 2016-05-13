@@ -1906,7 +1906,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		Rule rule = loadRule(mainMeasureRuleId, mainMeasureRuleVersion);
 		Map<String, String> attributesTemporalTypes = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 		for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
-			if ("TEMPORAL_ATTRIBUTE".equals(ruleOutput.getType())) {
+			if ("TEMPORAL_ATTRIBUTE".equals(ruleOutput.getType().getValueCd())) {
 				String attributeName = ruleOutput.getAlias();
 				String attributeTemporalType = ruleOutput.getHierarchy().getValueCd(); // YEAR, QUARTER, MONTH, WEEK, DAY
 				attributesTemporalTypes.put(attributeName, attributeTemporalType);
@@ -1927,13 +1927,13 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 			String temporalType = attributesTemporalTypes.get(attributeName);
 			if (temporalType != null) {
-				temporalValues.put(attributeName, attributeValue.replaceAll("'", "''"));
+				temporalValues.put(temporalType, attributeValue.replaceAll("'", "''"));
 				if (ProcessKpiJob.EXCLUDE_TEMPORAL_ATTRIBUTES_FROM_KPI_VALUE_LOGICAL_KEY)
 					continue;
 			}
 			if (logicalKeyTmp.length() > 0)
 				logicalKeyTmp.append(",");
-			logicalKeyTmp.append(attributeName.toUpperCase()).append("=").append(attributeValue);
+			logicalKeyTmp.append(attributeName.toUpperCase()).append("=").append(attributeValue.trim());
 		}
 		final String logicalKey = logicalKeyTmp.toString();
 

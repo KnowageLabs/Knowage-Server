@@ -738,7 +738,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				for (String attributeName : logicalKeyPairs.keySet()) {
 					if (logicalKey.length() > 0)
 						logicalKey.append(",");
-					logicalKey.append(attributeName).append("=").append(logicalKeyPairs.get(attributeName));
+					logicalKey.append(attributeName).append("=").append(logicalKeyPairs.get(attributeName).toString().trim());
 				}
 				boolean nullValue = value.toLowerCase().contains("null");
 				result.setErrorCount(result.getErrorCount() + (nullValue ? 1 : 0));

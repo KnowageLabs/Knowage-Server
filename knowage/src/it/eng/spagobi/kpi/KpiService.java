@@ -17,6 +17,11 @@
  */
 package it.eng.spagobi.kpi;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.util.JSON;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -99,11 +104,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.quartz.JobExecutionException;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.util.JSON;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
@@ -331,11 +331,11 @@ public class KpiService {
 	public Response findKpiValuesTest() throws EMFUserError, JsonGenerationException, JsonMappingException, IOException {
 		IKpiDAO kpiDao = DAOFactory.getNewKpiDAO();
 		Map<String, String> attributesValues = new HashMap<String, String>();
-		attributesValues.put("CA1", "0");
-		attributesValues.put("CA2", "0");
-		attributesValues.put("SA1", "1");
+		attributesValues.put("STORE_CITY", "Los Angeles");
+		attributesValues.put("STORE_TYPE", "Supermarket");
+		attributesValues.put("OPENED_MONTH", "5");
 		// attributesValues.put("SA2", "5");
-		List<KpiValue> kpiValues = kpiDao.findKpiValues(4, 0, null, null, attributesValues);
+		List<KpiValue> kpiValues = kpiDao.findKpiValues(11, 0, null, null, attributesValues);
 		String result = new ObjectMapper().writeValueAsString(kpiValues);
 		return Response.ok(result).build();
 	}
