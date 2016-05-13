@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>Business Model Catalogue</title>
 </head>
 <body  class="bodyStyle businessModelCatalog" ng-controller="businessModelCatalogueController as ctrl">
 	<angular-list-detail show-detail="showMe">
@@ -176,7 +176,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      	<md-toolbar class="secondaryToolbar">
 		      <div class="md-toolbar-tools">
 		        <h2>
-		          <span>Metadata</span>
+		          <span>{{translate.load("sbi.catalogues.generic.title.metadata")}}</span>
 		        </h2>
 		   
 		      </div>
@@ -192,13 +192,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<div   ng-show="bmImportingShow" >
     				<md-progress-linear md-mode="indeterminate"></md-progress-linear>
     				<div class="bottom-block">
-				      <span>Importing metadata</span>
+				      <span>{{translate.load("sbi.catalogues.generic.import.progress")}}</span>
 				    </div>
       			</div> 
       			<div   ng-show="bmCWMProcessingShow" >
     				<md-progress-linear md-mode="indeterminate"></md-progress-linear>
     				<div class="bottom-block">
-				      <span>Exporting CWM</span>
+				      <span>{{translate.load("sbi.metadata.cwm.export.progress")}}</span>
 				    </div>
       			</div> 
 	      	</div>
@@ -206,8 +206,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      	 <md-divider layout-margin></md-divider>
 	      	<div layout="row" layout-wrap>
 				<label flex="20" layout-align="center center" class="buttonLabel">{{translate.load("sbi.metadata.cwm.import.file.upload")}}:</label>
-		        <file-upload flex="50" ng-model="fileObjCWM" id="cwmFile" ng-click="fileCWMChange();checkCWMChange()"></file-upload>
-            	<div flex="30">
+		        <file-upload flex ng-model="fileObjCWM" id="cwmFile" ng-click="fileCWMChange();checkCWMChange()"></file-upload>
+            	<div flex="20">
                		 <md-button  ng-click="importCWMFile(selectedBusinessModel.id)" ng-disabled="bmCWMImportingShow" class="md-raised">{{translate.load("sbi.metadata.cwm.import.button")}}</md-button>
             	</div>
                	
@@ -217,7 +217,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       		<div   ng-show="bmCWMImportingShow" >
     				<md-progress-linear md-mode="indeterminate"></md-progress-linear>
     				<div class="bottom-block">
-				      <span>Importing CWM</span>
+				      <span>{{translate.load("sbi.metadata.cwm.import.progress")}}</span>
 				    </div>
       			</div> 
 	      </md-card-content>
