@@ -292,9 +292,8 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
  		var dataGet=""
  		if(ruleId){
  			dataGet+="ruleId="+ruleId;
-	 		if(ruleVersion){
-	 			dataGet+="&ruleVersion="+ruleVersion;
-	 		}
+ 			dataGet+="&ruleVersion="+ruleVersion;
+ 		 
  		}
  		
  		sbiModule_restServices.promiseGet("1.0/kpi","listAvailableAlias",dataGet)
