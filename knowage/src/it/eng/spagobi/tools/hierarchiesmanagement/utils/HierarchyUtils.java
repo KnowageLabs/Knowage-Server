@@ -628,9 +628,11 @@ public class HierarchyUtils {
 
 		if (filterHierarchy != null) {
 			logger.debug("Filter Hierarchy is [" + filterHierarchy + "]");
-			String vFilterDateConverted = HierarchyUtils.getConvertedDate(filterDate, dataSource);
-			String vFilterDateWhereClause = vFilterDateConverted + ">= " + beginDtColumn + " AND " + vFilterDateConverted + " <= " + endDtColumn;
-
+			String vFilterDateWhereClause = "";
+			if (filterDate != null) {
+				String vFilterDateConverted = HierarchyUtils.getConvertedDate(filterDate, dataSource);
+				vFilterDateWhereClause = vFilterDateConverted + ">= " + beginDtColumn + " AND " + vFilterDateConverted + " <= " + endDtColumn;
+			}
 			String hierNameCol = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 			String hierTypeCol = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
 			String dimFilterFieldCol = AbstractJDBCDataset.encapsulateColumnName(dimFilterField, dataSource);
