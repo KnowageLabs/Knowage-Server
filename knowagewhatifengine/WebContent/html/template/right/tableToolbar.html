@@ -1,5 +1,5 @@
 <div>
-<div class="menu-text" style="padding-bottom:5%">Drill types</div>
+<div class="menu-text" style="padding-bottom:5%">Drill on dimension</div>
 <md-grid-list
 	md-cols="3"	md-row-height="25px" md-gutter="0px">
 	
@@ -14,19 +14,15 @@
 	<md-grid-tile>
 		<md-button class="drill-buttons right" ng-click="changeDrillType('replace') " ng-disabled="isDisabledType('replace')" id = "drill-replace-btn">Replace</md-button>
 	</md-grid-tile>
-	 <md-grid-tile>
-		<span>&nbsp;</span>
-	</md-grid-tile>
-	<md-grid-tile>
-		<md-button 
-			id="drill-trough-btn"
-			class="drill-buttons down" 
-			style="min-width:130%!important;margin-top:10px!important;border-radius:0%!important" 
-			ng-click="enableDisableDrillThrough()">
-			Drill trough
-		</md-button>
-	</md-grid-tile>	 
 </md-grid-list>
+<div class="menu-text" style="padding-bottom:5%">Drill on data</div>
+<md-button 
+		id="drill-trough-btn"
+		class="drill-buttons down" 
+		style="min-width:100px!important;margin-left:calc( 50% - 50px );" 
+		ng-click="enableDisableDrillThrough()">
+		Drill trough
+</md-button>
 <div class="menu-text">OLAP functions</div>
 <md-grid-list
         md-cols="3" md-row-height="50px">

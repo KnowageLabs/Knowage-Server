@@ -142,9 +142,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			});	
 	}
 	
-	$scope.searchFilter = function(){
-		$scope.loadingNodes = true;
-		//searchTextUsed = $scope.searchText;
+	$scope.searchFilter = function(){		
 		hlght = true;
 		var encoded = encodeURI('/hierarchy/'+ h+ '/search/'+$scope.activeaxis+'/'+$scope.searchText+'/'+$scope.showSiblings+'?SBI_EXECUTION_ID='+ JSsbiExecutionID);
 		sbiModule_restServices.promiseGet
@@ -152,7 +150,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		.then(function(response) {
 				checkIfExists(response.data);
 				$scope.searchSucessText = $scope.searchText.toLowerCase();
-				$scope.loadingNodes = false;
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("An error occured during search for filter", 'Error');
 		});
