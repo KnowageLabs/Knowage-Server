@@ -423,45 +423,6 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		}
 
 		@SuppressWarnings("unused")
-		public NodeFilter(Member m, int depth, int position, String fatherName, List<Member> visibleMembers, boolean showS) throws OlapException {
-			super();
-			if (visibleMembers != null) {
-				this.visible = visibleMembers.contains(m);
-			} else {
-				this.visible = false;
-			}
-
-			this.id = m.getUniqueName();
-			this.uniqueName = m.getUniqueName();
-			this.name = m.getCaption();
-			this.collapsed = false;
-			this.children = new ArrayList<HierarchyResource.NodeFilter>();
-
-			if (m.getDepth() <= depth) {
-				List<Member> list = (List<Member>) m.getChildMembers();
-				if (list != null && list.size() > 0) {
-					this.collapsed = true;
-
-					if (m.getDepth() == depth - 1 && !showS) {
-						NodeFilter nf = new NodeFilter(list.get(position), depth, position, fatherName, visibleMembers, showS);
-						children.add(nf);
-					} else {
-						for (int i = 0; i < list.size(); i++) {
-							if (m.getDepth() == 0) {
-								NodeFilter nf = new NodeFilter(list.get(i), depth, position, fatherName, visibleMembers, showS);
-								children.add(nf);
-
-							} else if (fatherName.contains(list.get(i).getParentMember().getUniqueName())) {
-								NodeFilter nf = new NodeFilter(list.get(i), depth, position, fatherName, visibleMembers, showS);
-								children.add(nf);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		@SuppressWarnings("unused")
 		public NodeFilter(Member m, int depth, List<String> fatherNameList, String name, List<Member> visibleMembers, boolean showS) throws OlapException {
 
 			super();
@@ -483,7 +444,8 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 				for (int i = 0; i < list.size(); i++) {
 					String parentUN = list.get(i).getParentMember() != null ? list.get(i).getParentMember().getUniqueName() : "";
-					if (list.get(i).getName().toLowerCase().contains(name.toLowerCase()) && !showS) {
+					boolean containsName = list.get(i).getName().toLowerCase().contains(name.toLowerCase());
+					if (fatherNameList.contains(parentUN) && containsName && !showS) {
 						this.collapsed = true;
 						children.add(new NodeFilter(list.get(i), depth, fatherNameList, name, visibleMembers, showS));
 					} else if (fatherNameList.contains(parentUN) && showS) {
