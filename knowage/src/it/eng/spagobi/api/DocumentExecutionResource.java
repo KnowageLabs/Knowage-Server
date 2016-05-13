@@ -17,6 +17,9 @@
  */
 package it.eng.spagobi.api;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.RequestContainerAccess;
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
@@ -31,8 +34,10 @@ import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesLi
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -45,6 +50,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
+import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -135,6 +141,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		JSONObject jsonParameters = requestVal.optJSONObject("parameters");
 		JSONObject menuParameters = requestVal.optJSONObject("menuParameters"); // parameters setted when open document from menu
 
+		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
+		SessionContainer aSessionContainer = aRequestContainer.getSessionContainer();
+		SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
+
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 		List errorList = new ArrayList<>();
 		MessageBuilder m = new MessageBuilder();
@@ -162,9 +172,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				if (jsonParameters.isNull(objParameter.getId())) {
 					if (objParameter.getDefaultValues().size() == 1) {
 						// SINGLE
-						Object value = (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) ? objParameter
-								.getDefaultValues().get(0).getValue().toString().split("#")[0]
-								: objParameter.getDefaultValues().get(0).getValue();
+						Object value;
+						if (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
+							// value = objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0];
+							value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
+									GeneralUtilities.getLocaleDateFormat(permanentSession),
+									objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0]);
+						} else {
+							value = objParameter.getDefaultValues().get(0).getValue();
+						}
 						jsonParameters.put(objParameter.getId(), value);
 						jsonParameters.put(objParameter.getId() + "_field_visible_description", value);
 					} else {
@@ -202,6 +218,21 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						}
 					}
 				}
+
+				// format Date :
+				if (!objParameter.isMultivalue() && objParameter.getParType().equals("DATE")) {
+					if (!jsonParameters.isNull(objParameter.getId())) {
+						// CONVERT LOCALE FROM SERVER
+						if (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format") != null) {
+							String date = convertDate(GeneralUtilities.getLocaleDateFormat(permanentSession),
+									SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"),
+									jsonParameters.getString(objParameter.getId()));
+							jsonParameters.put(objParameter.getId(), date);
+						}
+					}
+
+				}
+
 			}
 
 			String url = DocumentExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
@@ -688,6 +719,21 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			return objParameter.getDefaultValues();
 		}
 
+	}
+
+	private String convertDate(String dateFrom, String dateTo, String dateStr) {
+		String date = dateStr;
+		SimpleDateFormat dateFromFormat = new SimpleDateFormat(dateFrom);
+		try {
+			Date d = dateFromFormat.parse(dateStr);
+			Format formatter = new SimpleDateFormat(dateTo);
+			date = formatter.format(d);
+			// jsonParameters.put(objParameter.getId(), date);
+		} catch (ParseException e) {
+			logger.error("Error prase date server ", e);
+
+		}
+		return date;
 	}
 
 }
