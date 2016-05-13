@@ -50,7 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	String objectId = request.getParameter(ObjectsTreeConstants.OBJECT_ID);
 	Map backUrlPars = new HashMap();
 	backUrlPars.put("PAGE", "detailBIObjectPage");
-	backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO,"1");
+	backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO,"0");
 	backUrlPars.put("MESSAGEDET", "DETAIL_SELECT");
 	String backUrl = urlBuilder.getUrl(request, backUrlPars);
 %>
