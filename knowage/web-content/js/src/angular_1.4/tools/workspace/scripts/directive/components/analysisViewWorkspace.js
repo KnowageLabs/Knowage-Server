@@ -25,8 +25,10 @@ angular
 	});
 
 function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,$mdDialog,$mdSidenav,$documentViewer) {
-		
-	$scope.activeTabAnalysis = null;
+	
+	$scope.allAnalysisDocsInitial = [];
+	$scope.cockpitAnalysisDocsInitial = [];
+	$scope.geoAnalysisDocsInitial = [];
 	
 	$scope.loadAllMyAnalysisDocuments = function() {
 		
@@ -67,19 +69,21 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 									$scope.allAnalysisDocs.splice(i,1);
 									break;
 									
-								case "MAP": 
-									$scope.geoAnalysisDocs.push($scope.allAnalysisDocs[i]); 
-									break;
-									
 								case "DOCUMENT_COMPOSITE": 
 									$scope.cockpitAnalysisDocs.push($scope.allAnalysisDocs[i]); 
 									break;	
+									
+								case "MAP": 
+									$scope.geoAnalysisDocs.push($scope.allAnalysisDocs[i]); 
+									break;
 									
 							}
 							
 						}
 						
 						$scope.allAnalysisDocsInitial = $scope.allAnalysisDocs;
+						$scope.cockpitAnalysisDocsInitial = $scope.cockpitAnalysisDocs;
+						$scope.geoAnalysisDocsInitial = $scope.geoAnalysisDocs;
 					},
 					
 					function(response) {
@@ -94,6 +98,8 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	 * Set the currently active tab of the Analysis perspective in order to
 	 * enable managing of visibility of "Add analysis document" button. This
 	 * button should not be visible if the user is seeing all the documents.
+	 * NOTE: $scope.activeTabAnalysis is defined inside the main controller
+	 * of the Workspace (controllerWorkspace.js).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.setActiveTabState = function(item) {		

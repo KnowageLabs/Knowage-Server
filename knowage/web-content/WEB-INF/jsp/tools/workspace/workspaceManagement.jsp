@@ -38,7 +38,7 @@
 					The progress circular animation will be shown until all the data for the Workspace is collected. 
 					@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 				-->
-				<md-progress-circular 	loading ng-show="showEl" md-mode="indeterminate" md-diameter="75%" 
+				<md-progress-circular 	loading ng-show="showEl || searching" md-mode="indeterminate" md-diameter="75%" 
 										style="position:fixed;top:50%;left:50%;z-index:500;background:rgba(255, 255, 255, 0);">
 				</md-progress-circular>
 				

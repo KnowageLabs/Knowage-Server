@@ -48,7 +48,6 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.currentOptionMainMenu = "";
-	$scope.activeTabAnalysis = null;	
 	
 	$scope.isDocumentFavorite = false;
 
@@ -57,23 +56,31 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.showGridView = true;
+	
+	$scope.translate = sbiModule_translate;
 
 	/**
 	 * Scope variables needed for showing details about the currently selected document in
 	 * the Workspace. Details will be shown inside the right side navigation panel.
 	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	$scope.selectedDocument = undefined;
-	$scope.showDocumentInfo = false;	
-	$scope.translate = sbiModule_translate;
+	var selectedDocument = undefined;
+	var showDocumentInfo = false;	
 	
 	/**
 	 * On-click listener function for the left main menu of the Workspace web page.
 	 * We will keep the lastly chosen option from this menu inside scope variable.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	$scope.showInfo = function(item) {
+	$scope.leftMenuItemPicked = function(item) {
+		
 		$scope.currentOptionMainMenu = item.name.toLowerCase();
+	
+		if (searchedBefore) {
+			$scope.searchInput = "";			
+			$scope.setSearchInput($scope.searchInput);
+		}
+		
 	}
 
 	/**
@@ -83,51 +90,168 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.toogleGridListViewOfDocs = function() {
 		$scope.showGridView = !$scope.showGridView;
 	}
-
-//	$scope.setSearchInput = function(newSearchInput) {
-//
-//		$scope.searchInput = newSearchInput;
-//		
-//		if ($scope.currentOptionMainMenu == "analysis") {
-//			
-//			if (newSearchInput.length > 0) {
-//				
-//				$scope.allAnalysisDocs = [];
-//				$scope.geoAnalysisDocs = [];
-//				$scope.cockpitAnalysisDocs = [];
-//				
-//				for (i=0; i<allAnalysisDocs.length; i++) {
-//																		
-//					console.log(searchDocuments[i].typeCode);
-//					if (searchDocuments[i].typeCode == "DOCUMENT_COMPOSITE") {
-//						$scope.allAnalysisDocs.push(searchDocuments[i]);
-//						$scope.cockpitAnalysisDocs.push(searchDocuments[i]);
-//					}
-//					else if (searchDocuments[i].typeCode == "MAP") {
-//						$scope.allAnalysisDocs.push(searchDocuments[i]);
-//						$scope.geoAnalysisDocs.push(searchDocuments[i]);
-//					}
-//					
-//				}
-//				
-//			}
-//			else {
-//				$scope.allAnalysisDocs = $scope.allAnalysisDocsInitial;
-//			}
-//			
-//		}
-//		
-//	}
+	
+	/**
+	 * Filter the sent collection of data (documents, analysis, datasets, etc.)
+	 * according to the searching term (sequence) user entered, 'newSearchInput'.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	var filterThroughCollection = function(newSearchInput,inputCollection) {
+		
+		/**
+		 * Resulting collection to return.
+		 */
+		var filteredCollection = [];
+		
+		if (inputCollection!=null) {
+		
+			var item = null;
+			
+			for (i=0; i<inputCollection.length; i++) {
+				
+				item = inputCollection[i];
+				
+				/**
+				 * NOTE: If we want to search just according to the starting sequence of the name
+				 * of a document, change this expression to this criteria: ... == 0).
+				 */
+				if (item["name"].toLowerCase().indexOf(newSearchInput.toLowerCase()) >= 0) {					
+					filteredCollection.push(item);					
+				}
+				
+			}
+			
+		}
+		
+		/**
+		 * Set the flag for displaying a circular loading animation to true, so it can be shown
+		 * when searching (filtering) is in progress.
+		 */
+		$scope.searching = false;
+		
+		return filteredCollection;		
+	}
 
 	/**
-	 * TODO: 
-	 * Preview (execute) a particular Analysis document.
+	 * Flag to indicate if we need to reload data when changing between options on the left menu.
+	 * For example, if user searched through the collection for one left menu option (e.g. Analysis)
+	 * and after that goes to another option (e.g. Datasets), he need to clear the searching input
+	 * field, as well as to reload all analysis documents that were filtered just before option change.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	$scope.executeDocument = function(document) {
+	var searchedBefore = false;
+	
+	/**
+	 * Function that is called when user is starting a search among some document collection (dataset,
+	 * analysis, documents, etc.).
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.setSearchInput = function(newSearchInput) {		
 		
-		console.info("[EXECUTION]: Execution of Analysis document with the label '" + document.label + "' is started.");		
-		$documentViewer.openDocument(document.id, document.label, document.name);
+		$scope.searchInput = newSearchInput;
+		var currentOptionMainMenu = $scope.currentOptionMainMenu;		
 		
+		/**
+		 * Collection through which we will search for diverse documents.
+		 */
+		var allAnalysisDocsTemp = null;
+		var cockpitAnalysisDocsTemp = null;
+		var geoAnalysisDocsTemp = null;
+		
+		var filteredCollection = [];
+		
+		var collectionForFiltering = null;		
+		
+		if (newSearchInput=="") { 
+			
+			switch(currentOptionMainMenu) {
+			
+				/**
+				 * SEARCH FOR ANALYSIS
+				 */
+				case "analysis":				
+					$scope.allAnalysisDocs = $scope.allAnalysisDocsInitial;
+					$scope.cockpitAnalysisDocs = $scope.cockpitAnalysisDocsInitial;
+					$scope.geoAnalysisDocs = $scope.geoAnalysisDocsInitial;				
+					break;
+				
+				/**
+				 * SEARCH FOR DATASETS
+				 */
+				case "datasets":
+					console.info("We will add functionality for searching through DATASETS");
+					break;
+				
+				/**
+				 * SEARCH FOR DOCUMENTS
+				 */
+				case "documents":
+					console.info("We will add functionality for searching through DOCUMENTS");
+					break;
+			}
+		}
+		else {
+			
+			$scope.searching = true;
+			
+			$timeout
+			(
+				function() {
+					
+					!searchedBefore ? searchedBefore = true : null;
+					
+					switch(currentOptionMainMenu) {
+					
+						/**
+						 * SEARCH FOR ANALYSIS
+						 */
+						case "analysis":
+							
+								var allAnalysisDocsFinal = [];
+							
+								allAnalysisDocsTemp = $scope.allAnalysisDocs;
+								cockpitAnalysisDocsTemp = $scope.cockpitAnalysisDocs;
+								geoAnalysisDocsTemp = $scope.geoAnalysisDocs;
+								
+								$scope.cockpitAnalysisDocs = filterThroughCollection(newSearchInput,$scope.cockpitAnalysisDocsInitial);
+								$scope.geoAnalysisDocs = filterThroughCollection(newSearchInput,$scope.geoAnalysisDocsInitial);
+								
+								allAnalysisDocsFinal = $scope.cockpitAnalysisDocs;
+								allAnalysisDocsFinal.length>0 ? allAnalysisDocsFinal.concat($scope.geoAnalysisDocs) : allAnalysisDocsFinal = $scope.geoAnalysisDocs;								
+								
+								$scope.allAnalysisDocs = allAnalysisDocsFinal;
+							
+							break;
+						
+						/**
+						 * SEARCH FOR DATASETS
+						 */
+						case "datasets":
+							console.info("We will add functionality for searching through DATASETS");
+							break;
+						
+						/**
+						 * SEARCH FOR DOCUMENTS
+						 */
+						case "documents":
+							console.info("We will add functionality for searching through DOCUMENTS");
+							break;
+				
+					}	
+					
+				}, 400
+			);		
+			
+		}			
+					
+	}
+
+	/**
+	 * Preview (execute) a particular document.
+	 */
+	$scope.executeDocument = function(document) {		
+		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");		
+		$documentViewer.openDocument(document.id, document.label, document.name);		
 	}
 	
 	/**
@@ -136,22 +260,22 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * side navigation panel.
 	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	$scope.showDocumentDetails = function() {
-		$scope.selectedDocument ? console.log($scope.selectedDocument) : null;
-		return $scope.showDocumentInfo && $scope.isSelectedDocumentValid();
+	var showDocumentDetails = function() {
+//		selectedDocument ? console.log(selectedDocument) : null;
+		return showDocumentInfo && isSelectedDocumentValid();
 	};	
 	
-	$scope.isSelectedDocumentValid = function() {
-		return $scope.selectedDocument !== undefined;
+	isSelectedDocumentValid = function() {
+		return selectedDocument !== undefined;
 	};
 	
-	$scope.setDocumentDetailOpen = function(isOpen) {
+	setDocumentDetailOpen = function(isOpen) {
 		
 		if (isOpen && !$mdSidenav('rightDoc').isLockedOpen() && !$mdSidenav('rightDoc').isOpen()) {
 			$scope.toggleDocumentDetail();
 		}
 
-		$scope.showDocumentInfo = isOpen;
+		showDocumentInfo = isOpen;
 	};
 	
 	$scope.toggleDocumentDetail = function() {
@@ -160,19 +284,19 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	
 	$scope.selectDocument= function ( document ) { 
 		
-		if (document !== undefined) {
-			$scope.lastDocumentSelected = document;
-		}
+//		if (document !== undefined) {
+//			$scope.lastDocumentSelected = document;
+//		}
 		
-		var alreadySelected = (document !== undefined && $scope.selectedDocument === document);
+		var alreadySelected = (document !== undefined && selectedDocument === document);
 		
-		$scope.selectedDocument = document;
+		selectedDocument = document;
 		
 		if (alreadySelected) {
-			$scope.selectedDocument=undefined;
-			$scope.setDocumentDetailOpen(!$scope.showDocumentDetail);
+			selectedDocument=undefined;
+			setDocumentDetailOpen(!showDocumentDetails);
 		} else {
-			$scope.setDocumentDetailOpen(document !== undefined);
+			setDocumentDetailOpen(document !== undefined);
 		}
 	};
 	/**
