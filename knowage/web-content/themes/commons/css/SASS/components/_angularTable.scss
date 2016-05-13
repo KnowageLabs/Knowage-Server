@@ -100,17 +100,17 @@ table {
 &[multi-select] table>tbody>tr>td:nth-child(n+3):nth-last-child(n+2),
 &:not(multi-select) table>thead>tr>th:nth-child(n+1):nth-last-child(n+2),
 &:not(multi-select) table>tbody>tr>td:nth-child(n+1):nth-last-child(n+2){
-	padding: 0 28px;
+	padding: 0 $standardPadding;
 }
 
 &[multi-select] table>thead>tr>th:nth-child(2),&:not(multi-select) table>thead>tr>th:nth-child(1),
 &[multi-select]  table>tbody>tr>td:nth-child(2),&:not(multi-select) table>tbody>tr>td:nth-child(1){
-	padding: 0 28px 0 0 !important;
+	padding: 0 $standardPadding 0 0 !important;
 }
 
 table>thead>tr>th:last-child,
 table>tbody>tr>td:last-child{
-padding: 0 24px 0 28px;
+padding: 0 $standardPadding;
 }
 
  
@@ -186,7 +186,16 @@ angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
     margin-left: -15px;
 }
 
+.fakeTable tr th:first-child div {
+    margin-left: $standardPadding;
+}
+.principalTable tr th:first-child div {
+    margin-left: $standardPadding;
+}
 
+.principalTable tr td:first-child>span {
+    margin-left: $standardPadding;
+}
 /* pagination */
 
 
