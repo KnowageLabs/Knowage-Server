@@ -56,7 +56,7 @@ public class AlertListenerInitializer extends SpagoBIInitializer {
 	public void init(Session session) {
 		logger.debug("IN");
 		try {
-			List<SbiAlertListener> lst = session.createCriteria(SbiAlertListener.class).list();
+			List<SbiAlertListener> lst = list(SbiAlertListener.class);
 			if (lst == null || lst.isEmpty()) {
 				logger.info("AlertListener table is empty. Starting populating listeners...");
 				writeListeners(session);
@@ -79,7 +79,7 @@ public class AlertListenerInitializer extends SpagoBIInitializer {
 			SourceBean aListenerSB = (SourceBean) it.next();
 			SbiAlertListener aListener = from(aListenerSB);
 			logger.debug("Inserting AlertListener with name = [" + aListenerSB.getAttribute("name") + "], ...");
-			aSession.save(aListener);
+			insert(aListener);
 		}
 		logger.debug("OUT");
 	}
@@ -124,7 +124,7 @@ public class AlertListenerInitializer extends SpagoBIInitializer {
 			}
 			if (!existsInDb) {
 				SbiAlertListener aListener = from(aListenerSB);
-				session.save(aListener);
+				insert(aListener);
 			}
 		}
 		logger.debug("OUT");

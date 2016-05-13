@@ -56,7 +56,7 @@ public class AlertActionInitializer extends SpagoBIInitializer {
 	public void init(Session session) {
 		logger.debug("IN");
 		try {
-			List<SbiAlertAction> lst = session.createCriteria(SbiAlertAction.class).list();
+			List<SbiAlertAction> lst = list(SbiAlertAction.class);
 			if (lst == null || lst.isEmpty()) {
 				logger.info("AlertAction table is empty. Starting populating actions...");
 				writeActions(session);
@@ -79,7 +79,7 @@ public class AlertActionInitializer extends SpagoBIInitializer {
 			SourceBean aActionSB = (SourceBean) it.next();
 			SbiAlertAction aAction = from(aActionSB);
 			logger.debug("Inserting AlertAction with name = [" + aActionSB.getAttribute("name") + "], ...");
-			aSession.save(aAction);
+			insert(aAction);
 		}
 		logger.debug("OUT");
 	}
@@ -124,7 +124,7 @@ public class AlertActionInitializer extends SpagoBIInitializer {
 			}
 			if (!existsInDb) {
 				SbiAlertAction aAction = from(aActionSB);
-				session.save(aAction);
+				insert(aAction);
 			}
 		}
 		logger.debug("OUT");
