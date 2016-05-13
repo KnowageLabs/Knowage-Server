@@ -224,6 +224,50 @@
 			});
 		};
 
+		//mail
+		$scope.sendMail = function(){
+			$mdDialog.show({
+				scope:$scope,
+				preserveScope: true,
+				clickOutsideToClose:true,
+				controllerAs : 'sendMailCtrl',
+				controller : function($mdDialog) {
+					var sendmailctl = this;
+					sendmailctl.mail = {};
+					sendmailctl.mail.label = $scope.executionInstance.OBJECT_LABEL;
+					sendmailctl.mail.docId = $scope.executionInstance.OBJECT_ID;
+					sendmailctl.mail.userId = sbiModule_user.userId;
+					sendmailctl.mail.MESSAGE = "";
+					params = documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+					params= typeof params === 'undefined' ? {} : params;
+					sendmailctl.mail.parameters = params;
+					sendmailctl.submit = function() {
+						sbiModule_restServices.promisePost(
+								"1.0/documentexecutionmail",
+								"sendMail", sendmailctl.mail)
+						.then(
+							function(response) {
+									$mdDialog.hide();
+									documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.sendmail.success"), 3000);
+							},
+						function(response){
+								documentExecuteServices.showToast(response.data.errors);
+							}	
+						);
+					};
+					
+					sendmailctl.annulla = function($event) {
+						$mdDialog.hide();
+					};
+				},
+
+				templateUrl : sbiModule_config.contextName 
+					+ '/js/src/angular_1.4/tools/documentexecution/templates/documentSendMail.html'
+			});
+		}
+		
+		
+		
 		//note document
 		$scope.noteDocument = function() {
 			var obj = {'id' : $scope.executionInstance.OBJECT_ID};

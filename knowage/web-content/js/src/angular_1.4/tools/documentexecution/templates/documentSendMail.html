@@ -1,0 +1,97 @@
+<md-dialog id="dialogNote" layout="column" aria-label="Select type of download"  ng-cloak>
+	
+<!-- 	<md-toolbar> -->
+<!-- 		<div class="md-toolbar-tools"> -->
+<!-- 	  		<h2 style="font-size: 20px; text-align: center; width: 100%;">{{translate.load("sbi.execution.sendmail.headerTitle")}}</h2> -->
+<!-- 		</div> -->
+<!-- 	</md-toolbar> -->
+	
+	<md-tabs flex md-border-bottom>
+			<md-tab>
+			<md-tab-label >{{translate.load("sbi.execution.sendmail.headerTitle")}}</md-tab-label>
+				<md-tab-body>
+	  	<md-dialog-content class="sticky-container">
+			<div layout="row" layout-wrap>
+				<div flex="100">
+					<md-input-container>
+						<label>{{translate.load("sbi.execution.sendmail.mailto")}}</label> 
+						<input ng-model="sendMailCtrl.mail.TO" type="text" md-maxlength="40" maxlength="40" >
+					</md-input-container>
+				</div>
+			</div>
+			<div layout="row" layout-wrap>
+				<div flex="100">
+					<md-input-container>
+						<label>{{translate.load("sbi.execution.sendmail.cc")}}</label>
+						<input ng-model="sendMailCtrl.mail.CC" type="text" md-maxlength="160" maxlength="160">
+					</md-input-container>
+				</div>
+			</div>
+			<div layout="row" layout-wrap>
+				<div flex="100">
+					<md-input-container>
+						<label>{{translate.load("sbi.execution.sendmail.object")}}</label>
+						<input ng-model="sendMailCtrl.mail.OBJECT" type="text" md-maxlength="160" maxlength="160">
+					</md-input-container>
+				</div>
+			</div>
+		  	<div class="wysiwygClass" >
+						<wysiwyg-edit content="sendMailCtrl.mail.MESSAGE"></wysiwyg-edit>
+			</div>	  	
+	  		<div layout="row" layout-wrap>
+				<div flex="100">
+					<md-input-container>
+						<label>{{translate.load("sbi.execution.sendmail.login")}}</label>
+						<input ng-model="sendMailCtrl.mail.LOGIN" type="text" md-maxlength="160" maxlength="160">
+					</md-input-container>
+				</div>
+			</div>
+			<div layout="row" layout-wrap>
+				<div flex="100">
+					<md-input-container>
+						<label>{{translate.load("sbi.execution.sendmail.password")}}</label>
+						<input ng-model="sendMailCtrl.mail.PASSWORD" type="text" md-maxlength="160" maxlength="160">
+					</md-input-container>
+				</div>
+			</div>
+			<div layout="row" layout-wrap>
+				<div flex="100">
+					<md-input-container>
+						<label>{{translate.load("sbi.execution.sendmail.replayto")}}</label>
+						<input ng-model="sendMailCtrl.mail.REPLAYTO" type="text" md-maxlength="160" maxlength="160">
+					</md-input-container>
+				</div>
+			</div>
+	  	</md-dialog-content>
+	  	
+	  	<div class="footer" layout="row">
+	  	<span flex></span>
+		    <md-button ng-click="sendMailCtrl.annulla()" class="md-raised">
+		  		{{translate.load("sbi.general.cancel")}}
+		    </md-button>
+		  <md-button id="buttonSendMail" class="md-raised" ng-click="sendMailCtrl.submit()" 
+		  ng-disabled="!sendMailCtrl.mail.TO">
+		  {{translate.load("sbi.execution.executionpage.toolbar.rating.submit")}}
+		  </md-button>
+	 	 </div>
+				</md-tab-body>				
+			</md-tab>
+		</md-tabs>
+
+</md-dialog>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

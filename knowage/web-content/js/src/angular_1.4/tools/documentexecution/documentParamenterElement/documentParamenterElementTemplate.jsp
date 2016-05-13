@@ -140,7 +140,8 @@
 		
 		<!-- lov combobox single and multiple input -->
 		<md-input-container class="md-block">
-			<label ng-if="parameter.selectionType=='COMBOBOX'"> {{parameter.label}}</label>
+			<label ng-if="parameter.selectionType=='COMBOBOX'" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' ">
+			 {{parameter.label}}</label>
 		
 		
 			<!-- multiple -->

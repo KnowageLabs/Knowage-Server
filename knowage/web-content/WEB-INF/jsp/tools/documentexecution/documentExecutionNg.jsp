@@ -152,6 +152,16 @@ try{
 					                </md-menu>
 				              	</md-menu-item>
 				          
+				          		<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEND_MAIL_FUNCTIONALITY)
+				          				&&  obj.getBiObjectTypeCode().equals("REPORT")) { %>
+				                <md-menu-item class="md-indent">
+					            	<md-icon class="fa fa-paper-plane"></md-icon>
+					            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" class="toolbar-button-custom"
+	                                		ng-click="sendMail()">{{translate.load('sbi.execution.executionpage.toolbar.send')}}
+					                </md-button>
+					            </md-menu-item>
+								<%} %>
+				          
 				                <span class="divider">{{translate.load("sbi.generic.info")}}</span>
 					            <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_METADATA_FUNCTIONALITY)) { %>
 					            <md-menu-item class="md-indent">
