@@ -17,11 +17,6 @@
  */
 package it.eng.spagobi.kpi.dao;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.bo.Alias;
 import it.eng.spagobi.kpi.bo.Cardinality;
@@ -40,6 +35,11 @@ import it.eng.spagobi.kpi.bo.TargetValue;
 import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface IKpiDAO extends ISpagoBIDao {
 
@@ -187,6 +187,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 * @return a list of Alias
 	 */
 	public List<Alias> listAliasNotInMeasure(Integer ruleId, Integer ruleVersion);
+
+	public List<Alias> listAliasInMeasure(Integer ruleId, Integer ruleVersion);
 
 	/**
 	 * Retrieve all aliases not currently used as measure in all rules

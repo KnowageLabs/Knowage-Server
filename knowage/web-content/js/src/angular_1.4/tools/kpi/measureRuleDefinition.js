@@ -184,6 +184,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 	}
 	
 	$scope.aliasList=[];
+	$scope.notAvailableAliasList=[];
 	$scope.placeholderList=[];
 	$scope.tipologiesType=[]; 
 	
@@ -298,7 +299,8 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
  		
  		sbiModule_restServices.promiseGet("1.0/kpi","listAvailableAlias",dataGet)
 		.then(function(response){ 
-			angular.copy(response.data,$scope.aliasList);
+			angular.copy(response.data.available,$scope.aliasList);
+			angular.copy(response.data.notAvailable,$scope.notAvailableAliasList);
 			if(deferred){
 				deferred.resolve();
 			}
@@ -380,6 +382,14 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 		}
 		return false; 
 	}
+ 	$scope.aliasUsedByMeasure=function(aliasName){
+ 		for(var i=0;i<$scope.notAvailableAliasList.length;i++){
+ 			if(angular.equals($scope.notAvailableAliasList[i].name.toUpperCase(),aliasName.toUpperCase())){
+ 				return true;
+ 			}
+ 		}
+ 		return false; 
+ 	}
  	
  	$scope.getPlaceholder=function(plcName){
  		for(var i=0;i<$scope.placeholderList.length;i++){

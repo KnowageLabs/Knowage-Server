@@ -20,6 +20,11 @@ line-height: 24px !important;
     color: #FFEB38 !important;
     margin-right: 6px;
 }
+.alertIconUsedAlias {
+line-height: 24px !important;
+    color: #f44246!important;
+    margin-right: 6px;
+}
 
 .saveDialogMeasureKpi .md-subheader{
 /* 	text-align: center; */

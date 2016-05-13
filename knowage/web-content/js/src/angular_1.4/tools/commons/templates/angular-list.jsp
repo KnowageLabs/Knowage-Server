@@ -16,7 +16,8 @@
 		<div flex id="{{id}}Tree" class="listItemContainer" ui-tree="dragDropOptions"
 				data-drag-enabled="dragAndDropEnabled" data-drag-delay="200"
 				data-clone-enabled={{enableClone==true}}
-				data-empty-placeholder-enabled={{showEmptyPlaceholder==true}}>
+				data-empty-placeholder-enabled={{showEmptyPlaceholder==true}}
+				ng-style="{overflow : !paginate==true? 'auto':'' }">
 	
 			<ol ui-tree-nodes ng-model="ngModel" class="angularListRowItem">
 				<li ng-if='SyncPagination && paginate' id="listItemTemplate"
