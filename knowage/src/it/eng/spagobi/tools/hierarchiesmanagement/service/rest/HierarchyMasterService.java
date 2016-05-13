@@ -1187,7 +1187,7 @@ public class HierarchyMasterService {
 
 		String selectClause = hierCdColumn + "," + hierNmColumn + "," + confColumn;
 
-		String selectQuery = "SELECT " + selectClause + " FROM " + HierarchyConstants.HIER_MASTERS_CONFIG_TABLE + " WHERE HIER_NM = ? ";
+		String selectQuery = "SELECT " + selectClause + " FROM " + HierarchyConstants.HIER_MASTERS_CONFIG_TABLE + " WHERE HIER_NM = ?  ORDER BY TIME_IN DESC ";
 
 		try (Statement stmt = dbConnection.createStatement(); PreparedStatement selectPs = dbConnection.prepareStatement(selectQuery)) {
 
@@ -1201,6 +1201,7 @@ public class HierarchyMasterService {
 
 			if (rs.next()) {
 				toReturn = rs.getString(HierarchyConstants.HIER_MASTERS_CONFIG);
+				logger.debug("Getted master configuration fron syncronize: " + toReturn);
 			}
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while restoring hierarchy backup");
