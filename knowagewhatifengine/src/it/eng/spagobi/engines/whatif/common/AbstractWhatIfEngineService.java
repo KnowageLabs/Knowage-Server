@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
+import org.olap4j.Axis;
 import org.olap4j.metadata.Member;
 import org.pivot4j.PivotModel;
 import org.pivot4j.sort.SortCriteria;
@@ -63,16 +64,17 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 	public String renderModel(PivotModel model) {
 		logger.debug("IN");
 
-		
 		String serializedModel = null;
 
 		try {
 			SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) model;
-
-			
+			ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
 			// adds the calculated fields before rendering the model
 			sbiModel.applyCal();
-			serializedModel = serialize(new PivotObjectForRendering(getWhatIfEngineInstance().getOlapConnection(), sbiModel, getWhatIfEngineInstance().getModelConfig()));
+			modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
+			modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
+			serializedModel = serialize(new PivotObjectForRendering(getWhatIfEngineInstance().getOlapConnection(), sbiModel, getWhatIfEngineInstance()
+					.getModelConfig()));
 			SortCriteria sortCriteria = model.getSortCriteria();
 
 			// restore the query without calculated fields
