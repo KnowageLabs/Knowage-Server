@@ -16,6 +16,7 @@ function recentController($scope,sbiModule_restServices,sbiModule_translate,$doc
 		sbiModule_restServices.promiseGet("2.0/recents","")
 		.then(function(response) {
 			angular.copy(response.data,$scope.recentDocumetnsList);
+			$scope.recentDocumentsInitial = $scope.recentDocumetnsList;
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});

@@ -16,23 +16,11 @@ angular
 
 function favouritesController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_user,$documentViewer){
 
-	$scope.formatColumns = function(array){
-		var arr = [];
-		for (var i = 0; i < array.length; i++) {
-			var obj = {};
-			obj.label = array[i].toUpperCase();
-			obj.name = array[i];
-			arr.push(obj);
-		}
-		return arr;
-	}
-	
 	$scope.loadFavoriteDocumentExecutionsForUser =function(){
 		sbiModule_restServices.promiseGet("2.0/favorites","")
 		.then(function(response) {
-			angular.copy(response.data,$scope.favoriteDocumetnsList);
-			$scope.resCol = Object.keys(response.data[0]);
-			$scope.finRes = $scope.formatColumns($scope.resCol);
+			angular.copy(response.data,$scope.favoriteDocumentsList);
+			$scope.favoriteDocumentsInitial = $scope.favoriteDocumentsList;
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});

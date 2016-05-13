@@ -14,7 +14,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.allDocuments = [];
 	$scope.federationDefinitions=[];
 	$scope.businessModels=[];
-	$scope.favoriteDocumetnsList = [];
+	$scope.favoriteDocumentsList = [];
 	$scope.recentDocumetnsList = [];
 	/**
 	 * variables for data management
@@ -47,7 +47,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * 							(ALL, COCKPIT, GEO).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	$scope.currentOptionMainMenu = "";
+	$scope.currentOptionMainMenu = "recent";
 	
 	$scope.isDocumentFavorite = false;
 
@@ -96,7 +96,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * according to the searching term (sequence) user entered, 'newSearchInput'.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	var filterThroughCollection = function(newSearchInput,inputCollection) {
+	var filterThroughCollection = function(newSearchInput,inputCollection,propertyName) {
 		
 		/**
 		 * Resulting collection to return.
@@ -115,7 +115,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 				 * NOTE: If we want to search just according to the starting sequence of the name
 				 * of a document, change this expression to this criteria: ... == 0).
 				 */
-				if (item["name"].toLowerCase().indexOf(newSearchInput.toLowerCase()) >= 0) {					
+				if (item[propertyName].toLowerCase().indexOf(newSearchInput.toLowerCase()) >= 0) {					
 					filteredCollection.push(item);					
 				}
 				
@@ -183,10 +183,17 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 					break;
 				
 				/**
-				 * SEARCH FOR DOCUMENTS
+				 * SEARCH FOR FAVORITES
 				 */
-				case "documents":
-					console.info("We will add functionality for searching through DOCUMENTS");
+				case "favorites":
+					$scope.favoriteDocumentsList = $scope.favoriteDocumentsInitial;
+					break;
+				
+				/**
+				 * SEARCH FOR RECENT
+				 */
+				case "recent":
+					$scope.recentDocumetnsList = $scope.recentDocumentsInitial;
 					break;
 			}
 		}
@@ -208,13 +215,9 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 						case "analysis":
 							
 								var allAnalysisDocsFinal = [];
-							
-								allAnalysisDocsTemp = $scope.allAnalysisDocs;
-								cockpitAnalysisDocsTemp = $scope.cockpitAnalysisDocs;
-								geoAnalysisDocsTemp = $scope.geoAnalysisDocs;
 								
-								$scope.cockpitAnalysisDocs = filterThroughCollection(newSearchInput,$scope.cockpitAnalysisDocsInitial);
-								$scope.geoAnalysisDocs = filterThroughCollection(newSearchInput,$scope.geoAnalysisDocsInitial);
+								$scope.cockpitAnalysisDocs = filterThroughCollection(newSearchInput,$scope.cockpitAnalysisDocsInitial,"name");
+								$scope.geoAnalysisDocs = filterThroughCollection(newSearchInput,$scope.geoAnalysisDocsInitial,"name");
 								
 								allAnalysisDocsFinal = $scope.cockpitAnalysisDocs;
 								allAnalysisDocsFinal.length>0 ? allAnalysisDocsFinal.concat($scope.geoAnalysisDocs) : allAnalysisDocsFinal = $scope.geoAnalysisDocs;								
@@ -224,22 +227,22 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 							break;
 						
 						/**
-						 * SEARCH FOR DATASETS
+						 * SEARCH FOR RECENT
 						 */
-						case "datasets":
-							console.info("We will add functionality for searching through DATASETS");
+						case "recent":
+							$scope.recentDocumetnsList = filterThroughCollection(newSearchInput,$scope.recentDocumentsInitial,"documentName");
 							break;
 						
 						/**
-						 * SEARCH FOR DOCUMENTS
+						 * SEARCH FOR FAVORITES
 						 */
-						case "documents":
-							console.info("We will add functionality for searching through DOCUMENTS");
+						case "favorites":
+							$scope.favoriteDocumentsList = filterThroughCollection(newSearchInput,$scope.favoriteDocumentsInitial,"name");
 							break;
 				
 					}	
 					
-				}, 400
+				}, 100
 			);		
 			
 		}			
