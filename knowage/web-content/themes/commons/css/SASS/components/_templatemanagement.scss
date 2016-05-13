@@ -1,4 +1,13 @@
 .kn-templatemanagement {
+	background-color: lighten($ternaryColor,10%); 
+	.mainContainer{
+		background-color: lighten($ternaryColor,10%); 
+	}
+	md-toolbar.md-knowage-theme:not(.secondaryToolbar) {
+		h2 {
+			padding-left: $standardPadding;
+		}
+	}
 	
 	.cardHeader {
 	        background-color: $secondaryColor !important;
