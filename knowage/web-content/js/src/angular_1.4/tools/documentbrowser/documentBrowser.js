@@ -87,7 +87,7 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 				if($cookies.getObject(cookiesObj) && $cookies.getObject(cookiesObj).length>0){
 					$scope.hideProgressCircular=false;
 					var breadIdx = 0;
-					var folderToOpen=0;
+					var folderToOpen = {id: 0};
 					for(var i=0; i<response.data.length; i++){
 						if(breadIdx<$cookies.getObject(cookiesObj).length){
 							if(response.data[i].id==$cookies.getObject(cookiesObj)[breadIdx]){
@@ -100,10 +100,10 @@ function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog,
 							break;
 						}
 					}
-				//load folder 
-				$timeout(function(){
-					$scope.loadFolderDocuments(folderToOpen.id);
-				},0,true);
+					//load folder 
+					$timeout(function(){
+						$scope.loadFolderDocuments(folderToOpen.id);
+					},0,true);
 				
 				}else{
 					response.data[0].expanded=true;					
