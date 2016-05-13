@@ -80,9 +80,8 @@ public class UdpResource extends AbstractSpagoBIResource {
 				return Response.ok(toBeReturned).build();
 			}
 
-			JSONObject response = new JSONObject();
-			response.put("Error", "List UDP is empty");
-			return Response.status(Status.NOT_FOUND).entity(response.toString()).build();
+			JSONArray response = new JSONArray();
+			return Response.ok().entity(response.toString()).build();
 
 		} catch (Exception e) {
 			logger.error("Error while getting the list of SbiUdps", e);

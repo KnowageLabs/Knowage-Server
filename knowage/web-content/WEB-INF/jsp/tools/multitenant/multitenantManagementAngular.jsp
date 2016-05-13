@@ -44,8 +44,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<list label="translate.load('sbi.multitenant')" new-function="addTenant" >				  	
 			    <angular-table flex
 					id="tenant" ng-model="tenants" 
-					columns='[{"label":"ID","name":"MULTITENANT_ID"},{"label":"Name","name":"MULTITENANT_NAME"}]'
-					columns-search='["MULTITENANT_ID","MULTITENANT_NAME"]'
+					columns='[{"label":"Name","name":"MULTITENANT_NAME"}]'
+					columns-search='["MULTITENANT_NAME"]'
 					highlights-selected-item = "true"
 					show-search-bar="true"
 					selected-item="tenantSelected"
@@ -73,8 +73,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										 	<input type="text" ng-model="tenant.MULTITENANT_NAME" md-maxlength="200" required ng-disabled = "tenant.MULTITENANT_ID">
 									 	</md-input-container>
 									 </md-content>
-									 <md-content layout="row" layout-align="center center">
-										 <md-input-container flex="90">
+									 <md-content layout="row" layout-align="start center">
+									 	<md-content flex="5"></md-content>
+										<md-input-container flex="50">
 										 	<label>{{translate.load("sbi.multitenant.theme")}}</label>
 										 	<md-select ng-model="tenant.MULTITENANT_THEME" required>
 												<md-option ng-value="theme.VALUE_CHECK" ng-repeat="theme in themes">{{ theme.VALUE_CHECK }}</md-option>
@@ -92,7 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						 		<md-card layout-fill layout="column">
 								 	<angular-table layout-fill
 										id="productTypes" ng-model="productTypes" 
-										columns='[{"label":"Label","name":"LABEL"},{"label":"Select","name":"checkbox"}]'
+										columns='[{"label":"Name","name":"LABEL"}]'
 										columns-search='["LABEL"]'
 										highlights-selected-item = "true"
 										show-search-bar="true"
@@ -111,7 +112,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-card layout-fill layout="column">
 							 		<angular-table layout-fill
 										id="datasource" ng-model="datasources" 
-										columns='[{"label":"Label","name":"LABEL"},{"label":"Description","name":"DESCRIPTION"},{"label":"Select","name":"checkbox"}]'
+										columns='[{"label":"Label","name":"LABEL"},{"label":"Description","name":"DESCRIPTION"}]'
 										columns-search='["LABEL"]'
 										highlights-selected-item = "true"
 										show-search-bar="true"

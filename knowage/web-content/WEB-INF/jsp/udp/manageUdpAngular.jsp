@@ -44,8 +44,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<list label="translate.load('sbi.udp.udpManagement')" new-function="addUdp" >
 				 <angular-table flex
 						id="table" ng-model="data" 
-						columns='["label","name","type","family"]'
-						columns-search='["label","name","type","family"]'
+						columns='["label","name"]'
+						columns-search='["label","name"]'
 						highlights-selected-item = "true"
 						show-search-bar="true"
 						no-pagination="true"
@@ -83,8 +83,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						     	</md-checkbox>
 						     </md-input-container>
 					     </md-content>
-					     <md-content layout="row" layout-align="center center">
-						     <md-input-container flex="90">
+					     <md-content layout="row" layout-align="start center">
+						     <md-content flex="5"></md-content>
+						     <md-input-container flex="50">
+						     	<label>{{translate.load('sbi.udp.type')}}</label>
 						        <md-select placeholder="{{translate.load('sbi.udp.type')}}" ng-model="property.type" required>
 								   <md-option value="Boolean">Boolean</md-option>
 								   <md-option value="Text">Text</md-option>
@@ -92,8 +94,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</md-select>
 			  				 </md-input-container>
 		  				 </md-content>
-		  				 <md-content layout="row" layout-align="center center">
-		 			     	 <md-input-container flex="90">
+		  				 <md-content layout="row" layout-align="start center">
+		 			     	 <md-content flex="5"></md-content>
+		 			     	 <md-input-container flex="50">
+		 			     	 	<label>{{translate.load('sbi.udp.family')}}</label>
 						        <md-select placeholder="{{translate.load('sbi.udp.family')}}" ng-model="property.family" required>
 								   <md-option value="Model">Model</md-option>
 								   <md-option value="Kpi">Kpi</md-option>
