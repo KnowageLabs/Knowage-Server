@@ -22,14 +22,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <div layout="row" layout-wrap> 
 <md-whiteframe class="md-whiteframe-3dp metadataTabs" layout-margin ng-repeat=" mtdValue in currentRule.ruleOutputs ">
   <md-toolbar>
-      <div class="md-toolbar-tools"  class="alertIconMissingAlias" > 
-         <span ng-if="::!aliasExtist(mtdValue.alias)">
+      <div class="md-toolbar-tools"  class="alertIconMissingAlias" >  
+         <span ng-if="::(!aliasExtist(mtdValue.alias) && !aliasUsedByMeasure(mtdValue.alias))">
 	  		 <md-tooltip md-direction="top">
 	  		 {{translate.load("sbi.kpi.rule.alias.missing")}}
 		 	</md-tooltip>  
         	<md-icon  class="alertIconMissingAlias"  md-font-icon="fa fa-exclamation-triangle" > 
        		</md-icon> 
          </span>
+         
+         <span ng-if="::aliasUsedByMeasure(mtdValue.alias)">
+	  		 <md-tooltip md-direction="top">
+	  		 {{translate.load("sbi.kpi.rule.alias.used")}}
+		 	</md-tooltip>  
+        	<md-icon  class="alertIconUsedAlias"  md-font-icon="fa fa-exclamation-triangle" > 
+       		</md-icon> 
+         </span>
+         
 		<span flex>{{mtdValue.alias}}</span>
 		</div>
       
