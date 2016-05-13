@@ -511,7 +511,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 					}
 					// Iterate over temporal types
 					Integer minTemporalTypePriority = 5;
-					while (minTemporalTypePriority >= 1) {
+					while (true) {
 						// Create a query for each measure and find the main
 						// measure
 						// (the highest cardinality, i.e. the one with most
@@ -597,6 +597,11 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 						}
 						kpiComputationUnits.add(
 								new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes, mainMeasure, replaceMode));
+
+						// Exit condition: no temporal attributes left (except perhaps YEAR)
+						if (realMinTemporalTypePriority <= 1)
+							break;
+
 						Integer nextPriority = 0;
 						for (String temporalType : queriesAttributesTemporalTypes.get(mainMeasure).values()) {
 							Integer priority = temporalTypesPriorities.get(temporalType);
