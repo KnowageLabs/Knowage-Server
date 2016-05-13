@@ -69,9 +69,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		disable-save-button="!attributeForm.$valid"
 		show-save-button="showMe" show-cancel-button="showMe">
 		<div layout-fill class="containerDiv">
-			<form name="attributeForm" layout-fill ng-submit="attributeForm.$valid && saveProfileAttribute()" class="detailBody mozSize md-whiteframe-z1">
-
-					<md-content flex layout-fill class=" ToolbarBox miniToolbar noBorder mozTable ">
+			<form name="attributeForm" ng-submit="attributeForm.$valid && saveProfileAttribute()" class="detailBody mozSize">
+				<md-card layout-padding>
 						
 						<div layout="row" layout-wrap>
       						<div flex=100>
@@ -95,106 +94,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       						</div>
     					</div>	
     							
-					</md-content>
 				
-				
+				</md-card>
 			</form>
 		</div>	
 	</detail>
 	</angular-list-detail>
-<!-- 	<angular_2_col> -->
-<!-- 		<left-col> -->
-<!-- 			<div class="leftBox"> -->
-<!-- 				<md-toolbar class="header" > -->
-<!-- 					<div class="md-toolbar-tools" > -->
-<!-- 						<div >{{translate.load("sbi.attributes.title");}}</div> -->
-                       
-<!-- 						<md-button  -->
-<!-- 							class="md-fab md-ExtraMini addButton" -->
-<!-- 							style="position:absolute; right:11px;" -->
-<!-- 							aria-label="create" -->
-<!-- 							ng-click="createProfileAttribute()">  -->
-<!-- 							<md-icon -->
-<!-- 								md-font-icon="fa fa-plus"  -->
-<!-- 								> -->
-<!-- 							</md-icon>  -->
-<!-- 						</md-button> -->
-<!-- 					</div> -->
-<!-- 				</md-toolbar> -->
-<!-- 				<md-content layout-padding style="background-color: rgb(236, 236, 236);" class="ToolbarBox miniToolbar noBorder leftListbox"> -->
-<!-- 					<angular-table  -->
-<!-- 						layout-fill -->
-<!-- 						id="profileAttributesList" -->
-<!-- 						ng-model="attributeList" -->
-<!-- 						columns='[ -->
-<!-- 						         {"label":"Name","name":"attributeName"}, -->
-<!-- 						         {"label":"Description","name":"attributeDescription"} -->
-<!-- 						         ]' -->
-<!-- 						columns-search='["attributeName","attributeDescription"]' -->
-<!-- 						show-search-bar=true -->
-<!-- 						highlights-selected-item=true -->
-<!-- 						speed-menu-option="paSpeedMenu" -->
-						
-<!-- 						click-function="loadAttribute(item)" -->
-										
-<!-- 					>						 -->
-<!-- 					</angular-table> -->
-<!-- 				</md-content> -->
-<!-- 			</div> -->
-<!-- 		</left-col> -->
-<!-- 		<right-col> -->
-<!-- 			<form name="attributeForm" layout-fill ng-submit="attributeForm.$valid && saveProfileAttribute()" class="detailBody md-whiteframe-z1"> -->
-<!-- 				<div ng-show="showMe"> -->
-<!-- 					<md-toolbar class="header"> -->
-<!-- 						<div class="md-toolbar-tools h100"> -->
-<!-- 							<div >{{translate.load("sbi.attributes.title");}}</div> -->
-<!-- 							<div style="position: absolute; right: 0px" class="h100"> -->
-								
-<!-- 								<md-button id="cancel" type="button" -->
-<!-- 								aria-label="cancel" class="md-raised md-ExtraMini rightHeaderButtonBackground" -->
-<!-- 								style=" margin-top: 2px;" -->
-<!-- 								ng-click="cancel()"> -->
-<!-- 								{{translate.load("sbi.generic.cancel");}}  -->
-<!-- 								</md-button> -->
-								
-<!-- 								<md-button type="submit" -->
-<!-- 								aria-label="save atrribute" class="md-raised md-ExtraMini rightHeaderButtonBackground" -->
-<!-- 								style=" margin-top: 2px;" -->
-<!-- 								ng-disabled="!attributeForm.$valid" -->
-<!-- 								> -->
-<!-- 								{{translate.load("sbi.attributes.update");}} </md-button> -->
-								
-<!-- 							</div> -->
-<!-- 							</div> -->
-<!-- 					</md-toolbar> -->
-<!-- 					<md-content flex style="margin-left:20px;" class="ToolbarBox miniToolbar noBorder"> -->
-<!-- 						<div layout="row" layout-wrap> -->
-<!--       						<div flex=100> -->
-<!--        							<md-input-container class="small counter"> -->
-<!--        								<label>{{translate.load("sbi.attributes.headerName")}}</label> -->
-<!--        								<input ng-model="selectedAttribute.attributeName" required -->
-<!--         							ng-change="setDirty()"  ng-maxlength="100"> -->
-        							
-<!--         							<div ng-messages="attributeForm.Name.$error" ng-show="!selectedAttribute.attributeName"> -->
-<!--           <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div> -->
-<!--         </div> -->
-<!--         							 </md-input-container> -->
-<!--       						</div> -->
-<!--     					</div> -->
-<!--     					<div layout="row" layout-wrap> -->
-<!--       						<div flex=100> -->
-<!--        							<md-input-container class="small counter"> -->
-<!--        								<label>{{translate.load("sbi.attributes.headerDescr")}}</label> -->
-<!--        								<input ng-model="selectedAttribute.attributeDescription" -->
-<!--         							ng-change="setDirty()"  ng-maxlength="100"> </md-input-container> -->
-<!--       						</div> -->
-<!--     					</div>			 -->
-<!-- 					</md-content> -->
-				
-<!-- 				</div> -->
-<!-- 			</form> -->
-<!-- 		</right-col> -->
-	
-<!-- 	</angular_2_col> -->
 </body>
 </html>

@@ -72,10 +72,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				show-save-button="showMe"
 				show-cancel-button="showMe"
 			>
-				<div ng-show="showMe">
-					<div layout-fill class="containerDiv">
-							<form name="dataSourceForm" layout-fill ng-submit="dataSourceForm.$valid && saveOrUpdateDataSource()" class="detailBody mozSize md-whiteframe-z1">
-								<md-content flex layout-fill class=" ToolbarBox miniToolbar noBorder mozTable ">
+							<form name="dataSourceForm"  ng-submit="dataSourceForm.$valid && saveOrUpdateDataSource()" class="detailBody mozSize">
+								<md-card layout-padding>
 
 									<!-- LABEL -->
 									<div layout="row" layout-wrap>
@@ -221,10 +219,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										</md-input-container>
 										<md-icon ng-click="showJdniInfo()" md-font-icon="fa fa-info-circle fa-lg"></md-icon>
 									</div>
-								</md-content>
+								</md-card>
 							</form>
-					</div>
-				</div>
 
 			</detail>
 
