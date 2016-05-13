@@ -94,8 +94,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 </script>
 <script type="text/ng-template" id="dialog1.tmpl.html">
-<md-dialog aria-label="{{translate.load('sbi.crossnavigation.selectDocument')}}" ng-cloak>
-<form>
+<md-dialog aria-label="{{translate.load('sbi.crossnavigation.selectDocument')}}" ng-cloak layout="column" style="height: 90%;">
+
 	<md-toolbar>
 		<div class="md-toolbar-tools">
 			<h1>{{translate.load('sbi.crossnavigation.selectDocument')}}</h1>
@@ -103,17 +103,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-button ng-click="closeDialog()"> <md-icon md-font-icon="fa fa-times" aria-label="Close dialog"></md-icon> </md-button>
 		</div>
 	</md-toolbar>
-	<md-dialog-content >
-		<div class="md-dialog-content">
-			<angular-list id="docList" 
-				ng-model="listDoc" item-name="DOCUMENT_NAME"
-				show-item-tooltip="false" highlights-selected-item="true"
-				show-search-bar="true"
-				no-pagination="true" click-function="clickOnSelectedDoc(item,listId,closeDialog)">
-			</angular-list>
-		</div>
-	</md-dialog-content>
-</form>
+	 
+	<md-content  flex layout style="position: relative;">
+		<angular-list id="docList"  style="position: absolute;"
+			ng-model="listDoc" item-name="DOCUMENT_NAME"
+			show-item-tooltip="false" highlights-selected-item="true"
+			show-search-bar="true"
+			no-pagination="true" click-function="clickOnSelectedDoc(item,listId,closeDialog)">
+		</angular-list>
+	</md-content>	 
+	
+	 
+
 <div ng-show="loading" class="loadingSpinner">
     <i class="fa fa-spinner fa-pulse fa-4x"></i> 
 </div>
