@@ -92,12 +92,13 @@ CodeMirror.defineMode('mathematica', function(_config, _parserConfig) {
     if (stream.match(/[a-zA-Z_\$][a-zA-Z_0-9\$]*_+[a-zA-Z_\$][a-zA-Z0-9_\$]*/, true, false)) {
       return 'variable-2';
     }
-    if (stream.match(/[a-zA-Z_\$][a-zA-Z_0-9\$]*_+/, true, false)) {
+    if (stream.match(/[a-zA-Z_\$][a-zA-Z_0-9\$]*_+[0-9\$]*/, true, false)) {
       return 'variable-2';
     }
     if (stream.match(/_+[a-zA-Z_\$][a-zA-Z_0-9\$]*/, true, false)) {
       return 'variable-2';
     }
+
 
     // Named characters in Mathematica, like \[Gamma].
     if (stream.match(/\\\[[a-zA-Z\$][a-zA-Z0-9\$]*\]/, true, false)) {
