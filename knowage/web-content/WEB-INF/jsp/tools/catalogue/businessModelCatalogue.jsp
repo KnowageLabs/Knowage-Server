@@ -164,7 +164,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				<div layout="row" layout-wrap>
 						<label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.file.upload.button")}}:</label>
-      				<file-upload  ng-model="fileObj" id="businessModelFile" ng-click="fileChange();checkChange()"></file-upload>
+      				<file-upload  ng-model="fileObj" id="businessModelFile" ng-click="fileChange();checkChange()" flex></file-upload>
       				
 				</div>
 				
@@ -173,7 +173,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      <md-card>
 	      <md-card-title>
 	      	<md-card-title-text>
-	      	<md-toolbar>
+	      	<md-toolbar class="secondaryToolbar">
 		      <div class="md-toolbar-tools">
 		        <h2>
 		          <span>Metadata</span>
@@ -186,7 +186,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      <md-card-content>
 	      	<div layout="column" layout-margin>
 		      	<div  layout="row">
-					<md-button ng-click="importMetadata(selectedBusinessModel.id)"  ng-disabled="bmImportingShow" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue.import.metadata");}}</md-button>
+					<md-button ng-click="importMetadata(selectedBusinessModel.id)"  ng-disabled="bmImportingShow" class="md-raised md-ExtraMini">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue.import.metadata");}}</md-button>
 					<md-button ng-click="downloadCWMFile(selectedBusinessModel.id)" ng-disabled="bmCWMProcessingShow" class="md-raised" >{{translate.load("sbi.metadata.cwm.export.button")}}</md-button></div>
 				</div>
 				<div   ng-show="bmImportingShow" >
@@ -224,10 +224,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      </md-card>
 	      
 	      
-	      <md-card>
+	      <md-card layout="column">
 	      <md-card-title>
 	      	<md-card-title-text>
-	      	<md-toolbar>
+	      	<md-toolbar class="secondaryToolbar">
 		      <div class="md-toolbar-tools">
 		        <h2>
 		          <span>{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}</span>
@@ -237,10 +237,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    </md-toolbar>
           	</md-card-title-text>
 	      </md-card-title>
-	      <md-card-content>
+	      <md-card-content layout="column">
 	      	
 				<md-radio-group ng-model="bmVersionsActive" ng-change="checkChange()">
-				<angular-table flex
+				
+				<angular-table
 					ng-show="!versionLoadingShow"
 					id="bmVersions_id"
 					ng-model="bmVersions"
@@ -259,7 +260,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					click-function="clickRightTable(item)"								
 				>						
 				</angular-table>
-				</md-radio-group>		
+				</md-radio-group>
+						
 	      </md-card-content>
 	      </md-card>
 	      </form>

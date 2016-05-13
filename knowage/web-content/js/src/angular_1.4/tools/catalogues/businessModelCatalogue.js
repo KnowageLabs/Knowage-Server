@@ -287,7 +287,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					if($scope.fileObj.fileName !== undefined)
 						$scope.saveBusinessModelFile();
 					
-					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'check');
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 					
@@ -316,7 +316,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.getBusinessModels();
 					$scope.isDirty = false;
 					$scope.selectedBusinessModel.modelLocker = response.data.modelLocker;
-					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'check');
 
 					
 				}, function(response) {
@@ -350,7 +350,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 						 $scope.selectedBusinessModel={};
 					 }
 					 $scope.selectedBusinessModels=[];
-					 sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+					 sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'check');
 
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -386,7 +386,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				.then(function(response) {
 					removeFromBMs(id,"right");
 					$scope.getVersions(bmId);
-					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'check');
 
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -540,7 +540,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				
 				sbiModule_restServices.promisePost("2.0/metadata/"+bmId+"/bmExtract","")
 				.then(function(response) {
-					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.imported"), 'Success!');
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.imported"), 'check');
 					$scope.bmImportingShow = false;
 
 				}, function(response) {
@@ -580,7 +580,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 									sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.metadata.cwm.error")+":"+data.errors[0].message, 'Error');  
 
 								}else{
-									sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.metadata.cwm.success"), 'Success!'); 
+									sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.metadata.cwm.success"), 'check'); 
 									console.log("[UPLOAD]: SUCCESS!");
 									$scope.fileObjCWM.fileName = "";
 									$scope.fileObjCWM = {};
