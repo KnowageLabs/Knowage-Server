@@ -228,7 +228,24 @@ public class CalculatedMemberManager {
 			IdentifierNode node = (IdentifierNode) parseNode;
 			String name = getIdentifierUniqueName(node);
 			if (parentNodeUniqueName.equals(name) && !parentCallNode.getOperatorName().equalsIgnoreCase("children")) {
-				parentCallNode.getArgList().add(positionInParentCallNode + 1, calculatedFieldTree);// The
+				boolean add = false;
+				for (int i = 0; i < parentCallNode.getArgList().size(); i++) {
+
+					if ((node.getSegmentList().get(0).getName()
+							.equalsIgnoreCase(((IdentifierNode) parentCallNode.getArgList().get(i)).getSegmentList().get(0).getName()) && !node
+							.getSegmentList().get(1).getName()
+							.equalsIgnoreCase(((IdentifierNode) parentCallNode.getArgList().get(i)).getSegmentList().get(1).getName()))
+							|| parentCallNode.getArgList().size() == 1) {
+						add = true;
+					}
+
+				}
+				if (add) {
+					parentCallNode.getArgList().add(positionInParentCallNode + 1, calculatedFieldTree);
+					return true;
+				}
+
+				// The
 				// new
 				// calculated
 				// member
@@ -237,25 +254,13 @@ public class CalculatedMemberManager {
 				// its
 				// parent
 				// node
-				return true;
+				return false;
+
 			}
 		} else if (parseNode instanceof LevelNode) {
 
 		} else if (parseNode instanceof MemberNode) {
-			MemberNode node = (MemberNode) parseNode;
-			String name = node.getMember().getUniqueName();
-			if (parentNodeUniqueName.equals(name)) {
-				parentCallNode.getArgList().add(positionInParentCallNode + 1, calculatedFieldTree);// The
-				// new
-				// calculated
-				// member
-				// goes
-				// next
-				// its
-				// parent
-				// node
-				return true;
-			}
+
 		}
 		return false;
 
