@@ -196,7 +196,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
 								.get(DocumentExecutionUtils.DEFAULT_VALUES);
 
-						if (defaultValues != null && defaultValues.size() == 1) {
+						if (defaultValues != null && defaultValues.size() == 1 && !defaultValues.get(0).containsKey("error")) {
 							jsonParameters.put(objParameter.getId(), defaultValues.get(0).get("value"));
 							jsonParameters.put(objParameter.getId() + "_field_visible_description", defaultValues.get(0).get("value"));
 						}
@@ -315,8 +315,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA,
 						defaultValuesData.get(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA));
 
-				// hide the parameter if is mandatory and have one value in lov
-				if (defaultValues != null && defaultValues.size() == 1 && objParameter.isMandatory()) {
+				// hide the parameter if is mandatory and have one value in lov (no error parameter)
+				if (defaultValues != null && defaultValues.size() == 1 && objParameter.isMandatory() && !defaultValues.get(0).containsKey("error")) {
 					showParameterLov = false;
 				}
 				// if parameterValue is not null and is array, check if all element are present in lov
