@@ -3,6 +3,7 @@ angular.module('document_view', ['ngMaterial','sbiModule'])
 	return {
 		 templateUrl: '/knowage/js/src/angular_1.4/tools/documentbrowser/directive/document-view/document-view.html',
 		controller: documentViewControllerFunction,
+		replace:true,
 		 priority: 10,
 		scope: {
 			ngModel:"=",
@@ -17,7 +18,8 @@ angular.module('document_view', ['ngMaterial','sbiModule'])
 			orderingDocumentCards:"=?",
 		},
 		link: function (scope, elem, attrs) { 
-			elem.css("position","relative")
+		 
+			elem.css("margin","0px");
 			 if(!attrs.tableSpeedMenuOption){
 				 scope.tableSpeedMenuOption=[];
 			 }

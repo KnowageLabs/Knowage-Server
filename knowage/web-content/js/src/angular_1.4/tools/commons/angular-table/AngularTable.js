@@ -492,8 +492,8 @@ function TableControllerFunction($scope, $timeout) {
 //		var tableActionHeight=  tableAction==undefined? 0 : tableAction.offsetHeight ;
 //		var footerTabHeigth= footerTab==undefined? 0 : footerTab.offsetHeight ;
         var headButtonHeight = headButton == undefined ? 0 : headButton.offsetHeight;
-        var listItemTemplBoxHeight = listItemTemplBox == undefined ? 21 : listItemTemplBox.offsetHeight;
-        var tableContainerHeight = tableContainer == undefined ? 27 : tableContainer.offsetHeight;
+        var listItemTemplBoxHeight = listItemTemplBox == undefined ? 32 : listItemTemplBox.offsetHeight;
+        var tableContainerHeight = tableContainer == undefined ? 32 : tableContainer.offsetHeight;
 
 
         var nit = parseInt((tableContainerHeight - headButtonHeight) / listItemTemplBoxHeight);
