@@ -53,10 +53,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	src="/knowage/js/src/angular_1.4/tools/servermanager/templateManagement.js"></script>
 
 </head>
-<body class="bodyStyle kn-templatemanagement kn-importExportDocument">
+<body class="bodyStyle kn-templatemanagement">
 
-	<div ng-controller="Controller " layout="column" layout-wrap>
-		<md-toolbar class="miniheadimportexport">
+	<div ng-controller="Controller " layout="column">
+		<md-toolbar>
 		<div class="md-toolbar-tools">
 			<i class="fa fa-file fa-2x"></i>
 			<h2 class="md-flex">{{translate.load("sbi.templatemanagemenent");}}</h2>
@@ -65,13 +65,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 
 
-		<md-content layout="column" layout-fill class="mainContainer" layout-wrap>
-		<md-card> <md-toolbar class="cardHeader">
+		<md-content layout="column" class="mainContainer">
+		<md-card> <md-toolbar class="cardHeader secondaryToolbar">
 		<div class="md-toolbar-tools">
 			<h2 class="md-flex">{{translate.load("sbi.templatemanagemenent.choosedate");}}</h2>
 		</div>
-		</md-toolbar> <md-content layout="row">
-		<div flex=30>
+		</md-toolbar> <md-content layout="row" layout-padding>
+		<div flex>
 			<p>{{translate.load("sbi.templatemanagemenent.firstmessage");}}</p>
 		</div>
 		<div flex>
@@ -80,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		</div>
 		</md-content> 
-		<md-toolbar class="cardHeader"  ng-show="documents.length!=0">
+		<md-toolbar class="cardHeader secondaryToolbar"  ng-show="documents.length!=0">
 		<div class="md-toolbar-tools">
 			<h2 class="md-flex">{{translate.load("sbi.templatemanagemenent.documentselection");}}</h2>
 		</div>

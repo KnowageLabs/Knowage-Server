@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    		 </div>
 		
 		<!-- Toolbar -->
-		<md-toolbar class="documentBrowserToolbar secondaryToolbar" >
+		<md-toolbar class="documentBrowserToolbar " >
 				<div class="md-toolbar-tools" layout="row" layout-align="center center">
 					<!-- Folders button -->
 					<md-button class="md-icon-button" title="Folders" aria-label="Folders"  hide-gt-md ng-hide="showSearchView" ng-click="toggleFolders()">
@@ -128,10 +128,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-content>
 				</md-sidenav>
 	
-				<md-content layout-margin flex layout="column"> 
+				<md-content flex layout="column" class="mainContent"> 
 				
 				<bread-crumb item-name='name' ng-model="breadModel" selected-item="selectedFolder" control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb>
-				 <md-input-container ng-show='showDocumentGridView'>
+				 <md-card>
+				 <md-input-container ng-show='showDocumentGridView' layout-margin>
 			        <label>{{translate.load("sbi.ds.orderComboLabel")}}</label>
 			        <md-select ng-model="selectedOrder" ng-model-option="trackBy:'$value.id'">
 			          <md-option ng-repeat="orderElement in orderElements" value="{{orderElement.name}}">{{orderElement.label}}</md-option>
@@ -139,7 +140,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       				</md-input-container>
 					
 				 
-			<h3 class="md-title" ng-show="folderDocuments.length==0" >{{translate.load("sbi.browser.document.noDocument")}}</h3>
+			<h3 class="md-title" layout-padding ng-show="folderDocuments.length==0" >{{translate.load("sbi.browser.document.noDocument")}}</h3>
 				 	
 				 	
 				 	<document-view flex style='overflow:auto' ng-model="folderDocuments" ng-show="hideProgressCircular"
@@ -153,6 +154,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							execute-document-action="executeDocument(doc)"
 							ordering-document-cards=selectedOrder>
 				 	  </document-view>
+				 	  </md-card>
+				 	  
 		   	</md-content>
 			</md-content>
 				<md-content ng-show="searchingDocuments">

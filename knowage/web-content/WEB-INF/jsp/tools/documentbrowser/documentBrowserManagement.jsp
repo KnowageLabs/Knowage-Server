@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <body   ng-app="documentBrowserModule" id="ng-app" class="kn-documentBrowser" ng-controller="documentBrowserNavigationController">
 
-	<md-tabs layout-fill md-autoselect class="documentNavigationToolbar" md-selected="documentNavigationToolbarSelectedIndex">
+	<md-tabs layout-fill md-autoselect class="documentNavigationToolbar secondaryToolbar" md-selected="documentNavigationToolbarSelectedIndex">
 	<md-tab >
 	 <md-tab-label><md-icon class="documentBrowserIcon" md-font-icon="fa  fa-folder-open-o " ></md-icon></md-tab-label>
 	 <md-tab-body>
