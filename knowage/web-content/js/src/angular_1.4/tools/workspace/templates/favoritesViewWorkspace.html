@@ -4,10 +4,13 @@
 	 	<favorite-view 	class="kn-documentBrowser" flex
 	 					style='overflow:auto;'
 	 					ng-model=favoriteDocumetnsList
+	 					hotlinkColumns=finRes
 	 					show-grid-view=showGridView
 	 					show-add-to-organizer="true"
 	 					selected-row=selectedRow
-	 					execute-document-action="executeDocument(doc)"
+	 					selected-document=selectedDocument
+	 					table-speed-menu-option=favoriteSpeedMenu
+	 					execute-document-action="executeFavorite(doc)"
 	 					select-document-action="selectDocument(doc)"
 	 					delete-document-action="deleteFavoriteDocumentExecutionById(doc)"
 	 					 >
@@ -21,7 +24,7 @@
 									<md-icon md-font-icon="fa fa-times" ></md-icon>
 							</md-button>
 
-							<md-button title="Execute Document" aria-label="Execute Document" class="md-icon-button" ng-click="executeDocument(selectedDocument)">
+							<md-button title="Execute Document" aria-label="Execute Document" class="md-icon-button" ng-click="executeFavorite(selectedDocument)">
 									<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
 							</md-button>
 

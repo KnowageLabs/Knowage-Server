@@ -1,6 +1,6 @@
  				 	<angular-table  ng-hide="showGridView==true || ngModel.length==0 " layout-fill style="position:absolute"
 							id='documentListTable' ng-model=ngModel
-							columns='[{"label":"Name","name":"name"},{"label":"Document name","name":"documentName"},{"label":"Document label","name":"documentLabel"},{"label":"Document description","name":"documentDescription"},{"label":"Document type","name":"documentType"}]'
+							columns='[{"label":"Document name","name":"documentName"},{"label":"Document label","name":"documentLabel"},{"label":"Document description","name":"documentDescription"},{"label":"Document type","name":"documentType"}]'
 							columnsSearch='["name"]' 
 							show-search-bar=false
 							speed-menu-option=tableSpeedMenuOption
@@ -10,14 +10,15 @@
 						</angular-table>
 					 
 					
+					
 					<!-- Document Grid View -->
 					<div layout="row"  layout-wrap ng-hide="showGridView!=true " >
 					<md-card class="documentCard" ng-repeat="document in ngModel| orderBy:orderingDocumentCards" ng-class="{'md-whiteframe-15dp' : selectedDocument==document }">
 			        <md-card-title>
 				          <md-card-title-text>
-				            <p class=" ellipsis">{{document.name}}</p>
+				            <p class=" ellipsis">{{document.documentName}}</p>
 				             <md-tooltip md-delay="1500">
-				              {{document.name}}
+				              {{document.documentName}}
 				            </md-tooltip>
 				          </md-card-title-text>
 				    </md-card-title>
@@ -30,10 +31,6 @@
 			          
 			          <md-button ng-if="showAddToOrganizer" class="md-icon-button" aria-label="Organizer" ng-click="addToOrganizerAction({doc:document});">
 			            <md-icon  md-font-icon="fa fa-plus-circle fa-2x"></md-icon>
-			          </md-button>
-			          
-			          <md-button class="md-icon-button" aria-label="Delete" ng-click="deleteDocumentAction({doc:document});">
-			            <md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
 			          </md-button>
 			          
 			        </md-card-actions>

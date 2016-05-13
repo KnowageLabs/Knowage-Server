@@ -14,14 +14,25 @@ angular
 		  };
 	})
 
-function favouritesController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_user){
+function favouritesController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_user,$documentViewer){
 
-	$scope.showDocumentInfo = false;
-
+	$scope.formatColumns = function(array){
+		var arr = [];
+		for (var i = 0; i < array.length; i++) {
+			var obj = {};
+			obj.label = array[i].toUpperCase();
+			obj.name = array[i];
+			arr.push(obj);
+		}
+		return arr;
+	}
+	
 	$scope.loadFavoriteDocumentExecutionsForUser =function(){
-		sbiModule_restServices.promiseGet("2.0/analyticalmodel/getmyrememberme", sbiModule_user.userId)
+		sbiModule_restServices.promiseGet("2.0/favorites","")
 		.then(function(response) {
 			angular.copy(response.data,$scope.favoriteDocumetnsList);
+			$scope.resCol = Object.keys(response.data[0]);
+			$scope.finRes = $scope.formatColumns($scope.resCol);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
@@ -29,12 +40,25 @@ function favouritesController($scope,sbiModule_restServices,sbiModule_translate,
 	$scope.loadFavoriteDocumentExecutionsForUser();
 
 	$scope.deleteFavoriteDocumentExecutionById = function(doc) {
-		sbiModule_restServices.promiseDelete("2.0/analyticalmodel",doc.id)
+		sbiModule_restServices.promiseDelete("2.0/favorites",doc.id)
 		.then(function(response) {
 			$scope.loadFavoriteDocumentExecutionsForUser();
 		},function(response) {
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
+	}
+	
+	$scope.favoriteSpeedMenu=[{
+		label : sbiModule_translate.load('sbi.generic.run'),
+		icon:'fa fa-play-circle' ,
+		backgroundColor:'transparent',	
+		action : function(item,event) {
+			$scope.executeFavorite(item);
+		}
+	} ];
+	
+	$scope.executeFavorite = function(document) {	
+		$documentViewer.openDocument(document.objId, document.documentLabel, document.documentName);
 	}
 
 }

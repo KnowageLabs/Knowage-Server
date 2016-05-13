@@ -15,7 +15,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.federationDefinitions=[];
 	$scope.businessModels=[];
 	$scope.favoriteDocumetnsList = [];
-
+	$scope.recentDocumetnsList = [];
 	/**
 	 * variables for data management
 	 */
