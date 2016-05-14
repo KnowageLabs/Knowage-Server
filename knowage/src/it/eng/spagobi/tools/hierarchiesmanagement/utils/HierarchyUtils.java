@@ -493,6 +493,7 @@ public class HierarchyUtils {
 		// 1 - execute query to get dimension data
 		String queryText = HierarchyUtils.createDimensionDataQuery(dataSource, metadataFields, dimensionName, validityDate, optionalFilter, filterDate,
 				filterHierarchy, filterHierType, hierTableName, dimFilterField, hierFilterField, exludeHierLeaf);
+		logger.error("getDimensionDataStore query: [" + queryText + "]");
 
 		IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
@@ -508,7 +509,7 @@ public class HierarchyUtils {
 		// 1 - execute query to get dimension data
 		String queryText = HierarchyUtils.createDimensionFromHierDataQuery(dataSource, metadataFields, dimensionName, validityDate, optionalFilter, filterDate,
 				filterHierarchy, filterHierType, hierTableName, dimFilterField, hierFilterField, exludeHierLeaf);
-
+		logger.error("getDimensionFromHierDataStore query: [" + queryText + "]");
 		IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
 		return dataStore;
@@ -651,28 +652,69 @@ public class HierarchyUtils {
 			String hierFilterField, boolean exludeHierLeaf) {
 		logger.debug("START");
 
-		String selectClause = getDimenensionSelectClause(dataSource, metadataFields);
-
-		// where
-		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + dimensionName + " WHERE 1=1 ");
+		String selectClause = getDimenensionSelectClause(dataSource, metadataFields, " D.");
 
 		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
 		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
 		String hierNameCol = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 		String hierTypeCol = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
 		String dimFilterFieldCol = AbstractJDBCDataset.encapsulateColumnName(dimFilterField, dataSource);
-		String selectFilterField = AbstractJDBCDataset.encapsulateColumnName(hierFilterField, dataSource);
-		String vFilterDateConverted = HierarchyUtils.getConvertedDate(filterDate, dataSource);
-		String vFilterDateWhereClause = vFilterDateConverted + ">= " + beginDtColumn + " AND " + vFilterDateConverted + " <= " + endDtColumn;
+		String selectFilterCol = AbstractJDBCDataset.encapsulateColumnName(hierFilterField, dataSource);
+		// where
+		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + dimensionName + " D, " + hierTableName + " H");
+		query.append(" WHERE  D." + dimFilterFieldCol + " = H." + selectFilterCol);
+		query.append(" AND D." + beginDtColumn + " = H." + beginDtColumn);
+		query.append(" AND D." + endDtColumn + " = H." + endDtColumn);
+		query.append(" AND H." + hierNameCol + " = '" + filterHierarchy + "' AND " + hierTypeCol + " = '" + filterHierType + "'");
 
-		query.append(HierarchyUtils.createInHierarchyCondition(dataSource, hierTableName, hierNameCol, filterHierarchy, hierTypeCol, filterHierType,
-				dimFilterFieldCol, selectFilterField, vFilterDateWhereClause, false));
+		//
+		// String vFilterDateWhereClause = null;
+		// if (filterDate != null) {
+		// String vFilterDateConverted = HierarchyUtils.getConvertedDate(filterDate, dataSource);
+		// vFilterDateWhereClause = vFilterDateConverted + ">= " + beginDtColumn + " AND " + vFilterDateConverted + " <= " + endDtColumn;
+		// }
+		// if (optionalFilter != null) {
+		// logger.debug("Optional Filters are [" + optionalFilter + "]");
+		//
+		// // get optional filters and add them to the query
+		// JSONArray filtersJSONArray = ObjectUtils.toJSONArray(optionalFilter);
+		// try {
+		// for (int i = 1; i <= filtersJSONArray.length(); i++) {
+		// JSONObject filter = filtersJSONArray.getJSONObject(i - 1);
+		// String filterType = (String) filter.get(HierarchyConstants.FILTER_TYPE);
+		// String filterValue = (!filter.isNull(HierarchyConstants.FILTER_VALUE)) ? filter.get(HierarchyConstants.FILTER_VALUE).toString() : null;
+		// HashMap<String, String> filterCondition = new HashMap<String, String>();
+		// int cIdx = 1;
+		// while (!filter.isNull(HierarchyConstants.FILTER_CONDITION + cIdx)) {
+		// filterCondition.put(HierarchyConstants.FILTER_CONDITION + cIdx, (String) filter.get(HierarchyConstants.FILTER_CONDITION + cIdx));
+		// cIdx++;
+		// }
+		// String filterString = "";
+		// if (filterValue != null) {
+		// if (filterType.equals(HierarchyConstants.FIELD_TP_STRING)) {
+		// filterString = HierarchyUtils.createStringFilterCondition(dataSource, filterCondition, filterValue);
+		// } else if (filterType.equals(HierarchyConstants.FIELD_TP_NUMBER)) {
+		// filterString = HierarchyUtils.createNumberFilterCondition(dataSource, filterCondition, filterValue);
+		// } else if (filterType.equals(HierarchyConstants.FIELD_TP_DATE)) {
+		// filterString = HierarchyUtils.createDateFilterCondition(dataSource, filterCondition, filterValue);
+		// }
+		// query.append(filterString);
+		// }
+		// }
+		// } catch (JSONException je) {
+		// logger.error("Error while getting optional filters. Error: " + je);
+		// throw new SpagoBIServiceException("An unexpected error occured while deserializing optional filters structure from JSON", je);
+		// }
+		// }
+		//
+		// query.append(HierarchyUtils.createInHierarchyCondition(dataSource, hierTableName, hierNameCol, filterHierarchy, hierTypeCol, filterHierType,
+		// dimFilterFieldCol, selectFilterField, vFilterDateWhereClause, false));
 
 		logger.debug("END");
 		return query;
 	}
 
-	private static String getDimenensionSelectClause(IDataSource dataSource, List<Field> metadataFields) {
+	private static String getDimenensionSelectClause(IDataSource dataSource, List<Field> metadataFields, String alias) {
 		String toReturn = "";
 		logger.debug("START");
 
@@ -689,7 +731,7 @@ public class HierarchyUtils {
 				sep = " ";
 			}
 
-			selectClauseBuffer.append(column + sep);
+			selectClauseBuffer.append(alias + column + sep);
 		}
 
 		toReturn = selectClauseBuffer.toString();
@@ -1074,8 +1116,11 @@ public class HierarchyUtils {
 			vDateWhereClause = "? = ?";
 		}
 
+		// String updateQuery = "UPDATE " + (String) paramsMap.get("hierarchyTable") + " SET " + hierNameColumn + "= ?, " + bkpColumn + " = ?, "
+		// + bkpTimestampColumn + "= ? WHERE " + hierNameColumn + "=? AND " + hierTypeColumn + "= ? AND " + vDateWhereClause;
+
 		String updateQuery = "UPDATE " + (String) paramsMap.get("hierarchyTable") + " SET " + hierNameColumn + "= ?, " + bkpColumn + " = ?, "
-				+ bkpTimestampColumn + "= ? WHERE " + hierNameColumn + "=? AND " + hierTypeColumn + "= ? AND " + vDateWhereClause;
+				+ bkpTimestampColumn + "= ? WHERE " + hierNameColumn + "=? AND " + hierTypeColumn + "= ? AND " + bkpColumn + " = ? ";
 
 		logger.debug("The update query is [" + updateQuery + "]");
 
@@ -1085,8 +1130,9 @@ public class HierarchyUtils {
 			preparedStatement.setTimestamp(3, new java.sql.Timestamp(timestamp));
 			preparedStatement.setString(4, (String) paramsMap.get("hierTargetName"));
 			preparedStatement.setString(5, (String) paramsMap.get("hierTargetType"));
-			preparedStatement.setDate(6, vDateConverted);
-			preparedStatement.setDate(7, vDateConverted);
+			preparedStatement.setBoolean(6, false);
+			// preparedStatement.setDate(6, vDateConverted);
+			// preparedStatement.setDate(7, vDateConverted);
 
 			preparedStatement.executeUpdate();
 

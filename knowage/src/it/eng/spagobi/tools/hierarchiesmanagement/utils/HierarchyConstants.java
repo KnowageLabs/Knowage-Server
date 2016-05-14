@@ -104,6 +104,7 @@ public class HierarchyConstants {
 	public final static String ROOT = "root";
 	public final static String COLUMNS = "columns";
 	public final static String COLUMNS_SEARCH = "columns_search";
+	public final static String DIM_FILTER_ID_FIELD = "_ID";
 	public final static String DIM_FILTER_FIELD = "_CD";
 	public final static String SELECT_HIER_FILTER_FIELD = "_CD_LEAF";
 	public final static String SUFFIX_CD_LEV = "_CD_LEV";

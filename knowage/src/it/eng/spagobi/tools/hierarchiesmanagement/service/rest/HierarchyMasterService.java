@@ -348,25 +348,30 @@ public class HierarchyMasterService {
 				hierNameForDim = optionHierarchy;
 			}
 			IDataStore dsNewDimensions = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters,
-					filterDate, hierNameForDim, filterHierType, hierTableName, prefix, exludeHierLeaf);
+					validityTreeDate, hierNameForDim, filterHierType, hierTableName, prefix, exludeHierLeaf);
+			logger.error("#Records from dimension: " + dsNewDimensions.getRecordsCount());
 
 			// 3 - Get the dimension leaves already present into the original Hierarchy
+			// IDataStore dsDimensionsFromHier = HierarchyUtils.getDimensionFromHierDataStore(dataSource, dimensionName, metadataFields, validityDate,
+			// optionalFilters, validityTreeDate, filterHierarchy, filterHierType, hierTableName, prefix, false);
+
 			IDataStore dsDimensionsFromHier = HierarchyUtils.getDimensionFromHierDataStore(dataSource, dimensionName, metadataFields, validityDate,
-					optionalFilters, validityTreeDate, filterHierarchy, filterHierType, hierTableName, prefix, false);
+					optionalFilters, null, filterHierarchy, filterHierType, hierTableName, prefix, false);
+			logger.error("#Records from hierarchy: " + dsDimensionsFromHier.getRecordsCount());
 
 			// 4 - Iterate on the dimensions' leaves used by the hierarchy datastore and check if the record is present into the dimension datastore:
 			// If it exists do nothing (get the new last)
 			// If it doesn't exist add the original record into the dimension datatore (merge action)
 			IMetaData metaDim = dsDimensionsFromHier.getMetaData();
-			int posCD = -1;
+			int posID = -1;
 			for (int i = 0; i < metaDim.getFieldCount(); i++) {
 				IFieldMetaData fieldMeta = metaDim.getFieldMeta(i);
-				if (fieldMeta.getName().equals(prefix + HierarchyConstants.DIM_FILTER_FIELD)) {
-					posCD = i;
+				if (fieldMeta.getName().equals(prefix + HierarchyConstants.DIM_FILTER_ID_FIELD)) {
+					posID = i;
 					break;
 				}
 			}
-			if (posCD == -1) {
+			if (posID == -1) {
 				logger.error("Impossible synchronize the hierarchy.");
 				throw new SpagoBIServiceException("Error", "Impossible synchronize the hierarchy. Column " + prefix + HierarchyConstants.DIM_FILTER_FIELD
 						+ " not found into the resultset. ");
@@ -376,12 +381,13 @@ public class HierarchyMasterService {
 			while (iterFromHier.hasNext()) {
 				// iterate on dimension records
 				IRecord hierRecord = (IRecord) iterFromHier.next();
-				IField f = hierRecord.getFieldAt(posCD);
-				List recs = dsNewDimensions.findRecords(posCD, f.getValue());
+				IField f = hierRecord.getFieldAt(posID);
+				List recs = dsNewDimensions.findRecords(posID, f.getValue());
 				if (recs.size() == 0) {
 					dsNewDimensions.appendRecord(hierRecord);
 				}
 			}
+			logger.error("#Records from dimension after merge: " + dsNewDimensions.getRecordsCount());
 
 			// begin transaction
 			dbConnection.setAutoCommit(false);
@@ -397,13 +403,16 @@ public class HierarchyMasterService {
 
 			// 5 - insert the new hierarchy (merged)
 			Iterator iterFromDim = dsNewDimensions.iterator();
+			int cont = 0;
 			while (iterFromDim.hasNext()) {
+				cont++;
 				// iterate on dimension records
 				IRecord record = (IRecord) iterFromDim.next();
 				primaryKeyCount++;
 				insertHierarchyMaster(dbConnection, dataSource, record, dsNewDimensions, hierTableName, generalFields, nodeFields, metatadaFieldsMap,
 						requestVal, prefix, dimensionName, validityDate, hierConfig, primaryKey, primaryKeyCount);
 			}
+			logger.error("#Records inserted into master hierarchy: " + cont);
 
 			if (orderFields != null && orderFields.size() > 0) {
 				paramsMap.put("prefix", prefix);
