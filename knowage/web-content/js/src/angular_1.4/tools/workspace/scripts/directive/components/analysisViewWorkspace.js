@@ -24,11 +24,13 @@ angular
 	    
 	});
 
-function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,$mdDialog,$mdSidenav,$documentViewer) {
+function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,sbiModule_user,$mdDialog,$mdSidenav,$documentViewer) {
 	
 	$scope.allAnalysisDocsInitial = [];
 	$scope.cockpitAnalysisDocsInitial = [];
 	$scope.geoAnalysisDocsInitial = [];
+	
+	$scope.activeTabAnalysis = null;
 	
 	$scope.loadAllMyAnalysisDocuments = function() {
 		
@@ -81,9 +83,9 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 							
 						}
 						
-						$scope.allAnalysisDocsInitial = $scope.allAnalysisDocs;
-						$scope.cockpitAnalysisDocsInitial = $scope.cockpitAnalysisDocs;
-						$scope.geoAnalysisDocsInitial = $scope.geoAnalysisDocs;
+						angular.copy($scope.allAnalysisDocs,$scope.allAnalysisDocsInitial);
+						angular.copy($scope.cockpitAnalysisDocs,$scope.cockpitAnalysisDocsInitial);
+						angular.copy($scope.geoAnalysisDocs,$scope.geoAnalysisDocsInitial);
 					},
 					
 					function(response) {
@@ -131,7 +133,20 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 						.promisePost("documents","clone?docId="+document.id)
 						.then(
 								function(response) {
+								
 									$scope.allAnalysisDocs.push(response.data);
+									angular.copy($scope.allAnalysisDocs,$scope.allAnalysisDocsInitial);
+									
+									if (document.typeCode == "DOCUMENT_COMPOSITE") { 
+										$scope.cockpitAnalysisDocs.push(response.data);
+										angular.copy($scope.cockpitAnalysisDocs,$scope.cockpitAnalysisDocsInitial);
+									}
+									
+									if (document.typeCode == "MAP") { 
+										$scope.geoAnalysisDocs.push(response.data);
+										angular.copy($scope.geoAnalysisDocs,$scope.geoAnalysisDocsInitial);
+									} 
+									
 									console.info("[CLONE END]: The cloning of a selected '" + document.label + "' went successfully.");	
 								},
 								
@@ -163,13 +178,23 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 			.then(
 					function() {
 						
-						var index = $scope.allAnalysisDocs.indexOf(document);
-					
+						var indexInAll = $scope.allAnalysisDocs.indexOf(document);
+						var indexInCockpit = $scope.cockpitAnalysisDocs.indexOf(document);
+						var indexInGeo = $scope.geoAnalysisDocs.indexOf(document);
+						
+						var isDocInAll = indexInAll >= 0;
+						var isDocInCockpit = indexInCockpit >= 0;
+						var isDocInGeo = indexInGeo >= 0;
+						
 						sbiModule_restServices
 							.promiseDelete("1.0/documents", document.label)
 							.then(
 									function(response) {
-										$scope.allAnalysisDocs.splice(index,1);
+									
+										isDocInAll ? $scope.allAnalysisDocs.splice(indexInAll,1) : null;
+										isDocInCockpit ? $scope.cockpitAnalysisDocs.splice(indexInCockpit,1) : null;
+										isDocInGeo ? $scope.geoAnalysisDocs.splice(indexInGeo,1) : null;
+										
 										$scope.selectedDocument = undefined;	// TODO: Create and define the role of this property
 										console.info("[DELETE END]: Delete of Analysis document with the label '" + document.label + "' is done successfully.");
 									},
@@ -188,7 +213,39 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	 * Create a new Analysis document.
 	 */
 	$scope.addNewAnalysisDocument = function() {
-		alert("This button will CREATE NEW s analysis document");
+
+		if ($scope.activeTabAnalysis=="COCKPIT") {	
+			console.info("[NEW COCKPIT - START]: Open page for adding a new Cockpit document.");
+			window.location.href = sbiModule_config.engineUrls.cockpitServiceUrl + '&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";	
+		}
+		else if ($scope.activeTabAnalysis=="GEO") {
+//			alert("This button will add new GEO document.");
+			console.log("USAO");
+			window.location.href = "AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&TYPE_DOC=GEO&MYANALYSIS=TRUE";
+//			sbiModule_restServices.promiseGet("selfservicedataset","").then(function(response) { console.log(response); }, function(reposnse) { console.log("BAD"); });
+		}
+		
+	}
+	
+	/**
+	 * Tooltip that will appear when the mouse is over the plus button for adding a new Cockpit/Geo map document.
+	 */
+	$scope.newAnalysisDocButtonTooltip = function() {
+		
+		/**
+		 * If we did not open the Analysis option yet, the Workspace's 'activeTabAnalysis' will be null (initialized value of the variable). Otherwise, it will contain 
+		 * one of three possible string values: ALL, COCKPIT, GEO.
+		 */
+		if ($scope.activeTabAnalysis!=null) {	
+			
+			/**
+			 * Provide first letter of the Analysis document type to capital.
+			 */
+			$scope.analysisDocTypeFirstCap = $scope.activeTabAnalysis.charAt(0).toUpperCase() + $scope.activeTabAnalysis.toLowerCase().slice(1);			
+			return "Add a new " + $scope.analysisDocTypeFirstCap  + " document";
+		
+		}				
+		
 	}
 	
 }

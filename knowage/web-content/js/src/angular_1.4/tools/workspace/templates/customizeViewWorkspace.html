@@ -3,17 +3,21 @@
 	<div class="md-toolbar-tools" layout="row" layout-align="center center">
 		
 		<!--  Search button -->
-		<md-button class="md-icon-button" ng-click="toggleSearchView()">
+		<md-button class="md-icon-button" ng-click="setSearchInput(searchInput)">
 			  <md-icon md-font-icon="fa fa-search"></md-icon>
 		</md-button>
 		
 		<!-- Search input -->
 	    <md-input-container ng-show=true class="searchInput">
-			<input type="text" id="searchInput" ng-model="searchInput" ng-change="setSearchInput(searchInput)" focus-on="searchInput">
+			<input 	type="text" id="searchInput" ng-model="searchInput" 
+					ng-change="setSearchInput(searchInput)" 
+					focus-on="searchInput"
+					title="Insert text for searching">
 		</md-input-container>
 		
 		<!-- Search clear -->
-		<md-button class="md-icon-button" title="Clear" aria-label="Clear" ng-show=true ng-click="setSearchInput('')">
+		<md-button 	class="md-icon-button" title="Clear the text for searching" 
+					aria-label="Clear" ng-show=true ng-click="setSearchInput('')">
 			   <md-icon md-font-icon="fa fa-times"></md-icon>
 		</md-button>
 		

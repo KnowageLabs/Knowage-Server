@@ -7,9 +7,9 @@
  */
 angular
 	.module('workspace.controller', ['workspace.directive','workspace.configuration'])
-	.controller('workspaceController', ["$scope","$http","$mdDialog","$timeout","$documentViewer","sbiModule_translate","sbiModule_restServices","sbiModule_config", workspaceFunction]);
+	.controller('workspaceController', ["$scope","$http","$mdDialog","$timeout","$documentViewer","sbiModule_translate","sbiModule_restServices","sbiModule_config","sbiModule_user", workspaceFunction]);
 
-function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiModule_translate,sbiModule_restServices,sbiModule_config) {
+function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiModule_translate,sbiModule_restServices,sbiModule_config,sbiModule_user) {
 
 	$scope.allDocuments = [];
 	$scope.federationDefinitions=[];
@@ -170,9 +170,9 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 				 * SEARCH FOR ANALYSIS
 				 */
 				case "analysis":				
-					$scope.allAnalysisDocs = $scope.allAnalysisDocsInitial;
-					$scope.cockpitAnalysisDocs = $scope.cockpitAnalysisDocsInitial;
-					$scope.geoAnalysisDocs = $scope.geoAnalysisDocsInitial;				
+					angular.copy($scope.allAnalysisDocsInitial,$scope.allAnalysisDocs); 
+					angular.copy($scope.cockpitAnalysisDocsInitial,$scope.cockpitAnalysisDocs);
+					angular.copy($scope.geoAnalysisDocsInitial,$scope.geoAnalysisDocs);
 					break;
 				
 				/**
@@ -215,12 +215,15 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 						case "analysis":
 							
 								var allAnalysisDocsFinal = [];
-								
+							
 								$scope.cockpitAnalysisDocs = filterThroughCollection(newSearchInput,$scope.cockpitAnalysisDocsInitial,"name");
 								$scope.geoAnalysisDocs = filterThroughCollection(newSearchInput,$scope.geoAnalysisDocsInitial,"name");
 								
-								allAnalysisDocsFinal = $scope.cockpitAnalysisDocs;
-								allAnalysisDocsFinal.length>0 ? allAnalysisDocsFinal.concat($scope.geoAnalysisDocs) : allAnalysisDocsFinal = $scope.geoAnalysisDocs;								
+								angular.copy($scope.cockpitAnalysisDocs,allAnalysisDocsFinal);
+								
+								for (i=0; i<$scope.geoAnalysisDocs.length; i++) {									
+									allAnalysisDocsFinal.push($scope.geoAnalysisDocs[i]);
+								}
 								
 								$scope.allAnalysisDocs = allAnalysisDocsFinal;
 							
@@ -253,8 +256,8 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * Preview (execute) a particular document.
 	 */
 	$scope.executeDocument = function(document) {		
-		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");		
-		$documentViewer.openDocument(document.id, document.label, document.name);		
+		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");			
+		$documentViewer.openDocument(document.id, document.label, document.name);
 	}
 	
 	/**
