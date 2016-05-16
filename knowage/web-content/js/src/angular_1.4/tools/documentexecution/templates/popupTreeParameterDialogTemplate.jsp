@@ -21,8 +21,10 @@
 				click-function="paramDialogCtrl.setTreeParameterValue(node)"
 				is-folder-fn="paramDialogCtrl.isFolderFn(node)"
 				is-open-folder-fn="paramDialogCtrl.isOpenFolderFn(node)"
-				is-document-fn="paramDialogCtrl.isDocumentFn(node)"
-				show-node-check-box-fn="paramDialogCtrl.showNodeCheckBoxFn(node)"
+				is-leaf-fn="paramDialogCtrl.isDocumentFn(node)"
+				folder-icon-fn="paramDialogCtrl.getFolderIconClass(node)"
+				open-folder-icon-fn="paramDialogCtrl.getOpenFolderIconClass(node)"
+				show-node-checkbox-fn="paramDialogCtrl.showNodeCheckBoxFn(node)"
 				dynamic-tree
 				/>
 	</md-dialog-content>

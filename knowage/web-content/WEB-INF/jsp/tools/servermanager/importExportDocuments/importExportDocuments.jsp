@@ -108,9 +108,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									ng-model="checkboxs.exportSnapshots" aria-label="Export snapshots">{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</md-checkbox>
 							</div>
 							<div layout-padding>
-								<document-tree ng-model="folders" id="impExpTree" create-tree="true"
+								<!--
+ 								<document-tree ng-model="folders" id="impExpTree" create-tree="true"
 									selected-item="selected" multi-select="true" show-files="true">
 								</document-tree>
+								-->
+								<component-tree ng-model="folders" id="impExpTree" create-tree="true"
+									selected-item="selected" multi-select="true" show-files="true">
+								</component-tree>
 							</div>
 						</div>
 				</md-content>

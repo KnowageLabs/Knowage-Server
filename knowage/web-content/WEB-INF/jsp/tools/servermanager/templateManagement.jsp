@@ -93,10 +93,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		</div>
 		<div id="lista"  ng-show="documents.length!=0">
+			<!--
 			<document-tree ng-model="tree" id="impExpTree" create-tree="true"
 				selected-item="docChecked" multi-select="true" show-files="true">
 			</document-tree>
-
+			-->
+			<component-tree ng-model="tree" id="impExpTree" create-tree="true"
+				selected-item="docChecked" multi-select="true" show-files="true">
+			</component-tree>
 		</div>
 	</div>
 	</md-card>

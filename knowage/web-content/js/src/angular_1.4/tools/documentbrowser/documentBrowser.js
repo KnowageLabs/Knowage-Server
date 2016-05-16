@@ -1,6 +1,16 @@
-angular.module('documentBrowserModule').controller( 'documentBrowserController', ['$mdMedia', '$scope', '$http', '$mdSidenav', '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_config', 'setFocus','$timeout', '$cookies', 'sbiModule_user','$interval',documentBrowserFunction]);
+angular.module('documentBrowserModule')
+.controller('documentBrowserController', 
+		[ '$mdMedia', '$scope', '$http', '$mdSidenav', 
+		  '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 
+		  'sbiModule_config', 'setFocus','$timeout', '$cookies', 
+		  'sbiModule_user','$interval',documentBrowserFunction]);
 
-function documentBrowserFunction($mdMedia, $scope, $http, $mdSidenav, $mdDialog, sbiModule_translate, sbiModule_restServices, sbiModule_config, setFocus,$timeout,$cookies,sbiModule_user,$interval){
+function documentBrowserFunction(
+		$mdMedia, $scope, $http, $mdSidenav, 
+		$mdDialog, sbiModule_translate, sbiModule_restServices, 
+		sbiModule_config, setFocus,$timeout, $cookies,
+		sbiModule_user,$interval) {
+	
 	$scope.translate=sbiModule_translate;
 	$scope.folders = [];
 	$scope.folderDocuments = [];
