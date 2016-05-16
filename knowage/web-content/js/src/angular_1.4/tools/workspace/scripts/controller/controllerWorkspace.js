@@ -90,8 +90,17 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * Flag that servers as indicator for toggling between grid and list view of documents.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	$scope.showGridView = true;
-
+	$scope.showGridView = true;	
+	
+	var recentDocumentsLoaded = false;
+	var favoritesDocumentsLoaded = false;
+	var recentDocumentsLoaded = false;
+	var organizerDocumentsLoaded = false;
+	var datasetsDocumentsLoaded = false;
+	var modelsDocumentsLoaded = false;
+	var smartFiltersDocumentsLoaded = false;
+	var analysisDocumentsLoaded = false;
+	
 	$scope.translate = sbiModule_translate;
 
 	/**
@@ -110,7 +119,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.leftMenuItemPicked = function(item) {
 		
 		$scope.currentOptionMainMenu = item.name.toLowerCase();
-		
+	
 		if($scope.currentOptionMainMenu==='models'){
 			$scope.currentTab='businessModels';
 		}
@@ -126,6 +135,94 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 		 */
 		$scope.selectedDocument = undefined;
 		
+		/**
+		 * Provide loading for different Workspace options from the left main menu only when it is chosen (clicked)
+		 * for the first time (after loading the main page). By default, the Recent documents are displayed first.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		switch($scope.currentOptionMainMenu) {
+			
+			case "analysis":
+				
+				if (analysisDocumentsLoaded==false) {
+					console.info("[LOAD START]: Loading of Analysis documents is started.");
+					$scope.loadAllMyAnalysisDocuments();
+					analysisDocumentsLoaded = true;
+				}
+				
+				break;
+
+			case "favorites":
+				
+				if (favoritesDocumentsLoaded==false) {
+					console.info("[LOAD START]: Loading of Favorites documents is started.");
+					$scope.loadFavoriteDocumentExecutionsForUser();
+					favoritesDocumentsLoaded = true;
+				}
+				
+				break;
+				
+			case "documents":
+				
+				if (organizerDocumentsLoaded==false) {
+					console.info("[LOAD START]: Loading of Organizer documents is started.");
+					$scope.loadAllDocuments();
+					organizerDocumentsLoaded = true;
+				}
+				
+				break;
+				
+			case "datasets":
+				
+				if (datasetsDocumentsLoaded==false) {
+					
+					console.info("[LOAD START]: Loading of Datasets is started.");
+					
+					$scope.loadDatasets();
+					$scope.loadMyDatasets();
+					$scope.loadEnterpriseDatasets();
+					$scope.loadSharedDatasets();
+					$scope.loadNotDerivedDatasets();
+					
+					$scope.markNotDerived($scope.myDatasets);
+					$scope.markNotDerived($scope.sharedDatasets);
+					$scope.markNotDerived($scope.enterpriseDatasets);
+					$scope.markNotDerived($scope.datasets);
+					
+					datasetsDocumentsLoaded = true;
+				}
+				
+				break;
+							
+			case "models":
+				
+				if (modelsDocumentsLoaded==false) {
+					
+					console.info("[LOAD START]: Loading of Models is started.");
+					
+					$scope.loadFederations();
+					$scope.loadBusinessModels();
+					
+					modelsDocumentsLoaded = true;
+				}
+				
+				break;
+				
+			case "smartfilters":
+				
+				if (smartFiltersDocumentsLoaded==false) {
+					
+//					console.info("[LOAD START]: Loading of Smart filters is started.");					
+					/**
+					 * TODO: Add functionality for loading all smart filters.
+					 */					
+					smartFiltersDocumentsLoaded = true;
+				}
+				
+				break;
+				
+		}
+		
 	}
 
 	/**
@@ -135,7 +232,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.toogleGridListViewOfDocs = function() {
 		$scope.showGridView = !$scope.showGridView;
 	}
-
+	
 	/**
 	 * Filter the sent collection of data (documents, analysis, datasets, etc.)
 	 * according to the searching term (sequence) user entered, 'newSearchInput'.
@@ -192,7 +289,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.setSearchInput = function(newSearchInput) {		
-		console.log(newSearchInput);
+		
 		$scope.searchInput = newSearchInput;
 		var currentOptionMainMenu = $scope.currentOptionMainMenu;		
 		
@@ -260,7 +357,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 						case "analysis":
 							
 								var allAnalysisDocsFinal = [];
-								
+							
 								$scope.cockpitAnalysisDocs = filterThroughCollection(newSearchInput,$scope.cockpitAnalysisDocsInitial,"name");
 								$scope.geoAnalysisDocs = filterThroughCollection(newSearchInput,$scope.geoAnalysisDocsInitial,"name");
 								
@@ -300,10 +397,9 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	/**
 	 * Preview (execute) a particular document.
 	 */
-	$scope.executeDocument = function(document) {
-		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");		
+	$scope.executeDocument = function(document) {		
+		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");			
 		$documentViewer.openDocument(document.id, document.label, document.name);
-		
 	}
 	
 	/**
@@ -313,7 +409,6 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	var showDocumentDetails = function() {
-//		selectedDocument ? console.log(selectedDocument) : null;
 		return showDocumentInfo && isSelectedDocumentValid();
 	};	
 	

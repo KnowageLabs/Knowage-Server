@@ -21,11 +21,11 @@ function favouritesController($scope,sbiModule_restServices,sbiModule_translate,
 		.then(function(response) {
 			angular.copy(response.data,$scope.favoriteDocumentsList);
 			$scope.favoriteDocumentsInitial = $scope.favoriteDocumentsList;
+			console.info("[LOAD END]: Loading of Favorites documents is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
-	$scope.loadFavoriteDocumentExecutionsForUser();
 
 	$scope.deleteFavoriteDocumentExecutionById = function(doc) {
 		sbiModule_restServices.promiseDelete("2.0/favorites",doc.id)

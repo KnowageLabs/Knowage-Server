@@ -86,6 +86,8 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 						angular.copy($scope.allAnalysisDocs,$scope.allAnalysisDocsInitial);
 						angular.copy($scope.cockpitAnalysisDocs,$scope.cockpitAnalysisDocsInitial);
 						angular.copy($scope.geoAnalysisDocs,$scope.geoAnalysisDocsInitial);
+						
+						console.info("[LOAD END]: Loading of Analysis documents is finished.");
 					},
 					
 					function(response) {
@@ -93,8 +95,6 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 					}
 				);
 	}
-
-	$scope.loadAllMyAnalysisDocuments();
 	
 	/**
 	 * Set the currently active tab of the Analysis perspective in order to
@@ -220,10 +220,10 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 		}
 		else if ($scope.activeTabAnalysis=="GEO") {
 //			alert("This button will add new GEO document.");
-			//console.log("USAO 1");
+			console.log("USAO 1");
 //			window.location.href = "AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&TYPE_DOC=GEO&MYANALYSIS=TRUE";
 			// Taken from the "AdhocreportingContainer.js"
-			window.location.href = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&TYPE_DOC=GEO&MYANALYSIS=TRUE';
+			window.location.href = 'AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&TYPE_DOC=GEO&MYANALYSIS=TRUE';
 //			sbiModule_restServices.promiseGet("selfservicedataset","").then(function(response) { console.log(response); }, function(reposnse) { console.log("BAD"); });
 		}
 		

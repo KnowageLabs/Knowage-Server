@@ -28,13 +28,12 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		sbiModule_restServices.promiseGet("2.0/federateddataset", "")
 		.then(function(response) {
 			angular.copy(response.data,$scope.federationDefinitions);
-//			console.log($scope.federationDefinitions);
+			console.info("[LOAD END]: Loading of Federation definitions is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
 	
-	$scope.loadFederations();
 	
 	
 	//TODO move business models to separate controller
@@ -42,12 +41,11 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
     	sbiModule_restServices.promiseGet("2.0/businessmodels", "")
 		.then(function(response) {
 			angular.copy(response.data,$scope.businessModels);
-//			console.log($scope.businessModels);
+			console.info("[LOAD END]: Loading of Business models is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
-	$scope.loadBusinessModels();
 	
 	$scope.showModelDetails = function() {
 		return $scope.showModelInfo && $scope.isSelectedModelValid();
