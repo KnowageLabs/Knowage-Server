@@ -63,17 +63,4 @@ sbiModule.factory('sbiModule_config',function(){
 </script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/mapFilter/utils/geoUtils.js"></script>
 
-<!--
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/thematizer/geoThematizer.js"></script>
-
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/mapFilter/geoMap/geoMapController.js"></script>	
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoRigthMenu/geoRigthMenuController.js"></script>	
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoMapMenu/geoMapMenuController.js"></script>	
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoLayers/geoLayersController.js"></script>	
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoDistanceCalculator/geoDistanceCalculatorController.js"></script>	
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoLegend/geoLegendController.js"></script>	
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoConfig/geoConfigController.js"></script>	
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoCrossNavMultiselect/geoCrossNavMultiselectController.js"></script>	
--->
-
-<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/mapFilter/css/mapFilter.css" type="text/css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/css/mapFilter/mapFilter.css" type="text/css">
