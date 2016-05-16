@@ -16,7 +16,8 @@ angular
 	});
 
 function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window){
-	
+	//console.log("aaaa");
+	//console.log(datasetParameters);
 	$scope.loadFederations=function(){
 		sbiModule_restServices.promiseGet("2.0/federateddataset", "")
 		.then(function(response) {
@@ -46,27 +47,21 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 //		console.log(federation);
 //		console.log(sbiModule_config.contextName);
 //		console.log(sbiModule_config.adapterPath);
-//		console.log(sbiModule_config.engineUrls);
-		var actionName= 'QBE_ENGINE_FROM_FEDERATION_START_ACTION';
+		
+	//	var actionName= 'QBE_ENGINE_FROM_FEDERATION_START_ACTION';
 		var federationId= federation.federation_id;
 		
+		var url=datasetParameters.qbeEditFederationServiceUrl
+		       +'&FEDERATION_ID='+federationId;
 		
-		var url= sbiModule_config.engineUrls.worksheetServiceUrl
-		         +'&ACTION_NAME='+actionName
-		         +'&FEDERATION_ID='+federationId
-		         + '&label='+federation.label;
-		        // +'&DATASOURCE_FOR_CACHE=knowage';
+//		var url= sbiModule_config.engineUrls.worksheetServiceUrl
+//		         +'&ACTION_NAME='+actionName
+//		         +'&FEDERATION_ID='+federationId
+//		         + '&label='+federation.label;
+//		        // +'&DATASOURCE_FOR_CACHE=knowage';
 		 $window.location.href=url;
 		
-//		var federationId = federation.federation_id;
-//		var dataSourceLabel = record.data.data_source_label;
-//		var url = this.qbeFromFederationBaseUrl;
-//	
-//		if(federationId || federationId!=""){
-//			url = url+ 
-//			'&FEDERATION_ID=' + federationId;
-//		}
-//		this.documentexecution.load(url);
+
 		
 	}
 	
@@ -124,15 +119,19 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	
 	$scope.showQbeFromBM=function(businessModel){
 		console.log(businessModel);
-		var actionName= 'QBE_ENGINE_START_ACTION_FROM_BM';
+		//var actionName= 'QBE_ENGINE_START_ACTION_FROM_BM';
 		var modelName= businessModel.name;
 		var dataSource=businessModel.dataSourceLabel;
+		var url= datasetParameters.qbeFromBMServiceUrl
+		        +'&isWorksheetEnabled='+datasetParameters.IS_WORKSHEET_ENABLED
+		        +'&MODEL_NAME='+modelName
+		        +'&DATA_SOURCE_LABEL='+ dataSource;
 		
-		var url= sbiModule_config.engineUrls.worksheetServiceUrl
-		         +'&ACTION_NAME='+actionName
-		         +'&MODEL_NAME='+modelName
-		         +'&isWorksheetEnabled=true'
-		         +'&DATA_SOURCE_LABEL='+ dataSource;
+//		var url= sbiModule_config.engineUrls.worksheetServiceUrl
+//		         +'&ACTION_NAME='+actionName
+//		         +'&MODEL_NAME='+modelName
+//		         +'&isWorksheetEnabled=true'
+//		         +'&DATA_SOURCE_LABEL='+ dataSource;
 		       
 		 $window.location.href=url;
 	}

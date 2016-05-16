@@ -229,7 +229,7 @@
 	             iconCls="web"/>
 	<ITEM code="workspace" title="Workspace"
 				   functionality="DocumentDevManagement"
-				   url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_WORKSPACE&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+				   url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp" 
 				   iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/40/mydata.png" 
 				   iconCls="web"/>
 							

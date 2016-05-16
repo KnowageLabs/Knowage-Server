@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
+
 package it.eng.spagobi.tools.dataset.service;
 
-import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -51,16 +50,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
-/**
- * @author Antonella Giachino (antonella.giachino@eng.it)
- */
-
-/*
 public class SelfServiceDatasetAction {
 
 	private static final long serialVersionUID = 1L;
@@ -107,66 +99,62 @@ public class SelfServiceDatasetAction {
 	// logger component
 	private static Logger logger = Logger.getLogger(SelfServiceDatasetStartAction.class);
 
-
-	public Map<String,String> getParameters(UserProfile profile) {
+	public Map<String, String> getParameters(UserProfile profile, Locale locale) {
 		logger.debug("IN");
 		try {
 
 			String executionId = ExecuteAdHocUtility.createNewExecutionId();
 
-		
-			
-			String qbeEditFromBMActionUrl = buildQbeEditFromBMServiceUrl(executionId);
-			String qbeEditFromFederationActionUrl = buildQbeEditFromFederationServiceUrl(executionId);
-			String qbeEditFromDataSetActionUrl = buildQbeEditFromDataSetServiceUrl(executionId);
-			String qbeEditDataSetActionUrl = buildQbeEditDataSetServiceUrl(executionId);
-			String worksheetEditActionUrl = buildWorksheetEditServiceUrl(executionId);
-			String geoereportEditActionUrl = buildGeoreportEditServiceUrl(executionId);
-			String cockpitEditActionUrl = buildCockpitEditServiceUrl(executionId);
-			String userCanPersist = userCanPersist();
+			String qbeEditFromBMActionUrl = buildQbeEditFromBMServiceUrl(executionId, locale, profile);
+			String qbeEditFromFederationActionUrl = buildQbeEditFromFederationServiceUrl(executionId, locale, profile);
+			String qbeEditFromDataSetActionUrl = buildQbeEditFromDataSetServiceUrl(executionId, locale, profile);
+			String qbeEditDataSetActionUrl = buildQbeEditDataSetServiceUrl(executionId, locale, profile);
+			String worksheetEditActionUrl = buildWorksheetEditServiceUrl(executionId, locale, profile);
+			String geoereportEditActionUrl = buildGeoreportEditServiceUrl(executionId, profile, locale);
+			String cockpitEditActionUrl = buildCockpitEditServiceUrl(executionId, locale, profile);
+			String userCanPersist = userCanPersist(profile);
 			String tableNamePrefix = getTableNamePrefix();
 			String isWorksheetEnabled = isWorksheetEnabled();
 			String isSmartFilterEnabled = isSmartFilterEnabled();
-			String isCkanEnabled = isCkanEnabled();
-			String ckanUrls = getCkanUrls();
-			String canCreateDatasetAsFinalUser = canCreateDatasetAsFinalUser();
-			String canUseFederatedDataset = canUseFederatedDatasetAsFinalUser();
-
+			String isCkanEnabled = isCkanEnabled(profile);
+			String ckanUrls = getCkanUrls(profile);
+			String canCreateDatasetAsFinalUser = canCreateDatasetAsFinalUser(profile);
+			String canUseFederatedDataset = canUseFederatedDatasetAsFinalUser(profile);
 
 			logger.trace("Copying output parameters to response...");
 			try {
-		
+				Map<String, String> parameters = new HashMap<>();
 
-				setAttribute(OUTPUT_PARAMETER_EXECUTION_ID, executionId);
-				setAttribute(OUTPUT_PARAMETER_QBE_EDIT_FROM_FEDERATION_SERVICE_URL, qbeEditFromFederationActionUrl);
-				setAttribute(OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL, worksheetEditActionUrl);
-				setAttribute(OUTPUT_PARAMETER_QBE_EDIT_FROM_BM_SERVICE_URL, qbeEditFromBMActionUrl);
-				setAttribute(OUTPUT_PARAMETER_QBE_EDIT_FROM_DATA_SET_SERVICE_URL, qbeEditFromDataSetActionUrl);
-				setAttribute(OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL, qbeEditDataSetActionUrl);
-				setAttribute(OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL, geoereportEditActionUrl);
-				setAttribute(OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL, cockpitEditActionUrl);
-				setAttribute(USER_CAN_PERSIST, userCanPersist);
-				setAttribute(TABLE_NAME_PREFIX, tableNamePrefix);
-				setAttribute(IS_WORKSHEET_ENABLED, isWorksheetEnabled);
-				setAttribute(IS_SMARTFILTER_ENABLED, isSmartFilterEnabled);
-				setAttribute(IS_CKAN_ENABLED, isCkanEnabled);
-				setAttribute(CKAN_URLS, ckanUrls);
-				setAttribute(CAN_CREATE_DATASET_AS_FINAL_USER, canCreateDatasetAsFinalUser);
-				setAttribute(CAN_USE_FEDERATED_DATASET_AS_FINAL_USER, canUseFederatedDataset);
+				parameters.put(OUTPUT_PARAMETER_EXECUTION_ID, executionId);
+				parameters.put(OUTPUT_PARAMETER_QBE_EDIT_FROM_FEDERATION_SERVICE_URL, qbeEditFromFederationActionUrl);
+				parameters.put(OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL, worksheetEditActionUrl);
+				parameters.put(OUTPUT_PARAMETER_QBE_EDIT_FROM_BM_SERVICE_URL, qbeEditFromBMActionUrl);
+				parameters.put(OUTPUT_PARAMETER_QBE_EDIT_FROM_DATA_SET_SERVICE_URL, qbeEditFromDataSetActionUrl);
+				parameters.put(OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL, qbeEditDataSetActionUrl);
+				parameters.put(OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL, geoereportEditActionUrl);
+				parameters.put(OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL, cockpitEditActionUrl);
+				parameters.put(USER_CAN_PERSIST, userCanPersist);
+				parameters.put(TABLE_NAME_PREFIX, tableNamePrefix);
+				parameters.put(IS_WORKSHEET_ENABLED, isWorksheetEnabled);
+				parameters.put(IS_SMARTFILTER_ENABLED, isSmartFilterEnabled);
+				parameters.put(IS_CKAN_ENABLED, isCkanEnabled);
+				parameters.put(CKAN_URLS, ckanUrls);
+				parameters.put(CAN_CREATE_DATASET_AS_FINAL_USER, canCreateDatasetAsFinalUser);
+				parameters.put(CAN_USE_FEDERATED_DATASET_AS_FINAL_USER, canUseFederatedDataset);
 
-
+				return parameters;
 			} catch (Throwable t) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "An error occurred while creating service response", t);
 			}
-			logger.trace("Output parameter succesfully copied to response");
+			// logger.trace("Output parameter succesfully copied to response");
 
 		} catch (CacheException ex) {
 			try {
 				logger.error(ex);
-				EMFErrorHandler errorHandler = getErrorHandler();
+				// EMFErrorHandler errorHandler = getErrorHandler();
 				EMFInternalError internalError = new EMFInternalError(EMFErrorSeverity.ERROR, ex);
-				errorHandler.addError(internalError);
-				return;
+				// errorHandler.addError(internalError);
+				return null;
 			} catch (Exception s) {
 				throw new SpagoBIRuntimeException("An error occurred while creating service response", s);
 			}
@@ -176,8 +164,8 @@ public class SelfServiceDatasetAction {
 	}
 
 	// GEO
-	protected String buildGeoreportEditServiceUrl(String executionId) {
-		Map<String, String> parametersMap = buildGeoreportEditServiceBaseParametersMap();
+	protected String buildGeoreportEditServiceUrl(String executionId, UserProfile profile, Locale locale) {
+		Map<String, String> parametersMap = buildGeoreportEditServiceBaseParametersMap(locale, profile);
 		parametersMap.put("SBI_EXECUTION_ID", executionId);
 		Engine georeportEngine = null;
 		String georeportEditActionUrl = null;
@@ -195,18 +183,18 @@ public class SelfServiceDatasetAction {
 		return georeportEditActionUrl;
 	}
 
-	protected Map<String, String> buildGeoreportEditServiceBaseParametersMap() {
-		Map<String, String> parametersMap = buildServiceBaseParametersMap();
+	protected Map<String, String> buildGeoreportEditServiceBaseParametersMap(Locale locale, UserProfile profile) {
+		Map<String, String> parametersMap = buildServiceBaseParametersMap(locale, profile);
 
 		return parametersMap;
 	}
 
 	// WORKSHEET
-	protected String buildWorksheetEditServiceUrl(String executionId) {
+	protected String buildWorksheetEditServiceUrl(String executionId, Locale locale, UserProfile profile) {
 		Engine worksheetEngine = null;
 		String worksheetEditActionUrl = null;
 
-		Map<String, String> parametersMap = buildWorksheetEditServiceBaseParametersMap();
+		Map<String, String> parametersMap = buildWorksheetEditServiceBaseParametersMap(locale, profile);
 		parametersMap.put("SBI_EXECUTION_ID", executionId);
 
 		IDataSource datasource;
@@ -237,19 +225,19 @@ public class SelfServiceDatasetAction {
 		return worksheetEditActionUrl;
 	}
 
-	protected Map<String, String> buildWorksheetEditServiceBaseParametersMap() {
-		Map<String, String> parametersMap = buildServiceBaseParametersMap();
+	protected Map<String, String> buildWorksheetEditServiceBaseParametersMap(Locale locale, UserProfile profile) {
+		Map<String, String> parametersMap = buildServiceBaseParametersMap(locale, profile);
 		parametersMap.put("ACTION_NAME", WORKSHEET_EDIT_ACTION);
 		return parametersMap;
 	}
 
 	// QBE from BM
-	protected String buildQbeEditFromDataSetServiceUrl(String executionId) {
+	protected String buildQbeEditFromDataSetServiceUrl(String executionId, Locale locale, UserProfile profile) {
 		Engine qbeEngine = null;
 		String qbeEditActionUrl = null;
 		String label = null;
-		
-		Map<String, String> parametersMap = buildQbeEditFromFederationServiceBaseParametersMap();
+
+		Map<String, String> parametersMap = buildQbeEditFromFederationServiceBaseParametersMap(locale, profile);
 		parametersMap.put("SBI_EXECUTION_ID", executionId);
 
 		IDataSource datasource;
@@ -263,7 +251,7 @@ public class SelfServiceDatasetAction {
 		} else {
 			logger.debug("There is no default datasource for writing");
 		}
-		
+
 		logger.debug("Getting the cache data source");
 		ICache cache = SpagoBICacheManager.getCache();
 		if (cache instanceof SQLDBCache) {
@@ -293,13 +281,12 @@ public class SelfServiceDatasetAction {
 		}
 		return qbeEditActionUrl;
 	}
-	
-	
-	protected String buildQbeEditFromBMServiceUrl(String executionId) {
+
+	protected String buildQbeEditFromBMServiceUrl(String executionId, Locale locale, UserProfile profile) {
 		Engine qbeEngine = null;
 		String qbeEditActionUrl = null;
 
-		Map<String, String> parametersMap = buildQbeEditFromBMServiceBaseParametersMap();
+		Map<String, String> parametersMap = buildQbeEditFromBMServiceBaseParametersMap(locale, profile);
 		parametersMap.put("SBI_EXECUTION_ID", executionId);
 
 		IDataSource datasource;
@@ -332,11 +319,11 @@ public class SelfServiceDatasetAction {
 	}
 
 	// QBE from dataset
-	protected String buildQbeEditFromFederationServiceUrl(String executionId) {
+	protected String buildQbeEditFromFederationServiceUrl(String executionId, Locale locale, UserProfile profile) {
 		Engine qbeEngine = null;
 		String qbeEditActionUrl = null;
 		String label = null;
-		Map<String, String> parametersMap = buildQbeEditFromFederationServiceBaseParametersMap();
+		Map<String, String> parametersMap = buildQbeEditFromFederationServiceBaseParametersMap(locale, profile);
 		parametersMap.put("SBI_EXECUTION_ID", executionId);
 
 		ICache cache = SpagoBICacheManager.getCache();
@@ -369,49 +356,56 @@ public class SelfServiceDatasetAction {
 		return qbeEditActionUrl;
 	}
 
-//	// QBE from dataset
-//	protected String buildQbeEditFromDataSetServiceUrl2(String executionId) {
-//		Engine qbeEngine = null;
-//		String qbeEditActionUrl = null;
-//
-//		Map<String, String> parametersMap = buildQbeEditFromDataSetServiceBaseParametersMap();
-//		parametersMap.put("SBI_EXECUTION_ID", executionId);
-//
-//		IDataSource datasource;
-//		try {
-//			datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
-//		} catch (EMFUserError e) {
-//			throw new SpagoBIRuntimeException("Error while loading default datasource for writing", e);
-//		}
-//		if (datasource != null) {
-//			parametersMap.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
-//		} else {
-//			logger.debug("There is no default datasource for writing");
-//		}
-//
-//		try {
-//			qbeEngine = ExecuteAdHocUtility.getQbeEngine();
-//		} catch (SpagoBIRuntimeException r) {
-//			// the qbe engine is not found
-//			logger.info("Engine not found. Error: ", r);
-//		}
-//
-//		if (qbeEngine != null) {
-//			LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
-//
-//			// create the qbe Edit Service's URL
-//			qbeEditActionUrl = GeneralUtilities.getUrl(qbeEngine.getUrl(), parametersMap);
-//			LogMF.debug(logger, "Qbe edit service invocation url is equal to [{}]", qbeEditActionUrl);
-//		}
-//		return qbeEditActionUrl;
-//	}
+	// // QBE from dataset
+	// protected String buildQbeEditFromDataSetServiceUrl2(String executionId) {
+	// Engine qbeEngine = null;
+	// String qbeEditActionUrl = null;
+	//
+	// Map<String, String> parametersMap =
+	// buildQbeEditFromDataSetServiceBaseParametersMap();
+	// parametersMap.put("SBI_EXECUTION_ID", executionId);
+	//
+	// IDataSource datasource;
+	// try {
+	// datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+	// } catch (EMFUserError e) {
+	// throw new
+	// SpagoBIRuntimeException("Error while loading default datasource for writing",
+	// e);
+	// }
+	// if (datasource != null) {
+	// parametersMap.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL,
+	// datasource.getLabel());
+	// } else {
+	// logger.debug("There is no default datasource for writing");
+	// }
+	//
+	// try {
+	// qbeEngine = ExecuteAdHocUtility.getQbeEngine();
+	// } catch (SpagoBIRuntimeException r) {
+	// // the qbe engine is not found
+	// logger.info("Engine not found. Error: ", r);
+	// }
+	//
+	// if (qbeEngine != null) {
+	// LogMF.debug(logger, "Engine label is equal to [{0}]",
+	// qbeEngine.getLabel());
+	//
+	// // create the qbe Edit Service's URL
+	// qbeEditActionUrl = GeneralUtilities.getUrl(qbeEngine.getUrl(),
+	// parametersMap);
+	// LogMF.debug(logger, "Qbe edit service invocation url is equal to [{}]",
+	// qbeEditActionUrl);
+	// }
+	// return qbeEditActionUrl;
+	// }
 
 	// QBE to edit a dataset
-	protected String buildQbeEditDataSetServiceUrl(String executionId) {
+	protected String buildQbeEditDataSetServiceUrl(String executionId, Locale locale, UserProfile profile) {
 		Engine qbeEngine = null;
 		String qbeEditActionUrl = null;
 
-		Map<String, String> parametersMap = buildQbeEditDataSetServiceBaseParametersMap();
+		Map<String, String> parametersMap = buildQbeEditDataSetServiceBaseParametersMap(locale, profile);
 		parametersMap.put("SBI_EXECUTION_ID", executionId);
 
 		IDataSource datasource;
@@ -443,31 +437,31 @@ public class SelfServiceDatasetAction {
 		return qbeEditActionUrl;
 	}
 
-	protected Map<String, String> buildQbeEditFromBMServiceBaseParametersMap() {
-		Map<String, String> parametersMap = buildServiceBaseParametersMap();
+	protected Map<String, String> buildQbeEditFromBMServiceBaseParametersMap(Locale locale, UserProfile profile) {
+		Map<String, String> parametersMap = buildServiceBaseParametersMap(locale, profile);
 		parametersMap.put("ACTION_NAME", QBE_EDIT_FROM_BM_ACTION);
 		return parametersMap;
 	}
 
-	protected Map<String, String> buildQbeEditFromFederationServiceBaseParametersMap() {
-		Map<String, String> parametersMap = buildServiceBaseParametersMap();
+	protected Map<String, String> buildQbeEditFromFederationServiceBaseParametersMap(Locale locale, UserProfile profile) {
+		Map<String, String> parametersMap = buildServiceBaseParametersMap(locale, profile);
 		parametersMap.put("ACTION_NAME", QBE_EDIT_FROM_FEDERATION_ACTION);
 		return parametersMap;
 	}
 
-	protected Map<String, String> buildQbeEditFromDataSetServiceBaseParametersMap() {
-		Map<String, String> parametersMap = buildServiceBaseParametersMap();
+	protected Map<String, String> buildQbeEditFromDataSetServiceBaseParametersMap(Locale locale, UserProfile profile) {
+		Map<String, String> parametersMap = buildServiceBaseParametersMap(locale, profile);
 		parametersMap.put("ACTION_NAME", QBE_EDIT_FROM_DATA_SET_ACTION);
 		return parametersMap;
 	}
 
-	protected Map<String, String> buildQbeEditDataSetServiceBaseParametersMap() {
-		Map<String, String> parametersMap = buildServiceBaseParametersMap();
+	protected Map<String, String> buildQbeEditDataSetServiceBaseParametersMap(Locale locale, UserProfile profile) {
+		Map<String, String> parametersMap = buildServiceBaseParametersMap(locale, profile);
 		parametersMap.put("ACTION_NAME", QBE_EDIT_DATA_SET_ACTION);
 		return parametersMap;
 	}
 
-	protected Map<String, String> buildServiceBaseParametersMap(Locale locale, UserProfile profile) {
+	protected Map<String, String> buildServiceBaseParametersMap(Locale locale, UserProfile userProfile) {
 		HashMap<String, String> parametersMap = new HashMap<String, String>();
 
 		parametersMap.put("NEW_SESSION", "TRUE");
@@ -475,11 +469,11 @@ public class SelfServiceDatasetAction {
 		parametersMap.put(SpagoBIConstants.SBI_CONTEXT, GeneralUtilities.getSpagoBiContext());
 		parametersMap.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
 
-		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, getLocale().getLanguage());
-		parametersMap.put(SpagoBIConstants.SBI_COUNTRY, getLocale().getCountry());
+		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, locale.getLanguage());
+		parametersMap.put(SpagoBIConstants.SBI_COUNTRY, locale.getCountry());
 
 		// if (!GeneralUtilities.isSSOEnabled()) {
-		UserProfile userProfile = (UserProfile) getUserProfile();
+		// UserProfile userProfile = (UserProfile) getUserProfile();
 		parametersMap.put(SsoServiceInterface.USER_ID, (String) userProfile.getUserUniqueIdentifier());
 		// }
 
@@ -487,11 +481,11 @@ public class SelfServiceDatasetAction {
 	}
 
 	// COCKPIT
-	protected String buildCockpitEditServiceUrl(String executionId) {
+	protected String buildCockpitEditServiceUrl(String executionId, Locale locale, UserProfile profile) {
 		Engine cockpitEngine = null;
 		String cockpitEditActionUrl = null;
 
-		Map<String, String> parametersMap = buildCockpitEditServiceBaseParametersMap();
+		Map<String, String> parametersMap = buildCockpitEditServiceBaseParametersMap(locale, profile);
 		parametersMap.put("SBI_EXECUTION_ID", executionId);
 
 		try {
@@ -510,17 +504,17 @@ public class SelfServiceDatasetAction {
 		return cockpitEditActionUrl;
 	}
 
-	protected Map<String, String> buildCockpitEditServiceBaseParametersMap() {
-		Map<String, String> parametersMap = buildServiceBaseParametersMap();
+	protected Map<String, String> buildCockpitEditServiceBaseParametersMap(Locale locale, UserProfile profile) {
+		Map<String, String> parametersMap = buildServiceBaseParametersMap(locale, profile);
 
 		return parametersMap;
 	}
 
 	// Check if user can persist a dataset
-	protected String userCanPersist() {
+	protected String userCanPersist(UserProfile profile) {
 		List funcs;
 		try {
-			profile = getUserProfile();
+			// profile = getUserProfile();
 			funcs = (List) profile.getFunctionalities();
 			if (isAbleTo(SpagoBIConstants.ENABLE_DATASET_PERSISTENCE, funcs)) {
 				return "true";
@@ -534,10 +528,10 @@ public class SelfServiceDatasetAction {
 	}
 
 	// Check if user can user CKAN
-	protected String isCkanEnabled() {
+	protected String isCkanEnabled(UserProfile profile) {
 		List funcs;
 		try {
-			profile = getUserProfile();
+			// profile = getUserProfile();
 			funcs = (List) profile.getFunctionalities();
 			if (isAbleTo(SpagoBIConstants.CKAN_FUNCTIONALITY, funcs)) {
 				return "true";
@@ -551,10 +545,10 @@ public class SelfServiceDatasetAction {
 	}
 
 	// Get the list of CKAN repository
-	protected String getCkanUrls() {
+	protected String getCkanUrls(UserProfile profile) {
 		List funcs;
 		try {
-			profile = getUserProfile();
+			// profile = getUserProfile();
 			funcs = (List) profile.getFunctionalities();
 			// Check if user can user CKAN
 			if (!isAbleTo(SpagoBIConstants.CKAN_FUNCTIONALITY, funcs)) {
@@ -580,10 +574,10 @@ public class SelfServiceDatasetAction {
 	}
 
 	// Check if user can create dataset as final user
-	protected String canCreateDatasetAsFinalUser() {
+	protected String canCreateDatasetAsFinalUser(UserProfile profile) {
 		List funcs;
 		try {
-			profile = getUserProfile();
+			// profile = getUserProfile();
 			funcs = (List) profile.getFunctionalities();
 			if (isAbleTo(SpagoBIConstants.CREATE_DATASETS_AS_FINAL_USER, funcs)) {
 				return "true";
@@ -597,10 +591,10 @@ public class SelfServiceDatasetAction {
 	}
 
 	// Check if user can use federated dataset
-	protected String canUseFederatedDatasetAsFinalUser() {
+	protected String canUseFederatedDatasetAsFinalUser(UserProfile profile) {
 		List funcs;
 		try {
-			profile = getUserProfile();
+			// profile = getUserProfile();
 			funcs = (List) profile.getFunctionalities();
 			if (isAbleTo(SpagoBIConstants.ENABLE_FEDERATED_DATASET, funcs)) {
 				return "true";
@@ -691,4 +685,3 @@ public class SelfServiceDatasetAction {
 		return toReturn;
 	}
 }
-*/

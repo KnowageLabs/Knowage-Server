@@ -1,7 +1,20 @@
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS                                                           --%>
 <%-- ---------------------------------------------------------------------- --%>
+<%@page import="it.eng.spagobi.tools.dataset.service.SelfServiceDatasetAction" %>
+<%@page import="java.util.Map" %>
+<%@page import="org.json.JSONObject"%>
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
+
+
+<%
+  
+  SelfServiceDatasetAction ssa= new SelfServiceDatasetAction();
+  Map<String,String> parameters= ssa.getParameters((UserProfile)userProfile,locale);
+  JSONObject selfServiceParameters=new JSONObject(parameters);
+%>
+
+
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="workspaceManager">
@@ -12,7 +25,9 @@
 
 <!-- Styles -->
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
-
+<script language="javascript" type="text/javascript">
+   var datasetParameters=<%=selfServiceParameters%>
+</script>
 </head>
 <body ng-controller="workspaceController" class="workspace" id="workspaceWebPageBody"> 
 	

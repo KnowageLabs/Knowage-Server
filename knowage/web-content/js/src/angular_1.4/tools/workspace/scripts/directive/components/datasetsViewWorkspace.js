@@ -28,6 +28,21 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     
     $scope.itemsPerPage=15;
     $scope.datasetInPreview=undefined;
+    
+    
+    $scope.markNotDerived=function(datasets){
+    	
+    	for(i=0;i<datasets.length;i++){
+    		
+    		if($scope.notDerivedDatasets.indexOf(dataset[i].label)>-1){
+    			datasets[i].derivated=false;
+    			
+    		}else{
+    			datasets[i].derivated=true;		
+    		}
+    	}
+    }
+    
 	/**
 	 * load all datasets
 	 */
@@ -81,9 +96,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	$scope.loadNotDerivedDatasets= function(){
 		sbiModule_restServices.promiseGet("2.0/datasets/listNotDerivedDataset", "")
 		.then(function(response) {
-			angular.copy(response.data,$scope.notDerivedDatasets);
+			//angular.copy(response.data,$scope.notDerivedDatasets);
+			$scope.extractNotDerivedLabels(response.data);
 //			console.log("not derivated");
-//		console.log($scope.notDerivedDatasets);
+		console.log($scope.notDerivedDatasets);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
@@ -91,6 +107,12 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	$scope.loadNotDerivedDatasets();
 	
 	
+	
+	 $scope.markNotDerived($scope.myDatasets);
+	 $scope.markNotDerived($scope.sharedDatasets);
+	 $scope.markNotDerived($scope.enterpriseDatasets);
+	 $scope.markNotDerived($scope.datasets);
+	 
 	$scope.showDatasetDetails = function() {
 		return $scope.showDatasetInfo && $scope.isSelectedDatasetValid();
 	};
@@ -150,16 +172,25 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     
     $scope.showQbeDataset= function(dataset){
     	console.log(dataset);
-		var actionName= 'QBE_ENGINE_FROM_FEDERATION_START_ACTION';
+	//	var actionName= 'QBE_ENGINE_FROM_FEDERATION_START_ACTION';
 		var label= dataset.label;
 		
-		
-		var url= sbiModule_config.engineUrls.worksheetServiceUrl
-		         +'&ACTION_NAME='+actionName
-		         +'&dataset_label='+label;
+		var url= datasetParameters.qbeFromDataSetServiceUrl
+		       +'&dataset_label='+label;
+//		var url= sbiModule_config.engineUrls.worksheetServiceUrl
+//		         +'&ACTION_NAME='+actionName
+//		         +'&dataset_label='+label;
 		 $window.location.href=url;
     }
     
+    $scope.extractNotDerivedLabels= function(datasets){
+    	for(i=0;i<datasets.length;i++){
+    		$scope.notDerivedDatasets.push(datasets[i].label);
+    	}
+    		
+    }
+    
+
     $scope.showHelpOnline= function(dataset){
     	
     	sbiModule_helpOnLine.show(dataset.label);
@@ -272,6 +303,21 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.addNewFileDataset=function(){
     	
       console.log("new dataset");	
+      
+      
+      $mdDialog.show({
+		  scope:$scope,
+		  preserveScope: true,
+	      controller: DatasetCreateController,
+	      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',  
+	      clickOutsideToClose:true,
+	      escapeToClose :true,
+	      //fullscreen: true,
+	      locals:{
+	    	 // previewDatasetModel:$scope.previewDatasetModel,
+	         // previewDatasetColumns:$scope.previewDatasetColumns 
+	      }
+	    });
     }
     
     $scope.switchTab=function(currentTab){
@@ -327,6 +373,57 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			 
 			 $mdDialog.cancel();	 
 	    }
+		
+		
+		
+	}
+	
+
+	
+	function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_config){
+		$scope.closeDatasetCreateDialog=function(){
+			$mdDialog.cancel();
+		}
+		
+		loadDatasetCategories= function(){
+			sbiModule_restServices.promiseGet("domainsforfinaluser/listValueDescriptionByType", "")
+			.then(function(response) {
+				console.log(response.data);
+				angular.copy(response.data,$scope.datasetCategories)
+			},function(response){
+				sbiModule_restServices.errorHandler(response.data,"faild to load categories");
+			});
+			
+			
+		}
+		
+	    loadDatasetCategories();
+//		$scope.fileObj={};
+//		
+//        $scope.uploadFileDataset=function(){
+//        	multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedataset/fileupload",$scope.fileObj).success(
+//
+//					function(data,status,headers,config){
+//						if(data.hasOwnProperty("errors")){						
+//							console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");		
+//							sbiModule_messaging.showErrorMessage("file upload failed"+":"+data.errors[0].message, 'Error');  
+//
+//						}else{
+//							sbiModule_messaging.showSuccessMessage("success", 'Success!'); 
+//							console.log("[UPLOAD]: SUCCESS!");
+//							$scope.fileObj.fileName = "";
+//							$scope.fileObj = {};
+//						}
+//						//$scope.bmCWMImportingShow = false;
+//
+//					}).error(function(data, status, headers, config) {
+//						console.log("[UPLOAD]: FAIL!"+status);
+//						sbiModule_messaging.showErrorMessage("errr", 'Error');
+//						//$scope.bmCWMImportingShow = false;
+//					});
+//        	
+//        }
+		
 		
 	}
     

@@ -55,7 +55,7 @@
 <!-- 			            <md-icon md-font-icon="fa fa-clone fa-2x"></md-icon> -->
 <!-- 			          </md-button> -->
 			          
-			          <md-button class="md-icon-button" aria-label="showDatasetQbe"  ng-click="showQbeDatasetAction({ds:dataset});" ng-show="showQbeEnabled">
+			          <md-button class="md-icon-button" aria-label="showDatasetQbe"  ng-click="showQbeDatasetAction({ds:dataset});" ng-show="showQbeEnabled && !dataset.derivated">
 			            <md-icon md-font-icon="fa fa-search fa-2x"></md-icon>
 			            <md-tooltip md-delay="1000">
 				              open qbe
