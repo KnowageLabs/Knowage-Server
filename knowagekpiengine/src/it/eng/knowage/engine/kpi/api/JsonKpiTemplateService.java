@@ -87,7 +87,7 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 			if (StringUtilities.isEmpty(result)) {
 				result = KpiEngineDataUtil.loadJsonData(jsonTemplate);
 			}
-			if (jsonTemplate.getJSONObject("chart").getString("type") == "kpi") {
+			if (jsonTemplate.getJSONObject("chart").getString("type").equals("kpi")) {
 				Calendar startDate = Calendar.getInstance();
 				JSONObject objTemp = new JSONObject();
 				List<KpiValue> kpiValues;
