@@ -134,7 +134,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <form id="businessModelForm">
           <md-card>
 	        <md-card-content>
-		        <md-input-container class="small counter">
+		        <md-input-container class="small counter" >
 					<label>{{translate.load("sbi.ds.name")}}</label>
 					<input ng-change="checkChange()" ng-model="selectedBusinessModel.name" required
 						 ng-maxlength="100"> 
@@ -165,8 +165,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<div layout="row" layout-wrap>
 						<label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.file.upload.button")}}:</label>
       				<file-upload  ng-model="fileObj" id="businessModelFile" ng-click="fileChange();checkChange()" flex></file-upload>
+      				<md-input-container flex="30">
+			          <md-switch ng-model="selectedBusinessModel.modelLocked" ng-change="businessModelLock()">{{ selectedBusinessModel.modelLocked && translate.load("sbi.bm.unlockModel") || translate.load("sbi.bm.lockModel")}}</md-switch>
+			        </md-input-container>
+				
       				
 				</div>
+				
+				
+				<!-- md-button class="md-fab md-Mini" style="left:0px; background-color:#3b678c" ng-click="businessModelLock()">
+       								<md-tooltip md-direction="bottom">
+       									{{ selectedBusinessModel.modelLocked && translate.load("sbi.bm.unlockModel") || translate.load("sbi.bm.lockModel")}}
+       								</md-tooltip>
+       								<md-icon
+       									ng-show="selectedBusinessModel.modelLocked"
+										md-font-icon="fa fa-unlock-alt fa-lg" 
+										style="color: white; ">
+									</md-icon>
+									<md-icon
+										ng-show="!selectedBusinessModel.modelLocked"
+										md-font-icon="fa fa-lock fa-lg" 
+										style="color: white; ">
+									</md-icon>  
+       						</md-button -->
 				
 			</md-card-content>
 	      </md-card>
