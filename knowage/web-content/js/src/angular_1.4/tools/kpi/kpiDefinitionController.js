@@ -333,7 +333,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/"+item.version+"/loadKpi")
 			.then(function(response){ 
 
-				angular.copy({},$scope.kpi.cardinality);
+			//	angular.copy({},$scope.kpi.cardinality);
 				$timeout(function(){
 					$scope.selectedTab.tab=0;
 				},0)
