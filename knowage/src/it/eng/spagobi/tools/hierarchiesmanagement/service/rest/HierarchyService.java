@@ -256,7 +256,7 @@ public class HierarchyService {
 			}
 
 			if (!isInsert && doBackup) {
-				HierarchyUtils.updateHierarchyForBackup(dataSource, connection, paramsMap);
+				HierarchyUtils.updateHierarchyForBackup(dataSource, connection, paramsMap, false);
 			} else if (!isInsert && !doBackup) {
 				HierarchyUtils.deleteHierarchy(dimension, hierSourceName, dataSource, connection);
 			}

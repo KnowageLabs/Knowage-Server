@@ -1093,7 +1093,7 @@ public class HierarchyUtils {
 	 * @param databaseConnection
 	 * @param paramsMap
 	 */
-	public static String updateHierarchyForBackup(IDataSource dataSource, Connection databaseConnection, HashMap paramsMap) {
+	public static String updateHierarchyForBackup(IDataSource dataSource, Connection databaseConnection, HashMap paramsMap, boolean isSyncronize) {
 		logger.debug("START");
 
 		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
@@ -1116,11 +1116,14 @@ public class HierarchyUtils {
 			vDateWhereClause = "? = ?";
 		}
 
-		// String updateQuery = "UPDATE " + (String) paramsMap.get("hierarchyTable") + " SET " + hierNameColumn + "= ?, " + bkpColumn + " = ?, "
-		// + bkpTimestampColumn + "= ? WHERE " + hierNameColumn + "=? AND " + hierTypeColumn + "= ? AND " + vDateWhereClause;
-
-		String updateQuery = "UPDATE " + (String) paramsMap.get("hierarchyTable") + " SET " + hierNameColumn + "= ?, " + bkpColumn + " = ?, "
-				+ bkpTimestampColumn + "= ? WHERE " + hierNameColumn + "=? AND " + hierTypeColumn + "= ? AND " + bkpColumn + " = ? ";
+		String updateQuery = "";
+		if (isSyncronize) {
+			updateQuery = "UPDATE " + (String) paramsMap.get("hierarchyTable") + " SET " + hierNameColumn + "= ?, " + bkpColumn + " = ?, " + bkpTimestampColumn
+					+ "= ? WHERE " + hierNameColumn + "=? AND " + hierTypeColumn + "= ? AND " + bkpColumn + " = ? ";
+		} else {
+			updateQuery = "UPDATE " + (String) paramsMap.get("hierarchyTable") + " SET " + hierNameColumn + "= ?, " + bkpColumn + " = ?, " + bkpTimestampColumn
+					+ "= ? WHERE " + hierNameColumn + "=? AND " + hierTypeColumn + "= ? AND " + vDateWhereClause;
+		}
 
 		logger.debug("The update query is [" + updateQuery + "]");
 
@@ -1130,10 +1133,13 @@ public class HierarchyUtils {
 			preparedStatement.setTimestamp(3, new java.sql.Timestamp(timestamp));
 			preparedStatement.setString(4, (String) paramsMap.get("hierTargetName"));
 			preparedStatement.setString(5, (String) paramsMap.get("hierTargetType"));
-			preparedStatement.setBoolean(6, false);
-			// preparedStatement.setDate(6, vDateConverted);
-			// preparedStatement.setDate(7, vDateConverted);
 
+			if (isSyncronize) {
+				preparedStatement.setBoolean(6, false);
+			} else {
+				preparedStatement.setDate(6, vDateConverted);
+				preparedStatement.setDate(7, vDateConverted);
+			}
 			preparedStatement.executeUpdate();
 
 			logger.debug("Update query successfully executed");

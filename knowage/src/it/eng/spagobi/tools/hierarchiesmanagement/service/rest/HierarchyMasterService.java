@@ -399,7 +399,7 @@ public class HierarchyMasterService {
 			paramsMap.put("hierTargetType", filterHierType);
 			paramsMap.put("doPropagation", true);
 
-			String backupHierName = HierarchyUtils.updateHierarchyForBackup(dataSource, dbConnection, paramsMap);
+			String backupHierName = HierarchyUtils.updateHierarchyForBackup(dataSource, dbConnection, paramsMap, true);
 
 			// 5 - insert the new hierarchy (merged)
 			Iterator iterFromDim = dsNewDimensions.iterator();
