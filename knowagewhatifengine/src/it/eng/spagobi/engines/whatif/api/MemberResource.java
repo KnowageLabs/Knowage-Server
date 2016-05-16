@@ -26,7 +26,9 @@ import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.ResultSetConverter;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -75,17 +78,18 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		modelConfig = getWhatIfEngineInstance().getModelConfig();
 	}
 
-	@GET
-	@Path("/drilldown/{axis}/{position}/{member}/{positionUniqueName}/{memberUniqueName}")
+	@POST
+	@Path("/drilldown/{axis}/{position}/{member}")
 	@Produces("text/html; charset=UTF-8")
 	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
-			@PathParam("member") int memberPos, @PathParam("positionUniqueName") String positionUniqueName,
-			@PathParam("memberUniqueName") String memberUniqueName) {
+			@PathParam("member") int memberPos) throws JSONException, IOException  {
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
 		String time = "Drilldown start " + format.format(new Date());
 		//System.out.println(time);
 		init();
 
+		String str = RestUtilities.readBody(req);
+		JSONObject jo = new JSONObject(str);
 		model.removeSubset();
 		//System.out.println(model.getCurrentMdx());
 		// The ROWS axis
@@ -94,13 +98,13 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		// Member positions of the ROWS axis.
 		List<Position> positions = rowsOrColumns.getPositions();
 
-		Position p = CubeUtilities.getPosition(positions, positionUniqueName);
+		Position p = CubeUtilities.getPosition(positions, jo.getString("positionUniqueName"));
 
 		List<Member> m = p.getMembers();
 		Member m2 = m.get(memberPos);
 
 		try {
-			m2 = CubeUtilities.getMember(model.getCube(), memberUniqueName);
+			m2 = CubeUtilities.getMember(model.getCube(), jo.getString("memberUniqueName"));
 		} catch (OlapException e) {
 			logger.error(e);
 			throw new SpagoBIRestServiceException(getLocale(), e);

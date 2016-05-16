@@ -14,9 +14,15 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	
 	
 	$scope.drillDown = function(axis, position, member, uniqueName,positionUniqueName) {
-		var encoded = encodeURI('/member/drilldown/'+ axis+ '/'+ position+ '/'+ member+ '/'+ positionUniqueName+ '/'+ uniqueName+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
-		sbiModule_restServices.promiseGet
-		("1.0",encoded)
+		
+		 var data = JSON.stringify({
+			 		memberUniqueName: uniqueName,
+	            	positionUniqueName: positionUniqueName
+	            });
+		
+		var encoded = encodeURI('/member/drilldown/'+ axis+ '/'+ position+ '/'+ member+ '/'+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+		sbiModule_restServices.promisePost
+		("1.0",encoded,data)
 		.then(function(response) {
 			$scope.handleResponse(response);
 		}, function(response) {
