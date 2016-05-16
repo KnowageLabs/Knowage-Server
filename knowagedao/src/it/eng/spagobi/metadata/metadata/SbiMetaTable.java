@@ -35,8 +35,8 @@ public class SbiMetaTable extends SbiHibernateModel {
 		this.deleted = deleted;
 	}
 
-	public SbiMetaTable(SbiMetaSource sbiMetaSource, String name, boolean deleted, Set sbiMetaTableColumns, Set sbiMetaObjTables, Set sbiMetaDsTables,
-			Set sbiMetaJobTables, Set sbiMetaTableBcs) {
+	public SbiMetaTable(SbiMetaSource sbiMetaSource, String name, boolean deleted, Set sbiMetaTableColumns, Set sbiMetaDsTables, Set sbiMetaJobTables,
+			Set sbiMetaTableBcs) {
 		this.sbiMetaSource = sbiMetaSource;
 		this.name = name;
 		this.deleted = deleted;
