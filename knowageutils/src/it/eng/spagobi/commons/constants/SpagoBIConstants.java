@@ -483,5 +483,11 @@ public class SpagoBIConstants {
 	public static final String DISTRIBUTED_MAP_INSTANCE_NAME = "KNOWAGE";
 	public static final String CACHE_MANAGEMENT = "CacheManagement";
 
-	public static final String META_MODELS_CATALOGUE_MANAGEMENT = "MetaModelsCatalogueManagement";
+	public static final String META_MODELS_CATALOGUE_MANAGEMENT = "AnalyticalWidget";
+	// Cockpit
+	public static final String MANAGE_STATIC_WIDGET = "StaticWidget";
+	public static final String MANAGE_ANALYTICAL_WIDGET = "AnalyticalWidget";
+	public static final String MANAGE_CHART_WIDGET = "ChartWidget";
+	public static final String MANAGE_MULTISHEET_COCKPIT = "MultisheetCockpit";
+
 }
