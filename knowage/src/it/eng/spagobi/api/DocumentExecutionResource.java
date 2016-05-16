@@ -149,7 +149,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		List errorList = new ArrayList<>();
 		MessageBuilder m = new MessageBuilder();
 		Locale locale = m.getLocale(req);
-
+		JSONObject err = new JSONObject();
+		JSONArray arrerr = new JSONArray();
 		if (sbiExecutionId == null || sbiExecutionId.isEmpty()) {
 			// create execution id
 			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
@@ -255,17 +256,21 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			resultAsMap.put("engineLabel", obj.getEngine().getLabel());
 
 		} catch (DocumentExecutionException e) {
-			JSONObject err = new JSONObject();
 			err.put("message", e.getMessage());
 			err.put("type", "missingRole");
-			JSONArray arrerr = new JSONArray();
 			arrerr.put(err);
 			JSONObject toRet = new JSONObject();
 			toRet.put("errors", arrerr);
 			return Response.ok(toRet.toString()).build();
 		} catch (Exception e) {
 			logger.error("Error while getting the document execution url", e);
-			throw new SpagoBIRuntimeException("Error while getting the document execution url", e);
+			// throw new SpagoBIRuntimeException("Error while getting the document execution url", e);
+			err.put("message", e.getMessage());
+			arrerr.put(err);
+			JSONObject toRet = new JSONObject();
+			toRet.put("errors", arrerr);
+			return Response.ok(toRet.toString()).build();
+
 		}
 
 		logger.debug("OUT");

@@ -204,8 +204,7 @@ public class DocumentExecutionUtils {
 
 			AuditLogUtilities.updateAudit(req, profile, "DOCUMENT.GET_URL", logParam, "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new SpagoBIServiceException(SERVICE_NAME, e.getMessage());
 		}
 		return url;
 	}

@@ -486,7 +486,12 @@
 //					}); 
 					if(response.data.errors[0].type=="missingRole" || response.data.errors[0].category=="VALIDATION_ERROR"){
 						docExecute_paramRolePanelService.toggleParametersPanel(true);
+					}else{
+						sbiModule_restServices.errorHandler(response.data,response.data.errors[0].message);
 					}
+					
+					
+					
 					serviceScope.frameLoaded = true; 
 				});
 		};
