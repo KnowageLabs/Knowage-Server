@@ -878,7 +878,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 			, scope: this
 			, handler:  Ext.Function.pass(this.onAddWidget, [Sbi.constants.cockpit.chart])
 			//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
-			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
+			, hidden: !Sbi.config.visibiltyButtons.showAddChart || Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
 		
 		tbItems.push(  new Ext.Button({
@@ -898,7 +898,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 			, scope: this
 			, handler:  Ext.Function.pass(this.onAddWidget, [Sbi.constants.cockpit.staticWidgets])
 			//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
-			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
+			, hidden: !Sbi.config.visibiltyButtons.showAddStaticWidgets || Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
 
 		tbItems.push(  new Ext.Button({
@@ -908,7 +908,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 			, scope: this
 			, handler:  Ext.Function.pass(this.onAddWidget, [Sbi.constants.cockpit.analyticalResources])
 			//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
-			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
+			, hidden: !Sbi.config.visibiltyButtons.showAddAnalytical || Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
 		
 		tbItems.push(  new Ext.Button({

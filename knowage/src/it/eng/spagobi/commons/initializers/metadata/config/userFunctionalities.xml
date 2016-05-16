@@ -54,7 +54,11 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpMenu" description="ImpExpMenu"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpUsers" description="ImpExpUsers"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
-	<USER_FUNCTIONALITY productType="KnowageBD" name="InstallConfig" description="InstallConfig" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="MultisheetCockpit" description="MultisheetCockpit" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ChartWidget" description="ChartWidget" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="StaticWidget" description="StaticWidget" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="AnalyticalWidget" description="AnalyticalWidget" />
+	
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="EnginesManagement" description="EnginesManagement"/>
@@ -129,6 +133,10 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="InstallConfig" description="InstallConfig" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AlertManagement" description="AlertManagement" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="MultisheetCockpit" description="MultisheetCockpit" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ChartWidget" description="ChartWidget" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="StaticWidget" description="StaticWidget" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
 	
 	<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="EnginesManagement" description="EnginesManagement"/>

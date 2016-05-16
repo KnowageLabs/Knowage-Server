@@ -102,6 +102,11 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	
 	documentMode = (request.getParameter("documentMode")==null)?"VIEW":request.getParameter("documentMode");
 	
+	boolean showAddChart = profile.isAbleToExecuteAction(SpagoBIConstants.MANAGE_CHART_WIDGET);
+	boolean showAddStaticWidgets = profile.isAbleToExecuteAction(SpagoBIConstants.MANAGE_STATIC_WIDGET);
+	boolean showAddAnalytical = profile.isAbleToExecuteAction(SpagoBIConstants.MANAGE_ANALYTICAL_WIDGET);
+	boolean showMultiSheet = profile.isAbleToExecuteAction(SpagoBIConstants.MANAGE_MULTISHEET_COCKPIT);
+	
 	boolean forceIE8Compatibility = false;
 	
 	boolean fromMyAnalysis = false;
@@ -442,6 +447,12 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		Sbi.config.chartDesignerUrl = "<%=chartDesignerUrl%>";
 		Sbi.config.chartRuntimeUrl = "<%=chartRuntimeUrl%>";
 		Sbi.config.currentRole = "<%=executionRole%>";
+		Sbi.config.visibiltyButtons = {
+				showAddChart : <%= showAddChart %>,
+				showAddStaticWidgets : <%= showAddStaticWidgets %>,
+				showAddAnalytical : <%= showAddAnalytical %>,
+				showMultiSheet :  <%= showMultiSheet %>
+		};
 		
 		var cockpitPanel = null;
 		    

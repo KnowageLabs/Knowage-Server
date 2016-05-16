@@ -335,4 +335,29 @@
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="InstallConfig" roleType="ADMIN" />
 	
+	<!-- Cockpit -->
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MultisheetCockpit" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MultisheetCockpit" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MultisheetCockpit" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MultisheetCockpit" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MultisheetCockpit" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ChartWidget" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ChartWidget" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ChartWidget" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ChartWidget" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ChartWidget" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="StaticWidget" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="StaticWidget" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="StaticWidget" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="StaticWidget" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="StaticWidget" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="MODEL_ADMIN" />
+	
 </ROLE_TYPE_USER_FUNCTIONALITIES>
