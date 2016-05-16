@@ -56,13 +56,7 @@
 				<md-progress-circular 	loading ng-show="showEl || searching" md-mode="indeterminate" md-diameter="75%" 
 										style="position:fixed;top:50%;left:50%;z-index:500;background:rgba(255, 255, 255, 0);">
 				</md-progress-circular>
-				
-				<!-- 
-					The toolbar that contains Search button and text field, as well as grid/list document view toggle button.
-					@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 	
-				-->
-				<customize-view-workspace>													</customize-view-workspace>
-				
+								
 				<!-- 
 					Pages for all items available in the left menu (table), e.g. Recent, Favorites, Documents, etc. 
 					@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 

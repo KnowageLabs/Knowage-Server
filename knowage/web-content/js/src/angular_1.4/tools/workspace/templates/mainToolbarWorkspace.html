@@ -1,22 +1,25 @@
-<md-toolbar class="md-toolbar-tools md-knowage-theme"> MY WORKSPACE
-		
-		<md-button ng-show="currentOptionMainMenu=='documents'" ng-click="" class="md-fab md-fab-top-right md-button ng-scope md-knowage-theme md-ink-ripple"> 
-			<md-icon md-font-icon="fa fa-folder-o"></md-icon> 
+<div layout="row">
+<md-toolbar flex=20 class="md-toolbar-tools md-knowage-theme"> MY WORKSPACE ({{currentOptionMainMenu | uppercase}})</md-toolbar>
+<customize-view-workspace></customize-view-workspace>
+<md-toolbar flex=20 class="md-toolbar-tools md-knowage-theme">
+
+		<md-button ng-show="currentOptionMainMenu=='documents'" ng-click="" class="md-fab md-fab-top-right md-button ng-scope md-knowage-theme md-ink-ripple">
+			<md-icon md-font-icon="fa fa-folder-o"></md-icon>
 		</md-button>
-		
-		<md-button ng-show="currentOptionMainMenu=='datasets' && currentTab=='myDataSet'" ng-click="addNewFileDataset()" class="md-fab md-fab-top-right md-button ng-scope md-knowage-theme md-ink-ripple"> 
-			<md-icon md-font-icon="fa fa-plus"></md-icon> 
+
+		<md-button ng-show="currentOptionMainMenu=='datasets' && currentTab=='myDataSet'" ng-click="addNewFileDataset()" class="md-fab md-fab-top-right md-button ng-scope md-knowage-theme md-ink-ripple">
+			<md-icon md-font-icon="fa fa-plus"></md-icon>
 		</md-button>
-		
-		<md-button ng-show="currentOptionMainMenu=='models' && currentTab=='federations'" ng-click="createFederation()" class="md-fab md-fab-top-right md-button ng-scope md-knowage-theme md-ink-ripple"> 
-			<md-icon md-font-icon="fa fa-plus"></md-icon> 
+
+		<md-button ng-show="currentOptionMainMenu=='models' && currentTab=='federations'" ng-click="createFederation()" class="md-fab md-fab-top-right md-button ng-scope md-knowage-theme md-ink-ripple">
+			<md-icon md-font-icon="fa fa-plus"></md-icon>
 		</md-button>
-		
-		<!-- 
+
+		<!--
 			KNOWAGE-861: Change the icon for creation of analysis in the main toolbar.
-			Provide the Plus button for adding the new analysis document inside the Analysis perspective if the 
-			active (selected) tab IS NOT "ALL" (for all available analysis documents). In other words, if the 
-			currently active tab displays exclusively Cockpit or Geo map documents, we will be able to add a new 
+			Provide the Plus button for adding the new analysis document inside the Analysis perspective if the
+			active (selected) tab IS NOT "ALL" (for all available analysis documents). In other words, if the
+			currently active tab displays exclusively Cockpit or Geo map documents, we will be able to add a new
 			document of such a type (respectively to the tab which user selected).
 			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		-->
@@ -24,5 +27,6 @@
 					class="md-fab md-fab-top-right md-button ng-scope md-knowage-theme md-ink-ripple" title="{{newAnalysisDocButtonTooltip()}}"> 
 			<md-icon md-font-icon="fa fa-plus"></md-icon>
 		</md-button>
-		
+
 </md-toolbar>
+</div>

@@ -131,7 +131,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.toogleGridListViewOfDocs = function() {
 		$scope.showGridView = !$scope.showGridView;
 	}
-
+	
 	/**
 	 * Filter the sent collection of data (documents, analysis, datasets, etc.)
 	 * according to the searching term (sequence) user entered, 'newSearchInput'.
@@ -188,7 +188,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.setSearchInput = function(newSearchInput) {		
-		
+		console.log(newSearchInput);
 		$scope.searchInput = newSearchInput;
 		var currentOptionMainMenu = $scope.currentOptionMainMenu;		
 		
@@ -296,10 +296,9 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	/**
 	 * Preview (execute) a particular document.
 	 */
-	$scope.executeDocument = function(document) {
+	$scope.executeDocument = function(document) {		
 		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");		
-		$documentViewer.openDocument(document.id, document.label, document.name);
-		
+		$documentViewer.openDocument(document.id, document.label, document.name);		
 	}
 	
 	/**

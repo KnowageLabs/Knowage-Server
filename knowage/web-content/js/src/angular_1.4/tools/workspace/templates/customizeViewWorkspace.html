@@ -1,23 +1,17 @@
-<md-content class="md-toolbar-tools">
-	
-	<div class="md-toolbar-tools" layout="row" layout-align="center center">
+<md-toolbar flex=70 class="md-toolbar-tools md-knowage-theme" layout-align="center center">
 		
 		<!--  Search button -->
-		<md-button class="md-icon-button" ng-click="setSearchInput(searchInput)">
-			  <md-icon md-font-icon="fa fa-search"></md-icon>
+		<md-button class="md-icon-button">
+			  <md-icon class="md-icon-button" md-font-icon="fa fa-search"></md-icon>
 		</md-button>
 		
 		<!-- Search input -->
-	    <md-input-container ng-show=true class="searchInput">
-			<input 	type="text" id="searchInput" ng-model="searchInput" 
-					ng-change="setSearchInput(searchInput)" 
-					focus-on="searchInput"
-					title="Insert text for searching">
+	    <md-input-container  ng-show=true class="searchInput">
+			<input class="workspaceSearchInput" type="text" id="searchInput" ng-model="searchInput" focus-on="searchInput" ng-change="setSearchInput(searchInput)">
 		</md-input-container>
 		
 		<!-- Search clear -->
-		<md-button 	class="md-icon-button" title="Clear the text for searching" 
-					aria-label="Clear" ng-show=true ng-click="setSearchInput('')">
+		<md-button class="md-icon-button" title="Clear" aria-label="Clear" ng-show=true ng-click="setSearchInput('')">
 			   <md-icon md-font-icon="fa fa-times"></md-icon>
 		</md-button>
 		
@@ -30,6 +24,4 @@
 			 
 		</md-button>		
 		
-	</div>
-	
-</md-content>
+</md-toolbar>
