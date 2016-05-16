@@ -50,10 +50,12 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 					    	
 					    	var subfoldersId = scope.subfoldersId;
 					    	
-					    	scope.iconFolder = 'fa fa-folder-o';
-					    	scope.iconFolderOpen = 'fa fa-folder-open-o';
-					    	scope.multiFolders= 'fa fa-folder';
-					    	scope.multiFoldersOpen= 'fa fa-folder-open';
+					    	//icons
+					    	scope.iconFolder 		= scope.keys !== undefined && scope.keys.iconFolder !==undefined && scope.keys.iconFolder.length > 0 ? scope.keys.iconFolder: 'fa fa-square' ;
+					    	scope.iconFolderOpen 	= scope.keys !== undefined && scope.keys.iconFolderOpen !==undefined && scope.keys.iconFolderOpen.length > 0 ? scope.keys.iconFolderOpen: 'fa fa-square-o' ;
+					    	scope.multiFolders 		= scope.keys !== undefined && scope.keys.multiFolders !==undefined && scope.keys.multiFolders.length > 0 ? scope.keys.multiFolders: 'fa fa-plus-square' ;
+					    	scope.multiFoldersOpen 	= scope.keys !== undefined && scope.keys.multiFoldersOpen !==undefined && scope.keys.multiFoldersOpen.length > 0 ? scope.keys.multiFoldersOpen: 'fa fa-minus-square' ;
+
 					    	
 					    	scope.seeTree = false;
 					    	
@@ -153,6 +155,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 
 function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
 	$scope.toogleSelected = function(element, parent){
+		
 		if (element !== undefined && $scope.multiSelect){
 			//check the element as the parent. If not the parent doesn't exist, toggle the element check
 			element.checked = parent === undefined ? !element.checked : parent.checked; 
