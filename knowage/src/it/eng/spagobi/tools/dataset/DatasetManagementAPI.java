@@ -17,18 +17,39 @@
  */
 package it.eng.spagobi.tools.dataset;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.naming.NamingException;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import commonj.work.Work;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleDataSetCategory;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
@@ -60,27 +81,6 @@ import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.NamingException;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import commonj.work.Work;
 
 /**
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
@@ -1469,10 +1469,20 @@ public class DatasetManagementAPI {
 			while (userRolesIter.hasNext()) {
 				String roleName = (String) userRolesIter.next();
 				Role role = roledao.loadByName(roleName);
-				List<RoleDataSetCategory> aRoleCategories = roledao.getDataSetCategoriesForRole(role.getId());
-				if (aRoleCategories != null) {
-					for (Iterator iterator = aRoleCategories.iterator(); iterator.hasNext();) {
-						RoleDataSetCategory roleDataSetCategory = (RoleDataSetCategory) iterator.next();
+
+				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
+				List<RoleMetaModelCategory> resp = new ArrayList<>();
+				List<SbiDomains> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+				for (RoleMetaModelCategory r : aRoleCategories) {
+					for (SbiDomains dom : array) {
+						if (r.getCategoryId().equals(dom.getValueId())) {
+							resp.add(r);
+						}
+					}
+				}
+				if (resp != null) {
+					for (Iterator iterator = resp.iterator(); iterator.hasNext();) {
+						RoleMetaModelCategory roleDataSetCategory = (RoleMetaModelCategory) iterator.next();
 						categories.add(roleDataSetCategory.getCategoryId());
 					}
 				}

@@ -17,6 +17,34 @@
  */
 package it.eng.spagobi.api;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
@@ -26,7 +54,7 @@ import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleDataSetCategory;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
@@ -34,6 +62,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -85,34 +114,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini (monica.franceschini@eng.it)
@@ -1045,8 +1046,8 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 
-	private Map<String, HierarchyLevel> getHierarchiesColumnsToCheck(String datasetMetadata) throws JsonMappingException, JsonParseException, JSONException,
-			IOException {
+	private Map<String, HierarchyLevel> getHierarchiesColumnsToCheck(String datasetMetadata)
+			throws JsonMappingException, JsonParseException, JSONException, IOException {
 		JSONObject metadataObject = null;
 
 		Map<String, HierarchyLevel> hierarchiesColumnsToCheck = new HashMap<String, HierarchyLevel>();
@@ -1145,8 +1146,8 @@ public class SelfServiceDataSetCRUD {
 		return dataSetsJSON;
 	}
 
-	private IDataSet recoverDataSetDetails(HttpServletRequest request, IDataSet dataSet, boolean savingDataset) throws EMFUserError, SourceBeanException,
-			IOException {
+	private IDataSet recoverDataSetDetails(HttpServletRequest request, IDataSet dataSet, boolean savingDataset)
+			throws EMFUserError, SourceBeanException, IOException {
 		return recoverDataSetDetails(request, dataSet, savingDataset, false, -1);
 	}
 
@@ -1841,10 +1842,21 @@ public class SelfServiceDataSetCRUD {
 			while (userRolesIter.hasNext()) {
 				String roleName = (String) userRolesIter.next();
 				Role role = roledao.loadByName(roleName);
-				List<RoleDataSetCategory> aRoleCategories = roledao.getDataSetCategoriesForRole(role.getId());
-				if (aRoleCategories != null) {
-					for (Iterator iterator = aRoleCategories.iterator(); iterator.hasNext();) {
-						RoleDataSetCategory roleDataSetCategory = (RoleDataSetCategory) iterator.next();
+
+				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
+				List<RoleMetaModelCategory> resp = new ArrayList<>();
+				List<SbiDomains> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+				for (RoleMetaModelCategory r : aRoleCategories) {
+					for (SbiDomains dom : array) {
+						if (r.getCategoryId().equals(dom.getValueId())) {
+							resp.add(r);
+						}
+					}
+
+				}
+				if (resp != null) {
+					for (Iterator iterator = resp.iterator(); iterator.hasNext();) {
+						RoleMetaModelCategory roleDataSetCategory = (RoleMetaModelCategory) iterator.next();
 						categories.add(roleDataSetCategory.getCategoryId());
 					}
 				}

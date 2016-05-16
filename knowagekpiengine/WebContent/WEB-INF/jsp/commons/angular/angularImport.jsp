@@ -56,3 +56,7 @@
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/module/sbiModule.js"></script>
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jsp"%>
+
+<!-- sbiModule_dateServices -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/sbiModule_services/sbiModule_dateServices.js"></script>
+	

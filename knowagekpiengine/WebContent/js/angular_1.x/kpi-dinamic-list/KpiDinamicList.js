@@ -15,7 +15,7 @@ angular.module('dinamic-list', ['ngMaterial','sbiModule'])
 	}
 });
 
-function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_restServices,sbiModule_translate,sbiModule_config){
+function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_restServices,sbiModule_translate,sbiModule_config,sbiModule_dateServices){
 	var s=$scope;
 	s.translate=sbiModule_translate;
 	s.kpiAllList = [];
@@ -133,7 +133,7 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 					obj["valueCd"] = response.data[i].category.valueCd;
 				}
 				obj["author"]=response.data[i].author;
-				obj["datacreation"]=new Date(response.data[i].dateCreation);
+				obj["datacreation"]=sbiModule_dateServices.formatDate(new Date(response.data[i].dateCreation));
 				obj["id"]=response.data[i].id;
 				obj["vieweAsList"] ='<md-select ng-model="row.vieweAs" class="noMargin">'
 					+'<md-option value=""></md-option>'

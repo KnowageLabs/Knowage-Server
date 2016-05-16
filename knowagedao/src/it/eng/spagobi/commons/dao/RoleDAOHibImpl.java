@@ -42,7 +42,6 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet;
 import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleDataSetCategory;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
@@ -1394,50 +1393,6 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 			}
 		}
-	}
-
-	/**
-	 * Get the Data Set Categories associated to a role
-	 *
-	 * @see it.eng.spagobi.commons.dao.IRoleDAO#getDataSetCategoryForRole(java.lang.Integer)
-	 */
-	@Override
-	public List<RoleDataSetCategory> getDataSetCategoriesForRole(Integer roleId) throws EMFUserError {
-		Session aSession = null;
-		Transaction tx = null;
-		List<RoleDataSetCategory> categories = new ArrayList<RoleDataSetCategory>();
-		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
-
-			SbiExtRoles sbiExtRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleId);
-			Integer extRoleId = sbiExtRole.getExtRoleId();
-			Set<SbiDomains> sbiDomains = sbiExtRole.getSbiDataSetCategories();
-
-			// For each category associated to the role
-			for (SbiDomains sbiDomain : sbiDomains) {
-				RoleDataSetCategory category = new RoleDataSetCategory();
-				category.setCategoryId(sbiDomain.getValueId());
-				category.setRoleId(extRoleId);
-				categories.add(category);
-			}
-
-			tx.commit();
-		} catch (HibernateException he) {
-			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
-		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
-		}
-		return categories;
 	}
 
 	/**

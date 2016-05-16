@@ -1,4 +1,6 @@
 <%-- this is part of sbiModule.js --%>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="it.eng.spago.message.MessageBundle"%>
 <script>
 (function() {
 	var sbiM=angular.module('sbiModule');
@@ -10,7 +12,8 @@
 		    port: '<%= request.getServerPort()%>',
 		    contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
 		    controllerPath: null ,// no cotroller just servlets   
-		    docLabel :"<%=docLabel%>",
+			dateFormat: '<%= GeneralUtilities.getLocaleDateFormat(MessageBundle.getUserLocale()) %>',  // the date format localized according to user language and country 
+	 		docLabel :"<%=docLabel%>",
 			docVersion : "<%=docVersion%>",
 		 	userId : "<%=userId%>",
 		 	docAuthor :"<%=docAuthor%>",

@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.kpi.dao;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.bo.Alias;
 import it.eng.spagobi.kpi.bo.Cardinality;
@@ -125,7 +126,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 * @param status
 	 * @return
 	 */
-	public List<Kpi> listKpi(STATUS status);
+	public List<Kpi> listKpi(STATUS status, IEngUserProfile profile);
 
 	public List<KpiExecution> listKpiWithResult();
 

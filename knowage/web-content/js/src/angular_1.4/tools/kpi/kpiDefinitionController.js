@@ -101,7 +101,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		} 
 	};
 	$scope.cancel = function(){
-		if($scope.formulaModified.value){
+		if($scope.formulaModified.value && $scope.kpi.id!=undefined){
 			var confirm = $mdDialog.confirm()
 			.title($scope.translate.load("sbi.layer.modify.progress"))
 			.content($scope.translate.load("sbi.layer.modify.progress.message.modify"))

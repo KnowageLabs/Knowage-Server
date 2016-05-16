@@ -42,6 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src=" "></script>
 <script type="text/javascript"
 	src="/knowage/js/src/angular_1.4/tools/catalogues/rolesManagement.js"></script>
+<script type="text/javascript"	src="/knowage/js/src/angular_1.4/tools/catalogues/RoleManagementSubController/kpiCategoryController.js"></script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Roles Management</title>
@@ -536,6 +537,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				multi-select="true"> </angular-table>
 		    </md-card>		
 			</md-content> </md-tab>
+			<!-- Add associations role categoryKpi -->
+			<md-tab id="tabKpi" >
+       				<md-tab-label>{{translate.load("sbi.roles.listcategory")}}</md-tab-label>
+        			<md-tab-body>
+        			<%@include	file="./rolesManagementTemplates/kpiCategory.jsp"%>
+					</md-tab-body>
+				</md-tab>
 			</md-tabs> 
 		
 	</form>

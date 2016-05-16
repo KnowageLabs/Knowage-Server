@@ -102,7 +102,6 @@ public class RoleBO implements Serializable {
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
-	private List<RoleDataSetCategory> roleDataSetCategories;
 
 	/**
 	 * Class constructor.
@@ -511,14 +510,6 @@ public class RoleBO implements Serializable {
 
 	public void setRoleMetaModelCategories(List<RoleMetaModelCategory> roleMetaModelCategories) {
 		this.roleMetaModelCategories = roleMetaModelCategories;
-	}
-
-	public List<RoleDataSetCategory> getRoleDataSetCategories() {
-		return roleDataSetCategories;
-	}
-
-	public void setRoleDataSetCategories(List<RoleDataSetCategory> roleDataSetCategories) {
-		this.roleDataSetCategories = roleDataSetCategories;
 	}
 
 }

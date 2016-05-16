@@ -38,7 +38,11 @@ import org.json.JSONObject;
 
 import it.eng.knowage.engine.kpi.KpiEngine;
 import it.eng.knowage.engine.kpi.KpiEngineInstance;
+import it.eng.knowage.engine.kpi.KpiEngineRuntimeException;
 import it.eng.knowage.engine.kpi.api.AbstractFullKpiEngineResource;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
@@ -104,6 +108,25 @@ public class PageResource extends AbstractFullKpiEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@Override
+	public EngineStartServletIOManager getIOManager() {
+		EngineStartServletIOManager ioManager = null;
+
+		try {
+			ioManager = new EngineStartServletIOManager(request, response);
+			UserProfile userProfile = (UserProfile) ioManager.getParameterFromSession(IEngUserProfile.ENG_USER_PROFILE);
+			if (userProfile == null) {
+				String userId = request.getHeader("user");
+				userProfile = (UserProfile) UserUtilities.getUserProfile(userId);
+				ioManager.setUserProfile(userProfile);
+			}
+		} catch (Exception e) {
+			throw new KpiEngineRuntimeException("An unexpected error occured while inizializing ioManager", e);
+		}
+
+		return ioManager;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -17,19 +17,18 @@
  */
 package it.eng.spagobi.commons.dao;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleDataSetCategory;
-import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
-import it.eng.spagobi.commons.metadata.SbiAuthorizations;
-import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-
 import java.util.List;
 
 import org.hibernate.Session;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting a role
@@ -201,8 +200,6 @@ public interface IRoleDAO extends ISpagoBIDao {
 	public void insertRoleDataSetCategory(Integer roleId, Integer categoryId) throws EMFUserError;
 
 	public void removeRoleDataSetCategory(Integer roleId, Integer categoryId) throws EMFUserError;
-
-	public List<RoleDataSetCategory> getDataSetCategoriesForRole(Integer roleId) throws EMFUserError;
 
 	/*
 	 * Methods for managing Role - Authorization association

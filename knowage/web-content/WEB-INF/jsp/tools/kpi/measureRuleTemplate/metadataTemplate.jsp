@@ -55,8 +55,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </md-input-container> 
         <md-input-container ng-if="mtdValue.type.valueCd=='TEMPORAL_ATTRIBUTE'">
         <label>{{translate.load("sbi.ds.metadata.dataset.hierarchy.level")}}</label>
-        <md-select ng-model="mtdValue.hierarchy"  ng-model-options="{trackBy: '$value.valueId'}">
-          <md-option ng-repeat="hlevel in hierarchicalLevelList" ng-value="{{hlevel}}">
+        <md-select ng-model="mtdValue.hierarchy" ng-model-options="{trackBy: '$value.valueId'}" required>
+          <md-option ng-repeat="hlevel in hierarchicalLevelList" ng-value="{{hlevel}}" >
             {{hlevel.valueName}}
           </md-option>
         </md-select>

@@ -17,33 +17,6 @@
  */
 package it.eng.spagobi.api;
 
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleDataSetCategory;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.container.ObjectUtils;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.ckan.CKANClient;
-import it.eng.spagobi.tools.dataset.ckan.Connection;
-import it.eng.spagobi.tools.dataset.ckan.exception.CKANException;
-import it.eng.spagobi.tools.dataset.ckan.resource.impl.Resource;
-import it.eng.spagobi.tools.dataset.ckan.utils.CKANUtils;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.json.JSONUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -60,6 +33,34 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.ckan.CKANClient;
+import it.eng.spagobi.tools.dataset.ckan.Connection;
+import it.eng.spagobi.tools.dataset.ckan.exception.CKANException;
+import it.eng.spagobi.tools.dataset.ckan.resource.impl.Resource;
+import it.eng.spagobi.tools.dataset.ckan.utils.CKANUtils;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
@@ -97,8 +98,8 @@ public class GetCertificatedDatasets {
 			String ckanFilter = request.getParameter("ckanFilter");
 			String ckanOffset = request.getParameter("ckanOffset");
 			String ckanRepository = request.getParameter("ckanRepository");
-			String typeDocWizard = (request.getParameter("typeDoc") != null && !"null".equals(request.getParameter("typeDoc"))) ? request
-					.getParameter("typeDoc") : null;
+			String typeDocWizard = (request.getParameter("typeDoc") != null && !"null".equals(request.getParameter("typeDoc")))
+					? request.getParameter("typeDoc") : null;
 
 			if (isTech != null && isTech.equals("true")) {
 				// if is technical dataset == ENTERPRISE --> get all ADMIN/DEV public datasets
@@ -349,13 +350,25 @@ public class GetCertificatedDatasets {
 			while (userRolesIter.hasNext()) {
 				String roleName = (String) userRolesIter.next();
 				Role role = roledao.loadByName(roleName);
-				List<RoleDataSetCategory> aRoleCategories = roledao.getDataSetCategoriesForRole(role.getId());
-				if (aRoleCategories != null) {
-					for (Iterator iterator = aRoleCategories.iterator(); iterator.hasNext();) {
-						RoleDataSetCategory roleDataSetCategory = (RoleDataSetCategory) iterator.next();
+
+				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
+				List<RoleMetaModelCategory> resp = new ArrayList<>();
+				List<SbiDomains> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+				for (RoleMetaModelCategory r : aRoleCategories) {
+					for (SbiDomains dom : array) {
+						if (r.getCategoryId().equals(dom.getValueId())) {
+							resp.add(r);
+						}
+					}
+
+				}
+				if (resp != null) {
+					for (Iterator iterator = resp.iterator(); iterator.hasNext();) {
+						RoleMetaModelCategory roleDataSetCategory = (RoleMetaModelCategory) iterator.next();
 						categories.add(roleDataSetCategory.getCategoryId());
 					}
 				}
+
 			}
 		} catch (Exception e) {
 			logger.error("Error loading the data set categories visible from the roles of the user");

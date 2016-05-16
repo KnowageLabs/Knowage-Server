@@ -408,7 +408,8 @@ public class KpiService {
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response listKpi(@Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
-		List<Kpi> kpis = dao.listKpi(STATUS.ACTIVE);
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		List<Kpi> kpis = dao.listKpi(STATUS.ACTIVE, profile);
 		return Response.ok(JsonConverter.objectToJson(kpis, kpis.getClass())).build();
 	}
 

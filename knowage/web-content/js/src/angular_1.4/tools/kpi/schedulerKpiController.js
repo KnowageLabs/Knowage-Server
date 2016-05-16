@@ -5,9 +5,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 
-app.controller('schedulerKpiController', ['$scope','sbiModule_messaging','sbiModule_config','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout','$angularListDetail','$filter','$timeout','$cronFrequency',kpiTargetControllerFunction ]);
+app.controller('schedulerKpiController', ['$scope','sbiModule_messaging','sbiModule_config','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout','$angularListDetail','$filter','$timeout','$cronFrequency','sbiModule_dateServices',kpiTargetControllerFunction ]);
 
-function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast,$timeout,$angularListDetail,$filter,$timeout,$cronFrequency){
+function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast,$timeout,$angularListDetail,$filter,$timeout,$cronFrequency,sbiModule_dateServices){
 	$scope.translate=sbiModule_translate;
 	$scope.selectedScheduler={"frequency":{"cron": {"type":"minute","parameter":{"numRepetition":"1"}}}};
 	$scope.frequency = {type: 'scheduler', value : {}};
@@ -23,7 +23,8 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 	$scope.funcTemporal = [];
 	$scope.lov = [];
 	$scope.expired = false;
-
+	$scope.showCircular = true;
+	
 	$scope.selectedTab={'tab':0};
 	
 	$scope.engineMenuOptionList = [	{
@@ -108,8 +109,10 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 	}
 
 	$scope.loadEngineKpi = function(){
+		$scope.showCircular = true;
 		sbiModule_restServices.promiseGet("1.0/kpi","listSchedulerKPI")
 		.then(function(response){ 
+			$scope.showCircular = false;
 			angular.copy(response.data,$scope.engines);
 			for(var i=0;i<$scope.engines.length;i++){
 				if($scope.engines[i].frequency.endDate!=null && $scope.engines[i].frequency.endDate!=undefined){
@@ -124,6 +127,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 				}
 			}
 		},function(response){
+			$scope.showCircular = false;
 		});
 
 	}
@@ -143,7 +147,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 					obj["valueCd"] = response.data[i].category.valueCd;
 				}
 				obj["author"]=response.data[i].author;
-				obj["datacreation"]=new Date(response.data[i].dateCreation);
+				obj["datacreation"]=sbiModule_dateServices.getDateFromFormat(response.data[i].dateCreation);
 				obj["id"]=response.data[i].id;
 
 				$scope.kpiAllList.push(obj);

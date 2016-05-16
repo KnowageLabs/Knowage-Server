@@ -20,7 +20,11 @@ package it.eng.spagobi.kpi.dao;
 import it.eng.qbe.InExpressionIgnoringCase;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICriterion;
@@ -28,6 +32,7 @@ import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.dao.SpagoBIDAOObjectNotExistingException;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.kpi.bo.Alias;
@@ -413,7 +418,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public List<Kpi> listKpi(final STATUS status) {
+	public List<Kpi> listKpi(final STATUS status, IEngUserProfile profile) {
 		List<SbiKpiKpi> lst = list(new ICriterion<SbiKpiKpi>() {
 			@Override
 			public Criteria evaluate(Session session) {
@@ -434,10 +439,50 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		});
 		List<Kpi> kpis = new ArrayList<>();
 		for (SbiKpiKpi sbi : lst) {
-			Kpi kpi = from(sbi, null, false);
-			kpis.add(kpi);
+			// if category is present check if role has authorization
+			if (sbi.getCategory() != null && !UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0])
+					&& !UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ROLE_TYPE_DEV, new String[0])) {
+				Collection<String> rolesProfile;
+				try {
+					rolesProfile = profile.getRoles();
+					Iterator it = rolesProfile.iterator();
+					while (it.hasNext()) {
+						String roleName = (String) it.next();
+						Role role = DAOFactory.getRoleDAO().loadByName(roleName);
+						List<RoleMetaModelCategory> lstCategory = DAOFactory.getRoleDAO().getMetaModelCategoriesForRole(role.getId());
+						if (!userIsAbilited(lstCategory, sbi.getCategory())) {
+							continue;
+						} else {
+							Kpi kpi = from(sbi, null, false);
+							kpis.add(kpi);
+						}
+					}
+
+				} catch (EMFInternalError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (EMFUserError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			} else {
+				Kpi kpi = from(sbi, null, false);
+				kpis.add(kpi);
+			}
+
 		}
 		return kpis;
+	}
+
+	private boolean userIsAbilited(List<RoleMetaModelCategory> lstCategory, SbiDomains domain) {
+
+		for (RoleMetaModelCategory cat : lstCategory) {
+			if (cat.getCategoryId().equals(domain.getValueId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

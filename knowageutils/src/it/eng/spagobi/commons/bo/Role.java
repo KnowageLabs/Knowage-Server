@@ -78,7 +78,6 @@ public class Role implements Serializable {
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
-	private List<RoleDataSetCategory> roleDataSetCategories;
 
 	/**
 	 * Checks if is able to save subobjects.
@@ -568,21 +567,6 @@ public class Role implements Serializable {
 	 */
 	public void setRoleMetaModelCategories(List<RoleMetaModelCategory> roleMetaModelCategories) {
 		this.roleMetaModelCategories = roleMetaModelCategories;
-	}
-
-	/**
-	 * @return the roleDataSetCategories
-	 */
-	public List<RoleDataSetCategory> getRoleDataSetCategories() {
-		return roleDataSetCategories;
-	}
-
-	/**
-	 * @param roleDataSetCategories
-	 *            the roleDataSetCategories to set
-	 */
-	public void setRoleDataSetCategories(List<RoleDataSetCategory> roleDataSetCategories) {
-		this.roleDataSetCategories = roleDataSetCategories;
 	}
 
 	public boolean isAbleToEditAllKpiComm() {

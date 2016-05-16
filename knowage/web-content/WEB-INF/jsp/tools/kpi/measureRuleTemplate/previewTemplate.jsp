@@ -18,7 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <md-content ng-controller="measureRulePreviewController" layout-fill  layout="row">
-
+	<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircular" layout-fill>
+     	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
+ 	</div>
 	<angular-table class="relative"  flex id='previewtable' ng-model="detailProperty.previewData.rows"
 				columns="detailProperty.previewData.columns" no-pagination="true" full-width>
 	</angular-table>

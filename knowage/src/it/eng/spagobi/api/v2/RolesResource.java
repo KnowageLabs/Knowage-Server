@@ -19,6 +19,7 @@ package it.eng.spagobi.api.v2;
 
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -37,12 +38,12 @@ import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleBO;
-import it.eng.spagobi.commons.bo.RoleDataSetCategory;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
@@ -111,6 +112,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "unchecked" })
 	@GET
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
 	@Path("/ds_categories/{id}")
@@ -123,8 +125,18 @@ public class RolesResource extends AbstractSpagoBIResource {
 			rolesDao = DAOFactory.getRoleDAO();
 			rolesDao.setUserProfile(getUserProfile());
 			role = rolesDao.loadByID(id);
-			List<RoleDataSetCategory> ds = rolesDao.getDataSetCategoriesForRole(role.getId());
-			return Response.ok(ds).build();
+			List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
+			List<RoleMetaModelCategory> resp = new ArrayList<>();
+			List<SbiDomains> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+			for (RoleMetaModelCategory r : ds) {
+				for (SbiDomains dom : array) {
+					if (r.getCategoryId().equals(dom.getValueId())) {
+						resp.add(r);
+					}
+				}
+
+			}
+			return Response.ok(resp).build();
 		} catch (Exception e) {
 			logger.error("Role with selected id: " + id + " doesn't exists", e);
 			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists", buildLocaleFromSession(), e);
@@ -139,8 +151,6 @@ public class RolesResource extends AbstractSpagoBIResource {
 		IRoleDAO rolesDao = null;
 		Role role = BOtoRole(body);
 		List<RoleMetaModelCategory> listMetaModelCategories = body.getRoleMetaModelCategories();
-		List<RoleDataSetCategory> listDataSetCategories = body.getRoleDataSetCategories();
-
 		try {
 			rolesDao = DAOFactory.getRoleDAO();
 			rolesDao.setUserProfile(getUserProfile());
@@ -150,11 +160,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 					rolesDao.insertRoleMetaModelCategory(id, roleMetaModelCategory.getCategoryId());
 				}
 			}
-			if (listDataSetCategories != null) {
-				for (RoleDataSetCategory roleDataSetCategory : listDataSetCategories) {
-					rolesDao.insertRoleDataSetCategory(id, roleDataSetCategory.getCategoryId());
-				}
-			}
+
 			String encodedRole = URLEncoder.encode("" + role.getId(), "UTF-8");
 			return Response.created(new URI("2.0/roles/" + encodedRole)).entity(encodedRole).build();
 		} catch (Exception e) {
@@ -174,7 +180,6 @@ public class RolesResource extends AbstractSpagoBIResource {
 		Role role = BOtoRole(body);
 		role.setId(body.getId());
 		List<RoleMetaModelCategory> listMetaModelCategories = body.getRoleMetaModelCategories();
-		List<RoleDataSetCategory> listDataSetCategories = body.getRoleDataSetCategories();
 		List<Domain> listAll;
 
 		try {
@@ -188,6 +193,14 @@ public class RolesResource extends AbstractSpagoBIResource {
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleMetaModelCategory(role.getId(), domain.getValueId());
 			}
+			listAll = domainsDao.loadListDomainsByType("KPI_KPI_CATEGORY");
+			for (Domain domain : listAll) {
+				rolesDao.removeRoleMetaModelCategory(role.getId(), domain.getValueId());
+			}
+			listAll = domainsDao.loadListDomainsByType("CATEGORY_TYPE");
+			for (Domain domain : listAll) {
+				rolesDao.removeRoleMetaModelCategory(role.getId(), domain.getValueId());
+			}
 			if (listMetaModelCategories != null) {
 				for (RoleMetaModelCategory roleMetaModelCategory : listMetaModelCategories) {
 					rolesDao.insertRoleMetaModelCategory(role.getId(), roleMetaModelCategory.getCategoryId());
@@ -197,11 +210,6 @@ public class RolesResource extends AbstractSpagoBIResource {
 			listAll = domainsDao.loadListDomainsByType("CATEGORY_TYPE");
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleDataSetCategory(role.getId(), domain.getValueId());
-			}
-			if (listDataSetCategories != null) {
-				for (RoleDataSetCategory roleDataSetCategory : listDataSetCategories) {
-					rolesDao.insertRoleDataSetCategory(role.getId(), roleDataSetCategory.getCategoryId());
-				}
 			}
 
 			String encodedRole = URLEncoder.encode("" + role.getId(), "UTF-8");
