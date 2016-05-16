@@ -125,7 +125,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         }
         $scope.selectedUser.sbiExtUserRoleses = tmpR;
         for (var i = 0; i < $scope.tempAttributes.length; i++) {
-            if ($scope.tempAttributes[i].hasOwnProperty("value") && $scope.tempAttributes[i].value != "") {
+            if ($scope.tempAttributes[i].hasOwnProperty("value")) {
                 tmpA[$scope.tempAttributes[i].id] = {};
                 tmpA[$scope.tempAttributes[i].id][$scope.tempAttributes[i].name] = $scope.tempAttributes[i].value;
             }
@@ -136,7 +136,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     
     /*
      * 	this function is used to add
-     *  temporary comfirm property to
+     *  temporary confirm property to
      *  user object
      *  																	
      */
@@ -278,7 +278,12 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     $scope.getAttributes = function () { // service that gets list of roles GET
     	sbiModule_restServices.promiseGet("2.0", "attributes")
 		.then(function(response) {
-			$scope.usersAttributes = response.data;
+			if(response.data.length != 0){
+				$scope.usersAttributes = response.data;
+			}else{
+				sbiModule_messaging.showWarningMessage('No user attributes defined', 'Warning');
+			}
+			
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			

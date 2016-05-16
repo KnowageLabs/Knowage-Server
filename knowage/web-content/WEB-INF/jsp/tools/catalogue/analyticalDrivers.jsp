@@ -31,8 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <!-- Styles -->
-<link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css">
-<link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css">
+<link rel="stylesheet" type="text/css"    href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
+
 <!-- Styles -->
 <script type="text/javascript" src=" "></script>
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/analyticalDrivers.js"></script>
@@ -40,90 +40,46 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Analytical Drivers Management</title>
 </head>
-<body class="bodyStyle" ng-controller="AnalyticalDriversController as ctrl" >
+<body class="bodyStyle kn-layerCatalogue" ng-controller="AnalyticalDriversController as ctrl" >
+	<angular-list-detail show-detail="showme">
+ 		<list label='translate.load("sbi.analytical.drivers.title")' new-function="createDrivers"> 
 
-	<angular_2_col>
-		<left-col>
-		<div style="height:100%;">
-	<div class="leftBox" style="height:50%;">
-		<md-toolbar class="header">
-		<div class="md-toolbar-tools">
-			<div style="font-size: 24px;">{{translate.load("sbi.analytical.drivers.title");}}</div>
-
-			<md-button class="md-fab md-ExtraMini addButton" aria-label="create"
-				style="position:absolute; right:11px; top:0px;"
-				ng-click="createDrivers()"> <md-icon
-				md-font-icon="fa fa-plus" style=" margin-top: 6px ; color: white;">
-			</md-icon> </md-button>
-		</div>
-		</md-toolbar>
-		<md-content layout-padding
-			style="background-color: rgb(236, 236, 236);"
-			class="ToolbarBox miniToolbar noBorder leftListbox"> <angular-table
-			layout-fill id="adList_id" ng-model="adList"
-			columns='[
-						         {"label":"Label","name":"label"},
-						         {"label":"Name","name":"name"},
-						         {"label":"Type","name":"type"}
-						         ]'
-			show-search-bar=true highlights-selected-item=true
-			speed-menu-option="adSpeedMenu" click-function="loadDrivers(item)">
-		</angular-table>
-		 </md-content>
-	</div>
-	
-	<div class="leftBox" style="height:50%;">
-		<md-toolbar class="header">
-		<div class="md-toolbar-tools">
-			<div style="font-size: 24px;">{{translate.load("sbi.analytical.drivers.usemode.title");}}</div>
-
-			<md-button class="md-fab md-ExtraMini addButton" aria-label="create"
-				style="position:absolute; right:11px; top:0px;"
-				ng-click="createUseModes()"> <md-icon
-				md-font-icon="fa fa-plus" style=" margin-top: 6px ; color: white;">
-			</md-icon> </md-button>
-		</div>
-		</md-toolbar>
-		<md-content layout-padding
-			style="background-color: rgb(236, 236, 236);"
-			class="ToolbarBox miniToolbar noBorder leftListbox">
 			 <angular-table
-								layout-fill id="useModeList_id" ng-model="useModeList"
-								columns='[
-											{"label":"Name","name":"name"}
-										 ]'
-								highlights-selected-item=true
-								speed-menu-option="dumSpeedMenu" click-function="loadUseMode(item)">
-			</angular-table>
-		 </md-content>
-	</div>
-	</div>
-		</left-col>
-		<right-col>
-		<form name="attributeForm" layout-fill ng-submit="attributeForm.$valid && save()"
-		class="detailBody md-whiteframe-z1">
-		<div ng-show="showme">
-				<md-toolbar class="header"> 
-					<div class="md-toolbar-tools h100">
-					<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.analytical.drivers.details");}}</div>
-					<div style="position: absolute; right: 0px" class="h100">
-						<md-button type="button" tabindex="-1" aria-label="cancel"
-							class="md-raised md-ExtraMini rightHeaderButtonBackground" style=" margin-top: 2px;"
-							ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}}
-						</md-button>
-						<md-button  type="submit"
-							aria-label="save" class="md-raised md-ExtraMini rightHeaderButtonBackground"
-							style=" margin-top: 2px;"
-							ng-disabled="!attributeForm.$valid"
-							>
-						{{translate.load("sbi.browser.defaultRole.save")}}
-						</md-button>
-					</div>
-				</div>
-				</md-toolbar>
-				<md-content flex style="margin-left:20px;"
-				class="ToolbarBox miniToolbar noBorder"> 
-			<md-tabs md-dynamic-height md-selected="selectedTab" md-border-bottom="">
+			flex
+			id="adList_id" 
+			ng-model="adList"
+			columns='[
+					  {"label":"Label","name":"label"},
+					  {"label":"Name","name":"name"},
+					  {"label":"Type","name":"type"}
+					]'
+			show-search-bar=true
+			highlights-selected-item=true
+			speed-menu-option="adSpeedMenu"
+			click-function="loadDrivers(item)">
+		     </angular-table>
+		
+		<angular-table
+		flex
+		id="useModeList_id" ng-model="useModeList"
+		columns='[
+				  {"label":"Name","name":"name"}
+				]'
+		highlights-selected-item=true
+		speed-menu-option="dumSpeedMenu" click-function="loadUseMode(item)">
+	</angular-table>
+
+		</list>
+		<detail label='selectedDriver.label'  save-function="save"
+		cancel-function="cancel"
+		disable-save-button="!attributeForm.$valid"
+		show-save-button="showme" show-cancel-button="showme">
+		<form name="attributeForm" ng-submit="attributeForm.$valid && save()"
+		
+		<md-card>
+	        <md-card-content>
+		      
+		     <md-tabs md-dynamic-height md-selected="selectedTab" md-border-bottom="">
 			<md-tab label='{{translate.load("sbi.analytical.drivers.details");}}'>
 			<md-content flex style="margin-left:20px; overflow:hidden"
 				class="md-padding ToolbarBox noBorder">
@@ -434,10 +390,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				 </md-content>
 				    </div>
 				   
-				 </md-content> </md-tab></md-tabs> </md-content>
-		</div>	
+				 </md-content> </md-tab></md-tabs> </md-content> 
+		      
+				
+			</md-card-content>
+	      </md-card>
+		
+		
+		
 		</form>
-		</right-col>
-	</angular_2_col>
+		</detail>
+	</angular-list-detail>
 </body>
 </html>
