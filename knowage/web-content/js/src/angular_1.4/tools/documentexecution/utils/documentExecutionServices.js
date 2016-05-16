@@ -578,9 +578,17 @@
 							} else {
 								//console.log('setting param ' + params[parameter.urlName]);
 								//console.log('setting param in ' , parameter);
-								parameter.parameterValue = parameter.multivalue ? 
-											JSON.parse(params[parameter.urlName])
-											: params[parameter.urlName];	
+								parameter.parameterValue = parameter.multivalue ? JSON.parse(params[parameter.urlName])	: params[parameter.urlName];
+								//lookup
+								if(parameter.selectionType.toLowerCase() == "lookup"){
+									parameter.parameterValueToShow = [];
+									parameter.parameterValueToShow = parameter.parameterValue;
+								}
+							
+								
+								
+								
+								
 							}
 							
 						} else if(parameter.valueSelection.toLowerCase() == 'map_in') {
