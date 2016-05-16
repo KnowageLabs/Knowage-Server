@@ -170,7 +170,7 @@ function federationDefinitionFunction
 	
 	$scope.goToFederationCatalogue = function() {
 		if($window.frameElement.name==="angularIframe"){
-			 $window.parent.angular.element(window.frameElement).scope().closeDialogFromExt();	
+			 $window.parent.angular.element(window.frameElement).scope().closeFederationDialog();	
 		}else{
 		     $window.location.href = contextName + "/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=TRUE&CALLBACK_FUNCTION=openFederation";
 		}

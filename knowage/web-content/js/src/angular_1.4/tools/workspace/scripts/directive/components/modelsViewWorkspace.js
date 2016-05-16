@@ -15,9 +15,15 @@ angular
 		  };	  
 	});
 
-function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window){
+function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav){
 	//console.log("aaaa");
 	//console.log(datasetParameters);
+	
+	$scope.selectedModel = undefined;
+
+	$scope.showModelInfo = false;
+	
+	
 	$scope.loadFederations=function(){
 		sbiModule_restServices.promiseGet("2.0/federateddataset", "")
 		.then(function(response) {
@@ -42,6 +48,50 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		});
 	}
 	$scope.loadBusinessModels();
+	
+	$scope.showModelDetails = function() {
+		return $scope.showModelInfo && $scope.isSelectedModelValid();
+	};
+	
+	
+	$scope.isSelectedModelValid = function() {
+		return $scope.selectedModel !== undefined;
+	};
+	
+	$scope.setDetailOpenModel = function(isOpen) {
+		if (isOpen && !$mdSidenav('rightModel').isLockedOpen() && !$mdSidenav('rightModel').isOpen()) {
+			$scope.toggleModelDetail();
+		}
+
+		$scope.showModelInfo = isOpen;
+	};
+	
+	$scope.toggleModelDetail = function() {
+		$mdSidenav('rightModel').toggle();
+	};
+	
+	$scope.selectModel= function ( model ) { 
+		if (model !== undefined) {
+			//$scope.lastDatasetSelected = dataset;
+		}
+		var alreadySelected = (model !== undefined && $scope.selectedModel === model);
+		$scope.selectedModel = model;
+		if (alreadySelected) {
+			$scope.selectedModel=undefined;
+			$scope.setDetailOpenModel(!$scope.showModelDetail);
+		} else {
+			$scope.setDetailOpenModel(model !== undefined);
+		}
+	};
+	
+	$scope.showQbeModel=function(model){
+		
+		if($scope.currentTab=='federations'){
+			$scope.showQbeFederation(model);
+		}else if($scope.currentTab=='businessModels'){
+			$scope.showQbeFromBM(model);
+		}
+	}
 	
 	$scope.showQbeFederation= function(federation){
 //		console.log(federation);
@@ -72,6 +122,8 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		//$window.location.href=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp&id="+id+"&label="+label;
 
     	 $mdDialog.show({
+    		  scope:$scope,
+			  preserveScope: true,
 		      controller: DialogEditFederationController,
 		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',  
 		      clickOutsideToClose:true,
@@ -96,7 +148,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 			.then(function(response) {
 			
 				$scope.loadFederations();
-				
+				$scope.selectModel(undefined);
 			},function(response) {
 				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.delete.error'));
 			});
@@ -138,10 +190,11 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	
 	function DialogEditFederationController($scope,$mdDialog,sbiModule_config,federation){
 	
-		$scope.closeDialogFromExt=function(){
+		$scope.closeFederationDialog=function(){
 			 $mdDialog.cancel();	 
-			
+			 $scope.loadFederations();
 		}
+		
 		if(federation!==undefined){
 		var id =federation.federation_id;
 		var label = federation.label;

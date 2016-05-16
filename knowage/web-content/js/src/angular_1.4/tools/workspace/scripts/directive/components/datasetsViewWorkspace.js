@@ -327,6 +327,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     		$scope.selectDataset(undefined);
          }
     	
+    	if($scope.selectedModel !== undefined){
+    		$scope.selectModel(undefined);
+         }
+    	
     }	
     
     $scope.getBackPreviewSet=function(){
