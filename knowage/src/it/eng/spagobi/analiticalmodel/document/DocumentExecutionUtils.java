@@ -46,6 +46,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DocumentExecutionUtils {
+	public static final String SELECTION_TYPE_TREE = "TREE";
+	public static final String SELECTION_TYPE_LOOKUP = "LOOKUP";
 	public static final String PARAMETERS = "PARAMETERS";
 	public static final String SERVICE_NAME = "GET_URL_FOR_EXECUTION_ACTION";
 	public static String NODE_ID_SEPARATOR = "___SEPA__";
