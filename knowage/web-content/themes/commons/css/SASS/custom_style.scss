@@ -60,6 +60,7 @@ md-toolbar.md-knowage-theme .md-toolbar-tools .md-button {
             color: $baseColor;
         }
 }
+​
 md-toolbar.md-knowage-theme .md-toolbar-tools .md-button:hover {
     background-color: $secondaryColor;
     color: $baseColor;
@@ -263,6 +264,7 @@ a.md-button.md-knowage-theme.md-primary, .md-button.md-knowage-theme.md-primary 
 .removeTransition{
 		transition	:none !important;
 	}
+
 md-content.md-knowage-theme.mainContent {
     background-color: $contentBackground;
 }
@@ -291,6 +293,76 @@ md-toast.md-knowage-theme.kn-toast-error {
     background-color: red;
 }
 
+
+
+	
+	@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+/* IE10+ CSS styles go here */
+
+.flex {
+  -ms-flex: 1 auto;
+  -webkit-box-flex: 1 auto;
+  -webkit-flex: 1 auto;
+          flex: 1;
+   width:100%;
+   margin:0px !important;
+}
+
+.flex2 {
+  -ms-flex: 1 auto;
+  -webkit-box-flex: 1 auto;
+  -webkit-flex: 1 auto;
+          flex: 1 auto;
+   width:100%;   
+   margin:0px !important;
+}
+
+#angularFullTableContentBox > table > thead > tr{
+width:100%;
+}
+
+md-tab-content > div {
+height:100%;
+}
+
+.rightHeight {
+height:100%;
+}
+
+
+#selectDivKPI{
+height:80%;
+}
+
+#selectDivKPI > angular_table{
+height:80%;
+}
+
+.mdDialogSize{
+height:100% !important;
+}
+
+.heightDivContent{
+height:100%;
+}
+
+.kn-scorecardKpiDefinition md-content{
+overflow-y: hidden;
+}
+
+.hidden-overflow-orizontal{
+width:100%;
+overflow-y:hidden;
+}
+#angularFullTableContentBox{
+width:100%;
+}
+
+#documentListTable{
+width:100%;
+}
+
+}
 
 //CUSTOM PAGES CLASSES    
 md-content.md-knowage-theme.config-content-detail {

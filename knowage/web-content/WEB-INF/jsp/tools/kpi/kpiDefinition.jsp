@@ -107,7 +107,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 </head>
 <body>
-	<angular-list-detail ng-controller="kpiDefinitionMasterController" full-screen=true >
+	<angular-list-detail ng-controller="kpiDefinitionMasterController" full-screen=true>
 		<list label="translate.load('sbi.kpi.list')" ng-controller="listController" new-function="addKpi" >
 		<angular-table flex
 		id='kpiListTable' ng-model=kpiList
@@ -122,7 +122,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</extra-button>
 		<detail save-function="parseFormula" cancel-function="cancel" label="getKpiName()">
  		<div layout="row" class="absolute" layout-fill>
-		<md-tabs flex md-selected='selectedTab.tab'>
+		<md-tabs flex md-selected='selectedTab.tab' class="hidden-overflow-orizontal">
 				<md-tab id="tab1" >
        				<md-tab-label>{{translate.load("sbi.kpi.formula")}}<span ng-show="formulaModified.value">*</span></md-tab-label>
         			<md-tab-body>

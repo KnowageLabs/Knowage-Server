@@ -1,6 +1,6 @@
 <div layout-fill ng-controller = "kpiController" layout="row">
  <md-whiteframe class="md-whiteframe-4dp layout-padding " layout layout-margin >
- 		<angular-table flex
+ 		<angular-table flex class="flex2"
 		id='targetListTable' ng-model=selectedScheduler.kpis
 		columns='[{"label":"Name","name":"name"},{"label":"Category","name":"valueCd"}]'
 		columns-search='["name"]' show-search-bar=true

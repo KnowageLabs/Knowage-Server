@@ -1,5 +1,4 @@
-<md-dialog aria-label="Select Function"  ng-cloak>
-  <form>
+<md-dialog aria-label="Select Function" class="flex2" ng-cloak style="height:80%">
     <md-toolbar>
       <div class="md-toolbar-tools">
         <h1>Scorecard List</h1>
@@ -13,9 +12,9 @@
       </div>
 	
     </md-toolbar>
-    <md-dialog-content layout="column" style ="height: 80%;">
-     <div class="md-dialog-content" layout="column" flex>
-		<angular-table flex style ="height: 80%;"
+    <md-dialog-content layout="column" classpi="mdDialogSize">
+     <div class="md-dialog-content" layout="column" >
+		<angular-table flex 
 		id='dinamicListTable' ng-model="allScorecard"
 		columns='[{"label":"Name","name":"name"},{"label":"Creation Date","name":"creationDate"}]'
 		columns-search='["name"]' show-search-bar=true selected-item="selectedItem" 
@@ -23,5 +22,4 @@
 		></angular-table>
 		</div>
    	 </md-dialog-content>
-  </form>
 </md-dialog>

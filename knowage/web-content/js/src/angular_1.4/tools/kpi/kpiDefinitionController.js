@@ -369,6 +369,12 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			angular.copy(emptyobj,$scope.kpi.cardinality);
 		}
 		$scope.countAccessCardinality++;
+		
+		
+		if(!angular.isObject($scope.kpi.cardinality))
+			$scope.kpi.cardinality = JSON.parse($scope.kpi.cardinality);
+		
+		
 		if($scope.kpi.cardinality!=undefined && Object.keys($scope.kpi.cardinality).length!=0){
 			var obj=$scope.kpi.cardinality
 			if(!angular.isObject($scope.kpi.cardinality)){ 

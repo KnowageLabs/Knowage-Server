@@ -75,7 +75,7 @@ try{
 		</style>
 	</head>
 
-	<body class="kn-documentExecution" ng-app="documentExecutionModule" ng-controller="documentExecutionController" layout="row" >
+	<body class="kn-documentExecution" ng-app="documentExecutionModule" ng-controller="documentExecutionController" layout="row" ng-cloak >
 		<div  layout-fill ng-hide="hideProgressCircular.status" style="z-index: 10000; position: absolute; background-color: rgba(0, 0, 0, 0.21);">
 	   		<md-progress-circular md-mode="indeterminate" md-diameter="60" 
 					style="left: 50%;top: 50%;margin-left: -30px;margin-top: -30px;"></md-progress-circular>

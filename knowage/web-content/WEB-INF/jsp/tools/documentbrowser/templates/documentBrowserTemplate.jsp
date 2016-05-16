@@ -131,7 +131,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-content flex layout="column" class="mainContent"> 
 				
 				<bread-crumb item-name='name' ng-model="breadModel" selected-item="selectedFolder" control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb>
-			<md-whiteframe flex layout="column" class="md-whiteframe-5dp" layout-margin>
+		<md-whiteframe flex layout="column" class="md-whiteframe-5dp" layout-margin>
 				 <md-input-container ng-show='showDocumentGridView' layout-margin>
 			        <label>{{translate.load("sbi.ds.orderComboLabel")}}</label>
 			        <md-select ng-model="selectedOrder" ng-model-option="trackBy:'$value.id'">
@@ -143,17 +143,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<h3 class="md-title" layout-padding ng-show="folderDocuments.length==0" >{{translate.load("sbi.browser.document.noDocument")}}</h3>
 				 	
 				 	
-			 	<document-view flex ng-model="folderDocuments" ng-show="hideProgressCircular"
-						show-grid-view="showDocumentGridView"
-						table-speed-menu-option="documentTableButton"
-						selected-document=selectedDocument
-						select-document-action="selectDocument(doc);"
-						edit-document-action="editDocument(doc)"
-						clone-document-action="cloneDocument(doc)"
-						delete-document-action="deleteDocument(doc)"
-						execute-document-action="executeDocument(doc)"
-						ordering-document-cards=selectedOrder>
-			 	  </document-view>
+				 	<document-view flex style='overflow:auto' ng-model="folderDocuments" ng-show="hideProgressCircular" class="hidden-overflow-orizontal heightDivContent"
+							show-grid-view="showDocumentGridView"
+							table-speed-menu-option="documentTableButton"
+							selected-document=selectedDocument
+							select-document-action="selectDocument(doc);"
+							edit-document-action="editDocument(doc)"
+							clone-document-action="cloneDocument(doc)"
+							delete-document-action="deleteDocument(doc)"
+							execute-document-action="executeDocument(doc)"
+							ordering-document-cards=selectedOrder>
+				 	</document-view>
 		</md-whiteframe>
 				 	  
 		   	</md-content>

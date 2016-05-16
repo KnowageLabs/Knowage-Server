@@ -549,7 +549,7 @@ $scope.loadTheadColumn=function(width){
     	var fakeDiv = angular.element(document.querySelectorAll('angular-table.' + $scope.id + 'ItemBox .faketable th>div'));
         var principalThDiv = angular.element(document.querySelectorAll('angular-table.' + $scope.id + 'ItemBox .principalTable th>div'));
         for(var i=0;i<principalThDiv.length;i++){
-        	console.log(principalThDiv[i])
+//        	console.log(principalThDiv[i])
         	angular.element(fakeDiv[i]).css("width",angular.element(principalThDiv[i])[0].offsetWidth+"px");
         }
         tableContentBox.css("width",width+"px");

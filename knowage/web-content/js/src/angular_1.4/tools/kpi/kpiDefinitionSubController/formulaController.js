@@ -20,6 +20,15 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 	$scope.kpiList=[];
 	$scope.kpiListOriginal=[];
 	
+	
+
+	if (!String.prototype.startsWith)
+		String.prototype.startsWith = function(test){
+			return(
+					this.substring(0, test.length) === test	
+			);
+		};
+	
 
 	CodeMirror.registerHelper(
 			"hint", "measures",
@@ -32,7 +41,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 				var hintList=[];
 				for(var i=0;i< $scope.measures.length;i++){
 
-					if(tok.string.trim()=="" || $scope.measures[i].alias.startsWith(tok.string)){
+					if(tok.string.trim()=="" ||	$scope.measures[i].alias.startsWith(tok.string)){
 						hintList.push($scope.measures[i].alias);
 					}
 
@@ -42,6 +51,24 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 					to: CodeMirror.Pos(cur.line, end)}
 			});
 
+	$scope.formulaStartsWith = function(string, test){
+		/*return (
+				string.lastIndexOf(test) === 0
+			);*/
+//		
+//		if ( test.length > string.length)
+//			return (1 == 0);
+//		var st1 = string.split("").reverse().join("");
+//		var st2 = test.split("").reverse().join("");
+//		var g = (st1.lastIndexOf(st2) === (st1.length - st2.length));
+//		
+		return(
+				string.substring(0, test.length) === test	
+		);
+		
+	};
+	
+	
 	$scope.codemirrorLoaded = function(_editor){
 
 		_editor.on("keyup", function(cm,event,c){
@@ -50,18 +77,19 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 			}
 			angular.copy(cm,$scope.cm);
 
-			if(event.keyIdentifier!="U+0008" && event.keyIdentifier!="Left" && event.keyIdentifier!="Right"){
+			if((event.keyIdentifier != undefined && event.keyIdentifier!="U+0008" && event.keyIdentifier!="Left" && event.keyIdentifier!="Right") || 
+					(event.key != undefined && event.key!="Backspace" && event.key!="Left" && event.key!="Right")){
 				var cur = cm.getCursor();
 				var token = cm.getTokenAt(cur);
 
 				if(token.string=="{" || token.string=="}" || token.string=="[" || token.string=="]"){
 
-					cm.replaceRange("", {line:cm.getCursor().line, ch : token.start}, {line:cm.getCursor().line, ch : token.end+1})
+					cm.replaceRange("", {line:cm.getCursor().line, ch : token.start}, {line:cm.getCursor().line, ch : token.end+1});
 
 				}else	if((token.type=="operator" || token.type=="bracket") && token.string!="_"){
 					token.string = " ";
-					cm.replaceRange(token.string, {line:cm.getCursor().line, ch : token.end})
-					cm.replaceRange(" ", {line:cm.getCursor().line, ch : token.start})
+					cm.replaceRange(token.string, {line:cm.getCursor().line, ch : token.end});
+					cm.replaceRange(" ", {line:cm.getCursor().line, ch : token.start});
 				}
 
 			}
@@ -88,14 +116,18 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 				}
 			}
 
-			if(event.srcElement.className.startsWith("cm-keyword") ||  event.srcElement.className.startsWith("cm-variable-2")) {
+			var className = event.srcElement.className;
+			
+			if(className.startsWith("cm-keyword") 
+					|| className.startsWith("cm-variable-2")) {
+				
 				$scope.ShowFunction(cm);
 			}
 
 
 		});
 
-	}
+	};
 
 	$scope.codemirrorOptions = {
 			mode: 'text/x-mathematica',
@@ -565,6 +597,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 
 		return -1;
 	};
+	
 	$scope.measureInList=function(item, list) {
 
 		for (var i = 0; i < list.length; i++) {
@@ -576,6 +609,7 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 
 		return -1;
 	};
+
 
 }
 function DialogController($scope,$mdDialog,items,token,selected){
@@ -591,4 +625,3 @@ function DialogController($scope,$mdDialog,items,token,selected){
 		items.resolve($scope.selectedFunctionalities);
 	}
 }
-

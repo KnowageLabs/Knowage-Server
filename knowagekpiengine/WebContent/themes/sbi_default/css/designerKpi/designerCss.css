@@ -13,3 +13,6 @@ color-picker input{
 color-picker{
     margin-top: 20px;	
 }
+.mdDialogSize{
+height:100% !important;
+}

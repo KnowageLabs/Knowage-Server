@@ -22,7 +22,7 @@
 		<md-toolbar>
 			<div class="md-toolbar-tools">
 				<h2>
-					<span>{{translate.load('sbi.kpi.scorecard.perspective.kpi.list')}}</span>
+				{{translate.load('sbi.kpi.scorecard.perspective.kpi.list')}}
 				</h2>
 				<span flex></span>
 				<md-button class="ng-scope" ng-click="addKpiToTarget();" aria-label="load kpi">
@@ -45,7 +45,7 @@
 		</md-content>
 		
 <script type="text/ng-template" id="templatesaveKPI.html">
-<md-dialog aria-label="Select Function" style="height: 90%;" ng-cloak layout="column" >
+<md-dialog aria-label="Select Function" class="flex2" style="height: 90%;" ng-cloak layout="column" >
   
     <md-toolbar>
       <div class="md-toolbar-tools">
