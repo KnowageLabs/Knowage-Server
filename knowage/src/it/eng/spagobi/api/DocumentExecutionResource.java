@@ -170,33 +170,36 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			for (DocumentParameters objParameter : parameters) {
 				// DEF VALUE
 				if (jsonParameters.isNull(objParameter.getId())) {
-					if (objParameter.getDefaultValues().size() == 1) {
-						// SINGLE
-						Object value;
-						if (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
-							// value = objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0];
-							value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
-									GeneralUtilities.getLocaleDateFormat(permanentSession),
-									objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0]);
-						} else {
-							value = objParameter.getDefaultValues().get(0).getValue();
-						}
-						jsonParameters.put(objParameter.getId(), value);
-						jsonParameters.put(objParameter.getId() + "_field_visible_description", value);
-					} else {
-						// MULTIPLE
-						ArrayList<String> paramValArr = new ArrayList<String>();
-						String paramDescStr = "";
-						for (int i = 0; i < objParameter.getDefaultValues().size(); i++) {
-							paramValArr.add(objParameter.getDefaultValues().get(i).getValue().toString());
-							paramDescStr = paramDescStr + objParameter.getDefaultValues().get(i).getValue().toString();
-							if (i < objParameter.getDefaultValues().size() - 1) {
-								paramDescStr = paramDescStr + ";";
+					if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
+						if (objParameter.getDefaultValues().size() == 1) {
+							// SINGLE
+							Object value;
+							if (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
+								// value = objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0];
+								value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
+										GeneralUtilities.getLocaleDateFormat(permanentSession), objParameter.getDefaultValues().get(0).getValue().toString()
+												.split("#")[0]);
+							} else {
+								value = objParameter.getDefaultValues().get(0).getValue();
 							}
+							jsonParameters.put(objParameter.getId(), value);
+							jsonParameters.put(objParameter.getId() + "_field_visible_description", value);
+						} else {
+							// MULTIPLE
+							ArrayList<String> paramValArr = new ArrayList<String>();
+							String paramDescStr = "";
+							for (int i = 0; i < objParameter.getDefaultValues().size(); i++) {
+								paramValArr.add(objParameter.getDefaultValues().get(i).getValue().toString());
+								paramDescStr = paramDescStr + objParameter.getDefaultValues().get(i).getValue().toString();
+								if (i < objParameter.getDefaultValues().size() - 1) {
+									paramDescStr = paramDescStr + ";";
+								}
+							}
+							jsonParameters.put(objParameter.getId(), paramValArr);
+							jsonParameters.put(objParameter.getId() + "_field_visible_description", paramDescStr);
 						}
-						jsonParameters.put(objParameter.getId(), paramValArr);
-						jsonParameters.put(objParameter.getId() + "_field_visible_description", paramDescStr);
 					}
+
 				}
 				// LOV SINGLE MANDATORY PARAMETER
 				if (objParameter.isMandatory()) {
