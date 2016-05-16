@@ -28,6 +28,9 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.sortSetDial = "/main/toolbar/sortingSettings.html";
 	$scope.filterDial = "/main/filter/filterDialog.html"
 	
+	$scope.filterDialogWidth = olapSharedSettings.getSettings().filterDialogWidth;
+	$scope.filterDialogHeight = olapSharedSettings.getSettings().filterDialogHeight;
+		
 	$scope.minNumOfLetters = olapSharedSettings.getSettings().minSearchLength;
 	$scope.searchText = "";
 	$scope.searchSucessText="";

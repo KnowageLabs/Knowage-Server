@@ -19,6 +19,11 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	var hlght = false;
 	var selectedFlag = false;
 	
+	/*$scope.filterDialogStyle = {
+			'width':$scope.filterDialogWidth+';',
+				
+			'height':$scope.filterDialogHeight+';'
+	};*/
 	var typeMsgWarn =sbiModule_translate.load('sbi.common.warning');
 	$scope.loadingFilter = true;
 	$scope.filterPanelEmpty = sbiModule_translate.load('sbi.olap.execution.table.filter.empty');
@@ -93,7 +98,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 		
 		$scope.showDialog(ev,$scope.filterDial);
-		
+
 		$scope.loadingFilter = false;
 	};
 	

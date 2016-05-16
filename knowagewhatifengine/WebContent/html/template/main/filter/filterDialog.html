@@ -1,4 +1,4 @@
-<md-dialog style='height:75%; width:25%; min-width:340px' layout="column">
+<md-dialog  style="width:30%; height:80%;"layout="column">
 	
 	<md-toolbar class="knowage-blue dialog-toolbar" flex=10 layout="column">
 		<p width="50%">{{filterDialogToolbarName}}</p>		
@@ -8,7 +8,7 @@
 		<span style="font-size: 10px; color:red;" ng-if="searchText.length > 0 && searchText.length < minNumOfLetters")>
 			You need at least {{minNumOfLetters}} letters to start search!
 		</span>	
-		<div>
+		<div style="white-space: nowrap;">
 			<input	ng-class="bgColor()?'filter-search-redbg filter-search':'filter-search'"
         			ng-show="true" 
         			ng-model="searchText" 
