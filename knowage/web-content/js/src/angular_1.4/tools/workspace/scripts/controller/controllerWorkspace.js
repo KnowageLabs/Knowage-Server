@@ -81,6 +81,12 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 			$scope.setSearchInput($scope.searchInput);
 		}
 		
+		/**
+		 * Unselect the already selected document when changing the option in the left menu.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$scope.selectedDocument = undefined;
+		
 	}
 
 	/**

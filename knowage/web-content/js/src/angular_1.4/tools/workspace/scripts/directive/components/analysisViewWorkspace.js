@@ -220,8 +220,10 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 		}
 		else if ($scope.activeTabAnalysis=="GEO") {
 //			alert("This button will add new GEO document.");
-			console.log("USAO");
-			window.location.href = "AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&TYPE_DOC=GEO&MYANALYSIS=TRUE";
+			//console.log("USAO 1");
+//			window.location.href = "AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&TYPE_DOC=GEO&MYANALYSIS=TRUE";
+			// Taken from the "AdhocreportingContainer.js"
+			window.location.href = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&TYPE_DOC=GEO&MYANALYSIS=TRUE';
 //			sbiModule_restServices.promiseGet("selfservicedataset","").then(function(response) { console.log(response); }, function(reposnse) { console.log("BAD"); });
 		}
 		
@@ -247,5 +249,21 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 		}				
 		
 	}
+	
+	/**
+	 * The immediate Run (preview) button functionality for the Analysis documents (for List view of documents). 
+	 */
+	$scope.analysisSpeedMenu = 
+	[
+	 	{
+	 		label: sbiModule_translate.load('sbi.generic.run'),
+	 		icon:'fa fa-play-circle' ,
+	 		backgroundColor:'transparent',
+	 		
+	 		action: function(item,event) {
+	 			$scope.executeDocument(item);
+	 		}
+	 	} 
+ 	];
 	
 }
