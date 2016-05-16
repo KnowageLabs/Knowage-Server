@@ -7,7 +7,42 @@
  */
 angular
 	.module('workspace.controller', ['workspace.directive','workspace.configuration'])
-	.controller('workspaceController', ["$scope","$http","$mdDialog","$timeout","$documentViewer","sbiModule_translate","sbiModule_restServices","sbiModule_config","sbiModule_user", workspaceFunction]);
+	.controller('workspaceController', ["$scope","$http","$mdDialog","$timeout","$documentViewer","sbiModule_translate","sbiModule_restServices","sbiModule_config","sbiModule_user", workspaceFunction])
+	.directive('fileModel',['$parse',function($parse){
+		
+		return {
+			restrict:'A',
+			link: function(scope,element,attrs){
+				var model = $parse(attrs.fileModel);
+				var modelSetter = model.assign;
+				
+				element.bind('change',function(){
+					scope.$apply(function(){
+						modelSetter(scope,element[0].files[0]);
+						
+					})
+				})
+			}
+		}
+		
+		
+	}])
+   .service('multipartForm',['$http',function($http){
+		
+		this.post = function(uploadUrl,data){
+			
+			var formData = new FormData();
+			
+			formData.append("file",data.file);
+
+			return	$http.post(uploadUrl,formData,{
+					transformRequest:angular.identity,
+					headers:{'Content-Type': undefined}
+				})
+		}
+		
+	}]);
+;
 
 function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiModule_translate,sbiModule_restServices,sbiModule_config,sbiModule_user) {
 
@@ -56,7 +91,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.showGridView = true;
-	
+
 	$scope.translate = sbiModule_translate;
 
 	/**
@@ -96,7 +131,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.toogleGridListViewOfDocs = function() {
 		$scope.showGridView = !$scope.showGridView;
 	}
-	
+
 	/**
 	 * Filter the sent collection of data (documents, analysis, datasets, etc.)
 	 * according to the searching term (sequence) user entered, 'newSearchInput'.
@@ -221,7 +256,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 						case "analysis":
 							
 								var allAnalysisDocsFinal = [];
-							
+								
 								$scope.cockpitAnalysisDocs = filterThroughCollection(newSearchInput,$scope.cockpitAnalysisDocsInitial,"name");
 								$scope.geoAnalysisDocs = filterThroughCollection(newSearchInput,$scope.geoAnalysisDocsInitial,"name");
 								
@@ -261,9 +296,10 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	/**
 	 * Preview (execute) a particular document.
 	 */
-	$scope.executeDocument = function(document) {		
-		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");			
+	$scope.executeDocument = function(document) {
+		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");		
 		$documentViewer.openDocument(document.id, document.label, document.name);
+		
 	}
 	
 	/**

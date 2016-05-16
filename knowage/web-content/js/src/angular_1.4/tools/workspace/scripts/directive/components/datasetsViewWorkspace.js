@@ -14,7 +14,7 @@ angular
 	  	};
 	})
 
-function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_user,sbiModule_helpOnLine,sbiModule_messaging){
+function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_user,sbiModule_helpOnLine,sbiModule_messaging,multipartForm){
 	$scope.selectedDataset = undefined;
 	//$scope.lastDocumentSelected = null;
 	$scope.showDatasettInfo = false;
@@ -380,7 +380,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	
 
 	
-	function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_config){
+	function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_config,multipartForm){
 		$scope.closeDatasetCreateDialog=function(){
 			$mdDialog.cancel();
 		}
@@ -398,31 +398,31 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		}
 		
 	    loadDatasetCategories();
-//		$scope.fileObj={};
-//		
-//        $scope.uploadFileDataset=function(){
-//        	multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedataset/fileupload",$scope.fileObj).success(
-//
-//					function(data,status,headers,config){
-//						if(data.hasOwnProperty("errors")){						
-//							console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");		
-//							sbiModule_messaging.showErrorMessage("file upload failed"+":"+data.errors[0].message, 'Error');  
-//
-//						}else{
-//							sbiModule_messaging.showSuccessMessage("success", 'Success!'); 
-//							console.log("[UPLOAD]: SUCCESS!");
-//							$scope.fileObj.fileName = "";
-//							$scope.fileObj = {};
-//						}
-//						//$scope.bmCWMImportingShow = false;
-//
-//					}).error(function(data, status, headers, config) {
-//						console.log("[UPLOAD]: FAIL!"+status);
-//						sbiModule_messaging.showErrorMessage("errr", 'Error');
-//						//$scope.bmCWMImportingShow = false;
-//					});
-//        	
-//        }
+		$scope.fileObj={};
+		
+        $scope.uploadFileDataset=function(){
+        	multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedataset/fileupload",$scope.fileObj).success(
+
+					function(data,status,headers,config){
+						if(data.hasOwnProperty("errors")){						
+							console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");		
+							sbiModule_messaging.showErrorMessage("file upload failed"+":"+data.errors[0].message, 'Error');  
+
+						}else{
+							sbiModule_messaging.showSuccessMessage("success", 'Success!'); 
+							console.log("[UPLOAD]: SUCCESS!");
+							$scope.fileObj.fileName = "";
+							$scope.fileObj = {};
+						}
+						//$scope.bmCWMImportingShow = false;
+
+					}).error(function(data, status, headers, config) {
+						console.log("[UPLOAD]: FAIL!"+status);
+						sbiModule_messaging.showErrorMessage("errr", 'Error');
+						//$scope.bmCWMImportingShow = false;
+					});
+        	
+        }
 		
 		
 	}
