@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.glossary.dao;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessCls;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlist;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlistId;
@@ -27,6 +28,8 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlTable;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlTableWlist;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlTableWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
@@ -185,6 +188,26 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	public List<SbiGlDataSetWlist> loadDataSetWlist(Integer datasetId, String Organiz);
 
+	// metaTable wlist
+
+	public List<SbiGlTableWlist> listMetaTableWlist(Integer metaTableId);
+
+	public SbiGlTableWlist getTableWlistOrNull(SbiGlTableWlistId id);
+
+	public SbiGlTableWlistId insertTableWlist(SbiGlTableWlist tablewlist);
+
+	public void deleteMetaTableWlist(SbiGlTableWlistId id);
+
+	// metaBc wlist
+
+	public List<SbiGlBnessClsWlist> listMetaBcWlist(Integer metaBcId);
+
+	public SbiGlBnessClsWlist getBcWlistOrNull(SbiGlBnessClsWlistId id);
+
+	public SbiGlBnessClsWlistId insertBcWlist(SbiGlBnessClsWlist BcWlist);
+
+	public void deleteMetaBnessClsWlist(SbiGlBnessClsWlistId id);
+
 	// navigation
 	public Map<String, Object> NavigationItem(JSONObject elem);
 
@@ -198,7 +221,7 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	public List<SbiGlBnessClsWlist> loadBnessClsWlistByParameter(Integer id, String column);
 
 	//
-	// Business Class
+	// Table
 	//
 	public SbiGlTable loadTable(Integer tableId);
 

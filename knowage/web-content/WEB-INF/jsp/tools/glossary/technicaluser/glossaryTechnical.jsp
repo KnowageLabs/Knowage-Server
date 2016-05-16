@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/glossary/generalStyle.css", currTheme)%>">
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/technicaluser/glossaryTec.js"></script>
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/technicaluser/glossaryTec_BusinessClass.js"></script>
-<!-- <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/technicaluser/glossaryTec_Table.js"></script> -->
+<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/technicaluser/glossaryTec_Table.js"></script>
 
 </head>
 
@@ -98,14 +98,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-content> 
 				</md-tab> 
 				<%} %> 
-				<% if(false){ %>
+				<% if(canSeeAdmin){ %>
 				<md-tab label='{{translate.load("sbi.generic.table.management");}}' ">
 					<md-content class="abs100">
 					<%@include file="/WEB-INF/jsp/tools/glossary/technicaluser/table_and_wordsAssociations.jspf"%>
 					</md-content> 
 				</md-tab> 
 				<%} %> 
-				<% if(false){ %>
+				<% if(canSeeAdmin){ %>
 				<md-tab label='{{translate.load("sbi.generic.businessclass.management");}}'">
 					<md-content class="abs100">
 					<%@include file="/WEB-INF/jsp/tools/glossary/technicaluser/business_class_and_wordsAssociations.jspf"%>

@@ -3587,3 +3587,46 @@ DROP TABLE SBI_EXT_ROLES_DS_CATEGORY;
 --16.05.2016 Carmelo Spiccia: missing columns in SBI_KPI_VALUE
 ALTER TABLE SBI_KPI_VALUE ADD STATE CHAR(1) NOT NULL DEFAULT '0';
 ALTER TABLE SBI_KPI_VALUE ADD MANUAL_NOTE VARCHAR(4) NULL NULL;
+
+
+--16.05.2016 Giovanni Luca Ulivo: Glossary navigation relation updated
+
+ALTER TABLE `spagobi_2`.`sbi_gl_table_wlist` 
+DROP FOREIGN KEY `TABLEID`;
+ALTER TABLE `spagobi_2`.`sbi_gl_table_wlist` 
+ADD CONSTRAINT `TABLEID`
+  FOREIGN KEY (`TABLE_ID`)
+  REFERENCES `spagobi_2`.`sbi_meta_table` (`TABLE_ID`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+  
+
+ALTER TABLE `spagobi_2`.`sbi_gl_bness_cls_wlist` 
+DROP FOREIGN KEY `BCID`;
+ALTER TABLE `spagobi_2`.`sbi_gl_bness_cls_wlist` 
+ADD CONSTRAINT `BCID`
+  FOREIGN KEY (`BC_ID`)
+  REFERENCES `spagobi_2`.`sbi_meta_bc` (`BC_ID`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+  
+DROP TABLE `spagobi_2`.`sbi_gl_table`;
+DROP TABLE `spagobi_2`.`sbi_gl_bness_cls`;
+
+
+ALTER TABLE `spagobi_2`.`sbi_gl_table_wlist` 
+ADD COLUMN `COLUMN_NAME` VARCHAR(100) NOT NULL AFTER `TABLE_ID`;
+
+ALTER TABLE `spagobi_2`.`sbi_gl_table_wlist` 
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`TABLE_ID`, `WORD_ID`, `COLUMN_NAME`);
+
+
+ALTER TABLE `spagobi_2`.`sbi_gl_bness_cls_wlist` 
+CHANGE COLUMN `COLUMN_NAME` `COLUMN_NAME` VARCHAR(100) NOT NULL ,
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`BC_ID`, `WORD_ID`, `COLUMN_NAME`);
+
+
+

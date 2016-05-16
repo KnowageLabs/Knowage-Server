@@ -36,16 +36,13 @@ function funzione_tec($scope,sbiModule_translate,sbiModule_restServices,$mdToast
 		if(component=='glossTreePage')return;
 		
 		if(component=="navigation"){
-			console.log("refresh navi")
 			global.initializer[component].scope.loadNavItem();
 		}else if(global.initializer[component].state==false){
-			console.log("Initialize "+component)
 			global.initializer[component].state=true;
 			global.initializer[component].scope.init();
 		}
 //		else{
 //			if(component=="navigation"){
-//				console.log("refresh navi")
 //				global.initializer[component].scope.loadNavItem();
 //			}
 //		}
@@ -56,23 +53,16 @@ function funzione_tec($scope,sbiModule_translate,sbiModule_restServices,$mdToast
 	global.showToast=function(text, time) {
 		var timer = time == undefined ? 6000 : time;
 
-		console.log(text)
 		$mdToast.show($mdToast.simple().content(text).position('top').action(
 		'OK').highlightAction(false).hideDelay(timer));
 	}
 
 	global.getAllGloss=function() {
-		sbiModule_restServices.get("1.0/glossary", "listGlossary").success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						console.log(data.errors[0].message);
-					} else {
-						global.glossary= data;
-					}
-
-				}).error(function(data, status, headers, config) {
-					console.log("Glossary non Ottenuti " + status);
-
+		sbiModule_restServices.promiseGet("1.0/glossary", "listGlossary").then(
+				function(response, status, headers, config) {
+						global.glossary= response.data;
+				},function(data, status, headers, config) {
+					sbiModule_restServices.errorHandler(response.data,"Glossary non Ottenuti");
 
 				})
 
@@ -80,12 +70,13 @@ function funzione_tec($scope,sbiModule_translate,sbiModule_restServices,$mdToast
 	global.getAllGloss();
 	
 	global.expandAllTree= function(tree){
-		console.log("expand")
 		if(angular.element(document.getElementById(tree)).scope()!=undefined)
 		angular.element(document.getElementById(tree)).scope().expandAll();
 	}
 
-
+	$scope.expandAllTree=function(tree){
+		global.expandAllTree(tree);
+	}
 }
 
 
@@ -111,12 +102,10 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 	docAss.loadDocList=function(item){
 		sbiModule_restServices.get("2.0/documents", "listDocument", item+"&scope=GLOSSARY").success(
 				function(data, status, headers, config) {
-					console.log(data)
 					if (data.hasOwnProperty("errors")) {
 						global.showToast(sbiModule_translate.load("sbi.glossary.load.error"),3000);
 
 					} else {
-						console.log("list doc ottenute")
 						docAss.listDoc = data.item;
 						docAss.sizeDoc=data.itemCount;
 						docAss.showSearchDocPreloader = false;
@@ -138,7 +127,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 
 
 	docAss.DocumentLike= function(ele,itemsPerPage){
-		console.log("DocumentLike "+ele);
 		
 			docAss.showSearchDocPreloader = true;
 			var item="Page=1&ItemPerPage="+itemsPerPage+"&label=" + ele;
@@ -149,22 +137,17 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 	docAss.prevSWSG = "";
 	docAss.tmpSWSG = "";
 	docAss.SearchWordInSelectedGloss= function(ele){
-		console.log("SearchWordInSelectedGloss  "+ele);
 		docAss.tmpSWSG = ele;
 		$timeout(function() {
 			if (docAss.tmpSWSG != ele || docAss.prevSWSG == ele) {
-				console.log("interrompo la ricerca  di ele " + ele)
 				return;
 			}
 
 			docAss.prevSWSG = ele;
 
-			console.log("cerco "+ele)
 			showPreloader("preloaderTree");
 			sbiModule_restServices.get("1.0/glossary", "glosstreeLike", "WORD=" + ele+"&GLOSSARY_ID="+docAss.selectedGloss.GLOSSARY_ID).success(
 					function(data, status, headers, config) {
-						console.log("glosstreeLike Ottenuti " + status)
-						console.log(data)
 
 						if (data.hasOwnProperty("errors")) {
 							showErrorToast(data.errors[0].message);
@@ -184,7 +167,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 						hidePreloader("preloaderTree");
 
 					}).error(function(data, status, headers, config) {
-						console.log("glosstreeLike non Ottenuti " + status);
 						global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 						hidePreloader("preloaderTree");
@@ -194,8 +176,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 	}
 
 	docAss.removeWord= function(event,word){
-		console.log("remove word");
-		console.log(word);
 
 		var confirm = $mdDialog.confirm().title(
 				sbiModule_translate.load("sbi.glossary.word.delete")).content(
@@ -212,8 +192,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 							.success(
 									function(data, status, headers,
 											config) {
-										console.log("Word eliminato")
-										console.log(data)
 										if (data.hasOwnProperty("errors")) {
 											showErrorToast(data.errors[0].message)
 											global.showToast(sbiModule_translate.load("sbi.glossary.word.delete.error"),3000);
@@ -230,7 +208,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 									.error(
 											function(data, status, headers,
 													config) {
-												console.log("WORD NON ELMINIATO "+ status);
 												showErrorToast("word non eliminato "+ status);
 												global.showToast(sbiModule_translate.load("sbi.glossary.word.delete.error"),3000);
 												hidePreloader();
@@ -238,7 +215,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 
 
 				}, function() {
-					console.log('Annullo.');
 				});
 
 
@@ -247,7 +223,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 	}
 
 	docAss.loadDocumentInfo= function(item){
-		console.log("loadDocumentInfo");
 		docAss.words=[];
 		docAss.searchDoc="";
 		showPreloader("preloader");
@@ -256,8 +231,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 				"1.0/glossary","getDocumentInfo","DOCUMENT_ID=" + item.DOCUMENT_ID )
 				.success(
 						function(data, status, headers, config) {
-							console.log("loadDocumentInfo ottnuti")
-							console.log(data)
 
 							if (data.hasOwnProperty("errors")) {
 								showErrorToast(data.errors[0].message);
@@ -272,7 +245,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 
 							hidePreloader("preloader");
 						}).error(function(data, status, headers, config) {
-							console.log("nodi non ottenuti " + status);
 							global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 							if (togg != undefined) {
 								togg.expand();
@@ -290,10 +262,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 	}
 
 	docAss.getGlossaryNode = function(gloss, node, togg) {
-		console.log("getGlossaryNode")
-		console.log(node)
-		console.log(gloss)
-		console.log(togg);
 		var PARENT_ID = (node == null ? null : node.CONTENT_ID);
 		var GLOSSARY_ID = (gloss == null ? null : gloss.GLOSSARY_ID);
 
@@ -306,8 +274,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 				+ PARENT_ID)
 				.success(
 						function(data, status, headers, config) {
-							console.log("nodi ottnuti")
-							console.log(data)
 
 							if (data.hasOwnProperty("errors")) {
 								showErrorToast(data.errors[0].message);
@@ -319,7 +285,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 									// check if parent is node or glossary
 									node==null ? gloss.SBI_GL_CONTENTS = data : node.CHILD = data;
 								}else{
-									console.log("riordino manualmente");
 									if(node!=null){
 										node.CHILD.sort(function(a,b) {return (a.CONTENT_NM > b.CONTENT_NM) ? 1 : ((b.CONTENT_NM > a.CONTENT_NM) ? -1 : 0);} ); 
 									}
@@ -334,7 +299,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 								hidePreloader("preloaderTree");
 							}
 						}).error(function(data, status, headers, config) {
-							console.log("nodi non ottenuti " + status);
 							global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 							if (togg != undefined) {
 								togg.expand();
@@ -345,14 +309,12 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 
 	docAss.toggle = function(scope, item, gloss) {
 
-		console.log("toggle")
 
 		if(docAss.searchWD!="" && docAss.searchWD!=undefined ){
 			scope.toggle();
 			return;	
 		}
 
-		console.log(scope)
 		item.preloader = true;
 		if (scope.collapsed) {
 			docAss.getGlossaryNode(gloss, item, scope)
@@ -363,12 +325,9 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 	};
 
 	function getAllDoc() {
-		console.log("getAllDoc")
 		showPreloader();
 		sbiModule_restServices.get("1.0/glossary", "listDocument").success(
 				function(data, status, headers, config) {
-					console.log("doc Ottenuti " + status)
-					console.log(data)
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message);
 						global.showToast(sbiModule_translate.load("sbi.glossary.load.error"),
@@ -380,7 +339,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 
 					hidePreloader();
 				}).error(function(data, status, headers, config) {
-					console.log("Glossary non Ottenuti " + status);
 					showErrorToast('Ci sono errori! \n status ' + status);
 					global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
@@ -412,20 +370,18 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 				var present=false;
 				for(var i=0;i<destNodesScope.$modelValue.length;i++){
 					if(destNodesScope.$modelValue[i].WORD_ID==sourceNodeScope.$modelValue.WORD_ID){
-						console.log("word present")	;
 						present= true;
 						break;
 					}
 				}
-				if(present){console.log("present"); return false;}
-				else{console.log("accepted");
+				if(present){ return false;}
+				else{
 				return true;}
 
 
 
 			},
 			beforeDrop : function(event) {
-				console.log("dropped")
 			},
 			dragStart : function(event) {
 			},
@@ -436,15 +392,11 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 	docAss.TreeOptions = {
 
 			accept : function(sourceNodeScope, destNodesScope, destIndex) {
-				console.log("accept")
 				return false;
 			},
 			beforeDrop : function(event) {
-				console.log("beforeDrop TreeOptions")
-				console.log(event)
 
 				if(event.source.nodesScope.$id==event.dest.nodesScope.$id){
-					console.log("no drop ")
 					return false;
 				}
 
@@ -452,7 +404,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 
 				elem.WORD_ID = event.source.nodeScope.$modelValue.WORD_ID;
 				elem.DOCUMENT_ID=docAss.selectedDocument.DOCUMENT_ID;
-				console.log(elem)
 
 				showPreloader();
 				sbiModule_restServices
@@ -509,8 +460,6 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 
 	function showErrorToast(err, time) {
 		var timer = time == undefined ? 6000 : time
-				console.log("ci sono errori")
-				console.log(err)
 				hidePreloader();
 		// $mdToast.show($mdToast.simple().content('Ci sono errori! \n ' + err)
 		// .position('top').action('OK').highlightAction(false).hideDelay(
@@ -563,12 +512,10 @@ function funzione_associazione_dataset(sbiModule_translate, sbiModule_restServic
 	datasetAss.loadDatasetList=function(item){
 		sbiModule_restServices.get("2.0/datasets", "listDataset", item).success(
 				function(data, status, headers, config) {
-					console.log(data)
 					if (data.hasOwnProperty("errors")) {
 						global.showToast(sbiModule_translate.load("sbi.glossary.load.error"),3000);
 
 					} else {
-						console.log("list Dataset ottenute")
 						datasetAss.listDataset = data.item;
 						datasetAss.sizeDataset=data.itemCount;
 						datasetAss.showSearchDatasetPreloader = false;
@@ -592,7 +539,6 @@ function funzione_associazione_dataset(sbiModule_translate, sbiModule_restServic
 	
 
 	datasetAss.DatasetLike= function(ele,itemsPerPage){
-		console.log("DatasetLike "+ele);
 		
 		datasetAss.showSearchDatasetPreloader = true;
 			var item="Page=1&ItemPerPage="+itemsPerPage+"&label=" + ele;
@@ -604,22 +550,17 @@ function funzione_associazione_dataset(sbiModule_translate, sbiModule_restServic
 	datasetAss.prevSWSG = "";
 	datasetAss.tmpSWSG = "";
 	datasetAss.SearchWordInSelectedGloss= function(ele){
-		console.log("SearchWordInSelectedGloss  "+ele);
 		datasetAss.tmpSWSG = ele;
 		$timeout(function() {
 			if (datasetAss.tmpSWSG != ele || datasetAss.prevSWSG == ele) {
-				console.log("interrompo la ricerca  di ele " + ele)
 				return;
 			}
 
 			datasetAss.prevSWSG = ele;
 
-			console.log("cerco "+ele)
 			showPreloader("preloaderTreeDS");
 			sbiModule_restServices.get("1.0/glossary", "glosstreeLike", "WORD=" + ele+"&GLOSSARY_ID="+datasetAss.selectedGloss.GLOSSARY_ID).success(
 					function(data, status, headers, config) {
-						console.log("glosstreeLike Ottenuti " + status)
-						console.log(data)
 
 						if (data.hasOwnProperty("errors")) {
 							showErrorToast(data.errors[0].message);
@@ -639,7 +580,6 @@ function funzione_associazione_dataset(sbiModule_translate, sbiModule_restServic
 						hidePreloader("preloaderTreeDS");
 
 					}).error(function(data, status, headers, config) {
-						console.log("glosstreeLike non Ottenuti " + status);
 						global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 						hidePreloader("preloaderTreeDS");
@@ -649,8 +589,6 @@ function funzione_associazione_dataset(sbiModule_translate, sbiModule_restServic
 	}
 
 	datasetAss.removeWord= function(item,word){
-		console.log("remove word");
-		console.log(item);
 
 		var confirm = $mdDialog.confirm().title(
 				sbiModule_translate.load("sbi.glossary.word.delete")).content(
@@ -671,8 +609,6 @@ function funzione_associazione_dataset(sbiModule_translate, sbiModule_restServic
 							.success(
 									function(data, status, headers,
 											config) {
-										console.log("Word eliminato")
-										console.log(data)
 										if (data.hasOwnProperty("errors")) {
 											showErrorToast(data.errors[0].message)
 											global.showToast(sbiModule_translate.load("sbi.glossary.word.delete.error"),3000);
@@ -692,18 +628,15 @@ function funzione_associazione_dataset(sbiModule_translate, sbiModule_restServic
 									.error(
 											function(data, status, headers,
 													config) {
-												console.log("WORD NON ELMINIATO "+ status);
 												showErrorToast("word non eliminato "+ status);
 												global.showToast(sbiModule_translate.load("sbi.glossary.word.delete.error"),3000);
 												hidePreloader();
 											})
 				}, function() {
-					console.log('Annullo.');
 				});
 	}
 
 	datasetAss.loadDatasetInfo= function(item){
-		console.log("loadDatasetInfo");
 		datasetAss.words=[];
 		datasetAss.searchDataset="";
 
@@ -712,8 +645,6 @@ function funzione_associazione_dataset(sbiModule_translate, sbiModule_restServic
 		.get("1.0/glossary","getDataSetInfo?DATASET_ID="+item.id.dsId+"&ORGANIZATION="+item.id.organization)
 				.success(
 						function(data, status, headers, config) {
-							console.log("loadDatasetInfo ottnuti")
-							console.log(data)
 
 							if (data.hasOwnProperty("errors")) {
 								showErrorToast(data.errors[0].message);
@@ -723,7 +654,6 @@ function funzione_associazione_dataset(sbiModule_translate, sbiModule_restServic
 									datasetAss.infoSelectedDataSet=data.DataSet;
 									datasetAss.words=data.SbiGlDataSetWlist;
 									datasetAss.SelfWords=data.Word;
-									console.log('datasetAss.SelfWords',datasetAss.SelfWords)
 									$timeout(function() {
 										global.expandAllTree("Tree-Word-Dataset");
 									},500);
@@ -732,7 +662,6 @@ function funzione_associazione_dataset(sbiModule_translate, sbiModule_restServic
 
 						hidePreloader("preloader");
 	}).error(function(data, status, headers, config) {
-		console.log("nodi non ottenuti " + status);
 		global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 		if (togg != undefined) {
 			togg.expand();
@@ -748,10 +677,6 @@ datasetAss.showSelectedGlossary = function(gloss) {
 }
 
 datasetAss.getGlossaryNode = function(gloss, node, togg) {
-	console.log("getGlossaryNode")
-	console.log(node)
-	console.log(gloss)
-	console.log(togg);
 	var PARENT_ID = (node == null ? null : node.CONTENT_ID);
 	var GLOSSARY_ID = (gloss == null ? null : gloss.GLOSSARY_ID);
 
@@ -764,8 +689,6 @@ datasetAss.getGlossaryNode = function(gloss, node, togg) {
 			+ PARENT_ID)
 			.success(
 					function(data, status, headers, config) {
-						console.log("nodi ottnuti")
-						console.log(data)
 
 						if (data.hasOwnProperty("errors")) {
 							showErrorToast(data.errors[0].message);
@@ -777,7 +700,6 @@ datasetAss.getGlossaryNode = function(gloss, node, togg) {
 								// check if parent is node or glossary
 								node==null ? gloss.SBI_GL_CONTENTS = data : node.CHILD = data;
 							}else{
-								console.log("riordino manualmente");
 								if(node!=null){
 									node.CHILD.sort(function(a,b) {return (a.CONTENT_NM > b.CONTENT_NM) ? 1 : ((b.CONTENT_NM > a.CONTENT_NM) ? -1 : 0);} ); 
 								}
@@ -792,7 +714,6 @@ datasetAss.getGlossaryNode = function(gloss, node, togg) {
 							hidePreloader("preloaderTreeDS");
 						}
 					}).error(function(data, status, headers, config) {
-						console.log("nodi non ottenuti " + status);
 						global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 						if (togg != undefined) {
 							togg.expand();
@@ -805,14 +726,12 @@ datasetAss.getGlossaryNode = function(gloss, node, togg) {
 
 datasetAss.toggle = function(scope, item, gloss) {
 
-	console.log("toggle")
 
 	if(datasetAss.searchWDS!="" && datasetAss.searchWDS!=undefined ){
 		scope.toggle();
 		return;	
 	}
 
-	console.log(scope)
 	item.preloader = true;
 	if (scope.collapsed) {
 		datasetAss.getGlossaryNode(gloss, item, scope)
@@ -823,12 +742,9 @@ datasetAss.toggle = function(scope, item, gloss) {
 };
 
 function getAllDataset() {
-	console.log("getAllDataset")
 	showPreloader();
 	sbiModule_restServices.get("1.0/glossary", "listDataset").success(
 			function(data, status, headers, config) {
-				console.log("Dataset Ottenuti " + status)
-				console.log(data)
 				if (data.hasOwnProperty("errors")) {
 					showErrorToast(data.errors[0].message);
 					global.showToast(sbiModule_translate.load("sbi.glossary.load.error"),
@@ -840,7 +756,6 @@ function getAllDataset() {
 
 				hidePreloader();
 			}).error(function(data, status, headers, config) {
-				console.log("Glossary non Ottenuti " + status);
 				showErrorToast('Ci sono errori! \n status ' + status);
 				global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
@@ -868,7 +783,6 @@ datasetAss.datasetWordSpeedMenuOpt = [
 datasetAss.TreeOptionsWord = {
 
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
-	console.log(destNodesScope)
 
 	if(destNodesScope.depth()==0){
 		return false;
@@ -876,7 +790,6 @@ datasetAss.TreeOptionsWord = {
 	
 			for(var i=0;i<destNodesScope.$modelValue.length;i++){
 				if(destNodesScope.$modelValue[i].WORD_ID==sourceNodeScope.$modelValue.WORD_ID){
-					console.log("word present")	;
 					return false;
 				}
 			}
@@ -886,7 +799,6 @@ return  true;
 
 		},
 		beforeDrop : function(event) {
-			console.log("dropped")
 		},
 		dragStart : function(event) {
 		},
@@ -899,13 +811,11 @@ return  true;
 datasetAss.TreeOptionsDataset_Word = {
 
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
-	console.log(destNodesScope)
 
 	
 	
 			for(var i=0;i<destNodesScope.$modelValue.length;i++){
 				if(destNodesScope.$modelValue[i].WORD_ID==sourceNodeScope.$modelValue.WORD_ID){
-					console.log("word present")	;
 					return false;
 				}
 			}
@@ -915,7 +825,6 @@ return  true;
 
 		},
 		beforeDrop : function(event) {
-			console.log("dropped")
 		},
 		dragStart : function(event) {
 		},
@@ -928,16 +837,12 @@ return  true;
 datasetAss.TreeOptions = {
 
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
-			console.log("accept")
 			return false;
 		},
 		beforeDrop : function(event) {
 			
-			console.log("beforeDrop TreeOptions")
-			console.log(event)
 			
 			if(event.source.nodesScope.$id==event.dest.nodesScope.$id){
-				console.log("no drop ")
 				return false;
 			}
 
@@ -955,7 +860,6 @@ datasetAss.TreeOptions = {
 			elem.DATASET_ID=datasetAss.selectedDataset.id.dsId;
 			
 			elem.ORGANIZATION=datasetAss.infoSelectedDataSet.id.organization;
-			console.log(elem)
 			
 			
 			showPreloader();
@@ -1013,8 +917,6 @@ datasetAss.TreeOptions = {
 
 function showErrorToast(err, time) {
 	var timer = time == undefined ? 6000 : time
-			console.log("ci sono errori")
-			console.log(err)
 			hidePreloader();
 	// $mdToast.show($mdToast.simple().content('Ci sono errori! \n ' + err)
 	// .position('top').action('OK').highlightAction(false).hideDelay(
@@ -1086,9 +988,7 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 		$timeout(function() {
 			if((navi.lastReq.type==type && navi.lastReq.item==item && navi.lastReq.time==d )|| navi.lastReq==undefined){
 				navi.loadNI(type,item);
-				console.log("load nI")
 			}else{
-				console.log("annullo LoadNi")
 			}
 		}, 1000);
 	}
@@ -1119,8 +1019,6 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 					} else if (data.Status == "NON OK") {
 						global.showToast(sbiModule_translate.load(data.Message),3000);
 					} else {
-//						console.log("loadNavItem ottenuti")
-//						console.log(data)
 						if(data.hasOwnProperty("document")){
 							navi.pagination.document.item=data.document;
 							navi.pagination.document.total=data.document_size;
@@ -1239,14 +1137,10 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 	}
 
 	navi.pageChanged = function(newPage,pagin_item) {
-		console.log("PAgeChange")
 		navi.loadNavItem("pagination",pagin_item.item_type);
 	};
 
 	navi.showInfoWORD=function(wordid){
-		console.log("showInfo");
-		console.log(event)
-		console.log(wordid)
 		$mdDialog
 		.show({  
 			controllerAs : 'infCtrl',
@@ -1271,10 +1165,7 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 		})
 	}
 
-	navi.showInfoDOC=function(ev,docLB,docID){
-		console.log("showInfo");
-		console.log(event)
-		console.log(docLB)
+	navi.showInfoDOC=function(ev,docLB,docID){ 
 		$mdDialog
 		.show({
 			controllerAs : 'infCtrl',
@@ -1284,13 +1175,6 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 				
 				idctrl.runDocument=function(){ 
 					$documentViewer.openDocument(idctrl.info.id,idctrl.info.label,idctrl.info.name);
-//					var pathUrl="";
-//					pathUrl+="&OBJECT_ID="+idctrl.info.id;
-//					pathUrl+="&OBJECT_LABEL="+idctrl.info.label;
-//					pathUrl+="&OBJECT_NAME="+idctrl.info.name;
-//					
-//					$window.location.href=sbiModule_config.adapterPath+'?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&IS_SOURCE_DOCUMENT=true&SBI_EXECUTION_ID=null'+pathUrl
-//						$window.location.href='/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&OBJECT_ID=35&OBJECT_LABEL=start%20doc&IS_SOURCE_DOCUMENT=true&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=null&OBJECT_NAME=start%20doc'
 				}
 				
 				sbiModule_restServices.get("1.0/documents", docLB)
@@ -1323,7 +1207,6 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 	}
 
 	navi.showInfoDS=function(ev,dsId,dsOrg){
-		console.log("showInfo");
 		$mdDialog
 		.show({
 			controllerAs : 'infCtrl',
@@ -1351,9 +1234,6 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 	}
 
 	navi.showInfoBC=function(ev,bclab){
-		console.log("showInfo");
-		console.log(event)
-		console.log(bclab)
 		$mdDialog
 		.show({
 			controllerAs : 'infCtrl',
@@ -1409,7 +1289,6 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 	}
 
 	navi.SearchLike = function(arr) {
-		console.log("SearchLike");
 		ele=arr.search;
 		arr.tmp_search = ele;
 		$timeout(function() {
@@ -1507,7 +1386,6 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 	}
 
 	navi.init=function(){
-		console.log("init Navi")
 		navi.pagination.word = {item_type:"word",item:[],selected:[],selGlo:"---",current: 1,total:10,item_number:3,id:"word_pagination",search:"",prev_search:"",prev_glo:"---",tmp_search:"",preloader:false};
 		navi.pagination.document = {item_type:"document",item:[],selected:[],current: 1,total:10,item_number:7,id:"document_pagination",search:"",prev_search:"",tmp_search:"",preloader:false};
 		navi.pagination.dataset = {item_type:"dataset",item:[],selected:[],current: 1,total:10,item_number:7,id:"dataset_pagination",search:"",prev_search:"",tmp_search:"",preloader:false};

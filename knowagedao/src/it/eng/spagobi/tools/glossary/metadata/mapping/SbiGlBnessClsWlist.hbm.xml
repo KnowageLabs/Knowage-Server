@@ -11,6 +11,9 @@
              <key-property name="bcId" type="int">
                 <column name="BC_ID" />
             </key-property>
+            <key-property name="column_name" type="string">
+                <column name="COLUMN_NAME" />
+            </key-property>
         </composite-id>
         
 		
@@ -22,9 +25,7 @@
             <column name="BC_ID" not-null="true" />
         </many-to-one>
        
-       <property name="column_name" type="string">
-			<column name="COLUMN_NAME" length="100" not-null="false" />
-		</property>
+       
         
         
 	<component name="commonInfo" insert="true" update="true"

@@ -13,7 +13,7 @@
 				</md-toolbar>
 
 				<md-content layout-padding class="ToolbarBox xsToolbar noBorder ">
-					<angular-list layout-fill id='dataset' ng-model=ctrl.listDataset
+					<angular-list  layout-fill id='dataset' ng-model=ctrl.listDataset
 							item-name='label ' click-function="ctrl.loadDatasetInfo(item)"
 							show-search-bar=true
 							search-function="ctrl.DatasetLike(searchValue,itemsPerPage)"

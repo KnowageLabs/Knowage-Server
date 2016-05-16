@@ -1,4 +1,4 @@
-package it.eng.spagobi.tools.table;
+package it.eng.spagobi.tools.metaTable;
 
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 import it.eng.spago.error.EMFUserError;
@@ -23,13 +23,13 @@ import org.json.JSONObject;
 
 import com.mongodb.util.JSON;
 
-@Path("/1.0/table")
+@Path("/1.0/metaTable")
 @ManageAuthorization
-public class tableService {
+public class MetaTableService {
 
 	@GET
-	@Path("/listTable")
-	public Response listListener(@Context HttpServletRequest req, @QueryParam("Page") String pageString, @QueryParam("ItemPerPage") String itemPerPageString,
+	@Path("/listMetaTable")
+	public Response listMetaTable(@Context HttpServletRequest req, @QueryParam("Page") String pageString, @QueryParam("ItemPerPage") String itemPerPageString,
 			@QueryParam("label") String search) throws EMFUserError {
 		String resp = "";
 		Integer page = getNumberOrNull(pageString);

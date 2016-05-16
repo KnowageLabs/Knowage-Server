@@ -22,13 +22,16 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.metadata.metadata.SbiMetaBc;
+import it.eng.spagobi.metadata.metadata.SbiMetaBcAttribute;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -38,6 +41,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -639,6 +645,149 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 			logger.debug("OUT");
 		}
 		return idToReturn;
+	}
+
+	/**
+	 * Load paginated tables.
+	 *
+	 * @return List of meta tables
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableDAOHibImpl#loadAllTables()
+	 */
+	@Override
+	public List<SbiMetaBc> loadPaginatedMetaBC(Integer page, Integer item_per_page, String search) throws EMFUserError {
+		logger.debug("IN");
+
+		Session tmpSession = null;
+		Transaction tx = null;
+		List<SbiMetaBc> toReturn = new ArrayList();
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			Criteria c = tmpSession.createCriteria(SbiMetaBc.class);
+			c.addOrder(Order.asc("name"));
+
+			c.setFirstResult((page - 1) * item_per_page);
+			c.setMaxResults(item_per_page);
+
+			c.add(Restrictions.like("name", search == null ? "" : search, MatchMode.ANYWHERE).ignoreCase());
+			tx.commit();
+			toReturn = c.list();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	@Override
+	public Integer countSbiMetaBC(String search) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			String hql = "select count(*) from SbiMetaBc where name like '%" + search + "%'";
+			Query hqlQuery = aSession.createQuery(hql);
+			Long temp = (Long) hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of SbiMetaBc", he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return resultNumber;
+	}
+
+	/**
+	 * Load BC by id.
+	 *
+	 * @param id
+	 *            the bc is
+	 *
+	 * @return the meta bc
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#loadBcByID(integer)
+	 */
+	@Override
+	public SbiMetaBc loadBcWithAttributesByID(Integer id) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiMetaBc tmpBC = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+		SbiMetaBc smbc = new SbiMetaBc();
+
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+			tmpBC = (SbiMetaBc) tmpSession.load(SbiMetaBc.class, id);
+			smbc.setBcId(tmpBC.getBcId());
+			smbc.setName(tmpBC.getName());
+
+			Set<SbiMetaBcAttribute> smtc = new HashSet<SbiMetaBcAttribute>();
+			for (Iterator<SbiMetaBcAttribute> iterator = tmpBC.getSbiMetaBcAttributes().iterator(); iterator.hasNext();) {
+				SbiMetaBcAttribute smc = iterator.next();
+				SbiMetaBcAttribute tmp = new SbiMetaBcAttribute();
+				tmp.setAttributeId(smc.getAttributeId());
+				tmp.setName(smc.getName());
+				tmp.setType(smc.getType());
+				smtc.add(tmp);
+			}
+
+			smbc.setSbiMetaBcAttributes(smtc);
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+
+			}
+		}
+		logger.debug("OUT");
+		return smbc;
 	}
 
 }

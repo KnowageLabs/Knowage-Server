@@ -11,6 +11,9 @@
              <key-property name="tableId" type="int">
                 <column name="TABLE_ID" />
             </key-property>
+            <key-property name="column_name" type="string">
+                <column name="COLUMN_NAME" />
+            </key-property>
         </composite-id>
         
 		
@@ -18,7 +21,7 @@
             <column name="WORD_ID" not-null="true" />
         </many-to-one>
 <!--          <many-to-one name="table" class="it.eng.spagobi.tools.glossary.metadata.SbiGlTable" update="false" insert="false" fetch="select"> -->
-         <many-to-one name="table" class="it.eng.spagobi.metadata.metadata.SbiMetaTable" update="false" insert="false" fetch="select">
+         <many-to-one name="table" class="it.eng.spagobi.metadata.metadata.SbiMetaTable" update="false" insert="false"  fetch="join">
             <column name="TABLE_ID" not-null="true" />
         </many-to-one>
        

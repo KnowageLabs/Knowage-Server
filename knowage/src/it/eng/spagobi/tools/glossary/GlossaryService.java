@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,6 +33,10 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.metadata.metadata.SbiMetaBc;
+import it.eng.spagobi.metadata.metadata.SbiMetaBcAttribute;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
+import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
@@ -41,6 +45,7 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.glossary.dao.IGlossaryDAO;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessCls;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlist;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlistId;
@@ -48,6 +53,8 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlTable;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlTableWlist;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlTableWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 import it.eng.spagobi.tools.udp.bo.Udp;
 import it.eng.spagobi.tools.udp.dao.IUdpDAO;
@@ -60,12 +67,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -158,6 +167,76 @@ public class GlossaryService {
 	}
 
 	@POST
+	@Path("/addMetaTableWlist")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
+	public Response addMetaTableWlist(@Context HttpServletRequest req) {
+		try {
+			logger.debug("addMetaTableWlist");
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
+
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+			Integer wordId = getNumberOrNull(requestVal.opt("WORD_ID"));
+			Integer metaTableId = getNumberOrNull(requestVal.opt("META_TABLE_ID"));
+			String column = requestVal.opt("COLUMN_NAME").toString();
+			// String organization = requestVal.opt("ORGANIZATION").toString();
+
+			SbiGlTableWlist twl = new SbiGlTableWlist();
+			SbiGlTableWlistId twlId = new SbiGlTableWlistId(wordId, metaTableId, column);
+			SbiGlTableWlist wo = dao.getTableWlistOrNull(twlId);
+			if (wo != null) {
+				throw new SpagoBIServiceException(req.getPathInfo(), "sbi.glossary.word.new.name.duplicate");
+			}
+
+			twl.setId(twlId);
+			dao.insertTableWlist(twl);
+
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+		return Response.ok().build();
+	}
+
+	@POST
+	@Path("/addMetaBcWlist")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
+	public Response addMetaBcWlist(@Context HttpServletRequest req) {
+		try {
+			logger.debug("addMetaTableWlist");
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
+
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+			Integer wordId = getNumberOrNull(requestVal.opt("WORD_ID"));
+			Integer metaBcId = getNumberOrNull(requestVal.opt("META_BC_ID"));
+			String column = requestVal.opt("COLUMN_NAME").toString();
+			// String organization = requestVal.opt("ORGANIZATION").toString();
+
+			SbiGlBnessClsWlist twl = new SbiGlBnessClsWlist();
+			SbiGlBnessClsWlistId twlId = new SbiGlBnessClsWlistId(wordId, metaBcId, column);
+			SbiGlBnessClsWlist wo = dao.getBcWlistOrNull(twlId);
+			if (wo != null) {
+				throw new SpagoBIServiceException(req.getPathInfo(), "sbi.glossary.word.new.name.duplicate");
+			}
+
+			twl.setId(twlId);
+			dao.insertBcWlist(twl);
+
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+		return Response.ok().build();
+	}
+
+	@POST
 	@Path("/deleteDocWlist")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
@@ -207,6 +286,58 @@ public class GlossaryService {
 			JSONObject jo = new JSONObject();
 			jo.put("Status", "OK");
 			return jo.toString();
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+	}
+
+	@DELETE
+	@Path("/deleteMetaTableWlist")
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
+	public Response deleteMetaTableWlist(@Context HttpServletRequest req) {
+		try {
+			logger.debug("deleteMetaTableWlist");
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
+			Integer wordId = getNumberOrNull(req.getParameter("WORD_ID"));
+			Integer tableId = getNumberOrNull(req.getParameter("TABLE_ID"));
+			String column = req.getParameter("COLUMN").toString();
+			SbiGlTableWlistId id = new SbiGlTableWlistId(wordId, tableId, column);
+
+			dao.deleteMetaTableWlist(id);
+
+			JSONObject jo = new JSONObject();
+			jo.put("Status", "OK");
+			return Response.ok().build();
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+	}
+
+	@DELETE
+	@Path("/deleteMetaBcWlist")
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
+	public Response deleteMetaBcWlist(@Context HttpServletRequest req) {
+		try {
+			logger.debug("deleteMetaTableWlist");
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
+			Integer wordId = getNumberOrNull(req.getParameter("WORD_ID"));
+			Integer bcId = getNumberOrNull(req.getParameter("BC_ID"));
+			String column = req.getParameter("COLUMN").toString();
+			SbiGlBnessClsWlistId id = new SbiGlBnessClsWlistId(wordId, bcId, column);
+
+			dao.deleteMetaBnessClsWlist(id);
+
+			JSONObject jo = new JSONObject();
+			jo.put("Status", "OK");
+			return Response.ok().build();
 
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
@@ -546,11 +677,120 @@ public class GlossaryService {
 	}
 
 	@GET
+	@Path("/getMetaTableInfo")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
+	public String getMetaTableInfo(@Context HttpServletRequest req) {
+
+		try {
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			dao.setUserProfile(profile);
+
+			Integer metaTableId = getNumberOrNull(req.getParameter("META_TABLE_ID"));
+			if (metaTableId == null) {
+				throw new SpagoBIServiceException(req.getPathInfo(), "MetaTable id  [" + metaTableId + "] not valid or null");
+			}
+
+			JSONObject jo = new JSONObject();
+			JSONArray columnArray = new JSONArray();
+			JSONArray mtWord = new JSONArray();
+
+			Map<String, Integer> map = new HashMap<String, Integer>();
+			SbiMetaTable datas = DAOFactory.getSbiMetaTableDAO().loadTableWithColumnByID(metaTableId);
+			for (Iterator<SbiMetaTableColumn> iterator = datas.getSbiMetaTableColumns().iterator(); iterator.hasNext();) {
+				SbiMetaTableColumn smc = iterator.next();
+				map.put(smc.getName(), columnArray.length());
+				JSONObject joMC = new JSONObject();
+				joMC.put("name", smc.getName());
+				joMC.put("columnId", smc.getColumnId());
+				joMC.put("type", smc.getType());
+				joMC.put("word", new JSONArray());
+				columnArray.put(joMC);
+			}
+
+			List<SbiGlTableWlist> listMetaTableWlist = dao.listMetaTableWlist(metaTableId);
+
+			for (SbiGlTableWlist twl : listMetaTableWlist) {
+
+				if (".SELF".equals(twl.getId().getColumn_name().toUpperCase())) {
+					mtWord.put(fromWordLight(twl.getWord()));
+				} else {
+					columnArray.getJSONObject(map.get(twl.getId().getColumn_name())).getJSONArray("word").put(fromWordLight(twl.getWord()));
+				}
+
+			}
+
+			jo.put("sbiGlTableWlist", columnArray);
+			jo.put("metaTable", JSON.parse(JsonConverter.objectToJson(datas, SbiMetaTable.class)));
+			jo.put("words", mtWord);
+			return jo.toString();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+	}
+
+	@GET
+	@Path("/getMetaBcInfo")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
+	public String getMetaBcInfo(@Context HttpServletRequest req) {
+
+		try {
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			dao.setUserProfile(profile);
+
+			Integer metaBcId = getNumberOrNull(req.getParameter("META_BC_ID"));
+			if (metaBcId == null) {
+				throw new SpagoBIServiceException(req.getPathInfo(), "MetaBc id  [" + metaBcId + "] not valid or null");
+			}
+
+			JSONObject jo = new JSONObject();
+			JSONArray columnArray = new JSONArray();
+			JSONArray mtWord = new JSONArray();
+
+			Map<String, Integer> map = new HashMap<String, Integer>();
+			SbiMetaBc datas = DAOFactory.getSbiMetaBCDAO().loadBcWithAttributesByID(metaBcId);
+			for (Iterator<SbiMetaBcAttribute> iterator = datas.getSbiMetaBcAttributes().iterator(); iterator.hasNext();) {
+				SbiMetaBcAttribute smc = iterator.next();
+				map.put(smc.getName(), columnArray.length());
+				JSONObject joMC = new JSONObject();
+				joMC.put("name", smc.getName());
+				joMC.put("columnId", smc.getAttributeId());
+				joMC.put("type", smc.getType());
+				joMC.put("word", new JSONArray());
+				columnArray.put(joMC);
+			}
+
+			List<SbiGlBnessClsWlist> listMetaBcWlist = dao.listMetaBcWlist(metaBcId);
+			// List<SbiGlTableWlist> listMetaTableWlist = dao.listMetaTableWlist(metaBcId);
+
+			for (SbiGlBnessClsWlist twl : listMetaBcWlist) {
+
+				if (".SELF".equals(twl.getId().getColumn_name().toUpperCase())) {
+					mtWord.put(fromWordLight(twl.getWord()));
+				} else {
+					columnArray.getJSONObject(map.get(twl.getId().getColumn_name())).getJSONArray("word").put(fromWordLight(twl.getWord()));
+				}
+
+			}
+
+			jo.put("sbiGlBnessClsWlist", columnArray);
+			jo.put("metaBc", JSON.parse(JsonConverter.objectToJson(datas, SbiMetaBc.class)));
+			jo.put("words", mtWord);
+			return jo.toString();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+	}
+
+	@GET
 	@Path("/getDatamartInfo")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
 	public String getDatamartInfo(@Context HttpServletRequest req) {
-
+		// called from helpOnLine
 		try {
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -572,8 +812,8 @@ public class GlossaryService {
 				Map<String, Integer> map = new HashMap<String, Integer>();
 				List<SbiGlBnessClsWlist> bcw = dao.loadBnessClsWlistByParameter(b.getBcId(), null);
 				for (SbiGlBnessClsWlist wl : bcw) {
-					String colname = wl.getColumn_name();
-					if (colname == null) {
+					String colname = wl.getId().getColumn_name();
+					if (".SELF".equals(colname)) {
 						self.put(fromWord(wl.getWord()));
 					} else {
 						Integer index = map.get(colname);

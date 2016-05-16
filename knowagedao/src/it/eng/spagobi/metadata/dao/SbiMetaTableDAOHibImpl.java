@@ -23,10 +23,13 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
+import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -78,6 +81,67 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			toReturn.setTableId(hibTable.getTableId());
 			toReturn.setName(hibTable.getName());
 			toReturn.setDeleted(hibTable.isDeleted());
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	/**
+	 * Load table by id.
+	 *
+	 * @param id
+	 *            the table is
+	 *
+	 * @return the meta table
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableDAOHibImpl#loadTableWithColumnByID(integer)
+	 */
+	@Override
+	public SbiMetaTable loadTableWithColumnByID(Integer id) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiMetaTable toReturn = new SbiMetaTable();
+		Session tmpSession = null;
+		Transaction tx = null;
+
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+			SbiMetaTable smt = loadTableByID(tmpSession, id);
+			toReturn.setTableId(smt.getTableId());
+			toReturn.setName(smt.getName());
+
+			Set<SbiMetaTableColumn> smtc = new HashSet<SbiMetaTableColumn>();
+			for (Iterator<SbiMetaTableColumn> iterator = smt.getSbiMetaTableColumns().iterator(); iterator.hasNext();) {
+				SbiMetaTableColumn smc = iterator.next();
+				SbiMetaTableColumn tmp = new SbiMetaTableColumn();
+				tmp.setColumnId(smc.getColumnId());
+				tmp.setName(smc.getName());
+				tmp.setType(smc.getType());
+				smtc.add(tmp);
+			}
+
+			toReturn.setSbiMetaTableColumns(smtc);
+
 			tx.commit();
 
 		} catch (HibernateException he) {

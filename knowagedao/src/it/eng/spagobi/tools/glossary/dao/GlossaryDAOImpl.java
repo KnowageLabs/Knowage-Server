@@ -30,6 +30,8 @@ import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryStructureWithWordLike;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchListDataSetWlist;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchListDocWlist;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchListMetaBnessClsWlist;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchListMetaTableWlist;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWlistByContentId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWord;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordAttrByWordId;
@@ -42,8 +44,11 @@ import it.eng.spagobi.tools.glossary.dao.criterion.loadContentsParent;
 import it.eng.spagobi.tools.glossary.dao.criterion.loadDataSetWlistByDataset;
 import it.eng.spagobi.tools.glossary.dao.criterion.loadDataSetWlistByDatasetAndWordAndColumn;
 import it.eng.spagobi.tools.glossary.dao.criterion.loadDocWlistByDocumentAndWord;
+import it.eng.spagobi.tools.glossary.dao.criterion.loadMetaBnessClassWlistByMetaBcAndWord;
+import it.eng.spagobi.tools.glossary.dao.criterion.loadMetaTableWlistByMetaTableAndWord;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessCls;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlist;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlistId;
@@ -53,6 +58,8 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlReferences;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlReferencesId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlTable;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlTableWlist;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlTableWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
@@ -903,7 +910,6 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 		} else {
 			return l.get(0);
 		}
-
 	}
 
 	@Override
@@ -932,6 +938,56 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 		return list(new SearchListDataSetWlist(datasetId, Organiz));
 	}
 
+	@Override
+	public List<SbiGlTableWlist> listMetaTableWlist(Integer metaTableId) {
+		return list(new SearchListMetaTableWlist(metaTableId));
+	}
+
+	@Override
+	public SbiGlTableWlist getTableWlistOrNull(SbiGlTableWlistId id) {
+		List<SbiGlTableWlist> l = list(new loadMetaTableWlistByMetaTableAndWord(id.getWordId(), id.getTableId(), id.getColumn_name()));
+		if (l.isEmpty()) {
+			return null;
+		} else {
+			return l.get(0);
+		}
+	}
+
+	@Override
+	public SbiGlTableWlistId insertTableWlist(SbiGlTableWlist tablewlist) {
+		return (SbiGlTableWlistId) insert(tablewlist);
+	}
+
+	@Override
+	public void deleteMetaTableWlist(SbiGlTableWlistId id) {
+		delete(SbiGlTableWlist.class, id);
+	}
+
+	@Override
+	public List<SbiGlBnessClsWlist> listMetaBcWlist(Integer metaBcId) {
+		return list(new SearchListMetaBnessClsWlist(metaBcId));
+	}
+
+	@Override
+	public SbiGlBnessClsWlistId insertBcWlist(SbiGlBnessClsWlist BcWlist) {
+		return (SbiGlBnessClsWlistId) insert(BcWlist);
+	}
+
+	@Override
+	public SbiGlBnessClsWlist getBcWlistOrNull(SbiGlBnessClsWlistId id) {
+		List<SbiGlBnessClsWlist> l = list(new loadMetaBnessClassWlistByMetaBcAndWord(id.getWordId(), id.getBcId(), id.getColumn_name()));
+		if (l.isEmpty()) {
+			return null;
+		} else {
+			return l.get(0);
+		}
+	}
+
+	@Override
+	public void deleteMetaBnessClsWlist(SbiGlBnessClsWlistId id) {
+		delete(SbiGlBnessClsWlist.class, id);
+	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<SbiGlWord> listWordFromArray(final Object[] arr) {
@@ -945,20 +1001,6 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 		});
 	}
 
-	// @SuppressWarnings({ "unchecked", "rawtypes" })
-	// @Override
-	// public List<SbiGlAttribute> listAttrFromArray(final Object[] arr) {
-	// return list(new ICriterion() {
-	//
-	// @Override
-	// public Criteria evaluate(Session session) {
-	// Criteria c = session.createCriteria(SbiGlAttribute.class);
-	// c.add(Restrictions.in("attributeId", arr));
-	// return c;
-	// }
-	// });
-	// }
-
 	@Override
 	public Map<String, Object> NavigationItem(final JSONObject elem) {
 
@@ -966,9 +1008,6 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 			@SuppressWarnings("unchecked")
 			@Override
 			public Map<String, Object> execute(Session session) throws JSONException {
-
-				// Filter filter =session.enableFilter("prova");
-				// filter.setParameter("user", "userTec");
 
 				Map<String, Object> map = new HashMap<String, Object>();
 				String tmpSearch = "";

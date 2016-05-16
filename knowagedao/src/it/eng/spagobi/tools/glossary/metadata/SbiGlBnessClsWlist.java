@@ -29,8 +29,6 @@ public class SbiGlBnessClsWlist extends SbiHibernateModel {
 	private SbiGlWord word;
 	private SbiMetaBc bness_cls;
 
-	private String column_name;
-
 	public SbiGlBnessClsWlist() {
 
 	}
@@ -39,11 +37,10 @@ public class SbiGlBnessClsWlist extends SbiHibernateModel {
 	 * @param word
 	 * @param bness_cls
 	 */
-	public SbiGlBnessClsWlist(SbiGlWord word, SbiMetaBc bness_cls, String column_name) {
+	public SbiGlBnessClsWlist(SbiGlWord word, SbiMetaBc bness_cls) {
 		super();
 		this.word = word;
 		this.bness_cls = bness_cls;
-		this.column_name = column_name;
 	}
 
 	/**
@@ -89,21 +86,6 @@ public class SbiGlBnessClsWlist extends SbiHibernateModel {
 	 */
 	public void setBness_cls(SbiMetaBc bness_cls) {
 		this.bness_cls = bness_cls;
-	}
-
-	/**
-	 * @return the column_name
-	 */
-	public String getColumn_name() {
-		return column_name;
-	}
-
-	/**
-	 * @param column_name
-	 *            the column_name to set
-	 */
-	public void setColumn_name(String column_name) {
-		this.column_name = column_name;
 	}
 
 }

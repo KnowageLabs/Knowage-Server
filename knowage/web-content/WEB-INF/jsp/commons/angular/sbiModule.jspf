@@ -411,8 +411,9 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		sbiModule_logger.trace("DELETE: " +endP_path+"/"+ req_Path + "" + item, conf);
 		
 		deferred.notify('About to call async function');
-
-		$http.delete(getBaseUrl(endP_path) + "" + req_Path, conf)
+		(item == undefined || item==null) ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
+		
+		$http.delete(getBaseUrl(endP_path) + "" + req_Path+""+item, conf)
 			.then(
 					function successCallback(data, status, headers, config) {
 						handleResponse(data, status, headers, config, deferred);

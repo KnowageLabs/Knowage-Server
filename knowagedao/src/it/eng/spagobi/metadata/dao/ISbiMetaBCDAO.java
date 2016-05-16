@@ -58,4 +58,11 @@ public interface ISbiMetaBCDAO extends ISpagoBIDao {
 	public void modifyBc(Session session, SbiMetaBc aMetaBC) throws EMFUserError;
 
 	public Integer insertBc(Session session, SbiMetaBc aMetaBC) throws EMFUserError;
+
+	public List<SbiMetaBc> loadPaginatedMetaBC(Integer page, Integer item_per_page, String search) throws EMFUserError;
+
+	public Integer countSbiMetaBC(String searchText) throws EMFUserError;
+
+	public SbiMetaBc loadBcWithAttributesByID(Integer id) throws EMFUserError;
+
 }

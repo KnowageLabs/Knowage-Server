@@ -1,0 +1,42 @@
+
+<div class="nodo_logico expander-icon" data-nodrag>
+		
+	<div ui-tree-handle class="smallTree" style="  cursor: pointer;">
+	
+									
+		<md-list>
+			<md-list-item  layout="row" ng-click="this.toggle()">  
+			<div class="indicator-child"></div> 
+			<md-icon style="margin-left: -8px;margin-top: 1px;" ng-class="{'fa fa-angle-down' : !collapsed , 'fa fa-angle-right' : collapsed}"></md-icon>
+			<p >{{item.name}}</p>
+			 
+			<md-progress-circular
+				md-diameter="20" ng-show="item.preloader" class="md-hue-2"
+				style="  left: 50%;  margin-left: -25px;   margin-top: -14px; position:absolute "
+				md-mode="indeterminate">
+			</md-progress-circular>
+			
+			</md-list-item>
+		
+		</md-list>
+	</div>
+</div>
+
+
+<ol	ui-tree-nodes="options" ng-model="item.word" ng-class="{hideChildren: collapsed}">
+	<li ng-repeat="itemW in item.word" ui-tree-node data-collapsed="true" class="figlioVisibile">
+		
+	<div  class="figlio_vocabolo smallTree">
+		<md-list class="noPadding"> 
+			<md-list-item layout="row">
+				<div class="indicator-child"></div>
+				<md-icon ng-disabled="true"   md-font-icon="fa fa-angle-right " style="margin-left: -8px;margin-top: 1px;" > </md-icon>
+				<p flex >{{itemW.WORD}}</p>
+ 				<md-icon   md-font-icon="fa fa-times" ng-click="removeWordFromData(item,itemW)" aria-label="delete word"  ></md-icon> 
+      
+		</md-list-item> 
+		</md-list>
+	</div>
+
+</li>
+</ol>
