@@ -70,7 +70,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</angular-table>
 
 		</list>
-		<detail label='selectedDriver.label'  save-function="save"
+		
+		<extra-button>
+			  <md-button class="md-flat" ng-click="createUseModes()" >New UseMode</md-button>
+		</extra-button>
+		
+		<detail label=' selectedDriver.label==undefined? "" : selectedDriver.label'  save-function="save"
 		cancel-function="cancel"
 		disable-save-button="!attributeForm.$valid"
 		show-save-button="showme" show-cancel-button="showme">

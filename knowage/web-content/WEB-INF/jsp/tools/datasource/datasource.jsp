@@ -62,7 +62,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					>
 			</angular-table>
 		</list>
-
+			
+			<extra-button>
+			  <md-button class="md-flat" ng-click="testDataSource()" >{{translate.load("sbi.datasource.testing")}}</md-button>
+		</extra-button>
 
 			<detail
 				label='(selectedDataSource.label==undefined)? "" : selectedDataSource.label'
