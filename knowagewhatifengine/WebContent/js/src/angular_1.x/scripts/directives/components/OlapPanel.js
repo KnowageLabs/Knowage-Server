@@ -24,18 +24,29 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		sbiModule_restServices.promisePost
 		("1.0",encoded,data)
 		.then(function(response) {
+			
 			$scope.handleResponse(response);
+			
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("An error occured by drill down functionality", 'Error');
 			
 		});		
 	}
 	
-	$scope.drillUp = function(axis, position, member, uniqueName,positionUniqueName) {
-		var encoded = encodeURI('/member/drillup/'+ axis+ '/'+ position+ '/'+ member+ '/'+ positionUniqueName+ '/'+ uniqueName+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
-		sbiModule_restServices.promiseGet
-		("1.0",encoded)
+	$scope.drillUp = function(axis, position, memberPosition,memberUniqueName, positionUniqueName) {
+		var toSend ={};
+		toSend.axis = axis;
+		toSend.position = position;
+		toSend.memberPosition = memberPosition;
+		toSend.positionUniqueName = positionUniqueName;
+		toSend.memberUniqueName = memberUniqueName;
+		
+		
+		var encoded = encodeURI('/member/drillup?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+		sbiModule_restServices.promisePost
+		("1.0",encoded,toSend)
 		.then(function(response) {
+			
 			$scope.handleResponse(response);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage("An error occured by drill up functionality", 'Error');
@@ -723,9 +734,16 @@ var checkForDuplicates = function(type) {
 	
 	var doMemberSaving = function() {
 		
-		var encoded = encodeURI('/calculatedmembers/execute/'+$scope.selectedMDXFunctionName+'/'+$scope.finalFormula+'/'+$scope.selectedMember.parentMember+'/'+$scope.selectedMember.axisOrdinal+'?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+		var toSend ={};
+		toSend.calculatedFieldName = $scope.selectedMDXFunctionName;
+		toSend.calculatedFieldFormula = $scope.finalFormula;
+		toSend.parentMemberUniqueName = $scope.selectedMember.parentMember;
+		toSend.axisOrdinal = $scope.selectedMember.axisOrdinal;
+			
+		
+		var encoded = encodeURI('/calculatedmembers?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 		sbiModule_restServices.promisePost
-		("1.0",encoded)
+		("1.0",encoded,toSend)
 		.then(function(response) {
 			$scope.handleResponse(response);
 			
@@ -848,8 +866,11 @@ $scope.sendCC = function() {
 		}
 
 $scope.deleteCC = function(calculateMemberName) {
-	sbiModule_restServices.promiseDelete
-	("1.0",'/calculatedmembers/'+calculateMemberName+'?SBI_EXECUTION_ID=' + JSsbiExecutionID)
+	
+	var toSend = {};
+	toSend.calculatedFieldName = calculateMemberName;
+	sbiModule_restServices.promisePost
+	("1.0",'/calculatedmembers/delete?SBI_EXECUTION_ID=' + JSsbiExecutionID,toSend)
 	.then(function(response) {
 		
 		$scope.handleResponse(response);
