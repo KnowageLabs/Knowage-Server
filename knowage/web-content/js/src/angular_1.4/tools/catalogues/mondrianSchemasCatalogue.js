@@ -2,7 +2,11 @@
  * 
  */
 
-var app = angular.module('mondrianSchemasCatalogueModule',['ngMaterial' , 'angular_list' , 'angular_table' , 'sbiModule' , 'angular_2_col','file_upload']);
+var app = angular.module('mondrianSchemasCatalogueModule',['ngMaterial' , 'angular_list' , 'angular_table' , 'sbiModule' , 'angular_2_col','file_upload','angular-list-detail']);
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
+    $mdThemingProvider.theme('knowage')
+    $mdThemingProvider.setDefaultTheme('knowage');
+ }]);
 
 app.controller('mondrianSchemasCatalogueController',["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","$filter","multipartForm","sbiModule_messaging",mondrianSchemasCatalogueFunction]);
 
@@ -67,8 +71,9 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 		{
 	        
 		label:sbiModule_translate.load("sbi.generic.delete"),
-	    icon:'fa fa-trash-o fa-lg',
-	    color:'#153E7E',
+		icon:'fa fa-trash',
+		//icon:'fa fa-trash-o fa-lg',
+	    // color:'#153E7E',
 	    action:function(item){
 	    $scope.confirmDelete(item,event);	
 	    
@@ -84,7 +89,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	        
 		label:sbiModule_translate.load("sbi.generic.download"),
 	    icon:'fa fa-download',
-	    color:'#153E7E',
+	   // color:'#153E7E',
 	    action:function(item,event){
 	    $scope.downloadFile(item,event);
 			
@@ -95,8 +100,9 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	   {
 	        
 		label:sbiModule_translate.load("sbi.generic.delete"),
-	    icon:'fa fa-trash-o fa-lg',
-	    color:'#153E7E',
+	    icon:'fa fa-trash',
+		//icon:'fa fa-trash-o fa-lg',
+	    //color:'#153E7E',
 	    action:function(item){
 	    $scope.confirmDelete(item,event);	
 	    
