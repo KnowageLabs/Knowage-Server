@@ -82,16 +82,16 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@Path("/drilldown/{axis}/{position}/{member}")
 	@Produces("text/html; charset=UTF-8")
 	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
-			@PathParam("member") int memberPos) throws JSONException, IOException  {
+			@PathParam("member") int memberPos) throws JSONException, IOException {
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
 		String time = "Drilldown start " + format.format(new Date());
-		//System.out.println(time);
+		// System.out.println(time);
 		init();
 
 		String str = RestUtilities.readBody(req);
 		JSONObject jo = new JSONObject(str);
 		model.removeSubset();
-		//System.out.println(model.getCurrentMdx());
+		// System.out.println(model.getCurrentMdx());
 		// The ROWS axis
 		CellSetAxis rowsOrColumns = getAxis(axisPos);
 
@@ -134,25 +134,48 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 
 		time = "Drilldown end " + format.format(new Date());
-		//System.out.println(time);
-		//System.out.println();
-		//System.out.println();
+		// System.out.println(time);
+		// System.out.println();
+		// System.out.println();
 		String table = renderModel(model);
 
 		return table;
 	}
 
-	@GET
-	@Path("/drillup/{axis}/{position}/{member}/{positionUniqueName}/{memberUniqueName}")
+	@POST
+	@Path("/drillup")
+	// {axis}/{position}/{memberPosition}/{positionUniqueName}/{memberUniqueName}
 	@Produces("text/html; charset=UTF-8")
-	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
-			@PathParam("member") int memberPos, @PathParam("positionUniqueName") String positionUniqueName,
-			@PathParam("memberUniqueName") String memberUniqueName) {
+	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req) {
 		init();
+		JSONObject jo;
+		int axis = 0;
+		int position = 0;
+		int memberPosition = 0;
+		String positionUniqueName = null;
+		String memberUniqueName = null;
+		String body;
+
+		try {
+			body = RestUtilities.readBody(req);
+			jo = new JSONObject(body);
+			axis = jo.getInt("axis");
+			position = jo.getInt("position");
+			memberPosition = jo.getInt("memberPosition");
+			positionUniqueName = jo.getString("positionUniqueName");
+			memberUniqueName = jo.getString("memberUniqueName");
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
 		String time = "Drillup start " + format.format(new Date());
-		//System.out.println(time);
+		// System.out.println(time);
 		List<Member> m = null;
 		Member m2 = null;
 		Hierarchy hierarchy = null;
@@ -160,7 +183,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		model.removeSubset();
 
 		// The ROWS axis
-		CellSetAxis rowsOrColumns = getAxis(axisPos);
+		CellSetAxis rowsOrColumns = getAxis(axis);
 
 		// Member positions of the ROWS axis.
 		List<Position> positions = rowsOrColumns.getPositions();
@@ -217,9 +240,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 
 		time = "Drillup end " + format.format(new Date());
-		//System.out.println(time);
-		//System.out.println();
-		//System.out.println();
+		// System.out.println(time);
+		// System.out.println();
+		// System.out.println();
 		return renderModel(model);
 	}
 
@@ -341,35 +364,41 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		return array.toString();
 	}
 
-	@GET
-	@Path("/sort/{axisToSortpos}/{axis}/{positionUniqueName}/{sortMode}")
-	public String sort(@PathParam("axisToSortpos") Integer axisToSortpos, @PathParam("axis") Integer axis,
-			@PathParam("positionUniqueName") String positionUniqueName, @PathParam("sortMode") String sortMode) {
+	@POST
+	@Path("/sort")
+	public String sort(@javax.ws.rs.core.Context HttpServletRequest req) {
 		init();
-		model.setSorting(true);
-		SortCriteria nextSortCriteria = SortMode.fromName(sortMode).nextMode(model.getSortCriteria());
-		model.setSortCriteria(nextSortCriteria);
-		sortModel(axisToSortpos, axis, positionUniqueName, sortMode);
-		//System.out.println(model.getSortCriteria());
-		model.setSorting(true);
-		String table = renderModel(model);
-		//System.out.println(model.getSortCriteria() + "memberResource 341");
-		return table;
-	}
+		JSONObject jo;
+		int axisToSort = 0;
+		int axis = 0;
+		String positionUniqueName = null;
+		String sortMode = null;
+		int topBottomCount = 0;
+		String body;
 
-	@GET
-	@Path("/sort/{axisToSortpos}/{axis}/{positionUniqueName}/{sortMode}/{topBottomCount}")
-	public String sort(@PathParam("axisToSortpos") Integer axisToSortpos, @PathParam("axis") Integer axis,
-			@PathParam("positionUniqueName") String positionUniqueName, @PathParam("sortMode") String sortMode,
-			@PathParam("topBottomCount") Integer topBottomCount) {
-		init();
+		try {
+			body = RestUtilities.readBody(req);
+			jo = new JSONObject(body);
+			axisToSort = jo.getInt("axisToSort");
+			axis = jo.getInt("axis");
+			positionUniqueName = jo.getString("positionUniqueName");
+			sortMode = jo.getString("sortMode");
+			topBottomCount = jo.getInt("topBottomCount");
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		model.setTopBottomCount(topBottomCount);
 		model.setSorting(true);
 
 		SortCriteria nextSortCriteria = SortMode.fromName(sortMode).nextMode(model.getSortCriteria());
 		model.setSortCriteria(nextSortCriteria);
 
-		sortModel(axisToSortpos, axis, positionUniqueName, sortMode);
+		sortModel(axisToSort, axis, positionUniqueName, sortMode);
 		model.setSorting(true);
 		return renderModel(model);
 	}
@@ -447,22 +476,6 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 		}
 
-	}
-
-	@GET
-	@Path("/start/{x}/{y}")
-	public String startFrom(@PathParam("x") Integer x, @PathParam("y") Integer y) {
-		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
-		String time = "Start from start " + format.format(new Date());
-		//System.out.println(time);
-		init();
-
-		model.startFrom(x, y);
-		time = "Start from end " + format.format(new Date());
-		//System.out.println(time);
-		//System.out.println();
-		//System.out.println();
-		return renderModel(model);
 	}
 
 }
