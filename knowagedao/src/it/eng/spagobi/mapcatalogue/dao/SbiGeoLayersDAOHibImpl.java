@@ -674,7 +674,13 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			JSONObject layerDef = new JSONObject(new String(aLayer.getLayerDef()));
 
 			if (!layerDef.get("layer_file").equals("null")) {
-				File doc = new File(layerDef.getString("layer_file"));
+				String resourcePath = SpagoBIUtilities.getResourcePath();
+				if (aLayer.getPathFile().startsWith(resourcePath)) {
+					// biLayer.setPathFile(biLayer.getPathFile());
+				} else {
+					aLayer.setPathFile(resourcePath + File.separator + aLayer.getPathFile());
+				}
+				File doc = new File(aLayer.getPathFile());
 				URL path = doc.toURI().toURL();
 				InputStream inputstream = path.openStream();
 				BufferedReader br = new BufferedReader(new InputStreamReader(inputstream));
