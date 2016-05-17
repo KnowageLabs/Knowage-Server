@@ -177,6 +177,8 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 					+'</md-input-container>';
 				$scope.kpiList.push(obj);
 			}
+			
+			$scope.loadTemplateIfExist();
 		},function(response){
 		});
 	};
@@ -278,7 +280,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		$scope.completeInfoKPI();
 	};
 
-	$scope.loadTemplateIfExist();
+	
 
 	$scope.completeInfoKPI = function() {
 		var arr= [];
