@@ -380,11 +380,13 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			objTemp["roleId"] = $scope.selectedRole.id;
 			$scope.selectedRole.roleMetaModelCategories.push(objTemp);
 		}
-		for(var i =0;i<$scope.selectedRole.roleDataSetCategories.length;i++){
-			$scope.selectedRole.roleMetaModelCategories.push($scope.selectedRole.roleDataSetCategories[i]);
+		if($scope.selectedRole.roleDataSetCategories!=undefined){
+			for(var i =0;i<$scope.selectedRole.roleDataSetCategories.length;i++){
+				$scope.selectedRole.roleMetaModelCategories.push($scope.selectedRole.roleDataSetCategories[i]);
+			}
+			delete $scope.selectedRole.roleDataSetCategories;
 		}
-		delete $scope.selectedRole.roleDataSetCategories;
-
+		
 		if($scope.selectedRole.hasOwnProperty("id")){
 
 			sbiModule_restServices.promisePut("2.0/roles", $scope.selectedRole.id , $scope.selectedRole)
