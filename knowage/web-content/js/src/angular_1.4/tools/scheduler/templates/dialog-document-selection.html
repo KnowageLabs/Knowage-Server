@@ -6,9 +6,10 @@
 			</h2>
 		</div>
 	</md-toolbar>
-	<md-content style="height: 100%;" layout="column">
-		<document-tree ng-model="docCtrl.folders" highlights-selected-item="true" create-tree="true" selected-item="docCtrl.selectedDocument" click-function="docCtrl.setSelectedDocument(item)" showFiles="true"></document-tree>
-		<div flex></div>
+	<md-content flex layout="column" layout-padding>
+		<document-tree ng-model="docCtrl.folders" highlights-selected-item="true" create-tree="true" selected-item="docCtrl.selectedDocument" click-function="docCtrl.setSelectedDocument(item)" showFiles="true" showEmptyPlaceholder="true"></document-tree>
+	</md-content>
+	<md-content layout="column">
 		<div class="md-actions" layout="row">
 			<md-button ng-click="docCtrl.cancel()" class="md-primary">
 				{{translate.load("sbi.ds.wizard.cancel");}} 

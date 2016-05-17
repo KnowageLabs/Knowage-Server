@@ -49,72 +49,73 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 			    	var subfoldersId = scope.subfoldersId;
 			    	
 			    	scope.iconFolder 		= scope.keys !== undefined && scope.keys.iconFolder !==undefined && scope.keys.iconFolder.length > 0 ? scope.keys.iconFolder: 'fa fa-square' ;
-					    	scope.iconFolderOpen 	= scope.keys !== undefined && scope.keys.iconFolderOpen !==undefined && scope.keys.iconFolderOpen.length > 0 ? scope.keys.iconFolderOpen: 'fa fa-square-o' ;
-					    	scope.multiFolders 		= scope.keys !== undefined && scope.keys.multiFolders !==undefined && scope.keys.multiFolders.length > 0 ? scope.keys.multiFolders: 'fa fa-plus-square' ;
-					    	scope.multiFoldersOpen 	= scope.keys !== undefined && scope.keys.multiFoldersOpen !==undefined && scope.keys.multiFoldersOpen.length > 0 ? scope.keys.multiFoldersOpen: 'fa fa-minus-square' ;
+			    	scope.iconFolderOpen 	= scope.keys !== undefined && scope.keys.iconFolderOpen !==undefined && scope.keys.iconFolderOpen.length > 0 ? scope.keys.iconFolderOpen: 'fa fa-square-o' ;
+			    	scope.multiFolders 		= scope.keys !== undefined && scope.keys.multiFolders !==undefined && scope.keys.multiFolders.length > 0 ? scope.keys.multiFolders: 'fa fa-plus-square' ;
+			    	scope.multiFoldersOpen 	= scope.keys !== undefined && scope.keys.multiFoldersOpen !==undefined && scope.keys.multiFoldersOpen.length > 0 ? scope.keys.multiFoldersOpen: 'fa fa-minus-square' ;
 			    	
 			    	scope.seeTree = false;
 			    	
 			    	scope.createTreeStructure = function (folders){
-			    		if (attrs.createTree !==undefined  && (attrs.createTree ==true || attrs.createTree =="true")){
-				    		if (folders !== undefined && folders.length > 0 && folders[0][subfoldersId] === undefined){
+			    		if (folders && attrs.createTree !==undefined  && (attrs.createTree ==true || attrs.createTree =="true")){
+			    			var myFolders = JSON.parse(JSON.stringify(folders));
+				    		if (myFolders !== undefined && myFolders.length > 0 && myFolders[0][subfoldersId] === undefined){
 					    		var mapFolder = {};	
 								
-								for (var i = 0 ; i < folders.length; i ++ ){
-									folders[i][subfoldersId] = [];
-									mapFolder[folders[i][elementId]] = folders[i]; 
+								for (var i = 0 ; i < myFolders.length; i ++ ){
+									myFolders[i][subfoldersId] = [];
+									mapFolder[myFolders[i][elementId]] = myFolders[i]; 
 								}
 								
 								var treeFolders = [];
-								for (var i = 0 ; i < folders.length; i ++ ){
+								for (var i = 0 ; i < myFolders.length; i ++ ){
 									//if folder has not father, is a root folder
-									if (folders[i][parentId] == null || folders[i][parentId] == "null"){
-										treeFolders.push(folders[i]);
+									if (myFolders[i][parentId] == null || myFolders[i][parentId] == "null"){
+										treeFolders.push(myFolders[i]);
 									}
 									else{
 										//search parent folder with hasmap and attach the son
-										if(mapFolder[folders[i][parentId]]){
-											mapFolder[folders[i][parentId]][subfoldersId].push(folders[i]);
+										if(mapFolder[myFolders[i][parentId]]){
+											mapFolder[myFolders[i][parentId]][subfoldersId].push(myFolders[i]);
 										}
 									}
 									//update linear structure with tree structure
 								}
-								folders=treeFolders; 
+								myFolders=treeFolders; 
 				    		}
 			    		}
-			    		return folders;
+			    		return myFolders;
 			    	}
 			    	
 			    	scope.initializeFolders = function (folders, parent){
 				    	if(folders){
-				    		var _folders = JSON.parse(JSON.stringify(folders));
-				    		for (var i = 0 ; i < _folders.length; i ++ ){
-								_folders[i].checked = _folders[i].checked === undefined ? false : _folders[i].checked;
-								_folders[i].expanded = _folders[i].expanded === undefined ? false : _folders[i].expanded;
-								_folders[i].type = _folders[i].type === undefined ? "folder" : _folders[i].type;
-								_folders[i].visible = _folders[i].visible === undefined ? true : _folders[i].visible;
-								_folders[i].$parent = parent;
+				    		var myFolders = JSON.parse(JSON.stringify(folders));
+				    		for (var i = 0 ; i < myFolders.length; i ++ ){
+								myFolders[i].checked = myFolders[i].checked === undefined ? false : myFolders[i].checked;
+								myFolders[i].expanded = myFolders[i].expanded === undefined ? false : myFolders[i].expanded;
+								myFolders[i].type = myFolders[i].type === undefined ? "folder" : myFolders[i].type;
+								myFolders[i].visible = myFolders[i].visible === undefined ? true : myFolders[i].visible;
+								myFolders[i].$parent = parent;
 								
-								if (_folders[i][subfoldersId] !== undefined && _folders[i][subfoldersId].length > 0){
-									scope.initializeFolders(_folders[i][subfoldersId], _folders[i]);
+								if (myFolders[i][subfoldersId] !== undefined && myFolders[i][subfoldersId].length > 0){
+									scope.initializeFolders(myFolders[i][subfoldersId], myFolders[i]);
 									if (attrs.orderBy){
-										_folders[i].sortDirection = _folders[i].sortDirection === undefined ? "desc" : _folders[i].sortDirection;
+										myFolders[i].sortDirection = myFolders[i].sortDirection === undefined ? "desc" : myFolders[i].sortDirection;
 									}
 								}
-								for (var j = 0; _folders[i].biObjects !==undefined && j < _folders[i].biObjects.length ; j++){
-									_folders[i].biObjects[j].type = _folders[i].biObjects[j].type == undefined ?  "biObject" : _folders[i].biObjects[j].type;
-									_folders[i].biObjects[j].checked = _folders[i].biObjects[j].checked == undefined ? false : _folders[i].biObjects[j].checked;
-									_folders[i].biObjects[j].visible = _folders[i].biObjects[j].visible == undefined ?  true : _folders[i].biObjects[j].visible;
-									_folders[i].biObjects[j].$parent = parent;
+								for (var j = 0; myFolders[i].biObjects !==undefined && j < myFolders[i].biObjects.length ; j++){
+									myFolders[i].biObjects[j].type = myFolders[i].biObjects[j].type == undefined ?  "biObject" : myFolders[i].biObjects[j].type;
+									myFolders[i].biObjects[j].checked = myFolders[i].biObjects[j].checked == undefined ? false : myFolders[i].biObjects[j].checked;
+									myFolders[i].biObjects[j].visible = myFolders[i].biObjects[j].visible == undefined ?  true : myFolders[i].biObjects[j].visible;
+									myFolders[i].biObjects[j].$parent = parent;
 								}
 							}
-				    		return _folders;
+				    		return myFolders;
 			    		}
 			    	}
 		
 //			    	scope.initializeFolders(scope.ngModel, null);
 //			    	scope.ngModel = scope.createTreeStructure(scope.ngModel);
-//					scope.folders=scope.ngModel;
+					scope.folders=scope.ngModel;
 			    	
 					var id="dcTree";
 					if(attrs.id){
@@ -141,9 +142,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 							scope.selectedItem = [];
 						}
 					}
-						
-						scope.seeTree=true;
-				
+					scope.seeTree=true;
 		        }
 			 }
 		},
@@ -210,12 +209,12 @@ function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
     	, function(){
     		$scope.seeTree = false;
     		if($scope.ngModel){
-	    		var newFolders = $scope.initializeFolders($scope.ngModel, null);
-	    		newFolders = $scope.createTreeStructure(newFolders);
-				$scope.folders= newFolders;
-				$timeout(function(){
+    			$timeout(function(){
+    				var newFolders = $scope.initializeFolders($scope.ngModel, null);
+		    		newFolders = $scope.createTreeStructure(newFolders);
+		    		$scope.folders = newFolders;
 					$scope.seeTree = true;
-					},0,true);
+				},0,true);
     		}
     	});
 	

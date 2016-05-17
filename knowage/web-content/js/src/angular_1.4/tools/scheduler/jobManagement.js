@@ -1,4 +1,4 @@
-var app = angular.module('jobManager', [ 'ngMaterial', 'ui.tree',
+var app = angular.module('jobManager', [ 'ngMaterial',
                                          'angularUtils.directives.dirPagination', 'ng-context-menu',
                                          'angular_list', 'angular_table' ,'sbiModule', 'angular-list-detail','document_tree',
                                          'angular_time_picker', 'ngMessages', 'ngSanitize']);
@@ -580,11 +580,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				};
 				
 				docCtrl.cancel = function($event) {
-					$mdDialog.hide();
-					showToast(
-							sbiModule_translate
-							.load("sbi.document.load.error"),
-							3000);
+					$mdDialog.cancel();
 				};
 			},
 			templateUrl : '/knowage/js/src/angular_1.4/tools/scheduler/templates/dialog-document-selection.html'

@@ -78,8 +78,9 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			sbiModule_restServices.get("2.0/scheduler", 'nextExecutions?start='+$scope.startDateTime+'&end='+$scope.endDateTime)
 				.success(function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
-						console.log("unable to get executions");
 						$scope.executions = [];
+						console.log("unable to get executions");
+						$scope.showToastError(data.errors[0].message);
 					} else {
 						var localizedTimestampFormat = sbiModule_config.localizedTimestampFormat.replace("Y", "y").replace("m", "M").replace("i", "m");
 						var clientServerTimestampFormat = sbiModule_config.clientServerTimestampFormat.replace("Y", "y").replace("m", "M").replace("i", "m");
@@ -106,8 +107,13 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					}
 				})
 				.error(function(data, status, headers, config) {
-					console.log("unable to get executions " + status);
 					$scope.executions = [];
+					console.log("unable to get executions " + status);
+					if(data.errors){
+						$scope.showToastError(data.errors[0].message);
+					}else{
+						$scope.showToastError(status);
+					}
 				});
 		}
 	}
@@ -137,6 +143,19 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				+ item.jobName;
 		$window.location.href = url;
 	}
+	
+	$scope.showToastError = function(message) {
+		var toast = $mdToast.simple()
+			.content(message)
+			.action('OK')
+			.highlightAction(true)
+			.position('top right')
+
+		$mdToast.show(toast).then(function(response) {
+			if ( response == 'ok' ) {
+			}
+		});
+	};
 	
 	// init
 	
