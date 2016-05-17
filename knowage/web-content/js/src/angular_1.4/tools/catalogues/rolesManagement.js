@@ -13,6 +13,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	$scope.showme = false; // flag for showing right side
 	$scope.dirtyForm = false; // flag to check for modification
 	$scope.disable = false; // flag that disable some role options
+	$scope.checkName = false;
 	$scope.translate = sbiModule_translate;
 	$scope.selectedRole = {}; // main item
 	$scope.selectedMeta = {};
@@ -405,7 +406,16 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			});
 
 		}else{
-
+			
+			for (var i = 0; i < $scope.rolesList.length; i++) {
+				if($scope.rolesList[i].name.toUpperCase() === $scope.selectedRole.name.toUpperCase()){
+					sbiModule_messaging.showErrorMessage('Role already exists', 'Error');
+					$scope.checkName = true;
+				}
+			}
+				
+			
+			if(!$scope.checkName){
 			sbiModule_restServices.promisePost("2.0/roles","",angular.toJson($scope.selectedRole, true))
 			.then(function(response) {
 				$scope.rolesList=[];
@@ -416,10 +426,12 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 				$scope.selectedRole = {};
 				$scope.showme=false;
 				$scope.dirtyForm=false;
+				$scope.checkName = false;
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 
 			});
+			}
 		}
 	}
 
