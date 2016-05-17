@@ -78,7 +78,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	}
 	
 	$scope.businessModelLock = function(){
-		debugger;
 		//should also check if user is allowed to do this
 		//$scope.selectedBusinessModel.modelLocked = !$scope.selectedBusinessModel.modelLocked;
 		if($scope.selectedBusinessModel.modelLocked){

@@ -31,6 +31,12 @@ function documentBrowserMasterFunction($scope,sbiModule_translate,$mdDialog){
 	$scope.translate=sbiModule_translate;
 	$scope.runningDocuments=[];
 	$scope.documentNavigationToolbarSelectedIndex=0;
+	$scope.keys = {
+			'iconFolder' 		: 'fa fa-square',
+			'iconFolderOpen'	: 'fa fa-square-o',
+			'multiFolders'		: 'fa fa-plus-square',
+			'multiFoldersOpen'	: 'fa fa-minus-square'
+		};
 	
 	$scope.removeDocumentFromList=function(docId){
 		 for(var index in $scope.runningDocuments){

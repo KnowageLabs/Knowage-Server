@@ -122,7 +122,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- 					<md-toolbar class=" ternaryToolbar"> -->
 <!-- 		       			<h3 class="md-toolbar-tools">{{translate.load("sbi.browser.filtrpanel.filtergroup.opt.folders")}}</h3> -->
 <!-- 	     			</md-toolbar> -->
-	     			<md-content layout-margin>
+	     			<md-content layout-margin layout-padding>
 	     				<document-tree ng-model="folders" highlights-selected-item="true" create-tree="true" selected-item="selectedFolder"  
 	     					click-function="setSelectedFolder(item)"  ></document-tree>
 					</md-content>

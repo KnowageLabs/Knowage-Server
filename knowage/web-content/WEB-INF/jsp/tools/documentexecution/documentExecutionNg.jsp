@@ -94,7 +94,7 @@ try{
 		    		ng-include="'${pageContext.request.contextPath}/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.jsp'">
 			</md-sidenav>
 			
-			<md-toolbar class="documentExecutionToolbar secondaryToolbar" flex="nogrow">
+			<md-toolbar class="documentExecutionToolbar" flex="nogrow">
 	            <div class="md-toolbar-tools" layout="row" layout-align="center center">
 	                <i class="fa fa-file-text-o fa-2x"></i>
 	                <span>&nbsp;&nbsp;</span>
