@@ -59,7 +59,12 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.enterpriseDatasets=[];
 	$scope.sharedDatasets=[];
 	$scope.notDerivedDatasets=[];
-
+     
+	/**
+	 * smart filters
+	 */
+	$scope.smartFiltersList=[];
+	
 	$scope.searchInput = "";
 
 	/**
@@ -206,10 +211,11 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 				
 				if (smartFiltersDocumentsLoaded==false) {
 					
-//					console.info("[LOAD START]: Loading of Smart filters is started.");					
+				console.info("[LOAD START]: Loading of Smart filters is started.");					
 	/**
 					 * TODO: Add functionality for loading all smart filters.
-					 */					
+					 */		
+					$scope.loadSmartFilters();
 					smartFiltersDocumentsLoaded = true;
 				}
 				
@@ -340,6 +346,10 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 					angular.copy($scope.federationDefinitionsInitial,$scope.federationDefinitions); 
 				    angular.copy($scope.businessModelsInitial,$scope.businessModels);
 				    break;
+				    
+				case "smartfilters":
+					  angular.copy($scope.smartFiltersListInitial,$scope.smartFiltersList);
+					break;
 			}
 		}
 		else {
@@ -404,6 +414,11 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 						case "models":
 							$scope.federationDefinitions=filterThroughCollection(newSearchInput,$scope.federationDefinitionsInitial,"name");
 							$scope.businessModels=filterThroughCollection(newSearchInput,$scope.businessModelsInitial,"name");
+							break;
+							
+							
+						case "smartfilters":
+							$scope.smartFiltersList=filterThroughCollection(newSearchInput,$scope.smartFiltersListInitial,"name");
 							break;
 					}	
 					

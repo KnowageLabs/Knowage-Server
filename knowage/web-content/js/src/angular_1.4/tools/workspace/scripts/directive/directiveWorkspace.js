@@ -13,5 +13,6 @@ angular
 	                                'dataset_view',
 	                                'models_view_workspace',
 	                                'favorite_view',
-	                                'recent_view'
+	                                'recent_view',
+	                                'smartfilters_view_workspace'
 	                                ]);

@@ -13,6 +13,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/components/recentViewWorkspace.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/components/leftMainMenuWorkspace.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/components/mainToolbarWorkspace.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/components/smartfiltersViewWorkspace.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/federation-view/federationView.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/documentbrowser/directive/document-view/documentView.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/directive/workspace-document-view/workspaceDocumentView.js"></script>

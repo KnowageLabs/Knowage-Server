@@ -18,7 +18,8 @@ angular.module('workspace_document_view', ['ngMaterial'])
 			addToOrganizerAction:"&",
 			addToFavoritesAction:"&",
 			orderingDocumentCards:"=?",
-			cloneEnabled:"=?"
+			cloneEnabled:"=?",
+			deleteEnabled:"=?"	
 		},
 		link: function (scope, elem, attrs) { 
 			

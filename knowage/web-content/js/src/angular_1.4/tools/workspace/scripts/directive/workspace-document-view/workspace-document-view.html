@@ -43,7 +43,7 @@
 			            	<md-icon md-font-icon="fa fa-clone fa-2x"></md-icon>
 			          	</md-button>
 			          
-			          <md-button class="md-icon-button" aria-label="Delete" ng-click="deleteDocumentAction({doc:document});">
+			          <md-button ng-if="deleteEnabled" class="md-icon-button" aria-label="Delete" ng-click="deleteDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
 			          </md-button>
 			          
