@@ -17,17 +17,6 @@
  */
 package it.eng.spagobi.mapcatalogue.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.ICriterion;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -55,12 +44,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
+import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
-
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.SingletonConfig;
-
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.ICriterion;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
 
@@ -497,7 +492,14 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			}
 			// load properties of file
 			if (!layerDef.get("layer_file").equals("null")) {
-				File doc = new File(layerDef.getString("layer_file"));
+
+				String resourcePath = SpagoBIUtilities.getResourcePath();
+				if (aLayer.getPathFile().startsWith(resourcePath)) {
+					// biLayer.setPathFile(biLayer.getPathFile());
+				} else {
+					aLayer.setPathFile(resourcePath + File.separator + aLayer.getPathFile());
+				}
+				File doc = new File(aLayer.getPathFile());
 				URL path = doc.toURI().toURL();
 				InputStream inputstream = path.openStream();
 				BufferedReader br = new BufferedReader(new InputStreamReader(inputstream));

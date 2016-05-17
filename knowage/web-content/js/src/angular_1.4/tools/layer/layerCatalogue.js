@@ -405,7 +405,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		if($scope.flag==true){
 			//there is a layer loaded in the form
 			$scope.isRequired=false;
-			$scope.selectedLayer = angular.copy($scope.object_temp);
+		
 			$scope.rolesItem=$scope.loadRolesItem($scope.selectedLayer);
 			$scope.filter_set = [];
 			if($scope.selectedLayer.properties!=null){
@@ -415,6 +415,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				$scope.filter_set.push(obj );
 			
 			}}
+			$scope.selectedLayer = angular.copy({});
 
 
 		} else{
