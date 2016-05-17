@@ -183,7 +183,7 @@ public class SchedulerUtilities {
 				String[] docLbls = docLblStr.split(",");
 				for (int i = 0; i < docLbls.length; i++) {
 					// BIObject biobj = biobjdao.loadBIObjectByLabel(docLbls[i]);
-					BIObject biobj = biobjdao.loadBIObjectByLabel(docLbls[i].substring(0, docLbls[i].indexOf("__")));
+					BIObject biobj = biobjdao.loadBIObjectByLabel(docLbls[i].substring(0, docLbls[i].lastIndexOf("__")));
 					List biobjpars = biobjpardao.loadBIObjectParametersById(biobj.getId());
 					biobj.setBiObjectParameters(biobjpars);
 					String biobjlbl = biobj.getLabel() + "__" + (i + 1);

@@ -236,7 +236,7 @@ public class SchedulerUtilitiesV2 {
 
 			JSONObject obj = new JSONObject();
 			obj.put("labelId", uniqueDispatchContextName);
-			String objId = uniqueDispatchContextName.substring(0, uniqueDispatchContextName.indexOf("__"));
+			String objId = uniqueDispatchContextName.substring(0, uniqueDispatchContextName.lastIndexOf("__"));
 			BIObject biObject = DAOFactory.getBIObjectDAO().loadBIObjectById(Integer.valueOf(objId));
 			if (biObject != null) {
 				obj.put("id", objId);
@@ -941,7 +941,7 @@ public class SchedulerUtilitiesV2 {
 					if (objIdentifier.contains("__")) {
 						JSONObject documentJSONObject = new JSONObject();
 
-						String objId = objIdentifier.substring(0, objIdentifier.indexOf("__"));
+						String objId = objIdentifier.substring(0, objIdentifier.lastIndexOf("__"));
 						BIObject biObject = biObjectDAO.loadBIObjectById(Integer.valueOf(objId));
 						if (biObject != null) {
 							String documentLabel = biObject.getLabel();
