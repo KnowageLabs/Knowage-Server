@@ -28,18 +28,21 @@ import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.DELETE;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
@@ -128,25 +131,47 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 	 * @return the rendered pivot table
 	 */
 	@POST
-	@Path("/execute/{calculateFieldName}/{calculateFieldFormula}/{parentMemberUniqueName}/{axisOrdinal}")
+	@Path("/")
+	// execute/{calculateFieldName}/{calculateFieldFormula}/{parentMemberUniqueName}/{axisOrdinal}
 	@Produces("text/html; charset=UTF-8")
-	public String execute(@PathParam("calculateFieldName") String calculateFieldName, @PathParam("calculateFieldFormula") String calculateFieldFormula,
-			@PathParam("parentMemberUniqueName") String parentMemberUniqueName, @PathParam("axisOrdinal") int axisOrdinal) {
+	public String execute(@javax.ws.rs.core.Context HttpServletRequest req) {
 		logger.debug("IN");
 		Member parentMember;
+		JSONObject jo;
+		String calculatedFieldName = null;
+		String calculatedFieldFormula = null;
+		String parentMemberUniqueName = null;
+		int axisOrdinal = 0;
 
-		logger.debug("expression= " + calculateFieldFormula);
+		String body;
+		try {
+			body = RestUtilities.readBody(req);
+			jo = new JSONObject(body);
+			calculatedFieldName = jo.getString("calculatedFieldName");
+			calculatedFieldFormula = jo.getString("calculatedFieldFormula");
+			parentMemberUniqueName = jo.getString("parentMemberUniqueName");
+			axisOrdinal = jo.getInt("axisOrdinal");
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		logger.debug("expression= " + calculatedFieldFormula);
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 
 		Axis axis;
 		String calculateFieldFormulaParsed = new String();
 		try {
-			if (!calculateFieldFormula.isEmpty()) {
-				calculateFieldFormulaParsed = calculateFieldFormula.replaceAll("\\{" + DIVISION_SIGN + "\\}", "/");
+			if (!calculatedFieldFormula.isEmpty()) {
+				calculateFieldFormulaParsed = calculatedFieldFormula.replaceAll("\\{" + DIVISION_SIGN + "\\}", "/");
 			}
 
 		} catch (Exception e) {
-			logger.error("Error parsing the formula. The original formula is " + calculateFieldFormula, e);
+			logger.error("Error parsing the formula. The original formula is " + calculatedFieldFormula, e);
 		}
 		try {
 			parentMember = CubeUtilities.getMember(ei.getPivotModel().getCube(), parentMemberUniqueName);
@@ -158,7 +183,7 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 		}
 
 		logger.debug("Adding the calculated fields into the model");
-		CalculatedMember cc = new CalculatedMember(calculateFieldName, calculateFieldFormulaParsed, parentMember, axis);
+		CalculatedMember cc = new CalculatedMember(calculatedFieldName, calculateFieldFormulaParsed, parentMember, axis);
 		ei.getSpagoBIPivotModel().addCalculatedField(cc);
 
 		String table = renderModel(ei.getPivotModel());
@@ -171,18 +196,34 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 	 *
 	 * @return the rendered pivot table
 	 */
-	@DELETE
-	@Path("/{calculatedFieldName}")
+	@POST
+	@Path("/delete")
+	// {calculatedFieldName}
 	@Produces("text/html; charset=UTF-8")
-	public String deleteCalculatedMember(@PathParam("calculatedFieldName") String calculateFieldName) {
+	public String deleteCalculatedMember(@javax.ws.rs.core.Context HttpServletRequest req) {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = ei.getSpagoBIPivotModel();
-		logger.debug("Deleting of calculated member with name" + calculateFieldName);
-		if (model.removeCalculatedField(calculateFieldName)) {
-			logger.debug("Member" + calculateFieldName + " deleted");
+		String calculatedFieldName = null;
+		String body;
+		JSONObject jo;
+		try {
+			body = RestUtilities.readBody(req);
+			jo = new JSONObject(body);
+			calculatedFieldName = jo.getString("calculatedFieldName");
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		logger.debug("Deleting of calculated member with name" + calculatedFieldName);
+		if (model.removeCalculatedField(calculatedFieldName)) {
+			logger.debug("Member" + calculatedFieldName + " deleted");
 		} else {
-			logger.debug("There is no member with name" + calculateFieldName);
+			logger.debug("There is no member with name" + calculatedFieldName);
 		}
 
 		String table = renderModel(model);
