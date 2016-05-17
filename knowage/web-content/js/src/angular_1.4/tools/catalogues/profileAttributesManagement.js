@@ -142,7 +142,7 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 			$scope.showMe=false;
 
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.catalogues.error.inuse"), 'Error');
 			
 		});
 	}

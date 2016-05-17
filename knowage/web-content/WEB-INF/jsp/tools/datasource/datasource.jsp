@@ -108,7 +108,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												<md-input-container class="small counter">
 													<label>{{translate.load("sbi.datasource.dialect")}}</label>
 													<md-select  ng-change="setDirty()"  aria-label="aria-label"	ng-model="selectedDataSource.dialectId">
-														<md-option	required ng-repeat="d in dialects" value="{{d.VALUE_ID}}">{{d.VALUE_NM}} </md-option>
+														<md-option	required ng-repeat="d in dialects" value="{{d.VALUE_ID}}">{{d.VALUE_DS}} </md-option>
 													</md-select>
 													<div ng-messages="dataSourceForm.dialectId.$error" ng-show="!selectedDataSource.dialectId">
 			          							<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>

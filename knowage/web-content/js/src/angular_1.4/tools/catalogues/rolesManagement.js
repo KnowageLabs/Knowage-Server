@@ -363,6 +363,8 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	 *  																
 	 */
 	$scope.saveRole = function () {
+		
+		console.log("saviiing");
 		$scope.formatCategories();
 		$scope.formatDsCategories();
 		console.log($scope.selectedRole.roleMetaModelCategories);
@@ -528,7 +530,8 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			$scope.dirtyForm = false;
 
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			console.log(response);
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.catalogues.error.inuse"), 'Error');
 
 		});
 	}
