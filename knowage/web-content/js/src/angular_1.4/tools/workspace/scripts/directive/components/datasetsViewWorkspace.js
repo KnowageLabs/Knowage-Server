@@ -25,16 +25,21 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.endPreviewIndex=0;
     $scope.totalItemsInPreview=0;
     $scope.previewPaginationEnabled=true; 
-    
+    console.log(datasetParameters);
     $scope.itemsPerPage=15;
     $scope.datasetInPreview=undefined;
     
+    
+    $scope.datasetsInitial=[];  //all
+	$scope.myDatasetsInitial= [];
+	$scope.enterpriseDatasetsInitial=[];
+	$scope.sharedDatasetsInitial=[];
     
     $scope.markNotDerived=function(datasets){
     	
     	for(i=0;i<datasets.length;i++){
     		
-    		if($scope.notDerivedDatasets.indexOf(dataset[i].label)>-1){
+    		if($scope.notDerivedDatasets.indexOf(datasets[i].label)>-1){
     			datasets[i].derivated=false;
     			
     		}else{
@@ -50,16 +55,20 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		sbiModule_restServices.promiseGet("2.0/datasets/mydata", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.datasets);
+			$scope.markNotDerived($scope.datasets);
+			angular.copy($scope.datasets,$scope.datasetsInitial);
 			console.info("[LOAD END]: Loading of All datasets is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
-	
+
 	$scope.loadMyDatasets= function(){
 		sbiModule_restServices.promiseGet("2.0/datasets/owned", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.myDatasets);
+			$scope.markNotDerived($scope.myDatasets);
+			angular.copy($scope.myDatasets,$scope.myDatasetsInitial);
 			console.info("[LOAD END]: Loading of My datasets is finished.");
 			
 		},function(response){
@@ -71,6 +80,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		sbiModule_restServices.promiseGet("2.0/datasets/enterprise", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.enterpriseDatasets);
+			$scope.markNotDerived($scope.enterpriseDatasets);
+			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
 			console.info("[LOAD END]: Loading of Enterprised datasets is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
@@ -81,6 +92,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		sbiModule_restServices.promiseGet("2.0/datasets/shared", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.sharedDatasets);
+			$scope.markNotDerived($scope.sharedDatasets);
+		    angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
 			console.info("[LOAD END]: Loading of Shared datasets is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
@@ -97,7 +110,16 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
-	 
+	
+	$scope.loadNotDerivedDatasets();
+	
+	$scope.loadInitialForDatasets=function(){
+		angular.copy($scope.datasets,$scope.datasetsInitial); 
+		angular.copy($scope.myDatasets,$scope.myDatasetsInitial);
+		angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
+		angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
+	};
+	
 	$scope.showDatasetDetails = function() {
 		return $scope.showDatasetInfo && $scope.isSelectedDatasetValid();
 	};
@@ -175,6 +197,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     		
     }
     
+    $scope.creationDatasetEnabled= function(){
+    	
+    return datasetParameters.CAN_CREATE_DATASET_AS_FINAL_USER==="true";
+    	
+    }
 
     $scope.showHelpOnline= function(dataset){
     	

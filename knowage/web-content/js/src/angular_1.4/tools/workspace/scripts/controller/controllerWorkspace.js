@@ -90,8 +90,8 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * Flag that servers as indicator for toggling between grid and list view of documents.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	$scope.showGridView = true;	
-	
+	$scope.showGridView = true;
+
 	var recentDocumentsLoaded = false;
 	var favoritesDocumentsLoaded = false;
 	var recentDocumentsLoaded = false;
@@ -119,7 +119,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.leftMenuItemPicked = function(item) {
 		
 		$scope.currentOptionMainMenu = item.name.toLowerCase();
-	
+		
 		if($scope.currentOptionMainMenu==='models'){
 			$scope.currentTab='businessModels';
 		}
@@ -148,8 +148,8 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 					console.info("[LOAD START]: Loading of Analysis documents is started.");
 					$scope.loadAllMyAnalysisDocuments();
 					analysisDocumentsLoaded = true;
-				}
-				
+	}
+
 				break;
 
 			case "favorites":
@@ -182,13 +182,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 					$scope.loadMyDatasets();
 					$scope.loadEnterpriseDatasets();
 					$scope.loadSharedDatasets();
-					$scope.loadNotDerivedDatasets();
-					
-					$scope.markNotDerived($scope.myDatasets);
-					$scope.markNotDerived($scope.sharedDatasets);
-					$scope.markNotDerived($scope.enterpriseDatasets);
-					$scope.markNotDerived($scope.datasets);
-					
+						
 					datasetsDocumentsLoaded = true;
 				}
 				
@@ -213,7 +207,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 				if (smartFiltersDocumentsLoaded==false) {
 					
 //					console.info("[LOAD START]: Loading of Smart filters is started.");					
-					/**
+	/**
 					 * TODO: Add functionality for loading all smart filters.
 					 */					
 					smartFiltersDocumentsLoaded = true;
@@ -232,7 +226,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.toogleGridListViewOfDocs = function() {
 		$scope.showGridView = !$scope.showGridView;
 	}
-	
+
 	/**
 	 * Filter the sent collection of data (documents, analysis, datasets, etc.)
 	 * according to the searching term (sequence) user entered, 'newSearchInput'.
@@ -321,7 +315,11 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 				 * SEARCH FOR DATASETS
 				 */
 				case "datasets":
-					console.info("We will add functionality for searching through DATASETS");
+					//console.info("We will add functionality for searching through DATASETS");
+					angular.copy($scope.datasetsInitial,$scope.datasets); 
+					angular.copy($scope.myDatasetsInitial,$scope.myDatasets);
+					angular.copy($scope.enterpriseDatasetsInitial,$scope.enterpriseDatasets);
+					angular.copy($scope.sharedDatasetsInitial,$scope.sharedDatasets);
 					break;
 				
 				/**
@@ -337,6 +335,11 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 				case "recent":
 					$scope.recentDocumetnsList = $scope.recentDocumentsInitial;
 					break;
+					
+				case "models":
+					angular.copy($scope.federationDefinitionsInitial,$scope.federationDefinitions); 
+				    angular.copy($scope.businessModelsInitial,$scope.businessModels);
+				    break;
 			}
 		}
 		else {
@@ -357,7 +360,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 						case "analysis":
 							
 								var allAnalysisDocsFinal = [];
-							
+								
 								$scope.cockpitAnalysisDocs = filterThroughCollection(newSearchInput,$scope.cockpitAnalysisDocsInitial,"name");
 								$scope.geoAnalysisDocs = filterThroughCollection(newSearchInput,$scope.geoAnalysisDocsInitial,"name");
 								
@@ -384,7 +387,24 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 						case "favorites":
 							$scope.favoriteDocumentsList = filterThroughCollection(newSearchInput,$scope.favoriteDocumentsInitial,"name");
 							break;
-				
+							
+						/**
+						 * SEARCH FOR DATASETS
+						 */	
+						case "datasets":
+							$scope.datasets=filterThroughCollection(newSearchInput,$scope.datasetsInitial,"name");
+							$scope.myDatasets= filterThroughCollection(newSearchInput,$scope.myDatasetsInitial,"name");
+							$scope.enterpriseDatasets=filterThroughCollection(newSearchInput,$scope.enterpriseDatasetsInitial,"name");
+							$scope.sharedDatasets=filterThroughCollection(newSearchInput,$scope.sharedDatasetsInitial,"name");
+							break;
+							
+						/**
+						 * SEARCH FOR MODELS
+						 */	
+						case "models":
+							$scope.federationDefinitions=filterThroughCollection(newSearchInput,$scope.federationDefinitionsInitial,"name");
+							$scope.businessModels=filterThroughCollection(newSearchInput,$scope.businessModelsInitial,"name");
+							break;
 					}	
 					
 				}, 100
@@ -397,9 +417,10 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	/**
 	 * Preview (execute) a particular document.
 	 */
-	$scope.executeDocument = function(document) {		
-		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");			
+	$scope.executeDocument = function(document) {
+		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");		
 		$documentViewer.openDocument(document.id, document.label, document.name);
+		
 	}
 	
 	/**

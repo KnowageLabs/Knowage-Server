@@ -16,8 +16,8 @@ angular
 	});
 
 function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav){
-	//console.log("aaaa");
-	//console.log(datasetParameters);
+	$scope.businessModelsInitial=[];
+	$scope.federationDefinitionsInitial=[];
 	
 	$scope.selectedModel = undefined;
 
@@ -28,6 +28,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		sbiModule_restServices.promiseGet("2.0/federateddataset", "")
 		.then(function(response) {
 			angular.copy(response.data,$scope.federationDefinitions);
+			angular.copy($scope.federationDefinitions,$scope.federationDefinitionsInitial);
 			console.info("[LOAD END]: Loading of Federation definitions is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
@@ -41,6 +42,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
     	sbiModule_restServices.promiseGet("2.0/businessmodels", "")
 		.then(function(response) {
 			angular.copy(response.data,$scope.businessModels);
+			angular.copy($scope.businessModels,$scope.businessModelsInitial);
 			console.info("[LOAD END]: Loading of Business models is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
