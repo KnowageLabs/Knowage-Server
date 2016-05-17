@@ -576,19 +576,13 @@
 								}
 								parameter.parameterValue = ArrValue;
 							} else {
-								//console.log('setting param ' + params[parameter.urlName]);
-								//console.log('setting param in ' , parameter);
+								//FROM VIEWPOINT : the lov value saved (multivalue or single value) matched  with the parameter 
 								parameter.parameterValue = parameter.multivalue ? JSON.parse(params[parameter.urlName])	: params[parameter.urlName];
 								//lookup
 								if(parameter.selectionType.toLowerCase() == "lookup"){
 									parameter.parameterValueToShow = [];
 									parameter.parameterValueToShow = parameter.parameterValue;
-								}
-							
-								
-								
-								
-								
+								}								
 							}
 							
 						} else if(parameter.valueSelection.toLowerCase() == 'map_in') {
@@ -878,9 +872,6 @@
 								"1.0/documentExeParameters",
 								"getParameters", objPost)
 						   .success(function(data, status, headers, config) {  
-							  
-							   
-							   
 							   if(data.status=="OK"){
 								   //from root only visibled element !!! 
 								   //set to disabled all default value parameter 
@@ -909,15 +900,26 @@
 															if( execProperties.parametersData.documentParameters[z].defaultValues[y].value==data.result.root[p].value){
 																//console.log("enabled for : " ,  execProperties.parametersData.documentParameters[z].defaultValues[y]);
 																execProperties.parametersData.documentParameters[z].defaultValues[y].isEnabled=true;
+																//if mandatory and if combo o list set parameter default !!!
+																if(data.result.root.length ==1 && execProperties.parametersData.documentParameters[z].mandatory
+																		&& (execProperties.parametersData.documentParameters[z].selectionType == 'COMBOBOX' 
+																			|| execProperties.parametersData.documentParameters[z].selectionType == 'LIST')){
+											
+																	execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
+																			[data.result.root[0].value]	: data.result.root[0].value;																	
+								
+																}
 															}	  
-														   } 
+														} 
 												   }
 												   break;
 											   }
 										   }	   
 									   }
 								   }else{
-									   //if no element in root hide the row component
+									   //if no element in root setting empty parameter value
+									   execProperties.parametersData.documentParameters[z].parameterValue = [];
+									   
 								   }  
 								   // set parameter ready
 								   
@@ -941,6 +943,9 @@
 					}
 				}	
 			 }//check undefined	
+				
+				
+				
 		  }
 		
 		
