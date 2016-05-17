@@ -30,18 +30,22 @@ function filterCardController($scope, $timeout, $window, $mdDialog, $http, $sce,
 	};
 	
 	updateHierService = function(ax, oldH, newH, pia){
-		sbiModule_restServices.promisePost(
-				"1.0","/axis/"+ax
-				+"/updateHierarchyOnDimension/"
-				+newH+"/"+oldH+"/"+pia
-				+"?SBI_EXECUTION_ID="+JSsbiExecutionID)
-		.then(function(response){
-			$scope.table = $sce.trustAsHtml(response.data.table);
-			$scope.handleResponse(response);
-			$scope.filterSelected = [];
-			$scope.initFilterList();
-		},function(response){
-			sbiModule_messaging.showErrorMessage("Error", 'An error occured has occured while updateing hierachie.');
+		var toSend = {
+				'axis':ax,
+				'newHierarchyUniqueName':newH,
+				'oldHierarchyUniqueName':oldH,
+				'hierarchyPosition':pia
+		}
+
+		var encoded = encodeURI("1.0/axis/updateHierarchyOnDimension?SBI_EXECUTION_ID=" + JSsbiExecutionID)
+		sbiModule_restServices.promisePost(encoded,"",toSend)
+			.then(function(response){
+				$scope.table = $sce.trustAsHtml(response.data.table);
+				$scope.handleResponse(response);
+				$scope.filterSelected = [];
+				$scope.initFilterList();
+			},function(response){
+				sbiModule_messaging.showErrorMessage("Error", 'An error occured has occured while updateing hierachie.');
 		});
 	};
 };

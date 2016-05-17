@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -56,6 +57,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/hierarchy")
 public class HierarchyResource extends AbstractWhatIfEngineService {
@@ -208,10 +210,9 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 	}
 
-	@GET
-	@Path("/{hierarchy}/search/{axis}/{name}/{showS}")
-	public String searchMemberByName(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
-			@PathParam("axis") int axis, @PathParam("name") String name, @PathParam("showS") boolean showS) {
+	@POST
+	@Path("/search")
+	public String searchMemberByName(@javax.ws.rs.core.Context HttpServletRequest req) {
 		Hierarchy hierarchy = null;
 		int nodeLimit = WhatIfEngineConfig.getInstance().getDepthLimit();
 		nodeLimit = nodeLimit > 0 ? nodeLimit : Integer.MAX_VALUE;
@@ -219,6 +220,24 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		List<String> fatherNameList = new ArrayList<String>();
 		List<Member> list = new ArrayList<Member>();
 		List<Member> visibleMembers = null;
+
+		String hierarchyUniqueName = null;
+		int axis = -2;
+		String name = null;
+		boolean showS = false;
+
+		try {
+			String params = RestUtilities.readBody(req);
+			JSONObject paramsObj = new JSONObject(params);
+
+			hierarchyUniqueName = paramsObj.getString("hierarchy");
+			name = paramsObj.getString("name");
+			showS = paramsObj.getBoolean("showS");
+			axis = paramsObj.getInt("axis");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		int lastDepth = -1;
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();

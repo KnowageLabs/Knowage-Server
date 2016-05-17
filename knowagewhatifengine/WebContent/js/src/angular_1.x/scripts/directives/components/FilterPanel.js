@@ -123,9 +123,15 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	 /*service for placing member on axis**/
 	 $scope.putMemberOnAxis = function(fromAxis,member){
-		 var encoded = encodeURI('1.0/axis/'+fromAxis+'/moveDimensionToOtherAxis/'+member.selectedHierarchyUniqueName+'/'+member.axis+'?SBI_EXECUTION_ID='+JSsbiExecutionID);
+		 var toSend = {
+				 'fromAxis':fromAxis,
+				 'hierarchy':member.selectedHierarchyUniqueName,
+				 'toAxis': member.axis
+		 }
+		 //var encoded = encodeURI('1.0/axis/'+fromAxis+'/moveDimensionToOtherAxis/'+member.selectedHierarchyUniqueName+'/'+member.axis+'?SBI_EXECUTION_ID='+JSsbiExecutionID);
+		 var encoded = encodeURI('1.0/axis/moveDimensionToOtherAxis?SBI_EXECUTION_ID='+JSsbiExecutionID);
 		 sbiModule_restServices.promisePost
-		 (encoded,"",member)
+		 (encoded,"",toSend)
 			.then(function(response) {
 				$scope.handleResponse(response);
 				checkShift();
@@ -144,9 +150,16 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	$scope.searchFilter = function(){		
 		hlght = true;
-		var encoded = encodeURI('/hierarchy/'+ h+ '/search/'+$scope.activeaxis+'/'+$scope.searchText+'/'+$scope.showSiblings+'?SBI_EXECUTION_ID='+ JSsbiExecutionID);
-		sbiModule_restServices.promiseGet
-		("1.0",encoded)
+		var toSend = {
+			'hierarchy':h,
+			'axis': $scope.activeaxis,
+			'name': $scope.searchText,
+			'showS':$scope.showSiblings
+		};
+		
+		var encoded = encodeURI('1.0/hierarchy/search?SBI_EXECUTION_ID='+ JSsbiExecutionID);
+		sbiModule_restServices.promisePost
+		(encoded,"",toSend)
 		.then(function(response) {
 				checkIfExists(response.data);
 				$scope.searchSucessText = $scope.searchText.toLowerCase();
@@ -315,11 +328,15 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 /* service for moving hierarchies* */
 	$scope.moveHierarchies = function(axis, hierarchieUniqeName, newPosition,
 			direction, member) {
-		var encoded = encodeURI('1.0/axis/' + axis + '/moveHierarchy/' + hierarchieUniqeName
-				+ '/' + newPosition + '/' + direction
-				+ '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+		var toSend ={ 
+				'axis':axis,
+				'hierarchy': hierarchieUniqeName,
+				'newPosition':newPosition,
+				'direction':direction
+		}
+		var encoded = encodeURI('1.0/axis/moveHierarchy?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 		sbiModule_restServices.promisePost(
-				encoded, "", member)
+				encoded, "", toSend)
 				.then(
 						function(response) {
 							$scope.handleResponse(response);

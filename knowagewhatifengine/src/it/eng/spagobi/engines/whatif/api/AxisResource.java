@@ -17,12 +17,6 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.axis.AxisDimensionManager;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.model.ModelConfig;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,11 +26,19 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.olap4j.Axis;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 import org.pivot4j.PivotModel;
 import org.pivot4j.transform.SwapAxes;
+
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.axis.AxisDimensionManager;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/axis")
 public class AxisResource extends AbstractWhatIfEngineService {
@@ -101,10 +103,25 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 * @return the rendered pivot table
 	 */
 	@POST
-	@Path("/{fromAxis}/moveDimensionToOtherAxis/{hierarchy}/{toAxis}")
+	@Path("/moveDimensionToOtherAxis")
 	@Produces("text/html; charset=UTF-8")
-	public String placeHierarchyOnAxis(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("fromAxis") int fromAxisPos,
-			@PathParam("toAxis") int toAxisPos, @PathParam("hierarchy") String hierarchyName) {
+	public String placeHierarchyOnAxis(@javax.ws.rs.core.Context HttpServletRequest req) {
+
+		int fromAxisPos = 0;
+		int toAxisPos = 0;
+		String hierarchyName = null;
+		try {
+			String params = RestUtilities.readBody(req);
+			JSONObject paramsObj = new JSONObject(params);
+
+			fromAxisPos = paramsObj.getInt("fromAxis");
+			toAxisPos = paramsObj.getInt("toAxis");
+			hierarchyName = paramsObj.getString("hierarchy");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		getAxisBusiness().moveDimensionToOtherAxis(fromAxisPos, toAxisPos, hierarchyName);
@@ -138,12 +155,28 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 * @return the rendered pivot table
 	 */
 	@POST
-	@Path("/{axis}/moveHierarchy/{hierarchyUniqueName}/{newPosition}/{direction}")
+	@Path("/moveHierarchy")
 	@Produces("text/html; charset=UTF-8")
-	public String moveHierarchies(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos,
-			@PathParam("hierarchyUniqueName") String hierarchyUniqueName, @PathParam("newPosition") int newPosition, @PathParam("direction") int direction) {
+	public String moveHierarchies(@javax.ws.rs.core.Context HttpServletRequest req) {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+
+		String hierarchyUniqueName = null;
+		int newPosition = -2;
+		int direction = -2;
+		int axisPos = -2;
+		try {
+			String params = RestUtilities.readBody(req);
+			JSONObject paramsObj = new JSONObject(params);
+
+			hierarchyUniqueName = paramsObj.getString("hierarchy");
+			newPosition = paramsObj.getInt("newPosition");
+			direction = paramsObj.getInt("direction");
+			axisPos = paramsObj.getInt("axis");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		getAxisBusiness().moveHierarchy(axisPos, hierarchyUniqueName, newPosition, direction);
 
@@ -171,11 +204,26 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 *            the position of the old hierarchy
 	 */
 	@POST
-	@Path("/{axis}/updateHierarchyOnDimension/{newHierarchyUniqueName}/{oldHierarchyUniqueName}/{hierarchyPosition}")
+	@Path("/updateHierarchyOnDimension")
 	@Produces("text/html; charset=UTF-8")
-	public String updateHierarchyOnDimension(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos,
-			@PathParam("newHierarchyUniqueName") String newHierarchyUniqueName, @PathParam("oldHierarchyUniqueName") String oldHierarchyUniqueName,
-			@PathParam("hierarchyPosition") int hierarchyPosition) {
+	public String updateHierarchyOnDimension(@javax.ws.rs.core.Context HttpServletRequest req) {
+		int axisPos = -2;
+		String newHierarchyUniqueName = null;
+		String oldHierarchyUniqueName = null;
+		int hierarchyPosition = -1;
+
+		try {
+			String params = RestUtilities.readBody(req);
+			JSONObject paramsObj = new JSONObject(params);
+
+			newHierarchyUniqueName = paramsObj.getString("newHierarchyUniqueName");
+			oldHierarchyUniqueName = paramsObj.getString("oldHierarchyUniqueName");
+			hierarchyPosition = paramsObj.getInt("hierarchyPosition");
+			axisPos = paramsObj.getInt("axis");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		Hierarchy h = getAxisBusiness().updateHierarchyOnAxis(axisPos, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition);
 
