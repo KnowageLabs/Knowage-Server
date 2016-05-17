@@ -42,7 +42,6 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ScriptDetail;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.CriteriaParameter;
 import it.eng.spagobi.commons.bo.CriteriaParameter.Match;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -737,24 +736,25 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			columnName = null;
 			manualInput = parameterUse.getManualInput().intValue() == 1;
 
-			IParameterDAO parameterDAO = DAOFactory.getParameterDAO();
-			Parameter parameter = parameterDAO.loadForExecutionByParameterIDandRoleName(id, role);
-			ModalitiesValue modVal = parameter.getModalityValue();
-			String lovProvider = modVal.getLovProvider();
-			String lovType = LovDetailFactory.getLovTypeCode(lovProvider);
-
-			ILovDetail lovDetail = null;
-			if (lovType.equalsIgnoreCase("QUERY")) {
-				lovDetail = QueryDetail.fromXML(lovProvider);
-			} else if (lovType.equalsIgnoreCase("FIXED_LIST")) {
-				lovDetail = FixedListDetail.fromXML(lovProvider);
-			} else if (lovType.equalsIgnoreCase("SCRIPT")) {
-				lovDetail = ScriptDetail.fromXML(lovProvider);
-			} else if (lovType.equalsIgnoreCase("JAVA_CLASS")) {
-				lovDetail = JavaClassDetail.fromXML(lovProvider);
-			}
-			columnName = lovDetail.getValueColumnName();
 			if (!manualInput) {
+				IParameterDAO parameterDAO = DAOFactory.getParameterDAO();
+				Parameter parameter = parameterDAO.loadForExecutionByParameterIDandRoleName(id, role);
+				ModalitiesValue modVal = parameter.getModalityValue();
+				String lovProvider = modVal.getLovProvider();
+				String lovType = LovDetailFactory.getLovTypeCode(lovProvider);
+
+				ILovDetail lovDetail = null;
+				if (lovType.equalsIgnoreCase("QUERY")) {
+					lovDetail = QueryDetail.fromXML(lovProvider);
+				} else if (lovType.equalsIgnoreCase("FIXED_LIST")) {
+					lovDetail = FixedListDetail.fromXML(lovProvider);
+				} else if (lovType.equalsIgnoreCase("SCRIPT")) {
+					lovDetail = ScriptDetail.fromXML(lovProvider);
+				} else if (lovType.equalsIgnoreCase("JAVA_CLASS")) {
+					lovDetail = JavaClassDetail.fromXML(lovProvider);
+				}
+				columnName = lovDetail.getValueColumnName();
+
 				String result = lovDetail.getLovResult(getUserProfile(), null, null, null);
 				SourceBean rowsSourceBean = SourceBean.fromXMLString(result);
 

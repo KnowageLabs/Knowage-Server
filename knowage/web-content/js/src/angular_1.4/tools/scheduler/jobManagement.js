@@ -95,14 +95,14 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							// update parameters
 							for(var docIndex=0; docIndex<job.documents.length; docIndex++){
 								var document = job.documents[docIndex];
-								for(var paramIndex=0; paramIndex<document.parameters.length; paramIndex++){
+								for(var paramIndex=0; paramIndex < document.parameters.length; paramIndex++){
 									var parameter = document.parameters[paramIndex];
 									if(parameter.value.trim() != ""){
 										parameter.values = parameter.value.split(";");
 										parameter.selectedValues = parameter.value.split(";");
 									}else{
-										parameter.values = []
-										parameter.selectedValues = []
+										parameter.values = [];
+										parameter.selectedValues = [];
 									}
 								}
 							}
@@ -652,16 +652,24 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		if(parameterId){
 			sbiModule_restServices.get("2.0/documents", encodeURI(selectedDocumentName)+"/parameters/"+encodeURI(parameterId)+"/values?role="+encodeURI(parameter.role))
 				.success(function(data, status, headers, config) {
-					if(parameter.value.trim() != ""){
-						parameter.selectedValues = parameter.value.split(";");
-					}else{
-						parameter.selectedValues = []
+					if (data.hasOwnProperty("errors")) {
+						console.log("unable to load parameters ", data.errors);
+					} else {
+						if(parameter.value.trim() != ""){
+							parameter.selectedValues = parameter.value.split(";");
+						}else{
+							parameter.selectedValues = [];
+						}
+						parameter.values = data.values;
+						parameter.manualInput = data.manualInput;
 					}
-					parameter.values = data.values;
-					parameter.manualInput = data.manualInput;
 				})
 				.error(function(data, status, headers, config) {
-					//sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+					if(data && data.errors){
+						console.log("unable to load parameters ", data.errors);
+					}else{
+						console.log("unable to load parameters ", status);
+					}
 				});
 		}
 	}

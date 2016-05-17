@@ -1252,9 +1252,7 @@ public class SchedulerService {
 								concatenatedValue = concatenatedValue.deleteCharAt(concatenatedValue.length() - 1);
 							}
 						}
-						if (concatenatedValue.length() > 0) {
-							fixedParameters.append(biobjpar.getParameterUrlName() + "=" + concatenatedValue + "%26");
-						}
+						fixedParameters.append(biobjpar.getParameterUrlName() + "=" + concatenatedValue + "%26");
 					}
 				}
 
