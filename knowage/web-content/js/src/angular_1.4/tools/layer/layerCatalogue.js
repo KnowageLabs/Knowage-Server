@@ -263,7 +263,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			$scope.flagtype=false;
 
 			//load Layer in the form
-			if($scope.selectedLayer != null){
+			if($scope.selectedLayer != null && Object.keys($scope.selectedLayer).length != 0){
 				var confirm = $mdDialog
 				.confirm()
 				.title(sbiModule_translate.load("sbi.layer.modify.progress"))
