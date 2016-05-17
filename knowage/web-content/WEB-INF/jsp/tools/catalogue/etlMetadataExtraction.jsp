@@ -64,10 +64,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             <h2 class="md-flex">{{translate.load("sbi.metadata.etl.upload.title")}}</h2>
                         </div>
                     </md-toolbar>
-                    <p>
+                    <p class="layout-padding">
                     {{translate.load("sbi.metadata.etl.description")}}                
                     </p>
-                    <md-content layout="row" >
+                    <md-content layout-padding layout="row" >
                         
                                 <md-input-container flex="30">
                                     <label>{{translate.load("sbi.metadata.etl.context.name")}}</label>
