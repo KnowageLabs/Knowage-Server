@@ -51,7 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-button>
 									    
 				    <!-- Search input -->
-				    <md-input-container ng-show="showSearchView" class="searchInput">
+				    <md-input-container ng-show="showSearchView" class="searchInput flex">
 						<label>{{translate.load("sbi.generic.search.msg")}}</label>
 						<input type="text" id="searchInput" ng-model="searchInput" focus-on="searchInput" key-enter="setSearchInput(searchInput)">
 					</md-input-container>

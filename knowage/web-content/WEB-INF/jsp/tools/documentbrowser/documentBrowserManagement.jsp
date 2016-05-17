@@ -76,32 +76,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
      	</md-button> 
      	
 
-     	<md-menu md-tab-fixed-last-clear-tabs  >
+     	<md-menu md-tab-fixed-last-clear-tabs >
 	      <md-button aria-label="Create new document" class="documentBrowserClearButton" ng-click="$mdOpenMenu($event)" ng-disabled="runningDocuments.length==0">
-	        <md-icon md-menu-origin  md-font-icon="fa fa-trash" class="md-primary"></md-icon>
+	        <md-icon md-menu-origin  md-font-icon="fa fa-times-circle-o" class="md-primary"></md-icon>
 	      </md-button>
-	      <md-menu-content width="4"> 
+	      <md-menu-content width="4" class="documentBrowserDropdown"> 
 	       <md-menu-item>
 	           <md-button ng-click="closeTabs('current');">
-	            <md-icon md-font-icon="fa fa-circle" md-menu-align-target></md-icon>
+	            <md-icon md-font-icon="fa fa-arrow-circle-o-down" md-menu-align-target></md-icon>
 	             {{translate.load("sbi.browser.close.document.this")}}
 	          </md-button>
 	          </md-menu-item>
 	         <md-menu-item>
 	          <md-button ng-click="closeTabs('other');">
-	            <md-icon md-font-icon="fa fa-circle" md-menu-align-target></md-icon>
+	            <md-icon md-font-icon="fa fa-times-circle-o" md-menu-align-target></md-icon>
 	           {{translate.load("sbi.browser.close.document.other")}}
 	          </md-button>
 	        </md-menu-item>
 	        <md-menu-item>
 	          <md-button ng-click="closeTabs('right');">
-	            <md-icon md-font-icon="fa fa-circle" md-menu-align-target></md-icon>
+	            <md-icon md-font-icon="fa fa-arrow-circle-o-right" md-menu-align-target></md-icon>
 	          {{translate.load("sbi.browser.close.document.right")}}
 	          </md-button>
 	        </md-menu-item>
 	         <md-menu-item>
 	          <md-button ng-click="closeTabs('all');">
-	            <md-icon md-font-icon="fa fa-circle" md-menu-align-target></md-icon>
+	            <md-icon md-font-icon="fa fa-times-circle-o" md-menu-align-target></md-icon>
 	           {{translate.load("sbi.browser.close.document.all")}}
 	          </md-button>
 	        </md-menu-item>
