@@ -229,6 +229,7 @@ function manageTenantFunction($angularListDetail,sbiModule_messaging, $timeout,s
 					$scope.tenants.splice(idx, 1);
 					$scope.message.showSuccessMessage($scope.translate.load('sbi.multitenant.deleted'));
 					$scope.showLoading(false);
+					$scope.resetForm();
 				}, function(response,status){
 					if (response.data.errors != undefined){
 						sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
