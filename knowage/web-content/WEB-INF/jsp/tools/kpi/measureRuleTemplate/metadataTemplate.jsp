@@ -21,6 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <div layout="row" layout-wrap> 
 <md-whiteframe class="md-whiteframe-3dp metadataTabs" layout-margin ng-repeat=" mtdValue in currentRule.ruleOutputs ">
+  <div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircularMetadata" layout-fill>
+     	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
+ 	</div>
   <md-toolbar>
       <div class="md-toolbar-tools"  class="alertIconMissingAlias" >  
          <span ng-if="::(!aliasExtist(mtdValue.alias) && !aliasUsedByMeasure(mtdValue.alias))">

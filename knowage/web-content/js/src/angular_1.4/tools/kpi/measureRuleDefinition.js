@@ -14,7 +14,7 @@ function measureRuleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
 	$scope.detailProperty={};
 	$scope.originalRule={};
 	$scope.selectedTab={'tab':0};
-
+	$scope.showCircularMetadata = true;
 	$scope.updateListRule=function(){
 		$scope.$broadcast("updateListRule");
 	}
@@ -139,10 +139,12 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 		} 
 		sbiModule_restServices.promisePost("1.0/kpi","queryPreview",postData)
 		.then(function(response){
+			$scope.showCircularMetadata = false;
 			$scope.detailProperty.queryChanged=false;
 			$scope.columnToRuleOutputs(response.data.columns);
 			deferred.resolve();
 		},function(response){
+			$scope.showCircularMetadata = false;
 			sbiModule_restServices.errorHandler(response.data,""+sbiModule_translate.load("sbi.kpi.rule.load.metadata.error")+""+sbiModule_translate.load("sbi.kpi.rule.query.wrong"));
 			$scope.clearPreviewAndMetadata(true,true);
 			deferred.reject();
