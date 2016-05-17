@@ -24,6 +24,7 @@
 // Toolbar elements  
 md-toolbar.md-knowage-theme {
 		min-height: 40px;
+        outline: none;
 		height: 40px;
 		background-color: $headerBackground !important;
 		color: $lightTextColor !important;
@@ -173,6 +174,12 @@ md-tab-content md-content.md-knowage-theme {
 // Dialog Buttons
 a.md-button.md-knowage-theme.md-primary, .md-button.md-knowage-theme.md-primary {
     color: $baseColor;
+}
+a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.md-primary.md-raised {
+    background-color: $baseColor;
+}
+.md-button.md-knowage-theme.md-primary.md-raised:not([disabled]):hover {
+    background-color: lighten($baseColor,10%);
 }
 
 //Raised Button

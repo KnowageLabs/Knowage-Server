@@ -318,7 +318,8 @@
 	.documentBrowserDropdown {
 		md-menu-item>.md-button {
 			md-icon {
-				line-height: 1.5em;
+				font-size: 1.3em;
+				line-height: 1.2em;
 			}
 		}
 	}
@@ -327,4 +328,10 @@
 	
 	
 	
+}
+.metadataDialog {
+	md-list-item {
+		min-height: 2em;
+		font-size: .8em;
+	}
 }
