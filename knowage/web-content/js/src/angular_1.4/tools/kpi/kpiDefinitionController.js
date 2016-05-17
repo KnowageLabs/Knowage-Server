@@ -277,6 +277,9 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			delete kpi.threshold.thresholdValues[i].includeMaxCheck;
 			delete kpi.threshold.thresholdValues[i].selectColor;
 			delete kpi.threshold.thresholdValues[i].comboSeverity;
+			if(kpi.threshold.thresholdValues[i].position != i+1){
+				kpi.threshold.thresholdValues[i].position = i+1;
+			}
 		}
 	}
 
