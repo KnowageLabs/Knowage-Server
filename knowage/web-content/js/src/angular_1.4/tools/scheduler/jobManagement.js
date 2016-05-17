@@ -124,8 +124,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	
 	ctrl.reloadJob = function(){
 		var jobName = ctrl.selectedJob.jobName;
-		ctrl.loadJobs();
-		ctrl.selectJobByName(jobName);
+		ctrl.loadJobs(jobName);
 	}
 	
 	ctrl.selectJobByName = function(jobName){
@@ -418,7 +417,6 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				} else {
 					ctrl.closeDetail();
 					ctrl.loadJobs();
-					ctrl.closeForm();
 					ctrl.showActionDelete();
 				}
 			})
@@ -993,7 +991,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 								//carico le informazioni dei documenti
 								activityEventCtrl.event.documents=d.documents;
 							
-								activityEventCtrl.selectedDocument = activityEventCtrl.event.documents[0];
+								activityEventCtrl.selectedDocument = (activityEventCtrl.event.documents == undefined || activityEventCtrl.event.documents.length != 0) ? activityEventCtrl.event.documents[0] : [];
 							}
 						})
 						.error(function(data, status, headers, config) {

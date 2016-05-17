@@ -176,7 +176,7 @@ public class JobJSONSerializer implements Serializer {
 							String[] parDef = parCouple.split("=");
 
 							String parameterName = parDef[0];
-							String parameterValues = parDef.length == 2 ? parDef[1] : "";
+							String parameterValues = (parDef.length == 2 ? parDef[1] : "");
 
 							JSONObject jsonPar = new JSONObject();
 							jsonPar.put("name", parameterName);

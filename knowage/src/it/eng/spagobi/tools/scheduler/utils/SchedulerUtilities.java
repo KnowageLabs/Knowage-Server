@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -47,16 +47,16 @@ public class SchedulerUtilities {
 
 	/**
 	 * Gets the named history snapshot.
-	 * 
+	 *
 	 * @param allsnapshots
 	 *            the allsnapshots
 	 * @param namesnap
 	 *            the namesnap
 	 * @param hist
 	 *            the hist
-	 * 
+	 *
 	 * @return the named history snapshot
-	 * 
+	 *
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -88,14 +88,14 @@ public class SchedulerUtilities {
 
 	/**
 	 * Gets the snapshots by name.
-	 * 
+	 *
 	 * @param allsnapshots
 	 *            the allsnapshots
 	 * @param namesnap
 	 *            the namesnap
-	 * 
+	 *
 	 * @return the snapshots by name
-	 * 
+	 *
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -113,10 +113,10 @@ public class SchedulerUtilities {
 
 	/**
 	 * Gets the sB from web service response.
-	 * 
+	 *
 	 * @param response
 	 *            the response
-	 * 
+	 *
 	 * @return the sB from web service response
 	 */
 	public static SourceBean getSBFromWebServiceResponse(String response) {
@@ -132,10 +132,10 @@ public class SchedulerUtilities {
 
 	/**
 	 * Check result of ws call.
-	 * 
+	 *
 	 * @param resultSB
 	 *            the result sb
-	 * 
+	 *
 	 * @return true, if successful
 	 */
 	public static boolean checkResultOfWSCall(SourceBean resultSB) {
@@ -157,10 +157,10 @@ public class SchedulerUtilities {
 
 	/**
 	 * Gets the job info from job source bean.
-	 * 
+	 *
 	 * @param jobDetSB
 	 *            the job det sb
-	 * 
+	 *
 	 * @return the job info from job source bean
 	 */
 	public static JobInfo getJobInfoFromJobSourceBean(SourceBean jobDetSB) {
@@ -250,7 +250,7 @@ public class SchedulerUtilities {
 								String parCouple = parCouples[j];
 								String[] parDef = parCouple.split("=");
 								if (biobjpar.getParameterUrlName().equals(parDef[0])) {
-									String parameterValues = parDef[1];
+									String parameterValues = (parDef.length == 2 ? parDef[1] : "");
 									String[] valuesArr = parameterValues.split(";");
 									List values = Arrays.asList(valuesArr);
 									biobjpar.setParameterValues(values);
@@ -273,12 +273,12 @@ public class SchedulerUtilities {
 
 	/**
 	 * Gets the trigger info from trigger source bean.
-	 * 
+	 *
 	 * @param triggerInfoSB
 	 *            the trigger det sb
 	 * @param jobInfoSB
 	 *            the job det sb
-	 * 
+	 *
 	 * @return the trigger info from trigger source bean
 	 */
 	public static TriggerInfo getTriggerInfoFromTriggerSourceBean(SourceBean triggerInfoSB, SourceBean jobInfoSB) {
@@ -332,10 +332,10 @@ public class SchedulerUtilities {
 
 	/**
 	 * From save info string.
-	 * 
+	 *
 	 * @param encodedDispatchContext
 	 *            the encoded dispatch context
-	 * 
+	 *
 	 * @return the save info
 	 */
 	public static DispatchContext decodeDispatchContext(String encodedDispatchContext) {
