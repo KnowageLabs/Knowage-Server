@@ -85,11 +85,11 @@
 		
 	md-tabs.documentNavigationToolbar>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item {
 		padding: 2px 20px;
-		color:rgb(183, 183, 183);
+		color: $baseColor;
 	}
 	
 	md-tabs.documentNavigationToolbar>md-tabs-content-wrapper {
-		top:30px;
+		top: 30px;
 	}
 	
 	md-tabs.documentNavigationToolbar>md-tabs-wrapper {
@@ -135,7 +135,7 @@
     
 	md-tabs.documentNavigationToolbar>button.documentBrowserTabButton>md-icon,
 	md-tabs.documentNavigationToolbar>md-menu>button.documentBrowserClearButton>md-icon{
-		color:rgb(183, 183, 183);
+		color: $baseColor;
 	}
 	
     md-tabs.documentNavigationToolbar>button.documentBrowserTabButton.selectedDocumentBrowserTabButton>md-icon{

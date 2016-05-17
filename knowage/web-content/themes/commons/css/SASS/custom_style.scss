@@ -13,6 +13,7 @@
   'components/scorecardKpiDefinition',
   'components/schedulerKpi',
   'components/angularTable',
+  'components/documentTree',
   'components/breadcrumb',
   'components/workspace',
   'components/linkDocument',
@@ -60,7 +61,7 @@ md-toolbar.md-knowage-theme .md-toolbar-tools .md-button {
             color: $baseColor;
         }
 }
-​
+
 md-toolbar.md-knowage-theme .md-toolbar-tools .md-button:hover {
     background-color: $secondaryColor;
     color: $baseColor;
@@ -362,6 +363,11 @@ width:100%;
 width:100%;
 }
 
+}
+
+//SWITCH
+md-switch.md-knowage-theme.md-checked .md-thumb {
+    background-color: $fabPrimaryColor;
 }
 
 //CUSTOM PAGES CLASSES    
