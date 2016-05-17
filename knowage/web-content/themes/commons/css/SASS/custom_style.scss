@@ -176,7 +176,12 @@ a.md-button.md-knowage-theme.md-primary, .md-button.md-knowage-theme.md-primary 
     color: $baseColor;
 }
 a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.md-primary.md-raised {
-    background-color: $baseColor;
+    &:not([disabled]) {
+        background-color: $baseColor;
+        &:focus {
+            background-color: $baseColor;
+        }
+    }
 }
 .md-button.md-knowage-theme.md-primary.md-raised:not([disabled]):hover {
     background-color: lighten($baseColor,10%);
