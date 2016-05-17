@@ -13,13 +13,13 @@
 					<md-icon class="fa fa-sitemap" style="color:white; margin-top:10%"></md-icon>
 				</md-button>
 			</div>
-			<div class="name-area">{{filter.name}}</div>
+			<div class="name-area">{{filter.caption}}</div>
 		</div>
 	
 	 	<div layout="row" class="bottom">
-			<div class="name-area"  title="{{filterSelected[$index].visible ? filterSelected[$index].name : 'Filter not selected'}}">
+			<div class="name-area"  title="{{filterSelected[$index].visible ? filterSelected[$index].caption : 'Filter not selected'}}">
 				<span style="white-space:nowrap;">
-					{{filterSelected[$index].visible ? cutName(filterSelected[$index].name) : '...'}}
+					{{filterSelected[$index].visible ? cutName(filterSelected[$index].caption) : '...'}}
 				</span>
 			</div>
 			<div class="button-area">

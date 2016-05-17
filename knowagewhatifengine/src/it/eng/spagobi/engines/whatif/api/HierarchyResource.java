@@ -397,6 +397,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		private String id;
 		private String name;
 		private String uniqueName;
+		private String caption;
 		private boolean collapsed;
 		private boolean visible;
 		private List<NodeFilter> children;
@@ -407,6 +408,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			this.id = m.getUniqueName();
 			this.uniqueName = m.getUniqueName();
 			this.name = m.getCaption();
+			this.caption = m.getCaption();
 			this.visible = false;
 			this.collapsed = false;
 			this.children = new ArrayList<HierarchyResource.NodeFilter>();
@@ -434,6 +436,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 			this.id = m.getUniqueName();
 			this.uniqueName = m.getUniqueName();
+			this.caption = m.getCaption();
 			this.name = m.getCaption();
 			this.collapsed = false;
 			this.children = new ArrayList<HierarchyResource.NodeFilter>();
@@ -475,6 +478,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			JSONObject obj = new JSONObject();
 			obj.put("id", id);
 			obj.put("name", name);
+			obj.put("caption", caption);
 			obj.put("uniqueName", uniqueName);
 			obj.put("collapsed", collapsed);
 			obj.put("visible", visible);
@@ -526,6 +530,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		JSONObject obj = new JSONObject();
 		obj.put("id", m.getUniqueName());
 		obj.put("name", m.getName());
+		obj.put("caption", m.getCaption());
 		obj.put("uniqueName", m.getUniqueName());
 		obj.put("text", m.getName());
 		obj.put("visible", true);
