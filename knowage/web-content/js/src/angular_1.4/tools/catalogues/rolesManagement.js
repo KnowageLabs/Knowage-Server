@@ -70,6 +70,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 	angular.element(document).ready(function () { // on page load function
 		$scope.getRoles();
+		$scope.getAuthorizations();
 		$scope.getDomainType();
 		$scope.getCategories();
 		$scope.getDsCategories();
@@ -445,6 +446,18 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 		});
 	}
+	
+	$scope.getAuthorizations = function () { // service that gets list of roles GET
+
+		sbiModule_restServices.promiseGet("2.0", "authorizations")
+		.then(function(response) {
+			$scope.authList = response.data;
+			console.log($scope.authList);
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+
+		});
+	}
 
 	/*
 	 * 	service that gets domain types for
@@ -477,6 +490,8 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 		});
 	}
+	
+	
 
 	/*
 	 * 	service that gets loaded meta model categories

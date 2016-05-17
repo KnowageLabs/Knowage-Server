@@ -64,7 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</list>
 			
 			<extra-button>
-			  <md-button class="md-flat" ng-click="testDataSource()" >{{translate.load("sbi.datasource.testing")}}</md-button>
+			  <md-button class="md-flat" ng-click="testDataSource()"  ng-show="showMe">{{translate.load("sbi.datasource.testing")}}</md-button>
 		</extra-button>
 
 			<detail

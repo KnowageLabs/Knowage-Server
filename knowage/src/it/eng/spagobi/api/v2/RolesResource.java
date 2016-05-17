@@ -232,6 +232,12 @@ public class RolesResource extends AbstractSpagoBIResource {
 			role.setId(id);
 			rolesDao = DAOFactory.getRoleDAO();
 			rolesDao.setUserProfile(getUserProfile());
+			// Remove Role - Business Model Categories Associations
+			List<RoleMetaModelCategory> RoleMetaModelCategories = rolesDao.getMetaModelCategoriesForRole(id);
+			for (RoleMetaModelCategory roleMetaModelCategory : RoleMetaModelCategories) {
+				rolesDao.removeRoleMetaModelCategory(roleMetaModelCategory.getRoleId(), roleMetaModelCategory.getCategoryId());
+			}
+
 			rolesDao.eraseRole(role);
 			String encodedRole = URLEncoder.encode("" + id, "UTF-8");
 			return Response.ok().entity(encodedRole).build();

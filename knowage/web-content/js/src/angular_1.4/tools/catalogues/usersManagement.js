@@ -125,12 +125,15 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
         }
         $scope.selectedUser.sbiExtUserRoleses = tmpR;
         for (var i = 0; i < $scope.tempAttributes.length; i++) {
-            if ($scope.tempAttributes[i].hasOwnProperty("value")) {
+            if ($scope.tempAttributes[i].hasOwnProperty("value") && $scope.tempAttributes[i].value != "") {
                 tmpA[$scope.tempAttributes[i].id] = {};
                 tmpA[$scope.tempAttributes[i].id][$scope.tempAttributes[i].name] = $scope.tempAttributes[i].value;
+            }else if($scope.tempAttributes[i].value == ""){
+            	console.log("skip");
             }
         }
         $scope.selectedUser.sbiUserAttributeses = tmpA;
+        console.log($scope.selectedUser.sbiUserAttributeses);
         delete $scope.selectedUser.confirm;
     }
     
