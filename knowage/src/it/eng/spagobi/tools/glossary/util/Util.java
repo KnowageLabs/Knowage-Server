@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,13 +21,13 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.metadata.metadata.SbiMetaBc;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessCls;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlReferences;
-import it.eng.spagobi.tools.glossary.metadata.SbiGlTable;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 import it.eng.spagobi.tools.udp.bo.Udp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
@@ -85,18 +85,19 @@ public class Util {
 		return jobj;
 	}
 
-	public static JSONObject fromBnessClsLight(SbiGlBnessCls sbibnesscls) throws JSONException {
+	public static JSONObject fromBnessClsLight(SbiMetaBc sbibnesscls) throws JSONException {
 		JSONObject jobj = new JSONObject();
 		jobj.put("BC_ID", sbibnesscls.getBcId());
-		jobj.put("BC_DATAMART_NM", sbibnesscls.getDatamart());
-		jobj.put("BC_UNIQUE_IDENT", sbibnesscls.getUnique_identifier());
+		jobj.put("META_MODEL_NAME", sbibnesscls.getSbiMetaModel().getName());
+		jobj.put("BC_NAME", sbibnesscls.getName());
 		return jobj;
 	}
 
-	public static JSONObject fromTableLight(SbiGlTable sbitable) throws JSONException {
+	public static JSONObject fromTableLight(SbiMetaTable sbitable) throws JSONException {
 		JSONObject jobj = new JSONObject();
 		jobj.put("TABLE_ID", sbitable.getTableId());
-		jobj.put("TABLE_NM", sbitable.getLabel());
+		jobj.put("META_SOURCE_NAME", sbitable.getSbiMetaSource().getName());
+		jobj.put("TABLE_NM", sbitable.getName());
 		return jobj;
 	}
 

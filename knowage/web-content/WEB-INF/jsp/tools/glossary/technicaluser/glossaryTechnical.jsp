@@ -37,9 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})){
 			canSee=true;
 		 canSeeAdmin=UserUtilities.haveRoleAndAuthorization(userProfile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[]{SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL});
-		}
-// 		System.out.println("User canSee? -------> "+canSee);
-// 		System.out.println("User canSeeAdmin? -------> "+canSeeAdmin);
+		} 
 %>
 
 <% if(canSee ){ %>
@@ -118,9 +116,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </body>
 </html>
 
-<%}else{ %>
-UNAUTHORIZED
-<%} %>
+<%}%> 
 
 
 

@@ -758,6 +758,13 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 			smbc.setBcId(tmpBC.getBcId());
 			smbc.setName(tmpBC.getName());
 
+			SbiMetaModel smm = new SbiMetaModel();
+			smm.setCategory(tmpBC.getSbiMetaModel().getCategory());
+			smm.setId(tmpBC.getSbiMetaModel().getId());
+			smm.setName(tmpBC.getSbiMetaModel().getName());
+			smm.setDescription(tmpBC.getSbiMetaModel().getDescription());
+
+			smbc.setSbiMetaModel(smm);
 			Set<SbiMetaBcAttribute> smtc = new HashSet<SbiMetaBcAttribute>();
 			for (Iterator<SbiMetaBcAttribute> iterator = tmpBC.getSbiMetaBcAttributes().iterator(); iterator.hasNext();) {
 				SbiMetaBcAttribute smc = iterator.next();

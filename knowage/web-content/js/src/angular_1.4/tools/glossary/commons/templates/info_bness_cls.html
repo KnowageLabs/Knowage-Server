@@ -5,12 +5,35 @@
     </div>
   </md-toolbar>
 <md-dialog-content class="noPadding">
-<div layout="column">
-<ul>
-<li><span>{{translate.load("sbi.tools.managedatasets.datamartcombo.label");}}:</span><p> {{infCtrl.info.datamart}} </p></li>
-<li><span>{{translate.load("sbi.generic.uniqueIdentifier");}}:</span><p> {{infCtrl.info.unique_identifier}} </p></li>
-
-</ul>
-</div>
+	<div layout="column">
+		<ul>
+			<li><span>{{translate.load("sbi.glossary.businessclass.metaModel");}}:</span><p> {{infCtrl.info.metaBc.sbiMetaModel.name}} </p></li>
+			<li><span>{{translate.load("sbi.glossary.businessclass");}}:</span><p> {{infCtrl.info.metaBc.name}} </p></li>
+			
+			<li>
+				<span>{{translate.load("sbi.glossary.word.associated");}}:</span>
+				<ul>
+					<li style="  display: list-item;" ng-repeat="colu in infCtrl.info.words " ng-class="{selected_item: ctrl.isSelected(colu)}">
+						{{colu.WORD}}
+					</li>
+				</ul>
+			</li>
+			
+			<li>
+				<span>{{translate.load("sbi.ds.metadata.column.column");}}:</span>
+				<ul>
+					<li style="  display: list-item;" ng-repeat="colu in infCtrl.info.sbiGlBnessClsWlist ">
+						{{colu.name}}
+						<ul>
+							<li ng-class="{selected_item: ctrl.isSelected(wor)}" style="  display: list-item;" ng-repeat="wor in colu.word ">
+							{{wor.WORD}}
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+		
+		</ul>
+	</div>
 </md-dialog-content>
 </md-dialog>

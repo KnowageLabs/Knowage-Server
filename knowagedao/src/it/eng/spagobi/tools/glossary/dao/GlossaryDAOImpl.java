@@ -22,6 +22,8 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.metadata.metadata.SbiMetaBc;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByName;
@@ -38,15 +40,12 @@ import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordAttrByWordId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByWord;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchtWlistByGlossaryIdAndWordId;
-import it.eng.spagobi.tools.glossary.dao.criterion.loadBnessClassByParameter;
-import it.eng.spagobi.tools.glossary.dao.criterion.loadBnessClsWlistFromArray;
 import it.eng.spagobi.tools.glossary.dao.criterion.loadContentsParent;
 import it.eng.spagobi.tools.glossary.dao.criterion.loadDataSetWlistByDataset;
 import it.eng.spagobi.tools.glossary.dao.criterion.loadDataSetWlistByDatasetAndWordAndColumn;
 import it.eng.spagobi.tools.glossary.dao.criterion.loadDocWlistByDocumentAndWord;
 import it.eng.spagobi.tools.glossary.dao.criterion.loadMetaBnessClassWlistByMetaBcAndWord;
 import it.eng.spagobi.tools.glossary.dao.criterion.loadMetaTableWlistByMetaTableAndWord;
-import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessCls;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
@@ -57,7 +56,6 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlReferences;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlReferencesId;
-import it.eng.spagobi.tools.glossary.metadata.SbiGlTable;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlTableWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlTableWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlist;
@@ -1090,12 +1088,12 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 						hql = "SELECT DISTINCT" + " dataset.id.dsId ," + " dataset.id.organization ," + " dataset.label " + "FROM " + " SbiDataSet dataset, "
 								+ " SbiGlDataSetWlist wl " + "WHERE " + " dataset.id.dsId = wl.id.datasetId "
 								+ " AND dataset.id.organization = wl.id.organization " + " AND dataset.active=true" + " AND wl.id.wordId in (" + listid + ")"
-								+ " AND dataset.label like :searchName " + "GROUP BY dataset.id.dsId  " + "HAVING COUNT(wl.id.wordId) =  " + sizeW;
+								+ " AND dataset.label like :searchName " + "GROUP BY dataset.id.dsId  " + "HAVING COUNT( distinct wl.id.wordId) =  " + sizeW;
 
-						countHql = "SELECT" + " COUNT(*) " + "FROM " + "	SbiDataSet dataset," + " SbiGlDataSetWlist wl " + "WHERE"
+						countHql = "SELECT" + " distinct dataset.id.dsId " + "FROM " + "	SbiDataSet dataset," + " SbiGlDataSetWlist wl " + "WHERE"
 								+ " dataset.id.dsId = wl.id.datasetId " + "	AND dataset.id.organization = wl.id.organization " + "	AND dataset.active=true"
 								+ " AND wl.id.wordId in (" + listid + ") " + " AND dataset.label like :searchName  " + "GROUP BY dataset.id.dsId  " + "HAVING "
-								+ "	COUNT(wl.id.wordId) =  " + sizeW;
+								+ "	COUNT( distinct wl.id.wordId) =  " + sizeW;
 
 						v = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
 					} else {
@@ -1136,23 +1134,23 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 				if (type.compareTo("all") == 0
 						|| (item.compareTo("bness_cls") == 0 && (type.compareTo("search") == 0 || type.compareTo("pagination") == 0 || type.compareTo("reset") == 0))
 						|| ((type.compareTo("click") == 0 || type.compareTo("reset") == 0) && item.compareTo("word") == 0)) {
-					List<SbiGlBnessCls> bness_cls_list = new ArrayList<SbiGlBnessCls>();
+					List<SbiMetaBc> bness_cls_list = new ArrayList<SbiMetaBc>();
 
 					tmpSearch = elem.getJSONObject("bness_cls").getString("search");
 					tmpPage = elem.getJSONObject("bness_cls").getInt("page");
 					tmp_item_count = elem.getJSONObject("bness_cls").getInt("item_number");
 					if (sizeW > 0) {
-						hql = "SELECT  " + "	dw.bness_cls.bcId AS bcId  ," + "	dw.bness_cls.sbiMetaModel.name AS datamart  ,"
-								+ "	dw.bness_cls.name AS unique_identifier  " + "FROM " + "	SbiGlBnessClsWlist dw " + "WHERE " + "	dw.id.wordId IN (" + listid
-								+ ") " + "	" + "AND (" + " dw.bness_cls.name LIKE :searchName  " + "OR " + " dw.bness_cls.sbiMetaModel.name LIKE:searchName"
-								+ ")" + "GROUP BY " + "	dw.bness_cls.bcId HAVING COUNT(dw.id.wordId) =  " + sizeW;
+						hql = "SELECT  distinct	dw.bness_cls.bcId AS bcId  ," + "	dw.bness_cls.sbiMetaModel AS sbiMetaModel  ,"
+								+ "	dw.bness_cls.name as name  " + "FROM " + "	SbiGlBnessClsWlist dw " + "WHERE " + "	dw.id.wordId IN (" + listid + ") " + "	"
+								+ "AND (" + " dw.bness_cls.name LIKE :searchName  " + "OR " + " dw.bness_cls.sbiMetaModel.name LIKE:searchName" + ")"
+								+ "GROUP BY " + "	dw.bness_cls.bcId HAVING COUNT(distinct dw.id.wordId) =  " + sizeW;
 
-						countHql = "SELECT" + " COUNT(*)  " + "FROM" + " SbiGlBnessClsWlist dw " + "WHERE" + " dw.id.wordId in (" + listid + ")"
+						countHql = "SELECT distinct	dw.bness_cls.bcId   FROM  SbiGlBnessClsWlist dw " + "WHERE" + " dw.id.wordId in (" + listid + ")"
 								+ " AND ( dw.bness_cls.name like :searchName OR dw.bness_cls.sbiMetaModel.name LIKE:searchName ) "
-								+ "GROUP BY dw.bness_cls.bcId  " + "HAVING COUNT(dw.id.wordId) =  " + sizeW;
+								+ "GROUP BY dw.bness_cls.bcId  " + "HAVING COUNT( distinct dw.id.wordId) =  " + sizeW;
 						v = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
 					} else {
-						hql = "select distinct dw.bness_cls.bcId as bcId ,dw.bness_cls.sbiMetaModel.name as datamart ,dw.bness_cls.name as unique_identifier "
+						hql = "select distinct dw.bness_cls.bcId as bcId ,dw.bness_cls.sbiMetaModel as sbiMetaModel ,dw.bness_cls.name as name "
 								+ "FROM SbiGlBnessClsWlist dw where ( dw.bness_cls.name like :searchName OR dw.bness_cls.sbiMetaModel.name LIKE:searchName ) ";
 						countHql = "select count(distinct dw.bness_cls.bcId) "
 								+ "FROM SbiGlBnessClsWlist dw where ( dw.bness_cls.name like :searchName OR dw.bness_cls.sbiMetaModel.name LIKE:searchName ) ";
@@ -1160,7 +1158,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 					}
 					Query q = session.createQuery(hql);
 					q.setString("searchName", "%" + tmpSearch + "%");
-					q.setResultTransformer(Transformers.aliasToBean(SbiGlBnessCls.class));
+					q.setResultTransformer(Transformers.aliasToBean(SbiMetaBc.class));
 
 					if (type.compareTo("pagination") == 0) {
 						q.setFirstResult((tmpPage - 1) * tmp_item_count).setMaxResults(tmp_item_count);
@@ -1180,28 +1178,28 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 				if (type.compareTo("all") == 0
 						|| (item.compareTo("table") == 0 && (type.compareTo("search") == 0 || type.compareTo("pagination") == 0 || type.compareTo("reset") == 0))
 						|| ((type.compareTo("click") == 0 || type.compareTo("reset") == 0) && item.compareTo("word") == 0)) {
-					List<SbiGlTable> table_list = new ArrayList<SbiGlTable>();
+					List<SbiMetaTable> table_list = new ArrayList<SbiMetaTable>();
 
 					tmpSearch = elem.getJSONObject("table").getString("search");
 					tmpPage = elem.getJSONObject("table").getInt("page");
 					tmp_item_count = elem.getJSONObject("table").getInt("item_number");
 					if (sizeW > 0) {
-						hql = "SELECT  " + "	dw.table.tableId AS tableId  ," + "	dw.table.name AS label  " + "FROM " + "	SbiGlTableWlist dw " + "WHERE "
-								+ "	dw.id.wordId IN (" + listid + ") " + "	AND dw.table.name LIKE :searchName  " + "GROUP BY "
-								+ "	dw.table.tableId HAVING COUNT(dw.id.wordId) =  " + sizeW;
+						hql = "SELECT  " + "	distinct dw.table.tableId AS tableId  ," + "dw.table.sbiMetaSource AS sbiMetaSource,	dw.table.name AS name  "
+								+ "FROM " + "	SbiGlTableWlist dw " + "WHERE " + "	dw.id.wordId IN (" + listid + ") " + "	AND dw.table.name LIKE :searchName  "
+								+ "GROUP BY " + "	dw.table.tableId HAVING COUNT( distinct dw.id.wordId) =  " + sizeW;
 
-						countHql = "SELECT" + " COUNT(*)  " + "FROM" + " SbiGlTableWlist dw " + "WHERE" + " dw.id.wordId in (" + listid + ")"
-								+ " AND dw.table.name like :searchName " + "GROUP BY dw.table.tableId  " + "HAVING COUNT(dw.id.wordId) =  " + sizeW;
+						countHql = "SELECT" + " distinct dw.table.tableId   " + "FROM" + " SbiGlTableWlist dw " + "WHERE" + " dw.id.wordId in (" + listid + ")"
+								+ " AND dw.table.name like :searchName " + "GROUP BY dw.table.tableId  " + "HAVING COUNT( distinct dw.id.wordId) =  " + sizeW;
 						v = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
 					} else {
-						hql = "select distinct dw.table.tableId as tableId  ,dw.table.name as label "
+						hql = "select distinct dw.table.tableId as tableId  ,dw.table.sbiMetaSource AS sbiMetaSource, dw.table.name as name "
 								+ "FROM SbiGlTableWlist dw where dw.table.name like :searchName";
 						countHql = "select count(distinct dw.table.tableId) " + "FROM SbiGlTableWlist dw where dw.table.name like :searchName";
 						v = ((Long) session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").uniqueResult()).intValue();
 					}
 					Query q = session.createQuery(hql);
 					q.setString("searchName", "%" + tmpSearch + "%");
-					q.setResultTransformer(Transformers.aliasToBean(SbiGlTable.class));
+					q.setResultTransformer(Transformers.aliasToBean(SbiMetaTable.class));
 
 					if (type.compareTo("pagination") == 0) {
 						q.setFirstResult((tmpPage - 1) * tmp_item_count).setMaxResults(tmp_item_count);
@@ -1294,15 +1292,16 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 						// +
 						// " and sl.id.datasetId in ("+listDataSetid+") and sl.word.word like :searchName  group by sl.word.wordId  having count(sl.id.datasetId) =  "+sizeDS;
 
-						hql = "SELECT " + "sl.word.wordId as wordId ," + "sl.word.word as word " + "FROM " + "SbiDataSet dataset," + "SbiGlDataSetWlist sl"
-								+ addGloToQuery + "  dataset.id.dsId = sl.id.datasetId " + " AND dataset.id.organization = sl.id.organization "
-								+ " AND dataset.active=true" + " AND sl.id.datasetId in (" + listDataSetid + ")" + " AND sl.word.word like :searchName "
-								+ "GROUP BY sl.word.wordId  " + "HAVING COUNT(sl.id.datasetId) =  " + sizeDS;
+						hql = "SELECT " + " distinct sl.word.wordId as wordId ," + "sl.word.word as word " + "FROM " + "SbiDataSet dataset,"
+								+ "SbiGlDataSetWlist sl" + addGloToQuery + "  dataset.id.dsId = sl.id.datasetId "
+								+ " AND dataset.id.organization = sl.id.organization " + " AND dataset.active=true" + " AND sl.id.datasetId in ("
+								+ listDataSetid + ")" + " AND sl.word.word like :searchName " + "GROUP BY sl.word.wordId  "
+								+ "HAVING COUNT( distinct sl.id.datasetId) =  " + sizeDS;
 
-						countHql = "SELECT" + " COUNT(*)" + "FROM " + " SbiDataSet dataset," + " SbiGlDataSetWlist sl " + addGloToQuery
+						countHql = "SELECT" + " distinct sl.word.wordId  FROM  SbiDataSet dataset,  SbiGlDataSetWlist sl " + addGloToQuery
 								+ " dataset.id.dsId = sl.id.datasetId" + " AND dataset.id.organization = sl.id.organization" + " AND dataset.active=true"
 								+ " AND sl.id.datasetId in (" + listDataSetid + ")" + " AND sl.word.word like :searchName  " + "GROUP BY sl.word.wordId "
-								+ "HAVING COUNT(sl.id.datasetId) =  " + sizeDS;
+								+ "HAVING COUNT( distinct sl.id.datasetId) =  " + sizeDS;
 						int tmpv = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
 						v = (v == null || tmpv < v) ? tmpv : v;
 						Query q = session.createQuery(hql);
@@ -1312,11 +1311,12 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 					}
 
 					if (sizeBC > 0) {
-						hql = "SELECT" + " sl.word.wordId as wordId," + " sl.word.word as word " + "FROM SbiGlBnessClsWlist sl " + addGloToQuery
+						hql = "SELECT" + " distinct sl.word.wordId as wordId," + " sl.word.word as word " + "FROM SbiGlBnessClsWlist sl " + addGloToQuery
 								+ " sl.id.bcId in (" + listBnessClsid + ")" + " AND sl.word.word like :searchName " + "GROUP BY sl.word.wordId "
-								+ "HAVING count(sl.id.bcId) =  " + sizeBC;
-						countHql = "SELECT" + " COUNT(*) " + "FROM " + "SbiGlBnessClsWlist sl " + addGloToQuery + " sl.id.bcId in (" + listBnessClsid + ")"
-								+ " AND sl.word.word like :searchName  " + "GROUP BY sl.word.wordId " + "HAVING count(sl.id.bcId) =  " + sizeBC;
+								+ "HAVING count( distinct sl.id.bcId) =  " + sizeBC;
+						countHql = "SELECT" + " distinct sl.word.wordId  " + "FROM " + "SbiGlBnessClsWlist sl " + addGloToQuery + " sl.id.bcId in ("
+								+ listBnessClsid + ")" + " AND sl.word.word like :searchName  " + "GROUP BY sl.word.wordId "
+								+ "HAVING count ( distinct sl.id.bcId) =  " + sizeBC;
 						int tmpv = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
 						v = (v == null || tmpv < v) ? tmpv : v;
 						Query q = session.createQuery(hql);
@@ -1326,11 +1326,12 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 					}
 
 					if (sizeTB > 0) {
-						hql = "SELECT" + " sl.word.wordId as wordId," + " sl.word.word as word " + "FROM SbiGlTableWlist sl " + addGloToQuery
+						hql = "SELECT" + " distinct sl.word.wordId as wordId," + " sl.word.word as word " + "FROM SbiGlTableWlist sl " + addGloToQuery
 								+ " sl.id.tableId in (" + listTableid + ")" + " AND sl.word.word like :searchName " + "GROUP BY sl.word.wordId "
-								+ "HAVING count(sl.id.tableId) =  " + sizeTB;
-						countHql = "SELECT" + " COUNT(*) " + "FROM " + "SbiGlTableWlist sl " + addGloToQuery + " sl.id.tableId in (" + listTableid + ")"
-								+ " AND sl.word.word like :searchName  " + "GROUP BY sl.word.wordId " + "HAVING count(sl.id.tableId) =  " + sizeTB;
+								+ "HAVING count( distinct sl.id.tableId) =  " + sizeTB;
+						countHql = "SELECT" + " distinct sl.word.wordId " + "FROM " + "SbiGlTableWlist sl " + addGloToQuery + " sl.id.tableId in ("
+								+ listTableid + ")" + " AND sl.word.word like :searchName  " + "GROUP BY sl.word.wordId  "
+								+ "HAVING count( distinct sl.id.tableId) =  " + sizeTB;
 						int tmpv = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
 						v = (v == null || tmpv < v) ? tmpv : v;
 						Query q = session.createQuery(hql);
@@ -1379,28 +1380,6 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 			}
 		});
 
-	}
-
-	@Override
-	public SbiGlBnessCls loadBnessCls(Integer bcId) {
-		return load(SbiGlBnessCls.class, bcId);
-	}
-
-	@Override
-	public List<SbiGlBnessCls> loadBnessClassByParameter(String datamart, String bness_cls) {
-		return list(new loadBnessClassByParameter(datamart, bness_cls));
-
-	}
-
-	@Override
-	public List<SbiGlBnessClsWlist> loadBnessClsWlistByParameter(Integer id, String column) {
-		return list(new loadBnessClsWlistFromArray(id, column));
-
-	}
-
-	@Override
-	public SbiGlTable loadTable(Integer tableId) {
-		return load(SbiGlTable.class, tableId);
 	}
 
 }

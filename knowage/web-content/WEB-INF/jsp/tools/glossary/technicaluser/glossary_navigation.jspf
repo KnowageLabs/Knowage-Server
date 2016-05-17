@@ -47,7 +47,7 @@
 			
 		</div>
 
-		<div flex="80" class="boxItemGlo">
+		<div flex="80" class="boxItemGlo" layout="column">
 
 			<md-toolbar class="md-blue xs-head" style="  border-bottom: 1px solid rgb(210, 210, 210);">
 			<div class="md-toolbar-tools">
@@ -56,133 +56,131 @@
 			</div>
 			</md-toolbar>
 
-			<md-content class="xs-head-max-content noTBPadding" style="position: absolute;  width: 100%;">
-			<div layout="row" layout-wrap class="h100">
-				<div flex="25" class="boxItemGlo">
-					<md-toolbar class="md-blue xs-head">
-					<div class="md-toolbar-tools">
-						<div style="text-align: center; width: 100%;">{{translate.load("sbi.kpis.documents");}}</div>
-							<md-progress-circular ng-show="ctrl.pagination.document.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
+			<md-content flex  layout="column" class=" noTBPadding" >
+			
+				<div layout="row"  flex  >
+					<md-whiteframe class="md-whiteframe-4dp"  flex layout-margin layout="column">
+						<md-toolbar class="md-blue xs-head">
+							<div class="md-toolbar-tools">
+								<div style="text-align: center; width: 100%;">{{translate.load("sbi.kpis.documents");}}</div>
+									<md-progress-circular ng-show="ctrl.pagination.document.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
+				
+							</div>
+						</md-toolbar>
+	
+						<md-content layout-padding layout="column" flex> 
+							<md-input-container md-no-float class="noPadding searchBar" >
+	       					 <md-icon md-font-icon="fa fa-search"></md-icon> 
+	       					 <input	ng-model="ctrl.pagination.document.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.document)" type="text" placeholder="Search ">
+	       					 <md-icon md-font-icon="fa fa-filter" ng-click="ctrl.deleteSelect('document')" class="filter-icon" 
+	       		 			ng-class="{ 'not_empty' : (ctrl.pagination.document.selected.length !== 0 || ctrl.pagination.document.search.length !== 0 )  }"></md-icon> 
+	       					 </md-input-container>
+	       					
+	       					
+		       				<md-list class="bottomBorder info_button" >
+							<md-list-item dir-paginate="document in ctrl.pagination.document.item |  itemsPerPage:ctrl.pagination.document.item_number "
+								total-items="ctrl.pagination.document.total" current-page="ctrl.pagination.document.current" pagination-id="ctrl.pagination.document.id" 
+								ng-click="ctrl.toggleFilter(document)" ng-repeat="n in [1]" class="smallListItem " 
+								ng-class="{selected_item: ctrl.isSelected(document)}">
+									<p class="wrapText">{{ document.DOCUMENT_NM | uppercase}}</p>
+									 <md-icon class="md-secondary" ng-click="ctrl.showInfoDOC($event,document.DOCUMENT_NM,document.DOCUMENT_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
+						
+							</md-list-item> 
+							</md-list>
+				
+						<div class="box_pagination" layout="row" layout-align="center end">
+							<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.document.id"
+							on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.document)"></dir-pagination-controls>
+						</div>
+				 
+			       		</md-content>
+					</md-whiteframe>
+	
+					<md-whiteframe class="md-whiteframe-4dp" flex layout-margin layout="column" >
+						<md-toolbar class="md-blue xs-head">
+							<div class="md-toolbar-tools">
+								<div style="text-align: center; width: 100%;">{{translate.load("sbi.kpi.kpiguidescription.dataset");}}</div>
+							<md-progress-circular ng-show="ctrl.pagination.dataset.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
+				
+							</div>
+						</md-toolbar>
+	
+						<md-content layout-padding layout="column" flex> 
+							<md-input-container md-no-float class="noPadding searchBar" >
+	       					 <md-icon md-font-icon="fa fa-search"></md-icon> 
+	       					 <input	ng-model="ctrl.pagination.dataset.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.dataset)" type="text" placeholder="Search ">
+	       					 <md-icon md-font-icon="fa fa-filter" ng-click="ctrl.deleteSelect('dataset')" class="filter-icon" 
+	       		 			ng-class="{ 'not_empty' : (ctrl.pagination.dataset.selected.length !== 0 || ctrl.pagination.dataset.search.length !== 0 )  }"></md-icon> 
+	       					</md-input-container>
+	       					
+	       					
+		       				<md-list class="bottomBorder info_button" >
+							<md-list-item dir-paginate="dataset in ctrl.pagination.dataset.item |  itemsPerPage:ctrl.pagination.dataset.item_number "
+								total-items="ctrl.pagination.dataset.total" current-page="ctrl.pagination.dataset.current" pagination-id="ctrl.pagination.dataset.id" 
+								ng-click="ctrl.toggleFilter(dataset)" ng-repeat="n in [1]" class="smallListItem " 
+								ng-class="{selected_item: ctrl.isSelected(dataset)}">
+									<p class="wrapText">{{ dataset.DATASET_NM | uppercase}} </p>
+									 <md-icon class="md-secondary" ng-click="ctrl.showInfoDS($event,dataset.DATASET_ID,dataset.DATASET_ORG)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
+						
+							</md-list-item> 
+							</md-list>
+			
+							<div class="box_pagination" layout="row" layout-align="center end">
+								<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.dataset.id"
+								on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.dataset)"></dir-pagination-controls>
+							</div>
+				
+			       		</md-content>
+					</md-whiteframe>
+				</div>
+				<div layout="row"  flex  >
+					<md-whiteframe class="md-whiteframe-4dp"  flex layout-margin layout="column">
+						<md-toolbar class="md-blue xs-head">
+						<div class="md-toolbar-tools">
+							<div style="text-align: center; width: 100%;">{{translate.load("sbi.glossary.businessclass");}}</div>
+						<md-progress-circular ng-show="ctrl.pagination.bness_cls.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
+			
+						</div>
+						</md-toolbar>
+
+						<md-content layout-padding layout="column" flex> 
+							<md-input-container md-no-float class="noPadding searchBar" >
+	       					 <md-icon md-font-icon="fa fa-search"></md-icon> 
+	       					 <input	ng-model="ctrl.pagination.bness_cls.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.bness_cls)" type="text" placeholder="Search ">
+	       					 <md-icon md-font-icon="fa fa-filter" ng-click="ctrl.deleteSelect('bness_cls')" class="filter-icon" 
+	       		 			ng-class="{ 'not_empty' : (ctrl.pagination.bness_cls.selected.length !== 0 || ctrl.pagination.bness_cls.search.length !== 0 )  }"></md-icon> 
+	       					</md-input-container>
+	       					
+       					
+		       				<md-list class="bottomBorder info_button" >
+							<md-list-item dir-paginate="bness_cls in ctrl.pagination.bness_cls.item |  itemsPerPage:ctrl.pagination.bness_cls.item_number "
+								total-items="ctrl.pagination.bness_cls.total" current-page="ctrl.pagination.bness_cls.current" pagination-id="ctrl.pagination.bness_cls.id" 
+								ng-click="ctrl.toggleFilter(bness_cls)" ng-repeat="n in [1]" class="smallListItem " 
+								ng-class="{selected_item: ctrl.isSelected(bness_cls)}">
+									<p class="wrapText">{{ bness_cls.META_MODEL_NAME | uppercase}}.{{ bness_cls.BC_NAME | uppercase}}  </p>
+									 <md-icon class="md-secondary" ng-click="ctrl.showInfoBC($event,bness_cls.BC_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
+						
+							</md-list-item> 
+							</md-list>
 		
-					</div>
+							<div class="box_pagination" layout="row" layout-align="center end">
+								<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.bness_cls.id"
+								on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.bness_cls)"></dir-pagination-controls>
+							</div>
+			
+		       			</md-content>
+				</md-whiteframe>
+
+				
+				<md-whiteframe class="md-whiteframe-4dp"  flex layout-margin layout="column">
+					<md-toolbar class="md-blue xs-head">
+						<div class="md-toolbar-tools">
+							<div style="text-align: center; width: 100%;">{{translate.load("sbi.glossary.tables");}}</div>
+							<md-progress-circular ng-show="ctrl.pagination.table.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
+						</div>
 					</md-toolbar>
 
-					<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
-						<md-input-container md-no-float class="noPadding searchBar" >
-       					 <md-icon md-font-icon="fa fa-search"></md-icon> 
-       					 <input	ng-model="ctrl.pagination.document.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.document)" type="text" placeholder="Search ">
-       					 <md-icon md-font-icon="fa fa-filter" ng-click="ctrl.deleteSelect('document')" class="filter-icon" 
-       		 			ng-class="{ 'not_empty' : (ctrl.pagination.document.selected.length !== 0 || ctrl.pagination.document.search.length !== 0 )  }"></md-icon> 
-       		 </md-input-container>
-       					
-       					
-       				<md-list class="bottomBorder info_button" >
-					<md-list-item dir-paginate="document in ctrl.pagination.document.item |  itemsPerPage:ctrl.pagination.document.item_number "
-						total-items="ctrl.pagination.document.total" current-page="ctrl.pagination.document.current" pagination-id="ctrl.pagination.document.id" 
-						ng-click="ctrl.toggleFilter(document)" ng-repeat="n in [1]" class="smallListItem " 
-						ng-class="{selected_item: ctrl.isSelected(document)}">
-							<p class="wrapText">{{ document.DOCUMENT_NM | uppercase}}</p>
-							 <md-icon class="md-secondary" ng-click="ctrl.showInfoDOC($event,document.DOCUMENT_NM,document.DOCUMENT_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
-				
-					</md-list-item> 
-					</md-list>
-		
-				<div class="box_pagination" layout="row" layout-align="center end">
-					<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.document.id"
-					on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.document)"></dir-pagination-controls>
-				</div>
-			
-			
-			
-		       		</md-content>
-				</div>
-
-				<div flex="25" class="boxItemGlo">
-					<md-toolbar class="md-blue xs-head">
-					<div class="md-toolbar-tools">
-						<div style="text-align: center; width: 100%;">{{translate.load("sbi.kpi.kpiguidescription.dataset");}}</div>
-					<md-progress-circular ng-show="ctrl.pagination.dataset.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
-		
-					</div>
-					</md-toolbar>
-
-						<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
-						<md-input-container md-no-float class="noPadding searchBar" >
-       					 <md-icon md-font-icon="fa fa-search"></md-icon> 
-       					 <input	ng-model="ctrl.pagination.dataset.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.dataset)" type="text" placeholder="Search ">
-       					 <md-icon md-font-icon="fa fa-filter" ng-click="ctrl.deleteSelect('dataset')" class="filter-icon" 
-       		 			ng-class="{ 'not_empty' : (ctrl.pagination.dataset.selected.length !== 0 || ctrl.pagination.dataset.search.length !== 0 )  }"></md-icon> 
-       					</md-input-container>
-       					
-       					
-       				<md-list class="bottomBorder info_button" >
-					<md-list-item dir-paginate="dataset in ctrl.pagination.dataset.item |  itemsPerPage:ctrl.pagination.dataset.item_number "
-						total-items="ctrl.pagination.dataset.total" current-page="ctrl.pagination.dataset.current" pagination-id="ctrl.pagination.dataset.id" 
-						ng-click="ctrl.toggleFilter(dataset)" ng-repeat="n in [1]" class="smallListItem " 
-						ng-class="{selected_item: ctrl.isSelected(dataset)}">
-							<p class="wrapText">{{ dataset.DATASET_NM | uppercase}} </p>
-							 <md-icon class="md-secondary" ng-click="ctrl.showInfoDS($event,dataset.DATASET_ID,dataset.DATASET_ORG)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
-				
-					</md-list-item> 
-					</md-list>
-		
-				<div class="box_pagination" layout="row" layout-align="center end">
-					<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.dataset.id"
-					on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.dataset)"></dir-pagination-controls>
-				</div>
-			
-		       		</md-content>
-				</div>
-
-
-<div flex="25" class="boxItemGlo">
-					<md-toolbar class="md-blue xs-head">
-					<div class="md-toolbar-tools">
-						<div style="text-align: center; width: 100%;">{{translate.load("sbi.glossary.businessclass");}}</div>
-					<md-progress-circular ng-show="ctrl.pagination.bness_cls.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
-		
-					</div>
-					</md-toolbar>
-
-						<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
-						<md-input-container md-no-float class="noPadding searchBar" >
-       					 <md-icon md-font-icon="fa fa-search"></md-icon> 
-       					 <input	ng-model="ctrl.pagination.bness_cls.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.bness_cls)" type="text" placeholder="Search ">
-       					 <md-icon md-font-icon="fa fa-filter" ng-click="ctrl.deleteSelect('bness_cls')" class="filter-icon" 
-       		 			ng-class="{ 'not_empty' : (ctrl.pagination.bness_cls.selected.length !== 0 || ctrl.pagination.bness_cls.search.length !== 0 )  }"></md-icon> 
-       					</md-input-container>
-       					
-       					
-       				<md-list class="bottomBorder info_button" >
-					<md-list-item dir-paginate="bness_cls in ctrl.pagination.bness_cls.item |  itemsPerPage:ctrl.pagination.bness_cls.item_number "
-						total-items="ctrl.pagination.bness_cls.total" current-page="ctrl.pagination.bness_cls.current" pagination-id="ctrl.pagination.bness_cls.id" 
-						ng-click="ctrl.toggleFilter(bness_cls)" ng-repeat="n in [1]" class="smallListItem " 
-						ng-class="{selected_item: ctrl.isSelected(bness_cls)}">
-							<p class="wrapText">{{ bness_cls.BC_DATAMART_NM | uppercase}}.{{ bness_cls.BC_UNIQUE_IDENT | uppercase}}  </p>
-							 <md-icon class="md-secondary" ng-click="ctrl.showInfoBC($event,bness_cls.BC_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
-				
-					</md-list-item> 
-					</md-list>
-		
-				<div class="box_pagination" layout="row" layout-align="center end">
-					<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.bness_cls.id"
-					on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.bness_cls)"></dir-pagination-controls>
-				</div>
-			
-		       		</md-content>
-				</div>
-
-				
-			<div flex="25" class="boxItemGlo">
-					<md-toolbar class="md-blue xs-head">
-					<div class="md-toolbar-tools">
-						<div style="text-align: center; width: 100%;">{{translate.load("sbi.glossary.tables");}}</div>
-					<md-progress-circular ng-show="ctrl.pagination.table.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
-		
-					</div>
-					</md-toolbar>
-
-						<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
+					<md-content layout-padding layout="column" flex> 
 						<md-input-container md-no-float class="noPadding searchBar" >
        					 <md-icon md-font-icon="fa fa-search"></md-icon> 
        					 <input	ng-model="ctrl.pagination.table.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.table)" type="text" placeholder="Search ">
@@ -196,30 +194,22 @@
 						total-items="ctrl.pagination.table.total" current-page="ctrl.pagination.table.current" pagination-id="ctrl.pagination.table.id" 
 						ng-click="ctrl.toggleFilter(table)" ng-repeat="n in [1]" class="smallListItem " 
 						ng-class="{selected_item: ctrl.isSelected(table)}">
-							<p class="wrapText">{{ table.TABLE_NM | uppercase}} </p>
+							<p class="wrapText">{{table.META_SOURCE_NAME | uppercase}}.{{ table.TABLE_NM | uppercase}} </p>
 							 <md-icon class="md-secondary" ng-click="ctrl.showInfoTB($event,table.TABLE_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
 				
 					</md-list-item> 
 					</md-list>
 		
-				<div class="box_pagination" layout="row" layout-align="center end">
-					<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.table.id"
-					on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.table)"></dir-pagination-controls>
-				</div>
+					<div class="box_pagination" layout="row" layout-align="center end">
+						<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.table.id"
+						on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.table)"></dir-pagination-controls>
+					</div>
 			
 		       		</md-content>
-				</div>
-
-
-
-
-
-
+				</md-whiteframe>
+ 
 			</div>
-
-
-
-
+ 
 			</md-content>
 		</div>
 

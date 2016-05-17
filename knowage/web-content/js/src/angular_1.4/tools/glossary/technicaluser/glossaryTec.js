@@ -61,7 +61,7 @@ function funzione_tec($scope,sbiModule_translate,sbiModule_restServices,$mdToast
 		sbiModule_restServices.promiseGet("1.0/glossary", "listGlossary").then(
 				function(response, status, headers, config) {
 						global.glossary= response.data;
-				},function(data, status, headers, config) {
+				},function(response, status, headers, config) {
 					sbiModule_restServices.errorHandler(response.data,"Glossary non Ottenuti");
 
 				})
@@ -1240,17 +1240,11 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 			 scope: $scope,preserveScope: true,
 			controller : function($mdDialog) {
 				var idsctrl = this;
-				sbiModule_restServices.get("1.0/glossary","getBnessCls", "BC_ID=" +bclab)
-				.success(
-						function(data, status, headers, config) {
-							if (data.hasOwnProperty("errors")) {
-								showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-							} else {
-								idsctrl.info = data;
-							}
-						}).error(function(data, status, headers, config) {
-							showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-
+				sbiModule_restServices.promiseGet("1.0/glossary","getMetaBcInfo", "META_BC_ID=" +bclab).then(
+						function(response, status, headers, config) {
+								idsctrl.info = response.data;
+						},function(response, status, headers, config) {
+							sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.glossary.load.error"))
 						})
 
 			},
@@ -1268,16 +1262,11 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 			 scope: $scope,preserveScope: true,
 			controller : function($mdDialog) {
 				var idsctrl = this;
-				sbiModule_restServices.get("1.0/glossary","getTable", "TABLE_ID=" +tblab)
-				.success(
-						function(data, status, headers, config) {
-							if (data.hasOwnProperty("errors")) {
-								showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-							} else {
-								idsctrl.info = data;
-							}
-						}).error(function(data, status, headers, config) {
-							showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+				sbiModule_restServices.promiseGet("1.0/glossary","getMetaTableInfo", "META_TABLE_ID=" +tblab).then(
+						function(response, status, headers, config) {
+							idsctrl.info = response.data;
+						},function(response, status, headers, config) {
+							sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.glossary.load.error"))
 
 						})
 
@@ -1316,6 +1305,7 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 
 	function changeItemPP() {
 		var boxsize = angular.element(document.querySelector('.navig-tab-content'))[0].offsetHeight;
+		var whiteframeSize=angular.element(document.querySelector('.navig-tab-content md-whiteframe>md-content'))[0].offsetHeight
 		var tbw = angular.element(document.querySelector('.xs-head'))[0].offsetHeight;
 		var bpw = angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
 		var search = angular.element(document.querySelector('.searchBar'))[0].offsetHeight;
@@ -1323,7 +1313,7 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 		bpw == 0 ? bpw = 19 : bpw = bpw;
 
 		var WordItemPerPage=parseInt((boxsize - tbw - search- bpw -32 -5) / 16);
-		var elemItemPerPage=parseInt((boxsize - tbw*2 - search- bpw -5  ) / 16);
+		var elemItemPerPage=parseInt((whiteframeSize  - search- bpw -5  ) / 16);
 
 		navi.pagination.word.item_number= WordItemPerPage;
 		navi.pagination.document.item_number= elemItemPerPage;
@@ -1334,12 +1324,13 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 
 	}
 
-	$scope
-	.$watch(
+	var firstInit=true;
+	$scope.$watch(
 			function() {
-				return angular.element(document.querySelector('.glossaryTec'))[0].offsetHeight;
+				return angular.element(document.querySelector('.navig-tab-content md-whiteframe>md-content'))[0].offsetHeight;
 			}, function(newValue, oldValue) {
-				if (newValue != oldValue) {
+				if (newValue != oldValue || firstInit) {
+					firstInit=false;
 					changeItemPP();
 				}
 			}, true);

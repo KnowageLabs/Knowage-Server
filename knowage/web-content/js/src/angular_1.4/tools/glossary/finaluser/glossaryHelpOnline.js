@@ -100,6 +100,7 @@ function funzione(sbiModule_translate,$filter, sbiModule_restServices, $q, $scop
 	};
 
 	s.loadDatamart=function(param){
+		//TO-DO this rest resvice is removed. test it
 		sbiModule_restServices.get("1.0/glossary","getDatamartInfo",param )
 		.success(function(data, status, headers, config) {
 			console.log("DatamartInfo ottnuti")

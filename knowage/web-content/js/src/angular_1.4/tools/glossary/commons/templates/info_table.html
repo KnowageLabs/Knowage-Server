@@ -7,8 +7,32 @@
 <md-dialog-content class="noPadding">
 <div layout="column">
 <ul>
-<li><span>{{translate.load("sbi.browser.document.label");}}:</span><p> {{infCtrl.info.label}} </p></li>
-
+	<li><span>{{translate.load("sbi.glossary.table.metaSource");}}:</span><p> {{infCtrl.info.metaSource.name}} </p></li>
+	<li><span>{{translate.load("sbi.browser.document.label");}}:</span><p> {{infCtrl.info.metaTable.name}} </p></li>
+	
+	<li>
+		<span>{{translate.load("sbi.glossary.word.associated");}}:</span>
+		<ul>
+			<li style="  display: list-item;" ng-repeat="colu in infCtrl.info.words " ng-class="{selected_item: ctrl.isSelected(colu)}">
+				{{colu.WORD}}
+			</li>
+		</ul>
+	</li>
+	
+	<li>
+		<span>{{translate.load("sbi.ds.metadata.column.column");}}:</span>
+		<ul>
+			<li style="  display: list-item;" ng-repeat="colu in infCtrl.info.sbiGlTableWlist ">
+				{{colu.name}}
+				<ul>
+					<li ng-class="{selected_item: ctrl.isSelected(wor)}" style="  display: list-item;" ng-repeat="wor in colu.word ">
+					{{wor.WORD}}
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</li>
+			
 </ul>
 </div>
 </md-dialog-content>

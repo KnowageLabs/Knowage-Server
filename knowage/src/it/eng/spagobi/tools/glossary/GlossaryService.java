@@ -35,6 +35,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaBcAttribute;
+import it.eng.spagobi.metadata.metadata.SbiMetaSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
@@ -43,7 +44,6 @@ import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.glossary.dao.IGlossaryDAO;
-import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessCls;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
@@ -52,7 +52,6 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
-import it.eng.spagobi.tools.glossary.metadata.SbiGlTable;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlTableWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlTableWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
@@ -394,9 +393,9 @@ public class GlossaryService {
 			}
 
 			if (fin.containsKey("bness_cls")) {
-				List<SbiGlBnessCls> doc = (List<SbiGlBnessCls>) fin.get("bness_cls");
+				List<SbiMetaBc> doc = (List<SbiMetaBc>) fin.get("bness_cls");
 				JSONArray ja = new JSONArray();
-				for (SbiGlBnessCls tmp : doc) {
+				for (SbiMetaBc tmp : doc) {
 					ja.put(fromBnessClsLight(tmp));
 				}
 				jo.put("bness_cls", ja);
@@ -404,9 +403,9 @@ public class GlossaryService {
 			}
 
 			if (fin.containsKey("table")) {
-				List<SbiGlTable> doc = (List<SbiGlTable>) fin.get("table");
+				List<SbiMetaTable> doc = (List<SbiMetaTable>) fin.get("table");
 				JSONArray ja = new JSONArray();
-				for (SbiGlTable tmp : doc) {
+				for (SbiMetaTable tmp : doc) {
 					ja.put(fromTableLight(tmp));
 				}
 				jo.put("table", ja);
@@ -723,6 +722,7 @@ public class GlossaryService {
 
 			jo.put("sbiGlTableWlist", columnArray);
 			jo.put("metaTable", JSON.parse(JsonConverter.objectToJson(datas, SbiMetaTable.class)));
+			jo.put("metaSource", JSON.parse(JsonConverter.objectToJson(datas.getSbiMetaSource(), SbiMetaSource.class)));
 			jo.put("words", mtWord);
 			return jo.toString();
 		} catch (Throwable t) {
@@ -786,59 +786,6 @@ public class GlossaryService {
 	}
 
 	@GET
-	@Path("/getDatamartInfo")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
-	public String getDatamartInfo(@Context HttpServletRequest req) {
-		// called from helpOnLine
-		try {
-			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			dao.setUserProfile(profile);
-
-			String datamart = req.getParameter("DATAMART");
-			String bness_cls = req.getParameter("BUSINESS_CLASS");
-
-			if (datamart == null) {
-				throw new SpagoBIServiceException(req.getPathInfo(), "Input param Id [" + datamart + "] not valid or null");
-			}
-
-			JSONObject jobj = new JSONObject();
-			JSONArray self = new JSONArray();
-			JSONArray colarr = new JSONArray();
-			List<SbiGlBnessCls> bns = dao.loadBnessClassByParameter(datamart, bness_cls);
-
-			for (SbiGlBnessCls b : bns) {
-				Map<String, Integer> map = new HashMap<String, Integer>();
-				List<SbiGlBnessClsWlist> bcw = dao.loadBnessClsWlistByParameter(b.getBcId(), null);
-				for (SbiGlBnessClsWlist wl : bcw) {
-					String colname = wl.getId().getColumn_name();
-					if (".SELF".equals(colname)) {
-						self.put(fromWord(wl.getWord()));
-					} else {
-						Integer index = map.get(colname);
-						if (index == null) {
-							// not exist... create it
-							map.put(colname, colarr.length());
-							index = colarr.length();
-							JSONObject ttmp = new JSONObject();
-							ttmp.put("name", colname);
-							ttmp.put("word", new JSONArray());
-							colarr.put(ttmp);
-						}
-						colarr.getJSONObject(map.get(colname)).getJSONArray("word").put(fromWord(wl.getWord()));
-					}
-				}
-			}
-			jobj.put("selfItem", self);
-			jobj.put("columnItem", colarr);
-			return jobj.toString();
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
-		}
-	}
-
-	@GET
 	@Path("/getWord")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS, SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
@@ -872,48 +819,6 @@ public class GlossaryService {
 
 			JSONObject jobj = fromWord(word);
 			return jobj.toString();
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
-		}
-	}
-
-	@GET
-	@Path("/getBnessCls")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
-	public String getBnessCls(@Context HttpServletRequest req) {
-		String id = req.getParameter("BC_ID");
-		if (!id.matches("\\d+")) {
-			throw new SpagoBIServiceException(req.getPathInfo(), "Input param Id [" + id + "] not valid");
-		}
-		try {
-			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			dao.setUserProfile(profile);
-			SbiGlBnessCls BnessCls = dao.loadBnessCls(Integer.valueOf(id));
-
-			return JsonConverter.objectToJson(BnessCls, SbiGlBnessCls.class);
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
-		}
-	}
-
-	@GET
-	@Path("/getTable")
-	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
-	public String getTable(@Context HttpServletRequest req) {
-		String id = req.getParameter("TABLE_ID");
-		if (!id.matches("\\d+")) {
-			throw new SpagoBIServiceException(req.getPathInfo(), "Input param Id [" + id + "] not valid");
-		}
-		try {
-			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			dao.setUserProfile(profile);
-			SbiGlTable Table = dao.loadTable(Integer.valueOf(id));
-
-			return JsonConverter.objectToJson(Table, SbiGlTable.class);
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
 		}

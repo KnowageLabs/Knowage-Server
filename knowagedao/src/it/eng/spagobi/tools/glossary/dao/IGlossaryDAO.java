@@ -18,7 +18,6 @@
 package it.eng.spagobi.tools.glossary.dao;
 
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessCls;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
@@ -27,7 +26,6 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
-import it.eng.spagobi.tools.glossary.metadata.SbiGlTable;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlTableWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlTableWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlist;
@@ -210,19 +208,5 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	// navigation
 	public Map<String, Object> NavigationItem(JSONObject elem);
-
-	//
-	// Business Class
-	//
-	public SbiGlBnessCls loadBnessCls(Integer bcId);
-
-	public List<SbiGlBnessCls> loadBnessClassByParameter(String datamart, String bness_cls);
-
-	public List<SbiGlBnessClsWlist> loadBnessClsWlistByParameter(Integer id, String column);
-
-	//
-	// Table
-	//
-	public SbiGlTable loadTable(Integer tableId);
 
 }
