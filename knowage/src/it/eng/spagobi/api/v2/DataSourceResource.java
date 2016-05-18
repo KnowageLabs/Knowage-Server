@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,29 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.api.v2;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -26,6 +41,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -43,18 +60,8 @@ import org.hibernate.HibernateException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import com.mongodb.DB;
+import com.mongodb.MongoClient;
 
 @Path("/2.0/datasources")
 @ManageAuthorization
@@ -66,7 +73,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	DataSource dataSource;
 	List<DataSource> dataSourceList;
 
-	
 	@SuppressWarnings("unchecked")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -165,14 +171,13 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		try {
 
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
-			
+
 			dataSourceDAO.setUserProfile(getUserProfile());
 			IDataSource oldDataSource = dataSourceDAO.loadDataSourceWriteDefault();
 
-			if(oldDataSource != null && dataSource.getWriteDefault() && oldDataSource.getDsId() != dataSource.getDsId())
-			{
+			if (oldDataSource != null && dataSource.getWriteDefault() && oldDataSource.getDsId() != dataSource.getDsId()) {
 				// unset the cache
-				//SpagoBICacheManager.removeCache();
+				// SpagoBICacheManager.removeCache();
 				oldDataSource.setWriteDefault(false);
 				dataSourceDAO.modifyDataSource(oldDataSource);
 			}
@@ -272,8 +277,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 
 			logger.error("Error while loading a single data set", e);
-			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(),
-					e);
+			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), e);
 
 		} finally {
 
@@ -302,8 +306,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			ResultSet rs = null;
 			try {
 				if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("oracle")) {
-					String q = "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM ALL_TAB_COLUMNS WHERE OWNER = '"
-							+ userName + "'";
+					String q = "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM ALL_TAB_COLUMNS WHERE OWNER = '" + userName + "'";
 					Statement stmt = conn.createStatement();
 					rs = stmt.executeQuery(q);
 					while (rs.next()) {
@@ -343,5 +346,69 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		}
 		metadataCache.put(metadataCacheKey, tableContent);
 		return tableContent;
+	}
+
+	@POST
+	@Path("/test")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	public String testDataSource(@Valid DataSource dataSource) throws Exception {
+
+		logger.debug("IN");
+
+		String url = dataSource.getUrlConnection();
+		String user = dataSource.getUser();
+		String pwd = dataSource.getPwd();
+		String driver = dataSource.getDriver();
+		String schemaAttr = dataSource.getSchemaAttribute();
+		String jndi = dataSource.getJndi();
+
+		IEngUserProfile profile = getUserProfile();
+
+		String schema = (String) profile.getUserAttribute(schemaAttr);
+		logger.debug("schema:" + schema);
+		Connection connection = null;
+
+		if (jndi != null && jndi.length() > 0) {
+			String jndiName = schema == null ? jndi : jndi + schema;
+			logger.debug("Lookup JNDI name:" + jndiName);
+			Context ctx = new InitialContext();
+			javax.sql.DataSource ds = (javax.sql.DataSource) ctx.lookup(jndiName);
+			connection = ds.getConnection();
+		} else {
+
+			if (driver.toLowerCase().contains("mongo")) {
+				logger.debug("Checking the connection for MONGODB");
+				MongoClient mongoClient = null;
+				try {
+					int databaseNameStart = url.lastIndexOf("/");
+					if (databaseNameStart < 0) {
+						logger.error("Error connecting to the mongoDB. No database selected");
+					}
+					String databaseUrl = url.substring(0, databaseNameStart);
+					String databaseName = url.substring(databaseNameStart + 1);
+
+					mongoClient = new MongoClient(databaseUrl);
+					DB database = mongoClient.getDB(databaseName);
+					database.getCollectionNames();
+
+					logger.debug("Connection OK");
+					return new JSONObject().toString();
+				} catch (Exception e) {
+					logger.error("Error connecting to the mongoDB", e);
+				} finally {
+					if (mongoClient != null) {
+						mongoClient.close();
+					}
+				}
+			} else {
+				Class.forName(driver);
+				connection = DriverManager.getConnection(url, user, pwd);
+			}
+
+		}
+
+		return new JSONObject().toString();
+
 	}
 }
