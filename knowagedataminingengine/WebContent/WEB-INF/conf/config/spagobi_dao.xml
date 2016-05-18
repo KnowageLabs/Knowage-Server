@@ -85,7 +85,6 @@
 		<DAO name="ISbiJobTableDAO" implementation="it.eng.spagobi.metadata.dao.SbiJobTableDAOHibImpl"/>
 		<DAO name="ISbiObjDsDAO" implementation="it.eng.spagobi.metadata.dao.SbiObjDsDAOHibImpl"/>
 		<DAO name="ISbiTableBcDAO" implementation="it.eng.spagobi.metadata.dao.SbiTableBcDAOHibImpl"/>
-		<DAO name="ISbiDsBcDAO" implementation="it.eng.spagobi.metadata.dao.SbiDsBcDAOImpl"/>
 	  	
 
 	 </DAO-CONF>     
