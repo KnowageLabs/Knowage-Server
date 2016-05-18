@@ -17,7 +17,11 @@ angular
  function smartfiltersController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_user,$documentViewer){
 	 
 	   $scope.smartFiltersListInitial=[];
-	   
+	   $scope.smartFilterEnabled=function(){
+		   
+		   return datasetParameters.IS_SMARTFILTER_ENABLED === "true";
+		   
+	   }  
 	 
 		$scope.loadSmartFilters= function(){
 			params={};

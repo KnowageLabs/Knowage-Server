@@ -124,7 +124,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.leftMenuItemPicked = function(item) {
 		
 		$scope.currentOptionMainMenu = item.name.toLowerCase();
-		
+		$scope.selectMenuItem(item);
 		if($scope.currentOptionMainMenu==='models'){
 			$scope.currentTab='businessModels';
 		}

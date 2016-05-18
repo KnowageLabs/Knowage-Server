@@ -23,6 +23,10 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 
 	$scope.showModelInfo = false;
 	
+	$scope.federationsEnabled= function (){
+		return datasetProperties.CAN_USE_FEDERATED_DATASET_AS_FINAL_USER === "true";
+
+	}
 	
 	$scope.loadFederations=function(){
 		sbiModule_restServices.promiseGet("2.0/federateddataset", "")

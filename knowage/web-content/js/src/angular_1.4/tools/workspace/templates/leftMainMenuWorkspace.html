@@ -7,10 +7,28 @@
 		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 -->
 	<md-list ng-cloak>
-		<md-list-item class="md-2-line" ng-repeat="option in leftMainMenu" ng-click="leftMenuItemPicked(option)">
+	    <div ng-repeat="option in leftMainMenu">
+		<md-list-item class="md-2-line" ng-click="leftMenuItemPicked(option)" ng-if="option.submenuOptions==undefined && option.visible ">
     		<md-icon md-font-icon="{{option.icon}}"></md-icon>
 	   	 	<p> {{ option.name }} </p>
 	  	</md-list-item>
+	  
+	  	<div ng-if="option.submenuOptions!=undefined">
+	  	  <md-list-item class="md-2-line" ng-click="setExpanded(option)">
+    		<md-icon md-font-icon="{{option.icon}}" ng-if="!option.active"></md-icon>
+    		<md-icon md-font-icon="{{option.activeIcon}}" ng-if="option.active"></md-icon>
+	   	 	<p> {{ option.name }} </p>
+	  	</md-list-item>
+	  	 <md-divider ng-show="option.active"></md-divider>
+	  	  <md-list-item class="md-2-line workspace-submenu" ng-repeat="suboption in option.submenuOptions" ng-show="option.active && suboption.visible" ng-click="leftMenuItemPicked(suboption)">
+    		<md-icon md-font-icon="{{suboption.icon}}"></md-icon>
+    		<p> {{ suboption.name }} </p>
+	  	</md-list-item>
+	  	
+	  	
+	  	</div>
+	      	<md-divider ng-if="option.visible"></md-divider>
+	  	</div>
 	</md-list>
 	
 </div>

@@ -16,7 +16,7 @@
  	 </md-content>
  	</md-tab> 
    
-	<md-tab label="Federation definitions" ng-click="switchTab('federations')" flex>
+	<md-tab label="Federation definitions" ng-click="switchTab('federations')" ng-show="isFederationEnabled" flex>
         <md-content>
  	<federation-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="federationDefinitions"
 		show-grid-view="showGridView"
