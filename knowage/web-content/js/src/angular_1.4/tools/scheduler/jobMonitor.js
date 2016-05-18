@@ -82,8 +82,14 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						console.log("unable to get executions");
 						$scope.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
-						var localizedTimestampFormat = sbiModule_config.localizedTimestampFormat.replace("Y", "y").replace("m", "M").replace("i", "m");
-						var clientServerTimestampFormat = sbiModule_config.clientServerTimestampFormat.replace("Y", "y").replace("m", "M").replace("i", "m");
+						var localizedTimestampFormat = sbiModule_config.localizedTimestampFormat.replace("Y", "y").replace("m", "M")
+								.replace("H", "HH").replace("HHHH", "HH")
+								.replace("i", "mm").replace("mmmm", "mm")
+								.replace("s", "ss").replace("ssss", "ss");
+						var clientServerTimestampFormat = sbiModule_config.clientServerTimestampFormat.replace("Y", "y").replace("m", "M")
+								.replace("H", "HH").replace("HHHH", "HH")
+								.replace("i", "mm").replace("mmmm", "mm")
+								.replace("s", "ss").replace("ssss", "ss");
 						$scope.executions = [];
 						for(var jobIndex = 0; jobIndex < data.root.length; jobIndex++){
 							var job = data.root[jobIndex];
