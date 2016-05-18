@@ -30,8 +30,12 @@ angular.module('geoModule')
 	}
 })
 
+var downlf;
 function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_interaction,sbiModule_translate,geoModule_layerServices){
 	$scope.showCircular=false;
+	downlf=function(){
+		$scope.showOverlay();
+	}
 	$scope.source = new ol.source.Vector();
 	var format = new ol.format.WKT();
 	var removed = [];
