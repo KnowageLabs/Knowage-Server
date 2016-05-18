@@ -37,8 +37,10 @@ public class SendMail extends AbstractAlertAction {
 		if (body.length() > 0 && externalParameters != null && !externalParameters.isEmpty()) {
 			for (Entry<String, String> entry : externalParameters.entrySet()) {
 				int start = body.indexOf(entry.getKey());
-				int end = start + entry.getKey().length();
-				body.replace(start, end, entry.getValue());
+				if (start >= 0) {
+					int end = start + entry.getKey().length();
+					body.replace(start, end, entry.getValue());
+				}
 			}
 		}
 		String mailTxt = body.toString();
@@ -147,77 +149,76 @@ public class SendMail extends AbstractAlertAction {
 		return SingletonConfig.getInstance().getConfigValue(key);
 	}
 
-}
+	private class InputParam {
+		// Comma (or semicolon) separated e-mail addresses
+		private String[] mailTo;
+		// E-mail subject
+		private String subject;
+		// Html e-mail body
+		private String body;
 
-class InputParam {
-	// Comma (or semicolon) separated e-mail addresses
-	private String[] mailTo;
-	// E-mail subject
-	private String subject;
-	// Html e-mail body
-	private String body;
+		// At runtime values will replace keys in body content
+		// private Map<String, String> parameterMap;
 
-	// At runtime values will replace keys in body content
-	// private Map<String, String> parameterMap;
+		/**
+		 * @return the mailTo
+		 */
+		public String[] getMailTo() {
+			return mailTo;
+		}
 
-	/**
-	 * @return the mailTo
-	 */
-	public String[] getMailTo() {
-		return mailTo;
+		/**
+		 * @param mailTo
+		 *            the mailTo to set
+		 */
+		public void setMailTo(String[] mailTo) {
+			this.mailTo = mailTo;
+		}
+
+		/**
+		 * @return the subject
+		 */
+		public String getSubject() {
+			return subject;
+		}
+
+		/**
+		 * @param subject
+		 *            the subject to set
+		 */
+		public void setSubject(String subject) {
+			this.subject = subject;
+		}
+
+		/**
+		 * @return the body
+		 */
+		public String getBody() {
+			return body;
+		}
+
+		/**
+		 * @param body
+		 *            the body to set
+		 */
+		public void setBody(String body) {
+			this.body = body;
+		}
+
+		/**
+		 * @return the parameterMap
+		 */
+		// public Map<String, String> getParameterMap() {
+		// return parameterMap;
+		// }
+
+		/**
+		 * @param parameterMap
+		 *            the parameterMap to set
+		 */
+		// public void setParameterMap(Map<String, String> parameterMap) {
+		// this.parameterMap = parameterMap;
+		// }
+
 	}
-
-	/**
-	 * @param mailTo
-	 *            the mailTo to set
-	 */
-	public void setMailTo(String[] mailTo) {
-		this.mailTo = mailTo;
-	}
-
-	/**
-	 * @return the subject
-	 */
-	public String getSubject() {
-		return subject;
-	}
-
-	/**
-	 * @param subject
-	 *            the subject to set
-	 */
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
-
-	/**
-	 * @return the body
-	 */
-	public String getBody() {
-		return body;
-	}
-
-	/**
-	 * @param body
-	 *            the body to set
-	 */
-	public void setBody(String body) {
-		this.body = body;
-	}
-
-	/**
-	 * @return the parameterMap
-	 */
-	// public Map<String, String> getParameterMap() {
-	// return parameterMap;
-	// }
-
-	/**
-	 * @param parameterMap
-	 *            the parameterMap to set
-	 */
-	// public void setParameterMap(Map<String, String> parameterMap) {
-	// this.parameterMap = parameterMap;
-	// }
-
 }
