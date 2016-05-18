@@ -39,9 +39,23 @@ function leftMenuController($scope){
 	
 	$scope.selectedMenuItem=$scope.leftMainMenu[0]; 
 
-	$scope.setExpanded=function(option){
+	$scope.setExpanded=function(option){	
 		
 		option.active=!option.active;
+		
+		/**
+		 * If the currently selected item from the left main menu is one of three suboptions of the 'Data' option (Datasets, Models, SmartFilters) and the Data option 
+		 * is collapsed, the Data option will be selected by taking the 'true' value of the model that it's style tracks - the 'suboptionActive' value.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$scope.isSuboptionActive = $scope.currentOptionMainMenu=="models" || $scope.currentOptionMainMenu=="datasets" || $scope.currentOptionMainMenu=="smartfilters";
+		
+		if ($scope.isSuboptionActive && !option.active) {
+			$scope.suboptionActive = true;
+		}
+		else {
+			$scope.suboptionActive = false;
+		}
 	}
 	
 	$scope.selectMenuItem= function(item){

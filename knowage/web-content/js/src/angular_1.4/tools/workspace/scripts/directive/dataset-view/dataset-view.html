@@ -1,6 +1,7 @@
  				 	<angular-table  ng-hide="showGridView==true || ngModel.length==0 "  
  				 					layout-fill 
- 				 					style="position:relative;height:calc(100% - 50px);min-height:calc(100% - 50px);"
+		 				 			style="position:absolute;overflow:auto"
+		 				 			no-pagination=true
 								    ng-model=ngModel
 								    no-pagination=true
 									columns='[{"label":"Label","name":"label"},{"label":"Name","name":"name"}]'

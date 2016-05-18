@@ -8,17 +8,20 @@
 angular
 	.module('workspace.controller', ['workspace.directive','workspace.configuration'])
 	.controller('workspaceController', ["$scope","$http","$mdDialog","$timeout","$documentViewer","sbiModule_translate","sbiModule_restServices","sbiModule_config","sbiModule_user","sbiModule_messaging", workspaceFunction])
-    .service('multipartForm',['$http',function($http){
-    	this.post = function(uploadUrl,data){
-    		var formData = new FormData();
+   .service('multipartForm',['$http',function($http){
+		
+		this.post = function(uploadUrl,data){
+			
+			var formData = new FormData();
     		for(var key in data){
     				formData.append(key,data[key]);
     			}
-    		return $http.post(uploadUrl,formData,{
-    			transformRequest:angular.identity,
-    			headers:{'Content-Type': undefined}
-    		})
-    	}
+			return	$http.post(uploadUrl,formData,{
+					transformRequest:angular.identity,
+					headers:{'Content-Type': undefined}
+				})
+		}
+		
 	}]);
 ;
 
@@ -37,7 +40,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.enterpriseDatasets=[];
 	$scope.sharedDatasets=[];
 	$scope.notDerivedDatasets=[];
-
+     
 	/**
 	 * smart filters
 	 */
@@ -103,6 +106,18 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 		
 		$scope.currentOptionMainMenu = item.name.toLowerCase();
 		$scope.selectMenuItem(item);
+		
+		/**
+		 * If the previously selected item from the left main menu was one of three suboptions of the 'Data' option (Datasets, Models, SmartFilters) and the newly selected
+		 * item is not among those three, whilst the Data option is collapsed, unselect the Data option.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		var isSuboptionActiveTemp = $scope.currentOptionMainMenu=="models" || $scope.currentOptionMainMenu=="datasets" || $scope.currentOptionMainMenu=="smartfilters";
+			
+		if (!isSuboptionActiveTemp && $scope.isSuboptionActive) {
+			$scope.suboptionActive = false;
+		}
+		
 		if($scope.currentOptionMainMenu==='models'){
 			$scope.currentTab='businessModels';
 		}
@@ -131,7 +146,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 					console.info("[LOAD START]: Loading of Analysis documents is started.");
 					$scope.loadAllMyAnalysisDocuments();
 					analysisDocumentsLoaded = true;
-	}
+				}
 
 				break;
 
@@ -189,8 +204,8 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 				
 				if (smartFiltersDocumentsLoaded==false) {
 					
-				console.info("[LOAD START]: Loading of Smart filters is started.");					
-	/**
+					console.info("[LOAD START]: Loading of Smart filters is started.");					
+					/**
 					 * TODO: Add functionality for loading all smart filters.
 					 */		
 					$scope.loadSmartFilters();
@@ -200,7 +215,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 				break;
 				
 		}
-
+		
 	}
 
 	/**
@@ -210,7 +225,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.toogleGridListViewOfDocs = function() {
 		$scope.showGridView = !$scope.showGridView;
 	}
-	
+
 	/**
 	 * Filter the sent collection of data (documents, analysis, datasets, etc.)
 	 * according to the searching term (sequence) user entered, 'newSearchInput'.
@@ -375,7 +390,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 						case "favorites":
 							$scope.favoriteDocumentsList = filterThroughCollection(newSearchInput,$scope.favoriteDocumentsInitial,"name");
 							break;
-				
+							
 						/**
 						 * SEARCH FOR DATASETS
 						 */	
@@ -410,9 +425,10 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	/**
 	 * Preview (execute) a particular document.
 	 */
-	$scope.executeDocument = function(document) {		
+	$scope.executeDocument = function(document) {
 		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");		
-		$documentViewer.openDocument(document.id, document.label, document.name);		
+		$documentViewer.openDocument(document.id, document.label, document.name);
+		
 	}
 	
 	/**
@@ -459,7 +475,6 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 			setDocumentDetailOpen(document !== undefined);
 		}
 	};
-	
 	/**
 	 * [END] Block of functions responsible for showing the details for 
 	 * currently selected document. Details will be shown inside the right 

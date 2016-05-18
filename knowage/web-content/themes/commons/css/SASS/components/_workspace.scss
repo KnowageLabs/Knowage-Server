@@ -62,7 +62,7 @@
 		padding-top:15px;
 		font-size: 16px;
 	}	
-	
+		
 	.workspace-submenu{
 	   padding-left:20px;
 	}
@@ -70,9 +70,8 @@
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
 	.workspaceBckgColorRightSide {
 		background-color: #FAFAFA;
-	}	
-
-
+	}
+	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	// Text in tabs is Knowage red (rose)
 	/*md-tabs md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active, md-tabs md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-default-theme.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-focused, md-tabs.md-default-theme.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-focused md-icon {
@@ -97,5 +96,20 @@
 	
 	.checkboxPadding{
 		padding-top: 7px;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.selectedLeftMenuItem {
+		border: 3px solid #a9c3db;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.selectedLeftMenuSubitem {
+		border: 3px solid #d9d9d9;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.notSelectedLeftMenuItem {
+		border: 3px solid #FFFFFF;
 	}
 }
