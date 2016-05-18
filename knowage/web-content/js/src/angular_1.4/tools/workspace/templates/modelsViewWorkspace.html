@@ -10,17 +10,21 @@
 	  			<md-tabs  flex layout-fill class="rightPanelDocuments">
 		    
 					<md-tab label="Business Models" ng-click="switchTab('businessModels')" flex>
+				   		
 				   		<md-content>
-						 	  <federation-view class="kn-documentBrowser" flex ng-model="businessModels"
-								selected-federation=selectedModel
-								select-federation-action="selectModel(federation);"
-								show-grid-view="showGridView"
-								edit-enabled=false
-								delete-enabled=false
-								show-federation-action="showQbeFromBM(fed)"
-								show-business-models=true
-						 	  ></federation-view>	
+						 	
+						 	<federation-view class="kn-documentBrowser" flex ng-model="businessModels"
+									selected-federation=selectedModel
+									select-federation-action="selectModel(federation);"
+									show-grid-view="showGridView"
+									edit-enabled=false
+									delete-enabled=false
+									show-federation-action="showQbeFromBM(fed)"
+									show-business-models=true>
+							</federation-view>
+								
 				 	 	</md-content>
+				 	 	
 		 			</md-tab> 
 		   
 	<md-tab label="Federation definitions" ng-click="switchTab('federations')" ng-show="isFederationEnabled" flex>

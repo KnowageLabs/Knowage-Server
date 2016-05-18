@@ -67,9 +67,19 @@
 	   padding-left:20px;
 	}
 	
-	//
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
 	.workspaceBckgColorRightSide {
 		background-color: #FAFAFA;
 	}
 	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	// Text in tabs is Knowage red (rose)
+	/*md-tabs md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active, md-tabs md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-default-theme.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-focused, md-tabs.md-default-theme.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-focused md-icon {
+	  color: #C70751 !important;
+	}*/
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	md-tab-content {
+		top: 5px;
+	}
 }
