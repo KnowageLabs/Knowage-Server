@@ -52,6 +52,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					console.log("unable to get formulas");
+					ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 				} else {
 					ctrl.formulas = data;
 				
@@ -66,6 +67,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			})
 			.error(function(data, status, headers, config) {
 				console.log("unable to get formulas " + status);
+				ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 			});
 	}
 	ctrl.loadFormulas();
@@ -75,6 +77,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					console.log("unable to get jobs");
+					ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 				} else {
 					ctrl.jobList = data.root;
 					
@@ -91,6 +94,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 								var trigger = job.triggers[triggerIndex];
 								trigger.triggerStartDateTime = trigger.triggerStartDate + " " + trigger.triggerStartTime;
 								trigger.triggerEndDateTime = trigger.triggerEndDate + " " + trigger.triggerEndTime;
+								trigger.triggerIsPausedString = (trigger.triggerIsPaused ? sbiModule_translate.load("sbi.general.yes") : sbiModule_translate.load("sbi.general.No"));
 							}
 							// update parameters
 							for(var docIndex=0; docIndex<job.documents.length; docIndex++){
@@ -113,6 +117,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			})
 			.error(function(data, status, headers, config) {
 				console.log("unable to get jobs " + status);
+				ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 			})
 	}
 	ctrl.loadJobs(jobNameFromUrl);
@@ -308,6 +313,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				sbiModule_logger.log("unable to pause schedulation");
 			} else {
 				ctrl.selectedTrigger.triggerIsPaused = true;
+				ctrl.selectedTrigger.triggerIsPausedString = sbiModule_translate.load("sbi.general.yes");
 				$mdDialog.show( 
 					$mdDialog.alert()
 			        .parent(angular.element(document.body))
@@ -335,6 +341,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				sbiModule_logger.log("unable to resume schedulation");
 			} else {
 				ctrl.selectedTrigger.triggerIsPaused = false;
+				ctrl.selectedTrigger.triggerIsPausedString = sbiModule_translate.load("sbi.general.No");
 				$mdDialog.show( 
 					$mdDialog.alert()
 			        .parent(angular.element(document.body))
@@ -466,6 +473,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					console.log("unable to get document");
+					ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 				} else {
 					ctrl.selectedDocument = data;
 					ctrl.loadSelectedDocumentRoles();
@@ -474,6 +482,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			})
 			.error(function(data, status, headers, config) {
 				console.log("unable to get document " + status);
+				ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 			})
 	}
 	
@@ -482,6 +491,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					console.log("unable to get document roles");
+					ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 				} else {
 					ctrl.selectedDocumentRoles = []
 					for(var i=0; i<data.length; i++){
@@ -501,6 +511,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			})
 			.error(function(data, status, headers, config) {
 				console.log("unable to get document roles " + status);
+				ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 			})
 	}
 	
@@ -509,6 +520,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					console.log("unable to get document parameters");
+					ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 				} else {
 					ctrl.selectedDocumentParameters = data;
 					for(var i=0; i<ctrl.selectedJob.documents[ctrl.selectedDocumentIndex].parameters.length; i++){
@@ -522,6 +534,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			})
 			.error(function(data, status, headers, config) {
 				console.log("unable to get document parameters " + status);
+				ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 			})
 	}
 	
@@ -535,10 +548,16 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				
 				sbiModule_restServices.get("2.0/folders", "?includeDocs=true&requestor=scheduler")
 					.success(function(data, status, headers, config) {
-						docCtrl.folders = data;
+						if (data.hasOwnProperty("errors")) {
+							console.log("unable to load folders ", data.errors);
+							ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
+						} else {
+							docCtrl.folders = data;
+						}
 					})
 					.error(function(data, status, headers, config) {
-						//sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+						console.log("unable to load folders ", status);
+						ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 					});
 				
 				docCtrl.setSelectedDocument = function(item){
@@ -651,6 +670,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				.success(function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						console.log("unable to load parameters ", data.errors);
+						ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
 						if(parameter.value.trim() != ""){
 							parameter.selectedValues = parameter.value.split(";");
@@ -662,11 +682,8 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					}
 				})
 				.error(function(data, status, headers, config) {
-					if(data && data.errors){
-						console.log("unable to load parameters ", data.errors);
-					}else{
-						console.log("unable to load parameters ", status);
-					}
+					console.log("unable to load parameters ", status);
+					ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 				});
 		}
 	}

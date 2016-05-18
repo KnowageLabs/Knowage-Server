@@ -93,7 +93,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 										columns='[{"label":translate.load("sbi.generic.name"),"name":"triggerName","size":"200px"},
 											{"label":translate.load("sbi.scheduler.type"),"name":"triggerChronType"},
 											{"label":translate.load("sbi.scheduler.startdate"),"name":"triggerStartDateTime"},
-											{"label":translate.load("sbi.scheduler.enddate"),"name":"triggerEndDateTime"}]'
+											{"label":translate.load("sbi.scheduler.enddate"),"name":"triggerEndDateTime"},
+											{"label":translate.load("sbi.scheduler.schedulation.paused.short"),"name":"triggerIsPausedString"},]'
 										show-search-bar=false
 										highlights-selected-item=false
 										speed-menu-option=ctrl.menuTrigger>

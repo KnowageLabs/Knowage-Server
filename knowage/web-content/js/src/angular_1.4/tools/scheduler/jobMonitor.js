@@ -80,7 +80,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					if (data.hasOwnProperty("errors")) {
 						$scope.executions = [];
 						console.log("unable to get executions");
-						$scope.showToastError(data.errors[0].message);
+						$scope.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
 						var localizedTimestampFormat = sbiModule_config.localizedTimestampFormat.replace("Y", "y").replace("m", "M").replace("i", "m");
 						var clientServerTimestampFormat = sbiModule_config.clientServerTimestampFormat.replace("Y", "y").replace("m", "M").replace("i", "m");
@@ -109,10 +109,10 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				.error(function(data, status, headers, config) {
 					$scope.executions = [];
 					console.log("unable to get executions " + status);
-					if(data.errors){
+					if(data && data.errors && data.errors[0] && data.errors[0].message){
 						$scope.showToastError(data.errors[0].message);
 					}else{
-						$scope.showToastError(status);
+						$scope.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 					}
 				});
 		}
