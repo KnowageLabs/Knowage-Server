@@ -67,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<div layout-fill class="containerDiv">	
 	<form name="attributeForm" layout-fill
 		ng-submit="attributeForm.$valid && saveUser()"
-		class="detailBody md-whiteframe-z1">
+		class="detailBody ">
 			
 			 <md-tabs  class="mozScroll hideTabs h100"
 				md-dynamic-height md-selected="selectedTab" md-border-bottom="">
@@ -145,14 +145,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>  
 				</md-input-container>
 				
-				 <angular-table
-				 layout-fill id="usersRoles_id" ng-model="usersRoles"
+				 <angular-table layout-fill
+				  id="usersRoles_id" ng-model="usersRoles"
 				columns='[
 							{"label":"NAME","name":"name","size":"50px"},
 							{"label":"VALUE","name":"description","size":"100px"},
 							 ]'
 				selected-item="role" highlights-selected-item="true"
-				multi-select="true">
+				multi-select="true" >
 				 </angular-table>
 				 </md-card>
 				 </md-content> 
