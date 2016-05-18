@@ -21,6 +21,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaDsBc;
+import it.eng.spagobi.metadata.metadata.SbiMetaDsBcId;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
 import java.util.List;
@@ -34,6 +35,10 @@ public interface ISbiDsBcDAO extends ISpagoBIDao {
 	public List<SbiMetaBc> loadBcByDsId(Integer dsId) throws EMFUserError;
 
 	public List<SbiDataSet> loadDsByBcId(Integer bcId) throws EMFUserError;
+
+	public List<SbiMetaDsBc> loadDsBcByKey(SbiMetaDsBcId dsBcId) throws EMFUserError;
+
+	public List<SbiMetaDsBc> loadBcByDsIdAndTenant(Integer dsId, String organization) throws EMFUserError;
 
 	public void modifyDsBc(SbiMetaDsBc aMetaDsBc) throws EMFUserError;
 

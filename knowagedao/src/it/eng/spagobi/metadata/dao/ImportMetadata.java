@@ -255,11 +255,11 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			// Business Class informations
 			for (SbiMetaBc aMetaBc : bcList) {
 				String bcName = null;
-				String tablename = null;
+				String tableName = null;
 
 				// get logical and phisical table name
 				int pos = aMetaBc.getName().indexOf("|");
-				tablename = aMetaBc.getName().substring(0, pos);
+				tableName = aMetaBc.getName().substring(0, pos);
 				bcName = aMetaBc.getName().substring(pos + 1);
 				aMetaBc.setName(bcName);
 
@@ -284,11 +284,11 @@ public class ImportMetadata extends AbstractHibernateDAO {
 				// SBI_META_TABLE_BC
 				SbiMetaTableBc smTableBc = new SbiMetaTableBc();
 				SbiMetaTableBcId smTableBcId = new SbiMetaTableBcId();
-				smTableBcId.setTableId(tablesMap.get(tablename).getTableId());
+				smTableBcId.setTableId(tablesMap.get(tableName).getTableId());
 				smTableBcId.setBcId(aMetaBc.getBcId());
 				smTableBc.setId(smTableBcId);
 				smTableBc.setSbiMetaBc(aMetaBc);
-				smTableBc.setSbiMetaTable(tablesMap.get(tablename));
+				smTableBc.setSbiMetaTable(tablesMap.get(tableName));
 				saveTableBC(aSession, smTableBc);
 			}
 
@@ -532,9 +532,11 @@ public class ImportMetadata extends AbstractHibernateDAO {
 			if (sbm == null) {
 				// insert the new one...
 				msDao.insertTableBc(session, aMetaTableBc);
+				setExistElement(false);
 			} else {
 				// update the existing...
 				msDao.modifyTableBc(session, aMetaTableBc);
+				setExistElement(true);
 			}
 
 		} catch (Exception e) {

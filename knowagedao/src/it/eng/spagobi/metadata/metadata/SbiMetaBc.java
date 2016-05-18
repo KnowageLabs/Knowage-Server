@@ -16,6 +16,7 @@ public class SbiMetaBc extends SbiHibernateModel {
 	private Integer bcId;
 	private SbiMetaModel sbiMetaModel;
 	private String name;
+	private String uniqueName;
 	private boolean deleted;
 
 	private Set sbiMetaDsBcs = new HashSet(0);
@@ -25,15 +26,17 @@ public class SbiMetaBc extends SbiHibernateModel {
 	public SbiMetaBc() {
 	}
 
-	public SbiMetaBc(SbiMetaModel sbiMetaModel, String name, boolean deleted) {
+	public SbiMetaBc(SbiMetaModel sbiMetaModel, String name, String uniqueName, boolean deleted) {
 		this.sbiMetaModel = sbiMetaModel;
 		this.name = name;
+		this.uniqueName = uniqueName;
 		this.deleted = deleted;
 	}
 
-	public SbiMetaBc(SbiMetaModel sbiMetaModel, String name, boolean deleted, Set sbiMetaDsBcs, Set sbiMetaTableBcs, Set sbiMetaBcAttributes) {
+	public SbiMetaBc(SbiMetaModel sbiMetaModel, String name, String uniqueName, boolean deleted, Set sbiMetaDsBcs, Set sbiMetaTableBcs, Set sbiMetaBcAttributes) {
 		this.sbiMetaModel = sbiMetaModel;
 		this.name = name;
+		this.uniqueName = uniqueName;
 		this.deleted = deleted;
 		this.sbiMetaDsBcs = sbiMetaDsBcs;
 		this.sbiMetaTableBcs = sbiMetaTableBcs;
@@ -62,6 +65,14 @@ public class SbiMetaBc extends SbiHibernateModel {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getUniqueName() {
+		return this.uniqueName;
+	}
+
+	public void setUniqueName(String uniqueName) {
+		this.uniqueName = uniqueName;
 	}
 
 	public boolean isDeleted() {

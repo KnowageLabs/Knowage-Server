@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,24 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.dao;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -36,9 +23,13 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.federateddataset.dao.SbiFederationDefinitionDAOHibImpl;
 import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
 import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
+import it.eng.spagobi.metadata.metadata.SbiMetaBc;
+import it.eng.spagobi.metadata.metadata.SbiMetaDsBc;
+import it.eng.spagobi.metadata.metadata.SbiMetaDsBcId;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -49,6 +40,23 @@ import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.json.JSONUtils;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Implement CRUD operations over spagobi datsets
@@ -415,7 +423,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					throw new SpagoBIDOAException("The Domain with value_cd= " + dataSet.getScopeCd() + " does not exist");
 				}
 			}
-
 			SbiDataSetId compositeKey = getDataSetKey(session, dataSet, true);
 			SbiDataSet hibDataSet = new SbiDataSet(compositeKey);
 
@@ -490,7 +497,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			session.save(hibDataSet);
 
 			idToReturn = hibDataSet.getId().getDsId();
+
 			transaction.commit();
+
+			if (type.equals("SbiQbeDataSet")) {
+				// insert relations between qbe dataset and bc
+				// insertQbeRelations(dataSet);
+				insertQbeRelations(hibDataSet);
+			}
 
 			DataSetEventManager.getInstance().notifyInsert(dataSet);
 
@@ -1150,51 +1164,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	/**
-	 * Checks for bi kpi associated.
-	 *
-	 * @param dsId
-	 *            the ds id
-	 * @return true, if checks for bi kpi associated
-	 * @throws EMFUserError
-	 *             the EMF user error
-	 * @see it.eng.spagobi.tools.dataSet.dao.IDataSetDAO#hasBIObjAssociated(java.lang.String)
-	 */
-	@Override
-	public boolean hasBIKpiAssociated(String dsId) {
-		logger.debug("IN");
-		boolean bool = false;
-
-		Session session = null;
-		Transaction transaction = null;
-		try {
-			session = getSession();
-			transaction = session.beginTransaction();
-			Integer dsIdInt = Integer.valueOf(dsId);
-
-			String hql = " from SbiKpi s where s.sbiDataSet = ?";
-			Query aQuery = session.createQuery(hql);
-			aQuery.setInteger(0, dsIdInt.intValue());
-			List biKPIAssocitedWithDs = aQuery.list();
-			if (biKPIAssocitedWithDs.size() > 0)
-				bool = true;
-			else
-				bool = false;
-			transaction.commit();
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("Error while getting the kpi associated with the data set with id " + dsId, t);
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
-		}
-		return bool;
-	}
-
-	/**
 	 * Checks for bi lovs associated.
 	 *
 	 * @param dsId
@@ -1219,8 +1188,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			String hql = " from SbiLov s where datasetId = ?";
 			Query aQuery = session.createQuery(hql);
 			aQuery.setInteger(0, dsIdInt.intValue());
-			List biKPIAssocitedWithDs = aQuery.list();
-			if (biKPIAssocitedWithDs.size() > 0)
+			List biLovAssocitedWithDs = aQuery.list();
+			if (biLovAssocitedWithDs.size() > 0)
 				bool = true;
 			else
 				bool = false;
@@ -1368,6 +1337,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 				transaction.commit();
 
+				if (dataSet.getDsType().equals("SbiQbeDataSet")) {
+					// insert relations between qbe dataset and bc
+					// insertQbeRelations(dataSet);
+					insertQbeRelations(hibDataSet);
+				}
 				DataSetEventManager.getInstance().notifyChange(dataSet);
 			}
 		} catch (Throwable t) {
@@ -1455,16 +1429,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 
-			// check dataset is not used by any document:
-			// Query hibernateQuery = session.createQuery("from SbiObjects h where h.dataSet = ?" );
-			// hibernateQuery.setInteger(0, datasetId);
-			// List objectsRelated = hibernateQuery.list();
-			// if(objectsRelated != null && objectsRelated.size() > 0){
-			// String message = "Dataset with id [" + datasetId + "] " +
-			// "cannot be erased because it is referenced by [" + objectsRelated.size() + "] document(s)";
-			// throw new SpagoBIDOAException(message);
-			// }
-
 			// check if dataset is used by document by querying SBI_OBJ_DATA_SET table
 			ArrayList<BIObject> objectsAssociated = DAOFactory.getBIObjDataSetDAO().getBIObjectsUsingDataset(datasetId, session);
 			if (!objectsAssociated.isEmpty()) {
@@ -1480,7 +1444,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (!federationsAssociated.isEmpty()) {
 
 				// check if its a derived dataset.. In this case delete also the federation..
-
 				for (Iterator iterator = federationsAssociated.iterator(); iterator.hasNext();) {
 					FederationDefinition fedDef = (FederationDefinition) iterator.next();
 					logger.debug("Dataset with id " + datasetId + " is used by Federation with label " + fedDef.getLabel());
@@ -1488,16 +1451,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			}
 
-			// boolean bObjects = hasBIObjAssociated(String.valueOf(datasetId));
 			boolean bLovs = hasBILovAssociated(String.valueOf(datasetId));
-			boolean bKpis = hasBIKpiAssociated(String.valueOf(datasetId));
-			// if (!objectsAssociated.isEmpty() || bObjects || bLovs || bKpis) {
-			if (!objectsAssociated.isEmpty() || !federationsAssociated.isEmpty() || bLovs || bKpis) {
+			// if (!objectsAssociated.isEmpty() || bObjects || bLovs ) {
+			if (!objectsAssociated.isEmpty() || !federationsAssociated.isEmpty() || bLovs) {
 				String message = "[deleteInUseDSError]: Dataset with id [" + datasetId + "] "
-						+ "cannot be erased because it is referenced by documents or federations or kpis or lovs.";
+						+ "cannot be erased because it is referenced by documents or federations or lovs.";
 				// throw new SpagoBIDOAException(message);
 				DatasetInUseException diue = new DatasetInUseException(message);
-				diue.setKpi(bKpis);
 				diue.setLov(bLovs);
 				ArrayList<String> objs = new ArrayList<String>();
 				for (int i = 0; i < objectsAssociated.size(); i++) {
@@ -1534,6 +1494,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						}
 					}
 
+					// deletes all relations with the business class
+					Integer intDsId = Integer.valueOf(datasetId);
+					List<SbiMetaDsBc> lstBcs = DAOFactory.getSbiDsBcDAO().loadBcByDsIdAndTenant(intDsId, sbiDataSet.getId().getOrganization());
+					for (SbiMetaDsBc dsBc : lstBcs) {
+						DAOFactory.getSbiDsBcDAO().deleteDsBc(dsBc);
+					}
+
 					DataSetEventManager.getInstance().notifyDelete(toReturn);
 				}
 			}
@@ -1550,8 +1517,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				DatasetException de = (DatasetException) t;
 				throw de;
 			} else {
-				String msg = (t.getMessage() != null) ? t.getMessage()
-						: "An unexpected error occured while deleting dataset " + "whose id is equal to [" + datasetId + "]";
+				String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting dataset " + "whose id is equal to ["
+						+ datasetId + "]";
 				throw new SpagoBIDOAException(msg, t);
 			}
 		} finally {
@@ -1610,8 +1577,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			String msg = (t.getMessage() != null) ? t.getMessage()
-					: "An unexpected error occured while deleting dataset " + "whose id is equal to [" + datasetId + "]";
+			String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting dataset " + "whose id is equal to ["
+					+ datasetId + "]";
 			throw new SpagoBIDOAException(msg, t);
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -1730,8 +1697,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException(
-					"An unexpected error occured while deleting dataset version" + "whose version num is equal to [" + datasetVersionNum + "]", t);
+			throw new SpagoBIDOAException("An unexpected error occured while deleting dataset version" + "whose version num is equal to [" + datasetVersionNum
+					+ "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1797,8 +1764,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException(
-					"An unexpected error occured while deleting inactive versions of dataset " + "whose id is equal to [" + datasetId + "]", t);
+			throw new SpagoBIDOAException("An unexpected error occured while deleting inactive versions of dataset " + "whose id is equal to [" + datasetId
+					+ "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1983,7 +1950,68 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				results.add(DataSetFactory.toDataSet(sbiDataSet, this.getUserProfile()));
 			}
 		}
+
 		return results;
 	}
 
+	// private void insertQbeRelations(IDataSet ds) {
+	private void insertQbeRelations(SbiDataSet ds) {
+		logger.debug("IN");
+		try {
+			// For get informations parses the template because the query object is always NULL !!
+			// QbeDataSet qbeDS = (QbeDataSet) ds;
+			// IDataSource qbeDSource = qbeDS.getQbeDataSourceFromStmt();
+			// IDataSource qbeDSource2 = qbeDS.getQbeDataSource();
+			// it.eng.qbe.query.Query q = (it.eng.qbe.query.Query) qbeDS.getQuery();
+			// Set<IModelEntity> entities = q.getQueryEntities(qbeDSource);
+
+			String config = JSONUtils.escapeJsonString(ds.getConfiguration());
+			JSONObject configJSON = ObjectUtils.toJSONObject(config);
+
+			JSONObject JSONQuery = ObjectUtils.toJSONObject(configJSON.getString("qbeJSONQuery"));
+			JSONObject JSONCatalogue = ObjectUtils.toJSONObject(JSONQuery.getString("catalogue"));
+			JSONArray queries = ObjectUtils.toJSONArray(JSONCatalogue.getString("queries"));
+			HashMap<String, Boolean> insertedMap = new HashMap<String, Boolean>();
+
+			// get the business class from the query fields
+			for (int i = 0; i < queries.length(); i++) {
+				JSONObject query = (JSONObject) queries.get(i);
+				JSONArray fields = query.getJSONArray("fields");
+				for (int f = 0; f < fields.length(); f++) {
+					JSONObject field = (JSONObject) fields.get(f);
+					String uniqueName = field.getString("entity").toLowerCase();
+					SbiMetaBc metaBC = DAOFactory.getSbiMetaBCDAO().loadBcByUniqueName(uniqueName);
+					if (metaBC == null) {
+						logger.error("The entity [" + uniqueName + "] doesn't exist into the SbiMetaBC tale. Relation not inserted!");
+						continue;
+					}
+					if (insertedMap.get(uniqueName) != null) {
+						logger.debug("Relation with [" + uniqueName + "]  already inserted. Skip the field.");
+						continue;
+					}
+					// sets the new bcId
+					SbiMetaDsBcId metaDsBcId = new SbiMetaDsBcId();
+					metaDsBcId.setOrganization(ds.getId().getOrganization());
+					metaDsBcId.setVersionNum(ds.getId().getVersionNum());
+					metaDsBcId.setDsId(ds.getId().getDsId());
+					metaDsBcId.setBcId(metaBC.getBcId());
+
+					// Loads old records to delete (previous version)
+					List<SbiMetaDsBc> lstDsBc = DAOFactory.getDsBcDAO().loadDsBcByKey(metaDsBcId);
+					for (SbiMetaDsBc el : lstDsBc) {
+						DAOFactory.getDsBcDAO().deleteDsBc(el);
+					}
+					// inserts the new version
+					SbiMetaDsBc metaDsBc = new SbiMetaDsBc();
+					metaDsBc.setId(metaDsBcId);
+					DAOFactory.getDsBcDAO().insertDsBc(metaDsBc);
+					insertedMap.put(uniqueName, true);
+				}
+			}
+		} catch (Throwable t) {
+			throw new SpagoBIDOAException("An unexpected error occured while insert relations between dataset and business class", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
 }

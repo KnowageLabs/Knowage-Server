@@ -133,6 +133,81 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 	}
 
 	@Override
+	public List<SbiMetaDsBc> loadBcByDsIdAndTenant(Integer dsId, String organization) throws EMFUserError {
+		logger.debug("IN");
+
+		Session aSession = null;
+		Transaction tx = null;
+		List<SbiMetaDsBc> toReturn = new ArrayList();
+		Query hqlQuery = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			hqlQuery = aSession.createQuery(" from SbiMetaDsBc as db where db.id.dsId = ? and db.id.organization = ? ");
+			hqlQuery.setInteger(0, dsId);
+			hqlQuery.setString(1, organization);
+			toReturn = hqlQuery.list();
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	@Override
+	public List<SbiMetaDsBc> loadDsBcByKey(SbiMetaDsBcId dsBcId) throws EMFUserError {
+		logger.debug("IN");
+
+		Session aSession = null;
+		Transaction tx = null;
+		List<SbiMetaDsBc> toReturn = null;
+		Query hqlQuery = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			hqlQuery = aSession.createQuery(" from SbiMetaDsBc as db where db.id.dsId = ? and db.id.bcId = ? and db.id.organization = ?");
+			hqlQuery.setInteger(0, dsBcId.getDsId());
+			hqlQuery.setInteger(1, dsBcId.getBcId());
+			hqlQuery.setString(2, dsBcId.getOrganization());
+			toReturn = hqlQuery.list();
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	@Override
 	public void modifyDsBc(SbiMetaDsBc aMeta) throws EMFUserError {
 		logger.debug("IN");
 

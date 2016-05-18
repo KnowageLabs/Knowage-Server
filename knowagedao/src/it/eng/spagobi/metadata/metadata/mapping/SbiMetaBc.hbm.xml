@@ -18,6 +18,9 @@
         <property name="name" type="string">
             <column name="NAME" length="100" not-null="true" />
         </property>
+        <property name="uniqueName" type="string">
+            <column name="UNIQUE_NAME" length="100" />
+        </property>
         <property name="deleted" type="boolean">
 	            <column name="DELETED" not-null="true" />
 	    </property>

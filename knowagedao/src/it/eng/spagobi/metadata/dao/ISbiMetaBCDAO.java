@@ -35,6 +35,8 @@ public interface ISbiMetaBCDAO extends ISpagoBIDao {
 
 	public SbiMetaBc loadBcByName(String name) throws EMFUserError;
 
+	public SbiMetaBc loadBcByUniqueName(String uniqueName) throws EMFUserError;
+
 	public void modifyBc(SbiMetaBc aMetaBC) throws EMFUserError;
 
 	public Integer insertBc(SbiMetaBc aMetaBC) throws EMFUserError;
@@ -54,6 +56,8 @@ public interface ISbiMetaBCDAO extends ISpagoBIDao {
 	// TRANSACTIONAL METHODS (the session is an input parameter):
 
 	public SbiMetaBc loadBcByName(Session session, String name) throws EMFUserError;
+
+	public SbiMetaBc loadBcByUniqueName(Session session, String uniqueName) throws EMFUserError;
 
 	public void modifyBc(Session session, SbiMetaBc aMetaBC) throws EMFUserError;
 

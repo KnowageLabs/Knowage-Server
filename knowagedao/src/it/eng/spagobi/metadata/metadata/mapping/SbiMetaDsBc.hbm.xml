@@ -18,10 +18,11 @@
                 <column name="BC_ID" />
             </key-property>
         </composite-id>
+        <!-- 
         <many-to-one name="sbiMetaBc" class="it.eng.spagobi.metadata.metadata.SbiMetaBc" lazy="false" update="false" insert="false" fetch="select">
             <column name="BC_ID" not-null="true" />
         </many-to-one>
-        
+         -->
         <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo"> 
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />

@@ -10,14 +10,16 @@ import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 public class SbiMetaDsBc extends SbiHibernateModel {
 
 	private SbiMetaDsBcId id;
-	private SbiMetaBc sbiMetaBc;
+
+	// private SbiMetaBc sbiMetaBc;
 
 	public SbiMetaDsBc() {
 	}
 
-	public SbiMetaDsBc(SbiMetaDsBcId id, SbiMetaBc sbiMetaBc) {
+	// public SbiMetaDsBc(SbiMetaDsBcId id, SbiMetaBc sbiMetaBc) {
+	public SbiMetaDsBc(SbiMetaDsBcId id) {
 		this.id = id;
-		this.sbiMetaBc = sbiMetaBc;
+		// this.sbiMetaBc = sbiMetaBc;
 	}
 
 	public SbiMetaDsBcId getId() {
@@ -28,12 +30,12 @@ public class SbiMetaDsBc extends SbiHibernateModel {
 		this.id = id;
 	}
 
-	public SbiMetaBc getSbiMetaBc() {
-		return this.sbiMetaBc;
-	}
-
-	public void setSbiMetaBc(SbiMetaBc sbiMetaBc) {
-		this.sbiMetaBc = sbiMetaBc;
-	}
+	// public SbiMetaBc getSbiMetaBc() {
+	// return this.sbiMetaBc;
+	// }
+	//
+	// public void setSbiMetaBc(SbiMetaBc sbiMetaBc) {
+	// this.sbiMetaBc = sbiMetaBc;
+	// }
 
 }

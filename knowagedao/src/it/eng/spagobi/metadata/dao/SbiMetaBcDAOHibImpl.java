@@ -143,6 +143,49 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	}
 
 	/**
+	 * Load source by name.
+	 *
+	 * @param name
+	 *            the source name
+	 *
+	 * @return the meta source
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#loadBcByName(string)
+	 */
+	@Override
+	public SbiMetaBc loadBcByUniqueName(String name) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiMetaBc toReturn = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+			toReturn = loadBcByUniqueName(tmpSession, name);
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	/**
 	 * Load all BCs.
 	 *
 	 * @return List of meta bc
@@ -554,6 +597,42 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	}
 
 	/**
+	 * Load source by the unique name.
+	 *
+	 * @param session
+	 *            the session
+	 *
+	 * @param name
+	 *            the unique name
+	 *
+	 * @return the meta bc
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#loadBcByUniqueName(session, string)
+	 */
+	@Override
+	public SbiMetaBc loadBcByUniqueName(Session session, String uniqueName) throws EMFUserError {
+		logger.debug("IN");
+
+		SbiMetaBc toReturn = null;
+
+		try {
+			Criterion labelCriterrion = Expression.eq("uniqueName", uniqueName);
+			Criteria criteria = session.createCriteria(SbiMetaBc.class);
+			criteria.add(labelCriterrion);
+			toReturn = (SbiMetaBc) criteria.uniqueResult();
+		} catch (HibernateException he) {
+			logException(he);
+			throw new HibernateException(he);
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+
+	/**
 	 * Modify a metaBC.
 	 *
 	 * * @param aSession the hibernate session
@@ -574,6 +653,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 			SbiMetaBc hibMeta = (SbiMetaBc) aSession.load(SbiMetaBc.class, aMetaBc.getBcId());
 
 			hibMeta.setName(aMetaBc.getName());
+			hibMeta.setUniqueName(aMetaBc.getUniqueName());
 			hibMeta.setDeleted(aMetaBc.isDeleted());
 
 			SbiMetaModel metaModel = null;
