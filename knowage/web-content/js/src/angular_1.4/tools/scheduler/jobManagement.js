@@ -417,7 +417,6 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				} else {
 					ctrl.closeDetail();
 					ctrl.loadJobs();
-					ctrl.showActionDelete();
 				}
 			})
 			.error(function(data, status, headers, config){
@@ -509,7 +508,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		sbiModule_restServices.get("2.0/documents", ctrl.selectedDocument.label+"/parameters")
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
-					console.log("unable to get document roles");
+					console.log("unable to get document parameters");
 				} else {
 					ctrl.selectedDocumentParameters = data;
 					for(var i=0; i<ctrl.selectedJob.documents[ctrl.selectedDocumentIndex].parameters.length; i++){
