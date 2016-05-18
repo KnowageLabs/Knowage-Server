@@ -375,4 +375,6 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DocumentScheduling" roleType="ADMIN" />
 </ROLE_TYPE_USER_FUNCTIONALITIES>
