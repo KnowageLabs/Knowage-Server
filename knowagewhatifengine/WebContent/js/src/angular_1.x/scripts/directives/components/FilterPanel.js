@@ -55,9 +55,13 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	};
 	
 	getVisibleService = function(un,axis){
-		var encoded = encodeURI('/hierarchy/'+ un+ '/getvisible/'+axis+'?SBI_EXECUTION_ID='+ JSsbiExecutionID);
-		sbiModule_restServices.promiseGet
-		("1.0",encoded)
+		var toSend = {
+			'hierarchy':un,
+			'axis':axis
+		}
+		var encoded = encodeURI('1.0/hierarchy/getvisible?SBI_EXECUTION_ID='+ JSsbiExecutionID);
+		sbiModule_restServices.promisePost
+		(encoded,"",toSend)
 		.then(function(response) {
 			visibleSelected = response.data;
 		}, function(response) {
@@ -188,9 +192,14 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	};
 	
 	$scope.getHierarchyMembersAsynchronus = function(hierarchy,axis,node,id){
-		var encoded = encodeURI('/hierarchy/'+ hierarchy+ '/filtertree/'+ axis+ '?SBI_EXECUTION_ID='+ JSsbiExecutionID+ '&node='+node);
-		sbiModule_restServices.promiseGet
-		("1.0",encoded)
+		var toSend={
+			'hierarchy':hierarchy,
+			'axis':axis,
+			'node':node
+		}
+		var encoded = encodeURI('1.0/hierarchy/filtertree?SBI_EXECUTION_ID='+ JSsbiExecutionID);
+		sbiModule_restServices.promisePost
+		(encoded,"",toSend)
 		.then(function(response) {
 				//$scope.handleResponse(response)
 			  if(node!=null){
@@ -252,19 +261,19 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		oldSelectedFilter = $scope.filterSelected[$scope.filterAxisPosition];
 		h = $scope.filterCardList[$scope.filterAxisPosition].uniqueName;
 		m = item.uniqueName;
-		$scope.filterSelected[$scope.filterAxisPosition].name = item.name;
+		$scope.filterSelected[$scope.filterAxisPosition].caption = item.name;
 		$scope.filterSelected[$scope.filterAxisPosition].uniqueName = item.uniqueName;
 	};
 	
 	$scope.closeFiltersDialog = function() {
 		
 		if(selectedFlag){
-			if(oldSelectedFilter.name != "..."){
-				$scope.filterSelected[$scope.filterAxisPosition].name = oldSelectedFilter.name;
+			if(oldSelectedFilter.caption != "..."){
+				$scope.filterSelected[$scope.filterAxisPosition].caption = oldSelectedFilter.name;
 				$scope.filterSelected[$scope.filterAxisPosition].uniqueName = oldSelectedFilter.uniqueName;
 			}				
 			else	
-				$scope.filterSelected[$scope.filterAxisPosition].name = "...";
+				$scope.filterSelected[$scope.filterAxisPosition].caption = "...";
 				$scope.filterSelected[$scope.filterAxisPosition].uniqueName = "";
 			
 			selectedFlag = false;
@@ -285,10 +294,16 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	}
 	
 	filterSlice = function(){
+		var toSend = {
+			'hierarchy':filterFather,
+			'member':m,
+			'multi':false
+		};
+		
 		if(filterFather != undefined && m!= undefined){
-			var encoded = encodeURI('/hierarchy/'+ filterFather+ '/slice/'+ m + '/'+ false + '?SBI_EXECUTION_ID='+ JSsbiExecutionID);
-			sbiModule_restServices.promiseGet
-			("1.0",encoded)
+			var encoded = encodeURI('1.0/hierarchy/slice?SBI_EXECUTION_ID='+ JSsbiExecutionID);
+			sbiModule_restServices.promisePost
+			(encoded,"",toSend)
 			.then(function(response) {
 				  $scope.table = $sce.trustAsHtml(response.data.table);
 				  $scope.filterSelected[$scope.filterAxisPosition].visible = true;
@@ -302,9 +317,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		removeChildren();
 		clearSelectedList();
 		console.log("from pmona"+visibleSelected);
-		var encoded = encodeURI('/axis/'+ $scope.activeaxis+ '/placeMembersOnAxis?SBI_EXECUTION_ID='+ JSsbiExecutionID);
+		var encoded = encodeURI('1.0/axis/'+ $scope.activeaxis+ '/placeMembersOnAxis?SBI_EXECUTION_ID='+ JSsbiExecutionID);
 		sbiModule_restServices.promisePost
-		("1.0",encoded,visibleSelected)
+		(encoded,"",visibleSelected)
 		.then(function(response) {
 			 visibleSelected = [];			
 			 $scope.handleResponse(response);
@@ -403,7 +418,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			fromAxis = data.axis;
 			
 			if(fromAxis == -1){
-				$scope.filterSelected[data.positionInAxis].name ="...";
+				$scope.filterSelected[data.positionInAxis].caption ="...";
 				$scope.filterSelected[data.positionInAxis].visible =false;
 			}				
 			
@@ -433,7 +448,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			fromAxis = data.axis;
 			
 			if(fromAxis == -1){
-				$scope.filterSelected[data.positionInAxis].name ="...";
+				$scope.filterSelected[data.positionInAxis].caption ="...";
 				$scope.filterSelected[data.positionInAxis].visible =false;
 			}	
 			
@@ -478,7 +493,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 					$scope.putMemberOnAxis(fromAxis,data);
 				}
 				
-				$scope.filterSelected[$scope.filterSelected.length] = {name:"...",uniqueName:"",visible:false};
+				$scope.filterSelected[$scope.filterSelected.length] = {caption:"...",uniqueName:"",visible:false};
 			}
 		}
 		if(data!=null)
@@ -574,7 +589,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$scope.filterSelected = [];
 		for(var i = 0; i < $scope.filterCardList.length;i++){
 			var x ={
-					name:"...",
+					caption:"...",
 					uniqueName:"",
 					visible:false
 					};

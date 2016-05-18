@@ -29,7 +29,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -65,16 +64,31 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	private static final String NODE_PARM = "node";
 	public static transient Logger logger = Logger.getLogger(HierarchyResource.class);
 
-	@GET
-	@Path("{hierarchy}/slice/{member}/{multi}")
-	@Produces("text/html; charset=UTF-8")
-	public String addSlicer(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyName,
-			@PathParam("member") String memberName, @PathParam("multi") boolean multiSelection) {
+	@POST
+	@Path("/slice")
+	// @Produces("text/html; charset=UTF-8")
+	public String addSlicer(@javax.ws.rs.core.Context HttpServletRequest req) {
+
+		String hierarchyName = null;
+		String memberName = null;
+		boolean multiSelection = false;
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 		Hierarchy hierarchy = null;
 		Member member = null;
+
+		try {
+			String params = RestUtilities.readBody(req);
+			JSONObject paramsObj = new JSONObject(params);
+
+			hierarchyName = paramsObj.getString("hierarchy");
+			memberName = paramsObj.getString("member");
+			multiSelection = paramsObj.getBoolean("multi");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		ChangeSlicer ph = model.getTransform(ChangeSlicer.class);
 
@@ -98,16 +112,31 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		return renderModel(model);
 	}
 
-	@GET
-	@Path("/{hierarchy}/filtertree/{axis}")
+	@POST
+	@Path("/filtertree")
 	@Produces("text/html; charset=UTF-8")
-	public String getMemberValue(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
-			@PathParam("axis") int axis, @QueryParam(NODE_PARM) String node) {
+	public String getMemberValue(@javax.ws.rs.core.Context HttpServletRequest req) {
 		Hierarchy hierarchy = null;
 
 		List<Member> list = new ArrayList<Member>();
 		List<Member> visibleMembers = null;
 		String memberDescription;
+
+		String hierarchyUniqueName = null;
+		int axis = -2;
+		String node = null;
+
+		try {
+			String params = RestUtilities.readBody(req);
+			JSONObject paramsObj = new JSONObject(params);
+
+			hierarchyUniqueName = paramsObj.getString("hierarchy");
+			node = paramsObj.getString("node");
+			axis = paramsObj.getInt("axis");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
@@ -372,19 +401,25 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 	}
 
-	@GET
-	@Path("/{hierarchy}/getvisible/{axis}")
-	public String getVisibleMembers(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
-			@PathParam("axis") int axis) {
+	@POST
+	@Path("/getvisible")
+	public String getVisibleMembers(@javax.ws.rs.core.Context HttpServletRequest req) {
 
-		Hierarchy hierarchy = null;
-
-		List<Member> list = new ArrayList<Member>();
+		int axis = -2;
 		List<Member> visibleMembers = null;
-		String memberDescription;
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
+
+		try {
+			String params = RestUtilities.readBody(req);
+			JSONObject paramsObj = new JSONObject(params);
+
+			axis = paramsObj.getInt("axis");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// if not a filter axis
 		if (axis >= 0) {
@@ -416,7 +451,6 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		private String id;
 		private String name;
 		private String uniqueName;
-		private String caption;
 		private boolean collapsed;
 		private boolean visible;
 		private List<NodeFilter> children;
@@ -427,7 +461,6 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			this.id = m.getUniqueName();
 			this.uniqueName = m.getUniqueName();
 			this.name = m.getCaption();
-			this.caption = m.getCaption();
 			this.visible = false;
 			this.collapsed = false;
 			this.children = new ArrayList<HierarchyResource.NodeFilter>();
@@ -455,7 +488,6 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 			this.id = m.getUniqueName();
 			this.uniqueName = m.getUniqueName();
-			this.caption = m.getCaption();
 			this.name = m.getCaption();
 			this.collapsed = false;
 			this.children = new ArrayList<HierarchyResource.NodeFilter>();
@@ -497,7 +529,6 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			JSONObject obj = new JSONObject();
 			obj.put("id", id);
 			obj.put("name", name);
-			obj.put("caption", caption);
 			obj.put("uniqueName", uniqueName);
 			obj.put("collapsed", collapsed);
 			obj.put("visible", visible);
@@ -549,7 +580,6 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		JSONObject obj = new JSONObject();
 		obj.put("id", m.getUniqueName());
 		obj.put("name", m.getName());
-		obj.put("caption", m.getCaption());
 		obj.put("uniqueName", m.getUniqueName());
 		obj.put("text", m.getName());
 		obj.put("visible", true);
