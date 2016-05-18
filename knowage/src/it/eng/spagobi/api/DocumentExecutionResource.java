@@ -247,7 +247,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			// resultAsMap.put("parameters", parameters);
 			resultAsMap.put("url", url + "&SBI_EXECUTION_ID=" + sbiExecutionId);
-			if (!errorList.isEmpty()) {
+			if (errorList!= null && !errorList.isEmpty()) {
 				resultAsMap.put("errors", errorList);
 			}
 			// ADD TYPE CODE
