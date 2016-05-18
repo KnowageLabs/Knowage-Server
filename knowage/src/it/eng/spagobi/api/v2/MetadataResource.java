@@ -79,7 +79,6 @@ import java.util.jar.JarFile;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -91,8 +90,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
@@ -131,8 +128,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response extractBusinessModelMetadataInformation(@PathParam("bmId") int businessModelId) {
 		logger.debug("IN");
-		Session aSession = null;
-		Transaction tx = null;
+
 		try {
 			// 1 - Retrieve Metamodel file from datamart.jar
 			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
@@ -209,20 +205,21 @@ public class MetadataResource extends AbstractSpagoBIResource {
 
 			// Extract information from Business Model
 			BusinessModel businessModel = model.getBusinessModels().get(0);
-			String BusinessModelName = businessModel.getName(); // used to retrieve model in SBI_META_MODELS
+			String businessModelName = businessModel.getName(); // used to retrieve model in SBI_META_MODELS
 
-			SbiMetaModel smBM = getSbiMetaModel(BusinessModelName);
+			SbiMetaModel smBM = getSbiMetaModel(businessModelName);
 
 			List<BusinessTable> businessTables = businessModel.getBusinessTables();
 
 			for (BusinessTable businessTable : businessTables) {
 				// 5 - Read informations about the business columns and the Business Table
-				// For the Business Table get Name, Model and Physical Table
+				// For the Business Table get Name, uniqueName, Model and Physical Table
 				// [SBI_META_BC, SBI_META_BC_ATTRIBUTE]
 				smBC = new SbiMetaBc();
 				Set<SbiMetaBcAttribute> bcAttributeSet = new HashSet<SbiMetaBcAttribute>();
 
 				String businessTableName = businessTable.getName();
+				String businessTableUniqueName = businessTable.getUniqueName();
 				String businessTablePhysicalTable = businessTable.getPhysicalTable().getName();
 
 				// For the business columns get Name and Type (attribute/measure)
@@ -238,7 +235,6 @@ public class MetadataResource extends AbstractSpagoBIResource {
 					if (businessColumn instanceof SimpleBusinessColumn) {
 						SimpleBusinessColumn simpleBusinessColumn = ((SimpleBusinessColumn) businessColumn);
 						String businessColumnPhysicalColumn = simpleBusinessColumn.getPhysicalColumn().getName();
-						SbiMetaTableColumn smTcBc = new SbiMetaTableColumn();
 						smAttribute.setSbiMetaTableColumn(newTableColumns.get(businessColumnPhysicalColumn));
 						bcAttributeSet.add(smAttribute);
 
@@ -247,6 +243,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 					}
 				}
 				smBC.setName(businessTablePhysicalTable + "|" + businessTableName); // link the logical table name with the phisical table name
+				smBC.setUniqueName(businessTableUniqueName.toLowerCase());
 				smBC.setSbiMetaBcAttributes(bcAttributeSet);
 				smBC.setSbiMetaModel(smBM);
 
@@ -267,17 +264,6 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 
-	}
-
-	/**
-	 * Update existing business model metadata information with specified id PUT
-	 **/
-	@PUT
-	@Path("/{bmId}/bmExtract")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response updateBusinessModelMetadataInformation(@PathParam("bmId") int businessModelId) {
-		// TODO:
-		return null;
 	}
 
 	/**
