@@ -1,4 +1,7 @@
- 				 	<angular-table  ng-hide="showGridView==true || ngModel.length==0 " flex layout-fill style="position:relative"
+ 				 	<angular-table  ng-hide="showGridView==true || ngModel.length==0 " 
+ 				 			style="position:static;overflow:auto" 
+		 					layout-fill 
+		 					no-pagination=true
 							id='federationListTable' ng-model=ngModel
 							columns='[{"label":"Label","name":"label"},{"label":"Name","name":"name"}]'
 							columnsSearch='["name"]' 

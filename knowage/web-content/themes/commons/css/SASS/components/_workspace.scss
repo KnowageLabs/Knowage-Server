@@ -4,9 +4,32 @@
 		height: calc(100% - 40px);
 	}
 	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
 	.rightPanelDocuments {
-		height: calc(100% - 65px);
-		min-height: calc(100% - 65px);
+		height: calc(100% - 20px);
+		min-height: calc(100% - 20px);
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.rightPanelDocuments {			
+			height: calc(100%);
+			min-height: calc(100%);		
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.md-whiteframe-5dp-rightPanelDocuments {
+		height: calc(100% - 60px);
+		min-height: calc(100% - 60px);
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.md-whiteframe-5dp-rightPanelDocuments {
+			height: calc(100% - 20px);
+			min-height: calc(100% - 20px);
+		}
 	}
 	
 	.panelBackgoundColor {

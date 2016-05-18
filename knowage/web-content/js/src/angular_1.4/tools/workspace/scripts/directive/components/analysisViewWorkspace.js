@@ -61,7 +61,6 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 						}
 						
 						angular.copy($scope.cockpitAnalysisDocs,$scope.cockpitAnalysisDocsInitial);
-						console.log($scope.cockpitAnalysisDocs);
 						
 						console.info("[LOAD END]: Loading of Analysis Cockpit documents is finished.");
 					},

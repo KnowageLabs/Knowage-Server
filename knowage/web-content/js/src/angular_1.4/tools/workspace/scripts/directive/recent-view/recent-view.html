@@ -1,15 +1,16 @@
- 				 	<angular-table  ng-hide="showGridView==true || ngModel.length==0 " layout-fill style="position:absolute"
-							id='documentListTable' ng-model=ngModel
-							columns='[{"label":"Document name","name":"documentName"},{"label":"Document label","name":"documentLabel"},{"label":"Document description","name":"documentDescription"},{"label":"Document type","name":"documentType"}]'
-							columnsSearch='["name"]' 
-							show-search-bar=false
-							speed-menu-option=tableSpeedMenuOption
-							highlights-selected-item="true"
-							selected-item=selectedDocument
-							click-function="clickDocument(item);">
-						</angular-table>
-					 
-					
+ 				 	<angular-table  ng-hide="showGridView==true || ngModel.length==0 " 
+ 				 					layout-fill 
+		 				 			style="position:absolute;overflow:auto"
+		 				 			no-pagination=true
+									id='documentListTable' ng-model=ngModel
+									columns='[{"label":"Document name","name":"documentName"},{"label":"Document label","name":"documentLabel"},{"label":"Document description","name":"documentDescription"},{"label":"Document type","name":"documentType"}]'
+									columnsSearch='["name"]' 
+									show-search-bar=false
+									speed-menu-option=tableSpeedMenuOption
+									highlights-selected-item="true"
+									selected-item=selectedDocument
+									click-function="clickDocument(item);">
+					</angular-table>					 
 					
 					<!-- Document Grid View -->
 					<div layout="row"  layout-wrap ng-hide="showGridView!=true " >

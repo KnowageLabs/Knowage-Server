@@ -1,6 +1,12 @@
 <md-content layout="row" flex>
-        <md-content flex layout="column" layout-fill class="rightPanelDocuments">
-              <workspace-document-view 
+	
+	<md-whiteframe flex layout="column" class="md-whiteframe-5dp md-whiteframe-5dp-rightPanelDocuments" layout-margin>
+	
+		<md-content layout="row" flex>
+		
+			<md-content layout="row" flex layout-fill class="rightPanelDocuments">
+        
+          		<workspace-document-view 
 							class="kn-documentBrowser" flex 
 		 					style='overflow:auto;' 
 		 					ng-model=smartFiltersList
@@ -13,19 +19,21 @@
 		 					selected-document=selectedDocument
 		 					select-document-action="selectDocument(doc)"
 		 					execute-document-action="executeDocument(doc)"
-		 					table-speed-menu-option=filterSpeedMenu
-		 				  >
-			 </workspace-document-view>	
-	    
+		 					table-speed-menu-option=filterSpeedMenu>
+			 	</workspace-document-view>		    
 
-	   </md-content>
-	   
-	   <md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" 
-				md-component-id="rightDoc" md-is-locked-open="$mdMedia('gt-md')"  
-				ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDocumentDetails()">
+	  		</md-content>
 		
+		</md-content>
+	
+	</md-whiteframe>
+	   
+   <md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" 
+			md-component-id="rightDoc" md-is-locked-open="$mdMedia('gt-md')"  
+			ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDocumentDetails()">
+	
 		<md-toolbar class="ternaryToolbar">
-			
+		
 			<div layout="row" layout-align="space-around center">
 				
 				<md-button ng-if="smallScreen" title="Execute Document" aria-label="Close panel" class="md-icon-button" ng-click="selectDocument(); toggleDocumentDetail();">
@@ -37,9 +45,9 @@
 				</md-button>
 				
 			</div>
-			
-		</md-toolbar>
 		
+		</md-toolbar>
+	
 		<!-- The content of the right side navigation panel, i.e. details for the currently selected document. -->
 		<md-content layout-margin>
 			
@@ -69,6 +77,7 @@
 			</md-list>
 			
 		</md-content>
-		
+	
 	</md-sidenav>
+	
 </md-content>

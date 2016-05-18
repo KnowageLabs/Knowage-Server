@@ -1,30 +1,37 @@
 <md-content layout="row" flex>
 	
-	<md-content flex layout-fill class="rightPanelDocuments">
-		
-		<!-- 
-			The view of the Analysis view of the Workspace.
-			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-		-->
-		<workspace-document-view 
-							class="kn-documentBrowser" flex 
-		 					style='overflow:auto;' 
-		 					ng-model=cockpitAnalysisDocs
-		 					show-grid-view=showGridView
-		 					show-add-to-organizer=false
-		 					favorites-enabled=false
-		 					clone-enabled=true
-		 					delete-enabled=true
-		 					selected-row=selectedRow
-		 					selected-document=selectedDocument
-		 					table-speed-menu-option=analysisSpeedMenu
-		 					execute-document-action="executeDocument(doc)"
-		 					select-document-action="selectDocument(doc)"
-		 					clone-document-action="cloneAnalysisDocument(doc)"
-		 					delete-document-action="deleteAnalysisDocument(doc)" >
-		</workspace-document-view>	
+	<md-whiteframe flex layout="column" class="md-whiteframe-5dp md-whiteframe-5dp-rightPanelDocuments" layout-margin>
 	
-	</md-content>
+		<md-content layout="row" flex>
+		
+			<md-content layout="row" flex layout-fill class="rightPanelDocuments">
+				
+				<!-- 
+					The view of the Analysis view of the Workspace.
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+				-->
+				<workspace-document-view 
+									class="kn-documentBrowser" flex 
+				 					ng-model=cockpitAnalysisDocs
+				 					show-grid-view=showGridView
+				 					show-add-to-organizer=false
+				 					favorites-enabled=false
+				 					clone-enabled=true
+				 					delete-enabled=true
+				 					selected-row=selectedRow
+				 					selected-document=selectedDocument
+				 					table-speed-menu-option=analysisSpeedMenu
+				 					execute-document-action="executeDocument(doc)"
+				 					select-document-action="selectDocument(doc)"
+				 					clone-document-action="cloneAnalysisDocument(doc)"
+				 					delete-document-action="deleteAnalysisDocument(doc)" >
+				</workspace-document-view>	
+			
+			</md-content>
+		
+		</md-content>
+	
+	</md-whiteframe>
 	
 	<!-- Side navigation panel that contains details about the selected document in the Analysis option. -->
 	<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" 

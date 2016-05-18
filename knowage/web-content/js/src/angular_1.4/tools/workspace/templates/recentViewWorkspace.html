@@ -1,19 +1,30 @@
 <md-content layout="row" flex>
-	<md-content flex layout="column" layout-fill class="rightPanelDocuments">
-		<recent-view 	class="kn-documentBrowser" flex
-	 					style='overflow:auto;'
-	 					ng-model=recentDocumetnsList
-	 					show-grid-view=showGridView
-	 					show-add-to-organizer="true"
-	 					selected-row=selectedRow
-	 					selected-document=selectedDocument
-	 					table-speed-menu-option=recentSpeedMenu
-	 					execute-document-action="executeRecent(doc)"
-	 					select-document-action="selectDocument(doc)"
-	 					 >
-		</recent-view>
-	</md-content>
+	
+	<md-whiteframe flex layout="column" class="md-whiteframe-5dp md-whiteframe-5dp-rightPanelDocuments" layout-margin>
+	
+		<md-content layout="row" flex>
+		
+			<md-content layout="row" flex layout-fill class="rightPanelDocuments">
+			
+				<recent-view 	class="kn-documentBrowser" flex
+			 					ng-model=recentDocumetnsList
+			 					show-grid-view=showGridView
+			 					show-add-to-organizer="true"
+			 					selected-row=selectedRow
+			 					selected-document=selectedDocument
+			 					table-speed-menu-option=recentSpeedMenu
+			 					execute-document-action="executeRecent(doc)"
+			 					select-document-action="selectDocument(doc)">
+				</recent-view>
+			
+			</md-content>
+		
+		</md-content>
+	
+	</md-whiteframe>
+		
 	<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightDoc" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDocumentDetails()">
+			
 		<md-toolbar class="ternaryToolbar">
 			<div layout="row" layout-align="space-around center">
 				<md-button ng-if="smallScreen" title="Execute Document" aria-label="Close panel" class="md-icon-button" ng-click="selectDocument();toggleDocumentDetail();">
@@ -30,38 +41,43 @@
 
 			</div>
 		</md-toolbar>
+		
 		<md-content layout-margin>
+			
 			<md-list>
 
-					<md-list-item class="md-2-line">
- 	          <div class="md-list-item-text">
- 	            <h3><b>Document name</b></h3>
- 	            <p>{{selectedDocument.documentName}}</p>
- 	          </div>
- 					</md-list-item>
-
-					<md-list-item class="md-2-line">
- 	          <div class="md-list-item-text">
- 	            <h3><b>Document label</b></h3>
- 	            <p>{{selectedDocument.documentLabel}}</p>
- 	          </div>
- 					</md-list-item>
-
-					<md-list-item class="md-2-line">
- 	          <div class="md-list-item-text">
- 	            <h3><b>Document description</b></h3>
- 	            <p>{{selectedDocument.documentDescription}}</p>
- 	          </div>
- 					</md-list-item>
-
-					<md-list-item class="md-2-line">
- 	          <div class="md-list-item-text">
- 	            <h3><b>Document type</b></h3>
- 	            <p>{{selectedDocument.documentType}}</p>
- 	          </div>
- 					</md-list-item>
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+		 	            <h3><b>Document name</b></h3>
+		 	            <p>{{selectedDocument.documentName}}</p>
+	 	         	 </div>
+				</md-list-item>
+	
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+	 	            	<h3><b>Document label</b></h3>
+	 	            	<p>{{selectedDocument.documentLabel}}</p>
+	 	          	</div>
+					</md-list-item>
+	
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+	 	           		<h3><b>Document description</b></h3>
+	 	            	<p>{{selectedDocument.documentDescription}}</p>
+ 	         		 </div>
+					</md-list-item>
+	
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+	 	           		<h3><b>Document type</b></h3>
+	 	            	<p>{{selectedDocument.documentType}}</p>
+	 	          	</div>
+					</md-list-item>
 
 			</md-list>
+			
 		</md-content>
+			
 	</md-sidenav>
+		
 </md-content>

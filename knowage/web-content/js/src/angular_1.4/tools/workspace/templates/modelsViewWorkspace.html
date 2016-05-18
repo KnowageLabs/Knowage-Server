@@ -1,71 +1,89 @@
 <md-content layout="row" flex>
- <md-content flex>
-  <md-tabs md-dynamic-height="true">
-    
-        <md-tab label="Business Models" ng-click="switchTab('businessModels')" flex>
-	   <md-content>
- 	  <federation-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="businessModels"
-		selected-federation=selectedModel
-		select-federation-action="selectModel(federation);"
-		show-grid-view="showGridView"
-		edit-enabled=false
-		delete-enabled=false
-		show-federation-action="showQbeFromBM(fed)"
-		show-business-models=true
- 	  ></federation-view>	
- 	 </md-content>
- 	</md-tab> 
-   
+	
+	<md-whiteframe flex layout="column" class="md-whiteframe-5dp md-whiteframe-5dp-rightPanelDocuments" layout-margin>
+	
+		<md-content layout="row" flex>
+		
+			<md-content layout="row" flex layout-fill class="rightPanelDocuments">
+	 
+	  			<md-tabs  flex layout-fill class="rightPanelDocuments">
+		    
+					<md-tab label="Business Models" ng-click="switchTab('businessModels')" flex>
+				   		<md-content>
+						 	  <federation-view class="kn-documentBrowser" flex ng-model="businessModels"
+								selected-federation=selectedModel
+								select-federation-action="selectModel(federation);"
+								show-grid-view="showGridView"
+								edit-enabled=false
+								delete-enabled=false
+								show-federation-action="showQbeFromBM(fed)"
+								show-business-models=true
+						 	  ></federation-view>	
+				 	 	</md-content>
+		 			</md-tab> 
+		   
 	<md-tab label="Federation definitions" ng-click="switchTab('federations')" ng-show="isFederationEnabled" flex>
-        <md-content>
- 	<federation-view class="kn-documentBrowser" flex style='overflow: auto; position: relative;' ng-model="federationDefinitions"
-		show-grid-view="showGridView"
-		selected-federation=selectedModel
-		select-federation-action="selectModel(federation);"
-		edit-enabled=true
-		edit-federation-action="editFederation(fed)"
-		delete-enabled=true
-		delete-federation-action="deleteFederation(fed)"
-		show-federation-action="showQbeFederation(fed)"
-		show-business-models=false
- 	  ></federation-view>	
-        </md-content>
- 	</md-tab>  
-   </md-tabs>
- 
-</md-content>
-    <md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightModel" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showModelDetails()">
-					<md-toolbar class="ternaryToolbar">
-						<div layout="row" layout-align="space-around center">
-							
-		                    <md-button title="Open qbe" aria-label="Open qbe" class="md-icon-button" ng-click="showQbeModel(selectedModel)">
-									<md-icon md-font-icon="fa fa-search"></md-icon>
-							</md-button>
-							 <md-button title="Edit" aria-label="Edit" class="md-icon-button" ng-show="currentTab=='federations'" ng-click="editFederation(selectedModel)">
-									<md-icon md-font-icon="fa fa-pencil"></md-icon>
-							</md-button>
-							
-							 <md-button title="Delete" aria-label="Edit" class="md-icon-button" ng-show="currentTab=='federations'" ng-click="deleteFederation(selectedModel)">
-									<md-icon md-font-icon="fa fa-trash"></md-icon>
-							</md-button>
-							
-						</div>
-					</md-toolbar>
-					<md-content layout-margin>
-						<md-list>
-							 <md-list-item class="md-2-line">
-							          <div class="md-list-item-text">
-							            <h3><b>{{translate.load("sbi.generic.descr")}}</b></h3>
-							            <p>{{selectedModel.description}}</p>
-							          </div>
-							 </md-list-item>
-							 <md-list-item class="md-2-line">
-							          <div class="md-list-item-text">
-							            <h3><b>Name</b></h3>
-							            <p>{{selectedModel.name}}</p>
-							          </div>
-							 </md-list-item>	
-						</md-list>
-					</md-content>
-				</md-sidenav>
-</md-content>				
+				        <md-content>
+						 	<federation-view class="kn-documentBrowser" flex ng-model="federationDefinitions"
+								show-grid-view="showGridView"
+								selected-federation=selectedModel
+								select-federation-action="selectModel(federation);"
+								edit-enabled=true
+								edit-federation-action="editFederation(fed)"
+								delete-enabled=true
+								delete-federation-action="deleteFederation(fed)"
+								show-federation-action="showQbeFederation(fed)"
+								show-business-models=false
+						 	  ></federation-view>	
+				        </md-content>
+			 		</md-tab>  
+				 	
+	  		 	</md-tabs>
+	  		 
+  			</md-content>
+		
+		</md-content>
+	
+	</md-whiteframe> 
+	
+ 	<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightModel" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showModelDetails()">
+			
+		<md-toolbar class="ternaryToolbar">
+			<div layout="row" layout-align="space-around center">
+				
+                   <md-button title="Open qbe" aria-label="Open qbe" class="md-icon-button" ng-click="showQbeModel(selectedModel)">
+						<md-icon md-font-icon="fa fa-search"></md-icon>
+				</md-button>
+				 <md-button title="Edit" aria-label="Edit" class="md-icon-button" ng-show="currentTab=='federations'" ng-click="editFederation(selectedModel)">
+						<md-icon md-font-icon="fa fa-pencil"></md-icon>
+				</md-button>
+				
+				 <md-button title="Delete" aria-label="Edit" class="md-icon-button" ng-show="currentTab=='federations'" ng-click="deleteFederation(selectedModel)">
+						<md-icon md-font-icon="fa fa-trash"></md-icon>
+				</md-button>
+				
+			</div>
+		</md-toolbar>
+			
+		<md-content layout-margin>
+			
+			<md-list>
+				 <md-list-item class="md-2-line">
+				          <div class="md-list-item-text">
+				            <h3><b>{{translate.load("sbi.generic.descr")}}</b></h3>
+				            <p>{{selectedModel.description}}</p>
+				          </div>
+				 </md-list-item>
+				 <md-list-item class="md-2-line">
+				          <div class="md-list-item-text">
+				            <h3><b>Name</b></h3>
+				            <p>{{selectedModel.name}}</p>
+				          </div>
+				 </md-list-item>	
+			</md-list>
+				
+		</md-content>
+			
+	</md-sidenav>
+	
+</md-content>	
