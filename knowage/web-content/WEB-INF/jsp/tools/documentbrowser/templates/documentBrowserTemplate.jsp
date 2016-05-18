@@ -103,12 +103,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				           {{translate.load("sbi.generic.document.add.traditional SpagoBI")}}
 				          </md-button>
 				        </md-menu-item>
+				        <% if(UserUtilities.isEngineEnabled(profile, SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE)) { %>
 				        <md-menu-item>
 				          <md-button ng-click="newDocument('cockpit');">
 				            <md-icon md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
 				            {{translate.load("sbi.generic.document.add.adhocCockpit")}}
 				          </md-button>
 				        </md-menu-item>
+				        <% } %>
 					</md-menu-content>
 					</md-menu>
 					 <%} %>

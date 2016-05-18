@@ -957,10 +957,10 @@ function saveDocument(goBack) {
 			<%} %>
 
 
-    <!-- DISPLAY RADIO BUTTON FOR LOCKING -->
+    		<!-- DISPLAY RADIO BUTTON FOR LOCKING -->
+    		<% if(userProfile.isAbleToExecuteAction(SpagoBIConstants.SHARED_DEVELOPMENT)) {  %>
+    		
                 <div class='div_detail_label'>
-                
-                
                 <%
                 if (isLocked && !isCurrentUserLocking) { // LOCKED BY ANOTHER USER
                 %>
@@ -976,6 +976,7 @@ function saveDocument(goBack) {
 
                 <%} %>
                 </div>
+                
                 <div class='div_detail_form'>
 
                     <input type="radio" name="lockedByUser" value="<%=userId%>" 
@@ -1002,7 +1003,7 @@ function saveDocument(goBack) {
                             <span class="portlet-font">False</span>
                     </input>
                 </div>
-            
+            <%} %>
         
 
         <script>

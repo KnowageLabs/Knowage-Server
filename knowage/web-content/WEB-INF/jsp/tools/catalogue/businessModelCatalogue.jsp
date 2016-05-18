@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
+<%@page import="it.eng.spago.security.IEngUserProfile"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
 <%@page import="it.eng.spagobi.tools.dataset.federation.FederationDefinition"%>
 <%@page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
@@ -207,8 +209,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      <md-card-content>
 	      	<div layout="column" layout-margin>
 		      	<div  layout="row">
-					<md-button ng-click="importMetadata(selectedBusinessModel.id)"  ng-disabled="bmImportingShow" class="md-raised md-ExtraMini">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue.import.metadata");}}</md-button>
+		      		<%
+					if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_SAVING_TO_RDBMS)) {%>
+					<md-button ng-click="importMetadata(selectedBusinessModel.id)"  ng-disabled="bmImportingShow" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue.import.metadata");}}</md-button>
+					<%} %>
+					<%
+					if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_CWM_EXPORTING)) {%>	
 					<md-button ng-click="downloadCWMFile(selectedBusinessModel.id)" ng-disabled="bmCWMProcessingShow" class="md-raised" >{{translate.load("sbi.metadata.cwm.export.button")}}</md-button></div>
+					<%} %>
 				</div>
 				<div   ng-show="bmImportingShow" >
     				<md-progress-linear md-mode="indeterminate"></md-progress-linear>

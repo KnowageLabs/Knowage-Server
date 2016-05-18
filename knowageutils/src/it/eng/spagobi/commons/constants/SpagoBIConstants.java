@@ -70,6 +70,9 @@ public class SpagoBIConstants {
 
 	public static final String LIST_PAGE = "LIST_PAGE";
 
+	public static final String DISTRIBUTED_MAP_FOR_CACHE = "CACHE";
+	public static final String DISTRIBUTED_MAP_INSTANCE_NAME = "KNOWAGE";
+
 	public static final String MODALITY = "MODALITY";
 	public static final String MESSAGEDET = "MESSAGEDET";
 
@@ -321,8 +324,8 @@ public class SpagoBIConstants {
 	// constants for user profiles
 	// ---superadmin functionalities
 	public static final String TENANT_MANAGEMENT = "TenantManagement";
-	public static final String ENGINES_MANAGEMENT = "EnginesManagement";
 	public static final String READ_ENGINES_MANAGEMENT = "ReadEnginesManagement";
+	public static final String CACHE_MANAGEMENT = "CacheManagement";
 	// ---end
 	public static final String DATASET_MANAGEMENT = "DatasetManagement";
 	public static final String FUNCTIONALITIES_MANAGEMENT = "FunctionalitiesManagement";
@@ -479,15 +482,18 @@ public class SpagoBIConstants {
 	public static final String IMP_EXP_RESOURCES = "ImpExpResources";
 	public static final String IMP_EXP_USERS = "ImpExpUsers";
 	public static final String IMP_EXP_CATALOG = "ImpExpCatalog";
-	public static final String DISTRIBUTED_MAP_FOR_CACHE = "CACHE";
-	public static final String DISTRIBUTED_MAP_INSTANCE_NAME = "KNOWAGE";
-	public static final String CACHE_MANAGEMENT = "CacheManagement";
 
-	public static final String META_MODELS_CATALOGUE_MANAGEMENT = "AnalyticalWidget";
+	public static final String META_MODELS_CATALOGUE_MANAGEMENT = "MetaModelsCatalogueManagement";
 	// Cockpit
 	public static final String MANAGE_STATIC_WIDGET = "StaticWidget";
 	public static final String MANAGE_ANALYTICAL_WIDGET = "AnalyticalWidget";
 	public static final String MANAGE_CHART_WIDGET = "ChartWidget";
 	public static final String MANAGE_MULTISHEET_COCKPIT = "MultisheetCockpit";
 
+	public static final String REGISTRY_DATA_ENTRY = "RegistryDataEntry";
+	public static final String DOCUMENT_SCHEDULING = "DocumentScheduling";
+	public static final String SCHEDULING_DISTRIBUTED_OUTPUT = "SchedulingDistributedOutput";
+	public static final String META_MODEL_CWM_EXPORTING = "MetaModelCwmExporting";
+	public static final String META_MODEL_SAVING_TO_RDBMS = "MetaModelSavingToRdbms";
+	public static final String SHARED_DEVELOPMENT = "SharedDevelopment";
 }

@@ -1217,7 +1217,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					metaModelCategories.remove(category);
 					hibRole.setSbiMetaModelCategories(metaModelCategories);
 				} else {
-					logger.error("Category " + category.getValueNm() + " is not associated to the role " + hibRole.getName());
+					logger.debug("Category " + category.getValueNm() + " is not associated to the role " + hibRole.getName());
 				}
 
 			}
@@ -1366,7 +1366,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					dataSetCategories.remove(category);
 					hibRole.setSbiDataSetCategories(dataSetCategories);
 				} else {
-					logger.error("Category " + category.getValueNm() + " is not associated to the role " + hibRole.getName());
+					logger.debug("Category " + category.getValueNm() + " is not associated to the role " + hibRole.getName());
 				}
 
 			}

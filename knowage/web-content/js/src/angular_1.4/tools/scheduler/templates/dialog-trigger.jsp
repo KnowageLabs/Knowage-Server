@@ -396,6 +396,9 @@
 							</div>
 						</div>
 						
+						<%
+						IEngUserProfile userProfile = (IEngUserProfile)session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+						if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SCHEDULING_DISTRIBUTED_OUTPUT)) {%>
 						<div style="margin-bottom: 6px;">
 							<md-toolbar class="minihead unselectedItem"
 									ng-class="activityEventCtrl.selectedDocument.sendmail? 'selectedItem' : 'unselectedItem'">
@@ -517,10 +520,9 @@
 								</md-content>
 							</div>
 						</div>
-						
+						<%} %>
 						<%
-						IEngUserProfile userProfile = (IEngUserProfile)session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-						if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DISTRIBUTIONLIST_MANAGEMENT)) {%>
+						if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DISTRIBUTIONLIST_MANAGEMENT) && userProfile.isAbleToExecuteAction(SpagoBIConstants.SCHEDULING_DISTRIBUTED_OUTPUT)) {%>
 						<md-toolbar class="minihead unselectedItem"
 								ng-class="activityEventCtrl.selectedDocument.saveasdl? 'selectedItem' : 'unselectedItem'">
 							<div class="md-toolbar-tools" layout="row">

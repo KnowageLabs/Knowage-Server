@@ -17,6 +17,34 @@
  */
 package it.eng.spagobi.commons.utilities;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.SessionContainer;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.UserFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.dao.exception.DAORuntimeException;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.config.dao.IEngineDAO;
+import it.eng.spagobi.services.common.SsoServiceFactory;
+import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.exceptions.SecurityException;
+import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -32,29 +60,6 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.UserFunctionality;
-import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.metadata.SbiTenant;
-import it.eng.spagobi.dao.exception.DAORuntimeException;
-import it.eng.spagobi.services.common.SsoServiceFactory;
-import it.eng.spagobi.services.common.SsoServiceInterface;
-import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
-import it.eng.spagobi.services.security.exceptions.SecurityException;
-import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class UserUtilities {
 
@@ -580,7 +585,7 @@ public class UserUtilities {
 				if (!isSuperAdm) {
 					for (int i = 0; i < functionalities.length; i++) {
 						String f = functionalities[i];
-						if (!f.equalsIgnoreCase(SpagoBIConstants.TENANT_MANAGEMENT) && !f.equalsIgnoreCase(SpagoBIConstants.ENGINES_MANAGEMENT)) {
+						if (!f.equalsIgnoreCase(SpagoBIConstants.TENANT_MANAGEMENT)) {
 							roleFunctionalities.add(f);
 						}
 					}
@@ -800,8 +805,8 @@ public class UserUtilities {
 				throw new SpagoBIRuntimeException("No tenants found on database");
 			}
 			if (tenants.size() > 1) {
-				throw new SpagoBIRuntimeException(
-						"Tenants are more than one, cannot associate input user profile [" + profile.getUserId() + "] to a single tenant!!!");
+				throw new SpagoBIRuntimeException("Tenants are more than one, cannot associate input user profile [" + profile.getUserId()
+						+ "] to a single tenant!!!");
 			}
 			SbiTenant tenant = tenants.get(0);
 			logger.warn("Associating user profile [" + profile.getUserId() + "] to tenant [" + tenant.getName() + "]");
@@ -857,6 +862,31 @@ public class UserUtilities {
 		SpagoBIUserProfile clone = new SpagoBIUserProfile((HashMap) profile.getAttributes().clone(), profile.getFunctions().clone(), profile.getIsSuperadmin(),
 				profile.getOrganization(), profile.getRoles().clone(), profile.getUniqueIdentifier(), profile.getUserId(), profile.getUserName());
 		return clone;
+	}
+
+	public static boolean isEngineEnabled(IEngUserProfile userProfile, String valueCd) {
+		boolean toReturn = false;
+
+		try {
+			IEngineDAO engineDao = DAOFactory.getEngineDAO();
+			engineDao.setUserProfile(userProfile);
+			List<Engine> nonPagedEngines = engineDao.loadAllEnginesByTenant();
+			for (int i = 0, l = nonPagedEngines.size(); i < l; i++) {
+				Engine elem = nonPagedEngines.get(i);
+				IDomainDAO domainDAO = DAOFactory.getDomainDAO();
+				Domain domainType = domainDAO.loadDomainById(elem.getBiobjTypeId());
+				if (domainType.getValueCd().equalsIgnoreCase(valueCd)) {
+					toReturn = true;
+					break;
+				}
+			}
+		} catch (Throwable t) {
+			logger.error("Impossible to load engines from database ", t);
+			throw new SpagoBIEngineRuntimeException("Impossible get worksheet availability");
+		}
+
+		return toReturn;
+
 	}
 
 }
