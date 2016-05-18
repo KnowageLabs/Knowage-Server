@@ -335,6 +335,22 @@
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="InstallConfig" roleType="ADMIN" />
 	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="RegistryDataEntry" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="RegistryDataEntry" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="RegistryDataEntry" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="RegistryDataEntry" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="RegistryDataEntry" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SchedulingDistributedOutput" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MetaModelCwmExporting" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MetaModelLifecycleManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MetaModelSavingToRdbms" roleType="ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SharedDevelopment" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SharedDevelopment" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SharedDevelopment" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SharedDevelopment" roleType="MODEL_ADMIN" />
+	
 	<!-- Cockpit -->
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MultisheetCockpit" roleType="USER" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MultisheetCockpit" roleType="ADMIN" />
@@ -359,5 +375,4 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="MODEL_ADMIN" />
-	
 </ROLE_TYPE_USER_FUNCTIONALITIES>
