@@ -14,7 +14,7 @@ angular
 	  	};
 	})
 
-function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_user,sbiModule_helpOnLine,sbiModule_messaging,multipartForm){
+function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_user,sbiModule_helpOnLine,sbiModule_messaging){
 	$scope.selectedDataset = undefined;
 	//$scope.lastDocumentSelected = null;
 	$scope.showDatasettInfo = false;
@@ -396,51 +396,90 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	
 
 	
-	function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_config,multipartForm){
-		$scope.closeDatasetCreateDialog=function(){
-			$mdDialog.cancel();
+	function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_config,multipartForm,$http){
+		$scope.fileObj={};
+		$scope.datasetWizardView=1;
+		$scope.datasetCategoryTypes = [];
+		
+		$scope.toggleDWVNext = function() {
+			if($scope.datasetWizardView>0&&$scope.datasetWizardView<4){
+				$scope.datasetWizardView = $scope.datasetWizardView +1;
+			}
 		}
 		
-		loadDatasetCategories= function(){
-			sbiModule_restServices.promiseGet("domainsforfinaluser/listValueDescriptionByType", "")
+		$scope.toggleDWVBack = function() {
+			if($scope.datasetWizardView>1&&$scope.datasetWizardView<5){
+				$scope.datasetWizardView = $scope.datasetWizardView -1;
+			}
+			
+			
+		}
+		
+		$scope.closeDatasetCreateDialog=function(){
+			$mdDialog.cancel();
+			$scope.datasetWizardView=1;
+		}
+		
+		loadDatasetValues= function(a,b){
+			sbiModule_restServices.promiseGet(a,b)
 			.then(function(response) {
 				console.log(response.data);
 				angular.copy(response.data,$scope.datasetCategories)
 			},function(response){
-				sbiModule_restServices.errorHandler(response.data,"faild to load categories");
-			});
-			
-			
+				sbiModule_restServices.errorHandler(response.data,"faild to load data for"+b);
+			});	
 		}
 		
-	    loadDatasetCategories();
-		$scope.fileObj={};
-		
-        $scope.uploadFileDataset=function(){
-        	multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedataset/fileupload",$scope.fileObj).success(
-
-					function(data,status,headers,config){
-						if(data.hasOwnProperty("errors")){						
-							console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");		
-							sbiModule_messaging.showErrorMessage("file upload failed"+":"+data.errors[0].message, 'Error');  
-
-						}else{
-							sbiModule_messaging.showSuccessMessage("success", 'Success!'); 
-							console.log("[UPLOAD]: SUCCESS!");
-							$scope.fileObj.fileName = "";
-							$scope.fileObj = {};
-						}
-						//$scope.bmCWMImportingShow = false;
-
-					}).error(function(data, status, headers, config) {
-						console.log("[UPLOAD]: FAIL!"+status);
-						sbiModule_messaging.showErrorMessage("errr", 'Error');
-						//$scope.bmCWMImportingShow = false;
-					});
-        	
-        }
+		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","");
+		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=CATEGORY_TYPE");
+		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_GEN_META_PROPERTY");
+		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_PROPERTY");
+		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_VALUE");
+	    
 		
 		
-	}
+		$scope.uploadFileDatasetAction=function(){
+			
+			completeUrl  = sbiModule_config.contextName +"/servlet/AdapterHTTP?ACTION_NAME=UPLOAD_DATASET_FILE_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&UPLOAD_FILE="+$scope.fileObj
+    	    baseUrl = sbiModule_config.contextName +"/servlet/AdapterHTTP"
+			params = {ACTION_NAME:"UPLOAD_DATASET_FILE_ACTION",LIGHT_NAVIGATOR_DISABLED:"TRUE",SBI_EXECUTION_ID:"-1"};
+			fileNameUploaded = $scope.fileObj.fileName;
+	    	$http.post(completeUrl,$scope.fileObj)
+	    	   .then(
+	    	       function(response){
+	    	         // success callback
+	    	    	   console.log(response);
+	    	       }, 
+	    	       function(response){
+	    	         // failure callback
+	    	    	   console.log(response);
+	    	       }
+	    	    );	
+	    }
+		
+		$scope.uploadFile= function(){
+			
+			multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedataset/fileupload",$scope.fileObj).success(
+				
+				function(data,status,headers,config){
+					if(data.hasOwnProperty("errors")){
+						
+						console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");
+						
+					}else{
+						
+						console.log("[UPLOAD]: SUCCESS!");
+						sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
+						
+						$scope.file={};
+						
+						
+					}
+				}).error(function(data, status, headers, config) {
+							console.log("[UPLOAD]: FAIL!"+status);
+						});
+			
+		}	
     
+}
 }
