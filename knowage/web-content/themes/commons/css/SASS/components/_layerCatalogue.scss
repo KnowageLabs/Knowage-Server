@@ -150,3 +150,19 @@
     font-family: Roboto,Verdana, Geneva, Arial, Helvetica, sans-serif;
   }
 }
+
+.kn-rolesManagement {
+  .rolesMetaModelCategories_idItemBox,.rolesDatasetCategories_idItemBox {
+    md-checkbox {
+      margin: 0 0 0 10px;
+    }
+  }
+  .authorizationList {
+    md-input-container.md-knowage-theme {
+      padding: 2px 2px 2px;
+    }
+    label {
+      font-size: .8em;
+    }
+  }
+}

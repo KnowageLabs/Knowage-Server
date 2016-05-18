@@ -186,10 +186,16 @@ angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
     margin-left: -15px;
 }
 
-.fakeTable tr th:first-child div {
+.fakeTable tr th:first-child *:not(md-checkbox) div:not(.md-icon) {
     margin-left: $standardPadding;
 }
-.principalTable tr th:first-child div {
+.principalTable tr th:first-child *:not(md-checkbox) div:not(.md-icon) {
+    margin-left: $standardPadding;
+}
+.fakeTable tr th:first-child > div:not(.md-icon) {
+    margin-left: $standardPadding;
+}
+.principalTable tr th:first-child > div:not(.md-icon) {
     margin-left: $standardPadding;
 }
 

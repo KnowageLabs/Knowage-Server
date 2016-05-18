@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Roles Management</title>
 </head>
-<body class="bodyStyle kn-layerCatalogue"
+<body class="bodyStyle kn-rolesManagement"
 	ng-controller="RolesManagementController as ctrl">
 
 	<angular-list-detail show-detail="showme">
@@ -83,7 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<div layout-fill class="containerDiv">	
 	<form name="attributeForm" layout-fill
 		ng-submit="attributeForm.$valid && saveRole()"
-		class="detailBody md-whiteframe-z1">
+		class="detailBody">
 <!-- 			<md-toolbar class="header"> -->
 <!-- 			<div class="md-toolbar-tools h100"> -->
 <!-- 				<div style="text-align: center; font-size: 24px;"></div> -->
@@ -105,7 +105,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-tab label='{{translate.load("sbi.generic.details");}}'>
 			<md-content flex 
 				class="ToolbarBox miniToolbar noBorder mozTable">
-            <md-card>
+            <md-card layout-padding>
 			<div layout="row" layout-wrap>
 				<div flex=100>
 					<md-input-container class="small counter"> <label>{{translate.load("sbi.roles.headerName")}}</label>
@@ -163,13 +163,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			 <md-tab label='{{translate.load("sbi.roles.authorizations");}}'>
 			  <md-content
 				flex 
-				class="ToolbarBox miniToolbar noBorder mozTable">
+				class="ToolbarBox miniToolbar noBorder mozTable authorizationList">
 				<md-card>
-				<div style="display: flex;">
-				<div style="width: 50%; margin-right:5px;">
+				
 
-				<md-toolbar class="md-blue minihead md-toolbar-tools" 
-												style="margin-top:15px" >
+				<md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+												 >
 										{{translate.load("sbi.roles.save");}}
 				</md-toolbar>
 				
@@ -214,8 +213,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.saveSubobj")}}</label>
 			       </div> 
 			   </div>
-			   <md-toolbar class="md-blue minihead md-toolbar-tools" 
-												style="margin-top:15px" >
+			   <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+												 >
 										{{translate.load("sbi.roles.see");}}
 				</md-toolbar>
 				
@@ -271,8 +270,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       </div>
 			   </div>
 			   
-			    <md-toolbar class="md-blue minihead md-toolbar-tools" 
-												style="margin-top:15px" >
+			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+												 >
 										{{translate.load("sbi.roles.send");}}
 				</md-toolbar>
 				 <div layout="row" layout-wrap>
@@ -285,8 +284,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.sendMail")}}</label>
 			       </div>
 			   </div>
-			    <md-toolbar class="md-blue minihead md-toolbar-tools" 
-												style="margin-top:15px" >
+			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+												 >
 										{{translate.load("sbi.roles.build");}}
 				</md-toolbar>
 				 <div layout="row" layout-wrap>
@@ -299,8 +298,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.buildQbe")}}</label>
 			       </div>
 			   </div>
-			    <md-toolbar class="md-blue minihead md-toolbar-tools" 
-												style="margin-top:15px" >
+			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+												 >
 										{{translate.load("sbi.roles.export");}}
 				</md-toolbar>
 				 <div layout="row" layout-wrap>
@@ -316,12 +315,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			  
 			   
 
-				</div>
-				<!-- right column -->
-				<div style="flex-grow: 1; margin-left:5px; ">
 				
-				 <md-toolbar class="md-blue minihead md-toolbar-tools" 
-												style="margin-top:15px" >
+				
+				 <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+												 >
 										{{translate.load("sbi.roles.manage");}}
 				</md-toolbar>
 				 <div layout="row" layout-wrap>
@@ -355,8 +352,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       </div> 
 			   </div>
 				
-				<md-toolbar class="md-blue minihead md-toolbar-tools" 
-												style="margin-top:15px" >
+				<md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+												 >
 										{{translate.load("sbi.roles.edit");}}
 				</md-toolbar>
 				 <div layout="row" layout-wrap>
@@ -369,8 +366,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.worksheet")}}</label>
 			       </div> 
 			   </div>
-			    <md-toolbar class="md-blue minihead md-toolbar-tools" 
-												style="margin-top:15px" >
+			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+												 >
 										{{translate.load("sbi.roles.enable");}}
 				</md-toolbar>
 				 <div layout="row" layout-wrap>
@@ -383,8 +380,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.enableDatasetPersistence")}}</label>
 			       </div> 
 			   </div>
-			   <md-toolbar class="md-blue minihead md-toolbar-tools" 
-												style="margin-top:15px" >
+			   <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+												 >
 										{{translate.load("sbi.roles.view");}}
 				</md-toolbar>
 				 <div layout="row" layout-wrap>
@@ -398,8 +395,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       </div> 
 			   </div>
 				
-				 <md-toolbar class="md-blue minihead md-toolbar-tools" 
-												style="margin-top:15px" >
+				 <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+												 >
 										{{translate.load("sbi.roles.finalUserCan");}}
 				</md-toolbar>
 				 <div layout="row" layout-wrap>
@@ -493,8 +490,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       </div> 
 			   </div>
 				
-				</div>
-				</div>
+			
+				
 				</md-card>
 				 </md-content> </md-tab> 
 				<md-tab
@@ -503,11 +500,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				flex  
 				class="ToolbarBox miniToolbar noBorder mozTable">
 				 <md-card>
-				<md-toolbar class="md-blue minihead md-toolbar-tools" 
-												style="margin-top:15px" >
+				<md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+												 >
 										{{translate.load("sbi.roles.businessModels.categories");}}
 				</md-toolbar>
-				
+				<md-card-content>
 				<angular-table
 				layout-fill id="rolesMetaModelCategories_id" ng-model="roleMetaModelCategories"
 				columns='[
@@ -515,6 +512,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							 ]'
 				selected-item="category" highlights-selected-item=true
 				multi-select="true"> </angular-table>
+				</md-card-content>
 		    </md-card>		
 			</md-content> </md-tab>
 			<md-tab
@@ -523,8 +521,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				flex  
 				class="ToolbarBox miniToolbar noBorder mozTable">
 				 <md-card>
-				<md-toolbar class="md-blue minihead md-toolbar-tools" 
-												style="margin-top:15px" >
+				<md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+												 >
 										{{translate.load("sbi.roles.datasets.categories");}}
 				</md-toolbar>
 				
@@ -534,6 +532,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							{"label":"NAME","name":"VALUE_NM","size":"50px"}
 							 ]'
 				selected-item="ds_category" highlights-selected-item=true
+				no-pagination=false
 				multi-select="true"> </angular-table>
 		    </md-card>		
 			</md-content> </md-tab>
