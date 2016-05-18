@@ -440,6 +440,7 @@ public class SpagoBIConstants {
 	public static final String DROP_TEMPORARY_TABLE_ON_EXIT = "SBI_DROP_TEMPORARY_TABLE_ON_EXIT";
 
 	public static final String CHART_TYPE_CODE = "CHART";
+	public static final String COCKPIT_ENGINE_NAME = "Cockpit Engine";
 
 	public static final String MONDRIAN_SCHEMA = "MONDRIAN_SCHEMA";
 	public static final String MONDRIAN_CUBE = "cube";

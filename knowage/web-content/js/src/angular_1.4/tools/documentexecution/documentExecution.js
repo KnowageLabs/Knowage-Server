@@ -14,22 +14,26 @@
 	}]);
 
 	documentExecutionApp.controller( 'documentExecutionController', 
-			['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices','sbiModule_user', 
+			['$scope', '$http', '$mdSidenav', '$mdDialog', '$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_user', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
-			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService','infoMetadataService','sbiModule_download','$crossNavigationScope',
-			 'docExecute_dependencyService','$timeout','docExecute_exportService','$filter','sbiModule_dateServices',documentExecutionControllerFn]);
+			 'documentExecuteServices', 'docExecute_urlViewPointService', 'docExecute_paramRolePanelService', 'infoMetadataService', 'sbiModule_download', '$crossNavigationScope',
+			 'docExecute_dependencyService', '$timeout', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing',
+			 documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
-			$scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices,sbiModule_user, sbiModule_config,
-			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine,documentExecuteServices
-			,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download,$crossNavigationScope,docExecute_dependencyService,$timeout,docExecute_exportService,$filter,sbiModule_dateServices) {
+			$scope, $http, $mdSidenav, $mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices,sbiModule_user, sbiModule_config,
+			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine, documentExecuteServices,
+			docExecute_urlViewPointService, docExecute_paramRolePanelService, infoMetadataService, sbiModule_download, $crossNavigationScope,
+			docExecute_dependencyService, $timeout, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing) {
 
 		console.log("documentExecutionControllerFn IN ");
+		
+		$scope.execProperties = execProperties;
+		$scope.cockpitEditing = cockpitEditing;
 		$scope.executionInstance = execProperties.executionInstance || {};
 		$scope.roles = execProperties.roles;
 		$scope.selectedRole = execProperties.selectedRole;
 		$scope.execContextId = "";
-		//$scope.documentUrl="";
 		$scope.showSelectRoles = true;
 		$scope.translate = sbiModule_translate;
 		$scope.documentParameters = execProperties.parametersData.documentParameters;
@@ -157,8 +161,8 @@
 	 /*
 	  * WATCH ON VISUAL DEPENDENCIES PARAMETER OBJECT
 	  */
-	  $scope.$watch( function() {
-		  return $scope.dependenciesService.observableVisualParameterArray;
+		$scope.$watch( function() {
+			return $scope.dependenciesService.observableVisualParameterArray;
 		},
 		function(newValue, oldValue) {
 			if (!angular.equals(newValue, oldValue)) {
@@ -167,7 +171,7 @@
 						docExecute_dependencyService.visualCorrelationWatch(newValue[i]);
 						break;
 					}
-					
+
 				}
 			}
 		},true);
@@ -175,8 +179,8 @@
 	     /*
 		  * WATCH ON DATA DEPENDENCIES PARAMETER OBJECT
 		  */
-	  $scope.$watch( function() {
-		  return $scope.dependenciesService.observableDataDependenciesArray;
+		$scope.$watch( function() {
+			return $scope.dependenciesService.observableDataDependenciesArray;
 		},
 		function(newValue, oldValue) {
 			if (!angular.equals(newValue, oldValue)) {
@@ -186,20 +190,16 @@
 						docExecute_dependencyService.dataDependenciesCorrelationWatch(newValue[i]);		
 						break;
 					}
-					
+
 				}
 			}
 		},true);
 	  
-	  
-		
-		
-		
 		//ranking document
 		$scope.rankDocument = function() {
 			var obj = {
 					'obj':$scope.executionInstance.OBJECT_ID
-					};
+			};
 			sbiModule_restServices.promisePost("documentrating", "getvote",obj).then(function(response) { 
 				//angular.copy(response.data,$scope.rankDocumentSaved);
 				$scope.rankDocumentSaved = response.data;
@@ -242,31 +242,28 @@
 					params= typeof params === 'undefined' ? {} : params;
 					sendmailctl.mail.parameters = params;
 					sendmailctl.submit = function() {
-						sbiModule_restServices.promisePost(
-								"1.0/documentexecutionmail",
-								"sendMail", sendmailctl.mail)
+						sbiModule_restServices
+						.promisePost("1.0/documentexecutionmail", "sendMail", sendmailctl.mail)
 						.then(
-							function(response) {
+								function(response) {
 									$mdDialog.hide();
 									documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.sendmail.success"), 3000);
-							},
-						function(response){
-								documentExecuteServices.showToast(response.data.errors);
-							}	
+								},
+								function(response){
+									documentExecuteServices.showToast(response.data.errors);
+								}	
 						);
 					};
-					
+
 					sendmailctl.annulla = function($event) {
 						$mdDialog.hide();
 					};
 				},
 
 				templateUrl : sbiModule_config.contextName 
-					+ '/js/src/angular_1.4/tools/documentexecution/templates/documentSendMail.html'
+				+ '/js/src/angular_1.4/tools/documentexecution/templates/documentSendMail.html'
 			});
-		}
-		
-		
+		};
 		
 		//note document
 		$scope.noteDocument = function() {
@@ -274,19 +271,19 @@
 			sbiModule_restServices
 			.promisePost("documentnotes", 'getNote',obj)
 			.then(
-				function(response) {
-					if (response.data.hasOwnProperty("errors")) {
-						$scope.showAction(response.data);
-					} else {
-						console.log(response);
-						angular.copy(response.data,$scope.noteLoaded);
-						$scope.contentNotes = $scope.noteLoaded.nota;
-						$scope.profile = response.data.profile;
-					}
-				},
-				function(response) {
-					$scope.errorHandler(response.data,"");
-				});
+					function(response) {
+						if (response.data.hasOwnProperty("errors")) {
+							$scope.showAction(response.data);
+						} else {
+							console.log(response);
+							angular.copy(response.data,$scope.noteLoaded);
+							$scope.contentNotes = $scope.noteLoaded.nota;
+							$scope.profile = response.data.profile;
+						}
+					},
+					function(response) {
+						$scope.errorHandler(response.data,"");
+					});
 
 			$mdDialog.show({
 				controller: noteControllerFunction,
@@ -338,7 +335,7 @@
 				}else{
 					docExecute_urlViewPointService.executionProcesRestV1(role, documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters));
 				}
-					 
+
 			}
 			console.log("changeRole OUT ");
 		};
@@ -370,15 +367,13 @@
 					docExecute_dependencyService.visualCorrelationWatch(parameter);
 				}
 			}
-			
-			
 		};
 
 		$scope.printDocument = function() {
 			var frame = window.frames["documentFrame"];
 			if(frame.print) {
 				frame.print();
-			}else if(frame.contentWindow) {
+			} else if(frame.contentWindow) {
 				frame.contentWindow.print();
 			}
 		};
@@ -386,9 +381,10 @@
 		$scope.closeDocument = function() {
 			$crossNavigationScope.closeDocument($scope.executionInstance.OBJECT_ID);  
 		};
+
 		$scope.isCloseDocumentButtonVisible=function(){
 			return $crossNavigationScope.isCloseDocumentButtonVisible();  
-		}
+		};
 
 		$scope.iframeOnload = function(){
 			docExecute_urlViewPointService.frameLoaded = true;
@@ -399,11 +395,11 @@
 		
 		$scope.navigateTo= function(outputParameters,inputParameters){
 			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,inputParameters);
-		}
+		};
 		
 		$scope.internalNavigateTo= function(params,targetDocLabel){
 			$crossNavigationScope.crossNavigationHelper.internalNavigateTo(params,targetDocLabel);
-		}
+		};
 		 
 		console.log("documentExecutionControllerFn OUT ");
 	};
@@ -411,8 +407,8 @@
 	documentExecutionApp.directive('iframeSetDimensionsOnload', ['docExecute_urlViewPointService',function(docExecute_urlViewPointService) {
 		return {
 			scope: {
-		        iframeOnload: '&?'
-		    },
+				iframeOnload: '&?'
+			},
 			restrict: 'A',
 			link: function(scope, element, attrs) {
 				element.on('load', function() {
@@ -420,7 +416,7 @@
 					element.css('height', iFrameHeight);				
 					element.css('width', '100%');
 					if(scope.iframeOnload)
-						 scope.iframeOnload();
+						scope.iframeOnload();
 				});
 			}
 		};
@@ -431,8 +427,8 @@
 var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, target){
 	var jsonEncodedParams=JSON.parse('{"' + decodeURI(params).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"').replace(/\s/g,'') + '"}');
 	angular.element(frameElement).scope().$parent.internalNavigateTo(jsonEncodedParams,doclabel);
-}
+};
 
 var execExternalCrossNavigation=function(outputParameters,inputParameters){ 
 	angular.element(frameElement).scope().$parent.navigateTo(outputParameters,inputParameters);
-}
+};

@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.BIObject"%>
 <%@page import="it.eng.spagobi.commons.utilities.ObjectsAccessVerifier"%>
+<%@page import="it.eng.spagobi.engines.config.bo.Engine"%>
 <%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
 
 <%@ page language="java" pageEncoding="utf-8" session="true"%>
@@ -31,6 +32,9 @@ String objLabel = null;
 IEngUserProfile profile = null;
 List<String> executionRoleNames = new ArrayList();
 
+Engine executingEngine = null;
+String engineName = null;
+
 try{
 	profile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	
@@ -38,7 +42,11 @@ try{
 	objId = new Integer(request.getParameter("OBJECT_ID"));
 	objLabel = request.getParameter("OBJECT_LABEL");
 	
+	executingEngine = obj.getEngine();
+	engineName = executingEngine.getName();
+	
 	executionRoleNames = ObjectsAccessVerifier.getCorrectRolesForExecution(objId, profile);
+	
 }catch (Throwable t) {
 	
 }
@@ -102,11 +110,25 @@ try{
 	                	{{::translate.load("sbi.generic.document")}}: {{executionInstance.OBJECT_LABEL}}
 	                </h2>
 	                <cross-navigation cross-navigation-helper="crossNavigationScope.crossNavigationHelper" flex>
-					<cross-navigation-bread-crumb id="clonedCrossBreadcrumb"> </cross-navigation-bread-crumb>
+						<cross-navigation-bread-crumb id="clonedCrossBreadcrumb"> </cross-navigation-bread-crumb>
 	 				</cross-navigation>
 		
 	                <span flex=""></span>
 	                
+	<% if(engineName.equalsIgnoreCase( SpagoBIConstants.COCKPIT_ENGINE_NAME)
+							&& userId.equals(obj.getCreationUser())) {%>
+	                <md-button ng-if="cockpitEditing.documentMode == 'EDIT'" class="md-icon-button" ng-click="::cockpitEditing.stopCockpitEditing()"
+							aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}"
+	                		title="{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}">
+						 <md-icon md-font-icon="fa fa-times-circle"></md-icon>
+					</md-button>
+	                <md-button ng-if="cockpitEditing.documentMode != 'EDIT'" class="md-icon-button" ng-click="::cockpitEditing.startCockpitEditing()"
+							aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.editcockpitdoc')}}"
+	                		title="{{::translate.load('sbi.execution.executionpage.toolbar.editcockpitdoc')}}">
+						 <md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
+					</md-button>
+	<%} %>
+					
 	                <md-button class="md-icon-button" aria-label="{{::translate.load('sbi.generic.helpOnLine')}}" ng-click="openHelpOnLine()"
 	                		title="{{::translate.load('sbi.generic.helpOnLine')}}">
 						 <md-icon md-font-icon="fa fa-book"></md-icon>
@@ -216,7 +238,7 @@ try{
 		      		<div layout="row" flex layout-align="center center" ng-hide="urlViewPointService.frameLoaded">
 			      		<md-progress-circular md-mode="indeterminate" md-diameter="70" ></md-progress-circular>
 					</div>
-					<iframe class="noBorder" id="documentFrame" ng-src="{{urlViewPointService.documentUrl}}" iframe-onload="iframeOnload()"
+					<iframe class="noBorder" id="documentFrame" ng-src="{{execProperties.documentUrl}}" iframe-onload="iframeOnload()"
 							iframe-set-dimensions-onload flex="grow" ng-show="urlViewPointService.frameLoaded">
 					</iframe>
 				</md-content>
@@ -245,12 +267,16 @@ try{
 			angular.module('documentExecutionModule', 
 					['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list','cross_navigation']);
 			
+			angular.module('documentExecutionModule').config(['$compileProvider', function ($compileProvider) {
+				  $compileProvider.debugInfoEnabled(false);
+			}]);
+			
 			angular.module('documentExecutionModule').factory('execProperties', function() {
 				 
 				var selRole= '<%= request.getParameter("SELECTED_ROLE") %>'=='null' ? '' : '<%= request.getParameter("SELECTED_ROLE") %>';
 				var crossParams= <%= request.getParameter("CROSS_PARAMETER") %>==null ? {} : <%= request.getParameter("CROSS_PARAMETER") %>;
 				
-				 var obj = {
+				var obj = {
 					roles: [<%for(Object roleObj : executionRoleNames) out.print("'" + (String)roleObj + "',");%>],
 					executionInstance: {
 						'OBJECT_ID' : <%= request.getParameter("OBJECT_ID") %>,
@@ -266,6 +292,7 @@ try{
 					parametersData: {
 						documentParameters: []
 					},
+					documentUrl : '',
 					selectedRole : {name : selRole },
 	 				currentView :  {status : "DOCUMENT"},
 	 				parameterView : {status : ""},
@@ -276,6 +303,71 @@ try{
  					returnFromViewpoint : {status : false}
 				};
 				return obj;
+			});
+			
+			angular.module('documentExecutionModule').service('cockpitEditing',
+					function($mdToast, execProperties, sbiModule_restServices, sbiModule_config, $filter) {
+	<% 
+	if(engineName.equalsIgnoreCase( SpagoBIConstants.COCKPIT_ENGINE_NAME)
+		&& userId.equals(obj.getCreationUser())) { 
+	%>
+				
+				var cockpitEditingService = this;
+				
+				cockpitEditingService.documentMode = 'VIEW';
+				
+				cockpitEditingService.startCockpitEditing = function() {
+					cockpitEditingService.documentMode = 'EDIT';
+					//cockpitEditingService.synchronize(this.controller, this.executionInstance);
+				   	
+					var newUrl = cockpitEditingService.changeDocumentExecutionUrlParameter('documentMode', cockpitEditingService.documentMode);
+				   	//cockpitEditingService.controller.getFrame().setSrc(newUrl);
+					execProperties.documentUrl = newUrl;
+				};
+				
+				cockpitEditingService.stopCockpitEditing = function() {
+					cockpitEditingService.documentMode = 'VIEW';
+					//cockpitEditingService.synchronize(this.controller, this.executionInstance);
+				   	
+					var newUrl = cockpitEditingService.changeDocumentExecutionUrlParameter('documentMode', cockpitEditingService.documentMode);
+				   	//cockpitEditingService.controller.getFrame().setSrc(newUrl);
+					execProperties.documentUrl = newUrl;
+				};
+				
+				cockpitEditingService.changeDocumentExecutionUrlParameter = function(parameterName, parameterValue) {
+				    var docurl = execProperties.documentUrl;
+				    var startIndex = docurl.indexOf('?') + 1;
+				    var endIndex = docurl.length;
+				    var baseUrl = docurl.substring(0, startIndex);
+				    var docUrlPar = docurl.substring(startIndex, endIndex);
+				    
+				    docUrlPar = docUrlPar.replace(/\+/g, " ");
+				    
+				    var parameterNameLastIndexOf = docUrlPar.lastIndexOf(parameterName);
+				    
+			    	
+				    if(parameterNameLastIndexOf == -1) {
+				    	docUrlPar = docUrlPar.replace(/&$/g, "");
+				    	docUrlPar += ("&" + parameterName + "=" + parameterValue);
+				    	
+				    } else {
+				    	var initialUrlPar = docUrlPar.substring(0, parameterNameLastIndexOf);
+				    	var middleUrlPar = docUrlPar.substring(parameterNameLastIndexOf);
+				    	
+				    	var ampersandCharIndexOf = middleUrlPar.indexOf('&') != -1 ? middleUrlPar.indexOf('&') : middleUrlPar.length;
+				    	var lastUrlPar = middleUrlPar.substring(ampersandCharIndexOf);
+				    	
+				    	middleUrlPar = (parameterName + "=" + parameterValue);
+				    	
+				    	docUrlPar = initialUrlPar + middleUrlPar + lastUrlPar;
+				    }
+				    
+				    var endUrl = baseUrl + docUrlPar;
+				    
+				    return endUrl;
+				};
+				
+	<%} %>
 			});
 
 		})();

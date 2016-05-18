@@ -69,12 +69,17 @@ Sbi.widgets.SaveDocumentWindow = function(config) {
 				, handler: this.saveDocument
 				, scope: this
 				, text: LN('sbi.generic.save')
-	           },{
-				  iconCls: 'icon-saveAndGoBack'
-				, handler: this.saveDocumentAndGoBack
-				, scope: this
-				, text: LN('sbi.generic.saveAndGoBack')
-	           }, {
+	           },
+
+        // it doesn't serve anymore because of new Knowage angularJs doc browser
+//	        {
+//				  iconCls: 'icon-saveAndGoBack'
+//				, handler: this.saveDocumentAndGoBack
+//				, scope: this
+//				, text: LN('sbi.generic.saveAndGoBack')
+//	        }, 
+	           
+	        {
                	text:  LN('sbi.generic.cancel')
               , handler: this.closeWin
               , scope: this
