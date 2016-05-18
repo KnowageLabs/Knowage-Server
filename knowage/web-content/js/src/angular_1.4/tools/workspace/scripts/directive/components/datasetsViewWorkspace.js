@@ -25,7 +25,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.endPreviewIndex=0;
     $scope.totalItemsInPreview=0;
     $scope.previewPaginationEnabled=true; 
-    console.log(datasetParameters);
+//    console.log(datasetParameters);
     $scope.itemsPerPage=15;
     $scope.datasetInPreview=undefined;
     

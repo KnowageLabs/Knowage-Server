@@ -26,10 +26,7 @@ angular
 
 function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,sbiModule_user,$mdDialog,$mdSidenav,$documentViewer) {
 	
-	$scope.allAnalysisDocsInitial = [];
-	$scope.cockpitAnalysisDocsInitial = [];
-	$scope.geoAnalysisDocsInitial = [];
-	
+	$scope.cockpitAnalysisDocsInitial = [];	
 	$scope.activeTabAnalysis = null;
 	
 	$scope.loadAllMyAnalysisDocuments = function() {
@@ -40,54 +37,33 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 					function(response) {
 						
 						/**
-						 * Take all Analysis documents (cockpit, geo and ad hoc) and keep them in signle
-						 * array, which serves for displaying all of them.
+						 * TODO: Provide a comment
 						 */
 						angular.copy(response.data.root,$scope.allAnalysisDocs);
 						
 						var tempDocumentType = "";
 						
 						/**
-						 * Additional three arrays for another three criteria (except the one that hold all 
-						 * analysis files - category ALL): COCKPIT, GEO and AD HOC. These are going to hold
-						 * data about all files that belong to each of those three categories.
+						 * TODO: Provide a comment
 						 */
 						for(var i=0; i<$scope.allAnalysisDocs.length; i++) {
 							
 							tempDocumentType = $scope.allAnalysisDocs[i].typeCode;							
 							
 							switch(tempDocumentType.toUpperCase()) {	
-							
-								/**
-								 * KNOWAGE-859: Remove AD HOC reports option (tab).
-								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-								 */
-								case "WORKSHEET": 
-//									$scope.adhocReportAnalysisDocs.push($scope.allAnalysisDocs[i]); 
-									/**
-									 * Remove all AD HOC reports available in analysis documents from an
-									 * array of all documents for Analysis perspective.
-									 */
-									$scope.allAnalysisDocs.splice(i,1);
-									break;
-									
+																
 								case "DOCUMENT_COMPOSITE": 
 									$scope.cockpitAnalysisDocs.push($scope.allAnalysisDocs[i]); 
 									break;	
-									
-								case "MAP": 
-									$scope.geoAnalysisDocs.push($scope.allAnalysisDocs[i]); 
-									break;
 									
 							}
 							
 						}
 						
-						angular.copy($scope.allAnalysisDocs,$scope.allAnalysisDocsInitial);
 						angular.copy($scope.cockpitAnalysisDocs,$scope.cockpitAnalysisDocsInitial);
-						angular.copy($scope.geoAnalysisDocs,$scope.geoAnalysisDocsInitial);
+						console.log($scope.cockpitAnalysisDocs);
 						
-						console.info("[LOAD END]: Loading of Analysis documents is finished.");
+						console.info("[LOAD END]: Loading of Analysis Cockpit documents is finished.");
 					},
 					
 					function(response) {
@@ -95,18 +71,6 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 					}
 				);
 	}
-	
-	/**
-	 * Set the currently active tab of the Analysis perspective in order to
-	 * enable managing of visibility of "Add analysis document" button. This
-	 * button should not be visible if the user is seeing all the documents.
-	 * NOTE: $scope.activeTabAnalysis is defined inside the main controller
-	 * of the Workspace (controllerWorkspace.js).
-	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	 */
-	$scope.setActiveTabState = function(item) {		
-		$scope.activeTabAnalysis = item.toUpperCase();
-	};
 	
 	/**
 	 * Clone a particular Analysis document.
@@ -133,19 +97,11 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 						.promisePost("documents","clone?docId="+document.id)
 						.then(
 								function(response) {
-								
-									$scope.allAnalysisDocs.push(response.data);
-									angular.copy($scope.allAnalysisDocs,$scope.allAnalysisDocsInitial);
 									
 									if (document.typeCode == "DOCUMENT_COMPOSITE") { 
 										$scope.cockpitAnalysisDocs.push(response.data);
 										angular.copy($scope.cockpitAnalysisDocs,$scope.cockpitAnalysisDocsInitial);
 									}
-									
-									if (document.typeCode == "MAP") { 
-										$scope.geoAnalysisDocs.push(response.data);
-										angular.copy($scope.geoAnalysisDocs,$scope.geoAnalysisDocsInitial);
-									} 
 									
 									console.info("[CLONE END]: The cloning of a selected '" + document.label + "' went successfully.");	
 								},
@@ -163,7 +119,7 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	 */
 	$scope.deleteAnalysisDocument = function(document) {
 				
-		console.info("[DELETE START]: Delete of Analysis document with the label '" + document.label + "' is started.");
+		console.info("[DELETE START]: Delete of Analysis Cockpit document with the label '" + document.label + "' is started.");
 		
 		var confirm = $mdDialog
 						.confirm()
@@ -178,25 +134,18 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 			.then(
 					function() {
 						
-						var indexInAll = $scope.allAnalysisDocs.indexOf(document);
 						var indexInCockpit = $scope.cockpitAnalysisDocs.indexOf(document);
-						var indexInGeo = $scope.geoAnalysisDocs.indexOf(document);
-						
-						var isDocInAll = indexInAll >= 0;
 						var isDocInCockpit = indexInCockpit >= 0;
-						var isDocInGeo = indexInGeo >= 0;
 						
 						sbiModule_restServices
 							.promiseDelete("1.0/documents", document.label)
 							.then(
 									function(response) {
 									
-										isDocInAll ? $scope.allAnalysisDocs.splice(indexInAll,1) : null;
 										isDocInCockpit ? $scope.cockpitAnalysisDocs.splice(indexInCockpit,1) : null;
-										isDocInGeo ? $scope.geoAnalysisDocs.splice(indexInGeo,1) : null;
 										
 										$scope.selectedDocument = undefined;	// TODO: Create and define the role of this property
-										console.info("[DELETE END]: Delete of Analysis document with the label '" + document.label + "' is done successfully.");
+										console.info("[DELETE END]: Delete of Analysis Cockpit document with the label '" + document.label + "' is done successfully.");
 									},
 								
 									function(response) {
@@ -210,44 +159,11 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	
 	/**
 	 * TODO:
-	 * Create a new Analysis document.
+	 * Create a new Cockpit document.
 	 */
 	$scope.addNewAnalysisDocument = function() {
-
-		if ($scope.activeTabAnalysis=="COCKPIT") {	
-			console.info("[NEW COCKPIT - START]: Open page for adding a new Cockpit document.");
-			window.location.href = sbiModule_config.engineUrls.cockpitServiceUrl + '&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";	
-		}
-		else if ($scope.activeTabAnalysis=="GEO") {
-//			alert("This button will add new GEO document.");
-			console.log("USAO 1");
-//			window.location.href = "AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&TYPE_DOC=GEO&MYANALYSIS=TRUE";
-			// Taken from the "AdhocreportingContainer.js"
-			window.location.href = 'AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&TYPE_DOC=GEO&MYANALYSIS=TRUE';
-//			sbiModule_restServices.promiseGet("selfservicedataset","").then(function(response) { console.log(response); }, function(reposnse) { console.log("BAD"); });
-		}
-		
-	}
-	
-	/**
-	 * Tooltip that will appear when the mouse is over the plus button for adding a new Cockpit/Geo map document.
-	 */
-	$scope.newAnalysisDocButtonTooltip = function() {
-		
-		/**
-		 * If we did not open the Analysis option yet, the Workspace's 'activeTabAnalysis' will be null (initialized value of the variable). Otherwise, it will contain 
-		 * one of three possible string values: ALL, COCKPIT, GEO.
-		 */
-		if ($scope.activeTabAnalysis!=null) {	
-			
-			/**
-			 * Provide first letter of the Analysis document type to capital.
-			 */
-			$scope.analysisDocTypeFirstCap = $scope.activeTabAnalysis.charAt(0).toUpperCase() + $scope.activeTabAnalysis.toLowerCase().slice(1);			
-			return "Add a new " + $scope.analysisDocTypeFirstCap  + " document";
-		
-		}				
-		
+		console.info("[NEW COCKPIT - START]: Open page for adding a new Cockpit document.");
+		window.location.href = sbiModule_config.engineUrls.cockpitServiceUrl + '&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";				
 	}
 	
 	/**
