@@ -546,7 +546,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			controller : function($mdDialog) {
 				var docCtrl = this;
 				
-				sbiModule_restServices.get("2.0/folders", "?includeDocs=true&requestor=scheduler")
+				sbiModule_restServices.get("scheduler/folders", "?includeDocs=true")
 					.success(function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
 							console.log("unable to load folders ", data.errors);

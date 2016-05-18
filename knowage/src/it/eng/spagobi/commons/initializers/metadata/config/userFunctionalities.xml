@@ -128,7 +128,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="InstallConfig" description="InstallConfig" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AlertManagement" description="AlertManagement" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="RegistryDataEntry" description="RegistryDataEntry" />
-	<!-- <USER_FUNCTIONALITY productType="KnowageSI" name="DocumentScheduling" description="DocumentScheduling" />  -->
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentScheduling" description="DocumentScheduling" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="SchedulingDistributedOutput" description="SchedulingDistributedOutput" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="MetaModelCwmExporting" description="MetaModelCwmExporting" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
@@ -194,7 +194,7 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="InstallConfig" description="InstallConfig" />
-	<!-- <USER_FUNCTIONALITY productType="KnowageER" name="DocumentScheduling" description="DocumentScheduling" /> -->
+	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentScheduling" description="DocumentScheduling" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="SchedulingDistributedOutput" description="SchedulingDistributedOutput" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="SharedDevelopment" description="SharedDevelopment" />
 	

@@ -25,6 +25,7 @@ import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getSched
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.toJsonTreeLowFunctionality;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -33,16 +34,20 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.JSONSerializer;
 import it.eng.spagobi.commons.serializer.JobJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
+import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.scheduler.Formula;
@@ -75,12 +80,15 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -1334,5 +1342,87 @@ public class SchedulerService {
 			}
 		}
 		return combinations;
+	}
+
+	@GET
+	@Path("/folders")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getFolders(@Context HttpServletRequest req, @DefaultValue("false") @QueryParam("includeDocs") Boolean recoverBIObjects,
+			@QueryParam("perm") String permissionOnFolder) {
+		logger.debug("IN");
+
+		try {
+			UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			ILowFunctionalityDAO dao = DAOFactory.getLowFunctionalityDAO();
+			dao.setUserProfile(profile);
+
+			List<LowFunctionality> allFolders = dao.loadAllLowFunctionalities(recoverBIObjects);
+			List<LowFunctionality> folders = new ArrayList<LowFunctionality>();
+
+			if (permissionOnFolder != null && !permissionOnFolder.isEmpty()) {
+				for (LowFunctionality lf : allFolders) {
+					if (ObjectsAccessVerifier.canSee(lf, profile) && checkPermissionOnFolder(permissionOnFolder, lf, profile)) {
+						filterBIObjectForScheduler(lf, profile);
+						folders.add(lf);
+					}
+				}
+			} else {
+				for (LowFunctionality lf : allFolders) {
+					if (ObjectsAccessVerifier.canSee(lf, profile)) {
+						filterBIObjectForScheduler(lf, profile);
+						folders.add(lf);
+					}
+				}
+			}
+			String jsonObjects = JsonConverter.objectToJson(folders, folders.getClass());
+
+			return Response.ok(jsonObjects).build();
+		} catch (Exception e) {
+			String errorString = "Error while getting the list of folders";
+			logger.error(errorString, e);
+			throw new SpagoBIRuntimeException(errorString, e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	private boolean checkPermissionOnFolder(String permission, LowFunctionality lf, UserProfile profile) {
+		boolean result = false;
+
+		switch (permission.toUpperCase()) {
+		case SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP:
+			result = ObjectsAccessVerifier.canDev(lf, profile);
+			break;
+		case SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST:
+			result = ObjectsAccessVerifier.canTest(lf, profile);
+			break;
+		case SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE:
+			result = ObjectsAccessVerifier.canExec(lf, profile);
+			break;
+		case SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE:
+			result = ObjectsAccessVerifier.canCreate(lf, profile);
+			break;
+		}
+
+		return result;
+	}
+
+	private void filterBIObjectForScheduler(LowFunctionality lf, UserProfile profile) throws EMFInternalError {
+		logger.debug("IN");
+		List<BIObject> documents = lf.getBiObjects();
+		if (documents != null && !documents.isEmpty()) {
+			if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_SCHEDULING)) {
+				logger.debug("The user [" + profile.getUserName() + "] is not be able to schedule all the documents, but only processes (ETL).");
+				Iterator<BIObject> iterator = documents.iterator();
+				while (iterator.hasNext()) {
+					BIObject document = iterator.next();
+					if (!document.getBiObjectTypeCode().equals("ETL")) {
+						logger.debug("Found a document with type [" + document.getBiObjectTypeCode() + "]. Removing it from the list...");
+						documents.remove(document);
+					}
+				}
+			}
+		}
+		logger.debug("OUT");
 	}
 }
