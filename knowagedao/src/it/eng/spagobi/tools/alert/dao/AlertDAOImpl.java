@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Session;
-import org.json.JSONObject;
 
 public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 
@@ -181,13 +180,15 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 					Calendar dateStartFreq = GregorianCalendar.getInstance(); // creates a new calendar instance
 					dateStartFreq.setTime(startTime); // assigns calendar to given date
 					alert.getFrequency().setStartTime(dateStartFreq.get(Calendar.HOUR_OF_DAY) + ":" + dateStartFreq.get(Calendar.MINUTE));
+					alert.getFrequency().setStartDate(dateStartFreq.getTime().getTime());
 					if (tr.getEndTime() != null) {
 						Date endTime = tr.getEndTime();
 						Calendar dateEndFreq = GregorianCalendar.getInstance(); // creates a new calendar instance
 						dateEndFreq.setTime(endTime); // assigns calendar to given date
 						alert.getFrequency().setEndTime(dateEndFreq.get(Calendar.HOUR_OF_DAY) + ":" + dateEndFreq.get(Calendar.MINUTE));
-						alert.getFrequency().setCron(tr.getChronExpression() != null ? new JSONObject(tr.getChronExpression()).toString() : null);
+						alert.getFrequency().setEndDate(dateEndFreq.getTime().getTime());
 					}
+					alert.getFrequency().setCron(tr.getChronExpression() != null ? tr.getChronExpression().getExpression().replace("'", "\"") : null);
 				}
 			} catch (Throwable e) {
 				throw new SpagoBIDOAException(e);
