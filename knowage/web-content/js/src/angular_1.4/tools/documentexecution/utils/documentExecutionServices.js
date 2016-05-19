@@ -322,13 +322,12 @@
 			
 //		dee.exportWorksheetsTo = function(mimeType, records){}
 			
+			
 		dee.exportOlapTo= function (format, contentUrl) {
-			var paramsExportType = '&cube=01';
-			if (format == "PDF") paramsExportType = paramsExportType + '&type=1';
-			else if(format == "XLS") paramsExportType = paramsExportType + '&type=0';
-			window.open(dee.getExportationUrl(format,paramsExportType,'knowagejpivotengine/Print') , 'name', 'resizable=1,height=750,width=1000');
+			var frame = window.frames["documentFrame"];
+			frame.contentWindow.downlf(format);
 		};
-
+			
 
 		dee.exportReportTo = function(format, contentUrl) {	
 			window.open(dee.getExportationUrl(format,'','/knowagebirtreportengine/BirtReportServlet') , 'name', 'resizable=1,height=750,width=1000');

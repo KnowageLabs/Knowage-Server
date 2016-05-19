@@ -147,7 +147,6 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		modelConfig.setScenario(template.getScenario());
 		modelConfig.setAliases(template.getAliases());
 
-		System.out.println(pivotModel);
 		
 		// init artifact informations
 		if (!template.isStandAlone()) {

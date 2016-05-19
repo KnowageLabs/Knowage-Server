@@ -17,9 +17,11 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
+import it.eng.spagobi.engines.whatif.export.ExportConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
@@ -349,7 +351,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	 */
 	@GET
 	@Path("/export/excel")
-	public byte[] exportExcel() {
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response exportExcel() {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
@@ -357,6 +360,13 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		ExcelExporter exporter = new ExcelExporter(out);
+		ExportConfig exportConfig =  WhatIfEngineConfig.getInstance().getExportProperties();
+		if(exportConfig.getFontFamily()!=null)
+			exporter.setFontFamily(exportConfig.getFontFamily());
+		if(exportConfig.getFontSize()!=null)
+			exporter.setFontSize(exportConfig.getFontSize());
+
+		
 		TableRenderer render = new TableRenderer();
 
 		// adds the calculated fields before rendering the model
@@ -366,15 +376,15 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		// restore the query without calculated fields
 		model.restoreQuery();
 		byte[] outputByte = out.toByteArray();
+		String fileName = getExportFileName()+ ".xls";
 
-		getServletResponse().addHeader("Content-type", MediaType.APPLICATION_OCTET_STREAM);
-		getServletResponse().addHeader("content-disposition", "attachment; filename = " + getExportFileName() + ".xls");
-		return outputByte;
+		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
 	}
 
 	@GET
 	@Path("/export/pdf")
-	public byte[] exportPdf() {
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response exportPdf() {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
@@ -383,6 +393,14 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		FopExporter exporter = new FopExporter(out);
 
+		ExportConfig exportConfig =  WhatIfEngineConfig.getInstance().getExportProperties();
+		if(exportConfig.getFontFamily()!=null)
+			exporter.setFontFamily(exportConfig.getFontFamily());
+		if(exportConfig.getFontSize()!=null)
+			exporter.setFontSize(exportConfig.getFontSize().toString());
+		if(exportConfig.getOrientation()!=null)
+			exporter.setOrientation(exportConfig.getOrientation());
+		
 		TableRenderer render = new TableRenderer();
 
 		// adds the calculated fields before rendering the model
@@ -393,9 +411,9 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		// restore the query without calculated fields
 		model.restoreQuery();
 		byte[] outputByte = out.toByteArray();
-		getServletResponse().addHeader("Content-type", MediaType.APPLICATION_OCTET_STREAM);
-		getServletResponse().addHeader("content-disposition", "filename = " + getExportFileName() + ".pdf");
-		return outputByte;
+		String fileName = getExportFileName()+ ".pdf";
+
+		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
 	}
 
 	/**

@@ -18,7 +18,6 @@
 
 package it.eng.spagobi.engines.whatif;
 
-import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.PivotJsonSerializer;
 import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -26,7 +25,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.olap4j.OlapConnection;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)

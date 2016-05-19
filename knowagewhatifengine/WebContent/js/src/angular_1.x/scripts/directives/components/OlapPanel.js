@@ -9,9 +9,43 @@ angular.module('olap_panel',[])
 	}
 });
 
+var downlf;
 function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate,toastr,$cookies,sbiModule_docInfo,sbiModule_config) {
 	
 	
+	downlf=function(type){
+		$scope.exportOlap(type);
+	}
+	
+	$scope.exportOlap = function(type) {
+		var encoded = encodeURI('1.0/model/export/excel?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+		if(type=="PDF"){
+			encoded = encodeURI('1.0/model/export/pdf?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+		}
+		
+		window.open(sbiModule_restServices.getCompleteBaseUrl(encoded));
+		/*("1.0", encoded)
+		.then(function(response) {
+			console.log(response);
+			$scope.dtTree = response.data;
+		    }, function(response) {
+			sbiModule_messaging.showErrorMessage("error", 'Error');
+			
+				});*/
+		}
+	
+	$scope.getCollections = function() {
+		var encoded = encodeURI('/member/drilltrough/levels/?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+		sbiModule_restServices.promiseGet
+		("1.0", encoded)
+		.then(function(response) {
+			console.log(response);
+			$scope.dtTree = response.data;
+		    }, function(response) {
+			sbiModule_messaging.showErrorMessage("error", 'Error');
+			
+				});
+		}
 	
 	$scope.drillDown = function(axis, position, member, uniqueName,positionUniqueName) {
 		

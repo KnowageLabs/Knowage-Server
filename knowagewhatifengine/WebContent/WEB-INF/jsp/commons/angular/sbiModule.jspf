@@ -28,7 +28,10 @@ sbiM.factory('sbiModule_docInfo',function(){
 
 sbiM.factory('sbiModule_config',function(){
 	return {
-    	contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
+		protocol: '<%= request.getScheme()%>' ,
+		host: '<%= request.getServerName()%>',
+	    port: '<%= request.getServerPort()%>',
+		contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
     	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>"		
 	};
 });
@@ -132,7 +135,16 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiM
 		alteredContextPath=null;
 		return burl ;
 	};
+	
+	this.getCompleteBaseUrl = function(endP_path) {		
+		var burl= alteredContextPath==null? sbiModule_config.contextName +'/restful-services/'+ endP_path  : alteredContextPath+ "/restful-services/" + endP_path 
+		alteredContextPath=null;
+		burl = sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+burl;
+		return burl ;
+	};
 
+	
+	
 	this.get = function(endP_path, req_Path, item, conf) {
 		(item == undefined || item==null) ? 
 				item = "" : 

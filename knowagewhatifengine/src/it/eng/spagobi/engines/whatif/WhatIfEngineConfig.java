@@ -22,6 +22,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.engines.whatif.export.ExportConfig;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.services.common.EnginConf;
@@ -116,7 +117,11 @@ public class WhatIfEngineConfig {
 	private final static String DEFAULT_ATTRIBUTE = "default";
 	private final static String DEPTHLIMIT_TAG = "DEPTHLIMIT";
 	private final static String DRILLTROUGH_MAX_ROWS_TAG = "DRILLTROUGH_MAX_ROWS";
-
+	private final static String EXPORT_TAG = "EXPORT_TAG";
+	private final static String EXPORT_FONT_SIZE_TAG = "fontSize";
+	private final static String EXPORT_FONT_FAMILY_TAG = "fontFamily";
+	private final static String EXPORT_ORIENTATION_TAG = "orientation";
+	
 	public String getTemplateFilePath() {
 		String templatePath = "";
 		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("TEMPLATE");
@@ -347,6 +352,22 @@ public class WhatIfEngineConfig {
 		return -1;
 	}
 
+	
+	public ExportConfig getExportProperties() {
+		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute(EXPORT_TAG);
+		
+		String fontSize=null;
+		String fontFamily=null;
+		String orientation=null;
+		
+		if (sb != null) {
+			fontSize = (String) sb.getAttribute(EXPORT_FONT_SIZE_TAG);
+			fontFamily = (String) sb.getAttribute(EXPORT_FONT_FAMILY_TAG);
+			orientation = (String) sb.getAttribute(EXPORT_ORIENTATION_TAG);
+		}
+		return new ExportConfig(fontFamily, fontSize, orientation);
+	}
+	
 	public int getDrillTroughMaxRows() {
 		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute(DRILLTROUGH_MAX_ROWS_TAG);
 		if (sb != null) {
