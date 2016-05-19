@@ -186,7 +186,7 @@ public class LovCRUD extends AbstractSpagoBIResource {
 			// int newID = modalitiesDAO.loadModalitiesValueByLabel(modVal.getLabel()).getId();
 
 			// return Response.ok().build();
-			System.out.println(modalitiesDAO.loadAllModalitiesValue().toString());
+			//System.out.println(modalitiesDAO.loadAllModalitiesValue().toString());
 			// return modalitiesDAO.loadAllModalitiesValue().toString();
 
 		} catch (Exception exception) {

@@ -268,7 +268,7 @@ public class ZipUtils {
 					byte[] tmp = new byte[4 * 1024];
 					FileOutputStream fos = null;
 					String opFilePath = "C:/" + zEntry.getName();
-					System.out.println("Extracting file to " + opFilePath);
+					//System.out.println("Extracting file to " + opFilePath);
 					fos = new FileOutputStream(opFilePath);
 					int size = 0;
 					while ((size = zipIs.read(tmp)) != -1) {

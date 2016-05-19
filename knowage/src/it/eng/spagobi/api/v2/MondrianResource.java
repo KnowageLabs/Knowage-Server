@@ -166,13 +166,13 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		Content content = artifactDAO.loadArtifactContentById(contentId);
 		byte[] file = content.getContent();
 		String s = new String(file);
-		System.out.println(s);
+		//System.out.println(s);
 		try {
 
 			ResponseBuilder response = Response.ok(file);
 			response.header("Content-Disposition", "attachment; filename=" + content.getFileName());
 			response.header("filename", content.getFileName());
-			System.out.println(uri.getAbsolutePath());
+			//System.out.println(uri.getAbsolutePath());
 			return response.build();
 
 		} catch (Exception e) {
@@ -244,13 +244,10 @@ public class MondrianResource extends AbstractSpagoBIResource {
 
 				artifactDAO.insertArtifactContent(artifactId, content);
 				String encodedContentId = URLEncoder.encode("" + content.getId(), "UTF-8");
-				System.out.println(new URI(uri.getAbsolutePath() + encodedContentId));
+				//System.out.println(new URI(uri.getAbsolutePath() + encodedContentId));
 			} catch (IOException e) {
 				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			} 
 
 		} else {
 			return Response.status(Status.BAD_REQUEST).build();
