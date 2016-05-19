@@ -17,12 +17,12 @@
  */
 package it.eng.spagobi.kpi.bo;
 
+import it.eng.spagobi.commons.bo.Domain;
+
 import java.io.Serializable;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import it.eng.spagobi.commons.bo.Domain;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Kpi implements Serializable {
@@ -37,6 +37,14 @@ public class Kpi implements Serializable {
 	private String author;
 	private Date dateCreation;
 
+	/**
+	 * If 'true' this is the last version of this Kpi
+	 */
+	private boolean active;
+
+	/**
+	 * If enableVersioning = true will not be allowed to disable it
+	 */
 	private boolean enableVersioning;
 
 	/**
@@ -170,16 +178,6 @@ public class Kpi implements Serializable {
 		this.category = category;
 	}
 
-	@Override
-	public int hashCode() {
-		return id == null ? super.hashCode() : id.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		return o instanceof Kpi && id != null && id.equals(((Kpi) o).getId());
-	}
-
 	/**
 	 * @return the threshold
 	 */
@@ -239,6 +237,62 @@ public class Kpi implements Serializable {
 	 */
 	public void setEnableVersioning(boolean enableVersioning) {
 		this.enableVersioning = enableVersioning;
+	}
+
+	/**
+	 * @return the active
+	 */
+	public boolean isActive() {
+		return active;
+	}
+
+	/**
+	 * @param active
+	 *            the active to set
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Kpi other = (Kpi) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
+			return false;
+		return true;
 	}
 
 }
