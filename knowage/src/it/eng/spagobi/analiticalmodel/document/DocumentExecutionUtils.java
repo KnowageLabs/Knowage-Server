@@ -241,7 +241,7 @@ public class DocumentExecutionUtils {
 	// public static ArrayList<HashMap<String, Object>> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter,
 	public static HashMap<String, Object> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter, HttpServletRequest req) {
 
-		return getLovDefaultValues(executionRole, biObject, objParameter, null, null, null, req);
+		return getLovDefaultValues(executionRole, biObject, objParameter, null, 0, null, req);
 	}
 
 	// public static ArrayList<HashMap<String, Object>> getLovDefaultValues(
