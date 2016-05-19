@@ -146,7 +146,7 @@ $scope.scorecardColumnsList=[
 	
 	$scope.loadScorecardList();
 	
-	$scope.scorecardListAction =  [{  label : 'Remove',
+	$scope.scorecardListAction =  [{  label :$scope.translate.load("sbi.generic.delete"),
 							        icon:'fa fa-trash' , 
 							        backgroundColor:'trasparent',
 							        action : function(item,event) { 
