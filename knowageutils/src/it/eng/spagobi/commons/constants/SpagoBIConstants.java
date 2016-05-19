@@ -496,6 +496,8 @@ public class SpagoBIConstants {
 	public static final String SCHEDULING_DISTRIBUTED_OUTPUT = "SchedulingDistributedOutput";
 	public static final String META_MODEL_CWM_EXPORTING = "MetaModelCwmExporting";
 	public static final String META_MODEL_SAVING_TO_RDBMS = "MetaModelSavingToRdbms";
+	public static final String META_MODEL_LIFECYCLE_MANAGEMENT = "MetaModelLifecycleManagement";
+
 	public static final String SHARED_DEVELOPMENT = "SharedDevelopment";
 
 	public static final String TEMPORAL_DIMENSION = "TemporalDimension";
