@@ -1,39 +1,51 @@
 <div layout="row">
 	
-	<md-toolbar layout-align="center" flex=45 class="documentBrowserToolbar" ng-cloak> MY WORKSPACE </md-toolbar>
-	
-	<customize-view-workspace></customize-view-workspace>
-	
-	<md-toolbar flex=5 class="md-toolbar-tools md-knowage-theme" layout="row" layout-align="end center" ng-cloak>
-	
-			<md-button 	ng-if="currentOptionMainMenu=='documents'" ng-click="" 
-						class="md-fab md-mini md-ink-ripple" style="top:0px;" ng-cloak>
-				<md-icon md-font-icon="fa fa-folder-o"></md-icon>
-			</md-button>
-	
-			<md-button 	ng-if="currentOptionMainMenu=='datasets' && currentTab=='myDataSet'" 
-						ng-click="addNewFileDataset()" class="md-fab md-mini md-ink-ripple" style="top:0px;right:0px;" ng-cloak>
-				<md-icon md-font-icon="fa fa-plus"></md-icon>
-			</md-button>
-	
-			<md-button 	ng-if="currentOptionMainMenu=='models' && currentTab=='federations'" ng-click="createFederation()" 
-						class="md-fab md-mini md-ink-ripple" style="top:0px;right:0px;" ng-cloak>
-				<md-icon md-font-icon="fa fa-plus"></md-icon>
-			</md-button>
-	
-			<!--
-				KNOWAGE-861: Change the icon for creation of analysis in the main toolbar.
-				Provide the Plus button for adding the new analysis document inside the Analysis perspective if the
-				active (selected) tab IS NOT "ALL" (for all available analysis documents). In other words, if the
-				currently active tab displays exclusively Cockpit or Geo map documents, we will be able to add a new
-				document of such a type (respectively to the tab which user selected).
-				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			-->
-			<md-button 	ng-if="currentOptionMainMenu=='analysis'" ng-click="addNewAnalysisDocument()" ng-cloak
-						class="md-fab md-mini md-ink-ripple" style="top:0px;right:0px;" title="Add a new Cockpit document"> 
-				<md-icon md-font-icon="fa fa-plus"></md-icon>
-			</md-button>
-	
-	</md-toolbar>
+	<md-toolbar class="documentBrowserToolbar" ng-cloak> 
+		
+		<div class="md-toolbar-tools" layout="row">
+			
+			<div flex=30>
+				<!-- Title -->
+				<h1>MY WORKSPACE</h1>
+			</div>
+		
+			<customize-view-workspace></customize-view-workspace>
+				
+			<div layout="row" layout-align="end center" flex>
+					      
+				<md-button 	ng-if="currentOptionMainMenu=='documents'" ng-click="" 
+							class="addNewDocumentButtonmd-fab md-mini md-ink-ripple" style="top:0px;right:-15px" ng-cloak>
+					<md-icon md-font-icon="fa fa-folder-o"></md-icon>
+				</md-button>
+		
+				<md-button 	ng-if="currentOptionMainMenu=='datasets' && currentTab=='myDataSet'" 
+							ng-click="addNewFileDataset()" class="md-fab md-mini md-ink-ripple" style="top:0px;right:-15px" ng-cloak>
+					<md-icon md-font-icon="fa fa-plus"></md-icon>
+				</md-button>
+		
+				<md-button 	ng-if="currentOptionMainMenu=='models' && currentTab=='federations'" ng-click="createFederation()" 
+							class="md-fab md-mini md-ink-ripple" style="top:0px;right:-15px" ng-cloak>
+					<md-icon md-font-icon="fa fa-plus"></md-icon>
+				</md-button>
+		
+				<!--
+					KNOWAGE-861: Change the icon for creation of analysis in the main toolbar.
+					Provide the Plus button for adding the new analysis document inside the Analysis perspective if the
+					active (selected) tab IS NOT "ALL" (for all available analysis documents). In other words, if the
+					currently active tab displays exclusively Cockpit or Geo map documents, we will be able to add a new
+					document of such a type (respectively to the tab which user selected).
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				-->
+				
+				<md-button 	 ng-if="currentOptionMainMenu=='analysis'" ng-click="addNewAnalysisDocument()" ng-cloak
+							class="addNewDocumentButton md-fab md-mini md-ink-ripple" title="Add a new Cockpit document"> 
+					<md-icon md-menu-origin md-font-icon="fa fa-plus" class="md-primary"></md-icon>
+				</md-button>
+				
+			</div>
+			
+		</div>	
+		
+	</md-toolbar>	
 	
 </div>
