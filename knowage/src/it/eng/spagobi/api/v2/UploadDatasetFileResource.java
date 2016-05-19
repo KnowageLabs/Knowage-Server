@@ -12,6 +12,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -28,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -53,14 +55,54 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 		List<InputPart> fileNamePart = uploadForm.get("fileName");
 		List<InputPart> fileParts = uploadForm.get("file");
+		FileOutputStream fileOuputStream = null;
 		byte[] bytes = null;
 		if (fileNamePart != null && fileParts != null) {
 			try {
-				// convert the uploaded file to input stream
+				String fileName = SpagoBIUtilities.getRelativeFileNames(fileNamePart.get(0).getBodyAsString());
+				// convert the uploaded file to input stream -> bytes
 				InputStream inputStream = fileParts.get(0).getBody(InputStream.class, null);
 				bytes = IOUtils.toByteArray(inputStream);
-				// code from UploadDatasetFileAction.java (inside doService from
-				// line 72 to line 102)
+
+				// save file into java temp directory
+				String path = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + fileName;
+				File tempFile = new File(path);
+
+				// convert array of bytes into file
+				fileOuputStream = new FileOutputStream(tempFile);
+				fileOuputStream.write(bytes);
+				fileOuputStream.close();
+
+				FileItem uploaded = new DiskFileItem("fileUpload", "application/octet-stream", false, fileName, DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD,
+						null);
+				uploaded.getOutputStream();
+
+				Object skipChecksObject = null;
+				Boolean skipChecks = false;
+				if (skipChecksObject != null) {
+					skipChecks = ((String) skipChecksObject).equals("on");
+				}
+				if (uploaded == null) {
+					throw new SpagoBIServiceException(getActionName(), "No file was uploaded");
+				}
+
+				checkDatasetFileMaxSize(uploaded, getUserProfile());
+
+				// check if the file is zip or gz
+				uploaded = checkArchiveFile(uploaded);
+
+				checkUploadedFile(uploaded);
+
+				File file = checkAndCreateDir(uploaded);
+
+				/*
+				 * if(!skipChecks){ checkFile(uploaded, file); }
+				 */
+
+				logger.debug("Saving file...");
+				saveFile(uploaded, file);
+				logger.debug("File saved");
+
 				return Response.ok().build();
 			} catch (Throwable t) {
 				logger.error("Error while uploading dataset file", t);
