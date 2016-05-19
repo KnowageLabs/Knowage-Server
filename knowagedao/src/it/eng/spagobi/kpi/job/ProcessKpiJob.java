@@ -540,6 +540,8 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 							for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
 								if ("TEMPORAL_ATTRIBUTE".equals(ruleOutput.getType().getValueCd())) {
 									String attributeName = ruleOutput.getAlias();
+									if (!groupByAttributes.contains(attributeName))
+										continue;
 
 									// YEAR, QUARTER, MONTH, WEEK, DAY
 									String attributeTemporalType = ruleOutput.getHierarchy().getValueCd();
@@ -751,20 +753,20 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				Object theYear = ifNull(temporalValues.get("YEAR"), "ALL");
 				String insertSql = "INSERT INTO SBI_KPI_VALUE (id, kpi_id, kpi_version, logical_key, time_run, computed_value,"
 						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (" + (++lastId) + ", " + parsedKpi.id + "," + parsedKpi.version
-						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "','" + isoNow + "'," + (nullValue ? "0" : value) + ",'" + theDay + "','"
-						+ theWeek + "','" + theMonth + "','" + theQuarter + "','" + theYear + "','" + (nullValue ? '1' : '0') + "')";
+						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "',?," + (nullValue ? "0" : value) + ",'" + theDay + "','" + theWeek + "','"
+						+ theMonth + "','" + theQuarter + "','" + theYear + "','" + (nullValue ? '1' : '0') + "')";
 				String whereCondition = "kpi_id = " + parsedKpi.id + " AND kpi_version = " + parsedKpi.version + " AND logical_key = '"
 						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + theDay + "' AND the_week = '" + theWeek + "'"
 						+ " AND the_month = '" + theMonth + "' AND the_quarter = '" + theQuarter + "' AND the_year = '" + theYear + "'";
 				String deleteSql = "DELETE FROM SBI_KPI_VALUE WHERE " + whereCondition;
-				String updateSql = "UPDATE SBI_KPI_VALUE SET computed_value = " + (nullValue ? "0" : value) + ", time_run = '" + isoNow + "', state='"
+				String updateSql = "UPDATE SBI_KPI_VALUE SET computed_value = " + (nullValue ? "0" : value) + ", time_run = ?, state='"
 						+ (nullValue ? '1' : '0') + "' WHERE " + whereCondition; // Currently unused
 
 				session.beginTransaction();
 				if (replaceMode) {
 					session.createSQLQuery(deleteSql).executeUpdate();
 				}
-				session.createSQLQuery(insertSql).executeUpdate();
+				session.createSQLQuery(insertSql).setParameter(0, timeRun).executeUpdate();
 				session.getTransaction().commit();
 				// break; // TODO remove after debug
 			}
