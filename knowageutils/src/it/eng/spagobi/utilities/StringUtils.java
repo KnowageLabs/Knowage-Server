@@ -18,6 +18,7 @@
 package it.eng.spagobi.utilities;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,7 +29,7 @@ import org.apache.log4j.Logger;
 
 /**
  * The Class StringUtils.
- *
+ * 
  * @author Andrea Gioia
  */
 public class StringUtils {
@@ -71,16 +72,16 @@ public class StringUtils {
 
 	/**
 	 * Replace parameters.
-	 *
+	 * 
 	 * @param filterCondition
 	 *            the filter condition
 	 * @param parameterTypeIdentifier
 	 *            the parameter type identifier
 	 * @param parameters
 	 *            the parameters
-	 *
+	 * 
 	 * @return the string
-	 *
+	 * 
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -103,16 +104,16 @@ public class StringUtils {
 
 	/**
 	 * Replace parameters.
-	 *
+	 * 
 	 * @param filterCondition
 	 *            the filter condition
 	 * @param parameterTypeIdentifier
 	 *            the parameter type identifier
 	 * @param parameters
 	 *            the parameters
-	 *
+	 * 
 	 * @return the string
-	 *
+	 * 
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -137,14 +138,14 @@ public class StringUtils {
 
 	/**
 	 * Gets the parameters.
-	 *
+	 * 
 	 * @param str
 	 *            the str
 	 * @param parameterTypeIdentifier
 	 *            the parameter type identifier
-	 *
+	 * 
 	 * @return the parameters
-	 *
+	 * 
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -167,7 +168,7 @@ public class StringUtils {
 
 	/**
 	 * Escapes the input string as a HQL static operand. At the time being, it replaces "'" with "''"
-	 *
+	 * 
 	 * @param parameter
 	 *            the parameter to be escaped
 	 * @return the escaped String
@@ -182,7 +183,7 @@ public class StringUtils {
 
 	/**
 	 * Joins the input string array into a unique string using the specified separator
-	 *
+	 * 
 	 * @param strings
 	 *            The strings to be joined
 	 * @param separator
@@ -199,11 +200,31 @@ public class StringUtils {
 	}
 
 	/**
+	 * Joins the input collection of string into a unique string using the specified separator
+	 * 
+	 * @param strings
+	 *            The collection to be joined
+	 * @param separator
+	 * @return Joins the input collection of string into a unique string using the specified separator
+	 */
+	public static String join(Collection<String> strings, String separator) {
+		StringBuffer sb = new StringBuffer();
+		Iterator<String> i = strings.iterator();
+		while (i.hasNext()) {
+			sb.append(i.next());
+			if (i.hasNext()) {
+				sb.append(separator);
+			}
+		}
+		return sb.toString();
+	}
+
+	/**
 	 * escape all the occurences of '. As escape char use ' so all the ' in the original string will be replaced with ''
-	 *
+	 * 
 	 * @param the
 	 *            string that must be escaped
-	 *
+	 * 
 	 * @return the escaped string
 	 */
 	public static String escapeQuotes(String str) {
@@ -212,14 +233,14 @@ public class StringUtils {
 
 	/**
 	 * escape all the occurences of c. As escape char use escapeChar so all the c in the original string will be replaced with escapeChar + c
-	 *
+	 * 
 	 * @param str
 	 *            the string that must be escaped
 	 * @param c
 	 *            the char to escape
 	 * @param escapeChar
 	 *            the char that will be use to escape
-	 *
+	 * 
 	 * @return the escaped string
 	 */
 	public static String escape(String str, char c, char escapeChar) {
@@ -238,7 +259,7 @@ public class StringUtils {
 
 	/**
 	 * Escapes the characters for the html code: ' --> &#39;
-	 *
+	 * 
 	 * @param str
 	 * @return
 	 */
@@ -249,7 +270,7 @@ public class StringUtils {
 
 	/**
 	 * The main method.
-	 *
+	 * 
 	 * @param args
 	 *            the arguments
 	 */
