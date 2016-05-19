@@ -27,7 +27,8 @@ angular.module('document_view', ['ngMaterial','sbiModule'])
 	}
 });
 
-function documentViewControllerFunction($scope,sbiModule_config){
+function documentViewControllerFunction($scope,sbiModule_config, sbiModule_translate){
+	$scope.translate = sbiModule_translate;
 	$scope.sbiModule_config=sbiModule_config;
 	$scope.clickDocument=function(item){
 		$scope.selectDocumentAction({doc: item});

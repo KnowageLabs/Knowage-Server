@@ -36,19 +36,19 @@
 			        
 			        
 			        <md-card-actions layout="row" layout-align="space-around end">
-			          <md-button title="Edit Document" class="md-icon-button" aria-label="edit" ng-click="editDocumentAction({doc:document});">
+			          <md-button title="{{translate.load('sbi.documentbrowser.edit')}}" class="md-icon-button" aria-label="edit" ng-click="editDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa  fa-pencil fa-2x"></md-icon>
 			          </md-button>
 			        	 
-			          <md-button title="Execute Document" class="md-icon-button" aria-label="Favorite" ng-click="executeDocumentAction({doc:document});">
+			          <md-button title="{{translate.load('sbi.documentbrowser.execute')}}" class="md-icon-button" aria-label="Favorite" ng-click="executeDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon>
 			          </md-button>
 			          
-			          <md-button title="Clone Document" class="md-icon-button" aria-label="Settings" ng-click="cloneDocumentAction({doc:document});">
+			          <md-button title="{{translate.load('sbi.documentbrowser.clone')}}" class="md-icon-button" aria-label="Settings" ng-click="cloneDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa fa-clone fa-2x"></md-icon>
 			          </md-button>
 			          
-			          <md-button title="Delete Document" class="md-icon-button" aria-label="Share" ng-click="deleteDocumentAction({doc:document});">
+			          <md-button title="{{translate.load('sbi.documentbrowser.delete')}}" class="md-icon-button" aria-label="Share" ng-click="deleteDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
 			          </md-button>
 			          

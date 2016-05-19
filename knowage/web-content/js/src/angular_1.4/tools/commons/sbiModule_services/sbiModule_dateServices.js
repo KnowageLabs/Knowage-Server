@@ -8,7 +8,8 @@ angular.module("sbiModule").service("sbiModule_dateServices",function(sbiModule_
 	}
 	
 	this.formatDate=function(value,pattern){
-		return formatDate(value,pattern);
+		var tmpPattern= pattern==undefined? sbiModule_config.dateFormat : pattern
+		return formatDate(value,tmpPattern);
 	}
 	
 	// ===================================================================

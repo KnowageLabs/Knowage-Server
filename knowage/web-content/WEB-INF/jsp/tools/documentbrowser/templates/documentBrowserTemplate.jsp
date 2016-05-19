@@ -184,23 +184,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-toolbar class="ternaryToolbar">
 	<!-- 					<h1 class="md-toolbar-tools" style="text-align:center; display:inline;">{{selectedDocument.name | limitEllipses:28}}</h1> -->
 						<div layout="row" layout-align="space-around center">
-							<md-button ng-if="smallScreen" title="Execute Document" aria-label="Close panel" class="md-icon-button" ng-click="selectDocument();toggleDocumentDetail();">
+							<md-button ng-if="smallScreen" title="{{translate.load('sbi.documentbrowser.execute')}}" aria-label="Close panel" class="md-icon-button" ng-click="selectDocument();toggleDocumentDetail();">
 									<md-icon md-font-icon="fa fa-times" ></md-icon>
 							</md-button>
 							
-							<md-button title="Execute Document" aria-label="Execute Document" class="md-icon-button" ng-click="executeDocument(selectedDocument)">
+							<md-button title="{{translate.load('sbi.documentbrowser.execute')}}" aria-label="Execute Document" class="md-icon-button" ng-click="executeDocument(selectedDocument)">
 									<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
 							</md-button>
 							
-							<md-button title="Edit Document" aria-label="Edit Document" class="md-icon-button" ng-click="editDocument(selectedDocument)">
+							<md-button title="{{translate.load('sbi.documentbrowser.edit')}}" aria-label="Edit Document" class="md-icon-button" ng-click="editDocument(selectedDocument)">
 									<md-icon md-font-icon="fa fa-pencil"></md-icon>
 							</md-button>
 							
-							<md-button title="Clone Document" aria-label="Clone Document" class="md-icon-button" ng-click="cloneDocument(selectedDocument)">
+							<md-button title="{{translate.load('sbi.documentbrowser.clone')}}" aria-label="Clone Document" class="md-icon-button" ng-click="cloneDocument(selectedDocument)">
 									<md-icon md-font-icon="fa fa-clone"></md-icon>
 							</md-button>
 							
-							<md-button title="Delete Document" aria-label="Delete Document" class="md-icon-button" ng-click="deleteDocument(selectedDocument)">
+							<md-button title="{{translate.load('sbi.documentbrowser.delete')}}" aria-label="Delete Document" class="md-icon-button" ng-click="deleteDocument(selectedDocument)">
 									<md-icon md-font-icon="fa fa-trash-o"></md-icon>
 							</md-button>
 						</div>
