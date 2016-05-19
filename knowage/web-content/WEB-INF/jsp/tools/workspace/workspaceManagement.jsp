@@ -23,8 +23,13 @@
 		<!-- Styles -->
 		<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 		
-		<script language="javascript" type="text/javascript">
-		   var datasetParameters=<%=selfServiceParameters%>   
+		<script language="javascript" type="text/javascript">		   
+		   /* 
+	   			Take the information if we are coming from the interface for a creation of a Cockpit document.
+	   			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	   		*/
+		   var whereAreWeComingFrom = <%=request.getParameter("comingFrom")%>;
+		   var datasetParameters=<%=selfServiceParameters%>;  
 		</script>
 		
 	</head>
@@ -71,8 +76,8 @@
 						<models-view-workspace		ng-show="currentOptionMainMenu=='models'">	    </models-view-workspace>
 						<smartfilters-view-workspace	ng-show="currentOptionMainMenu=='smartfilters'">
 						</smartfilters-view-workspace>
-						<analysis-view-workspace 	ng-show="currentOptionMainMenu=='analysis'">	</analysis-view-workspace>
-										
+						<analysis-view-workspace 	ng-show="currentOptionMainMenu=='analysis'">	</analysis-view-workspace>	
+						
 				</md-content>
 				
 			</md-content>

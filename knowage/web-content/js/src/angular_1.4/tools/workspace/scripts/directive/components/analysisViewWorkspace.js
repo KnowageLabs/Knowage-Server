@@ -27,7 +27,7 @@ angular
 function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,sbiModule_user,$mdDialog,$mdSidenav,$documentViewer) {
 	
 	$scope.cockpitAnalysisDocsInitial = [];	
-	$scope.activeTabAnalysis = null;
+	$scope.activeTabAnalysis = null;	
 	
 	$scope.loadAllMyAnalysisDocuments = function() {
 		
@@ -69,6 +69,18 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 					}
 				);
+	}
+	
+	/**
+	 * If we are coming to the Workspace interface (web page) from the interface for the creation of the new Cockpit document, reload all Analysis documents 
+	 * (Cockpit documents), so we can see the changes for the option from which we started a creation of a new documents (Analysis option).
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	if (whereAreWeComingFrom == "NewCockpit") {
+		$scope.loadAllMyAnalysisDocuments();
+		// Do not load Analysis documents again when clicking on its option after returning back to the Workspace.
+		$scope.analysisDocumentsLoaded = true;
+		whereAreWeComingFrom == null;
 	}
 	
 	/**
@@ -162,7 +174,7 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	 */
 	$scope.addNewAnalysisDocument = function() {
 		console.info("[NEW COCKPIT - START]: Open page for adding a new Cockpit document.");
-		window.location.href = sbiModule_config.engineUrls.cockpitServiceUrl + '&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";				
+		window.location.href = sbiModule_config.engineUrls.cockpitServiceUrl + '&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";
 	}
 	
 	/**

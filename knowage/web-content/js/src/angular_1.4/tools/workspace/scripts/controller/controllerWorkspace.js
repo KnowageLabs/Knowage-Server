@@ -68,7 +68,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * 							(ALL, COCKPIT, GEO).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	$scope.currentOptionMainMenu = "recent";
+	(whereAreWeComingFrom == "NewCockpit") ? $scope.currentOptionMainMenu = "analysis" : $scope.currentOptionMainMenu = "recent";	
 	
 	$scope.isDocumentFavorite = false;
 
@@ -85,10 +85,16 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	var datasetsDocumentsLoaded = false;
 	var modelsDocumentsLoaded = false;
 	var smartFiltersDocumentsLoaded = false;
-	var analysisDocumentsLoaded = false;
+	
+	/**
+	 * Attached to the scope because we need this information inside the controller for managing the Analysis documents and interface after coming to the Workspace
+	 * interface (web page) from the interface for the creation of a new Cockpit document.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.analysisDocumentsLoaded = false;
 	
 	$scope.translate = sbiModule_translate;
-
+	
 	/**
 	 * Scope variables needed for showing details about the currently selected document in
 	 * the Workspace. Details will be shown inside the right side navigation panel.
@@ -106,7 +112,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 		
 		$scope.currentOptionMainMenu = item.name.toLowerCase();
 		$scope.selectMenuItem(item);
-		
+
 		/**
 		 * If the previously selected item from the left main menu was one of three suboptions of the 'Data' option (Datasets, Models, SmartFilters) and the newly selected
 		 * item is not among those three, whilst the Data option is collapsed, unselect the Data option.
@@ -142,10 +148,10 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 			
 			case "analysis":
 				
-				if (analysisDocumentsLoaded==false) {
+				if ($scope.analysisDocumentsLoaded==false) {
 					console.info("[LOAD START]: Loading of Analysis documents is started.");
 					$scope.loadAllMyAnalysisDocuments();
-					analysisDocumentsLoaded = true;
+					$scope.analysisDocumentsLoaded = true;
 				}
 
 				break;
@@ -428,7 +434,6 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.executeDocument = function(document) {
 		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");		
 		$documentViewer.openDocument(document.id, document.label, document.name);
-		
 	}
 	
 	/**

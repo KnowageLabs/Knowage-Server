@@ -804,9 +804,20 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 	}
 	
 	, onCloseAngularAction: function() { 
+		
 		if(window.parent.angular.element(window.frameElement).scope()){
 			window.parent.angular.element(window.frameElement).scope().closeConfirm(!this.documentSaved,this.documentSaved);
 		}
+		/**
+		 * If we are coming from the Workspace's interface (web page) to the interface for creation of the new Cockpit document, when closing the Cockpit interace
+		 * return back to the Workspace interface (from where we came from). Sending and additional parameter in order to inform the page that it should go immediately
+		 * to the Analysis option (since we came from there).
+		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		else if (Sbi.config.environment=='WORKSPACE') {
+			window.location.href = "/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp&comingFrom='NewCockpit'";	
+		}
+		
 	}
 
 	, onSaveDocument: function(win, closeDocument, params) {
@@ -1008,10 +1019,12 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 	 		//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
 	 		, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 	 	}));
-		
-		
-	
 		 
+		/**
+		 * If we are coming from the Workspace's interface (web page) to the interface for creation of the new Cockpit document, provide the closing button
+		 * for the Cockpit interface (web page). When clicking on it, it will retunr us back to the Workspace main wbe page (interace).
+		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
 			tbItems.push( new Ext.Button({
 			 	id: 'closeAngular'
 		 		, iconCls: 'delete-icon-tab'
@@ -1019,12 +1032,9 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 		 		, scope: this
 		 		, handler:  this.onCloseAngularAction
 		 		//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
-		 		, hidden: window.name!="angularIframe"
+		 		, hidden: window.name!="angularIframe" && Sbi.config.environment!='WORKSPACE'
 		 	}));
 	 
-		
-		
-
 		/*
 		tbItems.push(new Ext.Button({
 		 		id: 'debug'
