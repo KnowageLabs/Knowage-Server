@@ -11,7 +11,7 @@ public class Alert {
 	private AlertListener alertListener;
 	private JOB_STATUS jobStatus;
 
-	private Frequency frequency;
+	private Frequency frequency = new Frequency();
 
 	public Alert() {
 	}

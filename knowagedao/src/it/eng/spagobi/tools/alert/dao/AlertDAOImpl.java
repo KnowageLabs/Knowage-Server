@@ -14,14 +14,19 @@ import it.eng.spagobi.tools.alert.metadata.SbiAlert;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertAction;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertListener;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertLog;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Session;
+import org.json.JSONObject;
 
 public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 
@@ -131,7 +136,12 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 					List<Alert> ret = new ArrayList<>();
 					for (SbiAlert sbiAlert : alertList) {
 						Alert alert = from(sbiAlert, false);
-						alert.setJobStatus(suspendedTriggers.contains("" + sbiAlert.getId()) ? JOB_STATUS.SUSPENDED : JOB_STATUS.ACTIVE);
+						if (DAOFactory.getSchedulerDAO().loadTrigger(ALERT_JOB_GROUP, alert.getId().toString()) == null) {
+							// trigger expired
+							alert.setJobStatus(JOB_STATUS.EXPIRED);
+						} else {
+							alert.setJobStatus(suspendedTriggers.contains("" + sbiAlert.getId()) ? JOB_STATUS.SUSPENDED : JOB_STATUS.ACTIVE);
+						}
 						ret.add(alert);
 					}
 					return ret;
@@ -156,7 +166,32 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 		}
 		if (checkStatus) {
 			String name = "" + sbiAlert.getId();
-			alert.setJobStatus(schedulerDao.isTriggerPaused(ALERT_JOB_GROUP, name, ALERT_JOB_GROUP, name) ? JOB_STATUS.SUSPENDED : JOB_STATUS.ACTIVE);
+			try {
+				// loading trigger
+				ISchedulerDAO daoScheduler = DAOFactory.getSchedulerDAO();
+				Trigger tr = daoScheduler.loadTrigger(ALERT_JOB_GROUP, name);
+				if (tr == null) {
+					// Calendar now = GregorianCalendar.getInstance(); // creates a new calendar instance
+					alert.getFrequency().setStartTime("00:00");
+					alert.getFrequency().setCron(null);
+					alert.setJobStatus(JOB_STATUS.EXPIRED);
+				} else {
+					alert.setJobStatus(schedulerDao.isTriggerPaused(ALERT_JOB_GROUP, name, ALERT_JOB_GROUP, name) ? JOB_STATUS.SUSPENDED : JOB_STATUS.ACTIVE);
+					Date startTime = tr.getStartTime();
+					Calendar dateStartFreq = GregorianCalendar.getInstance(); // creates a new calendar instance
+					dateStartFreq.setTime(startTime); // assigns calendar to given date
+					alert.getFrequency().setStartTime(dateStartFreq.get(Calendar.HOUR_OF_DAY) + ":" + dateStartFreq.get(Calendar.MINUTE));
+					if (tr.getEndTime() != null) {
+						Date endTime = tr.getEndTime();
+						Calendar dateEndFreq = GregorianCalendar.getInstance(); // creates a new calendar instance
+						dateEndFreq.setTime(endTime); // assigns calendar to given date
+						alert.getFrequency().setEndTime(dateEndFreq.get(Calendar.HOUR_OF_DAY) + ":" + dateEndFreq.get(Calendar.MINUTE));
+						alert.getFrequency().setCron(tr.getChronExpression() != null ? new JSONObject(tr.getChronExpression()).toString() : null);
+					}
+				}
+			} catch (Throwable e) {
+				throw new SpagoBIDOAException(e);
+			}
 		}
 		return alert;
 	}
@@ -164,7 +199,8 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 	@Override
 	public Alert loadAlert(Integer id) {
 		SbiAlert sbiAlert = load(SbiAlert.class, id);
-		return from(sbiAlert, true);
+		Alert alert = from(sbiAlert, true);
+		return alert;
 	}
 
 	@Override
