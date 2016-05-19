@@ -135,7 +135,7 @@ try{
 					</md-button>
 					
 					<md-button class="md-icon-button" aria-label="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="executeParameter()" 
-							title="{{::translate.load('sbi.scheduler.parameters')}}">
+							title="{{::translate.load('sbi.scheduler.refresh')}}">
 						 <md-icon md-font-icon="fa fa-refresh"></md-icon>
 					</md-button>
 					<md-button class="md-icon-button" aria-label="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="paramRolePanelService.toggleParametersPanel()"
