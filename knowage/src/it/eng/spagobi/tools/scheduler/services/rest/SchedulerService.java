@@ -1418,7 +1418,7 @@ public class SchedulerService {
 					BIObject document = iterator.next();
 					if (!document.getBiObjectTypeCode().equals("ETL")) {
 						logger.debug("Found a document with type [" + document.getBiObjectTypeCode() + "]. Removing it from the list...");
-						documents.remove(document);
+						iterator.remove();
 					}
 				}
 			}
