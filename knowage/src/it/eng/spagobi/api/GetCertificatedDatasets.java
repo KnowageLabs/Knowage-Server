@@ -353,9 +353,9 @@ public class GetCertificatedDatasets {
 
 				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
 				List<RoleMetaModelCategory> resp = new ArrayList<>();
-				List<SbiDomains> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+				List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
 				for (RoleMetaModelCategory r : aRoleCategories) {
-					for (SbiDomains dom : array) {
+					for (Domain dom : array) {
 						if (r.getCategoryId().equals(dom.getValueId())) {
 							resp.add(r);
 						}
