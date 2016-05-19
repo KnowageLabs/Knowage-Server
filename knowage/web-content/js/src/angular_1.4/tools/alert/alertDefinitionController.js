@@ -1,4 +1,4 @@
-var app = angular.module('alertDefinitionManager', [ 'ngMaterial', 'angular_table' ,'sbiModule', 'angular-list-detail','angular_list',"expander-box",'ngWYSIWYG','cron_frequency']);
+var app = angular.module('alertDefinitionManager', [ 'ngMaterial', 'angular_table' ,'sbiModule', 'angular-list-detail','angular_list',"expander-box",'ngWYSIWYG','cron_frequency','componentTreeModule']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
 	$mdThemingProvider.setDefaultTheme('knowage');

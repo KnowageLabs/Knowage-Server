@@ -4,6 +4,12 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
  $scope.translate=sbiModule_translate;
  $scope.kpiList=[];
 
+ 	$scope.initNgModel=function(){
+ 		if($scope.ngModel.kpiId != undefined && $scope.ngModel.kpiVersion != undefined){
+ 			$scope.loadKpi($scope.ngModel.kpiId,$scope.ngModel.kpiVersion);
+ 		}
+ 	}
+ 
 	if(!$scope.ngModel.hasOwnProperty("actions")){
 		$scope.ngModel.actions=[];
 	} 
@@ -18,8 +24,8 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 					
 					if(loadFullSelectedKpi==true){ 
 						for(var i=0;i<$scope.kpiList.length;i++){
-							if(angular.equals($scope.kpiList[i].id,$scope.ngModel.kpi.id)){
-								angular.extend($scope.kpiList[i],$scope.ngModel.kpi);
+							if(angular.equals($scope.kpiList[i].id,$scope.ngModel.kpiId)){
+								angular.extend($scope.kpiList[i],$scope.kpi);
 								break;
 							}
 						}
@@ -31,7 +37,7 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 					);
 	}
 	//if is an alter of saved alert, load the information of the kpi
-	$scope.loadKpiList($scope.ngModel.hasOwnProperty("kpi"));
+	$scope.loadKpiList($scope.hasOwnProperty("kpi"));
 	
 	
 	
@@ -48,15 +54,12 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 		return "";
 	}
 	
-	$scope.loadKpi=function(kpi){
-		// load kpi only if arent already loaded
-		if(kpi.thresholdValues!=undefined && kpi.thresholdValues!=null){
-			return;
-		}
-		sbiModule_restServices.promiseGet('1.0/kpi',kpi.id+"/"+kpi.version+"/loadKpi")
+	$scope.loadKpi=function(kpiId,kpiVersion){
+		sbiModule_restServices.promiseGet('1.0/kpi',kpiId+"/"+kpiVersion+"/loadKpi")
 		.then(
 				function(response){
-					angular.extend($scope.ngModel.kpi,response.data);
+					$scope.kpi = {};
+					angular.extend($scope.kpi,response.data);
 					},
 				function(response){
 						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.load.error"));
@@ -73,16 +76,20 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 	          .ok(sbiModule_translate.load("sbi.general.continue"))
 	          .cancel(sbiModule_translate.load("sbi.general.cancel"));
 	    $mdDialog.show(confirm).then(function() {
-	    	$scope.loadKpi(kpi);
+	    	$scope.loadKpi(kpi.id,kpi.version);
 	    	$scope.ngModel.actions=[];
+	    	$scope.ngModel.kpiId=kpi.id;
+	    	$scope.ngModel.kpiVersion=kpi.version;
+	    	$scope.oldkpi=$scope.kpi;
 	    }, function() {
-	    	$scope.ngModel.kpi=oldKpi;
+	    	$scope.kpi=oldKpi;
 	    });
 		}else{
-			$scope.loadKpi(kpi);
+			$scope.loadKpi(kpi.id,kpi.version);
+			$scope.ngModel.kpiId=kpi.id;
+	    	$scope.ngModel.kpiVersion=kpi.version;
+	    	$scope.oldkpi=$scope.kpi;
 		}
-		
-		
 	}
 	
 	
@@ -108,7 +115,7 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 		      preserveScope:true, 
 		      locals:{
 		    	  translate: sbiModule_translate,
-		    	  kpi:$scope.ngModel.kpi,
+		    	  kpi:$scope.kpi,
 		    	  actionToEdit:item
 		    	  }
 		    })
@@ -125,9 +132,9 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 	
 	$scope.getThresholdItem=function(Tarr){
 		var TObjArr=[];
-		for(var i=0;i<$scope.ngModel.kpi.threshold.thresholdValues.length;i++){
-			if(Tarr.indexOf(""+$scope.ngModel.kpi.threshold.thresholdValues[i].id)!=-1){
-				TObjArr.push($scope.ngModel.kpi.threshold.thresholdValues[i]);
+		for(var i=0;i<$scope.kpi.threshold.thresholdValues.length;i++){
+			if(Tarr.indexOf(""+$scope.kpi.threshold.thresholdValues[i].id)!=-1){
+				TObjArr.push($scope.kpi.threshold.thresholdValues[i]);
 			}
 		}
 		return TObjArr;

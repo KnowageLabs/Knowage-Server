@@ -1,10 +1,11 @@
 
-	<md-content flex layout="column" ng-controller="alertKpiDefinitionController" action-maker-validator="{model:ngModel,validator:validate}">
+	<md-content flex layout="column" ng-controller="alertKpiDefinitionController" action-maker-validator="{model:ngModel,validator:validate}"
+		ng-init="initNgModel()" >
 	
 		<md-input-container>
 		      <label>{{translate.load("sbi.generic.kpi")}}</label>
-		      <md-select ng-model="ngModel.kpi"  ng-model-options="{trackBy: '$value.id'}">
-		        <md-option ng-repeat="kpi in kpiList" ng-value="kpi" ng-click="loadSelectedKpi(ngModel.kpi,kpi)">
+		      <md-select ng-model="kpi"  ng-model-options="{trackBy: '$value.id'}">
+		        <md-option ng-repeat="kpi in kpiList" ng-value="kpi" ng-click="loadSelectedKpi(oldkpi,kpi)">
 		          {{kpi.name}}
 		        </md-option>
 		      </md-select>
@@ -12,7 +13,7 @@
 	 
 
   		
-  		<md-content ng-if="ngModel.kpi!=undefined"  layout="column" layout-margin flex class="md-whiteframe-1dp noPadding"> 
+  		<md-content ng-if="kpi!=undefined"  layout="column" layout-margin flex class="md-whiteframe-1dp noPadding"> 
 			<md-toolbar class="md-hue-2">
 	      		<div class="md-toolbar-tools"> 
 	        		<h2> 
