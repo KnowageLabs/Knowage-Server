@@ -8,7 +8,6 @@
     <MAP_REST_SERVICES>
     	<MAP_REST_SERVICE serviceUrl="/engine.*" 			businessProcess="publicFunctionality" />
     	<MAP_REST_SERVICE serviceUrl="/pages.*" 			businessProcess="publicFunctionality" />
-    	<MAP_REST_SERVICE serviceUrl="/jsonChartTemplate.*" businessProcess="publicFunctionality" />
     </MAP_REST_SERVICES>
     
     <MAP_EXTERNAL_REST_SERVICES>
