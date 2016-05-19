@@ -21,6 +21,8 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 	s.kpiAllList = [];
 	s.tableKpisColumn = [];
 	s.tableFunction={
+			translate:sbiModule_translate,
+			
 			loadListKPI: function(item,evt){
 			
 				var promise = s.loadListKPI();

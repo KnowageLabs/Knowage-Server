@@ -26,7 +26,9 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.allScorecard = [];
 
 	$scope.tableFunction={
-
+			
+			translate:sbiModule_translate,
+					
 			loadListScorecard: function(item,evt){
 				var promise =$scope.loadListScorecard();
 

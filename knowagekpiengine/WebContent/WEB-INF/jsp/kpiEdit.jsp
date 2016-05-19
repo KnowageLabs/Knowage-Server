@@ -64,10 +64,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	     		<md-radio-button  value='widget'>{{translate.load("sbi.kpi.widget")}} </md-radio-button>
    	</md-radio-group>
 
-	<expander-box id="Info" color="white" ng-if="typeChart=='scorecard'" expanded="true" title="'Scorecard List'">
-	<md-whiteframe class="md-whiteframe-4dp layout-padding " layout layout-margin style ="height: 80%;" > 
+	<expander-box id="Info" color="white" ng-if="typeChart=='scorecard'" expanded="true" title="translate.load('sbi.kpiedit.listscorecard')">
+	<md-whiteframe class="md-whiteframe-4dp layout-padding " layout layout-margin style ="height: 40%;" > 
 
- 		<angular-table flex style ="height: 80%;"
+ 		<angular-table flex style ="height: 40%;"
 		id='dinamicListTable' ng-model="scorecardSelected"
 		columns='[{"label":"Name","name":"name"},{"label":"Creation Date","name":"creationDate"}]'
 		columns-search='["name"]' show-search-bar=true
@@ -76,16 +76,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<queue-table>
 			<div layout="row"> 
 				<span flex></span>
-				<md-button ng-click="scopeFunctions.loadListScorecard()">Add Scorecard Association </md-button>
+				<md-button ng-click="scopeFunctions.loadListScorecard()">{{scopeFunctions.translate.load('sbi.kpi.addscoreass')}}</md-button>
 			</div>
 		</queue-table> 
 		</angular-table>	
    </md-whiteframe>       
 	</expander-box>
-	<expander-box id="Info" color="white" ng-show="typeChart=='kpi'" expanded="true" title="'Kpi List'">
+	<expander-box id="Info" color="white" ng-show="typeChart=='kpi'" expanded="true" title="translate.load('sbi.kpiedit.kpilist')">
 		<dinamic-list ng-model="selectedKpis" type-chart="typeDocument" multi-select=true selected-item ="addKpis"></dinamic-list>  
 	</expander-box>
-	<expander-box id="Info" color="white" expanded="false" title="'Options'" ng-if="typeChart=='kpi'">
+	<expander-box id="Info" color="white" expanded="false" title="translate.load('sbi.kpiedit.options')" ng-if="typeChart=='kpi'">
 		 <md-whiteframe class="md-whiteframe-4dp layout-padding " layout="column" layout layout-fill layout-margin  >
 		 
 		 <div layout="row">
@@ -129,7 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</span>
 		 </md-whiteframe>
 	</expander-box>
-	<expander-box id="Info" color="white"  title="'Style'">
+	<expander-box id="Info" color="white"  title="translate.load('sbi.kpiedit.style')">
 		<!-- direttiva style -->
 		<kpi-style ng-model="style"></kpi-style>
 	</expander-box>
