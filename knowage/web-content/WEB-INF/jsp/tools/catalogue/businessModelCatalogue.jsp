@@ -286,7 +286,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					highlights-selected-item=true
 					speed-menu-option="bmSpeedMenu2"	
 					no-pagination=false	
-					click-function="clickRightTable(item)"								
+					click-function="clickRightTable(item)"
+					layout-fill							
 				>						
 				</angular-table>
 				</md-radio-group>

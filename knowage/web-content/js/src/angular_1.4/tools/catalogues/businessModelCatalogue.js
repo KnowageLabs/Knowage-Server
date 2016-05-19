@@ -187,6 +187,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				$scope.bmLoadingShow = true;
 					$scope.businessModelList = [];
 					
+					if(response.data.length == 0)
+						$scope.bmLoadingShow = false;
 					setTimeout(function(){
   					for(var i = 0; i < response.data.length; i++){
   						$scope.businessModelList.push(response.data[i]);
