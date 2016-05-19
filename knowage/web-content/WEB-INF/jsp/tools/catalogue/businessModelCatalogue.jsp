@@ -167,10 +167,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<div layout="row" layout-wrap>
 						<label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.file.upload.button")}}:</label>
       				<file-upload  ng-model="fileObj" id="businessModelFile" ng-click="fileChange();checkChange()" flex></file-upload>
+      				<%
+					if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_LIFECYCLE_MANAGEMENT)) {%>
       				<md-input-container flex="30">
 			          <md-switch ng-model="selectedBusinessModel.modelLocked" ng-change="businessModelLock()">{{ selectedBusinessModel.modelLocked ? translate.load("sbi.bm.unlockModel") : translate.load("sbi.bm.lockModel")}}</md-switch>
 			        </md-input-container>
-				
+					<%} %>
       				
 				</div>
 				
