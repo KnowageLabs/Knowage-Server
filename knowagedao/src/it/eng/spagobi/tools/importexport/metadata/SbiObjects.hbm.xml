@@ -93,9 +93,7 @@
   		  <property generated="never" lazy="false" name="parametersRegion" type="string">
         <column length="20" name="PARAMETERS_REGION"/>
         </property>
-        <property  generated="never" lazy="false" name="lockedByUser" type="string">
-            <column name="LOCKED_BY_USER" length="100" />
-        </property>        
+               
         <set name="sbiObjPars" inverse="true">
             <key>
                 <column name="biobj_id" not-null="true" />
