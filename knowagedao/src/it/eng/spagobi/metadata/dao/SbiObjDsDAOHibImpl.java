@@ -28,6 +28,7 @@ import it.eng.spagobi.metadata.metadata.SbiMetaObjDsId;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -310,6 +311,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 			// 0. get template with configuration
 			String template = new String(obj.getActiveTemplate().getContent());
 			JSONObject configJSON = new JSONObject(template);
+			HashMap<Integer, Boolean> lstDsInsertedForObj = new HashMap<Integer, Boolean>();
 			// 1. search used datasets
 			JSONObject storeConfJSON = configJSON.getJSONObject("storesConf");
 			if (storeConfJSON != null) {
@@ -324,6 +326,10 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 					String dsLabel = storeJSON.getString("storeId");
 					logger.debug("Insert relation for dataset with label [" + dsLabel + "]");
 					VersionedDataSet ds = ((VersionedDataSet) DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel));
+					// insert only relations with new ds
+					if (lstDsInsertedForObj.get(ds.getId()) != null) {
+						continue;
+					}
 					String dsOrganization = ds.getOrganization();
 					logger.debug("Dataset organization used for insert relation is: " + dsOrganization);
 					Integer dsVersion = ds.getVersionNum();
@@ -339,6 +345,8 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 					relObjDs.setId(relObjDsId);
 
 					DAOFactory.getSbiObjDsDAO().insertObjDs(relObjDs);
+					lstDsInsertedForObj.put(ds.getId(), true);
+
 				}
 			} else {
 				logger.debug("The document doesn't use any dataset! ");
