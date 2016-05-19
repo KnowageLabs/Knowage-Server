@@ -3,7 +3,7 @@
 	<div class="md-toolbar-tools" layout="row" layout-align="start center">
 		
 		<!--  Search button -->
-		<md-button class="md-icon-button" style="padding-top:4px;">
+		<md-button class="md-icon-button">
 			  <md-icon md-font-icon="fa fa-search"></md-icon>
 		</md-button>
 		
@@ -13,14 +13,14 @@
 		</md-input-container>
 		
 		<!-- Search clear -->
-		<md-button class="md-icon-button" title="Clear" aria-label="Clear" ng-show=true ng-click="setSearchInput('')" style="padding-top:4px;">
+		<md-button class="md-icon-button" title="Clear" aria-label="Clear" ng-show=true ng-click="setSearchInput('')">
 			   <md-icon md-font-icon="fa fa-times"></md-icon>
 		</md-button>
 		
 		<!-- Document view buttons -->		
 		<md-button 	class="md-icon-button" ng-click="toogleGridListViewOfDocs()" 
 					title="{{showGridView ? 'List view' : 'Grid view'}}" 
-					aria-label="{{showGridView ? 'List view' : 'Grid view'}}" style="padding-top:4px;">
+					aria-label="{{showGridView ? 'List view' : 'Grid view'}}">
 					
 			 <md-icon md-font-icon="fa" ng-class="showGridView ? 'fa-th-list' : 'fa-th'"></md-icon>
 			 

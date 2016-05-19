@@ -110,8 +110,8 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 								function(response) {
 									
 									if (document.typeCode == "DOCUMENT_COMPOSITE") { 
+										$scope.cockpitAnalysisDocsInitial.push(response.data);
 										$scope.cockpitAnalysisDocs.push(response.data);
-										angular.copy($scope.cockpitAnalysisDocs,$scope.cockpitAnalysisDocsInitial);
 									}
 									
 									console.info("[CLONE END]: The cloning of a selected '" + document.label + "' went successfully.");	
@@ -146,6 +146,7 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 					function() {
 						
 						var indexInCockpit = $scope.cockpitAnalysisDocs.indexOf(document);
+						var indexInCockpitInitial = $scope.cockpitAnalysisDocsInitial.indexOf(document);
 						var isDocInCockpit = indexInCockpit >= 0;
 						
 						sbiModule_restServices
@@ -153,7 +154,8 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 							.then(
 									function(response) {
 									
-										isDocInCockpit ? $scope.cockpitAnalysisDocs.splice(indexInCockpit,1) : null;
+										(isDocInCockpit && indexInCockpitInitial) ? $scope.cockpitAnalysisDocs.splice(indexInCockpit,1) : null;
+										(isDocInCockpit && indexInCockpitInitial) ? $scope.cockpitAnalysisDocsInitial.splice(indexInCockpitInitial,1) : null;
 										
 										$scope.selectedDocument = undefined;	// TODO: Create and define the role of this property
 										console.info("[DELETE END]: Delete of Analysis Cockpit document with the label '" + document.label + "' is done successfully.");

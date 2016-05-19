@@ -34,7 +34,7 @@
 		
 	</head>
 	
-	<body ng-controller="workspaceController" class="workspace" id="workspaceWebPageBody"> 
+	<body ng-controller="workspaceController" class="workspace kn-documentBrowser" id="workspaceWebPageBody"> 
 		
 		<md-content layout="column" flex layout-fill>
 			

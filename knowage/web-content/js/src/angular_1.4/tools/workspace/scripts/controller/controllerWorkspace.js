@@ -311,9 +311,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 				 * SEARCH FOR ANALYSIS
 				 */
 				case "analysis":				
-					angular.copy($scope.allAnalysisDocsInitial,$scope.allAnalysisDocs); 
 					angular.copy($scope.cockpitAnalysisDocsInitial,$scope.cockpitAnalysisDocs);
-					angular.copy($scope.geoAnalysisDocsInitial,$scope.geoAnalysisDocs);
 					break;
 				
 				/**
