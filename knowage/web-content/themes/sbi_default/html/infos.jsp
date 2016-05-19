@@ -23,7 +23,7 @@
 		<md-toolbar class="minihead">
 			<div class="md-toolbar-tools">
 				  <md-content style="float:left;background-color: inherit;">&nbsp;
-				 	 <img src="<%=contextName %>/themes/sbi_default/img/wapp/logoKnowage.png" />
+				 	 <img src="<%=contextName %>/themes/sbi_default/img/wapp/logo.png" />
 				  </md-content>
 			</div>
 		</md-toolbar> 
@@ -51,7 +51,7 @@
 	</md-dialog-content-->
 
 	<md-dialog-content layout="column" layout-padding layout-margin>
-		 	 <img src="<%=contextName %>/themes/sbi_default/img/wapp/logoKnowage.png" width="234" layout-margin />
+		 	 <img src="<%=contextName %>/themes/sbi_default/img/wapp/logo.png" width="234" layout-margin />
 		 	 <div layout-padding>
 				<p>Version: 1.0.0</p>
 				<p >

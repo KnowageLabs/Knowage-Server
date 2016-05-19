@@ -103,7 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <div class="container">
         <div class="card card-container">
 
-            <img id="profile-img" class="logoHeader" src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logoKnowage.png", currTheme)%>' />
+            <img id="profile-img" class="logoHeader" src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logo.png", currTheme)%>' />
             <p id="profile-name" class="profile-name-card"></p>
             <form class="form-signin"  role="form" action="<%=contextName%>/ChangePwdServlet" method="POST">
             	<input type="hidden" id="MESSAGE" name="MESSAGE" value="CHANGE_PWD" />
