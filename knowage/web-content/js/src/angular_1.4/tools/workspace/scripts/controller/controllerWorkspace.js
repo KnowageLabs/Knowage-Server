@@ -94,7 +94,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.analysisDocumentsLoaded = false;
 	
 	$scope.translate = sbiModule_translate;
-	
+
 	/**
 	 * Scope variables needed for showing details about the currently selected document in
 	 * the Workspace. Details will be shown inside the right side navigation panel.
@@ -112,7 +112,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 		
 		$scope.currentOptionMainMenu = item.name.toLowerCase();
 		$scope.selectMenuItem(item);
-
+		
 		/**
 		 * If the previously selected item from the left main menu was one of three suboptions of the 'Data' option (Datasets, Models, SmartFilters) and the newly selected
 		 * item is not among those three, whilst the Data option is collapsed, unselect the Data option.
@@ -323,6 +323,8 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 					angular.copy($scope.myDatasetsInitial,$scope.myDatasets);
 					angular.copy($scope.enterpriseDatasetsInitial,$scope.enterpriseDatasets);
 					angular.copy($scope.sharedDatasetsInitial,$scope.sharedDatasets);
+					angular.copy($scope.ckanDatasetsListInitial,$scope.ckanDatasetsList);
+				
 					break;
 				
 				/**
@@ -403,6 +405,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 							$scope.myDatasets= filterThroughCollection(newSearchInput,$scope.myDatasetsInitial,"name");
 							$scope.enterpriseDatasets=filterThroughCollection(newSearchInput,$scope.enterpriseDatasetsInitial,"name");
 							$scope.sharedDatasets=filterThroughCollection(newSearchInput,$scope.sharedDatasetsInitial,"name");
+							$scope.ckanDatasetsList=filterThroughCollection(newSearchInput,$scope.ckanDatasetsListInitial,"name");
 							break;
 							
 						/**
@@ -432,6 +435,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.executeDocument = function(document) {
 		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");		
 		$documentViewer.openDocument(document.id, document.label, document.name);
+		
 	}
 	
 	/**

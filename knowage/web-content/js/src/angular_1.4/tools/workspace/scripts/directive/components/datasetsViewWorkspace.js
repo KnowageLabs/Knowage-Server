@@ -25,7 +25,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.endPreviewIndex=0;
     $scope.totalItemsInPreview=0;
     $scope.previewPaginationEnabled=true; 
-//    console.log(datasetParameters);
+    
     $scope.itemsPerPage=15;
     $scope.datasetInPreview=undefined;
     
@@ -47,7 +47,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     		}
     	}
     }
-    
+   
 	/**
 	 * load all datasets
 	 */
@@ -59,7 +59,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			angular.copy($scope.datasets,$scope.datasetsInitial);
 			console.info("[LOAD END]: Loading of All datasets is finished.");
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
 		});
 	}
 
@@ -72,7 +72,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			console.info("[LOAD END]: Loading of My datasets is finished.");
 			
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
 		});
 	}
 	
@@ -84,7 +84,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
 			console.info("[LOAD END]: Loading of Enterprised datasets is finished.");
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
 		});
 	}
 	
@@ -96,7 +96,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		    angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
 			console.info("[LOAD END]: Loading of Shared datasets is finished.");
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
 		});
 	}
 	
@@ -107,7 +107,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			$scope.extractNotDerivedLabels(response.data);
 			console.info("[LOAD END]: Loading of Not derived datasets is finished.");
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
 		});
 	}
 	
@@ -170,9 +170,14 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 //			          console.log(response);
 			          // binds changed value to object
 			          dataset.isPublic=response.data.isPublic;
-			          sbiModule_messaging.showSuccessMessage("dataset is shared successfuly","shared success");
+			          if(response.data.isPublic){
+			          sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.share.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));
+			          }else{
+			        	  
+			            sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.unshare.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));	  
+			          }
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.fail'));
 		});
     	
     }
@@ -230,7 +235,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     }
     
     $scope.previewDataset= function(dataset){
-    	console.log(dataset);
+    	
     	$scope.datasetInPreview=dataset;
     	if(dataset.meta.dataset.length>0){
     	$scope.totalItemsInPreview=dataset.meta.dataset[0].pvalue;
@@ -284,7 +289,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	config.params=params;
     	sbiModule_restServices.promiseGet("selfservicedataset/values", dataset.label,"",config)
 		.then(function(response) {
-			console.log(response.data);
+			//console.log(response.data);
 		    angular.copy(response.data.rows,$scope.previewDatasetModel);
 		    if( $scope.previewDatasetColumns.length==0){
 			$scope.createColumnsForPreview(response.data.metaData.fields);
@@ -343,6 +348,14 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     		$scope.selectModel(undefined);
          }
     	
+    	if($scope.selectedCkan !== undefined){
+    		$scope.selectCkan(undefined);
+         }
+    	
+    	$scope.ckanDatasetsList=[];
+    	$scope.selectedCkanRepo={};
+    	$scope.ckanDatasetsListInitial=[];
+    	
     }	
     
     $scope.getBackPreviewSet=function(){
@@ -377,7 +390,101 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
         	 
     }
     
-	function DatasetPreviewController($scope,$mdDialog){
+    function parseCkanRepository(){
+    	var ckanUrls= datasetParameters.CKAN_URLS;
+    	var ckanUrlsSplitted= ckanUrls.split("|");
+    	
+    	var repos=[];
+    	
+    	for(i=0;i<ckanUrlsSplitted.length-1;i+=2){
+    		repo={};
+    		repo.url=ckanUrlsSplitted[i];
+    		repo.name=ckanUrlsSplitted[i+1];
+    		repos.push(repo);
+    	}
+    	
+    	return repos;
+    }
+    //CKAN 
+    $scope.ckanRepos=parseCkanRepository();
+    $scope.selectedCkanRepo={};
+    $scope.ckanDatasetsList=[];
+    $scope.ckanDatasetsListInitial=[];
+	$scope.loadCkanDatasets=function(){
+		var repo=$scope.selectedCkanRepo;
+		params={};
+		params.isTech=false;
+		params.showDerivedDataset=false;
+		params.ckanDs=true;
+		params.ckanFilter="NOFILTER";
+		params.showOnlyOwner=true;
+		params.ckanOffset=0;
+		params.ckanRepository=repo.url;
+		
+		config={};
+		config.params=params;
+		sbiModule_restServices.promiseGet("certificateddatasets", "","",config)
+		.then(function(response) {
+			//console.log(response.data);
+            angular.copy(response.data.root,$scope.ckanDatasetsList);
+            angular.copy($scope.ckanDatasetsList,$scope.ckanDatasetsListInitial);
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,"error");
+		});
+		
+		
+	}
+	
+	$scope.showCkanDetails = function() {
+		return $scope.showCkanInfo && $scope.isSelectedCkanValid();
+	};
+	
+	
+	$scope.isSelectedCkanValid = function() {
+		return $scope.selectedCkan !== undefined;
+	};
+	
+	$scope.setCkanDetailOpen = function(isOpen) {
+		if (isOpen && !$mdSidenav('rightCkan').isLockedOpen() && !$mdSidenav('rightCkan').isOpen()) {
+			$scope.toggleCkanDetail();
+		}
+
+		$scope.showCkanInfo = isOpen;
+	};
+	
+	$scope.toggleCkanDetail = function() {
+		$mdSidenav('rightCkan').toggle();
+	};
+	
+	$scope.selectCkan= function ( dataset ) { 
+		if (dataset !== undefined) {
+			//$scope.lastDatasetSelected = dataset;
+		}
+		var alreadySelected = (dataset !== undefined && $scope.selectedCkan === dataset);
+		$scope.selectedCkan = dataset;
+		if (alreadySelected) {
+			$scope.selectedCkan=undefined;
+			$scope.setCkanDetailOpen(!$scope.showCkanDetail);
+		} else {
+			$scope.setCkanDetailOpen(dataset !== undefined);
+		}
+	};
+	
+	$scope.showDetailCkan=function(ckan){
+		
+		$mdDialog.show({
+  		  scope:$scope,
+			  preserveScope: true,
+		      controller: DialogCkanController,
+		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/ckanDetailTemplate.html',  
+		      clickOutsideToClose:false,
+		      escapeToClose :false,
+		      fullscreen: true,
+		      locals:{ckan:ckan }
+		    })
+	}
+    
+    function DatasetPreviewController($scope,$mdDialog){
 		
 		$scope.closeDatasetPreviewDialog=function(){
 			 $scope.previewDatasetModel=[];
@@ -394,6 +501,13 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		
 	}
 	
+    function DialogCkanController($scope,$mdDialog,ckan){
+    	$scope.ckan=ckan;
+    	$scope.closeCkanDetail=function(){
+    		$mdDialog.cancel();
+    	}
+    	
+    }
 
 	
 	function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_config,multipartForm,$http){
@@ -427,9 +541,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 				angular.copy(response.data,$scope.datasetCategories)
 			},function(response){
 				sbiModule_restServices.errorHandler(response.data,"faild to load data for"+b);
-			});	
+			});
 		}
-		
+			
 		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","");
 		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=CATEGORY_TYPE");
 		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_GEN_META_PROPERTY");
@@ -437,7 +551,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_VALUE");
 	    
 		
-		
+			
 		$scope.uploadFileDatasetAction=function(){
 			
 			completeUrl  = sbiModule_config.contextName +"/servlet/AdapterHTTP?ACTION_NAME=UPLOAD_DATASET_FILE_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&UPLOAD_FILE="+$scope.fileObj
@@ -453,33 +567,34 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	    	       function(response){
 	    	         // failure callback
 	    	    	   console.log(response);
-	    	       }
+		}
 	    	    );	
 	    }
 		
 		$scope.uploadFile= function(){
-			
-			multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedataset/fileupload",$scope.fileObj).success(
-				
-				function(data,status,headers,config){
-					if(data.hasOwnProperty("errors")){
+		
+        	multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedataset/fileupload",$scope.fileObj).success(
+
+					function(data,status,headers,config){
+						if(data.hasOwnProperty("errors")){						
+							console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");		
+
+						}else{
 						
-						console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");
-						
-					}else{
-						
-						console.log("[UPLOAD]: SUCCESS!");
+							console.log("[UPLOAD]: SUCCESS!");
 						sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
 						
 						$scope.file={};
 						
 						
-					}
-				}).error(function(data, status, headers, config) {
-							console.log("[UPLOAD]: FAIL!"+status);
-						});
-			
-		}	
+						}
+					}).error(function(data, status, headers, config) {
+						console.log("[UPLOAD]: FAIL!"+status);
+					});
+        	
+        }
+		
+		
+	}
     
-}
 }

@@ -1,0 +1,95 @@
+<md-dialog flex ng-controler="DialogCkanController"
+   style="height:70%; width:70%; max-height:90%; max-width:90%" ng-cloak>
+ 
+<md-toolbar>
+      <div class="md-toolbar-tools">
+         <h2>DETAILS</h2>
+         <span flex></span> 
+       
+         <md-button class=""
+            ng-click="closeCkanDetail()"> CLOSE </md-button>
+      </div>
+   </md-toolbar> 
+<md-conttent flex>
+
+  <md-toolbar class="secondaryToolbar">
+        <div class="md-toolbar-tools">
+          <h2>
+            <span>Package details</span>
+          </h2>
+     
+        </div>
+      </md-toolbar>
+ 
+<!--   <md-subheader class="md-no-sticky" style="background-color:#a9c3db;">Package details</md-subheader> -->
+    <md-list>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <h3>Name:</h3>
+          <p>{{ckan.configuration.Package.package_name}}</p>
+        </div>
+      </md-list-item>
+      <md-divider></md-divider>
+          <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <h3>Url:</h3>
+          <p>{{ckan.configuration.Package.package_url}}</p>
+        </div>
+      </md-list-item>
+     
+ </md-list>
+ 
+ 
+    <md-toolbar class="secondaryToolbar">
+        <div class="md-toolbar-tools">
+          <h2>
+            <span>Resource details</span>
+          </h2>
+     
+        </div>
+      </md-toolbar>
+      <md-list>
+    <md-list-item class="md-2-line">
+        
+        <div class="md-list-item-text">
+          <h3>Name:</h3>
+          <p>{{ckan.configuration.Resource.name}}</p>
+        </div>
+        
+      </md-list-item>
+      <md-divider></md-divider>
+          <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <h3>Url:</h3>
+          <p>{{ckan.configuration.Resource.url}}</p>
+        </div>
+    
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <h3>Description:</h3>
+          <p>{{ckan.configuration.Resource.description}}</p>
+        </div>
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <h3>Creation date:</h3>
+          <p>{{ckan.configuration.Resource.created|date:"medium"}}</p>
+        </div>
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+          <h3>Format:</h3>
+          <p>{{ckan.configuration.Resource.format}}</p>
+        </div>
+      </md-list-item>
+     
+ </md-list>
+ 
+</md-conttent>
+
+
+</md-dialog>
