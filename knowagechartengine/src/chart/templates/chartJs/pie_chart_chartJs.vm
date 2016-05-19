@@ -259,14 +259,17 @@
 	
 #set($scaleFontSize = false)
 #set($scaleFontSize = $genericStyle.fontSize.replace("px", ""))
-#if($scaleFontSize == false)
-    #set($scaleFontSize = "12")
-#end
+
 #if($yAxis.style != false && $yAxis.style.fontSize != false)
     #set($scaleFontSize = $yAxis.style.fontSize.replace("px", ""))
 #end
-	    // Number - Scale label font size in pixels
-	    scaleFontSize: "$scaleFontSize",
+
+#if((!$scaleFontSize ) || ("$scaleFontSize" == ""))
+    #set($scaleFontSize = "12")
+#end
+
+// Number - Scale label font size in pixels
+scaleFontSize: "$scaleFontSize" ,
 	
 #set($scaleFontStyle = false)
 #set($scaleFontStyle = $genericStyle.fontWeight)
