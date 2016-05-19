@@ -54,37 +54,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	ng-controller="mondrianSchemasCatalogueController as ctrl">
 
 		<angular-list-detail show-detail="showMe">
-<!-- /////////////// LEFT SIDE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->
 	<list label='translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue")' new-function="createMondrianSchema"> 
 	
-	
-	
-<!-- 		<md-toolbar class=" header"> -->
-<!--  /////////////// LEFT SIDE TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ 	 -->
-<!-- 			<div class="md-toolbar-tools"> -->
-		
-<!-- 				<div style="font-size: 24px;">{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue")}}</div> -->
- <!-- /////////////// ADD(PLUS) BUTTON \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->		
-<!-- 				<md-button 	class="md-fab md-ExtraMini addButton" -->
-<!-- 							style="position:absolute; right:11px; top:0px;" -->
-<!-- 							ng-click="createMondrianSchema()" -->
-<!-- 							aria-label="create" -->
-<!-- 							>  -->
-							
-<!-- 						<md-icon 	md-font-icon="fa fa-plus"  -->
-<!-- 									style=" margin-top: 6px ; -->
-<!-- 									color: white;"> -->
-						
-<!-- 						</md-icon> -->
-						 
-<!-- 				</md-button> -->
-				
-
-			
-<!-- 			</div> -->
-			
-<!-- 		</md-toolbar> -->
-		
 		 	
 					<div layout-align="space-around" layout="row" style="height:100%" ng-show="catalogLoadingShow" >
 					
@@ -125,11 +96,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		disable-save-button="false"
 		show-save-button="showMe" show-cancel-button="showMe">
 			
-			<div layout-fill class="containerDiv">
 			
-			<form 	layout-fill class="detailBody md-whiteframe-z1" >
+		<form >
 			
-					
+		<md-card>
+	     <md-card-content>			
 					
 <!-- /////////////// RIGHT SIDE TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->				
 <!-- 				<md-toolbar class= "header" > -->
@@ -215,69 +186,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</div>
 							<div flex style="margin-right: 32px">	
        						<file-upload ng-model="file" id="myId" label='browse' ng-disabled = "selectedMondrianSchema.modelLocker" ></file-upload>
-      					
-							
+     
 							</div>
+							
+							<md-input-container flex="30">
+			          <md-switch ng-model="selectedMondrianSchema.modelLocked" ng-change="unlockModel()">{{ selectedBusinessModel.modelLocked ? translate.load("sbi.bm.unlockModel") : translate.load("sbi.bm.lockModel")}}</md-switch>
+			        </md-input-container>
 							
 						</div>
        					
       				
 					 		
-      				
-					
-     			
-     				
-<!-- /////////////// LOCK UNLOCK BUTTON \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
-
-				<div  layout-wrap >
-
-      							<div  	style="line-height: 40px;margin: 2px;" 
-      									ng-hide="selectedMondrianSchema.modelLocked">
-      									
-      								<md-button 	class="md-fab md-Mini "style="
-											background-color: #3b678c;"
-      										aria-label="unlock"
-										> 
-						
-										<md-icon 	md-font-icon="fa fa-unlock fa-lg" 
-											style=" margin-top: 6px ;
-											color: white;">
-						
-										</md-icon>
-						 
-								</md-button>
-       							
-      						</div>
-      							
-      							
-      							<div  style="line-height: 40px;margin: 2px;" ng-show="selectedMondrianSchema.modelLocked">
-      								<md-button 	class="md-fab md-Mini 
-      								"style="background-color: #3b678c;"
-      								aria-label="lock"
-      									
-										ng-click="unlockModel()"> 
-						
-										<md-icon 	md-font-icon="fa fa-lock fa-lg" 
-											style=" margin-top: 6px ;
-											color: white;">
-						
-										</md-icon>
-						 
-								</md-button>
-       							<label>{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.lockedBy")}}:</label>
-       							<label>{{selectedMondrianSchema.modelLocker}}</label>
-      						</div>
-      						
-     					</div>
      					
 	
 <!-- /////////////// SAVED VERSION TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
-							
-				<md-toolbar class="header" >
-					
-					<label>{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}</label>
-						
-				</md-toolbar>
+				
+				<md-toolbar class="secondaryToolbar">
+		      <div class="md-toolbar-tools">
+		        <h2>
+		          <span>{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}</span>
+		        </h2>
+		   
+		      </div>
+		    </md-toolbar>
 				
 <!-- /////////////// SCROLL FOR SAVED FILES TABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->						
 			
@@ -300,7 +231,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- /////////////// SAVED FILES TABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 					<md-radio-group ng-model="selectedMondrianSchema.currentContentId" >
 						<angular-table 	
-						                flex
+						                layout-fill
 						                
 										id="versions" 
 										ng-model="fileList"
@@ -327,22 +258,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 				
 				
+			</md-card-content>
+	      </md-card>
 
-
-				
-	
-				
-				
-					
-			
-			
-			</form>	
-			
-		 </div>	
-			
-				
-		</right-col> 
-	
+			</form>
+			</detail>	
 	</angular-list-detail>
 
 </body>

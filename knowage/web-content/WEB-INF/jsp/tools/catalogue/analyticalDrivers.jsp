@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</list>
 		
 		<extra-button>
-			  <md-button class="md-flat" ng-click="createUseModes()" >New UseMode</md-button>
+			  <md-button class="md-flat" ng-click="createUseModes()" ng-show="showme">New UseMode</md-button>
 		</extra-button>
 		
 		<detail label=' selectedDriver.label==undefined? "" : selectedDriver.label'  save-function="save"

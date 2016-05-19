@@ -449,7 +449,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	
 	$scope.getAuthorizations = function () { // service that gets list of roles GET
 
-		sbiModule_restServices.promiseGet("2.0", "authorizations")
+		sbiModule_restServices.promiseGet("authorizations","")
 		.then(function(response) {
 			$scope.authList = response.data;
 			console.log($scope.authList);
