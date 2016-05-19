@@ -267,10 +267,6 @@ try{
 			angular.module('documentExecutionModule', 
 					['md.data.table', 'ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list','cross_navigation']);
 			
-			angular.module('documentExecutionModule').config(['$compileProvider', function ($compileProvider) {
-				  $compileProvider.debugInfoEnabled(false);
-			}]);
-			
 			angular.module('documentExecutionModule').factory('execProperties', function() {
 				 
 				var selRole= '<%= request.getParameter("SELECTED_ROLE") %>'=='null' ? '' : '<%= request.getParameter("SELECTED_ROLE") %>';
