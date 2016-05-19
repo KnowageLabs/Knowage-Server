@@ -2,7 +2,6 @@ package it.eng.spagobi.tools.alert.listener;
 
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
-import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.ThresholdValue;
 import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
 import it.eng.spagobi.kpi.metadata.SbiKpiValue;
@@ -49,7 +48,7 @@ public class KpiListener extends AbstractAlertListener {
 		Session session = HibernateSessionManager.getCurrentSession();
 		loadThresholdMap(par, session);
 
-		List<SbiKpiValue> resultSet = loadResults(par.getKpi().getId());
+		List<SbiKpiValue> resultSet = loadResults(par.getKpiId());
 		if (resultSet != null) {
 			for (SbiKpiValue sbiKpiValue : resultSet) {
 				Integer thresholdId = selectThreshold(sbiKpiValue);
@@ -291,15 +290,38 @@ public class KpiListener extends AbstractAlertListener {
 }
 
 class InputParameter {
-	private Kpi kpi;
+	private Integer kpiId;
+	private Integer kpiVersion;
 	private List<Action> actions;
 
-	public Kpi getKpi() {
-		return kpi;
+	/**
+	 * @return the kpiId
+	 */
+	public Integer getKpiId() {
+		return kpiId;
 	}
 
-	public void setKpi(Kpi kpi) {
-		this.kpi = kpi;
+	/**
+	 * @param kpiId
+	 *            the kpiId to set
+	 */
+	public void setKpiId(Integer kpiId) {
+		this.kpiId = kpiId;
+	}
+
+	/**
+	 * @return the kpiVersion
+	 */
+	public Integer getKpiVersion() {
+		return kpiVersion;
+	}
+
+	/**
+	 * @param kpiVersion
+	 *            the kpiVersion to set
+	 */
+	public void setKpiVersion(Integer kpiVersion) {
+		this.kpiVersion = kpiVersion;
 	}
 
 	public List<Action> getActions() {
