@@ -52,6 +52,7 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -1135,7 +1136,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		if (storeConfJSON != null) {
 			try {
 				JSONArray lstStoresJSON = storeConfJSON.getJSONArray("stores");
-
+				HashMap<Integer, Boolean> lstDsInsertedForObj = new HashMap<Integer, Boolean>();
 				// 2. delete all relations between document and datasets if exist
 				DAOFactory.getSbiObjDsDAO().deleteObjDsbyObjId(obj.getId());
 				// 3. insert the new relations between document and datasets
@@ -1144,6 +1145,12 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 					String dsLabel = storeJSON.getString("storeId");
 					logger.debug("Insert relation for dataset with label [" + dsLabel + "]");
 					VersionedDataSet ds = ((VersionedDataSet) DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel));
+
+					// insert only relations with new ds
+					if (lstDsInsertedForObj.get(ds.getId()) != null) {
+						continue;
+					}
+
 					String dsOrganization = ds.getOrganization();
 					logger.debug("Dataset organization used for insert relation is: " + dsOrganization);
 					Integer dsVersion = ds.getVersionNum();
@@ -1159,6 +1166,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 					relObjDs.setId(relObjDsId);
 
 					DAOFactory.getSbiObjDsDAO().insertObjDs(relObjDs);
+					lstDsInsertedForObj.put(ds.getId(), true);
 				}
 			} catch (Exception e) {
 				throw new Exception(e);
