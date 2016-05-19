@@ -1,6 +1,5 @@
 package it.eng.spagobi.tools.alert;
 
-import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -11,14 +10,11 @@ import it.eng.spagobi.tools.alert.bo.Alert;
 import it.eng.spagobi.tools.alert.bo.AlertAction;
 import it.eng.spagobi.tools.alert.bo.AlertListener;
 import it.eng.spagobi.tools.alert.dao.IAlertDAO;
-import it.eng.spagobi.tools.scheduler.bo.Frequency;
 import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
-import it.eng.spagobi.tools.scheduler.to.JobTrigger;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -106,26 +102,7 @@ public class AlertService {
 	public Response load(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
 		IAlertDAO dao = getDao(req);
 		Alert alert = dao.loadAlert(id);
-		// loading trigger
-		try {
-			JobTrigger triggerInfo = getJobTriggerInfo("" + id, ALERT_JOB_GROUP, "" + id, ALERT_JOB_GROUP);
-			Frequency frequency = new Frequency();
-			frequency.setStartTime(triggerInfo.getStartTime());
-			frequency.setEndTime(triggerInfo.getEndTime());
-			frequency.setCron(triggerInfo.getChrono() != null ? new JSONObject(triggerInfo.getChrono()).toString() : null);
-			SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-			if (triggerInfo.getStartDate() != null && !"".equals(triggerInfo.getStartDate())) {
-				frequency.setStartDate(df.parse(triggerInfo.getStartDate()).getTime());
-			}
-			if (triggerInfo.getEndDate() != null && !"".equals(triggerInfo.getEndDate())) {
-				frequency.setEndDate(df.parse(triggerInfo.getEndDate()).getTime());
-			}
-			alert.setFrequency(frequency);
-			return Response.ok(JsonConverter.objectToJson(alert, Alert.class)).build();
-		} catch (Throwable e) {
-			logger.error(req.getPathInfo(), e);
-		}
-		return Response.ok(new JSError().addErrorKey("100")).build();
+		return Response.ok(JsonConverter.objectToJson(alert, alert.getClass())).build();
 	}
 
 	@POST

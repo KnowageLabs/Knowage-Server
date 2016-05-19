@@ -30,6 +30,7 @@ function alertDefinitionControllerFunction($scope){
 			jsonOptions:{},
 			frequency:{}
 	};
+	$scope.x = {expired:false};
 	$scope.temporaneyAlert={};
 		
 	$scope.loadBroadcastLoadListAlert=function(){
@@ -71,24 +72,35 @@ function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModu
 		},
 		{ 
 			label: function(row){
-				return angular.equals(row.jobStatus.toUpperCase(),"SUSPENDED") ? sbiModule_translate.load('sbi.alert.resume') : sbiModule_translate.load('sbi.alert.suspend');
+				if(angular.equals(row.jobStatus.toUpperCase(),"EXPIRED")){
+					return "";
+				}else{
+					return angular.equals(row.jobStatus.toUpperCase(),"SUSPENDED") ? sbiModule_translate.load('sbi.alert.resume') : sbiModule_translate.load('sbi.alert.suspend');
+				}
 			},
 			icon: function(row){
-				return angular.equals(row.jobStatus.toUpperCase(),"SUSPENDED") ? 'fa fa-play' : 'fa fa-pause';
+				if(angular.equals(row.jobStatus.toUpperCase(),"EXPIRED")){
+					return "";
+				}else{
+					return angular.equals(row.jobStatus.toUpperCase(),"SUSPENDED") ? 'fa fa-play' : 'fa fa-pause';
+				}
 			}, 
 			backgroundColor:'transparent',
 			action : function(item,event) { 
-				var data="?jobGroup=ALERT_JOB_GROUP&triggerGroup=ALERT_JOB_GROUP&jobName="+item.id+"&triggerName="+item.id;
-				
-				sbiModule_restServices.promisePost("scheduler",(angular.equals(item.jobStatus.toUpperCase(),"SUSPENDED") ? 'resumeTrigger' : 'pauseTrigger')+""+data)
-				.then(function(response){  
-//					$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.catalogues.toast.deleted")).position('top').action(
-//					'OK').highlightAction(false).hideDelay(2000)) ;
-					item.jobStatus=angular.equals(item.jobStatus.toUpperCase(),"SUSPENDED") ? 'ACTIVE' : 'SUSPENDED';
-				},function(response){
-					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.deletingItemError"))});
+				if(angular.equals(item.jobStatus.toUpperCase(),"EXPIRED")){
+					//nothing
+				}else{
+					var data="?jobGroup=ALERT_JOB_GROUP&triggerGroup=ALERT_JOB_GROUP&jobName="+item.id+"&triggerName="+item.id;
+					
+					sbiModule_restServices.promisePost("scheduler",(angular.equals(item.jobStatus.toUpperCase(),"SUSPENDED") ? 'resumeTrigger' : 'pauseTrigger')+""+data)
+					.then(function(response){  
+	//					$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.catalogues.toast.deleted")).position('top').action(
+	//					'OK').highlightAction(false).hideDelay(2000)) ;
+						item.jobStatus=angular.equals(item.jobStatus.toUpperCase(),"SUSPENDED") ? 'ACTIVE' : 'SUSPENDED';
+					},function(response){
+						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.deletingItemError"))});
+					}
 				}
-		
 			}];
 	
 	
@@ -102,7 +114,13 @@ function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModu
 			} 
 			
 			response.data.frequency.cron=JSON.parse(response.data.frequency.cron);
-			 
+			
+			if(angular.equals(response.data.jobStatus.toUpperCase(),"EXPIRED")){
+				$scope.x.expired = true;
+			}else{
+				$scope.x.expired = false;
+			}
+			
 			angular.copy(response.data,$scope.alert);
 			$timeout(function(){
 				angular.copy($scope.alert,$scope.temporaneyAlert);
@@ -148,6 +166,9 @@ function alertDefinitionDetailControllerFunction($scope,$angularListDetail,sbiMo
 	$scope.isValidListenerCrono={status:false};
 	$scope.listeners=alertDefinition_listeners; 
 
+	$scope.closeExpired = function(){
+		$scope.x.expired = false;
+	}
 	
 	$scope.saveAlertFunction=function(){ 
 		var itemToSave={};

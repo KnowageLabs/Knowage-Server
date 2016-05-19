@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/alert/alert.css", currTheme)%>">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/alert/alertDefinitionController.js"></script>
 
 
@@ -76,7 +77,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 disable-save-button="isValidListener.status!=true || isValidListenerCrono.status!=true || alert.name == undefined || alert.name.length==0"
 		 layout="column" >
 
-  
+  		<md-whiteframe class="md-whiteframe-4dp" layout="row"  ng-if="x.expired">
+		   <p flex>{{translate.load("sbi.alert.error.expired.cron.interval")}}</p>
+		   <md-button    ng-click="closeExpired()"  >  {{translate.load("sbi.general.ok")}} </md-button>
+ 	 	</md-whiteframe>
       	<div layout="row" layout-margin>
 			<md-input-container flex class="md-block">
 				<label>{{translate.load("sbi.generic.name")}}</label>
