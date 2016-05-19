@@ -13,7 +13,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 		"<span class=\"md-toolbar-tools\">" +
 		"{{title}}" +
 		"</span>" +
-		"<i style=\"position:absolute;right:5px;top:0px;\"  ng-if=\"expanded\" class=\"material-icons\">expand_less</i>	<i  style=\"position:absolute;right:5px;top:2px;\" ng-if=\"!expanded\" class=\"material-icons\">expand_more</i>" +
+		"<i style=\"position:absolute;right:5px;top:0px;\"  ng-if=\"expanded\" class=\"fa fa-angle-up\"></i>	<i  style=\"position:absolute;right:5px;top:2px;\" ng-if=\"!expanded\" class=\"fa fa-angle-down\"></i>" +
 		"</md-toolbar><md-content layout-padding  ng-show=\"expanded\"><div ng-transclude style='padding: 0;'></div></md-content> " 
 		,
 		controller : boxExpanderControllerFunction,

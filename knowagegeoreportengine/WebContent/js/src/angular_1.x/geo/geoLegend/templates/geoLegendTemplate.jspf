@@ -22,7 +22,7 @@
 
 <md-button id="showLegend" class="md-fab md-mini"
 		ng-click="toggleLegend($event)" aria-label="toggle legend">
-	<i class="material-icons">format_list_bulleted</i> 
+	<i class="fa fa-list"></i> 
 </md-button>
 
 

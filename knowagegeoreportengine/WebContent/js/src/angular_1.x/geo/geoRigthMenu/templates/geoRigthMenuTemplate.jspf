@@ -3,8 +3,8 @@
 <md-button id="showMenu" class="md-fab zoomAnimation"
 			ng-click="toggleMenu($event)"
 			aria-label="toggle menu"> 
-		<i ng-if="!openRigthMenu" class="material-icons">chevron_left</i>
-		<i ng-if="openRigthMenu" class="material-icons">chevron_right</i>
+		<i ng-if="!openRigthMenu" class="fa fa-angle-double-left"></i>
+		<i ng-if="openRigthMenu" class="fa fa-angle-double-right"></i>
 	</md-button>
 
 	<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id='menu' md-is-locked-open="openRigthMenu" layout-fill>
@@ -12,7 +12,7 @@
 			layout-align="center center">
 			<div class="md-toolbar-tools" style="    height: 100%;    width: 100%;    text-align: center;">
 				
-					<i class="material-icons">my_location</i>
+					<i class="fa fa-crosshairs"></i>
 					<span style="    height: 100%;    width: 100%;    line-height: 23px;">{{translate.load("gisengine.rigthMenu.locationIntelligence")}}</span>
 				
 			</div>

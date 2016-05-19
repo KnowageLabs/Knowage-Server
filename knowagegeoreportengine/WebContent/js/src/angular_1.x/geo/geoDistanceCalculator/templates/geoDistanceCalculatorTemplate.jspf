@@ -17,7 +17,7 @@
  </md-button>
  
 <md-button  id="showDistanceCalculator" class="md-fab md-mini" ng-click="toggleDistanceCalculator($event)" aria-label="toggle menu" ng-disabled="disableButtons">
-<i class="material-icons">space_bar</i>
+<i class="fa fa-arrows-h"></i>
 </md-button>
 
 
