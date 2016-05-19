@@ -1,98 +1,128 @@
-<md-dialog flex
-   style="height:50%; width:50%; max-height:50%; max-width:50%" ng-cloak>
-   <md-toolbar>
-      <div class="md-toolbar-tools">
-         <h2>DATASET WIZARD</h2>
-         <span flex></span> 
-         <md-button class=""
-            ng-click="toggleDWVBack()"> BACK </md-button>
-         <md-button class=""
-            ng-click="toggleDWVNext()"> NEXT </md-button>
-         <md-button class=""
-            ng-click="closeDatasetCreateDialog()"> CLOSE </md-button>
-      </div>
-   </md-toolbar>
-   <md-content flex class="datasetWizardPadding knowageGrey">
-      <md-card ng-if="datasetWizardView==1">
-         <md-toolbar
-            class="secondaryToolbar">
-            <div class="md-toolbar-tools">
-               <h2>LOAD FILE</h2>
-               <span flex></span>
-            </div>
-         </md-toolbar>
-         <md-content flex class="loadFilePadding">
-            <form>
-               <div layout="row" layout-wrap>
-                  <div flex>
-                     <md-input-container class="small counter">
-                        <label>Category</label> 
-                        <md-select aria-label="aria-label"
-                           ng-model="cat">
-                           <md-option
-                              ng-repeat="category in datasetCategoryTypes">{{category.VALUE_NM}}</md-option>
-                        </md-select>
-                     </md-input-container>
-                  </div>
-               </div>
-               <div flex=50 layout="row">
-                  <label class="checkboxPadding">Limit
-                  preview:</label> 
-                  <md-input-container class="small counter" ng-model="checked">
-                     <md-checkbox ng-model="ckecked" aria-label="Checkbox 1"></md-checkbox>
-                  </md-input-container>
-               </div>
-               <div layout="row" layout-wrap>
-                  <label layout-align="center center"
-                     class="buttonLabel">{{translate.load("sbi.ds.wizard.selectFile")}}:</label>
-                  <file-upload flex ng-model="fileObj" id="datasetFile"
-                     ng-click="fileChange();checkChange()"></file-upload>
-                  <div>
-                     <md-button ng-click="uploadFile()" class="md-raised">UPLOAD</md-button>
-                  </div>
-               </div>
-            </form>
-         </md-content>
-      </md-card>
-      <md-card ng-if="datasetWizardView==2">
-         <md-toolbar
-            class="secondaryToolbar">
-            <div class="md-toolbar-tools">
-               <h2>LOAD FILE -> DEFINITION DATA</h2>
-               <span flex></span>
-            </div>
-         </md-toolbar>
-         <md-content flex class="loadFilePadding">
-            <form>
-               <!-- DEFINITION DATA -->
-            </form>
-         </md-content>
-      </md-card>
-      <md-card ng-if="datasetWizardView==3">
-         <md-toolbar>
-            <div class="md-toolbar-tools">
-               <h2>LOAD FILE -> DEFINITION DATA -> VALIDATION DATA</h2>
-               <span flex></span>
-            </div>
-         </md-toolbar>
-         <md-content flex class="loadFilePadding">
-            <form>
-               <!-- VALIDATION DATA -->
-            </form>
-         </md-content>
-      </md-card>
-      <md-card ng-if="datasetWizardView==4">
-         <md-toolbar>
-            <div class="md-toolbar-tools">
-               <h2>LOAD FILE -> DEFINITION DATA -> VALIDATION DATA -> SAVE THE DATASET</h2>
-               <span flex></span>
-            </div>
-         </md-toolbar>
-         <md-content flex class="loadFilePadding">
-            <form>
-               <!-- SAVE THE DATASET -->
-            </form>
-         </md-content>
-      </md-card>
+<md-dialog flex style="height:50%; width:50%; max-height:50%; max-width:50%" ng-cloak>
+  
+	<md-toolbar>
+      
+		<div class="md-toolbar-tools">
+      
+			<h2>DATASET WIZARD</h2>
+	         
+			<span flex></span> 
+	         
+			<md-button class="" ng-click="toggleDWVBack()"> BACK </md-button>
+			<md-button class="" ng-click="toggleDWVNext()"> NEXT </md-button>
+			<md-button class="" ng-click="closeDatasetCreateDialog()"> CLOSE </md-button>
+            
+		</div>
+      
+	</md-toolbar>
+   
+	<md-content flex class="datasetWizardPadding knowageGrey">
+      
+		<!-- CARD 1 (START) -->
+		<md-card ng-if="datasetWizardView==1">
+        
+			<md-toolbar class="secondaryToolbar">
+	         	<div class="md-toolbar-tools">
+	           		<h2>LOAD FILE</h2>
+	               	<span flex></span>
+	            </div>
+			</md-toolbar>
+	         
+			<md-content flex class="loadFilePadding">
+	         	
+				<form>
+		               
+					<div layout="row" layout-wrap>
+		                  <div flex>
+		                     <md-input-container class="small counter">
+		                        <label>Category</label> 
+		                        <md-select aria-label="aria-label" ng-model="cat">
+		                           <md-option
+		                              ng-repeat="category in datasetCategoryTypes">{{category.VALUE_NM}}</md-option>
+		                        </md-select>
+		                     </md-input-container>
+		                  </div>
+					</div>
+		               
+					<div flex=50 layout="row">
+		                  <label class="checkboxPadding">Limit preview:</label> 
+		                  <md-input-container class="small counter" ng-model="checked">
+		                     <md-checkbox ng-model="ckecked" aria-label="Checkbox 1"></md-checkbox>
+		                  </md-input-container>
+					</div>
+		               
+					<div layout="row" layout-wrap>
+		                  <label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.wizard.selectFile")}}:</label>
+		                  <file-upload flex ng-model="fileObj" id="datasetFile" ng-click="fileChange();checkChange()"></file-upload>
+		                  <div>
+		                     <md-button ng-click="uploadFile()" class="md-raised">UPLOAD</md-button>
+		                  </div>
+					</div>
+		               
+				</form>
+	            
+	       	</md-content>
+         
+		</md-card>
+		<!-- CARD 1 (END) -->
+      
+		<!-- CARD 2 (START) -->
+      	<md-card ng-if="datasetWizardView==2">
+         
+         	<md-toolbar class="secondaryToolbar">
+            	<div class="md-toolbar-tools">
+               	<h2>LOAD FILE -> DEFINITION DATA</h2>
+               	<span flex></span>
+           	 	</div>
+         	</md-toolbar>
+         
+         	<md-content flex class="loadFilePadding">
+	            <form>
+	               <!-- DEFINITION DATA -->
+	            </form>
+         	</md-content>
+         
+		</md-card>
+      	<!-- CARD 2 (END) -->
+     
+      	<!-- CARD 3 (START) -->
+      	<md-card ng-if="datasetWizardView==3">
+      	
+         	<md-toolbar>
+	            <div class="md-toolbar-tools">
+	               <h2>LOAD FILE -> DEFINITION DATA -> VALIDATION DATA</h2>
+	               <span flex></span>
+	            </div>
+         	</md-toolbar>
+         
+         	<md-content flex class="loadFilePadding">
+	            <form>
+	               <!-- VALIDATION DATA -->
+	            </form>
+         	</md-content>
+         	
+      	</md-card>
+     	<!-- CARD 3 (END) -->
+      
+      	<!-- CARD 4 (START) -->
+      	<md-card ng-if="datasetWizardView==4">
+        
+         	<md-toolbar>
+            	<div class="md-toolbar-tools">
+               	<h2>LOAD FILE -> DEFINITION DATA -> VALIDATION DATA -> SAVE THE DATASET</h2>
+               	<span flex></span>
+            	</div>
+         	</md-toolbar>
+         
+         	<md-content flex class="loadFilePadding">
+            	<form>
+              	 <!-- SAVE THE DATASET -->
+            	</form>
+        	</md-content>
+         
+      	</md-card>
+      	<!-- CARD 4 (END) -->
+      
    </md-content>
+   
 </md-dialog>
