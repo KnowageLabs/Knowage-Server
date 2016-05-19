@@ -59,7 +59,8 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="StaticWidget" description="StaticWidget" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
-	
+	<USER_FUNCTIONALITY productType="KnowageBD" name="MapCatalogueManagement" description="MapCatalogueManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageBD" name="MapFeaturesManagement" description="MapFeaturesManagement"/>
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -75,8 +76,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="EventsManagement" description="EventsManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="WorkspaceManagement" description="WorkspaceManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="WorklistManagement" description="WorklistManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageSI" name="MapCatalogueManagement" description="MapCatalogueManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageSI" name="MapFeaturesManagement" description="MapFeaturesManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentManagement" description="DocumentManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ProfileAttributeManagement" description="ProfileAttributeManagement"/>
@@ -137,6 +136,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ChartWidget" description="ChartWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="StaticWidget" description="StaticWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="TemporalDimension" description="TemporalDimension" />
 	
 	<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -211,8 +211,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="EventsManagement" description="EventsManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="WorkspaceManagement" description="WorkspaceManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="WorklistManagement" description="WorklistManagement"/>
-	<USER_FUNCTIONALITY productType="KnowagePM" name="MapCatalogueManagement" description="MapCatalogueManagement"/>
-	<USER_FUNCTIONALITY productType="KnowagePM" name="MapFeaturesManagement" description="MapFeaturesManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentManagement" description="DocumentManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ProfileAttributeManagement" description="ProfileAttributeManagement"/>
