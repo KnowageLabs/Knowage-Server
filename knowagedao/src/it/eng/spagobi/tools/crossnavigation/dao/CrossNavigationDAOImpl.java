@@ -222,17 +222,20 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						}
 						for (Object o : fromDoc.getSbiObjPars()) {
 							SbiObjPar op = (SbiObjPar) o;
-							nd.getFromPars().add(new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT));
+//							nd.getFromPars().add(new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT));
+							checkAndAddToList(nd.getFromPars(), new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT));
 						}
 						List outputParameterList = session.createCriteria(SbiOutputParameter.class).add(Restrictions.eq("biobjId", fromDoc.getBiobjId()))
 								.list();
 						for (Object object : outputParameterList) {
 							SbiOutputParameter outPar = (SbiOutputParameter) object;
-							nd.getFromPars().add(new SimpleParameter(outPar.getId(), outPar.getLabel(), TYPE_OUTPUT));
+//							nd.getFromPars().add(new SimpleParameter(outPar.getId(), outPar.getLabel(), TYPE_OUTPUT));
+							checkAndAddToList(nd.getFromPars(), new SimpleParameter(outPar.getId(), outPar.getLabel(), TYPE_OUTPUT));
 						}
 						for (Object o : toDoc.getSbiObjPars()) {
 							SbiObjPar op = (SbiObjPar) o;
-							nd.getToPars().add(new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT));
+//							nd.getToPars().add(new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT));
+							checkAndAddToList(nd.getToPars(), new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT));
 						}
 
 						int i = nd.getToPars().indexOf(toSp);
@@ -250,6 +253,12 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				return nd;
 			}
 		});
+	}
+	
+	private void checkAndAddToList(List list, Object obj){
+		if(!list.contains(obj)) {
+			list.add(obj);
+		}
 	}
 
 	@Override
