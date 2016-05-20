@@ -220,19 +220,19 @@ angular-table[multi-select] table>thead>tr>th:nth-child(n+3):nth-last-child(n+2)
 angular-table[multi-select] table>tbody>tr>td:nth-child(n+3):nth-last-child(n+2),
 angular-table:not(multi-select) table>thead>tr>th:nth-child(n+1):nth-last-child(n+2),
 angular-table:not(multi-select) table>tbody>tr>td:nth-child(n+1):nth-last-child(n+2) {
-    padding: 0 28px
+    padding: 0 10px
 }
 
 angular-table[multi-select] table>thead>tr>th:nth-child(2),
 angular-table:not(multi-select) table>thead>tr>th:nth-child(1),
 angular-table[multi-select] table>tbody>tr>td:nth-child(2),
 angular-table:not(multi-select) table>tbody>tr>td:nth-child(1) {
-    padding: 0 28px 0 0 !important
+    padding: 0 10px 0 0 !important
 }
 
 angular-table table>thead>tr>th:last-child,
 angular-table table>tbody>tr>td:last-child {
-    padding: 0 24px 0 28px
+    padding: 0 10px
 }
 
 angular-table table thead th div md-icon {
@@ -241,7 +241,7 @@ angular-table table thead th div md-icon {
 }
 
 angular-table table>tbody>tr {
-    height: 48px;
+    height: 2em;
     transition: background-color .2s
 }
 
@@ -303,6 +303,26 @@ angular-table angular-table-actions md-input-container.tableSearchBar .closeSear
     margin-left: -15px
 }
 
+angular-table .fakeTable tr th:first-child *:not(md-checkbox) div:not(.md-icon) {
+    margin-left: 10px
+}
+
+angular-table .principalTable tr th:first-child *:not(md-checkbox) div:not(.md-icon) {
+    margin-left: 10px
+}
+
+angular-table .fakeTable tr th:first-child>div:not(.md-icon) {
+    margin-left: 10px
+}
+
+angular-table .principalTable tr th:first-child>div:not(.md-icon) {
+    margin-left: 10px
+}
+
+angular-table .principalTable tr td:first-child>span {
+    margin-left: 10px
+}
+
 angular-table .pagination>li,
 angular-table .pagination>li>span {
     position: relative;
@@ -310,11 +330,12 @@ angular-table .pagination>li>span {
     margin-left: -1px;
     text-decoration: none !important;
     background-color: #fff;
+    border: 1px solid #ccc;
     display: block;
-    width: 20px;
-    height: 16px;
+    width: 30px;
+    height: 28px;
     text-align: center;
-    line-height: 16px
+    line-height: 28px
 }
 
 angular-table .pagination {
@@ -325,7 +346,13 @@ angular-table .pagination {
 angular-table .pagination>li>a {
     text-decoration: none !important;
     width: 100%;
-    display: block
+    display: block;
+    font-size: 12px;
+    color: #3b678c
+}
+
+angular-table .pagination>li>a:hover {
+    background-color: #f1f5f9
 }
 
 angular-table .pagination>.active,
@@ -338,8 +365,8 @@ angular-table .pagination>.active>span:hover {
     z-index: 2;
     color: #000;
     cursor: default;
-    background-color: #e8e8e8;
-    border-color: #e8e8e8
+    background-color: #a9c3db;
+    border-color: #a9c3db
 }
 
 angular-table .pagination>.disabled>a,
@@ -350,7 +377,7 @@ angular-table .pagination>.disabled>span:focus,
 angular-table .pagination>.disabled>span:hover {
     color: #777;
     cursor: not-allowed;
-    background-color: #fff;
+    background-color: #ddd;
     border-color: #ddd
 }
 
@@ -464,6 +491,7 @@ angular-table .principalTable>thead>tr>th {
     padding-top: 0px !important;
     padding-bottom: 0px !important
 }
+
 
 .md-button.md-knowage-theme.md-fab {
     top: 10px
@@ -677,3 +705,54 @@ a.md-button.md-knowage-theme.md-primary,
 .removeTransition {
     transition: none !important
 }
+
+.pagination > li, .pagination > li > span {
+        position: relative;
+        float: left;
+        margin-left: -1px;
+        text-decoration: none !important;
+        background-color: #fff;
+        border: 1px solid $bordersColor;
+        display: block;
+        width: 30px;
+        height: 28px;
+        text-align: center;
+        line-height: 28px;
+    }
+​
+    .pagination {
+        margin: 0px !important;
+        padding: 0px !important;
+    }
+​
+    .pagination > li > a {
+        text-decoration: none !important;
+        width: 100%;
+        display: block;
+        font-size: $smallFontSize;
+    	color: $baseColor;
+    	&:hover {
+    		background-color: lighten($secondaryColor,20%);
+    	}
+    }
+​
+    .pagination > .active, .pagination > .active > a,
+    .pagination > .active > a:focus, .pagination > .active > a:hover,
+    .pagination > .active > span, .pagination > .active > span:focus,
+    .pagination > .active > span:hover {
+        z-index: 2;
+        color: #000;
+        cursor: default;
+        background-color: $secondaryColor;
+        border-color: $secondaryColor;
+    }
+​
+    .pagination > .disabled > a, .pagination > .disabled > a:focus,
+    .pagination > .disabled > a:hover,
+    .pagination > .disabled > span, .pagination > .disabled > span:focus,
+    .pagination > .disabled > span:hover {
+        color: #777;
+        cursor: not-allowed;
+        background-color: #ddd;
+        border-color: #ddd;
+    }
