@@ -366,7 +366,6 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	 */
 	$scope.saveRole = function () {
 		
-		console.log("saviiing");
 		$scope.formatCategories();
 		$scope.formatDsCategories();
 		console.log($scope.selectedRole.roleMetaModelCategories);

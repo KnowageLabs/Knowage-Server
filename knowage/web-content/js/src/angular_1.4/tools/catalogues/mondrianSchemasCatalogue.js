@@ -8,9 +8,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
 
-app.controller('mondrianSchemasCatalogueController',["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","$filter","multipartForm","sbiModule_messaging",mondrianSchemasCatalogueFunction]);
+app.controller('mondrianSchemasCatalogueController',["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","$filter","multipartForm","sbiModule_messaging","sbiModule_download",mondrianSchemasCatalogueFunction]);
 
-function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,$filter,multipartForm,sbiModule_messaging){
+function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,$filter,multipartForm,sbiModule_messaging,sbiModule_download){
 	
 	$scope.translate = sbiModule_translate;
 	$scope.showMe = false;
@@ -27,16 +27,16 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	$scope.file ={};
 	
 	
-	$scope.downloadFile= function (item){
+
 		
-		sbiModule_restServices.promiseGet("2.0/mondrianSchemasResource/"+$scope.selectedMondrianSchema.id+"/versions/"+item.id+"/file","")
-		.then(function(response) {
-			window.location="http://localhost:8080/knowage/restful-services/2.0/mondrianSchemasResource/74/versions/"+item.id+"/file" ;
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			
-		});	
-	}
+		
+		$scope.downloadFile = function(item){
+
+			var link = "/restful-services/2.0/mondrianSchemasResource/"+$scope.selectedMondrianSchema.id+"/versions/"+item.id+"/file";
+			sbiModule_download.getLink(link);
+
+			}
+		
 	
 	$scope.unlockModel= function(){
 		

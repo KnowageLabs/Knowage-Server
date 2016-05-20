@@ -53,17 +53,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<angular-list-detail show-detail="showme">
 	<list label='translate.load("sbi.roles.rolesList");' new-function="createRole"> 
 	
-<!-- 		<md-toolbar class="header"> -->
-<!-- 		<div class="md-toolbar-tools"> -->
-<!-- 			<div style="font-size: 24px;">{{translate.load("sbi.roles.rolesList");}}</div> -->
-
-<!-- 			<md-button class="md-fab md-ExtraMini addButton" aria-label="create" -->
-<!-- 				style="position:absolute; right:11px; top:0px;" -->
-<!-- 				ng-click="createRole()"> <md-icon -->
-<!-- 				md-font-icon="fa fa-plus" style=" margin-top: 6px ; color: white;"> -->
-<!-- 			</md-icon> </md-button> -->
-<!-- 		</div> -->
-<!-- 		</md-toolbar> -->
 		 <angular-table
 		     flex
 			 id="rolesList_id" ng-model="rolesList"
@@ -81,24 +70,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		disable-save-button="!attributeForm.$valid"
 		show-save-button="showme" show-cancel-button="showme">
 	<div layout-fill class="containerDiv">	
-	<form name="attributeForm" layout-fill
-		ng-submit="attributeForm.$valid && saveRole()"
-		class="detailBody">
-<!-- 			<md-toolbar class="header"> -->
-<!-- 			<div class="md-toolbar-tools h100"> -->
-<!-- 				<div style="text-align: center; font-size: 24px;"></div> -->
-<!-- 				<div style="position: absolute; right: 0px" class="h100"> -->
-<!-- 					<md-button type="button" tabindex="-1" aria-label="cancel" -->
-<!-- 						class="md-raised md-ExtraMini rightHeaderButtonBackground" -->
-<!-- 						style=" margin-top: 2px;" ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}} -->
-<!-- 					</md-button> -->
-<!-- 					<md-button type="submit" aria-label="save_role" -->
-<!-- 						class="md-raised md-ExtraMini rightHeaderButtonBackground" -->
-<!-- 						style=" margin-top: 2px;" ng-disabled="!attributeForm.$valid"> -->
-<!-- 					{{translate.load("sbi.browser.defaultRole.save")}} </md-button> -->
-<!-- 				</div> -->
-<!-- 			</div> -->
-<!-- 			</md-toolbar> -->
+	<form name="attributeForm"
+		ng-submit="attributeForm.$valid && saveRole()">
+
 		
 			 <md-tabs
 				md-dynamic-height md-selected="selectedTab" md-border-bottom="">

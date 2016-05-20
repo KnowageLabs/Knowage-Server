@@ -61,7 +61,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		<angular-table
 		flex
-		id="useModeList_id" ng-model="useModeList"
+		id="useModeList_id"
+		ng-model="useModeList"
 		columns='[
 				  {"label":"Name","name":"name"}
 				]'
@@ -86,8 +87,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		      
 		     <md-tabs md-dynamic-height md-selected="selectedTab" md-border-bottom="">
 			<md-tab label='{{translate.load("sbi.analytical.drivers.details");}}'>
-			<md-content flex style="margin-left:20px; overflow:hidden"
-				class="md-padding ToolbarBox noBorder">
+			<md-content flex 
+			class="ToolbarBox miniToolbar noBorder mozTable">
 			<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="small counter">
@@ -166,9 +167,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			   </div>
 			
 			</md-content> </md-tab> 
-			<md-tab label='{{translate.load("sbi.analytical.drivers.usemode.details");}}' ng-if="showadMode"> <md-content
-				flex style="margin-left:20px;"
-				class="md-padding ToolbarBox noBorder"> 
+			<md-tab label='{{translate.load("sbi.analytical.drivers.usemode.details");}}' ng-if="showadMode"> 
+			<md-content flex 
+			class="ToolbarBox miniToolbar noBorder mozTable">
 				
 					<div layout="row" layout-wrap>
 						<div flex=100>
