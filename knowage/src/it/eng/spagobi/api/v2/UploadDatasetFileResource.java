@@ -12,34 +12,25 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 @Path("/selfservicedataset")
 @ManageAuthorization
@@ -54,85 +45,71 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 
 	@Path("/fileupload")
 	@POST
-	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
 	public Response uploadFileDataset(@Context HttpServletRequest req) {
-		
 
-	
-			try {
+		try {
 
-				FileItem uploaded = handleMultipartForm(req);
+			FileItem uploaded = handleMultipartForm(req);
 
-				Object skipChecksObject = null;
-				Boolean skipChecks = false;
-				if (skipChecksObject != null) {
-					skipChecks = ((String) skipChecksObject).equals("on");
-				}
-				if (uploaded == null) {
-					throw new SpagoBIServiceException(getActionName(), "No file was uploaded");
-				}
-
-				checkDatasetFileMaxSize(uploaded, getUserProfile());
-
-				// check if the file is zip or gz
-				uploaded = checkArchiveFile(uploaded);
-
-				checkUploadedFile(uploaded);
-
-				File file = checkAndCreateDir(uploaded);
-
-				/*
-				 * if(!skipChecks){ checkFile(uploaded, file); }
-				 */
-
-				logger.debug("Saving file...");
-				saveFile(uploaded, file);
-				logger.debug("File saved");
-
-				return Response.ok().build();
-			} catch (Throwable t) {
-				logger.error("Error while uploading dataset file", t);
-				return Response.serverError().build();
-			} finally {
-				logger.debug("OUT");
+			Object skipChecksObject = null;
+			Boolean skipChecks = false;
+			if (skipChecksObject != null) {
+				skipChecks = ((String) skipChecksObject).equals("on");
 			}
-	
-	
-		
+			if (uploaded == null) {
+				throw new SpagoBIServiceException(getActionName(), "No file was uploaded");
+			}
+
+			checkDatasetFileMaxSize(uploaded, getUserProfile());
+
+			// check if the file is zip or gz
+			uploaded = checkArchiveFile(uploaded);
+
+			checkUploadedFile(uploaded);
+
+			File file = checkAndCreateDir(uploaded);
+
+			/*
+			 * if(!skipChecks){ checkFile(uploaded, file); }
+			 */
+
+			logger.debug("Saving file...");
+			saveFile(uploaded, file);
+			logger.debug("File saved");
+
+			return Response.ok().build();
+		} catch (Throwable t) {
+			logger.error("Error while uploading dataset file", t);
+			return Response.serverError().build();
+		} finally {
+			logger.debug("OUT");
+		}
 
 	}
-	
-	private FileItem handleMultipartForm(HttpServletRequest request) 
-	    	throws Exception{
-	    	
-	    	// Create a factory for disk-based file items
-	    	FileItemFactory factory = new DiskFileItemFactory();
-	    	
-	    	// This is done to make upload work in Unix solaris
-	    	//((DiskFileItemFactory)factory).setSizeThreshold(5242880);
-	        
-	    	// Create a new file upload handler
-	    	ServletFileUpload upload = new ServletFileUpload(factory);
 
-	    	//upload.setFileSizeMax(5242880);
-	    	//upload.setSizeMax(5242880);
-	    	
-	    	
-	        // Parse the request
-	        List fileItems = upload.parseRequest(request);
-	        Iterator iter = fileItems.iterator();
-	        while (iter.hasNext()) {
-	            FileItem item = (FileItem) iter.next();
+	private FileItem handleMultipartForm(HttpServletRequest request) throws Exception {
 
-	            if (item.isFormField()) {
-	                String name = item.getFieldName();
-	                String value = item.getString();
-	            } else {
-	                return item;
-	            }
-	        }
-	        return null;
-	    }
+		// Create a factory for disk-based file items
+		FileItemFactory factory = new DiskFileItemFactory();
+
+		// Create a new file upload handler
+		ServletFileUpload upload = new ServletFileUpload(factory);
+
+		// Parse the request
+		List fileItems = upload.parseRequest(request);
+		Iterator iter = fileItems.iterator();
+
+		while (iter.hasNext()) {
+			FileItem item = (FileItem) iter.next();
+			if (item.isFormField()) {
+				String name = item.getFieldName();
+				String value = item.getString();
+			} else {
+				return item;
+			}
+		}
+		return null;
+	}
 
 	private void checkUploadedFile(FileItem uploaded) {
 
