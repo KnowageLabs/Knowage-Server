@@ -103,6 +103,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				break;
 			case "BUTTON_HIDE_EMPTY":
 				$scope.modelConfig.suppressEmpty = !$scope.modelConfig.suppressEmpty;
+				//$scope.tableSubsets=[];//added by dragan for caching clear
 				changeIcon(name);
 				break;
 			case "BUTTON_EXPORT_OUTPUT":
@@ -180,15 +181,18 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	 
 	  $scope.sort = function(axisToSort,axis,positionUniqueName){
 		  
-		  var path; 
+		  toSend = {};
+		  toSend.axisToSort =axisToSort;
+		  toSend.axis =axis;
+		  toSend.positionUniqueName = positionUniqueName;
+		  toSend.sortMode = $scope.selectedSortingMode;
+		  toSend.topBottomCount = $scope.sortingCount;
 		  
-		  if($scope.selectedSortingMode==='count'){
-			  var path = '/member/sort/'+axisToSort+'/'+axis+'/'+positionUniqueName+'/'+$scope.selectedSortingMode+'/'+$scope.sortingCount+'?SBI_EXECUTION_ID='+JSsbiExecutionID;
-		  }else {
-			  var path = '/member/sort/'+axisToSort+'/'+axis+'/'+positionUniqueName+'/'+$scope.selectedSortingMode+'?SBI_EXECUTION_ID='+JSsbiExecutionID;
-		  }
+		  var path ='/member/sort/?SBI_EXECUTION_ID='+JSsbiExecutionID; 
+		  
+	
 		 
-		 sbiModule_restServices.promiseGet("1.0",path)
+		 sbiModule_restServices.promisePost("1.0",path,toSend)
 			.then(function(response) {
 				$scope.handleResponse(response);
 			}, function(response) {
