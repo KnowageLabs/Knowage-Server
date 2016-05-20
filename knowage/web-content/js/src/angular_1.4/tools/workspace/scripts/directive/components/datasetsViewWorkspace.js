@@ -513,7 +513,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_config,multipartForm,$http){
 		$scope.fileObj={};
 		$scope.datasetWizardView=1;
-		$scope.datasetCategoryTypes = [];
+		$scope.datasetCategories = [];
+		$scope.datasetCategoryType = [];
+		$scope.dsGenMetaProperty = [];
+		$scope.dsMetaProperty = [];
+		$scope.dsMetaValue = [];
 		
 		$scope.toggleDWVNext = function() {
 			if($scope.datasetWizardView>0&&$scope.datasetWizardView<4){
@@ -524,9 +528,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		$scope.toggleDWVBack = function() {
 			if($scope.datasetWizardView>1&&$scope.datasetWizardView<5){
 				$scope.datasetWizardView = $scope.datasetWizardView -1;
-			}
-			
-			
+			}	
 		}
 		
 		$scope.closeDatasetCreateDialog=function(){
@@ -538,7 +540,17 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			sbiModule_restServices.promiseGet(a,b)
 			.then(function(response) {
 				console.log(response.data);
-				angular.copy(response.data,$scope.datasetCategories)
+				if(b=="") {
+					angular.copy(response.data,$scope.datasetCategories)
+				} else if(b=="?DOMAIN_TYPE=CATEGORY_TYPE"){
+					angular.copy(response.data,$scope.datasetCategoryType)
+				} else if(b=="?DOMAIN_TYPE=DS_GEN_META_PROPERTY"){
+					angular.copy(response.data,$scope.dsGenMetaProperty)
+				} else if(b=="?DOMAIN_TYPE=DS_META_PROPERTY"){
+					angular.copy(response.data,$scope.dsMetaProperty)
+				} else if(b=="?DOMAIN_TYPE=DS_META_VALUE"){
+					angular.copy(response.data,$scope.dsMetaValue)
+				}
 			},function(response){
 				sbiModule_restServices.errorHandler(response.data,"faild to load data for"+b);
 			});
@@ -549,52 +561,25 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_GEN_META_PROPERTY");
 		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_PROPERTY");
 		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_VALUE");
-	    
-		
-			
-		$scope.uploadFileDatasetAction=function(){
-			
-			completeUrl  = sbiModule_config.contextName +"/servlet/AdapterHTTP?ACTION_NAME=UPLOAD_DATASET_FILE_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&UPLOAD_FILE="+$scope.fileObj
-    	    baseUrl = sbiModule_config.contextName +"/servlet/AdapterHTTP"
-			params = {ACTION_NAME:"UPLOAD_DATASET_FILE_ACTION",LIGHT_NAVIGATOR_DISABLED:"TRUE",SBI_EXECUTION_ID:"-1"};
-			fileNameUploaded = $scope.fileObj.fileName;
-	    	$http.post(completeUrl,$scope.fileObj)
-	    	   .then(
-	    	       function(response){
-	    	         // success callback
-	    	    	   console.log(response);
-	    	       }, 
-	    	       function(response){
-	    	         // failure callback
-	    	    	   console.log(response);
-		}
-	    	    );	
-	    }
-		
-		$scope.uploadFile= function(){
-		
-        	multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedataset/fileupload",$scope.fileObj).success(
 
+		$scope.uploadFile= function(){
+        	multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedataset/fileupload",$scope.fileObj).success(
 					function(data,status,headers,config){
 						if(data.hasOwnProperty("errors")){						
 							console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");		
-
+							sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, 'Error!');
 						}else{
-						
 							console.log("[UPLOAD]: SUCCESS!");
-						sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
-						
-						$scope.file={};
-						
-						
+							sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
+							$scope.file={};
+							$scope.dataset.fileType = data.fileType;
+							$scope.dataset.fileName = data.fileName;
 						}
 					}).error(function(data, status, headers, config) {
 						console.log("[UPLOAD]: FAIL!"+status);
+						sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, 'Error!');
 					});
-        	
-        }
-		
-		
+        }	
 	}
     
 }

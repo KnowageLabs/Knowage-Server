@@ -9,12 +9,15 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -23,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -45,7 +47,7 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 
 	@Path("/fileupload")
 	@POST
-	public Response uploadFileDataset(@Context HttpServletRequest req) {
+	public Map<String, String> uploadFileDataset(@Context HttpServletRequest req) {
 
 		try {
 
@@ -65,7 +67,7 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 			// check if the file is zip or gz
 			uploaded = checkArchiveFile(uploaded);
 
-			checkUploadedFile(uploaded);
+			String extension = checkUploadedFile(uploaded);
 
 			File file = checkAndCreateDir(uploaded);
 
@@ -76,11 +78,15 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 			logger.debug("Saving file...");
 			saveFile(uploaded, file);
 			logger.debug("File saved");
+			Map<String, String> jsonMap = new HashMap<>();
+			jsonMap.put("fileName", file.getName());
+			jsonMap.put("fileType", extension);
 
-			return Response.ok().build();
+			return jsonMap;
 		} catch (Throwable t) {
+			String s = t.getMessage();
 			logger.error("Error while uploading dataset file", t);
-			return Response.serverError().build();
+			throw new SpagoBIRestServiceException(s, buildLocaleFromSession(), t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -111,7 +117,7 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 		return null;
 	}
 
-	private void checkUploadedFile(FileItem uploaded) {
+	private String checkUploadedFile(FileItem uploaded) {
 
 		logger.debug("IN");
 		try {
@@ -128,6 +134,8 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 			if (!"CSV".equalsIgnoreCase(fileExtension) && !"XLS".equalsIgnoreCase(fileExtension)) {
 				throw new SpagoBIServiceException(getActionName(), "The uploaded file has an invalid extension. Choose a CSV or XLS file.");
 			}
+
+			return fileExtension.toUpperCase();
 
 		} finally {
 			logger.debug("OUT");
