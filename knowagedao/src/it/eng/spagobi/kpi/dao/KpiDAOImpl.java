@@ -648,10 +648,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			JSONObject rule = measureList.getJSONObject(i);
 			Integer version = ruleVersion.get(rule.getInt("ruleId"));
 			if (version != null) {
-				rule.put("ruleVersion", version);
+				measureList.getJSONObject(i).put("ruleVersion", version);
 			}
 		}
-		persistentSbiKpiKpi.setCardinality(measureList.toString());
+		persistentSbiKpiKpi.setCardinality(new JSONObject(persistentSbiKpiKpi.getCardinality()).put("measureList", measureList).toString());
 	}
 
 	private SbiKpiAlias manageAlias(Session session, Integer aliasId, String aliasName) {
