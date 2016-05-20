@@ -511,8 +511,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	}
     	
     }
-
 	
+    $scope.editFileDataset = function (arg) {
+    	console.log(arg);
+    }
+    
 	function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_config,multipartForm,$http){
 		$scope.fileObj={};
 		$scope.datasetWizardView=1;
@@ -539,6 +542,12 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		$scope.closeDatasetCreateDialog=function(){
 			$mdDialog.cancel();
 			$scope.datasetWizardView=1;
+			
+			/**
+			 * Empty the object that was potentially uploaded previously when closing the dialog box.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			$scope.dataset = {};
 		}
 		
 		loadDatasetValues= function(a,b){
@@ -578,9 +587,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 						}else{
 						
 							console.log("[UPLOAD]: SUCCESS!");
-						sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
+							sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
 						
-						$scope.file={};
+							$scope.file={};
 							$scope.dataset.fileType = data.fileType;
 							$scope.dataset.fileName = data.fileName;
 						}

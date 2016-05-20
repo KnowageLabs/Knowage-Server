@@ -106,15 +106,17 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	/**
 	 * TODO: For Dataset wizard
 	 */
-	$scope.limitPreviewChecked = false;
+	$scope.dataset = {};
 	
-	$scope.csvEncoding = null; 
-	$scope.csvDelimiter = null; 
-	$scope.csvQuote = null; 
+	$scope.dataset.limitPreviewChecked = false;
 	
-	$scope.skipRows = 0;
-	$scope.limitRows = null;
-	$scope.xlsSheetNumber = 1;
+	$scope.dataset.csvEncoding = null; 
+	$scope.dataset.csvDelimiter = null; 
+	$scope.dataset.csvQuote = null; 
+	
+	$scope.dataset.skipRows = 0;
+	$scope.dataset.limitRows = null;
+	$scope.dataset.xlsSheetNumber = 1;
 	
 	$scope.csvEncodingTypes = 
 	[ 
@@ -140,17 +142,17 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
  	];
 	
 	$scope.chooseDelimiterCharacter = function(delimiterCharacterObj) {
-		$scope.csvDelimiter = delimiterCharacterObj.value;
+		$scope.dataset.csvDelimiter = delimiterCharacterObj.value;
 //		console.log($scope.csvDelimiter);
 	}
 	
 	$scope.chooseQuoteCharacter = function(quoteCharacterObj) {
-		$scope.csvQuote = quoteCharacterObj.value;
+		$scope.dataset.csvQuote = quoteCharacterObj.value;
 //		console.log($scope.csvQuote);
 	}
 	
 	$scope.chooseEncoding = function(encodingObj) {
-		$scope.csvEncoding = encodingObj.value;
+		$scope.dataset.csvEncoding = encodingObj.value;
 //		console.log($scope.csvEncoding);
 	}
 	

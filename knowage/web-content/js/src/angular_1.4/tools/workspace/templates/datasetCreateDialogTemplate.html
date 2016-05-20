@@ -1,4 +1,4 @@
-<md-dialog flex style="height:70%; width:50%; max-height:70%; max-width:50%" ng-cloak>
+<md-dialog flex class="mdDialogDatasetWizard" ng-cloak>
   
 	<md-toolbar>
       
@@ -19,9 +19,11 @@
 	<md-content flex class="datasetWizardPadding knowageGrey">
       
 		<!-- CARD 1 (START) -->
-		<md-card ng-if="datasetWizardView==1" class="datasetWizardCardHeight">
+		<!--<md-card ng-if="datasetWizardView==1">-->
+        <div ng-if="datasetWizardView==1">
         
-			
+			<md-whiteframe  flex layout="column" layout-margin class="md-whiteframe-5dp">
+				
 				<md-toolbar class="secondaryToolbar">
 		         	<div class="md-toolbar-tools">
 		           		<h2>LOAD FILE</h2>
@@ -62,14 +64,18 @@
 					</form>
 		            
 		       	</md-content>
+		       	
+	       	</md-whiteframe>
 	       	
          
          	<!-- <md-whiteframe flex layout="column" layout-margin class="md-whiteframe-5dp md-whiteframe-5dp-rightPanelDocuments"> -->
          		
+       		<md-whiteframe flex layout="column" layout-margin class="md-whiteframe-5dp threeCombosThreeNumFields">         		
+         		
          		<div layout="row">								
 			              
 			        <!-- CSV file is uploaded --> 
-					<div layout="row" flex ng-if="limitPreviewChecked">
+					<div layout="row" flex ng-if="dataset.fileType=='CSV'">
 		                 	
 	                 	<div layout="row" layout-wrap flex=33>
 	                  		<div flex=90 layout-align="center center">
@@ -116,7 +122,7 @@
 					</div>
 					
 					<!-- XLS file is uploaded -->
-					<div layout="row" flex ng-if="!limitPreviewChecked">
+					<div layout="row" flex ng-if="dataset.fileType=='XLS'">
 						
 						<div layout="row" layout-wrap flex=33>
 	                  		<div flex=90 layout-align="center center">
@@ -147,13 +153,13 @@
 						
 					</div>
 						
-				</div>
-					
+				</div>					
 				
-         <!-- 	</md-whiteframe> -->
-         
-		</md-card>
-		<!-- CARD 1 (END) -->
+       	 	</md-whiteframe>
+       	 	
+         </div>
+		
+		<!-- </md-card>CARD 1 (END) -->
       
 		<!-- CARD 2 (START) -->
       	<md-card ng-if="datasetWizardView==2">
