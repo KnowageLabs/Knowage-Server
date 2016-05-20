@@ -58,13 +58,12 @@ function alertKpiDefinitionControllerFunction($scope,sbiModule_translate,sbiModu
 		sbiModule_restServices.promiseGet('1.0/kpi',kpiId+"/"+kpiVersion+"/loadKpi")
 		.then(
 				function(response){
-					$scope.kpi = {};
-					angular.extend($scope.kpi,response.data);
-					},
+					$scope.kpi = response.data;
+				},
 				function(response){
 						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.load.error"));
-						}
-					);
+					}
+				);
 	}
 	
 	$scope.loadSelectedKpi=function(oldKpi,kpi){
