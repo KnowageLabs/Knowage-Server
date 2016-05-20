@@ -40,7 +40,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.maxRows = 3;
 	$scope.topSliderNeeded;
 	$scope.topStart = 0;
-	$scope.tableSubsets =[];
+	//$scope.tableSubsets =[];
 	$scope.columns;
 	$scope.maxCols = 5;
 	$scope.leftSliderNeeded;
@@ -118,7 +118,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.modelConfig = source.modelConfig;
 		console.log($scope.modelConfig);
 		$scope.table = $sce.trustAsHtml(source.table);
-		$scope.tableSubsets=[];
+		//$scope.tableSubsets=[];
 		
 		$scope.columns = source.columns;
 		$scope.rows = source.rows;
@@ -142,9 +142,15 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 					modelConfig).then(
 					function(response) {
 						$scope.table = $sce.trustAsHtml(response.data.table);
+						if($scope.modelConfig){
+							if($scope.modelConfig.startRow!=response.data.modelConfig.startRow){
+								$scope.scrollTo(response.data.modelConfig.startRow,response.data.modelConfig.startColumn);
+							}
+						}
+						
 						
 						$scope.modelConfig = response.data.modelConfig;
-						$scope.tableSubsets[$scope.modelConfig.startRow]=response.data.table;
+						//$scope.tableSubsets[$scope.modelConfig.startRow]=response.data.table;
 						
 						$scope.ready = true;
 						
