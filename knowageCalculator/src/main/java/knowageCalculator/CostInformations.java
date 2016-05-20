@@ -97,7 +97,8 @@ public class CostInformations {
 			 */
 
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			URL input = classLoader.getResource("listino_knowage.v4_calcolaticeLAST.xls");
+			// URL input = classLoader.getResource("listino_knowage.v4_calcolaticeLAST.xls");
+			URL input = classLoader.getResource("listino_knowage_calcolatrice_v6.xls");
 			String xlsFilePath = input.getFile();// .substring(1);
 			logger.debug("reading xls file from:" + xlsFilePath);
 			File f = new File(xlsFilePath);
@@ -189,7 +190,14 @@ public class CostInformations {
 				double licensePercentageEII = configurationSheet.getRow(1).getCell(1).getNumericCellValue();
 				double priceHypothesys = configurationSheet.getRow(2).getCell(1).getNumericCellValue();
 				double minPriceOneUserOEM_INT = configurationSheet.getRow(6).getCell(1).getNumericCellValue();
-				double basicPriceOneUser = Double.max(licensePercentageEII * priceHypothesys, minPriceOneUserOEM_INT);
+				// double basicPriceOneUser = Double.max(licensePercentageEII * priceHypothesys, minPriceOneUserOEM_INT);
+				double basicPriceOneUser = -1;
+				if ((licensePercentageEII * priceHypothesys) > minPriceOneUserOEM_INT) {
+					basicPriceOneUser = licensePercentageEII * priceHypothesys;
+				} else {
+					basicPriceOneUser = minPriceOneUserOEM_INT;
+				}
+
 				// System.out.println("basicPriceOneUser:"+basicPriceOneUser);
 				double increasePercentageForGoldSubscription = configurationSheet.getRow(4).getCell(1).getNumericCellValue();
 				Map<String, Set<String>> productSubfuncMap = initializeProductSubfuncMap(workbook.getSheet("Mappatura funzionalità"));
