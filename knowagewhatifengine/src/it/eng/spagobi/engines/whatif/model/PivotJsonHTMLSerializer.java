@@ -94,7 +94,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 	private static final String SLICERS = "slicers";
 	private static final String FORMULAS = "formulas";
 
-	public PivotJsonHTMLSerializer() {}
+	public PivotJsonHTMLSerializer() {
+	}
 
 	@Override
 	public void serialize(PivotObjectForRendering pivotobject, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
@@ -102,7 +103,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		PivotModel value = pivotobject.getModel();
 		ModelConfig modelConfig = pivotobject.getConfig();
 		OlapConnection connection = pivotobject.getConnection();
-		
+
 		logger.debug("IN");
 
 		String table = "";
@@ -110,7 +111,9 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		logger.debug("Creating the renderer");
 		StringWriter writer = new StringWriter();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) value;
-		model.setSubset(modelConfig.getStartRow(), modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
+		// model.setSubset(modelConfig.getStartRow(),
+		// modelConfig.getStartColumn(), modelConfig.getRowsSet(),
+		// modelConfig.getColumnSet());
 
 		// WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer();
 		WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer();
@@ -189,11 +192,42 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		} else {
 			renderer.setPropertyCollector(null);
 		}
-
+		int rowCount = model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount();
 		// /suppress empty rows/columns
 		Boolean suppressEmpty = modelConfig.getSuppressEmpty();
 		NonEmpty transformNonEmpty = value.getTransform(NonEmpty.class);
 		transformNonEmpty.setNonEmpty(suppressEmpty);
+		if (suppressEmpty) {
+
+			model.setSubset(modelConfig.getStartRow(), modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
+			int subSetrowCount = model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount();
+			int newRowSet = 0;
+			int direction = 1;
+			int newRowStart = Math.abs(modelConfig.getStartRow());
+			while (subSetrowCount != modelConfig.getRowsSet() && rowCount > newRowSet) {
+				if (subSetrowCount == 0) {
+					if (rowCount == newRowStart || modelConfig.getStartRow() < 0) {
+						direction = -1;
+					}
+					newRowStart = newRowStart + direction;
+					modelConfig.setStartRow(Math.abs(newRowStart));
+					newRowSet = 1;
+					model.removeSubset();
+					model.setSubset(Math.abs(newRowStart), modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
+					subSetrowCount = model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount();
+				} else {
+					newRowSet++;
+					model.removeSubset();
+					model.setSubset(Math.abs(newRowStart), modelConfig.getStartColumn(), newRowSet, modelConfig.getColumnSet());
+					subSetrowCount = model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount();
+				}
+
+			}
+		} else {
+			model.setSubset(Math.abs(modelConfig.getStartRow()), modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
+		}
+
+		// modelConfig.setRowCount(rowCount);
 
 		// updates the actual version in the model config
 		if (modelConfig.isWhatIfScenario()) {
@@ -202,12 +236,12 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		}
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss.SSS");
 		String time = "Serilize start " + format.format(new Date());
-		//System.out.println(time);
+		// System.out.println(time);
 		renderer.render(value, callback);
 		time = "Serilize end " + format.format(new Date());
-		//System.out.println(time);
+		// System.out.println(time);
 
-		//System.out.println();
+		// System.out.println();
 		try {
 			writer.flush();
 			writer.close();
@@ -263,7 +297,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 
 	}
 
-	private void serializeAxis(String field, JsonGenerator jgen, List<CellSetAxis> axis, Axis type, OlapConnection connection, ModelConfig modelConfig) throws JSONException, JsonGenerationException, IOException {
+	private void serializeAxis(String field, JsonGenerator jgen, List<CellSetAxis> axis, Axis type, OlapConnection connection, ModelConfig modelConfig)
+			throws JSONException, JsonGenerationException, IOException {
 		CellSetAxis aAxis = axis.get(0);
 		int axisPos = 0;
 		if (!aAxis.getAxisOrdinal().equals(type)) {
@@ -273,12 +308,12 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		List<Hierarchy> hierarchies = aAxis.getAxisMetaData().getHierarchies();
 		if (hierarchies != null) {
 			List<Dimension> dimensions = CubeUtilities.getDimensions(hierarchies);
-			serializeDimensions(jgen, dimensions, axisPos, field, false, null,  connection,  modelConfig);
+			serializeDimensions(jgen, dimensions, axisPos, field, false, null, connection, modelConfig);
 		}
 	}
 
-	private void serializeDimensions(JsonGenerator jgen, List<Dimension> dimensions, int axis, String field, boolean withSlicers, PivotModelImpl model, OlapConnection connection, ModelConfig modelConfig)
-			throws JSONException, JsonGenerationException, IOException {
+	private void serializeDimensions(JsonGenerator jgen, List<Dimension> dimensions, int axis, String field, boolean withSlicers, PivotModelImpl model,
+			OlapConnection connection, ModelConfig modelConfig) throws JSONException, JsonGenerationException, IOException {
 
 		QueryAdapter qa = null;
 		ChangeSlicer ph = null;
@@ -358,44 +393,38 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 
 		jgen.writeEndArray();
 		String name = MDXFormula.class.getDeclaredFields()[0].getName();
-		//System.out.println(name);
+		// System.out.println(name);
 	}
 
-/*	private void serializeFilters(String field, JsonGenerator jgen, List<Hierarchy> hierarchies, PivotModelImpl model, OlapConnection connection, ModelConfig modelConfig) throws JSONException,
-			JsonGenerationException, IOException {
-
-		QueryAdapter qa = new QueryAdapter(model);
-		qa.initialize();
-
-		ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
-
-		jgen.writeArrayFieldStart(field);
-		if (hierarchies != null) {
-			for (int i = 0; i < hierarchies.size(); i++) {
-				Hierarchy hierarchy = hierarchies.get(i);
-				Map<String, Object> hierarchyObject = new HashMap<String, Object>();
-				hierarchyObject.put(NAME, hierarchy.getName());
-				hierarchyObject.put(UNIQUE_NAME, hierarchy.getUniqueName());
-				hierarchyObject.put(POSITION, "" + i);
-				hierarchyObject.put(AXIS, "" + FILTERS_AXIS_POS);
-
-				List<Member> slicers = ph.getSlicer(hierarchy);
-				if (slicers != null && slicers.size() > 0) {
-					List<Map<String, String>> slicerMap = new ArrayList<Map<String, String>>();
-					for (int j = 0; j < slicers.size(); j++) {
-						Map<String, String> slicer = new HashMap<String, String>();
-						slicer.put(UNIQUE_NAME, slicers.get(j).getUniqueName());
-						slicer.put(NAME, slicers.get(j).getName());
-						slicerMap.add(slicer);
-					}
-					hierarchyObject.put(SLICERS, slicerMap);
-				}
-				jgen.writeObject(hierarchyObject);
-
-			}
-		}
-		jgen.writeEndArray();
-	}*/
+	/*
+	 * private void serializeFilters(String field, JsonGenerator jgen,
+	 * List<Hierarchy> hierarchies, PivotModelImpl model, OlapConnection
+	 * connection, ModelConfig modelConfig) throws JSONException,
+	 * JsonGenerationException, IOException {
+	 * 
+	 * QueryAdapter qa = new QueryAdapter(model); qa.initialize();
+	 * 
+	 * ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
+	 * 
+	 * jgen.writeArrayFieldStart(field); if (hierarchies != null) { for (int i =
+	 * 0; i < hierarchies.size(); i++) { Hierarchy hierarchy =
+	 * hierarchies.get(i); Map<String, Object> hierarchyObject = new
+	 * HashMap<String, Object>(); hierarchyObject.put(NAME,
+	 * hierarchy.getName()); hierarchyObject.put(UNIQUE_NAME,
+	 * hierarchy.getUniqueName()); hierarchyObject.put(POSITION, "" + i);
+	 * hierarchyObject.put(AXIS, "" + FILTERS_AXIS_POS);
+	 * 
+	 * List<Member> slicers = ph.getSlicer(hierarchy); if (slicers != null &&
+	 * slicers.size() > 0) { List<Map<String, String>> slicerMap = new
+	 * ArrayList<Map<String, String>>(); for (int j = 0; j < slicers.size();
+	 * j++) { Map<String, String> slicer = new HashMap<String, String>();
+	 * slicer.put(UNIQUE_NAME, slicers.get(j).getUniqueName()); slicer.put(NAME,
+	 * slicers.get(j).getName()); slicerMap.add(slicer); }
+	 * hierarchyObject.put(SLICERS, slicerMap); }
+	 * jgen.writeObject(hierarchyObject);
+	 * 
+	 * } } jgen.writeEndArray(); }
+	 */
 
 	public String formatQueryString(String queryString) {
 		String formattedQuery;
