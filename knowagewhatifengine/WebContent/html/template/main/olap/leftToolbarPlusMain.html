@@ -20,7 +20,9 @@
 					</md-button>
 					
 					<div ng-class="row.hierarchies.length == 1 ? 'name':'name-multi'" title="{{row.caption}}">
-						<div ng-class="row.hierarchies.length > 1 ? 'rotate-text-nop' : 'rotate-text'">{{row.caption}}</div>
+						<div ng-class="row.hierarchies.length > 1 ? 'rotate-text-nop' : 'rotate-text'">
+							{{cutName(row.caption, 1, row.hierarchies.length > 1)}}
+						</div>
 					</div>	
 					
 					<div class="action">

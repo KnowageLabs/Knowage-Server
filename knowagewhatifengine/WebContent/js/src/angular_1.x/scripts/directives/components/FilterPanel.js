@@ -19,6 +19,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	var hlght = false;
 	var selectedFlag = false;
 	
+	var cutArray = [12, 11, 10, 9, 6]; //array with maximum lengths for card
+	
 	var typeMsgWarn =sbiModule_translate.load('sbi.common.warning');
 	$scope.loadingFilter = true;
 	$scope.filterPanelEmpty = sbiModule_translate.load('sbi.olap.execution.table.filter.empty');
@@ -624,21 +626,21 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		else	
 			return true;
 	};
-	
-	$scope.cutName = function(name){
-		var result = name.split(" ");
+	//var fAxisCut = {'maxL':12, 'maxFWL':13,'maxSWL':3}
+	$scope.cutName = function(name, axis, multi){
+		var ind = axis;
+		if(multi)
+			ind = ind + 2;
 		
-		if(name.length < 12)
+		ind = ind+1;
+		
+		var cutProp = cutArray[ind];
+		
+		if(name.length <= cutProp)
 			return name;
-		if(result[0].length>13){
-			return result[0].substring(0,13)
-		}
-		else if(result[1]!=undefined){
-			if(result[1].length > 3){
-				var res = result[1].substring(0,3);
-				return result[0]+" "+res+"...";
-			}
-		}
+		else
+			return name.substring(0,cutProp)+"...";
+		
 	};
 	
 	updateFilterTracker = function(){

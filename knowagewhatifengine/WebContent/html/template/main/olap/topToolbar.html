@@ -19,7 +19,9 @@
 				<md-icon class="fa fa-sitemap" style="color:white;"></md-icon>
 			</md-button>
 			
-			<div class="name" title="{{column.caption}}">{{column.caption}}</div>
+			<div class="name" title="{{column.caption}}">
+				{{cutName(column.caption, 0, column.hierarchies.length > 1)}}			
+			</div>
 			
 			<div class="action">
 				<md-button class="md-icon-button button" aria-label="Favorite" ng-click="openFiltersDialogAsync(e, column, null)">
