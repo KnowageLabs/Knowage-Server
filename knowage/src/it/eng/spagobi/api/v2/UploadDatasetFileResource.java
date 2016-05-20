@@ -22,15 +22,19 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
@@ -51,31 +55,13 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 	@Path("/fileupload")
 	@POST
 	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
-	public Response uploadFileDataset(@MultipartForm MultipartFormDataInput input) {
-		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-		List<InputPart> fileNamePart = uploadForm.get("fileName");
-		List<InputPart> fileParts = uploadForm.get("file");
-		FileOutputStream fileOuputStream = null;
-		byte[] bytes = null;
-		if (fileNamePart != null && fileParts != null) {
+	public Response uploadFileDataset(@Context HttpServletRequest req) {
+		
+
+	
 			try {
-				String fileName = SpagoBIUtilities.getRelativeFileNames(fileNamePart.get(0).getBodyAsString());
-				// convert the uploaded file to input stream -> bytes
-				InputStream inputStream = fileParts.get(0).getBody(InputStream.class, null);
-				bytes = IOUtils.toByteArray(inputStream);
 
-				// save file into java temp directory
-				String path = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + fileName;
-				File tempFile = new File(path);
-
-				// convert array of bytes into file
-				fileOuputStream = new FileOutputStream(tempFile);
-				fileOuputStream.write(bytes);
-				fileOuputStream.close();
-
-				FileItem uploaded = new DiskFileItem("fileUpload", "application/octet-stream", false, fileName, DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD,
-						null);
-				uploaded.getOutputStream();
+				FileItem uploaded = handleMultipartForm(req);
 
 				Object skipChecksObject = null;
 				Boolean skipChecks = false;
@@ -110,11 +96,43 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 			} finally {
 				logger.debug("OUT");
 			}
-		} else {
-			return Response.ok().build();
-		}
+	
+	
+		
 
 	}
+	
+	private FileItem handleMultipartForm(HttpServletRequest request) 
+	    	throws Exception{
+	    	
+	    	// Create a factory for disk-based file items
+	    	FileItemFactory factory = new DiskFileItemFactory();
+	    	
+	    	// This is done to make upload work in Unix solaris
+	    	//((DiskFileItemFactory)factory).setSizeThreshold(5242880);
+	        
+	    	// Create a new file upload handler
+	    	ServletFileUpload upload = new ServletFileUpload(factory);
+
+	    	//upload.setFileSizeMax(5242880);
+	    	//upload.setSizeMax(5242880);
+	    	
+	    	
+	        // Parse the request
+	        List fileItems = upload.parseRequest(request);
+	        Iterator iter = fileItems.iterator();
+	        while (iter.hasNext()) {
+	            FileItem item = (FileItem) iter.next();
+
+	            if (item.isFormField()) {
+	                String name = item.getFieldName();
+	                String value = item.getString();
+	            } else {
+	                return item;
+	            }
+	        }
+	        return null;
+	    }
 
 	private void checkUploadedFile(FileItem uploaded) {
 
