@@ -59,8 +59,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.scheduler.bo.Trigger;
-import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -70,12 +68,10 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -722,32 +718,6 @@ public class KpiService {
 	public Response loadSchedulerKPI(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
 		IKpiDAO dao = getKpiDAO(req);
 		KpiScheduler t = dao.loadKpiScheduler(id);
-		try {
-
-			ISchedulerDAO daoScheduler = DAOFactory.getSchedulerDAO();
-			Trigger tr = daoScheduler.loadTrigger(KPI_SCHEDULER_GROUP, t.getId() + "");
-			if (tr == null) {
-				// Calendar now = GregorianCalendar.getInstance(); // creates a new calendar instance
-				t.getFrequency().setStartTime("00:00");
-				t.getFrequency().setCron(null);
-			} else {
-				Date startTime = tr.getStartTime();
-				Calendar dateStartFreq = GregorianCalendar.getInstance(); // creates a new calendar instance
-				dateStartFreq.setTime(startTime); // assigns calendar to given date
-				t.getFrequency().setStartTime(dateStartFreq.get(Calendar.HOUR_OF_DAY) + ":" + dateStartFreq.get(Calendar.MINUTE));
-				if (tr.getEndTime() != null) {
-					Date endTime = tr.getEndTime();
-					Calendar dateEndFreq = GregorianCalendar.getInstance(); // creates a new calendar instance
-					dateEndFreq.setTime(endTime); // assigns calendar to given date
-					t.getFrequency().setEndTime(dateEndFreq.get(Calendar.HOUR_OF_DAY) + ":" + dateEndFreq.get(Calendar.MINUTE));
-					t.getFrequency().setCron(tr.getChronExpression() != null ? new JSONObject(tr.getChronExpression()).toString() : null);
-				}
-
-			}
-
-		} catch (Throwable e) {
-			logger.error(req.getPathInfo(), e);
-		}
 		return Response.ok(JsonConverter.objectToJson(t, t.getClass())).build();
 	}
 
