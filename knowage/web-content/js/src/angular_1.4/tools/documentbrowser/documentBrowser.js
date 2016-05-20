@@ -223,10 +223,12 @@ function documentBrowserFunction(
 						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.search.error'))
 						.finally(function(){
 							$scope.searchDocuments = [];
-						})
+						});
+						$scope.searchingDocuments=false;
 					});
 				}else{
 					$scope.searchDocuments = [];
+					$scope.searchingDocuments=false;
 				}
 			}
 		}, 400);
