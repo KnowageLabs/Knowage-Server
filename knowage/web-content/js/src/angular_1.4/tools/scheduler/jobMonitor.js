@@ -117,7 +117,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			$scope.selectedExecution = item;
 			var confirm = $mdDialog.confirm()
 				.title(sbiModule_translate.load("sbi.generic.pleaseConfirm"))
-				.content(sbiModule_translate.load("sbi.generic.edit"))
+				.content(sbiModule_translate.load("sbi.schedulation.editConfirm"))
 				.ariaLabel('Edit job')
 				.ok(sbiModule_translate.load("sbi.general.continue"))
 				.cancel(sbiModule_translate.load("sbi.general.cancel"));
