@@ -106,9 +106,9 @@ public class CrossNavigationManager {
 		Level level = member.getLevel();
 		logger.debug("Member level is " + level.getUniqueName());
 		if (level.getUniqueName().equals(levelName)) {
+			level.getName();
 			logger.debug("Member level matches input level name " + levelName + "!!");
-			String uniqueName = member.getUniqueName();
-			toReturn = uniqueName.substring(uniqueName.lastIndexOf("].[") + 3, uniqueName.lastIndexOf("]"));
+			toReturn = member.getName();
 		} else {
 			logger.debug("Member level does NOT match input level name " + levelName + "!!");
 			// look for parent member at parent level
