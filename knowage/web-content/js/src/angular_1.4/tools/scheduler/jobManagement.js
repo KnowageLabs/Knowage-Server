@@ -476,8 +476,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 				} else {
 					ctrl.selectedDocument = data;
-					ctrl.loadSelectedDocumentRoles();
-					ctrl.loadSelectedDocumentParameters();
+					ctrl.loadSelectedDocumentRolesAndParameters();
 				}
 			})
 			.error(function(data, status, headers, config) {
@@ -507,6 +506,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							parameter.role = ctrl.selectedDocumentRoles[0].role;
 						}
 					}
+					ctrl.loadSelectedDocumentParameters();
 				}
 			})
 			.error(function(data, status, headers, config) {
