@@ -1,5 +1,5 @@
 angular.module('scrolly_directive',[])
-	.directive('scrolly',['$window','$interval', function ($window,$interval) {
+	.directive('scrolly',['$window','$interval','$sce', function ($window,$interval,$sce) {
 	    return {
 	        restrict: 'A',
 	        link: function (scope, element, attrs) {
@@ -61,12 +61,9 @@ angular.module('scrolly_directive',[])
 	            	if(table.offsetHeight<raw.offsetHeight-70&&
 	            			scope.modelConfig.rowCount>newRowSet){
 	            		console.log('table height is smaller than parent div and rowCount is greater than rowSet');
-	            		if(scope.modelConfig.suppressEmpty){
-	            			newRowSet++;
-	            			scope.showLoadingMask = false;
-	            		}else{
+	            		
 	            			newRowSet = 50;
-	            		}
+	            		
 	            			
 	            			
 	            		
@@ -78,12 +75,9 @@ angular.module('scrolly_directive',[])
 	            			
 	            		
 	            		if(table.offsetWidth+bodyColumns[newColumnSet].offsetWidth<raw.offsetWidth-50){
-	            			if(scope.modelConfig.suppressEmpty){
-	            				newColumnSet++;
-		            			scope.showLoadingMask = false;
-	            			}else{
+	            			
 		            			newColumnSet = 50;
-		            		}
+		            		
 	            			
 	            		}
 	            		
@@ -162,12 +156,25 @@ angular.module('scrolly_directive',[])
 	                
 	               
 	               if(scope.modelConfig.startRow!=startRow){
+	            	   if(scope.modelConfig.suppressEmpty){
+	            		   if(startRow<scope.modelConfig.startRow){
+	            			   scope.modelConfig.startRow = -startRow;
+	            		   }else{
+	            			   scope.modelConfig.startRow = startRow;
+	            		   }
+	            	   }else{
+	            		   scope.modelConfig.startRow = startRow;
+	            	   }
 	            	   
-	            	   scope.modelConfig.startRow = startRow;
+	            	   
 	            	   scope.showLoadingMask = false;
 	           	    	
+	           	  //  if(scope.tableSubsets[scope.modelConfig.startRow]!=undefined){
+	           	  //  	scope.table = $sce.trustAsHtml(scope.tableSubsets[scope.modelConfig.startRow]);
+	           	 //   }else{
+	           	    	scope.sendModelConfig(scope.modelConfig);
+	           	//    }
 	           	    
-	           	    scope.sendModelConfig(scope.modelConfig);
 	               }
 	               if(scope.modelConfig.startColumn!=startColumn){
 	            	
