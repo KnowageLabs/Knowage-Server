@@ -327,7 +327,7 @@ public class KpiService {
 	@GET
 	@Path("/findKpiValuesTest")
 	public Response findKpiValuesTest() throws EMFUserError, JsonGenerationException, JsonMappingException, IOException {
-		IKpiDAO kpiDao = DAOFactory.getNewKpiDAO();
+		IKpiDAO kpiDao = DAOFactory.getKpiDAO();
 		Map<String, String> attributesValues = new HashMap<String, String>();
 		attributesValues.put("STORE_CITY", "Los Angeles");
 		attributesValues.put("STORE_TYPE", "Supermarket");
@@ -673,10 +673,10 @@ public class KpiService {
 				comment.replaceAll(checkComment[checkComment.length - 1], profile.getUserId() + " " + creationDateStr);
 			}
 			if (requestVal.get("manualValue") == JSONObject.NULL) {
-				DAOFactory.getNewKpiDAO().editKpiValue(kpiValue.getInt("id"), -999, comment);
+				DAOFactory.getKpiDAO().editKpiValue(kpiValue.getInt("id"), -999, comment);
 
 			} else {
-				DAOFactory.getNewKpiDAO().editKpiValue(kpiValue.getInt("id"), requestVal.getDouble("manualValue"), comment);
+				DAOFactory.getKpiDAO().editKpiValue(kpiValue.getInt("id"), requestVal.getDouble("manualValue"), comment);
 
 			}
 
@@ -1047,8 +1047,7 @@ public class KpiService {
 	}
 
 	private static IKpiDAO getKpiDAO(HttpServletRequest req) throws EMFUserError {
-		// TODO rename getNewKpiDAO to getKpiDAO when old kpi will be removed
-		IKpiDAO dao = DAOFactory.getNewKpiDAO();
+		IKpiDAO dao = DAOFactory.getKpiDAO();
 		setProfile(req, dao);
 		return dao;
 	}
