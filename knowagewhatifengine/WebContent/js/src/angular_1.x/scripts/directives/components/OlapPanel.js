@@ -34,19 +34,6 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 				});*/
 		}
 	
-	$scope.getCollections = function() {
-		var encoded = encodeURI('/member/drilltrough/levels/?SBI_EXECUTION_ID=' + JSsbiExecutionID);
-		sbiModule_restServices.promiseGet
-		("1.0", encoded)
-		.then(function(response) {
-			console.log(response);
-			$scope.dtTree = response.data;
-		    }, function(response) {
-			sbiModule_messaging.showErrorMessage("error", 'Error');
-			
-				});
-		}
-	
 	$scope.drillDown = function(axis, position, member, uniqueName,positionUniqueName) {
 		
 		 var data = JSON.stringify({
@@ -99,9 +86,19 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		});	
 	}
 	
+	$scope.getCollections = function() {
+		var encoded = encodeURI('/member/drilltrough/levels/?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+		sbiModule_restServices.promiseGet
+		("1.0", encoded)
+		.then(function(response) {
+			$scope.dtTree = response.data;
+		    }, function(response) {
+			sbiModule_messaging.showErrorMessage("error", 'Error');
+			
+				});
+		}
+	
 	$scope.enableDisableDrillThrough = function() {
-		
-		
 		
 		if($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0){
 			
@@ -113,27 +110,17 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 			var encoded = encodeURI('/member/drilltrough?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 			sbiModule_restServices.promisePost
 			("1.0",encoded,toSend)
-			.then(function(response,ev) {
-				$scope.dtLoadingShow = true;
-				$scope.dtData = [];
-				setTimeout(function(){
+			.then(function(response) {
 					
 					$scope.dtData = response.data;
 					$scope.dtColumns = Object.keys(response.data[0]);
 					$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
 					$scope.getCollections();
 					$scope.openDtDialog();
-					
-					
-					
 				
-					$scope.dtLoadingShow = false;
-					$scope.$apply();
-				},1000)
 				
 			    }, function(response) {
 				sbiModule_messaging.showErrorMessage("Please select cell for DrillThrough", 'Error');
-				$scope.dtLoadingShow = false;
 					});	
 			
 		}else {
@@ -146,7 +133,6 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 			sbiModule_restServices.promisePost
 			("1.0",encoded,toSend)
 			.then(function(response,ev) {
-				$scope.dt = response.data;
 				$scope.dtData = response.data;
 				$scope.dtColumns = Object.keys(response.data[0]);
 				$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
@@ -305,19 +291,6 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 
 		};
 		
-	$scope.getCollections = function() {
-		var encoded = encodeURI('/member/drilltrough/levels/?SBI_EXECUTION_ID=' + JSsbiExecutionID);
-		sbiModule_restServices.promiseGet
-		("1.0", encoded)
-		.then(function(response) {
-			console.log(response);
-			$scope.dtTree = response.data;
-		    }, function(response) {
-			sbiModule_messaging.showErrorMessage("error", 'Error');
-			
-				});
-		}
-	
 	$scope.checkCheckboxes = function (item, list) {
 		if(item.hasOwnProperty("name")){
 			var index = $scope.indexInList(item, list);

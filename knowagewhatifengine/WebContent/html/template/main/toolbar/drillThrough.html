@@ -6,13 +6,9 @@
 	</md-toolbar>
 	 <md-card>
 	 
-	 <md-card-title  style="background-color: #3b678c;">
-          <md-card-title-text style="color: #ffffff;">
+	
             <span class="md-subhead">Select visible levels:</span>
-          </md-card-title-text>
-        </md-card-title>
-     
-     <md-card-content>
+        
         <div layout="row">
       	<div>
         <md-menu-bar>
@@ -32,13 +28,13 @@
         </md-menu-bar>
       </div>
     </div>
-     </md-card-content>
  </md-card>
 		
 		
 		
-	<md-content style="height:90%;">
-			
+	<md-content flex 
+				class="ToolbarBox miniToolbar noBorder mozTable">
+			<md-card layout-padding>
 					<angular-table 
 					
 						layout-fill
@@ -50,7 +46,7 @@
 					</angular-table>  
 	
 	
-	
+	</md-card>
 	</md-content>	
 		<md-dialog-actions layout="row">
 		

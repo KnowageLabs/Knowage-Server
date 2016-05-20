@@ -54,7 +54,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.filterSelected = [];
 	$scope.dtData = [];
 	$scope.dtTree = [];
-	$scope.dtLoadingShow = false;
 	$scope.dtMaxRows = 0;
 	$scope.dtAssociatedLevels = [];
 	$scope.formulasData = [];
