@@ -88,7 +88,7 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 			 }
 			 var tmpConfig = angular.fromJson(angular.toJson($scope.config));
 			 var urlResult = $scope.pathRest.result + '/'+commandName+'/'+output.outputName + '/' + $scope.pathRest.confirm;
-			 restServices.get($scope.pathRest.vers, urlResult, $scope.config.params , tmpConfig) //Added $scope.config.params (null before)
+			 restServices.get($scope.pathRest.vers, urlResult, null , tmpConfig) //Added $scope.config.params (null before)
 				 .success(function(data){
 					 $scope.results[commandName][output.outputName] = data;
 					 if (data.result){
