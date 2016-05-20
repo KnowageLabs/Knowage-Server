@@ -239,8 +239,8 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			return executeQuery(dataSourceId, toString(), quotedParameters);
 		}
 
-		private static QueryResult executeQuery(int dataSourceId, String sql, Map<String, String> quotedParameters)
-				throws JSONException, EMFUserError, EMFInternalError {
+		private static QueryResult executeQuery(int dataSourceId, String sql, Map<String, String> quotedParameters) throws JSONException, EMFUserError,
+				EMFInternalError {
 			// Read measure value
 			int maxItem = 0;
 			IEngUserProfile profile = null;
@@ -386,7 +386,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			} finally {
 				// Log the results
 				if (logToDb) {
-					IKpiDAO kpiDao = DAOFactory.getNewKpiDAO();
+					IKpiDAO kpiDao = DAOFactory.getKpiDAO();
 					if (result == null) {
 						// An error occurred
 						result = new KpiValueExecLog();
@@ -418,7 +418,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 		temporalTypesPriorities.put("DAY", 5);
 		try {
 			IModalitiesValueDAO modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
-			IKpiDAO kpiDao = DAOFactory.getNewKpiDAO();
+			IKpiDAO kpiDao = DAOFactory.getKpiDAO();
 			KpiScheduler kpiScheduler = kpiDao.loadKpiScheduler(kpiSchedulerId);
 
 			// Data needed for each kpi computation
@@ -597,8 +597,8 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 								}
 							}
 						}
-						kpiComputationUnits.add(
-								new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes, mainMeasure, replaceMode));
+						kpiComputationUnits.add(new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes,
+								mainMeasure, replaceMode));
 
 						// Exit condition: no temporal attributes left (except perhaps YEAR)
 						if (realMinTemporalTypePriority <= 1)
@@ -619,8 +619,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			// For each kpi, compute values and save them
 			for (KpiComputationUnit kpiComputationUnit : kpiComputationUnits) {
 				KpiValueExecLog subResult = computeKpi(kpiComputationUnit.parsedKpi, kpiComputationUnit.queries, kpiComputationUnit.mainMeasure,
-						kpiComputationUnit.replaceMode, kpiComputationUnit.queriesAttributesTemporalTypes, kpiComputationUnit.queriesIgnoredAttributes,
-						timeRun);
+						kpiComputationUnit.replaceMode, kpiComputationUnit.queriesAttributesTemporalTypes, kpiComputationUnit.queriesIgnoredAttributes, timeRun);
 				result.setErrorCount(result.getErrorCount() + subResult.getErrorCount());
 				result.setSuccessCount(result.getSuccessCount() + subResult.getSuccessCount());
 				result.setTotalCount(result.getTotalCount() + subResult.getTotalCount());
@@ -752,9 +751,28 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				Object theQuarter = ifNull(temporalValues.get("QUARTER"), "ALL");
 				Object theYear = ifNull(temporalValues.get("YEAR"), "ALL");
 				String insertSql = "INSERT INTO SBI_KPI_VALUE (id, kpi_id, kpi_version, logical_key, time_run, computed_value,"
-						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (" + (++lastId) + ", " + parsedKpi.id + "," + parsedKpi.version
-						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "',?," + (nullValue ? "0" : value) + ",'" + theDay + "','" + theWeek + "','"
-						+ theMonth + "','" + theQuarter + "','" + theYear + "','" + (nullValue ? '1' : '0') + "')";
+						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES ("
+						+ (++lastId)
+						+ ", "
+						+ parsedKpi.id
+						+ ","
+						+ parsedKpi.version
+						+ ",'"
+						+ logicalKey.toString().replaceAll("'", "''")
+						+ "',?,"
+						+ (nullValue ? "0" : value)
+						+ ",'"
+						+ theDay
+						+ "','"
+						+ theWeek
+						+ "','"
+						+ theMonth
+						+ "','"
+						+ theQuarter
+						+ "','"
+						+ theYear
+						+ "','"
+						+ (nullValue ? '1' : '0') + "')";
 				String whereCondition = "kpi_id = " + parsedKpi.id + " AND kpi_version = " + parsedKpi.version + " AND logical_key = '"
 						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + theDay + "' AND the_week = '" + theWeek + "'"
 						+ " AND the_month = '" + theMonth + "' AND the_quarter = '" + theQuarter + "' AND the_year = '" + theYear + "'";
