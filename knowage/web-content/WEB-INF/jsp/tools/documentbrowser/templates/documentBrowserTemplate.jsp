@@ -100,7 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				        <md-menu-item>
 				          <md-button ng-click="newDocument();">
 				            <md-icon md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
-				           {{translate.load("sbi.generic.document.add.traditional SpagoBI")}}
+				           {{translate.load("sbi.generic.document.add.traditional")}}
 				          </md-button>
 				        </md-menu-item>
 				        <% if(UserUtilities.isEngineEnabled(profile, SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE)) { %>

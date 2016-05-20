@@ -749,7 +749,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 //Hidden for first version of knowage        		
 //         		'	         <li id="GEO"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'creategeoreport\')">'+ LN('sbi.generic.document.add.adhocGeoReport') +'</a></li> '+
          		'	         <li id="COCKPIT"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'createcockpit\')">'+ LN('sbi.generic.document.add.adhocCockpit')+'</a></li> '+
-         		'	         <li id="STANDARD"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')">'+ LN('sbi.generic.document.add.traditional SpagoBI') +'</a></li> '+
+         		'	         <li id="STANDARD"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')">'+ LN('sbi.generic.document.add.traditional') +'</a></li> '+
         		'	    </ul> ';
              }
         } else {
@@ -761,7 +761,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 //Hidden for first version of knowage:
 //             		'	         <li id="GEO"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'creategeoreport\')">'+ LN('sbi.generic.document.add.adhocGeoReport') +'</a></li> '+
              		'	         <li id="COCKPIT"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'createcockpit\')">'+ LN('sbi.generic.document.add.adhocCockpit')+'</a></li> '+
-             		'	         <li id="STANDARD"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')">'+ LN('sbi.generic.document.add.traditional SpagoBI') +'</a></li> '+
+             		'	         <li id="STANDARD"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')">'+ LN('sbi.generic.document.add.traditional') +'</a></li> '+
              		'	    </ul> ';
             }else  if (this.isAbleToCreateDocument()){
 // Hidden for first version of knowage:
