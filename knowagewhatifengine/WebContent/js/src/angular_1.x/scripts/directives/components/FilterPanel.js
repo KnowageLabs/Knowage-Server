@@ -43,12 +43,12 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	clearSelectedList = function(){
 		for(var i=0;i< visibleSelected.length;i++){
-			if(visibleSelected[i].id.indexOf(h) == -1){
+			if(visibleSelected[i].id.indexOf(filterFather) == -1){
 				visibleSelected.splice(i,1);
 			}
 		}
 		for(var i=0;i<visibleSelectedTracker.length;i++){
-			if(visibleSelectedTracker[i].id == undefined || visibleSelectedTracker[i].id.indexOf(h) == 1){
+			if(visibleSelectedTracker[i].id == undefined || visibleSelectedTracker[i].id.indexOf(filterFather) == 1){
 				visibleSelectedTracker.splice(i,1);
 			}
 		}
