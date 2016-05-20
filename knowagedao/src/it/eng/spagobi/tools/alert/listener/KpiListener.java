@@ -1,18 +1,5 @@
 package it.eng.spagobi.tools.alert.listener;
 
-import it.eng.spagobi.commons.metadata.SbiCommonInfo;
-import it.eng.spagobi.commons.utilities.HibernateSessionManager;
-import it.eng.spagobi.kpi.bo.ThresholdValue;
-import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
-import it.eng.spagobi.kpi.metadata.SbiKpiValue;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.tools.alert.action.IAlertAction;
-import it.eng.spagobi.tools.alert.metadata.SbiAlertAction;
-import it.eng.spagobi.tools.alert.metadata.SbiAlertLog;
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -28,6 +15,19 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
+import it.eng.spagobi.kpi.bo.ThresholdValue;
+import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
+import it.eng.spagobi.kpi.metadata.SbiKpiValue;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.alert.action.IAlertAction;
+import it.eng.spagobi.tools.alert.metadata.SbiAlertAction;
+import it.eng.spagobi.tools.alert.metadata.SbiAlertLog;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
 public class KpiListener extends AbstractAlertListener {
 
@@ -147,24 +147,26 @@ public class KpiListener extends AbstractAlertListener {
 			boolean showMonth = false;
 			boolean showWeek = false;
 			boolean showDay = false;
-			for (SbiKpiValue sbiKpiValue : values) {
-				if (!ALL.equals(sbiKpiValue.getTheYear())) {
-					showYear = true;
-				}
-				if (!ALL.equals(sbiKpiValue.getTheQuarter())) {
-					showQuarter = true;
-				}
-				if (!ALL.equals(sbiKpiValue.getTheMonth())) {
-					showMonth = true;
-				}
-				if (!ALL.equals(sbiKpiValue.getTheWeek())) {
-					showWeek = true;
-				}
-				if (!ALL.equals(sbiKpiValue.getTheDay())) {
-					showDay = true;
-				}
-			}
 			if (values != null && !values.isEmpty()) {
+
+				for (SbiKpiValue sbiKpiValue : values) {
+					if (!ALL.equals(sbiKpiValue.getTheYear())) {
+						showYear = true;
+					}
+					if (!ALL.equals(sbiKpiValue.getTheQuarter())) {
+						showQuarter = true;
+					}
+					if (!ALL.equals(sbiKpiValue.getTheMonth())) {
+						showMonth = true;
+					}
+					if (!ALL.equals(sbiKpiValue.getTheWeek())) {
+						showWeek = true;
+					}
+					if (!ALL.equals(sbiKpiValue.getTheDay())) {
+						showDay = true;
+					}
+				}
+
 				StringBuffer sb = new StringBuffer();
 				for (ThresholdValue tValue : thresholds) {
 					if (tValue.getId().equals(thresholdId)) {
@@ -273,10 +275,10 @@ public class KpiListener extends AbstractAlertListener {
 	private Integer selectThreshold(SbiKpiValue kpiValue) {
 		for (ThresholdValue threshold : thresholds) {
 			double value = kpiValue.getComputedValue();
-			boolean minValueOk = threshold.getMinValue() == null || value > threshold.getMinValue().doubleValue() || threshold.isIncludeMin()
-					&& value == threshold.getMinValue().doubleValue();
-			boolean maxValueOk = threshold.getMaxValue() == null || value < threshold.getMaxValue().doubleValue() || threshold.isIncludeMax()
-					&& value == threshold.getMaxValue().doubleValue();
+			boolean minValueOk = threshold.getMinValue() == null || value > threshold.getMinValue().doubleValue()
+					|| threshold.isIncludeMin() && value == threshold.getMinValue().doubleValue();
+			boolean maxValueOk = threshold.getMaxValue() == null || value < threshold.getMaxValue().doubleValue()
+					|| threshold.isIncludeMax() && value == threshold.getMaxValue().doubleValue();
 			if (minValueOk && maxValueOk) {
 				return threshold.getId();
 			}

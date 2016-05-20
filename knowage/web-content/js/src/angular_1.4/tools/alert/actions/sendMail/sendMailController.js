@@ -1,5 +1,7 @@
-angular.module('alertDefinitionManager').controller('sendMailController', function($scope, $timeout,sbiModule_translate) {
-	  $scope.validate=function(){
+angular.module('alertDefinitionManager').controller('sendMailController', function($scope, $timeout,sbiModule_translate,sbiModule_restServices) {
+	$scope.listUserEmail = []; 
+	
+	$scope.validate=function(){
 		  console.log("check mail valiity")
 		  var valid=true;
 		  
@@ -24,6 +26,47 @@ angular.module('alertDefinitionManager').controller('sendMailController', functi
 			  	$scope.ngModel.mailTo=[];
 			  }
 	  }
+	  $scope.loadMAil = function(){
+	  
+		  sbiModule_restServices.promiseGet("2.0", "users")
+			.then(function(response) {
+				
+				for(var i=0;i<response.data.length;i++){
+					var obj = {};
+					var attributes = response.data[i].sbiUserAttributeses;
+					for(var key in attributes){
+						if(attributes[key]["email"]!=undefined){
+							obj["name"] = response.data[i].fullName;
+							obj["userId"] = response.data[i].userId;
+							obj["email"] = attributes[key]["email"];
+							
+							$scope.listUserEmail.push(obj);
+						}
+					}
+				}
+				
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});
+	  }
+	  $scope.loadMAil();
+	  $scope.querySearch=function (criteria) {
+		  var array = [];
+	      for(var index in $scope.listUserEmail){
+	    	  if($scope.listUserEmail[index].name.startsWith(criteria) || $scope.listUserEmail[index].userId.startsWith(criteria)){
+	    		  array.push($scope.listUserEmail[index])
+	    	  }
+	      }
+	      if(array.length==0){
+	    	  var obj = {};
+	    	  obj["name"] = criteria;
+	    	  obj["userId"] = "";
+	    	  obj["email"] = criteria;
+	    	  array.push(obj)
+	      }
+	      return array;
+	    }
 	  
 	  $scope.addMailAddressCallBack=function(chip){
 		  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

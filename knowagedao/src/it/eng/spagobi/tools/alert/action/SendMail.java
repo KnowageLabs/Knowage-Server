@@ -1,11 +1,7 @@
 package it.eng.spagobi.tools.alert.action;
 
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-
 import java.security.Security;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -20,6 +16,13 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
 public class SendMail extends AbstractAlertAction {
 
@@ -30,7 +33,25 @@ public class SendMail extends AbstractAlertAction {
 
 	@Override
 	public void execute(String jsonOptions, Map<String, String> externalParameters) throws SpagoBIException {
-		InputParam params = (InputParam) JsonConverter.jsonToObject(jsonOptions, InputParam.class);
+		JSONObject result = new JSONObject();
+		try {
+			JSONObject temp = new JSONObject(jsonOptions);
+
+			ArrayList<String> email = new ArrayList<>();
+
+			for (int i = 0; i < temp.getJSONArray("mailTo").length(); i++) {
+				JSONObject tmp = temp.getJSONArray("mailTo").getJSONObject(i);
+				email.add(tmp.getString("email"));
+			}
+			result.put("mailTo", email);
+			result.put("subject", temp.get("subject"));
+			result.put("body", temp.get("body"));
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		InputParam params = (InputParam) JsonConverter.jsonToObject(result.toString(), InputParam.class);
 		String subject = params.getSubject();
 		String[] recipients = params.getMailTo();
 		StringBuilder body = params.getBody() != null ? new StringBuilder(params.getBody()) : new StringBuilder();
@@ -127,7 +148,6 @@ public class SendMail extends AbstractAlertAction {
 			logger.error("Send mail failed", e);
 			throw new SpagoBIException("Send mail failed", e);
 		}
-
 	}
 
 	private class SMTPAuthenticator extends javax.mail.Authenticator {

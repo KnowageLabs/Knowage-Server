@@ -3,8 +3,18 @@
 
 	<div class="md-whiteframe-4dp" style="overflow:scroll;" layout-margin layout-padding layout="column" flex >
 			 <div layout="row"   layout-align="center end" ng-if="ngModel.mailTo!=undefined" >
-			      <label >{{translate.load("sbi.scheduler.schedulation.mailto")}}</label>
+			<!-- <label >{{translate.load("sbi.scheduler.schedulation.mailto")}}</label>
 			       <md-chips flex   ng-model="ngModel.mailTo" md-on-append="addMailAddressCallBack($chip)"></md-chips>
+			    -->   
+		<md-contact-chips flex style="width:500px;"
+		        ng-model="ngModel.mailTo"
+		        md-contacts="querySearch($query)"
+		        md-contact-name="name"
+		        md-contact-email="email"
+		        md-require-match="true"
+		        md-highlight-flags="i"
+		        placeholder="{{translate.load('sbi.scheduler.schedulation.mailto')}}">
+		    </md-contact-chips>  
 			 </div>
 			 
 			<md-input-container  class="md-block" >
