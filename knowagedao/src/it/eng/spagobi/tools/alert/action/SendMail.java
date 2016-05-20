@@ -112,7 +112,7 @@ public class SendMail extends AbstractAlertAction {
 			msg.setContent(mailTxt, "text/html");
 
 			// send message
-			if (("true".equals(ssl))) {
+			if (("true".equals(ssl)) && (!StringUtilities.isEmpty(user)) && (!StringUtilities.isEmpty(pwd))) {
 				// USE SSL Transport comunication with SMTPS
 				Transport transport = session.getTransport("smtps");
 				transport.connect(host, portInt, user, pwd);
