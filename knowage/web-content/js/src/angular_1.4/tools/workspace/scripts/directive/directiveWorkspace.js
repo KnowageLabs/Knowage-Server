@@ -15,5 +15,6 @@ angular
 	                                'favorite_view',
 	                                'recent_view',
 	                                'smartfilters_view_workspace',
-	                                'ckan_view'
+	                                'ckan_view',
+	                                'dataset_wizard_meta'
 	                                ]);

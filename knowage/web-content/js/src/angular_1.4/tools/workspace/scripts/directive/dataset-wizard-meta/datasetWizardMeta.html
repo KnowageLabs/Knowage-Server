@@ -1,0 +1,34 @@
+<div>
+  <md-input-container>
+	<md-select aria-label="aria-label" ng-model="metadataType" placeholder="Metadata Type" >
+		<md-option
+			value="{{m.id}}" ng-repeat="m in metadataTypes" ng-click="loog()">
+		{{m.name}} 
+		</md-option> 
+	</md-select>
+	</md-input-container>
+	
+	<div ng-if="metadataType == 1">
+	  <angular-table
+						flex
+						id="columnsMeta"
+						ng-model=table
+						columns="tableColumns"
+						show-search-bar=false
+					
+					>
+			</angular-table>
+	</div>
+	
+	<div ng-if="metadataType == 2">
+	  	  <angular-table
+						flex
+						id="datasetMeta"
+						ng-model=table
+						columns="tableDataset"
+						show-search-bar=false
+					
+					>
+			</angular-table>
+	</div>
+</div>

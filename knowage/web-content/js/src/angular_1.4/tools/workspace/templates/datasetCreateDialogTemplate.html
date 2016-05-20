@@ -9,7 +9,7 @@
 			<span flex></span> 
 	         
 			<md-button class="" ng-click="toggleDWVBack()" ng-if="datasetWizardView>1"> BACK </md-button>
-			<md-button class="" ng-click="toggleDWVNext()"> NEXT </md-button>
+			<md-button class="" ng-click="toggleDWVNext()" ng-disabled="!dataset.fileName"> NEXT </md-button>
 			<md-button class="" ng-click="closeDatasetCreateDialog()"> CLOSE </md-button>
             
 		</div>
@@ -173,7 +173,8 @@
          
          	<md-content flex class="loadFilePadding">
 	            <form>
-	               <!-- DEFINITION DATA -->
+	               
+	               <dataset-wizard-meta></dataset-wizard-meta>
 	            </form>
          	</md-content>
          

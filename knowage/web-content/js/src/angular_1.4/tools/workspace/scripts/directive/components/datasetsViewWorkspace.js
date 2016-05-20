@@ -328,7 +328,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	      controller: DatasetCreateController,
 	      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',  
 	      clickOutsideToClose: false,
-	      escapeToClose: true,
+	      escapeToClose :true,
 	      //fullscreen: true,
 	      locals:{
 	    	 // previewDatasetModel:$scope.previewDatasetModel,
@@ -337,6 +337,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	    });
     }
     
+  
     /**
 	 * Set the currently active Datasets tab. Initially, the 'My Data Set' tab is selected (active). 
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -346,20 +347,20 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.switchDatasetsTab = function(datasetsTab) {
     	
     	$scope.currentDatasetsTab = datasetsTab;
-    	
+    
     	if($scope.selectedDataset !== undefined){
     		$scope.selectDataset(undefined);
-    	}    	
+         }
     	
     	if($scope.selectedCkan !== undefined){
     		$scope.selectCkan(undefined);
-    	}
+         }
     	
     	$scope.ckanDatasetsList=[];
     	$scope.selectedCkanRepo={};
     	$scope.ckanDatasetsListInitial=[];
     	
-    }
+    }	
     
     $scope.getBackPreviewSet=function(){
     	 if($scope.startPreviewIndex-$scope.itemsPerPage < 0){
@@ -511,11 +512,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	}
     	
     }
-	
+
     $scope.editFileDataset = function (arg) {
     	console.log(arg);
     }
-    
+	
 	function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_config,multipartForm,$http){
 		$scope.fileObj={};
 		$scope.datasetWizardView=1;
@@ -526,9 +527,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		$scope.dsMetaValue = [];
 		
 		$scope.toggleDWVNext = function() {
-			
-			console.log($scope.dataset);
-			
+		
 			if($scope.datasetWizardView>0&&$scope.datasetWizardView<4){
 				$scope.datasetWizardView = $scope.datasetWizardView +1;
 			}
@@ -590,9 +589,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 						}else{
 						
 							console.log("[UPLOAD]: SUCCESS!");
-							sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
+						sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
 						
-							$scope.file={};
+						$scope.file={};
 							$scope.dataset.fileType = data.fileType;
 							$scope.dataset.fileName = data.fileName;
 						}
@@ -601,7 +600,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 						sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, 'Error!');
 					});
         	
-        }		
+        }
+		
 		
 	}
     
