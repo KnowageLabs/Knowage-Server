@@ -610,6 +610,17 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			hibLayer.setBaseLayer(aLayer.isBaseLayer());
 			hibLayer.setCategory_id(aLayer.getCategory_id());
 
+			if (hibLayer.getType().equals("File")) {
+				String resourcePath = SpagoBIUtilities.getResourcePath();
+				File doc = new File(resourcePath + File.separator + "Layer" + File.separator + aLayer.getLabel());
+				if (doc.exists()) {
+					boolean success = doc.delete();
+
+					// Se si è verificato un errore...
+					if (!success)
+						throw new IllegalArgumentException("Cancellazione fallita");
+				}
+			}
 			tmpSession.delete(hibLayer);
 
 			tx.commit();
