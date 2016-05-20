@@ -104,37 +104,49 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 			
 			var toSend ={};
 			toSend.ordinal = $scope.selectedCell.ordinal;
-			
+			if(toSend.ordinal != undefined){
+	
 			console.log(toSend);
 			
 			var encoded = encodeURI('/member/drilltrough?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 			sbiModule_restServices.promisePost
 			("1.0",encoded,toSend)
 			.then(function(response) {
-					
-					$scope.dtData = response.data;
-					$scope.dtColumns = Object.keys(response.data[0]);
+					$scope.dtData = [];
+					$scope.dtColumns = [];
+					$scope.dtData = angular.copy(response.data);
+					for ( var key in response.data[0]) {
+						
+						$scope.dtColumns.push(key);
+					}
 					$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
 					$scope.getCollections();
 					$scope.openDtDialog();
 				
 				
 			    }, function(response) {
-				sbiModule_messaging.showErrorMessage("Please select cell for DrillThrough", 'Error');
+				sbiModule_messaging.showErrorMessage("Error in DrillThrough", 'Error');
 					});	
-			
+			}else{
+				sbiModule_messaging.showErrorMessage("Please select cell for DrillThrough", 'Error');
+			}
 		}else {
 			
 			var toSend ={};
 			toSend.ordinal = $scope.selectedCell.ordinal;
-			toSend.levels = JSON.stringify($scope.dtAssociatedLevels);
+			toSend.levels = angular.toJson($scope.dtAssociatedLevels);
 			toSend.max = $scope.dtMaxRows;
 			var encoded = encodeURI('/member/drilltrough/full?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 			sbiModule_restServices.promisePost
 			("1.0",encoded,toSend)
 			.then(function(response,ev) {
-				$scope.dtData = response.data;
-				$scope.dtColumns = Object.keys(response.data[0]);
+				$scope.dtData = [];
+				$scope.dtColumns = [];
+				$scope.dtData = angular.copy(response.data);
+				for ( var key in response.data[0]) {
+					
+					$scope.dtColumns.push(key);
+				}
 				$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
 			    }, function(response) {
 				sbiModule_messaging.showErrorMessage("error", 'Error');
@@ -259,7 +271,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 				obj.size = "100px";
 				arr.push(obj);
 			}
+			console.log(arr);
 			return arr;
+			
 		}
 		
 		$scope.switchPosition = function(data){
