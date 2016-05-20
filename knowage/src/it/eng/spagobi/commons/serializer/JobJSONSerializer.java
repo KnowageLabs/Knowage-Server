@@ -90,7 +90,7 @@ public class JobJSONSerializer implements Serializer {
 			if (documentsLabels != null) {
 				for (int i = 0; i < documentsLabels.length; i++) {
 					// this will clean the string and get only the document (biobj) real name
-					String documentName = documentsLabels[i].substring(0, documentsLabels[i].indexOf("__"));
+					String documentName = documentsLabels[i].substring(0, documentsLabels[i].lastIndexOf("__"));
 					JSONObject aDocumentJSON = new JSONObject();
 
 					aDocumentJSON.put("name", documentName);
