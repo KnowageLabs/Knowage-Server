@@ -17,17 +17,17 @@
  */
 package it.eng.knowage.engine.util;
 
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.Scorecard;
 import it.eng.spagobi.services.serialization.JsonConverter;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class KpiEngineDataUtil extends AbstractHibernateDAO {
 	public static transient Logger logger = Logger.getLogger(KpiEngineDataUtil.class);
@@ -40,7 +40,7 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 			JSONObject chart = jo.getJSONObject("chart");
 			JSONArray array = new JSONArray();
 			if (chart.getString("type").equals("scorecard")) {
-				Scorecard card = DAOFactory.getNewKpiDAO().loadScorecard(chart.getJSONObject("data").getJSONObject("scorecard").getInt("id"));
+				Scorecard card = DAOFactory.getKpiDAO().loadScorecard(chart.getJSONObject("data").getJSONObject("scorecard").getInt("id"));
 				JSONObject object = new JSONObject(JsonConverter.objectToJson(card, card.getClass()));
 				JSONObject tempResult = new JSONObject();
 				tempResult.put("scorecard", object);
@@ -57,9 +57,9 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 					JSONObject temp = array.getJSONObject(i);
 					JSONObject tempResult = new JSONObject();
 
-					Kpi kpi = DAOFactory.getNewKpiDAO().loadKpi(temp.getInt("id"), temp.getInt("version"));
-					if (DAOFactory.getNewKpiDAO().valueTargetbyKpi(kpi) != null) {
-						Double valueTarget = new Double(DAOFactory.getNewKpiDAO().valueTargetbyKpi(kpi));
+					Kpi kpi = DAOFactory.getKpiDAO().loadKpi(temp.getInt("id"), temp.getInt("version"));
+					if (DAOFactory.getKpiDAO().valueTargetbyKpi(kpi) != null) {
+						Double valueTarget = new Double(DAOFactory.getKpiDAO().valueTargetbyKpi(kpi));
 						tempResult.put("target", valueTarget);
 					} else {
 						tempResult.put("target", JSONObject.NULL);
