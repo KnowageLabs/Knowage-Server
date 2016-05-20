@@ -485,7 +485,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			})
 	}
 	
-	ctrl.loadSelectedDocumentRoles = function(){
+	ctrl.loadSelectedDocumentRolesAndParameters = function(){
 		sbiModule_restServices.get("2.0/documents", ctrl.selectedDocument.id+"/userroles")
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
