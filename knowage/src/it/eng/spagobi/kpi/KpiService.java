@@ -358,10 +358,12 @@ public class KpiService {
 					jsError.addErrorKey(error.getKey(), new JSONArray(error.getValue()).toString().replaceAll("[\\[\\]]", ""));
 				}
 			}
-			// Checking if any removed measure is linked to a kpi (if so we cannot save this rule)
-			Collection<String> removedMeasures = checkConstrainsWithKpi(rule, req);
-			if (!removedMeasures.isEmpty()) {
-				jsError.addErrorKey("newKpi.rule.usedByKpi.save.error", StringUtils.join(removedMeasures, ", "));
+			if (rule.getId() != null) {
+				// Checking if any removed measure is linked to a kpi (if so we cannot save this rule)
+				Collection<String> removedMeasures = checkConstrainsWithKpi(rule, req);
+				if (!removedMeasures.isEmpty()) {
+					jsError.addErrorKey("newKpi.rule.usedByKpi.save.error", StringUtils.join(removedMeasures, ", "));
+				}
 			}
 			if (jsError.hasErrors()) {
 				return Response.ok(jsError.toString()).build();
@@ -388,13 +390,6 @@ public class KpiService {
 			Integer otherId = dao.getRuleIdByName(rule.getName());
 			if (otherId != null && (id == null || !id.equals(otherId))) {
 				jsError.addErrorKey(NEW_KPI_RULE_NAME_NOT_AVAILABLE, rule.getName());
-			}
-			// Checking if any removed measure is linked to a kpi (if so we cannot save this rule)
-			Collection<String> removedMeasures = checkConstrainsWithKpi(rule, req);
-			if (!removedMeasures.isEmpty()) {
-				jsError.addErrorKey("newKpi.rule.usedByKpi.delete.error", StringUtils.join(removedMeasures, ", "));
-			}
-			if (jsError.hasErrors()) {
 				return Response.ok(jsError.toString()).build();
 			}
 			if (id == null) {
@@ -403,6 +398,12 @@ public class KpiService {
 				id = newRule.getId();
 				version = newRule.getVersion();
 			} else {
+				// Checking if any removed measure is linked to a kpi (if so we cannot save this rule)
+				Collection<String> removedMeasures = checkConstrainsWithKpi(rule, req);
+				if (!removedMeasures.isEmpty()) {
+					jsError.addErrorKey("newKpi.rule.usedByKpi.delete.error", StringUtils.join(removedMeasures, ", "));
+					return Response.ok(jsError.toString()).build();
+				}
 				// Rule can only be modified logically
 				Rule newRule = dao.insertNewVersionRule(rule);
 				id = newRule.getId();
@@ -787,6 +788,9 @@ public class KpiService {
 
 	private Collection<String> checkConstrainsWithKpi(Rule rule, HttpServletRequest req) throws EMFUserError {
 		Collection<String> measureAndKpi = new HashSet<>();
+		if (rule.getId() == null) {
+			return measureAndKpi;
+		}
 		IKpiDAO kpiDao = getKpiDAO(req);
 		Map<Kpi, List<String>> kpimap = kpiDao.listKpisLinkedToRule(rule.getId(), rule.getVersion(), true);
 		Set<String> usedMeasureList = new HashSet<>();
