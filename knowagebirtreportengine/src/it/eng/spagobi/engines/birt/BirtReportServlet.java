@@ -85,6 +85,7 @@ import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
 import org.eclipse.birt.report.engine.api.IRunTask;
 import org.eclipse.birt.report.engine.api.IScalarParameterDefn;
 import org.eclipse.birt.report.engine.api.PDFRenderOption;
+import org.eclipse.birt.report.engine.api.RenderOption;
 import org.eclipse.birt.report.engine.dataextraction.CSVDataExtractionOption;
 import org.eclipse.birt.report.engine.dataextraction.ICSVDataExtractionOption;
 import org.eclipse.birt.report.utility.BirtUtility;
@@ -568,7 +569,7 @@ public class BirtReportServlet extends HttpServlet {
 		if (templateFileName == null || templateFileName.trim().equals(""))
 			templateFileName = "report";
 		IRenderOption renderOption = null;
-
+		
 		if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.PDF_RENDER_FORMAT)) {
 			renderOption = new PDFRenderOption();
 			renderOption.setOutputFormat(IBirtConstants.PDF_RENDER_FORMAT);
@@ -581,53 +582,40 @@ public class BirtReportServlet extends HttpServlet {
 			response.setHeader("Content-Type", "text/html");
 			response.setContentType("text/html");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.DOC_RENDER_FORMAT)) {
-			renderOption = prepareHtmlRenderOption(servletContext, request);
-			renderOption.setOutputFormat(IBirtConstants.DOC_RENDER_FORMAT);
-			// renderOption.setOutputFileName(templateFileName + ".doc");
+			renderOption = new RenderOption();
+			setMSOfficeEmitterId("doc", renderOption);
 			response.setContentType("application/msword");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".doc");
+		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("docx")) {
+			renderOption = new RenderOption();
+			setMSOfficeEmitterId("docx", renderOption);
+			response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".docx");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(RTF_FORMAT)) {
 			renderOption = prepareHtmlRenderOption(servletContext, request);
 			renderOption.setOutputFormat(RTF_FORMAT);
 			response.setContentType("application/rtf");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".rtf");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.EXCEL_RENDER_FORMAT)) {
-			renderOption = getExcelRenderOption("xls");
+			renderOption = new EXCELRenderOption();
+			setMSOfficeEmitterId("xls", renderOption);
 			response.setContentType("application/vnd.ms-excel");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xls");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("xlsx")) {
-			renderOption = getExcelRenderOption("xlsx");
+			renderOption = new EXCELRenderOption();
+			setMSOfficeEmitterId("xlsx", renderOption);
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xlsx");
-		}
-		// else if (outputFormat != null &&
-		// outputFormat.equalsIgnoreCase("xlsx")) {
-		// renderOption = prepareHtmlRenderOption(servletContext, request);
-		// // change emitter according to engine config.xml
-		// SourceBean engineConfig = EnginConf.getInstance().getConfig();
-		// String emitter = null;
-		// if(engineConfig!=null){
-		// SourceBean sourceBeanConf = (SourceBean)
-		// engineConfig.getAttribute("XLS_EMITTER");
-		// if(sourceBeanConf != null){
-		// emitter = (String) sourceBeanConf.getCharacters();
-		// renderOption.setOption(IRenderOption.EMITTER_ID, emitter);
-		// }
-		// }
-		// // render
-		// renderOption.setOutputFormat("xlsx");
-		// // renderOption.setOutputFileName(templateFileName + ".xls");
-		// response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-		// response.setHeader("Content-disposition", "inline; filename=" +
-		// templateFileName + ".xlsx");
-		//
-		// }
-		else if (outputFormat != null && outputFormat.equalsIgnoreCase("ppt")) {
-			renderOption = prepareHtmlRenderOption(servletContext, request);
-			renderOption.setOutputFormat("ppt");
-			// renderOption.setOutputFileName(templateFileName + ".ppt");
+		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("ppt")) {
+			renderOption = new RenderOption();
+			setMSOfficeEmitterId("ppt", renderOption);
 			response.setContentType("application/vnd.ms-powerpoint");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".ppt");
+		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("pptx")) {
+			renderOption = new RenderOption();
+			setMSOfficeEmitterId("pptx", renderOption);
+			response.setContentType("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".pptx");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.POSTSCRIPT_RENDER_FORMAT)) {
 			renderOption = new PDFRenderOption();
 			renderOption.setOutputFormat(IBirtConstants.POSTSCRIPT_RENDER_FORMAT);
@@ -681,20 +669,28 @@ public class BirtReportServlet extends HttpServlet {
 
 	}
 
-	private IRenderOption getExcelRenderOption(String output) {
-		IRenderOption renderOption = new EXCELRenderOption();
+	private void setMSOfficeEmitterId(String output, IRenderOption renderOption) {
 		// change emitter according to engine-config.xml
 		SourceBean engineConfig = EnginConf.getInstance().getConfig();
-		Assert.assertNotNull(engineConfig, "Could not find engine configuration file");
-		String attributeName = output.equalsIgnoreCase("xls") ? "XLS_EMITTER" : "XLSX_EMITTER";
+		if (engineConfig == null) {
+			renderOption.setOutputFormat(output);
+			logger.warn("Could not find engine config file");
+			return;
+		}
+		//Assert.assertNotNull(engineConfig, "Could not find engine configuration file");
+		String attributeName = output.toUpperCase() + "_EMITTER";
 		SourceBean emitterConf = (SourceBean) engineConfig.getAttribute(attributeName);
-		Assert.assertNotNull(emitterConf, "Could not find Excel emitter configuration");
+		if (emitterConf == null) {
+			renderOption.setOutputFormat(output);
+			logger.debug("Could not find emitter configuration for output = [" + output + "]. Using default emitter.");
+			return;
+		}
+		//Assert.assertNotNull(emitterConf, "Could not find Excel emitter configuration");
 		String emitterId = (String) emitterConf.getAttribute("id");
 		String outputFormat = (String) emitterConf.getAttribute("output_format");
 		logger.debug("Using emitter [" + emitterId + "] with output format [" + outputFormat + "] ...");
 		renderOption.setOption(IRenderOption.EMITTER_ID, emitterId);
 		renderOption.setOutputFormat(outputFormat);
-		return renderOption;
 	}
 
 	private Map getTaskContext(String userId, Map reportParams, HttpServletRequest request, String resourcePath, Map userProfileAttrs) throws IOException {
