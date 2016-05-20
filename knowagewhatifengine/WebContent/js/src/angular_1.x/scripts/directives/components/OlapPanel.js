@@ -104,9 +104,15 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		
 		
 		if($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0){
-			var encoded = encodeURI('/member/drilltrough/'+ $scope.selectedCell.ordinal + '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
-			sbiModule_restServices.promiseGet
-			("1.0",encoded)
+			
+			var toSend ={};
+			toSend.ordinal = $scope.selectedCell.ordinal;
+			
+			console.log(toSend);
+			
+			var encoded = encodeURI('/member/drilltrough?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+			sbiModule_restServices.promisePost
+			("1.0",encoded,toSend)
 			.then(function(response,ev) {
 				$scope.dtLoadingShow = true;
 				$scope.dtData = [];
@@ -131,11 +137,14 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 					});	
 			
 		}else {
-			console.log("IZ DIALOGAA");
-			var c = JSON.stringify($scope.dtAssociatedLevels);
-			var encoded = encodeURI('/member/drilltrough/'+ $scope.selectedCell.ordinal+ '/'+c+ '/'+ $scope.dtMaxRows+ '/' + '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
-			sbiModule_restServices.promiseGet
-			("1.0",encoded)
+			
+			var toSend ={};
+			toSend.ordinal = $scope.selectedCell.ordinal;
+			toSend.levels = JSON.stringify($scope.dtAssociatedLevels);
+			toSend.max = $scope.dtMaxRows;
+			var encoded = encodeURI('/member/drilltrough/full?SBI_EXECUTION_ID=' + JSsbiExecutionID);
+			sbiModule_restServices.promisePost
+			("1.0",encoded,toSend)
 			.then(function(response,ev) {
 				$scope.dt = response.data;
 				$scope.dtData = response.data;
@@ -227,9 +236,12 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	}
 	
 	$scope.getProps = function(memberUniqueName) {
-	var encoded = encodeURI('/member/properties/'+memberUniqueName+'?SBI_EXECUTION_ID='+JSsbiExecutionID);
-		sbiModule_restServices.promiseGet
-		("1.0",encoded)
+		
+		var toSend ={};
+		toSend.memberUniqueName = memberUniqueName;
+		var encoded = encodeURI('/member/properties?SBI_EXECUTION_ID='+JSsbiExecutionID);
+		sbiModule_restServices.promisePost
+		("1.0",encoded,toSend)
 		.then(function(response) {
 			console.log(response.data);
 			$scope.propertiesArray = response.data;

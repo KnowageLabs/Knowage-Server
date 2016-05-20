@@ -18,16 +18,6 @@
 
 package it.eng.spagobi.engines.whatif.api;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.model.ModelConfig;
-import it.eng.spagobi.engines.whatif.model.ResultSetConverter;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
@@ -65,6 +55,16 @@ import org.pivot4j.transform.DrillThrough;
 import org.pivot4j.transform.SwapAxes;
 import org.pivot4j.ui.collector.NonInternalPropertyCollector;
 import org.pivot4j.ui.command.DrillDownCommand;
+
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.ResultSetConverter;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/member")
 public class MemberResource extends AbstractWhatIfEngineService {
@@ -263,8 +263,20 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				hierarchy.put("name", h.getName());
 				List<Level> levels = h.getLevels();
 				for (Level level : levels) {
+					if (level.getName() == "MeasuresLevel") {
+						List<Member> temp = level.getMembers();
+						for (Member member : temp) {
+							JSONObject levelsObject = new JSONObject();
+							levelsObject.put("name", member.getName());
+							levelsObject.put("uniqueName", member.getUniqueName());
+							levelsObject.put("hierarchy", member.getHierarchy().getUniqueName());
+							levelsObject.put("depth", member.getDepth());
+							levelsArray.put(levelsObject);
+						}
+					}
 					JSONObject levelsObject = new JSONObject();
 					levelsObject.put("name", level.getName());
+					levelsObject.put("uniqueName", level.getUniqueName());
 					levelsObject.put("hierarchy", level.getHierarchy().getUniqueName());
 					levelsObject.put("depth", level.getDepth());
 					levelsArray.put(levelsObject);
@@ -281,10 +293,21 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		return array.toString();
 	}
 
-	@GET
-	@Path("/properties/{uni_name}")
+	@POST
+	@Path("/properties")
 	@Produces("text/html; charset=UTF-8")
-	public String getProperties(@PathParam("uni_name") String name) throws OlapException, JSONException {
+	public String getProperties(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException, JSONException {
+
+		String name = null;
+
+		try {
+			String params = RestUtilities.readBody(req);
+			JSONObject paramsObj = new JSONObject(params);
+
+			name = paramsObj.getString("memberUniqueName");
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
@@ -304,12 +327,22 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		return propsArray.toString();
 	}
 
-	@GET
-	@Path("/drilltrough/{ordinal}")
+	@POST
+	@Path("/drilltrough")
 	@Produces("text/html; charset=UTF-8")
-	public String drillt(@PathParam("ordinal") Integer ordinal) throws OlapException {
+	public String drillt(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException {
 		JSONArray array = null;
 		ResultSet set;
+		int ordinal = 0;
+
+		try {
+			String params = RestUtilities.readBody(req);
+			JSONObject paramsObj = new JSONObject(params);
+
+			ordinal = paramsObj.getInt("ordinal");
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		CellSet cellSet = model.getCellSet();
@@ -328,13 +361,26 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		return array.toString();
 	}
 
-	@GET
-	@Path("/drilltrough/{ordinal}/{collection}/{max}")
+	@POST
+	@Path("/drilltrough/full")
 	@Produces("text/html; charset=UTF-8")
-	public String drillfull(@PathParam("ordinal") Integer ordinal, @PathParam("collection") String col, @PathParam("max") Integer max) throws OlapException {
+	public String drillfull(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException {
 		JSONArray array = null;
-
 		ResultSet set;
+		int ordinal = 0;
+		String col = null;
+		int max = 0;
+
+		try {
+			String params = RestUtilities.readBody(req);
+			JSONObject paramsObj = new JSONObject(params);
+
+			ordinal = paramsObj.getInt("ordinal");
+			max = paramsObj.getInt("max");
+			col = paramsObj.getString("levels");
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		List<MetadataElement> selection = new ArrayList<MetadataElement>();
@@ -345,10 +391,16 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			JSONArray collections = new JSONArray(col);
 			for (int i = 0; i < collections.length(); i++) {
 				JSONObject jsonObj = collections.getJSONObject(i);
+				String unique = jsonObj.getString("uniqueName");
 				String hierarchy = jsonObj.getString("hierarchy");
 				Integer depth = jsonObj.getInt("depth");
 				Level l = CubeUtilities.getHierarchy(model.getCube(), hierarchy).getLevels().get(depth);
-				selection.add(l);
+				if (l.getName() == "MeasuresLevel") {
+					Member m = CubeUtilities.getMember(model.getCube(), unique);
+					selection.add(m);
+				} else {
+					selection.add(l);
+				}
 			}
 
 			Cell cell = cellSet.getCell(ordinal);
