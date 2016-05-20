@@ -14,6 +14,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	
 	$scope.executions = [];
 	$scope.selectedExecution = null;
+	$scope.loadingExecutions = false;
 	
 	$scope.minDate = new Date();
 	$scope.minDate = new Date($scope.minDate.getFullYear(), $scope.minDate.getMonth(), $scope.minDate.getDate());
@@ -23,28 +24,6 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	
 	$scope.startDateTime = null;
 	$scope.endDateTime = null;
-	
-	// watch
-	
-	$scope.$watch("startDate", function(newValue, oldValue) {
-		$scope.updateStartDateTime(newValue, $scope.startTime);
-		$scope.updateExecutionList();
-	});
-	
-	$scope.$watch("startTime", function(newValue, oldValue) {
-		$scope.updateStartDateTime($scope.startDate, newValue);
-		$scope.updateExecutionList();
-	});
-	
-	$scope.$watch("endDate", function(newValue, oldValue) {
-		$scope.updateEndDateTime(newValue, $scope.endTime);
-		$scope.updateExecutionList();
-	});
-	
-	$scope.$watch("endTime", function(newValue, oldValue) {
-		$scope.updateEndDateTime($scope.endDate, newValue);
-		$scope.updateExecutionList();
-	});
 	
 	// functions
 
@@ -74,53 +53,60 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	}
 	
 	$scope.updateExecutionList = function(){
+		$scope.updateStartDateTime($scope.startDate, $scope.startTime);
+		$scope.updateEndDateTime($scope.endDate, $scope.endTime);
 		if($scope.startDateTime && $scope.endDateTime){
-			sbiModule_restServices.get("2.0/scheduler", 'nextExecutions?start='+$scope.startDateTime+'&end='+$scope.endDateTime)
-				.success(function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						$scope.executions = [];
-						console.log("unable to get executions");
-						$scope.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						var localizedTimestampFormat = sbiModule_config.localizedTimestampFormat.replace("Y", "y").replace("m", "M")
-								.replace("H", "HH").replace("HHHH", "HH")
-								.replace("i", "mm").replace("mmmm", "mm")
-								.replace("s", "ss").replace("ssss", "ss");
-						var clientServerTimestampFormat = sbiModule_config.clientServerTimestampFormat.replace("Y", "y").replace("m", "M")
-								.replace("H", "HH").replace("HHHH", "HH")
-								.replace("i", "mm").replace("mmmm", "mm")
-								.replace("s", "ss").replace("ssss", "ss");
-						$scope.executions = [];
-						for(var jobIndex = 0; jobIndex < data.root.length; jobIndex++){
-							var job = data.root[jobIndex];
-							for(var triggerIndex = 0; triggerIndex < job.triggers.length; triggerIndex++){
-								var trigger = job.triggers[triggerIndex];
-								for(var docIndex = 0; docIndex < trigger.documents.length; docIndex++){
-									for(var executionIndex = 0; executionIndex < trigger.executions.length; executionIndex++){
-										var date = sbiModule_dateServices.getDateFromFormat(trigger.executions[executionIndex], clientServerTimestampFormat);
-										var execution = {
-											executionDate: sbiModule_dateServices.formatDate(date, localizedTimestampFormat),
-											jobName: job.name,
-											triggerName: trigger.name,
-											triggerType: trigger.type,
-											documentName: trigger.documents[docIndex]
-										};
-										$scope.executions.push(execution);
+			$timeout(function(){
+				$scope.loadingExecutions = true;
+				sbiModule_restServices.get("2.0/scheduler", 'nextExecutions?start='+$scope.startDateTime+'&end='+$scope.endDateTime)
+					.success(function(data, status, headers, config) {
+						if (data.hasOwnProperty("errors")) {
+							$scope.executions = [];
+							console.log("unable to get executions");
+							$scope.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
+						} else {
+							var localizedTimestampFormat = sbiModule_config.localizedTimestampFormat.replace("Y", "y").replace("m", "M")
+									.replace("H", "HH").replace("HHHH", "HH")
+									.replace("i", "mm").replace("mmmm", "mm")
+									.replace("s", "ss").replace("ssss", "ss");
+							var clientServerTimestampFormat = sbiModule_config.clientServerTimestampFormat.replace("Y", "y").replace("m", "M")
+									.replace("H", "HH").replace("HHHH", "HH")
+									.replace("i", "mm").replace("mmmm", "mm")
+									.replace("s", "ss").replace("ssss", "ss");
+							$scope.executions = [];
+							for(var jobIndex = 0; jobIndex < data.root.length; jobIndex++){
+								var job = data.root[jobIndex];
+								for(var triggerIndex = 0; triggerIndex < job.triggers.length; triggerIndex++){
+									var trigger = job.triggers[triggerIndex];
+									for(var docIndex = 0; docIndex < trigger.documents.length; docIndex++){
+										for(var executionIndex = 0; executionIndex < trigger.executions.length; executionIndex++){
+											var date = sbiModule_dateServices.getDateFromFormat(trigger.executions[executionIndex], clientServerTimestampFormat);
+											var execution = {
+												executionDate: sbiModule_dateServices.formatDate(date, localizedTimestampFormat),
+												jobName: job.name,
+												triggerName: trigger.name,
+												triggerType: trigger.type,
+												documentName: trigger.documents[docIndex]
+											};
+											$scope.executions.push(execution);
+										}
 									}
 								}
 							}
 						}
-					}
-				})
-				.error(function(data, status, headers, config) {
-					$scope.executions = [];
-					console.log("unable to get executions " + status);
-					if(data && data.errors && data.errors[0] && data.errors[0].message){
-						$scope.showToastError(data.errors[0].message);
-					}else{
-						$scope.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
-					}
-				});
+						$scope.loadingExecutions = false;
+					})
+					.error(function(data, status, headers, config) {
+						$scope.executions = [];
+						console.log("unable to get executions " + status);
+						if(data && data.errors && data.errors[0] && data.errors[0].message){
+							$scope.showToastError(data.errors[0].message);
+						}else{
+							$scope.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
+						}
+						$scope.loadingExecutions = false;
+					});
+			}, 400);
 		}
 	}
 	
@@ -167,7 +153,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	
 	$scope.endDate.setDate($scope.startDate.getDate() + 1);
 	$scope.updateStartDateTime($scope.startDate, $scope.startTime);
-	$scope.updateStartDateTime($scope.endDate, $scope.endTime);
+	$scope.updateEndDateTime($scope.endDate, $scope.endTime);
 };
 
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
