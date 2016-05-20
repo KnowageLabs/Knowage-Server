@@ -430,7 +430,7 @@ public class ChartDriver extends GenericDriver {
 	public List<DefaultOutputParameter> getDefaultOutputParameters() {
 		List<DefaultOutputParameter> ret = new ArrayList<>();
 		ret.add(new DefaultOutputParameter("CATEGORY_NAME", TYPE.String));
-		ret.add(new DefaultOutputParameter("CATEGORY_VALUE ", TYPE.String));
+		ret.add(new DefaultOutputParameter("CATEGORY_VALUE", TYPE.String));
 		ret.add(new DefaultOutputParameter("SERIE_NAME", TYPE.String));
 		ret.add(new DefaultOutputParameter("SERIE_VALUE", TYPE.String));
 		ret.add(new DefaultOutputParameter("GROUPING_NAME", TYPE.String));
