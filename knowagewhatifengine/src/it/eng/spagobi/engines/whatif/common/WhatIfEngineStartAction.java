@@ -49,13 +49,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
-@Path("/start")
+@Path("/startwhatif")
 public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 
 	// INPUT PARAMETERS
 	public static final String LANGUAGE = "SBI_LANGUAGE";
 	public static final String COUNTRY = "SBI_COUNTRY";
-
+	
 	// OUTPUT PARAMETERS
 
 	// SESSION PARAMETRES
@@ -75,16 +75,19 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 	@Path("/test")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String test() {
-
 		return "test";
-
 	}
-
+	
 	@GET
 	@Path("/")
 	@Produces("text/html")
-	public void startAction() {
+	public void startWhatIfActionOlap() {
+		logger.debug("Starting WHATIF");
+		startAction(true);
+	}
 
+
+	public void startAction(boolean whatif) {
 		logger.debug("IN");
 
 		HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
@@ -92,11 +95,13 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 
 		try {
 			SourceBean templateBean = getTemplateAsSourceBean();
+			
 			logger.debug("User Id: " + getUserId());
 			logger.debug("Audit Id: " + getAuditId());
 			logger.debug("Document Id: " + getDocumentId());
 			logger.debug("Template: " + templateBean);
 
+			
 			if (getAuditServiceProxy() != null) {
 				logger.debug("Audit enabled: [TRUE]");
 				getAuditServiceProxy().notifyServiceStartEvent();
@@ -109,7 +114,7 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 			logger.debug("Creating engine instance ...");
 
 			try {
-				whatIfEngineInstance = WhatIfEngine.createInstance(templateBean, getEnv());
+				whatIfEngineInstance = WhatIfEngine.createInstance(templateBean,whatif, getEnv());
 			} catch (WhatIfTemplateParseException e) {
 				SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Template not valid", e);
 				engineException.setDescription(e.getCause().getMessage());

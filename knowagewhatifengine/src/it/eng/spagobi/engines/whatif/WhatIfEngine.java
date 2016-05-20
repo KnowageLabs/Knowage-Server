@@ -55,12 +55,12 @@ public class WhatIfEngine {
 	 *
 	 * @return the WhatIf engine instance
 	 */
-	public static WhatIfEngineInstance createInstance(Object template, Map env) {
+	public static WhatIfEngineInstance createInstance(Object template, boolean whatif, Map env) {
 
 		WhatIfEngineInstance whatIfEngineInstance = null;
 		logger.debug("IN");
 		try {
-			whatIfEngineInstance = new WhatIfEngineInstance(template, env);
+			whatIfEngineInstance = new WhatIfEngineInstance(template, whatif, env);
 			initSerializers();
 		} catch (Exception e) {
 			logger.error("OUT", e);

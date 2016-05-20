@@ -72,7 +72,7 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 			try {
 				logger.debug(WhatIfEngineConfig.getInstance().getTemplateFilePath());
 				SourceBean template = SourceBean.fromXMLFile(WhatIfEngineConfig.getInstance().getTemplateFilePath());
-				whatIfEngineInstance = WhatIfEngine.createInstance(template, getEnv());
+				whatIfEngineInstance = WhatIfEngine.createInstance(template, true, getEnv());
 			} catch (Exception e) {
 				logger.error("Error starting the What-If engine: error while generating the engine instance.", e);
 				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while generating the engine instance.", e);

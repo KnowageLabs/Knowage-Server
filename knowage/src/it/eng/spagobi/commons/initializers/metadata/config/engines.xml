@@ -113,7 +113,11 @@
 		engineTypeCd="EXT" classNm="" biobjTypeCd="DOCUMENT_COMPOSITE"
 		useDataSet="false" useDataSource="false" encrypt="0" />
 	<ENGINE label="knowagewhatifengine" name="What-If Engine" descr="What-If Engine"
-		mainUrl="/knowagewhatifengine/restful-services/start" driverNm="it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"
+		mainUrl="/knowagewhatifengine/restful-services/startwhatif" driverNm="it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"
+		engineTypeCd="EXT" classNm="" biobjTypeCd="OLAP" useDataSet="false"
+		useDataSource="true" encrypt="0" />
+	<ENGINE label="knowageolapfengine" name="OLAP Engine" descr="OLAP Engine"
+		mainUrl="/knowagewhatifengine/restful-services/startolap" driverNm="it.eng.spagobi.engines.drivers.whatif.OlapDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="OLAP" useDataSet="false"
 		useDataSource="true" encrypt="0" />
 </ENGINES>

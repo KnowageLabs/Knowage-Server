@@ -74,11 +74,11 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 
 	// to spread the edited value
 
-	protected WhatIfEngineInstance(Object template, Map env) {
-		this(WhatIfTemplateParser.getInstance() != null ? WhatIfTemplateParser.getInstance().parse(template) : null, env);
+	protected WhatIfEngineInstance(Object template, boolean whatif, Map env) {
+		this(WhatIfTemplateParser.getInstance() != null ? WhatIfTemplateParser.getInstance().parse(template) : null,  whatif, env);
 	}
 
-	public WhatIfEngineInstance(WhatIfTemplate template, Map env) {
+	public WhatIfEngineInstance(WhatIfTemplate template, boolean whatif, Map env) {
 		super(env);
 
 		includes = WhatIfEngine.getConfig().getIncludes();
@@ -144,7 +144,10 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 
 		// init configs
 		modelConfig = new ModelConfig(pivotModel);
-		modelConfig.setScenario(template.getScenario());
+		if(whatif){
+			modelConfig.setScenario(template.getScenario());
+		}
+		
 		modelConfig.setAliases(template.getAliases());
 
 		
