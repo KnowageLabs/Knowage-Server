@@ -79,6 +79,7 @@ import it.eng.spagobi.kpi.metadata.SbiKpiValueExecLog;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.alert.listener.AbstractSuspendableJob.JOB_STATUS;
 import it.eng.spagobi.tools.scheduler.bo.Job;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.json.JSONUtils;
@@ -91,6 +92,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1587,13 +1589,31 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		 * Setting status
 		 */
 		try {
-			String name = "" + id;
-			ISchedulerDAO schedulerDao = DAOFactory.getSchedulerDAO();
-			if (schedulerDao.loadTrigger(KPI_SCHEDULER_GROUP, name) == null) {
+			// loading trigger
+			String name = id + "";
+			ISchedulerDAO daoScheduler = DAOFactory.getSchedulerDAO();
+			Trigger tr = daoScheduler.loadTrigger(KPI_SCHEDULER_GROUP, name);
+			if (tr == null) {
+				// Calendar now = GregorianCalendar.getInstance(); // creates a new calendar instance
+				scheduler.getFrequency().setStartTime("00:00");
+				scheduler.getFrequency().setCron(null);
 				scheduler.setJobStatus(JOB_STATUS.EXPIRED);
 			} else {
-				scheduler.setJobStatus(schedulerDao.isTriggerPaused(KPI_SCHEDULER_GROUP, name, KPI_SCHEDULER_GROUP, name) ? JOB_STATUS.SUSPENDED
+				scheduler.setJobStatus(daoScheduler.isTriggerPaused(KPI_SCHEDULER_GROUP, name, KPI_SCHEDULER_GROUP, name) ? JOB_STATUS.SUSPENDED
 						: JOB_STATUS.ACTIVE);
+				Date startTime = tr.getStartTime();
+				Calendar dateStartFreq = GregorianCalendar.getInstance(); // creates a new calendar instance
+				dateStartFreq.setTime(startTime); // assigns calendar to given date
+				scheduler.getFrequency().setStartTime(dateStartFreq.get(Calendar.HOUR_OF_DAY) + ":" + dateStartFreq.get(Calendar.MINUTE));
+				scheduler.getFrequency().setStartDate(dateStartFreq.getTime().getTime());
+				if (tr.getEndTime() != null) {
+					Date endTime = tr.getEndTime();
+					Calendar dateEndFreq = GregorianCalendar.getInstance(); // creates a new calendar instance
+					dateEndFreq.setTime(endTime); // assigns calendar to given date
+					scheduler.getFrequency().setEndTime(dateEndFreq.get(Calendar.HOUR_OF_DAY) + ":" + dateEndFreq.get(Calendar.MINUTE));
+					scheduler.getFrequency().setEndDate(dateEndFreq.getTime().getTime());
+				}
+				scheduler.getFrequency().setCron(tr.getChronExpression() != null ? tr.getChronExpression().getExpression().replace("'", "\"") : null);
 			}
 		} catch (EMFUserError e) {
 			throw new SpagoBIDOAException(e);
