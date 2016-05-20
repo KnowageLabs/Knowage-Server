@@ -9,7 +9,7 @@
 	 
 	  			<md-tabs  flex layout-fill class="rightPanelDocuments">
 		    
-					<md-tab label="Business Models" ng-click="switchTab('businessModels')" flex>
+					<md-tab label="Business Models" ng-click="switchModelsTab('businessModels')" flex>
 				   		
 				   		<md-content>
 						 	
@@ -27,7 +27,7 @@
 				 	 	
 		 			</md-tab> 
 		   
-	<md-tab label="Federation definitions" ng-click="switchTab('federations')" ng-show="isFederationEnabled" flex>
+	<md-tab label="Federation definitions" ng-click="switchModelsTab('federations')" ng-show="isFederationEnabled" flex>
 				        <md-content>
 						 	<federation-view class="kn-documentBrowser" flex ng-model="federationDefinitions"
 								show-grid-view="showGridView"

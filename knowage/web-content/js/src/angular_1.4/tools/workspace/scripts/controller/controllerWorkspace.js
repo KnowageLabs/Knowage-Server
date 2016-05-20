@@ -101,7 +101,58 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	var selectedDocument = undefined;
-	var showDocumentInfo = false;	
+	var showDocumentInfo = false;
+
+	/**
+	 * TODO: For Dataset wizard
+	 */
+	$scope.limitPreviewChecked = false;
+	
+	$scope.csvEncoding = null; 
+	$scope.csvDelimiter = null; 
+	$scope.csvQuote = null; 
+	
+	$scope.skipRows = 0;
+	$scope.limitRows = null;
+	$scope.xlsSheetNumber = 1;
+	
+	$scope.csvEncodingTypes = 
+	[ 
+	 	{ value: "windows-1252"	, 	name: "windows-1252" 	}, 
+	 	{ value: "UTF-8"		, 	name: "UTF-8" 			},	 	
+	 	{ value: "UTF-16"		,	name: "UTF-16" 			},	
+	 	{ value: "US-ASCII"		,	name: "US-ASCII" 		},	 	
+	 	{ value: "ISO-8859-1"	,	name: "ISO-8859-1"	 	}
+ 	];
+	
+	$scope.csvDelimiterCharacterTypes = 
+	[ 
+	 	{ value: ","	, 	name: "," 	}, 
+	 	{ value: ";"	, 	name: ";" 	},	 	
+	 	{ value: "\\t"	,	name: "\\t" },	
+	 	{ value: "\|"	,	name: "\|" 	}
+ 	];
+	
+	$scope.csvQuoteCharacterTypes = 
+	[ 
+	 	{ value: "\""	, 	name: "\"" 	}, 
+	 	{ value: "\'"	, 	name: "\'" 	}
+ 	];
+	
+	$scope.chooseDelimiterCharacter = function(delimiterCharacterObj) {
+		$scope.csvDelimiter = delimiterCharacterObj.value;
+//		console.log($scope.csvDelimiter);
+	}
+	
+	$scope.chooseQuoteCharacter = function(quoteCharacterObj) {
+		$scope.csvQuote = quoteCharacterObj.value;
+//		console.log($scope.csvQuote);
+	}
+	
+	$scope.chooseEncoding = function(encodingObj) {
+		$scope.csvEncoding = encodingObj.value;
+//		console.log($scope.csvEncoding);
+	}
 	
 	/**
 	 * On-click listener function for the left main menu of the Workspace web page.
@@ -122,10 +173,6 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 			
 		if (!isSuboptionActiveTemp && $scope.isSuboptionActive) {
 			$scope.suboptionActive = false;
-		}
-		
-		if($scope.currentOptionMainMenu==='models'){
-			$scope.currentTab='businessModels';
 		}
 	
 		if (searchedBefore) {

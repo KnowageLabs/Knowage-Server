@@ -1,4 +1,4 @@
-<md-dialog flex style="height:50%; width:50%; max-height:50%; max-width:50%" ng-cloak>
+<md-dialog flex style="height:70%; width:50%; max-height:70%; max-width:50%" ng-cloak>
   
 	<md-toolbar>
       
@@ -19,49 +19,138 @@
 	<md-content flex class="datasetWizardPadding knowageGrey">
       
 		<!-- CARD 1 (START) -->
-		<md-card ng-if="datasetWizardView==1">
+		<md-card ng-if="datasetWizardView==1" class="datasetWizardCardHeight">
         
-			<md-toolbar class="secondaryToolbar">
-	         	<div class="md-toolbar-tools">
-	           		<h2>LOAD FILE</h2>
-	               	<span flex></span>
-	            </div>
-			</md-toolbar>
-	         
-			<md-content flex class="loadFilePadding">
-	         	
-				<form>
-		               
-					<div layout="row" layout-wrap>
-		                  <div flex>
-		                     <md-input-container class="small counter">
-		                        <label>Category</label> 
-		                        <md-select aria-label="aria-label" ng-model="cat">
-		                           <md-option
-		                              ng-repeat="category in datasetCategoryType">{{category.VALUE_NM}}</md-option>
-		                        </md-select>
-		                     </md-input-container>
-		                  </div>
+			
+				<md-toolbar class="secondaryToolbar">
+		         	<div class="md-toolbar-tools">
+		           		<h2>LOAD FILE</h2>
+		               	<span flex></span>
+		            </div>
+				</md-toolbar>
+		         
+				<md-content class="loadFilePadding">
+		         	
+					<form>
+			               
+						<div layout="row" layout-wrap>
+			                  <div flex>
+			                     <md-input-container class="small counter">
+			                        <label>Category</label> 
+			                        <md-select aria-label="aria-label" ng-model="cat">
+			                           <md-option ng-repeat="category in datasetCategoryType">{{category.VALUE_NM}}</md-option>
+			                        </md-select>
+			                     </md-input-container>
+			                  </div>
+						</div>
+			               
+						<div flex=50 layout="row">
+			                  <label class="checkboxPadding">Limit preview:</label> 
+			                  <md-input-container class="small counter" ng-model="limitPreviewChecked">
+			                     <md-checkbox ng-model="limitPreviewChecked" aria-label="Checkbox 1"></md-checkbox>
+			                  </md-input-container>
+						</div>
+			               
+						<div layout="row" layout-wrap>
+			                  <label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.wizard.selectFile")}}:</label>
+			                  <file-upload flex ng-model="fileObj" id="datasetFile" ng-click="fileChange();checkChange()"></file-upload>
+			                  <div>
+			                     <md-button ng-click="uploadFile()" class="md-raised">UPLOAD</md-button>
+			                  </div>
+						</div>
+			               
+					</form>
+		            
+		       	</md-content>
+	       	
+         
+         	<!-- <md-whiteframe flex layout="column" layout-margin class="md-whiteframe-5dp md-whiteframe-5dp-rightPanelDocuments"> -->
+         		
+         		<div layout="row">								
+			              
+			        <!-- CSV file is uploaded --> 
+					<div layout="row" flex ng-if="limitPreviewChecked">
+		                 	
+	                 	<div layout="row" layout-wrap flex=33>
+	                  		<div flex=90 layout-align="center center">
+	                     		<md-input-container class="small counter">
+	                        		<label>Delimiter character</label> 
+	                        		<md-select aria-label="aria-label" ng-model="csvDelimiter">
+	                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
+	                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)">
+                          						{{csvDelimiterCharacterItem.name}}
+                     						</md-option>
+	                        		</md-select>
+		                     	</md-input-container>
+		                  	</div>
+						</div>
+	                 	
+                		<div layout="row" layout-wrap flex=33>
+	                  		<div flex=90 layout-align="center center">
+	                     		<md-input-container class="small counter">
+	                        		<label>Quote character</label> 
+	                        		<md-select aria-label="aria-label" ng-model="csvQuote">
+	                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
+	                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)">
+                          						{{csvQuoteCharacterItem.name}}
+                     						</md-option>
+	                        		</md-select>
+		                     	</md-input-container>
+		                  	</div>
+						</div>
+						
+						<div layout="row" layout-wrap flex=33>
+	                  		<div flex=90 layout-align="center center">
+	                     		<md-input-container class="small counter">
+	                        		<label>Delimiter character</label> 
+	                        		<md-select aria-label="aria-label" ng-model="csvEncoding">
+	                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
+	                           						ng-click="chooseEncoding(csvEncodingItem)">
+                          						{{csvEncodingItem.name}}
+                     						</md-option>
+	                        		</md-select>
+		                     	</md-input-container>
+		                  	</div>
+						</div>
+							
 					</div>
-		               
-					<div flex=50 layout="row">
-		                  <label class="checkboxPadding">Limit preview:</label> 
-		                  <md-input-container class="small counter" ng-model="checked">
-		                     <md-checkbox ng-model="ckecked" aria-label="Checkbox 1"></md-checkbox>
-		                  </md-input-container>
+					
+					<!-- XLS file is uploaded -->
+					<div layout="row" flex ng-if="!limitPreviewChecked">
+						
+						<div layout="row" layout-wrap flex=33>
+	                  		<div flex=90 layout-align="center center">
+	                     		<md-input-container class="small counter">
+	                        		<label>Skip rows</label> 
+	                        		<input ng-model="skipRows" type="number" step="1" min="0">
+		                     	</md-input-container>
+		                  	</div>
+						</div>
+	                 	
+                		<div layout="row" layout-wrap flex=33>
+	                  		<div flex=90 layout-align="center center">
+	                     		<md-input-container class="small counter">
+	                        		<label>Limit rows number</label> 
+	                        		<input ng-model="limitRows" type="number" step="1" min="0">
+		                     	</md-input-container>
+		                  	</div>
+						</div>
+						
+						<div layout="row" layout-wrap flex=33>
+	                  		<div flex=90 layout-align="center center">
+	                     		<md-input-container class="small counter">
+	                        		<label>Sheet number</label> 
+	                        		<input ng-model="xlsSheetNumber" type="number" step="1" min="1">
+		                     	</md-input-container>
+		                  	</div>
+						</div>
+						
 					</div>
-		               
-					<div layout="row" layout-wrap>
-		                  <label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.wizard.selectFile")}}:</label>
-		                  <file-upload flex ng-model="fileObj" id="datasetFile" ng-click="fileChange();checkChange()"></file-upload>
-		                  <div>
-		                     <md-button ng-click="uploadFile()" class="md-raised">UPLOAD</md-button>
-		                  </div>
-					</div>
-		               
-				</form>
-	            
-	       	</md-content>
+						
+				</div>
+					
+				
+         <!-- 	</md-whiteframe> -->
          
 		</md-card>
 		<!-- CARD 1 (END) -->

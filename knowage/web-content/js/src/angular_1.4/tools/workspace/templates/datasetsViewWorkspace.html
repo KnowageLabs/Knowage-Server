@@ -9,7 +9,7 @@
 		  		
 		  		<md-tabs flex layout-fill class="rightPanelDocuments">
 			  
-    <md-tab label="My data set" flex ng-click="switchTab('myDataSet')">
+    <md-tab label="My data set" flex ng-click="switchDatasetsTab('myDataSet')">
        <md-tab-body>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="myDatasets"
 		show-grid-view="showGridView"
@@ -24,7 +24,7 @@
  	  ></dataset-view>	
  	 </md-tab-body>
  	</md-tab>  
- 	<md-tab label="Enterprise data set" flex ng-click="switchTab('enterpriseDataSet')">
+ 	<md-tab label="Enterprise data set" flex ng-click="switchDatasetsTab('enterpriseDataSet')">
      <md-tab-body>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="enterpriseDatasets"
 		show-grid-view="showGridView"
@@ -38,7 +38,7 @@
  	  ></dataset-view>		
  	    </md-tab-body>
  	</md-tab>  
- 	<md-tab label="Shared data set" flex ng-click="switchTab('sharedDataSet')">
+ 	<md-tab label="Shared data set" flex ng-click="switchDatasetsTab('sharedDataSet')">
       <md-tab-body>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="sharedDatasets"
 		show-grid-view="showGridView"
@@ -52,7 +52,7 @@
  	  ></dataset-view>	
  	 </md-tab-body>
  	</md-tab>  
- 	<md-tab label="Ckan data set" flex ng-click="switchTab('ckanDataSet')">
+ 	<md-tab label="Ckan data set" flex ng-click="switchDatasetsTab('ckanDataSet')">
  	 	<md-tab-body>
  	 	 <div layout="row" flex>
  	 	   <span flex></span>
@@ -78,7 +78,7 @@
  	 	 </div>
  	 	</md-tab-body>
  	</md-tab>
- 	<md-tab label="All data set" flex ng-click="switchTab('allDataSet')">
+ 	<md-tab label="All data set" flex ng-click="switchDatasetsTab('allDataSet')">
       <md-tab-body>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="datasets"
 		show-grid-view="showGridView"

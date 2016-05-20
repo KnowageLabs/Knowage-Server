@@ -118,4 +118,18 @@
 		top: 0px !important;
 		right: -15px !important;
 	}
+		
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.datasetWizardCardHeight {
+		height: 70%;
+		min-height: 70%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.datasetWizardCardHeight {
+			height: 90%;
+			min-height: 90%;
+		}
+	}
 }

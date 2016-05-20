@@ -337,26 +337,29 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	    });
     }
     
-    $scope.switchTab=function(currentTab){
-    
-    	$scope.currentTab=currentTab;
+    /**
+	 * Set the currently active Datasets tab. Initially, the 'My Data Set' tab is selected (active). 
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.currentDatasetsTab = "myDataSet";
+	
+    $scope.switchDatasetsTab = function(datasetsTab) {
+    	
+    	$scope.currentDatasetsTab = datasetsTab;
+    	
     	if($scope.selectedDataset !== undefined){
     		$scope.selectDataset(undefined);
-         }
-    	
-    	if($scope.selectedModel !== undefined){
-    		$scope.selectModel(undefined);
-         }
+    	}    	
     	
     	if($scope.selectedCkan !== undefined){
     		$scope.selectCkan(undefined);
-         }
+    	}
     	
     	$scope.ckanDatasetsList=[];
     	$scope.selectedCkanRepo={};
     	$scope.ckanDatasetsListInitial=[];
     	
-    }	
+    }
     
     $scope.getBackPreviewSet=function(){
     	 if($scope.startPreviewIndex-$scope.itemsPerPage < 0){
@@ -528,7 +531,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		$scope.toggleDWVBack = function() {
 			if($scope.datasetWizardView>1&&$scope.datasetWizardView<5){
 				$scope.datasetWizardView = $scope.datasetWizardView -1;
-			}	
+			}
+			
+			
 		}
 		
 		$scope.closeDatasetCreateDialog=function(){
@@ -541,7 +546,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			.then(function(response) {
 				console.log(response.data);
 				if(b=="") {
-					angular.copy(response.data,$scope.datasetCategories)
+				angular.copy(response.data,$scope.datasetCategories)
 				} else if(b=="?DOMAIN_TYPE=CATEGORY_TYPE"){
 					angular.copy(response.data,$scope.datasetCategoryType)
 				} else if(b=="?DOMAIN_TYPE=DS_GEN_META_PROPERTY"){
@@ -561,17 +566,21 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_GEN_META_PROPERTY");
 		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_PROPERTY");
 		loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_VALUE");
-
+	    
 		$scope.uploadFile= function(){
+		
         	multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedataset/fileupload",$scope.fileObj).success(
+
 					function(data,status,headers,config){
 						if(data.hasOwnProperty("errors")){						
 							console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");		
 							sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, 'Error!');
 						}else{
+						
 							console.log("[UPLOAD]: SUCCESS!");
-							sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
-							$scope.file={};
+						sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
+						
+						$scope.file={};
 							$scope.dataset.fileType = data.fileType;
 							$scope.dataset.fileName = data.fileName;
 						}
@@ -579,7 +588,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 						console.log("[UPLOAD]: FAIL!"+status);
 						sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, 'Error!');
 					});
-        }	
+        	
+        }		
+		
 	}
     
 }

@@ -209,4 +209,20 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		}
 		
 		}
+	
+	/**
+	 * Set the currently active Models tab. Initially, the 'Business Models' tab is selected (active). 
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.currentModelsTab = "businessModels";
+	
+	$scope.switchModelsTab = function(modelsTab) {
+    	
+		$scope.currentModelsTab = modelsTab;
+    	
+		if($scope.selectedModel !== undefined){
+			$scope.selectModel(undefined);
+		}
+    	
+	}
 }
