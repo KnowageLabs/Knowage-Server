@@ -93,7 +93,7 @@
         </md-button>
       </div>
     </md-toolbar>
-    <md-dialog-content flex>
+    <md-dialog-content flex layout-padding>
   	<div layout="column" flex> 
 		<label layout = "row">&nbsp;&nbsp;<b>{{translate.load('sbi.kpi.scorecard.perspective.criterion')}} : </b></label>
 		<label layout = "row">&nbsp;&nbsp;&nbsp;&nbsp;{{translate.load(criterion.translatedValueName)}} </label>
