@@ -45,11 +45,11 @@ import org.olap4j.OlapConnection;
 import org.olap4j.OlapDataSource;
 import org.olap4j.Position;
 import org.olap4j.metadata.Cube;
-import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 import org.pivot4j.impl.PivotModelImpl;
 import org.pivot4j.impl.Quax;
+import org.pivot4j.impl.QueryAdapter;
 import org.pivot4j.mdx.Exp;
 import org.pivot4j.mdx.FunCall;
 import org.pivot4j.mdx.Literal;
@@ -70,6 +70,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	private SpagoBICrossNavigationConfig crossNavigation;
 	private List<TargetClickable> targetsClickable;
 	private List<Member> sortPosMembers1;
+	private QueryAdapter sbiQueryAdapter;
 
 	public List<Member> getSortPosMembers1() {
 		sortPosMembers1 = new ArrayList<Member>();
@@ -355,13 +356,13 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 		/*
 		 * if (isSubset(qaRows)) {
-		 * 
-		 * 
-		 * 
+		 *
+		 *
+		 *
 		 * } else { Exp setForAx = qa.getExp(); axis.getPositionCount();
-		 * 
+		 *
 		 * List<Exp> args = new ArrayList<Exp>(3);
-		 * 
+		 *
 		 * args.add(setForAx); args.add(Literal.create(startFrom));
 		 * args.add(Literal.create(count)); FunCall subset = new
 		 * FunCall("Subset", Syntax.Function, args); qa.setExp(subset); }
@@ -394,7 +395,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 		Integer rowCount = getCellSet().getAxes().get(1).getPositionCount();
 		Integer columnCount = getCellSet().getAxes().get(0).getPositionCount();
-		//System.out.println(rowCount + " x " + columnCount);
+		// System.out.println(rowCount + " x " + columnCount);
 		if (y < rowCount - 1) {
 			subsetRows.getArgs().set(1, Literal.create(y));
 		} else {
@@ -416,22 +417,38 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	}
 
 	public void removeSubset() {
-		CellSetAxis rows = this.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal());
-		CellSetAxis columns = this.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal());
-		QueryAxis qaRows = getQueryAxis(rows);
-		QueryAxis qaColumns = getQueryAxis(columns);
-		FunCall subsetRows = getSubSetFunction(qaRows);
-		FunCall subsetColumns = getSubSetFunction(qaColumns);
+		CellSetAxis rows = null;
+		CellSetAxis columns = null;
+		QueryAxis qaRows = null;
+		QueryAxis qaColumns = null;
+		FunCall subsetRows = null;
+		FunCall subsetColumns = null;
 
-		if (subsetRows.getFunction().equalsIgnoreCase("Subset")) {
-			Exp exp = subsetRows.getArgs().get(0);
-			qaRows.setExp(exp);
+		rows = this.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal());
+		columns = this.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal());
 
+		if (rows != null) {
+			qaRows = getQueryAxis(rows);
+			if (qaRows != null) {
+				subsetRows = getSubSetFunction(qaRows);
+				if (subsetRows != null && subsetRows.getFunction().equalsIgnoreCase("Subset")) {
+					Exp exp = subsetRows.getArgs().get(0);
+					qaRows.setExp(exp);
+				}
+			}
 		}
-		if (subsetColumns.getFunction().equalsIgnoreCase("Subset")) {
-			Exp exp = subsetColumns.getArgs().get(0);
-			qaColumns.setExp(exp);
+
+		if (columns != null) {
+			qaColumns = getQueryAxis(columns);
+			if (qaColumns != null) {
+				subsetColumns = getSubSetFunction(qaColumns);
+				if (subsetColumns != null && subsetColumns.getFunction().equalsIgnoreCase("Subset")) {
+					Exp exp = subsetColumns.getArgs().get(0);
+					qaColumns.setExp(exp);
+				}
+			}
 		}
+
 		fireModelChanged();
 
 	}
@@ -464,7 +481,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		Exp exp = f.getArgs().get(0);
 		qa.setExp(exp);
 		fireModelChanged();
-		//System.out.println(getCellSet().getAxes().get(1).getPositionCount());
+		// System.out.println(getCellSet().getAxes().get(1).getPositionCount());
 		if (getCellSet().getAxes().get(1).getPositionCount() > step) {
 			start = start + step;
 		}
@@ -495,13 +512,17 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	}
 
 	private QueryAxis getQueryAxis(CellSetAxis axis) {
-		List<Position> positions = axis.getPositions();
-		Dimension dim = positions.get(0).getMembers().get(0).getDimension();
 
-		Quax quax = getQueryAdapter().findQuax(dim);
-		MdxStatement pq = getQueryAdapter().getParsedQuery();
+		QueryAxis qa = null;
+		MdxStatement pq = null;
+		Quax quax = null;
 
-		QueryAxis qa = pq.getAxis(Axis.Factory.forOrdinal(quax.getOrdinal()));
+		pq = getQueryAdapter().getParsedQuery();
+		quax = getQueryAdapter().getQuax(axis.getAxisOrdinal());
+
+		if (pq != null && quax != null) {
+			qa = pq.getAxis(Axis.Factory.forOrdinal(quax.getOrdinal()));
+		}
 
 		return qa;
 	}
@@ -566,6 +587,14 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 		}
 		fireModelChanged();
+	}
+
+	public QueryAdapter getSbiQueryAdapter() {
+		return sbiQueryAdapter = getQueryAdapter();
+	}
+
+	public void setSbiQueryAdapter(QueryAdapter sbiQueryAdapter) {
+		this.sbiQueryAdapter = sbiQueryAdapter;
 	}
 
 }
