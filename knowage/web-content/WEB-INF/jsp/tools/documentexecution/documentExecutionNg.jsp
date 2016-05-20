@@ -233,8 +233,9 @@ try{
 				</div>
 	        </md-toolbar>
        
-            <div layout="row" flex="grow" ng-switch on="currentView.status">
-		 		<md-content id="documentFrameContainer" layout="row" flex="grow" ng-switch-when="DOCUMENT">  
+            <div layout="row" flex="grow">
+            	<!-- "ng-show" is used instead of "ng-if" (or "ng-switch") in order to prevent the iframe reloading -->
+		 		<md-content id="documentFrameContainer" layout="row" flex="grow" ng-show="currentView.status == 'DOCUMENT'">  
 		      		<div layout="row" flex layout-align="center center" ng-hide="urlViewPointService.frameLoaded">
 			      		<md-progress-circular md-mode="indeterminate" md-diameter="70" ></md-progress-circular>
 					</div>
@@ -243,7 +244,7 @@ try{
 					</iframe>
 				</md-content>
 										
-				<div flex layout ng-switch-when="PARAMETERS"> 
+				<div flex layout ng-if="currentView.status == 'PARAMETERS'"> 
 					<div ng-if="parameterView.status == 'FILTER_SAVED'" layout flex>
 						<parameter-view-point-handler flex layout="column"/>
 					</div>
