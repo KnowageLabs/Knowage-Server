@@ -108,11 +108,14 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 */
 	$scope.dataset = {};
 	
-	$scope.dataset.limitPreviewChecked = false;
+	$scope.dataset.fileType = "";
+	$scope.dataset.fileName = "";
 	
-	$scope.dataset.csvEncoding = null; 
-	$scope.dataset.csvDelimiter = null; 
-	$scope.dataset.csvQuote = null; 
+	$scope.limitPreviewChecked = false;
+	
+	$scope.dataset.csvEncoding = ""; 
+	$scope.dataset.csvDelimiter = ""; 
+	$scope.dataset.csvQuote = ""; 
 	
 	$scope.dataset.skipRows = 0;
 	$scope.dataset.limitRows = null;
@@ -155,7 +158,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 		$scope.dataset.csvEncoding = encodingObj.value;
 //		console.log($scope.csvEncoding);
 	}
-	
+		
 	/**
 	 * On-click listener function for the left main menu of the Workspace web page.
 	 * We will keep the lastly chosen option from this menu inside scope variable.

@@ -327,8 +327,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		  preserveScope: true,
 	      controller: DatasetCreateController,
 	      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',  
-	      clickOutsideToClose:true,
-	      escapeToClose :true,
+	      clickOutsideToClose: false,
+	      escapeToClose: true,
 	      //fullscreen: true,
 	      locals:{
 	    	 // previewDatasetModel:$scope.previewDatasetModel,
@@ -526,6 +526,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		$scope.dsMetaValue = [];
 		
 		$scope.toggleDWVNext = function() {
+			
+			console.log($scope.dataset);
+			
 			if($scope.datasetWizardView>0&&$scope.datasetWizardView<4){
 				$scope.datasetWizardView = $scope.datasetWizardView +1;
 			}

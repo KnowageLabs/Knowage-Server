@@ -8,7 +8,7 @@
 	         
 			<span flex></span> 
 	         
-			<md-button class="" ng-click="toggleDWVBack()"> BACK </md-button>
+			<md-button class="" ng-click="toggleDWVBack()" ng-if="datasetWizardView>1"> BACK </md-button>
 			<md-button class="" ng-click="toggleDWVNext()"> NEXT </md-button>
 			<md-button class="" ng-click="closeDatasetCreateDialog()"> CLOSE </md-button>
             
@@ -81,7 +81,7 @@
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
 	                        		<label>Delimiter character</label> 
-	                        		<md-select aria-label="aria-label" ng-model="csvDelimiter">
+	                        		<md-select aria-label="aria-label" ng-model="dataset.csvDelimiter">
 	                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
 	                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)">
                           						{{csvDelimiterCharacterItem.name}}
@@ -95,7 +95,7 @@
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
 	                        		<label>Quote character</label> 
-	                        		<md-select aria-label="aria-label" ng-model="csvQuote">
+	                        		<md-select aria-label="aria-label" ng-model="dataset.csvQuote">
 	                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
 	                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)">
                           						{{csvQuoteCharacterItem.name}}
@@ -109,7 +109,7 @@
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
 	                        		<label>Delimiter character</label> 
-	                        		<md-select aria-label="aria-label" ng-model="csvEncoding">
+	                        		<md-select aria-label="aria-label" ng-model="dataset.csvEncoding">
 	                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
 	                           						ng-click="chooseEncoding(csvEncodingItem)">
                           						{{csvEncodingItem.name}}
@@ -128,7 +128,7 @@
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
 	                        		<label>Skip rows</label> 
-	                        		<input ng-model="skipRows" type="number" step="1" min="0">
+	                        		<input ng-model="dataset.skipRows" type="number" step="1" min="0">
 		                     	</md-input-container>
 		                  	</div>
 						</div>
@@ -137,7 +137,7 @@
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
 	                        		<label>Limit rows number</label> 
-	                        		<input ng-model="limitRows" type="number" step="1" min="0">
+	                        		<input ng-model="dataset.limitRows" type="number" step="1" min="0">
 		                     	</md-input-container>
 		                  	</div>
 						</div>
@@ -146,7 +146,7 @@
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
 	                        		<label>Sheet number</label> 
-	                        		<input ng-model="xlsSheetNumber" type="number" step="1" min="1">
+	                        		<input ng-model="dataset.xlsSheetNumber" type="number" step="1" min="1">
 		                     	</md-input-container>
 		                  	</div>
 						</div>
