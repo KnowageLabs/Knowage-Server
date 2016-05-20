@@ -355,7 +355,7 @@ CREATE TABLE SBI_KPI_VALUE (
 
 ALTER TABLE  SBI_META_BC ADD UNIQUE_NAME VARCHAR(100) NULL;
 
-update SBI_ENGINES set MAIN_URL = '/knowagewhatifengine/restful-services/startwhatif' where NAME = 'Worksheet Engine';
+update SBI_ENGINES set MAIN_URL = '/knowagewhatifengine/restful-services/startwhatif' where LABEL = 'knowagewhatifengine';
 
 INSERT INTO SBI_ENGINES
 (ENGINE_ID,ENCRYPT,NAME,DESCR,MAIN_URL,SECN_URL,OBJ_UPL_DIR,OBJ_USE_DIR,DRIVER_NM,LABEL,ENGINE_TYPE,

@@ -354,6 +354,8 @@ CREATE TABLE SBI_KPI_VALUE (
 
 ALTER TABLE  SBI_META_BC ADD UNIQUE_NAME VARCHAR(100) NULL;
 
+update SBI_ENGINES set MAIN_URL = '/knowagewhatifengine/restful-services/startwhatif' where LABEL = 'knowagewhatifengine';
+
 INSERT INTO SBI_ENGINES (ENGINE_ID,ENCRYPT,NAME,DESCR,MAIN_URL,SECN_URL,OBJ_UPL_DIR,OBJ_USE_DIR,DRIVER_NM,LABEL,ENGINE_TYPE, CLASS_NM,BIOBJ_TYPE,USE_DATASET,USE_DATASOURCE,USER_IN,USER_UP,USER_DE,TIME_IN, TIME_UP,TIME_DE,SBI_VERSION_IN,SBI_VERSION_UP,SBI_VERSION_DE,META_VERSION,ORGANIZATION) VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_ENGINES'), 0, 'OLAP Engine', 'OLAP Engine', '/knowagewhatifengine/restful-services/startolap', NULL, NULL, NULL,  'it.eng.spagobi.engines.drivers.whatif.OlapDriver', 'knowageolapengine',  (SELECT VALUE_ID FROM SBI_DOMAINS WHERE DOMAIN_CD = 'ENGINE_TYPE' AND VALUE_CD = 'EXT'), NULL,  (SELECT VALUE_ID FROM SBI_DOMAINS WHERE DOMAIN_CD = 'BIOBJ_TYPE' AND VALUE_CD = 'OLAP'),  0, 1, 'system', NULL, NULL, SYSDATE, NULL, NULL, '1.0', NULL, NULL, NULL, NULL);
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ENGINES';
 
