@@ -135,6 +135,8 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	}
 
 	$scope.sendModelConfig = function(modelConfig) {
+		
+		var sentStartRow = $scope.modelConfig.startRow;
 		if ($scope.ready) {
 			$scope.ready = false;
 			sbiModule_restServices.promisePost(
@@ -143,9 +145,13 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 					function(response) {
 						$scope.table = $sce.trustAsHtml(response.data.table);
 						if($scope.modelConfig){
-							if($scope.modelConfig.startRow!=response.data.modelConfig.startRow){
-								$scope.scrollTo(response.data.modelConfig.startRow,response.data.modelConfig.startColumn);
-							}
+						
+							if(Math.abs(sentStartRow)!==Math.abs(response.data.modelConfig.startRow)){
+								
+									$scope.scrollTo(response.data.modelConfig.startRow,response.data.modelConfig.startColumn);
+								}
+								
+							
 						}
 						
 						
@@ -153,6 +159,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 						//$scope.tableSubsets[$scope.modelConfig.startRow]=response.data.table;
 						
 						$scope.ready = true;
+						$scope.isScrolling = false;
 						
 								
 					},
