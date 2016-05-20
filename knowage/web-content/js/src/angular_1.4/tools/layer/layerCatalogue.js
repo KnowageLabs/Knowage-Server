@@ -275,7 +275,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 										sbiModule_translate.load("sbi.general.cancel"));
 
 				$mdDialog.show(confirm).then(function() {
-					if(item.pathFile!=null){
+					if(item.pathFile!=null && item.type =="File"){
 						//if pathfile!=null enable the visualization of filename
 						$scope.pathFileCheck =true;
 					} else{
@@ -293,7 +293,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				});
 
 			}  else {
-				if(item.pathFile!=null){
+				if(item.pathFile!=null && item.type =="File"){
 					//if pathfile!=null enable the visualization of filename
 					$scope.pathFileCheck =true;
 				} else{
