@@ -3628,3 +3628,7 @@ ADD PRIMARY KEY (BC_ID, WORD_ID, COLUMN_NAME);
 
 --17.05.2016 Antonella Giachino: add unique_name in SBI_META_BC
 ALTER TABLE  SBI_META_BC ADD COLUMN UNIQUE_NAME VARCHAR(100) AFTER NAME;
+
+--20.05.2016 Alberto Ghedin
+update sbi_engines set main_url = '/knowagewhatifengine/restful-services/startwhatif' where name = 'Worksheet Engine';
+commit;
