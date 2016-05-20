@@ -21,7 +21,7 @@
 		<ENGINE label="knowageprocessengine" />
 		<ENGINE label="knowagechartengine" />
 		<ENGINE label="knowagecockpitengine" />
-		<ENGINE label="knowagewhatifengine" />
+		<ENGINE label="knowageolapfengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageER" active="true">
 		<ENGINE label="knowageofficeengine" />
