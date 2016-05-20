@@ -19,6 +19,11 @@ angular.module('scrolly_directive',[])
 	        	 
 	        	};
 	        	
+	        	  element.bind('scroll', function () {
+	                 scope.isScrolling = true;
+	                 
+	              });
+	        	
 	        	
 	        	scope.resize = function(){
 	        		
@@ -60,7 +65,7 @@ angular.module('scrolly_directive',[])
 	            	}	
 	            	if(table.offsetHeight<raw.offsetHeight-70&&
 	            			scope.modelConfig.rowCount>newRowSet){
-	            		console.log('table height is smaller than parent div and rowCount is greater than rowSet');
+	            		
 	            		
 	            			newRowSet = 50;
 	            		
@@ -139,9 +144,11 @@ angular.module('scrolly_directive',[])
 	        				if(scope.ready){
 	        					scope.resize();
 	        				}
+	        				if(!scope.isScrolling){
+	        					scope.scroll();
+	        				}
 	        				
-	        				scope.scroll();
-	        				
+	        				scope.isScrolling = false;
 	        			
 	        			},100);
 	               
