@@ -390,7 +390,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			}else if($scope.formulaModified.value){
 				var flag = true;
 				var obj2=$scope.kpi.definition.measures;
-				For1:for(var i=0;i<obj.length;i++){
+				For1:for(var i=0;i<obj.measureList.length;i++){
 					if(obj.measureList[i].measureName!=obj2[i]){
 						$scope.resetMatrix();
 						flag=false;
