@@ -113,35 +113,49 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	
 	$scope.limitPreviewChecked = false;
 	
-	$scope.dataset.csvEncoding = ""; 
-	$scope.dataset.csvDelimiter = ""; 
-	$scope.dataset.csvQuote = ""; 
+	$scope.dataset.csvEncoding = "UTF-8"; 
+	$scope.dataset.csvDelimiter = ","; 
+	$scope.dataset.csvQuote = "\""; 
 	
 	$scope.dataset.skipRows = 0;
 	$scope.dataset.limitRows = null;
-	$scope.dataset.xlsSheetNumber = 1;
+	$scope.dataset.xslSheetNumber = 1;
+	
+	$scope.dataset.catTypeVn = "";
+	$scope.dataset.catTypeId = null;
+	
+//	$scope.dataset.id = "";
+//	$scope.dataset.type = "File";
+//	$scope.dataset.label = "";
+//	$scope.dataset.name = ""
+//	$scope.dataset.description = "";
+//	$scope.dataset.persist = false;
+//	$scope.dataset.tablePrefix = datasetParameters.TABLE_NAME_PREFIX;
+//	$scope.dataset.tableName = "";
+//	$scope.dataset.fileUploaded = true;
+//	$scope.dataset.meta = [];
 	
 	$scope.csvEncodingTypes = 
 	[ 
-	 	{ value: "windows-1252"	, 	name: "windows-1252" 	}, 
-	 	{ value: "UTF-8"		, 	name: "UTF-8" 			},	 	
-	 	{ value: "UTF-16"		,	name: "UTF-16" 			},	
-	 	{ value: "US-ASCII"		,	name: "US-ASCII" 		},	 	
-	 	{ value: "ISO-8859-1"	,	name: "ISO-8859-1"	 	}
+	 	{value:"windows-1252",name:"windows-1252"}, 
+	 	{value:"UTF-8",name:"UTF-8"},	 	
+	 	{value:"UTF-16",name:"UTF-16"},	
+	 	{value:"US-ASCII",name:"US-ASCII"},	 	
+	 	{value:"ISO-8859-1",name:"ISO-8859-1"}
  	];
 	
 	$scope.csvDelimiterCharacterTypes = 
 	[ 
-	 	{ value: ","	, 	name: "," 	}, 
-	 	{ value: ";"	, 	name: ";" 	},	 	
-	 	{ value: "\\t"	,	name: "\\t" },	
-	 	{ value: "\|"	,	name: "\|" 	}
+	 	{value:",",name:","}, 
+	 	{value:";",name:";"},	 	
+	 	{value:"\\t",name:"\\t"},	
+	 	{value:"\|",name:"\|"}
  	];
 	
 	$scope.csvQuoteCharacterTypes = 
 	[ 
-	 	{ value: "\""	, 	name: "\"" 	}, 
-	 	{ value: "\'"	, 	name: "\'" 	}
+	 	{value:"\"",name:"\""}, 
+	 	{value:"\'",name:"\'"}
  	];
 	
 	$scope.chooseDelimiterCharacter = function(delimiterCharacterObj) {
@@ -159,6 +173,11 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 //		console.log($scope.csvEncoding);
 	}
 		
+	$scope.chooseCategory = function(category) {
+		$scope.dataset.catTypeVn = category.VALUE_CD;
+		$scope.dataset.catTypeId = category.VALUE_ID;
+	}
+	
 	/**
 	 * On-click listener function for the left main menu of the Workspace web page.
 	 * We will keep the lastly chosen option from this menu inside scope variable.

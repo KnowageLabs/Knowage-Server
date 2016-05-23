@@ -40,7 +40,7 @@
 			                     <md-input-container class="small counter">
 			                        <label>Category</label> 
 			                        <md-select aria-label="aria-label" ng-model="cat">
-			                           <md-option ng-repeat="category in datasetCategoryType">{{category.VALUE_NM}}</md-option>
+			                           <md-option ng-repeat="category in datasetCategoryType" ng-click="chooseCategory(category)">{{category.VALUE_NM}}</md-option>
 			                        </md-select>
 			                     </md-input-container>
 			                  </div>
@@ -146,7 +146,7 @@
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
 	                        		<label>Sheet number</label> 
-	                        		<input ng-model="dataset.xlsSheetNumber" type="number" step="1" min="1">
+	                        		<input ng-model="dataset.xslSheetNumber" type="number" step="1" min="1">
 		                     	</md-input-container>
 		                  	</div>
 						</div>
@@ -173,7 +173,6 @@
          
          	<md-content flex class="loadFilePadding">
 	            <form>
-	               
 	               <dataset-wizard-meta></dataset-wizard-meta>
 	            </form>
          	</md-content>
