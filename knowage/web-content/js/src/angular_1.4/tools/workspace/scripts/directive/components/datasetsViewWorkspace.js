@@ -527,7 +527,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		$scope.dsMetaValue = [];		
 		$scope.category = null;
 		
-		$scope.submit = function() {
+		$scope.submitStep1 = function() {
 			
 			var params = {};
 			
@@ -575,15 +575,23 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			.then
 			(
 				function successCallback(response) {
-					console.log("SUCCESS");
-					console.log(response.data.meta);
+					
+					if (!response.data.errors) {
+						console.info("[SUCCESS]: The Step 1 form is submitted successfully.");
+						$scope.datasetWizardView = $scope.datasetWizardView +1;
+					}
+					else {
+						console.info("[ERROR]: ",sbiModule_translate.load(response.data.errors[0].message));
+						sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error!');
+					}
 				}, 
 				
 				function errorCallback(response) {
 				// called asynchronously if an error occurs
 				// or server returns response with an error status.
-					console.log("FAILURE");
+					console.info("[FAILURE]: The form cannot be submitted because of some failure.");
 					console.log(response);
+					sbiModule_messaging.showErrorMessage("Failure!", 'Error!');
 				}
 			);
 		}
@@ -592,9 +600,19 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 						
 			console.log($scope.dataset);
 			
-			$scope.submit();
+			/**
+			 * Call this service only when submitting the form data from the Step 1.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			if ($scope.datasetWizardView == 1) {
+				$scope.submitStep1();
+			}			
 			
-			if($scope.datasetWizardView>0&&$scope.datasetWizardView<4){
+			/**
+			 * Bigger then 1, because for the Step 1 we will move to the next step in the 'submitStep1()', according to the state of success of the service call.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+			 */
+			if($scope.datasetWizardView>1 && $scope.datasetWizardView<4){
 				$scope.datasetWizardView = $scope.datasetWizardView +1;
 			}
 		}
@@ -656,11 +674,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 
 					function(data,status,headers,config){
 						if(data.hasOwnProperty("errors")){						
-							console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");		
+							console.info("[UPLOAD]: DATA HAS ERRORS PROPERTY!");		
 							sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, 'Error!');
 						}else{
 						
-							console.log("[UPLOAD]: SUCCESS!");
+							console.info("[UPLOAD]: SUCCESS!");
 							sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
 						
 							$scope.file={};
@@ -668,7 +686,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 							$scope.dataset.fileName = data.fileName;
 						}
 					}).error(function(data, status, headers, config) {
-						console.log("[UPLOAD]: FAIL!"+status);
+						console.info("[UPLOAD]: FAIL! Status: "+status);
 						sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, 'Error!');
 					});
         	
