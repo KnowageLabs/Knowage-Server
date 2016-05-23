@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,17 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.utilities;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,12 +43,6 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -91,23 +91,24 @@ public class StringUtilities {
 		return substituteParametersInString(str, UserProfileUtils.getProfileAttributes(profile), profileAttributeStartIndex);
 	}
 
-	
 	/**
 	 * returns the first index chars
-	 * @param str string to cut
-	 * @param index number of char to take
+	 *
+	 * @param str
+	 *            string to cut
+	 * @param index
+	 *            number of char to take
 	 * @return the left part of tre string
 	 */
-	public static String left(String str, int index){
-		
-		if(str!=null && str.length()>index){
+	public static String left(String str, int index) {
+
+		if (str != null && str.length() > index) {
 			return str.substring(0, index);
-		}
-		else return str;
-		
-		
+		} else
+			return str;
+
 	}
-	
+
 	/**
 	 * Substitutes the profile attributes with sintax "${attribute_name}" with the correspondent value in the string passed at input.
 	 *
@@ -186,8 +187,7 @@ public class StringUtilities {
 		} else {
 			if (attributeValue.startsWith("{")) {
 				// the profile attribute is multi-value
-				logger.warn(
-						"The attribute value seems to be a multi value attribute; trying considering it as a multi value using its own splitter and no prefix and suffix.");
+				logger.warn("The attribute value seems to be a multi value attribute; trying considering it as a multi value using its own splitter and no prefix and suffix.");
 				try {
 					// checks the sintax
 					String[] values = findAttributeValues(attributeValue);
@@ -437,8 +437,7 @@ public class StringUtilities {
 			} else {
 				if (value.startsWith("{")) {
 					// the profile attribute is multi-value
-					logger.warn(
-							"The attribute value seems to be a multi value parameter; trying considering it as a multi value using its own splitter and no prefix and suffix.");
+					logger.warn("The attribute value seems to be a multi value parameter; trying considering it as a multi value using its own splitter and no prefix and suffix.");
 					try {
 						// checks the sintax
 						String[] values = findAttributeValues(value);
@@ -625,8 +624,7 @@ public class StringUtilities {
 		} else {
 			if (value.startsWith("{")) {
 				// the profile attribute is multi-value
-				logger.warn(
-						"The attribute value seems to be a multi value parameter; trying considering it as a multi value using its own splitter and no prefix and suffix.");
+				logger.warn("The attribute value seems to be a multi value parameter; trying considering it as a multi value using its own splitter and no prefix and suffix.");
 				try {
 					// checks the sintax
 					String[] values = findAttributeValues(value);
@@ -885,6 +883,46 @@ public class StringUtilities {
 			}
 		}
 		return stringBuilder.toString();
+	}
+
+	public static String getMultiValue(String value, String type) {
+		String toReturn = "";
+
+		String[] tempArrayValues = value.split(",");
+		for (int j = 0; j < tempArrayValues.length; j++) {
+			String tempValue = tempArrayValues[j];
+			if (j == 0) {
+				toReturn = getSingleValue(tempValue, type);
+			} else {
+				toReturn = toReturn + "," + getSingleValue(tempValue, type);
+			}
+		}
+
+		return toReturn;
+	}
+
+	public static String getSingleValue(String value, String type) {
+		String toReturn = "";
+		value = value.trim();
+		if (type.equalsIgnoreCase("")) {
+			// this is the case of testing lov
+			toReturn = value;
+		} else if (type.equalsIgnoreCase("STRING") || type.equalsIgnoreCase("DATE")) {
+			if (!(value.startsWith("'") && value.endsWith("'"))) {
+				toReturn = "'" + value + "'";
+			}
+		} else if (type.equalsIgnoreCase("NUMBER")) {
+
+			if ((value.startsWith("'") && value.endsWith("'"))) {
+				toReturn = value.substring(1, value.length() - 1);
+			} else {
+				toReturn = value;
+			}
+			if (toReturn == null || toReturn.length() == 0) {
+				toReturn = "0";
+			}
+		}
+		return toReturn;
 	}
 
 }

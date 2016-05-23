@@ -255,6 +255,9 @@ public class SpagoBIConstants {
 
 	public static final String USER_PROFILE_FOR_TEST = "USER_PROFILE_FOR_TEST";
 
+	public static final String PARAMETERS_TO_FILL = "PARAMETERS_TO_FILL";
+	public static final String PARAMETERS_FILLED = "PARAMETERS_FILLED";
+
 	public static final String AUTHENTICATION_FAILED_MESSAGE = "AUTHENTICATION_FAILED_MESSAGE";
 
 	public static final String MESSAGE_BUILDER = "MESSAGE_BUILDER";
