@@ -267,6 +267,8 @@ try{
 			angular.module('documentExecutionModule', 
 					['ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list','cross_navigation']);
 			
+			
+			
 			angular.module('documentExecutionModule').factory('execProperties', function() {
 				 
 				var selRole= '<%= request.getParameter("SELECTED_ROLE") %>'=='null' ? '' : '<%= request.getParameter("SELECTED_ROLE") %>';

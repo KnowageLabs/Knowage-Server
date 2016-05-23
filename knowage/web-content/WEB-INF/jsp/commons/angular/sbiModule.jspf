@@ -7,9 +7,10 @@ var sbiM=angular.module('sbiModule',["toastr"]);
 // 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
 // });
 
-sbiM.factory('sbiModule_config',function(){
+sbiM.factory('sbiModule_config',function(){ 
 	return {
     	contextName: '<%= GeneralUtilities.getSpagoBiContext() %>',
+    	contextLogo: '<%= urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logo.png", currTheme)%>',
     	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
     	adapterPathNoContext : '<%= GeneralUtilities.getSpagoAdapterHttpUrl() %>',
     	host: '<%= GeneralUtilities.getSpagoBiHost() %>',

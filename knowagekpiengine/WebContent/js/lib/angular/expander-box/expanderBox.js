@@ -35,7 +35,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 			}
 			
 			if(!attrs.backgroundColor){
-				scope.backgroundColor="blue"
+				scope.backgroundColor="#DFDFDF";
 			}
 			
 			if(attrs.toolbarClass){
@@ -49,6 +49,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 			angular.element(element[0].querySelector("md-toolbar")).css("background-color",scope.backgroundColor);
 			angular.element(element[0].querySelector("md-toolbar")).css("color",scope.color);
 			angular.element(element[0].querySelector("md-content")).css("border","1px solid "+scope.backgroundColor);
+			element.addClass("md-whiteframe-2dp");
 			
 		}
 	}})

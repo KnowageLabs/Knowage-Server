@@ -94,13 +94,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 </script>
 <script type="text/ng-template" id="dialog1.tmpl.html">
-<md-dialog aria-label="{{translate.load('sbi.crossnavigation.selectDocument')}}" ng-cloak layout="column" style="height: 90%;">
+<md-dialog aria-label="{{translate.load('sbi.crossnavigation.selectDocument')}}" ng-cloak layout="column" style="height: 90%;    width: 40%;">
 
 	<md-toolbar>
 		<div class="md-toolbar-tools">
 			<h1>{{translate.load('sbi.crossnavigation.selectDocument')}}</h1>
 			<span flex></span>
-			<md-button ng-click="closeDialog()"> <md-icon md-font-icon="fa fa-times" aria-label="Close dialog"></md-icon> </md-button>
+			<md-button ng-click="closeDialog()"> {{translate.load('sbi.general.cancel')}} </md-button>
 		</div>
 	</md-toolbar>
 	 

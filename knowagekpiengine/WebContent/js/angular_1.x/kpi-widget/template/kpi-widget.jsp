@@ -1,5 +1,5 @@
 <md-whiteframe  class="md-whiteframe-4dp " layout="column" layout layout-margin  > 
- 	<md-toolbar	class="miniheadimportexport ternaryToolbar" layout="row">
+	 <md-toolbar	class="miniheadimportexport ternaryToolbar" layout="row">
 		<div class="md-toolbar-tools">
 			<h1  style="font-size: {{fontConf.size}}em;">{{label}}</h1>
 		</div>
@@ -44,6 +44,6 @@
 			target-value="targetValue"
 		></kpi-linear-gauge>
 		
-		<nvd3 data="data" options="options" ></nvd3>
+<!-- 		<nvd3 data="data" options="options" ></nvd3> -->
 	</div>
 </md-whiteframe>

@@ -1,5 +1,10 @@
+ function exportKpi(format){ 
+	 if(format=="PDF"){
+		 angular.element(document.body).scope().exportPDF(); 
+	 }
+}
 (function() {
-	
+	 
 	var scripts = document.getElementsByTagName("script");
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
@@ -7,14 +12,14 @@
 	var kpiViewerModule = angular.module('kpiViewerModule');
 
 	kpiViewerModule.controller('kpiViewerController', 
-			['$scope', 'documentData', 'sbiModule_restServices','sbiModule_translate','sbiModule_config', 'kpiViewerServices','$q','$mdDialog', kpiViewerControllerFn]);
+			['$scope', 'documentData', 'sbiModule_restServices','sbiModule_translate','sbiModule_config', 'kpiViewerServices','$q','$mdDialog','$timeout', kpiViewerControllerFn]);
 
-	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices,sbiModule_translate, sbiModule_config, kpiViewerServices,$q,$mdDialog) {
+	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices,sbiModule_translate, sbiModule_config, kpiViewerServices,$q,$mdDialog,$timeout) {
 		$scope.documentData = documentData;
 		$scope.kpiOptions = documentData.template.chart.options;
-
 		$scope.kpiItems = [];
-
+		$scope.showPreloader=false;
+		$scope.displayScorecard=true;
 		$scope.GAUGE_DEFAULT_SIZE = 250;
 		$scope.LINEAR_GAUGE_DEFAULT_SIZE= 400;
 		$scope.gaugeMinValue = 0;
@@ -25,6 +30,7 @@
 		$scope.percentage=0;
 		$scope.translate = sbiModule_translate;
 		$scope.loadKpiValues = [];
+		$scope.scorecardExpanderStatus={};
 	
 		$scope.loadKpiValue = function(){
 			if($scope.documentData.template.chart.data.kpi != undefined){
@@ -138,7 +144,189 @@
 			return deferred.promise;
 		}
 		
+		  
+		//export pdf
+		
+		function getPage() {
+	        var div = document.createElement('div')
+	        div.offsetWidth = 2048;
+	        div.classList.add("layout-padding");
+	        div.style.backgroundColor = 'white';
+	        return div;
+	    }
+		
+		$scope.createExportToolbar=function(text){
+			 var testata = document.createElement('div');  
+		     testata.classList.add("layout-row");
+		     testata.classList.add("layout-padding");
+		     var testataP = document.createElement('span');
+		     testataP.textContent =text;
+		     testataP.classList.add("flex");
+		     testataP.classList.add("layout-align-center-center");
+		     testataP.classList.add("layout-row");
+		     testataP.style.fontSize = "20";
+		     testata.appendChild(testataP); 
+		     var testataIMG = document.createElement('img');
+		     testataIMG.src=sbiModule_config.contextLogo;
+		     testataIMG.style.padding="10"
+		     testata.appendChild(testataIMG);
+		     return testata;
+		}
+		
+		$scope.createTmpContainer=function(pageArray){
+			 var printTmpContainer = document.createElement('div')
+		     printTmpContainer.id="printTmpContainer";
+		     printTmpContainer.style.position="absolute";
+		     printTmpContainer.style.width="1024";
+		     printTmpContainer.classList.add("layout-fill"); 
+		     document.body.appendChild(printTmpContainer);
+			 for(var i=0;i<pageArray.length;i++){
+		    	 printTmpContainer.appendChild(pageArray[i]);
+		     }
+			 
+			 return printTmpContainer;
+		}
+		
+		$scope.exportPDF=function(){
+			$scope.showPreloader=true;
+			if($scope.documentData.template.chart.type=="scorecard"){
+				$scope.exportScorecardPDF();
+			}else if($scope.documentData.template.chart.type=="kpi"){
+				 if($scope.documentData.template.chart.model=='widget'){
+					$scope.exportKpiWidgetPDF();
+				}else{
+					$scope.exportKpiListPDF();
+					
+				}
+			} else{
+				$scope.showPreloader=false;
+				alert("NO INFO")
+			}
+		}
+		
+		
+		$scope.exportKpiListPDF=function(){
+			$scope.showPreloader=false;
+		};
+		
+		$scope.exportKpiWidgetPDF=function(){
+			 var pdf = new jsPDF('p', 'pt', 'a4');
+			 pdf.addHTML(document.body, function () {
+		                 pdf.save($scope.documentData.docLabel+'.pdf');
+		                    
+		        });
+			 return
+			 var heigth = 0;
+		     var pageHeigth = 1000;
+		     var pageArray = [];
+		     var page = 0;
+		     pageArray.push(getPage());
+		     var testata=$scope.createExportToolbar($scope.documentData.docLabel);
+		     heigth+= testata.offsetHeight * 0.75;
+		     pageArray[page].appendChild(testata);
+		     var kpiList = document.querySelectorAll("#kpiWidgetTemplate md-whiteframe");
+		     for (var i = 0; i < kpiList.length; i++) {
+		    	 var offH= kpiList[i].offsetHeight * 0.75;
+		            if (heigth +offH > pageHeigth) {
+		                page++;
+		                heigth = 0;
+		                pageArray.push(getPage());
+		            }
+		            var tmpNode = kpiList[i].cloneNode(true); 
+		            pageArray[page].appendChild(tmpNode);
+		            heigth += offH; 
+		        }
+		     var printTmpContainer= $scope.createTmpContainer(pageArray);
+		     generatePdf(pageArray, 0, pdf,printTmpContainer).then(
+		    		 function(){
+		    			 $scope.showPreloader=false;
+		    		 },
+		    		 function(){
+		    			 alert("ERROR");
+		    		 }
+		    		 );
+		     
+		};
+		
+		
+		$scope.exportScorecardPDF=function(){ 
+			
+			var oldExpanderStatus={};
+			angular.copy($scope.scorecardExpanderStatus,oldExpanderStatus);
+			for(var key in $scope.scorecardExpanderStatus){
+				$scope.scorecardExpanderStatus[key]=true;
+			}
+			if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+			    $scope.$apply();
+			}
+			
+			$timeout(function(){  
+				 var pdf = new jsPDF('p', 'pt', 'a4');
+				 var heigth = 0;
+			     var pageHeigth = 1000;
+			     var pageArray = [];
+			     var page = 0;
+			     pageArray.push(getPage());
+			     var testata=$scope.createExportToolbar($scope.documentData.docLabel);
+			     heigth+= testata.offsetHeight * 0.75;
+			     pageArray[page].appendChild(testata);
+			     
+			     var perspectiveList = document.querySelectorAll("kpi-scorecard>md-content>div>expander-box");
+				 
+			     for (var i = 0; i < perspectiveList.length; i++) {
+			    	 var offH= perspectiveList[i].offsetHeight * 0.75;
+			            if (heigth +offH > pageHeigth) {
+			                page++;
+			                heigth = 0;
+			                pageArray.push(getPage());
+			            }
+			            var tmpNode = perspectiveList[i].cloneNode(true); 
+			            pageArray[page].appendChild(tmpNode);
+			            heigth += offH; 
+			        }
+			     var printTmpContainer= $scope.createTmpContainer(pageArray);
+			     generatePdf(pageArray, 0, pdf,printTmpContainer).then(
+			    		 function(){
+			    			 $scope.displayScorecard=false;
+			                    if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+			                        $scope.$apply();
+			                    }
+							    $timeout(function(){
+									$scope.displayScorecard=true;
+									angular.copy(oldExpanderStatus,$scope.scorecardExpanderStatus);
+									$scope.showPreloader=false;
+								},0); 
+			    		 },
+			    		 function(){
+			    			 alert("ERROR");
+			    		 }
+			    		 );
+				 
+			},0);
+		}
+		 
+		function generatePdf(pageArray, index, pdf,tmpContainer,deferred) {
+			if(deferred==undefined){
+				deferred=$q.defer();
+			}
+			 pdf.addHTML(pageArray[index], function () {
+	            if (index == pageArray.length - 1) { 
+	                    pdf.save($scope.documentData.docLabel+'.pdf');
+	                    deferred.resolve();
+	                    document.body.removeChild(tmpContainer) 
+	            } else {
+	                pdf.addPage();
+	                generatePdf(pageArray, index + 1, pdf,tmpContainer,deferred);
+	            }
+	        });
+			
+			return deferred.promise;
+	    }
+		
 	};
+	
+	
+
 	
 	function dialogController($scope,$mdDialog,sbiModule_restServices,$mdToast,sbiModule_config,sbiModule_translate,items,label,value,targetValue,valueSeries){
 		$scope.label = label;

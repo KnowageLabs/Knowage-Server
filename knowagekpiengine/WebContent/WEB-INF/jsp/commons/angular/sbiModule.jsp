@@ -24,6 +24,7 @@
 		 	docPreviewFile: "<%=docPreviewFile%>",
 		 	docCommunities: "<%=docCommunity%>",
 		 	docFunctionalities: "<%=docFunctionalities%>",
+		 	contextLogo: "/knowage/themes/sbi_default/img/wapp/logo.png", 
 		 	<%--
 			docDatasetLabel: "<%=docDatasetLabel%>",
 		 	docDatasetName: "<%=docDatasetName%>",

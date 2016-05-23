@@ -186,11 +186,21 @@ author:
 	src="${pageContext.request.contextPath}/js/lib/angular-nvd3/1.0.6/dist/angular-nvd3.js"></script>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/js/angular_1.x/gaugeNgDirective/gaugeNgDirectiveApp.js"></script>
+	
+<!-- jspdf -->
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jspdf/html2canvas/html2canvas.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jspdf/jspdf.min.js"></script>
+
+<%-- <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jspdf/plugins/addhtml.js"></script> --%>
 
 </head>
 
 <body ng-controller="kpiViewerController" ng-init="init()" 	class="kn-schedulerKpi">
-
+	<div ng-if="showPreloader" style=" position: absolute;background-color: white;z-index: 100000000000;"
+	 	layout-fill layout  layout-align="center center" >
+	 <md-progress-circular md-mode="indeterminate" md-diameter="96" ></md-progress-circular>
+	</div> 
 	<%--
 	<div style="padding:2em; font-size: 0.7em">kpiListValue: {{documentData.kpiListValue | json}}</div>
 	<div style="padding:2em; font-size: 0.7em">template: {{documentData.template | json}}</div>
@@ -207,9 +217,9 @@ author:
 
 
 	<div layout="row"  layout-wrap>
-		<div ng-repeat="kpiItem in kpiItems" layout-margin layout-padding>
+		<div id="kpiWidgetTemplate" ng-repeat="kpiItem in kpiItems" layout-margin layout-padding>
 			<md-whiteframe  class="md-whiteframe-4dp " layout="column" layout layout-margin ng-if="kpiItem.viewAs=='speedometer'" > 
-			 	<md-toolbar	class="miniheadimportexport ternaryToolbar" layout="row">
+				<md-toolbar	class="miniheadimportexport ternaryToolbar" layout="row">
 					<div class="md-toolbar-tools">
 						<h1  style="font-size: {{fontConf.size}}em;">{{kpiItem.name}}</h1>
 					</div>
@@ -220,7 +230,6 @@ author:
 		        	</md-button>
 			       
 				</md-toolbar>
-				
 				<kpi-gauge ng-if="kpiItem.viewAs=='speedometer'" layout="column"
 						gauge-id="kpiItem.id" label="kpiItem.name" size="kpiItem.size"
 						min-value="kpiItem.minValue" max-value="kpiItem.maxValue"
@@ -250,7 +259,8 @@ author:
 		}
 	} else if(type.equalsIgnoreCase("scorecard")) {
 	%>
-	<kpi-scorecard scorecard="documentData"></kpi-scorecard>
+ 
+	<kpi-scorecard ng-if="displayScorecard" scorecard="documentData" expander-status="scorecardExpanderStatus" resetExpander="true"></kpi-scorecard>
 	<!-- SCORECARD -->
 
 	<%

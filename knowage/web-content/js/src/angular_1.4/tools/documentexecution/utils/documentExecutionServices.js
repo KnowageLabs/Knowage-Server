@@ -365,7 +365,12 @@
 				// or server returns response with an error status.
 			});			
 		};	
-			
+		
+		dee.exportKPITo = function(format){
+				var frame = window.frames["documentFrame"];
+				frame.contentWindow.exportKpi(format)
+			}
+		 
 		dee.exportationHandlers = {	
 			'CHART': [
 				 {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportDocumentChart('PDF')} }
@@ -417,7 +422,10 @@
 			            {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportNetworkTo('pdf')} }
 			            ,{'description' : sbiModule_translate.load('sbi.execution.PngExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportNetworkTo('png')} }
 			            ,{'description' : sbiModule_translate.load('sbi.execution.GraphmlExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportNetworkTo('graphml')} }
-			            ]
+			            ],
+            'KPI' : [
+ 				 	{'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportKPITo('PDF')} }
+ 				 ]
 		};
 	});
 	

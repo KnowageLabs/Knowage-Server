@@ -11,8 +11,19 @@ kpiScorecardApp.directive("kpiScorecard",function(){
 			templateUrl: currentScriptPath + 'template/kpi-scorecard.jsp',
 			controller: kpiScorecardController,
 			scope: {
-				scorecard:"="
-			}
+				scorecard:"=",
+				expanderStatus:"=?",
+				resetExpander:"="
+			},
+			 link: function (scope, element, attrs, ctrl, transclude) {
+				 if(attrs.expanderStatus || scope.resetExpander!=true){
+					 if(scope.expanderStatus==undefined){
+						 scope.expanderStatus={};
+					 }
+				 }else{
+					 scope.expanderStatus={};
+				 }
+             }
 		};
 	});
 
@@ -155,6 +166,7 @@ function kpiScorecardController($scope, sbiModule_translate,$mdDialog,sbiModule_
 	//	do{}
 //	while ($scope.scorecard.scorecard == undefined)
 	$scope.scorecardTarget = $scope.scorecard;
+	 
 };
 
 function DialogControllerKPI($scope,$mdDialog,scoreMaster,sbiModule_dateServices, kpiArray, namingList, criterion, criterionOption,sbiModule_translate){

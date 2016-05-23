@@ -162,10 +162,14 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 					scope.clickOnSelectedDoc = clickOnSelectedDoc;
 					scope.translate = translate;
 					scope.loading = true;
-					sbiModule_restServices.get('2.0/documents/listDocument/', "", null).success(function(data) {
+					sbiModule_restServices.promiseGet("2.0/documents", "listDocument").then(
+					function(response){
 						scope.loading = false;
-						scope.listDoc = data.item;
-					});
+						scope.listDoc = response.data.item;},
+					function(response){
+							sbiModule_restServices.errorHandler(response.data,"")
+						}
+					) 
 				}
 			};
 			
