@@ -2281,9 +2281,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		for (SchedulerFilter sf : scheduler.getFilters()) {
 			if (sf.getExecutionId() == null) {
 				sf.setExecutionId(sbiKpiExecution.getId());
-				sbiKpiExecution.getSbiKpiExecutionFilters().add(from(sf, null, session));
 			}
-
+			sbiKpiExecution.getSbiKpiExecutionFilters().add(from(sf, null, session));
 		}
 		sbiKpiExecution.getSbiKpiKpis().clear();
 		for (Kpi kpi : scheduler.getKpis()) {
