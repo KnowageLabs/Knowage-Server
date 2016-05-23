@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <md-tab label='{{translate.load("sbi.modalities.check.title.predefined");}}' ng-click="clearRight(selectedTab)">
          <angular-table 
                         
-                        layout-fill
+                        flex
 						id="predefined_id"
 						ng-model="PredefinedList"
 						columns ='[
