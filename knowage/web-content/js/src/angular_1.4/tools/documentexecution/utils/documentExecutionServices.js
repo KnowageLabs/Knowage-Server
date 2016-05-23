@@ -29,8 +29,7 @@
 			
 			showToast: function(text, time) {
 				var timer = time == undefined ? 6000 : time;
-				$mdToast.show($mdToast.simple().content(text).position('top').action(
-				'OK').highlightAction(false).hideDelay(timer));
+				$mdToast.show($mdToast.simple().content(text).position('top').highlightAction(false).hideDelay(timer));
 			},
 
 			buildStringParameters : function (documentParameters) {
