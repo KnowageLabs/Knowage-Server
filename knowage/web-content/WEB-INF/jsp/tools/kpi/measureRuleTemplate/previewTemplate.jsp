@@ -18,8 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <md-content ng-controller="measureRulePreviewController" layout-fill  layout="row">
-	<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircular" layout-fill>
+	<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="!havePlaceholder() && showCircular" layout-fill>
      	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
+ 	</div>
+ 	<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="havePlaceholder()" layout-fill>
+     	<h3>{{translate.load("sbi.measurerule.valuefilter")}}</h3>
  	</div>
 	<angular-table class="relative"  flex id='previewtable' ng-model="detailProperty.previewData.rows"
 				columns="detailProperty.previewData.columns" no-pagination="true" full-width>
@@ -29,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      <md-toolbar>
 	      <div class="md-toolbar-tools" latoyt="row">
 	        <h1 flex >{{translate.load("sbi.kpi.filters")}}</h1>
-	         <md-button ng-click="loadPreview()">Run</md-button>
+	         <md-button ng-click="loadPreview()">{{translate.load('sbi.generic.run')}}</md-button>
 	      </div>
 	      </md-toolbar>
 	      <md-content layout-margin >   
