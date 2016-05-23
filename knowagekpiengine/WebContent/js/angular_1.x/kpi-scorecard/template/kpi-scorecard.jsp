@@ -95,18 +95,18 @@
     </md-toolbar>
     <md-dialog-content flex layout-padding>
   	<div layout="column" flex> 
-		<label layout = "row">&nbsp;&nbsp;<b>{{translate.load('sbi.kpi.scorecard.perspective.criterion')}} : </b></label>
-		<label layout = "row">&nbsp;&nbsp;&nbsp;&nbsp;{{translate.load(criterion.translatedValueName)}} </label>
+		<label layout = "row" style="padding-left:10px"><b>{{translate.load('sbi.kpi.scorecard.perspective.criterion')}} : </b></label>
+		<label layout = "row" style="padding-left:20px">{{translate.load(criterion.translatedValueName)}} </label>
 		<br>
 		<br>
 		<div  ng-if="criterion.valueCd != 'MAJORITY'">
 		<div>
-			<label layout="row">&nbsp;&nbsp;<b>{{translate.load('sbi.kpi.scorecard.info.list')}}</b></label>
+			<label layout="row" style="padding-left:10px"><b>{{translate.load('sbi.kpi.scorecard.info.list')}}</b></label>
 		</div>
 		<span flex></span>
 		<div>
-				<div layout="column">
-					<label layout="row" ng-repeat="targ in criterionOption.criterionPriority" >&nbsp;&nbsp;&nbsp;&nbsp; <li>{{targ}}</label>
+				<div layout="column" style="padding-left:20px">
+					<label layout="row" ng-repeat="targ in criterionOption.criterionPriority"><li>{{targ}}</label>
 				</div>
 		</div>
 		</div>	
