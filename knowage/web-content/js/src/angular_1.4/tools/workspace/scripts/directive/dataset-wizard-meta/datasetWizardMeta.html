@@ -10,11 +10,12 @@
 	
 	<div ng-if="metadataType == 1">
 	  <angular-table
-						flex
+						layout-fill
 						id="columnsMeta"
-						ng-model=table
+						ng-model=dataset.meta.columns
 						columns="tableColumns"
 						show-search-bar=false
+						scope-functions="metaScopeFunctions"
 					
 					>
 			</angular-table>
@@ -27,7 +28,8 @@
 						ng-model=table
 						columns="tableDataset"
 						show-search-bar=false
-					
+					   
+					    
 					>
 			</angular-table>
 	</div>

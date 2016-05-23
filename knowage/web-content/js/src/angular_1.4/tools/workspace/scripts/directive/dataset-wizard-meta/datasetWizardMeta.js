@@ -16,18 +16,20 @@ function datasetWizardMetaController($scope){
 	$scope.metadataType=undefined;
     $scope.tableColumns=[
                          {
-                          label:"Column",
-                          name:"column"
+                          name:"columnView", 
+                          label:"Column"
+                         
                          },
                          {
-                             name:"pname",
+                             name:"pnameView",
                              label:"Attribute"
                          },
                          {
-                             name:"pvalue",
+                             name:"pvalueView",
                              label:"Value"
                          }
                          ];
+    
     $scope.tableDataset=[{
         name:"pname",
         label:"Attribute"
@@ -39,4 +41,9 @@ function datasetWizardMetaController($scope){
     
     $scope.table=[];
     
+    $scope.metaScopeFunctions={
+    	datasetColumns:$scope.datasetColumns,
+    	dsMetaProperty:$scope.dsMetaProperty,
+    	dsMetaValue   :$scope.dsMetaValue
+    };
 }
