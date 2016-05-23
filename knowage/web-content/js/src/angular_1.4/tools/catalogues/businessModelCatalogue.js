@@ -485,13 +485,16 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		$scope.checkChange = function(){
 
 			if($scope.selectedBusinessModel.name === undefined || $scope.selectedBusinessModel.name === "" 
-				|| ( $scope.selectedBusinessModel.id === undefined && $scope.fileClicked === false)   // if file is new check also file has been added
+				|| ( $scope.selectedBusinessModel.id === undefined && $scope.fileObj.file == undefined) 
+				|| ( $scope.selectedBusinessModel.dataSourceLabel == undefined || $scope.selectedBusinessModel.dataSourceLabel == null)
 			){
 					$scope.isDirty = false;
 			}
 			else{
 				$scope.isDirty = true;
+				
 			}
+			
 			//$scope.isDirty = true;
 		}
 		
@@ -554,6 +557,13 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			});
 
 		}
+		
+		$scope.fileUploaded = function(){
+			if($scope.fileObj.file === undefined)
+				return true;
+			else
+				return false;
+		};
 		
 		
 		//import CWM Metamodel informations

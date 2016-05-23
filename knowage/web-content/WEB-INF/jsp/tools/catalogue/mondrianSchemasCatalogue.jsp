@@ -88,7 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- /////////////// RIGHT SIDE     \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->		
 		<detail label='selectedMondrianSchema.name==undefined? "" : selectedMondrianSchema.name'  save-function="saveMondrianCatalogue"
 		cancel-function="cancel"
-		disable-save-button="false"
+		disable-save-button="isDisabled()"
 		show-save-button="showMe" show-cancel-button="showMe">
 			
 			
@@ -97,7 +97,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-card>
 	     <md-card-content>			
 					
-						
+		
+			
 				
 				
 				
@@ -140,14 +141,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 							
 						<div layout="row" layout-wrap  >
-						
+							
 							<label layout-align="center center" class="buttonLabel">{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.fileUpload")}}:</label>
       						<file-upload  ng-model="file" id="myId" ng-disabled = "selectedMondrianSchema.modelLocker" flex></file-upload>
 							
 							
-		
+     
 							
-					<md-input-container flex="30">
+							<md-input-container flex="30">
 			          <md-switch ng-model="selectedMondrianSchema.modelLocked" ng-change="unlockModel()">{{ selectedBusinessModel.modelLocked ? translate.load("sbi.bm.unlockModel") : translate.load("sbi.bm.lockModel")}}</md-switch>
 			        </md-input-container>
 							
@@ -155,9 +156,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        					
       	</md-card-content>
 	      </md-card>	
-		
+      				
      	<md-card>
 	     <md-card-content>					
+					 		
+     					
 	
 <!-- /////////////// SAVED VERSION TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 				
@@ -218,8 +221,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 				
 				
-		</md-card-content>
-	      </md-card>	
+			</md-card-content>
+	      </md-card>
 
 			</form>
 			</detail>	

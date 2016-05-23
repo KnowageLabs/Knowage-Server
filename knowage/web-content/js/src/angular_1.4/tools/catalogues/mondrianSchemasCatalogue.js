@@ -28,7 +28,16 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	
 	
 
+	$scope.isDisabled = function(){
+		if($scope.selectedMondrianSchema.id == undefined){
+			if($scope.selectedMondrianSchema.name == undefined || $scope.selectedMondrianSchema.name=="" || $scope.file.file == undefined)
+				return true;
+			else
+				return false;
+		}
+		return false;
 		
+	}
 		
 		$scope.downloadFile = function(item){
 
