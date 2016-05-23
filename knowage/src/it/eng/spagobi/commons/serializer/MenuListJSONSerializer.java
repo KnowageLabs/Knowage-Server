@@ -205,9 +205,9 @@ public class MenuListJSONSerializer implements Serializer {
 							temp.put(TARGET, "_self");
 
 							// OLD DOC MANAGER
-							if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin")) {
-								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER + "', '" + text + "')");
-							}
+							// if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin")) {
+							// temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER + "', '" + text + "')");
+							// }
 
 							if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin_angular")) {
 								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_ANGULAR + "', '" + text + "')");
