@@ -59,7 +59,7 @@
 						<div flex="100">
 							<md-input-container>
 								<label>{{translate.load("sbi.execution.sendmail.password")}}</label>
-								<input ng-model="sendMailCtrl.mail.PASSWORD" type="text" md-maxlength="160" maxlength="160">
+								<input ng-model="sendMailCtrl.mail.PASSWORD" type="password" md-maxlength="160" maxlength="160">
 							</md-input-container>
 						</div>
 					</div>
@@ -80,7 +80,7 @@
 				    </md-button>
 				  	<md-button id="buttonSendMail" class="md-raised" ng-click="sendMailCtrl.submit()" 
 				 			ng-disabled="!sendMailCtrl.mail.TO">
-				  		{{translate.load("sbi.execution.executionpage.toolbar.rating.submit")}}
+				  		{{translate.load("sbi.execution.sendmail.headerTitle")}}
 				  	</md-button>
 	 	 		</div>
 			</md-tab-body>				

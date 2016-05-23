@@ -77,7 +77,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		final String OK = "10";
-		String ERROR = "20";
+		String ERROR = "Error. Mail not sent";
 		final String TONOTFOUND = "90";
 		// String retCode = "";
 		final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
