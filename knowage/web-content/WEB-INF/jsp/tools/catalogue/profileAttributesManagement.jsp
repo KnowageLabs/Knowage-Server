@@ -53,8 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  						ng-model="attributeList" 
  						columns='[ 
  						         {"label":"Name","name":"attributeName"}, 
- 						         {"label":"Description","name":"attributeDescription","size":"60px"}, 
- 						         {"label":" ","name":"icon","size":"30px"}
+ 						         {"label":"Description","name":"attributeDescription"}, 
  						         ]' 
  						columns-search='["attributeName","attributeDescription"]'
  						show-search-bar=true 
