@@ -9,7 +9,7 @@
 	</custom-toolbar>
 	<custom-toolbar-action layout="row">
 		<md-button style="position:absolute;right:75px;top:0px;"  aria-label="KPI list Perspective" class="md-icon-button" layout-padding ng-click="localsScope.listKPer(perspective.id,$event)">
-		<md-icon md-menu-origin md-font-icon="fa fa-search"></md-icon></md-icon></md-button>
+		<md-icon md-menu-origin md-font-icon="fa fa-search"></md-icon></md-button>
 		<md-button style="position:absolute;right:40px;top:0px;"  aria-label="Criterion Perspective" class="md-icon-button" layout-padding ng-click="localsScope.critPers(perspective.id,$event)">
 		<md-icon md-font-icon="fa fa-info-circle"></md-icon></md-button>
 	</custom-toolbar-action>
@@ -56,24 +56,24 @@
 
 
 <script type="text/ng-template" id="templateKPI.html">
-<md-dialog aria-label="Select Function" class="flex2" style="height: 90%;" ng-cloak layout="column" >
-  
+<md-dialog aria-label="Select Function" style="height:80%; width:70%" ng-cloak layout="column" >
     <md-toolbar>
       <div class="md-toolbar-tools">
         <h1>{{translate.load('sbi.kpi.scorecard.list.kpi.toolbar')}} {{nameList}}</h1>
-        <span flex></span>
+        <span flex class="flex2"></span>
 		<md-button class="md-primary" ng-click="closeDialog()">
 			Close    
         </md-button>
       </div>
     </md-toolbar>
 
-       <md-dialog-content flex layout >
-		<angular-table flex
+       <md-dialog-content layout style="height:90%;">
+		<angular-table
 		id='targetListTable' ng-model=arrayToShow
 		columns='[{"label":"Status","name":"kpiSemaphore","size":"60px"}, {"label":"KPI Name","name":"name"},{"label":"Category","name":"category.translatedValueName"},{"label":"Date","name":"dateCreation"},{"label":"Author","name":"author"}]'
 		comparison-column="'id'"
 		scope-functions = tableFunction 
+		style="height:100%;"
 		> </angular-table>
 	  </md-dialog-content>
 
@@ -82,7 +82,7 @@
 
 
 <script type="text/ng-template" id="templateCriterion.html">
-<md-dialog aria-label="show criterion" style="min-width:30%; min-height:60%;"  ng-cloak layout="column">
+<md-dialog aria-label="show criterion" style="min-width:30%; min-height:60%;" class="flex2" ng-cloak layout="column">
 
     <md-toolbar>
       <div class="md-toolbar-tools">
@@ -93,8 +93,8 @@
         </md-button>
       </div>
     </md-toolbar>
-    <md-dialog-content flex layout-padding>
-  	<div layout="column" flex> 
+    <md-dialog-content layout-padding>
+  	<div layout="column"> 
 		<label layout = "row" style="padding-left:10px"><b>{{translate.load('sbi.kpi.scorecard.perspective.criterion')}} : </b></label>
 		<label layout = "row" style="padding-left:20px">{{translate.load(criterion.translatedValueName)}} </label>
 		<br>

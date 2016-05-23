@@ -144,8 +144,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				 
 				<h3 class="md-title" layout-padding ng-show="folderDocuments.length==0" >{{translate.load("sbi.browser.document.noDocument")}}</h3>
 				 	
+		
 				 	
-				 	<document-view flex style='overflow:auto' ng-model="folderDocuments" ng-show="hideProgressCircular" class="hidden-overflow-orizontal heightDivContent"
+<!-- From Andrea		I have deleted option style='overflow:auto' - -->
+<!-- 					because on IE the document-view break layout -->
+<!-- 					when pass the mouse over the "play button" -->
+				 	<document-view flex
+				 	 ng-model="folderDocuments" ng-show="hideProgressCircular" class="hidden-overflow-vertical widthDivContent flex2"
 							show-grid-view="showDocumentGridView"
 							table-speed-menu-option="documentTableButton"
 							selected-document=selectedDocument

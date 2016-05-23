@@ -359,6 +359,10 @@ height:100% !important;
 height:100%;
 }
 
+.widthDivContent{
+width:100%;
+}
+
 .kn-scorecardKpiDefinition md-content{
 overflow-y: hidden;
 }
@@ -367,6 +371,12 @@ overflow-y: hidden;
 width:100%;
 overflow-y:hidden;
 }
+
+.hidden-overflow-vertical{
+width:100%;
+overflow-x:hidden;
+}
+
 #angularFullTableContentBox{
 width:100%;
 }
