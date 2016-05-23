@@ -216,7 +216,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 	$scope.addScheduler= function(cloning){
 		if (!cloning){
 			
-		angular.copy({"frequency":{"cron": {"type":"minute","parameter":{"numRepetition":"1"}}}},$scope.selectedScheduler);
+		angular.copy({"frequency":{"cron": {"type":"minute","parameter":{"numRepetition":"1"}}},"delta":true},$scope.selectedScheduler);
 		angular.copy([],$scope.kpi);
 		angular.copy([],$scope.kpiSelected);
 		};
