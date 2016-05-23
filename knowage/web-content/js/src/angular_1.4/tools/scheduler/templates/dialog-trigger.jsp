@@ -410,28 +410,10 @@
 							</md-toolbar>
 							<div ng-if="activityEventCtrl.selectedDocument.sendmail">
 								<md-content layout-padding class="borderBox">
-							
+								
 									<div layout="row" class="checkboxRow">
-										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.uniqueMail">
-											{{translate.load("scheduler.uniqueMail", "component_scheduler_messages")}}
-										</md-checkbox>
-									</div>
-							
-									<div layout="row" class="checkboxRow">
-										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.zipMailDocument">
-											{{translate.load("scheduler.zipMailDocument", "component_scheduler_messages")}}
-										</md-checkbox>
-									</div>
-							
-									<md-input-container class="subCheckboxRowElement"
-											ng-if="activityEventCtrl.selectedDocument.zipMailDocument==true">
-										<label>{{translate.load("scheduler.zipFileName", "component_scheduler_messages")}}:</label>
-										<input ng-model="activityEventCtrl.selectedDocument.zipMailName" maxlength="100"
-												ng-maxlength="100" md-maxlength="100"> 
-									</md-input-container>
-							
-									<div layout="row" class="checkboxRow">
-										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useFixedRecipients">
+										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useFixedRecipients"
+												ng-change="activityEventCtrl.updateUseFixedRecipients()">
 											{{translate.load("scheduler.fixedRecipients", "component_scheduler_messages")}}
 										</md-checkbox>
 										<md-button type="button" id="useFixedRecipients" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.useFixedRecipientsFlag = !activityEventCtrl.useFixedRecipientsFlag" >
@@ -449,7 +431,8 @@
 									</md-input-container>
 							
 									<div layout="row" class="checkboxRow" ng-if="activityEventCtrl.selectedDocument.parameters.length!=0">
-										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useDataset">
+										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useDataset"
+												ng-change="activityEventCtrl.updateUseDataset()">
 											{{translate.load("scheduler.useDatasetList", "component_scheduler_messages")}}
 										</md-checkbox>
 										<md-button type="button" id="useDataset" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.useDatasetFlag = !activityEventCtrl.useDatasetFlag" >
@@ -476,7 +459,8 @@
 									</md-input-container>
 								
 									<div layout="row" class="checkboxRow">
-										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useExpression">
+										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useExpression"
+												ng-change="activityEventCtrl.updateUseExpression()">
 											{{translate.load("scheduler.useExpression", "component_scheduler_messages")}}
 										</md-checkbox>
 										<md-button type="button" id="useExpression" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.useExpressionFlag = !activityEventCtrl.useExpressionFlag" >
@@ -491,6 +475,25 @@
 											ng-if="activityEventCtrl.selectedDocument.useExpression==true">
 										<label>{{translate.load("scheduler.mailToExpression", "component_scheduler_messages")}}:</label>
 										<input ng-model="activityEventCtrl.selectedDocument.expression" maxlength="100"
+												ng-maxlength="100" md-maxlength="100"> 
+									</md-input-container>
+							
+									<div layout="row" class="checkboxRow">
+										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.uniqueMail">
+											{{translate.load("scheduler.uniqueMail", "component_scheduler_messages")}}
+										</md-checkbox>
+									</div>
+							
+									<div layout="row" class="checkboxRow">
+										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.zipMailDocument">
+											{{translate.load("scheduler.zipMailDocument", "component_scheduler_messages")}}
+										</md-checkbox>
+									</div>
+							
+									<md-input-container class="subCheckboxRowElement"
+											ng-if="activityEventCtrl.selectedDocument.zipMailDocument==true">
+										<label>{{translate.load("scheduler.zipFileName", "component_scheduler_messages")}}:</label>
+										<input ng-model="activityEventCtrl.selectedDocument.zipMailName" maxlength="100"
 												ng-maxlength="100" md-maxlength="100"> 
 									</md-input-container>
 								
@@ -523,6 +526,7 @@
 						<%} %>
 						<%
 						if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DISTRIBUTIONLIST_MANAGEMENT) && userProfile.isAbleToExecuteAction(SpagoBIConstants.SCHEDULING_DISTRIBUTED_OUTPUT)) {%>
+						<!-- 
 						<md-toolbar class="minihead unselectedItem"
 								ng-class="activityEventCtrl.selectedDocument.saveasdl? 'selectedItem' : 'unselectedItem'">
 							<div class="md-toolbar-tools" layout="row">
@@ -531,6 +535,7 @@
 								</md-checkbox>
 							</div>
 						</md-toolbar>
+						-->
 						<%} %>
 					</div>
 				</div>

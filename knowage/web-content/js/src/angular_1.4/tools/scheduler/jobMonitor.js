@@ -84,8 +84,9 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 											var execution = {
 												executionDate: sbiModule_dateServices.formatDate(date, localizedTimestampFormat),
 												jobName: job.name,
-												triggerName: trigger.name,
-												triggerType: trigger.type,
+												triggerName: trigger.triggerName,
+												triggerType: trigger.triggerChronType,
+												triggerIsPausedString: trigger.triggerIsPaused ? sbiModule_translate.load("sbi.general.yes") : sbiModule_translate.load("sbi.general.No"),
 												documentName: trigger.documents[docIndex]
 											};
 											$scope.executions.push(execution);
