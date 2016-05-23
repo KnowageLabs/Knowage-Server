@@ -618,7 +618,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		// handling Category
 		SbiDomains category = insertOrUpdateCategory(session, kpi.getCategory(), KPI_KPI_CATEGORY);
 		sbiKpi.setCategory(category);
-		// handling relation many to many with rule output
+		// Updating relations with RuleOutput and KpiScheduler
 		refreshKpiRuleOutputRel(session, sbiKpi);
 		return sbiKpi;
 	}
@@ -630,6 +630,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	 * @param persistentSbiKpiKpi
 	 * @throws JSONException
 	 */
+	@SuppressWarnings("unchecked")
 	private void refreshKpiRuleOutputRel(Session session, SbiKpiKpi persistentSbiKpiKpi) throws JSONException {
 		// Updating relations starting from "definition"
 		List<String> measureNames = JSONUtils.asList(new JSONObject(persistentSbiKpiKpi.getDefinition()).getJSONArray("measures"));
@@ -652,6 +653,13 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 		}
 		persistentSbiKpiKpi.setCardinality(new JSONObject(persistentSbiKpiKpi.getCardinality()).put("measureList", measureList).toString());
+		// Updating relation with KpiScheduler
+		List<SbiKpiExecution> executions = session.createCriteria(SbiKpiExecution.class).createAlias("sbiKpiKpis", "_kpi")
+				.add(Restrictions.eq("_kpi.sbiKpiKpiId.id", persistentSbiKpiKpi.getSbiKpiKpiId().getId())).list();
+		for (SbiKpiExecution sbiKpiExecution : executions) {
+			// TODO
+			sbiKpiExecution.getCommonInfo();
+		}
 	}
 
 	private SbiKpiAlias manageAlias(Session session, Integer aliasId, String aliasName) {
@@ -1570,21 +1578,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				return from(sbi, true);
 			}
 		});
-		/**
-		 * Loading all placeholders owned by selected kpis
-		 */
-		if (!scheduler.getKpis().isEmpty()) {
-			Map<Kpi, List<String>> placeholders = listPlaceholderByKpiList(scheduler.getKpis());
-			for (Kpi kpi : placeholders.keySet()) {
-				for (String placeholderName : placeholders.get(kpi)) {
-					SchedulerFilter filter = new SchedulerFilter(id, placeholderName, kpi.getId(), kpi.getVersion());
-					filter.setKpiName(kpi.getName());
-					if (!scheduler.getFilters().contains(filter)) {
-						scheduler.getFilters().add(filter);
-					}
-				}
-			}
-		}
 		/**
 		 * Setting status
 		 */
