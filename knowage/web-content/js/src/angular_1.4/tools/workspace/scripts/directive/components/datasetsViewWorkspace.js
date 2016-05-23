@@ -319,8 +319,15 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
    
     $scope.addNewFileDataset=function(){
     	
-      console.log("new dataset");	
+      console.info("[ADD NEW DATASET]: Opening the Dataset wizard for creation of a new Dataset in the Workspace.");	
       
+      /**
+       * Initialize all the data needed for the 'dataset' object that we are sending towards the server when going to the Step 2 and ones that we are using
+       * internally (such as 'limitPreviewChecked'). This initialization should be done whenever we are opening the Dataset wizard, since the behavior should 
+       * be the reseting of all fields on the Step 1.
+       * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+       */
+      $scope.initializeDatasetWizard();
       
       $mdDialog.show({
 		  scope:$scope,
@@ -386,8 +393,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	 } else{
               $scope.startPreviewIndex= $scope.startPreviewIndex+$scope.itemsPerPage;
               $scope.endPreviewIndex=$scope.endPreviewIndex+$scope.itemsPerPage;
-    	 }   
-    	 
+    	 }       	 
     	 
         	 $scope.getPreviewSet($scope.datasetInPreview);
         	 
@@ -434,8 +440,6 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,"error");
 		});
-		
-		
 	}
 	
 	$scope.showCkanDetails = function() {
@@ -500,16 +504,13 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			 $mdDialog.cancel();	 
 	    }
 		
-		
-		
 	}
 	
     function DialogCkanController($scope,$mdDialog,ckan){
     	$scope.ckan=ckan;
     	$scope.closeCkanDetail=function(){
     		$mdDialog.cancel();
-    	}
-    	
+    	}    	
     }
 	
     $scope.editFileDataset = function (arg) {
@@ -523,7 +524,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		$scope.datasetCategoryType = [];
 		$scope.dsGenMetaProperty = [];
 		$scope.dsMetaProperty = [];
-		$scope.dsMetaValue = [];
+		$scope.dsMetaValue = [];		
+		$scope.category = null;
 		
 		$scope.submit = function() {
 			
@@ -587,7 +589,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		}
 		
 		$scope.toggleDWVNext = function() {		
-			
+						
 			$scope.submit();
 			
 			if($scope.datasetWizardView>0&&$scope.datasetWizardView<4){
@@ -610,6 +612,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			$scope.dataset = {};
+			$scope.limitPreviewChecked = false;
+			$scope.category = {};
 		}
 		
 		loadDatasetValues= function(a,b){
@@ -620,6 +624,12 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 				angular.copy(response.data,$scope.datasetCategories)
 				} else if(b=="?DOMAIN_TYPE=CATEGORY_TYPE"){
 					angular.copy(response.data,$scope.datasetCategoryType)
+					/**
+					 * Initialize the category type for the new Dataset when the Dataset wizard appears in the Workspace. The initial value should be the first one in an
+					 * array of all category types that are available (i.e. 'Cat1').
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					$scope.category = $scope.datasetCategoryType[0].VALUE_NM;
 				} else if(b=="?DOMAIN_TYPE=DS_GEN_META_PROPERTY"){
 					angular.copy(response.data,$scope.dsGenMetaProperty)
 				} else if(b=="?DOMAIN_TYPE=DS_META_PROPERTY"){

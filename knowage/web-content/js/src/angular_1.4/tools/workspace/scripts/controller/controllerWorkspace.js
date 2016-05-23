@@ -108,39 +108,44 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 */
 	$scope.dataset = {};
 	
-	$scope.dataset.fileType = "";
-	$scope.dataset.fileName = "";
+	/**
+     * Initialize all the data needed for the 'dataset' object that we are sending towards the server when going to the Step 2 and ones that we are using
+     * internally (such as 'limitPreviewChecked'). This initialization should be done whenever we are opening the Dataset wizard, since the behavior should 
+     * be the reseting of all fields on the Step 1.
+     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+     */
+	$scope.initializeDatasetWizard = function() {
+		
+		$scope.dataset.fileType = "";
+		$scope.dataset.fileName = "";
+		
+		$scope.limitPreviewChecked = false;
+		
+		$scope.dataset.csvEncoding = "UTF-8"; 
+		$scope.dataset.csvDelimiter = ","; 
+		$scope.dataset.csvQuote = "\""; 
+		
+		$scope.dataset.skipRows = 0;
+		$scope.dataset.limitRows = null;
+		$scope.dataset.xslSheetNumber = 1;
+		
+		$scope.dataset.catTypeVn = "";
+		$scope.dataset.catTypeId = null;
+		
+	}
 	
-	$scope.limitPreviewChecked = false;
+	$scope.initializeDatasetWizard();
 	
-	$scope.dataset.csvEncoding = "UTF-8"; 
-	$scope.dataset.csvDelimiter = ","; 
-	$scope.dataset.csvQuote = "\""; 
-	
-	$scope.dataset.skipRows = 0;
-	$scope.dataset.limitRows = null;
-	$scope.dataset.xslSheetNumber = 1;
-	
-	$scope.dataset.catTypeVn = "";
-	$scope.dataset.catTypeId = null;
-	
-//	$scope.dataset.id = "";
-//	$scope.dataset.type = "File";
-//	$scope.dataset.label = "";
-//	$scope.dataset.name = ""
-//	$scope.dataset.description = "";
-//	$scope.dataset.persist = false;
-//	$scope.dataset.tablePrefix = datasetParameters.TABLE_NAME_PREFIX;
-//	$scope.dataset.tableName = "";
-//	$scope.dataset.fileUploaded = true;
-//	$scope.dataset.meta = [];
-	
+	/**
+	 * Static (fixed) values for three comboboxes that appear when the CSV file is uploaded.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 */
 	$scope.csvEncodingTypes = 
 	[ 
-	 	{value:"windows-1252",name:"windows-1252"}, 
-	 	{value:"UTF-8",name:"UTF-8"},	 	
-	 	{value:"UTF-16",name:"UTF-16"},	
-	 	{value:"US-ASCII",name:"US-ASCII"},	 	
+	 	{value:"windows-1252",name:"windows-1252"},
+	 	{value:"UTF-8",name:"UTF-8"},
+	 	{value:"UTF-16",name:"UTF-16"},
+	 	{value:"US-ASCII",name:"US-ASCII"},
 	 	{value:"ISO-8859-1",name:"ISO-8859-1"}
  	];
 	
@@ -158,24 +163,45 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 	{value:"\'",name:"\'"}
  	];
 	
+	/**
+	 * Keep and change the values for three comboboxes that appear when user uploads a CSV file when creating a new Dataset.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 */
 	$scope.chooseDelimiterCharacter = function(delimiterCharacterObj) {
-		$scope.dataset.csvDelimiter = delimiterCharacterObj.value;
-//		console.log($scope.csvDelimiter);
+		$scope.dataset.csvDelimiter = delimiterCharacterObj;
 	}
 	
 	$scope.chooseQuoteCharacter = function(quoteCharacterObj) {
-		$scope.dataset.csvQuote = quoteCharacterObj.value;
-//		console.log($scope.csvQuote);
+		$scope.dataset.csvQuote = quoteCharacterObj;
 	}
 	
 	$scope.chooseEncoding = function(encodingObj) {
-		$scope.dataset.csvEncoding = encodingObj.value;
-//		console.log($scope.csvEncoding);
+		$scope.dataset.csvEncoding = encodingObj;
 	}
 		
 	$scope.chooseCategory = function(category) {
+		
+		/**
+		 * For the combo box that contains the chosen category type for the Dataset that we are creating.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$scope.category = category.VALUE_NM;
+		
+		/**
+		 * For the 'dataset' object that will be sent to the service when calling the Step 2.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
 		$scope.dataset.catTypeVn = category.VALUE_CD;
 		$scope.dataset.catTypeId = category.VALUE_ID;
+	}
+	
+	/**
+	 * Function for toggling the state of the checkbox for the 'Limit preview' option (Step 1).
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.toggleLimitPreview = function() {		
+		$scope.limitPreviewChecked = !$scope.limitPreviewChecked;
+		return $scope.limitPreviewChecked;
 	}
 	
 	/**

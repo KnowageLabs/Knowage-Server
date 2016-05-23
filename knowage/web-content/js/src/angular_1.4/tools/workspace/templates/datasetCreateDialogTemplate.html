@@ -39,8 +39,12 @@
 			                  <div flex>
 			                     <md-input-container class="small counter">
 			                        <label>Category</label> 
-			                        <md-select aria-label="aria-label" ng-model="cat">
-			                           <md-option ng-repeat="category in datasetCategoryType" ng-click="chooseCategory(category)">{{category.VALUE_NM}}</md-option>
+			                        <md-select aria-label="aria-label" ng-model="category">
+			                           <md-option 	ng-repeat="category in datasetCategoryType" 
+			                           				ng-click="chooseCategory(category)"
+			                           				value="{{category.VALUE_NM}}">
+	                           				{{category.VALUE_NM}}
+                           				</md-option>
 			                        </md-select>
 			                     </md-input-container>
 			                  </div>
@@ -48,8 +52,10 @@
 			               
 						<div flex=50 layout="row">
 			                  <label class="checkboxPadding">Limit preview:</label> 
-			                  <md-input-container class="small counter" ng-model="limitPreviewChecked">
-			                     <md-checkbox ng-model="limitPreviewChecked" aria-label="Checkbox 1"></md-checkbox>
+			                  <md-input-container class="small counter">
+			                     <md-checkbox 	aria-label="Checkbox 1" 
+			                     				ng-model="limitPreviewChecked" ng-checked="toggleLimitPreview()">
+           						</md-checkbox>
 			                  </md-input-container>
 						</div>
 			               
@@ -83,7 +89,8 @@
 	                        		<label>Delimiter character</label> 
 	                        		<md-select aria-label="aria-label" ng-model="dataset.csvDelimiter">
 	                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
-	                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)">
+	                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)" 
+	                           						value="{{csvDelimiterCharacterItem.name}}">
                           						{{csvDelimiterCharacterItem.name}}
                      						</md-option>
 	                        		</md-select>
@@ -97,7 +104,8 @@
 	                        		<label>Quote character</label> 
 	                        		<md-select aria-label="aria-label" ng-model="dataset.csvQuote">
 	                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
-	                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)">
+	                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)" 
+	                           						value="{{csvQuoteCharacterItem.name}}">
                           						{{csvQuoteCharacterItem.name}}
                      						</md-option>
 	                        		</md-select>
@@ -111,7 +119,8 @@
 	                        		<label>Delimiter character</label> 
 	                        		<md-select aria-label="aria-label" ng-model="dataset.csvEncoding">
 	                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
-	                           						ng-click="chooseEncoding(csvEncodingItem)">
+	                           						ng-click="chooseEncoding(csvEncodingItem)" 
+	                           						value="{{csvEncodingItem.name}}">
                           						{{csvEncodingItem.name}}
                      						</md-option>
 	                        		</md-select>
@@ -128,7 +137,8 @@
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
 	                        		<label>Skip rows</label> 
-	                        		<input ng-model="dataset.skipRows" type="number" step="1" min="0">
+	                        		<input 	ng-model="dataset.skipRows" type="number" 
+	                        				step="1" min="0" value="{{dataset.skipRows}}">
 		                     	</md-input-container>
 		                  	</div>
 						</div>
@@ -137,7 +147,8 @@
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
 	                        		<label>Limit rows number</label> 
-	                        		<input ng-model="dataset.limitRows" type="number" step="1" min="0">
+	                        		<input 	ng-model="dataset.limitRows" type="number" 
+	                        				step="1" min="0" value="{{dataset.limitRows}}">
 		                     	</md-input-container>
 		                  	</div>
 						</div>
@@ -146,7 +157,8 @@
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
 	                        		<label>Sheet number</label> 
-	                        		<input ng-model="dataset.xslSheetNumber" type="number" step="1" min="1">
+	                        		<input 	ng-model="dataset.xslSheetNumber" type="number" 
+	                        				step="1" min="1" value="{{dataset.xslSheetNumber}}">
 		                     	</md-input-container>
 		                  	</div>
 						</div>
