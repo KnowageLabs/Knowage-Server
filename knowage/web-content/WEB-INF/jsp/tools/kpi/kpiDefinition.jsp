@@ -135,14 +135,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         			<%@include	file="./kpiTemplate/cardinalityTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
-				
+				<!-- 
 				<md-tab id="tab3"  md-on-select="setFilters()" style="padding-right: 20px; padding-left: 20px;">
        				<md-tab-label>{{translate.load("sbi.kpi.filters")}}</md-tab-label>
         			<md-tab-body>
-        			<%@include	file="./kpiTemplate/filtersTemplate.jsp"%>
+        			include	file="./kpiTemplate/filtersTemplate.jsp
 					</md-tab-body>
 				</md-tab>
-				
+				 -->
 				<md-tab id="tab4" md-on-select="loadThreshold()" style="padding-right: 20px; padding-left: 20px;">
        				<md-tab-label>{{translate.load("sbi.kpis.threshold")}}</md-tab-label>
         			<md-tab-body>
