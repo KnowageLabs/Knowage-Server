@@ -33,11 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
-<!-- Styles -->
-<!-- <link rel="stylesheet" type="text/css" -->
-<!-- 	href="/knowage/themes/glossary/css/generalStyle.css"> -->
-<!-- <link rel="stylesheet" type="text/css" -->
-<!--  href="/knowage/themes/catalogue/css/catalogue.css"> -->
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
 
 
@@ -97,47 +92,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		show-save-button="showMe" show-cancel-button="showMe">
 			
 			
-		<form >
+		<form name="attributeForm" ng-submit="attributeForm.$valid">
 			
 		<md-card>
 	     <md-card-content>			
 					
-<!-- /////////////// RIGHT SIDE TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->				
-<!-- 				<md-toolbar class= "header" > -->
-				
-<!--  /////////////// RIGHT SIDE TOOLBAR TOOLS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->					 
-<!-- 					<div class="md-toolbar-tools h100"> -->
-					
-<!--  /////////////// RIGHT SIDE TOOLBAR TOOLS TITLE\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->						 
-<!-- 						<div 	style="text-align: center;  -->
-<!-- 								font-size: 24px;"> -->
-<!-- 								{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue");}}</div> -->
-					
-<!-- 						<div style="position: absolute; right: 0px" class="h100"> -->
 						
-<!--  /////////////// CANCEL BUTTON \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->						 
-<!-- 						<md-button id="cancel" type="button" -->
-<!-- 								aria-label="cancel" class="md-raised md-ExtraMini rightHeaderButtonBackground" -->
-<!-- 								style=" margin-top: 2px;" -->
-<!-- 								ng-click="cancel()"> -->
-<!-- 								{{translate.load("sbi.generic.cancel");}}  -->
-<!-- 						</md-button> -->
-
- <!-- /////////////// SAVE BUTTON \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->						 
-
-<!-- 						<md-button  type="submit" -->
-<!-- 							aria-label="save_constraint" class="md-raised md-ExtraMini rightHeaderButtonBackground" -->
-<!-- 							style=" margin-top: 2px;" -->
-<!-- 							ng-click="saveMondrianCatalogue()" -->
-<!-- 							ng-disabled = "selectedMondrianSchema.modelLocked"> -->
-<!-- 						{{translate.load("sbi.browser.defaultRole.save")}} -->
-<!-- 						</md-button> -->
-		
-<!-- 					</div> -->
-<!-- 				</div> -->
-<!-- 				</md-toolbar> -->
-			
-<!-- /////////////// INPUT PART \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->								
 				
 				
 				
@@ -180,24 +140,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 							
 						<div layout="row" layout-wrap  >
+						
+							<label layout-align="center center" class="buttonLabel">{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.fileUpload")}}:</label>
+      						<file-upload  ng-model="file" id="myId" ng-disabled = "selectedMondrianSchema.modelLocker" flex></file-upload>
 							
-								<div style="margin-top: 15px">
-								<label >{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.fileUpload");}}</label>	
-							</div>
-							<div flex style="margin-right: 32px">	
-       						<file-upload ng-model="file" id="myId" label='browse' ng-disabled = "selectedMondrianSchema.modelLocker" ></file-upload>
-     
-							</div>
 							
-							<md-input-container flex="30">
+		
+							
+					<md-input-container flex="30">
 			          <md-switch ng-model="selectedMondrianSchema.modelLocked" ng-change="unlockModel()">{{ selectedBusinessModel.modelLocked ? translate.load("sbi.bm.unlockModel") : translate.load("sbi.bm.lockModel")}}</md-switch>
 			        </md-input-container>
 							
 						</div>
        					
-      				
-					 		
-     					
+      	</md-card-content>
+	      </md-card>	
+		
+     	<md-card>
+	     <md-card-content>					
 	
 <!-- /////////////// SAVED VERSION TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 				
@@ -258,8 +218,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 				
 				
-			</md-card-content>
-	      </md-card>
+		</md-card-content>
+	      </md-card>	
 
 			</form>
 			</detail>	
