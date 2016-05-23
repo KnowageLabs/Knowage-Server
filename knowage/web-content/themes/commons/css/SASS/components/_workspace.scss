@@ -153,7 +153,43 @@
 		}
 	}
 	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	.threeCombosThreeNumFields {
 		background-color: #FFFFFF !important;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step3PreviewPanel {
+		height: 70%; 
+		max-height: 70%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.step3PreviewPanel {
+			height: 75%; 
+			max-height: 75%;
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step3PreviewTable {
+		height: 95%; 
+		max-height: 95%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step3ValidationText {
+		padding-left: 10px;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.validStatusColor {
+		color: #009933 !important;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.invalidStatusColor {
+		color: #FF0000 !important;
 	}
 }

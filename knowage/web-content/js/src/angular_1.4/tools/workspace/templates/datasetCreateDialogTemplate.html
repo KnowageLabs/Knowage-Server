@@ -16,7 +16,7 @@
       
 	</md-toolbar>
    
-	<md-content flex class="datasetWizardPadding knowageGrey">
+	<md-content flex class="knowageGrey">
       
 		<!-- CARD 1 (START) -->
 		<!--<md-card ng-if="datasetWizardView==1">-->
@@ -24,7 +24,7 @@
         
 			<md-whiteframe flex layout="column" layout-margin class="md-whiteframe-5dp">
 				
-				<md-toolbar>
+				<md-toolbar class="secondaryToolbar">
 		         	<div class="md-toolbar-tools">
 		           		<h2>LOAD FILE</h2>
 		               	<span flex></span>
@@ -176,7 +176,7 @@
 		<!-- CARD 2 (START) -->
       	<md-card ng-if="datasetWizardView==2">
          
-         	<md-toolbar>
+         	<md-toolbar class="secondaryToolbar">
             	<div class="md-toolbar-tools">
                	<h2>LOAD FILE &#10137; DEFINITION DATA</h2>
                	<span flex></span>
@@ -195,26 +195,79 @@
       	<!-- CARD 3 (START) -->
       	<md-card ng-if="datasetWizardView==3">
       	
-         	<md-toolbar>
+         	<md-toolbar class="secondaryToolbar">
 	            <div class="md-toolbar-tools">
 	               <h2>LOAD FILE &#10137; DEFINITION DATA &#10137; VALIDATION DATA</h2>
 	               <span flex></span>
 	            </div>
          	</md-toolbar>
          
-         	<md-content flex class="loadFilePadding">
+         	<md-content flex class="loadFilePadding step3PreviewPanel">
+	            
 	            <form>
+	               
 	               <!-- VALIDATION DATA -->
+	               	               
+				    <md-content flex>
+						
+						<!-- 			    
+				    	<md-toolbar class="documentBrowserToolbar secondaryToolbar">
+							
+							<div class="md-toolbar-tools" layout="row" layout-align="center center">
+						   		
+						   		<md-button class="md-fab md-mini" aria-label="backPagination" ng-click="getBackPreviewSet()">
+				          			<md-icon class="fa fa-angle-double-left"></md-icon>				        		
+				        		</md-button>
+				        		
+				        		<span flex></span>
+				        		
+				        		<div>{{startPreviewIndex+1 +'&nbsp-&nbsp'+ endPreviewIndex + '&nbsp/&nbsp'+totalItemsInPreview}} </div>
+				        		
+				        		<span flex></span>
+				             	
+				             	<md-button class="md-fab md-mini" aria-label="forwardPagination" ng-click="getNextPreviewSet()">
+				          			<md-icon class="fa fa-angle-double-right"></md-icon>
+				        		</md-button>
+				        		
+				    		</div>
+				    		
+				    	</md-toolbar>				    	 	
+				    
+				    	<br> 
+				    	-->
+				
+				 		<md-content flex class="step3PreviewTable">
+				 		
+							<angular-table 
+							            flex
+							            style="position:absolute;"
+							            ng-model="resultRowsStep2"
+										columns="allHeadersForStep3Preview" 
+										no-pagination=true
+										show-search-bar=false>
+							</angular-table>
+						
+				 		</md-content>
+				 		
+					</md-content>	
+					               
 	            </form>
-         	</md-content>
+	            
+         	</md-content>      	
          	
       	</md-card>
      	<!-- CARD 3 (END) -->
-      
+     	
+     	<!-- Validation status text: the validation state after going from the Step 2 to the Step 3 -->
+      	<p 	ng-show="validationStatus && datasetWizardView==3" 
+      		class="step3ValidationText {{validationStatus ? 'validStatusColor' : 'invalidStatusColor'}}">
+      		{{validationStatus ? translate.load("sbi.ds.metadata.msgOK") : translate.load("sbi.ds.metadata.msgKO")}}
+   		</p>
+      	
       	<!-- CARD 4 (START) -->
       	<md-card ng-if="datasetWizardView==4">
         
-         	<md-toolbar>
+         	<md-toolbar class="secondaryToolbar">
             	<div class="md-toolbar-tools">
                	<h2>LOAD FILE &#10137; DEFINITION DATA &#10137; VALIDATION DATA &#10137; SAVE THE DATASET</h2>
                	<span flex></span>

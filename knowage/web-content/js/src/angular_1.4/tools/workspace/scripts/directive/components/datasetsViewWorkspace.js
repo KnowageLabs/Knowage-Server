@@ -27,13 +27,20 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.previewPaginationEnabled=true; 
     
     $scope.itemsPerPage=15;
-    $scope.datasetInPreview=undefined;
-    
+    $scope.datasetInPreview=undefined;    
     
     $scope.datasetsInitial=[];  //all
 	$scope.myDatasetsInitial= [];
 	$scope.enterpriseDatasetsInitial=[];
 	$scope.sharedDatasetsInitial=[];
+	
+	/**
+	 * STEP 3
+	 */
+	$scope.allHeadersForStep3Preview = [];
+	$scope.allRowsForStep3Preview = [];
+	
+	$scope.validationStatus = false;
     
     $scope.markNotDerived=function(datasets){
     	
@@ -250,8 +257,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	}else{
     		 $scope.endPreviewIndex = $scope.itemsPerPage;
     	}
-    	
-    	
+    	    	
      	$mdDialog.show({
 			  scope:$scope,
 			  preserveScope: true,
@@ -264,14 +270,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		    	 // previewDatasetModel:$scope.previewDatasetModel,
 		         // previewDatasetColumns:$scope.previewDatasetColumns 
 		      }
-		    });
-   
-    	
+		    });   	
     	
     }
     
-    $scope.getPreviewSet= function(dataset){
-    	
+    $scope.getPreviewSet= function(dataset){    	
 
     	params={};
     	params.start=$scope.startPreviewIndex;
@@ -293,8 +296,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		    angular.copy(response.data.rows,$scope.previewDatasetModel);
 		    if( $scope.previewDatasetColumns.length==0){
 			$scope.createColumnsForPreview(response.data.metaData.fields);
-		    }
-		
+		    }		
 			
 			//$scope.startPreviewIndex=$scope.startPreviewIndex=0+20;
 			
@@ -379,8 +381,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	 }
     
     	 $scope.getPreviewSet($scope.datasetInPreview);
-    	 
-    	
+    	     	
     }
     
     $scope.getNextPreviewSet= function(){
@@ -395,7 +396,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
               $scope.endPreviewIndex=$scope.endPreviewIndex+$scope.itemsPerPage;
     	 }       	 
     	 
-        	 $scope.getPreviewSet($scope.datasetInPreview);
+    	 $scope.getPreviewSet($scope.datasetInPreview);
         	 
     }
     
@@ -639,17 +640,25 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			.then
 			(
 				function successCallback(response) {
-//					}
-					console.log("SUCCESS");
-					console.log(response.data.metaData.fields);
+
+					console.log("SUCCESS");					
+					console.log(response.data);
 					
 					if (!response.data.errors) {
 						console.info("[SUCCESS]: The Step 2 form is submitted successfully.");
-						angular.copy(response.data.metaData.fields,$scope.resultStep2);
+						// Take the meta data from resulting JSON object (needed for the table's header)
+						$scope.validationStatus = true;
+						$scope.resultMetaDataStep2 = [];
+						$scope.resultRowsStep2 = [];
+						angular.copy(response.data.metaData.fields,$scope.resultMetaDataStep2);
+						// Take all results (pure data) for rows of the Angular table
+						angular.copy(response.data.rows,$scope.resultRowsStep2);
+						$scope.collectHeadersForStep3Preview();
 						$scope.datasetWizardView = $scope.datasetWizardView +1;
 					}
 					else {
 						console.info("[ERROR]: ",sbiModule_translate.load(response.data.errors[0].message));
+						$scope.validationStatus = false;
 						sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error!');
 					}
 				}, 
@@ -659,6 +668,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 				// or server returns response with an error status.
 					console.info("[FAILURE]: The form cannot be submitted because of some failure.");
 					console.log(response);
+					$scope.validationStatus = false;
 					sbiModule_messaging.showErrorMessage("Failure!", 'Error!');
 				}
 			);
@@ -691,6 +701,27 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			if($scope.datasetWizardView>1&&$scope.datasetWizardView<5){
 				$scope.datasetWizardView = $scope.datasetWizardView -1;
 			}
+		}
+		
+		/**
+		 * Collect all table headers so we can preview results in the Step 3.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$scope.collectHeadersForStep3Preview = function() {			
+			
+			$scope.allHeadersForStep3Preview = [];
+			
+			for (i=0; i<$scope.resultMetaDataStep2.length; i++) {
+				
+				var temp = {};
+				
+				temp['label'] = $scope.resultMetaDataStep2[i].header;
+				temp['name'] = 'column_' + (i+1);
+				
+				$scope.allHeadersForStep3Preview.push(temp);
+				
+			}
+			
 		}
 		
 		$scope.closeDatasetCreateDialog=function(){
@@ -768,12 +799,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			$scope.dataset.meta.columns[i].columnView='<md-select ng-model=row.column class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumns" value="{{col.columnName}}">{{col.columnName}}</md-option></md-select>';
 			$scope.dataset.meta.columns[i].pnameView='<md-select ng-model=row.pname.toLowerCase() class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsMetaProperty" value="{{col.VALUE_CD.toLowerCase()}}">{{col.VALUE_NM}}</md-option></md-select>';
 			$scope.dataset.meta.columns[i].pvalueView='<md-select ng-model=row.pvalue.toLowerCase() class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsMetaValue" value="{{col.VALUE_CD.toLowerCase()}}">{{col.VALUE_NM}}</md-option></md-select>';
-
 				
 			}
 			
-		}
-		
+		}		
 		
 	}
     
