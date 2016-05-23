@@ -45,6 +45,9 @@
   -ms-user-select: none;
   user-select: none;
 }
+.nv-axis,  .nv-legendWrap, .nv-controlsWrap{
+	display:none !important;
+}
 
 /*Give tooltips that old fade in transition by
     putting a "with-transitions" class on the container div.
