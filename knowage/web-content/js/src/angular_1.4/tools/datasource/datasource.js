@@ -298,34 +298,6 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		});
 	};
 
-	//TEST SUCCEEDED
-	$scope.showActionTestOK = function() {
-		var toast = $mdToast.simple()
-		.content('Data Source correctly tested!')
-		.action('OK')
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-			}
-		});
-	};
-
-	//TEST FAILED
-	$scope.showActionTestKO = function(e) {
-		var toast = $mdToast.simple()
-		.content(e)
-		.action('OK')
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-			}
-		});
-	};
-
 	//CREATING PATH FOR DELETING MULTIPLE DATA SOURCES
 	queryParamDataSourceIdsToDelete = function(){
 
