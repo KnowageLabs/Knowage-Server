@@ -229,8 +229,11 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		
 		if(kpiSched.frequency.cron!=null){
 			$scope.selectedScheduler.frequency.cron = JSON.parse(kpiSched.frequency.cron);
-			$scope.selectedScheduler.frequency.cron.expression = $scope.selectedScheduler.frequency.cron.expression.replace(/\'/g,"\"");
-			$scope.selectedScheduler.frequency.cron = JSON.parse($scope.selectedScheduler.frequency.cron.expression);
+			if($scope.selectedScheduler.frequency.cron.expression!=undefined){
+				$scope.selectedScheduler.frequency.cron.expression = $scope.selectedScheduler.frequency.cron.expression.replace(/\'/g,"\"");
+				$scope.selectedScheduler.frequency.cron = JSON.parse($scope.selectedScheduler.frequency.cron.expression);
+			}
+			
 		}else{
 			$scope.selectedScheduler.frequency.cron = {"type":"minute","parameter":{"numRepetition":"1"}};
 		}
