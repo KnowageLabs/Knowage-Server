@@ -163,15 +163,9 @@ angular.module('scrolly_directive',[])
 	                
 	               
 	               if(scope.modelConfig.startRow!=startRow){
-	            	   if(scope.modelConfig.suppressEmpty){
-	            		   if(startRow<scope.modelConfig.startRow){
-	            			   scope.modelConfig.startRow = -startRow;
-	            		   }else{
-	            			   scope.modelConfig.startRow = startRow;
-	            		   }
-	            	   }else{
+	           
 	            		   scope.modelConfig.startRow = startRow;
-	            	   }
+	            	  
 	            	   
 	            	   
 	            	   scope.showLoadingMask = false;
@@ -185,10 +179,13 @@ angular.module('scrolly_directive',[])
 	               }
 	               if(scope.modelConfig.startColumn!=startColumn){
 	            	
-	            	   scope.modelConfig.startColumn = startColumn;
+	            	
+	            		   scope.modelConfig.startColumn = startColumn;
+	            	  
 	           	    	
 	            	   scope.showLoadingMask = false;
-	           	    scope.sendModelConfig(scope.modelConfig);
+	            	   scope.sendModelConfig(scope.modelConfig);
+	           	    
 	               }
 	   
 	    
