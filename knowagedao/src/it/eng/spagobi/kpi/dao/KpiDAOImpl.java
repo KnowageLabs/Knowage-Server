@@ -511,14 +511,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 						}
 					}
 
-				} catch (EMFInternalError e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (EMFUserError e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				} catch (EMFInternalError | EMFUserError e) {
+					logger.error(e.getMessage(), e);
 				}
-
 			} else {
 				Kpi kpi = from(sbi, null, false);
 				kpis.add(kpi);
@@ -654,12 +649,26 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 		}
 		persistentSbiKpiKpi.setCardinality(new JSONObject(persistentSbiKpiKpi.getCardinality()).put("measureList", measureList).toString());
-		// Updating relation with KpiScheduler
-		List<SbiKpiExecution> executions = session.createCriteria(SbiKpiExecution.class).createAlias("sbiKpiKpis", "_kpi")
-				.add(Restrictions.eq("_kpi.sbiKpiKpiId.id", persistentSbiKpiKpi.getSbiKpiKpiId().getId())).list();
+		// Updating relation with SbiKpiExecution
+		// - Gathering all SbiKpiExecution using this Kpi (another version of this Kpi)
+		Criteria c = session.createCriteria(SbiKpiExecution.class).createAlias("sbiKpiKpis", "_kpi")
+				.add(Restrictions.eq("_kpi.sbiKpiKpiId.id", persistentSbiKpiKpi.getSbiKpiKpiId().getId()));
+		if (persistentSbiKpiKpi.getSbiKpiKpiId().getVersion() != null) {
+			c.add(Restrictions.ne("_kpi.sbiKpiKpiId.version", persistentSbiKpiKpi.getSbiKpiKpiId().getVersion()));
+		}
+		List<SbiKpiExecution> executions = c.list();
 		for (SbiKpiExecution sbiKpiExecution : executions) {
-			// TODO
-			sbiKpiExecution.getCommonInfo();
+			Iterator<SbiKpiKpi> oldKpis = sbiKpiExecution.getSbiKpiKpis().iterator();
+			while (oldKpis.hasNext()) {
+				SbiKpiKpi oldKpi = oldKpis.next();
+				if (oldKpi.getSbiKpiKpiId().getId().equals(persistentSbiKpiKpi.getSbiKpiKpiId().getId())) {
+					// - Removing old version Kpi
+					oldKpis.remove();
+					break;
+				}
+			}
+			// - Adding new version Kpi to SbiKpiExecution
+			sbiKpiExecution.getSbiKpiKpis().add(persistentSbiKpiKpi);
 		}
 	}
 
