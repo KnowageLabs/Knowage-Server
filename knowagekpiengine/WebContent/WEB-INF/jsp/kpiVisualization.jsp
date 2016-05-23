@@ -216,7 +216,7 @@ author:
 	%>
 
 
-	<div layout="row"  layout-wrap>
+	<div layout="row" ng-if="displayKpiWidget"  layout-wrap >
 		<div id="kpiWidgetTemplate" ng-repeat="kpiItem in kpiItems" layout-margin layout-padding>
 			<md-whiteframe  class="md-whiteframe-4dp " layout="column" layout layout-margin ng-if="kpiItem.viewAs=='speedometer'" > 
 				<md-toolbar	class="miniheadimportexport ternaryToolbar" layout="row">

@@ -20,6 +20,7 @@
 		$scope.kpiItems = [];
 		$scope.showPreloader=false;
 		$scope.displayScorecard=true;
+		$scope.displayKpiWidget=true;
 		$scope.GAUGE_DEFAULT_SIZE = 250;
 		$scope.LINEAR_GAUGE_DEFAULT_SIZE= 400;
 		$scope.gaugeMinValue = 0;
@@ -150,7 +151,7 @@
 		function getPage() {
 	        var div = document.createElement('div')
 	        div.offsetWidth = 2048;
-	        div.classList.add("layout-padding");
+	        div.classList.add("layout-padding"); 
 	        div.style.backgroundColor = 'white';
 	        return div;
 	    }
@@ -211,35 +212,80 @@
 		
 		$scope.exportKpiWidgetPDF=function(){
 			 var pdf = new jsPDF('p', 'pt', 'a4');
-			 pdf.addHTML(document.body, function () {
-		                 pdf.save($scope.documentData.docLabel+'.pdf');
-		                    
-		        });
-			 return
+			
 			 var heigth = 0;
-		     var pageHeigth = 1000;
+			 var tmpMaxHeigth = 0;
+			 var tmpMaxHeigthPREV = 0;
+			 var width = 0;
+		     var pageHeigth = 900; //pt
+		     var pageWidth = 1024; //px
 		     var pageArray = [];
 		     var page = 0;
-		     pageArray.push(getPage());
+		     var fpage=getPage();
+		     fpage.classList.add("layout-column"); 
 		     var testata=$scope.createExportToolbar($scope.documentData.docLabel);
-		     heigth+= testata.offsetHeight * 0.75;
-		     pageArray[page].appendChild(testata);
+		     heigth+= 70 * 0.75;
+		     fpage.appendChild(testata);
+		     var fContentePage=getPage();
+		     fContentePage.classList.add("layout-row"); 
+		     fContentePage.classList.add("layout-wrap"); 
+		     fpage.appendChild(fContentePage);
+		     pageArray.push(fpage);
 		     var kpiList = document.querySelectorAll("#kpiWidgetTemplate md-whiteframe");
 		     for (var i = 0; i < kpiList.length; i++) {
 		    	 var offH= kpiList[i].offsetHeight * 0.75;
-		            if (heigth +offH > pageHeigth) {
+		    	 var offW= kpiList[i].offsetWidth;
+		    	 var nextRow=false;
+		    	 if(offH>tmpMaxHeigth){
+		    		 tmpMaxHeigthPREV=tmpMaxHeigth;
+		    		  tmpMaxHeigth=offH;
+		    	 }
+		    	 
+		    	 if(width + offW >pageWidth) {
+		    		 width=0;
+		            if (heigth +tmpMaxHeigth > pageHeigth) {
 		                page++;
-		                heigth = 0;
-		                pageArray.push(getPage());
+		                heigth = 0; 
+		                var tmppage=getPage();
+		                tmppage.classList.add("layout-row"); 
+		                tmppage.classList.add("layout-wrap"); 
+		                pageArray.push(tmppage);
+		            }else{
+		            	heigth += tmpMaxHeigthPREV; 
+		            	tmpMaxHeigth=0;
+		            	tmpMaxHeigthPREV=0;
+		            	nextRow=true;
 		            }
+		    	 }
+		    	 
+		    	 if(offH>tmpMaxHeigth && !nextRow){
+		    		 heigth += offH-tmpMaxHeigth; 
+		    	 }
+		    	 
+		    	 
+		    	 
 		            var tmpNode = kpiList[i].cloneNode(true); 
-		            pageArray[page].appendChild(tmpNode);
-		            heigth += offH; 
+		            //the page 0 have a toolbar
+		            if(page==0){
+		            	pageArray[page].children[1].appendChild(tmpNode);
+		            }else{
+		            	pageArray[page].appendChild(tmpNode);
+		            }
+		            width += offW; 
 		        }
 		     var printTmpContainer= $scope.createTmpContainer(pageArray);
 		     generatePdf(pageArray, 0, pdf,printTmpContainer).then(
 		    		 function(){
-		    			 $scope.showPreloader=false;
+
+		    			 $scope.displayKpiWidget=false;
+		                    if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+		                        $scope.$apply();
+		                    }
+						    $timeout(function(){
+								$scope.displayKpiWidget=true; 
+								$scope.showPreloader=false;
+							},0); 
+		    		 
 		    		 },
 		    		 function(){
 		    			 alert("ERROR");
