@@ -68,7 +68,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * 							(ALL, COCKPIT, GEO).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	(whereAreWeComingFrom == "NewCockpit") ? $scope.currentOptionMainMenu = "analysis" : $scope.currentOptionMainMenu = "datasets";	
+	(whereAreWeComingFrom == "NewCockpit") ? $scope.currentOptionMainMenu = "analysis" : $scope.currentOptionMainMenu = "recent";	
 	
 	$scope.isDocumentFavorite = false;
 
