@@ -87,10 +87,10 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		String time = "Drilldown start " + format.format(new Date());
 		// System.out.println(time);
 		init();
-
+		model.removeSubset();
 		String str = RestUtilities.readBody(req);
 		JSONObject jo = new JSONObject(str);
-		model.removeSubset();
+
 		// System.out.println(model.getCurrentMdx());
 		// The ROWS axis
 		CellSetAxis rowsOrColumns = getAxis(axisPos);
@@ -130,13 +130,14 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				transform.expand(m2);
 			}
 		}
-		modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
-		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
+		// modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
+		// modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 
 		time = "Drilldown end " + format.format(new Date());
 		// System.out.println(time);
 		// System.out.println();
 		// System.out.println();
+
 		String table = renderModel(model);
 
 		return table;
@@ -148,6 +149,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req) {
 		init();
+		model.removeSubset();
 		JSONObject jo;
 		int axis = 0;
 		int position = 0;
@@ -179,8 +181,6 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		List<Member> m = null;
 		Member m2 = null;
 		Hierarchy hierarchy = null;
-
-		model.removeSubset();
 
 		// The ROWS axis
 		CellSetAxis rowsOrColumns = getAxis(axis);
@@ -236,9 +236,6 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			}
 		}
 
-		modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
-		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
-
 		time = "Drillup end " + format.format(new Date());
 		// System.out.println(time);
 		// System.out.println();
@@ -263,10 +260,6 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				hierarchy.put("name", h.getName());
 				List<Level> levels = h.getLevels();
 				for (Level level : levels) {
-					if (level.getName() == "(All)") {
-						continue;
-					}
-
 					if (level.getName() == "MeasuresLevel") {
 						List<Member> temp = level.getMembers();
 						for (Member member : temp) {
@@ -473,8 +466,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			model.setSorting(false);
 		}
 
-		model.removeOrder(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()));
-		model.removeOrder(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()));
+		model.removeOrder(Axis.ROWS);
+		model.removeOrder(Axis.COLUMNS);
 		List<Member> a = model.getSortPosMembers1();
 		a.clear();
 
@@ -497,8 +490,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		SwapAxes transform = model.getTransform(SwapAxes.class);
 
 		model.removeSubset();
-		model.removeOrder(model.getCellSet().getAxes().get(1));
-		model.removeOrder(model.getCellSet().getAxes().get(0));
+		model.removeOrder(Axis.ROWS);
+		model.removeOrder(Axis.COLUMNS);
 		axisToSort = getAxis(axisToSortpos);
 		axisM = getAxis(axis);
 

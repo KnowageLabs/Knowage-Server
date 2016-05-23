@@ -55,7 +55,6 @@ import org.pivot4j.PivotModel;
 import org.pivot4j.impl.PivotModelImpl;
 import org.pivot4j.impl.QueryAdapter;
 import org.pivot4j.transform.ChangeSlicer;
-import org.pivot4j.transform.NonEmpty;
 import org.pivot4j.transform.impl.ChangeSlicerImpl;
 import org.pivot4j.ui.collector.NonInternalPropertyCollector;
 import org.pivot4j.ui.command.BasicDrillThroughCommand;
@@ -192,40 +191,18 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		} else {
 			renderer.setPropertyCollector(null);
 		}
-		int rowCount = model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount();
+
 		// /suppress empty rows/columns
 		Boolean suppressEmpty = modelConfig.getSuppressEmpty();
-		NonEmpty transformNonEmpty = value.getTransform(NonEmpty.class);
-		transformNonEmpty.setNonEmpty(suppressEmpty);
-		if (suppressEmpty) {
+		/*
+		 * NonEmpty transformNonEmpty = value.getTransform(NonEmpty.class);
+		 * transformNonEmpty.setNonEmpty(suppressEmpty);
+		 */
 
-			model.setSubset(modelConfig.getStartRow(), modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
-			int subSetrowCount = model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount();
-			int newRowSet = 0;
-			int direction = 1;
-			int newRowStart = Math.abs(modelConfig.getStartRow());
-			while (subSetrowCount != modelConfig.getRowsSet() && rowCount > newRowSet) {
-				if (subSetrowCount == 0) {
-					if (rowCount == newRowStart || modelConfig.getStartRow() < 0) {
-						direction = -1;
-					}
-					newRowStart = newRowStart + direction;
-					modelConfig.setStartRow(Math.abs(newRowStart));
-					newRowSet = 1;
-					model.removeSubset();
-					model.setSubset(Math.abs(newRowStart), modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
-					subSetrowCount = model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount();
-				} else {
-					newRowSet++;
-					model.removeSubset();
-					model.setSubset(Math.abs(newRowStart), modelConfig.getStartColumn(), newRowSet, modelConfig.getColumnSet());
-					subSetrowCount = model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount();
-				}
-
-			}
-		} else {
-			model.setSubset(Math.abs(modelConfig.getStartRow()), modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
-		}
+		model.setNonEmpty(suppressEmpty);
+		modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
+		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
+		model.setSubset(modelConfig.getStartRow(), modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
 
 		// modelConfig.setRowCount(rowCount);
 
@@ -295,6 +272,59 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 
 		logger.debug("OUT");
 
+	}
+
+	private int getNonEmptySet(int nonEmptyStart, int set, int count, int axisOrdinal, SpagoBIPivotModel model) {
+		int newSet = 1;
+		int subSetCount = 1;
+
+		while (subSetCount != set && count > newSet) {
+			newSet++;
+			model.removeSubset();
+			if (axisOrdinal == Axis.ROWS.axisOrdinal()) {
+				model.setSubset(nonEmptyStart, 0, newSet, 1);
+			} else {
+				model.setSubset(0, nonEmptyStart, 1, newSet);
+			}
+
+			subSetCount = model.getCellSet().getAxes().get(axisOrdinal).getPositionCount();
+		}
+		model.removeSubset();
+		return newSet;
+	}
+
+	private int getNonEmptyStart(int start, int axisOrdinal, SpagoBIPivotModel model) {
+
+		int nonEmptyStart = 0;
+
+		int subSetCount = model.getCellSet().getAxes().get(axisOrdinal).getPositionCount();
+
+		for (int i = 0; i < start; i++) {
+			model.removeSubset();
+			if (axisOrdinal == Axis.ROWS.axisOrdinal()) {
+				model.setSubset(nonEmptyStart, 0, 1, 1);
+			} else {
+				model.setSubset(0, nonEmptyStart, 1, 1);
+			}
+
+			subSetCount = model.getCellSet().getAxes().get(axisOrdinal).getPositionCount();
+
+			while (subSetCount == 0) {
+				nonEmptyStart++;
+				model.removeSubset();
+				if (axisOrdinal == Axis.ROWS.axisOrdinal()) {
+					model.setSubset(nonEmptyStart, 0, 1, 1);
+				} else {
+					model.setSubset(0, nonEmptyStart, 1, 1);
+				}
+
+				subSetCount = model.getCellSet().getAxes().get(axisOrdinal).getPositionCount();
+
+			}
+			nonEmptyStart++;
+		}
+		model.removeSubset();
+		return nonEmptyStart;
 	}
 
 	private void serializeAxis(String field, JsonGenerator jgen, List<CellSetAxis> axis, Axis type, OlapConnection connection, ModelConfig modelConfig)
@@ -401,11 +431,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 	 * List<Hierarchy> hierarchies, PivotModelImpl model, OlapConnection
 	 * connection, ModelConfig modelConfig) throws JSONException,
 	 * JsonGenerationException, IOException {
-	 * 
+	 *
 	 * QueryAdapter qa = new QueryAdapter(model); qa.initialize();
-	 * 
+	 *
 	 * ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
-	 * 
+	 *
 	 * jgen.writeArrayFieldStart(field); if (hierarchies != null) { for (int i =
 	 * 0; i < hierarchies.size(); i++) { Hierarchy hierarchy =
 	 * hierarchies.get(i); Map<String, Object> hierarchyObject = new
@@ -413,7 +443,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 	 * hierarchy.getName()); hierarchyObject.put(UNIQUE_NAME,
 	 * hierarchy.getUniqueName()); hierarchyObject.put(POSITION, "" + i);
 	 * hierarchyObject.put(AXIS, "" + FILTERS_AXIS_POS);
-	 * 
+	 *
 	 * List<Member> slicers = ph.getSlicer(hierarchy); if (slicers != null &&
 	 * slicers.size() > 0) { List<Map<String, String>> slicerMap = new
 	 * ArrayList<Map<String, String>>(); for (int j = 0; j < slicers.size();
@@ -422,7 +452,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 	 * slicers.get(j).getName()); slicerMap.add(slicer); }
 	 * hierarchyObject.put(SLICERS, slicerMap); }
 	 * jgen.writeObject(hierarchyObject);
-	 * 
+	 *
 	 * } } jgen.writeEndArray(); }
 	 */
 

@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.olap4j.Axis;
+import org.olap4j.Axis.Standard;
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
@@ -314,12 +315,38 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		this.targetsClickable = targetsClickable;
 	}
 
+	public void setNonEmpty(boolean suppressEmpty) {
+
+		if (suppressEmpty) {
+			QueryAxis qaRows = getQueryAxis(Axis.ROWS);
+			QueryAxis qaColumns = getQueryAxis(Axis.COLUMNS);
+
+			Exp rowsExp = qaRows.getExp();
+			String notIsEmpty = "NOT isEmpty(Measures.currentMember)";
+
+			List<Exp> rowsArgs = new ArrayList<Exp>(2);
+			rowsArgs.add(rowsExp);
+			rowsArgs.add(Literal.createString(notIsEmpty));
+			FunCall rowsFilter = new FunCall("Filter", Syntax.Function, rowsArgs);
+			qaRows.setExp(rowsFilter);
+
+			Exp columnsExp = qaColumns.getExp();
+
+			List<Exp> columsArgs = new ArrayList<Exp>(2);
+			columsArgs.add(columnsExp);
+			columsArgs.add(Literal.createString(notIsEmpty));
+			FunCall columnsFilter = new FunCall("Filter", Syntax.Function, columsArgs);
+			qaColumns.setExp(columnsFilter);
+		}
+
+		fireModelChanged();
+
+	}
+
 	public void setSubset(Integer startRow, Integer startColumn, Integer rowSet, Integer columnSet) {
 
-		CellSetAxis rows = this.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal());
-		CellSetAxis columns = this.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal());
-		QueryAxis qaRows = getQueryAxis(rows);
-		QueryAxis qaColumns = getQueryAxis(columns);
+		QueryAxis qaRows = getQueryAxis(Axis.ROWS);
+		QueryAxis qaColumns = getQueryAxis(Axis.COLUMNS);
 
 		if (!isSubset(qaRows)) {
 
@@ -354,98 +381,31 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 		}
 
-		/*
-		 * if (isSubset(qaRows)) {
-		 *
-		 *
-		 *
-		 * } else { Exp setForAx = qa.getExp(); axis.getPositionCount();
-		 *
-		 * List<Exp> args = new ArrayList<Exp>(3);
-		 *
-		 * args.add(setForAx); args.add(Literal.create(startFrom));
-		 * args.add(Literal.create(count)); FunCall subset = new
-		 * FunCall("Subset", Syntax.Function, args); qa.setExp(subset); }
-		 */
-
 		fireModelChanged();
-	}
-
-	public void startFrom(Integer x, Integer y) {
-
-		SwapAxes transform = this.getTransform(SwapAxes.class);
-		if (transform.isSwapAxes()) {
-			int temp = x;
-			x = y;
-			y = temp;
-		}
-		CellSetAxis rows = this.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal());
-		CellSetAxis columns = this.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal());
-		QueryAxis qaRows = getQueryAxis(rows);
-		QueryAxis qaColumns = getQueryAxis(columns);
-		FunCall subsetRows = getSubSetFunction(qaRows);
-		FunCall subsetColumns = getSubSetFunction(qaColumns);
-
-		Exp expRows = subsetRows.getArgs().get(0);
-		Exp expColumns = subsetColumns.getArgs().get(0);
-
-		qaRows.setExp(expRows);
-		qaColumns.setExp(expColumns);
-		fireModelChanged();
-
-		Integer rowCount = getCellSet().getAxes().get(1).getPositionCount();
-		Integer columnCount = getCellSet().getAxes().get(0).getPositionCount();
-		// System.out.println(rowCount + " x " + columnCount);
-		if (y < rowCount - 1) {
-			subsetRows.getArgs().set(1, Literal.create(y));
-		} else {
-			subsetRows.getArgs().set(1, Literal.create(rowCount - 1));
-		}
-		subsetRows.getArgs().set(2, Literal.create(10));
-		qaRows.setExp(subsetRows);
-
-		if (x < columnCount - 1) {
-			subsetColumns.getArgs().set(1, Literal.create(x));
-		} else {
-			subsetColumns.getArgs().set(1, Literal.create(columnCount - 1));
-		}
-		subsetColumns.getArgs().set(2, Literal.create(10));
-		qaColumns.setExp(subsetColumns);
-
-		fireModelChanged();
-
 	}
 
 	public void removeSubset() {
-		CellSetAxis rows = null;
-		CellSetAxis columns = null;
+
 		QueryAxis qaRows = null;
 		QueryAxis qaColumns = null;
 		FunCall subsetRows = null;
 		FunCall subsetColumns = null;
 
-		rows = this.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal());
-		columns = this.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal());
-
-		if (rows != null) {
-			qaRows = getQueryAxis(rows);
-			if (qaRows != null) {
-				subsetRows = getSubSetFunction(qaRows);
-				if (subsetRows != null && subsetRows.getFunction().equalsIgnoreCase("Subset")) {
-					Exp exp = subsetRows.getArgs().get(0);
-					qaRows.setExp(exp);
-				}
+		qaRows = getQueryAxis(Axis.ROWS);
+		if (qaRows != null) {
+			subsetRows = getSubSetFunction(qaRows);
+			if (subsetRows != null && subsetRows.getFunction().equalsIgnoreCase("Subset")) {
+				Exp exp = subsetRows.getArgs().get(0);
+				qaRows.setExp(exp);
 			}
 		}
 
-		if (columns != null) {
-			qaColumns = getQueryAxis(columns);
-			if (qaColumns != null) {
-				subsetColumns = getSubSetFunction(qaColumns);
-				if (subsetColumns != null && subsetColumns.getFunction().equalsIgnoreCase("Subset")) {
-					Exp exp = subsetColumns.getArgs().get(0);
-					qaColumns.setExp(exp);
-				}
+		qaColumns = getQueryAxis(Axis.COLUMNS);
+		if (qaColumns != null) {
+			subsetColumns = getSubSetFunction(qaColumns);
+			if (subsetColumns != null && subsetColumns.getFunction().equalsIgnoreCase("Subset")) {
+				Exp exp = subsetColumns.getArgs().get(0);
+				qaColumns.setExp(exp);
 			}
 		}
 
@@ -453,7 +413,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 	}
 
-	public void removeOrder(CellSetAxis axis) {
+	public void removeOrder(Standard axis) {
 		QueryAxis qa = getQueryAxis(axis);
 		FunCall f = getSubSetFunction(qa);
 		if (f.getFunction().equalsIgnoreCase("Order")) {
@@ -473,52 +433,14 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 	}
 
-	public void next(CellSetAxis axis, Integer step) {
-
-		QueryAxis qa = getQueryAxis(axis);
-		FunCall f = getSubSetFunction(qa);
-		Integer start = Integer.parseInt(f.getArgs().get(1).toString());
-		Exp exp = f.getArgs().get(0);
-		qa.setExp(exp);
-		fireModelChanged();
-		// System.out.println(getCellSet().getAxes().get(1).getPositionCount());
-		if (getCellSet().getAxes().get(1).getPositionCount() > step) {
-			start = start + step;
-		}
-
-		f.getArgs().set(1, Literal.create(start));
-		f.getArgs().set(2, Literal.create(10));
-		qa.setExp(f);
-		fireModelChanged();
-
-	}
-
-	public void previous(CellSetAxis axis, Integer step) {
-
-		QueryAxis qa = getQueryAxis(axis);
-
-		FunCall f = getSubSetFunction(qa);
-		Double d = (Double.parseDouble(f.getArgs().get(1).toString()));
-
-		Integer start = d.intValue();
-		if (start >= step) {
-			start = start - step;
-		}
-
-		f.getArgs().set(1, Literal.create(start));
-		qa.setExp(f);
-		fireModelChanged();
-
-	}
-
-	private QueryAxis getQueryAxis(CellSetAxis axis) {
-
+	private QueryAxis getQueryAxis(Standard axis) {
+		CellSetAxis cellSetAxis = this.getCellSet().getAxes().get(axis.axisOrdinal());
 		QueryAxis qa = null;
 		MdxStatement pq = null;
 		Quax quax = null;
 
 		pq = getQueryAdapter().getParsedQuery();
-		quax = getQueryAdapter().getQuax(axis.getAxisOrdinal());
+		quax = getQueryAdapter().getQuax(cellSetAxis.getAxisOrdinal());
 
 		if (pq != null && quax != null) {
 			qa = pq.getAxis(Axis.Factory.forOrdinal(quax.getOrdinal()));
@@ -543,7 +465,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 	}
 
-	public Integer getSubsetStart(CellSetAxis axis) {
+	public Integer getSubsetStart(Standard axis) {
 		QueryAxis qa = getQueryAxis(axis);
 		if (isSubset(qa)) {
 			FunCall f = getSubSetFunction(qa);
@@ -587,14 +509,6 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 		}
 		fireModelChanged();
-	}
-
-	public QueryAdapter getSbiQueryAdapter() {
-		return sbiQueryAdapter = getQueryAdapter();
-	}
-
-	public void setSbiQueryAdapter(QueryAdapter sbiQueryAdapter) {
-		this.sbiQueryAdapter = sbiQueryAdapter;
 	}
 
 }
