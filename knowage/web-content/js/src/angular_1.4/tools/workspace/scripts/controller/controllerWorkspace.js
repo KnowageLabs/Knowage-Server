@@ -107,6 +107,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * TODO: For Dataset wizard
 	 */
 	$scope.dataset = {};
+	$scope.resultStep2 = [];
 	
 	/**
      * Initialize all the data needed for the 'dataset' object that we are sending towards the server when going to the Step 2 and ones that we are using
