@@ -33,6 +33,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
@@ -44,6 +45,7 @@ import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -53,6 +55,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -70,6 +73,7 @@ public class GetParametersForExecutionAction extends AbstractSpagoBIAction {
 	public static String CALLBACK = "callback";
 	// logger component
 	private static Logger logger = Logger.getLogger(GetParameterValuesForExecutionAction.class);
+	private IParameterDAO ANALYTICAL_DRIVER_DAO;
 
 	@Override
 	public void doService() {
@@ -161,7 +165,7 @@ public class GetParametersForExecutionAction extends AbstractSpagoBIAction {
 
 		DefaultValuesList defaultValues;
 
-		// dependencies (dataDep & visualDep)
+		// dependencies (dataDep & visualDep &lovDep)
 		Map<String, List<ParameterDependency>> dependencies;
 
 		public abstract class ParameterDependency {
@@ -173,6 +177,9 @@ public class GetParametersForExecutionAction extends AbstractSpagoBIAction {
 
 		public class VisualDependency extends ParameterDependency {
 			public ObjParview condition;
+		}
+
+		public class LovDependency extends ParameterDependency {
 		}
 
 		public ParameterForExecution(BIObjectParameter biParam) {
@@ -211,6 +218,12 @@ public class GetParametersForExecutionAction extends AbstractSpagoBIAction {
 				ANALYTICAL_DOCUMENT_PARAMETER_DAO = DAOFactory.getBIObjectParameterDAO();
 			} catch (EMFUserError e) {
 				throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DOCUMENT_PARAMETER_DAO.getClass().getName() + "]", e);
+			}
+
+			try {
+				ANALYTICAL_DRIVER_DAO = DAOFactory.getParameterDAO();
+			} catch (EMFUserError e) {
+				throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DRIVER_DAO.getClass().getName() + "]", e);
 			}
 		}
 
@@ -285,6 +298,7 @@ public class GetParametersForExecutionAction extends AbstractSpagoBIAction {
 		private void initDependencies() {
 			initDataDependencies();
 			initVisualDependencies();
+			initLovDependencies();
 		}
 
 		private void initVisualDependencies() {
@@ -349,9 +363,70 @@ public class GetParametersForExecutionAction extends AbstractSpagoBIAction {
 			}
 		}
 
+		private void initLovDependencies() {
+
+			if (dependencies == null) {
+				dependencies = new HashMap<String, List<ParameterDependency>>();
+			}
+			// the execution instance could be a map if in massive export case
+			ExecutionInstance executionInstance = null;
+			Assert.assertNotNull(getContext().isExecutionInstanceAMap(ExecutionInstance.class.getName()), "Execution instance cannot be null");
+			boolean isAMap = getContext().isExecutionInstanceAMap(ExecutionInstance.class.getName());
+			if (!isAMap) {
+				executionInstance = getContext().getExecutionInstance(ExecutionInstance.class.getName());
+			} else {
+				Map<Integer, ExecutionInstance> instances = getContext().getExecutionInstancesAsMap(ExecutionInstance.class.getName());
+				Integer objId = analyticalDocumentParameter.getBiObjectID();
+				executionInstance = instances.get(objId);
+			}
+			if (executionInstance == null) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to find in context execution instance for execution of document with id " + " ["
+						+ analyticalDocumentParameter.getBiObjectID() + "]: was it searched as a map? " + isAMap);
+			}
+
+			ILovDetail lovDetail = executionInstance.getLovDetail(analyticalDocumentParameter);
+			Set<String> lovParameters = null;
+			try {
+				if (lovDetail != null) {
+					lovParameters = lovDetail.getParameterNames();
+					if (lovParameters != null && !lovParameters.isEmpty()) {
+						logger.debug("Found one or more parameters inside the LOV");
+						List<BIObjectParameter> objParameters = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadBIObjectParametersById(analyticalDocumentParameter
+								.getBiObjectID());
+						LovDependency lovDependency = new LovDependency();
+						for (BIObjectParameter objParameter : objParameters) {
+							Parameter objAnalyticalDriver = ANALYTICAL_DRIVER_DAO.loadForDetailByParameterID(objParameter.getParameter().getId());
+							if (objAnalyticalDriver != null && lovParameters.contains(objAnalyticalDriver.getLabel())) {
+								logger.debug("Found the analytical driver [" + objAnalyticalDriver.getLabel() + "] associated to the placeholder in the LOV");
+								lovDependency.urlName = objParameter.getParameterUrlName();
+								break;
+							}
+						}
+						if (lovDependency.urlName == null || lovDependency.urlName.isEmpty()) {
+							throw new SpagoBIRuntimeException(
+									"Impossible to found a parameter to satisfy the dependecy associated with the placeholder in the LOV [" + id + "]");
+						}
+
+						if (!dependencies.containsKey(lovDependency.urlName)) {
+							dependencies.put(lovDependency.urlName, new ArrayList<ParameterDependency>());
+						}
+						List<ParameterDependency> depList = dependencies.get(lovDependency.urlName);
+						depList.add(lovDependency);
+					}
+				}
+			} catch (Exception e) {
+				throw new SpagoBIServiceException("An error occurred while loading parameter lov dependecies for parameter [" + id + "]", e);
+			}
+		}
+
 		public void loadValues() {
-			if ("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType) || "SLIDER".equalsIgnoreCase(selectionType)
-					|| "TREE".equalsIgnoreCase(selectionType)) { // load values only if it is not a lookup
+			// if ("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType) || "SLIDER".equalsIgnoreCase(selectionType)
+			// || "TREE".equalsIgnoreCase(selectionType)) { // load values only if it is not a lookup
+
+			if (!hasParameterInsideLOV()
+					&& ("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType) || "SLIDER".equalsIgnoreCase(selectionType) || "TREE"
+							.equalsIgnoreCase(selectionType))) { // load values only if it is not a lookup
+
 				List lovs = getLOV();
 				setValuesCount(lovs == null ? 0 : lovs.size());
 				if (getValuesCount() == 1) {
@@ -413,6 +488,46 @@ public class GetParametersForExecutionAction extends AbstractSpagoBIAction {
 			}
 			logger.debug("OUT");
 			return rows;
+		}
+
+		private boolean hasParameterInsideLOV(ExecutionInstance executionInstance) {
+			ILovDetail lovDetail = executionInstance.getLovDetail(analyticalDocumentParameter);
+			if (lovDetail != null) {
+				Set<String> parameterNames = null;
+				try {
+					parameterNames = lovDetail.getParameterNames();
+				} catch (Exception e) {
+					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to find in context execution lov parameters for execution of document with id "
+							+ " [" + analyticalDocumentParameter.getBiObjectID() + "]", e);
+				}
+				if (parameterNames != null && !parameterNames.isEmpty()) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+
+		private boolean hasParameterInsideLOV() {
+			// ExecutionInstance executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
+			// the execution instance could be a map if in massive export case
+			ExecutionInstance executionInstance = null;
+			Assert.assertNotNull(getContext().isExecutionInstanceAMap(ExecutionInstance.class.getName()), "Execution instance cannot be null");
+			boolean isAMap = getContext().isExecutionInstanceAMap(ExecutionInstance.class.getName());
+			if (!isAMap) {
+				executionInstance = getContext().getExecutionInstance(ExecutionInstance.class.getName());
+			} else {
+				Map<Integer, ExecutionInstance> instances = getContext().getExecutionInstancesAsMap(ExecutionInstance.class.getName());
+				Integer objId = analyticalDocumentParameter.getBiObjectID();
+				executionInstance = instances.get(objId);
+			}
+			if (executionInstance == null) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to find in context execution instance for execution of document with id " + " ["
+						+ analyticalDocumentParameter.getBiObjectID() + "]: was it searched as a map? " + isAMap);
+			}
+			return hasParameterInsideLOV(executionInstance);
 		}
 
 		private String getValueFromLov(SourceBean lovSB) {

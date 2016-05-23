@@ -23,11 +23,13 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.cache.CacheInterface;
 import it.eng.spagobi.utilities.cache.CacheSingleton;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -116,14 +118,23 @@ public class LovResultCacheManager {
 	 *            The execution instance (it may be null, since a lov can be executed outside an execution instance context)
 	 * @return The key to be used in cache
 	 */
-	private String getCacheKey(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, ExecutionInstance executionInstance) {
+	private String getCacheKey(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, ExecutionInstance executionInstance)
+			throws Exception {
 		logger.debug("IN");
 		String toReturn = null;
 		String userID = (String) ((UserProfile) profile).getUserId();
 		if (lovDefinition instanceof QueryDetail) {
 			QueryDetail queryDetail = (QueryDetail) lovDefinition;
 			QueryDetail clone = queryDetail.clone();
-			clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, executionInstance.getBIObject().getBiObjectParameters()));
+			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, executionInstance.getBIObject().getBiObjectParameters()));
+			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(executionInstance.getBIObject().getBiObjectParameters());
+			String statement = queryDetail.getWrappedStatement(dependencies, executionInstance.getBIObject().getBiObjectParameters());
+			statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+			if (parameters != null && !parameters.isEmpty()) {
+				Map<String, String> types = queryDetail.getParametersNameToTypeMap(executionInstance.getBIObject().getBiObjectParameters());
+				statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
+			}
+			clone.setQueryDefinition(statement);
 			toReturn = userID + ";" + clone.toXML();
 		} else {
 			toReturn = userID + ";" + lovDefinition.toXML();
@@ -170,15 +181,24 @@ public class LovResultCacheManager {
 		return lovResult;
 	}
 
-	private String getCacheKeyDum(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject objetc) {
+	private String getCacheKeyDum(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject objetc) throws Exception {
 		logger.debug("IN");
 		String toReturn = null;
 		String userID = (String) ((UserProfile) profile).getUserId();
 		if (lovDefinition instanceof QueryDetail) {
 			QueryDetail queryDetail = (QueryDetail) lovDefinition;
 			QueryDetail clone = queryDetail.clone();
-			clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, objetc.getBiObjectParameters()));
+			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, objetc.getBiObjectParameters()));
+			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(objetc.getBiObjectParameters());
+			String statement = queryDetail.getWrappedStatement(dependencies, objetc.getBiObjectParameters());
+			statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+			if (parameters != null && !parameters.isEmpty()) {
+				Map<String, String> types = queryDetail.getParametersNameToTypeMap(objetc.getBiObjectParameters());
+				statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
+			}
+			clone.setQueryDefinition(statement);
 			toReturn = userID + ";" + clone.toXML();
+
 		} else {
 			toReturn = userID + ";" + lovDefinition.toXML();
 		}

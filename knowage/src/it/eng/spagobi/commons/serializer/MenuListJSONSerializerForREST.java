@@ -17,16 +17,6 @@
  */
 package it.eng.spagobi.commons.serializer;
 
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -42,6 +32,16 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.wapp.bo.Menu;
 import it.eng.spagobi.wapp.services.DetailMenuModule;
 import it.eng.spagobi.wapp.util.MenuUtilities;
+
+import java.util.List;
+import java.util.Locale;
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author Marco Cortella
@@ -76,6 +76,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	public static final String TARGET = "hrefTarget";
 	public static final String HELP = "HELP";
 
+	// OLD DOC MANAGER
+	private static final String HREF_DOC_BROWSER = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 	private static final String HREF_DOC_BROWSER_ANGULAR = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 
 	/**
@@ -216,6 +218,14 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							temp.put(PATH, path);
 							temp.put(TARGET, "_self");
 
+							// OLD DOC MANAGER
+							if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin")) {
+								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER + "', '" + text + "')");
+								temp.put(FIRST_URL, contextName + HREF_DOC_BROWSER);
+								temp.put(LINK_TYPE, "execDirectUrl");
+
+							}
+
 							if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin_angular")) {
 								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_ANGULAR + "', '" + text + "')");
 								temp.put(FIRST_URL, contextName + HREF_DOC_BROWSER_ANGULAR);
@@ -337,10 +347,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			socialAnalysis.put(SCALE, "large");
 			socialAnalysis.put(TARGET, "_self");
 			// if (!GeneralUtilities.isSSOEnabled()) {
-			socialAnalysis.put(HREF,
-					"javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SsoServiceInterface.USER_ID + "="
-							+ userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&"
-							+ SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');");
+			socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SsoServiceInterface.USER_ID + "="
+					+ userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&"
+					+ SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');");
 			socialAnalysis.put(FIRST_URL, HREF_SOCIAL_ANALYSIS + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString()
 					+ "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry());
 			socialAnalysis.put(LINK_TYPE, "execDirectUrl");
@@ -701,8 +710,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			String src = childElem.getUrl();
 
 			if (childElem.getObjId() != null) {
-				temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="
-						+ childElem.getMenuId() + "', '" + path + "' )");
+				temp2.put(HREF,
+						"javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=" + childElem.getMenuId()
+								+ "', '" + path + "' )");
 				temp2.put(LINK_TYPE, "execDirectUrl");
 				temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=" + childElem.getMenuId());
 			} else if (childElem.getStaticPage() != null) {
@@ -716,8 +726,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				temp2.put(LINK_TYPE, "execDirectUrl");
 				temp2.put(SRC, DetailMenuModule.findFunctionalityUrl(childElem, contextName));
 			} else if (childElem.getExternalApplicationUrl() != null) {
-				temp2.put(HREF,
-						"javascript:callExternalApp('" + StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()) + "', '" + path + "')");
+				temp2.put(HREF, "javascript:callExternalApp('" + StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()) + "', '" + path
+						+ "')");
 				temp2.put(LINK_TYPE, "callExternalApp");
 				temp2.put(SRC, StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()));
 			} else if (childElem.isAdminsMenu() && childElem.getUrl() != null) {
@@ -734,8 +744,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					url = url.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
 					src = src.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
 					// if (!GeneralUtilities.isSSOEnabled()) {
-					url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE
-							+ "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "'";
+					url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&"
+							+ SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "'";
 					/*
 					 * } else { url = url + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" +
 					 * locale.getCountry() + "'"; }

@@ -91,6 +91,7 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 				dependency.put("urlName", paramUrlName);
 				dependency.put("hasDataDependency", false);
 				dependency.put("hasVisualDependency", false);
+				dependency.put("isLovDependency", false);
 				JSONArray visualDependencyConditions = new JSONArray();
 				dependency.put("visualDependencyConditions", visualDependencyConditions);
 
@@ -111,6 +112,8 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 						viewLabel = msgBuild.getI18nMessage(locale, viewLabel);
 						visualDependencyCondition.put("label", viewLabel);
 						visualDependencyConditions.put(visualDependencyCondition);
+					} else if (pd instanceof GetParametersForExecutionAction.ParameterForExecution.LovDependency) {
+						dependency.put("isLovDependency", true);
 					}
 				}
 

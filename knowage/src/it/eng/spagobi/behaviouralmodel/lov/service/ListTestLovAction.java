@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -35,6 +35,8 @@ import it.eng.spago.paginator.basic.PaginatorIFace;
 import it.eng.spago.paginator.basic.impl.GenericList;
 import it.eng.spago.paginator.basic.impl.GenericPaginator;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.lov.bo.DatasetDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.IJavaClassLov;
@@ -48,8 +50,8 @@ import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.services.DelegatedBasicListService;
 import it.eng.spagobi.commons.utilities.DataSourceUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONFailure;
@@ -70,7 +72,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
- * 
+ *
  */
 public class ListTestLovAction extends AbstractSpagoBIAction {
 
@@ -93,6 +95,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			// recover lov object
 			RequestContainer requestContainer = getRequestContainer();
 			SessionContainer session = requestContainer.getSessionContainer();
+			Map<String, String> paramFilled = (Map<String, String>) session.getAttribute(SpagoBIConstants.PARAMETERS_FILLED);
 			ModalitiesValue modVal = (ModalitiesValue) session.getAttribute(SpagoBIConstants.MODALITY_VALUE_OBJECT);
 			// get the lov provider
 			String looProvider = modVal.getLovProvider();
@@ -112,14 +115,26 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			List<String> colNames = new ArrayList<String>();
 			if (typeLov.equalsIgnoreCase("QUERY")) {
 				QueryDetail qd = QueryDetail.fromXML(looProvider);
-				// String pool = qd.getConnectionName();
-				String datasource = qd.getDataSource();
-				String statement = qd.getQueryDefinition();
+				// // String pool = qd.getConnectionName();
+				// String datasource = qd.getDataSource();
+				// String statement = qd.getQueryDefinition();
+
 				// execute query
 				try {
-					statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
-					// rowsSourceBean = (SourceBean) executeSelect(getRequestContainer(), getResponseContainer(), pool, statement, colNames);
-					rowsSourceBean = (SourceBean) executeSelect(getRequestContainer(), getResponseContainer(), datasource, statement, colNames);
+					// statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+					// // rowsSourceBean = (SourceBean) executeSelect(getRequestContainer(), getResponseContainer(), pool, statement, colNames);
+					// rowsSourceBean = (SourceBean) executeSelect(getRequestContainer(), getResponseContainer(), datasource, statement, colNames);
+
+					// statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+					// statement = StringUtilities.substituteParametersInString(statement, paramFilled, null, false);
+					// // rowsSourceBean = (SourceBean) executeSelect(getRequestContainer(), getResponseContainer(), pool, statement, colNames);
+					// rowsSourceBean = (SourceBean) executeSelect(getRequestContainer(), getResponseContainer(), datasource, statement, colNames);
+
+					String result = qd.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
+
+					rowsSourceBean = SourceBean.fromXMLString(result);
+					colNames = findFirstRowAttributes(rowsSourceBean);
+
 				} catch (Exception e) {
 					logger.error("Exception occurred executing query lov: ", e);
 					String stacktrace = e.toString();
@@ -136,7 +151,8 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			} else if (typeLov.equalsIgnoreCase("FIXED_LIST")) {
 				FixedListDetail fixlistDet = FixedListDetail.fromXML(looProvider);
 				try {
-					String result = fixlistDet.getLovResult(profile, null, null, null);
+					// String result = fixlistDet.getLovResult(profile, null, null, null);
+					String result = fixlistDet.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 					if (!rowsSourceBean.getName().equalsIgnoreCase("ROWS")) {
@@ -157,7 +173,8 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			} else if (typeLov.equalsIgnoreCase("SCRIPT")) {
 				ScriptDetail scriptDetail = ScriptDetail.fromXML(looProvider);
 				try {
-					String result = scriptDetail.getLovResult(profile, null, null, null);
+					// String result = scriptDetail.getLovResult(profile, null, null, null);
+					String result = scriptDetail.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
@@ -189,7 +206,8 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			} else if (typeLov.equalsIgnoreCase("DATASET")) {
 				DatasetDetail datasetClassDetail = DatasetDetail.fromXML(looProvider);
 				try {
-					String result = datasetClassDetail.getLovResult(profile, null, null, null);
+					// String result = datasetClassDetail.getLovResult(profile, null, null, null);
+					String result = datasetClassDetail.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
@@ -276,8 +294,41 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 	}
 
 	/**
+	 * Create a list of mocked simple parameters from the input map (key: parameterName, value: parameterValue)
+	 *
+	 * @return the list of mocked BIObjectParameters
+	 */
+	public List<BIObjectParameter> toMockedBIObjectParameters(Map<String, String> parameters) {
+		List<BIObjectParameter> objParams;
+		if (parameters == null || parameters.isEmpty()) {
+			return null;
+		} else {
+			objParams = new ArrayList<BIObjectParameter>(parameters.size());
+			for (String parameterName : parameters.keySet()) {
+				String parameterValue = parameters.get(parameterName);
+				if (parameterValue == null) {
+					logger.error("There is no name-value mapping for parameter [" + parameterName + "].");
+					throw new SpagoBIRuntimeException("Error while retrieving the value for parameter [" + parameterName + "].");
+				} else {
+					BIObjectParameter objParam = new BIObjectParameter();
+					Parameter parameterDefinition = new Parameter();
+					parameterDefinition.setLabel(parameterName);
+					objParam.setParameter(parameterDefinition);
+					if (parameterValue.contains(",")) {
+						objParam.setParameterValues(Arrays.asList(parameterValue.split(",")));
+					} else {
+						objParam.setParameterValues(Arrays.asList(parameterValue));
+					}
+					objParams.add(objParam);
+				}
+			}
+			return objParams;
+		}
+	}
+
+	/**
 	 * Executes a select statement.
-	 * 
+	 *
 	 * @param requestContainer
 	 *            The request container object
 	 * @param responseContainer
@@ -288,9 +339,9 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 	 *            the datasource
 	 * @param columnsNames
 	 *            the columns names
-	 * 
+	 *
 	 * @return A generic object containing the Execution results
-	 * 
+	 *
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */
@@ -329,7 +380,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 	/**
 	 * Find the attributes of the first row of the xml passed at input: this xml is assumed to be: &lt;ROWS&gt; &lt;ROW attribute_1="value_of_attribute_1" ...
 	 * /&gt; .... &lt;ROWS&gt;
-	 * 
+	 *
 	 * @param rowsSourceBean
 	 *            The sourcebean to be parsed
 	 * @return the list of the attributes of the first row
