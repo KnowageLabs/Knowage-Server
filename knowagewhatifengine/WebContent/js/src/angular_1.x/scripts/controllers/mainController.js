@@ -143,15 +143,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 					modelConfig).then(
 					function(response) {
 						$scope.table = $sce.trustAsHtml(response.data.table);
-						if($scope.modelConfig){
 						
-							if(Math.abs(sentStartRow)!==Math.abs(response.data.modelConfig.startRow)){
-								
-									$scope.scrollTo(response.data.modelConfig.startRow,response.data.modelConfig.startColumn);
-								}
-								
-							
-						}
 						
 						
 						$scope.modelConfig = response.data.modelConfig;
