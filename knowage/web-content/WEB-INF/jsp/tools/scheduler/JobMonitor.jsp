@@ -77,6 +77,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 					{"label":translate.load("sbi.scheduler.activity"),"name":"jobName"},
 					{"label":translate.load("sbi.scheduler.schedulation"),"name":"triggerName"},
 					{"label":translate.load("sbi.scheduler.schedulationtype"),"name":"triggerType"},
+					{"label":translate.load("sbi.scheduler.schedulation.paused.short"),"name":"triggerIsPausedString"},
 					{"label":translate.load("sbi.generic.document"),"name":"documentName"}
 					]'
 				columnsSearch = '["executionDate","jobName","triggerName","triggerType","documentName"]'

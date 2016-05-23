@@ -1007,7 +1007,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 								//carico le informazioni dei documenti
 								activityEventCtrl.event.documents=d.documents;
 							
-								activityEventCtrl.selectedDocument = (activityEventCtrl.event.documents == undefined || activityEventCtrl.event.documents.length != 0) ? activityEventCtrl.event.documents[0] : [];
+								activityEventCtrl.setSelectedDocument();
 							}
 						})
 						.error(function(data, status, headers, config) {
@@ -1024,7 +1024,21 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				};
 				
 				activityEventCtrl.setSelectedDocument = function() {
-					activityEventCtrl.selectedDocument = (activityEventCtrl.event.documents == undefined || activityEventCtrl.event.documents.length != 0)? activityEventCtrl.event.documents[0] : [];
+					activityEventCtrl.selectedDocument = (activityEventCtrl.event.documents == undefined || activityEventCtrl.event.documents.length != 0) ? activityEventCtrl.event.documents[0] : [];
+					if(!activityEventCtrl.selectedDocument.useFixedRecipients){
+						activityEventCtrl.selectedDocument.useFixedRecipients = false;
+					}
+					if(!activityEventCtrl.selectedDocument.useDataset){
+						activityEventCtrl.selectedDocument.useDataset = false;
+					}
+					if(!activityEventCtrl.selectedDocument.useExpression){
+						activityEventCtrl.selectedDocument.useExpression = false;
+					}
+					if(!activityEventCtrl.selectedDocument.useFixedRecipients
+							&& !activityEventCtrl.selectedDocument.useDataset
+							&& !activityEventCtrl.selectedDocument.useExpression){
+						activityEventCtrl.selectedDocument.useFixedRecipients = true;
+					}
 				};
 				
 				activityEventCtrl.triggerEvent = function() {
@@ -1319,6 +1333,39 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				activityEventCtrl.cancel = function($event) {
 					$mdDialog.cancel();
 				};
+				
+				activityEventCtrl.updateUseFixedRecipients = function() {
+					if(!activityEventCtrl.selectedDocument.useFixedRecipients
+							&& !activityEventCtrl.selectedDocument.useDataset
+							&& !activityEventCtrl.selectedDocument.useExpression){
+						activityEventCtrl.selectedDocument.useFixedRecipients = true;
+					}else{
+						activityEventCtrl.selectedDocument.useDataset = false;
+						activityEventCtrl.selectedDocument.useExpression = false;
+					}
+				}
+				
+				activityEventCtrl.updateUseDataset = function() {
+					if(!activityEventCtrl.selectedDocument.useFixedRecipients
+							&& !activityEventCtrl.selectedDocument.useDataset
+							&& !activityEventCtrl.selectedDocument.useExpression){
+						activityEventCtrl.selectedDocument.useDataset = true;
+					}else{
+						activityEventCtrl.selectedDocument.useFixedRecipients = false;
+						activityEventCtrl.selectedDocument.useExpression = false;
+					}
+				}
+				
+				activityEventCtrl.updateUseExpression = function() {
+					if(!activityEventCtrl.selectedDocument.useFixedRecipients
+							&& !activityEventCtrl.selectedDocument.useDataset
+							&& !activityEventCtrl.selectedDocument.useExpression){
+						activityEventCtrl.selectedDocument.useExpression = true;
+					}else{
+						activityEventCtrl.selectedDocument.useFixedRecipients = false;
+						activityEventCtrl.selectedDocument.useDataset = false;
+					}
+				}
 				
 				activityEventCtrl.initJobsValues(jobName, jobGroup, triggerName, triggerGroup);
 			},
