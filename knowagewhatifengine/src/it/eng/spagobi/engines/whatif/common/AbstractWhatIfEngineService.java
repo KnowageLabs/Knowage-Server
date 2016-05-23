@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
-import org.olap4j.Axis;
 import org.olap4j.metadata.Member;
 import org.pivot4j.PivotModel;
 import org.pivot4j.sort.SortCriteria;
@@ -68,11 +67,12 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 
 		try {
 			SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) model;
+
 			ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
 			// adds the calculated fields before rendering the model
+
 			sbiModel.applyCal();
-			modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
-			modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
+
 			serializedModel = serialize(new PivotObjectForRendering(getWhatIfEngineInstance().getOlapConnection(), sbiModel, getWhatIfEngineInstance()
 					.getModelConfig()));
 			SortCriteria sortCriteria = model.getSortCriteria();
