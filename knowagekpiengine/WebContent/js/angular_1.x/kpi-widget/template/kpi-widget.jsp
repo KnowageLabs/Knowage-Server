@@ -44,6 +44,6 @@
 			target-value="targetValue"
 		></kpi-linear-gauge>
 		
-<!-- 		<nvd3 data="data" options="options" ></nvd3> -->
+		<nvd3 data="data" options="options" ></nvd3>
 	</div>
 </md-whiteframe>
