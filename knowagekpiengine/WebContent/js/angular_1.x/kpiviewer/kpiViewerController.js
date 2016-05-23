@@ -12,9 +12,9 @@
 	var kpiViewerModule = angular.module('kpiViewerModule');
 
 	kpiViewerModule.controller('kpiViewerController', 
-			['$scope', 'documentData', 'sbiModule_restServices','sbiModule_translate','sbiModule_config', 'kpiViewerServices','$q','$mdDialog','$timeout', kpiViewerControllerFn]);
+			['$scope', 'documentData', 'sbiModule_restServices','sbiModule_translate','sbiModule_config', 'kpiViewerServices','$q','$mdDialog','$timeout','$mdToast', kpiViewerControllerFn]);
 
-	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices,sbiModule_translate, sbiModule_config, kpiViewerServices,$q,$mdDialog,$timeout) {
+	function kpiViewerControllerFn($scope, documentData, sbiModule_restServices,sbiModule_translate, sbiModule_config, kpiViewerServices,$q,$mdDialog,$timeout,$mdToast) {
 		$scope.documentData = documentData;
 		$scope.kpiOptions = documentData.template.chart.options;
 		$scope.kpiItems = [];
@@ -44,8 +44,7 @@
 						for(var i = 0; i < array.length; i++){
 							var kpiArray = JSON.parse(array[i])
 							
-							if(kpiArray.length > 0 && kpiArray[kpiArray.length-1].kpiId == kpiItem.id 
-									&& kpiArray[kpiArray.length-1].kpiVersion == kpiItem.version){
+							if(kpiArray.length > 0 && kpiArray[kpiArray.length-1].kpiId == kpiItem.id ){
 								if(kpiArray[kpiArray.length-1].manualValue!=undefined)
 									kpiItem.value = kpiArray[kpiArray.length-1].manualValue;
 								else
@@ -72,6 +71,7 @@
 				$scope.gaugeTargetValue = null;
 				$scope.loadKpiValues = response.data.loadKpiValue;
 				if(chart.type == "kpi") {
+					if(response.data.info!=undefined){
 					if(Array.isArray(JSON.parse(response.data.info))) {
 						var templateKpi = $scope.documentData.template.chart.data.kpi;
 						if(!Array.isArray(templateKpi)) {
@@ -104,6 +104,7 @@
 							}
 						}
 					}
+					}
 
 					
 					$scope.loadKpiValue();
@@ -114,35 +115,42 @@
 		};
 		
 		$scope.openEdit = function(kpiItem){
-			var deferred = $q.defer();
-			$mdDialog.show({
-				controller: dialogController,
-				templateUrl: currentScriptPath + '../kpi-widget/template/kpi-widget-editValue.jsp',
-				clickOutsideToClose:true,
-				preserveScope:true,
-				locals: {
-					items: deferred,
-					label:kpiItem.name,
-					value:kpiItem.value,
-					targetValue:kpiItem.targetValue,
-					valueSeries:kpiItem.valueSeries[kpiItem.valueSeries.length-1]
-				}
-			})
-			.then(function(answer) {
-				
-				return deferred.resolve($scope.selectedFunctionalities);
-			}, function() {
-				//$scope.loadKpiValue();
-				if(deferred.promise.$$state.value!=undefined){
-					kpiItem.value = deferred.promise.$$state.value.value;
-				}
-				if(deferred.promise.$$state.comment!=undefined){
-					kpiItem.valueSeries[$scope.valueSeries.length-1].manualNote = deferred.promise.$$state.value.comment;
-				}
-				$scope.status = 'You cancelled the dialog.';
-			});
 			
-			return deferred.promise;
+			if(kpiItem.value!=undefined){
+				var deferred = $q.defer();
+				
+				$mdDialog.show({
+					controller: dialogController,
+					templateUrl: currentScriptPath + '../kpi-widget/template/kpi-widget-editValue.jsp',
+					clickOutsideToClose:true,
+					preserveScope:true,
+					locals: {
+						items: deferred,
+						label:kpiItem.name,
+						value:kpiItem.value,
+						targetValue:kpiItem.targetValue,
+						valueSeries:kpiItem.valueSeries[kpiItem.valueSeries.length-1]
+					}
+				})
+				.then(function(answer) {
+					
+					return deferred.resolve($scope.selectedFunctionalities);
+				}, function() {
+					//$scope.loadKpiValue();
+					if(deferred.promise.$$state.value!=undefined){
+						kpiItem.value = deferred.promise.$$state.value.value;
+					}
+					if(deferred.promise.$$state.comment!=undefined){
+						kpiItem.valueSeries[$scope.valueSeries.length-1].manualNote = deferred.promise.$$state.value.comment;
+					}
+					$scope.status = 'You cancelled the dialog.';
+				});
+				
+				return deferred.promise;
+			
+			}else{
+				$scope.showAction($scope.translate.load('sbi.kpi.widget.missingvalue'));
+			}
 		}
 		
 		  
@@ -294,7 +302,21 @@
 		     
 		};
 		
-		
+		$scope.showAction = function(text) {
+			var toast = $mdToast.simple()
+			.content(text)
+			.action('OK')
+			.highlightAction(false)
+			.hideDelay(3000)
+			.position('top')
+
+			$mdToast.show(toast).then(function(response) {
+
+				if ( response == 'ok' ) {
+
+				}
+			});
+		};
 		$scope.exportScorecardPDF=function(){ 
 			
 			var oldExpanderStatus={};

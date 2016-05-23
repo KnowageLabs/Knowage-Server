@@ -157,7 +157,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 			for(var i=0;i<response.data.length;i++){
 				var obj = {};
 				obj["name"]=response.data[i].name;
-				obj["version"]=response.data[i].version;
+				//obj["version"]=response.data[i].version;
 				if(response.data[i].category!=undefined){
 					obj["valueCd"] = response.data[i].category.valueCd;
 				}
@@ -345,7 +345,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 			for(var i=0;i<$scope.selectedKpis.length;i++){
 				var kpiObject = {};
 				kpiObject["id"] = $scope.selectedKpis[i].id;
-				kpiObject["version"] =  $scope.selectedKpis[i].version;
+				//kpiObject["version"] =  $scope.selectedKpis[i].version;
 				kpiObject["vieweas"] = $scope.selectedKpis[i].vieweAs;
 				if($scope.selectedKpis[i].rangeMinValue>=$scope.selectedKpis[i].rangeMaxValue || isNaN($scope.selectedKpis[i].rangeMinValue) || isNaN($scope.selectedKpis[i].rangeMaxValue)){
 					return null;

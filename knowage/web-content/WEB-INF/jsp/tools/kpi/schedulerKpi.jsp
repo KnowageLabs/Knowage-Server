@@ -137,7 +137,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		<md-whiteframe class="md-whiteframe-4dp" layout="row"  ng-if="expired">
 		   <p flex>{{translate.load("sbi.kbi.scheduler.error.expired.cron.interval")}}</p>
-		   <md-button    ng-click="closeExpired()"  >  {{translate.load("sbi.general.ok")}} </md-button>
+		   <md-button    ng-click="closeExpired()"  > {{translate.load("sbi.general.ok")}} </md-button>
  	 	</md-whiteframe>
 		<md-tabs flex md-selected='selectedTab.tab'>
 				<md-tab id="tab1" >

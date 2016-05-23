@@ -17,17 +17,17 @@
  */
 package it.eng.knowage.engine.util;
 
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.Scorecard;
 import it.eng.spagobi.services.serialization.JsonConverter;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class KpiEngineDataUtil extends AbstractHibernateDAO {
 	public static transient Logger logger = Logger.getLogger(KpiEngineDataUtil.class);
@@ -57,7 +57,7 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 					JSONObject temp = array.getJSONObject(i);
 					JSONObject tempResult = new JSONObject();
 
-					Kpi kpi = DAOFactory.getKpiDAO().loadKpi(temp.getInt("id"), temp.getInt("version"));
+					Kpi kpi = DAOFactory.getKpiDAO().loadLastActiveKpi(temp.getInt("id"));
 					if (DAOFactory.getKpiDAO().valueTargetbyKpi(kpi) != null) {
 						Double valueTarget = new Double(DAOFactory.getKpiDAO().valueTargetbyKpi(kpi));
 						tempResult.put("target", valueTarget);

@@ -17,18 +17,6 @@
  */
 package it.eng.knowage.engine.kpi.api;
 
-import it.eng.knowage.engine.kpi.KpiEngineInstance;
-import it.eng.knowage.engine.util.KpiEngineDataUtil;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.kpi.bo.KpiValue;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,6 +37,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import it.eng.knowage.engine.kpi.KpiEngineInstance;
+import it.eng.knowage.engine.util.KpiEngineDataUtil;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.kpi.bo.KpiValue;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/jsonKpiTemplate")
 @ManageAuthorization
@@ -116,8 +116,7 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 						}
 
 					}
-					kpiValues = DAOFactory.getKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), startDate.getTime(), new Date(),
-							attributesValues);
+					kpiValues = DAOFactory.getKpiDAO().findKpiValues(objTemp.getInt("id"), null, startDate.getTime(), new Date(), attributesValues);
 					String result2 = new ObjectMapper().writeValueAsString(kpiValues);
 					array.put(result2);
 				} else {
@@ -133,8 +132,7 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 							}
 
 						}
-						kpiValues = DAOFactory.getKpiDAO().findKpiValues(objTemp.getInt("id"), objTemp.getInt("version"), startDate.getTime(), new Date(),
-								attributesValues);
+						kpiValues = DAOFactory.getKpiDAO().findKpiValues(objTemp.getInt("id"), null, startDate.getTime(), new Date(), attributesValues);
 						String result2 = new ObjectMapper().writeValueAsString(kpiValues);
 						array.put(result2);
 					}
