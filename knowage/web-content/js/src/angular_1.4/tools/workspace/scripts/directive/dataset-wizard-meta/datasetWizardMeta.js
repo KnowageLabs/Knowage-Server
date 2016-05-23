@@ -44,6 +44,32 @@ function datasetWizardMetaController($scope){
     $scope.metaScopeFunctions={
     	datasetColumns:$scope.datasetColumns,
     	dsMetaProperty:$scope.dsMetaProperty,
-    	dsMetaValue   :$scope.dsMetaValue
+    	dsMetaValue   :$scope.dsMetaValue,
+    	filterMetaValues: function(value,row){
+    		console.log(row);
+    		row.dsMetaValue=[];
+    		if(value.toLowerCase()==="type".toLowerCase()){
+    			for(i=0;i<this.dsMetaValue.length;i++){
+    			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="string".toLowerCase()||
+    			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="double".toLowerCase()||
+    			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="integer".toLowerCase())
+    				 row.dsMetaValue.push(this.dsMetaValue[i]);
+    			
+    			}
+    			
+    		}else if(value.toLowerCase()==="fieldType".toLowerCase()){
+    			for(i=0;i<this.dsMetaValue.length;i++){
+       			 if(this.dsMetaValue[i].VALUE_CD.toLowerCase()==="attribute".toLowerCase()||
+       			    this.dsMetaValue[i].VALUE_CD.toLowerCase()==="measure".toLowerCase())
+       				 row.dsMetaValue.push(this.dsMetaValue[i]);
+       			
+       			}
+    			
+    		}else{
+    			
+    			angular.copy(this.dsMetaValue,row.dsMetaValue);
+    		}
+    		
+    	}
     };
 }
