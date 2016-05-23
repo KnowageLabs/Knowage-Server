@@ -153,11 +153,12 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
     	console.log($scope.selectedUser);
         if ($scope.dirtyForm) {
             $mdDialog.show($scope.confirm).then(function () {
+            	$scope.showme = true;
                 $scope.dirtyForm = false;
                 $scope.selectedUser = angular.copy(item);
                 $scope.setRoles();
                 $scope.setAttributes();
-                $scope.showme = true;
+               
                 $scope.selectedUser.confirm = $scope.selectedUser.password;
              
                 
@@ -227,9 +228,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 					$scope.getUsers();
 				}, 1000);
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
-				$scope.selectedUser={};
-				$scope.showme=false;
-				$scope.dirtyForm=false;	
+				$scope.cancel();
 			
     		}, function(response) {
     			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -245,9 +244,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 					$scope.getUsers();
 				}, 1000);
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
-				$scope.selectedUser={};
-				$scope.showme=false;
-				$scope.dirtyForm=false;	
+				$scope.cancel();
 			
     		}, function(response) {
     			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
