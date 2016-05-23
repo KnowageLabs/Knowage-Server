@@ -590,6 +590,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		
 		$scope.toggleDWVNext = function() {		
 						
+			console.log($scope.dataset);
+			
 			$scope.submit();
 			
 			if($scope.datasetWizardView>0&&$scope.datasetWizardView<4){
@@ -629,7 +631,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 					 * array of all category types that are available (i.e. 'Cat1').
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
-					$scope.category = $scope.datasetCategoryType[0].VALUE_NM;
+					$scope.chooseCategory($scope.datasetCategoryType[0]);
 				} else if(b=="?DOMAIN_TYPE=DS_GEN_META_PROPERTY"){
 					angular.copy(response.data,$scope.dsGenMetaProperty)
 				} else if(b=="?DOMAIN_TYPE=DS_META_PROPERTY"){

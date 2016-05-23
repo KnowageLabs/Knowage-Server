@@ -68,7 +68,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * 							(ALL, COCKPIT, GEO).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	(whereAreWeComingFrom == "NewCockpit") ? $scope.currentOptionMainMenu = "analysis" : $scope.currentOptionMainMenu = "recent";	
+	(whereAreWeComingFrom == "NewCockpit") ? $scope.currentOptionMainMenu = "analysis" : $scope.currentOptionMainMenu = "datasets";	
 	
 	$scope.isDocumentFavorite = false;
 
@@ -193,6 +193,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 		 */
 		$scope.dataset.catTypeVn = category.VALUE_CD;
 		$scope.dataset.catTypeId = category.VALUE_ID;
+		
 	}
 	
 	/**
