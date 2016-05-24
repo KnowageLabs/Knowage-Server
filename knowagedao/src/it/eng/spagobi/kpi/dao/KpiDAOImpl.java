@@ -785,17 +785,24 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public Kpi loadLastActiveKpi(final Integer id) {
-		Session tmpSession = getSession();
-		Transaction tx = tmpSession.beginTransaction();
+		
+		
+		return executeOnTransaction(new IExecuteOnTransaction<Kpi>() {
+			@Override
+			public Kpi execute(Session session) throws Exception {
+				Session tmpSession = getSession();
+				String hql = " from SbiKpiKpi WHERE sbiKpiKpiId.id =? AND active='T'";
+				Query q = tmpSession.createQuery(hql);
+				q.setInteger(0, id);
+				SbiKpiKpi kpi = (SbiKpiKpi) q.uniqueResult();
 
-		String hql = " from SbiKpiKpi WHERE sbiKpiKpiId.id =? AND active='T'";
-		Query q = tmpSession.createQuery(hql);
-		q.setInteger(0, id);
-		SbiKpiKpi kpi = (SbiKpiKpi) q.uniqueResult();
+				Kpi kpife = from(kpi, (SbiKpiThreshold) tmpSession.load(SbiKpiThreshold.class, kpi.getThresholdId()), true);
 
-		Kpi kpife = from(kpi, (SbiKpiThreshold) tmpSession.load(SbiKpiThreshold.class, kpi.getThresholdId()), true);
+				return kpife;
+			}
+		}
+		);
 
-		return kpife;
 	}
 
 	@Override
