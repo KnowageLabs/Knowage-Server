@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -132,7 +132,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * To be user by SpagoBI core ONLY. The user identifier in the output object will match this syntax: WORKFLOW_USER_ID_PREFIX + tenant name
-	 * 
+	 *
 	 * @return the user profile for the workflow
 	 */
 	public static final UserProfile createWorkFlowUserProfile() {
@@ -150,7 +150,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * To be user by SpagoBI core ONLY. The user identifier in the output object will match this syntax: SCHEDULER_USER_ID_PREFIX + tenant name
-	 * 
+	 *
 	 * @return the user profile for the scheduler
 	 */
 	public static final UserProfile createSchedulerUserProfile() {
@@ -194,18 +194,20 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getFunctionalities()
 	 */
+	@Override
 	public Collection getFunctionalities() throws EMFInternalError {
 		return functionalities;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getFunctionalitiesByRole(java.lang.String)
 	 */
+	@Override
 	public Collection getFunctionalitiesByRole(String arg0) throws EMFInternalError {
 		return new ArrayList();
 
@@ -213,9 +215,10 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getRoles()
 	 */
+	@Override
 	public Collection getRoles() throws EMFInternalError {
 		return this.roles;
 	}
@@ -243,34 +246,37 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserAttribute(java.lang.String)
 	 */
+	@Override
 	public Object getUserAttribute(String attributeName) throws EMFInternalError {
 		return userAttributes.get(attributeName);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserAttributeNames()
 	 */
+	@Override
 	public Collection getUserAttributeNames() {
 		return userAttributes.keySet();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserUniqueIdentifier()
 	 */
+	@Override
 	public Object getUserUniqueIdentifier() {
 		return userUniqueIdentifier;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserName()
 	 */
 	public Object getUserName() {
@@ -282,7 +288,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserId()
 	 */
 	public Object getUserId() {
@@ -294,27 +300,29 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#hasRole(java.lang.String)
 	 */
+	@Override
 	public boolean hasRole(String roleName) throws EMFInternalError {
 		return this.roles.contains(roleName);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteAction(java.lang.String)
 	 */
+	@Override
 	public boolean isAbleToExecuteAction(String actionName) throws EMFInternalError {
 		// first check if the actionName is a functionality...
-		if (this.functionalities.contains(actionName)) {
+		if (functionalities != null && functionalities.contains(actionName)) {
 			return true;
 		}
 		List<String> businessProcessNames = AuthorizationsBusinessMapper.getInstance().mapActionToBusinessProcess(actionName);
 		if (businessProcessNames != null) {
 			for (String businessProcess : businessProcessNames) {
-				if (this.functionalities.contains(businessProcess)) {
+				if (functionalities.contains(businessProcess)) {
 					return true;
 				}
 			}
@@ -324,7 +332,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteAction(java.lang.String)
 	 */
 	public boolean isAbleToExecuteService(String serviceUrl) throws EMFInternalError {
@@ -345,9 +353,10 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteModuleInPage(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public boolean isAbleToExecuteModuleInPage(String pageName, String moduleName) throws EMFInternalError {
 		String functionality = AuthorizationsBusinessMapper.getInstance().mapPageModuleToBusinessProcess(pageName, moduleName);
 		if (functionality != null) {
@@ -358,9 +367,10 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#setApplication(java.lang.String)
 	 */
+	@Override
 	public void setApplication(String arg0) throws EMFInternalError {
 	}
 
@@ -455,7 +465,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * To be user by external engines ONLY. The user identifier must match this syntax: SCHEDULER_USER_ID_PREFIX + tenant name
-	 * 
+	 *
 	 * @param userUniqueIdentifier
 	 *            The user identifier (SCHEDULER_USER_ID_PREFIX + tenant name)
 	 * @return the user profile for the scheduler
@@ -478,7 +488,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/**
 	 * To be user by external engines ONLY. The user identifier must match this syntax: WORKFLOW_USER_ID_PREFIX + tenant name
-	 * 
+	 *
 	 * @param userUniqueIdentifier
 	 *            The user identifier (WORKFLOW_USER_ID_PREFIX + tenant name)
 	 * @return the user profile for the workflow
