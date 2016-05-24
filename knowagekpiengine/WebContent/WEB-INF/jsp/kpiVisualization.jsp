@@ -254,7 +254,7 @@ author:
 	<%
 		} else if(model.equalsIgnoreCase("list")) {
 	%>
-	<kpi-list-document kpi-items="kpiItems"></kpi-list-document>
+	<kpi-list-document kpi-items="kpiItems" layout="row"></kpi-list-document>
 	<%
 		}
 	} else if(type.equalsIgnoreCase("scorecard")) {
