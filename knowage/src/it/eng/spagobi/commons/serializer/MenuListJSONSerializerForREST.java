@@ -109,6 +109,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	private static final String HREF_MANAGE_LOVS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp";
 	private static final String HREF_CACHE_MANAGEMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cache/cacheHome.jsp";
+	private static final String HREF_FUNCTIONS_CATALOG = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/functionsCatalog/functionsCatalog.jsp";
 
 	private static final String HREF_TEMPLATE_MANAGEMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/templateManagement.jsp";
 	private static final String HREF_IMPEXP_DOCUMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments/importExportDocuments.jsp";
@@ -383,8 +384,21 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			cacheManagement.put(TARGET, "_self");
 			cacheManagement.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_CACHE_MANAGEMENT + "');");
 			cacheManagement.put(LINK_TYPE, "execDirectUrl");
-			cacheManagement.put(FIRST_URL, contextName + HREF_HIERARCHIES_MANAGEMENT);
+			cacheManagement.put(FIRST_URL, contextName + HREF_CACHE_MANAGEMENT);
 			tempMenuList.put(cacheManagement);
+		}
+
+		if (isAbleTo(SpagoBIConstants.FUNCTIONS_CATALOG, funcs)) {
+			JSONObject functionsCatalog = new JSONObject();
+			functionsCatalog.put(ICON_CLS, "device_hub");
+			functionsCatalog.put(TOOLTIP, messageBuilder.getMessage("menu.FunctionsCatalog", locale));
+			functionsCatalog.put(ICON_ALIGN, "top");
+			functionsCatalog.put(SCALE, "large");
+			functionsCatalog.put(TARGET, "_self");
+			functionsCatalog.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_FUNCTIONS_CATALOG + "');");
+			functionsCatalog.put(LINK_TYPE, "execDirectUrl");
+			functionsCatalog.put(FIRST_URL, contextName + HREF_FUNCTIONS_CATALOG);
+			tempMenuList.put(functionsCatalog);
 		}
 
 		if (isAbleTo(SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL, funcs)) {
