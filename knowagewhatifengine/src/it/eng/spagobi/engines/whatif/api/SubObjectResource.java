@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,14 +23,17 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 @Path("/1.0/subobject")
 public class SubObjectResource extends AbstractWhatIfEngineService {
@@ -38,10 +41,28 @@ public class SubObjectResource extends AbstractWhatIfEngineService {
 	public static transient Logger logger = Logger.getLogger(AnalysisResource.class);
 
 	@POST
-	@Path("/{name}/{description}/{scope}")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public String save(@PathParam("name") String name, @PathParam("description") String description, @PathParam("scope") String scope) {
+	@Path("/")
+	public void save(@javax.ws.rs.core.Context HttpServletRequest req) {
+		String name = null;
+		String description = null;
+		String scope = null;
+		JSONObject jo;
+		String requestBody = null;
 		EngineAnalysisMetadata analysisMetadata = null;
+
+		try {
+			requestBody = RestUtilities.readBody(req);
+			jo = new JSONObject(requestBody);
+			name = jo.getString("name");
+			description = jo.getString("description");
+			scope = jo.getString("scope");
+		} catch (IOException e) {
+			logger.error("Error saving the subobject", e);
+			throw new SpagoBIRestServiceException("sbi.olap.subobject.save.error", getLocale(), "Error saving the subobject", e);
+		} catch (JSONException e) {
+			logger.error("Error saving the subobject", e);
+			throw new SpagoBIRestServiceException("sbi.olap.subobject.save.error", getLocale(), "Error saving the subobject", e);
+		}
 
 		logger.debug("IN");
 
@@ -66,14 +87,14 @@ public class SubObjectResource extends AbstractWhatIfEngineService {
 			result = saveAnalysisState();
 		} catch (SpagoBIEngineException e) {
 			logger.error("Error saving the subobject", e);
-			throw new SpagoBIRestServiceException("sbi.olap.save.analysis.error", getLocale(), "Error saving the subobject", e);
+			throw new SpagoBIRestServiceException("sbi.olap.subobject.save.error", getLocale(), "Error saving the subobject", e);
 		}
 		if (!result.trim().toLowerCase().startsWith("ok")) {
 			logger.error("Error saving the subobject " + result);
-			throw new SpagoBIRestServiceException("sbi.olap.save.analysis.error", getLocale(), "Error saving the subobject");
+			throw new SpagoBIRestServiceException("sbi.olap.subobject.save.error", getLocale(), "Error saving the subobject");
 		}
 
-		return getJsonSuccess();
+		// return getJsonSuccess();
 	}
 
 }
