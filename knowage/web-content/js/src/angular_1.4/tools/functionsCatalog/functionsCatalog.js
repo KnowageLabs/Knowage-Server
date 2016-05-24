@@ -206,13 +206,15 @@ function functionsCatalogFunction(sbiModule_translate, sbiModule_restServices, $
 	
 	$scope.applyItem=function(item,event){ 
 		
+		sbiModule_restServices.alterContextPath("knowagedataminingengine");
 		var functionId=item.id;
 		
 		sbiModule_restServices.get("executeFunction",functionId)
 		.success(function(result)
 		{
 			$log.info("Execution o function "+ functionId+" started, result:", result);			
-				
+			sbiModule_restServices.alterContextPath("knowage");
+	
 		});
 		
 		
