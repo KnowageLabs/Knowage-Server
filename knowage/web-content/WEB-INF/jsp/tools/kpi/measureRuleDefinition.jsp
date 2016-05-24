@@ -86,6 +86,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tab id="tab2"  md-on-select="loadMetadata()" ng-disabled="!detailProperty.dataSourcesIsSelected">
        				<md-tab-label>{{translate.load("sbi.execution.executionpage.toolbar.metadata")}}</md-tab-label>
         			<md-tab-body  >
+        			  <div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircularMetadata" layout-fill>
+					     	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
+					 </div>
         			<%@include	file="./measureRuleTemplate/metadataTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
