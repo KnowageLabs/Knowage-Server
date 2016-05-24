@@ -40,8 +40,18 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	$scope.allHeadersForStep3Preview = [];
 	$scope.allRowsForStep3Preview = [];
 	
+	/**
+	 * The validation status after submitting the Step 2.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
 	$scope.validationStatus = false;
-	    
+	
+	/**
+	 * An indicator if the user previously (already) uploaded an XLS/CSV file, in the case of re-browsing for a new one (this one needs to be uploaded, as well).
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.prevUploadedFile = null;
+	
     $scope.markNotDerived=function(datasets){
     	
     	for(i=0;i<datasets.length;i++){
@@ -812,6 +822,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 					/**
 					 * NOTE: Temporary solution!
 					 * WORKAROUND
+					 * TODO
 					 * @author Danilo Ristovski
 					 */
 					$mdDialog.cancel();
@@ -958,6 +969,12 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 							$scope.file={};
 							$scope.dataset.fileType = data.fileType;
 							$scope.dataset.fileName = data.fileName;
+							
+							/**
+							 * Whenever we upload a file, keep the track of its name, in order to indicate when the new one is browsed but not uploaded.
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */
+							$scope.prevUploadedFile = $scope.dataset.fileName;
 						}
 					}).error(function(data, status, headers, config) {
 						console.info("[UPLOAD]: FAIL! Status: "+status);
@@ -1036,14 +1053,21 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		}
 		
 		/**
-		 * Handle the title content (tooltip) of the 'Next' button in the Step 1 of the Dataset wizard (dialog) according to the state of data that is necessary 
-		 * for the creation of the Dataset.
+		 * Handle the title content (tooltip) of the 'Next' button in the Step 1 and the Step 4 of the Dataset wizard (dialog) according to the state of data 
+		 * that is necessary for the creation of the Dataset.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		$scope.datasetWizStep1NextButtonTitle = function() {
 			
-			if (!$scope.dataset.fileName) {
-				return 'Please upload XLS or CSV file in order to proceed with the dataset creation';
+			var notValidStep1 = !$scope.dataset.fileName || $scope.prevUploadedFile!=$scope.fileObj.fileName;
+			
+			if ($scope.datasetWizardView==1 && notValidStep1) {
+				if (!$scope.dataset.fileName) {
+					return 'Please upload XLS or CSV file in order to proceed with the dataset creation';
+				}
+				else if ($scope.prevUploadedFile!=$scope.fileObj.fileName) {
+					return 'Please upload newly browsed XLS or CSV file in order to proceed with the dataset creation';
+				}
 			}
 			else if ($scope.datasetWizardView==4) {
 				if ($scope.dataset.name=='') {
@@ -1060,6 +1084,27 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 				return 'Proceed to the next step';
 			}
 			
+		}
+		
+		/**
+		 * Handle the title content (tooltip) of the 'Upload' button in the Step 1 of the Dataset wizard (dialog) according to the state of data that is necessary 
+		 * for the creation of the Dataset.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$scope.datasetWizStep1UploadButtonTitle = function() {
+			
+			if (!$scope.fileObj.fileName) {
+				return 'Please browse for the XLS or CSV file in order to proceed with the dataset creation';
+			}
+			else {
+				return 'Upload the browsed file';
+			}
+			
+		}		
+		
+		$scope.nextOrSaveButtonCondition = function() {
+			return ($scope.datasetWizardView==1 && (!$scope.dataset.fileName || $scope.prevUploadedFile!=$scope.fileObj.fileName)) 
+						|| ($scope.datasetWizardView==4 && ($scope.dataset.name=='' || $scope.dataset.persist && $scope.dataset.tableName==''));
 		}
 		
 	}

@@ -11,7 +11,7 @@
 			<md-button 	class="" ng-click="toggleDWVBack()" ng-if="datasetWizardView>1" title="Go to the previous step"> BACK </md-button>
 			
 			<md-button 	class="" ng-click="toggleDWVNext()" 
-						ng-disabled="!dataset.fileName || datasetWizardView==4 && (dataset.name=='' || dataset.persist && dataset.tableName=='')"
+						ng-disabled="nextOrSaveButtonCondition()"
 						title="{{datasetWizStep1NextButtonTitle()}}"> 
 				{{datasetWizardView==4 ? 'SAVE' : 'NEXT' }} 
 			</md-button>
@@ -66,12 +66,15 @@
 						</div>
 			               
 						<div layout="row" layout-wrap>
-			                  <label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.wizard.selectFile")}}:</label>
-			                  <file-upload 	flex ng-model="fileObj" id="datasetFile" ng-click="fileChange();checkChange()" 
+		                  	<label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.wizard.selectFile")}}:</label>
+		                  	<file-upload 	flex ng-model="fileObj" id="datasetFile" ng-click="fileChange();checkChange()" 
 			                  				title="Browse for the XLS or CSV file"></file-upload>
-			                  <div class="uploadButton">
-			                     <md-button ng-click="uploadFile()" class="md-raised">UPLOAD</md-button>
-			                  </div>
+		                  	<div class="uploadButton">
+			                    <md-button 	ng-click="uploadFile()" class="md-raised" 
+			                     			ng-disabled="!fileObj.fileName" title="{{datasetWizStep1UploadButtonTitle()}}">
+	                     			UPLOAD
+             					</md-button>
+		                  	</div>
 						</div>
 			               
 					</form>

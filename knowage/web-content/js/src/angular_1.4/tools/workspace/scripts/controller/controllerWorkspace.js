@@ -149,10 +149,6 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 		
 	}
 	
-	/*$scope.checkChange = function() {
-		console.log($scope.fileObj);
-	}*/
-	
 	$scope.initializeDatasetWizard();
 	
 	/**
