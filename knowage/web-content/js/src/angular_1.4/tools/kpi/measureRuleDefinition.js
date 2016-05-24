@@ -457,6 +457,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 	$scope.translate=sbiModule_translate;
 
 	$scope.newMeasureFunction=function(){
+		$scope.showCircularMetadata = true;	
 		angular.copy($scope.emptyRule,$scope.currentRule);
 		angular.copy($scope.emptyRule,$scope.originalRule);
 		angular.copy($scope.emptyProperty,$scope.detailProperty);
@@ -499,6 +500,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 	};
 
 	$scope.measureClickFunction=function(item){
+		$scope.showCircularMetadata = true;	
 		$scope.loadRuleById(item.ruleId,item.ruleVersion,false);
 	};
 
