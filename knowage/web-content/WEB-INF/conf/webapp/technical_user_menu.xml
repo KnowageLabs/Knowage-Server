@@ -139,6 +139,9 @@
 			<ITEM	title="#menu.LayersCatalogue"
 					functionality="GeoLayersManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/layer/layerCatalogue.jsp" />		
+			<ITEM 	title="#menu.FunctionsCatalog" 
+					functionality="FunctionsCatalog"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/functionsCatalog/functionsCatalog.jsp" />				
 		
 			<ITEM	title="#menu.glossary.business"
 					functionality="ManageGlossaryBusiness"
