@@ -223,7 +223,16 @@
         <class-cache class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" usage="nonstrict-read-write"/>
         <class-cache class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole" usage="nonstrict-read-write"/>
      
-     
+     	
+     	<!-- Function catalog mapping -->  
+     	 <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiCatalogFunction.hbm.xml" />
+         <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionInputVariable.hbm.xml" />
+     	 <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionInputDataset.hbm.xml" />
+         <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionOutput.hbm.xml" />
+
+     	
+     	
+     	
 
         <!-- 
         <class-cache class="it.eng.spagobi.commons.metadata.SbiExtRoles" usage="read-only"/>
