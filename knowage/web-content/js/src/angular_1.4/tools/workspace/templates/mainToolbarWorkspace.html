@@ -19,7 +19,8 @@
 				</md-button>
 		
 				<md-button 	ng-if="currentOptionMainMenu=='datasets' && currentDatasetsTab=='myDataSet'" 
-							ng-click="addNewFileDataset()" class="md-fab md-mini md-ink-ripple" style="top:0px;right:-15px" ng-cloak>
+							ng-click="addNewFileDataset()" class="md-fab md-mini md-ink-ripple" style="top:0px;right:-15px" 
+							ng-cloak title="Create a new Dataset">
 					<md-icon md-font-icon="fa fa-plus"></md-icon>
 				</md-button>
 		
@@ -38,7 +39,7 @@
 				-->
 				
 				<md-button 	 ng-if="currentOptionMainMenu=='analysis'" ng-click="addNewAnalysisDocument()" ng-cloak
-							class="addNewDocumentButton md-fab md-mini md-ink-ripple" title="Add a new Cockpit document"> 
+							class="addNewDocumentButton md-fab md-mini md-ink-ripple" title="Create a new Cockpit document"> 
 					<md-icon md-menu-origin md-font-icon="fa fa-plus" class="md-primary"></md-icon>
 				</md-button>
 				

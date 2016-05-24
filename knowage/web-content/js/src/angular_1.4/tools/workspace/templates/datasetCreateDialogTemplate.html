@@ -8,9 +8,15 @@
 	         
 			<span flex></span> 
 	         
-			<md-button class="" ng-click="toggleDWVBack()" ng-if="datasetWizardView>1"> BACK </md-button>
-			<md-button class="" ng-click="toggleDWVNext()" ng-disabled="!dataset.fileName"> NEXT </md-button>
-			<md-button class="" ng-click="closeDatasetCreateDialog()"> CLOSE </md-button>
+			<md-button 	class="" ng-click="toggleDWVBack()" ng-if="datasetWizardView>1" title="Go to the previous step"> BACK </md-button>
+			
+			<md-button 	class="" ng-click="toggleDWVNext()" 
+						ng-disabled="!dataset.fileName || datasetWizardView==4 && (dataset.name=='' || dataset.persist && dataset.tableName=='')"
+						title="{{datasetWizStep1NextButtonTitle()}}"> 
+				{{datasetWizardView==4 ? 'SAVE' : 'NEXT' }} 
+			</md-button>
+			
+			<md-button class="" ng-click="closeDatasetCreateDialog()" title="Close the dialog"> CLOSE </md-button>
             
 		</div>
       
@@ -61,7 +67,8 @@
 			               
 						<div layout="row" layout-wrap>
 			                  <label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.wizard.selectFile")}}:</label>
-			                  <file-upload flex ng-model="fileObj" id="datasetFile" ng-click="fileChange();checkChange()"></file-upload>
+			                  <file-upload 	flex ng-model="fileObj" id="datasetFile" ng-click="fileChange();checkChange()" 
+			                  				title="Browse for the XLS or CSV file"></file-upload>
 			                  <div class="uploadButton">
 			                     <md-button ng-click="uploadFile()" class="md-raised">UPLOAD</md-button>
 			                  </div>
@@ -278,13 +285,16 @@
 		         
 				<md-content class="loadFilePadding">
 		         	
-					<form>
+					<form name="formForSaving">
 			               
 						<div layout="row" layout-wrap>
 			                  <div flex>
-			                     <md-input-container class="small counter">
-			                        <label>Name</label> 
-			                        <input ng-model="dataset.name">
+			                     <md-input-container class="md-block">
+			                        <label>Name</label> 			                        
+			                        <input type="text" ng-model="dataset.name">
+		                         	<div  ng-messages="formForSaving.lbl.$error" ng-show="dataset.name==''">
+				                        <div ng-messages="required">Please enter a value for this field.</div>
+						          	</div>
 			                     </md-input-container>
 			                  </div>
 						</div>
@@ -302,7 +312,7 @@
 	                  		<label class="checkboxPadding">Persist:</label> 
 		                  		<md-input-container class="small counter">
 		                     		<md-checkbox 	aria-label="Checkbox 2" 
-			                     				ng-model="dataset.persist" ng-checked="">
+			                     					ng-model="dataset.persist" ng-checked="">
 									</md-checkbox>
 		                  		</md-input-container>
 						</div>
@@ -311,7 +321,10 @@
 			                  <div flex>
 			                     <md-input-container class="small counter">
 			                        <label>Table name</label> 
-			                        <input ng-model="dataset.tableName">
+			                        <input ng-model="dataset.tableName" ng-disabled="!dataset.persist">
+			                        <div  ng-messages="formForSaving.lbl.$error" ng-show="dataset.persist && dataset.tableName==''">
+				                        <div ng-messages="required">Please enter a value for this field.</div>
+						          	</div>
 			                     </md-input-container>
 			                  </div>
 						</div>

@@ -41,7 +41,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	$scope.allRowsForStep3Preview = [];
 	
 	$scope.validationStatus = false;
-    
+	    
     $scope.markNotDerived=function(datasets){
     	
     	for(i=0;i<datasets.length;i++){
@@ -739,16 +739,6 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			params.SBI_EXECUTION_ID = -1;
 			params.isTech = false;
 			params.showOnlyOwner=true;
-				
-			var str = [];
-			
-			for(var p in $scope.dataset)
-				str.push(encodeURIComponent(p) + "=" + encodeURIComponent($scope.dataset[p]));
-			
-			
-			str.join("&");
-			
-			console.log(str.join("&"));
 			
 			/*sbiModule_restServices.promisePost("selfservicedataset","save?SBI_EXECUTION_ID=-1&isTech=false&showOnlyOwner=true&showDerivedDataset=false","",str)
 			.then(function(response) {
@@ -818,6 +808,16 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 				// or server returns response with an error status.
 					console.info("[FAILURE]: The form cannot be submitted because of some failure.");
 					console.log(response);
+					
+					/**
+					 * NOTE: Temporary solution!
+					 * WORKAROUND
+					 * @author Danilo Ristovski
+					 */
+					$mdDialog.cancel();
+					$scope.loadMyDatasets();
+					$scope.loadDatasets();
+					
 //					$scope.validationStatus = false;
 //					sbiModule_messaging.showErrorMessage("Failure!", 'Error!');
 				}
@@ -1035,6 +1035,32 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			}
 		}
 		
+		/**
+		 * Handle the title content (tooltip) of the 'Next' button in the Step 1 of the Dataset wizard (dialog) according to the state of data that is necessary 
+		 * for the creation of the Dataset.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$scope.datasetWizStep1NextButtonTitle = function() {
+			
+			if (!$scope.dataset.fileName) {
+				return 'Please upload XLS or CSV file in order to proceed with the dataset creation';
+			}
+			else if ($scope.datasetWizardView==4) {
+				if ($scope.dataset.name=='') {
+					return 'Please provide the name of the dataset you want to save';
+				}
+				else if ($scope.dataset.persist && $scope.dataset.tableName=='') {
+					return 'Please provide the table name of the dataset you want to save';
+				}
+				else {
+					return 'Save the dataset';
+				}
+			}
+			else {
+				return 'Proceed to the next step';
+			}
+			
+		}
 		
 	}
     
