@@ -66,19 +66,18 @@ it.eng.spagobi.engines.qbe.temporalfilterwizard = function() {
 	  });
 	  
 	  var params = {
-			  types: hierachiesColumnTypes
+		  types: hierachiesColumnTypes
 	  };
 
 	  var serviceurl = Sbi.config.contextName+'/restful-services/1.0/timespan/listTimespan';
 	  Ext.Ajax.request({
           url: serviceurl,
           method: "GET",
-          timeout: 60,
+          timeout: 60000,
           disableCaching: false,
           params: params,
           success: function(response) {
-        	  setTimeout(function(){
-        			 timeStore.loadData(Ext.util.JSON.decode(response.responseText));}, 100);
+        	  timeStore.loadData(Ext.util.JSON.decode(response.responseText));
           }
       });
 	  
