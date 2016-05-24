@@ -25,7 +25,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	$scope.fileList =[];
 	$scope.servicePath = "2.0/mondrianSchemasResource";
 	$scope.file ={};
-	
+	$scope.isDirty = false;
 	
 
 	$scope.isDisabled = function(){
@@ -172,11 +172,27 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 
 	};
 	$scope.createMondrianSchema = function(){
-		$scope.showMe = true;
-		$scope.selectedMondrianSchema = {};
-		$scope.selectedVersion = {};
-		$scope.fileList = [];
-		$scope.file ={};
+		
+		if($scope.isDirty){
+			$mdDialog.show($scope.confirm).then(function(){
+		    	$scope.isDirty=false;   
+		    	$scope.selectedMondrianSchema = {};
+				$scope.selectedVersion = {};
+				$scope.fileList = [];
+				$scope.file ={};
+		    },
+		     function(){		       
+		    	  $scope.showMe = true;
+		      });			
+		}
+		else{
+			$scope.isDirty=false;   
+	    	$scope.selectedMondrianSchema = {};
+			$scope.selectedVersion = {};
+			$scope.fileList = [];
+			$scope.file ={};
+		}
+		$scope.showMe = true;		
 		
 	}
 	
@@ -186,18 +202,34 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	
 	//CLICK FUNCTION FOR CATALOQUE TABLE
 	$scope.catalogueClickFunction = function(item){
-		$scope.showMe = true;
-		if(item!=$scope.selectedMondrianSchema){
-			$scope.selectedMondrianSchema ={};
-			$scope.selectedMondrianSchema = angular.copy(item);
-			$scope.fileList= $scope.getMondrianSchemasVersion();
-			
-			
-		}
 		
+		if(item!=$scope.selectedMondrianSchema){
+			if($scope.isDirty){
+				$mdDialog.show($scope.confirm).then(function(){
+			    	$scope.isDirty=false;   
+			    	$scope.selectedMondrianSchema ={};
+					$scope.selectedMondrianSchema = angular.copy(item);
+					$scope.fileList= $scope.getMondrianSchemasVersion();
+			    },
+			     function(){		       
+			    	  $scope.showMe = true;
+			      });		
+	
+			}
+			else{
+				$scope.selectedMondrianSchema ={};
+				$scope.selectedMondrianSchema = angular.copy(item);
+				$scope.fileList= $scope.getMondrianSchemasVersion();
+			}
+		}
+		$scope.showMe = true;		
 		console.log($scope.selectedMondrianSchema);
 		
 	}
+	
+	$scope.changeApplied = function(){
+		$scope.isDirty = true;
+	};
 	
 	//CLICK FUNCTION FOR VERSIONS TABLE
 	$scope.versionClickFunction = function(item){
@@ -293,7 +325,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	
 	//POST NEW MONDRIAN SCHEMA
 	$scope.addNewMondrianSchema = function(){
-		
+		$scope.isDirty = false;
 		$scope.selectedMondrianSchema.type ="MONDRIAN_SCHEMA";
 		console.log($scope.selectedMondrianSchema);
 		
@@ -307,7 +339,8 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 					console.log("uploading...");
 					$scope.uploadFile();
 					
-				}		
+				}
+			
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
@@ -343,7 +376,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	
 	//PUT MODIFY MONDRIAN SCHEMA
 	$scope.modifyMondrianSchema = function(){
-		
+		$scope.isDirty = false;
 		sbiModule_restServices.promisePut($scope.servicePath,$scope.selectedMondrianSchema.id,$scope.selectedMondrianSchema)
 		.then(function(response) {
 			
@@ -414,6 +447,16 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 			});	
 		}
 	}
+	
+	$scope.confirm = $mdDialog
+    .confirm()
+    .title(sbiModule_translate.load("sbi.catalogues.generic.modify"))
+    .content(
+            sbiModule_translate
+            .load("sbi.catalogues.generic.modify.msg"))
+            .ariaLabel('toast').ok(
+                    sbiModule_translate.load("sbi.general.continue")).cancel(
+                            sbiModule_translate.load("sbi.general.cancel"));
 	
 };
 

@@ -335,12 +335,11 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	 *  on plus button(create)																	
 	 */
 	$scope.createRole = function () {
-		$scope.selectedRole = {};
-		$scope.category = [];
-		$scope.ds_category = [];
 		if ($scope.dirtyForm) {
 			$mdDialog.show($scope.confirm).then(function () {	
-
+				$scope.selectedRole = {};
+				$scope.category = [];
+				$scope.ds_category = [];
 				$scope.dirtyForm = false;
 				$scope.roleInit();
 				$scope.showme = true;
@@ -352,6 +351,9 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			});
 
 		} else {
+			$scope.selectedRole = {};
+			$scope.category = [];
+			$scope.ds_category = [];
 			$scope.roleInit();
 			$scope.showme = true;
 		}

@@ -67,35 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body  class="bodyStyle businessModelCatalog" ng-controller="businessModelCatalogueController as ctrl">
 	<angular-list-detail show-detail="showMe">
 		<list label='translate.load("sbi.tools.catalogue.metaModelsCatalogue")' new-function="createBusinessModel"> 
-			
-<!-- 				<md-toolbar class="header"> -->
-<!-- 					<div class="md-toolbar-tools"> -->
-<!-- 						<div style="font-size: 24px;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue");}}</div> -->
-						
-<!-- 						<md-button  -->
-<!--     						ng-disabled=false -->
-<!--     						class="md-fab md-ExtraMini" -->
-<!--     						style="position:absolute; right:26px; top:0px; background-color:#E91E63" -->
-<!--     						ng-click="deleteBusinessModels()">  -->
-    						
-<!--     						<md-icon -->
-<!--         						md-font-icon="fa fa-trash"  -->
-<!--         						style=" margin-top: 6px ; color: white;" > -->
-<!--        						</md-icon>  -->
-<!-- 						</md-button> -->
-						
-<!-- 						<md-button  -->
-<!-- 							class="md-fab md-ExtraMini addButton" -->
-<!-- 							style="position:absolute; right:11px; top:0px;" -->
-<!-- 							ng-click="createBusinessModel()" -->
-<!-- 							aria-label="create"> -->
-<!-- 							<md-icon -->
-<!-- 								md-font-icon="fa fa-plus"  -->
-<!-- 								style=" margin-top: 6px ; color: white;"> -->
-<!-- 							</md-icon>  -->
-<!-- 						</md-button> -->
-<!-- 					</div> -->
-<!-- 				</md-toolbar> -->
+
 				<div layout-align="space-around" layout="row" style="height:100%" ng-show="bmLoadingShow">
      				<md-progress-circular 
         	 			class=" md-hue-4"
@@ -121,9 +93,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					>						
 					</angular-table>
 
-
-				
-		
 		</list>
 		
 		<detail label='selectedBusinessModel.name==undefined? "" : selectedBusinessModel.name'  
@@ -177,23 +146,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<%} %>
       				
 				</div>
-				
-				
-				<!-- md-button class="md-fab md-Mini" style="left:0px; background-color:#3b678c" ng-click="businessModelLock()">
-       								<md-tooltip md-direction="bottom">
-       									{{ selectedBusinessModel.modelLocked && translate.load("sbi.bm.unlockModel") || translate.load("sbi.bm.lockModel")}}
-       								</md-tooltip>
-       								<md-icon
-       									ng-show="selectedBusinessModel.modelLocked"
-										md-font-icon="fa fa-unlock-alt fa-lg" 
-										style="color: white; ">
-									</md-icon>
-									<md-icon
-										ng-show="!selectedBusinessModel.modelLocked"
-										md-font-icon="fa fa-lock fa-lg" 
-										style="color: white; ">
-									</md-icon>  
-       						</md-button -->
+
 				
 			</md-card-content>
 	      </md-card>
@@ -299,13 +252,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      </md-card-content>
 	      </md-card>
 	      </form>
-     					
 
-        
-
-			
-				
-			
 		</detail>
 	</angular-list-detail>
 </body>

@@ -61,24 +61,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				 		<md-content layout="row" layout-align="center center">
 							<md-input-container flex="90">
 			  					<label>{{translate.load("sbi.udp.label")}}</label>
-			  					<input ng-model="property.label" required  type="text">
+			  					<input ng-model="property.label" required  type="text" ng-change="checkChange()">
 			  				</md-input-container>
 		  				</md-content>
 		  				<md-content layout="row" layout-align="center center">
 			  				<md-input-container flex="90">	
 			  					<label>{{translate.load("sbi.udp.name")}}</label>
-			  					<input ng-model="property.name" required  type="text">
+			  					<input ng-model="property.name" required  type="text" ng-change="checkChange()">
 							</md-input-container>
 						</md-content>
 						<md-content layout="row" layout-align="center center">
 							<md-input-container flex="90">	
 			  					<label>{{translate.load("sbi.udp.description")}}</label>
-			  					<textarea ng-model="property.description" md-maxlength="2500"></textarea>
+			  					<textarea ng-model="property.description" md-maxlength="2500" ng-change="checkChange()"></textarea>
 							</md-input-container>
 						</md-content>
 						<md-content layout="row" layout-align="center center">
 							<md-input-container flex="90">
-						       <md-checkbox ng-model="property.multivalue" aria-label="Checkbox 1">
+						       <md-checkbox ng-model="property.multivalue" aria-label="Checkbox 1" ng-change="checkChange()">
 						         {{translate.load("sbi.udp.multivalue")}}
 						     	</md-checkbox>
 						     </md-input-container>
@@ -87,7 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						     <md-content flex="5"></md-content>
 						     <md-input-container flex="50">
 						     	<label>{{translate.load('sbi.udp.type')}}</label>
-						        <md-select placeholder="{{translate.load('sbi.udp.type')}}" ng-model="property.type" required>
+						        <md-select placeholder="{{translate.load('sbi.udp.type')}}" ng-model="property.type" required ng-change="checkChange()">
 								   <md-option value="Boolean">Boolean</md-option>
 								   <md-option value="Text">Text</md-option>
 								   <md-option value="Integer">Integer</md-option>
@@ -98,7 +98,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 			     	 <md-content flex="5"></md-content>
 		 			     	 <md-input-container flex="50">
 		 			     	 	<label>{{translate.load('sbi.udp.family')}}</label>
-						        <md-select placeholder="{{translate.load('sbi.udp.family')}}" ng-model="property.family" required>
+						        <md-select placeholder="{{translate.load('sbi.udp.family')}}" ng-model="property.family" required ng-change="checkChange()">
 								   <md-option value="Model">Model</md-option>
 								   <md-option value="Kpi">Kpi</md-option>
 			  					</md-select>

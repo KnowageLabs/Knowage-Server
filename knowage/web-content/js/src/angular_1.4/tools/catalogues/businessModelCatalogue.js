@@ -56,15 +56,29 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	
 	$scope.createBusinessModel = function(){
-		$scope.selectedBusinessModel = {};
-		$scope.bmVersions=[];
-		$scope.isNew = true;
-		$scope.showMe = true;
-		$scope.fileClicked = false;
-		$scope.fileCWMClicked = false;
-		
-		$scope.isDirty=false;
-		$scope.isCWMDirty = false;
+		if(!$scope.isDirty){
+			$scope.selectedBusinessModel = {};
+			$scope.bmVersions=[];
+			$scope.isNew = true;
+			$scope.showMe = true;
+			$scope.fileClicked = false;
+			$scope.fileCWMClicked = false;
+			
+			$scope.isDirty=false;
+			$scope.isCWMDirty = false;
+			
+		}
+		else{
+			$mdDialog.show($scope.confirm).then(function(){
+		    	$scope.isDirty=false;   
+		    	$scope.isCWMDirty = false;
+		    	$scope.selectedBusinessModel={};
+		    	$scope.showMe=true;
+		    },
+		     function(){		       
+		    	  $scope.showMe = true;
+		      });
+		}
 	}
 	
 	
@@ -101,6 +115,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		    	$scope.isDirty=false;   
 		    	$scope.isCWMDirty = false;
 		    	$scope.selectedBusinessModel=angular.copy(item);
+		    	$scope.getVersions(item.id);
 		    	$scope.showMe=true;
 		    },
 		     function(){		       

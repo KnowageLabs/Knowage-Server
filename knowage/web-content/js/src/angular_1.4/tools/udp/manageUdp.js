@@ -18,6 +18,7 @@ function manageUdpFucntion($angularListDetail,sbiModule_messaging, sbiModule_dev
 	$scope.data=[]
 	$scope.itemSelected = {};
 	$scope.showMe = false;
+	$scope.isDirty = false;
 	
 	var rowDefault = {
 			"id" : "",
@@ -51,15 +52,41 @@ function manageUdpFucntion($angularListDetail,sbiModule_messaging, sbiModule_dev
 	
 	
 	$scope.copyRowInForm = function(item,cell,listId) {
-		$scope.property = angular.copy(item);
-		$scope.showMe = true;
+		if($scope.isDirty){
+			$mdDialog.show($scope.confirm).then(function(){
+				$scope.property = angular.copy(item);
+				$scope.isDirty = false;
+		    	$scope.showMe=true;
+		    },
+		     function(){		       
+		    	  $scope.showMe = true;
+		      });
+		}
+		else{
+			$scope.property = angular.copy(item);
+	    	$scope.showMe=true;
+		}
 	}
 	
 	$scope.addUdp = function(){
-		$scope.property = {};
-		$scope.udpForm.$setUntouched();
-		$scope.udpForm.$setPristine();
-		$scope.showMe = true;
+		if($scope.isDirty){
+			$mdDialog.show($scope.confirm).then(function(){
+				$scope.property = {};
+				$scope.udpForm.$setUntouched();
+				$scope.udpForm.$setPristine();
+				$scope.isDirty = false;
+		    	$scope.showMe=true;
+		    },
+		     function(){		       
+		    	  $scope.showMe = true;
+		      });
+		}
+		else{
+			$scope.property = {};
+			$scope.udpForm.$setUntouched();
+			$scope.udpForm.$setPristine();
+			$scope.showMe = true;
+		}
 	}
 	
 	$scope.resetForm = function(){
@@ -81,6 +108,7 @@ function manageUdpFucntion($angularListDetail,sbiModule_messaging, sbiModule_dev
 	};
 	
 	$scope.saveNewProperty = function(item) {
+		$scope.isDirty = false;
 		//if id not set, add new row, else update old row
 		item.multivalue = $scope.property.multivalue === undefined ? "false" : $scope.property.multivalue;
 		item.description = $scope.property.description === undefined ? "" : $scope.property.description;
@@ -111,6 +139,7 @@ function manageUdpFucntion($angularListDetail,sbiModule_messaging, sbiModule_dev
 	} 
 	
 	$scope.saveModifiedProperty = function(item){
+		$scope.isDirty = false;
 		sbiModule_restServices
 		.promisePut($scope.path,item.id,angular.toJson(item))
 			.then(function(response){
@@ -172,6 +201,20 @@ function manageUdpFucntion($angularListDetail,sbiModule_messaging, sbiModule_dev
 		}
 		return -1;
 	};
+	
+	$scope.checkChange = function(){
+		$scope.isDirty = true;
+	};
+	
+	 $scope.confirm = $mdDialog
+     .confirm()
+     .title(sbiModule_translate.load("sbi.catalogues.generic.modify"))
+     .content(
+             sbiModule_translate
+             .load("sbi.catalogues.generic.modify.msg"))
+             .ariaLabel('toast').ok(
+                     sbiModule_translate.load("sbi.general.continue")).cancel(
+                             sbiModule_translate.load("sbi.general.cancel"));
 
 };
 
