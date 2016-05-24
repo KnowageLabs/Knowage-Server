@@ -177,19 +177,23 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public String valueTargetbyKpi(final Kpi kpi) {
-		Session tmpSession = getSession();
-		List<SbiKpiTargetValue> targets = new ArrayList<>();
-
-		String hql = " from SbiKpiTargetValue WHERE sbiKpiKpi.sbiKpiKpiId.id =? and sbiKpiKpi.sbiKpiKpiId.version=? and " + "sbiKpiTarget.endValidity > ? ";
-		Query q = tmpSession.createQuery(hql);
-		q.setInteger(0, kpi.getId());
-		q.setInteger(1, kpi.getVersion());
-		q.setDate(2, new Date());
-		targets = q.list();
-		if (targets.size() == 0) {
-			return null;
-		}
-		return targets.get(0).getValue().toString();
+		return executeOnTransaction(new IExecuteOnTransaction<String>() {
+			@Override
+			public String execute(Session session) throws Exception {
+				List<SbiKpiTargetValue> targets = new ArrayList<>();
+				
+				String hql = " from SbiKpiTargetValue WHERE sbiKpiKpi.sbiKpiKpiId.id =? and sbiKpiKpi.sbiKpiKpiId.version=? and " + "sbiKpiTarget.endValidity > ? ";
+				Query q = session.createQuery(hql);
+				q.setInteger(0, kpi.getId());
+				q.setInteger(1, kpi.getVersion());
+				q.setDate(2, new Date());
+				targets = q.list();
+				if (targets.size() == 0) {
+					return null;
+				}
+				return targets.get(0).getValue().toString();
+				
+			}});
 	};
 
 	@Override
@@ -2029,26 +2033,26 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public void editKpiValue(Integer id, double value, String comment) {
+	public void editKpiValue(final Integer id, final double value, final String comment) {
 
-		Session tmpSession = getSession();
-		Transaction tx = tmpSession.beginTransaction();
+		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
+			@Override
+			public Boolean execute(Session session) throws Exception {
 
-		String hql = " from SbiKpiValue WHERE id =?";
-		Query q = tmpSession.createQuery(hql);
-		q.setInteger(0, id);
-		SbiKpiValue kpiValue = (SbiKpiValue) tmpSession.load(SbiKpiValue.class, id);
-		if (value == -999) {
-			kpiValue.setManualValue(null);
-		} else {
-			kpiValue.setManualValue(value);
-		}
+				String hql = " from SbiKpiValue WHERE id =?";
+				Query q = session.createQuery(hql);
+				q.setInteger(0, id);
+				SbiKpiValue kpiValue = (SbiKpiValue) session.load(SbiKpiValue.class, id);
+				if (value == -999) {
+					kpiValue.setManualValue(null);
+				} else {
+					kpiValue.setManualValue(value);
+				}
 
-		kpiValue.setManualNote(comment);
-		tmpSession.save(kpiValue);
-
-		tx.commit();
-
+				kpiValue.setManualNote(comment);
+				session.save(kpiValue);
+				return true;
+			}});
 	}
 
 	// TODO: test and debug
