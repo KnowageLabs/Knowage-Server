@@ -39,6 +39,7 @@ import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
+import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
 import it.eng.spagobi.georeport.dao.IFeaturesProviderFileDAO;
 import it.eng.spagobi.georeport.dao.IFeaturesProviderWFSDAO;
 import it.eng.spagobi.hotlink.rememberme.dao.IRememberMeDAO;
@@ -921,4 +922,17 @@ public class DAOFactory {
 	public static IAlertDAO getAlertDAO() throws EMFUserError {
 		return (IAlertDAO) createDAOInstance("AlertDAO");
 	}
+
+	/**
+	 * Gets the CatalogFunction dao.
+	 *
+	 * @return the CatalogFunction dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ICatalogFunctionDAO getCatalogFunctionDAO() throws EMFUserError {
+		return (ICatalogFunctionDAO) createDAOInstance("ICatalogFunctionDAO");
+	}
+
 }
