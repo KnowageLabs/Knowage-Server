@@ -12,7 +12,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 
 	var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
 	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon"];
-	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS"]
+	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT"]
 	$scope.outputWizardDescription = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.description');
 	$scope.outputWizardTitle = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.title');
 	$scope.outputWizardTypeLabel = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type');
@@ -29,6 +29,46 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.showTable = false;
 	$scope.showOVDescription = false;
 	$scope.wiGridNeeded=false;
+	$scope.subObject ={
+			
+		name:"",
+		description:"",
+		scope:"",
+		isValid:function(){
+			
+			if(this.name!=undefined&&this.name!==""){
+				return true;
+			}
+			
+			return false;
+		},
+		setInitialState : function(){
+			
+			this.name = "";
+			this.description = "";
+			this.scope = "";
+			
+		},
+		saveSubObject: function(){
+			
+			var successMsg = sbiModule_translate.load('sbi.olap.subobject.save.ok');
+			var errorMsg = sbiModule_translate.load('sbi.olap.subobject.save.error');
+			console.log("Saving subObject");
+			sbiModule_restServices.promisePost
+			("1.0",'/subobject?SBI_EXECUTION_ID='+ JSsbiExecutionID,this)
+			.then(function(response) {
+				console.log(successMsg);
+				sbiModule_messaging.showSuccessMessage(successMsg, 'Success');
+				
+				
+				
+		  },function(response){
+			  sbiModule_messaging.showErrorMessage(errorMsg, 'Error'); 
+		  });
+			
+			
+		}
+	};
 	var exportBtn = {};
 	var result;
 	
@@ -118,7 +158,10 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				break;
 			case "BUTTON_EDIT_MDX":
 				$scope.showDialog(null,$scope.sendMdxDial);
-				break;	
+				break;
+			case "BUTTON_SAVE_SUBOBJECT":
+				$scope.showDialog(null,$scope.saveSubObjectDial);
+				break;
 			default:
 				console.log("something else clicked");
 		}
@@ -321,5 +364,19 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  var y = date.getFullYear();
 		  
 		  return "KnowageOlapExport-" + d + "." + m + "." + y;
+	  }
+	  
+	  $scope.cancelSavingSubObject = function(){
+		  
+		  console.log("closing Save customized view dialog");
+		  $scope.closeDialog();
+		  console.log("setting subObject to empty");
+		  $scope.subObject.setInitialState();
+	  }
+	  
+	  $scope.saveSubObject = function(){
+		  console.log($scope.subObject);
+		  $scope.subObject.saveSubObject();
+		  $scope.closeDialog();
 	  }
 };
