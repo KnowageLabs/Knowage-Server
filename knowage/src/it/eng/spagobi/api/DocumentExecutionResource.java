@@ -205,7 +205,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				if (objParameter.isMandatory()) {
 					Integer paruseId = objParameter.getParameterUseId();
 					ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
-					if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
+					if ("lov".equalsIgnoreCase(parameterUse.getValueSelection()) 
 							&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)) {
 						// ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(
 						// role, obj, objParameter.getAnalyticalDocumentParameter(), req);
@@ -246,7 +246,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			// resultAsMap.put("parameters", parameters);
 			resultAsMap.put("url", url + "&SBI_EXECUTION_ID=" + sbiExecutionId);
-			if (errorList != null && !errorList.isEmpty()) {
+			if (errorList!= null && !errorList.isEmpty()) {
 				resultAsMap.put("errors", errorList);
 			}
 			// ADD TYPE CODE
@@ -327,9 +327,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
 
-			parameterAsMap
-					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
-
+			parameterAsMap.put("allowInternalNodeSelection", 
+					objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
+			
 			if (jsonParameters.has(objParameter.getId())) {
 				documentUrlManager.refreshParameterForFilters(objParameter.getAnalyticalDocumentParameter(), jsonParameters);
 				parameterAsMap.put("parameterValue", objParameter.getAnalyticalDocumentParameter().getParameterValues());
@@ -338,44 +338,25 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			boolean showParameterLov = true;
 
 			// Parameters NON tree
-
-			if (objParameter.getLovDependencies() != null && objParameter.getLovDependencies().size() > 0) {
-				System.out.println("Load val default !!! ");
-			}
-
-			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
-					&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)
-					&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().size() == 0)) {
-
-				// System.out.println("parametro " + objParameter.getLabel());
-				// if (objParameter.getLovDependencies() != null && objParameter.getLovDependencies().size() > 0) {
-				// List<BIObjectParameter> newList = new ArrayList<BIObjectParameter>();
-				// for (BIObjectParameter b : biObject.getBiObjectParameters()) {
-				// if(b.getLabel().equals(objParameter.getLabel())){
-				// List paramL = new ArrayList<>();
-				// paramL.add("Drink");
-				// b.setParameterValues(paramL);
-				// newList.add(b);
-				// }
-				// }
-				// biObject.setBiObjectParameters(newList);
-				// }
+			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection()) 
+					&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)) {
 
 				HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
 						objParameter.getAnalyticalDocumentParameter(), req);
 
-				ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
-						.get(DocumentExecutionUtils.DEFAULT_VALUES);
+				ArrayList<HashMap<String, Object>> defaultValues = 
+						(ArrayList<HashMap<String, Object>>) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES);
 
 				List defaultValuesMetadata = (List) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES_METADATA);
 
-				if (!objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_LOOKUP)) {
+				if(!objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_LOOKUP)) {
 					parameterAsMap.put("defaultValues", defaultValues);
 				} else {
 					parameterAsMap.put("defaultValues", new ArrayList<>());
 				}
 				parameterAsMap.put("defaultValuesMeta", defaultValuesMetadata);
-				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, defaultValuesData.get(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA));
+				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, 
+						defaultValuesData.get(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA));
 				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA,
 						defaultValuesData.get(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA));
 
@@ -428,7 +409,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("dependsOn", objParameter.getDependencies());
 			parameterAsMap.put("dataDependencies", objParameter.getDataDependencies());
 			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
-			parameterAsMap.put("lovDependencies", (objParameter.getLovDependencies() != null) ? objParameter.getLovDependencies() : new ArrayList<>());
 
 			// load DEFAULT VALUE if present and if the parameter value is empty
 			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
