@@ -1979,14 +1979,18 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				JSONArray fields = query.getJSONArray("fields");
 				for (int f = 0; f < fields.length(); f++) {
 					JSONObject field = (JSONObject) fields.get(f);
+					if (field.isNull("entity")) {
+						logger.debug("Object [entity] not found. The field is calculated. Skip the field.");
+						continue;
+					}
 					String uniqueName = field.getString("entity").toLowerCase();
+					if (insertedMap.get(uniqueName) != null) {
+						logger.debug("Relation with [" + uniqueName + "]  already inserted. Skip the field.");
+						continue;
+					}
 					SbiMetaBc metaBC = DAOFactory.getSbiMetaBCDAO().loadBcByUniqueName(uniqueName);
 					if (metaBC == null) {
 						logger.error("The entity [" + uniqueName + "] doesn't exist into the SbiMetaBC tale. Relation not inserted!");
-						continue;
-					}
-					if (insertedMap.get(uniqueName) != null) {
-						logger.debug("Relation with [" + uniqueName + "]  already inserted. Skip the field.");
 						continue;
 					}
 					// sets the new bcId
