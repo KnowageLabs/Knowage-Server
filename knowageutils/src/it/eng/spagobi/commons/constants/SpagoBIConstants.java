@@ -502,6 +502,7 @@ public class SpagoBIConstants {
 	public static final String META_MODEL_LIFECYCLE_MANAGEMENT = "MetaModelLifecycleManagement";
 
 	public static final String SHARED_DEVELOPMENT = "SharedDevelopment";
+	public static final String FUNCTIONS_CATALOG = "FunctionsCatalog";
 
 	public static final String TEMPORAL_DIMENSION = "TemporalDimension";
 }
