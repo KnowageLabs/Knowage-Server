@@ -61,6 +61,8 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MapCatalogueManagement" description="MapCatalogueManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MapFeaturesManagement" description="MapFeaturesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageBD" name="FunctionsCatalog" description="FunctionsCatalog" />
+	
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -137,6 +139,8 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="StaticWidget" description="StaticWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="TemporalDimension" description="TemporalDimension" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="FunctionsCatalog" description="FunctionsCatalog" />
+	
 	
 	<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -197,6 +201,8 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentScheduling" description="DocumentScheduling" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="SchedulingDistributedOutput" description="SchedulingDistributedOutput" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="SharedDevelopment" description="SharedDevelopment" />
+	<USER_FUNCTIONALITY productType="KnowageER" name="FunctionsCatalog" description="FunctionsCatalog" />
+	
 	
 		<!-- Authorizations for KnowagePM -->
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -256,4 +262,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="InstallConfig" description="InstallConfig" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="AlertManagement" description="AlertManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePM" name="FunctionsCatalog" description="FunctionsCatalog" />
+	
 </USER_FUNCTIONALITIES>

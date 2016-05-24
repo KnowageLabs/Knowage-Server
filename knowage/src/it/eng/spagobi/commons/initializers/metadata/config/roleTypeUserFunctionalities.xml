@@ -383,4 +383,13 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="TemporalDimension" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="TemporalDimension" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="TemporalDimension" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalog" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalog" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalog" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalog" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalog" roleType="MODEL_ADMIN" />
+	
+	
+	
 </ROLE_TYPE_USER_FUNCTIONALITIES>
