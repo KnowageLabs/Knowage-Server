@@ -24,6 +24,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 	templateRoot = "/knowagewhatifengine/html/template";
 	$scope.sendMdxDial = "/main/toolbar/sendMdx.html";
+	$scope.saveSubObjectDial = "/main/savesubobject/saving_subobject_dialog.html";
 	$scope.showMdxDial = "/main/toolbar/showMdx.html";
 	$scope.sortSetDial = "/main/toolbar/sortingSettings.html";
 	$scope.filterDial = "/main/filter/filterDialog.html"
