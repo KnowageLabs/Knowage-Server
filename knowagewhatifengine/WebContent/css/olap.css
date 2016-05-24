@@ -32,6 +32,10 @@
  width: 100%;
  
  }
+ 
+ .BUTTON_SAVE_SUBOBJECT{
+ 	background-image: url(../img/savesuboject.png);
+ }
 
 .BUTTON_HIDE_SPANS_CLICKED{
 	background-image: url(../img/hide_spans_clicked.png);
@@ -730,4 +734,8 @@ md-option[selected], md-select-menu md-option[selected]{
 .filter-shift-arrow{
 	margin-top:1%;
 	max-width:40px;
+}
+
+.save-subObject-dialog{
+	padding: 100px;
 }
