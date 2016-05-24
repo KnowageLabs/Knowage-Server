@@ -10,14 +10,15 @@ angular
 		  };	  
 	});
 
-function datasetWizardMetaController($scope){
+function datasetWizardMetaController($scope,$mdDialog){
 	
-	$scope.metadataTypes=[{name:"Columns",id:"1"},{name:"Dataset",id:"2"}];	
+	$scope.metadataTypes=[{name:"Columns",id:"1"},{name:"Dataset",id:"2"}];
 	
 	$scope.selectedOptionForce = function(m) {
 		$scope.metadataType = m;
 		console.log($scope.metadataType);
 	}
+	
 	
     $scope.tableColumns=[
                          {
@@ -36,11 +37,11 @@ function datasetWizardMetaController($scope){
                          ];
     
     $scope.tableDataset=[{
-        name:"pname",
+        name:"pnameView",
         label:"Attribute"
     },
     {
-        name:"pvalue",
+        name:"pvalueView",
         label:"Value"
     }];
     
@@ -77,4 +78,55 @@ function datasetWizardMetaController($scope){
     		
     	}
     };
+    
+    $scope.deleteMetaColumn=function(item){
+    	var index=$scope.dataset.meta.columns.indexOf(item);
+    	if(index>-1){
+    		$scope.dataset.meta.columns.splice(index,1);
+    	}
+    }
+    
+    $scope.metaScopeFunctions.addNewMetaRow = function() {
+    	var newRow = {
+    			column:"",
+    			pname:"",
+    			pvalue:"",
+    			dsMetaValue: [],
+    			columnView:'<md-select ng-model=row.column class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumns" value="{{col.columnName}}">{{col.columnName}}</md-option></md-select>',
+    			pnameView:'<md-select ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsMetaProperty" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.filterMetaValues(col.VALUE_CD,row)">{{col.VALUE_NM}}</md-option></md-select>',
+    			pvalueView:'<md-select ng-model=row.pvalue class="noMargin"><md-option ng-repeat="col in row.dsMetaValue" value="{{col.VALUE_CD}}">{{col.VALUE_NM}}</md-option></md-select>'
+    	}
+    	angular.copy($scope.dsMetaValue,newRow.dsMetaValue);
+    	$scope.dataset.meta.columns.push(newRow);
+
+    }
+    
+    $scope.metaScopeFunctions.clearAllMeta = function() {
+    	$scope.dataset.meta.columns = [];
+    }
+    
+    $scope.metaScopeFunctions.dsGenMetaProperty = $scope.dsGenMetaProperty;
+    
+    $scope.metaScopeFunctions.addNewDatasetRow = function() {
+    	var newRow = {
+    			pname:"",
+    			pvalue:"",
+    			pnameView:'<md-select ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsGenMetaProperty" value="{{col.VALUE_CD}}">{{col.VALUE_NM}}</md-option></md-select>',
+    			pvalueView:'<div><md-input-container"><input type="text" ng-model="row.pvalue">	</md-input-container></div>'
+    	}
+    	$scope.dataset.meta.dataset.push(newRow);
+    }
+    $scope.metaScopeFunctions.clearAllDatasets = function() {
+    	$scope.dataset.meta.dataset = [];
+    }
+    
+    $scope.deleteMeta=[{
+    	label:'delete',
+    	icon: 'fa fa-trash',
+    	action:function(item){
+    		 $scope.deleteMetaColumn(item);
+    		
+    	}
+    }
+                         ];
 }
