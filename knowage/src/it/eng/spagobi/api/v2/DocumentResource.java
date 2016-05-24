@@ -68,7 +68,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -535,15 +537,18 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 				ScoreDoc[] hits = (ScoreDoc[]) hashMap.get("hits");
 
 				if (hits != null) {
+					Set<String> biobjIds = new HashSet<String>();
 					for (int i = 0; i < hits.length; i++) {
 						ScoreDoc hit = hits[i];
 						Document doc = searcher.doc(hit.doc);
 						String biobjId = doc.get(IndexingConstants.BIOBJ_ID);
-
-						BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForDetail(Integer.valueOf(biobjId));
-						if (obj != null) {
-							if (ObjectsAccessVerifier.canSee(obj, profile)) {
-								objects.add(obj);
+						if (!biobjIds.contains(biobjId)) {
+							BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForDetail(Integer.valueOf(biobjId));
+							if (obj != null) {
+								if (ObjectsAccessVerifier.canSee(obj, profile)) {
+									objects.add(obj);
+									biobjIds.add(biobjId);
+								}
 							}
 						}
 					}
