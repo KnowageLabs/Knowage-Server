@@ -3,15 +3,25 @@ var app = angular.module('jobMonitor', [ 'ngMaterial', 'ui.tree',
                                          'angular_list', 'angular_table' ,'sbiModule', 'angular-list-detail','document_tree',
                                          'angular_time_picker', 'ngMessages', 'ngSanitize']);
 
-app.controller('Controller', ["sbiModule_download", "sbiModule_translate","sbiModule_restServices", "sbiModule_logger", "sbiModule_config", "sbiModule_dateServices", "$scope", "$mdDialog", "$mdToast", "$timeout", "$window", mainFunction]);
+app.controller('Controller', ["sbiModule_download", "sbiModule_translate","sbiModule_restServices", "sbiModule_logger", "sbiModule_config", "sbiModule_dateServices", "$scope", "$mdDialog", "$mdToast", "$timeout", "$location", "$window", mainFunction]);
 
-function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger, sbiModule_config, sbiModule_dateServices, $scope, $mdDialog, $mdToast, $timeout, $window) {
+function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger, sbiModule_config, sbiModule_dateServices, $scope, $mdDialog, $mdToast, $timeout, $location, $window) {
 	
 	sbiModule_translate.addMessageFile("component_scheduler_messages");
 	$scope.translate = sbiModule_translate;
 	
+	// parameters from URL
+	
+	var executionFromUrl = $location.search().ex ? JSON.parse($location.search().ex) : null;
+	var startDateFromUrl = $location.search().sd ? JSON.parse($location.search().sd) : null;
+	var startTimeFromUrl = $location.search().st ? JSON.parse($location.search().st) : null;
+	var endDateFromUrl = $location.search().ed ? JSON.parse($location.search().ed) : null;
+	var endTimeFromUrl = $location.search().et ? JSON.parse($location.search().et) : null;
+	var tablePageFromUrl = $location.search().pg ? JSON.parse($location.search().pg) : null;
+	
 	// variables
 	
+	$scope.tablePage = 1;
 	$scope.executions = [];
 	$scope.selectedExecution = null;
 	$scope.loadingExecutions = false;
@@ -26,6 +36,10 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	$scope.endDateTime = null;
 	
 	// functions
+	
+	$scope.pageChanged = function(searchValue, itemsPerPage, currentPageNumber, columnsSearch, columnOrdering, reverseOrdering){
+		$scope.tablePage = currentPageNumber;
+	}
 
 	$scope.updateStartDateTime = function(date, time){
 		if(date && time){
@@ -95,6 +109,11 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 								}
 							}
 						}
+						
+						if(tablePageFromUrl){
+							$scope.tablePage = tablePageFromUrl;
+						}
+						
 						$scope.loadingExecutions = false;
 					})
 					.error(function(data, status, headers, config) {
@@ -132,8 +151,18 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	
 	$scope.editJob = function(item){
 		var url = sbiModule_config.contextName
-				+ "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_SCHEDULER_ACTION_ANGULARJS&LIGHT_NAVIGATOR_RESET_INSERT=TRUE#/?JOB_NAME="
-				+ item.jobName;
+				+ "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_SCHEDULER_ACTION_ANGULARJS&LIGHT_NAVIGATOR_RESET_INSERT=TRUE#/?ex="
+				+ JSON.stringify(item)
+				+ "&sd="
+				+ JSON.stringify($scope.startDate)
+				+ "&st="
+				+ JSON.stringify($scope.startTime)
+				+ "&ed="
+				+ JSON.stringify($scope.endDate)
+				+ "&et="
+				+ JSON.stringify($scope.endTime)
+				+ "&pg="
+				+ JSON.stringify($scope.tablePage);
 		$window.location.href = url;
 	}
 	
@@ -152,9 +181,26 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	
 	// init
 	
-	$scope.endDate.setDate($scope.startDate.getDate() + 1);
+	if(startDateFromUrl){
+		$scope.startDate = new Date(startDateFromUrl); 
+	}
+	if(startTimeFromUrl){
+		$scope.startTime = startTimeFromUrl;
+	}
 	$scope.updateStartDateTime($scope.startDate, $scope.startTime);
+	
+	if(endDateFromUrl){
+		$scope.endDate = new Date(endDateFromUrl);
+	}
+	if(endTimeFromUrl){
+		$scope.endTime = endTimeFromUrl;
+	}
 	$scope.updateEndDateTime($scope.endDate, $scope.endTime);
+	
+	if(executionFromUrl){
+		$scope.selectedExecution = executionFromUrl;
+		$scope.updateExecutionList();
+	}
 };
 
 app.config(['$mdThemingProvider', function($mdThemingProvider) {

@@ -43,6 +43,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 		<md-card style="margin-bottom: 0px;">
 			<md-card-content layout="row" layout-align="space-between center">
+			
 				<label>{{translate.load("scheduler.startdate","component_scheduler_messages")}}:</label>
 				<md-datepicker ng-model="startDate" md-placeholder={{translate.load("scheduler.startdate","component_scheduler_messages")}} md-min-date="minDate"></md-datepicker>
 				<label>&nbsp; {{translate.load("scheduler.starttime","component_scheduler_messages")}}:</label>
@@ -60,6 +61,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				<md-button class="md-icon-button" title="Search" aria-label="Search" ng-click="updateExecutionList()">
 					  <md-icon md-font-icon="fa fa-search"></md-icon>
 				</md-button>
+				
 			</md-card-content>
 		</md-card>
 		
@@ -68,7 +70,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				md-diameter="75%"
 				style="position:fixed; top:50%; left:50%; z-index:500; background:rgba(255, 255, 255, 0);">
 		</md-progress-circular>
-
+    
 		<angular-table ng-hide="loadingExecutions" flex style="margin-top: 0px;"
 				id = 'jobmonitor'
 				ng-model = 'executions'
@@ -84,8 +86,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				show-search-bar = true
 				selected-item = "selectedExecution"
 				highlights-selected-item = true
-				speed-menu-option = menuExecution
-				initial-sorting="'executionDate'">
+				speed-menu-option = "menuExecution"
+				initial-sorting = "'executionDate'"
+				current-page-number = "tablePage"
+				page-changed-function = "pageChanged(searchValue, itemsPerPage, currentPageNumber, columnsSearch, columnOrdering, reverseOrdering)">
 		</angular-table>
 	</list>
 </angular-list-detail>

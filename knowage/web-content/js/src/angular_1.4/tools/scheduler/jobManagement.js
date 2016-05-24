@@ -17,15 +17,22 @@ var EmptyJob = {
 	triggers: []
 }
 
-app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "sbiModule_logger", "$scope", "$mdDialog", "$mdToast", "$timeout", "$location", mainFunction ]);
+app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "sbiModule_logger", "sbiModule_config", "$scope", "$mdDialog", "$mdToast", "$timeout", "$location", "$window", mainFunction ]);
 
-function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger, $scope, $mdDialog, $mdToast, $timeout, $location) {
+function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger, sbiModule_config, $scope, $mdDialog, $mdToast, $timeout, $location, $window) {
 	var ctrl = this;
 	sbiModule_translate.addMessageFile("component_scheduler_messages");
 	
-	var jobNameFromUrl = $location.search().JOB_NAME;
+	// parameters from URL
 	
-	//variables
+	var executionFromUrl = $location.search().ex ? JSON.parse($location.search().ex) : null;
+	var startDateFromUrl = $location.search().sd ? JSON.parse($location.search().sd) : null;
+	var startTimeFromUrl = $location.search().st ? JSON.parse($location.search().st) : null;
+	var endDateFromUrl = $location.search().ed ? JSON.parse($location.search().ed) : null;
+	var endTimeFromUrl = $location.search().et ? JSON.parse($location.search().et) : null;
+	var tablePageFromUrl = $location.search().pg ? JSON.parse($location.search().pg) : null;
+	
+	// variables
 	ctrl.isOverviewTabActive = true;
 	ctrl.emptyJob = JSON.parse(JSON.stringify(EmptyJob));
 	ctrl.showDetail = false;
@@ -47,6 +54,9 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		{value : "false", label : sbiModule_translate.load("scheduler.doNotIterateOnParameterValues", "component_scheduler_messages")}];
 	
 	ctrl.formulas = [];
+	
+	// functions
+	
 	ctrl.loadFormulas = function(){
 		sbiModule_restServices.get("2.0/formulas", '')
 			.success(function(data, status, headers, config) {
@@ -120,7 +130,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 			})
 	}
-	ctrl.loadJobs(jobNameFromUrl);
+	ctrl.loadJobs(executionFromUrl ? executionFromUrl.jobName : null);
 	
 	ctrl.addJob = function(){
 		ctrl.selectedJob = angular.copy(ctrl.emptyJob);
@@ -170,7 +180,24 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	
 	ctrl.closeDetail = function(){
 		ctrl.showDetail = false;
-		ctrl.loadJobs();
+		if(executionFromUrl){
+			var url = sbiModule_config.contextName
+					+ "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_SCHEDULER_MONITOR_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE#/?ex="
+					+ JSON.stringify(executionFromUrl)
+					+ "&sd="
+					+ JSON.stringify(startDateFromUrl)
+					+ "&st="
+					+ JSON.stringify(startTimeFromUrl)
+					+ "&ed="
+					+ JSON.stringify(endDateFromUrl)
+					+ "&et="
+					+ JSON.stringify(endTimeFromUrl)
+					+ "&pg="
+					+ JSON.stringify(tablePageFromUrl);
+			$window.location.href = url;
+		}else{
+			ctrl.loadJobs();
+		}
 	}
 	
 	ctrl.saveJob = function(){
