@@ -12,13 +12,25 @@ angular
 
 function datasetWizardMetaController($scope,$mdDialog){
 	
-	$scope.metadataTypes=[{name:"Columns",id:"1"},{name:"Dataset",id:"2"}];
+	/**
+	 * WORKAROUND: Re-initialize the collection of metadata types, since for some reason this collection is changed after moving back/forward from the Step 2. 
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)  
+	 */
+	$scope.metadataTypes = 
+	[
+	 	{name:"Columns",value:"1"},
+	 	{name:"Dataset",value:"2"}
+ 	];
 	
-	$scope.selectedOptionForce = function(m) {
-		$scope.metadataType = m;
-		console.log($scope.metadataType);
+	$scope.markSelectedOptMetadataType = function(md) {
+		
+		for (var i = 0; i < $scope.metadataTypes.length; i++) {			
+			if ($scope.metadataTypes[i].value == md) {
+				$scope.metadataType=$scope.metadataTypes[i];
+			}			
+		}
+		
 	}
-	
 	
     $scope.tableColumns=[
                          {

@@ -110,7 +110,18 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.resultMetaDataStep2 = [];
 	$scope.resultRowsStep2 = [];
 	
-	$scope.metadataType = null;	
+	/**
+	 * For the STEP 2: all available meta-data types and the inititially selected one (Columns).
+	 * @editedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */	
+	$scope.metadataTypes=
+	[
+	 	{name:"Columns",value:"1"},
+	 	{name:"Dataset",value:"2"}
+ 	];	
+	
+	$scope.metadataType = $scope.metadataTypes[0];
+	$scope.metadataId = 1;
 	
 	/**
      * Initialize all the data needed for the 'dataset' object that we are sending towards the server when going to the Step 2 and ones that we are using

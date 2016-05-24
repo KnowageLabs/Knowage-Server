@@ -1,50 +1,57 @@
 <div>
-  <md-input-container>
-	<md-select aria-label="aria-label" ng-model="metadataType" placeholder="Metadata Type">
-			<md-option ng-repeat="metadataType in metadataTypes" ng-click="selectedOptionForce(metadataType)" value="{{metadataType.id}}" >
-				{{metadataType.name}} 
+ 
+	<md-input-container>
+	
+		<md-select 	aria-label="aria-label" ng-model="metadataType.value" placeholder="Metadata Type" 
+					ng-change="markSelectedOptMetadataType(metadataType.value)">
+			<md-option 	ng-repeat="m in metadataTypes track by $index"  value="{{m.value}}" 
+						ng-selected="m.value==metadataId">
+				{{m.name}} 
 			</md-option> 
 		</md-select>
+		
 	</md-input-container>
 	
-	<div ng-if="metadataType == 1" class="step2DefDataTableContainer">
+	<div ng-if="metadataType.value==1" class="step2DefDataTableContainer">
 	
-	      <angular-table
+  		<angular-table
 						id="columnsMeta"
 						ng-model=dataset.meta.columns
 						columns="tableColumns"
 						show-search-bar=false
 						scope-functions="metaScopeFunctions"
 					    speed-menu-option=deleteMeta
-					    no-pagination=true	
-						class="step2DefDataTable"
-					>
+						no-pagination=true	
+						class="step2DefDataTable">
 					
 					<queue-table>
 						<md-button class="md-raised" ng-click="scopeFunctions.addNewMetaRow()">Add new row</md-button>
 						<span flex></span>
 						<md-button class="md-raised" ng-click="scopeFunctions.clearAllMeta()">Clear all</md-button>
 					</queue-table>
-			</angular-table>
+		</angular-table>
+		
 	</div>
 	
-	<div ng-if="metadataType == 2" class="step2DefDataTableContainer">
+	<div ng-if="metadataType.value==2" class="step2DefDataTableContainer">
  		
-	  	  <angular-table
+ 		<angular-table
 						flex
 						id="datasetMeta"
 						ng-model=dataset.meta.dataset
 						columns="tableDataset"
 						show-search-bar=false
 						scope-functions="metaScopeFunctions"
-						no-pagination=true	
-					   	class="step2DefDataTable"
-					>
+					   	no-pagination=true	
+					   	class="step2DefDataTable">
+					   	
 					<queue-table>
 						<md-button class="md-raised" ng-click="scopeFunctions.addNewDatasetRow()">Add new row</md-button>
 						<span flex></span>
 						<md-button class="md-raised" ng-click="scopeFunctions.clearAllDatasets()">Clear all</md-button>
 					</queue-table>
-			</angular-table>
+		</angular-table>
+		
 	</div>
+	
 </div>
