@@ -10,6 +10,13 @@
     	<property name="hibernate.connection.datasource">java:/comp/env/jdbc/knowage</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
     
+    <!-- 
+    	<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/knowage/</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">MyPasswd</property>
+        <property name="hibernate.connection.pool_size">1</property>     
+    -->
+    	
      <!--      
         <session-factory>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
@@ -221,6 +228,12 @@
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaTableColumn.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaDocumentTableRelation.hbm.xml" />
          <mapping resource="it/eng/spagobi/metadata/metadata/mapping/SbiMetaDatasetTableRelation.hbm.xml" />
+         
+         <!-- Function catalog mapping -->  
+     	 <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiCatalogFunction.hbm.xml" />
+         <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionInputVariable.hbm.xml" />
+     	 <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionInputDataset.hbm.xml" />
+         <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionOutput.hbm.xml" />
         
         <!-- end mapping -->
         
@@ -230,7 +243,6 @@
         <class-cache class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" usage="nonstrict-read-write"/>
         <class-cache class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole" usage="nonstrict-read-write"/>
      
-     
 
         <!-- 
         <class-cache class="it.eng.spagobi.commons.metadata.SbiExtRoles" usage="read-only"/>
@@ -238,8 +250,7 @@
 		<!--   class-cache class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions" usage="nonstrict-read-write"/
 -->
 		<!--  collection-cache collection="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions.sbiFuncRoles" usage="nonstrict-read-write"/
--->   
-		        
+-->           
     </session-factory>
     
 </hibernate-configuration>
