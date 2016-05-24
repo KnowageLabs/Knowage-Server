@@ -110,6 +110,8 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	$scope.resultMetaDataStep2 = [];
 	$scope.resultRowsStep2 = [];
 	
+	$scope.metadataType = null;	
+	
 	/**
      * Initialize all the data needed for the 'dataset' object that we are sending towards the server when going to the Step 2 and ones that we are using
      * internally (such as 'limitPreviewChecked'). This initialization should be done whenever we are opening the Dataset wizard, since the behavior should 
@@ -135,6 +137,10 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 		$scope.dataset.catTypeId = null;
 		
 	}
+	
+	/*$scope.checkChange = function() {
+		console.log($scope.fileObj);
+	}*/
 	
 	$scope.initializeDatasetWizard();
 	

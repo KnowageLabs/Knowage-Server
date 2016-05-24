@@ -27,14 +27,13 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.previewPaginationEnabled=true; 
     
     $scope.itemsPerPage=15;
-    $scope.datasetInPreview=undefined;
-    
+    $scope.datasetInPreview=undefined;    
     
     $scope.datasetsInitial=[];  //all
 	$scope.myDatasetsInitial= [];
 	$scope.enterpriseDatasetsInitial=[];
 	$scope.sharedDatasetsInitial=[];
-    
+	
 	/**
 	 * STEP 3
 	 */
@@ -258,8 +257,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	}else{
     		 $scope.endPreviewIndex = $scope.itemsPerPage;
     	}
-    	
-    	
+    	    	
      	$mdDialog.show({
 			  scope:$scope,
 			  preserveScope: true,
@@ -272,14 +270,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		    	 // previewDatasetModel:$scope.previewDatasetModel,
 		         // previewDatasetColumns:$scope.previewDatasetColumns 
 		      }
-		    });
-   
-    	
+		    });   	
     	
     }
     
-    $scope.getPreviewSet= function(dataset){
-    	
+    $scope.getPreviewSet= function(dataset){    	
 
     	params={};
     	params.start=$scope.startPreviewIndex;
@@ -301,8 +296,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		    angular.copy(response.data.rows,$scope.previewDatasetModel);
 		    if( $scope.previewDatasetColumns.length==0){
 			$scope.createColumnsForPreview(response.data.metaData.fields);
-		    }
-		
+		    }		
 			
 			//$scope.startPreviewIndex=$scope.startPreviewIndex=0+20;
 			
@@ -343,7 +337,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	      controller: DatasetCreateController,
 	      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',  
 	      clickOutsideToClose: false,
-	      escapeToClose :true,
+	      escapeToClose: true,
 	      //fullscreen: true,
 	      locals:{
 	    	 // previewDatasetModel:$scope.previewDatasetModel,
@@ -352,7 +346,6 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	    });
     }
     
-  
     /**
 	 * Set the currently active Datasets tab. Initially, the 'My Data Set' tab is selected (active). 
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -362,20 +355,20 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.switchDatasetsTab = function(datasetsTab) {
     	
     	$scope.currentDatasetsTab = datasetsTab;
-    
+    	
     	if($scope.selectedDataset !== undefined){
     		$scope.selectDataset(undefined);
-         }
+    	}    	
     	
     	if($scope.selectedCkan !== undefined){
     		$scope.selectCkan(undefined);
-         }
+    	}
     	
     	$scope.ckanDatasetsList=[];
     	$scope.selectedCkanRepo={};
     	$scope.ckanDatasetsListInitial=[];
     	
-    }	
+    }
     
     $scope.getBackPreviewSet=function(){
     	 if($scope.startPreviewIndex-$scope.itemsPerPage < 0){
@@ -388,8 +381,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	 }
     
     	 $scope.getPreviewSet($scope.datasetInPreview);
-    	 
-    	
+    	     	
     }
     
     $scope.getNextPreviewSet= function(){
@@ -402,10 +394,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	 } else{
               $scope.startPreviewIndex= $scope.startPreviewIndex+$scope.itemsPerPage;
               $scope.endPreviewIndex=$scope.endPreviewIndex+$scope.itemsPerPage;
-    	 }   
+    	 }       	 
     	 
-    	 
-        	 $scope.getPreviewSet($scope.datasetInPreview);
+    	 $scope.getPreviewSet($scope.datasetInPreview);
         	 
     }
     
@@ -450,8 +441,6 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,"error");
 		});
-		
-		
 	}
 	
 	$scope.showCkanDetails = function() {
@@ -516,22 +505,19 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			 $mdDialog.cancel();	 
 	    }
 		
-		
-		
 	}
 	
     function DialogCkanController($scope,$mdDialog,ckan){
     	$scope.ckan=ckan;
     	$scope.closeCkanDetail=function(){
     		$mdDialog.cancel();
-    	}
-    	
+    	}    	
     }
-
+	
     $scope.editFileDataset = function (arg) {
     	console.log(arg);
     }
-	
+    
 	function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_config,multipartForm,$http){
 		$scope.fileObj={};
 		$scope.datasetWizardView=1;
@@ -539,9 +525,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		$scope.datasetCategoryType = [];
 		$scope.dsGenMetaProperty = [];
 		$scope.dsMetaProperty = [];
-		$scope.dsMetaValue = [];
+		$scope.dsMetaValue = [];		
 		$scope.category = null;
 		$scope.datasetColumns=[];
+		
 		$scope.submitStep1 = function() {
 			
 			var params = {};
@@ -561,7 +548,6 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			$scope.dataset.tableName = "";
 			$scope.dataset.fileUploaded = true;
 			
-			
 			if ($scope.dataset.limitRows == null)
 				$scope.dataset.limitRows = "";
 			
@@ -573,7 +559,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 					method: 'POST',
 					url: sbiModule_config.host+'/knowage/restful-services/selfservicedataset/testDataSet',
 					data: $scope.dataset,
-					params:params,
+					params: params,
 					headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 					
 					transformRequest: function(obj) {
@@ -591,7 +577,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			.then
 			(
 				function successCallback(response) {
-
+					
 					if (!response.data.errors) {
 						console.info("[SUCCESS]: The Step 1 form is submitted successfully.");
 						$scope.datasetWizardView = $scope.datasetWizardView +1;
@@ -604,7 +590,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 						sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error!');
 					}
 				}, 
-					
+				
 				function errorCallback(response) {
 				// called asynchronously if an error occurs
 				// or server returns response with an error status.
@@ -639,11 +625,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			$scope.dataset.page = 10;
 			
 			console.log($scope.dataset);
-				
+			
 			var params = {};
-				
+			
 			params.SBI_EXECUTION_ID = -1;
-				
+					
 			$http
 			(
 				{
@@ -700,10 +686,120 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 					sbiModule_messaging.showErrorMessage("Failure!", 'Error!');
 				}
 			);
+			
 		}
 		
-		$scope.toggleDWVNext = function() {
+		/**
+		 * Final submit
+		 */
+		$scope.submitStep4 = function() {
+			
+			$scope.dataset.isPublicDS = false;
+//			$scope.dataset.meta = '{"version":1,"dataset":[],"columns":[{"column":"country","pname":"Type","pvalue":"String"},{"column":"country","pname":"fieldType","pvalue":"ATTRIBUTE"},{"column":"region","pname":"Type","pvalue":"String"},{"column":"region","pname":"fieldType","pvalue":"ATTRIBUTE"},{"column":"province","pname":"Type","pvalue":"String"},{"column":"province","pname":"fieldType","pvalue":"ATTRIBUTE"},{"column":"store_sales_promo_2012","pname":"Type","pvalue":"Double"},{"column":"store_sales_promo_2012","pname":"fieldType","pvalue":"MEASURE"},{"column":"unit_sales_promo_2012","pname":"Type","pvalue":"Double"},{"column":"unit_sales_promo_2012","pname":"fieldType","pvalue":"MEASURE"},{"column":"store_sales_promo_2013","pname":"Type","pvalue":"Double"},{"column":"store_sales_promo_2013","pname":"fieldType","pvalue":"MEASURE"},{"column":"unit_sales_promo_2013","pname":"Type","pvalue":"Double"},{"column":"unit_sales_promo_2013","pname":"fieldType","pvalue":"MEASURE"}]}';
+			$scope.dataset.meta = $scope.dataset.datasetMetadata;
+			delete $scope.dataset['datasetMetadata'];
+			//console.log("meta",$scope.dataset.meta);
+				
+			var d = new Date();
+			var label = 'ds__' + d.getTime()%10000000; 
+			
+			$scope.dataset.label = label;
+			
+			console.log($scope.dataset);
+			
+			var params = {};
+			params.showDerivedDataset=false;
+			params.SBI_EXECUTION_ID = -1;
+			params.isTech = false;
+			params.showOnlyOwner=true;
+				
+			var str = [];
+			
+			for(var p in $scope.dataset)
+				str.push(encodeURIComponent(p) + "=" + encodeURIComponent($scope.dataset[p]));
+			
+			
+			str.join("&");
+			
+			console.log(str.join("&"));
+			
+			/*sbiModule_restServices.promisePost("selfservicedataset","save?SBI_EXECUTION_ID=-1&isTech=false&showOnlyOwner=true&showDerivedDataset=false","",str)
+			.then(function(response) {
+				          console.log(response);
+				          // binds changed value to object
+//				          dataset.isPublic=response.data.isPublic;
+//				          if(response.data.isPublic){
+//				          sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.share.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));
+//				          }else{
+//				        	  
+//				            sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.unshare.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));	  
+//				          }
+			},function(response){
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.fail'));
+			});*/
+			
+			$http
+			(
+				{
+					method: 'POST',
+					url: sbiModule_config.host+'/knowage/restful-services/selfservicedataset/save',
+					data: $scope.dataset,
+					params: params,
+					headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+					
+					transformRequest: function(obj) {
+						
+						var str = [];
+						
+						for(var p in obj)
+							str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+						
+						console.log(str.join("&"));
+						return str.join("&");
+						
+					},
+				}
+			)
+			.then
+			(
+				function successCallback(response) {
+
+					console.log("SUCCESS aaaaa");					
+					console.log(response.data);
+					
+					if (!response.data.errors) {
+						console.info("[SUCCESS]: The Step 2 form is submitted successfully.");
+						// Take the meta data from resulting JSON object (needed for the table's header)
+						$scope.validationStatus = true;
+						$scope.resultMetaDataStep2 = [];
+						$scope.resultRowsStep2 = [];
+						angular.copy(response.data.metaData.fields,$scope.resultMetaDataStep2);
+						// Take all results (pure data) for rows of the Angular table
+						angular.copy(response.data.rows,$scope.resultRowsStep2);
+						$scope.collectHeadersForStep3Preview();
+						$scope.datasetWizardView = $scope.datasetWizardView +1;
+					}
+					else {
+						console.info("[ERROR]: ",sbiModule_translate.load(response.data.errors[0].message));
+						$scope.validationStatus = false;
+						sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error!');
+					}
+				}, 
+				
+				function errorCallback(response) {
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+					console.info("[FAILURE]: The form cannot be submitted because of some failure.");
+					console.log(response);
+//					$scope.validationStatus = false;
+//					sbiModule_messaging.showErrorMessage("Failure!", 'Error!');
+				}
+			);
+			
+		}
 		
+		$scope.toggleDWVNext = function() {		
+						
 //			console.log($scope.dataset);
 			
 			/**
@@ -713,6 +809,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			switch($scope.datasetWizardView) {
 				case 1: $scope.submitStep1(); break;
 				case 2: $scope.submitStep2(); break;
+				case 4: $scope.submitStep4(); break;
 			}			
 			
 			/**
@@ -725,11 +822,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		}
 		
 		$scope.toggleDWVBack = function() {
-			if($scope.datasetWizardView>1&&$scope.datasetWizardView<5){ 
+			if($scope.datasetWizardView>1&&$scope.datasetWizardView<5){
 				$scope.datasetWizardView = $scope.datasetWizardView -1;
 			}
 		}
-			
+		
 		/**
 		 * Collect all table headers so we can preview results in the Step 3.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -747,8 +844,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 				
 				$scope.allHeadersForStep3Preview.push(temp);
 				
-		}
-		
+			}
+			
 		}
 		
 		$scope.closeDatasetCreateDialog=function(){
@@ -807,9 +904,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 						}else{
 						
 							console.info("[UPLOAD]: SUCCESS!");
-						sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
+							sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
 						
-						$scope.file={};
+							$scope.file={};
 							$scope.dataset.fileType = data.fileType;
 							$scope.dataset.fileName = data.fileName;
 						}
@@ -818,7 +915,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 						sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, 'Error!');
 					});
         	
-        }
+        }		
 		
 		$scope.prepareMetaForView=function(){
 			$scope.prepareMetaValue($scope.dataset.meta.columns);
@@ -858,17 +955,17 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
        			    $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="measure".toLowerCase()){
        				filteredMetaValues.push($scope.dsMetaValue[j]);
        			 }
-       				
-       			
-       			}
-    			
+				
+				
+			}
+			
     		}else{
     			
     			angular.copy($scope.dsMetaValue,filteredMetaValues);
     			
     		}
 			return filteredMetaValues;
-		}
+		}		
 		
 		$scope.prepareMetaValue=function(values){
 			

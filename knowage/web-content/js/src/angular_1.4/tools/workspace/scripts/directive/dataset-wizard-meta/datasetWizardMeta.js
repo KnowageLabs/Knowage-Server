@@ -12,8 +12,13 @@ angular
 
 function datasetWizardMetaController($scope){
 	
-	$scope.metadataTypes=[{name:"Columns",id:"1"},{name:"Dataset",id:"2"}];
-	$scope.metadataType=undefined;
+	$scope.metadataTypes=[{name:"Columns",id:"1"},{name:"Dataset",id:"2"}];	
+	
+	$scope.selectedOptionForce = function(m) {
+		$scope.metadataType = m;
+		console.log($scope.metadataType);
+	}
+	
     $scope.tableColumns=[
                          {
                           name:"columnView", 

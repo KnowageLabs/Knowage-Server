@@ -192,4 +192,36 @@
 	.invalidStatusColor {
 		color: #FF0000 !important;
 	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step2DefDataTableContainer {
+		height: 60%;
+		max-height: 60%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step2DefDataTable {
+		height: 100%; 
+		min-height: 100%
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.step2DefDataCardContent {
+			height: 85%;
+			max-height: 85%;
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.step2DefDataTable {
+			height: auto; 
+			min-height: auto;
+		}
+	}
+	
+	.uploadButton {
+		padding-top: 8px;
+	}
 }

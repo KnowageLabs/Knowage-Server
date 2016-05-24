@@ -62,7 +62,7 @@
 						<div layout="row" layout-wrap>
 			                  <label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.wizard.selectFile")}}:</label>
 			                  <file-upload flex ng-model="fileObj" id="datasetFile" ng-click="fileChange();checkChange()"></file-upload>
-			                  <div>
+			                  <div class="uploadButton">
 			                     <md-button ng-click="uploadFile()" class="md-raised">UPLOAD</md-button>
 			                  </div>
 						</div>
@@ -183,7 +183,7 @@
            	 	</div>
          	</md-toolbar>
          
-         	<md-content flex class="loadFilePadding">
+         	<md-content flex class="loadFilePadding step2DefDataCardContent">
 	            <form>
 	               <dataset-wizard-meta></dataset-wizard-meta>
 	            </form>
@@ -265,22 +265,64 @@
    		</p>
       	
       	<!-- CARD 4 (START) -->
-      	<md-card ng-if="datasetWizardView==4">
+      	<div ng-if="datasetWizardView==4">
         
-         	<md-toolbar class="secondaryToolbar">
-            	<div class="md-toolbar-tools">
-               	<h2>LOAD FILE &#10137; DEFINITION DATA &#10137; VALIDATION DATA &#10137; SAVE THE DATASET</h2>
-               	<span flex></span>
-            	</div>
-         	</md-toolbar>
+			<md-whiteframe flex layout="column" layout-margin class="md-whiteframe-5dp">
+				
+				<md-toolbar class="secondaryToolbar">
+		         	<div class="md-toolbar-tools">
+		           		<h2>LOAD FILE</h2>
+		               	<span flex></span>
+		            </div>
+				</md-toolbar>
+		         
+				<md-content class="loadFilePadding">
+		         	
+					<form>
+			               
+						<div layout="row" layout-wrap>
+			                  <div flex>
+			                     <md-input-container class="small counter">
+			                        <label>Name</label> 
+			                        <input ng-model="dataset.name">
+			                     </md-input-container>
+			                  </div>
+						</div>
+						
+						<div layout="row" layout-wrap>
+			                  <div flex>
+			                     <md-input-container class="small counter">
+			                        <label>Description</label> 
+			                        <textarea rows="2" cols="50" ng-model="dataset.description" style="overflow:auto;auto-scroll:true"></textarea>
+			                     </md-input-container>
+			                  </div>
+						</div>
+						
+			           	<div flex=50 layout="row">
+	                  		<label class="checkboxPadding">Persist:</label> 
+		                  		<md-input-container class="small counter">
+		                     		<md-checkbox 	aria-label="Checkbox 2" 
+			                     				ng-model="dataset.persist" ng-checked="">
+									</md-checkbox>
+		                  		</md-input-container>
+						</div>
+						
+						<div layout="row" layout-wrap>
+			                  <div flex>
+			                     <md-input-container class="small counter">
+			                        <label>Table name</label> 
+			                        <input ng-model="dataset.tableName">
+			                     </md-input-container>
+			                  </div>
+						</div>
+						
+					</form>					
+		            
+		       	</md-content>
+		       	
+	       	</md-whiteframe>
          
-         	<md-content flex class="loadFilePadding">
-            	<form>
-              	 <!-- SAVE THE DATASET -->
-            	</form>
-        	</md-content>
-         
-      	</md-card>
+         </div>
       	<!-- CARD 4 (END) -->
       
    </md-content>

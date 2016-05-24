@@ -1,36 +1,49 @@
 <div>
-  <md-input-container>
-	<md-select aria-label="aria-label" ng-model="metadataType" placeholder="Metadata Type" >
-		<md-option
-			value="{{m.id}}" ng-repeat="m in metadataTypes" ng-click="loog()">
-		{{m.name}} 
-		</md-option> 
-	</md-select>
+  
+	<md-input-container>
+	
+	<!-- <md-select aria-label="aria-label" ng-model="dataset.csvDelimiter">
+	                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
+	                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)" 
+	                           						value="{{csvDelimiterCharacterItem.name}}">
+                          						{{csvDelimiterCharacterItem.name}}
+                     						</md-option>
+	                        		</md-select> -->
+	
+		<md-select aria-label="aria-label" ng-model="metadataType" placeholder="Metadata Type">
+			<md-option ng-repeat="metadataType in metadataTypes" ng-click="selectedOptionForce(metadataType)" value="{{metadataType.id}}" >
+				{{metadataType.name}} 
+			</md-option> 
+		</md-select>
+		
 	</md-input-container>
 	
-	<div ng-if="metadataType == 1">
-	  <angular-table
-						layout-fill
+	<div ng-if="metadataType == 1" class="step2DefDataTableContainer">
+	
+  		<angular-table
 						id="columnsMeta"
 						ng-model=dataset.meta.columns
 						columns="tableColumns"
 						show-search-bar=false
 						scope-functions="metaScopeFunctions"
-					
-					>
-			</angular-table>
+						no-pagination=true	
+						class="step2DefDataTable">
+		</angular-table>
+		
 	</div>
 	
-	<div ng-if="metadataType == 2">
-	  	  <angular-table
+	<div ng-if="metadataType == 2" class="step2DefDataTableContainer">
+ 		
+ 		<angular-table
 						flex
 						id="datasetMeta"
 						ng-model=table
 						columns="tableDataset"
 						show-search-bar=false
-					   
-					    
-					>
-			</angular-table>
+					   	no-pagination=true	
+					   	class="step2DefDataTable">
+		</angular-table>
+		
 	</div>
+	
 </div>
