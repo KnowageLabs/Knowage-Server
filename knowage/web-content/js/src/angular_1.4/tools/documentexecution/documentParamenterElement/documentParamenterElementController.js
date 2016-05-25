@@ -248,26 +248,32 @@
 					};
 					
 					paramDialogCtrl.isFolderFn = function(node) {
-						return !!(
+						var isFolder = !!(
 								!node.expanded
 								&& (!node.leaf || node.leaf == false) 
 //								&& node.children !== undefined 
 //								&& (node.children.length > 0)
 						);
+						
+						return isFolder;
 					};
 					
 					paramDialogCtrl.isOpenFolderFn = function(node) {
-						return !!(
+						var isOpenFolder = !!(
 								node.expanded
 								&& (!node.leaf || node.leaf == false) 
 						);
+						
+						return isOpenFolder;
 					};
 					
 					paramDialogCtrl.isDocumentFn = function(node) {
-						return !!(
+						var isDocument = !!(
 								node.leaf
 								&& !node.children 
 						);
+						
+						return isDocument;
 					};
 					
 					paramDialogCtrl.showNodeCheckBoxFn = function(node) {
@@ -279,6 +285,14 @@
 										&& node.leaf == true && !node.children)
 								)
 							);
+					};
+					
+					paramDialogCtrl.getFolderIconClass = function(node) {
+						return 'fa fa-folder';
+					};
+					
+					paramDialogCtrl.getOpenFolderIconClass = function(node) {
+						return 'fa fa-folder-open';
 					};
 					
 					// Lov parameters NON tree

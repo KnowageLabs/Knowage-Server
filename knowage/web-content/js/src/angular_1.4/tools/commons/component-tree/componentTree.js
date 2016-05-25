@@ -119,7 +119,9 @@
 								folder.expanded = folder.expanded === undefined ? false : folder.expanded;
 								folder.type = folder.type === undefined ? 'folder' : folder.type;
 								folder.visible = folder.visible === undefined ? true : folder.visible;
-//								folder.$parent = parent;
+								if(scope.dynamicTree == false || scope.dynamicTree == 'false') {
+									folder.$parent = parent;
+								}
 
 								if (folder[subfoldersId] !== undefined && folder[subfoldersId].length > 0) {
 									scope.initializeFolders(folder[subfoldersId], folder);
@@ -135,7 +137,9 @@
 									folderBiObject.type = folderBiObject.type == undefined ?  'biObject' : folderBiObject.type;
 									folderBiObject.checked = folderBiObject.checked == undefined ? false : folderBiObject.checked;
 									folderBiObject.visible = folderBiObject.visible == undefined ?  true : folderBiObject.visible;
-//									folderBiObject.$parent = parent;
+									if(scope.dynamicTree == false || scope.dynamicTree == 'false') {
+										folderBiObject.$parent = parent;
+									}
 								}
 							}
 						};
