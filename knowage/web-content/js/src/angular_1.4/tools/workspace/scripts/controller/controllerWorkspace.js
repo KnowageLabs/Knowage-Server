@@ -129,24 +129,32 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
      * be the reseting of all fields on the Step 1.
      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
      */
-	$scope.initializeDatasetWizard = function() {
+	$scope.initializeDatasetWizard = function(dataset) {
 		
-		$scope.dataset.fileType = "";
-		$scope.dataset.fileName = "";
+		$scope.dataset.fileType = dataset!=undefined?dataset.fileType: "";
+		$scope.dataset.fileName = dataset!=undefined?dataset.fileName: "";
 		
 		$scope.limitPreviewChecked = false;
 		
-		$scope.dataset.csvEncoding = "UTF-8"; 
-		$scope.dataset.csvDelimiter = ","; 
-		$scope.dataset.csvQuote = "\""; 
+		$scope.dataset.csvEncoding =dataset!=undefined ? dataset.csvEncoding : "UTF-8"; 
+		$scope.dataset.csvDelimiter = dataset!=undefined ? dataset.csvDelimiter : ","; 
+		$scope.dataset.csvQuote =dataset!=undefined ?dataset.csvQuote:"\""; 
 		
-		$scope.dataset.skipRows = 0;
-		$scope.dataset.limitRows = null;
-		$scope.dataset.xslSheetNumber = 1;
+		$scope.dataset.skipRows =dataset!=undefined ?Number(dataset.skipRows):0;
+		$scope.dataset.limitRows =dataset!=undefined ?Number(dataset.limitRows):0;
+		$scope.dataset.xslSheetNumber = dataset!=undefined ? Number(dataset.xslSheetNumber):1;
 		
-		$scope.dataset.catTypeVn = "";
-		$scope.dataset.catTypeId = null;
+		$scope.dataset.catTypeVn =  dataset!=undefined?dataset.catTypeVn: "";
+		$scope.dataset.catTypeId =dataset!=undefined?Number(dataset.catTypeId) :null;
 		
+		
+		$scope.dataset.id =dataset!=undefined?dataset.id: "";
+		$scope.dataset.label =dataset!=undefined?dataset.label: "";
+		$scope.dataset.name = dataset!=undefined?dataset.name: "";
+		$scope.dataset.description =dataset!=undefined?dataset.description: ""; 
+		$scope.dataset.meta=dataset!=undefined ? dataset.meta : [];
+		
+		$scope.dataset.fileUploaded=false;
 	}
 	
 	$scope.initializeDatasetWizard();

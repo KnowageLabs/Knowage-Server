@@ -16,6 +16,7 @@ angular.module('ckan_view', ['ngMaterial'])
 			//cloneDocumentAction:"&",
 			//showQbeDatasetAction:"&",
 			showDetailCkanAction:"&",
+			editCkanAction:"&",
 			//showQbeEnabled:"=?",
 			//showDetailDatasetAction:"&",
 			//showDetailDatasetEnabled:"=?",

@@ -65,7 +65,7 @@
 			                  </md-input-container>
 						</div>
 			               
-						<div layout="row" layout-wrap>
+						<div layout="row" layout-wrap ng-show="dataset.fileName==''">
 		                  	<label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.wizard.selectFile")}}:</label>
 		                  	<file-upload 	flex ng-model="fileObj" id="datasetFile" ng-click="fileChange();checkChange()" 
 			                  				title="Browse for the XLS or CSV file"></file-upload>
@@ -75,6 +75,16 @@
 	                     			UPLOAD
              					</md-button>
 		                  	</div>
+						</div>
+						
+						<div layout="row" layout-wrap ng-if="dataset.fileName!=''">
+						 <label>Uploaded file is {{dataset.fileName}}</label>
+						 <span flex></span>
+						  
+						    <md-button 	ng-click="changeUploadedFile()" class="md-raised">
+	                     			CHANGE FILE
+             				</md-button>
+             				
 						</div>
 			               
 					</form>

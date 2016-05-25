@@ -27,13 +27,14 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.previewPaginationEnabled=true; 
     
     $scope.itemsPerPage=15;
-    $scope.datasetInPreview=undefined;    
+    $scope.datasetInPreview=undefined;
+    
     
     $scope.datasetsInitial=[];  //all
 	$scope.myDatasetsInitial= [];
 	$scope.enterpriseDatasetsInitial=[];
 	$scope.sharedDatasetsInitial=[];
-	
+    
 	/**
 	 * STEP 3
 	 */
@@ -45,7 +46,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.validationStatus = false;
-	
+    
 	/**
 	 * An indicator if the user previously (already) uploaded an XLS/CSV file, in the case of re-browsing for a new one (this one needs to be uploaded, as well).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -267,7 +268,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	}else{
     		 $scope.endPreviewIndex = $scope.itemsPerPage;
     	}
-    	    	
+    	
+    	
      	$mdDialog.show({
 			  scope:$scope,
 			  preserveScope: true,
@@ -280,11 +282,14 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		    	 // previewDatasetModel:$scope.previewDatasetModel,
 		         // previewDatasetColumns:$scope.previewDatasetColumns 
 		      }
-		    });   	
+		    });
+   
+    	
     	
     }
     
-    $scope.getPreviewSet= function(dataset){    	
+    $scope.getPreviewSet= function(dataset){
+    	
 
     	params={};
     	params.start=$scope.startPreviewIndex;
@@ -306,7 +311,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		    angular.copy(response.data.rows,$scope.previewDatasetModel);
 		    if( $scope.previewDatasetColumns.length==0){
 			$scope.createColumnsForPreview(response.data.metaData.fields);
-		    }		
+		    }
+		
 			
 			//$scope.startPreviewIndex=$scope.startPreviewIndex=0+20;
 			
@@ -339,7 +345,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
        * be the reseting of all fields on the Step 1.
        * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
        */
-      $scope.initializeDatasetWizard();
+      $scope.initializeDatasetWizard(undefined);
       
       $mdDialog.show({
 		  scope:$scope,
@@ -347,7 +353,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	      controller: DatasetCreateController,
 	      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',  
 	      clickOutsideToClose: false,
-	      escapeToClose: true,
+	      escapeToClose :true,
 	      //fullscreen: true,
 	      locals:{
 	    	 // previewDatasetModel:$scope.previewDatasetModel,
@@ -356,6 +362,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	    });
     }
     
+  
     /**
 	 * Set the currently active Datasets tab. Initially, the 'My Data Set' tab is selected (active). 
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -365,20 +372,20 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.switchDatasetsTab = function(datasetsTab) {
     	
     	$scope.currentDatasetsTab = datasetsTab;
-    	
+    
     	if($scope.selectedDataset !== undefined){
     		$scope.selectDataset(undefined);
-    	}    	
+         }
     	
     	if($scope.selectedCkan !== undefined){
     		$scope.selectCkan(undefined);
-    	}
+         }
     	
     	$scope.ckanDatasetsList=[];
     	$scope.selectedCkanRepo={};
     	$scope.ckanDatasetsListInitial=[];
     	
-    }
+    }	
     
     $scope.getBackPreviewSet=function(){
     	 if($scope.startPreviewIndex-$scope.itemsPerPage < 0){
@@ -391,7 +398,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	 }
     
     	 $scope.getPreviewSet($scope.datasetInPreview);
-    	     	
+    	 
+    	
     }
     
     $scope.getNextPreviewSet= function(){
@@ -404,10 +412,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	 } else{
               $scope.startPreviewIndex= $scope.startPreviewIndex+$scope.itemsPerPage;
               $scope.endPreviewIndex=$scope.endPreviewIndex+$scope.itemsPerPage;
-    	 }       	 
+    	 }   
     	 
-    	 $scope.getPreviewSet($scope.datasetInPreview);
     	 
+        	 $scope.getPreviewSet($scope.datasetInPreview);
+        	 
     }
     
     function parseCkanRepository(){
@@ -451,6 +460,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,"error");
 		});
+		
+		
 	}
 	
 	$scope.showCkanDetails = function() {
@@ -501,6 +512,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		      locals:{ckan:ckan }
 		    })
 	}
+	
+	$scope.editCkan=function(ckan){
+		console.log("edit ckan");
+	}
     
     function DatasetPreviewController($scope,$mdDialog,$http){
 		
@@ -515,39 +530,44 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			 $mdDialog.cancel();	 
 	    }
 		
+		
+		
 	}
 	
     function DialogCkanController($scope,$mdDialog,ckan){
     	$scope.ckan=ckan;
     	$scope.closeCkanDetail=function(){
     		$mdDialog.cancel();
-    	}    	
+    	}
+    	
     }
-	
+
     $scope.editFileDataset = function (arg) {
-//    	 console.log(arg);
-//    	  $scope.initializeDatasetWizard();
+    	 console.log(arg);
+    	  $scope.initializeDatasetWizard(arg);
 //    	  $scope.dataset=arg;
 //          $scope.dataset.xslSheetNumber=Number(arg.xslSheetNumber);
 //          $scope.dataset.skipRows=Number(arg.skipRows);
 //          $scope.dataset.limitRows=Number(arg.limitRows);
-//          $scope.fileObj={};
-//          $scope.fileObj.filename=arg.fileName;
-//          $mdDialog.show({
-//    		  scope:$scope,
-//    		  preserveScope: true,
-//    	      controller: DatasetCreateController,
-//    	      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',  
-//    	      clickOutsideToClose: false,
-//    	      escapeToClose :true,
-//    	      //fullscreen: true,
-//    	      locals:{
-//    	    	 // previewDatasetModel:$scope.previewDatasetModel,
-//    	         // previewDatasetColumns:$scope.previewDatasetColumns 
-//    	      }
-//    	    });
+          $scope.fileObj={};
+         // $scope.fileObj.filename=arg.fileName;
+          
+          $mdDialog.show({
+    		  scope:$scope,
+    		  preserveScope: true,
+    	      controller: DatasetCreateController,
+    	      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetCreateDialogTemplate.html',  
+    	      clickOutsideToClose: false,
+    	      escapeToClose :true,
+    	      //fullscreen: true,
+    	      locals:{
+    	    	 // previewDatasetModel:$scope.previewDatasetModel,
+    	         // previewDatasetColumns:$scope.previewDatasetColumns 
+    	      }
+    	    });
     }
     
+	
 	function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_config,multipartForm,$http){
 		$scope.fileObj={};
 		$scope.datasetWizardView=1;
@@ -555,9 +575,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		$scope.datasetCategoryType = [];
 		$scope.dsGenMetaProperty = [];
 		$scope.dsMetaProperty = [];
-		$scope.dsMetaValue = [];		
+		$scope.dsMetaValue = [];
 		$scope.category = null;
-		$scope.datasetColumns=[];			
+		$scope.datasetColumns=[];
+		
 		
 		$scope.submitStep1 = function() {
 			
@@ -567,21 +588,25 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			params.isTech = false;
 			params.showOnlyOwner = true;
 			params.showDerivedDataset = false;
+		
 			
-			$scope.dataset.id = "";
+			
+//			$scope.dataset.id = "";
 			$scope.dataset.type = "File";
-			$scope.dataset.label = "";
-			$scope.dataset.name = ""
-			$scope.dataset.description = "";
+//			$scope.dataset.label = "";
+//			$scope.dataset.name = ""
+//			$scope.dataset.description = "";
 			$scope.dataset.persist = false;
 			$scope.dataset.tablePrefix = datasetParameters.TABLE_NAME_PREFIX;
 			$scope.dataset.tableName = "";
-			$scope.dataset.fileUploaded = true;
+	//		$scope.dataset.fileUploaded = false;
 			
-			if ($scope.dataset.limitRows == null)
-				$scope.dataset.limitRows = "";
 			
-			$scope.dataset.meta = [];
+			
+//			if ($scope.dataset.limitRows == null)
+//				$scope.dataset.limitRows = "";
+			
+			$scope.dataset.meta = JSON.stringify($scope.dataset.meta);
 			
 			$http
 			(
@@ -589,7 +614,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 					method: 'POST',
 					url: sbiModule_config.host+'/knowage/restful-services/selfservicedataset/testDataSet',
 					data: $scope.dataset,
-					params: params,
+					params:params,
 					headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 					
 					transformRequest: function(obj) {
@@ -607,10 +632,13 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			.then
 			(
 				function successCallback(response) {
-					
+
 					if (!response.data.errors) {
 						console.info("[SUCCESS]: The Step 1 form is submitted successfully.");
 						$scope.datasetWizardView = $scope.datasetWizardView +1;
+						console.log(response.data);
+						//set meta to empty
+						$scope.dataset.meta=[];
 						angular.copy(response.data.meta,$scope.dataset.meta);
 						angular.copy(response.data.datasetColumns,$scope.datasetColumns);
 						$scope.prepareMetaForView();
@@ -621,7 +649,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 						sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error!');
 					}
 				}, 
-				
+					
 				function errorCallback(response) {
 				// called asynchronously if an error occurs
 				// or server returns response with an error status.
@@ -655,6 +683,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 				delete d[i].pvalueView;
 				delete d[i].pnameView;
 			}
+			
 			$scope.dataset.datasetMetadata = JSON.stringify($scope.dataset.datasetMetadata);
 			$scope.dataset.limitPreview = $scope.limitPreviewChecked;
 			$scope.dataset.page = 1;
@@ -662,11 +691,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			$scope.dataset.page = 10;
 			
 			console.log($scope.dataset);
-			
+				
 			var params = {};
-			
+				
 			params.SBI_EXECUTION_ID = -1;
-					
+				
 			$http
 			(
 				{
@@ -723,7 +752,6 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 					sbiModule_messaging.showErrorMessage("Failure!", 'Error!');
 				}
 			);
-			
 		}
 		
 		/**
@@ -740,8 +768,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			var d = new Date();
 			var label = 'ds__' + d.getTime()%10000000; 
 			
+			if($scope.dataset.label===''){
 			$scope.dataset.label = label;
-			
+			}
 			console.log($scope.dataset);
 			
 			var params = {};
@@ -749,7 +778,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			params.SBI_EXECUTION_ID = -1;
 			params.isTech = false;
 			params.showOnlyOwner=true;
-			
+				
 			/*sbiModule_restServices.promisePost("selfservicedataset","save?SBI_EXECUTION_ID=-1&isTech=false&showOnlyOwner=true&showDerivedDataset=false","",str)
 			.then(function(response) {
 				          console.log(response);
@@ -825,7 +854,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 					 * TODO
 					 * @author Danilo Ristovski
 					 */
-					$mdDialog.cancel();
+					$scope.closeDatasetCreateDialog();
 					$scope.loadMyDatasets();
 					$scope.loadDatasets();
 					
@@ -836,8 +865,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			
 		}
 		
-		$scope.toggleDWVNext = function() {		
-						
+		$scope.toggleDWVNext = function() {
+		
 //			console.log($scope.dataset);
 			
 			/**
@@ -873,11 +902,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			 */
 			$scope.metadataId = $scope.metadataType.value;
 			
-			if($scope.datasetWizardView>1&&$scope.datasetWizardView<5){
+			if($scope.datasetWizardView>1&&$scope.datasetWizardView<5){ 
 				$scope.datasetWizardView = $scope.datasetWizardView -1;
 			}
 		}
-		
+			
 		/**
 		 * Collect all table headers so we can preview results in the Step 3.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -895,8 +924,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 				
 				$scope.allHeadersForStep3Preview.push(temp);
 				
-			}
-			
+		}
+		
 		}
 		
 		$scope.closeDatasetCreateDialog=function(){
@@ -964,9 +993,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 						}else{
 						
 							console.info("[UPLOAD]: SUCCESS!");
-							sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
+						sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
 						
-							$scope.file={};
+						$scope.file={};
 							$scope.dataset.fileType = data.fileType;
 							$scope.dataset.fileName = data.fileName;
 							
@@ -975,36 +1004,34 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 							 */
 							$scope.prevUploadedFile = $scope.dataset.fileName;
+							$scope.dataset.fileUploaded=true;
 						}
 					}).error(function(data, status, headers, config) {
 						console.info("[UPLOAD]: FAIL! Status: "+status);
 						sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, 'Error!');
 					});
         	
-        }		
+        }
 		
 		$scope.prepareMetaForView=function(){
 			$scope.prepareMetaValue($scope.dataset.meta.columns);
 			for(i=0; i< $scope.dataset.meta.columns.length;i++){
 				loc = $scope.dataset.meta.columns[i];
 			var pname = loc.pname;
-			
 			loc.dsMetaValue=[];
 			loc.dsMetaValue=$scope.filterMetaValue(pname);	
-			loc.columnView='<md-select ng-model=row.column class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumns" value="{{col.columnName}}">{{col.columnName}}</md-option></md-select>';
-			loc.pnameView='<md-select ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsMetaProperty" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.filterMetaValues(col.VALUE_CD,row)">{{col.VALUE_NM}}</md-option></md-select>';
-	
-			loc.pvalueView='<md-select ng-model=row.pvalue class="noMargin"><md-option ng-repeat="col in row.dsMetaValue" value="{{col.VALUE_CD}}">{{col.VALUE_NM}}</md-option></md-select>';
+			loc.columnView='<md-select aria-label="column-view" ng-model=row.column class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumns" value="{{col.columnName}}">{{col.columnName}}</md-option></md-select>';
+			loc.pnameView='<md-select aria-label="pname-view" ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsMetaProperty" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.filterMetaValues(col.VALUE_CD,row)">{{col.VALUE_NM}}</md-option></md-select>';
+			loc.pvalueView='<md-select aria-label="pvalue-view"ng-model=row.pvalue class="noMargin"><md-option ng-repeat="col in row.dsMetaValue" value="{{col.VALUE_CD}}">{{col.VALUE_NM}}</md-option></md-select>';	
 			}	
 		}
-
+		
 		$scope.prepareDatasetForView = function() {
 			var datasets = $scope.dataset.meta.dataset
 			for (var i = 0; i < datasets.length; i++) {
-				datasets[i].pnameView = '<md-select ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsGenMetaProperty" value="{{col.VALUE_CD}}">{{col.VALUE_NM}}</md-option></md-select>';
-				dataset[i].pvalueView = ' <input ng-model="row.pvalue"></input>';
+				datasets[i].pnameView = '<md-select aria-label="dspname-view" ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsGenMetaProperty" value="{{col.VALUE_CD}}">{{col.VALUE_NM}}</md-option></md-select>';
+				datasets[i].pvalueView = ' <input ng-model="row.pvalue"></input>';
 			}
-			
 		}
 		
 		$scope.filterMetaValue = function(pname){
@@ -1015,10 +1042,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     					 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="double".toLowerCase()||
     					 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="integer".toLowerCase()){
     				 filteredMetaValues.push($scope.dsMetaValue[j]);
-    			 }
-    				
-    			
-    			}
+    			 }    			
+    		}
     			
     			
     		}else if(pname.toLowerCase()==="fieldType".toLowerCase()){
@@ -1027,17 +1052,17 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
        			    $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="measure".toLowerCase()){
        				filteredMetaValues.push($scope.dsMetaValue[j]);
        			 }
-				
-				
-			}
-			
+       				
+       			
+       			}
+    			
     		}else{
     			
     			angular.copy($scope.dsMetaValue,filteredMetaValues);
     			
     		}
 			return filteredMetaValues;
-		}		
+		}
 		
 		$scope.prepareMetaValue=function(values){
 			
@@ -1105,6 +1130,12 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		$scope.nextOrSaveButtonCondition = function() {
 			return ($scope.datasetWizardView==1 && (!$scope.dataset.fileName || $scope.prevUploadedFile!=$scope.fileObj.fileName)) 
 						|| ($scope.datasetWizardView==4 && ($scope.dataset.name=='' || $scope.dataset.persist && $scope.dataset.tableName==''));
+		}
+		
+		$scope.changeUploadedFile=function(){
+			$scope.fileObj={};
+			$scope.fileObj.fileName='';
+			$scope.dataset.fileName='';
 		}
 		
 	}

@@ -76,6 +76,7 @@
 			selected-ckan=selectedCkan
 			select-ckan-action="selectCkan(ckan);"
 			show-detail-ckan-action="showDetailCkan(ckan);"
+			edit-ckan-action="editCkan(ckan);"
  	 	 >
  	 	 </ckan-view>
  	 	 </div>
@@ -128,7 +129,7 @@
 		                    <md-button title="Open qbe" aria-label="Open qbe" class="md-icon-button" ng-click="showQbeDataset(selectedDataset)">
 									<md-icon md-font-icon="fa fa-search"></md-icon>
 							</md-button>
-							 <md-button title="Show Detail" aria-label="Show detail" class="md-icon-button" ng-click="">
+							 <md-button title="Show Detail" aria-label="Show detail" class="md-icon-button" ng-click="editFileDataset(selectedDataset)">
 									<md-icon md-font-icon="fa fa-info-circle"></md-icon>
 							</md-button>
 							
