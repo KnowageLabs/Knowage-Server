@@ -106,7 +106,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				</md-tab>
 				<md-tab label="{{translate.load('sbi.generic.details')}}" md-on-select="ctrl.selectDetailTab()" md-active="!ctrl.isOverviewTabActive">
 					<md-card>
-						<md-card-content layout="column" style="padding: 0px;">
+						<md-card-content layout="column">
 							<form name="jobDetailForm" class="wordForm" novalidate>
 								<div>
 									<div flex="100">
