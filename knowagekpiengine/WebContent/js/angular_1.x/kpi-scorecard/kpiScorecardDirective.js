@@ -43,6 +43,9 @@ function kpiScorecardController($scope, sbiModule_translate,$mdDialog,sbiModule_
 			listKGoal:function(idGoal,idPers,event){
 				$scope.listKpiGoal(idGoal,idPers,event);
 			},
+			critGoal:function(idGoal,idPers,event){
+				$scope.criterionSelectedGoal(idGoal,idPers,event);
+				},
 			};
 	
 	$scope.listKpiGoal = function(goalId, perspectiveId, event){
@@ -92,6 +95,40 @@ function kpiScorecardController($scope, sbiModule_translate,$mdDialog,sbiModule_
 		$scope.criterion = $scope.scorecard.scorecard.perspectives[pos].criterion;
 		$scope.criterionOption =  $scope.scorecard.scorecard.perspectives[pos].options;
 		$scope.nameList = "Perspective " + $scope.scorecard.scorecard.perspectives[pos].name;
+		
+		$mdDialog.show({
+			controller: DialogControllerKPI,
+			templateUrl: 'templateCriterion.html',
+			clickOutsideToClose:false,
+			preserveScope:true,
+			locals: {
+				scoreMaster:$scope.scorecard,
+				kpiArray:$scope.kpiArray,
+				namingList:$scope.nameList,
+				criterion:$scope.criterion,
+				criterionOption:$scope.criterionOption
+				
+				}
+		})
+		.then(function(data) {
+			
+		$timeout(function(){
+		},0);
+		});
+	};
+	
+	
+	$scope.criterionSelectedGoal = function (GoalId, perspectiveId, event){
+		event.stopPropagation();
+		var pos = 0;
+		var pos2 = 0;
+		while (pos < $scope.scorecard.scorecard.perspectives.length && $scope.scorecard.scorecard.perspectives[pos].id != perspectiveId)
+			pos++;
+		while (pos2 < $scope.scorecard.scorecard.perspectives[pos].targets.length && $scope.scorecard.scorecard.perspectives[pos].targets[pos2].id != GoalId)
+			pos2++;
+		$scope.criterion = $scope.scorecard.scorecard.perspectives[pos].targets[pos2].criterion;
+		$scope.criterionOption =  $scope.scorecard.scorecard.perspectives[pos].targets[pos2].options;
+		$scope.nameList = "Goal " + $scope.scorecard.scorecard.perspectives[pos].targets[pos2].name;
 		
 		$mdDialog.show({
 			controller: DialogControllerKPI,

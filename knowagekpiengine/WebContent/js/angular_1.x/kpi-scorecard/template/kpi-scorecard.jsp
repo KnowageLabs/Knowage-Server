@@ -30,9 +30,11 @@
 						</kpi-semaphore-indicator>
 						<label>{{goal.name}}</label> 
 						<span flex></span>
-						   <md-button aria-label="KPI List" class="md-icon-button" ng-click="localsScope.listKGoal(goal.id, perspective.id, $event)">
+						   <md-button style="position:absolute;right:28px;top:0px;" aria-label="KPI List" class="md-icon-button" ng-click="localsScope.listKGoal(goal.id, perspective.id, $event)">
 				       		 <md-icon md-menu-origin md-font-icon="fa fa-search"></md-icon>
 				     	   </md-button>
+				     	   	<md-button style="position:absolute;right:8px;top:0px;"  aria-label="Criterion Goal" class="md-icon-button" layout-padding ng-click="localsScope.critGoal(goal.id,perspective.id, $event)">
+							<md-icon md-font-icon="fa fa-info-circle"></md-icon></md-button>
 					</div>
 				</md-toolbar> 
 				<div>
