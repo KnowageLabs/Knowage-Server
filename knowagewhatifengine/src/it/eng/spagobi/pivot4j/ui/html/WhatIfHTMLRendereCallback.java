@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.pivot4j.ui.html;
 
-import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.DecimalFormat;
@@ -53,6 +46,13 @@ import org.pivot4j.ui.html.HtmlRenderCallback;
 import org.pivot4j.ui.table.TableRenderContext;
 import org.pivot4j.util.CssWriter;
 import org.pivot4j.util.RenderPropertyUtils;
+
+import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private boolean showProperties = false;
@@ -89,6 +89,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			int colId = context.getColumnIndex();
 			int rowId = context.getRowIndex();
 			int positionId = context.getCell().getOrdinal();
+			String value = context.getCell().getFormattedValue();
 			// String memberUniqueName = context.getMember().getUniqueName();
 			if (context.getCell().getValue() != null && context.getCell().getFormattedValue() != null) {
 				double dd = Double.parseDouble(context.getCell().getValue().toString());
@@ -115,7 +116,9 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			attributes.put("id", id);
 			attributes.put("measureName", measureName);
 			attributes.put("ordinal", String.valueOf(positionId));
+			attributes.put("value", value);
 			attributes.put("cell", null);
+
 		} else if (context.getCellType() == CellTypes.LABEL) {
 			NonInternalPropertyCollector np = new NonInternalPropertyCollector();
 			List<Property> properties = np.getProperties(context.getMember().getLevel());
@@ -345,8 +348,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					if (d != 0) {
 						context.getMember();
 						attributes.put("src", "../img/arrow-up.png");
-						attributes.put("ng-click", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','"
-								+ context.getHierarchy().getUniqueName() + "' )");
+						attributes.put("ng-click",
+								"drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + context.getHierarchy().getUniqueName() + "' )");
 						startElement("img", attributes);
 						endElement("img");
 					}
@@ -525,8 +528,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						attributes.put("src", "../img/ASC-columns.png");
 					}
 
-					attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString()
-							+ "' ) ;$event.stopPropagation();");
+					attributes.put("ng-click",
+							"sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' ) ;$event.stopPropagation();");
 					// System.out.println(context.getMember() + " has sorting "
 					// + context.getModel().getSortCriteria());
 					startElement("img", attributes);
@@ -540,8 +543,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						attributes.put("src", "../img/DESC-columns.png");
 					}
 
-					attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString()
-							+ "' ) ;$event.stopPropagation();");
+					attributes.put("ng-click",
+							"sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' ) ;$event.stopPropagation();");
 					// System.out.println(context.getMember() + " has sorting "
 					// + context.getModel().getSortCriteria());
 					startElement("img", attributes);
@@ -555,8 +558,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					attributes.put("src", "../img/noSortColumns.png");
 				}
 
-				attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString()
-						+ "' ); $event.stopPropagation();");
+				attributes.put("ng-click",
+						"sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' ); $event.stopPropagation();");
 
 				startElement("img", attributes);
 				endElement("img");

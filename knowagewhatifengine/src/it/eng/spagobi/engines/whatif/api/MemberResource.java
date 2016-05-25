@@ -260,6 +260,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				hierarchy.put("name", h.getName());
 				List<Level> levels = h.getLevels();
 				for (Level level : levels) {
+					if (level.getName() == "(All)") {
+						continue;
+					}
 					if (level.getName() == "MeasuresLevel") {
 						List<Member> temp = level.getMembers();
 						for (Member member : temp) {

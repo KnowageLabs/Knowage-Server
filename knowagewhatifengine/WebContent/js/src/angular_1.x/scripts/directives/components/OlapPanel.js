@@ -100,7 +100,11 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	
 	$scope.enableDisableDrillThrough = function() {
 		
-		if($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0){
+		if($scope.selectedCell.value == ""){
+			sbiModule_messaging.showErrorMessage("Cell doesnt have value", 'Error');
+		}
+		
+		else if($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0){
 			
 			var toSend ={};
 			toSend.ordinal = $scope.selectedCell.ordinal;
