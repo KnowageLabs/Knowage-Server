@@ -3,7 +3,7 @@
  */
 var app = angular.module('dataSourceModule', ['ngMaterial', 'angular_list', 'angular_table' ,'sbiModule', 'angular_2_col','angular-list-detail']);
 
-app.controller('dataSourceController', ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", "$timeout","sbiModule_messaging", dataSourceFunction]);
+app.controller('dataSourceController', ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", "$timeout","sbiModule_messaging","sbiModule_user", dataSourceFunction]);
 
 var emptyDataSource = {
 	label : "",
@@ -21,7 +21,7 @@ var emptyDataSource = {
 	writeDefault: false
 };
 
-function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging){
+function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging,sbiModule_user){
 
 	//DECLARING VARIABLES
 	$scope.showMe=false;
@@ -31,9 +31,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.selectedDataSource = {};
 	$scope.selectedDataSourceItems = [];
 	$scope.isDirty = false;
+	$scope.readOnly= false;
 	$scope.forms = {};
 	$scope.isSuperAdmin = superadmin;
 	$scope.jdbcOrJndi = {};
+	$scope.currentUser = sbiModule_user.userUniqueIdentifier;
 
 	$scope.isSuperAdminFunction=function(){
         return superadmin;
@@ -41,8 +43,9 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 	angular.element(document).ready(function () {
         $scope.getDataSources();
+        
     });
-
+	
 	$scope.setDirty = function () {
 		$scope.isDirty = true;
 	}
@@ -202,10 +205,21 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		}
 
 	};
+	
 
 	//LOAD SELECTED SOURCE
 	$scope.loadSelectedDataSource = function(item) {
+		
+		if( $scope.currentUser == item.userIn){
+			
+			console.log("i am the owner of : " + item.label);
+			$scope.readOnly= false;
 
+		}else{
+			$scope.readOnly= true;
+		}
+		
+		console.log(item);
 		$scope.jdbcOrJndi.type = null;
 		$scope.showMe=true;
 
@@ -354,13 +368,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		});
 	}
 
-	//Get user
-	$scope.getUser = function() {
-		console.log("is super admin - "+$scope.isSuperAdmin);
-
-	}
-	$scope.getUser();
-
+	
 	//SPEED MENU TRASH ITEM
 	$scope.dsSpeedMenu= [
 	                     {
@@ -370,8 +378,13 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	                    	action:function(item,event){
 
 	                    		$scope.deleteItem(item);
-	                    	}
+	                    	},
+	                    	 visible: function(row) {
+	             				return row.userIn==$scope.currentUser ? true : false;
+	                		 }
+
 	                     }
+	                    
 	                    ];
 
 	//INFO ABOUT THE JNDI INPUT FORM

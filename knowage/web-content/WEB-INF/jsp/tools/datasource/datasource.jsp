@@ -75,7 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				show-save-button="showMe"
 				show-cancel-button="showMe"
 			>
-							<form name="dataSourceForm"  ng-submit="dataSourceForm.$valid && saveOrUpdateDataSource()" class="detailBody mozSize">
+							<form name="dataSourceForm"  ng-disabled="readOnly"ng-submit="dataSourceForm.$valid && saveOrUpdateDataSource()" class="detailBody mozSize">
 								<md-card layout-padding>
 
 									<!-- LABEL -->
@@ -83,7 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<div flex=100>
 												<md-input-container class="small counter">
 													<label>{{translate.load("sbi.ds.label")}}</label>
-													<input ng-model="selectedDataSource.label" required ng-change="setDirty()"  ng-maxlength="100">
+													<input ng-model="selectedDataSource.label" required ng-change="setDirty()"  ng-maxlength="100" ng-readonly="readOnly">
 													<div ng-messages="dataSourceForm.label.$error" ng-show="!selectedDataSource.label">
 														<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
 													</div>
@@ -97,7 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<md-input-container class="small counter">
 												<label>{{translate.load("sbi.ds.description")}}</label>
 												<input ng-model="selectedDataSource.descr"
-													ng-change="setDirty()" ng-maxlength="160">
+													ng-change="setDirty()" ng-maxlength="160" ng-readonly="readOnly">
 											</md-input-container>
 										</div>
 									</div>
@@ -105,9 +105,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<!-- DIALECT -->
 									<div layout="row" layout-wrap>
 											<div flex=100>
-												<md-input-container class="small counter">
+												<md-input-container class="small counter" >
 													<label>{{translate.load("sbi.datasource.dialect")}}</label>
-													<md-select  ng-change="setDirty()"  aria-label="aria-label"	ng-model="selectedDataSource.dialectId">
+													<md-select  ng-disabled="readOnly" ng-change="setDirty()"  aria-label="aria-label"	ng-model="selectedDataSource.dialectId" >
 														<md-option	required ng-repeat="d in dialects" value="{{d.VALUE_ID}}">{{d.VALUE_DS}} </md-option>
 													</md-select>
 													<div ng-messages="dataSourceForm.dialectId.$error" ng-show="!selectedDataSource.dialectId">
@@ -119,9 +119,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 									<!-- MULTICHEMA -->
 									<div layout="row" layout-wrap style="margin-bottom:-19px;">
-										<label class="checkboxPadding">{{translate.load("sbi.datasource.multischema")}}:</label>
+										<label style="padding-top:7px;">{{translate.load("sbi.datasource.multischema")}}:</label>
 										<md-input-container class="small counter">
-											<md-checkbox	ng-change="setDirty()"  ng-model="selectedDataSource.multiSchema" aria-label="Multischema"></md-checkbox>
+											<md-checkbox	ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.multiSchema" aria-label="Multischema"></md-checkbox>
 										</md-input-container>
 									</div>
 
@@ -131,23 +131,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<md-input-container class="small counter">
 											<label>{{translate.load("sbi.datasource.multischema.attribute")}}</label>
 											<input ng-change="setDirty()"  ng-model="selectedDataSource.schemaAttribute"
-												ng-maxlength="45"> </md-input-container>
+												ng-maxlength="45" ng-disabled="readOnly"> </md-input-container>
 										</div>
 									</div>
 
 									<!-- READ ONLY -->
 									<div layout="row" layout-wrap>
-										<md-radio-group  ng-change="setDirty()"  ng-model="selectedDataSource.readOnly"> Read only:
+										<md-radio-group ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.readOnly"> Read only:
 					      					<md-radio-button  value="1" ng-disabled="selectedDataSource.writeDefault">Read only</md-radio-button>
 					      					<md-radio-button  value="0"> Read and write </md-radio-button>
 					    				</md-radio-group>
 									</div>
 
 									<!-- WRITE DEFAULT -->
-									<div layout="row" layout-wrap>
-										<label class="checkboxPadding"">{{translate.load("sbi.datasource.writedefault")}}:</label>
+									<div layout="row" layout-wrap style="margin-bottom:-19px;">
+										<label style="padding-top:7px;">{{translate.load("sbi.datasource.writedefault")}}:</label>
 										<md-input-container class="small counter">
-											<md-checkbox ng-change="setDirty()"
+											<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"
 												ng-model="selectedDataSource.writeDefault" ng-disabled="(selectedDataSource.readOnly == 1) || !isSuperAdminFunction()" aria-label="Write Default">
 											</md-checkbox>
 										</md-input-container>
@@ -155,9 +155,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 									<!-- TYPE -->
 									<div layout="row" layout-wrap>
-										<md-radio-group ng-model="jdbcOrJndi.type"> Type:
-					      					<md-radio-button value="JDBC">JDBC</md-radio-button>
-					      					<md-radio-button value="JNDI" ng-disabled="!isSuperAdminFunction()">JNDI</md-radio-button>
+										<md-radio-group   ng-model="jdbcOrJndi.type"> Type:
+					      					<md-radio-button value="JDBC" ng-disabled="readOnly">JDBC</md-radio-button>
+					      					<md-radio-button value="JNDI" ng-disabled="!isSuperAdminFunction() || readOnly">JNDI</md-radio-button>
 					    				</md-radio-group>
 									</div>
 
@@ -170,7 +170,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												<md-input-container class="small counter">
 													<label>{{translate.load("sbi.datasource.type.jdbc.url")}}</label>
 													<input ng-change="setDirty()"  ng-model="selectedDataSource.urlConnection" required
-														ng-maxlength="500">
+														ng-maxlength="500" ng-readonly="readOnly">
 													<div ng-messages="forms.dataSourceForm.urlConnection.$error" ng-show="!selectedDataSource.urlConnection">
 				          								<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
 				        							</div>
@@ -184,7 +184,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												<md-input-container class="small counter">
 												<label>{{translate.load("sbi.datasource.type.jdbc.user")}}</label>
 												<input ng-change="setDirty()"  ng-model="selectedDataSource.user"
-													ng-maxlength="50"> </md-input-container>
+													ng-maxlength="50" ng-readonly="readOnly"> </md-input-container>
 											</div>
 										</div>
 
@@ -194,7 +194,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												<md-input-container class="small counter">
 												<label>{{translate.load("sbi.datasource.type.jdbc.password")}}</label>
 												<input ng-change="setDirty()"  type="password" name="password" ng-model="selectedDataSource.pwd"
-													ng-maxlength="50"> </md-input-container>
+													ng-maxlength="50" ng-readonly="readOnly"> </md-input-container>
 											</div>
 										</div>
 
@@ -204,7 +204,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												<md-input-container class="small counter">
 													<label>{{translate.load("sbi.datasource.driver")}}</label>
 													<input ng-change="setDirty()"  ng-model="selectedDataSource.driver" required
-														ng-maxlength="160">
+														ng-maxlength="160" ng-readonly="readOnly">
 													<div ng-messages="forms.dataSourceForm.driver.$error" ng-show="!selectedDataSource.driver">
 				          								<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
 				        							</div>
@@ -218,7 +218,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div layout="row" layout-wrap ng-if= "jdbcOrJndi.type != 'JDBC'">
 										<md-input-container class="small counter" flex=95>
 											<label>{{translate.load("sbi.datasource.type.jndi.name")}}</label>
-											<input ng-model="selectedDataSource.jndi">
+											<input ng-model="selectedDataSource.jndi" ng-readonly="readOnly">
 										</md-input-container>
 										<md-icon ng-click="showJdniInfo()" md-font-icon="fa fa-info-circle fa-lg"></md-icon>
 									</div>
