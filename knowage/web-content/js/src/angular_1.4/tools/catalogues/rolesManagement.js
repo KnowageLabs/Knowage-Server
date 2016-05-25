@@ -28,6 +28,36 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	$scope.listCategories = [];
 	//VARIABLE FOR CATEGORY KPI
 	$scope.categoriesSelected = [];
+	checkboxList =[{dbname:"SAVE_SUBOBJECTS",label:"saveSubobj",visible:false, category:"SAVE"},  //save,see,send,build,manage,items,export,edit
+	               {dbname:"SEE_SUBOBJECTS",label:"seeSubobj",visible:false, category:"SEE"},
+	               {dbname:"SEE_VIEWPOINTS",label:"seeViewpoints",visible:false, category:"SEE"},
+	               {dbname:"SEE_SNAPSHOTS",label:"seeSnapshot",visible:false, category:"SEE"},
+	               {dbname:"SEE_NOTES",label:"seeNotes",visible:false, category:"SEE"},
+	               {dbname:"SEND_MAIL",label:"sendMail",visible:false, category:"SEND"},
+	               {dbname:"SAVE_INTO_FOLDER",label:"savePersonalFolder",visible:false, category:"SAVE"},
+	               {dbname:"SAVE_REMEMBER_ME",label:"saveRemember",visible:false, category:"SAVE"},
+	               {dbname:"SEE_METADATA",label:"seeMeta",visible:false, category:"SEE"},
+	               {dbname:"SAVE_METADATA",label:"saveMeta",visible:false, category:"SAVE"},
+	               
+	               {dbname:"BUILD_QBE_QUERY",label:"buildQbe",visible:false, category:"BUILD"},
+	               {dbname:"MANAGE_USERS",label:"manageUsers",visible:false, category:"MANAGE"},
+	               {dbname:"SEE_DOCUMENT_BROWSER",label:"seeDocBrowser",visible:false, category:"SEE"},
+	               {dbname:"SEE_FAVOURITES",label:"seeFavourites",visible:false, category:"ITEMS"},
+	               {dbname:"SEE_TODO_LIST",label:"seeToDoList",visible:false, category:"ITEMS"},
+	               {dbname:"CREATE_DOCUMENTS",label:"createDocument",visible:false, category:"ITEMS"},
+	               {dbname:"ENABLE_DATASET_PERSISTENCE",label:"enableDatasetPersistence",visible:false, category:"ENABLE"},
+	               {dbname:"SEE_MY_DATA",label:"seeMyData",visible:false, category:"ITEMS"},
+	               {dbname:"DO_MASSIVE_EXPORT",label:"doMassiveExport",visible:false, category:"EXPORT"},
+	               {dbname:"EDIT_WORKSHEET",label:"editWorksheet",visible:false, category:"EDIT"},
+	               
+	               {dbname:"SEE_SUBSCRIPTIONS",label:"seeSubscriptions",visible:false, category:"ITEMS"},
+	               {dbname:"CREATE_SOCIAL_ANALYSIS",label:"createSocialAnalysis",visible:false, category:"ITEMS"},
+	               {dbname:"VIEW_SOCIAL_ANALYSIS",label:"viewSocialAnalysis",visible:false, category:"ITEMS"},
+	               {dbname:"GLOSSARY",label:"",visible:false, category:"save"},
+	               {dbname:"MANAGE_GLOSSARY_BUSINESS",label:"manageGlossaryBusiness",visible:false, category:"MANAGE"},
+	               {dbname:"MANAGE_GLOSSARY_TECHNICAL",label:"manageGlossaryTechnical",visible:false, category:"MANAGE"},
+	               {dbname:"HIERARCHIES_MANAGEMENT",label:"hierarchiesManagement",visible:false, category:"ITEMS"}
+	               ];
 
 	$scope.rmSpeedMenu = [{
 		label: sbiModule_translate.load("sbi.generic.delete"),
@@ -453,6 +483,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		sbiModule_restServices.promiseGet("authorizations","")
 		.then(function(response) {
 			$scope.authList = response.data;
+			initCBList();
 			console.log($scope.authList);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -565,4 +596,35 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 
 		});
 	}
+	
+	initCBList = function(){
+		for(var i=0; i<$scope.authList.root.length;i++){
+			setVisible($scope.authList.root[i].name);
+		}
+	}
+	
+	setVisible = function(dbname){
+		for(var i=0; i<checkboxList.length;i++){
+			if(checkboxList[i].dbname == dbname){
+				checkboxList[i].visible = true;
+				break;
+			}
+		}
+	}
+	
+	$scope.isVisible = function(label){
+		for(var i=0; i<checkboxList.length;i++){
+			if(checkboxList[i].label == label)
+				return checkboxList[i].visible;
+		}
+	}
+	
+	$scope.isToolbarVisible = function(name){
+		name = name.toUpperCase();
+		for(var i=0; i<checkboxList.length;i++){
+			if(checkboxList[i].category == name && checkboxList[i].visible)
+				return true;
+		}
+		return false;
+	};
 };

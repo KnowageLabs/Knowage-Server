@@ -141,12 +141,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-card>
 				
 
-				<md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+				<md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar"  ng-if="isToolbarVisible('SAVE')"
 												 >
 										{{translate.load("sbi.roles.save");}}
 				</md-toolbar>
 				
-				<div layout="row" layout-wrap>
+				<div layout="row" layout-wrap ng-if="isVisible('savePersonalFolder')">
 				<md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSaveIntoPersonalFolder" aria-label="check" name ="savePersonalFolder">
@@ -157,7 +157,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       </div>
 			       
 			   </div>
-				<div layout="row" layout-wrap>
+				<div layout="row" layout-wrap ng-if="isVisible('saveMeta')">
 				<md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSaveMetadata" aria-label="check" name="saveMeta">
@@ -167,7 +167,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.saveMeta")}}</label>
 			       </div>
 			   </div>
-			   <div layout="row" layout-wrap>
+			   <div layout="row" layout-wrap ng-if="isVisible('saveRemember')">
 			   <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSaveRememberMe" aria-label="check" name="saveRemember">
@@ -177,7 +177,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.saveRemember")}}</label>
 			       </div>
 			   </div>
-			   <div layout="row" layout-wrap>
+			   <div layout="row" layout-wrap ng-if="isVisible('saveSubobj')">
 			   <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSaveSubobjects" aria-label="check" name="saveSubobj">
@@ -187,13 +187,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.saveSubobj")}}</label>
 			       </div> 
 			   </div>
-			   <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+			   <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('SEE')"
 												 >
 										{{translate.load("sbi.roles.see");}}
 				</md-toolbar>
 				
 				
-				<div layout="row" layout-wrap>
+				<div layout="row" layout-wrap ng-if="isVisible('seeMeta')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeMetadata" aria-label="check" name="seeMeta">
@@ -203,7 +203,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.seeMeta")}}</label>
 			       </div>
 			   </div>
-				<div layout="row" layout-wrap>
+				<div layout="row" layout-wrap ng-if="isVisible('seeNotes')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeNotes" aria-label="check" name="seeNotes">
@@ -213,7 +213,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.seeNotes")}}</label>
 			       </div>
 			   </div>
-			   <div layout="row" layout-wrap>
+			   <div layout="row" layout-wrap ng-if="isVisible('seeSnapshot')">
 			   <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeSnapshots" aria-label="check" name="seeSnapshot">
@@ -223,7 +223,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.seeSnapshot")}}</label>
 			       </div>
 			   </div>
-			   <div layout="row" layout-wrap>
+			   <div layout="row" layout-wrap ng-if="isVisible('seeSubobj')">
 			    <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeSubobjects" aria-label="check" name="seeSubobj">
@@ -233,7 +233,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.seeSubobj")}}</label>
 			       </div>
 			   </div>
-			   <div layout="row" layout-wrap>
+			   <div layout="row" layout-wrap ng-if="isVisible('seeViewpoints')">
 			    <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeViewpoints" aria-label="check" name="seeViewpoints">
@@ -244,11 +244,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       </div>
 			   </div>
 			   
-			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('SEND')"
 												 >
 										{{translate.load("sbi.roles.send");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap>
+				 <div layout="row" layout-wrap ng-if="isVisible('sendMail')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSendMail" aria-label="check" name="sendMail">
@@ -258,11 +258,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.sendMail")}}</label>
 			       </div>
 			   </div>
-			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('BUILD')"
 												 >
 										{{translate.load("sbi.roles.build");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap>
+				 <div layout="row" layout-wrap ng-if="isVisible('buildQbe')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToBuildQbeQuery" aria-label="check" name="buildQbe">
@@ -272,11 +272,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.buildQbe")}}</label>
 			       </div>
 			   </div>
-			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('EXPORT')"
 												 >
 										{{translate.load("sbi.roles.export");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap>
+				 <div layout="row" layout-wrap ng-if="isVisible('doMassiveExport')">
 				   <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToDoMassiveExport" aria-label="check" name="doMassiveExport">
@@ -291,11 +291,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 				
 				
-				 <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+				 <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('MANAGE')"
 												 >
 										{{translate.load("sbi.roles.manage");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap>
+				 <div layout="row" layout-wrap ng-if="isVisible('manageUsers')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageUsers" aria-label="check" name="manageUsers">
@@ -305,7 +305,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.manageUsers")}}</label>
 			       </div>
 			   </div>
-			    <div layout="row" layout-wrap>
+			    <div layout="row" layout-wrap ng-if="isVisible('manageGlossaryBusiness')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageGlossaryBusiness" aria-label="check" name="manageGlossaryBusiness">
@@ -315,7 +315,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.manageGlossaryBusiness")}}</label>
 			       </div>
 			   </div>
-			    <div layout="row" layout-wrap>
+			    <div layout="row" layout-wrap ng-if="isVisible('manageGlossaryTechnical')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageGlossaryTechnical" aria-label="check" name="manageGlossaryTechnical">
@@ -326,11 +326,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       </div> 
 			   </div>
 				
-				<md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+				<md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('EDIT')"
 												 >
 										{{translate.load("sbi.roles.edit");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap>
+				 <div layout="row" layout-wrap ng-if="isVisible('editWorksheet')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToEditWorksheet" aria-label="check" name="editWorksheet">
@@ -340,11 +340,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.worksheet")}}</label>
 			       </div> 
 			   </div>
-			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('ENABLE')"
 												 >
 										{{translate.load("sbi.roles.enable");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap>
+				 <div layout="row" layout-wrap ng-if="isVisible('enableDatasetPersistence')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToEnableDatasetPersistence" aria-label="check" name="enableDatasetPersistence">
@@ -354,11 +354,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.enableDatasetPersistence")}}</label>
 			       </div> 
 			   </div>
-			   <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+			   <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('VIEW')"
 												 >
 										{{translate.load("sbi.roles.view");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap>
+				 <div layout="row" layout-wrap ng-if="isVisible('enableFederatedDataset')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToEnableFederatedDataset" aria-label="check" name="enableFederatedDataset">
@@ -369,11 +369,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       </div> 
 			   </div>
 				
-				 <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
+				 <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('ITEMS')"
 												 >
 										{{translate.load("sbi.roles.finalUserCan");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap>
+				 <div layout="row" layout-wrap ng-if="isVisible('seeDocBrowser')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeDocumentBrowser" aria-label="check" ng-disabled="disable" name="seeDocBrowser">
@@ -383,7 +383,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.seeDocumentBrowser")}}</label>
 			       </div> 
 			   </div>
-				 <div layout="row" layout-wrap>
+				 <div layout="row" layout-wrap ng-if="isVisible('seeMyData')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeMyData" aria-label="check" ng-disabled="disable" name="seeMyData">
@@ -393,7 +393,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.seeMyData")}}</label>
 			       </div> 
 			   </div>
-				<div layout="row" layout-wrap>
+				<div layout="row" layout-wrap ng-if="isVisible('seeFavourites')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeFavourites" aria-label="check" ng-disabled="disable" name="seeFavourites">
@@ -403,7 +403,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.seeFavourites")}}</label>
 			       </div> 
 			   </div>
-				 <div layout="row" layout-wrap>
+				 <div layout="row" layout-wrap ng-if="isVisible('seeSubscriptions')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeSubscriptions" aria-label="check" ng-disabled="disable" name="seeSubscriptions">
@@ -413,7 +413,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.seeSubscriptions")}}</label>
 			       </div> 
 			   </div>
-			   <div layout="row" layout-wrap>
+			   <div layout="row" layout-wrap ng-if="isVisible('seeToDoList')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeToDoList" aria-label="check" ng-disabled="disable" name="seeToDoList">
@@ -423,7 +423,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.seeToDoList")}}</label>
 			       </div> 
 			   </div>
-				 <div layout="row" layout-wrap>
+				 <div layout="row" layout-wrap ng-if="isVisible('createDocument')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToCreateDocuments" aria-label="check" ng-disabled="disable" name="createDocument">
@@ -433,7 +433,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.createDocument")}}</label>
 			       </div> 
 			   </div>
-			   <div layout="row" layout-wrap>
+			   <div layout="row" layout-wrap ng-if="isVisible('createSocialAnalysis')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToCreateSocialAnalysis" aria-label="check" ng-disabled="disable" name="createSocialAnalysis">
@@ -443,7 +443,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.createSocialAnalysis")}}</label>
 			       </div> 
 			   </div>
-				 <div layout="row" layout-wrap>
+				 <div layout="row" layout-wrap ng-if="isVisible('viewSocialAnalysis')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToViewSocialAnalysis" aria-label="check" ng-disabled="disable" name="viewSocialAnalysis">
@@ -453,7 +453,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.viewSocialAnalysis")}}</label>
 			       </div> 
 			   </div>
-			   <div layout="row" layout-wrap>
+			   <div layout="row" layout-wrap ng-if="isVisible('hierarchiesManagement')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToHierarchiesManagement" aria-label="check" ng-disabled="disable" name="hierarchiesManagement">
