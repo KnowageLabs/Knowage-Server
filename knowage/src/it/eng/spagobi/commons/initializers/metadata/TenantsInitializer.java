@@ -72,6 +72,7 @@ public class TenantsInitializer extends SpagoBIInitializer {
 			for (String aConfiguredTenant : configuredTenants) {
 				if (exists(aConfiguredTenant, existingTenants)) {
 					LogMF.debug(logger, "Tenant {0} already exists", aConfiguredTenant);
+					writeMissingTenantProductType(aConfiguredTenant, hibernateSession);
 				} else {
 					LogMF.info(logger, "Tenant {0} does not exist. It will be inserted", aConfiguredTenant);
 					writeTenant(aConfiguredTenant, hibernateSession);
@@ -135,29 +136,78 @@ public class TenantsInitializer extends SpagoBIInitializer {
 			Iterator it = tenantProducts.iterator();
 			while (it.hasNext()) {
 				SourceBean aTenantProductSB = (SourceBean) it.next();
-				String productTypeName = (String) aTenantProductSB.getAttribute("name");
-				LogMF.debug(logger, "Found configured tenant product: [{0}]", productTypeName);
+				String isActive = (String) aTenantProductSB.getAttribute("active");
+				if (isActive != null && isActive.equalsIgnoreCase("true")) {
+					String productTypeName = (String) aTenantProductSB.getAttribute("name");
+					LogMF.debug(logger, "Found configured tenant product: [{0}]", productTypeName);
 
-				// /create association tenant to product type
-				SbiTenant aTenant = findTenant(hibernateSession, tenantName);
-				SbiProductType aProductType = findProductType(hibernateSession, productTypeName);
-				if (aProductType != null) {
-					SbiOrganizationProductType association = new SbiOrganizationProductType();
-					association.setSbiProductType(aProductType);
-					association.setSbiOrganizations(aTenant);
-					SbiCommonInfo commonInfo = new SbiCommonInfo();
-					commonInfo.setUserIn("server");
-					commonInfo.setTimeIn(new Date());
-					commonInfo.setOrganization(tenantName);
+					// /create association tenant to product type
+					SbiTenant aTenant = findTenant(hibernateSession, tenantName);
+					SbiProductType aProductType = findProductType(hibernateSession, productTypeName);
+					if (aProductType != null) {
+						SbiOrganizationProductType association = new SbiOrganizationProductType();
+						association.setSbiProductType(aProductType);
+						association.setSbiOrganizations(aTenant);
+						SbiCommonInfo commonInfo = new SbiCommonInfo();
+						commonInfo.setUserIn("server");
+						commonInfo.setTimeIn(new Date());
+						commonInfo.setOrganization(tenantName);
 
-					association.setCommonInfo(commonInfo);
+						association.setCommonInfo(commonInfo);
 
-					SbiOrganizationProductTypeId id = new SbiOrganizationProductTypeId();
-					id.setProductTypeId(aProductType.getProductTypeId());
-					id.setOrganizationId(aTenant.getId());
-					association.setId(id);
+						SbiOrganizationProductTypeId id = new SbiOrganizationProductTypeId();
+						id.setProductTypeId(aProductType.getProductTypeId());
+						id.setOrganizationId(aTenant.getId());
+						association.setId(id);
 
-					hibernateSession.save(association);
+						hibernateSession.save(association);
+					}
+				}
+			}
+		}
+	}
+
+	private void writeMissingTenantProductType(String tenantName, Session hibernateSession) throws Exception {
+		SourceBean configuration = this.getConfiguration();
+		Object tenantObject = configuration.getFilteredSourceBeanAttribute(TENANT_CONFIG_TAG_NAME, "name", tenantName);
+
+		if (tenantObject == null) {
+			throw new Exception("Tenant [" + tenantName + "] configuration not found!!!");
+		} else {
+			SourceBean tenantObjectSB = (SourceBean) tenantObject;
+			List tenantProducts = tenantObjectSB.getAttributeAsList("PRODUCT");
+			Iterator it = tenantProducts.iterator();
+			while (it.hasNext()) {
+				SourceBean aTenantProductSB = (SourceBean) it.next();
+				String isActive = (String) aTenantProductSB.getAttribute("active");
+				if (isActive != null && isActive.equalsIgnoreCase("true")) {
+					String productTypeName = (String) aTenantProductSB.getAttribute("name");
+					LogMF.debug(logger, "Found configured tenant product: [{0}]", productTypeName);
+
+					// /create association tenant to product type
+					SbiTenant aTenant = findTenant(hibernateSession, tenantName);
+					SbiProductType aProductType = findProductType(hibernateSession, productTypeName);
+					if (aProductType != null) {
+						SbiOrganizationProductType association = findOrganizationProductType(hibernateSession, tenantName, productTypeName);
+						if (association == null) {
+							association = new SbiOrganizationProductType();
+							association.setSbiProductType(aProductType);
+							association.setSbiOrganizations(aTenant);
+							SbiCommonInfo commonInfo = new SbiCommonInfo();
+							commonInfo.setUserIn("server");
+							commonInfo.setTimeIn(new Date());
+							commonInfo.setOrganization(tenantName);
+
+							association.setCommonInfo(commonInfo);
+
+							SbiOrganizationProductTypeId id = new SbiOrganizationProductTypeId();
+							id.setProductTypeId(aProductType.getProductTypeId());
+							id.setOrganizationId(aTenant.getId());
+							association.setId(id);
+
+							hibernateSession.save(association);
+						}
+					}
 				}
 			}
 		}

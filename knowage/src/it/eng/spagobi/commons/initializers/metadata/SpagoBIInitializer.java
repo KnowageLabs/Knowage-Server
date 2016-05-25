@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,6 +21,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
 import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
@@ -56,10 +57,12 @@ public abstract class SpagoBIInitializer extends AbstractHibernateDAO implements
 		return targetComponentName;
 	}
 
+	@Override
 	public SourceBean getConfig() {
 		return null;
 	}
 
+	@Override
 	public void init(SourceBean config) {
 		Session hibernateSession;
 		Transaction hibernateTransaction;
@@ -160,7 +163,6 @@ public abstract class SpagoBIInitializer extends AbstractHibernateDAO implements
 
 	protected SbiTenant findTenant(Session aSession, String name) {
 		logger.debug("IN");
-		SbiTenant aTenant = new SbiTenant();
 		String hql = "from SbiTenant t where t.name = :name";
 		Query hqlQuery = aSession.createQuery(hql);
 		hqlQuery.setParameter("name", name);
@@ -169,4 +171,14 @@ public abstract class SpagoBIInitializer extends AbstractHibernateDAO implements
 		return tenant;
 	}
 
+	protected SbiOrganizationProductType findOrganizationProductType(Session aSession, String tenant, String productType) {
+		logger.debug("IN");
+		String hql = "from SbiOrganizationProductType p where p.sbiOrganizations.name = :tenantName and p.sbiProductType.label = :productLabel";
+		Query hibQuery = aSession.createQuery(hql);
+		hibQuery.setString("tenantName", tenant);
+		hibQuery.setString("productLabel", productType);
+		SbiOrganizationProductType result = (SbiOrganizationProductType) hibQuery.uniqueResult();
+		logger.debug("OUT");
+		return result;
+	}
 }
