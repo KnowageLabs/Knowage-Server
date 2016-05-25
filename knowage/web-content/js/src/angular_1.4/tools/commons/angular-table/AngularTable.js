@@ -419,7 +419,8 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
 		        	return	$filter('orderBy')(items, column.comparatorColumn , reverse)
 		        }else{ 
 		        	if(column!=undefined){
-		        		return	$filter('orderBy')(items, column.name , reverse)
+		        		var str = JSON.stringify(column.name);
+		        		return	$filter('orderBy')(items, str , reverse)
 		        	}else{
 		        		 var filtered = getfiltered();
 		        		 if(reverse){
