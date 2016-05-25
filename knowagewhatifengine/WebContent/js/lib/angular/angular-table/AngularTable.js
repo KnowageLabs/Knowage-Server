@@ -174,7 +174,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
 
                                     //check for pagination
                                     if (!attrs.totalItemCount) {
-                                        scope.currentPageNumber = undefined;
+                                    	tbody.attr('current-page-number', scope.currentPageNumber);
                                         scope.totalItemCount = undefined;
                                         var paginBox = angular.element(footerBox[0].querySelector("dir-pagination-controls"));
                                         paginBox.removeAttr("on-page-change");
@@ -252,7 +252,9 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                         compile: function (tElement, tAttrs, transclude) {
                             if (tAttrs.localPagination == "true" || tAttrs.localPagination == true) {
                                 angular.element(tElement.children()[0]).removeAttr('total-items');
-                                angular.element(tElement.children()[0]).removeAttr('current-page');
+                                if (tAttrs.currentPageNumber == null) {
+                                	angular.element(tElement.children()[0]).removeAttr('current-page');
+                                }
                             }
 
                             if (tAttrs.noDragAndDrop == "true") {
@@ -417,7 +419,8 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
 		        	return	$filter('orderBy')(items, column.comparatorColumn , reverse)
 		        }else{ 
 		        	if(column!=undefined){
-		        		return	$filter('orderBy')(items, column.name , reverse)
+		        		var str = JSON.stringify(column.name);
+		        		return	$filter('orderBy')(items, str , reverse)
 		        	}else{
 		        		 var filtered = getfiltered();
 		        		 if(reverse){
