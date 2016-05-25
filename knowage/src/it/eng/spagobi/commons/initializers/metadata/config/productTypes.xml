@@ -29,9 +29,4 @@
 		<ENGINE label="knowagejasperreporte" />
 		<ENGINE label="knowageaccessibleeng" />
 	</PRODUCT_TYPE>
-	<PRODUCT_TYPE label="KnowagePM" active="true">
-		<ENGINE label="knowagecompositedoce" />
-		<ENGINE label="knowagekpiengine" />
-		<ENGINE label="knowagechartengine" />
-	</PRODUCT_TYPE>
 </PRODUCT_TYPES>

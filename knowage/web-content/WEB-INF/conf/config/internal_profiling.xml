@@ -145,19 +145,5 @@
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_FAVOURITES" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_SUBSCRIPTIONS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_TODO_LIST" organization="DEFAULT_TENANT"/>	
-		<!-- Authorizations for KnowagePM -->
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_FAVOURITES" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_TODO_LIST" organization="DEFAULT_TENANT"/>
 	</DEFAULT_AUTHORIZATIONS>
 </INTERNAL_PROFILING_INITIALIZER>
