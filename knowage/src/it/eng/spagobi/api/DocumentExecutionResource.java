@@ -205,7 +205,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				if (objParameter.isMandatory()) {
 					Integer paruseId = objParameter.getParameterUseId();
 					ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
-					if ("lov".equalsIgnoreCase(parameterUse.getValueSelection()) 
+					if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
 							&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)) {
 						// ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(
 						// role, obj, objParameter.getAnalyticalDocumentParameter(), req);
@@ -237,6 +237,19 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 				}
 
+				// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
+				if (!jsonParameters.isNull(objParameter.getId())) {
+					Integer paruseId = objParameter.getParameterUseId();
+					ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
+					if (jsonParameters.getString(objParameter.getId()).startsWith("[") && jsonParameters.getString(objParameter.getId()).endsWith("]")
+							&& parameterUse.getValueSelection().equals("man_in") && objParameter.getParType().equals("STRING")) {
+						int strLength = jsonParameters.getString(objParameter.getId()).toString().length();
+						String jsonParamRet = jsonParameters.getString(objParameter.getId()).toString().substring(1, strLength - 1);
+						jsonParameters.put(objParameter.getId(), jsonParamRet);
+					}
+
+				}
+
 			}
 
 			String url = DocumentExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
@@ -246,7 +259,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			// resultAsMap.put("parameters", parameters);
 			resultAsMap.put("url", url + "&SBI_EXECUTION_ID=" + sbiExecutionId);
-			if (errorList!= null && !errorList.isEmpty()) {
+			if (errorList != null && !errorList.isEmpty()) {
 				resultAsMap.put("errors", errorList);
 			}
 			// ADD TYPE CODE
@@ -327,9 +340,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
 
-			parameterAsMap.put("allowInternalNodeSelection", 
-					objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
-			
+			parameterAsMap
+					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
+
 			if (jsonParameters.has(objParameter.getId())) {
 				documentUrlManager.refreshParameterForFilters(objParameter.getAnalyticalDocumentParameter(), jsonParameters);
 				parameterAsMap.put("parameterValue", objParameter.getAnalyticalDocumentParameter().getParameterValues());
@@ -338,25 +351,24 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			boolean showParameterLov = true;
 
 			// Parameters NON tree
-			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection()) 
+			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
 					&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)) {
 
 				HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
 						objParameter.getAnalyticalDocumentParameter(), req);
 
-				ArrayList<HashMap<String, Object>> defaultValues = 
-						(ArrayList<HashMap<String, Object>>) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES);
+				ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
+						.get(DocumentExecutionUtils.DEFAULT_VALUES);
 
 				List defaultValuesMetadata = (List) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES_METADATA);
 
-				if(!objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_LOOKUP)) {
+				if (!objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_LOOKUP)) {
 					parameterAsMap.put("defaultValues", defaultValues);
 				} else {
 					parameterAsMap.put("defaultValues", new ArrayList<>());
 				}
 				parameterAsMap.put("defaultValuesMeta", defaultValuesMetadata);
-				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, 
-						defaultValuesData.get(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA));
+				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, defaultValuesData.get(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA));
 				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA,
 						defaultValuesData.get(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA));
 
@@ -395,7 +407,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					List<String> valList = (ArrayList) o;
 					for (int k = 0; k < valList.size(); k++) {
 						String itemVal = valList.get(k);
+						// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
+						if (itemVal.startsWith("[") && itemVal.endsWith("]") && parameterUse.getValueSelection().equals("man_in")
+								&& objParameter.getParType().equals("STRING")) {
+							itemVal = itemVal.substring(1, itemVal.length() - 1);
 
+						}
 						DefaultValue defValue = new DefaultValue();
 						defValue.setValue(itemVal);
 						defValue.setDescription(itemVal);
