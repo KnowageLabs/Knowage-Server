@@ -206,14 +206,14 @@ try{
 								<%} %>
 								
 								<span class="divider">{{translate.load("sbi.execution.executionpage.toolbar.shortcuts")}}</span>
-					            
+					            <%--
 					            <md-menu-item class="md-indent">
 					            	<md-button ng-disabled="true" class="toolbar-button-custom"
 					            			aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}">
 				            			{{translate.load('sbi.execution.executionpage.toolbar.savemyworkspace')}}
 					                </md-button>
 					            </md-menu-item>
-				           
+				            	--%>
 								<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_SNAPSHOTS_FUNCTIONALITY)) { %>
 				                <md-menu-item class="md-indent">
 					            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}"
