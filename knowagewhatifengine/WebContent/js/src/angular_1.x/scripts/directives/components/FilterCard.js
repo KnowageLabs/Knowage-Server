@@ -42,8 +42,6 @@ function filterCardController($scope, $timeout, $window, $mdDialog, $http, $sce,
 			.then(function(response){
 				$scope.table = $sce.trustAsHtml(response.data.table);
 				$scope.handleResponse(response);
-				$scope.filterSelected = [];
-				$scope.initFilterList();
 			},function(response){
 				sbiModule_messaging.showErrorMessage("Error", 'An error occured has occured while updateing hierachie.');
 		});
