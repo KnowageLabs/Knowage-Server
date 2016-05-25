@@ -119,7 +119,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 									<!-- MULTICHEMA -->
 									<div layout="row" layout-wrap style="margin-bottom:-19px;">
-										<label style="padding-top:7px;">{{translate.load("sbi.datasource.multischema")}}:</label>
+										<label class="checkboxPadding">{{translate.load("sbi.datasource.multischema")}}:</label>
 										<md-input-container class="small counter">
 											<md-checkbox	ng-change="setDirty()"  ng-model="selectedDataSource.multiSchema" aria-label="Multischema"></md-checkbox>
 										</md-input-container>
@@ -144,8 +144,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									</div>
 
 									<!-- WRITE DEFAULT -->
-									<div layout="row" layout-wrap style="margin-bottom:-19px;">
-										<label style="padding-top:7px;">{{translate.load("sbi.datasource.writedefault")}}:</label>
+									<div layout="row" layout-wrap>
+										<label class="checkboxPadding"">{{translate.load("sbi.datasource.writedefault")}}:</label>
 										<md-input-container class="small counter">
 											<md-checkbox ng-change="setDirty()"
 												ng-model="selectedDataSource.writeDefault" ng-disabled="(selectedDataSource.readOnly == 1) || !isSuperAdminFunction()" aria-label="Write Default">
