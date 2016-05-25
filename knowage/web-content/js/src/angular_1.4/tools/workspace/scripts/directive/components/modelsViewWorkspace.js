@@ -15,18 +15,39 @@ angular
 		  };	  
 	});
 
-function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav){
+function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_messaging){
 	$scope.businessModelsInitial=[];
 	$scope.federationDefinitionsInitial=[];
 	
 	$scope.selectedModel = undefined;
 
 	$scope.showModelInfo = false;
+	$scope.idsOfFederationDefinitionsUsediNFederatedDatasets = [];
+	$scope.allFederatedDatasets = [];
 	
 	$scope.federationsEnabled= function (){
 		return datasetProperties.CAN_USE_FEDERATED_DATASET_AS_FINAL_USER === "true";
 
 	}
+	
+	$scope.getFederatedDatasets = function() {
+		sbiModule_restServices.promiseGet("1.0/datasets", "")
+		.then(function(response) {
+			var allDatasets = response.data.root;
+			for (var i = 0; i < allDatasets.length; i++) {
+				if(allDatasets[i].hasOwnProperty('federationId')) {
+					if($scope.idsOfFederationDefinitionsUsediNFederatedDatasets.indexOf(allDatasets[i].federationId)==-1){
+						$scope.idsOfFederationDefinitionsUsediNFederatedDatasets.push(allDatasets[i].federationId);
+					}
+					$scope.allFederatedDatasets.push(allDatasets[i]);
+				}
+			}
+		},function(response){
+			
+		});
+	}
+	
+	$scope.getFederatedDatasets();
 	
 	$scope.loadFederations=function(){
 		sbiModule_restServices.promiseGet("2.0/federateddataset", "")
@@ -139,24 +160,34 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	}
 	
 	$scope.deleteFederation=function(federation){
-//		console.log("in delete");
-		var confirm = $mdDialog.confirm()
-		.title(sbiModule_translate.load("sbi.browser.document.delete.ask.title"))
-		.content(sbiModule_translate.load("sbi.browser.document.delete.ask"))
-		.ariaLabel('delete Document') 
-		.ok(sbiModule_translate.load("sbi.general.yes"))
-		.cancel(sbiModule_translate.load("sbi.general.No"));
-			$mdDialog.show(confirm).then(function() {
-			
-			sbiModule_restServices.promiseDelete("2.0/federateddataset",federation.federation_id)
-			.then(function(response) {
-			
-				$scope.loadFederations();
-				$scope.selectModel(undefined);
-			},function(response) {
-				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.delete.error'));
+		var usedInDatasets = [];
+		var fds = $scope.allFederatedDatasets;
+		if ($scope.idsOfFederationDefinitionsUsediNFederatedDatasets.indexOf(federation.federation_id)>-1) {
+			for (var i = 0; i < $scope.allFederatedDatasets.length; i++) {
+				if($scope.allFederatedDatasets[i].federationId==federation.federation_id){
+					usedInDatasets.push($scope.allFederatedDatasets[i].label)
+				}
+			}
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.federationdefinition.models.delete")+"["+usedInDatasets+"]", sbiModule_translate.load("sbi.generic.error"));
+		} else {
+			var confirm = $mdDialog.confirm()
+			.title(sbiModule_translate.load("sbi.federationdefinition.confirm.dialog"))
+			.content(sbiModule_translate.load("sbi.federationdefinition.confirm.delete"))
+			.ariaLabel('delete Document') 
+			.ok(sbiModule_translate.load("sbi.general.yes"))
+			.cancel(sbiModule_translate.load("sbi.general.No"));
+				$mdDialog.show(confirm).then(function() {
+				
+				sbiModule_restServices.promiseDelete("2.0/federateddataset",federation.federation_id)
+				.then(function(response) {
+				
+					$scope.loadFederations();
+					$scope.selectModel(undefined);
+				},function(response) {
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.delete.error'));
+				});
 			});
-		});
+		}
 	}
 	
 	$scope.createFederation=function(){

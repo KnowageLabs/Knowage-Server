@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,21 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.serializer;
-
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -38,6 +28,16 @@ import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
+
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class DataSetJSONSerializer implements Serializer {
 
@@ -119,6 +119,7 @@ public class DataSetJSONSerializer implements Serializer {
 
 	public static final String CKAN_URL = "ckanUrl";
 	public static final String CKAN_ID = "ckanId";
+	public static final String FEDERATION_ID = "federationId";
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -137,6 +138,10 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(LABEL, ds.getLabel());
 			result.put(NAME, ds.getName());
 			result.put(DESCRIPTION, ds.getDescription());
+			if (ds.getDatasetFederation() != null) {
+				result.put(FEDERATION_ID, ds.getDatasetFederation().getFederation_id());
+			}
+
 			Integer numObjAssociated = DAOFactory.getDataSetDAO().countBIObjAssociated(dsId);
 
 			Integer numFederAssociated = DAOFactory.getFedetatedDatasetDAO().countFederationsUsingDataset(dsId);
@@ -204,7 +209,9 @@ public class DataSetJSONSerializer implements Serializer {
 			}
 			result.put(DS_OLD_VERSIONS, versionsListJSON);
 
-			// TODO fix this!!!! the same method for dsType is used with 2 set of values: Qbe, File, .... and SbiQbeDataSet, SbiFileDataSet, ....!!!!!
+			// TODO fix this!!!! the same method for dsType is used with 2 set
+			// of values: Qbe, File, .... and SbiQbeDataSet, SbiFileDataSet,
+			// ....!!!!!
 			String type = ds.getDsType();
 			if (DataSetConstants.code2name.containsKey(type)) {
 				type = DataSetConstants.code2name.get(type);
@@ -314,7 +321,8 @@ public class DataSetJSONSerializer implements Serializer {
 					result.put(QUERY_SCRIPT_LANGUAGE, jsonConf.getString(DataSetConstants.QUERY_SCRIPT_LANGUAGE));
 					result.put(DATA_SOURCE, jsonConf.getString(DataSetConstants.DATA_SOURCE));
 				} else if (type.equalsIgnoreCase(DataSetConstants.QBE)) {
-					// result.put(QBE_SQL_QUERY, jsonConf.getString(DataSetConstants.QBE_SQL_QUERY));
+					// result.put(QBE_SQL_QUERY,
+					// jsonConf.getString(DataSetConstants.QBE_SQL_QUERY));
 					result.put(QBE_JSON_QUERY, jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 					result.put(QBE_DATA_SOURCE, jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
 					result.put(QBE_DATAMARTS, jsonConf.getString(DataSetConstants.QBE_DATAMARTS));

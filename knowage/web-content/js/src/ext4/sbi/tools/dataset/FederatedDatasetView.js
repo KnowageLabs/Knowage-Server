@@ -79,6 +79,8 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 		this.inline = {
 				wrap : false
 		};
+		this.idsOfFederationDefinitionsUsediNFederatedDatasets = [];
+		this.allFederatedDatasets = [];
 		this.scrollable = 'horizontal';
 	
 		this.callParent(arguments);
@@ -95,9 +97,38 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 				 */
 				'executeDocument'
 		);
+		this.getDatasets();
 	}
 	
 	
+	
+	,getDatasets: function(){
+		var globalScope = this;
+		var obj = {};
+		Ext.Ajax.request({
+			url: Sbi.config.contextName+"/restful-services/1.0/datasets",
+			method: 'GET', 
+			headers: { 'Content-Type': 'application/json' },
+		    success: function(response) {
+		    	var allDatasets = [];
+		    	obj = JSON.parse(response.responseText);
+		    	allDatasets = obj.root;
+		    	
+				for (var i = 0; i < allDatasets.length; i++) {
+					if(allDatasets[i].hasOwnProperty('federationId')) {
+						if(globalScope.idsOfFederationDefinitionsUsediNFederatedDatasets.indexOf(allDatasets[i].federationId)==-1){
+							globalScope.idsOfFederationDefinitionsUsediNFederatedDatasets.push(allDatasets[i].federationId);
+						}
+						globalScope.allFederatedDatasets.push(allDatasets[i]);
+					}
+				}
+		    },
+		    failure: function(response, opts) {
+		        console.log('server-side failure with status code ' + response.status);
+		    }
+		});
+		
+	}
 	
 	,initTemplate : function() {
 	
@@ -176,21 +207,36 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 		}
 	
 		else if(e.target.id == 'deleteFederated')	{
+			var globalScope = this;
 			var id = record.data.id;
-
-			Ext.Ajax.request({
-				url: Sbi.config.contextName+"/restful-services/2.0/federateddataset/"+id,
-				method: 'DELETE', 
-				headers: { 'Content-Type': 'application/json' },
-			    success: function() {
-			    	var urlToCall =   Sbi.config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=TRUE&CALLBACK_FUNCTION=openFederation"; 
-					window.location.href = urlToCall;
-			    },
-			    failure: function(response, opts) {
-			        console.log('server-side failure with status code ' + response.status);
-			    }
-			});
-	
+			var usedInDatasets = [];
+			var fds = globalScope.allFederatedDatasets;
+			if (globalScope.idsOfFederationDefinitionsUsediNFederatedDatasets.indexOf(id)>-1) {
+				for (var i = 0; i < globalScope.allFederatedDatasets.length; i++) {
+					if(globalScope.allFederatedDatasets[i].federationId==id){
+						usedInDatasets.push(globalScope.allFederatedDatasets[i].label)
+					}
+				}
+				Ext.Msg.alert(LN('sbi.generic.error'), LN('sbi.federationdefinition.models.delete') +"["+usedInDatasets+"]");
+			} else {
+				Ext.Msg.confirm(LN('sbi.federationdefinition.confirm.dialog'), LN('sbi.federationdefinition.confirm.delete'), function(btn){
+					  if (btn == 'yes'){
+						  Ext.Ajax.request({
+								url: Sbi.config.contextName+"/restful-services/2.0/federateddataset/"+id,
+								method: 'DELETE', 
+								headers: { 'Content-Type': 'application/json' },
+							    success: function() {
+							    	var urlToCall =   Sbi.config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=TRUE&CALLBACK_FUNCTION=openFederation"; 
+									window.location.href = urlToCall;
+							    },
+							    failure: function(response, opts) {
+							        console.log('server-side failure with status code ' + response.status);
+							    }
+							});
+					  }
+				});
+				
+			}	
 		}
 		else {
 			this.fireEvent('executeDocument','QBE','FEDERATED_DATASET',record);
