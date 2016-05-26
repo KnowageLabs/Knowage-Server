@@ -427,15 +427,16 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		return deferred.promise;
 	};
 	
-	
 	this.errorHandler=function(text,title){
-		var titleFin=sbiModule_translate.load(title) || "";
+		var titleFin= title ? sbiModule_translate.load(title) : "";
 		var textFin=text;
+		
 		if(angular.isObject(text)){
-			if(text.hasOwnProperty("errors")){
+			if(text.hasOwnProperty("errors") || text.hasOwnProperty("warnings")){
+				var messages = text.errors || text.warnings;
 				textFin="";
-				for(var i=0;i<text.errors.length;i++){
-					textFin+=sbiModule_translate.load(text.errors[i].message)+" <br> ";
+				for(var i=0;i<messages.length;i++){
+					textFin+=sbiModule_translate.load(messages[i].message)+" <br> ";
 				}
 			}else{
 				textFin=sbiModule_translate.load(JSON.stringify(text));
@@ -444,11 +445,12 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 			textFin=sbiModule_translate.load(text);
 		}
 		
-		var alert = $mdDialog.alert()
+		var alert = $mdDialog.confirm()
 		.title(titleFin)
 		.content(textFin)
 		.ariaLabel('error') 
-		.ok('OK') 
+		.ok(sbiModule_translate.load('sbi.general.ok'))
+		.cancel(sbiModule_translate.load('sbi.general.cancel'))
 		return $mdDialog.show(alert); //can use the finally function
 	}
 	
