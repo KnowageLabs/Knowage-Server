@@ -14,7 +14,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 		};
 		
 		//chartType,documentName, documentParameters, categoryName, categoryValue, serieName, serieValue, groupingCategoryName, groupingCategoryValue, stringParameters
-		this.navigateTo=function(outputParameter,inputParameter){
+		this.navigateTo=function(outputParameter,inputParameter,targetDocument){
 			 
 			sbiModule_restServices.promiseGet("1.0/crossNavigation",this.crossNavigationSteps.currentDocument.name+"/loadCrossNavigationByDocument")
 			.then(function(response){
@@ -28,7 +28,15 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 					execCross(navObj[0],outputParameter,inputParameter,true); 
 				}
 				else if(navObj.length>=1){
-				 
+					if(targetDocument!=undefined){
+						for(var i=0;i<navObj.length;i++){
+							if(angular.equals(navObj[i].document.label,targetDocument)){
+								execCross(navObj[0],outputParameter,inputParameter,true); 
+								return;
+							}
+						}
+					}
+					
 					$mdDialog.show({
 					      controller: function($scope,documents,translate,$mdDialog){
 					    	  $scope.translate=translate;
