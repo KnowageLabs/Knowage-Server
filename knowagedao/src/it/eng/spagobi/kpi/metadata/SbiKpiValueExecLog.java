@@ -20,6 +20,7 @@ package it.eng.spagobi.kpi.metadata;
 import java.util.Date;
 
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.kpi.bo.KpiValueExecLog;
 
 public class SbiKpiValueExecLog extends SbiHibernateModel implements java.io.Serializable {
 
@@ -89,4 +90,23 @@ public class SbiKpiValueExecLog extends SbiHibernateModel implements java.io.Ser
 		this.totalCount = totalCount;
 	}
 
+	public KpiValueExecLog toKpiValueExecLog() {
+		KpiValueExecLog log = new KpiValueExecLog();
+		log.setErrorCount(this.getErrorCount());
+		log.setId(this.getId());
+		log.setOutput("");
+		if (this.getOutput() != null) {
+			log.setOutputPresent(true);
+		} else {
+			log.setOutputPresent(false);
+		}
+
+		log.setSchedulerId(this.getSchedulerId());
+		log.setSuccessCount(this.getSuccessCount());
+		log.setTimeRun(this.getTimeRun());
+		log.setTotalCount(this.getTotalCount());
+
+		return log;
+
+	}
 }

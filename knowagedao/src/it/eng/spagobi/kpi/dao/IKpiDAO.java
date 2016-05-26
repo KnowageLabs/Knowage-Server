@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.kpi.dao;
 
+import java.util.ArrayList;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.bo.Alias;
@@ -292,6 +293,10 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public Kpi loadLastActiveKpi(Integer id);
 
+	public ArrayList<KpiValueExecLog> loadKpiValueExecLog(final Integer id, final Integer number);
+
+	public KpiValueExecLog loadlogExecutionListOutputContent(Integer id);
+	
 	public Integer insertAlertLog(SbiAlertLog alertLog);
 
 	public List<SbiKpiThresholdValue> listThresholdValueByThresholdIds(Collection<Integer> thresholdIds);

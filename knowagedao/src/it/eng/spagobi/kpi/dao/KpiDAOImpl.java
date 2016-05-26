@@ -2232,6 +2232,59 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		tx.commit();
 	}
 
+	@Override
+	public ArrayList<KpiValueExecLog> loadKpiValueExecLog(final Integer id, final Integer number) {
+
+		return executeOnTransaction(new IExecuteOnTransaction<ArrayList<KpiValueExecLog>>() {
+			@Override
+			public ArrayList<KpiValueExecLog> execute(Session session) throws Exception {
+
+				String hql = " from SbiKpiValueExecLog WHERE schedulerId =? ORDER BY timeRun DESC";
+				Query q = session.createQuery(hql);
+				q.setInteger(0, id);
+				if (number != null) {
+					q.setMaxResults(number);
+				}
+				ArrayList<SbiKpiValueExecLog> kpiValue = (ArrayList<SbiKpiValueExecLog>) q.list();
+				ArrayList<KpiValueExecLog> kpiExeclog = new ArrayList<>();
+				for (SbiKpiValueExecLog s : kpiValue) {
+					KpiValueExecLog execLog = s.toKpiValueExecLog();
+					kpiExeclog.add(execLog);
+				}
+
+				if (kpiExeclog.size() != 0) {
+					return kpiExeclog;
+				} else {
+					return null;
+				}
+			}
+		});
+
+	}
+
+	@Override
+	public KpiValueExecLog loadlogExecutionListOutputContent(final Integer id) {
+
+		return executeOnTransaction(new IExecuteOnTransaction<KpiValueExecLog>() {
+			@Override
+			public KpiValueExecLog execute(Session session) throws Exception {
+
+				String hql = " from SbiKpiValueExecLog WHERE id =?";
+				Query q = session.createQuery(hql);
+				q.setInteger(0, id);
+				SbiKpiValueExecLog kpiExecLog = (SbiKpiValueExecLog) q.uniqueResult();
+				KpiValueExecLog kpiValueExecLog = kpiExecLog.toKpiValueExecLog();
+				if (kpiExecLog.getOutput().length != 0) {
+					kpiValueExecLog.setOutput(new String(kpiExecLog.getOutput()));
+					return kpiValueExecLog;
+				} else {
+					return null;
+				}
+			}
+		});
+
+	}
+
 	private static Object ifNull(Object a, Object b) {
 		return a == null ? b : a;
 	}

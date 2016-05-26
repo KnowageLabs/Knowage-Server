@@ -2,7 +2,6 @@ package it.eng.spagobi.kpi.bo;
 
 import java.util.Date;
 
-// TODO: remove the old class it.eng.spagobi.kpi.bo.config.KpiValue
 public class KpiValueExecLog implements Cloneable {
 
 	private int id;
@@ -12,6 +11,7 @@ public class KpiValueExecLog implements Cloneable {
 	private int errorCount;
 	private int successCount;
 	private int totalCount;
+	private boolean outputPresent;
 
 	public int getId() {
 		return id;
@@ -69,4 +69,11 @@ public class KpiValueExecLog implements Cloneable {
 		this.totalCount = totalCount;
 	}
 
+	public boolean isOutputPresent() {
+		return outputPresent;
+	}
+
+	public void setOutputPresent(boolean outputPresent) {
+		this.outputPresent = outputPresent;
+	}
 }

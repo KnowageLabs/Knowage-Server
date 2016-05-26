@@ -195,6 +195,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 				},0)
 			}
 		}
+		$scope.$broadcast('activeExecutionLog');
 	}
 
 	$scope.removeEngine = function(item) {
@@ -226,7 +227,6 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 	
 	$scope.fixDataAfterLoad = function(kpiSched){
 		angular.copy(kpiSched,$scope.selectedScheduler);
-		
 		if(kpiSched.frequency.cron!=null){
 			$scope.selectedScheduler.frequency.cron = JSON.parse(kpiSched.frequency.cron);
 			if($scope.selectedScheduler.frequency.cron.expression!=undefined){
