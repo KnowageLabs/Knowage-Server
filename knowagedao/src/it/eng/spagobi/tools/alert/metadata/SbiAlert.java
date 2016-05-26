@@ -6,9 +6,41 @@ public class SbiAlert extends SbiHibernateModel {
 
 	private Integer id;
 	private String name;
+	private Character singleExecution;
+	private Integer eventBeforeTriggerAction;
 	private SbiAlertListener sbiAlertListener;
 	private Integer listenerId;
 	private String listenerOptions;
+
+	/**
+	 * @return the singleExecution
+	 */
+	public Character getSingleExecution() {
+		return singleExecution;
+	}
+
+	/**
+	 * @param singleExecution
+	 *            the singleExecution to set
+	 */
+	public void setSingleExecution(Character singleExecution) {
+		this.singleExecution = singleExecution;
+	}
+
+	/**
+	 * @return the eventBeforeTriggerAction
+	 */
+	public Integer getEventBeforeTriggerAction() {
+		return eventBeforeTriggerAction;
+	}
+
+	/**
+	 * @param eventBeforeTriggerAction
+	 *            the eventBeforeTriggerAction to set
+	 */
+	public void setEventBeforeTriggerAction(Integer eventBeforeTriggerAction) {
+		this.eventBeforeTriggerAction = eventBeforeTriggerAction;
+	}
 
 	/**
 	 * @return the listenerOptions

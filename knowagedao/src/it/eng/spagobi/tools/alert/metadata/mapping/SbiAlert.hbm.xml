@@ -18,6 +18,10 @@
         </id>
         
         <property name="name" column="NAME" type="string" length="40" />
+        
+        <property name="singleExecution" column="SINGLE_EXECUTION" type="char" />
+		<property name="eventBeforeTriggerAction" column="EVENT_BEFORE_TRIGGER_ACTION" type="integer"  />
+	
         <property name="listenerId" column="LISTENER_ID" type="int" />
         <property name="listenerOptions" column="LISTENER_OPTIONS" type="string" />
         <many-to-one name="sbiAlertListener" class="it.eng.spagobi.tools.alert.metadata.SbiAlertListener" column="LISTENER_ID" 

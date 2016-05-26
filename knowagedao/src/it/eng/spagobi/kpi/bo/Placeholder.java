@@ -25,6 +25,10 @@ public class Placeholder extends Alias {
 	public Placeholder() {
 	}
 
+	public Placeholder(Integer id) {
+		super(id, null);
+	}
+
 	public Placeholder(Integer id, String name) {
 		super(id, name);
 	}
