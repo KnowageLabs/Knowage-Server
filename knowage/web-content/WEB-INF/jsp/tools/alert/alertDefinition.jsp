@@ -101,13 +101,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   		<md-whiteframe style="background-color:rgb(255,255,255)" layout="row">
 	  		 <div flex-xs flex="50">
-		          <md-checkbox ng-model="(alert.singleExecution==undefined || alert.singleExecution=='') ? true : alert.singleExecution" aria-label="CheckAlert">
+		          <md-checkbox ng-model="alert.singleExecution" aria-label="CheckAlert">
 		            {{translate.load('sbi.alert.checkbox.name')}}
 		          </md-checkbox>
 		     </div>
 		     <md-input-container class="md-block" flex-gt-sm style = "width:70%;">
 		    	 <label>{{translate.load('sbi.alert.event.before.trigger')}}</label>
-		  		   	<input name="social" ng-model="(alert.eventBeforeTriggerAction==undefined || alert.eventBeforeTriggerAction=='') ? 1 : alert.eventBeforeTriggerAction "  type="number" step="1"/>
+		  		   	<input ng-model="alert.eventBeforeTriggerAction"  type="number" step="1"/>
 		    	 <div class="hint" ng-if="showHints">###</div>
 		     </md-input-container>
   		</md-whiteframe>
