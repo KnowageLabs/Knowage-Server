@@ -160,11 +160,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      </md-card>	
       				
      	<md-card>
-	     <md-card-content>					
-					 		
-     					
-	
-<!-- /////////////// SAVED VERSION TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
+     	<!-- /////////////// SAVED VERSION TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 				
 				<md-toolbar class="secondaryToolbar">
 		      <div class="md-toolbar-tools">
@@ -174,6 +170,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		   
 		      </div>
 		    </md-toolbar>
+	     <md-card-content>					
+					 		
+     					
+	
+
 				
 <!-- /////////////// SCROLL FOR SAVED FILES TABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->						
 			
