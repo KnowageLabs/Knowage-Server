@@ -575,6 +575,10 @@
 //				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.semaphore"),
 				label: " ",
 				name: "semaphore",
+				size: 30
+			},{
+				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.severity"),
+				name: "severity",
 				comparatorFunction:function(a, b){
 					var aSeverity = a.severity != null? a.severity.toLowerCase().trim() : ''; 
 					var bSeverity = b.severity != null? b.severity.toLowerCase().trim() : ''; 
@@ -583,20 +587,28 @@
 					var bValue = bSeverity == '' ? 0 : $scope.severityPriority[bSeverity];
 					
 					return (bValue - aValue);
-				},
-				size: 30
-			},{
-				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.severity"),
-				name: "severity"
+				}
 			},{
 				label: sbiModule_translate.load("sbi.generic.name"),
 				name: "name"
 			},{
 				label: sbiModule_translate.load("sbi.generic.value"),
-				name: "value"
+				name: "value",
+				comparatorFunction:function(a, b){
+					var aValue = (a.value==undefined || a.value=="") ? -999 : parseInt(a.value);
+					var bValue = (b.value==undefined || b.value=="") ? -999 : parseInt(b.value);
+					
+					return (bValue - aValue);
+				},
 			},{
 				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.lineargauge"),
 				name: "lineargauge",
+				comparatorFunction:function(a, b){
+					var aValue = (a.value==undefined || a.value=="") ? -999 : parseInt(a.value);
+					var bValue = (b.value==undefined || b.value=="") ? -999 : parseInt(b.value);
+					
+					return (bValue - aValue);
+				},
 				size: $scope.LINEAR_GAUGE_SIZE
 			},{
 				label: sbiModule_translate.load("sbi.kpi.viewer.document.list.trend"),

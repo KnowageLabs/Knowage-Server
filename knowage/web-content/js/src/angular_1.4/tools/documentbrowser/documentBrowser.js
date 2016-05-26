@@ -3,13 +3,13 @@ angular.module('documentBrowserModule')
 		[ '$mdMedia', '$scope', '$http', '$mdSidenav', 
 		  '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 
 		  'sbiModule_config', 'setFocus','$timeout', '$cookies', 
-		  'sbiModule_user','$interval',documentBrowserFunction]);
+		  'sbiModule_user','$interval','$q',documentBrowserFunction]);
 
 function documentBrowserFunction(
 		$mdMedia, $scope, $http, $mdSidenav, 
 		$mdDialog, sbiModule_translate, sbiModule_restServices, 
 		sbiModule_config, setFocus,$timeout, $cookies,
-		sbiModule_user,$interval) {
+		sbiModule_user,$interval,$q) {
 	
 	$scope.translate=sbiModule_translate;
 	$scope.folders = [];
@@ -265,16 +265,28 @@ function documentBrowserFunction(
 	};
 	
 	$scope.editDocument=function(document){
+		var deferred = $q.defer();
 		 $mdDialog.show({
  		      controller: DialogEditDocumentController,
  		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',  
  		      clickOutsideToClose:false,
  		      escapeToClose :false,
  		      fullscreen: true,
- 		      locals:{document:document }
- 		    })
+ 		      locals:{document:document, folderDocument : $scope.folderDocuments , searchDocuments:$scope.searchDocuments}
+		 
+		 })
+		 .then(function(answer) {
+				$scope.status = 'You said the information was "' + answer + '".';
+				return ;
+		}, function() {
+				$scope.status = 'You cancelled the dialog.';
+				$scope.reloadAll();
+		});
 	};
 	
+	$scope.reloadAll = function(){
+		//edit document with selectedFolder
+	}
 	$scope.newDocument=function(type){
 		$mdDialog.show({
 			controller: DialogNewDocumentController,
@@ -302,9 +314,15 @@ function documentBrowserFunction(
 		.cancel($scope.translate.load("sbi.general.No"));
 			$mdDialog.show(confirm).then(function() {
 			var index = $scope.folderDocuments.indexOf(Document);
+			var index2= $scope.searchDocuments.indexOf(Document);
 			sbiModule_restServices.promiseDelete("1.0/documents", Document.label)
 			.then(function(response) {
-			$scope.folderDocuments.splice(index,1);
+				if(index!=-1){
+					$scope.folderDocuments.splice(index,1);
+				}
+				if(index2!=-1){
+					$scope.searchDocuments.splice(index2,1);
+				}
 			$scope.selectedDocument = undefined;
 			},function(response) {
 				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.delete.error'));
@@ -327,6 +345,7 @@ function documentBrowserFunction(
 			sbiModule_restServices.promisePost("documents","clone?docId="+Document.id)
 			.then(function(response) {
 			$scope.folderDocuments.push(response.data);
+			$scope.searchDocuments.push(response.data);
 			},function(response) {
 				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.clone.error'));
 			});
@@ -388,9 +407,11 @@ app.factory('setFocus', function($rootScope, $timeout) {
 });
 
 
-function DialogEditDocumentController($scope,$mdDialog,sbiModule_config,document){
+function DialogEditDocumentController($scope,$mdDialog,sbiModule_config,document,folderDocument,searchDocuments){
 	$scope.closeDialogFromExt=function(){
 		 $mdDialog.cancel();
+		 //reload documents 
+		 
 	}
 	$scope.iframeUrl=sbiModule_config.contextName+"/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID="+document.id;
 }
