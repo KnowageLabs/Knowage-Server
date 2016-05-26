@@ -8,6 +8,8 @@ public class Alert {
 	private Integer id;
 	private String name;
 	private String jsonOptions;
+	private boolean singleExecution;
+	private Integer eventBeforeTriggerAction;
 	private AlertListener alertListener;
 	private JOB_STATUS jobStatus;
 
@@ -33,6 +35,36 @@ public class Alert {
 	 */
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the singleExecution
+	 */
+	public boolean isSingleExecution() {
+		return singleExecution;
+	}
+
+	/**
+	 * @param singleExecution
+	 *            the singleExecution to set
+	 */
+	public void setSingleExecution(boolean singleExecution) {
+		this.singleExecution = singleExecution;
+	}
+
+	/**
+	 * @return the eventBeforeTriggerAction
+	 */
+	public Integer getEventBeforeTriggerAction() {
+		return eventBeforeTriggerAction;
+	}
+
+	/**
+	 * @param eventBeforeTriggerAction
+	 *            the eventBeforeTriggerAction to set
+	 */
+	public void setEventBeforeTriggerAction(Integer eventBeforeTriggerAction) {
+		this.eventBeforeTriggerAction = eventBeforeTriggerAction;
 	}
 
 	/**
