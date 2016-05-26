@@ -629,7 +629,12 @@ public class DataSetTransformer {
 
 			if (!al.contains(row.get(groupvalue))) {
 
-				al.add((String) row.get(groupvalue));
+				if (row.get(groupvalue).getClass().equals(Integer.class)) {
+					al.add(row.get(groupvalue) + "");
+				} else {
+					al.add((String) row.get(groupvalue));
+				}
+
 				JSONObject jo = new JSONObject();
 				jo.put((new Integer(j)).toString(), row.get(groupvalue).toString());
 				ja.put(jo);
