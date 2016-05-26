@@ -1,4 +1,5 @@
 <%--
+
 Knowage, Open Source Business Intelligence suite
 Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 
@@ -15,7 +16,6 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-
 
 <%-- 
 author: Andrea Gioia (andrea.gioia@eng.it)
@@ -87,6 +87,14 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	docCommunities= (engineInstance.getDocumentCommunities()==null)?null:engineInstance.getDocumentCommunities();
 	docCommunity = (docCommunities == null || docCommunities.length == 0) ? "": docCommunities[0];
 	docFunctionalities= (engineInstance.getDocumentFunctionalities()==null)?new ArrayList():engineInstance.getDocumentFunctionalities();
+	
+	/*
+		WORKAROUND: Replace the single quote character wherever in the chart template with the ASCII code for a single quote character, so we can render the chart 
+		inside the Cockpit engine even when the JSON template contains	this character (e.g. "L'Italia"). Later, because of rendering the chart, this code
+		will be replaced with the "escaped" single quote character combination (in order not to have "L&#39;Italia").
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/
+	template = template.replaceAll("'","&#39;");
 	
 	documentMode = (request.getParameter("documentMode")==null)?"VIEW":request.getParameter("documentMode");
 	

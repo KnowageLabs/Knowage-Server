@@ -110,7 +110,7 @@
 	#end
     
     title: {
-        text: '$chart.TITLE.text',
+        text: "$chart.TITLE.text",
         
         #set ($titleAlign = $chart.TITLE.style.align)
         #if ($titleAlign != '' )
@@ -140,7 +140,7 @@
     
     #if($chart.SUBTITLE.text != '')
     subtitle: {
-        text: '$chart.SUBTITLE.text',
+        text: "$chart.SUBTITLE.text",
         
         #set ($subtitleAlign = $chart.SUBTITLE.style.align)
         #if ($subtitleAlign != '' )
@@ -341,7 +341,7 @@
 		        },
 		         title:
 		        {
-		        	text:'$chart.LEGEND.TITLE.text',
+		        	text:"$chart.LEGEND.TITLE.text",
 		        	style:
 		        	{	
 		        		color: '$chart.LEGEND.TITLE.style.color',
@@ -456,7 +456,7 @@
 		 	 	enabled: $xAxis.TITLE.enabled
 		 	 #end
 		 	 
-			 text: '$xAxis.TITLE.text',	 
+			 text: "$xAxis.TITLE.text",	 
 			 
 			 style:{
 	        	#foreach($styleName in $xAxis.TITLE.style.keySet())
@@ -552,7 +552,7 @@
 			 	 	enabled: $yAxis.TITLE.enabled
 			 	#end
 		 	 
-        		text: '$yAxis.TITLE.text',		
+        		text: "$yAxis.TITLE.text",		
 			 			 
         		style:{
 		        	#foreach($styleName in $yAxis.TITLE.style.keySet())
@@ -701,7 +701,7 @@
 							The same functionality as in the "pie_chart.vm".
 							@author: danristo (danilo.ristovski@mht.net) 
 						*#
-						name: '$serieCategoryName',
+						name: "$serieCategoryName",
 						y: $serieValue,
 						
 						#set($relatedSerieShowValue = $relatedSerie.showValue)

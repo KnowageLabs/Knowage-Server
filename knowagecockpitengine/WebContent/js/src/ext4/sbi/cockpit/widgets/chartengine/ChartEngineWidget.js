@@ -162,6 +162,14 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 		
 		var wData = Ext.JSON.encode(this.getWidgetDataAsJson());
 		
+		/*
+			WORKAROUND: Replace the single quote character wherever in the JSON for the Cockpit with the ASCII code for a single quote character, so we can render the chart 
+			inside the Cockpit engine even when the JSON template contains this character (e.g. "L'Italia"). Later, because of rendering the chart, this code
+			will be replaced with the "escaped" single quote character combination (in order not to have "L&#39;Italia").
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		*/
+		wData = wData.replace(new RegExp("'",'g'),"&#39;");
+		
 		var thePanel = this;
 		
 		Ext.Ajax.request({ 

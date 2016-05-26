@@ -18,8 +18,8 @@
 	#set($enableDrilldown = true)
 #end
 
-##set($crossNavigation = '')
-##set($crossNavigation = $chart.DRILL)
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
 
 #set($series = $chart.VALUES.SERIE) ## metadata related to series
 
@@ -40,19 +40,25 @@
 
 {
 	#set($drilldownEnabledFlag = false)
+	
 	#if($enableDrilldown || $crossNavigation != '')
 		#set($drilldownEnabledFlag = true)
 	#end
+	
 	meta: {
 		drilldownEnabled: $drilldownEnabledFlag,
 	},
 
     chart: {
+    	
     	#set($chartTypeToPrint = 'column')
+    	
     	#if($chartType == 'line' || $chartType == 'radar')
     		#set($chartTypeToPrint = 'line')
     	#end
+    	
     	##marginRight:40,
+    	
     	#*
     		Commented on 19.12: KNOWAGE-327 ISSUE
     	
@@ -70,7 +76,7 @@
         backgroundColor: '$chart.style.backgroundColor', ##outer chart background
         
         #if($chart.orientation == 'horizontal' && $chartTypeToPrint != 'radar')
-        inverted: true,
+        	inverted: true,
         #end
         
         #if($chart.height != '')
@@ -231,7 +237,8 @@
 	#end
     
     title: {
-        text: '$chart.TITLE.text',
+       
+        text: "$chart.TITLE.text",
        
         #set ($titleAlign = $chart.TITLE.style.align)
         #if ($titleAlign != '' )
@@ -261,7 +268,7 @@
     
     #if($chart.SUBTITLE.text != '')
     subtitle: {
-        text: '$chart.SUBTITLE.text',
+        text: "$chart.SUBTITLE.text",
         
         #set ($subtitleAlign = $chart.SUBTITLE.style.align)
         #if ($subtitleAlign != '' )
@@ -468,7 +475,7 @@
 		        title:
 		        {   
 		            #if('$chart.LEGEND.TITLE.text'!='')
-		        	text:'$chart.LEGEND.TITLE.text',
+		        		text:"$chart.LEGEND.TITLE.text",
 		        	#end
 		        	style:
 		        	{	
@@ -603,13 +610,13 @@
 	{
 	 	title: {
 	 	    #if($xAxis.TITLE.text != '')
-			text: '$xAxis.TITLE.text',
+			text: "$xAxis.TITLE.text",
 			customTitle: true,
 			#elseif($categorieColumns.name != '')
-			text: '$categorieColumns.name',
+			text: "$categorieColumns.name",
 			customTitle: false,
 			#else
-			text: '$categorieColumns.column',
+			text: "$categorieColumns.column",
 			customTitle: false,
 			#end
 			##y:-150, 
@@ -703,10 +710,10 @@
         	
         	title: {
         	    #if($yAxis.TITLE.text != '')
-        		text: '$yAxis.TITLE.text',
+        		text: "$yAxis.TITLE.text",
         		custom: true,
         		#else
-                text: '',
+                text: "",
                 custom: false,
                 #end
         		##x:50,
@@ -858,7 +865,7 @@
 			color: '$relatedSerieColor',
 	    #end
 		
-			name: '$relatedSerie.name',
+			name: "$relatedSerie.name",
 		
 		#set($relatedSerieType = '')
 		#if($relatedSerie.type)
@@ -894,20 +901,20 @@
 						##drilldown: $enableDrilldown,
 						drilldown: $drilldownEnabledFlag,
 						y: $serieValue,
-						name: '$serieCategoryName',
+						name: "$serieCategoryName",
 						
 						#if($crossNavigation != '') 
-						crossNavigationDocumentName: '$crossNavigation.document',
+						crossNavigationDocumentName: "$crossNavigation.document",
 						crossNavigationDocumentParams: [
 							## if single PARAM node, not array
 							#if($crossNavigation.PARAM_LIST.PARAM.class.name == "java.util.LinkedHashMap")
 								#set($param = $crossNavigation.PARAM_LIST.PARAM)
-								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' }
+								{ name: "$param.name", urlName:'$param.parameterUrlName', type: '$param.type', value: "$param.value" }
 							#else
 								##Array of parameters
 								
 								#foreach($param in $crossNavigation.PARAM_LIST.PARAM)
-								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' },
+								{ name: "$param.name", urlName:'$param.parameterUrlName', type: '$param.type', value: "$param.value" },
 								#end
 							#end
 						],

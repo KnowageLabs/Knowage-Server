@@ -2,10 +2,6 @@
 Knowage, Open Source Business Intelligence suite
 Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
 
-
-
-
-
 Knowage is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -19,7 +15,6 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-
 
 <%-- 
 author: 
@@ -109,6 +104,14 @@ author:
 	isTechnicalUser = (engineInstance.isTechnicalUser()==null)?"":engineInstance.isTechnicalUser().toString();
 	template = engineInstance.getTemplate().toString(0);	
 	
+	/*
+		WORKAROUND: Replace the single quote character wherever in the chart template with the ASCII code for a single quote character, so we can render the chart 
+		inside the Cockpit or Chart Engine even when the JSON template contains	this character (e.g. "L'Italia"). Later, because of rendering the chart, this code
+		will be replaced with the "escaped" single quote character combination (in order not to have "L&#39;Italia").
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/
+	template = template.replaceAll("'","&#39;");
+	
 	if(env.get("EXECUTE_COCKPIT") != null){
 		isCockpit = true;
 		datasetLabel = env.get(EngineConstants.ENV_DATASET_LABEL)!=null?(String)env.get(EngineConstants.ENV_DATASET_LABEL):"";
@@ -121,6 +124,14 @@ author:
 		datasetLabel = (engineInstance.getDataSet() != null )?
 				engineInstance.getDataSet().getLabel() : "" ;
 	}
+	
+	/*
+		WORKAROUND: Replace the single quote character in the meta data (information about the data inside the dataset that is picked for the chart/cockpit) 
+		with the "escaped" single quote combination, so we can render the chart inside the Cockpit when the data in the table (dataset) that is picked contains
+		this character (e.g. "L'Italia").
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/
+	metaData = metaData.replaceAll("'","\\\\'");
 	
 	docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
 	docVersion = (engineInstance.getDocumentVersion()==null)?"":engineInstance.getDocumentVersion().toString();
@@ -183,12 +194,14 @@ author:
 </script>
 
 <% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) {%>
+	
 	<jsp:include
 		page="<%=ChartEngineUtil.getLibraryInitializerPath(template,docLabel, profile)%>" >
 		<jsp:param name="template" value="<%=template%>" />
 	</jsp:include>
 	
 	<%@include file="commons/includeKnowageChartEngineJS5.jspf"%>
+	
 <% } %>
 
 </head>
@@ -318,6 +331,15 @@ author:
 			}else{
 				chartServiceManager.run('jsonChartTemplate', parameters, [], 
 						function (response) {
+					
+							/*
+								WORKAROUND: Replacing in other way - from the ASCII code for the single quote character to the "escaped" single quote combination in order 
+								to enable a proper (adequate) the exporting of the chart. This way we will decode the former single quote in the chart template that was
+								exchanged for this code (JSON cannot handle single quote inside it) and have a single quote on its place in the exported chart. 
+								@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							*/
+							response.responseText = response.responseText.replace(new RegExp("&#39;",'g'),"\\'");
+					
 							var chartConf = response.responseText;
 							
 							/*
@@ -632,6 +654,14 @@ author:
  			
  			chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
 
+ 				/*
+					WORKAROUND: Replacing in other way - from the ASCII code for the single quote character to the "escaped" single quote combination in order 
+					to enable a proper (adequate) rendering of the chart. This way we will decode the former single quote in the chart template that was
+					exchanged for this code (JSON cannot handle single quote inside it) and have a single quote on its place in the rendered chart. 
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				*/
+				response.responseText = response.responseText.replace(new RegExp("&#39;",'g'),"\\'");
+ 				
  				var chartConf = Ext.JSON.decode(response.responseText, true);	
  				
 				var typeChart = chartConf.chart.type.toUpperCase();		 				

@@ -123,8 +123,8 @@
 
 #set($result = $datasettransformer.toParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows, $serieNeeded, $groupingFunction))
 
-## #set($crossNavigation = '')
-## #set($crossNavigation = $chart.DRILL)
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
 
 #set($tooltipColumn='')
 
@@ -320,7 +320,7 @@
  	 	
  	emptymessage:
 	{
-		text: '$chart.EMPTYMESSAGE.text',		
+		text: "$chart.EMPTYMESSAGE.text",		
 		
 		style:
 		{
@@ -363,7 +363,7 @@
 		
 		title:
 		{ 
-		    text: '$chart.LEGEND.TITLE.text',
+		    text: "$chart.LEGEND.TITLE.text",
 			style:
 			{
 				fontFamily: '$chart.LEGEND.TITLE.style.fontFamily',			
@@ -398,7 +398,7 @@
  
  	title:
 	{
-		text: '$chart.TITLE.text',		
+		text: "$chart.TITLE.text",		
 		
 		style:
 		{
@@ -419,7 +419,7 @@
 	
 	subtitle:
 	{	
-		text: '$chart.SUBTITLE.text',		
+		text: "$chart.SUBTITLE.text",		
 		
 		style:
 		{

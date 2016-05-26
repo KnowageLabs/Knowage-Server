@@ -37,8 +37,8 @@
 #set($serieName = $chart.VALUES.SERIE.name)
 #set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
 
-## #set($crossNavigation = '')
-## #set($crossNavigation = $chart.DRILL)
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
 
 {
 	chart: 
@@ -140,7 +140,7 @@
 	
 	emptymessage:
 	{
-		text: '$chart.EMPTYMESSAGE.text',		
+		text: "$chart.EMPTYMESSAGE.text",		
 		
 		style:
 		{
@@ -161,7 +161,7 @@
 	
 	title:
 	{
-		text: '$chart.TITLE.text',		
+		text: "$chart.TITLE.text",		
 		
 		style:
 		{
@@ -182,7 +182,7 @@
 	
 	subtitle:
 	{	
-		text: '$chart.SUBTITLE.text',		
+		text: "$chart.SUBTITLE.text",		
 		
 		style:
 		{
@@ -206,7 +206,7 @@
 		that we would like to have for the SUNBURST chart.  *# 	
 	tip:
 	{
-		text: '$chart.TIP.text',				
+		text: "$chart.TIP.text",				
 				
 		style:
 		{	

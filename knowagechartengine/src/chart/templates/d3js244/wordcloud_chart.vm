@@ -50,8 +50,8 @@
 #set($sizeCriteria = $chart.sizeCriteria)
 #set($result = $datasettransformer.toWordcloud($columnsNeeded,$dataColumnsMapper,$dataRows,$serieName, $sizeCriteria, $groupingFunction))
 
-## #set($crossNavigation = '')
-## #set($crossNavigation = $chart.DRILL)
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
 
 {
  	chart: 
@@ -113,7 +113,7 @@
  	## Same as for the Sunburst chart
  	emptymessage:
 	{
-		text: '$chart.EMPTYMESSAGE.text',		
+		text: "$chart.EMPTYMESSAGE.text",		
 		
 		style:
 		{
@@ -134,7 +134,7 @@
 	
 	title:
 	{
-		text: '$chart.TITLE.text',		
+		text: "$chart.TITLE.text",		
 		
 		style:
 		{
@@ -155,7 +155,7 @@
 
 	subtitle:
 	{
-		text: '$chart.SUBTITLE.text',		
+		text: "$chart.SUBTITLE.text",		
 		
 		style:
 		{

@@ -117,6 +117,15 @@ author:
 	docCommunity = (docCommunities == null || docCommunities.length == 0) ? "": docCommunities[0];
 	docFunctionalities= (engineInstance.getDocumentFunctionalities()==null)?new ArrayList():engineInstance.getDocumentFunctionalities();
 	
+	/*
+		WORKAROUND: Detect all present single quotes inside the template we are receiving when rendering the chart and replace them with the ASCII code for the single
+		quote character, in order to pass the code execution (when calling the 'getLibraryInitializerPath' method in latter code here). So, when we are having the text 
+		value e.g. "L'Italia", we will firstly replace the single quote with its ASCII code (&#39;). In that case we will have "L&#39;Italia" as the value. Later, we will 
+		re-replace now the ASCII code (&#39;) with the escaped single quote combination (\\').
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/
+	template = template.replaceAll("'","&#39;");
+	
 	boolean forceIE8Compatibility = false;
 	
 	boolean fromMyAnalysis = false;
@@ -207,7 +216,17 @@ author:
  			var docLabel = '<%= docLabel %>';
  			var jsonTemplate = Ext.JSON.decode('<%=template%>');
  			var datasetLabel  = '<%=datasetLabel%>'; 			
- 			 			
+ 			
+ 			/*
+				WORKAROUND: Detect all present single quotes inside the template we are receiving when rendering the chart and replace them with the "escaped" single
+				quote combination, in order to render the chart appropriately. So, when we are having the text value e.g. "L'Italia", we will firstly replace the single
+				quote with its ASCII code (&#39;). In that case we will have "L&#39;Italia" as the value. Then, in this moment, we will re-replace now the ASCII code (&#39;)
+				with the escaped single quote combination (\\'). The ASCII combination is the only way to pass the code execution, whilst the latter, escapped single quote
+				combination, we will be able to render the data.
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			*/			
+			var jsonTemplate = Ext.JSON.decode('<%=template.replaceAll("&#39;","\\\\'")%>');
+			
  			var chartLibNamesConfig = <%=ChartEngineUtil.getChartLibNamesConfig()%>;
  			
  			var isCockpit = <%=isCockpit%>;

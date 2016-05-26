@@ -40,8 +40,8 @@
 	#set($columnsNeeded[$columnCounter] = $value.column)
 	#set($columnCounter = $columnCounter + 1)
 #end
-## #set($crossNavigation = '')
-## #set($crossNavigation = $chart.DRILL)
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
 
 {
 	chart:
@@ -187,7 +187,7 @@
 	
 	title:
 	{
-		text: '$chart.TITLE.text',
+		text: "$chart.TITLE.text",
 		
 		#*style:
 		{
@@ -213,7 +213,7 @@
 	
 	subtitle:
 	{
-		text: '$chart.SUBTITLE.text',
+		text: "$chart.SUBTITLE.text",
 		
 		#*style:
 		{
@@ -239,7 +239,7 @@
 		
 	emptymessage:
 	{
-		text: '$chart.EMPTYMESSAGE.text',
+		text: "$chart.EMPTYMESSAGE.text",
 		
 		style:
 		{

@@ -88,7 +88,7 @@
     },
     
     title: {
-        text: '$chart.TITLE.text',
+        text: "$chart.TITLE.text",
         
         #set ($titleAlign = $chart.TITLE.style.align)
         #if ($titleAlign != '' )
@@ -118,7 +118,7 @@
     
     #if($chart.SUBTITLE.text != '')
     subtitle: {
-        text: '$chart.SUBTITLE.text',
+        text: "$chart.SUBTITLE.text",
         
         #set ($subtitleAlign = $chart.SUBTITLE.style.align)
         #if ($subtitleAlign != '' )
@@ -221,7 +221,7 @@
 				 	#end
 			 	 	
 			 	 	#if($yAxis.TITLE.text)
-	        			text: '$yAxis.TITLE.text',
+	        			text: "$yAxis.TITLE.text",
 	        		#end
 	        		
 				 	#if( $yAxis.TITLE.style )

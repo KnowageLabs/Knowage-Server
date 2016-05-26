@@ -44,8 +44,8 @@
 
 #set($result = $datasettransformer.createTreeChart($columnsNeeded,$serie,$dataColumnsMapper,$dataRows, $groupingFunction))
 
-## #set($crossNavigation = '')
-## #set($crossNavigation = $chart.DRILL)	
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)	
 
 {
  	chart: 
@@ -141,7 +141,7 @@
 	#end
  
  	emptymessage: {
-		text: '$chart.EMPTYMESSAGE.text',
+		text: "$chart.EMPTYMESSAGE.text",
 		
 		style: {
 			fontFamily: '$chart.EMPTYMESSAGE.style.fontFamily',
@@ -160,7 +160,7 @@
 	},
 	
 	title: {
-		text: '$chart.TITLE.text',
+		text: "$chart.TITLE.text",
 		
 		style: {
 			fontFamily: '$chart.TITLE.style.fontFamily',
@@ -179,7 +179,7 @@
 	},
 	
 	subtitle: {
-		text: '$chart.SUBTITLE.text',
+		text: "$chart.SUBTITLE.text",
 		
 		style: {
 			fontFamily: '$chart.SUBTITLE.style.fontFamily',

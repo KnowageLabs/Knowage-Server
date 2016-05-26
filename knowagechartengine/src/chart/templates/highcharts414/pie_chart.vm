@@ -21,8 +21,8 @@
 	#end
 #end
 
-## #set($crossNavigation = '')
-## #set($crossNavigation = $chart.DRILL)
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
 
 {
     chart: {
@@ -134,7 +134,7 @@
 	#end
     
     title: {
-        text: '$chart.TITLE.text',
+        text: "$chart.TITLE.text",
         
         #set ($titleAlign = $chart.TITLE.style.align)
         #if ($titleAlign != '' )
@@ -164,7 +164,7 @@
     
     #if($chart.SUBTITLE.text != '')
     subtitle: {
-        text: '$chart.SUBTITLE.text',
+        text: "$chart.SUBTITLE.text",
         
         #set ($subtitleAlign = $chart.SUBTITLE.style.align)
         #if ($subtitleAlign != '' )
@@ -367,7 +367,7 @@
 		        
 		        title:
 		        {
-		        	text:'$chart.LEGEND.TITLE.text',
+		        	text:"$chart.LEGEND.TITLE.text",
 		        	style:
 		        	{	
 		        		color: '$chart.LEGEND.TITLE.style.color',
@@ -464,7 +464,7 @@
          title:
 		        {
 		        	#if('$chart.LEGEND.TITLE.text'!='')
-		        	text:'$chart.LEGEND.TITLE.text',
+		        	text:"$chart.LEGEND.TITLE.text",
 		        	#end
 		        	
 		        	style:
