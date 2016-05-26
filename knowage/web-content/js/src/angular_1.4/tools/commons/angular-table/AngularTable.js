@@ -45,7 +45,8 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             comparisonColumn:"=?",
                             initialSorting:"=?",
                             initialSortingAsc:"=?",
-                            visibleRowFunction:"&"
+                            visibleRowFunction:"&",
+                            sortableColumn:"=?"
                         },
                         compile: function (tElement, tAttrs, transclude) {
                             return {
@@ -712,6 +713,11 @@ function TableHeaderControllerFunction($scope, $timeout) {
     };
 
     $scope.orderBy = function (column) {
+    	
+    	if($scope.sortableColumn!=undefined && $scope.sortableColumn.indexOf(column.name)==-1){
+    		return
+    	}
+    	
         if ($scope.column_ordering!=undefined && $scope.column_ordering.name == column.name) {
             $scope.reverse_col_ord = !$scope.reverse_col_ord;
         } else {
