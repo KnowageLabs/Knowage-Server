@@ -359,13 +359,9 @@ public class KpiService {
 				}
 			}
 			if (rule.getId() != null) {
-				// Checking if any removed measure is linked to a kpi (if so we cannot save this rule)
-				Collection<String> removedMeasures = checkConstrainsWithKpi(rule, req);
-				if (!removedMeasures.isEmpty()) {
-					jsError.addErrorKey("newKpi.rule.usedByKpi.save.error", StringUtils.join(removedMeasures, ", "));
-				}
+				checkConflictsWithKpi(jsError, rule, req);
 			}
-			if (jsError.hasErrors()) {
+			if (jsError.hasErrors() || jsError.hasWarnings()) {
 				return Response.ok(jsError.toString()).build();
 			}
 
@@ -390,6 +386,11 @@ public class KpiService {
 			Integer otherId = dao.getRuleIdByName(rule.getName());
 			if (otherId != null && (id == null || !id.equals(otherId))) {
 				jsError.addErrorKey(NEW_KPI_RULE_NAME_NOT_AVAILABLE, rule.getName());
+			}
+			if (rule.getId() != null) {
+				checkConflictsWithKpi(jsError, rule, req);
+			}
+			if (jsError.hasErrors()) {
 				return Response.ok(jsError.toString()).build();
 			}
 			if (id == null) {
@@ -398,12 +399,6 @@ public class KpiService {
 				id = newRule.getId();
 				version = newRule.getVersion();
 			} else {
-				// Checking if any removed measure is linked to a kpi (if so we cannot save this rule)
-				Collection<String> removedMeasures = checkConstrainsWithKpi(rule, req);
-				if (!removedMeasures.isEmpty()) {
-					jsError.addErrorKey("newKpi.rule.usedByKpi.delete.error", StringUtils.join(removedMeasures, ", "));
-					return Response.ok(jsError.toString()).build();
-				}
 				// Rule can only be modified logically
 				Rule newRule = dao.insertNewVersionRule(rule);
 				id = newRule.getId();
@@ -786,31 +781,57 @@ public class KpiService {
 	 * *** Private methods ***
 	 */
 
-	private Collection<String> checkConstrainsWithKpi(Rule rule, HttpServletRequest req) throws EMFUserError {
-		Collection<String> measureAndKpi = new HashSet<>();
-		if (rule.getId() == null) {
-			return measureAndKpi;
-		}
-		IKpiDAO kpiDao = getKpiDAO(req);
-		Map<Kpi, List<String>> kpimap = kpiDao.listKpisLinkedToRule(rule.getId(), rule.getVersion(), true);
-		Set<String> usedMeasureList = new HashSet<>();
-		for (List<String> m : kpimap.values()) {
-			usedMeasureList.addAll(m);
-		}
-		Set<String> newMeasureList = new HashSet<>();
-		for (RuleOutput ro : rule.getRuleOutputs()) {
-			newMeasureList.add(ro.getAlias());
-		}
-		usedMeasureList.removeAll(newMeasureList);
-		for (String name : usedMeasureList) {
-			for (Entry<Kpi, List<String>> kpi : kpimap.entrySet()) {
-				if (kpi.getValue().contains(name)) {
-					measureAndKpi.add("'" + name + "' used by '" + kpi.getKey().getName() + "'");
-					break;
+	private void checkConflictsWithKpi(JSError jsError, Rule rule, HttpServletRequest req) throws EMFUserError {
+		if (rule.getId() != null && rule.getVersion() != null) {
+
+			// Checking if any removed measure is linked to a kpi (if so we cannot save this rule)
+			Collection<String> measureAndKpi = new HashSet<>();
+			IKpiDAO kpiDao = getKpiDAO(req);
+			Map<Kpi, List<String>> kpimap = kpiDao.listKpisLinkedToRule(rule.getId(), rule.getVersion(), true);
+			Set<String> usedMeasureList = new HashSet<>();
+			for (List<String> m : kpimap.values()) {
+				usedMeasureList.addAll(m);
+			}
+			Set<String> newMeasureList = new HashSet<>();
+			for (RuleOutput ro : rule.getRuleOutputs()) {
+				newMeasureList.add(ro.getAlias());
+			}
+			usedMeasureList.removeAll(newMeasureList);
+			for (String name : usedMeasureList) {
+				for (Entry<Kpi, List<String>> kpi : kpimap.entrySet()) {
+					if (kpi.getValue().contains(name)) {
+						measureAndKpi.add("'" + name + "' used by '" + kpi.getKey().getName() + "'");
+						break;
+					}
+				}
+			}
+			if (!measureAndKpi.isEmpty()) {
+				jsError.addErrorKey("newKpi.rule.usedByKpi.save.error", StringUtils.join(measureAndKpi, ", "));
+			}
+
+			// Checking if there are placeholders that are not set in a scheduler
+			// This check will give only a warning
+			if (rule.getPlaceholders() != null && !rule.getPlaceholders().isEmpty()) {
+				List<String> placeholderNames = new ArrayList<>();
+				for (Placeholder placeholder : rule.getPlaceholders()) {
+					placeholderNames.add(placeholder.getName());
+				}
+				List<String> kpiNames = new ArrayList<>();
+				for (Kpi kpi : kpimap.keySet()) {
+					List<KpiScheduler> schedulerList = kpiDao.listSchedulerAndFiltersByKpi(kpi.getId(), kpi.getVersion(), true);
+					for (KpiScheduler kpiScheduler : schedulerList) {
+						for (SchedulerFilter filter : kpiScheduler.getFilters()) {
+							placeholderNames.remove(filter.getPlaceholderName());
+						}
+					}
+					kpiNames.add(kpi.getName());
+				}
+				if (!placeholderNames.isEmpty()) {
+					jsError.addWarningKey("newKpi.rule.placeholdersMustBeSet.save.error", StringUtils.join(placeholderNames, ", "),
+							StringUtils.join(kpiNames, ", "));
 				}
 			}
 		}
-		return measureAndKpi;
 	}
 
 	private JSError checkKpiRel(IKpiDAO dao, Integer id, Integer version) {

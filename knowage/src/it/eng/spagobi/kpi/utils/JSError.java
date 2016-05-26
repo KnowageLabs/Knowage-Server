@@ -9,30 +9,50 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class JSError {
-	private static final String ERRORS = "errors";
 	private static final String MESSAGE = "message";
 	private final JSONObject jsError = new JSONObject();
 
+	private static enum MSG_TYPE {
+		errors, warnings
+	};
+
 	public JSError() {
-		try {
-			jsError.put(ERRORS, new JSONArray());
-		} catch (JSONException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	public JSError addErrorKey(String msgKey, String... args) {
+		return addMsgKey(msgKey, MSG_TYPE.errors, args);
+	}
+
+	public JSError addError(String msg) {
+		return addMsg(msg, MSG_TYPE.errors);
+	}
+
+	public JSError addWarningKey(String msgKey, String... args) {
+		return addMsgKey(msgKey, MSG_TYPE.warnings, args);
+	}
+
+	public JSError addWarning(String msg) {
+		return addMsg(msg, MSG_TYPE.warnings);
+	}
+
+	public JSError addMsg(String msg, MSG_TYPE type) {
 		try {
-			getErrors().put(new JSONObject().put(MESSAGE, getMessage(msgKey, args)));
+			if (!has(type)) {
+				jsError.put(type.name(), new JSONArray());
+			}
+			get(type).put(new JSONObject().put(MESSAGE, getMessage(msg)));
 		} catch (JSONException e) {
 			throw new RuntimeException(e);
 		}
 		return this;
 	}
 
-	public JSError addError(String msg) {
+	public JSError addMsgKey(String msgKey, MSG_TYPE type, String... args) {
 		try {
-			getErrors().put(new JSONObject().put(MESSAGE, getMessage(msg)));
+			if (!has(type)) {
+				jsError.put(type.name(), new JSONArray());
+			}
+			get(type).put(new JSONObject().put(MESSAGE, getMessage(msgKey, args)));
 		} catch (JSONException e) {
 			throw new RuntimeException(e);
 		}
@@ -40,12 +60,20 @@ public class JSError {
 	}
 
 	public boolean hasErrors() {
-		return getErrors().length() > 0;
+		return has(MSG_TYPE.errors);
+	}
+
+	public boolean hasWarnings() {
+		return has(MSG_TYPE.warnings);
+	}
+
+	private boolean has(MSG_TYPE type) {
+		return jsError.has(type.name()) && get(type).length() > 0;
 	}
 
 	@Override
 	public String toString() {
-		return getErrors().length() > 0 ? jsError.toString() : "";
+		return hasErrors() || hasWarnings() ? jsError.toString() : "";
 	}
 
 	private static String getMessage(String key, String... args) {
@@ -57,8 +85,16 @@ public class JSError {
 	}
 
 	private JSONArray getErrors() {
+		return get(MSG_TYPE.errors);
+	}
+
+	private JSONArray getWarnings() {
+		return get(MSG_TYPE.warnings);
+	}
+
+	private JSONArray get(MSG_TYPE msgType) {
 		try {
-			return jsError.getJSONArray(ERRORS);
+			return jsError.getJSONArray(msgType.name());
 		} catch (JSONException e) {
 			throw new RuntimeException(e);
 		}
