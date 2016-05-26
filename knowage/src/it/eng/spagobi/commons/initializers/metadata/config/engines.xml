@@ -18,8 +18,9 @@
 		biobjTypeCd="DOCUMENT_COMPOSITE" useDataSet="false" useDataSource="false"
 		encrypt="0" />
 	<ENGINE label="knowagekpiengine" name="Kpi Engine" descr="Kpi Engine"
-		mainUrl="/knowagekpiengine/restful-services/1.0/pages/execute" driverNm="" engineTypeCd="EXT"
-		classNm="it.eng.spagobi.engines.drivers.fullkpi.KpiDriver"
+		mainUrl="/knowagekpiengine/restful-services/1.0/pages/execute" 
+		engineTypeCd="EXT" classNm=""
+		driverNm="it.eng.spagobi.engines.drivers.kpi.KpiDriver" 
 		biobjTypeCd="KPI" useDataSet="false" useDataSource="false" encrypt="0" />
 	<ENGINE label="knowagebirtreporteng" name="Birt Report Engine"
 		descr="Birt Report Engine" mainUrl="/knowagebirtreportengine/BirtReportServlet"
