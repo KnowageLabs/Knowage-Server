@@ -322,6 +322,8 @@
 
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpUsers" roleType="ADMIN" />
 	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpKpis" roleType="ADMIN" />
+	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpCatalog" roleType="ADMIN" />
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="ADMIN" />

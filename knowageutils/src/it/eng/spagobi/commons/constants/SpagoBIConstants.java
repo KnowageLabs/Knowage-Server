@@ -485,6 +485,7 @@ public class SpagoBIConstants {
 	public static final String IMP_EXP_DOCUMENT = "ImpExpDocument";
 	public static final String IMP_EXP_RESOURCES = "ImpExpResources";
 	public static final String IMP_EXP_USERS = "ImpExpUsers";
+	public static final String IMP_EXP_KPIS = "ImpExpKpis";
 	public static final String IMP_EXP_CATALOG = "ImpExpCatalog";
 
 	public static final String META_MODELS_CATALOGUE_MANAGEMENT = "MetaModelsCatalogueManagement";

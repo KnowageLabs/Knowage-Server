@@ -53,6 +53,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpDocument" description="ImpExpDocument"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpMenu" description="ImpExpMenu"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpUsers" description="ImpExpUsers"/>	
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpKpis" description="ImpExpKpis"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MultisheetCockpit" description="MultisheetCockpit" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ChartWidget" description="ChartWidget" />
@@ -119,6 +120,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpMenu" description="ImpExpMenu"/>	
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpResources" description="ImpExpResources"/>	
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpUsers" description="ImpExpUsers"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpKpis" description="ImpExpKpis"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="InstallConfig" description="InstallConfig" />
@@ -187,6 +189,7 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpMenu" description="ImpExpMenu"/>	
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpResources" description="ImpExpResources"/>	
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpUsers" description="ImpExpUsers"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpKpis" description="ImpExpKpis"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="InstallConfig" description="InstallConfig" />

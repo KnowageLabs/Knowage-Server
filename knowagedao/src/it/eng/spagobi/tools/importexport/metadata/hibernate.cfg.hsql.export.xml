@@ -54,8 +54,17 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoFeatures.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoMaps.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDataSet.hbm.xml" />
+        
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiKpi.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiAlias.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRuleOutput.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRule.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiThresholdValue.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiThreshold.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiPlaceholder.hbm.xml" />
+        
         <!-- old kpi 
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiResources.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiResources.hbm.xml" />\
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModelInst.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModelResources.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpi.hbm.xml" />

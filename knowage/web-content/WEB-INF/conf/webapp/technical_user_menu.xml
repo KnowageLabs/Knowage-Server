@@ -274,6 +274,8 @@
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportResources.jsp" /> 
 	  		<ITEM title="#menu.ImpExpUsers" functionality="ImpExpUsers"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp" /> 
+	  		<ITEM title="#menu.ImpExpKpis" functionality="ImpExpKpis"
+				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportKpis/importExportKpis.jsp" /> 
 			<ITEM title="#menu.ImpExpCatalog" functionality="ImpExpCatalog"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportCatalog/importExportCatalog.jsp" /> 
 			
