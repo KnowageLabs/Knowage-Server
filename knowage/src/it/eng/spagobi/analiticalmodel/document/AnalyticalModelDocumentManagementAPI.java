@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.analiticalmodel.document;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -45,17 +56,6 @@ import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 import it.eng.spagobi.tools.objmetadata.dao.ObjMetadataDAOHibImpl;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -224,8 +224,8 @@ public class AnalyticalModelDocumentManagementAPI {
 					throw new SpagoBIRuntimeException("Analytical driver " + analyticalDriver + " cannot be loaded", t);
 				}
 			} else {
-				throw new SpagoBIRuntimeException("Unable to manage an analytical driver descriptor of type ["
-						+ analyticalDriverDescriptor.getClass().getName() + "]");
+				throw new SpagoBIRuntimeException(
+						"Unable to manage an analytical driver descriptor of type [" + analyticalDriverDescriptor.getClass().getName() + "]");
 			}
 		} catch (SpagoBIRuntimeException t) {
 			throw t; // nothing to add just re-throw
@@ -387,7 +387,7 @@ public class AnalyticalModelDocumentManagementAPI {
 				// metadata
 				logger.debug("Coping metadata");
 				copyMetadata(document, clonedDocument);
-
+				LuceneIndexer.updateBiobjInIndex(clonedDocument, false);
 			} catch (Throwable t) {
 				logger.error("Impossible to update object [" + document.getLabel() + "]", t);
 				throw new SpagoBIRuntimeException("Impossible to update object [" + document.getLabel() + "]", t);
@@ -508,8 +508,8 @@ public class AnalyticalModelDocumentManagementAPI {
 				}
 				String metadataPropertyName = documentMatadataPropertyJSON.optString(MetadataJSONSerializer.NAME);
 				if (metadataPropertyId == null && metadataPropertyName == null) {
-					throw new SpagoBIRuntimeException("Attributes [" + MetadataJSONSerializer.METADATA_ID + "] and [" + MetadataJSONSerializer.NAME
-							+ "] cannot be both null");
+					throw new SpagoBIRuntimeException(
+							"Attributes [" + MetadataJSONSerializer.METADATA_ID + "] and [" + MetadataJSONSerializer.NAME + "] cannot be both null");
 				}
 
 				if (metadataPropertyId == null) {
@@ -526,8 +526,8 @@ public class AnalyticalModelDocumentManagementAPI {
 
 				String documentMetadataPropertyValue = documentMatadataPropertyJSON.getString(MetadataJSONSerializer.TEXT);
 				if (documentMetadataPropertyValue == null) {
-					throw new SpagoBIRuntimeException("Attributes [" + MetadataJSONSerializer.TEXT + "] of metadata property cannot [" + metadataPropertyId
-							+ "] be null");
+					throw new SpagoBIRuntimeException(
+							"Attributes [" + MetadataJSONSerializer.TEXT + "] of metadata property cannot [" + metadataPropertyId + "] be null");
 				}
 
 				ObjMetacontent documentMatadataProperty = documentMetadataPropertyDAO.loadObjMetacontent(metadataPropertyId, document.getId(), subObjectId); // TODO
@@ -805,8 +805,8 @@ public class AnalyticalModelDocumentManagementAPI {
 			try {
 				documentParameterDAO.insertBIObjectParameter(documentParameter);
 			} catch (Throwable t) {
-				throw new SpagoBIRuntimeException("Impossible to save parameter whose label is equal to [" + analyticalDriverDescriptor + "] to document ["
-						+ document + "]", t);
+				throw new SpagoBIRuntimeException(
+						"Impossible to save parameter whose label is equal to [" + analyticalDriverDescriptor + "] to document [" + document + "]", t);
 			}
 
 			if (document.getBiObjectParameters() == null) {
@@ -817,8 +817,8 @@ public class AnalyticalModelDocumentManagementAPI {
 		} catch (SpagoBIRuntimeException t) {
 			throw t; // nothing to add just re-throw
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unsespected error occured while adding parameter [" + analyticalDriverDescriptor + "] to document ["
-					+ documentDescriptor + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unsespected error occured while adding parameter [" + analyticalDriverDescriptor + "] to document [" + documentDescriptor + "]", t);
 		}
 	}
 

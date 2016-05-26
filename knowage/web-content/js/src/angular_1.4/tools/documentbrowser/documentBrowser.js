@@ -27,7 +27,7 @@ function documentBrowserFunction(
 	$scope.smallScreen = false;
 	$scope.hideProgressCircular=true;
 	$scope.searchingDocuments=false;
-	
+	$scope.lastSearchInputInserted = "";
 	$scope.$watch(function() { return !$mdMedia('gt-sm'); }, function(big) {
 	    $scope.smallScreen = big;
 	  });
@@ -208,6 +208,8 @@ function documentBrowserFunction(
 	};
 	 
 	$scope.setSearchInput = function (newSearchInput) {
+		
+		$scope.lastSearchInputInserted = newSearchInput;
 		$scope.searchInput = newSearchInput;
 		setFocus("searchInput");
 
@@ -277,6 +279,7 @@ function documentBrowserFunction(
 		 })
 		 .then(function(answer) {
 				$scope.status = 'You said the information was "' + answer + '".';
+				$scope.reloadAll();
 				return ;
 		}, function() {
 				$scope.status = 'You cancelled the dialog.';
@@ -285,7 +288,9 @@ function documentBrowserFunction(
 	};
 	
 	$scope.reloadAll = function(){
-		//edit document with selectedFolder
+		$scope.showDocumentDetail = false;
+		$scope.loadFolderDocuments($scope.selectedFolder.id);
+		$scope.setSearchInput($scope.lastSearchInputInserted);
 	}
 	$scope.newDocument=function(type){
 		$mdDialog.show({
