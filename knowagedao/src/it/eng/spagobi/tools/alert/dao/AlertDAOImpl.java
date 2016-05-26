@@ -100,6 +100,8 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 		SbiAlert sbiAlert = new SbiAlert();
 		sbiAlert.setId(alert.getId());
 		sbiAlert.setName(alert.getName());
+		sbiAlert.setSingleExecution(alert.isSingleExecution() ? 'T' : 'F');
+		sbiAlert.setEventBeforeTriggerAction(alert.getEventBeforeTriggerAction());
 		sbiAlert.setListenerId(alert.getAlertListener().getId());
 		sbiAlert.setListenerOptions(alert.getJsonOptions());
 		return sbiAlert;
@@ -155,6 +157,8 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 		Alert alert = new Alert();
 		alert.setId(sbiAlert.getId());
 		alert.setName(sbiAlert.getName());
+		alert.setEventBeforeTriggerAction(sbiAlert.getEventBeforeTriggerAction());
+		alert.setSingleExecution(Character.valueOf('T').equals(sbiAlert.getSingleExecution()));
 		alert.setJsonOptions(sbiAlert.getListenerOptions());
 		alert.setAlertListener(from(sbiAlert.getSbiAlertListener()));
 		ISchedulerDAO schedulerDao;
