@@ -1,21 +1,5 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.navigation.LightNavigationManager;
@@ -53,6 +37,23 @@ import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.objects.Couple;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 public class DocumentUrlManager {
 
@@ -210,8 +211,8 @@ public class DocumentUrlManager {
 			List errorsOnChecks = getValidationErrorsOnChecks(biparam);
 			List values = biparam.getParameterValues();
 			if (biparam.isRequired() && (values == null || values.isEmpty() || normalizeList(values).size() == 0)) {
-				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null, null,
-						null);
+				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null,
+						null, null);
 				errorsOnChecks.add(error);
 			}
 			if (errorsOnChecks != null && errorsOnChecks.size() > 0) {
@@ -557,11 +558,13 @@ public class DocumentUrlManager {
 				String description = null;
 				if (value.equals("")) {
 					valueFound = true;
+					// TODO: REVIEW for modification to hierarchy tree !!!!
 				} else if (lovProvDet.getLovType().equals(TREE_INNER_LOV_TYPE)) {
-					List<String> treeColumns = lovProvDet.getTreeLevelsColumns();
+					// List<String> treeColumns = lovProvDet.getTreeLevelsColumns();
+					List<Couple<String, String>> treeColumns = lovProvDet.getTreeLevelsColumns();
 					if (treeColumns != null) {
 						for (int j = 0; j < treeColumns.size(); j++) {
-							valueFound = lovResultHandler.containsValueForTree(value, treeColumns.get(j));
+							valueFound = lovResultHandler.containsValueForTree(value, treeColumns.get(j).getFirst());
 							if (valueFound) {
 								break;
 							}

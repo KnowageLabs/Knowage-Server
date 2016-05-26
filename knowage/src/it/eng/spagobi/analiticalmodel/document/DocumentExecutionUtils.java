@@ -418,14 +418,14 @@ public class DocumentExecutionUtils {
 		try {
 
 			if (treeLovNodeValue != null && treeLovNodeValue.equalsIgnoreCase("lovroot")) {// root node
-				treeLovNodeName = (String) lovProvDet.getTreeLevelsColumns().get(0);
+				treeLovNodeName = lovProvDet.getTreeLevelsColumns().get(0).getFirst();
 				treeLovParentNodeName = "lovroot";
 				treeLovNodeLevel = -1;
 
 				// treeLovNodeLevel-1 because the fake root node is the level 0
 			} else if (lovProvDet.getTreeLevelsColumns().size() > treeLovNodeLevel + 1) {
-				treeLovNodeName = (String) lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1);
-				treeLovParentNodeName = (String) lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel);
+				treeLovNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1).getFirst();
+				treeLovParentNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel).getFirst();
 			}
 
 			Set<JSONObject> valuesDataJSON = new LinkedHashSet<JSONObject>();

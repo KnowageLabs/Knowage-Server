@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -196,8 +196,7 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 							for (int i = 0; i < a.length(); i++) {
 								if (a.get(i) != null) {
 									nv[i] = a.get(i).toString();
-								}
-								else {
+								} else {
 									nv[i] = null;
 								}
 							}
@@ -206,8 +205,8 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 						} else if (v instanceof String) {
 							selectedParameterValues.put(key, v);
 						} else {
-							Assert.assertUnreachable("Attribute [" + key + "] value [" + v + "] of PARAMETERS is not of type JSONArray nor String. It is of type ["
-									+ v.getClass().getName() + "]");
+							Assert.assertUnreachable("Attribute [" + key + "] value [" + v
+									+ "] of PARAMETERS is not of type JSONArray nor String. It is of type [" + v.getClass().getName() + "]");
 						}
 					}
 				} catch (JSONException e) {
@@ -240,10 +239,8 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 
 				// get from cache, if available
 				LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-				lovResult = executionCacheManager.getLovResult(profile,
-						lovProvDet,
-						executionInstance.getDependencies(biObjectParameter),
-						executionInstance, true);
+				lovResult = executionCacheManager.getLovResult(profile, lovProvDet, executionInstance.getDependencies(biObjectParameter), executionInstance,
+						true);
 
 				// get all the rows of the result
 				LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
@@ -273,16 +270,10 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 			// START filtering for correlation (only for
 			// DependenciesPostProcessingLov, i.e. scripts, java classes and
 			// fixed lists)
-			biParameterExecDependencies = executionInstance
-					.getDependencies(biObjectParameter);
-			if (lovProvDet instanceof DependenciesPostProcessingLov
-					&& selectedParameterValues != null
-					&& biParameterExecDependencies != null
-					&& biParameterExecDependencies.size() > 0
-					&& !contest.equals(MASSIVE_EXPORT)) {
-				rows = ((DependenciesPostProcessingLov) lovProvDet)
-						.processDependencies(rows, selectedParameterValues,
-								biParameterExecDependencies);
+			biParameterExecDependencies = executionInstance.getDependencies(biObjectParameter);
+			if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null && biParameterExecDependencies != null
+					&& biParameterExecDependencies.size() > 0 && !contest.equals(MASSIVE_EXPORT)) {
+				rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues, biParameterExecDependencies);
 			}
 			// END filtering for correlation
 
@@ -319,21 +310,13 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 		try {
 
 			if (treeLovNodeValue == "lovroot") {// root node
-				treeLovNodeName = (String) lovProvDet.getTreeLevelsColumns().get(0);
+				treeLovNodeName = lovProvDet.getTreeLevelsColumns().get(0).getFirst();
 				treeLovParentNodeName = "lovroot";
 				treeLovNodeLevel = -1;
-			} else if (lovProvDet.getTreeLevelsColumns().size() > treeLovNodeLevel + 1) {// treeLovNodeLevel-1
-																							// because
-																							// the
-																							// fake
-																							// root
-																							// node
-																							// is
-																							// the
-																							// level
-																							// 0
-				treeLovNodeName = (String) lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1);
-				treeLovParentNodeName = (String) lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel);
+			} else if (lovProvDet.getTreeLevelsColumns().size() > treeLovNodeLevel + 1) {
+				// treeLovNodeLevel-1 because the fake root node is the level 0
+				treeLovNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1).getFirst();
+				treeLovParentNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel).getFirst();
 			}
 
 			Set<JSONObject> valuesDataJSON = new LinkedHashSet<JSONObject>();
@@ -353,7 +336,8 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 				for (int i = 0; i < columns.size(); i++) {
 					SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
 					if ((treeLovParentNodeName == "lovroot")
-							|| (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName) && (attribute.getValue().toString()).equalsIgnoreCase(treeLovNodeValue))) {
+							|| (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName) && (attribute.getValue().toString())
+									.equalsIgnoreCase(treeLovNodeValue))) {
 						addNode = true;
 					}
 
@@ -474,8 +458,8 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 				visiblecolumns = new String[] { "value", "label", "description" };
 			}
 
-			valuesJSON = (JSONObject) JSONStoreFeedTransformer.getInstance().transform(valuesDataJSON,
-					valueColumn.toUpperCase(), displayColumn.toUpperCase(), descriptionColumn.toUpperCase(), visiblecolumns, new Integer(rows.size()));
+			valuesJSON = (JSONObject) JSONStoreFeedTransformer.getInstance().transform(valuesDataJSON, valueColumn.toUpperCase(), displayColumn.toUpperCase(),
+					descriptionColumn.toUpperCase(), visiblecolumns, new Integer(rows.size()));
 			return valuesJSON;
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Impossible to serialize response", e);

@@ -289,7 +289,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 		try {
 
 			if (treeLovNodeValue == "lovroot") {// root node
-				treeLovNodeName = (String) lovProvDet.getTreeLevelsColumns().get(0);
+				treeLovNodeName = lovProvDet.getTreeLevelsColumns().get(0).getFirst();
 				treeLovParentNodeName = "lovroot";
 				treeLovNodeLevel = -1;
 			} else if (lovProvDet.getTreeLevelsColumns().size() > treeLovNodeLevel + 1) {// treeLovNodeLevel-1
@@ -302,8 +302,9 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 																							// the
 																							// level
 																							// 0
-				treeLovNodeName = (String) lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1);
-				treeLovParentNodeName = (String) lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel);
+
+				treeLovNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1).getFirst();
+				treeLovParentNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel).getFirst();
 			}
 
 			Set<JSONObject> valuesDataJSON = new LinkedHashSet<JSONObject>();

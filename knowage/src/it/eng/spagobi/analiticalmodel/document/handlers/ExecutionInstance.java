@@ -62,6 +62,7 @@ import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.objects.Couple;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -98,7 +99,7 @@ import com.jamonapi.MonitorFactory;
 public class ExecutionInstance implements Serializable {
 
 	static private Logger logger = Logger.getLogger(ExecutionInstance.class);
-	private static final String TREE_INNER_LOV_TYPE = "treeinner";
+	// private static final String TREE_INNER_LOV_TYPE = "treeinner";
 
 	private String flowId = null;
 	private String executionId = null;
@@ -325,7 +326,7 @@ public class ExecutionInstance implements Serializable {
 			/*
 			 * The following lines were commented because there should be not need to check if the parameter is single-value, since if it is single-value then
 			 * it is transient (see initBIParameters method)
-			 * 
+			 *
 			 * if (biParameter.getLovResult() == null) continue; LovResultHandler lovResultHandler; try { lovResultHandler = new
 			 * LovResultHandler(biParameter.getLovResult()); if(lovResultHandler.isSingleValue()) countHidePar ++; } catch (SourceBeanException e) { continue; }
 			 */
@@ -844,7 +845,8 @@ public class ExecutionInstance implements Serializable {
 		// get lov result
 		String lovResult = null;
 		List toReturn = null;
-		if (lovProvDet instanceof QueryDetail) {
+		// if (lovProvDet instanceof QueryDetail) {
+		if (lovProvDet instanceof QueryDetail && lovProvDet.isSimpleLovType()) {
 			toReturn = getValidationErrorsOnValuesForQueries((QueryDetail) lovProvDet, clone);
 		} else {
 			LovResultCacheManager executionCacheManager = new LovResultCacheManager();
@@ -994,12 +996,23 @@ public class ExecutionInstance implements Serializable {
 				String description = null;
 				if (value.equals("")) {
 					valueFound = true;
-				} else if (lovProvDet.getLovType().equals(TREE_INNER_LOV_TYPE)) {
-					List<String> treeColumns = lovProvDet.getTreeLevelsColumns();
+					// } else if (lovProvDet.getLovType().equals(TREE_INNER_LOV_TYPE)) {
+				} else if (!lovProvDet.isSimpleLovType()) {
+					// List<String> treeColumns = lovProvDet.getTreeLevelsColumns();
+					List<Couple<String, String>> treeColumns = lovProvDet.getTreeLevelsColumns();
 					if (treeColumns != null) {
-						for (int j = 0; j < treeColumns.size(); j++) {
-							valueFound = lovResultHandler.containsValueForTree(value, treeColumns.get(j));
+						// for (int j = 0; j < treeColumns.size(); j++) {
+						// valueFound = lovResultHandler.containsValueForTree(value, treeColumns.get(j));
+						// if (valueFound) {
+						// break;
+						// }
+						// }
+						Iterator<Couple<String, String>> it = treeColumns.iterator();
+						while (it.hasNext()) {
+							Couple<String, String> entry = it.next();
+							valueFound = lovResultHandler.containsValue(value, entry.getFirst());
 							if (valueFound) {
+								description = lovResultHandler.getValueDescription(value, entry.getFirst(), entry.getSecond());
 								break;
 							}
 						}
@@ -1007,9 +1020,19 @@ public class ExecutionInstance implements Serializable {
 				} else if (lovResultHandler.containsValue(value, lovProvDet.getValueColumnName())) {
 					valueFound = true;
 				}
-				if (valueFound) {
-					description = lovResultHandler.getValueDescription(value, lovProvDet.getValueColumnName(), lovProvDet.getDescriptionColumnName());
-				} else {
+				// if (valueFound) {
+				// description = lovResultHandler.getValueDescription(value, lovProvDet.getValueColumnName(), lovProvDet.getDescriptionColumnName());
+				// } else {
+				// logger.error("Parameter '" + biparam.getLabel() + "' cannot assume value '" + value + "'" + " for user '"
+				// + ((UserProfile) this.userProfile).getUserId().toString() + "' with role '" + this.executionRole + "'.");
+				// List l = new ArrayList();
+				// l.add(biparam.getLabel());
+				// l.add(value);
+				// EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 1077, l);
+				// toReturn.add(userError);
+				// description = "NOT ADMISSIBLE";
+				// }
+				if (!valueFound) {
 					logger.error("Parameter '" + biparam.getLabel() + "' cannot assume value '" + value + "'" + " for user '"
 							+ ((UserProfile) this.userProfile).getUserId().toString() + "' with role '" + this.executionRole + "'.");
 					List l = new ArrayList();
@@ -1401,7 +1424,7 @@ public class ExecutionInstance implements Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

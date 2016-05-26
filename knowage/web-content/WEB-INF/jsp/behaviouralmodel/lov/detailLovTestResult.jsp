@@ -40,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
+<%@page import="it.eng.spagobi.utilities.objects.Couple"%>
 
 <script type="text/javascript" src="<%=linkProto%>"></script>
 <script type="text/javascript" src="<%=linkProtoWin%>"></script>
@@ -92,6 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    	readonly = "readonly";
    	}
     
+    /*
     String treeColumnNames = "";
     if(lovDet!=null && lovDet.getTreeLevelsColumns()!=null && lovDet.getTreeLevelsColumns().size()>0){
     	treeColumnNames = treeColumnNames+"['"+lovDet.getTreeLevelsColumns().get(0)+"'";
@@ -101,7 +103,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	 treeColumnNames = treeColumnNames+"]";
     }else{
     	treeColumnNames="[]";
+    }*/
+    
+    String treeColumnNames = "[";
+    if (lovDet != null && lovDet.getTreeLevelsColumns() != null && lovDet.getTreeLevelsColumns().size() > 0) {
+		Iterator<Couple<String, String>> it = lovDet.getTreeLevelsColumns().iterator();
+		while (it.hasNext()) {
+			Couple<String, String> entry = it.next();
+			treeColumnNames += "{name : '" + entry.getFirst() + "', description : '" + entry.getSecond() + "'}";
+			if (it.hasNext()) {
+				treeColumnNames += ",";
+			}
+		}
     }
+    treeColumnNames += "]";
     
     String contextName = GeneralUtilities.getSpagoBiContext();
     String adapterHTTPName = GeneralUtilities.getSpagoAdapterHttpUrl();
