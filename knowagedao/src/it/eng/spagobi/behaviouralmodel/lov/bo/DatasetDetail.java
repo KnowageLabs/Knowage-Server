@@ -27,6 +27,9 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.objects.Couple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +54,11 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 	private String valueColumnName = "";
 	private String descriptionColumnName = "";
 	private List invisibleColumnNames = null;
-	private List treeLevelsColumns = null;
+	// private List treeLevelsColumns = null;
+	// each entry of the list contains the name of the column to be considered as value column as first item, and the name of the column to be considered as
+	// description column as second item
+	private List<Couple<String, String>> treeLevelsColumns = null;
+
 	private String lovType = "simple";
 
 	private String datasetId;
@@ -105,17 +112,28 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#toXML()
 	 */
 	@Override
 	public String toXML() {
-		String XML = "<DATASET>" + "<ID>" + this.getDatasetId() + "</ID>" + "<LABEL>" + this.getDatasetLabel() + "</LABEL>" + "<VALUE-COLUMN>"
-				+ this.getValueColumnName() + "</VALUE-COLUMN>" + "<DESCRIPTION-COLUMN>" + this.getDescriptionColumnName() + "</DESCRIPTION-COLUMN>"
-				+ "<VISIBLE-COLUMNS>" + GeneralUtilities.fromListToString(this.getVisibleColumnNames(), ",") + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
+		// String XML = "<DATASET>" + "<ID>" + this.getDatasetId() + "</ID>" + "<LABEL>" + this.getDatasetLabel() + "</LABEL>" + "<VALUE-COLUMN>"
+		// + this.getValueColumnName() + "</VALUE-COLUMN>" + "<DESCRIPTION-COLUMN>" + this.getDescriptionColumnName() + "</DESCRIPTION-COLUMN>"
+		// + "<VISIBLE-COLUMNS>" + GeneralUtilities.fromListToString(this.getVisibleColumnNames(), ",") + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
+		// + GeneralUtilities.fromListToString(this.getInvisibleColumnNames(), ",") + "</INVISIBLE-COLUMNS>" + "<LOVTYPE>" + this.getLovType()
+		// + "</LOVTYPE>" + "<TREE-LEVELS-COLUMNS>" + GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",") + "</TREE-LEVELS-COLUMNS>"
+		// + "</DATASET>";
+		String XML = "<DATASET>" + "<ID>" + this.getDatasetId() + "</ID>" + "<LABEL>" + this.getDatasetLabel() + "</LABEL>" + "<VISIBLE-COLUMNS>"
+				+ GeneralUtilities.fromListToString(this.getVisibleColumnNames(), ",") + "</VISIBLE-COLUMNS>" + "<INVISIBLE-COLUMNS>"
 				+ GeneralUtilities.fromListToString(this.getInvisibleColumnNames(), ",") + "</INVISIBLE-COLUMNS>" + "<LOVTYPE>" + this.getLovType()
-				+ "</LOVTYPE>" + "<TREE-LEVELS-COLUMNS>" + GeneralUtilities.fromListToString(this.getTreeLevelsColumns(), ",") + "</TREE-LEVELS-COLUMNS>"
-				+ "</DATASET>";
+				+ "</LOVTYPE>";
+		if (this.isSimpleLovType()) {
+			XML += "<VALUE-COLUMN>" + valueColumnName + "</VALUE-COLUMN>" + "<DESCRIPTION-COLUMN>" + descriptionColumnName + "</DESCRIPTION-COLUMN>";
+		} else {
+			XML += "<VALUE-COLUMNS>" + GeneralUtilities.fromListToString(this.getTreeValueColumns(), ",") + "</VALUE-COLUMNS>" + "<DESCRIPTION-COLUMNS>"
+					+ GeneralUtilities.fromListToString(this.getTreeDescriptionColumns(), ",") + "</DESCRIPTION-COLUMNS>";
+		}
+		XML += "</DATASET>";
 		return XML;
 	}
 
@@ -173,14 +191,64 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 			descriptionColumn = valueColumn;
 
 		// compatibility control (versions till 3.6 does not have TREE-LEVELS-COLUMN definition)
-		SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
-		String treeLevelsColumnsString = null;
-		if (treeLevelsColumnsBean != null) {
-			treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
-		}
-		if ((treeLevelsColumnsString != null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("")) {
-			String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
-			this.treeLevelsColumns = Arrays.asList(treeLevelsColumnArr);
+		// SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
+		// String treeLevelsColumnsString = null;
+		// if (treeLevelsColumnsBean != null) {
+		// treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+		// }
+		// if ((treeLevelsColumnsString != null) && !treeLevelsColumnsString.trim().equalsIgnoreCase("")) {
+		// String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+		// this.treeLevelsColumns = Arrays.asList(treeLevelsColumnArr);
+		// }
+		try {
+			SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
+			if (treeLevelsColumnsBean != null) {
+				// compatibility control (versions till 5.1.0 does not have
+				// VALUE-COLUMNS and DESCRIPTION-COLUMNS definition)
+				String treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+				String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+				List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
+				for (int i = 0; i < treeLevelsColumnArr.length; i++) {
+					String aValueColumn = treeLevelsColumnArr[i];
+					if (i == treeLevelsColumnArr.length - 1) {
+						levelsMap.add(new Couple<String, String>(aValueColumn, descriptionColumn));
+					} else {
+						levelsMap.add(new Couple<String, String>(aValueColumn, aValueColumn));
+					}
+				}
+				this.setValueColumnName(null);
+				this.setDescriptionColumnName(null);
+			} else {
+				SourceBean valuesColumnsBean = (SourceBean) source.getAttribute("VALUE-COLUMNS");
+				SourceBean descriptionColumnsBean = (SourceBean) source.getAttribute("DESCRIPTION-COLUMNS");
+				if (valuesColumnsBean != null) {
+
+					Assert.assertTrue(descriptionColumnsBean != null, "DESCRIPTION-COLUMNS tag not defined");
+
+					List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
+					String valuesColumnsStr = valuesColumnsBean.getCharacters();
+					logger.debug("VALUE-COLUMNS is [" + valuesColumnsStr + "]");
+					String descriptionColumnsStr = descriptionColumnsBean.getCharacters();
+					logger.debug("DESCRIPTION-COLUMNS is [" + descriptionColumnsStr + "]");
+					String[] valuesColumns = valuesColumnsStr.split(",");
+					String[] descriptionColumns = descriptionColumnsStr.split(",");
+					List<String> valuesColumnsList = Arrays.asList(valuesColumns);
+					List<String> descriptionColumnsList = Arrays.asList(descriptionColumns);
+
+					Assert.assertTrue(valuesColumnsList.size() == descriptionColumnsList.size(),
+							"Value columns list and description columns list must have the same length");
+
+					for (int i = 0; i < valuesColumnsList.size(); i++) {
+						String aValueColumn = valuesColumnsList.get(i);
+						String aDescriptionColumn = descriptionColumnsList.get(i);
+						levelsMap.add(new Couple<String, String>(aValueColumn, aDescriptionColumn));
+					}
+					this.treeLevelsColumns = levelsMap;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error while reading LOV definition from XML", e);
+			throw new SpagoBIRuntimeException("Error while reading LOV definition from XML", e);
 		}
 		SourceBean lovTypeBean = (SourceBean) source.getAttribute("LOVTYPE");
 		String lovType;
@@ -211,7 +279,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(it.eng.spago.security.IEngUserProfile, java.util.List,
 	 * it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance)
 	 */
@@ -238,7 +306,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#requireProfileAttributes()
 	 */
 	@Override
@@ -248,7 +316,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getProfileAttributeNames()
 	 */
 	@Override
@@ -259,7 +327,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
@@ -269,7 +337,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames()
 	 */
 	@Override
@@ -279,7 +347,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName()
 	 */
 	@Override
@@ -289,7 +357,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames(java.util.List)
 	 */
 	@Override
@@ -299,7 +367,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames(java.util.List)
 	 */
 	@Override
@@ -309,7 +377,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName(java.lang.String)
 	 */
 	@Override
@@ -319,7 +387,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
@@ -329,7 +397,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java.lang.String)
 	 */
 	@Override
@@ -363,13 +431,22 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 		this.lovType = lovType;
 	}
 
+	// @Override
+	// public List getTreeLevelsColumns() {
+	// return treeLevelsColumns;
+	// }
+	//
+	// @Override
+	// public void setTreeLevelsColumns(List treeLevelsColumns) {
+	// this.treeLevelsColumns = treeLevelsColumns;
+	// }
 	@Override
-	public List getTreeLevelsColumns() {
+	public List<Couple<String, String>> getTreeLevelsColumns() {
 		return treeLevelsColumns;
 	}
 
 	@Override
-	public void setTreeLevelsColumns(List treeLevelsColumns) {
+	public void setTreeLevelsColumns(List<Couple<String, String>> treeLevelsColumns) {
 		this.treeLevelsColumns = treeLevelsColumns;
 	}
 

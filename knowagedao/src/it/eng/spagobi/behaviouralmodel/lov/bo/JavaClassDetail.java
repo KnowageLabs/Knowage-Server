@@ -28,6 +28,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.utilities.objects.Couple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -180,7 +181,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/**
 	 * checks if the result is formatted in the right xml structure
-	 * 
+	 *
 	 * @param result
 	 *            the result of the lov
 	 * @return true if the result is formatted correctly false otherwise
@@ -226,7 +227,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/**
 	 * Creates and returns an instance of the lov class
-	 * 
+	 *
 	 * @return instance of the lov class which must implement IJavaClassLov interface
 	 * @throws EMFUserError
 	 */
@@ -260,7 +261,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/**
 	 * Wraps the result of the query execution into the right xml structure
-	 * 
+	 *
 	 * @param result
 	 *            the result of the query (which is not formatted with the right xml structure)
 	 * @return the xml structure of the result
@@ -307,7 +308,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName()
 	 */
 	@Override
@@ -317,7 +318,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName(java.lang.String)
 	 */
 	@Override
@@ -327,7 +328,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames()
 	 */
 	@Override
@@ -337,7 +338,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames(java.util.List)
 	 */
 	@Override
@@ -347,7 +348,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
@@ -357,7 +358,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java.lang.String)
 	 */
 	@Override
@@ -367,7 +368,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
@@ -377,7 +378,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames(java.util.List)
 	 */
 	@Override
@@ -395,13 +396,23 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 		this.lovType = lovType;
 	}
 
+	// @Override
+	// public List getTreeLevelsColumns() {
+	// return treeLevelsColumns;
+	// }
+	//
+	// @Override
+	// public void setTreeLevelsColumns(List treeLevelsColumns) {
+	// this.treeLevelsColumns = treeLevelsColumns;
+	// }
+
 	@Override
-	public List getTreeLevelsColumns() {
+	public List<Couple<String, String>> getTreeLevelsColumns() {
 		return treeLevelsColumns;
 	}
 
 	@Override
-	public void setTreeLevelsColumns(List treeLevelsColumns) {
+	public void setTreeLevelsColumns(List<Couple<String, String>> treeLevelsColumns) {
 		this.treeLevelsColumns = treeLevelsColumns;
 	}
 

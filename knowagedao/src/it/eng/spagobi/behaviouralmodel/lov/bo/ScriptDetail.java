@@ -28,6 +28,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
 
 import java.net.URL;
@@ -282,7 +283,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/**
 	 * checks if the result is formatted in the right xml structure
-	 * 
+	 *
 	 * @param result
 	 *            the result of the lov
 	 * @return true if the result is formatted correctly false otherwise
@@ -417,7 +418,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/**
 	 * In case the result of the string is not structured as expected wrap the result into the right xml envelope
-	 * 
+	 *
 	 * @param result
 	 *            the result of the script
 	 * @return
@@ -472,7 +473,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName()
 	 */
 	@Override
@@ -482,7 +483,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName(java.lang.String)
 	 */
 	@Override
@@ -492,7 +493,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames()
 	 */
 	@Override
@@ -502,7 +503,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames(java.util.List)
 	 */
 	@Override
@@ -512,7 +513,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
@@ -522,7 +523,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java.lang.String)
 	 */
 	@Override
@@ -532,7 +533,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
@@ -542,7 +543,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames(java.util.List)
 	 */
 	@Override
@@ -568,13 +569,23 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		this.lovType = lovType;
 	}
 
+	// @Override
+	// public List getTreeLevelsColumns() {
+	// return treeLevelsColumns;
+	// }
+	//
+	// @Override
+	// public void setTreeLevelsColumns(List treeLevelsColumns) {
+	// this.treeLevelsColumns = treeLevelsColumns;
+	// }
+
 	@Override
-	public List getTreeLevelsColumns() {
+	public List<Couple<String, String>> getTreeLevelsColumns() {
 		return treeLevelsColumns;
 	}
 
 	@Override
-	public void setTreeLevelsColumns(List treeLevelsColumns) {
+	public void setTreeLevelsColumns(List<Couple<String, String>> treeLevelsColumns) {
 		this.treeLevelsColumns = treeLevelsColumns;
 	}
 

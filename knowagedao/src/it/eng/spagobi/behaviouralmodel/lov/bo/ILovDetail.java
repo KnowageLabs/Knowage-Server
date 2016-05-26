@@ -21,6 +21,7 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.utilities.objects.Couple;
 
 import java.io.Serializable;
 import java.util.List;
@@ -160,7 +161,7 @@ public interface ILovDetail extends Serializable {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public List getTreeLevelsColumns() throws Exception;
+	public List<Couple<String, String>> getTreeLevelsColumns() throws Exception;
 
 	/**
 	 * Sets the visible column names.
@@ -226,6 +227,6 @@ public interface ILovDetail extends Serializable {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public void setTreeLevelsColumns(List treeLevelColumns) throws Exception;
-
+	// public void setTreeLevelsColumns(List treeLevelColumns) throws Exception;
+	public void setTreeLevelsColumns(List<Couple<String, String>> treeLevelColumns) throws Exception;
 }

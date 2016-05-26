@@ -24,6 +24,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.objects.Couple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -385,7 +386,7 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName()
 	 */
 	@Override
@@ -395,7 +396,7 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName(java.lang.String)
 	 */
 	@Override
@@ -405,7 +406,7 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames()
 	 */
 	@Override
@@ -415,7 +416,7 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames(java.util.List)
 	 */
 	@Override
@@ -425,7 +426,7 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
@@ -435,7 +436,7 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java.lang.String)
 	 */
 	@Override
@@ -445,7 +446,7 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
@@ -455,7 +456,7 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames(java.util.List)
 	 */
 	@Override
@@ -473,13 +474,22 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 		this.lovType = lovType;
 	}
 
+	// @Override
+	// public List getTreeLevelsColumns() {
+	// return treeLevelsColumns;
+	// }
+	//
+	// @Override
+	// public void setTreeLevelsColumns(List treeLevelsColumns) {
+	// this.treeLevelsColumns = treeLevelsColumns;
+	// }
 	@Override
-	public List getTreeLevelsColumns() {
+	public List<Couple<String, String>> getTreeLevelsColumns() {
 		return treeLevelsColumns;
 	}
 
 	@Override
-	public void setTreeLevelsColumns(List treeLevelsColumns) {
+	public void setTreeLevelsColumns(List<Couple<String, String>> treeLevelsColumns) {
 		this.treeLevelsColumns = treeLevelsColumns;
 	}
 
