@@ -17,6 +17,18 @@
  */
 package it.eng.spagobi.analiticalmodel.document.utils;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -53,18 +65,6 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.file.FileUtils;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.log4j.Logger;
 
 public class DetBIObjModHelper {
 	static private Logger logger = Logger.getLogger(DetBIObjModHelper.class);
@@ -203,7 +203,7 @@ public class DetBIObjModHelper {
 		}
 
 		logger.debug("If engine requires datasource and datasource is not defined throw error");
-		if (engine != null && engine.getUseDataSource()) {
+		if (engine != null && engine.getUseDataSource() && !engine.getLabel().equals("knowagegisengine")) {
 			if (ds == null) {
 				logger.error("Engine " + engine.getLabel() + " do requires datasource but it is nodt defined");
 				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, ObjectsTreeConstants.FUNCT_ID, "1087");
