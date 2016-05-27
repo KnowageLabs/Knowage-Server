@@ -30,8 +30,8 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				else if(navObj.length>=1){
 					if(targetDocument!=undefined){
 						for(var i=0;i<navObj.length;i++){
-							if(angular.equals(navObj[i].document.label,targetDocument)){
-								execCross(navObj[0],outputParameter,inputParameter,true); 
+							if(angular.equals(navObj[i].crossName,targetDocument)){
+								execCross(navObj[i],outputParameter,inputParameter,true); 
 								return;
 							}
 						}
