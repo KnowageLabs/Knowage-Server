@@ -33,9 +33,11 @@ public abstract class AbstractLOV implements ILovDetail {
 		try {
 			List<Couple<String, String>> list = this.getTreeLevelsColumns();
 			List<String> toReturn = new ArrayList<String>();
-			Iterator<Couple<String, String>> it = list.iterator();
-			while (it.hasNext()) {
-				toReturn.add(it.next().getFirst());
+			if (list != null) {
+				Iterator<Couple<String, String>> it = list.iterator();
+				while (it.hasNext()) {
+					toReturn.add(it.next().getFirst());
+				}
 			}
 			return toReturn;
 		} catch (Exception e) {
@@ -47,9 +49,11 @@ public abstract class AbstractLOV implements ILovDetail {
 		try {
 			List<Couple<String, String>> list = this.getTreeLevelsColumns();
 			List<String> toReturn = new ArrayList<String>();
-			Iterator<Couple<String, String>> it = list.iterator();
-			while (it.hasNext()) {
-				toReturn.add(it.next().getSecond());
+			if (list != null) {
+				Iterator<Couple<String, String>> it = list.iterator();
+				while (it.hasNext()) {
+					toReturn.add(it.next().getSecond());
+				}
 			}
 			return toReturn;
 		} catch (Exception e) {

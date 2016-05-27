@@ -209,18 +209,22 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 				// compatibility control (versions till 5.1.0 does not have
 				// VALUE-COLUMNS and DESCRIPTION-COLUMNS definition)
 				String treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
-				String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
-				List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
-				for (int i = 0; i < treeLevelsColumnArr.length; i++) {
-					String aValueColumn = treeLevelsColumnArr[i];
-					if (i == treeLevelsColumnArr.length - 1) {
-						levelsMap.add(new Couple<String, String>(aValueColumn, descriptionColumn));
-					} else {
-						levelsMap.add(new Couple<String, String>(aValueColumn, aValueColumn));
+				if (treeLevelsColumnsString != null) {
+					String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+					List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
+					for (int i = 0; i < treeLevelsColumnArr.length; i++) {
+						String aValueColumn = treeLevelsColumnArr[i];
+						if (i == treeLevelsColumnArr.length - 1) {
+							levelsMap.add(new Couple<String, String>(aValueColumn, descriptionColumn));
+						} else {
+							levelsMap.add(new Couple<String, String>(aValueColumn, aValueColumn));
+						}
 					}
+					this.setValueColumnName(null);
+					this.setDescriptionColumnName(null);
+
 				}
-				this.setValueColumnName(null);
-				this.setDescriptionColumnName(null);
+
 			} else {
 				SourceBean valuesColumnsBean = (SourceBean) source.getAttribute("VALUE-COLUMNS");
 				SourceBean descriptionColumnsBean = (SourceBean) source.getAttribute("DESCRIPTION-COLUMNS");
@@ -245,6 +249,12 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 						String aValueColumn = valuesColumnsList.get(i);
 						String aDescriptionColumn = descriptionColumnsList.get(i);
 						levelsMap.add(new Couple<String, String>(aValueColumn, aDescriptionColumn));
+						// TREE LEAF
+						if (i == valuesColumnsList.size() - 1) {
+							this.setValueColumnName(aValueColumn);
+							this.setDescriptionColumnName(aDescriptionColumn);
+						}
+
 					}
 					this.treeLevelsColumns = levelsMap;
 				}
@@ -964,7 +974,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName ()
 	 */
 	@Override
@@ -974,7 +984,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName (java.lang.String)
 	 */
 	@Override
@@ -984,7 +994,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames ()
 	 */
 	@Override
@@ -994,7 +1004,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames (java.util.List)
 	 */
 	@Override
@@ -1004,7 +1014,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
@@ -1014,7 +1024,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName( java.lang.String)
 	 */
 	@Override
@@ -1024,7 +1034,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
@@ -1034,7 +1044,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames (java.util.List)
 	 */
 	@Override

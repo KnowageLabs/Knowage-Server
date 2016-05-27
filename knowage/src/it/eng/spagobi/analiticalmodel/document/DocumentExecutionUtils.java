@@ -23,6 +23,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.JSONStoreFeedTransformer;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheInterface;
@@ -88,7 +89,11 @@ public class DocumentExecutionUtils {
 			Iterator<BIObjectParameter> it = parameters.iterator();
 			while (it.hasNext()) {
 				BIObjectParameter parameter = it.next();
+				// try {
 				parametersForExecution.add(new DocumentParameters(parameter, executionRole, locale, document));
+				// } catch (Exception e) {
+				// System.out.println("catch parameter ...no add !!! ");
+				// }
 			}
 		}
 		return parametersForExecution;
@@ -369,7 +374,7 @@ public class DocumentExecutionUtils {
 							&& !objParameter.getParameter().getModalityValue().getSelectionType().equals("LOOKUP")) {
 
 						for (HashMap<String, Object> defVal : defaultValues) {
-							if (defVal.get("value").equals(item.get("value"))) {
+							if (defVal.get("value").equals(item.get("value")) && !item.isNull("label")) {
 								if (defVal.get("label").equals(item.get("label")) && defVal.get("description").equals(item.get("description"))) {
 									defaultParameterAlreadyExist = true;
 									break;
@@ -414,11 +419,13 @@ public class DocumentExecutionUtils {
 		boolean addNode;
 		String treeLovNodeName = "";
 		String treeLovParentNodeName = "";
+		String treeLovNodeNameBen = "";
 
 		try {
 
 			if (treeLovNodeValue != null && treeLovNodeValue.equalsIgnoreCase("lovroot")) {// root node
 				treeLovNodeName = lovProvDet.getTreeLevelsColumns().get(0).getFirst();
+				treeLovNodeNameBen = lovProvDet.getTreeLevelsColumns().get(0).getSecond();
 				treeLovParentNodeName = "lovroot";
 				treeLovNodeLevel = -1;
 
@@ -426,6 +433,7 @@ public class DocumentExecutionUtils {
 			} else if (lovProvDet.getTreeLevelsColumns().size() > treeLovNodeLevel + 1) {
 				treeLovNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1).getFirst();
 				treeLovParentNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel).getFirst();
+				treeLovNodeNameBen = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1).getSecond();
 			}
 
 			Set<JSONObject> valuesDataJSON = new LinkedHashSet<JSONObject>();
@@ -460,13 +468,30 @@ public class DocumentExecutionUtils {
 							notNullNode = true;
 						}
 						valueJSON.put("leaf", true);
-					} else if (attribute.getKey().equalsIgnoreCase(treeLovNodeName)) {
+					}
+
+					else if (attribute.getKey().equalsIgnoreCase(treeLovNodeName)) {
 						valueJSON = new JSONObject();
-						valueJSON.put("description", attribute.getValue());
 						valueJSON.put("value", attribute.getValue());
 						valueJSON.put("id", attribute.getValue() + NODE_ID_SEPARATOR + (treeLovNodeLevel + 1));
+						// SETTING DESCRIPTION NODE
+						for (int s = 0; s < columns.size(); s++) {
+							SourceBeanAttribute attributes = (SourceBeanAttribute) columns.get(s);
+							if (attributes.getKey().equalsIgnoreCase(treeLovNodeNameBen)) {
+								valueJSON.put("description", attributes.getValue());
+							}
+						}
 						notNullNode = true;
 					}
+
+					// else if (attribute.getKey().equalsIgnoreCase(treeLovNodeName)) {
+					// valueJSON = new JSONObject();
+					// valueJSON.put("value", attribute.getValue());
+					// valueJSON.put("id", attribute.getValue() + NODE_ID_SEPARATOR + (treeLovNodeLevel + 1));
+					// valueJSON.put("description", attribute.getValue());
+					// notNullNode = true;
+					// }
+
 				}
 
 				if (addNode && notNullNode) {
@@ -542,15 +567,27 @@ public class DocumentExecutionUtils {
 	 * @param biObject
 	 *            The document object
 	 * @return The key to be used in cache
+	 * @throws Exception
 	 */
-	private static String getCacheKey(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject biObject) {
+	private static String getCacheKey(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject biObject) throws Exception {
 		String toReturn = null;
 		String userID = (String) ((UserProfile) profile).getUserId();
 		if (lovDefinition instanceof QueryDetail) {
 			QueryDetail queryDetail = (QueryDetail) lovDefinition;
 			QueryDetail clone = queryDetail.clone();
-			clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, biObject.getBiObjectParameters()));
+			// clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, biObject.getBiObjectParameters()));
+			// toReturn = userID + ";" + clone.toXML();
+
+			Map<String, String> parameters = queryDetail.getParametersNameToValueMap(biObject.getBiObjectParameters());
+			String statement = queryDetail.getWrappedStatement(dependencies, biObject.getBiObjectParameters());
+			statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+			if (parameters != null && !parameters.isEmpty()) {
+				Map<String, String> types = queryDetail.getParametersNameToTypeMap(biObject.getBiObjectParameters());
+				statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
+			}
+			clone.setQueryDefinition(statement);
 			toReturn = userID + ";" + clone.toXML();
+
 		} else {
 			toReturn = userID + ";" + lovDefinition.toXML();
 		}
