@@ -1,21 +1,29 @@
 /*
-* Knowage, Open Source Business Intelligence suite
-* Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-*
-* Knowage is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Affero General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* Knowage is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.spagobi;
+
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.configuration.FileCreatorConfiguration;
+import it.eng.spagobi.commons.SimpleSingletonConfigCache;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.utilities.MockContext;
+import it.eng.spagobi.utilities.MockFactory;
+import it.eng.spagobi.utilities.MockHttpSession;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,14 +40,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
-
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.configuration.FileCreatorConfiguration;
-import it.eng.spagobi.commons.SimpleSingletonConfigCache;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.utilities.MockContext;
-import it.eng.spagobi.utilities.MockFactory;
-import it.eng.spagobi.utilities.MockHttpSession;
 
 public class UtilitiesForTest {
 
@@ -72,8 +72,10 @@ public class UtilitiesForTest {
 		ic.bind("java://comp/env/service_url", "http://localhost:8080/knowage");
 		ic.bind("java://comp/env/host_url", "http://localhost:8080");
 		ic.bind("java://comp/env/sso_class", "it.eng.spagobi.services.common.FakeSsoService");
+		ic.bind("java:/comp/env/jdbc/hdfs_url", "hdfs://192.168.56.1:8020");
 
 		SimpleSingletonConfigCache cache = new SimpleSingletonConfigCache();
+		cache.setProperty("SPAGOBI.ORGANIZATIONAL-UNIT.hdfsResource", "java:/comp/env/jdbc/hdfs_url");
 		cache.setProperty("SPAGOBI_SSO.INTEGRATION_CLASS_JNDI", "java:/comp/env/sso_class");
 		SingletonConfig.getInstance().setCache(cache);
 	}
@@ -81,8 +83,8 @@ public class UtilitiesForTest {
 	public static void writeSessionOfWebApp() throws IOException, InterruptedException {
 		Runtime runtime = Runtime.getRuntime();
 		// call login page of knowage to write JSESSION COOKIE
-		Process exec = runtime.exec(
-				"curl http://localhost:8080/knowage/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE -H 'Host: localhost:8080' -c ./resources-test/cookies.txt");
+		Process exec = runtime
+				.exec("curl http://localhost:8080/knowage/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE -H 'Host: localhost:8080' -c ./resources-test/cookies.txt");
 		exec.waitFor();
 		String jsessionId = getJSessionId();
 		exec = runtime

@@ -57,7 +57,7 @@ import org.safehaus.uuid.UUIDGenerator;
  *
  */
 
-public class PersistedTableManager {
+public class PersistedTableManager implements IPersistedManager {
 
 	private String dialect = new String();
 	private String tableName = new String();
@@ -90,6 +90,7 @@ public class PersistedTableManager {
 		this.profile = profile;
 	}
 
+	@Override
 	public void persistDataSet(IDataSet dataset) throws Exception {
 		String tableName = dataset.getTableNameForReading();
 		// changed

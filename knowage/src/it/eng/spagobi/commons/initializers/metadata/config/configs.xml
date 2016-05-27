@@ -500,5 +500,7 @@
 <CONFIG label="IMAGE_GALLERY.MAX_IMAGE_SIZE_KB" name="Max image size in Kb" description="Max image size in Kb" isActive="true" valueCheck="1024" valueType="NUM" category="IMAGE_GALLERY"/>
 <CONFIG label="IMAGE_GALLERY.MAX_USER_IMAGES" name="Max number of images uploadable per user" description="Max number of images uploadable per user" isActive="true" valueCheck="10" valueType="NUM" category="IMAGE_GALLERY"/>
 <CONFIG label="IMAGE_GALLERY.MAX_TENANT_IMAGES" name="Max number of images uploadable per tenant" description="Max number of images uploadable per tenant" isActive="true" valueCheck="100" valueType="NUM" category="IMAGE_GALLERY"/>
+<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.hdfsResource" name="hdfsResource" description="hdfsResource" isActive="true" valueCheck="java:comp/env/jdbc/hdfs" valueType="STRING" category="ORGANIZATIONAL-UNIT" />
+
 </CONFIGS>
 
