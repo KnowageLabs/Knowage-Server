@@ -167,7 +167,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<div flex=100>
 					<md-input-container class="small counter"> <label>{{attribute.name}}</label>
 					<input name="attr" ng-model="attribute.value" ng-maxlength="100"
-						ng-change="setDirty()"> </md-input-container>
+						ng-change="setDirty()"> <div ng-messages="" ng-show="false"></div></md-input-container>
+						
 				</div>
 
 
