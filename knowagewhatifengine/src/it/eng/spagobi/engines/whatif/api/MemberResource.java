@@ -257,25 +257,27 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				JSONObject hierarchy = new JSONObject();
 				JSONArray levelsArray = new JSONArray();
 
-				hierarchy.put("name", h.getName());
+				hierarchy.put("caption", h.getCaption());
 				List<Level> levels = h.getLevels();
 				for (Level level : levels) {
 					if (level.getName() == "(All)") {
 						continue;
 					}
 					if (level.getName() == "MeasuresLevel") {
+
 						List<Member> temp = level.getMembers();
 						for (Member member : temp) {
 							JSONObject levelsObject = new JSONObject();
-							levelsObject.put("name", member.getName());
+							levelsObject.put("caption", member.getCaption());
 							levelsObject.put("uniqueName", member.getUniqueName());
 							levelsObject.put("hierarchy", member.getHierarchy().getUniqueName());
 							levelsObject.put("depth", member.getDepth());
 							levelsArray.put(levelsObject);
 						}
+						continue;
 					}
 					JSONObject levelsObject = new JSONObject();
-					levelsObject.put("name", level.getName());
+					levelsObject.put("caption", level.getCaption());
 					levelsObject.put("uniqueName", level.getUniqueName());
 					levelsObject.put("hierarchy", level.getHierarchy().getUniqueName());
 					levelsObject.put("depth", level.getDepth());

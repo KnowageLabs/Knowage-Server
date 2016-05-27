@@ -14,13 +14,13 @@
         <md-menu-bar>
           <md-menu ng-repeat="parent in dtTree">
             <button ng-click="$mdOpenMenu()">
-              {{parent.name}}
+              {{parent.caption}}
             </button>
             <md-menu-content>
               <md-menu-item ng-repeat="child in parent.children">
                 	<md-checkbox style="margin-left:5px;"  md-prevent-menu-close="md-prevent-menu-close"
 						ng-click="checkCheckboxes(child , dtAssociatedLevels)"> 
-						{{ child.name }} 
+						{{ child.caption }} 
 						</md-checkbox>
               </md-menu-item>
             </md-menu-content>

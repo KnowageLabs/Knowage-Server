@@ -105,7 +105,6 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		}
 		
 		else if($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0){
-			
 			var toSend ={};
 			toSend.ordinal = $scope.selectedCell.ordinal;
 			if(toSend.ordinal != undefined){
@@ -310,7 +309,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		};
 		
 	$scope.checkCheckboxes = function (item, list) {
-		if(item.hasOwnProperty("name")){
+		if(item.hasOwnProperty("caption")){
 			var index = $scope.indexInList(item, list);
 
 			if(index != -1){
@@ -322,10 +321,10 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	};
 	
 	$scope.indexInList=function(item, list) {
-		if(item.hasOwnProperty("name")){
+		if(item.hasOwnProperty("caption")){
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
-			if(object.name==item.name){
+			if(object.caption==item.caption){
 				return i;
 			}
 		}
