@@ -49,54 +49,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				speed-menu-option="configSpeedMenu"
 			></angular-table>	
 		</list>
-		<detail label="labelDetailFunction()" save-function="saveRow" cancel-function="closeDetail" disable-save-button="configForm.$invalid">
-			<form name="configForm">
-				<md-content layout="row" layout-align="center center" class="config-content-detail">
-					<md-card flex="50" layout="column" layout-align="center center">
-						<md-content layout="row" layout-align="center center">
-							<md-input-container flex="80" > 
+		<detail label="labelDetailFunction()" save-function="saveRow" layout="column"   cancel-function="closeDetail" disable-save-button="configForm.$invalid">
+			<form name="configForm" layout="row" flex layout-align="center start"> 
+					<md-card flex="50" flex-sm="100" >
+						<md-card-content layout="column" layout-padding >
+						<div layout="row">
+							<md-input-container flex> 
 								<label>{{translate.load("sbi.config.manageconfig.fields.label")}}</label> 
 								<input ng-model="config.label" required type="text"> 
 							</md-input-container>
-						</md-content>
-						<md-content layout="row" layout-align="center center">
-						<md-input-container flex="80"> 
-							<label>{{translate.load("sbi.config.manageconfig.fields.name")}}</label> 
-							<input ng-model="config.name" required type="text"> 
-						</md-input-container>
-						</md-content>
-						<md-content layout="row" layout-align="center center">
-						<md-input-container flex="80"> 
-							<label>{{translate.load("sbi.config.manageconfig.fields.description")}}</label> 
-							<input ng-model="config.description" type="text"> 
-						</md-input-container>
-						</md-content>
-						<md-content layout="row" layout-align="center center">
-						<md-input-container flex="80"> 
-							<label>{{translate.load('sbi.config.manageconfig.fields.isactive')}}</label>
-							<md-select	placeholder="{{translate.load('sbi.config.manageconfig.fields.isactive')}}" ng-model="config.active" required> 
-								<md-option value="true">True</md-option> 
-								<md-option value="false">False</md-option>
-							</md-select> 
-						</md-input-container>
-						</md-content>
-						<md-content layout="row" layout-align="center center">
-						<md-input-container flex="80">
-							<label>{{translate.load("sbi.config.manageconfig.fields.valuecheck")}}</label> 
-							<input ng-model="config.valueCheck" type="text"> 
-						</md-input-container>
-						</md-content>
-						<md-content layout="row" layout-align="center center">
-						<md-input-container flex="80">
+						</div>
+						<div layout="row">
+							<md-input-container flex> 
+								<label>{{translate.load("sbi.config.manageconfig.fields.name")}}</label> 
+								<input ng-model="config.name" required type="text"> 
+							</md-input-container>
+						</div>
+						<div layout="row">
+							<md-input-container flex> 
+								<label>{{translate.load("sbi.config.manageconfig.fields.description")}}</label> 
+								<input ng-model="config.description" type="text"> 
+							</md-input-container>
+						</div>
+						<div layout="row">
+							<md-input-container flex> 
+								<label>{{translate.load('sbi.config.manageconfig.fields.isactive')}}</label>
+								<md-select	placeholder="{{translate.load('sbi.config.manageconfig.fields.isactive')}}" ng-model="config.active" required> 
+									<md-option value="true">True</md-option> 
+									<md-option value="false">False</md-option>
+								</md-select> 
+							</md-input-container>
+						</div>
+						<div layout="row">
+							<md-input-container flex>
+								<label>{{translate.load("sbi.config.manageconfig.fields.valuecheck")}}</label> 
+								<input ng-model="config.valueCheck" type="text"> 
+							</md-input-container>
+						</div>
+						<div layout="row">
+						<md-input-container flex>
 							<label>{{translate.load('sbi.config.manageconfig.fields.valuetype')}}</label>
 							<md-select placeholder="{{translate.load('sbi.config.manageconfig.fields.valuetype')}}" ng-model="config.valueTypeId"> 
 								<md-option value="407">NUM</md-option> 
 								<md-option value="408">STRING</md-option>
 							</md-select> 
 						</md-input-container>
-						</md-content>
-						<md-content layout="row" layout-align="center center">
-						<md-input-container flex="80"> 
+						</div>
+						<div layout="row">
+						<md-input-container flex> 
 							<label>{{translate.load('sbi.config.manageconfig.fields.category')}}</label>
 							<md-select placeholder="{{translate.load('sbi.config.manageconfig.fields.category')}}" ng-model="config.category" required>
 								<md-option ng-value="cnf.value" ng-repeat="cnf in filterCategory">
@@ -104,9 +104,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</md-option> 
 							</md-select> 
 						</md-input-container>
-						</md-content>
+						</div>
+						
+						<div layout="row">
+						<md-input-container flex> 
+							<label>{{translate.load("sbi.config.manageconfig.fields.description")}}</label> 
+							<input ng-model="config.description" type="text"> 
+						</md-input-container>
+						</div>
+						<div layout="row">
+						<md-input-container flex> 
+							<label>{{translate.load("sbi.config.manageconfig.fields.description")}}</label> 
+							<input ng-model="config.description" type="text"> 
+						</md-input-container>
+						</div>
+						</md-card-content>
 					</md-card>
-				</md-content>
 			</form>
 		</detail>
 	</angular-list-detail>

@@ -75,6 +75,9 @@ md-input-container.md-knowage-theme  {
 		border-color: $inputLineColor;
 	}
 }
+md-input-container.md-knowage-theme .md-errors-spacer {
+    min-height: 0;
+}
 
 md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused {
 
@@ -164,6 +167,7 @@ md-tabs.md-knowage-theme md-ink-bar {
 md-card.md-knowage-theme {
     background-color: $tabBackground;
     display: block; 
+    max-height: none !important;
     //padding: $tabPadding;
 }
 
