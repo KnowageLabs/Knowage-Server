@@ -90,7 +90,13 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidget, Sbi.cockpit.core.WidgetRuntime, 
 			, frame: false
 			, height: '100%'
 			, html: this.wconf.textValue
+			,bodyStyle:{"background-color": this.wconf.tableBgColor!=""?("#" + this.wconf.tableBgColor) : ""}
 		});
+		
+		if(this.wconf.tableBgColor!=""){
+			this.setBodyStyle("background-color", "#" + this.wconf.tableBgColor);
+		}
+		
 //		this.textTitle = new Ext.Panel({
 //			border: false
 //			, bodyBorder: false

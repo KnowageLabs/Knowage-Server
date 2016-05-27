@@ -22,39 +22,40 @@ Ext.ns("Sbi.cockpit.widgets.text");
 Sbi.cockpit.widgets.text.TextWidgetDesigner = function(config) {
 
 	var defaultSettings = {
-		name: 'textWidgetDesigner',
-		title: LN('sbi.cockpit.widgets.text.textWidgetDesigner.title'),
+			name: 'textWidgetDesigner',
+			title: LN('sbi.cockpit.widgets.text.textWidgetDesigner.title'),
 	};
 
-	
+
 	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.text && Sbi.settings.cockpit.widgets.text.textWidgetDesigner) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.cockpit.widgets.text.textWidgetDesigner);
 	}
 	var c = Ext.apply(defaultSettings, config || {});
-	
+
 	Ext.apply(this, c);
 
 	this.initTextPanel();
-	
+
 	c = {
-		layout: 'fit',
-		height: 350,
-		items: [this.textPanel]
+			layout: 'fit',
+			height: 350,
+			items: [this.textPanel]
 	};
 
 	Sbi.cockpit.widgets.text.TextWidgetDesigner.superclass.constructor.call(this, c);
 
 	this.on(
-		'beforerender' ,
-		function (thePanel, attribute) {
-			var state = {};
-			state.textValue = thePanel.textValue;
-			state.wtype = 'text';
-			this.setDesignerState(state);
-		},
-		this
+			'beforerender' ,
+			function (thePanel, attribute) {
+				var state = {};
+				state.textValue = thePanel.textValue;
+				state.wtype = 'text';
+				state.tableBgColor = thePanel.tableBgColor;
+				this.setDesignerState(state);
+			},
+			this
 	);
-	
+
 };
 
 Ext.extend(Sbi.cockpit.widgets.text.TextWidgetDesigner, Sbi.cockpit.core.WidgetDesigner, {
@@ -67,45 +68,64 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidgetDesigner, Sbi.cockpit.core.WidgetD
 		var state = Sbi.cockpit.widgets.text.TextWidgetDesigner.superclass.getDesignerState(this);
 		state.designer = 'Text Designer';
 		state.wtype = 'text';
-		
+
 		state.textValue = this.textField.getValue();
-		
+		if(this.tableBgColorPicker !== null) {	
+			state.tableBgColor = this.tableBgColorPicker.getValue();
+		}
 		Sbi.trace("[TextWidgetDesigner.getDesignerState]: OUT");
 		return state;
 	}
 
-	, setDesignerState: function(state) {
-		Sbi.trace("[TextWidgetDesigner.setDesignerState]: IN");
-		Sbi.cockpit.widgets.text.TextWidgetDesigner.superclass.setDesignerState(this, state);
-		if(state.textValue) this.textField.setValue(state.textValue);
-		
-		Sbi.trace("[TextWidgetDesigner.setDesignerState]: OUT");
-	}
+, setDesignerState: function(state) {
+	Sbi.trace("[TextWidgetDesigner.setDesignerState]: IN");
+	Sbi.cockpit.widgets.text.TextWidgetDesigner.superclass.setDesignerState(this, state);
+	if(state.textValue) this.textField.setValue(state.textValue);
+	if (state.tableBgColor) this.tableBgColorPicker.setValue(state.tableBgColor);
+	Sbi.trace("[TextWidgetDesigner.setDesignerState]: OUT");
+}
 
-	, validate: function(validFields){
-		return Sbi.cockpit.widgets.text.TextWidgetDesigner.superclass.validate(this, validFields);
-	}
+, validate: function(validFields){
+	return Sbi.cockpit.widgets.text.TextWidgetDesigner.superclass.validate(this, validFields);
+}
 
-	, initTextPanel: function (){
-	   this.textField = Ext.create('Ext.form.HtmlEditor', {
-			width: 525,
-		    height: 100,
-		    fieldLabel: LN('sbi.cockpit.widgets.text.textWidgetDesigner.text'),
-		    name: 'textField',
-		    enableLinks: false,
-		    enableSourceEdit: false,
-		    enableLists: false
-		});
-		this.textPanel = Ext.create('Ext.form.Panel', {
-	        border: false,
-	        fieldDefaults: {
-	            labelWidth: 55
-	        },
-	        /*url: 'save-form.php',*/
-	        bodyPadding: 5,
+, initTextPanel: function (){
 
-	        items: [this.textField]
-	    });
-	}
+	var LABEL_WIDTHS = 90;
+	var WIDTHS = 180;
+	this.textField = Ext.create('Ext.form.HtmlEditor', {
+		width: 525,
+		height: 100,
+		fieldLabel: LN('sbi.cockpit.widgets.text.textWidgetDesigner.text'),
+		name: 'textField',
+		enableLinks: false,
+		enableSourceEdit: false,
+		enableLists: false
+	});
+
+	// state.tableBgColor
+	this.tableBgColorPicker = Ext.create('Ext.ux.FontColorField', { 
+		msgTarget: 		'qtip', 
+		fallback: 		true,
+		fieldLabel: 	LN('sbi.cockpit.designer.fontConf.bgColor'),
+//		afterLabelTextTpl : '<span class="help" data-qtip="'
+//		+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
+//		+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+		name: 			'tableBgColorPicker',
+		allowBlank: 	true,
+		labelWidth:		LABEL_WIDTHS,
+		width:			WIDTHS,
+	});
+	this.textPanel = Ext.create('Ext.form.Panel', {
+		border: false,
+		fieldDefaults: {
+			labelWidth: 55
+		},
+		/*url: 'save-form.php',*/
+		bodyPadding: 5,
+
+		items: [this.textField, this.tableBgColorPicker]
+	});
+}
 
 });
