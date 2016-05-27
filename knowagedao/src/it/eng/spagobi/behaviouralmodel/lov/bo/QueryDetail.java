@@ -208,20 +208,44 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			if (treeLevelsColumnsBean != null) {
 				// compatibility control (versions till 5.1.0 does not have
 				// VALUE-COLUMNS and DESCRIPTION-COLUMNS definition)
+
+				// SVN 27/05/2016
+				// String treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
+				// if (treeLevelsColumnsString != null) {
+				// String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+				// List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
+				// for (int i = 0; i < treeLevelsColumnArr.length; i++) {
+				// String aValueColumn = treeLevelsColumnArr[i];
+				// if (i == treeLevelsColumnArr.length - 1) {
+				// levelsMap.add(new Couple<String, String>(aValueColumn, descriptionColumn));
+				// } else {
+				// levelsMap.add(new Couple<String, String>(aValueColumn, aValueColumn));
+				// }
+				// }
+				// this.setValueColumnName(null);
+				// this.setDescriptionColumnName(null);
+				// }
+
+				// COMPATIBILITY OLD TREE LOV
 				String treeLevelsColumnsString = treeLevelsColumnsBean.getCharacters();
-				if (treeLevelsColumnsString != null) {
-					String[] treeLevelsColumnArr = treeLevelsColumnsString.split(",");
+				if (treeLevelsColumnsString != null && !treeLevelsColumnsString.trim().equalsIgnoreCase("")) {
 					List<Couple<String, String>> levelsMap = new ArrayList<Couple<String, String>>();
-					for (int i = 0; i < treeLevelsColumnArr.length; i++) {
-						String aValueColumn = treeLevelsColumnArr[i];
-						if (i == treeLevelsColumnArr.length - 1) {
-							levelsMap.add(new Couple<String, String>(aValueColumn, descriptionColumn));
-						} else {
-							levelsMap.add(new Couple<String, String>(aValueColumn, aValueColumn));
+					String[] valuesColumns = treeLevelsColumnsString.split(",");
+					List<String> valuesColumnsList = Arrays.asList(valuesColumns);
+					for (int i = 0; i < valuesColumnsList.size(); i++) {
+						String aValueColumn = valuesColumnsList.get(i);
+						levelsMap.add(new Couple<String, String>(aValueColumn, aValueColumn));
+						// TREE LEAF
+						if (i == valuesColumnsList.size() - 1) {
+							this.setValueColumnName(aValueColumn);
+							SourceBean descriptionSourceBean = (SourceBean) source.getAttribute("DESCRIPTION-COLUMN");
+							String description = (descriptionSourceBean != null && descriptionSourceBean.getCharacters() != null) ? descriptionSourceBean
+									.getCharacters() : aValueColumn;
+							this.setDescriptionColumnName(description);
 						}
+
 					}
-					this.setValueColumnName(null);
-					this.setDescriptionColumnName(null);
+					this.treeLevelsColumns = levelsMap;
 
 				}
 
@@ -974,7 +998,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName ()
 	 */
 	@Override
@@ -984,7 +1008,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName (java.lang.String)
 	 */
 	@Override
@@ -994,7 +1018,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames ()
 	 */
 	@Override
@@ -1004,7 +1028,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames (java.util.List)
 	 */
 	@Override
@@ -1014,7 +1038,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
@@ -1024,7 +1048,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName( java.lang.String)
 	 */
 	@Override
@@ -1034,7 +1058,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
@@ -1044,7 +1068,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames (java.util.List)
 	 */
 	@Override
