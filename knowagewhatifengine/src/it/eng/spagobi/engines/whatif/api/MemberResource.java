@@ -368,7 +368,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 	public String drillfull(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException {
 		JSONArray array = null;
-		ResultSet set;
+		ResultSet set = null;
 		int ordinal = 0;
 		String col = null;
 		int max = 0;
@@ -389,7 +389,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		CellSet cellSet = model.getCellSet();
 
 		try {
-
+			Cell cell = cellSet.getCell(ordinal);
 			JSONArray collections = new JSONArray(col);
 			for (int i = 0; i < collections.length(); i++) {
 				JSONObject jsonObj = collections.getJSONObject(i);
@@ -405,14 +405,13 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				}
 			}
 
-			Cell cell = cellSet.getCell(ordinal);
+			if (selection != null && cell != null) {
+				DrillThrough transform = model.getTransform(DrillThrough.class);
+				set = transform.drillThrough(cell, selection, max);
+				array = ResultSetConverter.convertResultSetIntoJSON(set);
+			}
 
-			DrillThrough transform = model.getTransform(DrillThrough.class);
-			set = transform.drillThrough(cell, selection, max);
-			array = ResultSetConverter.convertResultSetIntoJSON(set);
-			// //System.out.println(array);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return array.toString();
