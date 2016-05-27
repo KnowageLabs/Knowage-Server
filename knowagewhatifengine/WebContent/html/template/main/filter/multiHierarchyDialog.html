@@ -2,7 +2,7 @@
 	
 	<md-toolbar class="knowage-blue" style="min-height:20px">
       <div>
-      		{{member.name}}
+      		{{member.caption}}
       	<span flex></span>
         <md-button class="md-icon-button" ng-click="closeDialog(ev)" style="float: right;">
           <md-icon class="fa fa-times" style="color:white;" aria-label="Close dialog"></md-icon>
@@ -12,7 +12,7 @@
     
     <md-dialog-content style="padding:10px;font-size:85%">
     	<span>
-    	The selected hierarchy is <b>{{member.hierarchies[member.selectedHierarchyPosition].name}}</b>.
+    	The selected hierarchy is <b>{{member.hierarchies[member.selectedHierarchyPosition].caption}}</b>.
     	You can change it acting on the form below.
     	</span>
     	<br/>
@@ -20,7 +20,7 @@
     	<md-input-container style="width:50%; padding-left:10%">    		
     		<select ng-model="selecetedMultiHierUN" class="multi-hier-combo" >
     			<option  ng-repeat="hier in member.hierarchies" value="{{hier.uniqueName}}" style="height:20px">
-    				<span style="font-size:85%;">{{hier.name}}</span>
+    				<span style="font-size:85%;">{{hier.caption}}</span>
     			</option>
     		</select>
     	</md-input-container>
