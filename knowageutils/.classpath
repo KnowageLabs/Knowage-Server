@@ -132,5 +132,20 @@
 	<classpathentry kind="lib" path="lib/mdrant.jar"/>
 	<classpathentry kind="lib" path="lib/mdrjdbc142.jar"/>
 	<classpathentry kind="lib" path="lib/openide-util.jar"/>
+	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-configuration-1.10.jar"/>
+	<classpathentry kind="lib" path="lib/guava-11.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-annotations-2.6.0-cdh5.4.3.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-auth-2.6.0-cdh5.4.3.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-common-2.6.0-cdh5.4.3.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-core-2.6.0-mr1-cdh5.4.3.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-hdfs-2.6.0-cdh5.4.3.jar"/>
+	<classpathentry kind="lib" path="lib/htrace-core-3.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/htrace-core-3.1.0-incubating.jar"/>
+	<classpathentry kind="lib" path="lib/protobuf-java-2.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/serializer-2.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/xalan-2.7.2.jar"/>
+	<classpathentry kind="lib" path="lib-test/mockito-all-1.10.19.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
