@@ -168,7 +168,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 				}
 				$scope.formateddtColumns =$scope.formatColumns($scope.dtColumns);
 			    }, function(response) {
-				sbiModule_messaging.showErrorMessage("Error in FullDrillThrough", 'Error');
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].localizedMessage, 'Error');
 				
 					});
 			

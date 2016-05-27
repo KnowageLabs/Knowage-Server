@@ -412,6 +412,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				array = ResultSetConverter.convertResultSetIntoJSON(set);
 			}
 
+		} catch (NullPointerException e) {
+			throw new SpagoBIRestServiceException("Selected member isnt associated with table column", buildLocaleFromSession(), e);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
