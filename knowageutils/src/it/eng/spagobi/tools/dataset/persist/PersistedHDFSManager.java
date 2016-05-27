@@ -12,9 +12,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
@@ -46,10 +46,10 @@ public class PersistedHDFSManager implements IPersistedManager {
 	@Override
 	public void persistDataSet(IDataSet dataSet) throws Exception {
 		logger.debug("Start persisting DataSet");
-		Calendar calendar = Calendar.getInstance();
-		Timestamp timestamp = new Timestamp(calendar.getTime().getTime());
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_h.mm.ss");
 		String folderName = Helper.sha256(dataSet.getSignature());
-		String fileName = dataSet.getLabel() + "_" + timestamp.toLocalDateTime().toString();
+		String fileName = dataSet.getLabel() + "_" + sdf.format(date);
 		dataSet.loadData();
 		IDataStore dataStore = dataSet.getDataStore();
 		persistDataSet(dataStore, fileName, folderName);
