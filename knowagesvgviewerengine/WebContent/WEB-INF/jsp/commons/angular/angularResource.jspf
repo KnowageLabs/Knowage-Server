@@ -1,0 +1,96 @@
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA IMPORTS															--%>
+<%-- ---------------------------------------------------------------------- --%>
+
+<!-- this imports are used for language controls  -->
+<%@page import="it.eng.spago.security.IEngUserProfile"%>
+<%@ page language="java" 
+	     contentType="text/html; charset=UTF-8" 
+	     pageEncoding="UTF-8"%>	
+
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA IMPORTS															--%>
+<%-- ---------------------------------------------------------------------- --%>
+<%@page import="java.util.Locale"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.Map"%>
+<%@page import="it.eng.knowage.engines.svgviewer.SvgViewerEngineInstance"%>
+<%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
+<%@page import="java.util.Iterator"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="org.json.JSONObject"%>
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA CODE 																--%>
+<%-- ---------------------------------------------------------------------- --%>
+<% 
+	SvgViewerEngineInstance engineInstance;
+	Map env;
+	String executionRole;
+	Locale locale;
+	String template;
+	String docLabel;
+	String docVersion;
+	String docAuthor;
+	String docName;
+	String docDescription;
+	String docIsPublic;
+	String docIsVisible;
+	String docPreviewFile;
+	String[] docCommunities;
+	String docCommunity;
+	List docFunctionalities;
+	String docDatasetLabel;
+	String userId;
+	List<String> includes;
+	boolean visibleDataSet;
+
+	engineInstance = (SvgViewerEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
+	env = engineInstance.getEnv();
+	locale = engineInstance.getLocale();
+
+	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
+	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();
+	//TODO: commented just for test
+	//template = engineInstance.getGuiSettings().toString();
+	docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
+	docVersion = (engineInstance.getDocumentVersion()==null)?"":engineInstance.getDocumentVersion().toString();
+	docAuthor = (engineInstance.getDocumentAuthor()==null)?"":engineInstance.getDocumentAuthor().toString();
+	docName = (engineInstance.getDocumentName()==null)?"":engineInstance.getDocumentName().toString();
+	docDescription = (engineInstance.getDocumentDescription()==null)?"":engineInstance.getDocumentDescription().toString();
+	docIsPublic= (engineInstance.getDocumentIsPublic()==null)?"":engineInstance.getDocumentIsPublic().toString();
+	docIsVisible= (engineInstance.getDocumentIsVisible()==null)?"":engineInstance.getDocumentIsVisible().toString();
+	docPreviewFile= (engineInstance.getDocumentPreviewFile()==null)?"":engineInstance.getDocumentPreviewFile().toString();	
+	docDatasetLabel = (engineInstance.getDataSet()==null)?"":engineInstance.getDataSet().getLabel();
+	String docDatasetName = (engineInstance.getDataSet()==null)?"":engineInstance.getDataSet().getName();
+	docCommunities= (engineInstance.getDocumentCommunities()==null)?null:engineInstance.getDocumentCommunities();
+	docCommunity = (docCommunities == null || docCommunities.length == 0) ? "": docCommunities[0];
+	docFunctionalities= (engineInstance.getDocumentFunctionalities()==null)?new ArrayList():engineInstance.getDocumentFunctionalities();
+	visibleDataSet = (engineInstance.isVisibleDataSet());
+
+	includes = engineInstance.getIncludes();
+	
+    // gets analytical driver
+    Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
+
+
+    Map driverParamsMap = new HashMap();
+	for(Object key : engineInstance.getAnalyticalDrivers().keySet()){
+		if(key instanceof String && !key.equals("widgetData")){
+			String value = request.getParameter((String)key);
+			if(value!=null){
+				driverParamsMap.put(key, value);
+			}
+		}
+	}
+	String driverParams = new JSONObject(driverParamsMap).toString(0);
+%>
+
+
+<%@include file="../../commons/includeMessageResource.jspf"%>
+
+		
+		
