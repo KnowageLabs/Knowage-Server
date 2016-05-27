@@ -51,7 +51,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 		chartTypeChanged: function(numberOfColors)
 		{
 			this.height = (numberOfColors+1)*20+65;
-			this.update();
+			//this.update();
 		}
 	},
 	

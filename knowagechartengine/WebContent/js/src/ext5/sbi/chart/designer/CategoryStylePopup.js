@@ -102,7 +102,7 @@ Ext.define
 					layout: 'anchor',					
 					items : []
     			}
-			);	
+			);		    	
 	    	
 	    	categoryOrderColumn = dataAtRow.get('categoryOrderColumn') ? dataAtRow.get('categoryOrderColumn') : '';
 	    	
@@ -132,6 +132,7 @@ Ext.define
 				'Sbi.chart.designer.SeriesOrderCombo', 
 				{
 					value: (categoryOrderType && categoryOrderType.trim() != '') ? categoryOrderType.trim() : '',
+					fieldLabel: LN("sbi.chartengine.structure.categoryStyleConfig.orderingType.labelText")
 				}
 			);
 			

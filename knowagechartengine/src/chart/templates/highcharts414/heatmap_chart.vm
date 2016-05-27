@@ -130,7 +130,7 @@
         	
         isCockpit: $chart.isCockpitEngine,
        
-       	#*
+		#*
   			If we are previewing a chart inside a Designer widget in the Cockpit, the 'chart.outcomingEventsEnabled' will be NULL, so we need to check if this is the case.
   			If not providing this check, we will experience rendering problem within the Highcharts Export (value for 'outcomingEventsEnabled' template property will be 
   			'$chart.outcomingEventsEnabled'.
@@ -139,7 +139,7 @@
   		#if($chart.isCockpitEngine=='true' && "$!chart.outcomingEventsEnabled" != "")
   			outcomingEventsEnabled: $chart.outcomingEventsEnabled,
   		#end
-       
+
   		xAxisDate: $isFirstDate,
   		style:
 		{			

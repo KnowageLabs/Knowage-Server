@@ -838,13 +838,34 @@ public class DataSetTransformer {
 		boolean isDate = false;
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
+		/**
+		 * ------------------------------------------------------------------------------------------ KNOWAGE-778
+		 * ("COCKPIT-Chart: heatmap hangs in loading when the selections return no data")
+		 * ------------------------------------------------------------------------------------------ If there is no data in the "firstresult" (if it is an
+		 * empty map), return the false boolean value to the VM. The first category (that does not exist) is definitely not of type DATE.
+		 * 
+		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
 		try {
-			Date date = df.parse(firstresult.get(0).get(column.toString()).toString());
-			isDate = true;
-			return isDate;
+
+			if (firstresult.isEmpty()) {
+
+				isDate = false;
+				return isDate;
+
+			} else {
+
+				Date date = df.parse(firstresult.get(0).get(column.toString()).toString());
+				isDate = true;
+				return isDate;
+
+			}
+
 		} catch (ParseException e) {
+
 			isDate = false;
 			return isDate;
+
 		}
 
 	}

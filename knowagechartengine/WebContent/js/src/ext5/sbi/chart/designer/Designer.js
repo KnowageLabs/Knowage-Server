@@ -2706,46 +2706,68 @@ Ext.define('Sbi.chart.designer.Designer', {
 					   
 					    handler: function(event, toolEl, panelHeader) 
 					    {					    	
-					    	var store = globalThis.bottomXAxisesPanel.getStore();
-					    							
-
 					    	/**
-					    	 * Create the store for the combobox that will contain all possible attributes
-					    	 * (columns) through which user can pick the particular one that he would like
-					    	 * to order the result by.
+					    	 * Check if there is at least one attribute dropped inside the X-axis (bottom) panel. If it is, enable the popup appearance in order to set
+					    	 * the category ordering column for the first category, but if it is not, prevent user from opening the popup, providing a proper message.
+					    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					    	 */
-							var categoriesPickerStoreItems = globalThis.categoriesPickerStore.data.items;
-							var categoriesStore = [];
-							
-							for (i=0; i<categoriesPickerStoreItems.length; i++)
-							{
-								categoriesStore.push(categoriesPickerStoreItems[i].data);
-							}
-							
-							var previousInstance = Ext.getCmp('categoryStylePopup');
-							
-							if(previousInstance != undefined) 
-							{
-								return;
-							}
-							
-							/**
-							 * 'rowIndex' is always of value 0, since we have the order by category (column)
-							 * option only for the first category (item) that is set inside the bottom X-axis
-							 * panel of the Designer. This option should be improved, so the other categories
-							 * could also have this option.
-							 */
-							var categoryStylePopup = Ext.create
-							(
-								'Sbi.chart.designer.CategoryStylePopup', 
+					    	if (Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson()!=null) {
+					    		
+					    		var store = globalThis.bottomXAxisesPanel.getStore();
+    							
+						    	/**
+						    	 * Create the store for the combobox that will contain all possible attributes
+						    	 * (columns) through which user can pick the particular one that he would like
+						    	 * to order the result by.
+						    	 */
+								var categoriesPickerStoreItems = globalThis.categoriesPickerStore.data.items;
+								var categoriesStore = [];
+								
+								for (i=0; i<categoriesPickerStoreItems.length; i++)
 								{
-									store: store,
-									rowIndex: 0,
-									categoriesPickerStore: categoriesStore
+									categoriesStore.push(categoriesPickerStoreItems[i].data);
 								}
-							);
-							
-							categoryStylePopup.show();
+								
+								var previousInstance = Ext.getCmp('categoryStylePopup');
+								
+								if(previousInstance != undefined) 
+								{
+									return;
+								}
+								
+								/**
+								 * 'rowIndex' is always of value 0, since we have the order by category (column)
+								 * option only for the first category (item) that is set inside the bottom X-axis
+								 * panel of the Designer. This option should be improved, so the other categories
+								 * could also have this option.
+								 */
+								var categoryStylePopup = Ext.create
+								(
+									'Sbi.chart.designer.CategoryStylePopup', 
+									{
+										store: store,
+										rowIndex: 0,
+										categoriesPickerStore: categoriesStore
+									}
+								);
+								
+								categoryStylePopup.show();
+								
+					    	}
+					    	else {
+					    		
+					    		Ext.Msg.show
+					    		(
+				    				{
+		            					title : LN('sbi.chartengine.categorypanel.mincategnumber.showcategcolumnpopup.title'),
+		            					message : LN('sbi.chartengine.categorypanel.mincategnumber.showcategcolumnpopup.warningmessage'),
+		            					icon : Ext.Msg.WARNING,
+		            					closable : false,
+		            					buttons : Ext.Msg.OK
+		            				}
+			    				);
+					    		
+					    	}
 						}
 					},
 					

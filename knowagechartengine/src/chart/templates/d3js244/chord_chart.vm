@@ -360,4 +360,4 @@
 	[
 		$datasettransformer.toMatrix($results,$columnsNeeded,$serieName,$dataColumnsMapper,$groupingFunction)
 	]
-}
+} 
