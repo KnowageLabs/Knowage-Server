@@ -140,7 +140,7 @@
     border-radius: 0px 7px 7px 0px;
 }
 
-	.dimension-top-toolbar .multi-hierarachy-btn{
+.dimension-top-toolbar .multi-hierarachy-btn{
 		width: 20% !important;
 		min-width: 0px;
 		margin: 3% 0px 0px 0% !important;
@@ -355,7 +355,9 @@ table tr:nth-child(even) {
   position:relative;
 }
 
-.tree ul {margin-left:.5em} /* (indentation/2) */
+.tree ul {
+	margin-left:.5em
+} /* (indentation/2) */
 
 .tree:before,
 .tree ul:before {
@@ -696,7 +698,7 @@ md-option[selected], md-select-menu md-option[selected]{
 		height:32px;
 		margin-top:20%;
 	}
-
+}
 
 .tree-item-padding{
 	padding-left:10px !important;
@@ -716,6 +718,7 @@ md-option[selected], md-select-menu md-option[selected]{
 		font-size:85%;
 		height:20%;
 		width: 100%;
+	}
 }
 
 .swap-axis-area{
@@ -732,8 +735,8 @@ md-option[selected], md-select-menu md-option[selected]{
 }
 
 .filter-shift-arrow{
-	margin-top:1%;
-	max-width:40px;
+	margin-top:1%!important;
+	max-width:40px!important;
 }
 
 .save-subObject-dialog{

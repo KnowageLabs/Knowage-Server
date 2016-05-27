@@ -74,7 +74,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	/**
 	 * Dialogs  
 	 **/
-	$scope.openFiltersDialogAsync = function(ev, filter, node) {
+	$scope.openFiltersDialogAsync = function(ev, filter, node, index) {
 		
 		$scope.clearLoadedData(filter.uniqueName);
 		visibleSelected = [];//check it
@@ -89,7 +89,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			getVisibleService(filter.uniqueName,filter.axis);
 		
 		$scope.filterDialogToolbarName = filter.caption;
-		$scope.filterAxisPosition = filter.positionInAxis;
+		$scope.filterAxisPosition = index;
 		$scope.activeaxis = filter.axis;
 		filterFather = filter.selectedHierarchyUniqueName;
 		h = filter.uniqueName;
@@ -260,7 +260,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	$scope.selectFilter = function(item){
 		selectedFlag = true;
-		oldSelectedFilter = $scope.filterSelected[$scope.filterAxisPosition];
+		oldSelectedFilter = $scope.filterSelected[$scope.filterAxisPosition];//ex:$scope.filterAxisPosition
 		h = $scope.filterCardList[$scope.filterAxisPosition].uniqueName;
 		m = item.uniqueName;
 		$scope.filterSelected[$scope.filterAxisPosition].caption = item.name;
@@ -308,7 +308,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			(encoded,"",toSend)
 			.then(function(response) {
 				  $scope.table = $sce.trustAsHtml(response.data.table);
-				  $scope.filterSelected[$scope.filterAxisPosition].visible = true;
+				  $scope.filterSelected[$scope.filterAxisPosition].visible = true;//ex:$scope.filterAxisPosition
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("An error occured", 'Error');
 			});	
@@ -559,7 +559,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 * Filter shift if necessary  
 	 **/
 	$scope.filterShift = function(direction) {
-		var length = $scope.filterCardList.length;
+		/*var length = $scope.filterCardList.length;
 		var first = $scope.filterCardList[0];
 		var last = $scope.filterCardList[length - 1];
 
@@ -575,6 +575,29 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			}
 			$scope.filterCardList[0] = last;
 		}
+		visibleSelectedShift(direction);*/
+		$scope.filterCardList = shift(direction,$scope.filterCardList);
+		$scope.filterSelected = shift(direction,$scope.filterSelected);
+	};
+	
+	shift = function(direction, data){
+		var length = data.length;
+		var first = data[0];
+		var last = data[length-1];
+		if(direction == "left"){
+			for (var i = 0; i < length; i++) {
+				data[i] = data[i + 1];
+			}
+			data[length - 1] = first;
+		}
+		else{
+			for (var i = length - 2; i >= 0; i--) {
+				data[i + 1] = data[i];
+			}
+			data[0] = last;
+		}
+		
+		return data;
 	};
 	
 	checkShift = function(){
