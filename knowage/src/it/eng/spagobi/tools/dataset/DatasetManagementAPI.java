@@ -17,26 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.NamingException;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import commonj.work.Work;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -81,6 +61,27 @@ import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.naming.NamingException;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import commonj.work.Work;
 
 /**
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
@@ -389,6 +390,7 @@ public class DatasetManagementAPI {
 						adjustMetadata((DataStore) dataStore, dataSet, null);
 						dataSet.decode(dataStore);
 					} else {
+						// TODO: here we actually already have the datastore, therefore we could optimize this step...
 						dataStore = cache.refresh(dataSet, false);
 						// if result was not cached put refresh date as now
 						dataStore.setCacheDate(new Date());
