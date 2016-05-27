@@ -19,7 +19,9 @@
             <md-menu-content>
               <md-menu-item ng-repeat="child in parent.children">
                 	<md-checkbox style="margin-left:5px;"  md-prevent-menu-close="md-prevent-menu-close"
-						ng-click="checkCheckboxes(child , dtAssociatedLevels)"> 
+						ng-click="checkCheckboxes(child , dtAssociatedLevels)"
+						ng-checked="getCheckboxes(child , dtAssociatedLevels)"
+						> 
 						{{ child.caption }} 
 						</md-checkbox>
               </md-menu-item>
@@ -27,7 +29,12 @@
           </md-menu>
         </md-menu-bar>
       </div>
-    </div>
+      <span flex></span>
+      
+      <md-button class="md-raised"  ng-click="clearLevels()">
+				Clear All Levels
+	</md-button>		  
+    </div>	
  </md-card>
 		
 		
@@ -63,6 +70,8 @@
 		        <md-option value="1000">1000</md-option>
 		      </md-select>
 		     </md-input-container>
+		     
+		     
 				<span flex></span>
 			<md-button class="md-raised" ng-click="closeDialog()">
 				Cancel

@@ -92,11 +92,27 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		("1.0", encoded)
 		.then(function(response) {
 			$scope.dtTree = response.data;
+			for (var i = 0; i < $scope.dtTree.length; i++) {
+				for (var j = 0; j < $scope.dtTree[i].children.length; j++) {
+					for (var k = 0; k < $scope.formateddtColumns.length; k++) {
+						if ($scope.formateddtColumns[k].label ==$scope.dtTree[i].children[j].caption.toUpperCase()) {
+							console.log($scope.dtTree[i].children[j].caption.toUpperCase());
+							$scope.checkCheckboxes($scope.dtTree[i].children[j],$scope.dtAssociatedLevels);
+						}
+					}
+					
+				}
+			}
+			console.log($scope.dtAssociatedLevels);
 		    }, function(response) {
 			sbiModule_messaging.showErrorMessage("error", 'Error');
 			
 				});
 		}
+	
+	$scope.clearLevels = function() {
+		$scope.dtAssociatedLevels = [];
+	}
 	
 	$scope.enableDisableDrillThrough = function() {
 		
@@ -315,11 +331,15 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 			if(index != -1){
 				$scope.dtAssociatedLevels.splice(index,1);
 			}else{
+				
 				$scope.dtAssociatedLevels.push(item);
 			}
 		} 
 	};
-	
+	$scope.getCheckboxes = function(item,list) {
+		
+		return  $scope.indexInList(item, list)>-1;
+	}
 	$scope.indexInList=function(item, list) {
 		if(item.hasOwnProperty("caption")){
 		for (var i = 0; i < list.length; i++) {

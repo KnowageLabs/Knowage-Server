@@ -398,6 +398,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				Integer depth = jsonObj.getInt("depth");
 				Level l = CubeUtilities.getHierarchy(model.getCube(), hierarchy).getLevels().get(depth);
 				if (l.getName() == "MeasuresLevel") {
+
 					Member m = CubeUtilities.getMember(model.getCube(), unique);
 					selection.add(m);
 				} else {
