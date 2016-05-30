@@ -85,7 +85,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			var errorU = "Error updating the datasource!"
 
 			//MODIFY DATA SOURCE
-
+				if($scope.selectedDataSource.readOnly==0){
+					$scope.selectedDataSource.readOnly=false;
+				} else if($scope.selectedDataSource.readOnly==1){
+					$scope.selectedDataSource.readOnly=true;
+				}
 				sbiModule_restServices.promisePut('2.0/datasources','',angular.toJson($scope.selectedDataSource))
 				.then(function(response) {
 					console.log("[PUT]: SUCCESS!");
@@ -100,7 +104,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		} else {
 
 			var errorS = "Error saving the datasource!";
-
+			if($scope.selectedDataSource.readOnly==0){
+				$scope.selectedDataSource.readOnly=false;
+			} else if($scope.selectedDataSource.readOnly==1){
+				$scope.selectedDataSource.readOnly=true;
+			}
 			//CREATE NEW DATA SOURCE
 			sbiModule_restServices.promisePost('2.0/datasources','', angular.toJson($scope.selectedDataSource))
 			.then(function(response) {
