@@ -17,33 +17,6 @@
  */
 package it.eng.spagobi.sdk.documents.impl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -105,6 +78,33 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.file.FileUtils;
 import it.eng.spagobi.utilities.mime.MimeUtils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 public class DocumentsServiceImpl extends AbstractSDKService implements DocumentsService {
 
@@ -716,13 +716,10 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	/**
 	 * Executes a document and return an object containing the result
-	 *
-	 * @param: document
-	 *             : the document
-	 * @param: parameters:
-	 *             ana array of SDKDocumentParameters, already filled with values
-	 * @param: roleName
-	 *             : name of the role
+	 * 
+	 * @param: document : the document
+	 * @param: parameters: ana array of SDKDocumentParameters, already filled with values
+	 * @param: roleName : name of the role
 	 */
 
 	@Override
@@ -800,9 +797,9 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				if (document.getType().equalsIgnoreCase("KPI")) { // CASE KPI
 					toReturn = executeKpi(document, instance.getBIObject(), (String) profile.getUserUniqueIdentifier(), output);
 				} else if (document.getType().equalsIgnoreCase("REPORT") || document.getType().equalsIgnoreCase("ACCESSIBLE_HTML")) { // CASE
-																																		// REPORT
-																																		// OR
-																																		// ACCESSIBLE_HTML
+					// REPORT
+					// OR
+					// ACCESSIBLE_HTML
 					toReturn = executeReport(document, instance.getBIObject(), profile, output);
 				} else {
 					logger.error("NO EXPORTER AVAILABLE");
@@ -1127,7 +1124,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	/**
 	 * search for model file inside content parameter and return byte array
-	 *
+	 * 
 	 * @param content
 	 * @param toReturn
 	 */
@@ -1356,7 +1353,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	/**
 	 * Add the schema mondrian to the catalogue and upload a template that uses it
-	 *
+	 * 
 	 * @param SDKSchema
 	 *            . The object with all informations
 	 */
@@ -1382,8 +1379,8 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				throw new SDKException("1001", "Error while uploading schema. Schema file is null.");
 				// return;
 			}
-			logger.debug("schema name = [" + schema.getSchemaName() + "] - schema description = [" + schema.getSchemaDescription() + "] - schema datasource = ["
-					+ schema.getSchemaDataSourceLbl() + "] ");
+			logger.debug("schema name = [" + schema.getSchemaName() + "] - schema description = [" + schema.getSchemaDescription()
+					+ "] - schema datasource = [" + schema.getSchemaDataSourceLbl() + "] ");
 			UserProfile userProfile = (UserProfile) this.getUserProfile();
 			try {
 				boolean isNewSchema = true;
@@ -1402,8 +1399,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				// checks if the artifact already exists. In this case doesn't
 				// create the new one!
 				if (artifact != null) {
-					logger.info(
-							"The schema with name " + schema.getSchemaName() + " is already been inserted in SpagoBI catalogue. Artifact will be updated! ");
+					logger.info("The schema with name " + schema.getSchemaName() + " is already been inserted in SpagoBI catalogue. Artifact will be updated! ");
 					isNewSchema = false;
 					artID = artifact.getId();
 				}
@@ -1739,4 +1735,68 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		return toReturn;
 	}
 
+	@Override
+	public String getLockStatus(SDKDocument document) throws NotAllowedOperationException {
+		logger.debug("IN");
+		logger.debug("OUT");
+		return null;
+	}
+
+	@Override
+	public String changeLockStatus(SDKDocument document) throws NotAllowedOperationException {
+		logger.debug("IN");
+		// TODO change parameter in String documentLabel
+		String toReturn = null;
+		String documentLabel = document.getLabel();
+		try {
+			BIObject biObj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(documentLabel);
+
+			if (biObj == null) {
+				logger.warn("Document with label " + documentLabel + " is not present");
+				throw new RuntimeException("Document with label " + documentLabel + " is not present");
+			}
+
+			String previousLockerUser = biObj.getLockedByUser();
+			String currentUser = (String) getUserProfile().getUserUniqueIdentifier();
+
+			boolean isUserAdmin = getUserProfile().isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
+
+			boolean isLocked = false;
+			boolean isLockedByCurrentUser = false;
+
+			if (previousLockerUser == null || previousLockerUser.equals("")) {
+				isLocked = false;
+				isLockedByCurrentUser = false;
+			} else if (previousLockerUser != null && previousLockerUser.equals(currentUser)) {
+				isLocked = true;
+				isLockedByCurrentUser = true;
+			} else {
+				isLocked = true;
+				isLockedByCurrentUser = false;
+			}
+			IBIObjectDAO biObjDAO = DAOFactory.getBIObjectDAO();
+			biObjDAO.setUserProfile(getUserProfile());
+
+			if (isLocked == false) {
+				logger.debug("Document " + documentLabel + " is not locked, lock it");
+				toReturn = biObjDAO.changeLockStatus(documentLabel, isUserAdmin);
+			} else if (isLocked == true && isLockedByCurrentUser == true) {
+				logger.debug("Document " + documentLabel + " is locked by current user, unlock");
+				toReturn = biObjDAO.changeLockStatus(documentLabel, isUserAdmin);
+			} else if (isLocked == true && isLockedByCurrentUser == false && isUserAdmin == true) {
+				logger.debug("Document " + documentLabel + " is not locked by current user but current user is administrator");
+				toReturn = biObjDAO.changeLockStatus(documentLabel, isUserAdmin);
+			} else {
+				logger.debug("Document " + documentLabel + " is locked by another user and current user is not administrator is, don't change");
+				toReturn = previousLockerUser;
+			}
+
+		} catch (Exception e) {
+			logger.error("Error in changing lock status", e);
+			throw new RuntimeException("Error in changing lock status for document with label " + documentLabel);
+
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
 }
