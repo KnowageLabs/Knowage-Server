@@ -17,34 +17,6 @@
  */
 package it.eng.spagobi.api;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
@@ -62,7 +34,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -115,8 +86,37 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 /**
- * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini (monica.franceschini@eng.it)
+ * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini
+ *          (monica.franceschini@eng.it)
  */
 @Path("/selfservicedataset")
 public class SelfServiceDataSetCRUD {
@@ -437,7 +437,8 @@ public class SelfServiceDataSetCRUD {
 					dataset.setPersistTableName(name);
 				}
 
-				// checkQbeDataset(((VersionedDataSet) dataset).getWrappedDataset());
+				// checkQbeDataset(((VersionedDataSet)
+				// dataset).getWrappedDataset());
 				checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
 
 				PersistedTableManager ptm = new PersistedTableManager(profile);
@@ -470,7 +471,8 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	/*
-	 * Change the scope of the dataset. If the dataset is private change it to public (SHARE) If the dataset is public change it to private (UNSHARE)
+	 * Change the scope of the dataset. If the dataset is private change it to
+	 * public (SHARE) If the dataset is public change it to private (UNSHARE)
 	 */
 	@POST
 	@Path("/share")
@@ -1046,8 +1048,8 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 
-	private Map<String, HierarchyLevel> getHierarchiesColumnsToCheck(String datasetMetadata)
-			throws JsonMappingException, JsonParseException, JSONException, IOException {
+	private Map<String, HierarchyLevel> getHierarchiesColumnsToCheck(String datasetMetadata) throws JsonMappingException, JsonParseException, JSONException,
+			IOException {
 		JSONObject metadataObject = null;
 
 		Map<String, HierarchyLevel> hierarchiesColumnsToCheck = new HashMap<String, HierarchyLevel>();
@@ -1146,8 +1148,8 @@ public class SelfServiceDataSetCRUD {
 		return dataSetsJSON;
 	}
 
-	private IDataSet recoverDataSetDetails(HttpServletRequest request, IDataSet dataSet, boolean savingDataset)
-			throws EMFUserError, SourceBeanException, IOException {
+	private IDataSet recoverDataSetDetails(HttpServletRequest request, IDataSet dataSet, boolean savingDataset) throws EMFUserError, SourceBeanException,
+			IOException {
 		return recoverDataSetDetails(request, dataSet, savingDataset, false, -1);
 	}
 
@@ -1400,8 +1402,10 @@ public class SelfServiceDataSetCRUD {
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
 		if (originalDatasetFile.exists()) {
 			/*
-			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
-			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to
+			 * the specified destination file. The directory holding the
+			 * destination file is created if it does not exist. If the
+			 * destination file exists, then this method will overwrite it.
 			 */
 			try {
 				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
@@ -1809,13 +1813,15 @@ public class SelfServiceDataSetCRUD {
 
 	// private void checkQbeDataset(IDataSet dataSet) {
 	// if (dataSet instanceof QbeDataSet) {
-	// SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+	// SpagoBICoreDatamartRetriever retriever = new
+	// SpagoBICoreDatamartRetriever();
 	// Map parameters = dataSet.getParamsMap();
 	// if (parameters == null) {
 	// parameters = new HashMap();
 	// dataSet.setParamsMap(parameters);
 	// }
-	// dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+	// dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER,
+	// retriever);
 	// }
 	// }
 
@@ -1845,9 +1851,9 @@ public class SelfServiceDataSetCRUD {
 
 				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
 				List<RoleMetaModelCategory> resp = new ArrayList<>();
-				List<SbiDomains> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+				List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
 				for (RoleMetaModelCategory r : aRoleCategories) {
-					for (SbiDomains dom : array) {
+					for (Domain dom : array) {
 						if (r.getCategoryId().equals(dom.getValueId())) {
 							resp.add(r);
 						}
