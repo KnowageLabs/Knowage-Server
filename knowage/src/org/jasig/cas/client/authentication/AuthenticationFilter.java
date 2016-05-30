@@ -55,6 +55,7 @@ public class AuthenticationFilter extends AbstractCasFilter {
 						gatewayStorageClass).newInstance());
 			} catch (Exception e) {
 				this.log.error(e, e);
+				
 				throw new ServletException(e);
 			}
 		}
