@@ -137,7 +137,15 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		$scope.dataset.start = "";
 		$scope.dataset.page = 10;
 		
-		console.log($scope.dataset);
+		/**
+		 * If the editing of the existing Dataset is in progress, reset its label in order to save a new XLS/CSV file.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		if ($scope.editingDatasetFile==true) {
+			$scope.dataset.label = "";
+		}
+		
+		//console.log($scope.dataset);
 			
 		var params = {};
 			
@@ -405,7 +413,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	loadDatasetValues= function(a,b){
 		sbiModule_restServices.promiseGet(a,b)
 		.then(function(response) {
-			console.log(response.data);
+			//console.log(response.data);
 			if(b=="") {
 			angular.copy(response.data,$scope.datasetCategories)
 			} else if(b=="?DOMAIN_TYPE=CATEGORY_TYPE"){
@@ -606,21 +614,22 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		/**
 		 * scenario1: If there is already an uploaded file, but user desides to change it and then browse for another one (different from the already uploaded one). In 
 		 * combination with other scenario (criteria) it prevents going to Next step if the newly browsed file is not uploaded as well.
-		 * scenario2: If there is no uploaded file or the browsed file is not the same as the one that is uploaded previously.
+		 * scenario2: If there is no uploaded file or the browsed file is not the same as the one that is uploaded previously. It is important that we are not in editing
+		 * mode, in order for this code to work properly.
 		 * scenario3: If on the Step 4, when finalizing the dataset creation user does not specify DS name or the name of the table if persisting.
+		 * scenario4: If the number fields contain invalid values (values less than 0), disable the Next button.
 		 */
 		var step1 = $scope.datasetWizardView==1;
 		var step4 = $scope.datasetWizardView==4;
-		
+			
 		var changingFile = $scope.changingFile==true;
 		var newUplFileDiffOldUpl = $scope.dataset.fileName!=$scope.fileObj.fileName;
 		var nameOfDSOrTableNameNotDef = $scope.dataset.name=='' || $scope.dataset.persist && $scope.dataset.tableName=='';
 		var fileNotUplOrNewOneNotUpl = !$scope.dataset.fileName || $scope.prevUploadedFile!=$scope.fileObj.fileName;
-		
+						
 		var scenario1 = step1 && changingFile && newUplFileDiffOldUpl;
-		var scenario2 = step1 && !changingFile && fileNotUplOrNewOneNotUpl;
+		var scenario2 = step1 && !$scope.editingDatasetFile && !changingFile && fileNotUplOrNewOneNotUpl;
 		var scenario3 = step4 && nameOfDSOrTableNameNotDef;
-		// If the number fields contain invalid values (values less than 0), disable the Next button
 		var scenario4 = step1 && ($scope.dataset.skipRows==undefined  && isNaN(Number($scope.dataset.skipRows))
 									|| $scope.dataset.limitRows==undefined && isNaN(Number($scope.dataset.limitRows))
 										|| $scope.dataset.xslSheetNumber==undefined && isNaN(Number($scope.dataset.xslSheetNumber)));
@@ -630,12 +639,32 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	}
 	
 	$scope.changeUploadedFile=function(){
+		
 		console.info("CHANGE FILE [IN]");
+		
 		$scope.changingFile = true;
+		
+		/**
+		 * If we are about to change the uploaded file in editing mode, we should keep the data about the name of the previously uploaded
+		 * file, in order to keep it in the line for the browsed file.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+		 */
+		if ($scope.editingDatasetFile==true) {
+			
+			$scope.fileObj = 
+			{
+				file: { name:$scope.dataset.fileName }, 
+				fileName: $scope.dataset.fileName
+			};
+			
+		}
+			
 //		$scope.fileObj={};
 //		$scope.fileObj.fileName='';
 //		$scope.dataset.fileName='';
+		
 		console.info("CHANGE FILE [OUT]");
+		
 	}
 	
 }

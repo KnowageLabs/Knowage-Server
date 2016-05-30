@@ -29,6 +29,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.itemsPerPage=15;
     $scope.datasetInPreview=undefined;
     
+    /**
+     * Flag that will tell us if we are entering the Dataset wizard from the Editing or from Creating phase (changing or adding a new dataset, respectively).
+     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+     */
+    $scope.editingDatasetFile = false;
     
     $scope.datasetsInitial=[];  //all
 	$scope.myDatasetsInitial= [];
@@ -340,6 +345,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	
       console.info("[ADD NEW DATASET]: Opening the Dataset wizard for creation of a new Dataset in the Workspace.");	
       
+      $scope.editingDatasetFile = false;
+      
       /**
        * Initialize all the data needed for the 'dataset' object that we are sending towards the server when going to the Step 2 and ones that we are using
        * internally (such as 'limitPreviewChecked'). This initialization should be done whenever we are opening the Dataset wizard, since the behavior should 
@@ -616,11 +623,15 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.editFileDataset = function (arg) {
     	 console.log(arg);
     	  $scope.initializeDatasetWizard(arg);
+    	  
+    	  // Set the flag for editing the current dataaset (file)
+    	  $scope.editingDatasetFile = true;
+    	 
 //    	  $scope.dataset=arg;
 //          $scope.dataset.xslSheetNumber=Number(arg.xslSheetNumber);
 //          $scope.dataset.skipRows=Number(arg.skipRows);
 //          $scope.dataset.limitRows=Number(arg.limitRows);
-          $scope.fileObj={};
+          //$scope.fileObj={};
          // $scope.fileObj.filename=arg.fileName;
           
           $mdDialog.show({
