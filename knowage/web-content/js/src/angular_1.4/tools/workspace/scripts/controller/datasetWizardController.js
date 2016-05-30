@@ -141,7 +141,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		 * If the editing of the existing Dataset is in progress, reset its label in order to save a new XLS/CSV file.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		if ($scope.editingDatasetFile==true) {
+		if ($scope.editingDatasetFile==true && $scope.dataset.fileUploaded==true) {
 			$scope.dataset.label = "";
 		}
 		
@@ -224,10 +224,10 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		var label = 'ds__' + d.getTime()%10000000; 
 		
 		if($scope.dataset.label===''){
-		$scope.dataset.label = label;
+			$scope.dataset.label = label;
 		}
-		console.log($scope.dataset);
-		
+		//console.log($scope.dataset);
+	
 		var params = {};
 		params.showDerivedDataset=false;
 		params.SBI_EXECUTION_ID = -1;
