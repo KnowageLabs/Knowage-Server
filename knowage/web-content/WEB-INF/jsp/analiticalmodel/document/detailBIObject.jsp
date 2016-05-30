@@ -944,8 +944,14 @@ function saveDocument(goBack) {
 				</div>
 				<div class='div_detail_form'>
 				<!-- ${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=ManageCrossOutParamsPage -->
-					
-					<a href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentbrowser/templates/linkDocument.jsp?OBJECT_ID=<%=obj.getId().toString()%>&LABEL=<%=obj.getLabel().toString()%>">
+						<%
+					Map linkDoc = new HashMap();
+						linkDoc.put(SpagoBIConstants.PAGE, SpagoBIConstants.MANAGE_DOC_LINKS_PAGE);
+						linkDoc.put(ObjectsTreeConstants.OBJECT_ID, obj.getId().toString());
+						linkDoc.put(ObjectsTreeConstants.OBJECT_LABEL, obj.getLabel().toString());
+					String documentLink = urlBuilder.getUrl(request, linkDoc);
+					%>
+					<a href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentbrowser/templates/linkDocument.jsp?OBJECT_ID=<%=obj.getId().toString()%>&OBJECT_LABEL=<%=obj.getLabel().toString()%>">
 						<img class='header-button-image-portlet-section' 
    				 			 title='<spagobi:message key = "Link Document" />' 
    				 			 src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/linkDocument.png", currTheme)%>' 

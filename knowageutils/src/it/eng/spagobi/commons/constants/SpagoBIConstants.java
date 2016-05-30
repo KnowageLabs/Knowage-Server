@@ -46,8 +46,10 @@ public class SpagoBIConstants {
 	public static final String RUN_ANYWAY = "RUN_ANYWAY";
 
 	/*
-	 * public static final String ACTOR = "ACTOR"; public static final String TESTER_ACTOR = "TESTER_ACTOR"; public static final String USER_ACTOR =
-	 * "USER_ACTOR"; public static final String ADMIN_ACTOR = "ADMIN_ACTOR"; public static final String DEV_ACTOR = "DEV_ACTOR";
+	 * public static final String ACTOR = "ACTOR"; public static final String
+	 * TESTER_ACTOR = "TESTER_ACTOR"; public static final String USER_ACTOR =
+	 * "USER_ACTOR"; public static final String ADMIN_ACTOR = "ADMIN_ACTOR";
+	 * public static final String DEV_ACTOR = "DEV_ACTOR";
 	 */
 	public static final String USE_PUBLIC_USER = "SPAGOBI.SECURITY.USE_PUBLIC_USER";
 	public static final String PUBLIC_USER_ID = "public_user";
@@ -475,7 +477,7 @@ public class SpagoBIConstants {
 
 	public static final String MANAGE_CROSS_NAVIGATION = "ManageCrossNavigation";
 	public static final String MANAGE_CROSS_OUT_PARAMS_PAGE = "ManageCrossOutParamsPage";
-
+	public static final String MANAGE_DOC_LINKS_PAGE = "ManageDocLinksPage";
 	public static final String CREATE_TIMESPAN = "CreateTimepan";
 
 	public static final String DOMAIN_MANAGEMENT = "DomainManagement";

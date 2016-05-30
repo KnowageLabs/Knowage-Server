@@ -33,16 +33,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(request.getParameter("OBJECT_ID")!=null){
 				documentID = request.getParameter("OBJECT_ID");
 			}
- 			if(request.getParameter("LABEL")!=null){
- 				documentLabel = request.getParameter("LABEL");
+ 			if(request.getParameter("OBJECT_LABEL")!=null){
+ 				documentLabel = request.getParameter("OBJECT_LABEL");
 			}
  			
  			Map backUrlPars = new HashMap();
  			backUrlPars.put("PAGE", "detailBIObjectPage");
- 			backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO,"1");
+ 			backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO,"0");
  			backUrlPars.put("MESSAGEDET", "DETAIL_SELECT");
  			String backUrl = urlBuilder.getUrl(request, backUrlPars);
- 			
+ 			System.out.println(backUrl);
+ 			 			
 		%>
 		
 		<script>
@@ -76,10 +77,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<h2 class="md-flex" >Table Link for  <%= documentLabel %> </h2>
 				
 				</div>
-
+				
 			</md-toolbar>
 	
-						
+			
 	
 			<md-content layout-padding class="mainContainer" >
 			
@@ -143,7 +144,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				<div>
 				<md-button class="md-raised buttonLeft" aria-label="btn_cancel"
-						ng-click="goBack()">Cancel
+				href='<%=backUrl%>'>Cancel
 				</md-button> 
 				</div>
 				<div>
