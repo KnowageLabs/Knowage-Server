@@ -27,10 +27,18 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -78,27 +86,30 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	public GeoLayer loadLayerByID(Integer layerID) throws EMFUserError {
 		GeoLayer toReturn = null;
 		Session tmpSession = null;
-		Transaction tx = null;
+		// Transaction tx = null;
 
 		try {
 			tmpSession = getSession();
-			tx = tmpSession.beginTransaction();
+			// tx = tmpSession.beginTransaction();
 			SbiGeoLayers hibLayer = (SbiGeoLayers) tmpSession.load(SbiGeoLayers.class, layerID);
 			toReturn = hibLayer.toGeoLayer();
 
 			String resourcePath = SpagoBIUtilities.getResourcePath();
-			if (toReturn.getPathFile().startsWith(resourcePath)) {
-				// biLayer.setPathFile(biLayer.getPathFile());
-			} else {
-				toReturn.setPathFile(resourcePath + File.separator + toReturn.getPathFile());
+			if (toReturn.getPathFile() != null) {
+				if (toReturn.getPathFile().startsWith(resourcePath)) {
+					// biLayer.setPathFile(biLayer.getPathFile());
+				} else {
+					toReturn.setPathFile(resourcePath + File.separator + toReturn.getPathFile());
+				}
 			}
-			tx.commit();
+
+			// tx.commit();
 
 		} catch (HibernateException he) {
 			logException(he);
 
-			if (tx != null)
-				tx.rollback();
+			// if (tx != null)
+			// tx.rollback();
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
@@ -131,11 +142,11 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	public GeoLayer loadLayerByLabel(String label) throws EMFUserError {
 		GeoLayer biLayer = null;
 		Session tmpSession = null;
-		Transaction tx = null;
+		// Transaction tx = null;
 
 		try {
 			tmpSession = getSession();
-			tx = tmpSession.beginTransaction();
+			// tx = tmpSession.beginTransaction();
 			Criterion labelCriterrion = Expression.eq("label", label);
 			Criteria criteria = tmpSession.createCriteria(SbiGeoLayers.class);
 			criteria.add(labelCriterrion);
@@ -145,16 +156,19 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			biLayer = hibLayer.toGeoLayer();
 
 			String resourcePath = SpagoBIUtilities.getResourcePath();
-			if (biLayer.getPathFile().startsWith(resourcePath)) {
-				// biLayer.setPathFile(biLayer.getPathFile());
-			} else {
-				biLayer.setPathFile(resourcePath + File.separator + biLayer.getPathFile());
+			if (biLayer.getPathFile() != null) {
+				if (biLayer.getPathFile().startsWith(resourcePath)) {
+					// biLayer.setPathFile(biLayer.getPathFile());
+				} else {
+					biLayer.setPathFile(resourcePath + File.separator + biLayer.getPathFile());
+				}
 			}
-			tx.commit();
+
+			// tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			// if (tx != null)
+			// tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 
@@ -491,7 +505,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				return new ArrayList<String>();
 			}
 			// load properties of file
-			if (!layerDef.get("layer_file").equals("null")) {
+			if (aLayer.getType().equals("File")) {
 
 				String resourcePath = SpagoBIUtilities.getResourcePath();
 				if (aLayer.getPathFile().startsWith(resourcePath)) {
@@ -529,43 +543,79 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			}
 
 			// load properties of wfs
-			if (!(layerDef.get("layer_url").equals("null"))) {
+			else if (aLayer.getType().equals("WFS")) {
 				String urlDescribeFeature = getDescribeFeatureTypeURL(layerDef.getString("layer_url"));
+
+				// Create a trust manager that does not validate certificate chains
+				TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+					@Override
+					public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+						return null;
+					}
+
+					@Override
+					public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+					}
+
+					@Override
+					public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+					}
+				} };
+
+				// Install the all-trusting trust manager
+				try {
+					SSLContext sc = SSLContext.getInstance("TLS");
+					sc.init(null, trustAllCerts, new java.security.SecureRandom());
+					HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+					// Create all-trusting host name verifier
+					HostnameVerifier allHostsValid = new HostnameVerifier() {
+						@Override
+						public boolean verify(String hostname, SSLSession session) {
+							return true;
+						}
+					};
+
+					// Install the all-trusting host verifier
+					HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+				} catch (Exception e) {
+				}
+
+				// Now you can access an https URL without having the certificate in the truststore
 				URL url = new URL(urlDescribeFeature);
-				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+				URLConnection connection = url.openConnection();
+				//
+				// connection.setRequestMethod("GET");
+				// connection.setDoOutput(true);
+				// connection.setDoInput(true);
+				// connection.setRequestProperty("CetRequestProperty(ontent-Type", "application/json");
+				// connection.setRequestProperty("Accept", "application/json");
+				// connection.connect();
+				//
+				// int HttpResult = connection.getResponseCode();
+				// if (HttpResult == HttpURLConnection.HTTP_OK) {
 
-				connection.setRequestMethod("GET");
-				connection.setDoOutput(true);
-				connection.setDoInput(true);
-				connection.setRequestProperty("CetRequestProperty(ontent-Type", "application/json");
-				connection.setRequestProperty("Accept", "application/json");
-				connection.connect();
+				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
+				String inputLine;
+				while ((inputLine = br.readLine()) != null) {
+					JSONObject obj = new JSONObject(inputLine);
+					JSONArray content = (JSONArray) obj.get("featureTypes");
+					content.getJSONObject(0);
+					for (int j = 0; j < content.length(); j++) {
+						JSONArray arr = content.getJSONObject(j).getJSONArray("properties");
+						for (int k = 0; k < arr.length(); k++) {
 
-				int HttpResult = connection.getResponseCode();
-				if (HttpResult == HttpURLConnection.HTTP_OK) {
-
-					BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
-					String inputLine;
-					while ((inputLine = br.readLine()) != null) {
-						JSONObject obj = new JSONObject(inputLine);
-						JSONArray content = (JSONArray) obj.get("featureTypes");
-						content.getJSONObject(0);
-						for (int j = 0; j < content.length(); j++) {
-							JSONArray arr = content.getJSONObject(j).getJSONArray("properties");
-							for (int k = 0; k < arr.length(); k++) {
-
-								JSONObject val = arr.getJSONObject(k);
-								if (!keys.contains(val.get("name")) && "string".equals(val.optString("localType"))) {
-									keys.add(val.getString("name"));
-								}
+							JSONObject val = arr.getJSONObject(k);
+							if (!keys.contains(val.get("name")) && "string".equals(val.optString("localType"))) {
+								keys.add(val.getString("name"));
 							}
 						}
 					}
-					br.close();
-					connection.disconnect();
-				} else {
-					System.out.println(connection.getResponseMessage());
 				}
+				br.close();
+				// connection.disconnect();
+				// } else {
+				// System.out.println(connection.getResponseMessage());
+				// }
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
