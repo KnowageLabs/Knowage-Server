@@ -17,23 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
@@ -47,6 +30,25 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.Valid;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("/2.0/roles")
 @ManageAuthorization
@@ -244,6 +246,40 @@ public class RolesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			logger.error("Error with deleting resource with id: " + id, e);
 			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id, buildLocaleFromSession(), e);
+		}
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	@GET
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@Path("/ds-categories")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public Response getDataSetCategoriesByUser() {
+		IRoleDAO rolesDao = null;
+		Set<RoleMetaModelCategory> categories = new HashSet<RoleMetaModelCategory>();
+		try {
+			List<String> roleNames = (List<String>) getUserProfile().getRoles();
+			if (!roleNames.isEmpty()) {
+				rolesDao = DAOFactory.getRoleDAO();
+				rolesDao.setUserProfile(getUserProfile());
+				List<SbiDomains> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+				for (String roleName : roleNames) {
+					Role role = rolesDao.loadByName(roleName);
+					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
+					for (RoleMetaModelCategory r : ds) {
+						for (SbiDomains dom : array) {
+							if (r.getCategoryId().equals(dom.getValueId())) {
+								categories.add(r);
+							}
+						}
+
+					}
+				}
+			}
+			return Response.ok(categories).build();
+		} catch (Exception e) {
+			logger.error("Impossible to get role dataset categories for user [" + getUserProfile() + "]", e);
+			throw new SpagoBIRestServiceException("Impossible to get role dataset categories for user [" + getUserProfile() + "]", buildLocaleFromSession(), e);
 		}
 	}
 
