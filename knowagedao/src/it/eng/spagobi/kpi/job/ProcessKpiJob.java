@@ -155,8 +155,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				}
 			}
 
-			// Replacing parameters from "@name" to "$P{name}" notation as
-			// expected by IDataSet
+			// Replacing parameters from "@name" to "$P{name}" notation as expected by IDataSet
 			for (String paramName : quotedParameters.keySet()) {
 				innerSql = innerSql.replaceAll("\\@\\b" + paramName + "\\b", "\\$P{" + paramName + "}");
 			}
@@ -206,8 +205,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 
 		@Override
 		public boolean equals(Object o) {
-			// Alternative equals criteria:
-			// ruleId|measureName|aggregateFunction|placeholders
+			// Alternative equals criteria: ruleId|measureName|aggregateFunction|placeholders
 			if (!(o instanceof AggregateMeasureQuery))
 				return false;
 			AggregateMeasureQuery amq = (AggregateMeasureQuery) o;
@@ -239,8 +237,8 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			return executeQuery(dataSourceId, toString(), quotedParameters);
 		}
 
-		private static QueryResult executeQuery(int dataSourceId, String sql, Map<String, String> quotedParameters) throws JSONException, EMFUserError,
-				EMFInternalError {
+		private static QueryResult executeQuery(int dataSourceId, String sql, Map<String, String> quotedParameters)
+				throws JSONException, EMFUserError, EMFInternalError {
 			// Read measure value
 			int maxItem = 0;
 			IEngUserProfile profile = null;
@@ -369,7 +367,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 	private static KpiValueExecLog computeKpis(JobExecutionContext job, Integer kpiSchedulerId, Date timeRun, boolean logToDb) throws JobExecutionException {
 		try {
 			KpiValueExecLog result = null;
-			String stacktrace = "";
+			String error = "";
 			try {
 				// Parse the job
 				if (kpiSchedulerId == null) {
@@ -379,9 +377,12 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				}
 				// Compute the KPIs values
 				result = computeKpis(kpiSchedulerId, timeRun);
+			} catch (KpiComputationException e) {
+				error = e.getMessage();
+				throw e;
 			} catch (Exception e) {
 				// Convert the stacktrace to string (including nested exceptions)
-				stacktrace = ExceptionUtils.getFullStackTrace(e);
+				error = ExceptionUtils.getFullStackTrace(e);
 				throw e;
 			} finally {
 				// Log the results
@@ -395,7 +396,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 						result.setErrorCount(1);
 						result.setSuccessCount(0);
 						result.setTotalCount(1);
-						result.setOutput(stacktrace);
+						result.setOutput(error);
 					}
 					kpiDao.insertKpiValueExecLog(result);
 				}
@@ -406,7 +407,15 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 		}
 	}
 
-	public static KpiValueExecLog computeKpis(Integer kpiSchedulerId, Date timeRun) throws JobExecutionException {
+	private static class KpiComputationException extends RuntimeException {
+		private static final long serialVersionUID = -2992083491234470249L;
+
+		public KpiComputationException(String cause) {
+			super(cause);
+		}
+	}
+
+	private static KpiValueExecLog computeKpis(Integer kpiSchedulerId, Date timeRun) throws JobExecutionException {
 		KpiValueExecLog result = new KpiValueExecLog();
 		result.setSchedulerId(kpiSchedulerId);
 		result.setTimeRun(timeRun);
@@ -431,9 +440,14 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			for (Kpi kpi : kpiScheduler.getKpis()) {
 				// Prepare placeholders
 				Map<String, String> placeholdersMap = new HashMap<>();
-				for (SchedulerFilter schedulerFilter : kpiScheduler.getFilters()) {
+				for (int f = 0; f < kpiScheduler.getFilters().size(); f++) {
+					SchedulerFilter schedulerFilter = kpiScheduler.getFilters().get(f);
+					if (schedulerFilter == null)
+						throw new KpiComputationException("Invalid filter (filter no. " + (f + 1) + ")");
 					if (!kpi.getName().equalsIgnoreCase(schedulerFilter.getKpiName()))
 						continue;
+					if (schedulerFilter.getType() == null)
+						throw new KpiComputationException("Invalid placeholder type (placeholder name: " + schedulerFilter.getPlaceholderName() + ")");
 					String type = schedulerFilter.getType().getValueCd();
 					if ("FIXED_VALUE".equals(type)) {
 						placeholdersMap.put(schedulerFilter.getPlaceholderName(), schedulerFilter.getValue());
@@ -448,10 +462,12 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 							SourceBeanAttribute firstAttribute = (SourceBeanAttribute) rows.get(0).getContainedAttributes().get(0);
 							String firstValue = (String) firstAttribute.getValue();
 							if (firstValue == null)
-								throw new RuntimeException("Null value for LOV: " + schedulerFilter.getValue());
+								throw new KpiComputationException("Null value for LOV: " + schedulerFilter.getValue() + " (placeholder name: "
+										+ schedulerFilter.getPlaceholderName() + ")");
 							placeholdersMap.put(schedulerFilter.getPlaceholderName(), firstValue);
 						} else {
-							throw new RuntimeException("No value for LOV: " + schedulerFilter.getValue());
+							throw new KpiComputationException(
+									"No value for LOV: " + schedulerFilter.getValue() + " (placeholder name: " + schedulerFilter.getPlaceholderName() + ")");
 						}
 					} else if ("TEMPORAL_FUNCTIONS".equals(type)) {
 						if ("EXECUTION_DAY".equals(schedulerFilter.getValue())) {
@@ -464,7 +480,13 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + ((GregorianCalendar.getInstance().get(Calendar.MONTH) - 1) / 4 + 1));
 						} else if ("EXECUTION_YEAR".equals(schedulerFilter.getValue())) {
 							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + GregorianCalendar.getInstance().get(Calendar.YEAR));
+						} else {
+							throw new KpiComputationException("Unsupported temporal function: " + schedulerFilter.getValue() + " (placeholder name: "
+									+ schedulerFilter.getPlaceholderName() + ")");
 						}
+					} else {
+						throw new KpiComputationException(
+								"Unsupported placeholder type: " + type + " (placeholder name: " + schedulerFilter.getPlaceholderName() + ")");
 					}
 				}
 
@@ -512,8 +534,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 					// Iterate over temporal types
 					Integer minTemporalTypePriority = 5;
 					while (true) {
-						// Create a query for each measure and find the main
-						// measure
+						// Create a query for each measure and find the main measure
 						// (the highest cardinality, i.e. the one with most
 						// attributes in the group-by section)
 						List<AggregateMeasureQuery> queries = new ArrayList<AggregateMeasureQuery>();
@@ -544,6 +565,12 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 										continue;
 
 									// YEAR, QUARTER, MONTH, WEEK, DAY
+									if (ruleOutput.getHierarchy() == null)
+										throw new KpiComputationException(
+												"Missing hierarchy for temporal attribute: " + attributeName + " (rule output id: " + ruleOutput.getId() + ")");
+									if (ruleOutput.getHierarchy().getValueCd() == null)
+										throw new KpiComputationException("Missing hierarchy value code for temporal attribute: " + attributeName
+												+ ruleOutput.getHierarchy() + " (rule output id: " + ruleOutput.getId() + ")");
 									String attributeTemporalType = ruleOutput.getHierarchy().getValueCd();
 
 									ntGroupByAttributes.remove(attributeName);
@@ -572,10 +599,8 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 							AggregateMeasureQuery query = new AggregateMeasureQuery(rule.getDataSourceId(), ruleSql, aggregateMeasureName,
 									aggregateMeasureFunction, groupByAttributes, queryOrderByAttributes, placeholdersMap);
 							if (queriesCache.containsKey(query)) {
-								// The query will be used more than once:
-								// reuse the previous instance of the query,
-								// discarding the new one
-								// and preload all the tuples
+								// The query will be used more than once: reuse the previous instance of the query,
+								// discarding the new one and preload all the tuples
 
 								// The previous instance cannot be retrieved efficiently via a Set, so we are forced to use a Map
 								query = queriesCache.get(query);
@@ -597,8 +622,8 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 								}
 							}
 						}
-						kpiComputationUnits.add(new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes,
-								mainMeasure, replaceMode));
+						kpiComputationUnits.add(
+								new KpiComputationUnit(parsedKpi, queries, queriesAttributesTemporalTypes, queriesIgnoredAttributes, mainMeasure, replaceMode));
 
 						// Exit condition: no temporal attributes left (except perhaps YEAR)
 						if (realMinTemporalTypePriority <= 1)
@@ -619,11 +644,14 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			// For each kpi, compute values and save them
 			for (KpiComputationUnit kpiComputationUnit : kpiComputationUnits) {
 				KpiValueExecLog subResult = computeKpi(kpiComputationUnit.parsedKpi, kpiComputationUnit.queries, kpiComputationUnit.mainMeasure,
-						kpiComputationUnit.replaceMode, kpiComputationUnit.queriesAttributesTemporalTypes, kpiComputationUnit.queriesIgnoredAttributes, timeRun);
+						kpiComputationUnit.replaceMode, kpiComputationUnit.queriesAttributesTemporalTypes, kpiComputationUnit.queriesIgnoredAttributes,
+						timeRun);
 				result.setErrorCount(result.getErrorCount() + subResult.getErrorCount());
 				result.setSuccessCount(result.getSuccessCount() + subResult.getSuccessCount());
 				result.setTotalCount(result.getTotalCount() + subResult.getTotalCount());
 			}
+		} catch (KpiComputationException kce) {
+			throw kce;
 		} catch (Exception e) {
 			throw new JobExecutionException(e);
 		}
@@ -751,28 +779,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				Object theQuarter = ifNull(temporalValues.get("QUARTER"), "ALL");
 				Object theYear = ifNull(temporalValues.get("YEAR"), "ALL");
 				String insertSql = "INSERT INTO SBI_KPI_VALUE (id, kpi_id, kpi_version, logical_key, time_run, computed_value,"
-						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES ("
-						+ (++lastId)
-						+ ", "
-						+ parsedKpi.id
-						+ ","
-						+ parsedKpi.version
-						+ ",'"
-						+ logicalKey.toString().replaceAll("'", "''")
-						+ "',?,"
-						+ (nullValue ? "0" : value)
-						+ ",'"
-						+ theDay
-						+ "','"
-						+ theWeek
-						+ "','"
-						+ theMonth
-						+ "','"
-						+ theQuarter
-						+ "','"
-						+ theYear
-						+ "','"
-						+ (nullValue ? '1' : '0') + "')";
+						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (" + (++lastId) + ", " + parsedKpi.id + "," + parsedKpi.version
+						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "',?," + (nullValue ? "0" : value) + ",'" + theDay + "','" + theWeek + "','"
+						+ theMonth + "','" + theQuarter + "','" + theYear + "','" + (nullValue ? '1' : '0') + "')";
 				String whereCondition = "kpi_id = " + parsedKpi.id + " AND kpi_version = " + parsedKpi.version + " AND logical_key = '"
 						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + theDay + "' AND the_week = '" + theWeek + "'"
 						+ " AND the_month = '" + theMonth + "' AND the_quarter = '" + theQuarter + "' AND the_year = '" + theYear + "'";
