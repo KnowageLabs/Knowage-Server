@@ -20,6 +20,7 @@ package it.eng.spagobi.sdk.behavioural.impl;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.sdk.AbstractSDKService;
@@ -38,6 +39,7 @@ public class BehaviouralServiceImpl extends AbstractSDKService implements Behavi
 
 	static private Logger logger = Logger.getLogger(BehaviouralServiceImpl.class);
 
+	@Override
 	public SDKAttribute[] getAllAttributes(String roleName) throws NotAllowedOperationException {
 
 		logger.debug("IN: roleName = [" + roleName + "]");
@@ -76,6 +78,7 @@ public class BehaviouralServiceImpl extends AbstractSDKService implements Behavi
 		return toReturn;
 	}
 
+	@Override
 	public SDKRole[] getRoles() throws NotAllowedOperationException {
 		logger.debug("IN");
 		SDKRole[] toReturn = null;
@@ -117,6 +120,7 @@ public class BehaviouralServiceImpl extends AbstractSDKService implements Behavi
 		return toReturn;
 	}
 
+	@Override
 	public SDKRole[] getRolesByUserId(String userId) throws NotAllowedOperationException {
 		logger.debug("IN");
 		SDKRole[] toReturn = null;
@@ -134,15 +138,15 @@ public class BehaviouralServiceImpl extends AbstractSDKService implements Behavi
 			if (roles != null) {
 				Iterator it = roles.iterator();
 				while (it.hasNext()) {
-					Role role = (Role) it.next();
+					SbiExtRoles role = (SbiExtRoles) it.next();
 					SDKRole sdkRole = new SDKRole();
 					sdkRole.setCode(role.getCode());
-					sdkRole.setDescr(role.getDescription());
-					sdkRole.setExtRoleId(role.getId());
+					sdkRole.setDescr(role.getDescr());
+					sdkRole.setExtRoleId(role.getExtRoleId());
 					sdkRole.setName(role.getName());
-					sdkRole.setOrganization(role.getOrganization());
-					sdkRole.setRoleTypeCd(role.getRoleTypeCD());
-					sdkRole.setRoleTypeId(role.getRoleTypeID());
+					// sdkRole.setOrganization(role.get());
+					sdkRole.setRoleTypeCd(role.getRoleTypeCode());
+					sdkRole.setRoleTypeId(role.getRoleType().getValueId());
 					sdkRoles.add(sdkRole);
 				}
 			}
