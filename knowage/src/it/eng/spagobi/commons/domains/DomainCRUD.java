@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.commons.domains;
 
+import it.eng.spago.base.Constants;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -71,7 +72,7 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 		try {
 			domaindao = DAOFactory.getDomainDAO();
 			domains = domaindao.loadListDomainsByType(type);
-			domainsJSONArray = translate(domains, getLocale());
+			domainsJSONArray = translate(domains, getLocale(req));
 			domainsJSONObject.put("domains", domainsJSONArray);
 
 			if ((extVersion != null) && (extVersion.equals("3"))) {
@@ -104,5 +105,19 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 			}
 		}
 		return dialectsJSONArray;
+	}
+
+	protected Locale getLocale(@Context HttpServletRequest req) {
+		String language = (String) req.getSession().getAttribute(Constants.USER_LANGUAGE);
+		String country = (String) req.getSession().getAttribute(Constants.USER_COUNTRY);
+		Locale locale = Locale.UK;
+		if (language != null) {
+			if (country == null && language != null) {
+				locale = new Locale(language);
+			} else {
+				locale = new Locale(language, country);
+			}
+		}
+		return locale;
 	}
 }

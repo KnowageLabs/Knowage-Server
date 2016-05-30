@@ -60,7 +60,7 @@ public class DomainCRUDForFinalUser extends DomainCRUD {
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	@Path("/ds-categories")
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public String getDataSetCategoriesByUser() {
+	public String getDataSetCategoriesByUser(@Context HttpServletRequest req) {
 		IRoleDAO rolesDao = null;
 		Set<Domain> categories = new HashSet<Domain>();
 		try {
@@ -82,7 +82,7 @@ public class DomainCRUDForFinalUser extends DomainCRUD {
 					}
 				}
 			}
-			return translate(categories, getLocale()).toString();
+			return translate(categories, getLocale(req)).toString();
 		} catch (Exception e) {
 			logger.error("Impossible to get role dataset categories for user [" + getUserProfile() + "]", e);
 			throw new SpagoBIRestServiceException("Impossible to get role dataset categories for user [" + getUserProfile() + "]", buildLocaleFromSession(), e);
