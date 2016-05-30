@@ -56,6 +56,10 @@ public interface DocumentsService {
 
 	Integer saveNewDocument(SDKDocument document, SDKTemplate template, Integer functionalityId) throws NotAllowedOperationException;
 
+	String getLockStatus(SDKDocument document) throws NotAllowedOperationException;
+
+	String changeLockStatus(SDKDocument document) throws NotAllowedOperationException;
+
 	SDKExecutedDocumentContent executeDocument(SDKDocument document, SDKDocumentParameter[] parameters, String roleName, String outputType)
 			throws NonExecutableDocumentException, NotAllowedOperationException, InvalidParameterValue, MissingParameterValue;
 
@@ -70,4 +74,5 @@ public interface DocumentsService {
 	HashMap<String, String> getAllDatamartModels() throws NotAllowedOperationException;
 
 	void uploadMondrianSchema(SDKSchema schema) throws NotAllowedOperationException, SDKException;
+
 }
