@@ -31,6 +31,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 	$scope.filterDialogWidth = olapSharedSettings.getSettings().filterDialogWidth;
 	$scope.filterDialogHeight = olapSharedSettings.getSettings().filterDialogHeight;
+	$scope.allowEditingCC = olapSharedSettings.getSettings().disableManualEditingCC;
 		
 	$scope.minNumOfLetters = olapSharedSettings.getSettings().minSearchLength;
 	$scope.searchText = "";

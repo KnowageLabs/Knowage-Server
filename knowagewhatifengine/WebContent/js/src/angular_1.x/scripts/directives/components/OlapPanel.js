@@ -664,6 +664,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 		
 	$scope.openArgumentsdialog = function(){
 		
+		$scope.editArguments = $scope.allowEditingCC;
+		console.log($scope.editArguments);
+		
 		$mdDialog
 			.show({
 				scope : $scope,

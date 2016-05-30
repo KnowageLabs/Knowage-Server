@@ -31,7 +31,8 @@ olapSet.service('olapSharedSettings',function(){
 		var settings = {
 				minSearchLength:4,
 				filterDialogWidth:'30%',
-				filterDialogHeight:'80%'
+				filterDialogHeight:'80%',
+				disableManualEditingCC: false
 		};
 		
 		return {
