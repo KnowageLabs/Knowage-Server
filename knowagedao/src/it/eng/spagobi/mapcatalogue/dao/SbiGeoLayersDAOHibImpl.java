@@ -215,7 +215,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 						separator += File.separatorChar;
 					}
 
-					path = aLayer.getPathFile() + separator + getTenant() + File.separator + "Layer" + File.separator;
+					path = aLayer.getPathFile() + File.separator + "Layer" + File.separator;
 					aLayer.setPathFile(path + aLayer.getLabel());
 
 				} else {
