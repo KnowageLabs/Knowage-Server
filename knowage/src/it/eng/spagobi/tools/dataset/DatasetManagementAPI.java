@@ -29,7 +29,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
@@ -84,9 +83,11 @@ import org.json.JSONObject;
 import commonj.work.Work;
 
 /**
- * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
- * simple CRUD operations over the dataset. It also manages user's profilation and autorization. Other class must access dataset through this class and not
- * calling directly the DAO.
+ * DataLayer facade class. It manage the access to SpagoBI's datasets. It is
+ * built on top of the dao. It manages all complex operations that involve more
+ * than a simple CRUD operations over the dataset. It also manages user's
+ * profilation and autorization. Other class must access dataset through this
+ * class and not calling directly the DAO.
  *
  * @author gavardi, gioia
  *
@@ -320,7 +321,8 @@ public class DatasetManagementAPI {
 	// }
 	//
 	// if (ds instanceof QbeDataSet) {
-	// SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+	// SpagoBICoreDatamartRetriever retriever = new
+	// SpagoBICoreDatamartRetriever();
 	// Map parameters = ds.getParamsMap();
 	// if (parameters == null) {
 	// parameters = new HashMap();
@@ -390,7 +392,8 @@ public class DatasetManagementAPI {
 						adjustMetadata((DataStore) dataStore, dataSet, null);
 						dataSet.decode(dataStore);
 					} else {
-						// TODO: here we actually already have the datastore, therefore we could optimize this step...
+						// TODO: here we actually already have the datastore,
+						// therefore we could optimize this step...
 						dataStore = cache.refresh(dataSet, false);
 						// if result was not cached put refresh date as now
 						dataStore.setCacheDate(new Date());
@@ -400,8 +403,10 @@ public class DatasetManagementAPI {
 					dataStore = cachedResultSet;
 					addLastCacheDate(cache, dataStore, dataSet);
 					/*
-					 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and
-					 * alias... therefore we adjust its metadata
+					 * since the datastore, at this point, is a JDBC datastore,
+					 * it does not contain information about
+					 * measures/attributes, fields' name and alias... therefore
+					 * we adjust its metadata
 					 */
 					adjustMetadata((DataStore) dataStore, dataSet, null);
 					dataSet.decode(dataStore);
@@ -575,8 +580,9 @@ public class DatasetManagementAPI {
 			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
 
 			/*
-			 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias...
-			 * therefore we adjust its metadata
+			 * since the datastore, at this point, is a JDBC datastore, it does
+			 * not contain information about measures/attributes, fields' name
+			 * and alias... therefore we adjust its metadata
 			 */
 			this.adjustMetadata((DataStore) dataStore, dataSet, null);
 
@@ -857,10 +863,14 @@ public class DatasetManagementAPI {
 				// entity id is not found on base query selected fields
 
 				/*
-				 * columnName = "Count"; if (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) { toReturn
-				 * .append(AggregationFunctions.COUNT_FUNCTION.apply("*")); } else { logger.error("Entity id " + aMeasure.getEntityId() +
-				 * " not found on the base query!!!!"); throw new RuntimeException("Entity id " + aMeasure.getEntityId() + " not found on the base query!!!!");
-				 * }
+				 * columnName = "Count"; if
+				 * (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) {
+				 * toReturn
+				 * .append(AggregationFunctions.COUNT_FUNCTION.apply("*")); }
+				 * else { logger.error("Entity id " + aMeasure.getEntityId() +
+				 * " not found on the base query!!!!"); throw new
+				 * RuntimeException("Entity id " + aMeasure.getEntityId() +
+				 * " not found on the base query!!!!"); }
 				 */
 			} else {
 				if (function != AggregationFunctions.NONE_FUNCTION) {
@@ -967,7 +977,8 @@ public class DatasetManagementAPI {
 	}
 
 	/**
-	 * The association is valid if number of records froma ssociation is less than Maximum of single datasets
+	 * The association is valid if number of records froma ssociation is less
+	 * than Maximum of single datasets
 	 *
 	 * @param dsLabel1
 	 * @param dsLabel2
@@ -1021,7 +1032,8 @@ public class DatasetManagementAPI {
 
 						logger.debug("Dataset with label " + dsLabel);
 						IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
-						// Datasets related to documents are not on DB so 'dataset' can be null
+						// Datasets related to documents are not on DB so
+						// 'dataset' can be null
 						if (dataset == null) {
 							// assFieldsJSONArray.get(assFieldsJSONArray.size()-1).remove(z);
 							fieldsAss.remove(z);
@@ -1034,7 +1046,8 @@ public class DatasetManagementAPI {
 						// if (cachedResultSet == null) {
 						if (!cache.getMetadata().containsCacheItem(dataset.getSignature())) {
 							logger.error("dataset " + dataset.getLabel() + " is not already cached, cache it");
-							// IDataStore dataStore = dataStore = cache.refresh(dataset, false);
+							// IDataStore dataStore = dataStore =
+							// cache.refresh(dataset, false);
 							cache.refresh(dataset, true);
 						}
 
@@ -1474,9 +1487,9 @@ public class DatasetManagementAPI {
 
 				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
 				List<RoleMetaModelCategory> resp = new ArrayList<>();
-				List<SbiDomains> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+				List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
 				for (RoleMetaModelCategory r : aRoleCategories) {
-					for (SbiDomains dom : array) {
+					for (Domain dom : array) {
 						if (r.getCategoryId().equals(dom.getValueId())) {
 							resp.add(r);
 						}
