@@ -1,7 +1,7 @@
 angular.module('document_view', ['ngMaterial','sbiModule'])
 .directive('documentView', function() {
 	return {
-		 templateUrl: '/knowage/js/src/angular_1.4/tools/documentbrowser/directive/document-view/document-view.html',
+		 templateUrl: '/knowage/js/src/angular_1.4/tools/documentbrowser/directive/document-view/document-view.jsp',
 		controller: documentViewControllerFunction,
 		replace:true,
 		 priority: 10,

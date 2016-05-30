@@ -87,8 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<!-- New Document -->
 					 <% 
-						if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.CREATE_DOCUMENT}) || 
-								UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0]) ||
+						if(UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0]) ||
 								UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ROLE_TYPE_DEV, new String[0])
 								){
 					%>			
@@ -103,7 +102,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				           {{translate.load("sbi.generic.document.add.traditional")}}
 				          </md-button>
 				        </md-menu-item>
-				        <% if(UserUtilities.isEngineEnabled(profile, SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE)) { %>
+				        <% if(UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0]) ||
+								UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ROLE_TYPE_DEV, new String[0])
+								){ %>
 				        <md-menu-item>
 				          <md-button ng-click="newDocument('cockpit');">
 				            <md-icon md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
@@ -196,7 +197,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<md-button title="{{translate.load('sbi.documentbrowser.execute')}}" aria-label="Execute Document" class="md-icon-button" ng-click="executeDocument(selectedDocument)">
 									<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
 							</md-button>
-							
+							 <% 
+								if(UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0]) ||
+									UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ROLE_TYPE_DEV, new String[0])
+									){
+							%>	
 							<md-button title="{{translate.load('sbi.documentbrowser.edit')}}" aria-label="Edit Document" class="md-icon-button" ng-click="editDocument(selectedDocument)">
 									<md-icon md-font-icon="fa fa-pencil"></md-icon>
 							</md-button>
@@ -208,6 +213,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<md-button title="{{translate.load('sbi.documentbrowser.delete')}}" aria-label="Delete Document" class="md-icon-button" ng-click="deleteDocument(selectedDocument)">
 									<md-icon md-font-icon="fa fa-trash-o"></md-icon>
 							</md-button>
+							<%
+								}
+							%>
 						</div>
 					</md-toolbar>
 					<md-content layout-margin>

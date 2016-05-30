@@ -1,3 +1,11 @@
+<%@page import="it.eng.spago.security.IEngUserProfile"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
+
+ <%
+	IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);;
+		
+	%>	
  <md-content layout="column">	
  				 	<angular-table flex  ng-hide="showGridView==true || ngModel.length==0 "
 							id='documentListTable' ng-model=ngModel
@@ -36,14 +44,25 @@
 			        
 			        
 			        <md-card-actions layout="row" layout-align="space-around end">
+			        <% 
+						if(UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0]) ||
+								UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ROLE_TYPE_DEV, new String[0])
+						){
+					%>
 			          <md-button title="{{translate.load('sbi.documentbrowser.edit')}}" class="md-icon-button" aria-label="edit" ng-click="editDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa  fa-pencil fa-2x"></md-icon>
 			          </md-button>
-			        	 
+			        <%
+			        	}
+			        %>	 
 			          <md-button title="{{translate.load('sbi.documentbrowser.execute')}}" class="md-icon-button" aria-label="Favorite" ng-click="executeDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon>
 			          </md-button>
-			          
+			        <% 
+							if(UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0]) ||
+								UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ROLE_TYPE_DEV, new String[0])
+							){
+					%>
 			          <md-button title="{{translate.load('sbi.documentbrowser.clone')}}" class="md-icon-button" aria-label="Settings" ng-click="cloneDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa fa-clone fa-2x"></md-icon>
 			          </md-button>
@@ -51,7 +70,9 @@
 			          <md-button title="{{translate.load('sbi.documentbrowser.delete')}}" class="md-icon-button" aria-label="Share" ng-click="deleteDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
 			          </md-button>
-			          
+			          <%
+			        	}
+			       	 %>	
 			        </md-card-actions>
 			      </md-card>
 	 
