@@ -42,7 +42,7 @@ function documentBrowserFunction(
 	}
 	
 	$scope.setSelectedFolder = function (folder) {
-		if ($scope.selectedFolder==undefined || folder.name !== $scope.selectedFolder.name) {
+		if ($scope.selectedFolder==undefined || folder.id !== $scope.selectedFolder.id) {
 			$scope.selectedDocument = undefined;
 			$scope.showDocumentDetail = false;
 			

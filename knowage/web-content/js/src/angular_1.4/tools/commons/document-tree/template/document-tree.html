@@ -1,6 +1,6 @@
 <!-- element of the tree, recursive call on this template to create the tree -->
 <script type="text/ng-template" id="folders_renderer.html">
-		<div layout = "row" layout-align="start center" class="customTreeNode" ui-tree-handle ng-class="{'hover-element' : folder.isHover, 'blue-stack' : (selectedItem.name == folder.name && highlightsSelectedItem == true)}" ng-mouseenter="folder.isHover = true" ng-mouseleave="folder.isHover = undefined" >
+		<div layout = "row" layout-align="start center" class="customTreeNode" ui-tree-handle ng-class="{'hover-element' : folder.isHover, 'blue-stack' : (selectedItem.id == folder.id && highlightsSelectedItem == true)}" ng-mouseenter="folder.isHover = true" ng-mouseleave="folder.isHover = undefined" >
 			<div layout = "row" layout-align="start center">
 				<md-checkbox ng-if="multiSelect" ng-checked="folder.checked" ng-click="toogleSelected(folder)" aria-label="Checkbox"></md-checkbox>            
 				<md-icon ng-click='openFolder(folder)' ng-if="!folder.expanded && folder[subfoldersId] !== undefined" md-font-icon="{{folder.subfolders.length!=0 ? multiFolders : iconFolder}}"></md-icon>				
