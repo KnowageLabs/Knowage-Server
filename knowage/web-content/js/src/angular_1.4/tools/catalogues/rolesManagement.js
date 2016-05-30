@@ -46,6 +46,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	               {dbname:"SEE_TODO_LIST",label:"seeToDoList",visible:false, category:"ITEMS"},
 	               {dbname:"CREATE_DOCUMENTS",label:"createDocument",visible:false, category:"ITEMS"},
 	               {dbname:"ENABLE_DATASET_PERSISTENCE",label:"enableDatasetPersistence",visible:false, category:"ENABLE"},
+	               {dbname:"ENABLE_FEDERATED_DATASET",label:"enableFederatedDataset",visible:false, category:"ENABLE"},
 	               {dbname:"SEE_MY_DATA",label:"seeMyData",visible:false, category:"ITEMS"},
 	               {dbname:"DO_MASSIVE_EXPORT",label:"doMassiveExport",visible:false, category:"EXPORT"},
 	               {dbname:"EDIT_WORKSHEET",label:"editWorksheet",visible:false, category:"EDIT"},
