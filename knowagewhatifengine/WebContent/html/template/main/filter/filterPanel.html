@@ -1,6 +1,6 @@
 <div id="filterpanel" layout="row" class="top-alignment" ng-drop="true" ng-drop-success="dropFilter($data,$event)">
 	
-	<div ng-show="filterCardList.length == 0" style="height:80px; padding-left:42px; padding-top:32px; width:100%"; >
+	<div ng-show="filterCardList.length == 0" class="filter-panel-empty"; >
 		{{filterPanelEmpty}}
 	</div>
 	<md-button class="md-icon-button filter-shift-arrow" flex=10 

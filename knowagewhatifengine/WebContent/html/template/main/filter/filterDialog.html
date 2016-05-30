@@ -5,10 +5,10 @@
 	</md-toolbar>
 
 	<md-content class="dialog-style" flex=90 >
-		<span style="font-size: 10px; color:red;" ng-if="searchText.length > 0 && searchText.length < minNumOfLetters")>
+		<span class="dialog-msg" ng-if="searchText.length > 0 && searchText.length < minNumOfLetters")>
 			You need at least {{minNumOfLetters}} letters to start search!
 		</span>	
-		<div style="white-space: nowrap;">
+		<div class="no-wrap">
 			<input	ng-class="bgColor()?'filter-search-redbg filter-search':'filter-search'"
         			ng-show="true" 
         			ng-model="searchText" 

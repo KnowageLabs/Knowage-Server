@@ -138,6 +138,7 @@
 }
 .dimension-top-toolbar{
     border-radius: 0px 7px 7px 0px;
+    width:95%
 }
 
 .dimension-top-toolbar .multi-hierarachy-btn{
@@ -741,4 +742,81 @@ md-option[selected], md-select-menu md-option[selected]{
 
 .save-subObject-dialog{
 	padding: 100px;
+}
+
+.dialog-button-padding{
+	padding-left: 3%;
+	padding-right: 3%;
+}
+
+.filter-panel-empty{
+	height:80px; 
+	padding-left:42px; 
+	padding-top:32px; 
+	width:100%";
+}
+
+.dialog-msg{
+	font-size: 10px;
+	color:red;
+}
+
+.no-wrap{
+	white-space:nowrap;
+}
+
+.left-axis-shift{
+	min-width:32px; 
+	min-height:32px;
+	margin-bottom: 2%;
+}
+
+.icon-color-white{
+	color:white!important;
+}
+
+.menu-toolbar{
+	cursor:pointer;
+	border-radius: 7px 0px 0px 7px; 
+	width: 4%;
+}
+
+.top-axis-switch{
+	margin-left:0px!important;
+	margin-right:0px!important;
+}
+
+.top-axis-element{
+	height:80%;
+	margin-right: 10px;
+}
+
+.left-axis{
+	height:calc(100% - 64px);
+}
+
+.export-dialog{
+	height:45%!important;
+	 width:35%!important;
+}
+
+.export-dialog-toolbar{
+	min-height:20px; 
+	height:15%; 
+	padding:3% 0 0 3%;
+}
+.export-dialog-content{
+	padding:10px;
+	font-size:85%;
+	height:60%;
+}
+
+.side-nav-x-btn-position{
+	right: 0px;
+	position: absolute;
+	top: 0px;
+}
+
+.side-nav-tabs{
+	width:33%;
 }

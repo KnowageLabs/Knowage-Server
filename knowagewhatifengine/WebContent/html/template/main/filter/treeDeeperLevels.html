@@ -1,14 +1,14 @@
 <ul ng-model="item.children" ng-show="item.collapsed">
 
 	<li ng-repeat="item in item.children">
-	<div style="white-space: nowrap;">
+	<div class="no-wrap">
 		<md-icon md-font-icon="fa fa-list-alt" ng-show="item.leaf && activeaxis == -1" ng-click=""> 
 		</md-icon>
 		<md-icon md-font-icon="fa fa-angle-right" ng-show="!item.collapsed && !item.leaf" 
-				ng-click="expandTreeAsync(item)" style="padding-left: 3%;padding-right: 3%;"> 
+				ng-click="expandTreeAsync(item)" class="dialog-button-padding"> 
 		</md-icon>
 		<md-icon md-font-icon="fa fa-angle-down" ng-show="item.collapsed && !item.leaf" 
-				ng-click="hideAsyncTree(item)" style="padding-left: 3%;padding-right: 3%;"> 
+				ng-click="hideAsyncTree(item)" class="dialog-button-padding"> 
 		</md-icon>
 		<span ng-click="selectFilter(item)" ng-show="activeaxis == -1" id="tdl-value-{{item.name}}">
 			<span ng-class="highlight(item.name)?'highlight-filter-result':''">
@@ -26,7 +26,7 @@
 		</span>
 		<span ng-click="" ng-show="activeaxis >= 0 && item.leaf" style="padding-left:35px;">
 			<md-checkbox ng-checked="item.visible" ng-click="checkboxSelected(item)">
-			<span ng-class="highlight(item.name)?'highlight-filter-result':''" style="white-space: nowrap;">
+			<span ng-class="highlight(item.name)?'highlight-filter-result':''" class="no-wrap">
 				{{item.name}}
 			</span>
 			</md-checkbox>

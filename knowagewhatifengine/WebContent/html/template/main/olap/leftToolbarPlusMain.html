@@ -1,13 +1,13 @@
 <div class="central-panel" layout="row" >
 	<div id="leftaxis" class='knowage-blue dimension-left-toolbar' layout="column" ng-drop="true" ng-drop-success="dropLeft($data,$event)">
 		
-		<div style="min-width:32px; min-height:32px; margin-bottom: 2%;">
+		<div class="left-axis-shift">
 			<md-button style="right:10px" class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('up')" ng-show="leftSliderNeeded">
-				<md-icon style="color:white" md-font-icon="fa fa-arrow-circle-o-up fa-2x" ></md-icon>
+				<md-icon class="icon-color-white" md-font-icon="fa fa-arrow-circle-o-up fa-2x" ></md-icon>
 			</md-button>
 		</div>	
 		
-		<div style="height:calc(100% - 64px);">
+		<div class="left-axis">
 			<div  ng-repeat="row in rows|limitTo:maxRows:leftStart">
 				<div class="filter-toolbar-element-left"  
 					 ng-drag="true" 
@@ -16,7 +16,7 @@
 					 id="left-{{row.name}}">
 					 
 					<md-button class="multi-hierarachy-btn"  ng-click="showMultiHierDialog(e,row)" ng-show="row.hierarchies.length > 1">
-						<md-icon class="fa fa-sitemap" style="color:white;"></md-icon>
+						<md-icon class="fa fa-sitemap" class="icon-color-white"></md-icon>
 					</md-button>
 					
 					<div ng-class="row.hierarchies.length == 1 ? 'name':'name-multi'" title="{{row.caption}}">
@@ -33,19 +33,19 @@
 				</div>
 				<div ng-hide="hideSwitchIcon(row.positionInAxis,1)"><!-- row.positionInAxis == rows.length-1 -->
 					<md-button class="md-icon-button" style="width:0px" ng-click="switchPosition(row)">
-						<md-icon md-font-icon="fa fa-arrows-v" style="color:white;"></md-icon>	
+						<md-icon md-font-icon="fa fa-arrows-v" class="icon-color-white"></md-icon>	
 					</md-button>
 				</div>
 			</div>
 		</div>
 	
-		<div style="min-width:32px;min-height:32px;margin-top:2%">
+		<div class="left-axis-shift">
 			<md-button style="right:10px;"
 					   class="md-icon-button" 
 					   aria-label="Favorite" 
 					   ng-click="dimensionShift('down')" 
 					   ng-show="leftSliderNeeded">
-				<md-icon style="color:white" md-font-icon="fa fa-arrow-circle-o-down fa-2x"></md-icon>
+				<md-icon class="icon-color-white" md-font-icon="fa fa-arrow-circle-o-down fa-2x"></md-icon>
 			</md-button>
 		</div>
 	</div>

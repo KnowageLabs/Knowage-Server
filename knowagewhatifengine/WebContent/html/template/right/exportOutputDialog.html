@@ -1,10 +1,10 @@
-<md-dialog style='height:45%; width:35%;' layout="column">
+<md-dialog class="export-dialog" layout="column">
 	
-	<md-toolbar class="knowage-blue" style="min-height:20px; height:15%; padding:5% 0 0 2%;">
+	<md-toolbar class="knowage-blue export-dialog-toolbar" >
 		{{outputWizardTitle}}
     </md-toolbar>
     
-    <md-dialog-content style="padding:10px;font-size:85%;height:60%">
+    <md-dialog-content class="export-dialog-content">
 		<export-version-wizard ng-show = "!showFile && !showTable && !showOVDescription"></export-version-wizard>
 		<export-version-file-wizard ng-show = "showFile && !showOVDescription"></export-version-file-wizard>
 		<export-version-table-wizard ng-show = "showTable && !showOVDescription"></export-version-table-wizard>
