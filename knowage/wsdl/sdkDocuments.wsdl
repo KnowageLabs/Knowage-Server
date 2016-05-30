@@ -20,6 +20,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
      <element name="name" nillable="true" type="soapenc:string"/>
      <element name="state" nillable="true" type="soapenc:string"/>
      <element name="type" nillable="true" type="soapenc:string"/>
+     <element name="lockedByUser" nillable="true" type="soapenc:string"/>
     </sequence>
    </complexType>
    <complexType name="SDKFunctionality">
@@ -274,9 +275,9 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
-   <wsdl:message name="getDocumentByLabelResponse">
+   <wsdl:message name="changeLockStatusRequest">
 
-      <wsdl:part name="getDocumentByLabelReturn" type="tns2:SDKDocument"/>
+      <wsdl:part name="in0" type="tns2:SDKDocument"/>
 
    </wsdl:message>
 
@@ -285,6 +286,12 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
       <wsdl:part name="in0" type="soapenc:int"/>
 
       <wsdl:part name="in1" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentByLabelResponse">
+
+      <wsdl:part name="getDocumentByLabelReturn" type="tns2:SDKDocument"/>
 
    </wsdl:message>
 
@@ -428,6 +435,12 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="changeLockStatusResponse">
+
+      <wsdl:part name="changeLockStatusReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
    <wsdl:message name="executeDocumentResponse">
 
       <wsdl:part name="executeDocumentReturn" type="tns2:SDKExecutedDocumentContent"/>
@@ -458,6 +471,12 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="getLockStatusRequest">
+
+      <wsdl:part name="in0" type="tns2:SDKDocument"/>
+
+   </wsdl:message>
+
    <wsdl:message name="getDocumentsAsListResponse">
 
       <wsdl:part name="getDocumentsAsListReturn" type="impl:ArrayOf_tns2_SDKDocument"/>
@@ -476,31 +495,13 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="getLockStatusResponse">
+
+      <wsdl:part name="getLockStatusReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
    <wsdl:portType name="DocumentsService">
-
-      <wsdl:operation name="getDocumentsAsList" parameterOrder="in0 in1 in2">
-
-         <wsdl:input message="impl:getDocumentsAsListRequest" name="getDocumentsAsListRequest"/>
-
-         <wsdl:output message="impl:getDocumentsAsListResponse" name="getDocumentsAsListResponse"/>
-
-      </wsdl:operation>
-
-      <wsdl:operation name="getDocumentById" parameterOrder="in0">
-
-         <wsdl:input message="impl:getDocumentByIdRequest" name="getDocumentByIdRequest"/>
-
-         <wsdl:output message="impl:getDocumentByIdResponse" name="getDocumentByIdResponse"/>
-
-      </wsdl:operation>
-
-      <wsdl:operation name="getDocumentByLabel" parameterOrder="in0">
-
-         <wsdl:input message="impl:getDocumentByLabelRequest" name="getDocumentByLabelRequest"/>
-
-         <wsdl:output message="impl:getDocumentByLabelResponse" name="getDocumentByLabelResponse"/>
-
-      </wsdl:operation>
 
       <wsdl:operation name="getDocumentsAsTree" parameterOrder="in0">
 
@@ -550,6 +551,30 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
+      <wsdl:operation name="getDocumentByLabel" parameterOrder="in0">
+
+         <wsdl:input message="impl:getDocumentByLabelRequest" name="getDocumentByLabelRequest"/>
+
+         <wsdl:output message="impl:getDocumentByLabelResponse" name="getDocumentByLabelResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDocumentById" parameterOrder="in0">
+
+         <wsdl:input message="impl:getDocumentByIdRequest" name="getDocumentByIdRequest"/>
+
+         <wsdl:output message="impl:getDocumentByIdResponse" name="getDocumentByIdResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDocumentsAsList" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:getDocumentsAsListRequest" name="getDocumentsAsListRequest"/>
+
+         <wsdl:output message="impl:getDocumentsAsListResponse" name="getDocumentsAsListResponse"/>
+
+      </wsdl:operation>
+
       <wsdl:operation name="downloadTemplate" parameterOrder="in0">
 
          <wsdl:input message="impl:downloadTemplateRequest" name="downloadTemplateRequest"/>
@@ -575,6 +600,16 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          <wsdl:input message="impl:saveNewDocumentRequest" name="saveNewDocumentRequest"/>
 
          <wsdl:output message="impl:saveNewDocumentResponse" name="saveNewDocumentResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="changeLockStatus" parameterOrder="in0">
+
+         <wsdl:input message="impl:changeLockStatusRequest" name="changeLockStatusRequest"/>
+
+         <wsdl:output message="impl:changeLockStatusResponse" name="changeLockStatusResponse"/>
 
          <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
 
@@ -650,65 +685,21 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
+      <wsdl:operation name="getLockStatus" parameterOrder="in0">
+
+         <wsdl:input message="impl:getLockStatusRequest" name="getLockStatusRequest"/>
+
+         <wsdl:output message="impl:getLockStatusResponse" name="getLockStatusResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
    </wsdl:portType>
 
    <wsdl:binding name="DocumentsServiceSoapBinding" type="impl:DocumentsService">
 
       <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
-
-      <wsdl:operation name="getDocumentsAsList">
-
-         <wsdlsoap:operation soapAction=""/>
-
-         <wsdl:input name="getDocumentsAsListRequest">
-
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
-
-         </wsdl:input>
-
-         <wsdl:output name="getDocumentsAsListResponse">
-
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
-
-         </wsdl:output>
-
-      </wsdl:operation>
-
-      <wsdl:operation name="getDocumentById">
-
-         <wsdlsoap:operation soapAction=""/>
-
-         <wsdl:input name="getDocumentByIdRequest">
-
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
-
-         </wsdl:input>
-
-         <wsdl:output name="getDocumentByIdResponse">
-
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
-
-         </wsdl:output>
-
-      </wsdl:operation>
-
-      <wsdl:operation name="getDocumentByLabel">
-
-         <wsdlsoap:operation soapAction=""/>
-
-         <wsdl:input name="getDocumentByLabelRequest">
-
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
-
-         </wsdl:input>
-
-         <wsdl:output name="getDocumentByLabelResponse">
-
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
-
-         </wsdl:output>
-
-      </wsdl:operation>
 
       <wsdl:operation name="getDocumentsAsTree">
 
@@ -824,6 +815,60 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
+      <wsdl:operation name="getDocumentByLabel">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDocumentByLabelRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDocumentByLabelResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDocumentById">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDocumentByIdRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDocumentByIdResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDocumentsAsList">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDocumentsAsListRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDocumentsAsListResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
       <wsdl:operation name="downloadTemplate">
 
          <wsdlsoap:operation soapAction=""/>
@@ -883,6 +928,30 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          </wsdl:input>
 
          <wsdl:output name="saveNewDocumentResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="changeLockStatus">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="changeLockStatusRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="changeLockStatusResponse">
 
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
 
@@ -1064,13 +1133,37 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
+      <wsdl:operation name="getLockStatus">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getLockStatusRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getLockStatusResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
    </wsdl:binding>
 
    <wsdl:service name="DocumentsServiceService">
 
       <wsdl:port binding="impl:DocumentsServiceSoapBinding" name="DocumentsService">
 
-         <wsdlsoap:address location="http://localhost:8181/SpagoBI/sdk/DocumentsService"/>
+         <wsdlsoap:address location="http://localhost:8080/knowage/sdk/DocumentsService"/>
 
       </wsdl:port>
 
