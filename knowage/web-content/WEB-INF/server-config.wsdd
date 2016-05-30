@@ -137,8 +137,8 @@
   <parameter name="wsdlTargetNamespace" value="urn:spagobisdktestconnection"/>
   <parameter name="wsdlServiceElement" value="TestConnectionServiceService"/>
  </service>
-  <service name="DocumentsService" provider="java:RPC">
-  <requestFlow>
+ <service name="DocumentsService" provider="java:RPC">
+   <requestFlow>
    <handler type="java:org.apache.ws.axis.security.WSDoAllReceiver">
     <parameter name="passwordCallbackClass" value="it.eng.spagobi.sdk.callbacks.ServerPWCallback"/>
     <parameter name="action" value="UsernameToken"/>

@@ -84,6 +84,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
     boolean isLocked = (obj.getLockedByUser() != null && !obj.getLockedByUser().equals("")) ? true : false;
     boolean isCurrentUserLocking = false;
+    boolean isUserAdmin = userProfile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
 
     String userLocker = null;
 
@@ -274,7 +275,7 @@ function saveDocument(goBack) {
 		%>
 		
             <%
-                if (!(isLocked && !isCurrentUserLocking)) { // LOCKED BY ANOTHER USER
+                if (!isLocked || isCurrentUserLocking || isUserAdmin) { 
                 %>
 		
 		<td class='header-button-column-portlet-section'>
@@ -990,7 +991,7 @@ function saveDocument(goBack) {
                             if (isLocked) {
                             	   out.println(" checked='checked' ");
                             }
-                            if (isLocked && !isCurrentUserLocking) {
+                            if (isLocked && !isCurrentUserLocking && !isUserAdmin) {
                                    out.println(" disabled='disabled' ");
                             }
                             %>>
@@ -1002,7 +1003,7 @@ function saveDocument(goBack) {
                             if (!isLocked) {
                                        out.println(" checked='checked' ");
                              }
-                            if (isLocked && !isCurrentUserLocking) {
+                            if (isLocked && !isCurrentUserLocking && !isUserAdmin) {
                                    out.println(" disabled='disabled' ");
                             }
                              %>>
