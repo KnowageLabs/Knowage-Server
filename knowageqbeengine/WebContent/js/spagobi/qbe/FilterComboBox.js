@@ -92,7 +92,7 @@ Ext.extend(Sbi.qbe.FilterComboBox, Ext.form.ComboBox, {
     	this.filterStore = new Ext.data.SimpleStore({
     	    fields: ['funzione', 'nome', 'descrizione'],
     	    data : [
-    	            ['NONE', LN('sbi.qbe.filtergridpanel.foperators.name.none'), LN()],
+    	            ['NONE', LN('sbi.qbe.filtergridpanel.foperators.name.none'), ''],
     	            ['EQUALS TO', LN('sbi.qbe.filtergridpanel.foperators.name.eq'),  LN('sbi.qbe.filtergridpanel.foperators.desc.eq')],
     	            ['NOT EQUALS TO', LN('sbi.qbe.filtergridpanel.foperators.name.noteq'),  LN('sbi.qbe.filtergridpanel.foperators.desc.noteq')],
     	            ['GREATER THAN', LN('sbi.qbe.filtergridpanel.foperators.name.gt'),  LN('sbi.qbe.filtergridpanel.foperators.desc.gt')],
