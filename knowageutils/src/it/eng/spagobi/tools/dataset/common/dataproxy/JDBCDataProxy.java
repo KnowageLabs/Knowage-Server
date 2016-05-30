@@ -91,7 +91,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 
 			try {
 				connection = getDataSource().getConnection(getSchema());
-			} catch (Throwable t) {
+			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection", t);
 			}
 			String dialect = dataSource.getHibDialectClass();
@@ -109,7 +109,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				} else {
 					stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				}
-			} catch (Throwable t) {
+			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
 			}
 			String sqlQuery = "";
@@ -122,42 +122,39 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				logger.debug("Executing query " + sqlQuery + " ...");
 				resultSet = stmt.executeQuery(sqlQuery);
 
-			} catch (Throwable t) {
+			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement: " + sqlQuery, t);
 			}
 
-			boolean notCountingStrategyUsedSuccessfully = false;
 			int resultNumber = -1;
 			if (isCalculateResultNumberOnLoadEnabled()) {
 				logger.debug("Calculation of result set total number is enabled");
 				try {
-
 					// if its an hive like db the query can be very slow so it's better to execute it just once and not use the inline view tecnique
-					if (!SqlUtils.isHiveLikeDialect(dialect)) {
-						// try to calculate the query total result number using
-						// inline view
+					if (SqlUtils.isHiveLikeDialect(dialect)) {
+						logger.debug("It's a BigData datasource so count data iterating result set till max");
+						dataReader.setCalculateResultNumberEnabled(true);
+					} else if (getOffset() == 0 && getFetchSize() == -1) {
+						// we need to load entire resultset, therefore there is no need to use the inline view tecnique
+						logger.debug("Offset = 0, fetch size = -1: the entire resultset will be loaded, no need to use the inline view tecnique");
+						dataReader.setCalculateResultNumberEnabled(true);
+					} else {
+						// try to calculate the query total result number using inline view tecnique
 						resultNumber = getResultNumber(connection);
 						logger.debug("Calculation of result set total number successful : resultNumber = " + resultNumber);
-						// ok, no need to ask the datareader to calculate the query
-						// total result number
+						// ok, no need to ask the datareader to calculate the query total result number
 						dataReader.setCalculateResultNumberEnabled(false);
-						notCountingStrategyUsedSuccessfully = true;
-					} else {
-						logger.debug("It's a BigData datasource so count data iterating result set till max ");
-						dataReader.setCalculateResultNumberEnabled(true);
 					}
-				} catch (Throwable t) {
+				} catch (Exception t) {
 					logger.debug("KO Calculation of result set total number using inlineview", t);
 					try {
-						logger.debug("Loading data using scrollable resultse tecnique");
+						logger.debug("Loading data using scrollable resultset tecnique");
 						resultNumber = getResultNumber(resultSet);
-						logger.debug("OK data loaded using scrollable resultse tecnique : resultNumber = " + resultNumber);
+						logger.debug("OK data loaded using scrollable resultset tecnique : resultNumber = " + resultNumber);
 						dataReader.setCalculateResultNumberEnabled(false);
-						notCountingStrategyUsedSuccessfully = true;
 					} catch (SQLException e) {
-						logger.debug("KO data loaded using scrollable resultse tecnique", e);
+						logger.debug("KO data loaded using scrollable resultset tecnique", e);
 						dataReader.setCalculateResultNumberEnabled(true);
-
 					}
 				}
 			} else {
@@ -169,18 +166,18 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			try {
 				// read data
 				dataStore = dataReader.read(resultSet);
-			} catch (Throwable t) {
+			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while parsing resultset", t);
 			}
 
-			if (notCountingStrategyUsedSuccessfully) {
+			if (resultNumber > -1) { // it means that resultNumber was successfully calculated by this data proxy
 				dataStore.getMetaData().setProperty("resultNumber", new Integer(resultNumber));
 			}
 
 		} finally {
 			try {
 				releaseResources(connection, stmt, resultSet);
-			} catch (Throwable t) {
+			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("Impossible to release allocated resources properly", t);
 			}
 		}
