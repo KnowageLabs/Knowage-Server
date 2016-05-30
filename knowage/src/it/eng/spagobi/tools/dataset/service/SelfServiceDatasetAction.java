@@ -151,10 +151,13 @@ public class SelfServiceDatasetAction {
 		} catch (CacheException ex) {
 			try {
 				logger.error(ex);
+				Map<String, String> errorMap = new HashMap<>();
+
 				// EMFErrorHandler errorHandler = getErrorHandler();
 				EMFInternalError internalError = new EMFInternalError(EMFErrorSeverity.ERROR, ex);
 				// errorHandler.addError(internalError);
-				return null;
+				errorMap.put("error", ex.getMessage());
+				return errorMap;
 			} catch (Exception s) {
 				throw new SpagoBIRuntimeException("An error occurred while creating service response", s);
 			}

@@ -35,6 +35,7 @@
 	</head>
 	
 	<body ng-controller="workspaceController" class="workspace kn-documentBrowser" id="workspaceWebPageBody"> 
+		<% if (parameters.containsKey("error")==false) {%>	
 		
 		<md-content layout="column" flex layout-fill>
 			
@@ -82,6 +83,12 @@
 			</md-content>
 			
 		</md-content>
+		<% }
+		else {
+			
+		%>    
+			<script  language="javascript" type="text/javascript">alert(datasetParameters.error);</script>
+		<% } %>
 		
 	</body>
 	
