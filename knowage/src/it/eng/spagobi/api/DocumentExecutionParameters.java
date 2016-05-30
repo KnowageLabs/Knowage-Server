@@ -36,6 +36,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,7 +45,7 @@ import org.json.JSONObject;
 @ManageAuthorization
 public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 
-	public static final String SERVICE_NAME = "SAVE_VIEWPOINTS_SERVICE";
+	public static final String SERVICE_NAME = "GET DOCUMENT PARAMETERS ";
 
 	// request parameters
 	public static String PARAMETER_ID = "PARAMETER_ID";
@@ -67,6 +68,8 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 	public static String MASSIVE_EXPORT = "massiveExport";
 	private static final String ROLE = "ROLE";
 	private static final String OBJECT_LABEL = "OBJECT_LABEL";
+
+	static protected Logger logger = Logger.getLogger(DocumentExecutionParameters.class);
 
 	@POST
 	@Path("/getParameters")
@@ -272,8 +275,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 				jsonObj.put("result", obj);
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error build Json Result Document Execution Parameter : " + e.getMessage());
 		}
 
 		return jsonObj;

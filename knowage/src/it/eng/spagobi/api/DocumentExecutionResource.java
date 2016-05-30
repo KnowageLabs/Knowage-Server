@@ -97,8 +97,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	public static final String METADATA = "METADATA";
 	public static final String NODE_ID_SEPARATOR = "___SEPA__";
 
-	// public static final String PARAMETERS = "PARAMETERS";
-	// public static final String SERVICE_NAME = "GET_URL_FOR_EXECUTION_ACTION";
 	public static String MODE_SIMPLE = "simple";
 	// public static String MODE_COMPLETE = "complete";
 	// public static String START = "start";
@@ -151,113 +149,26 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		JSONObject err = new JSONObject();
 		JSONArray arrerr = new JSONArray();
 		if (sbiExecutionId == null || sbiExecutionId.isEmpty()) {
-			// create execution id
+			// CREATE EXECUTION ID
 			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 			UUID uuidObj = uuidGen.generateTimeBasedUUID();
 			sbiExecutionId = uuidObj.toString();
 			sbiExecutionId = sbiExecutionId.replaceAll("-", "");
 		}
 		resultAsMap.put("sbiExecutionId", sbiExecutionId);
-
 		try {
 			String executingRole = getExecutionRole(role);
 			// displayToolbar
 			// modality
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(label, executingRole);
 			IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
-
-			List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null);
-			for (DocumentParameters objParameter : parameters) {
-				// DEF VALUE
-				if (jsonParameters.isNull(objParameter.getId())) {
-					if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
-						if (objParameter.getDefaultValues().size() == 1) {
-							// SINGLE
-							Object value;
-							if (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
-								// value = objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0];
-								value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
-										GeneralUtilities.getLocaleDateFormat(permanentSession), objParameter.getDefaultValues().get(0).getValue().toString()
-												.split("#")[0]);
-							} else {
-								value = objParameter.getDefaultValues().get(0).getValue();
-							}
-							jsonParameters.put(objParameter.getId(), value);
-							jsonParameters.put(objParameter.getId() + "_field_visible_description", value);
-						} else {
-							// MULTIPLE
-							ArrayList<String> paramValArr = new ArrayList<String>();
-							String paramDescStr = "";
-							for (int i = 0; i < objParameter.getDefaultValues().size(); i++) {
-								paramValArr.add(objParameter.getDefaultValues().get(i).getValue().toString());
-								paramDescStr = paramDescStr + objParameter.getDefaultValues().get(i).getValue().toString();
-								if (i < objParameter.getDefaultValues().size() - 1) {
-									paramDescStr = paramDescStr + ";";
-								}
-							}
-							jsonParameters.put(objParameter.getId(), paramValArr);
-							jsonParameters.put(objParameter.getId() + "_field_visible_description", paramDescStr);
-						}
-					}
-
-				}
-				// LOV SINGLE MANDATORY PARAMETER
-				if (objParameter.isMandatory()) {
-					Integer paruseId = objParameter.getParameterUseId();
-					ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
-					if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
-							&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)) {
-						// ArrayList<HashMap<String, Object>> defaultValues = DocumentExecutionUtils.getLovDefaultValues(
-						// role, obj, objParameter.getAnalyticalDocumentParameter(), req);
-
-						HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, obj,
-								objParameter.getAnalyticalDocumentParameter(), req);
-
-						ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
-								.get(DocumentExecutionUtils.DEFAULT_VALUES);
-
-						if (defaultValues != null && defaultValues.size() == 1 && !defaultValues.get(0).containsKey("error")) {
-							jsonParameters.put(objParameter.getId(), defaultValues.get(0).get("value"));
-							jsonParameters.put(objParameter.getId() + "_field_visible_description", defaultValues.get(0).get("value"));
-						}
-					}
-				}
-
-				// format Date :
-				if (!objParameter.isMultivalue() && objParameter.getParType().equals("DATE")) {
-					if (!jsonParameters.isNull(objParameter.getId())) {
-						// CONVERT LOCALE FROM SERVER
-						if (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format") != null) {
-							String date = convertDate(GeneralUtilities.getLocaleDateFormat(permanentSession),
-									SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"),
-									jsonParameters.getString(objParameter.getId()));
-							jsonParameters.put(objParameter.getId(), date);
-						}
-					}
-
-				}
-
-				// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
-				if (!jsonParameters.isNull(objParameter.getId())) {
-					Integer paruseId = objParameter.getParameterUseId();
-					ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
-					if (jsonParameters.getString(objParameter.getId()).startsWith("[") && jsonParameters.getString(objParameter.getId()).endsWith("]")
-							&& parameterUse.getValueSelection().equals("man_in") && objParameter.getParType().equals("STRING")) {
-						int strLength = jsonParameters.getString(objParameter.getId()).toString().length();
-						String jsonParamRet = jsonParameters.getString(objParameter.getId()).toString().substring(1, strLength - 1);
-						jsonParameters.put(objParameter.getId(), jsonParamRet);
-					}
-
-				}
-
-			}
-
+			// BUILD THE PARAMETERS
+			JSONObject jsonParametersToSend = buildJsonParameters(jsonParameters, req, role, permanentSession, parameterUseDAO, obj);
+			// BUILD URL
 			String url = DocumentExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
-					executingRole, modality, jsonParameters, locale);
+					executingRole, modality, jsonParametersToSend, locale);
 			errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
-					executingRole, modality, jsonParameters, locale);
-
-			// resultAsMap.put("parameters", parameters);
+					executingRole, modality, jsonParametersToSend, locale);
 			resultAsMap.put("url", url + "&SBI_EXECUTION_ID=" + sbiExecutionId);
 			if (errorList != null && !errorList.isEmpty()) {
 				resultAsMap.put("errors", errorList);
@@ -266,7 +177,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			// TODO return EXPORT FORMAT MAP
 			resultAsMap.put("typeCode", obj.getBiObjectTypeCode());
 			resultAsMap.put("engineLabel", obj.getEngine().getLabel());
-
 		} catch (DocumentExecutionException e) {
 			err.put("message", e.getMessage());
 			err.put("type", "missingRole");
@@ -276,17 +186,101 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			return Response.ok(toRet.toString()).build();
 		} catch (Exception e) {
 			logger.error("Error while getting the document execution url", e);
-			// throw new SpagoBIRuntimeException("Error while getting the document execution url", e);
 			err.put("message", e.getMessage());
 			arrerr.put(err);
 			JSONObject toRet = new JSONObject();
 			toRet.put("errors", arrerr);
 			return Response.ok(toRet.toString()).build();
+		}
+		logger.debug("OUT");
+		return Response.ok(resultAsMap).build();
+	}
+
+	private JSONObject buildJsonParameters(JSONObject jsonParameters, HttpServletRequest req, String role, SessionContainer permanentSession,
+			IParameterUseDAO parameterUseDAO, BIObject obj) throws JSONException, EMFUserError {
+
+		List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null);
+		for (DocumentParameters objParameter : parameters) {
+			// SETTING DEFAULT VALUE IF NO PRESENT IN JSON SUBMIT PARAMETER
+			if (jsonParameters.isNull(objParameter.getId())) {
+				if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
+					if (objParameter.getDefaultValues().size() == 1) {
+						// SINGLE
+						Object value;
+						// DEFAULT DATE FIELD : {date#format}
+						if (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
+							// CONVERT DATE FORMAT FROM DEFAULT TO LOCAL
+							value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
+									GeneralUtilities.getLocaleDateFormat(permanentSession),
+									objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0]);
+						} else {
+							value = objParameter.getDefaultValues().get(0).getValue();
+						}
+						jsonParameters.put(objParameter.getId(), value);
+						jsonParameters.put(objParameter.getId() + "_field_visible_description", value);
+					} else {
+						// MULTIPLE
+						ArrayList<String> paramValArr = new ArrayList<String>();
+						String paramDescStr = "";
+						for (int i = 0; i < objParameter.getDefaultValues().size(); i++) {
+							paramValArr.add(objParameter.getDefaultValues().get(i).getValue().toString());
+							paramDescStr = paramDescStr + objParameter.getDefaultValues().get(i).getValue().toString();
+							if (i < objParameter.getDefaultValues().size() - 1) {
+								paramDescStr = paramDescStr + ";";
+							}
+						}
+						jsonParameters.put(objParameter.getId(), paramValArr);
+						jsonParameters.put(objParameter.getId() + "_field_visible_description", paramDescStr);
+					}
+				}
+
+			}
+			// SUBMIT LOV SINGLE MANDATORY PARAMETER
+			if (objParameter.isMandatory()) {
+				Integer paruseId = objParameter.getParameterUseId();
+				ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
+				if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
+						&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)
+						&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().size() == 0)) {
+					HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, obj,
+							objParameter.getAnalyticalDocumentParameter(), req);
+
+					ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
+							.get(DocumentExecutionUtils.DEFAULT_VALUES);
+
+					if (defaultValues != null && defaultValues.size() == 1 && !defaultValues.get(0).containsKey("error")) {
+						jsonParameters.put(objParameter.getId(), defaultValues.get(0).get("value"));
+						jsonParameters.put(objParameter.getId() + "_field_visible_description", defaultValues.get(0).get("value"));
+					}
+				}
+			}
+			// CONVERT DATE PARAMETER FROM LOCALE TO SERVER FORMAT
+			if (!objParameter.isMultivalue() && objParameter.getParType().equals("DATE")) {
+				if (!jsonParameters.isNull(objParameter.getId())) {
+					if (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format") != null) {
+						String date = convertDate(GeneralUtilities.getLocaleDateFormat(permanentSession),
+								SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"),
+								jsonParameters.getString(objParameter.getId()));
+						jsonParameters.put(objParameter.getId(), date);
+					}
+				}
+			}
+			// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
+			if (!jsonParameters.isNull(objParameter.getId())) {
+				Integer paruseId = objParameter.getParameterUseId();
+				ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
+				if (jsonParameters.getString(objParameter.getId()).startsWith("[") && jsonParameters.getString(objParameter.getId()).endsWith("]")
+						&& parameterUse.getValueSelection().equals("man_in") && objParameter.getParType().equals("STRING")) {
+					int strLength = jsonParameters.getString(objParameter.getId()).toString().length();
+					String jsonParamRet = jsonParameters.getString(objParameter.getId()).toString().substring(1, strLength - 1);
+					jsonParameters.put(objParameter.getId(), jsonParamRet);
+				}
+
+			}
 
 		}
 
-		logger.debug("OUT");
-		return Response.ok(resultAsMap).build();
+		return jsonParameters;
 	}
 
 	/**
@@ -350,9 +344,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			boolean showParameterLov = true;
 
-			// Parameters NON tree
+			// Parameters NO TREE
 			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
-					&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)) {
+					&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)
+					&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().size() == 0)) {
 
 				HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
 						objParameter.getAnalyticalDocumentParameter(), req);
@@ -426,6 +421,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("dependsOn", objParameter.getDependencies());
 			parameterAsMap.put("dataDependencies", objParameter.getDataDependencies());
 			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
+			parameterAsMap.put("lovDependencies", (objParameter.getLovDependencies() != null) ? objParameter.getLovDependencies() : new ArrayList<>());
 
 			// load DEFAULT VALUE if present and if the parameter value is empty
 			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {

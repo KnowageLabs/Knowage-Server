@@ -26,7 +26,9 @@
 					 //console.log('item ' , item); 
 					 var params = documentExecuteServices.decodeRequestStringToJson(item.vpValueParams);
 					 //disable visual correlation
-					 execProperties.initResetFunctionDependency.status=false;
+					 execProperties.initResetFunctionVisualDependency.status=false;
+					 execProperties.initResetFunctionDataDependency.status=false;
+					 execProperties.returnFromDataDepenViewpoint.status = true;
 					 docExecute_urlViewPointService.fillParametersPanel(params);
 					 docExecute_paramRolePanelService.returnToDocument();
 					 
@@ -42,7 +44,9 @@
 					 //var params = documentExecuteServices.decodeRequestStringToJson(decodeURIComponent(item.vpValueParams));
 					 var params = documentExecuteServices.decodeRequestStringToJson(item.vpValueParams);
 					//disable visual correlation
-					 execProperties.initResetFunctionDependency.status=false;
+					 execProperties.initResetFunctionVisualDependency.status=false;
+					 execProperties.initResetFunctionDataDependency.status=false;
+					 execProperties.returnFromDataDepenViewpoint.status = true;
 					 docExecute_urlViewPointService.fillParametersPanel(params);
 					 docExecute_urlViewPointService.frameLoaded = false;
 					 docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, stringfyFromGetUrlParameters(params));

@@ -112,7 +112,7 @@
 								//TODO : parse method !!
 								dateToSubmit = $filter('date')(parameter.parameterValue, 
 										this.parseDateTemp(sbiModule_config.localizedDateFormat));
-								console.log('date to sub ' + dateToSubmit);
+								//console.log('date to sub ' + dateToSubmit);
 								jsonDatumValue=dateToSubmit;
 								jsonDatumDesc=dateToSubmit;							
 							}else{
@@ -364,12 +364,7 @@
 				// or server returns response with an error status.
 			});			
 		};	
-		
-		dee.exportKPITo = function(format){
-				var frame = window.frames["documentFrame"];
-				frame.contentWindow.exportKpi(format)
-			}
-		 
+			
 		dee.exportationHandlers = {	
 			'CHART': [
 				 {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportDocumentChart('PDF')} }
@@ -421,10 +416,7 @@
 			            {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportNetworkTo('pdf')} }
 			            ,{'description' : sbiModule_translate.load('sbi.execution.PngExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportNetworkTo('png')} }
 			            ,{'description' : sbiModule_translate.load('sbi.execution.GraphmlExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportNetworkTo('graphml')} }
-			            ],
-            'KPI' : [
- 				 	{'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportKPITo('PDF')} }
- 				 ]
+			            ]
 		};
 	});
 	
@@ -575,7 +567,7 @@
 								//console.log('Date to fill ' , params[parameter.urlName]);
 								parameter.parameterValue= new Date(params[parameter.urlName]);
 							}else if(parameter.type=='STRING'){
-								parameter.parameterValue = params[parameter.urlName];
+								parameter.parameterValue = params[parameter.urlName];									
 								if(parameter.defaultValues && parameter.defaultValues.length > 0) {
 									var parameterValues = parameter.parameterValue;
 									var parArr = parameterValues.split(';');
@@ -596,7 +588,10 @@
 					}
 					docExecute_dependencyService.visualCorrelationWatch(parameter);
 					docExecute_dependencyService.dataDependenciesCorrelationWatch(parameter);
+					
 				}
+				
+				
 			}
 		};
 		
@@ -622,7 +617,8 @@
 					//setting default value				
 					serviceScope.buildObjForFillParameterPanel(response.data.filterStatus);
 					// Enable visualcorrelation
-					execProperties.initResetFunctionDependency.status=true;
+					execProperties.initResetFunctionVisualDependency.status=true;
+					execProperties.initResetFunctionDataDependency.status=true;
 
 					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
 				}else{
@@ -745,7 +741,7 @@
 			execProperties.currentView.status = 'DOCUMENT';
 			execProperties.parameterView.status='';
 			execProperties.isParameterRolePanelDisabled.status = this.checkParameterRolePanelDisabled();
-			execProperties.returnFromViewpoint.status = true;
+			execProperties.returnFromVisualViewpoint.status = true;
 		};
 
 		this.isExecuteParameterDisabled = function() {
@@ -783,13 +779,11 @@
 			function(execProperties, documentExecuteServices,sbiModule_restServices) {
 	
 		var serviceScope = this;
-
-
 		/*
-		 * BUILD DATA DEPENDENCIES 
+		 * DATA DEPENDENCIES 
 		 */
 		this.buildDataDependenciesMap = function(parameters){
-			console.log('parameters ' , parameters);
+			//console.log('parameters ' , parameters);
 			for(var i=0; i<parameters.length ; i++){
 				if(parameters[i].dataDependencies && parameters[i].dataDependencies.length>0){						
 					for(var k=0; k<parameters[i].dataDependencies.length; k++){ 
@@ -817,14 +811,12 @@
 				var documentParamDependence = execProperties.parametersData.documentParameters[this.getRowIdfromUrlName(key)];
 				serviceScope.observableDataDependenciesArray.push(documentParamDependence);	
 			}
-
-			console.log('observableDataDependenciesArray ' , serviceScope.observableDataDependenciesArray);
+			//console.log('observableDataDependenciesArray ' , serviceScope.observableDataDependenciesArray);
 		};
 		
 		this.dataDependenciesCorrelationWatch = function(value){
-
-			console.log('modify dependency : ' , value);
-			console.log('element key '+ value.urlName , serviceScope.dataDependenciesMap[value.urlName]);
+			//console.log('modify dependency : ' , value);
+			//console.log('element key '+ value.urlName , serviceScope.dataDependenciesMap[value.urlName]);
 			if(serviceScope.dataDependenciesMap[value.urlName]){
 				for(var k=0; k<serviceScope.dataDependenciesMap[value.urlName].length; k++){
 					var dataDependenciesElementMap = serviceScope.dataDependenciesMap[value.urlName][k];
@@ -834,7 +826,7 @@
 						objPost.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
 						objPost.ROLE=execProperties.selectedRole.name;
 						objPost.PARAMETER_ID=dataDependenciesElementMap.parameterToChangeUrlName;
-						console.log('mode parameter type ' + dataDependenciesElementMap.lovParameterMode);
+						//console.log('mode parameter type ' + dataDependenciesElementMap.lovParameterMode);
 						objPost.MODE='simple';
 						objPost.PARAMETERS=documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
 						//objPost.PARAMETERS=JSON.parse('{"param1":"","param1_field_visible_description":"","param2":["South West"],"param2_field_visible_description":"South West"}');
@@ -854,9 +846,8 @@
 										}
 										break;
 									}
-
 								}
-								//set to enabled the correct default value 
+								//Set to enabled the correct default value 
 								if(data.result.root && data.result.root.length>0){
 									for(var p=0; p<data.result.root.length;p++){   
 										//console.log("parameter ID : " + data.idParam + " set value " + data.result.root[p].value);
@@ -875,7 +866,6 @@
 
 																execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
 																		[data.result.root[0].value]	: data.result.root[0].value;																	
-
 															}
 														}	  
 													} 
@@ -885,146 +875,265 @@
 										}	   
 									}
 								}else{
-									//if no element in root setting empty parameter value
+									//If no element in root setting empty parameter value
 									execProperties.parametersData.documentParameters[z].parameterValue = [];
-
 								}  
-								// set parameter ready
 							}
 						})
 						.error(function(data, status, headers, config) {});
 						//END REST CALL
-					
 					}else{
 						console.log('IS TREE .... CLEAR PARAM ID ' + dataDependenciesElementMap.parameterToChangeUrlName);
 						for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
 							if(execProperties.parametersData.documentParameters[z].urlName==dataDependenciesElementMap.parameterToChangeUrlName){
-								console.log('reset ... ' + execProperties.parametersData.documentParameters[z].urlName);
-								execProperties.parametersData.documentParameters[z].children = [];
-								documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[z]);
-
+								if(execProperties.initResetFunctionDataDependency.status){
+									console.log('Reset TREE PARAM ... ' + execProperties.parametersData.documentParameters[z].urlName);
+									execProperties.parametersData.documentParameters[z].children = [];
+									documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[z]);									
+								}
 								break;
 							}
 						}
+						if(execProperties.returnFromDataDepenViewpoint.status){
+							execProperties.initResetFunctionDataDependency.status=true;
+							execProperties.returnFromDataDepenViewpoint.status = false;
+						}
 					}
 				}	
-			 }//check undefined	
-		};
-		
-		/*
-		 * BUILD VISUAL DEPENDENCIES
+				
+			 }//check undefined		
+		  };
+			 
+	    /*
+		 * LOV DEPENDENCIES
 		 */
-		this.buildVisualCorrelationMap = function(parameters){
-
+		this.buildLovCorrelationMap = function(parameters){
 			for(var i=0; i<parameters.length ; i++){
-				if(parameters[i].visualDependencies && parameters[i].visualDependencies.length>0){						
-					for(var k=0; k<parameters[i].visualDependencies.length; k++){
-						var dependency = parameters[i].visualDependencies[k];
+				if(parameters[i].lovDependencies && parameters[i].lovDependencies.length>0){						
+					for(var k=0; k<parameters[i].lovDependencies.length; k++){
+						var dependency = {};
+						dependency.objParFatherUrlName = parameters[i].lovDependencies[k];
 						dependency.parameterToChangeUrlName = parameters[i].urlName;
-						dependency.parameterToChangeId = this.getRowIdfromUrlName(parameters[i].urlName); 
+						//dependency.parameterToChangeId = this.getRowIdfromUrlName(parameters[i].urlName); 
 						//build visualCorrelationMap : Key is fatherUrlName 
-						var keyMap = dependency.objParFatherUrlName;
-						if (keyMap in serviceScope.visualCorrelationMap) {
-							var dependenciesArr =  serviceScope.visualCorrelationMap[keyMap];
+						var keyMap = dependency.objParFatherUrlName; // 
+						if (keyMap in serviceScope.lovCorrelationMap) {
+							var dependenciesArr =  serviceScope.lovCorrelationMap[keyMap];
 							dependenciesArr.push(dependency);
-							serviceScope.visualCorrelationMap[keyMap] = dependenciesArr;
-						} else {
-							var dependenciesArr = new Array
-							dependenciesArr.push(dependency);
-							serviceScope.visualCorrelationMap[keyMap] = dependenciesArr;
-						}						
+							serviceScope.lovCorrelationMap[keyMap] = dependenciesArr;
+							} else {
+								var dependenciesArr = new Array
+								dependenciesArr.push(dependency);
+								serviceScope.lovCorrelationMap[keyMap] = dependenciesArr;
+							}						
 					}
 				}
 			}
-			for (var key in serviceScope.visualCorrelationMap) {
+			for (var key in serviceScope.lovCorrelationMap) {
 				//Fill Array VISUAL DEPENDENCIES
-				var documentParamVisualDependency = execProperties.parametersData.documentParameters[this.getRowIdfromUrlName(key)];
-				serviceScope.observableVisualParameterArray.push(documentParamVisualDependency);	
+				var documentParamLovDependency = execProperties.parametersData.documentParameters[this.getRowIdfromUrlName(key)];
+				serviceScope.observableLovParameterArray.push(documentParamLovDependency);	
 			}
-		};
-	
-		this.visualCorrelationWatch = function(value){
-			//console.log('visual correlation : ' , value);
-			if(serviceScope.visualCorrelationMap[value.urlName]){
-				var forceExit=false;
-				for(var k=0; k<serviceScope.visualCorrelationMap[value.urlName].length; k++){
-					if(forceExit){
-						break;
-					}
-					var visualDependency=serviceScope.visualCorrelationMap[value.urlName][k];
-					//id document Parameter to control 
-					var idDocumentParameter = visualDependency.parameterToChangeId;
-					//value to compare
-					var compareValueArr = visualDependency.compareValue.split(",");
-					for(var z=0; z<compareValueArr.length; z++){
-						var newValueStr = value.parameterValue;
-						var compareValueStr=compareValueArr[z].trim();
-						//conditions
-						var condition = false;
-						if( Object.prototype.toString.call( newValueStr ) === '[object Array]' ) {
-							if(visualDependency.operation=='contains') {
-								for(var l=0; l<newValueStr.length; l++){
-									if(compareValueStr==newValueStr[l]){
-										condition=true;
-										break;
+		}
+
+		this.lovCorrelationWatch = function(value){
+			//console.log('LOV correlation : ' , value);
+			if(serviceScope.lovCorrelationMap[value.urlName]){
+				for(var k=0; k<serviceScope.lovCorrelationMap[value.urlName].length; k++){
+					var dataDependenciesElementMap = serviceScope.lovCorrelationMap[value.urlName][k];
+					var objPost = {};
+					objPost.OBJECT_LABEL = execProperties.executionInstance.OBJECT_LABEL;
+					objPost.ROLE=execProperties.selectedRole.name;
+					objPost.PARAMETER_ID=dataDependenciesElementMap.parameterToChangeUrlName;
+					objPost.MODE='simple';
+					objPost.PARAMETERS=this.buildParameterLovDependencies();
+					sbiModule_restServices.promisePost("1.0/documentExeParameters",	"getParameters", objPost)
+						.then(
+							function(response, status, headers, config) {
+						   //console.log('execProperties parameters data : ', execProperties.parametersData.documentParameters)
+						   for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
+								if(execProperties.parametersData.documentParameters[z].urlName==response.data.idParam){
+									execProperties.parametersData.documentParameters[z].defaultValues = [];
+									//BUILD DEAFULT VALUE  
+									var defaultValueArrCache = [];
+									for(var k=0; k<response.data.result.root.length; k++){
+										response.data.result.root[k].isEnabled = true;
+										execProperties.parametersData.documentParameters[z].defaultValues.push(response.data.result.root[k]);
+										defaultValueArrCache.push(response.data.result.root[k].value);											
+									}
+									//Remove parameter value if not present in default value (clean operation)
+									//MULTIVALUE
+									if( Object.prototype.toString.call( execProperties.parametersData.documentParameters[z].parameterValue ) === '[object Array]' ) {
+										var paramValueArrCache= [];
+										angular.copy(execProperties.parametersData.documentParameters[z].parameterValue,paramValueArrCache);
+										for(var u=0; u<paramValueArrCache.length; u++){	
+											var index = execProperties.parametersData.documentParameters[z].parameterValue.indexOf(paramValueArrCache[u]);
+											if(defaultValueArrCache.indexOf(paramValueArrCache[u]) === -1) {
+												execProperties.parametersData.documentParameters[z].parameterValue.splice(index, 1);
+											}
+										}
+										//console.log('params Value multi after ' , execProperties.parametersData.documentParameters[z].parameterValue);
+									}else{
+										//SINGLEVALUE
+										if(defaultValueArrCache.indexOf(execProperties.parametersData.documentParameters[z].parameterValue) === -1) {
+											execProperties.parametersData.documentParameters[z].parameterValue='';
+										}
+										//console.log('params Value single after ' , execProperties.parametersData.documentParameters[z].parameterValue);
 									}
 								}
-							}
-							else { //not contains
-								condition=true; 
-								for(var l=0; l<newValueStr.length; l++){
-									if(compareValueStr==newValueStr[l]){
-										condition=false;
-										break;
-									}
-								}
-							}
-						}else{
-							condition = (visualDependency.operation=='contains') ? 
-									(compareValueStr==newValueStr) : condition=(compareValueStr!=newValueStr);
+						   }
+					   	},function(response, status, headers, config) {
+							var lovParamName = dataDependenciesElementMap.parameterToChangeUrlName;
+					   		documentExecuteServices.showToast('Error LOV "'+ lovParamName +'" : ' + response.data.errors[0].message);
+					   		var idRowParameter = serviceScope.getRowIdfromUrlName(lovParamName);
+							execProperties.parametersData.documentParameters[idRowParameter].defaultValues = [];
+							execProperties.parametersData.documentParameters[idRowParameter].parameterValue = [];
 						}
-
-//						var condition = (visualDependency.operation=='contains') 
-//						? (compareValueStr==newValueStr) : condition=(compareValueStr!=newValueStr); 
-
-						if(condition){
-							execProperties.parametersData.documentParameters[idDocumentParameter].label=visualDependency.viewLabel;
-							execProperties.parametersData.documentParameters[idDocumentParameter].visible=true;
-							//Exit if one conditions is verify
-							/* BUG FIX LOAD DEFAULT AND VIEWPOIN PARAMS
-							 No resetParameter for DEFAULT and Viewpoin  
-							 */
-							//console.log('reset for ' , execProperties.parametersData.documentParameters[idDocumentParameter]);
-							if(execProperties.initResetFunctionDependency.status){
-								documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[idDocumentParameter]);
-							}
-
-							forceExit = true;
-							break;
-						}else{
-							execProperties.parametersData.documentParameters[idDocumentParameter].visible=false;
-						}								
-					}
+					   );	
 				}
-			}  
-
-			//if return to viewpoin enable visual correlation 
-			if(execProperties.returnFromViewpoint.status){
-				execProperties.initResetFunctionDependency.status=true;
-				execProperties.returnFromViewpoint.status = false;
+		}
+	}				
+	/*
+	 * VISUAL DEPENDENCIES
+	 */
+	this.buildVisualCorrelationMap = function(parameters){
+		for(var i=0; i<parameters.length ; i++){
+			if(parameters[i].visualDependencies && parameters[i].visualDependencies.length>0){						
+				for(var k=0; k<parameters[i].visualDependencies.length; k++){
+					var dependency = parameters[i].visualDependencies[k];
+					dependency.parameterToChangeUrlName = parameters[i].urlName;
+					dependency.parameterToChangeId = this.getRowIdfromUrlName(parameters[i].urlName); 
+					//build visualCorrelationMap : Key is fatherUrlName 
+					var keyMap = dependency.objParFatherUrlName;
+					if (keyMap in serviceScope.visualCorrelationMap) {
+						var dependenciesArr =  serviceScope.visualCorrelationMap[keyMap];
+						dependenciesArr.push(dependency);
+						serviceScope.visualCorrelationMap[keyMap] = dependenciesArr;
+					} else {
+						var dependenciesArr = new Array
+						dependenciesArr.push(dependency);
+						serviceScope.visualCorrelationMap[keyMap] = dependenciesArr;
+					}						
+				}
 			}
-		};
-	
-		//GET ROW ID FROM URL NAME
-		this.getRowIdfromUrlName = function(urlName){
-			var row=0;
-			for(var i=0; i<execProperties.parametersData.documentParameters.length; i++ ){
-				if(execProperties.parametersData.documentParameters[i].urlName == urlName){
-					row = i;
+		}
+		for (var key in serviceScope.visualCorrelationMap) {
+			//Fill Array VISUAL DEPENDENCIES
+			var documentParamVisualDependency = execProperties.parametersData.documentParameters[this.getRowIdfromUrlName(key)];
+			serviceScope.observableVisualParameterArray.push(documentParamVisualDependency);	
+		}
+	};
+
+	this.visualCorrelationWatch = function(value){
+		//console.log('visual correlation : ' , value);
+		if(serviceScope.visualCorrelationMap[value.urlName]){
+			var forceExit=false;
+			for(var k=0; k<serviceScope.visualCorrelationMap[value.urlName].length; k++){
+				if(forceExit){
 					break;
 				}
+				var visualDependency=serviceScope.visualCorrelationMap[value.urlName][k];
+				//id document Parameter to control 
+				var idDocumentParameter = visualDependency.parameterToChangeId;
+				//value to compare
+				var compareValueArr = visualDependency.compareValue.split(",");
+				for(var z=0; z<compareValueArr.length; z++){
+					var newValueStr = value.parameterValue;
+					var compareValueStr=compareValueArr[z].trim();
+					//conditions
+					var condition = false;
+					if( Object.prototype.toString.call( newValueStr ) === '[object Array]' ) {
+						if(visualDependency.operation=='contains') {
+							for(var l=0; l<newValueStr.length; l++){
+								if(compareValueStr==newValueStr[l]){
+									condition=true;
+									break;
+								}
+							}
+						}
+						else { //not contains
+							condition=true; 
+							for(var l=0; l<newValueStr.length; l++){
+								if(compareValueStr==newValueStr[l]){
+									condition=false;
+									break;
+								}
+							}
+						}
+					}else{
+						condition = (visualDependency.operation=='contains') ? 
+								(compareValueStr==newValueStr) : condition=(compareValueStr!=newValueStr);
+					}
+
+					if(condition){
+						execProperties.parametersData.documentParameters[idDocumentParameter].label=visualDependency.viewLabel;
+						execProperties.parametersData.documentParameters[idDocumentParameter].visible=true;
+						//Exit if one conditions is verify
+						/* BUG FIX LOAD DEFAULT AND VIEWPOIN PARAMS
+						 No resetParameter for DEFAULT and Viewpoin  
+						 */
+						//console.log('reset for ' , execProperties.parametersData.documentParameters[idDocumentParameter]);
+						if(execProperties.initResetFunctionVisualDependency.status){
+							documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[idDocumentParameter]);
+						}
+						forceExit = true;
+						break;
+					}else{
+						execProperties.parametersData.documentParameters[idDocumentParameter].visible=false;
+					}								
+				}
 			}
-			return row;
-		};
+		}  
+
+		//if return to viewpoin enable visual correlation 
+		if(execProperties.returnFromVisualViewpoint.status){
+			execProperties.initResetFunctionVisualDependency.status=true;
+			execProperties.returnFromVisualViewpoint.status = false;
+		}
+	};
+
+	//GET ROW ID FROM URL NAME
+	this.getRowIdfromUrlName = function(urlName){
+		var row=0;
+		for(var i=0; i<execProperties.parametersData.documentParameters.length; i++ ){
+			if(execProperties.parametersData.documentParameters[i].urlName == urlName){
+				row = i;
+				break;
+			}
+		}
+		return row;
+	};		
+		
+	/* Lov dependencies : build the parameters to submit for getParameters service :
+	 * From default and viewpoint the parameters are object array ([{'value':'Food'},{'description':'Food'}])
+	 * For getParameters service parameters are array of value ['Food','Drink']
+	 * 
+	 */
+	this.buildParameterLovDependencies = function(){
+	 var obj = {};
+		if(execProperties.parametersData.documentParameters && execProperties.parametersData.documentParameters.length>0
+				&& execProperties.parametersData.documentParameters[0].parameterValue
+				&& execProperties.parametersData.documentParameters[0].parameterValue.length>0
+				&& execProperties.parametersData.documentParameters[0].parameterValue[0].value){
+			
+			var objToSend = execProperties.parametersData.documentParameters;
+			for(var l=0; l<execProperties.parametersData.documentParameters.length; l++){
+				var paramValueArr = execProperties.parametersData.documentParameters[l].parameterValue;
+				var paramValueArrNew = [];
+				if(execProperties.parametersData.documentParameters[l].parameterValue){
+					for(var t=0; t<execProperties.parametersData.documentParameters[l].parameterValue.length; t++){
+						paramValueArrNew.push(execProperties.parametersData.documentParameters[l].parameterValue[t].value);
+					}
+					objToSend[l].parameterValue = paramValueArrNew;										
+				}
+			}
+			obj=documentExecuteServices.buildStringParameters(objToSend);
+		}else{
+			obj=documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters);
+		}
+		return obj;
+	};
+		
+		
 	});
 })();

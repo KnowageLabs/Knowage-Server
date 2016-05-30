@@ -155,7 +155,7 @@
 				 	ng-if="showDefaultValueAreValid(parameter) && parameter.selectionType=='COMBOBOX' && parameter.multivalue" > 
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value"
 					  ng-if="defaultParameter.isEnabled">
-					{{::defaultParameter.label}}
+					{{defaultParameter.label}}
 				</md-option>
 			</md-select>
 			<!-- single -->
@@ -163,7 +163,7 @@
 				 	ng-if="showDefaultValueAreValid(parameter) && parameter.selectionType=='COMBOBOX' && !parameter.multivalue"> 
 				<md-option></md-option>
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
-					{{::defaultParameter.label}}
+					{{defaultParameter.label}}
 				</md-option>
 			</md-select>
 		

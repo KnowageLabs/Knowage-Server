@@ -120,6 +120,8 @@
 		$scope.dependenciesService.observableDataDependenciesArray = [];
 		$scope.dependenciesService.visualCorrelationMap = {};
 		$scope.dependenciesService.dataDependenciesMap = {};
+		$scope.dependenciesService.observableLovParameterArray = [];
+		$scope.dependenciesService.lovCorrelationMap = {};
 		
 		/*
 		 * BUILD CORRELATION
@@ -128,9 +130,12 @@
 		$scope.buildCorrelation = function(parameters){			
 			docExecute_dependencyService.buildVisualCorrelationMap(parameters);
 			docExecute_dependencyService.buildDataDependenciesMap(parameters);
+			docExecute_dependencyService.buildLovCorrelationMap(parameters);
 			//INIT VISUAL CORRELATION PARAMS
 			for(var i=0; i<parameters.length; i++){
 				docExecute_dependencyService.visualCorrelationWatch(parameters[i]);
+				docExecute_dependencyService.lovCorrelationWatch(parameters[i]);
+				
 			}
 		};
 				
@@ -157,6 +162,30 @@
 //        	}
 //        }, true);
 //		
+		
+		
+		
+		
+		 /*
+		  * WATCH ON LOV DEPENDENCIES PARAMETER OBJECT
+		  */
+		  $scope.$watch( function() {
+			  return $scope.dependenciesService.observableLovParameterArray;
+			},
+			function(newValue, oldValue) {
+				if (!angular.equals(newValue, oldValue)) {
+					for(var i=0; i<newValue.length; i++){
+						if(oldValue[i] && (!angular.equals(newValue[i].parameterValue, oldValue[i].parameterValue)) ){
+							docExecute_dependencyService.lovCorrelationWatch(newValue[i]);
+							break;
+						}
+						
+					}
+				}
+			},true);	
+		
+		
+		
 		
 	 /*
 	  * WATCH ON VISUAL DEPENDENCIES PARAMETER OBJECT

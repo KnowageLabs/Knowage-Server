@@ -297,8 +297,11 @@ try{
 	 				isParameterRolePanelDisabled : {status : false},
 	 				showParametersPanel : {status : false},
 	 				hideProgressCircular : {status : true},
- 					initResetFunctionDependency : {status : false},
- 					returnFromViewpoint : {status : false}
+ 					//FLAGS FOR RESET DEPENDENCIES PARAMETERS VALUE 
+	 				initResetFunctionVisualDependency : {status : false},
+ 					returnFromVisualViewpoint : {status : false},
+ 					initResetFunctionDataDependency : {status : false},
+ 					returnFromDataDepenViewpoint : {status : false}
 				};
 				return obj;
 			});
