@@ -62,5 +62,5 @@
 	<body id="cas" >
 		<div class="container">
 			<div class="card card-container">
-				<img id="profile-img" class="logoHeader" src='/knowage/themes/sbi_default/img/wapp/logoKnowage.png' />
+				<img id="profile-img" class="logoHeader" src='/knowage/themes/sbi_default/img/wapp/logo.png' />
 					<p id="profile-name" class="profile-name-card"/>
