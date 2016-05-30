@@ -108,12 +108,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		     <md-input-container class="md-block" flex-gt-sm style = "width:70%;">
 		    	 <label>{{translate.load('sbi.alert.event.before.trigger')}}</label>
 		  		   	<input ng-model="alert.eventBeforeTriggerAction"  type="number" step="1" min="0"/>
-		    	 <div class="hint" ng-if="showHints">###</div>
 		     </md-input-container>
   		</md-whiteframe>
 
 
-  		<action-maker flex ng-if="listenerIsSelected()"   ng-model="alert.jsonOptions" template-url="alert.alertListener.template" is-valid="isValidListener"></action-maker>
+  		<action-maker flex ng-if="listenerIsSelected()" ng-model="alert.jsonOptions" template-url="alert.alertListener.template" is-valid="isValidListener"></action-maker>
 
 			 </detail>
 </angular-list-detail>
