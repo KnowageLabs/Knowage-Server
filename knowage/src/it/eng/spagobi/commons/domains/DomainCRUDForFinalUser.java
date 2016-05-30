@@ -23,6 +23,7 @@ import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
@@ -42,10 +43,12 @@ import javax.ws.rs.core.MediaType;
  * physical functionality
  */
 @Path("/domainsforfinaluser")
+@ManageAuthorization
 public class DomainCRUDForFinalUser extends DomainCRUD {
 
 	@Override
 	@GET
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	@Path("/listValueDescriptionByType")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getListDomainsByType(@Context HttpServletRequest req) {
