@@ -6,7 +6,12 @@
 			</div>
 		</md-toolbar>
 	<div layout="row" >
-	<div flex=50 >
+	<angular-table
+		layout-fill id="rolekpiCategory_id" ng-model="listCategories"
+		columns='[{"label":"NAME","name":"VALUE_NM","size":"50px"} ]'
+				selected-item="categoriesSelected" highlights-selected-item=true
+				multi-select="true"> </angular-table>
+	<!--  <div flex=50 >
 		<md-whiteframe class="md-whiteframe-4dp" layout-margin > 
 		<div id="lista">
 			<div layout="row" layout-wrap>
@@ -27,7 +32,7 @@
 		</div>
 		</md-checkbox>
 		</md-whiteframe>
-	</div>
+	</div>-->
 	</div>
 </md-card>	
 </md-content>	

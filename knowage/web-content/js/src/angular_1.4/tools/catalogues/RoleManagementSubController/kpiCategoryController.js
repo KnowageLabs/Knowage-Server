@@ -30,7 +30,6 @@ function kpiCategoryControllerFunction(sbiModule_translate, sbiModule_restServic
 		sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=KPI_KPI_CATEGORY")
 		.then(function(response){ 
 			angular.copy(response.data,$scope.listCategories);
-			console.log(response.data);
 		},function(response){
 		});
 	}

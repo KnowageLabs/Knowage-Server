@@ -315,9 +315,9 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 			for(var i=0;i<response.data.length;i++){
 				var index =$scope.indexInList(response.data[i].categoryId, $scope.listCategories,"VALUE_ID");
 				if(index!=-1){
-					var obj = {};
-					obj["VALUE_ID"] = response.data[i].categoryId;
-					$scope.categoriesSelected.push(obj)
+			//		var obj = {};
+			//		obj["VALUE_ID"] = response.data[i].categoryId;
+					$scope.categoriesSelected.push($scope.listCategories[index])
 				}
 				var index =$scope.indexInList(response.data[i].categoryId, $scope.roleDataSetCategories,"VALUE_ID");
 				if(index!=-1){
