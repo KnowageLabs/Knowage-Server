@@ -156,7 +156,7 @@ public class SimpleRestClient {
 		}
 
 		logger.debug("Rest query status "+response.getStatus());
-		logger.debug("Rest query status info "+response.getStatusInfo());
+		//logger.debug("Rest query status info "+response.getStatusInfo());
 		logger.debug("Rest query status getReasonPhrase "+response.getResponseStatus().getReasonPhrase());
 		logger.debug("OUT");
 		return response;
