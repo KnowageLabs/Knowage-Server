@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,19 +11,20 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.domains;
 
-import it.eng.spago.base.Constants;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.DomainJSONSerializer;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,10 +45,11 @@ import org.json.JSONObject;
  *
  */
 @Path("/domains")
-public class DomainCRUD {
+public class DomainCRUD extends AbstractSpagoBIResource {
 
 	private static final String DOMAIN_TYPE = "DOMAIN_TYPE";
 	private static final String EXT_VERSION = "EXT_VERSION";
+	protected final String charset = "; charset=UTF-8";
 
 	static protected Logger logger = Logger.getLogger(DomainCRUD.class);
 
@@ -57,17 +59,6 @@ public class DomainCRUD {
 	public String getListDomainsByType(@Context HttpServletRequest req) {
 		IDomainDAO domaindao = null;
 		List<Domain> domains = null;
-
-		String language = (String) req.getSession().getAttribute(Constants.USER_LANGUAGE);
-		String country = (String) req.getSession().getAttribute(Constants.USER_COUNTRY);
-		Locale locale = Locale.UK;
-		if (language != null) {
-			if (country == null && language != null) {
-				locale = new Locale(language);
-			} else {
-				new Locale(language, country);
-			}
-		}
 
 		JSONArray domainsJSONArray = new JSONArray();
 		JSONObject domainsJSONObject = new JSONObject();
@@ -80,7 +71,7 @@ public class DomainCRUD {
 		try {
 			domaindao = DAOFactory.getDomainDAO();
 			domains = domaindao.loadListDomainsByType(type);
-			domainsJSONArray = translate(domains, locale);
+			domainsJSONArray = translate(domains, getLocale());
 			domainsJSONObject.put("domains", domainsJSONArray);
 
 			if ((extVersion != null) && (extVersion.equals("3"))) {
@@ -100,15 +91,15 @@ public class DomainCRUD {
 
 	}
 
-	protected JSONArray translate(List<Domain> domains, Locale locale) throws JSONException {
+	protected JSONArray translate(Collection<Domain> domains, Locale locale) throws JSONException {
 		JSONArray dialectsJSONArray = new JSONArray();
 		if (domains != null) {
-			for (int i = 0; i < domains.size(); i++) {
+			for (Domain domainObject : domains) {
 				JSONObject domain = new JSONObject();
-				domain.put(DomainJSONSerializer.VALUE_NAME, domains.get(i).getTranslatedValueName(locale));
-				domain.put(DomainJSONSerializer.VALUE_DECRIPTION, domains.get(i).getTranslatedValueDescription(locale));
-				domain.put(DomainJSONSerializer.VALUE_ID, domains.get(i).getValueId());
-				domain.put(DomainJSONSerializer.VALUE_CODE, domains.get(i).getValueCd());
+				domain.put(DomainJSONSerializer.VALUE_NAME, domainObject.getTranslatedValueName(locale));
+				domain.put(DomainJSONSerializer.VALUE_DECRIPTION, domainObject.getTranslatedValueDescription(locale));
+				domain.put(DomainJSONSerializer.VALUE_ID, domainObject.getValueId());
+				domain.put(DomainJSONSerializer.VALUE_CODE, domainObject.getValueCd());
 				dialectsJSONArray.put(domain);
 			}
 		}

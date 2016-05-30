@@ -34,9 +34,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -246,40 +244,6 @@ public class RolesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			logger.error("Error with deleting resource with id: " + id, e);
 			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id, buildLocaleFromSession(), e);
-		}
-	}
-
-	@SuppressWarnings({ "unchecked" })
-	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	@Path("/ds-categories")
-	@Produces(MediaType.APPLICATION_JSON + charset)
-	public Response getDataSetCategoriesByUser() {
-		IRoleDAO rolesDao = null;
-		Set<RoleMetaModelCategory> categories = new HashSet<RoleMetaModelCategory>();
-		try {
-			List<String> roleNames = (List<String>) getUserProfile().getRoles();
-			if (!roleNames.isEmpty()) {
-				rolesDao = DAOFactory.getRoleDAO();
-				rolesDao.setUserProfile(getUserProfile());
-				List<SbiDomains> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
-				for (String roleName : roleNames) {
-					Role role = rolesDao.loadByName(roleName);
-					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
-					for (RoleMetaModelCategory r : ds) {
-						for (SbiDomains dom : array) {
-							if (r.getCategoryId().equals(dom.getValueId())) {
-								categories.add(r);
-							}
-						}
-
-					}
-				}
-			}
-			return Response.ok(categories).build();
-		} catch (Exception e) {
-			logger.error("Impossible to get role dataset categories for user [" + getUserProfile() + "]", e);
-			throw new SpagoBIRestServiceException("Impossible to get role dataset categories for user [" + getUserProfile() + "]", buildLocaleFromSession(), e);
 		}
 	}
 
