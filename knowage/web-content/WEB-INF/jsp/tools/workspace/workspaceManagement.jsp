@@ -68,15 +68,14 @@
 							Pages for all items available in the left menu (table), e.g. Recent, Favorites, Documents, etc. 
 							@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 						-->						
-						<recent-view-workspace 		ng-show="currentOptionMainMenu.length==0 
-															|| currentOptionMainMenu=='recent'">	</recent-view-workspace>	
-						<favorites-view-workspace 	ng-show="currentOptionMainMenu=='favorites'">	</favorites-view-workspace>	
-						<documents-view-workspace 	ng-show="currentOptionMainMenu=='documents'">	</documents-view-workspace>			
-						<datasets-view-workspace 	ng-show="currentOptionMainMenu=='datasets'">	</datasets-view-workspace>
-						<models-view-workspace		ng-show="currentOptionMainMenu=='models'">	    </models-view-workspace>
-						<smartfilters-view-workspace	ng-show="currentOptionMainMenu=='smartfilters'">
-						</smartfilters-view-workspace>
-						<analysis-view-workspace 	ng-show="currentOptionMainMenu=='analysis'">	</analysis-view-workspace>	
+						<recent-view-workspace 			ng-show="currentOptionMainMenu.length==0 
+															|| currentOptionMainMenu=='recent'">			</recent-view-workspace>	
+						<favorites-view-workspace 		ng-show="currentOptionMainMenu=='favorites'">		</favorites-view-workspace>	
+						<documents-view-workspace 		ng-show="currentOptionMainMenu=='documents'">		</documents-view-workspace>			
+						<datasets-view-workspace 		ng-show="currentOptionMainMenu=='datasets'">		</datasets-view-workspace>
+						<models-view-workspace			ng-show="currentOptionMainMenu=='models'">	    	</models-view-workspace>
+						<smartfilters-view-workspace	ng-show="currentOptionMainMenu=='smartfilters'">	</smartfilters-view-workspace>
+						<analysis-view-workspace 		ng-show="currentOptionMainMenu=='analysis'">		</analysis-view-workspace>	
 						
 				</md-content>
 				

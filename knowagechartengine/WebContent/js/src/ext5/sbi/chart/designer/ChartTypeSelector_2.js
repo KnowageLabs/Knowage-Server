@@ -205,12 +205,10 @@ Ext.define
 //			 * Inform the Designer that it should take care of GUI elements on the Configuration tab of 
 //			 * the Designer. It should hide excess GUI elements on this tab and show just those that are
 //			 * necessary for the current chart type. This event is also caught inside the Designer.
-//			 */
-			
+//			 */			
 
 			globalScope.fireEvent("reconfigureConfigurationTab");
 			
-//			
 			var bottomAxisPanel = Ext.getCmp("chartBottomCategoriesContainer");
 
 			/**

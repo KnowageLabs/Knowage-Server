@@ -131,30 +131,31 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
      */
 	$scope.initializeDatasetWizard = function(dataset) {
 		
-		$scope.dataset.fileType = dataset!=undefined?dataset.fileType: "";
-		$scope.dataset.fileName = dataset!=undefined?dataset.fileName: "";
+		
+		
+		$scope.dataset.fileType = dataset!=undefined ? dataset.fileType : "";
+		$scope.dataset.fileName = dataset!=undefined ? dataset.fileName : "";
 		
 		$scope.limitPreviewChecked = false;
 		
-		$scope.dataset.csvEncoding =dataset!=undefined ? dataset.csvEncoding : "UTF-8"; 
+		$scope.dataset.csvEncoding = dataset!=undefined ? dataset.csvEncoding : "UTF-8"; 
 		$scope.dataset.csvDelimiter = dataset!=undefined ? dataset.csvDelimiter : ","; 
-		$scope.dataset.csvQuote =dataset!=undefined ?dataset.csvQuote:"\""; 
+		$scope.dataset.csvQuote = dataset!=undefined ?dataset.csvQuote : "\""; 
+		dataset ? console.log(dataset.limitRows) : null;
+		$scope.dataset.skipRows = dataset!=undefined ? Number(dataset.skipRows) : 0;
+		$scope.dataset.limitRows = dataset!=undefined ? dataset.limitRows : null;
+		$scope.dataset.xslSheetNumber = dataset!=undefined ? Number(dataset.xslSheetNumber) : 1;
 		
-		$scope.dataset.skipRows =dataset!=undefined ?Number(dataset.skipRows):0;
-		$scope.dataset.limitRows =dataset!=undefined ?Number(dataset.limitRows):0;
-		$scope.dataset.xslSheetNumber = dataset!=undefined ? Number(dataset.xslSheetNumber):1;
+		$scope.dataset.catTypeVn = dataset!=undefined ? dataset.catTypeVn : "";
+		$scope.dataset.catTypeId = dataset!=undefined ? Number(dataset.catTypeId) : null;		
 		
-		$scope.dataset.catTypeVn =  dataset!=undefined?dataset.catTypeVn: "";
-		$scope.dataset.catTypeId =dataset!=undefined?Number(dataset.catTypeId) :null;
+		$scope.dataset.id = dataset!=undefined ? dataset.id : "";
+		$scope.dataset.label = dataset!=undefined ? dataset.label : "";
+		$scope.dataset.name = dataset!=undefined ? dataset.name : "";
+		$scope.dataset.description = dataset!=undefined ? dataset.description : ""; 
+		$scope.dataset.meta = dataset!=undefined ? dataset.meta : [];
 		
-		
-		$scope.dataset.id =dataset!=undefined?dataset.id: "";
-		$scope.dataset.label =dataset!=undefined?dataset.label: "";
-		$scope.dataset.name = dataset!=undefined?dataset.name: "";
-		$scope.dataset.description =dataset!=undefined?dataset.description: ""; 
-		$scope.dataset.meta=dataset!=undefined ? dataset.meta : [];
-		
-		$scope.dataset.fileUploaded=false;
+		$scope.dataset.fileUploaded = false;
 	}
 	
 	$scope.initializeDatasetWizard();

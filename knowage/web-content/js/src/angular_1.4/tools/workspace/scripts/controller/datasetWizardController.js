@@ -1,4 +1,5 @@
 function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_user,sbiModule_config,multipartForm,$http,sbiModule_messaging ){
+	
 	$scope.fileObj={};
 	$scope.datasetWizardView=1;
 	$scope.datasetCategories = [];
@@ -8,8 +9,11 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	$scope.dsMetaValue = [];
 	$scope.category = null;
 	$scope.datasetColumns=[];
+	$scope.changingFile = false;
 	
-	
+	/**
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
 	$scope.submitStep1 = function() {
 		
 		var params = {};
@@ -17,9 +21,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		params.SBI_EXECUTION_ID = -1;
 		params.isTech = false;
 		params.showOnlyOwner = true;
-		params.showDerivedDataset = false;
-	
-		
+		params.showDerivedDataset = false;		
 		
 //			$scope.dataset.id = "";
 		$scope.dataset.type = "File";
@@ -31,12 +33,12 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		$scope.dataset.tableName = "";
 //		$scope.dataset.fileUploaded = false;
 		
-		
-		
-//			if ($scope.dataset.limitRows == null)
-//				$scope.dataset.limitRows = "";
+		if ($scope.dataset.limitRows == null)
+			$scope.dataset.limitRows = "";
 		
 		$scope.dataset.meta = JSON.stringify($scope.dataset.meta);
+		
+		//console.log($scope.dataset);
 		
 		$http
 		(
@@ -73,6 +75,9 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					angular.copy(response.data.datasetColumns,$scope.datasetColumns);
 					$scope.prepareMetaForView();
 					$scope.prepareDatasetForView();
+					
+					// Set a flag to indicate that we are not changing uploaded file any more (the 'Change file' button will appear when returning back to the Step 1.
+					$scope.changingFile = false;
 				}
 				else {
 					console.info("[ERROR]: ",sbiModule_translate.load(response.data.errors[0].message));
@@ -417,15 +422,17 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
     	multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedataset/fileupload",$scope.fileObj).success(
 
 				function(data,status,headers,config){
+					
 					if(data.hasOwnProperty("errors")){						
 						console.info("[UPLOAD]: DATA HAS ERRORS PROPERTY!");		
 						sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, 'Error!');
-					}else{
+					}
+					else {
 					
 						console.info("[UPLOAD]: SUCCESS!");
-					sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
+						sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
 					
-					$scope.file={};
+						$scope.file={};
 						$scope.dataset.fileType = data.fileType;
 						$scope.dataset.fileName = data.fileName;
 						
@@ -435,6 +442,8 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 						 */
 						$scope.prevUploadedFile = $scope.dataset.fileName;
 						$scope.dataset.fileUploaded=true;
+						$scope.changingFile = false;
+						
 					}
 				}).error(function(data, status, headers, config) {
 					console.info("[UPLOAD]: FAIL! Status: "+status);
@@ -515,7 +524,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	$scope.datasetWizStep1NextButtonTitle = function() {
 		
 		var notValidStep1 = !$scope.dataset.fileName || $scope.prevUploadedFile!=$scope.fileObj.fileName;
-		
+				
 		if ($scope.datasetWizardView==1 && notValidStep1) {
 			if (!$scope.dataset.fileName) {
 				return 'Please upload XLS or CSV file in order to proceed with the dataset creation';
@@ -557,15 +566,41 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		
 	}		
 	
+	/**
+	 * Returns boolean condition if the Next/Save button should be disabled.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
 	$scope.nextOrSaveButtonCondition = function() {
-		return ($scope.datasetWizardView==1 && (!$scope.dataset.fileName || $scope.prevUploadedFile!=$scope.fileObj.fileName)) 
-					|| ($scope.datasetWizardView==4 && ($scope.dataset.name=='' || $scope.dataset.persist && $scope.dataset.tableName==''));
+		
+		/**
+		 * scenario1: If there is already an uploaded file, but user desides to change it and then browse for another one (different from the already uploaded one). In 
+		 * combination with other scenario (criteria) it prevents going to Next step if the newly browsed file is not uploaded as well.
+		 * scenario2: If there is no uploaded file or the browsed file is not the same as the one that is uploaded previously.
+		 * scenario3: If on the Step 4, when finalizing the dataset creation user does not specify DS name or the name of the table if persisting.
+		 */
+		var step1 = $scope.datasetWizardView==1;
+		var step4 = $scope.datasetWizardView==4;
+		
+		var changingFile = $scope.changingFile==true;
+		var newUplFileDiffOldUpl = $scope.dataset.fileName!=$scope.fileObj.fileName;
+		var nameOfDSOrTableNameNotDef = $scope.dataset.name=='' || $scope.dataset.persist && $scope.dataset.tableName=='';
+		var fileNotUplOrNewOneNotUpl = !$scope.dataset.fileName || $scope.prevUploadedFile!=$scope.fileObj.fileName;
+		
+		var scenario1 = step1 && changingFile && newUplFileDiffOldUpl;
+		var scenario2 = step1 && !changingFile && fileNotUplOrNewOneNotUpl;
+		var scenario3 = step4 && nameOfDSOrTableNameNotDef;
+		
+		return scenario1 || scenario2 || scenario3;
+		
 	}
 	
 	$scope.changeUploadedFile=function(){
-		$scope.fileObj={};
-		$scope.fileObj.fileName='';
-		$scope.dataset.fileName='';
+		console.info("CHANGE FILE [IN]");
+		$scope.changingFile = true;
+//		$scope.fileObj={};
+//		$scope.fileObj.fileName='';
+//		$scope.dataset.fileName='';
+		console.info("CHANGE FILE [OUT]");
 	}
 	
 }

@@ -65,26 +65,41 @@
 			                  </md-input-container>
 						</div>
 			               
-						<div layout="row" layout-wrap ng-show="dataset.fileName==''">
-		                  	<label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.wizard.selectFile")}}:</label>
-		                  	<file-upload 	flex ng-model="fileObj" id="datasetFile" ng-click="fileChange();checkChange()" 
-			                  				title="Browse for the XLS or CSV file"></file-upload>
+						<div layout="row" layout-wrap ng-show="dataset.fileName=='' || changingFile">
+		                  	
+		                  	<label layout-align="center center" class="buttonLabel">
+		                  		{{translate.load("sbi.ds.wizard.selectFile")}}:
+	                  		</label>
+		                  	
+		                  	<file-upload 	flex ng-model="fileObj" id="datasetFile" 
+		                  					ng-click="fileChange();checkChange();fileObjTakeBackup()" 
+			                  				title="Browse for the XLS or CSV file">
+                			</file-upload>
+		                  	
 		                  	<div class="uploadButton">
 			                    <md-button 	ng-click="uploadFile()" class="md-raised" 
-			                     			ng-disabled="!fileObj.fileName" title="{{datasetWizStep1UploadButtonTitle()}}">
+			                     			ng-disabled="!fileObj.fileName || (changingFile && dataset.fileName==fileObj.fileName)" 
+			                     			title="{{datasetWizStep1UploadButtonTitle()}}">
 	                     			UPLOAD
              					</md-button>
 		                  	</div>
+		                  	
 						</div>
 						
-						<div layout="row" layout-wrap ng-if="dataset.fileName!=''">
-						 <label>Uploaded file is {{dataset.fileName}}</label>
-						 <span flex></span>
-						  
-						    <md-button 	ng-click="changeUploadedFile()" class="md-raised">
-	                     			CHANGE FILE
-             				</md-button>
-             				
+						<div layout="row" layout-wrap ng-if="dataset.fileName!='' && !changingFile">
+					 		
+					 		<label layout-align="center center" class="buttonLabel">
+					 			Uploaded file: <strong>{{dataset.fileName}}</strong>
+				 			</label>
+				 			
+					 		<span flex></span>
+						  	
+						  	<div class="uploadButton">
+							    <md-button 	ng-click="changeUploadedFile()" class="md-raised">
+		                     			CHANGE FILE
+	             				</md-button>
+           					</div>
+           					
 						</div>
 			               
 					</form>

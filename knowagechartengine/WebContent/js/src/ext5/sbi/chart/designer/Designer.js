@@ -720,38 +720,44 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */
 					//globalThis.chartTypeSelector.suspendEvents(false); 
 					
-					if (isChartSunburst || isChartWordCloud  || isChartTreemap 
-							|| isChartParallel || isChartHeatmap || isChartGauge 
-								|| isChartChord) {	
-						chartLegendCheckBox.hide();
-					} else {
-						chartLegendCheckBox.show();
+					if (chartLegendCheckBox!=undefined && chartLegendCheckBox!=null) {
+							if (isChartSunburst || isChartWordCloud  || isChartTreemap 
+								|| isChartParallel || isChartHeatmap || isChartGauge 
+									|| isChartChord) {	
+							chartLegendCheckBox.hide();
+						} else {
+							chartLegendCheckBox.show();
+						}
 					}
 					
 					/**
 					 * Show/hide the legend panel on the second configuration panel on the 
 					 * Step 2 tab of the Designer page.
 					 */
-					if (isChartSunburst || isChartWordCloud || isChartTreemap 
-							|| isChartParallel || isChartHeatmap || isChartGauge
-								|| isChartChord) {
-						chartLegend.hide();
-					} else {
-						chartLegend.show();
-					}
+					if (chartLegend!=undefined && chartLegend!=null) {
+							if (isChartSunburst || isChartWordCloud || isChartTreemap 
+								|| isChartParallel || isChartHeatmap || isChartGauge
+									|| isChartChord) {
+							chartLegend.hide();
+						} else {
+							chartLegend.show();
+						}
+					} 
 					
 					/**
 					 * Show/hide the orientation combo box on the main configuration panel
 					 * on the Step 2 tab of the Designer page.
 					 */
-					if ((isChartSunburst || isChartWordCloud || isChartTreemap 
-							|| isChartParallel || isChartHeatmap || isChartGauge 
-								|| isChartChord || isChartPie || isChartRadar 
-									|| isChartScatter)
-							|| chartLibrary == 'chartJs'){
-						chartOrientation.hide();
-					} else {
-						chartOrientation.show();
+					if (chartOrientation!=undefined && chartOrientation!=null) {
+						if ((isChartSunburst || isChartWordCloud || isChartTreemap 
+								|| isChartParallel || isChartHeatmap || isChartGauge 
+									|| isChartChord || isChartPie || isChartRadar 
+										|| isChartScatter)
+								|| chartLibrary == 'chartJs') {
+							chartOrientation.hide();
+						} else {
+							chartOrientation.show();
+						}
 					}
 					
 //					/**
@@ -769,11 +775,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * opacity on mouse over on the main configuration panel on the Step 2 tab 
 					 * of the Designer page.
 					 */
-					if (isChartSunburst) {
-						opacityOnMouseOver.show();
-					} else {
-						opacityOnMouseOver.hide();
-					}
+					if (opacityOnMouseOver!=undefined && opacityOnMouseOver!=null) {
+							if (isChartSunburst) {
+							opacityOnMouseOver.show();
+						} else {
+							opacityOnMouseOver.hide();
+						}
+					}  
 					
 					/**
 					 * Show/hide the color pallete on the second configuration panel on the 
@@ -955,7 +963,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					
 					Ext.getCmp("chartColorPalette").height = (numberOfColors+1)*20+65;
 					Ext.getCmp("chartColorPalette").update();
-					
+//					
 					/**
 					 * Update (refresh) the main configuration panel (the one on the top of 
 					 * the Step 2 tab) after selecting the particular style.
@@ -4005,21 +4013,21 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				if (chartType == "RADAR" || chartType == "SCATTER")
 				{
-					if (categoriesAsJson.length != 1)
+					if (categoriesAsJson==null || categoriesAsJson.length != 1)
 					{
 						errorMsg += LN("sbi.chartengine.validation.exactlyOneCategory"); 
 					}
 				}
 				else if (chartType == "HEATMAP" || chartType == "CHORD")
 				{
-					if (categoriesAsJson.length != 2)
+					if (categoriesAsJson==null || categoriesAsJson.length != 2)
 					{
 						errorMsg += LN("sbi.chartengine.validation.exactlyTwoCategories"); 
 					}
 				}
 				else if (chartType == "TREEMAP" || chartType=="SUNBURST")
 				{
-					if (categoriesAsJson.length < 2)
+					if (categoriesAsJson==null || categoriesAsJson.length < 2)
 					{
 						errorMsg += LN("sbi.chartengine.validation.atLeastTwoCategories");
 					}
