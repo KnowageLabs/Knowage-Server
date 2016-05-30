@@ -64,14 +64,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</list>
 			
 			<extra-button>
-			  <md-button class="md-flat" ng-click="testDataSource()"  ng-show="showMe">{{translate.load("sbi.datasource.testing")}}</md-button>
+			  <md-button class="md-flat" ng-click="testDataSource()" ng-disabled="readOnly" ng-show="showMe" >{{translate.load("sbi.datasource.testing")}}</md-button>
 		</extra-button>
 
 			<detail
 				label='(selectedDataSource.label==undefined)? "" : selectedDataSource.label'
 				save-function="saveOrUpdateDataSource"
 				cancel-function="closeForm"
-				disable-save-button="!dataSourceForm.$valid"
+				disable-save-button="!dataSourceForm.$valid || readOnly == true"
 				show-save-button="showMe"
 				show-cancel-button="showMe"
 			>

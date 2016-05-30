@@ -219,11 +219,12 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.loadSelectedDataSource = function(item) {
 		
 		if( $scope.currentUser == item.userIn){
-			
 			console.log("i am the owner of : " + item.label);
 			$scope.readOnly= false;
 
 		}else{
+			console.log("i didnt made this "+item.userIn+" is..");
+			sbiModule_messaging.showInfoMessage("You are not the owner of this catalog", 'Information');
 			$scope.readOnly= true;
 		}
 		
