@@ -64,6 +64,11 @@ public class FederationClient extends SimpleRestClient{
 		
 		
 		String respString = resp.getEntity(String.class);
+		if(respString!=null){
+			logger.debug("String returned by federation service "+respString);
+		}else{
+			logger.debug("String returned by federation service is empty");
+		}
 		
 		JSONObject jo = new JSONObject(respString);
 		
