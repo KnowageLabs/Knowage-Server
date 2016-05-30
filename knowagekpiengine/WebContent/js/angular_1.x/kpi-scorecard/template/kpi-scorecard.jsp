@@ -17,7 +17,7 @@
 
 		<md-content layout-padding layout="column">
 		<div layout="row">
-		 <b	layout-padding class="lh30">KPI</b> 
+		 <b	layout-padding class="lh30">{{translate.load('sbi.kpi.kpi')}}</b> 
 		 <kpi-semaphore-indicator flex ng-repeat="groupedKpi in perspective.groupedKpis"
 			indicator-color="groupedKpi.status" indicator-value="groupedKpi.count"></kpi-semaphore-indicator>
 		</div>
@@ -39,7 +39,7 @@
 				</md-toolbar> 
 				<div>
 				<md-content layout-padding layout="row"> 
-					<b	layout-padding class="lh30">KPI</b> 
+					<b	layout-padding class="lh30">{{translate.load('sbi.kpi.kpi')}}</b> 
 					<kpi-semaphore-indicator flex	ng-repeat="groupedKpi in goal.groupedKpis"
 						indicator-color="groupedKpi.status"	indicator-value="groupedKpi.count">
 					</kpi-semaphore-indicator> 
