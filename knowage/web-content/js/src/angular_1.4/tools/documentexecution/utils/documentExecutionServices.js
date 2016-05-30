@@ -336,6 +336,7 @@
 			var data = {};
 			var hostArr = sbiModule_config.host.split(":");
 			data.username = sbiModule_user.userId;
+			data.documentId = execProperties.executionInstance.OBJECT_ID;
 			data.documentLabel = execProperties.executionInstance.OBJECT_LABEL;
 			data.type= 'application/'+exportType;
 			data.port = hostArr[2];//8080

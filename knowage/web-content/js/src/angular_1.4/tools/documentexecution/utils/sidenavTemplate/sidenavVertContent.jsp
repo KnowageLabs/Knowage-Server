@@ -8,7 +8,8 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 %>
 	
 
-<md-toolbar class="header secondaryToolbar" ng-hide="isParameterPanelDisabled()">
+<md-toolbar class="header secondaryToolbar" ng-hide="isParameterPanelDisabled()" 
+		ng-if="!(execProperties.isFromDocumentWidget)">
 	<div layout="row" layout-align="{{sidenavCenter}}">	
 		<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
 				ng-click="clearListParametersForm();">
@@ -22,11 +23,6 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 				ng-click="urlViewPointService.getViewpoints();">
 			<i class="fa fa-pencil" style="color:white"></i>
 		</md-button>	
- 		<%} %>
-		<% 
-		if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.SEE_VIEWPOINTS_FUNCTIONALITY}) || 
-						UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0])){
-		%>			
 		<md-button title="Save" aria-label="Save Parameters" class="toolbar-button-custom" 
 				ng-click="urlViewPointService.createNewViewpoint();">
 			<i class="fa fa-floppy-o" style="color:white"></i>

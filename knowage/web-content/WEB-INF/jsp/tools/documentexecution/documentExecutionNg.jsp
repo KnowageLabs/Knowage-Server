@@ -27,25 +27,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%
 BIObject obj = null;
-Integer objId = null;
+/* 
+Integer objId = null; 
+*/
+String objId = null;
 String objLabel = null;
 IEngUserProfile profile = null;
 List<String> executionRoleNames = new ArrayList();
 
 Engine executingEngine = null;
 String engineName = null;
+String isFromDocumentWidget = null;
 
 try{
 	profile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	
 	obj = (BIObject) aServiceResponse.getAttribute(SpagoBIConstants.OBJECT);
-	objId = new Integer(request.getParameter("OBJECT_ID"));
-	objLabel = request.getParameter("OBJECT_LABEL");
+/* 	
+	objId = new Integer(request.getParameter("OBJECT_ID")); 
+*/
+	objId = (String)(request.getParameter("OBJECT_ID"));
+	objLabel = request.getParameter("OBJECT_LABEL") != null ? 
+			request.getParameter("OBJECT_LABEL") : obj.getLabel();
 	
 	executingEngine = obj.getEngine();
 	engineName = executingEngine.getName();
 	
-	executionRoleNames = ObjectsAccessVerifier.getCorrectRolesForExecution(objId, profile);
+	isFromDocumentWidget = (String)(request.getParameter("IS_FROM_DOCUMENT_WIDGET"));
+	
+	if(objId != null && !("null".equalsIgnoreCase(objId))) {
+		Integer objIdInt = new Integer(objId);
+		executionRoleNames = ObjectsAccessVerifier.getCorrectRolesForExecution(objIdInt, profile);
+	} else {
+		executionRoleNames = ObjectsAccessVerifier.getCorrectRolesForExecution(obj.getLabel(), profile);
+	}
 	
 }catch (Throwable t) {
 	
@@ -54,7 +69,9 @@ try{
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<% if(executionRoleNames.size() > 0) {%>
+<% 
+if(executionRoleNames.size() > 0) {
+%>
 	<head>
 		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 		<!-- Styles -->
@@ -100,7 +117,9 @@ try{
 		    		layout="column" md-is-locked-open="showParametersPanel.status" 
 		    		ng-include="'${pageContext.request.contextPath}/js/src/angular_1.4/tools/documentexecution/utils/sidenavTemplate/sidenavVertContent.jsp'">
 			</md-sidenav>
-			
+	<% 
+	if(isFromDocumentWidget == null || ("false").equalsIgnoreCase(isFromDocumentWidget)) {
+	%>
 			<md-toolbar class="documentExecutionToolbar" flex="nogrow">
 	            <div class="md-toolbar-tools" layout="row" layout-align="center center">
 	                <i class="fa fa-file-text-o fa-2x"></i>
@@ -114,7 +133,7 @@ try{
 		
 	                <span flex=""></span>
 	                
-	<% if(engineName.equalsIgnoreCase( SpagoBIConstants.COCKPIT_ENGINE_NAME)
+		<% if(engineName.equalsIgnoreCase( SpagoBIConstants.COCKPIT_ENGINE_NAME)
 							&& userId.equals(obj.getCreationUser())) {%>
 	                <md-button ng-if="cockpitEditing.documentMode == 'EDIT'" class="md-icon-button" ng-click="::cockpitEditing.stopCockpitEditing()"
 							aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}"
@@ -126,7 +145,7 @@ try{
 	                		title="{{::translate.load('sbi.execution.executionpage.toolbar.editcockpitdoc')}}">
 						 <md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
 					</md-button>
-	<%} %>
+		<%} %>
 					
 	                <md-button class="md-icon-button" aria-label="{{::translate.load('sbi.generic.helpOnLine')}}" ng-click="openHelpOnLine()"
 	                		title="{{::translate.load('sbi.generic.helpOnLine')}}">
@@ -231,6 +250,7 @@ try{
 					</md-button>
 				</div>
 	        </md-toolbar>
+	<%} %>
        
             <div layout="row" flex="grow">
             	<!-- "ng-show" is used instead of "ng-if" (or "ng-switch") in order to prevent the iframe reloading -->
@@ -302,6 +322,11 @@ try{
  					returnFromVisualViewpoint : {status : false},
  					initResetFunctionDataDependency : {status : false},
  					returnFromDataDepenViewpoint : {status : false}
+				<%
+				if(isFromDocumentWidget != null && "true".equalsIgnoreCase(isFromDocumentWidget)) {
+					out.print(", isFromDocumentWidget: true ");
+				}
+				%>
 				};
 				return obj;
 			});
@@ -393,7 +418,9 @@ try{
 		<script type="text/javascript" 
 				src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecutionRank.js")%>"></script>
 	</body>
-<% } else {%>
+<% 
+} else {
+%>
 	<head>
 		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	</head>

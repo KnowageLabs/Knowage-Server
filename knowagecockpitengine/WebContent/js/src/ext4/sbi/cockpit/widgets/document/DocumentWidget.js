@@ -96,6 +96,8 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidget, Sbi.cockpit.core.WidgetR
     	var parametersString = "";
     	this.documentId = this.wconf.documentId;
     	this.parameters = this.wconf.parameters?this.wconf.parameters:[];
+    	// OLD
+    	/*
     	if(this.parameters){
     		parametersString = "";
     		Ext.Array.forEach(this.parameters, function(param){
@@ -105,7 +107,36 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidget, Sbi.cockpit.core.WidgetR
     		},this);
     		parametersString = "&PARAMETERS="+encodeURIComponent(parametersString);
     	}
+
     	var url = Sbi.config.contextName+'/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&NEW_SESSION=TRUE&TOOLBAR_VISIBLE=FALSE&OBJECT_LABEL='+this.wconf.documentLabel+parametersString+"&SELECTED_ROLE="+Sbi.config.currentRole;
+		*/
+    	
+    	if(this.parameters){
+    		var crossParams = {};
+    		for(var i = 0 ; i < this.parameters.length; i++) {
+    			var param = this.parameters[i];
+    			
+    			var value = this.externalParameterMap.containsKey(param.parameterUrlName) ? 
+    					this.externalParameterMap.get(param.parameterUrlName) : param.value;
+    					
+    			crossParams[param.parameterUrlName] = value;
+    		}
+    		
+    		parametersString = "&CROSS_PARAMETER="
+    			+ encodeURIComponent(JSON.stringify(crossParams))
+	    			.replace(/'/g,"%27")
+	    			.replace(/"/g,"%22")
+	    			.replace(/%3D/g,"=")
+	    			.replace(/%26/g,"&");
+    	}
+    	
+    	var url = Sbi.config.contextName
+    		+ '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp'
+    		+ '&OBJECT_LABEL='+this.wconf.documentLabel
+    		+ "&SELECTED_ROLE=" + Sbi.config.currentRole
+    		+ parametersString
+    		+ "&IS_FROM_DOCUMENT_WIDGET=TRUE"
+    		;
     	
     	this.widgetContent = new Ext.ux.IFrame({xtype:'uxiframe',src: url,style: {height: '100%', width: '100%'}});
 
@@ -117,7 +148,6 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidget, Sbi.cockpit.core.WidgetR
 		}
 		
 		this.add(this.widgetContent);
-		
 		
 		Sbi.trace("[DocumentWidget.createContent]: OUT");
 	},

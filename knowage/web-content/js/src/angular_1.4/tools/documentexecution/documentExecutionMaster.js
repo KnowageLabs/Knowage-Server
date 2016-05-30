@@ -1,8 +1,24 @@
 angular.module('documentExecutionMasterModule',  [ 'ngMaterial', 'sbiModule','cross_navigation'])
 .factory('$documentNavigationScope', function($window) {
-	var docNavFrameScope=$window.parent.angular.element($window.frameElement).scope();
+	var angularTmp = null;
+	var isFromCockpit = false;
 	
-	    return docNavFrameScope==undefined ? {} : docNavFrameScope.$parent;
+	if($window.parent.angular) {
+		angularTmp = $window.parent.angular;
+	} else if ($window.parent.parent.angular){
+		angularTmp = $window.parent.parent.angular;
+		isFromCockpit = true;
+	}
+	
+	var docNavFrameScope = null;
+	if(isFromCockpit) {
+		docNavFrameScope = angularTmp.element($window.parent.frameElement).scope();
+	} else{
+		docNavFrameScope = angularTmp.element($window.frameElement).scope();
+	}
+	
+    return (docNavFrameScope == undefined || docNavFrameScope == null) ? 
+    		{} : docNavFrameScope.$parent;
 })
 .controller('docExMasterController',['$scope','sbiModule_translate','$timeout','sourceDocumentExecProperties','sbiModule_config','$crossNavigationHelper','$documentNavigationScope','$mdDialog',docExMasterControllerFunction]);
 
@@ -14,7 +30,10 @@ $scope.executeSourceDocument = function() {
 		var menuParams = {};
 		var err=false;
 		try{
-			var splittedMenuParams=sourceDocumentExecProperties.MENU_PARAMETERS=='null'? [] : sourceDocumentExecProperties.MENU_PARAMETERS.split("&");
+			var menuParameters = sourceDocumentExecProperties.MENU_PARAMETERS.replace(/&$/g, ''); //removes last '&' char
+			
+			var splittedMenuParams = menuParameters=='null'? [] : menuParameters.split("&");
+			
 			for(var i=0;i<splittedMenuParams.length;i++){
 				var splittedItem=splittedMenuParams[i].split("=");
 				if(splittedItem[1]==undefined){err=true;}
@@ -27,7 +46,7 @@ $scope.executeSourceDocument = function() {
 			if(err){ 
 			 $mdDialog.show(
 				      $mdDialog.alert()
-				         .clickOutsideToClose(true)
+				        .clickOutsideToClose(true)
 				        .title(sbiModule_translate.load("sbi.execution.menu.parameter.title"))
 				        .content(sbiModule_translate.load("sbi.execution.menu.parameter.messages"))
 				        .ariaLabel('Alert Dialog Demo')
