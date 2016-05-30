@@ -31,24 +31,24 @@
 			          <md-button class="md-icon-button" aria-label="shareDataset"  ng-click="shareDatasetAction({ds:dataset});" ng-show="shareDatasetEnabled">
 			            <md-icon md-font-icon="fa fa-share-alt fa-2x" ng-class="{'shared': dataset.isPublic==true }"></md-icon>
 			              <md-tooltip md-delay="1000" ng-if="!dataset.isPublic">
-				             share
+				             {{translate.load('sbi.workspace.dataset.share')}}
 				            </md-tooltip>
 			              <md-tooltip md-delay="1000" ng-if="dataset.isPublic" >
-				             unshare
+				            {{translate.load('sbi.workspace.dataset.unshare')}}
 				            </md-tooltip>
 			          </md-button>
 			          
 			          <md-button class="md-icon-button" aria-label="previewDataset" ng-click="previewDatasetAction({ds:dataset});">
 			            <md-icon md-font-icon="fa fa-eye fa-2x"></md-icon>
 			            <md-tooltip md-delay="1000">
-				             preview
+				             {{translate.load('sbi.workspace.dataset.preview')}}
 				            </md-tooltip>
 			          </md-button>
 			        	 
 			          <md-button class="md-icon-button" aria-label="detailDataset" ng-click="showDetailDatasetAction({ds:dataset});" ng-show="showDetailDatasetEnabled && dataset.dsTypeCd=='File'" >
 			            <md-icon md-font-icon="fa fa-info-circle fa-2x fa-2x"></md-icon>
 			             <md-tooltip md-delay="1000">
-				             details
+				              {{translate.load('sbi.workspace.dataset.detail')}}
 				            </md-tooltip>
 			          </md-button>
 			          
@@ -59,7 +59,7 @@
 			          <md-button class="md-icon-button" aria-label="showDatasetQbe"  ng-click="showQbeDatasetAction({ds:dataset});" ng-show="showQbeEnabled && !dataset.derivated">
 			            <md-icon md-font-icon="fa fa-search fa-2x"></md-icon>
 			            <md-tooltip md-delay="1000">
-				              open qbe
+				              {{translate.load('sbi.workspace.dataset.qbe')}}
 				            </md-tooltip>
 			          </md-button>
 			          

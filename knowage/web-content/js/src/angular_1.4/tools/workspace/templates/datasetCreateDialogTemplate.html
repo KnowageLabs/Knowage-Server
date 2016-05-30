@@ -4,8 +4,8 @@
       
 		<div class="md-toolbar-tools">
       
-			<h2>DATASET WIZARD</h2>
-	         
+			<h2>{{translate.load('sbi.workspace.dataset.wizard')}}</h2>
+	   
 			<span flex></span> 
 	         
 			<md-button 	class="" ng-click="toggleDWVBack()" ng-if="datasetWizardView>1" title="Go to the previous step"> BACK </md-button>
@@ -13,10 +13,10 @@
 			<md-button 	class="" ng-click="toggleDWVNext()" 
 						ng-disabled="nextOrSaveButtonCondition()"
 						title="{{datasetWizStep1NextButtonTitle()}}"> 
-				{{datasetWizardView==4 ? 'SAVE' : 'NEXT' }} 
+				{{datasetWizardView==4 ? translate.load('sbi.workspace.dataset.wizard.save') : translate.load('sbi.workspace.dataset.wizard.next') }} 
 			</md-button>
 			
-			<md-button class="" ng-click="closeDatasetCreateDialog()" title="Close the dialog"> CLOSE </md-button>
+			<md-button class="" ng-click="closeDatasetCreateDialog()" title="Close the dialog">{{translate.load('sbi.workspace.close')}} </md-button>
             
 		</div>
       
@@ -32,7 +32,7 @@
 				
 				<md-toolbar class="secondaryToolbar">
 		         	<div class="md-toolbar-tools">
-		           		<h2>LOAD FILE</h2>
+		           		<h2>{{translate.load('sbi.workspace.dataset.wizard.load')}}</h2>
 		               	<span flex></span>
 		            </div>
 				</md-toolbar>
@@ -44,7 +44,7 @@
 						<div layout="row" layout-wrap>
 			                  <div flex>
 			                     <md-input-container class="small counter">
-			                        <label>Category</label> 
+			                        <label>{{translate.load('sbi.workspace.dataset.wizard.category')}}</label> 
 			                        <md-select aria-label="aria-label" ng-model="category">
 			                           <md-option 	ng-repeat="category in datasetCategoryType" 
 			                           				ng-click="chooseCategory(category)"
@@ -57,7 +57,7 @@
 						</div>
 			               
 						<div flex=50 layout="row">
-			                  <label class="checkboxPadding">Limit preview:</label> 
+			                  <label class="checkboxPadding">{{translate.load('sbi.workspace.dataset.wizard.limit')}}</label> 
 			                  <md-input-container class="small counter">
 			                     <md-checkbox 	aria-label="Checkbox 1" 
 			                     				ng-model="limitPreviewChecked" ng-checked="toggleLimitPreview()">
@@ -80,10 +80,9 @@
 			                    <md-button 	ng-click="uploadFile()" class="md-raised" 
 			                     			ng-disabled="!fileObj.fileName || (changingFile && dataset.fileName==fileObj.fileName)" 
 			                     			title="{{datasetWizStep1UploadButtonTitle()}}">
-	                     			UPLOAD
+	                     			{{translate.load("sbi.workspace.dataset.wizard.upload")}}
              					</md-button>
 		                  	</div>
-		                  	
 						</div>
 						
 						<div layout="row" layout-wrap ng-if="dataset.fileName!='' && !changingFile">
@@ -92,14 +91,14 @@
 					 			Uploaded file: <strong>{{dataset.fileName}}</strong>
 				 			</label>
 				 			
-					 		<span flex></span>
-						  	
+						 <span flex></span>
+						  
 						  	<div class="uploadButton">
-							    <md-button 	ng-click="changeUploadedFile()" class="md-raised">
-		                     			CHANGE FILE
-	             				</md-button>
+						    <md-button 	ng-click="changeUploadedFile()" ng-show="!ckanInWizard" class="md-raised">
+	                     			{{translate.load("sbi.workspace.dataset.wizard.file.change")}}
+             				</md-button>
            					</div>
-           					
+             				
 						</div>
 			               
 					</form>
@@ -121,7 +120,7 @@
 	                 	<div layout="row" layout-wrap flex=33>
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
-	                        		<label>Delimiter character</label> 
+	                        		<label>{{translate.load("sbi.ds.file.csv.delimiter")}}</label> 
 	                        		<md-select aria-label="aria-label" ng-model="dataset.csvDelimiter">
 	                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
 	                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)" 
@@ -136,7 +135,7 @@
                 		<div layout="row" layout-wrap flex=33>
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
-	                        		<label>Quote character</label> 
+	                        		<label>{{translate.load("sbi.ds.file.csv.quote")}}</label> 
 	                        		<md-select aria-label="aria-label" ng-model="dataset.csvQuote">
 	                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
 	                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)" 
@@ -151,7 +150,7 @@
 						<div layout="row" layout-wrap flex=33>
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
-	                        		<label>Encoding</label> 
+	                        		<label>{{translate.load("sbi.workspace.dataset.wizard.csv.encoding")}}</label> 
 	                        		<md-select aria-label="aria-label" ng-model="dataset.csvEncoding">
 	                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
 	                           						ng-click="chooseEncoding(csvEncodingItem)" 
@@ -171,7 +170,7 @@
 						<div layout="row" layout-wrap flex=33>
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
-	                        		<label>Skip rows</label> 
+	                        		<label>{{translate.load("sbi.ds.file.xsl.skiprows")}}</label> 
 	                        		<input 	ng-model="dataset.skipRows" type="number" 
 	                        				step="1" min="0" value="{{dataset.skipRows}}">
 		                     	</md-input-container>
@@ -181,7 +180,7 @@
                 		<div layout="row" layout-wrap flex=33>
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
-	                        		<label>Limit rows number</label> 
+	                        		<label>{{translate.load("sbi.ds.file.xsl.limitrows")}}</label> 
 	                        		<input 	ng-model="dataset.limitRows" type="number" 
 	                        				step="1" min="0" value="{{dataset.limitRows}}">
 		                     	</md-input-container>
@@ -191,7 +190,7 @@
 						<div layout="row" layout-wrap flex=33>
 	                  		<div flex=90 layout-align="center center">
 	                     		<md-input-container class="small counter">
-	                        		<label>Sheet number</label> 
+	                        		<label>{{translate.load("sbi.ds.file.xsl.sheetnumber")}}</label> 
 	                        		<input 	ng-model="dataset.xslSheetNumber" type="number" 
 	                        				step="1" min="1" value="{{dataset.xslSheetNumber}}">
 		                     	</md-input-container>
@@ -213,7 +212,7 @@
          
          	<md-toolbar class="secondaryToolbar">
             	<div class="md-toolbar-tools">
-               	<h2>LOAD FILE &#10137; DEFINITION DATA</h2>
+               	<h2>{{translate.load('sbi.workspace.dataset.wizard.load')}} &#10137; {{translate.load('sbi.ds.wizard.metadata')}}</h2>
                	<span flex></span>
            	 	</div>
          	</md-toolbar>
@@ -232,7 +231,7 @@
       	
          	<md-toolbar class="secondaryToolbar">
 	            <div class="md-toolbar-tools">
-	               <h2>LOAD FILE &#10137; DEFINITION DATA &#10137; VALIDATION DATA</h2>
+	               <h2>{{translate.load('sbi.workspace.dataset.wizard.load')}} &#10137; {{translate.load('sbi.ds.wizard.metadata')}} &#10137; {{translate.load('sbi.ds.wizard.validation')}}</h2>
 	               <span flex></span>
 	            </div>
          	</md-toolbar>
@@ -306,7 +305,7 @@
 				
 				<md-toolbar class="secondaryToolbar">
 		         	<div class="md-toolbar-tools">
-		           		<h2>LOAD FILE</h2>
+		           		<h2>{{translate.load('sbi.workspace.dataset.wizard.load')}}</h2>
 		               	<span flex></span>
 		            </div>
 				</md-toolbar>
@@ -318,10 +317,10 @@
 						<div layout="row" layout-wrap>
 			                  <div flex>
 			                     <md-input-container class="md-block">
-			                        <label>Name</label> 			                        
+			                        <label>{{translate.load("sbi.generic.name")}}</label> 			                        
 			                        <input type="text" ng-model="dataset.name">
 		                         	<div  ng-messages="formForSaving.lbl.$error" ng-show="dataset.name==''">
-				                        <div ng-messages="required">Please enter a value for this field.</div>
+				                        <div ng-messages="required">{{translate.load("sbi.workspace.required")}}</div>
 						          	</div>
 			                     </md-input-container>
 			                  </div>
@@ -330,14 +329,14 @@
 						<div layout="row" layout-wrap>
 			                  <div flex>
 			                     <md-input-container class="small counter">
-			                        <label>Description</label> 
+			                        <label>{{translate.load("sbi.generic.descr")}}</label> 
 			                        <textarea rows="2" cols="50" ng-model="dataset.description" style="overflow:auto;auto-scroll:true"></textarea>
 			                     </md-input-container>
 			                  </div>
 						</div>
 						
 			           	<div flex=50 layout="row">
-	                  		<label class="checkboxPadding">Persist:</label> 
+	                  		<label class="checkboxPadding">{{translate.load("sbi.ds.isPersisted")}}</label> 
 		                  		<md-input-container class="small counter">
 		                     		<md-checkbox 	aria-label="Checkbox 2" 
 			                     					ng-model="dataset.persist" ng-checked="">
@@ -348,10 +347,10 @@
 						<div layout="row" layout-wrap>
 			                  <div flex>
 			                     <md-input-container class="small counter">
-			                        <label>Table name</label> 
+			                        <label>{{translate.load("sbi.ds.persistTableName")}}</label> 
 			                        <input ng-model="dataset.tableName" ng-disabled="!dataset.persist">
 			                        <div  ng-messages="formForSaving.lbl.$error" ng-show="dataset.persist && dataset.tableName==''">
-				                        <div ng-messages="required">Please enter a value for this field.</div>
+				                        <div ng-messages="required">{{translate.load("sbi.workspace.required")}}</div>
 						          	</div>
 			                     </md-input-container>
 			                  </div>

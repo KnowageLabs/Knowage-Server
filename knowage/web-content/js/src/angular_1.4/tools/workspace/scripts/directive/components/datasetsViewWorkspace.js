@@ -270,6 +270,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	}
     	
     	
+    	
      	$mdDialog.show({
 			  scope:$scope,
 			  preserveScope: true,
@@ -317,7 +318,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			//$scope.startPreviewIndex=$scope.startPreviewIndex=0+20;
 			
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.preview.error'));
 		});
     	
     	
@@ -419,6 +420,16 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
         	 
     }
     
+    
+//	$scope.isDetailEnabled = function(dataset){
+//		   if( dataset.dsTypeCd==="File" &&  dataset.owner==sbiModule_user.userId){
+//			   return true;
+//		   }else{
+//			   return false;
+//		   }
+//		   
+//		}
+//    
     function parseCkanRepository(){
     	var ckanUrls= datasetParameters.CKAN_URLS;
     	var ckanUrlsSplitted= ckanUrls.split("|");
@@ -513,6 +524,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		    })
 	}
 	
+	
+	
+	
 	$scope.editCkan=function(ckan){
 		//console.log(ckan);
 		config={};
@@ -531,6 +545,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			$scope.initializeDatasetWizard(ckanObj);
 			 $scope.fileObj={};
 			 $scope.dataset.fileUploaded=true;
+			 $scope.ckanInWizard=true;
 			 $mdDialog.show({
 	    		  scope:$scope,
 	    		  preserveScope: true,
@@ -623,7 +638,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	    });
     }
     
-	
+
 
     
 }

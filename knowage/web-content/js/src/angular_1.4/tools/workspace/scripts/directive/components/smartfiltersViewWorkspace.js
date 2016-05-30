@@ -35,7 +35,7 @@ angular
 				angular.copy($scope.smartFiltersList,$scope.smartFiltersListInitial);
 				console.info("[LOAD END]: Loading of All smartfilters is finished.");
 			},function(response){
-				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.smartfilter.load.error'));
 			});
 		}
 		

@@ -18,8 +18,8 @@ function datasetWizardMetaController($scope,$mdDialog){
 	 */
 	$scope.metadataTypes = 
 	[
-	 	{name:"Columns",value:"1"},
-	 	{name:"Dataset",value:"2"}
+	 	{name:"Columns",value:1},
+	 	{name:"Dataset",value:2}
  	];
 	
 	$scope.markSelectedOptMetadataType = function(md) {
@@ -29,7 +29,7 @@ function datasetWizardMetaController($scope,$mdDialog){
 				$scope.metadataType=$scope.metadataTypes[i];
 			}			
 		}
-		
+		console.log($scope.metadataType);
 	}
 	
     $scope.tableColumns=[

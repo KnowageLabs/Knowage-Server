@@ -33,29 +33,21 @@
 			          <md-button class="md-icon-button" aria-label="showQbe" ng-click="showFederationAction({fed:federation});">
 			            <md-icon md-font-icon="fa fa-search fa-2x"></md-icon>
 			              <md-tooltip md-delay="1000">
-				              show qbe
+				              {{translate.load('sbi.workspace.dataset.qbe')}}
 				            </md-tooltip>
 			          </md-button>
 			          
 			          <md-button class="md-icon-button" aria-label="edit" ng-show="editEnabled" ng-click="editFederationAction({fed:federation});">
 			            <md-icon md-font-icon="fa  fa-pencil fa-2x"></md-icon>
 			            <md-tooltip md-delay="1000">
-				              edit
+				              {{translate.load('sbi.workspace.dataset.edit')}}
 				            </md-tooltip>
 			          </md-button>
 			        	 
-<!-- 			          <md-button class="md-icon-button" aria-label="Favorite" ng-click="executeDocumentAction({doc:document});"> -->
-<!-- 			            <md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon> -->
-<!-- 			          </md-button> -->
-			          
-<!-- 			          <md-button class="md-icon-button" aria-label="Settings" ng-click="cloneDocumentAction({doc:document});"> -->
-<!-- 			            <md-icon md-font-icon="fa fa-clone fa-2x"></md-icon> -->
-<!-- 			          </md-button> -->
-			          
 			          <md-button class="md-icon-button" aria-label="delete" ng-show="deleteEnabled" ng-click="deleteFederationAction({fed:federation});">
 			            <md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
 			            <md-tooltip md-delay="1000">
-				              delete
+				              {{translate.load('sbi.workspace.dataset.delete')}}
 				            </md-tooltip>
 			          </md-button>
 			          
@@ -63,4 +55,4 @@
 			      </md-card>
 	 
 					</div> 
-				</md-content>
+				

@@ -9,7 +9,7 @@
 	 
 	  			<md-tabs  flex layout-fill class="rightPanelDocuments">
 		    
-					<md-tab label="Business Models" ng-click="switchModelsTab('businessModels')" flex>
+					<md-tab label="{{translate.load('sbi.workspace.models.business')}}" ng-click="switchModelsTab('businessModels')" flex>
 				   		
 				   		<md-content>
 						 	
@@ -27,7 +27,7 @@
 				 	 	
 		 			</md-tab> 
 		   
-	<md-tab label="Federation definitions" ng-click="switchModelsTab('federations')" ng-show="isFederationEnabled" flex>
+	<md-tab label="{{translate.load('sbi.workspace.models.federation')}}" ng-click="switchModelsTab('federations')" ng-show="isFederationEnabled" flex>
 				        <md-content>
 						 	<federation-view class="kn-documentBrowser" flex ng-model="federationDefinitions"
 								show-grid-view="showGridView"
@@ -56,14 +56,14 @@
 		<md-toolbar class="ternaryToolbar">
 			<div layout="row" layout-align="space-around center">
 				
-                   <md-button title="Open qbe" aria-label="Open qbe" class="md-icon-button" ng-click="showQbeModel(selectedModel)">
+                   <md-button title="{{translate.load('sbi.workspace.dataset.qbe')}}" aria-label="Open qbe" class="md-icon-button" ng-click="showQbeModel(selectedModel)">
 						<md-icon md-font-icon="fa fa-search"></md-icon>
 				</md-button>
-				 <md-button title="Edit" aria-label="Edit" class="md-icon-button" ng-show="currentTab=='federations'" ng-click="editFederation(selectedModel)">
+				 <md-button title="{{translate.load('sbi.workspace.dataset.edit')}}" aria-label="Edit" class="md-icon-button" ng-show="currentModelsTab=='federations'" ng-click="editFederation(selectedModel)">
 						<md-icon md-font-icon="fa fa-pencil"></md-icon>
 				</md-button>
 				
-				 <md-button title="Delete" aria-label="Edit" class="md-icon-button" ng-show="currentTab=='federations'" ng-click="deleteFederation(selectedModel)">
+				 <md-button title="{{translate.load('sbi.workspace.dataset.delete')}}" aria-label="Edit" class="md-icon-button" ng-show="currentModelsTab=='federations'" ng-click="deleteFederation(selectedModel)">
 						<md-icon md-font-icon="fa fa-trash"></md-icon>
 				</md-button>
 				
@@ -81,7 +81,7 @@
 				 </md-list-item>
 				 <md-list-item class="md-2-line">
 				          <div class="md-list-item-text">
-				            <h3><b>Name</b></h3>
+				            <h3><b>{{translate.load("sbi.generic.name")}}</b></h3>
 				            <p>{{selectedModel.name}}</p>
 				          </div>
 				 </md-list-item>	

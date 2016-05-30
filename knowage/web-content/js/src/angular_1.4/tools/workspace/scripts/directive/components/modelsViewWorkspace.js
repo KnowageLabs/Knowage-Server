@@ -119,21 +119,12 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	}
 	
 	$scope.showQbeFederation= function(federation){
-//		console.log(federation);
-//		console.log(sbiModule_config.contextName);
-//		console.log(sbiModule_config.adapterPath);
-		
-	//	var actionName= 'QBE_ENGINE_FROM_FEDERATION_START_ACTION';
+        
 		var federationId= federation.federation_id;
 		
 		var url=datasetParameters.qbeEditFederationServiceUrl
 		       +'&FEDERATION_ID='+federationId;
 		
-//		var url= sbiModule_config.engineUrls.worksheetServiceUrl
-//		         +'&ACTION_NAME='+actionName
-//		         +'&FEDERATION_ID='+federationId
-//		         + '&label='+federation.label;
-//		        // +'&DATASOURCE_FOR_CACHE=knowage';
 		 $window.location.href=url;
 		
 

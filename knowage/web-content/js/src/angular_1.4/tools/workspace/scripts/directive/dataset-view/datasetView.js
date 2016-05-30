@@ -34,12 +34,14 @@ angular.module('dataset_view', ['ngMaterial'])
 	}
 });
 
-function datasetViewControllerFunction($scope){
+function datasetViewControllerFunction($scope,sbiModule_user,sbiModule_translate){
 	$scope.clickDataset=function(item){
 		
 		 $scope.selectDatasetAction({ds: item});
 		 
+		 
 	}
 	
-
+	$scope.translate=sbiModule_translate;
+	
 }

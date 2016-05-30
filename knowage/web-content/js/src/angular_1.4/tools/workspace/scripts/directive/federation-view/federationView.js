@@ -40,9 +40,11 @@ angular.module('federation_view', ['ngMaterial'])
 	}
 });
 
-function federationViewControllerFunction($scope){
+function federationViewControllerFunction($scope,sbiModule_translate){
 	$scope.clickFederation=function(item){
 		
 		 $scope.selectFederationAction({federation: item});
 	}
+	
+	$scope.translate=sbiModule_translate;
 }

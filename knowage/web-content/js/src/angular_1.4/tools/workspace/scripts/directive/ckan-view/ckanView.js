@@ -35,12 +35,13 @@ angular.module('ckan_view', ['ngMaterial'])
 	}
 });
 
-function ckanViewControllerFunction($scope){
+function ckanViewControllerFunction($scope,sbiModule_translate){
 	$scope.clickCkan=function(item){
 		
 		 $scope.selectCkanAction({ckan: item});
 		 
 	}
 	
+	$scope.translate= sbiModule_translate;
 
 }

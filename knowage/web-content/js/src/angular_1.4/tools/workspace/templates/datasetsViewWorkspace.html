@@ -9,7 +9,7 @@
 		  		
 		  		<md-tabs flex layout-fill class="rightPanelDocuments">
 			  
-    <md-tab label="My data set" flex ng-click="switchDatasetsTab('myDataSet')">
+    <md-tab label="{{translate.load('sbi.workspace.dataset.my')}}" flex ng-click="switchDatasetsTab('myDataSet')">
        <md-tab-body>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="myDatasets"
 		show-grid-view="showGridView"
@@ -25,7 +25,7 @@
  	  ></dataset-view>	
  	 </md-tab-body>
  	</md-tab>  
- 	<md-tab label="Enterprise data set" flex ng-click="switchDatasetsTab('enterpriseDataSet')">
+ 	<md-tab label="{{translate.load('sbi.workspace.dataset.enterprise')}}" flex ng-click="switchDatasetsTab('enterpriseDataSet')">
      <md-tab-body>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="enterpriseDatasets"
 		show-grid-view="showGridView"
@@ -40,7 +40,7 @@
  	  ></dataset-view>		
  	    </md-tab-body>
  	</md-tab>  
- 	<md-tab label="Shared data set" flex ng-click="switchDatasetsTab('sharedDataSet')">
+ 	<md-tab label="{{translate.load('sbi.workspace.dataset.shared')}}" flex ng-click="switchDatasetsTab('sharedDataSet')">
       <md-tab-body>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="sharedDatasets"
 		show-grid-view="showGridView"
@@ -55,12 +55,12 @@
  	  ></dataset-view>	
  	 </md-tab-body>
  	</md-tab>  
- 	<md-tab label="Ckan data set" flex ng-click="switchDatasetsTab('ckanDataSet')">
+ 	<md-tab label="{{translate.load('sbi.workspace.dataset.ckan')}}" flex ng-click="switchDatasetsTab('ckanDataSet')">
  	 	<md-tab-body>
  	 	 <div layout="row" flex>
  	 	   <span flex></span>
  	 	  	<md-input-container flex=30>
-          		<md-select ng-model="selectedCkanRepo" placeholder="Chose ckan repository">
+          		<md-select ng-model="selectedCkanRepo" placeholder="{{translate.load('sbi.workspace.dataset.ckan.repository')}}">
     			<md-option ng-value="repository" ng-repeat="repository in ckanRepos">{{ repository.name }}</md-option>
   			    </md-select>
             </md-input-container>
@@ -82,7 +82,7 @@
  	 	 </div>
  	 	</md-tab-body>
  	</md-tab>
- 	<md-tab label="All data set" flex ng-click="switchDatasetsTab('allDataSet')">
+ 	<md-tab label="{{translate.load('sbi.workspace.dataset.all')}}" flex ng-click="switchDatasetsTab('allDataSet')">
       <md-tab-body>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="datasets"
 		show-grid-view="showGridView"
@@ -111,25 +111,25 @@
 									<md-icon md-font-icon="fa fa-times" ></md-icon>
 							</md-button>
 							
-							<md-button title="Share Dataset" aria-label="Share Dataset" class="md-icon-button" ng-show="currentTab=='myDataSet'" ng-click="shareDataset(selectedDataset)">
+							<md-button title="{{translate.load('sbi.workspace.dataset.shareUnshare')}}" aria-label="Share Dataset" class="md-icon-button" ng-show="currentTab=='myDataSet'" ng-click="shareDataset(selectedDataset)">
 									<md-icon md-font-icon="fa fa-share-alt" ></md-icon>
 							</md-button>
 							
-							<md-button title="Preview Dataset" aria-label="Preview Dataset" class="md-icon-button" ng-click="previewDataset(selectedDataset)">
+							<md-button title="{{translate.load('sbi.workspace.dataset.preview')}}" aria-label="Preview Dataset" class="md-icon-button" ng-click="previewDataset(selectedDataset)">
 									<md-icon md-font-icon="fa fa-eye"></md-icon>
 							</md-button>
 							
-							<md-button title="Export Dataset" aria-label="Export Dataset" class="md-icon-button" ng-click="exportDataset(selectedDataset)">
+							<md-button title="{{translate.load('sbi.workspace.dataset.export')}}" aria-label="Export Dataset" class="md-icon-button" ng-click="exportDataset(selectedDataset)">
 									<md-icon md-font-icon="fa fa-file-excel-o"></md-icon>
 							</md-button>
 							
-							<md-button title="Help Online" aria-label="Help Online" class="md-icon-button" ng-click="showHelpOnline(selectedDataset)">
+							<md-button title="{{translate.load('sbi.workspace.dataset.help')}}" aria-label="Help Online" class="md-icon-button" ng-click="showHelpOnline(selectedDataset)">
 									<md-icon md-font-icon="fa fa-question-circle"></md-icon>
 							</md-button>
-		                    <md-button title="Open qbe" aria-label="Open qbe" class="md-icon-button" ng-click="showQbeDataset(selectedDataset)">
+		                    <md-button title="{{translate.load('sbi.workspace.dataset.qbe')}}" aria-label="Open qbe" class="md-icon-button" ng-click="showQbeDataset(selectedDataset)">
 									<md-icon md-font-icon="fa fa-search"></md-icon>
 							</md-button>
-							 <md-button title="Show Detail" aria-label="Show detail" class="md-icon-button" ng-click="editFileDataset(selectedDataset)">
+							 <md-button title="{{translate.load('sbi.workspace.dataset.detail')}}" aria-label="Show detail" ng-show="isDetailEnabled(selectedDataset)" class="md-icon-button" ng-click="editFileDataset(selectedDataset)">
 									<md-icon md-font-icon="fa fa-info-circle"></md-icon>
 							</md-button>
 							
@@ -145,27 +145,28 @@
 							 </md-list-item>
 							 <md-list-item class="md-2-line">
 							          <div class="md-list-item-text">
-							            <h3><b>Name</b></h3>
+							            <h3><b>{{translate.load("sbi.generic.name")}}</b></h3>
 							            <p>{{selectedDataset.name}}</p>
 							          </div>
 							 </md-list-item>
 							 <md-list-item class="md-2-line" ng-show="currentTab=='myDataSet'">
 							          <div class="md-list-item-text">
-							            <h3><b>Label</b></h3>
+							            <h3><b>{{translate.load("sbi.generic.label")}}</b></h3>
 							            <p>{{selectedDataset.label}}</p>
 							          </div>
 							 </md-list-item>
 							 <md-list-item class="md-2-line">
 							          <div class="md-list-item-text">
-							            <h3><b>Author</b></h3>
+							            <h3><b>{{translate.load("sbi.generic.author")}}</b></h3>
 							            <p>{{selectedDataset.owner}}</p>
 							          </div>
 							 </md-list-item>
 							 	 <md-list-item class="md-2-line">
 							          <div class="md-list-item-text">
-							            <h3><b>Last modified</b></h3>
+							            <h3><b>{{translate.load("sbi.ds.changedon")}}</b></h3>
 							            <p>{{selectedDataset.dateIn | date}}</p>
 							          </div>
+							         
 							 </md-list-item>
 						</md-list>
 					</md-content>
@@ -177,15 +178,15 @@
 									<md-icon md-font-icon="fa fa-times" ></md-icon>
 							</md-button>
 								
-							<md-button title="Help Online" aria-label="Help Online" class="md-icon-button" ng-click="showHelpOnline(selectedCkan)">
+							<md-button title="{{translate.load('sbi.workspace.dataset.help')}}" aria-label="Help Online" class="md-icon-button" ng-click="showHelpOnline(selectedCkan)">
 									<md-icon md-font-icon="fa fa-question-circle"></md-icon>
 							</md-button>
 		                   
-							 <md-button title="Show Detail" aria-label="Show detail" class="md-icon-button" ng-click="showDetailCkan(selectedCkan)">
+							 <md-button title="{{translate.load('sbi.workspace.dataset.detail')}}" aria-label="Show detail" class="md-icon-button" ng-click="showDetailCkan(selectedCkan)">
 									<md-icon md-font-icon="fa fa-info-circle"></md-icon>
 							</md-button>
 							
-							 <md-button title="Edit" aria-label="edit" class="md-icon-button" ng-click="editCkan(selectedCkan);">
+							 <md-button title="{{translate.load('sbi.workspace.dataset.edit')}}" aria-label="edit" class="md-icon-button" ng-click="editCkan(selectedCkan);">
 									<md-icon md-font-icon="fa fa-pencil"></md-icon>
 							 </md-button>
 							
@@ -201,19 +202,19 @@
 							 </md-list-item>
 							 <md-list-item class="md-2-line">
 							          <div class="md-list-item-text">
-							            <h3><b>Name</b></h3>
+							            <h3><b>{{translate.load("sbi.generic.name")}}</b></h3>
 							            <p>{{selectedCkan.name}}</p>
 							          </div>
 							 </md-list-item>
 							 <md-list-item class="md-2-line" >
 							          <div class="md-list-item-text">
-							            <h3><b>Label</b></h3>
+							            <h3><b>{{translate.load("sbi.generic.label")}}</b></h3>
 							            <p>{{selectedCkan.label}}</p>
 							          </div>
 							 </md-list-item>
 							 <md-list-item class="md-2-line" >
 							          <div class="md-list-item-text">
-							            <h3><b>Owner</b></h3>
+							            <h3><b>{{translate.load("sbi.generic.author")}}</b></h3>
 							            <p>{{selectedCkan.owner}}</p>
 							          </div>
 							 </md-list-item>

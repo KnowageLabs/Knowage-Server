@@ -3,9 +3,9 @@
 	<md-input-container>
 	
 		<md-select 	aria-label="aria-label" ng-model="metadataType.value" placeholder="Metadata Type" 
-					ng-change="markSelectedOptMetadataType(metadataType.value)">
+					>
 			<md-option 	ng-repeat="m in metadataTypes track by $index"  value="{{m.value}}" 
-						ng-selected="m.value==metadataId">
+						>
 				{{m.name}} 
 			</md-option> 
 		</md-select>

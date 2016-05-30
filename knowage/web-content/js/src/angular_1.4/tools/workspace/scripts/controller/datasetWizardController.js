@@ -1,5 +1,4 @@
-function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_user,sbiModule_config,multipartForm,$http,sbiModule_messaging ){
-	
+function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_user,sbiModule_config,multipartForm,$http,sbiModule_messaging,sbiModule_translate ){
 	$scope.fileObj={};
 	$scope.datasetWizardView=1;
 	$scope.datasetCategories = [];
@@ -21,7 +20,9 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		params.SBI_EXECUTION_ID = -1;
 		params.isTech = false;
 		params.showOnlyOwner = true;
-		params.showDerivedDataset = false;		
+		params.showDerivedDataset = false;
+	
+		
 		
 //			$scope.dataset.id = "";
 		$scope.dataset.type = "File";
@@ -383,6 +384,11 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		 */
 		$scope.metadataId = 1;
 		$scope.metadataType.value = 1;
+		
+		/**
+		 * this is set when wizard is open from ckan 
+		 */
+		$scope.ckanInWizard=false;
 	}
 	
 	loadDatasetValues= function(a,b){
@@ -422,7 +428,6 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
     	multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedataset/fileupload",$scope.fileObj).success(
 
 				function(data,status,headers,config){
-					
 					if(data.hasOwnProperty("errors")){						
 						console.info("[UPLOAD]: DATA HAS ERRORS PROPERTY!");		
 						sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, 'Error!');
@@ -430,9 +435,9 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					else {
 					
 						console.info("[UPLOAD]: SUCCESS!");
-						sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
+					sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
 					
-						$scope.file={};
+					$scope.file={};
 						$scope.dataset.fileType = data.fileType;
 						$scope.dataset.fileName = data.fileName;
 						
@@ -524,7 +529,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	$scope.datasetWizStep1NextButtonTitle = function() {
 		
 		var notValidStep1 = !$scope.dataset.fileName || $scope.prevUploadedFile!=$scope.fileObj.fileName;
-				
+		
 		if ($scope.datasetWizardView==1 && notValidStep1) {
 			if (!$scope.dataset.fileName) {
 				return 'Please upload XLS or CSV file in order to proceed with the dataset creation';
