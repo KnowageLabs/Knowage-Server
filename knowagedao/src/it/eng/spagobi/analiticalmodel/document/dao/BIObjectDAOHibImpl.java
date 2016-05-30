@@ -2415,6 +2415,66 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	@Override
+	public String changeLockStatus(String documentLabel, boolean isUserAdmin) throws EMFUserError {
+		logger.debug("IN");
+		BIObject biObject = null;
+		Session aSession = null;
+		Transaction tx = null;
+		String toReturn = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Criterion labelCriterrion = Expression.eq("label", documentLabel);
+			Criteria criteria = aSession.createCriteria(SbiObjects.class);
+			criteria.add(labelCriterrion);
+
+			SbiObjects hibObject = (SbiObjects) criteria.uniqueResult();
+			if (hibObject == null)
+				return null;
+
+			String currentUser = (String) getUserProfile().getUserUniqueIdentifier();
+
+			boolean isLocked = false;
+			if (hibObject.getLockedByUser() != null && !hibObject.getLockedByUser().equals(""))
+				isLocked = true;
+
+			if (isLocked == true && hibObject.getLockedByUser().equals(currentUser)) {
+				hibObject.setLockedByUser(null);
+				aSession.save(hibObject);
+				tx.commit();
+				toReturn = hibObject.getLockedByUser();
+			} else if (isLocked == false) {
+				// if its not lcked change
+				hibObject.setLockedByUser(currentUser);
+				aSession.save(hibObject);
+				tx.commit();
+				toReturn = hibObject.getLockedByUser();
+			} else if (isLocked == true && !hibObject.getLockedByUser().equals(currentUser) && isUserAdmin == true) {
+				hibObject.setLockedByUser(null);
+				aSession.save(hibObject);
+				tx.commit();
+				toReturn = hibObject.getLockedByUser();
+			} else {
+				toReturn = null;
+			}
+
+		} catch (HibernateException he) {
+			logger.error(he);
+			he.printStackTrace();
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	@Override
 	public BIObject loadBIObjectForExecutionByLabelAndRole(String label, String role) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
