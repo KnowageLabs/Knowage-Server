@@ -95,6 +95,12 @@ public class PersistedTableHelper {
 				}
 			} else if (fieldMetaTypeName.contains("Time")) {
 				insertStatement.setTime(fieldIndex + 1, (Time) fieldValue);
+			} else if (fieldMetaTypeName.contains("Byte")) {
+				if (fieldValue == null) {
+					insertStatement.setNull(fieldIndex + 1, java.sql.Types.INTEGER);
+				} else {
+					insertStatement.setByte(fieldIndex + 1, (Byte) fieldValue);
+				}
 			} else if (fieldMetaTypeName.contains("Short")) {
 				// only for primitive type is necessary to use setNull method if value is null
 				if (fieldValue == null) {

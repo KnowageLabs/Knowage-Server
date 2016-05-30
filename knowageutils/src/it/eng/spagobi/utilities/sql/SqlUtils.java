@@ -188,8 +188,10 @@ public class SqlUtils {
 	}
 
 	public static boolean isHiveLikeDialect(String dialect) {
-		return (dialect.toLowerCase().contains("cassandra") || dialect.toLowerCase().contains("hive") || dialect.toLowerCase().contains("neo4j")  || 
-				dialect.toLowerCase().contains("drill") || dialect.toLowerCase().contains("spark") || dialect.toLowerCase().contains("phoenix") || dialect.toLowerCase().contains("impala"));
+		String dialectLowerCase = dialect.toLowerCase();
+		return (dialectLowerCase.contains("cassandra") || dialectLowerCase.contains("hive") || dialectLowerCase.contains("neo4j")
+				|| dialectLowerCase.contains("drill") || dialectLowerCase.contains("spark") || dialectLowerCase.contains("phoenix")
+				|| dialectLowerCase.contains("impala") || dialectLowerCase.contains("h2"));
 	}
 
 

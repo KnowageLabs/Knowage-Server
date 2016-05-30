@@ -41,6 +41,8 @@ public class OracleDataBase extends AbstractDataBase {
 
 		if (javaTypeName.contains("java.lang.String")) {
 			toReturn = " VARCHAR (" + getVarcharLength() + " CHAR)";
+		} else if (javaTypeName.contains("java.lang.Byte")) {
+			toReturn = " INTEGER ";
 		} else if (javaTypeName.contains("java.lang.Short")) {
 			toReturn = " INTEGER ";
 		} else if (javaTypeName.contains("java.lang.Integer")) {

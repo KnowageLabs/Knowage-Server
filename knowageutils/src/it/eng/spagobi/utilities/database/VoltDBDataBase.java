@@ -41,6 +41,8 @@ public class VoltDBDataBase extends AbstractDataBase {
 		String javaTypeName = javaType.toString();
 		if (javaTypeName.contains("java.lang.String")) {
 			toReturn = " VARCHAR (" + getVarcharLength() + ")";
+		} else if (javaTypeName.contains("java.lang.Byte")) {
+			toReturn = " INTEGER ";
 		} else if (javaTypeName.contains("java.lang.Short")) {
 			toReturn = " SMALLINT ";
 		} else if (javaTypeName.contains("java.lang.Integer")) {
