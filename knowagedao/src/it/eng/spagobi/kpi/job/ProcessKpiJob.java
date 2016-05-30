@@ -51,6 +51,8 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
@@ -162,6 +164,18 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			innerSql = innerSql.trim();
 			if (innerSql.endsWith(";"))
 				innerSql = innerSql.substring(0, innerSql.length() - 1);
+
+			// Checking for missing placeholders (if any)
+			Pattern pattern = Pattern.compile("@([^\\p{Punct}\\p{Space}]+)");
+			Matcher matcher = pattern.matcher(innerSql);
+			StringBuffer sb = new StringBuffer();
+			while (matcher.find()) {
+				String placeholder = matcher.group(0);
+				sb.append(", ").append(placeholder);
+			}
+			if (sb.length() > 0)
+				throw new KpiComputationException("Missing placeholder(s): " + sb.substring(2));
+
 			this.innerSql = innerSql;
 		}
 
@@ -447,7 +461,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 					if (!kpi.getName().equalsIgnoreCase(schedulerFilter.getKpiName()))
 						continue;
 					if (schedulerFilter.getType() == null)
-						throw new KpiComputationException("Invalid placeholder type (placeholder name: " + schedulerFilter.getPlaceholderName() + ")");
+						throw new KpiComputationException("Missing placeholder type (placeholder name: " + schedulerFilter.getPlaceholderName() + ")");
 					String type = schedulerFilter.getType().getValueCd();
 					if ("FIXED_VALUE".equals(type)) {
 						placeholdersMap.put(schedulerFilter.getPlaceholderName(), schedulerFilter.getValue());
