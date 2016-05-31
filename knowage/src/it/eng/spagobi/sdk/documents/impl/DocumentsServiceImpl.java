@@ -1000,55 +1000,54 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				}
 			}
 
-			try {
-
-				/***********************************************************************************************************/
-				/*
-				 * STEP 3: template creation in SpagoBI Metadata (under the personal folder) to use the previous datamart.
-				 */
-				/***********************************************************************************************************/
-				UserProfile userProfile = (UserProfile) this.getUserProfile();
-
-				String datamartName = sdkTemplate.getFolderName();
-				// checks if the template already exists. In this case doesn't
-				// create the new one!
-				if (DAOFactory.getBIObjectDAO().loadBIObjectByLabel(datamartName) != null) {
-					logger.info("The datamart with name " + datamartName + " is already been inserted in SpagoBI. Template not loaded! ");
-					return;
-				}
-
-				BIObject obj = createGenericObject(SpagoBIConstants.DATAMART_TYPE_CODE);
-				obj.setLabel(datamartName);
-				obj.setName(datamartName);
-				obj.setDescription("");
-				// get the dataSource if label is not null
-				IDataSource dataSource = null;
-				if (dataSourceLabel != null) {
-					logger.debug("retrieve data source with label " + dataSourceLabel);
-					dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
-					obj.setDataSourceId(dataSource.getDsId());
-				}
-
-				// sets the template's content
-				ObjTemplate objTemplate = createGenericTemplate(sdkTemplate.getFolderName() + ".xml");
-				String template = getDatamartTemplate(datamartName);
-				objTemplate.setContent(template.getBytes());
-
-				// inserts the document
-				logger.debug("Saving document ...");
-				IBIObjectDAO biObjDAO = DAOFactory.getBIObjectDAO();
-				biObjDAO.setUserProfile(userProfile);
-				biObjDAO.insertBIObject(obj, objTemplate);
-				Integer newIdObj = obj.getId();
-				if (newIdObj != null) {
-					logger.info("Document saved with id = " + newIdObj);
-				} else {
-					logger.error("Document not saved!!");
-				}
-			} catch (Exception e) {
-				logger.error("Error while uploading template", e);
-				throw new SpagoBIRuntimeException("Error while uploading template");
-			}
+			// try {
+			/***********************************************************************************************************/
+			/*
+			 * STEP 3: template creation in SpagoBI Metadata (under the personal folder) to use the previous datamart.
+			 */
+			/***********************************************************************************************************/
+			// UserProfile userProfile = (UserProfile) this.getUserProfile();
+			//
+			// String datamartName = sdkTemplate.getFolderName();
+			// // checks if the template already exists. In this case doesn't
+			// // create the new one!
+			// if (DAOFactory.getBIObjectDAO().loadBIObjectByLabel(datamartName) != null) {
+			// logger.info("The datamart with name " + datamartName + " is already been inserted in SpagoBI. Template not loaded! ");
+			// return;
+			// }
+			//
+			// BIObject obj = createGenericObject(SpagoBIConstants.DATAMART_TYPE_CODE);
+			// obj.setLabel(datamartName);
+			// obj.setName(datamartName);
+			// obj.setDescription("");
+			// // get the dataSource if label is not null
+			// IDataSource dataSource = null;
+			// if (dataSourceLabel != null) {
+			// logger.debug("retrieve data source with label " + dataSourceLabel);
+			// dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+			// obj.setDataSourceId(dataSource.getDsId());
+			// }
+			//
+			// // sets the template's content
+			// ObjTemplate objTemplate = createGenericTemplate(sdkTemplate.getFolderName() + ".xml");
+			// String template = getDatamartTemplate(datamartName);
+			// objTemplate.setContent(template.getBytes());
+			//
+			// // inserts the document
+			// logger.debug("Saving document ...");
+			// IBIObjectDAO biObjDAO = DAOFactory.getBIObjectDAO();
+			// biObjDAO.setUserProfile(userProfile);
+			// biObjDAO.insertBIObject(obj, objTemplate);
+			// Integer newIdObj = obj.getId();
+			// if (newIdObj != null) {
+			// logger.info("Document saved with id = " + newIdObj);
+			// } else {
+			// logger.error("Document not saved!!");
+			// }
+			// } catch (Exception e) {
+			// logger.error("Error while uploading template", e);
+			// throw new SpagoBIRuntimeException("Error while uploading template");
+			// }
 
 		} finally {
 			this.unsetTenant();
