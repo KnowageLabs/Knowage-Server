@@ -35,8 +35,8 @@
 							<md-button title="Execute Document" aria-label="Execute Document" class="md-icon-button" ng-click="executeRecent(selectedDocument)">
 									<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
 							</md-button>
-
-							<md-button  class="md-icon-button" aria-label="Organizer" ng-click="addToOrganizerAction({doc:document});">
+                            <!-- hidden because organizaer is not implemented -->
+							<md-button  class="md-icon-button" ng-show="false" aria-label="Organizer" ng-click="addToOrganizerAction({doc:document});">
 			            		<md-icon  md-font-icon="fa fa-plus-circle"></md-icon>
 			          		</md-button>
 
@@ -49,28 +49,28 @@
 
 				<md-list-item class="md-2-line">
 	 	          	<div class="md-list-item-text">
-		 	            <h3><b>Document name</b></h3>
+		 	            <h3><b>{{translate.load('sbi.workspace.recent.documentName')}}</b></h3>
 		 	            <p>{{selectedDocument.documentName}}</p>
 	 	         	 </div>
 				</md-list-item>
 	
 				<md-list-item class="md-2-line">
 	 	          	<div class="md-list-item-text">
-	 	            	<h3><b>Document label</b></h3>
+	 	            	<h3><b>{{translate.load('sbi.workspace.recent.documentLabel')}}</b></h3>
 	 	            	<p>{{selectedDocument.documentLabel}}</p>
 	 	          	</div>
 					</md-list-item>
 	
 				<md-list-item class="md-2-line">
 	 	          	<div class="md-list-item-text">
-	 	           		<h3><b>Document description</b></h3>
+	 	           		<h3><b>{{translate.load('sbi.workspace.recent.documentDescr')}}</b></h3>
 	 	            	<p>{{selectedDocument.documentDescription}}</p>
  	         		 </div>
 					</md-list-item>
 	
 				<md-list-item class="md-2-line">
 	 	          	<div class="md-list-item-text">
-	 	           		<h3><b>Document type</b></h3>
+	 	           		<h3><b>{{translate.load('sbi.workspace.recent.documentType')}}</b></h3>
 	 	            	<p>{{selectedDocument.documentType}}</p>
 	 	          	</div>
 					</md-list-item>

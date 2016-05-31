@@ -435,9 +435,23 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			sbiModule_restServices.errorHandler(response.data,"faild to load data for"+b);
 		});
 	}
+	
+	 // calls new service for dataset category type
+	loadDatasetCategories= function(){
+		sbiModule_restServices.promiseGet("domainsforfinaluser","ds-categories")
+		.then(function(response) {
+			
+			angular.copy(response.data,$scope.datasetCategoryType);
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,"faild to load dataset categories");
+		});
 		
+		
+	}	
+	
+	loadDatasetCategories();
 	loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","");
-	loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=CATEGORY_TYPE");
+	//loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=CATEGORY_TYPE");
 	loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_GEN_META_PROPERTY");
 	loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_PROPERTY");
 	loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_VALUE");

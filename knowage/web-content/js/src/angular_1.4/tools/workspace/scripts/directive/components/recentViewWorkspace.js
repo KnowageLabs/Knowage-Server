@@ -11,7 +11,7 @@ angular
 	});
 
 function recentController($scope,sbiModule_restServices,sbiModule_translate,$documentViewer){
-	
+	$scope.translate=sbiModule_translate;
 	$scope.loadRecentDocumentExecutionsForUser =function(){
 		sbiModule_restServices.promiseGet("2.0/recents","")
 		.then(function(response) {
