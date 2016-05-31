@@ -33,7 +33,7 @@
 		<md-toolbar class="ternaryToolbar">
 			
 			<div layout="row" layout-align="space-around center">
-				<md-button ng-if="smallScreen" title="Execute Document" aria-label="Close panel" class="md-icon-button" ng-click="selectDocument();toggleDocumentDetail();">
+							<md-button ng-if="smallScreen" title="Execute Document" aria-label="Close panel" class="md-icon-button" ng-click="selectDocument();toggleDocumentDetail();">
 									<md-icon md-font-icon="fa fa-times" ></md-icon>
 							</md-button>
 
@@ -43,7 +43,7 @@
 
 							<md-button title="Delete Document" aria-label="Delete Document" class="md-icon-button" ng-click="deleteFavoriteDocumentExecutionById(selectedDocument)">
 									<md-icon md-font-icon="fa fa-trash-o"></md-icon>
-				</md-button>	
+							</md-button>	
 			</div>
 			
 		</md-toolbar>
@@ -54,35 +54,35 @@
 			 	
 			 	<md-list-item class="md-2-line">
 	          		<div class="md-list-item-text">
-	            		<h3><b>Name</b></h3>
+	            		<h3><b>{{translate.load("sbi.workspace.favorites.name")}}</b></h3>
 	            	<p>{{selectedDocument.name}}</p>
 	          		</div>
 				</md-list-item>
 
 				<md-list-item class="md-2-line">
  	          		<div class="md-list-item-text">
- 	            		<h3><b>Document name</b></h3>
+ 	            		<h3><b>{{translate.load("sbi.workspace.favorites.documentName")}}</b></h3>
  	            		<p>{{selectedDocument.documentName}}</p>
  	         		 </div>
 					</md-list-item>
 
 				<md-list-item class="md-2-line">
  	          		<div class="md-list-item-text">
- 	            		<h3><b>Document label</b></h3>
+ 	            		<h3><b>{{translate.load("sbi.workspace.favorites.documentLabel")}}</b></h3>
  	            		<p>{{selectedDocument.documentLabel}}</p>
  	          		</div>
 					</md-list-item>
 
 				<md-list-item class="md-2-line">
  	          		<div class="md-list-item-text">
- 	            		<h3><b>Document description</b></h3>
+ 	            		<h3><b>{{translate.load("sbi.workspace.favorites.documentDescr")}}</b></h3>
  	            		<p>{{selectedDocument.documentDescription}}</p>
  	          		</div>
 					</md-list-item>
 
 					<md-list-item class="md-2-line">
  	          <div class="md-list-item-text">
- 	            <h3><b>Document type</b></h3>
+ 	            <h3><b>{{translate.load("sbi.workspace.favorites.documentType")}}</b></h3>
  	            <p>{{selectedDocument.documentType}}</p>
  	          </div>
  					</md-list-item>
