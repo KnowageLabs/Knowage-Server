@@ -879,4 +879,14 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 		});
 	}
 
+	@Override
+	public void pauseTrigger(String triggerGroup, String triggerName, String jobGroup, String jobName) throws EMFUserError {
+		TriggerPaused triggerPaused = new TriggerPaused();
+		triggerPaused.setJobGroup(jobGroup);
+		triggerPaused.setJobName(jobName);
+		triggerPaused.setTriggerGroup(triggerGroup);
+		triggerPaused.setTriggerName(triggerName);
+		pauseTrigger(triggerPaused);
+	}
+
 }
