@@ -129,9 +129,9 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	
 	$scope.showQbeModel=function(model){
 		
-		if($scope.currentTab=='federations'){
+		if($scope.currentModelsTab=='federations'){
 			$scope.showQbeFederation(model);
-		}else if($scope.currentTab=='businessModels'){
+		}else if($scope.currentModelsTab=='businessModels'){
 			$scope.showQbeFromBM(model);
 		}
 	}
