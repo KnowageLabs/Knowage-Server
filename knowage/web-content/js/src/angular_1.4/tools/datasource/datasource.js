@@ -85,11 +85,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			var errorU = "Error updating the datasource!"
 
 			//MODIFY DATA SOURCE
-				if($scope.selectedDataSource.readOnly==0){
-					$scope.selectedDataSource.readOnly=false;
-				} else if($scope.selectedDataSource.readOnly==1){
-					$scope.selectedDataSource.readOnly=true;
-				}
+				$scope.checkReadOnly();
 				sbiModule_restServices.promisePut('2.0/datasources','',angular.toJson($scope.selectedDataSource))
 				.then(function(response) {
 					console.log("[PUT]: SUCCESS!");
@@ -104,11 +100,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		} else {
 
 			var errorS = "Error saving the datasource!";
-			if($scope.selectedDataSource.readOnly==0){
-				$scope.selectedDataSource.readOnly=false;
-			} else if($scope.selectedDataSource.readOnly==1){
-				$scope.selectedDataSource.readOnly=true;
-			}
+			$scope.checkReadOnly();
 			//CREATE NEW DATA SOURCE
 			sbiModule_restServices.promisePost('2.0/datasources','', angular.toJson($scope.selectedDataSource))
 			.then(function(response) {
@@ -122,6 +114,14 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 			});
 
+		}
+	};
+	
+	$scope.checkReadOnly = function() {
+		if($scope.selectedDataSource.readOnly==0){
+			$scope.selectedDataSource.readOnly=false;
+		} else if($scope.selectedDataSource.readOnly==1){
+			$scope.selectedDataSource.readOnly=true;
 		}
 	};
 
@@ -219,11 +219,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.loadSelectedDataSource = function(item) {
 		
 		if( $scope.currentUser == item.userIn){
-			console.log("i am the owner of : " + item.label);
+			
 			$scope.readOnly= false;
 
 		}else{
-			console.log("i didnt made this "+item.userIn+" is..");
+			
 			sbiModule_messaging.showInfoMessage("You are not the owner of this catalog", 'Information');
 			$scope.readOnly= true;
 		}
