@@ -14,7 +14,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 		};
 		
 		//chartType,documentName, documentParameters, categoryName, categoryValue, serieName, serieValue, groupingCategoryName, groupingCategoryValue, stringParameters
-		this.navigateTo=function(outputParameter,inputParameter,targetDocument){
+		this.navigateTo=function(outputParameter,inputParameter,targetDocument,docLabel){
 			 
 			sbiModule_restServices.promiseGet("1.0/crossNavigation",this.crossNavigationSteps.currentDocument.name+"/loadCrossNavigationByDocument")
 			.then(function(response){
