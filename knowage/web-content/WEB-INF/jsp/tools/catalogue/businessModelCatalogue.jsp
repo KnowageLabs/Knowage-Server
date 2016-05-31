@@ -98,7 +98,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<detail label='selectedBusinessModel.name==undefined? "" : selectedBusinessModel.name'  
 				save-function="saveBusinessModel"
 				cancel-function="cancel"
-				disable-save-button="!isDirty && fileUploaded()"
+				disable-save-button="saveBtnDisabled()"
 				show-save-button="showMe" show-cancel-button="showMe">
 		
 		
@@ -136,7 +136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				<div layout="row" layout-wrap>
 						<label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.file.upload.button")}}:</label>
-      				<file-upload  ng-model="fileObj" id="businessModelFile" flex></file-upload>
+      				<file-upload  ng-model="fileObj" id="businessModelFile" ng-change="checkChange()"flex></file-upload>
       				<!-- ng-click="fileChange();checkChange()"  -->
       				<%
 					if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_LIFECYCLE_MANAGEMENT)) {%>

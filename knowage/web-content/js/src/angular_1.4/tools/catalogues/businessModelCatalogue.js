@@ -89,6 +89,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		$scope.isCWMDirty = false;
 		$scope.selectedBusinessModel = {};
 		$scope.bmVersions=[];
+		$scope.fileObj = {};
 	}
 	
 	$scope.businessModelLock = function(){
@@ -302,7 +303,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					
 					if($scope.fileObj.fileName !== undefined)
 						$scope.saveBusinessModelFile();
-					
+					$scope.$apply();
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'check');
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -333,7 +334,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.isDirty = false;
 					$scope.selectedBusinessModel.modelLocker = response.data.modelLocker;
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'check');
-
+					$scope.$apply();
 					
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -573,11 +574,16 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 		}
 		
-		$scope.fileUploaded = function(){
-			if($scope.fileObj.file === undefined)
-				return true;
-			else
-				return false;
+		$scope.saveBtnDisabled = function(){
+			if($scope.selectedBusinessModel.name === undefined || $scope.selectedBusinessModel.name === "" 
+				|| ( $scope.selectedBusinessModel.id === undefined && $scope.fileObj.file == undefined) 
+				|| ( $scope.selectedBusinessModel.dataSourceLabel == undefined || $scope.selectedBusinessModel.dataSourceLabel == null)
+			){
+					return true;
+			}
+			else{
+				return false;				
+			}
 		};
 		
 		
