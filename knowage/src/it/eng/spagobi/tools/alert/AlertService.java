@@ -47,12 +47,7 @@ public class AlertService {
 		ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
 		String name = "" + id;
 		if (!schedulerDAO.isTriggerPaused(ALERT_JOB_GROUP, name, ALERT_JOB_GROUP, name)) {
-			TriggerPaused triggerPaused = new TriggerPaused();
-			triggerPaused.setJobGroup(ALERT_JOB_GROUP);
-			triggerPaused.setJobName(name);
-			triggerPaused.setTriggerGroup(ALERT_JOB_GROUP);
-			triggerPaused.setTriggerName(name);
-			schedulerDAO.pauseTrigger(triggerPaused);
+			schedulerDAO.pauseTrigger(ALERT_JOB_GROUP, name, ALERT_JOB_GROUP, name);
 		}
 		return Response.ok().build();
 	}

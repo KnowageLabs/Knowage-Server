@@ -99,7 +99,7 @@ import org.json.JSONObject;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
- *
+ * 
  */
 @Path("/2.0/documents")
 public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
@@ -412,7 +412,8 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDocumentSearchAndPaginate(@QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
 			@QueryParam("label") String label, @QueryParam("name") String name, @QueryParam("descr") String descr,
-			@QueryParam("excludeType") String excludeType, @QueryParam("scope") String scope) throws EMFInternalError {
+			@QueryParam("excludeType") String excludeType, @QueryParam("includeType") String includeType, @QueryParam("scope") String scope)
+			throws EMFInternalError {
 		logger.debug("IN");
 		UserProfile profile = getUserProfile();
 		IBIObjectDAO documentsDao = null;
@@ -449,6 +450,9 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 
 		if (excludeType != null) {
 			restritions.add(new CriteriaParameter("objectTypeCode", excludeType, Match.NOT_EQ));
+		}
+		if (includeType != null) {
+			restritions.add(new CriteriaParameter("objectTypeCode", includeType, Match.EQ));
 		}
 		try {
 			documentsDao = DAOFactory.getBIObjectDAO();

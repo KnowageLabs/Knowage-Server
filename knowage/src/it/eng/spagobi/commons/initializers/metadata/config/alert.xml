@@ -2,6 +2,8 @@
 <ALERT>
 	<ACTION name="Send mail" className="it.eng.spagobi.tools.alert.action.SendMail"
 		template="js/src/angular_1.4/tools/alert/actions/sendMail/templates/sendMail.html" />
+	<ACTION name="Execute ETL Document" className="it.eng.spagobi.tools.alert.action.ExecuteETLDocument"
+		template="js/src/angular_1.4/tools/alert/actions/executeETL/templates/executeETL.html" />
 	<LISTENER name="KPI Listener" className="it.eng.spagobi.tools.alert.listener.KpiListener"
 		template="js/src/angular_1.4/tools/alert/listeners/kpiListener/templates/kpiListener.html" />
 </ALERT>
