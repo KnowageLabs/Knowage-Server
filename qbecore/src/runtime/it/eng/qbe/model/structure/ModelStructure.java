@@ -192,10 +192,10 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		RootEntitiesGraph rootEntitiesGraph;
 
 		//add a random name to relation
-		if(relationName==null || relationName.length()==0){
-			relationName = "relation"+Math.floor(Math.random()*10000000);
-		}
-		
+//		if(relationName==null || relationName.length()==0){
+//			relationName = "relation"+Math.floor(Math.random()*10000000);
+//		}
+//		
 		rootEntitiesGraph = modelRootEntitiesMap.getRootEntities(modelName);
 		if (rootEntitiesGraph == null) {
 			rootEntitiesGraph = new RootEntitiesGraph();
