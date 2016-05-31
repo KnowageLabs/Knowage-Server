@@ -142,9 +142,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			List filteredMenuList = (List) o;
 			JSONArray tempFirstLevelMenuList = new JSONArray();
 			JSONArray userMenu = new JSONArray();
-			if (!UserUtilities.isTechnicalUser(this.getUserProfile())) {
-				userMenu = createEndUserMenu(locale, 1, new JSONArray());
-			} else if (filteredMenuList != null && !filteredMenuList.isEmpty()) {
+			if (filteredMenuList != null && !filteredMenuList.isEmpty()) {
 				result = new JSONObject();
 
 				JSONArray menuUserList = new JSONArray();
@@ -270,6 +268,10 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						}
 					}
 				}
+			}
+
+			if (!UserUtilities.isTechnicalUser(this.getUserProfile())) {
+				userMenu = createEndUserMenu(locale, 1, new JSONArray());
 			}
 
 			JSONArray fixedMenuPart = createFixedMenu(locale, 1, new JSONArray());
