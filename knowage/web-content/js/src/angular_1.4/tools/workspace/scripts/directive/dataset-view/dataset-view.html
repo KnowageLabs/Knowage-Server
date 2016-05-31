@@ -1,70 +1,95 @@
- 				 	<angular-table  ng-hide="showGridView==true || ngModel.length==0 "  
- 				 					layout-fill 
-		 				 			style="position:absolute;overflow:auto"
-		 				 			no-pagination=true
-								    ng-model=ngModel
-								    no-pagination=true
-									columns='[{"label":"Label","name":"label"},{"label":"Name","name":"name"}]'
-									columnsSearch='["name"]' 
-									show-search-bar=false
-									speed-menu-option=tableSpeedMenuOption
-									highlights-selected-item="true"
-									selected-item=selectedDataset
-									click-function="clickDataset(item);">
-					</angular-table>					 
+<!--
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<angular-table  ng-hide="showGridView==true || ngModel.length==0 "  
+				layout-fill 
+ 				style="position:absolute;overflow:auto"
+ 				no-pagination=true
+			    ng-model=ngModel
+			    no-pagination=true
+				columns='[{"label":"Label","name":"label"},{"label":"Name","name":"name"}]'
+				columnsSearch='["name"]' 
+				show-search-bar=false
+				speed-menu-option=tableSpeedMenuOption
+				highlights-selected-item="true"
+				selected-item=selectedDataset
+				click-function="clickDataset(item);">
+</angular-table>					 
 					
 					
-					<!-- Dataset Grid View -->
-					<div layout="row"  layout-wrap ng-hide="showGridView!=true " >
-					<md-card class="documentCard" ng-repeat="dataset in ngModel| orderBy:orderingDatasetCards" ng-class="{'md-whiteframe-15dp' : selectedDataset==dataset }">
-			        <md-card-title>
-				          <md-card-title-text>
-				            <p class=" ellipsis">{{dataset.name}}</p>
-				             <md-tooltip md-delay="1500">
-				              {{dataset.name}}
-				            </md-tooltip>
-				          </md-card-title-text>
-				    </md-card-title>
-				        <div class="md-card-image workspace_image_dataset"   ng-click="clickDataset(dataset);"></div>
+<!-- Dataset Grid View -->
+<div layout="row"  layout-wrap ng-hide="showGridView!=true " >
+	
+	<md-card class="documentCard" ng-repeat="dataset in ngModel| orderBy:orderingDatasetCards" ng-class="{'md-whiteframe-15dp' : selectedDataset==dataset }">
+      
+      	<md-card-title>
+         	<md-card-title-text>
+           	<p class=" ellipsis">{{dataset.name}}</p>
+            <md-tooltip md-delay="1500">
+             	{{dataset.name}}
+           	</md-tooltip>
+         	</md-card-title-text>
+   		</md-card-title>
+   		
+       	<div class="md-card-image workspace_image_dataset"   ng-click="clickDataset(dataset);"></div>
+       	
 <!--  			        <img src="/knowage/themes/sbi_default/img/dataset/img-dataset-1.jpg" class="md-card-image" alt="" ng-click="clickDataset(dataset)">  -->
-			        <md-card-actions layout="row" layout-align="space-around end">
-			          <md-button class="md-icon-button" aria-label="shareDataset"  ng-click="shareDatasetAction({ds:dataset});" ng-show="shareDatasetEnabled">
-			            <md-icon md-font-icon="fa fa-share-alt fa-2x" ng-class="{'shared': dataset.isPublic==true }"></md-icon>
-			              <md-tooltip md-delay="1000" ng-if="!dataset.isPublic">
-				             {{translate.load('sbi.workspace.dataset.share')}}
-				            </md-tooltip>
-			              <md-tooltip md-delay="1000" ng-if="dataset.isPublic" >
-				            {{translate.load('sbi.workspace.dataset.unshare')}}
-				            </md-tooltip>
-			          </md-button>
-			          
-			          <md-button class="md-icon-button" aria-label="previewDataset" ng-click="previewDatasetAction({ds:dataset});">
-			            <md-icon md-font-icon="fa fa-eye fa-2x"></md-icon>
-			            <md-tooltip md-delay="1000">
-				             {{translate.load('sbi.workspace.dataset.preview')}}
-				            </md-tooltip>
-			          </md-button>
-			        	 
-			          <md-button class="md-icon-button" aria-label="detailDataset" ng-click="showDetailDatasetAction({ds:dataset});" ng-show="showDetailDatasetEnabled && dataset.dsTypeCd=='File'" >
-			            <md-icon md-font-icon="fa fa-info-circle fa-2x fa-2x"></md-icon>
-			             <md-tooltip md-delay="1000">
-				              {{translate.load('sbi.workspace.dataset.detail')}}
-				            </md-tooltip>
-			          </md-button>
-			          
+      
+     	<md-card-actions layout="row" layout-align="space-around end">
+        
+			<md-button class="md-icon-button" aria-label="shareDataset"  ng-click="shareDatasetAction({ds:dataset});" ng-show="shareDatasetEnabled">
+          		<md-icon md-font-icon="fa fa-share-alt fa-2x" ng-class="{'shared': dataset.isPublic==true }"></md-icon>
+            	<md-tooltip md-delay="1000" ng-if="!dataset.isPublic">
+            		{{translate.load('sbi.workspace.dataset.share')}}
+           		</md-tooltip>
+            	<md-tooltip md-delay="1000" ng-if="dataset.isPublic" >
+           			{{translate.load('sbi.workspace.dataset.unshare')}}
+           		</md-tooltip>
+        	</md-button>
+        
+	        <md-button class="md-icon-button" aria-label="previewDataset" ng-click="previewDatasetAction({ds:dataset});">
+	          	<md-icon md-font-icon="fa fa-eye fa-2x"></md-icon>
+	          	<md-tooltip md-delay="1000">
+	            	{{translate.load('sbi.workspace.dataset.preview')}}
+	          	</md-tooltip>
+	        </md-button>
+      	 
+	        <md-button class="md-icon-button" aria-label="detailDataset" ng-click="showDetailDatasetAction({ds:dataset});" ng-show="showDetailDatasetEnabled && dataset.dsTypeCd=='File'" >
+	          	<md-icon md-font-icon="fa fa-info-circle fa-2x fa-2x"></md-icon>
+	           	<md-tooltip md-delay="1000">
+	             	{{translate.load('sbi.workspace.dataset.detail')}}
+	           	</md-tooltip>
+	        </md-button>
+        
 <!-- 			          <md-button class="md-icon-button" aria-label="Settings" ng-click="cloneDocumentAction({doc:document});"> -->
 <!-- 			            <md-icon md-font-icon="fa fa-clone fa-2x"></md-icon> -->
 <!-- 			          </md-button> -->
-			          
-			          <md-button class="md-icon-button" aria-label="showDatasetQbe"  ng-click="showQbeDatasetAction({ds:dataset});" ng-show="showQbeEnabled && !dataset.derivated">
-			            <md-icon md-font-icon="fa fa-search fa-2x"></md-icon>
-			            <md-tooltip md-delay="1000">
-				              {{translate.load('sbi.workspace.dataset.qbe')}}
-				            </md-tooltip>
-			          </md-button>
-			          
-			        </md-card-actions>
-			      </md-card>
-	 
-					</div> 
-				</md-content>
+         
+         	<md-button class="md-icon-button" aria-label="showDatasetQbe"  ng-click="showQbeDatasetAction({ds:dataset});" ng-show="showQbeEnabled && !dataset.derivated">
+           		<md-icon md-font-icon="fa fa-search fa-2x"></md-icon>
+           		<md-tooltip md-delay="1000">
+              		{{translate.load('sbi.workspace.dataset.qbe')}}
+            	</md-tooltip>
+         	</md-button>
+         
+       </md-card-actions>
+       
+     </md-card>
+
+	</div> 
+	
+</md-content>

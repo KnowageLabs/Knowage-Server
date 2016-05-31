@@ -1,54 +1,78 @@
- 				 	<angular-table  ng-hide="showGridView==true || ngModel.length==0 "
- 				 					style="position:static;overflow:auto" 
- 				 					layout-fill 
- 				 					no-pagination=true
-									id='documentListTable' ng-model=ngModel
-									columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Date","name":"creationDate"}]'
-									columnsSearch='["name"]' 
-									show-search-bar=false
-									speed-menu-option=tableSpeedMenuOption
-									highlights-selected-item="true"
-									selected-item=selectedDocument
-									click-function="clickDocument(item);">
-					</angular-table>				
-					
-					<!-- Document Grid View -->
-					<div layout="row"  layout-wrap ng-hide="showGridView!=true " >
-					<md-card class="documentCard" ng-repeat="document in ngModel| orderBy:orderingDocumentCards" ng-class="{'md-whiteframe-15dp' : selectedDocument==document }">
-			        <md-card-title>
-				          <md-card-title-text>
-				            <p class=" ellipsis">{{document.name}}</p>
-				             <md-tooltip md-delay="1500">
-				              {{document.name}}
-				            </md-tooltip>
-				          </md-card-title-text>
-				    </md-card-title>
-			        <div class="md-card-image document_browser_image_{{document.typeCode}}"   ng-click="clickDocument(document);" ></div>
-			        <md-card-actions layout="row" layout-align="space-around end">
-			          			          			          			        	 
-			          <md-button class="md-icon-button" aria-label="Execute" ng-click="executeDocumentAction({doc:document});">
-			            <md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon>
-			          </md-button>
-			          
-			          <md-button ng-if="showAddToOrganizer" class="md-icon-button" aria-label="Organizer" ng-click="addToOrganizerAction({doc:document});">
-			            <md-icon  md-font-icon="fa fa-plus-circle fa-2x"></md-icon>
-			          </md-button>
-			          		          
-			          	<!-- 
-			          		Providing the Clone button that is needed for e.g. Analysis documents. 
-			          		- cloneEnabled: flag that will indicate if we will be able to see this button (option) for documents.
-			          		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		          		-->
-		          		<md-button ng-if="cloneEnabled" class="md-icon-button" aria-label="Clone" ng-click="cloneDocumentAction({doc:document});">
-			            	<md-icon md-font-icon="fa fa-clone fa-2x"></md-icon>
-			          	</md-button>
-			          
-			          <md-button ng-if="deleteEnabled" class="md-icon-button" aria-label="Delete" ng-click="deleteDocumentAction({doc:document});">
-			            <md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
-			          </md-button>
-			          
-			        </md-card-actions>
-			      </md-card>
-	 
-					</div> 
-				</md-content>
+<!--
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<angular-table  ng-hide="showGridView==true || ngModel.length==0 "
+				style="position:static;overflow:auto" 
+				layout-fill 
+				no-pagination=true
+				id='documentListTable' ng-model=ngModel
+				columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Date","name":"creationDate"}]'
+				columnsSearch='["name"]' 
+				show-search-bar=false
+				speed-menu-option=tableSpeedMenuOption
+				highlights-selected-item="true"
+				selected-item=selectedDocument
+				click-function="clickDocument(item);">
+</angular-table>				
+	
+<!-- Document Grid View -->
+<div layout="row"  layout-wrap ng-hide="showGridView!=true " >
+	
+	<md-card class="documentCard" ng-repeat="document in ngModel| orderBy:orderingDocumentCards" ng-class="{'md-whiteframe-15dp' : selectedDocument==document }">
+		
+		<md-card-title>
+          	<md-card-title-text>
+            	<p class=" ellipsis">{{document.name}}</p>
+             	<md-tooltip md-delay="1500">
+              		{{document.name}}
+            	</md-tooltip>
+          	</md-card-title-text>
+    	</md-card-title>
+    	
+       	<div class="md-card-image document_browser_image_{{document.typeCode}}"   ng-click="clickDocument(document);" ></div>
+       	
+       	<md-card-actions layout="row" layout-align="space-around end">
+         			          			          			        	 
+         	<md-button class="md-icon-button" aria-label="Execute" ng-click="executeDocumentAction({doc:document});">
+           		<md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon>
+        	 </md-button>
+         
+         	<md-button ng-if="showAddToOrganizer" class="md-icon-button" aria-label="Organizer" ng-click="addToOrganizerAction({doc:document});">
+           		<md-icon  md-font-icon="fa fa-plus-circle fa-2x"></md-icon>
+       	 	</md-button>
+         		          
+         	<!-- 
+        		Providing the Clone button that is needed for e.g. Analysis documents. 
+        		- cloneEnabled: flag that will indicate if we will be able to see this button (option) for documents.
+        		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+       		-->
+       		<md-button 	ng-if="cloneEnabled" class="md-icon-button" aria-label="Clone" 
+       					ng-click="cloneDocumentAction({doc:document});">
+           		<md-icon md-font-icon="fa fa-clone fa-2x"></md-icon>
+         	</md-button>
+         
+         	<md-button 	ng-if="deleteEnabled" class="md-icon-button" aria-label="Delete" 
+         				ng-click="deleteDocumentAction({doc:document});">
+           		<md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
+         	</md-button>
+         
+       </md-card-actions>
+       
+	</md-card>
+
+</div> 

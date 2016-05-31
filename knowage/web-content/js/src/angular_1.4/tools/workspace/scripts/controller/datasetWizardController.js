@@ -1,3 +1,21 @@
+/**
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * 
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_user,sbiModule_config,multipartForm,$http,sbiModule_messaging,sbiModule_translate ){
 	
 	$scope.fileObj={};
@@ -215,18 +233,15 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	$scope.submitStep4 = function() {
 		
 		$scope.dataset.isPublicDS = false;
-//			$scope.dataset.meta = '{"version":1,"dataset":[],"columns":[{"column":"country","pname":"Type","pvalue":"String"},{"column":"country","pname":"fieldType","pvalue":"ATTRIBUTE"},{"column":"region","pname":"Type","pvalue":"String"},{"column":"region","pname":"fieldType","pvalue":"ATTRIBUTE"},{"column":"province","pname":"Type","pvalue":"String"},{"column":"province","pname":"fieldType","pvalue":"ATTRIBUTE"},{"column":"store_sales_promo_2012","pname":"Type","pvalue":"Double"},{"column":"store_sales_promo_2012","pname":"fieldType","pvalue":"MEASURE"},{"column":"unit_sales_promo_2012","pname":"Type","pvalue":"Double"},{"column":"unit_sales_promo_2012","pname":"fieldType","pvalue":"MEASURE"},{"column":"store_sales_promo_2013","pname":"Type","pvalue":"Double"},{"column":"store_sales_promo_2013","pname":"fieldType","pvalue":"MEASURE"},{"column":"unit_sales_promo_2013","pname":"Type","pvalue":"Double"},{"column":"unit_sales_promo_2013","pname":"fieldType","pvalue":"MEASURE"}]}';
 		$scope.dataset.meta = $scope.dataset.datasetMetadata;
 		delete $scope.dataset['datasetMetadata'];
-		//console.log("meta",$scope.dataset.meta);
 			
 		var d = new Date();
 		var label = 'ds__' + d.getTime()%10000000; 
 		
-		if($scope.dataset.label===''){
+		if($scope.dataset.label==='') {
 			$scope.dataset.label = label;
-		}
-		//console.log($scope.dataset);
+		}		
 	
 		var params = {};
 		params.showDerivedDataset=false;
