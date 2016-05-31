@@ -49,23 +49,17 @@
 						<md-icon md-font-icon="fa fa-times" ></md-icon>
 				</md-button>
 				
-				<md-button 	aria-label="Execute Document" 
+				<md-button 	title="{{translate.load('sbi.documentbrowser.execute')}}" aria-label="Execute Document" 
 							class="md-icon-button" ng-click="executeDocument(selectedDocument)">
-						
 						<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
-						
-						<md-tooltip md-delay="1000" ng-if="!dataset.isPublic">
-		            		Execute DocumentAAA!
-		           		</md-tooltip>
-		           		
 				</md-button>
 				
-				<md-button 	aria-label="Clone Document" 
+				<md-button 	title="{{translate.load('sbi.documentbrowser.clone')}}" aria-label="Clone Document" 
 							class="md-icon-button" ng-click="cloneAnalysisDocument(selectedDocument)">
 						<md-icon md-font-icon="fa fa-clone"></md-icon>
 				</md-button>
 				
-				<md-button 	aria-label="Delete Document" 
+				<md-button 	title="{{translate.load('sbi.documentbrowser.delete')}}" aria-label="Delete Document" 
 							class="md-icon-button" ng-click="deleteAnalysisDocument(selectedDocument)">
 						<md-icon md-font-icon="fa fa-trash-o"></md-icon>
 				</md-button>

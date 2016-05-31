@@ -49,11 +49,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        	<md-card-actions layout="row" layout-align="space-around end">
          			          			          			        	 
          	<md-button class="md-icon-button" aria-label="Execute" ng-click="executeDocumentAction({doc:document});">
+           		
            		<md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon>
-        	 </md-button>
+           		
+           		<md-tooltip md-delay="1000">
+            		{{translate.load('sbi.documentbrowser.execute')}}
+           		</md-tooltip>
+           		
+       	 	</md-button>
          
-         	<md-button ng-if="showAddToOrganizer" class="md-icon-button" aria-label="Organizer" ng-click="addToOrganizerAction({doc:document});">
-           		<md-icon  md-font-icon="fa fa-plus-circle fa-2x"></md-icon>
+         	<md-button ng-if="showAddToOrganizer" class="md-icon-button" aria-label="Organizer" ng-click="addToOrganizerAction({doc:document});">           		
+           		<md-icon  md-font-icon="fa fa-plus-circle fa-2x"></md-icon>           		
        	 	</md-button>
          		          
          	<!-- 
@@ -63,12 +69,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        		-->
        		<md-button 	ng-if="cloneEnabled" class="md-icon-button" aria-label="Clone" 
        					ng-click="cloneDocumentAction({doc:document});">
+           		
            		<md-icon md-font-icon="fa fa-clone fa-2x"></md-icon>
+           		
+           		<md-tooltip md-delay="1000">
+            		{{translate.load('sbi.documentbrowser.clone')}}
+           		</md-tooltip>
+           		
          	</md-button>
          
          	<md-button 	ng-if="deleteEnabled" class="md-icon-button" aria-label="Delete" 
          				ng-click="deleteDocumentAction({doc:document});">
+         				
            		<md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
+           		
+           		<md-tooltip md-delay="1000">
+            		{{translate.load('sbi.documentbrowser.delete')}}
+           		</md-tooltip>
+           		
          	</md-button>
          
        </md-card-actions>
