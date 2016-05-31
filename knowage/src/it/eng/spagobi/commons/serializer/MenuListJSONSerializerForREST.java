@@ -388,18 +388,18 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tempMenuList.put(cacheManagement);
 		}
 
-		if (isAbleTo(SpagoBIConstants.FUNCTIONS_CATALOG, funcs)) {
-			JSONObject functionsCatalog = new JSONObject();
-			functionsCatalog.put(ICON_CLS, "device_hub");
-			functionsCatalog.put(TOOLTIP, messageBuilder.getMessage("menu.FunctionsCatalog", locale));
-			functionsCatalog.put(ICON_ALIGN, "top");
-			functionsCatalog.put(SCALE, "large");
-			functionsCatalog.put(TARGET, "_self");
-			functionsCatalog.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_FUNCTIONS_CATALOG + "');");
-			functionsCatalog.put(LINK_TYPE, "execDirectUrl");
-			functionsCatalog.put(FIRST_URL, contextName + HREF_FUNCTIONS_CATALOG);
-			tempMenuList.put(functionsCatalog);
-		}
+		// if (isAbleTo(SpagoBIConstants.FUNCTIONS_CATALOG, funcs)) {
+		// JSONObject functionsCatalog = new JSONObject();
+		// functionsCatalog.put(ICON_CLS, "device_hub");
+		// functionsCatalog.put(TOOLTIP, messageBuilder.getMessage("menu.FunctionsCatalog", locale));
+		// functionsCatalog.put(ICON_ALIGN, "top");
+		// functionsCatalog.put(SCALE, "large");
+		// functionsCatalog.put(TARGET, "_self");
+		// functionsCatalog.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_FUNCTIONS_CATALOG + "');");
+		// functionsCatalog.put(LINK_TYPE, "execDirectUrl");
+		// functionsCatalog.put(FIRST_URL, contextName + HREF_FUNCTIONS_CATALOG);
+		// tempMenuList.put(functionsCatalog);
+		// }
 
 		if (isAbleTo(SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL, funcs)) {
 			JSONObject glossaryManagementTechnical = new JSONObject();
@@ -479,18 +479,18 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tempMenuList.put(tenantManagementTechnical);
 		}
 
-		if (isAbleTo(SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT, funcs)) {
-			JSONObject udpManagementTechnical = new JSONObject();
-			udpManagementTechnical.put(ICON_CLS, "local_library");
-			udpManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.udp.management", locale)); // TODO
-			udpManagementTechnical.put(ICON_ALIGN, "top");
-			udpManagementTechnical.put(SCALE, "large");
-			udpManagementTechnical.put(TARGET, "_self");
-			udpManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_UDP + "');");
-			udpManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_UDP);
-			udpManagementTechnical.put(LINK_TYPE, "execDirectUrl");
-			tempMenuList.put(udpManagementTechnical);
-		}
+		// if (isAbleTo(SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT, funcs)) {
+		// JSONObject udpManagementTechnical = new JSONObject();
+		// udpManagementTechnical.put(ICON_CLS, "local_library");
+		// udpManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.udp.management", locale)); // TODO
+		// udpManagementTechnical.put(ICON_ALIGN, "top");
+		// udpManagementTechnical.put(SCALE, "large");
+		// udpManagementTechnical.put(TARGET, "_self");
+		// udpManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_UDP + "');");
+		// udpManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_UDP);
+		// udpManagementTechnical.put(LINK_TYPE, "execDirectUrl");
+		// tempMenuList.put(udpManagementTechnical);
+		// }
 
 		if (isAbleTo(SpagoBIConstants.LOVS_MANAGEMENT, funcs)) {
 			JSONObject lovsManagementTechnical = new JSONObject();
