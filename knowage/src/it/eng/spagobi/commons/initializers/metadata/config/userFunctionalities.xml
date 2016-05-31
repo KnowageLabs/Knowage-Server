@@ -107,7 +107,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageSI" name="MeasuresCatalogueManagement" description="MeasuresCatalogueManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImagesManagement" description="ImagesManagement" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="Glossary" description="Glossary" />
@@ -124,7 +123,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="InstallConfig" description="InstallConfig" />
-	<USER_FUNCTIONALITY productType="KnowageSI" name="AlertManagement" description="AlertManagement" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="RegistryDataEntry" description="RegistryDataEntry" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentScheduling" description="DocumentScheduling" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="SchedulingDistributedOutput" description="SchedulingDistributedOutput" />
@@ -180,7 +178,6 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="ConfigManagement" description="ConfigManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageER" name="MeasuresCatalogueManagement" description="MeasuresCatalogueManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImagesManagement" description="ImagesManagement" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="Timespan" description="Timespan" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="CreateChartFunctionality" description="CreateChartFunctionality" />
