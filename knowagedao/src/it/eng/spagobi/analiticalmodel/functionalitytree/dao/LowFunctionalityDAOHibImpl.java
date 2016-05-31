@@ -26,6 +26,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.UserFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
@@ -870,6 +871,20 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 * @return the corrispondent output <code>LowFunctionality</code>
 	 */
 	public LowFunctionality toLowFunctionality(SbiFunctions hibFunct, boolean recoverBIObjects) {
+		return toLowFunctionality(hibFunct, recoverBIObjects, null);
+	}
+
+	/**
+	 * From the Hibernate Low Functionality object at input, gives the corrispondent <code>LowFunctionality</code> object.
+	 * 
+	 * @param hibFunct
+	 *            The Hibernate Low Functionality object
+	 * @param recoverBIObjects
+	 *            If true the <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
+	 * 
+	 * @return the corrispondent output <code>LowFunctionality</code>
+	 */
+	public LowFunctionality toLowFunctionality(SbiFunctions hibFunct, boolean recoverBIObjects, List<String> allowedDocTypes) {
 		logger.debug("IN");
 		LowFunctionality lowFunct = new LowFunctionality();
 		lowFunct.setId(hibFunct.getFunctId());
@@ -948,8 +963,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				Set hibObjFuncs = hibFunct.getSbiObjFuncs();
 				for (Iterator it = hibObjFuncs.iterator(); it.hasNext();) {
 					SbiObjFunc hibObjFunc = (SbiObjFunc) it.next();
-					BIObject object = objDAO.toBIObject(hibObjFunc.getId().getSbiObjects(), null);
-					biObjects.add(object);
+					if (checkObjType(hibObjFunc.getId().getSbiObjects(), allowedDocTypes)) {
+						BIObject object = objDAO.toBIObject(hibObjFunc.getId().getSbiObjects(), null);
+						biObjects.add(object);
+					}
 				}
 			} catch (EMFUserError e) {
 				logger.error("Error", e);
@@ -959,6 +976,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		logger.debug("OUT");
 
 		return lowFunct;
+	}
+
+	private boolean checkObjType(SbiObjects sbiObjects, List<String> allowedDocTypes) {
+		if (allowedDocTypes != null && !allowedDocTypes.isEmpty()) {
+			boolean notFound = true;
+		}
+		return true;
 	}
 
 	/**
@@ -1022,6 +1046,24 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public List loadAllLowFunctionalities(boolean recoverBIObjects) throws EMFUserError {
+		return loadAllLowFunctionalities(recoverBIObjects, null);
+	}
+
+	/**
+	 * Load all low functionalities.
+	 * 
+	 * @param recoverBIObjects
+	 *            the recover bi objects
+	 * 
+	 * @return the list
+	 * 
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 * 
+	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadAllLowFunctionalities(boolean)
+	 */
+	@Override
+	public List loadAllLowFunctionalities(boolean recoverBIObjects, List<String> allowedDocTypes) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -1081,7 +1123,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			Iterator it = hibList.iterator();
 
 			while (it.hasNext()) {
-				LowFunctionality funct = toLowFunctionality((SbiFunctions) it.next(), recoverBIObjects);
+				LowFunctionality funct = toLowFunctionality((SbiFunctions) it.next(), recoverBIObjects, allowedDocTypes);
 				putIntoCache(String.valueOf(funct.getId()), funct);
 				realResult.add(funct);
 			}
