@@ -30,13 +30,12 @@
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="enterpriseDatasets"
 		show-grid-view="showGridView"
 		show-qbe-enabled="true"
-		show-detail-dataset-enabled="true"
+		show-detail-dataset-enabled="false"
 		share-dataset-enabled="false"
 	    selected-dataset=selectedDataset
 		select-dataset-action="selectDataset(ds);"
 		show-qbe-dataset-action="showQbeDataset(ds);"
 		preview-dataset-action= "previewDataset(ds);"
-		show-detail-dataset-action="editFileDataset(ds);"
  	  ></dataset-view>		
  	    </md-tab-body>
  	</md-tab>  
@@ -51,7 +50,6 @@
 		select-dataset-action="selectDataset(ds);"
 		show-qbe-dataset-action="showQbeDataset(ds);"
 		preview-dataset-action= "previewDataset(ds);"
-		show-detail-dataset-action="editFileDataset(ds);"
  	  ></dataset-view>	
  	 </md-tab-body>
  	</md-tab>  
@@ -87,13 +85,13 @@
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="datasets"
 		show-grid-view="showGridView"
 		show-qbe-enabled="true"
-		show-detail-dataset-enabled="true"
+		show-detail-dataset-enabled="false"
 		share-dataset-enabled="false"
 		selected-dataset=selectedDataset
 		select-dataset-action="selectDataset(ds);"
 		show-qbe-dataset-action="showQbeDataset(ds);"
 		preview-dataset-action= "previewDataset(ds);"
-		show-detail-dataset-action="editFileDataset(ds);"
+		
  	  ></dataset-view>	
  	  </md-tab-body>
  	</md-tab>    
@@ -111,7 +109,7 @@
 									<md-icon md-font-icon="fa fa-times" ></md-icon>
 							</md-button>
 							
-							<md-button title="{{translate.load('sbi.workspace.dataset.shareUnshare')}}" aria-label="Share Dataset" class="md-icon-button" ng-show="currentTab=='myDataSet'" ng-click="shareDataset(selectedDataset)">
+							<md-button title="{{translate.load('sbi.workspace.dataset.shareUnshare')}}" aria-label="Share Dataset" class="md-icon-button" ng-show="currentDatasetsTab=='myDataSet'" ng-click="shareDataset(selectedDataset)">
 									<md-icon md-font-icon="fa fa-share-alt" ></md-icon>
 							</md-button>
 							
@@ -126,10 +124,10 @@
 							<md-button title="{{translate.load('sbi.workspace.dataset.help')}}" aria-label="Help Online" class="md-icon-button" ng-click="showHelpOnline(selectedDataset)">
 									<md-icon md-font-icon="fa fa-question-circle"></md-icon>
 							</md-button>
-		                    <md-button title="{{translate.load('sbi.workspace.dataset.qbe')}}" aria-label="Open qbe" class="md-icon-button" ng-click="showQbeDataset(selectedDataset)">
+		                    <md-button title="{{translate.load('sbi.workspace.dataset.qbe')}}" aria-label="Open qbe" ng-show="!selectedDataset.derivated" class="md-icon-button" ng-click="showQbeDataset(selectedDataset)">
 									<md-icon md-font-icon="fa fa-search"></md-icon>
 							</md-button>
-							 <md-button title="{{translate.load('sbi.workspace.dataset.detail')}}" aria-label="Show detail" ng-show="isDetailEnabled(selectedDataset)" class="md-icon-button" ng-click="editFileDataset(selectedDataset)">
+							 <md-button title="{{translate.load('sbi.workspace.dataset.detail')}}" aria-label="Show detail" ng-show="currentDatasetsTab=='myDataSet' && selectedDataset.dsTypeCd=='File'" class="md-icon-button" ng-click="editFileDataset(selectedDataset)">
 									<md-icon md-font-icon="fa fa-info-circle"></md-icon>
 							</md-button>
 							
