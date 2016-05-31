@@ -86,6 +86,18 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 			//MODIFY DATA SOURCE
 				$scope.checkReadOnly();
+				
+			 if($scope.selectedDataSource.urlConnection != ""){
+				$scope.selectedDataSource.jndi = "";
+			}
+			 else if ($scope.selectedDataSource.jndi != "" ) {
+				$scope.selectedDataSource.urlConnection = "";
+				$scope.selectedDataSource.user = "";
+				$scope.selectedDataSource.pwd ="";
+				$scope.selectedDataSource.driver="";
+				
+			}
+			
 				sbiModule_restServices.promisePut('2.0/datasources','',angular.toJson($scope.selectedDataSource))
 				.then(function(response) {
 					console.log("[PUT]: SUCCESS!");
@@ -115,6 +127,23 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			});
 
 		}
+	};
+	
+	$scope.clearType = function() {
+		
+		if($scope.selectedDataSource.dsId == null){
+		
+		if ($scope.jdbcOrJndi.type == 'JDBC') {
+			$scope.selectedDataSource.jndi = "";
+		}else {
+			$scope.selectedDataSource.urlConnection = "";
+			$scope.selectedDataSource.user = "";
+			$scope.selectedDataSource.pwd = "";
+			$scope.selectedDataSource.driver= "";
+		}
+		
+		}
+	
 	};
 	
 	$scope.checkReadOnly = function() {
@@ -217,8 +246,13 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 	//LOAD SELECTED SOURCE
 	$scope.loadSelectedDataSource = function(item) {
+		console.log(item);
 		
-		if( $scope.currentUser == item.userIn){
+		if($scope.isSuperAdmin){
+			$scope.readOnly= false;
+		}
+		
+		else if( $scope.currentUser == item.userIn && item.jndi ==""){
 			
 			$scope.readOnly= false;
 
@@ -367,7 +401,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 		sbiModule_restServices.promisePost('2.0/datasources/test','',testJSON)
 		.then(function(response) {
-			sbiModule_messaging.showInfoMessage("Test is ok", 'Information!');
+			sbiModule_messaging.showInfoMessage("Ok, parameters are correct", 'Information!');
 		}, function(response) {
 			if (response.data.errors[0].message=="") {
 				sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.ds.error.testing.datasource"), 'Error');
@@ -389,7 +423,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	                    		$scope.deleteItem(item);
 	                    	},
 	                    	 visible: function(row) {
-	             				return row.userIn==$scope.currentUser ? true : false;
+	             				return row.userIn==$scope.currentUser || $scope.isSuperAdmin ? true : false;
 	                		 }
 
 	                     }
