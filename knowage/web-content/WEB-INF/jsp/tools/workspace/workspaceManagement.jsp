@@ -34,7 +34,7 @@
 		
 	</head>
 	
-	<body ng-controller="workspaceController" class="workspace kn-documentBrowser" id="workspaceWebPageBody"> 
+	<body ng-controller="workspaceController" class="workspace kn-workspace" id="workspaceWebPageBody"> 
 		<% if (parameters.containsKey("error")==false) {%>	
 		
 		<md-content layout="column" flex layout-fill>
@@ -47,9 +47,9 @@
 					Directive that will render the left main menu of the Workspace web page. 
 					@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				-->
-				<md-content flex=15 class="leftRightPanelHeight">
+
 					<left-main-menu-workspace></left-main-menu-workspace>
-				</md-content>
+
 				
 				<!-- 
 					The right part of the Workspace main page (Search toolbar and document details pages).

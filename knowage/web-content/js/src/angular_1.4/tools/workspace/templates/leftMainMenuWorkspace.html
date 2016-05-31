@@ -1,4 +1,10 @@
-<div>
+ <md-sidenav
+        class="md-sidenav-left"
+        md-component-id="left"
+        md-is-locked-open="$mdMedia('gt-md')"
+        md-disable-backdrop
+        md-whiteframe="4">
+
 	
 	<!-- 
 		Angular list that holds and displays all options for viewing files (different sets of files and 
@@ -11,29 +17,29 @@
 	    <div ng-repeat="option in leftMainMenu">
 			
 			<md-list-item 	ng-click="leftMenuItemPicked(option)" ng-if="option.submenuOptions==undefined && option.visible"
-							ng-class="option.name.toLowerCase() == currentOptionMainMenu ? 'md-2-line selectedLeftMenuItem' : 'md-2-line notSelectedLeftMenuItem'">
+							ng-class="option.name.toLowerCase() == currentOptionMainMenu ? 'selectedLeftMenuItem' : 'notSelectedLeftMenuItem'">
 	    		<md-icon md-font-icon="{{option.icon}}"></md-icon>
 		   	 	<p> {{ option.label }} </p>
 		  	</md-list-item>
 		  
 		  	<div ng-if="option.submenuOptions!=undefined">
 		  	 	
-		  	 	<md-list-item ng-class="suboptionActive ? 'md-2-line selectedLeftMenuSubitem' : 'md-2-line notSelectedLeftMenuItem'" ng-click="setExpanded(option)">
+		  	 	<md-list-item ng-class="suboptionActive ? 'selectedLeftMenuSubitem' : 'notSelectedLeftMenuItem'" ng-click="setExpanded(option)">
 	    			<md-icon md-font-icon="{{option.icon}}" ng-if="!option.active"></md-icon>
 	    			<md-icon md-font-icon="{{option.activeIcon}}" ng-if="option.active"></md-icon>
-		   	 		<p> {{ option.label }} </p>
-		  		</md-list-item>
+			   	 		<p> {{ option.label }} </p>
+	  		</md-list-item>
 		  		
 		  	 	<md-divider ng-show="option.active"></md-divider>
 		  	 	
-		  	  	<md-list-item 	ng-class="suboption.name.toLowerCase() == currentOptionMainMenu ? 'md-2-line workspace-submenu selectedLeftMenuItem'
-		  	  							 : 'md-2-line workspace-submenu notSelectedLeftMenuItem'"
+		  	  	<md-list-item 	ng-class="suboption.name.toLowerCase() == currentOptionMainMenu ? 'workspace-submenu selectedLeftMenuItem'
+		  	  							 : 'workspace-submenu notSelectedLeftMenuItem'"
 		  	  					ng-repeat="suboption in option.submenuOptions" 
 		  	  					ng-show="option.active && suboption.visible" 
 		  	  					ng-click="leftMenuItemPicked(suboption)">
 	    			<md-icon md-font-icon="{{suboption.icon}}"></md-icon>
-	    			<p> {{ suboption.label }} </p>
-		  		</md-list-item>	  	
+	 	    			<p> {{ suboption.label }} </p>
+  		</md-list-item>	  	
 	  	
 	  		</div>
 	  		
@@ -43,4 +49,4 @@
 	  	
 	</md-list>
 	
-</div>
+    </md-sidenav>

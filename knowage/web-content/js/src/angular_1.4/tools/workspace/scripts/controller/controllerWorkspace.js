@@ -7,7 +7,7 @@
  */
 angular
 	.module('workspace.controller', ['workspace.directive','workspace.configuration'])
-	.controller('workspaceController', ["$scope","$http","$mdDialog","$timeout","$documentViewer","sbiModule_translate","sbiModule_restServices","sbiModule_config","sbiModule_user","sbiModule_messaging", workspaceFunction])
+	.controller('workspaceController', ["$scope","$http","$mdDialog","$timeout","$mdSidenav","$documentViewer","sbiModule_translate","sbiModule_restServices","sbiModule_config","sbiModule_user","sbiModule_messaging", workspaceFunction])
    .service('multipartForm',['$http',function($http){
 		
 		this.post = function(uploadUrl,data){
@@ -25,7 +25,7 @@ angular
 	}]);
 ;
 
-function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiModule_translate,sbiModule_restServices,sbiModule_config,sbiModule_user,sbiModule_messaging) {
+function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentViewer,sbiModule_translate,sbiModule_restServices,sbiModule_config,sbiModule_user,sbiModule_messaging) {
 
 	$scope.allDocuments = [];
 	$scope.federationDefinitions=[];
@@ -77,6 +77,13 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$documentViewer,sbiMo
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.showGridView = true;
+	
+	
+	
+	// @author Davide Vernassa toggle navbar
+	$scope.toggleLeftNav = function(){
+		$mdSidenav('left').toggle();
+	}
 
 	var recentDocumentsLoaded = false;
 	var favoritesDocumentsLoaded = false;

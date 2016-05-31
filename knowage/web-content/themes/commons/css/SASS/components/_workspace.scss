@@ -1,5 +1,9 @@
 .workspace {
 
+	md-list {
+		padding-top: 0;
+	}
+
 	.leftRightPanelHeight {
 		height: calc(100% - 40px);
 	}
@@ -99,19 +103,16 @@
 	}
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
-	.selectedLeftMenuItem {
-		border: 3px solid #a9c3db;
+	.selectedLeftMenuItem, .selectedLeftMenuSubitem{
+		background-color: lighten($secondaryColor,10%);
+		button {
+			background-color: transparent;
+			&:hover {
+				background-color: transparent !important;
+			}
+		}
 	}
 	
-	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
-	.selectedLeftMenuSubitem {
-		border: 3px solid #d9d9d9;
-	}
-	
-	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	.notSelectedLeftMenuItem {
-		border: 3px solid #FFFFFF;
-	}
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	.addNewDocumentButton {

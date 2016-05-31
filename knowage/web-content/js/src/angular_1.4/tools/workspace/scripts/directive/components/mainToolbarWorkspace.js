@@ -1,5 +1,5 @@
 angular
-	.module('main_toolbar_workspace', [])
+	.module('main_toolbar_workspace', ['ngMaterial'])
 
 	.directive('mainToolbarWorkspace', function () {		
 		 return {			 
@@ -10,6 +10,10 @@ angular
 		  };	  
 	});
 
-function toolbarController($scope){
+function toolbarController($scope,$mdSidenav){
+	$scope.openedSidebar = $mdSidenav('left').isOpen();
+	$scope.toggleNav = function(){
+		$scope.toggleLeftNav();
+	}
 	
 }
