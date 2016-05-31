@@ -4,6 +4,10 @@
 		padding-top: 0;
 	}
 
+	md-toolbar.md-knowage-theme .md-button:not(.md-fab) md-icon {
+		line-height: 24px !important;
+	}
+
 	.leftRightPanelHeight {
 		height: calc(100% - 40px);
 	}

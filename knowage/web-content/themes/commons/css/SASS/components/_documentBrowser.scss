@@ -10,7 +10,7 @@
 		background-color: $baseColor;
 		color: #fff;
 	}
-	
+
 	md-toolbar.documentBrowserToolbar button.md-icon-button md-icon,
 		.selectedDocumentSidenav md-toolbar button.md-icon-button md-icon {
 		line-height: 22px;
@@ -58,7 +58,7 @@
 	
 	
 	.documentCard md-card-actions {
-	background-color: #FAFAFA;
+    	background-color: rgba(white,0.5);
 	}
 	
 	.documentCard div.md-card-image {
