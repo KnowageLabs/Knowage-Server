@@ -65,7 +65,7 @@ public class GeoReportEngine {
 		ICrossNavigationDAO crossDao = DAOFactory.getCrossNavigationDAO();
 		crossDao.setUserProfile((IEngUserProfile) env.get("ENV_USER_PROFILE"));
 		boolean isCross = false;
-		if (crossDao.documentIsCrossable(env.get("DOCUMENT_NAME").toString())) {
+		if (crossDao.documentIsCrossable(env.get("DOCUMENT_LABEL").toString())) {
 			isCross = true;
 		}
 		try {
