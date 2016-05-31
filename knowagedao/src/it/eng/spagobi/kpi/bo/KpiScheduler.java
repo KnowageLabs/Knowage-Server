@@ -1,6 +1,6 @@
 package it.eng.spagobi.kpi.bo;
 
-import it.eng.spagobi.tools.alert.listener.AbstractSuspendableJob.JOB_STATUS;
+import it.eng.spagobi.tools.alert.job.AbstractSuspendableJob.JOB_STATUS;
 import it.eng.spagobi.tools.scheduler.bo.Frequency;
 
 import java.util.ArrayList;

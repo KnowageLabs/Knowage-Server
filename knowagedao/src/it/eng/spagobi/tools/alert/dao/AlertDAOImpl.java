@@ -8,8 +8,8 @@ import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.tools.alert.bo.Alert;
 import it.eng.spagobi.tools.alert.bo.AlertAction;
 import it.eng.spagobi.tools.alert.bo.AlertListener;
-import it.eng.spagobi.tools.alert.listener.AbstractSuspendableJob.JOB_STATUS;
-import it.eng.spagobi.tools.alert.listener.IAlertListener;
+import it.eng.spagobi.tools.alert.job.AbstractSuspendableJob.JOB_STATUS;
+import it.eng.spagobi.tools.alert.job.IAlertListener;
 import it.eng.spagobi.tools.alert.metadata.SbiAlert;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertAction;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertListener;
@@ -28,8 +28,6 @@ import java.util.Map;
 import org.hibernate.Session;
 
 public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
-
-	private static final String ALERT_JOB_GROUP = "ALERT_JOB_GROUP";
 
 	@Override
 	public List<AlertListener> listListener() {
@@ -220,8 +218,13 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 	}
 
 	@Override
-	public void insertAlertLog(SbiAlertLog alertLog) {
-		insert(alertLog);
+	public Integer insertAlertLog(SbiAlertLog alertLog) {
+		return (Integer) insert(alertLog);
+	}
+
+	@Override
+	public void suspendAlert(Integer id) throws EMFUserError {
+		DAOFactory.getSchedulerDAO().pauseTrigger(ALERT_JOB_GROUP, "" + id, ALERT_JOB_GROUP, "" + id);
 	}
 
 }

@@ -21,7 +21,7 @@ import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
 import it.eng.spagobi.kpi.bo.SchedulerFilter;
 import it.eng.spagobi.kpi.dao.IKpiDAO;
-import it.eng.spagobi.tools.alert.listener.AbstractSuspendableJob;
+import it.eng.spagobi.tools.alert.job.AbstractSuspendableJob;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;

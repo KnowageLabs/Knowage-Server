@@ -77,8 +77,7 @@ import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
 import it.eng.spagobi.kpi.metadata.SbiKpiValue;
 import it.eng.spagobi.kpi.metadata.SbiKpiValueExecLog;
 import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tools.alert.listener.AbstractSuspendableJob.JOB_STATUS;
-import it.eng.spagobi.tools.alert.metadata.SbiAlertLog;
+import it.eng.spagobi.tools.alert.job.AbstractSuspendableJob.JOB_STATUS;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
@@ -1719,7 +1718,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	private void calculateKpiStatus(KpiExecution kpi) {
 		List<KpiValue> values = findKpiValues(kpi.getId(), kpi.getVersion(), null, null, new HashMap<String, String>());
 		if (values != null && !values.isEmpty()) {
-			double value = values.get(values.size() - 1).getComputedValue();
+			KpiValue kpiValue = values.get(values.size() - 1);
+			double value = kpiValue.getManualValue() != null ? kpiValue.getManualValue().doubleValue() : kpiValue.getComputedValue();
 			String color = "";
 			for (ThresholdValue threshold : kpi.getThreshold().getThresholdValues()) {
 				boolean minValueOk = threshold.getMinValue() == null || value > threshold.getMinValue().doubleValue() || threshold.isIncludeMin()
@@ -2057,10 +2057,16 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		});
 	}
 
-	// TODO: test and debug
 	@Override
 	public List<KpiValue> findKpiValues(final Integer kpiId, Integer kpiVersion, final Date computedAfter, final Date computedBefore,
 			Map<String, String> attributesValues) {
+		return findKpiValues(kpiId, kpiVersion, computedAfter, true, computedBefore, true, attributesValues);
+	}
+
+	// TODO: test and debug
+	@Override
+	public List<KpiValue> findKpiValues(final Integer kpiId, Integer kpiVersion, final Date computedAfter, final Boolean includeComputedAfter,
+			final Date computedBefore, final Boolean includeComputedBefore, Map<String, String> attributesValues) {
 		// Ensure attributesValues keys to be case-insensitive
 		TreeMap<String, String> cioAttributesValues = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 		cioAttributesValues.putAll(attributesValues);
@@ -2151,10 +2157,20 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					criteria.add(Restrictions.eq("kpiId", kpiId));
 				if (kpiVersionFinal != null)
 					criteria.add(Restrictions.eq("kpiVersion", kpiVersionFinal));
-				if (computedAfter != null)
-					criteria.add(Restrictions.ge("timeRun", computedAfter));
-				if (computedBefore != null)
-					criteria.add(Restrictions.le("timeRun", computedBefore));
+				if (computedAfter != null) {
+					if (Boolean.TRUE.equals(includeComputedAfter)) {
+						criteria.add(Restrictions.ge("timeRun", computedAfter));
+					} else {
+						criteria.add(Restrictions.gt("timeRun", computedAfter));
+					}
+				}
+				if (computedBefore != null) {
+					if (Boolean.TRUE.equals(includeComputedBefore)) {
+						criteria.add(Restrictions.le("timeRun", computedBefore));
+					} else {
+						criteria.add(Restrictions.lt("timeRun", computedBefore));
+					}
+				}
 				if (!logicalKey.isEmpty())
 					criteria.add(Restrictions.eq("logicalKey", logicalKey));
 				criteria.add(Restrictions.eq("theDay", ifNull(temporalValues.get("DAY"), "ALL")));
@@ -2500,17 +2516,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public Integer insertAlertLog(SbiAlertLog alertLog) {
-		return (Integer) insert(alertLog);
-	}
-
-	@Override
-	public List<SbiKpiThresholdValue> listThresholdValueByThresholdIds(final Collection<Integer> thresholdIds) {
+	public List<SbiKpiThresholdValue> listThresholdValueByIds(final Collection<Integer> thresholdValueIds) {
 		return list(new ICriterion<SbiKpiThresholdValue>() {
 			@Override
 			public Criteria evaluate(Session session) {
-				return session.createCriteria(SbiKpiThresholdValue.class).createAlias("sbiKpiThreshold", "sbiKpiThreshold")
-						.add(Restrictions.in("sbiKpiThreshold.id", thresholdIds));
+				return session.createCriteria(SbiKpiThresholdValue.class).add(Restrictions.in("id", thresholdValueIds));
 			}
 		});
 	}

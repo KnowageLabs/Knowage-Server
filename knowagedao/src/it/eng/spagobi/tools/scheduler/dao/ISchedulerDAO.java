@@ -101,6 +101,8 @@ public interface ISchedulerDAO {
 
 	boolean isTriggerPaused(String triggerGroup, String triggerName, String jobGroup, String jobName);
 
+	void pauseTrigger(String triggerGroup, String triggerName, String jobGroup, String jobName) throws EMFUserError;
+
 	void createOrUpdateJobAndTrigger(String jobName, Class jobClass, String groupName, String triggerGroup, Frequency frequency, Map<String, String> parameters);
 
 	Job createOrUpdateJob(String name, String groupName, Class jobClass, Map<String, String> parameters);

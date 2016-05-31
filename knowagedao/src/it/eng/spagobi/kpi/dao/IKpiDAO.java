@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.kpi.dao;
 
-import java.util.ArrayList;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.bo.Alias;
@@ -37,9 +36,9 @@ import it.eng.spagobi.kpi.bo.TargetValue;
 import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
 import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
-import it.eng.spagobi.tools.alert.metadata.SbiAlertLog;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -152,12 +151,19 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 *            The version of the KPI
 	 * @param computedAfter
 	 *            The datetime after which the KPI values must have been computed (optional, it can be null)
+	 * @param includeComputedAfter
+	 *            If true, computedAfter is checked for equals (optional)
 	 * @param computedBefore
 	 *            The datetime before which the KPI values must have been computed (optional, it can be null)
+	 * @param includeComputedBefore
+	 *            If true, computedBefore is checked for equals (optional)
 	 * @param attributesValues
 	 *            The KPI attributes name-value pairs
 	 * @return The list of KPI values
 	 */
+	public List<KpiValue> findKpiValues(Integer kpiId, Integer kpiVersion, Date computedAfter, Boolean includeComputedAfter, Date computedBefore,
+			Boolean includeComputedBefore, Map<String, String> attributesValues);
+
 	public List<KpiValue> findKpiValues(Integer kpiId, Integer kpiVersion, Date computedAfter, Date computedBefore, Map<String, String> attributesValues);
 
 	public void insertKpiValueExecLog(KpiValueExecLog kpiValueExecLog);
@@ -296,8 +302,6 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public ArrayList<KpiValueExecLog> loadKpiValueExecLog(final Integer id, final Integer number);
 
 	public KpiValueExecLog loadlogExecutionListOutputContent(Integer id);
-	
-	public Integer insertAlertLog(SbiAlertLog alertLog);
 
-	public List<SbiKpiThresholdValue> listThresholdValueByThresholdIds(Collection<Integer> thresholdIds);
+	public List<SbiKpiThresholdValue> listThresholdValueByIds(Collection<Integer> thresholdValueIds);
 }

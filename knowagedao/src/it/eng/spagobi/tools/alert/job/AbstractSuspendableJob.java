@@ -1,4 +1,4 @@
-package it.eng.spagobi.tools.alert.listener;
+package it.eng.spagobi.tools.alert.job;
 
 import org.apache.log4j.Logger;
 import org.quartz.Job;

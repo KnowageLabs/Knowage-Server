@@ -1,5 +1,6 @@
 package it.eng.spagobi.tools.alert.dao;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.alert.bo.Alert;
 import it.eng.spagobi.tools.alert.bo.AlertAction;
@@ -9,6 +10,8 @@ import it.eng.spagobi.tools.alert.metadata.SbiAlertLog;
 import java.util.List;
 
 public interface IAlertDAO extends ISpagoBIDao {
+
+	public static final String ALERT_JOB_GROUP = "ALERT_JOB_GROUP";
 
 	public List<AlertListener> listListener();
 
@@ -28,6 +31,7 @@ public interface IAlertDAO extends ISpagoBIDao {
 
 	public void remove(Integer id);
 
-	public void insertAlertLog(SbiAlertLog alertLog);
+	public Integer insertAlertLog(SbiAlertLog alertLog);
 
+	public void suspendAlert(Integer id) throws EMFUserError;
 }
