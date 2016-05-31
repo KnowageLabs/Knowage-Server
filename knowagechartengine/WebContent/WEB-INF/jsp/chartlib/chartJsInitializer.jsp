@@ -307,7 +307,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            			stringParameters:null
 	            	};
 //	             	window.parent.angular.element(window.frameElement).scope().$parent.crossNavigationHelper.navigateTo(navData); 
-	            	parent.execExternalCrossNavigation(navData); 
+	            	parent.execExternalCrossNavigation(navData,{},undefined,currentDocumentName); 
 	            }else{
 				Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
 					e.point.crossNavigationDocumentName,

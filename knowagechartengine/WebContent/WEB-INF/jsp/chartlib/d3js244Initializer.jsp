@@ -113,7 +113,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            			documentParameters:e.crossNavigationDocumentParams,
 	            			stringParameters:  e.stringParameters
 	            	};     
-					parent.execExternalCrossNavigation(navData); 
+					parent.execExternalCrossNavigation(navData,{},undefined,e.crossNavigationDocumentName); 
 	            }else{
 				
 				Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
@@ -153,7 +153,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             			groupingCategoryValue:groupingCategoryValue,
             			stringParameters:null
             	};     
-				parent.execExternalCrossNavigation(navData); 
+				parent.execExternalCrossNavigation(navData,{},undefined,currentDocumentName); 
             }else{
 			
 				Sbi.chart.viewer.CrossNavigationHelper.navigateTo(

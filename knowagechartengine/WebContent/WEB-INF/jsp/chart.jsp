@@ -191,6 +191,7 @@ author:
 	var serverPort = '<%=request.getServerPort()%>';
 	var protocol = window.location.protocol;
 	var driverParams = '<%=driverParams%>';
+	var currentDocumentName = '<%=docName%>';
 </script>
 
 <% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) {%>
