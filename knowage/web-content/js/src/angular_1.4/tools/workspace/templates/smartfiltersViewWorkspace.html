@@ -37,11 +37,12 @@
 		
 			<div layout="row" layout-align="space-around center">
 				
-				<md-button ng-if="smallScreen" title="Execute Document" aria-label="Close panel" class="md-icon-button" ng-click="selectDocument(); toggleDocumentDetail();">
+				<md-button ng-if="smallScreen" aria-label="Close panel" class="md-icon-button" ng-click="selectDocument(); toggleDocumentDetail();">
 						<md-icon md-font-icon="fa fa-times" ></md-icon>
 				</md-button>
 				
-				<md-button title="Execute Document" aria-label="Execute Document" class="md-icon-button" ng-click="executeDocument(selectedDocument)">
+				<md-button 	title="{{translate.load('sbi.documentbrowser.execute')}}" aria-label="Execute Document" 
+							class="md-icon-button" ng-click="executeDocument(selectedDocument)">
 						<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
 				</md-button>
 				

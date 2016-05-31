@@ -33,6 +33,9 @@ angular
 	})
 
 function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_user,sbiModule_helpOnLine,sbiModule_messaging){
+	
+	$scope.translate = sbiModule_translate;
+	
 	$scope.selectedDataset = undefined;
 	//$scope.lastDocumentSelected = null;
 	$scope.showDatasettInfo = false;

@@ -21,11 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  
 <md-toolbar>
       <div class="md-toolbar-tools">
-         <h2>DETAILS</h2>
+         <h2>{{translate.load('sbi.workspace.dataset.ckan.details')}}</h2>
          <span flex></span> 
        
          <md-button class=""
-            ng-click="closeCkanDetail()"> CLOSE </md-button>
+            ng-click="closeCkanDetail()"> {{translate.load('sbi.workspace.dataset.ckan.closedetails')}} </md-button>
       </div>
    </md-toolbar> 
 <md-conttent flex>
@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <md-toolbar class="secondaryToolbar">
         <div class="md-toolbar-tools">
           <h2>
-            <span>Package details</span>
+            <span>{{translate.load('sbi.workspace.dataset.ckan.packagedetails')}}</span>
           </h2>
      
         </div>
@@ -43,14 +43,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <md-list>
     <md-list-item class="md-2-line">
         <div class="md-list-item-text">
-          <h3>Name:</h3>
+          <h3>{{translate.load('sbi.workspace.dataset.ckan.list.name')}}</h3>
           <p>{{ckan.configuration.Package.package_name}}</p>
         </div>
       </md-list-item>
       <md-divider></md-divider>
           <md-list-item class="md-2-line">
         <div class="md-list-item-text">
-          <h3>Url:</h3>
+          <h3>{{translate.load('sbi.workspace.dataset.ckan.list.url')}}</h3>
           <p>{{ckan.configuration.Package.package_url}}</p>
         </div>
       </md-list-item>
@@ -61,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <md-toolbar class="secondaryToolbar">
         <div class="md-toolbar-tools">
           <h2>
-            <span>Resource details</span>
+            <span>{{translate.load('sbi.workspace.dataset.ckan.resourcedetails')}}</span>
           </h2>
      
         </div>
@@ -70,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <md-list-item class="md-2-line">
         
         <div class="md-list-item-text">
-          <h3>Name:</h3>
+          <h3>{{translate.load('sbi.workspace.dataset.ckan.list.name')}}</h3>
           <p>{{ckan.configuration.Resource.name}}</p>
         </div>
         
@@ -78,29 +78,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <md-divider></md-divider>
           <md-list-item class="md-2-line">
         <div class="md-list-item-text">
-          <h3>Url:</h3>
+          <h3>{{translate.load('sbi.workspace.dataset.ckan.list.url')}}</h3>
           <p>{{ckan.configuration.Resource.url}}</p>
         </div>
     
       </md-list-item>
       <md-divider></md-divider>
       <md-list-item class="md-2-line">
-        <div class="md-list-item-text">
-          <h3>Description:</h3>
+        <div class="md-list-item-text">{{translate.load('')}}
+          <h3>{{translate.load('sbi.workspace.dataset.ckan.list.description')}}</h3>
           <p>{{ckan.configuration.Resource.description}}</p>
         </div>
       </md-list-item>
       <md-divider></md-divider>
       <md-list-item class="md-2-line">
         <div class="md-list-item-text">
-          <h3>Creation date:</h3>
+          <h3>{{translate.load('sbi.workspace.dataset.ckan.list.creationdate')}}</h3>
           <p>{{ckan.configuration.Resource.created|date:"medium"}}</p>
         </div>
       </md-list-item>
       <md-divider></md-divider>
       <md-list-item class="md-2-line">
         <div class="md-list-item-text">
-          <h3>Format:</h3>
+          <h3>{{translate.load('sbi.workspace.dataset.ckan.list.format')}}</h3>
           <p>{{ckan.configuration.Resource.format}}</p>
         </div>
       </md-list-item>
@@ -108,6 +108,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  </md-list>
  
 </md-conttent>
-
 
 </md-dialog>

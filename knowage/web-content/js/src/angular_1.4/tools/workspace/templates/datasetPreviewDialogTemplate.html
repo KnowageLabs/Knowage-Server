@@ -1,54 +1,36 @@
-<!--
-Knowage, Open Source Business Intelligence suite
-Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-
-Knowage is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
-Knowage is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-
 <md-dialog  flex style="height:100%; width:100%; max-height:100%; max-width:100%" ng-cloak>
-    <md-content flex>
-    	<md-toolbar>
-    	
-      <div class="md-toolbar-tools">
-        <h2>DATASET PREVIEW</h2>
-        <span flex></span>
-        <md-button class="" ng-click="closeDatasetPreviewDialog()">
-         CLOSE
-        </md-button>
-      </div>   
-    </md-toolbar>
-    
-    <md-toolbar class="documentBrowserToolbar secondaryToolbar" ng-show="previewPaginationEnabled" >
-				<div class="md-toolbar-tools" layout="row" layout-align="center center">
-				   <md-button class="md-fab md-mini" aria-label="backPagination" ng-click="getBackPreviewSet()">
-          <md-icon class="fa fa-angle-double-left"></md-icon>
-        </md-button>
-        <span flex></span>
-        <div>{{startPreviewIndex+1 +'&nbsp-&nbsp'+ endPreviewIndex + '&nbsp/&nbsp'+totalItemsInPreview}} </div>
-        <span flex></span>
-             <md-button class="md-fab md-mini" aria-label="forwardPagination" ng-click="getNextPreviewSet()">
-          <md-icon class="fa fa-angle-double-right"></md-icon>
-        </md-button>
-    </div>
-    </md-toolbar>
-    <br>
+  	<md-content flex>
+   	<md-toolbar>
+   	
+     <div class="md-toolbar-tools">
+       <h2>{{translate.load('sbi.workspace.dataset.datasetpreview.title')}}</h2>
+       <span flex></span>
+       <md-button class="" ng-click="closeDatasetPreviewDialog()">
+       	{{translate.load('sbi.workspace.close')}}
+       </md-button>
+     </div>   
+   </md-toolbar>
+   
+   <md-toolbar class="documentBrowserToolbar secondaryToolbar" ng-show="previewPaginationEnabled" >
+			<div class="md-toolbar-tools" layout="row" layout-align="center center">
+			   <md-button class="md-fab md-mini" aria-label="backPagination" ng-click="getBackPreviewSet()">
+         <md-icon class="fa fa-angle-double-left"></md-icon>
+       </md-button>
+       <span flex></span>
+       <div>{{startPreviewIndex+1 +'&nbsp-&nbsp'+ endPreviewIndex + '&nbsp/&nbsp'+totalItemsInPreview}} </div>
+       <span flex></span>
+            <md-button class="md-fab md-mini" aria-label="forwardPagination" ng-click="getNextPreviewSet()">
+         <md-icon class="fa fa-angle-double-right"></md-icon>
+       </md-button>
+   </div>
+   </md-toolbar>
+   <br>
 
- <md-content flex style="height:85%">
-	<angular-table 
-	            flex
-	            style="position:absolute;"
-	            ng-model="previewDatasetModel"
+<md-content flex style="height:85%">
+<angular-table 
+            flex
+            style="position:absolute;"
+            ng-model="previewDatasetModel"
 				columns="previewDatasetColumns" 
 				no-pagination="true" 
 				show-search-bar=false

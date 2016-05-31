@@ -23,12 +23,13 @@
 		
 				<md-button 	ng-if="currentOptionMainMenu=='datasets' && currentDatasetsTab=='myDataSet'" 
 							ng-click="addNewFileDataset()" class="md-fab md-mini md-ink-ripple" style="top:0px;right:-15px" 
-							ng-cloak title="Create a new Dataset">
+							ng-cloak title="{{translate.load('sbi.workspace.mainmenu.addbutton.datasets')}}">
 					<md-icon md-font-icon="fa fa-plus"></md-icon>
 				</md-button>
 		
 				<md-button 	ng-if="currentOptionMainMenu=='models' && currentModelsTab=='federations'" ng-click="createFederation()" 
-							class="md-fab md-mini md-ink-ripple" style="top:0px;right:-15px" ng-cloak>
+							class="md-fab md-mini md-ink-ripple" style="top:0px;right:-15px" ng-cloak
+							title="{{translate.load('sbi.workspace.mainmenu.addbutton.models.federations')}}">
 					<md-icon md-font-icon="fa fa-plus"></md-icon>
 				</md-button>
 		
@@ -41,8 +42,9 @@
 					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				-->
 				
-				<md-button 	 ng-if="currentOptionMainMenu=='analysis'" ng-click="addNewAnalysisDocument()" ng-cloak
-							class="addNewDocumentButton md-fab md-mini md-ink-ripple" title="Create a new Cockpit document"> 
+				<md-button	ng-if="currentOptionMainMenu=='analysis'" ng-click="addNewAnalysisDocument()" ng-cloak
+							class="addNewDocumentButton md-fab md-mini md-ink-ripple" 
+							title="{{translate.load('sbi.workspace.mainmenu.addbutton.analysis.cockpit')}}"> 
 					<md-icon md-menu-origin md-font-icon="fa fa-plus" class="md-primary"></md-icon>
 				</md-button>
 				

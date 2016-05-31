@@ -2,10 +2,9 @@
  
 	<md-input-container>
 	
-		<md-select 	aria-label="aria-label" ng-model="metadataType.value" placeholder="Metadata Type" 
-					>
-			<md-option 	ng-repeat="m in metadataTypes track by $index"  value="{{m.value}}" 
-						>
+		<md-select 	aria-label="aria-label" ng-model="metadataType.value" 
+					placeholder="{{translate.load('sbi.workspace.dataset.wizard.metadatatype')}}">
+			<md-option 	ng-repeat="m in metadataTypes track by $index"  value="{{m.value}}">
 				{{m.name}} 
 			</md-option> 
 		</md-select>
@@ -25,9 +24,19 @@
 						class="step2DefDataTable">
 					
 					<queue-table>
-						<md-button class="md-raised" ng-click="scopeFunctions.addNewMetaRow()">Add new row</md-button>
+						
+						<md-button 	class="md-raised" ng-click="scopeFunctions.addNewMetaRow()"
+									title="{{scopeFunctions.translate.load('sbi.workspace.dataset.wizard.metadatatype.addNewMetaRow')}}">
+							{{scopeFunctions.translate.load('sbi.workspace.dataset.wizard.metadatatype.addnewrow')}}
+						</md-button>
+						
 						<span flex></span>
-						<md-button class="md-raised" ng-click="scopeFunctions.clearAllMeta()">Clear all</md-button>
+						
+						<md-button 	class="md-raised" ng-click="scopeFunctions.clearAllMeta()"
+									title="{{scopeFunctions.translate.load('sbi.workspace.dataset.wizard.metadatatype.clearAllMetaRows')}}">
+							{{scopeFunctions.translate.load('sbi.workspace.dataset.wizard.metadatatype.clearall')}}
+						</md-button>
+						
 					</queue-table>
 					
 		</angular-table>
@@ -45,11 +54,21 @@
 						scope-functions="metaScopeFunctions"
 					   	no-pagination=true	
 					   	class="step2DefDataTable">
-					   	
+												
 					<queue-table>
-						<md-button class="md-raised" ng-click="scopeFunctions.addNewDatasetRow()">Add new row</md-button>
+					
+						<md-button 	class="md-raised" ng-click="scopeFunctions.addNewDatasetRow()"
+									title="{{scopeFunctions.translate.load('sbi.workspace.dataset.wizard.metadatatype.addNewDatasetRow')}}">
+							{{scopeFunctions.translate.load('sbi.workspace.dataset.wizard.metadatatype.addnewrow')}}
+						</md-button>
+						
 						<span flex></span>
-						<md-button class="md-raised" ng-click="scopeFunctions.clearAllDatasets()">Clear all</md-button>
+						
+						<md-button 	class="md-raised" ng-click="scopeFunctions.clearAllDatasets()"
+									title="{{scopeFunctions.translate.load('sbi.workspace.dataset.wizard.metadatatype.clearAllDatasetRows')}}">
+							{{scopeFunctions.translate.load('sbi.workspace.dataset.wizard.metadatatype.clearall')}}
+						</md-button>
+						
 					</queue-table>
 					
 		</angular-table>

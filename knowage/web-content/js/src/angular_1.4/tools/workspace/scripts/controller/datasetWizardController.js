@@ -16,7 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_user,sbiModule_config,multipartForm,$http,sbiModule_messaging,sbiModule_translate ){
+function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_user,sbiModule_config,multipartForm,$http,sbiModule_messaging,sbiModule_translate) {
+
+	var translate = sbiModule_translate;
 	
 	$scope.fileObj={};
 	$scope.datasetWizardView=1;
@@ -110,8 +112,8 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					$scope.changingFile = false;
 				}
 				else {
-					console.info("[ERROR]: ",sbiModule_translate.load(response.data.errors[0].message));
-					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error!');
+					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
+					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), 'Error!');
 				}
 			}, 
 				
@@ -210,9 +212,9 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					$scope.datasetWizardView = $scope.datasetWizardView +1;
 				}
 				else {
-					console.info("[ERROR]: ",sbiModule_translate.load(response.data.errors[0].message));
+					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
 					$scope.validationStatus = false;
-					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error!');
+					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), 'Error!');
 				}
 			}, 
 			
@@ -255,13 +257,13 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				          // binds changed value to object
 //				          dataset.isPublic=response.data.isPublic;
 //				          if(response.data.isPublic){
-//				          sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.share.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));
+//				          sbiModule_messaging.showSuccessMessage(translate.load('sbi.workspace.dataset.share.success'),translate.load('sbi.workspace.dataset.success'));
 //				          }else{
 //				        	  
-//				            sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.unshare.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));	  
+//				            sbiModule_messaging.showSuccessMessage(translate.load('sbi.workspace.dataset.unshare.success'),translate.load('sbi.workspace.dataset.success'));	  
 //				          }
 			},function(response){
-				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.fail'));
+				sbiModule_restServices.errorHandler(response.data,translate.load('sbi.workspace.dataset.fail'));
 			});*/
 		
 		$http
@@ -306,9 +308,9 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					$scope.datasetWizardView = $scope.datasetWizardView +1;
 				}
 				else {
-					console.info("[ERROR]: ",sbiModule_translate.load(response.data.errors[0].message));
+					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
 					$scope.validationStatus = false;
-					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error!');
+					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), 'Error!');
 				}
 			}, 
 			
@@ -583,37 +585,46 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		var notValidStep1SheetNum = $scope.dataset.xslSheetNumber==undefined && isNaN(Number($scope.dataset.xslSheetNumber));
 				
 		if ($scope.datasetWizardView==1) {
+			
 			if (notValidStep1FileName) {
+				
 				if (!$scope.dataset.fileName) {
-					return 'Please upload XLS or CSV file in order to proceed with the dataset creation';
-				}
+					return translate.load('sbi.workspace.dataset.wizard.nextbutton.uploadfile.tooltip');
+				}	
 				else if ($scope.prevUploadedFile!=$scope.fileObj.fileName) {
-					return 'Please upload newly browsed XLS or CSV file in order to proceed with the dataset creation';
+					return translate.load('sbi.workspace.dataset.wizard.nextbutton.uploadnewfile.tooltip');
 				}
+				
 			}
 			else if (notValidStep1SkipRows) {
-				return 'Please insert valid value for the "Skip rows" numeric field or leave it empty';
+				return translate.load('sbi.workspace.dataset.wizard.nextbutton.invalid.skiprows.tooltip');
 			}
 			else if (notValidStep1LimitRows) {
-				return 'Please insert valid value for the "Limit rows number" numeric field or leave it empty';
+				return translate.load('sbi.workspace.dataset.wizard.nextbutton.invalid.limitrows.tooltip');
 			}
 			else if (notValidStep1SheetNum) {
-				return 'Please insert valid value for the "Sheet number" numeric field or leave it empty';
-			}
-		}
-		else if ($scope.datasetWizardView==4) {
-			if ($scope.dataset.name=='') {
-				return 'Please provide the name of the dataset you want to save';
-			}
-			else if ($scope.dataset.persist && $scope.dataset.tableName=='') {
-				return 'Please provide the table name of the dataset you want to save';
+				return translate.load('sbi.workspace.dataset.wizard.nextbutton.invalid.sheetnumber.tooltip');
 			}
 			else {
-				return 'Save the dataset';
+				return translate.load('sbi.workspace.dataset.wizard.nextbutton.valid.tooltip');
 			}
+			
+		}
+		else if ($scope.datasetWizardView==4) {
+			
+			if ($scope.dataset.name=='') {
+				return translate.load('sbi.workspace.dataset.wizard.nextbutton.save.missing.name.tooltip');
+			}
+			else if ($scope.dataset.persist && $scope.dataset.tableName=='') {
+				return translate.load('sbi.workspace.dataset.wizard.nextbutton.save.missing.tablename.tooltip');
+			}
+			else {
+				return translate.load('sbi.workspace.dataset.wizard.nextbutton.save.valid.tooltip');
+			}
+			
 		}
 		else {
-			return 'Proceed to the next step';
+			return translate.load('sbi.workspace.dataset.wizard.nextbutton.valid.tooltip');
 		}
 		
 	}
@@ -626,10 +637,10 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	$scope.datasetWizStep1UploadButtonTitle = function() {
 		
 		if (!$scope.fileObj.fileName) {
-			return 'Please browse for the XLS or CSV file in order to proceed with the dataset creation';
+			return translate.load('sbi.workspace.dataset.wizard.uploadbutton.missing.file.tooltip');
 		}
 		else {
-			return 'Upload the browsed file';
+			return translate.load('sbi.workspace.dataset.wizard.uploadbutton.missing.browsedfile.tooltip');
 		}
 		
 	}		

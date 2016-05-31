@@ -28,7 +28,9 @@ angular
 		  };	  
 	});
 
-function datasetWizardMetaController($scope,$mdDialog){
+function datasetWizardMetaController($scope,$mdDialog,sbiModule_translate){
+	
+	$scope.translate = sbiModule_translate;	
 	
 	/**
 	 * WORKAROUND: Re-initialize the collection of metadata types, since for some reason this collection is changed after moving back/forward from the Step 2. 
@@ -78,6 +80,7 @@ function datasetWizardMetaController($scope,$mdDialog){
     $scope.table=[];
     
     $scope.metaScopeFunctions={
+    	translate: sbiModule_translate,	
     	datasetColumns:$scope.datasetColumns,
     	dsMetaProperty:$scope.dsMetaProperty,
     	dsMetaValue   :$scope.dsMetaValue,

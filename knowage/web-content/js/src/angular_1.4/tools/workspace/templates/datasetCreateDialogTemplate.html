@@ -26,7 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	   
 			<span flex></span> 
 	         
-			<md-button 	class="" ng-click="toggleDWVBack()" ng-if="datasetWizardView>1" title="Go to the previous step"> BACK </md-button>
+			<md-button 	class="" ng-click="toggleDWVBack()" ng-if="datasetWizardView>1" 
+						title="{{translate.load('sbi.workspace.dataset.wizard.backbutton.tooltip')}}"> 
+				{{translate.load('sbi.workspace.dataset.wizard.back')}}  
+			</md-button>
 			
 			<md-button 	class="" ng-click="toggleDWVNext()" 
 						ng-disabled="nextOrSaveButtonCondition()"
@@ -34,7 +37,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				{{datasetWizardView==4 ? translate.load('sbi.workspace.dataset.wizard.save') : translate.load('sbi.workspace.dataset.wizard.next') }} 
 			</md-button>
 			
-			<md-button class="" ng-click="closeDatasetCreateDialog()" title="Close the dialog">{{translate.load('sbi.workspace.close')}} </md-button>
+			<md-button 	class="" ng-click="closeDatasetCreateDialog()" 
+						title="{{translate.load('sbi.workspace.dataset.wizard.closebutton.tooltip')}}">
+				{{translate.load('sbi.workspace.close')}} 
+			</md-button>
             
 		</div>
       
@@ -91,7 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		                  	
 		                  	<file-upload 	flex ng-model="fileObj" id="datasetFile" 
 		                  					ng-click="fileChange();checkChange();fileObjTakeBackup()" 
-			                  				title="Browse for the XLS or CSV file">
+			                  				title="{{translate.load('sbi.workspace.dataset.wizard.browsefile.tooltip')}}">
                 			</file-upload>
 		                  	
 		                  	<div class="uploadButton">
@@ -112,7 +118,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						 <span flex></span>
 						  
 						  	<div class="uploadButton">
-						    <md-button 	ng-click="changeUploadedFile()" ng-show="!ckanInWizard" class="md-raised">
+						    <md-button 	ng-click="changeUploadedFile()" ng-show="!ckanInWizard" class="md-raised" 
+						    			title="{{translate.load('sbi.workspace.dataset.wizard.file.change.tooltip')}}">
 	                     			{{translate.load("sbi.workspace.dataset.wizard.file.change")}}
              				</md-button>
            					</div>
