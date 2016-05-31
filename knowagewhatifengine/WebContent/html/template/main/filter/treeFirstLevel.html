@@ -1,5 +1,5 @@
 <div class="no-wrap">
-	<li ng-repeat="item in data" style="cursor:pointer;">
+	<li ng-repeat="item in data">
 		<div>
 			<md-icon md-font-icon="fa fa-list-alt" ng-show="item.leaf && activeaxis == -1" ng-click=""> 
 			</md-icon>
@@ -11,10 +11,10 @@
 			</md-icon>  
 			<span ng-click="selectFilter(item)" ng-show="activeaxis == -1">
 				{{item.name}}
-				<md-icon md-font-icon="fa fa-check-circle-o" style="color:green;" ng-show="item.uniqueName == filterSelected[filterAxisPosition].uniqueName"> 
+				<md-icon md-font-icon="fa fa-check-circle-o" class="icon-color-green" ng-show="item.uniqueName == filterSelected[filterAxisPosition].uniqueName"> 
 				</md-icon>
 			</span>
-			<span ng-click="" ng-show="activeaxis >= 0" style="padding-left: 10px;">
+			<span ng-click="" ng-show="activeaxis >= 0">
 				<md-checkbox ng-checked="item.visible" ng-click="checkboxSelected(item)">
 				<span ng-class="highlight(item.name)?'highlight-filter-result':''">
 					{{item.name}}

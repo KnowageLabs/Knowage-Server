@@ -1,36 +1,36 @@
-<md-dialog style='height:30%; width:25%;' layout="column">
+<md-dialog class="multi-hier-dialog" layout="column">
 	
-	<md-toolbar class="knowage-blue" style="min-height:20px">
+	<md-toolbar class="knowage-blue toolbar">
       <div>
       		{{member.caption}}
       	<span flex></span>
-        <md-button class="md-icon-button" ng-click="closeDialog(ev)" style="float: right;">
-          <md-icon class="fa fa-times" style="color:white;" aria-label="Close dialog"></md-icon>
+        <md-button class="md-icon-button x-btn" ng-click="closeDialog(ev)">
+          <md-icon class="fa fa-times icon-color-white" aria-label="Close dialog"></md-icon>
         </md-button>
       </div>
     </md-toolbar>
     
-    <md-dialog-content style="padding:10px;font-size:85%">
+    <md-dialog-content class="content">
     	<span>
     	The selected hierarchy is <b>{{member.hierarchies[member.selectedHierarchyPosition].caption}}</b>.
     	You can change it acting on the form below.
     	</span>
     	<br/>
     	<label>Available hierarchies:</label>
-    	<md-input-container style="width:50%; padding-left:10%">    		
-    		<select ng-model="selecetedMultiHierUN" class="multi-hier-combo" >
-    			<option  ng-repeat="hier in member.hierarchies" value="{{hier.uniqueName}}" style="height:20px">
-    				<span style="font-size:85%;">{{hier.caption}}</span>
+    	<md-input-container class="mh-input">    		
+    		<select ng-model="selecetedMultiHierUN" class="multi-hier-combo">
+    			<option  ng-repeat="hier in member.hierarchies" value="{{hier.uniqueName}}">
+    				<span>{{hier.caption}}</span>
     			</option>
     		</select>
     	</md-input-container>
     </md-dialog-content>
     
     <md-dialog-actions layout="row">
-    	<md-button ng-click="closeDialog(ev)" style="line-height:25px">
+    	<md-button ng-click="closeDialog(ev)" class="action-btn">
 			Cancel
 		</md-button>
-		<md-button ng-click="updateHierarchie(ev)" style="line-height:25px">
+		<md-button ng-click="updateHierarchie(ev)" class="action-btn">
 			Save
 		</md-button>
     </md-dialog-actions>
