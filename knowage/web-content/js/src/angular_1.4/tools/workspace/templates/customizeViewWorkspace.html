@@ -1,25 +1,18 @@
-<!-- md-toolbar class="documentBrowserToolbar" ng-cloak flex> 
+<div class="searchToolbar">
+	<!--  Search button -->
+	<md-button class="md-icon-button">
+		  <md-icon md-font-icon="fa fa-search"></md-icon>
+	</md-button>
 	
-	<div class="md-toolbar-tools" layout-align="center center"> -->
-		
-		<div class="searchToolbar">
-			<!--  Search button -->
-			<md-button class="md-icon-button">
-				  <md-icon md-font-icon="fa fa-search"></md-icon>
-			</md-button>
-			
-			<!-- Search input -->
-		    <md-input-container class="searchInput">
-				<input class="workspaceSearchInput" type="text" id="searchInput" ng-model="searchInput" focus-on="searchInput" ng-change="setSearchInput(searchInput)">
-			</md-input-container>
-			
-			<!-- Search clear -->
-			<md-button class="md-icon-button" title="Clear" aria-label="Clear" ng-show=true ng-click="setSearchInput('')">
-				   <md-icon md-font-icon="fa fa-times"></md-icon>
-			</md-button>
-		</div>
+	<!-- Search input -->
+    <md-input-container class="searchInput">
+		<input class="workspaceSearchInput" type="text" id="searchInput" ng-model="searchInput" focus-on="searchInput" ng-change="setSearchInput(searchInput)">
+	</md-input-container>
+	
+	<!-- Search clear -->
+	<md-button class="md-icon-button" title="Clear" aria-label="Clear" ng-show=true ng-click="setSearchInput('')">
+		   <md-icon md-font-icon="fa fa-times"></md-icon>
+	</md-button>
+</div>
 		
 				
-	<!--  /div>
-	
-</md-toolbar-->
