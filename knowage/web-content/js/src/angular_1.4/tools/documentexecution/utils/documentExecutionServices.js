@@ -267,7 +267,7 @@
 			var idDocument = '&document='+ execProperties.executionInstance.OBJECT_ID;
 			var language = '&SBI_LANGUAGE='+sbiModule_config.curr_language;
 			var host = '&SBI_HOST='+sbiModule_config.host;
-			var dataFormat = '&dataformat='+sbiModule_config.serverDateFormat;
+			var dateFormat = '&dateformat='+sbiModule_config.serverDateFormat;
 			var controller ='&SBI_SPAGO_CONTROLLER='+sbiModule_config.adapterPathNoContext;
 			var userID = '&user_id='+sbiModule_user.userId;
 			var sbiExeId= '&SBI_EXECUTION_ID=' + execProperties.executionInstance.SBI_EXECUTION_ID;
@@ -278,19 +278,25 @@
 			if(execProperties.parametersData.documentParameters && execProperties.parametersData.documentParameters.length>0){
 				var paramsArr = execProperties.parametersData.documentParameters;
 				for(var i=0; i<paramsArr.length; i++){
-					if(paramsArr[i].parameterValue && paramsArr[i].parameterValue!=''){
+					var currParam = paramsArr[i];
+					if(currParam.parameterValue && currParam.parameterValue!=''){
 						//date
-						if(paramsArr[i].type=="DATE"){
-							var dateParam = sbiModule_dateServices.formatDate(paramsArr[i].parameterValue, sbiModule_config.serverDateFormat);
-							paramsFilter=paramsFilter+'&'+paramsArr[i].urlName+'='+dateParam;
+						if(currParam.type=="DATE"){
+							var dateParam = sbiModule_dateServices.formatDate(currParam.parameterValue, sbiModule_config.serverDateFormat);
+							paramsFilter=paramsFilter+'&'+currParam.urlName+'='+dateParam;
 						}else{
-							paramsFilter=paramsFilter+'&'+paramsArr[i].urlName+'='+paramsArr[i].parameterValue;
-							//paramsFilter=paramsFilter+'&'+paramsArr[i].urlName+'_description=';
+							if(!currParam.multivalue) {
+								paramsFilter=paramsFilter+'&'+currParam.urlName+'='+currParam.parameterValue;
+							}
+							else {
+								var multivalue = "{;{"+currParam.parameterValue.join([separator = ';'])+"}"+currParam.type+"}";
+								paramsFilter=paramsFilter+'&'+currParam.urlName+'='+multivalue;
+							}
 						}
 					}
 				}
 			}
-			var exportationUrl =  sbiContext + docName + sbiExeRole + country + idDocument + language + host + dataFormat + controller + userID + sbiExeId + isFromCross + sbiEnv + outputType + paramsFilter + paramsExportType;
+			var exportationUrl =  sbiContext + docName + sbiExeRole + country + idDocument + language + host + dateFormat + controller + userID + sbiExeId + isFromCross + sbiEnv + outputType + paramsFilter + paramsExportType;
 			var url = encodeURIComponent(exportationUrl).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
 			return urlService + url;
 		};
