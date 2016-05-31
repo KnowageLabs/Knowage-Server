@@ -18,7 +18,7 @@
 
 var geoM=angular.module('geoModule');
 var borderColor="#AAAAAA"
-geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_dataset,geModule_datasetJoinColumnsItem,$map,geoModule_templateLayerData){
+geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_dataset,geModule_datasetJoinColumnsItem,$map,geoModule_templateLayerData,geoModule_filters){
 	var tmtz=this;
 	var cacheProportionalSymbolMinMax={};
 	var cacheDatasetValue={};
@@ -51,6 +51,11 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 
 	}
 	this.getStyle = function(feature, resolution) {
+		//if document without dataset
+		if(geoModule_template.noDatasetReport==true){
+			return;
+		}
+		
 		//if no indicator has been selected
 		if((geoModule_template.analysisType!="chart" && geoModule_template.selectedIndicator==undefined)||
 				(geoModule_template.analysisType=="chart" &&  (geoModule_template.selectedMultiIndicator==undefined || geoModule_template.selectedMultiIndicator.length==0))){
@@ -82,7 +87,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		}
 
 		if(geoModule_template.analysisType=="choropleth"){
-			return tmtz.choropleth(dsValue);
+			return tmtz.choropleth(dsValue,layerCol);
 		}else if(geoModule_template.analysisType=="proportionalSymbol"){
 			return tmtz.proportionalSymbol(dsValue);
 		}else if(geoModule_template.analysisType=="chart" && Object.keys(multiDsValue).length!= 0){
@@ -90,21 +95,28 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		}
 	}
 
-	function getChoroplethColor(val){
+	function getChoroplethColor(val,layerCol){
 		var color;
 		var alpha;
 		for(var i=0;i<tmtz.legendItem.choroplet.length;i++){
 			if(parseInt(val)>=parseInt(tmtz.legendItem.choroplet[i].from) && parseInt(val)<parseInt(tmtz.legendItem.choroplet[i].to)){
 				color=tmtz.legendItem.choroplet[i].color;
 				alpha=tmtz.legendItem.choroplet[i].alpha;
-				tmtz.legendItem.choroplet[i].item++;
+				if(tmtz.legendItem.choroplet[i].itemFeatures.indexOf(layerCol)==-1){
+					tmtz.legendItem.choroplet[i].itemFeatures.push(layerCol);
+					tmtz.legendItem.choroplet[i].item++;
+				}
+				
 				break;
 			}
 		}
 		if(color==undefined){
 			color=tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].color;
 			alpha=tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].alpha;
-			tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].item++;
+			if(tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].itemFeatures.indexOf(layerCol)==-1){
+				tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].itemFeatures.push(layerCol);
+				tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].item++;
+			}
 		}
 		return {color:color,alpha:alpha};
 	}
@@ -128,7 +140,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 	}
 
 
-	this.choropleth=function(dsValue){
+	this.choropleth=function(dsValue,layerCol){
 
 
 		return  [new ol.style.Style({
@@ -137,7 +149,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				width: 1
 			}),
 			fill: new ol.style.Fill({
-				color: getChoroplethColor(dsValue).color
+				color: getChoroplethColor(dsValue,layerCol).color
 			})
 		})];
 
@@ -340,13 +352,17 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		title.innerHTML="LayerStyle";
 		userStyle.appendChild(title);
 
-		if(geoModule_template.analysisType=="choropleth"){
-			tmtz.WMSChoropleth(docSld,userStyle);
-		}else if(geoModule_template.analysisType=="proportionalSymbol"){
-			tmtz.WMSproportionalSymbol(docSld,userStyle);
-		}else{
-			//TODO
-		}
+		
+			if(geoModule_template.analysisType=="choropleth"){
+				tmtz.WMSChoropleth(docSld,userStyle);
+			}else if(geoModule_template.analysisType=="proportionalSymbol"){
+				tmtz.WMSproportionalSymbol(docSld,userStyle);
+			}else{
+				//TODO
+			}
+		
+		
+		
 
 		namedLayer.appendChild(userStyle);
 
@@ -354,59 +370,35 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		return  oSerializer.serializeToString(sld);
 	}
 
-
+	
 	this.WMSChoropleth=function(docSld,userStyle){
 		var addedItem=[];
+		checkForDatasetValueOfIndicator();
+		
 		for(var i=0;i<geoModule_dataset.rows.length;i++){
-			if(addedItem.indexOf(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name])==-1){
-				var featureTypeStyle= docSld.createElement("FeatureTypeStyle");
-				var rule= docSld.createElement("Rule");
+			var filtredItem=false;
+			for(var key in geoModule_template.selectedFilters){
+				if(geoModule_template.selectedFilters[key]!="-1" 
+					&&  geoModule_template.selectedFilters[key].length!=0
+					&& geoModule_template.selectedFilters[key].indexOf(geoModule_dataset.rows[i][key])==-1){
+					filtredItem=true;
+				}
+			} 
+			
+			
+			if(addedItem.indexOf(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name])==-1 && !filtredItem){
 
-				var filter= docSld.createElement("ogc:Filter");
-				var propertyIsEqualTo= docSld.createElement("ogc:PropertyIsEqualTo");
-				var propertyName= docSld.createElement("ogc:PropertyName");
-				//Specify the attribute of geometry to apply the style
-				propertyName.innerHTML=geoModule_template.layerJoinColumns;
-				propertyIsEqualTo.appendChild(propertyName);
-
-				var literalParam= docSld.createElement("ogc:Literal");
-				literalParam.innerHTML=geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name];
-				propertyIsEqualTo.appendChild(literalParam);
+				var featureTypeStyle= tmtz.OGC_featureTypeStyle(docSld);
+				var rule= tmtz.OGC_rule(docSld);
+				var filter= tmtz.OGC_filter(docSld);
+				var propertyIsEqualTo=tmtz.OGC_propertyIsEqualTo(docSld,geoModule_template.layerJoinColumns,geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]);
 				filter.appendChild(propertyIsEqualTo)
 				rule.appendChild(filter);
-
-				var polygonSymbolizer= docSld.createElement("PolygonSymbolizer");
-				var geometryColor=getChoroplethColor(geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name]);
-				var fill= docSld.createElement("Fill");
-				var fillcssParameter= docSld.createElement("CssParameter");
-				fillcssParameter.setAttribute("name","fill");
-				fillcssParameter.innerHTML=geometryColor.color;
-				fill.appendChild(fillcssParameter);
-
-				var fillopacitycssParameter= docSld.createElement("CssParameter");
-				fillopacitycssParameter.setAttribute("name","fill-opacity");
-				fillopacitycssParameter.innerHTML=geometryColor.alpha;
-				fill.appendChild(fillopacitycssParameter);
-
-				polygonSymbolizer.appendChild(fill);
-
-				var stroke= docSld.createElement("Stroke");
-				var strokecssParameter= docSld.createElement("CssParameter");
-				strokecssParameter.setAttribute("name","stroke");
-				strokecssParameter.innerHTML=borderColor;
-				stroke.appendChild(strokecssParameter);
-
-				var strokewidthcssParameter= docSld.createElement("CssParameter");
-				strokewidthcssParameter.setAttribute("name","stroke-width");
-				strokewidthcssParameter.innerHTML="1";
-				stroke.appendChild(strokewidthcssParameter);
-
-				polygonSymbolizer.appendChild(stroke);
+				var geometryColor=getChoroplethColor(geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name],geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]);
+				var polygonSymbolizer= tmtz.OGC_PolygonSymbolizer(docSld,geometryColor.color,geometryColor.alpha,borderColor);
 				rule.appendChild(polygonSymbolizer);
-
 				featureTypeStyle.appendChild(rule);
 				userStyle.appendChild(featureTypeStyle);
-
 				addedItem.push(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]);
 			}
 		}	
@@ -415,81 +407,32 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 	this.WMSproportionalSymbol=function(docSld ,userStyle ){
 		var addedItem=[];
 		for(var i=0;i<geoModule_dataset.rows.length;i++){
-			if(addedItem.indexOf(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name])==-1){
-				var featureTypeStyle= docSld.createElement("FeatureTypeStyle");
-				var rule= docSld.createElement("Rule");
-
-				var filter= docSld.createElement("ogc:Filter");
-				var propertyIsEqualTo= docSld.createElement("ogc:PropertyIsEqualTo");
-				var propertyName= docSld.createElement("ogc:PropertyName");
-				//Specify the attribute of geometry to apply the style
-				propertyName.innerHTML=geoModule_template.layerJoinColumns;
-				propertyIsEqualTo.appendChild(propertyName);
-
-				var literalParam= docSld.createElement("ogc:Literal");
-				literalParam.innerHTML=geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name];
-				propertyIsEqualTo.appendChild(literalParam);
+			
+			var filtredItem=false;
+			for(var key in geoModule_template.selectedFilters){
+				if(geoModule_template.selectedFilters[key]!="-1" 
+					&&  geoModule_template.selectedFilters[key].length!=0
+					&& geoModule_template.selectedFilters[key].indexOf(geoModule_dataset.rows[i][key])==-1){
+					filtredItem=true;
+				}
+			} 
+			
+			if(addedItem.indexOf(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name])==-1 && !filtredItem){
+				var featureTypeStyle= tmtz.OGC_featureTypeStyle(docSld);
+				var rule= tmtz.OGC_rule(docSld);
+				var filter= tmtz.OGC_filter(docSld);
+				var propertyIsEqualTo=tmtz.OGC_propertyIsEqualTo(docSld,geoModule_template.layerJoinColumns,geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]);
+				 
 				filter.appendChild(propertyIsEqualTo)
 				rule.appendChild(filter);
 
-				var polygonSymbolizer= docSld.createElement("PolygonSymbolizer");
-				var stroke= docSld.createElement("Stroke");
-				var strokecssParameter= docSld.createElement("CssParameter");
-				strokecssParameter.setAttribute("name","stroke");
-				strokecssParameter.innerHTML=borderColor;
-				stroke.appendChild(strokecssParameter);
-
-				var strokewidthcssParameter= docSld.createElement("CssParameter");
-				strokewidthcssParameter.setAttribute("name","stroke-width");
-				strokewidthcssParameter.innerHTML="1";
-				stroke.appendChild(strokewidthcssParameter);
-
-				polygonSymbolizer.appendChild(stroke);
+				var polygonSymbolizer= tmtz.OGC_PolygonSymbolizer(docSld,null,null,borderColor);
 				rule.appendChild(polygonSymbolizer);
 
-				var pointSymbolizer= docSld.createElement("PointSymbolizer");
-				var geometry= docSld.createElement("Geometry");
-				var centroidFunc= docSld.createElement("ogc:Function");
-				centroidFunc.setAttribute("name","centroid");
-				var CFPropName= docSld.createElement("ogc:PropertyName");
-				CFPropName.innerHTML="the_geom";
-				centroidFunc.appendChild(CFPropName);
-				geometry.appendChild(centroidFunc);
-				pointSymbolizer.appendChild(geometry);
+				var pointSymbolizer= tmtz.OGC_pointSymbolizer(docSld);
 
-				var graphic= docSld.createElement("Graphic");
-				var mark= docSld.createElement("Mark");
-				var wellKnownName= docSld.createElement("WellKnownName");
-				wellKnownName.innerHTML="circle";
-				mark.appendChild(wellKnownName);
-
-				var fill= docSld.createElement("Fill");
-				var fillCssParameter= docSld.createElement("CssParameter");
-				fillCssParameter.setAttribute("name","fill");
-				//TODO recuperare il colore dalla leggenda
-				fillCssParameter.innerHTML=geoModule_template.analysisConf.proportionalSymbol.color;
-				fill.appendChild(fillCssParameter);
-				mark.appendChild(fill);
-
-				var stroke= docSld.createElement("Stroke");
-				var strokecssParameter= docSld.createElement("CssParameter");
-				strokecssParameter.setAttribute("name","stroke");
-				strokecssParameter.innerHTML=borderColor;
-				stroke.appendChild(strokecssParameter);
-
-				var strokewidthcssParameter= docSld.createElement("CssParameter");
-				strokewidthcssParameter.setAttribute("name","stroke-width");
-				strokewidthcssParameter.innerHTML="1";
-				stroke.appendChild(strokewidthcssParameter);
-
-				mark.appendChild(stroke);
-
-				graphic.appendChild(mark);
-
-				var size= docSld.createElement("Size");
-				size.innerHTML=getProportionalSymbolSize(geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name])
-				graphic.appendChild(size);
-
+				var graphic= tmtz.OGC_graphic(docSld,geoModule_template.analysisConf.proportionalSymbol.color,borderColor,getProportionalSymbolSize(geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name]));
+				 
 				pointSymbolizer.appendChild(graphic);
 
 				rule.appendChild(pointSymbolizer);
@@ -506,15 +449,25 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		var grad = tinygradient([geoModule_template.analysisConf.choropleth.fromColor, geoModule_template.analysisConf.choropleth.toColor]);
 		var gradienti= grad.rgb(numberGradient==1?2:numberGradient); // ternary operator required to handle single line dataset
 		tmtz.legendItem.choroplet.length=0;
+		
+		var containWMS=false;
+	 	for(var i in geoModule_templateLayerData){
+			if(geoModule_templateLayerData[i].type == "WMS"){
+				containWMS=true;
+				break;
+			}
+		}
+		
 		for(var i=0;i<gradienti.length;i++){
 			var  tmpGrad={};
-			if(geoModule_templateLayerData.type=="WMS"){
+			if(containWMS){
 				tmpGrad.color=gradienti[i].toHexString();
 				tmpGrad.alpha=gradienti[i].getAlpha();
 			}else{
 				tmpGrad.color=gradienti[i].toRgbString();
 			}
 			tmpGrad.item=0; //number of features in this range
+			tmpGrad.itemFeatures=[]; //features in this range
 			tmtz.legendItem.choroplet.push(tmpGrad);
 		}
 	}
@@ -579,4 +532,172 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 
 		}
 	}
+	
+	this.noDatasetObj={};
+	this.fillStyleNoDataset=function(label){
+		var tmpNDS={};
+		tmpNDS.layerName=label;
+		tmpNDS.getNoDatasetStyle=function(feature, resolution){
+			if( geoModule_template.hiddenTargetLayer.indexOf(tmpNDS.layerName)==-1 ){
+				
+				var tlProp=geoModule_templateLayerData[tmpNDS.layerName].properties;
+				//if there are specifyed analitical filter 
+				for( var key in geoModule_template.selectedAnalyticalFilter){
+//					&& feature.getProperties()[key]!=undefined
+					if(geoModule_template.selectedAnalyticalFilter[key].length>0 
+							&& tlProp.indexOf(key)!=-1
+							&& geoModule_template.selectedAnalyticalFilter[key].indexOf(feature.getProperties()[key])==-1){
+						return null;
+					}
+				}
+				
+				return  [new ol.style.Style({
+					stroke: new ol.style.Stroke({
+						color: "#3499CB",
+						width: 1
+					}),
+					fill: new ol.style.Fill({
+						color: 'rgba(158, 181, 199,0.5)'
+					})
+				})];
+			}else{
+				return null;
+			}
+		};
+		
+		tmtz.noDatasetObj[label]=tmpNDS;
+		return tmpNDS.getNoDatasetStyle;
+		
+	}
+	
+	  
+	this.loadCqlFilter=function(data,withDataset){
+		 
+		var tlProp=data.properties;
+		var filter=[];
+		
+		if(!withDataset){
+			for( var key in geoModule_template.selectedAnalyticalFilter){
+				if(geoModule_template.selectedAnalyticalFilter[key].length>0 && tlProp.indexOf(key)!=-1){
+					var fcql=[];
+					for(var i=0;i< geoModule_template.selectedAnalyticalFilter[key].length ; i++){
+						 fcql.push("'"+geoModule_template.selectedAnalyticalFilter[key][i]+"'");
+					} 
+					filter.push(key+" in ("+fcql.join(" , ")+")")
+				}
+			}
+		}
+		
+		
+		return filter.join(" AND ");
+	}
+	
+	this.OGC_propertyIsEqualTo=function(docSld,name,value){
+		var propertyIsEqualTo= docSld.createElement("ogc:PropertyIsEqualTo");
+		var propertyName= docSld.createElement("ogc:PropertyName");
+		//Specify the attribute of geometry to apply the style
+		propertyName.innerHTML=name;
+		propertyIsEqualTo.appendChild(propertyName);
+
+		var literalParam= docSld.createElement("ogc:Literal");
+		literalParam.innerHTML=value;
+		propertyIsEqualTo.appendChild(literalParam);
+		return propertyIsEqualTo;
+	};
+	
+	this.OGC_filter=function(docSld){
+		return docSld.createElement("ogc:Filter")
+	}
+	this.OGC_rule=function(docSld){
+		return docSld.createElement("Rule");
+	}
+	this.OGC_featureTypeStyle=function(docSld){
+		return docSld.createElement("FeatureTypeStyle");
+	}
+	this.OGC_PolygonSymbolizer=function(docSld,fillColor,fillOpacity,strokeColor){
+		var polygonSymbolizer= docSld.createElement("PolygonSymbolizer");
+		
+		if(fillColor!=null){
+			var fill= docSld.createElement("Fill");
+			var fillcssParameter= docSld.createElement("CssParameter");
+			fillcssParameter.setAttribute("name","fill");
+			fillcssParameter.innerHTML=fillColor;
+			fill.appendChild(fillcssParameter);
+		}
+
+		if(fillOpacity!=null){
+			var fillopacitycssParameter= docSld.createElement("CssParameter");
+			fillopacitycssParameter.setAttribute("name","fill-opacity");
+			fillopacitycssParameter.innerHTML=fillOpacity;
+			fill.appendChild(fillopacitycssParameter);
+			polygonSymbolizer.appendChild(fill);
+		}
+		
+		if(strokeColor!=null){
+			var stroke= docSld.createElement("Stroke");
+			var strokecssParameter= docSld.createElement("CssParameter");
+			strokecssParameter.setAttribute("name","stroke");
+			strokecssParameter.innerHTML=strokeColor;
+			stroke.appendChild(strokecssParameter);
+	
+			var strokewidthcssParameter= docSld.createElement("CssParameter");
+			strokewidthcssParameter.setAttribute("name","stroke-width");
+			strokewidthcssParameter.innerHTML="1";
+			stroke.appendChild(strokewidthcssParameter);
+			polygonSymbolizer.appendChild(stroke);
+		}
+		return polygonSymbolizer;
+	}
+	
+	this.OGC_pointSymbolizer=function(docSld){
+		var pointSymbolizer= docSld.createElement("PointSymbolizer");
+		var geometry= docSld.createElement("Geometry");
+		var centroidFunc= docSld.createElement("ogc:Function");
+		centroidFunc.setAttribute("name","centroid");
+		var CFPropName= docSld.createElement("ogc:PropertyName");
+		CFPropName.innerHTML="the_geom";
+		centroidFunc.appendChild(CFPropName);
+		geometry.appendChild(centroidFunc);
+		pointSymbolizer.appendChild(geometry);
+		return pointSymbolizer;
+	}
+	
+	this.OGC_graphic=function(docSld,fillColor,borderColor,circleSize){
+		var graphic= docSld.createElement("Graphic");
+		var mark= docSld.createElement("Mark");
+		var wellKnownName= docSld.createElement("WellKnownName");
+		wellKnownName.innerHTML="circle";
+		mark.appendChild(wellKnownName);
+
+		var fill= docSld.createElement("Fill");
+		var fillCssParameter= docSld.createElement("CssParameter");
+		fillCssParameter.setAttribute("name","fill");
+		//TODO recuperare il colore dalla leggenda
+		fillCssParameter.innerHTML=tinycolor(fillColor).toHexString();
+		fill.appendChild(fillCssParameter);
+		mark.appendChild(fill);
+
+		var stroke= docSld.createElement("Stroke");
+		var strokecssParameter= docSld.createElement("CssParameter");
+		strokecssParameter.setAttribute("name","stroke");
+		strokecssParameter.innerHTML=borderColor;
+		stroke.appendChild(strokecssParameter);
+
+		var strokewidthcssParameter= docSld.createElement("CssParameter");
+		strokewidthcssParameter.setAttribute("name","stroke-width");
+		strokewidthcssParameter.innerHTML="1";
+		stroke.appendChild(strokewidthcssParameter);
+
+		mark.appendChild(stroke);
+
+		graphic.appendChild(mark);
+
+		var size= docSld.createElement("Size");
+		size.innerHTML=circleSize;
+		graphic.appendChild(size);
+		
+		return graphic;
+	}
+	
+	
 });

@@ -422,8 +422,8 @@
 			}
 		};
 		
-		$scope.navigateTo= function(outputParameters,inputParameters,targetCrossNavigation){
-			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,inputParameters,targetCrossNavigation);
+		$scope.navigateTo= function(outputParameters,inputParameters,targetCrossNavigation,docLabel){
+			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel);
 		};
 		
 		$scope.internalNavigateTo= function(params,targetDocLabel){
@@ -458,6 +458,6 @@ var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, tar
 	angular.element(frameElement).scope().$parent.internalNavigateTo(jsonEncodedParams,doclabel);
 };
 
-var execExternalCrossNavigation=function(outputParameters,inputParameters,targetCrossNavigation){ 
-	angular.element(frameElement).scope().$parent.navigateTo(outputParameters,inputParameters,targetCrossNavigation);
+var execExternalCrossNavigation=function(outputParameters,inputParameters,targetCrossNavigation,docLabel){ 
+	angular.element(frameElement).scope().$parent.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel);
 };

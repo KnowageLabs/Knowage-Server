@@ -36,9 +36,11 @@ angular.module('geoModule')
 });
 
 function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$timeout,baseLayer,geoModule_layerServices,
-		sbiModule_restServices,sbiModule_logger,geoModule_template,geoModule_constant,sbiModule_translate){
+		sbiModule_restServices,sbiModule_logger,geoModule_template,geoModule_constant,sbiModule_translate,geo_interaction,geoModule_indicators,geoModule_templateLayerData,geoModule_driverParameters){
 
 	$scope.geoModule_layerServices=geoModule_layerServices;
+	$scope.geoModule_templateLayerData=geoModule_templateLayerData;
+	$scope.geoModule_template=geoModule_template;
 	$scope.layers={};
 	$scope.openLayersMenu=false;
 	$scope.baseLayers=baseLayer;
@@ -49,6 +51,78 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	$scope.multipleFilters={};
 	$scope.listCheckedfilter={};
 	$scope.oneTime=true;
+	$scope.selectModeInteraction = geo_interaction;
+	$scope.firstCallInteraction = true;
+	$scope.measureInsert=0;
+	$scope.selectMisure="kilometers";
+	$scope.geoModule_driverParameters=geoModule_driverParameters;
+	
+	$scope.selectModeTypeList = [
+	                             {label:sbiModule_translate.load("gisengine.rigthMapMenu.selectModeType.identify"), type:"identify"},
+	                             {label:sbiModule_translate.load("gisengine.rigthMapMenu.selectModeType.cross"), type:"cross"}
+	                             ];
+	$scope.filterTypes = [
+	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.near"), type:"near"},	
+	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.intersect"), type:"intersect"},	
+	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.inside"), type:"inside"}
+	                      ];
+	
+	$scope.typeOfMisure = [
+	                       {label: "m",type:"miglia"},
+	                       {label: "km",type:"kilometers"},
+	                       
+	                       ];
+	//inizializzo il valore dell'indicator
+	for(var i=0;i<geoModule_indicators.length;i++){
+		if(geoModule_indicators[i].header==geoModule_template.selectedIndicator.header){
+			geoModule_template.selectedIndicator=geoModule_indicators[i];
+			break;
+		}
+	}
+	
+	$scope.isCrossRadioButtonDisabled = function(selectModeType) {
+		var isCross = (selectModeType.toLowerCase() == "cross");
+		var isCrossNavigationInTemplate = (geoModule_template.crossNavigation == true);
+
+		var isCrossRadioButtonOptionDisabled = (isCross && !isCrossNavigationInTemplate);
+
+		return isCrossRadioButtonOptionDisabled;
+	};
+	
+	$scope.setSelectedFilterType = function(type) {
+		geo_interaction.selectedFilterType=type;
+		if(type=="near"){
+			
+		}else{
+			geoModule_layerServices.setInteraction();
+			if ($scope.$root.$$phase != '$apply') {
+				$scope.$apply();
+			}
+		}
+		
+	};
+	
+	$scope.saveMeasure = function(select,num,type){
+		$scope.selectMisure=select;
+		$scope.measureInsert=2*num;
+		if($scope.selectMisure=="miglia"){
+			//conversion in km
+			$scope.measureInsert=$scope.measureInsert*1.852;
+		}
+		geo_interaction.selectedFilterType=type;
+		geoModule_layerServices.measure=$scope.measureInsert*500;
+		geoModule_layerServices.setInteraction();
+	}
+	
+
+	
+	$scope.setDefaultDraw = function(){
+		if($scope.firstCallInteraction){
+			geoModule_layerServices.setInteraction();
+			$scope.firstCallInteraction=false;
+		}
+
+	}
 	
 	$scope.loadLayerFromTemplate=function(){
 		//if geoModule_template has baseLayersConf, add them to layerlist
@@ -169,6 +243,31 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		
 	};
 
+	$scope.toggleTargetLayer=function(targObj){
+		 	
+		var indexTL=geoModule_template.hiddenTargetLayer.indexOf(targObj.layerName);
+		if(indexTL==-1){
+			geoModule_template.hiddenTargetLayer.push(targObj.layerName);
+		}else{
+			geoModule_template.hiddenTargetLayer.splice(indexTL,1);
+		}
+
+		geoModule_layerServices.updateTargetLayer(targObj.layerName);
+		 
+	}
+	
+	$scope.targetLayerIsLoaded=function(targObj){
+		return geoModule_template.hiddenTargetLayer.indexOf(targObj.layerName)==-1;	
+	}
+
+	$scope.updateAllTargetLayer=function(){
+		 
+		for(var key in $scope.geoModule_templateLayerData){
+			geoModule_layerServices.updateTargetLayer(key);
+		}
+	}
+	
+	
 	$scope.toggleLayer = function(layerConf){
 		sbiModule_logger.log("toggleLayer");
 		//reload filters
@@ -187,24 +286,21 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			//add filters
 			if($scope.multipleFilters[layerConf.layerId]){
 				$scope.listCheckedfilter[layerConf.layerId]=$scope.multipleFilters[layerConf.layerId];
-				
 			}
-		
 			
 		}
-	
 		geoModule_layerServices.filters =$scope.listCheckedfilter;
 		geoModule_layerServices.toggleLayer(layerConf);
-		
 		//it is important to activate the map rendering
 		$map.setSize($map.getSize());
 		$map.renderSync();
 
 	};
-	//start code for filters 
 	
-
-
+	
+	
+	
+	//start code for filters 
 	$scope.getFilter = function(selectedLayer){
 
 		$scope.layerSelected = selectedLayer;

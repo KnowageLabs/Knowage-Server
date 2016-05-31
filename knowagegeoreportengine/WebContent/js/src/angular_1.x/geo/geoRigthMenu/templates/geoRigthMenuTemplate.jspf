@@ -7,19 +7,18 @@
 		<i ng-if="openRigthMenu" class="fa fa-angle-double-right"></i>
 	</md-button>
 
-	<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id='menu' md-is-locked-open="openRigthMenu" layout-fill>
+	<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id='menu' md-is-locked-open="openRigthMenu" layout="column">
 		<md-toolbar class="md-theme-light" layout="row" layout-wrap
 			layout-align="center center">
 			<div class="md-toolbar-tools" style="    height: 100%;    width: 100%;    text-align: center;">
 				
 					<i class="fa fa-crosshairs"></i>
 					<span style="    height: 100%;    width: 100%;    line-height: 23px;">{{translate.load("gisengine.rigthMenu.locationIntelligence")}}</span>
-				
 			</div>
 		</md-toolbar> 
-		<md-content class="contentStyle no-padding"   > 
-			<md-tabs class="mini-tabs">
-				<md-tab id="GEOMAP"> 
+		<md-content class=" no-padding"  flex  layout> 
+			<md-tabs class="mini-tabs" ng-class="{hiddenTabs:template.noDatasetReport==true}" flex>
+				<md-tab id="GEOMAP" ng-if="template.noDatasetReport!=true"> 
 					<md-tab-label>{{translate.load("gisengine.rigthMenu.tabs.geomap")}} </md-tab-label> 
 					<md-tab-body>
 						<geo-map-menu id="map"></geo-layers>
@@ -31,18 +30,18 @@
 						<geo-layers id="layer"></geo-layers>
 					</md-tab-body>
 				</md-tab>
-				<md-tab id="CONFIG"> 
+				<md-tab id="CONFIG" ng-if="template.noDatasetReport!=true"> 
 					<md-tab-label>{{translate.load("gisengine.rigthMenu.tabs.config")}}</md-tab-label> 
 					<md-tab-body>
 						<geo-config id="config"></geo-config>
 					</md-tab-body>
 				</md-tab>
-				<md-tab id="TEMPLATE"> 
+		<!-- 	<md-tab id="TEMPLATE"> 
 					<md-tab-label>TEMPLATE</md-tab-label> 
 					<md-tab-body>
 					<pre>{{template | json}}</pre>
 					</md-tab-body>
-				</md-tab>
+				</md-tab>  -->
 			</md-tabs>
 		</md-content>
 	</md-sidenav>

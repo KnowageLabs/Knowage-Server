@@ -34,10 +34,14 @@ angular.module('geoModule')
 	}
 });
 
-
-//Dont'remove geoReport_saveTemplate from function because it initialize the factory to save the template
-function geoMapControllerFunction($scope,geoModule_reportUtils,geoReport_saveTemplate,geoModule_layerServices){
-	geoModule_reportUtils.getTargetDataset();
+ 
+function geoMapControllerFunction($scope,geoModule_reportUtils,geoModule_layerServices,geoModule_template){
+	$scope.geoModule_template=geoModule_template;
+	if(!geoModule_template.noDatasetReport){
+		geoModule_reportUtils.getTargetDataset();
+	}else{
+		geoModule_reportUtils.GetTargetLayer();
+	}
 	$scope.openCrossNavMultiSelectFlag = false;
 	$scope.closePopup=function(){
 		geoModule_layerServices.removeSelectPopup();

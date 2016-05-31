@@ -17,6 +17,21 @@
  */
 package it.eng.spagobi.api;
 
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -51,21 +66,6 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -227,8 +227,8 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
-			throw new SpagoBIRuntimeException(
-					"User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label + "]");
+			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label
+					+ "]");
 
 		ResponseBuilder rb;
 		ObjTemplate template = document.getActiveTemplate();
@@ -257,8 +257,8 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
-			throw new SpagoBIRuntimeException(
-					"User [" + getUserProfile().getUserName() + "] has no rights to manage the template of document with label [" + label + "]");
+			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to manage the template of document with label ["
+					+ label + "]");
 
 		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 		List<InputPart> inputParts = uploadForm.get("file");
@@ -322,13 +322,13 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@SuppressWarnings("unused")
 	@Path("/saveGeoReportTemplate")
 	@POST
-	public String saveTemplate(@Context HttpServletRequest req) throws IOException, JSONException {
-		JSONObject response = new JSONObject();
-		JSONObject geoTemplate = RestUtilities.readBodyAsJSONObject(req);
-		String layerLabel = geoTemplate.getJSONObject("executionContext").getString("DOCUMENT_LABEL");
+	public Response saveTemplate(@Context HttpServletRequest req) throws IOException, JSONException {
+		JSONObject jsonData = RestUtilities.readBodyAsJSONObject(req);
+		JSONObject geoTemplate = jsonData.getJSONObject("TEMPLATE");
+		String layerLabel = jsonData.getString("DOCUMENT_LABEL");
 
 		ObjTemplate template = new ObjTemplate();
-		template.setName(geoTemplate.getJSONObject("executionContext").getString("DOCUMENT_LABEL") + "_Template.json");
+		template.setName(layerLabel + "_Template.json");
 		template.setContent(geoTemplate.toString().getBytes());
 		template.setDimension(Long.toString(geoTemplate.toString().getBytes().length / 1000) + " KByte");
 		try {
@@ -338,12 +338,10 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			document = biObjectDao.loadBIObjectByLabel(layerLabel);
 			documentManager.saveDocument(document, template);
 		} catch (EMFUserError e) {
-			response.put("Status", "NON OK");
-			logger.error("Error saving JSON Template to XML...", e);
+			logger.error("Error saving JSON Template ...", e);
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
 		}
-		response.put("Status", "OK");
-		return response.toString();
+		return Response.ok().build();
 	}
 
 	@POST

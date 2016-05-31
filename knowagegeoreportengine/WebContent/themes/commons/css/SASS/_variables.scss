@@ -1,0 +1,48 @@
+$baseColor: 		#3b678c;
+$headerBackground: $baseColor;
+$contentBackground: #fafafa;
+$headerFontWeight: 600;
+$pageBackground: #eceff1;
+$lightTextColor:	white;		
+$fabPrimaryColor: #c70751;
+$bordersColor: #ccc;
+$fabTop: 10px;
+$secondaryColor: #a9c3db;
+$ternaryColor: #ccc;
+$inputLineColor: $baseColor;
+$inactiveLabelColor: $secondaryColor;
+$activeLabelColor: $baseColor;
+$tabFontWeight: $headerFontWeight;
+$toolbarButtonColor: white;
+$listBackground: #eceff1;
+$listRightBorder: 2px solid gray;
+$detailBackground: #f6f6f6;
+$tabBackground: white;
+$tableFontSize: 16px;
+$tableLineSeparator: #c3d4df;
+$tableSelectedElementColor: $secondaryColor;
+$federatedDatasetBackground: #eceff1;
+$raisedButtonTextColor: white;
+$inputInvalidLineColor: #c70751;
+$invalidLabelColor: $inputInvalidLineColor;
+$importExportBackground: #eceff1;
+$calendarHeaderBackground: $baseColor;
+$calendarHeaderTextColor: white;
+
+/* FONTS & ICONS */
+$headerFontWeight: 	600;
+$tabFontWeight: 	$headerFontWeight;
+$fabIconSize: 		18px;
+$smallFontSize:		12px;
+$headerFontSize: 	15px;
+$tableFontSize: 	16px;
+
+/* PADDINGS */
+$standardPadding: 	10px;
+$tabPadding: 		8px;
+
+
+/* DIMENSIONS */
+$toolbarHeight: 40px;
+$browseButtonLineHeight : 4em;
+$angularTableTRHeight: 2em;

@@ -16,8 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-var geoM = angular.module('geoModule', [ 'ngMaterial', 'ngAnimate',
-                                         'angular_table', 'sbiModule', 'color.picker', "expander-box" ]);
+var geoM = angular.module('geoModule', [ 'ngMaterial', 'ngAnimate','angular_table', 'sbiModule', 'color.picker', "expander-box" ]);
+
+geoM.config(['$mdThemingProvider', function($mdThemingProvider) {
+    $mdThemingProvider.theme('knowage')
+    $mdThemingProvider.setDefaultTheme('knowage');
+}]);
 
 geoM.factory('geoModule_dataset', function() {
 	var ds = {};
@@ -110,59 +114,79 @@ geoM.service(
 			// this.cachedFeatureStyles = {};
 
 			this.setTemplateLayer = function(data) {
-				angular.copy(data,geoModule_templateLayerData);
-//				Object.assign(geoModule_templateLayerData, data);
-				geoModule_thematizer.updateLegend(geoModule_template.analysisType);
-				if (geoModule_templateLayerData.type == "WMS") {
-					var sldBody = geoModule_thematizer
-					.getWMSSlBody(geoModule_templateLayerData);
-					console.log(sldBody)
-					var params = JSON
-					.parse(geoModule_templateLayerData.layerParams);
-					params.LAYERS = geoModule_templateLayerData.layerName;
-					// var params={};
-					params.SLD_BODY = sldBody;
+				//if is report without dataset, the template layer data is a array
+				var tmpGeoModule_templateLayerData=data;
+				geoModule_templateLayerData[data.layerName]=data; 
+				
+				if(geoModule_template.noDatasetReport!=true){ 
+					geoModule_thematizer.updateLegend(geoModule_template.analysisType);
+				}
+				
+				var tmpTemplateLayer;
+				
+				if (tmpGeoModule_templateLayerData.type == "WMS") {
+					var params = JSON.parse(tmpGeoModule_templateLayerData.layerParams);
+					params.LAYERS = tmpGeoModule_templateLayerData.layerName;
+					if(geoModule_template.noDatasetReport){
+						var cqlfiler=geoModule_thematizer.loadCqlFilter(data);
+						if(cqlfiler!="")
+						params.CQL_FILTER=cqlfiler;
+					}else{
+						
+						var sldBody = geoModule_thematizer.getWMSSlBody(tmpGeoModule_templateLayerData);
+						params.SLD_BODY = sldBody;
+					}
+		 
 
-					layerServ.templateLayer = new ol.layer.Tile(
+					tmpTemplateLayer = new ol.layer.Tile(
 							{
 								source : new ol.source.TileWMS(
 										/** @type {olx.source.TileWMSOptions} */
 										{
 											url : sbiModule_config.externalBasePath+"restful-services/1.0/geo/getWMSlayer?layerURL="
-											+ geoModule_templateLayerData.layerURL,
+											+ tmpGeoModule_templateLayerData.layerURL,
 											params : params,
-											options : JSON
-											.parse(geoModule_templateLayerData.layerOptions)
+											options : JSON.parse(tmpGeoModule_templateLayerData.layerOptions)
 										})
 							});
 
 				} else {
 					var vectorSource = new ol.source.Vector(
 							{
-								features : (new ol.format.GeoJSON()).readFeatures(geoModule_templateLayerData,
+								features : (new ol.format.GeoJSON()).readFeatures(tmpGeoModule_templateLayerData,
 										{
 									// dataProjection: 'EPSG:4326',
 									featureProjection : 'EPSG:3857'
 										})
 							});
 
-					layerServ.templateLayer = new ol.layer.Vector({
-						source : vectorSource,
-						style : geoModule_thematizer.getStyle
-					});
+					var dataVector={source : vectorSource};
+					if(geoModule_template.noDatasetReport!=true){
+						dataVector.style =geoModule_thematizer.getStyle;
+					}else{
+						dataVector.style =geoModule_thematizer.fillStyleNoDataset(tmpGeoModule_templateLayerData.layerName);
+					}
+					
+					tmpTemplateLayer = new ol.layer.Vector(dataVector);
 				}
 
-				layerServ.templateLayer.setZIndex(0);
-				$map.addLayer(layerServ.templateLayer);
-				var duration = 2000;
-				var start = +new Date();
+				tmpTemplateLayer.setZIndex(0);
+				if(geoModule_template.hiddenTargetLayer.indexOf(tmpGeoModule_templateLayerData.layerName)!=-1){
+					tmpTemplateLayer.setVisible(false);
+				}
+				layerServ.templateLayer[tmpGeoModule_templateLayerData.layerName]=tmpTemplateLayer;
+				$map.addLayer(tmpTemplateLayer);
 				if(geoModule_template.currentView.center[0]==0 && geoModule_template.currentView.center[1]==0){
-					console.log(layerServ.templateLayer);
-					$map.getView().setCenter(layerServ.templateLayer.getSource().getFeatures()[0].getGeometry().getCoordinates()[0][0][0]);
-					if(layerServ.templateLayer.getSource().getFeatures().length>35){
-						$map.getView().setZoom(4);
+					 if (tmpGeoModule_templateLayerData.type == "WMS"){
+						$map.getView().setZoom(3);
 					}else{
-						$map.getView().setZoom(5);
+						$map.getView().setCenter(tmpTemplateLayer.getSource().getFeatures()[0].getGeometry().getCoordinates()[0][0][0]);
+						
+						if(tmpTemplateLayer.getSource().getFeatures().length>35){
+							$map.getView().setZoom(4);
+						}else{
+							$map.getView().setZoom(5);
+						}
 					}
 				}else{
 					$map.getView().setCenter(geoModule_template.currentView.center);
@@ -202,44 +226,116 @@ geoM.service(
 				$map.addInteraction(select);
 
 				select.on('select',	function(evt) {
+					
+					var containWMS=false;
+				 	for(var i in geoModule_templateLayerData){
+						if(geoModule_templateLayerData[i].type == "WMS"){
+							containWMS=true;
+							break;
+						}
+					}
+					 
+					
 					if (geo_interaction.type == "identify"
 						&& (evt.selected[0] == undefined || geo_interaction.distance_calculator)
-						&& geoModule_templateLayerData.type != "WMS") {
+						&& !containWMS) {
 						layerServ.overlay.setPosition(undefined);
 						return;
 					}
 
-					// if is a WMS i must load the
-					// properties from server
-					if (geoModule_templateLayerData.type == "WMS") {
-						var urlInfo = layerServ.templateLayer.getSource().getGetFeatureInfoUrl(
-								evt.mapBrowserEvent.coordinate,
-								$map.getView().getResolution(),
-								'EPSG:3857',
-								{
-									'INFO_FORMAT' : 'application/json'
-								});
-						$http.get(urlInfo).success(function(data,status,headers,config) {
-							sbiModule_logger.log("getGetFeatureInfoUrl caricati",data);
-							if (data.hasOwnProperty("errors")) {
-								sbiModule_logger.log("getGetFeatureInfoUrl non Ottenuti",data.errors);
-							} else {
-								if (data.features.length == 0) {
+					
+					var findOne=false;
+					var index=0;
+					for(var i in geoModule_templateLayerData){
+						if(!findOne){
+							checkClickAction(geoModule_templateLayerData[i],layerServ.templateLayer[i],evt)
+							.then(function(){
+								findOne=true;
+							},
+							function(){
+								if((Object.keys(geoModule_templateLayerData).length==index) && !findOne){
 									layerServ.overlay.setPosition(undefined);
+								}
+							});
+						}
+						index++;
+					}
+					
+					
+					
+				});
+			}
+			
+			function checkClickAction(tmplLayerData,tmplLayer,evt){
+				var deferredAction = $q.defer();
+				// if is a WMS i must load the
+				// properties from server
+				if (tmplLayerData.type == "WMS") {
+					var parser = new ol.format.WMSGetFeatureInfo();
+					var infoFormat='application/json';
+					if(geo_interaction.type == "cross"){
+						infoFormat='application/vnd.ogc.gml';
+					}
+					
+					var urlInfo = tmplLayer.getSource().getGetFeatureInfoUrl(
+							evt.mapBrowserEvent.coordinate,
+							$map.getView().getResolution(),
+							'EPSG:3857',
+							{
+								'INFO_FORMAT' : infoFormat
+							});
+					$http.get(urlInfo,{transformResponse:function(data) {
+						
+						if(geo_interaction.type == "cross"){
+							var features =	parser.readFeatures(data);
+							data=JSON.stringify({features:features.length});
+							for(var i=0;i<features.length;i++){
+								evt.target.getFeatures().push(features[i]);
+								
+							}
+							geo_interaction.selectedFeaturesCallbackFunctions[0]();
+						
+						}
+						return JSON.parse(data);
+					}}).success(function(data,status,headers,config) {
+						if (data.hasOwnProperty("errors")) {
+							sbiModule_logger.log("getGetFeatureInfoUrl non Ottenuti",data.errors);
+						} else {
+							if(geo_interaction.type == "cross"){
+								if(data.features==0){
+									deferredAction.reject();
+								}else{
+									layerServ.doClickAction(evt,{});	
+								}
+							}else{
+								if (data.features.length == 0) {
+									deferredAction.reject();
 								} else {
-									layerServ.doClickAction(evt,data.features[0].properties)
+									deferredAction.resolve();
+									layerServ.doClickAction(evt,data.features[0].properties);
 								}
 							}
-						})
-						.error(function(data,status,headers,config) {
-							sbiModule_logger.log("getGetFeatureInfoUrl non Ottenuti ",status);
-						});
+							
+						}
+					})
+					.error(function(data,status,headers,config) {
+						deferredAction.reject();
+						sbiModule_logger.log("getGetFeatureInfoUrl non Ottenuti ",status);
+					});
 
-					} else {
-						var prop = evt.selected.length ? evt.selected[0].getProperties(): null;
+				} else {
+					var prop = evt.selected.length ? evt.selected[0].getProperties(): null;
+					
+					if(prop!=null){
+						deferredAction.resolve();
 						layerServ.doClickAction(evt,prop)
+					}else{
+						deferredAction.reject();
 					}
-				});
+					
+				}
+				
+				return deferredAction.promise;
 			}
 
 			this.intersectFeature = function() {
@@ -267,12 +363,22 @@ geoM.service(
 					var selection = [];
 					var extent = dragBox.getGeometry().getExtent();
 
-					var vectorSource = layerServ.templateLayer.getSource();
-					vectorSource.forEachFeatureIntersectingExtent(extent,function(feature) {
-						sFeatures.push(feature);
-						selection.push(feature);
-					});
-
+					//multy template layers
+					for(var i in layerServ.templateLayer){
+						var vectorSource = layerServ.templateLayer[i].getSource();
+						
+						//not load the features of type wms
+						if(geoModule_templateLayerData[i].type!="WMS"){
+							vectorSource.forEachFeatureIntersectingExtent(extent,function(feature) {
+								sFeatures.push(feature);
+								selection.push(feature);
+							});
+						}else{
+							sbiModule_logger.log("unable to load features from templateLayers of type wms");
+						}
+						
+					}
+					
 					layerServ.selectedFeatures = selection;
 					geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
 
@@ -311,23 +417,20 @@ geoM.service(
 					var selection = [];
 					var extent = dragBox.getGeometry().getExtent();
 
-					var vectorSource = layerServ.templateLayer.getSource();
-					vectorSource.forEachFeatureIntersectingExtent(extent,function(feature) {
-						var geom = feature.getGeometry().getExtent();
-						if (geom[0] > extent[0]) {
-							if (geom[1] > extent[1]) {
-								if (geom[2] < extent[2]) {
-									if (geom[3] < extent[3]) {
-										// it is inside the polygon
-										sFeatures.push(feature);
-										selection.push(feature);
-									}
-								}
-							}
+					
+					
+					//multy template layers
+					for(var i in layerServ.templateLayer){
+						if(geoModule_templateLayerData[i].type!="WMS"){
+							var vectorSource = layerServ.templateLayer[i].getSource();
+							getInsideFeatures(vectorSource,extent,sFeatures,selection);
+						}else{
+							sbiModule_logger.log("unable to load features from templateLayers of type wms");
 						}
-
-					});
-
+						
+					}
+					
+					 
 					layerServ.selectedFeatures = selection;
 					geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
 
@@ -341,6 +444,24 @@ geoM.service(
 				});
 
 			}
+			
+			function getInsideFeatures(vectorSource,extent,sFeatures,selection){
+				vectorSource.forEachFeatureIntersectingExtent(extent,function(feature) {
+					var geom = feature.getGeometry().getExtent();
+					if (geom[0] > extent[0]) {
+						if (geom[1] > extent[1]) {
+							if (geom[2] < extent[2]) {
+								if (geom[3] < extent[3]) {
+									// it is inside the polygon
+									sFeatures.push(feature);
+									selection.push(feature);
+								}
+							}
+						}
+					} 
+				});
+			}
+			
 			this.spy = function() {
 				var element;
 
@@ -424,11 +545,29 @@ geoM.service(
 				var circleGeometry;
 				var myCircle;
 				var sFeatures = select.getFeatures();
+				var selection = [];
+				 
+				for(var i in layerServ.templateLayer){
+					if(geoModule_templateLayerData[i].type!="WMS"){
+						var features = layerServ.templateLayer[i].getSource().getFeatures();
+						getNearFeatures(features,coordinate,ray,sFeatures,selection);
+					}else{
+						sbiModule_logger.log("unable to load features from templateLayers of type wms");
+					}
+				}
+				 
+				
+				
+				if(selection.length>0){
+					layerServ.selectedFeatures = selection;
+					geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
+				}
 
+			}
 
-				var features = layerServ.templateLayer.getSource().getFeatures();
+			function getNearFeatures(features,coordinate,ray,sFeatures,selection){
 				if (features.length > 0) {
-					var selection = [];
+					
 					features.forEach(function(feature) {
 
 						var geom = feature.getGeometry().getCoordinates();
@@ -447,17 +586,9 @@ geoM.service(
 						}
 
 					})
-
-
-					layerServ.selectedFeatures = selection;
-					geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
-
+ 
 				}
-
-
-
 			}
-
 
 			this.findIntersect = function(x, y, center, ray) {
 				//intersect inside a circle
@@ -497,8 +628,8 @@ geoM.service(
 				}
 			}
 			this.doClickAction = function(evt, prop) {
-
 				layerServ.selectedFeatures = evt.target.getFeatures().getArray();
+				//qui aggiungo anche la features con il shift click
 				geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
 
 				if (geo_interaction.type == "identify") {
@@ -514,9 +645,10 @@ geoM.service(
 					}
 
 					angular.element((document.querySelector('#popup-content')))[0].innerHTML = txt;
-					$map.getOverlays().getArray()[0].setPosition(coordinate);
+//					$map.getOverlays().getArray()[0].setPosition(coordinate);
+					$map.getOverlays().getArray()[$map.getOverlays().getArray().length-1].setPosition(coordinate);
 
-				} else if (geo_interaction.type == "cross" && geo_interaction.selectedFilterType == "near") {
+				}else if (geo_interaction.type == "cross" && geo_interaction.selectedFilterType == "near") {
 					layerServ.spy();
 				} else if (geo_interaction.type == "cross" && geo_interaction.selectedFilterType == "intersect") {
 					layerServ.intersectFeature();
@@ -550,7 +682,6 @@ geoM.service(
 				//calculate ray in km
 				var wgs84Ellipsoid = new ol.Ellipsoid(6378137, 1 / 298.257223563);
 				var sourceProj = $map.getView().getProjection();
-
 				var c1 = ol.proj.transform(coord, sourceProj, 'EPSG:4326');
 				var c2 = ol.proj.transform(endCoord, sourceProj, 'EPSG:4326');
 
@@ -570,20 +701,44 @@ geoM.service(
 
 			}
 			this.updateTemplateLayer = function(legendType) {
-				geoModule_thematizer.updateLegend(legendType);
+				 geoModule_thematizer.updateLegend(legendType);
 				if (layerServ.templateLayer == undefined || Object.keys(layerServ.templateLayer).length == 0) {
 					return;
 				}
-				if (geoModule_templateLayerData.type == "WMS") {
-					var sldBody = geoModule_thematizer.getWMSSlBody(geoModule_templateLayerData);
-					layerServ.templateLayer.getSource().updateParams({
-						SLD_BODY : sldBody
-					})
-				} else {
-					layerServ.templateLayer.changed();
+				for(var key in geoModule_templateLayerData){
+					layerServ.updateTargetLayer(key);
 				}
 			};
 
+			this.updateTargetLayer=function(key){
+				if(geoModule_template.hiddenTargetLayer.indexOf(key)!=-1){
+					layerServ.templateLayer[key].setVisible(false);
+					return;
+				}
+				layerServ.templateLayer[key].setVisible(true);
+				
+				
+				if (geoModule_templateLayerData[key].type == "WMS") {
+					var params={};
+					if(!geoModule_template.noDatasetReport){
+						var sldBody = geoModule_thematizer.getWMSSlBody(geoModule_templateLayerData[key]);
+						params.SLD_BODY = sldBody;
+					}else{
+						var cqlFilter=geoModule_thematizer.loadCqlFilter(geoModule_templateLayerData[key],!geoModule_template.noDatasetReport);
+						if(cqlFilter!=""){
+							params.CQL_FILTER=cqlFilter;
+						}else{
+							params.CQL_FILTER=null;
+						}
+						
+					}
+					
+					layerServ.templateLayer[key].getSource().updateParams(params);
+				} else {
+					layerServ.templateLayer[key].changed();
+				}
+			}
+			
 			this.isSelectedBaseLayer = function(layer) {
 				return angular.equals(this.selectedBaseLayerOBJ, layer);
 			};
@@ -591,6 +746,8 @@ geoM.service(
 			this.layerIsLoaded = function(layer) {
 				return (this.loadedLayerOBJ[layer.layerId] != undefined);
 			};
+			
+			
 
 			this.alterBaseLayer = function(layerConf) {
 				var layer = this.createLayer(layerConf, true);
@@ -748,17 +905,13 @@ geoM.service(
 			this.getLayerFromFile=function(layerConf){
 				var deferredLayer = $q.defer();
 				sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
-				sbiModule_restServices.post("1.0/geo", 'getFileLayer',{layerUrl:layerConf.pathFile})
-				.success(
-						function(data, status, headers, config) {
-							if (data.hasOwnProperty("errors")) {
-								sbiModule_logger.log("file layer non Ottenuto");
-							} else {
-								sbiModule_logger.trace("file layer caricato",data);
+				sbiModule_restServices.promisePost("1.0/geo", 'getFileLayer',{layerUrl:layerConf.pathFile})
+				.then(
+						function(response, status, headers, config) { 
 
 								var vectorSource = new ol.source.Vector(
 										{
-											features : (new ol.format.GeoJSON()).readFeatures(data,
+											features : (new ol.format.GeoJSON()).readFeatures(response.data,
 													{
 												featureProjection : 'EPSG:3857'
 													})
@@ -769,10 +922,10 @@ geoM.service(
 									style: layerServ.applyFilter
 								}); 
 								deferredLayer.resolve(tmpLayer);
-							}
-						})
-						.error(function(data, status, headers, config) {
-							sbiModule_logger.log("file layer non Ottenuto");
+						 
+						},function(response, status, headers, config) {
+							sbiModule_restServices.errorHandler(response.data,"Error while attempt to load file layer ");
+							deferredLayer.reject()
 						});
 
 				return deferredLayer.promise;
@@ -915,13 +1068,6 @@ geoM.service(
 				if(applFilter==undefined){
 					applFilter = false ;
 				}
-
-
-
-
-
-
-
 
 				if(applFilter){
 

@@ -22,6 +22,7 @@
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="org.json.JSONObject"%>
+<%@page import="it.eng.spagobi.commons.ParameterValuesDecoder"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -75,13 +76,13 @@
     // gets analytical driver
     Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
 
-
+    ParameterValuesDecoder pvd=new ParameterValuesDecoder();
     Map driverParamsMap = new HashMap();
 	for(Object key : engineInstance.getAnalyticalDrivers().keySet()){
 		if(key instanceof String && !key.equals("widgetData")){
 			String value = request.getParameter((String)key);
 			if(value!=null){
-				driverParamsMap.put(key, value);
+				driverParamsMap.put(key, pvd.decode(value));
 			}
 		}
 	}

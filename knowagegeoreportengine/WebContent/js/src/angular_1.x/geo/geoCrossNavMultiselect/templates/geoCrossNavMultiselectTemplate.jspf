@@ -7,7 +7,7 @@
 			{{sbiModule_translate.load('gisengine.crossnavigation.multiselect.featuresselected')}}: {{geo_interaction.selectedFeatures.length}}
 			
 			<md-button class="md-fab md-mini md-ink-ripple" ng-click="multiSelectNavigateTo()">
-	          	<i class="material-icons">forward</i>
+	          	<md-icon md-font-icon="fa fa-play"></md-icon>
 	        </md-button>
 		</div>
 	</div>

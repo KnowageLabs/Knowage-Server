@@ -61,6 +61,7 @@ public class geoUtils {
 	public static final String LAYER_NAME = "layer";
 	public static final String LAYER_JOIN_COLUMNS = "layerJoinColumns";
 	public static final String LAYER_URL = "layerUrl";
+	public static final String NO_DATASET = "noDataset";
 
 	static private Logger logger = Logger.getLogger(geoUtils.class);
 
@@ -91,8 +92,9 @@ public class geoUtils {
 
 	public static String targetLayerAction(JSONObject req) throws JSONException {
 		String layerName = req.getString(LAYER_NAME);
-		String layerCol = req.getString(LAYER_JOIN_COLUMNS);
-		String featureIds = req.getString(FEATURE_IDS);
+		String layerCol = req.optString(LAYER_JOIN_COLUMNS);
+		String featureIds = req.optString(FEATURE_IDS);
+		Boolean noDataset = req.optBoolean(geoUtils.NO_DATASET);
 
 		try {
 			Monitor.start("GetTargetLayerAction.doService");
@@ -141,27 +143,34 @@ public class geoUtils {
 			} else {
 				logger.debug("Layer [" + FEATURE_SOURCE_TYPE + "] is in cache");
 			}
-
-			JSONArray featuresIdJSON = new JSONArray(featureIds);
-			Map<String, String> idIndex = new HashMap<String, String>();
-			for (int i = 0; i < featuresIdJSON.length(); i++) {
-				String s = featuresIdJSON.getString(i);
-				idIndex.put(s, s);
-			}
-			FeatureIterator it = outputFeatureCollection.features();
 			List<SimpleFeature> list = new ArrayList<SimpleFeature>();
-			while (it.hasNext()) {
-				SimpleFeature f = (SimpleFeature) it.next();
-				Property property = f.getProperty(layerCol);
-				if (property != null) {
-					String id = "" + property.getValue();
-					if (idIndex.containsKey(id)) {
-						list.add(f);
-					}
-				} else {
-					logger.warn("Impossible to read attribute [" + layerCol + "] from feature [" + f + "]");
+			if (noDataset) {
+				FeatureIterator it = outputFeatureCollection.features();
+				while (it.hasNext()) {
+					SimpleFeature f = (SimpleFeature) it.next();
+					list.add(f);
 				}
+			} else {
+				JSONArray featuresIdJSON = new JSONArray(featureIds);
+				Map<String, String> idIndex = new HashMap<String, String>();
+				for (int i = 0; i < featuresIdJSON.length(); i++) {
+					String s = featuresIdJSON.getString(i);
+					idIndex.put(s, s);
+				}
+				FeatureIterator it = outputFeatureCollection.features();
+				while (it.hasNext()) {
+					SimpleFeature f = (SimpleFeature) it.next();
+					Property property = f.getProperty(layerCol);
+					if (property != null) {
+						String id = "" + property.getValue();
+						if (idIndex.containsKey(id)) {
+							list.add(f);
+						}
+					} else {
+						logger.warn("Impossible to read attribute [" + layerCol + "] from feature [" + f + "]");
+					}
 
+				}
 			}
 
 			FeatureCollection<SimpleFeatureType, SimpleFeature> filteredOutputFeatureCollection = DataUtilities.collection(list);

@@ -1,0 +1,452 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * 
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */ 
+
+.minihead  {
+/*  position: absolute !important; */
+  height: 29px !important;
+  color: black !important;
+}
+
+.leftBox {
+	z-index: 3;
+    box-shadow: 10px 0px 39px -20px rgba(0, 0, 0, 0.75);
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(236, 236, 236);
+}
+
+.leftListbox md-content{
+	background-color: transparent;
+}
+
+.xs-head{
+	  height: 16px !important;
+  color: black !important;
+}
+
+.xs-head .md-title, .md-toolbar-tools{
+	font-size: 12px!important;
+}
+
+.xs-head .md-title, .md-toolbar-tools md-progress-circular{
+	font-size: 12px!important;
+	position: absolute;
+  top: -26px;
+  right: 0;
+  margin-top: -17px;
+  margin-right: -11px;
+}
+ md-content.xs-head-max-content  {
+   height: calc(100% - 16px);
+   }
+
+.md-button.md-ExtraMini {
+	line-height: 25px;
+	width: 25px;
+	height: 25px;
+	min-height: 0;
+}
+
+.md-button.md-ExtraMini span {
+	margin-top: 5px;
+}
+
+
+.md-button.md-MiniList {
+    width: 20px;
+    height: 20px;
+    padding-left: 4px;
+    padding-top: 3px;
+    min-height: 0;
+}
+
+.bodyStyle {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
+	color: black;
+	overflow: auto !important;
+}
+
+md-toolbar.minihead {
+	background-color: rgb(176, 190, 197);
+	color: rgb(255, 255, 255);
+	height: 50px;
+	min-height: 0px;
+}
+
+md-toolbar.xs-head {
+	background-color: rgb(232, 232, 232);
+	color: rgb(255, 255, 255);
+	height: 29px;
+	min-height: 16px;
+}
+
+.box_pagination {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	margin-bottom: 3px;
+	left: 0;
+}
+
+[layout-padding] .box_pagination {
+		margin-left: -8px!important;
+}
+
+
+.pagination>li, .pagination>li>span {
+	  position: relative;
+  float: left;
+  margin-left: -1px;
+  text-decoration: none !important;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  display: block;
+  width: 20px;
+  height: 16px;
+  text-align: center;
+  line-height: 16px;
+}
+
+
+.pagination {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+.pagination>li>a {
+	text-decoration: none !important;
+}
+
+.pagination>.active, .pagination>.active>a, .pagination>.active>a:focus,
+	.pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus,
+	.pagination>.active>span:hover {
+	z-index: 2;
+	color: #000;
+	cursor: default;
+	background-color: rgb(232, 232, 232);
+	border-color: rgb(232, 232, 232);
+}
+
+.pagination>.disabled>a, .pagination>.disabled>a:focus, .pagination>.disabled>a:hover,
+	.pagination>.disabled>span, .pagination>.disabled>span:focus,
+	.pagination>.disabled>span:hover {
+	color: #777;
+	cursor: not-allowed;
+	background-color: #fff;
+	border-color: #ddd;
+}
+
+
+.hidden {
+	display: none !important;
+	visibility: hidden !important;
+}
+
+.smallListItem, .smallListItem button, .smallListItem .md-list-item-inner
+	{
+	min-height: 15px !important;
+}
+
+.smallListItem p {
+	line-height: 15px;
+	margin: 3px;
+}
+
+ md-list.bottomBorder md-list-item button {
+   border-bottom: 1px solid rgb(176, 190, 197);
+  padding: 0;
+   margin-left: 8px;
+  margin-right: 8px;
+  border-radius: 0;
+}
+
+.noPadding {
+	padding: 0 !important;
+}
+.noTBPadding {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+}
+
+.noBorder {
+	border: none !important;
+}
+
+
+ 
+ 
+
+ md-toast {
+	position: fixed !important;
+	  top: 0px !important;
+}
+
+
+
+
+.preloader {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	z-index: 99999;
+	background-color: rgba(0, 0, 0, 0.12);
+}
+.preloader md-progress-circular {
+	top: 50%;
+	margin-top: -25px;
+	left: 50%;
+	margin-left: -25px;
+}
+
+p.wrapText {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.SecondaryOnLeft .md-secondary-container {
+	left: 0px !important;
+}
+
+.SecondaryOnLeft .expandericon {
+
+/* 	top: 4px; */
+/* 	margin-left: 19px; */
+    position: absolute;
+    left: 0px;
+    top: 3px;
+    margin-left: 24px;
+}
+
+
+
+
+.glossaryTec{
+	  height: 100%;
+  position: relative;
+}
+
+.glossaryTec md-tabs,.h100
+{
+	height:100% !important;
+}
+
+ md-content.abs100{
+height: 100%;
+  position: absolute;
+  width: 100%;}
+  
+md-input-container.search-input input{
+	height:20px;
+	margin-left: 15px;
+}
+
+md-input-container.search-input md-icon{
+	color: black;
+	margin-top: 2px;
+}
+  
+.searchBar{
+	padding: 0;
+  background-color: white;
+  margin-top: 3px;
+  height: 22px;
+}
+
+.navig-tab-content .searchBar{
+  margin-top: -2px !important;
+  margin-bottom: 4px !important;;
+  
+}
+
+.searchBar md-icon{
+	  color: rgb(177, 169, 174);
+  height: 100%;
+  top: 50%;
+  margin-top: -5px;
+}
+
+.searchBar md-icon.filter-icon{
+  left: 100%;
+  margin-left: -10px;
+  display:none;
+}
+.searchBar md-icon.filter-icon.not_empty{
+  color:red;
+  display: block;
+}
+
+.searchBar input{
+	margin: 0px;
+  margin-left: 15px;
+  height: 18px;
+}
+
+.blue{
+  	background-color: rgb(0, 148, 255)!important;
+}
+
+.addButton{
+	position: absolute ;
+  	right: 11px;
+  	background-color: rgb(0, 148, 255)!important;
+}
+
+.addButtonBody{
+	position: absolute ;
+  	background-color: rgb(0, 148, 255)!important;
+}
+
+md-dialog.infoBox{
+	max-height: 100%;
+	width: 50%; 
+	overflow-y: visible;
+}
+.infoBox ul{
+	padding: 0 20px;
+}
+
+.infoBox ul li{
+	display: block;
+}
+
+.infoBox ul li span{
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.infoBox ul li p{
+  margin-left: 20px;
+  margin-top: 5px;
+
+	}
+
+.infoBox ul li.sub-list ul{
+  height: 16px;
+  padding: 0;
+  margin-top: 5px;
+  margin-left: 20px;
+  margin-bottom: 13px;
+  margin-right: 0px;}
+
+.infoBox ul li.sub-list ul li	{  
+	float: left;
+  margin-right: 10px;
+/*   border-bottom: 1px solid; */
+  }
+.md-toolbar-tools h4{
+color: white;
+    padding: 0;
+    margin: 0;
+    font-size: large;
+    width: 100%;
+    text-align: center;
+}
+  
+ .blockedMenu{
+ left:10px !important;
+ }
+
+md-content.ToolbarBox  {
+	height: calc(100% - 66px) !important;
+	border: 1px solid #B0BEC5;
+	padding: 0px 4px;
+}
+
+md-content.ToolbarBox.miniToolbar  {
+height: calc(100% - 31px) !important;
+}
+
+
+md-content.ToolbarBox.xsToolbar  {
+height: calc(100% - 16px) !important;
+}
+
+.dragged-icon i, i.dragged-icon {
+	    font-size: 15px;
+    float: left;
+    color: rgb(176, 190, 197);
+    cursor: move;
+    margin-top: 4px;
+}
+
+.dragged-icon  p {
+	margin-left: 20px !important;
+	line-height: 20px !important;
+}
+
+.dropdown{
+	    margin-top: -25px;
+}
+
+.dropdown md-list {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 1000;
+	display: none;
+	float: left;
+	min-width: 160px;
+	padding: 5px 0;
+	margin: 2px 0 0;
+	font-size: 14px;
+	text-align: left;
+	list-style: none;
+	background-color: #fff;
+	background-clip: padding-box;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 4px;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+
+.dropdown.open md-list {
+	display: block;
+}
+
+md-tabs.mini-tabs{
+	height: 100%;
+}
+
+
+md-tabs.mini-tabs md-tabs-canvas,md-tabs.mini-tabs md-pagination-wrapper{
+	height:23px!important;
+}
+    
+md-tabs.mini-tabs md-tab-item{
+	  padding: 0 24px;
+}
+
+md-tabs.mini-tabs  md-tabs-content-wrapper{
+	 top:24px !important;
+}
+
+
+md-input-container.small{
+	    padding-bottom: 0px;
+}
+
+md-input-container.small.counter textarea,md-input-container.small.counter input {
+	 margin-right: 50px;
+}
+
+.tenantItemBox {
+	max-height: 80%;
+}

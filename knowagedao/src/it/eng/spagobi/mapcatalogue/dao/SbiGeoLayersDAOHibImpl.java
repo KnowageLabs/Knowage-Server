@@ -17,6 +17,19 @@
  */
 package it.eng.spagobi.mapcatalogue.dao;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.ICriterion;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -51,19 +64,6 @@ import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.ICriterion;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
 
@@ -501,7 +501,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tmpSession.beginTransaction();
 			GeoLayer aLayer = loadLayerByID(layerId);
 			JSONObject layerDef = new JSONObject(new String(aLayer.getLayerDef()));
-			if (aLayer.getType().equals("WMS") || aLayer.getType().equals("Google") || aLayer.getType().equals("TMS") || aLayer.getType().equals("OSM")) {
+			if (aLayer.getType().equals("Google") || aLayer.getType().equals("TMS") || aLayer.getType().equals("OSM")) {
 				return new ArrayList<String>();
 			}
 			// load properties of file
@@ -543,8 +543,17 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			}
 
 			// load properties of wfs
-			else if (aLayer.getType().equals("WFS")) {
-				String urlDescribeFeature = getDescribeFeatureTypeURL(layerDef.getString("layer_url"));
+			else if (aLayer.getType().equals("WFS") || aLayer.getType().equals("WMS")) {
+				String urlDescribeFeature = "";
+
+				switch (aLayer.getType()) {
+				case "WFS":
+					urlDescribeFeature = getDescribeFeatureTypeURL(layerDef.getString("layer_url"));
+					break;
+				case "WMS":
+					urlDescribeFeature = getWMSDescribeFeatureTypeURL(layerDef.getString("layer_url"), layerDef.getString("layerName"));
+					break;
+				}
 
 				// Create a trust manager that does not validate certificate chains
 				TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
@@ -957,6 +966,20 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		int indexOfRequest = url.indexOf("request=GetFeature");
 		if (indexOfRequest > 0) {
 			url = url.replaceAll("request=GetFeature", "request=DescribeFeatureType");
+		}
+		return url;
+	}
+
+	@Override
+	public String getWMSDescribeFeatureTypeURL(String url, String layerName) {
+		int indexOfRequest = url.indexOf("request=GetFeature");
+		if (indexOfRequest > 0) {
+			url = url.replaceAll("request=GetFeature", "request=DescribeFeatureType");
+		}
+
+		int pi = url.indexOf("?");
+		if (pi == -1) {
+			url += "?service=WFS&request=DescribeFeatureType&outputFormat=application%2Fjson&typename=" + layerName;
 		}
 		return url;
 	}

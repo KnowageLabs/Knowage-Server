@@ -1,3 +1,14 @@
+.md-button.md-knowage-theme.md-fab:not([disabled]) {
+    background-color: rgb(176,190,197)!important;
+    color: rgba(255,255,255,0.87);
+}
+
+.md-button.md-knowage-theme.md-fab {
+    top: 0px;
+}
+
+
+
 md-slider.margintop {
 	margin-top: 18px;
 }
@@ -88,7 +99,7 @@ geo-download {
 	height: 100%;
 }
 
-#geoRigthMenu .md-sidenav-right md-toolbar {
+#geoRigthMenu .md-sidenav-right>md-toolbar {
 	min-height: 23px;
 	height: 26px;
 }
@@ -337,23 +348,30 @@ geo-cross-nav-multiselect .itemboxGU:hover {
 	display: none;
 }
 
-md-tabs.mini-tabs{
-	height: 100%;
-}
+/* md-tabs.mini-tabs{ */
+/* 	height: 100%; */
+/* } */
 
 
-md-tabs.mini-tabs md-tabs-canvas,md-tabs.mini-tabs md-pagination-wrapper{
-	height:23px!important;
-}
+/* md-tabs.mini-tabs md-tabs-canvas,md-tabs.mini-tabs md-pagination-wrapper{ */
+/* 	height:23px!important; */
+/* } */
     
-md-tabs.mini-tabs md-tab-item{
-	  padding: 0 24px;
-}
+/* md-tabs.mini-tabs md-tab-item{ */
+/* 	  padding: 0 24px; */
+/* } */
 
-md-tabs.mini-tabs  md-tabs-content-wrapper{
-	 top:24px !important;
-}
+/* md-tabs.mini-tabs  md-tabs-content-wrapper{ */
+/* 	 top:24px !important; */
+/* } */
 
+
+md-tabs.hiddenTabs>md-tabs-wrapper{
+	display:none;
+}
+md-tabs.hiddenTabs>md-tabs-content-wrapper{
+	top:0;
+}
 expander-box md-checkbox{
 	text-overflow: ellipsis;
 	white-space: nowrap;

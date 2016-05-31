@@ -24,6 +24,12 @@ var geoM=angular.module('geoModule');
  */
 geoM.service('geoReportCompatibility',function($map){
 	this.resolveCompatibility=function(geoModule_template){
+		//convert targetLayrConf from object to array of object if necessary
+		if(!angular.isArray(geoModule_template.targetLayerConf)){
+			geoModule_template.targetLayerConf=[geoModule_template.targetLayerConf];
+		}
+		
+		
 		//     transform indicators in array of json if they arent
 		if(geoModule_template.hasOwnProperty('indicators') && geoModule_template.indicators.length>0){
 			var tmp=[];
@@ -130,61 +136,57 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 	 * */
 	this.GetTargetLayer=function(){
 		//load Layer object from layer catalogue
+		var data={items:[]};
+		for(var i=0;i<geoModule_template.targetLayerConf.length;i++){
+			data.items.push(geoModule_template.targetLayerConf[i].label);
+		}
+		
 		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
-		sbiModule_restServices.post("layers", 'getLayerFromList',{items: [geoModule_template.targetLayerConf.label]}).success(
-				function(data, status, headers, config) {
-	
-					sbiModule_logger.trace("TargetLayer caricato",data);
-					if (data.hasOwnProperty("errors")) {
-						sbiModule_restServices.errorHandler(data, sbiModule_translate.load("gisengine.errorLayer.error"));
-						sbiModule_logger.log("TargetLayer non Ottenuti",data.errors);
-					} else {
-						if(data.root[0]==undefined){
+		sbiModule_restServices.promisePost("layers", 'getLayerFromList',data).then(
+				function(response, status, headers, config) {
+				 		if(response.data.root[0]==undefined){
 							sbiModule_restServices.errorHandler(sbiModule_translate.load("gisengine.errorLayer.errorrole"), sbiModule_translate.load("gisengine.errorLayer.error"));
 						}else{
-							data=data.root[0];
-
-							if(data.type=='WMS'){
-								//if is a WMS
-
-								geoModule_layerServices.setTemplateLayer(data); 
-
-							}else{
-								//if is a WFS or file 
-								gru.getGEOJsonFromFileOrWfs();
+							for(var i=0;i<response.data.root.length;i++){
+								var data=response.data.root[i];
+								if(data.type=='WMS'){
+									//if is a WMS
+									geoModule_layerServices.setTemplateLayer(data); 
+								}else{
+									//if is a WFS or file 
+									gru.getGEOJsonFromFileOrWfs(data);
+								}
 							}
+							
 						}
-						
-					}
 
-				}).error(function(data, status, headers, config) {
-					console.log("TargetLayer non Ottenuto " + status);
+				},function(response, status, headers, config) {
+					sbiModule_restServices.errorHandler(response.data, sbiModule_translate.load("gisengine.errorLayer.error"));
 				});
 	}
 
 	/**
 	 * Loads the GEOJson from wfs or file  layer using a REST service
 	 * */
-	this.getGEOJsonFromFileOrWfs=function(){
+	this.getGEOJsonFromFileOrWfs=function(dataLayer){
 		var params = {
-				layer: geoModule_template.targetLayerConf.label
-				, layerJoinColumns: geoModule_template.layerJoinColumns
+				layer: dataLayer.label,
+				layerJoinColumns: geoModule_template.layerJoinColumns,
+				noDataset : (geoModule_template.noDatasetReport==true)
 		};
 
 		params.featureIds=getFeatureIdsFromStore();
-		sbiModule_restServices.post("1.0/geo", 'getTargetLayer',params)
-		.success(
-			function(data, status, headers, config) {
-				if (data.hasOwnProperty("errors")) {
-					sbiModule_logger.log("GetTargetLayer non Ottenuto");
-				} else {
-					sbiModule_logger.trace("GetTargetLayer caricato",data);
-	
-					geoModule_layerServices.setTemplateLayer(data); 
-				}
-		})
-		.error(function(data, status, headers, config) {
-			sbiModule_logger.log("GetTargetLayer non Ottenuto");
+		sbiModule_restServices.promisePost("1.0/geo", 'getTargetLayer',params)
+		.then(
+			function(response, status, headers, config) {
+				
+				//add the label on the response.data
+				response.data.layerName=dataLayer.name; 
+				response.data.properties=dataLayer.properties; 
+				 geoModule_layerServices.setTemplateLayer(response.data); 
+				 
+			},function(response, status, headers, config) {
+			sbiModule_restServices.errorHandler(response.data,"Error while attempt to load targetlayer")
 		});
 	}
  
@@ -192,28 +194,22 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 	 * Loads the dataset using a REST service
 	 * */
 	this.getTargetDataset=function(){
-		sbiModule_restServices.get("1.0/geo", 'getTargetDataset').success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						sbiModule_logger.log("dataset non Ottenuto");
-						alert("Errore nel recupero del dataset"+data);
-					} else {
-						angular.copy(data,geoModule_dataset);
-//						Object.assign(geoModule_dataset, data); 
-						sbiModule_logger.trace("dataset caricato",data);		
-						gru.initRigthMenuVariable();
-						gru.GetTargetLayer();
-						
-
-					}
-				}).error(function(data, status, headers, config) {
-					sbiModule_logger.log("dataset non Ottenuto");
+		sbiModule_restServices.promiseGet("1.0/geo", 'getTargetDataset').then(
+				function(response, status, headers, config) {
+					  
+				angular.copy(response.data,geoModule_dataset); 
+				gru.initRigthMenuVariable(); 
+				gru.GetTargetLayer();
+						 
+				},function(response, status, headers, config) {
+					sbiModule_restServices.errorHandler(response,"No dataset")
 				});
 	};
-
+	
+	 
 	/**
 	 * Initialization for Indicators and Filters
-	 * */
+	 **/
 	this.initRigthMenuVariable=function(){
 		if(geoModule_dataset.hasOwnProperty("metaData")){
 			if(geoModule_dataset.metaData.hasOwnProperty("fields")){
@@ -260,7 +256,7 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 //								Object.assign(geModule_datasetJoinColumnsItem, fields[i]); 
 							}
 						}else{
-							console.error("dataset->metaData->fields->role="+fields[i].role+"not managed ") 
+							sbiModule_restServices.errorHandler("dataset->metaData->fields->role="+fields[i].role+"not managed ","") ;
 						}
 					}
 				}
@@ -271,11 +267,11 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 				}
 
 			}else{
-				console.error("fields property in metaData property of dataset not present") 
+				sbiModule_restServices.errorHandler("fields property in metaData property of dataset not present",""); 
 			}
 
 		}else{
-			console.error("metaData property non present in dataset")
+			sbiModule_restServices.errorHandler("metaData property non present in dataset","");
 		}
 
 	}	
@@ -396,6 +392,23 @@ geoM.factory('geo_intersectFunctions', function() {
 	return toReturn;
 });
 
+geoM.service('crossNavigation', function(geoModule_template, geoModule_driverParameters, sbiModule_translate) {	
+	this.navigateTo = function(selectedElements){
+		 
+		if(geoModule_template.crossNavigation==true){
+			var crossData=[];
+			if(Array.isArray(selectedElements)){
+				for(var key in selectedElements){
+					crossData.push(selectedElements[key].getProperties());
+				}
+			}else{
+				crossData.push(selectedElements.getProperties());
+			}
+			parent.execExternalCrossNavigation(crossData,geoModule_driverParameters,undefined,geoModule_driverParameters.DOCUMENT_NAME[0]);
+		}
+	}
+});
+
 //geoM.service('crossNavigation', function(geoModule_template, geoModule_driverParameters, sbiModule_translate) {	
 //	this.navigateTo = function(selectedElements){
 //
@@ -480,71 +493,5 @@ geoM.factory('geo_intersectFunctions', function() {
 //	}
 //});
 
-geoM.service('crossNavigation', function(geoModule_template, geoModule_driverParameters, sbiModule_translate,$window) {	
-	this.navigateTo = function(selectedElements){
-		if(geoModule_template.crossNavigation==true){
-			var crossData=[];
-			if(Array.isArray(selectedElements)){
-				for(var key in selectedElements){
-					crossData.push(selectedElements[key].getProperties());
-				}
-			}else{
-				crossData.push(selectedElements.getProperties());
-			}
-			parent.execExternalCrossNavigation(crossData,geoModule_template.executionContext)
-//			parent.angular.element(frameElement).scope().navigateTo(crossData)
-//			$window.parent.angular.element($window.frameElement).scope().crossNavigationScope.crossNavigationHelper.navigateTo(crossData); 
-		}
-	}
-});
 
-var geoReportPanel;
-geoM.factory('geoReport_saveTemplate', function(geoModule_template,sbiModule_restServices,sbiModule_config,$map,$mdDialog,sbiModule_translate,$mdToast) {	
-	geoReportPanel={};
-	geoReportPanel.validate=function(){
-		
-		//message to user for the save of current view
-		
-			    var confirm = $mdDialog.confirm()
-			          .title(sbiModule_translate.load("gisengine.info.message.save.progress"))
-			          .textContent(sbiModule_translate.load("gisengine.info.message.save.saveView"))
-			          .ariaLabel('Salva vista')
-			          .ok(sbiModule_translate.load("gisengine.info.message.yes"))
-			          .cancel(sbiModule_translate.load("gisengine.info.message.no"));
-			    
-			    $mdDialog.show(confirm).then(function() {
-			    	//alter current view of the map
-					geoModule_template.currentView.center=$map.getView().getCenter();
-					geoModule_template.currentView.zoom=$map.getView().getZoom();
-					geoReportPanel.save();
-			    }, function() {
-			     
-			    });
-		
-		
-		
-		
-	}
-	geoReportPanel.save=function(){
-		console.log("salvo il template",geoModule_template,$map);
-		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
-		sbiModule_restServices.post("1.0/documents", 'saveGeoReportTemplate',geoModule_template).success(
-				function(data, status, headers, config) {
-					 $mdToast.show(
-						      $mdToast.simple()
-						        .textContent(sbiModule_translate.load("sbi.generic.ok.msg"))
-						        .position('top')
-						        .hideDelay(3000)
-						    );
-				}).error(function(data, status, headers, config) {
-					 $mdToast.show(
-						      $mdToast.simple()
-						        .textContent(sbiModule_translate.load("sbi.generic.error.msg"))
-						        .position('top')
-						        .hideDelay(3000)
-						    );
-				});
-	}
-	
-	return geoReportPanel;
-});
+

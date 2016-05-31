@@ -9,9 +9,10 @@
 		</div>
 		<div layout="row" layout-wrap layout-align="end end"
 			style="bottom: 0; right: 0; position: absolute;">
-			<geo-legend id="legend"></geo-legend>
+			<geo-legend id="legend" ng-if="!geoModule_template.noDatasetReport"></geo-legend>
 			<geo-distance-calculator id="calculator"></geo-distance-calculator>
 			<geo-download></geo-download>
+			<geo-save></geo-save>
 		</div>
 	</div>
 

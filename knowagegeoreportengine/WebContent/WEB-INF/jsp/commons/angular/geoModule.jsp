@@ -5,10 +5,11 @@
  */
  
 <%-- the JSP variable are present in angularResources.jsp--%>
+
 var template;
 geoM.factory('geoModule_template',function(geoReportCompatibility){
-	console.log("------------->template")
-	 template= <%= template %>;
+	template= <%= template %>;
+	template.noDatasetReport= "<%= docDatasetLabel %>"=="" ? true : false;
 	
 	if(template.hasOwnProperty('role')) {
 		template.role = template.role.charAt(0) == '/'? template.role.charAt(0): '/' + template.role.charAt(0);
@@ -17,24 +18,7 @@ geoM.factory('geoModule_template',function(geoReportCompatibility){
 	var executionRole = '<%= executionRole %>';
 	template.role = executionRole || template.role;
 	
-	var executionContext = {};
-    <% 
-    Iterator it = analyticalDrivers.keySet().iterator();
-	while(it.hasNext()) {
-		String parameterName = (String)it.next();
-		String parameterValue = (String)analyticalDrivers.get(parameterName);
-	 	String quote = (parameterValue.startsWith("'"))? "" : "'";
-		if ( parameterValue.indexOf(",") >= 0){
-	 %>
-			executionContext ['<%=parameterName%>'] = [<%=quote%><%=parameterValue%><%=quote%>];
-	<%	}else{
-	%>
-			executionContext ['<%=parameterName%>'] = <%=quote%><%=parameterValue%><%=quote%>;
-	 <%
-	 	}		
-	 } //while
-    %>
-    template.executionContext = executionContext;
+	 
     geoReportCompatibility.resolveCompatibility(template);
   
     if(!template.hasOwnProperty("analysisType")){
@@ -63,8 +47,12 @@ geoM.factory('geoModule_template',function(geoReportCompatibility){
     	template.layersLoaded={};
     }
     
+    if(!template.hasOwnProperty("hiddenTargetLayer")){
+    	template.hiddenTargetLayer=[];
+    }
+    
     if(!template.analysisConf.hasOwnProperty("choropleth")){
-    	template.analysisConf.choropleth={"method":"CLASSIFY_BY_QUANTILS","classes":3,"fromColor":"#FFFF00","toColor":"#008000"};
+    	template.analysisConf.choropleth={"method":"CLASSIFY_BY_QUANTILS","classes":3,"fromColor":"#FFF-F00","toColor":"#008000"};
     }
     
     if(!template.analysisConf.hasOwnProperty("proportionalSymbol")){
@@ -78,10 +66,20 @@ geoM.factory('geoModule_template',function(geoReportCompatibility){
     if(!template.hasOwnProperty("filtersApplied")){
     	template.filtersApplied={};
     }
+    
+    if(!template.hasOwnProperty("analitycalFilter")){
+    	template.analitycalFilter=[];
+    }
+    if(!template.hasOwnProperty("selectedAnalyticalFilter")){
+    	template.selectedAnalyticalFilter={};
+    }
+    
+    
     return template;
 });
 
-geoM.factory('geoModule_driverParameters',function(geoReportCompatibility){
+
+geoM.factory('geoModule_driverParameters',function(){
 	var driverParamsAsString = '<%=driverParams%>';
 	
 	var driverParamsToReturn = JSON.parse(driverParamsAsString);

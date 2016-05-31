@@ -19,6 +19,21 @@ package it.eng.spagobi.engines.georeport.api.restfull;
 
 import static it.eng.spagobi.engines.georeport.api.restfull.geoUtils.getDsFieldType;
 import static it.eng.spagobi.engines.georeport.api.restfull.geoUtils.targetLayerAction;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOConfig;
+import it.eng.spagobi.engines.georeport.GeoReportEngineInstance;
+import it.eng.spagobi.engines.georeport.api.AbstractChartEngineResource;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
 import java.util.Map;
@@ -34,21 +49,6 @@ import javax.ws.rs.core.MediaType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOConfig;
-import it.eng.spagobi.engines.georeport.GeoReportEngineInstance;
-import it.eng.spagobi.engines.georeport.api.AbstractChartEngineResource;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
@@ -66,12 +66,15 @@ public class GeoResource extends AbstractChartEngineResource {
 	public String getTargetDataset(@Context HttpServletRequest req) {
 
 		logger.debug("IN");
+		JSONObject dataSetJSON = new JSONObject();
 
 		try {
 			GeoReportEngineInstance engineInstance = getEngineInstance();
-
 			IDataSet dataSet = engineInstance.getDataSet();
-
+			if (dataSet == null) {
+				dataSetJSON.put("NoDatasetEngine", true);
+				return dataSetJSON.toString();
+			}
 			Map analyticalDrivers = engineInstance.getAnalyticalDrivers();
 			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 			analyticalDrivers.put("LOCALE", getLocale());
@@ -96,7 +99,7 @@ public class GeoResource extends AbstractChartEngineResource {
 			}
 
 			JSONDataWriter dataWriter = new JSONDataWriter();
-			JSONObject dataSetJSON = (JSONObject) dataWriter.write(dataStore);
+			dataSetJSON = (JSONObject) dataWriter.write(dataStore);
 
 			JSONObject metaData = dataSetJSON.getJSONObject("metaData");
 			JSONArray fields = metaData.getJSONArray("fields");
@@ -113,12 +116,11 @@ public class GeoResource extends AbstractChartEngineResource {
 
 			return dataSetJSON.toString();
 
-		} catch (Throwable t) {
-			t.printStackTrace();
+		} catch (Exception t) {
+			throw new SpagoBIRuntimeException("Error while attempt to load dataset", t);
 		} finally {
 			logger.debug("OUT");
 		}
-		return "{}";
 
 	}
 
@@ -134,19 +136,29 @@ public class GeoResource extends AbstractChartEngineResource {
 		Boolean layerName = requestVal.has(geoUtils.LAYER_NAME);
 		Boolean layerjoinCol = requestVal.has(geoUtils.LAYER_JOIN_COLUMNS);
 		Boolean featureIds = requestVal.has(geoUtils.FEATURE_IDS);
+		Boolean noDataset = requestVal.optBoolean(geoUtils.NO_DATASET);
 
-		if (layerName && layerjoinCol && featureIds) {
+		if (layerName && ((layerjoinCol && featureIds) || noDataset)) {
 			return targetLayerAction(requestVal);
 		} else {
 			JSONObject err = new JSONObject();
 			JSONArray ja = new JSONArray();
-			err.put("status", "non ok");
-			if (!layerName)
-				ja.put(geoUtils.LAYER_NAME);
-			if (!layerjoinCol)
-				ja.put(geoUtils.LAYER_JOIN_COLUMNS);
-			if (!featureIds)
-				ja.put(geoUtils.FEATURE_IDS);
+			if (!layerName) {
+				JSONObject jotmp = new JSONObject();
+				jotmp.put("message", "Required " + geoUtils.LAYER_NAME);
+				ja.put(jotmp);
+			}
+			if (!layerjoinCol) {
+				JSONObject jotmp = new JSONObject();
+				jotmp.put("message", "Required " + geoUtils.LAYER_JOIN_COLUMNS);
+				ja.put(jotmp);
+			}
+			if (!featureIds) {
+				JSONObject jotmp = new JSONObject();
+				jotmp.put("message", "Required " + geoUtils.FEATURE_IDS);
+				ja.put(jotmp);
+			}
+
 			err.put("errors", ja);
 			return err.toString();
 		}
