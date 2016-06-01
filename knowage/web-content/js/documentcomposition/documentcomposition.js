@@ -98,6 +98,11 @@ function execExternalCrossNavigation(outputParameters, inputParameter, targetCro
 		}
 		i++;
 	}
+	
+	//clean parameter's URL from the last & if there is
+	if (parameters.substr(parameters.length-1) == '&')
+		parameters = parameters.substr(0, parameters.length-1);
+	
 	//call the internal function
 	execCrossNavigation(windowName, null, parameters);
 }
