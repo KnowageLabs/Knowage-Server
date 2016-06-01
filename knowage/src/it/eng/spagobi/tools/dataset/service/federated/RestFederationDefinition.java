@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -35,6 +35,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -74,8 +75,17 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<FederationDefinition> get() {
 		try {
+			// List<FederationDefinition> allFederatedDatasets = null;
 			fdsDAO = DAOFactory.getFedetatedDatasetDAO();
-			listOfFederations = fdsDAO.loadAllFederatedDataSets();
+			fdsDAO.setUserProfile(this.getUserProfile());
+
+			ISbiFederationDefinitionDAO federDsDao = DAOFactory.getFedetatedDatasetDAO();
+			federDsDao.setUserProfile(this.getUserProfile());
+
+			listOfFederations = federDsDao.loadNotDegeneratedFederatedDataSets();
+			if (listOfFederations == null) {
+				listOfFederations = new ArrayList<FederationDefinition>();
+			}
 			// needs serialization
 			return listOfFederations;
 		} catch (EMFUserError e) {
