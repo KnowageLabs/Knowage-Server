@@ -70,6 +70,38 @@ function execDrill(name, url) {
 	alert("The 'execDrill' function is deprecated. For the refresh of the document call execCrossNavigation(windowName, labelDoc, parameters).");
 }
 
+function getParamsNumber(JSONPars){
+	var toReturn = 0;
+	
+	for (p in JSONPars){
+		toReturn++;
+	}
+	
+	return toReturn;
+} 
+
+/* Override of the method execExternalCrossNavigation ONLY for the DocumentComposition */
+function execExternalCrossNavigation(outputParameters, inputParameter, targetCrossNavigation, sourceLabel) {
+	if (sourceLabel == null){
+		alert("Label of the source document doesn't defined! Contact the System Administrator.");
+		return;
+	}
+	var windowName = (sourceLabel.indexOf("iframe_")>=0) ? sourceLabel : "iframe_" + sourceLabel;
+	
+	var parameters = "";
+	var i=1;
+	var totPars = getParamsNumber(outputParameters);
+	for (var p in outputParameters){
+		if (outputParameters[p] != null){
+			parameters += p + "=" + outputParameters[p];	
+			if (i < totPars) parameters += "&";
+		}
+		i++;
+	}
+	//call the internal function
+	execCrossNavigation(windowName, null, parameters);
+}
+
 /* Update the input url with value for refresh linked documents and execute themes */
 function execCrossNavigation(windowName, label, parameters) {
 	var baseName = "iframe_";
