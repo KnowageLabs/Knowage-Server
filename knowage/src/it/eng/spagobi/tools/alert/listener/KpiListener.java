@@ -43,22 +43,32 @@ public class KpiListener extends AbstractAlertListener {
 			List<KpiValue> resultSet = DAOFactory.getKpiDAO().findKpiValues(par.getKpiId(), par.getKpiVersion(), lastDate, false, null, null, new HashMap());
 			if (resultSet != null && !resultSet.isEmpty()) {
 				saveLastKey(resultSet.get(0).getTimeRun());
+				boolean alertTriggered = false;
 				for (KpiValue kpiValue : resultSet) {
 					Integer thresholdId = selectThreshold(kpiValue);
 					if (thresholdId != null) {
+						alertTriggered = true;
 						// In this case the value of this sbiKpiValue is in a threshold
 						// so we have to execute related actions
 						addValueToThresholdMap(thresholdId, kpiValue);
 					}
 				}
-				for (Action action : par.getActions()) {
-					if (hasValues(action)) {
-						Map<String, String> parameters = new HashMap<>();
-						parameters.put(VALUE_TABLE_PLACEHOLDER, makeHtmlValueTable(action.getThresholdValues()));
-						executeAction(JsonConverter.objectToJson(par, par.getClass()).toString(), action.getIdAction(),
-								JsonConverter.objectToJson(action, action.getClass()).toString(), parameters);
-					}
+				if (alertTriggered) {
+					incrementAlertTriggered();
+					// System.out.println("-------------------------\nAlert Triggered!!!\n\t" + getConsecutiveAlertsTriggered() + "\n-----------------");
+					if (getEventBeforeTriggerAction() < getConsecutiveAlertsTriggered()) {
+						for (Action action : par.getActions()) {
+							if (hasValues(action)) {
+								Map<String, String> parameters = new HashMap<>();
+								parameters.put(VALUE_TABLE_PLACEHOLDER, makeHtmlValueTable(action.getThresholdValues()));
+								executeAction(JsonConverter.objectToJson(par, par.getClass()).toString(), action.getIdAction(),
+										JsonConverter.objectToJson(action, action.getClass()).toString(), parameters);
+							}
 
+						}
+					}
+				} else {
+					resetConsecutiveAlertsTriggered();
 				}
 			} else {
 				String msg;
@@ -77,23 +87,10 @@ public class KpiListener extends AbstractAlertListener {
 		logger.info("KpiListener ended");
 	}
 
-	/*
-	 * private void writeActionLog(InputParameter par, Action action, String errorMsg) throws EMFUserError { SbiAlertLog alertLog = new SbiAlertLog(); if
-	 * (action != null) { alertLog.setActionId(action.getIdAction()); alertLog.setActionParams(action.getJsonActionParameters()); }
-	 * alertLog.setListenerId(getListenerId()); alertLog.setDetail(errorMsg); alertLog.setListenerParams(JsonConverter.objectToJson(par, par.getClass()));
-	 * alertLog.getCommonInfo().setTimeIn(new Date()); alertLog.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION); Tenant tenant =
-	 * TenantManager.getTenant(); if (tenant != null) { alertLog.getCommonInfo().setOrganization(tenant.getName()); }
-	 * DAOFactory.getKpiDAO().insertAlertLog(alertLog); }
-	 */
-
 	private void loadThresholdMap(InputParameter par) throws EMFUserError {
 		Set<Integer> thresholdIds = new HashSet<>();
 		for (Action action : par.getActions()) {
 			thresholdIds.addAll(action.getThresholdValues());
-			/*
-			 * for (Integer thresholdId : action.getThresholdValues()) { if (!thresholds.contains(new ThresholdValue(thresholdId))) { SbiKpiThresholdValue
-			 * sbiThreshold = (SbiKpiThresholdValue) session.load(SbiKpiThresholdValue.class, thresholdId); thresholds.add(from(sbiThreshold)); } }
-			 */
 		}
 		List<SbiKpiThresholdValue> lst = DAOFactory.getKpiDAO().listThresholdValueByIds(thresholdIds);
 		for (SbiKpiThresholdValue sbiKpiThresholdValue : lst) {
