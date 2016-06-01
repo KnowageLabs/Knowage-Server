@@ -18,9 +18,14 @@
 package it.eng.knowage.engines.svgviewer.api.page;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngine;
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineInstance;
 import it.eng.knowage.engines.svgviewer.api.AbstractSvgViewerEngineResource;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.callbacks.mapcatalogue.MapCatalogueAccessUtils;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 
@@ -98,11 +103,28 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 
 		try {
 
-			String savedTemplate = getIOManager().getTemplateAsString();
+			SourceBean savedTemplate = getIOManager().getTemplateAsSourceBean();
 			switch (pageName) {
 
 			case "execute":
-				engineInstance = SvgViewerEngine.createInstance(savedTemplate, getIOManager().getEnv());
+				UserProfile userProfile = (UserProfile) getIOManager().getParameterFromSession(IEngUserProfile.ENG_USER_PROFILE);
+				String userUniqueIdentifier = (String) userProfile.getUserUniqueIdentifier();
+
+				MapCatalogueAccessUtils mapCatalogueServiceProxy = new MapCatalogueAccessUtils(getHttpSession(), userUniqueIdentifier);
+
+				Map env = getIOManager().getEnv();
+				env.put(SvgViewerEngineConstants.ENV_MAPCATALOGUE_SERVICE_PROXY, mapCatalogueServiceProxy);
+
+				String standardHierarchy = mapCatalogueServiceProxy.getStandardHierarchy();
+
+				env.put(SvgViewerEngineConstants.ENV_STD_HIERARCHY, standardHierarchy);
+
+				env.put(SvgViewerEngineConstants.ENV_CONTEXT_URL, getContextUrl());
+
+				env.put(SvgViewerEngineConstants.ENV_ABSOLUTE_CONTEXT_URL, getAbsoluteContextUrl());
+
+				engineInstance = SvgViewerEngine.createInstance(savedTemplate, env);
+
 				// TODO put this not in session but in context
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				break;
@@ -122,6 +144,24 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private String getContextUrl() {
+		String contextUrl = null;
+
+		contextUrl = request.getContextPath();
+		logger.debug("Context path: " + contextUrl);
+
+		return contextUrl;
+	}
+
+	private String getAbsoluteContextUrl() {
+		String contextUrl = null;
+
+		contextUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/" + getContextUrl();
+		logger.debug("Context path: " + contextUrl);
+
+		return contextUrl;
 	}
 
 	// executeTest is substituted from the servelet Test like all External Engines (creates a new session for the engine)

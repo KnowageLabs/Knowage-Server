@@ -17,6 +17,12 @@
  */
 package it.eng.knowage.engines.svgviewer;
 
+import it.eng.knowage.engines.svgviewer.component.SvgViewerEngineComponentFactory;
+import it.eng.knowage.engines.svgviewer.datamart.provider.IDataMartProvider;
+import it.eng.knowage.engines.svgviewer.dataset.provider.Hierarchy;
+import it.eng.knowage.engines.svgviewer.map.provider.IMapProvider;
+import it.eng.knowage.engines.svgviewer.map.renderer.IMapRenderer;
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -30,12 +36,16 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 /**
@@ -49,12 +59,38 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 	private JSONObject docProperties;
 	private List<String> includes;
 
-	public SvgViewerEngineInstance(String template, Map env) {
+	/** The map provider. */
+	IMapProvider mapProvider;
+
+	/** The dataset provider. */
+	IDataMartProvider dataMartProvider;
+
+	/** The map renderer. */
+	IMapRenderer mapRenderer;
+
+	/** Logger component. */
+	public static transient Logger logger = Logger.getLogger(SvgViewerEngineInstance.class);
+
+	public SvgViewerEngineInstance(SourceBean template, Map env) {
 		super(env);
 
 		try {
 			// TODO: MC uncomment this, just test
 			// this.guiSettings = new JSONObject(template);
+
+			logger.debug("IN");
+
+			setMapProvider(SvgViewerEngineComponentFactory.buildMapProvider(template, env));
+			setDataMartProvider(SvgViewerEngineComponentFactory.buildDataMartProvider(template, env));
+			setMapRenderer(SvgViewerEngineComponentFactory.buildMapRenderer(template, env));
+
+			logger.info("MapProvider class: " + getMapProvider().getClass().getName());
+			logger.info("DatasetProvider class: " + getDataMartProvider().getClass().getName());
+			logger.info("MapRenderer class: " + getMapRenderer().getClass().getName());
+
+			validate();
+
+			logger.debug("OUT");
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Impossible to parse template", t);
 		}
@@ -187,6 +223,56 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 		return true;
 	}
 
+	public File renderMap(String format) throws SvgViewerEngineException {
+		return getMapRenderer().renderMap(getMapProvider(), getDataMartProvider(), format);
+	}
+
+	public IDataMartProvider getDataMartProvider() {
+		return dataMartProvider;
+	}
+
+	public void setDataMartProvider(IDataMartProvider dataMartProvider) {
+		this.dataMartProvider = dataMartProvider;
+	}
+
+	/**
+	 * Gets the map provider.
+	 *
+	 * @return the map provider
+	 */
+	public IMapProvider getMapProvider() {
+		return mapProvider;
+	}
+
+	/**
+	 * Sets the map provider.
+	 *
+	 * @param mapProvider
+	 *            the new map provider
+	 */
+	protected void setMapProvider(IMapProvider mapProvider) {
+		this.mapProvider = mapProvider;
+	}
+
+	/**
+	 * Gets the map renderer.
+	 *
+	 * @return the map renderer
+	 */
+	public IMapRenderer getMapRenderer() {
+		return mapRenderer;
+	}
+
+	/**
+	 * Sets the map renderer.
+	 *
+	 * @param mapRenderer
+	 *            the new map renderer
+	 */
+	protected void setMapRenderer(IMapRenderer mapRenderer) {
+		this.mapRenderer = mapRenderer;
+	}
+
 	// -- unimplemented methods ------------------------------------------------------------
 
 	@Override
@@ -201,7 +287,55 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 
 	@Override
 	public void validate() throws SpagoBIEngineException {
-		throw new SvgViewerEngineRuntimeException("Unsupported method [validate]");
+		String selectedHierarchyName = getDataMartProvider().getSelectedHierarchyName();
+		if (selectedHierarchyName == null) {
+			SvgViewerEngineException geoException;
+			logger.error("Select hierarchy name is not defined");
+			String description = "Select hierarchy name is not defined";
+			geoException = new SvgViewerEngineException("Configuration error");
+			geoException.setDescription(description);
+			throw geoException;
+		}
+
+		Hierarchy selectedHierarchy = getDataMartProvider().getHierarchy(selectedHierarchyName);
+		if (selectedHierarchy == null) {
+			SvgViewerEngineException geoException;
+			logger.error("Selected hierarchy [" + selectedHierarchyName + "] does not exist");
+			String description = "Selected hierarchy [" + selectedHierarchyName + "] does not exist";
+			List hints = new ArrayList();
+			hints.add("Check if hierarchy name is correct");
+			hints.add("Check if a hierarchy named " + selectedHierarchyName + "  has been defined. Defined hierarachy are: "
+					+ Arrays.toString(getDataMartProvider().getHierarchyNames().toArray()));
+			geoException = new SvgViewerEngineException("Configuration error");
+			geoException.setDescription(description);
+			// geoException.setHints(hints);
+			throw geoException;
+		}
+
+		String selectedLevelName = getDataMartProvider().getSelectedLevelName();
+		if (selectedLevelName == null) {
+			SvgViewerEngineException geoException;
+			logger.error("Select level name is not defined");
+			String description = "Select level name is not defined";
+			geoException = new SvgViewerEngineException("Configuration error");
+			geoException.setDescription(description);
+			throw geoException;
+		}
+
+		Hierarchy.Level selectedLevel = selectedHierarchy.getLevel(selectedLevelName);
+		if (selectedLevel == null) {
+			SvgViewerEngineException geoException;
+			logger.error("Selected level [" + selectedHierarchyName + "] does not exist in selected hierarchy [" + selectedHierarchyName + "]");
+			String description = "Selected level [" + selectedHierarchyName + "] does not exist in selected hierarchy [" + selectedHierarchyName + "]";
+			List hints = new ArrayList();
+			hints.add("Check if level name is correct");
+			hints.add("Check if a level named " + selectedLevelName + "  is defined into hierarachy " + selectedHierarchyName + ". " + "Defined level are: "
+					+ Arrays.toString(selectedHierarchy.getLevelNames().toArray()));
+			geoException = new SvgViewerEngineException("Configuration error");
+			geoException.setDescription(description);
+			// geoException.setHints(hints);
+			throw geoException;
+		}
 	}
 
 	public boolean isVisibleDataSet() {

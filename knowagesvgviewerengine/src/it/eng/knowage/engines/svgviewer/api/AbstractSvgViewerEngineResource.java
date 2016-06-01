@@ -64,9 +64,9 @@ public class AbstractSvgViewerEngineResource extends AbstractRestService {
 	}
 
 	/**
-	 * Gets the cockpit engine instance.
+	 * Gets the svg viewer engine instance.
 	 *
-	 * @return the console engine instance
+	 * @return the svg viewer engine instance
 	 */
 	@Override
 	public SvgViewerEngineInstance getEngineInstance() {
@@ -82,7 +82,7 @@ public class AbstractSvgViewerEngineResource extends AbstractRestService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.utilities.engines.rest.AbstractRestService#getServletRequest ()
 	 */
 	@Override

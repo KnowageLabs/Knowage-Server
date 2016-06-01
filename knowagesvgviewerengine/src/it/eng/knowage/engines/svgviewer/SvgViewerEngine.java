@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.engines.svgviewer;
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 
 import java.util.Map;
@@ -53,7 +54,7 @@ public class SvgViewerEngine {
 	 * @return the svg viewer engine instance
 	 * @throws EMFUserError
 	 */
-	public static SvgViewerEngineInstance createInstance(String template, Map env) throws EMFUserError {
+	public static SvgViewerEngineInstance createInstance(SourceBean template, Map env) throws EMFUserError {
 		SvgViewerEngineInstance svgViewerEngineInstance = null;
 		logger.debug("IN");
 		// TO-DO ceck if document is crossable

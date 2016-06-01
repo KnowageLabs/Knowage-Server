@@ -43,7 +43,7 @@ public class SvgViewerEngineException extends SpagoBIEngineException {
 
 	/**
 	 * Builds a <code>SvgViewerEngineException</code>.
-	 * 
+	 *
 	 * @param message
 	 *            Text of the exception
 	 * @param ex
@@ -51,6 +51,13 @@ public class SvgViewerEngineException extends SpagoBIEngineException {
 	 */
 	public SvgViewerEngineException(String message, Throwable ex) {
 		super(message, ex);
+	}
+
+	/**
+	 * @param ex
+	 */
+	public SvgViewerEngineException(Throwable ex) {
+		super(ex.getMessage(), ex);
 	}
 
 	@Override

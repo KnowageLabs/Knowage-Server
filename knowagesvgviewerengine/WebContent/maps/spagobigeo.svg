@@ -1,0 +1,1054 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SpagoBI - The Business Intelligence Free Platform
+
+Copyright (C) 2005 Engineering Ingegneria Informatica S.p.A.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+
+
+DESCRIPTION:
+"spagonigeo.svg" is part of the SpagoBIGeoEngine. 
+It is used to perform dynamic geo-analysis.
+
+
+CREDITS:
+* none so far
+
+
+
+CURRENT VERSION: 
+1.0.0
+
+VERSION HISTORY:
+* 1.0.0 (2007-09-17)
+initial version
+
+* 1.0.1 (2007-09-24)
+changed the name of ub variable to ub_values in order to avoid naming conflict with slider.js
+changed the name of lb variable to lb_values in order to avoid naming conflict with slider.js
+bug fixed in layer's checkboxes generation
+
+-->
+
+
+<svg 
+version="1.0" 
+contentScriptType="text/ecmascript" 
+contentStyleType="text/css" 
+xmlns="http://www.w3.org/2000/svg"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+xmlns:xlink="http://www.w3.org/1999/xlink" 
+xmlns:svg="http://www.w3.org/2000/svg"  
+xmlns:attrib="http://www.carto.net/attrib" 
+xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" 
+xmlns:batik="http://xml.apache.org/batik/ext" 
+xmlns:dc="http://purl.org/dc/elements/1.1/" 
+xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" 
+xmlns:cc="http://web.resource.org/cc/" 
+sodipodi:version="0.32" 
+preserveAspectRatio="xMidYMid meet"  zoomAndPan="disable" viewBox="0 0 1100 676" width="100%" height="100%"
+onload="init(evt);">
+
+
+		<g id="imported_scripts">
+		
+      
+    
+    </g>
+		
+		<script type="text/ecmascript" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:actuate="onLoad" id="included_scripts" xlink:show="other"><![CDATA[
+				
+		]]></script>
+		
+		<script id="init" type="text/ecmascript" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:actuate="onLoad"  xlink:show="other"><![CDATA[
+
+    
+]]></script>
+		
+		
+<script xlink:type="simple" xlink:actuate="onLoad" xlink:show="other" type="text/javascript" xmlns:xlink="http://www.w3.org/1999/xlink"><![CDATA[
+		
+		function ping() { 
+			alert("pong");
+		}	
+		
+		//global variables for mapApp and map object
+		var myMapApp = new mapApp();
+		var myMainMap;
+		var checkBoxes = new Array();
+		
+		var attribNS="http://www.carto.net/attrib";
+		var xlinkNS = "http://www.w3.org/1999/xlink";
+		var suspendProcess;
+		var windowPositions = new Array();
+		var execCrossFnScope = null;
+	
+		var isShowTableModalityActive = true;
+			
+		function init() {
+			window.setTimeout("initApplication()", 500);
+		}
+		
+		function initApplication(evt) {	
+      		
+			if (document.documentElement.suspendRedraw) {
+				suspendProcess = document.documentElement.suspendRedraw(30000);
+			}
+		  			
+	
+		  for(i = 0; i < sbi.geo.conf.measures.length; i++) {	
+        var measure = sbi.geo.conf.measures[i];
+				
+        ThresholdsFactory.getThresholds( measure );
+				ColourRangesFactory.getColourRanges( measure );
+				
+			}
+	
+			
+			initMainMap();			
+			initWindows();
+		
+			
+		  myMapApp.loadStatus = document.getElementById("statusColorMap");
+      
+			if(myMapApp.Windows["basiclayer"]) {
+        myMapApp.Windows["basiclayer"].createCheckBoxes();
+      }
+      
+			if(myMapApp.Windows["detail"]) {
+        myMapApp.Windows["detail"].initTabGroups();
+      }
+			
+      if(myMapApp.Windows["detail"]) {
+        myMapApp.Windows["detail"].initDetailInfopanels();  
+      } 
+			
+      if(myMapApp.Windows["legend"]) {
+        myMapApp.Windows["legend"].initLegendEntries();
+      }
+      
+      var target_layer = sbi.geo.conf.layers[ sbi.geo.conf.target_layer_index ];
+	  myMapApp.targetLayer = document.getElementById( target_layer.name );
+			
+			
+      if(myMapApp.Windows["thematic"]){ 
+        myMapApp.Windows["thematic"].addThemes();
+      } else {
+      	var index = sbi.geo.conf.selected_measure_index >=0 ? sbi.geo.conf.selected_measure_index: 0;
+        setKpi(sbi.geo.conf.measures[index].name,sbi.geo.conf.measures[index].name,sbi.geo.conf.measures[index].name);
+      }
+		
+			
+			loadProjectSpecific();
+			
+			if (document.documentElement.suspendRedraw) {
+				document.documentElement.unsuspendRedraw(suspendProcess);
+			}
+		}
+			
+		
+		function initWindows() {
+		
+		  var guiSettings = sbi.geo.conf.gui_settings;
+		  var windows = guiSettings.windows;
+		  var windowConf;
+		
+			//create windows
+			myMapApp.Windows = new Array();
+			
+			windowConf = Utils.find(windows, 'name', 'navigation');
+			windowConf = Utils.apply({visible:true}, windowConf || {}, guiSettings.windowDefaults || {});
+			if(windowConf && windowConf.visible) {
+        myMapApp.Windows["navWindow"] = new NavigationWindow( windowConf );
+      } 
+      
+      windowConf = Utils.find(windows, 'name', 'measures');
+      windowConf = Utils.apply({visible:true}, windowConf || {}, guiSettings.windowDefaults || {});
+			if(windowConf && windowConf.visible) {
+        myMapApp.Windows["thematic"] = new ThematicWindow( windowConf );
+      } 
+      
+      windowConf = Utils.find(windows, 'name', 'layers');
+      windowConf = Utils.apply({visible:true}, windowConf || {}, guiSettings.windowDefaults || {});
+			if(windowConf && windowConf.visible) {
+        myMapApp.Windows["basiclayer"] = new LayersWindow( windowConf );
+      } 
+      
+      windowConf = Utils.find(windows, 'name', 'detail');
+      windowConf = Utils.apply({visible:true}, windowConf || {}, guiSettings.windowDefaults || {});
+			if(windowConf && windowConf.visible) {
+        myMapApp.Windows["detail"] = new DetailsWindow( windowConf );
+      } 
+      
+      windowConf = Utils.find(windows, 'name', 'legend');
+      windowConf = Utils.apply({visible:true}, windowConf || {}, guiSettings.windowDefaults || {});
+			if(windowConf && windowConf.visible) {
+        myMapApp.Windows["legend"] = new LegendWindow( windowConf );
+      } 
+      
+      windowConf = Utils.find(windows, 'name', 'colourpicker');
+      windowConf = Utils.apply({visible:true}, windowConf || {}, guiSettings.windowDefaults || {});
+			if(windowConf && windowConf.visible) {
+        myMapApp.Windows["colourpicker"] = new ColourPickerWindow( windowConf );
+      } 
+			
+			//create checkboxes array
+			myMapApp.checkBoxes = new Array();
+			
+			
+		}	
+		
+		function addLinks(node) {
+			var crossUrl;
+		  	var drillUrl;
+		  	
+		  	if(!node || node.nodeName != 'a') {
+		    	alert('ERROR: addLinks: node is not a link' + node.toSource());
+		  	}
+			
+			drillUrl = "../servlet/AdapterHTTP?ACTION_NAME=SHOW_DATA_DETAILS_ACTION";
+			var featureValue = node.firstChild.getAttribute('id');
+			drillUrl += "&featureValue=" + featureValue;
+			drillUrl += "&SBI_EXECUTION_ID=" + sbi.geo.conf.execId;
+			
+			
+			node.setAttributeNS(attribNS, "drillUrl", drillUrl);
+    }
+    
+    function swapLink(node){
+     
+      var child = node.firstChild;
+      
+      var drillUrl = child.getAttributeNS(attribNS, "drillUrl");	
+      var crossUrl = child.getAttributeNS(attribNS, myMapApp.curKpi + "_LINK");
+			
+    		
+        if (sbi.geo.conf.gui_settings.defaultDrillNav == true){
+    	  		node.setAttributeNS(xlinkNS, "href", drillUrl);
+      		} else {
+        		node.setAttributeNS(xlinkNS, "href", crossUrl);
+      		}
+    }
+    
+    function getDataSet(node) {
+      var dataset;
+      
+      dataset = {};
+      dataset.names = new Array();
+      dataset.values = new Array();
+      dataset.colours = new Array();
+          
+      for(i = 0; i < sbi.geo.conf.measures.length; i++) {
+          dataset.names[i] = sbi.geo.conf.measures[i].name;
+          dataset.values[i] = node.getAttributeNS(attribNS, sbi.geo.conf.measures[i].name);
+          dataset.colours[i] = sbi.geo.conf.measures[i].colour;
+                       
+          if(sbi.geo.conf.gui_settings.normalizeChartValues === true) {
+              var n =  sbi.geo.conf.measures[i].ordered_values[ sbi.geo.conf.measures[i].ordered_values.length - 1 ];
+              if(dataset.values[i]) {
+        	       dataset.values[i] = 100 * (dataset.values[i]/n);
+              }
+          }
+      }
+      
+      return dataset;
+    }
+		
+	
+   function loadProjectSpecific() {
+      var names = [];
+      var values = [];      
+      var maxValue;
+      
+      var child;
+      
+      var normalize = sbi.geo.conf.gui_settings.normalizeChartValues;
+      
+      
+      if(normalize) {
+        maxValue = 100;
+      } else {
+        maxValue = sbi.geo.conf.measures[0].ordered_values[ sbi.geo.conf.measures[0].ordered_values.length - 1];
+        for(i = 1; i < sbi.geo.conf.measures.length; i++) {
+          var measure =  sbi.geo.conf.measures[i];        
+          var n = measure.ordered_values[ measure.ordered_values.length - 1];
+          if(n > maxValue) {
+            maxValue = n;
+          }
+        }
+      }
+           
+      var detailBarChartRenderer = new BarChart({
+        x: 50
+        , y: 35
+        , width: 100
+        , height:100
+        , maxGridLineValue: maxValue
+      });
+      
+      
+      var layerBarChartRenderer = new BarChart({
+        x: 50
+        , y: 35
+        , width: 100
+        , height:100
+        , gridLineVisible: false
+        , labelsVisible: false
+        , maxGridLineValue: maxValue
+        , scale: sbi.geo.conf.gui_settings.chartScale
+      });
+      
+      child = myMapApp.targetLayer.firstChild;
+      while(child) {
+          var targetNode = child;	
+          if(targetNode.nodeName == "a") {
+      			 addLinks(targetNode);
+	           targetNode = targetNode.firstChild;
+          }
+			   
+			    if (targetNode.nodeName == "path") {
+             
+            
+             var dataset = getDataSet(targetNode);
+             detailBarChartRenderer.setDataset(dataset);
+            
+             if(myMapApp.Windows["detail"]) {
+                 detailBarChartRenderer.render(document.getElementById("detailTabGroup__1_content"), targetNode.getAttributeNS(null, "id") + "_chart", "none");
+             }
+             
+             if(sbi.geo.conf.gui_settings.includeChartLayer == true) {
+                 layerBarChartRenderer.setDataset(dataset);
+                 var centroide = document.getElementById("centroidi_" + targetNode.getAttributeNS(null, "id"));
+                 if(centroide != null) {                 
+                    layerBarChartRenderer.setDimensions({
+                      x: centroide.getAttributeNS(null, "cx") - (layerBarChartRenderer.scale*sbi.geo.conf.gui_settings.chartWidth/2)
+	                    , y: centroide.getAttributeNS(null, "cy") - (layerBarChartRenderer.scale*sbi.geo.conf.gui_settings.chartHeight)
+	                    , width: sbi.geo.conf.gui_settings.chartWidth
+	                    , height: sbi.geo.conf.gui_settings.chartHeight
+                    });
+                    
+                    layerBarChartRenderer.render(document.getElementById("grafici"), targetNode.getAttributeNS(null, "id") + "_chartLayer", "inherit");
+                  } else {
+                    //alert("Nessun centroide per " + targetNode.getAttributeNS(null, "id") + "!!!");
+                  }
+              }
+                   
+              
+              
+              if(sbi.geo.conf.gui_settings.includeValuesLayer == true) {
+               	
+                  var text;
+                      
+                  var rounded_value = dataset.values[sbi.geo.conf.selected_measure_index];
+                  if(rounded_value != null) {
+                  	  var value_string = rounded_value.toString();
+	                  var decimal_location = value_string.indexOf(".");	
+			   		
+			   		  if (decimal_location != -1) {
+	                      var value_float = Utils.roundDecimals( parseFloat(value_string), 2 );
+	                   	  text = value_float.toString();
+	                  } else {                       	
+	                   		text = dataset.values[sbi.geo.conf.selected_measure_index];
+	                  }
+                  } else {
+                  	  text = '';
+                  }
+                  
+                       
+                  
+                       
+                  var valueLabel = document.createElementNS(svgNS,"text");
+                  var centroide = document.getElementById("centroidi_" + targetNode.getAttributeNS(null, "id"));
+                  if(centroide != null) {
+	                       valueLabel.setAttribute("x",0);
+	                       valueLabel.setAttribute("y",0);
+	                       valueLabel.setAttribute("id", "label_" + targetNode.getAttributeNS(null, "id"));
+	                       valueLabel.setAttribute("text-anchor","middle");
+	                       valueLabel.setAttribute("font-family","Arial,Helvetica");
+	                       valueLabel.setAttribute("font-size",sbi.geo.conf.gui_settings.valueFont);
+	                       valueLabel.setAttribute("fill","black");
+	                       var textNode = document.createTextNode(text);
+	                       valueLabel.appendChild(textNode);
+	                      
+	                       var valuesLayer = document.getElementById("valori");
+	                       valuesLayer.appendChild(valueLabel);
+	                       valueLabel.setAttribute("transform", "translate(" + centroide.getAttributeNS(null, "cx")+ " " + centroide.getAttributeNS(null, "cy") + ") scale(" + sbi.geo.conf.gui_settings.valueScale + ")");
+	                       
+	                      
+	                    } else {
+	                    	//alert("Nessun centroide per " + targetNode.getAttributeNS(null, "id") + "!!!");
+	                    }
+                   }
+               }
+               child = child.nextSibling;
+           }
+           
+           initLabels();
+       } 
+       
+    function initLabels() {
+      var labels;
+      
+      var svgroot = document.documentElement;
+      var svg = new ViewBox(svgroot);
+            
+      
+      labels = sbi.geo.conf.gui_settings.labels;
+      for(i = 0; i < labels.length; i++) {
+        var label = labels[i];
+        var labelEl = document.getElementById(label.position);
+        if(labelEl) {
+          var textNode = document.createTextNode(label.text);
+	        labelEl.appendChild(textNode);
+	        
+	        if(label.position.indexOf('footer') >= 0) {
+            Utils.applyAttributes(labelEl, label, {y:svg.height-5});
+          } else {
+            Utils.applyAttributes(labelEl, label, {y:25});
+          }
+        }
+        
+        
+      }
+    };
+		
+	  
+		function initMainMap() {
+			//dynamic layer array that allow loading from database
+			var dynamicLayers = new Array();
+			
+			//initialize digiLayers (layers that allow digitizing)
+			var digiLayers = new Array();
+			
+			//define some styles for the map object
+			var zoomRectStyles = {"fill":"none","stroke":"crimson","stroke-width":0.002,"stroke-dasharray":"0.012,0.002"};
+			var highlightStyles = {"stroke":"crimson","stroke-width":0.002};
+			var dragRectStyles = {"fill":"dimgray","fill-opacity":0.3};
+						
+			//initialize myMainMap object, you need to adopt the parameters here
+			myMainMap = new map("mainMap",35910,35,0.6,0,26911,"m",1,false,"","",dynamicLayers,digiLayers,"",zoomRectStyles,highlightStyles,dragRectStyles,"referenceMap","myDragCrossSymbol",4750);
+		}
+		
+		
+			
+		//this function toggles the display attribute of a map layer
+		function toggleMapLayer(id,checkStatus,labelText) {
+			var layerId = id.replace(/cb_/, "");
+			var mapLayer = document.getElementById(layerId);
+			var displayStatus = "none";
+			if (checkStatus) {
+				displayStatus = "inherit";
+			}
+			mapLayer.setAttributeNS(null,"display",displayStatus);
+		}
+		
+		//TODO: replace myMapApp.curKpi with myMapApp.curKpiIndex then remove this function
+		function getCurrentKpiIndex() {
+      var kpiName = myMapApp.curKpi;
+      var measures = sbi.geo.conf.measures;
+      for(i = 0; i < measures.length; i++) {
+        if(measures[i].name === kpiName) return i;
+      }
+      
+      return -1;
+    }
+		
+		function setKpi(cbId,radioId,label) {
+			if (document.documentElement.suspendRedraw) {
+				suspendProcess = document.documentElement.suspendRedraw(30000);
+			}
+			
+			
+			//set current topic in mapApp object
+			myMapApp.curKpi = radioId;
+			
+			var measure = sbi.geo.conf.measures[ getCurrentKpiIndex() ];
+  			
+			var child = myMapApp.targetLayer.firstChild;
+      		while(child) {
+	          	if(child.nodeName == "a") {
+	      			 swapLink(child);
+	      		}
+	      		child = child.nextSibling;
+       		}
+			
+			myMapApp.colArray = measure.colours;
+			myMapApp.threshArray = measure.thresholds;
+			myMapApp.curLabel = label;
+			
+			if(myMapApp.Windows["legend"]) {
+			
+  			var coulourBoxes = document.getElementById("coulourboxes");			
+  			for(i = 0; i < myMapApp.legRect.length; i++) {
+  				coulourBoxes.removeChild(myMapApp.legRect[i]);
+  				coulourBoxes.removeChild(myMapApp.legPanel[i]);
+  			}
+  			
+  			
+  			
+  			myMapApp.legPanel = new Array();	
+  			myMapApp.legRect = new Array();		
+  			for(i = 0; i < measure.num_group; i++) {
+  				// ...legendpanel
+  				var offset = 50 + (i*25);
+  				var panel = document.createElementNS(svgNS,"text");
+  				panel.setAttribute("id","legpanel" + (i+1));
+  				panel.setAttribute("x", "70");
+  				panel.setAttribute("y", "" + offset);
+  				panel.setAttribute("fill", "dimgray");
+  				panel.setAttribute("font-family", "Arial,Helvetica");
+  				panel.setAttribute("font-size", "14px");
+  				panel.setAttribute("startOffset", "0");
+  				var closingChar = (i!=measure.num_group-1?")":"]");
+  				var textString = "-   [" + Utils.numberToString(myMapApp.threshArray[i],2) + " - " + Utils.numberToString(myMapApp.threshArray[i+1],2) + closingChar;
+  				var text_node = document.createTextNode(textString);
+  				panel.appendChild(text_node);
+  				
+  				coulourBoxes.appendChild(panel);
+  				
+  				myMapApp.legPanel[i] = panel;
+  				
+  				// ...legendrect
+  				var offset = 35 + (i*25);
+  				var rect = document.createElementNS(svgNS,"rect");
+  				rect.setAttribute("id","rect" + (i+1));
+  				rect.setAttribute("stroke","dimgray");
+  				rect.setAttribute("x","30");
+  				rect.setAttribute("y",offset);
+  				rect.setAttribute("width","30");
+  				rect.setAttribute("height","20");
+  				rect.setAttribute("fill",myMapApp.colArray[i]);
+  				rect.setAttribute("onclick", "myMapApp.Windows['colourpicker'].openColourPiker(evt)");
+  				rect.setAttribute("cursor", "pointer");
+  				
+  				coulourBoxes.appendChild(rect);
+  				
+  				myMapApp.legRect[i] = rect;
+  			}	
+  		}
+			
+			
+			myMapApp.loadStatus.setAttributeNS(null,"display","inline");		
+			
+			window.setTimeout("colourMap()",200);
+			if (document.documentElement.suspendRedraw) {
+				document.documentElement.unsuspendRedraw(suspendProcess);
+			}
+		}
+			
+			
+		function mouseClickHandler(evt) {
+			var targetElemet = evt.target;
+		}	
+		
+		function setLinkAction(cbId,radioId,label) {
+			var child = myMapApp.targetLayer.firstChild;
+		 	
+			while(child) {
+			
+				var targetNode = child;					
+				if (targetNode.nodeName == "a") {
+					var url;
+					if(radioId == "drill_nav") {
+						url = targetNode.getAttributeNS(attribNS, "drillUrl");
+					} else {
+						url = targetNode.getAttributeNS(attribNS, "crossUrl");
+					}						
+					targetNode.setAttributeNS(xlinkNS, "href", url);
+				}
+				child = child.nextSibling;
+			}
+		}
+		
+	
+			
+
+
+    var prevFill;
+
+    function handleMouseIN(el) {
+      //el.setAttributeNS(null, "opacity", 0.5);
+      prevFill = el.getAttributeNS(null, "fill");
+      el.setAttributeNS(null, "fill", 'yellow');
+    }
+    
+    function handleMouseOUT(el) {
+      //el.setAttributeNS(null, "opacity", 1);
+      el.setAttributeNS(null, "fill", prevFill);
+    }
+
+    function showData(evt){
+      
+      
+      
+      
+      
+      var el = evt.target;
+      var nome = el.getAttributeNS(attribNS,"nome");
+      if(nome == null || nome == "") nome = el.getAttribute("id");
+           
+      var id = el.getAttributeNS(null,"id");
+      var kpi_values = [];
+           
+           for(i = 0; i < sbi.geo.conf.measures.length; i++) {
+                   kpi_values[sbi.geo.conf.measures[i].name] = el.getAttributeNS(attribNS,sbi.geo.conf.measures[i].name);
+           }
+           
+           var targetValue = parseFloat(kpi_values[myMapApp.curKpi]);
+           
+           //determine class
+           var colIndex = -1;   
+           
+           if(targetValue ==  myMapApp.threshArray[myMapApp.threshArray.length-1] ) {
+           		colIndex = myMapApp.threshArray.length-2;
+           } else {             
+	           for (var i = 0;i<myMapApp.threshArray.length-1;i++) {
+	               if (targetValue >= myMapApp.threshArray[i] && targetValue <  myMapApp.threshArray[i+1]) {
+	                   colIndex = i;
+	                   break;
+	               }
+	           }
+	       }
+           
+           var curLegendRect;;
+            if(myMapApp.Windows["legend"]) {
+              curLegendRect = (colIndex != -1? eval("myMapApp.legRect[" + colIndex + "]") : null);
+            }
+            
+           if (evt.type=="mouseover"){
+              if(sbi.geo.conf.gui_settings.highlightOnMouseOver === true) handleMouseIN(el);
+               if(myMapApp.Windows["detail"]) myMapApp.Windows["detail"].setTitleText(nome);
+               if (myMapApp.Windows["detail"] && !myMapApp.Windows["detail"].closed) {
+                   for(i = 0; i < sbi.geo.conf.measures.length; i++) {
+                        var rounded_value = kpi_values[sbi.geo.conf.measures[i].name];
+                   		var value_string = rounded_value.toString();
+		   				var decimal_location = value_string.indexOf(".");		
+		   				if (decimal_location != -1) {
+                   	   		var value_float = parseFloat(kpi_values[sbi.geo.conf.measures[i].name]);
+                   	   		myMapApp.infoPanel[i].firstChild.nodeValue = sbi.geo.conf.measures[i].description + " " + Utils.addSeparators(''+Utils.roundDecimals(value_float,2));
+                   	   	} else {                       	
+                       		myMapApp.infoPanel[i].firstChild.nodeValue = sbi.geo.conf.measures[i].description + " " + Utils.addSeparators(''+kpi_values[sbi.geo.conf.measures[i].name]);
+                  		}
+				   }
+                   if(document.getElementById(id + "_chart") != null) {
+                   		document.getElementById(id + "_chart").setAttributeNS(null, "display","block");
+                   }
+                }
+                             
+                if(myMapApp.Windows["legend"])myMapApp.Windows["legend"].setTitleText(myMapApp.curKpi + ": " + Utils.numberToString(targetValue,2));
+               	if (curLegendRect != null && myMapApp.Windows["legend"] && !myMapApp.Windows["legend"].closed) {
+                   curLegendRect.setAttributeNS(null, "stroke-width",2);
+                   curLegendRect.setAttributeNS(null, "stroke","black");
+               	}
+            }
+                     
+                     
+            if (evt.type=="mouseout"){
+               if(sbi.geo.conf.gui_settings.highlightOnMouseOver === true) handleMouseOUT(el);
+               
+               var windowConf;
+               
+               if(myMapApp.Windows["detail"]) {
+                windowConf = Utils.find(sbi.geo.conf.gui_settings.windows, 'name', 'detail');
+                myMapApp.Windows["detail"].setTitleText(windowConf.title || "Detail");
+               }
+               if (myMapApp.Windows["detail"] &&!myMapApp.Windows["detail"].closed) {
+                   for(i = 0; i < sbi.geo.conf.measures.length; i++) {
+                       myMapApp.infoPanel[i].firstChild.nodeValue = sbi.geo.conf.measures[i].description + " ";
+                   }
+                   if(document.getElementById(id + "_chart") != null) {
+                       document.getElementById(id + "_chart").setAttributeNS(null, "display","none");
+                   }
+               }
+               if (myMapApp.Windows["legend"]) {
+                windowConf = Utils.find(sbi.geo.conf.gui_settings.windows, 'name', 'legend');
+                myMapApp.Windows["legend"].setTitleText(windowConf.title || "Legend");
+               }
+               if (curLegendRect != null && myMapApp.Windows["legend"] && !myMapApp.Windows["legend"].closed) {
+                   curLegendRect.setAttributeNS(null, "stroke-width",1);
+                   curLegendRect.setAttributeNS(null, "stroke","dimgray");
+               }
+             }
+        } 
+		
+		
+			
+		function callCrossNavFunc(frameid, doclabel, params, subobjid, title, target) {
+			if(execCrossFnScope == null) {
+				if(parent) {
+					var p = parent;
+					while(p) {
+						if(p.execCrossNavigation) {
+							execCrossFnScope = p;
+							break;
+						} else {
+							p = p.parent;
+						}
+					}
+				} else {
+					if(top){
+						execCrossFnScope = top;
+					}
+				}
+			}
+			
+		
+			if(execCrossFnScope == null) {
+				alert("Impossible to find execCrossNavigation function");
+			} else {
+				execCrossFnScope.execCrossNavigation(frameid, doclabel, params, subobjid, title, target);
+			}	
+		}
+	
+		function colourMap() {			
+			if (document.documentElement.suspendRedraw) {
+				suspendProcess = document.documentElement.suspendRedraw(20000);
+			}
+						
+			var child = myMapApp.targetLayer.firstChild;
+			 
+			while(child) {
+				
+				var targetNode = child;
+				if (child.nodeName == "a") {
+					targetNode = child.firstChild;
+				}
+				
+				
+        if (targetNode.nodeName != "#text" && targetNode.nodeName != "#comment") {
+					var kpiAttrib = parseFloat(targetNode.getAttributeNS(attribNS,myMapApp.curKpi));
+			
+			
+					var targetColor = "#666666";
+					
+					var selectedMeasure = sbi.geo.conf.measures[getCurrentKpiIndex()];
+					
+					if(targetNode.getAttributeNS(attribNS,myMapApp.curKpi) == null || targetNode.getAttributeNS(attribNS,myMapApp.curKpi) == "") {
+						targetColor = selectedMeasure.no_value_color;
+					} else if(kpiAttrib < selectedMeasure.lower_bound) {
+						targetColor = selectedMeasure.lower_bound_color;
+					} else if(kpiAttrib > selectedMeasure.upper_bound) {
+						targetColor = selectedMeasure.upper_bound_color;
+					} else if(kpiAttrib == selectedMeasure.upper_bound) {
+						targetColor = myMapApp.colArray[myMapApp.threshArray.length-2];
+					} else  {
+						for (var i = 0;i<myMapApp.threshArray.length-1;i++) {
+							if (kpiAttrib >= myMapApp.threshArray[i] && kpiAttrib <  myMapApp.threshArray[i+1]) {
+								targetColor = myMapApp.colArray[i];
+								break;
+							} 
+						}
+					}
+					
+					if(targetNode.nodeName == 'path'
+              || targetNode.nodeName == 'polygon' 
+              || targetNode.nodeName == 'ellipse'
+              || targetNode.nodeName == 'circle'
+              || targetNode.nodeName == 'rect') {
+					   targetNode.setAttributeNS(null,"fill",targetColor);
+					} else if (targetNode.nodeName == 'line'
+                      || targetNode.nodeName == 'polyline' ){
+					   targetNode.setAttributeNS(null,"stroke",targetColor);
+          		}
+          		
+          		if(selectedMeasure.colourrange_calculator_conf.params.opacity) {
+		             targetNode.setAttributeNS(null,"opacity",selectedMeasure.colourrange_calculator_conf.params.opacity);
+		          } else {
+		             targetNode.setAttributeNS(null,"opacity",1.0);
+		          }
+					
+					if(sbi.geo.conf.gui_settings.includeValuesLayer == true) {
+										
+					   var text = "";
+					   var rounded_value = targetNode.getAttributeNS(attribNS,myMapApp.curKpi);
+					   if(rounded_value != null && rounded_value != "") {
+					   	   var value_string = rounded_value.toString();
+			   			   var decimal_location = value_string.indexOf(".");		
+			   			   if (decimal_location != -1) {
+	                   	   		var value_float = Utils.roundDecimals( parseFloat(value_string), 2 );
+	                   	   		text = value_float.toString();
+	                   	   } else {                       	
+	                       		text = targetNode.getAttributeNS(attribNS,myMapApp.curKpi);
+	                  	   }
+	                  	   
+							var valueLabel = document.getElementById("label_" + targetNode.getAttributeNS(null, "id"));					
+							if(valueLabel != null) {
+								valueLabel.firstChild.nodeValue = text;
+							} 
+					   }
+					}
+				}
+				
+				child = child.nextSibling;
+				
+				
+			}
+			
+			myMapApp.loadStatus.setAttributeNS(null,"display","none");
+			if (document.documentElement.suspendRedraw) {
+				document.documentElement.unsuspendRedraw(suspendProcess);
+			}
+		}
+			
+	function windowHandling(id,evtType) {
+		if (evtType == "minimized") {
+			windowPositions[id] = {"x":myMapApp.Windows[id].transX,"y":myMapApp.Windows[id].transY};
+			myMapApp.Windows[id].moveable = false;
+			y = 720;
+			if (id == "navWindow") {
+				x = 10;
+			}
+			if (id == "basiclayer") {
+				x = 436;
+			}
+			if (id == "thematic") {
+				x = 223;
+			}
+			if (id == "legend") {
+				x = 862;
+			}
+			if (id == "detail") {
+				x = 649;
+			}
+			
+			myMapApp.Windows[id].moveTo(x,y,false);
+		}
+		if (evtType == "maximized") {
+			myMapApp.Windows[id].moveTo(windowPositions[id].x,windowPositions[id].y,false);
+			myMapApp.Windows[id].moveable = true;
+		}
+	}
+			
+]]></script>
+		
+		<defs>
+		
+		
+		
+		
+			<!-- Symbols for checkboxes -->
+			<symbol overflow="visible" preserveAspectRatio="xMinYMin meet" id="checkBoxRect">
+				<rect x="-6" y="-6" fill="white" width="12" height="12" stroke="dimgray" stroke-width="1.5"/>
+			</symbol>
+			
+			<symbol fill="none" id="checkBoxCross" preserveAspectRatio="xMidYMid meet" stroke="dimgray" overflow="visible" stroke-width="1" pointer-events="none">
+				<line y2="5" x1="-5" x2="5" y1="-5"/>
+				<line y2="-5" x1="-5" x2="5" y1="5"/>
+			</symbol>
+			<!-- symbols for radio buttons -->
+			<symbol overflow="visible" preserveAspectRatio="xMidYMid meet" id="radioBorder">
+				<circle cursor="pointer" fill="white" r="5" cx="0" cy="0" stroke="dimgray" stroke-width="1.5"/>
+			</symbol>
+			<symbol overflow="visible" preserveAspectRatio="xMidYMid meet" id="radioPoint">
+				<circle fill="dimgray" r="3" pointer-events="none" cx="0" cy="0"/>
+			</symbol>
+			<!-- Symbols for Zoom Magnifyer glasses -->
+			<symbol overflow="visible" preserveAspectRatio="xMidYMid meet" id="magnifyerFull">
+				<text font-size="18px" y="7.5" startOffset="0" fill="dimgray" text-anchor="middle" font-family="Arial,Helvetica" font-weight="bold" pointer-events="none">F</text>
+			</symbol>
+			
+			<symbol overflow="visible" preserveAspectRatio="xMidYMid meet" id="infoBut">
+				<circle fill="none" r="7.5" cx="0" cy="0" stroke="dimgray" stroke-width="1.5"/>
+				<text font-size="13px" y="5" startOffset="0" fill="dimgray" text-anchor="middle" font-family="Arial,Helvetica" font-weight="bold" pointer-events="none">i</text>
+			</symbol>
+			<symbol fill="none" id="magnifyerManual" preserveAspectRatio="xMidYMid meet" stroke="dimgray" overflow="visible" stroke-width="1.5">
+				<rect x="-6" width="12" y="-6" height="12" stroke-dasharray="1.5,1.5"/>
+				<line y2="0" x1="-3" x2="3" y1="0"/>
+				<line y2="3" x1="0" x2="0" y1="-3"/>
+				
+			</symbol>
+			<symbol fill="none" id="magnifyerZoomIn" preserveAspectRatio="xMidYMid meet" stroke="dimgray" overflow="visible" stroke-width="2">
+				<line y2="0" x1="-4" x2="4" y1="0"/>
+				<line y2="4" x1="0" x2="0" y1="-4"/>
+			</symbol>
+			<symbol overflow="visible" preserveAspectRatio="xMidYMid meet" id="magnifyerZoomOut">
+				<line fill="none" x1="-4" x2="4" y1="0" y2="0" stroke="dimgray" stroke-width="2"/>
+			</symbol>
+			<!-- hand symbol for panning -->
+			
+			<symbol overflow="visible" preserveAspectRatio="xMidYMid meet" id="symbPan">
+				<path fill="none" stroke-width="1" d="M-2 6 C -2.2 2.5 -8.0 -0 -5.7 -1.9 C -4.3 -2.5 -3.3 -0.5 -2.5 0.7 C -3.2 -2.1 -5.5 -5.2 -3.6 -5.8 C -2.1 -6.3 -1.6 -3.6 -1.1 -1.9 C -0.9 -4.2 -1.6 -6.4 -0.2 -6.6 C 1.4 -6.8 0.9 -3 1.1 -1.9 C 1.5 -3.5 1.2 -6.1 2.5 -6.1 C 3.9 -6.1 3.5 -3.2 3.6 -1.6 C 4 -2.9 4.1 -4.3 5.3 -4.4 C 7.3 -3.5 4 2.2 3 6z" transform="scale(1.2)" stroke="dimgray"/>
+			</symbol>
+			<!-- Symbol for Arrows -->
+			<symbol overflow="visible" preserveAspectRatio="xMidYMid meet" id="symbArrow">
+				<polyline fill="none" stroke-width="1" points="-3,-6 3,-6 3,1 5,1 0,7 -5,1 -3,1 -3,-5" stroke="dimgray"/>
+			</symbol>
+			<symbol overflow="visible" preserveAspectRatio="xMidYMid meet" id="symbArrowLeft">
+				<use transform="rotate(90)" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#symbArrow" xlink:type="simple" xlink:actuate="onLoad" xlink:show="embed"/>
+				
+			</symbol>
+			<symbol overflow="visible" preserveAspectRatio="xMidYMid meet" id="symbArrowRight">
+				<use transform="rotate(-90)" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#symbArrow" xlink:type="simple" xlink:actuate="onLoad" xlink:show="embed"/>
+			</symbol>
+			<!-- Symbol for Recentering Map -->
+			<symbol overflow="visible" preserveAspectRatio="xMidYMid meet" id="symbRecenter">
+				<circle fill="dimgray" r="1" pointer-events="none" cx="0" cy="0"/>
+				<g fill="none" stroke-width="1.5" pointer-events="none" stroke="dimgray">
+					<line y2="-3" x1="-7" x2="-3" y1="-7"/>
+					
+					<line y2="3" x1="7" x2="3" y1="7"/>
+					<line y2="3" x1="-7" x2="-3" y1="7"/>
+					<line y2="-3" x1="7" x2="3" y1="-7"/>
+				</g>
+			</symbol>
+			<!-- Symbol for Slider -->
+			<symbol overflow="visible" preserveAspectRatio="xMidYMid meet" id="sliderSymbol" pointer-events="none">
+				<line fill="none" x1="0" x2="0" y1="-5" y2="5" stroke="dimgray" stroke-width="5"/>
+			</symbol>
+			
+			<!-- Symbol for Dragging if zoomed in far -->
+			<symbol fill="none" id="myDragCrossSymbol" preserveAspectRatio="xMidYMid meet" stroke="darkblue" overflow="visible" pointer-events="none">
+				<line y2="0" x1="-7000" x2="-2500" y1="0"/>
+				<line y2="0" x1="7000" x2="2500" y1="0"/>
+				<line y2="-7800" x1="0" x2="0" y1="-3300"/>
+				<line y2="7800" x1="0" x2="0" y1="3300"/>
+			</symbol>
+			<!-- Marker for Extent-Arrows -->
+			<marker overflow="visible" preserveAspectRatio="xMidYMid meet" id="myStartArrow" orient="auto">
+				
+				<polyline fill="dimgray" points="-0.5,0 8,-2 8,2"/>
+			</marker>
+			<marker overflow="visible" preserveAspectRatio="xMidYMid meet" id="myEndArrow" orient="auto">
+				<polyline fill="dimgray" points="0.5,0 -8,-2 -8,2"/>
+			</marker>
+		<symbol overflow="visible" preserveAspectRatio="xMidYMid meet" id="maximizeButton">
+    
+    
+    <rect x="-5.5" y="-5.5" fill="steelblue" width="11" height="11" stroke="white" stroke-width="2" pointer-events="fill"/>
+    </symbol><symbol overflow="visible" preserveAspectRatio="xMidYMid meet" id="minimizeButton">
+    <rect x="-5.5" y="-5.5" fill="steelblue" width="11" height="11" pointer-events="fill"/>
+    <line x1="5.5" x2="-5.5" y1="5.5" y2="5.5" stroke="white" stroke-width="2"/></symbol>
+    </defs>
+		
+    <title>SpagoBI Geo Engine</title>
+		
+		
+	  
+	
+		<!-- Main Map Frame -->
+		<svg contentScriptType="text/ecmascript" zoomAndPan="magnify" xmlns:xlink="http://www.w3.org/1999/xlink" 
+    xmlns:attrib="http://www.carto.net/attrib" contentStyleType="text/css" id="mainMap" version="1.0" 
+    width="100%" preserveAspectRatio="xMinYMin meet" viewBox="0 0 960 590" xmlns="http://www.w3.org/2000/svg" x="0" y="0"
+    height="100%">
+			
+			<style type="text/css" xml:space="preserve">
+				<![CDATA[
+				circle {stroke-width:2}
+				]]>
+			</style>
+
+
+				
+				<g id="mainMapGroup">
+		
+			
+				<g stroke-linecap="round" onmouseover="showData(evt)" fill="white" stroke-linejoin="round" onmouseout="showData(evt)" id="eventCatcher">
+				
+				<g id="targetMap">
+				
+				
+				
+				
+				</g>
+
+    
+				
+				<g stroke-linecap="square " fill="white" stroke-linejoin="miter" id="grafici" stroke="black" stroke-width="0.2">	</g>
+				<g stroke-linecap="square " fill="white" stroke-linejoin="miter" id="valori" stroke="black" stroke-width="0.2">	</g>
+				
+				</g>
+				</g>
+		</svg>
+
+	
+	<g id="statusColorMap" display="none">
+		<rect x="500" y="200" fill-opacity="0.8" fill="#fffce6" width="160" height="50"/>
+		<text x="515" font-size="14px" y="220" startOffset="0" fill="steelblue" font-family="Arial,Helvetica">loading Data ...</text>
+		<text x="560" font-size="14px" y="240" startOffset="0" fill="steelblue" font-family="Arial,Helvetica">...coloring Map</text>
+	</g>
+	
+	
+	
+	
+	
+	
+	   	<g id="mapHeader">  
+	      <text id="header-left" x="6" y="25" font-size="20px" startOffset="0" text-anchor="start" fill="black" width="1092" font-family="Arial,Helvetica" 
+        font-weight="bold" pointer-events="none"></text>
+			 
+		    <text id="header-center" x="542" y="25" font-size="20px" startOffset="0" text-anchor="middle" fill="black" width="1092" font-family="Arial,Helvetica" 
+        font-weight="bold" pointer-events="none"></text>
+		
+			 <text id="header-right" x="1092" y="25" font-size="20px" startOffset="0" text-anchor="end" fill="black" width="1092" 
+        font-family="Arial,Helvetica" font-weight="bold" pointer-events="none"></text>
+		  </g>
+	
+	    <g id="mapFooter">  
+	      <text id="footer-left" x="4" y="743" startOffset="0" text-anchor="start"></text>
+	      <text id="footer-center" x="542" y="743" startOffset="0" text-anchor="middle"></text>
+	    	<text id="footer-right" x="1092" y="743" startOffset="0" text-anchor="end"></text>
+	    </g>	
+	
+	
+	    <!-- WINDOWS CONTENT -->
+	    <g id="Windows">
+        <g id="detailWindow"/>
+        <g id="thematicWindow"/>
+        <g id="legendWindow"/>
+        <g id="layerWindow"/>
+         <g id="colourpickerWindow"/>
+         
+         
+        
+        
+       
+	      <g id="navigationWindow">
+          <g id="navigationWindowBody">
+  	       <svg contentScriptType="text/ecmascript" zoomAndPan="magnify" xmlns:xlink="http://www.w3.org/1999/xlink" display="none" 
+                contentStyleType="text/css" id="referenceMap" version="1.0" width="190" preserveAspectRatio="xMidYMid meet" 
+                cursor="crosshair" viewBox="-2471570.4 -1631093.7 4844781 3030131.8" height="150" xmlns="http://www.w3.org/2000/svg" x="10" y="8">
+  							
+  								<use stroke-linecap="round" fill="white" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#mainMapGroup" 
+                       stroke-linejoin="round" xlink:type="simple" xlink:actuate="onLoad" xlink:show="embed" pointer-events="none"/>
+  							
+  								<use x="-2471570.4" y="-1631093.7" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#myDragCrossSymbol" xlink:type="simple" visibility="hidden" xlink:actuate="onLoad" xlink:show="embed"/>
+  								
+  								 
+  						
+  					</svg>
+  				</g>
+				</g>
+				
+				
+			
+				
+      </g>
+      
+      
+
+    
+    
+   
+
+					
+		
+			
+	
+	  
+	
+	
+	</svg>
