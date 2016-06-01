@@ -79,6 +79,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	 */
 	$scope.prevUploadedFile = null;
 	
+	$scope.datasetSavedFromQbe = false;
+	
     $scope.markNotDerived=function(datasets){
     	
     	for(i=0;i<datasets.length;i++){

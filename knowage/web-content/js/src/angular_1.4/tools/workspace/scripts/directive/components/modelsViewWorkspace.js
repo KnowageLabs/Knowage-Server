@@ -33,7 +33,7 @@ angular
 		  };	  
 	});
 
-function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_messaging){
+function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_messaging,$qbeViewer){
 	$scope.businessModelsInitial=[];
 	$scope.federationDefinitionsInitial=[];
 	
@@ -138,12 +138,13 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	
 	$scope.showQbeFederation= function(federation){
         
-		var federationId= federation.federation_id;
+		var federationId = federation.federation_id;
 		
-		var url=datasetParameters.qbeEditFederationServiceUrl
-		       +'&FEDERATION_ID='+federationId;
+		var url = datasetParameters.qbeEditFederationServiceUrl + '&FEDERATION_ID=' + federationId;
 		
-		 $window.location.href=url;
+		$qbeViewer.openQbeInterface(url);
+		
+//		 $window.location.href=url;
 		
 	}
 	

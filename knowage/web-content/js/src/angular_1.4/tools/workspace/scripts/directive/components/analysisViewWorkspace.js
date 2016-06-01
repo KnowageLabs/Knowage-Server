@@ -42,7 +42,7 @@ angular
 	    
 	});
 
-function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,sbiModule_user,$mdDialog,$mdSidenav,$documentViewer) {
+function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,sbiModule_user,$mdDialog,$mdSidenav,$documentViewer,$qbeViewer) {
 	
 	$scope.cockpitAnalysisDocsInitial = [];	
 	$scope.activeTabAnalysis = null;	

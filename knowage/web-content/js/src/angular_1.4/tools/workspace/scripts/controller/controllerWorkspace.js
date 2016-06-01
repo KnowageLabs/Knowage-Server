@@ -25,7 +25,7 @@
  */
 angular
 	.module('workspace.controller', ['workspace.directive','workspace.configuration'])
-	.controller('workspaceController', ["$scope","$http","$mdDialog","$timeout","$mdSidenav","$documentViewer","sbiModule_translate","sbiModule_restServices","sbiModule_config","sbiModule_user","sbiModule_messaging", workspaceFunction])
+	.controller('workspaceController', ["$scope","$http","$mdDialog","$timeout","$mdSidenav","$documentViewer","sbiModule_translate","sbiModule_restServices","sbiModule_config","sbiModule_user","sbiModule_messaging","$qbeViewer", workspaceFunction])
    .service('multipartForm',['$http',function($http){
 		
 		this.post = function(uploadUrl,data){

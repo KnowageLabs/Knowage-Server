@@ -16,4 +16,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('workspace.configuration', ['ngMaterial', 'angular_list', 'angular_2_col', 'sbiModule', 'angular_table', 'document_view','document_viewer','file_upload','ngMessages']);
+angular.module('workspace.configuration', ['ngMaterial', 'angular_list', 'angular_2_col', 'sbiModule', 'angular_table', 'document_view','document_viewer','file_upload','ngMessages','qbe_viewer']);
