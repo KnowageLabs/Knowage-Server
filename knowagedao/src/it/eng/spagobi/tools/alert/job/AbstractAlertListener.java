@@ -33,6 +33,8 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 	private static final String LAST_KEY = "LAST_KEY";
 	private static final String ACTION_TRIGGERED = "ACTION_TRIGGERED";
 	private static final String ACTION_EXECUTED = "ACTION_EXECUTED";
+	private static final String CONSECUTIVE_ALERTS_TRIGGERED = "CONSECUTIVE_ALERTS_TRIGGERED";
+	private static final String ALERT_TRIGGERED = "ALERT_TRIGGERED";
 	private JobDetail jobDetail;
 	private JobDataMap jobDataMap;
 	private int eventBeforeTriggerAction;
@@ -101,15 +103,17 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 			throws EMFUserError, AlertListenerException {
 		try {
 			incrementActionTriggered(actionId);
-			if (getEventBeforeTriggerAction() < getActionTriggered(actionId)) {
-				incrementActionExecuted(actionId);
-				IAlertAction action = getActionInstance(actionId);
-				action.executeAction(actionParams, parameterMapFromListener);
-				writeAlertLog(listenerParams, actionId, actionParams, null);
-				if (isSingleExecution()) {
-
-				}
+			// System.out.println("-------------------------\nAction Triggered!!!\n\t" + actionId + "\n-----------------");
+			// if (getEventBeforeTriggerAction() < getActionTriggered(actionId)) {
+			// incrementActionExecuted(actionId);
+			IAlertAction action = getActionInstance(actionId);
+			action.executeAction(actionParams, parameterMapFromListener);
+			writeAlertLog(listenerParams, actionId, actionParams, null);
+			if (isSingleExecution()) {
+				String alertId = jobDataMap.getString(LISTENER_PARAMS);
+				DAOFactory.getAlertDAO().suspendAlert(Integer.valueOf(alertId));
 			}
+			// }
 		} catch (AlertActionException e) {
 			logger.error("Error executing action: \"" + actionId + "\"", e);
 			StringWriter sw = new StringWriter();
@@ -169,6 +173,31 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 		}
 	}
 
+	protected void incrementAlertTriggered() {
+		long n = getConsecutiveAlertsTriggered() + 1;
+		String key = CONSECUTIVE_ALERTS_TRIGGERED;
+		jobDataMap.put(key, "" + n);
+		try {
+			StdSchedulerFactory.getDefaultScheduler().addJob(jobDetail, true);
+		} catch (SchedulerException e) {
+			logger.error("incrementAlertTriggered", e);
+		}
+	}
+
+	protected void resetConsecutiveAlertsTriggered() {
+		jobDataMap.put(CONSECUTIVE_ALERTS_TRIGGERED, "0");
+		try {
+			StdSchedulerFactory.getDefaultScheduler().addJob(jobDetail, true);
+		} catch (SchedulerException e) {
+			logger.error("resetConsecutiveAlertsTriggered", e);
+		}
+	}
+
+	protected int getConsecutiveAlertsTriggered() {
+		String key = CONSECUTIVE_ALERTS_TRIGGERED;
+		return jobDataMap.containsKey(key) ? Integer.valueOf(jobDataMap.getString(key)) : 0;
+	}
+
 	protected void incrementActionExecuted(Integer actionId) {
 		long n = getActionExecuted(actionId) + 1;
 		String key = ACTION_EXECUTED + "_" + actionId;
@@ -176,8 +205,7 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 		try {
 			StdSchedulerFactory.getDefaultScheduler().addJob(jobDetail, true);
 		} catch (SchedulerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("incrementActionExecuted", e);
 		}
 	}
 
