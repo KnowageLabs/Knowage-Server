@@ -243,17 +243,42 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		return renderModel(model);
 	}
 
-	@GET
+	@POST
 	@Path("/drilltrough/levels")
 	@Produces("text/html; charset=UTF-8")
-	public String getallLevels() throws OlapException {
+	public String getallLevels(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException {
 
 		JSONArray array = new JSONArray();
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		String filter = null;
+
 		try {
-			List<Hierarchy> hs = model.getCube().getHierarchies();
-			for (Hierarchy h : hs) {
+			String params = RestUtilities.readBody(req);
+			JSONObject paramsObj = new JSONObject(params);
+
+			filter = paramsObj.getString("filters");
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		try {
+
+			CellSet cellSet = model.getCellSet();
+			List<CellSetAxis> axis = cellSet.getAxes();
+			List<Hierarchy> axisHierarchies = axis.get(0).getAxisMetaData().getHierarchies();
+			axisHierarchies.addAll(axis.get(1).getAxisMetaData().getHierarchies());
+
+			JSONArray filters = new JSONArray(filter);
+			for (int i = 0; i < filters.length(); i++) {
+				JSONObject jsonObj = filters.getJSONObject(i);
+				Hierarchy h = CubeUtilities.getHierarchy(model.getCube(), jsonObj.getString("selectedHierarchyUniqueName"));
+				axisHierarchies.add(h);
+			}
+
+			// List<Hierarchy> hs = model.getCube().getHierarchies();
+			for (Hierarchy h : axisHierarchies) {
+
 				JSONObject hierarchy = new JSONObject();
 				JSONArray levelsArray = new JSONArray();
 
@@ -381,7 +406,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			max = paramsObj.getInt("max");
 			col = paramsObj.getString("levels");
 		} catch (Exception e) {
-			// TODO: handle exception
+
 		}
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();

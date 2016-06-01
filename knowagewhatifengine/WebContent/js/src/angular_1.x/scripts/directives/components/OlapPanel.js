@@ -87,28 +87,39 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 	}
 	
 	$scope.getCollections = function() {
+		
+		var toSend ={};
+		toSend.filters = angular.toJson($scope.filterCardList);
+		
 		var encoded = encodeURI('/member/drilltrough/levels/?SBI_EXECUTION_ID=' + JSsbiExecutionID);
-		sbiModule_restServices.promiseGet
-		("1.0", encoded)
+		sbiModule_restServices.promisePost
+		("1.0", encoded,toSend)
 		.then(function(response) {
 			$scope.dtTree = response.data;
+			setTimeout(function(){
+				$scope.checkDtLevels();
+			},500)
+			
+		    }, function(response) {
+			sbiModule_messaging.showErrorMessage("Error getting DrillThrough Levels ", 'Error');
+			
+				});
+		}
+	$scope.checkDtLevels = function() {
+		if($scope.dtTree != null && $scope.formateddtColumns != null){
 			for (var i = 0; i < $scope.dtTree.length; i++) {
 				for (var j = 0; j < $scope.dtTree[i].children.length; j++) {
 					for (var k = 0; k < $scope.formateddtColumns.length; k++) {
 						if ($scope.formateddtColumns[k].label ==$scope.dtTree[i].children[j].caption.toUpperCase()) {
-							console.log($scope.dtTree[i].children[j].caption.toUpperCase());
 							$scope.checkCheckboxes($scope.dtTree[i].children[j],$scope.dtAssociatedLevels);
 						}
 					}
-					
 				}
 			}
-			console.log($scope.dtAssociatedLevels);
-		    }, function(response) {
-			sbiModule_messaging.showErrorMessage("error", 'Error');
-			
-				});
+		}else{
+			sbiModule_messaging.showErrorMessage("Checking not done", 'Error');
 		}
+	}
 	
 	$scope.clearLevels = function() {
 		$scope.dtAssociatedLevels = [];
