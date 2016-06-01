@@ -122,6 +122,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpKpis" description="ImpExpKpis"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="InstallConfig" description="InstallConfig" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="RegistryDataEntry" description="RegistryDataEntry" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentScheduling" description="DocumentScheduling" />
@@ -189,6 +190,7 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpKpis" description="ImpExpKpis"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ManageCrossNavigation" description="ManageCrossNavigation" />
+	<USER_FUNCTIONALITY productType="KnowageER" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="InstallConfig" description="InstallConfig" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentScheduling" description="DocumentScheduling" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="SchedulingDistributedOutput" description="SchedulingDistributedOutput" />

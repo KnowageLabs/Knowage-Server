@@ -51,7 +51,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- *
+ * 
  */
 @Path("/1.0/crossNavigation")
 @ManageAuthorization
@@ -162,7 +162,7 @@ public class CrossNavigationService {
 	@GET
 	@Path("/{label}/loadCrossNavigationByDocument")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
+	@UserConstraint(functionalities = { SpagoBIConstants.EXECUTE_CROSS_NAVIGATION })
 	public Response loadCrossNavigationData(@PathParam("label") String label, @Context HttpServletRequest req) {
 		try {
 			ICrossNavigationDAO dao = DAOFactory.getCrossNavigationDAO();
