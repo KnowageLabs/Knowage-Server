@@ -54,6 +54,8 @@ import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -1468,6 +1470,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(getUserProfile());
 			dataSet = dao.loadDataSetById(id);
+			//if its a federated dataset the datasource are teh ones on cahce
+			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+			dataSet.setDataSourceForReading(cache.getDataSource());
+			dataSet.setDataSourceForWriting(cache.getDataSource());
 			jsonDsConfig = new JSONObject(dataSet.getConfiguration());
 
 		}
