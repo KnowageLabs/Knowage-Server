@@ -649,7 +649,9 @@ public class StringUtilities {
 				}
 			} catch (Throwable e) {
 				// try to read engine_config settings
-				nullValueString = ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("DATA_SET_NULL_VALUE")).getCharacters();
+				if((SourceBean) EnginConf.getInstance().getConfig().getAttribute("DATA_SET_NULL_VALUE")!=null){
+					nullValueString = ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("DATA_SET_NULL_VALUE")).getCharacters();
+				}
 				if (nullValueString != null) {
 					newListOfValues = "'" + nullValueString + "'";
 
