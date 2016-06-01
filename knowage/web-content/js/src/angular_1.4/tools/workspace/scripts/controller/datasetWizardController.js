@@ -327,8 +327,9 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				 * @author Danilo Ristovski
 				 */
 				$scope.closeDatasetCreateDialog();
-				$scope.loadMyDatasets();
-				$scope.loadDatasets();
+			//	$scope.loadMyDatasets();
+			//	$scope.loadDatasets();
+				$scope.reloadMyData();
 				
 //					$scope.validationStatus = false;
 //					sbiModule_messaging.showErrorMessage("Failure!", 'Error!');

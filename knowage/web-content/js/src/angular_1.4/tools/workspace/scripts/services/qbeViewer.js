@@ -25,12 +25,14 @@ angular
 	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule'])
 	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices) { 
 	 		
-		this.openQbeInterface = function(url) {
+		this.openQbeInterface = function($scope,url) {
 			
 			$mdDialog
 				.show
 				(	
-					{
+					{   
+						scope:$scope,
+						preserveScope: true,
 						controller: openQbeInterfaceController,
 						templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 						fullscreen: true,
@@ -50,7 +52,8 @@ angular
 				$mdDialog.hide();
 				
 				if ($scope.datasetSavedFromQbe==true) {
-					alert("RELOAD DATASETS");
+					//alert("RELOAD DATASETS");
+					$scope.reloadMyData();
 					$scope.datasetSavedFromQbe = false;
 				}
 				

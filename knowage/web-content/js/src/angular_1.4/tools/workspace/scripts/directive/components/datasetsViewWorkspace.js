@@ -32,7 +32,7 @@ angular
 	  	};
 	})
 
-function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_user,sbiModule_helpOnLine,sbiModule_messaging){
+function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_user,sbiModule_helpOnLine,sbiModule_messaging,$qbeViewer){
 	
 	$scope.translate = sbiModule_translate;
 	
@@ -230,15 +230,14 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     
     $scope.showQbeDataset= function(dataset){
     	console.log(dataset);
-	//	var actionName= 'QBE_ENGINE_FROM_FEDERATION_START_ACTION';
+
 		var label= dataset.label;
 		
 		var url= datasetParameters.qbeFromDataSetServiceUrl
 		       +'&dataset_label='+label;
-//		var url= sbiModule_config.engineUrls.worksheetServiceUrl
-//		         +'&ACTION_NAME='+actionName
-//		         +'&dataset_label='+label;
-		 $window.location.href=url;
+
+		 //$window.location.href=url;
+		$qbeViewer.openQbeInterface($scope,url);
     }
     
     $scope.extractNotDerivedLabels= function(datasets){
@@ -450,16 +449,15 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
         	 
     }
     
-    
-//	$scope.isDetailEnabled = function(dataset){
-//		   if( dataset.dsTypeCd==="File" &&  dataset.owner==sbiModule_user.userId){
-//			   return true;
-//		   }else{
-//			   return false;
-//		   }
-//		   
-//		}
-//    
+    /**
+     * function that is called after adding new dataset, to syncronize model
+     */
+    $scope.reloadMyData=function(){
+    	$scope.loadNotDerivedDatasets();
+    	$scope.loadDatasets();
+    	$scope.loadMyDatasets();
+    }
+  
     function parseCkanRepository(){
     	var ckanUrls= datasetParameters.CKAN_URLS;
     	var ckanUrlsSplitted= ckanUrls.split("|");
@@ -476,6 +474,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	return repos;
     }
     //CKAN 
+   
     $scope.ckanRepos=parseCkanRepository();
     $scope.selectedCkanRepo={};
     $scope.ckanDatasetsList=[];

@@ -142,7 +142,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		
 		var url = datasetParameters.qbeEditFederationServiceUrl + '&FEDERATION_ID=' + federationId;
 		
-		$qbeViewer.openQbeInterface(url);
+		$qbeViewer.openQbeInterface($scope,url);
 		
 //		 $window.location.href=url;
 		
@@ -213,22 +213,16 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	}
 	
 	$scope.showQbeFromBM=function(businessModel){
-		console.log(businessModel);
-		//var actionName= 'QBE_ENGINE_START_ACTION_FROM_BM';
+
 		var modelName= businessModel.name;
 		var dataSource=businessModel.dataSourceLabel;
 		var url= datasetParameters.qbeFromBMServiceUrl
-		        +'&isWorksheetEnabled='+datasetParameters.IS_WORKSHEET_ENABLED
+		       // +'&isWorksheetEnabled='+datasetParameters.IS_WORKSHEET_ENABLED
 		        +'&MODEL_NAME='+modelName
 		        +'&DATA_SOURCE_LABEL='+ dataSource;
-		
-//		var url= sbiModule_config.engineUrls.worksheetServiceUrl
-//		         +'&ACTION_NAME='+actionName
-//		         +'&MODEL_NAME='+modelName
-//		         +'&isWorksheetEnabled=true'
-//		         +'&DATA_SOURCE_LABEL='+ dataSource;
 		       
-		 $window.location.href=url;
+		// $window.location.href=url;
+		$qbeViewer.openQbeInterface($scope,url);
 	}
 	
 	function DialogEditFederationController($scope,$mdDialog,sbiModule_config,federation){
