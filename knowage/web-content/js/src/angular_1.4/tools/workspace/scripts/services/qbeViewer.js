@@ -53,7 +53,8 @@ angular
 				
 				if ($scope.datasetSavedFromQbe==true) {
 					//alert("RELOAD DATASETS");
-					$scope.reloadMyData();
+//					$scope.reloadMyData();
+					$scope.reloadMyData = true;
 					$scope.datasetSavedFromQbe = false;
 				}
 				

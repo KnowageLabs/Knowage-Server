@@ -452,11 +452,16 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     /**
      * function that is called after adding new dataset, to syncronize model
      */
-    $scope.reloadMyData=function(){
-    	$scope.loadNotDerivedDatasets();
-    	$scope.loadDatasets();
-    	$scope.loadMyDatasets();
-    }
+//    $scope.reloadMyData=function(){
+//    	
+//    	$scope.loadNotDerivedDatasets();
+//
+//    	if ($scope.datasetsDocumentsLoaded==true) {
+//    		$scope.loadDatasets();
+//        	$scope.loadMyDatasets();
+//    	}
+//    	
+//    }
   
     function parseCkanRepository(){
     	var ckanUrls= datasetParameters.CKAN_URLS;

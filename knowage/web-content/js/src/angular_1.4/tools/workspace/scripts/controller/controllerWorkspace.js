@@ -105,9 +105,11 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	var favoritesDocumentsLoaded = false;
 	var recentDocumentsLoaded = false;
 	var organizerDocumentsLoaded = false;
-	var datasetsDocumentsLoaded = false;
+	$scope.datasetsDocumentsLoaded = false;
 	var modelsDocumentsLoaded = false;
 	var smartFiltersDocumentsLoaded = false;
+	
+	$scope.reloadMyData = false;
 	
 	/**
 	 * Attached to the scope because we need this information inside the controller for managing the Analysis documents and interface after coming to the Workspace
@@ -153,8 +155,6 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
      */
 	$scope.initializeDatasetWizard = function(dataset) {
-		
-		
 		
 		$scope.dataset.fileType = dataset!=undefined ? dataset.fileType : "";
 		$scope.dataset.fileName = dataset!=undefined ? dataset.fileName : "";
@@ -323,16 +323,31 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 				
 			case "datasets":
 				
-				if (datasetsDocumentsLoaded==false) {
+				if ($scope.datasetsDocumentsLoaded==false) {
 					
 					console.info("[LOAD START]: Loading of Datasets is started.");
+					
+//					if ($scope.reloadMyData==true) {
+//						console.info("[LOAD]: Not derivated datasets additionaly, because of reloading of MyData.");
+//						$scope.loadNotDerivedDatasets();
+//					}
 					
 					$scope.loadDatasets();
 					$scope.loadMyDatasets();
 					$scope.loadEnterpriseDatasets();
 					$scope.loadSharedDatasets();
 						
-					datasetsDocumentsLoaded = true;
+					$scope.datasetsDocumentsLoaded = true;
+					$scope.reloadMyData==false;
+				}
+				else {
+					if ($scope.reloadMyData==true) {
+						console.info("[LOAD]: Not derivated datasets, All datasets and  My Datasets, because of reloading of MyData.");
+						$scope.loadNotDerivedDatasets();
+						$scope.loadDatasets();
+			        	$scope.loadMyDatasets();
+			        	$scope.reloadMyData = false;
+					}
 				}
 				
 				break;
