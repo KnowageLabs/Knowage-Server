@@ -49,8 +49,8 @@
 		$scope.options = {
 				chart: {
 					type: 'stackedAreaChart',
-					height: 250,
-					width:400,
+					height: 200,
+					width:300,
 					margin : {
 						right: 0,
 						left: 0

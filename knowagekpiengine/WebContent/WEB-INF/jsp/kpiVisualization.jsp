@@ -196,18 +196,11 @@ author:
 
 </head>
 
-<body ng-controller="kpiViewerController" ng-init="init()" 	class="kn-schedulerKpi">
+<body ng-controller="kpiViewerController" ng-init="init()" 	class="kn-kpiExecution">
 	<div ng-if="showPreloader" style=" position: absolute;background-color: white;z-index: 100000000000;"
 	 	layout-fill layout  layout-align="center center" >
 	 <md-progress-circular md-mode="indeterminate" md-diameter="96" ></md-progress-circular>
 	</div> 
-	<%--
-	<div style="padding:2em; font-size: 0.7em">kpiListValue: {{documentData.kpiListValue | json}}</div>
-	<div style="padding:2em; font-size: 0.7em">template: {{documentData.template | json}}</div>
-	
-	<div style="padding:2em; font-size: 0.7em">kpiValue: {{documentData.kpiValue | json}}</div>
-	<div style="padding:2em; font-size: 0.7em">kpiItems: {{kpiItems | json}}</div>
-	--%>
 	<%
 	if(type.equalsIgnoreCase("kpi")) {
 		String model = (String)chartObj.get("model");
@@ -217,19 +210,20 @@ author:
 
 
 	<div layout="row" ng-if="displayKpiWidget"  layout-wrap >
-		<div id="kpiWidgetTemplate" ng-repeat="kpiItem in kpiItems" layout-margin layout-padding>
-			<md-whiteframe  class="md-whiteframe-4dp " layout="column" layout layout-margin ng-if="kpiItem.viewAs=='speedometer'" > 
-				<md-toolbar	class="miniheadimportexport ternaryToolbar" layout="row">
-					<div class="md-toolbar-tools">
-						<h1  style="font-size: {{fontConf.size}}em;">{{kpiItem.name}}</h1>
-					</div>
-					<span flex></span>
-					
+		<div id="kpiWidgetTemplate" ng-repeat="kpiItem in kpiItems" layout-margin>
+			<md-card  layout="column" layout-padding layout-margin ng-if="kpiItem.viewAs=='speedometer'" > 
+			<md-card-title>
+		    	<md-card-title-text layout="row" >
+		        	<span class="md-headline">{{kpiItem.name}}</span>
+		        	<span flex></span>
 					<md-button <%= canSee? " ng-show=true ":"ng-show=false" %>  class=" md-icon-button " ng-click="openEdit(kpiItem)">
 		         		 <md-icon md-font-icon="fa fa-pencil" aria-label="Edit Value" ></md-icon>
 		        	</md-button>
-			       
-				</md-toolbar>
+		        </md-card-title-text>
+		    </md-card-title>
+			
+			
+			
 				<kpi-gauge ng-if="kpiItem.viewAs=='speedometer'" layout="column"
 						gauge-id="kpiItem.id" label="kpiItem.name" size="kpiItem.size"
 						min-value="kpiItem.minValue" max-value="kpiItem.maxValue"
@@ -238,7 +232,7 @@ author:
 						show-value="kpiItem.showValue" show-target="kpiItem.showTarget"
 						show-thresholds="kpiItem.showThreshold"
 						value-precision="kpiItem.precision" font-conf="kpiItem.fontConf"></kpi-gauge>
-			</md-whiteframe>
+			</md-card>
 	        
 			<kpi-widget ng-if="kpiItem.viewAs=='kpicard'" widget-id="kpiItem.id" 
 					label="kpiItem.name" font-conf="kpiItem.fontConf"

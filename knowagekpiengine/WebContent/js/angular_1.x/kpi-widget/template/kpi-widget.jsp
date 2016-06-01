@@ -1,30 +1,29 @@
-<md-whiteframe  class="md-whiteframe-4dp " layout="column" layout layout-margin  > 
-	 <md-toolbar	class="miniheadimportexport ternaryToolbar" layout="row">
-		<div class="md-toolbar-tools">
-			<h1  style="font-size: {{fontConf.size}}em;">{{label}}</h1>
-		</div>
-		<span flex></span>
-		
-		<md-button ng-show="canSee" class="md-icon-button"  ng-click="openEdit()">
-          <md-icon md-font-icon="fa fa-pencil" aria-label="Edit Value"></md-icon>
-        </md-button>
-       
-	</md-toolbar>
+<md-card  class="" layout="column" layout-margin layout-padding > 
+	<md-card-title>
+    	<md-card-title-text layout="row" >
+        	<span class="md-headline">{{label}}</span>
+        	<span flex></span>
+			<md-button ng-show="canSee" class="md-icon-button"  ng-click="openEdit()">
+          		<md-icon md-font-icon="fa fa-pencil" aria-label="Edit Value"></md-icon>
+       		</md-button>
+        </md-card-title-text>
+    </md-card-title>
+ 	
  	<div layout-padding layout="column"> 
 		<div layout="row">
-			<div flex>
-				<h3 style="font-size: {{fontConf.size}}em;" class="grey">{{translate.load("sbi.kpi.widget.kpi")}}</h3>
-				<h1 style="color:#3B678C">{{getValueToShow()}}</h1>
+			<div flex class="kpiValue">
+				<h3 class="">{{translate.load("sbi.kpi.widget.kpi")}}</h3>
+				<h1>{{getValueToShow()}}</h1>
 			</div>
-			<div flex>
-				<h3 style="font-size: {{fontConf.size}}em;" class="grey">{{translate.load("sbi.kpi.widget.target")}}</h3>
-				<h1 style="color:#C4DCF3">{{getTargetToShow()}}</h1>
+			<div flex class="kpiValue">
+				<h3 class="">{{translate.load("sbi.kpi.widget.target")}}</h3>
+				<h1>{{getTargetToShow()}}</h1>
 			</div>
 			
 		</div>
-		<div layout="row" layout-align="start center" ng-if="showTargetPercentage" >
-			<h1  style="color:#C4DCF3">{{getPercentage()}}</h1> 
-			<h3 style="font-size: {{fontConf.size}}em;" layout-margin class="grey">
+		<div layout="row" layout-align="center center" ng-if="showTargetPercentage" class="kpiValue">
+			<h1 >{{getPercentage()}}</h1>&nbsp;
+			<h3 class="">
 				{{translate.load("sbi.kpi.widget.percentage.oftarget")}}
 			</h3>
 		</div>
@@ -46,4 +45,4 @@
 		
 		<nvd3 data="data" options="options" ></nvd3>
 	</div>
-</md-whiteframe>
+</md-card>
