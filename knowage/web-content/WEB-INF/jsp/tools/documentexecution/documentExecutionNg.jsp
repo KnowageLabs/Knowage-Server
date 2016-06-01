@@ -258,7 +258,7 @@ if(executionRoleNames.size() > 0) {
 		      		<div layout="row" flex layout-align="center center" ng-hide="urlViewPointService.frameLoaded">
 			      		<md-progress-circular md-mode="indeterminate" md-diameter="70" ></md-progress-circular>
 					</div>
-					<iframe class="noBorder" id="documentFrame" ng-src="{{execProperties.documentUrl}}" iframe-onload="iframeOnload()"
+					<iframe style="min-height:100%;" class="noBorder" id="documentFrame" ng-src="{{execProperties.documentUrl}}" iframe-onload="iframeOnload()"
 							iframe-set-dimensions-onload flex="grow" ng-show="urlViewPointService.frameLoaded">
 					</iframe>
 				</md-content>
