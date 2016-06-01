@@ -75,7 +75,7 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	
 	$scope.saveRow = function(){
 		var rowSelected = angular.copy($scope.domain);
-		if (rowSelected.id !== undefined) {
+		if (rowSelected.valueId !== undefined) {
 			$scope.saveModifiedRow(rowSelected);
 		}else{
 			$scope.saveNewRow(rowSelected);
@@ -87,7 +87,7 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	$scope.saveModifiedRow = function(item){
 		var idx = $scope.indexOf($scope.data, item);
 		sbiModule_restServices
-			.promisePut($scope.path,item.id, angular.toJson(item), headers)
+			.promisePut($scope.path,item.valueId, angular.toJson(item), headers)
 				.then(function(response){
 					if (response.data.errors != undefined){
 						sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
@@ -105,17 +105,17 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	
 	$scope.saveNewRow = function(item){
 		sbiModule_restServices
-		.post($scope.path,"",angular.toJson(item),headers)
+		.post($scope.path,"",item,headers)
 		.then(function successCallback(response) {
 			if (response.status == 201){
-				item.id = response.data;
+				item.valueId = response.data;
 				$scope.data.splice(0, 0, item);
 				$angularListDetail.goToList();
 				$scope.domain = {};
 				$scope.message.showSuccessMessage($scope.translate.load('sbi.generic.operationSucceded'));
 			}
 			else {
-				item.id = "";
+				item.valueId = "";
 				if (response.data.errors != undefined){
 					sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
 				}else{
@@ -124,7 +124,7 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 			}
 		},
 		function errorCallback(response) {
-			item.id = "";
+			item.valueId = "";
 			$scope.message.showErrorMessage($scope.translate.load('sbi.generic.error.msg') + response.data);
 		});	
 	}
@@ -140,10 +140,10 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	  	  	.show(confirm)		      
 	  	  	.then(function(){
   	  			var rowsSelected = item;
-  	  			if (rowsSelected.id !== undefined) {
+  	  			if (rowsSelected.valueId !== undefined) {
   	  				var idx = $scope.indexOf($scope.data, rowsSelected);
   	  				if (idx>=0){
-  	  					sbiModule_restServices.promiseDelete($scope.path, rowsSelected.id)
+  	  					sbiModule_restServices.promiseDelete($scope.path, rowsSelected.valueId)
   	  						.then(function(response){
   	  							if (response.data.errors != undefined){
   	  								sbiModule_restServices.errorHandler(response.data,$scope.translate.load('sbi.generic.error.msg'));
@@ -161,7 +161,7 @@ function manageDomainFucntion($angularListDetail,sbiModule_messaging, sbiModule_
 	
 	$scope.labelDetailFunction = function(){
 		if ($scope.domain){
-			if ($scope.domain.id == undefined){
+			if ($scope.domain.valueId == undefined){
 				return $scope.translate.load('sbi.generic.new');
 			}else{
 				return $scope.translate.load('sbi.generic.edit');
