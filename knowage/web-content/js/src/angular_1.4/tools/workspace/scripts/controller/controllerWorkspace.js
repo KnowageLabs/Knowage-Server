@@ -164,7 +164,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		$scope.dataset.csvEncoding = dataset!=undefined ? dataset.csvEncoding : "UTF-8"; 
 		$scope.dataset.csvDelimiter = dataset!=undefined ? dataset.csvDelimiter : ","; 
 		$scope.dataset.csvQuote = dataset!=undefined ?dataset.csvQuote : "\""; 
-		dataset ? console.log(dataset.limitRows) : null;
+		
 		$scope.dataset.skipRows = dataset!=undefined ? Number(dataset.skipRows) : 0;
 		$scope.dataset.limitRows = dataset!=undefined ? dataset.limitRows : null;
 		$scope.dataset.xslSheetNumber = dataset!=undefined ? Number(dataset.xslSheetNumber) : 1;
@@ -240,6 +240,8 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		 */
 		$scope.dataset.catTypeVn = category.VALUE_CD;
 		$scope.dataset.catTypeId = category.VALUE_ID;
+		
+		$scope.categorySet = category.VALUE_NM;
 		
 	}
 	

@@ -48,18 +48,24 @@
 					<form>
 			               
 						<div layout="row" layout-wrap>
+			                 
 			                  <div flex>
+			                     
 			                     <md-input-container class="small counter">
+			                     
 			                        <label>{{translate.load('sbi.workspace.dataset.wizard.category')}}</label> 
-			                        <md-select aria-label="aria-label" ng-model="category">
+			                        <md-select aria-label="aria-label" ng-model="categorySet">
 			                           <md-option 	ng-repeat="category in datasetCategoryType" 
 			                           				ng-click="chooseCategory(category)"
 			                           				value="{{category.VALUE_NM}}">
 	                           				{{category.VALUE_NM}}
                            				</md-option>
 			                        </md-select>
+			                        
 			                     </md-input-container>
+			                     
 			                  </div>
+			                  
 						</div>
 			               
 						<div flex=50 layout="row">

@@ -43,7 +43,7 @@ angular
 		
 		};
 		
-		function openQbeInterfaceController($scope,sbiModule_config,url) {
+		function openQbeInterfaceController($scope,url) {
 			
 			$scope.documentViewerUrl = url;
 			
@@ -53,8 +53,7 @@ angular
 				
 				if ($scope.datasetSavedFromQbe==true) {
 					//alert("RELOAD DATASETS");
-//					$scope.reloadMyData();
-					$scope.reloadMyData = true;
+					$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyData() : $scope.reloadMyData = true;
 					$scope.datasetSavedFromQbe = false;
 				}
 				

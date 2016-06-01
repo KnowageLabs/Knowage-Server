@@ -30,6 +30,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	$scope.category = null;
 	$scope.datasetColumns=[];
 	$scope.changingFile = false;
+	$scope.categorySet = null;
 	
 	/**
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -429,6 +430,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	}
 	
 	loadDatasetValues= function(a,b){
+
 		sbiModule_restServices.promiseGet(a,b)
 		.then(function(response) {
 			//console.log(response.data);
@@ -456,10 +458,30 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	
 	 // calls new service for dataset category type
 	loadDatasetCategories= function(){
+
 		sbiModule_restServices.promiseGet("domainsforfinaluser","ds-categories")
 		.then(function(response) {
 			
-			angular.copy(response.data,$scope.datasetCategoryType);
+			var datasetCategoryType = $scope.datasetCategoryType;
+			var minCatId = 100000000000;
+			var tempCatId = null;
+			var indexOfMinCatId = -1;
+			
+			angular.copy(response.data,$scope.datasetCategoryType);			
+			
+			for (i=0; i<datasetCategoryType.length; i++) {
+				
+				tempCatId = datasetCategoryType[i].VALUE_ID;
+				
+				if (tempCatId < minCatId) {
+					minCatId = tempCatId;
+					indexOfMinCatId = i;
+				}
+				
+			}
+			
+			$scope.categorySet = $scope.datasetCategoryType[indexOfMinCatId].VALUE_NM;			
+			
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,"faild to load dataset categories");
 		});
