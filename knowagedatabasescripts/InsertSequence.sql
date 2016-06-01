@@ -40,5 +40,5 @@ insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select m
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(BC_ID)+1 from SBI_META_BC) ,1),'SBI_META_BC');
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(ATTRIBUTE_ID)+1 from SBI_META_BC_ATTRIBUTE) ,1),'SBI_META_BC_ATTRIBUTE');
 insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(JOB_ID)+1 from SBI_META_JOB) ,1),'SBI_META_JOB');
-insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(DS_TABLE_REL_ID)+1 from SBI_META_DATASET_TABLE_RELATIONS) ,1),'SBI_META_DATASET_TABLE_RELATIONS');
-insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(DOC_TABLE_REL_ID)+1 from SBI_META_DOCUMENT_TABLE_RELATIONS) ,1),'SBI_META_DOCUMENT_TABLE_RELATIONS');
+insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(DS_TABLE_REL_ID)+1 from SBI_META_DATASET_REL) ,1),'SBI_META_DATASET_REL');
+insert into hibernate_sequences(next_val,sequence_name) values (ifnull((select max(DOC_TABLE_REL_ID)+1 from SBI_META_DOCUMENT_REL) ,1),'SBI_META_DOCUMENT_REL');

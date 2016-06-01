@@ -3,16 +3,15 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 12-apr-2016 10.43.25 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.metadata.metadata.SbiMetaDsTabRel" table="SBI_META_DATASET_TABLE_RELATIONS" >
+    <class name="it.eng.spagobi.metadata.metadata.SbiMetaDsTabRel" table="SBI_META_DATASET_REL" >
        <id name="relationId" type="java.lang.Integer">
             <column name="DS_TABLE_REL_ID" />
             <generator class="org.hibernate.id.enhanced.TableGenerator">
 				<param name="optimizer">none</param>
-				<param name="segment_value">SBI_META_DATASET_TABLE_RELATIONS</param>	
+				<param name="segment_value">SBI_META_DATASET_REL</param>	
 				<param name="initial_value">1</param>	
 		    </generator>
         </id>
-       
         <property name="datasetId">
 	            <column name="DATASET_ID" not-null="true"/>
 	    </property>
