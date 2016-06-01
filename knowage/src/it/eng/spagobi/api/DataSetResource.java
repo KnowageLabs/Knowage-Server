@@ -90,6 +90,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
@@ -956,7 +959,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String persistDataSets(@QueryParam("labelsAndKeys") JSONObject labels) {
 		logger.debug("IN");
-
+		Monitor monitor = MonitorFactory.start("spagobi.dataset.persist");
 		JSONObject labelsJSON = new JSONObject();
 
 		Iterator<String> keys = labels.keys();
@@ -974,6 +977,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 					DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
 					dataSetManagementAPI.setUserProfile(getUserProfile());
 					tableName = dataSetManagementAPI.persistDataset(label, true);
+					Monitor monitorIdx = MonitorFactory.start("spagobi.dataset.persist.indixes");
 					if (tableName != null) {
 						JSONArray columnsArray = labels.getJSONArray(label);
 						Set<String> columns = new HashSet<String>(columnsArray.length());
@@ -985,6 +989,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 							dataSetManagementAPI.createIndexes(label, columns);
 						}
 					}
+					monitorIdx.stop();
 				}
 				if (tableName != null) {
 					logger.debug("Dataset with label " + label + " is stored in table with name " + tableName);
@@ -999,6 +1004,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 
 		logger.debug("OUT");
+		monitor.stop();
 		return labelsJSON.toString();
 	}
 }
