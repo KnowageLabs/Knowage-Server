@@ -47,7 +47,7 @@ angular
 			
 			$scope.documentViewerUrl = url;
 			
-			$scope.closeDocument = function(){
+			$scope.closeDocument = function() {
 				
 				$mdDialog.hide();
 				

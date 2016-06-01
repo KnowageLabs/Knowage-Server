@@ -1,21 +1,3 @@
-<!--
-Knowage, Open Source Business Intelligence suite
-Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-
-Knowage is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
-Knowage is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-
 <md-dialog flex class="mdDialogDatasetWizard" ng-cloak>
   
 	<md-toolbar>
@@ -362,18 +344,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						
 			           	<div flex=50 layout="row">
 	                  		<label class="checkboxPadding">{{translate.load("sbi.ds.isPersisted")}}</label> 
-		                  		<md-input-container class="small counter">
-		                     		<md-checkbox 	aria-label="Checkbox 2" 
-			                     					ng-model="dataset.persist" ng-checked="">
-									</md-checkbox>
-		                  		</md-input-container>
+	                  		<md-input-container class="small counter step4BottomPadding">
+	                     		<md-checkbox 	aria-label="Checkbox 2" 
+		                     					ng-model="dataset.persist" ng-checked="">
+								</md-checkbox>
+	                  		</md-input-container>
+						</div>
+						
+						<div layout="row">
+							<label ng-show="dataset.persist" class="step4BottomPadding">
+								{{translate.load('sbi.workspace.dataset.wizard.tableprefix.label')}} <strong>{{dataset.tablePrefix}}</strong>
+							</label>
 						</div>
 						
 						<div layout="row" layout-wrap>
 			                  <div flex>
-			                     <md-input-container class="small counter">
+			                     <md-input-container class="small counter" ng-show="dataset.persist">
 			                        <label>{{translate.load("sbi.ds.persistTableName")}}</label> 
-			                        <input ng-model="dataset.tableName" ng-disabled="!dataset.persist">
+			                        <input ng-model="dataset.tableName">
 			                        <div  ng-messages="formForSaving.lbl.$error" ng-show="dataset.persist && dataset.tableName==''">
 				                        <div ng-messages="required">{{translate.load("sbi.workspace.required")}}</div>
 						          	</div>
