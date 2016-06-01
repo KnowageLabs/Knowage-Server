@@ -28,9 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import net.minidev.json.JSONArray;
+
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -77,6 +81,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private static final String ORION_JSON_PATH_ITEMS = "$.contextResponses[*].contextElement";
 
+	static private Logger logger = Logger.getLogger(JSONPathDataReader.class);
+	
 	public static class JSONPathAttribute {
 		private final String name;
 		private final String jsonPathValue;
@@ -297,7 +303,13 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private static String getJSONPathValue(Object o, String jsonPathValue) {
 		// can be an array with a single value, a single object or also null (not found)
-		Object res = JsonPath.read(o, jsonPathValue);
+		Object res = null;
+		try {
+			res = JsonPath.read(o, jsonPathValue);
+		} catch (PathNotFoundException e) {
+			logger.debug("JPath not found "+jsonPathValue);
+		}
+		
 		if (res == null) {
 			return null;
 		}
