@@ -55,6 +55,7 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.sql.SqlUtils;
@@ -369,7 +370,13 @@ public class DataSetFactory {
 				Set<IDataSet> sourcesDatasets = dao.loadAllFederatedDataSets(sbiFederation.getFederation_id());
 
 				UserProfile profile = (UserProfile) userProfile;
-				ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederationWithDataset(sbiFederation, sourcesDatasets), (String) profile.getUserId());
+				String userId = null;
+				if(profile!=null){
+					userId = (String) profile.getUserId();
+					logger.debug("Federated dataset but can't fid the user id");
+				}
+				
+				ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederationWithDataset(sbiFederation, sourcesDatasets), userId);
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((FederatedDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 
@@ -387,17 +394,14 @@ public class DataSetFactory {
 
 				// END
 
-				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
+				IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 				if (userProfile != null)
-					dataSourceDao.setUserProfile(userProfile);
-				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
-				if (dataSource != null) {
-					((QbeDataSet) ds).setDataSource(dataSource);
-					if (!dataSource.checkIsReadOnly()) {
-						ds.setDataSourceForWriting(dataSource);
-						ds.setDataSourceForReading(dataSource);
-					}
-				}
+					dataSourceDAO.setUserProfile(userProfile);
+
+				
+				IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
+				ds.setDataSourceForWriting(dataSource);
+				ds.setDataSourceForReading(dataSource);
 				ds.setDsType(FEDERATED_DS_TYPE);
 
 			}
