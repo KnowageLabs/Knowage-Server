@@ -80,31 +80,84 @@ function getParamsNumber(JSONPars){
 	return toReturn;
 } 
 
+function jsonToURI(jsonObj){
+	var strURI = "";
+
+	for (var o in jsonObj){
+		if (jsonObj[o] != null){
+			strURI += o + "=" + jsonObj[o] + "&";	
+		}
+	}
+	
+	//clean from the last '&' char
+	strURI = strURI.substring(0, strURI.length-1);
+	
+	return strURI;
+}
+
 /* Override of the method execExternalCrossNavigation ONLY for the DocumentComposition */
 function execExternalCrossNavigation(outputParameters, inputParameter, targetCrossNavigation, sourceLabel) {
+	var thisM = this;
+	
 	if (sourceLabel == null){
 		alert("Label of the source document doesn't defined! Contact the System Administrator.");
 		return;
 	}
-	var windowName = (sourceLabel.indexOf("iframe_")>=0) ? sourceLabel : "iframe_" + sourceLabel;
+
+	//call REST service to get cross navigation informations
+	var sourceLabelForRest = (sourceLabel.indexOf("iframe_")>=0) ? sourceLabel.substring(7) : sourceLabel
+	var urlRest =  Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: '1.0/crossNavigation/'+ sourceLabelForRest +'/loadCrossNavigationByDocument'
+			, baseParams: {}			
+	});
 	
-	var parameters = "";
-	var i=1;
-	var totPars = getParamsNumber(outputParameters);
-	for (var p in outputParameters){
-		if (outputParameters[p] != null){
-			parameters += p + "=" + outputParameters[p];	
-			if (i < totPars) parameters += "&";
-		}
-		i++;
-	}
-	
-	//clean parameter's URL from the last & if there is
-	if (parameters.substr(parameters.length-1) == '&')
-		parameters = parameters.substr(0, parameters.length-1);
-	
-	//call the internal function
-	execCrossNavigation(windowName, null, parameters);
+	Ext.Ajax.request({
+		 url: urlRest,
+		 success: function (response){			
+		  	  	if(response !== undefined) {   
+			      		if(response.responseText == undefined) {
+			      			Ext.MessageBox.show({
+			               		title: 'Server error'
+			               		, msg: 'Server response is empty'
+			               		, buttons: Ext.MessageBox.OK     
+			               		, icon: Ext.MessageBox.ERROR
+			               		, modal: false
+			           		});
+			      		}else{			      		
+			      			var parameters = {};
+			      			var content = Ext.util.JSON.decode( response.responseText );
+			      			if (content.errors != undefined) {
+				      			Ext.MessageBox.show({
+				               		title: 'Server error'
+				               		, msg: content.errors[0].message
+				               		, buttons: Ext.MessageBox.OK     
+				               		, icon: Ext.MessageBox.ERROR
+				               		, modal: false
+				           		});
+			      			}else if(content !== undefined && content[0] != undefined && content[0].navigationParams !== undefined) {
+			      				content = content[0];
+			      				for(var key in content.navigationParams){
+			    					var parVal=content.navigationParams[key];
+			    					if(parVal.fixed){
+			    						parameters[key]=parVal.value;
+			    					}else{
+			    						if(outputParameters.hasOwnProperty(parVal.value.label) && outputParameters[parVal.value.label]!=undefined && outputParameters[parVal.value.label]!=null){ 
+//			    							parameters[key]=parseParameterValue(parVal.value,content[parVal.value.label]);
+			    							parameters[key]=outputParameters[parVal.value.label];
+			    						}
+			    					}
+			    				}
+			      				parameters = jsonToURI(parameters); 
+			      				//call the internal function
+			      				var windowName = (sourceLabel.indexOf("iframe_")>=0) ? sourceLabel : "iframe_" + sourceLabel; 
+			      				execCrossNavigation(windowName, null, parameters);
+				      		}
+			      		}
+		  	  		}
+		        }
+		       , scope: this
+		       , failure: this.handleFailure  
+   });
 }
 
 /* Update the input url with value for refresh linked documents and execute themes */
@@ -555,6 +608,61 @@ function setValidSession(url, isValid, msg){
 	if (msg !== ""){
 		alert(msg);
 	}
+}
+
+function handleFailure(response, options) {
+	
+	var errorSeparator = "error.mesage.description.";
+	
+	var errMessage = ''
+	if(response !== undefined) {
+		if (response.responseText !== undefined) {
+			try{
+				var content = Ext.util.JSON.decode( response.responseText );
+			}catch(e){
+				var content =Ext.JSON.decode( response.responseText );
+			}
+			
+			if (content.errors !== undefined  && content.errors.length > 0) {
+				if (content.errors[0].message === 'session-expired') {
+					// session expired
+		        	Sbi.exception.ExceptionHandler.redirectToLoginUrl();
+		        	return;
+				} else if (content.errors[0].message === 'not-enabled-to-call-service') {
+					Sbi.exception.ExceptionHandler.showErrorMessage(LN('not-enabled-to-call-service'), 'Service Error')
+				}  else if (content.message === 'validation-error') {
+					for (var count = 0; count < content.errors.length; count++) {
+						var anError = content.errors[count];
+						if (anError.message !== undefined && anError.message !== '') {
+	        				errMessage += anError.message;
+	        			}
+	        			if (count < content.errors.length - 1) {
+	        				errMessage += '<br/>';
+	        			}
+					}
+				}else {
+					for (var count = 0; count < content.errors.length; count++) {
+						var anError = content.errors[count];
+						if (anError.message !== undefined && anError.message !== '' && anError.message.indexOf(errorSeparator)>=0) {
+	        				errMessage += LN(anError.message);
+	        			} else if (anError.localizedMessage !== undefined && anError.localizedMessage !== '') {
+	        				errMessage += anError.localizedMessage;
+	        			} else if (anError.message !== undefined && anError.message !== '') {
+	        				errMessage += anError.message;
+	        			}
+	        			if (count < content.errors.length - 1) {
+	        				errMessage += '<br/>';
+	        			}
+					}
+				}
+			}
+		} else {
+			errMessage = LN('sbi.generic.genericError');
+		}
+	}
+	
+	Sbi.exception.ExceptionHandler.showErrorMessage(errMessage, LN('sbi.generic.serviceError'));
+	
 }
 
 Ext.onReady(function() {  

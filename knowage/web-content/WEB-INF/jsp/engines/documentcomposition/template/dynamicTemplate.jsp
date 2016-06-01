@@ -25,10 +25,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     String urlIframe = "";
 	logger.debug("urlIframe: " + urlIframe);
 	String compositeJSDocumentUrl=urlBuilder.getResourceLink(request, "/js/documentcomposition/documentcomposition.js");
+	String restServicetUrl=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js");
 %> 
 <!-- LIBS AJAX-->
 	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/miframe/miframe-min.js")%>'></script>
-    <script type="text/javascript" src="<%=compositeJSDocumentUrl%>"></script>
+    <script type="text/javascript" src="<%=restServicetUrl%>"></script>
+    <script type="text/javascript" src="<%=compositeJSDocumentUrl%>"></script>    
     <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ExecutionWizard.js")%>'></script>
 <!-- ENDLIBS -->
 
@@ -62,6 +64,19 @@ for (int i=0; i<lstUrl.size(); i++){
 	}
 </style>
 <script>
+	var url = {
+    	host: '<%= request.getServerName()%>'
+    	, port: '<%= request.getServerPort()%>'
+    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
+    	   				  request.getContextPath().substring(1):
+    	   				  request.getContextPath()%>'
+    	    
+    };
+
+    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
+    	baseUrl: url
+    });
+    
 	/* Create associative arrays with information for refresh (dependencies, ...)   ACTHUNG: Every array is indipendent!!!! */
 	var arUrl = new Object();
 	var arTestUrl = new Object();
