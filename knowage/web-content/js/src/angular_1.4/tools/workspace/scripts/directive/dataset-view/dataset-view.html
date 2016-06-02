@@ -68,6 +68,13 @@
               		{{translate.load('sbi.workspace.dataset.qbe')}}
             	</md-tooltip>
          	</md-button>
+         	
+         		<md-button class="md-icon-button" aria-label="shareDataset"  ng-click="deleteDatasetAction({ds:dataset});" ng-show="shareDatasetEnabled">
+          		<md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
+            	<md-tooltip md-delay="1000">
+            	{{translate.load('sbi.generic.delete')}}
+           		</md-tooltip>
+        	</md-button>
          
        </md-card-actions>
        

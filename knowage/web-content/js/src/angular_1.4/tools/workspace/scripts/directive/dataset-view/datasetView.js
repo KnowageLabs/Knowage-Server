@@ -39,6 +39,7 @@ angular.module('dataset_view', ['ngMaterial'])
 			showDetailDatasetEnabled:"=?",
 			//executeDocumentAction:"&",
 			orderingDatasetCards:"=?",
+			deleteDatasetAction:"&",
 		},
 		
 		link: function (scope, elem, attrs) { 

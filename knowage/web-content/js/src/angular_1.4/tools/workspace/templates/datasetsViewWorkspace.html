@@ -22,6 +22,7 @@
 		show-qbe-dataset-action="showQbeDataset(ds);"
 		preview-dataset-action= "previewDataset(ds);"
 		show-detail-dataset-action="editFileDataset(ds);"
+		delete-dataset-action="deleteDataset(ds);"
  	  ></dataset-view>	
  	 </md-tab-body>
  	</md-tab>  
@@ -129,6 +130,10 @@
 							</md-button>
 							 <md-button title="{{translate.load('sbi.workspace.dataset.detail')}}" aria-label="Show detail" ng-show="currentDatasetsTab=='myDataSet' && selectedDataset.dsTypeCd=='File'" class="md-icon-button" ng-click="editFileDataset(selectedDataset)">
 									<md-icon md-font-icon="fa fa-info-circle"></md-icon>
+							</md-button>
+							
+							<md-button title="{{translate.load('sbi.generic.delete')}}" aria-label="Delete Dataset" class="md-icon-button" ng-show="currentDatasetsTab=='myDataSet'" ng-click="deleteDataset(selectedDataset)">
+									<md-icon md-font-icon="fa fa-trash" ></md-icon>
 							</md-button>
 							
 						</div>

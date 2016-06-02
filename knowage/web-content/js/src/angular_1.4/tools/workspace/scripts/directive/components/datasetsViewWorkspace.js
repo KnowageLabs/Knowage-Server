@@ -166,6 +166,31 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
 	};
 	
+	
+	$scope.deleteDataset=function(dataset){
+		var label= dataset.label;
+		
+		var confirm = $mdDialog.confirm()
+		.title(sbiModule_translate.load("sbi.federationdefinition.confirm.dialog"))
+		.content(sbiModule_translate.load("sbi.workspace.dataset.delete.confirm"))
+		.ariaLabel('delete Document') 
+		.ok(sbiModule_translate.load("sbi.general.yes"))
+		.cancel(sbiModule_translate.load("sbi.general.No"));
+			$mdDialog.show(confirm).then(function() {
+			
+			sbiModule_restServices.promiseDelete("1.0/datasets",label)
+			.then(function(response) {
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.delete.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));
+				$scope.reloadMyData();
+				$scope.selectDataset(undefined);
+			},function(response) {
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.delete.error'));
+			});
+		});
+		
+}
+	
+	
 	$scope.showDatasetDetails = function() {
 		return $scope.showDatasetInfo && $scope.isSelectedDatasetValid();
 	};
