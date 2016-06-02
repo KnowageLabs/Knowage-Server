@@ -673,7 +673,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     }
 
     $scope.editFileDataset = function (arg) {
-    	 console.log(arg);
+    	
     	  $scope.initializeDatasetWizard(arg);
     	  
     	  // Set the flag for editing the current dataaset (file)

@@ -168,7 +168,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		$scope.dataset.skipRows = dataset!=undefined ? Number(dataset.skipRows) : 0;
 		$scope.dataset.limitRows = dataset!=undefined ? dataset.limitRows : null;
 		$scope.dataset.xslSheetNumber = dataset!=undefined ? Number(dataset.xslSheetNumber) : 1;
-		
+				
 		$scope.dataset.catTypeVn = dataset!=undefined ? dataset.catTypeVn : "";
 		$scope.dataset.catTypeId = dataset!=undefined ? Number(dataset.catTypeId) : null;		
 		
@@ -179,6 +179,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		$scope.dataset.meta = dataset!=undefined ? dataset.meta : [];
 		
 		$scope.dataset.fileUploaded = false;
+		
 	}
 	
 	$scope.initializeDatasetWizard();
