@@ -196,9 +196,8 @@ function checkFormVisibility(docType, engineValue) {
 	var ind = docType.indexOf(",");
 	var type = docType.substring(ind+1);
 	// hide template dynamic creation button for olap document 
-	
 	var divLinkConf = document.getElementById("link_obj_conf");
-	if((type=="OLAP" && !(engineDriver[engineValue].toLowerCase().indexOf("what")>-1)) || type=="SMART_FILTER" || engineDriver[engineValue].toLowerCase().indexOf("chart.chartdriver")>-1
+	if(type=="OLAP" || type=="SMART_FILTER" || engineDriver[engineValue].toLowerCase().indexOf("chart.chartdriver")>-1
 			|| engineDriver[engineValue].toLowerCase().indexOf("kpi.kpidriver")>-1) {
 		divLinkConf.style.display="inline";
 	} else {
@@ -1088,7 +1087,7 @@ function saveDocument(goBack) {
 			     
 			     if ((BIobjTypecode.equalsIgnoreCase("OLAP") && ! EngineDriverClass.equals("it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"))
 			       || BIobjTypecode.equalsIgnoreCase("SMART_FILTER")
-			       || BIobjTypecode.equalsIgnoreCase("CHART")|| BIobjTypecode.equalsIgnoreCase("KPI"))
+			       || BIobjTypecode.equalsIgnoreCase("CHART") || BIobjTypecode.equalsIgnoreCase("KPI"))
 			     	styleDivLinkConf = " style='display:inline' ";
 			     else
 			     	styleDivLinkConf = " style='display:none' ";

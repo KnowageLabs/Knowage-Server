@@ -506,33 +506,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$scope.draggedFrom = df;
 		$scope.dragIndex = index;
 	};
-		
-	$scope.checkCheckboxes = function (item, list) {
-		if(item.hasOwnProperty("name")){
-			var index = $scope.indexInList(item, list);
-
-			if(index != -1){
-				$scope.dtAssociatedLevels.splice(index,1);
-			}else{
-				$scope.dtAssociatedLevels.push(item);
-			}
-		} 
-		console.log($scope.dtAssociatedLevels);
-	};
-	
-	$scope.indexInList=function(item, list) {
-		if(item.hasOwnProperty("name")){
-			for (var i = 0; i < list.length; i++) {
-				var object = list[i];
-				
-				if(object.name==item.name){
-					return i;
-				}
-			}
-		}
-		return -1;
-	};
-	
+			
 	$scope.openFilters = function(ev) {
 		$mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title(
 				"Here goes filtering").ok("ok").targetEvent(ev));

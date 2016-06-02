@@ -110,7 +110,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
 			for (var i = 0; i < $scope.dtTree.length; i++) {
 				for (var j = 0; j < $scope.dtTree[i].children.length; j++) {
 					for (var k = 0; k < $scope.formateddtColumns.length; k++) {
-						if ($scope.formateddtColumns[k].label ==$scope.dtTree[i].children[j].caption.toUpperCase()) {
+						if ($scope.formateddtColumns[k].label == $scope.dtTree[i].children[j].caption.toUpperCase()) {
 							$scope.checkCheckboxes($scope.dtTree[i].children[j],$scope.dtAssociatedLevels);
 						}
 					}
@@ -612,8 +612,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, 
       }; 
      
       $scope.showCCWizard = function(){
-    	  
-    	console.log($scope.olapDocName);
+    	 
     		$mdDialog
     			.show({
     				scope : $scope,
