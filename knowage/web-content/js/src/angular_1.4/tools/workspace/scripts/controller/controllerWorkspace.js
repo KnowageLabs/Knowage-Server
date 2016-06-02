@@ -86,7 +86,8 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	 * 							(ALL, COCKPIT, GEO).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	(whereAreWeComingFrom == "NewCockpit") ? $scope.currentOptionMainMenu = "analysis" : $scope.currentOptionMainMenu = "recent";	
+	(whereAreWeComingFrom == "NewCockpit") ? $scope.currentOptionMainMenu = "analysis" : $scope.currentOptionMainMenu = "recent";
+	$scope.resetOption = "recent";
 	
 	$scope.isDocumentFavorite = false;
 
@@ -110,6 +111,9 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	var smartFiltersDocumentsLoaded = false;
 	
 	$scope.reloadMyData = false;
+	
+	$scope.clearSearch = false;
+	$scope.resetSearchedData = true;
 	
 	/**
 	 * Attached to the scope because we need this information inside the controller for managing the Analysis documents and interface after coming to the Workspace
@@ -262,6 +266,28 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	 */
 	$scope.leftMenuItemPicked = function(item) {
 		
+		/**
+		 * Handle the situation of clicking on the left menu option, keeping track of the state of the search input field. In the if-block 
+		 * we should reload the data - re-initialize (after clearing the search field).
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		if ($scope.searchInput!="") {
+			
+			$scope.resetSearchedData = true;
+			
+			if ($scope.currentOptionMainMenu==item.name.toLowerCase()) {
+				$scope.resetOption = item.name.toLowerCase();
+			}
+			else {
+				$scope.resetOption = $scope.currentOptionMainMenu;
+			}
+			
+		}
+		else {
+			$scope.resetSearchedData = false;
+			$scope.resetOption = item.name.toLowerCase();
+		}
+				
 		$scope.currentOptionMainMenu = item.name.toLowerCase();
 		$scope.selectMenuItem(item);
 		
@@ -452,7 +478,10 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	 */
 	$scope.setSearchInput = function(newSearchInput) {		
 		
+		($scope.searchInput!="") ? $scope.resetSearchedData = true : null;
+		
 		$scope.searchInput = newSearchInput;
+		
 		var currentOptionMainMenu = $scope.currentOptionMainMenu;		
 		
 		/**
@@ -468,55 +497,74 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		
 		if (newSearchInput=="") { 
 			
-			switch(currentOptionMainMenu) {
-			
-				/**
-				 * SEARCH FOR ANALYSIS
-				 */
-				case "analysis":				
-					angular.copy($scope.cockpitAnalysisDocsInitial,$scope.cockpitAnalysisDocs);
-					break;
+			if ($scope.resetSearchedData==true) {
 				
-				/**
-				 * SEARCH FOR DATASETS
-				 */
-				case "datasets":
-					//console.info("We will add functionality for searching through DATASETS");
-					angular.copy($scope.datasetsInitial,$scope.datasets); 
-					angular.copy($scope.myDatasetsInitial,$scope.myDatasets);
-					angular.copy($scope.enterpriseDatasetsInitial,$scope.enterpriseDatasets);
-					angular.copy($scope.sharedDatasetsInitial,$scope.sharedDatasets);
-					angular.copy($scope.ckanDatasetsListInitial,$scope.ckanDatasetsList);
+				$scope.clearSearch = true;
 				
-					break;
-				
-				/**
-				 * SEARCH FOR FAVORITES
-				 */
-				case "favorites":
-					$scope.favoriteDocumentsList = $scope.favoriteDocumentsInitial;
-					break;
-				
-				/**
-				 * SEARCH FOR RECENT
-				 */
-				case "recent":
-					$scope.recentDocumetnsList = $scope.recentDocumentsInitial;
-					break;
+				$timeout
+				(
+					function() {					
 					
-				case "models":
-					angular.copy($scope.federationDefinitionsInitial,$scope.federationDefinitions); 
-				    angular.copy($scope.businessModelsInitial,$scope.businessModels);
-				    break;
-				    
-				case "smartfilters":
-					  angular.copy($scope.smartFiltersListInitial,$scope.smartFiltersList);
-					break;
-			}
+						switch($scope.resetOption) {
+						
+							/**
+							 * SEARCH FOR ANALYSIS
+							 */
+							case "analysis":				
+								angular.copy($scope.cockpitAnalysisDocsInitial,$scope.cockpitAnalysisDocs);
+								$scope.clearSearch = false;
+								break;
+							
+							/**
+							 * SEARCH FOR DATASETS
+							 */
+							case "datasets":
+								//console.info("We will add functionality for searching through DATASETS");
+								angular.copy($scope.datasetsInitial,$scope.datasets); 
+								angular.copy($scope.myDatasetsInitial,$scope.myDatasets);
+								angular.copy($scope.enterpriseDatasetsInitial,$scope.enterpriseDatasets);
+								angular.copy($scope.sharedDatasetsInitial,$scope.sharedDatasets);
+								angular.copy($scope.ckanDatasetsListInitial,$scope.ckanDatasetsList);
+								$scope.clearSearch = false;
+								break;
+							
+							/**
+							 * SEARCH FOR FAVORITES
+							 */
+							case "favorites":
+								$scope.favoriteDocumentsList = $scope.favoriteDocumentsInitial;
+								$scope.clearSearch = false;
+								break;
+							
+							/**
+							 * SEARCH FOR RECENT
+							 */
+							case "recent":
+								$scope.recentDocumetnsList = $scope.recentDocumentsInitial;
+								$scope.clearSearch = false;
+								break;
+								
+							case "models":
+								angular.copy($scope.federationDefinitionsInitial,$scope.federationDefinitions); 
+							    angular.copy($scope.businessModelsInitial,$scope.businessModels);
+							    $scope.clearSearch = false;
+							    break;
+							    
+							case "smartfilters":
+								  angular.copy($scope.smartFiltersListInitial,$scope.smartFiltersList);
+								  $scope.clearSearch = false;
+								break;
+						}
+					}, 1000
+				);
+				
+			}			
+			
 		}
 		else {
 			
-			$scope.searching = true;
+			$scope.searching = true;			
+			$scope.clearSearch = false;
 			
 			$timeout
 			(
@@ -543,6 +591,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 								}
 								
 								$scope.allAnalysisDocs = allAnalysisDocsFinal;
+								$scope.searching = false;
 							
 							break;
 						
@@ -551,6 +600,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 						 */
 						case "recent":
 							$scope.recentDocumetnsList = filterThroughCollection(newSearchInput,$scope.recentDocumentsInitial,"documentName");
+							$scope.searching = false;
 							break;
 						
 						/**
@@ -558,35 +608,39 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 						 */
 						case "favorites":
 							$scope.favoriteDocumentsList = filterThroughCollection(newSearchInput,$scope.favoriteDocumentsInitial,"name");
+							$scope.searching = false;
 							break;
 							
 						/**
 						 * SEARCH FOR DATASETS
 						 */	
 						case "datasets":
-							$scope.datasets=filterThroughCollection(newSearchInput,$scope.datasetsInitial,"name");
-							$scope.myDatasets= filterThroughCollection(newSearchInput,$scope.myDatasetsInitial,"name");
-							$scope.enterpriseDatasets=filterThroughCollection(newSearchInput,$scope.enterpriseDatasetsInitial,"name");
-							$scope.sharedDatasets=filterThroughCollection(newSearchInput,$scope.sharedDatasetsInitial,"name");
-							$scope.ckanDatasetsList=filterThroughCollection(newSearchInput,$scope.ckanDatasetsListInitial,"name");
+							$scope.datasets = filterThroughCollection(newSearchInput,$scope.datasetsInitial,"name");
+							$scope.myDatasets = filterThroughCollection(newSearchInput,$scope.myDatasetsInitial,"name");
+							$scope.enterpriseDatasets = filterThroughCollection(newSearchInput,$scope.enterpriseDatasetsInitial,"name");
+							$scope.sharedDatasets = filterThroughCollection(newSearchInput,$scope.sharedDatasetsInitial,"name");
+							$scope.ckanDatasetsList = filterThroughCollection(newSearchInput,$scope.ckanDatasetsListInitial,"name");
+							$scope.searching = false;
 							break;
 							
 						/**
 						 * SEARCH FOR MODELS
 						 */	
 						case "models":
-							$scope.federationDefinitions=filterThroughCollection(newSearchInput,$scope.federationDefinitionsInitial,"name");
-							$scope.businessModels=filterThroughCollection(newSearchInput,$scope.businessModelsInitial,"name");
+							$scope.federationDefinitions = filterThroughCollection(newSearchInput,$scope.federationDefinitionsInitial,"name");
+							$scope.businessModels = filterThroughCollection(newSearchInput,$scope.businessModelsInitial,"name");
+							$scope.searching = false;
 							break;
 							
 							
 						case "smartfilters":
-							$scope.smartFiltersList=filterThroughCollection(newSearchInput,$scope.smartFiltersListInitial,"name");
+							$scope.smartFiltersList = filterThroughCollection(newSearchInput,$scope.smartFiltersListInitial,"name");
+							$scope.searching = false;
 							break;
 					}	
 					
-				}, 100
-			);		
+				}, 1000
+			);
 			
 		}			
 					

@@ -28,8 +28,11 @@ angular
 		  };	  
 	});
 
-function toolbarController($scope,$mdSidenav){
+function toolbarController($scope,$mdSidenav,sbiModule_translate){
+
 	$scope.openedSidebar = $mdSidenav('left').isOpen();
+	$scope.translate = sbiModule_translate;
+	
 	$scope.toggleNav = function(){
 		$scope.toggleLeftNav();
 	}

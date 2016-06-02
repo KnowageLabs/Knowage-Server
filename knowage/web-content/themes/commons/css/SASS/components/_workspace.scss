@@ -235,4 +235,52 @@
 	.step4BottomPadding {
 		padding-bottom: 20px;
 	}
+	
+	// From the OLAP
+	// @addedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.loadingMask {
+		 position: fixed;
+		 z-index:500;
+		 height: 100%;
+		 width: 100%;
+		 background-color: black;
+		 opacity :0.5;
+	 }
+		
+	// From the OLAP
+	// @addedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	.loadingNoMask {
+		 position: fixed;
+		 z-index:500;
+		 height: 100%;
+		 width: 100%;		 
+	 }
+	 
+	 /*
+	 	Since the rectangle that surrounds the circular loading animation is 100px when 100% size, we need to calculate the top/left padding everytime we change 
+	 	the diameter. I.e. we should enter exactly the value of half of the value specified in percents (e.g. 75% diameter asks for substitution with 75px/2).
+	 	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 */
+	 .progressCircularWorkspace {
+	 	position: fixed;
+	 	top: calc(50% - #{($progCirculWorkspaceDiam/2)}px);
+	 	left: calc(50% - #{($progCirculWorkspaceDiam/2)}px);
+	 }
+	 
+	 // From the OLAP
+	// @addedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.searchMask {
+		 position: absolute;
+		 z-index:500;
+		 height: 100%;
+		 width: 100%;
+		 background-color: black;
+		 opacity :0.3;
+	 }
+	 
+	 .progressCircularWorkspaceSearch {
+	 	position: absolute;
+	 	top: calc(50% - #{($progCirculWorkspaceDiam/2)}px);
+	 	left: calc(50% - #{($progCirculWorkspaceDiam/2)}px);
+	 }
 }
