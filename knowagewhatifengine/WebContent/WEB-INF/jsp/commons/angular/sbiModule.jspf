@@ -23,6 +23,8 @@ var sbiM=angular.module('sbiModule',["toastr"]);
 sbiM.factory('sbiModule_docInfo',function(){
 	return {
     	label: '<%= documentLabel %>',
+    	id :	'<%= documentId %>'
+    	
 	};
 });
 

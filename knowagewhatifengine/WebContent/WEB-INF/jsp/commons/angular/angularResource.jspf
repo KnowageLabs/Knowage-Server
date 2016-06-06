@@ -53,6 +53,7 @@ author:...
        String spagobiServerHost = null;
        String spagobiContext = null;
        String documentLabel = null;
+       String documentId = null;
        String sbiExecutionID = null;   
        ExecutionSession es = new ExecutionSession(request, request.getSession());
        
@@ -68,7 +69,11 @@ author:...
         if(whatIfEngineInstance.getEnv().get("DOCUMENT_LABEL" ) != null){
                 documentLabel = (String)whatIfEngineInstance.getEnv().get("DOCUMENT_LABEL" );
     	}
-       
+        if(whatIfEngineInstance.getEnv().get("DOCUMENT_ID" ) != null){
+        	documentId = (String)whatIfEngineInstance.getEnv().get("DOCUMENT_ID" );
+	}
+        
+        
        isFromCross = (String)whatIfEngineInstance.getEnv().get( "isFromCross");
        
         if (isFromCross == null) {
