@@ -31,16 +31,10 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 	private static Logger logger = Logger.getLogger(AbstractAlertListener.class);
 
 	private static final String LAST_KEY = "LAST_KEY";
-	private static final String ACTION_TRIGGERED = "ACTION_TRIGGERED";
-	private static final String ACTION_EXECUTED = "ACTION_EXECUTED";
 	private static final String CONSECUTIVE_ALERTS_TRIGGERED = "CONSECUTIVE_ALERTS_TRIGGERED";
-	private static final String ALERT_TRIGGERED = "ALERT_TRIGGERED";
 	private JobDetail jobDetail;
 	private JobDataMap jobDataMap;
 	private int eventBeforeTriggerAction;
-	private boolean singleExecution;
-
-	// private Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
 	private final Map<Integer, IAlertAction> cachedActionMap = new HashMap<>();
 
@@ -53,10 +47,10 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 			IAlertDAO alertDao = DAOFactory.getAlertDAO();
 			Alert alert = alertDao.loadAlert(Integer.valueOf(alertId));
 			eventBeforeTriggerAction = alert.getEventBeforeTriggerAction() != null ? alert.getEventBeforeTriggerAction() : 0;
-			singleExecution = alert.isSingleExecution();
-
-			executeListener(alert.getJsonOptions());
-
+			boolean singleExecution = alert.isSingleExecution();
+			if (!singleExecution || lookForNewExecutions(alert.getJsonOptions())) {
+				executeListener(alert.getJsonOptions());
+			}
 		} catch (NumberFormatException e) {
 			logger.error("Alert id is not valid [" + alertId + "]", e);
 			throw new JobExecutionException("Alert id is not valid [" + alertId + "]", e);
@@ -68,6 +62,8 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 			throw new JobExecutionException("AlertListener [" + getClass().getName() + "] error", e);
 		}
 	}
+
+	protected abstract boolean lookForNewExecutions(String jsonParameters) throws AlertListenerException;
 
 	protected void writeAlertLog(String listenerParams, Integer actionId, String actionParams, String errorMsg) throws EMFUserError {
 		SbiAlertLog alertLog = new SbiAlertLog();
@@ -99,21 +95,15 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 		return cachedActionMap.get(actionId);
 	}
 
-	protected void executeAction(String listenerParams, Integer actionId, String actionParams, Map<String, String> parameterMapFromListener)
+	protected void executeAction(Object listenerParamsObj, Integer actionId, Object actionParamsObj, Map<String, String> parameterMapFromListener)
 			throws EMFUserError, AlertListenerException {
+		String listenerParams = JsonConverter.objectToJson(listenerParamsObj, listenerParamsObj.getClass()).toString();
+		String actionParams = JsonConverter.objectToJson(actionParamsObj, actionParamsObj.getClass()).toString();
 		try {
-			incrementActionTriggered(actionId);
-			// System.out.println("-------------------------\nAction Triggered!!!\n\t" + actionId + "\n-----------------");
-			// if (getEventBeforeTriggerAction() < getActionTriggered(actionId)) {
-			// incrementActionExecuted(actionId);
+			// incrementActionTriggered(actionId);
 			IAlertAction action = getActionInstance(actionId);
 			action.executeAction(actionParams, parameterMapFromListener);
 			writeAlertLog(listenerParams, actionId, actionParams, null);
-			if (isSingleExecution()) {
-				String alertId = jobDataMap.getString(LISTENER_PARAMS);
-				DAOFactory.getAlertDAO().suspendAlert(Integer.valueOf(alertId));
-			}
-			// }
 		} catch (AlertActionException e) {
 			logger.error("Error executing action: \"" + actionId + "\"", e);
 			StringWriter sw = new StringWriter();
@@ -140,38 +130,36 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 		}
 	}
 
-	protected void saveLastKey(Object key) {
+	protected void saveLastKey(Object key) throws AlertListenerException {
 		String _key = JsonConverter.objectToJson(key, key.getClass()).toString();
 		jobDataMap.put(LAST_KEY, _key);
 		try {
 			StdSchedulerFactory.getDefaultScheduler().addJob(jobDetail, true);
 		} catch (SchedulerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new AlertListenerException("Error saving lastKey", e);
 		}
 	}
 
-	protected long getActionTriggered(Integer actionId) {
-		String key = ACTION_TRIGGERED + "_" + actionId;
-		return jobDataMap.containsKey(key) ? Integer.valueOf(jobDataMap.getString(key)) : 0;
-	}
-
-	protected long getActionExecuted(Integer actionId) {
-		String key = ACTION_EXECUTED + "_" + actionId;
-		return jobDataMap.containsKey(key) ? Integer.valueOf(jobDataMap.getString(key)) : 0;
-	}
-
-	protected void incrementActionTriggered(Integer actionId) {
-		long n = getActionTriggered(actionId) + 1;
-		String key = ACTION_TRIGGERED + "_" + actionId;
-		jobDataMap.put(key, "" + n);
-		try {
-			StdSchedulerFactory.getDefaultScheduler().addJob(jobDetail, true);
-		} catch (SchedulerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	// protected long getActionTriggered(Integer actionId) {
+	// String key = ACTION_TRIGGERED + "_" + actionId;
+	// return jobDataMap.containsKey(key) ? Integer.valueOf(jobDataMap.getString(key)) : 0;
+	// }
+	//
+	// protected long getActionExecuted(Integer actionId) {
+	// String key = ACTION_EXECUTED + "_" + actionId;
+	// return jobDataMap.containsKey(key) ? Integer.valueOf(jobDataMap.getString(key)) : 0;
+	// }
+	//
+	// protected void incrementActionTriggered(Integer actionId) {
+	// long n = getActionTriggered(actionId) + 1;
+	// String key = ACTION_TRIGGERED + "_" + actionId;
+	// jobDataMap.put(key, "" + n);
+	// try {
+	// StdSchedulerFactory.getDefaultScheduler().addJob(jobDetail, true);
+	// } catch (SchedulerException e) {
+	// e.printStackTrace();
+	// }
+	// }
 
 	protected void incrementAlertTriggered() {
 		long n = getConsecutiveAlertsTriggered() + 1;
@@ -198,17 +186,6 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 		return jobDataMap.containsKey(key) ? Integer.valueOf(jobDataMap.getString(key)) : 0;
 	}
 
-	protected void incrementActionExecuted(Integer actionId) {
-		long n = getActionExecuted(actionId) + 1;
-		String key = ACTION_EXECUTED + "_" + actionId;
-		jobDataMap.put(key, "" + n);
-		try {
-			StdSchedulerFactory.getDefaultScheduler().addJob(jobDetail, true);
-		} catch (SchedulerException e) {
-			logger.error("incrementActionExecuted", e);
-		}
-	}
-
 	/**
 	 * @return the eventBeforeTriggerAction
 	 */
@@ -222,21 +199,6 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 	 */
 	public void setEventBeforeTriggerAction(Integer eventBeforeTriggerAction) {
 		this.eventBeforeTriggerAction = eventBeforeTriggerAction;
-	}
-
-	/**
-	 * @return the singleExecution
-	 */
-	public boolean isSingleExecution() {
-		return singleExecution;
-	}
-
-	/**
-	 * @param singleExecution
-	 *            the singleExecution to set
-	 */
-	public void setSingleExecution(boolean singleExecution) {
-		this.singleExecution = singleExecution;
 	}
 
 }

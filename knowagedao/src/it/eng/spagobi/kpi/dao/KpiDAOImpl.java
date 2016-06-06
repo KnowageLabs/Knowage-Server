@@ -2524,4 +2524,15 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 		});
 	}
+
+	@Override
+	public Date loadLastKpiValueTimeRunByKpiId(final Integer kpiId) {
+		return executeOnTransaction(new IExecuteOnTransaction<Date>() {
+			@Override
+			public Date execute(Session session) throws Exception {
+				return (Date) session.createCriteria(SbiKpiValue.class).add(Restrictions.eq("kpiId", kpiId)).setProjection(Projections.max("timeRun"))
+						.setMaxResults(1).uniqueResult();
+			}
+		});
+	}
 }

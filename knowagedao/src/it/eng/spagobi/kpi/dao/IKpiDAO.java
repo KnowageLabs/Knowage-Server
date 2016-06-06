@@ -303,5 +303,13 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public KpiValueExecLog loadlogExecutionListOutputContent(Integer id);
 
+	/**
+	 * Gets the last time run date with given kpiId
+	 * 
+	 * @param kpiId
+	 * @return timeRun
+	 */
+	public Date loadLastKpiValueTimeRunByKpiId(final Integer kpiId);
+
 	public List<SbiKpiThresholdValue> listThresholdValueByIds(Collection<Integer> thresholdValueIds);
 }
