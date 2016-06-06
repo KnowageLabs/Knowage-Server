@@ -246,15 +246,22 @@ geoM.service(
 					
 					var findOne=false;
 					var index=0;
-					for(var i in geoModule_templateLayerData){
+					var checkedNumber=0;
+					for(var i in geoModule_templateLayerData){ 
 						if(!findOne){
 							checkClickAction(geoModule_templateLayerData[i],layerServ.templateLayer[i],evt)
 							.then(function(){
+								checkedNumber++;
 								findOne=true;
 							},
 							function(){
-								if((Object.keys(geoModule_templateLayerData).length==index) && !findOne){
-									layerServ.overlay.setPosition(undefined);
+								checkedNumber++;
+								if((Object.keys(geoModule_templateLayerData).length==checkedNumber) && !findOne){
+									if(geo_interaction.type == "cross"){
+										geo_interaction.setSelectedFeatures([]);
+									}else{
+										layerServ.overlay.setPosition(undefined);
+									}
 								}
 							});
 						}
@@ -293,7 +300,7 @@ geoM.service(
 								evt.target.getFeatures().push(features[i]);
 								
 							}
-							geo_interaction.selectedFeaturesCallbackFunctions[0]();
+//							geo_interaction.selectedFeaturesCallbackFunctions[0]();
 						
 						}
 						return JSON.parse(data);
@@ -305,6 +312,7 @@ geoM.service(
 								if(data.features==0){
 									deferredAction.reject();
 								}else{
+									deferredAction.resolve();
 									layerServ.doClickAction(evt,{});	
 								}
 							}else{

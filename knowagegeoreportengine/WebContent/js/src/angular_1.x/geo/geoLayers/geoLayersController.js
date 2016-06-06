@@ -80,6 +80,8 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		}
 	}
 	
+	
+	
 	$scope.isCrossRadioButtonDisabled = function(selectModeType) {
 		var isCross = (selectModeType.toLowerCase() == "cross");
 		var isCrossNavigationInTemplate = (geoModule_template.crossNavigation == true);
@@ -571,4 +573,17 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			}
 		};
 	};
+	
+	//if no Dataset and template have driver parameter, set all value checked
+	if(geoModule_template.noDatasetReport){
+		for(var analFKey  in geoModule_template.analitycalFilter){
+			var analF=geoModule_template.analitycalFilter[analFKey]
+			if(geoModule_driverParameters[analF]!=undefined && geoModule_driverParameters[analF].length>0){
+				for(var itemKey in geoModule_driverParameters[analF]){
+					geoModule_template.selectedAnalyticalFilter[analF].push(geoModule_driverParameters[analF][itemKey]);
+				}
+			}
+		}
+		$scope.updateAllTargetLayer();
+	}
 };

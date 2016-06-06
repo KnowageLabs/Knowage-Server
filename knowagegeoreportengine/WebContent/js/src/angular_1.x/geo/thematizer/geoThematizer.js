@@ -544,9 +544,12 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				//if there are specifyed analitical filter 
 				for( var key in geoModule_template.selectedAnalyticalFilter){
 //					&& feature.getProperties()[key]!=undefined
-					if(geoModule_template.selectedAnalyticalFilter[key].length>0 
-							&& tlProp.indexOf(key)!=-1
-							&& geoModule_template.selectedAnalyticalFilter[key].indexOf(feature.getProperties()[key])==-1){
+					if(tlProp.indexOf(key)!=-1 && 
+							(	geoModule_template.selectedAnalyticalFilter[key].length==0 || 
+								(	geoModule_template.selectedAnalyticalFilter[key].length>0 
+									&& geoModule_template.selectedAnalyticalFilter[key].indexOf(feature.getProperties()[key])==-1)
+								)
+							){
 						return null;
 					}
 				}
@@ -578,12 +581,16 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		
 		if(!withDataset){
 			for( var key in geoModule_template.selectedAnalyticalFilter){
-				if(geoModule_template.selectedAnalyticalFilter[key].length>0 && tlProp.indexOf(key)!=-1){
-					var fcql=[];
-					for(var i=0;i< geoModule_template.selectedAnalyticalFilter[key].length ; i++){
-						 fcql.push("'"+geoModule_template.selectedAnalyticalFilter[key][i]+"'");
-					} 
-					filter.push(key+" in ("+fcql.join(" , ")+")")
+				if(tlProp.indexOf(key)!=-1){
+					if( geoModule_template.selectedAnalyticalFilter[key].length>0  ){
+						var fcql=[];
+						for(var i=0;i< geoModule_template.selectedAnalyticalFilter[key].length ; i++){
+							 fcql.push("'"+geoModule_template.selectedAnalyticalFilter[key][i]+"'");
+						} 
+						filter.push(key+" in ("+fcql.join(" , ")+")")
+					}else{
+						filter.push(key+" in ('') ");
+					}
 				}
 			}
 		}

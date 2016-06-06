@@ -12,7 +12,7 @@
 			<geo-legend id="legend" ng-if="!geoModule_template.noDatasetReport"></geo-legend>
 			<geo-distance-calculator id="calculator"></geo-distance-calculator>
 			<geo-download></geo-download>
-			<geo-save></geo-save>
+			<!-- <geo-save></geo-save>  -->
 		</div>
 	</div>
 
