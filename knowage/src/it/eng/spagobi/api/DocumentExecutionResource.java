@@ -270,9 +270,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				Integer paruseId = objParameter.getParameterUseId();
 				ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
 				if (jsonParameters.getString(objParameter.getId()).startsWith("[") && jsonParameters.getString(objParameter.getId()).endsWith("]")
-						&& parameterUse.getValueSelection().equals("man_in") && objParameter.getParType().equals("STRING")) {
+						&& parameterUse.getValueSelection().equals("man_in")) {
 					int strLength = jsonParameters.getString(objParameter.getId()).toString().length();
 					String jsonParamRet = jsonParameters.getString(objParameter.getId()).toString().substring(1, strLength - 1);
+					if (objParameter.isMultivalue()) {
+						jsonParamRet.replaceAll("\"", "'");
+					}
 					jsonParameters.put(objParameter.getId(), jsonParamRet);
 				}
 
@@ -399,20 +402,35 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			Object o = parameterAsMap.get("parameterValue");
 			if (o != null) {
 				if (o instanceof List) {
-					List<String> valList = (ArrayList) o;
-					for (int k = 0; k < valList.size(); k++) {
-						String itemVal = valList.get(k);
-						// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
-						if (itemVal.startsWith("[") && itemVal.endsWith("]") && parameterUse.getValueSelection().equals("man_in")
-								&& objParameter.getParType().equals("STRING")) {
-							itemVal = itemVal.substring(1, itemVal.length() - 1);
-
+					// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
+					if (o.toString().startsWith("[") && o.toString().endsWith("]") && parameterUse.getValueSelection().equals("man_in")) {
+						List<String> valList = (ArrayList) o;
+						String stringResult = "";
+						for (int k = 0; k < valList.size(); k++) {
+							String itemVal = valList.get(k);
+							if (objParameter.getParType().equals("STRING") && objParameter.isMultivalue()) {
+								stringResult += "'" + itemVal + "'";
+							} else {
+								stringResult += itemVal;
+							}
+							if (k != valList.size() - 1) {
+								stringResult += ",";
+							}
 						}
 						DefaultValue defValue = new DefaultValue();
-						defValue.setValue(itemVal);
-						defValue.setDescription(itemVal);
+						defValue.setValue(stringResult);
+						defValue.setDescription(stringResult);
 						parameterValueList.add(defValue);
+					} else {
+						List<String> valList = (ArrayList) o;
+						for (int k = 0; k < valList.size(); k++) {
+							String itemVal = valList.get(k);
+							DefaultValue defValue = new DefaultValue();
+							defValue.setValue(itemVal);
+							defValue.setDescription(itemVal);
+							parameterValueList.add(defValue);
 
+						}
 					}
 					parameterAsMap.put("parameterValue", parameterValueList);
 				}

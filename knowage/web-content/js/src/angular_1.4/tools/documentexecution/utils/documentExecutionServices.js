@@ -650,7 +650,7 @@
 					//var fillObj = {};
 					//MULTIVALUE
 					hasDefVal= true;
-					if(filterStatus[i].multivalue && filterStatus[i].parameterValue.length > 1 || filterStatus[i].selectionType=='TREE'){
+					if(filterStatus[i].multivalue && filterStatus[i].valueSelection!='man_in' || filterStatus[i].selectionType=='TREE' ){
 						//if(filterStatus[i].defaultValues && filterStatus[i].defaultValues.length>0){
 						//arrDefToFill=filterStatus[i].defaultValues;
 						//}

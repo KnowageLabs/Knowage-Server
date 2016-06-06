@@ -163,24 +163,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 					}
 				}
 			}
-			
-			var _keys = Object.keys(respStr);
-			for(key_index in _keys){
-				var k = _keys[key_index];
-				if(Array.isArray(respStr[k])){
-					var _value = '';
-					if(respStr[k].length>1){
-						for(i in respStr[k]){
-							if(i!=0){_value+=',';}
-							_value+="'"+respStr[k][i]+"'";
-						}
-						respStr[k]=_value;
-					}else{
-						respStr[k]=respStr[k][0];
-					}
-				}
-			}
-			
+			 
 			respStr = jsonToURI(respStr); 
 			
 			return respStr;
