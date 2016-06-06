@@ -125,7 +125,7 @@ if(executionRoleNames.size() > 0) {
 	                <i class="fa fa-file-text-o fa-2x"></i>
 	                <span>&nbsp;&nbsp;</span>
 	                <h2 class="md-flex" ng-hide="::crossNavigationScope.isNavigationInProgress()">
-	                	{{::translate.load("sbi.generic.document")}}: {{executionInstance.OBJECT_LABEL}}
+	                	{{::translate.load("sbi.generic.document")}}: {{executionInstance.OBJECT_NAME}}
 	                </h2>
 	                <cross-navigation cross-navigation-helper="crossNavigationScope.crossNavigationHelper" flex>
 						<cross-navigation-bread-crumb id="clonedCrossBreadcrumb"> </cross-navigation-bread-crumb>
@@ -299,6 +299,7 @@ if(executionRoleNames.size() > 0) {
 					executionInstance: {
 						'OBJECT_ID' : <%= request.getParameter("OBJECT_ID") %>,
 						'OBJECT_LABEL' : '<%= request.getParameter("OBJECT_LABEL") %>',
+						'OBJECT_NAME' : '<%= request.getParameter("OBJECT_NAME") %>',
 						'OBJECT_TYPE_CODE' : '',
 						'isFromCross' : false,
 						'isPossibleToComeBackToRolePage' : false,
