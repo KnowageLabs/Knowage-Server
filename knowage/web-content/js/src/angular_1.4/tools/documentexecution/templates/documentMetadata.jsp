@@ -1,5 +1,9 @@
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
-
+  <% boolean canModify = false;
+ 	 if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY)) {
+ 			canModify = true;
+  
+  } %>
 <md-dialog id="metadataDlg" aria-label="{{::metadataDlgCtrl.lblTitle}}" layout="column" flex class="metadataDialog">
 		
 	
@@ -21,7 +25,7 @@
 				<md-list-item ng-repeat="item in metadataDlgCtrl.shortText">
 					<div flex>
 		     			<md-input-container>
-		     				<label>{{ ::item.name }}</label><input ng-model="item.value">
+		     				<label>{{ ::item.name }}</label><input ng-model="item.value"  <%= canModify? "":"readonly" %> >
 		     			</md-input-container>
 					</div>
 	        	</md-list-item>
@@ -30,6 +34,10 @@
 				<md-tabs class="removeTransition" layout="column" md-border-bottom md-dynamic-height >
 					<md-tab flex=200  ng-repeat="item in metadataDlgCtrl.longText" label="{{::item.name}}" md-on-select="metadataDlgCtrl.setTab($index)">
 					 <md-tab-body >
+					 <!-- workaround to disable wysiwyg if user haven't authorization -->
+					 <div  <%= canModify? "style='display:none'":"" %> style="position:absolute; z-index:1000;background:transparent;" layout-fill>
+					 
+					 </div>
 					<wysiwyg-edit ng-if="metadataDlgCtrl.isSelectedTab($index)" content="item.value"></wysiwyg-edit>
 					</md-tab-body>
 						
@@ -46,7 +54,7 @@
 	  			<md-button class="md-raised" ng-click="metadataDlgCtrl.close()">
 		          CLOSE
 		        </md-button>
-      <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY)) { %>
+    		  <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY)) { %>
 		      	<md-button aria-label="{{::metadataDlgCtrl.lblSave}}" class="md-primary md-raised" 
 					ng-click="metadataDlgCtrl.save()">
 					{{::metadataDlgCtrl.lblSave}}
