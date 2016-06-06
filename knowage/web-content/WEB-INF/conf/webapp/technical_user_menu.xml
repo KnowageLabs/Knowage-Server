@@ -188,11 +188,11 @@
 	             url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE&amp;MYDATA=TRUE" 
 	             iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/40/mydata.png"
 	             iconCls="web"/>
-<!-- 	<ITEM code="workspace" title="Workspace" -->
-<!-- 				   functionality="DocumentDevManagement" -->
-<!-- 				   url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp"  -->
-<!-- 				   iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/40/mydata.png"  -->
-<!-- 				   iconCls="web"/> -->
+	<ITEM code="workspace" title="Workspace"
+				   functionality="DocumentDevManagement"
+				   url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp" 
+				   iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/40/mydata.png" 
+				   iconCls="web"/>
 							
 	<ITEM	code="analyticalModel" 
 			title="#menu.AnalyticalModel"
