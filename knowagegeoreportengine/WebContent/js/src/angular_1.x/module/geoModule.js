@@ -296,11 +296,31 @@ geoM.service(
 						if(geo_interaction.type == "cross"){
 							var features =	parser.readFeatures(data);
 							data=JSON.stringify({features:features.length});
-							for(var i=0;i<features.length;i++){
-								evt.target.getFeatures().push(features[i]);
-								
+							
+							if(features.length>0){
+								//re-add all the deselected
+								for(var i=0;i<evt.deselected.length;i++){
+									evt.target.getFeatures().push(evt.deselected[i]);
+								}
 							}
-//							geo_interaction.selectedFeaturesCallbackFunctions[0]();
+							
+							for(var i=0;i<features.length;i++){
+								var contain=-1;
+								for(var pk=0;pk<evt.target.getFeatures().getArray().length;pk++){
+									if(angular.equals(evt.target.getFeatures().getArray()[pk].getId(),features[i].getId())){
+										contain=pk;
+										break;
+									}
+								}
+								
+								if(contain==-1){
+									evt.target.getFeatures().push(features[i]);
+								}else{
+									evt.target.getFeatures().getArray().splice(contain,1);
+								}
+							}
+							
+							geo_interaction.selectedFeaturesCallbackFunctions[0]();
 						
 						}
 						return JSON.parse(data);
@@ -339,6 +359,7 @@ geoM.service(
 						layerServ.doClickAction(evt,prop)
 					}else{
 						deferredAction.reject();
+							
 					}
 					
 				}
