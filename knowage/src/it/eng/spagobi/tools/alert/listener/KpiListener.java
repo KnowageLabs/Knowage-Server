@@ -11,7 +11,6 @@ import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.alert.exception.AlertListenerException;
 import it.eng.spagobi.tools.alert.job.AbstractAlertListener;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,13 +35,10 @@ public class KpiListener extends AbstractAlertListener {
 	public void executeListener(String jsonParameters) throws AlertListenerException {
 		logger.info("KpiListener running...");
 		InputParameter par = (InputParameter) JsonConverter.jsonToObject(jsonParameters, InputParameter.class);
-
 		try {
 			loadThresholdMap(par);
-			Date lastDate = (Date) loadLastKey(Date.class);
-			List<KpiValue> resultSet = DAOFactory.getKpiDAO().findKpiValues(par.getKpiId(), par.getKpiVersion(), lastDate, false, null, null, new HashMap());
+			List<KpiValue> resultSet = DAOFactory.getKpiDAO().findKpiValues(par.getKpiId(), par.getKpiVersion(), null, false, null, null, new HashMap());
 			if (resultSet != null && !resultSet.isEmpty()) {
-				saveLastKey(resultSet.get(0).getTimeRun());
 				boolean alertTriggered = false;
 				for (KpiValue kpiValue : resultSet) {
 					Integer thresholdId = selectThreshold(kpiValue);
@@ -55,35 +51,26 @@ public class KpiListener extends AbstractAlertListener {
 				}
 				if (alertTriggered) {
 					incrementAlertTriggered();
-					// System.out.println("-------------------------\nAlert Triggered!!!\n\t" + getConsecutiveAlertsTriggered() + "\n-----------------");
 					if (getEventBeforeTriggerAction() < getConsecutiveAlertsTriggered()) {
+						resetConsecutiveAlertsTriggered();
 						for (Action action : par.getActions()) {
 							if (hasValues(action)) {
 								Map<String, String> parameters = new HashMap<>();
 								parameters.put(VALUE_TABLE_PLACEHOLDER, makeHtmlValueTable(action.getThresholdValues()));
-								executeAction(JsonConverter.objectToJson(par, par.getClass()).toString(), action.getIdAction(),
-										JsonConverter.objectToJson(action, action.getClass()).toString(), parameters);
+								executeAction(par, action.getIdAction(), action, parameters);
 							}
-
 						}
 					}
 				} else {
 					resetConsecutiveAlertsTriggered();
 				}
 			} else {
-				String msg;
-				if (lastDate != null) {
-					msg = MessageFormat.format(message.getMessage("KpiListener.noResultWithKey"), lastDate);
-				} else {
-					msg = message.getMessage("KpiListener.noResult");
-				}
-				writeAlertLog(JsonConverter.objectToJson(par, par.getClass()).toString(), null, null, msg);
+				writeAlertLog(JsonConverter.objectToJson(par, par.getClass()).toString(), null, null, message.getMessage("KpiListener.noResult"));
 			}
 		} catch (EMFUserError e) {
 			logger.error(e.getMessage(), e);
 			throw new AlertListenerException(e);
 		}
-
 		logger.info("KpiListener ended");
 	}
 
@@ -247,6 +234,23 @@ public class KpiListener extends AbstractAlertListener {
 
 	private String clean(Object o) {
 		return o != null ? o.toString() : "";
+	}
+
+	@Override
+	protected boolean lookForNewExecutions(String jsonParameters) throws AlertListenerException {
+		try {
+			InputParameter par = (InputParameter) JsonConverter.jsonToObject(jsonParameters, InputParameter.class);
+			Integer kpiId = par.getKpiId();
+			Date timeRun = DAOFactory.getKpiDAO().loadLastKpiValueTimeRunByKpiId(kpiId);
+			Date lastDate = (Date) loadLastKey(Date.class);
+			if (timeRun != null && (lastDate == null || timeRun.after(lastDate))) {
+				saveLastKey(timeRun);
+				return true;
+			}
+			return false;
+		} catch (EMFUserError e) {
+			throw new AlertListenerException(e);
+		}
 	}
 
 }
