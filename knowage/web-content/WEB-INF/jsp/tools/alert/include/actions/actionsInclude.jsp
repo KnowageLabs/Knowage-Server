@@ -3,3 +3,6 @@
 
 <!-- openPopUp controller -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/alert/actions/openPopUp/openPopUpController.js"></script> 
+
+<!-- executeETL controller -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/alert/actions/executeETL/executeETLController.js"></script>
