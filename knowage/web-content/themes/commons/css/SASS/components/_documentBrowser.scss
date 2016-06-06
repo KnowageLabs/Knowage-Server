@@ -43,9 +43,12 @@
 	}
 	
 	.documentCard {
-		width: 300px;
-		background-color: $ternaryColor;
+		width: 200px;
+		background-color: $baseColor;
 		padding: 8px 0 0 0;
+		md-icon {
+			color: $cardActionIconsColor;
+		}
 	}
 	
 	.documentCard md-card-title {
@@ -62,10 +65,10 @@
 	}
 	
 	.documentCard div.md-card-image {
-		max-height: 150px;
-		max-width: 300px;
+		max-height: 100px;
+		max-width: 200px;
 	    width: 100%;
-	    height: 150px;
+	    height: 100px;
 	    background-size: contain;
 	    background-position: top center;
 	    background-repeat: no-repeat;

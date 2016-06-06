@@ -13,6 +13,13 @@
 		<ENGINE label="knowagetalendengine" />
 		<ENGINE label="knowagenetworkengine" />
 	</PRODUCT_TYPE>
+	<PRODUCT_TYPE label="KnowagePM" active="true">
+        <ENGINE label="knowagecompositedoce" />
+        <ENGINE label="knowagekpiengine" />
+        <ENGINE label="knowagedataminingengine" />
+        <ENGINE label="knowagechartengine" />
+        <ENGINE label="knowagecockpitengine" />
+    </PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageSI" active="true">
 		<ENGINE label="knowagebirtreporteng" />
 		<ENGINE label="knowageqbeengine" />
