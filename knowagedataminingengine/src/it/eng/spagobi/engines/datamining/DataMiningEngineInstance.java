@@ -48,7 +48,7 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
 			"SBI_HOST", "country", "language", "user_id", "DOCUMENT_ID", "DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES",
 			"DOCUMENT_DESCRIPTION", "SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES",
-			"DOCUMENT_VERSION", };
+			"DOCUMENT_VERSION", "IS_TECHNICAL_USER", "PASS_TICKET" };
 	private final List<DataMiningCommand> commands;
 	private List<DataMiningDataset> datasets;
 	private final List<DataMiningScript> scripts;
@@ -145,17 +145,8 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 		while (it.hasNext()) {
 			String parameterName = (String) it.next();
 			Object parameterValue = getEnv().get(parameterName);
-
-			if (parameterValue != null && parameterValue.getClass().getName().equals("java.lang.String") && // test
-																											// necessary
-																											// for
-																											// don't
-																											// pass
-																											// complex
-																											// objects
-																											// like
-																											// proxy,...
-					isAnalyticalDriver(parameterName)) {
+			// test necessary "java.lang.String" is used for don't pass complex objects like proxy,...
+			if (parameterValue != null && parameterValue.getClass().getName().equals("java.lang.String") && isAnalyticalDriver(parameterName)) {
 				toReturn.put(parameterName, parameterValue);
 			}
 		}

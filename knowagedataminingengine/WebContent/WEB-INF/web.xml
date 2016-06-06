@@ -166,6 +166,10 @@
 		<servlet-name>ExternalResourceServlet</servlet-name>
 		<servlet-class>it.eng.spagobi.engines.datamining.servlet.ExternalResourceServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>DataMiningServlet</servlet-name>
+		<servlet-class>it.eng.spagobi.engines.datamining.servlet.DataMiningServletBackEnd</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
@@ -186,6 +190,10 @@
 		<servlet-name>ExternalResourceServlet</servlet-name>
 		<url-pattern>/external/1.0/execute</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DataMiningServlet</servlet-name>
+		<url-pattern>/restful-services/startBackEnd</url-pattern>
+	</servlet-mapping>    
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>

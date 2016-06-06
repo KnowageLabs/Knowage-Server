@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,7 +66,7 @@ public class RScriptExecutor {
 		this.re = re;
 	}
 
-	protected void evalScript(DataMiningCommand command, Boolean rerun) throws Exception {
+	protected void evalScript(DataMiningCommand command, Boolean rerun, HashMap params) throws Exception {
 		logger.debug("IN");
 
 		if (re == null) {
@@ -80,7 +81,7 @@ public class RScriptExecutor {
 			loadLibrariesFromRLocal(script.getLibraries());
 			logger.debug("loaded libraries from local dir (if needed)");
 			// command-->script name --> execute script without output
-			String scriptToExecute = getScriptCodeToEval(command);
+			String scriptToExecute = getScriptCodeToEval(command, params);
 			logger.debug("loaded script to execute");
 			// loading libraries, preprocessing, functions definition in main
 			// "auto"
@@ -202,7 +203,7 @@ public class RScriptExecutor {
 		logger.debug("OUT");
 	}
 
-	private String getScriptCodeToEval(DataMiningCommand command) throws Exception {
+	private String getScriptCodeToEval(DataMiningCommand command, HashMap params) throws Exception {
 		logger.debug("IN");
 		String code = "";
 
@@ -216,6 +217,15 @@ public class RScriptExecutor {
 			for (Output output : outputs) {
 				if (output.getVariables() != null) {
 					variables.addAll(output.getVariables());
+				}
+			}
+			if (!variables.isEmpty()) {
+				Iterator<Variable> itVariables = variables.iterator();
+				while (itVariables.hasNext()) {
+					Variable var = itVariables.next();
+					if (params != null && params.containsKey(var.getName())) {
+						var.setValue((String) params.get(var.getName()));
+					}
 				}
 			}
 			// code = DataMiningUtils.replaceVariables(command.getVariables(), script.getCode());

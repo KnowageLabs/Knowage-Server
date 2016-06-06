@@ -79,9 +79,15 @@ public class OutputsResource extends AbstractDataMiningEngineService {
 	@Path("/setAutoMode/{output}")
 	@Produces("text/html; charset=UTF-8")
 	public String setAutoMode(@PathParam("output") String outputName) {
+		setAutoModeOutput(outputName, null);
+		return getJsonSuccess();
+	}
+
+	public boolean setAutoModeOutput(String outputName, DataMiningEngineInstance dataMiningEngineInstance) {
 		logger.debug("IN");
 
-		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
+		dataMiningEngineInstance = dataMiningEngineInstance == null ? getDataMiningEngineInstance() : dataMiningEngineInstance;
+
 		List<DataMiningCommand> commands = null;
 		if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
 			commands = dataMiningEngineInstance.getCommands();
@@ -105,7 +111,7 @@ public class OutputsResource extends AbstractDataMiningEngineService {
 			}
 		}
 		logger.debug("OUT");
-		return getJsonSuccess();
+		return true;
 	}
 
 	@GET

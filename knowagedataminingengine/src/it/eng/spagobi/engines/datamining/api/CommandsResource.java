@@ -73,8 +73,22 @@ public class CommandsResource extends AbstractDataMiningEngineService {
 	public String setAutoMode(@PathParam("command") String commandName) {
 		logger.debug("IN");
 		String autoOutputJson = "";
+		try {
+			Output out = setAutoModeCommand(commandName, null);
+			autoOutputJson = serialize(out);
+		} catch (SerializationException e) {
+			throw new SpagoBIEngineRuntimeException("Error serializing output", e);
+		}
 
-		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
+		logger.debug("OUT");
+		return autoOutputJson;
+	}
+
+	public Output setAutoModeCommand(String commandName, DataMiningEngineInstance dataMiningEngineInstance) {
+		Output outputResult = null;
+
+		dataMiningEngineInstance = dataMiningEngineInstance == null ? getDataMiningEngineInstance() : dataMiningEngineInstance;
+
 		List<DataMiningCommand> commands = null;
 		if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
 			commands = dataMiningEngineInstance.getCommands();
@@ -87,11 +101,7 @@ public class CommandsResource extends AbstractDataMiningEngineService {
 							for (Iterator it2 = cmd.getOutputs().iterator(); it2.hasNext();) {
 								Output output = (Output) it2.next();
 								if (output.getOutputMode().equals(DataMiningConstants.EXECUTION_TYPE_AUTO)) {
-									try {
-										autoOutputJson = serialize(output);
-									} catch (SerializationException e) {
-										throw new SpagoBIEngineRuntimeException("Error serializing output", e);
-									}
+									outputResult = output;
 								}
 							}
 						}
@@ -101,8 +111,7 @@ public class CommandsResource extends AbstractDataMiningEngineService {
 				}
 			}
 		}
-		logger.debug("OUT");
-		return autoOutputJson;
+		return outputResult;
 	}
 
 	@GET

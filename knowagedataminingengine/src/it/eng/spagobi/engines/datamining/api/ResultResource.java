@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.engines.datamining.api;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
@@ -59,8 +60,33 @@ public class ResultResource extends AbstractDataMiningEngineService {
 			@QueryParam("DOC_LABEL") String docLabel) {
 		logger.debug("IN");
 
-		DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
 		String outputOfExecution = null;
+		DataMiningResult result = getDataMiningResult(commandName, outputName, rerun, docLabel, null, getUserProfile());
+
+		try {
+			outputOfExecution = serialize(result);
+		} catch (SerializationException e) {
+			logger.error("Error serializing the result", e);
+			throw new SpagoBIEngineRuntimeException("Error serializing the result", e);
+		}
+
+		if (!isNullOrEmpty(outputOfExecution)) {
+			logger.debug("Returning result");
+		} else {
+			logger.debug("No result found");
+		}
+
+		logger.debug("OUT");
+		return outputOfExecution;
+
+	}
+
+	public DataMiningResult getDataMiningResult(String commandName, String outputName, Boolean rerun, String docLabel,
+			DataMiningEngineInstance dataMiningEngineInstance, IEngUserProfile profile) {
+		logger.debug("IN");
+
+		DataMiningResult result = null;
+		dataMiningEngineInstance = dataMiningEngineInstance == null ? getDataMiningEngineInstance() : dataMiningEngineInstance;
 
 		// Instantiate an R or a Python executor depending on LANGUAGE tag in xml file
 		IDataMiningExecutor executor = null;
@@ -68,12 +94,12 @@ public class ResultResource extends AbstractDataMiningEngineService {
 			dataMiningEngineInstance.setLanguage("R");
 		}
 		if (dataMiningEngineInstance.getLanguage().equalsIgnoreCase("Python")) {
-			executor = new DataMiningPythonExecutor(dataMiningEngineInstance, getUserProfile());
+			executor = new DataMiningPythonExecutor(dataMiningEngineInstance, profile);
 		} else if (dataMiningEngineInstance.getLanguage().equalsIgnoreCase("R")) {
-			executor = new DataMiningRExecutor(dataMiningEngineInstance, getUserProfile());
+			executor = new DataMiningRExecutor(dataMiningEngineInstance, profile);
 		} else {
 			logger.debug("Unknown language specified, setting to default: R");
-			executor = new DataMiningRExecutor(dataMiningEngineInstance, getUserProfile());
+			executor = new DataMiningRExecutor(dataMiningEngineInstance, profile);
 
 		}
 
@@ -91,13 +117,7 @@ public class ResultResource extends AbstractDataMiningEngineService {
 								// and starts execution!
 								try {
 									HashMap params = (HashMap) dataMiningEngineInstance.getAnalyticalDrivers();
-
-									DataMiningResult result = executor.execute(params, cmd, output, getUserProfile(), rerun, docLabel);
-
-									outputOfExecution = serialize(result);
-								} catch (SerializationException e) {
-									logger.error("Error serializing the result", e);
-									throw new SpagoBIEngineRuntimeException("Error serializing the result", e);
+									result = executor.execute(params, cmd, output, profile, rerun, docLabel);
 								} catch (IOException e) {
 									logger.error("Error executing script", e);
 									throw new SpagoBIEngineRuntimeException("Error executing script", e);
@@ -108,20 +128,18 @@ public class ResultResource extends AbstractDataMiningEngineService {
 							}
 						}
 					}
-
 				}
 			}
 		}
 
-		if (!isNullOrEmpty(outputOfExecution)) {
+		if (result != null) {
 			logger.debug("Returning result");
 		} else {
 			logger.debug("No result found");
 		}
 
 		logger.debug("OUT");
-		return outputOfExecution;
-
+		return result;
 	}
 
 	/**
