@@ -17,12 +17,15 @@
  */
 package it.eng.spagobi.tools.crossnavigation.dao;
 
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.crossnavigation.bo.NavigationDetail;
 import it.eng.spagobi.tools.crossnavigation.bo.SimpleNavigation;
+import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation;
 
 import java.util.List;
 
+import org.hibernate.Session;
 import org.json.JSONArray;
 
 public interface ICrossNavigationDAO extends ISpagoBIDao {
@@ -40,4 +43,9 @@ public interface ICrossNavigationDAO extends ISpagoBIDao {
 	public JSONArray loadNavigationByDocument(String label);
 
 	public boolean documentIsCrossable(String docLabel);
+
+	public List<SbiCrossNavigation> listNavigationsByDocumentAndParameters(Integer documentId, List<Integer> inputParameters, List<Integer> outputParameters,
+			Session session);
+
+	public void deleteByDocument(BIObject document, Session session);
 }

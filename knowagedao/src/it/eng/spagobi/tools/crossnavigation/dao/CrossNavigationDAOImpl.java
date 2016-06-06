@@ -267,15 +267,47 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	}
 
 	@Override
+	public void deleteByDocument(BIObject obj, Session session) {
+		List<Integer> inputParameters = new ArrayList<>();
+		if (obj.getBiObjectParameters() != null) {
+			for (BIObjectParameter biObjectParameter : obj.getBiObjectParameters()) {
+				inputParameters.add(biObjectParameter.getId());
+			}
+		}
+		List<Integer> outputParameters = new ArrayList<>();
+		if (obj.getOutputParameters() != null) {
+			for (OutputParameter outputParameter : obj.getOutputParameters()) {
+				outputParameters.add(outputParameter.getId());
+			}
+		}
+		List<SbiCrossNavigation> cnToRemove = listNavigationsByDocumentAndParameters(obj.getId(), inputParameters, outputParameters, session);
+		for (SbiCrossNavigation cn : cnToRemove) {
+			session.delete(cn);
+		}
+	}
+
+	@Override
+	public List<SbiCrossNavigation> listNavigationsByDocumentAndParameters(Integer documentId, List<Integer> inputParameters, List<Integer> outputParameters,
+			Session session) {
+		// load cross navigation item
+		Disjunction disj = Restrictions.disjunction();
+		if (!inputParameters.isEmpty()) {
+			disj.add(Restrictions.conjunction().add(Restrictions.eq("_par.fromType", 1)).add(Restrictions.in("_par.fromKeyId", inputParameters)));
+		}
+		if (!outputParameters.isEmpty()) {
+			disj.add(Restrictions.conjunction().add(Restrictions.eq("_par.fromType", 0)).add(Restrictions.in("_par.fromKeyId", outputParameters)));
+		}
+		disj.add(Restrictions.conjunction().add(Restrictions.eq("_par.fromType", 2)).add(Restrictions.eq("_par.fromKeyId", documentId)));
+
+		return session.createCriteria(SbiCrossNavigation.class).createAlias("sbiCrossNavigationPars", "_par").add(disj).list();
+	}
+
+	@Override
 	public JSONArray loadNavigationByDocument(final String label) {
 
 		return executeOnTransaction(new IExecuteOnTransaction<JSONArray>() {
 			@Override
 			public JSONArray execute(Session session) throws JSONException, EMFUserError {
-				JSONArray ret = new JSONArray();
-				// JSONArray inputParametersList = new JSONArray();
-				// JSONArray outputParametersList = new JSONArray();
-
 				Map<Integer, crossNavigationParameters> documentIOParams = new HashMap<Integer, crossNavigationParameters>();
 
 				List<Integer> inputId = new ArrayList<>();
@@ -332,6 +364,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						tmpJO.put("document", new JSONObject(JsonConverter.objectToJson(bio, bio.getClass())));
 						tmpJO.put("documentId", obj.getBiobjId());
 						tmpJO.put("crossName", cnItem.getSbiCrossNavigation().getName());
+						tmpJO.put("crossId", cnItem.getSbiCrossNavigation().getId());
 						tmpJO.put("navigationParams", new JSONObject());
 
 						mappa.put(obj.getBiobjId(), tmpJO);
@@ -354,6 +387,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				}
 
 				Iterator it = mappa.entrySet().iterator();
+				JSONArray ret = new JSONArray();
 				while (it.hasNext()) {
 					Map.Entry pair = (Map.Entry) it.next();
 					ret.put(pair.getValue());
