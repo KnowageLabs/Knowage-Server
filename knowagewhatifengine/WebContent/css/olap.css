@@ -418,7 +418,7 @@ table tr:nth-child(even) {
 		background-size:23px 23px; 
 }
 
-.sorting-settings{
+.SORTING_SETTINGS{
 	background-image: url(../img/sorting-settings.png);
 	background-size:23px 23px;
 }
@@ -827,8 +827,8 @@ md-option[selected], md-select-menu md-option[selected]{
 }
 
 .multi-hier-dialog{
-		height:25%!important; 
-		width:25%!important;
+		height:35%!important; 
+		width:30%!important;
 }
 
 @-moz-document url-prefix() { 
@@ -863,4 +863,8 @@ md-option[selected], md-select-menu md-option[selected]{
 
 .multi-hier-dialog .action-btn{
 	line-height:25px;
+}
+
+.max-height{
+	height:100%!important;
 }
