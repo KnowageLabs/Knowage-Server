@@ -71,7 +71,7 @@ public class LuceneSearcher {
 			Query queryMetadata = new TermQuery(new Term(IndexingConstants.METADATA, metaDataToSearch));
 			andQuery.add(queryMetadata, BooleanClause.Occur.MUST);
 		}
-		Query query = new MultiFieldQueryParser(Version.LUCENE_CURRENT, fields, analyzer).parse(queryString);
+		Query query = new MultiFieldQueryParser(Version.LUCENE_CURRENT, fields, analyzer).parse(queryString.replace('_', ' '));
 		andQuery.add(query, BooleanClause.Occur.MUST);
 		Query tenantQuery = new TermQuery(new Term(IndexingConstants.TENANT, getTenant()));
 		andQuery.add(tenantQuery, BooleanClause.Occur.MUST);
@@ -188,7 +188,7 @@ public class LuceneSearcher {
 		BooleanQuery orQuery = new BooleanQuery();
 		BooleanQuery andQuery = new BooleanQuery();
 		for (int i = 0; i < fields.length; i++) {
-			Query query = new FuzzyQuery(new Term(fields[i], queryString));
+			Query query = new FuzzyQuery(new Term(fields[i], queryString.replace('_', ' ')));
 			query = query.rewrite(searcher.getIndexReader());
 			orQuery.add(query, BooleanClause.Occur.SHOULD);
 		}
