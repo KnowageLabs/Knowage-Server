@@ -29,9 +29,31 @@
 	<!-- <XLS_EMITTER id="org.eclipse.birt.report.engine.emitter.prototype.excel" output_format="xls" /> -->
 	<!-- spudsoft XLS emitter -->
 	<XLS_EMITTER id="uk.co.spudsoft.birt.emitters.excel.XlsEmitter" output_format="xls_spudsoft" />
+  	<!-- arctorus  emitter -->
+  	<!-- <XLS_EMITTER id="com.arctorus.export.birt43x.xls" output_format="xls" /> -->
 	
 	<!-- spudsoft XLSX emitter -->
 	<XLSX_EMITTER id="uk.co.spudsoft.birt.emitters.excel.XlsxEmitter" output_format="xlsx" />
+  	<!-- arctorus XLSX emitter -->
+	<!-- <XLSX_EMITTER id="com.arctorus.export.birt43x.xlsx" output_format="xlsx" /> -->
+	
+	<!-- default DOC emitter -->
+	<DOC_EMITTER id="org.eclipse.birt.report.engine.emitter.word" output_format="doc" />	
+	<!-- arctorus DOC emitter -->
+	<!-- <DOC_EMITTER id="com.arctorus.export.birt43x.doc" output_format="doc" /> -->
+
+	<!-- default DOCX emitter -->
+	<DOCX_EMITTER id="org.eclipse.birt.report.engine.emitter.docx" output_format="docx" />	
+	<!-- arctorus DOCX emitter -->
+	<!-- <DOCX_EMITTER id="com.arctorus.export.birt43x.docx" output_format="docx" /> -->
+
+	<!-- default PPT emitter -->
+	<PPT_EMITTER id="org.eclipse.birt.report.engine.emitter.ppt" output_format="ppt" />
+
+	<!-- default PPTX emitter -->
+	<PPTX_EMITTER id="org.eclipse.birt.report.engine.emitter.pptx" output_format="pptx" />
+	<!-- arctorus PPTX emitter -->
+	<!-- <PPTX_EMITTER id="com.arctorus.export.birt43x.pptx" output_format="pptx" /> -->
 	
 	<!--  <CSV_EMITTER_ENCODING>UTF-8</CSV_EMITTER_ENCODING> -->
  
