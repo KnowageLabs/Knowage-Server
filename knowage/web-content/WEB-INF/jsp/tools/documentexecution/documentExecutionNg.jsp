@@ -16,6 +16,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
+<%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
+<%@page import="it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.BIObject"%>
 <%@page import="it.eng.spagobi.commons.utilities.ObjectsAccessVerifier"%>
 <%@page import="it.eng.spagobi.engines.config.bo.Engine"%>
@@ -32,6 +34,7 @@ Integer objId = null;
 */
 String objId = null;
 String objLabel = null;
+
 IEngUserProfile profile = null;
 List<String> executionRoleNames = new ArrayList();
 
@@ -47,13 +50,22 @@ try{
 	objId = new Integer(request.getParameter("OBJECT_ID")); 
 */
 	objId = (String)(request.getParameter("OBJECT_ID"));
-	objLabel = request.getParameter("OBJECT_LABEL") != null ? 
-			request.getParameter("OBJECT_LABEL") : obj.getLabel();
+	objLabel = request.getParameter("OBJECT_LABEL") != null ? ((String)request.getParameter("OBJECT_LABEL")) : obj.getLabel();
 	
+	isFromDocumentWidget = (String)(request.getParameter("IS_FROM_DOCUMENT_WIDGET"));
+	
+	if(obj == null 
+			&& (isFromDocumentWidget != null 
+				&& ("true").equalsIgnoreCase(isFromDocumentWidget))) {
+		
+		IBIObjectDAO biObjectDAO = DAOFactory.getBIObjectDAO();
+		
+		obj = biObjectDAO.loadBIObjectByLabel(objLabel);
+	}
+
 	executingEngine = obj.getEngine();
 	engineName = executingEngine.getName();
 	
-	isFromDocumentWidget = (String)(request.getParameter("IS_FROM_DOCUMENT_WIDGET"));
 	
 	if(objId != null && !("null".equalsIgnoreCase(objId))) {
 		Integer objIdInt = new Integer(objId);
@@ -62,8 +74,8 @@ try{
 		executionRoleNames = ObjectsAccessVerifier.getCorrectRolesForExecution(obj.getLabel(), profile);
 	}
 	
-}catch (Throwable t) {
-	
+}catch (Exception e) {
+	e.printStackTrace();
 }
 
 %>
@@ -434,7 +446,64 @@ if(executionRoleNames.size() > 0) {
 			angular.module('cantExecuteDocumentModule')
 			
 			.factory('$documentBrowserScope', function($window) {
-				return $window.parent.angular.element($window.frameElement).scope().$parent.$parent;
+				/*
+				// return $window.parent.angular.element($window.frameElement).scope().$parent.$parent;
+				if($window.parent.angular && $window.frameElement!=null) {
+					return $window.parent.angular.element($window.frameElement).scope().$parent.$parent;
+				
+				} else if($window.parent.parent.angular ){ // coming from cockpit DocumentWidget
+					var scope = $window.parent.parent.angular.element($window.parent.parent.frameElement).scope().$parent
+					if (!scope.changeNavigationRole) {
+						scope.changeNavigationRole = function(){};
+					}
+					return scope;
+					
+				} else {
+					var f = function(){};
+					return {
+						changeNavigationRole: f,
+						isCloseDocumentButtonVisible: f
+					};
+				}
+				*/
+				
+				var f = function(){};
+				var fakeScope = {
+						changeNavigationRole: f,
+						closeDocument : f,
+						isCloseDocumentButtonVisible: f
+					};
+				
+				var ng = $window.parent.angular 
+					|| $window.parent.parent.angular; // coming from cockpit DocumentWidget
+				
+				if(ng && $window.frameElement!=null) {
+					//return ng.element($window.frameElement).scope().$parent.$parent;
+					var scope = ng.element($window.frameElement).scope();
+					if(scope && scope.$parent && scope.$parent.$parent) {
+						return scope.$parent.$parent;
+					} else {
+						return fakeScope;
+					}
+				
+				} else if(ng ){ // coming from cockpit DocumentWidget
+//					var scope = ng.element($window.parent.parent.frameElement).scope().$parent;
+					var scope = ng.element($window.parent.parent.frameElement).scope();
+					
+					if(scope && scope.$parent) {
+						var scopeParent = scope.$parent;
+						
+						if (!scopeParent.changeNavigationRole) {
+							scopeParent.changeNavigationRole = function(){};
+						}
+						return scopeParent;
+					} else {
+						return fakeScope;
+					}
+					
+				} else {
+					return fakeScope
+				}
 			})
 			
 			.controller( 'cantExecuteDocumentController', 

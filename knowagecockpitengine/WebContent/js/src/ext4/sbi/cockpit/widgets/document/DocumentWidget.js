@@ -112,12 +112,29 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidget, Sbi.cockpit.core.WidgetR
 		*/
     	
     	if(this.parameters){
+    		var executionContextParams = Sbi.config.executionContext;
+    		
     		var crossParams = {};
     		for(var i = 0 ; i < this.parameters.length; i++) {
     			var param = this.parameters[i];
     			
-    			var value = this.externalParameterMap.containsKey(param.parameterUrlName) ? 
-    					this.externalParameterMap.get(param.parameterUrlName) : param.value;
+//    			var value = this.externalParameterMap.containsKey(param.parameterUrlName) ? 
+//    					this.externalParameterMap.get(param.parameterUrlName) : param.value;
+    			var value = "";
+    			
+    			if(executionContextParams[param.parameterUrlName] 
+    					&& executionContextParams[param.parameterUrlName] != '') {
+    				
+    				value = executionContextParams[param.parameterUrlName];
+    			
+    			} else if( this.externalParameterMap.get(param.parameterUrlName) 
+    					&& this.externalParameterMap.get(param.parameterUrlName) != '') {
+    				
+    				value = this.externalParameterMap.get(param.parameterUrlName);
+    				
+    			} else {
+    				value = param.value;
+    			}
     					
     			crossParams[param.parameterUrlName] = value;
     		}
