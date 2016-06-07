@@ -35,5 +35,6 @@ angular
 	                                'smartfilters_view_workspace',
 	                                'ckan_view',
 	                                'dataset_wizard_meta',
-	                                'folder_view'
+	                                'folder_view',
+	                                'bread_crumb'
 	                                ]);

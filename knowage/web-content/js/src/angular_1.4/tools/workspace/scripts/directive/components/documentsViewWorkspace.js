@@ -34,7 +34,9 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	$scope.showDocumentInfo = false;
 	$scope.folders = [];
 	$scope.foldersToShow=[];
-
+	$scope.breadModel=[];
+	$scope.breadCrumbControl;
+	
 	$scope.showDocumentDetails = function() {
 		return $scope.showDocumentInfo && $scope.isSelectedDocumentValid();
 	};
@@ -108,7 +110,8 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	}
 	
 	$scope.openFolder = function(folder){
-		console.log(folder);
+		//console.log(folder);
+		$scope.breadModel.push(folder);
 		$scope.selectedFolder=folder;
 		$scope.foldersToShow=[];
 		if($scope.selectedFolder!= undefined){
@@ -132,8 +135,10 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 			if($scope.folders[i].parentFunct==null){
 				// set root as selected
 				$scope.selectedFolder=$scope.folders[i];
+				$scope.breadModel.push($scope.folders[i]);
 			}
 		}
+		
 		//display only childs of root
 		$scope.foldersToShow=[];
 		if($scope.selectedFolder!= undefined){
@@ -144,5 +149,10 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 			}
 		}
 		
+	}
+	
+	$scope.moveBreadCrumbToFolder=function(item,index){
+		console.log(item);
+		$scope.openFolder(item);
 	}
 }
