@@ -344,7 +344,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 				
 				if (organizerDocumentsLoaded==false) {
 					console.info("[LOAD START]: Loading of Organizer documents is started.");
-					$scope.loadAllDocuments();
+					$scope.loadAllFolders();
 					organizerDocumentsLoaded = true;
 				}
 				

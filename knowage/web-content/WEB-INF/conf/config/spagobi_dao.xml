@@ -143,6 +143,7 @@
 		<DAO name="ISbiMetaDsTabRel" implementation="it.eng.spagobi.metadata.dao.SbiMetaDsTabRelDAOHibImpl"/>
 		<DAO name="ISbiMetaDocTabRelDAO" implementation="it.eng.spagobi.metadata.dao.SbiMetaDocTabRelDAOHibImpl"/>
 		<DAO name="AlertDAO" implementation="it.eng.spagobi.tools.alert.dao.AlertDAOImpl"/>
+		<DAO name="IFunctionsOrganizerDAO" implementation="it.eng.spagobi.workspace.dao.FunctionsOrganizerDAOHibImpl"/>
 	</DAO-CONF>
 
 	<!-- ********************* END DAO CONFIGURATION ************************ -->

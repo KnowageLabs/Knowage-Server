@@ -28,20 +28,11 @@ angular
 		  };
 	})
 
-function documentsController($scope,sbiModule_restServices,sbiModule_translate,$window,$mdSidenav){
+function documentsController($scope,sbiModule_restServices,sbiModule_translate,$window,$mdSidenav,$mdDialog ){
 
 	$scope.selectedDocument = undefined;
 	$scope.showDocumentInfo = false;
-
-	$scope.loadAllDocuments=function(){
-		alert("This option will be implemented in the next phase.");
-//		sbiModule_restServices.promiseGet("2.0/documents", "")
-//		.then(function(response) {
-//			angular.copy(response.data,$scope.allDocuments);
-//		},function(response){
-//			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
-//		});
-	}
+	$scope.folders = [];
 
 	$scope.showDocumentDetails = function() {
 		return $scope.showDocumentInfo && $scope.isSelectedDocumentValid();
@@ -77,5 +68,50 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 			$scope.setDocumentDetailOpen(document !== undefined);
 		}
 	};
+	
+	$scope.tableSpeedMenuOption = [{
+		label : sbiModule_translate.load('sbi.generic.delete'),
+		icon:'fa fa-trash' ,
+		backgroundColor:'transparent',	
+		action : function(item,event) {
+			$scope.deleteFolder(item);
+		}
+	} ];
+	
+	$scope.deleteFolder = function(folder) {
+		var confirm = $mdDialog.confirm()
+		.title(sbiModule_translate.load("sbi.workspace.folder.delete.confirm.dialog"))
+		.content(sbiModule_translate.load("sbi.workspace.folder.delete.confirm"))
+		.ariaLabel('delete folder') 
+		.ok(sbiModule_translate.load("sbi.general.yes"))
+		.cancel(sbiModule_translate.load("sbi.general.No"));
+			$mdDialog.show(confirm).then(function() {
+				sbiModule_restServices.promiseDelete("2.0/organizer/folders",folder.functId)
+				.then(function(response) {
+					$scope.loadAllFolders();
+				},function(response) {
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+				});
+		});
+	}
+	
+	$scope.loadAllFolders = function() {
+		sbiModule_restServices.promiseGet("2.0/organizer/folders","")
+		.then(function(response) {
+			angular.copy(response.data,$scope.folders);
+			//$scope.favoriteDocumentsInitial = $scope.favoriteDocumentsList;
+			console.info("[LOAD END]: Loading of users folders is finished.");
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+		});
+	}
+	
+	$scope.openFolder = function(folder){
+		console.log(folder);
+	}
+	
+	$scope.createNewFolder = function(){
+		
+	}
 
 }

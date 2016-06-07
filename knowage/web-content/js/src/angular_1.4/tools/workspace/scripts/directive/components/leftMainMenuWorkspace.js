@@ -45,7 +45,7 @@ function leftMenuController($scope, sbiModule_translate){
 	                      	    
 	                      	 	{"name": "Recent", "label":sbiModule_translate.load('sbi.workspace.menu.recent'),		"icon": "fa fa-clock-o",	"visible":true, "active":false, "selected":true}, 
 	                      	 	{"name": "Favorites", "label":sbiModule_translate.load('sbi.workspace.menu.favorites'), 	"icon": "fa fa-star",	"visible":true, "active":false, "selected":false}, 
-	                      	 	{"name": "Documents", "label":sbiModule_translate.load('sbi.workspace.menu.documents'),	"icon": "fa fa-file-text", "visible":false, "active":false, "selected":false}, 
+	                      	 	{"name": "Documents", "label":sbiModule_translate.load('sbi.workspace.menu.documents'),	"icon": "fa fa-file-text", "visible":true, "active":false, "selected":false}, 
 	                      	 	{"name": "Data", "label":sbiModule_translate.load('sbi.workspace.menu.data'), 	"icon": "fa fa-angle-down", "activeIcon":"fa fa-angle-up" ,"visible":true, "active":false,
 	                      	 		"submenuOptions":[	{"name": "Datasets", "label":sbiModule_translate.load('sbi.workspace.menu.datasets'), 	"icon": "fa fa-database",	"visible":true, "selected":false},
 	                    	                      	 	{"name": "Models","label":sbiModule_translate.load('sbi.workspace.menu.models'), 	"icon": "fa fa-cubes",	"visible":true, "selected":false},

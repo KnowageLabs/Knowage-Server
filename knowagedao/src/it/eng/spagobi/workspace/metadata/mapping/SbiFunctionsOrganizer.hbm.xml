@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class name="it.eng.spagobi.workspace.metadata.SbiFunctionsOrganizer"
+		table="SBI_FUNCTIONS_ORGANIZER">
+		<id name="functId" type="integer">
+			<column name="funct_id" />
+			<generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_FUNCTIONS_ORGANIZER</param>
+				<param name="initial_value">1</param>
+			</generator>
+		</id>
+		<component class="it.eng.spagobi.commons.metadata.SbiCommonInfo"
+			name="commonInfo">
+			<property generated="never" lazy="false" name="userIn" type="string">
+				<column length="100" name="USER_IN" not-null="true" />
+			</property>
+			<property generated="never" lazy="false" name="userUp" type="string">
+				<column length="100" name="USER_UP" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="userDe" type="string">
+				<column length="100" name="USER_DE" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="timeIn" type="timestamp">
+				<column name="TIME_IN" not-null="true" />
+			</property>
+			<property generated="never" lazy="false" name="timeUp" type="timestamp">
+				<column name="TIME_UP" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="timeDe" type="timestamp">
+				<column name="TIME_DE" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="sbiVersionIn"
+				type="string">
+				<column length="10" name="SBI_VERSION_IN" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="sbiVersionUp"
+				type="string">
+				<column length="10" name="SBI_VERSION_UP" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="sbiVersionDe"
+				type="string">
+				<column length="10" name="SBI_VERSION_DE" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="organization"
+				type="string">
+				<column length="20" name="ORGANIZATION" not-null="false" />
+			</property>
+		</component>
+		<property generated="never" lazy="false" name="parentFunct" type="integer">
+			<column length="20" name="parent_funct_id" />
+		</property>
+		<property generated="never" lazy="false" name="code" type="string">
+			<column length="20" name="code" unique="true" />
+		</property>
+		<property generated="never" lazy="false" name="name" type="string">
+			<column length="40" name="name" />
+		</property>
+		<property generated="never" lazy="false" name="descr" type="string">
+			<column length="160" name="descr" />
+		</property>
+		<property generated="never" lazy="false" name="path" type="string">
+			<column length="400" name="path" />
+		</property>
+		<property generated="never" lazy="false" name="prog" type="integer">
+			<column name="prog" not-null="true" />
+		</property>
+
+		<filter condition="user_in=:user" name="userFilter" />
+	</class>
+	<filter-def name="userFilter">
+		<filter-param name="user" type="string" />
+	</filter-def>
+</hibernate-mapping>

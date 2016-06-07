@@ -216,7 +216,12 @@
      	 <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiCatalogFunction.hbm.xml" />
          <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionInputVariable.hbm.xml" />
      	 <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionInputDataset.hbm.xml" />
-         <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionOutput.hbm.xml" />   
+         <mapping resource="it/eng/spagobi/functions/metadata/mapping/SbiFunctionOutput.hbm.xml" />
+         
+         <!-- Workspace organizer mapping -->   
+         <mapping resource="it/eng/spagobi/workspace/metadata/mapping/SbiFunctionsOrganizer.hbm.xml" />
+         <mapping resource="it/eng/spagobi/workspace/metadata/mapping/SbiObjFuncOrganizer.hbm.xml" />
+         
          
         <!-- end mapping -->
         
