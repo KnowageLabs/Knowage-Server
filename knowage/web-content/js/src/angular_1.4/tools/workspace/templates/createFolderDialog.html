@@ -1,0 +1,46 @@
+<md-dialog aria-label="saveFederatedDatasetTemp" style="width: 80%; overflow-y: visible;">
+ <div>
+	<md-toolbar class="miniheadfederation">
+		<div class="md-toolbar-tools">
+			<h2 class="md-flex">{{translate.load("sbi.workspace.folder.create.dialog");}}</h2>
+			<span flex=""></span>
+		</div>	
+	</md-toolbar>
+  			<md-content class="sticky-container">
+    			<div style="padding:5px">
+					<form name="createFolderForm">
+
+
+			<md-input-container flex> <label>{{translate.load("sbi.generic.code");}}</label>
+			<input ng-model="folder.code" name="code" required>
+			 <div ng-messages="createFolderForm.code.$error" ng-if="createFolderForm.code.$dirty && !folder.code.length">
+							<div ng-message="required">{{translate.load("sbi.federationdefinition.required");}}</div>
+						</div>
+			 </md-input-container>
+
+			<md-input-container flex> <label>{{translate.load("sbi.generic.name");}}</label>
+			<input ng-model="folder.name" name="name" required>
+			<div ng-messages="createFolderForm.name.$error" ng-if="createFolderForm.name.$dirty && !folder.name.length">
+							<div ng-message="required">{{translate.load("sbi.federationdefinition.required");}}</div>
+						</div>
+			 </md-input-container>
+
+			<md-input-container> <label>{{translate.load("sbi.generic.descr");}}</label>
+			<input ng-model='folder.descr'/> </md-input-container>
+
+			<div class="md-actions" layout="row"><span flex></span> <md-button
+					class="md-raised floatRightFederationButton" ng-click="closeDialog()"
+					class="md-primary">
+				{{translate.load("sbi.general.close");}} </md-button> <md-button
+					class="md-raised floatRightFederationButton" ng-click="createFolder()"
+					class="md-primary" ng-disabled="createFolderForm.$invalid">
+				{{translate.load("sbi.generic.update");}} </md-button></div>
+
+		</form>
+      			</div>
+  			</md-content>
+
+  			
+	</div>
+ 
+</md-dialog>

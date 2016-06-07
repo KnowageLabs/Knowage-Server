@@ -28,7 +28,7 @@ angular
 		  };
 	})
 
-function documentsController($scope,sbiModule_restServices,sbiModule_translate,$window,$mdSidenav,$mdDialog ){
+function documentsController($scope,sbiModule_restServices,sbiModule_translate,$window,$mdSidenav,$mdDialog,sbiModule_messaging,sbiModule_config ){
 
 	$scope.selectedDocument = undefined;
 	$scope.showDocumentInfo = false;
@@ -122,12 +122,63 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 			}
 		}
 	}
+			
+	$scope.addNewFolder  = function(){
+		$mdDialog.show({
+			  scope:$scope,
+			  preserveScope: true,
+		      controller: AddNewFolderController,
+		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/createFolderDialog.html',  
+		      clickOutsideToClose:false,
+		      escapeToClose :false
+		 });
+	}
 	
-	$scope.createNewFolder = function(){
+	function AddNewFolderController($scope,$mdDialog,$http){
+		
+		$scope.createFolder = function() {
+			
+			$scope.folder = {
+				    "parentFunct": $scope.selectedFolder.functId,
+				    "code": $scope.folder.code,
+				    "name": $scope.folder.name,
+				    "descr": $scope.folder.descr,
+				    "path": $scope.selectedFolder.path+"/"+$scope.folder.code,
+				    "prog": 1
+				  }
+			if($scope.folder.descr==null){
+				$scope.folder.descr="";
+			}
+			sbiModule_restServices.promisePost('2.0/organizer/folders','',angular.toJson($scope.folder))
+			.then(function(response) {
+				console.log("[POST]: SUCCESS!");
+				$mdDialog.cancel();
+				$scope.clearForm();
+				$scope.openFolder($scope.selectedFolder);
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			});
+			
+		}
+		
+		$scope.closeDialog = function() {
+			$mdDialog.cancel();
+		}
+		
+		$scope.clearForm = function() {
+			$scope.folder = {
+				    "parentFunct": "",
+				    "code": "",
+				    "name": "",
+				    "descr": "",
+				    "path": "",
+				    "prog": 1
+			}
+		}
 		
 	}
     
-	
 	$scope.showRoot=function(){
 		console.log($scope.folders);
 		//searc for the root
