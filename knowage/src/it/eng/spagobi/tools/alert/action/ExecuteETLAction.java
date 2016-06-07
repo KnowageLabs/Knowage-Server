@@ -23,8 +23,8 @@ public class ExecuteETLAction extends AbstractAlertAction {
 
 	@Override
 	public void executeAction(String jsonOptions, Map<String, String> externalParameters) throws AlertActionException {
-		System.out.println("Running ExecuteETLAction...");
-		System.out.println("jsonOptions: " + jsonOptions);
+		logger.info("Running ExecuteETLAction...");
+		logger.debug("jsonOptions: " + jsonOptions);
 		try {
 			if (jsonOptions != null && !jsonOptions.isEmpty()) {
 				JSONObject json = new JSONObject(new JSONObject(jsonOptions).getString("jsonActionParameters"));
@@ -32,7 +32,7 @@ public class ExecuteETLAction extends AbstractAlertAction {
 					JSONArray ids = json.getJSONArray("listDocIdSelected");
 					for (int i = 0; i < ids.length(); i++) {
 						Integer id = ids.getJSONObject(i).getInt("DOCUMENT_ID");
-						System.out.println(">>> id=" + id);
+						logger.debug(">>> id=" + id);
 
 						BIObject biobj = DAOFactory.getBIObjectDAO().loadBIObjectById(id);
 
@@ -51,7 +51,6 @@ public class ExecuteETLAction extends AbstractAlertAction {
 			}
 
 		} catch (EMFUserError | JSONException e) {
-			// TODO rise specific exception
 			logger.error("Send mail failed", e);
 			throw new AlertActionException("Executing ETL failed", e);
 		}

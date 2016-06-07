@@ -1,5 +1,4 @@
 <md-content layout="column" ng-controller="executeETLController" flex action-maker-validator="{model:ngModel,validator:validate}" ng-init="initNgModel()">
-{{listDocSelected}}
  	<angular-table flex
 		id='docListTable' ng-model="listDoc"
 		columns='[{"label":"Label","name":"DOCUMENT_NM"}, {"label":"Name","name":"DOCUMENT_NAME"}]'

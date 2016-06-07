@@ -41,13 +41,11 @@ angular.module('alertDefinitionManager').controller('executeETLController', func
 			if(lst[i].DOCUMENT_ID == id){
 				toAdd = false;
 				$scope.ngModel.listDocIdSelected.splice(i, 1);
-				console.log("removed:"+id);
 				break;
 			}
 		}
 		if(toAdd){
 			$scope.ngModel.listDocIdSelected.splice(0, 0, {"DOCUMENT_ID":id});
-			console.log("added:"+id);
 		}
 	}
 
