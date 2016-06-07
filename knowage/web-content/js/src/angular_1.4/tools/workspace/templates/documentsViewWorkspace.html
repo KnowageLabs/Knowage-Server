@@ -6,103 +6,20 @@
 		
 			<md-content layout="row" flex layout-fill class="rightPanelDocuments">
 	
-			 	<workspace-document-view 	class="kn-documentBrowser" flex 
+			 	<folder-view	class="kn-documentBrowser" flex 
 			 					style='overflow:auto;' 
-			 					ng-model=allDocuments
+			 					ng-model=folders
 			 					show-grid-view=showGridView
-			 					show-add-to-organizer="false"
-			 					is-doc-favorite=isDocumentFavorite
-			 					selected-row=selectedRow
-			 					selected-document=selectedDocument
-			 					execute-document-action="executeDocument(doc)"
-			 					select-document-action="selectDocument(doc)"
+			 					selected-folder=selectedFolder
+			 					select-folder-action="openFolder(folder)"
+			 					delete-folder-action="deleteFolder(folder)"
 			 					 >
-				</workspace-document-view>		
+				</folder-view>		
 		
 			</md-content>
 		
 		</md-content>
 	
 	</md-whiteframe>
-		
-	<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightDoc" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDocumentDetails()">
-		
-		<md-toolbar class="ternaryToolbar">
-			
-			<div layout="row" layout-align="space-around center">
-				
-				<md-button ng-if="smallScreen" title="Execute Document" aria-label="Close panel" class="md-icon-button" ng-click="selectDocument();toggleDocumentDetail();">
-									<md-icon md-font-icon="fa fa-times" ></md-icon>
-							</md-button>
-							
-							<md-button title="Execute Document" aria-label="Execute Document" class="md-icon-button" ng-click="executeDocument(selectedDocument)">
-									<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
-							</md-button>
-														
-							<md-button title="Delete Document" aria-label="Delete Document" class="md-icon-button" ng-click="deleteDocument(selectedDocument)">
-									<md-icon md-font-icon="fa fa-trash-o"></md-icon>
-				</md-button>
-				
-			</div>
-		</md-toolbar>
-		
-		<md-content layout-margin>
-			
-			<md-list>
-			
-				 <md-list-item class="md-2-line">
-				          <div class="md-list-item-text">
-				            <h3><b>Name</b></h3>
-				            <p>{{selectedDocument.name}}</p>
-				          </div>
-				 </md-list-item>
-				 
-				 <md-list-item class="md-2-line">
-				          <div class="md-list-item-text">
-				            <h3><b>Label</b></h3>
-				            <p>{{selectedDocument.label}}</p>
-				          </div>
-				 </md-list-item>
-				 
-				  <md-list-item class="md-2-line">
-				          <div class="md-list-item-text">
-				            <h3><b>Description</b></h3>
-				            <p>{{selectedDocument.description}}</p>
-				          </div>
-				 </md-list-item>
-				 
-				 <md-list-item class="md-2-line">
-				          <div class="md-list-item-text">
-				            <h3><b>Creator</b></h3>
-				            <p>{{selectedDocument.creationUser}}</p>
-				          </div>
-				 </md-list-item>
-				 
-				 <md-list-item class="md-2-line">
-				          <div class="md-list-item-text">
-				            <h3><b>Creation date</b></h3>
-				            <p>{{selectedDocument.creationDate}}</p>
-				          </div>
-				 </md-list-item>
-				 
-				 <md-list-item class="md-2-line">
-				          <div class="md-list-item-text">
-				            <h3><b>Tenant</b></h3>
-				            <p>{{selectedDocument.tenant}}</p>
-				          </div>
-				 </md-list-item>
-				 
-				 <md-list-item class="md-2-line">
-				          <div class="md-list-item-text">
-				            <h3><b>Type</b></h3>
-				            <p>{{selectedDocument.typeCode}}</p>
-				          </div>
-				 </md-list-item>
-				 
-			</md-list>
-			
-		</md-content>
-		
-	</md-sidenav>
 		
 </md-content>
