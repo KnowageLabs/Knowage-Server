@@ -1,14 +1,14 @@
 <md-content layout="row" flex>
 	
 	<md-whiteframe flex layout="column" class="md-whiteframe-5dp md-whiteframe-5dp-rightPanelDocuments" layout-margin>
-	
+	 
 		<md-content layout="row" flex>
-		
+<!-- 	    <bread-crumb item-name='name' ng-model="breadModel" selected-item="selectedFolder" control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb> -->
 			<md-content layout="row" flex layout-fill class="rightPanelDocuments">
 	
 			 	<folder-view	class="kn-documentBrowser" flex 
 			 					style='overflow:auto;' 
-			 					ng-model=folders
+			 					ng-model=foldersToShow
 			 					show-grid-view=showGridView
 			 					selected-folder=selectedFolder
 			 					select-folder-action="openFolder(folder)"

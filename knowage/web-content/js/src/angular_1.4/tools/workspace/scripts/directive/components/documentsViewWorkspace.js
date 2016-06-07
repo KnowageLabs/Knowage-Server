@@ -33,6 +33,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	$scope.selectedDocument = undefined;
 	$scope.showDocumentInfo = false;
 	$scope.folders = [];
+	$scope.foldersToShow=[];
 
 	$scope.showDocumentDetails = function() {
 		return $scope.showDocumentInfo && $scope.isSelectedDocumentValid();
@@ -98,8 +99,8 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	$scope.loadAllFolders = function() {
 		sbiModule_restServices.promiseGet("2.0/organizer/folders","")
 		.then(function(response) {
-			angular.copy(response.data,$scope.folders);
-			//$scope.favoriteDocumentsInitial = $scope.favoriteDocumentsList;
+			angular.copy(response.data,$scope.folders); // all folders
+			$scope.showRoot();
 			console.info("[LOAD END]: Loading of users folders is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
@@ -108,10 +109,40 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	
 	$scope.openFolder = function(folder){
 		console.log(folder);
+		$scope.selectedFolder=folder;
+		$scope.foldersToShow=[];
+		if($scope.selectedFolder!= undefined){
+			for ( i = 0; i < $scope.folders.length; i++) {
+				if($scope.folders[i].parentFunct==$scope.selectedFolder.functId){
+					$scope.foldersToShow.push($scope.folders[i]);
+				}
+			}
+		}
 	}
 	
 	$scope.createNewFolder = function(){
 		
 	}
-
+    
+	
+	$scope.showRoot=function(){
+		console.log($scope.folders);
+		//searc for the root
+		for ( i = 0; i < $scope.folders.length; i++) {
+			if($scope.folders[i].parentFunct==null){
+				// set root as selected
+				$scope.selectedFolder=$scope.folders[i];
+			}
+		}
+		//display only childs of root
+		$scope.foldersToShow=[];
+		if($scope.selectedFolder!= undefined){
+			for ( i = 0; i < $scope.folders.length; i++) {
+				if($scope.folders[i].parentFunct==$scope.selectedFolder.functId){
+					$scope.foldersToShow.push($scope.folders[i]);
+				}
+			}
+		}
+		
+	}
 }
