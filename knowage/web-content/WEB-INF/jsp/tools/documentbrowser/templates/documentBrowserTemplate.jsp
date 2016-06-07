@@ -166,7 +166,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				 	  
 		   	</md-content>
 			</md-content>
-				<md-content ng-show="searchingDocuments">
+				<md-content flex ng-show="searchingDocuments">
 					<md-progress-circular loading
 							md-mode="indeterminate"
 							md-diameter="75%"
