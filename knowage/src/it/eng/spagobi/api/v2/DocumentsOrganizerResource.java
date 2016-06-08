@@ -42,7 +42,7 @@ public class DocumentsOrganizerResource extends AbstractSpagoBIResource {
 	public List loadDocumentsForFolder(@PathParam("id") Integer folderId) {
 		IObjFuncOrganizerDAO objFuncOrganizer;
 		try {
-			objFuncOrganizer = DAOFactory.getDocumentsOrganizerDAO();
+			objFuncOrganizer = DAOFactory.getObjFuncOrganizerDAO();
 			objFuncOrganizer.setUserProfile(getUserProfile());
 			List documents = objFuncOrganizer.loadDocumentsByFolder(folderId);
 			return documents;

@@ -945,7 +945,7 @@ public class DAOFactory {
 		return (IFunctionsOrganizerDAO) createDAOInstance("IFunctionsOrganizerDAO");
 	}
 
-	public static IObjFuncOrganizerDAO getDocumentsOrganizerDAO() throws EMFUserError {
+	public static IObjFuncOrganizerDAO getObjFuncOrganizerDAO() throws EMFUserError {
 		return (IObjFuncOrganizerDAO) createDAOInstance("IObjFuncOrganizerDAO");
 	}
 
