@@ -136,12 +136,14 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 	public String execute(@javax.ws.rs.core.Context HttpServletRequest req) {
 		logger.debug("IN");
-		Member parentMember;
+		Member parentMember = null;
 		JSONObject jo;
 		String calculatedFieldName = null;
 		String calculatedFieldFormula = null;
 		String parentMemberUniqueName = null;
+		String hierarchyUniqueName = null;
 		int axisOrdinal = 0;
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 
 		String body;
 		try {
@@ -151,20 +153,18 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 			calculatedFieldFormula = jo.getString("calculatedFieldFormula");
 			parentMemberUniqueName = jo.getString("parentMemberUniqueName");
 			axisOrdinal = jo.getInt("axisOrdinal");
+			hierarchyUniqueName = jo.getString("hierarchyUniqueName");
 
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
+		} catch (IOException e1) { // TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
 		logger.debug("expression= " + calculatedFieldFormula);
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 
 		Axis axis;
 		String calculateFieldFormulaParsed = new String();
+		Hierarchy hierarchy;
 		try {
 			if (!calculatedFieldFormula.isEmpty()) {
 				calculateFieldFormulaParsed = calculatedFieldFormula.replaceAll("\\{" + DIVISION_SIGN + "\\}", "/");
@@ -174,8 +174,11 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 			logger.error("Error parsing the formula. The original formula is " + calculatedFieldFormula, e);
 		}
 		try {
+
 			parentMember = CubeUtilities.getMember(ei.getPivotModel().getCube(), parentMemberUniqueName);
+
 			axis = CubeUtilities.getAxis(axisOrdinal);
+			hierarchy = CubeUtilities.getHierarchy(ei.getPivotModel().getCube(), hierarchyUniqueName);
 		} catch (OlapException e) {
 			logger.error("Error getting the parent of the calculated field. The unique name of the parent is " + parentMemberUniqueName, e);
 			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.celculated.definition.error", getLocale(),
@@ -184,6 +187,7 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 
 		logger.debug("Adding the calculated fields into the model");
 		CalculatedMember cc = new CalculatedMember(calculatedFieldName, calculateFieldFormulaParsed, parentMember, axis);
+
 		ei.getSpagoBIPivotModel().addCalculatedField(cc);
 
 		String table = renderModel(ei.getPivotModel());
