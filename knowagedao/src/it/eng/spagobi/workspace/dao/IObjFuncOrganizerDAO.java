@@ -6,7 +6,7 @@ import it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizer;
 
 import java.util.List;
 
-public interface ISbiObjFuncOrganizerDAO extends ISpagoBIDao {
+public interface IObjFuncOrganizerDAO extends ISpagoBIDao {
 
 	public List loadDocumentsByFolder(Integer folderId) throws EMFUserError;
 

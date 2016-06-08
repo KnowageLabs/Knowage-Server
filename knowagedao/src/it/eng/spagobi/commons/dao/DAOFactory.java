@@ -87,7 +87,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.wapp.dao.IMenuDAO;
 import it.eng.spagobi.wapp.dao.IMenuRolesDAO;
 import it.eng.spagobi.workspace.dao.IFunctionsOrganizerDAO;
-import it.eng.spagobi.workspace.dao.ISbiObjFuncOrganizerDAO;
+import it.eng.spagobi.workspace.dao.IObjFuncOrganizerDAO;
 
 import org.apache.log4j.Logger;
 
@@ -945,8 +945,8 @@ public class DAOFactory {
 		return (IFunctionsOrganizerDAO) createDAOInstance("IFunctionsOrganizerDAO");
 	}
 
-	public static ISbiObjFuncOrganizerDAO getDocumentsOrganizerDAO() throws EMFUserError {
-		return (ISbiObjFuncOrganizerDAO) createDAOInstance("ISbiObjFuncOrganizerDAO");
+	public static IObjFuncOrganizerDAO getDocumentsOrganizerDAO() throws EMFUserError {
+		return (IObjFuncOrganizerDAO) createDAOInstance("ISbiObjFuncOrganizerDAO");
 	}
 
 }
