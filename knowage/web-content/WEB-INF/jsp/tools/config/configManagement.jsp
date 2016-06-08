@@ -105,19 +105,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-select> 
 						</md-input-container>
 						</div>
-						
-						<div layout="row">
-						<md-input-container flex> 
-							<label>{{translate.load("sbi.config.manageconfig.fields.description")}}</label> 
-							<input ng-model="config.description" type="text"> 
-						</md-input-container>
-						</div>
-						<div layout="row">
-						<md-input-container flex> 
-							<label>{{translate.load("sbi.config.manageconfig.fields.description")}}</label> 
-							<input ng-model="config.description" type="text"> 
-						</md-input-container>
-						</div>
 						</md-card-content>
 					</md-card>
 			</form>
