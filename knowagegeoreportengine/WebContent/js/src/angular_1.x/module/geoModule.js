@@ -200,8 +200,12 @@ geoM.service(
 			};
 
 			this.overlay;
-
+			var clickAdded=false;
 			this.addClickEvent = function() {
+				if(clickAdded){
+					return;
+				}
+				clickAdded=true;
 				var selectStyle = new ol.style.Style({
 					stroke : new ol.style.Stroke({
 						// color: '#000000',
