@@ -102,12 +102,14 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		sbiModule_restServices.promiseGet("2.0/organizer/folders","")
 		.then(function(response) {
 			angular.copy(response.data,$scope.folders); // all folders
-			$scope.showRoot();
+			$scope.loadFolderContent();
 			console.info("[LOAD END]: Loading of users folders is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
+	
+
 	
 	$scope.openFolder = function(folder){
 		//console.log(folder);
@@ -122,7 +124,9 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 			}
 		}
 	}
-			
+	
+
+	
 	$scope.addNewFolder  = function(){
 		$mdDialog.show({
 			  scope:$scope,
@@ -154,7 +158,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 				console.log("[POST]: SUCCESS!");
 				$mdDialog.cancel();
 				$scope.clearForm();
-				$scope.openFolder($scope.selectedFolder);
+		        $scope.loadAllFolders();
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -174,36 +178,44 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 				    "descr": "",
 				    "path": "",
 				    "prog": 1
-			}
-		}
-		
 	}
-    
-	$scope.showRoot=function(){
-		console.log($scope.folders);
-		//searc for the root
-		for ( i = 0; i < $scope.folders.length; i++) {
-			if($scope.folders[i].parentFunct==null){
-				// set root as selected
-				$scope.selectedFolder=$scope.folders[i];
-				$scope.breadModel.push($scope.folders[i]);
-			}
 		}
-		
-		//display only childs of root
-		$scope.foldersToShow=[];
-		if($scope.selectedFolder!= undefined){
-			for ( i = 0; i < $scope.folders.length; i++) {
-				if($scope.folders[i].parentFunct==$scope.selectedFolder.functId){
-					$scope.foldersToShow.push($scope.folders[i]);
+    
+	}
+	
+	$scope.loadFolderContent=function(){
+		if($scope.selectedFolder==undefined){
+			$scope.showRoot();
+		}else{
+			//$scope.openFolder($scope.selectedFolder);
+			$scope.foldersToShow=[];
+			if($scope.selectedFolder!= undefined){
+				for ( i = 0; i < $scope.folders.length; i++) {
+					if($scope.folders[i].parentFunct==$scope.selectedFolder.functId){
+						$scope.foldersToShow.push($scope.folders[i]);
+					}
 				}
 			}
 		}
 		
+		
+	}
+	
+	$scope.showRoot=function(){
+		
+		//search for the root
+		for ( i = 0; i < $scope.folders.length; i++) {
+			if($scope.folders[i].parentFunct==null){
+			
+				$scope.openFolder($scope.folders[i]);
+			}
+		}
+			
 	}
 	
 	$scope.moveBreadCrumbToFolder=function(item,index){
-		console.log(item);
+	      
 		$scope.openFolder(item);
+		
 	}
 }
