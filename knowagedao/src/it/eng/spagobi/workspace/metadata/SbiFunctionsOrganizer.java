@@ -2,6 +2,8 @@ package it.eng.spagobi.workspace.metadata;
 
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
+import java.util.Set;
+
 public class SbiFunctionsOrganizer extends SbiHibernateModel {
 
 	// Fields
@@ -13,6 +15,7 @@ public class SbiFunctionsOrganizer extends SbiHibernateModel {
 	private String descr;
 	private String path;
 	private Integer prog;
+	private Set sbiObjFuncs;
 
 	// Constructors
 
@@ -79,6 +82,14 @@ public class SbiFunctionsOrganizer extends SbiHibernateModel {
 
 	public void setProg(Integer prog) {
 		this.prog = prog;
+	}
+
+	public Set getSbiObjFuncs() {
+		return sbiObjFuncs;
+	}
+
+	public void setSbiObjFuncs(Set sbiObjFuncs) {
+		this.sbiObjFuncs = sbiObjFuncs;
 	}
 
 	/*

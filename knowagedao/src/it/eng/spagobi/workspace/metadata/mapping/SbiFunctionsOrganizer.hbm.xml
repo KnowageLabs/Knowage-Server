@@ -68,7 +68,13 @@
 		<property generated="never" lazy="false" name="prog" type="integer">
 			<column name="prog" not-null="true" />
 		</property>
-
+        <set inverse="true" name="sbiObjFuncs" sort="natural">
+			<key>
+				<column name="funct_id" not-null="true" />
+			</key>
+			<one-to-many
+				class="it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizer" />
+		</set>
 		<filter condition="user_in=:user" name="userFilter" />
 	</class>
 	<filter-def name="userFilter">
