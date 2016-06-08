@@ -23,7 +23,7 @@
 						<label>{{translate.load("sbi.federationdefinition.template.name");}}</label> 
 						<input ng-model="federateddataset.name" name="name" required>
 						<div ng-messages="saveFDSForm.name.$error" ng-if="saveFDSForm.name.$dirty && !federateddataset.name.length">
-							<div ng-message="required">Required!</div>
+							<div ng-message="required">{{translate.load("sbi.federationdefinition.required");}}</div>
 						</div>
 						</md-input-container>
 												
