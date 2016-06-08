@@ -42,7 +42,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.maxRows = 3;
 	$scope.topSliderNeeded;
 	$scope.topStart = 0;
-	//$scope.tableSubsets =[];
+	$scope.tableSubsets ={};
 	$scope.columns;
 	$scope.maxCols = 5;
 	$scope.leftSliderNeeded;
@@ -115,11 +115,12 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.selecetedMultiHierUN;
 
 	$scope.handleResponse = function(response) {
+		$scope.tableSubsets=null;
 		source = response.data;
 		$scope.modelConfig = source.modelConfig;
 		console.log($scope.modelConfig);
 		$scope.table = $sce.trustAsHtml(source.table);
-		//$scope.tableSubsets=[];
+		$scope.tableSubsets=source.tables;
 		
 		$scope.columns = source.columns;
 		$scope.rows = source.rows;
@@ -133,10 +134,11 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.ready = true;
 
 		$scope.wiGridNeeded = response.data.modelConfig.whatIfScenario; //arsenije	
+		source = null;
 	}
 
 	$scope.sendModelConfig = function(modelConfig) {
-		
+		$scope.tableSubsets.length = 0;
 		var sentStartRow = $scope.modelConfig.startRow;
 		if ($scope.ready) {
 			$scope.ready = false;
@@ -144,12 +146,13 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 					"1.0/modelconfig?SBI_EXECUTION_ID=" + JSsbiExecutionID, "",
 					modelConfig).then(
 					function(response) {
+						
 						$scope.table = $sce.trustAsHtml(response.data.table);
 						
 						
 						
 						$scope.modelConfig = response.data.modelConfig;
-						//$scope.tableSubsets[$scope.modelConfig.startRow]=response.data.table;
+						$scope.tableSubsets=response.data.tables;
 						
 						$scope.ready = true;
 						$scope.isScrolling = false;
