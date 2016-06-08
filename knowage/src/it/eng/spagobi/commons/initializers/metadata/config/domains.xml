@@ -521,7 +521,7 @@
 	<DOMAIN valueCd="CUSTOM" valueNm="sbidomains.nm.customValue"
 		domainCd="DATE_FORMAT" domainNm="Date Format domain" valueDs="" />
 		
-	<DOMAIN valueCd="SpagoBI Dataset" valueNm="SpagoBI Dataset"
+	<DOMAIN valueCd="spagobi_ds" valueNm="spagobi_ds"
 		domainCd="CatalogOut" domainNm="CatalogOut" valueDs="CatalogOut" />	
 		
 	<DOMAIN valueCd="Text" valueNm="Text"

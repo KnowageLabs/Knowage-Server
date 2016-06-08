@@ -1,7 +1,13 @@
 var app = angular.module('cacheManager', ['ngMaterial','ngMessages','angular_table','sbiModule','chart.js']);
 
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
+    $mdThemingProvider.theme('knowage')
+    $mdThemingProvider.setDefaultTheme('knowage');
+ }]);
 
 app.controller('cacheRuntimeCtrl', ['sbiModule_restServices','sbiModule_translate',"$scope","$log","$mdDialog",cacheRuntimeManagerFunction]);
+
+
 
 function cacheRuntimeManagerFunction(sbiModule_restServices,sbiModule_translate, $scope,$log,$mdDialog)
 { 

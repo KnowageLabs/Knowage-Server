@@ -1,12 +1,12 @@
 
-var app = angular.module('functionsCatalogControllerModule',['ngMaterial', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload','angular-list-detail']);
+var app = angular.module('functionsCatalogControllerModule',['ngMaterial', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload','angular-list-detail','ngSanitize','ui.codemirror']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
-app.controller('functionsCatalogController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","$log", "sbiModule_download","sbiModule_messaging",functionsCatalogFunction]);
+app.controller('functionsCatalogController',["sbiModule_config","sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","$log", "sbiModule_download","sbiModule_messaging","$sce",functionsCatalogFunction]);
 
-function functionsCatalogFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$log,sbiModule_download,sbiModule_messaging){
+function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$log,sbiModule_download,sbiModule_messaging,$sce){
 
 	$scope.showDetail=false;
 	$scope.shownFunction={};
@@ -14,14 +14,14 @@ function functionsCatalogFunction(sbiModule_translate, sbiModule_restServices, $
 	$scope.tableSelectedFunction={};
 	$scope.tableSelectedFunction.language="Python";
 	$scope.languages=["Python","R"];
-	$scope.outputTypes=["SpagoBI Dataset","Text", "Image"];
+	$scope.outputTypes=["spagobi_ds","Text", "Image"];
 	$scope.inputTypes=["Simple Input", "Dataset Input"]
 	$scope.simpleInputs=[]; //=Input variables
 	$scope.inputDatasets=[];	 
 	$scope.varIndex=0;
 	$scope.datasetsIndex=0;
-	/*$scope.functionsList=[{"id":1,"name":"AVG","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script": "var b=1;\n"},
-	                       {"id":2,"name":"Variance","inputDatasets":[] , "inputVariables":[], "outputItems":[] , "language":"R", "script": "var c=2;\n"}];*/
+	/*$scope.functionsList=[{"id":1,"name":"AVG","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script": "b=1;\n"},
+	                       {"id":2,"name":"Variance","inputDatasets":[] , "inputVariables":[], "outputItems":[] , "language":"R", "script": "c=2;\n"}];*/
 	$scope.functionsList=[];
 		
 	$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[],"language":"Python", "script":""};	
@@ -31,13 +31,45 @@ function functionsCatalogFunction(sbiModule_translate, sbiModule_restServices, $
 	}
 	$scope.datasetLabelsList=[];
 	$scope.saveOrUpdateFlag="";
+	$scope.userId="";
+	
+	//For CodeMirror
+    $scope.editorOptions = {
+    	 lineWrapping : true,
+         lineNumbers: true,	
+         mode: 'python',
+         autoRefresh:true         
+        };
 	
 	
+	$scope.myF = function(text){
+		$scope.userId = text;
+	}
 	
 	
 	//Utility function
 	
 
+	
+	$scope.showTabDialog = function(/*result*/) {
+		   $mdDialog.show({
+		     controller: functionCatalogResults,
+		     templateUrl:  sbiModule_config.contextName	+ '/js/src/angular_1.4/tools/functionsCatalog/templates/'+'functionCatalogResults.jsp',
+		     //parent: angular.element(document.body),
+		     //targetEvent: ev,
+			 /*preserveScope : true,
+		     locals : {
+			 	results : result
+			 },*/
+		     clickOutsideToClose:true
+		   });
+		};
+	
+	
+	
+	
+	
+	
 	function isEmpty(obj) {
 		
 		var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -206,18 +238,39 @@ function functionsCatalogFunction(sbiModule_translate, sbiModule_restServices, $
 	
 	$scope.applyItem=function(item,event){ 
 		
-		sbiModule_restServices.alterContextPath("knowagedataminingengine");
+		sbiModule_restServices.alterContextPath("/knowagedataminingengine");
 		var functionId=item.id;
 		
-		sbiModule_restServices.get("executeFunction",functionId)
-		.success(function(result)
-		{
-			$log.info("Execution o function "+ functionId+" started, result:", result);			
-			sbiModule_restServices.alterContextPath("knowage");
+		$log.info("userId ", $scope.userId);
+
+		//sbiModule_restServices.get("executeFunction",functionId+"/?user_id=biadmin&DOCUMENT_LABEL=PythonDoc&DOCUMENT_COMMUNITIES=%5B%5D&DOCUMENT_IS_VISIBLE=true&SBI_EXECUTION_ROLE=admin&SBICONTEXT=%2Fknowage&DOCUMENT_FUNCTIONALITIES=%5B2%5D&SBI_COUNTRY=IT&DOCUMENT_AUTHOR=biadmin&DOCUMENT_DESCRIPTION=&document=1&IS_TECHNICAL_USER=true&SBI_SPAGO_CONTROLLER=%2Fservlet%2FAdapterHTTP&language=en&country=US&SBI_LANGUAGE=it&DOCUMENT_NAME=PythonDoc&NEW_SESSION=TRUE&DOCUMENT_IS_PUBLIC=true&DOCUMENT_VERSION=5&SBI_HOST=http%3A%2F%2Flocalhost%3A8080&SBI_ENVIRONMENT=DOCBROWSER&SBI_EXECUTION_ID=b9d02267227211e68ccb75d9d507deea&timereloadurl=1464178682338")
+		//sbiModule_restServices.get("executeFunction",functionId+"/?user_id="+$scope.userId)
 	
+		//"http://localhost:8080/knowagedataminingengine/restful-services/executeFunction/9/?user_id=biadmin"
+
+		
+		//sbiModule_restServices.post("1.0/functionexecution","url")
+		sbiModule_restServices.get("executeFunction",functionId+"/?user_id="+$scope.userId)
+		.success(function(results)
+		{
+			$log.info("Execution o function "+ functionId+" started, result:", results);			
+			//$scope.trustedHtml = $sce.trustAsHtml(result);
+			//sbiModule_restServices.alterContextPath("/knowagedataminingengine");
+			//CatalogCommad keyword riservata per chiamare i servizi del catalogo
+			//sbiModule_restServices.get("1.0/result","CatalogCommand/A/true")
+			//.success(function(result2)
+			//{
+			//	$log.info("OUTPUT DATAMINING RESULT:", result2);	
+				
+			//});
+			
+			$scope.showTabDialog(/*$event*//*results*/);
+			
+			
+					
 		});
 		
-		
+		sbiModule_restServices.alterContextPath("/knowage");
 		
 	};
 	
@@ -275,12 +328,31 @@ function functionsCatalogFunction(sbiModule_translate, sbiModule_restServices, $
 		return inputDataset;
 	}
 	
+	$scope.addInputVariable=function() 
+	{
+		$scope.cleanNewFunction();
+		var inputVariable={};
+
+		//Mi procuro la lista di label dei dataset da mostrare nel caso il tipo di inputItem fosse SpagoBI Dataset
+	
+		$scope.shownFunction.inputVariables.push(inputVariable);
+		$log.info("Added an input Variable ",$scope.shownFunction.inputVariables);
+		return inputVariable;
+	}
+	
 	
 	$scope.removeInputDataset=function(inputDataset)
 	{
 		var index=$scope.shownFunction.inputDatasets.indexOf(inputDataset);		
 		$scope.shownFunction.inputDatasets.splice(index, 1);
 		$log.info("Removed an input Dataset ",$scope.shownFunction.inputDatasets);
+	}
+	
+	$scope.removeInputVariable=function(inputVariable)
+	{
+		var index=$scope.shownFunction.inputVariables.indexOf(inputVariable);		
+		$scope.shownFunction.inputVariables.splice(index, 1);
+		$log.info("Removed an input Variable ",$scope.shownFunction.inputVariables);
 	}
 	
 	
@@ -305,10 +377,10 @@ function functionsCatalogFunction(sbiModule_translate, sbiModule_restServices, $
 	
 	$scope.removeOutputItem=function(output)
 	{		
-		var output={};
-		$scope.shownFunction.outputItems.push(output);
-		$log.info("Added an outputItem ",$scope.shownFunction.outputItems);
-		return output;
+		var index=$scope.shownFunction.outputItems.indexOf(output);		
+		$scope.shownFunction.outputItems.splice(index, 1);
+		$log.info("Removed an output Item ",$scope.shownFunction.output);
+		
 	}
 	
 	//----------------------------------------------Application Logic-----------------------------------------
@@ -317,9 +389,18 @@ function functionsCatalogFunction(sbiModule_translate, sbiModule_restServices, $
 	$scope.obtainDatasetLabelsRESTcall();
 	$scope.obtainCatalogFunctionsRESTcall();
 	
+	
+	
 };
 
 
+function functionCatalogResults($scope,$mdDialog/*, $log,results*/)
+{
+	//$log.info("received results: "/*,results*/);
+	
+	
+	
+};
 
 
 
