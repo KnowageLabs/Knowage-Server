@@ -215,7 +215,7 @@ public class PythonOutputExecutor {
 			// comma separated
 
 			logger.debug("Evaluated result");
-		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.SPAGOBI_DS_OUTPUT) && outVal != null && out.getOutputName() != null) {
+		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.DATASET_OUTPUT) && outVal != null && out.getOutputName() != null) {
 			logger.debug("SpagoBI output");
 			String pythonResult = null;
 			CreateDatasetResult creationResult = null;

@@ -151,7 +151,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 			$log.info("Shown function to send with POST", body);
 	
 			
-			sbiModule_restServices.post("1.0/FunctionsCatalog","setCatalogFunction",body)
+			sbiModule_restServices.post("1.0/FunctionsCatalog","insertCatalogFunction",body)
 			.success(function(data)
 			{			
 					$log.info("Catalog Function Added!");

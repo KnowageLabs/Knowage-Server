@@ -31,7 +31,7 @@ public class DataMiningConstants {
 	public static final String HTML_OUTPUT = "html";
 	public static final String TEXT_OUTPUT = "text";
 	public static final String SCRIPT_OUTPUT = "script";
-	public static final String SPAGOBI_DS_OUTPUT = "spagobi_ds";
+	public static final String DATASET_OUTPUT = "Dataset";
 
 	public static final String EXECUTION_TYPE_MANUAL = "manual";
 	public static final String EXECUTION_TYPE_AUTO = "auto";

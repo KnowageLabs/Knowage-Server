@@ -8,12 +8,13 @@ import java.util.Map;
 public class CatalogFunction {
 	private int functionId;
 	private String name;
+	private String description;
 	private String language;
 	private String script;
 
-	private Map<String, String> sbiFunctionInputVariables = new HashMap<String, String>();
-	private List<String> sbiFunctionInputDatasets = new ArrayList<String>();
-	private Map<String, String> sbiFunctionOutput = new HashMap<String, String>();
+	private Map<String, String> inputVariables = new HashMap<String, String>();
+	private List<String> inputDatasets = new ArrayList<String>();
+	private Map<String, String> outputs = new HashMap<String, String>();
 
 	public int getFunctionId() {
 		return functionId;
@@ -29,6 +30,14 @@ public class CatalogFunction {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getLanguage() {
@@ -47,28 +56,28 @@ public class CatalogFunction {
 		this.script = script;
 	}
 
-	public Map<String, String> getSbiFunctionInputVariables() {
-		return sbiFunctionInputVariables;
+	public Map<String, String> getInputVariables() {
+		return inputVariables;
 	}
 
-	public void setSbiFunctionInputVariables(Map<String, String> sbiFunctionInputVariables) {
-		this.sbiFunctionInputVariables = sbiFunctionInputVariables;
+	public void setInputVariables(Map<String, String> inputVariables) {
+		this.inputVariables = inputVariables;
 	}
 
-	public List<String> getSbiFunctionInputDatasets() {
-		return sbiFunctionInputDatasets;
+	public List<String> getInputDatasets() {
+		return inputDatasets;
 	}
 
-	public void setSbiFunctionInputDatasets(List<String> sbiFunctionInputDatasets) {
-		this.sbiFunctionInputDatasets = sbiFunctionInputDatasets;
+	public void setInputDatasets(List<String> inputDatasets) {
+		this.inputDatasets = inputDatasets;
 	}
 
-	public Map<String, String> getSbiFunctionOutput() {
-		return sbiFunctionOutput;
+	public Map<String, String> getOutputs() {
+		return outputs;
 	}
 
-	public void setSbiFunctionOutput(Map<String, String> sbiFunctionOutput) {
-		this.sbiFunctionOutput = sbiFunctionOutput;
+	public void setOutputs(Map<String, String> outputs) {
+		this.outputs = outputs;
 	}
 
 }

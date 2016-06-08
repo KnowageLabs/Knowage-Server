@@ -74,6 +74,10 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			serviceName: 'domainsforfinaluser/listValueDescriptionByType',
 			baseParams: baseParams
 		});
+		this.services["getDsCategories"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'domainsforfinaluser/ds-categories',
+			baseParams: baseParams
+		});
 		this.services["save"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: 'selfservicedataset/save',
 			baseParams: baseParams
@@ -329,7 +333,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
     		proxy: {
     			type: 'ajax',
     			extraParams : {DOMAIN_TYPE:"CATEGORY_TYPE"},
-    			url:  this.services['getCategories'],
+    			url:  this.services['getDsCategories'],
     			reader: {
     				type:"json"
     			}

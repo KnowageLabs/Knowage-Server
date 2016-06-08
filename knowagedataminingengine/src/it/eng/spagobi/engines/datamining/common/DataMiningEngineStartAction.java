@@ -24,6 +24,7 @@ import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.engines.datamining.DataMiningEngine;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
@@ -181,12 +182,9 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 
 	@GET
 	@Path("/executeFunction/{functionId}")
-	// @Produces("text/html")
 	@Produces("application/json")
 	public String executeCatalogFunction(@PathParam("functionId") int functionId, @Context HttpServletResponse response) {
 		logger.debug("IN");
-
-		// JSONObject retObj = new JSONObject();
 		SbiCatalogFunction function = null;
 		DataMiningEngineInstance dataMiningEngineInstance = null;
 		JSONArray serviceResponse = new JSONArray();
@@ -211,12 +209,12 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 				IDataSet iDataset = dsDAO.loadDataSetById(dsId);
 				d.setLabel(iDataset.getLabel());
 				d.setCanUpload(true);
-				d.setName(iDataset.getName()); // name in script, da cambiare, settato dall'utente e valido per l'utilizzatore
+				d.setName(iDataset.getName());
 				d.setFileName(iDataset.getName() + ".csv");
 				d.setType(iDataset.getDsType());
 
 				d.setOptions("sep=','");
-				d.setReadType("csv"); // Default dataset di tipo file e di tipo CSV
+				d.setReadType("csv"); // Default dataset is CSV file
 				dataminingDatasets.add(d);
 			}
 			template.setDatasets(dataminingDatasets);
@@ -245,8 +243,8 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 				out.setOutputName(o.getId().getLabel()); // Name=label
 				IDomainDAO domainsDAO = DAOFactory.getDomainDAO();
 				String type = domainsDAO.loadDomainById(o.getOutType()).getValueName();
-				if (type.equals("SpagoBI Dataset")) {
-					type = "spagobi_ds";
+				if (type.equals("Dataset")) {
+					type = DataMiningConstants.DATASET_OUTPUT;
 				}
 				out.setOutputType(type);
 				out.setOutputMode("auto"); // ??
@@ -288,8 +286,6 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 			logger.debug("Engine instance succesfully created");
 
 			getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, dataMiningEngineInstance);
-			// getExecutionSession().setAttributeInSession(EngineConstants.DOCUMENT_ID, getDocumentId());
-			// getExecutionSession().setAttributeInSession(EngineConstants.ENV_DOCUMENT_LABEL, getDocumentLabel()); //tolta ma c'era
 			try {
 				// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
 				servletRequest = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
@@ -297,7 +293,6 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 
 				response.setContentType("text/html");
 				response.setCharacterEncoding("UTF-8");
-				// servletRequest.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(servletRequest, response);
 				List<DataMiningResult> dataminingExecutionResults = FunctionExecutor.executeFunction(dataMiningEngineInstance, getUserProfile());
 				serviceResponse = new JSONArray();
 				for (DataMiningResult r : dataminingExecutionResults) {

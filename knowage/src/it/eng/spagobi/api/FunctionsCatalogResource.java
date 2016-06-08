@@ -57,45 +57,24 @@ import org.json.JSONObject;
 public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	public static transient Logger logger = Logger.getLogger(FunctionsCatalogResource.class);
 
-	/*
-	 * @GET
-	 *
-	 * @Path("/getCatalogFunction/{functionId}")
-	 *
-	 * @Produces(MediaType.APPLICATION_JSON) public String getCatalogFunction(@PathParam("functionId") int functionId) throws IOException { logger.debug("IN");
-	 *
-	 * JSONObject retObj = new JSONObject();
-	 *
-	 * try { ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO(); SbiCatalogFunction function = fcDAO.loadFunction(functionId);
-	 * System.out.println(function.getName()); retObj.append("function", function);
-	 *
-	 * } catch (Exception e) { logger.error("Error returning function identified by id " + functionId, e); throw new
-	 * SpagoBIServiceException("REST service /getCatalogFunction/", "Error retturning function ", e); }
-	 *
-	 * logger.debug("OUT"); return retObj.toString();
-	 *
-	 * }
-	 */
-
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG })
 	public String getAllCatalogFunctions() throws IOException {
 		logger.debug("IN");
 
 		JSONObject retObj = new JSONObject();
-		JSONArray funcArray = new JSONArray();
-		List<SbiCatalogFunction> functions = null;
 
 		try {
+			JSONArray funcArray = new JSONArray();
 			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
-			functions = fcDAO.loadAllCatalogFunctions();
+			fcDAO.setUserProfile(getUserProfile());
+			List<SbiCatalogFunction> functions = fcDAO.loadAllCatalogFunctions();
 			for (SbiCatalogFunction f : functions) {
 				JSONObject funcJsonObject = sbiFunctionToJsonObject(f);
 				funcArray.put(funcJsonObject);
-
 			}
-
 			retObj.put("functions", funcArray);
 
 		} catch (Exception e) {
@@ -108,6 +87,161 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	}
 
+	@POST
+	@Path("/insertCatalogFunction")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG })
+	public String insertCatalogFunction(String body) throws IOException {
+		logger.debug("IN");
+		ICatalogFunctionDAO catalogFunctionDAO = null;
+
+		CatalogFunction itemToInsert = new CatalogFunction();
+		JSONObject response = new JSONObject();
+
+		try {
+			int catalogFunctionId = -1;
+
+			JSONObject jsonObj = new JSONObject(body);
+			String name = jsonObj.getString("name");
+			String description = jsonObj.getString("description");
+			String language = jsonObj.getString("language");
+			String script = jsonObj.getString("script");
+
+			JSONArray jsonInputDatasets = jsonObj.getJSONArray("inputDatasets");
+			JSONArray jsonInputVariables = jsonObj.getJSONArray("inputVariables");
+
+			JSONArray outputItems = jsonObj.getJSONArray("outputItems");
+
+			Map<String, String> inputVariables = new HashMap<String, String>();
+			List<String> inputDatasets = new ArrayList<String>();
+			for (int i = 0; i < jsonInputDatasets.length(); i++) {
+
+				JSONObject inputItemJSON = jsonInputDatasets.getJSONObject(i);
+
+				String datasetLabel = inputItemJSON.getString("label");
+				inputDatasets.add(datasetLabel);
+			}
+
+			for (int i = 0; i < jsonInputVariables.length(); i++) {
+
+				JSONObject inputItemJSON = jsonInputVariables.getJSONObject(i);
+				String varName = inputItemJSON.getString("name");
+				String varValue = inputItemJSON.getString("value");
+				inputVariables.put(varName, varValue);
+			}
+
+			Map<String, String> outputs = new HashMap<String, String>();
+			for (int i = 0; i < outputItems.length(); i++) {
+
+				JSONObject outputItemJSON = outputItems.getJSONObject(i);
+				String outLabel = outputItemJSON.getString("label");
+				String outType = outputItemJSON.getString("type");
+				outputs.put(outLabel, outType);
+
+			}
+			itemToInsert.setName(name);
+			itemToInsert.setDescription(description);
+			itemToInsert.setLanguage(language);
+			itemToInsert.setScript(script);
+
+			catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
+			catalogFunctionId = catalogFunctionDAO.insertCatalogFunction(itemToInsert, inputDatasets, inputVariables, outputs);
+			logger.debug("Catalog function ID equals to [" + catalogFunctionId + "]");
+			response = jsonObj;
+			response.put("id", catalogFunctionId);
+
+		} catch (EMFUserError | JSONException e) {
+			throw new SpagoBIServiceException("Error while insert catalog function", e);
+		}
+		return response.toString();
+	}
+
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("updateCatalogFunction/{functionId}")
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG })
+	public String updateCatalogFunction(@PathParam("functionId") int functionId, String body) {
+
+		logger.debug("IN");
+		ICatalogFunctionDAO catalogFunctionDAO = null;
+
+		CatalogFunction itemToInsert = new CatalogFunction();
+		JSONObject response = new JSONObject();
+
+		try {
+			JSONObject jsonObj = new JSONObject(body);
+			String name = jsonObj.getString("name");
+			String description = jsonObj.getString("description");
+			String language = jsonObj.getString("language");
+			String script = jsonObj.getString("script");
+
+			JSONArray jsonInputDatasets = jsonObj.getJSONArray("inputDatasets");
+			JSONArray jsonInputVariables = jsonObj.getJSONArray("inputVariables");
+			JSONArray outputItems = jsonObj.getJSONArray("outputItems");
+
+			Map<String, String> inputVariables = new HashMap<String, String>();
+			List<String> inputDatasets = new ArrayList<String>();
+			for (int i = 0; i < jsonInputDatasets.length(); i++) {
+				JSONObject inputItemJSON = jsonInputDatasets.getJSONObject(i);
+				String datasetLabel = inputItemJSON.getString("label");
+				inputDatasets.add(datasetLabel);
+			}
+
+			for (int i = 0; i < jsonInputVariables.length(); i++) {
+				JSONObject inputItemJSON = jsonInputVariables.getJSONObject(i);
+				String varName = inputItemJSON.getString("name");
+				String varValue = inputItemJSON.getString("value");
+				inputVariables.put(varName, varValue);
+			}
+
+			Map<String, String> outputs = new HashMap<String, String>();
+			for (int i = 0; i < outputItems.length(); i++) {
+				JSONObject outputItemJSON = outputItems.getJSONObject(i);
+				String outLabel = outputItemJSON.getString("label");
+				String outType = outputItemJSON.getString("type");
+				outputs.put(outLabel, outType);
+			}
+			itemToInsert.setName(name);
+			itemToInsert.setDescription(description);
+			itemToInsert.setLanguage(language);
+			itemToInsert.setScript(script);
+			itemToInsert.setInputDatasets(inputDatasets);
+			itemToInsert.setOutputs(outputs);
+			itemToInsert.setInputVariables(inputVariables);
+
+			catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
+			catalogFunctionDAO.setUserProfile(getUserProfile());
+			catalogFunctionDAO.updateCatalogFunction(itemToInsert, functionId);
+
+			response.put("Response", "OK");
+
+		} catch (EMFUserError | JSONException e) {
+			throw new SpagoBIServiceException("Error while update catalog function " + functionId, e);
+		}
+		return response.toString();
+	}
+
+	@GET
+	@Path("/deleteFunction/{functionId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG })
+	public String deleteCatalogFunction(@PathParam("functionId") int functionId) {
+		logger.debug("IN");
+		JSONObject retObj = new JSONObject();
+		try {
+			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
+			fcDAO.setUserProfile(getUserProfile());
+			fcDAO.deleteCatalogFunction(functionId);
+			retObj.put("Response", "OK");
+		} catch (EMFUserError | JSONException e) {
+			throw new SpagoBIServiceException("Error returning function identified by id " + functionId, e);
+		}
+		logger.debug("OUT");
+		return retObj.toString();
+	}
+
 	private JSONObject sbiFunctionToJsonObject(SbiCatalogFunction sbiFunction) {
 
 		JSONObject ret = null;
@@ -115,6 +249,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			ret = new JSONObject();
 			ret.put("id", sbiFunction.getFunctionId());
 			ret.put("name", sbiFunction.getName());
+			ret.put("description", sbiFunction.getDescription());
 			ret.put("language", sbiFunction.getLanguage());
 			ret.put("script", sbiFunction.getScript());
 			JSONArray inputVariables = new JSONArray();
@@ -162,208 +297,8 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			ret.put("outputItems", outputItems);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new SpagoBIServiceException("Error while insert catalog function", e);
 		}
 		return ret;
 	}
-
-	@POST
-	@Path("/setCatalogFunction")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG })
-	public String setCatalogFunction(String body) throws IOException {
-		logger.debug("IN");
-		int catalogFunctionId = -1;
-		ICatalogFunctionDAO catalogFunctionDAO = null;
-
-		CatalogFunction itemToInsert = new CatalogFunction();
-		JSONObject jsonObj = null;
-		String functionName = null, language = null, script = null;
-		JSONObject response = new JSONObject();
-
-		try {
-
-			jsonObj = new JSONObject(body);
-			functionName = jsonObj.getString("name");
-			language = jsonObj.getString("language");
-			script = jsonObj.getString("script");
-
-			JSONArray jsonInputDatasets = jsonObj.getJSONArray("inputDatasets");
-			JSONArray jsonInputVariables = jsonObj.getJSONArray("inputVariables");
-
-			JSONArray outputItems = jsonObj.getJSONArray("outputItems");
-
-			Map<String, String> inputVariables = new HashMap<String, String>();
-			List<String> inputDatasets = new ArrayList<String>();
-			for (int i = 0; i < jsonInputDatasets.length(); i++) {
-
-				JSONObject inputItemJSON = jsonInputDatasets.getJSONObject(i);
-
-				String datasetLabel = inputItemJSON.getString("label");
-				inputDatasets.add(datasetLabel);
-			}
-
-			for (int i = 0; i < jsonInputVariables.length(); i++) {
-
-				JSONObject inputItemJSON = jsonInputVariables.getJSONObject(i);
-				String varName = inputItemJSON.getString("name");
-				String varValue = inputItemJSON.getString("value");
-				inputVariables.put(varName, varValue);
-			}
-
-			Map<String, String> outputs = new HashMap<String, String>();
-			for (int i = 0; i < outputItems.length(); i++) {
-
-				JSONObject outputItemJSON = outputItems.getJSONObject(i);
-				String outLabel = outputItemJSON.getString("label");
-				String outType = outputItemJSON.getString("type");
-				outputs.put(outLabel, outType);
-
-			}
-			itemToInsert.setName(functionName);
-			itemToInsert.setLanguage(language);
-			itemToInsert.setScript(script);
-
-			catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
-			catalogFunctionId = catalogFunctionDAO.insertCatalogFunction(itemToInsert, inputDatasets, inputVariables, outputs);
-			System.out.println("CATALOG_FUNCTION_ID=" + catalogFunctionId);
-			response = jsonObj;
-			response.put("id", catalogFunctionId);
-
-		} catch (JSONException e2) {
-			e2.printStackTrace();
-		} catch (EMFUserError e1) {
-			e1.printStackTrace();
-		}
-
-		return response.toString();
-	}
-
-	@PUT
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("updateCatalogFunction/{functionId}")
-	public String updateCatalogFunction(@PathParam("functionId") int functionId, String body) {
-
-		logger.debug("IN");
-		int catalogFunctionId = -1;
-		ICatalogFunctionDAO catalogFunctionDAO = null;
-
-		CatalogFunction itemToInsert = new CatalogFunction();
-		JSONObject jsonObj = null;
-		String functionName = null, language = null, script = null;
-		JSONObject response = new JSONObject();
-
-		try {
-
-			jsonObj = new JSONObject(body);
-			functionName = jsonObj.getString("name");
-			language = jsonObj.getString("language");
-			script = jsonObj.getString("script");
-
-			JSONArray jsonInputDatasets = jsonObj.getJSONArray("inputDatasets");
-			JSONArray jsonInputVariables = jsonObj.getJSONArray("inputVariables");
-
-			JSONArray outputItems = jsonObj.getJSONArray("outputItems");
-
-			Map<String, String> inputVariables = new HashMap<String, String>();
-			List<String> inputDatasets = new ArrayList<String>();
-			for (int i = 0; i < jsonInputDatasets.length(); i++) {
-
-				JSONObject inputItemJSON = jsonInputDatasets.getJSONObject(i);
-
-				String datasetLabel = inputItemJSON.getString("label");
-				inputDatasets.add(datasetLabel);
-			}
-
-			for (int i = 0; i < jsonInputVariables.length(); i++) {
-
-				JSONObject inputItemJSON = jsonInputVariables.getJSONObject(i);
-				String varName = inputItemJSON.getString("name");
-				String varValue = inputItemJSON.getString("value");
-				inputVariables.put(varName, varValue);
-			}
-
-			Map<String, String> outputs = new HashMap<String, String>();
-			for (int i = 0; i < outputItems.length(); i++) {
-
-				JSONObject outputItemJSON = outputItems.getJSONObject(i);
-				String outLabel = outputItemJSON.getString("label");
-				String outType = outputItemJSON.getString("type");
-				outputs.put(outLabel, outType);
-
-			}
-			itemToInsert.setName(functionName);
-			itemToInsert.setLanguage(language);
-			itemToInsert.setScript(script);
-			itemToInsert.setSbiFunctionInputDatasets(inputDatasets);
-			itemToInsert.setSbiFunctionOutput(outputs);
-			itemToInsert.setSbiFunctionInputVariables(inputVariables);
-
-			catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
-			catalogFunctionDAO.setUserProfile(getUserProfile());
-
-			catalogFunctionDAO.updateCatalogFunction(itemToInsert, functionId);
-
-			response.put("Response", "OK");
-
-		} catch (JSONException e2) {
-			e2.printStackTrace();
-		} catch (EMFUserError e1) {
-			e1.printStackTrace();
-		}
-
-		return response.toString();
-
-	}
-
-	@GET
-	@Path("/deleteFunction/{functionId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String deleteCatalogFunction(@PathParam("functionId") int functionId) {
-		logger.debug("IN");
-
-		JSONObject retObj = new JSONObject();
-
-		try {
-			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
-			fcDAO.deleteCatalogFunction(functionId);
-
-			retObj.put("response", "OK");
-		} catch (EMFUserError e) {
-			logger.error("Error returning function identified by id " + functionId, e);
-			e.printStackTrace();
-		} catch (JSONException e2) {
-			e2.printStackTrace();
-		}
-
-		logger.debug("OUT");
-
-		return retObj.toString();
-
-	}
-
-	/*
-	 * @GET
-	 * 
-	 * @Path("/executeFunction/{functionId}")
-	 * 
-	 * @Produces(MediaType.APPLICATION_JSON) public String executeCatalogFunction(@PathParam("functionId") int functionId) { logger.debug("IN");
-	 * 
-	 * JSONObject retObj = new JSONObject(); SbiCatalogFunction function = null;
-	 * 
-	 * try { ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO(); function = fcDAO.getCatalogFunctionById(functionId); DataMining
-	 * DataMiningEngineInstance(DataMiningTemplate template, Map env) {
-	 * 
-	 * retObj.put("functionResult", function); } catch (EMFUserError e) { logger.error("Error returning function identified by id " + functionId, e);
-	 * e.printStackTrace(); } catch (JSONException e2) { e2.printStackTrace(); }
-	 * 
-	 * logger.debug("OUT");
-	 * 
-	 * return retObj.toString();
-	 * 
-	 * }
-	 */
-
 }

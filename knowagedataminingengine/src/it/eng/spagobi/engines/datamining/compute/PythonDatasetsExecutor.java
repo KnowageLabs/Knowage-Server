@@ -19,6 +19,7 @@ package it.eng.spagobi.engines.datamining.compute;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 
 import java.io.File;
@@ -52,13 +53,9 @@ public class PythonDatasetsExecutor {
 				if (options == null || options.equals("")) {
 					options = "sep = ','";
 					// all available options for pandas read_csv at http://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_csv.html
-
 				}
 
 				if (ds.getType().equalsIgnoreCase("file")) {
-					// if (ds.getReadType().equalsIgnoreCase("csv")) {
-					// String strPathUploadedFile = DataMiningUtils.getUserResourcesPath(profile).toString() + ds.getName();
-					// ///resources/DEFAULT_TENANT/datamining/biadmin/biadmin_DatasetOutput_first_element'
 					String strPathUploadedFile = PythonOutputExecutor.getDatasetsDirectoryPath();
 					resPythonExecution = PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n");
 					if (resPythonExecution < 0) {
@@ -73,28 +70,22 @@ public class PythonDatasetsExecutor {
 					if (resPythonExecution < 0) {
 						throw new Exception("Python script execution error");
 					}
-					// }
 
-				} else if (ds.getType().equalsIgnoreCase("spagobi_ds")) {
-					logger.debug("SpagoBI ds");
-					// spagobi dataset content could change independently from
+				} else if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_OUTPUT)) {
+					logger.debug("Dataset");
+					// dataset content could change independently from
 					// the engine, so it must be recalculated every time
-
-					// if (ds.getReadType().equalsIgnoreCase("csv")) {
 					String csvToEval = DataMiningUtils.getFileFromSpagoBIDataset(paramsFilled, ds, profile);
 					File file = new File(csvToEval);
 					String csvPath = file.getParent();
-					resPythonExecution = PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + csvPath/* csvToEval */+ "')\n");
+					resPythonExecution = PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + csvPath + "')\n");
 					if (resPythonExecution < 0) {
 						throw new Exception("Python script execution error");
 					}
-					resPythonExecution = PyLib.execScript(ds.getName() + " = pandas.read_" + "csv"/* ds.getReadType() */+ "('" + ds.getName() + ".csv',"
-							+ "sep=','" + ")\n");
+					resPythonExecution = PyLib.execScript(ds.getName() + " = pandas.read_" + "csv('" + ds.getName() + ".csv'," + "sep=','" + ")\n");
 					if (resPythonExecution < 0) {
 						throw new Exception("Python script execution error");
 					}
-					// }
-
 				}
 
 			}

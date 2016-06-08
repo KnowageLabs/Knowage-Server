@@ -72,7 +72,7 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 	public static String DATASET_ATTRIBUTE_CANUPLOAD = "canUpload";
 
 	public static final String DATASET_TYPE_FILE = "file";
-	public static final String DATASET_TYPE_SPAGOBI_DS = "spagobi_ds";
+	public static final String DATASET_TYPE_SPAGOBI_DS = "Dataset";
 
 	public static String OUTPUT_ATTRIBUTE_TYPE = "type";
 	public static String OUTPUT_ATTRIBUTE_NAME = "name";

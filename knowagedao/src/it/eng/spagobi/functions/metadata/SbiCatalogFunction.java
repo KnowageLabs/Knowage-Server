@@ -14,6 +14,7 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 
 	private int functionId;
 	private String name;
+	private String description;
 	private String language;
 	private String script;
 
@@ -24,9 +25,10 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 	public SbiCatalogFunction() {
 	}
 
-	public SbiCatalogFunction(int functionId, String name, String language, String script) {
+	public SbiCatalogFunction(int functionId, String name, String description, String language, String script) {
 		this.functionId = functionId;
 		this.name = name;
+		this.description = description;
 		this.language = language;
 		this.script = script;
 	}
@@ -45,6 +47,14 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getLanguage() {

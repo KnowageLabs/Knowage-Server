@@ -521,16 +521,16 @@
 	<DOMAIN valueCd="CUSTOM" valueNm="sbidomains.nm.customValue"
 		domainCd="DATE_FORMAT" domainNm="Date Format domain" valueDs="" />
 		
-	<DOMAIN valueCd="spagobi_ds" valueNm="spagobi_ds"
-		domainCd="CatalogOut" domainNm="CatalogOut" valueDs="CatalogOut" />	
+	<DOMAIN valueCd="Dataset" valueNm="Dataset"
+		domainCd="FUNCTION_OUTPUT" domainNm="Function output type domain" valueDs="Dataset" />	
 		
 	<DOMAIN valueCd="Text" valueNm="Text"
-		domainCd="CatalogOut" domainNm="CatalogOut" valueDs="CatalogOut" />		
+		domainCd="FUNCTION_OUTPUT" domainNm="Function output type domain" valueDs="Text" />		
 	
 	<DOMAIN valueCd="Image" valueNm="Image"
-		domainCd="CatalogOut" domainNm="CatalogOut" valueDs="CatalogOut" />		
+		domainCd="FUNCTION_OUTPUT" domainNm="Function output type domain" valueDs="Image" />		
 	
 	<DOMAIN valueCd="Undefined" valueNm="Undefined"
-		domainCd="CatalogOut" domainNm="CatalogOut" valueDs="CatalogOut" />
+		domainCd="FUNCTION_OUTPUT" domainNm="Function output type domain" valueDs="Undefined" />
 			
 </DOMAINS>

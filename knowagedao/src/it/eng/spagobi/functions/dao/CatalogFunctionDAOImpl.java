@@ -15,7 +15,6 @@ import it.eng.spagobi.functions.metadata.SbiFunctionOutput;
 import it.eng.spagobi.functions.metadata.SbiFunctionOutputId;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.dao.SbiDataSetDAOImpl;
 import it.eng.spagobi.utilities.CatalogFunction;
 import it.eng.spagobi.utilities.assertion.Assert;
 
@@ -31,35 +30,27 @@ import org.hibernate.Transaction;
 
 public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICatalogFunctionDAO {
 
-	static private Logger logger = Logger.getLogger(SbiDataSetDAOImpl.class);
+	static private Logger logger = Logger.getLogger(CatalogFunctionDAOImpl.class);
 
 	@Override
 	public List<SbiCatalogFunction> loadAllCatalogFunctions() {
-
-		Session session;
-		Transaction transaction;
-		List<SbiCatalogFunction> sbiFunctionCatalog = null;
-
 		logger.debug("IN");
-
-		session = null;
+		Session session = null;
+		List<SbiCatalogFunction> sbiCatalogFunctions = null;
 		try {
-
 			session = getSession();
 			Assert.assertNotNull(session, "session cannot be null");
 			Query hibQuery = session.createQuery("from SbiCatalogFunction");
-			sbiFunctionCatalog = hibQuery.list();
-
+			sbiCatalogFunctions = hibQuery.list();
 		} catch (Throwable t) {
 			throw new SpagoBIDOAException("An error occured while reading Catalog Functions from DB", t);
-
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
 			}
 			logger.debug("OUT");
 		}
-		return sbiFunctionCatalog;
+		return sbiCatalogFunctions;
 	}
 
 	@Override
@@ -135,8 +126,6 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			// check label is already present; insert or modify dependently
 			IDataSet iDataSet = dataSetDAO.loadDataSetByLabel(datasetLabel);
 			int dsId = iDataSet.getId();
-			// int dsVersNum = 0; // COME PROCURARSELO?
-
 			dataset = new SbiFunctionInputDataset(new SbiFunctionInputDatasetId(sbiCatalogFunction.getFunctionId(), dsId));
 			inputDatasetSet.add(dataset);
 		}
@@ -168,7 +157,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		for (String varLabel : outputs.keySet()) {
 			String outType = outputs.get(varLabel);
 			try {
-				domain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("CatalogOut", outType);
+				domain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("FUNCTION_OUTPUT", outType);
 				Integer outTypeSbiDomainId = domain.getValueId();
 				var = new SbiFunctionOutput(new SbiFunctionOutputId(sbiCatalogFunction.getFunctionId(), varLabel), sbiCatalogFunction, outTypeSbiDomainId);
 				outputVariablesSet.add(var);
@@ -187,6 +176,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		hibFunctionCatalogItem.setFunctionId(functionItem.getFunctionId());
 		hibFunctionCatalogItem.setLanguage(functionItem.getLanguage());
 		hibFunctionCatalogItem.setName(functionItem.getName());
+		hibFunctionCatalogItem.setDescription(functionItem.getDescription());
 		hibFunctionCatalogItem.setScript(functionItem.getScript());
 
 		return hibFunctionCatalogItem;
@@ -218,21 +208,17 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			for (Object o : hibCatFunction.getSbiFunctionInputDatasets()) {
 				SbiFunctionInputDataset di = (SbiFunctionInputDataset) o;
 				session.delete(di);
-				// di.setSbiCatalogFunction(null);
 			}
 			for (Object o : hibCatFunction.getSbiFunctionOutputs()) {
 				SbiFunctionOutput out = (SbiFunctionOutput) o;
 				session.delete(out);
-				// out.setSbiCatalogFunction(null);
 			}
 			hibCatFunction.setSbiFunctionOutputs(null);
 
 			for (Object o : hibCatFunction.getSbiFunctionInputVariables()) {
 				SbiFunctionInputVariable vi = (SbiFunctionInputVariable) o;
 				session.delete(vi);
-				// vi.setSbiCatalogFunction(null);
 			}
-			// aggiunti dopo
 			if (hibCatFunction.getSbiFunctionInputVariables() != null)
 				hibCatFunction.getSbiFunctionInputVariables().clear();
 			if (hibCatFunction.getSbiFunctionOutputs() != null)
@@ -251,14 +237,12 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			} catch (Throwable t) {
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
-			hibCatFunction.setSbiFunctionInputVariables(getSbiFunctionInputVariablesSet(updatedCatalogFunction.getSbiFunctionInputVariables(), hibCatFunction));
-			hibCatFunction.setSbiFunctionOutputs(getSbiFunctionOutputSet(updatedCatalogFunction.getSbiFunctionOutput(), hibCatFunction));
-			hibCatFunction.setSbiFunctionInputDatasets(getSbiFunctionInputDatasetSet(updatedCatalogFunction.getSbiFunctionInputDatasets(), hibCatFunction));
-			// hibCatFunction.setFunctionId(catalogFunctionId);
+			hibCatFunction.setSbiFunctionInputVariables(getSbiFunctionInputVariablesSet(updatedCatalogFunction.getInputVariables(), hibCatFunction));
+			hibCatFunction.setSbiFunctionOutputs(getSbiFunctionOutputSet(updatedCatalogFunction.getOutputs(), hibCatFunction));
+			hibCatFunction.setSbiFunctionInputDatasets(getSbiFunctionInputDatasetSet(updatedCatalogFunction.getInputDatasets(), hibCatFunction));
 			hibCatFunction.setLanguage(updatedCatalogFunction.getLanguage());
 			hibCatFunction.setName(updatedCatalogFunction.getName());
 			hibCatFunction.setScript(updatedCatalogFunction.getScript());
-			// session.clear();
 			session.saveOrUpdate(hibCatFunction);
 			transaction.commit();
 
