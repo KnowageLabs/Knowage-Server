@@ -15,5 +15,7 @@ angular.module('olap.directives', [
                                    'sbi_chart_toolbar',
                                    'cell_directive',
                                    'member_directive',
-                                   'export_version_dialogs'
+                                   'export_version_dialogs',
+                                   'drill_down_command_directive',
+                                   'drill_up_command_directive'
                                    ]);
