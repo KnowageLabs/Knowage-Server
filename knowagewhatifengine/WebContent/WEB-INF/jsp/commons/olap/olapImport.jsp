@@ -23,6 +23,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/ChartToolbarRight.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/Member.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/ExportVersionDialog.js"></script>
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/DrillDownCommand.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/DrillUpCommand.js"></script>
 <!-- SERVICES -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/spagobi/commons/Settings.js"></script>
