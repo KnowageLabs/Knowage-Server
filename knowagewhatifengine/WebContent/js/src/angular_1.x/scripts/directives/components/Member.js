@@ -2,54 +2,65 @@ angular.module('member_directive',[])
 	.directive('member', function (sbiModule_restServices,sbiModule_messaging,$mdDialog) {
 	    return {
 	        restrict: 'A',
-	        link: function (scope, element, attrs) {
-	            
+	        
+	        link: function (scope, $element, attrs) {
+	           
 	           
 	            for(var i =0;i< scope.members.length;i++){
-	            	if(scope.members[i].uniqueName===element[0].attributes['uniqueName'].value){
+	            	if(scope.members[i].position===attrs.position&&scope.members[i].uniqueName===attrs.uniquename){
 	            		
-	            		element[0].className = 'x-pivot-header-column-selected';
+	            		$element.addClass('pivot-table-selected');
 	            		break;
 	            	}
 	            	
 	            }
 	            
-	           
-	         element.bind('click', function ($event,toaster) {
-	        	 
-	        	
-	        		 
-	        		 	scope.selectedMember.uniqueName = element[0].attributes['uniqueName'].value;
-			            scope.selectedMember.level = element[0].attributes['level'].value;
-			            scope.selectedMember.parentMember = element[0].attributes['parentMember'].value;
-			            scope.selectedMember.axisOrdinal = element[0].attributes['axisOrdinal'].value;
+	            $element.bind('$destroy', function () {
+	                
+	        	 	
+		        	 
+		        	 $element.detach();
+			        
+			          
+		        	 console.log("jjjjjjjjjjjjjjjjjjjjjjjjj");
+		               
+		            });
+	            
+	            var onClick = function($event,toaster){
+
+	        	 	$event.preventDefault()
+	        	 	$event.stopPropagation();
+	        		 	scope.selectedMember.uniqueName = attrs.uniquename;
+			            scope.selectedMember.level = attrs.level;
+			            scope.selectedMember.parentMember = attrs.parentmember;
+			            scope.selectedMember.axisOrdinal = attrs.axisordinal;
+			            scope.selectedMember.hierarchyUniqueName = attrs.hierarchyuniquename;
+			            scope.selectedMember.position = attrs.position;
 			            var contains = false;
 			            for(var i =0;i< scope.members.length;i++){
-			            	if(scope.members[i].uniqueName===scope.selectedMember.uniqueName){
+			            	if(scope.members[i].position===scope.selectedMember.position){
 			            		contains = true;
 			            		scope.members.splice(i,1);
-			            		element[0].className = 'x-pivot-header-column';
+			            		$element[0].className = 'pivot-table th';
 			            		break;
 			            	}
 			            	
 			            }
 			            
 			            if(!contains){
-			            	if(scope.members.length>0&&scope.members[scope.members.length-1].level===scope.selectedMember.level&&scope.members[scope.members.length-1].parentMember===scope.selectedMember.parentMember){
+			            	if(scope.members.length>0&&scope.selectedMember.hierarchyUniqueName===scope.members[0].hierarchyUniqueName){
 			            		scope.members.push(angular.copy(scope.selectedMember));
-				            	element[0].className = 'x-pivot-header-column-selected';
+				            	$element[0].className = 'pivot-table-selected';
 			            	}else if(scope.members.length===0){
 			            		scope.members.push(angular.copy(scope.selectedMember));
-				            	element[0].className = 'x-pivot-header-column-selected';
+				            	$element[0].className = 'pivot-table-selected';
 			            	}
 			            	
 			            	
 			            }
+			            console.log(scope.members);
 			            
-			            element[0].focus();
-		        	 console.log(scope.selectedMember);
-		        	 console.log(scope.members);
-		        	 console.log($event.target+" event")
+			         
 	        		
 	        if(scope.modelConfig.showCompactProperties == true){
 	        	
@@ -77,11 +88,10 @@ angular.module('member_directive',[])
 	    		});
 	        	
 	        }
-	                
-	        	 	
-	        	 	
-	               
-	            });
+	            }
+	            
+	           
+	         $element.bind('click', onClick);
 	        
 	         
 	        }
