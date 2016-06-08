@@ -49,7 +49,8 @@ import org.pivot4j.datasource.SimpleOlapDataSource;
 import sun.misc.BASE64Encoder;
 
 /**
- * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin
+ *         (alberto.ghedin@eng.it)
  */
 public class WhatIfEngineConfig {
 
@@ -121,7 +122,8 @@ public class WhatIfEngineConfig {
 	private final static String EXPORT_FONT_SIZE_TAG = "fontSize";
 	private final static String EXPORT_FONT_FAMILY_TAG = "fontFamily";
 	private final static String EXPORT_ORIENTATION_TAG = "orientation";
-	
+	private final static String PIVOT_TABLE_PAGES_LOAD_COUNT = "PIVOT_TABLE_PAGES_LOAD_COUNT";
+
 	public String getTemplateFilePath() {
 		String templatePath = "";
 		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("TEMPLATE");
@@ -345,21 +347,20 @@ public class WhatIfEngineConfig {
 		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute(DEPTHLIMIT_TAG);
 		if (sb != null) {
 			String dpth = (String) sb.getAttribute("value");
-			//System.out.println(dpth);
+			// System.out.println(dpth);
 			return Integer.parseInt(dpth);
 			// return Integer.parseInt(sb.getAttribute("value").toString());
 		}
 		return -1;
 	}
 
-	
 	public ExportConfig getExportProperties() {
 		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute(EXPORT_TAG);
-		
-		String fontSize=null;
-		String fontFamily=null;
-		String orientation=null;
-		
+
+		String fontSize = null;
+		String fontFamily = null;
+		String orientation = null;
+
 		if (sb != null) {
 			fontSize = (String) sb.getAttribute(EXPORT_FONT_SIZE_TAG);
 			fontFamily = (String) sb.getAttribute(EXPORT_FONT_FAMILY_TAG);
@@ -367,15 +368,26 @@ public class WhatIfEngineConfig {
 		}
 		return new ExportConfig(fontFamily, fontSize, orientation);
 	}
-	
+
 	public int getDrillTroughMaxRows() {
 		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute(DRILLTROUGH_MAX_ROWS_TAG);
 		if (sb != null) {
 			String max = (String) sb.getAttribute("value");
-			//System.out.println(max);
+			// System.out.println(max);
 			return Integer.parseInt(max);
 		}
 		return -1;
+	}
+
+	public int getPivotTableLoadCount() {
+
+		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute(PIVOT_TABLE_PAGES_LOAD_COUNT);
+
+		if (sb != null) {
+			String pagesCount = (String) sb.getAttribute("value");
+			return Integer.parseInt(pagesCount);
+		}
+		return 20;
 	}
 
 	// -- ACCESS Methods -----------------------------------------------
