@@ -112,13 +112,13 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			// }
 
 			String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
-			attributes.put("ng-dblclick", "makeEditable('" + id + "','" + measureName + "')");
+			// attributes.put("ng-dblclick", "makeEditable('" + id + "','" +
+			// measureName + "')");
 			attributes.put("id", id);
 			attributes.put("measureName", measureName);
 			attributes.put("ordinal", String.valueOf(positionId));
 			attributes.put("value", value);
 			attributes.put("cell", null);
-
 		} else if (context.getCellType() == CellTypes.LABEL) {
 			NonInternalPropertyCollector np = new NonInternalPropertyCollector();
 			List<Property> properties = np.getProperties(context.getMember().getLevel());
@@ -126,6 +126,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			String uniqueName = context.getMember().getUniqueName();
 			String level = context.getMember().getLevel().getUniqueName();
 			String dimensionType = null;
+			String hierarchyUniqueName = context.getMember().getHierarchy().getUniqueName();
+			String position = context.getPosition().getMembers().toString();
 			try {
 				dimensionType = context.getMember().getDimension().getDimensionType().xmlaName();
 			} catch (OlapException e) {
@@ -136,6 +138,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 			if (context.getMember().getParentMember() != null) {
 				parentMember = context.getMember().getParentMember().getUniqueName();
+			} else {
+				parentMember = context.getMember().getUniqueName();
 			}
 
 			int axisOrdinal = context.getAxis().axisOrdinal();
@@ -148,6 +152,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			attributes.put("parentMember", parentMember);
 			attributes.put("uniqueName", uniqueName);
 			attributes.put("level", level);
+			attributes.put("hierarchyUniqueName", hierarchyUniqueName);
+			attributes.put("position", position);
 			attributes.put("member", null);
 
 		}
@@ -219,20 +225,44 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						if (cmd != null) {
 							if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))
 									&& !drillMode.equals(DrillDownCommand.MODE_REPLACE)) {
-								attributes.put("src", "../img/minus.gif");
-								attributes.put("ng-click", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName
-										+ " '); $event.stopPropagation();");
-								startElement("img", attributes);
-								endElement("img");
+								/*
+								 * attributes.put("src", "../img/minus.gif");
+								 * attributes.put("ng-click", "drillUp(" + axis
+								 * + " , " + pos + " , " + memb + ",'" +
+								 * uniqueName + "','" + positionUniqueName +
+								 * " '); $event.stopPropagation();");
+								 * startElement("img", attributes);
+								 * endElement("img");
+								 */
+								Map<String, String> drillUpAttributes = new TreeMap<String, String>();
+								drillUpAttributes.put("axis", String.valueOf(axis));
+								drillUpAttributes.put("position", String.valueOf(pos));
+								drillUpAttributes.put("memberOrdinal", String.valueOf(memb));
+								drillUpAttributes.put("uniqueName", uniqueName);
+								drillUpAttributes.put("positionUniqueName", positionUniqueName);
+								startElement("drillup", drillUpAttributes);
+								endElement("drillup");
 
 							} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))) {
 
-								attributes.put("src", "../img/plus.gif");
-								attributes.put("ng-click", "drillDown(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + positionUniqueName
-										+ "' ); $event.stopPropagation();");
-
-								startElement("img", attributes);
-								endElement("img");
+								/*
+								 * attributes.put("src", "../img/plus.gif");
+								 * attributes.put("ng-click", "drillDown(" +
+								 * axis + " , " + pos + " , " + memb + ",'" +
+								 * uniqueName + "','" + positionUniqueName +
+								 * "' ); $event.stopPropagation();");
+								 *
+								 * startElement("img", attributes);
+								 * endElement("img");
+								 */
+								Map<String, String> drillDownAttributes = new TreeMap<String, String>();
+								drillDownAttributes.put("axis", String.valueOf(axis));
+								drillDownAttributes.put("position", String.valueOf(pos));
+								drillDownAttributes.put("memberOrdinal", String.valueOf(memb));
+								drillDownAttributes.put("uniqueName", uniqueName);
+								drillDownAttributes.put("positionUniqueName", positionUniqueName);
+								startElement("drilldown", drillDownAttributes);
+								endElement("drilldown");
 							} else {
 								if (context.getAxis() == Axis.ROWS && !isPropertyCell(context)) {
 
@@ -348,8 +378,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					if (d != 0) {
 						context.getMember();
 						attributes.put("src", "../img/arrow-up.png");
-						attributes.put("ng-click",
-								"drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + context.getHierarchy().getUniqueName() + "' )");
+						attributes.put("ng-click", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','"
+								+ context.getHierarchy().getUniqueName() + "' )");
 						startElement("img", attributes);
 						endElement("img");
 					}
@@ -523,9 +553,9 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				if (context.getModel().getSortCriteria().equals(SortCriteria.ASC) || context.getModel().getSortCriteria().equals(SortCriteria.BASC)
 						|| context.getModel().getSortCriteria().equals(SortCriteria.TOPCOUNT)) {
 					if (axisToSort == Axis.ROWS.axisOrdinal()) {
-						attributes.put("src", "../img/ASC-rows.png");
+						attributes.put("src", "../img/DESC-rows.png");
 					} else {
-						attributes.put("src", "../img/ASC-columns.png");
+						attributes.put("src", "../img/DESC-columns.png");
 					}
 
 					attributes.put("ng-click",
@@ -538,9 +568,9 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						|| context.getModel().getSortCriteria().equals(SortCriteria.BOTTOMCOUNT)) {
 
 					if (axisToSort == Axis.ROWS.axisOrdinal()) {
-						attributes.put("src", "../img/DESC-rows.png");
+						attributes.put("src", "../img/ASC-rows.png");
 					} else {
-						attributes.put("src", "../img/DESC-columns.png");
+						attributes.put("src", "../img/ASC-columns.png");
 					}
 
 					attributes.put("ng-click",
@@ -558,8 +588,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					attributes.put("src", "../img/noSortColumns.png");
 				}
 
-				attributes.put("ng-click",
-						"sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' ); $event.stopPropagation();");
+				attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString()
+						+ "' ); $event.stopPropagation();");
 
 				startElement("img", attributes);
 				endElement("img");
