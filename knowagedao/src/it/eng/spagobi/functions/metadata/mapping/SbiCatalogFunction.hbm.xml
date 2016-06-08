@@ -15,7 +15,7 @@
         <property name="name" type="string">
             <column name="NAME" length="100" not-null="true" />
         </property>
-        <property name="desciption" type="string">
+        <property name="description" type="string">
             <column name="DESCRIPTION" length="4000" not-null="true" />
         </property>
         <property name="language" type="string">
