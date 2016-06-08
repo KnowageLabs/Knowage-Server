@@ -452,55 +452,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		.ok(sbiModule_translate.load('sbi.general.ok'))
 		.cancel(sbiModule_translate.load('sbi.general.cancel'))
 		return $mdDialog.show(alert); //can use the finally function
-	}
-	
-	
-  });
-
-sbiM.service('sbiModule_download', function(sbiModule_config,sbiModule_logger, sbiModule_device, $window) {
-	var browser = sbiModule_device.browser.name;
-	/* allows download of Blob files. The files processed as blob are:
-			txt -> typeFile = 'text/plain'
-			json -> typeFile = 'text/json'
-			zip -> typeFile = 'application/zip'
-			image -> typeFile = 'image/[png | jpeg | gif |...]'
-	 */
-	this.getBlob = function(data, nameFile, typeFile, extensionFile){
-		var blob = new Blob([data],{type: typeFile}); 
-		var urlCreator = window.URL || window.webkitURL || window.mozURL || window.msURL;
-		var url = urlCreator !== undefined ? urlCreator.createObjectURL(blob) : JSON.stringify(blob);
-		
-		if (browser == 'internet explorer'){
-			window.navigator.msSaveBlob(blob,   nameFile + '.'  + extensionFile); // The user only has the option of clicking the Save button.
-		}else{
-			var link = document.createElement('a');
-			document.body.appendChild(link);
-			link.download = nameFile + '.'  + extensionFile;
-			link.href = url;
-			link.target = '_blank';
-			link.click();
-		}
-	}
-			
-	this.getPlain = function(data, nameFile, typeFile, extensionFile){
-		if (browser == 'internet explorer'){
-			this.getBlob(data, nameFile, typeFile, extensionFile);
-		}else{
-			text = JSON.stringify(data);	
-			a = document.createElement('a');
-			document.body.appendChild(a);
-			a.download = nameFile+ '.'  + extensionFile;
-			a.href = 'data:'+typeFile+ ';charset=utf-8,' + encodeURI(text);
-			a.target = '_blank';
-			a.click();
-		}
-	}
-	/* download file from direct link */
-	this.getLink = function (endPath){
-		var link = sbiModule_config.contextName + endPath;
-		console.log(link)
-		$window.location = link;
-	}
+	};
 });
 
 sbiM.factory('sbiModule_device',function($window){
@@ -512,23 +464,37 @@ sbiM.factory('sbiModule_device',function($window){
 		//detecting Firefox
 		browserObj.name='firefox';
 		browserObj.version = RegExp.$1;
-	}else if(/Chrome[\/\s](\d+\.\d+)/.test(userAgent)){
+	
+	}else if(
+			/Chrome[\/\s](\d+\.\d+)/.test(userAgent)
+			&& !(/Edge(\/)/.test(userAgent))
+		){
 		//detecting Chrome
 		browserObj.name='chrome';
 		browserObj.version = RegExp.$1;
-	}else{
+	
+	} else {
 		//detecting IE
 		var detectIEregexp = "";
-		if (userAgent.indexOf('MSIE') != -1){
+		if (userAgent.indexOf('MSIE') != -1){ // IE 9/10
 			detectIEregexp = /MSIE (\d+\.\d+);/ //test for MSIE x.x		
-		}else{ // if no "MSIE" string in userAgent
+		
+		} else if (
+				/Trident.*rv[ :]*(\d+\.\d+)/.test(userAgent)
+				&& !(/Edge(\/)/.test(userAgent))
+		){ // IE 11 // if no "MSIE" string in userAgent
 			detectIEregexp = /Trident.*rv[ :]*(\d+\.\d+)/;
+		} else { // IE Edge
+			detectIEregexp = /Mozilla.*Edge\/(12.\d+)/;
 		}
+		
+		
 		if (detectIEregexp.test(userAgent)){ //if some form of IE
 			browserObj.name='internet explorer';
 			browserObj.version = RegExp.$1;
 		 }
-	 }
+	}
+	
 	if (/iPhone|iPad|iPod|BlackBerry|Opera Mini|IEMobile|Android/i.test(userAgent)){
 		deviceObj.isMobile = true;
 	}else{
@@ -540,6 +506,53 @@ sbiM.factory('sbiModule_device',function($window){
 		browser : browserObj,
 		device : deviceObj
 	}
+});
+
+sbiM.service('sbiModule_download', function(sbiModule_config,sbiModule_logger, sbiModule_device, $window) {
+	var deviceBrowser = sbiModule_device.browser.name;
+	/* allows download of Blob files. The files processed as blob are:
+			txt -> typeFile = 'text/plain'
+			json -> typeFile = 'text/json'
+			zip -> typeFile = 'application/zip'
+			image -> typeFile = 'image/[png | jpeg | gif |...]'
+	 */
+	this.getBlob = function(data, nameFile, typeFile, extensionFile){
+		var blob = new Blob([data],{type: typeFile}); 
+		var urlCreator = window.URL || window.webkitURL || window.mozURL || window.msURL;
+		var url = urlCreator !== undefined ? urlCreator.createObjectURL(blob) : JSON.stringify(blob);
+		
+		if (deviceBrowser == 'internet explorer'){
+			window.navigator.msSaveBlob(blob, nameFile + '.'  + extensionFile); // The user only has the option of clicking the Save button.
+		}else{
+			var link = document.createElement('a');
+			document.body.appendChild(link);
+			link.download = nameFile + '.'  + extensionFile;
+			link.href = url;
+			link.target = '_blank';
+			link.click();
+		}
+	};
+			
+	this.getPlain = function(data, nameFile, typeFile, extensionFile){
+		if (deviceBrowser == 'internet explorer'){
+			this.getBlob(data, nameFile, typeFile, extensionFile);
+		}else{
+			text = JSON.stringify(data);	
+			a = document.createElement('a');
+			document.body.appendChild(a);
+			a.download = nameFile+ '.'  + extensionFile;
+			a.href = 'data:'+typeFile+ ';charset=utf-8,' + encodeURI(text);
+			a.target = '_blank';
+			a.click();
+		}
+	};
+	
+	/* download file from direct link */
+	this.getLink = function (endPath){
+		var link = sbiModule_config.contextName + endPath;
+		console.log(link)
+		$window.location = link;
+	};
 });
 
 sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModule_translate,sbiModule_config,sbiModule_restServices) {
