@@ -48,6 +48,7 @@
 	</DEPTHLIMIT>
 	<DRILLTROUGH_MAX_ROWS value="10">
 	</DRILLTROUGH_MAX_ROWS>
+	<PIVOT_TABLE_PAGES_LOAD_COUNT value ="51"></PIVOT_TABLE_PAGES_LOAD_COUNT>
 	<EXPORT_TAG orientation="PORTRAIT" fontSize="8" fontFamily="Verdana"/>
 	
 	<HMAC_JNDI_LOOKUP>java:/comp/env/hmacKey</HMAC_JNDI_LOOKUP>
