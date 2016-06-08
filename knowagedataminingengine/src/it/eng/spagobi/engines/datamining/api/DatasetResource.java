@@ -198,7 +198,10 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 
 				File dirToSaveDS = new File(DataMiningUtils.getUserResourcesPath(getUserProfile()) + fieldName);
 
-				dirToSaveDS.mkdir();
+				if (!dirToSaveDS.mkdirs()) {
+					logger.debug("Creating" + dirToSaveDS.getAbsolutePath());
+				}
+
 				logger.debug("created dir");
 				//
 				File[] dsfiles = dirToSaveDS.listFiles();

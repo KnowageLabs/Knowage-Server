@@ -64,7 +64,7 @@ author:...
 	
 	dataMiningEngineInstance = (DataMiningEngineInstance)es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE );
 	//documentId = (String)es.getAttributeFromSession(EngineConstants.DOCUMENT_ID );
-	documentLabel= (String)es.getAttributeFromSession(EngineConstants.ENV_DOCUMENT_LABEL);
+	documentLabel= (String)es.getAttributeFromSession(EngineConstants.ENV_DOCUMENT_LABEL);	
 	
 	profile = (UserProfile)dataMiningEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 	locale = (Locale)dataMiningEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
@@ -77,6 +77,7 @@ author:...
     spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
     spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
     spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
+    
     
 %>
 

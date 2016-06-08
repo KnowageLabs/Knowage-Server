@@ -74,7 +74,6 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 		commands = template.getCommands();
 		scripts = template.getScripts();
 		language = template.getLanguage();
-		// System.out.println("LANGUAGE=" + language);
 
 		logger.debug("OUT");
 	}

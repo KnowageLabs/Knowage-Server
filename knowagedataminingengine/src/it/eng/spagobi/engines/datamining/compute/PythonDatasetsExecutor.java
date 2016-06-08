@@ -57,11 +57,17 @@ public class PythonDatasetsExecutor {
 
 				if (ds.getType().equalsIgnoreCase("file")) {
 					// if (ds.getReadType().equalsIgnoreCase("csv")) {
-					String strPathUploadedFile = DataMiningUtils.getUserResourcesPath(profile).toString() + ds.getName();
+					// String strPathUploadedFile = DataMiningUtils.getUserResourcesPath(profile).toString() + ds.getName();
+					// ///resources/DEFAULT_TENANT/datamining/biadmin/biadmin_DatasetOutput_first_element'
+					String strPathUploadedFile = PythonOutputExecutor.getDatasetsDirectoryPath();
 					resPythonExecution = PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n");
 					if (resPythonExecution < 0) {
 						throw new Exception("Python script execution error");
 					}
+					if (ds.getReadType() == null) {
+						ds.setReadType("csv");
+					}
+
 					resPythonExecution = PyLib.execScript(ds.getName() + " = pandas.read_" + ds.getReadType() + "('" + ds.getFileName() + "'," + options
 							+ ")\n");
 					if (resPythonExecution < 0) {

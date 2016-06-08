@@ -213,42 +213,43 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 
-			// SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, catalogFunctionId);
-			// session.delete(hibCatFunction);
-			// session.flush();
-			//
-			// SbiCatalogFunction sbiCatFunc = new SbiCatalogFunction();
-			// sbiCatFunc.setFunctionId(catalogFunctionId);
-			// sbiCatFunc.setLanguage(updatedCatalogFunction.getLanguage());
-			// sbiCatFunc.setName(updatedCatalogFunction.getName());
-			// sbiCatFunc.setScript(updatedCatalogFunction.getScript());
-			// session.save(sbiCatFunc);
-			// session.flush();
-			//
-			// sbiCatFunc.setSbiFunctionInputVariables(getSbiFunctionInputVariablesSet(updatedCatalogFunction.getSbiFunctionInputVariables(), sbiCatFunc));
-			// sbiCatFunc.setSbiFunctionOutputs(getSbiFunctionOutputSet(updatedCatalogFunction.getSbiFunctionOutput(), sbiCatFunc));
-			// sbiCatFunc.setSbiFunctionInputDatasets(getSbiFunctionInputDatasetSet(updatedCatalogFunction.getSbiFunctionInputDatasets(), sbiCatFunc));
-			// session.saveOrUpdate(sbiCatFunc);
-			// session.flush();
-
 			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, catalogFunctionId);
 			hibCatFunction.getSbiFunctionInputDatasets().clear();
 			for (Object o : hibCatFunction.getSbiFunctionInputDatasets()) {
 				SbiFunctionInputDataset di = (SbiFunctionInputDataset) o;
-				// session.delete(di);
-				di.setSbiCatalogFunction(null);
+				session.delete(di);
+				// di.setSbiCatalogFunction(null);
 			}
 			for (Object o : hibCatFunction.getSbiFunctionOutputs()) {
 				SbiFunctionOutput out = (SbiFunctionOutput) o;
-				// session.delete(out);
-				out.setSbiCatalogFunction(null);
+				session.delete(out);
+				// out.setSbiCatalogFunction(null);
 			}
 			hibCatFunction.setSbiFunctionOutputs(null);
 
 			for (Object o : hibCatFunction.getSbiFunctionInputVariables()) {
-				SbiFunctionOutput vi = (SbiFunctionOutput) o;
-				// session.delete(vi);
-				vi.setSbiCatalogFunction(null);
+				SbiFunctionInputVariable vi = (SbiFunctionInputVariable) o;
+				session.delete(vi);
+				// vi.setSbiCatalogFunction(null);
+			}
+			// aggiunti dopo
+			if (hibCatFunction.getSbiFunctionInputVariables() != null)
+				hibCatFunction.getSbiFunctionInputVariables().clear();
+			if (hibCatFunction.getSbiFunctionOutputs() != null)
+				hibCatFunction.getSbiFunctionOutputs().clear();
+			if (hibCatFunction.getSbiFunctionInputDatasets() != null)
+				hibCatFunction.getSbiFunctionInputDatasets().clear();
+
+			transaction.commit();
+			session.close();
+
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 			hibCatFunction.setSbiFunctionInputVariables(getSbiFunctionInputVariablesSet(updatedCatalogFunction.getSbiFunctionInputVariables(), hibCatFunction));
 			hibCatFunction.setSbiFunctionOutputs(getSbiFunctionOutputSet(updatedCatalogFunction.getSbiFunctionOutput(), hibCatFunction));
@@ -259,19 +260,6 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			hibCatFunction.setScript(updatedCatalogFunction.getScript());
 			// session.clear();
 			session.saveOrUpdate(hibCatFunction);
-			// session.merge(hibCatFunction);
-
-			/*
-			 * Query hibQuery = session.createQuery("from SbiCatalogFunction f where functionId = ?"); hibQuery.setInteger(0, catalogFunctionId);
-			 * SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) hibQuery.uniqueResult();
-			 * hibCatFunction.setSbiFunctionInputVariables(getSbiFunctionInputVariablesSet(updatedCatalogFunction.getSbiFunctionInputVariables(),
-			 * hibCatFunction)); hibCatFunction.setSbiFunctionOutputs(getSbiFunctionOutputSet(updatedCatalogFunction.getSbiFunctionOutput(), hibCatFunction));
-			 * hibCatFunction.setSbiFunctionInputDatasets(getSbiFunctionInputDatasetSet(updatedCatalogFunction.getSbiFunctionInputDatasets(), hibCatFunction));
-			 * hibCatFunction.setFunctionId(catalogFunctionId); hibCatFunction.setLanguage(updatedCatalogFunction.getLanguage());
-			 * hibCatFunction.setName(updatedCatalogFunction.getName()); hibCatFunction.setScript(updatedCatalogFunction.getScript());
-			 * session.saveOrUpdate(hibCatFunction); // session.merge(hibCatFunction);
-			 */
-
 			transaction.commit();
 
 		} catch (Throwable t) {
@@ -306,9 +294,6 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			Assert.assertNotNull(session, "session cannot be null");
 			transaction = session.beginTransaction();
 			Assert.assertNotNull(transaction, "transaction cannot be null");
-
-			// Query hibQuery = session.createQuery("delete from SbiCatalogFunction f where functionId= ?");
-			// hibQuery.setInteger(0, idFunctionToDelete);
 
 			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, idFunctionToDelete);
 			session.delete(hibCatFunction);

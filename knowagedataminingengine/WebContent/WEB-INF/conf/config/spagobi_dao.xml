@@ -86,6 +86,8 @@
 		<DAO name="ISbiObjDsDAO" implementation="it.eng.spagobi.metadata.dao.SbiObjDsDAOHibImpl"/>
 		<DAO name="ISbiTableBcDAO" implementation="it.eng.spagobi.metadata.dao.SbiTableBcDAOHibImpl"/>
 	  	
+	  	<DAO name="ICatalogFunctionDAO" implementation="it.eng.spagobi.functions.dao.CatalogFunctionDAOImpl"/>
+	  	
 
 	 </DAO-CONF>     
      
