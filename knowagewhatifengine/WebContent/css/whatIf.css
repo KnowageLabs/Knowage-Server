@@ -23,7 +23,7 @@
 /********************************************************************************************************/
 
 .pivot-table{
-	border-collapse: collapse;
+	/*border-collapse: collapse;*/
 	text-align:left;
 	table-layout: fixed;
 	color: rgba(0,0,0,0.54);
