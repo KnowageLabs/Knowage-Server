@@ -71,7 +71,8 @@ public class PythonDatasetsExecutor {
 						throw new Exception("Python script execution error");
 					}
 
-				} else if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_OUTPUT)) {
+				} else if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_OUTPUT)
+						|| ds.getType().equalsIgnoreCase(DataMiningConstants.SPAGOBI_DS_OUTPUT)) {
 					logger.debug("Dataset");
 					// dataset content could change independently from
 					// the engine, so it must be recalculated every time

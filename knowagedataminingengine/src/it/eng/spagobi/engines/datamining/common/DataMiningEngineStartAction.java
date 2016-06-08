@@ -24,7 +24,6 @@ import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.engines.datamining.DataMiningEngine;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
-import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
@@ -199,7 +198,7 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 			DataMiningTemplate template = new DataMiningTemplate();
 			template.setLanguage(function.getLanguage());
 
-			List<SbiFunctionInputDataset> datasets = new ArrayList<SbiFunctionInputDataset>(function.getSbiFunctionInputDatasets());
+			Set<SbiFunctionInputDataset> datasets = function.getSbiFunctionInputDatasets();
 			List<DataMiningDataset> dataminingDatasets = new ArrayList<DataMiningDataset>();
 
 			for (SbiFunctionInputDataset dataset : datasets) {
@@ -219,9 +218,8 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 			}
 			template.setDatasets(dataminingDatasets);
 
-			List<SbiFunctionInputVariable> variables = new ArrayList<SbiFunctionInputVariable>(function.getSbiFunctionInputVariables());
-			List<SbiFunctionOutput> outputs = new ArrayList<SbiFunctionOutput>(function.getSbiFunctionOutputs());
-			List<DataMiningCommand> dataminingCommands = new ArrayList<DataMiningCommand>();
+			Set<SbiFunctionInputVariable> variables = function.getSbiFunctionInputVariables();
+			Set<SbiFunctionOutput> outputs = function.getSbiFunctionOutputs();
 
 			DataMiningCommand c = new DataMiningCommand();
 			c.setLabel("CatalogCommand");
@@ -243,11 +241,8 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 				out.setOutputName(o.getId().getLabel()); // Name=label
 				IDomainDAO domainsDAO = DAOFactory.getDomainDAO();
 				String type = domainsDAO.loadDomainById(o.getOutType()).getValueName();
-				if (type.equals("Dataset")) {
-					type = DataMiningConstants.DATASET_OUTPUT;
-				}
 				out.setOutputType(type);
-				out.setOutputMode("auto"); // ??
+				out.setOutputMode("auto"); // TODO: ??? can't figure out what auto means...
 				out.setOutputName(o.getId().getLabel());
 				out.setOutputValue(o.getId().getLabel());
 				outs.add(out);

@@ -14,7 +14,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 	$scope.tableSelectedFunction={};
 	$scope.tableSelectedFunction.language="Python";
 	$scope.languages=["Python","R"];
-	$scope.outputTypes=["spagobi_ds","Text", "Image"];
+	$scope.outputTypes=["Dataset","Text", "Image"];
 	$scope.inputTypes=["Simple Input", "Dataset Input"]
 	$scope.simpleInputs=[]; //=Input variables
 	$scope.inputDatasets=[];	 
