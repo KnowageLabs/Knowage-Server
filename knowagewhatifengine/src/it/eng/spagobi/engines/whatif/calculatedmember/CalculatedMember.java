@@ -18,6 +18,7 @@
 package it.eng.spagobi.engines.whatif.calculatedmember;
 
 import org.olap4j.Axis;
+import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 
 public class CalculatedMember {
@@ -65,6 +66,13 @@ public class CalculatedMember {
 
 	public void setParentMemberAxis(Axis parentMemberAxis) {
 		this.parentMemberAxis = parentMemberAxis;
+	}
+	
+	public Hierarchy getHierarchy(){
+		if(getParentMember()!=null){
+			return this.getParentMember().getHierarchy();
+		}
+		return null;
 	}
 
 }

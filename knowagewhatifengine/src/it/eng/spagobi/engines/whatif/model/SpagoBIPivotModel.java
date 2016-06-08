@@ -83,7 +83,34 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 		return sortPosMembers1;
 	}
+	/*
+	public void addCalucatedMembers(boolean add) {
 
+		  if (add) {
+		   QueryAxis qaRows = getQueryAxis(Axis.ROWS);
+		   QueryAxis qaColumns = getQueryAxis(Axis.COLUMNS);
+
+		   Exp rowsExp = qaRows.getExp();
+
+		   List<Exp> rowsArgs = new ArrayList<Exp>(1);
+		   rowsArgs.add(rowsExp);
+
+		   FunCall rowsCC = new FunCall("AddCalculatedMembers", Syntax.Function, rowsArgs);
+		   qaRows.setExp(rowsCC);
+
+		   Exp columnsExp = qaColumns.getExp();
+
+		   List<Exp> columsArgs = new ArrayList<Exp>(1);
+		   columsArgs.add(columnsExp);
+
+		   FunCall columnsCC = new FunCall("AddCalculatedMembers", Syntax.Function, columsArgs);
+		   qaColumns.setExp(columnsCC);
+		  }
+
+		  fireModelChanged();
+
+		 }
+*/
 	@Override
 	public boolean isSorting(Position position) {
 		if (sortPosMembers1 == null) {

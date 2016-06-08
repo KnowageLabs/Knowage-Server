@@ -211,6 +211,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 			Integer actualVersion = VersionManager.getActualVersion(value, modelConfig);
 			modelConfig.setActualVersion(actualVersion);
 		}
+//		model.addCalucatedMembers(true);
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss.SSS");
 		String time = "Serilize start " + format.format(new Date());
 		// System.out.println(time);
