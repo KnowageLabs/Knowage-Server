@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 <SPAGOBI>
 
@@ -145,7 +146,6 @@
 		<DAO name="AlertDAO" implementation="it.eng.spagobi.tools.alert.dao.AlertDAOImpl"/>
 		<DAO name="IFunctionsOrganizerDAO" implementation="it.eng.spagobi.workspace.dao.FunctionsOrganizerDAOHibImpl"/>
 		<DAO name="ICatalogFunctionDAO" implementation="it.eng.spagobi.functions.dao.CatalogFunctionDAOImpl"/>
-		<DAO name="IObjFuncOrganizerDAO" implementation="it.eng.spagobi.workspace.dao.ObjFuncOrganizerHIBDAOImpl"/>
 	</DAO-CONF>
 
 	<!-- ********************* END DAO CONFIGURATION ************************ -->
