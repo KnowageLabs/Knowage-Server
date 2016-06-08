@@ -131,7 +131,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 
 		callback.setRowHeaderStyleClass(null);// x-pivot-header
 		callback.setColumnHeaderStyleClass(null);// x-pivot-header-column
-		callback.setCornerStyleClass("corner");// x-pivot-header x-pivot-corner
+		callback.setCornerStyleClass(null);// x-pivot-header x-pivot-corner
 		callback.setCellStyleClass(null);// x-pivot-cell
 											// x-pivot-header-column
 		callback.setTableStyleClass("pivot-table");// x-pivot-table
@@ -406,11 +406,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 	 * List<Hierarchy> hierarchies, PivotModelImpl model, OlapConnection
 	 * connection, ModelConfig modelConfig) throws JSONException,
 	 * JsonGenerationException, IOException {
-	 *
+	 * 
 	 * QueryAdapter qa = new QueryAdapter(model); qa.initialize();
-	 *
+	 * 
 	 * ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
-	 *
+	 * 
 	 * jgen.writeArrayFieldStart(field); if (hierarchies != null) { for (int i =
 	 * 0; i < hierarchies.size(); i++) { Hierarchy hierarchy =
 	 * hierarchies.get(i); Map<String, Object> hierarchyObject = new
@@ -418,7 +418,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 	 * hierarchy.getName()); hierarchyObject.put(UNIQUE_NAME,
 	 * hierarchy.getUniqueName()); hierarchyObject.put(POSITION, "" + i);
 	 * hierarchyObject.put(AXIS, "" + FILTERS_AXIS_POS);
-	 *
+	 * 
 	 * List<Member> slicers = ph.getSlicer(hierarchy); if (slicers != null &&
 	 * slicers.size() > 0) { List<Map<String, String>> slicerMap = new
 	 * ArrayList<Map<String, String>>(); for (int j = 0; j < slicers.size();
@@ -427,7 +427,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 	 * slicers.get(j).getName()); slicerMap.add(slicer); }
 	 * hierarchyObject.put(SLICERS, slicerMap); }
 	 * jgen.writeObject(hierarchyObject);
-	 *
+	 * 
 	 * } } jgen.writeEndArray(); }
 	 */
 
