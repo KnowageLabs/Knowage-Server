@@ -827,14 +827,18 @@ md-option[selected], md-select-menu md-option[selected]{
 }
 
 .multi-hier-dialog{
-		height:35%!important; 
-		width:30%!important;
+		height:25%!important; 
+		width:25%!important;
+		min-width:450px;
+		min-height:250px;
 }
 
 @-moz-document url-prefix() { 
 	.multi-hier-dialog{
 		height:35%!important; 
 		width:30%!important;
+		min-width:450px;
+		min-height:250px;
 	}
 }
 
