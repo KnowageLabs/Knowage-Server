@@ -48,7 +48,7 @@
 	white-space: nowrap;
 } 
 */
-th[member] {
+.pivot-table th {
 	position: relative !important;
 	/*border-top-width: 1px !important;*/
 	/*border-right-width: 1px !important;*/
