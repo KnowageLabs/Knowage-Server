@@ -433,6 +433,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 					data.axis = 0;
 
 					$scope.putMemberOnAxis(fromAxis,data);
+					$scope.members = [];
 				}
 			}
 		}
