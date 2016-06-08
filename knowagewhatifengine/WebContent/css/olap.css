@@ -318,33 +318,10 @@ md-tabs .md-tab.md-active{
     padding: 10px;
 }
 
-table, th , td {
- /* border: 1px solid grey;*/
-  /*border-collapse: collapse;*/
-  padding: 5px;
-}
-table tr:nth-child(odd) {
-  background-color: #f1f1f1;
-}
-table tr:nth-child(even) {
-  background-color: #ffffff;
-}
 
-.pv-row-hdr{
-	border-bottom: 1px solid #3b678c;
-	border-right: 1px solid #3b678c;
-	background-color:white;
-	font-size:12px;
-	padding:5px;
-}
 
-.pv-col-hdr{
-	border-bottom: 1px solid #3b678c;
-	border-right: 1px solid #3b678c;
-	background-color:white;
-	font-size:12px;
-	padding:5px;
-}
+
+
 
 /*.tree css*/
 
