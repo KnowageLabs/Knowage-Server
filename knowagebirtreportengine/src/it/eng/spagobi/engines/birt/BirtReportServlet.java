@@ -36,7 +36,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.SpagoBIAccessUtils;
-import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.callbacks.audit.AuditAccessUtils;
 
 import java.io.ByteArrayInputStream;
@@ -95,6 +94,8 @@ import org.safehaus.uuid.UUIDGenerator;
 
 import sun.misc.BASE64Decoder;
 
+import com.arctorus.export.birt.xlsx.EmitterConfig;
+
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
  *
@@ -113,7 +114,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
 	 */
 	@Override
@@ -126,7 +127,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.GenericServlet#destroy()
 	 */
 	@Override
@@ -137,7 +138,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest , javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
@@ -569,7 +570,7 @@ public class BirtReportServlet extends HttpServlet {
 		if (templateFileName == null || templateFileName.trim().equals(""))
 			templateFileName = "report";
 		IRenderOption renderOption = null;
-		
+
 		if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.PDF_RENDER_FORMAT)) {
 			renderOption = new PDFRenderOption();
 			renderOption.setOutputFormat(IBirtConstants.PDF_RENDER_FORMAT);
@@ -603,6 +604,7 @@ public class BirtReportServlet extends HttpServlet {
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xls");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("xlsx")) {
 			renderOption = new EXCELRenderOption();
+			renderOption.setOption(EmitterConfig.KEY_EXCEL_NATIVE_CHARTS, false);
 			setMSOfficeEmitterId("xlsx", renderOption);
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xlsx");
@@ -677,7 +679,7 @@ public class BirtReportServlet extends HttpServlet {
 			logger.warn("Could not find engine config file");
 			return;
 		}
-		//Assert.assertNotNull(engineConfig, "Could not find engine configuration file");
+		// Assert.assertNotNull(engineConfig, "Could not find engine configuration file");
 		String attributeName = output.toUpperCase() + "_EMITTER";
 		SourceBean emitterConf = (SourceBean) engineConfig.getAttribute(attributeName);
 		if (emitterConf == null) {
@@ -685,7 +687,7 @@ public class BirtReportServlet extends HttpServlet {
 			logger.debug("Could not find emitter configuration for output = [" + output + "]. Using default emitter.");
 			return;
 		}
-		//Assert.assertNotNull(emitterConf, "Could not find Excel emitter configuration");
+		// Assert.assertNotNull(emitterConf, "Could not find Excel emitter configuration");
 		String emitterId = (String) emitterConf.getAttribute("id");
 		String outputFormat = (String) emitterConf.getAttribute("output_format");
 		logger.debug("Using emitter [" + emitterId + "] with output format [" + outputFormat + "] ...");
