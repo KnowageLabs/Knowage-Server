@@ -110,10 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    %>
 		    </ul>
 		    
-		    <br>
-		    If none of these possible fixes work, please ask on <a href="http://forge.objectweb.org/forum/forum.php?forum_id=862">Spagobi Forum</a> for futher help
-		    
-		    </td>
+
 		  </tr>
 		</table>
 		

@@ -85,10 +85,7 @@
 		    %>
 		    </ul>
 		    
-		    <br>
-		    If none of these possible fixes work, please ask on <a href="https://spagobi.eng.it/jforum/forums/list.page">SpagoBI Forum</a> for further help
-		    
-		    </td>
+
 		  </tr>
 		</table>
 		
