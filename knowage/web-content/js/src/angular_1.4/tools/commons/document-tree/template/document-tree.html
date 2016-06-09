@@ -3,14 +3,14 @@
 		<div layout = "row" layout-align="start center" class="customTreeNode" ui-tree-handle ng-class="{'hover-element' : folder.isHover, 'blue-stack' : (selectedItem.id == folder.id && highlightsSelectedItem == true)}" ng-mouseenter="folder.isHover = true" ng-mouseleave="folder.isHover = undefined" >
 			<div layout = "row" layout-align="start center">
 				<md-checkbox ng-if="multiSelect" ng-checked="folder.checked" ng-click="toogleSelected(folder)" aria-label="Checkbox"></md-checkbox>            
-				<md-icon ng-click='openFolder(folder)' ng-if="!folder.expanded && folder[subfoldersId] !== undefined" md-font-icon="{{folder.subfolders.length!=0 ? multiFolders : iconFolder}}"></md-icon>				
-				<md-icon ng-click='openFolder(folder)' ng-if=" folder.expanded && folder[subfoldersId] !== undefined" md-font-icon="{{folder.subfolders.length!=0 ? multiFoldersOpen : iconFolder}}"></md-icon>
-				<md-icon ng-click='openFolder(folder)' ng-if="folder.type !== 'folder'" md-font-icon="{{iconDocument}}"></md-icon>
+				<md-icon ng-click='openFolder(folder,false)' ng-if="!folder.expanded && folder[subfoldersId] !== undefined" md-font-icon="{{folder.subfolders.length!=0 ? multiFolders : iconFolder}}"></md-icon>				
+				<md-icon ng-click='openFolder(folder,false)' ng-if=" folder.expanded && folder[subfoldersId] !== undefined" md-font-icon="{{folder.subfolders.length!=0 ? multiFoldersOpen : iconFolder}}"></md-icon>
+				<md-icon ng-click='openFolder(folder,false)' ng-if="folder.type !== 'folder'" md-font-icon="{{iconDocument}}"></md-icon>
 				<div ng-if="orderBy !== undefined && orderBy.length > 0 && folder.type =='folder'">
 					<md-icon ng-if='folder.sortDirection=="asc"' ng-click='toogleSort(folder)' class = "fa fa-sort-asc"></md-icon>
 					<md-icon ng-if='folder.sortDirection=="desc"' ng-click='toogleSort(folder)' class = "fa fa-sort-desc"></md-icon>
 				</div>
-				<div ng-click='openFolder(folder)' class="line-container">
+				<div ng-click='openFolder(folder,true)' class="line-container">
 					<span> &nbsp;{{folder[label]}}</span> 
 				</div>
 			</div>

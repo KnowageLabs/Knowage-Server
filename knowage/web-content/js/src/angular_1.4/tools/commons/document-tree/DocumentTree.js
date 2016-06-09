@@ -175,14 +175,16 @@ function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
 		}
 	}
 	
-	$scope.openFolder = function (folder){
-		if (folder[$scope.subfoldersId] && folder[$scope.subfoldersId].length >= 15){
+	$scope.openFolder = function (folder,doClickAction){
+		 if (folder[$scope.subfoldersId] && folder[$scope.subfoldersId].length >= 15){
 			//if many children (>=20), show the loading message for n_child*125 milliseconds
 			$scope.seeTree = false;
 			
 			$timeout(function(){
 				folder.expanded = !folder.expanded;
-				$scope.setSelected(folder);
+				if(doClickAction){
+					$scope.setSelected(folder);
+				}
 				},100,true);
 			
 			$timeout(function(){
@@ -190,7 +192,9 @@ function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
 				},folder[$scope.subfoldersId].length*100,true);
 		}else{
 			folder.expanded = !folder.expanded;
-			$scope.setSelected(folder);
+			if(doClickAction){
+				$scope.setSelected(folder);
+			}
 			}
 		}
 	
