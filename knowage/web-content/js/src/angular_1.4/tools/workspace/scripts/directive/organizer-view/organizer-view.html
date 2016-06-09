@@ -1,6 +1,8 @@
- 				 	<angular-table  ng-hide="showGridView==true || ngModel.length==0 " layout-fill style="position:absolute"
-							id='documentListTable' ng-model=ngModel
-							columns='[{"label":"Name","name":"name"},{"label":"Document name","name":"documentName"},{"label":"Document label","name":"documentLabel"},{"label":"Document description","name":"documentDescription"},{"label":"Document type","name":"documentType"}]'
+ 				 	<angular-table  ng-hide="showGridView==true || ngModel.length==0 "
+ 				 	        layout-fill 
+		 				 	style="position:relative;overflow:auto"
+							id='organizerListTable' ng-model=ngModel
+							columns='[{"label":"Document name","name":"documentName"},{"label":"Document label","name":"documentLabel"},{"label":"Document description","name":"documentDescription"},{"label":"Document type","name":"documentType"}]'
 							columnsSearch='["name"]' 
 							show-search-bar=false
 							speed-menu-option=tableSpeedMenuOption

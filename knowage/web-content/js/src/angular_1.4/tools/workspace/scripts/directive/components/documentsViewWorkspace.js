@@ -120,6 +120,15 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		}
 	} ];
 	
+	$scope.organizerSpeedMenu=[{
+		label : sbiModule_translate.load('sbi.generic.run'),
+		icon:'fa fa-play-circle' ,
+		backgroundColor:'transparent',	
+		action : function(item,event) {
+			$scope.executeDocumentFromOrganizer(item);
+		}
+	} ];
+	
 	$scope.deleteFolder = function(folder) {
 		var confirm = $mdDialog.confirm()
 		.title(sbiModule_translate.load("sbi.workspace.folder.delete.confirm.dialog"))

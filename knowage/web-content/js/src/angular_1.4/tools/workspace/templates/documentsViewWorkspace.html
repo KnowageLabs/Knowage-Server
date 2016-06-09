@@ -3,37 +3,37 @@
 	<bread-crumb item-name='name' ng-model="breadModel" selected-item="selectedFolder" control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb>
 	<md-whiteframe flex layout="column" class="md-whiteframe-5dp md-whiteframe-5dp-rightPanelDocuments" layout-margin>
 	 
-		<md-content>
+		
 	    
 			<md-content layout-fill class="rightPanelDocuments">
-	
+	          <md-content>
 			 	<folder-view	class="kn-documentBrowser" flex 
 			 					style='overflow:auto;' 
 			 					ng-model=foldersToShow
 			 					show-grid-view=showGridView
+			 					table-speed-menu-option=tableSpeedMenuOption
 			 					selected-folder=selectedFolder
 			 					select-folder-action="openFolder(folder)"
 			 					delete-folder-action="deleteFolder(folder)"
 			 					 >
 				</folder-view>	
 				
-				<organizer-view 	class="kn-documentBrowser" flex
+			   </md-content>
+			   <md-content>
+				<organizer-view class="kn-documentBrowser" flex
 			 					style='overflow:auto;'
 			 					ng-model=documentsOfSelectedFolder
-			 					
 			 					show-grid-view=showGridView
-			 					
-			 					selected-row=selectedRow
 			 					selected-document=selectedOrganizerDocument
-			 					table-speed-menu-option=favoriteSpeedMenu
+			 					table-speed-menu-option=organizerSpeedMenu
 			 					execute-document-action="executeDocumentFromOrganizer(doc)"
 			 					select-document-action="selectOrganizerDocument(doc)"
 			 					delete-document-action="deleteDocumentFromOrganizer(doc)"
 			 					move-document-action="moveDocumentToFolder(doc)"
 			 					 >
 				</organizer-view>	
-		
-			</md-content>
+		      </md-content>
+	
 		
 		</md-content>
 	
