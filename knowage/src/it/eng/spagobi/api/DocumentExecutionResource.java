@@ -89,6 +89,7 @@ import org.safehaus.uuid.UUIDGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+
 @Path("/1.0/documentexecution")
 @ManageAuthorization
 public class DocumentExecutionResource extends AbstractSpagoBIResource {
@@ -151,6 +152,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String displayToolbar = requestVal.optString("displayToolbar");
 		String snapshotId = requestVal.optString("snapshotId");
 		String subObjectID = requestVal.optString("subObjectID");
+
+		String olapParam = "";
+
 		String sbiExecutionId = requestVal.optString("SBI_EXECUTION_ID");
 		JSONObject jsonParameters = requestVal.optJSONObject("parameters");
 		JSONObject menuParameters = requestVal.optJSONObject("menuParameters"); // parameters setted when open document from menu
@@ -185,7 +189,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					executingRole, modality, jsonParametersToSend, locale);
 			errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 					executingRole, modality, jsonParametersToSend, locale);
-			resultAsMap.put("url", url + "&SBI_EXECUTION_ID=" + sbiExecutionId);
+
+			if (obj.getBiObjectTypeCode().equals("OLAP"))
+				olapParam = BuildOlapUrlString(requestVal);
+
+			resultAsMap.put("url", url + "&SBI_EXECUTION_ID=" + sbiExecutionId + olapParam);
 			if (errorList != null && !errorList.isEmpty()) {
 				resultAsMap.put("errors", errorList);
 			}
@@ -210,6 +218,25 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
+	}
+
+	public String BuildOlapUrlString(JSONObject reqVal) throws JSONException {
+		String ret = "";
+		if (reqVal.getJSONObject("parameters").length() > 0) {
+			String subViewObjectID = reqVal.getJSONObject("parameters").getString("subobj_id");
+			String subViewObjectName = reqVal.getJSONObject("parameters").getString("subobj_name");
+			String subViewObjectDescription = reqVal.getJSONObject("parameters").getString("subobj_description");
+			String subViewObjectVisibility = reqVal.getJSONObject("parameters").getString("subobj_visibility");
+
+			ret = ret + "&SUBOBJ_ID=" + subViewObjectID + "&SUBOBJ_NAME=" + subViewObjectName;
+
+			if (!subViewObjectDescription.isEmpty())
+				ret = ret + "&SUBOBJ_DESCRIPTION=" + subViewObjectDescription;
+
+			ret = ret + "&SUBOBJ_VISIBILITY=" + subViewObjectVisibility;
+		}
+
+		return ret;
 	}
 
 	private JSONObject buildJsonParameters(JSONObject jsonParameters, HttpServletRequest req, String role, SessionContainer permanentSession,
@@ -361,8 +388,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
 
-			parameterAsMap
-					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
+			parameterAsMap.put("allowInternalNodeSelection",
+					objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
 			if (jsonParameters.has(objParameter.getId())) {
 				documentUrlManager.refreshParameterForFilters(objParameter.getAnalyticalDocumentParameter(), jsonParameters);
@@ -814,8 +841,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		addMetadata(generalMetadata, name, value, null);
 	}
 
-	private void addMetadata(JSONArray generalMetadata, String name, String value, Integer id) throws JsonMappingException, JsonParseException, JSONException,
-			IOException {
+	private void addMetadata(JSONArray generalMetadata, String name, String value, Integer id)
+			throws JsonMappingException, JsonParseException, JSONException, IOException {
 		JSONObject data = new JSONObject();
 		if (id != null) {
 			data.put("id", id);
@@ -825,8 +852,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		generalMetadata.put(data);
 	}
 
-	private void addTextMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id) throws JSONException,
-			JsonMappingException, JsonParseException, IOException {
+	private void addTextMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id)
+			throws JSONException, JsonMappingException, JsonParseException, IOException {
 		JSONArray jsonArray = metadataMap.get(type);
 		if (jsonArray == null) {
 			jsonArray = new JSONArray();

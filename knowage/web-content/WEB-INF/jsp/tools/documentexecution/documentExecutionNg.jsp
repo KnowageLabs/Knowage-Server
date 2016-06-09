@@ -254,6 +254,15 @@ if(executionRoleNames.size() > 0) {
 					                </md-button>
 					            </md-menu-item>
 								<%} %>
+								
+								<md-menu-item class="md-indent">
+					            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.show.olap.customized')}}"
+					            			class="toolbar-button-custom" ng-click="urlViewPointService.getOlapDocs()" ng-if="urlViewPointService.getOlapType()">
+					            			{{translate.load('sbi.execution.executionpage.toolbar.show.olap.customized')}}
+
+					                </md-button>
+					            </md-menu-item>
+								
 							</md-menu-content>
 						</md-menu>
 					</md-menu-bar>
@@ -284,6 +293,13 @@ if(executionRoleNames.size() > 0) {
 						<document-scheduler flex layout="column"/>
 					</div>
 				</div>
+				
+				<div flex layout ng-if="currentView.status == 'OLAP'"> 
+					<div ng-if="parameterView.status == 'OLAP'" layout flex>
+						<document-olap flex layout="column"/>
+					</div>
+				</div>
+
 	        </div>
 		</div>
 		
@@ -420,6 +436,8 @@ if(executionRoleNames.size() > 0) {
 				src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/parameterViewPointHandler/parameterViewPointHandlerController.js")%>"></script>
 		<script type="text/javascript" 
 			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentScheduler/documentSchedulerController.js")%>"></script>
+		<script type="text/javascript" 
+			src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentOlap/documentOlapController.js")%>"></script>
 		<script type="text/javascript" 
 				src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentParamenterElement/documentParamenterElementController.js")%>"></script>
 		<script type="text/javascript" 

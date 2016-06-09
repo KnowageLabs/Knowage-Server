@@ -501,7 +501,7 @@
 	documentExecutionModule.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config,docExecute_exportService
 			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories,$q,$filter,$timeout
-			,docExecute_dependencyService,sbiModule_messaging) {
+			,docExecute_dependencyService,sbiModule_messaging, $http) {
 		
 		var serviceScope = this;	
 //		serviceScope.documentUrl = '';
@@ -608,6 +608,31 @@
 			})
 			.error(function(data, status, headers, config) {});																	
 		};
+		
+		serviceScope.getOlapDocs = function() {
+			execProperties.currentView.status = 'OLAP';
+			execProperties.parameterView.status = 'OLAP';
+			
+			serviceScope.olapList = [];
+
+			sbiModule_restServices.get("1.0/olapsubobjects", 'getSubObjects', 
+					"idObj=" + execProperties.executionInstance.OBJECT_ID)
+			.then(function(response){  
+				angular.copy(response.data.results,serviceScope.olapList);
+			},function(response){
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.alert.load.error"));
+			});
+		
+		};
+		
+		serviceScope.getOlapType = function(){
+			
+			if (execProperties.executionInstance.ENGINE_LABEL == "knowagewhatifengine")
+				return true;
+			else
+				return false;
+		}
+		
 		
 		/*
 		 * Fill Parameters Panel 
