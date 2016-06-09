@@ -8,9 +8,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
 	$mdThemingProvider.setDefaultTheme('knowage');
 }]);
-app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$angularListDetail","$timeout","sbiModule_dateServices", controllerCalendar ]);
+app.controller('Controller', [ "sbiModule_download","sbiModule_config", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$angularListDetail","$timeout","sbiModule_dateServices", controllerCalendar ]);
 
-function controllerCalendar(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast, $angularListDetail,$timeout,sbiModule_dateServices) {
+function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast, $angularListDetail,$timeout,sbiModule_dateServices) {
 	$scope.translate = sbiModule_translate;
 	$scope.calendarList = [];
 	$scope.selectCalendar= {};
@@ -263,9 +263,16 @@ function controllerCalendar(sbiModule_download,sbiModule_translate,sbiModule_res
 	}
 
 	$scope.parseRealInfo = function(response){
+
 		for(var i=0;i<$scope.selectCalendar.realDateGenerated.length;i++){
 			//$scope.selectCalendar.realDateGenerated[i]["date"]=  response[i].timeByDay.dayDesc;
-			$scope.selectCalendar.realDateGenerated[i]["date"] = response[i].timeByDay.dayOfMonth + "/"+ response[i].timeByDay.monthOfYear+ "/" + response[i].timeByDay.yearId;
+			if(sbiModule_config.dateFormat=="MM/dd/yyyy"){
+				$scope.selectCalendar.realDateGenerated[i]["date"] = response[i].timeByDay.monthOfYear + "/"+ response[i].timeByDay.dayOfMonth + "/" + response[i].timeByDay.yearId;
+
+			}else{
+				$scope.selectCalendar.realDateGenerated[i]["date"] = response[i].timeByDay.dayOfMonth + "/"+ response[i].timeByDay.monthOfYear+ "/" + response[i].timeByDay.yearId;
+
+			}
 			$scope.selectCalendar.realDateGenerated[i]["day"] = response[i].timeByDay.dayName;
 			$scope.selectCalendar.realDateGenerated[i]["checkFestivity"] = '<div layout="row" layout-wrap>'
 				+'<div>'
