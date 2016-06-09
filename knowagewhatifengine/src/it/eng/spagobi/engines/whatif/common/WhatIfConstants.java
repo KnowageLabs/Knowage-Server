@@ -37,6 +37,7 @@ public class WhatIfConstants {
 	public static final String CURRENT_WHAT_IF_ANALYSIS_STATE_VERSION = "0";
 
 	public static final String MODEL_CONFIG = "modelConfig";
+	public static final String CALCULATED_FIELDS = "calculatedFields";
 	public static final String MDX_QUERY = "mdxQuery";
 
 	public static final String ENGINE_NAME = "SpagoBIWhatIfEngine";

@@ -17,9 +17,16 @@
  */
 package it.eng.spagobi.engines.whatif.calculatedmember;
 
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
+import org.apache.log4j.Logger;
 import org.olap4j.Axis;
+import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class CalculatedMember {
 
@@ -27,13 +34,28 @@ public class CalculatedMember {
 	private String calculateFieldFormula;
 	private Member parentMember;
 	private Axis parentMemberAxis;
-
+	public static transient Logger logger = Logger.getLogger(CalculatedMember.class);
+	
 	public CalculatedMember(String calculateFieldName, String calculateFieldFormula, Member parentMember, Axis parentMemberAxis) {
 		super();
 		this.calculateFieldName = calculateFieldName;
 		this.calculateFieldFormula = calculateFieldFormula;
 		this.parentMember = parentMember;
 		this.parentMemberAxis = parentMemberAxis;
+	}
+	
+	public CalculatedMember( Cube cube, String calculateFieldName, String calculateFieldFormula, String parentMemberUniqueName, int axisOrdinal) {
+		super();
+		this.calculateFieldName = calculateFieldName;
+		this.calculateFieldFormula = calculateFieldFormula;
+		try {
+			this.parentMember =  CubeUtilities.getMember(cube, parentMemberUniqueName);
+		} catch (Exception e) {
+			logger.error("Error loading the calculate field withe name "+calculateFieldFormula, e);
+			throw new SpagoBIEngineRuntimeException("Error loading the calculate field withe name "+calculateFieldFormula, e);
+		}
+		
+		this.parentMemberAxis = CubeUtilities.getAxis(axisOrdinal);
 	}
 
 	public String getCalculateFieldName() {
@@ -52,22 +74,33 @@ public class CalculatedMember {
 		this.calculateFieldFormula = calculateFieldFormula;
 	}
 
+	@JsonIgnore
 	public Member getParentMember() {
 		return parentMember;
+	}
+	
+	public String getParentMemberUniqueName() {
+		return parentMember.getUniqueName();
 	}
 
 	public void setParentMember(Member parentMember) {
 		this.parentMember = parentMember;
 	}
-
+	
+	@JsonIgnore
 	public Axis getParentMemberAxis() {
 		return parentMemberAxis;
+	}
+	
+	public int getParentMemberAxisOrdinal(){
+		return parentMemberAxis.axisOrdinal();
 	}
 
 	public void setParentMemberAxis(Axis parentMemberAxis) {
 		this.parentMemberAxis = parentMemberAxis;
 	}
 	
+	@JsonIgnore
 	public Hierarchy getHierarchy(){
 		if(getParentMember()!=null){
 			return this.getParentMember().getHierarchy();

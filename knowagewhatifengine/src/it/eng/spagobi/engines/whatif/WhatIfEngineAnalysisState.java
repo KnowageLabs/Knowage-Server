@@ -17,14 +17,20 @@
  */
 package it.eng.spagobi.engines.whatif;
 
+import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMember;
 import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
 import it.eng.spagobi.utilities.engines.EngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -109,13 +115,17 @@ public class WhatIfEngineAnalysisState extends EngineAnalysisState {
 			String query = analysisStateJSON.getString(WhatIfConstants.MDX_QUERY);
 			// set the model config into the analysis state
 			String config = analysisStateJSON.getString(WhatIfConstants.MODEL_CONFIG);
-
+			// set the model config into the analysis state
+			String calculatedFields = analysisStateJSON.optString(WhatIfConstants.CALCULATED_FIELDS);
+			
+			
+			
 			// deserialize the model config
 			ModelConfig configDeserialized = (ModelConfig) (SerializationManager.deserialize("application/json", config, ModelConfig.class));
 
 			instance.getPivotModel().setMdx(query);
 			instance.updateModelConfig(configDeserialized);
-
+			setCalculatedMember(calculatedFields, instance);
 		} catch (Throwable e) {
 			throw new SpagoBIEngineRuntimeException("Impossible to deserialize catalogue", e);
 		}
@@ -134,14 +144,41 @@ public class WhatIfEngineAnalysisState extends EngineAnalysisState {
 		try {
 			String query = instance.getPivotModel().getCurrentMdx();
 			String config = (String) SerializationManager.serialize("application/json", instance.getModelConfig());
-
+			
+			if(instance.getPivotModel() instanceof SpagoBIPivotModel){
+				String cc = (String) SerializationManager.serialize("application/json", ((SpagoBIPivotModel)instance.getPivotModel()).getCalculatedFields());
+				analysisStateJSON.put(WhatIfConstants.CALCULATED_FIELDS, cc);
+			}
+			
 			analysisStateJSON.put(WhatIfConstants.MDX_QUERY, query);
 			analysisStateJSON.put(WhatIfConstants.MODEL_CONFIG, config);
+			
+			
 		} catch (Throwable e) {
 			throw new SpagoBIEngineRuntimeException("Impossible to serialize catalogue", e);
 		}
-
+		
 		setProperty(WhatIfConstants.WHAT_IF_ANALYSIS_STATE, analysisStateJSON);
+	}
+	
+	private void setCalculatedMember(String cc, WhatIfEngineInstance instance) throws JSONException{
+		List<CalculatedMember> toreturn = new ArrayList<CalculatedMember>();
+		
+		if(instance.getPivotModel() instanceof SpagoBIPivotModel){
+			SpagoBIPivotModel model = (SpagoBIPivotModel)instance.getPivotModel();
+			
+			if(cc!=null && cc.length()>0){
+				JSONArray ja = new JSONArray(cc);
+				for(int i=0; i<ja.length(); i++){
+					JSONObject aSerMember = ja.getJSONObject(i);
+					CalculatedMember cm = new CalculatedMember(model.getCube(), aSerMember.getString("calculateFieldName"), aSerMember.getString("calculateFieldFormula"), aSerMember.getString("parentMemberUniqueName"), aSerMember.getInt("parentMemberAxisOrdinal"));
+					toreturn.add(cm);
+				}
+			}
+			
+			model.setCalculatedFields(toreturn);
+		}
+
 	}
 
 }
