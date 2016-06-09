@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -65,6 +65,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#loadById(java.lang.Integer)
 	 */
+	@Override
 	public SbiObjPar loadById(Integer id) throws EMFUserError {
 		SbiObjPar hibObjPar = null;
 		Session aSession = null;
@@ -88,7 +89,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 		return hibObjPar;
 	}
 
-	
+	@Override
 	public BIObjectParameter loadBiObjParameterById(Integer id) throws EMFUserError {
 		BIObjectParameter objPar = null;
 		Session aSession = null;
@@ -115,7 +116,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 		return objPar;
 	}
 
-
+	@Override
 	public BIObjectParameter loadBiObjParameterByObjIdAndLabel(Integer objId, String label) throws EMFUserError {
 		BIObjectParameter objPar = null;
 		Session aSession = null;
@@ -162,6 +163,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#loadForDetailByObjParId(java.lang.Integer)
 	 */
+	@Override
 	public BIObjectParameter loadForDetailByObjParId(Integer objParId) throws EMFUserError {
 
 		BIObjectParameter toReturn = null;
@@ -200,6 +202,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#modifyBIObjectParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter)
 	 */
+	@Override
 	public void modifyBIObjectParameter(BIObjectParameter aBIObjectParameter) throws EMFUserError {
 
 		Session aSession = null;
@@ -276,6 +279,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#insertBIObjectParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter)
 	 */
+	@Override
 	public void insertBIObjectParameter(BIObjectParameter aBIObjectParameter) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
@@ -339,6 +343,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#eraseBIObjectParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter)
 	 */
+	@Override
 	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter, boolean alsoDependencies) throws EMFUserError {
 
 		Session aSession = null;
@@ -365,7 +370,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 		}
 	}
 
-
+	@Override
 	public void eraseBIObjectParameterDependencies(BIObjectParameter aBIObjectParameter, Session aSession) throws EMFUserError {
 		logger.debug("IN");
 		logger.debug("Delete dependencies for object parameter with id " + aBIObjectParameter.getId());
@@ -397,6 +402,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 
 	}
 
+	@Override
 	public void eraseBIObjectParametersByObjectId(Integer biObjId, Session currSession) throws EMFUserError {
 		logger.debug("IN");
 		SbiObjects hibObjects = null;
@@ -488,6 +494,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#getDocumentLabelsListUsingParameter(java.lang.Integer)
 	 */
+	@Override
 	public List getDocumentLabelsListUsingParameter(Integer parId) throws EMFUserError {
 
 		List toReturn = new ArrayList();
@@ -532,6 +539,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#loadBIObjectParametersById(java.lang.Integer)
 	 */
+	@Override
 	public List loadBIObjectParametersById(Integer biObjectID) throws EMFUserError {
 
 		Session aSession = null;
@@ -632,6 +640,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 
 		Parameter parameter = new Parameter();
 		parameter.setId(hiObjPar.getSbiParameter().getParId());
+		parameter.setType(hiObjPar.getSbiParameter().getParameterTypeCode());
 		aBIObjectParameter.setParameter(parameter);
 		return aBIObjectParameter;
 	}

@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dbaccess.Utils;
@@ -32,6 +33,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -42,6 +44,7 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.DateRangeUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.objects.Couple;
@@ -74,6 +77,7 @@ import org.apache.log4j.Logger;
 public class QueryDetail extends AbstractLOV implements ILovDetail {
 	private static transient Logger logger = Logger.getLogger(QueryDetail.class);
 
+	public static final String TRUE_CONDITION = " ( 1 = 1 ) ";
 	private String dataSource = "";
 	private String queryDefinition = "";
 
@@ -426,6 +430,12 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 *            The execution instance
 	 */
 	private void addFilter(StringBuffer buffer, ObjParuse dependency, List<BIObjectParameter> BIObjectParameters) {
+		BIObjectParameter fatherParameter = getFatherParameter(dependency, BIObjectParameters);
+		if (isDateRange(fatherParameter)) {
+			buffer.append(getDateRangeClause(dependency, fatherParameter));
+			return;
+		}
+
 		String operator = findOperator(dependency, BIObjectParameters);
 		String value = findValue(dependency, BIObjectParameters);
 		if (value != null) {
@@ -438,6 +448,99 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			buffer.append(" ( 1 = 1 ) "); // in case a filter has no value, add
 											// a TRUE condition
 		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected String getDateRangeClause(ObjParuse dependency, BIObjectParameter fp) {
+		Assert.assertNotNull(fp, "param must be present");
+		List values = fp.getParameterValues();
+		if (notContainsValue(values)) {
+			return TRUE_CONDITION;
+		}
+
+		// Example: 21-10-2019_6Y
+		String value = (String) values.get(0);
+		String typeFilter = dependency.getFilterOperation();
+
+		// operators
+		String left = null;
+		String right = null;
+		String central = null;
+		if (SpagoBIConstants.NOT_IN_RANGE_FILTER.equals(typeFilter)) {
+			left = "<";
+			right = ">";
+		} else if (SpagoBIConstants.IN_RANGE_FILTER.equals(typeFilter)) {
+			left = ">=";
+			right = "<=";
+		} else if (SpagoBIConstants.LESS_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.LESS_END_FILTER.equals(typeFilter)) {
+			central = "<";
+		} else if (SpagoBIConstants.LESS_OR_EQUAL_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.LESS_OR_EQUAL_END_FILTER.equals(typeFilter)) {
+			central = "<=";
+		} else if (SpagoBIConstants.GREATER_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.GREATER_END_FILTER.equals(typeFilter)) {
+			central = ">";
+		} else if (SpagoBIConstants.GREATER_OR_EQUAL_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.GREATER_OR_EQUAL_END_FILTER.equals(typeFilter)) {
+			central = ">=";
+		} else {
+			Assert.assertUnreachable("filter not supported");
+		}
+
+		// valid format
+		Date[] startEnd = DateRangeUtils.getDateRangeDates(value);
+		boolean isDateFormat = isDateFormat(getDataSourceDialect());
+		// formats accepted by #composeStringToDt
+		String dateFormat = isDateFormat ? "dd/MM/YYYY" : "dd/MM/YYYY HH:mm:ss";
+		DateFormat df = new SimpleDateFormat(dateFormat);
+		Date startDate = startEnd[0];
+		Date endDate = startEnd[1];
+		if (central == null && !isDateFormat) {
+			// add 1 day to end date because it will be transformed to timestamp
+			endDate = DateRangeUtils.addDay(endDate);
+			right = SpagoBIConstants.IN_RANGE_FILTER.equals(typeFilter) ? right = "<" : ">=";
+		}
+		String startDateS = df.format(startDate);
+		String endDateS = df.format(endDate);
+
+		// for query
+		String startDateSQLValue = getSQLDateValue(startDateS, true);
+		String endDateSQLValue = getSQLDateValue(endDateS, true);
+		String columnSQLName = getColumnSQLName(dependency.getFilterColumn());
+		String res = null;
+		// result something line (column>=date start AND column<=date end)
+		if (SpagoBIConstants.NOT_IN_RANGE_FILTER.equals(typeFilter) || SpagoBIConstants.IN_RANGE_FILTER.equals(typeFilter)) {
+			res = String.format(" ( %s%s%s AND %s%s%s) ", columnSQLName, left, startDateSQLValue, columnSQLName, right, endDateSQLValue);
+		} else if (SpagoBIConstants.LESS_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.LESS_OR_EQUAL_BEGIN_FILTER.equals(typeFilter)
+				|| SpagoBIConstants.GREATER_BEGIN_FILTER.equals(typeFilter) || SpagoBIConstants.GREATER_OR_EQUAL_BEGIN_FILTER.equals(typeFilter)) {
+			res = String.format(" ( %s%s%s) ", columnSQLName, central, startDateSQLValue);
+		} else if (SpagoBIConstants.LESS_END_FILTER.equals(typeFilter) || SpagoBIConstants.LESS_OR_EQUAL_END_FILTER.equals(typeFilter)
+				|| SpagoBIConstants.GREATER_END_FILTER.equals(typeFilter) || SpagoBIConstants.GREATER_OR_EQUAL_END_FILTER.equals(typeFilter)) {
+			res = String.format(" ( %s%s%s) ", columnSQLName, central, endDateSQLValue);
+		} else {
+			res = TRUE_CONDITION;
+		}
+		return res;
+	}
+
+	/**
+	 * These dialacts use date formats. The others dialects use timestamp format
+	 *
+	 * @param dataSourceDialect
+	 * @return
+	 */
+	private boolean isDateFormat(String dataSourceDialect) {
+		return DIALECT_TERADATA.equals(dataSourceDialect) || DIALECT_INGRES.equals(dataSourceDialect) || DIALECT_HSQL.equals(dataSourceDialect);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static boolean notContainsValue(List values) {
+		return values == null || values.isEmpty() || (values.size() == 1 && values.get(0).equals(""));
+	}
+
+	public static boolean isDateRange(BIObjectParameter biObjectParameter) {
+		if (biObjectParameter != null) {
+			Parameter parameter = biObjectParameter.getParameter();
+			return parameter != null && DATE_RANGE_TYPE.equals(parameter.getType());
+		}
+		return false;
 	}
 
 	private String getColumnSQLName(String columnName) {
@@ -539,6 +642,15 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			logger.error("Parameter type not supported: [" + parameterType + "]");
 			throw new SpagoBIRuntimeException("Parameter type not supported: [" + parameterType + "]");
 		}
+	}
+
+	private String getSQLDateValue(String value, boolean notValidate) {
+		if (!notValidate) {
+			validateDate(value);
+		}
+		String dialect = getDataSourceDialect();
+		String toReturn = composeStringToDt(dialect, value);
+		return toReturn;
 	}
 
 	private void validateNumber(String value) {
@@ -998,7 +1110,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName ()
 	 */
 	@Override
@@ -1008,7 +1120,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName (java.lang.String)
 	 */
 	@Override
@@ -1018,7 +1130,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames ()
 	 */
 	@Override
@@ -1028,7 +1140,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames (java.util.List)
 	 */
 	@Override
@@ -1038,7 +1150,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
@@ -1048,7 +1160,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName( java.lang.String)
 	 */
 	@Override
@@ -1058,7 +1170,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
@@ -1068,7 +1180,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames (java.util.List)
 	 */
 	@Override

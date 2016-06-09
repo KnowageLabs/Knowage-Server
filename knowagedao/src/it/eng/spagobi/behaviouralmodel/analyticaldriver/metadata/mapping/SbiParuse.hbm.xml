@@ -66,6 +66,9 @@
 		<property name="label" type="string">
 			<column name="label" length="20" not-null="true" />
 		</property>
+		 <property name="options" type="string">
+            <column name="options" length="4000" not-null="false" />
+        </property>
 		<property name="name" type="string">
 			<column name="name" length="40" not-null="true" />
 		</property>

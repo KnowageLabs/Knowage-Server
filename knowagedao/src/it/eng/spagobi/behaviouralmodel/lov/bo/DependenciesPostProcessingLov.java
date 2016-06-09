@@ -30,6 +30,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.DateRangeUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.text.SimpleDateFormat;
@@ -452,7 +453,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 			Date valueDate = null;
 			Date valueFilterDate = null;
 			try {
-				valueDate = toDate(value, format);
+				valueDate = DateRangeUtils.toDate(value, format);
 			} catch (Exception e) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
 						"DelegatedBasicListService::filterList: the string value is not a valid date representation according to the format " + format
@@ -466,7 +467,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				throw error;
 			}
 			try {
-				valueFilterDate = toDate(valuefilter, format);
+				valueFilterDate = DateRangeUtils.toDate(valuefilter, format);
 			} catch (Exception e) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
 						"DelegatedBasicListService::filterList: input string is not a valid date representation according to the format " + format
@@ -500,6 +501,8 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER, "100", null, params);
 				throw error;
 			}
+		} else if (valuetypefilter.equalsIgnoreCase(SpagoBIConstants.DATE_RANGE_TYPE)) {
+			return DateRangeUtils.isInDateRangeFilter(valuefilter, typeFilter, value);
 		} else {
 			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "DelegatedBasicListService::filterList: the filter value type '"
 					+ valuetypefilter + "' is not a valid filter value type");
