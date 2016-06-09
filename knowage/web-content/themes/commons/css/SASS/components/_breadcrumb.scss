@@ -9,6 +9,7 @@ bread-crumb nav {
     	text-decoration: none;
     	span {
     		padding: .5em;
+            color: rgba($baseColor, 0.6);
     	}
     	&:hover span{
     		background-color: $ternaryColor;
@@ -19,6 +20,9 @@ bread-crumb nav {
     	}
     	&:last-child {
     		color: rgba($baseColor, 1);
+            span {
+                color: rgba($baseColor, 1);
+            }
     	}
     	&:first-child:before {
     		display: none;

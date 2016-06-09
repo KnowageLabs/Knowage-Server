@@ -37,6 +37,13 @@ md-toolbar.md-knowage-theme {
 		}
 }
 
+md-list-item ._md-list-item-inner ._md-secondary-container, md-list-item ._md-secondary-container {
+  height: 0;
+}
+md-list-item._md-button-wrap>div.md-button:first-child ._md-list-item-inner {
+  height: 0;
+}
+
 md-toolbar.secondaryToolbar.md-knowage-theme {
 	background-color: $secondaryColor !important;
 }
