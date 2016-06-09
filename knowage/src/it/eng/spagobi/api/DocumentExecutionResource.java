@@ -226,7 +226,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						// DEFAULT DATE FIELD : {date#format}
 
 						if (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
-							// CONVERT DATE FORMAT FROM DEFAULT TO LOCAL
+							// CONVERT DATE FORMAT FROM DEFAULT TO SERVER
 							value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
 							// GeneralUtilities.getLocaleDateFormat(permanentSession),
 									SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), objParameter.getDefaultValues().get(0)
@@ -239,7 +239,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 							String[] dateRangeArr = dateRange.split("_");
 							String range = "_" + dateRangeArr[dateRangeArr.length - 1];
 							dateRange = dateRange.replace(range, "");
-							// CONVERT DATE FORMAT FROM DEFAULT TO LOCAL
+							// CONVERT DATE FORMAT FROM DEFAULT TO Server
 							value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
 							// GeneralUtilities.getLocaleDateFormat(permanentSession)
 									SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), dateRange);
@@ -285,39 +285,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					}
 				}
 			}
-			// CONVERT DATE PARAMETER FROM LOCALE TO SERVER FORMAT
-
-			// if (!objParameter.isMultivalue() && objParameter.getParType().equals("DATE")) {
-			// if (!jsonParameters.isNull(objParameter.getId())) {
-			// if (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format") != null) {
-			// String date = convertDate(GeneralUtilities.getLocaleDateFormat(permanentSession),
-			// SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"),
-			// jsonParameters.getString(objParameter.getId()));
-			// jsonParameters.put(objParameter.getId(), date);
-			// }
-			// }
-			// }
-
-			// CONVERT DATE RANGE (06/17/2016_3M) PARAMETER FROM LOCALE TO SERVER FORMAT
-			// if (!objParameter.isMultivalue() && objParameter.getParType().equals("DATE_RANGE")) {
-			// if (!jsonParameters.isNull(objParameter.getId())) {
-			// if (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format") != null) {
-			// String dateRange = jsonParameters.getString(objParameter.getId());
-			// if (!dateRange.equals("")) {
-			// String[] dateRangeArr = dateRange.split("_");
-			// String rangeEnd = "";
-			// if (dateRangeArr.length > 0) {
-			// rangeEnd = "_" + dateRangeArr[dateRangeArr.length - 1];
-			// dateRange = dateRange.replace(rangeEnd, "");
-			// }
-			// String date = convertDate(GeneralUtilities.getLocaleDateFormat(permanentSession),
-			// SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), dateRange);
-			// jsonParameters.put(objParameter.getId(), date + rangeEnd);
-			// }
-			//
-			// }
-			// }
-			// }
 
 			// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
 			if (!jsonParameters.isNull(objParameter.getId())) {
@@ -933,33 +900,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			return objParameter.getDefaultValues();
 		}
 
-	}
-
-	/*
-	 * Convert the range date value format type_quantity FROM 5D To dayes_5;
-	 */
-	private String convertDateRange(String range) {
-		String value = "";
-		if (range != null && range.length() > 1) {
-			String type = range.substring(range.length() - 1, range.length());
-			String quantity = range.substring(0, range.length() - 1);
-			if (type.equals("D")) {
-				type = "days";
-			}
-			if (type.equals("Y")) {
-				type = "years";
-			}
-			if (type.equals("W")) {
-				type = "weeks";
-			}
-			if (type.equals("M")) {
-				type = "months";
-			}
-
-			value = type + "_" + quantity;
-
-		}
-		return value;
 	}
 
 	private String convertDate(String dateFrom, String dateTo, String dateStr) {
