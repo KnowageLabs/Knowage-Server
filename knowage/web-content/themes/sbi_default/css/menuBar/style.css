@@ -305,9 +305,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
   -o-transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
   transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
 }
+#contieniLinkAdmin .row {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
 .gruppoLinkAdmin{
   margin-bottom: 5px;
-  min-height: 220px;
+  /* DavVerna commented to use flex instead. Decomment to use old grid system */
+  /*min-height: 220px;*/
 }
 #contieniLinkAdmin {
   width: 0;
@@ -323,7 +329,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
     font-size: 14px;
     font-weight: 300;
     font-family: 'Roboto', 'Helvetica Neue, Helvetica, Arial', sans-serif;
-    border-radius: 3px;
     background: #3B668C;
     padding: 4px;
     width: 90%;

@@ -287,4 +287,12 @@
 	 	top: calc(50% - #{($progCirculWorkspaceDiam/2)}px);
 	 	left: calc(50% - #{($progCirculWorkspaceDiam/2)}px);
 	 }
+
+	 .documentCard {
+	 	md-card-actions {
+	 		md-icon.shared {
+	 			color: #c70751;
+	 		}
+	 	}
+	 }
 }
