@@ -4,13 +4,12 @@ import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import it.eng.knowage.tools.servermanager.importexport.ExportUtilities;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 public class CalendarUtilities {
-	static private Logger logger = Logger.getLogger(ExportUtilities.class);
+	static private Logger logger = Logger.getLogger(CalendarUtilities.class);
 
 	public static SessionFactory getHibSessionAida() throws EMFUserError {
 		logger.debug("IN");
