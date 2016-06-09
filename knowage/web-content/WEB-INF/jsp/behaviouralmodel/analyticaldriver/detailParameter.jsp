@@ -231,7 +231,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</div>
 		<spagobi:error/>
 	
-<% if (modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_INS)) { %>
+<% 
+
+if (modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_INS)) { %>
 	</div>
 </form>
 <% } else if (modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) { 
@@ -288,7 +290,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    //List typeLov = domaindao.loadListDomainsByType("INPUT_TYPE");
 
 %>
-
 		<input type='hidden' id='saveParameterUse' value='' name='' />
 		<input type='hidden' id='selected_paruse_id' name='' value=''/>
 		<input type='hidden' id='deleteParameterUse' name='' value=''/>
@@ -399,110 +400,136 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					   value="<%=paruse.getDescription() == null ? "" : StringEscapeUtils.escapeHtml(paruse.getDescription())%>" maxlength="160">
 			</div>
 			
-			<div class='div_detail_label'>
-				<span class='portlet-form-field-label'>
-				  		<%if(parameter.getType().equals("DATE")){ %>
-		  					<spagobi:message key = "SBIDev.ListParamUse.parInfo.Default"/>
-		  				<%}else{ %>
-		  					<spagobi:message key = "SBIDev.ListParamUse.parInfo.Name"/>
-		  				<%} %>
-		
-				</span>
-			</div>
 			
-			<div class='div_detail_form' id='divForm' >
-		<% 
-			String lovName = null;
-	  	   	Integer idLov = null;
-	  	   	idLov = paruse.getIdLov();
-	  	   	Integer idLovInit = new Integer(-1);
-	  	   	if(idLov!= null){
-	  	   		if(!idLov.toString().equals(idLovInit.toString())) {
-	  		   		ModalitiesValue modVal  = DAOFactory.getModalitiesValueDAO().loadModalitiesValueByID(idLov);
-	  				lovName = modVal.getName();
-		  	   	}
-	  	   	}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<%if (!parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)) { %>
+	<div class='div_detail_label'>
+		<span class='portlet-form-field-label'>
+	  		<%if(parameter.getType().equals("DATE")){ %>
+				<spagobi:message key = "SBIDev.ListParamUse.parInfo.Default"/>
+			<%} else{ %>
+				<spagobi:message key = "SBIDev.ListParamUse.parInfo.Name"/>
+			<%} %>
 
-	  	   	boolean isManualInput = false;
-	    	boolean isMapInput = false;
-	  		boolean maximizerEnabled = false;
-	  		String maximizerDisabled = disabled;
-	    	boolean isLov = false;
-	    	
-	    	String valueSelection = "man_in";
-	    	String selectedLayer = null;
-	    	String selectedLayerProp = null;
-	    	
-	    	if(paruse.getValueSelection() != null) {
-		    	valueSelection = paruse.getValueSelection();
-	    	}
-	    	
-	    	int manual = 0;
-	    	if (paruse.getManualInput()!= null) {
-	    		manual = paruse.getManualInput().intValue();
-	    	}
-	    	
-	    	if(manual > 0 && valueSelection.equals("man_in")) { 
-	    		isManualInput = true;
-	    		maximizerEnabled = paruse.isMaximizerEnabled();
-	    	} else if( valueSelection.equals("map_in")){
-	    		isLov = false;
-	    		maximizerEnabled = false;
-	    		maximizerDisabled = "disabled";
-	    		
-	    		selectedLayer = paruse.getSelectedLayer();
-	    		selectedLayerProp = paruse.getSelectedLayerProp();
-	    	} else {
-	    		isLov = true;
-	    		maximizerEnabled = false;
-	    		maximizerDisabled = "disabled";
-	    	}
-	    %> 
-				<%--   				
-				<input type="radio" name="valueSelection" id ="valueSelection" value="lov" <%=disabled%> <% if(isLov) { out.println(" checked='checked' "); } %> onClick = "lovControl();manualInputSelection=this.value;" /> 
-				--%>
-  				<input type="radio" name="valueSelection" id ="valueSelection" value="lov" <%=disabled%> <% if(valueSelection.equals("lov")) { out.println(" checked='checked' "); } %> onClick = "lovControl(this.value);" />
+		</span>
+	</div>
+<% }  %>
+
+<%if (!parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)) { %>
+	<div class='div_detail_form' id = 'divForm' >
+<% }   
+
+  String lovName = null;
+  Integer idLov = null;
+  idLov = paruse.getIdLov();
+  Integer idLovInit = new Integer(-1);
+  if(idLov!= null){
+  if(!idLov.toString().equals(idLovInit.toString())) {
+   	ModalitiesValue modVal  = DAOFactory.getModalitiesValueDAO().loadModalitiesValueByID(idLov);
+	lovName = modVal.getName();
+  }
+  }
+  
+	boolean isManualInput = false;
+	boolean maximizerEnabled = false;
+	String maximizerDisabled = disabled;
+	boolean isLov = false;
+	
+	String valueSelection = "man_in";
+	String selectedLayer = null;
+	String selectedLayerProp = null;
+	
+	if(paruse.getValueSelection() != null) {
+    	valueSelection = paruse.getValueSelection();
+	}
+	
+	int manual = 0;
+	if (paruse.getManualInput()!= null) {
+		manual = paruse.getManualInput().intValue();
+	}
+	
+	if(manual > 0 && valueSelection.equals("man_in")) { 
+		isManualInput = true;
+		maximizerEnabled = paruse.isMaximizerEnabled();
+	} else if( valueSelection.equals("map_in")){
+		isLov = false;
+		maximizerEnabled = false;
+		maximizerDisabled = "disabled";
+
+
+
+
+		
+		selectedLayer = paruse.getSelectedLayer();
+		selectedLayerProp = paruse.getSelectedLayerProp();
+	} else {
+		isLov = true;
+		maximizerEnabled = false;
+		maximizerDisabled = "disabled";
+	}
+%> 
+    
+<%if (!parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)) { %>
+  		
+  		<input type="radio" name="valueSelection" id ="valueSelection" value="lov" <%=disabled%> <% if(valueSelection.equals("lov")) { out.println(" checked='checked' "); } %> onClick = "lovControl(this.value);" />
 	  	
-				<input type="text"	class='portlet-form-input-field' id="paruseLovName" <%=disabled%>
-				   		name="paruseLovName" size="40" 
-						value="<%= lovName != null ? StringEscapeUtils.escapeHtml(lovName) : "" %>" maxlength="100" readonly <%if(!isLov) {out.println("disabled = 'disabled'");} %>>
-	  		
-		  		<input type='hidden' id='paruseLovId' value='<%=(idLov != null?(idLov.intValue() != -1 ? idLov.toString() : ""):"") %>' <%=disabled%>
-		           		name='paruseLovId' />
-		  		&nbsp;*&nbsp;
-		    	<input 	type='image' name="loadLovLookup" <%=readonly%> id="loadLovLookup" value="LovLookup" style='<%if(isLov) {out.println("display:inline;");} else {out.println("display:none;");} %>'
-			   		src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/detail.gif", currTheme)%>' 
-			   		title='Lov Lookup' alt='Lov Lookup'/>
+  	
+		<input 	class='portlet-form-input-field' type="text" id="paruseLovName" <%=disabled%>
+		   		name="paruseLovName" size="40" 
+				value="<%= lovName != null ? StringEscapeUtils.escapeHtml(lovName) : "" %>" maxlength="100" readonly <%if(!isLov) {out.println("disabled = 'disabled'");} %>>
+  		
+  		<input 	type='hidden' id='paruseLovId' value='<%=(idLov != null?(idLov.intValue() != -1 ? idLov.toString() : ""):"") %>' <%=disabled%>
+           		name='paruseLovId' />
+  		&nbsp;*&nbsp;
+    	<input 	type='image' name="loadLovLookup" <%=readonly%> id="loadLovLookup" value="LovLookup" style='<%if(isLov) {out.println("display:inline;");} else {out.println("display:none;");} %>'
+		   		src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/detail.gif", currTheme)%>' 
+		   		title='Lov Lookup' alt='Lov Lookup'/>
 			 
-		 	</div>	
+	</div>
+<% }  %>
 		 
-		 	<div class='div_detail_label'>
-				<span class='portlet-form-field-label'>
-					&nbsp;
-				</span>
-			</div>	
-			<div class='div_detail_form' id = 'divForm' >
-	<%if(!parameter.getType().equals("DATE")){ %>
-			<select class='portlet-form-input-field' NAME="selectionType" id="paruseSelType" <% if (isManualInput) { out.print("disabled='disabled'"); } %>>
+		 
+<%if(!parameter.getType().equals("DATE") && !parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)){ %>
+	<div class='div_detail_label'>
+		<span class='portlet-form-field-label'>
+			&nbsp;
+		</span>
+	</div>	
+	<div class='div_detail_form' id = 'divForm' >
+		<select class='portlet-form-input-field' NAME="selectionType" id="paruseSelType" <% if (isManualInput) { out.print("disabled='disabled'"); } %>>
 		<% 
-	 	String curr_seltype_val = paruse.getSelectionType();
-	 	if(curr_seltype_val == null) 
-	 		curr_seltype_val = "none";
-	 	
-		for (int i = 0; i < selTypeList.size(); i++){
-			Domain domain = new Domain();
-  	       	domain = (Domain)selTypeList.get(i);		
+		 String curr_seltype_val = paruse.getSelectionType();
+		 if(curr_seltype_val == null) curr_seltype_val = "none";
+		 for (int i=0	; i<selTypeList.size(); i++){
+    	       Domain domain = new Domain();
+    	       domain = (Domain)selTypeList.get(i);		
 		%>		
-				<option <%=disabled%> value="<%=(String)domain.getValueCd()%>" 
-		<%	if(curr_seltype_val.equals(domain.getValueCd().toString()))
-				out.println(" selected='selected' "); 
-		%> 		>
-        <%=	domain.getTranslatedValueName(locale)%>
-       	<%} %>
-       		</select>  
-  	<%}else{ %>
-			<input type="hidden" NAME="selectionType" id="paruseSelType" value="COMBOBOX" />
-	<%}%>
+        	<option <%=disabled%> VALUE="<%=(String)domain.getValueCd()%>" <%if(curr_seltype_val.equals(domain.getValueCd().toString())) { out.println(" selected='selected' "); } %> >
+        	<%=domain.getTranslatedValueName(locale)%>
+       <%} %>
+       </select>  
+    </div>	     
+<% } else { %>
+	<input type="hidden" NAME="selectionType" id="paruseSelType" value="COMBOBOX" />
+<%}%>
+
+
+
+
+
+
+
+
 
 		</div>	     
 
@@ -512,9 +539,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</span>
 		</div>
 		<div class='div_detail_form'>
-			<%--
-			<input type="radio" name="valueSelection" <%=disabled%> id ="valueSelection" value="map_in" <% if(isManualInput) { out.println(" checked='checked' "); } %> onClick = "lovControl();manualInputSelection=this.value;" ></input>
-			--%>
+			
 			<input type="radio" name="valueSelection" <%=disabled%> id ="valueSelection" value="map_in" 
 					<% if(valueSelection.equals("map_in")) { out.println(" checked='checked' "); } %> onClick = "lovControl(this.value);" ></input>
 
@@ -538,9 +563,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</span>
 		</div>
 		<div class='div_detail_form'>
-			<%--
-			<input type="radio"  name="valueSelection" <%=disabled%> id ="valueSelection" value="man_in" <% if(isManualInput) { out.println(" checked='checked' "); } %> onClick = "lovControl();manualInputSelection=this.value;" ></input>
-			--%>
+			
 			<input type="radio"  name="valueSelection" <%=disabled%> id ="valueSelection" value="man_in" <% if(valueSelection.equals("man_in")) { out.println(" checked='checked' "); } %> onClick = "lovControl(this.value);" ></input>
 		</div>
 	
@@ -565,10 +588,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    %>
 	
 	    <div class='div_detail_label'>
-	        <span class='portlet-form-field-label'>
-	            <spagobi:message key = "SBIDev.paramUse.defaultValue" />
-	        </span>
-	    </div>
+        <span class='portlet-form-field-label'>
+<% if (!parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)) { %>
+            <spagobi:message key = "SBIDev.paramUse.defaultValue" />
+<% } else {%>
+			<spagobi:message key = "SBIDev.paramUse.defaultValueStartDate" />
+<% } %>
+        </span>
+    </div>
 	        <div class='div_detail_form'>
 	        <input type="radio" name="defaultMethod" id="defaultMethod" value="none" <%= (idLovForDefault == -1 && defaultFormula.equals("")) ? "checked='checked'" : "" %> />
 	        <spagobi:message key="SBIDev.paramUse.noDefault" />
@@ -606,7 +633,95 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            <option value="LAST" <%= defaultFormula.equals("LAST") ? "selected='selected'" : "" %> ><spagobi:message key="SBIDev.paramUse.useFormulaForDefault.LAST" /></option>
 	       </select>
 	    </div>
+	
+<% if (parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)) { %>
+
+  
+  <!-- Date Range management -->
+	<div class='div_detail_label'>
+		<span class='portlet-form-field-label'>Options</span>
 	</div>
+
+	<div class='div_detail_form' style="height: auto;">
+		<table id='dateRangeTableOptions'>
+			<tr class='portlet-form-field-label'>
+				<th ></th>
+				<th >Period</th>
+				<th>Quantity</th>
+				<!-- add button: in the header -->
+				<th>
+					<a alt='Add option' title='Add option' href='javascript:addDateRangeTableOption()'><img src='/knowage/themes/sbi_default/img/new.png'></a>
+				</th>
+			</tr>
+		</table>
+	</div>
+
+
+	<script type="text/javascript">
+		var currentDateRangeOptionId=0;
+		//[[value, description]]
+		var dateRangeOptions = [["years","<spagobi:message key = "SBIDev.paramUse.years" />"],["months","<spagobi:message key = "SBIDev.paramUse.months" />"],["weeks","<spagobi:message key = "SBIDev.paramUse.weeks" />"],["days","<spagobi:message key = "SBIDev.paramUse.days" />"]];
+		
+		var optionsToLoad = '<%=paruse.getOptions()==null?"":paruse.getOptions() %>';
+		if (optionsToLoad.length != 0) {
+			addDateRangeTableOptions(JSON.parse(optionsToLoad).options);
+		} else {
+			//at least 1 option, with 1 years (0 options not allowed)
+			addDateRangeTableOptions([{type:dateRangeOptions[0][0],quantity:1}]);
+		}
+
+		/**
+		* Add the existing saved options
+		*/
+		function addDateRangeTableOptions(options) {
+			for (var i=0;i<options.length;i++) {
+				var opt=options[i]; //{type:,quantity:}
+				addDateRangeTableOption(opt);
+			}
+		}
+
+		/** 
+		* Add a saved or new option to table: opt = {type:,quantity:} , can be null (new option added)
+		*/
+		function addDateRangeTableOption(opt) {
+			var table=document.getElementById('dateRangeTableOptions');
+			var row=table.insertRow(-1);
+			var remove=row.insertCell(-1);
+			remove.innerHTML="<a alt='Remove option' title='Remove option' onclick='removeRow(this)'><img src='/knowage/themes/sbi_default/img/erase.gif'></a>"
+			
+			var type=row.insertCell(-1);
+			type.innerHTML=getTypeCombo(currentDateRangeOptionId,opt?opt.type:null);
+			
+			var quantity=row.insertCell(-1);
+			quantity.innerHTML="<input type='number' required='true' name='dateRangeOptionQuantity_"+currentDateRangeOptionId+"' value='"+(opt?opt.quantity:"1")+"' ></input>"
+			
+			row.insertCell(-1); //add
+			currentDateRangeOptionId+=1;
+		}
+
+		//return the HTML of combobox of type of period (years,months and days)
+		function getTypeCombo(optionId,type) {
+			var res = "<select name='dateRangeOptionType_"+optionId+"'>";
+			for (var i=0;i<dateRangeOptions.length;i++) {
+				res+="<option value='"+dateRangeOptions[i][0]+"' "+(type===dateRangeOptions[i][0]?"selected":"")+">"+dateRangeOptions[i][1]+"</option>";
+			}
+			res+="</select>";
+			return res;
+		}
+
+		//remove a row of table
+		function removeRow(removeButton) {
+			var cell=removeButton.parentNode;
+			var row=cell.parentNode;
+			var table=row.parentNode;
+			table.removeChild(row);
+		}
+	</script>
+	
+<% } %>
+
+
+</div>
 
 
 	<table style="margin-bottom:5px;width:100%;">
@@ -751,9 +866,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			modality = mod;
 		}
 		
-<%-- 	
-	var manualInputSelection = '<%=isLov ? "lov" : "man_in"%>'; 
-	--%>
+
 	var manualInputSelection = '<%=valueSelection != null ? valueSelection : "man_in" %>';
 	
 	function lovControl(newManualInputSelectionValue) {
@@ -761,26 +874,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		console.log('lovControl function: newManualInputSelectionValue = "' + newManualInputSelectionValue + '"');
 		
-		/* 		
-		var var1 = document.getElementById('loadLovLookup');
-		var var2 = document.getElementById('paruseLovName');
-		var var3 = document.getElementById('paruseSelType');
-		var maximizerEnabledInput = document
-				.getElementById('maximizerEnabled');
-
-		if (var1.style.display != 'inline') {
-			var1.style.display = 'inline';
-			var2.disabled = false;
-			var3.disabled = false;
-			maximizerEnabledInput.disabled = true;
-		} else {
-			var1.style.display = 'none';
-			var2.disabled = true;
-			var3.disabled = true;
-			maximizerEnabledInput.disabled = false;
-		} 
-		*/
-
+		
 		var loadLovLookup = document.getElementById('loadLovLookup'); //lov lookup detail button
 		var paruseLovName = document.getElementById('paruseLovName'); //lov input text
 		var paruseSelType = document.getElementById('paruseSelType'); //lov combobox
@@ -792,10 +886,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			paruseSelType.disabled = false;
 			maximizerEnabledInput.disabled = true;
 		} else {
-			loadLovLookup.style.display = 'none';
-			paruseLovName.disabled = true;
-			paruseSelType.disabled = true;
-			maximizerEnabledInput.disabled = false;
+			
+			if(loadLovLookup) loadLovLookup.style.display = 'none';
+			if(paruseLovName) paruseLovName.disabled = true;
+			if(paruseSelType) paruseSelType.disabled = true;
+			if(maximizerEnabledInput) maximizerEnabledInput.disabled = false;
 		}
 		
 		var isMapInput = !!(manualInputSelection.toLowerCase() == 'map_in'); // true or false
@@ -821,26 +916,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 		
-		/* 
-		var paruseLovForDefaultId = document.getElementsByName('paruseLovForDefaultId');
-		for(var i = 0; i < paruseLovForDefaultId.length; i++) {
-			var element = paruseLovForDefaultId[i];
-			element.disabled = isMapInput;
-		}
-		
-		var paruseLovForDefaultName = document.getElementsByName('paruseLovForDefaultName');
-		for(var i = 0; i < paruseLovForDefaultName.length; i++) {
-			var element = paruseLovForDefaultName[i];
-			element.disabled = isMapInput;
-		}
-		
-		var loadLovForDefaultLookup = document.getElementsByName('loadLovForDefaultLookup');
-		for(var i = 0; i < loadLovForDefaultLookup.length; i++) {
-			var element = loadLovForDefaultLookup[i];
-			//element.disabled = isMapInput;
-			element.style.display = isMapInput? 'inline' : 'none' ;
-		}
-		*/
 		
 		var formulaForDefault = document.getElementsByName('formulaForDefault');
 		for(var i = 0; i < formulaForDefault.length; i++) {
@@ -861,7 +936,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		var paruseLabel = document.getElementById('paruseLabel').value;
 		var paruseName = document.getElementById('paruseName').value;
 		var paruseDescription = document.getElementById('paruseDescription').value;
-		var paruseLovId = document.getElementById('paruseLovId').value;
+		var paruseLovId = document.getElementById('paruseLovId')?document.getElementById('paruseLovId').value:'';
 		var manIn;
 		if (manualInputSelection == 'lov') {
 			manIn = 0;
@@ -923,7 +998,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			|| (paruseName != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialParuse.getName()))%>')
 			|| (paruseDescription != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialParuse.getDescription())) != null ? StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialParuse.getDescription())) : ""%>') 
 			|| (paruseLovId != '<%= initialParuse.getIdLov().intValue() != -1 ? initialParuse.getIdLov().toString() : "" %>')
-			<%-- || (manIn != <%=initialParuse.getManualInput()%>) --%>
 			|| (manualInputSelection != '<%=valueSelection%>')
 			|| rolesChanged
 			|| checksChanged) {

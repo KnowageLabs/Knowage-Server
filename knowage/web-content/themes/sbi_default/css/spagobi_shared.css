@@ -687,3 +687,92 @@ IMG {
 .parameter-leaf{
       background-image: url(../img/behavioural/parameter-leaf.png) !important;
 }
+
+/*Date Range driver CSS */
+
+/*date range param: to hide label of second and third fields*/
+.date-range-param .x-fieldset-body div:nth-child(2) label {
+	visibility: hidden;
+}
+
+/*table width and align*/
+#dateRangeTableOptions tr td:nth-child(1),
+#dateRangeTableOptions tr td:nth-child(4),
+#dateRangeTableOptions tr th:nth-child(1),
+#dateRangeTableOptions tr th:nth-child(4) {
+	width: 15%;	
+}
+
+#dateRangeTableOptions tr td:nth-child(2),
+#dateRangeTableOptions tr td:nth-child(3),
+#dateRangeTableOptions tr th:nth-child(2),
+#dateRangeTableOptions tr th:nth-child(3) {
+	width: 35%;	
+}
+
+#dateRangeTableOptions tr td,
+#dateRangeTableOptions tr th {
+	text-align: center;
+}
+
+#dateRangeTableOptions {
+	width: 320px;
+}
+
+#dateRangeTableOptions tr td:nth-child(3) input {
+	width: 70%;
+}
+
+/* hide first remove row: at least 1 row (also checked server side)*/
+#dateRangeTableOptions tr:nth-child(2) td:nth-child(1) {
+	visibility: hidden;
+}
+
+
+/* ParametersPanel layout */
+
+	/* All layouts */
+
+	/* remove date select image from end param (north and right)*/
+	input.date-range-param-end-north + img,
+	input.date-range-param-end-right + img {
+		visibility: hidden;
+	}
+
+	/* remove border and padding */
+	fieldset.date-range-param {
+		border: none;
+		padding: 0px;
+	}
+
+
+	/* top layout*/
+
+	input.date-range-param-start-north,
+	input.date-range-param-periods-north {
+		width: 70px !important;
+	}
+
+	/* start param */
+	.date-range-param-table-panel-north td:nth-child(1) {
+		width: 250px;
+	}
+
+	/* periods param */
+	.date-range-param-table-panel-north td:nth-child(2) {
+		width: 150px;
+	}
+
+	.date-range-param-start-panel-north label {
+		padding-left: 5px !important;
+	}
+
+	.date-range-param-start-panel-north {
+		width: 202px !important;
+	}
+
+	/* periods param remove 2px for alignment */
+	.date-range-param-table-panel-north td:nth-child(2) > div {
+		margin-top: -2px;
+	}
+

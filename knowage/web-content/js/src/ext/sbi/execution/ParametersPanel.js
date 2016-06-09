@@ -41,7 +41,18 @@
   * - Andrea Gioia (andrea.gioia@eng.it)
   */
 
+
 Ext.ns("Sbi.execution");
+
+var assert= function(condition, message) {
+    if (!condition) {
+        message = message || "Assertion failed";
+        if (typeof Error !== "undefined") {
+            throw new Error(message);
+        }
+        throw message; // Fallback
+    }
+};
 
 Sbi.execution.ParametersPanel = function(config, doc) {
 	
@@ -58,6 +69,7 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 		, viewportWindowHeight: 300
 		, fieldsPadding : 5
 		, maxFieldHeight : 300
+		, labelSeparator : ':'
 	};
 	
 	
@@ -75,7 +87,7 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	// merge settings and input configuration
 	var c = Ext.apply(temp, config || {});
 	
-	if(doc.parametersRegion != undefined){
+	if(doc != undefined && doc.parametersRegion != undefined){
 		c.parametersRegion = doc.parametersRegion;
 	}
 	
@@ -85,10 +97,6 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	
 	
 	this.baseConfig = c;
-	
-	//global variable
-	this.firstInitialization = true;
-
 	
 	this.parametersPreference = undefined;
 	if (c.parameters) {
@@ -177,7 +185,10 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 			, 'executionbuttonclicked'
 			, 'checkReady'
 			, 'ready'
-	);	
+	);
+	
+	// when the panel is rendered, we manage the dependencies between parameters 
+	this.on('ready', this.handleInitialDependencies, this, {single: true});
 };
 
 Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
@@ -237,6 +248,16 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     , showViewpointWin:null
     , saveViewpointWin: null
     
+    
+    , handleInitialDependencies : function () {
+    	Sbi.debug('[ParametersPanel.handleInitialDependencies] : IN');
+    	for (p in this.fields) {
+    		var aField = this.fields[p];
+    		this.updateDependentFields(aField, false);
+		}
+    	Sbi.debug('[ParametersPanel.handleInitialDependencies] : OUT');
+    }
+    
     // ----------------------------------------------------------------------------------------
     // public methods
     // ----------------------------------------------------------------------------------------
@@ -280,6 +301,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 
 	, clearParametersForm: function() {
 		//this.reset();
+		this.resetTreeDrivers();
 		var defaultValuesFormState = this.getDefaultValuesFormState();
 		Sbi.debug('[ParametersPanel.clearParametersForm] : default values form state is [' + defaultValuesFormState + ']');
 		var state = Ext.apply(defaultValuesFormState, this.preferenceState);
@@ -456,10 +478,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				var aField = this.fields[fieldName];
 				var hasChangeEvent = false;		
 				if(aField.hasListener('change')) {
+					Sbi.debug('[ParametersPanel.setFormState] : field [' + p + '] has change listener');
 					hasChangeEvent = true;
-					aField.un('change', this.onUpdateDependentFields);
-				}			
+					aField.un('change', this.onUpdateDependentFields, this);
+				}
+				Sbi.debug('[ParametersPanel.setFormState] : setting value [' + fieldValue + '] to [' + p + '] ... ');
 				aField.setValue( fieldValue );
+				Sbi.debug('[ParametersPanel.setFormState] : value [' + fieldValue + '] to [' + p + '] set');
 				if(hasChangeEvent) aField.on('change', this.onUpdateDependentFields, this);
 				
 				
@@ -473,6 +498,18 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}
 		
 		Sbi.trace("[ParametersPanel.setFormState] : OUT");
+	}
+	
+	,
+	resetTreeDrivers: function() {
+		Sbi.trace('[ParametersPanel.resetTreeDrivers] : IN');
+		for (f in this.fields) {
+			var aField = this.fields[f];
+			if (aField.behindParameter.selectionType === 'TREE') {
+				aField.reset();
+			}
+		}
+		Sbi.trace('[ParametersPanel.resetTreeDrivers] : OUT');
 	}
 	
 	, applyViewPoint: function(v) {
@@ -492,7 +529,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var hasChangeEvent = false;				
 		if(suspendEvents && aField.hasListener('change')) {
 			hasChangeEvent = true;
-			aField.un('change', this.onUpdateDependentFields);
+			aField.un('change', this.onUpdateDependentFields, this);
 		}			
 		aField.reset();
 		if(hasChangeEvent) aField.on('change', this.onUpdateDependentFields, this);
@@ -510,7 +547,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				if (!aField.isTransient) {
 					Sbi.debug('[ParametersPanel.reset] : Reset field [' + p + ']');
 					this.resetField(aField, true);
-					this.updateDependentFields( aField );
+					this.updateDependentFields( aField , true);
 				}
 			}
 		}
@@ -567,6 +604,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 					value = value || this.concatenateDefaultValues(behindParameter.defaultValues);
 					if(field.isTransient == false && (value==undefined || value==null || value.length==0)){
 						return false;
+					}
+					
+					if (field.isDateRange) {
+						value = field.getValue();
+						if (field.getValue()==null || field.getValue()=='') {
+							return false;
+						}
 					}
 				}
 			}
@@ -650,6 +694,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	     });
 	}
 
+	, isNorth: function() {
+		return this.parametersRegion == 'north';
+	}
+
 	, initializeParametersPanel: function( parameters, reset ) {
 			
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : IN');
@@ -668,10 +716,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		var nonTransientField = 0;
 		
-//		if(!this.parameters || this.parameters.length==0){
-//			this.fireEvent("hideparameterspanel");
-//		}
-			
 		var occupiedInRow = 0;
 		
 		for(var i = 0; i < parameters.length; i++) {
@@ -698,12 +742,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			
 			var field = this.createField( parameters[i] );
 				
-			var isAdded = false;
-			
 			if( this.parameterHasOnlyOneValue( parameters[i] ) ) {
 				if( this.parameterHasDependencies( parameters[i] ) || parameters[i].type === 'DATE') {
 					this.addField(field, nonTransientField++);
-					isAdded = true;
 				} else {
 					field.isTransient = true;
 					field.setValue(parameters[i].value);
@@ -711,9 +752,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			} else {				
 				if ( this.parameterValueIsPassedFromMenu(parameters[i]) ) {
 					field.setValue(this.preferenceState[parameters[i].id]);
-//					alert("initializeParametersPanel: set value of [" + parameters[i].id + "] " +
-//							"to [" + field.getValue() + "] " +
-//							"but dont add it to panel");
 					Sbi.debug("[ParametersPanel.initializeParametersPanel]: set value of [" + parameters[i].id + "] " +
 							"to [" + field.getValue() + "] " +
 							"but dont add it to panel");
@@ -722,20 +760,15 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 					// the parameter is passed in prefereces but it not came from the menu, it came from a cross nav
 					if( this.parameterValueIsInPreferences(parameters[i]) ){
 						//field.setValue(this.preferenceState[parameters[i].id]);
-//						alert("initializeParametersPanel: set value of [" + parameters[i].id + "] " +
-//								"to [" + this.preferenceState[parameters[i].id] +"] " +
-//								"and add it to panel");
 						Sbi.debug("[ParametersPanel.initializeParametersPanel]: set value of [" + parameters[i].id + "] " +
 								"to [" + this.preferenceState[parameters[i].id] +"] " +
 								"and add it to panel");
 					} else {
-//						alert("initializeParametersPanel: parameter [" + parameters[i].id + "] not in preferences");
 						Sbi.debug("[ParametersPanel.initializeParametersPanel]: parameter [" + parameters[i].id + "] not in preferences");
 					}
 					
 					if (parameters[i].visible === true && parameters[i].vizible !== false) {
 						this.addField(field, nonTransientField++);
-						isAdded = true;
 						Sbi.debug('field [' + parameters[i].id + '] is added');
 					} else {
 						Sbi.debug('field [' + parameters[i].id + '] is not added');
@@ -743,11 +776,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				}
 			}
 
-			//if(isAdded==true){
-				this.fields[parameters[i].id] = field;
-			//}
-				// update occupiedInRow 
-				occupiedInRow  += parameters[i].colspan; 
+			this.fields[parameters[i].id] = field;
+			// update occupiedInRow 
+			occupiedInRow  += parameters[i].colspan; 
 			 
 		}
 
@@ -788,8 +819,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		//var state = Ext.apply(defaultValuesFormState, this.preferenceState);
 		Sbi.debug('[ParametersPanel.initializeParametersPanel] : preference state applied to default values [' + Sbi.toSource(state) + ']');
 		this.setFormState(state);
-		this.firstInitialization = false;
-
 			
 		if (this.firstLoadTotParams == 0 && reset) {
 			this.fireEvent('ready', this, this.isReadyForExecution(), state);	
@@ -868,7 +897,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	
 	, onUpdateDependentFields: function(field, record, index) {
 		Sbi.trace('[ParametersPanel.onUpdateDependentFields] : IN');
-		this.updateDependentFields( field );
+		this.updateDependentFields( field , true);
 		Sbi.trace('[ParametersPanel.onUpdateDependentFields] : OUT');
 	}
 	, initializeFieldDependencies: function() {
@@ -922,7 +951,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			if (theField.behindParameter && theField.behindParameter.selectionType === 'TREE') {
 				
 				this.fields[p].on('select', function(field, record, index) {
-					this.updateDependentFields( field );
+					this.updateDependentFields( field, true);
 				} , this);
 				
 			} else 
@@ -930,25 +959,29 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			if (theField.behindParameter && theField.behindParameter.selectionType === 'LOOKUP') {
 			
 				this.fields[p].on('select', function(field, record, index) {
-					this.updateDependentFields( field );
+					this.updateDependentFields( field, true);
 				} , this);
 				
 			} else if(theField.behindParameter.selectionType === 'COMBOBOX'
 				|| theField.behindParameter.selectionType === 'LIST' 
 				|| theField.behindParameter.selectionType === 'SLIDER') {
 				this.fields[p].on('change', this.onUpdateDependentFields, this);
+			}else if (theField.behindParameter.type === 'DATE_RANGE') {
+				this.fields[p].on_change(function(field) {
+					this.updateDependentFields( field, true);
+				} , this);
 			} else if(theField.behindParameter.typeCode == 'MAN_IN') {
 				
 				if(theField.behindParameter.type == "DATE"){
 					this.fields[p].on('change', function(field, record, index) {
-						this.updateDependentFields( field );
+						this.updateDependentFields( field, true);
 					} , this);
 				}else{
 					// if input field has an element (it means that the field was displayed)
 					if (theField.el !== undefined) {
 						
 						theField.el.on('keydown', 
-							this.updateDependentFields.createDelegate(this, [theField]), this, {buffer: 350});
+							this.updateDependentFields.createDelegate(this, [theField, true]), this, {buffer: 350});
 						
 						
 						var onKeyDown = function(event, element, options , field){
@@ -971,7 +1004,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}
 	}
 	
-	, updateDependentFields: function(f) {
+	, updateDependentFields: function(f, reset) {
 		
 		//if(f.behindParameter.selectionType === 'SLIDER') alert('SLIDER updateDependentFields');
 		
@@ -984,7 +1017,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		if (f.dependants !== undefined) {
 			for(var i = 0; i < f.dependants.length; i++) {
 				if(f.dependants[i].hasDataDependency === true) {
-					this.updateDataDependentField(f, f.dependants[i]);
+					this.updateDataDependentField(f, f.dependants[i], reset);
 					hasDataDependency = true;
 				}
 				
@@ -1007,6 +1040,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		}
 		
+		this.checkLovDependency(f);
+		
 		Sbi.debug('[ParametersPanel.updateDependentFields] : fields that depend on [' + f.name + '] have been succesfully updated');
 		Sbi.trace('[ParametersPanel.updateDependentFields] : OUT');
 	}
@@ -1023,16 +1058,20 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var state = this.getFormState();			
 		this.removeAllFields();
 		
+
 		this.initializeParametersPanel(this.parameters, false);	
 		//Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : restore state [' + state.toSource() + ']');
+		//this.firstInitialization = true;
 		this.setFormState(state);
+		
+
 		
 		Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : OUT');
 		
 		this.manageVisualDependenciesOnVisibility = true;
 	}
 	
-	, updateDataDependentField: function(fatherField, dependantConf) {
+	, updateDataDependentField: function(fatherField, dependantConf, reset) {
 		Sbi.debug('[ParametersPanel.updateDataDependentField] : updating field [' + dependantConf.parameterId + '] that is data correlated with field [' + fatherField.name + ']');
 		
 		var field = this.fields[ dependantConf.parameterId ];
@@ -1040,14 +1079,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			|| field.behindParameter.selectionType === 'LIST' 
 			|| field.behindParameter.selectionType === 'SLIDER'){ 
 			field.store.load();
-		}		
-		if(field.behindParameter.selectionType === 'TREE'){ 
-			var p = Sbi.commons.JSON.encode(this.getFormState());
-			field.reloadTree(p);
-			if (!this.firstInitialization){
-				field.reset();
-			}
-		} else {
+		}
+		if (reset) {
 			field.reset();
 		}
 		Sbi.debug('[ParametersPanel.updateDataDependentField] : field [' + dependantConf.parameterId + '] that is data correlated with field [' + fatherField.name + '] have been updeted succesfully');
@@ -1175,10 +1208,35 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	
 	, addField: function(field, index) {
 		field.isTransient = false;
+
+		//manage date range on 'north' layout
+		if (field.isDateRange && this.isNorth()) {
+			var leftStart = new Ext.Panel({
+		        layout: 'form',
+		        border: false,
+		        cls:'date-range-param-start-panel-north',
+		        items : [ field.dateRangeItem[0] ]
+			});
+
+			var mainTable = new Ext.Panel({
+			    layout:'table',
+			    border: false,
+			    colspan: 1,
+			    cls:'date-range-param-table-panel-north',
+			    layoutConfig: {
+			        columns: 2
+			    }
+			});
+
+			mainTable.add(leftStart);
+			mainTable.add(field.dateRangeItem[1]);
+
+			this.tableContainer.add ( mainTable );
+		}
+
 		var newPanel = new Ext.Panel({
 	        layout: 'form'
 	        , autoDestroy: false
-	        //, title: 'miaoooooo'
 	        , colspan: this.columnNo > 1 ? field.colspan : 1
 	        , border: false
 	        , autoScroll: true
@@ -1186,11 +1244,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	        	padding : '' + this.fieldsPadding + 'px 0px 0px ' + this.fieldsPadding + 'px'  // padding is applied on top and left regions
 	        	, maxHeight : '' + this.maxFieldHeight + 'px'
 	        }
-	        , items : [ field ]
+	        , items : [ field.isDateRange && this.isNorth()? field.dateRangeItem[2]:field ]
 		});
 		this.tableContainer.add ( newPanel );
-
-		
 	}
 	
 	, addEmptyField: function(field, index) {
@@ -1237,11 +1293,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var el = field.el.dom.parentNode.parentNode;    
 		if( el.children[0].tagName.toLowerCase() === 'label' ) {  
 			//el.children[0].class = 'x-exec-paramlabel-disabled';
-			el.children[0].innerHTML = label + ':';    
+			el.children[0].innerHTML = label + this.labelSeparator;
 		} else if( el.parentNode.children[0].tagName.toLowerCase() === 'label' ){    
 			//el.parentNode.children[0].class = 'x-exec-paramlabel-disabled';
-			el.parentNode.children[0].innerHTML = label + ':';  
-			
+			el.parentNode.children[0].innerHTML = label + this.labelSeparator;  
 		}    
 	}
 	
@@ -1272,7 +1327,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		baseConfig.format = Sbi.config.localizedDateFormat;
 		
-		field = new Ext.form.DateField(baseConfig);
+		var field = new Ext.form.DateField(baseConfig);
 		
 		if(p.value !== undefined && p.value !== null) {	
 			var dt = Sbi.commons.Format.date(p.value, Sbi.config.clientServerDateFormat);
@@ -1283,8 +1338,210 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 	}
 
-	, createLookupField: function( baseConfig, executionInstance )  {
+	/*
+	*	Create a DateRange field. This is a field set of 3 fields: Start Date,
+	*	Combobox of options and readonly End Date. It simulates a field with set/getValue methods.
+	*
+	*/
+	, createDateRangeField : function( baseConfig, executionInstance ) {
+		var p = baseConfig.parameter;
+
+		//start date field
+		var confStart=Ext.apply({
+			isDateRange:true
+		}, baseConfig);
+		if (this.isNorth()) {
+			confStart.cls='date-range-param-start-north';
+		} else {
+			confStart.cls='date-range-param-start-right';
+		}
+		var start = this.createDateField(confStart,executionInstance);
+		start.addListener('valid',function(){refreshEnd();});
+
+		//combobox of options
+		var confPeriods = Ext.apply({
+				isDateRange:true,
+				select : function(){refreshEnd();}
+			}, baseConfig);
+		if (this.isNorth()) {
+			confPeriods.cls='date-range-param-periods-north';
+			confPeriods.fieldWidth=100;
+		}  else {
+			confPeriods.cls='date-range-param-periods-right';
+		}
+
+		var periods = this.createComboField(confPeriods,executionInstance);
+
+		//readonly end date field
+		var confEnd = Ext.apply({
+			isDateRange:true,
+			readOnly:true,
+			allowBlank:true
+		}, baseConfig);
+		confEnd.fieldLabel+=" "+LN('sbi.execution.parametersselection.dateRangeEnd');
+		if (this.isNorth()) {
+			confEnd.cls='date-range-param-end-north';
+			confEnd.fieldWidth=100;
+		} else {
+			confEnd.cls='date-range-param-end-right';
+		}
+		var end = this.createDateField(confEnd,executionInstance);
 		
+		var res = new Ext.form.FieldSet({
+			items:[start,periods,end],
+			cls:'date-range-param'
+		});
+
+		//return type (years,months...) and quantity (1,3...) of date range
+		function getTypeQuantity() {
+			//value = type + "_" + quantity
+			var periodDate = periods.getValue();
+			if (periodDate == null || periodDate.length == 0) {
+				return null;
+			}
+
+			var typeQuantity=periodDate.split("_");
+			assert(typeQuantity.length == 2,"not valid date range value");
+			return typeQuantity;
+		}
+
+		//calback function for dependant fields
+		var on_changes=[];
+		var bindings = [];
+		var refreshDeps = function () {
+			for (var i=0;i<on_changes.length;i++) {
+				on_changes[i].call(bindings[i],res);
+			}
+		}
+		
+		//refresh the end date based on start date and option selected
+		function refreshEnd() {
+			var typeQuantity=getTypeQuantity();
+			if (typeQuantity == null || typeQuantity == '') {
+				end.setValue('');
+				return; //not defined
+			}
+
+			var startDate = start.getValue();
+			if (startDate == null || startDate == '') {
+				end.setValue('');
+				return ;
+			}
+
+			var type=typeQuantity[0]; var quantity=typeQuantity[1];
+
+			//possible values in detailParameter.jsp
+			var newDate = null;
+			if (type === 'days') {
+				newDate  = new Date(startDate.getTime()+86400000*parseInt(quantity));
+			} else if (type === 'weeks') {
+				newDate  = new Date(startDate.getTime()+86400000*7*parseInt(quantity));
+			} else if (type === 'months') {
+				newDate = new Date(startDate.getTime());
+				newDate.setMonth(newDate.getMonth() + parseInt(quantity));
+			} else if (type === 'years') {
+				newDate = new Date(startDate.getTime());
+				newDate.setFullYear(newDate.getFullYear() + parseInt(quantity));
+			}
+			assert(newDate != null,"date range type not supported: "+type);
+			end.setValue(newDate);
+			
+			refreshDeps();
+		}
+		
+		
+
+		//pad with 0, s:int
+		function padDate(s) {
+			var res=""+s;
+			assert(res.length === 1 || res.length === 2,"at least one digit must be present");
+			if (res.length === 1) { //1
+				res="0"+res;
+			}
+			return res;
+		}
+		
+		
+		//for simulating a field
+		Ext.applyIf(res, {
+			getValue : function () {
+				var typeQuantity=getTypeQuantity();
+				if (typeQuantity === null) {
+					return '';
+				}
+
+				var startDate = start.getValue();
+				if (startDate == null) {
+					return '';
+				}
+
+				var type=typeQuantity[0]; var quantity=typeQuantity[1];
+				//6 years -> 6Y
+				//return  day-month-year_6Y
+				var res=padDate(startDate.getDate())+"-"+padDate(startDate.getMonth()+1)+"-"+startDate.getFullYear();
+				res+="_"+(quantity+type.charAt(0)).toUpperCase();
+				return res;
+			},
+			setValue : function (value) {
+				if (value == null || value === '') {
+					start.setValue(value);
+					periods.setValue(value);
+					return;
+				}
+
+				if (value instanceof Date) {
+					start.setValue(value);
+					return;
+				}
+
+				//contains the complete value
+				if (value.indexOf('_') !== -1) {
+					//day-month-year_6Y
+					//set start
+					var dqp=value.split("_");
+					var ds=dqp[0].split("-"); //day-month-year split, 3 length
+					start.setValue(new Date(parseInt(ds[2]),parseInt(ds[1])-1,parseInt(ds[0]),0,0,0,0));
+
+					//set period
+					var type=dqp[1].substring(dqp[1].length-1); //Y
+					var quantity=dqp[1].substring(0,dqp[1].length-1); //6
+					var translate={'Y':'years','M':'months','W':'weeks','D':'days'};
+					var typeTranslate=translate[type];
+					var newPeriodVale=typeTranslate+"_"+quantity;
+					//set async because values could be not loaded
+					periods.store.reload({callback:function(){periods.setValue(newPeriodVale);}});
+					return;
+				}
+
+				//set only start because contains only start value
+				start.setValue(value);
+			},
+			getRawValue : function () { 
+				return this.getValue();
+			},
+			setRawValue : function (value) {
+				//the default value will be only for start
+				this.setValue(value); 
+			},
+			clearInvalid : function() {
+				start.clearInvalid();
+				periods.clearInvalid();
+				end.clearInvalid();
+			},
+			name : p.id,
+			isDateRange: true,
+			dateRangeItem: [start,periods,end],
+			allowBlank:baseConfig.allowBlank,
+			on_change : function (callback,binding) {
+				on_changes.push(callback);
+				bindings.push(binding);
+			}
+		});
+
+		return res;
+	}
+
+	, createLookupField: function( baseConfig, executionInstance )  {
 		var p = baseConfig.parameter;
 		
 		var params = this.getBaseParams(p, executionInstance, 'complete');
@@ -1296,11 +1553,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			return true;
 		}, this);
 		
-		field = new Sbi.widgets.LookupField(Ext.apply(baseConfig, {
-			store: store
-			, params: params
-			, readOnly: true
-			, singleSelect: (p.multivalue === false)
+		var field = new Sbi.widgets.LookupField(Ext.apply(baseConfig, {
+			  store: store
+				, params: params
+				, readOnly: true
+				, singleSelect: (p.multivalue === false)
 		}));
 		
 		return field;
@@ -1329,6 +1586,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		return field;
 	}
 	
+	
 	, createTreeField: function( baseConfig, executionInstance ) {
 		
 		var p = baseConfig.parameter;
@@ -1336,16 +1594,36 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		
 		var params = this.getBaseParams(p, executionInstance, 'complete');
-		params.PARAMETERS = Sbi.commons.JSON.encode(this.getFormState());;
+		//params.PARAMETERS = Sbi.commons.JSON.encode(this.getFormState());;
 		params.LIGHT_NAVIGATOR_DISABLED = 'TRUE';
 		
 		
-		field = new Sbi.widgets.TreeLookUpField(Ext.apply(baseConfig,{
+		var field = new Sbi.widgets.TreeLookUpField(Ext.apply(baseConfig,{
 			params: params, 
 			allowInternalNodeSelection: p.allowInternalNodeSelection,
 			service: this.services['getParameterValueForExecutionService']
 		}));
 
+		field.treeLoader.on('beforeload', function(treeloader, node) {
+			var p = Sbi.commons.JSON.encode(this.getFormState());
+			treeloader.baseParams.PARAMETERS = p;
+			return true;
+		}, this);
+		
+		field.treeLoader.on('loadexception', function(loader, node, response) {
+			var f = this.fields[loader.baseParams.PARAMETER_ID];
+			var ignoreError = false;
+			if (f != undefined){
+				ignoreError = this.checkLovDependency(f);
+			}
+			if (!ignoreError){
+				Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			}
+			//fires after the sore is loaded: can apply
+			this.firstLoadCounter++;
+			this.fireEvent('checkReady', this);
+		}, this);
+		
 		field.treeLoader.on('load', function(loader, node, response) {
 			//fires after the sore is loaded: can apply
 			this.firstLoadCounter++;
@@ -1377,7 +1655,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var sliderWidth = 200 * p.colspan;
 		baseConfig.width  = sliderWidth;
 		
-		field = new Sbi.widgets.SliderField(Ext.apply(baseConfig, {
+		var field = new Sbi.widgets.SliderField(Ext.apply(baseConfig, {
 			multiSelect: p.multivalue,
 			store :  store,
 			displayField:'label',
@@ -1395,12 +1673,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		return field;
 	}
 	
-	, createComboField: function( baseConfig, executionInstance ) {
+	, createComboField: function( baseConfig, executionInstance ) { 
 		
 		var p = baseConfig.parameter;
 		
 		if(!p.colspan) p.colspan = 1;
-		var comboWidth = 200 * p.colspan;
+		var comboWidth = (baseConfig.isDateRange && this.isNorth()?100:200) * p.colspan;
 		baseConfig.width  = comboWidth;
 		
 		var store = this.createCompleteStore(p, executionInstance, 'simple');
@@ -1433,7 +1711,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}
 		
 		
-		field = new Ext.ux.Andrie.Select(Ext.apply(baseConfig, {
+		var field = new Ext.ux.Andrie.Select(Ext.apply(baseConfig, {
 			multiSelect: p.multivalue
 			//, minLength:2
 			, editable  : false			    
@@ -1469,6 +1747,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		var store = this.createCompleteStore(p, executionInstance, 'simple');
 		
+		var field = null;
 		if(p.multivalue) {	
 			field = new Sbi.widgets.CheckboxField(Ext.apply(baseConfig, {
 	           store : store
@@ -1495,8 +1774,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		var baseConfig = {
 			multivalue: p.multivalue
-	       , fieldLabel: p.label
-	       , fieldDefaultLabel: p.label
+	       , fieldLabel: p.label.replace(" ", "&nbsp;")
+	       , fieldDefaultLabel: p.label.replace(" ", "&nbsp;")
 		   , name : p.id
 		   , width: this.baseConfig.fieldWidth
 		   , allowBlank: !p.mandatory
@@ -1505,7 +1784,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		   , thickPerc: p.thickPerc
 		   // do not load store if the right value is passed in the preferences. In this case infact the field will be not added to the parameters panel
 		   // so it is not necessary to calculate all its values
-		   , autoLoad: !this.parameterValueIsPassedFromMenu(p) 
+		   , autoLoad: !this.parameterValueIsPassedFromMenu(p)
+		   , labelSeparator: this.labelSeparator
 		};
 		
 		var labelStyle = '';
@@ -1514,6 +1794,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		labelStyle += 'width: '+this.baseConfig.fieldLabelWidth+'px;';
 		baseConfig.labelStyle = labelStyle;
 		
+
 		if((this.mandatoryFieldAdditionalString!=null && this.mandatoryFieldAdditionalString!=undefined) && p.mandatory === true ){
 			if(baseConfig.fieldDefaultLabel!=undefined && baseConfig.fieldDefaultLabel!=null){
 				baseConfig.fieldDefaultLabel =  baseConfig.fieldDefaultLabel+' *';
@@ -1523,8 +1804,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}
 		}
 		
-		if(p.type === 'DATE' && p.selectionType !== 'MAN_IN') {		
+
+		if((p.type === 'DATE' && p.selectionType !== 'MAN_IN') ) {		
 			field = this.createDateField( baseConfig, this.executionInstance );
+		} else if (p.type === 'DATE_RANGE') {
+			field = this.createDateRangeField( baseConfig, this.executionInstance );
 		} else if(p.selectionType === 'LIST') {
 			var baseParams = {};
 			Ext.apply(baseParams, this.executionInstance);
@@ -1571,7 +1855,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			field = this.createLookupField( baseConfig, this.executionInstance );	
 		} else if(p.selectionType === 'SLIDER') { 
 			field = this.createSliderField( baseConfig, this.executionInstance );
-		
 		} else if( p.valueSelection && p.valueSelection.toLowerCase() == 'map_in'
 					&& p.selectedLayer && p.selectedLayer.trim() != ''
 						&& p.selectedLayerProp && p.selectedLayerProp.trim() != '') {
@@ -1579,19 +1862,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			field = this.createMapField( baseConfig, this.executionInstance );
 			
 		} else { 
-//			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {		
-//				baseConfig.format = Sbi.config.localizedDateFormat;
-//				field = new Ext.form.DateField(baseConfig);
-//				if(p.type ==='DATE_DEFAULT') {
-//					field.setValue(new Date());
-//				}		
-//			} else {
-			if (p.enableMaximizer) {
-				field = new Sbi.execution.LookupFieldWithMaximize(baseConfig);
-			} else {
-				field = new Ext.form.TextField(baseConfig);
-			}	
-//			}			
+
+				if (p.enableMaximizer) {
+					field = new Sbi.execution.LookupFieldWithMaximize(baseConfig);
+				} else {
+					field = new Ext.form.TextField(baseConfig);
+				}	
+		
 		}
 		
 		if(!field) {
@@ -1653,10 +1930,26 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		});
 		
 		store.on('loadexception', function(store, options, response, e) {
-			Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			var f = this.fields[options.params.PARAMETER_ID];
+			var ignoreError = false;
+			if (f.behindParameter.selectionType == "COMBOBOX"){
+				ignoreError = this.checkLovDependency(f);
+			}
+			if (!ignoreError){
+				Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			}
 		});
 		
 		store.on('load', function(store, records, options) {
+			//if the field is a ComboBox start to check it	
+			var fieldName = store.baseParams.PARAMETER_ID;
+			var field = this.fields[fieldName];
+			if (field != undefined){
+				if (field.behindParameter.selectionType == "COMBOBOX"){
+					this.checkFieldValue(field,store, records, options);
+				}
+				this.checkLovDependency(field);
+ 			}
 			//fires after the sore is loaded: can apply 
 			this.firstLoadCounter++;
 			this.fireEvent('checkReady', this);
@@ -1664,6 +1957,37 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 
 		return store;
 		
+	}
+	
+	, checkFieldValue: function(field, store, records, options){
+	//if the ComboBox has only one value, select this value automatically
+		if (records !== undefined && records.length == 1){
+			var item = records[0].data;
+			field.setValue(item.value);
+			field.setRawValue(item.description);
+		}
+	}
+	
+	, checkLovDependency: function(field){
+		//if the ComboBox has at least one LOV parametric dependency unset, invalid the comboBox until the dependency is set
+		var listFields = "";
+		var noSetLovParamtricField = false;
+		for (i=0; field.dependencies != undefined && i < field.dependencies.length; i++){
+			if (field.dependencies[i].isLovDependency == true){
+				var dependency = this.fields[field.dependencies[i].urlName];
+				if (dependency != undefined){
+					var rawValue = dependency.getRawValue();
+					if (rawValue == undefined || rawValue.length == 0){
+						noSetLovParamtricField = true;	
+						listFields = listFields + dependency.fieldLabel + ", ";
+					}
+				}
+			}
+		}
+		if (noSetLovParamtricField){			
+			field.markInvalid(LN('sbi.execution.parametersselection.message.unset.lov.parametric') + ". [" + listFields.substring(0,listFields.length - 2) + "]" );
+		}
+		return noSetLovParamtricField;
 	}
 	
 	// =====================================================================================
@@ -1772,7 +2096,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var rawValue = state.description;
 		if (state.description !== undefined && state.description != null && f.rendered === true) {
 			f.setRawValue( state.description );
-			this.updateDependentFields( f );
+			this.updateDependentFields( f, true);
 		}		
 	}
 	

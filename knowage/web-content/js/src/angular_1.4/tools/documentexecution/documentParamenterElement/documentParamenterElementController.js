@@ -17,7 +17,7 @@
 	
 	var documentParamenterElementCtrl = function(
 			$scope, sbiModule_config, sbiModule_restServices, sbiModule_translate, 
-			execProperties, documentExecuteServices, $mdDialog, $mdMedia,execProperties) {
+			execProperties, documentExecuteServices, $mdDialog, $mdMedia,execProperties,$filter,sbiModule_dateServices) {
 		
 		$scope.execProperties = execProperties;
 		$scope.documentExecuteServices = documentExecuteServices;
@@ -141,16 +141,90 @@
 			$scope.popupParameterDialog(parameter, templateUrl);
 		};
 		
+		
+		$scope.endDateRange = function(defaultValue, parameter){
+			var dateStart = parameter.parameterValue;
+			//console.log('range : ' , defaultValue);
+			//console.log('datestart : ' , dateStart);
+			if(defaultValue && defaultValue!='' && dateStart!=null && dateStart!=''){
+				var defaultValueObj = {};
+				for(var i=0; i<parameter.defaultValues.length; i++){
+					if(parameter.defaultValues[i].value==defaultValue){
+						defaultValueObj = parameter.defaultValues[i];
+						break;
+					}
+				}
+				var dateS = new Date(dateStart);
+				if(defaultValueObj.type=='days'){
+					var ys = parseInt(dateS.getDate());
+					var ye =  parseInt(defaultValueObj.quantity);
+					dateS.setDate(ys + ye);
+				}else if(defaultValueObj.type=='years'){
+					var ys = parseInt(dateS.getFullYear());
+					var ye =  parseInt(defaultValueObj.quantity);
+					dateS.setFullYear(ys + ye);
+				}else if(defaultValueObj.type=='months'){
+					var ys = parseInt(dateS.getMonth());
+					var ye =  parseInt(defaultValueObj.quantity);
+					dateS.setMonth(ys + ye);
+				}else if(defaultValueObj.type=='weeks'){
+					var ys = parseInt(dateS.getDate());
+					var ye =  parseInt(defaultValueObj.quantity * 7);
+					dateS.setDate(ys + ye);
+				}	
+				var dateToSubmit = $filter('date')(dateS, $scope.parseDateTemp(sbiModule_config.localizedDateFormat));
+				//var dateToSubmit = sbiModule_dateServices.formatDate(parameter.parameterValue, sbiModule_config.localizedDateFormat);
+				if(typeof parameter.datarange == 'undefined' ){
+					parameter.datarange = {};				
+				}
+				return dateToSubmit;
+			}else{
+				return '';
+			}
+		};
+		
+		
+		$scope.parseDateTemp = function(date){
+			result = "";
+			if(date == "d/m/Y"){
+				result = "dd/MM/yyyy";
+			}
+			if(date =="m/d/Y"){
+				result = "MM/dd/yyyy"
+			}
+			return result;
+		}
+		
+		
+		
+		
+		
+		
 		$scope.showRequiredFieldMessage = function(parameter) {
-			return (
+		return (
 				parameter.mandatory 
 				&& (
 						!parameter.parameterValue
 						|| (Array.isArray(parameter.parameterValue) && parameter.parameterValue.length == 0) 
-						|| parameter.parameterValue == '')
+						|| parameter.parameterValue == ''
+				)
 				) == true;
 		};	
 		
+		
+		$scope.showRequiredFieldMessageDateRange = function(parameter) {
+			if(parameter.mandatory){
+				if( parameter.parameterValue!='' && parameter.datarange && parameter.datarange.opt!=''){
+					return false;
+				}else{
+					return true;
+				}
+			}else{
+				return false;
+			}
+			
+			
+			};
 		
 		$scope.showDefaultValueAreValid = function(parameter) {
 			if(parameter.defaultValues && parameter.defaultValues.length>0 && parameter.defaultValues[0].error){
@@ -444,6 +518,11 @@
 				}
 			}
 		}
+		
+		
+		
+		
+		
 		
 		var testCondition = function(fieldA, condition, fieldB){
 			var ret = false;

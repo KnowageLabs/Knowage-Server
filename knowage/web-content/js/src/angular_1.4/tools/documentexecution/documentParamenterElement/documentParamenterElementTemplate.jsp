@@ -108,6 +108,29 @@
 <!-- 				</span> -->
 		</section>		
 	
+	
+	<!-- Date RANGE-->
+		<section ng-if="parameter.type=='DATE_RANGE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column">
+		<label 	ng-class="showRequiredFieldMessageDateRange(parameter) ? 'requiredField' : 'norequiredField'" >
+				{{parameter.label}}
+		</label>
+		<md-datepicker ng-model="parameter.parameterValue"  md-placeholder="{{parameter.label}}" >
+		</md-datepicker>
+			
+		<md-select ng-model="parameter.datarange.opt"> 
+				<md-option></md-option>
+				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" >
+					{{defaultParameter.label}}
+				</md-option>
+		</md-select>	
+		
+		<md-input-container class="md-block">
+		 {{sbiModule_translate.load("sbi.generic.to")}} : {{endDateRange(parameter.datarange.opt,parameter)}}
+		</md-input-container>	
+		</section>	
+	
+	
+	
 		<!-- manual number input -->
 		<md-input-container class="md-block" ng-if="parameter.type=='NUM' && parameter.selectionType=='' && parameter.valueSelection=='man_in'">
 			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">

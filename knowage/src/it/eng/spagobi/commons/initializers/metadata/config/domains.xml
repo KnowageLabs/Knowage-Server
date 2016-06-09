@@ -54,6 +54,8 @@
 		domainNm="Input value types to check" valueDs="sbidomains.ds.multi" />
 	<DOMAIN valueCd="DATE" valueNm="sbidomains.nm.date" domainCd="PAR_TYPE"
 		domainNm="Parameter type" valueDs="sbidomains.ds.date" />
+	<DOMAIN valueCd="DATE_RANGE" valueNm="sbidomains.nm.dateRange" domainCd="PAR_TYPE"
+		domainNm="Parameter type" valueDs="sbidomains.ds.range" />
 	<DOMAIN valueCd="NUM" valueNm="sbidomains.nm.num" domainCd="PAR_TYPE"
 		domainNm="Parameter type" valueDs="sbidomains.ds.num" />
 	<DOMAIN valueCd="STRING" valueNm="sbidomains.nm.string"

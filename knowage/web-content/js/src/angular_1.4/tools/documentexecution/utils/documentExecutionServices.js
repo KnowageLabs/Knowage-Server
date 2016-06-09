@@ -1,7 +1,7 @@
 (function() {
 	var documentExecutionModule = angular.module('documentExecutionModule');
 	
-	documentExecutionModule.service('documentExecuteServices', function($mdToast,execProperties,sbiModule_restServices,sbiModule_config,$filter) {
+	documentExecutionModule.service('documentExecuteServices', function($mdToast,execProperties,sbiModule_restServices,sbiModule_config,$filter,sbiModule_dateServices) {
 		var documentExecuteServicesObj = {
 //			decodeRequestStringToJson: function (str) {
 //				var hash;
@@ -109,13 +109,50 @@
 						} else {
 							//DATE
 							if(parameter.type=='DATE'){
-								//TODO : parse method !!
-								dateToSubmit = $filter('date')(parameter.parameterValue, 
-										this.parseDateTemp(sbiModule_config.localizedDateFormat));
-								//console.log('date to sub ' + dateToSubmit);
+//								dateToSubmit = $filter('date')(parameter.parameterValue, 
+//										this.parseDateTemp(sbiModule_config.localizedDateFormat));
+								//submit server date
+								//dateToSubmit = sbiModule_dateServices.formatDate(parameter.parameterValue, t.parseDateTemp(sbiModule_config.serverDateFormat));
+								var dateToSubmitFilter = $filter('date')(parameter.parameterValue, sbiModule_config.serverDateFormat);
+								if( Object.prototype.toString.call( dateToSubmitFilter ) === '[object Array]' ) {
+									dateToSubmit = dateToSubmitFilter[0].value;
+								}else{
+									dateToSubmit = dateToSubmitFilter;
+								}
+								console.log('date to sub ' + dateToSubmit);
 								jsonDatumValue=dateToSubmit;
 								jsonDatumDesc=dateToSubmit;							
-							}else{
+							}
+							//DATE RANGE
+							else if(parameter.type=='DATE_RANGE'){
+//								dateToSubmit = $filter('date')(parameter.parameterValue, 
+//										this.parseDateTemp(sbiModule_config.localizedDateFormat));
+								
+								var dateToSubmitFilter = $filter('date')(parameter.parameterValue, sbiModule_config.serverDateFormat);
+								if( Object.prototype.toString.call( dateToSubmitFilter ) === '[object Array]' ) {
+									dateToSubmit = dateToSubmitFilter[0].value;
+								}else{
+									dateToSubmit = dateToSubmitFilter;
+								}
+								
+								if(dateToSubmit!= '' && dateToSubmit!=null && parameter.datarange && parameter.datarange.opt){
+									var defaultValueObj = {};
+									for(var ii=0; ii<parameter.defaultValues.length; ii++){
+										if(parameter.datarange && parameter.datarange.opt && parameter.defaultValues[ii].value==parameter.datarange.opt){
+											defaultValueObj = parameter.defaultValues[ii];
+											break;
+										}
+									}
+									var rangeStr = defaultValueObj.quantity + this.getRangeCharacter(defaultValueObj.type);
+									console.log('rangeStr ', rangeStr);
+									jsonDatumValue=dateToSubmit+"_"+rangeStr;
+									jsonDatumDesc=dateToSubmit+"_"+rangeStr;																
+								}else{
+									jsonDatumValue='';
+									jsonDatumDesc='';
+								}
+							}
+							else{
 								jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
 								jsonDatumDesc = jsonDatumValue;
 							}							
@@ -138,7 +175,26 @@
 				}
 				return result;
 			},
-					
+			
+			getRangeCharacter : function(type){
+				result = "";
+				if(type=="days"){
+					result = "D";
+				}
+				if(type=="years"){
+					result = "Y";
+				}
+				if(type=="months"){
+					result = "M";
+				}
+				if(type=="weeks"){
+					result = "W";
+				}
+				return result;
+			},
+			
+			
+			
 			recursiveChildrenChecks : function(parameterValue,parameterDescription,childrenArray) {
 				childrenArray = childrenArray || [];
 				for(var i = 0; i < childrenArray.length; i++) {
@@ -173,7 +229,6 @@
 					if(parameter.selectionType.toLowerCase() == 'tree') {
 						if(parameter.multivalue) {
 							parameter.parameterValue = [];
-							
 							documentExecuteServicesObj.resetParameterInnerLovData(parameter.children);
 						} else {
 							parameter.parameterValue = '';
@@ -191,6 +246,10 @@
 					}
 				} else {
 					parameter.parameterValue = '';
+					if(parameter.type=='DATE_RANGE' && parameter.datarange){
+						parameter.datarange.opt='';
+					}
+					
 				}
 			},
 						
@@ -253,7 +312,7 @@
 	});
 	
 	documentExecutionModule.service('docExecute_exportService', function(sbiModule_translate,sbiModule_config,
-			execProperties,sbiModule_user,$http,sbiModule_dateServices) {
+			execProperties,sbiModule_user,$http,sbiModule_dateServices,documentExecuteServices) {
 		
 		var dee = this;
 		
@@ -284,7 +343,16 @@
 						if(currParam.type=="DATE"){
 							var dateParam = sbiModule_dateServices.formatDate(currParam.parameterValue, sbiModule_config.serverDateFormat);
 							paramsFilter=paramsFilter+'&'+currParam.urlName+'='+dateParam;
-						}else{
+						}else if(currParam.type=="DATE_RANGE"){
+							var dateParam = sbiModule_dateServices.formatDate(currParam.parameterValue, sbiModule_config.serverDateFormat);
+							if(paramsArr[i].datarange && paramsArr[i].datarange.opt){
+								var rangeArr = paramsArr[i].datarange.opt.split('_');
+								var rangeType = documentExecuteServices.getRangeCharacter(rangeArr[0]);
+								var rangeQuantity = rangeArr[1];
+								paramsFilter=paramsFilter+'&'+currParam.urlName+'='+dateParam+'_'+rangeQuantity+rangeType;
+							}
+						}
+						else{
 							if(!currParam.multivalue) {
 								paramsFilter=paramsFilter+'&'+currParam.urlName+'='+currParam.parameterValue;
 							}
@@ -523,7 +591,7 @@
 		 */
 		serviceScope.fillParametersPanel = function(params){
 
-			console.log('Load filter params : ' , params);
+			//console.log('Load filter params : ' , params);
 			if(execProperties.parametersData.documentParameters.length > 0){
 
 				//var readyParams //-> su questi parametri è stato settato il valore (o non ho nessun valore da settarvi) 
@@ -573,9 +641,25 @@
 							if(parameter.type=='NUM'){
 								parameter.parameterValue = parseFloat(params[parameter.urlName],10);
 							}else if(parameter.type=='DATE'){
-								//console.log('Date to fill ' , params[parameter.urlName]);
 								parameter.parameterValue= new Date(params[parameter.urlName]);
-							}else if(parameter.type=='STRING'){
+							}else if(parameter.type=='DATE_RANGE'){
+								var dateRange = params[parameter.urlName];
+								var dateRangeArr = dateRange.split('_');
+								var range = dateRangeArr[1];
+								dateRange = dateRangeArr[0];
+								if (dateRange === parseInt(dateRange)){
+									//FROM DEFAULT
+									parameter.parameterValue= new Date(parseInt(dateRange)); 
+								}else{
+									//FROM VIEWPOINT
+									parameter.parameterValue= new Date(dateRange); 
+								}
+								if(typeof parameter.datarange ==='undefined'){
+									parameter.datarange = {};
+								}
+								parameter.datarange.opt=serviceScope.convertDateRange(range);
+							}
+							else if(parameter.type=='STRING'){
 								parameter.parameterValue = params[parameter.urlName];									
 								if(parameter.defaultValues && parameter.defaultValues.length > 0) {
 									var parameterValues = parameter.parameterValue;
@@ -603,6 +687,39 @@
 				
 			}
 		};
+		
+		
+		
+		/*
+		 * Convert the range date value format type_quantity FROM 5D To dayes_5;
+		 */
+		serviceScope.convertDateRange = function(range) {
+			var value = "";
+			if (range != null && range.length > 1) {
+				var type = range.substring(range.length - 1, range.length);
+				var quantity = range.substring(0, range.length - 1);
+				if (type=="D") {
+					type = "days";
+				}
+				if (type=="Y") {
+					type = "years";
+				}
+				if (type=="W") {
+					type = "weeks";
+				}
+				if (type=="M") {
+					type = "months";
+				}
+
+				value = type + "_" + quantity;
+
+			}
+			return value;
+		}
+		
+		
+		
+		
 		
 	
 		serviceScope.getParametersForExecution = function(role, buildCorrelation,crossParameters) {
@@ -756,11 +873,30 @@
 		this.isExecuteParameterDisabled = function() {
 			if(execProperties.parametersData.documentParameters.length > 0) {
 				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++ ) {
-					if(execProperties.parametersData.documentParameters[i].mandatory 
-							&& (!execProperties.parametersData.documentParameters[i].parameterValue
-									|| execProperties.parametersData.documentParameters[i].parameterValue == '' )) {
-						return true;
-					}
+					
+//					if(execProperties.parametersData.documentParameters[i].mandatory 
+//							&& (!execProperties.parametersData.documentParameters[i].parameterValue
+//									|| execProperties.parametersData.documentParameters[i].parameterValue == '' )) {
+//						return true;
+//					}
+					
+					if(execProperties.parametersData.documentParameters[i].mandatory){
+						if(execProperties.parametersData.documentParameters[i].type=='DATE_RANGE'){
+							if(!execProperties.parametersData.documentParameters[i].parameterValue
+							    || execProperties.parametersData.documentParameters[i].parameterValue == ''
+								|| typeof execProperties.parametersData.documentParameters[i].datarange ==='undefined'
+								|| execProperties.parametersData.documentParameters[i].datarange.opt==''
+										 ){
+									return true;
+							}
+						}else{
+							if(!execProperties.parametersData.documentParameters[i].parameterValue
+									|| execProperties.parametersData.documentParameters[i].parameterValue == ''){
+								return true;
+							}
+							
+						}						
+					}					
 				}
 			}
 			return false
@@ -785,7 +921,7 @@
 	//DEPENDENCIES
 	
 	angular.module('documentExecutionModule').service('docExecute_dependencyService',
-			function(execProperties, documentExecuteServices,sbiModule_restServices) {
+			function(execProperties, documentExecuteServices,sbiModule_restServices,sbiModule_dateServices,sbiModule_config) {
 	
 		var serviceScope = this;
 		/*
@@ -1070,8 +1206,16 @@
 							}
 						}
 					}else{
-						condition = (visualDependency.operation=='contains') ? 
-								(compareValueStr==newValueStr) : condition=(compareValueStr!=newValueStr);
+						if(value.type=="DATE" || value.type=="DATE_RANGE"){
+							if(typeof newValueStr!= 'undefined' && newValueStr!=''){
+								var dateToSubmit1 = sbiModule_dateServices.formatDate(newValueStr, documentExecuteServices.parseDateTemp(sbiModule_config.localizedDateFormat));
+								condition = (visualDependency.operation=='contains') ? 
+										(compareValueStr==dateToSubmit1) : condition=(compareValueStr!=dateToSubmit1);								
+							}
+						}else{
+							condition = (visualDependency.operation=='contains') ? 
+									(compareValueStr==newValueStr) : condition=(compareValueStr!=newValueStr);
+						}						
 					}
 
 					if(condition){

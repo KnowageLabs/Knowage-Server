@@ -17,6 +17,9 @@
  */
 package it.eng.spagobi.api;
 
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_OPTIONS_KEY;
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_QUANTITY_JSON;
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE_JSON;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.SessionContainer;
@@ -37,6 +40,8 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
@@ -46,7 +51,9 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
@@ -102,7 +109,16 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	// public static String START = "start";
 	// public static String LIMIT = "limit";
 
+	public static final String SERVICE_NAME = "DOCUMENT_EXECUTION_RESOURCE";
+	private static final String DESCRIPTION_FIELD = "description";
+
+	private static final String VALUE_FIELD = "value";
+
+	private static final String LABEL_FIELD = "label";
+
 	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
+
+	private static final String[] VISIBLE_COLUMNS = new String[] { VALUE_FIELD, LABEL_FIELD, DESCRIPTION_FIELD };
 
 	private class DocumentExecutionException extends Exception {
 		private static final long serialVersionUID = -1882998632783944575L;
@@ -208,11 +224,26 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						// SINGLE
 						Object value;
 						// DEFAULT DATE FIELD : {date#format}
+
 						if (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
 							// CONVERT DATE FORMAT FROM DEFAULT TO LOCAL
 							value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
-									GeneralUtilities.getLocaleDateFormat(permanentSession),
-									objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0]);
+							// GeneralUtilities.getLocaleDateFormat(permanentSession),
+									SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), objParameter.getDefaultValues().get(0)
+											.getValue().toString().split("#")[0]);
+						}
+
+						// DEFAULT DATE RANGE FIELD : {date_2W#format}
+						else if (objParameter.getParType().equals("DATE_RANGE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
+							String dateRange = objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0];
+							String[] dateRangeArr = dateRange.split("_");
+							String range = "_" + dateRangeArr[dateRangeArr.length - 1];
+							dateRange = dateRange.replace(range, "");
+							// CONVERT DATE FORMAT FROM DEFAULT TO LOCAL
+							value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
+							// GeneralUtilities.getLocaleDateFormat(permanentSession)
+									SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), dateRange);
+							value = value + range;
 						} else {
 							value = objParameter.getDefaultValues().get(0).getValue();
 						}
@@ -255,16 +286,39 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				}
 			}
 			// CONVERT DATE PARAMETER FROM LOCALE TO SERVER FORMAT
-			if (!objParameter.isMultivalue() && objParameter.getParType().equals("DATE")) {
-				if (!jsonParameters.isNull(objParameter.getId())) {
-					if (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format") != null) {
-						String date = convertDate(GeneralUtilities.getLocaleDateFormat(permanentSession),
-								SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"),
-								jsonParameters.getString(objParameter.getId()));
-						jsonParameters.put(objParameter.getId(), date);
-					}
-				}
-			}
+
+			// if (!objParameter.isMultivalue() && objParameter.getParType().equals("DATE")) {
+			// if (!jsonParameters.isNull(objParameter.getId())) {
+			// if (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format") != null) {
+			// String date = convertDate(GeneralUtilities.getLocaleDateFormat(permanentSession),
+			// SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"),
+			// jsonParameters.getString(objParameter.getId()));
+			// jsonParameters.put(objParameter.getId(), date);
+			// }
+			// }
+			// }
+
+			// CONVERT DATE RANGE (06/17/2016_3M) PARAMETER FROM LOCALE TO SERVER FORMAT
+			// if (!objParameter.isMultivalue() && objParameter.getParType().equals("DATE_RANGE")) {
+			// if (!jsonParameters.isNull(objParameter.getId())) {
+			// if (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format") != null) {
+			// String dateRange = jsonParameters.getString(objParameter.getId());
+			// if (!dateRange.equals("")) {
+			// String[] dateRangeArr = dateRange.split("_");
+			// String rangeEnd = "";
+			// if (dateRangeArr.length > 0) {
+			// rangeEnd = "_" + dateRangeArr[dateRangeArr.length - 1];
+			// dateRange = dateRange.replace(rangeEnd, "");
+			// }
+			// String date = convertDate(GeneralUtilities.getLocaleDateFormat(permanentSession),
+			// SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), dateRange);
+			// jsonParameters.put(objParameter.getId(), date + rangeEnd);
+			// }
+			//
+			// }
+			// }
+			// }
+
 			// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
 			if (!jsonParameters.isNull(objParameter.getId())) {
 				Integer paruseId = objParameter.getParameterUseId();
@@ -301,6 +355,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	public Response getDocumentExecutionFilters(@Context HttpServletRequest req) throws DocumentExecutionException, EMFUserError, IOException, JSONException {
 
 		logger.debug("IN");
+
+		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
+		SessionContainer aSessionContainer = aRequestContainer.getSessionContainer();
+		SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 		String label = requestVal.getString("label");
 		String role = requestVal.getString("role");
@@ -312,7 +370,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
 		BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
 
-		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
 		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
 		DocumentUrlManager documentUrlManager = new DocumentUrlManager(this.getUserProfile(), locale);
 
@@ -397,6 +454,17 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				}
 			}
 
+			// DATE RANGE DEFAULT VALUE
+			if (objParameter.getParType().equals("DATE_RANGE")) {
+				try {
+					ArrayList<HashMap<String, Object>> defaultValues = manageDataRange(biObject, role, objParameter.getId());
+					parameterAsMap.put("defaultValues", defaultValues);
+				} catch (SerializationException e) {
+					logger.debug("Filters DATE RANGE ERRORS ", e);
+				}
+
+			}
+
 			// convert the parameterValue from array of string in array of object
 			DefaultValuesList parameterValueList = new DefaultValuesList();
 			Object o = parameterAsMap.get("parameterValue");
@@ -445,7 +513,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
 				DefaultValuesList valueList = null;
 				if (jsonParameters.isNull(objParameter.getId())) {
-					valueList = buildDefaultValueList(objParameter);
+					valueList = buildDefaultValueList(objParameter, permanentSession);
 					if (valueList != null) {
 						parameterAsMap.put("parameterValue", valueList);
 					}
@@ -464,6 +532,79 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
+	}
+
+	private ArrayList<HashMap<String, Object>> manageDataRange(BIObject biObject, String executionRole, String biparameterId) throws EMFUserError,
+			SerializationException, JSONException, IOException {
+
+		BIObjectParameter biObjectParameter = null;
+		List parameters = biObject.getBiObjectParameters();
+		for (int i = 0; i < parameters.size(); i++) {
+			BIObjectParameter p = (BIObjectParameter) parameters.get(i);
+			if (biparameterId.equalsIgnoreCase(p.getParameterUrlName())) {
+				biObjectParameter = p;
+				break;
+			}
+		}
+
+		try {
+			if (DateRangeDAOUtilities.isDateRange(biObjectParameter)) {
+				logger.debug("loading date range combobox");
+
+			}
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Error on loading date range combobox values", e);
+		}
+
+		Integer parID = biObjectParameter.getParID();
+		Assert.assertNotNull(parID, "parID");
+		ParameterUse param = DAOFactory.getParameterUseDAO().loadByParameterIdandRole(parID, executionRole);
+		String options = param.getOptions();
+		Assert.assertNotNull(options, "options");
+
+		ArrayList<HashMap<String, Object>> dateRangeValuesDataJSON = getDateRangeValuesDataJSON(options);
+
+		// TODO
+		// int dataRangeOptionsSize = getDataRangeOptionsSize(options);
+		// JSONObject valuesJSON = (JSONObject) JSONStoreFeedTransformer.getInstance().transform(dateRangeValuesDataJSON, VALUE_FIELD.toUpperCase(),
+		// LABEL_FIELD.toUpperCase(), DESCRIPTION_FIELD.toUpperCase(), VISIBLE_COLUMNS, dataRangeOptionsSize);
+
+		return dateRangeValuesDataJSON;
+
+	}
+
+	// private static int getDataRangeOptionsSize(String options) throws JSONException {
+	// JSONObject json = new JSONObject(options);
+	// JSONArray res = json.getJSONArray(DATE_RANGE_OPTIONS_KEY);
+	// return res.length();
+	// }
+
+	private ArrayList<HashMap<String, Object>> getDateRangeValuesDataJSON(String optionsJson) throws JSONException {
+		JSONObject json = new JSONObject(optionsJson);
+		JSONArray options = json.getJSONArray(DATE_RANGE_OPTIONS_KEY);
+		JSONArray res = new JSONArray();
+
+		ArrayList<HashMap<String, Object>> defaultValues = new ArrayList<>();
+
+		for (int i = 0; i < options.length(); i++) {
+			// JSONObject opt = new JSONObject();
+			JSONObject optJson = (JSONObject) options.get(i);
+			String type = (String) optJson.get(DATE_RANGE_TYPE_JSON);
+			// String typeDesc = getLocalizedMessage("SBIDev.paramUse." + type);
+			String quantity = (String) optJson.get(DATE_RANGE_QUANTITY_JSON);
+			String value = type + "_" + quantity;
+			String label = quantity + " " + type;
+			// message properties !!!
+			HashMap<String, Object> obj = new HashMap<String, Object>();
+			obj.put(VALUE_FIELD, value);
+			obj.put(LABEL_FIELD, label);
+			obj.put(DESCRIPTION_FIELD, label);
+			obj.put(DATE_RANGE_TYPE_JSON, type);
+			obj.put(DATE_RANGE_QUANTITY_JSON, quantity);
+			defaultValues.add(obj);
+
+		}
+		return defaultValues;
 	}
 
 	@POST
@@ -744,7 +885,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return role;
 	}
 
-	private DefaultValuesList buildDefaultValueList(DocumentParameters objParameter) {
+	private DefaultValuesList buildDefaultValueList(DocumentParameters objParameter, SessionContainer permanentSession) {
+		SimpleDateFormat serverDateFormat = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+
 		if (objParameter.getParType() != null && objParameter.getParType().equals("DATE")) {
 			String valueDate = objParameter.getDefaultValues().get(0).getValue().toString();
 			String[] date = valueDate.split("#");
@@ -753,7 +896,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			DefaultValue valueDef = new DefaultValue();
 			try {
 				Date d = format.parse(date[0]);
-				valueDef.setValue(d);
+				String dateServerFormat = serverDateFormat.format(d);
+				valueDef.setValue(dateServerFormat);
 				valueDef.setDescription(objParameter.getDefaultValues().get(0).getDescription());
 				valueList.add(valueDef);
 				return valueList;
@@ -761,10 +905,61 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				logger.error("Error while building defalt Value List Date Type ", e);
 				return null;
 			}
-		} else {
+		} else if (objParameter.getParType() != null && objParameter.getParType().equals("DATE_RANGE")) {
+			String valueDate = objParameter.getDefaultValues().get(0).getValue().toString();
+			String[] date = valueDate.split("#");
+			SimpleDateFormat format = new SimpleDateFormat(date[1]);
+			DefaultValuesList valueList = new DefaultValuesList();
+			DefaultValue valueDef = new DefaultValue();
+			try {
+
+				String dateRange = date[0];
+				String[] dateRangeArr = dateRange.split("_");
+				String range = dateRangeArr[dateRangeArr.length - 1];
+				dateRange = dateRange.replace("_" + range, "");
+				Date d = format.parse(dateRange);
+				String dateServerFormat = serverDateFormat.format(d);
+				valueDef.setValue(dateServerFormat + "_" + range);
+				valueDef.setDescription(objParameter.getDefaultValues().get(0).getDescription());
+				valueList.add(valueDef);
+				return valueList;
+			} catch (ParseException e) {
+				logger.error("Error while building defalt Value List Date Type ", e);
+				return null;
+			}
+		}
+
+		else {
 			return objParameter.getDefaultValues();
 		}
 
+	}
+
+	/*
+	 * Convert the range date value format type_quantity FROM 5D To dayes_5;
+	 */
+	private String convertDateRange(String range) {
+		String value = "";
+		if (range != null && range.length() > 1) {
+			String type = range.substring(range.length() - 1, range.length());
+			String quantity = range.substring(0, range.length() - 1);
+			if (type.equals("D")) {
+				type = "days";
+			}
+			if (type.equals("Y")) {
+				type = "years";
+			}
+			if (type.equals("W")) {
+				type = "weeks";
+			}
+			if (type.equals("M")) {
+				type = "months";
+			}
+
+			value = type + "_" + quantity;
+
+		}
+		return value;
 	}
 
 	private String convertDate(String dateFrom, String dateTo, String dateStr) {

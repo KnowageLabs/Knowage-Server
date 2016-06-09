@@ -215,7 +215,7 @@
 			if (!angular.equals(newValue, oldValue)) {
 				for(var i=0; i<newValue.length; i++){
 					//only new value different old value
-					if(oldValue[i] && (!angular.equals(newValue[i].parameterValue, oldValue[i].parameterValue)) ){
+					if(oldValue[i] && (!angular.equals(newValue[i], oldValue[i])) ){
 						docExecute_dependencyService.dataDependenciesCorrelationWatch(newValue[i]);		
 						break;
 					}

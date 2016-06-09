@@ -17,6 +17,9 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service;
 
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_OPTIONS_KEY;
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_QUANTITY_JSON;
+import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE_JSON;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFUserError;
@@ -26,14 +29,19 @@ import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.DependenciesPostProcessingLov;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.JSONStoreFeedTransformer;
+import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.services.DelegatedBasicListService;
+import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheInterface;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -59,6 +67,12 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 
 	public static final String SERVICE_NAME = "GET_PARAMETERS_FOR_EXECUTION_SERVICE";
 
+	private static final String DESCRIPTION_FIELD = "description";
+
+	private static final String VALUE_FIELD = "value";
+
+	private static final String LABEL_FIELD = "label";
+
 	// request parameters
 	public static String PARAMETER_ID = "PARAMETER_ID";
 	public static String SELECTED_PARAMETER_VALUES = "PARAMETERS";
@@ -77,6 +91,8 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 												// case; cannot use MODALITY
 												// because already in use
 	public static String MASSIVE_EXPORT = "massiveExport";
+
+	private static final String[] VISIBLE_COLUMNS = new String[] { VALUE_FIELD, LABEL_FIELD, DESCRIPTION_FIELD };
 
 	// logger component
 	private static Logger logger = Logger.getLogger(GetParameterValuesForExecutionAction.class);
@@ -229,6 +245,17 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 			Assert.assertNotNull(biObjectParameter, "Impossible to find parameter [" + biparameterId + "]");
 			// END get the relevant biobject parameter
 
+			// Date Range managing
+			try {
+				Parameter parameter = biObjectParameter.getParameter();
+				if (DateRangeDAOUtilities.isDateRange(parameter)) {
+					manageDataRange(biObjectParameter, executionInstance);
+					return;
+				}
+			} catch (Exception e) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Error on loading date range combobox values", e);
+			}
+
 			lovProvDet = executionInstance.getLovDetail(biObjectParameter);
 
 			// START get the lov result
@@ -298,6 +325,52 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 			logger.debug("OUT");
 		}
 
+	}
+
+	private void manageDataRange(BIObjectParameter biObjectParameter, ExecutionInstance executionInstance) throws EMFUserError, SerializationException,
+			JSONException, IOException {
+		Integer parID = biObjectParameter.getParID();
+		Assert.assertNotNull(parID, "parID");
+		String executionRole = executionInstance.getExecutionRole();
+		ParameterUse param = DAOFactory.getParameterUseDAO().loadByParameterIdandRole(parID, executionRole);
+		String options = param.getOptions();
+		Assert.assertNotNull(options, "options");
+
+		JSONArray dateRangeValuesDataJSON = getDateRangeValuesDataJSON(options);
+		int dataRangeOptionsSize = getDataRangeOptionsSize(options);
+		JSONObject valuesJSON = (JSONObject) JSONStoreFeedTransformer.getInstance().transform(dateRangeValuesDataJSON, VALUE_FIELD.toUpperCase(),
+				LABEL_FIELD.toUpperCase(), DESCRIPTION_FIELD.toUpperCase(), VISIBLE_COLUMNS, dataRangeOptionsSize);
+		writeBackToClient(new JSONSuccess(valuesJSON));
+	}
+
+	private static int getDataRangeOptionsSize(String options) throws JSONException {
+		JSONObject json = new JSONObject(options);
+		JSONArray res = json.getJSONArray(DATE_RANGE_OPTIONS_KEY);
+		return res.length();
+	}
+
+	private JSONArray getDateRangeValuesDataJSON(String optionsJson) throws JSONException {
+		JSONObject json = new JSONObject(optionsJson);
+		JSONArray options = json.getJSONArray(DATE_RANGE_OPTIONS_KEY);
+		JSONArray res = new JSONArray();
+		for (int i = 0; i < options.length(); i++) {
+			JSONObject opt = new JSONObject();
+			JSONObject optJson = (JSONObject) options.get(i);
+			String type = (String) optJson.get(DATE_RANGE_TYPE_JSON);
+			String typeDesc = getLocalizedMessage("SBIDev.paramUse." + type);
+			String quantity = (String) optJson.get(DATE_RANGE_QUANTITY_JSON);
+			String value = type + "_" + quantity;
+			String label = quantity + " " + typeDesc;
+			opt.put(VALUE_FIELD, value);
+			opt.put(LABEL_FIELD, label);
+			opt.put(DESCRIPTION_FIELD, label);
+			res.put(opt);
+		}
+		return res;
+	}
+
+	private String getLocalizedMessage(String code) {
+		return MessageBuilderFactory.getMessageBuilder().getMessage(code, getHttpRequest());
 	}
 
 	private JSONArray getChildrenForTreeLov(ILovDetail lovProvDet, List rows, String mode, int treeLovNodeLevel, String treeLovNodeValue) {
