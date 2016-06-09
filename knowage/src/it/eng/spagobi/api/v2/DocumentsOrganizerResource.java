@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
@@ -28,6 +27,7 @@ import java.util.List;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -44,24 +44,51 @@ public class DocumentsOrganizerResource extends AbstractSpagoBIResource {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List loadDocumentsForFolder(@PathParam("id") Integer folderId) {
-
+		logger.debug("IN");
 		try {
 			objFuncOrganizer = DAOFactory.getObjFuncOrganizerDAO();
 			objFuncOrganizer.setUserProfile(getUserProfile());
 			List documents = objFuncOrganizer.loadDocumentsByFolder(folderId);
 			return documents;
-		} catch (EMFUserError e) {
+		} catch (Exception exception) {
+			logger.error("Error while loading documents from organizer.", exception);
+			throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.load", buildLocaleFromSession(), exception);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
 
-			throw new SpagoBIRestServiceException("sbi.browser.folder.load.error", buildLocaleFromSession(), e);
+	@POST
+	@Path("/{id}")
+	public Response addDocumentToOrganizer(@PathParam("id") Integer documentId) {
+		logger.debug("IN");
+		try {
+			objFuncOrganizer = DAOFactory.getObjFuncOrganizerDAO();
+			objFuncOrganizer.setUserProfile(getUserProfile());
+			objFuncOrganizer.addDocumentToOrganizer(documentId);
+			return Response.ok().build();
+		} catch (Exception exception) {
+			logger.error("Error while saving document in organizer.", exception);
+			throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.post", buildLocaleFromSession(), exception);
+		} finally {
+			logger.debug("OUT");
 		}
 	}
 
 	@DELETE
 	@Path("/{folderId}/{docId}")
-	public Response deleteFolder(@PathParam("folderId") Integer folderId, @PathParam("docId") Integer docId) throws EMFUserError {
-		objFuncOrganizer = DAOFactory.getObjFuncOrganizerDAO();
-		objFuncOrganizer.removeDocumentFromOrganizer(folderId, docId);
-		return Response.ok().build();
+	public Response deleteDocumentFromOrganizer(@PathParam("folderId") Integer folderId, @PathParam("docId") Integer docId) {
+		logger.debug("IN");
+		try {
+			objFuncOrganizer = DAOFactory.getObjFuncOrganizerDAO();
+			objFuncOrganizer.removeDocumentFromOrganizer(folderId, docId);
+			return Response.ok().build();
+		} catch (Exception exception) {
+			logger.error("Error while deleting a document in organizer.", exception);
+			throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.delete", buildLocaleFromSession(), exception);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 }

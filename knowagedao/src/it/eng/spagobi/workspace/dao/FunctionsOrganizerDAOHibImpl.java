@@ -1,7 +1,22 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.spagobi.workspace.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.workspace.bo.FunctionsOrganizer;
@@ -24,7 +39,7 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 	private static transient Logger logger = Logger.getLogger(FunctionsOrganizerDAOHibImpl.class);
 
 	@Override
-	public List loadFolderByUser() throws EMFUserError {
+	public List loadFolderByUser() {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -49,7 +64,6 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("HibernateException", he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -61,7 +75,7 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 	}
 
 	@Override
-	public SbiFunctionsOrganizer createFolder(SbiFunctionsOrganizer folder) throws EMFUserError {
+	public SbiFunctionsOrganizer createFolder(SbiFunctionsOrganizer folder) {
 		logger.debug("IN");
 		IEngUserProfile user = getUserProfile();
 		String userId = user.getUserUniqueIdentifier().toString();
@@ -89,14 +103,10 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 			if (tx != null)
 				tx.rollback();
 
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [insertLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
-
 				}
 				logger.debug("OUT");
 			}
@@ -105,7 +115,7 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 	}
 
 	@Override
-	public void deleteFolder(Integer folderId) throws EMFUserError {
+	public void deleteFolder(Integer folderId) {
 
 		logger.debug("IN");
 		Session aSession = null;
@@ -117,12 +127,9 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 			tx.commit();
 		} catch (Exception he) {
 			logException(he);
-			logger.error("Error in loading folder linked to user", he);
+			logger.error("Error in deleting the folder from organizer", he);
 			if (tx != null)
 				tx.rollback();
-
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
