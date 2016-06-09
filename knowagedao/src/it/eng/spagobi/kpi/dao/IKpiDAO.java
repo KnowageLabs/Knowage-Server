@@ -18,6 +18,7 @@
 package it.eng.spagobi.kpi.dao;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.bo.Alias;
 import it.eng.spagobi.kpi.bo.Cardinality;
@@ -120,6 +121,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 */
 	public Rule insertRule(Rule rule) throws SpagoBIException;
 
+	public Rule importRule(Rule rule) throws SpagoBIException;
+
 	public Rule insertNewVersionRule(Rule rule) throws SpagoBIException;
 
 	public Kpi insertNewVersionKpi(Kpi kpi) throws SpagoBIException;
@@ -131,6 +134,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public Rule loadRule(Integer id, Integer version);
 
 	public Integer getRuleIdByName(String name);
+
+	public Integer createDomainIfNotExists(Domain domain);
 
 	/**
 	 * Retrieves all kpi filtered by status (only active / only not active / all records)
@@ -224,6 +229,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public List<Threshold> listThreshold();
 
 	public Threshold loadThreshold(Integer id);
+
+	public Integer getThresholdIdByName(String name);
 
 	/**
 	 * Given a list of measures it retrieves a list of placeholder related to that measures

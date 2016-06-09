@@ -214,11 +214,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 				for (SbiKpiRuleOutput sbiRuleOutput : allRuleOutputs) {
 					if (MEASURE.equals(sbiRuleOutput.getType().getValueCd())) {
-						cardinalityBuilder.addMeasure(sbiRuleOutput.getSbiKpiRule().getSbiKpiRuleId().getId(), sbiRuleOutput.getSbiKpiRule().getSbiKpiRuleId()
-								.getVersion(), sbiRuleOutput.getSbiKpiRule().getName(), sbiRuleOutput.getSbiKpiAlias().getName());
+						cardinalityBuilder.addMeasure(sbiRuleOutput.getSbiKpiRule().getSbiKpiRuleId().getId(),
+								sbiRuleOutput.getSbiKpiRule().getSbiKpiRuleId().getVersion(), sbiRuleOutput.getSbiKpiRule().getName(),
+								sbiRuleOutput.getSbiKpiAlias().getName());
 					} else {
-						cardinalityBuilder.addAttribute(sbiRuleOutput.getSbiKpiRule().getSbiKpiRuleId().getId(), sbiRuleOutput.getSbiKpiRule()
-								.getSbiKpiRuleId().getVersion(), sbiRuleOutput.getSbiKpiAlias().getName());
+						cardinalityBuilder.addAttribute(sbiRuleOutput.getSbiKpiRule().getSbiKpiRuleId().getId(),
+								sbiRuleOutput.getSbiKpiRule().getSbiKpiRuleId().getVersion(), sbiRuleOutput.getSbiKpiAlias().getName());
 					}
 				}
 
@@ -247,7 +248,16 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return insertRule(rule, false);
 	}
 
+	@Override
+	public Rule importRule(final Rule rule) {
+		return insertRule(rule, false, true);
+	}
+
 	private Rule insertRule(final Rule rule, final boolean newVersion) {
+		return insertRule(rule, newVersion, false);
+	}
+
+	private Rule insertRule(final Rule rule, final boolean newVersion, final boolean importMode) {
 		return executeOnTransaction(new IExecuteOnTransaction<Rule>() {
 			@Override
 			public Rule execute(Session session) throws SpagoBIException {
@@ -276,9 +286,15 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
 					SbiKpiRuleOutput sbiRuleOutput = new SbiKpiRuleOutput();
 					sbiRuleOutput.setSbiKpiRule(sbiRule);
-					sbiRuleOutput.setTypeId(ruleOutput.getType().getValueId());
+					Integer typeId = ruleOutput.getType().getValueId();
+					if (importMode)
+						typeId = loadOrCreateDomain(session, ruleOutput.getType()).getValueId();
+					sbiRuleOutput.setTypeId(typeId);
 					if (ruleOutput.getHierarchy() != null) {
-						sbiRuleOutput.setHierarchyId(ruleOutput.getHierarchy().getValueId());
+						Integer hierarchyId = ruleOutput.getHierarchy().getValueId();
+						if (importMode)
+							hierarchyId = loadOrCreateDomain(session, ruleOutput.getHierarchy()).getValueId();
+						sbiRuleOutput.setHierarchyId(hierarchyId);
 					}
 					// handling Alias
 					SbiKpiAlias sbiAlias = manageAlias(session, ruleOutput.getAliasId(), ruleOutput.getAlias());
@@ -626,7 +642,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * It gets measure names from "definition", loads last version rules by measure names, updates relations between kpi and rule output, updates "cardinality"
-	 * 
+	 *
 	 * @param session
 	 * @param persistentSbiKpiKpi
 	 * @throws JSONException
@@ -731,9 +747,43 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return cat;
 	}
 
+	@Override
+	public Integer createDomainIfNotExists(final Domain domain) {
+		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
+			@Override
+			public Integer execute(Session session) throws SpagoBIException {
+				return loadOrCreateDomain(session, domain).getValueId();
+			}
+		});
+	}
+
+	private SbiDomains loadOrCreateDomain(Session session, Domain domain) {
+		SbiDomains cat = null;
+		if (domain != null) {
+			if (domain.getValueId() != null) {
+				cat = (SbiDomains) session.load(SbiDomains.class, domain.getValueId());
+			} else if (domain.getValueCd() != null) {
+				cat = (SbiDomains) session.createCriteria(SbiDomains.class).add(Restrictions.eq("domainCd", domain.getDomainCode()))
+						.add(Restrictions.eq("valueCd", domain.getValueCd())).uniqueResult();
+				if (cat == null) {
+					cat = new SbiDomains();
+					cat.setDomainCd(domain.getDomainCode());
+					cat.setDomainNm(domain.getDomainName());
+					cat.setValueCd(domain.getValueCd());
+					cat.setValueNm(domain.getValueName());
+					cat.setValueDs(domain.getValueDescription());
+					updateSbiCommonInfo4Insert(cat);
+					Integer id = (Integer) session.save(cat);
+					cat.setValueId(id);
+				}
+			}
+		}
+		return cat;
+	}
+
 	/**
 	 * Delete category after checking if no other Kpi object is using it
-	 * 
+	 *
 	 * @param session
 	 * @param category
 	 * @param kpi
@@ -1027,10 +1077,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			@Override
 			public Criteria evaluate(Session session) {
 				return session
-						.createCriteria(SbiKpiThreshold.class)
-						.setProjection(
-								Projections.projectionList().add(Projections.property("id"), "id").add(Projections.property("name"), "name")
-										.add(Projections.property("description"), "description"))
+						.createCriteria(SbiKpiThreshold.class).setProjection(Projections.projectionList().add(Projections.property("id"), "id")
+								.add(Projections.property("name"), "name").add(Projections.property("description"), "description"))
 						.setResultTransformer(Transformers.aliasToBean(SbiKpiThreshold.class));
 			}
 		});
@@ -1099,7 +1147,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Converts a SbiKpiThreshold in a Threshold. If full=false it gets only id, name and description
-	 * 
+	 *
 	 * @param sbiKpiThreshold
 	 * @param full
 	 * @return
@@ -1164,8 +1212,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			public Map<String, List<String>> execute(Session session) throws Exception {
 				Map<String, List<String>> invalidAlias = new HashMap<>();
 				for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
-					validateRuleOutput(session, ruleOutput.getAliasId(), ruleOutput.getAlias(), MEASURE.equals(ruleOutput.getType().getValueCd()),
-							rule.getId(), rule.getVersion(), invalidAlias);
+					validateRuleOutput(session, ruleOutput.getAliasId(), ruleOutput.getAlias(), MEASURE.equals(ruleOutput.getType().getValueCd()), rule.getId(),
+							rule.getVersion(), invalidAlias);
 				}
 				return invalidAlias;
 			}
@@ -1286,6 +1334,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	@Override
 	public Threshold loadThreshold(Integer id) {
 		return from(load(SbiKpiThreshold.class, id), true);
+	}
+
+	@Override
+	public Integer getThresholdIdByName(final String name) {
+		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
+			@Override
+			public Integer execute(Session session) throws Exception {
+				return (Integer) session.createCriteria(SbiKpiThreshold.class).add(Restrictions.eq("name", name)).setProjection(Property.forName("id"))
+						.setMaxResults(1).uniqueResult();
+			}
+		});
 	}
 
 	@Override
@@ -1627,8 +1686,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				scheduler.getFrequency().setCron(null);
 				scheduler.setJobStatus(JOB_STATUS.EXPIRED);
 			} else {
-				scheduler.setJobStatus(daoScheduler.isTriggerPaused(KPI_SCHEDULER_GROUP, name, KPI_SCHEDULER_GROUP, name) ? JOB_STATUS.SUSPENDED
-						: JOB_STATUS.ACTIVE);
+				scheduler.setJobStatus(
+						daoScheduler.isTriggerPaused(KPI_SCHEDULER_GROUP, name, KPI_SCHEDULER_GROUP, name) ? JOB_STATUS.SUSPENDED : JOB_STATUS.ACTIVE);
 				Date startTime = tr.getStartTime();
 				Calendar dateStartFreq = GregorianCalendar.getInstance(); // creates a new calendar instance
 				dateStartFreq.setTime(startTime); // assigns calendar to given date
@@ -1722,10 +1781,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			double value = kpiValue.getManualValue() != null ? kpiValue.getManualValue().doubleValue() : kpiValue.getComputedValue();
 			String color = "";
 			for (ThresholdValue threshold : kpi.getThreshold().getThresholdValues()) {
-				boolean minValueOk = threshold.getMinValue() == null || value > threshold.getMinValue().doubleValue() || threshold.isIncludeMin()
-						&& value == threshold.getMinValue().doubleValue();
-				boolean maxValueOk = threshold.getMaxValue() == null || value < threshold.getMaxValue().doubleValue() || threshold.isIncludeMax()
-						&& value == threshold.getMaxValue().doubleValue();
+				boolean minValueOk = threshold.getMinValue() == null || value > threshold.getMinValue().doubleValue()
+						|| threshold.isIncludeMin() && value == threshold.getMinValue().doubleValue();
+				boolean maxValueOk = threshold.getMaxValue() == null || value < threshold.getMaxValue().doubleValue()
+						|| threshold.isIncludeMax() && value == threshold.getMaxValue().doubleValue();
 				if (minValueOk && maxValueOk) {
 					color = threshold.getColor();
 					break;
@@ -1976,17 +2035,13 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 							.add(Restrictions.eq("sbiKpiKpis.sbiKpiKpiId.version", kpi.getVersion())));
 				}
 
-				List<Map<String, Object>> measures = session
-						.createCriteria(SbiKpiRuleOutput.class)
-						.createAlias("sbiKpiRule", "sbiKpiRule")
-						.createAlias("sbiKpiKpis", "sbiKpiKpis")
-						.createAlias("sbiKpiAlias", "sbiKpiAlias")
-						.add(disjunction)
-						.setProjection(
-								Projections.projectionList().add(Property.forName("sbiKpiKpis.sbiKpiKpiId.id").as("id"))
-										.add(Property.forName("sbiKpiKpis.sbiKpiKpiId.version").as("version"))
-										.add(Property.forName("sbiKpiKpis.placeholder").as("placeholder")).add(Property.forName("sbiKpiKpis.name").as("name"))
-										.add(Property.forName("sbiKpiAlias.name").as("measure"))).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
+				List<Map<String, Object>> measures = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiRule", "sbiKpiRule")
+						.createAlias("sbiKpiKpis", "sbiKpiKpis").createAlias("sbiKpiAlias", "sbiKpiAlias").add(disjunction)
+						.setProjection(Projections.projectionList().add(Property.forName("sbiKpiKpis.sbiKpiKpiId.id").as("id"))
+								.add(Property.forName("sbiKpiKpis.sbiKpiKpiId.version").as("version"))
+								.add(Property.forName("sbiKpiKpis.placeholder").as("placeholder")).add(Property.forName("sbiKpiKpis.name").as("name"))
+								.add(Property.forName("sbiKpiAlias.name").as("measure")))
+						.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 				return measures;
 			}
 		});
@@ -2305,8 +2360,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return a == null ? b : a;
 	}
 
-	private static final List<it.eng.spagobi.kpi.bo.ScorecardStatus.STATUS> statusValues = Collections.unmodifiableList(Arrays
-			.asList(it.eng.spagobi.kpi.bo.ScorecardStatus.STATUS.values()));
+	private static final List<it.eng.spagobi.kpi.bo.ScorecardStatus.STATUS> statusValues = Collections
+			.unmodifiableList(Arrays.asList(it.eng.spagobi.kpi.bo.ScorecardStatus.STATUS.values()));
 	private static final int SIZE = statusValues.size();
 	private static final Random RANDOM = new Random();
 
@@ -2447,7 +2502,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	/**
 	 * Add kpi/placeholders to job parameter map in this form ["kpiId|kpiVersion":[{"placeholderName":"placeholderValue"}]]
-	 * 
+	 *
 	 * @param job
 	 * @param scheduler
 	 */
