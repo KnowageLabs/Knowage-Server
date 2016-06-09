@@ -4256,11 +4256,10 @@ console.log(this.manageDatasetFieldMetadataGrid);
 						var values = this.getValues();
 						
 						var isPersisted = values['isPersisted'];
-						var isScheduled = values['isScheduled'];
-			
+									
 						var params = this.buildParamsToSendToServer(values);
 						
-						if(isPersisted && isScheduled){
+						if(isPersisted){
 							this.isFromSaveNoMetadata = true;
 							this.doSave();
 						} else {

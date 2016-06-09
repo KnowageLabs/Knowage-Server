@@ -200,6 +200,34 @@ public class DatasetMetadataParser {
 
 		return resultXml;
 	}
+	
+	
+	public String buildNoMetadataXML() {
+		logger.debug("IN");
+
+
+		SourceBean sb = null;
+		SourceBean sbColumns = null;
+		SourceBean sbDataset = null;
+		try{
+
+			sb = new SourceBean(DatasetMetadataParser.META);
+			sbDataset = new SourceBean(DatasetMetadataParser.DATASET);
+			SourceBeanAttribute version = new SourceBeanAttribute(VERSION, "-1");
+			sb.setAttribute(version);
+			sb.setAttribute(sbDataset);
+
+		}
+		catch (Exception e) {
+			logger.error("Error in building xml from metadata", e);
+			throw new SpagoBIRuntimeException("Error in building xml from metadata", e);
+		}
+
+		String resultXml = sb.toXML(false);
+		logger.debug("OUT");
+
+		return resultXml;
+	}
 
 
 	public void insertPropertiesInSourceBean(SourceBean sbMeta, Map properties ) throws SourceBeanException{
@@ -250,83 +278,89 @@ public class DatasetMetadataParser {
 				encodingFormatVersion = "0";
 			}
 			
-			logger.debug("Row data encoding version  [" + encodingFormatVersion + "]");
+			if(encodingFormatVersion.equals("-1")){//it's a dataset without metadata
+				logger.debug("Dataset has no metadata. It has been saved and metadata has not beel already saved");
+			}else{
+				logger.debug("Row data encoding version  [" + encodingFormatVersion + "]");
 
-			if (encodingFormatVersion.equalsIgnoreCase(CURRENT_VERSION)) {				
-				template = sb;
-			} else {
-				logger.warn("Row data encoding version [" + encodingFormatVersion + "] does not match with the current version used by the engine [" + CURRENT_VERSION + "] ");
-				logger.debug("Converting from encoding version [" + encodingFormatVersion + "] to encoding version [" + CURRENT_VERSION + "]....");
-				IDatasetMetadataXMLTemplateLoader datasetMetadataXMLTemplateLoader;
-				datasetMetadataXMLTemplateLoader = DatasetMetadataXMLTemplateLoaderFactory.getInstance().getLoader(encodingFormatVersion);
-				if (datasetMetadataXMLTemplateLoader == null) {
-					throw new SpagoBIEngineException("Unable to load data stored in format [" + encodingFormatVersion + "] ");
+				if (encodingFormatVersion.equalsIgnoreCase(CURRENT_VERSION)) {				
+					template = sb;
+				} else {
+					logger.warn("Row data encoding version [" + encodingFormatVersion + "] does not match with the current version used by the engine [" + CURRENT_VERSION + "] ");
+					logger.debug("Converting from encoding version [" + encodingFormatVersion + "] to encoding version [" + CURRENT_VERSION + "]....");
+					IDatasetMetadataXMLTemplateLoader datasetMetadataXMLTemplateLoader;
+					datasetMetadataXMLTemplateLoader = DatasetMetadataXMLTemplateLoaderFactory.getInstance().getLoader(encodingFormatVersion);
+					if (datasetMetadataXMLTemplateLoader == null) {
+						throw new SpagoBIEngineException("Unable to load data stored in format [" + encodingFormatVersion + "] ");
+					}
+					template = (SourceBean) datasetMetadataXMLTemplateLoader.load(sb);
+					logger.debug("Encoding conversion has been executed succesfully");
 				}
-				template = (SourceBean) datasetMetadataXMLTemplateLoader.load(sb);
-				logger.debug("Encoding conversion has been executed succesfully");
-			}
-			
-			
-			
-			
-			//Dataset Metadata Properties
-			SourceBean sbDataset = (SourceBean) template.getAttribute(DATASET);
-			List propertiesDataset =sbDataset.getAttributeAsList(PROPERTY);
-			if(propertiesDataset != null && propertiesDataset.size()!=0){
-				try{
-					insertPropertiesInMeta(dsMeta, propertiesDataset);
-				}
-				catch (Exception e) {
-					logger.error("Error in reading properties");
-					throw new SpagoBIRuntimeException("Error in inserting properties: "+e.getMessage());
-				}
-			}
-			
-			
-			//Columns Metadata Properties
-			SourceBean sbColumns = (SourceBean) template.getAttribute(COLUMNLIST);
-			List lst = sbColumns.getAttributeAsList(COLUMN);
-			for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
-				SourceBean sbRow = (SourceBean)iterator.next();
-				String name=sbRow.getAttribute(NAME)!= null ? sbRow.getAttribute(NAME).toString() : null;
-				String type=sbRow.getAttribute(TYPE)!= null ? sbRow.getAttribute(TYPE).toString() : null;
-				String alias=sbRow.getAttribute(ALIAS)!= null ? sbRow.getAttribute(ALIAS).toString() : null;
-				String fieldType=sbRow.getAttribute(FIELD_TYPE)!= null ? sbRow.getAttribute(FIELD_TYPE).toString() : null;
-
-				Assert.assertNotNull(name, "Name in XML column cannot be null");
-
-				FieldMetadata fieldMeta=new FieldMetadata();
-				fieldMeta.setName(name);
-				Assert.assertNotNull(type, "type in XML column "+name+" cannot be null");
-				// remove class!
-				// operation for back compatibility, if there is class remove it otherwise not needed)
-				if(type.startsWith("class")){
-					type=type.substring(6);						
-				}
-				fieldMeta.setType(Class.forName(type.trim()));
-
-				fieldMeta.setAlias(alias);
-				if(fieldType != null && fieldType.equalsIgnoreCase(FieldType.ATTRIBUTE.toString())) 
-					fieldMeta.setFieldType(FieldType.ATTRIBUTE);
-				else if(fieldType != null && fieldType.equalsIgnoreCase(FieldType.MEASURE.toString())) 
-					fieldMeta.setFieldType(FieldType.MEASURE);
-				else fieldMeta.setFieldType(FieldType.ATTRIBUTE);
-
-				List properties =sbRow.getAttributeAsList(DatasetMetadataParser.PROPERTY);
-
-				if(properties != null && properties.size()!=0){
+				
+				
+				
+				
+				//Dataset Metadata Properties
+				SourceBean sbDataset = (SourceBean) template.getAttribute(DATASET);
+				List propertiesDataset =sbDataset.getAttributeAsList(PROPERTY);
+				if(propertiesDataset != null && propertiesDataset.size()!=0){
 					try{
-						insertPropertiesInMeta(fieldMeta, properties);
+						insertPropertiesInMeta(dsMeta, propertiesDataset);
 					}
 					catch (Exception e) {
 						logger.error("Error in reading properties");
-						throw new Exception("Error in inserting properties: "+e.getMessage());
+						throw new SpagoBIRuntimeException("Error in inserting properties: "+e.getMessage());
 					}
 				}
+				
+				
+				//Columns Metadata Properties
+				SourceBean sbColumns = (SourceBean) template.getAttribute(COLUMNLIST);
+				List lst = sbColumns.getAttributeAsList(COLUMN);
+				for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
+					SourceBean sbRow = (SourceBean)iterator.next();
+					String name=sbRow.getAttribute(NAME)!= null ? sbRow.getAttribute(NAME).toString() : null;
+					String type=sbRow.getAttribute(TYPE)!= null ? sbRow.getAttribute(TYPE).toString() : null;
+					String alias=sbRow.getAttribute(ALIAS)!= null ? sbRow.getAttribute(ALIAS).toString() : null;
+					String fieldType=sbRow.getAttribute(FIELD_TYPE)!= null ? sbRow.getAttribute(FIELD_TYPE).toString() : null;
+
+					Assert.assertNotNull(name, "Name in XML column cannot be null");
+
+					FieldMetadata fieldMeta=new FieldMetadata();
+					fieldMeta.setName(name);
+					Assert.assertNotNull(type, "type in XML column "+name+" cannot be null");
+					// remove class!
+					// operation for back compatibility, if there is class remove it otherwise not needed)
+					if(type.startsWith("class")){
+						type=type.substring(6);						
+					}
+					fieldMeta.setType(Class.forName(type.trim()));
+
+					fieldMeta.setAlias(alias);
+					if(fieldType != null && fieldType.equalsIgnoreCase(FieldType.ATTRIBUTE.toString())) 
+						fieldMeta.setFieldType(FieldType.ATTRIBUTE);
+					else if(fieldType != null && fieldType.equalsIgnoreCase(FieldType.MEASURE.toString())) 
+						fieldMeta.setFieldType(FieldType.MEASURE);
+					else fieldMeta.setFieldType(FieldType.ATTRIBUTE);
+
+					List properties =sbRow.getAttributeAsList(DatasetMetadataParser.PROPERTY);
+
+					if(properties != null && properties.size()!=0){
+						try{
+							insertPropertiesInMeta(fieldMeta, properties);
+						}
+						catch (Exception e) {
+							logger.error("Error in reading properties");
+							throw new Exception("Error in inserting properties: "+e.getMessage());
+						}
+					}
 
 
-				dsMeta.addFiedMeta(fieldMeta);
+					dsMeta.addFiedMeta(fieldMeta);
+				}
 			}
+			
+			
 			
 			
 		} catch(Throwable t) {

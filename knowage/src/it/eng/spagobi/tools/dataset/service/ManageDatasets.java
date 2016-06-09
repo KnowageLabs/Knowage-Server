@@ -850,7 +850,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 								}
 
 								LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
-							} else {
+							} else if(!isFromSaveNoMetadata){
 								// load existing metadata
 								logger.debug("Loading existing dataset...");
 								String id = getAttributeAsString(DataSetConstants.ID);
@@ -871,6 +871,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 									// metadata, and there is no ID
 									dsMetadata = "";
 								}
+							}else{//just isFromSaveNoMetadata
+								logger.debug("Saving dataset without metadata. I'll add empty metadata with version = -1");
+								DatasetMetadataParser dsp = new DatasetMetadataParser();
+								dsMetadata = dsp.buildNoMetadataXML();
 							}
 							ds.setDsMetadata(dsMetadata);
 						}
@@ -1815,7 +1819,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			checkFileDataset(dataSet);
 			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
 			dataStore = dataSet.getDataStore();
-			DatasetMetadataParser dsp = new DatasetMetadataParser();
+			//DatasetMetadataParser dsp = new DatasetMetadataParser();
 
 			JSONArray metadataArray = JSONUtils.toJSONArray(metadata);
 

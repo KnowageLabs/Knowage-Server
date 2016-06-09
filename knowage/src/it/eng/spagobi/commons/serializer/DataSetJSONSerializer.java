@@ -492,42 +492,45 @@ public class DataSetJSONSerializer implements Serializer {
 					SourceBean columns = (SourceBean) source.getAttribute("COLUMNLIST");
 					JSONArray columnsJSONArray = new JSONArray();
 
-					List<SourceBean> rows = columns.getAttributeAsList("COLUMN");
-					for (int i = 0; i < rows.size(); i++) {
-						SourceBean row = rows.get(i);
-						String columnName = (String) row.getAttribute("name");
-						String type = (String) row.getAttribute("TYPE");
+					if(columns!=null){
+						List<SourceBean> rows = columns.getAttributeAsList("COLUMN");
+						for (int i = 0; i < rows.size(); i++) {
+							SourceBean row = rows.get(i);
+							String columnName = (String) row.getAttribute("name");
+							String type = (String) row.getAttribute("TYPE");
 
-						JSONObject typeJSONObject = new JSONObject();
-						typeJSONObject.put("column", columnName);
-						typeJSONObject.put("pname", "Type");
-						typeJSONObject.put("pvalue", type);
-						columnsJSONArray.put(typeJSONObject);
+							JSONObject typeJSONObject = new JSONObject();
+							typeJSONObject.put("column", columnName);
+							typeJSONObject.put("pname", "Type");
+							typeJSONObject.put("pvalue", type);
+							columnsJSONArray.put(typeJSONObject);
 
-						String fieldType = (String) row.getAttribute("fieldType");
-						JSONObject fieldTypeJSONObject = new JSONObject();
-						fieldTypeJSONObject.put("column", columnName);
-						fieldTypeJSONObject.put("pname", "fieldType");
-						fieldTypeJSONObject.put("pvalue", fieldType);
-						columnsJSONArray.put(fieldTypeJSONObject);
+							String fieldType = (String) row.getAttribute("fieldType");
+							JSONObject fieldTypeJSONObject = new JSONObject();
+							fieldTypeJSONObject.put("column", columnName);
+							fieldTypeJSONObject.put("pname", "fieldType");
+							fieldTypeJSONObject.put("pvalue", fieldType);
+							columnsJSONArray.put(fieldTypeJSONObject);
 
-						List<SourceBean> properties = row.getAttributeAsList("PROPERTY");
-						for (int j = 0; j < properties.size(); j++) {
-							SourceBean property = properties.get(j);
-							String propertyName = (String) property.getAttribute("name");
-							String propertyValue = (String) property.getAttribute("value");
-							JSONObject propertiesJSONObject = new JSONObject();
-							propertiesJSONObject.put("column", columnName);
-							propertiesJSONObject.put("pname", propertyName);
-							propertiesJSONObject.put("pvalue", propertyValue);
+							List<SourceBean> properties = row.getAttributeAsList("PROPERTY");
+							for (int j = 0; j < properties.size(); j++) {
+								SourceBean property = properties.get(j);
+								String propertyName = (String) property.getAttribute("name");
+								String propertyValue = (String) property.getAttribute("value");
+								JSONObject propertiesJSONObject = new JSONObject();
+								propertiesJSONObject.put("column", columnName);
+								propertiesJSONObject.put("pname", propertyName);
+								propertiesJSONObject.put("pvalue", propertyValue);
 
-							columnsJSONArray.put(propertiesJSONObject);
+								columnsJSONArray.put(propertiesJSONObject);
+							}
+
 						}
+						metadataJSONObject.put("columns", columnsJSONArray);
 
 					}
-					metadataJSONObject.put("columns", columnsJSONArray);
-
 				}
+					
 			}
 
 		}
