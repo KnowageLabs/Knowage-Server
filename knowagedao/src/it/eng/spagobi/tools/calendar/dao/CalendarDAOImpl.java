@@ -179,9 +179,15 @@ public class CalendarDAOImpl implements ICalendarDAO {
 		Transaction tx = session.beginTransaction();
 
 		for (CalendarConfiguration conf : listDays) {
+
+			conf.setAttributeId(null);
+			conf.setCalendarAttribute(null);
 			session.delete(conf);
 		}
-
+		List<CalendarAttribute> attributes = session.createCriteria(CalendarAttribute.class).add(Restrictions.eq("calendarId", id)).list();
+		for (CalendarAttribute attr : attributes) {
+			session.delete(attr);
+		}
 		session.delete(calToDelete);
 		tx.commit();
 	}
