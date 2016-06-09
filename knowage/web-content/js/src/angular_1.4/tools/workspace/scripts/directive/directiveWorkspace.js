@@ -36,5 +36,6 @@ angular
 	                                'ckan_view',
 	                                'dataset_wizard_meta',
 	                                'folder_view',
-	                                'bread_crumb'
+	                                'bread_crumb',
+	                                'organizer_view'
 	                                ]);

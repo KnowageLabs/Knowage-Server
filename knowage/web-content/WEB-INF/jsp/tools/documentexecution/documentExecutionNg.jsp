@@ -237,14 +237,15 @@ if(executionRoleNames.size() > 0) {
 								<%} %>
 								
 								<span class="divider">{{translate.load("sbi.execution.executionpage.toolbar.shortcuts")}}</span>
-					            <%--
+					            
 					            <md-menu-item class="md-indent">
-					            	<md-button ng-disabled="true" class="toolbar-button-custom"
+					                <md-icon class="fa fa-suitcase"></md-icon>
+					            	<md-button ng-disabled="false" class="toolbar-button-custom" ng-click="urlViewPointService.addToWorkspace()"
 					            			aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}">
 				            			{{translate.load('sbi.execution.executionpage.toolbar.savemyworkspace')}}
 					                </md-button>
 					            </md-menu-item>
-				            	--%>
+				            	
 								<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_SNAPSHOTS_FUNCTIONALITY)) { %>
 				                <md-menu-item class="md-indent">
 					            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}"

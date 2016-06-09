@@ -501,7 +501,7 @@
 	documentExecutionModule.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config,docExecute_exportService
 			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories,$q,$filter,$timeout
-			,docExecute_dependencyService) {
+			,docExecute_dependencyService,sbiModule_messaging) {
 		
 		var serviceScope = this;	
 //		serviceScope.documentUrl = '';
@@ -567,7 +567,30 @@
 			})
 			.error(function(data, status, headers, config) {});																	
 		};
-
+		serviceScope.addToWorkspace = function() {
+			console.log(execProperties);
+			
+//			sbiModule_restServices.promisePost( "2.0/organizer/documents",execProperties.executionInstance.OBJECT_ID)
+//			.success(function(data, status, headers, config) {	
+//				 
+//				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+//			})
+//			.error(function(data, status, headers, config) {
+//				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+//				
+//			});		
+//			
+			
+			sbiModule_restServices.promisePost('2.0/organizer/documents',execProperties.executionInstance.OBJECT_ID)
+			.then(function(response) {
+				console.log("[POST]: SUCCESS!");
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.browser.document.addedToWorkscpace"), sbiModule_translate.load('sbi.generic.success'));
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load('sbi.generic.error'));
+			});
+		};
+			
+		
 		serviceScope.getSchedulers = function() {
 			execProperties.currentView.status = 'PARAMETERS';
 			execProperties.parameterView.status='SCHEDULER';

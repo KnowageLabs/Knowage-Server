@@ -28,7 +28,7 @@ angular
 		  };
 	})
 
-function documentsController($scope,sbiModule_restServices,sbiModule_translate,$window,$mdSidenav,$mdDialog,sbiModule_messaging,sbiModule_config ){
+function documentsController($scope,sbiModule_restServices,sbiModule_translate,$window,$mdSidenav,$mdDialog,sbiModule_messaging,sbiModule_config, $documentViewer ){
 
 	$scope.selectedDocument = undefined;
 	$scope.showDocumentInfo = false;
@@ -36,6 +36,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	$scope.foldersToShow=[];
 	$scope.breadModel=[];
 	$scope.breadCrumbControl;
+	$scope.documentsOfSelectedFolder=[];
 	
 	$scope.showDocumentDetails = function() {
 		return $scope.showDocumentInfo && $scope.isSelectedDocumentValid();
@@ -71,6 +72,44 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 			$scope.setDocumentDetailOpen(document !== undefined);
 		}
 	};
+	
+	
+	$scope.showOrganizerDocumentDetails = function() {
+		return $scope.showOrganizerDocumentInfo && $scope.isSelectedOrganizerDocumentValid();
+	};
+
+
+	$scope.isSelectedOrganizerDocumentValid = function() {
+		return $scope.selectedOrganizerDocument !== undefined;
+	};
+
+	$scope.setOrganizerDocumentDetailOpen = function(isOpen) {
+		if (isOpen && !$mdSidenav('rightOrganizer').isLockedOpen() && !$mdSidenav('rightOrganizer').isOpen()) {
+			$scope.toggleOrganizerDocumentDetail();
+		}
+
+		$scope.showOrganizerDocumentInfo = isOpen;
+	};
+
+	$scope.toggleOrganizerDocumentDetail = function() {
+		$mdSidenav('rightOrganizer').toggle();
+	};
+
+	$scope.selectOrganizerDocument= function ( document ) {
+		if (document !== undefined) {
+			$scope.lastDocumentSelected = document;
+		}
+		var alreadySelected = (document !== undefined && $scope.selectedOrganizerDocument === document);
+		$scope.selectedOrganizerDocument = document;
+		if (alreadySelected) {
+			$scope.selectedOrganizerDocument=undefined;
+			$scope.setOrganizerDocumentDetailOpen(!$scope.showOrganizerDocumentDetail);
+		} else {
+			$scope.setOrganizerDocumentDetailOpen(document !== undefined);
+		}
+	};
+	
+	
 	
 	$scope.tableSpeedMenuOption = [{
 		label : sbiModule_translate.load('sbi.generic.delete'),
@@ -113,6 +152,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	
 	$scope.openFolder = function(folder){
 		//console.log(folder);
+		$scope.selectOrganizerDocument(undefined);
 		$scope.breadModel.push(folder);
 		$scope.selectedFolder=folder;
 		$scope.foldersToShow=[];
@@ -123,6 +163,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 				}
 			}
 		}
+		$scope.loadDocumentsForFolder(folder);
 	}
 	
 
@@ -208,6 +249,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 			if($scope.folders[i].parentFunct==null){
 			
 				$scope.openFolder($scope.folders[i]);
+				$scope.loadDocumentsForFolder($scope.folders[i]);
 			}
 		}
 			
@@ -217,5 +259,46 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	      
 		$scope.openFolder(item);
 		
+	}
+	
+	$scope.loadDocumentsForFolder=function(folder){
+		$scope.documentsOfSelectedFolder=[];
+		if(folder != undefined){
+		sbiModule_restServices.promiseGet("2.0/organizer/documents",folder.functId)
+		.then(function(response) {
+			angular.copy(response.data,$scope.documentsOfSelectedFolder); // all folders
+			console.info("[LOAD END]: Loading of documents.");
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+		});
+		}
+	}
+	
+	$scope.executeDocumentFromOrganizer=function(document){
+		console.log(document);
+		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");		
+		$documentViewer.openDocument(document.biObjId, document.documentLabel, document.documentName);
+	}
+	
+	$scope.deleteDocumentFromOrganizer = function(document) {
+		var confirm = $mdDialog.confirm()
+		.title(sbiModule_translate.load("sbi.workspace.folder.delete.confirm.dialog"))
+		.content(sbiModule_translate.load("sbi.workspace.organizer.document.delete.confirm"))
+		.ariaLabel('delete documentOrganizer') 
+		.ok(sbiModule_translate.load("sbi.general.yes"))
+		.cancel(sbiModule_translate.load("sbi.general.No"));
+			$mdDialog.show(confirm).then(function() {
+				sbiModule_restServices.promiseDelete("2.0/organizer/documents/"+document.functId,document.biObjId)
+				.then(function(response) {
+					$scope.loadDocumentsForFolder($scope.selectedFolder);
+					$scope.selectOrganizerDocument(undefined);
+				},function(response) {
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+				});
+		});
+	}
+	
+	$scope.moveDocumentToFolder=function(document){
+		console.log("moveee it move it");
 	}
 }
