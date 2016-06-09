@@ -55,11 +55,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <md-tabs md-dynamic-height> 
 	<md-tab label="Overview">
 	  <div layout="row" ng-if="!ctrl.isUndefined(ctrl.data)">
-			<md-card flex="50" layout-padding>
+			<md-card flex="50">
 
 				<md-toolbar class="md-knowage-theme"> <div class="md-toolbar-tools"> {{ctrl.translate.load("cache.manager.runtimeInformation")}}</div> </md-toolbar>
-				<div layout-align="center center" layout-padding layout-margin flex>	<!-- rimuovibile-->		
-					<div layout="row" layout-wrap layout-margin>
+					<md-card-content layout="row">
 						<div flex="50">
 					
 							<p>{{ctrl.translate.load("cache.manager.cacheEnabled")}}				{{ ctrl.data.enabled }}</p>
@@ -81,13 +80,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</div>
 						</div>
 						
-					</div>
-				</div>	
+				</md-card-content>
 			</md-card>
 			
-			<md-card flex="50" layout-padding>
+			<md-card flex="50">
 				<md-toolbar class="md-knowage-theme"> <div class="md-toolbar-tools"> {{ctrl.translate.load("cache.manager.generalSettings")}} <div flex></div> <md-button ng-click="ctrl.saveFunction()"  ng-disabled="manageForm.$invalid">{{ctrl.translate.load("cache.manager.save")}}</md-button> <md-button ng-click="ctrl.discardFunction()">{{ctrl.translate.load("cache.manager.discard")}}</md-button> </div> </md-toolbar>
-						
+				<md-card-content layout="column">		
 				<form layout="row" layout-wrap name=manageForm >
 					<md-switch class="md-primary" md-no-ink ng-model="ctrl.variableEnabled" flex="50" ng-disabled="true"> {{ctrl.translate.load("cache.manager.disabledEnabled")}} </md-switch>
 										
@@ -161,7 +159,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						
 					</div>
 					
-				</form>					
+				</form>	
+				</md-card-content>				
 		
 			</md-card>
 			
