@@ -580,6 +580,9 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			var analF=geoModule_template.analitycalFilter[analFKey]
 			if(geoModule_driverParameters[analF]!=undefined && geoModule_driverParameters[analF].length>0){
 				for(var itemKey in geoModule_driverParameters[analF]){
+					if(geoModule_template.selectedAnalyticalFilter[analF]==undefined){
+						geoModule_template.selectedAnalyticalFilter[analF]=[];
+					}
 					geoModule_template.selectedAnalyticalFilter[analF].push(geoModule_driverParameters[analF][itemKey]);
 				}
 			}
