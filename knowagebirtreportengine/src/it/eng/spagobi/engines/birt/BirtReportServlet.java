@@ -94,8 +94,6 @@ import org.safehaus.uuid.UUIDGenerator;
 
 import sun.misc.BASE64Decoder;
 
-import com.arctorus.export.birt.xlsx.EmitterConfig;
-
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
  *
@@ -114,7 +112,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
 	 */
 	@Override
@@ -127,7 +125,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see javax.servlet.GenericServlet#destroy()
 	 */
 	@Override
@@ -138,7 +136,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest , javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
@@ -604,7 +602,7 @@ public class BirtReportServlet extends HttpServlet {
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xls");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase("xlsx")) {
 			renderOption = new EXCELRenderOption();
-			renderOption.setOption(EmitterConfig.KEY_EXCEL_NATIVE_CHARTS, false);
+			renderOption.setOption("excel_native_charts", false);
 			setMSOfficeEmitterId("xlsx", renderOption);
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".xlsx");
