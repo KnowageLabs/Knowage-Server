@@ -342,10 +342,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
   margin-left: 1em;
 }
 #contieniLinkAdmin li:before {
-  font-family: 'Material Icons';
+  font-family: 'FontAwesome';
   position: absolute;
   left: -1em;
-  content: "";
+  content: "\f105";
   font-size: 12px;
 }
 #contieniLinkAdmin li a{
