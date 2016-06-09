@@ -6,7 +6,9 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.workspace.bo.DocumentOrganizer;
+import it.eng.spagobi.workspace.metadata.SbiFunctionsOrganizer;
 import it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizer;
+import it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizerId;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -66,24 +68,6 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 		return toReturn;
 	}
 
-	@Override
-	public SbiObjFuncOrganizer addDocumentToOrganizer(Integer documentId) throws EMFUserError {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void removeDocumentFromOrganizer(SbiObjFuncOrganizer documentToRemove) throws EMFUserError {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void moveDocumentToDifferentFolder(SbiObjFuncOrganizer documentToMove) throws EMFUserError {
-		// TODO Auto-generated method stub
-
-	}
-
 	private DocumentOrganizer toDocumentOrganizer(SbiObjFuncOrganizer hibObj) {
 		DocumentOrganizer toReturn = new DocumentOrganizer();
 
@@ -96,6 +80,64 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 		toReturn.setFunctId(hibObj.getId().getSbiFunctionsOrganizer().getFunctId());
 
 		return toReturn;
+	}
+
+	@Override
+	public SbiObjFuncOrganizer addDocumentToOrganizer(Integer documentId) throws EMFUserError {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeDocumentFromOrganizer(Integer folderId, Integer docId) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			deleteOrganizerDocumentById(folderId, docId, aSession);
+			tx.commit();
+		} catch (Exception he) {
+			logException(he);
+			logger.error("Error in loading folder linked to user", he);
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+	}
+
+	public void deleteOrganizerDocumentById(Integer folderId, Integer docId, Session aSession) throws Exception {
+		logger.debug("IN");
+
+		SbiFunctionsOrganizer sfo = new SbiFunctionsOrganizer();
+		sfo.setFunctId(folderId);
+
+		SbiObjects so = new SbiObjects();
+		so.setBiobjId(docId);
+
+		SbiObjFuncOrganizerId compId = new SbiObjFuncOrganizerId();
+		compId.setSbiFunctionsOrganizer(sfo);
+		compId.setSbiObjects(so);
+
+		SbiObjFuncOrganizer documentToDelete = (SbiObjFuncOrganizer) aSession.load(SbiObjFuncOrganizer.class, compId);
+		aSession.delete(documentToDelete);
+
+		logger.debug("OUT");
+	}
+
+	@Override
+	public void moveDocumentToDifferentFolder(SbiObjFuncOrganizerId documentToMove) throws EMFUserError {
+		// TODO Auto-generated method stub
+
 	}
 
 }

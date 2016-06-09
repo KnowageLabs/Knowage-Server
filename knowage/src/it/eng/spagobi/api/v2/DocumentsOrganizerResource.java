@@ -26,21 +26,25 @@ import it.eng.spagobi.workspace.dao.IObjFuncOrganizerDAO;
 
 import java.util.List;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("/2.0/organizer/documents")
 @ManageAuthorization
 public class DocumentsOrganizerResource extends AbstractSpagoBIResource {
 
+	IObjFuncOrganizerDAO objFuncOrganizer;
+
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List loadDocumentsForFolder(@PathParam("id") Integer folderId) {
-		IObjFuncOrganizerDAO objFuncOrganizer;
+
 		try {
 			objFuncOrganizer = DAOFactory.getObjFuncOrganizerDAO();
 			objFuncOrganizer.setUserProfile(getUserProfile());
@@ -50,6 +54,14 @@ public class DocumentsOrganizerResource extends AbstractSpagoBIResource {
 
 			throw new SpagoBIRestServiceException("sbi.browser.folder.load.error", buildLocaleFromSession(), e);
 		}
+	}
+
+	@DELETE
+	@Path("/{folderId}/{docId}")
+	public Response deleteFolder(@PathParam("folderId") Integer folderId, @PathParam("docId") Integer docId) throws EMFUserError {
+		objFuncOrganizer = DAOFactory.getObjFuncOrganizerDAO();
+		objFuncOrganizer.removeDocumentFromOrganizer(folderId, docId);
+		return Response.ok().build();
 	}
 
 }
