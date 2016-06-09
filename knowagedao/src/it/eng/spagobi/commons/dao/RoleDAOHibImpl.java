@@ -200,6 +200,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	public SbiExtRoles loadByNameInSession(String roleName, Session aSession) {
 		Criterion aCriterion = Expression.eq("name", roleName);
+
 		Criteria aCriteria = aSession.createCriteria(SbiExtRoles.class);
 
 		aCriteria.add(aCriterion);
@@ -532,7 +533,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (authI.getName().equals("ENABLE_FEDERATED_DATASET") && aRole.isAbleToEnableFederatedDataset())
 						|| (authI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && aRole.isAbleToManageGlossaryBusiness())
 						|| (authI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && aRole.isAbleToManageGlossaryTechnical())
-						|| (authI.getName().equals("MANAGE_KPI_VALUE") && aRole.isAbleToManageKpiValue())) {
+						|| (authI.getName().equals("MANAGE_KPI_VALUE") && aRole.isAbleToManageKpiValue())
+						|| (authI.getName().equals("MANAGE_CALENDAR") && aRole.isAbleToManageCalendar())) {
 
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
 					SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(authI.getId(), hibRole.getExtRoleId());
@@ -836,6 +838,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (name.equals("MANAGE_KPI_VALUE")) {
 				role.setAbleToManageKpiValue(true);
 			}
+			if (name.equals("MANAGE_CALENDAR")) {
+				role.setAbleToManageCalendar(true);
+			}
+
 		}
 
 		role.setRoleTypeCD(hibRole.getRoleTypeCode());
@@ -1015,7 +1021,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (functI.getName().equals("ENABLE_FEDERATED_DATASET") && role.isAbleToEnableFederatedDataset())
 						|| (functI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && role.isAbleToManageGlossaryBusiness())
 						|| (functI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && role.isAbleToManageGlossaryTechnical())
-						|| (functI.getName().equals("MANAGE_KPI_VALUE") && role.isAbleToManageKpiValue())) {
+						|| (functI.getName().equals("MANAGE_KPI_VALUE") && role.isAbleToManageKpiValue())
+						|| (functI.getName().equals("MANAGE_CALENDAR") && role.isAbleToManageCalendar())) {
 
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
 					SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(functI.getId(), hibRole.getExtRoleId());

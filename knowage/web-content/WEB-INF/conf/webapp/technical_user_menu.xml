@@ -115,7 +115,11 @@
 			<ITEM	title="#menu.timespan"
 					functionality="Timespan"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/timespan/timespan.jsp" />
-								
+			
+			<ITEM	title="#menu.calendar"
+					functionality="Calendar"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/calendar/calendarTemplate.jsp" />
+										
 		</ITEM>		
 		<ITEM code="menu_tools" title="#menu.ToolsMenu" groupingMenu="true"	iconCls="build">
 
@@ -242,7 +246,7 @@
 <!-- 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/mail_generic16.png" /> -->
 
 		</ITEM>
-		<!--
+	<!--
 		<ITEM	code="subscription" 
 			title="#menu.Subscription"
 			groupingMenu="true"
@@ -257,7 +261,7 @@
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/distributionlist/distributionlistuser16.png" />
 			
 		</ITEM>
-		-->
+			-->
 		<ITEM code="menu_servermanager" title="#menu.ServerManager"	groupingMenu="true" iconCls="build">
 
 			<ITEM title="#menu.TenantMan" functionality="TenantManagement"
@@ -287,7 +291,8 @@
 	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/etlMetadataExtraction.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />					
 						
-	  	</ITEM>	  	
+	  	</ITEM>	 
+	  		
 	</ITEM>
 	
 	<!-- ITEM	code="repo_mng" 

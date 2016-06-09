@@ -100,6 +100,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	private static final String HREF_MANAGE_GLOSSARY_BUSINESS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/businessuser/glossaryBusiness.jsp";
 	private static final String HREF_MANAGE_CROSS_DEFINITION = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/definition/crossDefinition.jsp";
 
+	private static final String HREF_CALENDAR = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/calendar/calendarTemplate.jsp";
+
 	private static final String HREF_MANAGE_DOMAIN = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/domain/domainManagement.jsp";
 	private static final String HREF_MANAGE_CONFIG = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/config/configManagement.jsp";
 	private static final String HREF_MANAGE_TENANT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagementAngular.jsp";
@@ -442,6 +444,18 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tempMenuList.put(o);
 		}
 
+		if (isAbleTo(SpagoBIConstants.CALENDAR, funcs)) {
+			JSONObject calendar = new JSONObject();
+			calendar.put(ICON_CLS, "font_download");
+			calendar.put(TOOLTIP, messageBuilder.getMessage("menu.calendar", locale));
+			calendar.put(ICON_ALIGN, "top");
+			calendar.put(SCALE, "large");
+			calendar.put(TARGET, "_self");
+			calendar.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_CALENDAR + "');");
+			calendar.put(FIRST_URL, contextName + HREF_CALENDAR);
+			calendar.put(LINK_TYPE, "execDirectUrl");
+			tempMenuList.put(calendar);
+		}
 		if (isAbleTo(SpagoBIConstants.DOMAIN_MANAGEMENT, funcs)) {
 			JSONObject domainManagementTechnical = new JSONObject();
 			domainManagementTechnical.put(ICON_CLS, "assignment");

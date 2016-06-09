@@ -507,6 +507,11 @@
 	
 	<DOMAIN valueCd="EXECUTION_YEAR" valueNm="sbidomains.temporalfunction.year"
 		domainCd="KPI_PLACEHOLDER_FUNC" domainNm="KPI placeholder value functions" valueDs="sbidomains.temporalfunction.year" />
+	
+	<DOMAIN valueCd="CHIUSURA_AZIENDALE" valueNm="sbidomains.calendar.event.chiusura"
+		domainCd="CALENDAR_EVENT" domainNm="Calendar Event" valueDs="sbidomains.calendar.event.chiusura" />
+	<DOMAIN valueCd="PATRONO" valueNm="sbidomains.calendar.event.patrono"
+		domainCd="CALENDAR_EVENT" domainNm="Calendar Event" valueDs="sbidomains.calendar.event.patrono" />
 		
 	<DOMAIN valueCd="DEFAULT" valueNm="sbidomains.nm.defaultValue"
 		domainCd="DATE_FORMAT" domainNm="Date Format domain" valueDs="" />

@@ -489,7 +489,11 @@ public class SpagoBIConstants {
 	public static final String MANAGE_GLOSSARY_BUSINESS = "ManageGlossaryBusiness";
 	public static final String MANAGE_GLOSSARY_TECHNICAL = "ManageGlossaryTechnical";
 
+	public static final String CALENDAR = "Calendar";
+
 	public static final String MANAGE_KPI_VALUE = "ManageKpiValue";
+	
+	public static final String MANAGE_CALENDAR = "ManageCalendar";
 
 	public static final String MANAGE_CROSS_NAVIGATION = "ManageCrossNavigation";
 	public static final String EXECUTE_CROSS_NAVIGATION = "ExecuteCrossNavigation";

@@ -325,7 +325,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.manageGlossaryTechnical")}}</label>
 			       </div> 
 			   </div>
-				
+			   <div layout="row" layout-wrap ng-if="isVisible('manageKpiValue')">
+				 <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageKpiValue" aria-label="check" name="manageKpiValue">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.manageKpiValue")}}</label>
+			       </div> 
+			   </div>
+				<div layout="row" layout-wrap ng-if="isVisible('manageCalendar')">
+				 <md-input-container class="small counter"> 
+			        <md-checkbox
+			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageCalendar" aria-label="check" name="manageCalendar">
+			        </md-checkbox> 
+			       </md-input-container>
+			       <div flex=3 style="line-height: 40px">
+			        <label>{{translate.load("sbi.roles.manageCalendar")}}</label>
+			       </div> 
+			   </div>
+			  
 				<md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('EDIT')"
 												 >
 										{{translate.load("sbi.roles.edit");}}

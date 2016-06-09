@@ -99,6 +99,8 @@ public class RoleBO implements Serializable {
 	private boolean ableToManageGlossaryTechnical;
 
 	private boolean ableToManageKpiValue;
+
+	private boolean ableToManageCalendar;
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
@@ -510,6 +512,14 @@ public class RoleBO implements Serializable {
 
 	public void setRoleMetaModelCategories(List<RoleMetaModelCategory> roleMetaModelCategories) {
 		this.roleMetaModelCategories = roleMetaModelCategories;
+	}
+
+	public boolean isAbleToManageCalendar() {
+		return ableToManageCalendar;
+	}
+
+	public void setAbleToManageCalendar(boolean ableToManageCalendar) {
+		this.ableToManageCalendar = ableToManageCalendar;
 	}
 
 }

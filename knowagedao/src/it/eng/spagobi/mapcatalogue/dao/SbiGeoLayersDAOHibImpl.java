@@ -41,6 +41,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -64,6 +65,7 @@ import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
 
@@ -211,6 +213,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			}
 			hibLayer.setDescr(aLayer.getDescr());
 			hibLayer.setType(aLayer.getType());
+			if (!hibLayer.getLabel().equals(aLayer.getLabel())) {
+				// modify name of file
+				updateFileIfPresent(hibLayer, aLayer.getLabel());
+			}
 			hibLayer.setLabel(aLayer.getLabel());
 			hibLayer.setBaseLayer(aLayer.isBaseLayer());
 			if (aLayer.getCategory_id() == null) {
@@ -328,6 +334,28 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			}
 		}
 
+	}
+
+	private void updateFileIfPresent(SbiGeoLayers layer, String newName) {
+		String filePath = SpagoBIUtilities.getResourcePath() + File.separatorChar + "Layer" + File.separatorChar;
+		String fileNewPath = SpagoBIUtilities.getResourcePath() + File.separatorChar + "Layer" + File.separatorChar;
+
+		File originalDatasetFile = new File(filePath + layer.getLabel());
+		File newDatasetFile = new File(fileNewPath + newName);
+		if (originalDatasetFile.exists()) {
+			/*
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
+			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
+			 */
+			try {
+				Files.copy(originalDatasetFile.toPath(), newDatasetFile.toPath());
+
+				// Then delete old file
+				originalDatasetFile.delete();
+			} catch (IOException e) {
+				throw new SpagoBIRuntimeException("Cannot move dataset File", e);
+			}
+		}
 	}
 
 	/**

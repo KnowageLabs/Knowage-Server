@@ -75,6 +75,8 @@ public class Role implements Serializable {
 
 	private boolean isAbleToManageKpiValue;
 
+	private boolean isAbleToManageCalendar;
+
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
@@ -639,6 +641,14 @@ public class Role implements Serializable {
 
 	public boolean isAbleToManageKpiValue() {
 		return isAbleToManageKpiValue;
+	}
+
+	public boolean isAbleToManageCalendar() {
+		return isAbleToManageCalendar;
+	}
+
+	public void setAbleToManageCalendar(boolean isAbleToManageCalendar) {
+		this.isAbleToManageCalendar = isAbleToManageCalendar;
 	}
 
 	public void setAbleToManageGlossaryTechnical(boolean isAbleToManageGlossaryTechnical) {

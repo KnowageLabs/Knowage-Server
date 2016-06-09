@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.tools.calendar.metadata.CalendarConfiguration" table="A_T_CAL_CFG">
+        
+        <id name="idCalComposition" type="integer">
+           <column name="ID_CAL_COMPOSITION" />
+		   <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">A_T_CAL_CFG</param>	
+				<param name="initial_value">1</param>	
+		   </generator>
+        </id>
+        <property name="calendarId" column="CALENDAR_ID" type="int" not-null="true"/>
+        <property name="timeId" column="TIME_ID" type="int" not-null="true"/>
+        <property name="isHoliday" column="IS_HOLIDAY" type="int" />
+        <property name="pubHoliday" column="PUB_HOLIDAY" type="string" length="100" />
+        <property name="attributeId" column="ATTRIBUTE_ID" type="int" not-null="true"/>
+        <property name="recStatus" column="REC_STATUS" type="string" length="1" not-null="true"/>
+             
+        <many-to-one name="calendar" class="it.eng.spagobi.tools.calendar.metadata.Calendar" column="CALENDAR_ID" lazy="false" fetch="join" insert="false" update="false"/>
+        <many-to-one name="timeByDay" class="it.eng.spagobi.tools.calendar.metadata.TimeByDay" column="TIME_ID" lazy="false" fetch="join" insert="false" update="false"/>
+        <many-to-one name="calendarAttribute" class="it.eng.spagobi.tools.calendar.metadata.CalendarAttribute" column="ATTRIBUTE_ID" lazy="false" fetch="join" insert="false" update="false"/>
+        
+	</class>
+</hibernate-mapping>

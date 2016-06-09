@@ -57,6 +57,8 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	               {dbname:"GLOSSARY",label:"",visible:false, category:"save"},
 	               {dbname:"MANAGE_GLOSSARY_BUSINESS",label:"manageGlossaryBusiness",visible:false, category:"MANAGE"},
 	               {dbname:"MANAGE_GLOSSARY_TECHNICAL",label:"manageGlossaryTechnical",visible:false, category:"MANAGE"},
+	               {dbname:"MANAGE_KPI_VALUE",label:"manageKpiValue",visible:false, category:"MANAGE"},
+	               {dbname:"MANAGE_CALENDAR",label:"manageCalendar",visible:false, category:"MANAGE"},
 	               {dbname:"HIERARCHIES_MANAGEMENT",label:"hierarchiesManagement",visible:false, category:"ITEMS"}
 	               ];
 
@@ -112,6 +114,8 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		$scope.disable = true;
 		$scope.selectedRole.ableToManageGlossaryBusiness= false;
 		$scope.selectedRole.ableToManageGlossaryTechnical= false;
+		$scope.selectedRole.ableToManageKpiValue= false;
+		$scope.selectedRole.ableToManageCalendar = false;
 		$scope.selectedRole.ableToManageUsers= false;
 		$scope.selectedRole.ableToSaveIntoPersonalFolder= true;
 		$scope.selectedRole.ableToEnableDatasetPersistence= true;

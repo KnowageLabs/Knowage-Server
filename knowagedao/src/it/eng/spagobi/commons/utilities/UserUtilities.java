@@ -261,6 +261,7 @@ public class UserUtilities {
 			for (int i = 0; i < profile.getRoles().size(); i++) {
 				IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 				roleDAO.setTenant(((UserProfile) profile).getOrganization());
+
 				Role rol = roleDAO.loadByName(((ArrayList<?>) profile.getRoles()).get(i).toString());
 				if (Role == null || rol.getRoleTypeCD().compareTo(Role) == 0) {
 
@@ -576,6 +577,10 @@ public class UserUtilities {
 			if (virtualRole.isAbleToManageKpiValue()) {
 				roleFunctionalities.add(SpagoBIConstants.MANAGE_KPI_VALUE);
 			}
+			if (virtualRole.isAbleToManageCalendar()) {
+				roleFunctionalities.add(SpagoBIConstants.MANAGE_CALENDAR);
+			}
+
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
 				roleFunctionalities.addAll(roleTypeFunctionalities);
@@ -787,8 +792,12 @@ public class UserUtilities {
 						virtualRole.setAbleToManageGlossaryTechnical(true);
 					}
 					if (anotherRole.isAbleToManageKpiValue()) {
-						logger.debug("User has role " + roleName + " that is able to manage glossary technical.");
+						logger.debug("User has role " + roleName + " that is able to manage kpi value.");
 						virtualRole.setAbleToManageKpiValue(true);
+					}
+					if (anotherRole.isAbleToManageCalendar()) {
+						logger.debug("User has role " + roleName + " that is able to manage Calendar.");
+						virtualRole.setAbleToManageCalendar(true);
 					}
 				}
 			}

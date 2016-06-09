@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory name="HibernateSessionFactoryMySQL">
+
+		
+        <property name="hibernate.cache.use_second_level_cache">false</property>
+        <property name="hibernate.cache.use_query_cache">false</property>        
+ 		<property name="hibernate.show_sql">false</property>
+
+		<mapping resource="it/eng/spagobi/tools/calendar/metadata/mapping/Calendar.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/calendar/metadata/mapping/CalendarAttribute.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/calendar/metadata/mapping/CalendarAttributeDomain.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/calendar/metadata/mapping/CalendarConfiguration.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/calendar/metadata/mapping/TimeByDay.hbm.xml" />	
+        <!-- end mapping -->
+        
+      <!--   <class-cache class="it.eng.spagobi.commons.metadata.SbiDomains" usage="read-only"/> -->
+     
+	</session-factory>
+
+</hibernate-configuration>

@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.commons.dao;
 
+import org.apache.log4j.Logger;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectRating;
@@ -66,6 +68,7 @@ import it.eng.spagobi.metadata.dao.ISbiTableBcDAO;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.tools.alert.dao.IAlertDAO;
+import it.eng.spagobi.tools.calendar.dao.ICalendarDAO;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.crossnavigation.dao.ICrossNavigationDAO;
@@ -88,8 +91,6 @@ import it.eng.spagobi.wapp.dao.IMenuDAO;
 import it.eng.spagobi.wapp.dao.IMenuRolesDAO;
 import it.eng.spagobi.workspace.dao.IFunctionsOrganizerDAO;
 import it.eng.spagobi.workspace.dao.IObjFuncOrganizerDAO;
-
-import org.apache.log4j.Logger;
 
 /**
  * Contains all the data access object for all the BO objects defined into
@@ -684,6 +685,10 @@ public class DAOFactory {
 	 */
 	public static IGlossaryDAO getGlossaryDAO() throws EMFUserError {
 		return (IGlossaryDAO) createDAOInstance("GlossaryDAO");
+	}
+
+	public static ICalendarDAO geCalendarDAO() throws EMFUserError {
+		return (ICalendarDAO) createDAOInstance("CalendarDAO");
 	}
 
 	/**

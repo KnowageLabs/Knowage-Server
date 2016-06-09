@@ -101,7 +101,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 	private final String MANAGE_GLOSSARY_TECHNICAL = "manageGlossaryTechnical";
 
 	private final String MANAGE_KPI_VALUE = "manageKpiValue";
-
+	private final String MANAGE_CALENDAR = "manageCalendar";
 	private final String BM_CATEGORY_ID = "bmCategoryId";
 	private final String BM_CATEGORIES = "bmCategories";
 
@@ -201,6 +201,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 			Boolean manageGlossaryTechnical = getAttributeAsBoolean(MANAGE_GLOSSARY_TECHNICAL);
 
 			Boolean manageKpiValue = getAttributeAsBoolean(MANAGE_KPI_VALUE);
+			Boolean manageCalendar = getAttributeAsBoolean(MANAGE_CALENDAR);
 			List<String> bmCategoryIds = getAttributeAsList(BM_CATEGORIES);
 			if (bmCategoryIds.size() == 1) {
 				if (bmCategoryIds.get(0).equals("")) {
@@ -294,7 +295,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				role.setAbleToManageGlossaryTechnical(manageGlossaryTechnical);
 
 				role.setAbleToManageKpiValue(manageKpiValue);
-
+				role.setAbleToManageCalendar(manageCalendar);
 				try {
 					String id = getAttributeAsString(ID);
 					if (id != null && !id.equals("") && !id.equals("0")) {

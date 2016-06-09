@@ -297,6 +297,14 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Timespan" roleType="MODEL_ADMIN" />
 
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Calendar" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Calendar" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Calendar" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Calendar" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Calendar" roleType="MODEL_ADMIN" />
+	
+	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="USER" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="DEV_ROLE" />
@@ -383,6 +391,7 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AnalyticalWidget" roleType="MODEL_ADMIN" />
+
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DocumentScheduling" roleType="ADMIN" />
 	

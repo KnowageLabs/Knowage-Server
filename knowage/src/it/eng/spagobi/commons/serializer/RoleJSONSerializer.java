@@ -75,6 +75,8 @@ public class RoleJSONSerializer implements Serializer {
 
 	public static final String MANAGE_KPI_VALUE = "manageKpiValue";
 
+	public static final String MANAGE_CALENDAR = "manageCalendar";
+
 	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
@@ -123,6 +125,7 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(MANAGE_GLOSSARY_BUSINESS, role.isAbleToManageGlossaryBusiness());
 			result.put(MANAGE_GLOSSARY_TECHNICAL, role.isAbleToManageGlossaryTechnical());
 			result.put(MANAGE_KPI_VALUE, role.isAbleToManageKpiValue());
+			result.put(MANAGE_CALENDAR, role.isAbleToManageCalendar());
 			result.put(ENABLE_DATASET_PERSISTENCE, role.isAbleToEnableDatasetPersistence());
 			result.put(ENABLE_FEDERATED_DATASET, role.isAbleToEnableFederatedDataset());
 
