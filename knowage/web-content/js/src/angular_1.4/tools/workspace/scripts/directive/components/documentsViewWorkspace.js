@@ -33,6 +33,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	$scope.selectedDocument = undefined;
 	$scope.showDocumentInfo = false;
 	$scope.folders = [];
+	$scope.foldersForTree=[];
 	$scope.foldersToShow=[];
 	$scope.breadModel=[];
 	$scope.breadCrumbControl;
@@ -140,6 +141,8 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 				sbiModule_restServices.promiseDelete("2.0/organizer/folders",folder.functId)
 				.then(function(response) {
 					$scope.loadAllFolders();
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.folder.delete.success'),sbiModule_translate.load('sbi.generic.success'));
+
 				},function(response) {
 					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 				});
@@ -150,6 +153,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		sbiModule_restServices.promiseGet("2.0/organizer/folders","")
 		.then(function(response) {
 			angular.copy(response.data,$scope.folders); // all folders
+			angular.copy(response.data,$scope.foldersForTree);
 			$scope.loadFolderContent();
 			console.info("[LOAD END]: Loading of users folders is finished.");
 		},function(response){
@@ -299,6 +303,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 			$mdDialog.show(confirm).then(function() {
 				sbiModule_restServices.promiseDelete("2.0/organizer/documents/"+document.functId,document.biObjId)
 				.then(function(response) {
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.organizer.document.delete.success'),sbiModule_translate.load('sbi.generic.success'));
 					$scope.loadDocumentsForFolder($scope.selectedFolder);
 					$scope.selectOrganizerDocument(undefined);
 				},function(response) {
@@ -309,5 +314,53 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	
 	$scope.moveDocumentToFolder=function(document){
 		console.log("moveee it move it");
+		
+		$mdDialog.show({
+			  scope:$scope,
+			  preserveScope: true,
+		      controller: MoveDocumentToFolderController,
+		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/folderTreeTemplate.html',  
+		      clickOutsideToClose:false,
+		      escapeToClose :false,
+		      locals:{
+		    	 doc:document
+		      }
+		    });
+		
+	}
+	
+	function  MoveDocumentToFolderController($scope,$mdDialog,doc){
+		$scope.destFolder=undefined;
+		$scope.closeFolderTree=function(){
+    		$mdDialog.cancel();
+    	}
+	
+	
+		$scope.keys={
+				'id':'functId',
+				'parentId':'parentFunct'
+		};
+		
+		$scope.setDestinationFolder=function(item){
+			
+			$scope.destFolder=item;
+		}
+		
+		$scope.executeMovingDocument=function(){
+			if($scope.destFolder!=undefined){
+				sbiModule_restServices.promisePut("2.0/organizer/documents/"+doc.biObjId+"/"+$scope.selectedFolder.functId,$scope.destFolder.functId)
+				.then(function(response) {
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.organizer.folder.move.success'),sbiModule_translate.load('sbi.generic.success'));
+					$scope.loadDocumentsForFolder($scope.selectedFolder);
+					$scope.selectOrganizerDocument(undefined);
+					$scope.closeFolderTree();
+				},function(response) {
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+				});
+				
+			}
+			
+		}
+		
 	}
 }

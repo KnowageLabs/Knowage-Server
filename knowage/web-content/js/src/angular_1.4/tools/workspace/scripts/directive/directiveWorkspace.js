@@ -37,5 +37,6 @@ angular
 	                                'dataset_wizard_meta',
 	                                'folder_view',
 	                                'bread_crumb',
-	                                'organizer_view'
+	                                'organizer_view',
+	                                'document_tree'
 	                                ]);
