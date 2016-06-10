@@ -30,6 +30,9 @@ import it.eng.knowage.meta.model.physical.PhysicalModelFactory;
 import it.eng.knowage.meta.model.physical.PhysicalPrimaryKey;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.util.JDBCTypeMapper;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -44,22 +47,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public class PhysicalModelInitializer {
 
 	IPropertiesInitializer propertiesInitializer;
 	Model rootModel;
-	private static Logger logger = LoggerFactory.getLogger(PhysicalModelInitializer.class);
+	private static Logger logger = Logger.getLogger(PhysicalModelInitializer.class);
 
 	static public PhysicalModelFactory FACTORY = PhysicalModelFactory.eINSTANCE;
 	static public String ORACLE_SPATIAL_GEOMETRY = "SDO_GEOMETRY";
@@ -71,25 +73,30 @@ public class PhysicalModelInitializer {
 	}
 
 	// Initialize PhysicalModel with table filter
-	public PhysicalModel initialize(String modelName, Connection conn, String connectionName, String connectionDriver, String connectionUrl,
-			String connectionUsername, String connectionPassword, String connectionDatabaseName, String defaultCatalog, String defaultSchema,
-			List<String> selectedTables) {
+	public PhysicalModel initialize(Integer datasourceId, List<String> selectedTables) {
 		PhysicalModel model;
 		DatabaseMetaData dbMeta;
 
 		try {
+			IDataSourceDAO datasourceDao = DAOFactory.getDataSourceDAO();
+			// TODO
+			datasourceDao.setTenant("");
+			DataSource ds = datasourceDao.loadDataSourceByID(datasourceId);
+			Connection conn = ds.getConnection();
+
 			model = FACTORY.createPhysicalModel();
-			model.setName(modelName);
+			model.setName("model_name_mock");
 
 			if (getRootModel() != null) {
 				model.setParentModel(getRootModel());
 			}
 
 			dbMeta = conn.getMetaData();
+			String connectionName = ds.getLabel();
 
 			addDatabase(dbMeta, model);
-			addCatalog(conn, model, defaultCatalog);
-			addSchema(dbMeta, model, defaultSchema);
+			// addCatalog(conn, model, catalog);
+			// addSchema(dbMeta, model, schema);
 
 			addTables(dbMeta, model, selectedTables);
 
@@ -102,28 +109,28 @@ public class PhysicalModelInitializer {
 
 			// Setting Connection properties values
 			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME, connectionName);
-			logger.debug("PhysicalModel Property: Connection name is [{}]",
-					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME).getValue());
+			logger.debug("PhysicalModel Property: Connection name is [{}] "
+					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME).getValue());
 
-			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER, connectionDriver);
-			logger.debug("PhysicalModel Property: Connection driver is [{}]",
-					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER).getValue());
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER, ds.getDriver());
+			logger.debug("PhysicalModel Property: Connection driver is [{}] "
+					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER).getValue());
 
-			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL, connectionUrl);
-			logger.debug("PhysicalModel Property: Connection url is [{}]", model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL)
-					.getValue());
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL, ds.getUrlConnection());
+			logger.debug("PhysicalModel Property: Connection url is [{}] "
+					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL).getValue());
 
-			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME, connectionUsername);
-			logger.debug("PhysicalModel Property: Connection username is [{}]",
-					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME).getValue());
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME, ds.getUser());
+			logger.debug("PhysicalModel Property: Connection username is [{}] "
+					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME).getValue());
 
-			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD, connectionPassword);
-			logger.debug("PhysicalModel Property: Connection password is [{}]",
-					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD).getValue());
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD, ds.getPwd());
+			logger.debug("PhysicalModel Property: Connection password is [{}] "
+					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD).getValue());
 
-			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME, connectionDatabaseName);
-			logger.debug("PhysicalModel Property: Connection databasename is [{}]",
-					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME).getValue());
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME, ds.getLabel());
+			logger.debug("PhysicalModel Property: Connection databasename is [{}] "
+					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME).getValue());
 
 			// Quote string identification
 			String quote = dbMeta.getIdentifierQuoteString();
@@ -136,28 +143,28 @@ public class PhysicalModelInitializer {
 			}
 
 			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING, quote);
-			logger.debug("PhysicalModel Property: Connection databasequotestring is [{}]",
-					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING).getValue());
+			logger.debug("PhysicalModel Property: Connection databasequotestring is [{}] "
+					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING).getValue());
 
 			/*
 			 * model.getPropertyType("connection.name").setDefaultValue(connectionName); logger.debug("PhysicalModel Property: Connection name is [{}]",
 			 * model.getPropertyType("connection.name").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.driver").setDefaultValue(connectionDriver); logger.debug("PhysicalModel Property: Connection driver is [{}]",
 			 * model.getPropertyType("connection.driver").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.url").setDefaultValue(connectionUrl); logger.debug("PhysicalModel Property: Connection url is [{}]",
 			 * model.getPropertyType("connection.url").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.username").setDefaultValue(connectionUsername);
 			 * logger.debug("PhysicalModel Property: Connection username is [{}]", model.getPropertyType("connection.username").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.password").setDefaultValue(connectionPassword);
 			 * logger.debug("PhysicalModel Property: Connection password is [{}]", model.getPropertyType("connection.password").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.databasename").setDefaultValue(connectionDatabaseName);
 			 * logger.debug("PhysicalModel Property: Connection databasename is [{}]", model.getPropertyType("connection.databasename").getDefaultValue());
-			 *
+			 * 
 			 * // Quote string identification String quote = dbMeta.getIdentifierQuoteString(); // check if escaping is needed if (quote.equals("\"")) { quote =
 			 * "\\\""; } model.getPropertyType("connection.databasequotestring").setDefaultValue(quote);
 			 * logger.debug("PhysicalModel Property: Connection databasequotestring is [{}]", model.getPropertyType("connection.databasequotestring")
@@ -169,13 +176,6 @@ public class PhysicalModelInitializer {
 
 		return model;
 
-	}
-
-	// Initialize Physical Model with ALL original Database Tables
-	public PhysicalModel initialize(String modelName, Connection conn, String connectionName, String connectionDriver, String connectionUrl,
-			String connectionUsername, String connectionPassword, String connectionDatabaseName, String defaultCatalog, String defaultSchema) {
-		return initialize(modelName, conn, connectionName, connectionDriver, connectionUrl, connectionUsername, connectionPassword, connectionDatabaseName,
-				defaultCatalog, defaultSchema, null);
 	}
 
 	private void addDatabase(DatabaseMetaData dbMeta, PhysicalModel model) {
@@ -303,7 +303,7 @@ public class PhysicalModelInitializer {
 			/*
 			 * -------------------------------------------------- resultset's structure -------------------------------------------------- 1. TABLE_CAT String
 			 * => table catalog (may be null) 2. TABLE_SCHEM String => table schema (may be null) 3. TABLE_NAME String => table name
-			 *
+			 * 
 			 * Data Warehouse Management Model 181 4. TABLE_TYPE String => table type. Typical types are �TABLE�, �VIEW�, �SYSTEM TABLE�,�GLOBAL TEMPORARY�,
 			 * �LOCAL TEMPORARY�, �ALIAS�, �SYNONYM�. 5. REMARKS String => explanatory comment on the table 6. TYPE_CAT String => the types catalog (may be
 			 * null) 7. TYPE_SCHEM String => the types schema (may be null) 8. TYPE_NAME String => type name (may be null) 9. SELF_REFERENCING_COL_NAME String
@@ -353,7 +353,7 @@ public class PhysicalModelInitializer {
 			 * at 1) 18. IS_NULLABLE String => �NO� means column definitely does not allow NULL values; �YES� means the column might allow NULL values. An empty
 			 * string means nobody knows. 19. SCOPE_CATLOG String => catalog of table that is the scope of a reference attribute (null if DATA_TYPE isn�t REF)
 			 * 20. SCOPE_SCHEMA String => schema of table that is the scope of a
-			 *
+			 * 
 			 * 182 Chapter 5 reference attribute (null if the DATA_TYPE isn�t REF) 21. SCOPE_TABLE String => table name that is the scope of a reference
 			 * attribute (null if the DATA_TYPE isn�t REF) 22. SOURCE_DATA_TYPE short => source type of a distinct type or user-generated Ref type, SQL type
 			 * from java.sql.Types (null if DATA_TYPE isn�t DISTINCT or user-generated REF)
@@ -567,7 +567,7 @@ public class PhysicalModelInitializer {
 	// ---------------------------------------------------------
 	/**
 	 * Get tables names that are present in the database but not in the passed physical model
-	 *
+	 * 
 	 * @param connection
 	 *            jdbc connection to the database
 	 * @param physicalModel
@@ -606,7 +606,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Get columns names that are present in the database but not in the passed physical model
-	 *
+	 * 
 	 * @param connection
 	 *            jdbc connection to the database
 	 * @param physicalModel
@@ -657,7 +657,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Get tables and columns names that are present in the database but not in the passed physical model
-	 *
+	 * 
 	 * @param connection
 	 *            jdbc connection to the database
 	 * @param physicalModel
@@ -721,7 +721,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Update originaModel with new tables and columns from updateModel, also mark as deleted the tables or columns not found in the updated model
-	 *
+	 * 
 	 */
 	public PhysicalModel updateModel(PhysicalModel originalModel, PhysicalModel updatedModel, List<String> selectedTables) {
 		EList<PhysicalTable> originalTables = originalModel.getTables();
@@ -861,7 +861,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Update originalTable with new columns information found in the updatedTable
-	 *
+	 * 
 	 * @param originalTable
 	 *            table to update
 	 * @param updatedTable
@@ -943,7 +943,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Check foreign keys of the originalTable using informations from the updatedTable
-	 *
+	 * 
 	 * @param originalTable
 	 * @param updatedTable
 	 */
@@ -988,9 +988,9 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Update (if necessary) the originalPhysicalForeignKey with the information retrieved from the updatedPhysicalForeignKey
-	 *
+	 * 
 	 * Important: We skip the check of source tables because we call this method only in the checkForeignKeys() method
-	 *
+	 * 
 	 * @param originalPhysicalForeignKey
 	 * @param updatedPhysicalForeignKey
 	 */
@@ -1097,7 +1097,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Create a new foreign key to the passed model using the same informations found in the passed examplePhysicalForeignKey
-	 *
+	 * 
 	 * @param model
 	 * @param examplePhysicalForeignKey
 	 */
@@ -1207,7 +1207,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Return a collection of elements (tables and columns) that are marked as deleted in the passed physical model
-	 *
+	 * 
 	 * @param physicalModel
 	 * @return markedElements elements marked as deleted (tables and columns)
 	 */
@@ -1239,7 +1239,7 @@ public class PhysicalModelInitializer {
 
 	/**
 	 * Remove the physical foreign key from the Physical Model and also remove pending references (ex in BusinessRelationship)
-	 *
+	 * 
 	 */
 	public void removePhysicalForeignKey(PhysicalModel physicalModel, PhysicalForeignKey physicalForeignKey) {
 		physicalModel.getForeignKeys().remove(physicalForeignKey);
