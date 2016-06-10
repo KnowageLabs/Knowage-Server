@@ -28,6 +28,7 @@ import java.util.List;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -86,6 +87,23 @@ public class DocumentsOrganizerResource extends AbstractSpagoBIResource {
 		} catch (Exception exception) {
 			logger.error("Error while deleting a document in organizer.", exception);
 			throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.delete", buildLocaleFromSession(), exception);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@PUT
+	@Path("/{documentId}/{sourceFolderId}/{destinationFolderId}")
+	public Response moveDocumentToDifferentFolderInOrganizer(@PathParam("documentId") Integer documentId, @PathParam("sourceFolderId") Integer sourceFolderId,
+			@PathParam("destinationFolderId") Integer destinationFolderId) {
+		logger.debug("IN");
+		try {
+			objFuncOrganizer = DAOFactory.getObjFuncOrganizerDAO();
+			objFuncOrganizer.moveDocumentToDifferentFolder(documentId, sourceFolderId, destinationFolderId);
+			return Response.ok().build();
+		} catch (Exception exception) {
+			logger.error("Error while moving a document in organizer.", exception);
+			throw new SpagoBIRestServiceException("sbi.workspace.organizer.error.move", buildLocaleFromSession(), exception);
 		} finally {
 			logger.debug("OUT");
 		}

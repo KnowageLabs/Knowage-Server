@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.workspace.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
@@ -65,14 +63,9 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 			return toReturn;
 		} catch (HibernateException he) {
 			logException(he);
+			logger.error("HibernateException", he);
 			if (tx != null)
 				tx.rollback();
-			try {
-				throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
-			} catch (EMFInternalError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -116,6 +109,7 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
+			logException(he);
 			logger.error("HibernateException", he);
 			if (tx != null)
 				tx.rollback();
@@ -138,9 +132,14 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			deleteOrganizerDocumentById(folderId, docId, aSession);
+			try {
+				deleteOrganizerDocumentById(folderId, docId, aSession);
+			} catch (Exception e) {
+				logger.error("Document was not deleted from the organizer!", e);
+			}
 			tx.commit();
-		} catch (Exception he) {
+			logger.debug("Document was deleted from the organizer!");
+		} catch (HibernateException he) {
 			logException(he);
 			logger.error("Error while deleting the document from organizer.", he);
 			if (tx != null)
@@ -174,12 +173,33 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 	}
 
 	@Override
-	public void moveDocumentToDifferentFolder(SbiObjFuncOrganizerId documentToMove) {
-		// TODO Auto-generated method stub
+	public void moveDocumentToDifferentFolder(Integer documentId, Integer sourceFolderId, Integer destinationFolderId) {
+
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			loadAndUpdateDocumentInOrganizerById(documentId, sourceFolderId, destinationFolderId, aSession);
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			logger.error("Error while deleting the document from organizer.", he);
+			if (tx != null)
+				tx.rollback();
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+			logger.debug("OUT");
+		}
 
 	}
 
 	private DocumentOrganizer toDocumentOrganizer(SbiObjFuncOrganizer hibObj) {
+
 		DocumentOrganizer toReturn = new DocumentOrganizer();
 
 		SbiObjects sbiObj = hibObj.getId().getSbiObjects();
@@ -216,7 +236,7 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			logger.error("Loading dataset federation", he);
+			logger.error("Error while getting the root folder of the current user.", he);
 			if (tx != null)
 				tx.rollback();
 
@@ -228,6 +248,46 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 		}
 		logger.debug("OUT");
 		return toReturn.getFunctId();
+	}
+
+	private void loadAndUpdateDocumentInOrganizerById(Integer docId, Integer folId, Integer destId, Session aSession) {
+		addToNewFolder(docId, destId, aSession);
+		try {
+			deleteOrganizerDocumentById(folId, docId, aSession);
+		} catch (Exception e) {
+			logger.error("Document was not removed from source folder!", e);
+		}
+	}
+
+	private SbiObjFuncOrganizer addToNewFolder(Integer documentId, Integer destId, Session aSession) {
+		logger.debug("IN");
+		SbiObjFuncOrganizer hibDoc = null;
+		try {
+			hibDoc = new SbiObjFuncOrganizer();
+
+			SbiFunctionsOrganizer sfo = new SbiFunctionsOrganizer();
+			sfo.setFunctId(destId);
+
+			SbiObjects so = new SbiObjects();
+			so.setBiobjId(documentId);
+
+			SbiObjFuncOrganizerId compId = new SbiObjFuncOrganizerId();
+			compId.setSbiFunctionsOrganizer(sfo);
+			compId.setSbiObjects(so);
+
+			hibDoc.setId(compId);
+			hibDoc.setProg(1);
+
+			updateSbiCommonInfo4Insert(hibDoc);
+			aSession.save(hibDoc);
+
+		} catch (HibernateException he) {
+			logException(he);
+			logger.error("Error while adding document to new folder.", he);
+		} finally {
+			logger.debug("OUT");
+		}
+		return hibDoc;
 	}
 
 }

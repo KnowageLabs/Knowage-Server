@@ -19,7 +19,6 @@ package it.eng.spagobi.workspace.dao;
 
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizer;
-import it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizerId;
 
 import java.util.List;
 
@@ -31,6 +30,6 @@ public interface IObjFuncOrganizerDAO extends ISpagoBIDao {
 
 	public void removeDocumentFromOrganizer(Integer folderId, Integer docId);
 
-	public void moveDocumentToDifferentFolder(SbiObjFuncOrganizerId documentToMove);
+	public void moveDocumentToDifferentFolder(Integer documentId, Integer sourceFolderId, Integer destinationFolderId);
 
 }
