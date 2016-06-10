@@ -155,7 +155,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		sbiModule_restServices.promiseGet("2.0/organizer/folders","")
 		.then(function(response) {
 			angular.copy(response.data,$scope.folders); // all folders
-			angular.copy(response.data,$scope.foldersForTree);
+			//angular.copy(response.data,$scope.foldersForTree);
 			$scope.loadFolderContent();
 			console.info("[LOAD END]: Loading of users folders is finished.");
 		},function(response){
@@ -316,8 +316,8 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	}
 	
 	$scope.moveDocumentToFolder=function(document){
-		console.log("moveee it move it");
 		
+		angular.copy($scope.folders,$scope.foldersForTree);
 		$mdDialog.show({
 			  scope:$scope,
 			  preserveScope: true,
@@ -333,8 +333,9 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	}
 	
 	function  MoveDocumentToFolderController($scope,$mdDialog,doc){
-		
+		console.log($scope.foldersForTree);
 		$scope.closeFolderTree=function(){
+			$scope.destFolder=undefined;
     		$mdDialog.cancel();
     	}
 	
