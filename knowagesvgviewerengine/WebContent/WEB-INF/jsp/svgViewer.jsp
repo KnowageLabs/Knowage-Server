@@ -29,18 +29,17 @@
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	<%@include file="/WEB-INF/jsp/commons/angular/svgViewerImport.jsp"%>
 	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/svgviewer/svgViewerController.js"></script>
+	
 	<title>SVG Viewer</title>
 	
 	</head>
 	
-	<body>
-
-        Testing the SVG Viewer Engine!
+	<body>        
         
-        <!-- 
 			<div ng-app="myapp">
 			    <div layout="column" ng-controller="MyController">
-			        <md-sidenav md-component-id="left" md-is-open="isSidenavOpen" class="md-sidenav-left">
+			        <md-sidenav md-disable-backdrop md-component-id="left" md-is-open="isSidenavOpen" class="md-sidenav-left">
 			            Left Nav!
 			        </md-sidenav>
 			         <md-content>
@@ -48,12 +47,16 @@
 			              Open Side Nav
 			            </md-button>
 			            <div id="container">
+							<object id="svgContainer" width="100%" height="100%"
+								data="http://localhost:8080/knowagesvgviewerengine/api/1.0/svgviewer/drawMap"
+								type="image/svg+xml"> Your browser does not support SVG 
+							</object>
 						</div>
 			          </md-content>
 			    </div>
 			</div>        
         	
-		 -->
+		 
 		 <!-- 
 		<iframe id="iframe_1"
 		        name="iframe_1"
@@ -65,9 +68,7 @@
 		</iframe>
 		 -->
 		
-		<object id="svg1" width="100%" height="100%" data="http://localhost:8080/knowagesvgviewerengine/api/1.0/svgviewer/drawMap" type="image/svg+xml">
-		Your browser does not support SVG
-		</object>
+		
 
 
 </body>

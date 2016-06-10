@@ -107,21 +107,7 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 			switch (pageName) {
 
 			case "execute":
-				UserProfile userProfile = (UserProfile) getIOManager().getParameterFromSession(IEngUserProfile.ENG_USER_PROFILE);
-				String userUniqueIdentifier = (String) userProfile.getUserUniqueIdentifier();
-
-				MapCatalogueAccessUtils mapCatalogueServiceProxy = new MapCatalogueAccessUtils(getHttpSession(), userUniqueIdentifier);
-
-				Map env = getIOManager().getEnv();
-				env.put(SvgViewerEngineConstants.ENV_MAPCATALOGUE_SERVICE_PROXY, mapCatalogueServiceProxy);
-
-				String standardHierarchy = mapCatalogueServiceProxy.getStandardHierarchy();
-
-				env.put(SvgViewerEngineConstants.ENV_STD_HIERARCHY, standardHierarchy);
-
-				env.put(SvgViewerEngineConstants.ENV_CONTEXT_URL, getContextUrl());
-
-				env.put(SvgViewerEngineConstants.ENV_ABSOLUTE_CONTEXT_URL, getAbsoluteContextUrl());
+				Map env = getEngineEnv();
 
 				engineInstance = SvgViewerEngine.createInstance(savedTemplate, env);
 
@@ -144,6 +130,27 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private Map getEngineEnv() throws Exception {
+		UserProfile userProfile = (UserProfile) getIOManager().getParameterFromSession(IEngUserProfile.ENG_USER_PROFILE);
+		String userUniqueIdentifier = (String) userProfile.getUserUniqueIdentifier();
+
+		MapCatalogueAccessUtils mapCatalogueServiceProxy = new MapCatalogueAccessUtils(getHttpSession(), userUniqueIdentifier);
+		String standardHierarchy = mapCatalogueServiceProxy.getStandardHierarchy();
+
+		Map env = getIOManager().getEnv();
+
+		// Add extra Environment variables specific for this engine
+		env.put(SvgViewerEngineConstants.ENV_MAPCATALOGUE_SERVICE_PROXY, mapCatalogueServiceProxy);
+
+		env.put(SvgViewerEngineConstants.ENV_STD_HIERARCHY, standardHierarchy);
+
+		env.put(SvgViewerEngineConstants.ENV_CONTEXT_URL, getContextUrl());
+
+		env.put(SvgViewerEngineConstants.ENV_ABSOLUTE_CONTEXT_URL, getAbsoluteContextUrl());
+
+		return env;
 	}
 
 	private String getContextUrl() {
