@@ -27,7 +27,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
- *
+ * 
  */
 public class MetaTestSuite extends TestCase {
 	static public Test suite() {
@@ -37,7 +37,6 @@ public class MetaTestSuite extends TestCase {
 		suite.addTest(ModelSerializationTestSuite.suite());
 		suite.addTest(JpaMappingGenerationTestSuite.suite());
 		// suite.addTest(ModelQueryTestSuite.suite());
-
 		return suite;
 	}
 }

@@ -33,6 +33,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * <!-- begin-user-doc --> An implementation of the model object '<em><b>Business Column</b></em>'. <!-- end-user-doc -->
  * <p>
@@ -70,6 +72,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 	 * @generated
 	 */
 	@Override
+	@JsonIgnore
 	public BusinessColumnSet getTable() {
 		if (eContainerFeatureID() != BusinessModelPackage.BUSINESS_COLUMN__TABLE)
 			return null;

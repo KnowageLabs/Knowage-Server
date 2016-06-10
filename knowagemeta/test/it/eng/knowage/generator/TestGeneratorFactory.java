@@ -17,20 +17,21 @@
  */
 package it.eng.knowage.generator;
 
-import it.eng.knowage.common.TestConstants;
+import it.eng.knowage.common.ConfigSingleton;
 import it.eng.knowage.meta.generator.jpamapping.JpaMappingClassesGenerator;
 import it.eng.knowage.meta.generator.jpamapping.JpaMappingCodeGenerator;
 import it.eng.knowage.meta.generator.jpamapping.JpaMappingJarGenerator;
+import it.eng.spagobi.tools.dataset.dao.TestConstants;
 
 import java.io.File;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public class TestGeneratorFactory {
 	public static JpaMappingCodeGenerator createCodeGenerator() {
-		File generatorProjectRootFolder = new File(TestConstants.workspaceFolder, "it.eng.knowage.meta.generator");
+		File generatorProjectRootFolder = new File(ConfigSingleton.getInstance().workspaceFolder(), "it.eng.knowage.meta.generator");
 		File generatorProjectTemplateFolder = new File(generatorProjectRootFolder, "templates");
 		JpaMappingCodeGenerator.defaultTemplateFolderPath = generatorProjectTemplateFolder.toString();
 		JpaMappingCodeGenerator jpaMappingCodeGenerator = new JpaMappingCodeGenerator();
@@ -44,7 +45,7 @@ public class TestGeneratorFactory {
 	public static JpaMappingClassesGenerator createClassesGenerator() {
 		File generatorProjectRootFolder = new File(TestConstants.workspaceFolder, "it.eng.knowage.meta.generator");
 		File generatorProjectTemplateFolder = new File(generatorProjectRootFolder, "templates");
-		File generatorProjectLibFolder = new File(TestConstants.libFolder, "eclipselink");
+		File generatorProjectLibFolder = new File(ConfigSingleton.getInstance().libFolder(), "eclipselink");
 
 		JpaMappingClassesGenerator jpaMappingClassesGenerator;
 		JpaMappingClassesGenerator.defaultTemplateFolderPath = generatorProjectTemplateFolder.toString();

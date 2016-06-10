@@ -78,23 +78,23 @@ public class MySQLFilteredModelInizializtaionTest extends AbstractKnowageMetaTes
 
 	public void testPhysicalModelTables() {
 
-		Assert.assertEquals(TestConstants.MYSQL_FILTERED_TABLES_FOR_PMODEL.length, filteredPhysicalModel.getTables().size());
+		Assert.assertEquals(TestConstants.selectedTables.length, filteredPhysicalModel.getTables().size());
 
-		for (int i = 0; i < TestConstants.MYSQL_FILTERED_TABLES_FOR_PMODEL.length; i++) {
-			PhysicalTable physicalTable = filteredPhysicalModel.getTable(TestConstants.MYSQL_FILTERED_TABLES_FOR_PMODEL[i]);
+		for (int i = 0; i < TestConstants.selectedTables.length; i++) {
+			PhysicalTable physicalTable = filteredPhysicalModel.getTable(TestConstants.selectedTables[i]);
 			Assert.assertNotNull(physicalTable);
 		}
 	}
 
 	public void testBusinessModelTables() {
 
-		Assert.assertEquals(TestConstants.MYSQL_FILTERED_TABLES_FOR_BMODEL.length, filteredBusinessModel.getTables().size());
+		Assert.assertEquals(TestConstants.selectedPhysical.length, filteredBusinessModel.getTables().size());
 
-		for (int i = 0; i < TestConstants.MYSQL_FILTERED_TABLES_FOR_BMODEL.length; i++) {
-			List<BusinessTable> businessTables = businessModel.getBusinessTableByPhysicalTable(TestConstants.MYSQL_FILTERED_TABLES_FOR_BMODEL[i]);
+		for (int i = 0; i < TestConstants.selectedPhysical.length; i++) {
+			List<BusinessTable> businessTables = businessModel.getBusinessTableByPhysicalTable(TestConstants.selectedPhysical[i]);
 			Assert.assertNotNull(businessTables);
-			Assert.assertFalse("Business model does not contain table [" + TestConstants.MYSQL_TABLE_NAMES[i] + "]", businessTables.size() == 0);
-			Assert.assertFalse("Business model contains table [" + TestConstants.MYSQL_TABLE_NAMES[i] + "] more than one time", businessTables.size() > 1);
+			Assert.assertFalse("Business model does not contain table [" + TestConstants.tables[i] + "]", businessTables.size() == 0);
+			Assert.assertFalse("Business model contains table [" + TestConstants.tables[i] + "] more than one time", businessTables.size() > 1);
 		}
 	}
 

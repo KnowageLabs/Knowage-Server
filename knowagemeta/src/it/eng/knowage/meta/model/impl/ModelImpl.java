@@ -39,6 +39,8 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * <!-- begin-user-doc --> An implementation of the model object '<em><b>Model</b></em>'. <!-- end-user-doc -->
  * <p>
@@ -51,13 +53,13 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <li>{@link it.eng.knowage.meta.model.impl.ModelImpl#getPropertyCategories <em>Property Categories</em>}</li>
  * </ul>
  * </p>
- *
+ * 
  * @generated
  */
 public class ModelImpl extends ModelObjectImpl implements Model {
 	/**
 	 * The cached value of the '{@link #getPhysicalModels() <em>Physical Models</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getPhysicalModels()
 	 * @generated
 	 * @ordered
@@ -66,7 +68,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * The cached value of the '{@link #getBusinessModels() <em>Business Models</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getBusinessModels()
 	 * @generated
 	 * @ordered
@@ -75,7 +77,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * The cached value of the '{@link #getOlapModels() <em>Olap Models</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getOlapModels()
 	 * @generated
 	 * @ordered
@@ -84,7 +86,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * The cached value of the '{@link #getPropertyTypes() <em>Property Types</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getPropertyTypes()
 	 * @generated
 	 * @ordered
@@ -94,7 +96,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 	/**
 	 * The cached value of the '{@link #getPropertyCategories() <em>Property Categories</em>}' containment reference list. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 *
+	 * 
 	 * @see #getPropertyCategories()
 	 * @generated
 	 * @ordered
@@ -103,7 +105,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	protected ModelImpl() {
@@ -112,7 +114,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -122,10 +124,11 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
+	@JsonIgnore
 	public EList<PhysicalModel> getPhysicalModels() {
 		if (physicalModels == null) {
 			physicalModels = new EObjectContainmentWithInverseEList<PhysicalModel>(PhysicalModel.class, this, ModelPackage.MODEL__PHYSICAL_MODELS,
@@ -136,10 +139,11 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
+	@JsonIgnore
 	public EList<BusinessModel> getBusinessModels() {
 		if (businessModels == null) {
 			businessModels = new EObjectContainmentWithInverseEList<BusinessModel>(BusinessModel.class, this, ModelPackage.MODEL__BUSINESS_MODELS,
@@ -150,7 +154,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -164,7 +168,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -177,7 +181,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -190,7 +194,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -209,7 +213,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -231,7 +235,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -253,7 +257,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -286,7 +290,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -313,7 +317,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override

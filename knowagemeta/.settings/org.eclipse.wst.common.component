@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
 	<wb-module deploy-name="knowagemeta">
-		<wb-resource deploy-path="/" source-path="/WebContent"/>
 		<wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-		<wb-resource deploy-path="/WEB-INF/classes" source-path="/test"/>
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/test"/>
 		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/knowagedao/knowagedao">
 			<dependency-type>uses</dependency-type>
 		</dependent-module>
@@ -15,7 +15,7 @@
 		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/qbecore/qbecore">
 			<dependency-type>uses</dependency-type>
 		</dependent-module>
-		<property name="java-output-path"/>
         <property name="context-root" value="knowagemeta"/>
+        <property name="java-output-path" value="/knowagemeta/WebContent/WEB-INF/classes"/>
 	</wb-module>
 </project-modules>

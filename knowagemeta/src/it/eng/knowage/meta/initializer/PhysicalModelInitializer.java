@@ -79,8 +79,6 @@ public class PhysicalModelInitializer {
 
 		try {
 			IDataSourceDAO datasourceDao = DAOFactory.getDataSourceDAO();
-			// TODO
-			datasourceDao.setTenant("");
 			DataSource ds = datasourceDao.loadDataSourceByID(datasourceId);
 			Connection conn = ds.getConnection();
 

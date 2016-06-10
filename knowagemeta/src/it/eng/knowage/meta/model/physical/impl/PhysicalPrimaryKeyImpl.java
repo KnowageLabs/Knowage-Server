@@ -36,26 +36,25 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Physical Primary Key</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Physical Primary Key</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link it.eng.knowage.meta.model.physical.impl.PhysicalPrimaryKeyImpl#getModel <em>Model</em>}</li>
- *   <li>{@link it.eng.knowage.meta.model.physical.impl.PhysicalPrimaryKeyImpl#getTable <em>Table</em>}</li>
- *   <li>{@link it.eng.knowage.meta.model.physical.impl.PhysicalPrimaryKeyImpl#getColumns <em>Columns</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.physical.impl.PhysicalPrimaryKeyImpl#getModel <em>Model</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.physical.impl.PhysicalPrimaryKeyImpl#getTable <em>Table</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.physical.impl.PhysicalPrimaryKeyImpl#getColumns <em>Columns</em>}</li>
  * </ul>
  * </p>
- *
+ * 
  * @generated
  */
 public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalPrimaryKey {
 	/**
-	 * The cached value of the '{@link #getTable() <em>Table</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * The cached value of the '{@link #getTable() <em>Table</em>}' reference. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @see #getTable()
 	 * @generated
 	 * @ordered
@@ -63,9 +62,8 @@ public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalP
 	protected PhysicalTable table;
 
 	/**
-	 * The cached value of the '{@link #getColumns() <em>Columns</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * The cached value of the '{@link #getColumns() <em>Columns</em>}' reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @see #getColumns()
 	 * @generated
 	 * @ordered
@@ -73,8 +71,8 @@ public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalP
 	protected EList<PhysicalColumn> columns;
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	protected PhysicalPrimaryKeyImpl() {
@@ -82,8 +80,8 @@ public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalP
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -92,30 +90,34 @@ public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalP
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
+	@JsonIgnore
 	public PhysicalModel getModel() {
-		if (eContainerFeatureID() != PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL) return null;
-		return (PhysicalModel)eContainer();
+		if (eContainerFeatureID() != PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL)
+			return null;
+		return (PhysicalModel) eContainer();
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public NotificationChain basicSetModel(PhysicalModel newModel, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject)newModel, PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL, msgs);
+		msgs = eBasicSetContainer((InternalEObject) newModel, PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL, msgs);
 		return msgs;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public void setModel(PhysicalModel newModel) {
 		if (newModel != eInternalContainer() || (eContainerFeatureID() != PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL && newModel != null)) {
 			if (EcoreUtil.isAncestor(this, newModel))
@@ -124,23 +126,25 @@ public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalP
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			if (newModel != null)
-				msgs = ((InternalEObject)newModel).eInverseAdd(this, PhysicalModelPackage.PHYSICAL_MODEL__PRIMARY_KEYS, PhysicalModel.class, msgs);
+				msgs = ((InternalEObject) newModel).eInverseAdd(this, PhysicalModelPackage.PHYSICAL_MODEL__PRIMARY_KEYS, PhysicalModel.class, msgs);
 			msgs = basicSetModel(newModel, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL, newModel, newModel));
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
+	@JsonIgnore
 	public PhysicalTable getTable() {
 		if (table != null && table.eIsProxy()) {
-			InternalEObject oldTable = (InternalEObject)table;
-			table = (PhysicalTable)eResolveProxy(oldTable);
+			InternalEObject oldTable = (InternalEObject) table;
+			table = (PhysicalTable) eResolveProxy(oldTable);
 			if (table != oldTable) {
 				if (eNotificationRequired())
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__TABLE, oldTable, table));
@@ -150,19 +154,21 @@ public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalP
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@JsonIgnore
 	public PhysicalTable basicGetTable() {
 		return table;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public void setTable(PhysicalTable newTable) {
 		PhysicalTable oldTable = table;
 		table = newTable;
@@ -171,10 +177,11 @@ public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalP
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public EList<PhysicalColumn> getColumns() {
 		if (columns == null) {
 			columns = new EObjectResolvingEList<PhysicalColumn>(PhysicalColumn.class, this, PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__COLUMNS);
@@ -183,138 +190,138 @@ public class PhysicalPrimaryKeyImpl extends ModelObjectImpl implements PhysicalP
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL:
-				if (eInternalContainer() != null)
-					msgs = eBasicRemoveFromContainer(msgs);
-				return basicSetModel((PhysicalModel)otherEnd, msgs);
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL:
+			if (eInternalContainer() != null)
+				msgs = eBasicRemoveFromContainer(msgs);
+			return basicSetModel((PhysicalModel) otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL:
-				return basicSetModel(null, msgs);
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL:
+			return basicSetModel(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
 		switch (eContainerFeatureID()) {
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL:
-				return eInternalContainer().eInverseRemove(this, PhysicalModelPackage.PHYSICAL_MODEL__PRIMARY_KEYS, PhysicalModel.class, msgs);
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL:
+			return eInternalContainer().eInverseRemove(this, PhysicalModelPackage.PHYSICAL_MODEL__PRIMARY_KEYS, PhysicalModel.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL:
-				return getModel();
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__TABLE:
-				if (resolve) return getTable();
-				return basicGetTable();
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__COLUMNS:
-				return getColumns();
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL:
+			return getModel();
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__TABLE:
+			if (resolve)
+				return getTable();
+			return basicGetTable();
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__COLUMNS:
+			return getColumns();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL:
-				setModel((PhysicalModel)newValue);
-				return;
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__TABLE:
-				setTable((PhysicalTable)newValue);
-				return;
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__COLUMNS:
-				getColumns().clear();
-				getColumns().addAll((Collection<? extends PhysicalColumn>)newValue);
-				return;
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL:
+			setModel((PhysicalModel) newValue);
+			return;
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__TABLE:
+			setTable((PhysicalTable) newValue);
+			return;
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__COLUMNS:
+			getColumns().clear();
+			getColumns().addAll((Collection<? extends PhysicalColumn>) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL:
-				setModel((PhysicalModel)null);
-				return;
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__TABLE:
-				setTable((PhysicalTable)null);
-				return;
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__COLUMNS:
-				getColumns().clear();
-				return;
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL:
+			setModel((PhysicalModel) null);
+			return;
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__TABLE:
+			setTable((PhysicalTable) null);
+			return;
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__COLUMNS:
+			getColumns().clear();
+			return;
 		}
 		super.eUnset(featureID);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL:
-				return getModel() != null;
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__TABLE:
-				return table != null;
-			case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__COLUMNS:
-				return columns != null && !columns.isEmpty();
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__MODEL:
+			return getModel() != null;
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__TABLE:
+			return table != null;
+		case PhysicalModelPackage.PHYSICAL_PRIMARY_KEY__COLUMNS:
+			return columns != null && !columns.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
-	
+
 	// =========================================================================
 	// Utility methods
 	// =========================================================================
-	
-	
+
 	@Override
 	public EList<ModelPropertyType> getPropertyTypes() {
 		return getModel().getParentModel().getPropertyTypes();
 	}
 
-} //PhysicalPrimaryKeyImpl
+} // PhysicalPrimaryKeyImpl

@@ -40,6 +40,8 @@ import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * <!-- begin-user-doc --> An implementation of the model object '<em><b>Physical Table</b></em>'. <!-- end-user-doc -->
  * <p>
@@ -171,6 +173,7 @@ public class PhysicalTableImpl extends ModelObjectImpl implements PhysicalTable 
 	 * @generated
 	 */
 	@Override
+	@JsonIgnore
 	public PhysicalModel getModel() {
 		if (eContainerFeatureID() != PhysicalModelPackage.PHYSICAL_TABLE__MODEL)
 			return null;

@@ -46,25 +46,24 @@ import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Business Column Set</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Business Column Set</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link it.eng.knowage.meta.model.business.impl.BusinessColumnSetImpl#getModel <em>Model</em>}</li>
- *   <li>{@link it.eng.knowage.meta.model.business.impl.BusinessColumnSetImpl#getColumns <em>Columns</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.business.impl.BusinessColumnSetImpl#getModel <em>Model</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.business.impl.BusinessColumnSetImpl#getColumns <em>Columns</em>}</li>
  * </ul>
  * </p>
- *
+ * 
  * @generated
  */
 public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessColumnSet {
 	/**
-	 * The cached value of the '{@link #getColumns() <em>Columns</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * The cached value of the '{@link #getColumns() <em>Columns</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @see #getColumns()
 	 * @generated
 	 * @ordered
@@ -72,8 +71,8 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 	protected EList<BusinessColumn> columns;
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	protected BusinessColumnSetImpl() {
@@ -81,8 +80,8 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -91,30 +90,34 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
+	@JsonIgnore
 	public BusinessModel getModel() {
-		if (eContainerFeatureID() != BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL) return null;
-		return (BusinessModel)eContainer();
+		if (eContainerFeatureID() != BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL)
+			return null;
+		return (BusinessModel) eContainer();
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public NotificationChain basicSetModel(BusinessModel newModel, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject)newModel, BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL, msgs);
+		msgs = eBasicSetContainer((InternalEObject) newModel, BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL, msgs);
 		return msgs;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public void setModel(BusinessModel newModel) {
 		if (newModel != eInternalContainer() || (eContainerFeatureID() != BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL && newModel != null)) {
 			if (EcoreUtil.isAncestor(this, newModel))
@@ -123,245 +126,249 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			if (newModel != null)
-				msgs = ((InternalEObject)newModel).eInverseAdd(this, BusinessModelPackage.BUSINESS_MODEL__TABLES, BusinessModel.class, msgs);
+				msgs = ((InternalEObject) newModel).eInverseAdd(this, BusinessModelPackage.BUSINESS_MODEL__TABLES, BusinessModel.class, msgs);
 			msgs = basicSetModel(newModel, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL, newModel, newModel));
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public EList<BusinessColumn> getColumns() {
 		if (columns == null) {
-			columns = new EObjectContainmentWithInverseEList<BusinessColumn>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS, BusinessModelPackage.BUSINESS_COLUMN__TABLE);
+			columns = new EObjectContainmentWithInverseEList<BusinessColumn>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS,
+					BusinessModelPackage.BUSINESS_COLUMN__TABLE);
 		}
 		return columns;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL:
-				if (eInternalContainer() != null)
-					msgs = eBasicRemoveFromContainer(msgs);
-				return basicSetModel((BusinessModel)otherEnd, msgs);
-			case BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getColumns()).basicAdd(otherEnd, msgs);
+		case BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL:
+			if (eInternalContainer() != null)
+				msgs = eBasicRemoveFromContainer(msgs);
+			return basicSetModel((BusinessModel) otherEnd, msgs);
+		case BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS:
+			return ((InternalEList<InternalEObject>) (InternalEList<?>) getColumns()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL:
-				return basicSetModel(null, msgs);
-			case BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS:
-				return ((InternalEList<?>)getColumns()).basicRemove(otherEnd, msgs);
+		case BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL:
+			return basicSetModel(null, msgs);
+		case BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS:
+			return ((InternalEList<?>) getColumns()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
 		switch (eContainerFeatureID()) {
-			case BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL:
-				return eInternalContainer().eInverseRemove(this, BusinessModelPackage.BUSINESS_MODEL__TABLES, BusinessModel.class, msgs);
+		case BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL:
+			return eInternalContainer().eInverseRemove(this, BusinessModelPackage.BUSINESS_MODEL__TABLES, BusinessModel.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL:
-				return getModel();
-			case BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS:
-				return getColumns();
+		case BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL:
+			return getModel();
+		case BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS:
+			return getColumns();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL:
-				setModel((BusinessModel)newValue);
-				return;
-			case BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS:
-				getColumns().clear();
-				getColumns().addAll((Collection<? extends BusinessColumn>)newValue);
-				return;
+		case BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL:
+			setModel((BusinessModel) newValue);
+			return;
+		case BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS:
+			getColumns().clear();
+			getColumns().addAll((Collection<? extends BusinessColumn>) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL:
-				setModel((BusinessModel)null);
-				return;
-			case BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS:
-				getColumns().clear();
-				return;
+		case BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL:
+			setModel((BusinessModel) null);
+			return;
+		case BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS:
+			getColumns().clear();
+			return;
 		}
 		super.eUnset(featureID);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL:
-				return getModel() != null;
-			case BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS:
-				return columns != null && !columns.isEmpty();
+		case BusinessModelPackage.BUSINESS_COLUMN_SET__MODEL:
+			return getModel() != null;
+		case BusinessModelPackage.BUSINESS_COLUMN_SET__COLUMNS:
+			return columns != null && !columns.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
-	
+
 	// =========================================================================
 	// Utility methods
 	// =========================================================================
-	
+
 	@Override
+	@JsonIgnore
 	public BusinessIdentifier getIdentifier() {
-		return (getModel() != null)? getModel().getIdentifier(this): null;
+		return (getModel() != null) ? getModel().getIdentifier(this) : null;
 	}
-	
-	
+
 	@Override
 	public SimpleBusinessColumn getSimpleBusinessColumnByUniqueName(String uniqueName) {
-		
-		if(uniqueName == null) {
+
+		if (uniqueName == null) {
 			return null;
 		}
-		
-		for(SimpleBusinessColumn column :  getSimpleBusinessColumns()) {
-			if(uniqueName.equals( column.getUniqueName() )) {
+
+		for (SimpleBusinessColumn column : getSimpleBusinessColumns()) {
+			if (uniqueName.equals(column.getUniqueName())) {
 				return column;
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
 	public List<SimpleBusinessColumn> getSimpleBusinessColumnsByName(String name) {
-		
+
 		List<SimpleBusinessColumn> columns = new ArrayList<SimpleBusinessColumn>();
-		
-		if(name == null) {
+
+		if (name == null) {
 			return columns;
 		}
-		
-		for(SimpleBusinessColumn column :  getSimpleBusinessColumns()) {
-			if(name.equals( column.getName() )) {
+
+		for (SimpleBusinessColumn column : getSimpleBusinessColumns()) {
+			if (name.equals(column.getName())) {
 				columns.add(column);
 			}
 		}
-		
+
 		return columns;
 	}
-	
+
 	@Override
 	public List<SimpleBusinessColumn> getSimpleBusinessColumnsByPhysicalColumn(String physicalTableName, String physicalColumnName) {
-		
+
 		List<SimpleBusinessColumn> columns = new ArrayList<SimpleBusinessColumn>();
-		
+
 		BusinessModel businessModel = getModel();
-		if(businessModel == null) return columns;
-		
+		if (businessModel == null)
+			return columns;
+
 		PhysicalModel physicalModel = businessModel.getPhysicalModel();
-		if(physicalModel == null) return columns;
-		
+		if (physicalModel == null)
+			return columns;
+
 		PhysicalTable physicalTable = physicalModel.getTable(physicalTableName);
-		if(physicalTable == null) return columns;
-		
+		if (physicalTable == null)
+			return columns;
+
 		PhysicalColumn physicalColumn = physicalTable.getColumn(physicalColumnName);
-		if(physicalColumn == null) return columns;
-		
+		if (physicalColumn == null)
+			return columns;
+
 		return getSimpleBusinessColumnsByPhysicalColumn(physicalColumn);
 	}
-	
+
 	@Override
 	public List<SimpleBusinessColumn> getSimpleBusinessColumnsByPhysicalColumn(PhysicalColumn physicalColumn) {
-		
+
 		List<SimpleBusinessColumn> columns = new ArrayList<SimpleBusinessColumn>();
-		
-		if(physicalColumn == null) {
+
+		if (physicalColumn == null) {
 			return columns;
 		}
-		
-		for(SimpleBusinessColumn column :  getSimpleBusinessColumns()) {
-			if(column.getPhysicalColumn().equals(physicalColumn)) {
+
+		for (SimpleBusinessColumn column : getSimpleBusinessColumns()) {
+			if (column.getPhysicalColumn().equals(physicalColumn)) {
 				columns.add(column);
-			} 
+			}
 		}
 		return columns;
 	}
-	
+
 	@Override
 	public List<SimpleBusinessColumn> getSimpleBusinessColumns() {
 		EList<BusinessColumn> businessColumns = getColumns();
 		List<SimpleBusinessColumn> simpleColumns = new ArrayList<SimpleBusinessColumn>();
-		for (BusinessColumn column:businessColumns){
-			if (column instanceof SimpleBusinessColumn){
-				simpleColumns.add((SimpleBusinessColumn)column);
+		for (BusinessColumn column : businessColumns) {
+			if (column instanceof SimpleBusinessColumn) {
+				simpleColumns.add((SimpleBusinessColumn) column);
 			}
 		}
 		return simpleColumns;
 	}
-	
-	
-	
-	// -- deprecated  ---------
-	
+
+	// -- deprecated ---------
+
 	@Override
 	public SimpleBusinessColumn getSimpleBusinessColumn(String name) {
-		for(int i = 0; i < getSimpleBusinessColumns().size(); i++) {
-			if(getSimpleBusinessColumns().get(i).getName().equals(name)) {
+		for (int i = 0; i < getSimpleBusinessColumns().size(); i++) {
+			if (getSimpleBusinessColumns().get(i).getName().equals(name)) {
 				return getSimpleBusinessColumns().get(i);
 			}
 		}
@@ -370,26 +377,26 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	@Override
 	public SimpleBusinessColumn getSimpleBusinessColumn(PhysicalColumn physicalColumn) {
-		for(int i = 0; i < getSimpleBusinessColumns().size(); i++) {
-			if(getSimpleBusinessColumns().get(i).getPhysicalColumn().equals(physicalColumn)) {
+		for (int i = 0; i < getSimpleBusinessColumns().size(); i++) {
+			if (getSimpleBusinessColumns().get(i).getPhysicalColumn().equals(physicalColumn)) {
 				return getSimpleBusinessColumns().get(i);
-			} 
+			}
 		}
 		return null;
 	}
-	// -- deprecated  ---------
-	
-	
-	public CalculatedBusinessColumn getCalculatedBusinessColumn(String name){
-		for(int i = 0; i < getCalculatedBusinessColumns().size(); i++) {
-			if(getCalculatedBusinessColumns().get(i).getName().equals(name)) {
+
+	// -- deprecated ---------
+
+	@Override
+	public CalculatedBusinessColumn getCalculatedBusinessColumn(String name) {
+		for (int i = 0; i < getCalculatedBusinessColumns().size(); i++) {
+			if (getCalculatedBusinessColumns().get(i).getName().equals(name)) {
 				return getCalculatedBusinessColumns().get(i);
 			}
 		}
 		return null;
 	}
 
-	
 	@Override
 	public EList<ModelPropertyType> getPropertyTypes() {
 		return getModel().getParentModel().getPropertyTypes();
@@ -398,17 +405,16 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 	@Override
 	public List<BusinessRelationship> getRelationships() {
 		List<BusinessRelationship> relationships = new ArrayList<BusinessRelationship>();
-		
+
 		Iterator<BusinessRelationship> it = getModel().getRelationships().iterator();
-		
+
 		while (it.hasNext()) {
 			BusinessRelationship relationship = it.next();
-			
-			if ( (relationship.getSourceTable() != null)&& (relationship.getSourceTable().equals(this)) ){
+
+			if ((relationship.getSourceTable() != null) && (relationship.getSourceTable().equals(this))) {
 				if (relationship.getDestinationTable() != null)
-					relationships.add(relationship); 
-			}
-			else if ( (relationship.getDestinationTable() != null) && (relationship.getDestinationTable().equals(this)) ) {
+					relationships.add(relationship);
+			} else if ((relationship.getDestinationTable() != null) && (relationship.getDestinationTable().equals(this))) {
 				if (relationship.getSourceTable() != null)
 					relationships.add(relationship);
 			}
@@ -416,17 +422,16 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 		return relationships;
 	}
 
-
 	@Override
 	public List<CalculatedBusinessColumn> getCalculatedBusinessColumns() {
 		EList<BusinessColumn> businessColumns = getColumns();
 		List<CalculatedBusinessColumn> calculatedColumns = new ArrayList<CalculatedBusinessColumn>();
-		for (BusinessColumn column:businessColumns){
-			if (column instanceof CalculatedBusinessColumn){
-				calculatedColumns.add((CalculatedBusinessColumn)column);
+		for (BusinessColumn column : businessColumns) {
+			if (column instanceof CalculatedBusinessColumn) {
+				calculatedColumns.add((CalculatedBusinessColumn) column);
 			}
 		}
 		return calculatedColumns;
 	}
 
-} //BusinessColumnSetImpl
+} // BusinessColumnSetImpl

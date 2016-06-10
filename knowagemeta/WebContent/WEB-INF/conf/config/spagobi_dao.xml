@@ -2,6 +2,7 @@
 <SPAGOBI>
 
 	<DAO-CONF>
+	
 		<!-- HIBERNATE DAO (DEFAULT) IMPLEMENTATION -->
 		<DAO name="TenantsDAO" implementation="it.eng.spagobi.commons.dao.TenantsDAOHibImpl" />
 		<DAO name="BIObjectDAO"

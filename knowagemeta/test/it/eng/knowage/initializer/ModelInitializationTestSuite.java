@@ -17,7 +17,7 @@
  */
 package it.eng.knowage.initializer;
 
-import it.eng.knowage.common.TestConstants;
+import it.eng.knowage.common.ConfigSingleton;
 import it.eng.knowage.impl.mysql.MySQLBusinessModelInizializationTest;
 import it.eng.knowage.impl.mysql.MySQLFilteredModelInizializtaionTest;
 import it.eng.knowage.impl.mysql.MySQLPhysicalModelInizializationTest;
@@ -27,26 +27,23 @@ import junit.framework.TestSuite;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
- *
+ * 
  */
 public class ModelInitializationTestSuite extends TestCase {
 	static public Test suite() {
 		TestSuite suite = new TestSuite("Initialization tests");
-		if (TestConstants.enableTestsOnMySql) {
+		if (ConfigSingleton.getInstance().enableTestsOnMySql()) {
 			suite.addTestSuite(MySQLPhysicalModelInizializationTest.class);
 			suite.addTestSuite(MySQLBusinessModelInizializationTest.class);
 			suite.addTestSuite(MySQLFilteredModelInizializtaionTest.class);
 
 		}
-		if (TestConstants.enableTestsOnPostgres) {
-			// suite.addTestSuite(PostgresSQLDBCacheTest.class);
-		}
-		if (TestConstants.enableTestsOnOracle) {
-			// suite.addTestSuite(OracleSQLDBCacheTest.class);
-		}
-		if (TestConstants.enableTestsOnSQLServer) {
-			// suite.addTestSuite(SQLServerSQLDBCacheTest.class);
-		}
+		// TODO
+		/*
+		 * if (ConfigSingleton.getInstance().enableTestsOnPostgres) { // suite.addTestSuite(PostgresSQLDBCacheTest.class); } if
+		 * (ConfigSingleton.getInstance().enableTestsOnOracle) { // suite.addTestSuite(OracleSQLDBCacheTest.class); } if
+		 * (ConfigSingleton.getInstance().enableTestsOnSQLServer) { // suite.addTestSuite(SQLServerSQLDBCacheTest.class); }
+		 */
 		return suite;
 	}
 }

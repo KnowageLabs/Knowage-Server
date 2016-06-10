@@ -33,6 +33,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * <!-- begin-user-doc --> An implementation of the model object '<em><b>Physical Column</b></em>'. <!-- end-user-doc -->
  * <p>
@@ -490,6 +492,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 	 * @generated
 	 */
 	@Override
+	@JsonIgnore
 	public PhysicalTable getTable() {
 		if (eContainerFeatureID() != PhysicalModelPackage.PHYSICAL_COLUMN__TABLE)
 			return null;

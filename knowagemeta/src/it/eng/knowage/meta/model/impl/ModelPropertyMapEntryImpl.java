@@ -30,25 +30,24 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Property Map Entry</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Property Map Entry</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link it.eng.knowage.meta.model.impl.ModelPropertyMapEntryImpl#getTypedKey <em>Key</em>}</li>
- *   <li>{@link it.eng.knowage.meta.model.impl.ModelPropertyMapEntryImpl#getTypedValue <em>Value</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.impl.ModelPropertyMapEntryImpl#getTypedKey <em>Key</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.impl.ModelPropertyMapEntryImpl#getTypedValue <em>Value</em>}</li>
  * </ul>
  * </p>
- *
+ * 
  * @generated
  */
-public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.Entry<String,ModelProperty> {
+public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.Entry<String, ModelProperty> {
 	/**
-	 * The default value of the '{@link #getTypedKey() <em>Key</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * The default value of the '{@link #getTypedKey() <em>Key</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @see #getTypedKey()
 	 * @generated
 	 * @ordered
@@ -56,9 +55,8 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	protected static final String KEY_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getTypedKey() <em>Key</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * The cached value of the '{@link #getTypedKey() <em>Key</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @see #getTypedKey()
 	 * @generated
 	 * @ordered
@@ -66,9 +64,8 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	protected String key = KEY_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getTypedValue() <em>Value</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * The cached value of the '{@link #getTypedValue() <em>Value</em>}' containment reference. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @see #getTypedValue()
 	 * @generated
 	 * @ordered
@@ -76,8 +73,8 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	protected ModelProperty value;
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	protected ModelPropertyMapEntryImpl() {
@@ -85,8 +82,8 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -95,8 +92,8 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public String getTypedKey() {
@@ -104,8 +101,8 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public void setTypedKey(String newKey) {
@@ -116,8 +113,8 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public ModelProperty getTypedValue() {
@@ -125,8 +122,8 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public NotificationChain basicSetTypedValue(ModelProperty newValue, NotificationChain msgs) {
@@ -134,120 +131,124 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 		value = newValue;
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE, oldValue, newValue);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
+			if (msgs == null)
+				msgs = notification;
+			else
+				msgs.add(notification);
 		}
 		return msgs;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public void setTypedValue(ModelProperty newValue) {
 		if (newValue != value) {
 			NotificationChain msgs = null;
 			if (value != null)
-				msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE, null, msgs);
+				msgs = ((InternalEObject) value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE, null, msgs);
 			if (newValue != null)
-				msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE, null, msgs);
+				msgs = ((InternalEObject) newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE, null, msgs);
 			msgs = basicSetTypedValue(newValue, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE, newValue, newValue));
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE:
-				return basicSetTypedValue(null, msgs);
+		case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE:
+			return basicSetTypedValue(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__KEY:
-				return getTypedKey();
-			case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE:
-				return getTypedValue();
+		case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__KEY:
+			return getTypedKey();
+		case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE:
+			return getTypedValue();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__KEY:
-				setTypedKey((String)newValue);
-				return;
-			case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE:
-				setTypedValue((ModelProperty)newValue);
-				return;
+		case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__KEY:
+			setTypedKey((String) newValue);
+			return;
+		case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE:
+			setTypedValue((ModelProperty) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__KEY:
-				setTypedKey(KEY_EDEFAULT);
-				return;
-			case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE:
-				setTypedValue((ModelProperty)null);
-				return;
+		case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__KEY:
+			setTypedKey(KEY_EDEFAULT);
+			return;
+		case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE:
+			setTypedValue((ModelProperty) null);
+			return;
 		}
 		super.eUnset(featureID);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__KEY:
-				return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
-			case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE:
-				return value != null;
+		case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__KEY:
+			return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
+		case ModelPackage.MODEL_PROPERTY_MAP_ENTRY__VALUE:
+			return value != null;
 		}
 		return super.eIsSet(featureID);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (key: ");
@@ -257,17 +258,18 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	protected int hash = -1;
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public int getHash() {
 		if (hash == -1) {
 			Object theKey = getKey();
@@ -277,46 +279,51 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public void setHash(int hash) {
 		this.hash = hash;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public String getKey() {
 		return getTypedKey();
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public void setKey(String key) {
 		setTypedKey(key);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public ModelProperty getValue() {
 		return getTypedValue();
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public ModelProperty setValue(ModelProperty value) {
 		ModelProperty oldValue = getValue();
 		setTypedValue(value);
@@ -324,14 +331,15 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
+	@JsonIgnore
 	public EMap<String, ModelProperty> getEMap() {
 		EObject container = eContainer();
-		return container == null ? null : (EMap<String, ModelProperty>)container.eGet(eContainmentFeature());
+		return container == null ? null : (EMap<String, ModelProperty>) container.eGet(eContainmentFeature());
 	}
 
-} //ModelPropertyMapEntryImpl
+} // ModelPropertyMapEntryImpl

@@ -19,7 +19,6 @@ package it.eng.knowage.impl.mysql;
 
 import it.eng.knowage.common.TestConstants;
 import it.eng.knowage.initializer.AbstractKnowageMetaTest;
-import it.eng.knowage.initializer.DataSourceFactory;
 import it.eng.knowage.initializer.TestModelFactory;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
 import it.eng.knowage.meta.model.physical.PhysicalForeignKey;
@@ -35,7 +34,7 @@ import org.junit.Assert;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
- *
+ * 
  */
 public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTest {
 
@@ -92,32 +91,9 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 		Assert.assertNull("If the source database is MySql the schema property must be null", physicalModel.getSchema());
 	}
 
-	// Create Datasources specific for this test
-	public void testCreateDataSources() {
-		dataSourceReading = DataSourceFactory.createDataSource(TestConstants.DatabaseType.MYSQL);
-		Assert.assertNotNull("DataSource on MYSQL not defined correctly", dataSourceReading);
-	}
-
-	// =======================================================
-	// TABLES
-	// =======================================================
-
-	/**
-	 * Test that all tables contained in the database are imported in the physical model
-	 */
-	public void testPhysicalModelTables() {
-
-		Assert.assertEquals(TestConstants.MYSQL_TABLE_NAMES.length, physicalModel.getTables().size());
-
-		for (int i = 0; i < TestConstants.MYSQL_TABLE_NAMES.length; i++) {
-			PhysicalTable table = physicalModel.getTable(TestConstants.MYSQL_TABLE_NAMES[i]);
-			Assert.assertNotNull("Physical model does not contain table [" + TestConstants.MYSQL_TABLE_NAMES[i] + "]", table);
-		}
-	}
-
 	/**
 	 * Test that table comments are imported properly in the physical model
-	 *
+	 * 
 	 * TODO find out why MYSQL driver is unable to return comments as defined into database
 	 */
 	public void testPhysicalModelTableComments() {
@@ -200,9 +176,9 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 	/**
 	 * Test numeric column properties related to column type:
-	 *
+	 * 
 	 * - Type name - Data type - Radix - Decimal digits - Octect length - Size
-	 *
+	 * 
 	 * @see http://dev.mysql.com/doc/refman/5.5/en/numeric-type-overview.html
 	 */
 	public void testPhysicalModelNumericColumnTypes() {
@@ -213,7 +189,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_bit` bit(8) NOT NULL
-		 *
+		 * 
 		 * COMMENT: A bit-field type. M indicates the number of bits per value, from 1 to 64. The default is 1 if M is omitted.
 		 */
 		column = table.getColumn("t_bit");
@@ -226,7 +202,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_tinyint` tinyint(3) unsigned NOT NULL
-		 *
+		 * 
 		 * COMMENT: A very small integer. The signed range is -128 to 127. The unsigned range is 0 to 255.
 		 */
 		column = table.getColumn("t_tinyint");
@@ -239,7 +215,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_boolean` tinyint(1) NOT NULL
-		 *
+		 * 
 		 * COMMENT These types are synonyms for TINYINT(1)
 		 */
 		column = table.getColumn("t_boolean");
@@ -252,7 +228,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_smallint` smallint(5) unsigned NOT NULL
-		 *
+		 * 
 		 * COMMENT: A small integer. The signed range is -32768 to 32767. The unsigned range is 0 to 65535.
 		 */
 		column = table.getColumn("t_smallint");
@@ -265,7 +241,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_mediumint` mediumint(8) unsigned NOT NULL
-		 *
+		 * 
 		 * COMMENT 'A medium-sized integer. The signed range is -8388608 to 8388607. The unsigned range is 0 to 16777215. ',
 		 */
 		column = table.getColumn("t_mediumint");
@@ -278,7 +254,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_int` int(10) unsigned NOT NULL
-		 *
+		 * 
 		 * COMMENT 'A normal-size integer. The signed range is -2147483648 to 2147483647. The unsigned range is 0 to 4294967295.
 		 */
 		column = table.getColumn("t_int");
@@ -291,7 +267,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_integer` int(11) NOT NULL
-		 *
+		 * 
 		 * COMMENT This type is a synonym for INT.
 		 */
 		column = table.getColumn("t_integer");
@@ -304,7 +280,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_bigint` bigint(20) unsigned NOT NULL
-		 *
+		 * 
 		 * COMMENT: A large integer. The signed range is -9223372036854775808 to 9223372036854775807. The unsigned range is 0 to 18446744073709551615.
 		 */
 		column = table.getColumn("t_bigint");
@@ -317,7 +293,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_decimal` decimal(12,3) NOT NULL
-		 *
+		 * 
 		 * COMMENT A packed “exact” fixed-point number. M is the total number of digits (the precision) and D is the number of digits after the decimal point
 		 * (the scale).
 		 */
@@ -331,7 +307,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_dec` decimal(9,3) NOT NULL
-		 *
+		 * 
 		 * COMMENT These types are synonyms for DECIMAL
 		 */
 		column = table.getColumn("t_dec");
@@ -344,7 +320,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_float` float(9,3) NOT NULL
-		 *
+		 * 
 		 * COMMENT A small (single-precision) floating-point number
 		 */
 		column = table.getColumn("t_float");
@@ -357,7 +333,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_double` double(12,3) NOT NULL
-		 *
+		 * 
 		 * COMMENT A normal-size (double-precision) floating-point number
 		 */
 		column = table.getColumn("t_double");
@@ -371,9 +347,9 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 	/**
 	 * Test date/time column properties related to column type:
-	 *
+	 * 
 	 * - Type name - Data type - Radix - Decimal digits - Octect length - Size
-	 *
+	 * 
 	 * @see http://dev.mysql.com/doc/refman/5.5/en/date-and-time-type-overview.html
 	 */
 	public void testPhysicalModelDateTimeColumnTypes() {
@@ -384,7 +360,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_date` date NOT NULL
-		 *
+		 * 
 		 * COMMENT: A date. The supported range is ''1000-01-01'' to ''9999-12-31''. MySQL displays DATE values in ''YYYY-MM-DD'' format, but permits assignment
 		 * of values to DATE columns using either strings or numbers.
 		 */
@@ -398,7 +374,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_datetime` datetime NOT NULL
-		 *
+		 * 
 		 * COMMENT: A date and time combination. The supported range is ''1000-01-01 00:00:00'' to ''9999-12-31 23:59:59''. MySQL displays DATETIME values in
 		 * ''YYYY-MM-DD HH:MM:SS'' format, but permits assignment of values to DATETIME columns using either strings or numbers.
 		 */
@@ -412,7 +388,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_timestamp` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
-		 *
+		 * 
 		 * COMMENT A timestamp. The range is ''1970-01-01 00:00:01'' UTC to ''2038-01-19 03:14:07'' UTC. TIMESTAMP values are stored as the number of seconds
 		 * since the epoch (''1970-01-01 00:00:00'' UTC).
 		 */
@@ -426,7 +402,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_time` time NOT NULL
-		 *
+		 * 
 		 * COMMENT: 'A time. The range is ''-838:59:59'' to ''838:59:59''. MySQL displays TIME values in ''HH:MM:SS'' format
 		 */
 		column = table.getColumn("t_time");
@@ -439,7 +415,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_year` year(4) NOT NULL
-		 *
+		 * 
 		 * COMMENT: A year in two-digit or four-digit format. The default is four-digit format.
 		 */
 		column = table.getColumn("t_year");
@@ -453,9 +429,9 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 	/**
 	 * Test date/time column properties related to column type:
-	 *
+	 * 
 	 * - Type name - Data type - Radix - Decimal digits - Octect length - Size
-	 *
+	 * 
 	 * @see http://dev.mysql.com/doc/refman/5.5/en/string-type-overview.html
 	 */
 	public void testPhysicalModelStringColumnTypes() {
@@ -466,7 +442,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_char` char(1) NOT NULL
-		 *
+		 * 
 		 * COMMENT is shorthand for CHARACTER'
 		 */
 		column = table.getColumn("t_char");
@@ -479,7 +455,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 		/**
 		 * `t_binary` binary(1) NOT NULL
-		 *
+		 * 
 		 * COMMENT: The BINARY type is similar to the CHAR type, but stores binary byte strings rather than nonbinary character strings. M represents the column
 		 * length in bytes.
 		 */
@@ -510,9 +486,9 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 	/**
 	 * Test that column comments are imported properly in the physical model
-	 *
+	 * 
 	 * NOTE: if comment is not set MYSQL returns an empty string while POSTGRES returns null.
-	 *
+	 * 
 	 * TODO uniform the behaviour in the two cases
 	 */
 	public void testPhysicalModelColumnComments() {
@@ -610,7 +586,7 @@ public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTes
 
 	/**
 	 * Test that simple primary key (i.e. primary key composed by only one column) are imported properly in the physical model.
-	 *
+	 * 
 	 * NOTE: The name of the primary key in MYSQL is always equals to PRIMARY while in POSTGRES it is equals to the name specified by the user or automatically
 	 * generated by the database
 	 */

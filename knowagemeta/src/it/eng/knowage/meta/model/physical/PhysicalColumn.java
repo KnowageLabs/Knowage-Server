@@ -19,6 +19,8 @@ package it.eng.knowage.meta.model.physical;
 
 import it.eng.knowage.meta.model.ModelObject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * <!-- begin-user-doc --> A representation of the model object '<em><b>Physical Column</b></em>'. <!-- end-user-doc -->
  * 
@@ -319,6 +321,7 @@ public interface PhysicalColumn extends ModelObject {
 	 * @model opposite="columns" required="true" transient="false"
 	 * @generated
 	 */
+	@JsonIgnore
 	PhysicalTable getTable();
 
 	/**
