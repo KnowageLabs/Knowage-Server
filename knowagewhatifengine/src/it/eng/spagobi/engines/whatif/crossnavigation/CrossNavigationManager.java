@@ -25,6 +25,7 @@ import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.text.MessageFormat;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -86,7 +87,7 @@ public class CrossNavigationManager {
 		String levelName = parameter.getLevel();
 		String propertyName = parameter.getProperty();
 		logger.debug("Looking for dimension " + dimensionName + ", hierarchy " + hierarchyName + ", level " + levelName + ", property " + propertyName + " ...");
-		Hierarchy hierarchy = getHierarchy(ei.getSpagoBIPivotModel().getCube(), ei.getModelConfig(), dimensionName);
+		Hierarchy hierarchy = getHierarchy(ei.getSpagoBIPivotModel().getCube(), ei.getModelConfig(), dimensionName, hierarchyName);
 		Member member = cell.getContextMember(hierarchy);
 		logger.debug("Considering context member " + member.getUniqueName());
 		logger.debug("Member hierarchy is " + hierarchy.getUniqueName());
@@ -139,7 +140,8 @@ public class CrossNavigationManager {
 		return toReturn;
 	}
 
-	public static Hierarchy getHierarchy(Cube cube, ModelConfig modelConfig, String dimensionName) {
+	
+	public static Hierarchy getHierarchy(Cube cube, ModelConfig modelConfig, String dimensionName, String hierarchyName) {
 		List<Dimension> dimensions = cube.getDimensions();
 		Dimension result = null;
 		for (java.util.Iterator<Dimension> iterator = dimensions.iterator(); iterator.hasNext();) {
@@ -156,18 +158,16 @@ public class CrossNavigationManager {
 
 		// get Hierarchy Used by dimension
 		NamedList<Hierarchy> hierarchies = result.getHierarchies();
-		Hierarchy hierarchy = null;
-		if (hierarchies == null || hierarchies.size() == 0) {
-			logger.error("Could not find hierarchies for dimension");
-			throw new SpagoBIEngineRuntimeException("Could not find hierarchies for dimension");
-		} else if (hierarchies.size() == 1) {
-			hierarchy = hierarchies.get(0);
-		} else {
-			String hierarchyUsed = modelConfig.getDimensionHierarchyMap().get(dimensionName);
-			hierarchy = hierarchies.get(hierarchyUsed);
+		for (Iterator iterator = hierarchies.iterator(); iterator.hasNext();) {
+			Hierarchy aHierarchy = (Hierarchy) iterator.next();
+			if(aHierarchy.getUniqueName().equals(hierarchyName)){
+				return aHierarchy;
+			}
 		}
-		return hierarchy;
+
+		return null;
 	}
+
 
 	public static String buildClickableUrl(Member member, List<TargetClickable> targetsClickable) {
 		logger.debug("IN");

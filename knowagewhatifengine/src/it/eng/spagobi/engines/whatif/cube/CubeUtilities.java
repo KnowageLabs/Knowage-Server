@@ -231,6 +231,9 @@ public class CubeUtilities {
 			String hierarchyUsed = modelConfig.getDimensionHierarchyMap().get(WhatIfConstants.VERSION_DIMENSION_UNIQUENAME);
 			hierarchy = hierarchies.get(hierarchyUsed);
 		}
+		if(hierarchy == null){
+			hierarchy= versionDimension.getDefaultHierarchy();
+		}
 
 		return hierarchy;
 	}
