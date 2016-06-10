@@ -52,6 +52,7 @@ import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -228,12 +229,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			String subViewObjectDescription = reqVal.getJSONObject("parameters").getString("subobj_description");
 			String subViewObjectVisibility = reqVal.getJSONObject("parameters").getString("subobj_visibility");
 
-			ret = ret + "&SUBOBJ_ID=" + subViewObjectID + "&SUBOBJ_NAME=" + subViewObjectName;
+			ret = ret + "&"+AbstractEngineStartAction.SUBOBJ_ID+"=" + subViewObjectID +  "&"+AbstractEngineStartAction.SUBOBJ_NAME+"=" + subViewObjectName;
 
 			if (!subViewObjectDescription.isEmpty())
-				ret = ret + "&SUBOBJ_DESCRIPTION=" + subViewObjectDescription;
+				ret = ret + "&"+AbstractEngineStartAction.SUBOBJ_DESCRIPTION+"=" + subViewObjectDescription;
 
-			ret = ret + "&SUBOBJ_VISIBILITY=" + subViewObjectVisibility;
+			ret = ret + "&"+AbstractEngineStartAction.SUBOBJ_VISIBILITY+"=" + subViewObjectVisibility;
 		}
 
 		return ret;
