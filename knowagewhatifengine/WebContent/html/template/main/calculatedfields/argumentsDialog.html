@@ -10,7 +10,9 @@
    <md-input-container class="md-block" ng-repeat="argument in selectedMDXFunction.argument" >
           <label>{{argument.expected_value}}</label>
           <input ng-model="argument.default_value" ng-readonly="editArguments"> 
-          <md-button class="md-raised" ng-click="enterSelectMode($index,argument)" style="float: right;" ng-show="argument.expected_value == 'Set_Expression' || argument.expected_value == 'Member_Expression'|| argument.expected_value == 'Level_Expression'">
+          <md-button class="md-raised" ng-click="enterSelectMode($index,argument)" style="float: right;" 
+          ng-show="argument.expected_value == 'Set_Expression' || argument.expected_value == 'Member_Expression'|| argument.expected_value == 'Level_Expression'|| argument.expected_value == 'Custom_Expression'|| argument.expected_value == 'Numeric_Expression'"
+          >
        Select from table
       	</md-button>
       	 <md-button  class="md-raised" ng-click="openSavedSets()" style="float: right;" ng-show="argument.expected_value == 'Set_Expression'">

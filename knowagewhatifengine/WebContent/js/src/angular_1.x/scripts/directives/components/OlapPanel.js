@@ -657,13 +657,13 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 	};
 
 	$scope.showCCWizard = function() {
-
 		cleanCC();
-
+		
 		$mdDialog
 				.show({
 					scope : $scope,
 					preserveScope : true,
+					parent : angular.element(document.body),
 					controllerAs : 'olapCtrl',
 					templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/calculatedFields.html',
 					clickOutsideToClose : false,
@@ -805,20 +805,27 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 	}
 
 	var formatFormulaforSending = function() {
-
-		var value = $scope.selectedMDXFunction.name + "(";
-
-		if ($scope.selectedMDXFunction.argument.length >= 1) {
-			value += $scope.selectedMDXFunction.argument[0].default_value;
+		
+		String.prototype.replaceAll = function(search, replace) {
+		    if (replace === undefined) {
+		        return this.toString();
+		    }
+		    return this.split(search).join(replace);
 		}
-		for (var i = 1; i < $scope.selectedMDXFunction.argument.length; i++) {
+		
+		var tempString =  $scope.selectedMDXFunction.body;
+		var finString = tempString;
+
+			for (var i = 0; i < $scope.selectedMDXFunction.argument.length; i++) {
+			
 			if ($scope.selectedMDXFunction.argument[i].default_value != undefined) {
-				value += ","
-						+ $scope.selectedMDXFunction.argument[i].default_value;
+				
+				finString = finString.replaceAll($scope.selectedMDXFunction.argument[i].name,$scope.selectedMDXFunction.argument[i].default_value);
+						
 			}
 		}
-		value += ")";
-		$scope.finalFormula = value;
+	
+		$scope.finalFormula = finString;
 
 	}
 

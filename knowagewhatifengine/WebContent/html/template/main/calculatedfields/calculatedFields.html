@@ -7,7 +7,7 @@
     
     
     
-       <div style="margin-left: 20px;" ng-hide="selectedTab == 3">
+       <div style="margin-left: 20px;" ng-hide="selectedTab == 4">
       <md-input-container class="md-block">
           <label>Name</label>
           <input ng-model="selectedMDXFunctionName" >
@@ -63,6 +63,23 @@
         </md-list-item>
     </md-content>      
       </md-tab>
+       <md-tab label="Custom">
+    <md-content class="md-padding">
+      <md-list flex>
+        <md-list-item class="md-3-line"
+         ng-repeat="formula in formulasData | filter: {'type': 'custom'}"
+         ng-class="{selected:(selectedMDXFunction.name == formula.name)}"
+          ng-click="selectMDXFunction(formula)">
+          <div class="md-list-item-text" layout="column" >
+            <h3>{{ formula.name }}</h3>
+            <h4>{{  formula.syntax }}</h4>
+            <p>{{  formula.description }}</p>
+          </div>
+          <md-divider ></md-divider>
+        </md-list-item>
+    </md-content>      
+      </md-tab>
+      
      <md-tab label="Recent">
     <md-content class="md-padding">
       <md-list flex>
