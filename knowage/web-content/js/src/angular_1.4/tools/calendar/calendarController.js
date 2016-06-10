@@ -126,6 +126,9 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 			$scope.showAction(sbiModule_translate.load("sbi.calendar.errormissingstartdate"));
 		}else if($scope.selectCalendar.calEndDay==undefined){
 			$scope.showAction(sbiModule_translate.load("sbi.calendar.errormissingenddate"));
+		}else if(new Date($scope.selectCalendar.calStartDay).getTime()>new Date($scope.selectCalendar.calEndDay).getTime()){
+
+			$scope.showAction(sbiModule_translate.load("sbi.calendar.errorstartdayenddate"));
 		}else{
 			if($scope.selectCalendar.calendarId!=undefined){
 				sbiModule_restServices.promisePost("calendar",+$scope.selectCalendar.calendarId+"/updateDaysGenerated", $scope.selectCalendar.realDateGenerated)

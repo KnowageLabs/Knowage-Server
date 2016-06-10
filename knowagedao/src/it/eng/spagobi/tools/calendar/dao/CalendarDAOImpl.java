@@ -52,6 +52,18 @@ public class CalendarDAOImpl implements ICalendarDAO {
 		c1.setTime(cal.getCalStartDay());
 		Transaction tx = session.beginTransaction();
 		TimeByDay time = loadCalendarConfigurationByDate(c1, session);
+		if (loadAttribute(0, session) == null) {
+			// nothing attribute present...
+			CalendarAttribute attr = new CalendarAttribute();
+			attr.setCalendar(cal);
+			attr.setDomainId(0);
+			attr.setCalendarId(id);
+			attr.setCalendarAttributeDomain(loadDomainbyDescr(session, "0"));
+			attr.setRecStatus("A");
+			session.save(attr);
+			tx.commit();
+		}
+		Transaction tx2 = session.beginTransaction();
 		Integer timeId = time.getTimeId();
 		System.out.println(System.currentTimeMillis() / 1000 - start);
 		while (c1.before(c2) || c1.equals(c2)) {
@@ -59,14 +71,15 @@ public class CalendarDAOImpl implements ICalendarDAO {
 
 			calConf.setTimeId(timeId);
 			calConf.setCalendarId(cal.getCalendarId());
-			calConf.setAttributeId(0);
+
+			calConf.setAttributeId(loadCalendarAttributebyCalId(id, session).getAttributeId());
 			calConf.setRecStatus("A");
 			session.save(calConf);
 			timeId += 1;
 			c1.add(java.util.Calendar.DAY_OF_MONTH, 1);
 
 		}
-		tx.commit();
+		tx2.commit();
 		System.out.println(System.currentTimeMillis() / 1000 - start);
 		List daysGenerated = loadCalendarDays(cal.getCalendarId(), session);
 		System.out.println(System.currentTimeMillis() / 1000 - start);
@@ -84,7 +97,7 @@ public class CalendarDAOImpl implements ICalendarDAO {
 
 		return (TimeByDay) session.createCriteria(TimeByDay.class).add(Restrictions.eq("dayOfMonth", date.get(java.util.Calendar.DAY_OF_MONTH)))
 				.add(Restrictions.eq("monthOfYear", date.get(java.util.Calendar.MONTH) + 1)).add(Restrictions.eq("yearId", date.get(java.util.Calendar.YEAR)))
-				.uniqueResult();
+				.setMaxResults(1).uniqueResult();
 	}
 
 	@Override
@@ -170,6 +183,11 @@ public class CalendarDAOImpl implements ICalendarDAO {
 	public CalendarAttribute loadAttribute(Integer id, Session session) {
 		return (CalendarAttribute) session.createCriteria(CalendarAttribute.class).add(Restrictions.eq("attributeId", id)).uniqueResult();
 
+	}
+
+	private CalendarAttribute loadCalendarAttributebyCalId(Integer calId, Session session) {
+		return (CalendarAttribute) session.createCriteria(CalendarAttribute.class).add(Restrictions.eq("calendarId", calId)).add(Restrictions.eq("domainId", 0))
+				.uniqueResult();
 	}
 
 	@Override
