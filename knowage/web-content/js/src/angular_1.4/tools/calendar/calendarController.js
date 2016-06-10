@@ -36,7 +36,7 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 	                  {"label":"Day","name":"day"},
 	                  {"label":"Holiday","name":"checkFestivity"},
 	                  {"label":"Public Holiday","name":"nationalFest"},
-	                  {"label":"Event","name":"selectEvent"}
+	                  {"label":"Attributes","name":"selectEvent"}
 	                  ];
 
 	$scope.tableFunction={
@@ -49,10 +49,10 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 			},
 			listType: $scope.listType,
 			loadEvent: function(item){
-				if(item.checkEvent.trim()!="" && item.checkEvent!=undefined){
-					item.checkFestivityBoolean  = false;
-					item.checkNationalBoolean = false;
-				}
+//				if(item.checkEvent.trim()!="" && item.checkEvent!=undefined){
+//					item.checkFestivityBoolean  = false;
+//					item.checkNationalBoolean = false;
+//				}
 				//add other association 
 				var index = $scope.indexinRealDate(item, $scope.selectCalendar.realDateGenerated);
 				if(index!=-1 && (item.checkEvent.trim()!="" && item.checkEvent!=undefined)){
@@ -63,8 +63,8 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 						$scope.selectCalendar.realDateGenerated[index].calendarAttribute = {
 								"calendarAttributeDomain": {"attributeDomainDescr": item.checkEvent}
 						};
-						$scope.selectCalendar.realDateGenerated[index].isHoliday = null;
-						$scope.selectCalendar.realDateGenerated[index].pubHoliday = null;
+					//	$scope.selectCalendar.realDateGenerated[index].isHoliday = null;
+					//	$scope.selectCalendar.realDateGenerated[index].pubHoliday = null;
 					}
 
 				}else{
@@ -293,9 +293,11 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 				+'</md-select>';
 			if( response[i].isHoliday==1){
 				$scope.selectCalendar.realDateGenerated[i]["checkFestivityBoolean"] = true;
-			} else if(response[i].pubHoliday=="true"){
+			}
+			if(response[i].pubHoliday=="true"){
 				$scope.selectCalendar.realDateGenerated[i]["checkNationalBoolean"] = true;
-			}else if(response[i].attributeId!=0){
+			}
+			if(response[i].attributeId!=0){
 				$scope.selectCalendar.realDateGenerated[i]["checkEvent"] = response[i].calendarAttribute.calendarAttributeDomain.attributeDomainDescr;
 			}
 
@@ -406,10 +408,10 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 	}
 
 	$scope.checkFestivityFunc = function(item){
-		if(item.checkNationalBoolean || item.checkNationalBoolean==undefined || item.checkEvent!=undefined){
-			item.checkNationalBoolean = false;
-			item.checkEvent = ""
-		}
+//		if(item.checkNationalBoolean || item.checkNationalBoolean==undefined || item.checkEvent!=undefined){
+//			item.checkNationalBoolean = false;
+//			item.checkEvent = ""
+//		}
 		if(item.checkFestivityBoolean){
 			item.checkFestivityBoolean = false;
 		}else{
@@ -418,18 +420,18 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 		var index = $scope.indexinRealDate(item, $scope.selectCalendar.realDateGenerated);
 		if(index!=-1 && $scope.selectCalendar.realDateGenerated[index].isHoliday!=1){
 			$scope.selectCalendar.realDateGenerated[index].isHoliday = 1;
-			$scope.selectCalendar.realDateGenerated[index].pubHoliday = null;
+	//		$scope.selectCalendar.realDateGenerated[index].pubHoliday = null;
 		}else if(index!=-1){
-			$scope.selectCalendar.realDateGenerated[index].isHoliday = null;
-			$scope.selectCalendar.realDateGenerated[index].calendarAttribute.attributeId = 0;
+			$scope.selectCalendar.realDateGenerated[index].isHoliday = 0;
+	//		$scope.selectCalendar.realDateGenerated[index].calendarAttribute.attributeId = 0;
 		}
 
 	}
 	$scope.checkNationalFunc = function(item){
-		if(item.checkFestivityBoolean || item.checkFestivityBoolean==undefined || item.checkEvent!=undefined){
-			item.checkFestivityBoolean  = false;
-			item.checkEvent = ""
-		}
+//		if(item.checkFestivityBoolean || item.checkFestivityBoolean==undefined || item.checkEvent!=undefined){
+//			item.checkFestivityBoolean  = false;
+//			item.checkEvent = ""
+//		}
 		if(item.checkNationalBoolean){
 			item.checkNationalBoolean = false;
 		}else{
@@ -439,10 +441,10 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 		var index = $scope.indexinRealDate(item, $scope.selectCalendar.realDateGenerated);
 		if(index!=-1 && $scope.selectCalendar.realDateGenerated[index].pubHoliday!="true"){
 			$scope.selectCalendar.realDateGenerated[index].pubHoliday = "true";
-			$scope.selectCalendar.realDateGenerated[index].isHoliday = null;
+		//	$scope.selectCalendar.realDateGenerated[index].isHoliday = null;
 		}else if(index!=-1){
 			$scope.selectCalendar.realDateGenerated[index].pubHoliday = null;
-			$scope.selectCalendar.realDateGenerated[index].calendarAttribute.attributeId = 0;
+		//	$scope.selectCalendar.realDateGenerated[index].calendarAttribute.attributeId = 0;
 		}
 	}
 
