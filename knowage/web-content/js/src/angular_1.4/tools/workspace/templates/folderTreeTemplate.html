@@ -1,5 +1,5 @@
-<md-dialog  flex style="height:60%; width:20%; max-height:100%; max-width:20%" ng-cloak>
-	<md-content flex>
+<md-dialog  flex style="height:60%; width:20%; max-height:100%; max-width:20%" ng-cloak>	
+<md-content flex>
    	<md-toolbar>
    	
      <div class="md-toolbar-tools">
@@ -14,8 +14,8 @@
      </div>   
    </md-toolbar>
          <md-content layout-margin layout-padding>
-	     				<document-tree ng-model="foldersForTree" highlights-selected-item="true" create-tree="true" selected-item="destFolder"  
-	     					click-function="setDestinationFolder(item)"  keys="keys" ></document-tree>
+	     				<document-tree ng-model="foldersForTree" highlights-selected-item="true" multi-select="false" create-tree="true" selected-item="destFolder"  
+	     					  keys="keys" ></document-tree>
 		 </md-content>
    </md-content>
 </md-dialog>

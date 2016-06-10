@@ -38,6 +38,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	$scope.breadModel=[];
 	$scope.breadCrumbControl;
 	$scope.documentsOfSelectedFolder=[];
+	$scope.destFolder=undefined;
 	
 	$scope.showDocumentDetails = function() {
 		return $scope.showDocumentInfo && $scope.isSelectedDocumentValid();
@@ -330,7 +331,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	}
 	
 	function  MoveDocumentToFolderController($scope,$mdDialog,doc){
-		$scope.destFolder=undefined;
+		
 		$scope.closeFolderTree=function(){
     		$mdDialog.cancel();
     	}
@@ -341,10 +342,10 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 				'parentId':'parentFunct'
 		};
 		
-		$scope.setDestinationFolder=function(item){
-			
-			$scope.destFolder=item;
-		}
+//		$scope.setDestinationFolder=function(item){
+//			
+//			$scope.destFolder=item;
+//		}
 		
 		$scope.executeMovingDocument=function(){
 			if($scope.destFolder!=undefined){
