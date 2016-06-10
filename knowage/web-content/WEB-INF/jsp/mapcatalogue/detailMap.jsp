@@ -174,7 +174,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<input class='portlet-form-input-field' type="text" name="DESCR" 
 				   size="50" value="<%= StringEscapeUtils.escapeHtml(desc) %>" maxlength="130" />
 		</div>
-	
+		<!-- hierarchy columns -->
+		<div class='div_detail_label'>
+			<span class='portlet-form-field-label'>	
+				<spagobi:message key = "SBIMapCatalogue.columnHierarchy" />
+			</span>
+		</div>
+		<div class='div_detail_form'>
+		<%
+			   String hier = map.getHierarchyName();
+			   if((hier==null) || (hier.equalsIgnoreCase("null"))  ) {
+				   hier = "";
+			   }
+		%>
+			<input class='portlet-form-input-field' type="text" name="HIERARCHY_NAME" 
+				   size="50" value="<%= StringEscapeUtils.escapeHtml(hier) %>" maxlength="100" />
+		</div>
+		<div class='div_detail_label'>
+			<span class='portlet-form-field-label'>	
+				<spagobi:message key = "SBIMapCatalogue.columnLevel" />
+			</span>
+		</div>
+		<div class='div_detail_form'>
+		<%
+		    Integer level = map.getLevel();
+		 	String strHier = (level != null) ? level.toString() : "";
+		%>
+			<input class='portlet-form-input-field' type="number" name="LEVEL" 
+				   size="50" value="<%=  StringEscapeUtils.escapeHtml(strHier) %>"  />
+		</div>		
+		<div class='div_detail_label'>
+			<span class='portlet-form-field-label'>	
+				<spagobi:message key = "SBIMapCatalogue.columnMember" />
+			</span>
+		</div>
+		<div class='div_detail_form'>
+		<%
+			   String member = map.getMemberName();
+			   if((member==null) || (member.equalsIgnoreCase("null"))  ) {
+				   member = "";
+			   }
+		%>
+			<input class='portlet-form-input-field' type="text" name="MEMBER_NAME" 
+				   size="50" value="<%= StringEscapeUtils.escapeHtml(member) %>" maxlength="100" />
+		</div>
+		
 		<!-- DISPLAY FORM FOR TEMPLATE  UPLOAD -->
 		<div id="form_upload" > 
 			<div class='div_detail_label'>
