@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,19 +11,15 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.mapcatalogue.dao;
 
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.mapcatalogue.bo.GeoMap;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
@@ -56,21 +52,24 @@ import org.hibernate.criterion.Expression;
  * @author giachino
  *
  */
-public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoMapsDAO{
+public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoMapsDAO {
 
 	static private Logger logger = Logger.getLogger(SbiGeoMapsDAOHibImpl.class);
 
 	/**
 	 * Load map by id.
-	 * 
-	 * @param mapID the map id
-	 * 
+	 *
+	 * @param mapID
+	 *            the map id
+	 *
 	 * @return the geo map
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
 	 * @see it.eng.spagobi.mapcatalogue.dao.geo.bo.dao.ISbiGeoMapsDAO#loadMapByID(integer)
 	 */
+	@Override
 	public GeoMap loadMapByID(Integer mapID) throws EMFUserError {
 		GeoMap toReturn = null;
 		Session tmpSession = null;
@@ -79,7 +78,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			SbiGeoMaps hibMap = (SbiGeoMaps)tmpSession.load(SbiGeoMaps.class,  mapID);
+			SbiGeoMaps hibMap = (SbiGeoMaps) tmpSession.load(SbiGeoMaps.class, mapID);
 			toReturn = hibMap.toGeoMap();
 			tx.commit();
 
@@ -91,27 +90,30 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
-		} finally {			
-			if (tmpSession!=null){
-				if (tmpSession.isOpen()) tmpSession.close();
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
 
 			}
-		}		
+		}
 		return toReturn;
-	}	
-
+	}
 
 	/**
 	 * Load map by name.
-	 * 
-	 * @param name the name
-	 * 
+	 *
+	 * @param name
+	 *            the name
+	 *
 	 * @return the geo map
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
 	 * @see it.eng.spagobi.mapcatalogue.dao.geo.bo.dao.ISbiGeoMapsDAO#loadMapByName(string)
-	 */	
+	 */
+	@Override
 	public GeoMap loadMapByName(String name) throws EMFUserError {
 		GeoMap biMap = null;
 		Session tmpSession = null;
@@ -119,17 +121,17 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("name",
-					name);
+			Criterion labelCriterrion = Expression.eq("name", name);
 			Criteria criteria = tmpSession.createCriteria(SbiGeoMaps.class);
-			criteria.add(labelCriterrion);	
-			//List tmpLst = criteria.list();
-			//return first map (unique)
-			//if (tmpLst != null && tmpLst.size()>0) biMap = (SbiGeoMaps)tmpLst.get(0);		
-			//if (tmpLst != null && tmpLst.size()>0) biMap = (SbiGeoMaps)tmpLst.get(0);
+			criteria.add(labelCriterrion);
+			// List tmpLst = criteria.list();
+			// return first map (unique)
+			// if (tmpLst != null && tmpLst.size()>0) biMap = (SbiGeoMaps)tmpLst.get(0);
+			// if (tmpLst != null && tmpLst.size()>0) biMap = (SbiGeoMaps)tmpLst.get(0);
 			SbiGeoMaps hibMap = (SbiGeoMaps) criteria.uniqueResult();
-			if (hibMap == null) return null;
-			biMap = hibMap.toGeoMap();				
+			if (hibMap == null)
+				return null;
+			biMap = hibMap.toGeoMap();
 
 			tx.commit();
 		} catch (HibernateException he) {
@@ -138,23 +140,28 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession!=null){
-				if (tmpSession.isOpen()) tmpSession.close();
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
 			}
 		}
-		return biMap;		
+		return biMap;
 	}
 
 	/**
 	 * Modify map.
-	 * 
-	 * @param aMap the a map
-	 * @param content the content file svg
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
+	 *
+	 * @param aMap
+	 *            the a map
+	 * @param content
+	 *            the content file svg
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#modifyEngine(it.eng.spagobi.bo.Engine)
 	 */
+	@Override
 	public void modifyMap(GeoMap aMap, byte[] content) throws EMFUserError {
 
 		Session tmpSession = null;
@@ -163,11 +170,11 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			//inserts the svg file into sbi_binary_contents
+			// inserts the svg file into sbi_binary_contents
 			SbiBinContents hibBinContents = null;
 
 			Integer binId = Integer.valueOf(aMap.getBinId());
-			if (binId != null && binId > new Integer("0")){
+			if (binId != null && binId > new Integer("0")) {
 				hibBinContents = (SbiBinContents) tmpSession.load(SbiBinContents.class, binId);
 				hibBinContents.setContent(content);
 				updateSbiCommonInfo4Insert(hibBinContents);
@@ -175,15 +182,18 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			} else {
 				hibBinContents = new SbiBinContents();
 				hibBinContents.setContent(content);
-				Integer idBin = (Integer)tmpSession.save(hibBinContents);
+				Integer idBin = (Integer) tmpSession.save(hibBinContents);
 				// recover the saved binary hibernate object
 				hibBinContents = (SbiBinContents) tmpSession.load(SbiBinContents.class, idBin);
 			}
 			SbiGeoMaps hibMap = (SbiGeoMaps) tmpSession.load(SbiGeoMaps.class, new Integer(aMap.getMapId()));
 			hibMap.setName(aMap.getName());
 			hibMap.setDescr(aMap.getDescr());
-			hibMap.setUrl(aMap.getUrl());			
+			hibMap.setUrl(aMap.getUrl());
 			hibMap.setFormat(aMap.getFormat());
+			hibMap.setHierarchyName(aMap.getHierarchyName());
+			hibMap.setLevel(aMap.getLevel());
+			hibMap.setMemberName(aMap.getMemberName());
 			hibMap.setBinContents(hibBinContents);
 			updateSbiCommonInfo4Update(hibMap);
 			tx.commit();
@@ -196,34 +206,38 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
-		} finally {			
-			if (tmpSession!=null){
-				if (tmpSession.isOpen()) tmpSession.close();
-			}			
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
 		}
 
 	}
 
 	/**
 	 * Insert map.
-	 * 
-	 * @param aMap the a map
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
+	 *
+	 * @param aMap
+	 *            the a map
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#insertEngine(it.eng.spagobi.bo.Engine)
 	 */
-	public void insertMap(GeoMap aMap, byte[] content) throws EMFUserError {		
+	@Override
+	public void insertMap(GeoMap aMap, byte[] content) throws EMFUserError {
 		Session tmpSession = null;
 		Transaction tx = null;
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			//inserts the svg file into sbi_binary_contents
+			// inserts the svg file into sbi_binary_contents
 			SbiBinContents hibBinContents = new SbiBinContents();
 			hibBinContents.setContent(content);
-			Integer idBin = (Integer)tmpSession.save(hibBinContents);
+			Integer idBin = (Integer) tmpSession.save(hibBinContents);
 			// recover the saved binary hibernate object
 			hibBinContents = (SbiBinContents) tmpSession.load(SbiBinContents.class, idBin);
 
@@ -232,6 +246,9 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			hibMap.setDescr(aMap.getDescr());
 			hibMap.setUrl(aMap.getUrl());
 			hibMap.setFormat(aMap.getFormat());
+			hibMap.setHierarchyName(aMap.getHierarchyName());
+			hibMap.setLevel(aMap.getLevel());
+			hibMap.setMemberName(aMap.getMemberName());
 
 			hibMap.setBinContents(hibBinContents);
 			updateSbiCommonInfo4Insert(hibMap);
@@ -247,23 +264,26 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 
 		} finally {
 
-			if (tmpSession!=null){
-				if (tmpSession.isOpen()) tmpSession.close();
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
 			}
 
 		}
 	}
 
-
 	/**
 	 * Erase map.
-	 * 
-	 * @param aMap the a map
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
+	 *
+	 * @param aMap
+	 *            the a map
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#eraseEngine(it.eng.spagobi.bo.Engine)
 	 */
+	@Override
 	public void eraseMap(GeoMap aMap) throws EMFUserError {
 
 		Session tmpSession = null;
@@ -272,14 +292,14 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			SbiGeoMaps hibMap = (SbiGeoMaps) tmpSession.load(SbiGeoMaps.class,
-					new Integer(aMap.getMapId()));
+			SbiGeoMaps hibMap = (SbiGeoMaps) tmpSession.load(SbiGeoMaps.class, new Integer(aMap.getMapId()));
 
 			tmpSession.delete(hibMap);
 
 			// delete template from sbi_binary_contents
 			SbiBinContents hibBinCont = hibMap.getBinContents();
-			if (hibBinCont != null) tmpSession.delete(hibBinCont);
+			if (hibBinCont != null)
+				tmpSession.delete(hibBinCont);
 
 			tx.commit();
 		} catch (HibernateException he) {
@@ -292,8 +312,9 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 
 		} finally {
 
-			if (tmpSession!=null){
-				if (tmpSession.isOpen()) tmpSession.close();
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
 			}
 
 		}
@@ -301,13 +322,15 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 
 	/**
 	 * Load all maps.
-	 * 
+	 *
 	 * @return the list
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#loadAllEngines()
 	 */
+	@Override
 	public List loadAllMaps() throws EMFUserError {
 		Session tmpSession = null;
 		Transaction tx = null;
@@ -319,11 +342,11 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			Query hibQuery = tmpSession.createQuery(" from SbiGeoMaps");
 
 			List hibList = hibQuery.list();
-			Iterator it = hibList.iterator();			
-			while (it.hasNext()) {			
-				SbiGeoMaps hibMap = (SbiGeoMaps) it.next();	
+			Iterator it = hibList.iterator();
+			while (it.hasNext()) {
+				SbiGeoMaps hibMap = (SbiGeoMaps) it.next();
 				if (hibMap != null) {
-					GeoMap biMap = hibMap.toGeoMap();	
+					GeoMap biMap = hibMap.toGeoMap();
 					realResult.add(biMap);
 				}
 			}
@@ -338,8 +361,9 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 
 		} finally {
 
-			if (tmpSession!=null){
-				if (tmpSession.isOpen()) tmpSession.close();
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
 			}
 
 		}
@@ -348,18 +372,20 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 
 	/**
 	 * Checks for features associated.
-	 * 
-	 * @param mapId the map id
-	 * 
+	 *
+	 * @param mapId
+	 *            the map id
+	 *
 	 * @return true, if checks for features associated
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
 	 * @see it.eng.spagobi.mapcatalogue.dao.geo.bo.dao.ISbiGeoMapsDAO#hasFeaturesAssociated(java.lang.String)
 	 */
-	public boolean hasFeaturesAssociated (String mapId) throws EMFUserError{
-		boolean bool = false; 
-
+	@Override
+	public boolean hasFeaturesAssociated(String mapId) throws EMFUserError {
+		boolean bool = false;
 
 		Session tmpSession = null;
 		Transaction tx = null;
@@ -387,8 +413,9 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (tmpSession!=null){
-				if (tmpSession.isOpen()) tmpSession.close();
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
 			}
 		}
 		return bool;
@@ -397,20 +424,23 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 
 	/**
 	 * Gets the features (tag <g>) from the SVG File.
-	 * 
-	 * @param content the content of svg file
-	 * 
+	 *
+	 * @param content
+	 *            the content of svg file
+	 *
 	 * @return the features from svg
-	 * 
-	 * @throws Exception raised If there are some problems
-	 */ 
+	 *
+	 * @throws Exception
+	 *             raised If there are some problems
+	 */
+	@Override
 	public List getFeaturesFromSVG(byte[] content) throws Exception {
 		logger.debug("IN");
 		// load a svg file
-		XMLInputFactory xmlIF =XMLInputFactory.newInstance();		   
-		xmlIF.setProperty(XMLInputFactory.IS_COALESCING , Boolean.TRUE);
+		XMLInputFactory xmlIF = XMLInputFactory.newInstance();
+		xmlIF.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
 
-		//create a temporary file for gets the features:
+		// create a temporary file for gets the features:
 		String javaIoTmpDir = System.getProperty("java.io.tmpdir");
 		String tmpdir = null;
 		if (javaIoTmpDir.endsWith(System.getProperty("file.separator"))) {
@@ -424,16 +454,15 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 		logger.debug("Temporary file created.");
 		File tmpFile = null;
 		try {
-			tmpFile = File.createTempFile("svgfile", ".svg" , dir);
+			tmpFile = File.createTempFile("svgfile", ".svg", dir);
 			OutputStream out = new FileOutputStream(tmpFile);
 			out.write(content);
 		} catch (Exception e) {
-			logger.error("Error while creating outputstream: ",e );
+			logger.error("Error while creating outputstream: ", e);
 			e.printStackTrace();
 		}
 
- 
-		FileInputStream fisMap = null;		
+		FileInputStream fisMap = null;
 		List lstFeatures = null;
 		HashMap feature;
 
@@ -450,47 +479,48 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			logger.error("Cannot load the stream of the file svg, path " + tmpFile);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "error.mapfile.notloaded");
 		}
-		if(streamReader==null) {
+		if (streamReader == null) {
 			logger.debug("streamReader is null.");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "error.mapfile.notloaded");
-		}	
+		}
 
-		try{
+		try {
 			streamReader.next();
 			int event = streamReader.getEventType();
-			int nFeature=-1;
+			int nFeature = -1;
 			lstFeatures = new ArrayList();
-			while (true) { 
+			while (true) {
 				switch (event) {
 				case XMLStreamConstants.START_DOCUMENT:
 					break;
 				case XMLStreamConstants.START_ELEMENT:
 					// get the tag name
-					String tagname = streamReader.getLocalName();       
-					if(tagname.trim().equalsIgnoreCase("g")) {		            		
-						for(int i=0, n=streamReader.getAttributeCount(); i<n; ++i) {
+					String tagname = streamReader.getLocalName();
+					if (tagname.trim().equalsIgnoreCase("g")) {
+						for (int i = 0, n = streamReader.getAttributeCount(); i < n; ++i) {
 							String attrName = streamReader.getAttributeName(i).toString();
 							String attrValue = streamReader.getAttributeValue(i);
-							// if the attribute is the id, search values and set the style		
+							// if the attribute is the id, search values and set the style
 							feature = new HashMap();
-							if(attrName.equalsIgnoreCase("id")) {	
+							if (attrName.equalsIgnoreCase("id")) {
 								nFeature++;
-								feature.put("id",attrValue);
+								feature.put("id", attrValue);
 							}
-							if(attrName.equalsIgnoreCase("descr")) {		            			
-								feature.put("descr",attrValue);
+							if (attrName.equalsIgnoreCase("descr")) {
+								feature.put("descr", attrValue);
 							}
-							if(attrName.equalsIgnoreCase("type")) {		            			
-								feature.put("type",attrValue);
-							}		
-							if (feature.size()>0) lstFeatures.add(feature);						            		
-						}			            				            	
+							if (attrName.equalsIgnoreCase("type")) {
+								feature.put("type", attrValue);
+							}
+							if (feature.size() > 0)
+								lstFeatures.add(feature);
+						}
 					}
 					break;
 				case XMLStreamConstants.END_ELEMENT:
-					//tagname = streamReader.getLocalName();
-					//if(tagname.trim().equalsIgnoreCase("g")) {
-					//}
+					// tagname = streamReader.getLocalName();
+					// if(tagname.trim().equalsIgnoreCase("g")) {
+					// }
 					break;
 				case XMLStreamConstants.END_DOCUMENT:
 					break;
@@ -499,20 +529,21 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 					break;
 				event = streamReader.next();
 			}
-		} catch (XMLStreamException xe){
-			logger.error("Error while parsign the svg file: " +  xe.getMessage());
+		} catch (XMLStreamException xe) {
+			logger.error("Error while parsign the svg file: " + xe.getMessage());
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "5031", "component_mapcatalogue_messages");
 		} finally {
 			streamReader.close();
 		}
 
 		// instant cleaning
-		if (tmpFile != null) tmpFile.delete();
-		if (dir != null) dir.delete();
+		if (tmpFile != null)
+			tmpFile.delete();
+		if (dir != null)
+			dir.delete();
 
 		logger.debug("OUT");
 		return lstFeatures;
 	}
-
 
 }
