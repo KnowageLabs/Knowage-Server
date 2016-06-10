@@ -99,6 +99,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<div  <%= canSee? "style='display:none'":"" %> style="position:absolute; z-index:1000;background:transparent;" layout-fill>
 				</div>
 				</md-whiteframe>
+				<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="selectCalendar.realDateGenerated.length<=0 || selectCalendar.realDateGenerated==undefined" layout-fill>
+			     	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
+			 	</div>
 				<md-whiteframe ng-show="selectCalendar.realDateGenerated.length>0"  class="md-whiteframe-4dp layout-padding" layout-margin>
 				<angular-table flex ng-show="selectCalendar.realDateGenerated.length>0" layout-fill 
 					id='dayslist' ng-model=selectCalendar.realDateGenerated
@@ -107,7 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					scope-functions=tableFunction <%= canSee? "speed-menu-option=measureMenuOption ":"" %>
 					current-page-number = "tablePage" initial-sorting="'date'"> </angular-table>
 					
-			</md-whiteframe>
+				</md-whiteframe>
 				
 
 

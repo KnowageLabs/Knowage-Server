@@ -30,12 +30,12 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 	                			var aValue = a.timeByDay.timeDate;
 	                			var bValue = b.timeByDay.timeDate;
 
-	                			return (bValue - aValue);
+	                			return (aValue - bValue);
 	                		}
 	                  },
 	                  {"label":"Day","name":"day"},
-	                  {"label":"Festivity","name":"checkFestivity"},
-	                  {"label":"National Fest","name":"nationalFest"},
+	                  {"label":"Holiday","name":"checkFestivity"},
+	                  {"label":"Public Holiday","name":"nationalFest"},
 	                  {"label":"Event","name":"selectEvent"}
 	                  ];
 
@@ -133,7 +133,7 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 			if($scope.selectCalendar.calendarId!=undefined){
 				sbiModule_restServices.promisePost("calendar",+$scope.selectCalendar.calendarId+"/updateDaysGenerated", $scope.selectCalendar.realDateGenerated)
 				.then(function(response){ 
-					$scope.showAction(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"));
+					$scope.showAction(sbiModule_translate.load("sbi.calendar.save"));
 
 				},function(response){
 					$scope.showAction(response.data);
@@ -154,7 +154,7 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 		.then(function(response){ 
 			$scope.selectCalendar.calendarId = response.data;
 			$scope.loadCalendarList();
-			$scope.showAction(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"));
+			$scope.showAction(sbiModule_translate.load("sbi.calendar.save"));
 		},function(response){
 			$scope.showAction(sbiModule_translate.load("sbi.generic.savingItemError"));
 		});
