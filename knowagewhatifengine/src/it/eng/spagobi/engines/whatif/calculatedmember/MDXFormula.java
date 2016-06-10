@@ -28,6 +28,8 @@ public class MDXFormula {
 
 	private String description;
 
+	private String body;
+
 	private String name;
 
 	private List<Argument> arguments;
@@ -50,6 +52,14 @@ public class MDXFormula {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getBody() {
+		return body;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
 	}
 
 	public String getName() {

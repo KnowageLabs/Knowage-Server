@@ -19,9 +19,18 @@ package it.eng.spagobi.engines.whatif.calculatedmember;
 
 public class Argument {
 
+	private String name;
 	private String expected_value;
 	private String default_value;
 	private String argument_description;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public String getExpected_value() {
 		return expected_value;

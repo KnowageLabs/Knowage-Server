@@ -89,7 +89,8 @@ public class MDXFormulaHandler {
 	public static MDXFormulas getFormulas() throws JAXBException {
 		getFormulasFromXML();
 		placeHolders.put(TIME_DIMENSION, getSelectedTimeHierarchyName());
-		injectDefaultAgumentValue();
+		injectTimeDimensionInDefaultAgumentValue();
+		injectTimeDimensionInBody();
 		return formulas;
 
 	}
@@ -126,7 +127,7 @@ public class MDXFormulaHandler {
 
 	}
 
-	private static void injectDefaultAgumentValue() {
+	private static void injectTimeDimensionInDefaultAgumentValue() {
 
 		for (int i = 0; i < formulas.getFormulas().size(); i++) {
 
@@ -143,6 +144,23 @@ public class MDXFormulaHandler {
 				}
 
 			}
+		}
+	}
+
+	private static void injectTimeDimensionInBody() {
+
+		for (int i = 0; i < formulas.getFormulas().size(); i++) {
+
+			String body = formulas.getFormulas().get(i).getBody();
+			Iterator it = placeHolders.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry pair = (Map.Entry) it.next();
+
+				body = body.replaceAll(pair.getKey().toString(), pair.getValue().toString());
+				formulas.getFormulas().get(i).setBody(body);
+
+			}
+
 		}
 	}
 
