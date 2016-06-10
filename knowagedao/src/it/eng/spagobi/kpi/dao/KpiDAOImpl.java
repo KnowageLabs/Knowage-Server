@@ -253,6 +253,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return insertRule(rule, false, true);
 	}
 
+	@Override
+	public Rule importRule(final Rule rule, boolean overwriteMode) {
+		boolean newVersion = overwriteMode && rule.getId() != null && rule.getVersion() != null;
+		return insertRule(rule, newVersion, true);
+	}
+
 	private Rule insertRule(final Rule rule, final boolean newVersion) {
 		return insertRule(rule, newVersion, false);
 	}
@@ -492,6 +498,23 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
+	public Rule loadLastActiveRule(final Integer id) {
+		SbiKpiRule rule = executeOnTransaction(new IExecuteOnTransaction<SbiKpiRule>() {
+			@Override
+			public SbiKpiRule execute(Session session) throws Exception {
+				String hql = " FROM SbiKpiRule WHERE sbiKpiRuleId.id = ? AND active = 'T'";
+				Query q = session.createQuery(hql);
+				q.setInteger(0, id);
+				SbiKpiRule rule = (SbiKpiRule) q.uniqueResult();
+				Hibernate.initialize(rule.getSbiKpiPlaceholders());
+				Hibernate.initialize(rule.getSbiKpiRuleOutputs());
+				return rule;
+			}
+		});
+		return from(rule);
+	}
+
+	@Override
 	public List<Kpi> listKpi(final STATUS status, IEngUserProfile profile) {
 		List<SbiKpiKpi> lst = list(new ICriterion<SbiKpiKpi>() {
 			@Override
@@ -557,6 +580,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	@Override
 	public Kpi insertKpi(final Kpi kpi) {
 		return insertKpi(kpi, false);
+	}
+
+	@Override
+	public Kpi importKpi(final Kpi kpi, boolean overwriteMode) {
+		boolean newVersion = overwriteMode && kpi.getId() != null && kpi.getVersion() != null;
+		return insertKpi(kpi, newVersion);
 	}
 
 	public Kpi insertKpi(final Kpi kpi, final boolean newVersion) {

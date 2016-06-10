@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-button ng-click="save($event)" aria-label="Start import" >{{translate.load("sbi.importkpis.startimport");}}</md-button>
 		</md-input-container>
 	</div>
+	<md-checkbox flex style="line-height: 61px;"  ng-model="IEDConf.overwriteMode" aria-label="Overwrite">Overwrite existing KPIs and rules</md-checkbox>
 	This is a test: {{IEDConf | json}}
 	<div layout="row" flex>
 		<div flex style="position: relative;" >

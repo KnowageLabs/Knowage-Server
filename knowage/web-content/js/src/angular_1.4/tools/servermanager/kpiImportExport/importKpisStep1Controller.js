@@ -18,7 +18,8 @@ function importKpiStep1FuncController(sbiModule_download, sbiModule_device,
 		} else {
 			// Import data
 			var data = {
-				"kpis": $scope.IEDConf.roles.selectedKpis
+					"kpis": $scope.IEDConf.roles.selectedKpis,
+					"overwrite": $scope.IEDConf.overwriteMode
 			}
 			// Import
 			alert(JSON.stringify(data));

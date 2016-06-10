@@ -123,6 +123,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public Rule importRule(Rule rule) throws SpagoBIException;
 
+	public Rule importRule(Rule rule, boolean overwriteMode) throws SpagoBIException;
+
 	public Rule insertNewVersionRule(Rule rule) throws SpagoBIException;
 
 	public Kpi insertNewVersionKpi(Kpi kpi) throws SpagoBIException;
@@ -132,6 +134,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public void removeRule(Integer id, Integer version, boolean toBeVersioned);
 
 	public Rule loadRule(Integer id, Integer version);
+
+	public Rule loadLastActiveRule(Integer id);
 
 	public Integer getRuleIdByName(String name);
 
@@ -180,6 +184,17 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 * @return new generated kpi id
 	 */
 	public Kpi insertKpi(Kpi kpi);
+
+	/**
+	 * Insert or update a KPI
+	 *
+	 * @param kpi
+	 *            The KPI
+	 * @param overwriteMode
+	 *            Whether or not an existing KPI should be updated (either directly or by creating a new version)
+	 * @return The KPI
+	 */
+	public Kpi importKpi(final Kpi kpi, boolean overwriteMode);
 
 	/**
 	 * Update an existing kpi
