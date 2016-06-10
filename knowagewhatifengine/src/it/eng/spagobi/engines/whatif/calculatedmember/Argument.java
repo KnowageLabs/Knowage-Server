@@ -28,7 +28,8 @@ public class Argument {
 	}
 
 	public String getDefault_value() {
-		return default_value;
+
+		return default_value.trim();
 	}
 
 	public void setDefault_value(String default_value) {

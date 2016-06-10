@@ -263,15 +263,16 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 			jgen.writeStringField(TABLE, tables.get(modelConfig.getStartRow()));
 			jgen.writeObjectField("tables", tables);
 			// serializeTables("tables", jgen, tables);
-			/***********************************************/
-			serializeFunctions(FORMULAS, jgen);
-			/***********************************************/
+
 			serializeAxis(ROWS, jgen, axis, Axis.ROWS, connection, modelConfig);
 			serializeAxis(COLUMNS, jgen, axis, Axis.COLUMNS, connection, modelConfig);
 			List<Hierarchy> hierarchy = value.getCube().getHierarchies();
 			// serializeFilters(FILTERS, jgen, hierarchy, (PivotModelImpl)
 			// value);
 			serializeDimensions(jgen, otherHDimensions, FILTERS_AXIS_POS, FILTERS, true, (PivotModelImpl) value, connection, modelConfig);
+			/***********************************************/
+			serializeFunctions(FORMULAS, jgen, model, modelConfig);
+			/***********************************************/
 			jgen.writeNumberField(COLUMNSAXISORDINAL, Axis.COLUMNS.axisOrdinal());
 			jgen.writeNumberField(ROWSAXISORDINAL, Axis.ROWS.axisOrdinal());
 			jgen.writeObjectField(MODELCONFIG, modelConfig);
@@ -367,8 +368,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		jgen.writeEndArray();
 	}
 
-	private void serializeFunctions(String field, JsonGenerator jgen) throws JsonProcessingException, IOException, JSONException, JAXBException {
+	private void serializeFunctions(String field, JsonGenerator jgen, SpagoBIPivotModel model, ModelConfig modelConfig) throws JsonProcessingException,
+			IOException, JSONException, JAXBException {
 
+		MDXFormulaHandler.setModel(model);
+		MDXFormulaHandler.setModelConfig(modelConfig);
 		MDXFormulas formulas = MDXFormulaHandler.getFormulas();
 		jgen.writeArrayFieldStart(field);
 

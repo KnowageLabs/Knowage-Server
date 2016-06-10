@@ -18,17 +18,49 @@
 package it.eng.spagobi.engines.whatif.calculatedmember;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.olap4j.OlapException;
+import org.olap4j.metadata.Dimension;
+import org.olap4j.metadata.Hierarchy;
+
 public class MDXFormulaHandler {
 
 	private static String xmlPath = WhatIfEngineConfig.getInstance().getEngineResourcePath() + "Olap/formulas.xml";
 	private static File xmlFile;
+	private static MDXFormulas formulas;
+	private static Map<String, String> placeHolders = new HashMap<String, String>();
+	private static String TIME_DIMENSION = "TimeDimension";
+	private static SpagoBIPivotModel model;
+	private static ModelConfig modelConfig;
+
+	public static SpagoBIPivotModel getModel() {
+		return model;
+	}
+
+	public static void setModel(SpagoBIPivotModel model) {
+		MDXFormulaHandler.model = model;
+	}
+
+	public static ModelConfig getModelConfig() {
+		return modelConfig;
+	}
+
+	public static void setModelConfig(ModelConfig modelConfig) {
+		MDXFormulaHandler.modelConfig = modelConfig;
+	}
 
 	public MDXFormulaHandler() {
 
@@ -42,8 +74,8 @@ public class MDXFormulaHandler {
 
 	}
 
-	public static MDXFormulas getFormulas() throws JAXBException {
-		MDXFormulas formulas = new MDXFormulas();
+	private static MDXFormulas getFormulasFromXML() throws JAXBException {
+		formulas = new MDXFormulas();
 
 		if (loadFile()) {
 			JAXBContext jc = JAXBContext.newInstance(MDXFormulas.class);
@@ -53,5 +85,65 @@ public class MDXFormulaHandler {
 
 		return formulas;
 	};
+
+	public static MDXFormulas getFormulas() throws JAXBException {
+		getFormulasFromXML();
+		placeHolders.put(TIME_DIMENSION, getSelectedTimeHierarchyName());
+		injectDefaultAgumentValue();
+		return formulas;
+
+	}
+
+	private static String getSelectedTimeHierarchyName() {
+
+		Hierarchy h = null;
+		List<Dimension> dimensions = CubeUtilities.getDimensions(model.getCube().getHierarchies());
+		for (Dimension dimension : dimensions) {
+			try {
+				if (dimension.getDimensionType().name().equalsIgnoreCase("Time")) {
+					String selectedHierarchyName = modelConfig.getDimensionHierarchyMap().get(dimension.getUniqueName());
+
+					if (selectedHierarchyName == null) {
+						h = dimension.getDefaultHierarchy();
+						return h.getUniqueName();
+
+					} else {
+						try {
+							h = CubeUtilities.getHierarchy(model.getCube(), selectedHierarchyName);
+						} catch (OlapException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						return h.getUniqueName();
+					}
+				}
+			} catch (OlapException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return h.getUniqueName();
+
+	}
+
+	private static void injectDefaultAgumentValue() {
+
+		for (int i = 0; i < formulas.getFormulas().size(); i++) {
+
+			for (int j = 0; j < formulas.getFormulas().get(i).getArguments().size(); j++) {
+
+				String defaultAgumentValue = formulas.getFormulas().get(i).getArguments().get(j).getDefault_value();
+				Iterator it = placeHolders.entrySet().iterator();
+				while (it.hasNext()) {
+					Map.Entry pair = (Map.Entry) it.next();
+
+					defaultAgumentValue = defaultAgumentValue.replaceAll(pair.getKey().toString(), pair.getValue().toString());
+					formulas.getFormulas().get(i).getArguments().get(j).setDefault_value(defaultAgumentValue);
+
+				}
+
+			}
+		}
+	}
 
 }
