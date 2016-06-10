@@ -21,7 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="!havePlaceholder() && showCircular" layout-fill>
      	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
  	</div>
- 	<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="havePlaceholder()" layout-fill>
+ 	<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="!showMessage() && showCircular && havePlaceholder()" layout-fill>
+     	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
+ 	</div>
+ 	<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showMessage() && showCircular" layout-fill>
      	<h3>{{translate.load("sbi.measurerule.valuefilter")}}</h3>
  	</div>
 	<angular-table class="relative"  flex id='previewtable' ng-model="detailProperty.previewData.rows"

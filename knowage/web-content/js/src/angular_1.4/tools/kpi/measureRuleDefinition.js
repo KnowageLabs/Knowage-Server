@@ -166,6 +166,18 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 		return false;
 	}
 
+	$scope.showMessage = function(){
+		var result = $scope.havePlaceholder();
+		if(result){
+			if($scope.detailProperty.previewData.length>0){
+				return false;
+			}else{
+				return true;
+			}
+		}else{
+			return false;
+		}
+	}
 	$scope.aliasList=[];
 	$scope.notAvailableAliasList=[];
 	$scope.placeholderList=[];
