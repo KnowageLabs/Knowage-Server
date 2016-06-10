@@ -568,19 +568,7 @@
 			.error(function(data, status, headers, config) {});																	
 		};
 		serviceScope.addToWorkspace = function() {
-			console.log(execProperties);
-			
-//			sbiModule_restServices.promisePost( "2.0/organizer/documents",execProperties.executionInstance.OBJECT_ID)
-//			.success(function(data, status, headers, config) {	
-//				 
-//				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
-//			})
-//			.error(function(data, status, headers, config) {
-//				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-//				
-//			});		
-//			
-			
+		
 			sbiModule_restServices.promisePost('2.0/organizer/documents',execProperties.executionInstance.OBJECT_ID)
 			.then(function(response) {
 				console.log("[POST]: SUCCESS!");

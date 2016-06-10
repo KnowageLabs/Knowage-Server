@@ -245,6 +245,16 @@ if(executionRoleNames.size() > 0) {
 				            			{{translate.load('sbi.execution.executionpage.toolbar.savemyworkspace')}}
 					                </md-button>
 					            </md-menu-item>
+					            
+					            <!--  
+					            <md-menu-item class="md-indent">
+					                <md-icon class="fa fa-heart"></md-icon>
+					            	<md-button ng-disabled="false" class="toolbar-button-custom" ng-click="urlViewPointService.openFavoriteDefinitionForm()"
+					            			aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}">
+				            			{{translate.load('sbi.execution.executionpage.toolbar.addbookmark')}}
+					                </md-button>
+					            </md-menu-item>
+					            -->
 				            	
 								<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_SNAPSHOTS_FUNCTIONALITY)) { %>
 				                <md-menu-item class="md-indent">
