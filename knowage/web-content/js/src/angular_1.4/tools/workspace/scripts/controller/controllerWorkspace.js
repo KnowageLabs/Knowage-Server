@@ -535,7 +535,16 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 								$scope.favoriteDocumentsList = $scope.favoriteDocumentsInitial;
 								$scope.clearSearch = false;
 								break;
+								
 							
+								/**
+								 * SEARCH IN SELECTED FOLDER IN ORGANIZER
+								 * 
+								 */
+							case "documents":
+								$scope.documentsOfSelectedFolder= $scope.documentsOfSelectedFolderInitial;
+							    $scope.clearSearch = false;
+                                break;							
 							/**
 							 * SEARCH FOR RECENT
 							 */
@@ -608,6 +617,11 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 						 */
 						case "favorites":
 							$scope.favoriteDocumentsList = filterThroughCollection(newSearchInput,$scope.favoriteDocumentsInitial,"name");
+							$scope.searching = false;
+							break;
+						
+						case "documents":
+							$scope.documentsOfSelectedFolder=filterThroughCollection(newSearchInput,$scope.documentsOfSelectedFolderInitial,"documentName");
 							$scope.searching = false;
 							break;
 							

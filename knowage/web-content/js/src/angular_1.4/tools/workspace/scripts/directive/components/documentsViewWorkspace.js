@@ -38,6 +38,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	$scope.breadModel=[];
 	$scope.breadCrumbControl;
 	$scope.documentsOfSelectedFolder=[];
+	$scope.documentsOfSelectedFolderInitial=[];
 	$scope.destFolder=undefined;
 	
 	$scope.showDocumentDetails = function() {
@@ -280,7 +281,8 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		if(folder != undefined){
 		sbiModule_restServices.promiseGet("2.0/organizer/documents",folder.functId)
 		.then(function(response) {
-			angular.copy(response.data,$scope.documentsOfSelectedFolder); // all folders
+			angular.copy(response.data,$scope.documentsOfSelectedFolder); 
+			angular.copy(response.data,$scope.documentsOfSelectedFolderInitial); 
 			console.info("[LOAD END]: Loading of documents.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
