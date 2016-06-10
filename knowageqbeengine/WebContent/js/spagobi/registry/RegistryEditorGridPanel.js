@@ -587,6 +587,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				
 				// set renderer based on field type
 				
+				var rendererFunctions = {};
 				var rendererFunction;
 				
 				if(meta.fields[i].type) {
@@ -632,7 +633,9 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				   }else{
 					   //meta.fields[i].renderer = Sbi.locale.formatters[t];
 					   meta.fields[i].renderer = this.renderTooltip.createDelegate(this);
-				   }   
+					   rendererFunction = meta.fields[i].renderer;
+				   }
+				   rendererFunctions[meta.fields[i].name]=rendererFunction;
 			   }
 			   
 			   // set if cells have to be merged
@@ -693,8 +696,12 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				   	retValue = value;
 
 				   	// done to avoid that color renderer overwrite format renderer
-				   if(rendererFunction != undefined){
-					   retValue = rendererFunction(value);
+				   if(rendererFunctions != undefined){
+					if(rendererFunctions[metaData.name] != undefined)   {
+						var mName = this.name;
+						rendererFunction = rendererFunctions[mName];
+						retValue = rendererFunction(value);
+					}
 				   }
 				    //retValue = "<font style=' color:red;'>" + value + "</font>"; //this is for inc
 				   	return retValue ;
