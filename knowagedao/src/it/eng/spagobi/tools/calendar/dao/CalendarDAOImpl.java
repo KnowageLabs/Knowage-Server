@@ -175,7 +175,8 @@ public class CalendarDAOImpl implements ICalendarDAO {
 
 	@Override
 	public List<CalendarAttributeDomain> loadCalendarDomains(Session session) {
-		return session.createCriteria(CalendarAttributeDomain.class).add(Restrictions.eq("attributeDomain", "CALENDARDOMAIN")).list();
+		return session.createCriteria(CalendarAttributeDomain.class).add(Restrictions.eq("attributeDomain", "CALENDARDOMAIN"))
+				.add(Restrictions.eq("recStatus", "A")).list();
 
 	}
 
