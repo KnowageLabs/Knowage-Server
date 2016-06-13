@@ -92,7 +92,41 @@ function jsonToURI(jsonObj){
 	//clean from the last '&' char
 	strURI = strURI.substring(0, strURI.length-1);
 	
+	
 	return strURI;
+}
+
+function parseParameterValue(param,value){
+	if(param.type==undefined && param.inputParameterType==undefined){
+		return value;
+	}
+
+	if(param.inputParameterType=="STRING" || (param.type!=undefined && param.type.valueCd=="STRING")){
+		var res = "";
+		if (Array.isArray(value)){
+			var i=0;
+			for(var v in value){  
+				if (i > 0) res +=","
+				res +=  "\"" + value[v] + "\"";
+				i++;				
+			}
+		}else{
+			res = "\"" + value + "\"";
+		}
+			
+		return res;
+	}
+	
+	if(param.inputParameterType=="DATE" || (param.type!=undefined && param.type.valueCd=="DATE")){
+		 // return sbiModule_dateServices.getDateFromFormat(value, param.dateFormat)
+		 			
+	}
+	if(param.inputParameterType=="NUM" || (param.type!=undefined && param.type.valueCd=="NUM")){
+		var res=parseFloat(value);
+		return isNaN(res) ? undefined : res;
+	}
+	
+	return value; //default
 }
 
 /* Override of the method execExternalCrossNavigation ONLY for the DocumentComposition */
@@ -104,6 +138,9 @@ function execExternalCrossNavigation(outputParameters, inputParameter, targetCro
 		return;
 	}
 
+	 if(outputParameters.length==1)
+		 outputParameters = outputParameters[0];
+			
 	//call REST service to get cross navigation informations
 	var sourceLabelForRest = (sourceLabel.indexOf("iframe_")>=0) ? sourceLabel.substring(7) : sourceLabel
 	var urlRest =  Sbi.config.serviceRegistry.getRestServiceUrl({
@@ -123,36 +160,67 @@ function execExternalCrossNavigation(outputParameters, inputParameter, targetCro
 			               		, icon: Ext.MessageBox.ERROR
 			               		, modal: false
 			           		});
-			      		}else{			      		
-			      			var parameters = {};
-			      			var content = Ext.util.JSON.decode( response.responseText );
-			      			if (content.errors != undefined) {
-				      			Ext.MessageBox.show({
-				               		title: 'Server error'
-				               		, msg: content.errors[0].message
-				               		, buttons: Ext.MessageBox.OK     
-				               		, icon: Ext.MessageBox.ERROR
-				               		, modal: false
-				           		});
-			      			}else if(content !== undefined && content[0] != undefined && content[0].navigationParams !== undefined) {
-			      				content = content[0];
+			      			return;
+			      		}	      		
+		      			var parameters = {};
+		      			var content = Ext.util.JSON.decode( response.responseText );
+		      			if (content.errors != undefined) {
+			      			Ext.MessageBox.show({
+			               		title: 'Server error'
+			               		, msg: content.errors[0].message
+			               		, buttons: Ext.MessageBox.OK     
+			               		, icon: Ext.MessageBox.ERROR
+			               		, modal: false
+			           		});
+			      			return;
+			      			}
+		      			if(content !== undefined && content[0] != undefined && content[0].navigationParams !== undefined) {
+		      				content = content[0];
+		      			}
+		      			
+	      				if(Array.isArray(outputParameters)){
+		      					for(var dataKey in outputParameters){  
+		      						for(var key in content.navigationParams){
+		      							var parVal=content.navigationParams[key];
+		      							if(parVal.fixed){
+		      								if(!parameters.hasOwnProperty(key)){
+		      									parameters[key]=[];
+		      								}
+		      								if(parameters[key].indexOf(parVal.value)==-1)
+		      								{ 
+		      									parameters[key].push(parVal.value);
+		      								}
+		      							}else{
+		      								if(outputParameters[dataKey].hasOwnProperty(parVal.value.label) && outputParameters[dataKey][parVal.value.label]!=undefined && outputParameters[dataKey][parVal.value.label]!=null){ 
+		      									if(!parameters.hasOwnProperty(key)){
+		      										parameters[key]=[];
+		      									}
+		      									
+//		      									parameters[key].push(outputParameters[dataKey][parVal.value.label]);
+		      									parameters[key].push(parseParameterValue(parVal.value, outputParameters[dataKey][parVal.value.label]));
+		      								}
+		      							}
+		      							
+		      						} 
+		      					}			      					
+		      				
+		      				}else{			      							      				
 			      				for(var key in content.navigationParams){
 			    					var parVal=content.navigationParams[key];
 			    					if(parVal.fixed){
 			    						parameters[key]=parVal.value;
 			    					}else{
 			    						if(outputParameters.hasOwnProperty(parVal.value.label) && outputParameters[parVal.value.label]!=undefined && outputParameters[parVal.value.label]!=null){ 
-//			    							parameters[key]=parseParameterValue(parVal.value,content[parVal.value.label]);
-			    							parameters[key]=outputParameters[parVal.value.label];
+//			    							parameters[key]=outputParameters[parVal.value.label];
+			    							parameters[key]=parseParameterValue(parVal.value,outputParameters[parVal.value.label]);
 			    						}
 			    					}
-			    				}
-			      				parameters = jsonToURI(parameters); 
-			      				//call the internal function
-			      				var windowName = (sourceLabel.indexOf("iframe_")>=0) ? sourceLabel : "iframe_" + sourceLabel; 
-			      				execCrossNavigation(windowName, null, parameters);
-				      		}
-			      		}
+			    				}			      						      							      
+		      			}
+	      				//call the internal function
+	      				parameters = jsonToURI(parameters); 	
+	      				var windowName = (sourceLabel.indexOf("iframe_")>=0) ? sourceLabel : "iframe_" + sourceLabel; 
+	      				execCrossNavigation(windowName, null, parameters);	
 		  	  		}
 		        }
 		       , scope: this
@@ -408,6 +476,11 @@ function getNewValues(newLabel, paramsNewValues){
    			newValues += (newValues=="")?"":",";
    			newValues +=  singleValue;
    		}
+   	}   	
+   	//remove "" if are present ONLY FOR SINGLE VALUES 
+   	if (newValues.indexOf(",") < 0){
+		RE = new RegExp("\"", "ig");
+		newValues = newValues.replace(RE,"");
    	}
    	return newValues;
 }
@@ -420,7 +493,10 @@ function setMultivalueFormat(newValue, oldValue){
 	if (typePar === 'STRING'){
 		//remove ' if are present
 		RE = new RegExp("'", "ig");
-		value = value.replace(RE,"");		
+		value = value.replace(RE,"");	
+		//remove " if are present
+		RE = new RegExp("\"", "ig");
+		value = value.replace(RE,"");	
 	}
 	value = DEFAULT_OPEN_BLOCK_MARKER + DEFAULT_SEPARATOR + DEFAULT_OPEN_BLOCK_MARKER + 
 		    value + DEFAULT_CLOSE_BLOCK_MARKER + typePar + DEFAULT_CLOSE_BLOCK_MARKER;
