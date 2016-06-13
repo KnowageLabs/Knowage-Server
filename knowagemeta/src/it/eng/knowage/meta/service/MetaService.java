@@ -28,6 +28,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,7 +39,7 @@ public class MetaService {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 * 
+	 *
 	 * @param dsId
 	 * @return
 	 */
@@ -92,8 +93,8 @@ public class MetaService {
 			while (businessModelsIterator.hasNext()) {
 				bt.add(businessModelsIterator.next());
 			}
-			translatedModel.put("physicalModel", JsonConverter.objectToJson(pt, pt.getClass()));
-			translatedModel.put("businessModel", JsonConverter.objectToJson(bt, bt.getClass()));
+			translatedModel.put("physicalModel", new JSONArray(JsonConverter.objectToJson(pt, pt.getClass())));
+			translatedModel.put("businessModel", new JSONArray(JsonConverter.objectToJson(bt, bt.getClass())));
 
 			return Response.ok(translatedModel.toString()).build();
 
@@ -102,7 +103,7 @@ public class MetaService {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		return Response.ok().build();
+		return Response.serverError().build();
 	}
 
 }
