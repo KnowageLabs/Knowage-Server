@@ -19,6 +19,7 @@ package it.eng.spagobi.workspace.dao;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.workspace.bo.FunctionsOrganizer;
 import it.eng.spagobi.workspace.metadata.SbiFunctionsOrganizer;
 
@@ -130,6 +131,7 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 			logger.error("Error in deleting the folder from organizer", he);
 			if (tx != null)
 				tx.rollback();
+			throw new SpagoBIRuntimeException("Could not delete folder", he);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())

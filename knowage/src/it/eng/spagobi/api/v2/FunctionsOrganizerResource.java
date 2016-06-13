@@ -4,6 +4,8 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.workspace.dao.IFunctionsOrganizerDAO;
 import it.eng.spagobi.workspace.metadata.SbiFunctionsOrganizer;
 
@@ -51,8 +53,12 @@ public class FunctionsOrganizerResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/{id}")
 	public Response deleteFolder(@PathParam("id") Integer folderId) throws EMFUserError {
-		foldersOrganizerDAO = DAOFactory.getFunctionsOrganizerDAO();
-		foldersOrganizerDAO.deleteFolder(folderId);
-		return Response.ok().build();
+		try {
+			foldersOrganizerDAO = DAOFactory.getFunctionsOrganizerDAO();
+			foldersOrganizerDAO.deleteFolder(folderId);
+			return Response.ok().build();
+		} catch (SpagoBIRuntimeException ex) {
+			throw new SpagoBIRestServiceException("sbi.workspace.organizer.folder.error.delete", buildLocaleFromSession(), ex);
+		}
 	}
 }

@@ -1,12 +1,12 @@
 <md-content layout="row" flex class="workspaceBckgColorRightSide">
 <md-content layout="column" flex>
 	<bread-crumb item-name='name' ng-model="breadModel" selected-item="selectedFolder" control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb>
-	<md-whiteframe flex layout="column" class="md-whiteframe-5dp md-whiteframe-5dp-rightPanelDocuments" layout-margin>
+	<md-whiteframe flex layout="column" class="md-whiteframe-5dp md-whiteframe-5dp-rightPanelDocuments workspaceBckgColorRightSide" layout-margin>
 	 
 		
 	    
-			<md-content layout-fill class="rightPanelDocuments">
-	          <md-content>
+			<md-content layout-fill class="rightPanelDocuments workspaceBckgColorRightSide">
+	          
 			 	<folder-view	class="kn-documentBrowser" flex 
 			 					style='overflow:auto;' 
 			 					ng-model=foldersToShow
@@ -18,8 +18,8 @@
 			 					 >
 				</folder-view>	
 				
-			   </md-content>
-			   <md-content>
+		
+			 
 				<organizer-view class="kn-documentBrowser" flex
 			 					style='overflow:auto;'
 			 					ng-model=documentsOfSelectedFolder
@@ -32,7 +32,7 @@
 			 					move-document-action="moveDocumentToFolder(doc)"
 			 					 >
 				</organizer-view>	
-		      </md-content>
+		    
 	
 		
 		</md-content>

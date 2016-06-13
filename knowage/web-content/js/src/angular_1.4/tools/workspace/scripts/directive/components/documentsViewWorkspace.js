@@ -40,6 +40,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	$scope.documentsOfSelectedFolder=[];
 	$scope.documentsOfSelectedFolderInitial=[];
 	$scope.destFolder=undefined;
+	$scope.selectedFolder=undefined;
 	
 	$scope.showDocumentDetails = function() {
 		return $scope.showDocumentInfo && $scope.isSelectedDocumentValid();
@@ -157,6 +158,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 			angular.copy(response.data,$scope.folders); // all folders
 			//angular.copy(response.data,$scope.foldersForTree);
 			$scope.loadFolderContent();
+			$scope.loadDocumentsForFolder($scope.selectedFolder);
 			console.info("[LOAD END]: Loading of users folders is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
@@ -168,8 +170,11 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	$scope.openFolder = function(folder){
 		//console.log(folder);
 		$scope.selectOrganizerDocument(undefined);
-		$scope.breadModel.push(folder);
+	
+		//$scope.breadModel.push(folder);
+		$scope.breadCrumbControl.insertBread(folder);	
 		$scope.selectedFolder=folder;
+		
 		$scope.foldersToShow=[];
 		if($scope.selectedFolder!= undefined){
 			for ( i = 0; i < $scope.folders.length; i++) {
@@ -246,6 +251,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 			//$scope.openFolder($scope.selectedFolder);
 			$scope.foldersToShow=[];
 			if($scope.selectedFolder!= undefined){
+			
 				for ( i = 0; i < $scope.folders.length; i++) {
 					if($scope.folders[i].parentFunct==$scope.selectedFolder.functId){
 						$scope.foldersToShow.push($scope.folders[i]);
@@ -258,11 +264,11 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	}
 	
 	$scope.showRoot=function(){
+		//$scope.breadModel=[];
 		
 		//search for the root
 		for ( i = 0; i < $scope.folders.length; i++) {
 			if($scope.folders[i].parentFunct==null){
-			
 				$scope.openFolder($scope.folders[i]);
 				$scope.loadDocumentsForFolder($scope.folders[i]);
 			}
@@ -271,9 +277,11 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	}
 	
 	$scope.moveBreadCrumbToFolder=function(item,index){
-	      
-		$scope.openFolder(item);
-		
+	     //console.log($scope.breadModel);
+		//$scope.openFolder(item);
+		$scope.selectedFolder=item;
+		$scope.loadFolderContent();
+		$scope.loadDocumentsForFolder($scope.selectedFolder);
 	}
 	
 	$scope.loadDocumentsForFolder=function(folder){
