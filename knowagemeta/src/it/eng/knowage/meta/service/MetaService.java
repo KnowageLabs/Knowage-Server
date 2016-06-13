@@ -28,18 +28,19 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 @Path("/1.0/metaWeb")
 public class MetaService {
-
+	private static Logger logger = Logger.getLogger(MetaService.class);
 	private static final String MODEL_NAME = "modelName";
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 *
+	 * 
 	 * @param dsId
 	 * @return
 	 */
@@ -84,26 +85,29 @@ public class MetaService {
 
 			JSONObject translatedModel = new JSONObject();
 			Iterator<PhysicalTable> physicalModelsIterator = physicalModel.getTables().iterator();
-			List<PhysicalTable> pt = new ArrayList<>();
+			JSONArray physicalModelJson = new JSONArray();
 			while (physicalModelsIterator.hasNext()) {
-				pt.add(physicalModelsIterator.next());
+				physicalModelJson.put(new JSONObject(physicalModelsIterator.next()));
 			}
+
+			JSONArray businessModelJson = new JSONArray();
 			Iterator<BusinessTable> businessModelsIterator = businessModel.getBusinessTables().iterator();
-			List<BusinessTable> bt = new ArrayList<>();
 			while (businessModelsIterator.hasNext()) {
-				bt.add(businessModelsIterator.next());
+				BusinessTable curr = businessModelsIterator.next();
+				String tabelName = curr.getPhysicalTable().getName();
+				curr.setPhysicalTable(null);
+				JSONObject bmJson = new JSONObject(curr);
+				bmJson.put("physicalTable", new JSONObject().put("name", tabelName));
+				businessModelJson.put(bmJson);
 			}
-			translatedModel.put("physicalModel", new JSONArray(JsonConverter.objectToJson(pt, pt.getClass())));
-			translatedModel.put("businessModel", new JSONArray(JsonConverter.objectToJson(bt, bt.getClass())));
+			translatedModel.put("physicalModel", physicalModelJson);
+			translatedModel.put("businessModel", businessModelJson);
 
 			return Response.ok(translatedModel.toString()).build();
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
-			e.printStackTrace();
+		} catch (IOException | JSONException e) {
+			logger.error(e);
 		}
 		return Response.serverError().build();
 	}
-
 }

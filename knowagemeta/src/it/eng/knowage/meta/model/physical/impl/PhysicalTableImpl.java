@@ -417,6 +417,7 @@ public class PhysicalTableImpl extends ModelObjectImpl implements PhysicalTable 
 	}
 
 	@Override
+	@JsonIgnore
 	public EList<ModelPropertyType> getPropertyTypes() {
 		return getModel().getParentModel().getPropertyTypes();
 	}

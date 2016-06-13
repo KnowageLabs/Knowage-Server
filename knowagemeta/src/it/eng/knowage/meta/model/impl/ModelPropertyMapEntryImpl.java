@@ -96,6 +96,7 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	 * 
 	 * @generated
 	 */
+	@JsonIgnore
 	public String getTypedKey() {
 		return key;
 	}
@@ -117,6 +118,7 @@ public class ModelPropertyMapEntryImpl extends EObjectImpl implements BasicEMap.
 	 * 
 	 * @generated
 	 */
+	@JsonIgnore
 	public ModelProperty getTypedValue() {
 		return value;
 	}

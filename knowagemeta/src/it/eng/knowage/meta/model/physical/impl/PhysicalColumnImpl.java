@@ -810,6 +810,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 	}
 
 	@Override
+	@JsonIgnore
 	public EList<ModelPropertyType> getPropertyTypes() {
 		return getTable().getModel().getParentModel().getPropertyTypes();
 	}
