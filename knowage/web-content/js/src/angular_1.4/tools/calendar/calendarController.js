@@ -20,7 +20,7 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 	$scope.listType = [];
 	$scope.tablePage = 1;
 	$scope.disableGenera = false;
-
+	$scope.generating = false;
 	$scope.columns = [
 	                  {
 	                	  "label":"Date",
@@ -49,28 +49,8 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 			},
 			listType: $scope.listType,
 			loadEvent: function(item){
-//				if(item.checkEvent.trim()!="" && item.checkEvent!=undefined){
-//					item.checkFestivityBoolean  = false;
-//					item.checkNationalBoolean = false;
-//				}
-				//add other association 
-				var index = $scope.indexinRealDate(item, $scope.selectCalendar.realDateGenerated);
-				if(index!=-1 && (item.checkEvent.trim()!="" && item.checkEvent!=undefined)){
-					//after add relation with other table
-					var indexDom = $scope.indexofDomain(item.checkEvent, $scope.listType);
-					if(indexDom !=-1){
-						$scope.selectCalendar.realDateGenerated[index].attributeId = $scope.listType[indexDom].domainId;
-						$scope.selectCalendar.realDateGenerated[index].calendarAttribute = {
-								"calendarAttributeDomain": {"attributeDomainDescr": item.checkEvent}
-						};
-					//	$scope.selectCalendar.realDateGenerated[index].isHoliday = null;
-					//	$scope.selectCalendar.realDateGenerated[index].pubHoliday = null;
-					}
-
-				}else{
-					$scope.selectCalendar.realDateGenerated[index].calendarAttribute = null;
-					$scope.selectCalendar.realDateGenerated[index].attributeId = 0;
-				}
+				item.listOfAttributes = [];
+				angular.copy(item.checkEvent, item.listOfAttributes);
 			}
 	};
 
@@ -230,6 +210,7 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 		if($scope.selectCalendar.realDateGenerated.length!=0){
 			$scope.showAction($scope.translate.load("sbi.calendar.errorgenerate"));
 		}else{
+			$scope.generating = true;
 			var stringToShow = $scope.translate.load("sbi.calendar.confirmgenerate.description.first") + 
 			" "+$scope.getDays()+" "
 			+$scope.translate.load("sbi.calendar.confirmgenerate.description.second");
@@ -248,7 +229,7 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 						$scope.selectCalendar.realDateGenerated = response.data;
 						$scope.parseRealInfo(response.data);
 						$scope.showCircularGenera = false;
-	
+						$scope.generating = false;
 					},function(response){
 					});
 				},function(response){
@@ -285,7 +266,7 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 				+'<div>'
 				+'<md-checkbox aria-label="BaseLayer" ng-checked="row.checkNationalBoolean" ng-click="scopeFunctions.checkNational(row)"></md-checkbox>'
 				+'</div></div>';
-			$scope.selectCalendar.realDateGenerated[i]["selectEvent"] = '<md-select  aria-label="BaseLayer" md-on-close="scopeFunctions.loadEvent(row)" ng-model="row.checkEvent" class="noMargin">'
+			$scope.selectCalendar.realDateGenerated[i]["selectEvent"] = '<md-select multiple="true"  aria-label="BaseLayer" md-on-close="scopeFunctions.loadEvent(row)" ng-model="row.checkEvent" class="noMargin">'
 				+'<md-option value=""></md-option>'
 				+'<md-option ng-repeat="val in scopeFunctions.listType" value={{val.attributeDomainDescr}}>'
 				+'{{val.attributeDomainDescr}}'
@@ -297,8 +278,19 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 			if(response[i].pubHoliday=="true"){
 				$scope.selectCalendar.realDateGenerated[i]["checkNationalBoolean"] = true;
 			}
-			if(response[i].attributeId!=0){
-				$scope.selectCalendar.realDateGenerated[i]["checkEvent"] = response[i].calendarAttribute.calendarAttributeDomain.attributeDomainDescr;
+			if(response[i].listOfAttributes!=null){
+				var array = response[i].listOfAttributes;
+				$scope.selectCalendar.realDateGenerated[i]["checkEvent"] = [];
+				$scope.selectCalendar.realDateGenerated[i]["listOfAttributes"] = [];
+				for(var k=0;k<array.length;k++){
+					if(array[k].calendarAttributeDomain!=null){
+						
+						$scope.selectCalendar.realDateGenerated[i]["listOfAttributes"].push(array[k].calendarAttributeDomain.attributeDomainDescr);
+						$scope.selectCalendar.realDateGenerated[i]["checkEvent"].push(array[k].calendarAttributeDomain.attributeDomainDescr);
+					}
+					
+				}
+				
 			}
 
 		}
@@ -408,10 +400,6 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 	}
 
 	$scope.checkFestivityFunc = function(item){
-//		if(item.checkNationalBoolean || item.checkNationalBoolean==undefined || item.checkEvent!=undefined){
-//			item.checkNationalBoolean = false;
-//			item.checkEvent = ""
-//		}
 		if(item.checkFestivityBoolean){
 			item.checkFestivityBoolean = false;
 		}else{
@@ -420,18 +408,12 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 		var index = $scope.indexinRealDate(item, $scope.selectCalendar.realDateGenerated);
 		if(index!=-1 && $scope.selectCalendar.realDateGenerated[index].isHoliday!=1){
 			$scope.selectCalendar.realDateGenerated[index].isHoliday = 1;
-	//		$scope.selectCalendar.realDateGenerated[index].pubHoliday = null;
 		}else if(index!=-1){
 			$scope.selectCalendar.realDateGenerated[index].isHoliday = 0;
-	//		$scope.selectCalendar.realDateGenerated[index].calendarAttribute.attributeId = 0;
 		}
 
 	}
 	$scope.checkNationalFunc = function(item){
-//		if(item.checkFestivityBoolean || item.checkFestivityBoolean==undefined || item.checkEvent!=undefined){
-//			item.checkFestivityBoolean  = false;
-//			item.checkEvent = ""
-//		}
 		if(item.checkNationalBoolean){
 			item.checkNationalBoolean = false;
 		}else{
@@ -441,10 +423,8 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 		var index = $scope.indexinRealDate(item, $scope.selectCalendar.realDateGenerated);
 		if(index!=-1 && $scope.selectCalendar.realDateGenerated[index].pubHoliday!="true"){
 			$scope.selectCalendar.realDateGenerated[index].pubHoliday = "true";
-		//	$scope.selectCalendar.realDateGenerated[index].isHoliday = null;
 		}else if(index!=-1){
 			$scope.selectCalendar.realDateGenerated[index].pubHoliday = null;
-		//	$scope.selectCalendar.realDateGenerated[index].calendarAttribute.attributeId = 0;
 		}
 	}
 

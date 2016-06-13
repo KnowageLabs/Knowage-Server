@@ -1,5 +1,7 @@
 package it.eng.spagobi.tools.calendar.metadata;
 
+import java.util.Set;
+
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 public class CalendarConfiguration extends SbiHibernateModel {
@@ -10,11 +12,19 @@ public class CalendarConfiguration extends SbiHibernateModel {
 
 	private Integer calendarId;
 	private Integer timeId;
-	private Integer attributeId;
 
 	private Calendar calendar;
 	private TimeByDay timeByDay;
-	private CalendarAttribute calendarAttribute;
+
+	private Set<CalendarAttribute> listOfAttributes;
+
+	public Set<CalendarAttribute> getListOfAttributes() {
+		return listOfAttributes;
+	}
+
+	public void setListOfAttributes(Set<CalendarAttribute> listOfAttributes) {
+		this.listOfAttributes = listOfAttributes;
+	}
 
 	public Integer getIdCalComposition() {
 		return idCalComposition;
@@ -64,14 +74,6 @@ public class CalendarConfiguration extends SbiHibernateModel {
 		this.timeId = timeId;
 	}
 
-	public Integer getAttributeId() {
-		return attributeId;
-	}
-
-	public void setAttributeId(Integer attributeId) {
-		this.attributeId = attributeId;
-	}
-
 	public Calendar getCalendar() {
 		return calendar;
 	}
@@ -86,14 +88,6 @@ public class CalendarConfiguration extends SbiHibernateModel {
 
 	public void setTimeByDay(TimeByDay timeByDay) {
 		this.timeByDay = timeByDay;
-	}
-
-	public CalendarAttribute getCalendarAttribute() {
-		return calendarAttribute;
-	}
-
-	public void setCalendarAttribute(CalendarAttribute calendarAttribute) {
-		this.calendarAttribute = calendarAttribute;
 	}
 
 }

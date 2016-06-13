@@ -1,7 +1,10 @@
 package it.eng.spagobi.tools.calendar.dao;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -50,19 +53,8 @@ public class CalendarDAOImpl implements ICalendarDAO {
 		java.util.Calendar c2 = java.util.Calendar.getInstance();
 		c2.setTime(cal.getCalEndDay());
 		c1.setTime(cal.getCalStartDay());
-		Transaction tx = session.beginTransaction();
 		TimeByDay time = loadCalendarConfigurationByDate(c1, session);
-		if (loadAttribute(0, session) == null) {
-			// nothing attribute present...
-			CalendarAttribute attr = new CalendarAttribute();
-			attr.setCalendar(cal);
-			attr.setDomainId(0);
-			attr.setCalendarId(id);
-			attr.setCalendarAttributeDomain(loadDomainbyDescr(session, "0"));
-			attr.setRecStatus("A");
-			session.save(attr);
-			tx.commit();
-		}
+
 		Transaction tx2 = session.beginTransaction();
 		Integer timeId = time.getTimeId();
 		System.out.println(System.currentTimeMillis() / 1000 - start);
@@ -72,7 +64,6 @@ public class CalendarDAOImpl implements ICalendarDAO {
 			calConf.setTimeId(timeId);
 			calConf.setCalendarId(cal.getCalendarId());
 
-			calConf.setAttributeId(loadCalendarAttributebyCalId(id, session).getAttributeId());
 			calConf.setRecStatus("A");
 			session.save(calConf);
 			timeId += 1;
@@ -138,28 +129,31 @@ public class CalendarDAOImpl implements ICalendarDAO {
 				CalendarConfiguration conf = loadCalendarConfigurationById(object.getInt("idCalComposition"), session);
 				conf.setIsHoliday(object.optInt("isHoliday"));
 				conf.setPubHoliday(object.optString("pubHoliday"));
-				if (object.optInt("attributeId") != 0) {
-					// add relation with domain.
-					CalendarAttributeDomain dom = loadDomainbyDescr(session,
-							object.getJSONObject("calendarAttribute").getJSONObject("calendarAttributeDomain").getString("attributeDomainDescr"));
-					CalendarAttribute attribute = (CalendarAttribute) session.createCriteria(CalendarAttribute.class)
-							.add(Restrictions.eq("domainId", dom.getDomainId())).add(Restrictions.eq("calendarId", cal.getCalendarId())).setMaxResults(1)
-							.uniqueResult();
-					if (attribute == null) {
+				if (object.optJSONArray("listOfAttributes") != null) {
+					Set<CalendarAttribute> listOfAttributes = new HashSet();
 
-						attribute = new CalendarAttribute();
-						attribute.setCalendarId(cal.getCalendarId());
-						attribute.setCalendar(cal);
-						attribute.setDomainId(dom.getDomainId());
-						attribute.setCalendarAttributeDomain(dom);
-						attribute.setRecStatus("A");
-						session.saveOrUpdate(attribute);
+					for (int j = 0; j < object.optJSONArray("listOfAttributes").length(); j++) {
+						String value = object.optJSONArray("listOfAttributes").getString(j);
+						CalendarAttributeDomain domain = loadDomainbyDescr(session, value);
+						CalendarAttribute attribute = (CalendarAttribute) session.createCriteria(CalendarAttribute.class)
+								.add(Restrictions.eq("domainId", domain.getDomainId())).add(Restrictions.eq("calendarId", cal.getCalendarId())).setMaxResults(1)
+								.uniqueResult();
+						if (attribute == null) {
+							attribute = new CalendarAttribute();
+							attribute.setCalendar(cal);
+							attribute.setCalendarAttributeDomain(domain);
+							attribute.setCalendarId(cal.getCalendarId());
+							attribute.setDomainId(domain.getDomainId());
+							attribute.setRecStatus("A");
+							session.save(attribute);
+
+						}
+						listOfAttributes.add(attribute);
+
 					}
-					conf.setAttributeId(attribute.getAttributeId());
-
-				} else {
-					conf.setAttributeId(0);
+					conf.setListOfAttributes(listOfAttributes);
 				}
+
 				session.saveOrUpdate(conf);
 			}
 		} catch (JSONException e) {
@@ -198,26 +192,34 @@ public class CalendarDAOImpl implements ICalendarDAO {
 		Transaction tx = session.beginTransaction();
 
 		for (CalendarConfiguration conf : listDays) {
+			for (CalendarAttribute attr : conf.getListOfAttributes()) {
+				if (attr != null) {
+					session.delete(attr);
+				}
 
-			conf.setAttributeId(null);
-			conf.setCalendarAttribute(null);
+			}
 			session.delete(conf);
 		}
-		List<CalendarAttribute> attributes = session.createCriteria(CalendarAttribute.class).add(Restrictions.eq("calendarId", id)).list();
-		for (CalendarAttribute attr : attributes) {
-			session.delete(attr);
-		}
+
 		session.delete(calToDelete);
 		tx.commit();
 	}
 
 	@Override
 	public void deleteDayofCalendar(Integer id, Session session) throws EMFUserError {
+
 		Transaction tx = session.beginTransaction();
 		CalendarConfiguration conf = loadCalendarConfigurationById(id, session);
 
 		session.delete(conf);
 
+		for (CalendarAttribute attr : conf.getListOfAttributes()) {
+
+			if (attr.getListOfConfiguration().size() == 1) {
+				Iterator<CalendarConfiguration> it = attr.getListOfConfiguration().iterator();
+				session.delete(attr);
+			}
+		}
 		tx.commit();
 
 	}

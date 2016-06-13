@@ -9,7 +9,7 @@
 		
         <property name="hibernate.cache.use_second_level_cache">false</property>
         <property name="hibernate.cache.use_query_cache">false</property>        
- 		<property name="hibernate.show_sql">false</property>
+ 		<property name="hibernate.show_sql">true</property>
 
 		<mapping resource="it/eng/spagobi/tools/calendar/metadata/mapping/Calendar.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/calendar/metadata/mapping/CalendarAttribute.hbm.xml" />

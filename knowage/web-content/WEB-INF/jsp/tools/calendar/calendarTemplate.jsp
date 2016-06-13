@@ -99,7 +99,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<div  <%= canSee? "style='display:none'":"" %> style="position:absolute; z-index:1000;background:transparent;" layout-fill>
 				</div>
 				</md-whiteframe>
-				<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="selectCalendar.realDateGenerated.length<=0 || selectCalendar.realDateGenerated==undefined" layout-fill>
+				<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="generating" layout-fill>
 			     	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
 			 	</div>
 				<md-whiteframe ng-show="selectCalendar.realDateGenerated.length>0"  class="md-whiteframe-4dp layout-padding" layout-margin>

@@ -1,5 +1,9 @@
 package it.eng.spagobi.tools.calendar.metadata;
 
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 public class CalendarAttribute extends SbiHibernateModel {
@@ -9,6 +13,16 @@ public class CalendarAttribute extends SbiHibernateModel {
 	private CalendarAttributeDomain calendarAttributeDomain = new CalendarAttributeDomain();
 	private Calendar calendar = new Calendar();
 	private String recStatus;
+	@JsonIgnore
+	private Set<CalendarConfiguration> listOfConfiguration;
+
+	public Set<CalendarConfiguration> getListOfConfiguration() {
+		return listOfConfiguration;
+	}
+
+	public void setListOfConfiguration(Set<CalendarConfiguration> listOfConfiguration) {
+		this.listOfConfiguration = listOfConfiguration;
+	}
 
 	public Integer getAttributeId() {
 		return attributeId;

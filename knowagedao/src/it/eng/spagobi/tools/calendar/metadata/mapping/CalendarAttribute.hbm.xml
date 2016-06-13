@@ -25,11 +25,18 @@
             <column name="REC_STATUS" length="1" not-null="true"/>
         </property>
        
-    		
+    	
 
  		 <many-to-one name="calendarAttributeDomain" class="it.eng.spagobi.tools.calendar.metadata.CalendarAttributeDomain" column="DOMAIN_ID"  lazy="false" fetch="join" insert="false" update="false"/>
  		 <many-to-one name="calendar" class="it.eng.spagobi.tools.calendar.metadata.Calendar" column="CALENDAR_ID"  lazy="false" fetch="join" insert="false" update="false"/>
-
+		<set name="listOfConfiguration" table="A_T_ASS_CAL_CFG_ATTRIB"  cascade="none" lazy="true">
+			<key >
+				<column name="ATTRIBUTE_ID"/>
+			</key>
+			<many-to-many class="it.eng.spagobi.tools.calendar.metadata.CalendarConfiguration">
+				<column name="ID_CAL_COMPOSITION" />
+			</many-to-many>
+		</set>
     </class>
 	
 </hibernate-mapping>

@@ -20,12 +20,18 @@
         <property name="timeId" column="TIME_ID" type="int" not-null="true"/>
         <property name="isHoliday" column="IS_HOLIDAY" type="int" />
         <property name="pubHoliday" column="PUB_HOLIDAY" type="string" length="100" />
-        <property name="attributeId" column="ATTRIBUTE_ID" type="int" not-null="true"/>
         <property name="recStatus" column="REC_STATUS" type="string" length="1" not-null="true"/>
              
         <many-to-one name="calendar" class="it.eng.spagobi.tools.calendar.metadata.Calendar" column="CALENDAR_ID" lazy="false" fetch="join" insert="false" update="false"/>
         <many-to-one name="timeByDay" class="it.eng.spagobi.tools.calendar.metadata.TimeByDay" column="TIME_ID" lazy="false" fetch="join" insert="false" update="false"/>
-        <many-to-one name="calendarAttribute" class="it.eng.spagobi.tools.calendar.metadata.CalendarAttribute" column="ATTRIBUTE_ID" lazy="false" fetch="join" insert="false" update="false"/>
         
+        <set name="listOfAttributes" table="A_T_ASS_CAL_CFG_ATTRIB"  cascade="save-update" lazy="true">
+			<key >
+				<column name="ID_CAL_COMPOSITION" />
+			</key>
+			<many-to-many class="it.eng.spagobi.tools.calendar.metadata.CalendarAttribute">
+				<column name="ATTRIBUTE_ID"/>
+			</many-to-many>
+		</set> 
 	</class>
 </hibernate-mapping>
