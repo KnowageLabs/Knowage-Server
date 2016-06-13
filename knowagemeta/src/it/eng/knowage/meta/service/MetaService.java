@@ -19,8 +19,10 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
@@ -29,6 +31,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.common.util.EList;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,10 +87,13 @@ public class MetaService {
 			BusinessModel businessModel = businessModelInitializer.initialize("pippoBusiness", physicalTableFilter, physicalModel);
 
 			JSONObject translatedModel = new JSONObject();
-			Iterator<PhysicalTable> physicalModelsIterator = physicalModel.getTables().iterator();
 			JSONArray physicalModelJson = new JSONArray();
-			while (physicalModelsIterator.hasNext()) {
-				physicalModelJson.put(new JSONObject(physicalModelsIterator.next()));
+			Map<String, Integer> physicalTableMap = new HashMap<>();
+			EList<PhysicalTable> physicalTables = physicalModel.getTables();
+			for (int j = 0; j < physicalTables.size(); j++) {
+				PhysicalTable physicalTable = physicalTables.get(j);
+				physicalModelJson.put(new JSONObject(JsonConverter.objectToJson(physicalTable, physicalTable.getClass())));
+				physicalTableMap.put(physicalTable.getName(), j);
 			}
 
 			JSONArray businessModelJson = new JSONArray();
@@ -95,9 +101,8 @@ public class MetaService {
 			while (businessModelsIterator.hasNext()) {
 				BusinessTable curr = businessModelsIterator.next();
 				String tabelName = curr.getPhysicalTable().getName();
-				curr.setPhysicalTable(null);
-				JSONObject bmJson = new JSONObject(curr);
-				bmJson.put("physicalTable", new JSONObject().put("name", tabelName));
+				JSONObject bmJson = new JSONObject(JsonConverter.objectToJson(curr, curr.getClass()));
+				bmJson.put("physicalTable", new JSONObject().put("physicalTableIndex", physicalTableMap.get(tabelName)));
 				businessModelJson.put(bmJson);
 			}
 			translatedModel.put("physicalModel", physicalModelJson);

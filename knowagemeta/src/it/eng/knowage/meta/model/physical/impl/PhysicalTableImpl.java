@@ -41,6 +41,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * <!-- begin-user-doc --> An implementation of the model object '<em><b>Physical Table</b></em>'. <!-- end-user-doc -->
@@ -56,6 +58,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * 
  * @generated
  */
+@JsonInclude(Include.NON_NULL)
 public class PhysicalTableImpl extends ModelObjectImpl implements PhysicalTable {
 	/**
 	 * The default value of the '{@link #getComment() <em>Comment</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
