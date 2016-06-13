@@ -794,13 +794,13 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				Object theYear = ifNull(temporalValues.get("YEAR"), "ALL");
 				String insertSql = "INSERT INTO SBI_KPI_VALUE (id, kpi_id, kpi_version, logical_key, time_run, computed_value,"
 						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (" + (++lastId) + ", " + parsedKpi.id + "," + parsedKpi.version
-						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "',?," + (nullValue ? "0" : value) + ",'" + theDay + "','" + theWeek + "','"
+						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "',?, coalesce(" + (nullValue ? "0" : value) + ", 0) ,'" + theDay + "','" + theWeek + "','"
 						+ theMonth + "','" + theQuarter + "','" + theYear + "','" + (nullValue ? '1' : '0') + "')";
 				String whereCondition = "kpi_id = " + parsedKpi.id + " AND kpi_version = " + parsedKpi.version + " AND logical_key = '"
 						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + theDay + "' AND the_week = '" + theWeek + "'"
 						+ " AND the_month = '" + theMonth + "' AND the_quarter = '" + theQuarter + "' AND the_year = '" + theYear + "'";
 				String deleteSql = "DELETE FROM SBI_KPI_VALUE WHERE " + whereCondition;
-				String updateSql = "UPDATE SBI_KPI_VALUE SET computed_value = " + (nullValue ? "0" : value) + ", time_run = ?, state='"
+				String updateSql = "UPDATE SBI_KPI_VALUE SET computed_value = coalesce(" + (nullValue ? "0" : value) + ", 0) , time_run = ?, state='"
 						+ (nullValue ? '1' : '0') + "' WHERE " + whereCondition; // Currently unused
 
 				session.beginTransaction();
