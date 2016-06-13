@@ -200,7 +200,7 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 								} else {
 									ftds.setCanUpload(false);
 								}
-							} else if (datasetType.equalsIgnoreCase(DATASET_TYPE_SPAGOBI_DS)) {
+							} else if (datasetType.equalsIgnoreCase(DATASET_TYPE_SPAGOBI_DS) || datasetType.equalsIgnoreCase("spagobi_ds")) {
 								String dsLabel = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_SPAGOBILABEL);
 								if (dsLabel != null) {
 									ftds.setSpagobiLabel(dsLabel);

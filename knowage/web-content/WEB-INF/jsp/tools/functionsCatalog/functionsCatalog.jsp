@@ -168,6 +168,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		disable-save-button=false
 		show-save-button=true>
        		<md-tabs layout-fill> 
+       		
+       			<md-tab label="General">
+					<md-content layout-padding>
+						
+						<md-input-container>
+        					<label>Function Name</label>
+        					<input ng-model=shownFunction.name>
+      					</md-input-container>
+
+	       				<md-input-container class="md-block">
+          					<label>Description</label>
+          					<textarea ui-refresh="true" ng-model="shownFunction.description"></textarea>
+        				</md-input-container>
+					</md-content>
+				</md-tab>
+       		
 				<md-tab label="Input">
 					<md-content layout-padding>
   						<div>
@@ -186,7 +202,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
            									</md-select>
           							</md-input-container>
 									<div layout-padding layout-margin>
-      									<md-button class="md-raised md-ExtraMini">Dataset Preview</md-button>   								
+      									<md-button class="md-raised md-ExtraMini" ng-click="datasetPreview()">Dataset Preview</md-button>   								
 									</div>
       								
 	     						</div> 						
@@ -242,11 +258,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-tab>
 				<md-tab label="Script">
 					<md-content layout-padding>
-					    <md-input-container>
-        					<label>Function Name</label>
-        					<input ng-model=shownFunction.name>
-      					</md-input-container>
-      					
+  					
       					<md-input-container class="md-block" flex-gt-sm>
             				<label>Language</label>
             				<md-select ng-model="shownFunction.language">
@@ -255,14 +267,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               					</md-option>
            					</md-select>
           				</md-input-container>
-    
-  						
-  
+      						
   						<md-input-container class="md-block">
           					<label>Script</label>
-          					<textarea ui-refresh="true" ng-model="shownFunction.script" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
+          					<textarea flex ui-refresh="true" ng-model="shownFunction.script" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
         				</md-input-container>
-        											
+									
         			</md-content>	
   						    					
 				</md-tab>
@@ -272,9 +282,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   							Output 
   							<i class="fa fa-plus-square" ng-click="output=addOutputItem()" aria-hidden="true"></i>
   							<div ng-repeat="o in shownFunction.outputItems" layout-gt-sm="row" layout-align="start center">	      						
-	      						<div>
+	      						<!--<div>
 									<md-button class="md-raised md-ExtraMini">Show Preview</md-button>
-	      						</div>
+	      						</div>-->
 	  							<md-input-container>
 	        						<label>Label</label>
 	        						<input ng-model="o.label">
@@ -297,7 +307,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   						</div>
 						
 					</md-content>
-				</md-tab>			
+				</md-tab>
+		
+							
        		</md-tabs>
        
        </detail>

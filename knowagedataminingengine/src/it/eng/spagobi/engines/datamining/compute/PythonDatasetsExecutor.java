@@ -56,7 +56,8 @@ public class PythonDatasetsExecutor {
 				}
 
 				if (ds.getType().equalsIgnoreCase("file")) {
-					String strPathUploadedFile = PythonOutputExecutor.getDatasetsDirectoryPath();
+					// String strPathUploadedFile = PythonOutputExecutor.getDatasetsDirectoryPath();
+					String strPathUploadedFile = DataMiningUtils.getUserResourcesPath(profile) + ds.getName();
 					resPythonExecution = PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n");
 					if (resPythonExecution < 0) {
 						throw new Exception("Python script execution error");
@@ -71,12 +72,14 @@ public class PythonDatasetsExecutor {
 						throw new Exception("Python script execution error");
 					}
 
-				} else if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_OUTPUT)
-						|| ds.getType().equalsIgnoreCase(DataMiningConstants.SPAGOBI_DS_OUTPUT)) {
+				} else if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET) || ds.getType().equalsIgnoreCase(DataMiningConstants.SPAGOBI_DS)) {
 					logger.debug("Dataset");
 					// dataset content could change independently from
 					// the engine, so it must be recalculated every time
-					String csvToEval = DataMiningUtils.getFileFromSpagoBIDataset(paramsFilled, ds, profile);
+
+					// String csvToEval = DataMiningUtils.getFileFromSpagoBIDataset(paramsFilled, ds, profile);
+					String csvToEval = DataMiningUtils.getSpagoBIDatasetFile(paramsFilled, ds, profile);
+
 					File file = new File(csvToEval);
 					String csvPath = file.getParent();
 					resPythonExecution = PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + csvPath + "')\n");

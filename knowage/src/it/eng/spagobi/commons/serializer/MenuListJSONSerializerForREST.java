@@ -392,18 +392,18 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tempMenuList.put(cacheManagement);
 		}
 
-		// if (isAbleTo(SpagoBIConstants.FUNCTIONS_CATALOG, funcs)) {
-		// JSONObject functionsCatalog = new JSONObject();
-		// functionsCatalog.put(ICON_CLS, "device_hub");
-		// functionsCatalog.put(TOOLTIP, messageBuilder.getMessage("menu.FunctionsCatalog", locale));
-		// functionsCatalog.put(ICON_ALIGN, "top");
-		// functionsCatalog.put(SCALE, "large");
-		// functionsCatalog.put(TARGET, "_self");
-		// functionsCatalog.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_FUNCTIONS_CATALOG + "');");
-		// functionsCatalog.put(LINK_TYPE, "execDirectUrl");
-		// functionsCatalog.put(FIRST_URL, contextName + HREF_FUNCTIONS_CATALOG);
-		// tempMenuList.put(functionsCatalog);
-		// }
+		if (isAbleTo(SpagoBIConstants.FUNCTIONS_CATALOG, funcs)) {
+			JSONObject functionsCatalog = new JSONObject();
+			functionsCatalog.put(ICON_CLS, "device_hub");
+			functionsCatalog.put(TOOLTIP, messageBuilder.getMessage("menu.FunctionsCatalog", locale));
+			functionsCatalog.put(ICON_ALIGN, "top");
+			functionsCatalog.put(SCALE, "large");
+			functionsCatalog.put(TARGET, "_self");
+			functionsCatalog.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_FUNCTIONS_CATALOG + "');");
+			functionsCatalog.put(LINK_TYPE, "execDirectUrl");
+			functionsCatalog.put(FIRST_URL, contextName + HREF_FUNCTIONS_CATALOG);
+			tempMenuList.put(functionsCatalog);
+		}
 
 		if (isAbleTo(SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL, funcs)) {
 			JSONObject glossaryManagementTechnical = new JSONObject();

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -95,6 +95,60 @@ public class DataMiningUtils {
 			}
 
 			filePath += "/" + ds.getSpagobiLabel() + DataMiningConstants.CSV_FILE_FORMAT;
+			File csvFile = new File(filePath);
+			csvFile.createNewFile();
+			logger.debug("Created Csv file");
+			writer = new CSVWriter(new FileWriter(filePath), ',');
+			writeColumns(dataStore, writer);
+			writeFields(dataStore, writer);
+			writer.flush();
+
+			filePath = filePath.replaceAll("\\\\", "/");
+			return filePath;
+
+		} catch (Exception e) {
+			logger.error(e);
+			if (writer != null) {
+				writer.close();
+			}
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+			logger.debug("OUT");
+		}
+		return filePath;
+
+	}
+
+	public static String getSpagoBIDatasetFile(HashMap params, DataMiningDataset ds, IEngUserProfile profile) throws IOException {
+		logger.debug("IN");
+		String filePath = "";
+		IDataSetDAO dataSetDao;
+		CSVWriter writer = null;
+		try {
+			dataSetDao = DAOFactory.getDataSetDAO();
+			dataSetDao.setUserProfile(profile);
+			IDataSet spagobiDataset = dataSetDao.loadDataSetByLabel(ds.getSpagobiLabel());
+			logger.debug("Got spagobi dataset");
+			spagobiDataset.setParamsMap(params);
+			spagobiDataset.loadData();
+			DataStore dataStore = (DataStore) spagobiDataset.getDataStore();
+			/*
+			 * filePath = getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + ds.getName();
+			 * logger.debug("Got user resource path");
+			 * 
+			 * File csvdir = new File(filePath); if (!csvdir.exists()) { csvdir.mkdir(); }
+			 * 
+			 * filePath += "/" + ds.getSpagobiLabel() + DataMiningConstants.CSV_FILE_FORMAT;
+			 */
+			// ---replaced
+
+			filePath = PythonOutputExecutor.getDatasetsDirectoryPath();
+			filePath += "/" + ds.getSpagobiLabel() + DataMiningConstants.CSV_FILE_FORMAT;
+
+			// ---end replaced
+
 			File csvFile = new File(filePath);
 			csvFile.createNewFile();
 			logger.debug("Created Csv file");

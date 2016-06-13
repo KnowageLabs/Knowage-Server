@@ -11,6 +11,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 	$scope.showDetail=false;
 	$scope.shownFunction={};
 	$scope.datasetLabelList=[];
+	$scope.datasetNamesList=[];
+	$scope.datasets=[];
 	$scope.tableSelectedFunction={};
 	$scope.tableSelectedFunction.language="Python";
 	$scope.languages=["Python","R"];
@@ -24,10 +26,10 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 	                       {"id":2,"name":"Variance","inputDatasets":[] , "inputVariables":[], "outputItems":[] , "language":"R", "script": "c=2;\n"}];*/
 	$scope.functionsList=[];
 		
-	$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[],"language":"Python", "script":""};	
+	$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[],"language":"Python", "script":"","description":""};	
 	$scope.cleanNewFunction=function()
 	{
-		$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script":""};	
+		$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script":"","description":""};	
 	}
 	$scope.datasetLabelsList=[];
 	$scope.saveOrUpdateFlag="";
@@ -51,22 +53,47 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 	
 
 	
-	$scope.showTabDialog = function(/*result*/) {
+	$scope.showTabDialog = function(result) {
 		   $mdDialog.show({
 		     controller: functionCatalogResults,
 		     templateUrl:  sbiModule_config.contextName	+ '/js/src/angular_1.4/tools/functionsCatalog/templates/'+'functionCatalogResults.jsp',
 		     //parent: angular.element(document.body),
 		     //targetEvent: ev,
-			 /*preserveScope : true,
+			 preserveScope : true,
 		     locals : {
-			 	results : result
-			 },*/
+			 	results : result,
+			 	logger:	$log
+			 },
 		     clickOutsideToClose:true
 		   });
-		};
+	};
 	
 	
-	
+	$scope.showNewInputDialog= function(data,datasetList)
+	{
+			$log.info("userId --------------------------> "+$scope.userId);
+		    var executionResult = $mdDialog.show({
+			     controller: executeWithNewData,
+			     templateUrl:  sbiModule_config.contextName	+ '/js/src/angular_1.4/tools/functionsCatalog/templates/'+'functionCatalogNewInputs.jsp',
+			     //parent: angular.element(document.body),
+			     //targetEvent: ev,			     
+				 preserveScope : true,
+			     locals : {
+				 	demoData : data,
+				 	logger:	$log,
+				 	datasets: datasetList,
+				 	userId: $scope.userId
+				 },
+			     clickOutsideToClose:true
+			   });
+		    executionResult.then(function(response){   //positive response, given from $mdDialog.hide(..)
+		    	$scope.showTabDialog(response); 
+		    },function(data){							 //negative response, given from $mdDialog.close(..)
+		    	
+		    });
+			$scope.obtainDatasetLabelsRESTcall();
+
+	};
 	
 	
 	
@@ -113,11 +140,16 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 		{
 			$log.info("Received Datasets ", datasets);			
 				
+			$scope.datasets=datasets;
+			
 			$scope.datasetsList=[];
+			$scope.datasetLabelsList=[]; 
+			$scope.datasetNamesList=[];
 			for(d in datasets.item)
 			{
 				//$log.info("d[label]", datasets.item[d].name);			
 				$scope.datasetLabelsList.push(datasets.item[d].label);
+				$scope.datasetNamesList.push(datasets.item[d].name);
 				
 			}
 			$log.info("Dataset labels list", $scope.datasetLabelsList);			
@@ -161,7 +193,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 					
 					$scope.cleanNewFunction=function()
 					{
-						$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script":""};	
+						$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script":"", "description":""};	
 					}
 					$scope.shownFunction=$scope.newFunction;
 	
@@ -204,11 +236,18 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 	                    	  }
 	                      	},
 		                    {
-		                      label:sbiModule_translate.load("Apply"),
+		                      label:sbiModule_translate.load("Execute Demo"),
 		                      icon:'fa fa-play-circle',		 
 		                      action:function(item,event){
-		                    	  $scope.applyItem(item,event);
+		                    	  $scope.applyDemoItem(item,event);
 		                      }
+		                    },
+		                    {
+			                  label:sbiModule_translate.load("Execute with new data"),
+			                  icon:'fa fa-play-circle',		 
+			                  action:function(item,event){
+			                  $scope.applyItem(item,event);
+			                 }
 		                    }
 	                  
 	                     ];
@@ -236,7 +275,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 	
 	
 	
-	$scope.applyItem=function(item,event){ 
+	$scope.applyDemoItem=function(item,event){ 
 		
 		sbiModule_restServices.alterContextPath("/knowagedataminingengine");
 		var functionId=item.id;
@@ -264,7 +303,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 				
 			//});
 			
-			$scope.showTabDialog(/*$event*//*results*/);
+			$scope.showTabDialog(results);  //$event
 			
 			
 					
@@ -273,6 +312,23 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 		sbiModule_restServices.alterContextPath("/knowage");
 		
 	};
+	
+	
+	
+	$scope.applyItem=function(item,event){ 
+		
+		$log.info("Execute with new data operation");
+
+		//body=$scope.shownFunction;  //cambiare
+		demoData=item;
+		
+		$log.info("Demo data ", demoData);
+		$scope.showNewInputDialog(demoData,$scope.datasets);
+
+		
+	};
+	
+	
 	
 	
 	$scope.leftTableClick=function(item)
@@ -389,19 +445,126 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 	$scope.obtainDatasetLabelsRESTcall();
 	$scope.obtainCatalogFunctionsRESTcall();
 	
+
+	function functionCatalogResults($scope, $mdDialog, logger,results)
+	{
+		logger.info("received results: ",results);
+		$scope.numTab=results.length;
+		$scope.results=results;
+		for (var res in $scope.results) {
+			  if ($scope.results.hasOwnProperty(res)) { 
+			    //logger.info("res: " + res + " value: " + $scope.results[res])
+			    $scope.results[res].imageString="data:image/png;base64," +$scope.results[res].result;
+			    //logger.info($scope.results[res].imageString);
+			  }
+			}
+		
+		
+		
+	};
+
+	function executeWithNewData($scope, $mdDialog, logger,demoData,datasets,userId)
+	{
+		logger.info("received demo function data: ", demoData);
+		//$scope.numTab=results.length;
+		$scope.demoData=demoData;
+		$scope.datasets=datasets;
+		$scope.functionId=demoData.id;
+		$scope.userId=userId;
+		logger.info("HAVING DATASETS: ", $scope.datasets);
+		$scope.replacingDatasetList={};
+		$scope.replacingVariableValues={};
+		$scope.replacingDatasetOutLabels={};
+		$scope.replacingTextOutLabels={};
+		$scope.replacingImageOutLabels={};
+		
+		
+		
+		$scope.getDatasetNameByLabel=function (label,datasetList)
+		{
+			for (var d in datasetList.item) {
+				  if (datasetList.item.hasOwnProperty(d)) { 
+					  var datasetObj=datasetList.item[d];
+					  if(datasetObj.label==label)
+						  return datasetObj.name;
+				  }
+			}
+		}	
+		
+		/*
+		for (var res in $scope.results) {
+			  if ($scope.results.hasOwnProperty(res)) { 
+			    //logger.info("res: " + res + " value: " + $scope.results[res])
+			    $scope.results[res].imageString="data:image/png;base64," +$scope.results[res].result;
+			    logger.info($scope.results[res].imageString);
+			  }
+			}
+		*/
+		
+		$scope.executeFunction=function()
+		{
+			var body=[];
+
+			var obj={},obj2={},obj3={},obj4={},obj5={};
+			obj.type="variablesIn";
+			obj.items=$scope.replacingVariableValues;
+			body.push(obj);
+			 
+			obj2.type="datasetsIn";
+			obj2.items=$scope.replacingDatasetList;
+			body.push(obj2);
+			
+			obj3.type="datasetsOut";
+			obj3.items=$scope.replacingDatasetOutLabels;
+			body.push(obj3);
+			
+			obj4.type="textOut";
+			obj4.items=$scope.replacingTextOutLabels;
+			body.push(obj4);
+			
+			obj5.type="imageOut";
+			obj5.items=$scope.replacingImageOutLabels;
+			body.push(obj5);
+						
+			logger.info("body: ", body);
+				
+			
+			sbiModule_restServices.alterContextPath("/knowagedataminingengine");
+			sbiModule_restServices.post("executeFunctionWithNewData",$scope.functionId+"/?user_id="+$scope.userId,body)
+			.success(function(executionResult)
+			{			
+					$log.info("Catalog Function executed with new data!!");
+					$log.info("Execution result ", executionResult);
+					
+					$mdDialog.hide(executionResult);
+
+					
+					/*
+					//$scope.functionsList.push(data);
+					$scope.obtainCatalogFunctionsRESTcall();
+					
+					$scope.cleanNewFunction=function()
+					{
+						$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script":"", "description":""};	
+					}
+					$scope.shownFunction=$scope.newFunction;
+					*/
+			});
+			
+			
+
+		}
+
+		
+		
+		
+		
+	};
+
 	
+
 	
 };
-
-
-function functionCatalogResults($scope,$mdDialog/*, $log,results*/)
-{
-	//$log.info("received results: "/*,results*/);
-	
-	
-	
-};
-
 
 
 

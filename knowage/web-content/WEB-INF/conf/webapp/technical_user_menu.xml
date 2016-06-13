@@ -120,6 +120,10 @@
 					functionality="Calendar"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/calendar/calendarTemplate.jsp" />
 										
+			
+			<ITEM	title="#menu.FunctionsCatalog"
+					functionality="Functions Catalog"  
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/functionsCatalog/functionsCatalog.jsp" />					
 		</ITEM>		
 		<ITEM code="menu_tools" title="#menu.ToolsMenu" groupingMenu="true"	iconCls="build">
 

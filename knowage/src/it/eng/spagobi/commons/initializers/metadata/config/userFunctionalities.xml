@@ -61,7 +61,9 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="Calendar" description="Calendar" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="FunctionsCatalog" description="FunctionsCatalog" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="KpiManagement" description="KpiManagement" />
+	
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -138,7 +140,9 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="TemporalDimension" description="TemporalDimension" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="Calendar" description="Calendar" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="FunctionsCatalog" description="FunctionsCatalog" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="KpiManagement" description="KpiManagement" />
+	
 	
 	<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -200,6 +204,7 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="SchedulingDistributedOutput" description="SchedulingDistributedOutput" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="SharedDevelopment" description="SharedDevelopment" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="Calendar" description="Calendar" />
+	<USER_FUNCTIONALITY productType="KnowageER" name="FunctionsCatalog" description="FunctionsCatalog" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="KpiManagement" description="KpiManagement" />
 	
 </USER_FUNCTIONALITIES>

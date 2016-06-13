@@ -202,7 +202,6 @@ public class SpagoBIAccessFilter implements Filter {
 				logger.debug("User profile is null. Impossibile to manage tenant.");
 			}
 			chain.doFilter(request, response);
-
 		} catch (Throwable t) {
 			logger.error("--------------------------------------------------------------------------------");
 			logger.error("SpagoBIAccessFilter" + ":doFilter ServletException!!", t);
