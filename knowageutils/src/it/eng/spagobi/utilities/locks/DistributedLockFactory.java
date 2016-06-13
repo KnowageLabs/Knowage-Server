@@ -20,6 +20,7 @@ package it.eng.spagobi.utilities.locks;
 
 import org.apache.log4j.Logger;
 
+import com.hazelcast.config.ClasspathXmlConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
@@ -36,7 +37,7 @@ public class DistributedLockFactory {
 	@SuppressWarnings("rawtypes")
 	public static IMap getDistributedMap(String instanceName, String mapName) {
 		logger.debug("Getting or creating Hazelcast instance with name [" + instanceName + "]");
-		com.hazelcast.config.Config cfg = new com.hazelcast.config.Config();
+		ClasspathXmlConfig cfg = new ClasspathXmlConfig("hazelcast.xml");
 		cfg.setInstanceName(instanceName);
 		HazelcastInstance hz = Hazelcast.getOrCreateHazelcastInstance(cfg);
 		logger.debug("Getting Hazelcast map with name [" + mapName + "]");

@@ -12,4 +12,7 @@
             </tcp-ip>
         </join>
     </network>
+    <properties> 
+    	<property name="hazelcast.socket.bind.any">false</property>
+    </properties>
 </hazelcast>

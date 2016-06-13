@@ -11,7 +11,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/wsdl4j-1.5.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/wss4j-1.5.7.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xalan.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xercesImpl-2.6.2.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xml-apis-2.0.2.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xmlsec-1.4.2.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/activation.jar"/>
