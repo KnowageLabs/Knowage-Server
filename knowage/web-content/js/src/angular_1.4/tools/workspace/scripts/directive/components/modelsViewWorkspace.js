@@ -191,6 +191,13 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 				
 					$scope.loadFederations();
 					$scope.selectModel(undefined);
+					
+					/**
+					 * If some federation is removed from the filtered set of datasets, clear the search input, since all federations are refreshed.
+					 *  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					$scope.searchInput = "";
+					
 				},function(response) {
 					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.delete.error'));
 				});

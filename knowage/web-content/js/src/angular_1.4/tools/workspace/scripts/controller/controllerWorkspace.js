@@ -479,9 +479,8 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	$scope.setSearchInput = function(newSearchInput) {		
 		
 		($scope.searchInput!="") ? $scope.resetSearchedData = true : null;
-		
 		$scope.searchInput = newSearchInput;
-		
+
 		var currentOptionMainMenu = $scope.currentOptionMainMenu;		
 		
 		/**
@@ -496,21 +495,21 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		var collectionForFiltering = null;		
 		
 		if (newSearchInput=="") { 
-			
+
 			if ($scope.resetSearchedData==true) {
 				
 				$scope.clearSearch = true;
 				
 				$timeout
 				(
-					function() {					
-					
-						switch($scope.resetOption) {
+					function() {	
+						
+						switch($scope.currentOptionMainMenu!=$scope.resetOption ? $scope.currentOptionMainMenu : $scope.resetOption) {
 						
 							/**
 							 * SEARCH FOR ANALYSIS
 							 */
-							case "analysis":				
+							case "analysis":	
 								angular.copy($scope.cockpitAnalysisDocsInitial,$scope.cockpitAnalysisDocs);
 								$scope.clearSearch = false;
 								break;
@@ -519,7 +518,6 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 							 * SEARCH FOR DATASETS
 							 */
 							case "datasets":
-								//console.info("We will add functionality for searching through DATASETS");
 								angular.copy($scope.datasetsInitial,$scope.datasets); 
 								angular.copy($scope.myDatasetsInitial,$scope.myDatasets);
 								angular.copy($scope.enterpriseDatasetsInitial,$scope.enterpriseDatasets);
@@ -589,17 +587,8 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 						case "analysis":
 							
 								var allAnalysisDocsFinal = [];
-								
 								$scope.cockpitAnalysisDocs = filterThroughCollection(newSearchInput,$scope.cockpitAnalysisDocsInitial,"name");
-								$scope.geoAnalysisDocs = filterThroughCollection(newSearchInput,$scope.geoAnalysisDocsInitial,"name");
-								
-								angular.copy($scope.cockpitAnalysisDocs,allAnalysisDocsFinal);
-								
-								for (i=0; i<$scope.geoAnalysisDocs.length; i++) {									
-									allAnalysisDocsFinal.push($scope.geoAnalysisDocs[i]);
-								}
-								
-								$scope.allAnalysisDocs = allAnalysisDocsFinal;
+
 								$scope.searching = false;
 							
 							break;

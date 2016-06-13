@@ -332,6 +332,12 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			//	$scope.loadDatasets();
 				$scope.reloadMyData();
 				
+				/**
+				 * If some dataset is removed from the filtered set of datasets, clear the search input, since all datasets are refreshed.
+				 *  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				$scope.searchInput = "";
+				
 //					$scope.validationStatus = false;
 //					sbiModule_messaging.showErrorMessage("Failure!", 'Error!');
 			}

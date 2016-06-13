@@ -59,7 +59,7 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 						 * TODO: Provide a comment
 						 */
 						angular.copy(response.data.root,$scope.allAnalysisDocs);
-						
+						$scope.cockpitAnalysisDocs = [];
 						var tempDocumentType = "";
 						
 						/**
@@ -67,7 +67,7 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 						 */
 						for(var i=0; i<$scope.allAnalysisDocs.length; i++) {
 							
-							tempDocumentType = $scope.allAnalysisDocs[i].typeCode;							
+							tempDocumentType = $scope.allAnalysisDocs[i].typeCode;						
 							
 							switch(tempDocumentType.toUpperCase()) {	
 																
@@ -164,19 +164,24 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 			.then(
 					function() {
 						
-						var indexInCockpit = $scope.cockpitAnalysisDocs.indexOf(document);
-						var indexInCockpitInitial = $scope.cockpitAnalysisDocsInitial.indexOf(document);
-						var isDocInCockpit = indexInCockpit >= 0;
-						
 						sbiModule_restServices
 							.promiseDelete("1.0/documents", document.label)
 							.then(
 									function(response) {
-									
-										(isDocInCockpit && indexInCockpitInitial) ? $scope.cockpitAnalysisDocs.splice(indexInCockpit,1) : null;
-										(isDocInCockpit && indexInCockpitInitial) ? $scope.cockpitAnalysisDocsInitial.splice(indexInCockpitInitial,1) : null;
+										
+										/**
+										 * Reload all Cockpits in Analysis after delete.
+										 */
+										$scope.loadAllMyAnalysisDocuments();
 										
 										$scope.selectedDocument = undefined;	// TODO: Create and define the role of this property
+										
+										/**
+										 * If some dataset is removed from the filtered set of datasets, clear the search input, since all datasets are refreshed.
+										 *  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+										 */
+										$scope.searchInput = "";
+										
 										console.info("[DELETE END]: Delete of Analysis Cockpit document with the label '" + document.label + "' is done successfully.");
 									},
 								

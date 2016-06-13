@@ -157,6 +157,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		});
 	}
 	
+	/**
+	 * This function will be called immediately on the loading of the Workspace, because we need to have not derived datasets on the very beginning.
+	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
 	$scope.loadNotDerivedDatasets();
 	
 	$scope.loadInitialForDatasets=function(){
@@ -183,6 +187,12 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.delete.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));
 				$scope.reloadMyData();
 				$scope.selectDataset(undefined);
+				
+				/**
+				 * If some dataset is removed from the filtered set of datasets, clear the search input, since all datasets are refreshed.
+				 *  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				$scope.searchInput = "";
 			},function(response) {
 				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.delete.error'));
 			});
