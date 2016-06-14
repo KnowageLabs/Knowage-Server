@@ -850,7 +850,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 								}
 
 								LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
-							} else if(!isFromSaveNoMetadata){
+							} else if (!isFromSaveNoMetadata) {
 								// load existing metadata
 								logger.debug("Loading existing dataset...");
 								String id = getAttributeAsString(DataSetConstants.ID);
@@ -871,7 +871,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 									// metadata, and there is no ID
 									dsMetadata = "";
 								}
-							}else{//just isFromSaveNoMetadata
+							} else {// just isFromSaveNoMetadata
 								logger.debug("Saving dataset without metadata. I'll add empty metadata with version = -1");
 								DatasetMetadataParser dsp = new DatasetMetadataParser();
 								dsMetadata = dsp.buildNoMetadataXML();
@@ -1195,8 +1195,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 						File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files"
 								+ File.separatorChar + dsLabel + "." + configuration.getString("fileType").toLowerCase());
-						FileUtils.copyFile(source, dest);
-						FileUtils.forceDeleteOnExit(source);
+						if (!source.getCanonicalPath().equals(dest.getCanonicalPath())) {
+							logger.debug("Source and destination are not the same. Copying from source to dest");
+							FileUtils.copyFile(source, dest);
+							FileUtils.forceDeleteOnExit(source);
+						}
 					}
 
 				} catch (EMFUserError e1) {
@@ -1474,7 +1477,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(getUserProfile());
 			dataSet = dao.loadDataSetById(id);
-			//if its a federated dataset the datasource are teh ones on cahce
+			// if its a federated dataset the datasource are teh ones on cahce
 			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 			dataSet.setDataSourceForReading(cache.getDataSource());
 			dataSet.setDataSourceForWriting(cache.getDataSource());
@@ -1819,7 +1822,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			checkFileDataset(dataSet);
 			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
 			dataStore = dataSet.getDataStore();
-			//DatasetMetadataParser dsp = new DatasetMetadataParser();
+			// DatasetMetadataParser dsp = new DatasetMetadataParser();
 
 			JSONArray metadataArray = JSONUtils.toJSONArray(metadata);
 
