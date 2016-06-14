@@ -415,6 +415,7 @@ public class PhysicalTableImpl extends ModelObjectImpl implements PhysicalTable 
 	}
 
 	@Override
+	@JsonIgnore
 	public List<PhysicalForeignKey> getForeignKeysInvolvingTable() {
 		return getModel().getForeignKeysInvolvingTable(this);
 	}

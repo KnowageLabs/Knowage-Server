@@ -9,6 +9,7 @@ import it.eng.knowage.meta.model.business.BusinessTable;
 import it.eng.knowage.meta.model.filter.PhysicalTableFilter;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
+import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.serialization.JsonConverter;
@@ -17,6 +18,7 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +50,8 @@ public class MetaService {
 	 * @return
 	 */
 
+	public static Model model = null;
+
 	@POST
 	@Path("/create")
 	public Response createModels(@Context HttpServletRequest req) {
@@ -67,8 +71,6 @@ public class MetaService {
 			List<String> physicalModels = (List<String>) JsonConverter.jsonToObject(json.getString("physicalModels"), List.class);
 			List<String> businessModels = (List<String>) JsonConverter.jsonToObject(json.getString("businessModels"), List.class);
 
-			Model model;
-
 			String name = MODEL_NAME;
 
 			model = ModelFactory.eINSTANCE.createModel();
@@ -85,7 +87,6 @@ public class MetaService {
 			PhysicalTableFilter physicalTableFilter = new PhysicalTableFilter(physicalTableToIncludeInBusinessModel);
 			BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
 			BusinessModel businessModel = businessModelInitializer.initialize("pippoBusiness", physicalTableFilter, physicalModel);
-
 			JSONObject translatedModel = new JSONObject();
 			JSONArray physicalModelJson = new JSONArray();
 			Map<String, Integer> physicalTableMap = new HashMap<>();
@@ -108,11 +109,25 @@ public class MetaService {
 			translatedModel.put("physicalModel", physicalModelJson);
 			translatedModel.put("businessModel", businessModelJson);
 
+			EmfXmiSerializer serializer = new EmfXmiSerializer();
+			serializer.serialize(model, new File("c:\\test.sbimodel.txt"));
+
 			return Response.ok(translatedModel.toString()).build();
 
 		} catch (IOException | JSONException e) {
 			logger.error(e);
 		}
 		return Response.serverError().build();
+	}
+
+	@POST
+	@Path("/generateModel")
+	public Response generateModel(@Context HttpServletRequest req) {
+
+		// JpaMappingCodeGenerator jpaMappingCodeGenerator = TestGeneratorFactory.createCodeGenerator();
+		// jpaMappingCodeGenerator.generate(_businessModel, TestConstants.outputFolder.toString());
+		EmfXmiSerializer serializer = new EmfXmiSerializer();
+		serializer.serialize(model, new File("c:\\test.sbimodel.txt"));
+		return Response.ok().build();
 	}
 }

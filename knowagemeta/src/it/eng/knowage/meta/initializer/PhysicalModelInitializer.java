@@ -38,6 +38,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -93,8 +94,8 @@ public class PhysicalModelInitializer {
 			String connectionName = ds.getLabel();
 
 			addDatabase(dbMeta, model);
-			// addCatalog(conn, model, catalog);
-			// addSchema(dbMeta, model, schema);
+			addCatalog(conn, model, conn.getCatalog());
+			addSchema(dbMeta, model, conn.getSchema());
 
 			addTables(dbMeta, model, selectedTables);
 
@@ -1324,6 +1325,117 @@ public class PhysicalModelInitializer {
 
 	private static void log(String msg) {
 		// System.out.println(msg);
+	}
+
+	/**
+	 * methods for using with static values
+	 */
+	// Initialize PhysicalModel with table filter
+	public PhysicalModel initialize(String modelName, Connection conn, String connectionName, String connectionDriver, String connectionUrl,
+			String connectionUsername, String connectionPassword, String connectionDatabaseName, String defaultCatalog, String defaultSchema,
+			List<String> selectedTables) {
+		PhysicalModel model;
+		DatabaseMetaData dbMeta;
+
+		try {
+			model = FACTORY.createPhysicalModel();
+			model.setName(modelName);
+
+			if (getRootModel() != null) {
+				model.setParentModel(getRootModel());
+			}
+
+			dbMeta = conn.getMetaData();
+
+			addDatabase(dbMeta, model);
+			addCatalog(conn, model, defaultCatalog);
+			addSchema(dbMeta, model, defaultSchema);
+
+			addTables(dbMeta, model, selectedTables);
+
+			for (int i = 0; i < model.getTables().size(); i++) {
+				addPrimaryKey(dbMeta, model, model.getTables().get(i));
+				addForeignKeys(dbMeta, model, model.getTables().get(i));
+			}
+
+			getPropertiesInitializer().addProperties(model);
+
+			// Setting Connection properties values
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME, connectionName);
+			logger.debug(MessageFormat.format("PhysicalModel Property: Connection name is [{0}]",
+					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME).getValue()));
+
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER, connectionDriver);
+			logger.debug(MessageFormat.format("PhysicalModel Property: Connection driver is [{0}]",
+					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER).getValue()));
+
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL, connectionUrl);
+			logger.debug(MessageFormat.format("PhysicalModel Property: Connection url is [{0}]",
+					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL).getValue()));
+
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME, connectionUsername);
+			logger.debug(MessageFormat.format("PhysicalModel Property: Connection username is [{0}]",
+					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME).getValue()));
+
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD, connectionPassword);
+			logger.debug(MessageFormat.format("PhysicalModel Property: Connection password is [{0}]",
+					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD).getValue()));
+
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME, connectionDatabaseName);
+			logger.debug(MessageFormat.format("PhysicalModel Property: Connection databasename is [{0}]",
+					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASENAME).getValue()));
+
+			// Quote string identification
+			String quote = dbMeta.getIdentifierQuoteString();
+			// check if escaping is needed
+			if (quote.equals("\"")) {
+				quote = "\\\"";
+			}
+			if (quote.equals(" ")) {
+				quote = "";
+			}
+
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING, quote);
+			logger.debug(MessageFormat.format("PhysicalModel Property: Connection databasequotestring is [{0}]",
+					model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING).getValue()));
+
+			/*
+			 * model.getPropertyType("connection.name").setDefaultValue(connectionName); logger.debug("PhysicalModel Property: Connection name is [{}]",
+			 * model.getPropertyType("connection.name").getDefaultValue());
+			 * 
+			 * model.getPropertyType("connection.driver").setDefaultValue(connectionDriver); logger.debug("PhysicalModel Property: Connection driver is [{}]",
+			 * model.getPropertyType("connection.driver").getDefaultValue());
+			 * 
+			 * model.getPropertyType("connection.url").setDefaultValue(connectionUrl); logger.debug("PhysicalModel Property: Connection url is [{}]",
+			 * model.getPropertyType("connection.url").getDefaultValue());
+			 * 
+			 * model.getPropertyType("connection.username").setDefaultValue(connectionUsername);
+			 * logger.debug("PhysicalModel Property: Connection username is [{}]", model.getPropertyType("connection.username").getDefaultValue());
+			 * 
+			 * model.getPropertyType("connection.password").setDefaultValue(connectionPassword);
+			 * logger.debug("PhysicalModel Property: Connection password is [{}]", model.getPropertyType("connection.password").getDefaultValue());
+			 * 
+			 * model.getPropertyType("connection.databasename").setDefaultValue(connectionDatabaseName);
+			 * logger.debug("PhysicalModel Property: Connection databasename is [{}]", model.getPropertyType("connection.databasename").getDefaultValue());
+			 * 
+			 * // Quote string identification String quote = dbMeta.getIdentifierQuoteString(); // check if escaping is needed if (quote.equals("\"")) { quote =
+			 * "\\\""; } model.getPropertyType("connection.databasequotestring").setDefaultValue(quote);
+			 * logger.debug("PhysicalModel Property: Connection databasequotestring is [{}]", model.getPropertyType("connection.databasequotestring")
+			 * .getDefaultValue());
+			 */
+		} catch (Throwable t) {
+			throw new RuntimeException("Impossible to initialize physical model", t);
+		}
+
+		return model;
+
+	}
+
+	// Initialize Physical Model with ALL original Database Tables
+	public PhysicalModel initialize(String modelName, Connection conn, String connectionName, String connectionDriver, String connectionUrl,
+			String connectionUsername, String connectionPassword, String connectionDatabaseName, String defaultCatalog, String defaultSchema) {
+		return initialize(modelName, conn, connectionName, connectionDriver, connectionUrl, connectionUsername, connectionPassword, connectionDatabaseName,
+				defaultCatalog, defaultSchema, null);
 	}
 
 }

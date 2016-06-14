@@ -47,6 +47,8 @@ import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * <!-- begin-user-doc --> An implementation of the model object '<em><b>Business Model</b></em>'. <!-- end-user-doc -->
  * <p>
@@ -230,6 +232,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 	 * @generated
 	 */
 	@Override
+	@JsonIgnore
 	public EList<BusinessColumnSet> getTables() {
 		if (tables == null) {
 			tables = new EObjectContainmentWithInverseEList<BusinessColumnSet>(BusinessColumnSet.class, this, BusinessModelPackage.BUSINESS_MODEL__TABLES,

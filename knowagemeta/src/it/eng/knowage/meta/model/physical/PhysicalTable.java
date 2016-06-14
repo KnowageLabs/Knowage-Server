@@ -23,8 +23,6 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * <!-- begin-user-doc --> A representation of the model object '<em><b>Physical Table</b></em>'. <!-- end-user-doc -->
  * 
@@ -110,7 +108,6 @@ public interface PhysicalTable extends ModelObject {
 	 * @model opposite="tables" required="true" transient="false"
 	 * @generated
 	 */
-	@JsonIgnore
 	PhysicalModel getModel();
 
 	/**
@@ -144,13 +141,10 @@ public interface PhysicalTable extends ModelObject {
 	// =========================================================================
 	// Utility methods
 	// =========================================================================
-	@JsonIgnore
 	public PhysicalPrimaryKey getPrimaryKey();
 
-	@JsonIgnore
 	public PhysicalColumn getColumn(String name);
 
-	@JsonIgnore
 	public List<PhysicalForeignKey> getForeignKeys();
 
 	public boolean containsAllNotDeleted(List<PhysicalColumn> physicalColumns);
@@ -160,7 +154,6 @@ public interface PhysicalTable extends ModelObject {
 	 * 
 	 * @return
 	 */
-	@JsonIgnore
 	public List<PhysicalForeignKey> getForeignKeysInvolvingTable();
 
 } // PhysicalTable
