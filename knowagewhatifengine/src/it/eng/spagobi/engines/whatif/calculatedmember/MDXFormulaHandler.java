@@ -17,11 +17,6 @@
  */
 package it.eng.spagobi.engines.whatif.calculatedmember;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.model.ModelConfig;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +30,11 @@ import javax.xml.bind.Unmarshaller;
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
+
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 
 public class MDXFormulaHandler {
 
@@ -87,10 +87,16 @@ public class MDXFormulaHandler {
 	};
 
 	public static MDXFormulas getFormulas() throws JAXBException {
+
+		String selectedTimeHierarchyName = getSelectedTimeHierarchyName();
 		getFormulasFromXML();
-		placeHolders.put(TIME_DIMENSION, getSelectedTimeHierarchyName());
-		injectTimeDimensionInDefaultAgumentValue();
-		injectTimeDimensionInBody();
+
+		if (selectedTimeHierarchyName != null) {
+			placeHolders.put(TIME_DIMENSION, getSelectedTimeHierarchyName());
+			injectTimeDimensionInDefaultAgumentValue();
+			injectTimeDimensionInBody();
+		}
+
 		return formulas;
 
 	}
@@ -123,7 +129,7 @@ public class MDXFormulaHandler {
 				e.printStackTrace();
 			}
 		}
-		return h.getUniqueName();
+		return null;
 
 	}
 
