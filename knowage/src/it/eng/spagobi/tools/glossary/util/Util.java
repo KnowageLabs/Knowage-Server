@@ -17,6 +17,12 @@
  */
 package it.eng.spagobi.tools.glossary.util;
 
+import java.util.Iterator;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
@@ -31,12 +37,6 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlReferences;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 import it.eng.spagobi.tools.udp.bo.Udp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
-
-import java.util.Iterator;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class Util {
 
@@ -66,6 +66,7 @@ public class Util {
 		ret.put("DOCUMENT_NM", sbiob.getLabel());
 		ret.put("DOCUMENT_NAME", sbiob.getName());
 		ret.put("DOCUMENT_DESCR", sbiob.getDescription());
+		ret.put("DOCUMENT_AUTH", sbiob.getCreationUser());
 		return ret;
 	}
 
@@ -163,7 +164,7 @@ public class Util {
 
 	public static JSONObject fromGlossaryLight(SbiGlGlossary sbiGlGlossary)
 
-	throws JSONException {
+			throws JSONException {
 		JSONObject ret = new JSONObject();
 		ret.put("GLOSSARY_ID", sbiGlGlossary.getGlossaryId());
 		ret.put("GLOSSARY_NM", sbiGlGlossary.getGlossaryNm());
