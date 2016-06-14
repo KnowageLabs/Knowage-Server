@@ -19,17 +19,24 @@ package it.eng.knowage.engines.svgviewer.api.restful;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.knowage.engines.svgviewer.api.AbstractSvgViewerEngineResource;
+import it.eng.knowage.engines.svgviewer.map.renderer.Measure;
+import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
@@ -63,6 +70,106 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		}
 
 		// TODO: to finish
+	}
+
+	@Path("/getMeasures")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getMeasures(@Context HttpServletRequest req) {
+		logger.debug("IN");
+		try {
+			SourceBean templateSB = getEngineInstance().getTemplate();
+			SourceBean confSB = (SourceBean) templateSB.getAttribute(SvgViewerEngineConstants.MAP_RENDERER_TAG);
+
+			SourceBean measuresConfigurationSB = (SourceBean) confSB.getAttribute("MEASURES");
+
+			Map measures = getMeasures(measuresConfigurationSB);
+			ResponseBuilder response = Response.ok(measures);
+
+			return response.build();
+
+		} catch (Exception e) {
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	// ** Utility methods */
+	private static Map getMeasures(SourceBean measuresConfigurationSB) {
+		Map measures;
+		List measureList;
+		SourceBean measureSB;
+		SourceBean tresholdsSB;
+		SourceBean coloursSB;
+		List paramList;
+		SourceBean paramSB;
+		Measure measure;
+		String attributeValue;
+
+		measures = new HashMap();
+
+		measureList = measuresConfigurationSB.getAttributeAsList("KPI");
+		for (int i = 0; i < measureList.size(); i++) {
+
+			measureSB = (SourceBean) measureList.get(i);
+			measure = new Measure();
+
+			attributeValue = (String) measureSB.getAttribute("column_id");
+			measure.setColumnId(attributeValue);
+			attributeValue = (String) measureSB.getAttribute("description");
+			measure.setDescription(attributeValue);
+			attributeValue = (String) measureSB.getAttribute("agg_func");
+			if (attributeValue == null)
+				attributeValue = "sum";
+			measure.setAggFunc(attributeValue);
+			attributeValue = (String) measureSB.getAttribute("colour");
+			measure.setColour(attributeValue);
+			attributeValue = (String) measureSB.getAttribute("pattern");
+			measure.setPattern(attributeValue);
+			attributeValue = (String) measureSB.getAttribute("unit");
+			measure.setUnit(attributeValue);
+
+			tresholdsSB = (SourceBean) measureSB.getAttribute("TRESHOLDS");
+			attributeValue = (String) tresholdsSB.getAttribute("lb_value");
+			measure.setTresholdLb(attributeValue);
+			attributeValue = (String) tresholdsSB.getAttribute("ub_value");
+			measure.setTresholdUb(attributeValue);
+			attributeValue = (String) tresholdsSB.getAttribute("type");
+			measure.setTresholdCalculatorType(attributeValue);
+
+			paramList = tresholdsSB.getAttributeAsList("PARAM");
+			Properties tresholdCalculatorParameters = new Properties();
+			for (int j = 0; j < paramList.size(); j++) {
+				paramSB = (SourceBean) paramList.get(j);
+				String pName = (String) paramSB.getAttribute("name");
+				String pValue = (String) paramSB.getAttribute("value");
+				tresholdCalculatorParameters.setProperty(pName, pValue);
+			}
+			measure.setTresholdCalculatorParameters(tresholdCalculatorParameters);
+
+			coloursSB = (SourceBean) measureSB.getAttribute("COLOURS");
+			attributeValue = (String) coloursSB.getAttribute("null_values_color");
+			measure.setColurNullCol(attributeValue);
+			attributeValue = (String) coloursSB.getAttribute("outbound_colour");
+			measure.setColurOutboundCol(attributeValue);
+			attributeValue = (String) coloursSB.getAttribute("type");
+			measure.setColurCalculatorType(attributeValue);
+
+			paramList = coloursSB.getAttributeAsList("PARAM");
+			Properties colurCalculatorParameters = new Properties();
+			for (int j = 0; j < paramList.size(); j++) {
+				paramSB = (SourceBean) paramList.get(j);
+				String pName = (String) paramSB.getAttribute("name");
+				String pValue = (String) paramSB.getAttribute("value");
+				colurCalculatorParameters.setProperty(pName, pValue);
+			}
+			measure.setColurCalculatorParameters(colurCalculatorParameters);
+
+			measures.put(measure.getColumnId().toUpperCase(), measure);
+		}
+
+		return measures;
 	}
 
 }

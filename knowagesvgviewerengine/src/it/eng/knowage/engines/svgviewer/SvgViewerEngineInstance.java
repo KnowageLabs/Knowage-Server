@@ -59,6 +59,9 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 	private JSONObject docProperties;
 	private List<String> includes;
 
+	/** The xml document template as a Source Bean */
+	private SourceBean template;
+
 	/** The map provider. */
 	IMapProvider mapProvider;
 
@@ -67,6 +70,9 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 
 	/** The map renderer. */
 	IMapRenderer mapRenderer;
+
+	/** The position of the properties Panel **/
+	String propertiesPanelPosition = "left";
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(SvgViewerEngineInstance.class);
@@ -83,10 +89,12 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 			setMapProvider(SvgViewerEngineComponentFactory.buildMapProvider(template, env));
 			setDataMartProvider(SvgViewerEngineComponentFactory.buildDataMartProvider(template, env));
 			setMapRenderer(SvgViewerEngineComponentFactory.buildMapRenderer(template, env));
-
+			propertiesPanelPosition = initPropertiesPanelPosition(template);
 			logger.info("MapProvider class: " + getMapProvider().getClass().getName());
 			logger.info("DatasetProvider class: " + getDataMartProvider().getClass().getName());
 			logger.info("MapRenderer class: " + getMapRenderer().getClass().getName());
+
+			this.template = template;
 
 			validate();
 
@@ -273,7 +281,48 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 		this.mapRenderer = mapRenderer;
 	}
 
+	// ------------------------------------------------------------------------------------
+
+	public String getPropertiesPanelPosition() {
+		return propertiesPanelPosition;
+	}
+
+	public void setPropertiesPanelPosition(String propertiesPanelPosition) {
+		this.propertiesPanelPosition = propertiesPanelPosition;
+	}
+
+	public String initPropertiesPanelPosition(SourceBean template) throws SvgViewerEngineException {
+		SourceBean confSB = null;
+		String position = "left";
+
+		logger.debug("IN");
+		confSB = (SourceBean) template.getAttribute("PANEL_PROPERTIES");
+		if (confSB == null) {
+			logger.warn("Cannot find Panel properties configuration settings: tag name " + "PANEL_PROPERTIES");
+		} else {
+			position = (String) confSB.getAttribute("POSITION");
+			if (position == null) {
+				position = "left";
+				logger.warn("Cannot find Panel properties position attribute: " + "POSITION");
+				logger.warn("The default MapProvider implementation will be used: [" + position + "]");
+			}
+
+		}
+
+		logger.debug("IN");
+
+		return position;
+	}
+
 	// -- unimplemented methods ------------------------------------------------------------
+
+	public SourceBean getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(SourceBean template) {
+		this.template = template;
+	}
 
 	@Override
 	public IEngineAnalysisState getAnalysisState() {

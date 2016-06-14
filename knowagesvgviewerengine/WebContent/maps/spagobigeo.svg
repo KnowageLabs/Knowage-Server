@@ -468,6 +468,7 @@ onload="init(evt);">
     }
 		
 		function setKpi(cbId,radioId,label) {
+			//debugger;
 			if (document.documentElement.suspendRedraw) {
 				suspendProcess = document.documentElement.suspendRedraw(30000);
 			}
