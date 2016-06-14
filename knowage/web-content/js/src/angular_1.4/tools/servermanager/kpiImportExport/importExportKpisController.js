@@ -33,7 +33,7 @@ app.factory("importExportDocumentModule_importConf", function() {
 	var current_data = {};
 	var default_values = {
 		fileImport : {},
-		importPersonalFolder : true.
+		importPersonalFolder : true,
 		overwriteMode: false,
 		typeSaveKpi : 'Missing',
 		checkboxs : {
