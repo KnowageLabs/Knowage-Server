@@ -88,7 +88,7 @@ public class PersistedTableHelper {
 			} else if (fieldMetaTypeName.contains("Date")) {
 				insertStatement.setDate(fieldIndex + 1, (Date) fieldValue);
 			} else if (fieldMetaTypeName.toLowerCase().contains("timestamp")) {
-				if (fieldValue instanceof oracle.sql.TIMESTAMP) {
+				if (fieldValue.getClass().toString().contains("oracle.sql.TIMESTAMP")) {
 					insertStatement.setTimestamp(fieldIndex + 1, ((oracle.sql.TIMESTAMP) fieldValue).timestampValue());
 				} else {
 					insertStatement.setTimestamp(fieldIndex + 1, (Timestamp) fieldValue);
@@ -154,7 +154,7 @@ public class PersistedTableHelper {
 			} else if (fieldMetaTypeName.contains("[B")) { // BLOB
 				insertStatement.setBytes(fieldIndex + 1, (byte[]) fieldValue);
 			} else if (fieldMetaTypeName.contains("BLOB")) {
-				if (fieldValue instanceof oracle.sql.BLOB) {
+				if (fieldValue.getClass().toString().contains("oracle.sql.BLOB")) {
 					insertStatement.setBytes(fieldIndex + 1, ((oracle.sql.BLOB) fieldValue).getBytes());
 				} else {
 					logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
@@ -162,7 +162,7 @@ public class PersistedTableHelper {
 			} else if (fieldMetaTypeName.contains("[C")) { // CLOB
 				insertStatement.setBytes(fieldIndex + 1, (byte[]) fieldValue);
 			} else if (fieldMetaTypeName.contains("CLOB")) {
-				if (fieldValue instanceof oracle.sql.CLOB) {
+				if (fieldValue.getClass().toString().contains("oracle.sql.CLOB")) {
 					StringBuilder sb = new StringBuilder();
 					oracle.sql.CLOB clob = (oracle.sql.CLOB) fieldValue;
 					long length = clob.length();
