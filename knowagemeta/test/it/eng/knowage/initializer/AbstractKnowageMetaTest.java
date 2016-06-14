@@ -31,8 +31,8 @@ import org.junit.Assert;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
- * 
- */
+ *
+ */ 
 public abstract class AbstractKnowageMetaTest extends TestCase {
 
 	protected static BusinessModelInitializer businessModelInitializer;

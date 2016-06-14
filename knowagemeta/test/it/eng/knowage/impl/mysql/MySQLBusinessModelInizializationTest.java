@@ -17,7 +17,6 @@
  */
 package it.eng.knowage.impl.mysql;
 
-import it.eng.knowage.common.ConfigSingleton;
 import it.eng.knowage.common.TestConstants;
 import it.eng.knowage.initializer.AbstractKnowageMetaTest;
 import it.eng.knowage.initializer.TestModelFactory;
@@ -32,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
-
+ 
 public class MySQLBusinessModelInizializationTest extends AbstractKnowageMetaTest {
 
 	public MySQLBusinessModelInizializationTest() {
@@ -116,15 +115,13 @@ public class MySQLBusinessModelInizializationTest extends AbstractKnowageMetaTes
 
 	public void testBusinessModelTables() {
 
-		Assert.assertEquals(ConfigSingleton.getInstance().MYSQL_TABLE_NAMES().length, businessModel.getTables().size());
+		Assert.assertEquals(TestConstants.MYSQL_TABLE_NAMES.length, businessModel.getTables().size());
 
-		for (int i = 0; i < ConfigSingleton.getInstance().MYSQL_TABLE_NAMES().length; i++) {
-			List<BusinessTable> businessTables = businessModel.getBusinessTableByPhysicalTable(ConfigSingleton.getInstance().MYSQL_TABLE_NAMES()[i]);
+		for (int i = 0; i < TestConstants.MYSQL_TABLE_NAMES.length; i++) {
+			List<BusinessTable> businessTables = businessModel.getBusinessTableByPhysicalTable(TestConstants.MYSQL_TABLE_NAMES[i]);
 			Assert.assertNotNull(businessTables);
-			Assert.assertFalse("Business model does not contain table [" + ConfigSingleton.getInstance().MYSQL_TABLE_NAMES()[i] + "]",
-					businessTables.size() == 0);
-			Assert.assertFalse("Business model contains table [" + ConfigSingleton.getInstance().MYSQL_TABLE_NAMES()[i] + "] more than one time",
-					businessTables.size() > 1);
+			Assert.assertFalse("Business model does not contain table [" + TestConstants.MYSQL_TABLE_NAMES[i] + "]", businessTables.size() == 0);
+			Assert.assertFalse("Business model contains table [" + TestConstants.MYSQL_TABLE_NAMES[i] + "] more than one time", businessTables.size() > 1);
 		}
 	}
 

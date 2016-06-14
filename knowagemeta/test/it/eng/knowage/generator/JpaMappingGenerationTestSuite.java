@@ -17,7 +17,7 @@
  */
 package it.eng.knowage.generator;
 
-import it.eng.knowage.common.ConfigSingleton;
+import it.eng.knowage.common.TestConstants;
 import it.eng.knowage.impl.mysql.MySqlJpaMappingTestSuite;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -25,12 +25,12 @@ import junit.framework.TestSuite;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class JpaMappingGenerationTestSuite extends TestCase {
-	static public Test suite() {
+	static public Test suite() { 
 		TestSuite suite = new TestSuite("Generation tests");
-		if (ConfigSingleton.getInstance().enableTestsOnMySql())
+		if (TestConstants.enableTestsOnMySql)
 			suite.addTest(MySqlJpaMappingTestSuite.suite());
 		// if (TestConstants.enableTestsOnPostgres)
 		// suite.addTest(PostgresJpaMappingTestSuite.suite());

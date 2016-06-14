@@ -17,20 +17,20 @@
  */
 package it.eng.knowage.edit;
 
-import it.eng.knowage.common.ConfigSingleton;
+import it.eng.knowage.common.TestConstants;
 import it.eng.knowage.impl.mysql.MySqlModelEditingTestSuite;
 import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import junit.framework.TestSuite; 
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class ModelEditingTestSuite extends TestCase {
 	static public Test suite() {
 		TestSuite suite = new TestSuite("Editing tests");
-		if (ConfigSingleton.getInstance().enableTestsOnMySql())
+		if (TestConstants.enableTestsOnMySql)
 			suite.addTest(MySqlModelEditingTestSuite.suite());
 		// add here test suites of other databases ...
 		return suite;

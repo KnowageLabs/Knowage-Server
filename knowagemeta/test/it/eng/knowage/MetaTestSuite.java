@@ -17,10 +17,7 @@
  */
 package it.eng.knowage;
 
-import it.eng.knowage.edit.ModelEditingTestSuite;
-import it.eng.knowage.generator.JpaMappingGenerationTestSuite;
 import it.eng.knowage.initializer.ModelInitializationTestSuite;
-import it.eng.knowage.serialization.ModelSerializationTestSuite;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -33,10 +30,11 @@ public class MetaTestSuite extends TestCase {
 	static public Test suite() {
 		TestSuite suite = new TestSuite("One test suite to bring them all");
 		suite.addTest(ModelInitializationTestSuite.suite());
-		suite.addTest(ModelEditingTestSuite.suite());
-		suite.addTest(ModelSerializationTestSuite.suite());
-		suite.addTest(JpaMappingGenerationTestSuite.suite());
+		// suite.addTest(ModelEditingTestSuite.suite());
+		// suite.addTest(ModelSerializationTestSuite.suite());
+		// suite.addTest(JpaMappingGenerationTestSuite.suite());
 		// suite.addTest(ModelQueryTestSuite.suite());
+
 		return suite;
 	}
 }
