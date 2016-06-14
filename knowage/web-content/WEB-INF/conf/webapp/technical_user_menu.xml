@@ -200,7 +200,7 @@
 				   functionality="DocumentDevManagement"
 				   url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp" 
 				   iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/40/mydata.png" 
-				   iconCls="web"/>
+				   iconCls="work"/>
 							
 	<ITEM	code="analyticalModel" 
 			title="#menu.AnalyticalModel"

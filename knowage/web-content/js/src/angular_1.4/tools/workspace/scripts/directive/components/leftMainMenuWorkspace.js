@@ -34,8 +34,17 @@ angular
 		  };	  
 	});
 
-function leftMenuController($scope, sbiModule_translate){
+function leftMenuController($scope, sbiModule_translate, sbiModule_user){
 	 
+	
+	
+	$scope.showMyData= (sbiModule_user.functionalities.indexOf("SeeMyData")>-1)? true:false;
+	$scope.showAnalysis= (sbiModule_user.functionalities.indexOf("CreateDocument")>-1)? true:false;
+    $scope.showOrganizer= (sbiModule_user.functionalities.indexOf("SaveIntoFolderFunctionality")>-1)? true:false;
+    $scope.isUserAdmin= (sbiModule_user.roles.indexOf("admin")>-1)?true:false;
+    
+ 
+    
 	/**
 	 * Left main menu options and their associated icons for the Angular list on the
 	 * the Workspace web page.
@@ -45,14 +54,14 @@ function leftMenuController($scope, sbiModule_translate){
 	                      	    
 	                      	 	{"name": "Recent", "label":sbiModule_translate.load('sbi.workspace.menu.recent'),		"icon": "fa fa-clock-o",	"visible":true, "active":false, "selected":true}, 
 	                      	 	{"name": "Favorites", "label":sbiModule_translate.load('sbi.workspace.menu.favorites'), 	"icon": "fa fa-star",	"visible":false, "active":false, "selected":false}, 
-	                      	 	{"name": "Documents", "label":sbiModule_translate.load('sbi.workspace.menu.documents'),	"icon": "fa fa-file-text", "visible":true, "active":false, "selected":false}, 
-	                      	 	{"name": "Data", "label":sbiModule_translate.load('sbi.workspace.menu.data'), 	"icon": "fa fa-angle-down", "activeIcon":"fa fa-angle-up" ,"visible":true, "active":false,
-	                      	 		"submenuOptions":[	{"name": "Datasets", "label":sbiModule_translate.load('sbi.workspace.menu.datasets'), 	"icon": "fa fa-database",	"visible":true, "selected":false},
+	                      	 	{"name": "Documents", "label":sbiModule_translate.load('sbi.workspace.menu.documents'),	"icon": "fa fa-file-text", "visible":$scope.showOrganizer && !$scope.isUserAdmin , "active":false, "selected":false}, 
+	                      	 	{"name": "Data", "label":sbiModule_translate.load('sbi.workspace.menu.data'), 	"icon": "fa fa-angle-down", "activeIcon":"fa fa-angle-up" ,"visible":$scope.showMyData, "active":false,
+	                      	 		"submenuOptions":[	{"name": "Datasets", "label":sbiModule_translate.load('sbi.workspace.menu.datasets'), 	"icon": "fa fa-database",	"visible":!$scope.isUserAdmin, "selected":false},
 	                    	                      	 	{"name": "Models","label":sbiModule_translate.load('sbi.workspace.menu.models'), 	"icon": "fa fa-cubes",	"visible":true, "selected":false},
-	                    	                      	 	{"name": "SmartFilters","label":sbiModule_translate.load('sbi.workspace.menu.smartFilter'), 	"icon": "fa fa-filter",	"visible":"smartFilterEnabled", "selected":false}
+	                    	                      	 	{"name": "SmartFilters","label":sbiModule_translate.load('sbi.workspace.menu.smartFilter'), 	"icon": "fa fa-filter",	"visible":!$scope.isUserAdmin, "selected":false}
 	                      	 	                     ]}, 
 	                      	  
-	                      	 	{"name": "Analysis", "label":sbiModule_translate.load('sbi.workspace.menu.analysis'), 	"icon": "fa fa-calculator","visible":true, "active":false, "selected":false}
+	                      	 	{"name": "Analysis", "label":sbiModule_translate.load('sbi.workspace.menu.analysis'), 	"icon": "fa fa-calculator","visible":!$scope.isUserAdmin && $scope.showAnalysis , "active":false, "selected":false}
 	                     	];
 	
 	$scope.selectedMenuItem=$scope.leftMainMenu[0]; 

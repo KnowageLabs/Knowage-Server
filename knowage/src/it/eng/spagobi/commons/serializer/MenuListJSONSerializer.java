@@ -75,8 +75,8 @@ public class MenuListJSONSerializer implements Serializer {
 	public static final String TARGET = "hrefTarget";
 	public static final String HELP = "HELP";
 
-	// OLD DOC MANAGER
 	private static final String HREF_DOC_BROWSER = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+
 	private static final String HREF_DOC_BROWSER_ANGULAR = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 
 	/**
@@ -99,7 +99,6 @@ public class MenuListJSONSerializer implements Serializer {
 	private static final String HREF_MANAGE_GLOSSARY_BUSINESS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/businessuser/glossaryBusiness.jsp";
 	private static final String HREF_MANAGE_CROSS_DEFINITION = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/definition/crossDefinition.jsp";
 	private static final String HREF_CACHE_MANAGEMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cache/cacheHome.jsp";
-	private static final String HREF_FUNCTIONS_CATALOG = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/functionsCatalog/functionsCatalog.jsp";
 
 	private static final String HREF_MANAGE_DOMAIN = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/domain/domainManagement.jsp";
 	private static final String HREF_MANAGE_CONFIG = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/config/configManagement.jsp";
@@ -109,6 +108,7 @@ public class MenuListJSONSerializer implements Serializer {
 	private static final String HREF_USERS = "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_USER_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 
 	private static final String HREF_MANAGE_LOVS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp";
+	private static final String HREF_WORKSPACE = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp";
 
 	public String contextName = "";
 	public String defaultThemePath = "/themes/sbi_default";
@@ -204,12 +204,9 @@ public class MenuListJSONSerializer implements Serializer {
 							temp.put(SCALE, "large");
 							temp.put(PATH, path);
 							temp.put(TARGET, "_self");
-
-							// OLD DOC MANAGER
-							// if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin")) {
-							// temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER + "', '" + text + "')");
-							// }
-
+							if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin")) {
+								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER + "', '" + text + "')");
+							}
 							if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin_angular")) {
 								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_ANGULAR + "', '" + text + "')");
 							}
@@ -217,7 +214,8 @@ public class MenuListJSONSerializer implements Serializer {
 							/**
 							 * The URL for the Workspace web page.
 							 *
-							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 * @author Danilo Ristovski (danristo,
+							 *         danilo.ristovski@mht.net)
 							 */
 							if (menuElem.getCode() != null && menuElem.getCode().equals("workspace")) {
 
@@ -284,7 +282,7 @@ public class MenuListJSONSerializer implements Serializer {
 			tempMenuList.put(myAccount);
 		}
 		if (isAbleTo(SpagoBIConstants.SEE_DOCUMENT_BROWSER, funcs)) {
-			JSONObject browser = createMenuItem("folder_open", HREF_DOC_BROWSER_ANGULAR, messageBuilder.getMessage("menu.Browser", locale), true, null);
+			JSONObject browser = createMenuItem("folder_open", HREF_DOC_BROWSER, messageBuilder.getMessage("menu.Browser", locale), true, null);
 			tempMenuList.put(browser);
 		}
 		if (isAbleTo(SpagoBIConstants.SEE_FAVOURITES, funcs)) {
@@ -310,6 +308,16 @@ public class MenuListJSONSerializer implements Serializer {
 			tempMenuList.put(myData);
 		}
 
+		// workspace should always be visible
+		JSONObject workspace = new JSONObject();
+		workspace.put(ICON_CLS, "work");
+		workspace.put(TOOLTIP, messageBuilder.getMessage("menu.workspace", locale));
+		workspace.put(ICON_ALIGN, "top");
+		workspace.put(SCALE, "large");
+		workspace.put(TARGET, "_self");
+		workspace.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_WORKSPACE + "');");
+		tempMenuList.put(workspace);
+
 		String strSbiSocialAnalysisStatus = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE");
 		boolean sbiSocialAnalysisStatus = "TRUE".equalsIgnoreCase(strSbiSocialAnalysisStatus);
 		if (sbiSocialAnalysisStatus && (isAbleTo(SpagoBIConstants.CREATE_SOCIAL_ANALYSIS, funcs) || isAbleTo(SpagoBIConstants.VIEW_SOCIAL_ANALYSIS, funcs))) {
@@ -324,8 +332,10 @@ public class MenuListJSONSerializer implements Serializer {
 					+ userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&"
 					+ SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');");
 			/*
-			 * } else { socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" +
-			 * locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');"); }
+			 * } else { socialAnalysis.put(HREF, "javascript:execDirectUrl('" +
+			 * HREF_SOCIAL_ANALYSIS + "?" + SpagoBIConstants.SBI_LANGUAGE + "="
+			 * + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "="
+			 * + locale.getCountry() + "');"); }
 			 */
 			tempMenuList.put(socialAnalysis);
 		}
@@ -354,7 +364,9 @@ public class MenuListJSONSerializer implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS, funcs)) {
 			JSONObject glossaryManagementTechnical = new JSONObject();
-			glossaryManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			glossaryManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO:
+																				// change
+																				// icon
 			glossaryManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.glossary.business", locale));
 			glossaryManagementTechnical.put(ICON_ALIGN, "top");
 			glossaryManagementTechnical.put(SCALE, "large");
@@ -377,7 +389,9 @@ public class MenuListJSONSerializer implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.DOMAIN_MANAGEMENT, funcs)) {
 			JSONObject domainManagementTechnical = new JSONObject();
-			domainManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			domainManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO:
+																			// change
+																			// icon
 			domainManagementTechnical.put(ICON_ALIGN, "top");
 			domainManagementTechnical.put(SCALE, "large");
 			domainManagementTechnical.put(TARGET, "_self");
@@ -387,7 +401,9 @@ public class MenuListJSONSerializer implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.CONFIG_MANAGEMENT, funcs)) {
 			JSONObject configManagementTechnical = new JSONObject();
-			configManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			configManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO:
+																			// change
+																			// icon
 			configManagementTechnical.put(ICON_ALIGN, "top");
 			configManagementTechnical.put(SCALE, "large");
 			configManagementTechnical.put(TARGET, "_self");
@@ -397,7 +413,9 @@ public class MenuListJSONSerializer implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.TENANT_MANAGEMENT, funcs)) {
 			JSONObject tenantManagementTechnical = new JSONObject();
-			tenantManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			tenantManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO:
+																			// change
+																			// icon
 			tenantManagementTechnical.put(ICON_ALIGN, "top");
 			tenantManagementTechnical.put(SCALE, "large");
 			tenantManagementTechnical.put(TARGET, "_self");
@@ -407,7 +425,9 @@ public class MenuListJSONSerializer implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT, funcs)) {
 			JSONObject udpManagementTechnical = new JSONObject();
-			udpManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			udpManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO:
+																			// change
+																			// icon
 			udpManagementTechnical.put(ICON_ALIGN, "top");
 			udpManagementTechnical.put(SCALE, "large");
 			udpManagementTechnical.put(TARGET, "_self");
@@ -417,7 +437,9 @@ public class MenuListJSONSerializer implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.LOVS_MANAGEMENT, funcs)) {
 			JSONObject lovsManagementTechnical = new JSONObject();
-			lovsManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			lovsManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO:
+																			// change
+																			// icon
 			lovsManagementTechnical.put(ICON_ALIGN, "top");
 			lovsManagementTechnical.put(SCALE, "large");
 			lovsManagementTechnical.put(TARGET, "_self");
@@ -434,17 +456,6 @@ public class MenuListJSONSerializer implements Serializer {
 			cacheManagement.put(TARGET, "_self");
 			cacheManagement.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_CACHE_MANAGEMENT + "');");
 			tempMenuList.put(cacheManagement);
-		}
-
-		if (isAbleTo(SpagoBIConstants.FUNCTIONS_CATALOG, funcs)) {
-			JSONObject functionsCatalog = new JSONObject();
-			functionsCatalog.put(ICON_CLS, "functions_catalog"); // *
-			functionsCatalog.put(TOOLTIP, messageBuilder.getMessage("menu.FunctionsCatalog", locale));
-			functionsCatalog.put(ICON_ALIGN, "top");
-			functionsCatalog.put(SCALE, "large");
-			functionsCatalog.put(TARGET, "_self");
-			functionsCatalog.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_FUNCTIONS_CATALOG + "');");
-			tempMenuList.put(functionsCatalog);
 		}
 
 		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);
@@ -567,8 +578,10 @@ public class MenuListJSONSerializer implements Serializer {
 			}
 		}
 		/*
-		 * Cannot set a static ID as a random number!!!! See https://www.spagoworld.org/jira/browse/SPAGOBI-1268 See
-		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1269 The following line was the cause of the above issues!!
+		 * Cannot set a static ID as a random number!!!! See
+		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1268 See
+		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1269 The following
+		 * line was the cause of the above issues!!
 		 */
 		// temp2.put(ID, new Double(Math.random()).toString());
 
@@ -613,8 +626,10 @@ public class MenuListJSONSerializer implements Serializer {
 					url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&"
 							+ SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "'";
 					/*
-					 * } else { url = url + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" +
-					 * locale.getCountry() + "'"; }
+					 * } else { url = url + "?" + SpagoBIConstants.SBI_LANGUAGE
+					 * + "=" + locale.getLanguage() + "&" +
+					 * SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry()
+					 * + "'"; }
 					 */
 				}
 
