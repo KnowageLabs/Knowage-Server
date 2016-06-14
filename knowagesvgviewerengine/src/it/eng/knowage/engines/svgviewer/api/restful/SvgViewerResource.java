@@ -19,6 +19,7 @@ package it.eng.knowage.engines.svgviewer.api.restful;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.knowage.engines.svgviewer.api.AbstractSvgViewerEngineResource;
+import it.eng.knowage.engines.svgviewer.map.renderer.Layer;
 import it.eng.knowage.engines.svgviewer.map.renderer.Measure;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
@@ -95,7 +96,66 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		}
 	}
 
-	// ** Utility methods */
+	@Path("/getLayers")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getLayers(@Context HttpServletRequest req) {
+		logger.debug("IN");
+		try {
+			SourceBean templateSB = getEngineInstance().getTemplate();
+			SourceBean confSB = (SourceBean) templateSB.getAttribute(SvgViewerEngineConstants.MAP_RENDERER_TAG);
+
+			SourceBean measuresConfigurationSB = (SourceBean) confSB.getAttribute("LAYERS");
+
+			Map measures = getLayers(measuresConfigurationSB);
+			ResponseBuilder response = Response.ok(measures);
+
+			return response.build();
+
+		} catch (Exception e) {
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	/** Utility methods ******************************************************************************************************/
+	private static Map getLayers(SourceBean layersConfigurationSB) {
+		Map layers;
+		List layerList;
+		Layer layer;
+		Properties attributes;
+		String attributeValue;
+
+		layers = new HashMap();
+
+		layerList = layersConfigurationSB.getAttributeAsList("LAYER");
+
+		for (int i = 0; i < layerList.size(); i++) {
+			SourceBean layerSB = (SourceBean) layerList.get(i);
+
+			layer = new Layer();
+
+			attributeValue = (String) layerSB.getAttribute("name");
+			layer.setName(attributeValue);
+			attributeValue = (String) layerSB.getAttribute("description");
+			layer.setDescription(attributeValue);
+			attributeValue = (String) layerSB.getAttribute("selected");
+			if (attributeValue != null) {
+				layer.setSelected(attributeValue.equalsIgnoreCase("true"));
+			} else {
+				layer.setSelected(false);
+			}
+
+			attributeValue = (String) layerSB.getAttribute("default_fill_color");
+			layer.setDefaultFillColor(attributeValue);
+
+			layers.put(layer.getName(), layer);
+		}
+
+		return layers;
+	}
+
 	private static Map getMeasures(SourceBean measuresConfigurationSB) {
 		Map measures;
 		List measureList;
