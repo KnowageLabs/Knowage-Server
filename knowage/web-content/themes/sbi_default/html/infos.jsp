@@ -7,11 +7,13 @@
 
 
  	String userName="";
+ 	String tenantName="";
 	IEngUserProfile userProfile = (IEngUserProfile)session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	
 
 	if (userProfile!=null){
 		userName=(String)((UserProfile)userProfile).getUserName();
+		tenantName=(String)((UserProfile)userProfile).getOrganization();
 	}
 
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
@@ -56,6 +58,9 @@
 				<p>Version: 1.0.0</p>
 				<p >
 					Logged User: <%= userName %>
+				</p>
+				<p >
+					Tenant: <%= tenantName %>
 				</p>
 				<p  >
 					Source code available at <a href="http://www.knowage-suite.com" target="_blank">www.knowage-suite.com</a>
