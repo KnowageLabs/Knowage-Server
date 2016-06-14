@@ -47,7 +47,6 @@ public class CalendarDAOImpl implements ICalendarDAO {
 
 	@Override
 	public List generateCalendarDays(Integer id, Session session) throws EMFUserError {
-		long start = System.currentTimeMillis() / 1000;
 		Calendar cal = loadCalendarById(id, session);
 		java.util.Calendar c1 = java.util.Calendar.getInstance();
 		java.util.Calendar c2 = java.util.Calendar.getInstance();
@@ -57,7 +56,6 @@ public class CalendarDAOImpl implements ICalendarDAO {
 
 		Transaction tx2 = session.beginTransaction();
 		Integer timeId = time.getTimeId();
-		System.out.println(System.currentTimeMillis() / 1000 - start);
 		while (c1.before(c2) || c1.equals(c2)) {
 			CalendarConfiguration calConf = new CalendarConfiguration();
 
@@ -71,9 +69,7 @@ public class CalendarDAOImpl implements ICalendarDAO {
 
 		}
 		tx2.commit();
-		System.out.println(System.currentTimeMillis() / 1000 - start);
 		List daysGenerated = loadCalendarDays(cal.getCalendarId(), session);
-		System.out.println(System.currentTimeMillis() / 1000 - start);
 		return daysGenerated;
 
 	}
