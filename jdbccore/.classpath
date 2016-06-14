@@ -6,11 +6,11 @@
 	<classpathentry kind="lib" path="lib/jdbc/postgresql-9.3-1101.jdbc3.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/sqljdbc4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="lib/jdbc/ojdbc14.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/ojdbc14.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
