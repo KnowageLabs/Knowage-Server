@@ -1,5 +1,5 @@
 /*
- * Knowage, Open Source Business Intelligence suite 
+ * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
  * 
  * Knowage is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ public class StatusWorkAction extends AbstractEngineAction {
 		JSONObject info = null;
 		Object pidO = request.getAttribute("PROCESS_ID");
 		String pid = "";
-		if (pidO != null) {
+		if (pidO != null && !pidO.toString().equals("")) {
 			pid = pidO.toString();
 
 		} else { // if pidO not found just return an empty xml Object
