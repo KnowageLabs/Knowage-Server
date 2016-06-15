@@ -128,21 +128,23 @@ public class ExecuteAdHocUtility {
 		JSONObject metadataObject = JSONUtils.toJSONObject(meta);
 		if (metadataObject == null) return false;
 		
-		JSONArray columnsMetadataArray = metadataObject.getJSONArray("columns");
+		JSONArray columnsMetadataArray = metadataObject.optJSONArray("columns");
+		if(columnsMetadataArray!=null){
+			for (int j = 0; j < columnsMetadataArray.length(); j++) {
+				JSONObject columnJsonObject = columnsMetadataArray
+						.getJSONObject(j);
+//					String columnName = columnJsonObject.getString("column");
+				String propertyName = columnJsonObject.getString("pname");
+				String propertyValue = columnJsonObject.getString("pvalue");
 
-		for (int j = 0; j < columnsMetadataArray.length(); j++) {
-			JSONObject columnJsonObject = columnsMetadataArray
-					.getJSONObject(j);
-//				String columnName = columnJsonObject.getString("column");
-			String propertyName = columnJsonObject.getString("pname");
-			String propertyValue = columnJsonObject.getString("pvalue");
-
-			if (propertyName.equalsIgnoreCase("hierarchy")) {
-				if (propertyValue.equalsIgnoreCase("geo")){
-					return true;
-				}
-			}	
+				if (propertyName.equalsIgnoreCase("hierarchy")) {
+					if (propertyValue.equalsIgnoreCase("geo")){
+						return true;
+					}
+				}	
+			}
 		}
+
 		return false;
 	}
 
