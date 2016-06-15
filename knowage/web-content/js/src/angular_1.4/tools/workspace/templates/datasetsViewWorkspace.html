@@ -9,7 +9,7 @@
 		  		
 		  		<md-tabs flex layout-fill class="rightPanelDocuments">
 			  
-    <md-tab label="{{translate.load('sbi.workspace.dataset.my')}}" flex ng-click="switchDatasetsTab('myDataSet')">
+    <md-tab id="my-dataset" label="{{translate.load('sbi.workspace.dataset.my')}}" flex ng-click="switchDatasetsTab('myDataSet')">
        <md-tab-body>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="myDatasets"
 		show-grid-view="showGridView"
@@ -26,7 +26,7 @@
  	  ></dataset-view>	
  	 </md-tab-body>
  	</md-tab>  
- 	<md-tab label="{{translate.load('sbi.workspace.dataset.enterprise')}}" flex ng-click="switchDatasetsTab('enterpriseDataSet')">
+ 	<md-tab id="enterprise-dataset" label="{{translate.load('sbi.workspace.dataset.enterprise')}}" flex ng-click="switchDatasetsTab('enterpriseDataSet')">
      <md-tab-body>
  	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="enterpriseDatasets"
 		show-grid-view="showGridView"

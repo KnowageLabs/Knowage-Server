@@ -44,7 +44,7 @@
            		</md-tooltip>
         	</md-button>
         
-	        <md-button class="md-icon-button" aria-label="previewDataset" ng-click="previewDatasetAction({ds:dataset});">
+	        <md-button id="previewDataset" class="md-icon-button" aria-label="previewDataset" ng-click="previewDatasetAction({ds:dataset});">
 	          	<md-icon md-font-icon="fa fa-eye fa-2x"></md-icon>
 	          	<md-tooltip md-delay="1000">
 	            	{{translate.load('sbi.workspace.dataset.preview')}}
@@ -69,7 +69,7 @@
             	</md-tooltip>
          	</md-button>
          	
-         		<md-button class="md-icon-button" aria-label="shareDataset"  ng-click="deleteDatasetAction({ds:dataset});" ng-show="shareDatasetEnabled">
+         		<md-button class="md-icon-button" aria-label="deleteDataset"  ng-click="deleteDatasetAction({ds:dataset});" ng-show="shareDatasetEnabled">
           		<md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
             	<md-tooltip md-delay="1000">
             	{{translate.load('sbi.generic.delete')}}

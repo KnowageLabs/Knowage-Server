@@ -17,7 +17,7 @@
 			
 			<md-list-item 	ng-click="leftMenuItemPicked(option)" ng-if="option.submenuOptions==undefined && option.visible"
 							ng-class="option.name.toLowerCase() == currentOptionMainMenu ? 'selectedLeftMenuItem' : 'notSelectedLeftMenuItem'">
-	    		<md-icon md-font-icon="{{option.icon}}"></md-icon>
+	    		<md-icon id="{{option.label}}" md-font-icon="{{option.icon}}"></md-icon>
 		   	 	<p> {{ option.label }} </p>
 		  	</md-list-item>
 		  
