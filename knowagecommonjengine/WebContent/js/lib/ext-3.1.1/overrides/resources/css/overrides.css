@@ -1,0 +1,12 @@
+/* START SPAGOBI-1181
+This override solves the issue on Chrome on combo-boxes: 
+issue SPAGOBI-1181: Combobox issue on Chrome: trigger is displayed on the left 
+https://www.spagoworld.org/jira/browse/SPAGOBI-1181
+See also (even if the DON'T exactly solve the issue)
+http://www.sencha.com/forum/showthread.php?95768-ComboBox-chrome-issues&
+http://www.sencha.com/forum/showthread.php?121786-Combo-trigger-icon-appearing-on-left-of-textfield
+*/
+.ext-webkit .x-form-field-wrap .x-form-trigger {
+    right: auto !important;
+}
+/* END SPAGOBI-1181 */
