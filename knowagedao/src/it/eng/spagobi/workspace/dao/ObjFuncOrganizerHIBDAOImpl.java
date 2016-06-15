@@ -218,24 +218,16 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 		Session aSession = null;
 		Transaction tx = null;
 		SbiFunctionsOrganizer toReturn = null;
-		List listOfFolders = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
 			Criteria criteria = aSession.createCriteria(SbiFunctionsOrganizer.class);
 			criteria.add(Restrictions.eq("code", user));
-			listOfFolders = criteria.list();
-			Iterator it = listOfFolders.iterator();
-			if (listOfFolders.isEmpty()) {
+			toReturn = (SbiFunctionsOrganizer) criteria.uniqueResult();
+			if (toReturn == null) {
 				toReturn = createRootFolder(user);
-			} else {
-				while (it.hasNext()) {
-					SbiFunctionsOrganizer hibObj = (SbiFunctionsOrganizer) it.next();
-					toReturn = hibObj;
-				}
 			}
-
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
