@@ -7,9 +7,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
-app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","multipartForm", "sbiModule_download","sbiModule_messaging",businessModelCatalogueFunction]);
+app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","multipartForm", "sbiModule_download","sbiModule_messaging","sbiModule_config",businessModelCatalogueFunction]);
 
-function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,multipartForm,sbiModule_download,sbiModule_messaging){
+function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,multipartForm,sbiModule_download,sbiModule_messaging,sbiModule_config){
 	
 	//variables
 	///////////////////////////////////////////////////////////
@@ -653,6 +653,32 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			 $scope.bmVersionsActive = item.id;
 		 }
 
+		 
+		 $scope.createBusinessModels=function(){
+	 
+			var dsId;
+			 for(var i=0;i<$scope.listOfDatasources.length;i++){
+				 if(angular.equals($scope.listOfDatasources[i].DATASOURCE_LABEL, $scope.selectedBusinessModel.dataSourceLabel)){
+					 dsId=$scope.listOfDatasources[i].DATASOURCE_ID;
+					 break;
+				 }
+			 }
+			 
+			 
+				$mdDialog.show({
+					preserveScope: true,
+					controller: function($scope,url){$scope.metaUrl=url;},
+					template:   '<md-dialog aria-label="Open meta"  style="width: 100%;  height: 100%;max-width: 100%;  max-height: 100%;" ng-cloak>'+
+								'<md-dialog-content flex layout="column" class="metaContent" >'+
+								'<iframe flex class=" noBorder" ng-src="{{metaUrl}}" name="metaIframe"></iframe>'+ 
+								'</md-dialog-content> '+
+								'</md-dialog>',  
+					clickOutsideToClose:true,
+					escapeToClose :true,
+					fullscreen: true,
+					locals:{url:sbiModule_config.contextName+'/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp&datasourceId='+dsId}
+				});
+			}
 };
 
 

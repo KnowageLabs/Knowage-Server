@@ -131,6 +131,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                     tmpColData.comparatorFunction=col[i].comparatorFunction;
                                                     tmpColData.comparatorColumn=col[i].comparatorColumn;
                                                     tmpColData.transformer=col[i].transformer;
+                                                    tmpColData.customClass=col[i].customClass;
                                                 } else {
                                                     //only the col name
                                                     tmpColData.label = col[i];

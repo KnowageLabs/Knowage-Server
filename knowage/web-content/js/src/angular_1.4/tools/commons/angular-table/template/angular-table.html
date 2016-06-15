@@ -43,7 +43,7 @@
 
 
 <script type="text/ng-template" id="headThTemplate.html">
-<th ng-repeat="val in tableColumns" width="{{val.size}}">
+<th ng-repeat="val in tableColumns" width="{{val.size}}" ng-class="val.customClass">
 
 	<div id="headDiv{{$index}}"  ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--'" ng-click="orderBy(val)"  ng-class="{ 'black': val.name==column_ordering}">
 		

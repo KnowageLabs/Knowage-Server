@@ -450,8 +450,8 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		.content(textFin)
 		.ariaLabel('error') 
 		.ok(sbiModule_translate.load('sbi.general.ok'))
-		.cancel(sbiModule_translate.load('sbi.general.cancel'))
 		return $mdDialog.show(alert); //can use the finally function
+// 		.cancel(sbiModule_translate.load('sbi.general.cancel'))
 	};
 });
 

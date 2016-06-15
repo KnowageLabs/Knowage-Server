@@ -48,6 +48,11 @@
 				, isLeafFn : '&?'
 				, showNodeCheckboxFn : '&?'
 				, dynamicTree : '@?'
+				, staticTree : '@?'
+				, hideProgress : '=?'
+				, notHideOnLoad : "=?"
+				, interceptor : "=?"
+				, expandOnClick :"=?"
 			},
 			controller: componentTreeControllerFunction,
 			controllerAs: 'ctrl',
@@ -280,6 +285,12 @@
 						
 						
 						scope.seeTree = true;
+						
+						if(scope.interceptor!=undefined){
+							scope.interceptor.refreshTree=function(){
+								scope.refreshTree();
+							}
+						}
 					}
 				};
 			}
@@ -319,9 +330,15 @@
 			}
 		};
 
-		$scope.openFolder = function (node) {
-			node.expanded = !node.expanded;
-			$scope.setSelected(node);
+		$scope.openFolder = function (node,doClickAction) {
+			if(($scope.expandOnClick!=false && $scope.expandOnClick!='false') || doClickAction==false ){
+				node.expanded = !node.expanded;
+			}
+			
+			if(doClickAction){
+				$scope.setSelected(node);
+			}
+			
 		};
 
 		$scope.setSelected = function (item) {
@@ -430,24 +447,30 @@
 			if(checkIgnoreDeepObjectChange(newValue, oldValue)) {
 				return;
 			} else {
-				$scope.seeTree = false;
-				
-				$scope.initializeFolders($scope.ngModel, null);
-				$scope.ngModel = $scope.createTreeStructure($scope.ngModel);
-				$scope.folders = $scope.ngModel;
-				
-				$timeout(function() {
-					$scope.seeTree = true;
-				},400,true);
+				$scope.refreshTree();
 			}
 		};
 		
-		if($scope.dynamicTree) {
-			$scope.$watch( watchedNgModel, updateWatchedItemFn, true);
-		} else {
-			$scope.$watchCollection( watchedNgModel, updateWatchedItemFn, true);
+		$scope.refreshTree=function(){
+			$scope.seeTree = false;
+			
+			$scope.initializeFolders($scope.ngModel, null);
+			$scope.ngModel = $scope.createTreeStructure($scope.ngModel);
+			$scope.folders = $scope.ngModel;
+			
+			$timeout(function() {
+				$scope.seeTree = true;
+			},400,true);
 		}
-		
+
+		if($scope.staticTree=='true'){
+			if($scope.dynamicTree) {
+				$scope.$watch( watchedNgModel, updateWatchedItemFn, true);
+			} else {
+				$scope.$watchCollection( watchedNgModel, updateWatchedItemFn, true);
+			}
+		}
+			
 		$scope.resetVisible = function(element) {
 			element.visible = true;
 			if (element[$scope.subfoldersId] !== undefined) {

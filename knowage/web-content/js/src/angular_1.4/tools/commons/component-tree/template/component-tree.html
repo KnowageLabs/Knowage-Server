@@ -5,15 +5,15 @@
 	<div layout="row" layout-align="start center">
 		<md-checkbox ng-if="showNodeCheckbox(node)" ng-model="node.checked"
 				ng-change="toogleSelected(node)" aria-label="Checkbox"></md-checkbox>
-		<md-icon ng-click="openFolder(node)"
+		<md-icon ng-click="openFolder(node,false)"
 				ng-if="isFolder(node)"
-				md-font-icon="{{folderIcon(node)}}"></md-icon>
-		<md-icon ng-click="openFolder(node)"
+				md-font-icon ng-class="folderIcon(node)"></md-icon>
+		<md-icon ng-click="openFolder(node,false)"
 				ng-if="isOpenFolder(node)"
-				md-font-icon="{{openFolderIcon(node)}}"></md-icon>
-		<md-icon ng-click="openFolder(node)"
+				md-font-icon ng-class="openFolderIcon(node)"></md-icon>
+		<md-icon ng-click="openFolder(node,false)"
 				ng-if="isLeaf(node)"
-				md-font-icon="{{getLeafIcon(node)}}"></md-icon>
+				md-font-icon ng-class="getLeafIcon(node)"></md-icon>
 		
 		<div ng-if="orderBy !== undefined && orderBy.length > 0 && node.type =='node'">
 			<md-icon ng-if="node.sortDirection=='asc'"
@@ -21,7 +21,7 @@
 			<md-icon ng-if="node.sortDirection=='desc'"
 				ng-click="toogleSort(node)" class="fa fa-sort-desc"></md-icon>
 		</div>
-		<div ng-click="openFolder(node)" class="line-container" ng-class="{'selectedNode': selectedItem.id == node.id}">
+		<div ng-click="openFolder(node,true)" class="line-container" ng-class="{'selectedNode': selectedItem.id!=undefined ? (selectedItem.id == node.id) : (selectedItem.$$hashKey == node.$$hashKey) }">
 			<span> &nbsp;{{node[label]}}</span>
 		</div>
 	</div>
@@ -57,7 +57,7 @@
 </script>
 
 <!-- seeTree is true when the tree is initialized and elaborated -->
-<div ng-show="seeTree==true">
+<div ng-show="seeTree==true || notHideOnLoad==true">
 	<div class="{{classLayout}}" id ="{{id}}">
 		<!-- create the tree structure -->
 		<div id="tree-container" ui-tree="optionsDragDrop" data-drag-delay="500" data-drag-enabled="{{enableDrag==true}}" >	
@@ -75,7 +75,7 @@
 	</div>
 </div>
  
-<md-content class="waitingContainer" ng-hide="seeTree==true" 
+<md-content class="waitingContainer" ng-hide="seeTree==true || hideProgress==true" 
 		layout="row" layout-padding layout-align="space-around center">
 	<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 	<h4>Please wait...</h4>
