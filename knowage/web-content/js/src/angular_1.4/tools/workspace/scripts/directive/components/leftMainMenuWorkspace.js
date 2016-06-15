@@ -41,7 +41,7 @@ function leftMenuController($scope, sbiModule_translate, sbiModule_user){
 	$scope.showMyData= (sbiModule_user.functionalities.indexOf("SeeMyData")>-1)? true:false;
 	$scope.showAnalysis= (sbiModule_user.functionalities.indexOf("CreateDocument")>-1)? true:false;
     $scope.showOrganizer= (sbiModule_user.functionalities.indexOf("SaveIntoFolderFunctionality")>-1)? true:false;
-    $scope.isUserAdmin= (sbiModule_user.roles.indexOf("admin")>-1)?true:false;
+    $scope.isUserAdmin= isAdmin;
     
  
     

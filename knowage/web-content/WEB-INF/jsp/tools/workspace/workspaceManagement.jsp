@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   SelfServiceDatasetAction ssa= new SelfServiceDatasetAction();
   Map<String,String> parameters= ssa.getParameters((UserProfile)userProfile,locale);
   JSONObject selfServiceParameters=new JSONObject(parameters);
+  boolean isAdmin = UserUtilities.isAdministrator(userProfile);
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -47,7 +48,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	   			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	   		*/
 		   var whereAreWeComingFrom = <%=request.getParameter("comingFrom")%>;
-		   var datasetParameters=<%=selfServiceParameters%>;  
+		   var datasetParameters=<%=selfServiceParameters%>;
+		   var isAdmin =<%=isAdmin%>;
 		</script>
 		
 	</head>
