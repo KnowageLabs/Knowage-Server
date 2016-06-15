@@ -574,6 +574,9 @@
 				console.log("[POST]: SUCCESS!");
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.browser.document.addedToWorkscpace"), sbiModule_translate.load('sbi.generic.success'));
 			}, function(response) {
+				if(response.data.errors[0].message=="not-enabled-to-call-service"){
+					response.data.errors[0].message=sbiModule_translate.load('sbi.workspace.user.role.constraint');
+				}
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load('sbi.generic.error'));
 			});
 		};

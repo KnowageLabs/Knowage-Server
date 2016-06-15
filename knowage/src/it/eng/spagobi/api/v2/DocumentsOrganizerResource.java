@@ -18,8 +18,10 @@
 package it.eng.spagobi.api.v2;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.workspace.dao.IObjFuncOrganizerDAO;
 
@@ -61,6 +63,7 @@ public class DocumentsOrganizerResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/{id}")
+	@UserConstraint(functionalities = { SpagoBIConstants.SAVE_INTO_FOLDER_FUNCTIONALITY })
 	public Response addDocumentToOrganizer(@PathParam("id") Integer documentId) {
 		logger.debug("IN");
 		try {
