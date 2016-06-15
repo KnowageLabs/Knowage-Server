@@ -17,30 +17,6 @@
  */
 package it.eng.spagobi.commons.dao;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
-import org.safehaus.uuid.UUIDGenerator;
-
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
@@ -66,6 +42,30 @@ import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
+import org.safehaus.uuid.UUIDGenerator;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
@@ -462,7 +462,6 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 		aRole.setIsAbleToCreateDocuments(true);
 		aRole.setIsAbleToCreateSocialAnalysis(true);
 		aRole.setIsAbleToDoMassiveExport(true);
-		aRole.setIsAbleToEditWorksheet(true);
 		aRole.setIsAbleToEnableDatasetPersistence(true);
 		aRole.setIsAbleToEnableFederatedDataset(true);
 		aRole.setIsAbleToHierarchiesManagement(true);

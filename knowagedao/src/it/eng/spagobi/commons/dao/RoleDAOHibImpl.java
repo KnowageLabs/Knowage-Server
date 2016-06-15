@@ -515,7 +515,6 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (authI.getName().equals("SAVE_INTO_FOLDER") && aRole.isAbleToSaveIntoPersonalFolder())
 						|| (authI.getName().equals("BUILD_QBE_QUERY") && aRole.isAbleToBuildQbeQuery())
 						|| (authI.getName().equals("DO_MASSIVE_EXPORT") && aRole.isAbleToDoMassiveExport())
-						|| (authI.getName().equals("EDIT_WORKSHEET") && aRole.isAbleToEditWorksheet())
 						|| (authI.getName().equals("MANAGE_USERS") && aRole.isAbleToManageUsers())
 						|| (authI.getName().equals("SEE_DOCUMENT_BROWSER") && aRole.isAbleToSeeDocumentBrowser())
 						|| (authI.getName().equals("SEE_FAVOURITES") && aRole.isAbleToSeeFavourites())
@@ -781,9 +780,6 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (name.equals("DO_MASSIVE_EXPORT")) {
 				role.setIsAbleToDoMassiveExport(true);
 			}
-			if (name.equals("EDIT_WORKSHEET")) {
-				role.setIsAbleToEditWorksheet(true);
-			}
 			if (name.equals("MANAGE_USERS")) {
 				role.setIsAbleToManageUsers(true);
 			}
@@ -1003,7 +999,6 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (functI.getName().equals("SAVE_INTO_FOLDER") && role.isAbleToSaveIntoPersonalFolder())
 						|| (functI.getName().equals("BUILD_QBE_QUERY") && role.isAbleToBuildQbeQuery())
 						|| (functI.getName().equals("DO_MASSIVE_EXPORT") && role.isAbleToDoMassiveExport())
-						|| (functI.getName().equals("EDIT_WORKSHEET") && role.isAbleToEditWorksheet())
 						|| (functI.getName().equals("MANAGE_USERS") && role.isAbleToManageUsers())
 						|| (functI.getName().equals("SEE_DOCUMENT_BROWSER") && role.isAbleToSeeDocumentBrowser())
 						|| (functI.getName().equals("SEE_FAVOURITES") && role.isAbleToSeeFavourites())

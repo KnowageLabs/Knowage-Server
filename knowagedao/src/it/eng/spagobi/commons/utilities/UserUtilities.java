@@ -520,9 +520,6 @@ public class UserUtilities {
 			if (virtualRole.isAbleToDoMassiveExport()) {
 				roleFunctionalities.add(SpagoBIConstants.DO_MASSIVE_EXPORT_FUNCTIONALITY);
 			}
-			if (virtualRole.isAbleToEditWorksheet()) {
-				roleFunctionalities.add(SpagoBIConstants.EDIT_WORKSHEET_FUNCTIONALITY);
-			}
 			if (virtualRole.isAbleToManageUsers()) {
 				roleFunctionalities.add(SpagoBIConstants.FINAL_USERS_MANAGEMENT);
 			}
@@ -719,10 +716,6 @@ public class UserUtilities {
 						logger.debug("User has role " + roleName + " that is able to do massive export.");
 						virtualRole.setIsAbleToDoMassiveExport(true);
 					}
-					if (anotherRole.isAbleToEditWorksheet()) {
-						logger.debug("User has role " + roleName + " that is able to edit worksheet documents.");
-						virtualRole.setIsAbleToEditWorksheet(true);
-					}
 					if (anotherRole.isAbleToManageUsers()) {
 						logger.debug("User has role " + roleName + " that is able to manage users.");
 						virtualRole.setIsAbleToManageUsers(true);
@@ -891,7 +884,7 @@ public class UserUtilities {
 			}
 		} catch (Throwable t) {
 			logger.error("Impossible to load engines from database ", t);
-			throw new SpagoBIEngineRuntimeException("Impossible get worksheet availability");
+			throw new SpagoBIEngineRuntimeException("Impossible get engine availability");
 		}
 
 		return toReturn;
