@@ -58,9 +58,13 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 			criteria.add(Restrictions.or(rest1, rest2));
 			listOfFolders = criteria.list();
 			Iterator it = listOfFolders.iterator();
-
-			while (it.hasNext()) {
-				realResult.add(toFunctionsOrganizer((SbiFunctionsOrganizer) it.next()));
+			if (listOfFolders.isEmpty()) {
+				SbiFunctionsOrganizer root = createRootFolder(userId);
+				realResult.add(toFunctionsOrganizer(root));
+			} else {
+				while (it.hasNext()) {
+					realResult.add(toFunctionsOrganizer((SbiFunctionsOrganizer) it.next()));
+				}
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -160,6 +164,43 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 		fo.setTimeIn(sfo.getCommonInfo().getTimeIn());
 
 		return fo;
+	}
+
+	public SbiFunctionsOrganizer createRootFolder(String user) {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		SbiFunctionsOrganizer hibFunct = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			hibFunct = new SbiFunctionsOrganizer();
+			hibFunct.setCode(user);
+			hibFunct.setDescr("root");
+			hibFunct.setName("root");
+			hibFunct.setPath("/" + user);
+			hibFunct.setParentFunct(null);
+			hibFunct.setProg(1);
+
+			updateSbiCommonInfo4Insert(hibFunct);
+			aSession.save(hibFunct);
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error("HibernateException", he);
+
+			if (tx != null)
+				tx.rollback();
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen()) {
+					aSession.close();
+				}
+				logger.debug("OUT");
+			}
+		}
+		return hibFunct;
 	}
 
 }
