@@ -76,8 +76,6 @@
 		<!-- Authorizations for KnowageBD -->
 		<AUTHORIZATION authorizationName="SAVE_SUBOBJECTS"
 			productType="KnowageBD" organization="DEFAULT_TENANT" />
-		<AUTHORIZATION authorizationName="SEE_SUBOBJECTS"
-			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SEE_VIEWPOINTS"
 			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SEE_SNAPSHOTS"
@@ -88,19 +86,13 @@
 			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SAVE_INTO_FOLDER"
 			productType="KnowageBD" organization="DEFAULT_TENANT" />
-		<AUTHORIZATION authorizationName="SAVE_REMEMBER_ME"
-			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SEE_METADATA"
 			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SAVE_METADATA"
 			productType="KnowageBD" organization="DEFAULT_TENANT" />
-		<AUTHORIZATION authorizationName="BUILD_QBE_QUERY"
-			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="MANAGE_USERS"
 			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SEE_DOCUMENT_BROWSER"
-			productType="KnowageBD" organization="DEFAULT_TENANT" />
-		<AUTHORIZATION authorizationName="SEE_FAVOURITES"
 			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="CREATE_DOCUMENTS"
 			productType="KnowageBD" organization="DEFAULT_TENANT" />
@@ -111,19 +103,15 @@
 		
 		<!-- Authorizations for KnowageSI -->
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_FAVOURITES" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_TODO_LIST" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
@@ -133,7 +121,6 @@
 		
 		<!-- Authorizations for KnowageER -->
 		<AUTHORIZATION productType="KnowageER" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
@@ -143,8 +130,6 @@
 		<AUTHORIZATION productType="KnowageER" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_FAVOURITES" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_SUBSCRIPTIONS" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_TODO_LIST" organization="DEFAULT_TENANT"/>	
+		<AUTHORIZATION productType="KnowageER" authorizationName="SEE_SUBSCRIPTIONS" organization="DEFAULT_TENANT"/>	
 	</DEFAULT_AUTHORIZATIONS>
 </INTERNAL_PROFILING_INITIALIZER>
