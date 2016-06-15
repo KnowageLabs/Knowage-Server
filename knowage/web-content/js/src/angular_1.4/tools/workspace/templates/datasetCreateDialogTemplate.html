@@ -10,18 +10,20 @@
 	         
 			<md-button 	class="" ng-click="toggleDWVBack()" ng-if="datasetWizardView>1" 
 						title="{{translate.load('sbi.workspace.dataset.wizard.backbutton.tooltip')}}"> 
-				{{translate.load('sbi.workspace.dataset.wizard.back')}}  
+				<md-icon class="fa fa-arrow-circle-o-left fa-2x">
 			</md-button>
 			
 			<md-button 	class="" ng-click="toggleDWVNext()" 
 						ng-disabled="nextOrSaveButtonCondition()"
 						title="{{datasetWizStep1NextButtonTitle()}}"> 
-				{{datasetWizardView==4 ? translate.load('sbi.workspace.dataset.wizard.save') : translate.load('sbi.workspace.dataset.wizard.next') }} 
+				 <md-icon ng-show="datasetWizardView==4" class="fa fa-floppy-o fa-2x"></md-icon> 
+				 <md-icon ng-show="datasetWizardView!=4" class="fa fa-arrow-circle-o-right fa-2x"></md-icon> 		
+				
 			</md-button>
 			
 			<md-button 	class="" ng-click="closeDatasetCreateDialog()" 
 						title="{{translate.load('sbi.workspace.dataset.wizard.closebutton.tooltip')}}">
-				{{translate.load('sbi.workspace.close')}} 
+				 <md-icon class="fa fa-times-circle-o fa-2x"></md-icon> 
 			</md-button>
             
 		</div>
