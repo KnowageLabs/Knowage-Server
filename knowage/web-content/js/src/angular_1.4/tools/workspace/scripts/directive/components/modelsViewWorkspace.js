@@ -224,7 +224,6 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		var modelName= businessModel.name;
 		var dataSource=businessModel.dataSourceLabel;
 		var url= datasetParameters.qbeFromBMServiceUrl
-		       // +'&isWorksheetEnabled='+datasetParameters.IS_WORKSHEET_ENABLED
 		        +'&MODEL_NAME='+modelName
 		        +'&DATA_SOURCE_LABEL='+ dataSource;
 		       

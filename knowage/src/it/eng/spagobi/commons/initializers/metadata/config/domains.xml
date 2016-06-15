@@ -34,8 +34,6 @@
 		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.smart_filter" />
 	<DOMAIN valueCd="CONSOLE" valueNm="Console" domainCd="BIOBJ_TYPE"
 		domainNm="BI Object types" valueDs="sbidomains.ds.console" />
-	<DOMAIN valueCd="WORKSHEET" valueNm="sbidomains.nm.worksheet"
-		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.worksheet" />
 	<DOMAIN valueCd="CHART" valueNm="sbidomains.nm.chart" domainCd="BIOBJ_TYPE"
 		domainNm="BI Object types" valueDs="sbidomains.ds.chart" />
 	<DOMAIN valueCd="MOBILE_REPORT" valueNm="sbidomains.nm.mobile.report"

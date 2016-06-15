@@ -43,7 +43,6 @@
 
 <MAPPING business_type="ACTION" business_name="EXECUTE_DOCUMENT_ACTION" publisher_name="ExecuteDocumentPublisher"/>
 <MAPPING business_type="ACTION" business_name="EXECUTE_DOCUMENT_ANGULAR_ACTION" publisher_name="ExecuteDocumentAngularPublisher"/>
-<MAPPING business_type="ACTION" business_name="CREATE_DATASET_FOR_WORKSHEET_ACTION" publisher_name="CreateWorksheetObjectPublisher"/>
 <MAPPING business_type="ACTION" business_name="SELECT_DATASET_ACTION" publisher_name="SelectDatasetPublisher"/>
 
 </PRESENTATION>

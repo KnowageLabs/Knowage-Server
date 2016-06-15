@@ -44,7 +44,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			LIGHT_NAVIGATOR_DISABLED: 'TRUE'
 		};
 				
-		// case coming from createWorksheetObject.jsp
+		
 		if(config.MESSAGE_DET != undefined && config.MESSAGE_DET != null ){
 			saveDocParams.MESSAGE_DET = config.MESSAGE_DET;
 		
@@ -280,8 +280,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		 
 		var docName = this.docName.getValue();
 		//defines the document label internally (Since SpagoBI 5 is not more visible in the GUI)
-//		var docLabel = this.docLabel.getValue();		
-		var docLabel = (this.OBJECT_TYPE == 'WORKSHEET')? 'ws__' : 'map__';
+		var docLabel =  'map__';
 		docLabel +=  Math.floor((Math.random()*1000000000)+1); 
 		var docDescr = this.docDescr.getValue();
 		var docVisibility = this.docVisibility.getValue();

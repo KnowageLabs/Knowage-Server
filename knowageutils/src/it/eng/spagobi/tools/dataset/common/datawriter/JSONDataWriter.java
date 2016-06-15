@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,20 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.common.datawriter;
+
+import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -30,15 +39,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
-import it.eng.spagobi.tools.dataset.common.datastore.Field;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -62,8 +62,8 @@ public class JSONDataWriter implements IDataWriter {
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	private static final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat("HH:mm:ss");
-	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
-	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
+	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
+	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
 	public static final String METADATA = "metaData";
 	public static final String PROPERTY_FIELD_OPTION = "PROPERTY_FIELD_OPTION";
 	public static final String PROPERTY_ADJUST = "PROPERTY_ADJUST";
@@ -145,8 +145,8 @@ public class JSONDataWriter implements IDataWriter {
 			Assert.assertNotNull(propertyRawValue, "DataStore property [resultNumber] cannot be null");
 			Assert.assertTrue(propertyRawValue instanceof Integer, "DataStore property [resultNumber] must be of type [Integer]");
 			resultNumber = ((Integer) propertyRawValue).intValue();
-			Assert.assertTrue(resultNumber >= 0,
-					"DataStore property [resultNumber] cannot be equal to [" + resultNumber + "]. It must be greater or equal to zero");
+			Assert.assertTrue(resultNumber >= 0, "DataStore property [resultNumber] cannot be equal to [" + resultNumber
+					+ "]. It must be greater or equal to zero");
 
 			// records
 			recNo = 0;
@@ -253,8 +253,8 @@ public class JSONDataWriter implements IDataWriter {
 			Assert.assertNotNull(propertyRawValue, "DataStore property [resultNumber] cannot be null");
 			Assert.assertTrue(propertyRawValue instanceof Integer, "DataStore property [resultNumber] must be of type [Integer]");
 			resultNumber = ((Integer) propertyRawValue).intValue();
-			Assert.assertTrue(resultNumber >= 0,
-					"DataStore property [resultNumber] cannot be equal to [" + resultNumber + "]. It must be greater or equal to zero");
+			Assert.assertTrue(resultNumber >= 0, "DataStore property [resultNumber] cannot be equal to [" + resultNumber
+					+ "]. It must be greater or equal to zero");
 			result.put(TOTAL_PROPERTY, resultNumber);
 
 			recordsJSON = new JSONArray();
@@ -469,20 +469,20 @@ public class JSONDataWriter implements IDataWriter {
 
 	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId, JSONObject fieldMetaDataJSON) {
 		if (fieldOptions != null) {
-			for (int i = 0; i < fieldOptions.length(); i++) {
-				try {
-					JSONObject afield = fieldOptions.getJSONObject(i);
-					JSONObject aFieldOptions = afield.getJSONObject(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
-					String afieldId = afield.getString("id");
-					String scaleFactor = aFieldOptions.optString(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
-					if (afieldId.equals(fieldId) && scaleFactor != null) {
-						fieldMetaDataJSON.put(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR, scaleFactor);
-						return;
-					}
-				} catch (Exception e) {
-					throw new RuntimeException("An unpredicted error occurred while adding measures scale factor", e);
-				}
-			}
+			// for (int i = 0; i < fieldOptions.length(); i++) {
+			// try {
+			// JSONObject afield = fieldOptions.getJSONObject(i);
+			// JSONObject aFieldOptions = afield.getJSONObject(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
+			// String afieldId = afield.getString("id");
+			// String scaleFactor = aFieldOptions.optString(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
+			// if (afieldId.equals(fieldId) && scaleFactor != null) {
+			// fieldMetaDataJSON.put(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR, scaleFactor);
+			// return;
+			// }
+			// } catch (Exception e) {
+			// throw new RuntimeException("An unpredicted error occurred while adding measures scale factor", e);
+			// }
+			// }
 		}
 	}
 

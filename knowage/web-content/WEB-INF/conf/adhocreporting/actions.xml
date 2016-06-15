@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ACTIONS>
- <ACTION name="START_CREATING_WORKSHEET_FROM_DATASET_ACTION" class="it.eng.spagobi.adhocreporting.services.StartCreatingWorksheetFromDatasetAction" scope="REQUEST">
- 	<CONFIG/>
- </ACTION>
 <!-- 
  <ACTION name="GET_DATASETS_USER_LIST" class="it.eng.spagobi.adhocreporting.services.GetDatasetsUserListAction" scope="REQUEST">
     <CONFIG/>

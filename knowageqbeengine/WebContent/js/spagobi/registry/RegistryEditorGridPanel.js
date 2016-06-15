@@ -1041,8 +1041,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			iconCls: 'icon-delete',
 			handler : function(){
 				Ext.MessageBox.confirm(
-						LN('sbi.worksheet.designer.msg.deletetab.title'),
-						LN('sbi.worksheet.designer.msg.deletetab.msg'),            
+						LN('sbi.qbe.designer.msg.deletetab.title'),
+						LN('sbi.qbe.designer.msg.deletetab.msg'),            
 			            function(btn, text) {
 			                if (btn=='yes') {
 			    				this.deleteRecord();

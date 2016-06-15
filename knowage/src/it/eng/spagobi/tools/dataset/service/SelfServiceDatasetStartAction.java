@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -67,9 +67,6 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	public static final String COUNTRY = "COUNTRY";
 	public static final String OUTPUT_PARAMETER_EXECUTION_ID = "executionId";
 
-	public static final String OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL = "worksheetServiceUrl";
-	public static final String WORKSHEET_EDIT_ACTION = "WORKSHEET_WITH_DATASET_START_EDIT_ACTION";
-
 	public static final String OUTPUT_PARAMETER_QBE_EDIT_FROM_BM_SERVICE_URL = "qbeFromBMServiceUrl";
 	public static final String OUTPUT_PARAMETER_QBE_EDIT_FROM_DATA_SET_SERVICE_URL = "qbeFromDataSetServiceUrl";
 	public static final String OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL = "qbeEditDatasetServiceUrl";
@@ -90,7 +87,6 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	public static final String TABLE_NAME_PREFIX = "TABLE_NAME_PREFIX";
 
 	public static final String PERSIST_TABLE_PREFIX_CONFIG = "SPAGOBI.DATASET.PERSIST.TABLE_PREFIX";
-	public static final String IS_WORKSHEET_ENABLED = "IS_WORKSHEET_ENABLED";
 	public static final String IS_SMARTFILTER_ENABLED = "IS_SMARTFILTER_ENABLED";
 	public static final String IS_CKAN_ENABLED = "IS_CKAN_ENABLED";
 	public static final String CKAN_URLS = "CKAN_URLS";
@@ -112,13 +108,10 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 
 			String executionId = ExecuteAdHocUtility.createNewExecutionId();
 
-		
-			
 			String qbeEditFromBMActionUrl = buildQbeEditFromBMServiceUrl(executionId);
 			String qbeEditFromFederationActionUrl = buildQbeEditFromFederationServiceUrl(executionId);
 			String qbeEditFromDataSetActionUrl = buildQbeEditFromDataSetServiceUrl(executionId);
 			String qbeEditDataSetActionUrl = buildQbeEditDataSetServiceUrl(executionId);
-			String worksheetEditActionUrl = buildWorksheetEditServiceUrl(executionId);
 			String geoereportEditActionUrl = buildGeoreportEditServiceUrl(executionId);
 			String cockpitEditActionUrl = buildCockpitEditServiceUrl(executionId);
 			String isFromMyData = (getAttributeAsString("MYDATA") == null) ? "FALSE" : getAttributeAsString("MYDATA");
@@ -128,15 +121,24 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			String typeDoc = getAttributeAsString("TYPE_DOC");
 			String userCanPersist = userCanPersist();
 			String tableNamePrefix = getTableNamePrefix();
-			String isWorksheetEnabled = isWorksheetEnabled();
 			String isSmartFilterEnabled = isSmartFilterEnabled();
 			String isCkanEnabled = isCkanEnabled();
 			String ckanUrls = getCkanUrls();
 			String canCreateDatasetAsFinalUser = canCreateDatasetAsFinalUser();
 			String canUseFederatedDataset = canUseFederatedDatasetAsFinalUser();
 
-			String callBackFunction= (getAttributeAsString(CALLBACK_FUNCTION) == null) ? "empty" : getAttributeAsString("CALLBACK_FUNCTION");//name of a function that has to be invoked on manageSelfService.jsp. Now we use toFederation in order to pen the federation tab after.
-			
+			String callBackFunction = (getAttributeAsString(CALLBACK_FUNCTION) == null) ? "empty" : getAttributeAsString("CALLBACK_FUNCTION");// name of a
+																																				// function that
+																																				// has to be
+																																				// invoked on
+																																				// manageSelfService.jsp.
+																																				// Now we use
+																																				// toFederation
+																																				// in order to
+																																				// pen the
+																																				// federation
+																																				// tab after.
+
 			logger.trace("Copying output parameters to response...");
 			try {
 				Locale locale = getLocale();
@@ -144,7 +146,6 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 				setAttribute(COUNTRY, locale.getCountry());
 				setAttribute(OUTPUT_PARAMETER_EXECUTION_ID, executionId);
 				setAttribute(OUTPUT_PARAMETER_QBE_EDIT_FROM_FEDERATION_SERVICE_URL, qbeEditFromFederationActionUrl);
-				setAttribute(OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL, worksheetEditActionUrl);
 				setAttribute(OUTPUT_PARAMETER_QBE_EDIT_FROM_BM_SERVICE_URL, qbeEditFromBMActionUrl);
 				setAttribute(OUTPUT_PARAMETER_QBE_EDIT_FROM_DATA_SET_SERVICE_URL, qbeEditFromDataSetActionUrl);
 				setAttribute(OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL, qbeEditDataSetActionUrl);
@@ -156,7 +157,6 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 				setAttribute(IS_FROM_DOCBROWSER, isFromDocBrowser);
 				setAttribute(USER_CAN_PERSIST, userCanPersist);
 				setAttribute(TABLE_NAME_PREFIX, tableNamePrefix);
-				setAttribute(IS_WORKSHEET_ENABLED, isWorksheetEnabled);
 				setAttribute(IS_SMARTFILTER_ENABLED, isSmartFilterEnabled);
 				setAttribute(IS_CKAN_ENABLED, isCkanEnabled);
 				setAttribute(CKAN_URLS, ckanUrls);
@@ -210,54 +210,12 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 		return parametersMap;
 	}
 
-	// WORKSHEET
-	protected String buildWorksheetEditServiceUrl(String executionId) {
-		Engine worksheetEngine = null;
-		String worksheetEditActionUrl = null;
-
-		Map<String, String> parametersMap = buildWorksheetEditServiceBaseParametersMap();
-		parametersMap.put("SBI_EXECUTION_ID", executionId);
-
-		IDataSource datasource;
-		try {
-			datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
-		} catch (EMFUserError e) {
-			throw new SpagoBIRuntimeException("Error while loading default datasource for writing", e);
-		}
-		if (datasource != null) {
-			parametersMap.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
-		} else {
-			logger.debug("There is no default datasource for writing");
-		}
-
-		try {
-			worksheetEngine = ExecuteAdHocUtility.getWorksheetEngine();
-		} catch (SpagoBIRuntimeException r) {
-			// the ws engine is not found
-			logger.info("Engine not found. Error: ", r);
-		}
-		if (worksheetEngine != null) {
-			LogMF.debug(logger, "Engine label is equal to [{0}]", worksheetEngine.getLabel());
-			// create the WorkSheet Edit Service's URL
-			worksheetEditActionUrl = GeneralUtilities.getUrl(worksheetEngine.getUrl(), parametersMap);
-			LogMF.debug(logger, "Worksheet edit service invocation url is equal to [{}]", worksheetEditActionUrl);
-		}
-
-		return worksheetEditActionUrl;
-	}
-
-	protected Map<String, String> buildWorksheetEditServiceBaseParametersMap() {
-		Map<String, String> parametersMap = buildServiceBaseParametersMap();
-		parametersMap.put("ACTION_NAME", WORKSHEET_EDIT_ACTION);
-		return parametersMap;
-	}
-
 	// QBE from BM
 	protected String buildQbeEditFromDataSetServiceUrl(String executionId) {
 		Engine qbeEngine = null;
 		String qbeEditActionUrl = null;
 		String label = null;
-		
+
 		Map<String, String> parametersMap = buildQbeEditFromFederationServiceBaseParametersMap();
 		parametersMap.put("SBI_EXECUTION_ID", executionId);
 
@@ -272,7 +230,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 		} else {
 			logger.debug("There is no default datasource for writing");
 		}
-		
+
 		logger.debug("Getting the cache data source");
 		ICache cache = SpagoBICacheManager.getCache();
 		if (cache instanceof SQLDBCache) {
@@ -302,8 +260,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 		}
 		return qbeEditActionUrl;
 	}
-	
-	
+
 	protected String buildQbeEditFromBMServiceUrl(String executionId) {
 		Engine qbeEngine = null;
 		String qbeEditActionUrl = null;
@@ -378,42 +335,42 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 		return qbeEditActionUrl;
 	}
 
-//	// QBE from dataset
-//	protected String buildQbeEditFromDataSetServiceUrl2(String executionId) {
-//		Engine qbeEngine = null;
-//		String qbeEditActionUrl = null;
-//
-//		Map<String, String> parametersMap = buildQbeEditFromDataSetServiceBaseParametersMap();
-//		parametersMap.put("SBI_EXECUTION_ID", executionId);
-//
-//		IDataSource datasource;
-//		try {
-//			datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
-//		} catch (EMFUserError e) {
-//			throw new SpagoBIRuntimeException("Error while loading default datasource for writing", e);
-//		}
-//		if (datasource != null) {
-//			parametersMap.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
-//		} else {
-//			logger.debug("There is no default datasource for writing");
-//		}
-//
-//		try {
-//			qbeEngine = ExecuteAdHocUtility.getQbeEngine();
-//		} catch (SpagoBIRuntimeException r) {
-//			// the qbe engine is not found
-//			logger.info("Engine not found. Error: ", r);
-//		}
-//
-//		if (qbeEngine != null) {
-//			LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
-//
-//			// create the qbe Edit Service's URL
-//			qbeEditActionUrl = GeneralUtilities.getUrl(qbeEngine.getUrl(), parametersMap);
-//			LogMF.debug(logger, "Qbe edit service invocation url is equal to [{}]", qbeEditActionUrl);
-//		}
-//		return qbeEditActionUrl;
-//	}
+	// // QBE from dataset
+	// protected String buildQbeEditFromDataSetServiceUrl2(String executionId) {
+	// Engine qbeEngine = null;
+	// String qbeEditActionUrl = null;
+	//
+	// Map<String, String> parametersMap = buildQbeEditFromDataSetServiceBaseParametersMap();
+	// parametersMap.put("SBI_EXECUTION_ID", executionId);
+	//
+	// IDataSource datasource;
+	// try {
+	// datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+	// } catch (EMFUserError e) {
+	// throw new SpagoBIRuntimeException("Error while loading default datasource for writing", e);
+	// }
+	// if (datasource != null) {
+	// parametersMap.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
+	// } else {
+	// logger.debug("There is no default datasource for writing");
+	// }
+	//
+	// try {
+	// qbeEngine = ExecuteAdHocUtility.getQbeEngine();
+	// } catch (SpagoBIRuntimeException r) {
+	// // the qbe engine is not found
+	// logger.info("Engine not found. Error: ", r);
+	// }
+	//
+	// if (qbeEngine != null) {
+	// LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
+	//
+	// // create the qbe Edit Service's URL
+	// qbeEditActionUrl = GeneralUtilities.getUrl(qbeEngine.getUrl(), parametersMap);
+	// LogMF.debug(logger, "Qbe edit service invocation url is equal to [{}]", qbeEditActionUrl);
+	// }
+	// return qbeEditActionUrl;
+	// }
 
 	// QBE to edit a dataset
 	protected String buildQbeEditDataSetServiceUrl(String executionId) {
@@ -643,30 +600,6 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 
 	}
 
-	protected String isWorksheetEnabled() {
-		String toReturn = "false";
-
-		try {
-			IEngineDAO engineDao = DAOFactory.getEngineDAO();
-			List<Engine> nonPagedEngines = engineDao.loadAllEnginesByTenant();
-			for (int i = 0, l = nonPagedEngines.size(); i < l; i++) {
-				Engine elem = nonPagedEngines.get(i);
-				IDomainDAO domainDAO = DAOFactory.getDomainDAO();
-				Domain domainType = domainDAO.loadDomainById(elem.getBiobjTypeId());
-				if (domainType.getValueCd().equalsIgnoreCase("WORKSHEET")) {
-					toReturn = "true";
-					break;
-				}
-			}
-		} catch (Throwable t) {
-			logger.error("Impossible to load engines from database ", t);
-			throw new SpagoBIEngineRuntimeException("Impossible get worksheet availability");
-		}
-
-		return toReturn;
-
-	}
-
 	protected String isSmartFilterEnabled() {
 		String toReturn = "false";
 
@@ -684,7 +617,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			}
 		} catch (Throwable t) {
 			logger.error("Impossible to load engines from database ", t);
-			throw new SpagoBIEngineRuntimeException("Impossible get worksheet availability");
+			throw new SpagoBIEngineRuntimeException("Impossible get smart filter availability");
 		}
 		return toReturn;
 	}

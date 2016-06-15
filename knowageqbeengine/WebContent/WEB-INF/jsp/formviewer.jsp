@@ -28,8 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spago.base.*"%>
 <%@page import="it.eng.spagobi.engines.qbe.QbeEngineConfig"%>
 <%@page import="it.eng.spagobi.engines.qbe.QbeEngineInstance"%>
-<%@page import="it.eng.spagobi.engines.worksheet.WorksheetEngineInstance"%>
-<%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
@@ -38,15 +36,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.services.common.EnginConf"%>
 <%@page import="it.eng.qbe.serializer.SerializationManager"%>
 <%@page import="org.json.JSONObject"%>
-<%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%
 	QbeEngineInstance qbeEngineInstance;
-	WorksheetEngineInstance worksheetEngineInstance;
-	WorkSheetDefinition workSheetDefinition;
 	UserProfile profile;
 	Locale locale;
 	String isFromCross;
@@ -62,10 +57,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	SourceBean serviceResponse = responseContainer.getServiceResponse();
 	SourceBean serviceRequest = requestContainer.getServiceRequest();
 	qbeEngineInstance = (QbeEngineInstance) serviceResponse.getAttribute("ENGINE_INSTANCE");
-	worksheetEngineInstance = (WorksheetEngineInstance) serviceResponse.getAttribute(WorksheetEngineInstance.class.getName());
-  	workSheetDefinition = worksheetEngineInstance != null ? 
-  			((WorkSheetDefinition) worksheetEngineInstance.getAnalysisState()) 
-  			: null;
 	profile = (UserProfile)qbeEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 	locale = (Locale) qbeEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 	modality = (String) serviceRequest.getAttribute("MODALITY");
@@ -110,7 +101,6 @@ end DOCTYPE declaration --%>
 
     	Sbi.config = {}; 
     	
-    	Sbi.config.worksheetVersion = <%= WorkSheetDefinition.CURRENT_VERSION %>;
 		Sbi.config.queryLimit = {};
 		Sbi.config.queryLimit.maxRecords = <%= resultLimit != null ? "" + resultLimit.intValue() : "undefined" %>;
 		Sbi.config.queryLimit.isBlocking = <%= isMaxResultLimitBlocking %>;
@@ -137,16 +127,7 @@ end DOCTYPE declaration --%>
 		});
 	    
 	    
-	    var formEngineConfig = {};
-	    formEngineConfig.worksheet = {};
-	    formEngineConfig.worksheet.engineInitialized = <%= worksheetEngineInstance != null %>;
-      	<%
-      	JSONObject workSheetDefinitionJSON = workSheetDefinition != null ? 
-      			(JSONObject) SerializationManager.serialize(workSheetDefinition, "application/json") : 
-      				new JSONObject();
-      	%>
-      	formEngineConfig.worksheet.worksheetTemplate = <%= workSheetDefinitionJSON %>;
-	    
+	    var formEngineConfig = {};	    
       	Sbi.formviewer.formEnginePanel = null;
 	    
         Ext.onReady(function() {
@@ -165,7 +146,6 @@ end DOCTYPE declaration --%>
 				region: 'center'
 				, formViewerPageConfig : {
 					showSaveFormButton : <%= modality.equalsIgnoreCase("VIEW") %>
-					, showWorksheetButton : <%= modality.equalsIgnoreCase("VIEW") || modality.equalsIgnoreCase("WORKSHEET_EDIT") %>
 				}
 			};
 			

@@ -474,10 +474,6 @@ Sbi.constants.qbe.SLOTS_EDITOR_AGGREGATION_FUNCTIONS = Sbi.constants.qbe.AGGREGA
 // script functions
 Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_SCRIPT_FUNCTIONS = Sbi.constants.qbe.SCRIPT_FUNCTIONS;
 
-Sbi.constants.worksheet = {
-		
-};
-
 Sbi.constants.formviewer = {
 		
 };

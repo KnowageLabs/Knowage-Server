@@ -642,9 +642,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <option value="<%= SpagoBIConstants.FINAL_USERS_MANAGEMENT %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.FINAL_USERS_MANAGEMENT)) ? "selected='selected'" : ""%>>
                     <spagobi:message key="menu.Users" />
                 </option>
-                <option value="<%= SpagoBIConstants.CREATE_WORKSHEET_FROM_DATASET_USER %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.CREATE_WORKSHEET_FROM_DATASET_USER)) ? "selected='selected'" : ""%>>
-                    <spagobi:message key="menu.WorksheetFromDataset" />
-                </option>
 			</select>
 		</div>
 		

@@ -17,13 +17,13 @@
  */
 package it.eng.spagobi.commons.bo;
 
+import it.eng.spagobi.services.validation.Xss;
+
 import java.io.Serializable;
 import java.util.List;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
-
-import it.eng.spagobi.services.validation.Xss;
 
 /**
  * Defines a <code>Role</code> object.
@@ -71,7 +71,6 @@ public class RoleBO implements Serializable {
 	private boolean ableToSeeNotes;
 	private boolean ableToSendMail;
 	private boolean ableToSaveIntoPersonalFolder;
-	private boolean ableToEditWorksheet;
 	private boolean ableToSaveRememberMe;
 	private boolean ableToSeeMetadata;
 	private boolean ableToSaveMetadata;
@@ -312,14 +311,6 @@ public class RoleBO implements Serializable {
 
 	public void setAbleToSaveIntoPersonalFolder(boolean ableToSaveIntoPersonalFolder) {
 		this.ableToSaveIntoPersonalFolder = ableToSaveIntoPersonalFolder;
-	}
-
-	public boolean isAbleToEditWorksheet() {
-		return ableToEditWorksheet;
-	}
-
-	public void setAbleToEditWorksheet(boolean ableToEditWorksheet) {
-		this.ableToEditWorksheet = ableToEditWorksheet;
 	}
 
 	public boolean isAbleToSaveRememberMe() {

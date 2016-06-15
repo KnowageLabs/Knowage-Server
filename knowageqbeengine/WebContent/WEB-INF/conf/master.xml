@@ -53,12 +53,6 @@
 	<CONFIGURATOR path="/WEB-INF/conf/dataset/actions.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/dataset/validation.xml" />
 	
-	<!-- start worksheet configuration -->
-	<CONFIGURATOR path="/WEB-INF/conf/worksheet/actions.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/worksheet/validation.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/worksheet/publishers.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/worksheet/presentation.xml" />
-	
 	<!-- start registry configuration -->
 	<CONFIGURATOR path="/WEB-INF/conf/registry/actions.xml" />
 

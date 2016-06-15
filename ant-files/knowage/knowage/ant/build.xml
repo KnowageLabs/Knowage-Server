@@ -363,58 +363,8 @@
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
 	<target name="production" depends="create-production">
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS.jspf">
-			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
-			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
-		</replace>
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS.jspf">
-			<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
-			<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
-		</replace>
+		<!-- non trova i files-->
 
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS.jspf">
-			<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
-			<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
-		</replace>
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS.jspf">
-			<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
-			<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
-		</replace>
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS311.jspf">
-			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
-			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
-		</replace>
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS311.jspf">
-			<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
-			<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
-		</replace>
-
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS311.jspf">
-			<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
-			<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
-		</replace>
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS311.jspf">
-			<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
-			<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
-		</replace>
-			<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS410.jspf">
-				<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
-				<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
-			</replace>
-			<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS410.jspf">
-				<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
-				<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
-			</replace>
-
-			<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS410.jspf">
-				<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
-				<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
-			</replace>
-			<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS410.jspf">
-				<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
-				<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
-			</replace>
-		
 	</target>
 
 
@@ -513,8 +463,6 @@
 				<file name="./src/ext/sbi/home/DefaultRoleWindow.js" /> 
 
 				<file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js" />  
-
-				<file name="./src/ext/sbi/worksheet/WorksheetEditorIframePanel.js" />
 
 			</filelist>
 
@@ -652,10 +600,7 @@
 
 				<file name="./src/ext/sbi/browser/DocumentsTree.js" />
 				<file name="./src/ext/sbi/execution/SaveDocumentWindow.js" />
-				<file name="./src/ext/sbi/worksheet/DatasetsListPanel.js" />
-				<file name="./src/ext/sbi/worksheet/WorksheetEditorIframePanelExt3.js" />
-				<file name="./src/ext/sbi/worksheet/WorksheetFromDatasetPanel.js" />
-				
+
 			</filelist>
 
 		</concat>
@@ -799,6 +744,7 @@
 		<java jar="./yuicompressor-2.4.2.jar" fork="true">
 			<arg line="-o ${build}/${webapp_name}/js/src/ext4/sbi-all-ext410-${project.version}.js ${build}/${webapp_name}/js/src/ext4/sbi-all-ext410-debug.js --nomunge" />
 		</java>
+
 	</target>
 
 

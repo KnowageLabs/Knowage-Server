@@ -43,12 +43,6 @@
 		defaultValue="false" />
 	<EXPORTER domain="RTF" engine="knowagesmartfilteren"
 		defaultValue="false" />
-	<EXPORTER domain="XLS" engine="knowageworksheeteng"
-		defaultValue="true" />
-	<EXPORTER domain="XLSX" engine="knowageworksheeteng"
-		defaultValue="false" />
-	<EXPORTER domain="PDF" engine="knowageworksheeteng"
-		defaultValue="false" />
 	<!-- <EXPORTER domain="PDF" engine="SpagoBIDashboardEng"
 		defaultValue="true" /> -->
 	<EXPORTER domain="PDF" engine="knowageconsoleengine"

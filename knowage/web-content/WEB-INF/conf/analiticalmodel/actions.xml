@@ -226,12 +226,6 @@
  	class="it.eng.spagobi.analiticalmodel.execution.service.GetDocumentInfoAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
- 
-  <ACTION name="CREATE_DATASET_FOR_WORKSHEET_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.execution.service.CreateDatasetForWorksheetAction" scope="REQUEST">
- 	<CONFIG/>
- </ACTION>
-
   <ACTION name="SELECT_DATASET_ACTION" 
     class="it.eng.spagobi.analiticalmodel.execution.service.SelectDatasetAction" scope="REQUEST">
     <CONFIG/>

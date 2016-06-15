@@ -268,12 +268,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/SaveDocumentWindow.js")%>'></script>
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/SaveDatasetWindow.js")%>'></script>
-<script type="text/javascript"
-	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/worksheet/DatasetsListPanel.js")%>'></script>
-<script type="text/javascript"
-	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/worksheet/WorksheetEditorIframePanelExt3.js")%>'></script>
-<script type="text/javascript"
-	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/worksheet/WorksheetFromDatasetPanel.js")%>'></script>
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION

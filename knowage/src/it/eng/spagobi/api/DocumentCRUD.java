@@ -17,6 +17,34 @@
  */
 package it.eng.spagobi.api;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.DocumentsJSONDecorator;
+import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
+import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.json.JSONUtils;
+
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,41 +76,12 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was  not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.serializer.DocumentsJSONDecorator;
-import it.eng.spagobi.commons.serializer.SerializationException;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.container.ObjectUtils;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.services.exceptions.ExceptionUtilities;
-import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
-import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
-import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.json.JSONUtils;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -237,19 +236,12 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 			List myObjects = new ArrayList();
 			if (personalFolder != null) {
 				Engine geoEngine = null;
-				Engine wsEngine = null;
 				Engine cockpitEngine = null;
 
 				try {
 					geoEngine = ExecuteAdHocUtility.getGeoreportEngine();
 				} catch (SpagoBIRuntimeException r) {
 					// the geo engine is not found
-					logger.info("Engine not found. ", r);
-				}
-				try {
-					wsEngine = ExecuteAdHocUtility.getWorksheetEngine();
-				} catch (SpagoBIRuntimeException r) {
-					// the ws engine is not found
 					logger.info("Engine not found. ", r);
 				}
 
@@ -264,21 +256,16 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 				if ((docType == null) || (docType.equalsIgnoreCase("ALL"))) {
 					List filteredMyObjects = new ArrayList();
 					myObjects = DAOFactory.getBIObjectDAO().loadBIObjects(Integer.valueOf(personalFolder.getId()), profile, true);
-					// Get only documents of type Worksheet and Map
+					// Get only documents of type Cockpit and Map
 					for (Iterator it = myObjects.iterator(); it.hasNext();) {
 						BIObject biObject = (BIObject) it.next();
 						String biObjectType = biObject.getBiObjectTypeCode();
-						if ((wsEngine != null && biObject.getEngine().getId().equals(wsEngine.getId()))
-								|| (geoEngine != null && biObject.getEngine().getId().equals(geoEngine.getId()))
+						if ((geoEngine != null && biObject.getEngine().getId().equals(geoEngine.getId()))
 								|| (cockpitEngine != null && biObject.getEngine().getId().equals(cockpitEngine.getId()))) {
 							filteredMyObjects.add(biObject);
 						}
 					}
 					myObjects = filteredMyObjects;
-
-				} else if (docType.equalsIgnoreCase("Report") && wsEngine != null) {
-					// return only Worksheets inside the personal folder
-					myObjects = DAOFactory.getBIObjectDAO().loadBIObjects("WORKSHEET", "REL", personalFolder.getPath());
 
 				} else if (docType.equalsIgnoreCase("Map") && geoEngine != null) {
 					// return only Geo Map (GIS) documents inside the personal

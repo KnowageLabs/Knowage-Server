@@ -55,7 +55,6 @@ if (isMyData.equalsIgnoreCase("FALSE")) {
 
 <%
     String executionId = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_EXECUTION_ID);
-    String worksheetEditActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL);
     String qbeEditFromBMActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_QBE_EDIT_FROM_BM_SERVICE_URL);
     String qbeEditFromDataSetActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_QBE_EDIT_FROM_DATA_SET_SERVICE_URL);
     String qbeEditDatasetActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL);
@@ -72,7 +71,6 @@ if (isMyData.equalsIgnoreCase("FALSE")) {
 	String isSmartFilterEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_SMARTFILTER_ENABLED);
 	String createDatasetsAsFinalUser = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.CAN_CREATE_DATASET_AS_FINAL_USER);
     String isFederatedDatasetEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.CAN_USE_FEDERATED_DATASET_AS_FINAL_USER);
-	String isWorksheetEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_WORKSHEET_ENABLED);
 	Object callBackFunction =  aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.CALLBACK_FUNCTION);
 	
 	
@@ -107,16 +105,14 @@ alert(LN('sbi.myanalysis.noCorrectSettingsForCache'));
 		console.log(getUserId);
 	
     Ext.onReady(function(){
-    	Sbi.settings.mydata.showCkanDataSetFilter = <%=isCkanEnabled%>;
-    	Sbi.settings.mydata.isWorksheetEnabled = <%= isWorksheetEnabled %>; 
+    	Sbi.settings.mydata.showCkanDataSetFilter = <%=isCkanEnabled%>; 
     	Sbi.settings.mydata.showDataSetTab = <%=isMyData%>;
     	Sbi.settings.mydata.showModelsTab = <%=(typeDoc != null && "GEO".equalsIgnoreCase(typeDoc))?false:true%>;
     	Sbi.settings.mydata.showSmartFilterTab = <%=(isMyData.equalsIgnoreCase("true") && isSmartFilterEnabled.equalsIgnoreCase("true"))?true:false%>;
     	Sbi.settings.mydata.showCreateButton = <%=createDatasetsAsFinalUser%>;
         Sbi.settings.mydata.showFederatedDatasetTab = <%=isFederatedDatasetEnabled%>;
     	selfService = Ext.create('Sbi.selfservice.ManageSelfServiceContainer',{
-        	worksheetEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(worksheetEditActionUrl) %>'
-            , qbeFromBMBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromBMActionUrl) %>'
+              qbeFromBMBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromBMActionUrl) %>'
             , qbeFromFederationBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromFederationActionUrl) %>'
             , qbeFromDataSetBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromDataSetActionUrl) %>'
             , qbeEditDatasetUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditDatasetActionUrl) %>'

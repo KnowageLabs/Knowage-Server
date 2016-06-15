@@ -1,20 +1,20 @@
 /*
-* Knowage, Open Source Business Intelligence suite
-* Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-* 
-* Knowage is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Affero General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-* 
-* Knowage is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Affero General Public License for more details.
-* 
-* You should have received a copy of the GNU Affero General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.spagobi.engines.qbe.template;
 
 import it.eng.spago.base.SourceBean;
@@ -32,14 +32,13 @@ import java.util.UUID;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-
 /**
  * The Class QbeTemplate.
- * 
+ *
  * @author Andrea Gioia
  */
-public class QbeXMLTemplateParser implements IQbeTemplateParser{
-	
+public class QbeXMLTemplateParser implements IQbeTemplateParser {
+
 	public static String TAG_ROOT_COMPOSITE = "COMPOSITE-QBE";
 	public static String TAG_ROOT_NORMAL = "QBE";
 	public static String TAG_ROOT_SMART_FILTER = "SMART_FILTER";
@@ -53,7 +52,6 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 	public static String TAG_QUERY = "QUERY";
 	public static String TAG_FORM = "FORM";
 	public static String TAG_FORM_VALUES = "FORM_VALUES";
-//	public static String TAG_WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
 	public static String TAG_EXTERNAL_SERVICES = "EXTERNAL_SERVICES";
 	public static String TAG_EXTERNAL_SERVICE = "EXTERNAL_SERVICE";
 	public static String PROP_SERVICE_DESCRIPTION = "description";
@@ -61,193 +59,185 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 	public static String PROP_SERVICE_OPERATION = "operation";
 	public static String PROP_SERVICE_REQUIREDCOLUMNS = "requiredcolumns";
 	public static String TAG_REGISTRY = "REGISTRY";
-	
 
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(QbeXMLTemplateParser.class);
-	
-    public QbeTemplate parse(Object template) {
-    	Assert.assertNotNull(template, "Input parameter [template] cannot be null");
-    	Assert.assertTrue(template instanceof SourceBean, "Input parameter [template] cannot be of type [" + template.getClass().getName() + "]");
-    	return parse((SourceBean)template);
-    }
-    
+	public static transient Logger logger = Logger.getLogger(QbeXMLTemplateParser.class);
+
+	@Override
+	public QbeTemplate parse(Object template) {
+		Assert.assertNotNull(template, "Input parameter [template] cannot be null");
+		Assert.assertTrue(template instanceof SourceBean, "Input parameter [template] cannot be of type [" + template.getClass().getName() + "]");
+		return parse((SourceBean) template);
+	}
+
 	private QbeTemplate parse(SourceBean template) {
-		
+
 		QbeTemplate qbeTemplate = null;
-		
+
 		String templateName;
-		SourceBean datamartSB, querySB, formSB, worksheetSB;
+		SourceBean datamartSB, querySB, formSB;
 		String dmName;
 		SourceBean modalitySB;
 		List modalities;
 		SourceBean compositeModalitySB;
 		SourceBean functionalitiesSB;
-		JSONObject formJSONTemplate, formValuesJSONTemplate, queryJSON, worksheetJSONTemplate;
-		
+		JSONObject formJSONTemplate, formValuesJSONTemplate, queryJSON;
+
 		try {
-			
+
 			qbeTemplate = new QbeTemplate();
-			
+
 			templateName = template.getName();
 			logger.debug("Parsing template [" + templateName + "] ...");
 			Assert.assertNotNull(templateName, "Root tag cannot be not be null");
-			
-			
-			if(!TAG_ROOT_COMPOSITE.equalsIgnoreCase(templateName)
-					&& !TAG_ROOT_NORMAL.equalsIgnoreCase(templateName)
-					&& !TAG_ROOT_SMART_FILTER.equalsIgnoreCase(templateName)){
-				
+
+			if (!TAG_ROOT_COMPOSITE.equalsIgnoreCase(templateName) && !TAG_ROOT_NORMAL.equalsIgnoreCase(templateName)
+					&& !TAG_ROOT_SMART_FILTER.equalsIgnoreCase(templateName)) {
+
 				QbeTemplateParseException e = new QbeTemplateParseException("Malformed template structure");
-				e.setDescription("template root tag cannot be equals to [" + templateName +"]. " +
-						"It must be equal to [" + TAG_ROOT_NORMAL + "] or [" + TAG_ROOT_COMPOSITE + "]");
+				e.setDescription("template root tag cannot be equals to [" + templateName + "]. " + "It must be equal to [" + TAG_ROOT_NORMAL + "] or ["
+						+ TAG_ROOT_COMPOSITE + "]");
 				e.addHint("Check document template in document details page");
 				throw e;
 			}
-			
+
 			boolean isComposite;
 			isComposite = TAG_ROOT_COMPOSITE.equalsIgnoreCase(templateName);
-			qbeTemplate.setComposite( isComposite );
-			
-			modalities  = new ArrayList();
+			qbeTemplate.setComposite(isComposite);
+
+			modalities = new ArrayList();
 			dmName = null;
-			
-			if(qbeTemplate.isComposite()) {
+
+			if (qbeTemplate.isComposite()) {
 				List qbeList;
 				SourceBean qbeSB;
 				String dblink;
 				String maxRecursionLevel;
-				
+
 				logger.debug("The QBE described in the template is of type COMPOSITE");
-								
+
 				qbeList = template.getAttributeAsList(TAG_ROOT_NORMAL);
-				for(int i = 0; i < qbeList.size(); i++) {
-					qbeSB = (SourceBean)qbeList.get(i);
-					
+				for (int i = 0; i < qbeList.size(); i++) {
+					qbeSB = (SourceBean) qbeList.get(i);
+
 					// DATAMART block
-					if(qbeSB.containsAttribute(TAG_DATAMART)) {
-						datamartSB = (SourceBean)qbeSB.getAttribute(TAG_DATAMART);	
-						dmName = (String)datamartSB.getAttribute(PROP_DATAMART_NAME);
-						Assert.assertTrue(!StringUtilities.isEmpty(dmName), "Attribute [" + PROP_DATAMART_NAME +"] in tag [" + TAG_DATAMART + "] must be properly defined");
-						
-						qbeTemplate.addDatamartName( dmName );
-										
-						dblink = (String)datamartSB.getAttribute(PROP_DATAMART_DBLINK);
-						if(dblink != null) {
-							qbeTemplate.setDbLink( dmName, dblink );
+					if (qbeSB.containsAttribute(TAG_DATAMART)) {
+						datamartSB = (SourceBean) qbeSB.getAttribute(TAG_DATAMART);
+						dmName = (String) datamartSB.getAttribute(PROP_DATAMART_NAME);
+						Assert.assertTrue(!StringUtilities.isEmpty(dmName), "Attribute [" + PROP_DATAMART_NAME + "] in tag [" + TAG_DATAMART
+								+ "] must be properly defined");
+
+						qbeTemplate.addDatamartName(dmName);
+
+						dblink = (String) datamartSB.getAttribute(PROP_DATAMART_DBLINK);
+						if (dblink != null) {
+							qbeTemplate.setDbLink(dmName, dblink);
 						}
-						
-						maxRecursionLevel = (String)datamartSB.getAttribute(PROP_DATAMART_MAXRECURSIONLEVEL);
-						if(maxRecursionLevel != null) {
+
+						maxRecursionLevel = (String) datamartSB.getAttribute(PROP_DATAMART_MAXRECURSIONLEVEL);
+						if (maxRecursionLevel != null) {
 							qbeTemplate.setProperty("maxRecursionLevel", maxRecursionLevel);
 						}
-						
+
 					} else {
 						Assert.assertUnreachable("Missing compolsury tag [" + TAG_DATAMART + "]");
 					}
-					
+
 					// MODALITY block
-					if(qbeSB.containsAttribute(TAG_MODALITY)) {
-						modalitySB = (SourceBean)qbeSB.getAttribute(TAG_MODALITY);
-						modalities.add(modalitySB);		
+					if (qbeSB.containsAttribute(TAG_MODALITY)) {
+						modalitySB = (SourceBean) qbeSB.getAttribute(TAG_MODALITY);
+						modalities.add(modalitySB);
 					} else {
-						logger.debug("Qbe template associated to datamart [" + dmName + "] does not contain tag [" + TAG_MODALITY +"] so it will be not profiled");
+						logger.debug("Qbe template associated to datamart [" + dmName + "] does not contain tag [" + TAG_MODALITY
+								+ "] so it will be not profiled");
 					}
 				}
-				
-				// query block 
-				if(template.containsAttribute(TAG_QUERY)) {
+
+				// query block
+				if (template.containsAttribute(TAG_QUERY)) {
 					querySB = (SourceBean) template.getAttribute(TAG_QUERY);
 					queryJSON = new JSONObject(querySB.getCharacters());
 					qbeTemplate.setProperty("query", queryJSON);
 				} else {
-					logger.debug("Qbe template does not contain tag [" + TAG_QUERY +"]");
+					logger.debug("Qbe template does not contain tag [" + TAG_QUERY + "]");
 				}
-				
+
 			} else {
 				logger.debug("The QBE described in the template is of type STANDARD");
-				
+
 				// DATAMART block
-				if(template.containsAttribute(TAG_DATAMART)) {
-					datamartSB = (SourceBean)template.getAttribute(TAG_DATAMART);
-					dmName = (String)datamartSB.getAttribute(PROP_DATAMART_NAME);
-					Assert.assertTrue(!StringUtilities.isEmpty(dmName), "Attribute [" + PROP_DATAMART_NAME +"] in tag [" + TAG_DATAMART + "] must be properly defined");
-					qbeTemplate.addDatamartName( dmName );
-					
-					String maxRecursionLevel = (String)datamartSB.getAttribute(PROP_DATAMART_MAXRECURSIONLEVEL);
-					if(maxRecursionLevel != null) {
+				if (template.containsAttribute(TAG_DATAMART)) {
+					datamartSB = (SourceBean) template.getAttribute(TAG_DATAMART);
+					dmName = (String) datamartSB.getAttribute(PROP_DATAMART_NAME);
+					Assert.assertTrue(!StringUtilities.isEmpty(dmName), "Attribute [" + PROP_DATAMART_NAME + "] in tag [" + TAG_DATAMART
+							+ "] must be properly defined");
+					qbeTemplate.addDatamartName(dmName);
+
+					String maxRecursionLevel = (String) datamartSB.getAttribute(PROP_DATAMART_MAXRECURSIONLEVEL);
+					if (maxRecursionLevel != null) {
 						qbeTemplate.setProperty("maxRecursionLevel", maxRecursionLevel);
 					}
 				}// else {
-					//Assert.assertUnreachable("Missing compolsury tag [" + TAG_DATAMART + "]");
-				//}
-				
+					// Assert.assertUnreachable("Missing compolsury tag [" + TAG_DATAMART + "]");
+				// }
+
 				// MODALITY block
-				if(template.containsAttribute(TAG_MODALITY)) {
-					modalitySB = (SourceBean)template.getAttribute(TAG_MODALITY);
+				if (template.containsAttribute(TAG_MODALITY)) {
+					modalitySB = (SourceBean) template.getAttribute(TAG_MODALITY);
 					modalities.add(modalitySB);
 				} else {
-					logger.debug("Qbe template does not contain tag [" + TAG_MODALITY +"] so it will be not profiled");
+					logger.debug("Qbe template does not contain tag [" + TAG_MODALITY + "] so it will be not profiled");
 				}
-				
-				// query block 
-				if(template.containsAttribute(TAG_QUERY)) {
+
+				// query block
+				if (template.containsAttribute(TAG_QUERY)) {
 					querySB = (SourceBean) template.getAttribute(TAG_QUERY);
 					queryJSON = new JSONObject(querySB.getCharacters());
 					qbeTemplate.setProperty("query", queryJSON);
 				} else {
-					logger.debug("Qbe template does not contain tag [" + TAG_QUERY +"]");
+					logger.debug("Qbe template does not contain tag [" + TAG_QUERY + "]");
 				}
-				
+
 				// form block
-				if(template.containsAttribute(TAG_FORM)) {
+				if (template.containsAttribute(TAG_FORM)) {
 					formSB = (SourceBean) template.getAttribute(TAG_FORM);
 					formJSONTemplate = new JSONObject(formSB.getCharacters());
 					qbeTemplate.setProperty("formJSONTemplate", formJSONTemplate);
 				} else {
-					logger.debug("Qbe template does not contain tag [" + TAG_FORM +"]");
+					logger.debug("Qbe template does not contain tag [" + TAG_FORM + "]");
 				}
-				
+
 				// form values block
-				if(template.containsAttribute(TAG_FORM_VALUES)) {
+				if (template.containsAttribute(TAG_FORM_VALUES)) {
 					formSB = (SourceBean) template.getAttribute(TAG_FORM_VALUES);
 					formValuesJSONTemplate = new JSONObject(formSB.getCharacters());
 					qbeTemplate.setProperty("formValuesJSONTemplate", formValuesJSONTemplate);
 				} else {
-					logger.debug("Qbe template does not contain tag [" + TAG_FORM_VALUES +"]");
+					logger.debug("Qbe template does not contain tag [" + TAG_FORM_VALUES + "]");
 				}
-				
-//				// worksheet block
-//				if(template.containsAttribute(TAG_WORKSHEET_DEFINITION)) {
-//					worksheetSB = (SourceBean) template.getAttribute(TAG_WORKSHEET_DEFINITION);
-//					worksheetJSONTemplate = new JSONObject(worksheetSB.getCharacters());
-//					qbeTemplate.setProperty("worksheetJSONTemplate", worksheetJSONTemplate);
-//				} else {
-//					logger.debug("Qbe template does not contain tag [" + TAG_WORKSHEET_DEFINITION +"]");
-//				}
 			}
-			
+
 			compositeModalitySB = new SourceBean(TAG_MODALITY);
-			
-			for(int i = 0; i < modalities.size(); i++) {
-				modalitySB = (SourceBean)modalities.get(i);
-				String recursiveFilteringAttr = (String)modalitySB.getAttribute(QbeXMLModelAccessModality.ATTR_RECURSIVE_FILTERING);
-				if(!StringUtilities.isEmpty(recursiveFilteringAttr)) {
+
+			for (int i = 0; i < modalities.size(); i++) {
+				modalitySB = (SourceBean) modalities.get(i);
+				String recursiveFilteringAttr = (String) modalitySB.getAttribute(QbeXMLModelAccessModality.ATTR_RECURSIVE_FILTERING);
+				if (!StringUtilities.isEmpty(recursiveFilteringAttr)) {
 					compositeModalitySB.setAttribute(QbeXMLModelAccessModality.ATTR_RECURSIVE_FILTERING, recursiveFilteringAttr);
 				}
 				List tables = modalitySB.getAttributeAsList(TAG_MODALITY_TABLE);
-				for(int j = 0; j < tables.size(); j++) {
-					SourceBean tableSB = (SourceBean)tables.get(j);
+				for (int j = 0; j < tables.size(); j++) {
+					SourceBean tableSB = (SourceBean) tables.get(j);
 					compositeModalitySB.setAttribute(tableSB);
 				}
 			}
-					
-			if(compositeModalitySB != null && compositeModalitySB.getAttribute(TAG_MODALITY_TABLE) != null) { 
+
+			if (compositeModalitySB != null && compositeModalitySB.getAttribute(TAG_MODALITY_TABLE) != null) {
 				QbeXMLModelAccessModality datamartModelAccessModality = new QbeXMLModelAccessModality(compositeModalitySB);
 				qbeTemplate.setDatamartModelAccessModality(datamartModelAccessModality);
 			}
-			
-			if(template.containsAttribute(TAG_EXTERNAL_SERVICES)) {
+
+			if (template.containsAttribute(TAG_EXTERNAL_SERVICES)) {
 				SourceBean extServiceConfig = (SourceBean) template.getAttribute(TAG_EXTERNAL_SERVICES);
 				List services = extServiceConfig.getAttributeAsList(TAG_EXTERNAL_SERVICE);
 				Iterator it = services.iterator();
@@ -265,20 +255,18 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 					if (description == null || description.trim().equals("")) {
 						logger.error("External service configuration is not valid: " + PROP_SERVICE_DESCRIPTION + " attribute is mandatory.");
 						QbeTemplateParseException e = new QbeTemplateParseException("Wrong external service configuration");
-						e.setDescription("External service configuration is not valid: " + PROP_SERVICE_DESCRIPTION 
-								+ " attribute is mandatory.");
+						e.setDescription("External service configuration is not valid: " + PROP_SERVICE_DESCRIPTION + " attribute is mandatory.");
 						e.addHint("Check document template in external service details section");
 						throw e;
 					}
 					if (endpoint == null || endpoint.trim().equals("")) {
 						logger.error("External service configuration is not valid:  " + PROP_SERVICE_ENDPOINT + " attribute is mandatory.");
 						QbeTemplateParseException e = new QbeTemplateParseException("Wrong external service configuration");
-						e.setDescription("External service configuration is not valid:  " + PROP_SERVICE_ENDPOINT
-								+ " attribute is mandatory.");
+						e.setDescription("External service configuration is not valid:  " + PROP_SERVICE_ENDPOINT + " attribute is mandatory.");
 						e.addHint("Check document template in external service details section");
 						throw e;
 					}
-					
+
 					ExternalServiceConfiguration conf = new ExternalServiceConfiguration();
 					String id = UUID.randomUUID().toString();
 					logger.debug("Created id = " + id + " for service with description [" + description + "]");
@@ -291,28 +279,27 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 					}
 					qbeTemplate.addExternalServiceConfiguration(conf);
 				}
-				
+
 			} else {
-				logger.debug("Qbe template does not contain tag [" + TAG_EXTERNAL_SERVICES +"]");
+				logger.debug("Qbe template does not contain tag [" + TAG_EXTERNAL_SERVICES + "]");
 			}
-			
-			
+
 			if (template.containsAttribute(TAG_REGISTRY)) {
 				SourceBean registryConf = (SourceBean) template.getAttribute(TAG_REGISTRY);
 				RegistryConfigurationXMLParser parser = new RegistryConfigurationXMLParser();
 				RegistryConfiguration conf = parser.parse(registryConf);
 				qbeTemplate.setProperty("registryConfiguration", conf);
 			} else {
-				logger.debug("Qbe template does not contain tag [" + TAG_REGISTRY +"]");
+				logger.debug("Qbe template does not contain tag [" + TAG_REGISTRY + "]");
 			}
-			
+
 			logger.debug("Templete parsed succesfully");
-		} catch(Throwable t) {
-			throw new QbeTemplateParseException("Impossible to parse template [" + template.toString()+ "]", t);
+		} catch (Throwable t) {
+			throw new QbeTemplateParseException("Impossible to parse template [" + template.toString() + "]", t);
 		} finally {
 			logger.debug("OUT");
-		}	
-		
+		}
+
 		return qbeTemplate;
 	}
 }

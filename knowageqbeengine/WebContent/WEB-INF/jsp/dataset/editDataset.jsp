@@ -30,7 +30,6 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
-<%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
 <%@page import="it.eng.qbe.serializer.SerializationManager"%>
 <%@page import="it.eng.spago.configuration.*"%>
 <%@page import="it.eng.qbe.model.structure.IModelStructure"%>
@@ -128,7 +127,6 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 			Sbi.config = {};
 	
 			Sbi.config.queryVersion = <%= QbeEngineStaticVariables.CURRENT_QUERY_VERSION %>;
-			Sbi.config.worksheetVersion = <%= WorkSheetDefinition.CURRENT_VERSION %>;
 			Sbi.config.queryLimit = {};
 			Sbi.config.queryLimit.maxRecords = <%= resultLimit != null ? "" + resultLimit.intValue() : "undefined" %>;
 			Sbi.config.queryLimit.isBlocking = <%= isMaxResultLimitBlocking %>;
@@ -203,7 +201,6 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 
 	       		// if user is a power user, instantiate and show also the QueryBuilderPanel
 	       		qbeConfig.displayQueryBuilderPanel = true;
-	       		qbeConfig.displayWorksheetPanel = false;
 	       		qbeConfig.displayFormBuilderPanel = false;
 	       		qbeConfig.enableQueryTbSaveBtn = false;
 	       		qbeConfig.eastConfig = {};

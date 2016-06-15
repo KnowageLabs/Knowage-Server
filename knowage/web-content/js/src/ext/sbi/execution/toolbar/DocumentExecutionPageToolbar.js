@@ -357,7 +357,6 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		   if (this.executionInstance.document && this.executionInstance.document.decorators &&  
 				   this.executionInstance.document.decorators.isSavable && 
 				   (this.executionInstance.document.typeCode === 'MAP' 
-					   || this.executionInstance.document.typeCode === 'WORKSHEET' 
 						   || this.executionInstance.document.typeCode === 'DATAMART'
 							   || this.executionInstance.document.typeCode === 'SMART_FILTER') && 
 				   Sbi.user.userId !== this.PUBLIC_USER) {
@@ -377,16 +376,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			  this.saveButton = new Ext.Toolbar.Button(conf);
 			  this.addButton(this.saveButton);
 		   }
-	   			
-			if (Sbi.user.userId !== this.PUBLIC_USER && 
-				Sbi.user.functionalities.contains('EditWorksheetFunctionality') && this.executionInstance.document.typeCode === 'WORKSHEET') {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-edit' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.edit')
-				    , scope: this
-				    , handler : this.startWorksheetEditing	
-				}));
-			}
+	   		
 			
 			if(this.isCockpitEngine() && 
 					Sbi.config.serviceRegistry.baseParams.SBI_ENVIRONMENT === 'DOCBROWSER' && 
@@ -486,8 +476,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				   , handler : function(){this.isInsert=true;this.saveDocumentAs()}
 		   }));
 
-		   if(this.executionInstance.document.exporters.length > 0 &&
-				   this.executionInstance.document.typeCode !== 'WORKSHEET'){
+		   if(this.executionInstance.document.exporters.length > 0 ){
 			   var menu = new Sbi.execution.toolbar.ExportersMenu({
 				    toolbar: this
 					, executionInstance: this.executionInstance
@@ -505,13 +494,6 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			   }
 		   }
 		   
-		   this.addSeparator();
-		   this.addButton(new Ext.Toolbar.Button({
-			   iconCls: 'icon-view' 
-				   , tooltip: LN('sbi.execution.executionpage.toolbar.view')
-				   , scope: this
-				   , handler : this.stopWorksheetEditing	
-		   }));
 		   
 		   Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForEditMode]: OUT');	
 	   }
@@ -960,14 +942,6 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		this.win_metadata.show();
 	}
 	
-	
-   
-   , startWorksheetEditing: function() {
-	   this.documentMode = 'EDIT';
-	   this.synchronize(this.controller, this.executionInstance);
-	   var newUrl = this.changeDocumentExecutionUrlParameter('ACTION_NAME', 'WORKSHEET_START_EDIT_ACTION');
-	   this.controller.getFrame().setSrc(newUrl);
-   }
    
    , startCockpitEditing: function() {	
 	   this.documentMode = 'EDIT';
@@ -980,18 +954,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    , getDocumentTemplateAsString: function() {
 		try {
 			var thePanel = null;
-			if(this.executionInstance.document.typeCode == 'WORKSHEET'){
-				//the worksheet has been constructed starting from a qbe document
-				thePanel = this.controller.getFrame().getWindow().qbe;
-				if(thePanel==null){
-					//the worksheet has been constructed starting from a smart filter document
-					thePanel = this.controller.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
-				}
-				if(thePanel==null){
-					//the worksheet is alone with out the qbe
-					thePanel = this.controller.getFrame().getWindow().workSheetPanel;
-				}
-			}else if(this.executionInstance.document.typeCode == 'DATAMART'){
+			if(this.executionInstance.document.typeCode == 'DATAMART'){
 				thePanel = this.controller.getFrame().getWindow().qbe;
 			}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
 				thePanel = this.controller.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
@@ -1053,13 +1016,9 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				'OBJECT_FUNCTIONALITIES': this.executionInstance.document.functionalities,
 				'OBJECT_SCOPE':  this.executionInstance.document.isPublic
 			};
-		if(this.executionInstance.document.typeCode == 'DATAMART' || this.executionInstance.document.typeCode == 'WORKSHEET'){
-			params.OBJECT_QUERY = templateJSON.OBJECT_QUERY;
-			params.OBJECT_FORM_VALUES = templateJSON.OBJECT_FORM_VALUES;  // the worksheet may be based on a smart filter document
-			params.OBJECT_TYPE = 'WORKSHEET';
-		}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
+		if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
 			params.OBJECT_FORM_VALUES = templateJSON.OBJECT_FORM_VALUES;			
-			params.OBJECT_TYPE = 'WORKSHEET';
+			//params.OBJECT_TYPE = 'WORKSHEET';
 		}else if(this.executionInstance.document.typeCode == 'MAP'){
 			params.OBJECT_TYPE = 'MAP';
 			params.typeid = 'GEOREPORT';
@@ -1069,12 +1028,6 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		return params;
    }
    
-   , stopWorksheetEditing: function() {
-	   this.documentMode = 'VIEW';
-	   this.synchronize(this.controller, this.executionInstance);
-	   var newUrl = this.changeDocumentExecutionUrlParameter('ACTION_NAME', 'WORKSHEET_ENGINE_START_ACTION');
-	   this.controller.getFrame().setSrc(newUrl);
-   }
    
    , stopCockpitEditing: function() {
 	   this.documentMode = 'VIEW';
@@ -1103,8 +1056,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		try {
 			if (!Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality')) {
 				// If user is not a Qbe power user, he can only save worksheet
-				this.isInsert = true;
-				this.saveDocumentAs();
+//				this.isInsert = true;
+//				this.saveDocumentAs();
 			} else {
 				// If the user is a Qbe power user, he can save both current query and worksheet definition.
 				// We must get the current active tab in order to understand what must be saved.
@@ -1112,15 +1065,10 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				var qbePanel = qbeWindow.qbe;
 				var anActiveTab = qbePanel.tabs.getActiveTab();
 				var activeTabId = anActiveTab.getId();
-				var isBuildingWorksheet = (activeTabId === 'WorksheetPanel');
-				if (isBuildingWorksheet) {
-					// save worksheet as document
-					this.isInsert = true;
-					this.saveDocumentAs();
-				} else {
-					// save query as customized view
-					qbePanel.queryEditorPanel.showSaveQueryWindow();
-				}
+
+				// save query as customized view
+				qbePanel.queryEditorPanel.showSaveQueryWindow();
+
 			}
 		} catch (err) {
 			alert('Sorry, cannot perform operation.');

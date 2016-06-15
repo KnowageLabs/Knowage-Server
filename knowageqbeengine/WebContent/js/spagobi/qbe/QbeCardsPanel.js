@@ -95,7 +95,9 @@ Sbi.qbe.QbeCardsPanel = function(config) {
 			, hideMode: !Ext.isIE ? 'nosize' : 'display'
 	});
 	
-	Sbi.worksheet.designer.QueryFieldsCardPanel.superclass.constructor.call(this, c);
+//	Sbi.worksheet.designer.QueryFieldsCardPanel.superclass.constructor.call(this, c);
+	
+	Sbi.qbe.QbeCardsPanel.superclass.constructor.call(this, c);
 	
 };
 

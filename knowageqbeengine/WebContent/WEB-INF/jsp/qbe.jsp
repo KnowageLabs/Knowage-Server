@@ -29,9 +29,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
-<%@page import="it.eng.spagobi.engines.worksheet.WorksheetEngineInstance"%>
 <%@page import="it.eng.spagobi.commons.QbeEngineStaticVariables"%>
-<%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
 <%@page import="it.eng.qbe.serializer.SerializationManager"%>
 <%@page import="it.eng.spago.configuration.*"%>
 <%@page import="it.eng.qbe.model.structure.IModelStructure"%>
@@ -58,9 +56,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- ---------------------------------------------------------------------- --%>
 <%
 	QbeEngineInstance qbeEngineInstance;
-	WorksheetEngineInstance worksheetEngineInstance;
 	QbeEngineConfig qbeEngineConfig;
-	WorkSheetDefinition workSheetDefinition;
 	UserProfile profile;
 	Locale locale;
 	String isFromCross;
@@ -75,13 +71,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	String spagobiServerHost;
 	String spagobiContext;
 	String spagobiSpagoController;
-	String isWorksheetEnabled;
 	
 	qbeEngineInstance = (QbeEngineInstance)ResponseContainer.getResponseContainer().getServiceResponse().getAttribute("ENGINE_INSTANCE");
-	worksheetEngineInstance = (WorksheetEngineInstance)ResponseContainer.getResponseContainer().getServiceResponse().getAttribute(WorksheetEngineInstance.class.getName());
-  	workSheetDefinition = worksheetEngineInstance != null ? 
-  			((WorkSheetDefinition) worksheetEngineInstance.getAnalysisState()) 
-  			: null;
 	profile = (UserProfile)qbeEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 	locale = (Locale)qbeEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 	
@@ -90,7 +81,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		isFromCross = "false";
 	}
 	isPowerUser = profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY);
-	isWorksheetEnabled = (String)qbeEngineInstance.getEnv().get("isWorksheetEnabled");
 	
 	qbeEngineConfig = QbeEngineConfig.getInstance();
     
@@ -144,7 +134,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			Sbi.config = {};
 	
 			Sbi.config.queryVersion = <%= QbeEngineStaticVariables.CURRENT_QUERY_VERSION %>;
-			Sbi.config.worksheetVersion = <%= WorkSheetDefinition.CURRENT_VERSION %>;
 			Sbi.config.queryLimit = {};
 			Sbi.config.queryLimit.maxRecords = <%= resultLimit != null ? "" + resultLimit.intValue() : "undefined" %>;
 			Sbi.config.queryLimit.isBlocking = <%= isMaxResultLimitBlocking %>;
@@ -203,7 +192,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	qbeConfig.initialQueriesCatalogue.version = Sbi.config.queryVersion;
 	      	
 	      	qbeConfig.isFromCross = <%= isFromCross %>;
-	      	qbeConfig.displayWorksheetPanel = <%= isWorksheetEnabled %>;
 	      	<%
 	      	StringBuffer datamartNamesBuffer = new StringBuffer("[");
 	      	
@@ -220,15 +208,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	qbeConfig.westConfig.datamartsName = <%= datamartNamesBuffer.toString() %>;
 
 	      	qbeConfig.externalServicesConfig = <%= qbeEngineInstance.getTemplate() != null ? qbeEngineInstance.getTemplate().getExternalServiceConfigurationsAsJSONArray() : "[]"%>;
-
-	      	qbeConfig.worksheet = {};
-	      	qbeConfig.worksheet.engineInitialized = <%= worksheetEngineInstance != null %>;
-	      	<%
-	      	JSONObject workSheetDefinitionJSON = workSheetDefinition != null ? 
-	      			(JSONObject) SerializationManager.serialize(workSheetDefinition, "application/json") : 
-	      				new JSONObject();
-	      	%>
-	      	qbeConfig.worksheet.worksheetTemplate = <%= workSheetDefinitionJSON %>;
 	    	
 	        // javascript-side user profile object
 	        Ext.ns("Sbi.user");

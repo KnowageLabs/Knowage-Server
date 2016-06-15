@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -37,7 +37,6 @@ import it.eng.spagobi.engines.chart.SpagoBIChartInternalEngine;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.geo.GeoDriver;
-import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
 import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -71,9 +70,6 @@ public class ExecutionProxy {
 
 	private String returnedContentType = null;
 	String mimeType = null;
-
-	// used for worksheetExecution
-	private boolean splittingFilter = false;
 
 	/**
 	 * Gets the bi object.
@@ -438,16 +434,6 @@ public class ExecutionProxy {
 			mapPars.put("ACTION_NAME", "EXECUTION_PROXY_GEO_ACTION");
 			mapPars.remove("outputType");
 			mapPars.put("outputType", "JPEG");
-		} else if (driver instanceof WorksheetDriver && modality.equals(SpagoBIConstants.MASSIVE_EXPORT_MODALITY)) {
-			mapPars.remove("ACTION_NAME");
-			mapPars.put("ACTION_NAME", WorksheetDriver.MASSIVE_EXPORT_PARAM_ACTION_NAME);
-			mapPars.remove("MIME_TYPE");
-			mapPars.put("MIME_TYPE", mimeType);
-			mapPars.remove("SPLITTING_FILTER");
-			mapPars.put("SPLITTING_FILTER", splittingFilter);
-			mapPars.put(SpagoBIConstants.EXECUTION_MODALITY, SpagoBIConstants.MASSIVE_EXPORT_MODALITY);
-			mapPars.put(SpagoBIConstants.TEMPORARY_TABLE_ROOT_NAME, this.getTemporaryTableName());
-			mapPars.put(SpagoBIConstants.DROP_TEMPORARY_TABLE_ON_EXIT, "TRUE");
 		}
 	}
 
@@ -458,13 +444,13 @@ public class ExecutionProxy {
 		return executionId.replaceAll("-", "");
 	}
 
-	public boolean isSplittingFilter() {
-		return splittingFilter;
-	}
-
-	public void setSplittingFilter(boolean splittingFilter) {
-		this.splittingFilter = splittingFilter;
-	}
+	// public boolean isSplittingFilter() {
+	// return splittingFilter;
+	// }
+	//
+	// public void setSplittingFilter(boolean splittingFilter) {
+	// this.splittingFilter = splittingFilter;
+	// }
 
 	public String getMimeType() {
 		return mimeType;

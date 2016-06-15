@@ -338,8 +338,7 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	}
 
 	/**
-	 * A datasource is generally required, therefore default is false, but engines can override this method and accept missing datasource (example: Worksheet
-	 * created on a file dataset)
+	 * A datasource is generally required, therefore default is false, but engines can override this method and accept missing datasource
 	 *
 	 * @return true if this engine tolerates the case when the datasource is missing
 	 */

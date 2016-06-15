@@ -22,8 +22,7 @@
 	    
 		<MAP_REST_SERVICE serviceUrl="/documents/sendFeedback" businessProcess="publicFunctionality" />	
 		<MAP_REST_SERVICE serviceUrl="/documents/clone" businessProcess="publicFunctionality" />	
-		<MAP_REST_SERVICE serviceUrl="/documents/share" businessProcess="publicFunctionality" />
-		<MAP_REST_SERVICE serviceUrl="/documents/myAnalysisDocsList" businessProcess="CreateWorksheetFromDatasetUserFunctionality" />  
+		<MAP_REST_SERVICE serviceUrl="/documents/share" businessProcess="publicFunctionality" />  
 	
 		<MAP_REST_SERVICE serviceUrl="/geoexport/jpg" businessProcess="publicFunctionality" />	
 

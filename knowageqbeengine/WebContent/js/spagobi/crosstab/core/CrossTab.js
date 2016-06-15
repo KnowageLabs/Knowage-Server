@@ -1870,7 +1870,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		if(optionDefinition!=null){
 			legendSuffix = optionDefinition.options.measureScaleFactor;
 			if(legendSuffix != undefined && legendSuffix != null && legendSuffix!='NONE'){
-				scaleFactor.text = LN('sbi.worksheet.config.options.measurepresentation.'+legendSuffix);
+				scaleFactor.text = LN('sbi.qbe.config.options.measurepresentation.'+legendSuffix);
 				switch (legendSuffix)
 				{
 				case 'K':

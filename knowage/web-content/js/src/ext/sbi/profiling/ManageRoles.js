@@ -144,7 +144,6 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                        	          , 'manageGlossaryTechnical'
 	                        	          , 'manageKpiValue'
 	                        	          , 'manageCalendar'
-	                        	          , 'editWorksheet'
 	                        	          , 'seeDocBrowser'
 	                        	          , 'seeFavourites'
 	                        	          , 'seeSubscriptions'
@@ -186,7 +185,6 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 											manageGlossaryTechnical:false,
 											manageKpiValue:false,
 											manageCalendar:false,
-											editWorksheet: false,
 											seeDocBrowser:false,
 		                        	        seeFavourites:false,
 		                        	        seeSubscriptions:false,
@@ -589,17 +587,6 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            boxMinWidth  : 150,
 		            hideLabel  : false,
 		            fieldLabel: LN('sbi.roles.edit'),
-		            itemId: 'isAbleToEditWorksheet',
-		            items: [
-		                {boxLabel: LN('sbi.roles.worksheet'), name: 'editWorksheet',id: 'editWorksheet', checked:'editWorksheet',inputValue: 1}
-		            ]
-		        },
-		        {
-		            xtype: 'checkboxgroup',
-		            columns: 1,
-		            boxMinWidth  : 150,
-		            hideLabel  : false,
-		            fieldLabel: LN('sbi.roles.edit'),
 		            itemId: 'isAbleTokpiCommentEditAll',
 		            items: [
 		                {boxLabel: LN('sbi.roles.allKpiComment'), name: 'kpiCommentEditAll',id: 'kpiCommentEditAll', checked:'kpiCommentEditAll',inputValue: 1}
@@ -711,9 +698,6 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
             		  item.setValue('manageGlossaryTechnical', rec.get('manageGlossaryTechnical'));
             		  item.setValue('manageKpiValue', rec.get('manageKpiValue'));
             		  item.setValue('manageCalendar', rec.get('manageCalendar'));
-            		  
-        		  }else if(item.getItemId() == 'isAbleToEditWorksheet'){
-            		  item.setValue('editWorksheet', rec.get('editWorksheet'));
         		  }else if(item.getItemId() == 'isAbleTokpiCommentDelete'){
             		  item.setValue('kpiCommentDelete', rec.get('kpiCommentDelete'));
         		  }else if(item.getItemId() == 'isAbleTokpiCommentEditMy'){
@@ -829,7 +813,6 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 								manageGlossaryTechnical:false,
 								manageKpiValue:false,
 								manageCalendar:false,
-								editWorksheet: this.isVisible('editWorksheet'),
 								seeDocBrowser:this.isVisible('seeDocBrowser'),
                     	        seeFavourites:this.isVisible('seeFavourites'),
                     	        seeSubscriptions:this.isVisible('seeSubscriptions'),
@@ -876,7 +859,6 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         var manageGlossaryTechnical =values['manageGlossaryTechnical'];  
         var manageKpiValue = values['manageKpiValue'];
         var manageCalendar = values['manageCalendar'];
-        var editWorksheet =values['editWorksheet'];
         var seeDocBrowser =values['seeDocBrowser'];  
         var seeMyData =values['seeMyData'];  
         var seeFavourites =values['seeFavourites'];  
@@ -976,11 +958,6 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         	record.set('manageCalendar', true);
         }else{
         	record.set('manageCalendar', false);
-        }
-        if(editWorksheet == 1){
-        	record.set('editWorksheet', true);
-        }else{
-        	record.set('editWorksheet', false);
         }
         if(seeDocBrowser == 1){
         	record.set('seeDocBrowser', true);
@@ -1147,7 +1124,6 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 			manageGlossaryTechnical:newRec.data.manageGlossaryTechnical,
 			manageKpiValue:newRec.data.manageKpiValue,
 			manageCalendar:newRec.data.manageCalendar,
-			editWorksheet: newRec.data.editWorksheet,
 			seeDocBrowser: newRec.data.seeDocBrowser,
 			seeMyData: newRec.data.seeMyData,
 			seeFavourites: newRec.data.seeFavourites,

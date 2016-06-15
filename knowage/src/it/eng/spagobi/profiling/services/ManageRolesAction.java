@@ -81,7 +81,6 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 	private final String BUILD_QBE_QUERY = "buildQbe";
 	private final String DO_MASSIVE_EXPORT = "doMassiveExport";
 	private final String MANAGE_USERS = "manageUsers";
-	private final String EDIT_WORKSHEET = "editWorksheet";
 	private final String SEE_DOCUMENT_BROWSER = "seeDocBrowser";
 	private final String SEE_MY_DATA = "seeMyData";
 	private final String SEE_FAVOURITES = "seeFavourites";
@@ -181,7 +180,6 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 			Boolean buildQbeQuery = getAttributeAsBoolean(BUILD_QBE_QUERY);
 			Boolean doMassiveExport = getAttributeAsBoolean(DO_MASSIVE_EXPORT);
 			Boolean manageUsers = getAttributeAsBoolean(MANAGE_USERS);
-			Boolean editWorksheet = getAttributeAsBoolean(EDIT_WORKSHEET);
 			Boolean seeDocBrowser = getAttributeAsBoolean(SEE_DOCUMENT_BROWSER);
 			Boolean seeMyData = getAttributeAsBoolean(SEE_MY_DATA);
 			Boolean seeFavourites = getAttributeAsBoolean(SEE_FAVOURITES);
@@ -275,7 +273,6 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				role.setIsAbleToSeeViewpoints(seeViewpoints);
 				role.setIsAbleToSendMail(sendMail);
 				role.setIsAbleToManageUsers(manageUsers);
-				role.setIsAbleToEditWorksheet(editWorksheet);
 				role.setIsAbleToSeeDocumentBrowser(seeDocBrowser);
 				role.setIsAbleToSeeMyData(seeMyData);
 				role.setIsAbleToSeeFavourites(seeFavourites);

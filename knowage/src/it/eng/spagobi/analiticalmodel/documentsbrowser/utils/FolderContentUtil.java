@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,26 +25,20 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.DocumentsJSONDecorator;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -157,14 +151,8 @@ public class FolderContentUtil {
 		 * if (isRoot) functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(true, false, profile); else functionalities =
 		 * DAOFactory.getLowFunctionalityDAO().loadChildFunctionalities(Integer.valueOf(functID), false);
 		 */
-		boolean recoverBiObjects = false;
-		// for massive export must also get the objects to check if there are worksheets
-		Collection userFunctionalities = profile.getFunctionalities();
-		if (userFunctionalities.contains("DoMassiveExportFunctionality")) {
-			recoverBiObjects = true;
-		}
 
-		functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(folder.getId(), recoverBiObjects, profile);
+		functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(folder.getId(), false, profile);
 
 		JSONArray foldersJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(functionalities, locale);
 
@@ -175,21 +163,6 @@ public class FolderContentUtil {
 		JSONObject scheduleAction = new JSONObject();
 		scheduleAction.put("name", "schedule");
 		scheduleAction.put("description", "Schedule");
-
-		// call check for worksheet presence only if user can eexecute massive export, otherwise jump over control
-		if (userFunctionalities.contains("DoMassiveExportFunctionality")) {
-			Map<String, Boolean> folderToWorksheet = checkIfWorksheetContained(functionalities);
-
-			for (int i = 0; i < foldersJSON.length(); i++) {
-				JSONObject folderJSON = foldersJSON.getJSONObject(i);
-				String code = folderJSON.getString("code");
-				Boolean isWorksheet = folderToWorksheet.get(code);
-				if (isWorksheet) {
-					folderJSON.getJSONArray("actions").put(exportAction);
-					folderJSON.getJSONArray("actions").put(scheduleAction);
-				}
-			}
-		}
 
 		// Flat View Management: show only documents inside a folder and no subfolders
 		JSONObject foldersResponseJSON;
@@ -267,7 +240,7 @@ public class FolderContentUtil {
 
 	/**
 	 * Creates a json array to display add button or not
-	 * 
+	 *
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -281,7 +254,7 @@ public class FolderContentUtil {
 
 	/**
 	 * Creates a json array with children document informations
-	 * 
+	 *
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -299,7 +272,7 @@ public class FolderContentUtil {
 
 	/**
 	 * Creates a json array with children folders informations
-	 * 
+	 *
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -317,7 +290,7 @@ public class FolderContentUtil {
 
 	/**
 	 * Creates a json array with children document informations
-	 * 
+	 *
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -336,41 +309,9 @@ public class FolderContentUtil {
 		return results;
 	}
 
-	private Map checkIfWorksheetContained(List functionalities) throws SpagoBIException {
-		logger.debug("IN");
-		// link each functionality to bo0olean indicating if containing worksheets
-		Domain worksheetDomain;
-		try {
-			worksheetDomain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.BIOBJ_TYPE, SpagoBIConstants.WORKSHEET_TYPE_CODE);
-		} catch (EMFUserError e) {
-			logger.error("Could not recover Worksheet domain type", e);
-			throw new SpagoBIException("Could not recover Worksheet domain type", e);
-		}
-
-		Map<String, Boolean> functWorksheet = new HashMap<String, Boolean>();
-		for (Iterator iterator = functionalities.iterator(); iterator.hasNext();) {
-			LowFunctionality lowFunc = (LowFunctionality) iterator.next();
-			boolean isThereWorksheet = false;
-			if (lowFunc.getBiObjects() != null) {
-				for (Iterator iterator2 = lowFunc.getBiObjects().iterator(); iterator2.hasNext() && !isThereWorksheet;) {
-					BIObject biObj = (BIObject) iterator2.next();
-					Integer typeId = biObj.getBiObjectTypeID();
-					if (typeId.equals(worksheetDomain.getValueId())) {
-						isThereWorksheet = true;
-					}
-				}
-			}
-			logger.debug("functionality " + lowFunc.getCode() + " has worksheets inside? " + isThereWorksheet);
-			functWorksheet.put(lowFunc.getCode(), isThereWorksheet);
-
-		}
-		logger.debug("OUT");
-		return functWorksheet;
-	}
-
 	/**
 	 * Returns true if the folder specified by folderIdStr exists and the user can see it, false otherwise
-	 * 
+	 *
 	 * @param folderIdStr
 	 *            The string representing the folder id
 	 * @param profile

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -35,8 +35,6 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.common.SsoServiceInterface;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -68,7 +66,6 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 	public static final String PORTLET = "PORTLET";
 	public static final String OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL = "georeportServiceUrl";
 	public static final String OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL = "cockpitServiceUrl";
-	public static final String OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL = "worksheetServiceUrl";
 
 	private Locale locale;
 	IEngUserProfile profile;
@@ -155,7 +152,6 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 				// Defining action urls
 				String executionId = ExecuteAdHocUtility.createNewExecutionId();
 				String geoereportEditActionUrl = null;
-				String worksheetEditActionUrl = null;
 				String cockpitEditActionUrl = null;
 
 				try {
@@ -166,25 +162,15 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 				}
 
 				try {
-					worksheetEditActionUrl = buildWorksheetEditServiceUrl(executionId);
-				} catch (SpagoBIRuntimeException r) {
-					// the geo engine is not found
-					logger.info("[DAJS]:: error", r);
-				}
-
-				try {
 					cockpitEditActionUrl = buildCockpitEditServiceUrl(executionId);
 				} catch (SpagoBIRuntimeException r) {
-					// the geo engine is not found
+					// the cockpit engine is not found
 					logger.info("[DAJS]:: error", r);
 				}
 
 				JSONObject jsonUrlObj = config.toJSON();
 				if (geoereportEditActionUrl != null) {
 					jsonUrlObj.put(OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL, geoereportEditActionUrl);
-				}
-				if (worksheetEditActionUrl != null) {
-					jsonUrlObj.put(OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL, worksheetEditActionUrl);
 				}
 				if (cockpitEditActionUrl != null) {
 					jsonUrlObj.put(OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL, cockpitEditActionUrl);
@@ -226,48 +212,6 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 		LogMF.debug(logger, "Georeport edit service invocation url is equal to [{}]", georeportEditActionUrl);
 
 		return georeportEditActionUrl;
-	}
-
-	// protected Map<String, String> buildGeoreportEditServiceBaseParametersMap() {
-	// Map<String, String> parametersMap = buildServiceBaseParametersMap();
-	//
-	// return parametersMap;
-	// }
-
-	// WORKSHEET
-	protected String buildWorksheetEditServiceUrl(String executionId) {
-		Engine worksheetEngine = null;
-		String worksheetEditActionUrl = null;
-
-		Map<String, String> parametersMap = buildEditServiceBaseParametersMap();
-		parametersMap.put("SBI_EXECUTION_ID", executionId);
-
-		IDataSource datasource;
-		try {
-			datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
-		} catch (EMFUserError e) {
-			throw new SpagoBIRuntimeException("Error while loading default datasource for writing", e);
-		}
-		if (datasource != null) {
-			parametersMap.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
-		} else {
-			logger.debug("There is no default datasource for writing");
-		}
-
-		try {
-			worksheetEngine = ExecuteAdHocUtility.getWorksheetEngine();
-		} catch (SpagoBIRuntimeException r) {
-			// the ws engine is not found
-			logger.info("Engine not found. Error: ", r);
-		}
-		if (worksheetEngine != null) {
-			LogMF.debug(logger, "Engine label is equal to [{0}]", worksheetEngine.getLabel());
-			// create the WorkSheet Edit Service's URL
-			worksheetEditActionUrl = GeneralUtilities.getUrl(worksheetEngine.getUrl(), parametersMap);
-			LogMF.debug(logger, "Worksheet edit service invocation url is equal to [{}]", worksheetEditActionUrl);
-		}
-
-		return worksheetEditActionUrl;
 	}
 
 	// COCKPIT

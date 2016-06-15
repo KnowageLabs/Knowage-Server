@@ -300,8 +300,6 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 				     Sbi.debug('MyAnalysisView raise Document execution event');        			     
 				     if ((record.data.typeCode == 'MAP') && (record.data.engine == 'Gis Engine')){
 					   	scope.fireEvent('executeDocument','GEOREPORT','DOCUMENT',record);
-				     } else if (record.data.typeCode == 'WORKSHEET'){
-				   		scope.fireEvent('executeDocument','WORKSHEET','DOCUMENT',record);
 				     } else if (record.data.typeCode == 'DOCUMENT_COMPOSITE'){
 				    	 scope.fireEvent('executeDocument','COCKPIT','DOCUMENT',record);
 				     }

@@ -200,21 +200,6 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ArtifactCatalogueManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="CreateWorksheetFromDatasetUserFunctionality"
-		roleType="ADMIN" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="CreateWorksheetFromDatasetUserFunctionality"
-		roleType="USER" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="CreateWorksheetFromDatasetUserFunctionality"
-		roleType="DEV_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="CreateWorksheetFromDatasetUserFunctionality"
-		roleType="TEST_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="CreateWorksheetFromDatasetUserFunctionality"
-		roleType="MODEL_ADMIN" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="SelfServiceDatasetManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="SelfServiceDatasetManagement" roleType="USER" />

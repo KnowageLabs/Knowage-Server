@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -64,7 +64,7 @@ import sun.misc.BASE64Decoder;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
@@ -114,6 +114,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		super.init(config);
 	}
 
+	@Override
 	public void service(SourceBean request, SourceBean response) throws SpagoBIEngineException {
 		setSpagoBIRequestContainer(request);
 		setSpagoBIResponseContainer(response);
@@ -177,7 +178,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 	/**
 	 * Gets the audit id.
-	 * 
+	 *
 	 * @return the audit id
 	 */
 	public String getAuditId() {
@@ -197,7 +198,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 	/**
 	 * Gets the document id.
-	 * 
+	 *
 	 * @return the document id
 	 */
 	public String getDocumentId() {
@@ -299,7 +300,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 	/**
 	 * Gets the data source.
-	 * 
+	 *
 	 * @return the data source
 	 */
 
@@ -340,9 +341,8 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	}
 
 	/**
-	 * A datasource is generally required, therefore default is false, but engines can override this method and accept missing datasource (example: Worksheet
-	 * created on a file dataset)
-	 * 
+	 * A datasource is generally required, therefore default is false, but engines can override this method and accept missing datasource
+	 *
 	 * @return true if this engine tolerates the case when the datasource is missing
 	 */
 	protected boolean tolerateMissingDatasource() {
@@ -358,7 +358,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 	/**
 	 * Gets the locale.
-	 * 
+	 *
 	 * @return the locale
 	 */
 	public Locale getLocale() {
@@ -389,7 +389,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 	/**
 	 * Gets the analysis metadata.
-	 * 
+	 *
 	 * @return the analysis metadata
 	 */
 	public EngineAnalysisMetadata getAnalysisMetadata() {
@@ -440,7 +440,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 	/**
 	 * Gets the analysis state row data.
-	 * 
+	 *
 	 * @return the analysis state row data
 	 */
 	public byte[] getAnalysisStateRowData() {
@@ -537,7 +537,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 	/**
 	 * Copy request parameters into env.
-	 * 
+	 *
 	 * @param env
 	 *            the env
 	 * @param serviceRequest
@@ -580,10 +580,10 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 	/**
 	 * Decode parameter value.
-	 * 
+	 *
 	 * @param parValue
 	 *            the par value
-	 * 
+	 *
 	 * @return the string
 	 */
 	private String decodeParameterValue(String parValue) {
@@ -606,7 +606,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 	protected IDataSetTableDescriptor persistDataset(IDataSet dataset, Map env) {
 		IDataSetTableDescriptor descriptor = null;
-		if (!dataset.isPersisted() && (dataset.getPersistTableName()==null || dataset.getPersistTableName().equals(""))  && !dataset.isFlatDataset()) {
+		if (!dataset.isPersisted() && (dataset.getPersistTableName() == null || dataset.getPersistTableName().equals("")) && !dataset.isFlatDataset()) {
 			logger.debug("Dataset is neither persisted nor flat. Persisting dataset into a temporary table...");
 			IDataSource dataSource = (IDataSource) env.get(EngineConstants.DATASOURCE_FOR_WRITING);
 			if (dataSource == null) {
@@ -619,9 +619,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 			// since this a start action, we can consider that the dataset can
 			// be considered to be persistent during all the user session, so we
-			// can change the state of the dataset. Compare with
-			// it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction
-			// where we cannot
+			// can change the state of the dataset.
 			dataset.setPersisted(true);
 			dataset.setPersistTableName(descriptor.getTableName());
 			dataset.setDataSourceForReading(dataSource);
@@ -743,9 +741,8 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	}
 
 	public void setDataSource(IDataSource dataSource) {
-		logger.debug("Setting datasource for engine. The label is "+dataSource.getLabel());
+		logger.debug("Setting datasource for engine. The label is " + dataSource.getLabel());
 		this.dataSource = dataSource;
 	}
-	
-	
+
 }

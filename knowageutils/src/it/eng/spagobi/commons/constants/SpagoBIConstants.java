@@ -178,7 +178,6 @@ public class SpagoBIConstants {
 	public static final String BIOBJECT_TYPE_CODE = "BIOBJECT_TYPE_CODE";
 	public static final String REPORT_TYPE_CODE = "REPORT";
 	public static final String DATAMART_TYPE_CODE = "DATAMART";
-	public static final String WORKSHEET_TYPE_CODE = "WORKSHEET";
 
 	public static final String OLAP_TYPE_CODE = "OLAP";
 	public static final String DATA_MINING_TYPE_CODE = "DATA_MINING";
@@ -384,7 +383,6 @@ public class SpagoBIConstants {
 	public static final String KPI_MANAGEMENT = "KpiManagement";
 	public static final String PROFILE_MANAGEMENT = "ProfileManagement";
 	public static final String FINAL_USERS_MANAGEMENT = "FinalUsersManagement";
-	public static final String CREATE_WORKSHEET_FROM_DATASET_USER = "CreateWorksheetFromDatasetUserFunctionality";
 	public static final String SELF_SERVICE_DATASET_MANAGEMENT = "SelfServiceDatasetManagement";
 
 	public static final String SAVE_SUBOBJECT_FUNCTIONALITY = "SaveSubobjectFunctionality";
@@ -394,7 +392,6 @@ public class SpagoBIConstants {
 	public static final String SEE_NOTES_FUNCTIONALITY = "SeeNotesFunctionality";
 	public static final String SEND_MAIL_FUNCTIONALITY = "SendMailFunctionality";
 	public static final String SAVE_INTO_FOLDER_FUNCTIONALITY = "SaveIntoFolderFunctionality";
-	public static final String EDIT_WORKSHEET_FUNCTIONALITY = "EditWorksheetFunctionality";
 	public static final String SAVE_REMEMBER_ME_FUNCTIONALITY = "SaveRememberMeFunctionality";
 	public static final String SEE_METADATA_FUNCTIONALITY = "SeeMetadataFunctionality";
 	public static final String SAVE_METADATA_FUNCTIONALITY = "SaveMetadataFunctionality";
@@ -492,7 +489,7 @@ public class SpagoBIConstants {
 	public static final String CALENDAR = "Calendar";
 
 	public static final String MANAGE_KPI_VALUE = "ManageKpiValue";
-	
+
 	public static final String MANAGE_CALENDAR = "ManageCalendar";
 
 	public static final String MANAGE_CROSS_NAVIGATION = "ManageCrossNavigation";

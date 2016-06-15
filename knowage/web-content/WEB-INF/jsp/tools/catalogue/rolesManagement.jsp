@@ -350,17 +350,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												 >
 										{{translate.load("sbi.roles.edit");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap ng-if="isVisible('editWorksheet')">
-				 <md-input-container class="small counter"> 
-			        <md-checkbox
-			         ng-change="setDirty()"  ng-model="selectedRole.ableToEditWorksheet" aria-label="check" name="editWorksheet">
-			        </md-checkbox> 
-			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
-			        <label>{{translate.load("sbi.roles.worksheet")}}</label>
-			       </div> 
-			   </div>
-			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('ENABLE')"
+				 
+			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" 
 												 >
 										{{translate.load("sbi.roles.enable");}}
 				</md-toolbar>

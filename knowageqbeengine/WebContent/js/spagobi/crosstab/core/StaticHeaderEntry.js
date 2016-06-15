@@ -304,7 +304,7 @@ Ext.extend(Sbi.crosstab.core.StaticHeaderEntry, Ext.Panel, {
 		if(fieldOptions!=undefined && fieldOptions!=null){
 			for(var i=0; i<fieldOptions.length; i++){
 				if(fieldName==fieldOptions[i].alias && fieldOptions[i].options.measureScaleFactor!=undefined && fieldOptions[i].options.measureScaleFactor!=null && fieldOptions[i].options.measureScaleFactor!='NONE'){
-					return fieldName+' '+LN('sbi.worksheet.config.options.measurepresentation.'+fieldOptions[i].options.measureScaleFactor);
+					return fieldName+' '+LN('sbi.qbe.config.options.measurepresentation.'+fieldOptions[i].options.measureScaleFactor);
 				}
 			}
 		}

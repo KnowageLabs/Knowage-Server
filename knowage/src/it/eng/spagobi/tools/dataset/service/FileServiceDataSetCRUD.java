@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -66,7 +66,7 @@ import org.json.JSONObject;
  insert into SBI_CONFIG (ID,LABEL,NAME,DESCRIPTION,IS_ACTIVE,VALUE_CHECK, VALUE_TYPE_ID, USER_IN, TIME_IN, CATEGORY)
  values(
  (select NEXT_VAL from hibernate_sequences where SEQUENCE_NAME = 'SBI_CONFIG')
- , 'remoteUrl.protocol' , ' Remote Url Protocol', ' Remote Url Protocol', 1, 'http' 
+ , 'remoteUrl.protocol' , ' Remote Url Protocol', ' Remote Url Protocol', 1, 'http'
  , (select VALUE_ID from SBI_DOMAINS where DOMAIN_CD = 'PAR_TYPE ' AND VALUE_CD = 'STRING')
  , 'spagobi'
  , current_timestamp
@@ -77,7 +77,7 @@ import org.json.JSONObject;
  insert into SBI_CONFIG (ID,LABEL,NAME,DESCRIPTION,IS_ACTIVE,VALUE_CHECK, VALUE_TYPE_ID, USER_IN, TIME_IN, CATEGORY)
  values(
  (select NEXT_VAL from hibernate_sequences where SEQUENCE_NAME = 'SBI_CONFIG')
- , 'remoteUrl.host' , ' Remote Url Host', ' Remote Url Host', 1, 'HOST_TO_CALL' 
+ , 'remoteUrl.host' , ' Remote Url Host', ' Remote Url Host', 1, 'HOST_TO_CALL'
  , (select VALUE_ID from SBI_DOMAINS where DOMAIN_CD = 'PAR_TYPE ' AND VALUE_CD = 'STRING')
  , 'spagobi'
  , current_timestamp
@@ -89,7 +89,7 @@ import org.json.JSONObject;
  insert into SBI_CONFIG (ID,LABEL,NAME,DESCRIPTION,IS_ACTIVE,VALUE_CHECK, VALUE_TYPE_ID, USER_IN, TIME_IN, CATEGORY)
  values(
  (select NEXT_VAL from hibernate_sequences where SEQUENCE_NAME = 'SBI_CONFIG')
- , 'remoteUrl.port' , ' Remote Url Port', ' Remote Url Host', 1, 'PORT_TO_CALL' 
+ , 'remoteUrl.port' , ' Remote Url Port', ' Remote Url Host', 1, 'PORT_TO_CALL'
  , (select VALUE_ID from SBI_DOMAINS where DOMAIN_CD = 'PAR_TYPE ' AND VALUE_CD = 'NUM')
  , 'spagobi'
  , current_timestamp
@@ -101,11 +101,11 @@ import org.json.JSONObject;
  insert into SBI_CONFIG (ID,LABEL,NAME,DESCRIPTION,IS_ACTIVE,VALUE_CHECK, VALUE_TYPE_ID, USER_IN, TIME_IN, CATEGORY)
  values(
  (select NEXT_VAL from hibernate_sequences where SEQUENCE_NAME = 'SBI_CONFIG')
- , 'remoteUrl.domain' , ' Remote Url DOMAIN', ' Remote Url Domain', 1, 'DOMAIN_TO_CALL' 
+ , 'remoteUrl.domain' , ' Remote Url DOMAIN', ' Remote Url Domain', 1, 'DOMAIN_TO_CALL'
  , (select VALUE_ID from SBI_DOMAINS where DOMAIN_CD = 'PAR_TYPE ' AND VALUE_CD = 'STRING')
  , 'spagobi'
  , current_timestamp
- , 'REMOTE_URL'	
+ , 'REMOTE_URL'
  );
  update hibernate_sequences set NEXT_VAL = NEXT_VAL+1 where SEQUENCE_NAME = 'SBI_CONFIG';
  commit
@@ -118,19 +118,18 @@ import org.json.JSONObject;
 
  */
 /**
- * 
+ *
  * @author gavardi
- * 
+ *
  */
 @Path("/fileservicedataset")
 public class FileServiceDataSetCRUD {
 
 	static private Logger logger = Logger.getLogger(it.eng.spagobi.tools.dataset.service.FileServiceDataSetCRUD.class);
 
-	// Distinguish if has to be opened with QBE or worksheet
+	// Distinguish if has to be opened with QBE
 	static final private String OPEN_WITH = "openWith";
 	static final private String QBE = "qbe";
-	static final private String WORKSHEET = "worksheet";
 
 	//
 	static final private String PARAMETERS_URL = "parametersUrl";
@@ -143,8 +142,8 @@ public class FileServiceDataSetCRUD {
 	IEngUserProfile profile = null;
 
 	/**
-	 * this service calls an url, retrieve the zip, opens and write a dataset base on metadata file and data file; then opens it with a qbe or worksheet
-	 * 
+	 * this service calls an url, retrieve the zip, opens and write a dataset base on metadata file and data file; then opens it with a qbe
+	 *
 	 * @param req
 	 * @return
 	 * @throws Exception
@@ -155,8 +154,7 @@ public class FileServiceDataSetCRUD {
 		logger.debug("IN");
 
 		Object openWithO = req.getParameter(OPEN_WITH);
-		boolean openWorksheet = openWithO == null ? true : openWithO.toString().equalsIgnoreCase(WORKSHEET);
-		logger.debug("Open with " + (openWorksheet == true ? "Worksheet Engine" : "QBE Engine"));
+		logger.debug("Open with QBE Engine");
 
 		Object parsRemoteUrlO = req.getParameter(PARAMETERS_URL);
 		String parsRemoteUrl = parsRemoteUrlO != null ? parsRemoteUrlO.toString() : "";
@@ -260,29 +258,15 @@ public class FileServiceDataSetCRUD {
 
 		url = protocol + "://" + host + ":" + port + "/" + qbeContext;
 
-		if (openWorksheet) {
-			logger.debug("Open with worksheet case");
+		logger.debug("Open with QBE case");
 
-			url += "?ACTION_NAME=WORKSHEET_WITH_DATASET_START_EDIT_ACTION";
-			url += "&user_id=" + profile.getUserUniqueIdentifier();
-			url += "&dataset_label=" + dataSet.getLabel();
-			url += "&ENGINE_DATASOURCE_LABEL=" + dataSourceLabel;
-			url += "&NEW_SESSION=TRUE";
-			url += "&SBI_LANGUAGE=" + sbiLanguage;
-			url += "&SBI_COUNTRY=" + sbiCountry;
-
-		} else {
-
-			logger.debug("Open with QBE case");
-
-			url += "?ACTION_NAME=QBE_ENGINE_FROM_DATASET_START_ACTION";
-			url += "&user_id=" + profile.getUserUniqueIdentifier();
-			url += "&dataset_label=" + dataSet.getLabel();
-			url += "&datasource_label=" + dataSourceLabel;
-			url += "&NEW_SESSION=TRUE";
-			url += "&SBI_LANGUAGE=" + sbiLanguage;
-			url += "&SBI_COUNTRY=" + sbiCountry;
-		}
+		url += "?ACTION_NAME=QBE_ENGINE_FROM_DATASET_START_ACTION";
+		url += "&user_id=" + profile.getUserUniqueIdentifier();
+		url += "&dataset_label=" + dataSet.getLabel();
+		url += "&datasource_label=" + dataSourceLabel;
+		url += "&NEW_SESSION=TRUE";
+		url += "&SBI_LANGUAGE=" + sbiLanguage;
+		url += "&SBI_COUNTRY=" + sbiCountry;
 
 		logger.debug("URL to call");
 		java.net.URI location = new java.net.URI(url);
@@ -294,7 +278,7 @@ public class FileServiceDataSetCRUD {
 
 	/**
 	 * Build remote url
-	 * 
+	 *
 	 * @param parameters
 	 * @return
 	 * @throws EMFUserError
@@ -333,7 +317,7 @@ public class FileServiceDataSetCRUD {
 
 	/**
 	 * get CSV file from remote Url
-	 * 
+	 *
 	 * @param url
 	 * @return
 	 * @throws HttpException
@@ -369,7 +353,7 @@ public class FileServiceDataSetCRUD {
 
 	/**
 	 * Decompress downloaded file
-	 * 
+	 *
 	 * @param response
 	 * @return
 	 * @throws IOException
@@ -418,7 +402,7 @@ public class FileServiceDataSetCRUD {
 
 	/**
 	 * Save dataset with metadata info
-	 * 
+	 *
 	 * @param jsonObject
 	 * @return
 	 * @throws JSONException

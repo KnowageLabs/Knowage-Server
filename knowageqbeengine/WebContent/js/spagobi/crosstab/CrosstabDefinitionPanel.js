@@ -201,7 +201,7 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 		
 		if(valErr != ''){
 			valErr = valErr.substring(0, valErr.length - 1)
-			return LN("sbi.worksheet.designer.validation.invalidFields")+valErr;
+			return LN("sbi.qbe.designer.validation.invalidFields")+valErr;
 		}
 		
 		var crossTabDef = this.getCrosstabDefinition();

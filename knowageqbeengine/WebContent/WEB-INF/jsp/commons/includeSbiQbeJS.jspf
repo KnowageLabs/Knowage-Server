@@ -12,7 +12,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <!-- Include QBE stylesheets -->
 <link rel="styleSheet" href ="../css/qbe.css" type="text/css" />
-<link rel="styleSheet" href ="../css/worksheet.css" type="text/css" />
 
 
 <!-- Include localized labels  -->
@@ -133,7 +132,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/formviewer/SaveFormValueSubObject.js'></script>
 <script type="text/javascript" src='../js/spagobi/formviewer/DataStorePanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/formviewer/ResultsPage.js'></script>
-<script type="text/javascript" src='../js/spagobi/formviewer/WorksheetPage.js'></script>
 <script type="text/javascript" src='../js/spagobi/formviewer/FormEnginePanel.js'></script>
 
 <script type="text/javascript" src='../js/spagobi/formtemplate/DocumentTemplateBuilder.js'></script>
@@ -162,54 +160,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <script type="text/javascript" src='../js/spagobi/dataset/ParametersGridPanel.js'></script>
 
-<script type="text/javascript" src='../js/spagobi/worksheet/exception/ValidationError.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/AttributeValuesChooserWindow.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetTabMenu.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetsContainerPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignToolsPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignToolsPallettePanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignToolsLayoutPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignSheetFiltersPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignSheetFiltersEditWizard.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetTitlePanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/ChooseImageWindow.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/WorksheetDesignerPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetContentPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/ChartCategoryPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/SeriesGroupingPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/ChartSeriesPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/GenericChartDesignerPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/BarChartDesignerPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/LineChartDesignerPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/PieChartDesignerPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/TableDesignerPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/QueryFieldsCardPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/QueryFieldsContainerPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetFilterContentPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/WorksheetDefinitionPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/designer/WorksheetPanel.js'></script>
-
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeSheetsContainerPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeSheetPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeSheetFiltersPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeSheetFiltersInfoPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/WorkSheetsRuntimePanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeSheetContentPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/WorkSheetPreviewPage.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeGenericChartPanel.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeGenericChartPanelExt3.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeChartFactory.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeBarChartPanelHighcharts.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeLineChartPanelHighcharts.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimePieChartPanelHighcharts.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeBarChartPanelExt3.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeLineChartPanelExt3.js'></script>
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimePieChartPanelExt3.js'></script>
-
-<script type="text/javascript" src='../js/spagobi/worksheet/runtime/DefaultChartDimensionRetrieverStrategy.js'></script>
-
-<script type="text/javascript" src='../js/spagobi/worksheet/config/OptionsWindow.js'></script>
 
 <script type="text/javascript" src='../js/spagobi/registry/RegistryPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/registry/RegistryEditorGridPanel.js'></script>
@@ -221,5 +171,4 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/qbe-all-1.1.0.js'></script>
 END-PRODUCTION -->
 
-<script type="text/javascript" src='../js/spagobi/worksheet/config/Options.js'></script>
 <script type="text/javascript" src='../js/spagobi/overrides.js'></script>

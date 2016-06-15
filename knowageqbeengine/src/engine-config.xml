@@ -10,12 +10,6 @@
 	<QBE_DATAMART_DIR>datamarts</QBE_DATAMART_DIR>	
 	<QBE_DATAMART_RETRIVER>it.eng.qbe.model.io.LocalFileSystemDataMartModelRetriever</QBE_DATAMART_RETRIVER>
 
-	<WORKSHEET_DIR>worksheet</WORKSHEET_DIR>
-	<!-- Max size for worksheet images: 2 MB -->
-	<WORKSHEET_IMAGES_MAX_SIZE>2097152</WORKSHEET_IMAGES_MAX_SIZE>
-	<!-- Max number for worksheet images: 100 -->
-	<WORKSHEET_IMAGES_MAX_NUMBER>100</WORKSHEET_IMAGES_MAX_NUMBER>
-
 	<!-- ====================================================================================== -->
 	<!--  INTERNAL SETTINGS 																    --> 
 	<!-- ====================================================================================== -->

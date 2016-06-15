@@ -51,7 +51,7 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 	private static Logger logger = Logger.getLogger(GetAnalyticalDriversFromDocsInFolderAction.class);
 
 	// type of document to search: all if null
-	private final String TYPE = "type"; // for example WORKSHEET
+	private final String TYPE = "type";
 
 	private final String FUNCTIONALITY_ID = "functId";
 	private final String ROLE = "selectedRole";
@@ -165,7 +165,7 @@ public class GetAnalyticalDriversFromDocsInFolderAction extends GetParametersFor
 
 	/**
 	 * retrieve allparameters contained in objectsList, two are considered queals if labels and adriver are equals
-	 * 
+	 *
 	 * @param objList
 	 * @param docType
 	 * @return

@@ -150,17 +150,6 @@ Sbi.execution.ExporterUtils = {
 				if(outputType == 'GRAPHML') {outputType = 'graphml'; }
 				
 				exporter.exportNetworkTo(outputType);
-			} else if (docType == 'WORKSHEET') {
-				Sbi.debug('[ExporterUtils.exportCurrentDocument]: exporting worksheet ...');
-				if (outputType == 'PDF') {
-					outputType = 'application/pdf';
-				} else if (outputType == 'XLS') {
-					outputType = 'application/vnd.ms-excel';
-				} else if (outputType == 'XLSX') {
-					outputType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-				}
-				
-				exporter.exportWorksheetsTo(outputType);
 			}
 			
 		}

@@ -23,7 +23,6 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.file.FileUtils;
 
@@ -47,9 +46,6 @@ public class QbeEngineConfig {
 
 	public static String QBE_MODE = "QBE_MODE";
 	public static String QBE_DATAMART_DIR = "QBE_DATAMART_DIR";
-	public static String WORKSHEET_DIR = "WORKSHEET_DIR";
-	public static String WORKSHEET_IMAGES_MAX_SIZE = "WORKSHEET_IMAGES_MAX_SIZE";
-	public static String WORKSHEET_IMAGES_MAX_NUMBER = "WORKSHEET_IMAGES_MAX_NUMBER";
 	public static String QBE_DATAMART_RETRIVER = "QBE_DATAMART_RETRIVER";
 	public static String SPAGOBI_SERVER_URL = "SPAGOBI_SERVER_URL";
 	public static String DEFAULT_SPAGOBI_SERVER_URL = "http://localhost:8080/SpagoBI";
@@ -133,52 +129,6 @@ public class QbeEngineConfig {
 		}
 
 		return propertyValue;
-	}
-
-	public File getWorksheetDir() {
-		File worksheetDir;
-
-		worksheetDir = null;
-
-		String property = getProperty(WORKSHEET_DIR);
-		if (property != null) {
-			String baseDirStr = getEngineResourcePath();
-			File baseDir = new File(baseDirStr);
-			if (!FileUtils.isAbsolutePath(property)) {
-				String fs = File.separator;
-				property = baseDir + fs + property;
-				worksheetDir = new File(property);
-			}
-		}
-
-		return worksheetDir;
-	}
-
-	public File getWorksheetImagesDir() {
-		File worksheetDir = getWorksheetDir();
-		File worksheetImagesDir = new File(worksheetDir, "images");
-		if (worksheetImagesDir.exists() && !worksheetImagesDir.isDirectory()) {
-			throw new SpagoBIEngineRuntimeException("Cannot create worksheet images dir! A file with the same name exists!");
-		}
-		if (!worksheetImagesDir.exists()) {
-			boolean success = worksheetImagesDir.mkdirs();
-			if (!success) {
-				throw new SpagoBIEngineRuntimeException("Cannot create worksheet images dir!");
-			}
-		}
-		return worksheetImagesDir;
-	}
-
-	public int getWorksheetImagesMaxSize() {
-		String property = getProperty(WORKSHEET_IMAGES_MAX_SIZE);
-		int toReturn = Integer.parseInt(property);
-		return toReturn;
-	}
-
-	public int getWorksheetImagesMaxNumber() {
-		String property = getProperty(WORKSHEET_IMAGES_MAX_NUMBER);
-		int toReturn = Integer.parseInt(property);
-		return toReturn;
 	}
 
 	public Integer getResultLimit() {

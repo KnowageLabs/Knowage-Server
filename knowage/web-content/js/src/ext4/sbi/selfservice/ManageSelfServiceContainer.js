@@ -29,7 +29,6 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 	extend: 'Ext.panel.Panel',
 
 	congig:{
-    	worksheetEngineBaseUrl : '',
     	qbeFromBMBaseUrl : '',
     	qbeFromDataSetBaseUrl : '',
         georeportEngineBaseUrl :  '',
@@ -93,7 +92,6 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			selfServiceContainer : this
 			, datasetsServicePath : config.datasetsServicePath
 			, qbeEditDatasetUrl : config.qbeEditDatasetUrl
-			, isWorksheetEnabled : config.isWorksheetEnabled
 			, typeDoc : config.typeDoc
 			, userCanPersist: config.userCanPersist
 			, tablePrefix: config.tablePrefix
@@ -107,7 +105,7 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		        /**
 		         * @event event1
 		         * Execute the qbe clicking in the model/dataset
-				 * @param {Object} docType engine to execute 'QBE'/'WORKSHEET'
+				 * @param {Object} docType engine to execute 'QBE'
 				 * @param {Object} inputType 'DATASET'/'MODEL'
 				 * @param {Object} record the record that contains all the information of the metamodel/dataset
 		         */
@@ -120,8 +118,6 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 	, executeDocument: function(docType,inputType, record){
 		if( docType == 'QBE' ) {
 			this.executeQbe(inputType, record);
-		} else if ( docType == 'WORKSHEET' ) {
-			this.executeWorksheet(inputType, record);
 		} else if( docType == 'GEOREPORT' ) {
 			this.executeGeoreport(inputType, record);
 		} else {
@@ -134,8 +130,7 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		if(inputType == "MODEL"){
 			var modelName = record.data.name;
 			var dataSourceLabel = record.data.data_source_label;
-			var url = this.qbeFromBMBaseUrl+"&MODEL_NAME="+modelName+
-				"&isWorksheetEnabled="+Sbi.settings.mydata.isWorksheetEnabled;
+			var url = this.qbeFromBMBaseUrl+"&MODEL_NAME="+modelName;
 			if(dataSourceLabel || dataSourceLabel!=""){
 				url = url+ 
 				'&DATA_SOURCE_LABEL=' + dataSourceLabel;
@@ -160,29 +155,6 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			var url =  this.qbeFromDataSetBaseUrl+ '&dataset_label=' + datasetLabel;
 			this.documentexecution.load(url);
 			this.documentexecution.datasetLabel = datasetLabel;
-		}
-	}
-	
-	, executeWorksheet: function(inputType, record){
-		if(inputType == "DATASET"){
-			var datasetLabel = record.data.label;
-			var dataSourceLabel = record.data.dataSource;
-			var url = this.worksheetEngineBaseUrl+ '&dataset_label=' + datasetLabel;
-			this.documentexecution.load(url);
-			this.documentexecution.datasetLabel = datasetLabel;
-			
-		}
-		if(inputType == "SMART_FILTER"){
-			this.params = this.commonParams;
-			var doc = record.data;
-			this.params.OBJECT_ID=doc.id;
-		   	this.params.OBJECT_LABEL=doc.label;
-		   	var url = Sbi.config.serviceRegistry.getServiceUrl({
-		   						serviceName: 'EXECUTE_DOCUMENT_ACTION'
-		   						, baseParams: this.params
-		   					});
-		   	this.documentexecution.hideSaveButton();
-		   	this.documentexecution.load(url);
 		}
 	}
 	

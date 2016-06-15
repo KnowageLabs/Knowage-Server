@@ -65,20 +65,6 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 		
 		, getFieldsTab1: function(){
 			
-			this.worksheetSelectionButton = new Ext.Button({
-				  text: ''
-		          ,flex:1
-		          ,margin: 10
-		          ,height: '100px'
-		          ,cls:'reportbutton'
-		          ,handler: function() {
-		              thisPanel.documentType = 'Worksheet';             
-		              thisPanel.fireEvent('openMyDataForReport');		 
-		              thisPanel.close();
-		          }
-				  ,tooltip:'Create a new Report Analysis Using Worksheet'
-			});
-			
 			this.geoSelectionButton = new Ext.Button({
 				  text: ''
 		          ,flex:1
@@ -111,9 +97,6 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 			
 			var buttons = [];
 			
-			if (this.useWSEngine && this.useQbeEngine)
-				buttons.push(this.worksheetSelectionButton);
-			
 			if (this.useGeoEngine)
 				buttons.push(this.geoSelectionButton);
 			
@@ -125,8 +108,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 			    align: 'stretch',
 			    border: 0,
 			    padding: 10,
-			    style: 'background-color: white;padding: 40px',
-//				items: [this.worksheetSelectionButton, this.geoSelectionButton, this.cockpitSelectionButton]				
+			    style: 'background-color: white;padding: 40px',				
 				items: buttons
 			});
 			

@@ -72,14 +72,9 @@ Sbi.execution.toolbar.ExportersMenu = function(config) {
 			if(documentPanel==null){//smart filter
 				documentPanel = documentWindow.Sbi.formviewer.formEnginePanel;
 			}
-			var isBuildingWorksheet =  documentPanel.isWorksheetPageActive();
 			var newItems; 
 			thisMenu.removeAll(false);
-			if (isBuildingWorksheet) {
-				newItems = this.initMenuItemsConfig('WORKSHEET');
-			} else {
-				newItems = this.initMenuItemsConfig('DATAMART');
-			}
+			newItems = this.initMenuItemsConfig('DATAMART');
 			for(var i =0; i<newItems.length; i++){
 				thisMenu.add(newItems[i]);
 			}
@@ -220,12 +215,6 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 			,'CSV'    : function() { this.exportQbeTo('CSV'); }
 			,'JRXML'  : function() { this.exportQbeTo('JRXML'); }
 			,'JSON'   : function() { this.exportQbeTo('JSON'); }
-		},
-		//'SMART_FILTER': null,
-		'WORKSHEET': {
-			 'PDF'    : function() { this.exportWorksheetsTo('application/pdf'); }
-			,'XLS'    : function() { this.exportWorksheetsTo('application/vnd.ms-excel'); }
-			,'XLSX'    : function() { this.exportWorksheetsTo('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); }
 		},
 		'NETWORK': {
 			 'PDF'     : function() { this.exportNetworkTo('pdf'); }
@@ -527,20 +516,6 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 			window = this.toolbar.getDocumentWindow();
 		}
 		return window;
-	}
-	
-	/**
-	 * @deprecated
-	 * 
-	 * at the moment is used only by #exportWorksheetsTo to retrieve parametersPanel's formState. Finde a way
-	 * to remove this dependencies
-	 */
-	, getController: function() {
-		var controller = null;
-		if(this.toolbar && this.toolbar.controller) {
-			controller = this.toolbar.controller
-		}
-		return controller;
 	}
 	
 	/**
@@ -931,93 +906,7 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	    	window.open(exportationUrl, 'name','resizable=1,height=750,width=1000');
 	    }
 	}
-	
-	, exportWorksheetsTo: function (mimeType, records) {
-		
-		Sbi.debug('[ExportersMenu.exportWorksheetsTo] : IN');
-		
-		
-		try {
-			
-			this.fireEvent('showmask','Exporting..');
-			
-			if(!records) {
-				if(Sbi.user.functionalities.contains('SeeMetadataFunctionality')){
-					Sbi.debug('[ExportersMenu.exportWorksheetsTo] : Loading records...');
-					
-					var urlForMetadata = this.services['getMetadataService'];
-					urlForMetadata += "&OBJECT_ID=" + this.executionInstance.OBJECT_ID;
-					if (this.executionInstance.SBI_SUBOBJECT_ID) {
-						urlForMetadata += "&SUBOBJECT_ID=" + this.executionInstance.SBI_SUBOBJECT_ID;
-					}
-				
-					var metadataStore = new Ext.data.JsonStore({
-				        autoLoad: false,
-				        fields: [
-				           'meta_id'
-				           , 'biobject_id'
-				           , 'subobject_id'
-				           , 'meta_name'
-				           , 'meta_type'
-				           , 'meta_content'
-				           , 'meta_creation_date'
-				           , 'meta_change_date'
-				        ]
-				        , url: urlForMetadata
-				    });
-				    metadataStore.on('load', function(store, records, options ) {
-				    	Sbi.debug('[ExportersMenu.exportWorksheetsTo] : Record succefully loaded');
-				    	this.exportWorksheetsTo(mimeType, records);
-			    	}, this);
-				    
-				    metadataStore.load();
-				}else{
-					Sbi.debug('[ExportersMenu.exportWorksheetsTo] : User is not able to see metadata informations.');
-					this.exportWorksheetsTo(mimeType, []);
-				}
-			} else {
-				
-				Sbi.debug('[ExportersMenu.exportWorksheetsTo] : exporting records...');
-				var metadata = [];
-				if(Sbi.user.functionalities.contains('SeeMetadataFunctionality')){
-					for(var i = 0; i < records.length; i++) {
-						var record = records[i];
-						metadata.push(record.data);
-					}
-				}
-				var documentWindow = this.getDocumentWindow();
-				var documentPanel = documentWindow.qbe;
-				if(documentPanel==null){
-					//the worksheet has been constructed starting from a smart filter document
-					documentPanel = documentWindow.Sbi.formviewer.formEnginePanel;
-				}
-				if(documentPanel==null){
-					//the worksheet is alone with out the qbe
-					documentPanel = documentWindow.workSheetPanel;
-				}
-				
-				var parameters = [];
-				var formState = this.getController().getParameterValues();
-				for(f in formState) {
-					if(f.indexOf('_field_visible_description') == -1) {
-						var p = {name: f, value: formState[f]};
-						var description = formState[f + '_field_visible_description'];
-						if(description) p.description = description;
-						parameters.push(p);
-					}
-				}
-				
-				documentPanel.exportContent(mimeType, false, metadata, parameters);
-				Sbi.debug('[ExportersMenu.exportWorksheetsTo] : recods exported');
-			}
-		} catch (err) {
-			alert('Sorry, cannot perform operation');
-			throw err;
-		}
-		
-		Sbi.debug('[ExportersMenu.exportWorksheetsTo] : OUT');
-	}
-	
+
 	, exportKpiTo: function () {
 		var urlExporter = this.services['toPdf'] + '&OBJECT_ID=' + this.executionInstance.OBJECT_ID;
 		window.open(urlExporter,'name','resizable=1,height=750,width=1000');

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -54,7 +54,7 @@ public class StartMassiveExportExecutionProcessAction extends GetParametersForEx
 	private static Logger logger = Logger.getLogger(StartMassiveExportExecutionProcessAction.class);
 
 	// type of document to search: all if null
-	private final String TYPE = "type";   // for wxample WORKSHEET
+	private final String TYPE = "type";
 
 	private final String MODALITY = "MODALITY";
 	private final String FUNCTIONALITY_ID = "functId";
@@ -64,8 +64,7 @@ public class StartMassiveExportExecutionProcessAction extends GetParametersForEx
 	private final String RETRIEVE_DOCUMENTS_MODALITY = "RETRIEVE_DOCUMENTS_MODALITY";
 	private final String CREATE_EXEC_CONTEST_ID_MODALITY = "CREATE_EXEC_CONTEST_ID_MODALITY";
 
-
-	Map<Integer, ExecutionInstance> instances; 
+	Map<Integer, ExecutionInstance> instances;
 
 	ExecutionInstance executionInstance;
 
@@ -75,7 +74,6 @@ public class StartMassiveExportExecutionProcessAction extends GetParametersForEx
 
 		IBIObjectDAO biObjDao;
 		ILowFunctionalityDAO funcDao;
-
 
 		try {
 			biObjDao = DAOFactory.getBIObjectDAO();
@@ -88,114 +86,96 @@ public class StartMassiveExportExecutionProcessAction extends GetParametersForEx
 		Integer folderId = this.getAttributeAsInteger(FUNCTIONALITY_ID);
 		String modality = this.getAttributeAsString(MODALITY);
 		Assert.assertNotNull(modality, "modality cannot be null");
-		logger.debug("MODALITY "+modality );
-		logger.debug("FolderId "+folderId);
-
+		logger.debug("MODALITY " + modality);
+		logger.debug("FolderId " + folderId);
 
 		String documentType = this.getAttributeAsString(TYPE);
-		logger.debug("FolderdocumetnType "+documentType);
+		logger.debug("FolderdocumetnType " + documentType);
 
-		if(folderId == null){
+		if (folderId == null) {
 			logger.error("Functionality id cannot be null");
-			throw new SpagoBIServiceException(SERVICE_NAME,"Functionality id cannot be null");
-		}		
-
+			throw new SpagoBIServiceException(SERVICE_NAME, "Functionality id cannot be null");
+		}
 
 		JSONObject responseJSON = null;
 		IEngUserProfile profile = getUserProfile();
-		logger.debug("user is "+profile.getUserUniqueIdentifier());
+		logger.debug("user is " + profile.getUserUniqueIdentifier());
 		try {
 
 			LowFunctionality funct = funcDao.loadLowFunctionalityByID(folderId, true);
-			Assert.assertNotNull(funct, "functionality with id "+folderId+" cannot be null");
-			List selObjects = Utilities.getContainedObjFilteredbyType(funct, documentType );
+			Assert.assertNotNull(funct, "functionality with id " + folderId + " cannot be null");
+			List selObjects = Utilities.getContainedObjFilteredbyType(funct, documentType);
 
-			if(modality.equals(RETRIEVE_DOCUMENTS_MODALITY)){
+			if (modality.equals(RETRIEVE_DOCUMENTS_MODALITY)) {
 				JSONArray docsArray = new JSONArray();
-				for (int i =0; i < selObjects.size() ;i++) {
+				for (int i = 0; i < selObjects.size(); i++) {
 					BIObject obj = (BIObject) selObjects.get(i);
 
 					boolean canSee = ObjectsAccessVerifier.canSee(obj, profile);
-					if(canSee){
+					if (canSee) {
 						boolean canExec = ObjectsAccessVerifier.isAbleToExec(obj.getStateCode(), profile);
-						if(canExec){
+						if (canExec) {
 							String label = obj.getName();
 							docsArray.put(i, label);
-							logger.debug("retrieve document "+label);
+							logger.debug("retrieve document " + label);
+						} else {
+							logger.debug(profile + " user cannot exec document " + obj.getName());
 						}
-						else{
-							logger.debug(profile + " user cannot exec document "+obj.getName());
-						}
-					}
-					else{
-						logger.debug(profile + " user cannot see document "+obj.getName());
+					} else {
+						logger.debug(profile + " user cannot see document " + obj.getName());
 					}
 				}
-				logger.debug("retrieved "+docsArray.length()+" documents of type "+documentType);
+				logger.debug("retrieved " + docsArray.length() + " documents of type " + documentType);
 
 				responseJSON = new JSONObject();
 				responseJSON.put("selectedDocuments", docsArray);
 
-			}
-			else if(modality.equals(CREATE_EXEC_CONTEST_ID_MODALITY)){
+			} else if (modality.equals(CREATE_EXEC_CONTEST_ID_MODALITY)) {
 
 				String execRole = this.getAttributeAsString(ROLE);
-				logger.debug("Search folder "+folderId+ " for documents of type "+TYPE);
+				logger.debug("Search folder " + folderId + " for documents of type " + TYPE);
 
 				// for each object I want to execute I must create an executionInstance
 				String executionContextId = createExecutionInstances(selObjects, execRole);
-				logger.debug("execution context id is "+executionContextId);
+				logger.debug("execution context id is " + executionContextId);
 
 				// ExecutionInstance has been created it's time to prepare the response with the instance unique id and flush it to the client
 				responseJSON = new JSONObject();
 				responseJSON.put("execContextId", executionContextId);
 			}
 
+			writeBackToClient(new JSONSuccess(responseJSON));
 
-
-			writeBackToClient( new JSONSuccess( responseJSON ) );
-
-		} 
-		catch (EMFUserError e) {
-			logger.error("EMFUserError happened during action "+SERVICE_NAME+" called with modality "+modality, e);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Error happened while retrieving documents: \n"+e.getDescription(), e);
-		}
-		catch (Throwable e) {
-			logger.error("generic error happened during action "+SERVICE_NAME+" called with modality "+modality, e);
+		} catch (EMFUserError e) {
+			logger.error("EMFUserError happened during action " + SERVICE_NAME + " called with modality " + modality, e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Error happened while retrieving documents: \n" + e.getDescription(), e);
+		} catch (Throwable e) {
+			logger.error("generic error happened during action " + SERVICE_NAME + " called with modality " + modality, e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Error happened while retrieving documents", e);
 		}
 
 		logger.debug("OUT");
 	}
 
-
-
-
-
-
-
-
-
-
-
-	/**create context with a map associating biObject id with its executionInstance
-	 * 
+	/**
+	 * create context with a map associating biObject id with its executionInstance
+	 *
 	 * @param selObjects
 	 * @param execRole
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 
-	private String createExecutionInstances(List selObjects, String execRole) throws Exception{
+	private String createExecutionInstances(List selObjects, String execRole) throws Exception {
 		logger.debug("IN");
 
 		// create execution id
-		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 		UUID uuidObj = uuidGen.generateTimeBasedUUID();
 		String executionId = uuidObj.toString();
 		String executionContextId = executionId.replaceAll("-", "");
-		logger.debug("created random execution id "+executionId);
+		logger.debug("created random execution id " + executionId);
 
-		CoreContextManager ccm = createContext( executionContextId );
+		CoreContextManager ccm = createContext(executionContextId);
 
 		instances = new HashMap<Integer, ExecutionInstance>();
 		for (Iterator iterator = selObjects.iterator(); iterator.hasNext();) {
@@ -217,28 +197,25 @@ public class StartMassiveExportExecutionProcessAction extends GetParametersForEx
 		Boolean displaySlider = false;
 		String modality = SpagoBIConstants.MASSIVE_EXPORT_MODALITY;
 
-
-		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 		UUID uuidObj2 = uuidGen.generateTimeBasedUUID();
 		String executionContextId = uuidObj2.toString();
 		executionContextId = executionContextId.replaceAll("-", "");
 
-		if (executionFlowId == null) executionFlowId = executionId;
+		if (executionFlowId == null)
+			executionFlowId = executionId;
 
 		// create new execution instance
 		ExecutionInstance instance = null;
 		try {
-			instance = new ExecutionInstance(getUserProfile(), executionFlowId, executionContextId, biobjectId, aRoleName, modality, 
+			instance = new ExecutionInstance(getUserProfile(), executionFlowId, executionContextId, biobjectId, aRoleName, modality,
 					displayToolbar.booleanValue(), displaySlider.booleanValue(), getLocale());
 		} catch (Exception e) {
 			logger.error(e);
-			throw(e);
+			throw (e);
 		}
 		logger.debug("OUT");
 		return instance;
 	}
-
-
-
 
 }

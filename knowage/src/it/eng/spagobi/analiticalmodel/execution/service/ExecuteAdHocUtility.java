@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -41,27 +41,23 @@ public class ExecuteAdHocUtility {
 
 	// logger component
 	private static Logger logger = Logger.getLogger(ExecuteAdHocUtility.class);
-	
-	public static Engine getWorksheetEngine() {
-		return getEngineByDriver("it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver");
-	}
-	
+
 	public static Engine getQbeEngine() {
 		return getEngineByDriver("it.eng.spagobi.engines.drivers.qbe.QbeDriver");
 	}
-	
+
 	public static Engine getGeoreportEngine() {
 		return getEngineByDriver("it.eng.spagobi.engines.drivers.gis.GisDriver");
-		
+
 	}
-	
+
 	public static Engine getCockpitEngine() {
 		return getEngineByDriver("it.eng.spagobi.engines.drivers.cockpit.CockpitDriver");
 	}
-	
+
 	public static Engine getEngineByDriver(String driver) {
 		Engine engine;
-		
+
 		engine = null;
 		try {
 			Assert.assertNotNull(DAOFactory.getEngineDAO(), "EngineDao cannot be null");
@@ -69,19 +65,19 @@ public class ExecuteAdHocUtility {
 			if (engine == null) {
 				throw new SpagoBIRuntimeException("There are no engines with driver equal to [" + driver + "] available");
 			}
-		} catch(Throwable t) {
-			throw new SpagoBIRuntimeException( "Impossible to load a valid engine whose drover is equal to [" + driver + "]", t);				
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Impossible to load a valid engine whose drover is equal to [" + driver + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
-		
+
 		return engine;
 	}
-	
+
 	public static Engine getEngineByDocumentType(String type) {
 		Engine engine;
 		List<Engine> engines;
-		
+
 		engine = null;
 		try {
 			Assert.assertNotNull(DAOFactory.getEngineDAO(), "EngineDao cannot be null");
@@ -89,59 +85,59 @@ public class ExecuteAdHocUtility {
 			if (engines == null || engines.size() == 0) {
 				throw new SpagoBIRuntimeException("There are no engines for documents of type [" + type + "] available");
 			} else {
-				engine = (Engine) engines.get(0);
-				LogMF.warn(logger, "There are more than one engine for document of type [" + type + "]. We will use the one whose label is equal to [{0}]", engine.getLabel());
+				engine = engines.get(0);
+				LogMF.warn(logger, "There are more than one engine for document of type [" + type + "]. We will use the one whose label is equal to [{0}]",
+						engine.getLabel());
 			}
-		} catch(Throwable t) {
-			throw new SpagoBIRuntimeException( "Impossible to load a valid engine for document of type [" + type + "]", t);				
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Impossible to load a valid engine for document of type [" + type + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
-		
+
 		return engine;
 	}
-	
+
 	public static String createNewExecutionId() {
 		String executionId;
-		
+
 		logger.debug("IN");
-		
+
 		executionId = null;
 		try {
-			UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 			UUID uuidObj = uuidGen.generateTimeBasedUUID();
 			executionId = uuidObj.toString();
 			executionId = executionId.replaceAll("-", "");
-		} catch(Throwable t) {
-			
+		} catch (Throwable t) {
+
 		} finally {
 			logger.debug("OUT");
 		}
-		
+
 		return executionId;
 	}
-	
-	//returns true if the dataset is geospazial
-	public static boolean hasGeoHierarchy(String meta) 
-			throws JsonMappingException, JsonParseException, JSONException, IOException{
-		
+
+	// returns true if the dataset is geospazial
+	public static boolean hasGeoHierarchy(String meta) throws JsonMappingException, JsonParseException, JSONException, IOException {
+
 		JSONObject metadataObject = JSONUtils.toJSONObject(meta);
-		if (metadataObject == null) return false;
-		
+		if (metadataObject == null)
+			return false;
+
 		JSONArray columnsMetadataArray = metadataObject.optJSONArray("columns");
-		if(columnsMetadataArray!=null){
+		if (columnsMetadataArray != null) {
 			for (int j = 0; j < columnsMetadataArray.length(); j++) {
-				JSONObject columnJsonObject = columnsMetadataArray
-						.getJSONObject(j);
-//					String columnName = columnJsonObject.getString("column");
+				JSONObject columnJsonObject = columnsMetadataArray.getJSONObject(j);
+				// String columnName = columnJsonObject.getString("column");
 				String propertyName = columnJsonObject.getString("pname");
 				String propertyValue = columnJsonObject.getString("pvalue");
 
 				if (propertyName.equalsIgnoreCase("hierarchy")) {
-					if (propertyValue.equalsIgnoreCase("geo")){
+					if (propertyValue.equalsIgnoreCase("geo")) {
 						return true;
 					}
-				}	
+				}
 			}
 		}
 

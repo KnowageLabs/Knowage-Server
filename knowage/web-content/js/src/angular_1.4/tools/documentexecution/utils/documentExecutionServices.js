@@ -398,8 +398,6 @@
 			window.open(dee.getExportationUrl(format,paramsExportType,'knowageqbeengine/servlet/AdapterHTTP') , 'name', 'resizable=1,height=750,width=1000');
 		};
 			
-//		dee.exportWorksheetsTo = function(mimeType, records){}
-			
 			
 		dee.exportOlapTo= function (format, contentUrl) {
 			var frame = window.frames["documentFrame"];
@@ -489,11 +487,6 @@
 				,{'description' : sbiModule_translate.load('sbi.execution.jrxmlExport') , 'iconClass':'fa fa-file-text-o', 'func': function() {dee.exportQbeTo('text/jrxml')} }
 				,{'description' : sbiModule_translate.load('sbi.execution.jsonExport') , 'iconClass':'fa fa-file-text-o', 'func': function() {dee.exportQbeTo('application/json')} }
 			],
-			'WORKSHEET': [
-			              {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportWorksheetsTo('application/pdf')} }
-			              ,{'description' : sbiModule_translate.load('sbi.execution.XlsExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportWorksheetsTo('application/vnd.ms-excel')} }
-			              ,{'description' : sbiModule_translate.load('sbi.execution.XlsxExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportWorksheetsTo('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')} }
-			              ],
 			'NETWORK': [
 			            {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportNetworkTo('pdf')} }
 			            ,{'description' : sbiModule_translate.load('sbi.execution.PngExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportNetworkTo('png')} }

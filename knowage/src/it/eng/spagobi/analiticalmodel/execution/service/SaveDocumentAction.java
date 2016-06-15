@@ -34,27 +34,20 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
-import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
 import it.eng.spagobi.metadata.metadata.SbiMetaObjDs;
 import it.eng.spagobi.metadata.metadata.SbiMetaObjDsId;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -71,10 +64,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 
 	private final String MESSAGE_DET = "MESSAGE_DET";
 	// type of service
-	private final String SAVE_WORKSHEET_FROM_QBE = "DOC_SAVE";
-	private final String SAVE_WORKSHEET_FROM_DATASET = "DOC_SAVE_FROM_DATASET";
 	private final String DOC_UPDATE = "DOC_UPDATE";
-	private final String SAVE_WORKSHEET_FROM_MODEL = "DOC_SAVE_FROM_MODEL";
 	private final String MODIFY_GEOREPORT = "MODIFY_GEOREPORT";
 	private final String MODIFY_COCKPIT = "MODIFY_COCKPIT";
 
@@ -129,13 +119,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		logger.debug("Action type is equal to [" + action + "]");
 
 		try {
-			if (SAVE_WORKSHEET_FROM_QBE.equalsIgnoreCase(action) || SAVE_WORKSHEET_FROM_DATASET.equalsIgnoreCase(action)
-					|| SAVE_WORKSHEET_FROM_MODEL.equalsIgnoreCase(action)) {
-				doInsertDocument(request);
-			} else if (DOC_UPDATE.equalsIgnoreCase(action)) {
-				updateWorksheetDocumentTemplate();
-			} else if (MODIFY_GEOREPORT.equalsIgnoreCase(action) || MODIFY_COCKPIT.equalsIgnoreCase(action)) {
-				// modifyGeoreportDocument(request);
+			if (MODIFY_GEOREPORT.equalsIgnoreCase(action) || MODIFY_COCKPIT.equalsIgnoreCase(action)) {
 				doModifyDocument(request);
 			} else {
 				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.document.unsupported.action");
@@ -173,9 +157,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			}
 
 			String type = documentJSON.getString("type");
-			if (SpagoBIConstants.WORKSHEET_TYPE_CODE.equalsIgnoreCase(type)) {
-				insertWorksheetDocument(request);
-			} else if ("MAP".equalsIgnoreCase(type)) {
+			if ("MAP".equalsIgnoreCase(type)) {
 				insertGeoreportDocument(request);
 			} else if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)) {
 				insertCockpitDocument(request);
@@ -226,7 +208,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 
 			String tempalteName = (MODIFY_GEOREPORT.equalsIgnoreCase(action)) ? "template.georeport" : "template.sbicockpit";
 			String templateContent = customDataJSON.optString("templateContent");
-			ObjTemplate template = buildDocumentTemplate(tempalteName, templateContent, document, null, null, null, null);
+			ObjTemplate template = buildDocumentTemplate(tempalteName, templateContent, document, null, null, null);
 			documentManagementAPI.saveDocument(document, template);
 
 			// save relations between document and datasets (only for cockpit engine)
@@ -303,8 +285,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				insertGeoReportDocumentCreatedOnDataset(sourceDatasetJSON, documentJSON, customDataJSON, filteredFoldersJSON);
 			} else if (sourceModelName != null) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to create geo document defined on a metamodel");
-				// insertWorksheetDocumentCreatedOnModel(sourceModelName,
-				// documentJSON, customDataJSON, foldersJSON);
 			} else {
 				insertGeoReportDocumentCreatedOnDataset(null, documentJSON, customDataJSON, filteredFoldersJSON);
 				// throw new SpagoBIServiceException(SERVICE_NAME,
@@ -399,183 +379,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		} catch (Throwable e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while inserting geo document created on datset [" + sourceDatasetLabel
 					+ "]", e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	private void insertWorksheetDocument(JSONObject request) {
-
-		logger.debug("IN");
-
-		try {
-			String sourceModelName = getAttributeAsString("model_name");
-			JSONObject documentJSON = request.optJSONObject("document");
-			JSONArray foldersJSON = request.optJSONArray("folders");
-			if (foldersJSON == null) {
-				IEngUserProfile profile = getUserProfile();
-				// add personal folder for default
-				LowFunctionality userFunc = null;
-				try {
-					userFunc = UserUtilities.loadUserFunctionalityRoot((UserProfile) profile, true);
-				} catch (Exception e) {
-					logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
-					throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
-				}
-				foldersJSON = new JSONArray();
-				foldersJSON.put(userFunc.getId());
-			}
-			JSONObject customDataJSON = request.optJSONObject("customData");
-			Assert.assertNotNull(customDataJSON, "Custom data object cannot be null");
-			Assert.assertNotNull(customDataJSON.has("worksheet"), "Worksheet data object cannot be null");
-			if (customDataJSON.has("smartFilter")) {
-				Assert.assertNotNull(customDataJSON.has("query"), "Query cannot be null if smartFilter data is available");
-			}
-
-			if (request.has("sourceDocument")) {
-				JSONObject sourceDocumentJSON = request.optJSONObject("sourceDocument");
-				insertWorksheetDocumentCreatedOnQbe(sourceDocumentJSON, documentJSON, customDataJSON, foldersJSON);
-			} else if (request.has("sourceDataset")) {
-				JSONObject sourceDatasetJSON = request.getJSONObject("sourceDataset");
-				insertWorksheetDocumentCreatedOnDataset(sourceDatasetJSON, documentJSON, customDataJSON, foldersJSON);
-			} else if (sourceModelName != null) {
-
-				insertWorksheetDocumentCreatedOnModel(sourceModelName, documentJSON, customDataJSON, foldersJSON);
-			} else {
-				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Impossible to create worksheet document because both sourceDocument and sourceDataset are null");
-			}
-		} catch (SpagoBIServiceException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while creating worksheet document", e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	private void insertWorksheetDocumentCreatedOnQbe(JSONObject sourceDocumentJSON, JSONObject documentJSON, JSONObject customDataJSON, JSONArray foldersJSON) {
-
-		String sourceDocumentId;
-
-		logger.debug("IN");
-
-		sourceDocumentId = null;
-		try {
-
-			sourceDocumentId = sourceDocumentJSON.optString("id").trim();
-			Assert.assertNotNull(StringUtilities.isNotEmpty(sourceDocumentId), "Source document's id cannot be null or empty");
-
-			BIObject sourceDocument = null;
-			try {
-				Integer id = new Integer(sourceDocumentId);
-				sourceDocument = documentManagementAPI.getDocument(id);
-			} catch (NumberFormatException e1) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Source document id [" + sourceDocumentId + "] is not a valid number");
-			} catch (Throwable t) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load document [" + sourceDocumentId + "]");
-			}
-			if (sourceDocument == null) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Source document [" + sourceDocumentId + "] does not exist");
-			}
-
-			BIObject document = createBaseDocument(documentJSON, sourceDocumentJSON, foldersJSON);
-			ObjTemplate template = buildDocumentTemplate("template.sbiworksheet", customDataJSON, sourceDocument);
-
-			documentManagementAPI.saveDocument(document, template);
-			documentManagementAPI.copyParameters(sourceDocument, document);
-
-		} catch (SpagoBIServiceException e) {
-			throw e;
-		} catch (Throwable e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while inserting worksheet document created on document ["
-					+ sourceDocumentId + "]", e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	private void insertWorksheetDocumentCreatedOnModel(String modelName, JSONObject documentJSON, JSONObject customDataJSON, JSONArray foldersJSON) {
-
-		try {
-
-			BIObject document = createBaseDocument(documentJSON, null, foldersJSON);
-
-			MetaModel metamodel = DAOFactory.getMetaModelsDAO().loadMetaModelByName(modelName);
-
-			String dataSourceLabel = metamodel.getDataSourceLabel();
-			if (dataSourceLabel != null) {
-				IDataSource datasource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
-				document.setDataSourceId(datasource.getDsId());
-			}
-
-			customDataJSON.put("modelName", modelName);
-			ObjTemplate template = buildDocumentTemplate("template.sbiworksheet", customDataJSON, null);
-
-			documentManagementAPI.saveDocument(document, template);
-
-		} catch (SpagoBIServiceException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new SpagoBIServiceException("Error creating the document", e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	private void insertWorksheetDocumentCreatedOnDataset(JSONObject sourceDatasetJSON, JSONObject documentJSON, JSONObject customDataJSON, JSONArray foldersJSON) {
-
-		logger.debug("IN");
-
-		String sourceDatasetLabel = null;
-		try {
-
-			sourceDatasetLabel = sourceDatasetJSON.optString("label");
-			Assert.assertNotNull(StringUtilities.isNotEmpty(sourceDatasetLabel), "Source dataset's label cannot be null or empty");
-
-			IDataSet sourceDataset = null;
-			try {
-				sourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
-			} catch (Throwable t) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load source datset [" + sourceDatasetLabel + "]");
-			}
-			if (sourceDataset == null) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Source datset [" + sourceDatasetLabel + "] does not exist");
-			}
-
-			BIObject document = createBaseDocument(documentJSON, null, foldersJSON);
-			ObjTemplate template = buildDocumentTemplate("template.sbiworksheet", customDataJSON, null);
-
-			document.setDataSetId(sourceDataset.getId());
-
-			// datasource
-			// GuiDataSetDetail detail = sourceDataset.getActiveDetail();
-			if (sourceDataset.getDsType().equalsIgnoreCase(DataSetConstants.QUERY)) {
-				String config = JSONUtils.escapeJsonString(sourceDataset.getConfiguration());
-				JSONObject jsonConf = ObjectUtils.toJSONObject(config);
-				// JSONObject jsonConf =
-				// ObjectUtils.toJSONObject(sourceDataset.getConfiguration());
-				try {
-					String dataSourceLabel = jsonConf.getString(DataSetConstants.DATA_SOURCE);
-					IDataSource datasource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
-					document.setDataSourceId(datasource.getDsId());
-				} catch (Exception e) {
-					logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
-				}
-
-			}
-
-			documentManagementAPI.saveDocument(document, template);
-			documentManagementAPI.propagateDatasetParameters(sourceDataset, document);
-			JSONArray metadataJSON = documentJSON.optJSONArray("metadata");
-			if (metadataJSON != null) {
-				documentManagementAPI.saveDocumentMetadataProperties(document, null, metadataJSON);
-			}
-		} catch (SpagoBIServiceException e) {
-			throw e;
-		} catch (Throwable e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while inserting worksheet document created on datset ["
-					+ sourceDatasetLabel + "]", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -775,15 +578,14 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 
 	private ObjTemplate buildDocumentTemplate(String templateName, JSONObject customDataJSON, BIObject sourceDocument) {
 		String templateContent = customDataJSON.optString("templateContent");
-		String worksheetData = customDataJSON.optString("worksheet");
 		JSONObject smartFilterData = customDataJSON.optJSONObject("smartFilter");
 		String query = customDataJSON.optString("query");
 		String modelName = customDataJSON.optString("modelName");
-		return buildDocumentTemplate(templateName, templateContent, sourceDocument, query, smartFilterData, worksheetData, modelName);
+		return buildDocumentTemplate(templateName, templateContent, sourceDocument, query, smartFilterData, modelName);
 	}
 
 	private ObjTemplate buildDocumentTemplate(String templateName, String templateContent, BIObject sourceDocument, String query, JSONObject smartFilterData,
-			String worksheetData, String modelName) {
+			String modelName) {
 
 		ObjTemplate template = null;
 
@@ -799,15 +601,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			} else if (smartFilterData != null) {
 				ExecutionInstance executionInstance = getContext().getExecutionInstance(ExecutionInstance.class.getName());
 				BIObject parentQbeDocument = executionInstance.getBIObject();
-				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, parentQbeDocument, query, worksheetData,
-						smartFilterData, null);
-			} else if (worksheetData != null && query != null && sourceDocument != null) {
-				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, sourceDocument, query, worksheetData,
-						smartFilterData, null);
-			} else if (action.equals(SAVE_WORKSHEET_FROM_DATASET) && worksheetData != null) {
-				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, null, query, worksheetData, null, null);
-			} else if (modelName != null && worksheetData != null) {
-				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, null, query, worksheetData, null, modelName);
+				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, parentQbeDocument, query, smartFilterData,
+						modelName);
+
 			} else {
 				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.document.saveError");
 			}
@@ -936,10 +732,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			// customData
 			JSONObject customData = new JSONObject();
 
-			String worksheetData = getAttributeAsString(OBJECT_WK_DEFINITION);
-			if (worksheetData != null)
-				customData.put("worksheet", worksheetData);
-
 			if (requestContainsAttribute(FORMVALUES) && StringUtilities.isNotEmpty(getAttributeAsString(FORMVALUES))) {
 				JSONObject smartFilterData = getAttributeAsJSONObject(FORMVALUES);
 				if (smartFilterData != null)
@@ -1002,104 +794,35 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	// TODO refactor the following code...
 	// ==============================================================
 
-	private void updateWorksheetDocumentTemplate() throws Exception {
-		logger.debug("IN");
-		JSONArray filteredFoldersJSON = new JSONArray();
-		// if(getAttributeAsJSONArray("folders") == null){
-		boolean foldersPassed = false;
-		Integer userFolderId = null;
-
-		if (getAttributeAsJSONArray("functs") == null) {
-			IEngUserProfile profile = getUserProfile();
-			// add personal folder for default
-			LowFunctionality userFunc = null;
-			try {
-				ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
-				// userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
-				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + ((UserProfile) profile).getUserId().toString(), false);
-			} catch (Exception e) {
-				logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
-				throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
-			}
-			if (userFunc != null) {
-				filteredFoldersJSON.put(userFunc.getId());
-				userFolderId = userFunc.getId();
-			}
-		} else {
-			// filteredFoldersJSON =
-			// filterFolders(getAttributeAsJSONArray("folders"));
-			filteredFoldersJSON = filterFolders(getAttributeAsJSONArray("functs"));
-			foldersPassed = true;
-		}
-
-		byte[] content = getTemplateContent();
-		ObjTemplate objTemp = createNewTemplate(content);
-		ExecutionInstance executionInstance = getContext().getExecutionInstance(ExecutionInstance.class.getName());
-		BIObject biobj = executionInstance.getBIObject();
-
-		// if folders where not passed and user default is used keep previous
-		// folder do not overwrite,
-		if (foldersPassed == false) {
-			List functs = biobj.getFunctionalities();
-			for (Iterator iterator = functs.iterator(); iterator.hasNext();) {
-				Object functO = iterator.next();
-				if (functO != null) {
-					Integer functId = (Integer) functO;
-					if (userFolderId == null || !functId.equals(userFolderId)) {
-						filteredFoldersJSON.put(functId);
-					}
-				}
-			}
-
-		}
-
-		// update document informations
-		biobj = syncronizeDocument(biobj, filteredFoldersJSON);
-
-		UserProfile userProfile = (UserProfile) this.getUserProfile();
-		logger.info("User with unique identifier " + userProfile.getUserUniqueIdentifier() + ", id " + userProfile.getUserId() + ", name "
-				+ userProfile.getUserName() + " is updating document with id " + biobj.getId() + ", label " + biobj.getLabel() + ", name " + biobj.getName()
-				+ "; new template is:");
-		logger.info(new String(objTemp.getContent()));
-		documentManagementAPI.saveDocument(biobj, objTemp);
-		logger.debug("Template of document with id " + biobj.getId() + ", label " + biobj.getLabel() + ", name " + biobj.getName() + " updated");
-		logger.debug("OUT");
-	}
-
-	protected byte[] getTemplateContent() throws Exception {
-		logger.debug("OUT");
-		String wkDefinition = getAttributeAsString(OBJECT_WK_DEFINITION);
-		String query = getAttributeAsString(OBJECT_QUERY);
-		JSONObject smartFilterValues = getAttributeAsJSONObject(FORMVALUES);
-		String smartFilterValuesString = null;
-		if (smartFilterValues != null) {
-			smartFilterValuesString = smartFilterValues.toString();
-		}
-		logger.debug("Worksheet definition : " + wkDefinition);
-		logger.debug("Base query definition : " + query);
-		logger.debug("Smart filter values : " + smartFilterValues);
-		ExecutionInstance executionInstance = getContext().getExecutionInstance(ExecutionInstance.class.getName());
-		BIObject biobj = executionInstance.getBIObject();
-		ObjTemplate qbETemplate = biobj.getActiveTemplate();
-		String templCont = new String(qbETemplate.getContent());
-		WorksheetDriver q = new WorksheetDriver();
-		String temp = q.updateWorksheetTemplate(wkDefinition, query, smartFilterValuesString, templCont);
-		byte[] content = temp.getBytes();
-		logger.debug("OUT");
-		return content;
-	}
-
-	protected ObjTemplate createNewTemplate(byte[] content) {
-		logger.debug("IN");
-		ObjTemplate objTemp = new ObjTemplate();
-		objTemp.setContent(content);
-		UserProfile userProfile = (UserProfile) this.getUserProfile();
-		objTemp.setCreationUser(userProfile.getUserId().toString());
-		objTemp.setDimension(Long.toString(content.length / 1000) + " KByte");
-		objTemp.setName("template.sbiworksheet");
-		logger.debug("OUT");
-		return objTemp;
-	}
+	// protected byte[] getTemplateContent() throws Exception {
+	// logger.debug("OUT");
+	// String wkDefinition = getAttributeAsString(OBJECT_WK_DEFINITION);
+	// String query = getAttributeAsString(OBJECT_QUERY);
+	// JSONObject smartFilterValues = getAttributeAsJSONObject(FORMVALUES);
+	// String smartFilterValuesString = null;
+	// if (smartFilterValues != null) {
+	// smartFilterValuesString = smartFilterValues.toString();
+	// }
+	// logger.debug("Base query definition : " + query);
+	// logger.debug("Smart filter values : " + smartFilterValues);
+	// ExecutionInstance executionInstance = getContext().getExecutionInstance(ExecutionInstance.class.getName());
+	// BIObject biobj = executionInstance.getBIObject();
+	// ObjTemplate qbETemplate = biobj.getActiveTemplate();
+	// String templCont = new String(qbETemplate.getContent());
+	// logger.debug("OUT");
+	// return content;
+	// }
+	//
+	// protected ObjTemplate createNewTemplate(byte[] content) {
+	// logger.debug("IN");
+	// ObjTemplate objTemp = new ObjTemplate();
+	// objTemp.setContent(content);
+	// UserProfile userProfile = (UserProfile) this.getUserProfile();
+	// objTemp.setCreationUser(userProfile.getUserId().toString());
+	// objTemp.setDimension(Long.toString(content.length / 1000) + " KByte");
+	// logger.debug("OUT");
+	// return objTemp;
+	// }
 
 	private JSONArray filterFolders(JSONArray foldersJSON) {
 		JSONArray toReturn = new JSONArray();

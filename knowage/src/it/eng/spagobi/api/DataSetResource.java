@@ -792,14 +792,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 */
 	private JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray, String typeDocWizard) throws JSONException, EMFInternalError {
 
-		Engine wsEngine = null;
-		try {
-			wsEngine = ExecuteAdHocUtility.getWorksheetEngine();
-		} catch (SpagoBIRuntimeException r) {
-			// the ws engine is not found
-			logger.info("Engine not found. ", r);
-		}
-
 		Engine qbeEngine = null;
 		try {
 			qbeEngine = ExecuteAdHocUtility.getQbeEngine();
@@ -823,10 +815,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		JSONObject deleteAction = new JSONObject();
 		deleteAction.put("name", "delete");
 		deleteAction.put("description", "Delete dataset");
-
-		JSONObject worksheetAction = new JSONObject();
-		worksheetAction.put("name", "worksheet");
-		worksheetAction.put("description", "Show Worksheet");
 
 		JSONObject georeportAction = new JSONObject();
 		georeportAction.put("name", "georeport");
@@ -866,10 +854,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			if (isGeoDataset && geoEngine != null) {
 				actions.put(georeportAction);
-			}
-
-			if (wsEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
-				actions.put(worksheetAction);
 			}
 
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);

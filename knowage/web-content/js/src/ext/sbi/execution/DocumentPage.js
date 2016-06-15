@@ -308,7 +308,6 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 
 		listeners['message:subobjectsaved'] = this.initSubObjectSavedMessageListner();
 		listeners['message:contentexported'] = this.initContentExportedMessageListner();
-    	listeners['message:worksheetexporttaberror'] = this.initWorksheetExportTabErrorMessageListner();
 		listeners['message:crossnavigation'] = this.initCrossNavigationaMessageListner();
 		listeners['message:closeDocument'] = this.closeDocumentListener();
 		listeners['message:managebutton'] = this.initManageButton();
@@ -491,22 +490,6 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 	 * init the listner for event 'message:contentexported'
 	 */
 	, initContentExportedMessageListner: function() {
-		return {
-	    	fn: function(srcFrame, message) {
-	        	if (this.loadMask != null) {
-	        		this.hideMask();
-	        	}  
-	    	}
-	    	, scope: this
-	    };
-	}
-	
-	/**
-	 * @method
-	 * 
-	 * init the listner for event 'message:worksheetexporttaberror'
-	 */
-	, initWorksheetExportTabErrorMessageListner: function() {
 		return {
 	    	fn: function(srcFrame, message) {
 	        	if (this.loadMask != null) {

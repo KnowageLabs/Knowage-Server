@@ -25,7 +25,6 @@ import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.serializer.RegistryConfigurationJSONSerializer;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
-import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
@@ -56,8 +55,6 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
 	public static final String REGISTRY_CONFIGURATION = "REGISTRY_CONFIGURATION";
 
-	public static final String IS_WORKSHEET_ENABLED = "IS_WORKSHEET_ENABLED";
-
 	/** Logger component. */
 	private static transient Logger logger = Logger.getLogger(QbeEngineStartAction.class);
 
@@ -66,7 +63,6 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 	@Override
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse) {
 		QbeEngineInstance qbeEngineInstance = null;
-		WorksheetEngineInstance worksheetEngineInstance = null;
 		QbeEngineAnalysisState analysisState;
 		Locale locale;
 
@@ -185,12 +181,6 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 
 			setAttribute(LANGUAGE, locale.getLanguage());
 			setAttribute(COUNTRY, locale.getCountry());
-
-			String isWorksheetEnabled = getAttributeAsString("isWorksheetEnabled");
-			if (null == isWorksheetEnabled)
-				isWorksheetEnabled = "false";
-
-			setAttribute(IS_WORKSHEET_ENABLED, isWorksheetEnabled);
 
 		} catch (Throwable e) {
 			SpagoBIEngineStartupException serviceException = null;

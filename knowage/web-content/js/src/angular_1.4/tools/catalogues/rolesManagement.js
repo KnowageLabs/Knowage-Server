@@ -49,7 +49,6 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	               {dbname:"ENABLE_FEDERATED_DATASET",label:"enableFederatedDataset",visible:false, category:"ENABLE"},
 	               {dbname:"SEE_MY_DATA",label:"seeMyData",visible:false, category:"ITEMS"},
 	               {dbname:"DO_MASSIVE_EXPORT",label:"doMassiveExport",visible:false, category:"EXPORT"},
-	               {dbname:"EDIT_WORKSHEET",label:"editWorksheet",visible:false, category:"EDIT"},
 	               
 	               {dbname:"SEE_SUBSCRIPTIONS",label:"seeSubscriptions",visible:false, category:"ITEMS"},
 	               {dbname:"CREATE_SOCIAL_ANALYSIS",label:"createSocialAnalysis",visible:false, category:"ITEMS"},
@@ -134,7 +133,6 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		$scope.selectedRole.ableToSeeSnapshots= true;
 		$scope.selectedRole.ableToDoMassiveExport= true;
 		$scope.selectedRole.ableToCreateDocuments= true;
-		$scope.selectedRole.ableToEditWorksheet= true;
 		$scope.selectedRole.ableToHierarchiesManagement= true;
 		$scope.selectedRole.ableToEditAllKpiComm= true;
 		$scope.selectedRole.ableToSeeDocumentBrowser= true;

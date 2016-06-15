@@ -170,15 +170,16 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			listeners: {
 			    afterrender: function(combo) {
 			    	if (!this.rawValue || this.rawValue == ''){
-				        var recordSelected = combo.getStore().getAt(0);                     
-				        combo.setValue(recordSelected.get('VALUE_ID'));
-				        
-				        if (combo.getStore().data.length < 2){
-				        	combo.hidden = true;
-				        } else {
-				        	combo.hidden = false;
-				        }
-				        				        
+				        var recordSelected = combo.getStore().getAt(0); 
+				        if (recordSelected){
+					        combo.setValue(recordSelected.get('VALUE_ID'));
+					        
+					        if (combo.getStore().data.length < 2){
+					        	combo.hidden = true;
+					        } else {
+					        	combo.hidden = false;
+					        }
+				        }				        				        
 			    	}
 			    }
 			}

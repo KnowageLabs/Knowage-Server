@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -41,30 +41,26 @@ import org.safehaus.uuid.UUIDGenerator;
 /**
  * Action that gets a dataset id and prepare the url to call (depending on TARGET parameter value)
  *
- * 1) the worksheeet's edit service (WORKSHEET_WITH_DATASET_START_EDIT_ACTION) in order to build a worksheet document on the brandnew dataset
  *
- * 2) the Qbe Engine (QBE_ENGINE_FROM_DATASET_START_ACTION)
+ * 1) the Qbe Engine (QBE_ENGINE_FROM_DATASET_START_ACTION)
  *
  *
  *
  * @author Giulio Gavardi
  */
-public class SelectDatasetAction extends CreateDatasetForWorksheetAction {
+public class SelectDatasetAction extends ExecuteDocumentAction {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String WORKSHEET_EDIT_ACTION = "WORKSHEET_WITH_DATASET_START_EDIT_ACTION";
 	public static final String QBE_EDIT_ACTION = "QBE_ENGINE_FROM_DATASET_START_ACTION";
 
 	/** parameter that ecides action target */
 	public static final String INPUT_PARAMETER_ENGINE = "ENGINE";
-	public static final String WORKSHEET = "WORKSHEET";
 	public static final String QBE = "QBE";
 
 	/** label f dataset to open */
 	public static final String INPUT_PARAMETER_DS_LABEL = "DATASET_LABEL";
 
-	public static final String OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL = "serviceUrl";
 	public static final String OUTPUT_PARAMETER_EXECUTION_ID = "executionId";
 	public static final String OUTPUT_PARAMETER_DATASET_LABEL = "datasetLabel";
 	public static final String OUTPUT_PARAMETER_DATASOURCE_LABEL = "datasourceLabel";
@@ -84,21 +80,20 @@ public class SelectDatasetAction extends CreateDatasetForWorksheetAction {
 		logger.debug("IN");
 
 		try {
-			// can be QBE or WORKSHEETs
+			// can be QBE
 			LogMF.trace(logger, "Reading input parametr [{0}] from request...", INPUT_PARAMETER_ENGINE);
 			target = getAttributeAsString(INPUT_PARAMETER_ENGINE);
 			LogMF.debug(logger, "Input parameter [{0}] is equal to [{1}]", INPUT_PARAMETER_ENGINE, target);
 			Assert.assertNotNull(target, "Input parameter [" + INPUT_PARAMETER_ENGINE + "] cannot be null");
 
-			String actionToCall = target == null || target.equals(WORKSHEET) ? WORKSHEET_EDIT_ACTION : QBE_EDIT_ACTION;
+			String actionToCall = QBE_EDIT_ACTION;
 
-			// create the input parameters to pass to the WorkSheet Edit Service
 			Map editActionParameters = buildEditServiceBaseParametersMap(actionToCall);
 
 			String executionId = createNewExecutionId();
 			editActionParameters.put("SBI_EXECUTION_ID", executionId);
 
-			String typeCode = target == null || target.equals(WORKSHEET) ? SpagoBIConstants.WORKSHEET_TYPE_CODE : SpagoBIConstants.DATAMART_TYPE_CODE;
+			String typeCode = SpagoBIConstants.DATAMART_TYPE_CODE;
 			Engine engineToCall = getEngine(typeCode);
 
 			LogMF.debug(logger, "Engine label is equal to [{0}]", engineToCall.getLabel());
@@ -111,20 +106,13 @@ public class SelectDatasetAction extends CreateDatasetForWorksheetAction {
 			editActionParameters.put("dataset_label", dataset.getLabel());
 
 			IDataSource datasource = dataset.getDataSource();
-			if (target.equals(WORKSHEET)) {
-				editActionParameters.put("datasource_label", datasource.getLabel());
-				Engine worksheetEngine = getWorksheetEngine();
-				int defEngineDataSource = 0;
-				// worksheetEngine.getDataSourceId();
-				editActionParameters.put("ENGINE_DATASOURCE_ID", defEngineDataSource);
-			} else {
-				editActionParameters.put("selected_datasource_label", datasource.getLabel());
-				// add the data default datasource of teh engine
-				Engine qbeEngine = getQbeEngine();
-				int defEngineDataSource = 0;
-				// qbeEngine.getDataSourceId();
-				editActionParameters.put("ENGINE_DATASOURCE_ID", defEngineDataSource);
-			}
+
+			editActionParameters.put("selected_datasource_label", datasource.getLabel());
+			// add the data default datasource of teh engine
+			Engine qbeEngine = getQbeEngine();
+			int defEngineDataSource = 0;
+			// qbeEngine.getDataSourceId();
+			editActionParameters.put("ENGINE_DATASOURCE_ID", defEngineDataSource);
 
 			// IDataSource dataSource = getDatasourceToOpen(dataSourceId);
 
@@ -139,11 +127,6 @@ public class SelectDatasetAction extends CreateDatasetForWorksheetAction {
 				editActionParameters.putAll(new HashMap<String, String>());
 
 			}
-
-			// create the WorkSheet Edit Service's URL
-			String worksheetEditActionUrl = GeneralUtilities.getUrl(engineToCall.getUrl(), editActionParameters);
-			LogMF.debug(logger, "Worksheet edit service invocation url is equal to [{}]", worksheetEditActionUrl);
-
 			// create the dataset
 			logger.trace("Creating the dataset...");
 			Integer datasetId = null;
@@ -159,7 +142,6 @@ public class SelectDatasetAction extends CreateDatasetForWorksheetAction {
 			logger.trace("Copying output parameters to response...");
 			try {
 				getServiceResponse().setAttribute(OUTPUT_PARAMETER_EXECUTION_ID, executionId);
-				getServiceResponse().setAttribute(OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL, worksheetEditActionUrl);
 				getServiceResponse().setAttribute(OUTPUT_PARAMETER_DATASET_LABEL, dataset.getLabel());
 				getServiceResponse().setAttribute(OUTPUT_PARAMETER_DATASOURCE_LABEL, datasource.getLabel());
 
@@ -281,4 +263,35 @@ public class SelectDatasetAction extends CreateDatasetForWorksheetAction {
 		return dataset;
 	}
 
+	private Engine getEngineByDocumentType(String type) {
+		Engine engine;
+		List<Engine> engines;
+
+		engine = null;
+		try {
+			Assert.assertNotNull(DAOFactory.getEngineDAO(), "EngineDao cannot be null");
+			engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(type);
+			if (engines == null || engines.size() == 0) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "There are no engines for documents of type [" + type + "] available");
+			} else {
+				engine = engines.get(0);
+				if (engines.size() > 1) {
+					LogMF.warn(logger, "There are more than one engine for document of type [" + type + "]. We will use the one whose label is equal to [{0}]",
+							engine.getLabel());
+				} else {
+					LogMF.debug(logger, "Using engine with label [{0}]", engine.getLabel());
+				}
+			}
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load a valid engine for document of type [" + type + "]", t);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return engine;
+	}
+
+	private Engine getQbeEngine() {
+		return getEngineByDocumentType(SpagoBIConstants.DATAMART_TYPE_CODE);
+	}
 }

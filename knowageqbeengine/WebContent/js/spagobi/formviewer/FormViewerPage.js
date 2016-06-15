@@ -47,7 +47,7 @@ Sbi.formviewer.FormViewerPage = function(template, config, formValues) {
 		, border : false
 		//, bodyStyle: 'padding:30px'
 		, showSaveFormButton : true
-		, showWorksheetButton : true
+//		, showWorksheetButton : true
 		, title: LN('sbi.formviewer.formviewerpage.filters.title')
 	};
 	
@@ -164,20 +164,20 @@ Ext.extend(Sbi.formviewer.FormViewerPage, Ext.Panel, {
 			scope: this
 	    });
 		
-		if (c.showWorksheetButton) {
-			toolbarItems.push('-');
-			toolbarItems.push({
-				text: LN('sbi.formviewer.formviewerpage.designworksheet'),
-				tooltip: LN('sbi.formviewer.formviewerpage.designworksheet.tooltip'),
-				handler: function() {
-		    		this.validateForm(function() {
-		    			var state = this.getFormState();
-		    			this.fireEvent('crosstabrequired', state);
-		    		}, this);
-		    	},
-				scope: this
-		    });
-		}
+//		if (c.showWorksheetButton) {
+//			toolbarItems.push('-');
+//			toolbarItems.push({
+//				text: LN('sbi.formviewer.formviewerpage.designworksheet'),
+//				tooltip: LN('sbi.formviewer.formviewerpage.designworksheet.tooltip'),
+//				handler: function() {
+//		    		this.validateForm(function() {
+//		    			var state = this.getFormState();
+//		    			this.fireEvent('crosstabrequired', state);
+//		    		}, this);
+//		    	},
+//				scope: this
+//		    });
+//		}
 		
 		this.toolbar = new Ext.Toolbar({
 			items: toolbarItems

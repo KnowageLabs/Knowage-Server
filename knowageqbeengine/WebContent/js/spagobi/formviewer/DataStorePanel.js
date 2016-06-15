@@ -270,7 +270,7 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 				 return numberFormatterFunction.call(this,scaledValue);	
 			}
 			
-			field.header = field.header +' '+ LN('sbi.worksheet.config.options.measurepresentation.'+scaleFactor);
+			field.header = field.header +' '+ LN('sbi.qbe.config.options.measurepresentation.'+scaleFactor);
 		}else{
 			field.renderer =numberFormatterFunction;
 		}

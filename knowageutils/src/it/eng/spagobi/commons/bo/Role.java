@@ -46,7 +46,6 @@ public class Role implements Serializable {
 	private boolean isAbleToSeeNotes;
 	private boolean isAbleToSendMail;
 	private boolean isAbleToSaveIntoPersonalFolder;
-	private boolean isAbleToEditWorksheet;
 	private boolean isAbleToSaveRememberMe;
 	private boolean isAbleToSeeMetadata;
 	private boolean isAbleToSaveMetadata;
@@ -440,14 +439,6 @@ public class Role implements Serializable {
 
 	public void setIsAbleToDoMassiveExport(boolean isAbleToDoMassiveExport) {
 		this.isAbleToDoMassiveExport = isAbleToDoMassiveExport;
-	}
-
-	public boolean isAbleToEditWorksheet() {
-		return isAbleToEditWorksheet;
-	}
-
-	public void setIsAbleToEditWorksheet(boolean isAbleToEditWorksheet) {
-		this.isAbleToEditWorksheet = isAbleToEditWorksheet;
 	}
 
 	public boolean isAbleToManageUsers() {

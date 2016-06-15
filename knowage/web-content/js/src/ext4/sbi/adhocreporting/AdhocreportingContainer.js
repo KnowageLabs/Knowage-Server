@@ -29,7 +29,6 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 	extend: 'Ext.panel.Panel',
 
 	config:{
-    	worksheetEngineBaseUrl : '',
     	qbeFromBMBaseUrl : '',
     	qbeFromDataSetBaseUrl : '',
         user : '',
@@ -73,7 +72,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 		        /**
 		         * @event event1
 		         * Execute the qbe clicking in the model/dataset
-				 * @param {Object} docType engine to execute 'QBE'/'WORKSHEET'/'COCKPIT'
+				 * @param {Object} docType engine to execute 'QBE'/'/'COCKPIT'
 				 * @param {Object} inputType 'DOCUMENT'
 				 * @param {Object} record the record that contains all the information of the document
 		         */
@@ -120,9 +119,6 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 		if(docType=='COCKPIT'){
 			Sbi.debug("Cockpit document execution");
 			this.executeCockpit(inputType, record);
-		} else if (docType=='WORKSHEET'){
-			Sbi.debug("Worksheet document execution");
-			this.executeWorksheet(inputType, record);
 		} else if (docType=='GEOREPORT'){
 			Sbi.debug("Georeport document execution");
 			this.executeGeoreport(inputType, record);
@@ -138,13 +134,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 			this.executeDocumentAction(inputType, record);			
 		}
 	}
-	
-	, executeWorksheet: function(inputType, record){
-		if(inputType == "DOCUMENT"){
-			this.executeDocumentAction(inputType, record);			
-		}
-	}
-	
+
 	, executeGeoreport: function(inputType, record){
 		if(inputType == "DOCUMENT"){
 			this.executeDocumentAction(inputType, record);

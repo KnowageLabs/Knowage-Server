@@ -47,7 +47,6 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 				, myAnalysisServicePath: config.myAnalysisServicePath
 				, id: 'this'
 				, useCockpitEngine: (config.adhocreportingContainer.cockpitEngineBaseUrl != 'null')?true:false
-				, useWSEngine: ((config.adhocreportingContainer.worksheetEngineBaseUrl != 'null') && Sbi.settings.mydata.isWorksheetEnabled)?true:false
 				, useQbeEngine: (config.adhocreportingContainer.qbeFromDataSetBaseUrl != 'null')?true:false
 				, useGeoEngine: (config.adhocreportingContainer.georeportEngineBaseUrl != 'null' &&
 								 Sbi.settings.myanalysis.showMapFilter)?true:false
@@ -63,7 +62,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 		        /**
 		         * @event event1
 		         * Execute the qbe clicking in the model/dataset
-				 * @param {Object} docType engine to execute 'QBE'/'WORKSHEET'/'COCKPIT'
+				 * @param {Object} docType engine to execute QBE COCKPIT
 				 * @param {Object} inputType 'DOCUMENT'
 				 * @param {Object} record the record that contains all the information of the document
 		         */

@@ -65,7 +65,7 @@
 	<ENGINE label="knowagesmartfilteren" name="Smart Filter Engine"
 		descr=" Smart Filter Engine" mainUrl="/knowageqbeengine/servlet/AdapterHTTP"
 		driverNm="it.eng.spagobi.engines.drivers.smartfilter.SmartFilterDriver"
-		engineTypeCd="EXT" classNm="" biobjTypeCd="SMART_FILTER" useDataSet="false"
+		engineTypeCd="EXT" classNm="" biobjTypeCd="SMART_FILTER" useDataSet="true"
 		useDataSource="true" encrypt="0" />
 	<ENGINE label="knowagegisengine" name="Gis Engine" descr="Gis Engine"
 		mainUrl="/knowagegeoreportengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.gis.GisDriver"
@@ -74,11 +74,6 @@
 	<ENGINE label="knowageconsoleengine" name="Console Engine" descr="Console Engine"
 		mainUrl="/knowageconsoleengine/servlet/AdapterHTTP" driverNm="it.eng.spagobi.engines.drivers.console.ConsoleDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="CONSOLE" useDataSet="true"
-		useDataSource="true" encrypt="0" />
-	<ENGINE label="knowageworksheeteng" name="Worksheet Engine"
-		descr="Worksheet Engine" mainUrl="/knowageqbeengine/servlet/AdapterHTTP"
-		driverNm="it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver"
-		engineTypeCd="EXT" classNm="" biobjTypeCd="WORKSHEET" useDataSet="true"
 		useDataSource="true" encrypt="0" />
 	<ENGINE label="knowagechartengine" name="Chart Engine" descr="Chart Engine"
 		mainUrl="/knowagechartengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.chart.ChartDriver"

@@ -68,7 +68,6 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 			, datasetsServicePath : config.datasetsServicePath
 			, id: 'this'
 			, qbeEditDatasetUrl : config.qbeEditDatasetUrl
-			, isWorksheetEnabled: config.isWorksheetEnabled
 			, typeDoc : config.typeDoc
 			, fromMyAnalysis: config.fromMyAnalysis
 			, userCanPersist: config.userCanPersist
@@ -106,7 +105,7 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 		        /**
 		         * @event event1
 		         * Execute the qbe clicking in the model/dataset
-				 * @param {Object} docType engine to execute 'QBE'/'WORKSHEET'
+				 * @param {Object} docType engine to execute 'QBE'
 				 * @param {Object} inputType 'DATASET'/'MODEL'
 				 * @param {Object} record the record that contains all the information of the metamodel/dataset
 		         */

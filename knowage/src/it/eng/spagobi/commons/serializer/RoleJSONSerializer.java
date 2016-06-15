@@ -53,7 +53,6 @@ public class RoleJSONSerializer implements Serializer {
 	private static final String DO_MASSIVE_EXPORT = "doMassiveExport";
 	private static final String MANAGE_USERS = "manageUsers";
 	private static final String DEFAULT_ROLE = "defaultRole";
-	private static final String EDIT_WORKSHEET = "editWorksheet";
 	private static final String SEE_DOC_BROWSER = "seeDocBrowser";
 	private static final String SEE_MY_DATA = "seeMyData";
 	private static final String SEE_FAVOURITES = "seeFavourites";
@@ -109,7 +108,6 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(DO_MASSIVE_EXPORT, role.isAbleToDoMassiveExport());
 			result.put(MANAGE_USERS, role.isAbleToManageUsers());
 			result.put(DEFAULT_ROLE, role.isDefaultRole());
-			result.put(EDIT_WORKSHEET, role.isAbleToEditWorksheet());
 			result.put(SEE_DOC_BROWSER, role.isAbleToSeeDocumentBrowser());
 			result.put(SEE_MY_DATA, role.isAbleToSeeMyData());
 			result.put(SEE_FAVOURITES, role.isAbleToSeeFavourites());

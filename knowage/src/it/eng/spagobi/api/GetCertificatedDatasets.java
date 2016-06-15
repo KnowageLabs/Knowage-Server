@@ -143,14 +143,6 @@ public class GetCertificatedDatasets {
 
 	private JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray, String typeDocWizard) throws JSONException, EMFInternalError {
 
-		Engine wsEngine = null;
-		try {
-			wsEngine = ExecuteAdHocUtility.getWorksheetEngine();
-		} catch (SpagoBIRuntimeException r) {
-			// the ws engine is not found
-			logger.info("Engine not found. ", r);
-		}
-
 		Engine qbeEngine = null;
 		try {
 			qbeEngine = ExecuteAdHocUtility.getQbeEngine();
@@ -173,10 +165,6 @@ public class GetCertificatedDatasets {
 		JSONObject deleteAction = new JSONObject();
 		deleteAction.put("name", "delete");
 		deleteAction.put("description", "Delete dataset");
-
-		JSONObject worksheetAction = new JSONObject();
-		worksheetAction.put("name", "worksheet");
-		worksheetAction.put("description", "Show Worksheet");
 
 		JSONObject georeportAction = new JSONObject();
 		georeportAction.put("name", "georeport");
@@ -225,9 +213,6 @@ public class GetCertificatedDatasets {
 					// profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
 					actions.put(georeportAction); // Annotated view map action to release SpagoBI 4
 				}
-			}
-			if ((wsEngine != null && typeDocWizard == null) || (typeDocWizard != null && typeDocWizard.equalsIgnoreCase("REPORT"))) {
-				actions.put(worksheetAction);
 			}
 
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);

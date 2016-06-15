@@ -28,9 +28,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
-<%@page import="it.eng.spagobi.engines.worksheet.WorksheetEngineInstance"%>
 <%@page import="it.eng.spagobi.commons.QbeEngineStaticVariables"%>
-<%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
 <%@page import="it.eng.qbe.serializer.SerializationManager"%>
 <%@page import="it.eng.spago.configuration.*"%>
 <%@page import="it.eng.qbe.model.structure.IModelStructure"%>
@@ -118,7 +116,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			Sbi.config = {};
 	
 			Sbi.config.queryVersion = <%= QbeEngineStaticVariables.CURRENT_QUERY_VERSION %>;
-			Sbi.config.worksheetVersion = <%= WorkSheetDefinition.CURRENT_VERSION %>;
 			Sbi.config.queryLimit = {};
 			Sbi.config.queryLimit.maxRecords = <%= resultLimit != null ? "" + resultLimit.intValue() : "undefined" %>;
 			Sbi.config.queryLimit.isBlocking = <%= isMaxResultLimitBlocking %>;
@@ -188,8 +185,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	qbeConfig.westConfig.datamartsName = <%= datamartNamesBuffer.toString() %>;
 
 	      	qbeConfig.externalServicesConfig = <%= qbeEngineInstance.getTemplate() != null ? qbeEngineInstance.getTemplate().getExternalServiceConfigurationsAsJSONArray() : "[]"%>;
-
-	      	qbeConfig.worksheet = {};
 	    	
 	        // javascript-side user profile object
 	        Ext.ns("Sbi.user");
@@ -208,7 +203,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	       		// if user is a power user, instantiate and show also the QueryBuilderPanel
 	       		qbeConfig.displayQueryBuilderPanel = Sbi.user.isPowerUser;
 	       		qbeConfig.displayFormBuilderPanel = false;
-	       		qbeConfig.displayWorksheetPanel = false;
 	       		qbeConfig.enableQueryTbSaveBtn = false;
 	       		qbeConfig.eastConfig = {};
 	       		qbeConfig.eastConfig.parametersGridPanel = new Sbi.dataset.ParametersGridPanel({

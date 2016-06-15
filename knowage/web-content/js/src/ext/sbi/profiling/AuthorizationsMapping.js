@@ -19,7 +19,6 @@ Sbi.profiling.AuthorizationsMapping =  {
 			    			['saveMeta','SAVE_METADATA'],
 			    			['buildQbe','BUILD_QBE_QUERY'],
 			    			['doMassiveExport','DO_MASSIVE_EXPORT'],
-			    			['editWorksheet','EDIT_WORKSHEET'],
 			    			['manageUsers','MANAGE_USERS'],
 			    			['manageGlossaryBusiness','MANAGE_GLOSSARY_BUSINESS'],
 			    			['manageGlossaryTechnical','MANAGE_GLOSSARY_TECHNICAL'],

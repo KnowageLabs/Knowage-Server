@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -64,16 +64,17 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 * 
+	 *
 	 * @param profile
 	 *            Profile of the user
 	 * @param roleName
 	 *            the name of the execution role
 	 * @param analyticalDocument
 	 *            the biobject
-	 * 
+	 *
 	 * @return Map The map of the execution call parameters
 	 */
+	@Override
 	public Map getParameterMap(Object analyticalDocument, IEngUserProfile profile, String roleName) {
 		Map parameters;
 		BIObject biObject;
@@ -101,7 +102,7 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 * 
+	 *
 	 * @param analyticalDocumentSubObject
 	 *            SubObject to execute
 	 * @param profile
@@ -110,9 +111,10 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 	 *            the name of the execution role
 	 * @param analyticalDocument
 	 *            the object
-	 * 
+	 *
 	 * @return Map The map of the execution call parameters
 	 */
+	@Override
 	public Map getParameterMap(Object analyticalDocument, Object analyticalDocumentSubObject, IEngUserProfile profile, String roleName) {
 
 		Map parameters;
@@ -156,7 +158,7 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Adds a system parameter contaning info about document parameters (url name, label, type)
-	 * 
+	 *
 	 * @param biobject
 	 *            The BIObject under execution
 	 * @param map
@@ -193,7 +195,7 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Starting from a BIObject extracts from it the map of the paramaeters for the execution call
-	 * 
+	 *
 	 * @param biObject
 	 *            BIObject to execute
 	 * @return Map The map of the execution call parameters
@@ -236,7 +238,7 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
-	 * 
+	 *
 	 * @param biobj
 	 *            BIOBject to execute
 	 * @param pars
@@ -272,17 +274,18 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 * 
+	 *
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 * 
+	 *
 	 * @return the edits the document template build url
-	 * 
+	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
+	@Override
 	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 
 		EngineURL engineURL;
@@ -335,17 +338,18 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 * 
+	 *
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 * 
+	 *
 	 * @return the new document template build url
-	 * 
+	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
+	@Override
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 
 		EngineURL engineURL;
@@ -471,6 +475,7 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 		logger.debug("Added parameter [" + pname + "] with value [" + pvalue + "] to request parameters list");
 	}
 
+	@Override
 	public SourceBean getTemplateAsSourceBean(byte[] content) {
 		SourceBean templateSB = null;
 		try {
@@ -490,9 +495,78 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 			return new String("");
 	}
 
+	@Override
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public String composeSmartFilterTemplate(String smartFilterDef, String smartFilterQuery, String smartFilterValues, String originalQbeTempl)
+			throws SourceBeanException {
+		/*
+		 * SourceBean templateSB = new SourceBean(TAG_WORKSHEET); templateSB.setAttribute(ATTRIBUTE_VERSION, CURRENT_VERSION); SourceBean confSB =
+		 * SourceBean.fromXMLString(originalQbeTempl); // from version 0 to version 1 worksheet change compensation: on version 0 the // worksheet definition
+		 * was inside QBE tag; on version 1 the QBE tag is inside // WORKSHEET tag if (confSB.getName().equalsIgnoreCase(TAG_QBE) ||
+		 * confSB.getName().equalsIgnoreCase(TAG_QBE_COMPOSITE) || confSB.getName().equalsIgnoreCase(TAG_SMART_FILTER)) {
+		 * 
+		 * if (confSB.containsAttribute(TAG_WORKSHEET_DEFINITION)) { confSB.delAttribute(TAG_WORKSHEET_DEFINITION); } templateSB.setAttribute(confSB);
+		 * SourceBean wk_def_sb = new SourceBean(TAG_WORKSHEET_DEFINITION); wk_def_sb.setCharacters(workSheetDef); templateSB.setAttribute(wk_def_sb);
+		 * 
+		 * if (workSheetQuery != null && !workSheetQuery.equals("")) { SourceBean query_sb = new SourceBean(QUERY); query_sb.setCharacters(workSheetQuery);
+		 * confSB.updAttribute(query_sb); }
+		 * 
+		 * if (smartFilterValues != null && !smartFilterValues.equals("")) { SourceBean smartFilterValuesSB = new SourceBean(FORM_VALUES);
+		 * smartFilterValuesSB.setCharacters(smartFilterValues); confSB.updAttribute(smartFilterValuesSB); }
+		 * 
+		 * } else {
+		 * 
+		 * SourceBean qbeSB = null;
+		 * 
+		 * if (confSB.containsAttribute(TAG_QBE)) { qbeSB = (SourceBean) confSB.getAttribute(TAG_QBE); } else if (confSB.containsAttribute(TAG_QBE_COMPOSITE)) {
+		 * qbeSB = (SourceBean) confSB.getAttribute(TAG_QBE_COMPOSITE); } else if (confSB.containsAttribute(TAG_SMART_FILTER)) { qbeSB = (SourceBean)
+		 * confSB.getAttribute(TAG_SMART_FILTER); }
+		 * 
+		 * if (qbeSB != null) { templateSB.setAttribute(qbeSB); if (workSheetQuery != null && !workSheetQuery.equals("")) { SourceBean query_sb = new
+		 * SourceBean(QUERY); query_sb.setCharacters(workSheetQuery); qbeSB.updAttribute(query_sb); }
+		 * 
+		 * if (smartFilterValues != null && !smartFilterValues.equals("")) { SourceBean smartFilterValuesSB = new SourceBean(FORM_VALUES);
+		 * smartFilterValuesSB.setCharacters(smartFilterValues); qbeSB.updAttribute(smartFilterValuesSB); } }
+		 * 
+		 * SourceBean wk_def_sb = new SourceBean(TAG_WORKSHEET_DEFINITION); wk_def_sb.setCharacters(workSheetDef); templateSB.setAttribute(wk_def_sb); }
+		 * 
+		 * String template = templateSB.toXML(false);
+		 */
+		String template = "";
+		return template;
+	}
+
+	public String createNewSmartFitleremplate(String smartFilterDefinition, String modelName, String query) throws SourceBeanException {
+		// SourceBean templateSB = new SourceBean(TAG_WORKSHEET);
+		// templateSB.setAttribute(ATTRIBUTE_VERSION, CURRENT_VERSION);
+		// SourceBean worksheetDefinitionSB = new SourceBean(TAG_WORKSHEET_DEFINITION);
+		// worksheetDefinitionSB.setCharacters(smartFilterDefinition);
+		// templateSB.setAttribute(worksheetDefinitionSB);
+		// if (modelName != null && !modelName.equals("")) {
+		// // case when starting from a model
+		// SourceBean templateQBE = new SourceBean(TAG_QBE);
+		// SourceBean templateDatamart = new SourceBean(DATAMART);
+		// templateDatamart.setAttribute("name", modelName);
+		// templateQBE.setAttribute(templateDatamart);
+		// SourceBean templateQuery = new SourceBean(QUERY);
+		// templateQuery.setCharacters(query);
+		// templateQBE.setAttribute(templateQuery);
+		// templateSB.setAttribute(templateQBE);
+		// } else if (query != null && !query.trim().equals("")) {
+		// // case when starting from a dataset
+		// SourceBean qbeSB = new SourceBean(TAG_QBE);
+		// SourceBean queryDefinitionSB = new SourceBean(QUERY);
+		// queryDefinitionSB.setCharacters(query);
+		// qbeSB.setAttribute(queryDefinitionSB);
+		// templateSB.setAttribute(qbeSB);
+		// }
+		// String template = templateSB.toXML(false);
+		String template = "";
+		return template;
 	}
 
 }

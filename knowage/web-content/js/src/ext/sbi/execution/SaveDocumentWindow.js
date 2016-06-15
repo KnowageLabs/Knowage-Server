@@ -264,7 +264,7 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 			
 			//defines the document label internally (Since SpagoBI 5 is not more visible in the GUI)
 			if (this.isInsert == undefined || this.isInsert == null || this.isInsert == true){
-				params.label = (this.OBJECT_TYPE == 'WORKSHEET')? 'ws__' : 'map__';
+				params.label = 'map__';
 				params.label +=  Math.floor((Math.random()*1000000000)+1); 
 				params.MESSAGE_DET = 'DOC_SAVE';	
 			}else{

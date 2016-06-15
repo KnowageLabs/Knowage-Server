@@ -42,7 +42,7 @@ Sbi.settings.geobi.mydata = {
 	toolbar: {
 		hide: true
 	}
-	, hiddenActions: ['worksheet', 'qbe']
+	, hiddenActions: ['qbe']
 	/**
 	 * This options will set the default active
 	 * filter used the first time the MyData page is opened

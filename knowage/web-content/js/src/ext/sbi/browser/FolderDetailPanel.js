@@ -211,9 +211,6 @@ Sbi.browser.FolderDetailPanel = function(config) {
         this.cockpitServiceUrl = config.engineUrls.cockpitServiceUrl;
     }
     
-    if (config.engineUrls.worksheetServiceUrl != null){
-        this.worksheetServiceUrl = config.engineUrls.worksheetServiceUrl;
-    }
 };
 
 
@@ -233,7 +230,6 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     , folderId: null
     , georeportServiceUrl: null
     , cockpitServiceUrl: null
-    , worksheetServiceUrl: null
     
     , id:'this'
     , communities: null
@@ -745,7 +741,6 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 //             	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span></a> ';
         		 createButton += 
         		' 		<ul class="create" id="newDocument"> '+ '<span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span>' +
-//        		'	         <li id="WS"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'createworksheet\')">'+ 'Ad Hoc Worksheet' +'</a> </li> '+
 //Hidden for first version of knowage        		
 //         		'	         <li id="GEO"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'creategeoreport\')">'+ LN('sbi.generic.document.add.adhocGeoReport') +'</a></li> '+
          		'	         <li id="COCKPIT"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'createcockpit\')">'+ LN('sbi.generic.document.add.adhocCockpit')+'</a></li> '+
@@ -757,7 +752,6 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 //            	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span></a> ';
             	createButton += 
              		' 		<ul class="create" id="newDocument"> '+ '<span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span>' +
-//             		'	         <li id="WS"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'createworksheet\')">'+ 'Ad Hoc Worksheet' +'</a> </li> '+
 //Hidden for first version of knowage:
 //             		'	         <li id="GEO"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'creategeoreport\')">'+ LN('sbi.generic.document.add.adhocGeoReport') +'</a></li> '+
              		'	         <li id="COCKPIT"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'createcockpit\')">'+ LN('sbi.generic.document.add.adhocCockpit')+'</a></li> '+

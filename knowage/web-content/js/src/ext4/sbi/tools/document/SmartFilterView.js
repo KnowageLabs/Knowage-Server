@@ -155,14 +155,7 @@ Ext.define('Sbi.tools.document.SmartFilterView', {
 									'<div class="box-container-browser">',
 										'<div class="box-figure">',
 											'<img class="SMART_FILTER-icon" align="center" src="'+Sbi.config.contextName+'/themes/sbi_default/img/analiticalmodel/browser/document_smart_filter.png" alt=" " />',
-											'<span class="shadow"></span>',
-											'<div class="hover">',
-												'<div class="box-actions-container">',
-									            '    <ul class="box-actions">',	    
-									            		'<li class="worksheet"><a href="#" title="Show Smart Filter"></a></li>',
-									            '    </ul>',
-												'</div>',
-											'</div>',										
+											'<span class="shadow"></span>',									
 										'</div>',
 										'<div title="{name}" class="box-text">',
 											'<h2>{name}</h2>',
@@ -183,7 +176,7 @@ Ext.define('Sbi.tools.document.SmartFilterView', {
 		}
 	
 		,onClick : function(obj, record, item, index, e, eOpts) {
-			this.fireEvent('executeDocument','WORKSHEET','SMART_FILTER',record);
+			this.fireEvent('executeDocument','','SMART_FILTER',record);
 	    }
 
 

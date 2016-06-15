@@ -63,7 +63,7 @@ Sbi.formviewer.FormEnginePanel = function(formEngineConfig) {
 	
 	this.initFormViewerPage(formEngineConfig.template, c.formViewerPageConfig || {}, formEngineConfig.formValues);
 	this.initResultsPage( Ext.apply( c.resultsPageConfig || {}, {template : formEngineConfig.template} ));
-	this.initWorksheetPage(formEngineConfig.worksheet || {});
+//	this.initWorksheetPage(formEngineConfig.worksheet || {});
 	this.activePageNumber =0;
 	c = Ext.apply(c, {
 		closable: false
@@ -71,7 +71,8 @@ Sbi.formviewer.FormEnginePanel = function(formEngineConfig) {
 		, activeItem: 0
 		, hideMode: !Ext.isIE ? 'nosize' : 'display'
 		, layout: 'card'
-		, items: [this.formViewerPage, this.resultsPage, this.worksheetPage]
+//		, items: [this.formViewerPage, this.resultsPage, this.worksheetPage]
+		, items: [this.formViewerPage, this.resultsPage]
 	});
 	
 	
@@ -96,39 +97,39 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
     , initFormViewerPage: function(template, config, formValues) {
 		this.formViewerPage = new Sbi.formviewer.FormViewerPage(template, config, formValues);
 		this.formViewerPage.on('submit', this.moveToResultsPage, this);
-		this.formViewerPage.on('crosstabrequired', this.moveToWorksheetPage, this);
-		this.formViewerPage.on('activate', this.getSaveWorksheetButtonEnabler(false), this);
+//		this.formViewerPage.on('crosstabrequired', this.moveToWorksheetPage, this);
+//		this.formViewerPage.on('activate', this.getSaveWorksheetButtonEnabler(false), this);
 	}
 
 	, initResultsPage: function(config) {
 		this.resultsPage = new Sbi.formviewer.ResultsPage(config);
 		this.resultsPage.on('edit', this.moveToFormPage, this);
-		this.resultsPage.on('activate', this.getSaveWorksheetButtonEnabler(true, 'dataset'), this);
+//		this.resultsPage.on('activate', this.getSaveWorksheetButtonEnabler(true, 'dataset'), this);
 	}
 	
-	, initWorksheetPage: function(config) {
-		this.worksheetPage = new Sbi.formviewer.WorksheetPage(config);
-		this.worksheetPage.on('edit', this.moveToFormPage, this);
-		this.worksheetPage.on('contentexported', function(){sendMessage({}, 'contentexported');}, this);
-		this.worksheetPage.on('activate', this.getSaveWorksheetButtonEnabler(true, 'worksheet'), this);
-	}
+//	, initWorksheetPage: function(config) {
+//		this.worksheetPage = new Sbi.formviewer.WorksheetPage(config);
+//		this.worksheetPage.on('edit', this.moveToFormPage, this);
+//		this.worksheetPage.on('contentexported', function(){sendMessage({}, 'contentexported');}, this);
+//		this.worksheetPage.on('activate', this.getSaveWorksheetButtonEnabler(true, 'worksheet'), this);
+//	}
 	
 	// it is actually used to save worksheet and form as dataset!
-	, getSaveWorksheetButtonEnabler : function (enabled, target) {
-		var toReturn = function () {
-			if (typeof sendMessage == 'function') { // check if function is existing (when building a Smart Filter document it does not)
-				sendMessage({button: "saveworksheet", property:"visibility", value:"" + enabled + "", target:"" + target + ""}, "managebutton");
-			}
-		};
-		return toReturn;
-	}
+//	, getSaveWorksheetButtonEnabler : function (enabled, target) {
+//		var toReturn = function () {
+//			if (typeof sendMessage == 'function') { // check if function is existing (when building a Smart Filter document it does not)
+//				sendMessage({button: "saveworksheet", property:"visibility", value:"" + enabled + "", target:"" + target + ""}, "managebutton");
+//			}
+//		};
+//		return toReturn;
+//	}
 	
-    , moveToWorksheetPage: function(formState) {
-    	this.getLayout().setActiveItem( 2 );
-    	this.worksheetPage.setFormState(formState);
-    	this.worksheetPage.updateWorksheetEngine();
-    	this.activePageNumber = 2;
-	}
+//    , moveToWorksheetPage: function(formState) {
+//    	this.getLayout().setActiveItem( 2 );
+//    	this.worksheetPage.setFormState(formState);
+//    	this.worksheetPage.updateWorksheetEngine();
+//    	this.activePageNumber = 2;
+//	}
 	
     , moveToResultsPage: function(formState) {
     	this.getLayout().setActiveItem( 1 );
@@ -146,43 +147,43 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
     	return this.worksheetPage.worksheetDesignerPanel.validate(this.getWorksheetTemplateAsString, this.worksheetPage.worksheetDesignerPanel.showValidationErrors, this );	
     }
     
-    , getWorksheetTemplateAsString : function () {
-	    if (this.worksheetPage !== null) {
-
-			var worksheetDefinition = this.worksheetPage.getWorksheetDefinition();
-			var formState = this.formViewerPage.getFormState();
-			
-
-			var template = Ext.util.JSON.encode({
-				'OBJECT_WK_DEFINITION' : worksheetDefinition,
-				'OBJECT_FORM_VALUES' : formState
-			});
-			return template;
-		} else {
-			alert('Warning: worksheetDesignerPanel not defined!!');
-			return null;
-		}
-	}
+//    , getWorksheetTemplateAsString : function () {
+//	    if (this.worksheetPage !== null) {
+//
+//			var worksheetDefinition = this.worksheetPage.getWorksheetDefinition();
+//			var formState = this.formViewerPage.getFormState();
+//			
+//
+//			var template = Ext.util.JSON.encode({
+//				'OBJECT_WK_DEFINITION' : worksheetDefinition,
+//				'OBJECT_FORM_VALUES' : formState
+//			});
+//			return template;
+//		} else {
+//			alert('Warning: worksheetDesignerPanel not defined!!');
+//			return null;
+//		}
+//	}
     
     , getFormState : function () {
     	return this.formViewerPage.getFormState();
     }
     
-    , exportContent: function(mimeType){
-    	if(this.isWorksheetPageActive()){
-	    	if( this.worksheetPage!=undefined && this.worksheetPage!=null){
-	    		this.worksheetPage.exportContent(mimeType);
-	    	}
-		}else{
-			sendMessage({}, 'worksheetexporttaberror');
-		}
-    }
+//    , exportContent: function(mimeType){
+//    	if(this.isWorksheetPageActive()){
+//	    	if( this.worksheetPage!=undefined && this.worksheetPage!=null){
+//	    		this.worksheetPage.exportContent(mimeType);
+//	    	}
+//		}else{
+//			sendMessage({}, 'worksheetexporttaberror');
+//		}
+//    }
 
-    , isWorksheetPageActive: function(){
-    	if( this.activePageNumber == 2 && this.worksheetPage!=undefined && this.worksheetPage!=null){
-    		return this.worksheetPage.tabs.getActiveTab().id=='WorkSheetPreviewPage';
-    	}
-    	return false;
-    }
+//    , isWorksheetPageActive: function(){
+//    	if( this.activePageNumber == 2 && this.worksheetPage!=undefined && this.worksheetPage!=null){
+//    		return this.worksheetPage.tabs.getActiveTab().id=='WorkSheetPreviewPage';
+//    	}
+//    	return false;
+//    }
 	
 });

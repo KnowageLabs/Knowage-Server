@@ -3772,3 +3772,10 @@ ALTER TABLE  SBI_GEO_MAPS ADD COLUMN HIERARCHY_NAME VARCHAR(100) AFTER FORMAT;
 ALTER TABLE  SBI_GEO_MAPS ADD COLUMN LEVEL INTEGER AFTER HIERARCHY_NAME;
 ALTER TABLE  SBI_GEO_MAPS ADD COLUMN MEMBER_NAME VARCHAR(100) AFTER LEVEL;
 									
+-- 15.6.2016 Antonella: deleted WORSKSHEET engine - clean db from its user func and engines
+SET FOREIGN_KEY_CHECKS=0;
+DELETE from SBI_USER_FUNC  where name = 'CreateWorksheetFromDatasetUserFunctionality';
+DELETE FROM SBI_OBJECTS WHERE ENGINE_ID = (select engine_id from SBI_ENGINES  where name = 'Worksheet Engine');
+DELETE from SBI_ENGINES  where name = 'Worksheet Engine';
+DELETE from SBI_DOMAINS where value_cd = 'WORKSHEET';
+SET FOREIGN_KEY_CHECKS=1;

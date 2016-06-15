@@ -294,7 +294,6 @@
 <file name='./spagobi/formviewer/SaveFormValueSubObject.js' />
 <file name='./spagobi/formviewer/DataStorePanel.js' />
 <file name='./spagobi/formviewer/ResultsPage.js' />
-<file name='./spagobi/formviewer/WorksheetPage.js' />
 <file name='./spagobi/formviewer/FormEnginePanel.js' />
 
 <file name='./spagobi/formtemplate/DocumentTemplateBuilder.js' />
@@ -322,55 +321,6 @@
 <file name='./spagobi/crosstab/core/HTMLCrossTab.js' />
 
 <file name='./spagobi/dataset/ParametersGridPanel.js' />
-
-<file name='./spagobi/worksheet/exception/ValidationError.js' />
-<file name='./spagobi/worksheet/designer/AttributeValuesChooserWindow.js' />
-<file name='./spagobi/worksheet/designer/SheetTabMenu.js' />
-<file name='./spagobi/worksheet/designer/SheetsContainerPanel.js' />
-<file name='./spagobi/worksheet/designer/DesignToolsPanel.js' />
-<file name='./spagobi/worksheet/designer/DesignToolsPallettePanel.js' />
-<file name='./spagobi/worksheet/designer/DesignToolsLayoutPanel.js' />
-<file name='./spagobi/worksheet/designer/SheetPanel.js' />
-<file name='./spagobi/worksheet/designer/DesignSheetFiltersPanel.js' />
-<file name='./spagobi/worksheet/designer/DesignSheetFiltersEditWizard.js' />
-<file name='./spagobi/worksheet/designer/SheetTitlePanel.js' />
-<file name='./spagobi/worksheet/designer/ChooseImageWindow.js' />
-<file name='./spagobi/worksheet/designer/WorksheetDesignerPanel.js' />
-<file name='./spagobi/worksheet/designer/SheetContentPanel.js' />
-<file name='./spagobi/worksheet/designer/ChartCategoryPanel.js' />
-<file name='./spagobi/worksheet/designer/SeriesGroupingPanel.js' />
-<file name='./spagobi/worksheet/designer/ChartSeriesPanel.js' />
-<file name='./spagobi/worksheet/designer/GenericChartDesignerPanel.js' />
-<file name='./spagobi/worksheet/designer/BarChartDesignerPanel.js' />
-<file name='./spagobi/worksheet/designer/LineChartDesignerPanel.js' />
-<file name='./spagobi/worksheet/designer/PieChartDesignerPanel.js' />
-<file name='./spagobi/worksheet/designer/TableDesignerPanel.js' />
-<file name='./spagobi/worksheet/designer/QueryFieldsCardPanel.js' />
-<file name='./spagobi/worksheet/designer/QueryFieldsContainerPanel.js' />
-<file name='./spagobi/worksheet/designer/SheetFilterContentPanel.js' />
-<file name='./spagobi/worksheet/designer/WorksheetDefinitionPanel.js' />
-<file name='./spagobi/worksheet/designer/WorksheetPanel.js' />
-
-<file name='./spagobi/worksheet/runtime/RuntimeSheetsContainerPanel.js' />
-<file name='./spagobi/worksheet/runtime/RuntimeSheetPanel.js' />
-<file name='./spagobi/worksheet/runtime/RuntimeSheetFiltersPanel.js' />
-<file name='./spagobi/worksheet/runtime/RuntimeSheetFiltersInfoPanel.js' />
-<file name='./spagobi/worksheet/runtime/WorkSheetsRuntimePanel.js' />
-<file name='./spagobi/worksheet/runtime/RuntimeSheetContentPanel.js' />
-<file name='./spagobi/worksheet/runtime/WorkSheetPreviewPage.js' />
-<file name='./spagobi/worksheet/runtime/RuntimeGenericChartPanel.js' />
-<file name='./spagobi/worksheet/runtime/RuntimeGenericChartPanelExt3.js' />
-<file name='./spagobi/worksheet/runtime/RuntimeChartFactory.js' />
-<file name='./spagobi/worksheet/runtime/RuntimeBarChartPanelHighcharts.js' />
-<file name='./spagobi/worksheet/runtime/RuntimeLineChartPanelHighcharts.js' />
-<file name='./spagobi/worksheet/runtime/RuntimePieChartPanelHighcharts.js' />
-<file name='./spagobi/worksheet/runtime/RuntimeBarChartPanelExt3.js' />
-<file name='./spagobi/worksheet/runtime/RuntimeLineChartPanelExt3.js' />
-<file name='./spagobi/worksheet/runtime/RuntimePieChartPanelExt3.js' />
-
-<file name='./spagobi/worksheet/runtime/DefaultChartDimensionRetrieverStrategy.js' />
-
-<file name='./spagobi/worksheet/config/OptionsWindow.js' />
 
 <file name='./spagobi/registry/RegistryEditorGridPanel.js' />
 <file name='./spagobi/registry/RegistryPanel.js' />

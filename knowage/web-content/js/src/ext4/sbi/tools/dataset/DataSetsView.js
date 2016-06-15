@@ -272,7 +272,6 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		var scope = this;
 
     	var actionDetail = e.getTarget('li[class=detaildataset]', 10, true);
-    	var actionWorksheet = e.getTarget('li[class=worksheet]', 10, true);
     	var actionQbe = e.getTarget('li[class=qbe]', 10, true);
     	var actionGeoreport = e.getTarget('li[class=georeport]', 10, true);
         var actionInfo = e.getTarget('li[class=info]',10,true);				// for CKAN
@@ -286,8 +285,6 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         
         var actionShareDataset = e.getTarget('div[class=share]',10,true);
         
-        //if (!this.fromMyDataCtx) actionWorksheet = true;
-        
         delete record.data.actions; 
         if (actionDetail != null){
         	Sbi.debug('DataSetView view detail raise event...');        	
@@ -295,13 +292,6 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         } else if (actionDelete != null){
         	Sbi.debug('DataSetView delete dataset raise event...');        	
         	scope.fireEvent('delete', record.data);
-        } else if (actionWorksheet != null){
-        	Sbi.debug('DataSetView actionWorksheet raise event...');
-	        if (record.data.pars != undefined && record.data.pars != ''){
-	        	Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noWorksheetDesigner'));
-	        	return true;
-	        }
-	   		scope.fireEvent('executeDocument','WORKSHEET','DATASET',record);
         } else if (actionQbe != null){
         	Sbi.debug('DataSetView actionQbe raise event...'); 
 	        if (record.data.pars != undefined && record.data.pars != ''){
@@ -329,15 +319,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         } else if(actionHelpOnLine!=null){
         	Sbi.debug('DataSetView actionHelpOnLine raise event...'); 
         	parent.execShowHelpOnLine('DATASET='+record.data.id+'&LABEL='+record.data.label);
-        }/*else {
-        	Sbi.debug('DataSetView default click event...'); 
-        	if (record.data.pars != undefined && record.data.pars != ''){
-        		Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noWorksheetDesigner'));
-        		return true;
-        	}
-   			scope.fireEvent('executeDocument','WORKSHEET','DATASET',record);      	
-        }*/
-		 else if(actionExportExcel!=null){
+        }else if(actionExportExcel!=null){
 	    	Sbi.debug('DataSetView Export Excel raise event...'); 
 	    	parent.execShowExportExcel(record.data.id);
 	    	//scope.fireEvent('info', record.data);

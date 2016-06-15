@@ -115,8 +115,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
- * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini
- *          (monica.franceschini@eng.it)
+ * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini (monica.franceschini@eng.it)
  */
 @Path("/selfservicedataset")
 public class SelfServiceDataSetCRUD {
@@ -148,6 +147,7 @@ public class SelfServiceDataSetCRUD {
 			boolean isTechDsMngr = UserUtilities.isTechDsManager(profile);
 			String showOnlyOwner = req.getParameter("showOnlyOwner");
 			String showDerivedDatasetsStr = "true";// req.getParameter("showDerivedDataset");
+			req.getParameter("showDerivedDataset");
 			boolean showDerivedDatasets = showDerivedDatasetsStr != null && showDerivedDatasetsStr.equalsIgnoreCase("true") ? true : false;
 
 			if (!isTechDsMngr) {
@@ -183,14 +183,6 @@ public class SelfServiceDataSetCRUD {
 
 	private JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray, String typeDocWizard) throws JSONException, EMFInternalError {
 
-		Engine wsEngine = null;
-		try {
-			wsEngine = ExecuteAdHocUtility.getWorksheetEngine();
-		} catch (SpagoBIRuntimeException r) {
-			// the ws engine is not found
-			logger.info("Engine not found. ", r);
-		}
-
 		Engine qbeEngine = null;
 		try {
 			qbeEngine = ExecuteAdHocUtility.getQbeEngine();
@@ -220,10 +212,6 @@ public class SelfServiceDataSetCRUD {
 		georeportAction.put("name", "georeport");
 		georeportAction.put("description", "Show Map");
 
-		JSONObject worksheetAction = new JSONObject();
-		worksheetAction.put("name", "worksheet");
-		worksheetAction.put("description", "Show Worksheet");
-
 		JSONObject qbeAction = new JSONObject();
 		qbeAction.put("name", "qbe");
 		qbeAction.put("description", "Show Qbe");
@@ -252,9 +240,6 @@ public class SelfServiceDataSetCRUD {
 				if (isGeoDataset)
 					actions.put(georeportAction); // Annotated view map action
 													// to release SpagoBI 4
-			}
-			if (wsEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
-				actions.put(worksheetAction);
 			}
 
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
@@ -471,8 +456,7 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	/*
-	 * Change the scope of the dataset. If the dataset is private change it to
-	 * public (SHARE) If the dataset is public change it to private (UNSHARE)
+	 * Change the scope of the dataset. If the dataset is private change it to public (SHARE) If the dataset is public change it to private (UNSHARE)
 	 */
 	@POST
 	@Path("/share")
@@ -1402,10 +1386,8 @@ public class SelfServiceDataSetCRUD {
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
 		if (originalDatasetFile.exists()) {
 			/*
-			 * This method copies the contents of the specified source file to
-			 * the specified destination file. The directory holding the
-			 * destination file is created if it does not exist. If the
-			 * destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
+			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
 			 */
 			try {
 				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
