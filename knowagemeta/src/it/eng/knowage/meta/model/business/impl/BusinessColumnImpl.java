@@ -218,6 +218,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 	// =========================================================================
 
 	@Override
+	@JsonIgnore
 	public EList<ModelPropertyType> getPropertyTypes() {
 		return getTable().getModel().getParentModel().getPropertyTypes();
 	}
