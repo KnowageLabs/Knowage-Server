@@ -71,11 +71,13 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 	private boolean standalone = false;
 	private IDataSource dataSourceForWriting;
 	private String algorithmInUse = null;// the allocation algorithm used
+	private boolean whatif= false; //are in what if context?
 
 	// to spread the edited value
 
 	protected WhatIfEngineInstance(Object template, boolean whatif, Map env) {
 		this(WhatIfTemplateParser.getInstance() != null ? WhatIfTemplateParser.getInstance().parse(template) : null,  whatif, env);
+		this.whatif = whatif;
 	}
 
 	public WhatIfEngineInstance(WhatIfTemplate template, boolean whatif, Map env) {
@@ -164,7 +166,10 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 			logger.debug("Artifact locker is " + locker);
 			modelConfig.setLocker(locker);
 			logger.debug("Init the datatsource fro writing");
-			dataSourceForWriting = initDataSourceForWriting();
+			if(this.whatif){
+				dataSourceForWriting = initDataSourceForWriting();
+			}
+			
 			SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) pivotModel;
 			if (template.getCrossNavigation() != null) {
 				modelConfig.setCrossNavigation(template.getCrossNavigation());
