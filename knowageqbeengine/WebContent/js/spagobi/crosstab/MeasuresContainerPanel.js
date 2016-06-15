@@ -46,9 +46,9 @@ Sbi.crosstab.MeasuresContainerPanel = function(config) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.qbe.measuresContainerPanel);
 	}
 	
-	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.common) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.common);
-	}
+//	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.common) {
+//		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.common);
+//	}
 	
 	var c = Ext.apply(defaultSettings, config || {});
 	
