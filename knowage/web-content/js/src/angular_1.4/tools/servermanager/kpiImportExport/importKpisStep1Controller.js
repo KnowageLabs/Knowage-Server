@@ -23,8 +23,8 @@ function importKpiStep1FuncController(sbiModule_download, sbiModule_device,
 			}
 			// Import
 			alert(JSON.stringify(data));
-			$scope.stopImport($scope.translate.load("sbi.importkpis.importkpiok"));
-		/*	sbiModule_restServices
+//			$scope.stopImport($scope.translate.load("sbi.importkpis.importkpiok"));
+			sbiModule_restServices
 				.post("1.0/serverManager/importExport/kpis","importKpis", data)
 				.success(function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
@@ -36,7 +36,7 @@ function importKpiStep1FuncController(sbiModule_download, sbiModule_device,
 					}
 				}).error(function(data, status, headers, config) {
 					$scope.stopImport(data);
-				}) */
+				})
 		}
 	}
 }
