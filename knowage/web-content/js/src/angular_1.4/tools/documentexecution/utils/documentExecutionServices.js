@@ -46,7 +46,7 @@
 						
 						if(parameter.valueSelection.toLowerCase() == 'lov') {
 							//TREE MODIFY (see with benedetto)
-							if(parameter.selectionType.toLowerCase() == 'tree'){
+							if(parameter.selectionType.toLowerCase() == 'tree' || parameter.selectionType.toLowerCase() == 'lookup'){
 //								if(parameter.multivalue) {
 									var paramArrayTree = [];
 									var paramStrTree = "";
@@ -233,7 +233,14 @@
 						} else {
 							parameter.parameterValue = '';
 						}
-					} else {
+					}else if(parameter.selectionType.toLowerCase() == 'lookup'){
+						if(parameter.multivalue) {
+							parameter.parameterValue = [];
+						} else {
+							parameter.parameterValue = '';
+						}
+					}
+					else {
 						if(parameter.multivalue) {
 							parameter.parameterValue = [];
 //							for(var j = 0; j < parameter.defaultValues.length; j++) {
@@ -255,15 +262,13 @@
 						
 //			showParameterHtml: function(parameter) {	
 			setParameterValueResult: function(parameter) {	
-				if(parameter.selectionType.toLowerCase() == 'tree') {
+				if(parameter.selectionType.toLowerCase() == 'tree'  ) {
 					if(parameter.multivalue) {
 						var toReturn = '';
 						
 						parameter.parameterValue =  [];
 						parameter.parameterDescription =  {};
-						
-						documentExecuteServicesObj.recursiveChildrenChecks(parameter.parameterValue,parameter.parameterDescription, parameter.children);
-						
+					    documentExecuteServicesObj.recursiveChildrenChecks(parameter.parameterValue,parameter.parameterDescription, parameter.children);
 						for(var i = 0; i < parameter.parameterValue.length; i++) {
 							var parameterValueItem = parameter.parameterValue[i];
 							
@@ -285,7 +290,7 @@
 						return (parameter.parameterValue && parameter.parameterValue.value)?
 								parameter.parameterValue.value : '';
 					}
-				} else {
+				}else {
 					if(parameter.multivalue) {
 						parameter.parameterValue = parameter.parameterValue || [];
 						var toReturn = parameter.parameterValue.join(",<br/>");
@@ -650,7 +655,7 @@
 //						&& parameter.selectionType.toLowerCase() == "tree"
 //						) {
 						if(parameter.valueSelection=='lov') {
-							if(parameter.selectionType.toLowerCase() == "tree") {
+							if(parameter.selectionType.toLowerCase() == "tree" || parameter.selectionType.toLowerCase() == "lookup") {
 								//TREE DESC FOR LABEL
 								var ArrValue = JSON.parse(params[parameter.urlName]);
 								var ArrDesc = params[parameter.urlName+'_field_visible_description'].split(';');
@@ -663,12 +668,22 @@
 								parameter.parameterValue = ArrValue;
 							} else {
 								//FROM VIEWPOINT : the lov value saved (multivalue or single value) matched  with the parameter 
-								parameter.parameterValue = parameter.multivalue ? JSON.parse(params[parameter.urlName])	: params[parameter.urlName];
-								//lookup
-								if(parameter.selectionType.toLowerCase() == "lookup"){
-									parameter.parameterValueToShow = [];
-									parameter.parameterValueToShow = parameter.parameterValue;
-								}								
+								//parameter.parameterValue = parameter.multivalue ? JSON.parse(params[parameter.urlName])	: params[parameter.urlName];
+								//lookup old
+//								if(parameter.selectionType.toLowerCase() == "lookup"){
+//									var ArrValue = JSON.parse(params[parameter.urlName]);
+//									var ArrDesc = params[parameter.urlName+'_field_visible_description'].split(';');
+//									if (typeof parameter.parameterDescription === 'undefined'){
+//										parameter.parameterDescription = {};
+//									}
+//									for(var w=0; w<ArrValue.length; w++){
+//										parameter.parameterDescription[ArrValue[w]] =ArrDesc[w];
+//									}
+//									parameter.parameterValue = ArrValue;
+//									
+//								}else{
+									parameter.parameterValue = parameter.multivalue ? JSON.parse(params[parameter.urlName])	: params[parameter.urlName];
+								//}								
 							}
 
 						} else if(parameter.valueSelection.toLowerCase() == 'map_in') {
@@ -808,7 +823,7 @@
 					//var fillObj = {};
 					//MULTIVALUE
 					hasDefVal= true;
-					if(filterStatus[i].multivalue && filterStatus[i].valueSelection!='man_in' || filterStatus[i].selectionType=='TREE' ){
+					if(filterStatus[i].multivalue && filterStatus[i].valueSelection!='man_in' || filterStatus[i].selectionType=='TREE' || filterStatus[i].selectionType=='LOOKUP'){
 						//if(filterStatus[i].defaultValues && filterStatus[i].defaultValues.length>0){
 						//arrDefToFill=filterStatus[i].defaultValues;
 						//}
@@ -817,8 +832,8 @@
 							arrDefToFillDescription.push(filterStatus[i].parameterValue[k].description);
 						}	
 						fillObj[filterStatus[i].urlName] = JSON.stringify(arrDefToFill);
-						//TREE
-						if(filterStatus[i].selectionType=='TREE'){
+						//TREE - LOOKUP
+						if(filterStatus[i].selectionType=='TREE' || filterStatus[i].selectionType=='LOOKUP'){
 							var strDefToFillDescription ='';
 							for(var z=0; z<arrDefToFillDescription.length; z++){
 								strDefToFillDescription=strDefToFillDescription+arrDefToFillDescription[z];

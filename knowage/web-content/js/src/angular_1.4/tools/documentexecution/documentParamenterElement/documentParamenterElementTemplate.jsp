@@ -35,6 +35,7 @@
 		</section>
 	
 		<!-- lov LOOKUP single and multiple input -->
+		
 		<section ng-if="parameter.selectionType=='LOOKUP'">
 			<div layout="row" layout-align="start">
 				<md-button class="" id="{{::parameter.urlName}}"
@@ -44,22 +45,21 @@
 				</md-button>
 			</div>
 			<span ng-class="{'layout-padding': parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0}"
-					ng-show="(parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0)">
-<!-- 				<md-chips> -->
-<!-- 					<md-chip ng-repeat="paramVal in parameter.parameterValueToShow"> -->
-<!-- 						{{paramVal}} -->
-<!-- 					</md-chip> -->
-<!-- 				</md-chips> -->
-				
-				<md-chips ng-model="parameter.parameterValueToShow" readonly="true">
+					ng-show="(parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0)">				
+				<md-chips ng-model="parameter.parameterValue" readonly="true">
+					 <md-chip-template>
+				          <strong>{{parameter.parameterDescription[$chip]}}</strong>
+			        </md-chip-template>
 				</md-chips>
-				
-				
-				
 			</span>
 			<span ng-class="{'layout-padding': !parameter.multivalue && parameter.parameterValue && parameter.parameterValue != ''}"
 					ng-show="(!parameter.multivalue && parameter.parameterValue && parameter.parameterValue != '')">
-				<md-chips><md-chip>{{parameter.parameterValueToShow}}</md-chip></md-chips>
+				<md-chips ng-model="parameter.parameterValue" readonly="true">
+					 <md-chip-template>
+				          <strong>{{parameter.parameterDescription[$chip]}}</strong>
+			        </md-chip-template>
+				</md-chips>
+				
 			</span>
 		</section>
 		

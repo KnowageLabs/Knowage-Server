@@ -292,8 +292,9 @@
 					paramDialogCtrl.save = function() {
 						// Lov parameters NON tree
 						if(paramDialogCtrl.tempParameter.defaultValues && paramDialogCtrl.tempParameter.defaultValuesMeta) {
+							var parameterValueArray = [];
 							if(paramDialogCtrl.tempParameter.multivalue) {
-								var parameterValueArray = [];
+								
 								var parameterValueArrayToShow = [];
 	
 								for(var i = 0; i < paramDialogCtrl.selectedTableItems.length; i++) {
@@ -302,13 +303,26 @@
 									parameterValueArrayToShow.push(selectedTableItem[paramDialogCtrl.tempParameter.descriptionColumnNameMetadata.toUpperCase()]);
 									parameterValueArray.push(selectedTableItem[paramDialogCtrl.tempParameter.valueColumnNameMetadata.toUpperCase()]);
 								}
-	
-								paramDialogCtrl.tempParameter.parameterValueToShow = parameterValueArrayToShow;
+								
+								if(paramDialogCtrl.tempParameter.selectionType == 'LOOKUP'){
+									paramDialogCtrl.tempParameter.parameterDescription = {};
+									for(var w=0; w<parameterValueArray.length; w++){
+										paramDialogCtrl.tempParameter.parameterDescription[parameterValueArray[w]] =parameterValueArrayToShow[w];
+									}
+									
+								}
 								paramDialogCtrl.tempParameter.parameterValue = parameterValueArray;
 							} else {
-								paramDialogCtrl.tempParameter.parameterValueToShow = paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.descriptionColumnNameMetadata.toUpperCase()];
-								paramDialogCtrl.tempParameter.parameterValue = paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.valueColumnNameMetadata.toUpperCase()];
-//								paramDialogCtrl.tempParameter.parameterValue = paramDialogCtrl.selectedTableItems.value;
+								if(paramDialogCtrl.tempParameter.selectionType == 'LOOKUP'){
+									parameterValueArray.push(paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.valueColumnNameMetadata.toUpperCase()]);
+									paramDialogCtrl.tempParameter.parameterValue = parameterValueArray;
+									paramDialogCtrl.tempParameter.parameterDescription = {};
+									paramDialogCtrl.tempParameter.parameterDescription[paramDialogCtrl.tempParameter.parameterValue] =paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.descriptionColumnNameMetadata.toUpperCase()];
+								}else{
+									paramDialogCtrl.tempParameter.parameterDescription = paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.descriptionColumnNameMetadata.toUpperCase()];
+									paramDialogCtrl.tempParameter.parameterValue = paramDialogCtrl.selectedTableItems[paramDialogCtrl.tempParameter.valueColumnNameMetadata.toUpperCase()];
+//									paramDialogCtrl.tempParameter.parameterValue = paramDialogCtrl.selectedTableItems.value;
+								}
 							}
 						}
 						
@@ -317,6 +331,8 @@
 						if(paramDialogCtrl.initialParameterState.selectionType == 'TREE'){
 							documentExecuteServices.setParameterValueResult(paramDialogCtrl.initialParameterState);
 						}
+						
+						
 						
 						$mdDialog.hide();
 					};
