@@ -17,6 +17,11 @@
  */
 package it.eng.knowage.meta.service;
 
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +31,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
@@ -34,7 +40,7 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
  * @authors
  * 
  */
-
+@ManageAuthorization
 @Path("/1.0/pages")
 public class PageResource {
 
@@ -48,6 +54,11 @@ public class PageResource {
 		urls.put("test", "/WEB-INF/jsp/test.jsp");
 	}
 
+	@Context
+	protected HttpServletRequest request;
+	@Context
+	protected HttpServletResponse response;
+
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
@@ -55,13 +66,23 @@ public class PageResource {
 		String dispatchUrl = urls.get(pageName);
 
 		try {
+			EngineStartServletIOManager ioManager = new EngineStartServletIOManager(request, response);
+			UserProfile userProfile = ioManager.getUserProfile();
+			if (userProfile == null) {
+				String userId = request.getHeader("user");
+				userProfile = (UserProfile) UserUtilities.getUserProfile(userId);
+				ioManager.setUserProfile(userProfile);
+			}
 
 			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
 			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
 			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
-			// response.setContentType("text/html");
-			// response.setCharacterEncoding("UTF-8");
+			ioManager.getHttpSession().setAttribute("ioManagerEnv", ioManager.getEnv());
+			ioManager.getHttpSession().setAttribute("userProfile", userProfile);
+
+			response.setContentType("text/html");
+			response.setCharacterEncoding("UTF-8");
 
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 

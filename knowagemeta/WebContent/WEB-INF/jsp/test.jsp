@@ -10,6 +10,8 @@
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
 
+<%@page import="it.eng.spago.base.RequestContainerAccess"%>
+<%@page import="it.eng.spago.base.RequestContainer"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=UTF-8" 
 	     pageEncoding="UTF-8"%>	
@@ -27,10 +29,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
-<%
-	Locale locale;
-	
-%>
+
 
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -39,14 +38,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <html>
 	
 	<head>
-		<%@include file="commons/includeMessageResource.jspf" %>
-		<%@include file="commons/includeXXX.jspf" %>
-
-		<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN KNOWAGE AND EXTERNAL ENGINES) -->
-		<script type="text/javascript">
-		document.domain='<%= EnginConf.getInstance().getSpagoBiDomain() %>';
-		</script>
-		<-- END SCRIPT FOR DOMAIN DEFINITION --%>
+		
 	
 	</head>
 	
@@ -57,7 +49,11 @@ author: Andrea Gioia (andrea.gioia@eng.it)
         // ... 
         
         </script>
-	
+        inizio<br>
+	aa ioManagerEnv<%=request.getSession().getAttribute("ioManagerEnv")%>
+	<br>aa userProfile=<%=request.getSession().getAttribute("userProfile")%>
+	<br>
+	fine
 	</body>
 
 </html>
