@@ -17,6 +17,23 @@
  */
 package it.eng.spagobi.tools.crossnavigation.dao;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
@@ -35,23 +52,6 @@ import it.eng.spagobi.tools.crossnavigation.bo.SimpleParameter;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICrossNavigationDAO {
 
@@ -76,7 +76,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					sn.setName(cn.getName());
 					if (cn.getSbiCrossNavigationPars() != null && !cn.getSbiCrossNavigationPars().isEmpty()) {
 						SbiCrossNavigationPar cnp = cn.getSbiCrossNavigationPars().iterator().next();
-						sn.setToDoc(cnp.getToKey().getLabel());
+						sn.setToDoc(cnp.getToKey().getSbiObject().getLabel());
 						switch (cnp.getFromType()) {
 						case TYPE_INPUT:
 							SbiObjPar op = (SbiObjPar) session.get(SbiObjPar.class, cnp.getFromKeyId());

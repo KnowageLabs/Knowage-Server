@@ -12,7 +12,6 @@
         <property name="hibernate.show_sql">true</property>
  <!-- 	<property name="hibernate.jdbc.batch_size">0</property>  -->      
 
-		<mapping resource="it/eng/spagobi/tools/crossnavigation/metadata/mapping/SbiOutputParameter.hbm.xml" />
 
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMenu.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEvents.hbm.xml" />
@@ -26,7 +25,8 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUserAttributes.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAttribute.hbm.xml" />
       	<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiExtUserRoles.hbm.xml" /> 
-            
+           
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOutputParameter.hbm.xml" />    
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParameters.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParuseDet.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiParuse.hbm.xml" />
@@ -54,6 +54,9 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoFeatures.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoMaps.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDataSet.hbm.xml" />
+        
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiCrossNavigation.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiCrossNavigationPar.hbm.xml" />
         
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiKpi.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiAlias.hbm.xml" />
