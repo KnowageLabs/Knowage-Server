@@ -24,6 +24,12 @@ function renderSunburst(jsonObject)
 
 	var chartOpacityOnMouseOver = (jsonObject.chart.opacMouseOver != '$chart.style.opacMouseOver') ? parseInt(jsonObject.chart.opacMouseOver) : 100 ;
 	
+	/**
+	 * Percentage/absolute value type for displaying tooltip and breadcrumb values for slices that are covered with mouse cursor.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	var percAbsolSliceValue = jsonObject.chart.percAbsolSliceValue!="" && jsonObject.chart.percAbsolSliceValue!=null ? jsonObject.chart.percAbsolSliceValue : "percentage";
+		
 	/* 'topPadding':	padding (empty space) between the breadcrumb 
 	 * 					(toolbar) and the top of the chart when the
 	 * 					toolbar is possitioned on the top of the chart. 
@@ -592,11 +598,17 @@ function renderSunburst(jsonObject)
 	function mouseover(d) 
 	{	
 	  var percentage = (100 * d.value / totalSize).toPrecision(3);
-	  var percentageString = percentage + "%";
 	  
-	  if (percentage < 0.1) 
+	  /**
+	   * According to the type for dispalying the value of the slice that is covered via mouse (that user has chosen), display appropriate
+	   * value (percentage of the value that is covered (against the sum of all values) or absolute (real) value of the slice that is hovered.
+	   * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	   */
+	  percentOrAbsSliceValueString = (percAbsolSliceValue=="absolute") ? d.value : percentage + "%";
+	  
+	  if (percentage < 0.1 && percAbsolSliceValue=="percentage") 
 	  {
-	    percentageString = "< 0.1%";
+		  percentOrAbsSliceValueString = "< 0.1%";
 	  }
 	  
 	  /* If we already have move mouse over the chart, remove
@@ -623,7 +635,7 @@ function renderSunburst(jsonObject)
   		.style("font-size",tipFontSize); 
 	
 	  d3.select("#percentage"+randomId)
-	  		.text(percentageString)		  	
+	  		.text(percentOrAbsSliceValueString)		  	
 	  		.style("font-family",jsonObject.tip.style.fontFamily)
     		.style("font-style",jsonObject.tip.style.fontStyle ? jsonObject.tip.style.fontStyle : "none")
     		.style("font-weight",jsonObject.tip.style.fontWeight ? jsonObject.tip.style.fontWeight : "none")
@@ -666,7 +678,7 @@ function renderSunburst(jsonObject)
 	      .style("visibility", "");
 	
 	  var sequenceArray = getAncestors(d);
-	  updateBreadcrumbs(sequenceArray, percentageString);
+	  updateBreadcrumbs(sequenceArray, percentOrAbsSliceValueString);
 	  
 	  var opacMouseOver = chartOpacityOnMouseOver;
 	  opacMouseOver = opacMouseOver/100; // normalize value from interval [1,100] to %
@@ -848,7 +860,7 @@ function renderSunburst(jsonObject)
 	};
 	
 	// Update the breadcrumb trail to show the current sequence and percentage.
-	function updateBreadcrumbs(nodeArray, percentageString) {
+	function updateBreadcrumbs(nodeArray, percentOrAbsSliceValueString) {
 	
 	  // Data join; key function combines name and depth (= position in sequence).
 	  var g = d3.select("#trail"+randomId)
@@ -977,7 +989,7 @@ function renderSunburst(jsonObject)
 	  	  .attr("x", overallWidth + b.t)
 	      .attr("y", b.h / 2)
 	      .attr("dy", "0.35em")
-	      .text(percentageString);
+	      .text(percentOrAbsSliceValueString);
 	
 	  // Make the breadcrumb trail visible, if it's hidden.
 	  d3.select("#trail"+randomId)

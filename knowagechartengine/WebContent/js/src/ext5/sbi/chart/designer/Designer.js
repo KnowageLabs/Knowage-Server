@@ -642,11 +642,17 @@ Ext.define('Sbi.chart.designer.Designer', {
 					//var chartWidth = mainConfigurationPanel.getComponent("chartWidthNumberfield");	
 						
 					/**
-					 * The main configuration panel element (opacity on mouse over) to show
+					 * The main configuration panel elements (opacity on mouse over) to show
 					 * on the Step 2 main configuration panel when the SUNBURST is selected.
+					 * 
+					 * 'percAbsolSliceValueCombo': percentage/absolute value type for displaying tooltip and breadcrumb values for slices that 
+					 * are covered with mouse cursor. This variable is the field container of the combo that offers these two types.
+					 * 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
-					var opacityOnMouseOver = mainConfigurationPanel.getComponent("opacityMouseOver");
-						
+					var opacityOnMouseOver = mainConfigurationPanel.getComponent("opacityMouseOver");					
+					var percAbsolSliceValueField = mainConfigurationPanel.getComponent("percAbsolSliceValueCombo");
+					
 					/**
 					 * "Show table" checkbox for the PARALLEL chart serves as a indicator of
 					 * whether the PARALLEL table should be shown when rendering the chart.
@@ -782,6 +788,20 @@ Ext.define('Sbi.chart.designer.Designer', {
 							opacityOnMouseOver.hide();
 						}
 					}  
+					
+					/**
+					 * Percentage/absolute value type for displaying tooltip and breadcrumb values for slices that are covered with mouse cursor.
+					 * NOTE: 'percAbsolSliceValueCombo' is field container of the combo that offers these two types.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					if (percAbsolSliceValueField!=undefined && percAbsolSliceValueField!=null) {
+						if (isChartSunburst) {								
+							percAbsolSliceValueField.show();
+						} 
+						else {
+							percAbsolSliceValueField.hide();
+						}
+					} 
 					
 					/**
 					 * Show/hide the color pallete on the second configuration panel on the 

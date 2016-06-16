@@ -1034,13 +1034,22 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			}
 
 			/**
-			 * Parameter specific for the SUNBURST chart only.
+			 * Parameters specific for the SUNBURST chart only.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if (chartType.toUpperCase() == "SUNBURST") {
 
 				CHART['opacMouseOver'] = (Number(chartModel.get('opacMouseOver'))) ? Number(chartModel.get('opacMouseOver')) : 100;
 //				CHART['opacMouseOver'] = ChartUtils.checkValuesOfModelOrGUI(chartModel.get('opacMouseOver'), Ext.getCmp("opacityMouseOver").value);	
+
+				/**
+				 * Percentage/absolute value type for displaying tooltip and breadcrumb values for slices that are covered with mouse cursor.
+				 * This parameter is used for the SUNBURST chart type.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				CHART['percAbsolSliceValue'] = chartModel.get('percAbsolSliceValue')!=undefined 
+												? chartModel.get('percAbsolSliceValue') 
+														: Sbi.settings.chart.configurationStep.defaultPercAbsSliceValue;
 			}
 
 			/**
@@ -1812,6 +1821,15 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		isOpacityMouseOverEnabled : function () {
 			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST';
 		},
+		
+		/**
+		 * Percentage/absolute value type for displaying tooltip and breadcrumb values for slices that are covered with mouse cursor.
+		 * The combo that offers these two values (types) will be shown if the chart type is appropriate (the SUNBURST).
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		isPercAbsSliceValueEnabled : function () {
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST';
+		},
 
 		isWordcloudPanelEnabled : function () {
 			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'WORDCLOUD';
@@ -2161,6 +2179,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
 				opacMouseOver : jsonTemplate.CHART.opacMouseOver ? jsonTemplate.CHART.opacMouseOver : "",
+				percAbsolSliceValue: (jsonTemplate.CHART.percAbsolSliceValue && jsonTemplate.CHART.percAbsolSliceValue!="") 
+										? jsonTemplate.CHART.percAbsolSliceValue : Sbi.settings.chart.configurationStep.defaultPercAbsSliceValue,
 				
 				/**
 				 * Added for the PARALLEL chart.

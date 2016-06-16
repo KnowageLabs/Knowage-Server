@@ -45,6 +45,14 @@
 	{
 		type: '$chart.type',
 		opacMouseOver: '$chart.opacMouseOver',	
+		
+		#*
+		  Percentage/absolute value type for displaying tooltip and breadcrumb values for slices that are covered with mouse cursor.
+		  This parameter contains one of two possible values: percentage or absolute.
+		  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 	*#
+		percAbsolSliceValue: '$chart.percAbsolSliceValue',
+			
 		isCockpit: $chart.isCockpitEngine, 
 		
 		#*

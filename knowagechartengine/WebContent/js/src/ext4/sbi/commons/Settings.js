@@ -119,7 +119,15 @@ Sbi.settings.chart =
 		 * Set the default dimension type for dimensions of the chart (height and 
 		 * width) to be pixels. 
 		 */
-		defaultDimensionType: "pixels"
+		defaultDimensionType: "pixels",
+		
+		/**
+		 * Percentage/absolute value type for displaying tooltip and breadcrumb values for slices that are covered with mouse cursor.
+		 * This is the default value that should be shown and taken when none is specified. So, by default show value of hovered slice
+		 * in the SUNBURST chart in percents.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		defaultPercAbsSliceValue: "percentage"
 	},
 	
 	/**

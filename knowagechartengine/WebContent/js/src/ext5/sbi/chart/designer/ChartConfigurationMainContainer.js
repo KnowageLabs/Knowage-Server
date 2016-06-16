@@ -73,7 +73,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     		bind : '{configModel.height}',
     		fieldLabel : LN('sbi.chartengine.configuration.height'),
     		hidden: ChartUtils.isChartHeightDisabled()  // added by: Giorgio Federici (https://production.eng.it/jira/browse/KNOWAGE-548)
-    	};
+    	};      
         
         /**
          * The dimension type for the height of the chart (percentage or pixels). The default value
@@ -436,10 +436,83 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 		);
  	    
  	    this.add(toolbarOpacMouseOver);
+ 	    
+ 	   /**
+		 * Percentage/absolute value type for displaying tooltip and breadcrumb values for slices that are covered with mouse cursor.
+		 * NOTE: 'percAbsolSliceValue' is field container of the combo that offers these two types.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+ 	    var percAbsolSliceValue = Ext.create
+ 	    (
+			{
+	 			/* Horizontal line with one number field - OPACITY ON MOUSE OVER */                        
+				xtype: 'fieldcontainer',
+				id: "percAbsolSliceValueCombo",
+
+	            hidden: !ChartUtils.isPercAbsSliceValueEnabled(),
+	
+				defaults : 
+				{
+					margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		
+					layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+				},
+	
+				items: 
+				[
+					 {
+						 xtype: "combo",
+				        	
+						 store: 
+						 {
+							 fields: [ 'typeValue', 'typeAbbr' ],                
+							 data: [ {"typeValue": "Absolute", "typeAbbr":'absolute'}, {"typeValue": "Percentage","typeAbbr":'percentage'} ]
+						 },
+			            
+						 displayField: 'typeValue',
+						 valueField: 'typeAbbr',
+						 value: Sbi.settings.chart.configurationStep.defaultPercAbsSliceValue,
+						 bind: '{configModel.percAbsolSliceValue}',
+						 fieldLabel: LN("sbi.chartengine.configuration.sunburst.percAbsSliceValueType"),        
+						 editable: false,         
+						 width: Sbi.settings.chart.configurationStep.widthOfFields
+					}
+				 ]		                     
+			}
+ 	    );
+ 	   
+ 	  this.add(percAbsolSliceValue);
+ 	    
+// 	   /**
+//         * TODO: comment
+//         */
+//        this.percAbsolSliceValue = 
+//        {
+//        	xtype: "combo",
+//        	id: "percAbsolSliceValueCombo",
+//        	
+//        	store: 
+//        	{
+//                fields: [ 'typeValue', 'typeAbbr' ],                
+//                data: [ {"typeValue": "Absolute", "typeAbbr":'absolute'}, {"typeValue": "Percentage","typeAbbr":'percentage'} ]
+//            },
+//            
+//            displayField: 'typeValue',
+//            valueField: 'typeAbbr',
+//            value: Sbi.settings.chart.configurationStep.defaultPercAbsSliceValue,
+//            bind : '{configModel.percAbsolSliceValue}',
+//            fieldLabel : "Percentage or absolute",  // TODO: LN()        
+//            editable : false,            
+//            margin: Sbi.settings.chart.configurationStep.marginOfTopFieldsetButtons,
+//            hidden: !ChartUtils.isPercAbsSliceValueEnabled() 
+//        };   
      	
      	if (!ChartUtils.isOpacityMouseOverEnabled()) {
      		this.getComponent("opacityMouseOver").hide();
- 		}     	
+ 		}   
+     	
+     	if (!ChartUtils.isPercAbsSliceValueEnabled()) {
+     		this.getComponent("percAbsolSliceValueCombo").hide();
+ 		}  
      	
     	var showLegend = Ext.create({
 			xtype: 'checkboxfield',
