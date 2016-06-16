@@ -136,7 +136,7 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 			id: 'addTab',
 	        title: '<br>',
 	        iconCls: 'newTabIcon',
-	        hidden: Sbi.config.visibiltyButtons.showMultiSheet
+	        hidden: !Sbi.config.visibiltyButtons.showMultiSheet
 		};
 		
 
@@ -207,7 +207,7 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 	    this.resumeEvents();
 	     
 	    tab.on('beforeClose',function(panel){
-	    	if (!Sbi.config.visibiltyButtons){
+	    	if (Sbi.config.visibiltyButtons != null && !Sbi.config.visibiltyButtons.showMultiSheet){
 	    		return false;
 	    	}
 			Ext.MessageBox.confirm(
