@@ -27,7 +27,7 @@
 	
 	//Initialization of the messageResource object
 	messageResource.init({
-  		filePath : '${pageContext.request.contextPath}/js/src/ext4/sbi/messages/'
+  		filePath : '${pageContext.request.contextPath}/js/src/messages/'
   		, defaultLocale : 'en_US'
   		, ajaxFunction : getSynch
 	});

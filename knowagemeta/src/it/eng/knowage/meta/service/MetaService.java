@@ -9,7 +9,6 @@ import it.eng.knowage.meta.model.business.BusinessTable;
 import it.eng.knowage.meta.model.filter.PhysicalTableFilter;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
-import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.serialization.JsonConverter;
@@ -18,7 +17,6 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +43,7 @@ public class MetaService {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 * 
+	 *
 	 * @param dsId
 	 * @return
 	 */
@@ -109,8 +107,8 @@ public class MetaService {
 			translatedModel.put("physicalModel", physicalModelJson);
 			translatedModel.put("businessModel", businessModelJson);
 
-			EmfXmiSerializer serializer = new EmfXmiSerializer();
-			serializer.serialize(model, new File("c:\\test.sbimodel.txt"));
+			// EmfXmiSerializer serializer = new EmfXmiSerializer();
+			// serializer.serialize(model, new File("c:\\test.sbimodel.txt"));
 
 			return Response.ok(translatedModel.toString()).build();
 
@@ -126,8 +124,8 @@ public class MetaService {
 
 		// JpaMappingCodeGenerator jpaMappingCodeGenerator = TestGeneratorFactory.createCodeGenerator();
 		// jpaMappingCodeGenerator.generate(_businessModel, TestConstants.outputFolder.toString());
-		EmfXmiSerializer serializer = new EmfXmiSerializer();
-		serializer.serialize(model, new File("c:\\test.sbimodel.txt"));
+		// EmfXmiSerializer serializer = new EmfXmiSerializer();
+		// serializer.serialize(model, new File("c:\\test.sbimodel.txt"));
 		return Response.ok().build();
 	}
 }

@@ -38,7 +38,7 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
 /**
  * @authors
- * 
+ *
  */
 @ManageAuthorization
 @Path("/1.0/pages")
@@ -50,7 +50,7 @@ public class PageResource {
 
 	{
 		urls = new HashMap<String, String>();
-		urls.put("edit", "/WEB-INF/jsp/test.jsp");
+		urls.put("edit", "/WEB-INF/jsp/metaWeb.jsp");
 		urls.put("test", "/WEB-INF/jsp/test.jsp");
 	}
 
