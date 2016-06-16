@@ -463,7 +463,7 @@
 			},400,true);
 		}
 
-		if($scope.staticTree=='true'){
+		if($scope.staticTree!='true'){
 			if($scope.dynamicTree) {
 				$scope.$watch( watchedNgModel, updateWatchedItemFn, true);
 			} else {
