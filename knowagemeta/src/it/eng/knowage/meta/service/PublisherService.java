@@ -1,74 +1,62 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
+ *
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
-
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.knowage.meta.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
 /**
- * @authors
+ * PublisherService Rest service can be used to display a jsp. It can be called passing the request parameter "PUBLISHER" containing the uri to the requested
+ * resource. i.e. PUBLISHER=PUBLISHER=/WEB-INF/jsp/community/XXX.jsp
+ * 
+ * @author franceschini
  * 
  */
 
-@Path("/1.0/pages")
-public class PageResource {
+@Path("/publish")
+public class PublisherService {
+	@Context
+	private HttpServletResponse servletResponse;
 
-	static private Map<String, String> urls;
-
-	static private Logger logger = Logger.getLogger(PageResource.class);
-
-	{
-		urls = new HashMap<String, String>();
-		urls.put("edit", "/WEB-INF/jsp/test.jsp");
-		urls.put("test", "/WEB-INF/jsp/test.jsp");
-	}
+	private static Logger logger = Logger.getLogger(PublisherService.class);
+	private static String PUBLISHER = "PUBLISHER";
 
 	@GET
-	@Path("/{pagename}")
-	@Produces("text/html")
-	public void getPage(@PathParam("pagename") String pageName) {
-		String dispatchUrl = urls.get(pageName);
+	public void publish(@Context HttpServletRequest req) {
 
 		try {
 
-			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
 			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
 			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
-			// response.setContentType("text/html");
-			// response.setCharacterEncoding("UTF-8");
-
-			request.getRequestDispatcher(dispatchUrl).forward(request, response);
+			String publisher = request.getParameter(PUBLISHER);
+			if (publisher != null) {
+				request.getRequestDispatcher(publisher).forward(request, response);
+			}
 
 		} catch (Exception e) {
-			logger.error(e);
-		} finally {
-			logger.debug("OUT");
+			logger.error("Error forwarding request", e);
 		}
 	}
 

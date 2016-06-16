@@ -8,7 +8,7 @@
   </context-param>
   <context-param>
 		<param-name>resteasy.resources</param-name>
-		<param-value>it.eng.knowage.meta.service.MetaService,it.eng.knowage.meta.service.PageResource</param-value>
+		<param-value>it.eng.knowage.meta.service.MetaService,it.eng.knowage.meta.service.PageResource,it.eng.knowage.meta.service.PublisherService</param-value>
 	</context-param>
   <context-param>
     <param-name>resteasy.servlet.mapping.prefix</param-name>
