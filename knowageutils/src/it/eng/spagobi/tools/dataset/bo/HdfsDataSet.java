@@ -1,29 +1,11 @@
-/*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package it.eng.spagobi.tools.dataset.bo;
 
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.hdfs.Hdfs;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
+import it.eng.spagobi.tools.dataset.common.dataproxy.HdfsFileDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
-import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetCsvDataReader;
-import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetXlsDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -33,37 +15,28 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-/**
- * @authors Angelo Bernabei angelo.bernabei@eng.it Giulio Gavardi giulio.gavardi@eng.it Andrea Gioia andrea.gioia@eng.it Davide Zerbetto davide.zerbetto@eng.it
- *
- */
-public class FileDataSet extends ConfigurableDataSet {
+public class HdfsDataSet extends FileDataSet {
 
-	public static String DS_TYPE = "SbiFileDataSet";
-	public static final String FILE_NAME = "fileName";
-	public static final String FILE_TYPE = "fileType";
-	public static final String RESOURCE_PATH = "resourcePath";
+	private static transient Logger logger = Logger.getLogger(FileDataSet.class);
 
-	public String fileType;
-
-	public boolean useTempFile = false; // if true we use a file in resources\dataset\files\temp for reading
+	public static String DS_TYPE = "SbiHdfsDataSet";
 
 	private int maxResults = -1; // number of rows to read in a file, default -1 equals to no limits
 
-	private static transient Logger logger = Logger.getLogger(FileDataSet.class);
+	public Hdfs hdfs;
 
 	/**
 	 * Instantiates a new empty file data set.
 	 */
-	public FileDataSet() {
+	public HdfsDataSet() {
 		super();
+		hdfs = new Hdfs();
+		hdfs.init();
 	}
 
-	public FileDataSet(SpagoBiDataSet dataSetConfig) {
+	public HdfsDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
-		if (dataSetConfig.isPersistedHDFS()) {
-			return;
-		}
+		hdfs = new Hdfs();
 		logger.debug("IN");
 		try {
 			// JSONObject jsonConf =
@@ -91,83 +64,54 @@ public class FileDataSet extends ConfigurableDataSet {
 	}
 
 	@Override
-	public SpagoBiDataSet toSpagoBiDataSet() {
-		SpagoBiDataSet sbd;
-
-		sbd = super.toSpagoBiDataSet();
-
-		sbd.setType(DS_TYPE);
-		return sbd;
-	}
-
-	/**
-	 * try to guess the proper dataReader to use depending on the file extension
-	 *
-	 * @param fileName
-	 *            the target filename
-	 */
-	public void setDataReader(String fileName) {
-		JSONObject jsonConf = ObjectUtils.toJSONObject(this.getConfiguration());
-		String fileExtension = fileName.lastIndexOf('.') > 0 ? fileName.substring(fileName.lastIndexOf('.') + 1) : null;
-		logger.debug("File extension: [" + fileExtension + "]");
-		String fileType = this.getFileType();
-
-		if ((fileType != null) && (!fileType.isEmpty())) {
-			logger.debug("File type is: [" + fileType + "]");
-		} else {
-			logger.debug("No file type specified, using file extension as file type: [" + fileExtension + "]");
-			fileType = fileExtension;
-		}
-
-		if ("CSV".equalsIgnoreCase(fileType)) {
-			logger.info("File format: [CSV]");
-			// setDataReader( new CsvDataReader() );
-			setDataReader(new FileDatasetCsvDataReader(jsonConf));
-		} else if ("XLS".equalsIgnoreCase(fileType)) {
-			logger.info("File format: [XLS Office 2003]");
-			setDataReader(new FileDatasetXlsDataReader(jsonConf));
-		}
-		// else if ("xml".equalsIgnoreCase( fileExtension ) || "txt".equalsIgnoreCase( fileExtension )) {
-		// logger.info("File format: [XML]");
-		// setDataReader( new XmlDataReader() );
-		// }
-
-		else {
-			throw new IllegalArgumentException("[" + fileExtension + "] is not a supported file type");
-		}
-	}
-
-	@Override
-	public FileDataProxy getDataProxy() {
+	public HdfsFileDataProxy getDataProxy() {
 		IDataProxy dataProxy;
 
 		dataProxy = super.getDataProxy();
 
-		if (dataProxy == null) {
-			setDataProxy(new FileDataProxy(this.getResourcePath()));
-			dataProxy = getDataProxy();
+		if (dataProxy == null || !(dataProxy instanceof HdfsFileDataProxy)) {
+			dataProxy = new HdfsFileDataProxy(this.getResourcePath());
+			setDataProxy(dataProxy);
 			if (useTempFile) {
-				if (dataProxy instanceof FileDataProxy) {
-					((FileDataProxy) dataProxy).setUseTempFile(true);
-
+				if (dataProxy instanceof HdfsFileDataProxy) {
+					((HdfsFileDataProxy) dataProxy).setUseTempFile(true);
 				}
 			}
 		}
 
-		if (!(dataProxy instanceof FileDataProxy))
+		((HdfsFileDataProxy) dataProxy).setHdfs(hdfs);
+
+		if (!(dataProxy instanceof HdfsFileDataProxy))
 			throw new RuntimeException("DataProxy cannot be of type [" + dataProxy.getClass().getName() + "] in FileDataSet");
 
-		return (FileDataProxy) dataProxy;
+		return (HdfsFileDataProxy) dataProxy;
 	}
 
+	public boolean deleteFile(String path) {
+		return hdfs.deleteFile(path);
+	}
+
+	@Override
+	public SpagoBiDataSet toSpagoBiDataSet() {
+		SpagoBiDataSet sbd;
+
+		sbd = super.toSpagoBiDataSet();
+		sbd.setPersistedHDFS(this.persistedHDFS);
+		sbd.setType(DS_TYPE);
+		return sbd;
+	}
+
+	@Override
 	public String getFileName() {
 		return getDataProxy().getFileName();
 	}
 
+	@Override
 	public void setFileName(String fileName) {
 		setFileName(fileName, true);
 	}
 
+	@Override
 	public void setFileName(String fileName, boolean updateFileFormat) {
 		if (fileName == null || fileName.length() == 0) {
 			throw new IllegalArgumentException("fileName argument cannot be null or an empty string");
@@ -186,15 +130,22 @@ public class FileDataSet extends ConfigurableDataSet {
 	/**
 	 * @return the fileType
 	 */
+	@Override
 	public String getFileType() {
 		return fileType;
 	}
 
-	@Override
-	public void loadData() {
-		super.loadData();
-		this.adjustMetadata(this.getDataStore());
-	}
+	// @Override
+	// public void loadData(int offset, int fetchSize, int maxResults) {
+	// if (getFileName() != null) {
+	// String s = "";
+	// }
+	// }
+
+	// @Override
+	// public String getTableNameForReading() {
+	// return super.getTableNameForReading();
+	// }
 
 	private void adjustMetadata(IDataStore iDataStore) {
 		IMetaData metadata = iDataStore.getMetaData();
@@ -221,6 +172,7 @@ public class FileDataSet extends ConfigurableDataSet {
 	 * @param fileType
 	 *            the fileType to set
 	 */
+	@Override
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
 	}
@@ -234,6 +186,7 @@ public class FileDataSet extends ConfigurableDataSet {
 	/**
 	 * @return the useTempFile
 	 */
+	@Override
 	public boolean isUseTempFile() {
 		return useTempFile;
 	}
@@ -242,14 +195,17 @@ public class FileDataSet extends ConfigurableDataSet {
 	 * @param useTempFile
 	 *            the useTempFile to set
 	 */
+	@Override
 	public void setUseTempFile(boolean useTempFile) {
 		this.useTempFile = useTempFile;
 	}
 
+	@Override
 	public int getMaxResults() {
 		return maxResults;
 	}
 
+	@Override
 	public void setMaxResults(int maxResults) {
 		this.maxResults = maxResults;
 	}
@@ -259,4 +215,15 @@ public class FileDataSet extends ConfigurableDataSet {
 		return null;
 	}
 
+	public Hdfs getHdfs() {
+		return hdfs;
+	}
+
+	public void setHdfs(Hdfs hdfs) {
+		this.hdfs = hdfs;
+	}
+
+	public String getHdfsResourcePath() {
+		return hdfs.getFs().getWorkingDirectory().toString();
+	}
 }

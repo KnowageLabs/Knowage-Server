@@ -8,10 +8,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import junit.framework.TestCase;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -19,23 +16,7 @@ public class PersistedHDFSManagerTest extends TestCase {
 	private PersistedHDFSManager hdfsManager = null;
 
 	@Test
-	public void testInitConfiguration() {
-		String myPath = "hdfs://localhost:8020";
-		Configuration conf = new Configuration();
-		conf.set("fs.default.name", myPath);
-		Configuration confHdfs = hdfsManager.initConfiguration();
-		assertEquals(confHdfs.toString(), conf.toString());
-	}
-
-	@Test
-	public void testInitializeFileSystem() {
-		Configuration confHdfs = hdfsManager.initConfiguration();
-		FileSystem fs = hdfsManager.initializeFileSystem(confHdfs);
-		assertNotNull(fs);
-	}
-
-	@Test
-	public void testPersistDataSet() {
+	public void testPersistDataStore() {
 		IDataStore dataStore = Mockito.mock(IDataStore.class);
 		IMetaData metaData = Mockito.mock(IMetaData.class);
 		IRecord record = Mockito.mock(IRecord.class);
@@ -54,11 +35,7 @@ public class PersistedHDFSManagerTest extends TestCase {
 		Mockito.when(record.getFieldAt(2)).thenReturn(fieldStr);
 		Mockito.when(fieldInt.getValue()).thenReturn(new Integer(1));
 		Mockito.when(fieldStr.getValue()).thenReturn(new String("test"));
-		Configuration confHdfs = hdfsManager.initConfiguration("./resources-test/core-site.xml");
-		confHdfs.addResource(new Path("./resources-test/hdfs-site.xml"));
-		confHdfs.set("hadoop.job.ugi", "spagobi");
-		hdfsManager.initializeFileSystem(confHdfs);
-		FSDataOutputStream fsOS = (FSDataOutputStream) hdfsManager.persistDataSet(dataStore, "test_table", "signature_xyz");
+		FSDataOutputStream fsOS = (FSDataOutputStream) hdfsManager.persistDataStore(dataStore, "test_table", "signature_xyz");
 		assertNotNull(fsOS);
 		assertEquals(fsOS.size(), 232);
 	}
@@ -67,7 +44,7 @@ public class PersistedHDFSManagerTest extends TestCase {
 	public void setUp() {
 		System.setProperty("user.name", "spagobi");
 		System.setProperty("HADOOP_USER_NAME", "spagobi");
-		hdfsManager = new PersistedHDFSManager();
+		hdfsManager = new PersistedHDFSManager("test", "testDescription");
 		try {
 			SingletonConfig.getInstance();
 			UtilitiesForTest.setUpMasterConfiguration();

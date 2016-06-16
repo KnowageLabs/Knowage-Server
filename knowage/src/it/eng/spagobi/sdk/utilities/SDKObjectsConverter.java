@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,7 +26,9 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
@@ -58,6 +60,7 @@ import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
@@ -541,8 +544,15 @@ public class SDKObjectsConverter {
 
 			// defines correct dataset detail
 			if (dataset.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-				ds = new FileDataSet();
-				((FileDataSet) ds).setResourcePath(DAOConfig.getResourcePath());
+				boolean storeToHDFS = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue(SpagoBIConstants.CONFIG_STORE_TO_HDFS)).booleanValue();
+				if (storeToHDFS) {
+					ds = new HdfsDataSet();
+					ds.setPersistedHDFS(true);
+					((HdfsDataSet) ds).setResourcePath(((HdfsDataSet) ds).getResourcePath());
+				} else {
+					ds = new FileDataSet();
+					((FileDataSet) ds).setResourcePath(DAOConfig.getResourcePath());
+				}
 				String fileName = jsonConf.getString(DataSetConstants.FILE_NAME);
 				if (fileName != null && !fileName.equals("")) {
 					((FileDataSet) ds).setFileName(fileName);

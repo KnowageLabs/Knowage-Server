@@ -71,6 +71,9 @@
          <property name="persisted" type="boolean">
             <column name="IS_PERSISTED" />
         </property>
+         <property name="persistedHDFS" type="boolean">
+            <column name="IS_PERSISTED_HDFS" />
+        </property>
         <property name="persistTableName" type="string">
             <column name="PERSIST_TABLE_NAME" length="50" not-null="false" />
         </property>

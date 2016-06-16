@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -88,6 +88,7 @@ public class SbiDataSet extends SbiHibernateModel {
 	private boolean numRows = false;
 
 	private boolean persisted = false;
+	private boolean persistedHDFS = false;
 	private String persistTableName = null;
 
 	private String owner = null;
@@ -106,7 +107,7 @@ public class SbiDataSet extends SbiHibernateModel {
 	private Date timeDe = null;
 
 	private SbiDomains scope = null;
-	
+
 	private SbiFederationDefinition federation = null;
 
 	/**
@@ -407,7 +408,7 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	/**
 	 * the metadata.
-	 * 
+	 *
 	 * @param transformer
 	 *            the new metadata
 	 */
@@ -669,6 +670,13 @@ public class SbiDataSet extends SbiHibernateModel {
 	public void setFederation(SbiFederationDefinition federation) {
 		this.federation = federation;
 	}
-	
-	
+
+	public boolean isPersistedHDFS() {
+		return persistedHDFS;
+	}
+
+	public void setPersistedHDFS(boolean persistedHDFS) {
+		this.persistedHDFS = persistedHDFS;
+	}
+
 }

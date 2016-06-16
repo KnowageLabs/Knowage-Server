@@ -909,6 +909,7 @@ CREATE TABLE SBI_DATA_SET (
        PIVOT_VALUE            VARCHAR(56),
        NUM_ROWS               BIT default 0,    
        IS_PERSISTED           BIT default 0,
+       IS_PERSISTED_HDFS	  BIT default 0,
        PERSIST_TABLE_NAME     VARCHAR(50),
        CONFIGURATION          TEXT NULL,              
        OWNER                  VARCHAR(50),

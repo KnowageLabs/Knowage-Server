@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -41,32 +41,33 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 	IDataReader dataReader;
 	IDataProxy dataProxy;
 	IDataStore dataStore;
-	
-	protected boolean abortOnOverflow;	
+
+	protected boolean abortOnOverflow;
 	protected Map bindings;
 	private boolean calculateResultNumberOnLoad = true;
 
 	Map<String, Object> userProfileParameters;
 
-
 	private static transient Logger logger = Logger.getLogger(ConfigurableDataSet.class);
 
-
-	public ConfigurableDataSet(){
+	public ConfigurableDataSet() {
 		super();
 		userProfileParameters = new HashMap<String, Object>();
 	}
 
-	public ConfigurableDataSet(SpagoBiDataSet dataSetConfig){
+	public ConfigurableDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
 		userProfileParameters = new HashMap<String, Object>();
 	}
-	
-	/**utility method used to clean different parameters values that should be null
-	 * @param params parameters map
+
+	/**
+	 * utility method used to clean different parameters values that should be null
+	 *
+	 * @param params
+	 *            parameters map
 	 * @return cleaned params map
 	 */
-	private Map cleanNullParametersValues(Map params){
+	private Map cleanNullParametersValues(Map params) {
 		if (params == null) {
 			return null;
 		}
@@ -74,110 +75,108 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
 			Object val = params.get(key);
-			if(val instanceof String){
-				if(val != null && (val.equals("") || val.equals("''"))){
+			if (val instanceof String) {
+				if (val != null && (val.equals("") || val.equals("''"))) {
 					params.put(key, null);
 				}
 			}
 		}
-		
+
 		return params;
 	}
 
+	@Override
 	public void loadData(int offset, int fetchSize, int maxResults) {
-		
+
 		if (this.isPersisted() || this.isFlatDataset()) {
-			
 			JDBCDataSet dataset = new JDBCDataSet();
 			dataset.setDataSource(getDataSourceForReading());
 			dataset.setQuery("select * from " + getTableNameForReading());
 			dataset.loadData(offset, fetchSize, maxResults);
 			dataStore = dataset.getDataStore();
-			
 		} else {
-			
+
 			Map parameters = cleanNullParametersValues(getParamsMap());
-	
+
 			dataProxy.setParameters(parameters);
-	
+
 			dataProxy.setProfile(getUserProfileAttributes());
 			dataProxy.setResPath(resPath);
-			
+
 			// check if the proxy is able to manage results pagination
-			if(dataProxy.isOffsetSupported()) {
+			if (dataProxy.isOffsetSupported()) {
 				dataProxy.setOffset(offset);
-			} else if(dataReader.isOffsetSupported()){
+			} else if (dataReader.isOffsetSupported()) {
 				dataReader.setOffset(offset);
 			} else {
-	
+
 			}
-	
-			if(dataProxy.isFetchSizeSupported()) {
+
+			if (dataProxy.isFetchSizeSupported()) {
 				dataProxy.setFetchSize(fetchSize);
-			} else if(dataReader.isOffsetSupported()){
+			} else if (dataReader.isOffsetSupported()) {
 				dataReader.setFetchSize(fetchSize);
 			} else {
-	
+
 			}
-	
+
 			// check if the proxy is able to manage results limit
-			if(dataProxy.isMaxResultsSupported()) {
+			if (dataProxy.isMaxResultsSupported()) {
 				dataProxy.setMaxResults(maxResults);
-			} else if(dataReader.isOffsetSupported()){
+			} else if (dataReader.isOffsetSupported()) {
 				dataReader.setMaxResults(maxResults);
 			} else {
-	
+
 			}
-			
-			
-			if( hasBehaviour(QuerableBehaviour.class.getName()) ) { 
-				QuerableBehaviour querableBehaviour = (QuerableBehaviour)getBehaviour(QuerableBehaviour.class.getName()) ;
+
+			if (hasBehaviour(QuerableBehaviour.class.getName())) {
+				QuerableBehaviour querableBehaviour = (QuerableBehaviour) getBehaviour(QuerableBehaviour.class.getName());
 				String stm = querableBehaviour.getStatement();
-				//stm = stm.replaceAll("''", "'"); why????
-				//                                 This line transforms, for example:
-				//                                 .... where column = 'rock ''n'' roll'
-				//                                 that is correct into 
-				//                                  .... where column = 'rock 'n' roll' 
-				//                                 THAT IS NOT CORRECT!!!
-				//                                 Commenting out this line solves https://spagobi.eng.it/jira/browse/SPAGOBI-1697 Error in Smart Filter: an error occurs when a static open filter contains a single quote
+				// stm = stm.replaceAll("''", "'"); why????
+				// This line transforms, for example:
+				// .... where column = 'rock ''n'' roll'
+				// that is correct into
+				// .... where column = 'rock 'n' roll'
+				// THAT IS NOT CORRECT!!!
+				// Commenting out this line solves https://spagobi.eng.it/jira/browse/SPAGOBI-1697 Error in Smart Filter: an error occurs when a static open
+				// filter contains a single quote
 				dataProxy.setStatement(stm);
 			}
-			
+
 			dataProxy.setCalculateResultNumberOnLoad(this.isCalculateResultNumberOnLoadEnabled());
-	
-			dataStore = dataProxy.load(dataReader); 
-	
-	
-			if(hasDataStoreTransformer()) {
+
+			dataStore = dataProxy.load(dataReader);
+
+			if (hasDataStoreTransformer()) {
 				getDataStoreTransformer().transform(dataStore);
 			}
-		
+
 		}
 	}
 
-	public IDataStore getDataStore() {    	
+	@Override
+	public IDataStore getDataStore() {
 		return this.dataStore;
-	}    
-
-	
+	}
 
 	/**
 	 * Gets the list of names of the profile attributes required.
-	 * 
+	 *
 	 * @return list of profile attribute names
-	 * 
-	 * @throws Exception the exception
+	 *
+	 * @throws Exception
+	 *             the exception
 	 */
 	public List getProfileAttributeNames() throws Exception {
 		List names = new ArrayList();
-		String query = (String)getQuery();
-		while(query.indexOf("${")!=-1) {
+		String query = (String) getQuery();
+		while (query.indexOf("${") != -1) {
 			int startind = query.indexOf("${");
 			int endind = query.indexOf("}", startind);
 			String attributeDef = query.substring(startind + 2, endind);
-			if(attributeDef.indexOf("(")!=-1) {
+			if (attributeDef.indexOf("(") != -1) {
 				int indroundBrack = query.indexOf("(", startind);
-				String nameAttr = query.substring(startind+2, indroundBrack);
+				String nameAttr = query.substring(startind + 2, indroundBrack);
 				names.add(nameAttr);
 			} else {
 				names.add(attributeDef);
@@ -203,23 +202,27 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 		this.dataProxy = dataProxy;
 	}
 
+	@Override
 	public Map<String, Object> getUserProfileAttributes() {
 		return userProfileParameters;
 	}
 
+	@Override
 	public void setUserProfileAttributes(Map<String, Object> parameters) {
 		this.userProfileParameters = parameters;
 	}
 
+	@Override
 	public void setAbortOnOverflow(boolean abortOnOverflow) {
 		this.abortOnOverflow = abortOnOverflow;
 	}
 
+	@Override
 	public void addBinding(String bindingName, Object bindingValue) {
 		bindings.put(bindingName, bindingValue);
 	}
 
-	
+	@Override
 	public IDataStore test() {
 		logger.debug("IN");
 		loadData();
@@ -227,8 +230,7 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 		return getDataStore();
 	}
 
-
-
+	@Override
 	public IDataStore test(int offset, int fetchSize, int maxResults) {
 		logger.debug("IN");
 		loadData(offset, fetchSize, maxResults);
@@ -237,31 +239,34 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 
 	}
 
-	public IDataStore decode(
-			IDataStore datastore) {
+	@Override
+	public IDataStore decode(IDataStore datastore) {
 		return datastore;
 	}
 
+	@Override
 	public boolean isCalculateResultNumberOnLoadEnabled() {
 		return calculateResultNumberOnLoad;
 	}
 
+	@Override
 	public void setCalculateResultNumberOnLoad(boolean enabled) {
 		calculateResultNumberOnLoad = enabled;
 	}
-	
 
+	@Override
 	public String getSignature() {
 		throw new UnreachableCodeException("getSignature method not implemented in class " + this.getClass().getName() + "!!!!");
 	}
 
+	@Override
 	public void setDataSource(IDataSource dataSource) {
 		throw new UnreachableCodeException("setDataSource method not implemented in class " + this.getClass().getName() + "!!!!");
 	}
 
+	@Override
 	public IDataSource getDataSource() {
 		throw new UnreachableCodeException("getDataSource method not implemented in class " + this.getClass().getName() + "!!!!");
 	}
 
-	
 }

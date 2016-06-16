@@ -113,6 +113,7 @@ public class DataSetConstants {
 
 	public static final String IS_FROM_SAVE_NO_METADATA = "isFromSaveNoMetadata";
 	public static final String IS_PERSISTED = "isPersisted";
+	public static final String IS_PERSISTED_HDFS = "isPersistedHDFS";
 	public static final String IS_SCHEDULED = "isScheduled";
 	public static final String FLAT_TABLE_NAME = "flatTableName";
 	public static final String DATA_SOURCE_FLAT = "dataSourceFlat";

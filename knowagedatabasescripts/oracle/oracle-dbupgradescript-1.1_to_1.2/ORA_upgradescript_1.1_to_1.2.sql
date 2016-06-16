@@ -17,3 +17,5 @@ alter table SBI_ENGINES enable constraint 'FK_SBI_ENGINES_1';
 alter table SBI_ENGINES enable constraint 'FK_SBI_ENGINES_2';
 -- not fk to disable for domains:
 delete from SBI_DOMAINS where value_cd = 'WORKSHEET';
+
+ALTER TABLE  SBI_DATA_SET ADD IS_PERSISTED_HDFS SMALLINT DEFAULT 0;

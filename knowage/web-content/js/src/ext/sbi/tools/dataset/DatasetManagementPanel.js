@@ -618,10 +618,13 @@ Ext
 						if (persistSelected != null && persistSelected == true) {
 							this.persistDetail.setVisible(true);
 							this.isScheduled.setVisible(true);
+							this.isPersistedHDFS.setVisible(true);
 						} else {
 							this.persistDetail.setVisible(false);
 							this.isScheduled.setVisible(false);
 							this.isScheduled.setValue(false);
+							this.isPersistedHDFS.setVisible(false);
+							this.isPersistedHDFS.setValue(false);
 						}
 					}
 
@@ -836,6 +839,7 @@ Ext
 							pivotRowName : values['pivotRowName'],
 							pivotIsNumRows : values['pivotIsNumRows'],
 							isPersisted : values['isPersisted'],
+							isPersistedHDFS : values['isPersistedHDFS'],
 							persistTableName : values['persistTableName'],
 							isScheduled : values['isScheduled'],
 							schedulingCronLine : values['schedulingCronLine'],
@@ -932,7 +936,7 @@ Ext
 								'jclassNameForCustom', 'customData', 'pars',
 								'trasfTypeCd', 'pivotColName', 'pivotColValue',
 								'pivotRowName', 'pivotIsNumRows', 'dsVersions',
-								'isPersisted', 'persistTableName',
+								'isPersisted', 'isPersistedHDFS', 'persistTableName',
 								'isScheduled', 'schedulingCronLine',
 								'startDate', 'endDate', 'flatTableName',
 								'dataSourceFlat', 'qbeSQLQuery',
@@ -981,6 +985,7 @@ Ext
 									pivotRowName : '',
 									pivotIsNumRows : '',
 									isPersisted : '',
+									isPersistedHDFS : '',
 									persistTableName : '',
 									isScheduled : '',
 									schedulingCronLine : '',
@@ -2342,6 +2347,13 @@ Ext
 							name : 'isPersisted',
 							fieldLabel : LN('sbi.ds.isPersisted')
 						});
+						
+						this.isPersistedHDFS = new Ext.form.Checkbox({
+							xtype : 'checkbox',
+							itemId : 'isPersistedHDFS',
+							name : 'isPersistedHDFS',
+							fieldLabel : 'HDFS'
+						});
 						// extjs4: this.isPersisted.addListener('change',
 						// this.activatePersistForm, this);
 						this.isPersisted.addListener('check',
@@ -2999,7 +3011,7 @@ Ext
 													: "-13px")
 													: "0"
 										},
-										items : [ this.isPersisted,
+										items : [ this.isPersisted, this.isPersistedHDFS, 
 												this.persistDetail,
 												this.isScheduled,
 												this.schedulingDetail ]
@@ -3117,6 +3129,7 @@ Ext
 							pivotRowName : '',
 							pivotIsNumRows : '',
 							isPersisted : '',
+							isPersistedHDFS : '',
 							persistTableName : '',
 							isScheduled : '',
 							schedulingCronLine : '',
@@ -3238,6 +3251,7 @@ Ext
 							pivotRowName : values['pivotRowName'],
 							pivotIsNumRows : values['pivotIsNumRows'],
 							isPersisted : values['isPersisted'],
+							isPersistedHDFS : values['isPersistedHDFS'],
 							persistTableName : values['persistTableName'],
 							isScheduled : values['isScheduled'],
 							schedulingCronLine : values['schedulingCronLine'],
@@ -3315,6 +3329,7 @@ Ext
 							pivotRowName : values['pivotRowName'],
 							pivotIsNumRows : values['pivotIsNumRows'],
 							isPersisted : values['isPersisted'],
+							isPersistedHDFS : values['isPersistedHDFS'],
 							persistTableName : values['persistTableName'],
 							isScheduled : values['isScheduled'],
 							schedulingCronLine : values['schedulingCronLine'],
@@ -3387,6 +3402,7 @@ Ext
 							pivotIsNumRows : values['pivotIsNumRows'],
 							isFromSaveNoMetadata : values['isFromSaveNoMetadata'],
 							isPersisted : values['isPersisted'],
+							isPersistedHDFS : values['isPersistedHDFS'],
 							persistTableName : values['persistTableName'],
 							isScheduled : values['isScheduled'],
 							schedulingCronLine : values['schedulingCronLine'],
@@ -3460,6 +3476,7 @@ Ext
 						record.set('pivotRowName', values['pivotRowName']);
 						record.set('pivotIsNumRows', values['pivotIsNumRows']);
 						record.set('isPersisted', values['isPersisted']),
+						record.set('isPersistedHDFS', values['isPersistedHDFS']),
 								record.set('persistTableName',
 										values['persistTableName']), record
 										.set('isScheduled',

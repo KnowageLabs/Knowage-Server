@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -36,6 +36,7 @@ import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
+import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHBaseDataSet;
@@ -105,6 +106,7 @@ public class DataSetFactory {
 			guiDataSet.setDateIn(new Date());
 
 			guiDataSet.setId(sbiDataSet.getId().getDsId());
+			guiDataSet.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
 		}
 
 		return guiDataSet;
@@ -182,6 +184,7 @@ public class DataSetFactory {
 
 		// set persist values
 		toReturn.setPersisted(dataSet.isPersisted());
+		toReturn.setPersistedHDFS(dataSet.isPersistedHDFS());
 		toReturn.setPersistTableName(dataSet.getPersistTableName());
 		toReturn.setScopeCd(dataSet.getScopeCd());
 		toReturn.setScopeId(dataSet.getScopeId());
@@ -225,12 +228,19 @@ public class DataSetFactory {
 		JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 		try {
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-				ds = new FileDataSet();
-				FileDataSet fds = (FileDataSet) ds;
+				FileDataSet fds;
+
+				if (sbiDataSet.isPersistedHDFS()) {
+					ds = new HdfsDataSet();
+					fds = (HdfsDataSet) ds;
+				} else {
+					ds = new FileDataSet();
+					fds = (FileDataSet) ds;
+				}
 
 				String resourcePath = jsonConf.optString("resourcePath");
 				if (StringUtilities.isEmpty(resourcePath)) {
-					resourcePath = DAOConfig.getResourcePath();
+					resourcePath = sbiDataSet.isPersistedHDFS() ? ((HdfsDataSet) ds).getHdfsResourcePath() : DAOConfig.getResourcePath();
 					jsonConf.put("resourcePath", resourcePath);
 				}
 				fds.setResourcePath(resourcePath);
@@ -371,11 +381,11 @@ public class DataSetFactory {
 
 				UserProfile profile = (UserProfile) userProfile;
 				String userId = null;
-				if(profile!=null){
+				if (profile != null) {
 					userId = (String) profile.getUserId();
 					logger.debug("Federated dataset but can't fid the user id");
 				}
-				
+
 				ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederationWithDataset(sbiFederation, sourcesDatasets), userId);
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((FederatedDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
@@ -398,7 +408,6 @@ public class DataSetFactory {
 				if (userProfile != null)
 					dataSourceDAO.setUserProfile(userProfile);
 
-				
 				IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
 				ds.setDataSourceForWriting(dataSource);
 				ds.setDataSourceForReading(dataSource);
@@ -483,6 +492,7 @@ public class DataSetFactory {
 							.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
+				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());
 				ds.setOwner(sbiDataSet.getOwner());
 				ds.setPublic(sbiDataSet.isPublicDS());
@@ -539,8 +549,14 @@ public class DataSetFactory {
 		JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 		try {
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-				ds = new FileDataSet();
-				FileDataSet fds = (FileDataSet) ds;
+				FileDataSet fds;
+				if (sbiDataSet.isPersistedHDFS()) {
+					ds = new HdfsDataSet();
+					fds = (HdfsDataSet) ds;
+				} else {
+					ds = new FileDataSet();
+					fds = (FileDataSet) ds;
+				}
 
 				String resourcePath = jsonConf.optString("resourcePath");
 				if (StringUtilities.isEmpty(resourcePath)) {
@@ -748,6 +764,7 @@ public class DataSetFactory {
 							.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
+				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());
 				ds.setOwner(sbiDataSet.getOwner());
 				ds.setPublic(sbiDataSet.is_public());
@@ -805,8 +822,14 @@ public class DataSetFactory {
 		JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 		try {
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-				ds = new FileDataSet();
-				FileDataSet fds = (FileDataSet) ds;
+				FileDataSet fds;
+				if (sbiDataSet.isPersistedHDFS()) {
+					ds = new HdfsDataSet();
+					fds = (HdfsDataSet) ds;
+				} else {
+					ds = new FileDataSet();
+					fds = (FileDataSet) ds;
+				}
 
 				String resourcePath = jsonConf.optString("resourcePath");
 				if (StringUtilities.isEmpty(resourcePath)) {
@@ -1073,6 +1096,7 @@ public class DataSetFactory {
 							.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
+				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());
 				ds.setOwner(sbiDataSet.getOwner());
 				ds.setPublic(sbiDataSet.isPublicDS());

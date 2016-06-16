@@ -23,6 +23,7 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
@@ -36,6 +37,7 @@ import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
@@ -334,35 +336,35 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 
 	/*
 	 * private GuiDataSetDetail constructDataSetDetail(String dsType){ GuiDataSetDetail dsActiveDetail = instantiateCorrectDsDetail(dsType);
-	 * 
+	 *
 	 * if(dsActiveDetail!=null){ dsActiveDetail.setDsType(dsType);
-	 * 
+	 *
 	 * String catTypeCd = getAttributeAsString(DataSetConstants.CATEGORY_TYPE_VN); JSONArray parsJSON = getAttributeAsJSONArray(DataSetConstants.PARS); String
 	 * meta = getAttributeAsString(DataSetConstants.METADATA); String trasfTypeCd = getAttributeAsString(DataSetConstants.TRASFORMER_TYPE_CD);
-	 * 
+	 *
 	 * List<Domain> domainsCat = (List<Domain>)getSessionContainer().getAttribute("catTypesList"); HashMap<String, Integer> domainIds = new HashMap<String,
 	 * Integer> (); if(domainsCat != null){ for(int i=0; i< domainsCat.size(); i++){ domainIds.put(domainsCat.get(i).getValueCd(),
 	 * domainsCat.get(i).getValueId()); } } Integer catTypeID = domainIds.get(catTypeCd); if(catTypeID!=null){ dsActiveDetail.setCategoryValueName(catTypeCd);
 	 * dsActiveDetail.setCategoryId(catTypeID); }
-	 * 
+	 *
 	 * if(meta != null && !meta.equals("")){ dsActiveDetail.setDsMetadata(meta); }
-	 * 
+	 *
 	 * if(parsJSON != null){ String pars; try { pars = deserializeParsListJSONArray(parsJSON); dsActiveDetail.setParameters(pars); } catch (JSONException e) {
 	 * logger.error("Error in deserializing parameter",e); e.printStackTrace(); } catch (SourceBeanException e) { logger.error("Source Bean Exception",e);
 	 * e.printStackTrace(); } }
-	 * 
+	 *
 	 * if(trasfTypeCd!=null && !trasfTypeCd.equals("")){ dsActiveDetail = setTransformer(dsActiveDetail, trasfTypeCd); }
-	 * 
+	 *
 	 * IDataSet ds = null; try { if ( dsType!=null && !dsType.equals("")) {
-	 * 
+	 *
 	 * ds = instantiateCorrectIDataSetType(dsType); if(ds!=null){ if(trasfTypeCd!=null && !trasfTypeCd.equals("")){ ds = setTransformer(ds, trasfTypeCd); }
 	 * HashMap h = new HashMap(); if(parsJSON!=null){ h = deserializeParValuesListJSONArray(parsJSON); } IEngUserProfile profile = getUserProfile(); String
 	 * dsMetadata = getDatasetTestMetadata(ds, h, profile); dsActiveDetail.setDsMetadata(dsMetadata); } }else{ logger.error("DataSet type is not existent");
 	 * throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypeError"); } } catch (Exception e) { logger.error("Error while getting dataset metadataa",e);
 	 * } } return dsActiveDetail; }
-	 * 
+	 *
 	 * private GuiDataSetDetail instantiateCorrectDsDetail(String dsType){ GuiDataSetDetail dsActiveDetail = null;
-	 * 
+	 *
 	 * if(dsType.equalsIgnoreCase(DataSetConstants.DS_FILE)){ dsActiveDetail = new FileDataSetDetail(); String fileName =
 	 * getAttributeAsString(DataSetConstants.FILE_NAME); if(fileName!=null && !fileName.equals("")){ ((FileDataSetDetail)dsActiveDetail).setFileName(fileName);
 	 * } }else if(dsType.equalsIgnoreCase(DataSetConstants.DS_JCLASS)){ dsActiveDetail = new JClassDataSetDetail(); String jclassName =
@@ -384,19 +386,19 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 	 * getAttributeAsString(DataSetConstants.WS_OPERATION); if(wsOperation!=null && !wsOperation.equals("")){
 	 * ((WSDataSetDetail)dsActiveDetail).setOperation(wsOperation); } if(wsAddress!=null && !wsAddress.equals("")){
 	 * ((WSDataSetDetail)dsActiveDetail).setAddress(wsAddress); } } return dsActiveDetail; }
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * private GuiDataSetDetail setTransformer(GuiDataSetDetail dsActiveDetail, String trasfTypeCd){ List<Domain> domainsTrasf =
 	 * (List<Domain>)getSessionContainer().getAttribute("trasfTypesList"); HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer> ();
 	 * if(domainsTrasf != null){ for(int i=0; i< domainsTrasf.size(); i++){ domainTrasfIds.put(domainsTrasf.get(i).getValueCd(),
 	 * domainsTrasf.get(i).getValueId()); } } Integer transformerId = domainTrasfIds.get(trasfTypeCd); dsActiveDetail.setTransformerId(transformerId);
 	 * dsActiveDetail.setTransformerCd(trasfTypeCd);
-	 * 
+	 *
 	 * String pivotColName = getAttributeAsString(DataSetConstants.PIVOT_COL_NAME); String pivotColValue =
 	 * getAttributeAsString(DataSetConstants.PIVOT_COL_VALUE); String pivotRowName = getAttributeAsString(DataSetConstants.PIVOT_ROW_NAME); Boolean
 	 * pivotIsNumRows = getAttributeAsBoolean(DataSetConstants.PIVOT_IS_NUM_ROWS);
-	 * 
+	 *
 	 * if(pivotColName != null && !pivotColName.equals("")){ dsActiveDetail.setPivotColumnName(pivotColName); } if(pivotColValue != null &&
 	 * !pivotColValue.equals("")){ dsActiveDetail.setPivotColumnValue(pivotColValue); } if(pivotRowName != null && !pivotRowName.equals("")){
 	 * dsActiveDetail.setPivotRowName(pivotRowName); } if(pivotIsNumRows != null){ dsActiveDetail.setNumRows(pivotIsNumRows); } return dsActiveDetail; }
@@ -447,7 +449,14 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 
 		IDataSet ds = null;
 		if (dsType.equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-			ds = new FileDataSet();
+			boolean storeToHDFS = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue(SpagoBIConstants.CONFIG_STORE_TO_HDFS)).booleanValue();
+			if (storeToHDFS) {
+				ds = new HdfsDataSet();
+				ds.setPersisted(true);
+				((HdfsDataSet) ds).setResourcePath(((HdfsDataSet) ds).getResourcePath());
+			} else {
+				ds = new FileDataSet();
+			}
 			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
 			((FileDataSet) ds).setFileName(fileName);
 		}
@@ -724,8 +733,15 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 		JSONObject jsonDsConfig = new JSONObject();
 
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-			dataSet = new FileDataSet();
-			((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
+			boolean storeToHDFS = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue(SpagoBIConstants.CONFIG_STORE_TO_HDFS)).booleanValue();
+			if (storeToHDFS) {
+				dataSet = new HdfsDataSet();
+				dataSet.setPersisted(true);
+				((HdfsDataSet) dataSet).setResourcePath(((HdfsDataSet) dataSet).getResourcePath());
+			} else {
+				dataSet = new FileDataSet();
+				((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
+			}
 			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
 			jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
 			((FileDataSet) dataSet).setFileName(fileName);

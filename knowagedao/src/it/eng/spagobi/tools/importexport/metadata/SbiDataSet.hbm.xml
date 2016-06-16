@@ -57,6 +57,9 @@
          <property name="persisted" type="boolean">
             <column name="IS_PERSISTED" />
         </property>
+        <property name="persistedHDFS" type="boolean">
+            <column name="IS_PERSISTED_HDFS" />
+        </property>
          <property name="configuration" type="string">
             <column name="CONFIGURATION" />
         </property>

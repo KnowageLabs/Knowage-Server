@@ -89,6 +89,7 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String PIVOT_IS_NUM_ROWS = "pivotIsNumRows";
 
 	private static final String IS_PERSISTED = "isPersisted";
+	private static final String IS_PERSISTED_HDFS = "isPersistedHDFS";
 	private static final String PERSIST_TABLE_NAME = "persistTableName";
 	private static final String FLAT_TABLE_NAME = "flatTableName";
 	private static final String DATA_SOURCE_FLAT = "dataSourceFlat";
@@ -377,6 +378,7 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(PIVOT_ROW_NAME, ds.getPivotRowName());
 			result.put(PIVOT_IS_NUM_ROWS, ds.isNumRows());
 			result.put(IS_PERSISTED, ds.isPersisted());
+			result.put(IS_PERSISTED_HDFS, ds.isPersistedHDFS());
 			result.put(PERSIST_TABLE_NAME, ds.getPersistTableName());
 			result.put(IS_PUBLIC, ds.isPublic());
 			result.put(OWNER, ds.getOwner());

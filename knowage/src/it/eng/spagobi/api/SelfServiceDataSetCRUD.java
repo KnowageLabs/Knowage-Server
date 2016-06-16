@@ -23,6 +23,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
@@ -44,12 +45,15 @@ import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.hdfs.Hdfs;
+import it.eng.spagobi.hdfs.HdfsUtilities;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.metamodel.SiblingsFileWrapper;
 import it.eng.spagobi.rest.annotations.ToValidate;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
@@ -67,6 +71,8 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogue;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
 import it.eng.spagobi.tools.dataset.normalization.GeoSpatialDimensionDatasetNormalizer;
+import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
+import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
@@ -126,6 +132,7 @@ public class SelfServiceDataSetCRUD {
 	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
 	static private String saveDuplicatedDSError = "error.mesage.description.data.set.saving.duplicated";
 	static private String parsingDSError = "error.mesage.description.data.set.parsing.error";
+	static private String STORE_TO_HDFS = SpagoBIConstants.CONFIG_STORE_TO_HDFS;
 
 	static private String previewRowsConfigLabel = "SPAGOBI.DATASET.PREVIEW_ROWS";
 
@@ -334,7 +341,17 @@ public class SelfServiceDataSetCRUD {
 			VersionedDataSet versionedDataset = (VersionedDataSet) dataset;
 			IDataSet wrappedDataset = versionedDataset.getWrappedDataset();
 
-			if (wrappedDataset instanceof FileDataSet) {
+			if (wrappedDataset instanceof HdfsDataSet) {
+				String sep = HdfsUtilities.getHdfsSperator();
+				HdfsDataSet hdfsDataset = (HdfsDataSet) wrappedDataset;
+				String resourcePath = hdfsDataset.getResourcePath();
+				String fileName = hdfsDataset.getFileName();
+				String filePath = resourcePath + sep + "dataset" + sep + "files" + sep;
+				boolean isDeleted = hdfsDataset.deleteFile(filePath + fileName);
+				if (isDeleted) {
+					logger.debug("Dataset File " + fileName + " has been deleted");
+				}
+			} else if (wrappedDataset instanceof FileDataSet) {
 				FileDataSet fileDataset = (FileDataSet) wrappedDataset;
 				String resourcePath = fileDataset.getResourcePath();
 				String fileName = fileDataset.getFileName();
@@ -359,6 +376,7 @@ public class SelfServiceDataSetCRUD {
 	public String saveDataSet(@Context HttpServletRequest request) {
 		IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
+
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(profile);
 			String label = request.getParameter("label");
@@ -425,8 +443,12 @@ public class SelfServiceDataSetCRUD {
 				// checkQbeDataset(((VersionedDataSet)
 				// dataset).getWrappedDataset());
 				checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
-
-				PersistedTableManager ptm = new PersistedTableManager(profile);
+				IPersistedManager ptm = null;
+				if (dataset.isPersistedHDFS()) {
+					ptm = new PersistedHDFSManager();
+				} else {
+					ptm = new PersistedTableManager(profile);
+				}
 				ptm.persistDataSet(dataset);
 				logger.debug("Persistence ended succesfully!");
 			}
@@ -1145,6 +1167,7 @@ public class SelfServiceDataSetCRUD {
 		if (idStr != null && !idStr.equals("")) {
 			id = new Integer(idStr);
 		}
+		// TODO create HDFS FILE DATASET e fare qua la scrittura
 		String type = request.getParameter("type");
 		String label = request.getParameter("label");
 		String description = request.getParameter("description");
@@ -1277,8 +1300,18 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	private IDataSet getFileDataSet(HttpServletRequest request, boolean savingDataset) {
-		FileDataSet toReturn = new FileDataSet();
-		toReturn.setResourcePath(DAOConfig.getResourcePath());
+		boolean storeToHDFS = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue(STORE_TO_HDFS)).booleanValue();
+
+		FileDataSet toReturn = null;
+		if (storeToHDFS) {
+			toReturn = new HdfsDataSet();
+			toReturn.setPersistedHDFS(storeToHDFS);
+			toReturn.setResourcePath(((HdfsDataSet) toReturn).getHdfsResourcePath());
+		} else {
+			toReturn = new FileDataSet();
+			toReturn.setResourcePath(DAOConfig.getResourcePath());
+		}
+
 		JSONObject jsonDsConfig = this.getFileDataSetConfig(request, savingDataset);
 		toReturn.setConfiguration(jsonDsConfig.toString());
 
@@ -1299,8 +1332,11 @@ public class SelfServiceDataSetCRUD {
 			// creating a new dataset, the file uploaded has to be renamed and
 			// moved
 			toReturn.setUseTempFile(true);
-
-			if (savingDataset) {
+			if (storeToHDFS && savingDataset) {
+				String resourcePath = toReturn.getResourcePath();
+				renameAndMoveDatasetFileToHDFS(fileName, label, resourcePath, fileType, ((HdfsDataSet) toReturn).getHdfs());
+				toReturn.setUseTempFile(false);
+			} else if (savingDataset) {
 				// rename and move the file
 				String resourcePath = toReturn.getResourcePath();
 				renameAndMoveDatasetFile(fileName, label, resourcePath, fileType);
@@ -1314,7 +1350,11 @@ public class SelfServiceDataSetCRUD {
 				toReturn.setUseTempFile(true);
 
 				// saving the existing dataset with a new file associated
-				if (savingDataset) {
+				if (storeToHDFS && savingDataset) {
+					String resourcePath = toReturn.getResourcePath();
+					renameAndMoveDatasetFileToHDFS(fileName, label, resourcePath, fileType, ((HdfsDataSet) toReturn).getHdfs());
+					toReturn.setUseTempFile(false);
+				} else if (savingDataset) {
 					// rename and move the file
 					String resourcePath = toReturn.getResourcePath();
 					renameAndMoveDatasetFile(fileName, label, resourcePath, fileType);
@@ -1398,6 +1438,24 @@ public class SelfServiceDataSetCRUD {
 				logger.debug("Cannot move dataset File");
 				throw new SpagoBIRuntimeException("Cannot move dataset File", e);
 			}
+		}
+	}
+
+	// This method rename a file and move it from resources\dataset\files\temp
+	// to resources\dataset\files
+	private void renameAndMoveDatasetFileToHDFS(String originalFileName, String newFileName, String resourcePath, String fileType, Hdfs hdfs) {
+		String sep = HdfsUtilities.getHdfsSperator();
+		String filePath = resourcePath + sep + "dataset" + sep + "files" + sep + "temp" + sep + originalFileName;
+		String fileNewPath = resourcePath + sep + "dataset" + sep + "files" + sep;
+
+		if (hdfs.exists(filePath)) {
+			/*
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
+			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
+			 */
+			String newDatasetPath = fileNewPath + newFileName + "." + fileType.toLowerCase();
+			hdfs.mkdirsParent(newDatasetPath);
+			hdfs.copy(filePath, newDatasetPath, false);
 		}
 	}
 
@@ -1808,7 +1866,10 @@ public class SelfServiceDataSetCRUD {
 	// }
 
 	private void checkFileDataset(IDataSet dataSet) {
-		if (dataSet instanceof FileDataSet) {
+		if (dataSet instanceof HdfsDataSet) {
+			((HdfsDataSet) dataSet).setPersistedHDFS(true);
+			((HdfsDataSet) dataSet).setResourcePath(((HdfsDataSet) dataSet).getHdfsResourcePath());
+		} else if (dataSet instanceof FileDataSet) {
 			((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
 		}
 	}

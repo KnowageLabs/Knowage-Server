@@ -458,6 +458,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibDataSet.setNumRows(dataSet.isNumRows());
 
 			hibDataSet.setPersisted(dataSet.isPersisted());
+			hibDataSet.setPersistedHDFS(dataSet.isPersistedHDFS());
 			hibDataSet.setPersistTableName(dataSet.getPersistTableName());
 
 			hibDataSet.setCategory(category);
@@ -1291,6 +1292,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 				// manage of persistence fields
 				hibDataSet.setPersisted(dataSet.isPersisted());
+				hibDataSet.setPersistedHDFS(dataSet.isPersistedHDFS());
 				hibDataSet.setPersistTableName(dataSet.getPersistTableName());
 
 				hibDataSet.setLabel(dataSet.getLabel());
