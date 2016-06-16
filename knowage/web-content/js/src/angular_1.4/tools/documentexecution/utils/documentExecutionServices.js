@@ -616,7 +616,7 @@
 		
 		serviceScope.getOlapType = function(){
 			
-			if (execProperties.executionInstance.ENGINE_LABEL == "knowagewhatifengine")
+			if (execProperties.executionInstance.ENGINE_LABEL == "knowagewhatifengine" || execProperties.executionInstance.ENGINE_LABEL == "knowageolapengine")
 				return true;
 			else
 				return false;
