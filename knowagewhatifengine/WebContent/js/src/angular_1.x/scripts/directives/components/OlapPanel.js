@@ -657,6 +657,8 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 	};
 
 	$scope.showCCWizard = function() {
+		
+		formulasSplit();
 		cleanCC();
 		
 		$mdDialog
@@ -803,6 +805,44 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 						});
 
 	}
+	
+	$scope.hideNameInputCC = function(option) {
+		if(option == "select"){
+			$scope.hideName = true;
+		}else{
+			$scope.hideName = false;
+		}
+		
+	}
+	
+	var formulasSplit = function() {
+		
+		$scope.aggregationArray = [];
+		$scope.arithmeticArray = [];
+		$scope.temporalArray = [];
+		$scope.customArray = [];
+		
+		for (var i = 0; i < $scope.formulasData.length; i++) {
+			
+			switch ($scope.formulasData[i].type) {
+			case "aggregation":
+				$scope.aggregationArray.push($scope.formulasData[i]);
+				break;
+			case "arithmetic":
+				$scope.arithmeticArray.push($scope.formulasData[i]);
+				break;
+			case "temporal":
+				$scope.temporalArray.push($scope.formulasData[i]);
+				break;	
+			case "custom":
+				$scope.customArray.push($scope.formulasData[i]);
+				break;	
+			default:
+				break;
+			}
+			
+		}
+	}
 
 	var formatFormulaforSending = function() {
 		
@@ -826,7 +866,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		}
 	
 		$scope.finalFormula = finString;
-
+		
 	}
 
 	var cleanCC = function() {
@@ -856,7 +896,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		toSend.calculatedFieldFormula = $scope.finalFormula;
 		toSend.parentMemberUniqueName = $scope.selectedMember.parentMember;
 		toSend.axisOrdinal = $scope.selectedMember.axisOrdinal;
-
+		
 		var encoded = encodeURI('/calculatedmembers?SBI_EXECUTION_ID='
 				+ JSsbiExecutionID);
 		sbiModule_restServices.promisePost("1.0", encoded, toSend).then(

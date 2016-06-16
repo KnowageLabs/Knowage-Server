@@ -7,7 +7,7 @@
     
     
     
-       <div style="margin-left: 20px; margin-right: 20px; " ng-hide="selectedTab == 4">
+       <div style="margin-left: 20px; margin-right: 20px; " ng-hide="hideName">
       <md-input-container class="md-block">
           <label>Name</label>
           <input ng-model="selectedMDXFunctionName" >
@@ -15,11 +15,11 @@
       </div>
   <md-dialog-content ng-cloak>
     <md-tabs md-dynamic-height  md-selected="selectedTab" md-border-bottom>
-      <md-tab label="Aggregation">
+      <md-tab label="Aggregation" ng-if="aggregationArray.length > 0">
     <md-content class="md-padding">
       <md-list flex>
         <md-list-item class="md-3-line"
-         ng-repeat="formula in formulasData | filter: {'type': 'aggregation'}"
+         ng-repeat="formula in aggregationArray"
          ng-class="{selected:(selectedMDXFunction.name == formula.name)}"
           ng-click="selectMDXFunction(formula)">
           <div class="md-list-item-text" layout="column" >
@@ -31,11 +31,28 @@
         </md-list-item>
     </md-content>      
       </md-tab>
-      <md-tab label="Arithmetic">
+      <md-tab label="Arithmetic" ng-if="arithmeticArray.length > 0">
     <md-content class="md-padding">
       <md-list flex>
 	       <md-list-item class="md-3-line"
-         ng-repeat="formula in formulasData | filter: {'type': 'arithmetic'}"
+         ng-repeat="formula in arithmeticArray"
+         ng-class="{selected:(selectedMDXFunction.name == formula.name)}"
+          ng-click="selectMDXFunction(formula)">
+          <div class="md-list-item-text" layout="column" >
+          
+            <h3>{{ formula.name }}</h3>
+            <h4>{{  formula.syntax }}</h4>
+            <p>{{  formula.description }}</p>
+          </div>
+          <md-divider ></md-divider>
+        </md-list-item>
+    </md-content>      
+      </md-tab>
+      <md-tab label="Temporal" ng-if="temporalArray.length > 0">
+    <md-content class="md-padding">
+      <md-list flex>
+        <md-list-item class="md-3-line"
+         ng-repeat="formula in temporalArray"
          ng-class="{selected:(selectedMDXFunction.name == formula.name)}"
           ng-click="selectMDXFunction(formula)">
           <div class="md-list-item-text" layout="column" >
@@ -47,32 +64,16 @@
         </md-list-item>
     </md-content>      
       </md-tab>
-      <md-tab label="Temporal">
+       <md-tab label="Custom" ng-if="customArray.length > 0">
     <md-content class="md-padding">
       <md-list flex>
         <md-list-item class="md-3-line"
-         ng-repeat="formula in formulasData | filter: {'type': 'temporal'}"
+         ng-repeat="formula in customArray"
          ng-class="{selected:(selectedMDXFunction.name == formula.name)}"
           ng-click="selectMDXFunction(formula)">
           <div class="md-list-item-text" layout="column" >
             <h3>{{ formula.name }}</h3>
-            <h4>{{  formula.syntax }}</h4>
-            <p>{{  formula.description }}</p>
-          </div>
-          <md-divider ></md-divider>
-        </md-list-item>
-    </md-content>      
-      </md-tab>
-       <md-tab label="Custom">
-    <md-content class="md-padding">
-      <md-list flex>
-        <md-list-item class="md-3-line"
-         ng-repeat="formula in formulasData | filter: {'type': 'custom'}"
-         ng-class="{selected:(selectedMDXFunction.name == formula.name)}"
-          ng-click="selectMDXFunction(formula)">
-          <div class="md-list-item-text" layout="column" >
-            <h3>{{ formula.name }}</h3>
-            <h4>{{  formula.syntax }}</h4>
+            <h4>{{  formula.body }}</h4>
             <p>{{  formula.description }}</p>
           </div>
           <md-divider ></md-divider>
@@ -80,7 +81,7 @@
     </md-content>      
       </md-tab>
       
-     <md-tab label="Recent">
+     <md-tab label="Recent" md-on-select="hideNameInputCC('select')" md-on-deselect="hideNameInputCC('deselect')">
     <md-content class="md-padding">
       <md-list flex>
         <md-list-item class="secondary-button-padding" ng-click="edit(item)"
