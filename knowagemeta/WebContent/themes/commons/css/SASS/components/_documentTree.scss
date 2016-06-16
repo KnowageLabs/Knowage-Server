@@ -1,0 +1,71 @@
+document-tree {
+
+	.angular-ui-tree-handle {
+	md-icon {
+	    top: 3px;
+    	position: relative;
+	}
+	padding: 5px;}
+	.menu-container{
+		margin-left: 2rem;
+	}
+
+	.line-container{
+		font-family: Roboto,"Helvetica Neue",sans-serif;
+		font-size: 14px;
+		color: rgba(0, 0, 0, 0.87);
+		font-weight: normal;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		max-width: 20rem;
+		outline: none;
+	}
+	.icon-container{
+		width : 15px;
+		height : 15px;
+		margin-left: 5px;
+	}
+	
+	.hover-element{
+		background-color: rgba(144, 144, 144, 0.5);
+	}
+	
+	.fa-folder, .fa-folder-open, .fa-leaf{
+		padding-right: 4px;
+		color: black;
+	}
+	.fa-sort-asc, .fa-sort-desc{
+		width: auto;
+		color: black;
+	}
+		
+	.minihead-tree {
+	  	background-color: #3B668C !important;
+		color: white !important;	
+	}
+
+	md-toolbar.minihead-tree-small {
+		background-color: #3B668C;
+		color: #000000255255255;
+		height: 35px;
+		min-height: 0px;
+	}
+	md-icon {
+		outline: none;
+	}
+	
+	.minihead-tree-small{
+		background-color: #3B668C !important;
+		color: white !important;
+		height: 35px;
+	}
+
+	.blue-stack{
+	background-color: rgb(169, 195, 219);
+
+		span {
+			font-weight: bold;
+		}
+	}
+}

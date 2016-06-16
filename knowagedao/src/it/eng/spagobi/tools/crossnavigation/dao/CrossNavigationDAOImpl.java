@@ -303,11 +303,14 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	}
 
 	@Override
-	public JSONArray loadNavigationByDocument(final String label) {
+	public JSONArray loadNavigationByDocument(final String label, final Session outerSession) {
 
 		return executeOnTransaction(new IExecuteOnTransaction<JSONArray>() {
 			@Override
 			public JSONArray execute(Session session) throws JSONException, EMFUserError {
+				if (outerSession != null)
+					session = outerSession;
+
 				Map<Integer, crossNavigationParameters> documentIOParams = new HashMap<Integer, crossNavigationParameters>();
 
 				List<Integer> inputId = new ArrayList<>();

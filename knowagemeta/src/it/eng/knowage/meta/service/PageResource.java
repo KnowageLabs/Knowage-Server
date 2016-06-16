@@ -77,8 +77,7 @@ public class PageResource {
 			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
 			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
 			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
-
-			ioManager.getHttpSession().setAttribute("ioManagerEnv", ioManager.getEnv());
+			ioManager.getHttpSession().setAttribute("ioManager", ioManager);
 			ioManager.getHttpSession().setAttribute("userProfile", userProfile);
 
 			response.setContentType("text/html");
@@ -88,6 +87,7 @@ public class PageResource {
 
 		} catch (Exception e) {
 			logger.error(e);
+			e.printStackTrace();
 		} finally {
 			logger.debug("OUT");
 		}

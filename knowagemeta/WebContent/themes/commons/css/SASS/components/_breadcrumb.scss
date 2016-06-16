@@ -1,0 +1,38 @@
+bread-crumb nav {
+	color: #fff;
+    background-color: lighten($ternaryColor,10%);
+    width: 100%;
+    height: 2.5em;
+    line-height: 2.5em;
+    a {
+    	color: rgba($baseColor, 0.6);
+    	text-decoration: none;
+    	span {
+    		padding: .5em;
+    	}
+    	&:hover span{
+    		background-color: $ternaryColor;
+    	}
+
+    	&:first-child {
+    		padding-left: 1em;
+    	}
+    	&:last-child {
+    		color: rgba($baseColor, 1);
+    	}
+    	&:first-child:before {
+    		display: none;
+    	}
+    	&:before {
+    		content: '\f054';
+		    color: rgba($baseColor,0.6);
+		    vertical-align: top;
+		    display: inline-block;
+		    font-family: 'FontAwesome';
+		    font-weight: normal;
+		    font-style: normal;
+		    font-size: .8em;
+		    -webkit-font-smoothing: antialiased;
+    	}
+    }
+}

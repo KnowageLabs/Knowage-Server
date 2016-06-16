@@ -6,10 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/knowageutils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/knowageutilsjson"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/qbecore"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/velocity/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/velocity/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/velocity/oro-2.0.8.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/velocity/velocity-1.6.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.7.0_45">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
