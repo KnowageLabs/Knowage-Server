@@ -205,10 +205,12 @@ Ext.define
 //			 * Inform the Designer that it should take care of GUI elements on the Configuration tab of 
 //			 * the Designer. It should hide excess GUI elements on this tab and show just those that are
 //			 * necessary for the current chart type. This event is also caught inside the Designer.
-//			 */			
+//			 */
+			
 
 			globalScope.fireEvent("reconfigureConfigurationTab");
 			
+//			
 			var bottomAxisPanel = Ext.getCmp("chartBottomCategoriesContainer");
 
 			/**
@@ -403,11 +405,21 @@ Ext.define
 				 * When changing the chart type, check if the newly picked one is existing (if the 
 				 * code treat is as a part of application - it there is a specific customization
 				 * inside the picked style sheet (XML template) for this document). If the one does
-				 * not exist, this variable will be undefined. 
-				 * 
+				 * not exist, this variable will be undefined. 				 * 
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
-				var chartSpecificConfigCheck = Designer.getConfigurationForStyle(Designer.styleName,true)[currentOrNewChartType.toLowerCase()];
+				var chartSpecificConfigCheck = null;
+				var chartExists = currentOrNewChartType.toLowerCase()!="" && currentOrNewChartType.toLowerCase()!=null && currentOrNewChartType.toLowerCase()!=undefined;
+				
+				/**
+				 * KNOWAGE-1043 JIRA ISSUE FIXING:
+				 * If there is no folder with styles, we will not have information about any style.
+				 * In other words, this variable will be an empty value.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				if (Designer.getConfigurationForStyle(Designer.styleName,true)!=null) {
+					chartSpecificConfigCheck = Designer.getConfigurationForStyle(Designer.styleName,true)[currentOrNewChartType.toLowerCase()];
+				}
 						
 				/**
 				 * Check if the event is fired because of the change of the chart type and not
@@ -418,7 +430,7 @@ Ext.define
 				 */
 				if (previousChartType!=null)
 				{
-					if (chartSpecificConfigCheck)
+					if (chartExists)
 					{
 						/**
 						 * Remove the icon in the chart type combo box when changing between two types

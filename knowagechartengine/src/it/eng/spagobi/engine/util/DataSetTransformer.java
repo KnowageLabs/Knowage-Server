@@ -674,7 +674,13 @@ public class DataSetTransformer {
 				jo.put((new Integer(j).toString()), series.get(i));
 				jo.put("prefix", prefix.get(i));
 				jo.put("postfix", postfix.get(i));
-				jo.put("precision", new Integer(precision.get(i)));
+
+				if (precision.get(i).getClass().equals(String.class) && precision.get(i).equals("")) {
+					jo.put("precision", 0);
+				} else {
+					jo.put("precision", new Integer(precision.get(i)));
+				}
+
 				ja.put(jo);
 				j++;
 			}
@@ -843,7 +849,7 @@ public class DataSetTransformer {
 		 * ("COCKPIT-Chart: heatmap hangs in loading when the selections return no data")
 		 * ------------------------------------------------------------------------------------------ If there is no data in the "firstresult" (if it is an
 		 * empty map), return the false boolean value to the VM. The first category (that does not exist) is definitely not of type DATE.
-		 * 
+		 *
 		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		try {

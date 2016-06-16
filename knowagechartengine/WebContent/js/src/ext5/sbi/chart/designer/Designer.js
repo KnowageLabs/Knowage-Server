@@ -909,37 +909,44 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * skip appearance of the ghost serie item after mergin. Parameter that tells 
 					 * the method that is called that we should remove this tag is "yAxisListIsEmpty".
 					 */
-					var configurationForStyleGeneric = 	
+					if (Designer.getConfigurationForStyle(Designer.styleName,true)!=null && Designer.getConfigurationForStyle(Designer.styleName,true)!=undefined) {
 						
-						Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle
-						(
-							Designer.getConfigurationForStyle(Designer.styleName,true).generic,
-							yAxisListIsEmpty
-						);	
-					
-					var configurationForStyleSpecific = 
+						var configurationForStyleGeneric = 	
+							
+							Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle
+							(
+								Designer.getConfigurationForStyle(Designer.styleName,true).generic,
+								yAxisListIsEmpty
+							);	
 						
-						Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle
+						var configurationForStyleSpecific = 
+							
+							Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle
+							(
+								Designer.getConfigurationForStyle(Designer.styleName,true)[currentChartType.toLowerCase()],
+								yAxisListIsEmpty
+							);	
+						
+						var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
 						(
-							Designer.getConfigurationForStyle(Designer.styleName,true)[currentChartType.toLowerCase()],
-							yAxisListIsEmpty
-						);	
-					
-					var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
-					(
-						jsonTemplateAdvancedEditor,
-						configurationForStyleGeneric,
-						configApplyAxes
-					);
-					
-					localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
-					(
-						localJsonTemplate, 
-						configurationForStyleSpecific,
-						configApplyAxes
-					);							
-					
-					jsonTemplate = localJsonTemplate;				
+							jsonTemplateAdvancedEditor,
+							configurationForStyleGeneric,
+							configApplyAxes
+						);
+						
+						localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
+						(
+							localJsonTemplate, 
+							configurationForStyleSpecific,
+							configApplyAxes
+						);							
+						
+						jsonTemplate = localJsonTemplate;	
+						
+					}
+					else {
+						jsonTemplate = jsonTemplateAdvancedEditor;	
+					}				
 					
 					/**
 					 * When user selects (changes) chart type we should check if there are 
@@ -3964,7 +3971,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				 * if occurences is selected as size criteria for wordcloud it can be saved without serie
 				 * @author Ana Tomic (ana.tomic@mht.net)
 				 */
-				if (chartType == "TREEMAP" || (chartType == "WORDCLOUD" && chartViewModelData.sizeCriteria=="serie" ) || chartType == "CHORD")
+				if (chartType == "TREEMAP" || (chartType == "WORDCLOUD" /*&& chartViewModelData.sizeCriteria=="serie"*/ ) || chartType == "CHORD")
 				{
 					/**
 					 * TREEMAP, WORDCLOUD and CHORD charts need exactly one serie item.
@@ -5916,7 +5923,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				/* ================================================================================= */
 				/* WORDCLOUD fields (parameters) values from the chart model - NON-NUMERICAL VALUES	 */
 				/* ================================================================================= */
-				var wordcloudSizeCriteriaCModel = chartViewModelData.sizeCriteria;
+//				var wordcloudSizeCriteriaCModel = chartViewModelData.sizeCriteria;
 				var wordcloudMaxWordsCModel = chartViewModelData.maxWords;
 				var wordcloudWordLayoutCModel = chartViewModelData.wordLayout;
 				var wordcloudMaxAngleCModel = chartViewModelData.maxAngle;
@@ -5931,16 +5938,16 @@ Ext.define('Sbi.chart.designer.Designer', {
 				var wordcloudMaxFont;
 				var wordcloudMinFont;
 				
-				(wordcloudSizeCriteriaCModel=="" || wordcloudSizeCriteriaCModel==null || wordcloudSizeCriteriaCModel==undefined) ?
-						errorMsg += Sbi.locale.sobstituteParams
-						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
-							
-							[
-								LN('sbi.chartengine.configuration.wordcloud.sizeCriteria'),
-								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
-							]
-						) : errorMsg;
+//				(wordcloudSizeCriteriaCModel=="" || wordcloudSizeCriteriaCModel==null || wordcloudSizeCriteriaCModel==undefined) ?
+//						errorMsg += Sbi.locale.sobstituteParams
+//						(
+//							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+//							
+//							[
+//								LN('sbi.chartengine.configuration.wordcloud.sizeCriteria'),
+//								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+//							]
+//						) : errorMsg;
 				(wordcloudWordLayoutCModel=="" || wordcloudWordLayoutCModel==null ||wordcloudWordLayoutCModel==undefined) ?
 						 errorMsg += Sbi.locale.sobstituteParams
 						 (
