@@ -365,11 +365,12 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 	public BIObjDataSet getObjectDetailDataset(Integer objectId, Session currSession) throws EMFUserError {
 		logger.debug("IN");
 
-		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = " + objectId + " AND isDetail =" + true;
+		BIObjDataSet aBIObjectDataSet = null;
+		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = " + objectId + " AND isDetail = ? ";
 		Query hqlQuery = currSession.createQuery(hql);
+		hqlQuery.setBoolean(0, true);
 		SbiObjDataSet hibDs = (SbiObjDataSet) hqlQuery.uniqueResult();
 
-		BIObjDataSet aBIObjectDataSet = null;
 		if (hibDs != null) {
 			aBIObjectDataSet = toBIObjDataSet(hibDs);
 		}
