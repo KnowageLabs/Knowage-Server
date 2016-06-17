@@ -4,5 +4,6 @@
 		<PRODUCT name="KnowageBD" active="true"/>
 		<PRODUCT name="KnowageSI" active="true"/>
 		<PRODUCT name="KnowageER" active="true"/>
+		<PRODUCT name="KnowagePM" active="true"/>
 	</TENANT>
 </TENANTS>
