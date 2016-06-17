@@ -423,7 +423,7 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 				DataMiningDataset d = new DataMiningDataset();
 				IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
 				int dsId = dataset.getId().getDsId();
-				IDataSet iDataset = dsDAO.loadDataSetById(dsId);
+				IDataSet iDataset = dsDAO.loadDataSetById(dsId);// *
 				String labelDemoDS = iDataset.getLabel();
 				if (datasetsInMap.containsKey(labelDemoDS)) // map element format: <demoLabel:replacingLabel>
 				{
@@ -432,14 +432,23 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 					JSONObject dsHavingReplacingDSlabel = new JSONObject(datasetHavingReplacingDSlabel);
 					String replacingDSlabel = dsHavingReplacingDSlabel.getString("label");
 
-					if (replacingDSlabel != null && (!replacingDSlabel.equals(""))) { // se non c'è un replacing dataset associato, associa il demo dataset
+					if (replacingDSlabel != null && (!replacingDSlabel.equals(""))) { // if a replacing dataset isn't specified, associate the demo dataset
 						IDataSet ds = dsDAO.loadDataSetByLabel(replacingDSlabel);
-						if (ds != null) // se non c'è un replacing dataset associato, associa il demo dataset
+						if (ds != null) // if a replacing dataset isn't specified, associate the demo dataset
 						{
 							iDataset = ds;
 						}
+						// else //just set *
+						// {
+						// iDataset = dsDAO.loadDataSetById(dsId);
+						// }
+
 					}
 				}
+				// else
+				// {
+				// iDataset = dsDAO.loadDataSetById(dsId);
+				// }
 				d.setLabel(iDataset.getLabel());
 				d.setSpagobiLabel(iDataset.getLabel()); // Important! used label is spagobiLabel!
 				d.setCanUpload(true);
@@ -474,13 +483,16 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 				if (variablesInMap.containsKey(varName)) // map element format: <demoVarName:replacingVALUE>
 				{
 					String replacingVariableValue = variablesInMap.get(varName);
-					if (!replacingVariableValue.equals("") && replacingVariableValue != null) // se non c'è un replacing variable value associato, associa il
+					if (!replacingVariableValue.equals("") && replacingVariableValue != null) // se non c'è un replacing variable value associato, associa il //
 																								// val demo
 					{
 						varValue = replacingVariableValue;
 					} else {
 						varValue = v.getVarValue();
 					}
+				} else // variable not present in input map, use demo variable
+				{
+					varValue = v.getVarValue();
 				}
 
 				var.setValue(varValue);
@@ -514,8 +526,6 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 				String type = domainsDAO.loadDomainById(o.getOutType()).getValueName();
 				out.setOutputType(type);
 				out.setOutputMode("auto"); // TODO: ??? can't figure out what auto means...
-				// out.setOutputName(label); //duplicato??
-				// out.setOutputValue(label);
 				outs.add(out);
 			}
 			c.setVariables(vars);

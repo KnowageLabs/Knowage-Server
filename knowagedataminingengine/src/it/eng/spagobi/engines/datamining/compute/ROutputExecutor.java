@@ -18,11 +18,17 @@
 package it.eng.spagobi.engines.datamining.compute;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.DAOConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.engines.datamining.model.Variable;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -35,6 +41,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngine;
@@ -62,12 +69,12 @@ public class ROutputExecutor {
 		this.re = re;
 	}
 
-	protected DataMiningResult evalOutput(Output out, RScriptExecutor scriptExecutor) throws Exception {
+	protected DataMiningResult evalOutput(Output out, RScriptExecutor scriptExecutor, String documentLabel, String userId) throws Exception {
 		logger.debug("IN");
 		// output -->if image and function --> execute function then prepare
 		// output
 		// output -->if script --> execute script then prepare output
-		
+
 		DataMiningResult res = new DataMiningResult();
 		if (re == null) {
 			res.setError("No R instance found");
@@ -87,8 +94,8 @@ public class ROutputExecutor {
 			logger.debug("Replaced variables in output value");
 		}
 
-		String noArgFunctionExecuted="";
-		
+		String noArgFunctionExecuted = "";
+
 		if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.IMAGE_OUTPUT) && out.getOutputName() != null) {
 			logger.debug("Image output");
 			res.setVariablename(outVal);// could be multiple value
@@ -150,7 +157,7 @@ public class ROutputExecutor {
 					rexp = re.parseAndEval("try(" + function + ")");
 				} else {
 					rexp = re.parseAndEval("try(" + function + "(" + outVal + "))");
-					noArgFunctionExecuted=function + "(" + outVal + "))";
+					noArgFunctionExecuted = function + "(" + outVal + "))";
 				}
 
 			} else {
@@ -224,6 +231,69 @@ public class ROutputExecutor {
 
 			logger.debug("Evaluated result");
 		}
+
+		else if ((out.getOutputType().equalsIgnoreCase(DataMiningConstants.DATASET) || out.getOutputType().equalsIgnoreCase(DataMiningConstants.SPAGOBI_DS)
+				|| out.getOutputType().equalsIgnoreCase("SpagoBI Dataset") || out.getOutputType().equalsIgnoreCase("Dataset"))
+				&& outVal != null && out.getOutputName() != null) {
+			logger.debug("Dataset output");
+			CreateDatasetResult creationResult = null;
+			REXP rexp = null; // pythonResult
+
+			if (function != null && function.length() > 0) {
+				if (outVal == null || outVal.equals("")) {
+					outVal = out.getOuputLabel();
+					res.setVariablename(outVal);// could be multiple value
+					creationResult = createAndPersistDatasetProductByFunction(profile, outVal, out, function, userId, documentLabel);
+					if (creationResult.getRExecutionError() != null && !creationResult.getRExecutionError().equals("")) {
+						res.setError("R execution error:" + creationResult.getRExecutionError());
+						return res;
+					}
+
+					/*
+					 * resPythonExecution = PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String if (resPythonExecution < 0) {
+					 * res.setError("Python error"); return res; } pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
+					 * 
+					 * rexp=re.parseAndEval(arg0); if (rexp.inherits("try-error")) { logger.debug("Script contains error(s)"); res.setError(rexp.asString()); }
+					 */
+
+				} else {
+					// res.setVariablename(outVal);// could be multiple value
+					noArgFunctionExecuted = function + "(" + outVal + ")";
+					res.setVariablename(noArgFunctionExecuted);
+					creationResult = createAndPersistDatasetProductByFunction(profile, outVal, out, noArgFunctionExecuted, userId, documentLabel);
+
+					if (creationResult.getRExecutionError() != null && !creationResult.getRExecutionError().equals("")) {
+						res.setError("R execution error:" + creationResult.getRExecutionError());
+						return res;
+					}
+					// PyLib.execScript(outVal + "=" + function + "(" + outVal + ")");
+					// PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String
+
+					// pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
+				}
+
+			} else { // function="" or no function (simple case)
+				res.setVariablename(outVal);// could be multiple value
+				creationResult = createAndPersistDataset(profile, outVal, out, userId, documentLabel);
+				if (creationResult.getRExecutionError() != null && !creationResult.equals("")) {
+					res.setError("R execution error:" + creationResult.getRExecutionError());
+					return res;
+				}
+				/*
+				 * resPythonExecution = PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String if (resPythonExecution < 0) {
+				 * res.setError("Python error"); return res; }
+				 */
+
+				// pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
+			}
+
+			res.setOutputType("text");
+			// res.setResult("" + pythonResult); //return Json
+			res.setResult("SpagoBi dataset saved, visible from Data Set section in Document Browser, with label :" + creationResult.getDatasetlabel());
+			logger.debug("Evaluated result");
+
+		}
+
 		logger.debug("OUT");
 		return res;
 	}
@@ -321,4 +391,182 @@ public class ROutputExecutor {
 		return result;
 
 	}
+
+	private CreateDatasetResult createAndPersistDataset(IEngUserProfile profile, String outVal, Output out, String userId, String documentLabel)
+			throws Exception {
+		logger.debug("IN");
+
+		REXP rexp = null;
+		CreateDatasetResult creationResult = new CreateDatasetResult();
+
+		String spagoBiDatasetname = userId + "_" + documentLabel + "_" + out.getOuputLabel();
+
+		FileDataSet dataSet = new FileDataSet();
+		String path = getDatasetsDirectoryPath();
+		dataSet.setResourcePath(path);// (DAOConfig.getResourcePath());
+
+		JSONObject configurationObj = new JSONObject();
+		// configurationObj.put("fileType", "CSV");
+		// configurationObj.put("csvDelimiter", ",");
+		// configurationObj.put("csvQuote", "'"); // Alternativa "\""
+		// configurationObj.put("fileName", spagoBiDatasetname + ".csv");
+		// // configurationObj.put("fileName", outVal + ".csv");
+		// configurationObj.put("encoding", "UTF-8");
+
+		configurationObj.put(DataSetConstants.FILE_TYPE, "CSV");
+		configurationObj.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, ",");
+		configurationObj.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, "'");
+		configurationObj.put(DataSetConstants.FILE_NAME, spagoBiDatasetname + ".csv");
+		configurationObj.put("encoding", "UTF-8");
+		configurationObj.put(DataSetConstants.XSL_FILE_SKIP_ROWS, DataSetConstants.XSL_FILE_SKIP_ROWS);
+		configurationObj.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, DataSetConstants.XSL_FILE_LIMIT_ROWS);
+		configurationObj.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, DataSetConstants.XSL_FILE_SHEET_NUMBER);
+
+		String confString = configurationObj.toString();
+		dataSet.setConfiguration(confString);
+
+		/*
+		 * WRITE IN R PyLib.execScript("import os\n" + "import pandas\n" + "os.chdir(r'" + path + "')\n"); PyLib.execScript(outVal + "=" + "pandas.DataFrame(" +
+		 * outVal + ")\n"); resPythonExecution = PyLib.execScript(outVal + ".to_csv('" + spagoBiDatasetname + ".csv'" + ",index=False)\n"); if
+		 * (resPythonExecution < 0) { createDatasetResult.setPythonExecutionError(resPythonExecution); return createDatasetResult; }
+		 */
+
+		String rExecution = "write.csv(" + outVal + ",file='" + path + "/" + spagoBiDatasetname + ".csv',row.names=FALSE,na='')";
+		rexp = re.parseAndEval("try(" + rExecution + ")");
+		if (rexp.inherits("try-error")) {
+			logger.debug("Script contains error(s)");
+			creationResult.setRExecutionError(rexp.asString());
+		}
+
+		// dataSet.setFileName(outVal + ".csv");
+		dataSet.setFileName(spagoBiDatasetname + ".csv");
+		dataSet.setFileType("CSV");
+		dataSet.setDsType(DataSetConstants.DS_FILE);
+
+		dataSet.setLabel(spagoBiDatasetname);
+		dataSet.setName(spagoBiDatasetname);
+		dataSet.setDescription("Dataset created from execution of document " + documentLabel + " by user " + userId);
+		dataSet.setOwner(profile.getUserUniqueIdentifier().toString());
+
+		IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
+		dataSetDAO.setUserProfile(profile);
+
+		logger.debug("check if dataset with label " + spagoBiDatasetname + " is already present");
+
+		// check label is already present; insert or modify dependengly
+		IDataSet iDataSet = dataSetDAO.loadDataSetByLabel(spagoBiDatasetname);
+
+		// loadActiveDataSetByLabel(label);
+		if (iDataSet != null) {
+			logger.debug("a dataset with label " + spagoBiDatasetname + " is already present: modify it");
+			dataSet.setId(iDataSet.getId());
+			dataSetDAO.modifyDataSet(dataSet);
+		} else {
+			logger.debug("No dataset with label " + spagoBiDatasetname + " is already present: insert it");
+			dataSetDAO.insertDataSet(dataSet);
+
+		}
+		creationResult.setDatasetlabel(spagoBiDatasetname);
+		return creationResult;
+
+	}
+
+	private CreateDatasetResult createAndPersistDatasetProductByFunction(IEngUserProfile profile, String outVal, Output out, String function, String userId,
+			String documentLabel) throws Exception {
+		logger.debug("IN");
+		CreateDatasetResult creationResult = new CreateDatasetResult();
+		REXP rexp = null;
+		DataMiningResult res = new DataMiningResult();
+
+		FileDataSet dataSet = new FileDataSet();
+		String path = getDatasetsDirectoryPath();
+		dataSet.setResourcePath(path);// (DAOConfig.getResourcePath());
+
+		String spagoBiDatasetname = userId + "_" + documentLabel + "_" + out.getOuputLabel();
+		JSONObject configurationObj = new JSONObject();
+		// configurationObj.put("fileType", "CSV");
+		// configurationObj.put("csvDelimiter", ",");
+		// configurationObj.put("csvQuote", "'"); // Alternativa "\""
+		// configurationObj.put("fileName", spagoBiDatasetname + ".csv");
+		// configurationObj.put("encoding", "UTF-8");
+
+		configurationObj.put(DataSetConstants.FILE_TYPE, "CSV");
+		configurationObj.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, ",");
+		configurationObj.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, "'");
+		configurationObj.put(DataSetConstants.FILE_NAME, spagoBiDatasetname + ".csv");
+		configurationObj.put("encoding", "UTF-8");
+		configurationObj.put(DataSetConstants.XSL_FILE_SKIP_ROWS, DataSetConstants.XSL_FILE_SKIP_ROWS);
+		configurationObj.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, DataSetConstants.XSL_FILE_LIMIT_ROWS);
+		configurationObj.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, DataSetConstants.XSL_FILE_SHEET_NUMBER);
+
+		String confString = configurationObj.toString();
+		dataSet.setConfiguration(confString);
+
+		/*
+		 * SCRIVERLO IN R PyLib.execScript("import os\n" + "import pandas\n" + "os.chdir(r'" + path + "')\n"); PyLib.execScript(outVal + "=" +
+		 * "pandas.DataFrame(" + function + ")\n"); resPythonExecution = PyLib.execScript(outVal + ".to_csv('" + spagoBiDatasetname + ".csv'" +
+		 * ",index=False)\n");
+		 * 
+		 * if (resPythonExecution < 0) { creationResult.setPythonExecutionError(resPythonExecution); return creationResult; }
+		 */
+
+		// write.csv(df, file = '/home/df.csv', row.names=FALSE, na='');
+
+		String rExecution = "write.csv(" + outVal + ",file=" + path + spagoBiDatasetname + ",row.names=FALSE,na='')";
+		rexp = re.parseAndEval("try(" + rExecution + ")");
+		if (rexp.inherits("try-error")) {
+			logger.debug("Script contains error(s)");
+			creationResult.setRExecutionError(rexp.asString());
+		}
+
+		dataSet.setFileName(spagoBiDatasetname + ".csv");
+		dataSet.setFileType("CSV");
+		dataSet.setDsType(DataSetConstants.DS_FILE);
+
+		String label = out.getOuputLabel();
+		dataSet.setLabel(spagoBiDatasetname);
+		dataSet.setName(spagoBiDatasetname);
+		dataSet.setDescription("Dataset created from execution of document " + documentLabel + " by user " + userId);
+		dataSet.setOwner(profile.getUserUniqueIdentifier().toString());
+
+		IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
+		dataSetDAO.setUserProfile(profile);
+
+		logger.debug("check if dataset with label " + spagoBiDatasetname + " is already present");
+
+		// check label is already present; insert or modify dependengly
+		IDataSet iDataSet = dataSetDAO.loadDataSetByLabel(spagoBiDatasetname);
+
+		// loadActiveDataSetByLabel(label);
+		if (iDataSet != null) {
+			logger.debug("a dataset with label " + spagoBiDatasetname + " is already present: modify it");
+			dataSet.setId(iDataSet.getId());
+			dataSetDAO.modifyDataSet(dataSet);
+		} else {
+			logger.debug("No dataset with label " + spagoBiDatasetname + " is already present: insert it");
+			dataSetDAO.insertDataSet(dataSet);
+
+		}
+		creationResult.setDatasetlabel(spagoBiDatasetname);
+		return creationResult;
+
+	}
+
+	public static String getDatasetsDirectoryPath() {
+
+		String datasetDirPath = DAOConfig.getResourcePath();
+		datasetDirPath += File.separatorChar + "dataset" + File.separatorChar + "files";
+
+		File file = new File(datasetDirPath);
+		if (!file.exists()) {
+			if (file.mkdirs()) {
+				System.out.println("Directory is created!");
+			} else {
+				System.out.println("Failed to create directory!");
+			}
+		}
+
+		return datasetDirPath.replace("\\", "/");
+	}
+
 }

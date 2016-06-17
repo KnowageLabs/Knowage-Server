@@ -50,31 +50,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- ---------------------------------------------------------------------- --%>
 <%
 
-    
-    
 	IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);;
 	profile.getUserAttributeNames();
-	System.out.println(profile.getUserAttributeNames().size());
-	System.out.println(profile.getUserAttributeNames().toArray()[0]);
-	System.out.println(profile.getUserAttributeNames().toArray()[1]);
-	System.out.println(profile.getUserAttributeNames().toArray()[2]);
-	System.out.println(profile.getUserAttributeNames().toArray()[3]);
-	System.out.println(profile.getUserAttributeNames().toArray()[4]);
-
-	String getUserId = ((UserProfile)profile).getUserId().toString();
-	System.out.println("USER_ID:"+getUserId);
-	
+	String getUserId = ((UserProfile)profile).getUserId().toString();	
 	UserProfile myUserProfile=(UserProfile)profile;
-	System.out.println("UUID:"+myUserProfile.getUserUniqueIdentifier());
-	
-	
 	String[] names=session.getValueNames();
-	for(int i=0;i<names.length;i++)
-	{
-		System.out.println("NOME: "+names[i]);
-	}	
     session.getAttribute("REQUEST_CONTAINER");
-    
+    boolean isAdmin=UserUtilities.isAdministrator(profile);
+    String admin=isAdmin+"";
 %>
 
 
@@ -93,6 +76,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
+
+<script type="text/javascript">
+	var isAdminGlobal=<%=admin.toString()%>
+</script>
+
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="functionsCatalogControllerModule">
@@ -119,8 +107,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.css" />
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.js"></script>
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/sql-hint.js"></script>
-<!--  <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/clike/clike.js"></script> -->
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/python/python.js"></script>
+<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/r/r.js"></script>
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js"></script>
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/display/autorefresh.js"></script>
 
@@ -131,21 +119,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <title>Functions Catalog</title>
 </head>
 
-<body  class="bodyStyle" ng-controller="functionsCatalogController" ng-cloak ng-init="userId='<%=getUserId.toString()%>'">
-		
-	<!-- <div ng-bind-html="trustedHtml"></div>	
-		
-	<div  layout-wrap layout-fill>
-	<iframe class="noBorder" id="documentFrame" ng-src="http://localhost:8080/knowagedataminingengine/restful-services/executeFunction/9/?user_id=biadmin" 
-		iframe-set-dimensions-onload flex="grow">
-	</iframe>
-	-->
+<body  class="bodyStyle" ng-controller="functionsCatalogController" ng-cloak ng-init="userId='<%=getUserId.toString()%>'; isAdmin=<%=admin.toString()%>;">
 	
-	<angular-list-detail show-detail="showDetail" layout-column >
+	<angular-list-detail show-detail="showDetail"  >
 		
-		<list label="Functions"  new-function="addFunction"> 
-    		<angular-table 
-					flex
+		<% 
+		String addFunction="";
+		if(isAdmin){
+			addFunction="addFunction";
+			
+		   } 
+		%>
+		
+		<list label="Functions"  new-function="<%=addFunction%>" layout-column> 
+    		<angular-table
+    				id="functionsTable" 
+					flex=100
 					ng-show=true
 					ng-model="functionsList"
 					columns='[{"label":"Function Name","name":"name"}]' 
@@ -159,50 +148,53 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</angular-table>
     	
     	
-    	
+    	 
     	</list>
     	
     	
-       <detail label='shownFunction.name==undefined? "" : shownFunction.name' save-function="saveFunction" 	cancel-function="cancelFunction"
+       <detail label='shownFunction.name==undefined? "Demo" : "Demo: "+shownFunction.name' save-function="saveFunction" 	cancel-function="cancelFunction"
        	disable-cancel-button=false
 		disable-save-button=false
-		show-save-button=true>
+		show-save-button=isAdmin>
        		<md-tabs layout-fill> 
        		
-       			<md-tab label="General">
+       			<md-tab label='{{translate.load("sbi.functionscatalog.general");}}'>
 					<md-content layout-padding>
 						
 						<md-input-container>
-        					<label>Function Name</label>
-        					<input ng-model=shownFunction.name>
+        					<label>{{translate.load("sbi.functionscatalog.functionname");}}</label>
+        					<input ng-model=shownFunction.name ng-disabled=!isAdmin>
       					</md-input-container>
 
 	       				<md-input-container class="md-block">
-          					<label>Description</label>
-          					<textarea ui-refresh="true" ng-model="shownFunction.description"></textarea>
+          					<label>{{translate.load("sbi.functionscatalog.description");}}</label>
+          					<textarea ui-refresh="true" ng-model="shownFunction.description" ng-disabled=!isAdmin></textarea>
         				</md-input-container>
 					</md-content>
 				</md-tab>
        		
-				<md-tab label="Input">
+				<md-tab label='{{translate.load("sbi.functionscatalog.input");}}'>
 					<md-content layout-padding>
   						<div>
-  							Input dataset
-  							<i class="fa fa-plus-square" ng-click="input=addInputDataset()" aria-hidden="true"></i>
+  							{{translate.load("sbi.functionscatalog.inputdatasets");}}
+  							<i class="fa fa-plus-square" ng-click="input=addInputDataset()" aria-hidden="true" ng-show=isAdmin></i>  							
+  							<div ng-if="shownFunction.inputDatasets.length==0 && !isAdmin" layout-align="start center">
+  								&emsp;&emsp;{{translate.load("sbi.functionscatalog.noinputdatasetsrequired");}}</br></br>
+  							</div>
   							<div ng-repeat="d in shownFunction.inputDatasets" layout-gt-sm="row" layout-align="start center">
 
 	     						<div layout="row">
 	     							    								
       								<md-input-container class="md-block" flex-gt-sm>
-            							<label>Dataset Label</label>
-            								<md-select ng-model="d.label">
+            							<label>{{translate.load("sbi.functionscatalog.datasetlabel");}}</label>
+            								<md-select ng-model="d.label" ng-disabled=!isAdmin>
               									<md-option ng-repeat="datasetLabel in datasetLabelsList" value="{{datasetLabel}}">
                 									{{datasetLabel}}
               									</md-option>
            									</md-select>
           							</md-input-container>
 									<div layout-padding layout-margin>
-      									<md-button class="md-raised md-ExtraMini" ng-click="datasetPreview()">Dataset Preview</md-button>   								
+      									<md-button class="md-raised md-ExtraMini" ng-click="datasetPreview(d.label)">{{translate.load("sbi.functionscatalog.datasetpreview");}}</md-button>   								
 									</div>
       								
 	     						</div> 						
@@ -210,43 +202,46 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<div ng-if="d.type=='Simple Input'" layout="row">
 	     							
 	     							<md-input-container>
-        								<label>Input Name</label>  
-        								<input ng-model="d.name">
+        								<label>{{translate.load("sbi.functionscatalog.inputname");}}</label>  
+        								<input ng-model="d.name" ng-disabled=!isAdmin>
       								</md-input-container>
       								
       								<md-input-container>
-        								<label>Input Value</label>  
-        								<input ng-model="d.value">
+        								<label>{{translate.load("sbi.functionscatalog.inputvalue");}}</label>  
+        								<input ng-model="d.value" ng-disabled=!isAdmin>
       								</md-input-container>
       								
 	     						</div> 	
 									      						
 	      						<div>
-									<i class="fa fa-minus-square" ng-click="output=removeInputDataset(i)" aria-hidden="true"></i> 	
+									<i class="fa fa-minus-square" ng-click="output=removeInputDataset(i)" aria-hidden="true" ng-show=isAdmin></i> 	
 								</div>	      						
   							</div>
   						</div>
 						
 						<div>
-  							Input variable
-  							<i class="fa fa-plus-square" ng-click="input=addInputVariable()" aria-hidden="true"></i>
+  							Input Variables
+  							<i class="fa fa-plus-square" ng-click="input=addInputVariable()" aria-hidden="true" ng-show=isAdmin></i>
+  							<div ng-if="shownFunction.inputVariables.length==0  && !isAdmin" layout-align="start center">
+  								&emsp;&emsp; {{translate.load("sbi.functionscatalog.noinputvariablesrequired");}}</br></br>
+  							</div>
+  							
   							<div ng-repeat="v in shownFunction.inputVariables" layout-gt-sm="row" layout-align="start center">
 
-	     						<div layout="row">
-	     							    								
+	     						<div layout="row"> 								
       								<md-input-container class="md-block" flex-gt-sm>
-            							<label>Variable name</label>
-        								<input ng-model="v.name">
+            							<label>{{translate.load("sbi.functionscatalog.variablename");}}</label>
+        								<input ng-model="v.name" ng-disabled=!isAdmin>
       								</md-input-container>
       								
       								<md-input-container class="md-block" flex-gt-sm>
-            							<label>Variable value</label>
-        								<input ng-model="v.value">
+            							<label>{{translate.load("sbi.functionscatalog.variablevalue");}}</label>
+        								<input ng-model="v.value" ng-disabled=!isAdmin>
       								</md-input-container>
 	     						</div> 						
 				      						
 	      						<div>
-									<i class="fa fa-minus-square" ng-click="output=removeInputVariable(i)" aria-hidden="true"></i> 	
+									<i class="fa fa-minus-square" ng-click="output=removeInputVariable(i)" aria-hidden="true" ng-show=isAdmin></i> 	
 								</div>	      						
   							</div>
   						</div>
@@ -256,11 +251,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						
 					</md-content>
 				</md-tab>
-				<md-tab label="Script">
+				<md-tab label='{{translate.load("sbi.functionscatalog.script");}}' ng-if=isAdmin>
 					<md-content layout-padding>
   					
       					<md-input-container class="md-block" flex-gt-sm>
-            				<label>Language</label>
+            				<label>{{translate.load("sbi.functionscatalog.language");}}</label>
             				<md-select ng-model="shownFunction.language">
               					<md-option ng-repeat="language in languages" value="{{language}}">
                 					{{language}}
@@ -268,31 +263,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
            					</md-select>
           				</md-input-container>
       						
-  						<md-input-container class="md-block">
-          					<label>Script</label>
+  						<md-input-container class="md-block" flex>
+          					<label>{{translate.load("sbi.functionscatalog.script");}}</label>
           					<textarea flex ui-refresh="true" ng-model="shownFunction.script" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
         				</md-input-container>
 									
         			</md-content>	
   						    					
 				</md-tab>
-				<md-tab label="Output">
+				<md-tab label='{{translate.load("sbi.functionscatalog.output");}}'>
 					<md-content layout-padding>
   						<div>
-  							Output 
-  							<i class="fa fa-plus-square" ng-click="output=addOutputItem()" aria-hidden="true"></i>
+  							{{translate.load("sbi.functionscatalog.output");}} 
+  							<i class="fa fa-plus-square" ng-click="output=addOutputItem()" aria-hidden="true" ng-show=isAdmin></i>
+  							
+  							<div ng-if="shownFunction.outputItems.length==0  && !isAdmin" layout-align="start center">
+  								&emsp;&emsp;{{translate.load("sbi.functionscatalog.nooutputexpected");}}</br></br>
+  							</div>
+  							
   							<div ng-repeat="o in shownFunction.outputItems" layout-gt-sm="row" layout-align="start center">	      						
 	      						<!--<div>
 									<md-button class="md-raised md-ExtraMini">Show Preview</md-button>
 	      						</div>-->
 	  							<md-input-container>
-	        						<label>Label</label>
-	        						<input ng-model="o.label">
+	        						<label>{{translate.load("sbi.functionscatalog.label");}}</label>
+	        						<input ng-model="o.label" ng-disabled=!isAdmin>
 	      						</md-input-container>
 	      						
 	      						<md-input-container aria-hidden="true">
-	      							<label>Type</label>
-	        						<md-select ng-model="o.type">
+	      							<label>{{translate.load("sbi.functionscatalog.type");}}</label>
+	        						<md-select ng-model="o.type" ng-disabled=!isAdmin>
               							<md-option ng-repeat="type in outputTypes" value="{{type}}">
                 							{{type}}
               							</md-option>
@@ -300,7 +300,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      						</md-input-container>
 	      						
 	      						<div>
-									<i class="fa fa-minus-square" ng-click="removeOutputItem(o)" aria-hidden="true"></i>	
+									<i class="fa fa-minus-square" ng-click="removeOutputItem(o)" aria-hidden="true" ng-show=isAdmin></i>	
 								</div>	  
 								
   							</div>

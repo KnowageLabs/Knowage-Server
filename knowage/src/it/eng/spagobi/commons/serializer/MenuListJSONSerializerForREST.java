@@ -245,8 +245,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							/**
 							 * The URL for the Workspace web page.
 							 *
-							 * @author Danilo Ristovski (danristo,
-							 *         danilo.ristovski@mht.net)
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 							 */
 							if (menuElem.getCode() != null && menuElem.getCode().equals("workspace")) {
 
@@ -381,10 +380,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			socialAnalysis.put(LINK_TYPE, "execDirectUrl");
 
 			/*
-			 * } else { socialAnalysis.put(HREF, "javascript:execDirectUrl('" +
-			 * HREF_SOCIAL_ANALYSIS + "?" + SpagoBIConstants.SBI_LANGUAGE + "="
-			 * + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "="
-			 * + locale.getCountry() + "');"); }
+			 * } else { socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" +
+			 * locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');"); }
 			 */
 			tempMenuList.put(socialAnalysis);
 		}
@@ -746,10 +743,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			}
 		}
 		/*
-		 * Cannot set a static ID as a random number!!!! See
-		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1268 See
-		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1269 The following
-		 * line was the cause of the above issues!!
+		 * Cannot set a static ID as a random number!!!! See https://www.spagoworld.org/jira/browse/SPAGOBI-1268 See
+		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1269 The following line was the cause of the above issues!!
 		 */
 		// temp2.put(ID, new Double(Math.random()).toString());
 
@@ -807,10 +802,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&"
 							+ SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "'";
 					/*
-					 * } else { url = url + "?" + SpagoBIConstants.SBI_LANGUAGE
-					 * + "=" + locale.getLanguage() + "&" +
-					 * SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry()
-					 * + "'"; }
+					 * } else { url = url + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" +
+					 * locale.getCountry() + "'"; }
 					 */
 				}
 				temp2.put(SRC, src);

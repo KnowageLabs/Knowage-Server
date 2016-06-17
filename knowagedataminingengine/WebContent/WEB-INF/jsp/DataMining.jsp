@@ -252,6 +252,14 @@ author:...
 												{{out.outputName}} = {{results[cmd.name][out.outputName].result}}
 											</h3>
 										</div>
+										
+										<div layout-padding class="div-text" ng-if = "results[cmd.name][out.outputName].outputType == 'Dataset'|| results[cmd.name][out.outputName].outputType == 'dataset' || results[cmd.name][out.outputName].outputType == 'spagobi_ds' ">
+											<h3 class="md-subhead">	
+												{{out.outputName}} = SpagoBi dataset saved, visible from Data Set section in Document Browser, with label: &nbsp; {{results[cmd.name][out.outputName].result}}
+											</h3>
+										</div>
+										
+										
 									</md-content>
 								</div>
 								

@@ -63,5 +63,7 @@
                  link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION" 
                  iconUrl="${SPAGOBI_CONTEXT}/img/wapp/pencil16.png">
     </APPLICATION>
+    
+    
 	
 </FINAL_USER_FUNCTIONALITIES>

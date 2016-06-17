@@ -20,6 +20,7 @@ package it.eng.spagobi.engines.datamining.compute;
 import it.eng.spago.engines.datamining.work.DataminingWriteWork;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
@@ -198,8 +199,9 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 		// evaluates script code
 		scriptExecutor.evalScript(command, rerun, params);
 		logger.debug("Evaluated script");
+		UserProfile profile = (UserProfile) userProfile;
 		// create output
-		result = outputExecutor.evalOutput(output, scriptExecutor);
+		result = outputExecutor.evalOutput(output, scriptExecutor, documentLabel, (String) profile.getUserId());
 		logger.debug("Got result");
 		// save result of script computation objects and datasets to
 		// user workspace
@@ -228,12 +230,12 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 	 * setupEnvonment(userProfile); logger.debug("Set up environment"); // datasets preparation datasetsExecutor.updateDataset(ds);
 	 * logger.debug("Loaded datasets"); // save result of script computation objects and datasets to // user workspace saveUserWorkSpace();
 	 * logger.debug("Saved WS"); logger.debug("OUT"); }
-	 *
-	 *
+	 * 
+	 * 
 	 * protected void loadUserWorkSpace() throws IOException {
-	 *
+	 * 
 	 * example usage > save.image(file = 'D:/script/.Rdata', safe = TRUE) > load(file = 'D:/script/.Rdata')
-	 *
+	 * 
 	 * // create user workspace data logger.debug("IN"); re.(parseAndEval"save(list = ls(all = TRUE), file= '" + profile.getUserUniqueIdentifier() +
 	 * ".RData')"); logger.debug("Save all object in "+profile.getUserUniqueIdentifier() + ".RData"); re.(parseAndEval"load(file= '" +
 	 * profile.getUserUniqueIdentifier() + ".RData')"); logger.debug("Loaded "+profile.getUserUniqueIdentifier() + ".RData"); logger.debug("OUT"); }

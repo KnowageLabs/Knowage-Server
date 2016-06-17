@@ -18,17 +18,18 @@
 package it.eng.spagobi.engines.datamining.compute;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.engines.datamining.model.Variable;
-import it.eng.spagobi.hdfs.HdfsUtilities;
 import it.eng.spagobi.hdfs.Hdfs;
+import it.eng.spagobi.hdfs.HdfsUtilities;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -277,9 +278,11 @@ public class PythonOutputExecutor {
 				pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
 			}
 
-			res.setOutputType("text");
+			// res.setOutputType("text");
+			res.setOutputType("Dataset");
 			// res.setResult("" + pythonResult); //return Json
-			res.setResult("SpagoBi dataset saved, visible from Data Set section in Document Browser, with label :" + creationResult.getDatasetlabel());
+			// res.setResult("SpagoBi dataset saved, visible from Data Set section in Document Browser, with label :" + creationResult.getDatasetlabel());
+			res.setResult(creationResult.getDatasetlabel());
 			logger.debug("Evaluated result");
 
 		}
@@ -350,7 +353,9 @@ public class PythonOutputExecutor {
 
 		CreateDatasetResult createDatasetResult = new CreateDatasetResult();
 		String spagoBiDatasetname = userId + "_" + documentLabel + "_" + out.getOuputLabel();
-		boolean storeToHDFS = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue(STORE_TO_HDFS)).booleanValue();
+		IConfigDAO configsDAO = DAOFactory.getSbiConfigDAO();
+		Config conf = configsDAO.loadConfigParametersByLabel(STORE_TO_HDFS);
+		boolean storeToHDFS = Boolean.valueOf(conf.getValueCheck()).booleanValue();
 		FileDataSet dataSet;
 		if (storeToHDFS) {
 			dataSet = new HdfsDataSet();
@@ -362,12 +367,22 @@ public class PythonOutputExecutor {
 		dataSet.setResourcePath(path);// (DAOConfig.getResourcePath());
 
 		JSONObject configurationObj = new JSONObject();
-		configurationObj.put("fileType", "CSV");
-		configurationObj.put("csvDelimiter", ",");
-		configurationObj.put("csvQuote", "'"); // Alternativa "\""
-		configurationObj.put("fileName", spagoBiDatasetname + ".csv");
-		// configurationObj.put("fileName", outVal + ".csv");
+		// configurationObj.put("fileType", "CSV");
+		// configurationObj.put("csvDelimiter", ",");
+		// configurationObj.put("csvQuote", "'"); // Alternativa "\""
+		// configurationObj.put("fileName", spagoBiDatasetname + ".csv");
+		// // configurationObj.put("fileName", outVal + ".csv");
+		// configurationObj.put("encoding", "UTF-8");
+
+		configurationObj.put(DataSetConstants.FILE_TYPE, "CSV");
+		configurationObj.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, ",");
+		configurationObj.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, "'");
+		configurationObj.put(DataSetConstants.FILE_NAME, spagoBiDatasetname + ".csv");
 		configurationObj.put("encoding", "UTF-8");
+		configurationObj.put(DataSetConstants.XSL_FILE_SKIP_ROWS, DataSetConstants.XSL_FILE_SKIP_ROWS);
+		configurationObj.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, DataSetConstants.XSL_FILE_LIMIT_ROWS);
+		configurationObj.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, DataSetConstants.XSL_FILE_SHEET_NUMBER);
+
 		String confString = configurationObj.toString();
 		dataSet.setConfiguration(confString);
 
@@ -422,7 +437,9 @@ public class PythonOutputExecutor {
 		CreateDatasetResult creationResult = new CreateDatasetResult();
 		DataMiningResult res = new DataMiningResult();
 
-		boolean storeToHDFS = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue(STORE_TO_HDFS)).booleanValue();
+		IConfigDAO configsDAO = DAOFactory.getSbiConfigDAO();
+		Config conf = configsDAO.loadConfigParametersByLabel(STORE_TO_HDFS);
+		boolean storeToHDFS = Boolean.valueOf(conf.getValueCheck()).booleanValue();
 		FileDataSet dataSet;
 		if (storeToHDFS) {
 			dataSet = new HdfsDataSet();
@@ -436,11 +453,21 @@ public class PythonOutputExecutor {
 
 		String spagoBiDatasetname = userId + "_" + documentLabel + "_" + out.getOuputLabel();
 		JSONObject configurationObj = new JSONObject();
-		configurationObj.put("fileType", "CSV");
-		configurationObj.put("csvDelimiter", ",");
-		configurationObj.put("csvQuote", "'"); // Alternativa "\""
-		configurationObj.put("fileName", spagoBiDatasetname + ".csv");
+		// configurationObj.put("fileType", "CSV");
+		// configurationObj.put("csvDelimiter", ",");
+		// configurationObj.put("csvQuote", "'"); // Alternativa "\""
+		// configurationObj.put("fileName", spagoBiDatasetname + ".csv");
+		// configurationObj.put("encoding", "UTF-8");
+
+		configurationObj.put(DataSetConstants.FILE_TYPE, "CSV");
+		configurationObj.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, ",");
+		configurationObj.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, "'");
+		configurationObj.put(DataSetConstants.FILE_NAME, spagoBiDatasetname + ".csv");
 		configurationObj.put("encoding", "UTF-8");
+		configurationObj.put(DataSetConstants.XSL_FILE_SKIP_ROWS, DataSetConstants.XSL_FILE_SKIP_ROWS);
+		configurationObj.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, DataSetConstants.XSL_FILE_LIMIT_ROWS);
+		configurationObj.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, DataSetConstants.XSL_FILE_SHEET_NUMBER);
+
 		String confString = configurationObj.toString();
 		dataSet.setConfiguration(confString);
 

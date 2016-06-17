@@ -3,6 +3,7 @@ package it.eng.spagobi.engines.datamining.compute;
 public class CreateDatasetResult {
 	private int pythonExecutionError = 0; // -1 =error
 	private String datasetlabel = null;
+	private String rExecutionError = null;
 
 	public CreateDatasetResult(int pythonExecutionError, String datasetlabel) {
 		this.pythonExecutionError = pythonExecutionError;
@@ -17,8 +18,8 @@ public class CreateDatasetResult {
 		return pythonExecutionError;
 	}
 
-	public void setPythonExecutionError(int pythonExecutionError) {
-		this.pythonExecutionError = pythonExecutionError;
+	public void setPythonExecutionError(int executionError) {
+		this.pythonExecutionError = executionError;
 	}
 
 	public String getDatasetlabel() {
@@ -28,4 +29,13 @@ public class CreateDatasetResult {
 	public void setDatasetlabel(String datasetlabel) {
 		this.datasetlabel = datasetlabel;
 	}
+
+	public String getRExecutionError() {
+		return rExecutionError;
+	}
+
+	public void setRExecutionError(String rExecutionError) {
+		this.rExecutionError = rExecutionError;
+	}
+
 }

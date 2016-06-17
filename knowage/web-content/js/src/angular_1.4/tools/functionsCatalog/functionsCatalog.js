@@ -9,7 +9,7 @@ app.controller('functionsCatalogController',["sbiModule_config","sbiModule_trans
 function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$log,sbiModule_download,sbiModule_messaging,$sce){
 
 	$scope.showDetail=false;
-	$scope.shownFunction={};
+	$scope.shownFunction={"language":"Python"};
 	$scope.datasetLabelList=[];
 	$scope.datasetNamesList=[];
 	$scope.datasets=[];
@@ -34,46 +34,50 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 	$scope.datasetLabelsList=[];
 	$scope.saveOrUpdateFlag="";
 	$scope.userId="";
+	$scope.isAdmin="";
 	
 	//For CodeMirror
     $scope.editorOptions = {
     	 lineWrapping : true,
          lineNumbers: true,	
-         mode: 'python',
-         autoRefresh:true         
+         mode: $scope.shownFunction.language.toLowerCase(),
+         autoRefresh:true 
         };
 	
-	
+    	
 	$scope.myF = function(text){
 		$scope.userId = text;
-	}
+	} 
 	
 	
 	//Utility function
 	
 
 	
-	$scope.showTabDialog = function(result) {
+	$scope.showTabDialog = function(result,isDemoExecution) {
 		   $mdDialog.show({
-		     controller: functionCatalogResults,
+		     controller: functionCatalogResultsController,
 		     templateUrl:  sbiModule_config.contextName	+ '/js/src/angular_1.4/tools/functionsCatalog/templates/'+'functionCatalogResults.jsp',
 		     //parent: angular.element(document.body),
-		     //targetEvent: ev,
 			 preserveScope : true,
 		     locals : {
 			 	results : result,
-			 	logger:	$log
+			 	logger:	$log,
+			 	translate:sbiModule_translate,
+			 	isDemo:isDemoExecution
 			 },
 		     clickOutsideToClose:true
 		   });
 	};
 	
 	
-	$scope.showNewInputDialog= function(data,datasetList)
+	$scope.showNewInputDialog= function(data,datasetList,isDemoFunction)
 	{
-			$log.info("userId --------------------------> "+$scope.userId);
+			$log.info("userId  --------------------------> "+$scope.userId);
+			$log.info("ISADMIN --------------------------> "+$scope.isAdmin);
+
 		    var executionResult = $mdDialog.show({
-			     controller: executeWithNewData,
+			     controller: executeWithNewDataController,
 			     templateUrl:  sbiModule_config.contextName	+ '/js/src/angular_1.4/tools/functionsCatalog/templates/'+'functionCatalogNewInputs.jsp',
 			     //parent: angular.element(document.body),
 			     //targetEvent: ev,			     
@@ -82,12 +86,13 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 				 	demoData : data,
 				 	logger:	$log,
 				 	datasets: datasetList,
-				 	userId: $scope.userId
+				 	userId: $scope.userId,
+				 	translate:sbiModule_translate
 				 },
 			     clickOutsideToClose:true
 			   });
 		    executionResult.then(function(response){   //positive response, given from $mdDialog.hide(..)
-		    	$scope.showTabDialog(response); 
+		    	$scope.showTabDialog(response,isDemoFunction); 
 		    },function(data){							 //negative response, given from $mdDialog.close(..)
 		    	
 		    });
@@ -147,7 +152,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 			$scope.datasetNamesList=[];
 			for(d in datasets.item)
 			{
-				//$log.info("d[label]", datasets.item[d].name);			
 				$scope.datasetLabelsList.push(datasets.item[d].label);
 				$scope.datasetNamesList.push(datasets.item[d].name);
 				
@@ -172,72 +176,110 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 	{
 		var body={};		
 
-		if($scope.saveOrUpdateFlag=="save")
-		{
-			
-			$log.info("Save operation");
-
-			
-			body=$scope.shownFunction;
-			
-			$log.info("Shown function to send with POST", body);
-	
-			
-			sbiModule_restServices.post("1.0/FunctionsCatalog","insertCatalogFunction",body)
-			.success(function(data)
-			{			
-					$log.info("Catalog Function Added!");
-					$log.info("Function added to db with id: ",data);
-					//$scope.functionsList.push(data);
-					$scope.obtainCatalogFunctionsRESTcall();
-					
-					$scope.cleanNewFunction=function()
-					{
-						$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script":"", "description":""};	
-					}
-					$scope.shownFunction=$scope.newFunction;
-	
-			});
-		}
-		else if($scope.saveOrUpdateFlag=="update")
-		{
-			$log.info("Update operation");
-			body=$scope.shownFunction;
-			functionId=$scope.shownFunction.id;
-			$log.info("Shown function to send with PUT", body);
-	
-
-			sbiModule_restServices.put("1.0/FunctionsCatalog","updateCatalogFunction/"+functionId,body)
-			.success(function(data)
-			{			
-					$log.info("Catalog Function Updated!");
-					$log.info("Message returned: ",data);
-					//$scope.functionsList.push(data); 
-					$scope.obtainCatalogFunctionsRESTcall();
-					
-			}); 
-			
-			
-			
-			
-		}	
 		
+		if(!$scope.checkCorrectArguments())
+		{
+		    $mdDialog.show(
+		    	      $mdDialog.alert()
+		    	        .parent(angular.element(document.querySelector('#popupContainer')))
+		    	        .clickOutsideToClose(true)
+		    	        .title('Some fields are not filled!!')
+//		    	        .textContent('Fill missing informations to save function.')
+		    	        .ariaLabel('Alert Dialog Demo')
+		    	        .ok('OK')
+		    	    );
+		}
+		else
+		{
+			if($scope.saveOrUpdateFlag=="save")
+			{
+				
+				$log.info("Save operation");
+	
+				
+				body=$scope.shownFunction;
+				
+				$log.info("Shown function to send with POST", body);
+		
+				
+				sbiModule_restServices.post("1.0/FunctionsCatalog","insertCatalogFunction",body)
+				.success(function(data)
+				{			
+						$log.info("Catalog Function Added!");
+						$log.info("Function added to db with id: ",data);
+						$scope.obtainCatalogFunctionsRESTcall();
+						
+						$scope.cleanNewFunction=function()
+						{
+							$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script":"", "description":""};	
+						}
+						$scope.shownFunction=$scope.newFunction;
+		
+				});
+			}
+			else if($scope.saveOrUpdateFlag=="update")
+			{
+				$log.info("Update operation");
+				body=$scope.shownFunction;
+				functionId=$scope.shownFunction.id;
+				$log.info("Shown function to send with PUT", body);
+		
+	
+				sbiModule_restServices.put("1.0/FunctionsCatalog","updateCatalogFunction/"+functionId,body)
+				.success(function(data)
+				{			
+						$log.info("Catalog Function Updated!");
+						$log.info("Message returned: ",data);
+						$scope.obtainCatalogFunctionsRESTcall();
+						
+				}); 
+				
+				
+				
+				
+			}	
+		}
 		
 		
 	}
 	
+	$scope.checkCorrectArguments=function()
+	{
+		//$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script":"", "description":""};	
+
+		for(var i=0;i<$scope.shownFunction.inputDatasets.length;i++)
+		{
+				if($scope.shownFunction.inputDatasets[i].label==undefined)
+				{
+					return false;
+				}
+		}
+		for(var i=0;i<$scope.shownFunction.inputVariables.length;i++)
+		{
+				if($scope.shownFunction.inputVariables[i].name==undefined||$scope.shownFunction.inputVariables[i].value==undefined)
+				{
+					return false;
+				}
+		}
+		for(var i=0;i<$scope.shownFunction.outputItems.length;i++)
+		{
+				if($scope.shownFunction.outputItems[i].label==undefined||$scope.shownFunction.outputItems[i].type==undefined)
+				{
+					return false;
+				}
+		}
+		if($scope.shownFunction.description==""||$scope.shownFunction.description=="")
+		{
+			return false;
+		}	
+		return true; 
+	}
+	
 	
 	$scope.acSpeedMenu= [
-	                      {
-	                    	  label:sbiModule_translate.load("Delete"),
-	                    	  icon:'fa fa-trash',
-	                    	  action:function(item,event){
-	                    		  $scope.deleteFunction(item,event);
-	                    	  }
-	                      	},
 		                    {
 		                      label:sbiModule_translate.load("Execute Demo"),
-		                      icon:'fa fa-play-circle',		 
+		                      icon:'fa fa-play-circle-o',		 
 		                      action:function(item,event){
 		                    	  $scope.applyDemoItem(item,event);
 		                      }
@@ -251,6 +293,24 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 		                    }
 	                  
 	                     ];
+	
+	
+	
+    var deleteIcon={
+    		label:sbiModule_translate.load("Delete"),
+    		icon:'fa fa-trash',
+    		action:function(item,event){
+    			$scope.deleteFunction(item,event);
+    		}
+    }
+    if(isAdminGlobal)
+    {
+    	$scope.acSpeedMenu.push(deleteIcon);
+    }	
+	
+	
+	
+	
 	
 	$scope.deleteFunction=function(item,event){
  
@@ -292,20 +352,9 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 		sbiModule_restServices.get("executeFunction",functionId+"/?user_id="+$scope.userId)
 		.success(function(results)
 		{
-			$log.info("Execution o function "+ functionId+" started, result:", results);			
-			//$scope.trustedHtml = $sce.trustAsHtml(result);
-			//sbiModule_restServices.alterContextPath("/knowagedataminingengine");
-			//CatalogCommad keyword riservata per chiamare i servizi del catalogo
-			//sbiModule_restServices.get("1.0/result","CatalogCommand/A/true")
-			//.success(function(result2)
-			//{
-			//	$log.info("OUTPUT DATAMINING RESULT:", result2);	
-				
-			//});
-			
-			$scope.showTabDialog(results);  //$event
-			
-			
+			$log.info("Execution o function "+ functionId+" started, result:", results);	
+			var isDemo=true;
+			$scope.showTabDialog(results,isDemo);  
 					
 		});
 		
@@ -319,11 +368,12 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 		
 		$log.info("Execute with new data operation");
 
-		//body=$scope.shownFunction;  //cambiare
+		//body=$scope.shownFunction; 
 		demoData=item;
+		var isDemo=false;
 		
-		$log.info("Demo data ", demoData);
-		$scope.showNewInputDialog(demoData,$scope.datasets);
+		$log.info("Execution Data ", demoData);
+		$scope.showNewInputDialog(demoData,$scope.datasets,isDemo);
 
 		
 	};
@@ -341,36 +391,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 		$scope.saveOrUpdateFlag="update";
 
 	}
-	/*
-	$scope.addInputItem=function()
-	{
-		$scope.cleanNewFunction();
-		var inputItem={};
-
-		//Mi procuro la lista di label dei dataset da mostrare nel caso il tipo di inputItem fosse SpagoBI Dataset
-		
-		sbiModule_restServices.get("2.0/datasets","listDataset")
-		.success(function(datasets)
-		{
-			$log.info("Received Datasets ", datasets);			
-				
-			$scope.datasetsList=[];
-			for(d in datasets.item)
-			{
-				$log.info("d[label]", datasets.item[d].name);			
-				$scope.datasetsList.push(datasets.item[d].label);
-				
-			}
-			$log.info("Datasets list", $scope.datasetsList);			
-
-		});
-			
-		
-		$scope.shownFunction.inputItems.push(inputItem);
-		$log.info("Added an input ",$scope.shownFunction.inputItems);
-		return inputItem;
-	}
-	*/
 	
 	$scope.addInputDataset=function() 
 	{
@@ -411,18 +431,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 		$log.info("Removed an input Variable ",$scope.shownFunction.inputVariables);
 	}
 	
-	
-	$scope.addDatasetFunc=function()
-	{
-
-	}
-	
-	$scope.removeDatasetFunc=function(dataset) 
-	{		
-
-		
-	}
-	
 	$scope.addOutputItem=function()
 	{
 		var output={};
@@ -439,23 +447,87 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 		
 	}
 	
+	$scope.datasetPreview=function(datasetLabel)
+	{
+		sbiModule_restServices.post("1.0/datasets",datasetLabel+"/content")
+		.success(function(dataset)
+		{
+			$log.info("Received Dataset ", dataset);			
+			$scope.showDatasetPreviewDialog(dataset,datasetLabel);	
+				
+		}); 
+			
+		
+		
+	}
+	
+	
+	
+	
+	$scope.showDatasetPreviewDialog= function(datasetToSee,labelDS)
+	{
+			var executionResult = $mdDialog.show({
+			     controller: datasetPreviewController,
+			     templateUrl:  sbiModule_config.contextName	+ '/js/src/angular_1.4/tools/functionsCatalog/templates/'+'datasetPreview.jsp',		     
+				 preserveScope : true,
+			     locals : {
+				 	logger:	$log,
+				 	dataset: datasetToSee,
+				 	datasetLabel: labelDS, 
+				 	translate: sbiModule_translate
+				 },
+			     clickOutsideToClose:true
+			   });
+		    
+	};
+	
+	
+	
 	//----------------------------------------------Application Logic-----------------------------------------
 	
-
+	
+	
+	
 	$scope.obtainDatasetLabelsRESTcall();
 	$scope.obtainCatalogFunctionsRESTcall();
 	
+	//----------------------------------------------Controllers-----------------------------------------------
 
-	function functionCatalogResults($scope, $mdDialog, logger,results)
+	function functionCatalogResultsController($scope, $mdDialog, logger,results,translate,isDemo)
 	{
 		logger.info("received results: ",results);
 		$scope.numTab=results.length;
 		$scope.results=results;
+		$scope.translate=translate;
+		$scope.isDemo=isDemo;
+		$scope.truncate=false;
+		$scope.dataset = {rows:[]}; 
 		for (var res in $scope.results) {
 			  if ($scope.results.hasOwnProperty(res)) { 
 			    //logger.info("res: " + res + " value: " + $scope.results[res])
-			    $scope.results[res].imageString="data:image/png;base64," +$scope.results[res].result;
+				  if($scope.results[res].resultType=="image"||$scope.results[res].resultType=="Image")
+			      {
+					  $scope.results[res].imageString="data:image/png;base64," +$scope.results[res].result;
+			      }
 			    //logger.info($scope.results[res].imageString);
+				  if($scope.results[res].resultType=="dataset"||$scope.results[res].resultType=="Dataset")
+				  {
+					  	var datasetLabel=$scope.results[res].result;
+						sbiModule_restServices.post("1.0/datasets",datasetLabel+"/content")
+						.success(function(dataset)
+						{
+							$log.info("Received Dataset ", dataset);			
+						
+							$scope.dataset=dataset;
+							$scope.datasetLabel=datasetLabel;
+							if($scope.dataset.rows.length>10)
+							{
+								$scope.truncate=true;
+							}	
+							$scope.dataset.rows=$scope.dataset.rows.slice(0,9);
+							
+						}); 
+				  }	  
 			  }
 			}
 		
@@ -463,7 +535,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 		
 	};
 
-	function executeWithNewData($scope, $mdDialog, logger,demoData,datasets,userId)
+	function executeWithNewDataController($scope, $mdDialog, logger,demoData,datasets,userId,translate)
 	{
 		logger.info("received demo function data: ", demoData);
 		//$scope.numTab=results.length;
@@ -477,7 +549,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 		$scope.replacingDatasetOutLabels={};
 		$scope.replacingTextOutLabels={};
 		$scope.replacingImageOutLabels={};
-		
+		$scope.translate=translate;
 		
 		
 		$scope.getDatasetNameByLabel=function (label,datasetList)
@@ -490,7 +562,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 				  }
 			}
 		}	
-		
+			
 		/*
 		for (var res in $scope.results) {
 			  if ($scope.results.hasOwnProperty(res)) { 
@@ -555,13 +627,24 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 
 		}
 
-		
-		
-		
-		
+					
 	};
 
-	
+	function datasetPreviewController($scope, $mdDialog, logger,dataset,datasetLabel,translate)
+	{
+		logger.info("Preview Controller, received dataset: ", dataset);
+		//$scope.numTab=results.length;
+		$scope.dataset=dataset;
+		$scope.truncate=false;
+		$scope.datasetLabel=datasetLabel;
+		$scope.translate=translate;
+		if($scope.dataset.rows.length>10)
+		{
+			$scope.truncate=true;
+		}	
+		$scope.dataset.rows=$scope.dataset.rows.slice(0,9);
+	 
+	}
 
 	
 };
