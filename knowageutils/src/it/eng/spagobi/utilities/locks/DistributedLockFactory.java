@@ -43,4 +43,10 @@ public class DistributedLockFactory {
 		logger.debug("Getting Hazelcast map with name [" + mapName + "]");
 		return hz.getMap(mapName);
 	}
+
+	public static HazelcastInstance getHazelcastInstance(String instanceName) {
+		ClasspathXmlConfig cfg = new ClasspathXmlConfig("hazelcast.xml");
+		cfg.setInstanceName(instanceName);
+		return Hazelcast.getOrCreateHazelcastInstance(cfg);
+	}
 }

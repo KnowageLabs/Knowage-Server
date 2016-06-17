@@ -148,6 +148,9 @@
 	<listener>
 		<listener-class>it.eng.spagobi.tools.scheduler.listeners.SchedulerContextListener</listener-class>
 	</listener>
+	<listener>
+		<listener-class>it.eng.spagobi.utilities.locks.listeners.HazelcastContextListener</listener-class>
+	</listener>
 
 	<!-- EXO
 
@@ -213,6 +216,40 @@ END-LIFERAY -->
 		<servlet-name>AdapterHTTP</servlet-name>
 		<servlet-class>it.eng.spago.dispatching.httpchannel.AdapterHTTP</servlet-class>
 	</servlet>
+	
+		<!-- This will start up all Admin4J Servlets with standard defaults.
+	<servlet>
+		<servlet-name>Admin4J Index Servlet</servlet-name>
+		<servlet-class>net.admin4j.ui.servlets.Admin4JHomePageServlet</servlet-class>
+	 	<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>Admin4J Index Servlet</servlet-name>
+		<url-pattern>/admin4j/index</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Admin4J Index Servlet</servlet-name>
+		<url-pattern>/admin4j/index/*</url-pattern>
+	</servlet-mapping>  -->
+	
+		<!-- will ensure that standard Admin4J filters are invoked in the proper order.	
+	<filter>
+		<filter-name>Admin4J Standard Filter</filter-name>
+		<filter-class>
+			net.admin4j.ui.filters.Admin4JStandardFilter
+		</filter-class>
+		<init-param>
+			<description>If true, includes a server-side timestamp in all returned html.</description>
+			<param-name>include.serverside.timestamp</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>Admin4J Standard Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping> -->
 
 	<!-- EXO
 <servlet>
