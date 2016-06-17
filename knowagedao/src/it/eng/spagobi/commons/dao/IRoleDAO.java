@@ -76,6 +76,8 @@ public interface IRoleDAO extends ISpagoBIDao {
 	 */
 	public List loadAllRoles() throws EMFUserError;
 
+	public List loadAllRolesFiltereByTenant() throws EMFUserError;
+
 	public List loadRolesItem(JSONObject item) throws EMFUserError, JSONException;
 
 	/**

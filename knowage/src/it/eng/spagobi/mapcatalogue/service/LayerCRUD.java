@@ -206,13 +206,14 @@ public class LayerCRUD {
 	@Path("/getroles")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getRoles(@Context HttpServletRequest req) throws JSONException, IOException {
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 		// get roles from database
 		List<Role> roles = null;
 		Role aRole = null;
 		ArrayList<JSONObject> roles_get = new ArrayList<JSONObject>();
 		try {
-			roles = DAOFactory.getRoleDAO().loadAllRoles();
+			roles = DAOFactory.getRoleDAO().loadAllRolesFiltereByTenant();
 		} catch (EMFUserError e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -220,6 +221,7 @@ public class LayerCRUD {
 
 		for (Iterator<Role> it = roles.iterator(); it.hasNext();) {
 			aRole = it.next();
+
 			JSONObject jo = new JSONObject();
 			try {
 				jo.put("id", aRole.getId());

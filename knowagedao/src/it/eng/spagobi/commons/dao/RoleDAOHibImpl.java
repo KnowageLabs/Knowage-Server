@@ -258,6 +258,44 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	}
 
 	@Override
+	public List loadAllRolesFiltereByTenant() throws EMFUserError {
+		List realResult = new ArrayList();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Criteria finder = aSession.createCriteria(SbiExtRoles.class).add(Restrictions.eq("commonInfo.organization", this.getTenant()));
+			finder.addOrder(Order.asc("name"));
+			List hibList = finder.list();
+
+			tx.commit();
+
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				Role role = toRole((SbiExtRoles) it.next());
+				putIntoCache(String.valueOf(role.getId()), role);
+				realResult.add(role);
+			}
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return realResult;
+	}
+
+	@Override
 	public List loadRolesItem(JSONObject item) throws EMFUserError, JSONException {
 		List realResult = new ArrayList();
 		Session aSession = null;
