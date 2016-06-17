@@ -41,24 +41,18 @@ public class DAOConfig {
 	 * For testing purpose
 	 */
 	private static File hibernateConfigurationFileFile;
-	private static String resourcePath;
 
 	static private Logger logger = Logger.getLogger(DAOConfig.class);
 
 	public static String getResourcePath() {
-		if (DAOConfig.resourcePath == null) {
-			try {
-				DAOConfig.resourcePath = SpagoBIUtilities.getResourcePath();
-			} catch (Throwable t) {
-				logger.debug(t);
-				DAOConfig.resourcePath = EnginConf.getInstance().getResourcePath();
-			}
+		String resourcePath;
+		try {
+			resourcePath = SpagoBIUtilities.getResourcePath();
+		} catch (Throwable t) {
+			logger.debug(t);
+			resourcePath = EnginConf.getInstance().getResourcePath();
 		}
 		return resourcePath;
-	}
-
-	public static void setResourcePath(String resourcePath) {
-		DAOConfig.resourcePath = resourcePath;
 	}
 
 	public static void setMappings(Map<String, String> mappings) {
