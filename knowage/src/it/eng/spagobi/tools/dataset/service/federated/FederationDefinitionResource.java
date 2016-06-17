@@ -51,7 +51,7 @@ public class FederationDefinitionResource {
 
 	@GET
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.FEDERATED_DATASET_MANAGEMENT  })
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<FederationDefinition> get() {
 		try {
@@ -67,7 +67,7 @@ public class FederationDefinitionResource {
 
 	@GET
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.FEDERATED_DATASET_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public FederationDefinition getFederationByID(@PathParam("id") Integer id) {
 		try {
@@ -99,7 +99,7 @@ public class FederationDefinitionResource {
 
 	@DELETE
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.FEDERATED_DATASET_MANAGEMENT  })
 	public Response remove(@PathParam("id") Integer id) {
 		try {
 			fdsDAO = DAOFactory.getFedetatedDatasetDAO();
