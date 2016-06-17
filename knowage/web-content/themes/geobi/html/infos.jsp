@@ -30,7 +30,7 @@
 <br/>
 <div></div>
 <div style="margin-top: 40px">
-Version: 1.0.0
+Version: 1.2.0
 </div>
 <div style="margin-top: 5px">
 Logged User: <%= userName %>
