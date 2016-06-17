@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -17,7 +18,6 @@ import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hdfs.HdfsConfiguration;
 import org.apache.log4j.Logger;
-import org.hsqldb.lib.Iterator;
 
 public class Hdfs {
 	private static final Logger logger = Logger.getLogger(Hdfs.class);
@@ -183,7 +183,7 @@ public class Hdfs {
 			if (propertyFile.exists()) {
 				InputStream propertiesStream = new FileInputStream(propertyFile);
 				properties.load(propertiesStream);
-				Iterator propertiesSetIterator = (Iterator) properties.entrySet().iterator();
+				Iterator propertiesSetIterator = properties.entrySet().iterator();
 				while (propertiesSetIterator.hasNext()) {
 					Entry propertyEntry = (Entry) propertiesSetIterator.next();
 					String key = (String) propertyEntry.getKey();
