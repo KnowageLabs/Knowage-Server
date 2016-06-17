@@ -55,6 +55,8 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,
 		dataToSent.datasourceId = $scope.datasourceId;
 		dataToSent.physicalModels = $scope.physicalModels;
 		dataToSent.businessModels = $scope.businessModels;
+		//TODO set model name here
+		dataToSent.modelName = 'test_model_hard_coded';
 		sbiModule_restServices.alterContextPath("/knowagemeta");
 		sbiModule_restServices
 				.promisePost("1.0/metaWeb", "create", dataToSent)
@@ -429,13 +431,13 @@ angular.module('metaManager').service("parametersBuilder", function() {
 	// if(!propertiesStructure.hasOwnProperty(struct[0])){
 	// propertiesStructure[struct[0]]=[];
 	// }
-	//			
+	//
 	// // propertiesStructure[struct[0]][propertiesStructure[struct[0]].length]=
 	// tmpProp.value;
 	// propertiesStructure[struct[0]].push(properties[i]);
-	//			
+	//
 	// }
-	//		
+	//
 	// return propertiesStructure;
 	// }
 

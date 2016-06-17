@@ -302,6 +302,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	 * @generated
 	 */
 	@Override
+	@JsonIgnore
 	public PhysicalForeignKey getPhysicalForeignKey() {
 		if (physicalForeignKey != null && physicalForeignKey.eIsProxy()) {
 			InternalEObject oldPhysicalForeignKey = (InternalEObject) physicalForeignKey;
@@ -313,6 +314,11 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 			}
 		}
 		return physicalForeignKey;
+	}
+
+	public String getPhysicalForeignKeyName() {
+		return getPhysicalForeignKey().getUniqueName() != null && !getPhysicalForeignKey().getUniqueName().isEmpty() ? getPhysicalForeignKey().getUniqueName()
+				: getPhysicalForeignKey().getName();
 	}
 
 	/**

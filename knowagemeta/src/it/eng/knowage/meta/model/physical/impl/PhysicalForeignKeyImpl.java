@@ -255,6 +255,7 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 	 * @generated
 	 */
 	@Override
+	@JsonIgnore
 	public PhysicalTable getDestinationTable() {
 		if (destinationTable != null && destinationTable.eIsProxy()) {
 			InternalEObject oldDestinationTable = (InternalEObject) destinationTable;
@@ -266,6 +267,10 @@ public class PhysicalForeignKeyImpl extends ModelObjectImpl implements PhysicalF
 			}
 		}
 		return destinationTable;
+	}
+
+	public String getDestinationTableName() {
+		return getDestinationTable().getUniqueName();
 	}
 
 	/**
