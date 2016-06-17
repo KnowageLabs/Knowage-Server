@@ -481,7 +481,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		}
 		
 		/* Styling */
-		var columnClassName = field.name.trim() + 'CustomColumnClass';
+		var columnClassName = this.id + field.name.trim() + 'CustomColumnClass';
 		var columnClassId = columnClassName + 'Id';
 		
 		var columnClass = '';
