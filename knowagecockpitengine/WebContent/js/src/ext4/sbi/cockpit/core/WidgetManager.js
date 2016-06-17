@@ -322,6 +322,8 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 
 		this.fireEvent('selectionChange');
 		Sbi.storeManager.loadAllStores();
+		
+		this.updateCockpitSelections(null);
 
 		Sbi.trace("[WidgetManager.clearSelections]: OUT");
 	}
@@ -715,8 +717,31 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	}
 
     	this.fireEvent('selectionChange');
+    	
+    	var currentSelection = this.getSelectionsByStores();
+    	this.updateCockpitSelections(currentSelection);
 
     	Sbi.trace("[WidgetManager.onSelection]: OUT");
+    }
+    
+    
+    , updateCockpitSelections : function (selections) {
+    	var stringifiedSelections = selections != null ? JSON.stringify(selections) : "";
+    	
+    	var mainPanel = Ext.getElementById("mainPanel");
+    	
+    	var cockpitSelectionsContainerToDelete = Ext.getElementById("cockpitSelectionsContainer");
+    	
+    	if (cockpitSelectionsContainerToDelete) {
+    		delete cockpitSelectionsContainerToDelete;
+    	}
+
+    	var cockpitSelectionsContainer = document.createElement('span');
+    	cockpitSelectionsContainer.id = "cockpitSelectionsContainer";
+    	cockpitSelectionsContainer.style.display = "none";
+    	
+    	cockpitSelectionsContainer.innerHTML = stringifiedSelections;
+    	mainPanel.appendChild(cockpitSelectionsContainer);
     }
 	/**
 	 * Set selections for chart widgets

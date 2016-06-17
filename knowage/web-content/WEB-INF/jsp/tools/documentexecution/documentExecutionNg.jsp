@@ -41,22 +41,32 @@ List<String> executionRoleNames = new ArrayList();
 Engine executingEngine = null;
 String engineName = null;
 String isFromDocumentWidget = null;
+String isForExport = null;
+String cockpitSelections = null;
 
 try{
 	profile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	
 	obj = (BIObject) aServiceResponse.getAttribute(SpagoBIConstants.OBJECT);
-/* 	
-	objId = new Integer(request.getParameter("OBJECT_ID")); 
-*/
-	objId = (String)(request.getParameter("OBJECT_ID"));
-	objLabel = request.getParameter("OBJECT_LABEL") != null ? ((String)request.getParameter("OBJECT_LABEL")) : obj.getLabel();
+	objId = (String)(request.getParameter(SpagoBIConstants.OBJECT_ID));
+	objLabel = request.getParameter(SpagoBIConstants.OBJECT_LABEL) != null ? ((String)request.getParameter(SpagoBIConstants.OBJECT_LABEL)) : obj.getLabel();
 	
 	isFromDocumentWidget = (String)(request.getParameter("IS_FROM_DOCUMENT_WIDGET"));
+	isForExport = (String)(request.getParameter(SpagoBIConstants.IS_FOR_EXPORT));
+	if(isForExport == null) {
+		isForExport = "false";
+	}
+	
+	cockpitSelections = (String)(request.getParameter(SpagoBIConstants.COCKPIT_SELECTIONS));
 	
 	if(obj == null 
-			&& (isFromDocumentWidget != null 
-				&& ("true").equalsIgnoreCase(isFromDocumentWidget))) {
+			&& (
+					(isForExport != null 
+						&& ("true").equalsIgnoreCase(isForExport))
+					|| (isFromDocumentWidget != null 
+						&& ("true").equalsIgnoreCase(isFromDocumentWidget))
+				)
+	) {
 		
 		IBIObjectDAO biObjectDAO = DAOFactory.getBIObjectDAO();
 		
@@ -188,12 +198,12 @@ if(executionRoleNames.size() > 0) {
 					                </md-button>
 					            </md-menu-item>
 					            				     				          
-								<span class="divider" >Export</span>
+								<span class="divider" >{{translate.load("sbi.execution.executionpage.toolbar.export")}}</span>
 								<md-menu-item>
 					                <md-menu>
 						                <md-menu-item class="md-indent">
 					                  		<md-icon class="fa fa-download"></md-icon>
-						                  	<md-button ng-click="$mdOpenMenu()">Export</md-button>
+						                  	<md-button ng-click="$mdOpenMenu()">{{translate.load("sbi.execution.executionpage.toolbar.export")}}</md-button>
 						                </md-menu-item>
 					                  	<md-menu-content>
 						                    <md-menu-item class="md-indent" ng-repeat="exportationFormat in urlViewPointService.exportation">
@@ -287,10 +297,11 @@ if(executionRoleNames.size() > 0) {
             <div layout="row" flex="grow">
             	<!-- "ng-show" is used instead of "ng-if" (or "ng-switch") in order to prevent the iframe reloading -->
 		 		<md-content id="documentFrameContainer" layout="row" flex="grow" ng-show="currentView.status == 'DOCUMENT'">  
-		      		<div layout="row" flex layout-align="center center" ng-hide="urlViewPointService.frameLoaded">
+		      		<div layout="row" flex layout-align="center center"
+		      				ng-hide="execProperties.executionInstance.IS_FOR_EXPORT || urlViewPointService.frameLoaded">
 			      		<md-progress-circular md-mode="indeterminate" md-diameter="70" ></md-progress-circular>
 					</div>
-					<iframe  class="noBorder" id="documentFrame" ng-src="{{execProperties.documentUrl}}" iframe-onload="iframeOnload()"
+					<iframe class="noBorder" id="documentFrame" ng-src="{{execProperties.documentUrl}}" iframe-onload="iframeOnload()"
 							iframe-set-dimensions-onload flex="grow" ng-show="urlViewPointService.frameLoaded">
 					</iframe>
 				</md-content>
@@ -338,14 +349,23 @@ if(executionRoleNames.size() > 0) {
 					executionInstance: {
 						'OBJECT_ID' : <%= request.getParameter("OBJECT_ID") %>,
 						'OBJECT_LABEL' : '<%= request.getParameter("OBJECT_LABEL") %>',
-						'OBJECT_NAME' : '<%= request.getParameter("OBJECT_NAME") %>',
+						'OBJECT_NAME' : '<%= obj.getName() %>',
 						'OBJECT_TYPE_CODE' : '',
 						'isFromCross' : false,
 						'isPossibleToComeBackToRolePage' : false,
 						'SBI_EXECUTION_ID' : '',
 						'CROSS_PARAMETER' : crossParams,
 						'ENGINE_LABEL' : '',
-						'SidenavOri': '<%=obj.getParametersRegion() %>'
+						'SidenavOri': '<%=obj.getParametersRegion() %>',
+						'IS_FOR_EXPORT' : <%= isForExport %>
+						<%
+						if(cockpitSelections != null && !cockpitSelections.equalsIgnoreCase("")) {
+						%>
+						, 'COCKPIT_SELECTIONS' : '<%=cockpitSelections%>'
+						<%
+						}
+					%>
+						
 					},
 					parametersData: {
 						documentParameters: []
@@ -440,6 +460,8 @@ if(executionRoleNames.size() > 0) {
 		</script>
 		<script type="text/javascript" 
 				src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/documentExecutionServices.js")%>"></script>
+		<script type="text/javascript" 
+				src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/documentExecutionExportService.js")%>"></script>
 		<script type="text/javascript" 
 				src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/utils/documentExecutionFactories.js")%>"></script>
 		<script type="text/javascript" 

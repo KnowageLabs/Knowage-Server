@@ -47,6 +47,8 @@ Sbi.cockpit.core.WidgetRuntime = function(config) {
 
 	Sbi.trace("[WidgetRuntime.constructor]: IN");
 
+	var isForExport = Sbi.config.executionContext.IS_FOR_EXPORT || false ;
+	
 	// init properties...
 	var defaultSettings = {
 		border: false
@@ -64,6 +66,8 @@ Sbi.cockpit.core.WidgetRuntime = function(config) {
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.core.WidgetRuntime', defaultSettings);
+	
+	settings.isForExport = isForExport
 
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);

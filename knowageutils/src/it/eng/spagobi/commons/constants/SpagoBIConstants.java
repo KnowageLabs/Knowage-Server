@@ -529,6 +529,9 @@ public class SpagoBIConstants {
 	public static final String TEMPORAL_DIMENSION = "TemporalDimension";
 	public static String CONFIG_STORE_TO_HDFS = "SPAGOBI.GENERIC_CONFIGURATION.DATASET_FILE_HDFS";
 
+	public static final String IS_FOR_EXPORT = "IS_FOR_EXPORT";
+	public static final String COCKPIT_SELECTIONS = "COCKPIT_SELECTIONS";
+
 	// Date Range
 	public static final String DATE_RANGE_OPTION_QUANTITY_PREFIX = "dateRangeOptionQuantity_";
 	public static final String DATE_RANGE_OPTION_TYPE_PREFIX = "dateRangeOptionType_";

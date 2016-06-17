@@ -55,7 +55,7 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
 			"SBI_HOST", "country", "language", "user_id", "DOCUMENT_ID", "DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES",
 			"DOCUMENT_DESCRIPTION", "SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES",
-			"DOCUMENT_VERSION", };
+			"DOCUMENT_VERSION", "IS_FOR_EXPORT", "COCKPIT_SELECTIONS"};
 
 	public CockpitEngineInstance(String template, Map env) {
 		super(env);

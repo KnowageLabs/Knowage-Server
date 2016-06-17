@@ -1717,14 +1717,28 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     	var p = this.getStoreParametersValues(storeConf.storeId);
     	var parameters = Ext.JSON.encode( p );
     	
+    	var extraParams = {
+			parameters: parameters 
+    	};
+    	
+    	var isForExport = Sbi.config.executionContext.IS_FOR_EXPORT || false ;
+    	var cockpitSelections = Sbi.config.executionContext.COCKPIT_SELECTIONS || "" ;
+    	
+    	/*
+    	isForExport = true ;
+    	cockpitSelections = '{"Clone_UnitsByMonth":{"Province":["(\'OR\')"]},"Inventory_UnitsByMonth":{"Province":["(\'OR\')"]}}';
+    	 */
+    	
+    	if(isForExport == true && cockpitSelections.trim() != '' ) {
+    		extraParams.selections = cockpitSelections;
+    	}
+    	
     	var proxy = new Ext.data.HttpProxy({
 			url: Sbi.config.serviceReg.getServiceUrl('v2/loadDataSetStore', {
 				pathParams: {datasetLabel: storeConf.storeId}
 			})
 			, method: 'GET'
-			, extraParams: {
-			    	parameters: parameters 
-			 }
+			, extraParams: extraParams
 	    	//, timeout : this.timeout
 	    });
 		

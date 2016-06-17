@@ -39,6 +39,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
@@ -157,6 +158,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String olapParam = "";
 
 		String sbiExecutionId = requestVal.optString("SBI_EXECUTION_ID");
+		
+		String isForExport = requestVal.optString("IS_FOR_EXPORT");
+		//cockpit selections
+		String cockpitSelections = requestVal.optString("COCKPIT_SELECTIONS");
+		
+		
 		JSONObject jsonParameters = requestVal.optJSONObject("parameters");
 		JSONObject menuParameters = requestVal.optJSONObject("menuParameters"); // parameters setted when open document from menu
 
@@ -191,8 +198,18 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 					executingRole, modality, jsonParametersToSend, locale);
 
-			if (obj.getBiObjectTypeCode().equals("OLAP"))
-				olapParam = BuildOlapUrlString(requestVal);
+			if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.OLAP_TYPE_CODE))
+				olapParam = buildOlapUrlString(requestVal);
+			
+			if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE)) {
+				if(!("".equalsIgnoreCase(isForExport))) {
+					url += "&IS_FOR_EXPORT=" + isForExport;
+
+					if(!("".equalsIgnoreCase(cockpitSelections))) {
+						url += "&COCKPIT_SELECTIONS=" + cockpitSelections;
+					}
+				}
+			}
 
 			resultAsMap.put("url", url + "&SBI_EXECUTION_ID=" + sbiExecutionId + olapParam);
 			if (errorList != null && !errorList.isEmpty()) {
@@ -221,7 +238,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return Response.ok(resultAsMap).build();
 	}
 
-	public String BuildOlapUrlString(JSONObject reqVal) throws JSONException {
+	public String buildOlapUrlString(JSONObject reqVal) throws JSONException {
 		String ret = "";
 		if (reqVal.getJSONObject("parameters").length() > 0) {
 			String subViewObjectID = reqVal.getJSONObject("parameters").getString("subobj_id");

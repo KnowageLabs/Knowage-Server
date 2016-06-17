@@ -214,6 +214,31 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		 	}							
 		 }
         %>
+        
+        <%
+        String isForExport = (String)request.getParameter(SpagoBIConstants.IS_FOR_EXPORT);
+        String cockpitSelections = (String)request.getParameter(SpagoBIConstants.COCKPIT_SELECTIONS);
+        // .replaceAll("'", "\\\\'");
+        
+        if(cockpitSelections != null) {
+        	cockpitSelections = cockpitSelections.replaceAll("\"", "\\\\\"").replaceAll("\'", "\\\\\'");
+        }
+        
+        
+        if(isForExport != null && "true".equalsIgnoreCase(isForExport)) {
+        %>
+        		executionContext['IS_FOR_EXPORT'] = <%=isForExport%>;
+        		
+        		Sbi.logging.enabled = false;
+        		
+        <%
+        	if(cockpitSelections != null && !("".equalsIgnoreCase(cockpitSelections))) {
+        %>
+       	 		executionContext['COCKPIT_SELECTIONS'] = "<%=cockpitSelections%>";
+        <%
+        	}
+        }
+        %>
         Sbi.config.executionContext = executionContext;
 	
 		var params = {

@@ -530,6 +530,8 @@ sbiM.service('sbiModule_download', function(sbiModule_config,sbiModule_logger, s
 			link.href = url;
 			link.target = '_blank';
 			link.click();
+			
+			document.body.removeChild(link);
 		}
 	};
 			
