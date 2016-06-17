@@ -37,8 +37,10 @@ public class PersistedTableHelper {
 	public static void addField(PreparedStatement insertStatement, int fieldIndex, Object fieldValue, String fieldMetaName, String fieldMetaTypeName,
 			boolean isfieldMetaFieldTypeMeasure, Map<String, Integer> columnSizes) {
 		try {
-			// in case of a measure with String type, convert it into a Double
-			if (isfieldMetaFieldTypeMeasure && fieldMetaTypeName.contains("String")) {
+			if (fieldValue == null) {
+				insertStatement.setObject(fieldIndex + 1, null);
+			} else if (isfieldMetaFieldTypeMeasure && fieldMetaTypeName.contains("String")) {
+				// in case of a measure with String type, convert it into a Double
 				try {
 					logger.debug("Column type is string but the field is measure: converting it into a double");
 					// only for primitive type is necessary to use setNull method if value is null
