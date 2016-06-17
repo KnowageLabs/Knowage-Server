@@ -172,6 +172,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			.action('OK')
 			.highlightAction(true)
 			.position('top right')
+			.hideDelay(0);
 
 		$mdToast.show(toast).then(function(response) {
 			if ( response == 'ok' ) {
