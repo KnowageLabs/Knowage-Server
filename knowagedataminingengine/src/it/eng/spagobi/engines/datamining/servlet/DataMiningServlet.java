@@ -39,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -51,8 +52,8 @@ import org.apache.log4j.Logger;
 
 import sun.misc.BASE64Decoder;
 
-public class DataMiningServletBackEnd extends HttpServlet {
-	protected static Logger logger = Logger.getLogger(DataMiningServletBackEnd.class);
+public class DataMiningServlet extends HttpServlet {
+	protected static Logger logger = Logger.getLogger(DataMiningServlet.class);
 
 	public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 	public static final String LANGUAGE = "SBI_LANGUAGE";
@@ -69,14 +70,21 @@ public class DataMiningServletBackEnd extends HttpServlet {
 	private Map env = null;
 
 	@Override
+	public void init(ServletConfig servletConfig) throws ServletException {
+		logger.debug("Initializing SpagoBI DataMining Engine...");
+		super.init(servletConfig);
+		logger.debug(":init:Inizialization of SpagoBI DataMining Engine ended succesfully");
+	}
+	
+	@Override
 	public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
 		logger.debug("Start processing a new request...");
 		// USER PROFILE
 		HttpSession session = request.getSession();
-		IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		String documentId = request.getParameter("document");
-		String userId = (String) profile.getUserUniqueIdentifier();
+		profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		documentId = request.getParameter("document");
+		userId = profile == null ? request.getParameter("user_id") : (String) profile.getUserUniqueIdentifier();
 		env = createEnv(request);
 
 		logger.debug("userId=" + userId);
@@ -84,7 +92,7 @@ public class DataMiningServletBackEnd extends HttpServlet {
 		// AUDIT UPDATE
 		auditId = request.getParameter("SPAGOBI_AUDIT_ID");
 		logger.debug("auditId=" + auditId);
-		AuditAccessUtils auditAccessUtils = (AuditAccessUtils) request.getSession().getAttribute("SPAGOBI_AUDIT_UTILS");
+		AuditAccessUtils auditAccessUtils = (AuditAccessUtils) session.getAttribute("SPAGOBI_AUDIT_UTILS");
 		if (auditId != null) {
 			if (auditAccessUtils != null)
 				auditAccessUtils.updateAudit(session, userId, auditId, new Long(System.currentTimeMillis()), null, "EXECUTION_STARTED", null, null);
@@ -140,9 +148,6 @@ public class DataMiningServletBackEnd extends HttpServlet {
 		HttpSession session = servletRequest.getSession();
 		AbstractDataMiningEngineService abstractDataMiningEngineService = new AbstractDataMiningEngineService();
 		executeSession = new ExecutionSession(servletRequest, session);
-		profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		userId = (String) profile.getUserUniqueIdentifier();
-		documentId = servletRequest.getParameter("document");
 		documentLabel = (String) executeSession.getAttributeFromSession(EngineConstants.ENV_DOCUMENT_LABEL);
 		if (documentLabel == null || executeSession.requestContainsAttribute(EngineConstants.ENV_DOCUMENT_LABEL)) {
 			documentLabel = executeSession.getAttributeAsString(EngineConstants.ENV_DOCUMENT_LABEL);

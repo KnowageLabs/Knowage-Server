@@ -134,6 +134,19 @@
 		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
 	
+	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<url-pattern>/DataMiningServletBackEnd</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>EngineCheckSessionFilter</filter-name>
+		<url-pattern>/DataMiningServletBackEnd</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SpagoBIAccessFilter</filter-name>
+		<url-pattern>/DataMiningServletBackEnd</url-pattern>
+	</filter-mapping>
+	
 	<listener>
 		<listener-class>
             org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
@@ -168,7 +181,7 @@
 	</servlet>
 	<servlet>
 		<servlet-name>DataMiningServlet</servlet-name>
-		<servlet-class>it.eng.spagobi.engines.datamining.servlet.DataMiningServletBackEnd</servlet-class>
+		<servlet-class>it.eng.spagobi.engines.datamining.servlet.DataMiningServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
@@ -192,7 +205,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>DataMiningServlet</servlet-name>
-		<url-pattern>/restful-services/startBackEnd</url-pattern>
+		<url-pattern>/DataMiningServletBackEnd</url-pattern>
 	</servlet-mapping>    
 	<session-config>
 		<session-timeout>30</session-timeout>
