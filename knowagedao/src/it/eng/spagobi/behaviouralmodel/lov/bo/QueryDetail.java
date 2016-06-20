@@ -849,6 +849,19 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			dataResult = sqlCommand.execute();
 			ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
 			SourceBean result = scrollableDataResult.getSourceBean();
+			
+			List<String> colNames = Arrays.asList(scrollableDataResult.getColumnNames());
+			List rows = result.getAttributeAsList(DataRow.ROW_TAG);
+			//insert all the columns name in the first row, so after all the columns will be present and returned to the client
+			if (rows.size() > 0){
+				SourceBean rowBean = (SourceBean) rows.get(0);
+				for (int i = 0 ; i < colNames.size(); i++){
+					String  col = colNames.get(i).toString();
+					if (!rowBean.containsAttribute(col)){
+						rowBean.setAttribute(col, "");
+					}
+				}
+			}
 			resStr = result.toXML(false);
 			resStr = resStr.trim();
 			if (resStr.startsWith("<?")) {
