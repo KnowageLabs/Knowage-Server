@@ -458,7 +458,7 @@ public class MenuListJSONSerializer implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.FUNCTIONS_CATALOG, funcs)) {
 			JSONObject functionsCatalog = new JSONObject();
-			functionsCatalog.put(ICON_CLS, "device_hub");
+			functionsCatalog.put(ICON_CLS, "layers");
 			functionsCatalog.put(TOOLTIP, messageBuilder.getMessage("menu.FunctionsCatalog", locale));
 			functionsCatalog.put(ICON_ALIGN, "top");
 			functionsCatalog.put(SCALE, "large");

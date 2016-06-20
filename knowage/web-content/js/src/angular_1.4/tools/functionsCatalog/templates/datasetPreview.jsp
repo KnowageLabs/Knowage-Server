@@ -18,6 +18,7 @@
 		<angular-table 
 					id="tablePreview"
 					flex
+					columns="headers"
 					ng-show=true
 					ng-model="dataset.rows" 
 					highlights-selected-item=true				

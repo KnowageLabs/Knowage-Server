@@ -495,6 +495,11 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 
 	function functionCatalogResultsController($scope, $mdDialog, logger,results,translate,isDemo)
 	{
+		function isObject(obj)
+		{
+			  return obj === Object(obj);
+		}
+		
 		logger.info("received results: ",results);
 		$scope.numTab=results.length;
 		$scope.results=results;
@@ -517,7 +522,12 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 						.success(function(dataset)
 						{
 							$log.info("Received Dataset ", dataset);			
-						
+							
+							for(var i=0;i<dataset.rows.length;i++)
+							{
+								delete dataset.rows[i].id;
+							}	
+							
 							$scope.dataset=dataset;
 							$scope.datasetLabel=datasetLabel;
 							if($scope.dataset.rows.length>10)
@@ -525,6 +535,37 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 								$scope.truncate=true;
 							}	
 							$scope.dataset.rows=$scope.dataset.rows.slice(0,9);
+							
+							
+
+							$scope.headers=[];
+							if(!isObject($scope.dataset.metaData.fields[0])) //in case first field is "recNO", skip it
+							{
+								i=1;
+							}
+							else
+							{
+								i=0;
+							}
+							
+							for(i;i<$scope.dataset.metaData.fields.length;i++) 
+							{
+								if($scope.dataset.metaData.fields[i].header!=undefined && $scope.dataset.metaData.fields[i].header!="")
+								{	
+									var colToInsert={};
+									colToInsert["label"]=$scope.dataset.metaData.fields[i].header;
+									colToInsert["name"]=$scope.dataset.metaData.fields[i].name;
+									$scope.headers.push(colToInsert);
+								}
+
+							}	
+							
+							
+							
+							
+							
+							
+							
 							
 						}); 
 				  }	  
@@ -563,15 +604,98 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 			}
 		}	
 			
-		/*
-		for (var res in $scope.results) {
-			  if ($scope.results.hasOwnProperty(res)) { 
-			    //logger.info("res: " + res + " value: " + $scope.results[res])
-			    $scope.results[res].imageString="data:image/png;base64," +$scope.results[res].result;
-			    logger.info($scope.results[res].imageString);
-			  }
+
+		
+		
+		$scope.isExecuteDisabled=function()
+		{
+			disabled=false;
+//			$log.info("replacingDatasetList:",$scope.replacingDatasetList);
+//			$log.info("replacingVariableValues",$scope.replacingVariableValues);
+//			$log.info("replacingDatasetOutLabels",$scope.replacingDatasetOutLabels);
+			//$scope.replacingTextOutLabels NOT USED, DEMO LABELS VALUES USED 
+			//$scope.replacingImageOutLabels NOT USED, DEMO LABELS VALUES USED 
+			
+
+
+			function isEmpty(obj) {
+				
+				// Speed up calls to hasOwnProperty
+				var hasOwnProperty = Object.prototype.hasOwnProperty;
+				
+			    // null and undefined are "empty"
+			    if (obj == null) return true;
+
+			    // Assume if it has a length property with a non-zero value
+			    // that that property is correct.
+			    if (obj.length > 0)    return false;
+			    if (obj.length === 0)  return true;
+
+			    // Otherwise, does it have any properties of its own?
+			    // Note that this doesn't handle
+			    // toString and valueOf enumeration bugs in IE < 9
+			    for (var key in obj) {
+			        if (hasOwnProperty.call(obj, key)) return false;
+			    }
+
+			    return true;
 			}
-		*/
+			
+			
+			// The output are generic outputItems with a Type field that distinguish them, in contrast with the input, that are divided in inputDatasets and inputVariables
+			// in future make 3 lists of outputs (outputImages, outputDatasets and outputText) instead of outputItems (also in the jsp view!!) 
+			$scope.numDSout=0;
+			function classifyOutput()
+			{
+				for(var i=0;i<$scope.demoData.outputItems.length;i++)
+				{
+					if(demoData.outputItems[i].type=="Dataset")
+					{
+						$scope.numDSout=$scope.numDSout+1;
+					}	
+					
+				}
+				return $scope.numDSout;
+			}
+			
+			 $scope.numDSout=classifyOutput();
+			
+			
+			if((isEmpty($scope.replacingDatasetList) && $scope.demoData.inputDatasets.length!=0)||(isEmpty($scope.replacingVariableValues) && $scope.demoData.inputVariables.length!=0)||(isEmpty($scope.replacingDatasetOutLabels) && $scope.numDSout!=0))
+			{
+				disabled=true;
+			}
+			else
+			{
+				for (var property in $scope.replacingDatasetList) {
+				    if ($scope.replacingDatasetList.hasOwnProperty(property)) {
+				    	if(isEmpty($scope.replacingDatasetList[property]))
+				    	{				
+				    		disabled=true;
+				    	}	
+				    }
+				}
+				for (var property in $scope.replacingVariableValues) {
+				    if ($scope.replacingVariableValues.hasOwnProperty(property)) {
+				    	if(isEmpty($scope.replacingVariableValues[property]))
+				    	{				
+				    		disabled=true;
+				    	}					  
+				    }
+				}
+				for (var property in $scope.replacingDatasetOutLabels) {
+				    if ($scope.replacingDatasetOutLabels.hasOwnProperty(property)) {
+				    	if(isEmpty($scope.replacingDatasetOutLabels[property]))
+				    	{				
+				    		disabled=true;
+				    	}
+				    }
+				}
+				
+			}	
+			return disabled;
+		}
+		
 		
 		$scope.executeFunction=function()
 		{
@@ -609,18 +733,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 					$log.info("Execution result ", executionResult);
 					
 					$mdDialog.hide(executionResult);
-
-					
-					/*
-					//$scope.functionsList.push(data);
-					$scope.obtainCatalogFunctionsRESTcall();
-					
-					$scope.cleanNewFunction=function()
-					{
-						$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script":"", "description":""};	
-					}
-					$scope.shownFunction=$scope.newFunction;
-					*/
 			});
 			
 			
@@ -632,8 +744,17 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 
 	function datasetPreviewController($scope, $mdDialog, logger,dataset,datasetLabel,translate)
 	{
+		function isObject(obj)
+		{
+			  return obj === Object(obj);
+		}
+				
 		logger.info("Preview Controller, received dataset: ", dataset);
 		//$scope.numTab=results.length;
+		for(var i=0;i<dataset.rows.length;i++)
+		{
+			delete dataset.rows[i].id;
+		}	
 		$scope.dataset=dataset;
 		$scope.truncate=false;
 		$scope.datasetLabel=datasetLabel;
@@ -643,7 +764,29 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 			$scope.truncate=true;
 		}	
 		$scope.dataset.rows=$scope.dataset.rows.slice(0,9);
-	 
+		
+		
+		$scope.headers=[];
+		if(!isObject($scope.dataset.metaData.fields[0])) //in case first field is "recNO", skip it
+		{
+			i=1;
+		}
+		else
+		{
+			i=0;
+		}
+		
+		for(i;i<$scope.dataset.metaData.fields.length;i++) 
+		{
+			if($scope.dataset.metaData.fields[i].header!=undefined && $scope.dataset.metaData.fields[i].header!="")
+			{	
+				var colToInsert={};
+				colToInsert["label"]=$scope.dataset.metaData.fields[i].header;
+				colToInsert["name"]=$scope.dataset.metaData.fields[i].name;
+				$scope.headers.push(colToInsert);
+			}
+
+		}	
 	}
 
 	

@@ -134,7 +134,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<list label="Functions"  new-function="<%=addFunction%>" layout-column> 
     		<angular-table
     				id="functionsTable" 
-					flex=100
+					flex
 					ng-show=true
 					ng-model="functionsList"
 					columns='[{"label":"Function Name","name":"name"}]' 
