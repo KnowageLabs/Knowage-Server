@@ -333,7 +333,12 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 *      executionInstance) throws Exception;
 	 */
 	@Override
-	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> bIObjectParameters, Locale locale)
+ 			throws Exception {
+		return getLovResult(profile, dependencies, bIObjectParameters, locale, false);
+	} 
+	 
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale, boolean getAllColumns)
 			throws Exception {
 		logger.debug("IN");
 		Map<String, String> parameters = getParametersNameToValueMap(BIObjectParameters);
@@ -344,7 +349,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
 		}
 		logger.info("User [" + ((UserProfile) profile).getUserId() + "] is executing sql: " + statement);
-		String result = getLovResult(profile, statement);
+		String result = getLovResult(profile, statement, getAllColumns);
 		logger.debug("OUT.result=" + result);
 		return result;
 	}
@@ -836,7 +841,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * @throws Exception
 	 */
 
-	private String getLovResult(IEngUserProfile profile, String statement) throws Exception {
+	private String getLovResult(IEngUserProfile profile, String statement, boolean getAllColumns) throws Exception {
 		String resStr = null;
 		DataConnection dataConnection = null;
 		SQLCommand sqlCommand = null;
@@ -853,7 +858,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			List<String> colNames = Arrays.asList(scrollableDataResult.getColumnNames());
 			List rows = result.getAttributeAsList(DataRow.ROW_TAG);
 			//insert all the columns name in the first row, so after all the columns will be present and returned to the client
-			if (rows.size() > 0){
+			if (getAllColumns && rows.size() > 0){
 				SourceBean rowBean = (SourceBean) rows.get(0);
 				for (int i = 0 ; i < colNames.size(); i++){
 					String  col = colNames.get(i).toString();

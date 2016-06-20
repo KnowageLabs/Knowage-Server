@@ -130,7 +130,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 					// // rowsSourceBean = (SourceBean) executeSelect(getRequestContainer(), getResponseContainer(), pool, statement, colNames);
 					// rowsSourceBean = (SourceBean) executeSelect(getRequestContainer(), getResponseContainer(), datasource, statement, colNames);
 
-					String result = qd.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
+					String result = qd.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null, true);
 
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
