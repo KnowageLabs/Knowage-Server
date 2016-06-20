@@ -1,6 +1,6 @@
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
- * 
+ *
  */
 var scripts = document.getElementsByTagName("script")
 var currentScriptPath = scripts[scripts.length-1].src;
@@ -16,7 +16,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 		"</span>" +
 		"<span id=\"customToolbarActionContent\" layout=\"row\"></span>"+
 		"<md-button   class=\"md-icon-button\" aria-label=\"More\"><md-icon class=\"fa fa-chevron-{{expanded?'up':'down'}}\"></md-icon></md-button>"+
-		"</md-toolbar><md-content class=\"animate-accordion\" layout-padding  ng-show=\"expanded\"><div ng-transclude style='padding: 0;'></div></md-content> " 
+		"</md-toolbar><md-content class=\"animate-accordion\" layout-padding  ng-show=\"expanded\"><div ng-transclude style='padding: 0;' layout={{layout}}></div></md-content> "
 		,
 		controller : boxExpanderControllerFunction,
 		scope : {
@@ -27,43 +27,44 @@ angular.module('expander-box', [ 'ngMaterial'])
 			toolbarClass:"@?",
 			title:"=",
 			locals:"=?",
-			expanded:"=?"
+			expanded:"=?",
+			layout:"@?"
 
 		},
 		link: function(scope, element, attrs, ctrl, transclude) {
-			if(attrs.color){ 
+			if(attrs.color){
 				angular.element(element[0].querySelector("md-toolbar"))[0].style.setProperty("color",scope.color,"important")
 				angular.element(element[0].querySelector("md-toolbar>button>md-icon"))[0].style.setProperty("color",scope.color,"important")
 			}
-			
+
 			if(!attrs.backgroundColor && !attrs.toolbarClass){
 				angular.element(element[0].querySelector("md-toolbar"))[0].style.setProperty("background-color","#3b678c ","important")
 				angular.element(element[0].querySelector("md-content"))[0].style.setProperty("border","1px solid #3b678c ","important");
 			}else if(attrs.backgroundColor && !attrs.toolbarClass){
 				angular.element(element[0].querySelector("md-toolbar"))[0].style.setProperty("background-color",scope.backgroundColor,"important")
-				angular.element(element[0].querySelector("md-content"))[0].style.setProperty("border",scope.backgroundColor,"important"); 
+				angular.element(element[0].querySelector("md-content"))[0].style.setProperty("border",scope.backgroundColor,"important");
 			}
-			
+
 			if(attrs.borderColor){
 				angular.element(element[0].querySelector("md-content"))[0].style.setProperty("border","1px solid "+scope.borderColor,"important");
 			}
-			
+
 			if(attrs.toolbarClass){
 				angular.element(element[0].querySelector("md-toolbar")).addClass(attrs.toolbarClass);
 				if(!attrs.borderColor){
 					angular.element(element[0].querySelector("md-content"))[0].style.setProperty("border","1px solid #3b678c ","important");
 				}
 			}
-			
+
 			if(!attrs.expanded){
 				scope.expanded=false;
 			}
 
-			
-		
-			
+
+
+
 			element.addClass("md-whiteframe-2dp");
-			
+
 		}
 	}})
 
@@ -78,7 +79,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 				var contElem=element.parent().parent().parent()[0].querySelector("#customToolbarContent");
 				angular.element(contElem).append(clone);
 //				$compile(contElem)(scope);
-			}); 
+			});
 		}
 	}
 })
@@ -93,7 +94,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 				var contElem=element.parent().parent().parent()[0].querySelector("#customToolbarActionContent");
 				angular.element(contElem).append(clone);
 //				$compile(contElem)(scope);
-			}); 
+			});
 		}
 	}
 })
