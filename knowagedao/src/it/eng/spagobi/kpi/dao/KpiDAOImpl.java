@@ -2557,22 +2557,24 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public List<Target> listTargetByKpi(final Integer kpiId, final Integer kpiVersion) {
-		List<SbiKpiTarget> sbiKpiTargets = list(new ICriterion<SbiKpiTarget>() {
+		return listTargetByKpi(kpiId, kpiVersion, false);
+	}
+
+	@Override
+	public List<Target> listTargetByKpi(final Integer kpiId, final Integer kpiVersion, final boolean full) {
+		return executeOnTransaction(new IExecuteOnTransaction<List<Target>>() {
 			@Override
-			public Criteria evaluate(Session session) {
-				// Ordering by rule name and measure name
-				Criteria c = session.createCriteria(SbiKpiTarget.class).createAlias("sbiKpiTargetValues", "_tValues").createAlias("_tValues.sbiKpiKpi", "_kpi")
-						.add(Restrictions.eq("_kpi.sbiKpiKpiId.id", kpiId)).add(Restrictions.eq("_kpi.sbiKpiKpiId.version", kpiVersion));
-				return c;
+			public List<Target> execute(Session session) throws Exception {
+				List<SbiKpiTarget> sbiKpiTargets = session.createCriteria(SbiKpiTarget.class).createAlias("sbiKpiTargetValues", "_tValues")
+						.createAlias("_tValues.sbiKpiKpi", "_kpi").add(Restrictions.eq("_kpi.sbiKpiKpiId.id", kpiId))
+						.add(Restrictions.eq("_kpi.sbiKpiKpiId.version", kpiVersion)).list();
+				List<Target> targets = new ArrayList<>();
+				for (SbiKpiTarget sbiKpiTarget : sbiKpiTargets) {
+					targets.add(from(sbiKpiTarget, full));
+				}
+				return targets;
 			}
 		});
-
-		List<Target> targets = new ArrayList<>();
-		for (SbiKpiTarget sbiKpiTarget : sbiKpiTargets) {
-			targets.add(from(sbiKpiTarget, false));
-
-		}
-		return targets;
 	}
 
 	@Override

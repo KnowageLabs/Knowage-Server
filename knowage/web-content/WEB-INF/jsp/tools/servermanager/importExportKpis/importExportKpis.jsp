@@ -86,6 +86,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-input-container>
 						</div>
 					</div>
+					<div layout="row" layout-wrap>
+						<md-checkbox flex style="line-height: 61px;"  ng-model="targetsAndRelatedKpis" aria-label="Include targets and related KPIs">Include targets and related KPIs</md-checkbox>
+					</div>
 					<div id="lista">
 						<div layout="row" layout-wrap>
 							<div>

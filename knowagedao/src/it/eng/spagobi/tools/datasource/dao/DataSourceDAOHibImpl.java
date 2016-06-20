@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,6 +22,7 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
@@ -128,8 +129,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			Query hibQuery = null;
 
-			hibQuery = tmpSession
-					.createQuery("select ds.sbiDataSource from SbiOrganizationDatasource ds where ds.sbiOrganizations.name = :tenantName and ds.sbiDataSource.label = :dsLabel");
+			hibQuery = tmpSession.createQuery(
+					"select ds.sbiDataSource from SbiOrganizationDatasource ds where ds.sbiOrganizations.name = :tenantName and ds.sbiDataSource.label = :dsLabel");
 			hibQuery.setString("tenantName", getTenant());
 			hibQuery.setString("dsLabel", label);
 
@@ -288,6 +289,40 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		}
 		logger.debug("OUT");
 		return realResult;
+	}
+
+	/**
+	 * Load dialect by id.
+	 *
+	 * @param dialectId
+	 *            the dialect id
+	 *
+	 * @return the dialect
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	@Override
+	public Domain loadDialect(int dialectId) throws EMFUserError {
+		Session session = null;
+		try {
+			session = getSession();
+			SbiDomains sd = (SbiDomains) session.load(SbiDomains.class, dialectId);
+			Domain d = new Domain();
+			d.setValueId(sd.getValueId());
+			d.setDomainCode(sd.getDomainCd());
+			d.setDomainName(sd.getDomainNm());
+			d.setValueCd(sd.getValueCd());
+			d.setValueName(sd.getValueNm());
+			d.setValueDescription(sd.getValueDs());
+			return d;
+		} catch (HibernateException e) {
+			logger.error("Error while loading the dialect with id " + dialectId, e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
 	}
 
 	/**
@@ -606,8 +641,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	}
 
 	/**
-	 * From the hibernate DataSource at input, gives the corrispondent
-	 * <code>DataSource</code> object.
+	 * From the hibernate DataSource at input, gives the corrispondent <code>DataSource</code> object.
 	 *
 	 * @param hibDataSource
 	 *            The hybernate data source

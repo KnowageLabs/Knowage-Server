@@ -164,6 +164,7 @@ function kpiExportFuncController(sbiModule_download, sbiModule_translate,
 		sbiModule_restServices, $scope, $mdDialog, $mdToast) {
 	$scope.flagCheck = false;
 	$scope.nameExport = "";
+	$scope.targetsAndRelatedKpis = false;
 	$scope.exportCheckboxs = {};
 
 	$scope.selectAll = function() {
@@ -198,7 +199,8 @@ function kpiExportFuncController(sbiModule_download, sbiModule_translate,
 			}
 			var config = {
 				"KPIS_LIST" : kpisIdVersionPairs,
-				"EXPORT_FILE_NAME" : $scope.nameExport
+				"EXPORT_FILE_NAME" : $scope.nameExport,
+				"TARGETS_AND_RELATED_KPIS":  $scope.targetsAndRelatedKpis
 			};
 			$scope.wait = true;
 			sbiModule_restServices.post("1.0/serverManager/importExport/kpis",

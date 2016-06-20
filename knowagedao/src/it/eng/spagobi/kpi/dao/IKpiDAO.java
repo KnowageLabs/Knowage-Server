@@ -76,6 +76,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public List<Target> listTargetByKpi(Integer kpiId, Integer kpiVersion);
 
+	public List<Target> listTargetByKpi(Integer kpiId, Integer kpiVersion, boolean full);
+
 	/**
 	 * Checks if given measure names are really existing on db
 	 *
