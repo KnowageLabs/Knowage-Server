@@ -237,6 +237,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpResources" description="ImpExpResources"/>	
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpUsers" description="ImpExpUsers"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="InstallConfig" description="InstallConfig" />
+	<USER_FUNCTIONALITY productType="KnowagePM" name="KpiManagement" description="KpiManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="LovsManagement" description="LovsManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="LovsView" description="LovsView"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ManageCrossNavigation" description="ManageCrossNavigation" />
