@@ -27,8 +27,12 @@ import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.engines.datamining.model.Variable;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -41,6 +45,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
@@ -403,15 +408,10 @@ public class ROutputExecutor {
 
 		FileDataSet dataSet = new FileDataSet();
 		String path = getDatasetsDirectoryPath();
-		dataSet.setResourcePath(path);// (DAOConfig.getResourcePath());
+		String resourcePath = DAOConfig.getResourcePath();
+		dataSet.setResourcePath(resourcePath);
 
 		JSONObject configurationObj = new JSONObject();
-		// configurationObj.put("fileType", "CSV");
-		// configurationObj.put("csvDelimiter", ",");
-		// configurationObj.put("csvQuote", "'"); // Alternativa "\""
-		// configurationObj.put("fileName", spagoBiDatasetname + ".csv");
-		// // configurationObj.put("fileName", outVal + ".csv");
-		// configurationObj.put("encoding", "UTF-8");
 
 		configurationObj.put(DataSetConstants.FILE_TYPE, "CSV");
 		configurationObj.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, ",");
@@ -425,12 +425,6 @@ public class ROutputExecutor {
 		String confString = configurationObj.toString();
 		dataSet.setConfiguration(confString);
 
-		/*
-		 * WRITE IN R PyLib.execScript("import os\n" + "import pandas\n" + "os.chdir(r'" + path + "')\n"); PyLib.execScript(outVal + "=" + "pandas.DataFrame(" +
-		 * outVal + ")\n"); resPythonExecution = PyLib.execScript(outVal + ".to_csv('" + spagoBiDatasetname + ".csv'" + ",index=False)\n"); if
-		 * (resPythonExecution < 0) { createDatasetResult.setPythonExecutionError(resPythonExecution); return createDatasetResult; }
-		 */
-
 		String rExecution = "write.csv(" + outVal + ",file='" + path + "/" + spagoBiDatasetname + ".csv',row.names=FALSE,na='')";
 		rexp = re.parseAndEval("try(" + rExecution + ")");
 		if (rexp.inherits("try-error")) {
@@ -438,7 +432,6 @@ public class ROutputExecutor {
 			creationResult.setRExecutionError(rexp.asString());
 		}
 
-		// dataSet.setFileName(outVal + ".csv");
 		dataSet.setFileName(spagoBiDatasetname + ".csv");
 		dataSet.setFileType("CSV");
 		dataSet.setDsType(DataSetConstants.DS_FILE);
@@ -447,6 +440,33 @@ public class ROutputExecutor {
 		dataSet.setName(spagoBiDatasetname);
 		dataSet.setDescription("Dataset created from execution of document " + documentLabel + " by user " + userId);
 		dataSet.setOwner(profile.getUserUniqueIdentifier().toString());
+
+		// ------------Metadata setting------------
+
+		dataSet.loadData();
+		IDataStore dataStore = dataSet.getDataStore();
+		JSONArray metadataArray = new JSONArray();
+
+		IMetaData metaData = dataStore.getMetaData();
+		for (int i = 0; i < metaData.getFieldCount(); i++) {
+			IFieldMetaData ifmd = metaData.getFieldMeta(i);
+			for (int j = 0; j < metadataArray.length(); j++) {
+				if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
+					if ("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+						ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+					} else {
+						ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+					}
+					break;
+				}
+			}
+		}
+		IMetaData currentMetadata = dataStore.getMetaData();
+		DatasetMetadataParser dsp = new DatasetMetadataParser();
+		String dsMetadata = dsp.metadataToXML(currentMetadata);
+		dataSet.setDsMetadata(dsMetadata);
+
+		// ----------------------------------------
 
 		IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
 		dataSetDAO.setUserProfile(profile);
@@ -480,15 +500,11 @@ public class ROutputExecutor {
 
 		FileDataSet dataSet = new FileDataSet();
 		String path = getDatasetsDirectoryPath();
-		dataSet.setResourcePath(path);// (DAOConfig.getResourcePath());
+		String resourcePath = DAOConfig.getResourcePath();
+		dataSet.setResourcePath(resourcePath);
 
 		String spagoBiDatasetname = userId + "_" + documentLabel + "_" + out.getOuputLabel();
 		JSONObject configurationObj = new JSONObject();
-		// configurationObj.put("fileType", "CSV");
-		// configurationObj.put("csvDelimiter", ",");
-		// configurationObj.put("csvQuote", "'"); // Alternativa "\""
-		// configurationObj.put("fileName", spagoBiDatasetname + ".csv");
-		// configurationObj.put("encoding", "UTF-8");
 
 		configurationObj.put(DataSetConstants.FILE_TYPE, "CSV");
 		configurationObj.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, ",");
@@ -501,16 +517,6 @@ public class ROutputExecutor {
 
 		String confString = configurationObj.toString();
 		dataSet.setConfiguration(confString);
-
-		/*
-		 * SCRIVERLO IN R PyLib.execScript("import os\n" + "import pandas\n" + "os.chdir(r'" + path + "')\n"); PyLib.execScript(outVal + "=" +
-		 * "pandas.DataFrame(" + function + ")\n"); resPythonExecution = PyLib.execScript(outVal + ".to_csv('" + spagoBiDatasetname + ".csv'" +
-		 * ",index=False)\n");
-		 * 
-		 * if (resPythonExecution < 0) { creationResult.setPythonExecutionError(resPythonExecution); return creationResult; }
-		 */
-
-		// write.csv(df, file = '/home/df.csv', row.names=FALSE, na='');
 
 		String rExecution = "write.csv(" + outVal + ",file=" + path + spagoBiDatasetname + ",row.names=FALSE,na='')";
 		rexp = re.parseAndEval("try(" + rExecution + ")");
@@ -528,6 +534,33 @@ public class ROutputExecutor {
 		dataSet.setName(spagoBiDatasetname);
 		dataSet.setDescription("Dataset created from execution of document " + documentLabel + " by user " + userId);
 		dataSet.setOwner(profile.getUserUniqueIdentifier().toString());
+
+		// ------------Metadata setting------------
+
+		dataSet.loadData();
+		IDataStore dataStore = dataSet.getDataStore();
+		JSONArray metadataArray = new JSONArray();
+
+		IMetaData metaData = dataStore.getMetaData();
+		for (int i = 0; i < metaData.getFieldCount(); i++) {
+			IFieldMetaData ifmd = metaData.getFieldMeta(i);
+			for (int j = 0; j < metadataArray.length(); j++) {
+				if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
+					if ("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+						ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+					} else {
+						ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+					}
+					break;
+				}
+			}
+		}
+		IMetaData currentMetadata = dataStore.getMetaData();
+		DatasetMetadataParser dsp = new DatasetMetadataParser();
+		String dsMetadata = dsp.metadataToXML(currentMetadata);
+		dataSet.setDsMetadata(dsMetadata);
+
+		// ----------------------------------------
 
 		IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
 		dataSetDAO.setUserProfile(profile);
