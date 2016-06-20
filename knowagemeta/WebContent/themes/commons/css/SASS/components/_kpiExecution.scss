@@ -1,0 +1,29 @@
+.kn-kpiExecution {
+	background-color: $detailBackground;
+	md-card {
+		.md-headline {
+			margin-left: 8px;
+			font-size: inherit;
+		}
+		md-card-title-text{
+			font-size: 1.3em;
+			color: $ternaryColor;
+			text-transform: uppercase;
+			font-weight: bold;
+		}
+	}
+	.kpiValue {
+		margin-bottom: 10px;
+		h3 {
+			margin: 0;
+			font-size: .8em;
+			color: $ternaryColor;
+			text-transform: uppercase;
+		}
+		h1 {
+			margin: 0;
+			font-size: 1.5em;
+			font-weight: 300;
+		}
+	}
+}
