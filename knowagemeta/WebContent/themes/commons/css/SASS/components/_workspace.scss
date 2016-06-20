@@ -1,0 +1,302 @@
+.workspace {
+
+	md-list {
+		padding-top: 0;
+	}
+
+	md-toolbar.md-knowage-theme .md-button:not(.md-fab) md-icon {
+		line-height: 24px !important;
+	}
+
+	.leftRightPanelHeight {
+		height: calc(100% - 40px);
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.rightPanelDocuments {
+		height: calc(100% - 20px);
+		min-height: calc(100% - 20px);
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.rightPanelDocuments {			
+			height: calc(100%);
+			min-height: calc(100%);		
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.md-whiteframe-5dp-rightPanelDocuments {
+		height: calc(100% - 60px);
+		min-height: calc(100% - 60px);
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.md-whiteframe-5dp-rightPanelDocuments {
+			height: calc(100% - 20px);
+			min-height: calc(100% - 20px);
+		}
+	}
+	
+	.panelBackgoundColor {
+		background-color:#ECEFF1;
+	}
+	
+	.yesFav {
+		color:orange;
+	}
+    
+    .workspace_image_dataset{
+	    background-image: url('../../sbi_default/img/dataset/img-dataset-1.jpg')!important;
+	}
+	
+	.workspace_image_federation{
+	    background-image: url('../../sbi_default/img/metamodel/federation.png')!important;
+	}
+	
+	.workspace_image_metamodel{
+	    background-image: url('../../sbi_default/img/metamodel/metamodel.png')!important;
+	}
+	
+	.workspace_image_folder{
+		background-image: url('../../sbi_default/img/analiticalmodel/browser/folder.png')!important;
+	}
+	
+	.shared {
+	   color: #c70751;
+	}
+
+	.workspaceSearchInput{
+		color: #FFFFFF !important;
+		border-color: #FFFFFF !important;
+		padding-top:15px;
+		font-size: 16px;
+	}	
+		
+	.workspace-submenu{
+	   padding-left:20px;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.workspaceBckgColorRightSide {
+		background-color: #FAFAFA;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	// Text in tabs is Knowage red (rose)
+	/*md-tabs md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active, md-tabs md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-default-theme.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-focused, md-tabs.md-default-theme.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-focused md-icon {
+	  color: #C70751 !important;
+	}*/
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	md-tab-content {
+		top: 5px;
+	}
+	
+	.datasetWizardPadding{
+		padding: 30px;
+	}
+	.knowageGrey {
+		background-color: #F6F6F6;
+	}
+	
+	.loadFilePadding{
+		padding:10px;
+	}
+	
+	.checkboxPadding{
+		padding-top: 7px;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.selectedLeftMenuItem, .selectedLeftMenuSubitem{
+		background-color: lighten($secondaryColor,10%);
+		button {
+			background-color: transparent;
+			&:hover {
+				background-color: transparent !important;
+			}
+		}
+	}
+	
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.addNewDocumentButton {
+		top: 0px !important;
+		right: -15px !important;
+	}
+		
+	/* REMOVE (if not used anymore!!!) */
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.datasetWizardCardHeight {
+		height: 65%;
+		min-height: 65%;
+	}
+	
+	/* REMOVE (if not used anymore!!!) */
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.datasetWizardCardHeight {
+			height: 90%;
+			min-height: 90%;
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.mdDialogDatasetWizard {
+		height:65%; 
+		width:50%; 
+		max-height:65%; 
+		max-width:50%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.mdDialogDatasetWizard {
+			height:70%; 
+			width:50%; 
+			max-height:70%; 
+			max-width:50%;
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.threeCombosThreeNumFields {
+		background-color: #FFFFFF !important;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step3PreviewPanel {
+		height: 70%; 
+		max-height: 70%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.step3PreviewPanel {
+			height: 75%; 
+			max-height: 75%;
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step3PreviewTable {
+		height: 95%; 
+		max-height: 95%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step3ValidationText {
+		padding-left: 10px;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.validStatusColor {
+		color: #009933 !important;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.invalidStatusColor {
+		color: #FF0000 !important;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step2DefDataTableContainer {
+		height: 60%;
+		max-height: 60%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step2DefDataTable {
+		height: 100%; 
+		min-height: 100%
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.step2DefDataCardContent {
+			height: 85%;
+			max-height: 85%;
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.step2DefDataTable {
+			height: auto; 
+			min-height: auto;
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.uploadButton {
+		padding-top: 8px;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step4BottomPadding {
+		padding-bottom: 20px;
+	}
+	
+	// From the OLAP
+	// @addedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.loadingMask {
+		 position: fixed;
+		 z-index:500;
+		 height: 100%;
+		 width: 100%;
+		 background-color: black;
+		 opacity :0.5;
+	 }
+		
+	// From the OLAP
+	// @addedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	.loadingNoMask {
+		 position: fixed;
+		 z-index:500;
+		 height: 100%;
+		 width: 100%;		 
+	 }
+	 
+	 /*
+	 	Since the rectangle that surrounds the circular loading animation is 100px when 100% size, we need to calculate the top/left padding everytime we change 
+	 	the diameter. I.e. we should enter exactly the value of half of the value specified in percents (e.g. 75% diameter asks for substitution with 75px/2).
+	 	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 */
+	 .progressCircularWorkspace {
+	 	position: fixed;
+	 	top: calc(50% - #{($progCirculWorkspaceDiam/2)}px);
+	 	left: calc(50% - #{($progCirculWorkspaceDiam/2)}px);
+	 }
+	 
+	 // From the OLAP
+	// @addedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.searchMask {
+		 position: absolute;
+		 z-index:500;
+		 height: 100%;
+		 width: 100%;
+		 background-color: black;
+		 opacity :0.3;
+	 }
+	 
+	 .progressCircularWorkspaceSearch {
+	 	position: absolute;
+	 	top: calc(50% - #{($progCirculWorkspaceDiam/2)}px);
+	 	left: calc(50% - #{($progCirculWorkspaceDiam/2)}px);
+	 }
+
+	 .documentCard {
+	 	md-card-title {
+	 		padding: 4px;
+	 	}
+	 	md-card-actions {
+	 		margin: 0;
+	 		md-icon.shared {
+	 			color: #c70751;
+	 		}
+	 	}
+	 }
+}
