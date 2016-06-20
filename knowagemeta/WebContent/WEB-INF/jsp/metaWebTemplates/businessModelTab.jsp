@@ -62,24 +62,38 @@
 			
 			<md-tab id="inboundTab" label="{{translate.load('sbi.meta.model.business.inbound')}}"  ng-if="selectedBusinessModel.columns!=undefined">
 				<md-content layout  layout-fill ng-controller="businessModelInboundController">
-					<angular-table id="inbountTable"  
-					 	ng-model="selectedBusinessModel.relationships" 
-					 	show-search-bar=true
-					 	no-pagination="true"
-					 	columns="[{label:'name',name:'name'}]"
-					 	visible-row-function="isInbound(item)">
+					<angular-table id="inbountTable"
+							    ng-model="selectedBusinessModel.relationships" 
+								show-search-bar=true
+								no-pagination="true"
+								columns="inboundColumns"
+								scope-functions="inboundFunctions"
+								visible-row-function="isInbound(item)">
+								<queue-table>
+									<div layout="row"> 
+										<span flex></span>
+										<md-button type="button" id="add-element" ng-click="scopeFunctions.openShowDialog($event);">{{scopeFunctions.translate.load("sbi.meta.model.add.inbound.element")}}</md-button>
+									</div>
+								</queue-table> 
 					 </angular-table>
 				</md-content>
 			</md-tab>
 			
 			<md-tab id="outboundTab" label="{{translate.load('sbi.meta.model.business.outbound')}}"  ng-if="selectedBusinessModel.columns!=undefined">
 				<md-content layout  layout-fill ng-controller="businessModelOutboundController">
-					<angular-table id="outbountTable"  
+					<angular-table id="outbountTable"
 					 	ng-model="selectedBusinessModel.relationships" 
-					 	columns="[{label:'name',name:'name'}]"
+					 	columns="outboundColumns"
 					 	show-search-bar=true
 					 	no-pagination="true"
+					 	scope-functions="outboundFunctions"
 					 	visible-row-function="isOutbound(item)">
+					 	<queue-table>
+							<div layout="row"> 
+								<span flex></span>
+								<md-button type="button" id="add-element" ng-click="scopeFunctions.openShowDialog($event);">{{scopeFunctions.translate.load("sbi.meta.model.add.outbound.element")}}</md-button>
+							</div>
+						</queue-table> 
 					 </angular-table>
 				</md-content>
 			</md-tab>

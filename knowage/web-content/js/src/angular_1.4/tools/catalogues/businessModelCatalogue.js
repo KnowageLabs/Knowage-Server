@@ -7,9 +7,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
-app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","multipartForm", "sbiModule_download","sbiModule_messaging","sbiModule_config",businessModelCatalogueFunction]);
+app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","multipartForm", "sbiModule_download","sbiModule_messaging","sbiModule_config","sbiModule_user",businessModelCatalogueFunction]);
 
-function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,multipartForm,sbiModule_download,sbiModule_messaging,sbiModule_config){
+function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,multipartForm,sbiModule_download,sbiModule_messaging,sbiModule_config,sbiModule_user){
 	
 	//variables
 	///////////////////////////////////////////////////////////
@@ -677,7 +677,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					escapeToClose :true,
 					fullscreen: true,
 //					locals:{url:sbiModule_config.contextName+'/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp&datasourceId='+dsId}
-					locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId}
+					locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId}
 				});
 			}
 };

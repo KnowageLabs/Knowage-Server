@@ -216,10 +216,52 @@ function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiM
 		return angular.equals(item.sourceTableName,
 				$scope.selectedBusinessModel.name);
 	}
+
+	$scope.inboundFunctions = {translate:sbiModule_translate};
+	$scope.inboundColumns = [{label:'name',name:'name'},
+	                      {label:'source Table Name',name:'sourceTableName'},
+	                      {label:'source Columns',name:'sourceColumns',transformer:function(data){
+	                    	  var ret = [];
+	                    	  data.forEach(function(entry) {
+	                    		    ret.push(entry.name);
+	                    		  }, this);
+	                    	  return ret.join(", ")
+	                      }},
+	                      {label:'dest. Table Name',name:'destinationTableName'},
+	                      {label:'destination Columns',name:'destinationColumns',transformer:function(data){
+	                    	  var retD = [];
+	                    	  data.forEach(function(entry) {
+	                    		    retD.push(entry.name);
+	                    		  }, this);
+	                    	  return retD.join(", ")
+	                      }}
+	                      ];
 }
 function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout){
 	$scope.isOutbound = function(item) {
 		return !angular.equals(item.sourceTableName,
 				$scope.selectedBusinessModel.name);
 	}
+
+	$scope.outboundFunctions = {translate:sbiModule_translate};
+	$scope.outboundColumns = [{label:'name',name:'name'},
+		                      {label:'source Table Name',name:'destinationTableName'},
+		                      {label:'source Columns',name:'destinationColumns',transformer:function(data){
+		                    	  var retD = [];
+		                    	  data.forEach(function(entry) {
+		                    		    retD.push(entry.name);
+		                    		  }, this);
+		                    	  return retD.join(", ")
+		                      }},
+		                      {label:'dest. Table Name',name:'sourceTableName'},
+		                      {label:'destination Columns',name:'sourceColumns',transformer:function(data){
+		                    	  var ret = [];
+		                    	  data.forEach(function(entry) {
+		                    		    ret.push(entry.name);
+		                    		  }, this);
+		                    	  return ret.join(", ")
+		                      }}
+		                      ];
+
+
 }
