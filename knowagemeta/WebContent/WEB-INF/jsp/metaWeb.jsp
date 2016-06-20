@@ -50,8 +50,10 @@ var datasourceId='<%= datasourceId%>';
 	<md-toolbar>
 		<h1 class="md-toolbar-tools" layout="row">
 			<span flex>{{translate.load("sbi.meta.definition")}}</span>
-			 <md-button ng-click="continueToMeta()">{{translate.load("sbi.general.continue")}}</md-button>
-			 <md-button ng-click="closeMetaDefinition()">{{translate.load("sbi.general.cancel")}}</md-button>
+			 <md-button ng-click="closeMetaDefinition()">{{translate.load("sbi.general.close")}}</md-button>
+			 <md-button ng-click="continueToMeta()" ng-if="steps.current==0">{{translate.load("sbi.general.continue")}}</md-button>
+			 <md-button ng-click="gobackToMetaDefinition()" ng-if="steps.current==1">{{translate.load("sbi.generic.back")}}</md-button>
+			 <md-button ng-click="saveModel()" ng-if="steps.current==1">{{translate.load("sbi.generic.update")}}</md-button>
 		</h1>
 	</md-toolbar>
 	<md-content ng-controller="metaModelDefinitionController" flex layout ng-switch-when="0">

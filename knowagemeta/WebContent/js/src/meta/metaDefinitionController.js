@@ -22,38 +22,65 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 	$scope.physicalModel = [];
 	$scope.businessModel = [];
 
-	$scope.closeMetaDefinition = function() {
-		if ($scope.steps.current == 1) {
-			$scope.steps.current = 0;
-		} else {
-			alert("close");
-		}
-	}
-	$scope.continueToMeta = function() {
-		if ($scope.steps.current == 1) {
-			alert("Finish");
-		} else {
 
+
+	$scope.saveModel=function(){
+		var dataToSend={};
+		dataToSend.datasourceId = $scope.datasourceId;
+		dataToSend.physicalModels = $scope.physicalModels;
+		dataToSend.businessModels = $scope.businessModels;
+		// TODO set model name here
+		dataToSend.modelName = 'test_model_hard_coded';
+		dataToSend.physicalModel = $scope.removeCircularDependency(angular.extend([],$scope.physicalModel));
+		dataToSend.businessModel =  $scope.removeCircularDependency(angular.extend([],$scope.businessModel));
+
+		sbiModule_restServices
+		.promisePost("1.0/metaWeb", "generateModel", dataToSend)
+		.then(
+				function(response) {
+
+				},function(response) {
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.meta.model.generate.error"));
+				});
+	}
+
+	$scope.closeMetaDefinition = function() {
+		//TO-DO chiedere conferma prima di chiudere
+		alert("chiude")
+	}
+
+	$scope.continueToMeta = function() {
 			if ($scope.businessModels.length == 0) {
-				sbiModule_restServices.errorHandler(sbiModule_translate
-						.load("sbi.meta.model.business.select.required"), "");
+				sbiModule_restServices.errorHandler(sbiModule_translate.load("sbi.meta.model.business.select.required"), "");
 			} else {
 				$scope.createMeta();
 			}
+	};
 
-		}
+	$scope.gobackToMetaDefinition=function(){
+		//TO-DO chiedere conferma prima di andare indietro
+		$scope.steps.current = 0;
 	}
 
+	 $scope.removeCircularDependency=function(data){
+		 for(var i=0;i<data.length;i++){
+			 for(var j=0;j<data[i].columns.length;j++){
+				 delete data[i].columns[j].$parent;
+			 }
+		 }
+		 return data;
+	 }
+
 	$scope.createMeta = function() {
-		var dataToSent = {};
-		dataToSent.datasourceId = $scope.datasourceId;
-		dataToSent.physicalModels = $scope.physicalModels;
-		dataToSent.businessModels = $scope.businessModels;
+		var dataToSend = {};
+		dataToSend.datasourceId = $scope.datasourceId;
+		dataToSend.physicalModels = $scope.physicalModels;
+		dataToSend.businessModels = $scope.businessModels;
 		// TODO set model name here
-		dataToSent.modelName = 'test_model_hard_coded';
+		dataToSend.modelName = 'test_model_hard_coded';
 		sbiModule_restServices.alterContextPath("/knowagemeta");
 		sbiModule_restServices
-				.promisePost("1.0/metaWeb", "create", dataToSent)
+				.promisePost("1.0/metaWeb", "create", dataToSend)
 				.then(
 						function(response) {
 							$scope.steps.current = 1;
@@ -63,11 +90,7 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 									$scope.physicalModel);
 						},
 						function(response) {
-							sbiModule_restServices
-									.errorHandler(
-											response.data,
-											sbiModule_translate
-													.load("sbi.kpi.rule.load.datasource.error"));
+							sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.datasource.error"));
 						});
 
 	}
