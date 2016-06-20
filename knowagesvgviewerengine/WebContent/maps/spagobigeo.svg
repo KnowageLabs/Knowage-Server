@@ -171,37 +171,37 @@ onload="init(evt);">
 			myMapApp.Windows = new Array();
 			
 			windowConf = Utils.find(windows, 'name', 'navigation');
-			windowConf = Utils.apply({visible:true}, windowConf || {}, guiSettings.windowDefaults || {});
+			windowConf = Utils.apply({visible:false}, windowConf || {}, guiSettings.windowDefaults || {});
 			if(windowConf && windowConf.visible) {
         myMapApp.Windows["navWindow"] = new NavigationWindow( windowConf );
       } 
       
       windowConf = Utils.find(windows, 'name', 'measures');
-      windowConf = Utils.apply({visible:true}, windowConf || {}, guiSettings.windowDefaults || {});
+      windowConf = Utils.apply({visible:false}, windowConf || {}, guiSettings.windowDefaults || {});
 			if(windowConf && windowConf.visible) {
         myMapApp.Windows["thematic"] = new ThematicWindow( windowConf );
       } 
       
       windowConf = Utils.find(windows, 'name', 'layers');
-      windowConf = Utils.apply({visible:true}, windowConf || {}, guiSettings.windowDefaults || {});
+      windowConf = Utils.apply({visible:false}, windowConf || {}, guiSettings.windowDefaults || {});
 			if(windowConf && windowConf.visible) {
         myMapApp.Windows["basiclayer"] = new LayersWindow( windowConf );
       } 
       
       windowConf = Utils.find(windows, 'name', 'detail');
-      windowConf = Utils.apply({visible:true}, windowConf || {}, guiSettings.windowDefaults || {});
+      windowConf = Utils.apply({visible:false}, windowConf || {}, guiSettings.windowDefaults || {});
 			if(windowConf && windowConf.visible) {
         myMapApp.Windows["detail"] = new DetailsWindow( windowConf );
       } 
       
       windowConf = Utils.find(windows, 'name', 'legend');
-      windowConf = Utils.apply({visible:true}, windowConf || {}, guiSettings.windowDefaults || {});
+      windowConf = Utils.apply({visible:false}, windowConf || {}, guiSettings.windowDefaults || {});
 			if(windowConf && windowConf.visible) {
         myMapApp.Windows["legend"] = new LegendWindow( windowConf );
       } 
       
       windowConf = Utils.find(windows, 'name', 'colourpicker');
-      windowConf = Utils.apply({visible:true}, windowConf || {}, guiSettings.windowDefaults || {});
+      windowConf = Utils.apply({visible:false}, windowConf || {}, guiSettings.windowDefaults || {});
 			if(windowConf && windowConf.visible) {
         myMapApp.Windows["colourpicker"] = new ColourPickerWindow( windowConf );
       } 
