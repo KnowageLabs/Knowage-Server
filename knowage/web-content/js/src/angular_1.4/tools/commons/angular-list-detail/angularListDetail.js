@@ -128,7 +128,7 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 .directive('detail',
 		function($compile) {
 	return {
-		template:'<div ng-hide="ALD_controller.fullScreen==true && ALD_controller.currentView.value!=\'detail\'" flex class="md-container kn-detail" layout="column" layout-wrap>'+
+		template:'<div ng-hide="ALD_controller.fullScreen==true && ALD_controller.currentView.value!=\'detail\'" flex class="md-container kn-detail" layout="column">'+
 		' <md-toolbar>'+
 		'	<div class="md-toolbar-tools">'+
 //		'		<md-button aria-label="back"  ng-if="ALD_controller.fullScreen==true" ng-click="ALD_controller.currentView.value=\'list\'" >  <md-icon md-font-icon="fa fa-arrow-left"></md-icon></md-button>'+
