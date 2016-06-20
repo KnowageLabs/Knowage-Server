@@ -252,12 +252,14 @@ public class DocumentParameters {
 					List<BIObjectParameter> objParameters = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadBIObjectParametersById(analyticalDocumentParameter
 							.getBiObjectID());
 					LovDependency lovDependency = new LovDependency();
+					lovDependencies = new ArrayList<>();
 					for (BIObjectParameter objParameter : objParameters) {
 						Parameter objAnalyticalDriver = ANALYTICAL_DRIVER_DAO.loadForDetailByParameterID(objParameter.getParameter().getId());
 						if (objAnalyticalDriver != null && lovParameters.contains(objAnalyticalDriver.getLabel())) {
 							logger.debug("Found the analytical driver [" + objAnalyticalDriver.getLabel() + "] associated to the placeholder in the LOV");
 							lovDependency.urlName = objParameter.getParameterUrlName();
-							break;
+							lovDependencies.add(lovDependency.urlName);
+							// break;
 						}
 					}
 					if (lovDependency.urlName == null || lovDependency.urlName.isEmpty()) {
@@ -267,8 +269,8 @@ public class DocumentParameters {
 
 					if (!dependencies.containsKey(lovDependency.urlName)) {
 						dependencies.put(lovDependency.urlName, new ArrayList<ParameterDependency>());
-						lovDependencies = new ArrayList<>();
-						lovDependencies.add(lovDependency.urlName);
+						// lovDependencies = new ArrayList<>();
+						// lovDependencies.add(lovDependency.urlName);
 					}
 					List<ParameterDependency> depList = dependencies.get(lovDependency.urlName);
 					depList.add(lovDependency);
