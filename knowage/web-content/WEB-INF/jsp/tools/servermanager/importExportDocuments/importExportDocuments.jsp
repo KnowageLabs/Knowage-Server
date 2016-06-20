@@ -130,7 +130,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		  	<md-tab-label>{{translate.load("SBISet.import","component_impexp_messages");}}</md-tab-label>
 				<md-tab-body> 
 				  <md-card>
-					<md-content ng-controller="importController"  layout-wrap layout-fill ng-cloak ng-switch="selectedStep">
+					<md-content ng-controller="importController" ng-cloak ng-switch="selectedStep">
 						<bread-crumb
 							ng-model=stepItem item-name='name' selected-index='selectedStep'
 							control='stepControl'>

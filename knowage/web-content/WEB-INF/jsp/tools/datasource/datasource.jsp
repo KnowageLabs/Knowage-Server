@@ -79,61 +79,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-card layout-padding>
 
 									<!-- LABEL -->
-									<div layout="row" layout-wrap>
-											<div flex=100>
-												<md-input-container class="small counter">
-													<label>{{translate.load("sbi.ds.label")}}</label>
-													<input ng-model="selectedDataSource.label" required ng-change="setDirty()"  ng-maxlength="100" ng-readonly="readOnly">
-													<div ng-messages="dataSourceForm.label.$error" ng-show="!selectedDataSource.label">
-														<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
-													</div>
-												</md-input-container>
+									<div >
+										<md-input-container  class="md-block">
+											<label>{{translate.load("sbi.ds.label")}}</label>
+											<input ng-model="selectedDataSource.label" required ng-change="setDirty()"  ng-maxlength="100" ng-readonly="readOnly">
+											<div ng-messages="dataSourceForm.label.$error" ng-show="!selectedDataSource.label">
+												<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
 											</div>
+										</md-input-container>
 									</div>
 
 									<!-- DESCRIPTION -->
-									<div layout="row" layout-wrap>
-										<div flex=100>
-											<md-input-container class="small counter">
-												<label>{{translate.load("sbi.ds.description")}}</label>
-												<input ng-model="selectedDataSource.descr"
-													ng-change="setDirty()" ng-maxlength="160" ng-readonly="readOnly">
-											</md-input-container>
+									<div>
+										<md-input-container  class="md-block">
+											<label>{{translate.load("sbi.ds.description")}}</label>
+											<input ng-model="selectedDataSource.descr"
+												ng-change="setDirty()" ng-maxlength="160" ng-readonly="readOnly">
+										</md-input-container>
 										</div>
-									</div>
+
+
 
 									<!-- DIALECT -->
-									<div layout="row" layout-wrap>
-											<div flex=100>
-												<md-input-container class="small counter" >
-													<label>{{translate.load("sbi.datasource.dialect")}}</label>
-													<md-select  ng-disabled="readOnly" ng-change="setDirty()"  aria-label="aria-label"	ng-model="selectedDataSource.dialectId" >
-														<md-option	required ng-repeat="d in dialects" value="{{d.VALUE_ID}}">{{d.VALUE_DS}} </md-option>
-													</md-select>
-													<div ng-messages="dataSourceForm.dialectId.$error" ng-show="!selectedDataSource.dialectId">
+									<div >
+										<md-input-container  class="md-block" >
+											<label>{{translate.load("sbi.datasource.dialect")}}</label>
+											<md-select  ng-disabled="readOnly" ng-change="setDirty()"  aria-label="aria-label"	ng-model="selectedDataSource.dialectId" >
+												<md-option	required ng-repeat="d in dialects" value="{{d.VALUE_ID}}">{{d.VALUE_DS}} </md-option>
+											</md-select>
+											<div ng-messages="dataSourceForm.dialectId.$error" ng-show="!selectedDataSource.dialectId">
 			          							<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
 			        						</div>
-												</md-input-container>
-											</div>
+										</md-input-container>
 									</div>
 
 									<!-- MULTICHEMA -->
-									<div layout="row" layout-wrap style="margin-bottom:-19px;">
-										<label style="padding-top:7px;">{{translate.load("sbi.datasource.multischema")}}:</label>
+									<div >
+										<label>{{translate.load("sbi.datasource.multischema")}}:</label>
 										<md-input-container class="small counter">
 											<md-checkbox	ng-disabled="readOnly" ng-change="setDirty()"  ng-model="selectedDataSource.multiSchema" aria-label="Multischema"></md-checkbox>
 										</md-input-container>
 									</div>
 
 									<!-- SCHEMA ATTRIBUTE -->
-									<div ng-show= "selectedDataSource.multiSchema == true " layout="row" layout-wrap>
-										<div flex=100>
-											<md-input-container class="small counter">
+
+										<div ng-show="selectedDataSource.multiSchema" >
+											<md-input-container  class="md-block" >
 											<label>{{translate.load("sbi.datasource.multischema.attribute")}}</label>
 											<input ng-change="setDirty()"  ng-model="selectedDataSource.schemaAttribute"
 												ng-maxlength="45" ng-disabled="readOnly"> </md-input-container>
 										</div>
-									</div>
 
 									<!-- READ ONLY -->
 									<div layout="row" layout-wrap>
@@ -144,8 +139,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									</div>
 
 									<!-- WRITE DEFAULT -->
-									<div layout="row" layout-wrap style="margin-bottom:-19px;">
-										<label style="padding-top:7px;">{{translate.load("sbi.datasource.writedefault")}}:</label>
+									<div >
+										<label>{{translate.load("sbi.datasource.writedefault")}}:</label>
 										<md-input-container class="small counter">
 											<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"
 												ng-model="selectedDataSource.writeDefault" ng-disabled="(selectedDataSource.readOnly == 1) || !isSuperAdminFunction()" aria-label="Write Default">
@@ -162,12 +157,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									</div>
 
 									<!-- JDBC -->
-									<div ng-if= "jdbcOrJndi.type == 'JDBC'">
+									<div ng-if= "jdbcOrJndi.type == 'JDBC'" layout="column">
 
 										<!-- URL -->
-										<div layout="row" layout-wrap>
-											<div flex=100>
-												<md-input-container class="small counter">
+										<div layout="row">
+										<md-input-container flex class="md-block" >
 													<label>{{translate.load("sbi.datasource.type.jdbc.url")}}</label>
 													<input ng-change="setDirty()"  ng-model="selectedDataSource.urlConnection" required
 														ng-maxlength="500" ng-readonly="readOnly">
@@ -176,32 +170,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				        							</div>
 												</md-input-container>
 											</div>
-										</div>
 
 										<!-- USER -->
-										<div layout="row" layout-wrap>
-											<div flex=100>
-												<md-input-container class="small counter">
+										<div layout="row">
+										<md-input-container flex class="md-block" >
 												<label>{{translate.load("sbi.datasource.type.jdbc.user")}}</label>
 												<input ng-change="setDirty()"  ng-model="selectedDataSource.user"
 													ng-maxlength="50" ng-readonly="readOnly"> </md-input-container>
 											</div>
-										</div>
+
 
 										<!-- PASSWORD -->
-										<div layout="row" layout-wrap>
-											<div flex=100>
-												<md-input-container class="small counter">
+										<div layout="row">				
+										<md-input-container flex class="md-block" >
 												<label>{{translate.load("sbi.datasource.type.jdbc.password")}}</label>
 												<input ng-change="setDirty()"  type="password" name="password" ng-model="selectedDataSource.pwd"
 													ng-maxlength="50" ng-readonly="readOnly"> </md-input-container>
 											</div>
-										</div>
+									
 
 										<!-- DRIVER -->
-										<div layout="row" layout-wrap>
-											<div flex=100>
-												<md-input-container class="small counter">
+										<div layout="row">
+										<md-input-container flex class="md-block" >
 													<label>{{translate.load("sbi.datasource.driver")}}</label>
 													<input ng-change="setDirty()"  ng-model="selectedDataSource.driver" required
 														ng-maxlength="160" ng-readonly="readOnly">
@@ -212,15 +202,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											</div>
 										</div>
 
-									</div>
+									
 
 									<!-- JNDI -->
-									<div layout="row" layout-wrap ng-if= "jdbcOrJndi.type != 'JDBC'">
-										<md-input-container class="small counter" flex=95>
+									<div flex=100 layout="row" ng-if= "jdbcOrJndi.type == 'JNDI'" >
+										<md-input-container flex="90" >
 											<label>{{translate.load("sbi.datasource.type.jndi.name")}}</label>
 											<input ng-model="selectedDataSource.jndi" ng-readonly="readOnly">
 										</md-input-container>
-										<md-icon ng-click="showJdniInfo()" md-font-icon="fa fa-info-circle fa-lg"></md-icon>
+										<md-icon ng-click="showJdniInfo()" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
 									</div>
 								</md-card>
 							</form>

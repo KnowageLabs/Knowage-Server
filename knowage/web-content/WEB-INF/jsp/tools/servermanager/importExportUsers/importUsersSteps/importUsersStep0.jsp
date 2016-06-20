@@ -18,18 +18,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <div  layout="column" layout-wrap>
-						<div layout="row" layout-wrap>
+						<div layout="row" layout-wrap layout-align="center center">
 			
 							<div flex >
 								<file-upload flex id="AssociationFileUploadImport" ng-model="IEDConf.fileImport"></file-upload>
 							</div>
 							
-							<md-input-container class="small counter"> 
 								<md-button ng-click="upload($event)" aria-label="upload Users"
-									class="md-fab md-mini"  > <md-icon
+									class="md-fab internalFab md-knowage-theme md-mini"  > <md-icon
 									md-font-icon="fa fa-upload fa-2x"  >
 								</md-icon> </md-button>
-							</md-input-container>
 							
 							
 								

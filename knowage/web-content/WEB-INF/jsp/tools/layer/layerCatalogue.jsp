@@ -104,67 +104,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				md-on-select="setTab('Layer')" md-active="isSelectedTab('Layer')">
 			<md-content flex layout-fill
 				class=" ToolbarBox miniToolbar noBorder mozTable ">
-			<md-card>
-			<div layout="row" layout-wrap>
+			<md-card layout-padding>
 				
-				<div flex=25>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.glossary.category")}}</label>
+				<div flex="100">
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.glossary.category")}}</label>
 					<md-select aria-label="aria-label" ng-model="selectedLayer.category_id">
 						<md-option ng-repeat="ct in category" value="{{ct.VALUE_ID}}">{{ct.VALUE_NM}}</md-option>
 					</md-select> </md-input-container>
 				</div>
-			</div>
 
-			<div layout="row" layout-wrap>
-				<!--<div flex=3 style="margin-top: 30px;">
-						<md-icon md-font-icon="fa fa-bookmark"></md-icon>
-					</div>
-					-->
 				<div flex=100>
-					<md-input-container class="small counter" class="small counter">
+					<md-input-container class="md-block" class="small counter">
 					<label>{{translate.load("sbi.behavioural.lov.details.label")}}</label>
 					<input class="input_class" ng-model="selectedLayer.label" required
 						maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 				</div>
-			</div>
-			<div layout="row" layout-wrap>
-				<!--<div flex=3 style="margin-top: 30px;">
-						<md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
-					</div>
-					  -->
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.behavioural.lov.details.name")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.behavioural.lov.details.name")}}</label>
 					<input class="input_class" ng-model="selectedLayer.name" required
 						maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 				</div>
-			</div>
-			<div layout="row" layout-wrap>
-				<!--<div flex=3 style="margin-top: 30px;">
-						<md-icon md-font-icon="fa fa-file-text-o"></md-icon>
-					</div>
-					  -->
+
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.descprition")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.tools.layer.props.descprition")}}</label>
 					<input class="input_class" ng-model="selectedLayer.descr"
 						maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 				</div>
-			</div>
 
-			<div layout="row" layout-wrap>
-				<md-input-container class="small counter"> <md-checkbox
+				<md-input-container class="md-block"> <md-checkbox
 					ng-model="selectedLayer.baseLayer" aria-label="BaseLayer">
 					{{translate.load("sbi.tools.layer.baseLayer")}}
 				</md-checkbox> </md-input-container>
 
-			</div>
-			<div layout="row" layout-wrap>
-				<!-- 
-					<div flex=3 style="margin-top: 30px;">
-						<md-icon md-font-icon="fa fa-caret-square-o-down"></md-icon>
-					</div>
-					 -->
+
 				<div flex=25>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.type")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.tools.layer.props.type")}}</label>
 					<md-select
 						placeholder='{{translate.load("sbi.generic.select")}} {{translate.load("sbi.tools.layer.props.type")}}'
 						ng-required="isRequired" ng-mouseleave="isRequired=true"
@@ -173,62 +147,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						ng-repeat="type in listType" value="{{type.value}}">{{type.label}}</md-option>
 					</md-select> </md-input-container>
 				</div>
-			</div>
 			<div style="margin-top: 0px; margin-left: 15px;">
 				<md-select-label ng-show="!flagtype">{{selectedLayer.type}}</md-select-label>
 			</div>
-			<div layout="row" layout-wrap>
-				<!-- 
-					<div flex=3 style="margin-top: 30px;">
-						<md-icon md-font-icon="fa fa-bookmark"></md-icon>
-					</div>
-					 -->
 
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.label")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.tools.layer.props.label")}}</label>
 					<input class="input_class" ng-model="selectedLayer.layerLabel"
 						required maxlength="100" ng-maxlength="100" md-maxlength="100">
 					</md-input-container>
 				</div>
-			</div>
-			<div layout="row" layout-wrap>
-				<!--  
-					<div flex=3 style="margin-top: 30px;">
-						<md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
-					</div>
-					-->
+
+
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.name")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.tools.layer.props.name")}}</label>
 					<input class="input_class" ng-model="selectedLayer.layerName"
 						required maxlength="100" ng-maxlength="100" md-maxlength="100">
 					</md-input-container>
 				</div>
-			</div>
-			<div layout="row" layout-wrap>
-				<!--
-					<div flex=3 style="margin-top: 30px;">
-						<md-icon md-font-icon="fa fa-tag"></md-icon>
-					</div>
-					  -->
+
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.id")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.tools.layer.props.id")}}</label>
 					<input class="input_class" ng-model="selectedLayer.layerIdentify"
 						required maxlength="100" ng-maxlength="100" md-maxlength="100">
 					</md-input-container>
 				</div>
-			</div>
 
-			<div layout="row" layout-wrap>
-				<!-- 
-					<div flex=3 style="margin-top: 30px;">
-						<md-icon md-font-icon="fa fa-spinner"></md-icon>
-					</div> -->
+
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.order")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.tools.layer.props.order")}}</label>
 					<input class="input_class" ng-model="selectedLayer.layerOrder"
 						required type="number" min="0"> </md-input-container>
 				</div>
-			</div>
 			<br>
 			<div layout="row" layout-wrap ng-show="pathFileCheck">
 				<p>
@@ -243,7 +193,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 					  -->
 				<div flex=100>
-					<md-input-container class="small counter"> <input
+					<md-input-container class="md-block"> <input
 						id="layerFile" ng-model="selectedLayer.layerFile" type="file"
 						fileread="selectedLayer.layerFile" accept=".json"> </md-input-container>
 
@@ -257,7 +207,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 					 -->
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.url")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.tools.layer.props.url")}}</label>
 					<input class="input_class" placeholder="Es:http://www.google.it"
 						type="url" ng-model="selectedLayer.layerURL" required
 						maxlength="500" ng-maxlength="500" md-maxlength="500"> </md-input-container>
@@ -271,7 +221,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<md-icon md-font-icon="fa fa-cogs"></md-icon>
 					</div>  -->
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.options")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.tools.layer.props.options")}}</label>
 					<input class="input_class" ng-model="selectedLayer.layerOptions"
 						required maxlength="100" ng-maxlength="100" md-maxlength="100">
 					</md-input-container>
@@ -282,7 +232,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<md-icon md-font-icon="fa fa-ellipsis-v"></md-icon>
 					</div>  -->
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.params")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.tools.layer.props.params")}}</label>
 					<input class="input_class" ng-model="selectedLayer.layerParams"
 						required maxlength="100" ng-maxlength="100" md-maxlength="100">
 					</md-input-container>

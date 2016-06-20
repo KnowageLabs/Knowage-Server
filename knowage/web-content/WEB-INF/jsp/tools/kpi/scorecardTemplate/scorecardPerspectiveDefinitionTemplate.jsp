@@ -32,12 +32,12 @@
 				</md-button>
 			</div>
 		</md-toolbar>
-		<div layout="row" layout-padding layout-wrap  ng-cloak >
+		<div layout="row"  layout-wrap  ng-cloak >
 			
 			
-			<md-whiteframe class="md-whiteframe-2dp scorecardPrespectiveCard" layout-margin layout="column"    ng-repeat="target in currentPerspective.targets">
+			<md-card class="md-whiteframe-2dp scorecardPrespectiveCard"  layout="column"    ng-repeat="target in currentPerspective.targets">
 				<md-toolbar>
-					<div class="md-toolbar-tools" layout-fill layout="column">
+					<div class="md-toolbar-tools" layout-fill layout="row">
 						<kpi-semaphore-indicator indicator-color="target.status"  ></kpi-semaphore-indicator>
 			       		<label>{{target.name}}</label>
 			       		<span flex></span>
@@ -64,12 +64,12 @@
 			       		
 			    	</div>
 		    	</md-toolbar>
-		    	<md-content layout-padding layout="row" >
+		    	<md-card-content layout-padding layout="row" >
 		    		
 		    			<b layout-padding class="lh30">{{translate.load('sbi.generic.kpi')}}</b>
 		    			<kpi-semaphore-indicator flex ng-repeat="groupedKpi in target.groupedKpis" indicator-color="groupedKpi.status" indicator-value="groupedKpi.count"></kpi-semaphore-indicator>
 
-		    	</md-content>
+		    	</md-card-content>
 			</md-whiteframe> 
 			 
 		</div>

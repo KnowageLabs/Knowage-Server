@@ -106,37 +106,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <form id="businessModelForm">
           <md-card>
 	        <md-card-content>
-		        <md-input-container class="small counter" >
+	        <div flex=100>
+		        <md-input-container class="md-block" >
 					<label>{{translate.load("sbi.ds.name")}}</label>
 					<input ng-change="checkChange()" ng-model="selectedBusinessModel.name" required
 						 ng-maxlength="100"> 
 				</md-input-container>
+				</div>
 				
-				<md-input-container class="small counter">
+				<div flex=100>
+				<md-input-container class="md-block">
 					<label>{{translate.load("sbi.ds.description")}}</label>
 					<input ng-model="selectedBusinessModel.description"
 						ng-maxlength="100" ng-change="checkChange()"> 
 				</md-input-container>
+				</div>
 				
-				<md-input-container class="small counter"> 
+				<div flex=100>
+				<md-input-container class="md-block"> 
 					<label>{{translate.load("sbi.ds.catType")}}</label>
 				   <md-select  aria-label="aria-label"
 				    ng-model="selectedBusinessModel.category" ng-change="checkChange()"> <md-option
 				    ng-repeat="c in listOfCategories" value="{{c.VALUE_ID}}">{{c.VALUE_NM}} </md-option>
 				   </md-select> 
 				</md-input-container>
+				</div>
 				
-				<md-input-container class="small counter"> 
+				<div flex=100>
+				<md-input-container class="md-block"> 
 					<label>{{translate.load("sbi.ds.dataSource")}}</label>
 				       <md-select  aria-label="aria-label"
 				        ng-model="selectedBusinessModel.dataSourceLabel" ng-change="checkChange()"> <md-option
 				        ng-repeat="d in listOfDatasources" value="{{d.DATASOURCE_LABEL}}">{{d.DATASOURCE_LABEL}} </md-option>
 				       </md-select> 
 				</md-input-container>
+				</div>
 				
-				<div layout="row" layout-wrap>
-					<label layout-align="center center" class="buttonLabel">{{translate.load("sbi.ds.file.upload.button")}}:</label>
-      				<file-upload  ng-model="fileObj" id="businessModelFile" ng-change="checkChange()"flex></file-upload>
+				<div layout="row" layout-wrap layout-align="start center">
+						<label  flex class="buttonLabel">{{translate.load("sbi.ds.file.upload.button")}}:</label>
+      				<file-upload  flex ng-model="fileObj" id="businessModelFile" ng-change="checkChange()"flex></file-upload>
       				 <md-button class="md-fab md-primary md-hue-2" aria-label="Profile" ng-click="createBusinessModels()" ng-disabled="selectedBusinessModel.dataSourceLabel==undefined">
 						<md-icon md-font-icon="fa fa-pencil fa-2x"></md-icon>
 					</md-button>
@@ -145,7 +153,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       				<!-- ng-click="fileChange();checkChange()"  -->
       				<%
 					if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_LIFECYCLE_MANAGEMENT)) {%>
-      				<md-input-container flex="30">
+      				<md-input-container flex>
 			          <md-switch ng-model="selectedBusinessModel.modelLocked" ng-change="businessModelLock()">{{ selectedBusinessModel.modelLocked ? translate.load("sbi.bm.unlockModel") : translate.load("sbi.bm.lockModel")}}</md-switch>
 			        </md-input-container>
 					<%} %>
@@ -156,8 +164,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-card-content>
 	      </md-card>
 	      <md-card>
-	      <md-card-title>
-	      	<md-card-title-text>
+
 	      	<md-toolbar class="secondaryToolbar">
 		      <div class="md-toolbar-tools">
 		        <h2>
@@ -166,8 +173,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		   
 		      </div>
 		    </md-toolbar>
-          	</md-card-title-text>
-	      </md-card-title>
+
 	      <md-card-content>
 	      	<div layout="column" layout-margin>
 		      	<div  layout="row">
@@ -195,10 +201,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      	</div>
 	      	 
 	      	 <md-divider layout-margin></md-divider>
-	      	<div layout="row" layout-wrap>
-				<label flex="20" layout-align="center center" class="buttonLabel">{{translate.load("sbi.metadata.cwm.import.file.upload")}}:</label>
+	      	<div layout="row" layout-wrap layout-align="start center">
+				<label flex  class="buttonLabel">{{translate.load("sbi.metadata.cwm.import.file.upload")}}:</label>
 		        <file-upload flex ng-model="fileObjCWM" id="cwmFile" ng-click="fileCWMChange();checkCWMChange()"></file-upload>
-            	<div flex="20">
+            	<div flex>
                		 <md-button  ng-click="importCWMFile(selectedBusinessModel.id)" ng-disabled="bmCWMImportingShow" class="md-raised">{{translate.load("sbi.metadata.cwm.import.button")}}</md-button>
             	</div>
                	
@@ -216,8 +222,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      
 	      
 	      <md-card layout="column">
-	      <md-card-title>
-	      	<md-card-title-text>
 	      	<md-toolbar class="secondaryToolbar">
 		      <div class="md-toolbar-tools">
 		        <h2>
@@ -226,8 +230,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		   
 		      </div>
 		    </md-toolbar>
-          	</md-card-title-text>
-	      </md-card-title>
+
 	      <md-card-content layout="column">
 	      	
 				<md-radio-group ng-model="bmVersionsActive" ng-change="checkChange()">

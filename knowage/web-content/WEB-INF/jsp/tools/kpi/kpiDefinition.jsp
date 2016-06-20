@@ -106,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 </head>
-<body>
+<body class="kn-kpi-definition">
 	<angular-list-detail ng-controller="kpiDefinitionMasterController" full-screen=true>
 		<list label="translate.load('sbi.kpi.list')" ng-controller="listController" new-function="addKpi" >
 		<angular-table flex

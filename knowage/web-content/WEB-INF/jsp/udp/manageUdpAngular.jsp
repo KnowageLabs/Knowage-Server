@@ -58,52 +58,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				show-save-button="showMe" show-cancel-button="showMe">
 				 <form name="udpForm">
 				 	<md-card>
-				 		<md-content layout="row" layout-align="center center">
-							<md-input-container flex="90">
+				 		<md-card-content layout-wrap layout="row">
+				 			<div flex="100">
+							<md-input-container class="md-block">
 			  					<label>{{translate.load("sbi.udp.label")}}</label>
 			  					<input ng-model="property.label" required  type="text" ng-change="checkChange()">
 			  				</md-input-container>
-		  				</md-content>
-		  				<md-content layout="row" layout-align="center center">
-			  				<md-input-container flex="90">	
+			  				</div>
+			  				<div flex="100">
+			  				<md-input-container class="md-block">	
 			  					<label>{{translate.load("sbi.udp.name")}}</label>
 			  					<input ng-model="property.name" required  type="text" ng-change="checkChange()">
 							</md-input-container>
-						</md-content>
-						<md-content layout="row" layout-align="center center">
-							<md-input-container flex="90">	
+							</div>
+	
+							<div flex="100">
+							<md-input-container class="md-block">	
 			  					<label>{{translate.load("sbi.udp.description")}}</label>
 			  					<textarea ng-model="property.description" md-maxlength="2500" ng-change="checkChange()"></textarea>
 							</md-input-container>
-						</md-content>
-						<md-content layout="row" layout-align="center center">
-							<md-input-container flex="90">
+							</div>
+							<div flex="100">
+							<md-input-container class="md-block">
 						       <md-checkbox ng-model="property.multivalue" aria-label="Checkbox 1" ng-change="checkChange()">
 						         {{translate.load("sbi.udp.multivalue")}}
 						     	</md-checkbox>
 						     </md-input-container>
-					     </md-content>
-					     <md-content layout="row" layout-align="start center">
-						     <md-content flex="5"></md-content>
-						     <md-input-container flex="50">
+							</div>
+						     <md-input-container flex="50" class="md-block">
 						     	<label>{{translate.load('sbi.udp.type')}}</label>
-						        <md-select placeholder="{{translate.load('sbi.udp.type')}}" ng-model="property.type" required ng-change="checkChange()">
+						        <md-select flex placeholder="{{translate.load('sbi.udp.type')}}" ng-model="property.type" required ng-change="checkChange()">
 								   <md-option value="Boolean">Boolean</md-option>
 								   <md-option value="Text">Text</md-option>
 								   <md-option value="Integer">Integer</md-option>
 								</md-select>
-			  				 </md-input-container>
-		  				 </md-content>
-		  				 <md-content layout="row" layout-align="start center">
-		 			     	 <md-content flex="5"></md-content>
-		 			     	 <md-input-container flex="50">
+								</md-input-container>
+		 			     	 <md-input-container flex="50" class="md-block">
 		 			     	 	<label>{{translate.load('sbi.udp.family')}}</label>
-						        <md-select placeholder="{{translate.load('sbi.udp.family')}}" ng-model="property.family" required ng-change="checkChange()">
+						        <md-select flex placeholder="{{translate.load('sbi.udp.family')}}" ng-model="property.family" required ng-change="checkChange()">
 								   <md-option value="Model">Model</md-option>
 								   <md-option value="Kpi">Kpi</md-option>
 			  					</md-select>
 		  					 </md-input-container>
-	  					 </md-content>
+	  					 </md-card-content>
   					 </md-card>
 				 </form>
 			</detail>

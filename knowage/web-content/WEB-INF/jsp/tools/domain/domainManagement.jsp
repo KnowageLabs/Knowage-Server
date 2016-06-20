@@ -57,36 +57,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 			<form name="domainForm">
 			 		<md-content layout="row" layout-align="center center" class="config-content-detail">
 						<md-card flex="50" layout="column" layout-align="center center">
+							<md-card-content>
 							<md-content layout="row" layout-align="center center">
-								<md-input-container flex="80"> 
+								<md-input-container flex="100"> 
 									<label>{{translate.load("sbi.domain.managedomains.fields.valuecd")}}</label> 
 									<input ng-model="domain.valueCd" required type="text"> 
 								</md-input-container>
 							</md-content>
 							<md-content layout="row" layout-align="center center">
-								<md-input-container flex="80"> 
+								<md-input-container flex="100"> 
 									<label>{{translate.load("sbi.domain.managedomains.fields.valuenm")}}</label> 
 									<input	ng-model="domain.valueName" required type="text"> 
 								</md-input-container>
 							</md-content>
 							<md-content layout="row" layout-align="center center">
-								<md-input-container flex="80"> 
+								<md-input-container flex="100"> 
 									<label>{{translate.load("sbi.domain.managedomains.fields.domaincd")}}</label> 
 									<input ng-model="domain.domainCode" required type="text"> 
 								</md-input-container>
 							</md-content>
 							<md-content layout="row" layout-align="center center">
-								<md-input-container flex="80"> 
+								<md-input-container flex="100"> 
 									<label>{{translate.load("sbi.domain.managedomains.fields.domainnm")}}</label> 
 									<input ng-model="domain.domainName" required type="text"> 
 								</md-input-container>
 							</md-content>
 							<md-content layout="row" layout-align="center center">
-								<md-input-container flex="80"> 
+								<md-input-container flex="100"> 
 									<label>{{translate.load("sbi.domain.managedomains.fields.valueds")}}</label> 
 									<input ng-model="domain.valueDescription" required type="text"> 
 								</md-input-container>
 							</md-content>
+							</md-card-content>
 						</md-card>
 					</md-content>
 	 			</form>

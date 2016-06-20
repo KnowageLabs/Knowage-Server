@@ -57,7 +57,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  <div layout="row" ng-if="!ctrl.isUndefined(ctrl.data)">
 			<md-card flex="50">
 
-				<md-toolbar class="md-knowage-theme"> <div class="md-toolbar-tools"> {{ctrl.translate.load("cache.manager.runtimeInformation")}}</div> </md-toolbar>
+				<md-toolbar class="md-knowage-theme"> 
+					<div class="md-toolbar-tools"> {{ctrl.translate.load("cache.manager.runtimeInformation")}}</div> 
+				</md-toolbar>
 					<md-card-content layout="row">
 						<div flex="50">
 					
@@ -84,36 +86,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-card>
 			
 			<md-card flex="50">
-				<md-toolbar class="md-knowage-theme"> <div class="md-toolbar-tools"> {{ctrl.translate.load("cache.manager.generalSettings")}} <div flex></div> <md-button ng-click="ctrl.saveFunction()"  ng-disabled="manageForm.$invalid">{{ctrl.translate.load("cache.manager.save")}}</md-button> <md-button ng-click="ctrl.discardFunction()">{{ctrl.translate.load("cache.manager.discard")}}</md-button> </div> </md-toolbar>
+				<md-toolbar> <div class="md-toolbar-tools"> {{ctrl.translate.load("cache.manager.generalSettings")}} <div flex></div> <md-button ng-click="ctrl.saveFunction()"  ng-disabled="manageForm.$invalid">{{ctrl.translate.load("cache.manager.save")}}</md-button> <md-button ng-click="ctrl.discardFunction()">{{ctrl.translate.load("cache.manager.discard")}}</md-button> </div> </md-toolbar>
 				<md-card-content layout="column">		
 				<form layout="row" layout-wrap name=manageForm >
-					<md-switch class="md-primary" md-no-ink ng-model="ctrl.variableEnabled" flex="50" ng-disabled="true"> {{ctrl.translate.load("cache.manager.disabledEnabled")}} </md-switch>
+					<md-switch class="md-primary" md-no-ink ng-model="ctrl.variableEnabled" flex="100" ng-disabled="true"> {{ctrl.translate.load("cache.manager.disabledEnabled")}} </md-switch>
 										
-					<div flex="50">
+					<div flex="50" layout="column">
 						
-						<md-input-container>
+						<md-input-container class="md-block">
             				<label>{{ctrl.translate.load("cache.manager.prefixForCacheTablesName")}}</label>
             				<input ng-model="ctrl.variableNamePrefix" >
           				</md-input-container>
 						
-						<md-input-container>
+						<md-input-container class="md-block">
             				<label>{{ctrl.translate.load("cache.manager.maximumPercentOfCacheCleaningQuota")}}</label>
             				<input ng-model="ctrl.variableLimitForClean" type="number" min="0" max="100">
           				</md-input-container>
 
-					    <md-input-container>
+					    <md-input-container class="md-block">
 					    	<label>{{ctrl.translate.load("cache.manager.frequencyOfCleaningDaemon")}}</label>
 					       		<md-select ng-model="ctrl.variableSchedulingFullClean">
 					         		<md-option ng-repeat="val in ctrl.schedulingValues" ng-value="val">{{val}}</md-option>
 					       		</md-select>
 					    </md-input-container>
 				<!-- New -->		
-						<md-input-container>
+						<md-input-container class="md-block">
             				<label>{{ctrl.translate.load("cache.manager.ttlForCachedDataset")}}</label>
             				<input ng-model="ctrl.variableLastAccessTtl" type="number">
           				</md-input-container>
 
-					    <md-input-container>
+					    <md-input-container class="md-block">
 					    	<label>{{ctrl.translate.load("cache.manager.tToCreateTempTable")}}</label>
 					       	<input ng-model="ctrl.variableCreateAndPersistTimeout" type="number">
 					    </md-input-container>
@@ -121,19 +123,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 					</div>
 		
-					<div flex="50">
-						<md-input-container>
+					<div flex="50" layout="column">
+						<md-input-container class="md-block">
             				<label>{{ctrl.translate.load("cache.manager.totalBytesAvailableForCache")}}</label>
             				<input ng-model="ctrl.variableSpaceAvailable" type="number" min="0">
            				
           				</md-input-container>
           				
-          				<md-input-container>
+          				<md-input-container class="md-block">
             				<label>{{ctrl.translate.load("cache.manager.cacheDimensionSingleDataset")}}</label>
             				<input ng-model="ctrl.variableCacheLimitForStore" type="number" min="0" max="100">
           				</md-input-container>
 
-          				<md-input-container>
+          				<md-input-container class="md-block">
 					    	<label>{{ctrl.translate.load("cache.manager.targetDatasource")}}</label>
 					       		<md-select ng-model="ctrl.variableSelectedDataSource">
 					         		<md-option ng-repeat="dataSource in ctrl.filteredDataSources" ng-value="dataSource">{{dataSource.label}}</md-option>
@@ -141,17 +143,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					    </md-input-container>
 					 
 			<!-- New -->
-						<md-input-container>
+						<md-input-container class="md-block">
             				<label>{{ctrl.translate.load("cache.manager.timeToLock")}}</label>
             				<input ng-model="ctrl.variableSqldbCacheTimeout" type="number">
           				</md-input-container>
 
-					    <md-input-container>
+					    <md-input-container class="md-block">
 					    	<label>{{ctrl.translate.load("cache.manager.hazelcastTimeToLock")}}</label>
 					       	<input ng-model="ctrl.variableHazelcastTimeout" type="number">
 					    </md-input-container>		    
 					    
-					    <md-input-container>
+					    <md-input-container class="md-block">
 					    	<label>{{ctrl.translate.load("cache.manager.hazelcastTimeToReleaseLock")}}</label>
 					       	<input ng-model="ctrl.variableHazelcastLeaseTime" type="number">
 					    </md-input-container>	

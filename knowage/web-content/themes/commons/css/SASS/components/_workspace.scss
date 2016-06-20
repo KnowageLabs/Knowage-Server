@@ -289,7 +289,11 @@
 	 }
 
 	 .documentCard {
+	 	md-card-title {
+	 		padding: 4px;
+	 	}
 	 	md-card-actions {
+	 		margin: 0;
 	 		md-icon.shared {
 	 			color: #c70751;
 	 		}

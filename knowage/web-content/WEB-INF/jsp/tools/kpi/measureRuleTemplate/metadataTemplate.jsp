@@ -20,11 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <md-content ng-controller="measureRuleMetadataController"  layout-fill>
 
 <div layout="row" layout-wrap> 
-<md-whiteframe class="md-whiteframe-3dp metadataTabs" layout-margin ng-repeat=" mtdValue in currentRule.ruleOutputs ">
+<md-card class="md-whiteframe-3dp metadataTabs" ng-repeat=" mtdValue in currentRule.ruleOutputs ">
 
-  <div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircularMetadata" layout-fill>
-     	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
- 	</div>
+  
   <md-toolbar>
       <div class="md-toolbar-tools"  class="alertIconMissingAlias" >  
          <span ng-if="::(!aliasExtist(mtdValue.alias) && !aliasUsedByMeasure(mtdValue.alias))">
@@ -48,8 +46,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       
 		 
 </md-toolbar> 
-<md-content layout-margin>
- <md-input-container >
+<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircularMetadata" layout-fill>
+     	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
+ 	</div>
+<md-card-content>
+ <md-input-container class="md-block">
         <label> {{translate.load("sbi.generic.tipology")}}</label>
         <md-select ng-model="mtdValue.type" ng-model-options="{trackBy: '$value.valueCd'}" ng-disabled="mtdValue.isBlockedType" >
           <md-option ng-repeat="tipolo in tipologiesType" ng-value={{tipolo}}>
@@ -83,8 +84,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </md-autocomplete>      
       
       
-      </md-content>
-</md-whiteframe>
+      </md-card-content>
+</md-card>
 
  </div>  
   </md-content> 

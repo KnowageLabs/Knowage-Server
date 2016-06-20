@@ -3,6 +3,10 @@
 		position:absolute;
 	}
 
+	md-tabs-canvas {
+    	background-color: $tabBackground;
+	}
+
 	div.importSteps>md-content {
 		    height: calc(100% - 25px);
 	}
@@ -30,5 +34,27 @@
 
 	.mainContainer {
 		background-color: $importExportBackground;
+	}
+	md-radio-button {
+		display: flex;
+		align-items: center;
+	}
+
+	.internalFab.md-knowage-theme {
+		top:-10px !important;
+	}
+
+	#AssociationFileUploadImport {
+		padding: 0;
+	}
+	#fileUploadImport {
+		padding: 0;
+	}
+	component-tree {
+		md-checkbox {
+			margin-bottom: 0;
+			display: flex;
+			align-items: center;
+		}
 	}
 }

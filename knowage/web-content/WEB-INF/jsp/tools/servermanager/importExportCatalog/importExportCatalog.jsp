@@ -58,9 +58,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-tabs md-select="ImportExport" layout-fill class="absolute">
 				<md-tab label="Export" md-on-select="setTab('Export')" md-active="isSelectedTab('Export')"> 
 			
-					<md-tab-body layout-fill><md-card>
-						<md-content layout-fill layout="column" layout-wrap>
-							<div layout="row" layout-wrap>
+					<md-tab-body layout-fill>
+					<md-card>
+						<md-card-content layout-fill layout="column" layout-wrap>
+							<div layout="row" layout-wrap layout-align="center center">
 								<div flex>
 										<md-input-container flex class="md-block">
 										<label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
@@ -68,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									</md-input-container>
 									
 								</div>
-								<div flex=5>
+								<div>
 									<md-input-container class="small counter"> <md-button
 										ng-show="!wait" ng-click="prepare($event)"
 										aria-label="download Dataset" class="md-fab md-mini">
@@ -91,17 +92,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</angular-table>
 							</div>
 
-						</md-content> </md-card>
+						</md-card-content> 
+						</md-card>
 					</md-tab-body> 
 				</md-tab> 
 				<md-tab label="Import" md-on-select="setTab('Import')" id="importTab" md-active="isSelectedTab('Import')">
 					<md-tab-body layout-fill ><md-card>
-					<md-content ng-cloak>
+					<md-toolbar  class="secondaryToolbar miniheadimportexport">
+						<div class="md-toolbar-tools">
+							<h2 class="md-flex" >{{translate.load("sbi.importusers.import")}}</h2>
+						</div>
+					</md-toolbar>
+					<md-card-content ng-cloak>
 					
-					
-					<div layout="row" layout-wrap>
-								<h3>{{translate.load("sbi.importusers.import")}}</h3>
-							</div>
 							<div layout="row" layout-wrap >
 								<file-upload flex id="AssociationFileUploadImport" ng-model="importFile"></file-upload>
 								<md-button ng-click="upload($event)" aria-label="upload Menu"
@@ -118,7 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<md-button class="md-raised" ng-click="save($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>
 							</div>
 				
-					<div layout="column" layout-fill>
+					<div layout="column">
 						<md-checkbox ng-show="exportedDataset.length>0"
 							ng-checked="exists('DatasetImported',listTypeImported)"
 							ng-click="toggle('DatasetImported',listTypeImported)">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>
@@ -133,7 +136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</angular-table>
 						</div>
 					</div>
-					</md-content></md-card>
+					</md-card-content></md-card>
 					</md-tab-body>
 			</md-tab>
 

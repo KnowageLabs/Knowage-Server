@@ -88,37 +88,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-tab-label>{{translate.load("SBISet.export","component_impexp_messages");}}</md-tab-label>
 				<md-tab-body> 
 				<md-card>
-				<md-content layout="column" layout-wrap ng-controller="userExportController" >
-		<div layout="row" layout-wrap >
-			<div flex >
-				<md-input-container class="small counter"> <label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
-				<input class="input_class" ng-model="nameExport" required
-					maxlength="100" ng-maxlength="100" md-maxlength="100" /> </md-input-container>
+				<md-card-content layout="column" ng-controller="userExportController" >
+		<div layout="row" layout-align="center center" layout-wrap>
+			<div flex flex-sm="100" flex-xs="100">
+				<md-input-container class="md-block"> 
+					<label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
+					<input class="input_class" ng-model="nameExport" required
+					maxlength="100" ng-maxlength="100" md-maxlength="100" /> 
+				</md-input-container>
 			</div>
-			
-				<md-checkbox ng-model="exportCheckboxs.exportPersonalFolder"
+			<div flex-sm="100" flex-xs="100" layout="row" layout-align="center center">
+				<md-checkbox ng-model="exportCheckboxs.exportPersonalFolder"  class="md-block"
 					aria-label="Checkbox 1"><h4>{{translate.load("sbi.impexpusers.exportPersonalFolder");}}</h4></md-checkbox>
 			
 			
-				<md-checkbox ng-if="exportCheckboxs.exportPersonalFolder"
+				<md-checkbox ng-if="exportCheckboxs.exportPersonalFolder"  class="md-block"
 					ng-model="exportCheckboxs.exportSubObj" aria-label="Checkbox 1"><h4>{{translate.load("SBISet.importexport.expSubView","component_impexp_messages");}}</h4></md-checkbox>
 			
 			
-				<md-checkbox  ng-if="exportCheckboxs.exportPersonalFolder"
+				<md-checkbox  ng-if="exportCheckboxs.exportPersonalFolder"  class="md-block"
 					ng-model="exportCheckboxs.exportSnapshots" aria-label="Checkbox 1"><h4>{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</h4></md-checkbox>
 			
-			<div>
-				<md-input-container class="small counter"> <md-button
+ 				<md-button 
 					ng-show="!wait" ng-click="prepare($event)"
-					aria-label="download Users" class="md-fab md-mini"> <md-icon
+					aria-label="download Users" class="md-fab md-mini internalFab"> <md-icon
 					md-font-icon="fa fa-download fa-2x"> </md-icon> </md-button>
 				<div ng-show="wait">
 					<i class="fa fa-spinner fa-spin fa-4x"></i>
 				</div>
-
-				<!--  <md-progress-circular ng-show="wait" md-mode="indeterminate"></md-progress-circular>-->
-				</md-input-container>
-			</div>
+		</div>
 		</div>
 
 		<div id="lista">
@@ -137,7 +135,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</div>
 					</div>
 			
-					</md-content>
+					</md-card-content>
 					</md-card>
 					</md-tab-body>
 					
@@ -146,10 +144,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tab	id="userImportTab"  >
 					<md-tab-label>{{translate.load("SBISet.import","component_impexp_messages");}}</md-tab-label>
 					<md-tab-body> 
-					<md-card>
-					<md-content ng-controller="userImportController"  layout-wrap layout-fill ng-cloak ng-switch="selectedStep">
-						<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl'>
+					<md-card ng-controller="userImportController" ng-switch="selectedStep">
+					<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl'>
 						</bread-crumb>
+					<md-card-content   layout-wrap ng-cloak >
+						
 
 						<div class="importSteps" flex ng-controller="importUserControllerStep0" ng-switch-when="0"><%@include	file="./importUsersSteps/importUsersStep0.jsp"%></div>
 						<div class="importSteps" flex ng-controller="importUserControllerStep1" ng-switch-when="1"><%@include	file="./importUsersSteps/importUsersStep1.jsp"%></div>
@@ -160,7 +159,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div class="importSteps" flex ng-controller="importControllerStep4" ng-switch-when="5" ng-init="importType='user'"><%@include	file="../importExportDocuments/importDocumentsSteps/importDocumentsStep4.jsp"%></div>
 
 
-					</md-content>
+					</md-card-content>
 					</md-card>
 				</md-tab-body> 
 				</md-tab>

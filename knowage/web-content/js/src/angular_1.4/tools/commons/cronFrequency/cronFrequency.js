@@ -32,6 +32,7 @@ angular.module('cron_frequency', [ 'ngMaterial','sbiModule','angular_time_picker
 	  return {
 	    templateUrl: currentScriptPathCF.substring(0, currentScriptPathCF.lastIndexOf('/') + 1) +'/template/cronFrequencyTemplate.html',
 	    controller: cronFrequencyFunction,
+	    replace: true,
 	    scope: {
 	    	ngModel:'=',
 	    	id:"@",

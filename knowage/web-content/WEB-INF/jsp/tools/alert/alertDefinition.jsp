@@ -83,33 +83,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		   <p flex>{{translate.load("sbi.alert.error.expired.cron.interval")}}</p>
 		   <md-button    ng-click="closeExpired()"  >  {{translate.load("sbi.general.ok")}} </md-button>
  	 	</md-whiteframe>
-      	<div layout="row" layout-margin>
+      	<md-card>
+      		<md-card-content layout="row" >
+      		<div flex="100" flex-gt-sm="50">
 			<md-input-container flex class="md-block">
 				<label>{{translate.load("sbi.generic.name")}}</label>
 			    <input ng-model="alert.name" >
 			</md-input-container>
-         
+			</div>
+         <div flex="100" flex-gt-sm="50" layout="row">
 			<md-input-container flex>
 				<label>{{translate.load("sbi.alert.listener")}}</label>
 				<md-select  ng-model="alert.alertListener" ng-model-options="{trackBy: '$value.id'}"  >
 					<md-option ng-value="listener" ng-repeat="listener in listeners" >{{ listener.name }}</md-option>
 				</md-select>  
 			</md-input-container>
-      	</div>
+			</div>
+			</md-card-content>
+      	</md-card>
       	
 	 	<cron-frequency ng-if="alert.frequency!=undefined" is-valid="isValidListenerCrono" ng-model=alert.frequency></cron-frequency> 
 
-  		<md-whiteframe style="background-color:rgb(255,255,255)" layout="row">
-	  		 <div flex-xs flex="50">
-		          <md-checkbox ng-model="alert.singleExecution" aria-label="CheckAlert">
-		            {{translate.load('sbi.alert.checkbox.name')}}
-		          </md-checkbox>
-		     </div>
-		     <md-input-container class="md-block" flex-gt-sm style = "width:70%;">
+  		<md-card>
+  			<md-card-content layout="row" layout-align="center center">
+  			<div flex="50"> 
+		     <md-input-container class="md-block" >
 		    	 <label>{{translate.load('sbi.alert.event.before.trigger')}}</label>
 		  		   	<input ng-model="alert.eventBeforeTriggerAction"  type="number" step="1" min="0"/>
 		     </md-input-container>
-  		</md-whiteframe>
+		     </div>
+	  		 <div flex="50">
+		          <md-checkbox ng-model="alert.singleExecution" class="md-block" aria-label="CheckAlert">
+		            {{translate.load('sbi.alert.checkbox.name')}}
+		          </md-checkbox>
+		     </div>
+		     
+		     </md-card-content>
+  		</md-card>
 
 
   		<action-maker flex ng-if="listenerIsSelected()" ng-model="alert.jsonOptions" template-url="alert.alertListener.template" is-valid="isValidListener"></action-maker>

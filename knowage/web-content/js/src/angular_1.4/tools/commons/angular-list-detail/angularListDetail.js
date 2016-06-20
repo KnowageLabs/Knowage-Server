@@ -19,7 +19,7 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 .directive('angularListDetail',
 		function($compile) {
 	return {
-		template:'<div  class="kn-list-detail" layout="row" layout-wrap layout-fill></div>',
+		template:'<div  class="kn-list-detail" layout="row" layout-wrap layout-fill><div class="blackOverlay" ng-if="listOverlay" ng-click="toggleList()"></div></div>',
 		controller : function($scope,sbiModule_translate,currentView) {
 						this.currentView=currentView;
 						$scope.translate=sbiModule_translate; 
@@ -55,11 +55,11 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 	}
 })
 .directive('list',
-		function($compile) {
+		function($compile,$rootScope) {
 	return {
-		template:'<div ng-hide="ALD_controller.fullScreen==true && ALD_controller.currentView.value!=\'list\'" class="md-container kn-list" layout="column" layout-wrap ng-class="(ALD_controller.fullScreen==true && ALD_controller.currentView.value==\'list\') ? \'flex\' : \'flex-40\'">'+
+		template:'<div ng-hide="ALD_controller.fullScreen==true && ALD_controller.currentView.value!=\'list\'" hide show-gt-sm class="md-container kn-list" layout="column" layout-wrap ng-class="{\'flex-100\':ALD_controller.fullScreen==true && ALD_controller.currentView.value==\'list\',\'flex-gt-sm-40\':ALD_controller.fullScreen!=true || ALD_controller.currentView.value!=\'list\', \'listOverlay\':listOverlay }">'+
 		'<md-toolbar>'+
-		'	<div class="md-toolbar-tools">'+
+		'	<div class="md-toolbar-tools" flex>'+
 		'	 <h2 flex>{{AWD_listController.title}}</h2>'+
 		'	<md-button  ng-disabled="AWD_listController.disableNewButton" aria-label="new" ng-if="newFuncName!=undefined && AWD_listController.showNewButton!=false" ng-click="newFuncName();" class="md-fab md-fab-top-right ">'+
 		' 	<md-icon md-font-icon="fa-plus" class="fa s32 md-primary md-hue-2" ></md-icon>'+
@@ -128,11 +128,11 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 .directive('detail',
 		function($compile) {
 	return {
-		template:'<div ng-hide="ALD_controller.fullScreen==true && ALD_controller.currentView.value!=\'detail\'"  flex class="md-container kn-detail" layout="column" layout-wrap>'+
+		template:'<div ng-hide="ALD_controller.fullScreen==true && ALD_controller.currentView.value!=\'detail\'" flex class="md-container kn-detail" layout="column" layout-wrap>'+
 		' <md-toolbar>'+
 		'	<div class="md-toolbar-tools">'+
 //		'		<md-button aria-label="back"  ng-if="ALD_controller.fullScreen==true" ng-click="ALD_controller.currentView.value=\'list\'" >  <md-icon md-font-icon="fa fa-arrow-left"></md-icon></md-button>'+
-		'		<h2 flex>{{AWD_detailController.title}}</h2>'+
+		'		<md-button hide-gt-sm class="md-icon-button" ng-click="toggleList()"><md-icon md-font-icon="fa fa-bars"></md-icon></md-button><h2 flex>{{AWD_detailController.title}}</h2>'+
 		'<span class="extraButtonContainer"></span>'+
 		'		<md-button aria-label="save" ng-disabled="AWD_detailController.disableSaveButton" ng-if="saveFuncName!=undefined && AWD_detailController.showSaveButton!=false" ng-click="saveFuncName()">{{translate.load("sbi.generic.update")}}</md-button>'+
 		'		<md-button aria-label="cancel" ng-disabled="AWD_detailController.disableCancelButton" ng-if="cancelFuncName!=undefined && AWD_detailController.showCancelButton!=false" ng-click="cancelFuncName()">{{translate.load("sbi.federationdefinition.template.button.close")}}</md-button>'+
@@ -231,7 +231,11 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 })
 
  
-function listControllerFunction($scope) {
+function listControllerFunction($scope,$rootScope) {
 }
-function detailControllerFunction($scope) {
+function detailControllerFunction($scope,$rootScope) {
+	$scope.listOverlay = false;
+	$scope.toggleList = function(){
+		$scope.listOverlay = !$scope.listOverlay;
+	}
 }

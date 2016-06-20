@@ -53,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 </head>
 
-<body class="bodyStyle" ng-app="crossDefinition" id="ng-app">
+<body class="bodyStyle kn-cross-navigation-definition" ng-app="crossDefinition" id="ng-app">
 
 <script type="text/ng-template" id="nodes_renderer1.html">
 <md-toolbar class="ternaryToolbar tree-node tree-node-content crossnavigation-parameter " ui-tree-handle layout="row">
@@ -124,8 +124,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </md-dialog>
 </script>
 
-	<angular-list-detail ng-controller="navigationController as ctrl"   >
-       <list label="translate.load('sbi.crossnavigation.lst')" new-function="ctrl.newNavigation" > <!-- Requires an instruction like $scope.translate = sbiModule_translate on myController -->
+	<angular-list-detail ng-controller="navigationController as ctrl" full-screen="true"  >
+       <list label="translate.load('sbi.crossnavigation.lst')" new-function="ctrl.newNavigation"> <!-- Requires an instruction like $scope.translate = sbiModule_translate on myController -->
 			<!-- navigations list -->
 			<angular-table 
 					flex
@@ -144,11 +144,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 		</list>
 		
-        <detail label="ctrl.detail.simpleNavigation?ctrl.detail.simpleNavigation.name:''" save-function="ctrl.saveFunc" cancel-function="ctrl.cancelFunc"> <!-- assuming that $scope.selectedItem stores the selected item on teh controller  -->
+        <detail label="ctrl.detail.simpleNavigation?ctrl.detail.simpleNavigation.name:'New navigation'" save-function="ctrl.saveFunc" cancel-function="ctrl.cancelFunc"> <!-- assuming that $scope.selectedItem stores the selected item on teh controller  -->
+			<md-card>
+			<md-card-content>
 			<form name="tsForm" novalidate >			
 				<div layout="row" layout-wrap>
 					<div flex="50">
-						<md-input-container > 
+						<md-input-container class="md-block"> 
 							<label>{{translate.load("sbi.crossnavigation.name");}}</label>
 							<input maxlength="100" type="text" ng-model="ctrl.detail.simpleNavigation.name" required > 
 							<div ng-messages="tsForm.ctrl.detail.simpleNavigation.name.$error" ng-show="tsForm.ctrl.detail.simpleNavigation.name.$dirty">
@@ -183,12 +185,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</div>
 						</md-toolbar>
 						<h3 ng-model="ctrl.detail.fromDoc"></h3>
-					    <div ui-tree="ctrl.treeOptions" id="tree1-root" data-nodrop-enabled="true" data-clone-enabled="true" ng-show="ctrl.detail.fromPars.length>0">
-					      <ol ui-tree-nodes="" ng-model="ctrl.detail.fromPars" data-nodrop-enabled="true">
-					        <li ng-repeat="par in ctrl.detail.fromPars" ui-tree-node ng-include="'nodes_renderer1.html'" ></li>
-					      </ol>
-					    </div>
-					    <div layout="row" flex="100" ng-if="ctrl.detail.simpleNavigation.fromDoc" >
+						<div layout="row" ng-if="ctrl.detail.simpleNavigation.fromDoc" >
 							<md-input-container flex> <label>{{translate.load("sbi.crossnavigation.fixedValue");}}</label>
 								<input maxlength="100" type="text" ng-model="ctrl.tmpfixedValue" > 
 							</md-input-container>
@@ -197,6 +194,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</md-icon> 
 							</md-button>
 						</div>
+					    <div ui-tree="ctrl.treeOptions" id="tree1-root" data-nodrop-enabled="true" data-clone-enabled="true" ng-show="ctrl.detail.fromPars.length>0">
+					      <ol ui-tree-nodes="" ng-model="ctrl.detail.fromPars" data-nodrop-enabled="true">
+					        <li ng-repeat="par in ctrl.detail.fromPars" ui-tree-node ng-include="'nodes_renderer1.html'" ></li>
+					      </ol>
+					    </div>
+					    
 					</div>
 					<div layout="column" flex class="parametersList">
 						<md-toolbar class="secondaryToolbar md-knowage-theme" >
@@ -216,6 +219,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<div ng-show="ctrl.detailLoadingSpinner" class="loadingSpinner">
 				<i class="fa fa-spinner fa-pulse fa-4x"></i> 
 			</div>
+			</md-card-content>
+			</md-card>
 		</detail>
 	</angular-list-detail>
 </body>

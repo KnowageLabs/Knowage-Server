@@ -1,9 +1,7 @@
 <md-content flex  class="ToolbarBox miniToolbar noBorder mozTable" ng-controller="kpiCategoryController">
-<md-card  layout-margin> 
-		<md-toolbar	class="miniheadimportexport secondaryToolbar">
-			<div class="md-toolbar-tools">
-				<h2 class="md-flex">{{translate.load("sbi.roles.listcategory")}}</h2>
-			</div>
+<md-card> 
+		<md-toolbar	class="miniheadimportexport md-toolbar-tools secondaryToolbar">
+			{{translate.load("sbi.roles.listcategory")}}
 		</md-toolbar>
 	<div layout="row" >
 	<angular-table

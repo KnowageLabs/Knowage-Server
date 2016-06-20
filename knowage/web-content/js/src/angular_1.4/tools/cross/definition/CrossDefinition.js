@@ -7,7 +7,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
     $mdThemingProvider.setDefaultTheme('knowage');
 }])
 .controller('navigationController'
-		,['$scope','sbiModule_restServices','sbiModule_translate','$mdDialog','$mdToast',function($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, $mdToast){
+		,['$scope','sbiModule_restServices','sbiModule_translate','$angularListDetail','$mdDialog','$mdToast',function($scope, sbiModule_restServices, sbiModule_translate,$angularListDetail, $mdDialog, $mdToast){
 			var ctr = this;
 			var s = $scope;
 			
@@ -78,6 +78,8 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			
 			ctr.newNavigation = function(){
 				ctr.detail = newRecord();
+				$angularListDetail.goToDetail();
+				
 			};
 			ctr.saveFunc = function(){
 				sbiModule_restServices.promisePost('1.0/crossNavigation/save', "", ctr.detail)
@@ -85,12 +87,14 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 					$scope.showActionOK("sbi.crossnavigation.save.ok");
 					ctr.navigationList.loadNavigationList();
 					ctr.detail = newRecord();
+					$angularListDetail.goToList();
 				},function(response){
 					$scope.showActionOK(response.data.errors);
 				});
 			};
 			ctr.cancelFunc = function(){
 				ctr.detail = newRecord();
+				$angularListDetail.goToList();
 			};
 			
 			function loadInputParameters(documentLabel,callbackFunction){

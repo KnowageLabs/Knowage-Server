@@ -104,30 +104,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</list>
 		<detail label="getLabelForBar()" save-function="showSaveTargetDialog" cancel-function="cancel">
 			<div id="contentWhiteFrame" class="overflow" flex layout="column">
-				<md-whiteframe class="md-whiteframe-4dp layout-padding" layout-margin>
-					<div>
+				<md-card>
+					<md-card-content>
 						<div>
-							<md-input-container class="small counter" class="small counter">
+							<md-input-container class="md-block" >
 							<label>{{translate.load("sbi.behavioural.lov.details.name")}}</label>
 							<input class="input_class" ng-model="target.name" required
 								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 						</div>
-						<div>
-							<label>{{translate.load("sbi.target.startvalidity")}}</label>
-							<md-datepicker ng-model="target.startValidityDate" name="Select Data"
+						<div layout="row">
+							<label flex>{{translate.load("sbi.target.startvalidity")}}</label>
+							<md-datepicker flex ng-model="target.startValidityDate" name="Select Data"
 								ng-change="parseDate()" md-placeholder={{translate.load("sbi.target.selectdate");}} ></md-datepicker>
-							<label>{{translate.load("sbi.target.endvalidity")}}</label>
-							<md-datepicker ng-model="target.endValidityDate" name="Select Data"
+							<label flex>{{translate.load("sbi.target.endvalidity")}}</label>
+							<md-datepicker flex ng-model="target.endValidityDate" name="Select Data"
 								ng-change="parseDate()" md-placeholder={{translate.load("sbi.target.selectdate");}} ></md-datepicker>
 						</div>
-					</div>
-				</md-whiteframe>
-				<md-whiteframe class="md-whiteframe-4dp layout-padding" layout-margin layout="column" flex>
+					</md-card-content>
+				</md-card>
+				<md-card layout="column" flex>
 					<md-toolbar>
 						<div class="md-toolbar-tools" layout="row" class="headerNote">
 							<h1>{{translate.load("sbi.target.headerkpi")}}</h1>
 						</div>
 					</md-toolbar>
+					<md-card-content>
 					<angular-table flex 
 						id="kpisTable" ng-model="kpis"
 						columns='[{"label":"KPI name","name":"name"},{"label":"Value","name":"value", "editable": "true"}]'
@@ -145,7 +146,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</div>
 						</queue-table> 
 					</angular-table>
-				</md-whiteframe>
+					</md-card-content>
+				</md-card>
 			</div>
 			</detail>
 		</angular-list-detail>

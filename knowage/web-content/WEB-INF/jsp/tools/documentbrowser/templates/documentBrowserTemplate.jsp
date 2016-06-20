@@ -121,7 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-content layout="row" flex>
 		 	<md-content layout="row" flex ng-show="!showSearchView">
 				
-				<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')" ng-class="{'full-screen-sidenav': smallScreen}" >
+				<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')" ng-class="{'full-screen-sidenav': smallScreen}" >
 <!-- 					<md-toolbar class=" ternaryToolbar"> -->
 <!-- 		       			<h3 class="md-toolbar-tools">{{translate.load("sbi.browser.filtrpanel.filtergroup.opt.folders")}}</h3> -->
 <!-- 	     			</md-toolbar> -->
@@ -135,12 +135,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				<bread-crumb item-name='name' ng-model="breadModel" selected-item="selectedFolder" control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb>
 		<md-whiteframe flex layout="column" class="md-whiteframe-5dp" layout-margin>
-				 <md-input-container ng-show='showDocumentGridView' layout-margin>
+			<div layout="row" ng-show='showDocumentGridView'>
+				 <md-input-container  class="md-block"  flex >
 			        <label>{{translate.load("sbi.ds.orderComboLabel")}}</label>
 			        <md-select ng-model="selectedOrder" ng-model-option="trackBy:'$value.id'">
 			          <md-option ng-repeat="orderElement in orderElements" value="{{orderElement.name}}">{{orderElement.label}}</md-option>
 			        </md-select>
       			</md-input-container>
+      			</div>
 					
 				 
 				<h3 class="md-title" layout-padding ng-show="folderDocuments.length==0" >{{translate.load("sbi.browser.document.noDocument")}}</h3>

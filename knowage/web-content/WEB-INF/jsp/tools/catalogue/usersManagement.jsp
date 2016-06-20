@@ -74,10 +74,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-tab label='{{translate.load("sbi.generic.details");}}'>
 			<md-content 
 				class=" ToolbarBox miniToolbar noBorder mozTable ">
-            <md-card layout-padding>
-			<div layout="row" layout-wrap>
+            <md-card layout-padding ng-cloak>
+            
+            
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.users.userId")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.users.userId")}}</label>
 					<input name="id" ng-model="selectedUser.userId" ng-required="true"
 						ng-maxlength="100" ng-change="setDirty()">
 
@@ -87,10 +88,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 					</md-input-container>
 				</div>
-			</div>
-			<div layout="row" layout-wrap>
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.users.fullName")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.users.fullName")}}</label>
 					<input name="name" ng-model="selectedUser.fullName"
 						ng-required="true" ng-maxlength="255" ng-change="setDirty()">
 
@@ -100,10 +99,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 					</md-input-container>
 				</div>
-			</div>
-			<div layout="row" layout-wrap>
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.users.pwd")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.users.pwd")}}</label>
 					<input data-ng-model="selectedUser.password" type="password"
 						name="password" required ng-maxlength="100" ng-change="setDirty()">
 					<div ng-messages="attributeForm.password.$error"
@@ -112,11 +109,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 					</md-input-container>
 				</div>
-			</div>
 
-			<div layout="row" layout-wrap>
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.users.confPwd")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.users.confPwd")}}</label>
 					<input ng-model="selectedUser.confirm" type="password"
 						name="confirm_password" required ng-maxlength="100" ng-change="setDirty()"
 						nx-equal-ex="selectedUser.password">
@@ -130,7 +125,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 					</md-input-container>
 				</div>
-			</div>
 			</md-card>
 			</md-content> 
 			</md-tab> 
@@ -139,8 +133,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				flex 
 				class="ToolbarBox noBorder">
 				<md-card flex layout-padding>
-				 <md-input-container class="small counter" >
-				    <div  ng-messages="attributeForm.dropdown.$error" ng-show="role.length== 0">
+				 <md-input-container class="md-block" ng-show="role.length== 0">
+				    <div  ng-messages="attributeForm.dropdown.$error" >
 					<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired.role");}}</div>
 					</div>  
 				</md-input-container>
@@ -151,6 +145,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							{"label":"NAME","name":"name","size":"50px"},
 							{"label":"VALUE","name":"description","size":"100px"},
 							 ]'
+							 no-pagination=false
 				selected-item="role" highlights-selected-item="true"
 				multi-select="true" >
 				 </angular-table>
@@ -165,7 +160,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <md-card layout-padding>
 			<div layout="row" layout-wrap ng-repeat="attribute in tempAttributes">
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{attribute.name}}</label>
+					<md-input-container class="md-block"> <label>{{attribute.name}}</label>
 					<input name="attr" ng-model="attribute.value" ng-maxlength="100"
 						ng-change="setDirty()"> <div ng-messages="" ng-show="false"></div></md-input-container>
 						

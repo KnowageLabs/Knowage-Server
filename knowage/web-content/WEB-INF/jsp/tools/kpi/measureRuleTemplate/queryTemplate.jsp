@@ -17,16 +17,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 
-<div layout="column" layout-wrap layout-fill ng-controller="measureRuleQueryController">
-    <md-input-container>
-        <label>{{translate.load("sbi.ds.dataSource")}}</label>
-        <md-select ng-model="currentRule.dataSourceId">
-          <md-option ng-repeat="ds in datasourcesList" value={{ds.DATASOURCE_ID}} ng-click="alterDatasource(ds.DATASOURCE_ID)">
-            {{ds.DATASOURCE_LABEL}}
-          </md-option>
-        </md-select>
-     </md-input-container> 
-    <md-whiteframe ng-if="detailProperty.dataSourcesIsSelected" class="md-whiteframe-2dp relative" layout-margin flex  >
-		<div ui-codemirror="{ onLoad : codemirrorLoaded }" class="absolute" layout-fill ui-codemirror-opts="codemirrorOptions" ng-model=currentRule.definition></div> 
-     </md-whiteframe>
-</div>
+	<md-card  ng-controller="measureRuleQueryController">
+		<md-card-content layout="column" layout-fill>
+	    <md-input-container>
+	        <label>{{translate.load("sbi.ds.dataSource")}}</label>
+	        <md-select ng-model="currentRule.dataSourceId">
+	          <md-option ng-repeat="ds in datasourcesList" value={{ds.DATASOURCE_ID}} ng-click="alterDatasource(ds.DATASOURCE_ID)">
+	            {{ds.DATASOURCE_LABEL}}
+	          </md-option>
+	        </md-select>
+	     </md-input-container> 
+	    <md-whiteframe ng-if="detailProperty.dataSourcesIsSelected" class="md-whiteframe-2dp relative" layout-margin flex  >
+			<div ui-codemirror="{ onLoad : codemirrorLoaded }" class="absolute" layout-fill ui-codemirror-opts="codemirrorOptions" ng-model=currentRule.definition></div> 
+	     </md-whiteframe>
+	     </md-card-content>
+	</md-card>
+

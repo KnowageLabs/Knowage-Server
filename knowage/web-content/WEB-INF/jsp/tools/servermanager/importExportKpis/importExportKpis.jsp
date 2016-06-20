@@ -67,16 +67,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tab-label>{{translate.load("SBISet.export","component_impexp_messages");}}</md-tab-label>
 				<md-tab-body>
 				<md-card>
-				<md-content layout="column" layout-wrap ng-controller="kpiExportController">
-					<div layout="row" layout-wrap>
+				<md-card-content layout="column" layout-wrap ng-controller="kpiExportController">
+					<div layout="row" layout-wrap layout-align="center center">
 						<div flex>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 								<label>{{translate.load("sbi.impexpkpis.nameexport")}}</label>
 								<input class="input_class" ng-model="nameExport" required maxlength="100" ng-maxlength="100" md-maxlength="100" />
 							</md-input-container>
 						</div>
 						<div>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 								<md-button ng-show="!wait" ng-click="prepare($event)" aria-label="download KPIs" class="md-fab md-mini">
 									<md-icon md-font-icon="fa fa-download fa-2x"> </md-icon>
 								</md-button>
@@ -100,7 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</div>
 						</div>
 					</div>
-				</md-content>
+				</md-card-content>
 				</md-card>
 				</md-tab-body>
 			</md-tab>
@@ -109,16 +109,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-tab id="kpiImportTab">
 				<md-tab-label>{{translate.load("SBISet.import","component_impexp_messages");}}</md-tab-label>
 				<md-tab-body>
-				<md-card>
-				<md-content ng-controller="kpiImportController" layout-wrap layout-fill ng-cloak ng-switch="selectedStep">
-					<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl'></bread-crumb>
+				<md-card ng-controller="kpiImportController">
+				<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl'></bread-crumb>
+				<md-card-content  layout-wrap  ng-cloak ng-switch="selectedStep">
 					<div class="importSteps" flex ng-controller="importKpiControllerStep0" ng-switch-when="0">
 						<%@include file="./importKpisSteps/importKpisStep0.jsp"%>
 					</div>
 					<div class="importSteps" flex ng-controller="importKpiControllerStep1" ng-switch-when="1">
 						<%@include file="./importKpisSteps/importKpisStep1.jsp"%>
 					</div>
-				</md-content>
+				</md-card-content>
 				</md-card>
 				</md-tab-body>
 			</md-tab>

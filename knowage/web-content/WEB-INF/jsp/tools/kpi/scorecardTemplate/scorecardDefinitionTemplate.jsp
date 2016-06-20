@@ -14,11 +14,11 @@
 				</md-button>
 			</div>
 		</md-toolbar>
-		<div layout="row" layout-padding layout-wrap  ng-cloak >
+		<div layout="row" layout-wrap  ng-cloak >
 			
-			<md-whiteframe class="md-whiteframe-2dp scorecardPrespectiveCard" layout-margin layout="column" ng-repeat="perspective in currentScorecard.perspectives">
+			<md-card class="md-whiteframe-2dp scorecardPrespectiveCard" layout="column" ng-repeat="perspective in currentScorecard.perspectives">
 				<md-toolbar>
-					<div class="md-toolbar-tools" layout-fill layout="column">
+					<div class="md-toolbar-tools" layout-fill layout="row">
 						<kpi-semaphore-indicator indicator-color="perspective.status"></kpi-semaphore-indicator>
 			       		<label>{{perspective.name}}</label>
 			       		<span flex></span>
@@ -45,13 +45,13 @@
 
 			    	</div>	
 		    	</md-toolbar>
-		    	<md-content layout-padding layout="row" >
+		    	<md-card-content layout-padding layout="row" >
 		    		
 		    			<b layout-padding class="lh30">KPI</b>
 		    			<kpi-semaphore-indicator flex ng-repeat="groupedKpi in perspective.groupedKpis" indicator-color="groupedKpi.status" indicator-value="groupedKpi.count"></kpi-semaphore-indicator>
 
-		    	</md-content>
-			</md-whiteframe> 
+		    	</md-card-content>
+			</md-card> 
 			
 		</div>
 		</md-content>

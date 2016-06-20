@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <md-content layout-fill layout="column" ng-controller="kpiDefinitionCardinalityController">
 <md-card >
-<div class="toolbarFormula">
+<div class="toolbarFormula" layout-padding>
 	<div class="formula " id="formulaId"></div>
 </div>
 </md-card>

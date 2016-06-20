@@ -20,6 +20,12 @@
   'components/businessModelCatalog',
   'components/etlMetadata',
   'components/cacheManager',
+  'components/usersManagement',
+  'components/mondrianSchemaCatalog',
+  'components/angularTimePicker',
+  'components/glossary',
+  'components/angularTree',
+  'components/crossNavigationDefinition',
   'components/kpiExecution';
    
  
@@ -52,6 +58,26 @@ md-toolbar.secondaryToolbar.md-knowage-theme {
 md-toolbar.ternaryToolbar.md-knowage-theme {
 	background-color: $ternaryColor !important;
 }
+
+md-input-container.md-knowage-theme {
+  +label {
+      padding: 0;
+      line-height: 40px;
+    }
+  md-checkbox {
+    margin-bottom: 0;
+    &.md-checked ._md-icon {
+      background-color: $baseColor;
+    }
+    
+  }
+}
+
+md-checkbox.md-knowage-theme.md-checked ._md-icon {
+  background-color: $baseColor;
+}
+
+
 
 .md-button.md-knowage-theme.md-fab {
     &:not([disabled]) {
@@ -268,6 +294,23 @@ a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.m
     position: absolute;
     right: 5px;
     top: 5px;
+}
+
+.kn-list md-icon.fa {
+  padding-left:0;
+}
+
+.kn-checkInput {
+  md-input-container {
+    margin: 8px 0;
+  }
+  label {
+    line-height: 28px;
+  }
+  
+}
+.md-block {
+
 }
 
 .ellipsis {
@@ -489,4 +532,37 @@ md-content.md-knowage-theme.config-content-detail {
 }
 .buttonLabel{
     line-height: $browseButtonLineHeight;
+}
+form {
+  margin-bottom: 0;
+}
+.listSideNav {
+  width: auto;
+}
+.listOverlay {
+  width: 80% !important;
+  display: block !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 999 !important ;
+  bottom: 0 !important;
+  height: 100% !important;
+  md-content {
+    height: 85% ;
+  } 
+  -webkit-transition: all .5s;
+  transition: all .5s;
+}
+.blackOverlay {
+  top: 0;
+  left:0;
+  bottom:0;
+  right: 0;
+  width: 100%;
+  display: block;
+  position: absolute;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 900;
 }

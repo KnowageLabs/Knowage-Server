@@ -1,4 +1,4 @@
-<div  layout="column"  layout-fill class="angularListTemplate"> 
+<div  layout="column"  layout-fill class="angularListTemplate kn-list-tree"> 
 		<md-input-container ng-show="showSearchBar==true" md-no-float class="searchBarList">
 			<md-icon md-font-icon="fa fa-search"></md-icon> 
 			<input ng-if="!localSearch" ng-model="searchVal"

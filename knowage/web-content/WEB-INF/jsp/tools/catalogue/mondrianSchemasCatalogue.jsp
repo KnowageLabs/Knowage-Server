@@ -103,8 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				
 <!-- /////////////// INPUT FIELD NAME \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->			
-					<div layout="row" layout-wrap>
-      					<div flex>
+      					<div flex="100">
 		
 				 			<md-input-container class="small counter"> 
 				 
@@ -117,13 +116,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										> 
 							</md-input-container> 
 						</div>
-     				</div>
+     			
 				
 				
 <!-- /////////////// INPUT FIELD DESCRIPTION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 
-				<div layout="row" layout-wrap >
-      				<div flex>				
+      				<div flex="100">				
 							<md-input-container class="small counter"> 
 				
 								<label>{{translate.load("sbi.ds.description");}}</label>
@@ -136,21 +134,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 								</md-input-container>
 				</div>
-     				</div>	
+
      				
 <!-- /////////////// INPUT FILE UPLOAD \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 
 				
 							
-						<div layout="row" layout-wrap  >
+						<div layout="row" layout-wrap  layout-align="start center">
 							
-							<label layout-align="center center" class="buttonLabel">{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.fileUpload")}}:</label>
-      						<file-upload  ng-model="file" id="myId" ng-disabled = "selectedMondrianSchema.modelLocker" ng-change = "changeApplied()" flex></file-upload>
+							<label  flex class="buttonLabel">{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.fileUpload")}}:</label>
+      						<file-upload  flex ng-model="file" id="myId" ng-disabled = "selectedMondrianSchema.modelLocker" ng-change = "changeApplied()" flex></file-upload>
 							
 							
      
 							
-							<md-input-container flex="30">
+							<md-input-container flex>
 			          <md-switch ng-model="selectedMondrianSchema.modelLocked" ng-change="unlockModel();changeApplied()">{{ selectedBusinessModel.modelLocked ? translate.load("sbi.bm.unlockModel") : translate.load("sbi.bm.lockModel")}}</md-switch>
 			        </md-input-container>
 							

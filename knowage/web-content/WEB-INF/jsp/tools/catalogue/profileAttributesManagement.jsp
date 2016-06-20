@@ -71,9 +71,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<form name="attributeForm" ng-submit="attributeForm.$valid && saveProfileAttribute()" class="detailBody mozSize">
 				<md-card layout-padding>
 						
-						<div layout="row" layout-wrap>
       						<div flex=100>
-       							<md-input-container class="small counter">
+       							<md-input-container class="md-block">
        								<label>{{translate.load("sbi.attributes.headerName")}}</label>
        								<input ng-model="selectedAttribute.attributeName" required
         							ng-change="setDirty()"  ng-maxlength="100">
@@ -82,16 +81,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
         </div>
         							 </md-input-container>
-      						</div>
     					</div>
-    					<div layout="row" layout-wrap>
       						<div flex=100>
-       							<md-input-container class="small counter">
+       							<md-input-container class="md-block">
        								<label>{{translate.load("sbi.attributes.headerDescr")}}</label>
        								<input ng-model="selectedAttribute.attributeDescription"
         							ng-change="setDirty()"  ng-maxlength="100"> </md-input-container>
       						</div>
-    					</div>	
     							
 				
 				</md-card>

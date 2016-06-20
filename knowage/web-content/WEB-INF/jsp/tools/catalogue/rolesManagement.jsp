@@ -80,9 +80,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-content flex 
 				class="ToolbarBox miniToolbar noBorder mozTable">
             <md-card layout-padding>
-			<div layout="row" layout-wrap>
+
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.roles.headerName")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.roles.headerName")}}</label>
 					<input name="name" ng-model="selectedRole.name" ng-required="true"
 						ng-maxlength="100" ng-change="setDirty()">
 
@@ -92,29 +92,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 					</md-input-container>
 				</div>
-			</div>
-			<div layout="row" layout-wrap>
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.roles.headerCode")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.roles.headerCode")}}</label>
 					<input name="code" ng-model="selectedRole.code"
 					 ng-maxlength="255" ng-change="setDirty()">
 
 					</md-input-container>
 				</div>
-			</div>
-			<div layout="row" layout-wrap>
 				<div flex=100>
-					<md-input-container class="small counter"> <label>{{translate.load("sbi.roles.headerDescr")}}</label>
+					<md-input-container class="md-block"> <label>{{translate.load("sbi.roles.headerDescr")}}</label>
 					<input name="code" ng-model="selectedRole.description"
 					 ng-maxlength="255" ng-change="setDirty()">
 
 					</md-input-container>
 				</div>
-			</div>
-
-			<div layout="row" layout-wrap>
       				<div flex=100>
-				       <md-input-container class="small counter" > 
+				       <md-input-container class="md-block" > 
 				       <label>{{translate.load("sbi.roles.headerRoleType")}}</label>
 				       <md-select  aria-label="dropdown" placeholder ="Role Type"
 				       	name ="dropdown" 
@@ -130,7 +123,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				      </div>   
 				        </md-input-container>
 				   </div>
-			</div>
 			</md-card>
 			</md-content>
 			 </md-tab> 
@@ -146,46 +138,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										{{translate.load("sbi.roles.save");}}
 				</md-toolbar>
 				
-				<div layout="row" layout-wrap ng-if="isVisible('savePersonalFolder')">
-				<md-input-container class="small counter"> 
-			        <md-checkbox
+				<div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('savePersonalFolder')">
+				<md-input-container> 
+			        <md-checkbox 
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSaveIntoPersonalFolder" aria-label="check" name ="savePersonalFolder">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
-			        <label>{{translate.load("sbi.roles.savePersonalFolder")}}</label>
-			       </div>
+			       <label flex="90">{{translate.load("sbi.roles.savePersonalFolder")}}</label>
+			        
 			       
 			   </div>
-				<div layout="row" layout-wrap ng-if="isVisible('saveMeta')">
-				<md-input-container class="small counter"> 
+				<div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('saveMeta')">
+				<md-input-container> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSaveMetadata" aria-label="check" name="saveMeta">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
-			        <label>{{translate.load("sbi.roles.saveMeta")}}</label>
-			       </div>
+			        <label flex="90">{{translate.load("sbi.roles.saveMeta")}}</label>
 			   </div>
-			   <div layout="row" layout-wrap ng-if="isVisible('saveRemember')">
-			   <md-input-container class="small counter"> 
+			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('saveRemember')">
+			   <md-input-container> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSaveRememberMe" aria-label="check" name="saveRemember">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
-			        <label>{{translate.load("sbi.roles.saveRemember")}}</label>
-			       </div>
+			        <label flex="90">{{translate.load("sbi.roles.saveRemember")}}</label>
 			   </div>
-			   <div layout="row" layout-wrap ng-if="isVisible('saveSubobj')">
-			   <md-input-container class="small counter"> 
+			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('saveSubobj')">
+			   <md-input-container> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSaveSubobjects" aria-label="check" name="saveSubobj">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
-			        <label>{{translate.load("sbi.roles.saveSubobj")}}</label>
-			       </div> 
+			        <label flex="90">{{translate.load("sbi.roles.saveSubobj")}}</label>
 			   </div>
 			   <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('SEE')"
 												 >
@@ -193,98 +178,83 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-toolbar>
 				
 				
-				<div layout="row" layout-wrap ng-if="isVisible('seeMeta')">
-				 <md-input-container class="small counter"> 
+				<div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeMeta')">
+				 <md-input-container> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeMetadata" aria-label="check" name="seeMeta">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
-			        <label>{{translate.load("sbi.roles.seeMeta")}}</label>
-			       </div>
+			        <label flex="90">{{translate.load("sbi.roles.seeMeta")}}</label>
 			   </div>
-				<div layout="row" layout-wrap ng-if="isVisible('seeNotes')">
-				 <md-input-container class="small counter"> 
+				<div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeNotes')">
+				 <md-input-container> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeNotes" aria-label="check" name="seeNotes">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
-			        <label>{{translate.load("sbi.roles.seeNotes")}}</label>
-			       </div>
+			        <label flex="90">{{translate.load("sbi.roles.seeNotes")}}</label>
 			   </div>
-			   <div layout="row" layout-wrap ng-if="isVisible('seeSnapshot')">
-			   <md-input-container class="small counter"> 
+			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeSnapshot')">
+			   <md-input-container> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeSnapshots" aria-label="check" name="seeSnapshot">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
-			        <label>{{translate.load("sbi.roles.seeSnapshot")}}</label>
-			       </div>
-			   </div>
-			   <div layout="row" layout-wrap ng-if="isVisible('seeSubobj')">
-			    <md-input-container class="small counter"> 
+			        <label flex="90">{{translate.load("sbi.roles.seeSnapshot")}}</label>
+			   </div> 
+			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeSubobj')">
+			    <md-input-container> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeSubobjects" aria-label="check" name="seeSubobj">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
-			        <label>{{translate.load("sbi.roles.seeSubobj")}}</label>
-			       </div>
+			        <label flex="90">{{translate.load("sbi.roles.seeSubobj")}}</label>
 			   </div>
-			   <div layout="row" layout-wrap ng-if="isVisible('seeViewpoints')">
-			    <md-input-container class="small counter"> 
+			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeViewpoints')">
+			    <md-input-container> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeViewpoints" aria-label="check" name="seeViewpoints">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
-			        <label>{{translate.load("sbi.roles.seeViewpoints")}}</label>
-			       </div>
+			        <label flex="90">{{translate.load("sbi.roles.seeViewpoints")}}</label>
 			   </div>
 			   
 			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('SEND')"
 												 >
 										{{translate.load("sbi.roles.send");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap ng-if="isVisible('sendMail')">
-				  <md-input-container class="small counter"> 
+				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('sendMail')">
+				  <md-input-container> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSendMail" aria-label="check" name="sendMail">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
-			        <label>{{translate.load("sbi.roles.sendMail")}}</label>
-			       </div>
+			        <label flex="90">{{translate.load("sbi.roles.sendMail")}}</label>
 			   </div>
 			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('BUILD')"
 												 >
 										{{translate.load("sbi.roles.build");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap ng-if="isVisible('buildQbe')">
-				 <md-input-container class="small counter"> 
+				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('buildQbe')">
+				 <md-input-container> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToBuildQbeQuery" aria-label="check" name="buildQbe">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
-			        <label>{{translate.load("sbi.roles.buildQbe")}}</label>
-			       </div>
+			        <label flex="90">{{translate.load("sbi.roles.buildQbe")}}</label>
 			   </div>
 			    <md-toolbar class="md-blue minihead md-toolbar-tools secondaryToolbar" ng-if="isToolbarVisible('EXPORT')"
 												 >
 										{{translate.load("sbi.roles.export");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap ng-if="isVisible('doMassiveExport')">
-				   <md-input-container class="small counter"> 
+				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('doMassiveExport')">
+				   <md-input-container> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToDoMassiveExport" aria-label="check" name="doMassiveExport">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
-			        <label>{{translate.load("sbi.roles.doMassiveExport")}}</label>
-			       </div>
+			        <label flex="90">{{translate.load("sbi.roles.doMassiveExport")}}</label>
+
 			   </div>
 			  
 			   
@@ -295,37 +265,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												 >
 										{{translate.load("sbi.roles.manage");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap ng-if="isVisible('manageUsers')">
+				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('manageUsers')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageUsers" aria-label="check" name="manageUsers">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       <div >
 			        <label>{{translate.load("sbi.roles.manageUsers")}}</label>
 			       </div>
 			   </div>
-			    <div layout="row" layout-wrap ng-if="isVisible('manageGlossaryBusiness')">
+			    <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('manageGlossaryBusiness')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageGlossaryBusiness" aria-label="check" name="manageGlossaryBusiness">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       <div >
 			        <label>{{translate.load("sbi.roles.manageGlossaryBusiness")}}</label>
 			       </div>
 			   </div>
-			    <div layout="row" layout-wrap ng-if="isVisible('manageGlossaryTechnical')">
+			    <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('manageGlossaryTechnical')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageGlossaryTechnical" aria-label="check" name="manageGlossaryTechnical">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       <div >
 			        <label>{{translate.load("sbi.roles.manageGlossaryTechnical")}}</label>
 			       </div> 
 			   </div>
-			   <div layout="row" layout-wrap ng-if="isVisible('manageKpiValue')">
+			   <div layout="row" class="kn-checkInput" layout-wrap ng-if="isVisible('manageKpiValue')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageKpiValue" aria-label="check" name="manageKpiValue">
@@ -335,7 +305,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.manageKpiValue")}}</label>
 			       </div> 
 			   </div>
-				<div layout="row" layout-wrap ng-if="isVisible('manageCalendar')">
+				<div layout="row" class="kn-checkInput" layout-wrap ng-if="isVisible('manageCalendar')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToManageCalendar" aria-label="check" name="manageCalendar">
@@ -355,13 +325,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												 >
 										{{translate.load("sbi.roles.enable");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap ng-if="isVisible('enableDatasetPersistence')">
+				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('enableDatasetPersistence')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToEnableDatasetPersistence" aria-label="check" name="enableDatasetPersistence">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       <div >
 			        <label>{{translate.load("sbi.roles.enableDatasetPersistence")}}</label>
 			       </div> 
 			   </div>
@@ -369,13 +339,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												 >
 										{{translate.load("sbi.roles.view");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap ng-if="isVisible('enableFederatedDataset')">
+				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('enableFederatedDataset')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToEnableFederatedDataset" aria-label="check" name="enableFederatedDataset">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       <div >
 			        <label>{{translate.load("sbi.roles.enableFederatedDataset")}}</label>
 			       </div> 
 			   </div>
@@ -384,93 +354,93 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												 >
 										{{translate.load("sbi.roles.finalUserCan");}}
 				</md-toolbar>
-				 <div layout="row" layout-wrap ng-if="isVisible('seeDocBrowser')">
+				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeDocBrowser')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeDocumentBrowser" aria-label="check" ng-disabled="disable" name="seeDocBrowser">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       <div >
 			        <label>{{translate.load("sbi.roles.seeDocumentBrowser")}}</label>
 			       </div> 
 			   </div>
-				 <div layout="row" layout-wrap ng-if="isVisible('seeMyData')">
+				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeMyData')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeMyData" aria-label="check" ng-disabled="disable" name="seeMyData">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       <div >
 			        <label>{{translate.load("sbi.roles.seeMyData")}}</label>
 			       </div> 
 			   </div>
-				<div layout="row" layout-wrap ng-if="isVisible('seeFavourites')">
+				<div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeFavourites')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeFavourites" aria-label="check" ng-disabled="disable" name="seeFavourites">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       <div >
 			        <label>{{translate.load("sbi.roles.seeFavourites")}}</label>
 			       </div> 
 			   </div>
-				 <div layout="row" layout-wrap ng-if="isVisible('seeSubscriptions')">
+				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeSubscriptions')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeSubscriptions" aria-label="check" ng-disabled="disable" name="seeSubscriptions">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       <div >
 			        <label>{{translate.load("sbi.roles.seeSubscriptions")}}</label>
 			       </div> 
 			   </div>
-			   <div layout="row" layout-wrap ng-if="isVisible('seeToDoList')">
+			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeToDoList')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeToDoList" aria-label="check" ng-disabled="disable" name="seeToDoList">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       <div >
 			        <label>{{translate.load("sbi.roles.seeToDoList")}}</label>
 			       </div> 
 			   </div>
-				 <div layout="row" layout-wrap ng-if="isVisible('createDocument')">
+				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('createDocument')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToCreateDocuments" aria-label="check" ng-disabled="disable" name="createDocument">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       <div >
 			        <label>{{translate.load("sbi.roles.createDocument")}}</label>
 			       </div> 
 			   </div>
-			   <div layout="row" layout-wrap ng-if="isVisible('createSocialAnalysis')">
+			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('createSocialAnalysis')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToCreateSocialAnalysis" aria-label="check" ng-disabled="disable" name="createSocialAnalysis">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       <div >
 			        <label>{{translate.load("sbi.roles.createSocialAnalysis")}}</label>
 			       </div> 
 			   </div>
-				 <div layout="row" layout-wrap ng-if="isVisible('viewSocialAnalysis')">
+				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('viewSocialAnalysis')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToViewSocialAnalysis" aria-label="check" ng-disabled="disable" name="viewSocialAnalysis">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       <div >
 			        <label>{{translate.load("sbi.roles.viewSocialAnalysis")}}</label>
 			       </div> 
 			   </div>
-			   <div layout="row" layout-wrap ng-if="isVisible('hierarchiesManagement')">
+			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('hierarchiesManagement')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToHierarchiesManagement" aria-label="check" ng-disabled="disable" name="hierarchiesManagement">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       <div >
 			        <label>{{translate.load("sbi.roles.hierarchiesManagement")}}</label>
 			       </div> 
 			   </div>

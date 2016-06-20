@@ -1,5 +1,17 @@
 .kn-documentBrowser{
 
+	angular-table {
+		md-icon {
+			height: 14px;
+			width: 14px;
+		}
+	}
+
+	.md-fab.md-mini md-icon {
+		height: 28px;
+		width: 28px;
+	}
+
 	md-toolbar.documentBrowserToolbar button.md-icon-button,
 		.selectedDocumentSidenav md-toolbar button.md-icon-button {
 		height: 40px;
@@ -45,7 +57,6 @@
 	.documentCard {
 		width: 250px;
 		background-color: $baseColor;
-		padding: 8px 0 0 0;
 		md-icon {
 			color: $cardActionIconsColor;
 		}
@@ -53,15 +64,18 @@
 	
 	.documentCard md-card-title {
 	    color: #FAFAFA;
+	    padding: 12px;
     	text-transform: uppercase;
 	}
-	.documentCard md-card-title p {
-	    margin: 0px 5px;
+
+	.documentCard md-card-title p{
+	    margin: 0;
+	    padding: 0;
 	}
-	
 	
 	.documentCard md-card-actions {
     	background-color: rgba(white,0.5);
+    	margin: 0;
 	}
 	
 	.documentCard div.md-card-image {

@@ -63,17 +63,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-card>
 						<md-content	ng-controller="exportController">
 							<div layout="column" layout-padding layout-wrap>
-								<div layout="row" layout-wrap >
-									<md-input-container flex class="md-block">
+								<div layout="row" layout-align="center center">
+									<md-input-container flex="90" class="md-block">
 										<label>{{translate.load('SBISet.importexport.nameExp', 'component_impexp_messages')}}</label>
 										<input type="text" ng-model="exportName" required> 
 									</md-input-container>
-									<md-input-container class="small counter"> 
 										<md-button ng-if="!flags.waitExport" ng-click="exportFiles(selected)" aria-label="{{translate.load('SBISet.importexport.fileArchive', 'component_impexp_messages')}}"
 											ng-disabled="exportName===undefined || exportName.length == 0" class="md-fab md-mini"  > <md-icon
 										md-font-icon="fa fa-download"  >
 										</md-icon> </md-button>
-									</md-input-container>
 									<div ng-if="flags.waitExport">
 										<i  class="fa fa-spinner fa-spin fa-4x"></i>
 									</div>
@@ -89,11 +87,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tab id="importTab" > 
 					<md-tab-label>{{translate.load("SBISet.import", "component_impexp_messages")}}</md-tab-label>
 					<md-tab-body> <md-card>
-						<md-content ng-cloak >
-							<div layout="row" layout-wrap>
-								<h3>{{translate.load("sbi.importusers.import")}}</h3>
-							</div>
-							<div layout="row" layout-wrap >
+					<md-toolbar> 
+						<div class="md-toolbar-tools">{{translate.load("sbi.importusers.import")}}</div>
+					</md-toolbar>
+						<md-card-content>
+							<div layout="row" layout-wrap layout-align="center center">
 								<file-upload flex id="AssociationFileUploadImport" ng-model="importFile"></file-upload>
 								<md-button ng-click="upload($event)" aria-label="upload Menu"
 								class="md-fab md-mini"  > <md-icon
@@ -125,7 +123,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</div>
 								<span flex></span>
 							</div>
-						</md-content></md-card>
+							</md-card-content>
+						</md-card>
 					</md-tab-body>
 				</md-tab>
 			</md-tabs> 
