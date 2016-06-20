@@ -70,9 +70,14 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			logger.debug("OUT");
 		}
 
-		// TODO: to finish
 	}
 
+	/**
+	 * Retrieve the measures from the document template
+	 *
+	 * @param req
+	 * @return
+	 */
 	@Path("/getMeasures")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -96,6 +101,12 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		}
 	}
 
+	/**
+	 * Retrieve the layers from the document template
+	 *
+	 * @param req
+	 * @return
+	 */
 	@Path("/getLayers")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -169,6 +180,8 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 
 		measures = new HashMap();
 
+		String defaultMeasure = (String) measuresConfigurationSB.getAttribute("default_kpi");
+
 		measureList = measuresConfigurationSB.getAttributeAsList("KPI");
 		for (int i = 0; i < measureList.size(); i++) {
 
@@ -177,6 +190,10 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 
 			attributeValue = (String) measureSB.getAttribute("column_id");
 			measure.setColumnId(attributeValue);
+			if (defaultMeasure.equalsIgnoreCase(attributeValue)) {
+				measure.setSelected(true);
+			}
+
 			attributeValue = (String) measureSB.getAttribute("description");
 			measure.setDescription(attributeValue);
 			attributeValue = (String) measureSB.getAttribute("agg_func");

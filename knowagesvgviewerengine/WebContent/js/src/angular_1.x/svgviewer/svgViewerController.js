@@ -27,6 +27,12 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 						sbiModule_logger.log("measures not retrivied");
 					} else {
 						$scope.measures = data;
+						for (var propt in $scope.measures){
+							if ($scope.measures[propt].selected){
+								//set default selected measure
+								$scope.measureValue = $scope.measures[propt].columnId;
+							}
+						}
 						sbiModule_logger.trace("measures correctly retrivied",data);		
 
 					}
@@ -37,6 +43,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	
 	//call function
 	this.getMeasures();
+	
 	
 	/**
 	 * Loads the measures list with a REST service

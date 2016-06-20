@@ -33,18 +33,28 @@
 
 	<title>SVG Viewer</title>
 	
+	<style type="text/css">
+		.sidenavOpenButton {
+			position:absolute;
+			top:0px;
+			left:0px;
+			z-index: 2;
+			
+		} 
+	</style>
 	</head>
+
 	
 	<body>        
         
 			<div ng-app="svgViewerApp">
-			    <div layout="column" ng-controller="SvgViewerController">
+			    <div ng-controller="SvgViewerController">
 			        <md-sidenav md-disable-backdrop md-component-id="svgSideNav" md-is-open="isSidenavOpen" class="md-sidenav-<%= propertiesPanelPosition %>"  >
 			           	Properties
 			            <br/>
-					    <md-radio-group>
+					    <md-radio-group ng-model="measureValue">
 					   		 Measures
-					      <md-radio-button ng-model="measureValue" ng-repeat="(key,prop) in measures track by $index" ng-value="prop.columnId"  ng-click="changeSelectedMeasure(prop.columnId,prop.description)">
+					      <md-radio-button  ng-repeat="(key,prop) in measures track by $index" ng-value="prop.columnId"  ng-click="changeSelectedMeasure(prop.columnId,prop.description)">
 					      	{{prop.description}}                 
 					      </md-radio-button>
 					    </md-radio-group>		
@@ -55,24 +65,21 @@
 					      	{{prop.description}}                 
 					     </md-checkbox>             
 			        </md-sidenav>
-			         <md-content>
-			            <md-button ng-click="openSideNav()">
+			        <md-button class="sidenavOpenButton" ng-click="openSideNav()">
 			              <i class="fa fa-2x fa-bar-chart" aria-hidden="true"></i>
-			            </md-button>
-			            <div id="container">
-				<iframe id="svgContainer" name="iframe_1"
-					src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'
-					width="100%" height="100%" frameborder="0"
-					style="background-color: white;"> 
-				</iframe>
-			</div>
+			        </md-button>
+			         <md-content layout-fill layout="column">
+			            
+			            <div id="container" layout-fill>
+							<iframe id="svgContainer" name="iframe_1"
+								src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'
+								width="100%" height="100%" frameborder="0"
+								style="background-color: white;"> 
+							</iframe>
+						</div>
 			          </md-content>
 			    </div>
 			</div>        
-
-		
-		
-
 
 </body>
 

@@ -49,6 +49,8 @@ public class Measure {
 	/** The colur calculator type. */
 	String colurCalculatorType;
 
+	boolean isSelected = false;
+
 	/** The colur calculator parameters. */
 	Properties colurCalculatorParameters;
 
@@ -316,5 +318,13 @@ public class Measure {
 	 */
 	public void setUnit(String unit) {
 		this.unit = unit;
+	}
+
+	public boolean isSelected() {
+		return isSelected;
+	}
+
+	public void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
 	}
 }
