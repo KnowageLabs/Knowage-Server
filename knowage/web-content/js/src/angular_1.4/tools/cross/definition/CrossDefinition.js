@@ -54,6 +54,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 						var data = response.data;
 						ctr.detailLoadingSpinner = false;
 						ctr.detail = data;
+						$angularListDetail.goToList();
 					},function(response){
 						console.log(response);
 					});
