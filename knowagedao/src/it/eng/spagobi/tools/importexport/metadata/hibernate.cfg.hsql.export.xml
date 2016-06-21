@@ -9,7 +9,7 @@
         <property name="hibernate.connection.username">sa</property>
         <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
         <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
-        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.show_sql">false</property>
  <!-- 	<property name="hibernate.jdbc.batch_size">0</property>  -->      
 
 
@@ -55,6 +55,13 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGeoMaps.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDataSet.hbm.xml" />
         
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlContents.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlGlossary.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlReferences.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlWlist.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlWord.hbm.xml" />
+    
+        
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiCrossNavigation.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiCrossNavigationPar.hbm.xml" />
         
@@ -62,8 +69,6 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiAlias.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRuleOutput.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRule.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiTarget.hbm.xml" />
-        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiTargetValue.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiThresholdValue.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiThreshold.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiPlaceholder.hbm.xml" />
