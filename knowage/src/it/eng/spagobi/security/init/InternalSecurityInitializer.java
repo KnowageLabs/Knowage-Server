@@ -497,34 +497,32 @@ public class InternalSecurityInitializer implements InitializerIFace {
 				authorizationsFound.add(authorization.getName() + "-" + sbiProductType.getLabel());
 			}
 
-			if (authorizations == null || authorizations.isEmpty()) {
-				logger.debug("Initializer inserts default authorization");
+			logger.debug("Initializer inserts default authorization");
 
-				Set<String> productTypes = loadProductTypes();
-				for (SourceBean defaultAuthSB : defaultAuthorizationsSB) {
-					String authName = (String) defaultAuthSB.getAttribute("authorizationName");
-					logger.debug("insert " + authName);
+			Set<String> productTypes = loadProductTypes();
+			for (SourceBean defaultAuthSB : defaultAuthorizationsSB) {
+				String authName = (String) defaultAuthSB.getAttribute("authorizationName");
+				logger.debug("Insert " + authName);
 
-					/*
-					 * String organization = (String) defaultAuthSB.getAttribute("organization"); if (organization == null) { throw new
-					 * SpagoBIRuntimeException("Predefined authorization [" + authName + "] has no organization set."); }
-					 */
-					String productType = (String) defaultAuthSB.getAttribute("productType");
-					if (productType == null) {
-						throw new SpagoBIRuntimeException("Predefined authorization [" + authName + "] has no product type set.");
-					}
+				/*
+				 * String organization = (String) defaultAuthSB.getAttribute("organization"); if (organization == null) { throw new
+				 * SpagoBIRuntimeException("Predefined authorization [" + authName + "] has no organization set."); }
+				 */
+				String productType = (String) defaultAuthSB.getAttribute("productType");
+				if (productType == null) {
+					throw new SpagoBIRuntimeException("Predefined authorization [" + authName + "] has no product type set.");
+				}
 
-					if (productTypes.contains(productType)) {
-						if (!authorizationsFound.contains(authName + "-" + productType)) {
-							DAOFactory.getRoleDAO().insertAuthorization(authName, productType);
-							logger.debug("Succesfully inserted authorization [" + authName + "] for product Type [" + productType + "]");
-						} else {
-							logger.debug("Not inserted authorization [" + authName + "] for product Type [" + productType + "] because already present.");
-
-						}
+				if (productTypes.contains(productType)) {
+					if (!authorizationsFound.contains(authName + "-" + productType)) {
+						DAOFactory.getRoleDAO().insertAuthorization(authName, productType);
+						logger.debug("Succesfully inserted authorization [" + authName + "] for product Type [" + productType + "]");
 					} else {
-						logger.debug("Not inserted authorization [" + authName + "]. Product Type [" + productType + "] is not registered.");
+						logger.debug("Not inserted authorization [" + authName + "] for product Type [" + productType + "] because already present.");
+
 					}
+				} else {
+					logger.debug("Not inserted authorization [" + authName + "]. Product Type [" + productType + "] is not registered.");
 				}
 			}
 
