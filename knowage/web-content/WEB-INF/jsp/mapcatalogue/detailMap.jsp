@@ -54,7 +54,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		Map lookupFeatureUrlPars = new HashMap();
 		lookupFeatureUrlPars.put("PAGE", "FeaturesLookupPage");
 		lookupFeatureUrlPars.put("MESSAGEDET", modality);
-		lookupFeatureUrlPars.put("MAP_ID", new Integer(map.getMapId()));
+		Integer mapId = (map == null)? null: new Integer(map.getMapId());
+		lookupFeatureUrlPars.put("MAP_ID", mapId);
 		lookupFeatureUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_DISABLED, "true");
 		String lookupFeraturesUrl = urlBuilder.getUrl(request, lookupFeatureUrlPars);	
 		
