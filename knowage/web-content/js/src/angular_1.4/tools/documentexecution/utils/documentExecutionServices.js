@@ -1019,7 +1019,15 @@
 						   }
 					   	},function(response, status, headers, config) {
 							var lovParamName = dataDependenciesElementMap.parameterToChangeUrlName;
-					   		documentExecuteServices.showToast('Error LOV "'+ lovParamName +'" : ' + response.data.errors[0].message);
+					   		var errorMes = '';
+							if(typeof response.data!='undefined' &&  typeof response.data.errors !='undefined'){
+								errorMes = response.data.errors[0].message;
+							}
+					   		if(typeof response.data.RemoteException !='undefined' ){
+					   			errorMes = response.data.RemoteException.message;
+					   		}
+					   		
+							documentExecuteServices.showToast('Error LOV " '+ lovParamName +' " : ' + errorMes);
 					   		var idRowParameter = serviceScope.getRowIdfromUrlName(lovParamName);
 							execProperties.parametersData.documentParameters[idRowParameter].defaultValues = [];
 							execProperties.parametersData.documentParameters[idRowParameter].parameterValue = [];

@@ -201,7 +201,7 @@ public class DefaultValuesRetriever {
 
 			columnName = lovProvDet.getValueColumnName();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		// get all the rows of the result
@@ -209,21 +209,21 @@ public class DefaultValuesRetriever {
 		try {
 			lovResultHandler = new LovResultHandler(lovResult);
 		} catch (SourceBeanException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		DefaultValuesList defaultValuesList = new DefaultValuesList();
-		List<SourceBean> rows = lovResultHandler.getRows();
+		if (lovResultHandler != null) {
+			List<SourceBean> rows = lovResultHandler.getRows();
+			for (SourceBean row : rows) {
+				String rowValue = (String) row.getAttribute(columnName);
 
-		for (SourceBean row : rows) {
-			String rowValue = (String) row.getAttribute(columnName);
+				DefaultValue defaultValue = new DefaultValue();
+				defaultValue.setValue(rowValue);
 
-			DefaultValue defaultValue = new DefaultValue();
-			defaultValue.setValue(rowValue);
-
-			defaultValuesList.add(defaultValue);
+				defaultValuesList.add(defaultValue);
+			}
 		}
-
 		return defaultValuesList;
 	}
 
