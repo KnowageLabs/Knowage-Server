@@ -117,7 +117,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			try {
 				dataSetDAO = DAOFactory.getDataSetDAO();
 			} catch (EMFUserError e) {
-				e.printStackTrace();
+				throw new SpagoBIDOAException("An error occured while getting the dataset DAO", e);
 			}
 			dataSetDAO.setUserProfile(profile);
 
@@ -162,7 +162,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				var = new SbiFunctionOutput(new SbiFunctionOutputId(sbiCatalogFunction.getFunctionId(), varLabel), sbiCatalogFunction, outTypeSbiDomainId);
 				outputVariablesSet.add(var);
 			} catch (EMFUserError e) {
-				e.printStackTrace();
+				throw new SpagoBIDOAException("An error occured while getting domain by code [FUNCTION_OUTPUT] and value [" + outType + "]", e);
 			}
 
 		}
@@ -242,7 +242,9 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			hibCatFunction.setSbiFunctionInputDatasets(getSbiFunctionInputDatasetSet(updatedCatalogFunction.getInputDatasets(), hibCatFunction));
 			hibCatFunction.setLanguage(updatedCatalogFunction.getLanguage());
 			hibCatFunction.setName(updatedCatalogFunction.getName());
+			hibCatFunction.setDescription(updatedCatalogFunction.getDescription());
 			hibCatFunction.setScript(updatedCatalogFunction.getScript());
+			updateSbiCommonInfo4Update(hibCatFunction);
 			session.saveOrUpdate(hibCatFunction);
 			transaction.commit();
 
