@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Class-Path: KnowageQbeCore.jar
 
-Name: knowage.qbecore-1.0.0.jar
+Name: knowage.qbecore-1.2.0.jar
 Implementation-Title: KnowageQbeCore
-Implementation-Version: 1.1.0
+Implementation-Version: 1.2.0

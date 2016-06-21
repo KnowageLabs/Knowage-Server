@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: knowageaccessibilityengine.war
 Implementation-Title: knowageaccessibilityengine
-Implementation-Version: 1.0.0
+Implementation-Version: 1.2.0
 

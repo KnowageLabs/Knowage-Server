@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Class-Path: knowageutilsjson.jar
 
-Name: knowage.utils-1.0.0.jar
+Name: knowage.utils-1.2.0.jar
 Implementation-Title: KnowageUtils
-Implementation-Version: 1.0.0
+Implementation-Version: 1.2.0
 

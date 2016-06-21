@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: knowagejasperreportengine.war
 Implementation-Title: knowagejasperreportengine
-Implementation-Version: 1.0.0
+Implementation-Version: 1.2.0
 Included: Jasper 4.0.0
