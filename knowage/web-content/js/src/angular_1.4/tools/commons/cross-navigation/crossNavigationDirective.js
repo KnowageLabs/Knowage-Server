@@ -114,25 +114,13 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				for(var dataKey in outputParameter){  
 					for(var key in navObj.navigationParams){
 						var parVal=navObj.navigationParams[key];
-						if(parVal.fixed){
+						if(outputParameter[dataKey].hasOwnProperty(parVal.value.label) && outputParameter[dataKey][parVal.value.label]!=undefined && outputParameter[dataKey][parVal.value.label]!=null){ 
 							if(!respStr.hasOwnProperty(key)){
 								respStr[key]=[];
 							}
-							if(respStr[key].indexOf(parVal.value)==-1)
-							{ 
-								respStr[key].push(parVal.value);
-							}
-						}else{
-							if(outputParameter[dataKey].hasOwnProperty(parVal.value.label) && outputParameter[dataKey][parVal.value.label]!=undefined && outputParameter[dataKey][parVal.value.label]!=null){ 
-								if(!respStr.hasOwnProperty(key)){
-									respStr[key]=[];
-								}
-								
-								respStr[key].push(parseParameterValue(parVal.value,outputParameter[dataKey][parVal.value.label]));
-//								respStr[key].push(outputParameter[dataKey][parVal.value]);
-							}
+							
+							respStr[key].push(parseParameterValue(parVal.value,outputParameter[dataKey][parVal.value.label]));
 						}
-						
 					} 
 				}
 				
@@ -140,29 +128,30 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			}else{
 				for(var key in navObj.navigationParams){
 					var parVal=navObj.navigationParams[key];
-					if(parVal.fixed){
-						respStr[key]=parVal.value;
-					}else{
-						if(outputParameter.hasOwnProperty(parVal.value.label) && outputParameter[parVal.value.label]!=undefined && outputParameter[parVal.value.label]!=null){ 
-							respStr[key]=parseParameterValue(parVal.value,outputParameter[parVal.value.label]);
-						}
+					if(outputParameter.hasOwnProperty(parVal.value.label) && outputParameter[parVal.value.label]!=undefined && outputParameter[parVal.value.label]!=null){ 
+						respStr[key]=parseParameterValue(parVal.value,outputParameter[parVal.value.label]);
 					}
 				}
 			}
 			
 			//check for input parameters
-			if(inputParameter!=undefined){
-				for(var key in navObj.navigationParams){
-					var parVal=navObj.navigationParams[key];
-					if(parVal.fixed){
-						respStr[key]=parVal.value;
-					}else{
-						if(respStr[key]==undefined && inputParameter.hasOwnProperty(parVal.value.label) && inputParameter[parVal.value.label]!=undefined && inputParameter[parVal.value.label]!=null){ 
-							respStr[key]=parseParameterValue(parVal.value,inputParameter[parVal.value.label]);
-						}
+			if(inputParameter!=undefined && navObj.navigationParams!=undefined){
+				for(var parin=0;parin<inputParameter.length;parin++){
+					var urlName=inputParameter[parin].urlName;
+					if(navObj.navigationParams.hasOwnProperty(urlName)){
+						respStr[urlName]=inputParameter[parin].parameterValue;
 					}
 				}
+				
 			}
+			
+			//load fixed value --- replace all
+			for(var key in navObj.navigationParams){
+				if(navObj.navigationParams[key].fixed==true){
+					respStr[key]=navObj.navigationParams[key].value;
+				}
+			}
+			
 			 
 			respStr = jsonToURI(respStr); 
 			

@@ -423,7 +423,8 @@
 		};
 		
 		$scope.navigateTo= function(outputParameters,inputParameters,targetCrossNavigation,docLabel){
-			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel);
+			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,execProperties.parametersData.documentParameters,targetCrossNavigation,docLabel);
+//			$crossNavigationScope.crossNavigationHelper.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel);
 		};
 		
 		$scope.internalNavigateTo= function(params,targetDocLabel){

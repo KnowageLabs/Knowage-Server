@@ -22,6 +22,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.bmCWMProcessingShow;
 	$scope.bmCWMImportingShow;
 	$scope.isNew;
+	$scope.metaWebFunctionality=false;
 	
 	$scope.translate = sbiModule_translate;
 	$scope.businessModelList=[];		//All Business Models list
@@ -667,7 +668,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			 
 				$mdDialog.show({
 					preserveScope: true,
-					controller: function($scope,url){$scope.metaUrl=url;},
+					controller: function($scope,$mdDialog,url){
+						$scope.metaUrl=url;
+						$scope.closeMetaWeb=function(){
+							$mdDialog.hide();
+						}
+					},
 					template:   '<md-dialog aria-label="Open meta"  style="width: 100%;  height: 100%;max-width: 100%;  max-height: 100%;" ng-cloak>'+
 								'<md-dialog-content flex layout="column" class="metaContent" >'+
 								'<iframe flex class=" noBorder" ng-src="{{metaUrl}}" name="metaIframe"></iframe>'+ 

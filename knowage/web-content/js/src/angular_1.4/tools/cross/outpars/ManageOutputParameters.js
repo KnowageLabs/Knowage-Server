@@ -32,7 +32,7 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 			};
 			
 			var newRecord = function(){
-				ctr.detail = {'id':null, 'biObjectId': objectId};
+				ctr.detail = {'id':null, 'biObjectId': objectId,type:{}};
 			};
 			
 			var loadParametersList = function(){

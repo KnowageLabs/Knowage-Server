@@ -56,6 +56,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		%>
 		
+		<!-- check if use is admin or tecnical user -->
+		
+		<%
+		boolean isAdmin=UserUtilities.isAdministrator(userProfile);
+		boolean isTec=UserUtilities.isTechnicalUser(userProfile);
+		
+		%>
 		<!-- Making lisOfDSL and relString avaliable for use in federatedDataset.js -->
 		<script>
 			var valueUser = '<%= user  %>';
@@ -143,12 +150,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 				
 				<div layout="row" layout-wrap layout-align="start center">
-						<label  flex class="buttonLabel">{{translate.load("sbi.ds.file.upload.button")}}:</label>
-      				<file-upload  flex ng-model="fileObj" id="businessModelFile" ng-change="checkChange()"flex></file-upload>
-      				 <md-button class="md-fab md-primary md-hue-2" aria-label="Profile" ng-click="createBusinessModels()" ng-disabled="selectedBusinessModel.dataSourceLabel==undefined">
-						<md-icon md-font-icon="fa fa-pencil fa-2x"></md-icon>
+					<label ng-if="!metaWebFunctionality"  class="buttonLabel">{{translate.load("sbi.ds.file.upload.button")}}:</label>
+      				<file-upload ng-if="!metaWebFunctionality"  flex ng-model="fileObj" id="businessModelFile" ng-change="checkChange()"flex></file-upload>
+      				
+      				<% if(isAdmin || isTec){ %>
+      				
+      				 <md-button ng-if="metaWebFunctionality" class="md-raised" aria-label="Profile" ng-click="createBusinessModels()" ng-disabled="selectedBusinessModel.dataSourceLabel==undefined">
+						Meta web
 					</md-button>
-<!--       				<md-button  ng-click="createBusinessModels()" class="md-raised">Create from meta web</md-button> -->
+					
+					<md-input-container flex>
+			          <md-switch ng-model="metaWebFunctionality" >{{translate.load("enable.meta.web")}}</md-switch>
+			        </md-input-container>
+					<%} %>
       				
       				<!-- ng-click="fileChange();checkChange()"  -->
       				<%
