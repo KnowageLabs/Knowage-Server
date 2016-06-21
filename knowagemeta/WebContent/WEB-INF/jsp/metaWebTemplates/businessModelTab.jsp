@@ -72,7 +72,7 @@
 								<queue-table>
 									<div layout="row"> 
 										<span flex></span>
-										<md-button type="button" id="add-element" ng-click="scopeFunctions.openShowDialog($event);">{{scopeFunctions.translate.load("sbi.meta.model.add.inbound.element")}}</md-button>
+										<md-button type="button" id="add-element" ng-click="scopeFunctions.addNewInbound();">{{scopeFunctions.translate.load("sbi.general.add")}}</md-button>
 									</div>
 								</queue-table> 
 					 </angular-table>
@@ -91,7 +91,7 @@
 					 	<queue-table>
 							<div layout="row"> 
 								<span flex></span>
-								<md-button type="button" id="add-element" ng-click="scopeFunctions.openShowDialog($event);">{{scopeFunctions.translate.load("sbi.meta.model.add.outbound.element")}}</md-button>
+								<md-button type="button" id="add-element" ng-click="scopeFunctions.addNewOutbound($event);">{{scopeFunctions.translate.load("sbi.general.add")}}</md-button>
 							</div>
 						</queue-table> 
 					 </angular-table>
