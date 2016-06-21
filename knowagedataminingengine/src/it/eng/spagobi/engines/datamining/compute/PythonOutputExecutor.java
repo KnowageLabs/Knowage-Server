@@ -120,7 +120,7 @@ public class PythonOutputExecutor {
 			}
 
 			// In case the system where Datamining engine is running isn't a X server (doesn't have $DISPLAY variable initialized)
-			PyLib.execScript("import matplotlib\n" + "matplotlib.add('Agg')\n");
+			PyLib.execScript("import matplotlib\n" + "matplotlib.use('Agg')\n");
 
 			res.setVariablename(outVal);// could be multiple value
 										// comma separated
