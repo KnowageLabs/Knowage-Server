@@ -5,7 +5,7 @@ app.config([ '$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.setDefaultTheme('knowage');
 } ]);
 
-app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices', metaDefinitionControllerFunction ]);
+app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config', metaDefinitionControllerFunction ]);
 
 
 
@@ -34,8 +34,7 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 		dataToSend.physicalModel = $scope.removeCircularDependency(angular.extend([],$scope.physicalModel));
 		dataToSend.businessModel =  $scope.removeCircularDependency(angular.extend([],$scope.businessModel));
 
-		sbiModule_restServices
-		.promisePost("1.0/metaWeb", "generateModel", dataToSend)
+		sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", dataToSend)
 		.then(
 				function(response) {
 
@@ -78,9 +77,8 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 		dataToSend.businessModels = $scope.businessModels;
 		// TODO set model name here
 		dataToSend.modelName = 'test_model_hard_coded';
-		sbiModule_restServices.alterContextPath("/knowagemeta");
-		sbiModule_restServices
-				.promisePost("1.0/metaWeb", "create", dataToSend)
+
+		sbiModule_restServices.promisePost("1.0/metaWeb", "create", dataToSend)
 				.then(
 						function(response) {
 							$scope.steps.current = 1;

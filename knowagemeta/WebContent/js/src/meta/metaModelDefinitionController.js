@@ -1,6 +1,6 @@
-angular.module('metaManager').controller('metaModelDefinitionController', [ '$scope','sbiModule_translate', 'sbiModule_restServices',metaModelDefinitionControllerFunction ]);
+angular.module('metaManager').controller('metaModelDefinitionController', [ '$scope','sbiModule_translate', 'sbiModule_restServices','sbiModule_config',metaModelDefinitionControllerFunction ]);
 
-function metaModelDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices) {
+function metaModelDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config) {
 	$scope.dataSourceStructure = [];
 
 	$scope.datasourceStructureColumnsList = [
@@ -104,9 +104,8 @@ function metaModelDefinitionControllerFunction($scope, sbiModule_translate,sbiMo
 
 	$scope.loadDatasourceTable = function() {
 		// $scope.loadDatasourceSchemas(dsId)
-		sbiModule_restServices
-				.promiseGet("2.0/datasources",
-						"structure/" + $scope.datasourceId)
+		sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath);
+		sbiModule_restServices.promiseGet("2.0/datasources","structure/" + $scope.datasourceId)
 				.then(
 						function(response) {
 							angular.copy($scope
