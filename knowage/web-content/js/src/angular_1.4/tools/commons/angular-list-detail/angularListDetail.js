@@ -57,7 +57,7 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 .directive('list',
 		function($compile) {
 	return {
-		template:'<div ng-hide="ALD_controller.fullScreen==true && ALD_controller.currentView.value!=\'list\'" class="md-container kn-list" layout="column" layout-wrap ng-class="(ALD_controller.fullScreen==true && ALD_controller.currentView.value==\'list\') ? \'flex\' : \'flex-40\'">'+
+		template:'<div ng-hide="ALD_controller.fullScreen==true && ALD_controller.currentView.value!=\'list\'" class="md-container kn-list" layout="column" ng-class="(ALD_controller.fullScreen==true && ALD_controller.currentView.value==\'list\') ? \'flex\' : \'flex-40\'">'+
 		'<md-toolbar>'+
 		'	<div class="md-toolbar-tools">'+
 		'	 <h2 flex>{{AWD_listController.title}}</h2>'+
@@ -129,7 +129,7 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		//old version recommit
 		function($compile) {
 	return {
-		template:'<div ng-hide="ALD_controller.fullScreen==true && ALD_controller.currentView.value!=\'detail\'"  flex class="md-container kn-detail" layout="column" layout-wrap>'+
+		template:'<div ng-hide="ALD_controller.fullScreen==true && ALD_controller.currentView.value!=\'detail\'"  flex class="md-container kn-detail" layout="column">'+
 		' <md-toolbar>'+
 		'	<div class="md-toolbar-tools">'+
 //		'		<md-button aria-label="back"  ng-if="ALD_controller.fullScreen==true" ng-click="ALD_controller.currentView.value=\'list\'" >  <md-icon md-font-icon="fa fa-arrow-left"></md-icon></md-button>'+

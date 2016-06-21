@@ -51,10 +51,11 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 					ctr.detailLoadingSpinner = true;
 					sbiModule_restServices.promiseGet('1.0/crossNavigation/'+item.id+'/load', "", null)
 					.then(function(response) {
+						$angularListDetail.goToDetail();
 						var data = response.data;
 						ctr.detailLoadingSpinner = false;
 						ctr.detail = data;
-						$angularListDetail.goToList();
+						
 					},function(response){
 						console.log(response);
 					});

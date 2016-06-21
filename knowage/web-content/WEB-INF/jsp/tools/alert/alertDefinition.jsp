@@ -122,7 +122,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   		</md-card>
 
 
-  		<action-maker flex ng-if="listenerIsSelected()" ng-model="alert.jsonOptions" template-url="alert.alertListener.template" is-valid="isValidListener"></action-maker>
+  		<action-maker ng-if="listenerIsSelected()" ng-model="alert.jsonOptions" template-url="alert.alertListener.template" is-valid="isValidListener"></action-maker>
 
 			 </detail>
 </angular-list-detail>
