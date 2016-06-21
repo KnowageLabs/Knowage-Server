@@ -64,6 +64,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 
 	private final String MESSAGE_DET = "MESSAGE_DET";
 	// type of service
+	private final String DOC_SAVE = "DOC_SAVE";
 	private final String DOC_UPDATE = "DOC_UPDATE";
 	private final String MODIFY_GEOREPORT = "MODIFY_GEOREPORT";
 	private final String MODIFY_COCKPIT = "MODIFY_COCKPIT";
@@ -119,7 +120,13 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		logger.debug("Action type is equal to [" + action + "]");
 
 		try {
-			if (MODIFY_GEOREPORT.equalsIgnoreCase(action) || MODIFY_COCKPIT.equalsIgnoreCase(action)) {
+
+			if (DOC_SAVE.equalsIgnoreCase(action)) {
+				doInsertDocument(request);
+			} else if (DOC_UPDATE.equalsIgnoreCase(action)) {
+				logger.error("DOC_UPDATE action is no more supported");
+				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.document.unsupported.udpateaction");
+			} else if (MODIFY_GEOREPORT.equalsIgnoreCase(action) || MODIFY_COCKPIT.equalsIgnoreCase(action)) {
 				doModifyDocument(request);
 			} else {
 				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.document.unsupported.action");
@@ -615,10 +622,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	}
 
 	/**
-	 *
-	 * @return a JSON object representing the input request to the service with the following structure:
-	 *
-	 *         <code>
+	 * @return a JSON object representing the input request to the service with the following structure: <code>
 	 * 		{
 	 * 			action: STRING
 	 * 			, sourceDataset: {
@@ -644,7 +648,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	 * 			, folders: [STRING, ... , STRING]
 	 * 		}
 	 * 	</code>
-	 *
 	 **/
 
 	public JSONObject parseRequest() {
