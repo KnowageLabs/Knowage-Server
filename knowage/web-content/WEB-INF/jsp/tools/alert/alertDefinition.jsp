@@ -121,9 +121,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		     </md-card-content>
   		</md-card>
 
-
-  		<action-maker ng-if="listenerIsSelected()" ng-model="alert.jsonOptions" template-url="alert.alertListener.template" is-valid="isValidListener"></action-maker>
-
+		<md-card ng-if="listenerIsSelected()">
+			<md-card-content>
+  		<action-maker  ng-model="alert.jsonOptions" template-url="alert.alertListener.template" is-valid="isValidListener"></action-maker>
+			</md-card-content></md-card>
 			 </detail>
 </angular-list-detail>
 </body>
