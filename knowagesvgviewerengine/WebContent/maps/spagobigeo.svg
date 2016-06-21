@@ -96,6 +96,9 @@ onload="init(evt);">
 		var suspendProcess;
 		var windowPositions = new Array();
 		var execCrossFnScope = null;
+		
+		//force highlight on mouse over
+		sbi.geo.conf.gui_settings.highlightOnMouseOver = true;
 	
 		var isShowTableModalityActive = true;
 			
