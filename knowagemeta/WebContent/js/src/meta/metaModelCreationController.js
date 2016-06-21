@@ -5,7 +5,7 @@ angular.module('metaManager').controller('metaModelCreationPhysicalController', 
 angular.module('metaManager').controller('metaModelCreationBusinessController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',metaModelCreationBusinessControllerFunction ]);
 angular.module('metaManager').controller('businessModelPropertyController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelPropertyControllerFunction ]);
 angular.module('metaManager').controller('businessModelAttributeController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelAttributeControllerFunction ]);
-angular.module('metaManager').controller('businessModelInboundController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelInboundControllerFunction ]);
+angular.module('metaManager').controller('businessModelInboundController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config',businessModelInboundControllerFunction ]);
 angular.module('metaManager').controller('businessModelOutboundController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelOutboundControllerFunction ]);
 
 function metaModelCreationControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout) {
@@ -211,24 +211,23 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 			}
 		}
 }
-function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout){
+function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config){
 	$scope.isInbound = function(item) {
 		return angular.equals(item.sourceTableName,
 				$scope.selectedBusinessModel.name);
 	}
 
-	$scope.inboundFunctions = {translate:sbiModule_translate};
-	$scope.inboundColumns = [{label:'name',name:'name'},
-	                      {label:'source Table Name',name:'sourceTableName'},
-	                      {label:'source Columns',name:'sourceColumns',transformer:function(data){
+	$scope.inboundColumns = [{label:'Name',name:'name'},
+	                      {label:'Source Table',name:'sourceTableName'},
+	                      {label:'Source Columns',name:'sourceColumns',transformer:function(data){
 	                    	  var ret = [];
 	                    	  data.forEach(function(entry) {
 	                    		    ret.push(entry.name);
 	                    		  }, this);
 	                    	  return ret.join(", ")
 	                      }},
-	                      {label:'dest. Table Name',name:'destinationTableName'},
-	                      {label:'destination Columns',name:'destinationColumns',transformer:function(data){
+	                      {label:'Target Table',name:'destinationTableName'},
+	                      {label:'Target Columns',name:'destinationColumns',transformer:function(data){
 	                    	  var retD = [];
 	                    	  data.forEach(function(entry) {
 	                    		    retD.push(entry.name);
@@ -236,6 +235,27 @@ function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiM
 	                    	  return retD.join(", ")
 	                      }}
 	                      ];
+
+	$scope.addNewInbound = function(){
+			$mdDialog.show({
+
+				preserveScope: true,
+				templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/inboundModel.jsp',
+				clickOutsideToClose:true,
+				escapeToClose :true,
+				fullscreen: true,
+//				locals:{url:sbiModule_config.contextName+'/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp&datasourceId='+dsId}
+//				locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId}
+			});
+
+	}
+
+	$scope.inboundFunctions = {
+			translate:sbiModule_translate,
+			addNewInbound:$scope.addNewInbound
+	};
+
+
 }
 function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout){
 	$scope.isOutbound = function(item) {
@@ -243,18 +263,17 @@ function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbi
 				$scope.selectedBusinessModel.name);
 	}
 
-	$scope.outboundFunctions = {translate:sbiModule_translate};
-	$scope.outboundColumns = [{label:'name',name:'name'},
-		                      {label:'source Table Name',name:'destinationTableName'},
-		                      {label:'source Columns',name:'destinationColumns',transformer:function(data){
+	$scope.outboundColumns = [{label:'Name',name:'name'},
+		                      {label:'Source Table',name:'destinationTableName'},
+		                      {label:'Source Columns',name:'destinationColumns',transformer:function(data){
 		                    	  var retD = [];
 		                    	  data.forEach(function(entry) {
 		                    		    retD.push(entry.name);
 		                    		  }, this);
 		                    	  return retD.join(", ")
 		                      }},
-		                      {label:'dest. Table Name',name:'sourceTableName'},
-		                      {label:'destination Columns',name:'sourceColumns',transformer:function(data){
+		                      {label:'Target Table',name:'sourceTableName'},
+		                      {label:'Target Columns',name:'sourceColumns',transformer:function(data){
 		                    	  var ret = [];
 		                    	  data.forEach(function(entry) {
 		                    		    ret.push(entry.name);
@@ -263,5 +282,12 @@ function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbi
 		                      }}
 		                      ];
 
+	$scope.addNewOutbound = function(){
 
+	}
+
+	$scope.outboundFunctions = {
+			translate:sbiModule_translate,
+			addNewOutbound:$scope.addNewOutbound
+	};
 }
