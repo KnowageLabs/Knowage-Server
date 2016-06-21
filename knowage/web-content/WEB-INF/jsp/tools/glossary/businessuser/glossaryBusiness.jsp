@@ -88,7 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						aria-label="add word"
 						style="position:absolute; right:11px; top:0px;"> <md-icon
 						md-font-icon="fa fa-plus "
-						style="  margin-top: 6px ; color: white;"></md-icon> </md-button>
+						style="color: white;"></md-icon> </md-button>
 				</div>
 				</md-toolbar>
 
@@ -260,7 +260,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			  											right: 0;
 			  											margin: 0;">
 					<md-icon md-font-icon="fa fa-times"
-						style="color: rgb(0, 0, 0);  margin-top: 5px;"></md-icon> </md-button>
+						style="color: rgb(0, 0, 0); "></md-icon> </md-button>
 
 
 				</div>

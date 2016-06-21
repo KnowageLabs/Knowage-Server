@@ -64,7 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 </head>
 
-<body >
+<body class="kn-glossary-execution">
 	<div ng-controller="Controller_tec as global" layout-fill>
 		<md-content class="glossaryTec"> 
 			<md-tabs md-border-bottom>

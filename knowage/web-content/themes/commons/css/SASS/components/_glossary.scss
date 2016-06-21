@@ -7,3 +7,33 @@
 		}
 	}
 }
+.kn-glossary-execution {
+	.searchBar {
+		md-icon.fa-search{
+			top: 0;
+			margin-top:0;
+		}
+		md-icon.fa-filter {
+			top: 0;
+			margin-top:0;
+			color: $fabPrimaryColor !important;
+		}
+		input {
+			padding-left: 20px !important;
+		}
+	}
+	.selected_item {
+		button, button:hover {
+			background-color: lighten($fabPrimaryColor, 10%) !important;
+			color: white !important;
+			
+		}
+		._md-list-item-inner {
+			.wrapText {
+				color: white !important;
+				z-index: 2;
+			}
+		}
+	}
+
+}

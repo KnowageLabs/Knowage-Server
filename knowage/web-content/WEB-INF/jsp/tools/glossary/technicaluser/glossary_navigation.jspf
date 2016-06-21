@@ -5,15 +5,15 @@
 	<div layout="row" layout-wrap class=" h100">
 
 		<div flex="20" class="boxItemGlo">
-			<md-toolbar class="md-blue xs-head">
+			<md-toolbar class="md-blue xs-head no-margin">
 				<div class="md-toolbar-tools">
 					<div>{{translate.load("sbi.glossary.word");}}</div>
 					<md-progress-circular ng-show="ctrl.pagination.word.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
 				</div>
 			</md-toolbar>
 
-			<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
-				<md-select  style="padding: 0 0 2px 0; margin:0" placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.pagination.word.selGlo" >
+			<md-content layout="column" class="xs-head-max-content noTBPadding"> 
+				<md-select   placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.pagination.word.selGlo" >
 					<md-option value="---" ng-click="ctrl.SearchLike(ctrl.pagination.word);">{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}</md-option>
 					<md-option ng-repeat="gloss in global.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.SearchLike(ctrl.pagination.word);" >{{gloss.GLOSSARY_NM}}</md-option>
 				</md-select>
@@ -49,7 +49,7 @@
 
 		<div flex="80" class="boxItemGlo" layout="column">
 
-			<md-toolbar class="md-blue xs-head" style="  border-bottom: 1px solid rgb(210, 210, 210);">
+			<md-toolbar class="md-blue xs-head no-margin" style="  border-bottom: 1px solid rgb(210, 210, 210);">
 			<div class="md-toolbar-tools">
 				<div>{{translate.load("sbi.glossary.elements");}}</div>
 				   <md-button class="md-primary md-hue-1 delete_select" ng-click="ctrl.deleteSelect()">{{translate.load("sbi.config.manageconfig.fields.clearFilter");}}</md-button>
@@ -60,7 +60,7 @@
 			
 				<div layout="row"  flex  >
 					<md-whiteframe class="md-whiteframe-4dp"  flex layout-margin layout="column">
-						<md-toolbar class="md-blue xs-head">
+						<md-toolbar class="md-blue xs-head no-margin">
 							<div class="md-toolbar-tools">
 								<div style="text-align: center; width: 100%;">{{translate.load("sbi.kpis.documents");}}</div>
 									<md-progress-circular ng-show="ctrl.pagination.document.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
@@ -97,7 +97,7 @@
 					</md-whiteframe>
 	
 					<md-whiteframe class="md-whiteframe-4dp" flex layout-margin layout="column" >
-						<md-toolbar class="md-blue xs-head">
+						<md-toolbar class="md-blue xs-head no-margin">
 							<div class="md-toolbar-tools">
 								<div style="text-align: center; width: 100%;">{{translate.load("sbi.kpi.kpiguidescription.dataset");}}</div>
 							<md-progress-circular ng-show="ctrl.pagination.dataset.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
@@ -135,7 +135,7 @@
 				</div>
 				<div layout="row"  flex  >
 					<md-whiteframe class="md-whiteframe-4dp"  flex layout-margin layout="column">
-						<md-toolbar class="md-blue xs-head">
+						<md-toolbar class="md-blue xs-head no-margin">
 						<div class="md-toolbar-tools">
 							<div style="text-align: center; width: 100%;">{{translate.load("sbi.glossary.businessclass");}}</div>
 						<md-progress-circular ng-show="ctrl.pagination.bness_cls.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
@@ -173,7 +173,7 @@
 
 				
 				<md-whiteframe class="md-whiteframe-4dp"  flex layout-margin layout="column">
-					<md-toolbar class="md-blue xs-head">
+					<md-toolbar class="md-blue xs-head no-margin">
 						<div class="md-toolbar-tools">
 							<div style="text-align: center; width: 100%;">{{translate.load("sbi.glossary.tables");}}</div>
 							<md-progress-circular ng-show="ctrl.pagination.table.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
