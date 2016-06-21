@@ -69,7 +69,10 @@ public class StyleResource {
 			}
 		}
 		URL urlToSfnas = StyleResource.class.getResource(PATH_TO_SFNAS);
-		JSONObject sfnas = convertToJson(urlToSfnas.getPath());
+		String path = urlToSfnas.getPath();
+		path = path.replaceAll("%20", " ");
+
+		JSONObject sfnas = convertToJson(path);
 		if (sfnas != null)
 			allStyles.put(sfnas);
 
