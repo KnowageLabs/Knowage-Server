@@ -278,7 +278,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-tab label="Filter" md-on-select="setTab('Filter')"
 			md-active="isSelectedTab('Filter')" ng-click="loadFilter();">
 		<md-card>	
-			<div layout="column" layout-wrap layout-fill>
+			<div layout="column"  layout-fill>
 		<md-toolbar class="md-blue minihead ">
 	
 		<div class="md-toolbar-tools" layout="row" layout-wrap >
