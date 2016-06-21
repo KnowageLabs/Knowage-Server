@@ -91,7 +91,6 @@ import org.safehaus.uuid.UUIDGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-
 @Path("/1.0/documentexecution")
 @ManageAuthorization
 public class DocumentExecutionResource extends AbstractSpagoBIResource {
@@ -155,15 +154,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String snapshotId = requestVal.optString("snapshotId");
 		String subObjectID = requestVal.optString("subObjectID");
 
-		String olapParam = "";
+		String engineParam = "";
 
 		String sbiExecutionId = requestVal.optString("SBI_EXECUTION_ID");
-		
+
 		String isForExport = requestVal.optString("IS_FOR_EXPORT");
-		//cockpit selections
+		// cockpit selections
 		String cockpitSelections = requestVal.optString("COCKPIT_SELECTIONS");
-		
-		
+
 		JSONObject jsonParameters = requestVal.optJSONObject("parameters");
 		JSONObject menuParameters = requestVal.optJSONObject("menuParameters"); // parameters setted when open document from menu
 
@@ -198,20 +196,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 					executingRole, modality, jsonParametersToSend, locale);
 
-			if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.OLAP_TYPE_CODE))
-				olapParam = buildOlapUrlString(requestVal);
-			
-			if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE)) {
-				if(!("".equalsIgnoreCase(isForExport))) {
-					url += "&IS_FOR_EXPORT=" + isForExport;
+			engineParam = BuildEngineUrlString(requestVal, obj, req, isForExport, cockpitSelections);
 
-					if(!("".equalsIgnoreCase(cockpitSelections))) {
-						url += "&COCKPIT_SELECTIONS=" + cockpitSelections;
-					}
-				}
-			}
-
-			resultAsMap.put("url", url + "&SBI_EXECUTION_ID=" + sbiExecutionId + olapParam);
+			resultAsMap.put("url", url + "&SBI_EXECUTION_ID=" + sbiExecutionId + engineParam);
 			if (errorList != null && !errorList.isEmpty()) {
 				resultAsMap.put("errors", errorList);
 			}
@@ -238,20 +225,43 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return Response.ok(resultAsMap).build();
 	}
 
-	public String buildOlapUrlString(JSONObject reqVal) throws JSONException {
+	private String BuildEngineUrlString(JSONObject reqVal, BIObject obj, HttpServletRequest req, String isForExport, String cockpitSelections)
+			throws JSONException {
 		String ret = "";
-		if (reqVal.getJSONObject("parameters").length() > 0) {
-			String subViewObjectID = reqVal.getJSONObject("parameters").getString("subobj_id");
-			String subViewObjectName = reqVal.getJSONObject("parameters").getString("subobj_name");
-			String subViewObjectDescription = reqVal.getJSONObject("parameters").getString("subobj_description");
-			String subViewObjectVisibility = reqVal.getJSONObject("parameters").getString("subobj_visibility");
 
-			ret = ret + "&"+AbstractEngineStartAction.SUBOBJ_ID+"=" + subViewObjectID +  "&"+AbstractEngineStartAction.SUBOBJ_NAME+"=" + subViewObjectName;
+		if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.OLAP_TYPE_CODE)) {
+			if (reqVal.getJSONObject("parameters").length() > 0) {
+				String subViewObjectID = reqVal.getJSONObject("parameters").getString("subobj_id");
+				String subViewObjectName = reqVal.getJSONObject("parameters").getString("subobj_name");
+				String subViewObjectDescription = reqVal.getJSONObject("parameters").getString("subobj_description");
+				String subViewObjectVisibility = reqVal.getJSONObject("parameters").getString("subobj_visibility");
 
-			if (!subViewObjectDescription.isEmpty())
-				ret = ret + "&"+AbstractEngineStartAction.SUBOBJ_DESCRIPTION+"=" + subViewObjectDescription;
+				ret = ret + "&" + AbstractEngineStartAction.SUBOBJ_ID + "=" + subViewObjectID + "&" + AbstractEngineStartAction.SUBOBJ_NAME + "="
+						+ subViewObjectName;
 
-			ret = ret + "&"+AbstractEngineStartAction.SUBOBJ_VISIBILITY+"=" + subViewObjectVisibility;
+				if (!subViewObjectDescription.isEmpty())
+					ret = ret + "&" + AbstractEngineStartAction.SUBOBJ_DESCRIPTION + "=" + subViewObjectDescription;
+
+				ret = ret + "&" + AbstractEngineStartAction.SUBOBJ_VISIBILITY + "=" + subViewObjectVisibility;
+			}
+		}
+
+		// REPORT BIRT - JASPER
+		// MOBILE
+		if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.REPORT_TYPE_CODE)
+				&& obj.getEngine() != null
+				&& (obj.getEngine().getLabel().equals(SpagoBIConstants.BIRT_ENGINE_LABEL) || obj.getEngine().getLabel()
+						.equals(SpagoBIConstants.JASPER_ENGINE_LABEL)) && req.getHeader("User-Agent").indexOf("Mobile") != -1) {
+			ret = ret + "&outputType=PDF";
+		}
+		// COCKPIT
+		if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE)) {
+			if (!("".equalsIgnoreCase(isForExport))) {
+				ret += "&IS_FOR_EXPORT=" + isForExport;
+				if (!("".equalsIgnoreCase(cockpitSelections))) {
+					ret += "&COCKPIT_SELECTIONS=" + cockpitSelections;
+				}
+			}
 		}
 
 		return ret;
@@ -406,8 +416,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
 
-			parameterAsMap.put("allowInternalNodeSelection",
-					objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
+			parameterAsMap
+					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
 			if (jsonParameters.has(objParameter.getId())) {
 				documentUrlManager.refreshParameterForFilters(objParameter.getAnalyticalDocumentParameter(), jsonParameters);
@@ -859,8 +869,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		addMetadata(generalMetadata, name, value, null);
 	}
 
-	private void addMetadata(JSONArray generalMetadata, String name, String value, Integer id)
-			throws JsonMappingException, JsonParseException, JSONException, IOException {
+	private void addMetadata(JSONArray generalMetadata, String name, String value, Integer id) throws JsonMappingException, JsonParseException, JSONException,
+			IOException {
 		JSONObject data = new JSONObject();
 		if (id != null) {
 			data.put("id", id);
@@ -870,8 +880,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		generalMetadata.put(data);
 	}
 
-	private void addTextMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id)
-			throws JSONException, JsonMappingException, JsonParseException, IOException {
+	private void addTextMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id) throws JSONException,
+			JsonMappingException, JsonParseException, IOException {
 		JSONArray jsonArray = metadataMap.get(type);
 		if (jsonArray == null) {
 			jsonArray = new JSONArray();

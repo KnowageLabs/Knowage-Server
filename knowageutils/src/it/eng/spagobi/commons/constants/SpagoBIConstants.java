@@ -459,6 +459,8 @@ public class SpagoBIConstants {
 
 	public static final String CHART_TYPE_CODE = "CHART";
 	public static final String COCKPIT_ENGINE_NAME = "Cockpit Engine";
+	public static final String BIRT_ENGINE_LABEL = "knowagebirtreporteng";
+	public static final String JASPER_ENGINE_LABEL = "knowagejasperreporte";
 
 	public static final String MONDRIAN_SCHEMA = "MONDRIAN_SCHEMA";
 	public static final String MONDRIAN_CUBE = "cube";
