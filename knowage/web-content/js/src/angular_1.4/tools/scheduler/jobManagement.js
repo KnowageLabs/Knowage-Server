@@ -553,7 +553,12 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					ctrl.selectedDocumentParameters = data;
 					for(var i=0; i<ctrl.selectedJob.documents[ctrl.selectedDocumentIndex].parameters.length; i++){
 						var parameter = ctrl.selectedJob.documents[ctrl.selectedDocumentIndex].parameters[i];
-						parameter.temporal = ctrl.getParameterByName(parameter.name).parameter.temporal;
+						var selectedDocumentParameter = ctrl.getParameterByName(parameter.name);
+						if(selectedDocumentParameter != null){
+							parameter.temporal = selectedDocumentParameter.parameter.temporal;
+						}else{
+							parameter.temporal = false;
+						}
 						if(parameter.type == "fixed"){
 							ctrl.loadParameterValues(parameter);
 						}
@@ -692,27 +697,30 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	
 	ctrl.loadParameterValues = function(parameter){
 		var selectedDocumentName = ctrl.selectedJob.documents[ctrl.selectedDocumentIndex].name
-		var parameterId = ctrl.getParameterByName(parameter.name).parID;
-		if(parameterId){
-			sbiModule_restServices.get("2.0/documents", encodeURI(selectedDocumentName)+"/parameters/"+encodeURI(parameterId)+"/values?role="+encodeURI(parameter.role))
-				.success(function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						console.log("unable to load parameters ", data.errors);
-						ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
-					} else {
-						if(parameter.value.trim() != ""){
-							parameter.selectedValues = parameter.value.split(";");
-						}else{
-							parameter.selectedValues = [];
+		var selectedDocumentParameter = ctrl.getParameterByName(parameter.name);
+		if(selectedDocumentParameter != null){
+			var parameterId = selectedDocumentParameter.parID;
+			if(parameterId){
+				sbiModule_restServices.get("2.0/documents", encodeURI(selectedDocumentName)+"/parameters/"+encodeURI(parameterId)+"/values?role="+encodeURI(parameter.role))
+					.success(function(data, status, headers, config) {
+						if (data.hasOwnProperty("errors")) {
+							console.log("unable to load parameters ", data.errors);
+							ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
+						} else {
+							if(parameter.value.trim() != ""){
+								parameter.selectedValues = parameter.value.split(";");
+							}else{
+								parameter.selectedValues = [];
+							}
+							parameter.values = data.values;
+							parameter.manualInput = data.manualInput;
 						}
-						parameter.values = data.values;
-						parameter.manualInput = data.manualInput;
-					}
-				})
-				.error(function(data, status, headers, config) {
-					console.log("unable to load parameters ", status);
-					ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
-				});
+					})
+					.error(function(data, status, headers, config) {
+						console.log("unable to load parameters ", status);
+						ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
+					});
+			}
 		}
 	}
 	
