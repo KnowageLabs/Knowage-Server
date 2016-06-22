@@ -155,14 +155,16 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		.then(function(response){ 
 
 			for(var i=0;i<response.data.length;i++){
+				var kpiItem = response.data[i];
 				var obj = {};
-				obj["name"]=response.data[i].name;
-				//obj["version"]=response.data[i].version;
-				if(response.data[i].category!=undefined){
-					obj["valueCd"] = response.data[i].category.valueCd;
+				
+				obj["name"]=kpiItem.name;
+				//obj["version"]=kpiItem.version;
+				if(kpiItem.category!=undefined){
+					obj["valueCd"] = kpiItem.category.valueCd;
 				}
-				obj["author"]=response.data[i].author;
-				obj["id"]=response.data[i].id;
+				obj["author"]=kpiItem.author;
+				obj["id"]=kpiItem.id;
 				obj["vieweAsList"] ='<md-select ng-model="row.vieweAs" class="noMargin">'
 					+'<md-option value=""></md-option>'
 					+'<md-option ng-repeat="sev in scopeFunctions.vieweAs" value="{{sev.label}}">'
@@ -177,6 +179,23 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 					+'<label ng-class="{\'redLabel\':scopeFunctions.checkValue(row)}" >Range Max Value</label>'
 					+'<input required type="number" name="max" ng-model="row.rangeMaxValue" />'
 					+'</md-input-container>';
+				obj["prefixSuffixValue"] = kpiItem.prefixSuffixValue || '';
+				obj["prefixSuffixValueHTML"] = 
+					'<md-input-container class="md-block">'
+					+ '<label>' + sbiModule_translate.load('sbi.kpiedit.prefixSuffixValue') + '</label>'
+					+ '<input type="text" name="max" ng-model="row.prefixSuffixValue" maxlength="3"/>'
+					+'</md-input-container>';
+				
+				obj["isSuffix"] = kpiItem.isSuffix;
+				obj["isSuffixHTML"] = 
+					'<div layout-align="center center" layout="row">'
+						+ '<md-checkbox aria-label="Switch" ng-init="row.isSuffix=' + kpiItem.isSuffix + '" ng-model="row.isSuffix">' 
+						+ '</md-checkbox>'
+						+ '<span ng-show="row.isSuffix==false">' + sbiModule_translate.load('sbi.kpiedit.prefix') + '</span>'
+						+ '<span ng-show="row.isSuffix==true">' + sbiModule_translate.load('sbi.kpiedit.suffix')+ '</span>'
+					+ '</div>';
+				
+				
 				$scope.kpiList.push(obj);
 			}
 			
@@ -287,19 +306,27 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.completeInfoKPI = function() {
 		var arr= [];
 		var flagList = false;
-		for(var i=0;i<$scope.selectedKpis.length;i++){
 
-			var index = $scope.indexInList($scope.selectedKpis[i],$scope.kpiList);
+		var selectedKpis = $scope.selectedKpis;
+		var kpiList = $scope.kpiList;
+		
+		for(var i = 0; i < selectedKpis.length; i++){
+			var selectedKpi = selectedKpis[i];
+			
+			var index = $scope.indexInList(selectedKpi, kpiList);
 			if(index !=-1){
+				var kpiListItem = kpiList[index];
+				
 				var obj = {};
-				obj["name"]=$scope.kpiList[index].name;
-				obj["version"]=$scope.kpiList[index].version;
+				
+				obj["name"]=kpiListItem.name;
+				obj["version"]=kpiListItem.version;
 
-				obj["valueCd"] = $scope.kpiList[index].valueCd;
+				obj["valueCd"] = kpiListItem.valueCd;
 
-				obj["author"]=$scope.kpiList[index].author;
-				obj["id"]=$scope.kpiList[index].id;
-				obj["vieweAs"]= $scope.selectedKpis[i].vieweas;
+				obj["author"]=kpiListItem.author;
+				obj["id"]=kpiListItem.id;
+				obj["vieweAs"]= selectedKpi.vieweas;
 				obj["vieweAsList"] ='<md-select ng-model="row.vieweAs" class="noMargin">'
 					+'<md-option value=""></md-option>'
 					+'<md-option ng-repeat="sev in scopeFunctions.vieweAs" value="{{sev.label}}">'
@@ -314,8 +341,25 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 					+'<label ng-class="{\'redLabel\':scopeFunctions.checkValue(row)}" >Range Max Value</label>'
 					+'<input required type="number" name="max" ng-model="row.rangeMaxValue" />'
 					+'</md-input-container>';
-				obj["rangeMinValue"]= parseFloat($scope.selectedKpis[i].rangeMinValue);
-				obj["rangeMaxValue"]= parseFloat($scope.selectedKpis[i].rangeMaxValue);
+				obj["rangeMinValue"]= parseFloat(selectedKpi.rangeMinValue);
+				obj["rangeMaxValue"]= parseFloat(selectedKpi.rangeMaxValue);
+				
+				obj["prefixSuffixValue"] = selectedKpi.prefixSuffixValue || '';
+				obj["prefixSuffixValueHTML"] = 
+					'<md-input-container class="md-block">'
+					+ '<label>' + sbiModule_translate.load('sbi.kpiedit.prefixSuffixValue') + '</label>'
+					+ '<input type="text" name="max" ng-model="row.prefixSuffixValue" maxlength="3"/>'
+					+'</md-input-container>';
+				
+				obj["isSuffix"] = selectedKpi.isSuffix;
+				obj["isSuffixHTML"] = 
+					'<div layout-align="center center" layout="row">'
+						+ '<md-checkbox aria-label="Switch" ng-init="row.isSuffix=' + selectedKpi.isSuffix + '" ng-model="row.isSuffix">' 
+						+ '</md-checkbox>'
+						+ '<span ng-show="row.isSuffix==false">' + sbiModule_translate.load('sbi.kpiedit.prefix') + '</span>'
+						+ '<span ng-show="row.isSuffix==true">' + sbiModule_translate.load('sbi.kpiedit.suffix')+ '</span>'
+					+ '</div>';
+				
 				arr.push(obj);
 			}
 		}
@@ -342,16 +386,25 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		if($scope.typeChart=="kpi"){
 			obj.chart["model"]=$scope.typeDocument;
 			var arr=[];
-			for(var i=0;i<$scope.selectedKpis.length;i++){
+			var selectedKpis = $scope.selectedKpis;
+			
+			for(var i=0 ; i < selectedKpis.length; i++){
+				var selectedKpi = selectedKpis[i];
+				
 				var kpiObject = {};
-				kpiObject["id"] = $scope.selectedKpis[i].id;
-				//kpiObject["version"] =  $scope.selectedKpis[i].version;
-				kpiObject["vieweas"] = $scope.selectedKpis[i].vieweAs;
-				if($scope.selectedKpis[i].rangeMinValue>=$scope.selectedKpis[i].rangeMaxValue || isNaN($scope.selectedKpis[i].rangeMinValue) || isNaN($scope.selectedKpis[i].rangeMaxValue)){
+				kpiObject["id"] = selectedKpi.id;
+				//kpiObject["version"] =  selectedKpi.version;
+				kpiObject["vieweas"] = selectedKpi.vieweAs;
+				if(selectedKpi.rangeMinValue >= selectedKpi.rangeMaxValue 
+						|| isNaN(selectedKpi.rangeMinValue) 
+						|| isNaN(selectedKpi.rangeMaxValue)){
 					return null;
 				}
-				kpiObject["rangeMinValue"] = $scope.selectedKpis[i].rangeMinValue;
-				kpiObject["rangeMaxValue"] = $scope.selectedKpis[i].rangeMaxValue;
+				kpiObject["rangeMinValue"] = selectedKpi.rangeMinValue;
+				kpiObject["rangeMaxValue"] = selectedKpi.rangeMaxValue;
+				kpiObject["prefixSuffixValue"] = selectedKpi.prefixSuffixValue || '';
+				kpiObject["isSuffix"] = selectedKpi.isSuffix;
+				
 				arr.push(kpiObject);
 			}
 			obj.chart.data["kpi"]=arr;

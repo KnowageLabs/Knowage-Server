@@ -24,6 +24,8 @@
 				conf.minValue = templateKpi.rangeMinValue;
 				conf.maxValue = templateKpi.rangeMaxValue;
 				conf.value = kpiValue.value;
+				conf.valuePrefixSuffix = templateKpi.prefixSuffixValue;
+				conf.labelIsSuffix = templateKpi.isSuffix;
 				conf.valueSeries = [];
 				conf.targetValue = kpiValue.targetValue;
 				conf.thresholdStops = [];

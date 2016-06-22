@@ -212,24 +212,24 @@ author:
 	<div layout="row" ng-if="displayKpiWidget"  layout-wrap >
 		<div id="kpiWidgetTemplate" ng-repeat="kpiItem in kpiItems" layout-margin>
 			<md-card  layout="column" layout-padding layout-margin ng-if="kpiItem.viewAs=='speedometer'" > 
-			<md-card-title>
-		    	<md-card-title-text layout="row" >
-		        	<span class="md-headline">{{kpiItem.name}}</span>
-		        	<span flex></span>
-					<md-button <%= canSee? " ng-show=true ":"ng-show=false" %>  class=" md-icon-button " ng-click="openEdit(kpiItem)">
-		         		 <md-icon md-font-icon="fa fa-pencil" aria-label="Edit Value" ></md-icon>
-		        	</md-button>
-		        </md-card-title-text>
-		    </md-card-title>
-			
-			
+				<md-card-title>
+			    	<md-card-title-text layout="row" >
+			        	<span class="md-headline">{{kpiItem.name}}</span>
+			        	<span flex></span>
+						<md-button <%= canSee? " ng-show=true ":"ng-show=false" %>  class=" md-icon-button " ng-click="openEdit(kpiItem)">
+			         		 <md-icon md-font-icon="fa fa-pencil" aria-label="Edit Value" ></md-icon>
+			        	</md-button>
+			        </md-card-title-text>
+			    </md-card-title>
 			
 				<kpi-gauge ng-if="kpiItem.viewAs=='speedometer'" layout="column"
 						gauge-id="kpiItem.id" label="kpiItem.name" size="kpiItem.size"
 						min-value="kpiItem.minValue" max-value="kpiItem.maxValue"
 						value="kpiItem.value" target-value="kpiItem.targetValue"
+						value-prefix-suffix="kpiItem.valuePrefixSuffix" label-is-suffix="kpiItem.labelIsSuffix"
 						threshold-stops="kpiItem.thresholdStops"
 						show-value="kpiItem.showValue" show-target="kpiItem.showTarget"
+						show-target-percentage="kpiItem.showTargetPercentage"
 						show-thresholds="kpiItem.showThreshold"
 						value-precision="kpiItem.precision" font-conf="kpiItem.fontConf"></kpi-gauge>
 			</md-card>
@@ -239,10 +239,10 @@ author:
 					show-target-percentage="kpiItem.showTargetPercentage"
 					show-thresholds="kpiItem.showThreshold" min-value="kpiItem.minValue"
 					max-value="kpiItem.maxValue" value="kpiItem.value"
+					value-prefix-suffix="kpiItem.valuePrefixSuffix" label-is-suffix="kpiItem.labelIsSuffix"
 					target-value="kpiItem.targetValue" precision="kpiItem.precision"
 					gauge-size="kpiItem.size" threshold-stops="kpiItem.thresholdStops" value-series="kpiItem.valueSeries"
-					<%= canSee? " can-see=true ":"" %> 
-					></kpi-widget>
+					<%= canSee? " can-see=true ":"" %> ></kpi-widget>
 		</div>
 	</div>
 	<%

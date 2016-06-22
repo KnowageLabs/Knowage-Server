@@ -15,6 +15,8 @@
 				minValue:'=',
 				maxValue:'=',
 				value:'=',
+				valuePrefixSuffix:'=',
+				labelIsSuffix:'=',
 				targetValue:'=',
 				thresholdStops:'=',
 				precision:'=?',
@@ -143,6 +145,20 @@
 			}
 			
 			return valueToShow;
+		};
+		
+		$scope.checkLabelIsPrefix = function(){ 
+			return ($scope.value && $scope.valuePrefixSuffix 
+					&& $scope.valuePrefixSuffix != '' 
+						&& ($scope.labelIsSuffix == false 
+								|| $scope.labelIsSuffix == 'false'));
+		};
+		
+		$scope.checkLabelIsSuffix = function(){ 
+			return ($scope.value && $scope.valuePrefixSuffix 
+					&& $scope.valuePrefixSuffix != '' 
+						&& ($scope.labelIsSuffix == true
+								|| $scope.labelIsSuffix == 'true'));
 		};
 		
 		$scope.getTargetToShow = function(){

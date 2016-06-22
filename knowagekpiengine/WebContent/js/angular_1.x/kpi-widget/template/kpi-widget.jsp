@@ -13,7 +13,11 @@
 		<div layout="row">
 			<div flex class="kpiValue">
 				<h3 class="">{{translate.load("sbi.kpi.widget.kpi")}}</h3>
-				<h1>{{getValueToShow()}}</h1>
+				<div layout="row" layout-align="start center">
+					<span ng-if="checkLabelIsPrefix()">{{valuePrefixSuffix}}&nbsp;</span>
+					<h1>{{getValueToShow()}}</h1>
+					<span ng-if="checkLabelIsSuffix()">&nbsp;{{valuePrefixSuffix}}</span>
+				</div>
 			</div>
 			<div flex class="kpiValue">
 				<h3 class="">{{translate.load("sbi.kpi.widget.target")}}</h3>

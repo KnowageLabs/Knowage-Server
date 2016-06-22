@@ -69,18 +69,22 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 	s.$watch('typeChart' , function(newValue,oldValue){
 		if(newValue=='list'){
 			s.tableKpisColumn=[
-				                     {"label":"Name","name":"name"},
-				                     {"label":"Category","name":"valueCd"},
-				                     {"label":"Range Min Value","name":"rangeMinValueHTML"},
-				                     {"label":"Range Max Value","name":"rangeMaxValueHTML"}
+				                     {"label": sbiModule_translate.load('sbi.generic.name') ,"name":"name"},
+				                     {"label": sbiModule_translate.load('sbi.kpi.category'),"name":"valueCd"},
+				                     {"label": sbiModule_translate.load('sbi.kpiedit.range.minvalue'),"name":"rangeMinValueHTML"},
+				                     {"label": sbiModule_translate.load('sbi.kpiedit.range.maxvalue'),"name":"rangeMaxValueHTML"},
+				                     {"label": sbiModule_translate.load('sbi.kpiedit.prefixSuffixValue'),"name":"prefixSuffixValueHTML"},
+				                     {"label": sbiModule_translate.load('sbi.kpiedit.isSuffix'),"name":"isSuffixHTML"}
 				                  ];
 		}else{
 			s.tableKpisColumn=[
-				                     {"label":"Name","name":"name"},
-				                     {"label":"Category","name":"valueCd"},
-				                     {"label":"View As","name":"vieweAsList"},
-				                     {"label":"Range Min Value","name":"rangeMinValueHTML"},
-				                     {"label":"Range Max Value","name":"rangeMaxValueHTML"}
+				                     {"label": sbiModule_translate.load('sbi.generic.name'),"name":"name"},
+				                     {"label": sbiModule_translate.load('sbi.kpi.category'),"name":"valueCd"},
+				                     {"label": sbiModule_translate.load('sbi.kpiedit.viewas'),"name":"vieweAsList"},
+				                     {"label": sbiModule_translate.load('sbi.kpiedit.range.minvalue'),"name":"rangeMinValueHTML"},
+				                     {"label": sbiModule_translate.load('sbi.kpiedit.range.maxvalue'),"name":"rangeMaxValueHTML"},
+				                     {"label": sbiModule_translate.load('sbi.kpiedit.prefixSuffixValue'),"name":"prefixSuffixValueHTML"},
+				                     {"label": sbiModule_translate.load('sbi.kpiedit.isSuffix'),"name":"isSuffixHTML"}
 				                  ];
 		}
 		
@@ -127,16 +131,17 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 		sbiModule_restServices.promiseGet("1.0/kpi","listKpi")
 		.then(function(response){ 
 			for(var i=0;i<response.data.length;i++){
-
+				var kpiItem = response.data[i];
 				var obj = {};
-				obj["name"]=response.data[i].name;
-				obj["version"]=response.data[i].version;
-				if(response.data[i].category!=undefined){
-					obj["valueCd"] = response.data[i].category.valueCd;
+				
+				obj["name"]=kpiItem.name;
+				obj["version"]=kpiItem.version;
+				if(kpiItem.category!=undefined){
+					obj["valueCd"] = kpiItem.category.valueCd;
 				}
-				obj["author"]=response.data[i].author;
-				obj["datacreation"]=sbiModule_dateServices.formatDate(new Date(response.data[i].dateCreation));
-				obj["id"]=response.data[i].id;
+				obj["author"]=kpiItem.author;
+				obj["datacreation"]=sbiModule_dateServices.formatDate(new Date(kpiItem.dateCreation));
+				obj["id"]=kpiItem.id;
 				obj["vieweAsList"] ='<md-select ng-model="row.vieweAs" class="noMargin">'
 					+'<md-option value=""></md-option>'
 					+'<md-option ng-repeat="sev in scopeFunctions.vieweAs" value="{{sev.label}}">'
@@ -154,8 +159,23 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 					+'</md-input-container>';
 				obj["rangeMinValue"]= "";
 				obj["rangeMaxValue"]= "";
-				s.kpiAllList.push(obj);
+				
+				obj["prefixSuffixValue"] = kpiItem.prefixSuffixValue || '';
+				obj["prefixSuffixValueHTML"] = 
+					'<md-input-container class="md-block">'
+						+ '<label>' + sbiModule_translate.load('sbi.kpiedit.prefixSuffixValue') + '</label>'
+						+ '<input type="text" name="max" ng-model="row.prefixSuffixValue" maxlength="3" ng-pattern="/^.{0,3}$/"/>'
+					+'</md-input-container>';
+				obj["isSuffix"] = kpiItem.isSuffix;
+				obj["isSuffixHTML"] = 
+					'<div layout-align="center center" layout="row">'
+						+ '<md-checkbox aria-label="Switch" ng-init="row.isSuffix=' + kpiItem.isSuffix + '" ng-model="row.isSuffix">' 
+						+ '</md-checkbox>'
+						+ '<span ng-show="row.isSuffix==false">' + sbiModule_translate.load('sbi.kpiedit.prefix') + '</span>'
+						+ '<span ng-show="row.isSuffix==true">' + sbiModule_translate.load('sbi.kpiedit.suffix')+ '</span>'
+					+ '</div>';
 
+				s.kpiAllList.push(obj);
 			}
 		},function(response){
 		});

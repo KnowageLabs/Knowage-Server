@@ -26,6 +26,9 @@
 
 			this.config.range = this.config.max - this.config.min;
 			
+			this.config.valuePrefixSuffix = configuration.valuePrefixSuffix != undefined ? configuration.valuePrefixSuffix : '';
+			this.config.labelIsSuffix = configuration.labelIsSuffix != undefined ? configuration.labelIsSuffix : false;
+			
 			this.config.showValue = configuration.showValue != undefined ? configuration.showValue : true;
 			this.config.showTarget = configuration.showTarget != undefined ? configuration.showTarget : true;
 			this.config.valuePrecision = configuration.valuePrecision != undefined ? configuration.valuePrecision : 0;
@@ -160,7 +163,6 @@
 				.style("stroke", "#AC0A08")
 				.style("stroke-width", "3px");
 			
-				
 			var pointerContainer = 
 				this.body.append("svg:g").attr("class", "pointerContainer");
 
@@ -260,8 +262,6 @@
 
 		this.redraw = function (value, transitionDuration) {
 			var pointerContainer = this.body.select(".pointerContainer");
-
-//			pointerContainer.selectAll("text").text(Math.round(value));
 			
 			var valueToBeRounded = 0;
 			if(self.config.valuePrecision) {
@@ -270,9 +270,21 @@
 				valueToBeRounded = valueToBeRounded *  Math.pow(10, -(self.config.valuePrecision));
 			}
 			
-			pointerContainer.selectAll("text")
-				.text(self.config.valuePrecision? 
-						valueToBeRounded.toFixed(self.config.valuePrecision) : Math.round(value));
+			var valueToUpdate = self.config.valuePrecision? 
+					valueToBeRounded.toFixed(self.config.valuePrecision) : Math.round(value);
+					
+			if(self.config.valuePrefixSuffix != ""){
+				var valuePrefixSuffix = self.config.valuePrefixSuffix;
+				var labelIsSuffix = self.config.labelIsSuffix;
+
+				if(labelIsSuffix == true || labelIsSuffix == 'true') {
+					valueToUpdate = valueToUpdate + " " + valuePrefixSuffix;
+ 				} else {
+ 					valueToUpdate = valuePrefixSuffix + " " + valueToUpdate;
+ 				}
+			}
+			
+			pointerContainer.selectAll("text").text(valueToUpdate);
 
 			var pointer = pointerContainer.selectAll("path");
 			pointer.transition()
@@ -345,16 +357,23 @@
 	var gaugeNgDirectiveApp = angular.module('gaugeNgDirectiveApp', 
 			['ngMaterial', 'ngSanitize', 'ngAnimate', 'sbiModule', 'angular_table', 'kpi_semaphore_indicator']);
 	
-	gaugeNgDirectiveApp.directive("kpiGauge", ['$compile', '$timeout' , function($compile, $timeout){
+	gaugeNgDirectiveApp.directive("kpiGauge", 
+			['$compile', '$timeout', 'sbiModule_translate' , function($compile, $timeout, sbiModule_translate){
+				
 		return {
 			restrict: 'E',
 			template: 
-				'<div layout-align="center center" layout="row">'
-				+ '<div id="{{containerFrameId}}" svg-style="height:{{size}}px; width:{{size}}px;"></div></div>'
-				+'<style>'
-				+'</style>',
+				'<div layout-align="center center" layout="column">'
+					+ '<div id="{{containerFrameId}}" svg-style="height:{{size}}px; width:{{size}}px;"></div>' 
+					
+					+ '<div layout="row" layout-align="center center" class="kpiValue"'
+					+ 		' ng-if="showTargetPercentage && targetValue && targetValue != 0">'
+						+ '<span>{{getTargetPercentage()}}</span>&nbsp;'
+						+ '<h3>{{translate.load("sbi.kpi.widget.percentage.oftarget")}}</h3>'
+					+ '</div>'
+				+ '</div>'
+				,
 			controller: kpiGaugeCtrl,
-//			transclude: true,
 			scope: {
 				gaugeId: '=',
 				label: '=',
@@ -362,9 +381,12 @@
 				minValue: '=',
 				maxValue: '=',
 				value: '=',
+				valuePrefixSuffix:'=',
+				labelIsSuffix:'=',
 				targetValue: '=',
 				thresholdStops: '=?',
 				showValue: '=?',
+				showTargetPercentage: '=?',
 				showThresholds: '=?',
 				valuePrecision: '=?',
 				fontConf: '=?',
@@ -386,15 +408,25 @@
 		};
 	}]);
 	
-	function kpiGaugeCtrl($scope){
+	function kpiGaugeCtrl($scope, sbiModule_translate){
+		$scope.translate = sbiModule_translate;
+
 		$scope.containerFrameId = "kpiGaugeFrame_" + $scope.gaugeId;
 		
 		$scope.gaugeSvg = null;
 		
 		$scope.showTarget = $scope.showTarget != undefined? $scope.showTarget : true ;
 		
+		$scope.getTargetPercentage = function() {
+			if($scope.value && $scope.targetValue && $scope.targetValue != 0) {
+				return ($scope.value * 100 / $scope.targetValue) + "% ";
+			} else {
+				return "";
+			}
+		};
+		
 		$scope.createGauge = function(
-				frameId, label, size, min, max, thresholdStops, 
+				frameId, label, size, min, max, valuePrefixSuffix, labelIsSuffix, thresholdStops, 
 				showValue, showTarget, showThresholds, valuePrecision, fontConf) {
 			
 			var initialConfig = {
@@ -402,6 +434,9 @@
 				label : undefined != label? label: '',
 				min : undefined != min ? min : 0,
 				max : undefined != max ? max : 100,
+				valuePrefixSuffix : undefined != valuePrefixSuffix ? valuePrefixSuffix : '',
+				labelIsSuffix : undefined != labelIsSuffix ? labelIsSuffix : false,
+						
 				showValue : undefined != showValue && null != showValue ? 
 						showValue : true,
 				showTarget : undefined != showTarget && null != showTarget ? 
@@ -473,6 +508,8 @@
 				$scope.size,
 				$scope.minValue,
 				$scope.maxValue,
+				$scope.valuePrefixSuffix,
+				$scope.labelIsSuffix,
 				$scope.thresholdStops,
 				$scope.showValue,
 				$scope.showTarget,
