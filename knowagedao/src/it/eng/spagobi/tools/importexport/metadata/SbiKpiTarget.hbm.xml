@@ -13,7 +13,7 @@
         <property name="startValidity" type="timestamp" column="START_VALIDITY_DAY" not-null="true"/>
         <property name="endValidity" type="timestamp" column="END_VALIDITY_DAY" not-null="false" />
         
-        <set name="sbiKpiTargetValues" inverse="true" cascade="all-delete-orphan">
+        <set name="sbiKpiTargetValues" inverse="true" cascade="all-delete-orphan" lazy="false">
             <key>
                 <column name="TARGET_ID" />
             </key>

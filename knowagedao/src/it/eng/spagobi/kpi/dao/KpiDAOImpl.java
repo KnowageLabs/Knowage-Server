@@ -781,7 +781,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) throws SpagoBIException {
-				return loadOrCreateDomain(session, domain).getValueId();
+				SbiDomains sd = loadOrCreateDomain(session, domain);
+				return sd == null ? null : sd.getValueId();
 			}
 		});
 	}
@@ -1507,6 +1508,16 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		tv.setKpiVersion(sbiKpi.getSbiKpiKpiId().getVersion());
 		tv.setValue(sbiValue.getValue());
 		return tv;
+	}
+
+	@Override
+	public Target loadTargetByName(final String name) {
+		return executeOnTransaction(new IExecuteOnTransaction<Target>() {
+			@Override
+			public Target execute(Session session) throws Exception {
+				return from((SbiKpiTarget) session.createCriteria(SbiKpiTarget.class).add(Restrictions.eq("name", name)).setMaxResults(1).uniqueResult(), true);
+			}
+		});
 	}
 
 	@Override

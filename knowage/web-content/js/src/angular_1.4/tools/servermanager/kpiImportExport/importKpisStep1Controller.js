@@ -19,10 +19,11 @@ function importKpiStep1FuncController(sbiModule_download, sbiModule_device,
 			// Import data
 			var data = {
 					"kpis": $scope.IEDConf.roles.selectedKpis,
-					"overwrite": $scope.IEDConf.overwriteMode
+					"overwrite": $scope.IEDConf.overwriteMode,
+					"targetsAndRelatedKpis": $scope.IEDConf.targetsAndRelatedKpis
 			}
 			// Import
-			alert(JSON.stringify(data));
+//			alert(JSON.stringify(data));
 //			$scope.stopImport($scope.translate.load("sbi.importkpis.importkpiok"));
 			sbiModule_restServices
 				.post("1.0/serverManager/importExport/kpis","importKpis", data)
@@ -30,7 +31,7 @@ function importKpiStep1FuncController(sbiModule_download, sbiModule_device,
 					if (data.hasOwnProperty("errors")) {
 						$scope.stopImport(data.errors[0].message);
 					} else if (data.success == false) {
-						$scope.stopImport(data.SUBMESSAGE, $scope.translate.load(data.ERROR,'component_impexp_messages'));
+						$scope.stopImport(data.submessage, $scope.translate.load(data.error,'component_impexp_messages'));
 					} else if (data.success == true) {
 						$scope.stopImport($scope.translate.load("sbi.importkpis.importkpiok"));
 					}

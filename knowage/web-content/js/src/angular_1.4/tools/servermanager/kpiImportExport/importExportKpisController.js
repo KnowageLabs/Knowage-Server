@@ -35,6 +35,7 @@ app.factory("importExportDocumentModule_importConf", function() {
 		fileImport : {},
 		importPersonalFolder : true,
 		overwriteMode: false,
+		targetsAndRelatedKpis: false,
 		typeSaveKpi : 'Missing',
 		checkboxs : {
 			exportSubObj : false,

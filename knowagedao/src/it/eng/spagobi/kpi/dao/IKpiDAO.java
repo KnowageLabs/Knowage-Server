@@ -274,6 +274,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public Target loadTarget(Integer id);
 
+	public Target loadTargetByName(String name);
+
 	public Integer insertTarget(Target target);
 
 	public void updateTarget(Target target);
