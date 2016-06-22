@@ -29,10 +29,6 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-/**
- * TODO: dadav ci serve?
- * 
- */
 @Path("/1.0/engine")
 public class EngineResource extends AbstractChartEngineResource {
 
@@ -51,6 +47,14 @@ public class EngineResource extends AbstractChartEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+	
+	@GET
+	@Path("/ping")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String ping() {
+		return "ok";
+		
 	}
 
 	// =======================================================================

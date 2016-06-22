@@ -49,12 +49,21 @@ Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner = function(config) {
 
 	Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner.superclass.constructor.call(this, c);
 
+
 	this.on(
 			'beforerender' ,
 			function (thePanel, attribute) {
-				var form = this.chartEnginePanel.getForm();				
-				form.submit({target: this.iFrameId});
-				
+				//this is just a ping. We don't care about the response, we just need to invoke a get on chart engine, in this way cas can login user
+				Ext.Ajax.request({
+					url: Sbi.config.chartRuntimeUrlPing,
+					method: "GET",
+					success : function(){
+						var form = this.chartEnginePanel.getForm();				
+						form.submit({target: this.iFrameId});
+					},
+					scope: this
+						
+				});				
 			},
 			this
 		);
@@ -100,6 +109,7 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner, Sbi.cockpi
 		Sbi.trace("[ChartEngineWidgetDesigner.setDesignerState]: OUT");
 	}
 	
+
 	, createContent: function() {
 		
     	Sbi.trace("[ChartEngineWidgetDesigner.createContent]: IN");

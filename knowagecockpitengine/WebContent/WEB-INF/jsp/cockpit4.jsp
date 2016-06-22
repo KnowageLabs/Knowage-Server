@@ -137,6 +137,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
     
     StringBuffer chartDesignerUrlTemp = new StringBuffer("/"+chartEngineContextName+"/api/1.0/pages/edit_cockpit");
     StringBuffer chartRuntimeUrlTemp = new StringBuffer("/"+chartEngineContextName+"/api/1.0/pages/execute_cockpit");
+    StringBuffer chartRuntimeUrlPing = new StringBuffer("/"+chartEngineContextName+"/api/1.0/engine/ping");
     
     chartDesignerUrlTemp.append(param2);
     chartRuntimeUrlTemp.append(param2);
@@ -480,6 +481,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		Sbi.config.contextName =  '<%= contextName %>';
 		Sbi.config.documentMode = "<%=documentMode%>";
 		Sbi.config.chartDesignerUrl = "<%=chartDesignerUrl%>";
+		Sbi.config.chartRuntimeUrlPing = "<%=chartRuntimeUrlPing%>";
 		Sbi.config.chartRuntimeUrl = "<%=chartRuntimeUrl%>";
 		Sbi.config.currentRole = "<%=executionRole%>";
 		Sbi.config.visibiltyButtons = {
