@@ -210,17 +210,19 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                     }
 
                                     
-
+									
                                     if(attrs.hasOwnProperty("fullWidth") || (attrs.hasOwnProperty("noPagination") && attrs.noPagination==true)){
-                                    	  scope.$watch(function () {
-                                        	  var elem = angular.element(document.querySelector('angular-table.' + scope.id + 'ItemBox #angularTableContentBox .principalTable thead'))[0];
-                                        	  return elem == undefined ? null : elem.offsetWidth;
-                                        }, function (newValue, oldValue) {
-                                        	if(newValue!=oldValue){
-                                        		scope.loadTheadColumn(newValue);
-                                        		
-                                        	}
-                                        }, true);
+										scope.getPrincipalTableHeadWidth=function(){
+											var elem = angular.element(document.querySelector('angular-table.' + scope.id + 'ItemBox #angularTableContentBox .principalTable thead'))[0];
+										 	  return elem == undefined ? null : elem.offsetWidth;
+										}
+                                    	  
+										scope.$watch(function(){return scope.getPrincipalTableHeadWidth()}
+                                    		  , function (newValue, oldValue) {
+	                                        	if(newValue!=oldValue){
+	                                        		scope.loadTheadColumn();
+	                                        	}
+											}, true);
                                     }
 
                                     transclude(scope, function (clone, scope) {
@@ -546,10 +548,12 @@ function TableControllerFunction($scope, $timeout) {
         }
     });
     
+    
    
-$scope.loadTheadColumn=function(width){
+$scope.loadTheadColumn=function(){
  
     $timeout(function(){
+    	var width=$scope.getPrincipalTableHeadWidth();
     	var tableContentBox=angular.element(document.querySelectorAll('angular-table.' + $scope.id + 'ItemBox #angularTableContentBox'));
     	var fakeDiv = angular.element(document.querySelectorAll('angular-table.' + $scope.id + 'ItemBox .faketable th>div'));
         var principalThDiv = angular.element(document.querySelectorAll('angular-table.' + $scope.id + 'ItemBox .principalTable th>div'));
@@ -557,7 +561,9 @@ $scope.loadTheadColumn=function(width){
 //        	console.log(principalThDiv[i])
         	angular.element(fakeDiv[i]).css("width",angular.element(principalThDiv[i])[0].offsetWidth+"px");
         }
-        tableContentBox.css("width",width+"px");
+        if(tableContentBox[0].offsetWidth!=width){
+        	tableContentBox.css("width",width+"px");
+        }
     },0)
     
 
