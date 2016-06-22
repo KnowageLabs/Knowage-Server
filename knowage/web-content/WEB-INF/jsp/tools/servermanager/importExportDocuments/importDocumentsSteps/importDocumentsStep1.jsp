@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- <md-button ng-click="nextStep()">nextStep 2</md-button> -->
 
-<md-content  layout="column">
+<div  layout="column">
 	<div layout="row" layout-align="end center">
 		<md-button ng-click="saveRoleAssociation()" ng-if="IEDConf.importPersonalFolder" class="md-raised">{{translate.load('Sbi.next','component_impexp_messages');}}</md-button> 
 		<md-button class="md-raised" ng-if="!IEDConf.importPersonalFolder" ng-click="saveRoleAssociation()" aria-label="upload Users" >{{translate.load("sbi.importusers.startimport");}}</md-button>
@@ -51,5 +51,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</section>
 	
 	</md-content>
-</md-content>
+</div>
 
