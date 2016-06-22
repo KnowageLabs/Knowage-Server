@@ -99,3 +99,5 @@ alter table SBI_ENGINES enable constraint 'FK_SBI_ENGINES_2';
 -- not fk to disable for domains:
 delete from SBI_DOMAINS where value_cd = 'WORKSHEET';
 
+-- 22.06.2016 Antonella: rename LEVEL column to NUM_LEVEL
+ ALTER TABLE SBI_GEO_MAPS RENAME COLUMN LEVEL TO NUM_LEVEL;
