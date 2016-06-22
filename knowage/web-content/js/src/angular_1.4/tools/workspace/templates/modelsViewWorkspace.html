@@ -1,19 +1,19 @@
 <md-content layout="row" flex class="workspaceBckgColorRightSide">
 	
-	<md-whiteframe 	flex layout="column" layout-margin 
+	<md-whiteframe 	flex layout="column" layout-margin
 					class="md-whiteframe-5dp md-whiteframe-5dp-rightPanelDocuments workspaceBckgColorRightSide">
-	
+
 		<md-content layout="row" flex class="workspaceBckgColorRightSide">
-		
+  
 			<md-content layout="row" flex layout-fill class="rightPanelDocuments workspaceBckgColorRightSide">
-	 
-	  			<md-tabs  flex layout-fill class="rightPanelDocuments">
+		  		
+		  		<md-tabs flex layout-fill class="rightPanelDocuments">
 		    
-					<md-tab label="{{translate.load('sbi.workspace.models.business')}}" ng-click="switchModelsTab('businessModels')" flex>
+					<md-tab id="bmtab" label="{{translate.load('sbi.workspace.models.business')}}" ng-click="switchModelsTab('businessModels')" flex>
 				   		
-				   		<md-content>
+				   		 <md-tab-body>
 						 	
-						 	<federation-view class="kn-documentBrowser" flex ng-model="businessModels"
+						 	<federation-view class="kn-documentBrowser" flex  style='overflow: auto;' ng-model="businessModels"
 									selected-federation=selectedModel
 									select-federation-action="selectModel(federation);"
 									show-grid-view="showGridView"
@@ -23,13 +23,13 @@
 									show-business-models=true>
 							</federation-view>
 								
-				 	 	</md-content>
+				 	 	</md-tab-body>
 				 	 	
 		 			</md-tab> 
 		   
-	<md-tab label="{{translate.load('sbi.workspace.models.federation')}}" ng-click="switchModelsTab('federations')" ng-show="isFederationEnabled" flex>
-				        <md-content>
-						 	<federation-view class="kn-documentBrowser" flex ng-model="federationDefinitions"
+	<md-tab id="fedtab" label="{{translate.load('sbi.workspace.models.federation')}}" ng-click="switchModelsTab('federations')" flex>
+				         <md-tab-body>
+						 	<federation-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="federationDefinitions"
 								show-grid-view="showGridView"
 								selected-federation=selectedModel
 								select-federation-action="selectModel(federation);"
@@ -40,7 +40,8 @@
 								show-federation-action="showQbeFederation(fed)"
 								show-business-models=false
 						 	  ></federation-view>	
-				        </md-content>
+                    
+				        </md-tab-body>
 			 		</md-tab>  
 				 	
 	  		 	</md-tabs>
