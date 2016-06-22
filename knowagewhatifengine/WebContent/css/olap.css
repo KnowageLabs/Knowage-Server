@@ -381,21 +381,21 @@ md-tabs .md-tab.md-active{
 	padding-right: 32px;
 }
 
-.sorting-d-btn{
+.BUTTON_SORTING{
 	background-image: url(../img/sorting-enabled.png);
 	background-size:23px 23px; 
 }
 
-.sorting-e-btn{
-	background-image: url(../img/node-closed.png);
+.BUTTON_SORTING_CLICKED{
+	background-image: url(../img/sorting-enabled-clicked.png);
 		background-size:23px 23px; 
 }
-.cc-w-btn{
+.BUTTON_CC{
 	background-image: url(../img/cc.png);
 		background-size:23px 23px; 
 }
 
-.SORTING_SETTINGS{
+.BUTTON_SORTING_SETTINGS{
 	background-image: url(../img/sorting-settings.png);
 	background-size:23px 23px;
 }

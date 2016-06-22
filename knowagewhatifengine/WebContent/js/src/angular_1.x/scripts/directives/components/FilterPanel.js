@@ -182,9 +182,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 					exist = true;
 					$scope.loadedData[i] = data
 					$scope.data= $scope.loadedData[i];
-					if($scope.activeaxis >= 0){
-						getVisible($scope.data,h);
-				}
+					
 			}
 		}
 		if(!exist){
@@ -213,8 +211,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 					if(visibleSelectedTracker[j].id == h && visibleSelectedTracker[j].selected.length > 0)
 						shouldSearchVisible= false;
 					}
-				  //if(shouldSearchVisible)
-						getVisible($scope.data, h);
 			  }				  
 			  else{
 				  checkIfExists(response.data);
@@ -225,20 +221,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		});	
 	}
 	
-	//Called to get visible elements row/column
-	getVisible = function(data, un){
-		for(var i=0;i<data.length;i++){
-			if(data[i].visible){
-				visibleSelected.push(data[i]);
-			}
-			if(data[i].children != undefined){
-				getVisible(data[i].children);
-			}
-		}
-		var element={id:un,selected:visibleSelected};
-		visibleSelectedTracker.push(element);
-	};
-	
 	//Called if row/column dimension is unselected
 	removeUnselected = function(name){
 		for(var i=0;i<visibleSelected.length;i++){
@@ -246,6 +228,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				visibleSelected.splice(i,1);	
 			}
 		}
+		
 	};
 	
 	removeChildren = function(){

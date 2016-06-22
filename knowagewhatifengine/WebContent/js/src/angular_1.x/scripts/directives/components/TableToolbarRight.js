@@ -9,10 +9,11 @@ angular.module('sbi_table_toolbar',[])
 });
 
 function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_download) {
-
+	
 	var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
 	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon"];
-	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT"]
+	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT","BUTTON_SORTING_SETTINGS","BUTTON_CC","BUTTON_SORTING"]
+	$scope.clickedButtons = [];
 	$scope.outputWizardDescription = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.description');
 	$scope.outputWizardTitle = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.title');
 	$scope.outputWizardTypeLabel = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type');
@@ -101,7 +102,6 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	filterXMLResult = function(res) {
 		var regEx = /([A-Z]+_*)+/g;
 		var i;
-		
 		while (i = regEx.exec(res)){
 			var btn = {};
 			btn.tooltip = sbiModule_translate.load("sbi.olap.toolbar."+ i[0]);// messageResource.get("sbi.olap.toolbar."+ i[0], 'messages');
@@ -123,8 +123,23 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		whatIfBtns(status);
 	};
 	
+	filterClickedButtons = function(data){
+		var regEx = /([A-Z]+_*)+/g;
+		var i;
+		while (i = regEx.exec(data)){
+			$scope.clickedButtons.push(i[0]);
+		}
+	}
+	
 	filterXMLResult(toolbarVisibleBtns);
-			
+	filterClickedButtons(toolbarClickedBtns);
+	
+	$scope.executeClicks = function(){
+		for(var i=0; i< $scope.clickedButtons.length; i++){
+			$scope.btnFunctions($scope.clickedButtons[i]);
+		}
+	}
+	
 	$scope.btnFunctions = function(name){
 		var sendModelConfig = true;
 		
@@ -162,6 +177,19 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			case "BUTTON_SAVE_SUBOBJECT":
 				$scope.showDialog(null,$scope.saveSubObjectDial);
 				break;
+			case "BUTTON_SORTING_SETTINGS":
+				$scope.showDialog(null,$scope.sortSetDial);
+				sendModelConfig = false;
+				break;
+			case "BUTTON_CC":
+				$scope.showCCWizard();
+				sendModelConfig = false;
+				break;
+			case "BUTTON_SORTING":
+				$scope.enableDisableSorting();
+				changeIcon(name);
+				sendModelConfig = false;
+				break;	
 			default:
 				console.log("something else clicked");
 		}
@@ -365,7 +393,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  
 		  return "KnowageOlapExport-" + d + "." + m + "." + y;
 	  }
-	  
+
 	  $scope.cancelSavingSubObject = function(){
 		  
 		  console.log("closing Save customized view dialog");
