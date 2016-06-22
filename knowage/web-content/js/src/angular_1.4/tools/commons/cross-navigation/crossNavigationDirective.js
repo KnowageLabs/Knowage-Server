@@ -114,7 +114,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				for(var dataKey in outputParameter){  
 					for(var key in navObj.navigationParams){
 						var parVal=navObj.navigationParams[key];
-						if(outputParameter[dataKey].hasOwnProperty(parVal.value.label) && outputParameter[dataKey][parVal.value.label]!=undefined && outputParameter[dataKey][parVal.value.label]!=null){ 
+						if(parVal.value.isInput==false && outputParameter[dataKey].hasOwnProperty(parVal.value.label) && outputParameter[dataKey][parVal.value.label]!=undefined && outputParameter[dataKey][parVal.value.label]!=null){ 
 							if(!respStr.hasOwnProperty(key)){
 								respStr[key]=[];
 							}
@@ -128,7 +128,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			}else{
 				for(var key in navObj.navigationParams){
 					var parVal=navObj.navigationParams[key];
-					if(outputParameter.hasOwnProperty(parVal.value.label) && outputParameter[parVal.value.label]!=undefined && outputParameter[parVal.value.label]!=null){ 
+					if(parVal.value.isInput==false &&  outputParameter.hasOwnProperty(parVal.value.label) && outputParameter[parVal.value.label]!=undefined && outputParameter[parVal.value.label]!=null){ 
 						respStr[key]=parseParameterValue(parVal.value,outputParameter[parVal.value.label]);
 					}
 				}
@@ -138,11 +138,12 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			if(inputParameter!=undefined && navObj.navigationParams!=undefined){
 				for(var parin=0;parin<inputParameter.length;parin++){
 					var urlName=inputParameter[parin].urlName;
-					if(navObj.navigationParams.hasOwnProperty(urlName)){
-						respStr[urlName]=inputParameter[parin].parameterValue;
+					for(var key in navObj.navigationParams){
+						if(navObj.navigationParams[key].value.isInput==true && angular.equals(navObj.navigationParams[key].value.label,urlName)){
+							respStr[key]=inputParameter[parin].parameterValue;
+						}
 					}
 				}
-				
 			}
 			
 			//load fixed value --- replace all
