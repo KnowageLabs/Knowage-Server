@@ -54,9 +54,11 @@ angular
 				if ($scope.datasetSavedFromQbe==true) {
 					console.info("[RELOAD]: Reload all necessary datasets (its different categories)");
 					$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyData() : $scope.reloadMyData = true;
+					if($scope.currentOptionMainMenu=="models"&&$scope.currentModelsTab=="federations"){
+						$scope.getFederatedDatasets();
+					}
 					$scope.datasetSavedFromQbe = false;
-				}
-				
+				}	
 			}
 			
 			$scope.saveQbeDocument = function() {
