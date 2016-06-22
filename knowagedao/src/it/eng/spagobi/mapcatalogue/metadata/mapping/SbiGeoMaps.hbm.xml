@@ -63,7 +63,7 @@
             <column name="HIERARCHY_NAME" />
         </property>  
         <property name="level" type="int">
-            <column name="LEVEL" />
+            <column name="NUM_LEVEL" />
         </property>  
         <property name="memberName" type="string">
             <column name="MEMBER_NAME" />
