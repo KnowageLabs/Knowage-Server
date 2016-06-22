@@ -23,6 +23,7 @@ import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.EngineURL;
@@ -98,9 +99,9 @@ public class BirtReportDriver extends AbstractDriver implements IEngineDriver {
 		pars.put("documentName", documentName);
 
 		// retrieving the date format
-		ConfigSingleton config = ConfigSingleton.getInstance();
-		SourceBean formatSB = (SourceBean) config.getAttribute("DATA-ACCESS.DATE-FORMAT");
-		String format = (formatSB == null) ? "DD-MM-YYYY" : (String) formatSB.getAttribute("format");
+		SingletonConfig config = SingletonConfig.getInstance();
+		String formatSB = (String) config.getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
+		String format = (formatSB == null) ? "DD-MM-YYYY" :formatSB;
 		pars.put("dateformat", format);
 		pars = addBIParameters(biobj, pars);
 		pars = addBIParameterDescriptions(biobj, pars);
