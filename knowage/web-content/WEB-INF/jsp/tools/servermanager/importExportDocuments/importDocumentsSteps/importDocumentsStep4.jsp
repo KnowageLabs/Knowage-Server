@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- <md-button ng-click="nextStep()">nextStep 3</md-button> -->
 
-<md-content layout="column" layout-wrap >
+<div layout="column"  >
 <div layout="row" layout-wrap >
 <md-switch flex ng-model="overwriteMetaData" aria-label="Switch 1" ng-init="overwriteMetaData=false">
   {{translate.load('impexp.overwrite','component_impexp_messages');}} : {{ overwriteMetaData }}
@@ -226,4 +226,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
     </md-content>
 
-</md-content>
+</div>
