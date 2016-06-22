@@ -40,6 +40,10 @@
 		min-height: 32px;
 		height: 32px;
 	}
+	.smallListItem p {
+		max-width: 160px;
+    font-size: 12px;
+	}
 	md-list-item._md-button-wrap>div.md-button:first-child>.md-button:first-child{
 		height: inherit;
 	}
