@@ -13,7 +13,7 @@
 			</md-toolbar>
 
 			<md-content layout="column" class="xs-head-max-content noTBPadding"> 
-				<md-select   placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.pagination.word.selGlo" >
+				<md-select   placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.pagination.word.selGlo" class="noMargin" >
 					<md-option value="---" ng-click="ctrl.SearchLike(ctrl.pagination.word);">{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}</md-option>
 					<md-option ng-repeat="gloss in global.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.SearchLike(ctrl.pagination.word);" >{{gloss.GLOSSARY_NM}}</md-option>
 				</md-select>
@@ -98,10 +98,9 @@
 	
 					<md-whiteframe class="md-whiteframe-4dp" flex layout-margin layout="column" >
 						<md-toolbar class="md-blue xs-head no-margin">
-							<div class="md-toolbar-tools">
-								<div style="text-align: center; width: 100%;">{{translate.load("sbi.kpi.kpiguidescription.dataset");}}</div>
-							<md-progress-circular ng-show="ctrl.pagination.dataset.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
-				
+							<div class="md-toolbar-tools" layout="row">
+								<div flex >{{translate.load("sbi.kpi.kpiguidescription.dataset");}}</div>
+								<md-progress-circular ng-show="ctrl.pagination.dataset.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
 							</div>
 						</md-toolbar>
 	

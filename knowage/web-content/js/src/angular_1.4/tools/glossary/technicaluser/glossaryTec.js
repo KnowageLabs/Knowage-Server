@@ -1312,8 +1312,8 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 
 		bpw == 0 ? bpw = 19 : bpw = bpw;
 
-		var WordItemPerPage=parseInt((boxsize - tbw - search- bpw -32 -5) / 16);
-		var elemItemPerPage=parseInt((whiteframeSize  - search- bpw -5  ) / 16);
+		var WordItemPerPage=parseInt((boxsize - tbw - search- bpw -32 -5) / 48);
+		var elemItemPerPage=parseInt((whiteframeSize  - search- bpw -17  ) / 48);
 
 		navi.pagination.word.item_number= WordItemPerPage;
 		navi.pagination.document.item_number= elemItemPerPage;
@@ -1327,7 +1327,8 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 	var firstInit=true;
 	$scope.$watch(
 			function() {
-				return angular.element(document.querySelector('.navig-tab-content md-whiteframe>md-content'))[0].offsetHeight;
+				return angular.element(document.querySelector('.navig-tab-content'))[0].offsetHeight;
+				//				return angular.element(document.querySelector('.navig-tab-content md-whiteframe>md-content'))[0].offsetHeight;
 			}, function(newValue, oldValue) {
 				if (newValue != oldValue || firstInit) {
 					firstInit=false;

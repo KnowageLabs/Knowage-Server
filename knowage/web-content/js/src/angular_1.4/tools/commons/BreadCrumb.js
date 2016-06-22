@@ -45,11 +45,21 @@ angular.module('bread_crumb', ['ngMaterial'])
 
 function breadCrumbControllerFunction($scope){
 	var s=$scope;
-
+	
+	s.canGoBack=function(item,index){
+		if($scope.disableGoBack==true && s.selectedIndex!=undefined && index<s.selectedIndex){
+			return false;
+		}else{
+			return true
+		}
+	}
+	
 	s.moveToItem = function(item,index){
-//		if($scope.disableGoBack==true && s.selectedIndex!=undefined && index<s.selectedIndex){
-//			return;
-//		}
+		
+		if(!s.canGoBack(item,index)){
+			return;
+		}
+		
 		if(index!=s.selectedIndex){
 			s.selectedIndex=index;
 			s.selectedItem=item;

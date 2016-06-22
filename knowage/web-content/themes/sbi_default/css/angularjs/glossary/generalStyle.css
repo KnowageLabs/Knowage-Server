@@ -43,14 +43,14 @@
 	font-size: 12px!important;
 }
 
-.xs-head .md-title, .md-toolbar-tools md-progress-circular{
-	font-size: 12px!important;
-	position: absolute;
-  top: -26px;
-  right: 0;
-  margin-top: -17px;
-  margin-right: -11px;
-}
+/* .xs-head .md-title, .md-toolbar-tools md-progress-circular{ */
+/* 	font-size: 12px!important; */
+/* 	position: absolute; */
+/*   top: -26px; */
+/*   right: 0; */
+/*   margin-top: -17px; */
+/*   margin-right: -11px; */
+/* } */
  md-content.xs-head-max-content  {
    height: calc(100% - 16px);
    }
