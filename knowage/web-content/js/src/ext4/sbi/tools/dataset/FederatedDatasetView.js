@@ -65,7 +65,7 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 	constructor : function(config) {
 	
 		this.initConfig(config);
-	
+			
 		Ext.apply(this, config || {});
 	
 		this.itemSelector = 'dd';
@@ -97,6 +97,7 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 				'executeDocument'
 		);
 		this.getDatasets();
+		this.initTemplate();
 	}
 	
 	
@@ -121,8 +122,6 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 						globalScope.allFederatedDatasets.push(allDatasets[i]);
 					}
 				}
-				globalScope.initTemplate();
-				console.log("iniiiiit");
 		    },
 		    failure: function(response, opts) {
 		        console.log('server-side failure with status code ' + response.status);
