@@ -38,7 +38,7 @@ bread-crumb nav {
 		    font-size: .8em;
 		    -webkit-font-smoothing: antialiased;
     	}
-    	.disabledLink {
+    	&.disabledLink {
     		cursor: not-allowed;
     	}
     }
