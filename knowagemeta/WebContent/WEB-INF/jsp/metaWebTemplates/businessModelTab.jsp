@@ -9,7 +9,7 @@
 				not-hide-on-load = true
 				is-folder-fn="businessModel_isFolder(node)"
 				folder-icon-fn="businesslModel_getlevelIcon(node)"
-				open-folder-icon-fn="getOpenFolderIcons(node)"
+				open-folder-icon-fn="businesslModel_getlevelIcon(node)"
 				interceptor="businessModelTreeInterceptor"
 				static-tree=true
 				expand-on-click=false

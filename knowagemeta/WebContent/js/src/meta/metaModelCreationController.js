@@ -12,6 +12,7 @@ function metaModelCreationControllerFunction($scope, sbiModule_translate,sbiModu
 	$scope.getOpenFolderIcons = function(node) {
 		return;
 	}
+
 }
 
 function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout) {
@@ -117,23 +118,58 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 
 	};
 
+
+	$scope.getBusinessModelType=function(bm){
+		var prop=bm.properties;
+		for(var i=0;i<prop.length;i++){
+			if(angular.equals(prop[i].key,"structural.tabletype")){
+				return prop[i].value.value;
+			}
+		}
+		return "generic";
+	};
+
+	$scope.getBusinessModelColumnsType=function(bm){
+		var prop=bm.properties;
+		for(var i=0;i<prop.length;i++){
+			if(angular.equals(prop[i].key,"structural.columntype")){
+				return prop[i].value.value;
+			}
+		}
+	};
+	$scope.businessModelIconType={
+			"generic" :"fa fa-table",
+			"cube":"fa fa-cube",
+			"dimension":"fa fa-square-o",
+			"temporal dimension":"fa fa-calendar",
+			"time dimension":"fa fa-clock-o",
+			"geographic dimension":"fa fa-globe",
+			"measure":"fa fa-barcode",
+			"attribute":"fa fa-circle-o",
+			"calendar":"fa fa-calendar-check-o",
+	}
+
 	$scope.businesslModel_getlevelIcon = function(node) {
 		if (node.hasOwnProperty("simpleBusinessColumns")) {
 			// is business model node
 
 			// TO-DO manage folder by type
-			return "fa fa-table";
+			return $scope.businessModelIconType[$scope.getBusinessModelType(node)] ||  "fa fa-table";
 		} else {
 			// is column node
 			if (node.identifier == true) {
 				return "fa fa-key goldKey"
 			}
-			return "fa fa-columns";
+			return $scope.businessModelIconType[$scope.getBusinessModelColumnsType(node)];
 
 		}
 	}
 	$scope.businessModel_isFolder = function(node) {
-		return true;
+		if (node.hasOwnProperty("simpleBusinessColumns")) {
+			return !node.expanded;
+		}else{
+			return true
+		}
 	}
 
 }

@@ -5,11 +5,15 @@ app.config([ '$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.setDefaultTheme('knowage');
 } ]);
 
-app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config', metaDefinitionControllerFunction ]);
+app.factory("dialogScope",function(){
+	return window.parent.angular.element(window.frameElement).scope() || {};
+})
+
+app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope', metaDefinitionControllerFunction ]);
 
 
 
-function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices) {
+function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope) {
 	$scope.translate = sbiModule_translate;
 	$scope.steps = {
 		current : 0
@@ -45,6 +49,7 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 
 	$scope.closeMetaDefinition = function() {
 		//TO-DO chiedere conferma prima di chiudere
+		dialogScope.closeMetaWeb();
 		alert("chiude")
 	}
 
