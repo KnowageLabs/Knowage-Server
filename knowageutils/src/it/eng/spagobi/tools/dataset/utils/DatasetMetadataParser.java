@@ -210,12 +210,13 @@ public class DatasetMetadataParser {
 		SourceBean sbColumns = null;
 		SourceBean sbDataset = null;
 		try{
-
+			sbColumns = new SourceBean(DatasetMetadataParser.COLUMNLIST);
 			sb = new SourceBean(DatasetMetadataParser.META);
 			sbDataset = new SourceBean(DatasetMetadataParser.DATASET);
 			SourceBeanAttribute version = new SourceBeanAttribute(VERSION, "-1");
 			sb.setAttribute(version);
 			sb.setAttribute(sbDataset);
+			sb.setAttribute(sbColumns);
 
 		}
 		catch (Exception e) {
