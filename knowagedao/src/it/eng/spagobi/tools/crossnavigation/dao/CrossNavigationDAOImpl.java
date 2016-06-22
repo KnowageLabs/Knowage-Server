@@ -17,23 +17,6 @@
  */
 package it.eng.spagobi.tools.crossnavigation.dao;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
@@ -52,6 +35,23 @@ import it.eng.spagobi.tools.crossnavigation.bo.SimpleParameter;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICrossNavigationDAO {
 
@@ -327,7 +327,9 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					// paramJSON.put("url", param.getParameterUrlName());
 					// inputParametersList.put(paramJSON);
 					inputId.add(param.getId());
-					documentIOParams.put(param.getId(), new crossNavigationParameters(param.getParameterUrlName(), param.getParameter().getType()));
+					crossNavigationParameters cpn = new crossNavigationParameters(param.getParameterUrlName(), param.getParameter().getType());
+					cpn.setIsInput(true);
+					documentIOParams.put(param.getId(), cpn);
 				}
 
 				// Load Output Parameter
@@ -336,7 +338,9 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				for (OutputParameter upitem : lst) {
 					// inputParametersList.put(JsonConverter.objectToJson(upitem, upitem.getClass()));
 					outputId.add(upitem.getId());
-					documentIOParams.put(upitem.getId(), new crossNavigationParameters(upitem.getName(), upitem.getType(), upitem.getFormatValue()));
+					crossNavigationParameters cpn = new crossNavigationParameters(upitem.getName(), upitem.getType(), upitem.getFormatValue());
+					cpn.setIsInput(false);
+					documentIOParams.put(upitem.getId(), cpn);
 				}
 
 				// if (!inputId.isEmpty() || !outputId.isEmpty()) {
@@ -433,6 +437,7 @@ class crossNavigationParameters {
 	Domain type;
 	String inputParameterType;
 	String dateFormat;
+	Boolean isInput;
 
 	/**
 	 * @param label
@@ -533,6 +538,14 @@ class crossNavigationParameters {
 	 */
 	public void setInputParameterType(String inputParameterType) {
 		this.inputParameterType = inputParameterType;
+	}
+
+	public Boolean getIsInput() {
+		return isInput;
+	}
+
+	public void setIsInput(Boolean isInput) {
+		this.isInput = isInput;
 	}
 
 }
