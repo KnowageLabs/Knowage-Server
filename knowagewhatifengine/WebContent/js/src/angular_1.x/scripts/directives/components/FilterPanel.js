@@ -518,23 +518,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 * Filter shift if necessary  
 	 **/
 	$scope.filterShift = function(direction) {
-		/*var length = $scope.filterCardList.length;
-		var first = $scope.filterCardList[0];
-		var last = $scope.filterCardList[length - 1];
 
-		if (direction == "left") {
-			for (var i = 0; i < length; i++) {
-				$scope.filterCardList[i] = $scope.filterCardList[i + 1];
-			}
-			$scope.filterCardList[length - 1] = first;
-		}
-		else{
-			for (var i = length - 2; i >= 0; i--) {
-				$scope.filterCardList[i + 1] = $scope.filterCardList[i];
-			}
-			$scope.filterCardList[0] = last;
-		}
-		visibleSelectedShift(direction);*/
 		$scope.filterCardList = shift(direction,$scope.filterCardList);
 		$scope.filterSelected = shift(direction,$scope.filterSelected);
 	};
