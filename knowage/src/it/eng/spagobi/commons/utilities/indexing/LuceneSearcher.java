@@ -71,7 +71,7 @@ public class LuceneSearcher {
 			Query queryMetadata = new TermQuery(new Term(IndexingConstants.METADATA, metaDataToSearch));
 			andQuery.add(queryMetadata, BooleanClause.Occur.MUST);
 		}
-		Query query = new MultiFieldQueryParser(Version.LUCENE_CURRENT, fields, analyzer).parse(queryString.replace('_', ' '));
+		Query query = new MultiFieldQueryParser(Version.LUCENE_CURRENT, fields, analyzer).parse(cleanQueryString(queryString));
 		andQuery.add(query, BooleanClause.Occur.MUST);
 		Query tenantQuery = new TermQuery(new Term(IndexingConstants.TENANT, getTenant()));
 		andQuery.add(tenantQuery, BooleanClause.Occur.MUST);
@@ -188,7 +188,7 @@ public class LuceneSearcher {
 		BooleanQuery orQuery = new BooleanQuery();
 		BooleanQuery andQuery = new BooleanQuery();
 		for (int i = 0; i < fields.length; i++) {
-			Query query = new FuzzyQuery(new Term(fields[i], queryString.replace('_', ' ')));
+			Query query = new FuzzyQuery(new Term(fields[i], cleanQueryString(queryString)));
 			query = query.rewrite(searcher.getIndexReader());
 			orQuery.add(query, BooleanClause.Occur.SHOULD);
 		}
@@ -270,4 +270,14 @@ public class LuceneSearcher {
 		return TenantManager.getTenant().getName();
 	}
 
+	private static String cleanQueryString(String queryString) {
+		String result = queryString.replace('_', ' ');
+		if (result.startsWith("*") || result.startsWith("?")) {
+			result = result.substring(1, result.length());
+		}
+		if (result.endsWith(" *")) {
+			result = result.substring(0, result.length() - 2);
+		}
+		return result.trim();
+	}
 }
