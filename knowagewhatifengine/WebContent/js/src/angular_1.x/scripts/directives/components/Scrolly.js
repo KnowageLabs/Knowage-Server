@@ -83,6 +83,20 @@ angular.module('scrolly_directive',[])
             	
             		};
             		
+            		this.getHtmlTableBodyDataElements = function (){
+            			
+            			var bodyDataElements;
+            			
+            			if(this.getHtmlTableBody()){
+            				var bodyDataElements = this.getHtmlTableBody().getElementsByTagName("td");
+            			}
+            			
+            			
+                    	
+            			return bodyDataElements;
+            	
+            		};
+            		
             		this.getHtmlTableBodyDataColumnElements = function(columnNumber){
             			
             			var bodyDataColumnElements = [];
@@ -104,7 +118,14 @@ angular.module('scrolly_directive',[])
             		
             		this.getHtmlTableBody =function(){
             			
-            			return this.getHtmlTable().getElementsByTagName("tbody")[0];
+            			var htmlTable;
+            			
+            			if(this.getHtmlTable()){
+            				
+            				htmlTable = this.getHtmlTable().getElementsByTagName("tbody")[0];
+            			}
+            			
+            			return htmlTable;
             		};
             		
             		this.getHtmlTableBodyHeaders = function(rowNumber){
@@ -225,7 +246,18 @@ angular.module('scrolly_directive',[])
 	        	
 	        	
 	        	
-	        	
+	        	scope.clearTableCellSelection = function(tableCells){
+	        		if(tableCells){
+	        			for (var i = 0; i < tableCells.length; i++) {
+							if(tableCells[i].id!==scope.selectedCell.id){
+								tableCells[i].className = 'pivot-table th';
+							}else{
+								tableCells[i].className = 'pivot-table-selected';
+							}
+						}
+	        		}
+	        		
+	        	}
 	        	  
 	        	
 	        	
@@ -272,7 +304,7 @@ angular.module('scrolly_directive',[])
 	           
 	        	scope.interval = $interval(
 	        			function(){
-	        				
+	        				scope.clearTableCellSelection(new Table("pivot-table").getHtmlTableBodyDataElements());
 	        				scope.scroll();
 	        				if(scope.ready){
 	        					scope.resize();

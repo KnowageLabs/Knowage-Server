@@ -34,9 +34,19 @@ angular.module('cell_directive',[])
 	            	scope.makeEditable(cell.id,cell.measurename);
 	            }
 	            
+	            
+	            
 	            var onClick =function(){
+	            	
+	            	if(scope.selectedCell.id===cell.id){
+	            		scope.selectedCell = {};
+	            	}else{
+	            		scope.selectedCell = cell;
 	            		
-	            	scope.selectedCell = cell;
+	            	}
+	            		
+	            	
+	            	
 			            
 		        	
 		        	
