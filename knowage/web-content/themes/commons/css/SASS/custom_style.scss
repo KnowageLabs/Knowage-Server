@@ -574,3 +574,9 @@ form {
   top: -4px;
   position: relative;
 }
+.layout-margin md-tabs {
+  margin: 0;
+}
+md-pagination-wrapper {
+  width: auto !important;
+}
