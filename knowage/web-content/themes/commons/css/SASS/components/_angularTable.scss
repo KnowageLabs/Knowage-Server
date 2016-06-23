@@ -371,5 +371,12 @@ md-radio-button ._md-container {
     top: 10px;
 }
 
+@-moz-document url-prefix() {
+    md-radio-button ._md-container {
+        left: 20px;
+        top: 0px;
+    }
+}
+
 
 }

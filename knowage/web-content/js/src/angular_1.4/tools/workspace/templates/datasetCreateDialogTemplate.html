@@ -36,7 +36,7 @@
 		<!--<md-card ng-if="datasetWizardView==1">-->
         <div ng-if="datasetWizardView==1">
         
-			<md-whiteframe flex layout="column" layout-margin class="md-whiteframe-5dp">
+			<md-card layout="column">
 				
 				<md-toolbar class="secondaryToolbar">
 		         	<div class="md-toolbar-tools">
@@ -45,15 +45,14 @@
 		            </div>
 				</md-toolbar>
 		         
-				<md-content class="loadFilePadding">
+				<md-card-content class="loadFilePadding">
 		         	
 					<form>
 			               
 						<div layout="row" layout-wrap>
 			                 
-			                  <div flex>
 			                     
-			                     <md-input-container class="small counter">
+			                     <md-input-container class="md-block" flex=100>
 			                     
 			                        <label>{{translate.load('sbi.workspace.dataset.wizard.category')}}</label> 
 			                        <md-select aria-label="aria-label" ng-model="dataset.catTypeVn">
@@ -66,20 +65,20 @@
 			                        
 			                     </md-input-container>
 			                     
-			                  </div>
+
 			                  
-						</div>
+						
 			               
-						<div flex=50 layout="row">
+						<div flex=100 layout="row" layout-align="start center">
 			                  <label class="checkboxPadding">{{translate.load('sbi.workspace.dataset.wizard.limit')}}</label> 
-			                  <md-input-container class="small counter">
+			                  <md-input-container class="md-block">
 			                     <md-checkbox 	aria-label="Checkbox 1" 
 			                     				ng-model="limitPreviewChecked" ng-checked="toggleLimitPreview()">
            						</md-checkbox>
 			                  </md-input-container>
 						</div>
 			               
-						<div layout="row" layout-wrap ng-show="dataset.fileName=='' || changingFile">
+						<div layout="row" flex=100  layout-align="start center" ng-show="dataset.fileName=='' || changingFile">
 		                  	
 		                  	<label layout-align="center center" class="buttonLabel">
 		                  		{{translate.load("sbi.ds.wizard.selectFile")}}:
@@ -99,7 +98,7 @@
 		                  	</div>
 						</div>
 						
-						<div layout="row" layout-wrap ng-if="dataset.fileName!='' && !changingFile">
+						<div layout="row" flex=100 ng-if="dataset.fileName!='' && !changingFile">
 					 		
 					 		<label layout-align="center center" class="buttonLabel">
 					 			Uploaded file: <strong>{{dataset.fileName}}</strong>
@@ -115,26 +114,26 @@
            					</div>
              				
 						</div>
-			               
+			               </div>
 					</form>
 		            
-		       	</md-content>
+		       	</md-card-content>
 		       	
-	       	</md-whiteframe>
+	       	</md-card>
 	       	
          
          	<!-- <md-whiteframe flex layout="column" layout-margin class="md-whiteframe-5dp md-whiteframe-5dp-rightPanelDocuments"> -->
          		
-       		<md-whiteframe flex layout="column" layout-margin class="md-whiteframe-5dp threeCombosThreeNumFields">         		
+       		<md-whiteframe ng-if="dataset.fileType=='CSV'" flex layout="column" layout-margin class="md-whiteframe-5dp threeCombosThreeNumFields">         		
          		
          		<div layout="row">								
 			              
 			        <!-- CSV file is uploaded --> 
-					<div layout="row" flex ng-if="dataset.fileType=='CSV'">
+					<div layout="row" flex >
 		                 	
-	                 	<div layout="row" layout-wrap flex=33>
+	                 	<div layout="row" layout-wrap flex=30>
 	                  		<div flex=90 layout-align="center center">
-	                     		<md-input-container class="small counter">
+	                     		<md-input-container class="md-block">
 	                        		<label>{{translate.load("sbi.ds.file.csv.delimiter")}}</label> 
 	                        		<md-select aria-label="aria-label" ng-model="dataset.csvDelimiter">
 	                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
@@ -147,9 +146,9 @@
 		                  	</div>
 						</div>
 	                 	
-                		<div layout="row" layout-wrap flex=33>
+                		<div layout="row" layout-wrap flex=30>
 	                  		<div flex=90 layout-align="center center">
-	                     		<md-input-container class="small counter">
+	                     		<md-input-container class="md-block">
 	                        		<label>{{translate.load("sbi.ds.file.csv.quote")}}</label> 
 	                        		<md-select aria-label="aria-label" ng-model="dataset.csvQuote">
 	                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
@@ -162,9 +161,9 @@
 		                  	</div>
 						</div>
 						
-						<div layout="row" layout-wrap flex=33>
+						<div layout="row" layout-wrap flex=30>
 	                  		<div flex=90 layout-align="center center">
-	                     		<md-input-container class="small counter">
+	                     		<md-input-container class="md-block">
 	                        		<label>{{translate.load("sbi.workspace.dataset.wizard.csv.encoding")}}</label> 
 	                        		<md-select aria-label="aria-label" ng-model="dataset.csvEncoding">
 	                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
@@ -182,9 +181,9 @@
 					<!-- XLS file is uploaded -->
 					<div layout="row" flex ng-if="dataset.fileType=='XLS'">
 						
-						<div layout="row" layout-wrap flex=33>
+						<div layout="row" layout-wrap flex=30>
 	                  		<div flex=90 layout-align="center center">
-	                     		<md-input-container class="small counter">
+	                     		<md-input-container class="md-block">
 	                        		<label>{{translate.load("sbi.ds.file.xsl.skiprows")}}</label> 
 	                        		<input 	ng-model="dataset.skipRows" type="number" 
 	                        				step="1" min="0" value="{{dataset.skipRows}}">
@@ -192,9 +191,9 @@
 		                  	</div>
 						</div>
 	                 	
-                		<div layout="row" layout-wrap flex=33>
+                		<div layout="row" layout-wrap flex=30>
 	                  		<div flex=90 layout-align="center center">
-	                     		<md-input-container class="small counter">
+	                     		<md-input-container class="md-block">
 	                        		<label>{{translate.load("sbi.ds.file.xsl.limitrows")}}</label> 
 	                        		<input 	ng-model="dataset.limitRows" type="number" 
 	                        				step="1" min="0" value="{{dataset.limitRows}}">
@@ -202,9 +201,9 @@
 		                  	</div>
 						</div>
 						
-						<div layout="row" layout-wrap flex=33>
+						<div layout="row" layout-wrap flex=30>
 	                  		<div flex=90 layout-align="center center">
-	                     		<md-input-container class="small counter">
+	                     		<md-input-container class="md-block">
 	                        		<label>{{translate.load("sbi.ds.file.xsl.sheetnumber")}}</label> 
 	                        		<input 	ng-model="dataset.xslSheetNumber" type="number" 
 	                        				step="1" min="1" value="{{dataset.xslSheetNumber}}">
