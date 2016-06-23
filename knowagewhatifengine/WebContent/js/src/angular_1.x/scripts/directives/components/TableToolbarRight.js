@@ -181,6 +181,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				break;
 			case "BUTTON_EXPORT_OUTPUT":
 				$scope.showExportDialog(null);
+				sendModelConfig = false;
 				break;
 			case "BUTTON_FLUSH_CACHE":
 				flushCache();
@@ -188,12 +189,15 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				break;
 			case "BUTTON_MDX":
 				$scope.showDialog(null,$scope.showMdxDial);
+				sendModelConfig = false;
 				break;
 			case "BUTTON_EDIT_MDX":
 				$scope.showDialog(null,$scope.sendMdxDial);
+				sendModelConfig = false;
 				break;
 			case "BUTTON_SAVE_SUBOBJECT":
 				$scope.showDialog(null,$scope.saveSubObjectDial);
+				sendModelConfig = false;
 				break;
 			case "BUTTON_SORTING_SETTINGS":
 				$scope.showDialog(null,$scope.sortSetDial);
