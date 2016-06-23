@@ -121,7 +121,7 @@ public class PageResource extends AbstractChartEngineResource {
 
 		try {
 
-			String savedTemplate = getIOManager().getTemplateAsString();
+			String savedTemplate = getIOManager().getTemplateAsString(pageName.equals("edit"));
 			switch (pageName) {
 
 			case "execute":

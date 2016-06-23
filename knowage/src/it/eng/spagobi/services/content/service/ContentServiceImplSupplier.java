@@ -48,6 +48,7 @@ import it.eng.spagobi.engines.drivers.chart.ChartDriver;
 import it.eng.spagobi.engines.drivers.kpi.KpiDriver;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
+import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import sun.misc.BASE64Encoder;
 
 public class ContentServiceImplSupplier {
@@ -325,7 +326,8 @@ public class ContentServiceImplSupplier {
 			ExecutionInstance instance = new ExecutionInstance(profile, "", "", biobjectId, roleName, modality, true, true, null);
 
 			instance.refreshParametersValues(parameters, true);
-			List errors = instance.getParametersErrors();
+			boolean onEditMode = (parameters.get(EngineStartServletIOManager.ON_EDIT_MODE)!=null);
+			List errors = instance.getParametersErrors(onEditMode);
 			if (errors != null && errors.size() > 0) {
 				return false;
 			} else {

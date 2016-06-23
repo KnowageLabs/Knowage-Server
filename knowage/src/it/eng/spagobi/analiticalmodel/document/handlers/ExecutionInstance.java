@@ -603,6 +603,9 @@ public class ExecutionInstance implements Serializable {
 		logger.debug("OUT");
 	}
 
+	public List getParametersErrors() throws Exception{
+		return getParametersErrors(false);
+	}
 	/**
 	 * Checks if is single value.
 	 *
@@ -617,7 +620,7 @@ public class ExecutionInstance implements Serializable {
 	 * (SourceBeanException e) { logger.error("SourceBeanException", e); } logger.debug("OUT"); return isSingleValue; }
 	 */
 
-	public List getParametersErrors() throws Exception {
+	public List getParametersErrors(boolean onEditMode) throws Exception {
 		logger.debug("IN");
 		List toReturn = new ArrayList();
 		List biparams = object.getBiObjectParameters();
@@ -637,7 +640,7 @@ public class ExecutionInstance implements Serializable {
 			List errorsOnChecks = getValidationErrorsOnChecks(biparam);
 
 			List values = biparam.getParameterValues();
-			if (biparam.isRequired() && (values == null || values.isEmpty() || normalizeList(values).size() == 0)) {
+			if ((!onEditMode && biparam.isRequired()) && (values == null || values.isEmpty() || normalizeList(values).size() == 0)) {
 				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null,
 						null, null);
 				errorsOnChecks.add(error);

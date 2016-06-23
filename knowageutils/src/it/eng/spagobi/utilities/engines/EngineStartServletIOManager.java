@@ -89,6 +89,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	public static final String COUNTRY = "SBI_COUNTRY";
 	public static final String LANGUAGE = "SBI_LANGUAGE";
+	public static final String ON_EDIT_MODE = "onEditMode";
 
 	private Logger logger = Logger.getLogger(EngineStartServletIOManager.class);
 
@@ -225,16 +226,26 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	}
 
 	public String getTemplateAsString() {
-		byte[] template = getTemplate();
-		return template!=null? new String(getTemplate()): null;
+		return getTemplateAsString(false);
 	}
 
-	public byte[] getTemplate() {
+	public String getTemplateAsString(boolean forEdit) {
+		byte[] template = getTemplate(forEdit);
+		return template!=null? new String(template): null;
+	}
+	
+	public byte[] getTemplate(boolean forEdit) {
 		byte[] templateContent = null;
-
+		
+		
 		if (template == null) {
 			contentProxy = getContentServiceProxy();
 			HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(getRequestContainer());
+			if(forEdit){
+				if(forEdit){
+					requestParameters.put(ON_EDIT_MODE,ON_EDIT_MODE);
+				}
+			}
 			template = contentProxy.readTemplate(getDocumentId(), requestParameters);
 		}
 
