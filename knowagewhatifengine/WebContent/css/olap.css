@@ -242,8 +242,8 @@
   color:white;
   cursor: pointer;
   background-color:#3b678c;
-  min-height: 110px;
-  max-height: 120px;
+  min-height: 120px;
+  max-height: 130px;
 
 }
 
@@ -251,8 +251,8 @@
   
   padding-left:5px; 
   overflow: hidden;
-  min-height:85px;
-  max-height:90px;
+  min-height:95px;
+  max-height:100px;
   white-space: nowrap;
 }
 

@@ -627,7 +627,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		var lah = document.getElementById("leftaxis").offsetHeight - 66;
 		var faw = document.getElementById("filterpanel").offsetWidth - 80;
 		$scope.maxCols = Math.round(taw/200);
-		$scope.maxRows = Math.round(lah/165);
+		$scope.maxRows = Math.round(lah/175);
 		$scope.numVisibleFilters = Math.round(faw/200);
 
 	};
