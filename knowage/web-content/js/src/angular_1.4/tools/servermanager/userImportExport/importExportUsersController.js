@@ -89,17 +89,11 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	
 	
 	$scope.loadAllUsers = function(){
-		sbiModule_restServices.get("2.0", 'users').success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						console.log("layer non Ottenuti");
-					} else {
-						$scope.users = data;
-					}
-
-				}).error(function(data, status, headers, config) {
-					console.log("layer non Ottenuti " + status);
-
+		sbiModule_restServices.promiseGet("2.0", 'users').then(
+				function(response, status, headers, config) {
+						$scope.users = response.data;
+				},function(response, status, headers, config) {
+					sbiModule_restServices.errorHandler(response.data,"");
 				})
 	};
 	$scope.loadAllUsers();
@@ -190,20 +184,17 @@ function userExportFuncController(sbiModule_download,sbiModule_translate,sbiModu
 					"EXPORT_SNAPSHOT":$scope.exportCheckboxs.exportSnapshots,
 					"EXPORT_PERSONAL_FOLDER":$scope.exportCheckboxs.exportPersonalFolder};
 			$scope.wait = true;
-			sbiModule_restServices.post("1.0/serverManager/importExport/users", 'export',config).success(
-					function(data, status, headers, config) {
-						if (data.hasOwnProperty("errors")) {
-							console.log("layer non Ottenuti");
-						} else {
-							if(data.hasOwnProperty("STATUS") && data.STATUS=="OK"){
-								//da usare poi 
-								$scope.downloadFile();
-							}
-								
-						} 
+			sbiModule_restServices.promisePost("1.0/serverManager/importExport/users", 'export',config).then(
+					function(response, status, headers, config) {
+						 
+						if(response.data.hasOwnProperty("STATUS") && response.data.STATUS=="OK"){
+							//da usare poi 
+							$scope.downloadFile();
+						}
+						 
 						$scope.wait = false;
-					}).error(function(data, status, headers, config) {
-						console.log("layer non Ottenuti " + status);
+					},function(response, status, headers, config) {
+						sbiModule_restServices.errorHandler(response.data,"");
 						$scope.wait = false;
 					})
 		}
@@ -214,19 +205,16 @@ function userExportFuncController(sbiModule_download,sbiModule_translate,sbiModu
 	$scope.downloadFile= function(){
 			var data={"FILE_NAME":$scope.nameExport};
 			var config={"responseType": "arraybuffer"};
-			sbiModule_restServices.post("1.0/serverManager/importExport/users","downloadExportFile",data,config)
-			.success(function(data, status, headers, config) {
-				if (data.hasOwnProperty("errors")) {
-					showToast(data.errors[0].message,4000);
-					$scope.wait = false;
-				}else if(status==200){
-					$scope.download.getBlob(data,$scope.nameExport,'application/zip','zip');
+			sbiModule_restServices.promisePost("1.0/serverManager/importExport/users","downloadExportFile",data,config)
+			.then(function(response, status, headers, config) {
+				 
+					$scope.download.getBlob(response.data,$scope.nameExport,'application/zip','zip');
 					$scope.viewDownload = false;
 					$scope.wait = false;
 					$scope.showAction(sbiModule_translate.load("sbi.importusers.downloadOK"));
-				}
-			}).error(function(data, status, headers, config) {
-				showToast("ERRORS "+status,4000);
+				 
+			},function(response, status, headers, config) {
+				sbiModule_restServices.errorHandler(response.data,"");
 				$scope.wait = false;
 			})
 		}

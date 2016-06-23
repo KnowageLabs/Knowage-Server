@@ -60,29 +60,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 					<md-tab-body layout-fill>
 					<md-card>
-						<md-card-content layout-fill layout="column" layout-wrap>
-							<div layout="row" layout-wrap layout-align="center center">
-								<div flex>
-										<md-input-container flex class="md-block">
-										<label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
-										<input type="text" ng-model="nameExport" requiredmaxlength="100" ng-maxlength="100" md-maxlength="100" /> 
-									</md-input-container>
-									
+						<md-card-content  layout="column" >
+							<div layout="row" >
+								<md-input-container flex class="md-block">
+									<label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
+									<input type="text" ng-model="nameExport" requiredmaxlength="100" ng-maxlength="100" md-maxlength="100" /> 
+								</md-input-container>
+							
+								 <md-button	ng-show="!wait" ng-click="prepare($event)"	aria-label="download Dataset" class="md-fab md-mini">
+									<md-icon md-font-icon="fa fa-download"> </md-icon>
+								 </md-button>
+								 
+								<div ng-show="wait">
+									<i class="fa fa-spinner fa-spin fa-4x"></i>
 								</div>
-								<div>
-									<md-input-container class="small counter"> <md-button
-										ng-show="!wait" ng-click="prepare($event)"
-										aria-label="download Dataset" class="md-fab md-mini">
-									<md-icon md-font-icon="fa fa-download"> </md-icon> </md-button>
-									<div ng-show="wait">
-										<i class="fa fa-spinner fa-spin fa-4x"></i>
-									</div>
-									<!--  <md-progress-circular ng-show="wait" md-mode="indeterminate"></md-progress-circular>-->
-									</md-input-container>
-								</div>
+							
 							</div>
 							<md-checkbox ng-checked="exists('Dataset',listType)" ng-click="toggle('Dataset',listType)">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>
-							<div flex ng-show="showDataset">
+							<div flex layout ng-show="showDataset">
 								<angular-table id='datasetlist' ng-model=dataset
 									columns='[{"label":"Label","name":"label","size":"20px"},{"label":"Name","name":"name","size":"20px"}]'
 									columnsSearch='["label"]' show-search-bar=true
@@ -126,15 +121,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							ng-checked="exists('DatasetImported',listTypeImported)"
 							ng-click="toggle('DatasetImported',listTypeImported)">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>
 						<h4 ng-show="showDatasetImported">{{translate.load("sbi.importexportcatalog.messagesfederated");}}</h4>
-						<div flex  ng-show="showDatasetImported">
-							<angular-table id='datasetlistImported' ng-model=exportedDataset
-								columns='[{"label":"Label","name":"label","size":"20px"},{"label":"Name","name":"name","size":"20px"},{"label":"Type","name":"type","size":"20px"}]'
-								columnsSearch='["label"]' show-search-bar=true
-								highlights-selected-item=true multi-select=true
-								selected-item=datasetSelected no-pagination=true
-								scope-functions=tableFunction> 
-							</angular-table>
-						</div>
+						 
+						<angular-table flex  ng-show="showDatasetImported" id='datasetlistImported' ng-model=exportedDataset
+							columns='[{"label":"Label","name":"label","size":"20px"},{"label":"Name","name":"name","size":"20px"},{"label":"Type","name":"type","size":"20px"}]'
+							columnsSearch='["label"]' show-search-bar=true
+							highlights-selected-item=true multi-select=true
+							selected-item=datasetSelected no-pagination=true
+							scope-functions=tableFunction> 
+						</angular-table>
+						 
 					</div>
 					</md-card-content></md-card>
 					</md-tab-body>
