@@ -15,7 +15,7 @@
 	
 		<md-tabs class="mozScroll hideTabs" md-dynamic-height md-border-bottom>
 			<md-tab id="eventTabDetail" label="{{translate.load('sbi.generic.details')}}">
-				<md-content class="md-padding" layout="column" >
+				<md-content class="md-padding internalContent" layout="column" >
 					<md-input-container  class="md-block">
 						<label>{{translate.load("scheduler.schedname","component_scheduler_messages")}}</label>
 						<input ng-model="activityEventCtrl.event.triggerName" name="name" required maxlength="100" ng-maxlength="100" md-maxlength="100" ng-disabled="activityEventCtrl.disableName">

@@ -574,8 +574,16 @@ form {
   top: -4px;
   position: relative;
 }
+.internalContent {
+  overflow: hidden;
+}
 .layout-margin md-tabs {
   margin: 0;
+}
+.layout-padding {
+  md-input-container {
+    padding: 0;
+  }
 }
 md-pagination-wrapper {
   width: auto !important;
