@@ -10,7 +10,7 @@
 			</h2>
 		</div>
 	</md-toolbar>
-	<!--  form layout="column" name="triggerForm" ng-submit="triggerForm.$valid && activityEventCtrl.saveEvent(triggerForm.$valid,true)" class="wordForm" novalidate-->
+	<form layout="column" name="triggerForm" ng-submit="triggerForm.$valid && activityEventCtrl.saveEvent(triggerForm.$valid,true)" class="wordForm" novalidate>
 	<md-dialog-content  layout="column" style="max-height:810px; ">
 	
 		<md-tabs class="mozScroll hideTabs" md-dynamic-height md-border-bottom>
@@ -566,5 +566,5 @@
 					{{translate.load("scheduler.save", "component_scheduler_messages")}}
 				</md-button>
 		</md-dialog-actions>
-		<!--  /form-->
+		</form>
 </md-dialog>
