@@ -420,6 +420,7 @@ String extTheme=ThemesManager.getTheExtTheme(currTheme);
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/bootstrap/css/bootstrap.min.css">
 	<link id="spagobi-angular" rel="styleSheet"	href="${pageContext.request.contextPath}/themes/sbi_default/css/menuBar/style.css" type="text/css" />
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
 
 <%-- ---------------------------------------------------------------------- --%>
