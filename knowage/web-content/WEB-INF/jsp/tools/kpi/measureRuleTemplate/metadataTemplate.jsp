@@ -49,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircularMetadata" layout-fill>
      	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
  	</div>
-<md-card-content>
+<md-card-content layout="column">
  <md-input-container class="md-block">
         <label> {{translate.load("sbi.generic.tipology")}}</label>
         <md-select ng-model="mtdValue.type" ng-model-options="{trackBy: '$value.valueCd'}" ng-disabled="mtdValue.isBlockedType" >
@@ -58,9 +58,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </md-option>
         </md-select>
       </md-input-container> 
-        <md-input-container ng-if="mtdValue.type.valueCd=='TEMPORAL_ATTRIBUTE'">
+        <md-input-container class="md-block" ng-if="mtdValue.type.valueCd=='TEMPORAL_ATTRIBUTE'">
         <label>{{translate.load("sbi.ds.metadata.dataset.hierarchy.level")}}</label>
-        <md-select ng-model="mtdValue.hierarchy" ng-model-options="{trackBy: '$value.valueId'}" required>
+        <!--  DAVIDE VERNASSA temporary required removal, logic moved to controller for a angular material bug 
+        <md-select ng-model="mtdValue.hierarchy" ng-model-options="{trackBy: '$value.valueId'}" required-->
+        <md-select ng-model="mtdValue.hierarchy" ng-model-options="{trackBy: '$value.valueId'}" >
           <md-option ng-repeat="hlevel in hierarchicalLevelList" ng-value="{{hlevel}}" >
             {{hlevel.valueName}}
           </md-option>
