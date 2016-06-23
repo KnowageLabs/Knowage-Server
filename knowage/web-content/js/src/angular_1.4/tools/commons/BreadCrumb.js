@@ -29,7 +29,7 @@ angular.module('bread_crumb', ['ngMaterial'])
 			if(scope.control.prevBread==undefined){
 				scope.control.prevBread = function(){
 					if(scope.selectedIndex!=undefined && scope.selectedIndex!=0){
-						scope.moveToItem(scope.ngModel[scope.selectedIndex-1],scope.selectedIndex-1);
+						scope.moveToItem(scope.ngModel[scope.selectedIndex-1],scope.selectedIndex-1,false);
 					}
 				};
 			}
@@ -54,9 +54,9 @@ function breadCrumbControllerFunction($scope){
 		}
 	}
 	
-	s.moveToItem = function(item,index){
+	s.moveToItem = function(item,index,isFromBread){
 		
-		if(!s.canGoBack(item,index)){
+		if(!s.canGoBack(item,index) && isFromBread==true){
 			return;
 		}
 		

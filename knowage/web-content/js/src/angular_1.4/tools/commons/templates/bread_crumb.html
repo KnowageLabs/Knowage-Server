@@ -1,7 +1,7 @@
 <nav>
   <div class="nav-wrapper" ng-if="ngModel!=undefined && ngModel.length!=0">
     <div class="col s12">
-      <a href="#!" ng-class="{disabledLink : !canGoBack(item,$index) }" ng-repeat="item in ngModel"  ng-click="moveToItem(item,$index)" >
+      <a href="#!" ng-class="{disabledLink : !canGoBack(item,$index) }" ng-repeat="item in ngModel"  ng-click="moveToItem(item,$index,true)" >
       	<span>{{itemName==undefined? item : item[itemName]}}</span>
       </a>
     </div>
