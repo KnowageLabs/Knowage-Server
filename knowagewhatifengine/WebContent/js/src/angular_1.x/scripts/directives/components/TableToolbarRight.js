@@ -132,7 +132,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	}
 	
 	filterXMLResult(toolbarVisibleBtns);
-	filterClickedButtons(toolbarClickedBtns);
+	//filterClickedButtons(toolbarClickedBtns);
 	
 	$scope.executeClicks = function(){
 		for(var i=0; i< $scope.clickedButtons.length; i++){
