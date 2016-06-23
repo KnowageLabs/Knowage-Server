@@ -588,3 +588,8 @@ form {
 md-pagination-wrapper {
   width: auto !important;
 }
+.searchInput.md-input-has-value, .searchInput.md-input-focused {
+  label {
+    display: none;
+  }
+}
