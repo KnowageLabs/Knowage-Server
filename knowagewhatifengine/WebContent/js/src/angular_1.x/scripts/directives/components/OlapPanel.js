@@ -99,6 +99,8 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 	}
 
 	$scope.swapAxis = function() {
+		
+		$scope.tableSubsets = [];
 		var encoded = encodeURI("1.0/axis/swap?SBI_EXECUTION_ID="
 				+ JSsbiExecutionID);
 		sbiModule_restServices.promisePost(encoded, "").then(
@@ -801,7 +803,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 	}
 
 	$scope.enterSelectMode = function(index, obj) {
-
+		$scope.selectedAgument = obj;
 		$mdDialog.hide();
 		toastr
 				.info(

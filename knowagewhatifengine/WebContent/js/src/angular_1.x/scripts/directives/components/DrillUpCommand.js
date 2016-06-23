@@ -35,7 +35,7 @@ angular.module('drill_up_command_directive',[])
 	        	 
 			         element.unbind('click',onClick); 
 			         element.detach();
-		        	 console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+		        	
 		               
 		            });
 	        },

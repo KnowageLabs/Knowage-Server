@@ -29,7 +29,7 @@ angular.module('drill_down_command_directive',[])
 	        	  $event.stopPropagation();
 	        	  scope.drillDown(attrs.axis,attrs.memberordinal,attrs.position,attrs.uniquename,attrs.positionuniquename);
 	        	 
-	        	  console.log('click!!!!!!!!!!!!!!');
+	        	  
 	        	  element.unbind('click',onClick); 
 	          }
 	          
@@ -40,7 +40,7 @@ angular.module('drill_down_command_directive',[])
 	          element.bind('$destroy', function () {
 	                
 	        	  
-		        	 console.log(element);
+		        	
 			         element.unbind('click',onClick); 
 			          
 		        	

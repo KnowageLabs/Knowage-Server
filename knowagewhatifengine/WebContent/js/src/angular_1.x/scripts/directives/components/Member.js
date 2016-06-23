@@ -40,11 +40,15 @@ angular.module('member_directive',[])
 		        	 $element.detach();
 			        
 			          
-		        	 console.log("jjjjjjjjjjjjjjjjjjjjjjjjj");
+		        	
 		               
 		            });
 	            
 	            var onClick = function($event,toaster){
+	            	
+	            	if(scope.selectedAgument){
+	            		
+	            	
 
 	        	 	$event.preventDefault()
 	        	 	$event.stopPropagation();
@@ -65,19 +69,37 @@ angular.module('member_directive',[])
 			            	
 			            }
 			            
-			            if(!contains){
-			            	if(scope.members.length>0&&scope.selectedMember.hierarchyUniqueName===scope.members[0].hierarchyUniqueName){
-			            		scope.members.push(angular.copy(scope.selectedMember));
-				            	$element[0].className = 'pivot-table-selected';
-			            	}else if(scope.members.length===0){
-			            		scope.members.push(angular.copy(scope.selectedMember));
-				            	$element[0].className = 'pivot-table-selected';
-			            	}
-			            	
-			            	
+			            if(scope.selectedAgument.expected_value==='Measure_Expression'){
+			            	if(!contains){
+				            	if(scope.members.length>0&&scope.selectedMember.hierarchyUniqueName==='[Measures]'
+				            			){
+				            		scope.members.push(angular.copy(scope.selectedMember));
+					            	$element[0].className = 'pivot-table-selected';
+				            	}else if(scope.members.length===0&&scope.selectedMember.hierarchyUniqueName==='[Measures]'){
+				            		scope.members.push(angular.copy(scope.selectedMember));
+					            	$element[0].className = 'pivot-table-selected';
+				            	}
+				            	
+				            	
+				            }
+			            }else{
+			            	if(!contains){
+				            	if(scope.members.length>0&&scope.selectedMember.hierarchyUniqueName===scope.members[0].hierarchyUniqueName
+				            			){
+				            		scope.members.push(angular.copy(scope.selectedMember));
+					            	$element[0].className = 'pivot-table-selected';
+				            	}else if(scope.members.length===0){
+				            		scope.members.push(angular.copy(scope.selectedMember));
+					            	$element[0].className = 'pivot-table-selected';
+				            	}
+				            	
+				            	
+				            }
 			            }
-			            console.log(scope.members);
 			            
+			            
+			           
+	            }    
 			         
 	        		
 	        if(scope.modelConfig.showCompactProperties == true){

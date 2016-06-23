@@ -38,8 +38,8 @@ angular.module('cell_directive',[])
 	            		
 	            	scope.selectedCell = cell;
 			            
-		        	 console.log(cell);
-		        	 console.log(scope.selectedCell);
+		        	
+		        	
 	            		
 	            }
 	           
@@ -55,7 +55,7 @@ angular.module('cell_directive',[])
 		         element.unbind('dblclick',ondbClick);  
 		         element.unbind('click',onClick); 
 		         element.detach();
-	        	 console.log("lllllllllllllllllllllllllllllllll");
+	        	 
 	               
 	            });
 	        }

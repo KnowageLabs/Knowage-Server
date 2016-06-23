@@ -22,157 +22,252 @@ angular.module('scrolly_directive',[])
 	        restrict: 'A',
 	        link: function (scope, element, attrs) {
 	        	var ready = false;
-	            var raw = element[0];
+	            var container = element[0];
 	            
 	            var startRow = null;
 	            var startColumn = null;
 	            
-	            var table = null;
-        		var thead = null;
-        		var bodyRows = [];
-        		var bodyColumns = [];
-        		var newRowSet = null;
-        		var newColumnSet = null;
-        		var newTableHeight =null;
-        		var newTableWeight = null;
 	            
-	           
-	            scope.tableHeight = raw.offsetHeight;
-	            scope.tableWeight = raw.offsetWidth;
+	            function Table(className){
+	            	
+	            	//table class name
+	            	this.tableCssClass =className;
+	            	
+            		this.getHtmlTable = function(){
+            	
+            			return document.getElementsByClassName(this.tableCssClass)[0];
+            	
+            		};
+            
+            		this.getHtmlTableRows = function(){
+            	
+            			return this.getHtmlTable().getElementsByTagName("tr");
+            		};
+            			
+            		this.getHtmlTableRow = function(rowNumber){
+            	
+            			return this.getHtmlTableRows()[rowNumber];
+            		};
+            		
+            		this.getHtmlTableHeaderRow = function(rowNumber){
+            	
+            			return this.getHtmlTableHeader().getElementsByTagName("tr")[rowNumber];
+            		};
+            		
+            		this.getHtmlTableHeaderRows = function (){
+            			
+            			return this.getHtmlTableHeader().getElementsByTagName("tr");
+            		}
+            
+            		this.getHtmlTableBodyRow = function(rowNumber){
+            	
+            			return this.getHtmlTableBody().getElementsByTagName("tr")[rowNumber];
+            		};
+            		
+            		this.getHtmlTableBodyRows = function(){
+                    	
+            			return this.getHtmlTableBody().getElementsByTagName("tr");
+            		};
+            
+            		this.getHtmlTableColumns = function (htmlRow){
+            	
+            			return htmlRow.children;
+            	
+            		};
+            		
+            		this.getHtmlTableBodyDataRowElements = function (rowNumber){
+            			
+            			var bodyDataRowElements = this.getHtmlTableBodyRow(rowNumber).getElementsByTagName("td");
+                    	
+            			return bodyDataRowElements;
+            	
+            		};
+            		
+            		this.getHtmlTableBodyDataColumnElements = function(columnNumber){
+            			
+            			var bodyDataColumnElements = [];
+            			
+            			var bodyRows = this.getHtmlTableBodyRows();
+            			
+            			for (var i = 0; i < bodyRows.length; i++) {
+            				var bodyColumnElement = this.getHtmlTableBodyDataRowElements(i)[columnNumber];
+            				bodyDataColumnElements.push(bodyColumnElement);
+						}
+            			return bodyDataColumnElements;
+            		}
+            		
+            		this.getHtmlTableHeader = function(){
+            			
+            			return this.getHtmlTable().getElementsByTagName("thead")[0];
+            		};
+            		
+            		
+            		this.getHtmlTableBody =function(){
+            			
+            			return this.getHtmlTable().getElementsByTagName("tbody")[0];
+            		};
+            		
+            		this.getHtmlTableBodyHeaders = function(rowNumber){
+            			var bodyRowHeaders = [];
+            			var bodyRow;
+            			bodyRowColumns = this.getHtmlTableBodyRow(rowNumber).children;
+            			
+            			for (var i = 0; i < bodyRowColumns.length; i++) {
+							
+            				if(bodyRowColumns[i].nodeName==='TH'){
+            					bodyRowHeaders.push(bodyRowColumns[i]);
+            				}
+						}
+            			
+            			return bodyRowHeaders;
+            		}
+            		
+            		
+	            	
+	            }
+	            
+	            function Margin(top,left,bottom,right){
+	            	this.top = top;
+	            	this.left = left;
+	            	this.bottom = bottom;
+	            	this.right = right;
+	            	
+	            }
+	            
+	        
+	            
+	            function Bounds(htmlElement,marginObj){
+	            	this.rectObject = htmlElement.getBoundingClientRect();
+	            	this.margin = marginObj;
+	       
+	            	
+	            	this.isOutOfBounds = function(htmlElement){
+	            		
+	            		var compareRectObject = htmlElement.getBoundingClientRect();
+	            		if(this.rectObject.top+this.margin.top>compareRectObject.top||
+	            				this.rectObject.left+this.margin.left>compareRectObject.left||
+	            				this.rectObject.bottom-this.margin.bottom<compareRectObject.bottom||
+	            				this.rectObject.right-this.margin.right<compareRectObject.right
+	            			
+	            				){
+	            			return true;
+	            		}
+	            		
+	            		return false;
+	            	}
+	            	
+	            	
+	            }
+	            
+
+	            scope.tableHeight = container.offsetHeight;
+	            scope.tableWeight = container.offsetWidth;
 	            
 	            scope.scrollTo = function(posX,posY) {
-	        		raw.scrollTop = posX*100;
-	        		raw.scrollLeft = posY*100;
+	            	container.scrollTop = posX*100;
+	            	container.scrollLeft = posY*100;
 	        	 
 	        	};
+	        	
+	        	var getInBoundsTableRowsColumsSet = function (table,bounds){
+	        		
+	        		var newRowsColumnsSet = {};
+	        		var tableBodyDataRowElements = table.getHtmlTableBodyDataRowElements(0);
+	        		var tableBodyDataColumnElements = table.getHtmlTableBodyDataColumnElements(0);
+	        		var newTableHeight = 0;
+	        		
+	        		for (var i = 0; i < tableBodyDataRowElements.length; i++) {
+	        			
+	        			if(bounds.isOutOfBounds(tableBodyDataRowElements[i])){
+	        				newRowsColumnsSet.columnsSet = i;
+	        				break;
+	        			}
+	        				
+					}
+	        		
+	        		for (var i = 0; i < tableBodyDataColumnElements.length; i++) {
+	        			
+	        			if(bounds.isOutOfBounds(tableBodyDataColumnElements[i])){
+	        				newRowsColumnsSet.rowsSet = i;
+	        				break;
+	        			}
+	        				
+					}
+
+	        		return newRowsColumnsSet;
+	        		
+	        		
+	        	}
+	        	
+	        	
+	        	
+	        	var setNewModelConfigValues = function (modelConfig,newRowsColumnsSet){
+	        		var  isReadyToResize = false;
+	        		if(newRowsColumnsSet.rowsSet&&modelConfig.rowsSet!=newRowsColumnsSet.rowsSet){
+	        			modelConfig.rowsSet=newRowsColumnsSet.rowsSet;
+	        			isReadyToResize = true;
+	        		}
+	        		
+	        		if(newRowsColumnsSet.columnsSet&&modelConfig.columnSet!=newRowsColumnsSet.columnsSet){
+	        			modelConfig.columnSet=newRowsColumnsSet.columnsSet;
+	        			isReadyToResize = true;
+	        		}
+	        		
+	        		return isReadyToResize;
+	            	
+	        	}
+	        	
+	        	var sendNewTableSize = function(modelConfig,isReadyToResize){
+	        		if(isReadyToResize){
+	        			scope.sendModelConfig(modelConfig);
+	        		}
+	        	}
+	        	
+	        	
+	        	
 	        	
 	        	  
 	        	
 	        	
 	        	scope.resize = function(){
 	        		
-	        		scope.tableHeight = raw.offsetHeight;
-		            scope.tableWeight = raw.offsetWidth;
-		            
-	            	table = document.getElementsByClassName("pivot-table")[0];
-	            	
-	            	
-	            	 if(table){
-	            		 
-	            		  thead = table.getElementsByTagName("thead")[0];
-		            	  bodyRows = table.getElementsByTagName("tbody")[0].children;
-		            	  bodyColumns = bodyRows[0].children;
-	            	 
-		            	  newRowSet = scope.modelConfig.rowsSet;
-		            	  newColumnSet = scope.modelConfig.columnSet; 
-	            	
-	            	
-		            	  //Setting new number of rows if table height is bigger than div 
-		            	  if(table.offsetHeight>raw.offsetHeight-25){
-	            		
-		            		  newTableHeight = thead.offsetHeight;
-		            		  newRowSet = 0;
-		            		  
-		            		  	for ( var i = 0; i < bodyRows.length; i++) {
-							
-		            		  		if((newTableHeight+bodyRows[newRowSet].offsetHeight)>(raw.parentElement.offsetHeight-25)){
-	            					            				
-		            		  			break;
-		            		  		}else{
-		            		  			
-		            		  			newRowSet++;
-		            		  			newTableHeight = newTableHeight+bodyRows[newRowSet].offsetHeight;
-	            				
-		            		  		}
-	            				
-		            		  	}
-	            		
-	            	
-		            	  }
-		            	  
-		            	  if(table.offsetHeight<raw.offsetHeight-70&&
-		            		scope.modelConfig.rowCount>newRowSet){
-	            		
-	            			newRowSet = 50;
-
-		            	  }	
-	            	
-		            	  if(table.offsetWidth<raw.offsetWidth-50&&
-	            			scope.modelConfig.columnCount>newColumnSet){
-		            		  
-		            		  if(bodyColumns[newColumnSet]){
-	            			
-		            			  if(table.offsetWidth+bodyColumns[newColumnSet].offsetWidth<raw.offsetWidth-50){
-	            			
-		            			newColumnSet = 50;
-		            		
-	            			
-		            			  }
-	            		
-		            		  }
-	            			
-	            		
-		            	  }	
-	            	
-	            	
-	            		if(table.offsetWidth>raw.parentElement.offsetWidth-50){
-	            			
-		            		var ajSize = 0;
-		            		var headerCount = 0;
-		            		
-		            		for ( newColumnSet = 0; newColumnSet < bodyColumns.length; newColumnSet++) {
-								
-	
-		            			if(bodyColumns[newColumnSet].nodeName==='TH'){
-		            				headerCount++;
-		            			}
-		            			
-		            			if((ajSize+bodyColumns[newColumnSet].offsetWidth)>(raw.parentElement.offsetWidth-50)){
-		            				           				
-		            				break;
-		            			}else{
-		            				ajSize = ajSize+bodyColumns[newColumnSet].offsetWidth;
-		            			}
-		            				
-							}
-		            		newColumnSet = newColumnSet-headerCount;
+	        		var SCROLL_WIDTH = 15;
+	        		var COLUMNS_WIDTH = 200;
+	        		var ROW_HEIGHT = 50;
+	        		var isReadyToResize = false;
+	        		var table = new Table("pivot-table");
+	        		var bounds = new Bounds(container,new Margin(0,0,SCROLL_WIDTH,SCROLL_WIDTH));
+	        		var resizeBounds = new Bounds(container,new Margin(0,0,SCROLL_WIDTH+ROW_HEIGHT,SCROLL_WIDTH+COLUMNS_WIDTH));
+	        		var newRowsColumnsSet = {};
+	        		
+	        		
+	        		if(table.getHtmlTable()){
+	        			
+	        			if(bounds.isOutOfBounds(table.getHtmlTable())){
+		        			
+		        			newRowsColumnsSet = getInBoundsTableRowsColumsSet(table,bounds);
+		        			
+		        			
+		        		}else if(!resizeBounds.isOutOfBounds(table.getHtmlTable())&&scope.modelConfig.columnCount>scope.modelConfig.columnSet){
+		        			
+		        			newRowsColumnsSet.columnsSet = 50;
+		        			
+		        			
+		        		}else if(!resizeBounds.isOutOfBounds(table.getHtmlTable())&&scope.modelConfig.rowCount>scope.modelConfig.rowsSet){
+		        			
+		        			newRowsColumnsSet.rowsSet = 50;
+		        			
+		        		}
 	        		}
-	            		
-		            	
-		            	
-		            if(newRowSet<1){
-		            		
-		            	newRowSet =1;
-		            	
-		            }
-		            	 
-		            if(newColumnSet<1){
-		            		
-		            	newColumnSet =1;
-		            	 
-		            }
-		            	 
-		            if(scope.modelConfig.rowsSet!=newRowSet||scope.modelConfig.columnSet!=newColumnSet){
-		            	
-		            	if(scope.ready){
-		            		
-		            		scope.modelConfig.rowsSet=newRowSet;
-			            	scope.modelConfig.columnSet=newColumnSet;
-			            	scope.sendModelConfig(scope.modelConfig);
-			            		
-		            	}
-		            		 
-		            }
-		            	 
-	            	 
-	        	} 
-	            	  //table = null;
-	            	  thead = null;
-	            	  bodyRows.length = 0;
-	            	  bodyColumns.length = 0;
-	            	  newRowSet = null;
-	            	  newColumnSet = null;
-	            	  newTableHeight =null;
+	        		
+	        		
+	        		
+	        		
+        			isReadyToResize = setNewModelConfigValues(scope.modelConfig,newRowsColumnsSet);
+	        		
+	        		sendNewTableSize(scope.modelConfig,isReadyToResize);
+	        		
+
 	        	}
 	           
 	        	scope.interval = $interval(
@@ -183,10 +278,7 @@ angular.module('scrolly_directive',[])
 	        					scope.resize();
 	        				}
 	        				
-	        					
-	        				
-	        				
-	        				//scope.isScrolling = false;
+
 	        			
 	        			},100);
 	        	
@@ -198,17 +290,15 @@ angular.module('scrolly_directive',[])
 	        		
 	                
 	                
-	                startRow = Math.round((raw.scrollTop)/100);
-	                startColumn =  Math.round(raw.scrollLeft/100);
+	                startRow = Math.round((container.scrollTop)/100);
+	                startColumn =  Math.round(container.scrollLeft/100);
 	                
 	                
 	                if(scope.modelConfig){
 	                	
 	                	if(scope.modelConfig.startRow!=startRow){
 	                		
-	                		if(table){
-	        		   			table.remove();
-	        		   		}
+	                		
 	           
 	            		   scope.modelConfig.startRow = startRow;
 	            		   scope.showLoadingMask = false;
