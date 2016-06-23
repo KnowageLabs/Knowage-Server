@@ -501,7 +501,7 @@
             cursor: 'pointer',
             dataLabels: {
                 enabled: true,
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                #*format: '<b>{point.name}</b>: {point.percentage:.1f} %',*#
                 style: {
                     color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                 }
@@ -542,15 +542,15 @@
 	    	
 	    	point:
 	    	{
-	    	#if($chart.isCockpitEngine == 'true' && $chart.outcomingEventsEnabled == 'true')
-              	events:{
-                	click: handleCockpitSelection
-            	}
-            #elseif($crossNavigation != '')
-               events:{
-                	click: handleCrossNavigationTo
-            	}
-            #end	
+		    	#if($chart.isCockpitEngine == 'true' && $chart.outcomingEventsEnabled == 'true')
+	              	events:{
+	                	click: handleCockpitSelection
+	            	}
+	            #elseif($crossNavigation != '')
+	               events:{
+	                	click: handleCrossNavigationTo
+	            	}
+	            #end	
             },
             
 	        data: [
@@ -564,21 +564,21 @@
 						name: '$serieName',
 						y: $serieValue,
 						
-						    	#if($crossNavigation != '') 
-						crossNavigationDocumentName: '$crossNavigation.document',
-						crossNavigationDocumentParams: [
-							## if single PARAM node, not array
-							#if($crossNavigation.PARAM_LIST.PARAM.class.name == "java.util.LinkedHashMap")
-								#set($param = $crossNavigation.PARAM_LIST.PARAM)
-								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' }
-							#else
-								##Array of parameters
-								
-								#foreach($param in $crossNavigation.PARAM_LIST.PARAM)
-								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' },
+				    	#if($crossNavigation != '') 
+							crossNavigationDocumentName: '$crossNavigation.document',
+							crossNavigationDocumentParams: [
+								## if single PARAM node, not array
+								#if($crossNavigation.PARAM_LIST.PARAM.class.name == "java.util.LinkedHashMap")
+									#set($param = $crossNavigation.PARAM_LIST.PARAM)
+									{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' }
+								#else
+									##Array of parameters
+									
+									#foreach($param in $crossNavigation.PARAM_LIST.PARAM)
+									{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' },
+									#end
 								#end
-							#end
-						],
+							],
 						#end
 						
 						#set($relatedSerieShowAbsValue = $relatedSerie.showAbsValue)
@@ -596,11 +596,64 @@
 							dataLabels: 
 							{							
 			                    enabled: true,
-			                    	                    
-			                    #set ($precisionValueAsString = ':,.' + $precision + 'f')
-			                    			                    
-			                    format: '<b>{point.name}</b>: {y$precisionValueAsString}'
-			                }
+			                    
+			                    /* 
+			                    	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+			                    	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+			                    	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
+			                    	is included into the formatting of the number that is going to be displayed, as well as precision.
+			                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	                     		*/ 
+			                    formatter: function() {
+			                     
+				                    var value = this.y;	
+				                    var newValue = "";	                  
+				                    
+			                      	var scaleFactor = '${relatedSerie.scaleFactor}';
+			                      	
+			                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+			                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+			                      				                      	
+			                      	var precision = '${relatedSerie.precision}';
+			                      	var pointName = "<b>" + this.point.name + "</b>: ";  
+			                      	
+	                      	        newValue = pointName;        	
+			                      	
+			                      	switch(scaleFactor.toUpperCase()) {
+			                      	
+			                      		case "EMPTY":
+			                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
+			                      			newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
+			                      			break;
+			                      		case "K":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";	
+			                      			break;
+			                      		case "M":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";	
+			                      			break;
+			                      		case "G":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+			                      			break;
+		                      			case "T":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+			                      			break;
+			                      		case "P":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+			                      			break;
+		                      			case "E":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+			                      			break;
+		                      			default:
+		                      				/* The same as for the case when user picked "no selection" - in case when the chart 
+		                      				template does not contain the scale factor for current serie */
+		                      				newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
+			                      			break;
+			                      	
+			                      	}						
+		                        		                       
+		                          	return newValue;
+				            	}
+		                	}
 			                
 		                #elseif($relatedSerieShowAbsValue == false && $relatedSerieShowPercentage == true)
 			              	
@@ -610,15 +663,74 @@
 			                    format: '<b>{point.name}</b>: {point.percentage:.' + $precision + 'f}%'
 			                }
 		                
-		                #elseif($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == true)
 		                
+		                #elseif($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == true)
+		               	
 							dataLabels: 
 							{
 			                    enabled: true,
 			                    
 			                    #set ($precisionValueAsString = ':,.' + $precision + 'f')
-								
-			                   	format: '<b>{point.name}</b>: {y$precisionValueAsString} ({point.percentage:.' + $precision + 'f}%)'
+			                   	
+			                   	/* 
+			                    	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+			                    	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+			                    	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
+			                    	is included into the formatting of the number that is going to be displayed, as well as precision.
+			                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	                     		*/
+			                   	formatter: function() {
+			                     
+				                    var value = this.y;	
+				                    var newValue = "";	                  
+				                    
+			                      	var scaleFactor = '${relatedSerie.scaleFactor}';
+			                      	
+			                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+			                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+			                      	
+			                      	var precision = '${relatedSerie.precision}';
+			                      	var pointPercentage = this.point.percentage;
+			                      	var pointName = "<b>" + this.point.name + "</b>: ";
+			                      	
+	                      	        newValue = pointName;        	
+			                      	
+			                      	switch(scaleFactor.toUpperCase()) {
+			                      	
+			                      		case "EMPTY":
+			                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
+			                      			newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
+			                      			break;
+			                      		case "K":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";		
+			                      			break;
+			                      		case "M":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";	
+			                      			break;
+			                      		case "G":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+			                      			break;
+		                      			case "T":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+			                      			break;
+			                      		case "P":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+			                      			break;
+		                      			case "E":
+			                      			newValue += Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+			                      			break;
+		                      			default:
+		                      				/* The same as for the case when user picked "no selection" - in case when the chart 
+		                      				template does not contain the scale factor for current serie */
+		                      				newValue += Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
+			                      			break;
+			                      	
+			                      	}						
+		                        		 
+		                        	newValue += " (" + Highcharts.numberFormat(pointPercentage,precision,decimalPoints,thousandsSep) + "%)"; 
+		                        		                       
+		                          	return newValue;
+				            	}
 			                }
 			                
 		                #else

@@ -684,11 +684,23 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					serie['showPercentage'] = serieAsMap
 						.get('serieShowPercentage') != undefined ? serieAsMap
 						.get('serieShowPercentage')
-						 : false;	
+						 : false;
+					
+					/**
+					 * The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), 
+					 * "M" (mega), "G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this 
+					 * factor and display these abbreviations (number suffix) along with the scaled number. 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */	
+					serie['scaleFactor'] = serieAsMap
+						.get('serieScaleFactor') != undefined ? serieAsMap
+						.get('serieScaleFactor')
+						 : 'empty';
+						
 					serie['type'] = serieAsMap.get('serieType') != undefined ? serieAsMap
 						.get('serieType')
 						 : '';
-
+						
 					var chartType = Sbi.chart.designer.Designer.chartTypeSelector
 						.getChartType();
 						

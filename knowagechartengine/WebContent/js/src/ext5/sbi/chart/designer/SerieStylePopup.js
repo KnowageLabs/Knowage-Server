@@ -332,6 +332,44 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			serieShowPercentage = true;
 		}
 		
+		/**
+		 * The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), 
+		 * "M" (mega), "G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this 
+		 * factor and display these abbreviations (number suffix) along with the scaled number. 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */	
+		var serieScaleFactor = dataAtRow.get('serieScaleFactor');
+				
+		this.serieScaleFactor = Ext.create
+		(
+			'Ext.form.ComboBox', 
+			
+			{
+				store: 
+				{
+					store: 'array',
+					fields: ['name', 'value'],
+					
+					data: 	
+					[
+				       	{name: "No selection", value: "empty"},
+				       	{name: "k", value: "k"},
+				       	{name: "M", value: "M"},
+				       	{name: "G", value: "G"},
+				       	{name: "T", value: "T"},
+				       	{name: "P", value: "P"},
+				       	{name: "E", value: "E"}
+			       	]
+				},
+				
+				value: (serieScaleFactor && serieScaleFactor.trim() != '') ? serieScaleFactor.trim() : 'empty',
+				valueField: 'value',
+				displayField: 'name',
+				fieldLabel : LN("sbi.chartengine.designer.scalefactor.label"),
+				editable: false
+			}
+		);	
+		
 		this.serieShowPercentage = Ext.create('Ext.form.field.Checkbox',{
 			checked: serieShowPercentage,
 			labelSeparator: '',
@@ -339,9 +377,10 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			fieldLabel: LN('sbi.chartengine.designer.showPercentage'),
 		});	
 	
-		this.serieFieldSet.add(this.serieShowValue);
+		this.serieFieldSet.add(this.serieShowValue);		
 		this.serieFieldSet.add(this.serieShowAbsValue);
 		this.serieFieldSet.add(this.serieShowPercentage);
+		this.serieFieldSet.add(this.serieScaleFactor);
 		
 		var seriePrecision = dataAtRow.get('seriePrecision');
 		
@@ -517,6 +556,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		var showValue = this.serieShowValue.getValue();
 		var showAbsValue = this.serieShowAbsValue.getValue();
 		var showPercentage = this.serieShowPercentage.getValue();
+		var serieScaleFactor = this.serieScaleFactor.getValue();
 		var serieTooltipColor = this.tooltipColor.getColor();
 		var serieTooltipBackgroundColor = this.tooltipBackgroundColor.getColor();
 		var serieTooltipAlign = this.tooltipAlignComboBox.getValue();
@@ -645,6 +685,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			dataAtRow.set('serieShowValue', showValue);
 			dataAtRow.set('serieShowAbsValue', showAbsValue);
 			dataAtRow.set('serieShowPercentage', showPercentage);
+			dataAtRow.set('serieScaleFactor', serieScaleFactor);
 			dataAtRow.set('serieTooltipColor', serieTooltipColor);
 			dataAtRow.set('serieTooltipBackgroundColor', serieTooltipBackgroundColor);
 			dataAtRow.set('serieTooltipAlign', serieTooltipAlign);

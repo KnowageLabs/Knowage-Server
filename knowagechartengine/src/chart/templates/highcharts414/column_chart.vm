@@ -18,9 +18,7 @@
 	#set($enableDrilldown = true)
 #end
 
-
 #set($series = $chart.VALUES.SERIE) ## metadata related to series
-
 
 #set($seriesMap = {}) ## conversion series metadata to map object
 
@@ -958,46 +956,58 @@
 							#end
 		                   
 		                   labelFormat: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}',			                  
-                            		                    
-			               formatter: function() {
+                            		             
+                           	/* 
+		                    	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+		                    	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+		                    	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
+		                    	is included into the formatting of the number that is going to be displayed, as well as precision.
+		                    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+                     		*/                		                    
+			               	formatter: function() {
 			                     
-			                    var value=this.y;
-								var newValue = value;
-	                        	
-	                        	if (value >= 1000) {
-	                           		
-	                           		var suffixes = ["", "k" , "M" , "G" , "T" , "P" , "E"];
-	                           		var suffixNum = Math.floor( (""+value).length/3 );
-	                           		var shortValue = '';
-	                           		
-	                           		for (var precision = 2; precision >= 1; precision--) {
-	                           			
-	                           			shortValue = parseFloat( (suffixNum != 0 ? (value / Math.pow(1000,suffixNum) ) : value).toPrecision(2));
-	                           			var dotLessShortValue = (shortValue + '').replace(/[^a-zA-Z 0-9]+/g,'');
-	                              		
-	                              		if (dotLessShortValue.length <= 2) { 
-	                              			break; 
-                              			}
-	                        		}
-	                        		
-	                      			if (shortValue % 1 != 0) { 
-	                      				shortNum = shortValue.toFixed(1);
-                      				}
-	                          		
-	                          		newValue = shortValue + suffixes[suffixNum];
-	                       		}
-	                       		
-	                       		else {
-	                       		
-	                       			/*
-	                       				Provide precision that user specified for current series item for numbers that
-	                       				are smaller than 1000 (1k).
-	                       				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	                       			*/
-	                       			newValue = newValue.toFixed(${relatedSerie.precision});
-	                       		
-	                       		}
-	                       
+			                    var value = this.y;	
+			                    var newValue = "";		                    
+			                    
+		                      	var scaleFactor = '${relatedSerie.scaleFactor}';
+		                      	
+		                      	var decimalPoints = Highcharts.getOptions().lang.decimalPoint;
+		                      	var thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+		                      	
+		                      	var precision = '${relatedSerie.precision}';
+		                      	
+		                      	switch(scaleFactor.toUpperCase()) {
+		                      	
+		                      		case "EMPTY":
+		                      			/* No selection is provided for the number to be displayed as the data label (pure value). */
+		                      			newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);		                      			
+		                      			break;
+		                      		case "K":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,3),precision,decimalPoints,thousandsSep) + "k";	
+		                      			break;
+		                      		case "M":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,6),precision,decimalPoints,thousandsSep) + "M";	
+		                      			break;
+		                      		case "G":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,9),precision,decimalPoints,thousandsSep) + "G";
+		                      			break;
+	                      			case "T":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,12),precision,decimalPoints,thousandsSep) + "T";
+		                      			break;
+		                      		case "P":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,15),precision,decimalPoints,thousandsSep) + "P";
+		                      			break;
+	                      			case "E":
+		                      			newValue = Highcharts.numberFormat(value/Math.pow(10,18),precision,decimalPoints,thousandsSep) + "E";
+		                      			break;
+	                      			default:
+	                      				/* The same as for the case when user picked "no selection" - in case when the chart 
+	                      				template does not contain the scale factor for current serie */
+	                      				newValue = Highcharts.numberFormat(value,precision,decimalPoints,thousandsSep);	
+		                      			break;
+		                      	
+		                      	}						
+	                        		                       
 	                          	return newValue;
 			            	},
 		                      

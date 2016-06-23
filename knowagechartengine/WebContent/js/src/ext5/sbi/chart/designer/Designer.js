@@ -208,7 +208,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				exporterContextName) {
 			
 			Sbi.chart.designer.ChartUtils.setCockpitEngine(isCockpit);	
-			
+						
 			/**
 			 * Base JSON template that we will use when the new chart (document) is created
 			 */
@@ -353,6 +353,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * (danristo :: danilo.ristovski@mht.net) 
 			 */
 			var chartTypeUpperCase = jsonTemplate.CHART.type.toUpperCase();
+			
+			
 			
 			if (chartTypeUpperCase == 'PIE' 
 				|| chartTypeUpperCase == 'SUNBURST'
@@ -3683,6 +3685,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 									serieShowValue: serie.showValue,
 									serieShowAbsValue: serie.showAbsValue,
 									serieShowPercentage: serie.showPercentage,
+									serieScaleFactor: (serie.scaleFactor!=undefined && serie.scaleFactor!=null && serie.scaleFactor!="") ? serie.scaleFactor : "empty",
 									seriePrecision: serie.precision + '',
 									seriePrefixChar: serie.prefixChar,
 									seriePostfixChar: serie.postfixChar,
@@ -3721,6 +3724,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 									serieShowValue: serie.showValue,
 									serieShowAbsValue: serie.showAbsValue,
 									serieShowPercentage: serie.showPercentage,
+									serieScaleFactor: (serie.scaleFactor!=undefined && serie.scaleFactor!=null && serie.scaleFactor!="") ? serie.scaleFactor : "empty",
 									seriePrecision: serie.precision + '',
 									seriePrefixChar: serie.prefixChar,
 									seriePostfixChar: serie.postfixChar,
