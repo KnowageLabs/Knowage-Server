@@ -200,7 +200,8 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	 */
 	$scope.addNewAnalysisDocument = function() {
 		console.info("[NEW COCKPIT - START]: Open page for adding a new Cockpit document.");
-		window.location.href = sbiModule_config.engineUrls.cockpitServiceUrl + '&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";
+	    // cockpit service url from dataset parameters because sbiModule.config engineUrls not visible for user
+		window.location.href = datasetParameters.cockpitServiceUrl + '&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";
 	}
 	
 	/**
