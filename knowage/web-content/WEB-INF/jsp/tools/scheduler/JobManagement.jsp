@@ -38,7 +38,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/scheduler/jobManagement.js")%>"></script>
 
 </head>
-<body class="bodyStyle">
+<body class="bodyStyle kn-scheduler">
 	<angular-list-detail ng-controller="Controller as ctrl" show-detail="ctrl.showDetail" id="angularListDetail">
 		<list label='Scheduler' new-function="ctrl.addJob">
 			<angular-table flex
@@ -110,14 +110,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 							<form name="jobDetailForm" class="wordForm" novalidate>
 								<div>
 									<div flex="100">
-										<md-input-container class="small counter" ng-show="ctrl.selectedJob.NEWJOB">
+										<md-input-container class="md-block" ng-show="ctrl.selectedJob.NEWJOB">
 											<label>{{translate.load("sbi.generic.name")}}</label>
 											<input class="input_class" name="name" ng-model="ctrl.selectedJob.jobName" required maxlength="80" ng-maxlength="80" md-maxlength="80">
 											<div ng-messages="jobDetailForm.name.$error">
 												<div ng-message="required">{{translate.load("sbi.federationdefinition.required")}}</div>
 									        </div>
 										</md-input-container>
-										<md-input-container class="small counter">
+										<md-input-container class="md-block">
 											<label>{{translate.load("sbi.generic.descr")}}</label>
 											<input class="input_class" ng-model="ctrl.selectedJob.jobDescription" maxlength="120" ng-maxlength="120" md-maxlength="120">
 										</md-input-container>
@@ -145,14 +145,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 												<md-subheader flex="40">{{parameter.name}}</md-subheader>
 												<md-content layout="column" flex>
 													<!-- <span>{{parameter.value}}</span> -->
-													<md-input-container class="small counter" ng-show="parameter.temporal">
+													<md-input-container class="md-block" ng-show="parameter.temporal">
 														<label>{{translate.load("scheduler.parameterValuesStrategyQuestion","component_scheduler_messages")}}</label>
 														<md-select aria-label="aria-label" ng-model="parameter.type" ng-change="ctrl.setDefaultValue(parameter)">
 															<md-option ng-repeat="strategy in ctrl.triggerStrategies" value="{{strategy.value}}">{{strategy.label}}</md-option>
 														</md-select>
 													</md-input-container>
 													
-													<md-input-container class="small counter" ng-hide="parameter.temporal">
+													<md-input-container class="md-block" ng-hide="parameter.temporal">
 														<label>{{translate.load("scheduler.parameterValuesStrategyQuestion","component_scheduler_messages")}}</label>
 														<md-select aria-label="aria-label" ng-model="parameter.type" ng-change="ctrl.setDefaultValue(parameter)">
 															<md-option ng-repeat="strategy in ctrl.triggerStrategiesNoFormula" value="{{strategy.value}}">{{strategy.label}}</md-option>
@@ -166,14 +166,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 														</md-select>
 													</md-input-container>
 													
-													<md-input-container class="small counter" ng-show="parameter.type == 'fixed' && parameter.values.length > 0 && !parameter.manualInput">
+													<md-input-container class="md-block" ng-show="parameter.type == 'fixed' && parameter.values.length > 0 && !parameter.manualInput">
 														<label>{{translate.load("sbi.thresholds.values")}}</label>
 														<md-select ng-model="parameter.selectedValues" ng-disabled="!parameter.role || parameter.role == ''" md-on-close="ctrl.saveParameterValues(parameter)" multiple>
 															<md-option ng-value="value" ng-repeat="value in parameter.values track by $index">{{value}}</md-option>
 														</md-select>
 													</md-input-container>
 													
-													<md-input-container class="small counter" ng-show="parameter.type == 'fixed' && (parameter.values.length == 0 || parameter.manualInput)">
+													<md-input-container class="md-block" ng-show="parameter.type == 'fixed' && (parameter.values.length == 0 || parameter.manualInput)">
 														<label>{{translate.load("sbi.thresholds.values")}}</label>
 														<input class="input_class" ng-model="parameter.value">
 													</md-input-container>
@@ -192,7 +192,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 														</md-select>
 													</md-input-container>
 													
-													<md-input-container class="small counter">
+													<md-input-container class="md-block">
 														<md-select aria-label="aria-label" ng-model="parameter.iterative">
 															<md-option ng-repeat="iteration in ctrl.triggerIterations" value="{{iteration.value}}">{{iteration.label}}</md-option>
 														</md-select>

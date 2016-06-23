@@ -2,21 +2,21 @@
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 
-<md-dialog aria-label="{{translate.load('sbi.scheduler.schedulation.detail')}}" style="width: 90%; height: 90%; overflow-y: visible;">
+<md-dialog aria-label="{{translate.load('sbi.scheduler.schedulation.detail')}}" style="width:80%" class="kn-scheduler-dialog">
 	<md-toolbar>
 		<div class="md-toolbar-tools">
-			<h2 style="font-size: 20px; text-align: center; width: 100%;">
+			<h2>
 				{{translate.load("sbi.scheduler.schedulation.detail")}}
 			</h2>
 		</div>
 	</md-toolbar>
-	<md-content style="height: 100%;" layout="column">
-	<form style="height: 100%; margin-bottom: 0px;" layout="column" name="triggerForm" ng-submit="triggerForm.$valid && activityEventCtrl.saveEvent(triggerForm.$valid,true)" class="wordForm md-padding" novalidate>
-		<md-content flex>
-		<md-tabs class="mozScroll hideTabs h100" md-border-bottom md-dynamic-height flex>
+	<!--  form layout="column" name="triggerForm" ng-submit="triggerForm.$valid && activityEventCtrl.saveEvent(triggerForm.$valid,true)" class="wordForm" novalidate-->
+	<md-dialog-content  layout="column" style="max-height:810px; ">
+	
+		<md-tabs class="mozScroll hideTabs" md-dynamic-height md-border-bottom>
 			<md-tab id="eventTabDetail" label="{{translate.load('sbi.generic.details')}}">
-				<div flex> 
-					<md-input-container>
+				<md-content class="md-padding" layout="column" >
+					<md-input-container  class="md-block">
 						<label>{{translate.load("scheduler.schedname","component_scheduler_messages")}}</label>
 						<input ng-model="activityEventCtrl.event.triggerName" name="name" required maxlength="100" ng-maxlength="100" md-maxlength="100" ng-disabled="activityEventCtrl.disableName">
 						<div ng-messages="triggerForm.name.$error">
@@ -24,12 +24,12 @@
 				        </div>
 					</md-input-container>
 					
-					<md-input-container>
+					<md-input-container  class="md-block">
 						<label>{{translate.load("scheduler.scheddescription","component_scheduler_messages")}}:</label>
 						<textarea ng-model="activityEventCtrl.event.triggerDescription" columns="1" maxlength="500" ng-maxlength="500" md-maxlength="500"></textarea>
 					</md-input-container>
 
-					<div layout="row" layout-align="start center">
+					<div layout="row" layout-align="center center">
 						<label>{{translate.load("scheduler.startdate","component_scheduler_messages")}}:</label>
 						<div layout="column">
 							<md-datepicker ng-model="activityEventCtrl.event.startDate" name="startDateField" required md-placeholder={{translate.load("scheduler.startdate","component_scheduler_messages")}}></md-datepicker>
@@ -42,7 +42,7 @@
 						<angular-time-picker id="myTimePicker1" required ng-model="activityEventCtrl.event.startTime"></angular-time-picker>
 					</div>
 
-					<div layout="row" layout-align="start center">
+					<div layout="row" layout-align="center center">
 						<label style="margin-right: 5px;">{{translate.load("scheduler.enddate","component_scheduler_messages")}}:</label>
 						<div layout="column">
 							<md-datepicker ng-model="activityEventCtrl.event.endDate" name="endDateField" md-placeholder={{translate.load("scheduler.enddate","component_scheduler_messages")}}></md-datepicker>
@@ -54,9 +54,9 @@
 						<angular-time-picker id="myTimePicker2" ng-model="activityEventCtrl.event.endTime"></angular-time-picker>
 					</div>
 					
-					<md-toolbar class="unselectedItem">
+					<md-toolbar class="unselectedItem" flex>
 						<div class="md-toolbar-tools" layout="row" style="padding-left: 0px;">
-							<md-input-container> 
+							<md-input-container class="md-block"> 
 								<label>&nbsp;</label>
 								<md-select aria-label="aria-label" ng-model="activityEventCtrl.typeOperation" ng-change="activityEventCtrl.changeTypeOperation();">
 									<md-option ng-repeat="type in activityEventCtrl.SCHEDULER_TYPES" value="{{type.value}}">{{type.label}}</md-option>
@@ -65,8 +65,8 @@
 						</div>
 					</md-toolbar>
 					
-					<div ng-if="activityEventCtrl.eventSched.repetitionKind == 'event'"	layout-padding class="borderBox">
-						<md-input-container> 
+					<div ng-if="activityEventCtrl.eventSched.repetitionKind == 'event'"	layout-padding class="borderBox" flex>
+						<md-input-container class="md-block"> 
 							<label>{{translate.load("scheduler.eventType","component_scheduler_messages")}}:</label>
 							<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.event_type" ng-change="activityEventCtrl.changeTypeFrequency()" required name={{translate.load("scheduler.repeatinterval","component_scheduler_messages")}}>
 								<md-option ng-repeat="eventType in activityEventCtrl.EVENT_TYPES" value="{{eventType.value}}"> {{eventType.label}} </md-option> 
@@ -80,14 +80,14 @@
 								</div>
 							</md-toolbar>
 	
-							<md-content layout-padding class="borderBox"> 
-								<md-input-container>
+							<md-content layout-padding > 
+								<md-input-container class="md-block">
 									<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
 									<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.dataset" ng-change="activityEventCtrl.changeTypeFrequency()" required name={{translate.load("sbi.scheduler.schedulation.events.event.dataset")}}>
 										<md-option ng-repeat="item in activityEventCtrl.datasets" value="{{item.id.dsId}}">{{item.label}}</md-option> 
 									</md-select> 
 								</md-input-container> 
-								<md-input-container>
+								<md-input-container class="md-block">
 									<label>{{translate.load("sbi.scheduler.schedulation.events.event.frequency")}} ({{translate.load("sbi.kpis.mins")}}) :</label>
 									<input type="number" ng-change="activityEventCtrl.changeTypeFrequency()" ng-model="activityEventCtrl.eventSched.frequency"> 
 								</md-input-container> 
@@ -95,7 +95,7 @@
 						</div>
 					</div>
 
-					<div ng-if="activityEventCtrl.shedulerType" layout-padding class="borderBox">
+					<div ng-if="activityEventCtrl.shedulerType" layout-padding class="borderBox" flex>
 						<div layout="row" class="md-block">
 							<span>{{translate.load("scheduler.repeatinterval","component_scheduler_messages")}} &nbsp;</span>
 							<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.repetitionKind"
@@ -191,10 +191,10 @@
 							</div>
 						</div>
 					</div>
-				</div>
+					</md-content>
 			</md-tab> 
 			<md-tab id="eventTabDocuments" label="{{translate.load('sbi.scheduler.schedulation.events.documentsmanagement')}}">
-				<div class="h100">
+				<md-content layout="column" class="md-padding">
 					<md-chips ng-model="activityEventCtrl.event.documents" readonly="true">
 						<md-chip-template ng-click="activityEventCtrl.selectedDocument=$chip">
 							<strong ng-class="{'selectedDoc' : activityEventCtrl.selectedDocument.label==$chip.label }">{{$chip.label}}</strong>
@@ -217,19 +217,19 @@
 							</md-toolbar>
 							<div ng-if="activityEventCtrl.selectedDocument.saveassnapshot">
 								<md-content layout-padding class="borderBox"> 
-									<md-input-container>
+									<md-input-container class="md-block">
 										<label>{{translate.load("sbi.scheduler.schedulation.events.event.name")}}:</label>
 										<input ng-model="activityEventCtrl.selectedDocument.snapshotname"
 												maxlength="100" ng-maxlength="100" md-maxlength="100"> 
 									</md-input-container> 
 									
-									<md-input-container>
+									<md-input-container class="md-block">
 										<label>{{translate.load("sbi.scheduler.schedulation.events.event.description")}}:</label>
 										<input ng-model="activityEventCtrl.selectedDocument.snapshotdescription"
 												maxlength="100" ng-maxlength="100" md-maxlength="100"> 
 									</md-input-container> 
 									
-									<md-input-container >
+									<md-input-container class="md-block">
 										<label>{{translate.load("scheduler.historylength", "component_scheduler_messages")}}:</label>
 										<input ng-keyup="activityEventCtrl.selectedDocument.snapshothistorylength=activityEventCtrl.onlyNumberConvert(activityEventCtrl.selectedDocument.snapshothistorylength)" 
 												ng-model="activityEventCtrl.selectedDocument.snapshothistorylength">
@@ -249,13 +249,13 @@
 							</md-toolbar>
 							<div ng-if="activityEventCtrl.selectedDocument.saveasfile">
 								<md-content layout-padding class="borderBox"> 
-									<md-input-container>
+									<md-input-container class="md-block">
 										<label>{{translate.load("scheduler.fileName", "component_scheduler_messages")}}:</label> 
 										<input ng-model="activityEventCtrl.selectedDocument.fileName" 
 												maxlength="100"	ng-maxlength="100" md-maxlength="100"> 
 									</md-input-container>
 									
-									<md-input-container>
+									<md-input-container class="md-block">
 										<label>{{translate.load("scheduler.destinationfolder", "component_scheduler_messages")}}:</label>
 										<input ng-model="activityEventCtrl.selectedDocument.destinationfolder"
 												maxlength="100" ng-maxlength="100" md-maxlength="100"> 
@@ -267,7 +267,7 @@
 										</md-checkbox>
 									</div>
 								
-									<md-input-container class="subCheckboxRowElement"
+									<md-input-container class="subCheckboxRowElement md-block"
 											ng-if="activityEventCtrl.selectedDocument.zipFileDocument==true">
 										
 										<label>{{translate.load("scheduler.zipFileName", "component_scheduler_messages")}}:</label> 
@@ -289,13 +289,13 @@
 							</md-toolbar>
 							<div ng-if="activityEventCtrl.selectedDocument.saveasdocument">
 								<md-content layout-padding class="borderBox"> 
-									<md-input-container>
+									<md-input-container class="md-block">
 										<label>{{translate.load("sbi.scheduler.schedulation.events.event.name")}}:</label>
 										<input ng-model="activityEventCtrl.selectedDocument.documentname"
 											maxlength="100" ng-maxlength="100" md-maxlength="100"> 
 									</md-input-container>
 									
-									<md-input-container>
+									<md-input-container class="md-block">
 										<label>{{translate.load("sbi.scheduler.schedulation.events.event.description")}}:</label>
 										<input ng-model="activityEventCtrl.selectedDocument.documentdescription"
 											maxlength="100" ng-maxlength="100" md-maxlength="100"> 
@@ -358,14 +358,14 @@
 										</md-card>
 									</div>
 								
-									<md-input-container class="subCheckboxRowElement" ng-if="activityEventCtrl.selectedDocument.useFolderDataset==true">
+									<md-input-container class="subCheckboxRowElement md-block" ng-if="activityEventCtrl.selectedDocument.useFolderDataset==true">
 										<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}} &nbsp;</label>
 										<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetFolderLabel" required name={{translate.load("sbi.scheduler.schedulation.events.event.dataset")}}>
 											<md-option ng-repeat="item in activityEventCtrl.datasets" value="{{item.label}}">{{item.label}}</md-option> 
 										</md-select> 
 									</md-input-container> 
 										
-									<md-input-container class="subCheckboxRowElement"
+									<md-input-container class="subCheckboxRowElement md-block"
 											ng-if="activityEventCtrl.selectedDocument.useFolderDataset==true">
 										<label>{{translate.load("scheduler.folderToDriver", "component_scheduler_messages")}}</label>
 										<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetFolderParameter" required 
@@ -388,7 +388,7 @@
 							</md-toolbar>
 							<div ng-if="activityEventCtrl.selectedDocument.sendtojavaclass">
 								<md-content layout-padding class="borderBox"> 
-									<md-input-container>
+									<md-input-container class="md-block">
 										<label>{{translate.load("scheduler.javaclasspath", "component_scheduler_messages")}}:</label>
 										<input ng-model="activityEventCtrl.selectedDocument.javaclasspath" maxlength="100" ng-maxlength="100" md-maxlength="100"> 
 									</md-input-container> 
@@ -424,7 +424,7 @@
 										</md-card>
 									</div>
 							
-									<md-input-container class="subCheckboxRowElement"
+									<md-input-container class="subCheckboxRowElement md-block"
 											ng-if="activityEventCtrl.selectedDocument.useFixedRecipients==true">
 										<label>{{translate.load("scheduler.mailto", "component_scheduler_messages")}}:</label>
 										<input ng-model="activityEventCtrl.selectedDocument.mailtos" maxlength="100" ng-maxlength="100" md-maxlength="100"> 
@@ -443,7 +443,7 @@
 										</md-card>
 									</div>
 							
-									<md-input-container class="subCheckboxRowElement" ng-if="activityEventCtrl.selectedDocument.useDataset==true">
+									<md-input-container class="subCheckboxRowElement md-block" ng-if="activityEventCtrl.selectedDocument.useDataset==true">
 										<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
 										<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetLabel" required 
 												name={{translate.load("sbi.scheduler.schedulation.events.event.dataset")}}>
@@ -451,7 +451,7 @@
 										</md-select> 
 									</md-input-container> 
 									
-									<md-input-container class="subCheckboxRowElement" ng-if="activityEventCtrl.selectedDocument.useDataset==true">
+									<md-input-container class="subCheckboxRowElement md-block" ng-if="activityEventCtrl.selectedDocument.useDataset==true">
 										<label>{{translate.load("scheduler.mailToDatasetParameter", "component_scheduler_messages")}}</label> 
 										<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetParameter" required name={{translate.load("sbi.scheduler.schedulation.events.event.parameter")}}>
 											<md-option ng-repeat=" par in activityEventCtrl.selectedDocument.parameters" value="{{par}}">{{par}}</md-option>
@@ -471,7 +471,7 @@
 										</md-card>
 									</div>
 								
-									<md-input-container class="subCheckboxRowElement"
+									<md-input-container class="subCheckboxRowElement md-block"
 											ng-if="activityEventCtrl.selectedDocument.useExpression==true">
 										<label>{{translate.load("scheduler.mailToExpression", "component_scheduler_messages")}}:</label>
 										<input ng-model="activityEventCtrl.selectedDocument.expression" maxlength="100"
@@ -490,7 +490,7 @@
 										</md-checkbox>
 									</div>
 							
-									<md-input-container class="subCheckboxRowElement"
+									<md-input-container class="subCheckboxRowElement md-block"
 											ng-if="activityEventCtrl.selectedDocument.zipMailDocument==true">
 										<label>{{translate.load("scheduler.zipFileName", "component_scheduler_messages")}}:</label>
 										<input ng-model="activityEventCtrl.selectedDocument.zipMailName" maxlength="100"
@@ -503,19 +503,19 @@
 										</md-checkbox>
 									</div>
 								
-									<md-input-container> 
+									<md-input-container class="md-block">
 										<label>{{translate.load("scheduler.mailsubject", "component_scheduler_messages")}}:</label>
 										<input ng-model="activityEventCtrl.selectedDocument.mailsubj"
 												maxlength="100" ng-maxlength="100" md-maxlength="100"> 
 									</md-input-container> 
 									
-									<md-input-container>
+									<md-input-container class="md-block">
 										<label>{{translate.load("scheduler.fileName", "component_scheduler_messages")}}:</label> 
 										<input ng-model="activityEventCtrl.selectedDocument.containedFileName"
 												maxlength="100" ng-maxlength="100" md-maxlength="100">
 									</md-input-container> 
 									
-									<md-input-container>
+									<md-input-container class="md-block">
 										<label>{{translate.load("scheduler.mailtext", "component_scheduler_messages")}}:</label>
 										<textarea ng-model="activityEventCtrl.selectedDocument.mailtxt" columns="1"
 												maxlength="500" ng-maxlength="500" md-maxlength="500"></textarea> 
@@ -538,12 +538,13 @@
 						-->
 						<%} %>
 					</div>
-				</div>
+				</md-content>
 			</md-tab>
 		</md-tabs>
-		</md-content>
-		<md-content>
-			<div class="md-actions" layout="row">
+		
+	
+	</md-dialog-content>
+	<md-dialog-actions>
 				<md-button type="reset" ng-click="activityEventCtrl.cancel()" class="md-primary">
 					{{translate.load("sbi.ds.wizard.cancel")}} 
 				</md-button>
@@ -564,8 +565,6 @@
 				<md-button type="submit" class="md-primary" ng-disabled="!triggerForm.$valid">
 					{{translate.load("scheduler.save", "component_scheduler_messages")}}
 				</md-button>
-			</div>
-		</md-content>
-	</form>
-	</md-content>
+		</md-dialog-actions>
+		<!--  /form-->
 </md-dialog>

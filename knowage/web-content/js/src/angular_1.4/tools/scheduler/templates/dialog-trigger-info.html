@@ -6,7 +6,7 @@
 			</h2>
 		</div>
 	</md-toolbar>
-	<md-content style="height: 100%;" layout="column">
+	<md-dialog-content style="height: 100%;" layout="column">
 		<md-tabs class="mozScroll hideTabs h100" md-border-bottom md-dynamic-height flex >
 			<md-tab label="{{document.label}}" ng-repeat="document in triggerInfoCtrl.triggerInfo.documents track by $index" layout="column">
 				<md-content layout-padding>
@@ -33,10 +33,11 @@
 				</md-content>
 			</md-tab>
 		</md-tabs>
-		<div class="md-actions" layout="row">
-			<md-button ng-click="triggerInfoCtrl.cancel()" class="md-primary">
-				{{translate.load("sbi.general.close");}} 
-			</md-button>
-		</div>
-	</md-content>
+		
+	</md-dialog-content>
+	<md-dialog-actions  layout="row">
+		<md-button ng-click="triggerInfoCtrl.cancel()" class="md-primary">
+			{{translate.load("sbi.general.close");}} 
+		</md-button>
+	</md-dialog-action>
 </md-dialog>

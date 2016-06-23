@@ -26,6 +26,7 @@
   'components/glossary',
   'components/angularTree',
   'components/crossNavigationDefinition',
+  'components/scheduler',
   'components/kpiExecution';
    
 
@@ -568,4 +569,8 @@ form {
   height: 100%;
   background-color: rgba(0,0,0,0.5);
   z-index: 900;
+}
+.lonelyIcon {
+  top: -4px;
+  position: relative;
 }
