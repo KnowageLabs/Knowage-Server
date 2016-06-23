@@ -18,6 +18,16 @@
         </property>
         <property name="format" type="string">
             <column name="FORMAT" />
+        </property>     
+        
+        <property name="hierarchyName" type="string">
+            <column name="HIERARCHY_NAME" />
+        </property>  
+        <property name="level" type="int">
+            <column name="NUM_LEVEL" />
+        </property>  
+        <property name="memberName" type="string">
+            <column name="MEMBER_NAME" />
         </property>        
        <many-to-one name="binContents" class="it.eng.spagobi.commons.metadata.SbiBinContents">
             <column name="BIN_ID" not-null="false"/>
