@@ -17,7 +17,7 @@ function importKpiStep0FuncController(sbiModule_download, sbiModule_device,
 		} else {
 			var fd = new FormData();
 			fd.append('exportedArchive', $scope.IEDConf.fileImport.file);
-			sbiModule_restServices.post("1.0/serverManager/importExport/kpis", 'import', fd, {transformRequest: angular.identity, headers: {'Content-Type': undefined}})
+			sbiModule_restServices.post("1.0/serverManager/importExport/kpis", 'uploadArchive', fd, {transformRequest: angular.identity, headers: {'Content-Type': undefined}})
 			.success(function(data, status, headers, config) {
 				if (data.STATUS == "NON OK") {
 					$mdToast.show($mdToast.simple().content("data.ERROR").position('top')

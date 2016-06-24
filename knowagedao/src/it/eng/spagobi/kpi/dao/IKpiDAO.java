@@ -294,6 +294,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public List<Scorecard> listScorecardByKpi(Integer kpiId, Integer kpiVersion);
 
+	public List<Scorecard> listScorecardByKpi(Integer kpiId, Integer kpiVersion, boolean full);
+
 	public Scorecard loadScorecard(Integer id);
 
 	public Integer insertScorecard(Scorecard scorecard);

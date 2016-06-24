@@ -267,7 +267,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return executeOnTransaction(new IExecuteOnTransaction<Rule>() {
 			@Override
 			public Rule execute(Session session) throws SpagoBIException {
-				ruleValidationForInsert(session, rule);
+				ruleValidationForInsert(session, rule, importMode);
 
 				SbiKpiRule sbiRule = new SbiKpiRule();
 				Set<SbiKpiKpi> relatedKpis = new HashSet<>();
@@ -1280,7 +1280,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		errorMap.get(errorKey).add(alias);
 	}
 
-	private void ruleValidationForInsert(Session session, Rule rule) throws SpagoBIException {
+	private void ruleValidationForInsert(Session session, Rule rule, boolean importMode) throws SpagoBIException {
 		checkRule(rule);
 		boolean hasMeasure = false;
 		Map<String, List<String>> invalidAlias = new HashMap<>();
@@ -1288,7 +1288,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if (ruleOutput.getAliasId() == null && ruleOutput.getAlias() == null) {
 				throw new SpagoBIDOAException(message.getMessage(NEW_KPI_RULEOUTPUT_ALIAS_MANDATORY));
 			}
-			if (ruleOutput.getType().getValueId() == null) {
+			if ((!importMode && ruleOutput.getType().getValueId() == null) || ruleOutput.getType() == null) {
 				throw new SpagoBIDOAException(message.getMessage(NEW_KPI_RULEOUTPUT_TYPE_MANDATORY));
 			}
 			boolean isMeasure = MEASURE.equals(ruleOutput.getType().getValueCd());
@@ -1901,6 +1901,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public List<Scorecard> listScorecardByKpi(final Integer id, final Integer version) {
+		return listScorecardByKpi(id, version, false);
+	}
+
+	@Override
+	public List<Scorecard> listScorecardByKpi(final Integer id, final Integer version, boolean full) {
 		List<SbiKpiScorecard> lst = list(new ICriterion<SbiKpiScorecard>() {
 			@Override
 			public Criteria evaluate(Session session) {
@@ -1910,7 +1915,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		});
 		List<Scorecard> scorecardList = new ArrayList<>();
 		for (SbiKpiScorecard sbiKpiScorecard : lst) {
-			scorecardList.add(from(sbiKpiScorecard, false));
+			scorecardList.add(from(sbiKpiScorecard, full));
 		}
 		return scorecardList;
 	}

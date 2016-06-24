@@ -36,6 +36,7 @@ app.factory("importExportDocumentModule_importConf", function() {
 		importPersonalFolder : true,
 		overwriteMode: false,
 		targetsAndRelatedKpis: false,
+		scorecardsAndRelatedKpis: false,
 		typeSaveKpi : 'Missing',
 		checkboxs : {
 			exportSubObj : false,
@@ -166,6 +167,7 @@ function kpiExportFuncController(sbiModule_download, sbiModule_translate,
 	$scope.flagCheck = false;
 	$scope.nameExport = "";
 	$scope.targetsAndRelatedKpis = false;
+	$scope.scorecardsAndRelatedKpis = false;
 	$scope.exportCheckboxs = {};
 
 	$scope.selectAll = function() {
@@ -201,7 +203,8 @@ function kpiExportFuncController(sbiModule_download, sbiModule_translate,
 			var config = {
 				"KPIS_LIST" : kpisIdVersionPairs,
 				"EXPORT_FILE_NAME" : $scope.nameExport,
-				"TARGETS_AND_RELATED_KPIS":  $scope.targetsAndRelatedKpis
+				"TARGETS_AND_RELATED_KPIS": $scope.targetsAndRelatedKpis,
+				"SCORECARDS_AND_RELATED_KPIS": $scope.scorecardsAndRelatedKpis
 			};
 			$scope.wait = true;
 			sbiModule_restServices.post("1.0/serverManager/importExport/kpis",

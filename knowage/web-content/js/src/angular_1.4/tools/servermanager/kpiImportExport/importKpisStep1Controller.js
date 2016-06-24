@@ -20,7 +20,8 @@ function importKpiStep1FuncController(sbiModule_download, sbiModule_device,
 			var data = {
 					"kpis": $scope.IEDConf.roles.selectedKpis,
 					"overwrite": $scope.IEDConf.overwriteMode,
-					"targetsAndRelatedKpis": $scope.IEDConf.targetsAndRelatedKpis
+					"targetsAndRelatedKpis": $scope.IEDConf.targetsAndRelatedKpis,
+					"scorecardsAndRelatedKpis": $scope.IEDConf.scorecardsAndRelatedKpis
 			}
 			// Import
 //			alert(JSON.stringify(data));
