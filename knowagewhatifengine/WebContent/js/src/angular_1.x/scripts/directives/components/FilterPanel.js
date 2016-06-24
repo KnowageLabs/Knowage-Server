@@ -240,9 +240,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	}
 	
 	//Called if row/column dimension is unselected
-	removeUnselected = function(name){
+	removeUnselected = function(id){
 		for(var i=0;i<visibleSelected.length;i++){
-			if(name == visibleSelected[i].name){
+			if(id == visibleSelected[i].id){
 				visibleSelected.splice(i,1);	
 			}
 		}
@@ -340,7 +340,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			visibleSelected.push(data);
 		}
 		else{
-			removeUnselected(data.name)
+			removeUnselected(data.id)
 		}
 	}
 	

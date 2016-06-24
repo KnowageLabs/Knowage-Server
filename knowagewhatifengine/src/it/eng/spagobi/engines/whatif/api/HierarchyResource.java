@@ -406,6 +406,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	public String getVisibleMembers(@javax.ws.rs.core.Context HttpServletRequest req) {
 
 		int axis = -2;
+		String hier = "";
 		List<Member> visibleMembers = null;
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -416,6 +417,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			JSONObject paramsObj = new JSONObject(params);
 
 			axis = paramsObj.getInt("axis");
+			hier = paramsObj.getString("hierarchy");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -424,7 +426,12 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		// if not a filter axis
 		if (axis >= 0) {
 			PlaceMembersOnAxes pm = model.getTransform(PlaceMembersOnAxes.class);
-			visibleMembers = pm.findVisibleMembers(CubeUtilities.getAxis(axis));
+			try {
+				visibleMembers = pm.findVisibleMembers(CubeUtilities.getHierarchy(model.getCube(), hier));
+			} catch (OlapException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		JSONArray ja = new JSONArray();
