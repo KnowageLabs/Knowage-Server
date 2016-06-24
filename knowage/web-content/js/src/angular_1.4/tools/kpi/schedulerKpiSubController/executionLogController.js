@@ -29,16 +29,19 @@ function executionLogControllerFunction($scope,sbiModule_translate,$mdDialog, sb
 	}
 
 	$scope.download = function(item){
-		//sbiModule_download
-		if(item.outputPresent){
-			sbiModule_restServices.promiseGet("1.0/kpi",item.id+'/logExecutionListOutputContent').then(
-					function(response) {
-						sbiModule_download.getBlob(response.data.output,$scope.selectedScheduler.name+"ErrorLog", 'text/plain', 'txt' );
+		if(item.id!=undefined){
+			//sbiModule_download
+			if(item.outputPresent){
+				sbiModule_restServices.promiseGet("1.0/kpi",item.id+'/logExecutionListOutputContent').then(
+						function(response) {
+							sbiModule_download.getBlob(response.data.output,$scope.selectedScheduler.name+"ErrorLog", 'text/plain', 'txt' );
 
 					},function(response) {
 						sbiModule_restServices.errorHandler(response.data,"");
 					})
+			}
 		}
+		
 		
 	}
 
