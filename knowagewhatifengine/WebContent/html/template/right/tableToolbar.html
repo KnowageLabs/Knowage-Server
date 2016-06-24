@@ -15,12 +15,14 @@
 		<md-button class="drill-buttons right" ng-click="changeDrillType('replace') " ng-disabled="isDisabledType('replace')" id = "drill-replace-btn">Replace</md-button>
 	</md-grid-tile>
 </md-grid-list>
-<div class="menu-text" style="padding-bottom:5%">Drill on data</div>
+<div class="menu-text" style="padding-bottom:5%" ng-if="DTEnabled">Drill on data</div>
 <md-button 
+		ng-if="DTEnabled"
 		id="drill-trough-btn"
 		class="drill-buttons down" 
 		style="min-width:100px!important;margin-left:calc( 50% - 50px );" 
 		ng-click="enableDisableDrillThrough()">
+		
 		Drill Through
 </md-button>
 <div class="menu-text">OLAP functions</div>

@@ -38,6 +38,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.outputTypes = [{name:'table',value:'table'},{name:'file',value:'csv'}]
 	$scope.outputVersions = []; //TODO
 	$scope.lockTooltip;
+	$scope.DTEnabled = false;
 	$scope.delimiter = "|";
 	$scope.tableName = "WHATIFOUTPUTTABLE";
 	$scope.outputType = $scope.outputTypes.length > 0 ? $scope.outputTypes[0].value:'';
@@ -126,14 +127,15 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			btn.img =i[0];//"../img/show_parent_members.png"// url(../img/show_parent_members.png);
 			btn.name =i[0];
 			
-			if(btn.img == "BUTTON_EXPORT_OUTPUT")
+			if(btn.name == "BUTTON_EXPORT_OUTPUT")
 				exportBtn = btn;
-			
-			if(olapButtonNames.indexOf(btn.img)>-1)
+			if(btn.name == "BUTTON_DRILL_THROUGH")
+				$scope.DTEnabled = true;
+			if(olapButtonNames.indexOf(btn.name)>-1)
 				$scope.olapToolbarButtons.push(btn);
-			else if(whatifButtonNames.indexOf(btn.img)>-1)
+			else if(whatifButtonNames.indexOf(btn.name)>-1)
 				$scope.whatifToolbarButtons.push(btn);
-			else if(tableButtonNames.indexOf(btn.img)>-1)
+			else if(tableButtonNames.indexOf(btn.name)>-1)
 				$scope.tableToolbarButtons.push(btn);
 			
 		}
