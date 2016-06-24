@@ -54,6 +54,7 @@ import it.eng.spagobi.tools.dataset.crosstab.CrossTab;
 import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.exceptions.DatasetInUseException;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
@@ -167,8 +168,16 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		try {
 			datasetDao.deleteDataSet(dataset.getId());
 		} catch (Exception e) {
+			String message = null;
+			if (e instanceof DatasetInUseException) {
+				DatasetInUseException dui = (DatasetInUseException) e;
+				message = dui.getMessage() + "Used by: objects" + dui.getObjectsLabel() + " federations: " + dui.getFederationsLabel();
+			} else {
+				message = "Error while deleting the specified dataset";
+			}
+
 			logger.error("Error while deleting the specified dataset", e);
-			throw new SpagoBIRuntimeException("Error while deleting the specified dataset", e);
+			throw new SpagoBIRuntimeException(message, e);
 		}
 
 		return Response.ok().build();
@@ -262,7 +271,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStore(@PathParam("label") String label, @QueryParam("parameters") String parameters, @QueryParam("selections") String selections // the
-			, @QueryParam("aggregations") String aggregations // the aggregation to apply to the joined dataset
+			, @QueryParam("aggregations") String aggregations // the aggregation
+																// to apply to
+																// the joined
+																// dataset
 	) {
 
 		logger.debug("IN");
@@ -375,8 +387,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			String columnName;
 
-			// in the Cockpit Engine, table, you can insert many times the same measure.
-			// To manage this, it's not possibile to use the alias as column name.
+			// in the Cockpit Engine, table, you can insert many times the same
+			// measure.
+			// To manage this, it's not possibile to use the alias as column
+			// name.
 			// So in the measure object there is also a "columnName" field
 
 			if (!categoryObject.isNull("columnName")) {
@@ -395,8 +409,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			String columnName;
 
-			// in the Cockpit Engine, table, you can insert many times the same measure.
-			// To manage this, it's not possibile to use the alias as column name.
+			// in the Cockpit Engine, table, you can insert many times the same
+			// measure.
+			// To manage this, it's not possibile to use the alias as column
+			// name.
 			// So in the measure object there is also a "columnName" field
 
 			if (!measureObject.isNull("columnName")) {
@@ -412,11 +428,14 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			IAggregationFunction function = AggregationFunctions.get(measureObject.getString("funct"));
 			if (function != AggregationFunctions.NONE_FUNCTION) {
-				// ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, function.getName(), columnName);
+				// ProjectionCriteria aProjectionCriteria = new
+				// ProjectionCriteria(dataset, columnName, function.getName(),
+				// columnName);
 				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, function.getName(), aliasName, orderTypeFinal);
 				projectionCriterias.add(aProjectionCriteria);
 			} else {
-				// ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, columnName);
+				// ProjectionCriteria aProjectionCriteria = new
+				// ProjectionCriteria(dataset, columnName, null, columnName);
 				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName);
 				projectionCriterias.add(aProjectionCriteria);
 			}
@@ -432,8 +451,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			String columnName;
 
-			// in the Cockpit Engine, table, you can insert many times the same measure.
-			// To manage this, it's not possibile to use the alias as column name.
+			// in the Cockpit Engine, table, you can insert many times the same
+			// measure.
+			// To manage this, it's not possibile to use the alias as column
+			// name.
 			// So in the measure object there is also a "columnName" field
 
 			if (!categoryObject.isNull("columnName")) {
@@ -739,7 +760,11 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	protected String getFieldColumnType(IFieldMetaData fieldMetaData) {
 		String fieldColumnType = fieldMetaData.getType().toString();
-		fieldColumnType = fieldColumnType.substring(fieldColumnType.lastIndexOf(".") + 1); // clean the class type name
+		fieldColumnType = fieldColumnType.substring(fieldColumnType.lastIndexOf(".") + 1); // clean
+																							// the
+																							// class
+																							// type
+																							// name
 		return fieldColumnType;
 	}
 
@@ -782,10 +807,14 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 * @param profile
 	 * @param datasetsJSONArray
 	 * @param typeDocWizard
-	 *            Usato dalla my analysis per visualizzare solo i dataset su cui è possi bile costruire un certo tipo di analisi selfservice. Al momento filtra
-	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
-	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
-	 *            rifattorizzata al più presto.
+	 *            Usato dalla my analysis per visualizzare solo i dataset su cui
+	 *            è possi bile costruire un certo tipo di analisi selfservice.
+	 *            Al momento filtra la lista dei dataset solo nel caso del GEO
+	 *            in cui vengono eliminati tutti i dataset che non contengono un
+	 *            riferimento alla dimensione spaziale. Ovviamente il fatto che
+	 *            un metodo che si chiama putActions filtri in modo silente la
+	 *            lista dei dataset è una follia che andrebbe rifattorizzata al
+	 *            più presto.
 	 * @return
 	 * @throws JSONException
 	 * @throws EMFInternalError
@@ -841,7 +870,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			try {
 				// String meta = datasetJSON.getString("meta"); // [A]
-				// isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta); // [A]
+				// isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta); //
+				// [A]
 
 				String meta = datasetJSON.optString("meta");
 
@@ -868,7 +898,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			datasetJSON.put("actions", actions);
 
 			if ("GEO".equalsIgnoreCase(typeDocWizard)) {
-				// if is caming from myAnalysis - create Geo Document - must shows only ds geospatial --> isGeoDataset == true
+				// if is caming from myAnalysis - create Geo Document - must
+				// shows only ds geospatial --> isGeoDataset == true
 				if (geoEngine != null && isGeoDataset) {
 					datasetsJSONReturn.put(datasetJSON);
 				}
@@ -901,7 +932,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Check if the association passed is valid ',' is valid if number of record from association is lower than maximum of single datasets
+	 * Check if the association passed is valid ',' is valid if number of record
+	 * from association is lower than maximum of single datasets
 	 *
 	 * @param association
 	 */
@@ -918,7 +950,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		try {
 			JSONArray arrayAss = new JSONArray(association);
 
-			// boolean valid = getDatasetManagementAPI().checkAssociation(arrayAss);
+			// boolean valid =
+			// getDatasetManagementAPI().checkAssociation(arrayAss);
 			// logger.debug("The association is valid? " + valid);
 			// toReturn.put("valid", valid);
 			toReturn.put("valid", true);
@@ -933,7 +966,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Persist a dataset list in cache, or use a persisted dataset if its datasource match with the cache datasource
+	 * Persist a dataset list in cache, or use a persisted dataset if its
+	 * datasource match with the cache datasource
 	 *
 	 * @param labels
 	 */

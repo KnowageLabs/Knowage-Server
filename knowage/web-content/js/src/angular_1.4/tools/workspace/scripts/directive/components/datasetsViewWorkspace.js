@@ -172,6 +172,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	
 	
 	$scope.deleteDataset=function(dataset){
+		console.log(dataset);
 		var label= dataset.label;
 		
 		var confirm = $mdDialog.confirm()
@@ -194,7 +195,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 				 */
 				$scope.searchInput = "";
 			},function(response) {
-				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.delete.error'));
+				sbiModule_messaging.showErrorMessage(response.data.RemoteException.message,sbiModule_translate.load('sbi.workspace.dataset.delete.error'));
+				//sbiModule_restServices.errorHandler(response.data.message,sbiModule_translate.load('sbi.workspace.dataset.delete.error'));
 			});
 		});
 		
@@ -315,7 +317,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     }
     
     $scope.previewDataset= function(dataset){
-    	
+    	console.log(dataset);
     	$scope.datasetInPreview=dataset;
     	if(dataset.meta.dataset.length>0){
     	$scope.totalItemsInPreview=dataset.meta.dataset[0].pvalue;
