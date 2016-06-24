@@ -103,6 +103,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                  width='0'
                  frameborder='0' >
 </iframe> 
+
+<iframe id='invalidSessionKpi'
+                 name='invalidSessionKpi'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%>/knowagekpiengine/invalidateSession.jsp'
+                 height='0'
+                 width='0'
+                 frameborder='0' >
+</iframe> 
 <%
 
 boolean backUrlB=false;
