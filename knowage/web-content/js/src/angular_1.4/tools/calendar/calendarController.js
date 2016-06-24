@@ -37,7 +37,9 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 	                  {"label":"Holiday","name":"checkFestivity"},
 	                  {"label":"Public Holiday","name":"nationalFest"},
 	                  {"label":"Attributes","name":"selectEvent"}
+	   
 	                  ];
+	
 
 	$scope.tableFunction={
 
@@ -47,13 +49,22 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 			checkNational: function(item,evt){
 				$scope.checkNationalFunc(item);				
 			},
-			listType: $scope.listType,
+			listType:$scope.listType, 
 			loadEvent: function(item){
 				item.listOfAttributes = [];
-				angular.copy(item.checkEvent, item.listOfAttributes);
+				
+				var array = [];
+				for(var i=0;i<item.checkEvent.length;i++){
+					if(item.checkEvent[i].trim()!=""){
+						item.listOfAttributes.push(item.checkEvent[i]);
+					}
+				}
+				
 			}
 	};
 
+	
+	
 	$scope.indexofDomain = function(item, list){
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
