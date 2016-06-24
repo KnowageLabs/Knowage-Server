@@ -48,25 +48,10 @@ author:
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 
-<%@include file="commons/angular/angularResource.jspf"%>
+<%@include file="commons/angular/angularResource.jsp"%>
 <%@include file="commons/angular/angularImport.jsp"%>
 
 <%
-
-
-	engineInstance = (KpiEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
-	env = engineInstance.getEnv();
-	profile = engineInstance.getUserProfile();
-	profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-	profileJSONStr = new ObjectMapper().writeValueAsString(profile);
-	// locale = engineInstance.getLocale();
-	
-	contextName = request.getParameter(SpagoBIConstants.SBI_CONTEXT); 
-	environment = request.getParameter("SBI_ENVIRONMENT"); 
-	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
-	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();
-	isTechnicalUser = (engineInstance.isTechnicalUser()==null)?"":engineInstance.isTechnicalUser().toString();
-	template = engineInstance.getTemplate().toString(0);
 	
 	JSONObject templateObj = engineInstance.getTemplate();
 	JSONObject chartObj = templateObj.getJSONObject("chart");

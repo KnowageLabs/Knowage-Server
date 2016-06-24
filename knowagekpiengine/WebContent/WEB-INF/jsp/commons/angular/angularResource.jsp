@@ -59,7 +59,7 @@ env = engineInstance.getEnv();
 
 locale = engineInstance.getLocale();
 profile = engineInstance.getUserProfile();
-profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+// profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 profileJSONStr = new ObjectMapper().writeValueAsString(profile);
 // locale = engineInstance.getLocale();
 
