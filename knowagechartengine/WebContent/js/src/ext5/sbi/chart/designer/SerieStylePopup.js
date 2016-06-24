@@ -379,7 +379,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 				valueField: 'value',
 				displayField: 'name',
 				fieldLabel : LN("sbi.chartengine.designer.scalefactor.label"),
-				hidden: (chartType == 'TREEMAP' || chartType == "HEATMAP"),
+				hidden: (chartType == 'TREEMAP' || chartType == "HEATMAP" || chartType == "CHORD"),
 				editable: false
 			}
 		);	

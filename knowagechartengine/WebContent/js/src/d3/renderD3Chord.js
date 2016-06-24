@@ -2,10 +2,12 @@
 Released under the GNU General Public License, version 3.*/
 
 /**
- * Javascript function that serves for rendering the CHORD chart
- * @param jsonData Input data in JSON format, needed for rendering the chart on the client side
+ * The rendering function for the PARALLEL chart.
+ * @param jsonData JSON containing data (parameters) about the chart.
+ * @param locale Information about the locale (language). Needed for the formatting of the series values (data labels and tooltips). 
+ * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
-function renderChordChart(jsonData)
+function renderChordChart(jsonData,locale)
 {
 
 	/**
@@ -57,35 +59,99 @@ function renderChordChart(jsonData)
 	 * TODO: NOT USED: Useful when filtering is enabled (FILTER tags attribute 'value' is set to 'true')
 	 */
    function getIndex(a, obj) {
-	    for (var i = 0; i < a.length; i++) {
-	        if (a[i].value === obj) {
-	            return a[i].index;
-	        }
-	    }
-	    return -1;
+	   for (var i = 0; i < a.length; i++) {
+		   if (a[i].value === obj) {
+			   return a[i].index;
+		   }
+	   }
+	   return -1;
    }
-
+   
    /**
     * Returns an array of tick angles and labels, given a group.
+    * 
+    * Modified so it can set an unique tick density for any CHORD chart document
+    * (no matter how big numbers on arcs are - kilos, millions and so on). Also
+    * the frequency of appearance of numeric labels on those arcs is set so they
+    * are equidistant.
+    * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     */
-   // TODO: Customize text that goes next to the ticks (here it is 'k') ???
    function groupTicks(d)     
    {   	
 		var k = (d.endAngle - d.startAngle) / d.value;
+				
+		/**
+		 * What will be a value by a single tick (value that distance between two
+		 * subsequent ticks represents). This way we will split ticks so that we
+		 * have 360 of them on all arcs, showing that way a value per 1 degree.
+		 * This will be common for all CHORD charts and in this way we will have
+		 * an uniformly organized charts.
+		 */
+		var valueByTick = Math.floor(totalValueOnArcs/360);
 		
-		return d3.range(0, d.value, 1000).map(function(v, i) {			
+		/**
+		 * The index that represents a letter in the "suffixes" array, so it 
+		 * replicates the suffix degree of a number. E.g. suffixNum=1 represents
+		 * kilos, since it will take the 1th element in the "suffixes" array.
+		 */
+		var suffixNum = 0;
+		
+		var suffixes = ["", "k" , "M" , "G" , "T" , "P" , "E"];
+		
+		/**
+		 * The precision that numerical label values will have (number of decimals
+		 * behind the whole value of the number).
+		 */
+		var precision = 2;
+		var precisPoweredValue = Math.pow(10,precision);
+		
+		var suffixNumPoweredValue = 0;
+		
+		/**
+		 * Divide current arc on as many tick we have for it, so that every tick
+		 * will have an offset of 'valuByTick' value.
+		 */
+		return d3.range(0, d.value, valueByTick).map(function(v, i) {				
+						
+			/**
+			 * If the value of the current tick, 'v', is greater then 1000 (1k),
+			 * analyze the value in order to figure out what is the appropriate
+			 * suffix that numeric label value will contain (show) - k, M, G and 
+			 * so on.
+			 */
+			if (v >= 1000)
+			{
+				suffixNum = Math.floor((v + "").length/3);
+				
+				/**
+				 * If the number of numerals inside the current tick value is
+				 * a while multiple of number 3 (3, 6, 9 and so on), consider 
+				 * it as a number that belongs to the previous numerical suffix.
+				 * E.g. if the 'v' is 999555, we will consider it as a 999.55k,
+				 * hence we will not use the mega (M) suffix, but rather kilo
+				 * (k).
+				 */
+				if ((v + "").length%3 === 0) {
+					suffixNum--;
+				}			
+			}
+			
+			suffixNumPoweredValue = Math.pow(1000,suffixNum);
+			
 			return {
+				
 				startAngle: d.startAngle,
 				endAngle: d.endAngle,
 				angle: v * k + d.startAngle,
-				label: i % 5 ? null : v / 1000 + "k"
-				};
-			});
+				label: i % 10 ? null : Math.round(parseFloat(v / suffixNumPoweredValue)*precisPoweredValue)/precisPoweredValue + "" + suffixes[suffixNum]	
+				
+			};
+		});
    }
 	
    /**
     * 'deselectClickedItem' - indicator if user clicked on some item on the chart - if false, prevent mouse over 
-    * and mouse out events. If true every item on the chart should be deselected - full colored
+    * and mouse out events. If true every item on the chart should be deselected - fully colored
     * 
     * 'indexOfItemSelected' - index of the item of the chart that is selected. We need this parameter to take care
     * if we should
@@ -124,8 +190,7 @@ function renderChordChart(jsonData)
 				svg.selectAll(".chord path")
 				 	.filter(function(d) { return d.source.index != i && d.target.index != i; })
 				 	.transition()
-				 	.style("opacity", opacityMouseOver);
-				
+				 	.style("opacity", opacityMouseOver);				
 				
 				var tool=printTheResultWhenSelecting(i);
 				
@@ -359,18 +424,34 @@ function renderChordChart(jsonData)
 	   //	console.log(rowsPairedWithColumns[i]);
 		
 	   	var ttp="<b>" + columnsPairedWithRows[i].row + "</b>"+ "<br/><br/>"+"<u>To</u>:";
-	   	
+	   
 	   	for(j=0;j<columnsPairedWithRows[i].pairedWith.length;j++){
 	   		
 	   		ttp+="<br/>";	
 	   		
 	   		ttp+=columnsPairedWithRows[i].pairedWith[j].column;
+	   		
 	   		ttp+="&nbsp : &nbsp";
+	   		
 	   		if(jsonData.tooltip.prefix){
 	   			ttp+=jsonData.tooltip.prefix;
 	   			ttp+="&nbsp";
 	   		}
-	   		ttp+=Number(columnsPairedWithRows[i].pairedWith[j].value).toFixed(Number(jsonData.tooltip.precision));
+	   		
+	   		// OLD CODE (BEFORE 1060 AND 1061 CHANGE)
+	   		// @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	   		//ttp+=Number(columnsPairedWithRows[i].pairedWith[j].value).toFixed(Number(jsonData.tooltip.precision));
+	   		
+	   		var value = Number(columnsPairedWithRows[i].pairedWith[j].value);
+	   		   	  
+	   		/**
+	   		 * Providing the formatting localization for the series' tooltip value for the incoming category item. The locale (language) and 
+	   		 * the precision for the series value is included in formatting, as well.
+	   		 * [JIRA 1060 and 1061]
+	   		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	   		 */
+	   		ttp += value.toLocaleString(locale,{ minimumFractionDigits: jsonData.tooltip.precision, maximumFractionDigits: jsonData.tooltip.precision});	
+   						   		
 	   		if(jsonData.tooltip.postfix){
 	   			ttp+="&nbsp";
 	   			ttp+=jsonData.tooltip.postfix;	
@@ -399,7 +480,22 @@ function renderChordChart(jsonData)
 	   			ttp+=jsonData.tooltip.prefix;
 	   			ttp+="&nbsp";
 	   		}
-	   		ttp+=Number(rowsPairedWithColumns[i].pairedWith[j].value).toFixed(Number(jsonData.tooltip.precision));
+	   		
+	   		// OLD CODE (BEFORE 1060 AND 1061 CHANGE)
+	   		// @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	   		//ttp+=Number(rowsPairedWithColumns[i].pairedWith[j].value).toFixed(Number(jsonData.tooltip.precision));
+	   		
+	   		var value = Number(rowsPairedWithColumns[i].pairedWith[j].value);
+	   		   	  
+	   		/**
+	   		 * Providing the formatting localization for the series' tooltip value for the incoming category item. The locale (language) and 
+	   		 * the precision for the series value is included in formatting, as well.
+	   		 * [JIRA 1060 and 1061]
+	   		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	   		 */
+	   		ttp += value.toLocaleString(locale,{ minimumFractionDigits: jsonData.tooltip.precision, maximumFractionDigits: jsonData.tooltip.precision});	
+	   		
+	   		
 	   		if(jsonData.tooltip.postfix){
 	   			ttp+="&nbsp";
 	   			ttp+=jsonData.tooltip.postfix;
@@ -702,8 +798,8 @@ function renderChordChart(jsonData)
 	  		 
 	  		 rowsPairedWithColumns.push(tempObject);
 		 }  	 
-		 
-		 /**
+	  	 
+	  	  /**
 		  * Check if there are any arcs (if there is non-zero value for the item that is
 		  * selected in the Cockpit (Cockpit selection).
 		  * 
@@ -722,7 +818,6 @@ function renderChordChart(jsonData)
 		  	 ); 
 		  	 
 		 }
-	  	 
   	 }
 	 else
 	 {
@@ -757,6 +852,25 @@ function renderChordChart(jsonData)
 		 d3.select("body").append("div").html(errorInfoForChordChart);
 	 }
 	 
+	 /**
+	  * We need sum of values on all arcs on the chart in order to provide equidistant
+	  * ticks organization and the same princip for numeric labels.
+	  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	  */
+	 function sumOfAllArcs(ticks)
+	 {		 	
+		 var tempMax = 0;
+		 
+		 for (var i=0; i<ticks[0].length; i++)
+		 {
+			 tempMax += ticks[0][i].__data__.value;
+		 }
+		 
+		return tempMax;		 
+	 }
+	 
+	 var maximumValueOnArcs = 0;
+	 
 	 function drawGraph(matrix)
 	 {	
 		 /**
@@ -785,15 +899,13 @@ function renderChordChart(jsonData)
 			  * 
 			  * (from: https://github.com/mbostock/d3/wiki/Chord-Layout)
 			  */
-			 var chord = d3.layout
-			 				.chord()
-			  				.padding(.05)
+			 var chord = d3.layout.chord()
+			  				.padding(.05)	// TODO: Customize ???
 	  						.sortSubgroups(d3.descending)
 	  						.matrix(matrix);	
+			 			 
 			 
-			 var tickLabelsFontCustom = jsonData.yAxis.labels.style;
-			 
-			 /**
+			/**
 			  * If matrix has at least one non-zero item (item of value that is not zero).
 			  * So we should have at least one non-zero serie value for the selection
 			  * provided inside the Cockpit engine for the CHORD chart in order to draw arcs
@@ -806,78 +918,90 @@ function renderChordChart(jsonData)
 			  */
 			 if(matrix.length > 1 || (matrix.length==1 && matrix[0][0]!=0))
 			 {
-				 // draws circles and defines the effect on the passage mouse
-				 var arcs1 = svg.append("svg:g").selectAll("path")
-								.data(chord.groups)
-								.enter(); 
-				
-				 arcs =	arcs1.append("svg:path")
-							.style("fill", function(d) { return fill(d.index); })
-							.style("stroke", function(d) { return fill(d.index); })
-							.attr("d", d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius));				 			
-
-				 var ticks1 = svg.append("svg:g").selectAll("g")
-							.data(chord.groups)
-							.enter();
-				
-				 var	ticks = ticks1.append("svg:g").selectAll("g")
-								.data(groupTicks)
-								.enter().append("svg:g")
-								.attr("transform", function(d) {
-									return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
-									+ "translate(" + outerRadius + ",0)";
-									});
+			 	// draws circles and defines the effect on the passage mouse
+				var arcs1 = svg.append("svg:g").selectAll("path")
+					.data(chord.groups)
+					.enter();	
 			
-				 /**
-				  * Customization for category labels (desciptions over arcs of the CHORD chart).
-				  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				  */
-				 var literalLabelsFontCustom = jsonData.xAxis.labels.style;
-				
-				 ticks1.append("svg:text")
-				  		.each(function(d,i) {  d.angle = (d.startAngle + d.endAngle) / 2; })
-				  		.attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
-				  		.attr("transform", function(d) {
-				  			return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
-				  			+ "translate(" + (innerRadius + 60) + ")"
-				  			+ (d.angle > Math.PI ? "rotate(180)" : "");
-				  			})
-				  		.attr("fill", literalLabelsFontCustom.color)
-				  		.style("font-family",literalLabelsFontCustom.fontFamily)	
-				  		.style("font-style",literalLabelsFontCustom.fontStyle)
-				  		.style("font-size",literalLabelsFontCustom.fontSize)
-				  		.style("font-weight",literalLabelsFontCustom.fontWeight)
-				  		.style("text-decoration",literalLabelsFontCustom.textDecoration)
-				  		.text(function(d,i) { return allFieldsArray[i]; })		  
-	
-				 //aggiunge le lineette "graduate"		 
-				 ticks.append("svg:line")
+				arcs =	arcs1.append("svg:path")
+					.style("fill", function(d) { return fill(d.index); })
+					.style("stroke", function(d) { return fill(d.index); })
+					.attr("d", d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius));		
+
+			 		var ticks1 = svg.append("svg:g").selectAll("g")
+						.data(chord.groups)
+						.enter();
+			 
+			 		
+			 		/**
+			  		* Set the value of total sum of values on all arcs to the global variable,
+			  		* so we can access ot from the function that needs this information. That
+			 		* function is 'groupTicks()'.
+			  		* @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			  		*/
+			 		totalValueOnArcs = sumOfAllArcs(ticks1);
+			 	
+			 	var ticks = ticks1.append("svg:g").selectAll("g")
+					.data(groupTicks)
+					.enter().append("svg:g")
+					.attr("transform", function(d) {
+						return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
+					 	  + "translate(" + outerRadius + ",0)";
+						});
+			
+				/**
+			 	* Customization for category labels (desciptions over arcs of the CHORD chart).
+			 	* @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 	*/
+				var literalLabelsFontCustom = jsonData.xAxis.labels.style;
+			
+			 	ticks1.append("svg:text")
+			  	.each(function(d,i) {  d.angle = (d.startAngle + d.endAngle) / 2; })
+			   	.attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
+			  	.attr("transform", function(d) {
+					return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
+					+ "translate(" + (innerRadius + 60) + ")"
+					+ (d.angle > Math.PI ? "rotate(180)" : "");
+			  	})
+			  	.attr("fill", literalLabelsFontCustom.color)
+			  	.style("font-family",literalLabelsFontCustom.fontFamily)	
+			  	.style("font-style",literalLabelsFontCustom.fontStyle)
+			  	.style("font-size",literalLabelsFontCustom.fontSize)
+			  	.style("font-weight",literalLabelsFontCustom.fontWeight)
+			  	.style("text-decoration",literalLabelsFontCustom.textDecoration)
+			  	.text(function(d,i) { return allFieldsArray[i];})		  
+
+			 	//aggiunge le lineette "graduate"		 
+			 	ticks.append("svg:line")
 					.attr("x1", "1")
 					.attr("y1", "0")
 					.attr("x2", "5")
 					.attr("y2", "0")
 					.style("stroke", "#FF0000");	// TODO: Customize the color of ticks ???
-		       
-				/**
-				 * Customization for serie labels (ticks on arcs of the CHORD chart).			 * 
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */			
-				 //aggiunge le label unit� di misura
-				ticks.append("svg:text")
-					.attr("x", "8")
-					.attr("dy", ".35em")
-					.attr("transform", function(d) { return d.angle > Math.PI ? "rotate(180)translate(-16)" : null; })
-					.style("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
-					.attr("fill", tickLabelsFontCustom.color)
-					.style("font-family",tickLabelsFontCustom.fontFamily)	
-					.style("font-style",tickLabelsFontCustom.fontStyle)
-					.style("font-size",tickLabelsFontCustom.fontSize)
-					.style("font-weight",tickLabelsFontCustom.fontWeight)
-					.style("text-decoration",tickLabelsFontCustom.textDecoration)
-					.text(function(d) { return d.label; });
-			 }
-			 else
-			 {
+	       
+			/**
+			 * Customization for serie labels (ticks on arcs of the CHORD chart).			 * 
+			 * @author: danristo (danilo.ristovski@mht.net)
+			 */
+			var tickLabelsFontCustom = jsonData.yAxis.labels.style;
+			
+			 //aggiunge le label unit� di misura
+			ticks.append("svg:text")
+				.attr("x", "8")
+				.attr("dy", ".35em")
+				.attr("transform", function(d) { return d.angle > Math.PI ? "rotate(180)translate(-16)" : null; })
+				.style("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
+				.attr("fill", tickLabelsFontCustom.color)
+				.style("font-family",tickLabelsFontCustom.fontFamily)	
+				.style("font-style",tickLabelsFontCustom.fontStyle)
+				.style("font-size",tickLabelsFontCustom.fontSize)
+				.style("font-weight",tickLabelsFontCustom.fontWeight)
+				.style("text-decoration",tickLabelsFontCustom.textDecoration)
+				.text(function(d) { return d.label; });
+				
+			}
+			else
+			{
 				 /**
 				 * Customization for category labels (desciptions over arcs of the CHORD chart).
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
