@@ -16,7 +16,7 @@ function executionLogControllerFunction($scope,sbiModule_translate,$mdDialog, sb
 							$scope.kpiValueExecLogList[i].timeRun = sbiModule_dateServices.formatDate(new Date($scope.kpiValueExecLogList[i].timeRun));
 						}
 					},function(response) {
-						$scope.errorHandler(response.data,"");
+						sbiModule_restServices.errorHandler(response.data,"");
 					})
 		}
 
@@ -36,7 +36,7 @@ function executionLogControllerFunction($scope,sbiModule_translate,$mdDialog, sb
 						sbiModule_download.getBlob(response.data.output,$scope.selectedScheduler.name+"ErrorLog", 'text/plain', 'txt' );
 
 					},function(response) {
-						$scope.errorHandler(response.data,"");
+						sbiModule_restServices.errorHandler(response.data,"");
 					})
 		}
 		

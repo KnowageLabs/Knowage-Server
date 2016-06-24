@@ -32,13 +32,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 	
-	<link rel="stylesheet" type="text/css" href="/knowage/themes/timespan/css/timespanStyle.css">
 	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/timespan/timespan.js"></script>
 	
 </head>
 
 
-<body ng-cloak>
+<body ng-cloak class="kn-timespan">
 	<angular-list-detail ng-controller="Controller as ctrl">
 		<list label="translate.load('sbi.timespan')"  new-function="ctrl.newTs" >
 			<angular-table flex 
@@ -54,12 +53,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<detail label="ctrl.selectedItem.name" save-function="ctrl.saveTimespan" cancel-function="ctrl.cancel">
 							<div layout="row" layout-wrap>
 								<div flex="50">
-									<md-input-container > <label>{{translate.load("sbi.generic.name");}}</label>
-									<input maxlength="100" type="text" ng-model="ctrl.selectedItem.name"> </md-input-container>
+									<md-input-container  class="md-block">
+										<label>{{translate.load("sbi.generic.name");}}</label>
+										<input maxlength="100" type="text" ng-model="ctrl.selectedItem.name">
+									 </md-input-container>
 								</div>
 			
 								<div flex="50">
-									<md-input-container > <label>{{translate.load("sbi.generic.type");}}</label> 
+									<md-input-container  class="md-block"> <label>{{translate.load("sbi.generic.type");}}</label> 
 									<md-select ng-model="ctrl.selectedItem.type" ng-change="ctrl.changeType()"> 
 										<md-option ng-repeat="type in ctrl.tsType" value="{{type.value}}" >
 											{{type.label}} 
@@ -72,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 							<div layout="row" >
 								<div flex="50">
-									<md-input-container > <label>{{translate.load("sbi.generic.category");}}</label> 
+									<md-input-container  class="md-block"> <label>{{translate.load("sbi.generic.category");}}</label> 
 										<md-select ng-model="ctrl.selectedItem.category"> 
 											<md-option
 												ng-repeat="cat in ctrl.tsCategory" value="{{cat.VALUE_ID}}">
