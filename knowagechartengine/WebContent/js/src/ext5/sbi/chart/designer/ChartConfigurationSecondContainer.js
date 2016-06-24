@@ -120,14 +120,20 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			}
 		); 		
 		
-		var wordcloudTooltip=Ext.create
-		(
-				"Sbi.chart.designer.ChartConfigurationWordcloudTooltip",
-				
-				{
-					viewModel: this.viewModel
-				}
-			); 	
+		/**
+		 * The tooltip customization panel for the WORDCLOUD chart (Step 2, "Configuration") is removed, since we provided all needed
+		 * input (starting point) elements in the series style configuration popup for particular series items, also for the WORDCLOUD
+		 * chart type. [JIRA 1060 and 1061]
+		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)			 
+		 */
+//		var wordcloudTooltip=Ext.create
+//		(
+//				"Sbi.chart.designer.ChartConfigurationWordcloudTooltip",
+//				
+//				{
+//					viewModel: this.viewModel
+//				}
+//		); 	
 		
 		/**
 		 * These three panels are needed for the PARALLEL chart
@@ -248,7 +254,14 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		 * WORDCLOUD panel for specific parameters
 		 */
 		this.add(this.wordCloudParameters);
-		this.add(wordcloudTooltip);
+		
+		/**
+		 * The tooltip customization panel for the WORDCLOUD chart (Step 2, "Configuration") is removed, since we provided all needed
+		 * input (starting point) elements in the series style configuration popup for particular series items, also for the WORDCLOUD
+		 * chart type. [JIRA 1060 and 1061]
+		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)			 
+		 */
+//		this.add(wordcloudTooltip);
 		
 		/**
 		 * PARALLEL panels for specific parameters
@@ -315,13 +328,27 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		{
 //			this.getComponent("wordcloudConfiguration").show();
 			this.wordCloudParameters.show();
-			this.getComponent("wordcloudConfigurationTooltip").show();
+			
+			/**
+			 * The tooltip customization panel for the WORDCLOUD chart (Step 2, "Configuration") is removed, since we provided all needed
+			 * input (starting point) elements in the series style configuration popup for particular series items, also for the WORDCLOUD
+			 * chart type. [JIRA 1060 and 1061]
+			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)			 
+			 */
+//			this.getComponent("wordcloudConfigurationTooltip").show();
 		}
 		else 
 		{
 //			this.getComponent("wordcloudConfiguration").hide();
 			this.wordCloudParameters.hide();
-			this.getComponent("wordcloudConfigurationTooltip").hide();
+			
+			/**
+			 * The tooltip customization panel for the WORDCLOUD chart (Step 2, "Configuration") is removed, since we provided all needed
+			 * input (starting point) elements in the series style configuration popup for particular series items, also for the WORDCLOUD
+			 * chart type. [JIRA 1060 and 1061]
+			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)			 
+			 */
+//			this.getComponent("wordcloudConfigurationTooltip").hide();
 		}
 		
 		if (ChartUtils.isParallelPanelEnabled())

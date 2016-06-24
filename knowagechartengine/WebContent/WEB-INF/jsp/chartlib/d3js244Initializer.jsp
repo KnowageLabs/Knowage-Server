@@ -62,36 +62,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return false;
 		}
 	}
-
-	function renderChart(chartConf){
+	
+	/*
+		Information about the locale (language) is needed for number formatting, in a manner of thousands and decimal separators
+		for series items' data labels charts (tooltips and other displaying aspects).
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/
+	function renderChart(chartConf,locale){
 		
 		/* 
 			If rerendering the chart, we will need cleaning of the
 			page before it. This method will destroy (remove) every
 			page element that already existed on the page (potentially).
 			It is implemented inside of the renderD3.js.
-			@author: (danilo.ristovski@mht.net)
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		*/
 		cleanChart();
 		
 		if(chartConf.chart.type.toLowerCase() == "wordcloud"){
 			
-			renderWordCloud(chartConf);
+			renderWordCloud(chartConf,locale);
 			
 		}
 		else if (chartConf.chart.type.toLowerCase() == "sunburst")
 		{
-			renderSunburst(chartConf);
+			renderSunburst(chartConf,locale);
 			
 		}
 		else if (chartConf.chart.type.toLowerCase() == "parallel")
 		{
-			renderParallelChart(chartConf);
+			renderParallelChart(chartConf,locale);
 			
 		}
 		else if (chartConf.chart.type.toLowerCase() == "chord")
 		{
-			renderChordChart(chartConf);
+			renderChordChart(chartConf,locale);
 		}
 		
 		else

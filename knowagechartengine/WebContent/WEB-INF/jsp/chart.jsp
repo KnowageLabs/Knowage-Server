@@ -232,7 +232,25 @@ author:
 		
 		var isChartHeightEmpty = null;
 		var isChartWidthEmpty= null;
-				
+		
+		/*
+			The locale (language) is used when rendering D3 charts, for formatting localization of the series values
+			that are displayed on charts in various ways (values in tables, values in tooltip etc.).
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		*/
+		var locale = '<%=locale%>';
+		
+		console.info("Locale (raw): ",locale);
+		
+		var localeParsed = locale.split("_");
+		var localeFormatted = "";
+		
+		for(var i=0; i<localeParsed.length; i++) {			
+			(i==0) ? localeFormatted = localeParsed[i] : localeFormatted += "-" + localeParsed[i];
+		}
+		
+		console.info("Locale (formatted for (D3) chart rendering): ",localeFormatted);	
+		
 		function exportChart(exportType) {
 		
 			var chartType = chartConfiguration.chart.type.toUpperCase();
@@ -596,7 +614,7 @@ author:
 						}				
  						
  						/* Re-render the chart after resizing the window (panel). */
- 						renderChart(chartConfiguration);
+ 						renderChart(chartConfiguration,localeFormatted);
  						Ext.getBody().unmask();
 					}
 				}
@@ -661,8 +679,9 @@ author:
 					exchanged for this code (JSON cannot handle single quote inside it) and have a single quote on its place in the rendered chart. 
 					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				*/
+				
 				response.responseText = response.responseText.replace(new RegExp("&#39;",'g'),"\\'");
- 				
+			
  				var chartConf = Ext.JSON.decode(response.responseText, true);	
  				
 				var typeChart = chartConf.chart.type.toUpperCase();		 				
@@ -748,7 +767,7 @@ author:
 					}
 						
 					chartConfiguration = chartConf;	
-					renderChart(chartConf);
+					renderChart(chartConf,localeFormatted);
 
 				} 
 				else {

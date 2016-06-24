@@ -646,20 +646,24 @@ public class DataSetTransformer {
 
 	}
 
-	public JSONArray getSeriesForParallelChart(Object serieNeeded, Object groupingFunction, Object seriePrefix, Object seriePostfix, Object seriePrecision)
-			throws JSONException {
+	/**
+	 * @param serieScaleFactor
+	 *            The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), "G" (giga), "T"
+	 *            (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display these abbreviations (number suffix)
+	 *            along with the scaled number.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	public JSONArray getSeriesForParallelChart(Object serieNeeded, Object groupingFunction, Object seriePrefix, Object seriePostfix, Object seriePrecision,
+			Object serieScaleFactor) throws JSONException {
 
 		JSONArray ja = new JSONArray();
 
 		Map<String, String> series = (Map<String, String>) serieNeeded;
-
 		Map<String, String> groupings = (Map<String, String>) groupingFunction;
-
 		Map<String, String> prefix = (Map<String, String>) seriePrefix;
-
 		Map<String, String> postfix = (Map<String, String>) seriePostfix;
-
 		Map<String, String> precision = (Map<String, String>) seriePrecision;
+		Map<String, String> scaleFactor = (Map<String, String>) serieScaleFactor;
 
 		ArrayList<String> al = new ArrayList<String>();
 
@@ -680,6 +684,9 @@ public class DataSetTransformer {
 				} else {
 					jo.put("precision", new Integer(precision.get(i)));
 				}
+
+				// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) [JIRA 1060 and 1061]
+				jo.put("scaleFactor", scaleFactor.get(i));
 
 				ja.put(jo);
 				j++;

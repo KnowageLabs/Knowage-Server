@@ -13,8 +13,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 
-function renderSunburst(jsonObject)
-{
+/**
+ * The rendering function for the SUNBURST chart.
+ * @param jsonObject JSON containing data (parameters) about the chart. 
+ * @param locale Information about the locale (language). Needed for the formatting of the series values (data labels and tooltips). 
+ * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ */
+function renderSunburst(jsonObject,locale)
+{		
+	/**
+	 * Configuration of the series items of the chart (precision, prefix, etc.).
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	var seriesItemConf = jsonObject.series;
+	
+	var seriesItemPrecision = seriesItemConf.precision;
+	var seriesItemScaleFactor = seriesItemConf.scaleFactor;
+	var seriesItemPrefix = seriesItemConf.prefixChar!=null ? seriesItemConf.prefixChar : "";
+	var seriesItemSuffix = seriesItemConf.postfixChar!=null ? seriesItemConf.postfixChar : "";
+	
 	/*The part that we need to place into HTML (JSP) in order to attach 
 	 * given data to them - we are going to create it through D3 notation */
 			
@@ -597,19 +614,181 @@ function renderSunburst(jsonObject)
 	// Fade all but the current sequence, and show it in the breadcrumb trail.
 	function mouseover(d) 
 	{	
-	  var percentage = (100 * d.value / totalSize).toPrecision(3);
+		/**
+		 * The displaying of the numeric (series) values in the table of the SUNBURST chart is redefined, so now it considers the 
+		 * precision, prefix, suffix (postfix), thousands separator, formatting localization and scale factor. [JIRA 1060 and 1061]
+		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		var finalValueToDisplay = seriesItemPrefix + (seriesItemPrefix!="" ? " " : "");
+		
+		// OLD LINE: Changed for scaling factor change (JIRA tasks 1060 and 1061)
+//		var percentage = (100 * d.value / totalSize).toPrecision(3);
+		var percentage = (100 * d.value / totalSize).toFixed(seriesItemPrecision);
+	  		
+		var percentOrAbsSliceValueString = "";
+		
+//		var seriesItemPrecisionDefined = seriesItemPrecision!=null && seriesItemPrecision!="" && (seriesItemPrecision+"")!="0"; 
+		
+		/**
+		 * According to the type for dispalying the value of the slice that is covered via mouse (that user has chosen), display appropriate
+		 * value (percentage of the value that is covered (against the sum of all values) or absolute (real) value of the slice that is hovered.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		if (percAbsolSliceValue=="absolute") {
+			
+			var number = d.value;			
+			
+			/* 
+	        	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+	        	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+	        	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
+	        	is included into the formatting of the number that is going to be displayed, as well as precision. [JIRA 1060 and 1061]
+	        	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 		*/
+			switch(seriesItemScaleFactor.toUpperCase()) {
+          	
+	      		case "EMPTY":
+	      			
+	      			/* No selection is provided for the number to be displayed as the data label (pure value). */		      			
+//	      			if (number%1==0) {
+//	      				finalValueToDisplay += (number).toLocaleString(locale);	      				
+//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
+//	      			}
+//	      			else {
+//	      				finalValueToDisplay += (number).toFixed(seriesItemPrecision).toLocaleString(locale);
+//	      			}	 
+	      			
+	      			finalValueToDisplay += number.toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
+	      			
+	      			break;
+	      			
+	      		case "K":	
+	      			
+//	      			if (number/Math.pow(10,3)%1==0) {
+//	      				finalValueToDisplay += Number(number/Math.pow(10,3)).toLocaleString(locale);	      				
+//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
+//	      			}
+//	      			else {
+//	      				finalValueToDisplay += (number/Math.pow(10,3)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
+//	      			}
+	      			
+	      			finalValueToDisplay += (number/Math.pow(10,3)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
+	      			
+	      			finalValueToDisplay += "k";
+	      			
+	      			break;
+	      			
+	      		case "M":
+	      			
+//	      			if (number/Math.pow(10,6)%1==0) {
+//	      				finalValueToDisplay += Number(number/Math.pow(10,6)).toLocaleString(locale);	      				
+//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
+//	      			}
+//	      			else {
+//	      				finalValueToDisplay += (number/Math.pow(10,6)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision  });
+//	      			}	      			
+	      			
+	      			finalValueToDisplay += (number/Math.pow(10,6)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
+	      			
+	      			finalValueToDisplay += "M";
+	      			
+	      			break;
+	      			
+	      		case "G":
+
+//	      			if (number/Math.pow(10,9)%1==0) {
+//	      				finalValueToDisplay += Number(number/Math.pow(10,9)).toLocaleString(locale);	      				
+//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
+//	      			}
+//	      			else {
+//	      				finalValueToDisplay += (number/Math.pow(10,9)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision  });
+//	      			}
+	      			
+	      			finalValueToDisplay += (number/Math.pow(10,9)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
+	      			
+	      			finalValueToDisplay += "G";
+	      			
+	      			break;
+	      			
+	  			case "T":
+	  				
+//	  				if (number/Math.pow(10,12)%1==0) {
+//	      				finalValueToDisplay += Number(number/Math.pow(10,12)).toLocaleString(locale);	      				
+//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
+//	      			}
+//	      			else {
+//	      				finalValueToDisplay += (number/Math.pow(10,12)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision  });
+//	      			}
+      			
+	  				finalValueToDisplay += (number/Math.pow(10,12)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
+	  				
+      				finalValueToDisplay += "T";
+      			
+	      			break;
+	      			
+	      		case "P":
+
+//	      			if (number/Math.pow(10,15)%1==0) {
+//	      				finalValueToDisplay += Number(number/Math.pow(10,15)).toLocaleString(locale);	      				
+//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
+//	      			}
+//	      			else {
+//	      				finalValueToDisplay += (number/Math.pow(10,15)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision  });
+//	      			}
+    	      			
+	      			finalValueToDisplay += (number/Math.pow(10,15)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
+	      			
+	      			finalValueToDisplay += "P";
+	      			
+	      			break;
+	      			
+	  			case "E":
+	  				
+//	  				if (number/Math.pow(10,18)%1==0) {
+//	      				finalValueToDisplay += Number(number/Math.pow(10,18)).toLocaleString(locale);	      				
+//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
+//	      			}
+//	      			else {
+//	      				finalValueToDisplay += (number/Math.pow(10,18)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision  });
+//	      			}
+      			
+	  				finalValueToDisplay += (number/Math.pow(10,18)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
+	  				
+  					finalValueToDisplay += "E";
+  					
+	      			break;
+	      			
+	  			default:
+	  				
+	  				/* The same as for the case when user picked "no selection" - in case when the chart 
+	  				template does not contain the scale factor for current serie */
+//	  				if (number%1==0) {
+//	      				finalValueToDisplay += (number).toLocaleString(locale);	      				
+//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
+//	      			}
+//	      			else {
+//	      				finalValueToDisplay += (number).toFixed(seriesItemPrecision).toLocaleString(locale);
+//	      			}	
+//	  			
+	  				finalValueToDisplay += number.toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
+	  				
+	      			break;
+	      	
+	      	}
+						
+			finalValueToDisplay += (seriesItemSuffix!="" ? " " : "") + seriesItemSuffix;
+
+		}
+		else {
+			finalValueToDisplay += percentage + "%" + (seriesItemSuffix!="" ? " " : "") + seriesItemSuffix;
+		}
+			
+	 	percentOrAbsSliceValueString = finalValueToDisplay;
 	  
-	  /**
-	   * According to the type for dispalying the value of the slice that is covered via mouse (that user has chosen), display appropriate
-	   * value (percentage of the value that is covered (against the sum of all values) or absolute (real) value of the slice that is hovered.
-	   * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	   */
-	  percentOrAbsSliceValueString = (percAbsolSliceValue=="absolute") ? d.value : percentage + "%";
-	  
-	  if (percentage < 0.1 && percAbsolSliceValue=="percentage") 
-	  {
-		  percentOrAbsSliceValueString = "< 0.1%";
-	  }
+		if (percentage < 0.1 && percAbsolSliceValue=="percentage") 
+		{
+			percentOrAbsSliceValueString = "< 0.1%";
+		}
 	  
 	  /* If we already have move mouse over the chart, remove
 	   * previous content for the "explanation", i.e. move the

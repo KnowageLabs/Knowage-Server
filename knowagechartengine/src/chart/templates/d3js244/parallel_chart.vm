@@ -36,6 +36,14 @@
 
 #set($colorsReqCounter = 0)
 
+#*
+	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+	these abbreviations (number suffix) along with the scaled number. [JIRA 1060 and 1061]
+	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+*#
+#set($serieScaleFactor = {})
+
 #if($category.class.name == "java.util.LinkedHashMap")
   #set($columnsNeeded[0]=$category.column)
 #else  
@@ -46,16 +54,26 @@
 #end
 
 #foreach($value in $serie) 
-	 #set($serieNeeded[$serieCounter] = $value.column)
-	 #set($seriePrefix[$serieCounter]= $value.prefixChar)
-	 #set($seriePostfix[$serieCounter]= $value.postfixChar)
-	 #set($seriePrecision[$serieCounter]= $value.precision)
-	 #if($chart.LIMIT.groupByCategory == 'true')
-	 #set($groupingFunction[$serieCounter] = $value.groupingFunction)
-	 #else
-	 #set($groupingFunction[$serieCounter]="NONE")
-	 #end
-	 #set($serieCounter = $serieCounter + 1)
+
+	#set($serieNeeded[$serieCounter] = $value.column)
+	#set($seriePrefix[$serieCounter]= $value.prefixChar)
+	#set($seriePostfix[$serieCounter]= $value.postfixChar)
+	#set($seriePrecision[$serieCounter]= $value.precision)
+		
+	## @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) [JIRA 1060 and 1061]
+ 	#if($value.scaleFactor && "$!$value.scaleFactor" != "")
+		#set($serieScaleFactor[$serieCounter] = $value.scaleFactor)
+	#else
+		#set($serieScaleFactor[$serieCounter] = 'empty')
+	#end
+	 
+	#if($chart.LIMIT.groupByCategory == 'true')
+	 	#set($groupingFunction[$serieCounter] = $value.groupingFunction)
+	#else
+		#set($groupingFunction[$serieCounter]="NONE")
+	#end
+	
+	#set($serieCounter = $serieCounter + 1)
 #end
 
 #*
@@ -90,7 +108,8 @@
 #end
 
 #set($groups = $datasettransformer.getGroupsForParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows))
-#set($series = $datasettransformer.getSeriesForParallelChart($serieNeeded, $groupingFunction, $seriePrefix, $seriePostfix, $seriePrecision))
+## @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) [JIRA 1060 and 1061]
+#set($series = $datasettransformer.getSeriesForParallelChart($serieNeeded, $groupingFunction, $seriePrefix, $seriePostfix, $seriePrecision, $serieScaleFactor))
 
 #if ($colorsPallete.COLOR.value && $colorCounter == 0)
 

@@ -284,6 +284,31 @@
 						#end
 	},	
 	
+	#*
+		Since we cannot have more than one series items for the SUNBURST chart, we can specify a single parameter customization 
+		(for only one series item). [JIRA 1060 and 1061]
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*#
+	series: {
+	
+		#*
+			The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+			"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+			these abbreviations (number suffix) along with the scaled number. [JIRA 1060 and 1061]
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		*#
+		#if($chart.VALUES.SERIE.scaleFactor && "$!chart.VALUES.SERIE.scaleFactor" != "")
+			scaleFactor: '$chart.VALUES.SERIE.scaleFactor',
+		#else
+			scaleFactor: 'empty',
+		#end
+		
+		precision: '$chart.VALUES.SERIE.precision',
+		prefixChar: '$chart.VALUES.SERIE.prefixChar',
+		postfixChar: '$chart.VALUES.SERIE.postfixChar'
+	
+	},
+	
 	data:
 	[
 	 	$datasettransformer.toTree($columnsNeeded,$serieName,$dataColumnsMapper,$dataRows,$groupingFunction)

@@ -26,7 +26,7 @@ Ext.define('Sbi.chart.designer.AxisesContainerModel',{
 		
 		'serieTooltipBackgroundColor', 'serieTooltipAlign', 
 		'serieTooltipColor', 'serieTooltipFont', 'serieTooltipFontWeight', 'serieTooltipFontSize',
-		'serieTooltipBorderWidth', 'serieTooltipBorderWidth',
+		'serieTooltipBorderWidth', 'serieTooltipBorderRadius',
 		
 		// For DIAL tag in SERIE tag (characteristic for the GAUGE chart)
 		'backgroundColorDial',

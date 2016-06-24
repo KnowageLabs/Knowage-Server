@@ -832,12 +832,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * Show/hide the customization panel for the WORDCLOUD chart parameters on the 
 					 * second configuration panel on the Step 2 tab of the Designer page.
 					 */
+					/** 
+					 * The chart does not take parameters for the customization of the series item and its tooltip from separate XML tag, but
+					 * rather from the SERIE tag of the chart's XML template (tooltip panel is removed from the second tab in the Designer when
+					 * working with the WORDCLOUD, hence no more WORDCLOUD_TOOLTIP tag in the XML). [JIRA 1060 and 1061]
+					 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+					 */
 					if (isChartWordCloud) {
 						wordCloudPanel.show();
-						wordCloudPanelTooltip.show();
+//						wordCloudPanelTooltip.show();
 					} else {
 						wordCloudPanel.hide();
-						wordCloudPanelTooltip.hide();
+//						wordCloudPanelTooltip.hide();
 					}
 					
 					/**

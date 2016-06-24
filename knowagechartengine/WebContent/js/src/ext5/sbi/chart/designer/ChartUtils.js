@@ -331,7 +331,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			result['CHART'] = CHART;
 
 			// RESULT PRINT
-//			console.log(result); 
+			//console.log(result); 
 
 			return result;
 		},
@@ -705,11 +705,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						.getChartType();
 						
 					/**
-					 * (if-checking added by: danilo.ristovski@mht.net)
+					 * The tooltip customization panel for the WORDCLOUD chart (Step 2, "Configuration") is removed, since we provided all needed
+					 * input (starting point) elements in the series style configuration popup for particular series items, also for the WORDCLOUD
+					 * chart type. [JIRA 1060 and 1061]
+					 * NOTE: The commented code if-statement is from the old implementation. 
+					 * @author (if-checking added by: danilo.ristovski@mht.net)
+					 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)			 
 					 */
-					// TODO: Check if this should be excluded also for other chart types
-					if (chartType.toUpperCase() != "SUNBURST"
-						 && chartType.toUpperCase() != "WORDCLOUD") {
+//					if (chartType.toUpperCase() != "SUNBURST"
+//					 /*&& chartType.toUpperCase() != "WORDCLOUD"*/)
+					if (chartType.toUpperCase() != "SUNBURST") {
 
 						var TOOLTIP = {};
 
@@ -753,7 +758,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						TOOLTIP['borderRadius']=serieAsMap.get('serieTooltipBorderRadius') != undefined ? 
 										serieAsMap.get('serieTooltipBorderRadius')
 										 : '';		
+										
 						serie['TOOLTIP'] = TOOLTIP;
+						
 					}
 
 					/**
@@ -991,29 +998,35 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				CHART['minFontSize'] = (Number(chartModel.get('minFontSize'))) ? Number(chartModel.get('minFontSize')) : 0;
 				CHART['wordPadding'] = (Number(chartModel.get('wordPadding'))) ? Number(chartModel.get('wordPadding')) : 0;
 				
-				var TOOLTIP={};
-				
-				TOOLTIP['precision']=chartModel.get('wordcloudTooltipPrecision') ? chartModel.get('wordcloudTooltipPrecision') : '';
-				TOOLTIP['prefix']=chartModel.get('wordcloudTooltipPrefix') ? chartModel.get('wordcloudTooltipPrefix') : '';
-				TOOLTIP['postfix']=chartModel.get('wordcloudTooltipPostfix') ? chartModel.get('wordcloudTooltipPostfix') : '';
-				TOOLTIP['backgroundColor']= (chartModel.get('wordcloudTooltipBackgroundColor')!=undefined && chartModel.get('wordcloudTooltipBackgroundColor')!='' )?'#'+chartModel.get('wordcloudTooltipBackgroundColor') : '';
-				var style='';
-				style += 'fontFamily:'
-					 + ((chartModel.get('wordcloudTooltipFontFamily') != undefined) ? chartModel.get('wordcloudTooltipFontFamily') : '') + ';';
-
-					style += 'fontSize:' + ((chartModel.get('wordcloudTooltipFontSize') != undefined) ? 
-						chartModel.get('wordcloudTooltipFontSize') : '') + ';';
-					style += 'fontWeight:' + ((chartModel.get('wordcloudTooltipFontStyle') != undefined) ?
-						chartModel.get('wordcloudTooltipFontStyle') : '') + ';';
-					style+='color:' + ((chartModel.get('wordcloudTooltipFontColor') != undefined && (chartModel.get('wordcloudTooltipFontColor') != '')) ?
-							'#'+chartModel.get('wordcloudTooltipFontColor') : '') + ';';
-					style+='align:' + ((chartModel.get('wordcloudTooltipAlign') != undefined) ?
-							chartModel.get('wordcloudTooltipAlign') : '') + ';';
-				
-			    TOOLTIP['style']=style;
-			    TOOLTIP['borderWidth']=chartModel.get('wordcloudTooltipBorderWidth') ? chartModel.get('wordcloudTooltipBorderWidth') : '';
-			    TOOLTIP['borderRadius']=chartModel.get('wordcloudTooltipBorderRadius') ? chartModel.get('wordcloudTooltipBorderRadius') : '';
-				CHART['WORDCLOUD_TOOLTIP']=TOOLTIP;
+				/** 
+				 * The chart does not take parameters for the customization of the series item and its tooltip from separate XML tag, but
+				 * rather from the SERIE tag of the chart's XML template (tooltip panel is removed from the second tab in the Designer when
+				 * working with the WORDCLOUD, hence no more WORDCLOUD_TOOLTIP tag in the XML). [JIRA 1060 and 1061]
+				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+				 */
+//				var TOOLTIP={};
+//				
+//				TOOLTIP['precision']=chartModel.get('wordcloudTooltipPrecision') ? chartModel.get('wordcloudTooltipPrecision') : '';
+//				TOOLTIP['prefix']=chartModel.get('wordcloudTooltipPrefix') ? chartModel.get('wordcloudTooltipPrefix') : '';
+//				TOOLTIP['postfix']=chartModel.get('wordcloudTooltipPostfix') ? chartModel.get('wordcloudTooltipPostfix') : '';
+//				TOOLTIP['backgroundColor']= (chartModel.get('wordcloudTooltipBackgroundColor')!=undefined && chartModel.get('wordcloudTooltipBackgroundColor')!='' )?'#'+chartModel.get('wordcloudTooltipBackgroundColor') : '';
+//				var style='';
+//				style += 'fontFamily:'
+//					 + ((chartModel.get('wordcloudTooltipFontFamily') != undefined) ? chartModel.get('wordcloudTooltipFontFamily') : '') + ';';
+//
+//					style += 'fontSize:' + ((chartModel.get('wordcloudTooltipFontSize') != undefined) ? 
+//						chartModel.get('wordcloudTooltipFontSize') : '') + ';';
+//					style += 'fontWeight:' + ((chartModel.get('wordcloudTooltipFontStyle') != undefined) ?
+//						chartModel.get('wordcloudTooltipFontStyle') : '') + ';';
+//					style+='color:' + ((chartModel.get('wordcloudTooltipFontColor') != undefined && (chartModel.get('wordcloudTooltipFontColor') != '')) ?
+//							'#'+chartModel.get('wordcloudTooltipFontColor') : '') + ';';
+//					style+='align:' + ((chartModel.get('wordcloudTooltipAlign') != undefined) ?
+//							chartModel.get('wordcloudTooltipAlign') : '') + ';';
+//				
+//			    TOOLTIP['style']=style;
+//			    TOOLTIP['borderWidth']=chartModel.get('wordcloudTooltipBorderWidth') ? chartModel.get('wordcloudTooltipBorderWidth') : '';
+//			    TOOLTIP['borderRadius']=chartModel.get('wordcloudTooltipBorderRadius') ? chartModel.get('wordcloudTooltipBorderRadius') : '';
+//				CHART['WORDCLOUD_TOOLTIP']=TOOLTIP;
 				
 				// TODO: commented since it is not completely tested
 				/*console.log("AAA",chartModel.get('maxAngle')&&!chartModel.get('maxAngle')==="");
@@ -1804,8 +1817,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 			var chartLibrary = Sbi.chart.designer.Designer.chartLibNamesConfig[chartType.toLowerCase()];
 
-			var isSerieTooltipDisabled = ((chartType == "WORDCLOUD") 
-					|| chartLibrary == 'chartJs' || chartType == "PARALLEL" ); 
+			/**
+			 * The tooltip customization panel for the WORDCLOUD chart (Step 2, "Configuration") is removed, since we provided all needed
+			 * input (starting point) elements in the series style configuration popup for particular series items, also for the WORDCLOUD
+			 * chart type. [JIRA 1060 and 1061]
+			 * NOTE: The commented code if-statement is from the old implementation. 
+			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)			 
+			 */
+//			var isSerieTooltipDisabled = (/*chartType == "WORDCLOUD" || */chartType == "SUNBURST"
+//				|| chartLibrary == 'chartJs' || chartType == "PARALLEL" ); 
+			var isSerieTooltipDisabled = (chartType == "SUNBURST" || chartLibrary == 'chartJs' || chartType == "PARALLEL"); 
 				
 			return isSerieTooltipDisabled;
 		},
@@ -2081,15 +2102,21 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				});
 			}
 		
-			var wordcloudTooltip=null;
-		    var wordcloudTooltipStyle = null;
+			/** 
+			 * The chart does not take parameters for the customization of the series item and its tooltip from separate XML tag, but
+			 * rather from the SERIE tag of the chart's XML template (tooltip panel is removed from the second tab in the Designer when
+			 * working with the WORDCLOUD, hence no more WORDCLOUD_TOOLTIP tag in the XML). [JIRA 1060 and 1061]
+			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+			 */
+//			var wordcloudTooltip=null;
+//		    var wordcloudTooltipStyle = null;
 		    
-		    if(Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'WORDCLOUD'){
-		    	wordcloudTooltip=jsonTemplate.CHART.WORDCLOUD_TOOLTIP;
-		    	 wordcloudTooltipStyle=jsonTemplate.CHART.WORDCLOUD_TOOLTIP ? 
-							Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.WORDCLOUD_TOOLTIP.style) : '';
-		    	
-		    }
+//		    if(Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'WORDCLOUD'){
+//		    	wordcloudTooltip=jsonTemplate.CHART.WORDCLOUD_TOOLTIP;
+//		    	 wordcloudTooltipStyle=jsonTemplate.CHART.WORDCLOUD_TOOLTIP ? 
+//							Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.WORDCLOUD_TOOLTIP.style) : '';
+//		    	
+//		    }
 					
 			var cModel = Ext.create('Sbi.chart.designer.ChartConfigurationModel', {
 				/**
@@ -2174,17 +2201,23 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				sizeCriteria : jsonTemplate.CHART.sizeCriteria ? jsonTemplate.CHART.sizeCriteria : "",
                 wordLayout: jsonTemplate.CHART.wordLayout ? jsonTemplate.CHART.wordLayout : "",
                 preventOverlap: jsonTemplate.CHART.preventOverlap ?  jsonTemplate.CHART.preventOverlap : "",
-                wordcloudTooltipPrecision:(wordcloudTooltip != null)?wordcloudTooltip.precision:null,
-                wordcloudTooltipPrefix:(wordcloudTooltip != null)?wordcloudTooltip.prefix:null,
-                wordcloudTooltipPostfix:(wordcloudTooltip != null)?wordcloudTooltip.postfix:null,
-                wordcloudTooltipBackgroundColor:(wordcloudTooltip != null)?Sbi.chart.designer.ChartUtils.removeStartingHash(wordcloudTooltip.backgroundColor):null,
-                wordcloudTooltipFontFamily:(wordcloudTooltipStyle != null) ? wordcloudTooltipStyle.fontFamily : null,
-                wordcloudTooltipFontStyle:(wordcloudTooltipStyle != null) ? wordcloudTooltipStyle.fontWeight : null,		
-                wordcloudTooltipFontColor:(wordcloudTooltipStyle != null) ? Sbi.chart.designer.ChartUtils.removeStartingHash(wordcloudTooltipStyle.color) : null,
-                wordcloudTooltipFontSize:(wordcloudTooltipStyle != null) ? wordcloudTooltipStyle.fontSize : null,
-                wordcloudTooltipAlign:(wordcloudTooltipStyle != null)  ? wordcloudTooltipStyle.align : null,		
-                wordcloudTooltipBorderWidth:(wordcloudTooltip != null)?wordcloudTooltip.borderWidth:null,
-                wordcloudTooltipBorderRadius:(wordcloudTooltip != null)?wordcloudTooltip.borderRadius:null,		
+        		/** 
+				 * The chart does not take parameters for the customization of the series item and its tooltip from separate XML tag, but
+				 * rather from the SERIE tag of the chart's XML template (tooltip panel is removed from the second tab in the Designer when
+				 * working with the WORDCLOUD, hence no more WORDCLOUD_TOOLTIP tag in the XML). [JIRA 1060 and 1061]
+				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+				 */
+//                wordcloudTooltipPrecision:(wordcloudTooltip != null)?wordcloudTooltip.precision:null,
+//                wordcloudTooltipPrefix:(wordcloudTooltip != null)?wordcloudTooltip.prefix:null,
+//                wordcloudTooltipPostfix:(wordcloudTooltip != null)?wordcloudTooltip.postfix:null,
+//                wordcloudTooltipBackgroundColor:(wordcloudTooltip != null)?Sbi.chart.designer.ChartUtils.removeStartingHash(wordcloudTooltip.backgroundColor):null,
+//                wordcloudTooltipFontFamily:(wordcloudTooltipStyle != null) ? wordcloudTooltipStyle.fontFamily : null,
+//                wordcloudTooltipFontStyle:(wordcloudTooltipStyle != null) ? wordcloudTooltipStyle.fontWeight : null,		
+//                wordcloudTooltipFontColor:(wordcloudTooltipStyle != null) ? Sbi.chart.designer.ChartUtils.removeStartingHash(wordcloudTooltipStyle.color) : null,
+//                wordcloudTooltipFontSize:(wordcloudTooltipStyle != null) ? wordcloudTooltipStyle.fontSize : null,
+//                wordcloudTooltipAlign:(wordcloudTooltipStyle != null)  ? wordcloudTooltipStyle.align : null,		
+//                wordcloudTooltipBorderWidth:(wordcloudTooltip != null)?wordcloudTooltip.borderWidth:null,
+//                wordcloudTooltipBorderRadius:(wordcloudTooltip != null)?wordcloudTooltip.borderRadius:null,		
 				
 				/**
 				 * Added for the SUNBURST chart.

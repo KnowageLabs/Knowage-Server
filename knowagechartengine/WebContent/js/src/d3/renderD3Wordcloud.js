@@ -1,4 +1,5 @@
 /*In this file is used code that is distribuited uner the license:
+
 Copyright (c) 2013, Jason Davies.
 All rights reserved.
 
@@ -26,8 +27,13 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-
-function renderWordCloud(chartConf,catchSVG){
+/**
+ * The rendering function for the WORDCLOUD chart.
+ * @param chartConf JSON containing data (parameters) about the chart. 
+ * @param locale Information about the locale (language). Needed for the formatting of the series values (data labels and tooltips). 
+ * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ */
+function renderWordCloud(chartConf,locale){
 
 	var maxic = 0;
 	var minValue=0;
@@ -673,9 +679,9 @@ function renderWordCloud(chartConf,catchSVG){
          
 		
 		var tooltip=d3.select("#chart"+randomId)
-		.append("div")
-		.attr("class","tooltip")
-		.style("opacity","0");
+			.append("div")
+			.attr("class","tooltip")
+			.style("opacity","0");
 		
 		
 		var tooltipBackgroundColor=(chartConf.tooltip.backgroundColor)?chartConf.tooltip.backgroundColor:"rgba(255, 255, 255, 0.85)";
@@ -686,24 +692,24 @@ function renderWordCloud(chartConf,catchSVG){
 	    var tooltipBorderRadius=chartConf.tooltip.borderRadius?chartConf.tooltip.borderRadius:'3';
 	    
 		d3.selectAll(".tooltip")
-		.style("position","absolute")
-		.style("text-align",chartConf.tooltip.align)
-		.style("min-width",10)
-		.style("max-width",1000)
-		.style("min-height",10)
-		.style("max-height",800)
-		.style("padding",3)
-		.style("color",chartConf.tooltip.fontColor)
-		.style("font-size",chartConf.tooltip.fontSize)
-		.style("font-family",chartConf.tooltip.fontFamily)
-		.style("border",tooltipBorderWidth+"px solid")	// @modifiedBy: danristo (danilo.ristovski@mht.net)
-		.style("border-color",chartConf.tooltip.fontColor)
-		.style("border-radius",tooltipBorderRadius+"px")
-		.style("pointer-events","none")
-		.style("background-color",tooltipBackgroundColor)
-		.style("font-style",tolltipFontStyle)
-		.style("font-weight",tolltipFontWeight)
-		.style("text-decoration",tolltipTextDecoration);
+			.style("position","absolute")
+			.style("text-align",chartConf.tooltip.align)
+			.style("min-width",10)
+			.style("max-width",1000)
+			.style("min-height",10)
+			.style("max-height",800)
+			.style("padding",3)
+			.style("color",chartConf.tooltip.fontColor)
+			.style("font-size",chartConf.tooltip.fontSize)
+			.style("font-family",chartConf.tooltip.fontFamily)
+			.style("border",tooltipBorderWidth+"px solid")	// @modifiedBy: danristo (danilo.ristovski@mht.net)
+			.style("border-color",chartConf.tooltip.fontColor)
+			.style("border-radius",tooltipBorderRadius+"px")
+			.style("pointer-events","none")
+			.style("background-color",tooltipBackgroundColor)
+			.style("font-style",tolltipFontStyle)
+			.style("font-weight",tolltipFontWeight)
+			.style("text-decoration",tolltipTextDecoration);
 		
 		    var wordArea=bacground
 			.append("g")
@@ -723,10 +729,10 @@ function renderWordCloud(chartConf,catchSVG){
 		    
 		    
 			wordArea.transition().duration(1e3)
-			.attr("transform", function(d) {
+				.attr("transform", function(d) {
 				return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";})
-			.style("font-size", function(d) { return d.size + "px"; })	
-			.text(function(d) { return d.text.toLowerCase(); })
+				.style("font-size", function(d) { return d.size + "px"; })	
+				.text(function(d) { return d.text.toLowerCase(); })
 			
 		   
 			wordArea.on('click', function(d){
@@ -765,16 +771,90 @@ function renderWordCloud(chartConf,catchSVG){
 			});
 			
 			wordArea.on('mouseover',function(d){
+				
 				var tooltipText;
+				
 				for(j=0;j<chartConf.data[0].length;j++){
-					if(chartConf.data[0][j].name===d.text){
+					
+					if(chartConf.data[0][j].name===d.text) {	
 						
-						tooltipText=chartConf.data[0][j].value;
+						/**
+						 * The displaying of the numeric (series) values in the table of the WORDCLOUD chart is redefined, so now it considers the 
+						 * precision, prefix, suffix (postfix), thousands separator, formatting localization and scale factor. [JIRA 1060 and 1061]
+						 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+						var value = Number(chartConf.data[0][j].value);
+						
+						var text = "";
+						tooltipText = chartConf.data[0][j].value;
+						
+						var prefix = chartConf.tooltip.prefix;
+						var postfix = chartConf.tooltip.postfix;
+						var precision = chartConf.tooltip.precision;
+						var scaleFactor = chartConf.tooltip.scaleFactor;
+												
+						if (prefix) {
+				 		   text += prefix +" ";
+				 	   	}
+				   	   		
+				   	   	/* 
+			   	    		The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+			   	    		"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+			   	    		these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
+			   	    		is included into the formatting of the number that is going to be displayed, as well as precision.
+				   	    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			   			*/
+				   		switch(scaleFactor.toUpperCase()) {
+				   	  	
+				   	  		case "EMPTY":   					   	  			
+				   	  			text += value.toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});					   	  			
+				   	  			break;
+				   	  			
+				   	  		case "K":					   	  			
+				   	  			text += (value/Math.pow(10,3)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});					   	  			
+				   	  			text += "k";					   	  			
+				   	  			break;
+				   	  			
+				  			case "M":
+				  				text += (value/Math.pow(10,6)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});   	  			
+				   	  			text += "M";
+				   	  			break;
+				   	  			
+				  			case "G":					   	  			
+				   	  			text += (value/Math.pow(10,9)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});   	  			
+				   	  			text += "G";				   	  			
+				   	  			break;
+				   	  			
+							case "T":
+								text += (value/Math.pow(10,12)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });					
+								text += "T";					   				
+				   	  			break;
+				   	  			
+							case "P":		
+				   	  			text += (value/Math.pow(10,15)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });	   	  			
+				   	  			text += "P";
+				   	  			break;
+				   	  			
+							case "E":
+			   					text += (value/Math.pow(10,18)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });
+			   					text += "E";					   					
+				   	  			break;
+				   	  			
+							default:					   				
+								text += value.toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });					   					
+				   	  			break;
+			   	  	
+			   	  		}
+			   					
+			   			text += (postfix!="" ? " " : "") + postfix;
+						
 					}
+					
 				}
+				
 				tooltip.transition().duration(50).style("opacity","1");
     				
-				var ttText = tooltip.text("  "+chartConf.tooltip.prefix+" "+tooltipText.toFixed(chartConf.tooltip.precision)+" "+chartConf.tooltip.postfix+"  ");
+				var ttText = tooltip.text(text);
 			  				
 				/**
 				 * Call the function that enables positioning of the 

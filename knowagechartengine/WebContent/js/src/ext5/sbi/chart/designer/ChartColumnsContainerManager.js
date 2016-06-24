@@ -447,7 +447,19 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 	//										(!newRecordToDrop.get('serieTooltipTemplateHtml')) ? 
 	//												newRecordToDrop.set('serieTooltipTemplateHtml', serieTooltipTagParameters.templateHtml) : null;
 											(!newRecordToDrop.get('serieTooltipBackgroundColor')) ? 
-													newRecordToDrop.set('serieTooltipBackgroundColor', serieTooltipTagParameters.backgroundColor) : null;									
+													newRecordToDrop.set('serieTooltipBackgroundColor', serieTooltipTagParameters.backgroundColor) : null;	
+													
+											/**
+											 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+											 */
+											(!newRecordToDrop.get('serieTooltipBorderWidth')) ? 
+													newRecordToDrop.set('serieTooltipBorderWidth', serieTooltipTagParameters.borderWidth) : null;
+											
+											/**
+											 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+											 */		
+											(!newRecordToDrop.get('serieTooltipBorderRadius')) ? 
+													newRecordToDrop.set('serieTooltipBorderRadius', serieTooltipTagParameters.borderRadius) : null;
 											
 											var splitSerieTooltipStyle = serieTooltipTagParameters.style.split(";");
 											
@@ -1034,9 +1046,16 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			 */
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			
-			if (chartType == "SUNBURST" || chartType == "TREEMAP" 
-			     || chartType == "HEATMAP" || chartType == "WORDCLOUD")
-			{
+			/**
+			 * Now, both WORDCLOUD and SUNBURST charts posses information about the series item configuration (customization), such
+			 * as precision, scale factor, prefix and so on. For that reason, the series style configuration popup should appear (not
+			 * be hidden for these two chart types also). [JIRA 1060 and 1061]
+			 * NOTE: The commented code if-statement is from the old implementation.
+			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+			 */
+//			if (/*chartType == "SUNBURST" || */chartType == "TREEMAP" 
+//			     || chartType == "HEATMAP" /*|| chartType == "WORDCLOUD"*/)
+			if (chartType == "TREEMAP" || chartType == "HEATMAP") {
 				chartColumnsContainer.columns[2].items[0].iconCls = "x-hidden";	
 			}
 			

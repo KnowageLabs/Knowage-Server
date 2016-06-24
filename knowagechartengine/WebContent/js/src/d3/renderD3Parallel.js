@@ -1,10 +1,11 @@
 /**
  * The rendering function for the PARALLEL chart.
- * 
- * @param data JSON containing data (parameters) about the chart 
+ * @param data JSON containing data (parameters) about the chart.
+ * @param locale Information about the locale (language). Needed for the formatting of the series values (data labels and tooltips). 
+ * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
-function renderParallelChart(data){
-   
+function renderParallelChart(data,locale){
+	
 	var records = data.data[0];
 	
 	if(records.length>0){
@@ -47,6 +48,14 @@ function renderParallelChart(data){
 		var precisions={};
 		var prefixes={};
 		var postfixes={};
+		
+		/**
+		 * The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+		 * "G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+		 * these abbreviations (number suffix) along with the scaled number. [JIRA 1060 and 1061]
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		var scaleFactor = {};
 
 		for (var i = 0; i< group.length; i++){
 
@@ -59,6 +68,7 @@ function renderParallelChart(data){
 			precisions[column[i][i]]=column[i]["precision"];
 			prefixes[column[i][i]]=column[i]["prefix"];
 			postfixes[column[i][i]]=column[i]["postfix"];
+			scaleFactor[column[i][i]] = column[i]["scaleFactor"];
 			
 		}
 
@@ -802,7 +812,8 @@ function renderParallelChart(data){
 		     .selectAll("td")
 		     .data(function(row){
 		    	 return tableColumns.map(function(column) {
-		                return {column: column, value: row[column], prefix: prefixes[column], postfix:postfixes[column], precision:precisions[column] };
+		    	 		// @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) [JIRA 1060 and 1061]
+		                return {column: column, value: row[column], prefix: prefixes[column], postfix:postfixes[column], precision:precisions[column], scaleFactor:scaleFactor[column] };
 		            });
 		     }).enter()
 		       .append("td")
@@ -812,21 +823,167 @@ function renderParallelChart(data){
 		       
 	}	
 	
-	function formatTableCell(d){
-		  var text='';
-   	   if(d.prefix) {
-   		   text+=d.prefix +" ";
-   	   }
-   	   if(d.precision){
-   		   text+=Number(d.value).toFixed(d.precision);
-   		   
-   	   }else{
-   		   text+=d.value;
-   	   }
-   	   if(d.postfix){
-   		   text+=" "+d.postfix;
-   	   }
-   	   return text
+	function formatTableCell(d) {
+		
+		var text='';
+		
+		/**
+		 * The displaying of the numeric (series) values in the table of the PARALLEL chart is redefined, so now it considers the 
+		 * precision, prefix, suffix (postfix), thousands separator, formatting localization and scale factor. [JIRA 1060 and 1061]
+		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		var scaleFactor = d.scaleFactor;
+		var prefix = d.prefix;
+		var precision = d.precision;
+		var postfix = d.postfix;
+		var value = d.value;
+		
+//		var seriesItemPrecisionDefined = precision!=null && precision!="" && (precision+"")!="0"; 
+		     	  
+		/**
+		 * If these parameters are undefined, it means that we are dealing with the category value, not the series item value,
+		 * because the category does not posses any of them. In that case we only have a "value" parameter that represents the
+		 * category value.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+   	   	if (scaleFactor==undefined && postfix==undefined && precision==undefined && prefix==undefined) {   	   		
+   	   		text += value;    	   	
+   	   	}
+   	   	else {
+   	   		
+	   	   	if (prefix) {
+	 		   text += prefix +" ";
+	 	   	}
+   	   		
+	   	   	/* 
+   	    		The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+   	    		"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+   	    		these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
+   	    		is included into the formatting of the number that is going to be displayed, as well as precision. [JIRA 1060 and 1061]
+	   	    	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+   			*/
+	   		switch(scaleFactor.toUpperCase()) {
+	   	  	
+	   	  		case "EMPTY":
+	   	  			
+	   	  			/* No selection is provided for the number to be displayed as the data label (pure value). */		      			
+	//   	  			if (value%1==0) {
+	//   	  				text += (value).toLocaleString(locale);	      				
+	//   	  				text += seriesItemPrecisionDefined ?  "." + "0".repeat(precision) : "";
+	//   	  			}
+	//   	  			else {
+	//   	  				text += (value).toFixed(precision).toLocaleString(locale);
+	//   	  			}	     
+	   	  			
+	   	  			text += value.toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});	   	  			
+	   	  			break;
+	   	  			
+	   	  		case "K":	
+	   	  			
+	//   	  			if (value/Math.pow(10,3)%1==0) {
+	//   	  				text += Number(value/Math.pow(10,3)).toLocaleString(locale);	      				
+	//  					text += seriesItemPrecisionDefined ?  "." + "0".repeat(precision) : "";
+	//   	  			}
+	//   	  			else {
+	//   	  				text += (value/Math.pow(10,3)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});
+	//   	  			}
+	   	  			
+	   	  			text += (value/Math.pow(10,3)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});
+	   	  			text += "k";	   	  			
+	   	  			break;
+	   	  			
+	  			case "M":
+	   	  			
+	//	   	  			if (value/Math.pow(10,6)%1==0) {
+	//	   	  				text += Number(value/Math.pow(10,6)).toLocaleString(locale);	      				
+	//	   	  				text += seriesItemPrecisionDefined ?  "." + "0".repeat(precision) : "";
+	//	   	  			}
+	//	   	  			else {
+	//	   	  				text += (value/Math.pow(10,6)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });
+	//	   	  			}	
+	   	  				
+	  				text += (value/Math.pow(10,6)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});   	  			
+	   	  			text += "M";	   	  			
+	   	  			break;
+	   	  			
+	  			case "G":
+	
+	//	   	  			if (value/Math.pow(10,9)%1==0) {
+	//	   	  				text += Number(value/Math.pow(10,9)).toLocaleString(locale);	      				
+	//	   	  				text += seriesItemPrecisionDefined ?  "." + "0".repeat(precision) : "";
+	//	   	  			}
+	//	   	  			else {
+	//	   	  				text += (value/Math.pow(10,9)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });
+	//	   	  			}
+		   	  			
+	   	  			text += (value/Math.pow(10,9)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision});   	  			
+	   	  			text += "G";	   	  			
+	   	  			break;
+	   	  			
+				case "T":
+	   					
+	//					if (value/Math.pow(10,12)%1==0) {
+	//						text += Number(value/Math.pow(10,12)).toLocaleString(locale);	      				
+	//						text += seriesItemPrecisionDefined ?  "." + "0".repeat(precision) : "";
+	//	   	  			}
+	//	   	  			else {
+	//	   	  				text += (value/Math.pow(10,12)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });
+	//	   	  			}
+	//   				
+					text += (value/Math.pow(10,12)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });					
+					text += "T";
+	   	  			break;
+	   	  			
+				case "P":
+	
+	//	   	  			if (value/Math.pow(10,15)%1==0) {
+	//	   	  				text += Number(value/Math.pow(10,15)).toLocaleString(locale);	      				
+	//	   	  				text += seriesItemPrecisionDefined ?  "." + "0".repeat(precision) : "";
+	//	   	  			}
+	//	   	  			else {
+	//	   	  				text += (value/Math.pow(10,15)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });
+	//	   	  			}
+		   	      			
+	   	  			text += (value/Math.pow(10,15)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });	   	  			
+	   	  			text += "P";	  			
+	   	  			break;
+	   	  			
+				case "E":
+	   					
+	//   					if (value/Math.pow(10,18)%1==0) {
+	//   						text += Number(value/Math.pow(10,18)).toLocaleString(locale);	      				
+	//   						text += seriesItemPrecisionDefined ?  "." + "0".repeat(precision) : "";
+	//   					}
+	//	   	  			else {
+	//	   	  				text += (value/Math.pow(10,18)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });
+	//	   	  			}
+	   				
+	   					text += (value/Math.pow(10,18)).toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });
+	   					text += "E";	   					
+	   					break;
+	   	  			
+				default:
+	   					
+	   					/* The same as for the case when user picked "no selection" - in case when the chart 
+	   					template does not contain the scale factor for current serie */
+	//   					if (value%1==0) {
+	//   						text += (value).toLocaleString(locale);	      				
+	//   						text += seriesItemPrecisionDefined ?  "." + "0".repeat(precision) : "";
+	//	   	  			}
+	//	   	  			else {
+	//	   	  				text += (value).toFixed(precision).toLocaleString(locale);
+	//	   	  			}	
+	   				
+					text += value.toLocaleString(locale,{ minimumFractionDigits: precision, maximumFractionDigits: precision });
+	   	  			break;
+   	  	
+   	  		}
+   					
+   			text += (postfix!="" ? " " : "") + postfix;
+   	   		
+   	   	}   	 
+   	   	
+   	   	return text;
 		
 	}
 	
@@ -956,7 +1113,8 @@ function renderParallelChart(data){
 	     .selectAll("td")
 	     .data(function(row){
 	    	 return tableColumns.map(function(column) {
-	                return {column: column, value: row[column], prefix: prefixes[column], postfix:postfixes[column], precision:precisions[column]};
+	    	 		// @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) [JIRA 1060 and 1061]
+	                return {column: column, value: row[column], prefix: prefixes[column], postfix:postfixes[column], precision:precisions[column], scaleFactor:scaleFactor[column]};
 	            });
 	     }).enter()
 	       .append("td")
@@ -1068,7 +1226,8 @@ function renderParallelChart(data){
 		.selectAll("td")
 		.data(function(row){
 			return tableColumns.map(function(column) {
-				return {column: column, value: row[column], prefix: prefixes[column], postfix:postfixes[column], precision:precisions[column]};
+				// @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) [JIRA 1060 and 1061]
+				return {column: column, value: row[column], prefix: prefixes[column], postfix:postfixes[column], precision:precisions[column], scaleFactor:scaleFactor[column]};
 			});
 		}).enter()
 		.append("td")
@@ -1111,7 +1270,8 @@ function renderParallelChart(data){
 		.selectAll("td")
 		.data(function(row){
 			return tableColumns.map(function(column) {
-				return {column: column, value: row[column], prefix: prefixes[column], postfix:postfixes[column], precision:precisions[column]};
+				// @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) [JIRA 1060 and 1061]
+				return {column: column, value: row[column], prefix: prefixes[column], postfix:postfixes[column], precision:precisions[column], scaleFactor:scaleFactor[column]};
 			});
 		}).enter()
 		.append("td")

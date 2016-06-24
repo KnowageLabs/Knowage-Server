@@ -153,6 +153,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			items : []
 		});
 		
+		var chartTypeUpperCase = chartType.toUpperCase();
+		
 		/* * * * * * * * * * SERIE FIELDS  * * * * * *  * * * * */
 		var serieName = dataAtRow.get('axisName');
 		this.serieNameTextField = Ext.create('Ext.form.field.Text', {
@@ -163,8 +165,11 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			allowBlank: true,
 			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.serie.name.emptyText")
 		});
+		
 		this.serieFieldSet.add(this.serieNameTextField);
-	    if(chartType.toUpperCase()=="WORDCLOUD" || chartType.toUpperCase()=="PARALLEL" || chartType.toUpperCase()=="CHORD" ){
+			    
+		if(chartTypeUpperCase=="SUNBURST" || chartType.toUpperCase()=="WORDCLOUD" 
+				|| chartType.toUpperCase()=="PARALLEL" || chartType.toUpperCase()=="CHORD" ){
 	    	this.serieNameTextField.hide();
 	    }
 		
@@ -188,6 +193,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		}
 		
 		this.serieTypesComboBox = Ext.create('Ext.form.ComboBox', {
+			id: "serieTypesComboBox",
 			store: {
 				store: 'array',
 				fields: ['name', 'value'],
@@ -223,15 +229,20 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			this.serieTypesComboBox.hide();
 		}	
 		
-		this.serieFieldSet.add(this.serieTypesComboBox);		
+		this.serieFieldSet.add(this.serieTypesComboBox);
+		
+		if (chartTypeUpperCase=="SUNBURST") {
+			this.serieTypesComboBox.hide();
+		}
 		
 		var serieOrder = dataAtRow.get('serieOrderType');
 		this.serieOrderComboBox = Ext.create('Sbi.chart.designer.SeriesOrderCombo', {
 			value: (serieOrder && serieOrder.trim() != '') ? serieOrder.trim() : '',
 		});
+		
 		this.serieFieldSet.add(this.serieOrderComboBox);
-				
-		if(chartType=="WORDCLOUD" || chartType=="PARALLEL" || chartType=="CHORD" ){
+								
+		if(chartTypeUpperCase=="SUNBURST" || chartType=="WORDCLOUD" || chartType=="PARALLEL" || chartType=="CHORD" ){
 			this.serieOrderComboBox.hide();
 		}
 		
@@ -245,7 +256,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			value: serieColor
 		});
 		
-		this.serieFieldSet.add(this.serieColorPicker);
+		this.serieFieldSet.add(this.serieColorPicker);	
 		
 		/**
 		 * This parameters does not play any role when chart is of type PIE
@@ -255,7 +266,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		 * @author: danristo (danilo.ristovski@mht.net)  
 		 */
 		// TODO: I think there are more chart types whose serie popup should be refined !!!		
-		if (chartType == "PIE" || chartType=="WORDCLOUD" || chartType=="PARALLEL" || chartType=="CHORD")
+		if (chartTypeUpperCase=="SUNBURST" || chartType == "PIE" 
+				|| chartType=="WORDCLOUD" || chartType=="PARALLEL" || chartType=="CHORD")
 		{			
 			this.serieFieldSet.getComponent("serieColorFieldSet").hide();
 		}		
@@ -280,6 +292,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		}
 		
 		var showValue = dataAtRow.get('serieShowValue');
+		
 		this.serieShowValue = Ext.create('Ext.form.field.Checkbox',{
 			checked: serieShowValue,
 			labelSeparator: '',
@@ -353,12 +366,12 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 					data: 	
 					[
 				       	{name: "No selection", value: "empty"},
-				       	{name: "k", value: "k"},
-				       	{name: "M", value: "M"},
-				       	{name: "G", value: "G"},
-				       	{name: "T", value: "T"},
-				       	{name: "P", value: "P"},
-				       	{name: "E", value: "E"}
+				       	{name: "k (thousands)", value: "k"},
+				       	{name: "M (millions)", value: "M"},
+				       	{name: "G (billions)", value: "G"},
+				       	{name: "T (trillions)", value: "T"},
+				       	{name: "P (quadrillions)", value: "P"},
+				       	{name: "E (quintillions)", value: "E"}
 			       	]
 				},
 				
@@ -366,6 +379,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 				valueField: 'value',
 				displayField: 'name',
 				fieldLabel : LN("sbi.chartengine.designer.scalefactor.label"),
+				hidden: (chartType == 'TREEMAP' || chartType == "HEATMAP"),
 				editable: false
 			}
 		);	
@@ -377,7 +391,12 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			fieldLabel: LN('sbi.chartengine.designer.showPercentage'),
 		});	
 	
-		this.serieFieldSet.add(this.serieShowValue);		
+		this.serieFieldSet.add(this.serieShowValue);
+		
+		if(chartTypeUpperCase=="SUNBURST"){
+			this.serieShowValue.hide();
+		}
+		
 		this.serieFieldSet.add(this.serieShowAbsValue);
 		this.serieFieldSet.add(this.serieShowPercentage);
 		this.serieFieldSet.add(this.serieScaleFactor);
@@ -503,10 +522,11 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.tooltipFieldSet.add(this.tooltipFontSizeComboBox);
 		
 		var serieTooltipBorderWidth = dataAtRow.get('serieTooltipBorderWidth');
+		
 		this.tooltipBorderWidthNumberfield = Ext.create('Ext.form.field.Number', {
 			id: "serieTolltipBorderWidth",
 			fieldLabel: LN('sbi.chartengine.configuration.serieStyleConf.tooltip.borderWidth'),
-			hidden: chartType != 'CHORD',
+			hidden: chartType != 'CHORD' && chartType != 'WORDCLOUD',
 			selectOnFocus: true,
 			value: serieTooltipBorderWidth,
 			maxValue: 10,
@@ -517,10 +537,11 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.tooltipFieldSet.add(this.tooltipBorderWidthNumberfield);
 		
 		var serieTooltipBorderRadius = dataAtRow.get('serieTooltipBorderRadius');
+		
 		this.tooltipBorderRadiusNumberfield = Ext.create('Ext.form.field.Number', {
 			id: "serieTolltipBorderRadius",
 			fieldLabel: LN('sbi.chartengine.configuration.serieStyleConf.tooltip.borderRadius'),
-			hidden: chartType != 'CHORD',
+			hidden: chartType != 'CHORD' && chartType != 'WORDCLOUD',
 			selectOnFocus: true,
 			value: serieTooltipBorderRadius,
 			maxValue: 10,
