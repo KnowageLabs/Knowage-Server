@@ -96,6 +96,9 @@ import org.hibernate.transform.Transformers;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 /**
  * Defines the Hibernate implementations for all DAO methods, for a BI Object.
  */
@@ -252,6 +255,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 */
 	@Override
 	public BIObject loadBIObjectForDetail(Integer id) throws EMFUserError {
+		Monitor monitor = MonitorFactory.start("it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl.loadBIObjectForDetail(Integer id)");
 		logger.debug("IN");
 		BIObject biObject = null;
 		Session aSession = null;
@@ -280,6 +284,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 		}
 		logger.debug("OUT");
+		monitor.stop();
 		return biObject;
 	}
 

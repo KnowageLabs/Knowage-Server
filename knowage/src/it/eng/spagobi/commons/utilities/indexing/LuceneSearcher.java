@@ -51,6 +51,9 @@ import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.util.Version;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 public class LuceneSearcher {
 
 	static private Logger logger = Logger.getLogger(LuceneSearcher.class);
@@ -60,6 +63,7 @@ public class LuceneSearcher {
 
 	public static HashMap<String, Object> searchIndex(IndexSearcher searcher, String queryString, String index, String[] fields, String metaDataToSearch)
 			throws IOException, ParseException {
+		Monitor monitor = MonitorFactory.start("it.eng.spagobi.commons.utilities.indexing.LuceneSearcher.searchIndex()");
 		logger.debug("IN");
 		HashMap<String, Object> objectsToReturn = new HashMap<String, Object>();
 
@@ -145,6 +149,7 @@ public class LuceneSearcher {
 		logger.info(numTotalHits + " total matching documents");
 
 		logger.debug("OUT");
+		monitor.stop();
 		return objectsToReturn;
 
 	}
@@ -182,6 +187,7 @@ public class LuceneSearcher {
 
 	public static HashMap<String, Object> searchIndexFuzzy(IndexSearcher searcher, String queryString, String index, String[] fields, String metaDataToSearch)
 			throws IOException, ParseException {
+		Monitor monitor = MonitorFactory.start("it.eng.spagobi.commons.utilities.indexing.LuceneSearcher.searchIndexFuzzy()");
 		logger.debug("IN");
 		HashMap<String, Object> objectsToReturn = new HashMap<String, Object>();
 		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
@@ -261,6 +267,7 @@ public class LuceneSearcher {
 		logger.info(numTotalHits + " total matching documents");
 
 		logger.debug("OUT");
+		monitor.stop();
 		return objectsToReturn;
 
 	}

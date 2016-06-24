@@ -97,9 +97,12 @@ import org.apache.lucene.store.FSDirectory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
- * 
+ *
  */
 @Path("/2.0/documents")
 public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
@@ -484,8 +487,8 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentByLucene(@QueryParam("value") String valueFilter, @QueryParam("attributes") String attributes,
 			@QueryParam("similar") Boolean similar) {
+		Monitor monitor = MonitorFactory.start("it.eng.spagobi.api.v2.DocumentResource.getDocumentByLucene()");
 		logger.debug("IN");
-
 		try {
 			UserProfile profile = getUserProfile();
 
@@ -575,6 +578,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
 		} finally {
 			logger.debug("OUT");
+			monitor.stop();
 		}
 	}
 
