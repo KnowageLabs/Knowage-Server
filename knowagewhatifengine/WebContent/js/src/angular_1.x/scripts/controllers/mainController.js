@@ -123,8 +123,14 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.selectedSortingMode = 'basic';
 	$scope.sortingCount = 10;
 	$scope.saveSortingSettings = function() {
-		$mdDialog.hide();
-		$scope.sortDisable();
+		if($scope.sortingCount<1||!$scope.sortingCount){
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.sortingSetting.count.error'), 'Error');
+			
+		}else{
+			$mdDialog.hide();
+			$scope.sortDisable();
+		}
+		
 	}
 	$scope.loadingNodes = false;
 	$scope.activeaxis;
