@@ -64,6 +64,7 @@ public class LuceneSearcher {
 	public static HashMap<String, Object> searchIndex(IndexSearcher searcher, String queryString, String index, String[] fields, String metaDataToSearch)
 			throws IOException, ParseException {
 		Monitor monitor = MonitorFactory.start("it.eng.spagobi.commons.utilities.indexing.LuceneSearcher.searchIndex()");
+		Monitor monitorPreSearch = MonitorFactory.start("it.eng.spagobi.commons.utilities.indexing.LuceneSearcher.searchIndex().preSearch");
 		logger.debug("IN");
 		HashMap<String, Object> objectsToReturn = new HashMap<String, Object>();
 
@@ -84,8 +85,11 @@ public class LuceneSearcher {
 
 		// Collect enough docs to show 5 pages
 		TopScoreDocCollector collector = TopScoreDocCollector.create(5 * hitsPerPage, false);
-
+		monitorPreSearch.stop();
+		Monitor monitorSearch = MonitorFactory.start("it.eng.spagobi.commons.utilities.indexing.LuceneSearcher.searchIndex().search");
 		searcher.search(andQuery, collector);
+		monitorSearch.stop();
+		Monitor monitorPostSearch = MonitorFactory.start("it.eng.spagobi.commons.utilities.indexing.LuceneSearcher.searchIndex().postSearch");
 		ScoreDoc[] hits = collector.topDocs().scoreDocs;
 		// setsback to action
 		objectsToReturn.put("hits", hits);
@@ -107,6 +111,8 @@ public class LuceneSearcher {
 					}
 					objectsToReturn.put(biobjId + "-views", views);
 				}
+				Monitor monitorPostSearchSummary = MonitorFactory
+						.start("it.eng.spagobi.commons.utilities.indexing.LuceneSearcher.searchIndex().postSearchSummary");
 				String summary = "";
 				if (highlighter != null) {
 					String[] summaries;
@@ -143,12 +149,14 @@ public class LuceneSearcher {
 						logger.error(e.getMessage(), e);
 					}
 				}
+				monitorPostSearchSummary.stop();
 			}
 		}
 		int numTotalHits = collector.getTotalHits();
 		logger.info(numTotalHits + " total matching documents");
 
 		logger.debug("OUT");
+		monitorPostSearch.stop();
 		monitor.stop();
 		return objectsToReturn;
 
