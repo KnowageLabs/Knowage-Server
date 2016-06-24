@@ -128,9 +128,9 @@ public class SearchContentAction extends AbstractSpagoBIAction {
 				// getting documents
 
 				if (similar) {
-					returned = LuceneSearcher.searchIndexFuzzy(searcher, valueFilter, index, fields, metaDataToSearch);
+					returned = LuceneSearcher.searchIndexFuzzy(searcher, valueFilter, index, fields, metaDataToSearch, true);
 				} else {
-					returned = LuceneSearcher.searchIndex(searcher, valueFilter, index, fields, metaDataToSearch);
+					returned = LuceneSearcher.searchIndex(searcher, valueFilter, index, fields, metaDataToSearch, true);
 				}
 				ScoreDoc[] hits = (ScoreDoc[]) returned.get("hits");
 

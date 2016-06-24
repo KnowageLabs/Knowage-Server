@@ -61,10 +61,9 @@ public class LuceneSearcher {
 	private static final String LONG_TEXT = "LONG_TEXT";// html
 	private static final String SHORT_TEXT = "SHORT_TEXT";// simple text
 
-	public static HashMap<String, Object> searchIndex(IndexSearcher searcher, String queryString, String index, String[] fields, String metaDataToSearch)
-			throws IOException, ParseException {
+	public static HashMap<String, Object> searchIndex(IndexSearcher searcher, String queryString, String index, String[] fields, String metaDataToSearch,
+			boolean isSummaryEnabled) throws IOException, ParseException {
 		Monitor monitor = MonitorFactory.start("it.eng.spagobi.commons.utilities.indexing.LuceneSearcher.searchIndex()");
-		Monitor monitorPreSearch = MonitorFactory.start("it.eng.spagobi.commons.utilities.indexing.LuceneSearcher.searchIndex().preSearch");
 		logger.debug("IN");
 		HashMap<String, Object> objectsToReturn = new HashMap<String, Object>();
 
@@ -85,18 +84,13 @@ public class LuceneSearcher {
 
 		// Collect enough docs to show 5 pages
 		TopScoreDocCollector collector = TopScoreDocCollector.create(5 * hitsPerPage, false);
-		monitorPreSearch.stop();
-		Monitor monitorSearch = MonitorFactory.start("it.eng.spagobi.commons.utilities.indexing.LuceneSearcher.searchIndex().search");
 		searcher.search(andQuery, collector);
-		monitorSearch.stop();
-		Monitor monitorPostSearch = MonitorFactory.start("it.eng.spagobi.commons.utilities.indexing.LuceneSearcher.searchIndex().postSearch");
 		ScoreDoc[] hits = collector.topDocs().scoreDocs;
 		// setsback to action
 		objectsToReturn.put("hits", hits);
 
-		// highlighter
-		Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter(), new QueryScorer(andQuery));
-		if (hits != null) {
+		if (hits != null && isSummaryEnabled) {
+			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter(), new QueryScorer(andQuery));
 			logger.debug("hits size: " + hits.length);
 			for (int i = 0; i < hits.length; i++) {
 				ScoreDoc hit = hits[i];
@@ -111,8 +105,6 @@ public class LuceneSearcher {
 					}
 					objectsToReturn.put(biobjId + "-views", views);
 				}
-				Monitor monitorPostSearchSummary = MonitorFactory
-						.start("it.eng.spagobi.commons.utilities.indexing.LuceneSearcher.searchIndex().postSearchSummary");
 				String summary = "";
 				if (highlighter != null) {
 					String[] summaries;
@@ -149,20 +141,19 @@ public class LuceneSearcher {
 						logger.error(e.getMessage(), e);
 					}
 				}
-				monitorPostSearchSummary.stop();
 			}
 		}
 		int numTotalHits = collector.getTotalHits();
 		logger.info(numTotalHits + " total matching documents");
 
 		logger.debug("OUT");
-		monitorPostSearch.stop();
 		monitor.stop();
 		return objectsToReturn;
 
 	}
 
 	private static String fillSummaryText(Integer objId) throws Exception {
+		Monitor monitor = MonitorFactory.start("it.eng.spagobi.commons.utilities.indexing.LuceneSearcher.fillSummaryText(Integer objId)");
 		logger.debug("IN");
 		List metadata = DAOFactory.getObjMetadataDAO().loadAllObjMetadata();
 		if (metadata != null && !metadata.isEmpty()) {
@@ -190,11 +181,12 @@ public class LuceneSearcher {
 			}
 		}
 		logger.debug("OUT");
+		monitor.stop();
 		return null;
 	}
 
-	public static HashMap<String, Object> searchIndexFuzzy(IndexSearcher searcher, String queryString, String index, String[] fields, String metaDataToSearch)
-			throws IOException, ParseException {
+	public static HashMap<String, Object> searchIndexFuzzy(IndexSearcher searcher, String queryString, String index, String[] fields, String metaDataToSearch,
+			boolean isSummaryEnabled) throws IOException, ParseException {
 		Monitor monitor = MonitorFactory.start("it.eng.spagobi.commons.utilities.indexing.LuceneSearcher.searchIndexFuzzy()");
 		logger.debug("IN");
 		HashMap<String, Object> objectsToReturn = new HashMap<String, Object>();
@@ -226,12 +218,8 @@ public class LuceneSearcher {
 		ScoreDoc[] hits = collector.topDocs().scoreDocs;
 		objectsToReturn.put("hits", hits);
 
-		// highlighter
-		// orQuery = orQuery.rewrite(searcher.getIndexReader());
-		// andQuery = andQuery.rewrite(searcher.getIndexReader());
-		Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter(), new QueryScorer(andQuery));
-
-		if (hits != null) {
+		if (hits != null && isSummaryEnabled) {
+			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter(), new QueryScorer(andQuery));
 			for (int i = 0; i < hits.length; i++) {
 				ScoreDoc hit = hits[i];
 				Document doc = searcher.doc(hit.doc);

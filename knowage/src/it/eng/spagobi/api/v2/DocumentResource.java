@@ -537,9 +537,9 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 
 				// getting documents
 				if (similar != null && similar) {
-					hashMap = LuceneSearcher.searchIndexFuzzy(searcher, valueFilter, indexFolderPath, fields, metaDataToSearch);
+					hashMap = LuceneSearcher.searchIndexFuzzy(searcher, valueFilter, indexFolderPath, fields, metaDataToSearch, false);
 				} else {
-					hashMap = LuceneSearcher.searchIndex(searcher, valueFilter, indexFolderPath, fields, metaDataToSearch);
+					hashMap = LuceneSearcher.searchIndex(searcher, valueFilter, indexFolderPath, fields, metaDataToSearch, false);
 				}
 				ScoreDoc[] hits = (ScoreDoc[]) hashMap.get("hits");
 
