@@ -499,7 +499,7 @@ public class KpiService {
 			}
 
 			if (kpi.getCardinality() != null && !kpi.getCardinality().isEmpty()) {
-				checkCardinality(jsError, kpi.getCardinality());
+				checkCardinality(jsError, kpi.getCardinality(), kpi.getDefinition());
 			}
 			if (kpi.getPlaceholder() != null && !kpi.getPlaceholder().isEmpty()) {
 				checkPlaceholder(req, kpi);
@@ -1033,36 +1033,47 @@ public class KpiService {
 		List<String> selectedAttrs = new ArrayList<>();
 	}
 
-	private void checkCardinality(JSError errors, String cardinality) throws JSONException, EMFUserError {
+	private void checkCardinality(JSError errors, String cardinality, String definition) throws JSONException, EMFUserError {
 		JSONArray measureArray = new JSONObject(cardinality).getJSONArray("measureList");
-		List<Measure> measureLst = new ArrayList<>();
-		for (int i = 0; i < measureArray.length(); i++) {
-			JSONObject misuraJson = measureArray.getJSONObject(i);
-			JSONObject attrs = misuraJson.optJSONObject(MEASURE_ATTRIBUTES);
-			Measure measure = new Measure();
-			measure.name = misuraJson.getString(MEASURE_NAME);
-			measureLst.add(measure);
-			if (attrs != null) {
-				Iterator<String> attrNames = attrs.keys();
-				while (attrNames.hasNext()) {
-					String attr = attrNames.next();
-					if (attrs.optBoolean(attr)) {
-						measure.selectedAttrs.add(attr);
+		JSONArray measureOfFormulaArray = new JSONObject(definition).getJSONArray("measures");
+		if (measureArray.length() != measureOfFormulaArray.length()) {
+			errors.addErrorKey(NEW_KPI_CARDINALITY_ERROR);
+		}
+		if (!errors.hasErrors()) {
+			List<Measure> measureLst = new ArrayList<>();
+			for (int i = 0; i < measureArray.length(); i++) {
+				String measureName = measureArray.getJSONObject(i).getString(MEASURE_NAME);
+				if (!measureOfFormulaArray.get(i).equals(measureName)) {
+					errors.addErrorKey(NEW_KPI_CARDINALITY_ERROR);
+					break;
+				}
+				JSONObject misuraJson = measureArray.getJSONObject(i);
+				JSONObject attrs = misuraJson.optJSONObject(MEASURE_ATTRIBUTES);
+				Measure measure = new Measure();
+				measure.name = misuraJson.getString(MEASURE_NAME);
+				measureLst.add(measure);
+				if (attrs != null) {
+					Iterator<String> attrNames = attrs.keys();
+					while (attrNames.hasNext()) {
+						String attr = attrNames.next();
+						if (attrs.optBoolean(attr)) {
+							measure.selectedAttrs.add(attr);
+						}
 					}
 				}
 			}
-		}
-		Collections.sort(measureLst, new Comparator<Measure>() {
-			@Override
-			public int compare(Measure m1, Measure m2) {
-				return m1.selectedAttrs.size() - m2.selectedAttrs.size();
-			}
-		});
-		for (int i = 1; i < measureLst.size(); i++) {
-			Measure prevMeasure = measureLst.get(i - 1);
-			Measure currMeasure = measureLst.get(i);
-			if (!currMeasure.selectedAttrs.containsAll(prevMeasure.selectedAttrs)) {
-				errors.addErrorKey(NEW_KPI_CARDINALITY_ERROR);
+			Collections.sort(measureLst, new Comparator<Measure>() {
+				@Override
+				public int compare(Measure m1, Measure m2) {
+					return m1.selectedAttrs.size() - m2.selectedAttrs.size();
+				}
+			});
+			for (int i = 1; i < measureLst.size(); i++) {
+				Measure prevMeasure = measureLst.get(i - 1);
+				Measure currMeasure = measureLst.get(i);
+				if (!currMeasure.selectedAttrs.containsAll(prevMeasure.selectedAttrs)) {
+					errors.addErrorKey(NEW_KPI_CARDINALITY_ERROR);
+				}
 			}
 		}
 	}
