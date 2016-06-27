@@ -335,7 +335,7 @@
             			GROUPING_VALUE:groupingCategoryValue,
             			stringParameters:null
             	}; 
-            	parent.execExternalCrossNavigation(navData,JSON.parse(driverParams),undefined,currentDocumentName)
+            	parent.execExternalCrossNavigation(navData,JSON.parse(driverParams),undefined,currentDocumentLabel)
 //             	parent.angular.element(frameElement).scope().navigateTo(navData); 
             }else{
             	Sbi.chart.viewer.CrossNavigationHelper.navigateTo(

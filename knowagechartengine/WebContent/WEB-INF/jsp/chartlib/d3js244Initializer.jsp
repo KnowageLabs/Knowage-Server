@@ -158,7 +158,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             			groupingCategoryValue:groupingCategoryValue,
             			stringParameters:null
             	};     
-				parent.execExternalCrossNavigation(navData,{},undefined,currentDocumentName); 
+				parent.execExternalCrossNavigation(navData,{},undefined,currentDocumentLabel); 
             }else{
 			
 				Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
