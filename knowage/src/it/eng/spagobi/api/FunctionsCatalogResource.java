@@ -28,6 +28,7 @@ import it.eng.spagobi.functions.metadata.SbiFunctionInputVariable;
 import it.eng.spagobi.functions.metadata.SbiFunctionOutput;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.CatalogFunction;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -272,8 +273,13 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				objToInsert.put("type", "Dataset Input");
 				objToInsert.put("functionId", d.getId().getFunctionId());
 				inputDatasets.put(objToInsert);
-
-				String label = dsDAO.loadDataSetById(d.getId().getDsId()).getLabel();
+				String label = null;
+				IDataSet loadedDS = dsDAO.loadDataSetById(d.getId().getDsId());
+				if (loadedDS != null) {
+					label = loadedDS.getLabel();
+				} else {
+					label = "DS not found in DB";
+				}
 				objToInsert.put("label", label);
 			}
 
