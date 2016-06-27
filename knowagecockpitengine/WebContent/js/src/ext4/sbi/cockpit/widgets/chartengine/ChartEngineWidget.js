@@ -302,7 +302,8 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 			method: "GET",
 			success : function(){
 				this.chartEngineServicePostCall();
-			}
+			},
+			scope: this
 		});
 		
 		Sbi.cockpit.widgets.chartengine.ChartEngineWidget.superclass.onStoreLoad.call(this, this.getStore());
