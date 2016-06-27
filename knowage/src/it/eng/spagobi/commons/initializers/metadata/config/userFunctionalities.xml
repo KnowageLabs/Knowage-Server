@@ -39,8 +39,6 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ObjMetadataManagement" description="ObjMetadataManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ProfileManagement" description="ProfileManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement" />
-	<USER_FUNCTIONALITY productType="KnowageBD" name="DomainManagement" description="DomainManagement" />
-	<USER_FUNCTIONALITY productType="KnowageBD" name="ConfigManagement" description="ConfigManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality" />
@@ -105,8 +103,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ObjMetadataManagement" description="ObjMetadataManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ProfileManagement" description="ProfileManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageSI" name="DomainManagement" description="DomainManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageSI" name="ConfigManagement" description="ConfigManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement"/>
@@ -184,8 +180,6 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="ObjMetadataManagement" description="ObjMetadataManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ProfileManagement" description="ProfileManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageER" name="DomainManagement" description="DomainManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageER" name="ConfigManagement" description="ConfigManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImagesManagement" description="ImagesManagement" />
@@ -211,7 +205,6 @@
 	
 	<!-- Authorizations for KnowagePM -->
 	<USER_FUNCTIONALITY productType="KnowagePM" name="AlertManagement" description="AlertManagement" />
-	<USER_FUNCTIONALITY productType="KnowagePM" name="ConfigManagement" description="ConfigManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ConstraintManagement" description="ConstraintManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ConstraintView" description="ConstraintView"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="CreateChartFunctionality" description="CreateChartFunctionality" />
@@ -230,7 +223,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentStateManagement" description="DocumentStateManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentTestManagement" description="DocumentTestManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentUserManagement" description="DocumentUserManagement"/>
-	<USER_FUNCTIONALITY productType="KnowagePM" name="DomainManagement" description="DomainManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="FunctionsCatalog" description="FunctionsCatalog" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImagesManagement" description="ImagesManagement" />

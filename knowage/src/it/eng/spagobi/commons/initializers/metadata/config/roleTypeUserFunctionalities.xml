@@ -184,10 +184,6 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="UserDefinedPropertyManagement" roleType="MODEL_ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="DomainManagement" roleType="ADMIN" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="ConfigManagement" roleType="ADMIN" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="UserSaveDocumentFunctionality" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="UserSaveDocumentFunctionality" roleType="USER" />
