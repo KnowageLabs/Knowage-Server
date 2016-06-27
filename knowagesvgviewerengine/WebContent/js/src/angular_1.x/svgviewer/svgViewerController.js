@@ -1,5 +1,10 @@
 var app = angular.module('svgViewerApp', ['ngMaterial','sbiModule']);
 
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
+	    $mdThemingProvider.theme('knowage')
+	    $mdThemingProvider.setDefaultTheme('knowage');
+	}]);
+
 app.controller('SvgViewerController', ['$scope','sbiModule_restServices','$mdSidenav','sbiModule_logger','$window',SvgViewerControllerFunction] );
 		
 function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,sbiModule_logger,$window)	{
@@ -10,9 +15,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
     $mdSidenav('svgSideNav').toggle();
   };
     
-  $scope.$watch('isSidenavOpen', function(isSidenavOpen) {
-	  
-  });
+
   
   //Call functions when the SVG is loaded
   angular.element(document.getElementById('svgContainer')).ready(function() {

@@ -49,26 +49,33 @@
         
 			<div ng-app="svgViewerApp">
 			    <div ng-controller="SvgViewerController">
-			        <md-sidenav md-disable-backdrop md-component-id="svgSideNav" md-is-open="isSidenavOpen" class="md-sidenav-<%= propertiesPanelPosition %>"  >
-			           	Properties
-			            <br/>
-					    <md-radio-group ng-model="measureValue">
-					   		 Measures
-					      <md-radio-button  ng-repeat="(key,prop) in measures track by $index" ng-value="prop.columnId"  ng-click="changeSelectedMeasure(prop.columnId,prop.description)">
+			        <md-sidenav layout="column" md-component-id="svgSideNav"  class="md-sidenav-<%= propertiesPanelPosition %>"  >
+			           <md-toolbar class="secondaryToolbar" layout="row" layout-align="start center"> 
+			           	<span layout-padding>Measures </span>	           
+			           </md-toolbar>
+			           <div>
+					    <md-radio-group ng-model="measureValue" layout-padding layout="column" layout-align="center start">
+					      <md-radio-button  class="noPadding" ng-repeat="(key,prop) in measures track by $index" ng-value="prop.columnId"  ng-click="changeSelectedMeasure(prop.columnId,prop.description)">
 					      	{{prop.description}}                 
 					      </md-radio-button>
-					    </md-radio-group>		
-					    <br/>
-					    Layers
-					    <br/>					    
-					    <md-checkbox ng-model="layerSelected"  ng-repeat="(key,prop) in layers track by $index" ng-click="changeSelectedLayer(prop.name,!layerSelected)">
-					      	{{prop.description}}                 
-					     </md-checkbox>     
-					     Legend
-					     </br>
-					     <div ng-repeat="color in legend.colors track by $index" ng-style="{'background-color':color}" style="padding:20px;">
-					     	{{color}}  {{legend.tresholds[$index]}} - {{legend.tresholds[$index+1]}}  
-					     </div>        
+					    </md-radio-group>					           
+			           </div>
+			           <md-toolbar class="secondaryToolbar" layout="row" layout-align="start center"> 
+			           	<span layout-padding>Layers</span>	           
+			           </md-toolbar>
+					   <div layout="row" layout-wrap layout-padding>
+						    <md-checkbox class="noPadding" flex="100" ng-model="layerSelected"  ng-repeat="(key,prop) in layers track by $index" ng-click="changeSelectedLayer(prop.name,!layerSelected)">
+						      	{{prop.description}}                 
+						     </md-checkbox>     
+					    </div>			    
+						<md-toolbar class="secondaryToolbar" layout="row" layout-align="start center"> 
+			           		<span layout-padding>Legend</span>	           
+			            </md-toolbar>
+			            <div layout="row" layout-wrap layout-padding>
+			            </div>
+					     <md-card ng-repeat="color in legend.colors track by $index" ng-style="{'background-color':color}" style="padding:5px;">
+					     	 [{{legend.tresholds[$index] | number:2}} - {{legend.tresholds[$index+1] | number:2}}] 
+					     </md-card>        
 			        </md-sidenav>
 			        <md-button class="sidenavOpenButton" ng-click="openSideNav()">
 			              <i class="fa fa-2x fa-bar-chart" aria-hidden="true"></i>
