@@ -404,7 +404,7 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 			}else{
 				crossData.push(selectedElements.getProperties());
 			}
-			parent.execExternalCrossNavigation(crossData,geoModule_driverParameters,undefined,geoModule_driverParameters.DOCUMENT_NAME[0]);
+			parent.execExternalCrossNavigation(crossData,geoModule_driverParameters,undefined,geoModule_driverParameters.DOCUMENT_LABEL[0]);
 		}
 	}
 });
