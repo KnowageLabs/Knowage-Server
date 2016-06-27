@@ -209,10 +209,24 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			tmpKpiToSave.definition = JSON.stringify($scope.kpi.definition);
 		}
 		//update cardinality
-		if(Object.keys($scope.kpi.cardinality).length>0){
+		if(Object.keys($scope.kpi.cardinality).length>0 ){
 			if(angular.isObject($scope.kpi.cardinality)){
-				tmpKpiToSave.cardinality=JSON.stringify($scope.kpi.cardinality);
+				if($scope.kpi.cardinality.length!=$scope.kpi.cardinality.measureList.length && $scope.formulaModified.value){
+					$scope.setCardinality();
+					tmpKpiToSave.cardinality=JSON.stringify($scope.kpi.cardinality);
+				}else{
+					tmpKpiToSave.cardinality=JSON.stringify($scope.kpi.cardinality);
+				}
+			
 
+			}else{
+				$scope.kpi.cardinality = JSON.parse($scope.kpi.cardinality);
+				if($scope.kpi.cardinality.length!=$scope.kpi.cardinality.measureList.length && $scope.formulaModified.value){
+					$scope.setCardinality();
+					tmpKpiToSave.cardinality=JSON.stringify($scope.kpi.cardinality);
+				}else{
+					tmpKpiToSave.cardinality=JSON.stringify($scope.kpi.cardinality);
+				}
 			}
 		}else{
 			var obj;
