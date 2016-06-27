@@ -86,6 +86,20 @@ onload="init(evt);">
 			alert("pong");
 		}	
 		
+		//Polyfill for Explorer		
+		(function () {
+		  function CustomEvent ( event, params ) {
+		    params = params || { bubbles: false, cancelable: false, detail: undefined };
+		    var evt = document.createEvent( 'CustomEvent' );
+		    evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
+		    return evt;
+		   }
+		
+		  CustomEvent.prototype = window.Event.prototype;
+		
+		  window.CustomEvent = CustomEvent;
+		})();
+		
 		//global variables for mapApp and map object
 		var myMapApp = new mapApp();
 		var myMainMap;
@@ -96,7 +110,7 @@ onload="init(evt);">
 		var suspendProcess;
 		var windowPositions = new Array();
 		var execCrossFnScope = null;
-		
+
 		//force highlight on mouse over
 		sbi.geo.conf.gui_settings.highlightOnMouseOver = true;
 	
@@ -161,6 +175,10 @@ onload="init(evt);">
 			if (document.documentElement.suspendRedraw) {
 				document.documentElement.unsuspendRedraw(suspendProcess);
 			}
+			//debugger;
+			//Launch an event to announce that we are at the end of the script executions
+			var event = new CustomEvent("SVGLoaded", { "detail": "SVG is Loaded" });
+			window.parent.document.dispatchEvent(event);
 		}
 			
 		
@@ -718,7 +736,8 @@ onload="init(evt);">
 			}	
 		}
 	
-		function colourMap() {			
+		function colourMap() {	
+		//debugger;		
 			if (document.documentElement.suspendRedraw) {
 				suspendProcess = document.documentElement.suspendRedraw(20000);
 			}

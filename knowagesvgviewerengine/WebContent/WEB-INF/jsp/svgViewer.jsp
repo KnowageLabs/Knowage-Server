@@ -63,7 +63,12 @@
 					    <br/>					    
 					    <md-checkbox ng-model="layerSelected"  ng-repeat="(key,prop) in layers track by $index" ng-click="changeSelectedLayer(prop.name,!layerSelected)">
 					      	{{prop.description}}                 
-					     </md-checkbox>             
+					     </md-checkbox>     
+					     Legend
+					     </br>
+					     <div ng-repeat="color in legend.colors track by $index" ng-style="{'background-color':color}" style="padding:20px;">
+					     	{{color}}  {{legend.tresholds[$index]}} - {{legend.tresholds[$index+1]}}  
+					     </div>        
 			        </md-sidenav>
 			        <md-button class="sidenavOpenButton" ng-click="openSideNav()">
 			              <i class="fa fa-2x fa-bar-chart" aria-hidden="true"></i>
@@ -71,7 +76,7 @@
 			         <md-content layout-fill layout="column">
 			            
 			            <div id="container" layout-fill>
-							<iframe id="svgContainer" name="iframe_1"
+							<iframe id="svgContainer" 
 								src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'
 								width="100%" height="100%" frameborder="0"
 								style="background-color: white;"> 
