@@ -297,7 +297,14 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 	, onStoreLoad: function() {
 		Sbi.trace("[ChartEngineWidget.onStoreLoad]: IN");
 		
-		this.chartEngineServicePostCall();
+		Ext.Ajax.request({
+			url: Sbi.config.chartRuntimeUrlPing,
+			method: "GET",
+			success : function(){
+				this.chartEngineServicePostCall();
+			}
+		});
+		
 		Sbi.cockpit.widgets.chartengine.ChartEngineWidget.superclass.onStoreLoad.call(this, this.getStore());
 		
      	Sbi.trace("[ChartEngineWidget.onStoreLoad]: OUT");
