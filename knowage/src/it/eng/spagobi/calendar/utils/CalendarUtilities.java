@@ -5,6 +5,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
@@ -16,9 +17,11 @@ public class CalendarUtilities {
 		Configuration conf = new Configuration();
 		String resource = "it/eng/spagobi/tools/calendar/metadata/mapping/hibernate.calendar.cfg.xml";
 		conf = conf.configure(resource);
-
-		IDataSource datasource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel("aida_oracle");
 		try {
+
+			IDataSource datasource = DAOFactory.getDataSourceDAO()
+					.loadDataSourceByLabel(SingletonConfig.getInstance().getConfigValue("dwh.calendar.datasource.label"));
+
 			conf.setProperty("hibernate.connection.url", datasource.getUrlConnection());
 			conf.setProperty("hibernate.connection.password", datasource.getPwd());
 			conf.setProperty("hibernate.connection.username", datasource.getUser());
