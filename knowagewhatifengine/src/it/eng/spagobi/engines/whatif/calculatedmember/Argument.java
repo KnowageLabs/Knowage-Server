@@ -37,7 +37,9 @@ public class Argument {
 	}
 
 	public String getDefault_value() {
-
+		if(default_value==null){
+			return "";
+		}
 		return default_value.trim();
 	}
 

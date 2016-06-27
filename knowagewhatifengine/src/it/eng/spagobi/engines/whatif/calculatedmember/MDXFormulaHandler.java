@@ -161,12 +161,11 @@ public class MDXFormulaHandler {
 			Iterator it = placeHolders.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry pair = (Map.Entry) it.next();
-
-				body = body.replaceAll(pair.getKey().toString(), pair.getValue().toString());
-				formulas.getFormulas().get(i).setBody(body);
-
+				if(body!=null){
+					body = body.replaceAll(pair.getKey().toString(), pair.getValue().toString());
+					formulas.getFormulas().get(i).setBody(body);
+				}
 			}
-
 		}
 	}
 
