@@ -181,11 +181,13 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 
 	$scope.loadCalendar = function(item){
 		$scope.disableGenera = true;
-		$scope.showCircularGenera = false;
+		$scope.showCircularGenera = true;
 		angular.copy(item, $scope.selectCalendar);
 		sbiModule_restServices.promiseGet("calendar",item.calendarId+"/getInfoCalendarById")
 		.then(function(response){ 
+			
 			$scope.selectCalendar.realDateGenerated = response.data;
+			$scope.showCircularGenera = false;
 			if($scope.selectCalendar.realDateGenerated.length==0){
 				$scope.disableGenera = false;
 			}else{
