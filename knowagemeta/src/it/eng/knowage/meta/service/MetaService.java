@@ -64,6 +64,7 @@ import com.flipkart.zjsonpatch.JsonDiff;
 public class MetaService {
 	private static Logger logger = Logger.getLogger(MetaService.class);
 	private static final String DEFAULT_MODEL_NAME = "modelName";
+	private static final String EMF_MODEL = "EMF_MODEL";
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
@@ -85,6 +86,7 @@ public class MetaService {
 			}
 
 			Model model = createEmptyModel(json);
+			req.getSession().setAttribute(EMF_MODEL, model);
 
 			JSONObject translatedModel = createJson(model);
 
@@ -111,16 +113,17 @@ public class MetaService {
 			Assert.assertTrue(json.has("physicalModel"), "physicalModel is mandatory");
 			Assert.assertTrue(json.has("businessModel"), "businessModel is mandatory");
 
-			Model model = createEmptyModel(json);
-			JSONObject emptyModelJson = createJson(model);
-			JsonNode patch = JsonDiff.asJson(mapper.readTree(emptyModelJson.toString()), actualJson);
+			// Model model = createEmptyModel(json);
+			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 
 			serializer.serialize(model, new File("c:\\test.sbimodel_old.txt"));
 
-			try {
+			// JSONObject emptyModelJson = createJson(model);
+			// JsonNode patch = JsonDiff.asJson(mapper.readTree(emptyModelJson.toString()), actualJson);
+
+			if (json.has("diff")) {
+				JsonNode patch = mapper.readTree(json.getString("diff"));
 				applyPatch(patch, model);
-			} catch (SpagoBIException e) {
-				throw new SpagoBIServiceException(req.getPathInfo(), e);
 			}
 
 			applyRelationships(actualJson, model);
@@ -131,6 +134,8 @@ public class MetaService {
 			return Response.ok().build();
 		} catch (IOException | JSONException e) {
 			logger.error(e);
+		} catch (SpagoBIException e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
 		return Response.serverError().build();
 	}
@@ -144,17 +149,21 @@ public class MetaService {
 			String jsonString = RestUtilities.readBody(req);
 			JSONObject json = new JSONObject(jsonString);
 
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode actualJson = mapper.readTree(jsonString);
+			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 
-			Assert.assertTrue(json.has("newBusinessModel"), "businessModel is mandatory");
-
-			Model model = createEmptyModel(json);
+			if (json.has("diff")) {
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode patch = mapper.readTree(json.getString("diff"));
+				applyPatch(patch, model);
+			}
 
 			JSONObject emptyModelJson = createJson(model);
+
 			// TODO
 		} catch (IOException | JSONException e) {
 			logger.error(e);
+		} catch (SpagoBIException e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
 		return Response.serverError().build();
 	}
@@ -163,8 +172,18 @@ public class MetaService {
 	@Path("/addBusinessRelation")
 	public Response addBusinessRelation(@Context HttpServletRequest req) {
 		try {
-
 			JSONObject json = RestUtilities.readBodyAsJSONObject(req);
+
+			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+
+			JSONObject oldJsonModel = createJson(model);
+
+			ObjectMapper mapper = new ObjectMapper();
+			if (json.has("diff")) {
+				JsonNode patch = mapper.readTree(json.getString("diff"));
+				applyPatch(patch, model);
+			}
+
 			String name = json.getString("name");
 			String destTableName = json.getString("destinationTable");
 			String sourceTableName = json.getString("sourceTable");
@@ -172,7 +191,6 @@ public class MetaService {
 			JSONArray sourceCols = json.getJSONArray("sourceColumns");
 
 			BusinessModel bm = BusinessModelFactory.eINSTANCE.createBusinessModel();
-			Model model = ModelFactory.eINSTANCE.createModel();
 			bm.setParentModel(model);
 
 			BusinessRelationship rel = BusinessModelFactory.eINSTANCE.createBusinessRelationship();
@@ -202,11 +220,14 @@ public class MetaService {
 				rel.getSourceColumns().add(bc);
 			}
 
-			String jsonRel = JsonConverter.objectToJson(rel, rel.getClass());
+			JSONObject jsonModel = createJson(model);
+			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 
-			return Response.ok(jsonRel).build();
+			return Response.ok(patch.toString()).build();
 		} catch (IOException | JSONException e) {
 			logger.error(e);
+		} catch (SpagoBIException e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
 		return Response.serverError().build();
 	}
@@ -467,6 +488,19 @@ public class MetaService {
 		businessModelInitializer.initialize("pippoBusiness", physicalTableFilter, physicalModel);
 
 		return model;
+	}
+
+	public static void main2(String[] args) {
+		Pattern p = Pattern.compile("(/)(\\d)(/)");
+		String input = "/physicalModel/0/columns/0/name";
+		Matcher m = p.matcher(input);
+		StringBuffer s = new StringBuffer();
+		while (m.find()) {
+			System.out.println(m.group(2));
+			m.appendReplacement(s, "[" + String.valueOf(1 + Integer.parseInt(m.group(2))) + "]/");
+		}
+		System.out.println(">" + s.toString());
+		System.exit(0);
 	}
 
 	public static void main(String[] args) {
