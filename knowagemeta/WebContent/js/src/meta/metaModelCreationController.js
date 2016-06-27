@@ -2,11 +2,12 @@ angular.module('metaManager').controller('metaModelCreationController', [ '$scop
 
 angular.module('metaManager').controller('metaModelCreationPhysicalController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',metaModelCreationPhysicalControllerFunction ]);
 
-angular.module('metaManager').controller('metaModelCreationBusinessController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',metaModelCreationBusinessControllerFunction ]);
+angular.module('metaManager').controller('metaModelCreationBusinessController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$rootScope',metaModelCreationBusinessControllerFunction ]);
 angular.module('metaManager').controller('businessModelPropertyController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelPropertyControllerFunction ]);
 angular.module('metaManager').controller('businessModelAttributeController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelAttributeControllerFunction ]);
 angular.module('metaManager').controller('businessModelInboundController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config',businessModelInboundControllerFunction ]);
-angular.module('metaManager').controller('businessModelOutboundController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelOutboundControllerFunction ]);
+angular.module('metaManager').controller('businessModelOutboundController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config',businessModelOutboundControllerFunction ]);
+
 
 function metaModelCreationControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout) {
 	$scope.getOpenFolderIcons = function(node) {
@@ -274,8 +275,9 @@ function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiM
 
 	$scope.addNewInbound = function(){
 			$mdDialog.show({
-
+				controller: inboundModelPageControllerFunction,
 				preserveScope: true,
+				locals: {businessModel:$scope.businessModel, selectedBusinessModel:$scope.selectedBusinessModel},
 				templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/inboundModel.jsp',
 				clickOutsideToClose:true,
 				escapeToClose :true,
@@ -283,7 +285,6 @@ function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiM
 //				locals:{url:sbiModule_config.contextName+'/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp&datasourceId='+dsId}
 //				locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId}
 			});
-
 	}
 
 	$scope.inboundFunctions = {
@@ -293,7 +294,8 @@ function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiM
 
 
 }
-function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout){
+
+function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config){
 	$scope.isOutbound = function(item) {
 		return !angular.equals(item.sourceTableName,
 				$scope.selectedBusinessModel.name);
@@ -319,11 +321,113 @@ function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbi
 		                      ];
 
 	$scope.addNewOutbound = function(){
-
-	}
+		$mdDialog.show({
+			controller: outboundModelPageControllerFunction,
+			preserveScope: true,
+			locals: {businessModel:$scope.businessModel, selectedBusinessModel:$scope.selectedBusinessModel},
+			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/outboundModel.jsp',
+			clickOutsideToClose:true,
+			escapeToClose :true,
+			fullscreen: true
+		});
+}
 
 	$scope.outboundFunctions = {
 			translate:sbiModule_translate,
 			addNewOutbound:$scope.addNewOutbound
 	};
+}
+
+
+function inboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout, businessModel, selectedBusinessModel){
+	$scope.translate = sbiModule_translate;
+	$scope.cardinality = [{name:'1 to 1',value:'1'},{name:'1 to N',value:'2'},{name:'N to 1',value:'3'},{name:' 1* to 1',value:'4'},
+	                      {name:'1 to 1*',value:'5'},{name:'1* to N',value:'6'},{name:'1 to N*',value:'7'},{name:'N* to 1',value:'8'},
+	                      {name:'N to 1*',value:'9'}];
+	$scope.businessName;
+	$scope.businessModel = angular.copy(businessModel);
+	$scope.selectedBusinessModel = angular.copy(selectedBusinessModel);
+	$scope.leftElement = {};
+	$scope.rightElement = {};
+
+	$scope.cardinalityValue = 0;
+
+	$scope.tableToSimpleBound = function( model ){
+		var a = [];
+		if(model){
+			if(model.columns)
+				model.columns.forEach(function(item){
+					a.push({name:item.name, links:[]});
+					});
+				}
+		return a;
+	};
+
+	$scope.simpleRight = $scope.tableToSimpleBound($scope.selectedBusinessModel);
+	$scope.simpleLeft = [];
+
+
+	$scope.alterTableToSimpleBound = function(item){
+		$scope.simpleLeft = $scope.tableToSimpleBound(item);
+	}
+
+	$scope.createInbound = function(){
+
+	}
+
+	$scope.cancel = function(){
+		$mdDialog.cancel();
+	}
+
+}
+
+function outboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout, businessModel, selectedBusinessModel){
+	$scope.translate = sbiModule_translate;
+	$scope.cardinality = [{name:'1 to 1',value:'1'},{name:'1 to N',value:'2'},{name:'N to 1',value:'3'},{name:' 1* to 1',value:'4'},
+	                      {name:'1 to 1*',value:'5'},{name:'1* to N',value:'6'},{name:'1 to N*',value:'7'},{name:'N* to 1',value:'8'},
+	                      {name:'N to 1*',value:'9'}];
+	$scope.businessName;
+	$scope.businessModel = businessModel;
+	$scope.selectedBusinessModel = selectedBusinessModel;
+	$scope.leftElement = {};
+	$scope.rightElement = {};
+
+	$scope.cardinalityValue = 0;
+
+	$scope.tableToSimpleBound = function( model ){
+		var a = [];
+		if(model){
+			if(model.columns)
+				model.columns.forEach(function(item){
+					a.push({name:item.name, links:[]});
+					});
+				}
+		return a;
+	};
+
+	$scope.simpleLeft = $scope.tableToSimpleBound($scope.selectedBusinessModel);
+	$scope.simpleRight = [];
+
+
+	$scope.alterTableToSimpleBound = function(item){
+		$scope.simpleRight = $scope.tableToSimpleBound(item);
+	}
+
+	$scope.createOutbound = function(){
+		var dataSend = {};
+		dataSend.cardinality = $scope.cardinalityValue;
+		dataSend.name = $scope.businessName;
+		dataSend.sourceColumns = [];
+		dataSend.destinationColumns = [];
+		dataSend.sourceTable = selectedBusinessModel.uniqueName;
+		dataSend.targetTable = rightElement.uniqueName;
+
+
+		console.log(dataSend);
+	}
+
+	$scope.cancel = function(){
+		$mdDialog.cancel();
+	}
+
 }

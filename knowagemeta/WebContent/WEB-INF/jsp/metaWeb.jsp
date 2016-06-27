@@ -41,6 +41,7 @@ var datasourceId='<%= datasourceId%>';
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>meta Definition</title>
 	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/associatordirective/associatordirective.js"></script>
 	<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/metaDefinitionController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/metaModelCreationController.js"></script>
