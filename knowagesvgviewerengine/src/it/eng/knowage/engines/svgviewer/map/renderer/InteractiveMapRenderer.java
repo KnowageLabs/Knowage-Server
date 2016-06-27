@@ -908,8 +908,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 		IDataStore dataStore = datamart.getDataStore();
 
-		// Element targetLayer = map.getElementById(datamart.getTargetFeatureName());
-		Element targetLayer = map.getElementById("rooms"); // has selected=true
+		Element targetLayer = map.getElementById(datamart.getTargetFeatureName());
 
 		NodeList nodeList = targetLayer.getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
