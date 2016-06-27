@@ -193,7 +193,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	 */
 	public String getSourceTableName() {
 		BusinessColumnSet bcSet = getSourceTable();
-		return bcSet != null ? bcSet.getName() : null;
+		return bcSet != null ? bcSet.getUniqueName() : null;
 	}
 
 	/**
@@ -243,7 +243,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	 */
 	public String getDestinationTableName() {
 		BusinessColumnSet bcSet = getDestinationTable();
-		return bcSet != null ? bcSet.getName() : null;
+		return bcSet != null ? bcSet.getUniqueName() : null;
 	}
 
 	/**
@@ -317,8 +317,10 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	}
 
 	public String getPhysicalForeignKeyName() {
-		return getPhysicalForeignKey().getUniqueName() != null && !getPhysicalForeignKey().getUniqueName().isEmpty() ? getPhysicalForeignKey().getUniqueName()
-				: getPhysicalForeignKey().getName();
+		if (getPhysicalForeignKey() != null)
+			return getPhysicalForeignKey().getUniqueName() != null && !getPhysicalForeignKey().getUniqueName().isEmpty() ? getPhysicalForeignKey()
+					.getUniqueName() : getPhysicalForeignKey().getName();
+		return null;
 	}
 
 	/**

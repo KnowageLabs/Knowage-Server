@@ -4,12 +4,18 @@ import it.eng.knowage.meta.initializer.BusinessModelInitializer;
 import it.eng.knowage.meta.initializer.PhysicalModelInitializer;
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelFactory;
+import it.eng.knowage.meta.model.ModelPropertyType;
+import it.eng.knowage.meta.model.business.BusinessColumn;
+import it.eng.knowage.meta.model.business.BusinessColumnSet;
 import it.eng.knowage.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.business.BusinessModelFactory;
+import it.eng.knowage.meta.model.business.BusinessRelationship;
 import it.eng.knowage.meta.model.business.BusinessTable;
 import it.eng.knowage.meta.model.filter.PhysicalTableFilter;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
+import it.eng.knowage.meta.model.serializer.ModelPropertyFactory;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
@@ -23,11 +29,13 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,13 +55,15 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.flipkart.zjsonpatch.JsonDiff;
 
 @ManageAuthorization
 @Path("/1.0/metaWeb")
 public class MetaService {
 	private static Logger logger = Logger.getLogger(MetaService.class);
-	private static final String MODEL_NAME = "modelName";
+	private static final String DEFAULT_MODEL_NAME = "modelName";
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
@@ -74,7 +84,7 @@ public class MetaService {
 				TenantManager.setTenant(new Tenant(userProfile.getOrganization()));
 			}
 
-			Model model = createModel(json);
+			Model model = createEmptyModel(json);
 
 			JSONObject translatedModel = createJson(model);
 
@@ -101,36 +111,22 @@ public class MetaService {
 			Assert.assertTrue(json.has("physicalModel"), "physicalModel is mandatory");
 			Assert.assertTrue(json.has("businessModel"), "businessModel is mandatory");
 
-			Model model = createModel(json);
+			Model model = createEmptyModel(json);
+			JSONObject emptyModelJson = createJson(model);
+			JsonNode patch = JsonDiff.asJson(mapper.readTree(emptyModelJson.toString()), actualJson);
+
 			serializer.serialize(model, new File("c:\\test.sbimodel_old.txt"));
 
-			JSONObject jsonOld = createJson(model);
-
-			// JsonNode patch = JsonDiff.asJson(mapper.readTree(jsonOld.toString()), actualJson);
-			jsonOld.remove("physicalModel");
-			JsonNode patch = JsonDiff.asJson(mapper.readTree(jsonOld.getJSONArray("businessModel").toString()), actualJson.get("businessModel"));
-
 			try {
-				applyPatch(patch, model.getBusinessModels().get(0));
+				applyPatch(patch, model);
 			} catch (SpagoBIException e) {
 				throw new SpagoBIServiceException(req.getPathInfo(), e);
 			}
 
+			applyRelationships(actualJson, model);
+
 			serializer.serialize(model, new File("c:\\test.sbimodel_new.txt"));
-			/*
-			 * JSONArray physicalModels = json.getJSONArray("physicalModel"); Map<String, JSONObject> pmMap = new HashMap<>(); for (int i = 0; i <
-			 * physicalModels.length(); i++) { JSONObject physicalModel = physicalModels.getJSONObject(i); pmMap.put(physicalModel.getString("name"),
-			 * physicalModel); }
-			 * 
-			 * JSONArray businessTablesJson = json.getJSONArray("businessModel"); Map<String, JSONObject> bmMap = new HashMap<>(); for (int i = 0; i <
-			 * businessTablesJson.length(); i++) { JSONObject businessTableJson = businessTablesJson.getJSONObject(i);
-			 * bmMap.put(businessTableJson.getString("uniqueName"), businessTableJson); }
-			 * 
-			 * Iterator<BusinessTable> businessTableIterator = model.getBusinessModels().get(0).getBusinessTables().iterator(); while
-			 * (businessTableIterator.hasNext()) { BusinessTable businessTable = businessTableIterator.next(); Iterator<BusinessColumn> columnIterator =
-			 * businessTable.getColumns().iterator(); JSONObject businessTableJson = bmMap.get(businessTable.getName()); while (columnIterator.hasNext()) {
-			 * BusinessColumn businessColumn = columnIterator.next(); businessColumn.getProperties().clear(); } }
-			 */
+			System.out.println("!!! model generation ended !!!");
 
 			return Response.ok().build();
 		} catch (IOException | JSONException e) {
@@ -139,47 +135,203 @@ public class MetaService {
 		return Response.serverError().build();
 	}
 
-	private void applyPatch(JsonNode patch, BusinessModel model) throws SpagoBIException {
+	@POST
+	@Path("/addBusinessModel")
+	public Response addBusinessModel(@Context HttpServletRequest req) {
+		try {
+			EmfXmiSerializer serializer = new EmfXmiSerializer();
+
+			String jsonString = RestUtilities.readBody(req);
+			JSONObject json = new JSONObject(jsonString);
+
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode actualJson = mapper.readTree(jsonString);
+
+			Assert.assertTrue(json.has("newBusinessModel"), "businessModel is mandatory");
+
+			Model model = createEmptyModel(json);
+
+			JSONObject emptyModelJson = createJson(model);
+			// TODO
+		} catch (IOException | JSONException e) {
+			logger.error(e);
+		}
+		return Response.serverError().build();
+	}
+
+	@POST
+	@Path("/addBusinessRelation")
+	public Response addBusinessRelation(@Context HttpServletRequest req) {
+		try {
+
+			JSONObject json = RestUtilities.readBodyAsJSONObject(req);
+			String name = json.getString("name");
+			String destTableName = json.getString("destinationTable");
+			String sourceTableName = json.getString("sourceTable");
+			JSONArray destCols = json.getJSONArray("destinationColumns");
+			JSONArray sourceCols = json.getJSONArray("sourceColumns");
+
+			BusinessModel bm = BusinessModelFactory.eINSTANCE.createBusinessModel();
+			Model model = ModelFactory.eINSTANCE.createModel();
+			bm.setParentModel(model);
+
+			BusinessRelationship rel = BusinessModelFactory.eINSTANCE.createBusinessRelationship();
+			rel.setModel(bm);
+			rel.setName(name);
+			rel.getProperties();
+			rel.getPropertyTypes();
+			rel.getPhysicalForeignKey();
+			BusinessColumnSet destColumnSet = BusinessModelFactory.eINSTANCE.createBusinessColumnSet();
+			destColumnSet.setName(destTableName);
+			rel.setDestinationTable(destColumnSet);
+			BusinessColumnSet sourceColumnSet = BusinessModelFactory.eINSTANCE.createBusinessColumnSet();
+			sourceColumnSet.setName(sourceTableName);
+			rel.setSourceTable(sourceColumnSet);
+
+			for (int i = 0; i < destCols.length(); i++) {
+				String colName = destCols.getString(i);
+				BusinessColumn bc = BusinessModelFactory.eINSTANCE.createBusinessColumn();
+				bc.setUniqueName(colName);
+				rel.getDestinationColumns().add(bc);
+			}
+
+			for (int i = 0; i < sourceCols.length(); i++) {
+				String colName = sourceCols.getString(i);
+				BusinessColumn bc = BusinessModelFactory.eINSTANCE.createBusinessColumn();
+				bc.setUniqueName(colName);
+				rel.getSourceColumns().add(bc);
+			}
+
+			String jsonRel = JsonConverter.objectToJson(rel, rel.getClass());
+
+			return Response.ok(jsonRel).build();
+		} catch (IOException | JSONException e) {
+			logger.error(e);
+		}
+		return Response.serverError().build();
+	}
+
+	private void applyRelationships(JsonNode actualJson, Model model) {
+		Iterator<JsonNode> btIterator = actualJson.get("businessModel").elements();
+		BusinessModel bm = model.getBusinessModels().get(0);
+		EList<BusinessRelationship> relationships = bm.getRelationships();
+		relationships.clear();
+		while (btIterator.hasNext()) {
+			JsonNode bt = btIterator.next();
+			JsonNode rels = bt.get("relationships");
+			if (rels != null && !rels.isNull()) {
+				Iterator<JsonNode> relIndex = rels.elements();
+				while (relIndex.hasNext()) {
+					JsonNode rel = relIndex.next();
+					String sourceTableName = rel.get("sourceTableName").asText().toLowerCase();
+					String destinationTableName = rel.get("destinationTableName").asText().toLowerCase();
+
+					BusinessRelationship br = BusinessModelFactory.eINSTANCE.createBusinessRelationship();
+					relationships.add(br);
+
+					BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
+					br.setSourceTable(sourceBcs);
+
+					BusinessColumnSet destBcs = bm.getBusinessTableByUniqueName(destinationTableName);
+					br.setDestinationTable(destBcs);
+
+					br.setId(rel.get("id").textValue());
+					br.setDescription(rel.get("description").textValue());
+					br.setName(rel.get("name").textValue());
+					br.setUniqueName(rel.get("uniqueName").textValue());
+
+					Iterator<JsonNode> sourceColsIterator = rel.get("sourceColumns").elements();
+					while (sourceColsIterator.hasNext()) {
+						JsonNode jsonNode = sourceColsIterator.next();
+						BusinessColumn bc = sourceBcs.getSimpleBusinessColumnByUniqueName(jsonNode.get("uniqueName").asText());
+						br.getSourceColumns().add(bc);
+					}
+					Iterator<JsonNode> destColsIterator = rel.get("destinationColumns").elements();
+					while (destColsIterator.hasNext()) {
+						JsonNode jsonNode = destColsIterator.next();
+						BusinessColumn bc = destBcs.getSimpleBusinessColumnByUniqueName(jsonNode.get("uniqueName").asText());
+						br.getDestinationColumns().add(bc);
+					}
+					// setting multiplicity and other properties
+					Iterator<JsonNode> propIterator = rel.get("properties").elements();
+					while (propIterator.hasNext()) {
+						JsonNode jsonNode = propIterator.next();
+						ModelPropertyType propType = bm.getPropertyType(jsonNode.get("key").textValue());
+						br.setProperty(propType, jsonNode.get("value").textValue());
+					}
+					// This field must be null (in relationship)
+					// br.setPhysicalForeignKey();
+				}
+				System.out.println("relationships: " + relationships.size());
+			}
+		}
+		bm.getBusinessTables().iterator();
+	}
+
+	private void applyPatch(JsonNode patch, Model model) throws SpagoBIException {
 		System.out.println(patch.toString());
 		Iterator<JsonNode> elements = patch.elements();
 		JXPathContext context = JXPathContext.newContext(model);
+		context.setFactory(new ModelPropertyFactory());
 		while (elements.hasNext()) {
 			JsonNode jsonNode = elements.next();
 			String operation = jsonNode.get("op").textValue();
 			String path = jsonNode.get("path").textValue();
 
-			path = cleanPath(path);
+			if (toSkip(path)) {
+				System.out.println("skipping " + path);
+				continue;
+			}
 
-			System.out.println(operation + " > " + path);
+			path = cleanPath(path);
 
 			switch (operation.toUpperCase()) {
 			case "ADD":
-				System.out.println("ADD - todo");
-				System.out.println(path);
+				JsonNode node = jsonNode.get("value");
+				System.out.println("add " + node.asText());
+				addJson(node, path, context);
 				break;
 			case "REMOVE":
 				remove(path, context);
 				break;
 			case "REPLACE":
 				String value = jsonNode.get("value").textValue();
-				Pointer empPtr = context.getPointer(path);
-				empPtr.setValue(value);
+				replace(value, path, context);
 				break;
 			case "MOVE":
-				if (path.matches(".*\\]$")) {
-					String from = cleanPath(jsonNode.get("from").textValue());
-					Object obj = context.getPointer(from).getNode();
-					remove(from, context);
-					add(obj, path, context);
-				} else {
-					throw new SpagoBIException("TODO operation [" + operation + "] not supported for single element");
-				}
+				String from = cleanPath(jsonNode.get("from").textValue());
+				System.out.println("move from [" + from + "] to [" + path + "]");
+				Object obj = context.getPointer(from).getNode();
+				remove(from, context);
+				// addValue(obj, path, context);
+				replace(obj, path, context);
 				break;
 			default:
 				throw new SpagoBIException("invalid json patch operation [" + operation + "]");
 			}
 		}
+	}
 
+	private boolean toSkip(String path) {
+		if (path.equals("/datasourceId") || path.equals("/modelName") || path.equals("/physicalModels") || path.equals("/businessModels")
+				|| path.contains("/physicalColumn/") || path.contains("/simpleBusinessColumns") || path.contains("relationships")) {
+			System.out.println("skipping " + path);
+			return true;
+		}
+		return false;
+	}
+
+	private void replace(Object value, String path, JXPathContext context) {
+		try {
+			if (value instanceof TextNode)
+				value = ((TextNode) value).asText();
+			if (value == null || value.equals("null") || value instanceof NullNode)
+				value = null;
+			context.createPathAndSetValue(path, value);
+		} catch (Throwable t) {
+			// TODO
+			t.printStackTrace();
+		}
 	}
 
 	private void remove(String path, JXPathContext context) throws SpagoBIException {
@@ -190,23 +342,74 @@ public class MetaService {
 			Pointer coll = context.getPointer(path.substring(0, i));
 			((List<?>) coll.getNode()).remove(obj.getNode());
 		} else {
-			throw new SpagoBIException("TODO operation \"remove\" not supported for single element");
+			// TODO
+			// throw new SpagoBIException("TODO operation \"remove\" not supported for single element");
 		}
 	}
 
-	private void add(Object obj, String topath, JXPathContext context) throws SpagoBIException {
+	private void addJson(JsonNode obj, String topath, JXPathContext context) throws SpagoBIException {
+		if (toSkip(topath)) {
+			System.out.println("skipping " + topath);
+			return;
+		}
+
+		if (obj.isArray()) {
+			System.out.println("isArray! " + obj);
+			int i = 1;
+			for (JsonNode jsonNode : obj) {
+				addJson(jsonNode, topath + "[" + i + "]", context);
+			}
+		} else if (obj.isObject()) {
+
+			// setting all key-values from json to eObject
+			Iterator<Entry<String, JsonNode>> elementIterator = obj.fields();
+			while (elementIterator.hasNext()) {
+				Entry<String, JsonNode> ele = elementIterator.next();
+				addJson(ele.getValue(), topath + "/" + ele.getKey(), context);
+			}
+		} else {
+			addValue(obj.textValue(), topath, context);
+		}
+
+	}
+
+	private void addValue(String obj, String topath, JXPathContext context) throws SpagoBIException {
 		System.out.println("ADD > " + obj + " > " + topath);
-		int i = topath.lastIndexOf("[");
-		int j = topath.lastIndexOf("]");
-		Pointer toColl = context.getPointer(topath.substring(0, i));
-		((List) toColl.getNode()).add(Integer.parseInt(topath.substring(i + 1, j)) - 1, obj);
+		if (topath.endsWith("]")) {
+			int i = topath.lastIndexOf("[");
+			int j = topath.lastIndexOf("]");
+			Pointer toColl = context.getPointer(topath.substring(0, i));
+			if (toColl.getNode() instanceof List) {
+				if (!((List) toColl.getNode()).contains(obj)) {
+					((List) toColl.getNode()).add(obj);
+				}
+				// ((List) toColl.getNode()).add(Integer.parseInt(topath.substring(i + 1, j)) - 1, obj);
+			}
+		} else {
+			replace(obj, topath, context);
+		}
+	}
+
+	private Field getField(Class clazz, String fieldName) {
+		Field f = null;
+		if (clazz != null) {
+			try {
+				f = clazz.getDeclaredField(fieldName);
+			} catch (NoSuchFieldException | SecurityException e) {
+			}
+			if (f == null) {
+				return getField(clazz.getSuperclass(), fieldName);
+			}
+		}
+		return f;
 	}
 
 	private String cleanPath(String path) {
-		// path.replaceAll("^/physicalModel/", "/physicalModels/0/tables/").replaceAll("^/businessModel/", "businessModels/0/businessTables/");
+		path = path.replaceAll("^/physicalModel/", "/physicalModels/0/tables/").replaceAll("^/businessModel/", "/businessModels/0/businessTables/");
 		Pattern p = Pattern.compile("(/)(\\d)");
 		Matcher m = p.matcher(path);
-		StringBuffer s = new StringBuffer("/businessTables");
+		// StringBuffer s = new StringBuffer("/businessTables");
+		StringBuffer s = new StringBuffer();
 		while (m.find()) {
 			m.appendReplacement(s, "[" + String.valueOf(1 + Integer.parseInt(m.group(2))) + "]");
 		}
@@ -238,14 +441,13 @@ public class MetaService {
 		return translatedModel;
 	}
 
-	private Model createModel(JSONObject json) throws JSONException {
+	private Model createEmptyModel(JSONObject json) throws JSONException {
 		Assert.assertTrue(json.has("datasourceId"), "datasourceId is mandatory");
-		Assert.assertTrue(json.has("modelName"), "modelName is mandatory");
 		Assert.assertTrue(json.has("physicalModels"), "physicalModels is mandatory");
 		Assert.assertTrue(json.has("businessModels"), "businessModels is mandatory");
 
 		Integer dsId = json.getInt("datasourceId");
-		String modelName = json.getString("modelName");
+		String modelName = json.optString("modelName", DEFAULT_MODEL_NAME);
 		List<String> physicalModels = (List<String>) JsonConverter.jsonToObject(json.getString("physicalModels"), List.class);
 		List<String> businessModels = (List<String>) JsonConverter.jsonToObject(json.getString("businessModels"), List.class);
 

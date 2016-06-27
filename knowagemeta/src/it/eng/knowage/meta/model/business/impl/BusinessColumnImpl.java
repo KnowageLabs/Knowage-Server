@@ -270,4 +270,8 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 		return (getTable().getIdentifier().getColumns().size() > 1);
 	}
 
+	public void setPartOfCompositeIdentifier(boolean b) {
+		// not modifiable
+	}
+
 } // BusinessColumnImpl

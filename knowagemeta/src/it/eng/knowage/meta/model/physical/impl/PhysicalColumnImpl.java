@@ -499,6 +499,10 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 		return (PhysicalTable) eContainer();
 	}
 
+	public String getTableName() {
+		return getTable() != null ? getTable().getName() : "";
+	}
+
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -785,6 +789,10 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 		}
 		return false;
 
+	}
+
+	public void setMarkedDeleted(boolean b) {
+		// not modifiable
 	}
 
 	@Override

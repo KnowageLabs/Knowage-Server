@@ -91,6 +91,13 @@ public class BusinessTableImpl extends BusinessColumnSetImpl implements Business
 		return physicalTable;
 	}
 
+	public String getPhysicalTableName() {
+		PhysicalTable pt = getPhysicalTable();
+		if (pt != null)
+			return pt.getUniqueName();
+		return null;
+	}
+
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
