@@ -510,6 +510,7 @@ public class SpagoBIConstants {
 	public static final String IMP_EXP_USERS = "ImpExpUsers";
 	public static final String IMP_EXP_KPIS = "ImpExpKpis";
 	public static final String IMP_EXP_CATALOG = "ImpExpCatalog";
+	public static final String IMP_EXP_GLOSSARY = "ImpExpGlossary";
 
 	public static final String META_MODELS_CATALOGUE_MANAGEMENT = "MetaModelsCatalogueManagement";
 	// Cockpit

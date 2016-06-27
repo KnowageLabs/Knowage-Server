@@ -17,6 +17,11 @@
  */
 package it.eng.spagobi.tools.glossary.dao;
 
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONObject;
+
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlistId;
@@ -26,6 +31,7 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlReferences;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlTableWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlTableWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlist;
@@ -34,11 +40,6 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 //import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttr;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
-
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONObject;
 
 /**
  * CRUD operations
@@ -53,6 +54,10 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	public SbiGlGlossary loadGlossary(Integer glossaryId);
 
 	public List<SbiGlGlossary> loadGlossaryByName(String glossaryNM);
+
+	public SbiGlGlossary loadGlossaryByGlossaryNm(String name);
+
+	public SbiGlGlossary loadGlossaryByGlossaryCd(String cd);
 
 	public List<SbiGlGlossary> listGlossary();
 
@@ -77,6 +82,8 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	public List<SbiGlContents> loadContentsByName(String contentNM);
 
+	public List<SbiGlContents> loadContentsByGlossaryId(Integer glossaryId);
+
 	public List<SbiGlContents> listContents();
 
 	public List<SbiGlContents> listContentsByGlossaryIdAndParentId(Integer glossaryId, Integer parentId);
@@ -94,6 +101,12 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	//
 	public SbiGlWord loadWord(Integer wordId);
 
+	public SbiGlWord loadWordByWord(String word);
+
+	public SbiGlWlist loadWListbyContentAndWord(Integer contentId, Integer wordId);
+
+	public SbiGlReferences loadSbiGlReferences(Integer refWordId, Integer wordId);
+
 	public Integer wordCount(String word, Integer gloss);
 
 	public List<SbiGlWord> loadWordByName(String wordNM);
@@ -107,8 +120,8 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	// public Integer insertWordOld(SbiGlWord word,List<SbiGlWord> objLink,List<SbiGlAttribute> objAttr,Map<Integer, JSONObject> MapAttr,Map<Integer,
 	// JSONObject> MapLink,final boolean modify);
 
-	public Integer insertWord(SbiGlWord word, List<SbiGlWord> objLink, List<SbiUdp> objAttr, Map<Integer, JSONObject> MapAttr,
-			Map<Integer, JSONObject> MapLink, final boolean modify);
+	public Integer insertWord(SbiGlWord word, List<SbiGlWord> objLink, List<SbiUdp> objAttr, Map<Integer, JSONObject> MapAttr, Map<Integer, JSONObject> MapLink,
+			final boolean modify);
 
 	public void modifyWord(SbiGlWord word);
 
@@ -168,6 +181,8 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	public List<SbiGlDocWlist> listDocWlist(Integer docwId);
 
 	public SbiGlDocWlist loadDocWlist(SbiGlDocWlistId docwlistId);
+
+	public List<SbiGlWlist> loadWlistbyContentId(Integer contentId);
 
 	public SbiGlDocWlistId insertDocWlist(SbiGlDocWlist docwlist);
 

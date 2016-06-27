@@ -7,7 +7,7 @@
         <id name="udpValueId" type="integer">
             <column name="UDP_VALUE_ID" />
         </id>
-        <many-to-one name="sbiUdp" class="it.eng.spagobi.tools.udp.metadata.SbiUdp" fetch="select">
+        <many-to-one name="sbiUdp" class="it.eng.spagobi.tools.udp.metadata.SbiUdp" lazy="false" fetch="select">
             <column name="UDP_ID" not-null="true" />
         </many-to-one>
         <property name="value" type="string">

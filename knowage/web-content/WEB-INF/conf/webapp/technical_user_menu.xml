@@ -286,6 +286,8 @@
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportKpis/importExportKpis.jsp" /> 
 			<ITEM title="#menu.ImpExpCatalog" functionality="ImpExpCatalog"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportCatalog/importExportCatalog.jsp" /> 
+			<ITEM title="#menu.ImpExpGlossary" functionality="ImpExpGlossary"
+				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportGlossary/importExportGlossaryTemplate.jsp" /> 
 			
 			<ITEM title="#menu.InstallConf" functionality="InstallConfig"
 				url="${SPAGOBI_CONTEXT}/restful-services/2.0/installconfig"

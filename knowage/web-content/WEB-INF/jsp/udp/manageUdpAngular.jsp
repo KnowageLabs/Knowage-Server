@@ -98,6 +98,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						        <md-select flex placeholder="{{translate.load('sbi.udp.family')}}" ng-model="property.family" required ng-change="checkChange()">
 								   <md-option value="Model">Model</md-option>
 								   <md-option value="Kpi">Kpi</md-option>
+								   <md-option value="Glossary">Glossary</md-option>
 			  					</md-select>
 		  					 </md-input-container>
 	  					 </md-card-content>
