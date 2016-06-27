@@ -2,11 +2,9 @@ package it.eng.knowage.engines.svgviewer.dataset;
 
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DataSet.
  *
- * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class DataMart {
 

@@ -5,23 +5,24 @@ import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
 import it.eng.knowage.engines.svgviewer.datamart.provider.AbstractDataMartProvider;
 import it.eng.knowage.engines.svgviewer.dataset.DataSetMetaData;
+import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.knowage.engines.svgviewer.dataset.provider.Hierarchy;
 import it.eng.knowage.engines.svgviewer.dataset.provider.Link;
+import it.eng.knowage.engines.svgviewer.map.renderer.configurator.AbstractMapRendererConfigurator;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AbstractDatasetProviderConfigurator.
  *
- * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class AbstractDataMartProviderConfigurator {
 
@@ -54,14 +55,19 @@ public class AbstractDataMartProviderConfigurator {
 		}
 
 		if (confSB != null) {
-			DataSetMetaData mataData = null;
+			Map<String, HierarchyMember> hierarchyMembers = new HashMap<String, HierarchyMember>();
+
+			// DataSetMetaData mataData = null;
 			Map hierarchies = null;
 			String selectedHierarchyName = null;
-			String selectedLevelName = null;
+			String selectedMemberName = null;
+			// String selectedLevelName = null;
 
 			selectedHierarchyName = getSelectedHierarchyName(confSB);
-			selectedLevelName = getSelectedLevelName(confSB);
-			mataData = getMetaData(confSB);
+			// selectedLevelName = getSelectedLevelName(confSB);
+			// mataData = getMetaData(confSB);
+			hierarchyMembers = getHierarchyMembers(confSB);
+			selectedMemberName = getSelectedMemberName(hierarchyMembers);
 
 			String stdHierarchy = (String) abstractDatasetProvider.getEnv().get(SvgViewerEngineConstants.ENV_STD_HIERARCHY);
 			SourceBean stdHierarchySB = null;
@@ -70,13 +76,15 @@ public class AbstractDataMartProviderConfigurator {
 			} catch (SourceBeanException e) {
 				e.printStackTrace();
 			}
-			hierarchies = getHierarchies(confSB, stdHierarchySB);
-			setLink(confSB, hierarchies);
+			// hierarchies = getHierarchies(confSB, stdHierarchySB);
+			// setLink(confSB, hierarchies);
 
-			abstractDatasetProvider.setMetaData(mataData);
-			abstractDatasetProvider.setHierarchies(hierarchies);
+			// abstractDatasetProvider.setMetaData(mataData);
+			// abstractDatasetProvider.setHierarchies(hierarchies);
+			// abstractDatasetProvider.setSelectedLevelName(selectedLevelName);
+			abstractDatasetProvider.setHierarchyMembers(hierarchyMembers);
 			abstractDatasetProvider.setSelectedHierarchyName(selectedHierarchyName);
-			abstractDatasetProvider.setSelectedLevelName(selectedLevelName);
+			abstractDatasetProvider.setSelectedMemberName(selectedMemberName);
 		}
 	}
 
@@ -144,7 +152,29 @@ public class AbstractDataMartProviderConfigurator {
 	 * @return the selected hierarchy name
 	 */
 	private static String getSelectedHierarchyName(SourceBean confSB) {
-		return (String) confSB.getAttribute("HIERARCHY");
+		SourceBean hierarchySB = (SourceBean) confSB.getAttribute("HIERARCHY");
+		return (String) hierarchySB.getAttribute("name");
+	}
+
+	/**
+	 * Gets the selected hierarchy name.
+	 *
+	 * @param membersMap
+	 *            the map with all members
+	 *
+	 * @return the selected member name
+	 */
+	private static String getSelectedMemberName(Map<String, HierarchyMember> membersMap) {
+		// @TODO : gestire l'acquisizione del membro / livello da visualizzare.
+		// Per ora prende sempre il primo
+		String toReturn = null;
+
+		for (Iterator iterator = membersMap.keySet().iterator(); iterator.hasNext();) {
+			toReturn = (String) iterator.next();
+			break;
+		}
+
+		return toReturn;
 	}
 
 	/**
@@ -205,25 +235,26 @@ public class AbstractDataMartProviderConfigurator {
 					metaData.setColumnProperty(columnName, "type", columnType);
 
 					if (columnType.equalsIgnoreCase("geoid")) {
-						String hierarchyName = (String) columnSB.getAttribute(SvgViewerEngineConstants.COLUMN_HIERARCHY_REF_ATTRIBUTE);
-						logger.debug("Column [" + i + "] attribute [" + SvgViewerEngineConstants.COLUMN_HIERARCHY_REF_ATTRIBUTE + "]is equal to ["
-								+ hierarchyName + "]");
-						Assert.assertNotNull(hierarchyName, "Attribute [" + SvgViewerEngineConstants.COLUMN_HIERARCHY_REF_ATTRIBUTE + "] of tag ["
-								+ SvgViewerEngineConstants.COLUMN_TAG + "] cannot be null");
-						metaData.setColumnProperty(columnName, "hierarchy", hierarchyName);
-
-						String levelName = (String) columnSB.getAttribute(SvgViewerEngineConstants.COLUMN_LEVEL_REF_ATTRIBUTE);
-						logger.debug("Column [" + i + "] attribute [" + SvgViewerEngineConstants.COLUMN_LEVEL_REF_ATTRIBUTE + "]is equal to [" + levelName
-								+ "]");
-						Assert.assertNotNull(hierarchyName, "Attribute [" + SvgViewerEngineConstants.COLUMN_LEVEL_REF_ATTRIBUTE + "] of tag ["
-								+ SvgViewerEngineConstants.COLUMN_TAG + "] cannot be null");
-						metaData.setColumnProperty(columnName, "level", levelName);
+						// String hierarchyName = (String) columnSB.getAttribute(SvgViewerEngineConstants.COLUMN_HIERARCHY_REF_ATTRIBUTE);
+						// logger.debug("Column [" + i + "] attribute [" + SvgViewerEngineConstants.COLUMN_HIERARCHY_REF_ATTRIBUTE + "]is equal to ["
+						// + hierarchyName + "]");
+						// Assert.assertNotNull(hierarchyName, "Attribute [" + SvgViewerEngineConstants.COLUMN_HIERARCHY_REF_ATTRIBUTE + "] of tag ["
+						// + SvgViewerEngineConstants.COLUMN_TAG + "] cannot be null");
+						// metaData.setColumnProperty(columnName, "hierarchy", hierarchyName);
+						//
+						// String levelName = (String) columnSB.getAttribute(SvgViewerEngineConstants.COLUMN_LEVEL_REF_ATTRIBUTE);
+						// logger.debug("Column [" + i + "] attribute [" + SvgViewerEngineConstants.COLUMN_LEVEL_REF_ATTRIBUTE + "]is equal to [" + levelName
+						// + "]");
+						// Assert.assertNotNull(hierarchyName, "Attribute [" + SvgViewerEngineConstants.COLUMN_LEVEL_REF_ATTRIBUTE + "] of tag ["
+						// + SvgViewerEngineConstants.COLUMN_TAG + "] cannot be null");
+						// metaData.setColumnProperty(columnName, "level", levelName);
 					} else if (columnType.equalsIgnoreCase("measure")) {
-						String aggFunc = (String) columnSB.getAttribute(SvgViewerEngineConstants.COLUMN_AFUNC_REF_ATTRIBUTE);
-						logger.debug("Column [" + i + "] attribute [" + SvgViewerEngineConstants.COLUMN_AFUNC_REF_ATTRIBUTE + "]is equal to [" + aggFunc + "]");
-						Assert.assertNotNull(aggFunc, "Attribute [" + SvgViewerEngineConstants.COLUMN_AFUNC_REF_ATTRIBUTE + "] of tag ["
-								+ SvgViewerEngineConstants.COLUMN_TAG + "] cannot be null");
-						metaData.setColumnProperty(columnName, "func", aggFunc);
+						// String aggFunc = (String) columnSB.getAttribute(SvgViewerEngineConstants.COLUMN_AFUNC_REF_ATTRIBUTE);
+						// logger.debug("Column [" + i + "] attribute [" + SvgViewerEngineConstants.COLUMN_AFUNC_REF_ATTRIBUTE + "]is equal to [" + aggFunc +
+						// "]");
+						// Assert.assertNotNull(aggFunc, "Attribute [" + SvgViewerEngineConstants.COLUMN_AFUNC_REF_ATTRIBUTE + "] of tag ["
+						// + SvgViewerEngineConstants.COLUMN_TAG + "] cannot be null");
+						metaData.setColumnProperty(columnName, "func", "sum");
 					}
 					logger.debug("Column  [" + i + "] parsed succesfully");
 				} catch (Throwable t) {
@@ -240,6 +271,95 @@ public class AbstractDataMartProviderConfigurator {
 		}
 
 		return metaData;
+	}
+
+	/**
+	 * Gets the selected hierarchy name.
+	 *
+	 * @param confSB
+	 *            the conf sb
+	 *
+	 * @return the selected hierarchy name
+	 */
+	private static Map<String, HierarchyMember> getHierarchyMembers(SourceBean confSB) {
+
+		Map<String, HierarchyMember> toReturn = new HashMap<String, HierarchyMember>();
+		SourceBean hierarchySB = (SourceBean) confSB.getAttribute("HIERARCHY");
+		SourceBean memberSB = null;
+
+		try {
+			List members = hierarchySB.getAttributeAsList(SvgViewerEngineConstants.MEMBER_TAG);
+			boolean foundActive = false;
+			for (int i = 0; i < members.size(); i++) {
+				memberSB = null;
+				try {
+					logger.debug("Parsing member  [" + i + "]");
+					memberSB = (SourceBean) members.get(i);
+
+					String name = (String) memberSB.getAttribute("name");
+					logger.debug("Member [" + i + "] name [" + name + "]");
+					String dsMeasure = (String) memberSB.getAttribute("measure_dataset");
+					logger.debug("Member [" + i + "] measure_dataset [" + dsMeasure + "]");
+					String dsConfig = (String) memberSB.getAttribute("config_dataset");
+					logger.debug("Member [" + i + "] config_dataset [" + dsConfig + "]");
+					String level = (String) memberSB.getAttribute("level");
+					logger.debug("Member [" + i + "] level [" + level + "]");
+
+					Assert.assertNotNull(name, "Attribute [" + SvgViewerEngineConstants.MEMBER_NAME + "] of tag [" + SvgViewerEngineConstants.MEMBER_NAME
+							+ "] cannot be null");
+
+					Assert.assertNotNull(dsMeasure, "Attribute [" + SvgViewerEngineConstants.DATASET_MEASURE + "] of tag ["
+							+ SvgViewerEngineConstants.DATASET_MEASURE + "] cannot be null");
+
+					Assert.assertNotNull(dsMeasure, "Attribute [" + SvgViewerEngineConstants.DATASET_CONFIG + "] of tag ["
+							+ SvgViewerEngineConstants.DATASET_CONFIG + "] cannot be null");
+
+					HierarchyMember member = new HierarchyMember();
+					member.setName(name);
+					member.setDsMeasure(dsMeasure);
+					member.setDsConfig(dsConfig);
+					member.setLevel(Integer.valueOf(level));
+
+					// get metadata informations
+					DataSetMetaData dsMetadata = getMetaData(memberSB);
+					member.setDsMetaData(dsMetadata);
+
+					// get leyers informations
+					SourceBean layersSB = (SourceBean) memberSB.getAttribute("LAYERS");
+					Map layers = AbstractMapRendererConfigurator.getLayers(layersSB);
+					member.setLayers(layers);
+
+					// for default set active the member with level 1
+					if (member.getLevel() == 1) {
+						member.setActive(true);
+						foundActive = true;
+						logger.debug("Set [" + member.getName() + "] as the active member.");
+					}
+
+					logger.debug("Member  [" + i + "] parsed succesfully");
+					toReturn.put(name, member);
+				} catch (Throwable t) {
+					throw new SvgViewerEngineException("An error occurred while parsing member [" + memberSB + "]", t);
+				}
+			}
+			if (!foundActive) {
+				// force the first member as active
+				for (String key : toReturn.keySet()) {
+					(toReturn.get(key)).setActive(true);
+					logger.debug("Member with level 1 not found. Set [" + key + "] as the active member.");
+					break;
+				}
+			}
+		} catch (Throwable t) {
+			SvgViewerEngineRuntimeException e = new SvgViewerEngineRuntimeException("An error occurred while parsing metadata [" + hierarchySB + "]", t);
+			e.addHint("Download document template and fix the problem that have coused the syntax/semantic error");
+			throw e;
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return toReturn;
+
 	}
 
 	/**
@@ -305,4 +425,5 @@ public class AbstractDataMartProviderConfigurator {
 
 		return hierarchies;
 	}
+
 }

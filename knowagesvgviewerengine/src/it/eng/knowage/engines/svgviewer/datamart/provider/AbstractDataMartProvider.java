@@ -4,23 +4,25 @@ import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.component.AbstractSvgViewerEngineComponent;
 import it.eng.knowage.engines.svgviewer.datamart.provider.configurator.AbstractDataMartProviderConfigurator;
 import it.eng.knowage.engines.svgviewer.dataset.DataMart;
-import it.eng.knowage.engines.svgviewer.dataset.DataSetMetaData;
+import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.knowage.engines.svgviewer.dataset.provider.Hierarchy;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.Map;
 import java.util.Set;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AbstractDatasetProvider.
  *
- * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent implements IDataMartProvider {
 
 	/** The meta data. */
-	private DataSetMetaData metaData;
+	// private DataSetMetaData metaData;
+
+	/** The Hierarchies Members */
+	private Map<String, HierarchyMember> hierarchyMembers;
 
 	/** The hierarchies. */
 	private Map hierarchies;
@@ -31,6 +33,9 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 	/** The selected level name. */
 	private String selectedLevelName;
 
+	/** The selected member name. */
+	private String selectedMemberName;
+
 	/**
 	 * Instantiates a new abstract dataset provider.
 	 */
@@ -40,7 +45,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.AbstractGeoEngineComponent#init(java.lang.Object)
 	 */
 	@Override
@@ -51,7 +56,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getDataSet()
 	 */
 	@Override
@@ -61,7 +66,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getDataDetails(java.lang.String)
 	 */
 	@Override
@@ -71,7 +76,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getHierarchyNames()
 	 */
 	@Override
@@ -84,7 +89,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getHierarchy(java.lang.String)
 	 */
 	@Override
@@ -97,7 +102,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedHierarchy()
 	 */
 	@Override
@@ -110,7 +115,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedLevel()
 	 */
 	@Override
@@ -122,24 +127,24 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 		return null;
 	}
 
-	/**
-	 * Gets the meta data.
-	 *
-	 * @return the meta data
-	 */
-	public DataSetMetaData getMetaData() {
-		return metaData;
-	}
-
-	/**
-	 * Sets the meta data.
-	 *
-	 * @param metaData
-	 *            the new meta data
-	 */
-	public void setMetaData(DataSetMetaData metaData) {
-		this.metaData = metaData;
-	}
+	// /**
+	// * Gets the meta data.
+	// *
+	// * @return the meta data
+	// */
+	// public DataSetMetaData getMetaData() {
+	// return metaData;
+	// }
+	//
+	// /**
+	// * Sets the meta data.
+	// *
+	// * @param metaData
+	// * the new meta data
+	// */
+	// public void setMetaData(DataSetMetaData metaData) {
+	// this.metaData = metaData;
+	// }
 
 	/**
 	 * Sets the hierarchies.
@@ -154,7 +159,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedHierarchyName()
 	 */
 	@Override
@@ -164,7 +169,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#setSelectedHierarchyName(java.lang.String)
 	 */
 	@Override
@@ -174,7 +179,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedLevelName()
 	 */
 	@Override
@@ -184,11 +189,52 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#setSelectedLevelName(java.lang.String)
 	 */
 	@Override
 	public void setSelectedLevelName(String selectedLevelName) {
 		this.selectedLevelName = selectedLevelName;
 	}
+
+	/**
+	 * @return the hierarchyMembers
+	 */
+	public Map<String, HierarchyMember> getHierarchyMembers() {
+		return hierarchyMembers;
+	}
+
+	/**
+	 * @param hierarchyMembers
+	 *            the hierarchyMembers to set
+	 */
+	public void setHierarchyMembers(Map<String, HierarchyMember> hierarchyMembers) {
+		this.hierarchyMembers = hierarchyMembers;
+	}
+
+	/**
+	 * Gets the hierarchy member by name.
+	 *
+	 * @param name
+	 *            the member name
+	 *
+	 * @return the hierarchy member
+	 */
+	@Override
+	public HierarchyMember getHierarchyMember(String name) {
+		HierarchyMember toReturn = this.hierarchyMembers.get(name);
+		Assert.assertNotNull(toReturn, "Hierarchy Member [" + name + "] cannot be null");
+		return toReturn;
+	}
+
+	@Override
+	public String getSelectedMemberName() {
+		return selectedMemberName;
+	}
+
+	@Override
+	public void setSelectedMemberName(String selectedMemberName) {
+		this.selectedMemberName = selectedMemberName;
+	}
+
 }

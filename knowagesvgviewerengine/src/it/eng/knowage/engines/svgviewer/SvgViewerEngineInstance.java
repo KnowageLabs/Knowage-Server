@@ -19,7 +19,6 @@ package it.eng.knowage.engines.svgviewer;
 
 import it.eng.knowage.engines.svgviewer.component.SvgViewerEngineComponentFactory;
 import it.eng.knowage.engines.svgviewer.datamart.provider.IDataMartProvider;
-import it.eng.knowage.engines.svgviewer.dataset.provider.Hierarchy;
 import it.eng.knowage.engines.svgviewer.map.provider.IMapProvider;
 import it.eng.knowage.engines.svgviewer.map.renderer.IMapRenderer;
 import it.eng.spago.base.SourceBean;
@@ -37,8 +36,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -346,45 +343,45 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 			throw geoException;
 		}
 
-		Hierarchy selectedHierarchy = getDataMartProvider().getHierarchy(selectedHierarchyName);
-		if (selectedHierarchy == null) {
-			SvgViewerEngineException geoException;
-			logger.error("Selected hierarchy [" + selectedHierarchyName + "] does not exist");
-			String description = "Selected hierarchy [" + selectedHierarchyName + "] does not exist";
-			List hints = new ArrayList();
-			hints.add("Check if hierarchy name is correct");
-			hints.add("Check if a hierarchy named " + selectedHierarchyName + "  has been defined. Defined hierarachy are: "
-					+ Arrays.toString(getDataMartProvider().getHierarchyNames().toArray()));
-			geoException = new SvgViewerEngineException("Configuration error");
-			geoException.setDescription(description);
-			// geoException.setHints(hints);
-			throw geoException;
-		}
-
-		String selectedLevelName = getDataMartProvider().getSelectedLevelName();
-		if (selectedLevelName == null) {
-			SvgViewerEngineException geoException;
-			logger.error("Select level name is not defined");
-			String description = "Select level name is not defined";
-			geoException = new SvgViewerEngineException("Configuration error");
-			geoException.setDescription(description);
-			throw geoException;
-		}
-
-		Hierarchy.Level selectedLevel = selectedHierarchy.getLevel(selectedLevelName);
-		if (selectedLevel == null) {
-			SvgViewerEngineException geoException;
-			logger.error("Selected level [" + selectedHierarchyName + "] does not exist in selected hierarchy [" + selectedHierarchyName + "]");
-			String description = "Selected level [" + selectedHierarchyName + "] does not exist in selected hierarchy [" + selectedHierarchyName + "]";
-			List hints = new ArrayList();
-			hints.add("Check if level name is correct");
-			hints.add("Check if a level named " + selectedLevelName + "  is defined into hierarachy " + selectedHierarchyName + ". " + "Defined level are: "
-					+ Arrays.toString(selectedHierarchy.getLevelNames().toArray()));
-			geoException = new SvgViewerEngineException("Configuration error");
-			geoException.setDescription(description);
-			// geoException.setHints(hints);
-			throw geoException;
-		}
+		// Hierarchy selectedHierarchy = getDataMartProvider().getHierarchy(selectedHierarchyName);
+		// if (selectedHierarchy == null) {
+		// SvgViewerEngineException geoException;
+		// logger.error("Selected hierarchy [" + selectedHierarchyName + "] does not exist");
+		// String description = "Selected hierarchy [" + selectedHierarchyName + "] does not exist";
+		// List hints = new ArrayList();
+		// hints.add("Check if hierarchy name is correct");
+		// hints.add("Check if a hierarchy named " + selectedHierarchyName + "  has been defined. Defined hierarachy are: "
+		// + Arrays.toString(getDataMartProvider().getHierarchyNames().toArray()));
+		// geoException = new SvgViewerEngineException("Configuration error");
+		// geoException.setDescription(description);
+		// // geoException.setHints(hints);
+		// throw geoException;
+		// }
+		//
+		// String selectedLevelName = getDataMartProvider().getSelectedLevelName();
+		// if (selectedLevelName == null) {
+		// SvgViewerEngineException geoException;
+		// logger.error("Select level name is not defined");
+		// String description = "Select level name is not defined";
+		// geoException = new SvgViewerEngineException("Configuration error");
+		// geoException.setDescription(description);
+		// throw geoException;
+		// }
+		//
+		// Hierarchy.Level selectedLevel = selectedHierarchy.getLevel(selectedLevelName);
+		// if (selectedLevel == null) {
+		// SvgViewerEngineException geoException;
+		// logger.error("Selected level [" + selectedHierarchyName + "] does not exist in selected hierarchy [" + selectedHierarchyName + "]");
+		// String description = "Selected level [" + selectedHierarchyName + "] does not exist in selected hierarchy [" + selectedHierarchyName + "]";
+		// List hints = new ArrayList();
+		// hints.add("Check if level name is correct");
+		// hints.add("Check if a level named " + selectedLevelName + "  is defined into hierarachy " + selectedHierarchyName + ". " + "Defined level are: "
+		// + Arrays.toString(selectedHierarchy.getLevelNames().toArray()));
+		// geoException = new SvgViewerEngineException("Configuration error");
+		// geoException.setDescription(description);
+		// // geoException.setHints(hints);
+		// throw geoException;
+		// }
 	}
 
 	public boolean isVisibleDataSet() {

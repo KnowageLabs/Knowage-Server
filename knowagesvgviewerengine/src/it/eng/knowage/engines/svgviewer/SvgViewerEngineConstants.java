@@ -53,6 +53,9 @@ public class SvgViewerEngineConstants {
 	/** The Constant MAP_NAME_TAG. */
 	public static final String MAP_NAME_TAG = "MAP_NAME";
 
+	/** The Constant MEMBER_TAG. */
+	public static final String MEMBER_TAG = "MEMBER";
+
 	// ATTRIBUTES
 
 	/** The Constant CLASS_NAME_ATTRIBUTE. */
@@ -111,6 +114,15 @@ public class SvgViewerEngineConstants {
 
 	/** The Constant DATASET_URL_ATTRIBUTE. */
 	public static final String DATASET_URL_ATTRIBUTE = "URL";
+
+	/** The Constant DATASET_MEASURE. */
+	public static final String DATASET_MEASURE = "measure_dataset";
+
+	/** The Constant DATASET_CONFIG. */
+	public static final String DATASET_CONFIG = "config_dataset";
+
+	/** The Constant MEMBER_NAME. */
+	public static final String MEMBER_NAME = "NAME";
 
 	// ENV PROPERTIES
 

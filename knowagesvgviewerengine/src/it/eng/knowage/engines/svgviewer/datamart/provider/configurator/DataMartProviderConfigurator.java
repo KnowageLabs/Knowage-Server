@@ -18,11 +18,9 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 
 import org.apache.log4j.Logger;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class SQLDatasetProviderConfigurator.
  *
- * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class DataMartProviderConfigurator {
 

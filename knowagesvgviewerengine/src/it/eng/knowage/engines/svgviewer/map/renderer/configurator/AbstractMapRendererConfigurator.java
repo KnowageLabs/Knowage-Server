@@ -18,11 +18,9 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AbstractMapRendererConfigurator.
  *
- * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class AbstractMapRendererConfigurator {
 
@@ -62,14 +60,15 @@ public class AbstractMapRendererConfigurator {
 			}
 			Map measures = getMeasures(measuresConfigurationSB);
 
-			SourceBean layersConfigurationSB = (SourceBean) confSB.getAttribute("LAYERS");
-			Map layers = getLayers(layersConfigurationSB);
+			// Layers are getted through member object
+			// SourceBean layersConfigurationSB = (SourceBean) confSB.getAttribute("LAYERS");
+			// Map layers = getLayers(layersConfigurationSB);
 
 			SourceBean guiSettingsConfigurationSB = (SourceBean) confSB.getAttribute("GUI_SETTINGS");
 			GuiSettings guiSettings = getGuiSettings(guiSettingsConfigurationSB);
 
 			abstractMapRenderer.setMeasures(measures);
-			abstractMapRenderer.setLayers(layers);
+			// abstractMapRenderer.setLayers(layers);
 			abstractMapRenderer.setGuiSettings(guiSettings);
 		}
 	}
@@ -166,7 +165,7 @@ public class AbstractMapRendererConfigurator {
 	 *
 	 * @return the layers
 	 */
-	private static Map getLayers(SourceBean layersConfigurationSB) {
+	public static Map getLayers(SourceBean layersConfigurationSB) {
 		Map layers;
 		List layerList;
 		Layer layer;

@@ -129,16 +129,14 @@ public class DataSetMetaData {
 	 *
 	 * @return the geo id column name
 	 */
-	public String getGeoIdColumnName(String hierarchyName) {
+	public String getGeoIdColumnName() {
 		Set names = getColumnNames();
 		if (names != null) {
 			Iterator it = names.iterator();
 			while (it.hasNext()) {
 				String columnName = (String) it.next();
 				if (isGeoIdColumn(columnName)) {
-					if (hierarchyName.equalsIgnoreCase(getColumnProperty(columnName, "hierarchy"))) {
-						return getColumnProperty(columnName, "column_id");
-					}
+					return getColumnProperty(columnName, "column_id");
 				}
 			}
 		}

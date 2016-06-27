@@ -6,6 +6,7 @@ import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
 import it.eng.knowage.engines.svgviewer.datamart.provider.IDataMartProvider;
 import it.eng.knowage.engines.svgviewer.dataset.DataMart;
+import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.knowage.engines.svgviewer.map.provider.IMapProvider;
 import it.eng.knowage.engines.svgviewer.map.renderer.configurator.InteractiveMapRendererConfigurator;
 import it.eng.knowage.engines.svgviewer.map.utils.SVGMapLoader;
@@ -54,9 +55,6 @@ import org.w3c.dom.svg.SVGElement;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
-/**
- * @author Andrea Gioia
- */
 public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 	private boolean closeLink = false;
@@ -135,7 +133,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		Monitor loadDataMartTotalTimeMonitor = null;
 		Monitor loadMasterMapTotalTimeMonitor = null;
 		Monitor loadTargetMapTotalTimeMonitor = null;
-		Monitor margeAndDecorateMapTotalTimeMonitor = null;
+		Monitor mergeAndDecorateMapTotalTimeMonitor = null;
 
 		// load datamart
 		try {
@@ -171,15 +169,15 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				loadTargetMapTotalTimeMonitor.stop();
 		}
 
-		// marge and decorate map
+		// merge and decorate map
 		try {
 
-			margeAndDecorateMapTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.margeAndDecorateMap");
+			mergeAndDecorateMapTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.mergeAndDecorateMap");
 
 			addData(targetMap, dataMart);
 			addLink(targetMap, dataMart);
 
-			SVGMapMerger.margeMap(targetMap, masterMap, null, "targetMap");
+			SVGMapMerger.mergeMap(targetMap, masterMap, null, "targetMap");
 
 			if (includeScript) {
 				includeScripts(masterMap);
@@ -215,9 +213,11 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				logger.debug("Selected measure index [" + selectedMeasureIndexIndex + "]");
 				conf.put("selected_measure_index", selectedMeasureIndexIndex);
 				conf.put("measures", measures);
-
+				HierarchyMember activeMember = datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName());
+				setLayers(activeMember.getLayers());
 				JSONArray layers = getLayersConfigurationScript(targetMap);
-				String targetLayer = datamartProvider.getSelectedLevel().getFeatureName();
+				// String targetLayer = datamartProvider.getSelectedLevel().getFeatureName();
+				String targetLayer = dataMart.getTargetFeatureName();
 				int targetLayerIndex = -1;
 				for (int i = 0; i < layers.length(); i++) {
 					JSONObject layer = (JSONObject) layers.get(i);
@@ -307,8 +307,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				throw geoException;
 			}
 		} finally {
-			if (margeAndDecorateMapTotalTimeMonitor != null)
-				margeAndDecorateMapTotalTimeMonitor.stop();
+			if (mergeAndDecorateMapTotalTimeMonitor != null)
+				mergeAndDecorateMapTotalTimeMonitor.stop();
 		}
 
 		return tmpMap;
@@ -350,7 +350,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 		decorateMap(masterMap, targetMap, datamart);
 
-		SVGMapMerger.margeMap(targetMap, masterMap, null, "targetMap");
+		SVGMapMerger.mergeMap(targetMap, masterMap, null, "targetMap");
 
 		setMainMapDimension(masterMap, targetMap);
 		// setMainMapBkgRectDimension(masterMap, targetMap);
@@ -908,7 +908,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 		IDataStore dataStore = datamart.getDataStore();
 
-		Element targetLayer = map.getElementById(datamart.getTargetFeatureName());
+		// Element targetLayer = map.getElementById(datamart.getTargetFeatureName());
+		Element targetLayer = map.getElementById("rooms"); // has selected=true
 
 		NodeList nodeList = targetLayer.getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {

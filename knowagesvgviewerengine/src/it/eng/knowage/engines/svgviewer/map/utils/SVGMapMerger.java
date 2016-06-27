@@ -6,16 +6,14 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGElement;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class SVGMapMerger.
  *
- * @author Andrea Gioia
  */
 public class SVGMapMerger {
 
 	/**
-	 * Marge map.
+	 * Merge map.
 	 *
 	 * @param srcMap
 	 *            the src map
@@ -26,7 +24,7 @@ public class SVGMapMerger {
 	 * @param dstId
 	 *            the dst id
 	 */
-	public static void margeMap(SVGDocument srcMap, SVGDocument dstMap, String srcId, String dstId) {
+	public static void mergeMap(SVGDocument srcMap, SVGDocument dstMap, String srcId, String dstId) {
 		SVGElement srcMapRoot;
 		Element srcElement;
 		Element dstElement;

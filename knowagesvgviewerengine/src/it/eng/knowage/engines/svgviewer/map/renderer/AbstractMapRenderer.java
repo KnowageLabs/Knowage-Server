@@ -15,8 +15,8 @@ import org.apache.log4j.Logger;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class AbstractMapRenderer.
- *
+ * The Class AbstractMapRenderer. *
+ * 
  * @author Andrea Gioia
  */
 public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implements IMapRenderer {
@@ -45,7 +45,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.AbstractGeoEngineComponent#init(java.lang.Object)
 	 */
 	@Override
@@ -56,7 +56,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#renderMap(it.eng.spagobi.engines.geo.map.provider.IMapProvider,
 	 * it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider, java.lang.String)
 	 */
@@ -67,7 +67,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#renderMap(it.eng.spagobi.engines.geo.map.provider.IMapProvider,
 	 * it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider)
 	 */
@@ -137,7 +137,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#getLayer(java.lang.String)
 	 */
 	@Override
@@ -147,7 +147,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#addLayer(it.eng.spagobi.engines.geo.map.renderer.Layer)
 	 */
 	@Override
@@ -157,7 +157,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#getLayerNames()
 	 */
 	@Override
@@ -189,7 +189,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#clearLayers()
 	 */
 	@Override

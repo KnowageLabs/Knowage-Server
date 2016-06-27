@@ -3,7 +3,9 @@ package it.eng.knowage.engines.svgviewer.datamart.provider;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.datamart.provider.configurator.DataMartProviderConfigurator;
 import it.eng.knowage.engines.svgviewer.dataset.DataMart;
-import it.eng.knowage.engines.svgviewer.dataset.provider.Hierarchy;
+import it.eng.knowage.engines.svgviewer.dataset.DataSetMetaData;
+import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
+import it.eng.knowage.engines.svgviewer.map.renderer.Layer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -13,17 +15,10 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -91,28 +86,49 @@ public class DataMartProvider extends AbstractDataMartProvider {
 
 			IDataStore dataStore = dataSet.getDataStore();
 			IMetaData dataStoreMeta = dataStore.getMetaData();
-			dataStoreMeta.setIdField(dataStoreMeta.getFieldIndex(getSelectedLevel().getColumnId()));
+			// dataStoreMeta.setIdField(dataStoreMeta.getFieldIndex(getSelectedLevel().getColumnId()));
 
 			dataMart = new DataMart();
 			dataMart.setDataStore(dataStore);
 			try {
+				HierarchyMember activeMember = getHierarchyMember(getSelectedMemberName());
+				DataSetMetaData metaData = activeMember.getDsMetaData();
+				String firstLayerName = "";
+				for (String key : activeMember.getLayers().keySet()) {
+					Layer layer = activeMember.getLayers().get(key);
+					if (layer.isSelected()) {
+						firstLayerName = layer.getName();
+						dataMart.setTargetFeatureName(layer.getName());
+						logger.debug("Set active layer [" + layer.getName() + "]");
+						break;
+					}
+				}
+				// if no layer setted through the template property, sets the first one
+				if (dataMart.getTargetFeatureName() == null) {
+					dataMart.setTargetFeatureName(firstLayerName);
+					logger.debug("No layer has property selected to true. So, set as active layer the first one: [" + firstLayerName + "]");
+				}
 
-				dataMart.setTargetFeatureName(getSelectedLevel().getFeatureName());
-				String columnid = getSelectedLevel().getColumnId();
-				String[] measureColumnNames = (String[]) getMetaData().getMeasureColumnNames().toArray(new String[0]);
+				String columnId = metaData.getGeoIdColumnName();
+				dataStoreMeta.setIdField(dataStoreMeta.getFieldIndex(columnId));
+				String[] measureColumnNames = (String[]) metaData.getMeasureColumnNames().toArray(new String[0]);
 
+				// dataMart.setTargetFeatureName(getSelectedLevel().getFeatureName());
+				// String columnId = getSelectedLevel().getColumnId();
+				// String[] measureColumnNames = (String[]) getMetaData().getMeasureColumnNames().toArray(new String[0]);
+				//
 				Iterator it = dataStore.iterator();
 				while (it.hasNext()) {
 					IRecord record = (IRecord) it.next();
 
 					IField field;
 
-					field = record.getFieldAt(dataStoreMeta.getFieldIndex(columnid));
+					field = record.getFieldAt(dataStoreMeta.getFieldIndex(columnId));
 					String id = "" + field.getValue();
 					if ((id == null) || (id.trim().equals(""))) {
 						continue;
 					}
-					dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(columnid)).setProperty("ROLE", "GEOID");
+					dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(columnId)).setProperty("ROLE", "GEOID");
 
 					for (int i = 0; i < measureColumnNames.length; i++) {
 						field = record.getFieldAt(dataStoreMeta.getFieldIndex(measureColumnNames[i]));
@@ -125,8 +141,8 @@ public class DataMartProvider extends AbstractDataMartProvider {
 					}
 				}
 
-				IDataStoreTransformer dddLinkFieldTransformer = new AddLinkFieldsTransformer(measureColumnNames, getSelectedLevel(), this.getEnv());
-				dddLinkFieldTransformer.transform(dataStore);
+				// IDataStoreTransformer dddLinkFieldTransformer = new AddLinkFieldsTransformer(measureColumnNames, getSelectedLevel(), this.getEnv());
+				// dddLinkFieldTransformer.transform(dataStore);
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 				throw new SvgViewerEngineException("Impossible to get DataMart");
@@ -144,25 +160,25 @@ public class DataMartProvider extends AbstractDataMartProvider {
 	private String getDimGeoQuery() {
 		String query = "";
 
-		Hierarchy hierarchy = getSelectedHierarchy();
-		String baseLevelName = getMetaData().getLevelName(hierarchy.getName());
-		Hierarchy.Level baseLevel = hierarchy.getLevel(baseLevelName);
-
-		List levels = hierarchy.getSublevels(baseLevel.getName());
-
-		query += "SELECT " + baseLevel.getColumnId();
-		for (int i = 0; i < levels.size(); i++) {
-			Hierarchy.Level subLevel;
-			subLevel = (Hierarchy.Level) levels.get(i);
-			query += ", " + subLevel.getColumnId();
-		}
-		query += " FROM " + hierarchy.getTable();
-		query += " GROUP BY " + baseLevel.getColumnId();
-		for (int i = 0; i < levels.size(); i++) {
-			Hierarchy.Level subLevel;
-			subLevel = (Hierarchy.Level) levels.get(i);
-			query += ", " + subLevel.getColumnId();
-		}
+		// Hierarchy hierarchy = getSelectedHierarchy();
+		// String baseLevelName = getMetaData().getLevelName(hierarchy.getName());
+		// Hierarchy.Level baseLevel = hierarchy.getLevel(baseLevelName);
+		//
+		// List levels = hierarchy.getSublevels(baseLevel.getName());
+		//
+		// query += "SELECT " + baseLevel.getColumnId();
+		// for (int i = 0; i < levels.size(); i++) {
+		// Hierarchy.Level subLevel;
+		// subLevel = (Hierarchy.Level) levels.get(i);
+		// query += ", " + subLevel.getColumnId();
+		// }
+		// query += " FROM " + hierarchy.getTable();
+		// query += " GROUP BY " + baseLevel.getColumnId();
+		// for (int i = 0; i < levels.size(); i++) {
+		// Hierarchy.Level subLevel;
+		// subLevel = (Hierarchy.Level) levels.get(i);
+		// query += ", " + subLevel.getColumnId();
+		// }
 
 		return query;
 
@@ -221,51 +237,51 @@ public class DataMartProvider extends AbstractDataMartProvider {
 	 */
 	private String getFilteredQuery(String filterValue) {
 		String aggragateQuery = null;
-		String query = getExecutableQuery();
-
-		String subQueryAlias = "t" + System.currentTimeMillis();
-		String normalizedSubQueryAlias = "n" + System.currentTimeMillis();
-		String dimGeoAlias = "g" + System.currentTimeMillis();
-
-		Hierarchy hierarchy = getSelectedHierarchy();
-		Hierarchy.Level level = getSelectedLevel();
-		String baseLevelName = getMetaData().getLevelName(hierarchy.getName());
-		Hierarchy.Level baseLevel = hierarchy.getLevel(baseLevelName);
-
-		if (hierarchy.getType().equalsIgnoreCase("custom")) {
-			System.out.println("\nCUSTOM HIERARCHY...\n");
-			String aggregationColumnName = level.getColumnId();
-			aggragateQuery = "SELECT * ";
-			aggragateQuery += " \nFROM ( " + query + ") " + subQueryAlias;
-			aggragateQuery += " \nWHERE " + subQueryAlias + "." + level.getColumnId();
-			aggragateQuery += " = '" + filterValue + "'";
-		} else {
-			System.out.println("\nDEFAULT HIERARCHY...\n");
-			String aggregationColumnName = level.getColumnId();
-			aggragateQuery = "SELECT * ";
-			String[] kpiColumnNames = (String[]) getMetaData().getMeasureColumnNames().toArray(new String[0]);
-
-			String normalizedSubQuery = query;
-
-			normalizedSubQuery = "SELECT " + normalizedSubQueryAlias + "." + getMetaData().getGeoIdColumnName(hierarchy.getName()) + " AS "
-					+ getMetaData().getGeoIdColumnName(hierarchy.getName());
-			for (int i = 0; i < kpiColumnNames.length; i++) {
-				normalizedSubQuery += ", SUM(" + normalizedSubQueryAlias + "." + kpiColumnNames[i] + ") AS " + kpiColumnNames[i];
-			}
-			normalizedSubQuery += " \nFROM ( " + query + ") " + normalizedSubQueryAlias;
-			normalizedSubQuery += " \nGROUP BY " + normalizedSubQueryAlias + "." + getMetaData().getGeoIdColumnName(hierarchy.getName());
-			System.out.println("\nNormalized query:\n" + normalizedSubQuery);
-
-			aggragateQuery += " \nFROM ( \n" + normalizedSubQuery + "\n ) " + subQueryAlias;
-			String dimGeoQuery = getDimGeoQuery();
-			System.out.println("\nDimGeo query:\n" + dimGeoQuery);
-			aggragateQuery += ", (" + dimGeoQuery + ") " + dimGeoAlias;
-			aggragateQuery += " \nWHERE " + subQueryAlias + "." + getMetaData().getGeoIdColumnName(hierarchy.getName());
-			aggragateQuery += " = " + dimGeoAlias + "." + baseLevel.getColumnId();
-			aggragateQuery += " \nAND  " + dimGeoAlias + "." + level.getColumnId() + " = '" + filterValue + "'";
-		}
-
-		System.out.println("\nExecutable query:\n" + aggragateQuery);
+		// String query = getExecutableQuery();
+		//
+		// String subQueryAlias = "t" + System.currentTimeMillis();
+		// String normalizedSubQueryAlias = "n" + System.currentTimeMillis();
+		// String dimGeoAlias = "g" + System.currentTimeMillis();
+		//
+		// Hierarchy hierarchy = getSelectedHierarchy();
+		// Hierarchy.Level level = getSelectedLevel();
+		// String baseLevelName = getMetaData().getLevelName(hierarchy.getName());
+		// Hierarchy.Level baseLevel = hierarchy.getLevel(baseLevelName);
+		//
+		// if (hierarchy.getType().equalsIgnoreCase("custom")) {
+		// System.out.println("\nCUSTOM HIERARCHY...\n");
+		// String aggregationColumnName = level.getColumnId();
+		// aggragateQuery = "SELECT * ";
+		// aggragateQuery += " \nFROM ( " + query + ") " + subQueryAlias;
+		// aggragateQuery += " \nWHERE " + subQueryAlias + "." + level.getColumnId();
+		// aggragateQuery += " = '" + filterValue + "'";
+		// } else {
+		// System.out.println("\nDEFAULT HIERARCHY...\n");
+		// String aggregationColumnName = level.getColumnId();
+		// aggragateQuery = "SELECT * ";
+		// String[] kpiColumnNames = (String[]) getMetaData().getMeasureColumnNames().toArray(new String[0]);
+		//
+		// String normalizedSubQuery = query;
+		//
+		// normalizedSubQuery = "SELECT " + normalizedSubQueryAlias + "." + getMetaData().getGeoIdColumnName(hierarchy.getName()) + " AS "
+		// + getMetaData().getGeoIdColumnName(hierarchy.getName());
+		// for (int i = 0; i < kpiColumnNames.length; i++) {
+		// normalizedSubQuery += ", SUM(" + normalizedSubQueryAlias + "." + kpiColumnNames[i] + ") AS " + kpiColumnNames[i];
+		// }
+		// normalizedSubQuery += " \nFROM ( " + query + ") " + normalizedSubQueryAlias;
+		// normalizedSubQuery += " \nGROUP BY " + normalizedSubQueryAlias + "." + getMetaData().getGeoIdColumnName(hierarchy.getName());
+		// System.out.println("\nNormalized query:\n" + normalizedSubQuery);
+		//
+		// aggragateQuery += " \nFROM ( \n" + normalizedSubQuery + "\n ) " + subQueryAlias;
+		// String dimGeoQuery = getDimGeoQuery();
+		// System.out.println("\nDimGeo query:\n" + dimGeoQuery);
+		// aggragateQuery += ", (" + dimGeoQuery + ") " + dimGeoAlias;
+		// aggragateQuery += " \nWHERE " + subQueryAlias + "." + getMetaData().getGeoIdColumnName(hierarchy.getName());
+		// aggragateQuery += " = " + dimGeoAlias + "." + baseLevel.getColumnId();
+		// aggragateQuery += " \nAND  " + dimGeoAlias + "." + level.getColumnId() + " = '" + filterValue + "'";
+		// }
+		//
+		// System.out.println("\nExecutable query:\n" + aggragateQuery);
 
 		return aggragateQuery;
 	}
@@ -279,70 +295,70 @@ public class DataMartProvider extends AbstractDataMartProvider {
 	public SourceBean getDataDetails(String featureValue) {
 		SourceBean results = null;
 
-		Hierarchy hierarchy = getSelectedHierarchy();
-		String baseLevelName = getMetaData().getLevelName(hierarchy.getName());
-		Hierarchy.Level baseLevel = hierarchy.getLevel(baseLevelName);
-		String columnid = baseLevel.getColumnId();
-
-		String targetLevelName = getSelectedLevelName();
-		String filterValue = featureValue;
-		if (filterValue.trim().startsWith(targetLevelName + "_")) {
-			filterValue = filterValue.substring(targetLevelName.length() + 1);
-		}
-
-		String filteredQuery = "";
-		filteredQuery = getFilteredQuery(filterValue);
-		int max_rows = 1000;
-
-		Connection connection = null;
-		try {
-			JDBCDataSet dataSet = (JDBCDataSet) getEnv().get(EngineConstants.ENV_DATASET);
-			if (dataSet != null) {
-				connection = dataSet.getDataSource().getConnection();
-			} else {
-				connection = getDataSource().getConnection();
-			}
-			Statement statement = connection.createStatement();
-			statement.execute(filteredQuery);
-			ResultSet resultSet = statement.getResultSet();
-
-			ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-			int columnCount = resultSetMetaData.getColumnCount();
-
-			results = new SourceBean("ROWS");
-			SourceBean row;
-			// resultSet.beforeFirst();
-			int rowno = 0;
-			while (resultSet.next()) {
-				if (++rowno > 1000)
-					break;
-
-				String id = resultSet.getString(resultSet.findColumn(columnid));
-				if ((id == null) || (id.trim().equals(""))) {
-					continue;
-				}
-
-				row = new SourceBean("ROW");
-
-				for (int i = 1; i <= columnCount; i++) {
-					row.setAttribute(resultSetMetaData.getColumnLabel(i), (resultSet.getString(i) == null) ? "" : resultSet.getString(i));
-				}
-				results.setAttribute(row);
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			// throw new EMFUserError(EMFErrorSeverity.ERROR, "error.mapfile.notloaded");
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					// throw new EMFUserError(EMFErrorSeverity.ERROR, "Impossible to close connection");
-				}
-			}
-		}
+		// Hierarchy hierarchy = getSelectedHierarchy();
+		// String baseLevelName = getMetaData().getLevelName(hierarchy.getName());
+		// Hierarchy.Level baseLevel = hierarchy.getLevel(baseLevelName);
+		// String columnid = baseLevel.getColumnId();
+		//
+		// String targetLevelName = getSelectedLevelName();
+		// String filterValue = featureValue;
+		// if (filterValue.trim().startsWith(targetLevelName + "_")) {
+		// filterValue = filterValue.substring(targetLevelName.length() + 1);
+		// }
+		//
+		// String filteredQuery = "";
+		// filteredQuery = getFilteredQuery(filterValue);
+		// int max_rows = 1000;
+		//
+		// Connection connection = null;
+		// try {
+		// JDBCDataSet dataSet = (JDBCDataSet) getEnv().get(EngineConstants.ENV_DATASET);
+		// if (dataSet != null) {
+		// connection = dataSet.getDataSource().getConnection();
+		// } else {
+		// connection = getDataSource().getConnection();
+		// }
+		// Statement statement = connection.createStatement();
+		// statement.execute(filteredQuery);
+		// ResultSet resultSet = statement.getResultSet();
+		//
+		// ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+		// int columnCount = resultSetMetaData.getColumnCount();
+		//
+		// results = new SourceBean("ROWS");
+		// SourceBean row;
+		// // resultSet.beforeFirst();
+		// int rowno = 0;
+		// while (resultSet.next()) {
+		// if (++rowno > 1000)
+		// break;
+		//
+		// String id = resultSet.getString(resultSet.findColumn(columnid));
+		// if ((id == null) || (id.trim().equals(""))) {
+		// continue;
+		// }
+		//
+		// row = new SourceBean("ROW");
+		//
+		// for (int i = 1; i <= columnCount; i++) {
+		// row.setAttribute(resultSetMetaData.getColumnLabel(i), (resultSet.getString(i) == null) ? "" : resultSet.getString(i));
+		// }
+		// results.setAttribute(row);
+		// }
+		//
+		// } catch (Exception ex) {
+		// ex.printStackTrace();
+		// // throw new EMFUserError(EMFErrorSeverity.ERROR, "error.mapfile.notloaded");
+		// } finally {
+		// if (connection != null) {
+		// try {
+		// connection.close();
+		// } catch (SQLException e) {
+		// e.printStackTrace();
+		// // throw new EMFUserError(EMFErrorSeverity.ERROR, "Impossible to close connection");
+		// }
+		// }
+		// }
 
 		return results;
 	}

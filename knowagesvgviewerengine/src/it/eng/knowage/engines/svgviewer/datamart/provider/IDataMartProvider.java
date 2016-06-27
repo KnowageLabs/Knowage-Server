@@ -3,6 +3,7 @@ package it.eng.knowage.engines.svgviewer.datamart.provider;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.component.ISvgViewerEngineComponent;
 import it.eng.knowage.engines.svgviewer.dataset.DataMart;
+import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.knowage.engines.svgviewer.dataset.provider.Hierarchy;
 import it.eng.spago.base.SourceBean;
 
@@ -98,4 +99,29 @@ public interface IDataMartProvider extends ISvgViewerEngineComponent {
 	 * @return the selected level
 	 */
 	Hierarchy.Level getSelectedLevel();
+
+	/**
+	 * Sets the selected member name.
+	 *
+	 * @param memberName
+	 *            the new selected member name
+	 */
+	void setSelectedMemberName(String memberName);
+
+	/**
+	 * Gets the selected member name.
+	 *
+	 * @return the selected member name
+	 */
+	String getSelectedMemberName();
+
+	/**
+	 * Gets the specific hierarchy member.
+	 *
+	 * @param name
+	 *            the name
+	 *
+	 * @return the hierarchy member
+	 */
+	HierarchyMember getHierarchyMember(String name);
 }

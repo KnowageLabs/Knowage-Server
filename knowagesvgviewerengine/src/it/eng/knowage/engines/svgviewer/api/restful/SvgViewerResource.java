@@ -114,9 +114,22 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		logger.debug("IN");
 		try {
 			SourceBean templateSB = getEngineInstance().getTemplate();
-			SourceBean confSB = (SourceBean) templateSB.getAttribute(SvgViewerEngineConstants.MAP_RENDERER_TAG);
+			// SourceBean confSB = (SourceBean) templateSB.getAttribute(SvgViewerEngineConstants.MAP_RENDERER_TAG);
+			SourceBean confSB = (SourceBean) templateSB.getAttribute(SvgViewerEngineConstants.DATAMART_PROVIDER_TAG);
+			SourceBean hierarchySB = (SourceBean) confSB.getAttribute("HIERARCHY");
+			List members = hierarchySB.getAttributeAsList(SvgViewerEngineConstants.MEMBER_TAG);
 
-			SourceBean measuresConfigurationSB = (SourceBean) confSB.getAttribute("LAYERS");
+			SourceBean measuresConfigurationSB = null;
+			// @TODO gestire l'acquisizione del membro dinamicamente: ora prende il primo
+			for (int i = 0; i < members.size(); i++) {
+				SourceBean memberSB = null;
+				logger.debug("Parsing member  [" + i + "]");
+				memberSB = (SourceBean) members.get(i);
+				measuresConfigurationSB = (SourceBean) memberSB.getAttribute("LAYERS");
+				break;
+			}
+
+			// SourceBean measuresConfigurationSB = (SourceBean) confSB.getAttribute("LAYERS");
 
 			Map measures = getLayers(measuresConfigurationSB);
 			ResponseBuilder response = Response.ok(measures);
