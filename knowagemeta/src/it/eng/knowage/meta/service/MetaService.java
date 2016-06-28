@@ -1,5 +1,6 @@
 package it.eng.knowage.meta.service;
 
+import it.eng.knowage.meta.generator.jpamapping.JpaMappingJarGenerator;
 import it.eng.knowage.meta.initializer.BusinessModelInitializer;
 import it.eng.knowage.meta.initializer.PhysicalModelInitializer;
 import it.eng.knowage.meta.model.Model;
@@ -18,10 +19,13 @@ import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
 import it.eng.knowage.meta.model.serializer.ModelPropertyFactory;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -30,6 +34,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,8 +45,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -171,53 +178,62 @@ public class MetaService {
 	@Path("/addBusinessRelation")
 	public Response addBusinessRelation(@Context HttpServletRequest req) {
 		try {
-			JSONObject json = RestUtilities.readBodyAsJSONObject(req);
+			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 
 			JSONObject oldJsonModel = createJson(model);
 
 			ObjectMapper mapper = new ObjectMapper();
-			if (json.has("diff")) {
-				JsonNode patch = mapper.readTree(json.getString("diff"));
+			if (jsonRoot.has("diff")) {
+				JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
 				applyPatch(patch, model);
 			}
 
+			JSONObject json = jsonRoot.getJSONObject("data");
 			String name = json.getString("name");
-			String destTableName = json.getString("destinationTable");
-			String sourceTableName = json.getString("sourceTable");
-			JSONArray destCols = json.getJSONArray("destinationColumns");
-			JSONArray sourceCols = json.getJSONArray("sourceColumns");
 
-			BusinessModel bm = BusinessModelFactory.eINSTANCE.createBusinessModel();
-			bm.setParentModel(model);
+			// TODO remove this
+			json.put("uniqueName", name);
 
-			BusinessRelationship rel = BusinessModelFactory.eINSTANCE.createBusinessRelationship();
-			rel.setModel(bm);
-			rel.setName(name);
-			rel.getProperties();
-			rel.getPropertyTypes();
-			rel.getPhysicalForeignKey();
-			BusinessColumnSet destColumnSet = BusinessModelFactory.eINSTANCE.createBusinessColumnSet();
-			destColumnSet.setName(destTableName);
-			rel.setDestinationTable(destColumnSet);
-			BusinessColumnSet sourceColumnSet = BusinessModelFactory.eINSTANCE.createBusinessColumnSet();
-			sourceColumnSet.setName(sourceTableName);
-			rel.setSourceTable(sourceColumnSet);
+			// String destTableName = json.getString("destinationTable");
+			// String sourceTableName = json.getString("sourceTable");
+			// JSONArray destCols = json.getJSONArray("destinationColumns");
+			// JSONArray sourceCols = json.getJSONArray("sourceColumns");
 
-			for (int i = 0; i < destCols.length(); i++) {
-				String colName = destCols.getString(i);
-				BusinessColumn bc = BusinessModelFactory.eINSTANCE.createBusinessColumn();
-				bc.setUniqueName(colName);
-				rel.getDestinationColumns().add(bc);
-			}
+			BusinessModel bm = model.getBusinessModels().get(0);
 
-			for (int i = 0; i < sourceCols.length(); i++) {
-				String colName = sourceCols.getString(i);
-				BusinessColumn bc = BusinessModelFactory.eINSTANCE.createBusinessColumn();
-				bc.setUniqueName(colName);
-				rel.getSourceColumns().add(bc);
-			}
+			JsonNode rel = mapper.readTree(json.toString());
+			applyRelationships(rel, bm);
+
+			// BusinessRelationship rel = BusinessModelFactory.eINSTANCE.createBusinessRelationship();
+			// rel.setModel(bm);
+			// rel.setName(name);
+			// rel.getProperties();
+			// rel.getPropertyTypes();
+			// rel.getPhysicalForeignKey();
+			// BusinessColumnSet destColumnSet = BusinessModelFactory.eINSTANCE.createBusinessColumnSet();
+			// destColumnSet.setName(destTableName);
+			// rel.setDestinationTable(destColumnSet);
+			// BusinessColumnSet sourceColumnSet = BusinessModelFactory.eINSTANCE.createBusinessColumnSet();
+			// sourceColumnSet.setName(sourceTableName);
+			// rel.setSourceTable(sourceColumnSet);
+			//
+			// for (int i = 0; i < destCols.length(); i++) {
+			// String colName = destCols.getString(i);
+			// BusinessColumn bc = BusinessModelFactory.eINSTANCE.createBusinessColumn();
+			// // bc.setUniqueName(colName);
+			//
+			// rel.getDestinationColumns().add(bc);
+			// }
+			//
+			// for (int i = 0; i < sourceCols.length(); i++) {
+			// String colName = sourceCols.getString(i);
+			// BusinessColumn bc = BusinessModelFactory.eINSTANCE.createBusinessColumn();
+			// bc.setUniqueName(colName);
+			// rel.getSourceColumns().add(bc);
+			// }
+			// bm.getRelationships().add(rel);
 
 			JSONObject jsonModel = createJson(model);
 			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
@@ -229,6 +245,44 @@ public class MetaService {
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
 		return Response.serverError().build();
+	}
+
+	@GET
+	@Path("/buildModel")
+	public Response buildModel(@QueryParam("id") Integer id, @Context HttpServletRequest req) {
+		Model model = getModel(id);
+		JpaMappingJarGenerator jpaMappingJarGenerator = new JpaMappingJarGenerator();
+		// JpaMappingJarGenerator.defaultTemplateFolderPath =
+		// "D:/Sviluppo/Athena/knowagemeta-unit-test/workspaces/metadata/it.eng.knowage.meta.generator/templates";
+		// File projectRootFolder = new File("D:/Sviluppo/Athena/knowagemeta-unit-test/workspaces/metadata/it.eng.knowage.meta.generator");
+		// jpaMappingJarGenerator.setLibDir(new File(projectRootFolder, "libs/eclipselink"));
+		jpaMappingJarGenerator.setLibs(new String[] { "org.eclipse.persistence.core_2.1.2.jar", "javax.persistence_2.0.1.jar" });
+		try {
+			// java.nio.file.Path outFile = Files.createTempFile("model_", "_tmp");
+			java.nio.file.Path outDir = Files.createTempDirectory("model_");
+			jpaMappingJarGenerator.generate(model.getBusinessModels().get(0), outDir.toString());
+			IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
+			dao.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+			Content content = new Content();
+			// convert the uploaded file to input stream
+			// InputStream inputStream = inputPart.getBody(InputStream.class, null);
+			// bytes = IOUtils.toByteArray(inputStream);
+			// content.setContent(bytes);
+			// content.setCreationDate(new Date());
+			// content.setCreationUser(getUserProfile().getUserName().toString());
+			// dao.insertMetaModelContent(id, content );
+		} catch (IOException e) {
+			// TODO
+			e.printStackTrace();
+		}
+		return Response.serverError().build();
+	}
+
+	private Model getModel(Integer id) {
+		// TODO get file from db
+		File f = new File("c:\\test.sbimodel_new.txt");
+		EmfXmiSerializer serializer = new EmfXmiSerializer();
+		return serializer.deserialize(f);
 	}
 
 	private void applyRelationships(JsonNode actualJson, Model model) {
@@ -245,54 +299,73 @@ public class MetaService {
 				while (relIndex.hasNext()) {
 					JsonNode rel = relIndex.next();
 					String uniqueName = rel.get("uniqueName").textValue();
-					if (Boolean.TRUE.equals(relationshipMap.get(uniqueName))) {
-						continue;
-					} else {
+					if (!Boolean.TRUE.equals(relationshipMap.get(uniqueName))) {
 						relationshipMap.put(uniqueName, Boolean.TRUE);
+						applyRelationships(rel, bm);
 					}
-					String sourceTableName = rel.get("sourceTableName").asText().toLowerCase();
-					String destinationTableName = rel.get("destinationTableName").asText().toLowerCase();
-
-					BusinessRelationship br = BusinessModelFactory.eINSTANCE.createBusinessRelationship();
-					relationships.add(br);
-
-					BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
-					br.setSourceTable(sourceBcs);
-
-					BusinessColumnSet destBcs = bm.getBusinessTableByUniqueName(destinationTableName);
-					br.setDestinationTable(destBcs);
-
-					br.setId(rel.get("id").textValue());
-					br.setDescription(rel.get("description").textValue());
-					br.setName(rel.get("name").textValue());
-					br.setUniqueName(uniqueName);
-
-					Iterator<JsonNode> sourceColsIterator = rel.get("sourceColumns").elements();
-					while (sourceColsIterator.hasNext()) {
-						JsonNode jsonNode = sourceColsIterator.next();
-						BusinessColumn bc = sourceBcs.getSimpleBusinessColumnByUniqueName(jsonNode.get("uniqueName").asText());
-						br.getSourceColumns().add(bc);
-					}
-					Iterator<JsonNode> destColsIterator = rel.get("destinationColumns").elements();
-					while (destColsIterator.hasNext()) {
-						JsonNode jsonNode = destColsIterator.next();
-						BusinessColumn bc = destBcs.getSimpleBusinessColumnByUniqueName(jsonNode.get("uniqueName").asText());
-						br.getDestinationColumns().add(bc);
-					}
-					// setting multiplicity and other properties
-					Iterator<JsonNode> propIterator = rel.get("properties").elements();
-					while (propIterator.hasNext()) {
-						JsonNode jsonNode = propIterator.next();
-						ModelPropertyType propType = bm.getPropertyType(jsonNode.get("key").textValue());
-						br.setProperty(propType, jsonNode.get("value").textValue());
-					}
-					// This field must be null (in relationship)
-					// br.setPhysicalForeignKey();
 				}
 				System.out.println("relationships: " + relationships.size());
 			}
 		}
 		bm.getBusinessTables().iterator();
+	}
+
+	private void applyRelationships(JsonNode rel, BusinessModel bm) {
+		BusinessRelationship br = BusinessModelFactory.eINSTANCE.createBusinessRelationship();
+		bm.getRelationships().add(br);
+		String uniqueName = rel.get("uniqueName").textValue();
+
+		String sourceTableName = rel.get("sourceTableName").asText().toLowerCase();
+		String destinationTableName = rel.get("destinationTableName").asText().toLowerCase();
+
+		BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
+		br.setSourceTable(sourceBcs);
+
+		BusinessColumnSet destBcs = bm.getBusinessTableByUniqueName(destinationTableName);
+		br.setDestinationTable(destBcs);
+
+		if (rel.has("id"))
+			br.setId(rel.get("id").textValue());
+		if (rel.has("description"))
+			br.setDescription(rel.get("description").textValue());
+		if (rel.has("name"))
+			br.setName(rel.get("name").textValue());
+
+		br.setUniqueName(uniqueName);
+
+		Iterator<JsonNode> sourceColsIterator = rel.get("sourceColumns").elements();
+		while (sourceColsIterator.hasNext()) {
+			JsonNode jsonNode = sourceColsIterator.next();
+			BusinessColumn bc;
+			if (jsonNode.isTextual()) {
+				bc = sourceBcs.getSimpleBusinessColumnByUniqueName(jsonNode.asText());
+			} else {
+				bc = sourceBcs.getSimpleBusinessColumnByUniqueName(jsonNode.get("uniqueName").asText());
+			}
+			br.getSourceColumns().add(bc);
+		}
+		Iterator<JsonNode> destColsIterator = rel.get("destinationColumns").elements();
+		while (destColsIterator.hasNext()) {
+			JsonNode jsonNode = destColsIterator.next();
+			BusinessColumn bc;
+			if (jsonNode.isTextual()) {
+				bc = destBcs.getSimpleBusinessColumnByUniqueName(jsonNode.asText());
+			} else {
+				bc = destBcs.getSimpleBusinessColumnByUniqueName(jsonNode.get("uniqueName").asText());
+			}
+			br.getDestinationColumns().add(bc);
+		}
+		// setting multiplicity and other properties
+		if (rel.has("properties")) {
+			Iterator<JsonNode> propIterator = rel.get("properties").elements();
+			while (propIterator.hasNext()) {
+				JsonNode jsonNode = propIterator.next();
+				ModelPropertyType propType = bm.getPropertyType(jsonNode.get("key").textValue());
+				br.setProperty(propType, jsonNode.get("value").textValue());
+			}
+		}
+		// This field should be null (in relationship)
+		// br.setPhysicalForeignKey();
 	}
 
 	private void applyPatch(JsonNode patch, Model model) throws SpagoBIException {
