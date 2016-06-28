@@ -184,6 +184,7 @@
 		</ITEM>
 	</ITEM>
 	
+	
 	<!-- angular temp test start-->  
 	<ITEM code="doc_admin_angular" 	title="#menu.DocumentDev"
 			functionality="DocumentDevManagement"
@@ -278,14 +279,16 @@
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportDocuments/importExportDocuments.jsp" />
 			<ITEM title="#menu.ImpExpMenu" functionality="ImpExpMenu"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportMenu/importExportMenu.jsp" />
-			<ITEM title="#menu.ImpExpResources" functionality="ImpExpResources"
-				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportResources.jsp" /> 
+<!-- 			<ITEM title="#menu.ImpExpResources" functionality="ImpExpResources" -->
+<!-- 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportResources.jsp" />  -->
 	  		<ITEM title="#menu.ImpExpUsers" functionality="ImpExpUsers"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp" /> 
 	  		<ITEM title="#menu.ImpExpKpis" functionality="ImpExpKpis"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportKpis/importExportKpis.jsp" /> 
+			
 			<ITEM title="#menu.ImpExpCatalog" functionality="ImpExpCatalog"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportCatalog/importExportCatalog.jsp" /> 
+				
 			<ITEM title="#menu.ImpExpGlossary" functionality="ImpExpGlossary"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportGlossary/importExportGlossaryTemplate.jsp" /> 
 			
