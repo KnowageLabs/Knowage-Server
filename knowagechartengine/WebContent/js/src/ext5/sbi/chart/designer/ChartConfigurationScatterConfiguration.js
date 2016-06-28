@@ -21,7 +21,7 @@ Ext.define
        	 */
        columnWidth: 1,     		          
 //        width: 290,
-       height: 230,
+       height: 125,
         
 	    title: LN("sbi.chartengine.configuration.scatter.panelTitle"),
 		bodyPadding: 10,
@@ -43,34 +43,40 @@ Ext.define
 			this.callParent(config);
 			this.viewModel = config.viewModel;			
 			
-	        /***
-	         * Scatter zoom type combo box for the SCATTER chart type
-	         */
-	        var scatterZoomTypeField = Ext.create
-	    	(
-				"Sbi.chart.designer.ChartConfigurationScatterZoomType",
-				
-				{
-					viewModel: this.viewModel,
-	        		bind : '{configModel.scatterZoomType}'
-				}
-			);
-	        
-	        var scatterZoomTypeFieldDC = Ext.create
-	        (
-	    		{
-	    	        xtype : 'fieldcontainer',
-	    	        layout : 'hbox',
-	    	        id: "zoomTypeFC",
-	    	        
-	    	        defaults : 
-	    	        {
-	    	            margin: '15 0 0 0'
-	    	        },
-	    	        
-	    	        items : [scatterZoomTypeField]
-	    		}
-	        );
+			/**
+			 * The Zoom type combo box should be removed from the Scatter configuration panel (Picture 3) on the Step 2 of the Designer, 
+			 * since for all chart types that possess this parameter (property, feature) the value are having a static value of 'xy' (fixed).
+			 * [KNOWAGE-1114 JIRA ISSUE]
+			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+//	        /***
+//	         * Scatter zoom type combo box for the SCATTER chart type
+//	         */
+//	        var scatterZoomTypeField = Ext.create
+//	    	(
+//				"Sbi.chart.designer.ChartConfigurationScatterZoomType",
+//				
+//				{
+//					viewModel: this.viewModel,
+//	        		bind : '{configModel.scatterZoomType}'
+//				}
+//			);
+//	        
+//	        var scatterZoomTypeFieldDC = Ext.create
+//	        (
+//	    		{
+//	    	        xtype : 'fieldcontainer',
+//	    	        layout : 'hbox',
+//	    	        id: "zoomTypeFC",
+//	    	        
+//	    	        defaults : 
+//	    	        {
+//	    	            margin: '15 0 0 0'
+//	    	        },
+//	    	        
+//	    	        items : [scatterZoomTypeField]
+//	    		}
+//	        );
 	        
 	        var scatterStartOnTick = Ext.create
 	    	(
@@ -78,7 +84,7 @@ Ext.define
 			        xtype: 'checkboxfield',
 			        id: 'startOnTick',
 			        bind : '{configModel.scatterStartOnTick}',
-			        margin: '20 0 0 0',
+			        //margin: '20 0 0 0',
 			        labelSeparator: '',
 			        fieldLabel: LN("sbi.chartengine.configuration.scatter.startOnTick"),
 			    }	
@@ -90,7 +96,7 @@ Ext.define
 			        xtype: 'checkboxfield',
 			        id: 'endOnTick',
 			        bind : '{configModel.scatterEndOnTick}',
-			        margin: '20 0 0 0',
+			        //margin: '20 0 0 0',
 			        labelSeparator: '',
 			        fieldLabel: LN("sbi.chartengine.configuration.scatter.endOnTick"), 
 			    }	
@@ -102,13 +108,20 @@ Ext.define
 			        xtype: 'checkboxfield',
 			        id: 'showLastLabel',
 			        bind : '{configModel.scatterShowLastLabel}',
-			        margin: '20 0 0 0',
+			        //margin: '20 0 0 0',
 			        labelSeparator: '',
 			        fieldLabel: LN("sbi.chartengine.configuration.scatter.showLastLabel"), 
 			    }	
 	    	);     
 	        
-	        this.add(scatterZoomTypeFieldDC);
+	     	/**
+			 * The Zoom type combo box should be removed from the Scatter configuration panel (Picture 3) on the Step 2 of the Designer, 
+			 * since for all chart types that possess this parameter (property, feature) the value are having a static value of 'xy' (fixed).
+			 * [KNOWAGE-1114 JIRA ISSUE]
+			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+//	        this.add(scatterZoomTypeFieldDC);
+	     	
 	        this.add(scatterStartOnTick); 
 	        this.add(scatterEndOnTick); 
 	        this.add(scatterShowLastLabel); 		

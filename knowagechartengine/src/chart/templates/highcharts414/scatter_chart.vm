@@ -33,8 +33,15 @@
 
 {
     chart: {
+        
         type: 'scatter',
-        zoomType: '$chart.zoomType',
+        
+        #*
+        	Zoom type will be fixed to the 'xy', since all other chart types that possess this feature are defined with 
+        	that value (again, statically).	[KNOWAGE-1114 JIRA ISSUE]
+			@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+        *#
+        zoomType: 'xy',
         
         backgroundColor: '$chart.style.backgroundColor', ##outer chart background
         
