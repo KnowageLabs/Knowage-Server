@@ -321,19 +321,20 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 						fieldLabel : LN('sbi.chartengine.axisstylepopup.axis.align'),
 			});
 		} else {
+			
 			this.styleAlignComboBox = Ext.create('Sbi.chart.designer.FontAlignCombo', {
 				value: (styleAlign && styleAlign.trim() != '') ? styleAlign.trim() : '',
 						fieldLabel : LN('sbi.chartengine.axisstylepopup.axis.align'),
 			});
+			
 		}
 		
 		/**
-		 * For those two chart types we do not need this parameter (feature).
-		 * 
-		 * @author: danristo (danilo.ristovski@mht.net)
+		 * For these chart types we do not need this parameter (feature).
+		 * NOTE: The checking for RADAR is added for the KNOWAGE-1113 JIRA ISSUE. 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		if (chartType != "CHORD" && chartType != "PARALLEL")
-		{
+		if (chartType != "CHORD" && chartType != "PARALLEL" && chartType != "RADAR") {
 			this.axisFieldSet.add(this.styleAlignComboBox);
 		}
 		

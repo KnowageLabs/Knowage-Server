@@ -684,16 +684,16 @@
         			predefined one - defined by the Highcharts library), since the label aligned left will 
         			overlap with the title (characteristic of this library). Hence, the value inside 
         			of the combo for alignment of labels on the axis inside of the X-axis panel's Axis 
-        			style configuration popup will not be taken into account.        			
+        			style configuration popup will not be taken into account.      
+        			
+        			NOTE: We should disable the 'align' property for the X-axis labels for RADAR chart, since 
+        			it causes a weird alignment	on the edge of the chart (categories values are strangely aligned)
+        			for this chart type. Without this property, those will be aligned perfectly, so the axis line 
+        			comes right in the middle of the category value.
+        			  			
         			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
         		*#  
-        		#if($labelAlign && ($chart.orientation == 'vertical' || $chartType == "radar"))
-        			#* 
-        				NOTE: This should probably be disabled for RADAR chart, since it causes some weird alignment on the edge of the
-        				chart (categories values are strangely aligned). Without this property, those would be aligned perfectly, so the
-        				axis line comes right in the middle of the category value.
-        				@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-    				*#
+        		#if($labelAlign && $chart.orientation == 'vertical' && $chartType != "radar")
         			align: "$labelAlign", 
         		#end
         		
