@@ -387,7 +387,7 @@ md-tabs .md-tab.md-active{
 }
 
 .BUTTON_SORTING_CLICKED{
-	background-image: url(../img/sorting-enabled-clicked.png);
+	background-image: url(../img/sorting-enabled_clicked.png);
 		background-size:23px 23px; 
 }
 .BUTTON_CC{
