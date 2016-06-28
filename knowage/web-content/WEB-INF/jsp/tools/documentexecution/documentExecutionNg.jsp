@@ -381,7 +381,9 @@ if(executionRoleNames.size() > 0) {
 	 				initResetFunctionVisualDependency : {status : false},
  					returnFromVisualViewpoint : {status : false},
  					initResetFunctionDataDependency : {status : false},
- 					returnFromDataDepenViewpoint : {status : false}
+ 					returnFromDataDepenViewpoint : {status : false},
+ 					initResetFunctionLovDependency : {status : false},
+ 					returnFromLovDepenViewpoint : {status : false}
 				<%
 				if(isFromDocumentWidget != null && "true".equalsIgnoreCase(isFromDocumentWidget)) {
 					out.print(", isFromDocumentWidget: true ");

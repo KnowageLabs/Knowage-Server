@@ -28,7 +28,9 @@
 					 //disable visual correlation
 					 execProperties.initResetFunctionVisualDependency.status=false;
 					 execProperties.initResetFunctionDataDependency.status=false;
+					 execProperties.initResetFunctionLovDependency.status=false;
 					 execProperties.returnFromDataDepenViewpoint.status = true;
+					 execProperties.returnFromLovDepenViewpoint.status = true;
 					 docExecute_urlViewPointService.fillParametersPanel(params);
 					 docExecute_paramRolePanelService.returnToDocument();
 					 
@@ -46,7 +48,9 @@
 					//disable visual correlation
 					 execProperties.initResetFunctionVisualDependency.status=false;
 					 execProperties.initResetFunctionDataDependency.status=false;
+					 execProperties.initResetFunctionLovDependency.status=false;
 					 execProperties.returnFromDataDepenViewpoint.status = true;
+					 execProperties.returnFromLovDepenViewpoint.status = true;
 					 docExecute_urlViewPointService.fillParametersPanel(params);
 					 docExecute_urlViewPointService.frameLoaded = false;
 					 docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, stringfyFromGetUrlParameters(params));

@@ -148,7 +148,11 @@
 		
 		<!-- lov list single input -->
 		<section ng-if="parameter.selectionType=='LIST' && !parameter.multivalue">
-			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}
+			 <md-icon ng-show="parameter.lovNotDefine" md-font-icon="fa fa-info-circle">
+			  <md-tooltip>{{sbiModule_translate.load("sbi.execution.parameter.lovnotdefined")}} </md-tooltip>
+			 </md-icon>
+			 </label>
 			<md-radio-group ng-model="parameter.parameterValue" ng-required="::parameter.mandatory">
 				<md-radio-button class="md-primary" ng-repeat="defaultParameter in parameter.defaultValues" ng-if="defaultParameter.isEnabled" value="{{::defaultParameter.value}}">
 					{{::defaultParameter.label}} 
@@ -158,7 +162,12 @@
 		
 		<!-- lov list multiple input -->
 		<section ng-if="parameter.selectionType=='LIST' && parameter.multivalue">
-			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">{{parameter.label}}</label>
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'">{{parameter.label}}
+         		 <md-icon ng-show="parameter.lovNotDefine" md-font-icon="fa fa-info-circle" >
+			     <md-tooltip>{{sbiModule_translate.load("sbi.execution.parameter.lovnotdefined")}} </md-tooltip>
+			   </md-icon>
+			 </label>
+			
 			<div ng-repeat="defaultParameter in parameter.defaultValues">
 				<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled"
 						ng-checked="checkboxParameterExists(defaultParameter.value, parameter)" ng-click="toggleCheckboxParameter(defaultParameter.value, parameter)" >
@@ -170,7 +179,7 @@
 		<!-- lov combobox single and multiple input -->
 		<md-input-container class="md-block">
 			<label ng-if="parameter.selectionType=='COMBOBOX'" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' ">
-			 {{parameter.label}}</label>
+			 {{parameter.label}} </label>
 		
 		
 			<!-- multiple -->

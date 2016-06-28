@@ -635,6 +635,7 @@
 					// Enable visualcorrelation
 					execProperties.initResetFunctionVisualDependency.status=true;
 					execProperties.initResetFunctionDataDependency.status=true;
+					execProperties.initResetFunctionLovDependency.status=true;
 
 					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
 				}else{
@@ -991,15 +992,21 @@
 									execProperties.parametersData.documentParameters[z].defaultValues = [];
 									//BUILD DEAFULT VALUE  
 									var defaultValueArrCache = [];
-									for(var k=0; k<response.data.result.root.length; k++){
-										response.data.result.root[k].isEnabled = true;
-										execProperties.parametersData.documentParameters[z].defaultValues.push(response.data.result.root[k]);
-										defaultValueArrCache.push(response.data.result.root[k].value);											
-									}
+									
+									
+										for(var k=0; k<response.data.result.root.length; k++){
+											response.data.result.root[k].isEnabled = true;
+											execProperties.parametersData.documentParameters[z].defaultValues.push(response.data.result.root[k]);
+											defaultValueArrCache.push(response.data.result.root[k].value);											
+										}
+									
+									
 									//Remove parameter value if not present in default value (clean operation)
 									//MULTIVALUE
 									if( Object.prototype.toString.call( execProperties.parametersData.documentParameters[z].parameterValue ) === '[object Array]' ) {
 										var paramValueArrCache= [];
+										
+										
 										angular.copy(execProperties.parametersData.documentParameters[z].parameterValue,paramValueArrCache);
 										for(var u=0; u<paramValueArrCache.length; u++){	
 											var index = execProperties.parametersData.documentParameters[z].parameterValue.indexOf(paramValueArrCache[u]);
@@ -1015,8 +1022,33 @@
 										}
 										//console.log('params Value single after ' , execProperties.parametersData.documentParameters[z].parameterValue);
 									}
+									
+									//if mandatory and is unique default value
+									if(response.data.result.root.length==1 &&
+											execProperties.parametersData.documentParameters[z].mandatory && 
+											execProperties.parametersData.documentParameters[z].selectionType=='LIST' ){
+											console.log('setting default value ', response.data.result.root[0].value);
+											execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
+													[response.data.result.root[0].value]	: response.data.result.root[0].value;
+										}else{
+											//don't back from viewpoint and default value 
+											if(execProperties.initResetFunctionLovDependency.status){
+											execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
+													[]	: '';
+											}
+										}
+																		
+									execProperties.parametersData.documentParameters[z].lovNotDefine=false;
 								}
+															
 						   }
+						   
+						   if(execProperties.returnFromLovDepenViewpoint.status){
+								execProperties.initResetFunctionLovDependency.status=true;
+								execProperties.returnFromLovDepenViewpoint.status = false;
+							}
+						   
+						   
 					   	},function(response, status, headers, config) {
 							var lovParamName = dataDependenciesElementMap.parameterToChangeUrlName;
 					   		var errorMes = '';
@@ -1026,9 +1058,9 @@
 					   		if(typeof response.data.RemoteException !='undefined' ){
 					   			errorMes = response.data.RemoteException.message;
 					   		}
-					   		
-							documentExecuteServices.showToast('Error LOV " '+ lovParamName +' " : ' + errorMes);
+							//documentExecuteServices.showToast('Error LOV " '+ lovParamName +' " : ' + errorMes);
 					   		var idRowParameter = serviceScope.getRowIdfromUrlName(lovParamName);
+					   		execProperties.parametersData.documentParameters[idRowParameter].lovNotDefine=true;
 							execProperties.parametersData.documentParameters[idRowParameter].defaultValues = [];
 							execProperties.parametersData.documentParameters[idRowParameter].parameterValue = [];
 						}
