@@ -11,6 +11,7 @@ import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.datamart.provider.DataMartProvider;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -57,12 +58,28 @@ public class DataMartProviderConfigurator {
 			String query = null;
 			IDataSet dataSet = null;
 
+			// get dataset of active member if present...
+			String labelDsData = datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName()).getDsMeasure();
+			try {
+				dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(labelDsData);
+				if (dataSet != null) {
+					datamartProvider.setDs(dataSet);
+					datamartProvider.getEnv().put(EngineConstants.ENV_DATASET, dataSet);
+					return;
+				}
+			} catch (Exception e) {
+				logger.error("Impossible to load dataset with data", e);
+				throw new SvgViewerEngineException("Impossible to load dataset with data", e);
+			}
+
+			// ...otherwise get dataset associated to the document...
 			dataSet = (IDataSet) datamartProvider.getEnv().get(EngineConstants.ENV_DATASET);
 			if (dataSet != null) {
 				datamartProvider.setDs(dataSet);
 				return;
 			}
 
+			// ... at last try to get dataset from the template
 			SourceBean dataSetSB = (SourceBean) confSB.getAttribute(SvgViewerEngineConstants.DATASET_TAG);
 			if (dataSetSB == null) {
 				logger.warn("Cannot find dataset configuration settings: tag name " + SvgViewerEngineConstants.DATASET_TAG);
