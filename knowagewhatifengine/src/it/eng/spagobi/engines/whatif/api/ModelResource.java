@@ -17,32 +17,11 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
-import it.eng.spagobi.engines.whatif.export.ExportConfig;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmFactory;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
-import it.eng.spagobi.engines.whatif.parser.Lexer;
-import it.eng.spagobi.engines.whatif.parser.parser;
-import it.eng.spagobi.engines.whatif.version.VersionManager;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-import it.eng.spagobi.writeback4j.mondrian.CacheManager;
-
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -64,6 +43,10 @@ import javax.ws.rs.core.Response;
 
 import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONObject;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
@@ -73,6 +56,31 @@ import org.pivot4j.PivotModel;
 import org.pivot4j.ui.fop.FopExporter;
 import org.pivot4j.ui.poi.ExcelExporter;
 import org.pivot4j.ui.table.TableRenderer;
+
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
+import it.eng.spagobi.engines.whatif.export.ExportConfig;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmFactory;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
+import it.eng.spagobi.engines.whatif.parser.Lexer;
+import it.eng.spagobi.engines.whatif.parser.parser;
+import it.eng.spagobi.engines.whatif.version.VersionManager;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 @Path("/1.0/model")
 public class ModelResource extends AbstractWhatIfEngineService {
@@ -140,7 +148,6 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			logger.debug("No query found");
 		}
 
-		
 		table = renderModel(model);
 		logger.debug("OUT");
 		return table;
@@ -360,13 +367,12 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		ExcelExporter exporter = new ExcelExporter(out);
-		ExportConfig exportConfig =  WhatIfEngineConfig.getInstance().getExportProperties();
-		if(exportConfig.getFontFamily()!=null)
+		ExportConfig exportConfig = WhatIfEngineConfig.getInstance().getExportProperties();
+		if (exportConfig.getFontFamily() != null)
 			exporter.setFontFamily(exportConfig.getFontFamily());
-		if(exportConfig.getFontSize()!=null)
+		if (exportConfig.getFontSize() != null)
 			exporter.setFontSize(exportConfig.getFontSize());
 
-		
 		TableRenderer render = new TableRenderer();
 
 		// adds the calculated fields before rendering the model
@@ -376,7 +382,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		// restore the query without calculated fields
 		model.restoreQuery();
 		byte[] outputByte = out.toByteArray();
-		String fileName = getExportFileName()+ ".xls";
+		String fileName = getExportFileName() + ".xls";
 
 		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
 	}
@@ -393,14 +399,14 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		FopExporter exporter = new FopExporter(out);
 
-		ExportConfig exportConfig =  WhatIfEngineConfig.getInstance().getExportProperties();
-		if(exportConfig.getFontFamily()!=null)
+		ExportConfig exportConfig = WhatIfEngineConfig.getInstance().getExportProperties();
+		if (exportConfig.getFontFamily() != null)
 			exporter.setFontFamily(exportConfig.getFontFamily());
-		if(exportConfig.getFontSize()!=null)
+		if (exportConfig.getFontSize() != null)
 			exporter.setFontSize(exportConfig.getFontSize().toString());
-		if(exportConfig.getOrientation()!=null)
+		if (exportConfig.getOrientation() != null)
 			exporter.setOrientation(exportConfig.getOrientation());
-		
+
 		TableRenderer render = new TableRenderer();
 
 		// adds the calculated fields before rendering the model
@@ -411,7 +417,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		// restore the query without calculated fields
 		model.restoreQuery();
 		byte[] outputByte = out.toByteArray();
-		String fileName = getExportFileName()+ ".pdf";
+		String fileName = getExportFileName() + ".pdf";
 
 		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
 	}
@@ -456,6 +462,43 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		String fileName = exportFileName + "_" + d.getYear() + d.getMonth() + d.getDay() + d.getHours() + d.getMinutes() + ".txt";
 
 		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
+	}
+
+	@GET
+	@Path("/exceltest")
+	public void excelFillExample() {
+		XSSFWorkbook wb = null;
+		InputStream fileInputStream = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("it/eng/spagobi/tools/dataset/service/export_dataset_template.xlsm");
+		try {
+			wb = new XSSFWorkbook();
+			FileOutputStream fileOut = new FileOutputStream("workbook.xlsx");
+		} catch (IOException e) {
+			logger.error("Input Output Exception " + e.getMessage());
+			throw new SpagoBIServiceException("Name", "Impossible to get xlsm export template file ", e);
+		}
+
+		if (wb != null) {
+			XSSFSheet sheet = wb.createSheet("test sheet");
+			XSSFRow row = sheet.createRow(1);
+			for (int i = 0; i < 20; i++) {
+				XSSFCell cell = row.createCell(i);
+				cell.setCellValue("" + i);
+			}
+		}
+		OutputStream out;
+		try {
+			String ime = "test";
+			getServletResponse().setHeader("Content-Disposition", "attachment" + "; filename=\"" + ime + ".xlsm" + "\";");
+			getServletResponse().setContentType("application/octet-stream");
+			out = getServletResponse().getOutputStream();
+			wb.write(out);
+			getServletResponse().getOutputStream().flush();
+			getServletResponse().getOutputStream().close();
+		} catch (IOException e) {
+			logger.error("write output file stream error " + e.getMessage());
+			throw new SpagoBIServiceException("test", "Impossible to write output file xls error", e);
+		}
 	}
 
 	private String getExportFileName() {
