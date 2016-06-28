@@ -104,28 +104,27 @@ public class MetaService {
 		try {
 			EmfXmiSerializer serializer = new EmfXmiSerializer();
 
-			String jsonString = RestUtilities.readBody(req);
-			JSONObject json = new JSONObject(jsonString);
+			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode actualJson = mapper.readTree(jsonString);
-
-			Assert.assertTrue(json.has("physicalModel"), "physicalModel is mandatory");
-			Assert.assertTrue(json.has("businessModel"), "businessModel is mandatory");
+			// Assert.assertTrue(json.has("physicalModel"), "physicalModel is mandatory");
+			// Assert.assertTrue(json.has("businessModel"), "businessModel is mandatory");
 
 			// Model model = createEmptyModel(json);
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 
 			serializer.serialize(model, new File("c:\\test.sbimodel_old.txt"));
 
-			// JSONObject emptyModelJson = createJson(model);
 			// JsonNode patch = JsonDiff.asJson(mapper.readTree(emptyModelJson.toString()), actualJson);
 
-			if (json.has("diff")) {
-				JsonNode patch = mapper.readTree(json.getString("diff"));
+			ObjectMapper mapper = new ObjectMapper();
+			if (jsonRoot.has("diff")) {
+				JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
 				applyPatch(patch, model);
 			}
 
+			// TODO Check if this is still needed
+			JSONObject jsonModel = createJson(model);
+			JsonNode actualJson = mapper.readTree(jsonModel.toString());
 			applyRelationships(actualJson, model);
 
 			serializer.serialize(model, new File("c:\\test.sbimodel_new.txt"));
@@ -237,6 +236,7 @@ public class MetaService {
 		BusinessModel bm = model.getBusinessModels().get(0);
 		EList<BusinessRelationship> relationships = bm.getRelationships();
 		relationships.clear();
+		Map<String, Boolean> relationshipMap = new HashMap<>();
 		while (btIterator.hasNext()) {
 			JsonNode bt = btIterator.next();
 			JsonNode rels = bt.get("relationships");
@@ -244,6 +244,12 @@ public class MetaService {
 				Iterator<JsonNode> relIndex = rels.elements();
 				while (relIndex.hasNext()) {
 					JsonNode rel = relIndex.next();
+					String uniqueName = rel.get("uniqueName").textValue();
+					if (Boolean.TRUE.equals(relationshipMap.get(uniqueName))) {
+						continue;
+					} else {
+						relationshipMap.put(uniqueName, Boolean.TRUE);
+					}
 					String sourceTableName = rel.get("sourceTableName").asText().toLowerCase();
 					String destinationTableName = rel.get("destinationTableName").asText().toLowerCase();
 
@@ -259,7 +265,7 @@ public class MetaService {
 					br.setId(rel.get("id").textValue());
 					br.setDescription(rel.get("description").textValue());
 					br.setName(rel.get("name").textValue());
-					br.setUniqueName(rel.get("uniqueName").textValue());
+					br.setUniqueName(uniqueName);
 
 					Iterator<JsonNode> sourceColsIterator = rel.get("sourceColumns").elements();
 					while (sourceColsIterator.hasNext()) {
@@ -426,7 +432,8 @@ public class MetaService {
 	}
 
 	private String cleanPath(String path) {
-		path = path.replaceAll("^/physicalModel/", "/physicalModels/0/tables/").replaceAll("^/businessModel/", "/businessModels/0/businessTables/");
+		// path = path.replaceAll("^/physicalModel/", "/physicalModels/0/tables/").replaceAll("^/businessModel/", "/businessModels/0/businessTables/");
+		path = "/businessModels" + path;
 		Pattern p = Pattern.compile("(/)(\\d)");
 		Matcher m = p.matcher(path);
 		// StringBuffer s = new StringBuffer("/businessTables");
