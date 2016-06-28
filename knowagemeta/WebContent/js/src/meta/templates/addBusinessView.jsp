@@ -47,7 +47,7 @@
 						source-column-label="translate.load('sbi.meta.business.relationship.source.attributes')"
 						target-column-label="translate.load('sbi.meta.business.relationship.target.attributes')"
 						drag-options="dragOptionsFunct"
-						before-delete-association=beforeClearItem(item)
+						after-delete-association=afterClearItem(item)
 						>
 					</associator-directive>
 				</md-content>
@@ -56,7 +56,19 @@
 				
 				
 				<expander-box title="Riepilogo" expanded="true">
-				riepilogo
+				 
+					<md-list class="md-dense" flex >
+        				<md-list-item     ng-repeat="item in summary"  ng-click="null" layout="row">
+        					<span flex=40>{{item.source}}</span>
+	        				<span flex  ><i class="fa fa-link" aria-hidden="true"></i></span>
+	        				<span flex=40>{{item.target}}</span>
+	        				 <md-button   class="md-secondary md-icon-button " ng-click="deleteRelationship(item)">
+	        				 <md-icon md-font-icon="fa fa-trash"></md-icon>
+        				 </md-button>
+        				 <md-divider ng-if="!$last"></md-divider>
+			    		</md-list-item>
+			    	</md-list>
+				
 				</expander-box>
 				
 				

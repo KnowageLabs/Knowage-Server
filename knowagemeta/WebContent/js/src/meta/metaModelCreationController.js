@@ -190,7 +190,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 		$mdDialog.show({
 			controller: addBusinessViewController,
 			preserveScope: true,
-			locals: {businessModel:$scope.businessModel, physicalModel: $scope.physicalModel},
+			locals: {businessModel:$scope.businessModel, originalPhysicalModel: $scope.physicalModel},
 			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addBusinessView.jsp',
 			clickOutsideToClose:true,
 			escapeToClose :true,

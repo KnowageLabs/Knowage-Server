@@ -13,7 +13,8 @@ associatorDirective.directive("associatorDirective",function(){
 				targetName:"@",
 				associatedItem:"@?",
 				dragOptions:"=?",
-				beforeDeleteAssociation:"&?"
+				beforeDeleteAssociation:"&?",
+				afterDeleteAssociation:"&?",
 			},
 			 link: function (scope, element, attrs, ctrl, transclude) {
 
@@ -38,6 +39,13 @@ function associatorDirectiveController($scope){
 		}
 		if(execute!=false){
 			item[$scope.associatedItem]=[];
+			if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+	    	    $scope.$apply();
+	    	}
+		}
+
+		if($scope.afterDeleteAssociation!=undefined){
+			execute= $scope.afterDeleteAssociation({item:item})
 		}
 	}
 }
@@ -151,7 +159,9 @@ associatorDirective.directive('droppable', function() {
 
         			    	scope.item[scope.$parent.associatedItem].push(scope.$parent.sourceModel[data]);
 
-        			    	scope.$apply();
+        			    	if (scope.$root.$$phase != '$apply' && scope.$root.$$phase != '$digest') {
+        			    	    scope.$apply();
+        			    	}
 
         			    	if(scope.$parent.dragOptions && scope.$parent.dragOptions.hasOwnProperty("dropEnd")){
         			    		scope.$parent.dragOptions.dropEnd(ev,scope.$parent.sourceModel[data],scope.item);
