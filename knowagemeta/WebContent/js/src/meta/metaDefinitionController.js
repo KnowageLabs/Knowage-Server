@@ -87,13 +87,13 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 
 	$scope.saveModel=function(){
 		var dataToSend={};
-		dataToSend.datasourceId = $scope.datasourceId;
-		dataToSend.physicalModels = $scope.physicalModels;
-		dataToSend.businessModels = $scope.businessModels;
-		// TODO set model name here
-		dataToSend.modelName = 'test_model_hard_coded';
-		dataToSend.physicalModel = $scope.removeCircularDependency(angular.extend([],$scope.physicalModel));
-		dataToSend.businessModel =  $scope.removeCircularDependency(angular.extend([],$scope.businessModel));
+//		dataToSend.datasourceId = $scope.datasourceId;
+//		dataToSend.physicalModels = $scope.physicalModels;
+//		dataToSend.businessModels = $scope.businessModels;
+//		// TODO set model name here
+//		dataToSend.modelName = 'test_model_hard_coded';
+//		dataToSend.physicalModel = $scope.removeCircularDependency(angular.extend([],$scope.physicalModel));
+//		dataToSend.businessModel =  $scope.removeCircularDependency(angular.extend([],$scope.businessModel));
 
 		sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", businessModelServices.createRequestRest(dataToSend))
 		.then(

@@ -8,6 +8,60 @@
 		<md-dialog-content flex > 
 			<div class="md-dialog-content" layout="column">
 				
+				<expander-box title="translate.load('sbi.meta.model.physical')" expanded="true">
+					<angular-table flex id='newBViewTableColumn' ng-model="physicalModel"
+					columns='bvTableColumns'
+				 	show-search-bar=true 
+				 	no-pagination="true"
+				 	multi-select="true"
+				 	selected-item="tmpBnssView.physicalModels"
+				 	></angular-table>
+				</expander-box>
+				
+				<md-content layout="column" layout-padding>
+					<div layout="row" >
+						<md-input-container flex>
+							<label>{{translate.load("sbi.meta.business.relationship.source.table")}}</label>
+							<md-select ng-model="sourceTable" ng-model-options="{trackBy: '$value.name'}" >
+								<md-option ng-repeat="colu in tmpBnssView.physicalModels"  ng-value="colu"  >
+								{{colu.name}}
+								</md-option>
+							</md-select>
+						</md-input-container>						
+
+						<md-input-container flex>
+							<label>{{translate.load("sbi.meta.business.relationship.target.table")}}</label>
+							<md-select ng-model="targetTable" ng-model-options="{trackBy: '$value.name'}" >
+								<md-option ng-repeat="colu in tmpBnssView.physicalModels"  ng-value="colu"  >
+								{{colu.name}}
+								</md-option>
+							</md-select>
+						</md-input-container>						
+					</div>
+					<associator-directive flex 
+						source-model="sourceTable.columns"
+						target-model="targetTable.columns"  
+						source-name="name" 
+						target-name="name" 
+						associated-item="links" 
+						source-column-label="translate.load('sbi.meta.business.relationship.source.attributes')"
+						target-column-label="translate.load('sbi.meta.business.relationship.target.attributes')"
+						drag-options="dragOptionsFunct"
+						before-delete-association=beforeClearItem(item)
+						>
+					</associator-directive>
+				</md-content>
+				
+				
+				
+				
+				<expander-box title="Riepilogo" expanded="true">
+				riepilogo
+				</expander-box>
+				
+				
+				
+				
 			</div>
 		</md-dialog-content>
 		<md-dialog-actions layout="row">

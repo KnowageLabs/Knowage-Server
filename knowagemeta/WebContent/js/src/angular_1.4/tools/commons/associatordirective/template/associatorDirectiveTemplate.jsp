@@ -4,30 +4,34 @@
 			<div layout="column" flex="50" class="parametersList">
 				<md-toolbar class="secondaryToolbar md-knowage-theme" >
 					<div class="md-toolbar-tools ">
-						<h1>{{translate.load("sbi.meta.business.relationship.source.attributes");}}</h1>
+<!-- 						<h1>{{translate.load("sbi.meta.business.relationship.source.attributes");}}</h1> -->
+						<h1>{{sourceColumnLabel}}</h1>
 					</div>
 				</md-toolbar> 
-					<md-list flex>
-        				<md-list-item id="source-{{$index}}" draggable="true" ondragstart="angular.element(document.getElementById('assDirApp')).scope().drag(event)"    ng-repeat="item in sourceModel" ng-click="null">
+					<md-list class="md-dense"  flex>
+        				<md-list-item id="source-{{$index}}"   ng-repeat="item in sourceModel"  draggable item="item" ng-click="null">
         				 {{item[sourceName]}}
+        				 <md-divider ng-if="!$last"></md-divider>
 			    		</md-list-item>
 			    	</md-list>
 			</div>
 			<div layout="column" flex class="parametersList" >
 				<md-toolbar class="secondaryToolbar md-knowage-theme" >
 					<div class="md-toolbar-tools ">
-						<h1>{{translate.load("sbi.meta.business.relationship.target.attributes");}}</h1>
+<!-- 						<h1>{{translate.load("sbi.meta.business.relationship.target.attributes");}}</h1> -->
+						<h1>{{targetColumnLabel}}</h1>					
 					</div>
 				</md-toolbar> 
-					<md-list flex>
-        				<md-list-item class="secondary-button-padding" id="target-{{$index}}" ondrop="angular.element(document.getElementById('assDirApp')).scope().drop(event)" ondragover="angular.element(document.getElementById('assDirApp')).scope().allowDrop(event)" 
-        				  ng-repeat="item in targetModel" ng-click="null" layout="row" >
+					<md-list class="md-dense"  flex>
+        				<md-list-item class="secondary-button-padding" id="target-{{$index}}" 
+        				  ng-repeat="item in targetModel" droppable item="item"  ng-click="null" layout="row" >
 	        				<span flex=40>{{item[targetName]}}</span>
 	        				<span flex ng-if="item[associatedItem].length>0" ><i class="fa fa-link" aria-hidden="true"></i></span>
 	        				<span flex=40 ng-if="item[associatedItem].length>0" >{{item[associatedItem][0][sourceName]}}</span>
-	        				 <md-button  ng-if="item[associatedItem].length>0" class="md-secondary md-icon-button " ng-click="">
+	        				 <md-button  ng-if="item[associatedItem].length>0" class="md-secondary md-icon-button " ng-click="deleteRelationship(item)">
 	        				 <md-icon md-font-icon="fa fa-trash"></md-icon>
         				 </md-button>
+        				 <md-divider ng-if="!$last"></md-divider>
         				</md-list-item>
 			    	</md-list>
 			</div>
