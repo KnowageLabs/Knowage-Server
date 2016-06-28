@@ -394,7 +394,8 @@ public class DataSetFactory {
 				FederationDefinition fd = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(sbiFedDef.getFederation_id());
 				((FederatedDataSet) ds).setDatasetFederation(fd);
 
-				// START -> This code should work instead of CheckQbeDataSets around the projects
+				// START -> This code should work instead of CheckQbeDataSets
+				// around the projects
 
 				Map parameters = ds.getParamsMap();
 				if (parameters == null) {
@@ -411,6 +412,7 @@ public class DataSetFactory {
 				IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
 				ds.setDataSourceForWriting(dataSource);
 				ds.setDataSourceForReading(dataSource);
+				ds.setDataSource(dataSource);
 				ds.setDsType(FEDERATED_DS_TYPE);
 
 			}
@@ -421,7 +423,8 @@ public class DataSetFactory {
 				((QbeDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 				((QbeDataSet) ds).setDatamarts(jsonConf.getString(DataSetConstants.QBE_DATAMARTS));
 
-				// START -> This code should work instead of CheckQbeDataSets around the projects
+				// START -> This code should work instead of CheckQbeDataSets
+				// around the projects
 				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
 				Map parameters = ds.getParamsMap();
 				if (parameters == null) {
@@ -694,7 +697,8 @@ public class DataSetFactory {
 				((QbeDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 				((QbeDataSet) ds).setDatamarts(jsonConf.getString(DataSetConstants.QBE_DATAMARTS));
 
-				// START -> This code should work instead of CheckQbeDataSets around the projects
+				// START -> This code should work instead of CheckQbeDataSets
+				// around the projects
 				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
 				Map parameters = ds.getParamsMap();
 				if (parameters == null) {
@@ -983,7 +987,8 @@ public class DataSetFactory {
 				((FederatedDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 
 				SbiFederationDefinition sbiFedDef = sbiDataSet.getFederation();
-				// FederationDefinition fd = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(sbiFedDef.getFederation_id());
+				// FederationDefinition fd =
+				// DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(sbiFedDef.getFederation_id());
 				FederationDefinition fd = new FederationDefinition();
 				fd.setDegenerated(sbiFedDef.isDegenerated());
 				fd.setDescription(sbiFedDef.getDescription());
@@ -994,7 +999,8 @@ public class DataSetFactory {
 
 				((FederatedDataSet) ds).setDatasetFederation(fd);
 
-				// START -> This code should work instead of CheckQbeDataSets around the projects
+				// START -> This code should work instead of CheckQbeDataSets
+				// around the projects
 
 				Map parameters = ds.getParamsMap();
 				if (parameters == null) {
@@ -1025,7 +1031,8 @@ public class DataSetFactory {
 				((QbeDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 				((QbeDataSet) ds).setDatamarts(jsonConf.getString(DataSetConstants.QBE_DATAMARTS));
 
-				// START -> This code should work instead of CheckQbeDataSets around the projects
+				// START -> This code should work instead of CheckQbeDataSets
+				// around the projects
 				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
 				Map parameters = ds.getParamsMap();
 				if (parameters == null) {
