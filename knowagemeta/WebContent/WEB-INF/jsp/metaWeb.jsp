@@ -46,6 +46,8 @@ var datasourceId='<%= datasourceId%>';
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/metaDefinitionController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/metaModelCreationController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/metaModelDefinitionController.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/addBusinessModelDialogController.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/addBusinessViewDialogController.js"></script>
 </head>
 <body ng-controller="metaDefinitionController" layout="column" ng-switch on="steps.current">
 	<md-toolbar>

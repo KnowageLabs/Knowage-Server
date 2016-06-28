@@ -1,4 +1,4 @@
-var app = angular.module('metaManager', [ 'ngMaterial', 'angular_table','sbiModule', 'componentTreeModule', 'expander-box','associator-directive' ]);
+var app = angular.module('metaManager', [ 'ngMaterial', 'angular_table','sbiModule', 'componentTreeModule', 'expander-box','associator-directive','angular-list-detail' ]);
 
 app.config([ '$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
@@ -9,11 +9,32 @@ app.factory("dialogScope",function(){
 	return window.parent.angular.element(window.frameElement).scope() || {};
 })
 
-app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope', metaDefinitionControllerFunction ]);
+app.service("businessModelServices",function(sbiModule_jsonServices){
+	var bms=this;
+	this.businessModelObserver;
+
+	this.observe=function(observer){
+		bms.businessModelObserve=sbiModule_jsonServices.observe(observer);
+	};
+
+	this.generateDiff=function(){
+		return sbiModule_jsonServices.generate(bms.businessModelObserve);
+	}
+
+	this.createRequestRest=function(myJson){
+		var resp={
+				data : myJson,
+				diff : bmf.generateDiff()
+		};
+		return resp;
+	}
+})
+
+app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','businessModelServices', metaDefinitionControllerFunction ]);
 
 
 
-function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope) {
+function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,businessModelServices) {
 	$scope.translate = sbiModule_translate;
 	$scope.steps = {
 		current : 0
@@ -25,6 +46,7 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 
 	$scope.physicalModel = [];
 	$scope.businessModel = [];
+
 
 
 
@@ -91,6 +113,9 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 									$scope.businessModel);
 							angular.copy(response.data.physicalModel,
 									$scope.physicalModel);
+
+							businessModelServices.observe($scope.businessModel);
+
 						},
 						function(response) {
 							sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.datasource.error"));

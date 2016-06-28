@@ -1,6 +1,6 @@
-<md-content layout="row" flex layout-fill ng-controller="metaModelCreationBusinessController">
-	<md-content layout="row" flex="30"   layout-margin  class="md-whiteframe-9dp">
-		 	<component-tree id="bcmTree" layout-fill style="position:absolute"
+<angular-list-detail ng-controller="metaModelCreationBusinessController">
+	<list label="'BusinessModelName'" layout="column">
+		<component-tree id="bcmTree"  style="margin:0px"
 				ng-model="businessModel"
 				highlights-selected-item="true"   
 				subnode-key="columns" 
@@ -14,14 +14,13 @@
 				static-tree=true
 				expand-on-click=false
 			></component-tree>
-	</md-content>
-<!-- 									dynamic-tree=true -->
-
-	<md-content layout="column" flex class="md-whiteframe-9dp"    ng-if="selectedBusinessModel.name!=undefined" >
-		<md-toolbar class="md-theme-indigo">
-			<h1 class="md-toolbar-tools">{{selectedBusinessModel.name}}</h1>
-		</md-toolbar>
-
+	</list>
+	<extra-list-button>
+		<md-button ng-click="addBusinessModel()">add BusinessModel</md-button>
+		<md-button ng-click="addBusinessView()">add BusinessView</md-button>
+	</extra-list-button>
+	
+	<detail label="selectedBusinessModel.name==undefined ? '' : selectedBusinessModel.name "  ng-if="selectedBusinessModel.name!=undefined" >
 		<md-tabs flex>
 			<md-tab id="propertiestab" label="{{translate.load('sbi.udp.udpList')}}">
 				<md-content layout="column" ng-controller="businessModelPropertyController">
@@ -98,9 +97,7 @@
 				</md-content>
 			</md-tab>
 		</md-tabs>
-
-
 		
-	</md-content>
-						
-</md-content>
+	</detail>
+</angular-list-detail>
+

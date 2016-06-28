@@ -2,7 +2,7 @@ angular.module('metaManager').controller('metaModelCreationController', [ '$scop
 
 angular.module('metaManager').controller('metaModelCreationPhysicalController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',metaModelCreationPhysicalControllerFunction ]);
 
-angular.module('metaManager').controller('metaModelCreationBusinessController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$rootScope',metaModelCreationBusinessControllerFunction ]);
+angular.module('metaManager').controller('metaModelCreationBusinessController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config',metaModelCreationBusinessControllerFunction ]);
 angular.module('metaManager').controller('businessModelPropertyController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelPropertyControllerFunction ]);
 angular.module('metaManager').controller('businessModelAttributeController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelAttributeControllerFunction ]);
 angular.module('metaManager').controller('businessModelInboundController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config',businessModelInboundControllerFunction ]);
@@ -89,7 +89,7 @@ function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate
 	}];
 }
 
-function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout){
+function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config){
 	$scope.selectedBusinessModel = {};
 	$scope.currentBusinessModelParameterCategories = [];
 	$scope.businessModelTreeInterceptor = {};
@@ -171,6 +171,31 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 		}else{
 			return true
 		}
+	}
+
+
+	$scope.addBusinessModel=function(){
+		$mdDialog.show({
+			controller: addBusinessModelController,
+			preserveScope: true,
+			locals: {businessModel:$scope.businessModel, physicalModel: $scope.physicalModel},
+			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addBusinessModel.jsp',
+			clickOutsideToClose:true,
+			escapeToClose :true,
+			fullscreen: true
+		});
+	}
+
+	$scope.addBusinessView=function(){
+		$mdDialog.show({
+			controller: addBusinessViewController,
+			preserveScope: true,
+			locals: {businessModel:$scope.businessModel, physicalModel: $scope.physicalModel},
+			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addBusinessView.jsp',
+			clickOutsideToClose:true,
+			escapeToClose :true,
+			fullscreen: true
+		});
 	}
 
 }
