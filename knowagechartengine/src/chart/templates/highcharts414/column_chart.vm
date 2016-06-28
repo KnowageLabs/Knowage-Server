@@ -45,7 +45,31 @@
 		drilldownEnabled: $drilldownEnabledFlag,
 	},
 
+	#*
+		Spread the chart over almost entire free space of the RADAR chart.
+		[KNOWAGE-1112 JIRA ISSUE]
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*#	
+	#if ($chartType == "radar")	
+		pane: {
+	    	size: '95%',
+	    },	    
+    #end
+
     chart: {
+    
+    	#*
+    		The zoom in option for BAR and LINE charts. User will be able to zoom in on either of those two chart types
+    		by both axes ('x' and 'y'). [KNOWAGE-1110 JIRA ISSUE]
+    		
+    		NOTE: This property will work only for BAR and LINE, since for the polar charts, the Highchart disabled it
+    		(reference: http://stackoverflow.com/questions/25320940/highcharts-spider-web-chart-questions).
+    		
+    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	*#
+    	#if ($chartType != "radar")
+    		zoomType: 'xy',
+    	#end
     	
     	#set($chartTypeToPrint = 'column')
     	
@@ -67,8 +91,9 @@
         type: '$chartTypeToPrint',
         
     	#if($chartType == 'radar')
-    	polar: true,
+    		polar: true,
     	#end
+    	
         backgroundColor: '$chart.style.backgroundColor', ##outer chart background
         
         #if($chart.orientation == 'horizontal' && $chartTypeToPrint != 'radar')
@@ -81,10 +106,8 @@
         
         #*
     		Dimension type (pixels or percentage) parameter for height of the chart
-    		is provided. 
-    		
-    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').
-    				
+    		is provided.     		
+    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').    				
     		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	*#
      	#if($chart.heightDimType)
@@ -148,8 +171,7 @@
     
     #*
     	Handle the situation in which there are no colors inside the color palette as
-    	the Highcharts library expects.    
-    		
+    	the Highcharts library expects.    		
     	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     *#
    	#if("$!chart.COLORPALETTE"!="" && (($chart.COLORPALETTE!="" && $chart.COLORPALETTE.class.name == 'java.lang.String') || 
@@ -216,7 +238,7 @@
 					If user does not specify any color inside the color palette the chart
 					will take predefined value for the color (#000000) (else-case).	Otherwise, 
 					we will take the single value specified in the palette (if-case).
-					@author: danristo (danilo.ristovski@mht.net)
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				*#
 				
 				#if ($chart.COLORPALETTE.COLOR)
@@ -298,8 +320,7 @@
     #end
 	 
     #*
-    	The logic for handling data needed for rendering of the chart.
-    	
+    	The logic for handling data needed for rendering of the chart.    	
     	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     *#
     #if ($chart.LEGEND.show != '' && ($chart.LEGEND.show == 'true' || $chart.LEGEND.show == true))
@@ -344,8 +365,7 @@
 		    
 			    #*
 					Take only numeric value from the font size parameter (that is 
-					actually the string in this moment. 
-					
+					actually the string in this moment. 					
 					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 				*#
 			    #if ($titleFontSize != "")
@@ -366,8 +386,7 @@
 		    
 			    #*
 					Take only numeric value from the font size parameter (that is 
-					actually the string in this moment. 
-					
+					actually the string in this moment. 					
 					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 				*#
 			    #if ($subtitleFontSize != "")
@@ -385,8 +404,7 @@
 			#end
 		   
 		 	#*
-				Convert chart's title and subtitle heights to Integer.
-				
+				Convert chart's title and subtitle heights to Integer.				
 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 			*#
 		    #set($intTitleFontSize = 0)
@@ -412,8 +430,7 @@
 			#*
 				Append the offset to the total height of the chart's title and subtitle
 				so it can have always the same distance from those two chart elements
-				(no matter what is the size of title and subtitle).
-				
+				(no matter what is the size of title and subtitle).				
 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 			*#
 			#set($totalDistanceLegend  = ($intTitleFontSize + $intSubtitleFontSize + $intBorderWidth) + $offsetFromTitleSubtitle)
@@ -504,8 +521,7 @@
 	#else
 		
 		#* 
-			If legend is disabled this JSON property ('enabled') should be false.
-			
+			If legend is disabled this JSON property ('enabled') should be false.			
 			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)			
 		*#
 		legend:
@@ -668,12 +684,17 @@
         			predefined one - defined by the Highcharts library), since the label aligned left will 
         			overlap with the title (characteristic of this library). Hence, the value inside 
         			of the combo for alignment of labels on the axis inside of the X-axis panel's Axis 
-        			style configuration popup will not be taken into account.
-        			
-        			@author: danristo (danilo.ristovski@mht.net)
+        			style configuration popup will not be taken into account.        			
+        			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
         		*#  
         		#if($labelAlign && ($chart.orientation == 'vertical' || $chartType == "radar"))
-        			align: "$labelAlign",
+        			#* 
+        				NOTE: This should probably be disabled for RADAR chart, since it causes some weird alignment on the edge of the
+        				chart (categories values are strangely aligned). Without this property, those would be aligned perfectly, so the
+        				axis line comes right in the middle of the category value.
+        				@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    				*#
+        			align: "$labelAlign", 
         		#end
         		
         		#if($rotation!="" &&  $rotation!="null")
@@ -687,6 +708,15 @@
 		#end
 		 
 		type: 'category',
+		
+		#*			
+			Place the points of chart onto the axes (lines), instead of inside the slices for RADAR.
+			[KNOWAGE-1109 JIRA ISSUE]
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		*#
+		#if ($chartType == "radar")
+			tickmarkPlacement: 'on'
+		#end
 	},
 	#end
     
@@ -706,11 +736,11 @@
         	
         	title: {
         	    #if($yAxis.TITLE.text != '')
-        		text: "$yAxis.TITLE.text",
-        		custom: true,
+        			text: "$yAxis.TITLE.text",
+        			custom: true,
         		#else
-                text: "",
-                custom: false,
+                	text: "",
+               	 	custom: false,
                 #end
         		##x:50,
         		#*
@@ -782,8 +812,7 @@
 	        			will overlap with the title (characteristic of this library). Hence, the value inside 
 	        			of the combo for alignment of labels on the axis inside of the Y-axis panel's Axis 
 	        			style configuration popup will not be taken into account.
-	        			
-	        			@author: danristo (danilo.ristovski@mht.net)
+	        			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	        		*# 	        		       		
 	        		#if($labelAlign && ($chart.orientation == 'horizontal' || $chartType == "radar"))
 	        			align: "$labelAlign",	        		     			
@@ -855,36 +884,44 @@
 	    #set($relatedSerie = $seriesMap.get($valueKey))
 	    	
 	    {	
-		#set($relatedSerieColor = false)
-		#set($relatedSerieColor = $relatedSerie.color)
-		#if($relatedSerieColor && $relatedSerieColor != '')
-			color: '$relatedSerieColor',
-	    #end
+			#set($relatedSerieColor = false)
+			#set($relatedSerieColor = $relatedSerie.color)
+			#if($relatedSerieColor && $relatedSerieColor != '')
+				color: '$relatedSerieColor',
+		    #end
 		
 			name: "$relatedSerie.name",
 		
-		#set($relatedSerieType = '')
-		#if($relatedSerie.type)
-			#set($relatedSerieType = $relatedSerie.type)
-		#end
-		#if($relatedSerieType != '')		
-			#if($relatedSerieType == 'bar')
-				#set($relatedSerieType = 'column')
-			#end		
-			#if($relatedSerieType == 'radar')
-				#set($relatedSerieType = 'line')
-			#end		
-	    	type: '$relatedSerieType',
-	    #end
-	    
+			#*
+				Move series values from the middle of the chart (in the middle of the top slice) to the axis for RADAR.
+				[KNOWAGE-1111 JIRA ISSUE]
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			*#	
+			#if($chartType == "radar")
+				pointPlacement: 'on',
+			#end
+		
+			#set($relatedSerieType = '')
+			
+			#if($relatedSerie.type)
+				#set($relatedSerieType = $relatedSerie.type)
+			#end
+			
+			#if($relatedSerieType != '')		
+				#if($relatedSerieType == 'bar')
+					#set($relatedSerieType = 'column')
+				#end		
+				#if($relatedSerieType == 'radar')
+					#set($relatedSerieType = 'line')
+				#end		
+		    	type: '$relatedSerieType',
+		    #end
 	       
 	    	## makes the datalabels overlapping
 	    	
 	    	dataLabels: {
 	    		allowOverlap: true
 	    	},
-	    	
-	    	
 	    	
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
@@ -893,6 +930,7 @@
 			   
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
+					
 					{
 						##drilldown: $enableDrilldown,
 						drilldown: $drilldownEnabledFlag,
@@ -922,7 +960,6 @@
 							If inside the style template the value of the "Show value"
 							parameter for particular serie is not specified, consider 
 							it as a false.
-							
 							@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 						*#
 						#if ($relatedSerieShowValue == "" || $relatedSerieShowValue == "false")
@@ -1126,10 +1163,8 @@
         	/*
         		When there is no precision set by the user, force the precison of
         		value zero, since it has the same effect whether is set or not, but
-        		it helps for other situations in which the value is not zero. 
-        		
-        		Also, always set the thousands separator, no matter what.
-        		
+        		it helps for other situations in which the value is not zero. Also, 
+        		always set the thousands separator, no matter what.        		
         		@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
         	*/
         	var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
@@ -1282,7 +1317,6 @@
         	Customize the value of the category on the X-axis of the chart,
         	the one that previously was in a form of hyperlink. The hyperlink
         	will be removed in order to skip confusion.
-        	
         	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
         *#
         activeAxisLabelStyle: 

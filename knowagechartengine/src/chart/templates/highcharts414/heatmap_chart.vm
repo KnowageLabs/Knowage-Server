@@ -104,6 +104,13 @@
  	{
  		type: '$chartType',
  		
+ 		#*
+    		The zoom in option for HEATMAP chart. User will be able to zoom in on either of those two chart types
+    		by both axes ('x' and 'y'). [KNOWAGE-1110 JIRA ISSUE]    		
+    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	*#
+    	zoomType: 'xy',
+ 		
 	  	#if($chart.height != '')
        	 	height: $chart.height,
         #end

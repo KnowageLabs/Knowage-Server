@@ -239,6 +239,7 @@ function prepareChartConfForTreemap(chartConf) {
 	{
 		chartObject = 
 		{
+			//zoomType: 'xy', // Causes problems when zooming out (Zoom reset) (danristo)
 			marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
 					
 			/**
@@ -267,7 +268,7 @@ function prepareChartConfForTreemap(chartConf) {
 		{
 			height: chartConf.chart.height ? Number(chartConf.chart.height) : undefined,
 			width: chartConf.chart.width ? Number(chartConf.chart.width) : undefined,
-					
+			//zoomType: 'xy', // Causes problems when zooming out (Zoom reset) (danristo)
 			marginTop: chartConf.chart.marginTop ? chartConf.chart.marginTop : undefined,
 					
 			/**
@@ -519,6 +520,14 @@ function prepareChartConfForHeatmap(chartConf) {
         	renderTo: 'mainPanel',
             type: 'heatmap',
             backgroundColor:chartConf.chart.style.backgroundColor,
+            
+            /**
+			 * The zoom in option for HEATMAP chart. User will be able to zoom in on either of those two chart types by both axes ('x' and 'y'). 
+			 * [KNOWAGE-1110 JIRA ISSUE] 		
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+            zoomType: chartConf.chart.zoomType,
+            
             //margin: [80, 80, 80, 80],
             
             /**
@@ -549,6 +558,13 @@ function prepareChartConfForHeatmap(chartConf) {
         	height: chartConf.chart.height ? Number(chartConf.chart.height) : undefined,
 			width: chartConf.chart.width ? Number(chartConf.chart.width) : undefined,
             
+			/**
+			 * The zoom in option for HEATMAP chart. User will be able to zoom in on either of those two chart types by both axes ('x' and 'y'). 
+			 * [KNOWAGE-1110 JIRA ISSUE]    		
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			zoomType: chartConf.chart.zoomType,
+					
 			type: 'heatmap',
             backgroundColor:chartConf.chart.style.backgroundColor,
             //margin: [200, 200, 200, 200],

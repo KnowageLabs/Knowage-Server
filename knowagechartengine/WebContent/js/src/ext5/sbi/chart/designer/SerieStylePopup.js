@@ -551,9 +551,10 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	
 	/**
 	 * The 'getScaleFactors' function will give us an array of all available scale factors. The content of 
-	 * this array depends on the user's value for the 'biggerScaleFactors' property in the Settings.js file.
+	 * this array depends on the user's value for the 'biggerScaleFactorsEnabled' property in the Settings.js file.
 	 * This parameter, if true provides additional scale factors (bigger than millions). The returning array
 	 * will give the user the fixed array (up to millions - M) and optionaly the one with bigger scale factors.
+	 * [KNOWAGE-1108 JIRA ISSUE]
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	getScaleFactors: function() {
@@ -579,7 +580,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			scaleFactorsAvailable.push(scaleFactorsFixed[i]);
 		}
 			
-		if (Sbi.settings.chart.configurationStep.biggerScaleFactors == true) {
+		if (Sbi.settings.chart.configurationStep.biggerScaleFactorsEnabled == true) {
 			
 			for (i=0; i<scaleFactorsOptional.length; i++) {
 				scaleFactorsAvailable.push(scaleFactorsOptional[i]);

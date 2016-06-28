@@ -133,10 +133,10 @@ Sbi.settings.chart =
 		 * Hide the unnecessary scale factor values, namely 'G', 'T', 'P', 'E', since we do not need them for the majority of our needs.
 		 * If needed, the user should be able to change this property to "true" boolean value. This property can be found in the Series
 		 * style configuration popup for a particular series item (icon with the scissors and triangle in the line of the series item),
-		 * as the "Scale factor" combo box.
+		 * as the "Scale factor" combo box. [KNOWAGE-1108 JIRA ISSUE]
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		biggerScaleFactors: false
+		biggerScaleFactorsEnabled: false
 	},
 	
 	/**
