@@ -177,15 +177,14 @@
 		</section>
 		
 		<!-- lov combobox single and multiple input -->
+		
+		<md-icon ng-show="parameter.lovNotDefine" md-font-icon="fa fa-info-circle">
+			  <md-tooltip ng-if="parameter.lovNotDefine">{{sbiModule_translate.load("sbi.execution.parameter.lovnotdefined")}} </md-tooltip>
+	    </md-icon>
 		<md-input-container class="md-block">
 			<label ng-if="parameter.selectionType=='COMBOBOX'" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' ">
 			 {{parameter.label}}
-			 <md-icon ng-show="parameter.lovNotDefine" md-font-icon="fa fa-info-circle">
-			  <md-tooltip>{{sbiModule_translate.load("sbi.execution.parameter.lovnotdefined")}} </md-tooltip>
-			 </md-icon>
 			 </label>
-		
-		
 			<!-- multiple -->
 			<md-select ng-model="parameter.parameterValue" multiple ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
 				 	ng-if="showDefaultValueAreValid(parameter) && parameter.selectionType=='COMBOBOX' && parameter.multivalue" > 
