@@ -352,7 +352,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */	
 		var serieScaleFactor = dataAtRow.get('serieScaleFactor');
-				
+
 		this.serieScaleFactor = Ext.create
 		(
 			'Ext.form.ComboBox', 
@@ -361,18 +361,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 				store: 
 				{
 					store: 'array',
-					fields: ['name', 'value'],
-					
-					data: 	
-					[
-				       	{name: "No selection", value: "empty"},
-				       	{name: "k (thousands)", value: "k"},
-				       	{name: "M (millions)", value: "M"},
-				       	{name: "G (billions)", value: "G"},
-				       	{name: "T (trillions)", value: "T"},
-				       	{name: "P (quadrillions)", value: "P"},
-				       	{name: "E (quintillions)", value: "E"}
-			       	]
+					fields: ['name', 'value'],				
+					data: this.getScaleFactors()
 				},
 				
 				value: (serieScaleFactor && serieScaleFactor.trim() != '') ? serieScaleFactor.trim() : 'empty',
@@ -557,6 +547,48 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 //		if(chartType=="WORDCLOUD"){
 //		  this.tooltipFieldSet.hide();	
 //		}
+	},
+	
+	/**
+	 * The 'getScaleFactors' function will give us an array of all available scale factors. The content of 
+	 * this array depends on the user's value for the 'biggerScaleFactors' property in the Settings.js file.
+	 * This parameter, if true provides additional scale factors (bigger than millions). The returning array
+	 * will give the user the fixed array (up to millions - M) and optionaly the one with bigger scale factors.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	getScaleFactors: function() {
+				
+		var scaleFactorsFixed = 
+		[
+	       	{name: "No selection", value: "empty"},
+	       	{name: "k (thousands)", value: "k"},
+	       	{name: "M (millions)", value: "M"}
+        ];
+		
+		var scaleFactorsOptional = 
+		[
+	       	{name: "G (billions)", value: "G"},
+	       	{name: "T (trillions)", value: "T"},
+	       	{name: "P (quadrillions)", value: "P"},
+	       	{name: "E (quintillions)", value: "E"}
+		 ];
+		
+		var scaleFactorsAvailable = new Array();
+		
+		for (i=0; i<scaleFactorsFixed.length; i++) {
+			scaleFactorsAvailable.push(scaleFactorsFixed[i]);
+		}
+			
+		if (Sbi.settings.chart.configurationStep.biggerScaleFactors == true) {
+			
+			for (i=0; i<scaleFactorsOptional.length; i++) {
+				scaleFactorsAvailable.push(scaleFactorsOptional[i]);
+			}
+			
+		}
+		
+		return scaleFactorsAvailable;
+		
 	},
 	
     writeConfigsAndExit: function() {

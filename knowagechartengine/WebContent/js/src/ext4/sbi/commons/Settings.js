@@ -127,7 +127,16 @@ Sbi.settings.chart =
 		 * in the SUNBURST chart in percents.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		defaultPercAbsSliceValue: "percentage"
+		defaultPercAbsSliceValue: "percentage",
+		
+		/**
+		 * Hide the unnecessary scale factor values, namely 'G', 'T', 'P', 'E', since we do not need them for the majority of our needs.
+		 * If needed, the user should be able to change this property to "true" boolean value. This property can be found in the Series
+		 * style configuration popup for a particular series item (icon with the scissors and triangle in the line of the series item),
+		 * as the "Scale factor" combo box.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		biggerScaleFactors: false
 	},
 	
 	/**
