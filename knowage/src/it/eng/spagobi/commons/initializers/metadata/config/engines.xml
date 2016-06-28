@@ -50,7 +50,7 @@
 		useDataSource="true" encrypt="0" />
 	<ENGINE label="knowagedataminingengine" name="Data-mining Engine"
 		descr="Data-mining Engine" mainUrl="/knowagedataminingengine/restful-services/start"
-		driverNm="it.eng.spagobi.engines.drivers.datamining.DataMiningDriver"
+		secnUrl="/knowagedataminingengine/DataMiningServlet" driverNm="it.eng.spagobi.engines.drivers.datamining.DataMiningDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="DATA_MINING" useDataSet="false"
 		useDataSource="true" encrypt="0" />
 	<ENGINE label="knowageaccessibleeng" name="Accessible Report Engine"
