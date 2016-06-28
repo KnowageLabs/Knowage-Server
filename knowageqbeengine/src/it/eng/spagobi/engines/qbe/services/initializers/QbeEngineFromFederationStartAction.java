@@ -86,19 +86,19 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 	public IDataSource getDataSource() {
 		logger.debug("IN");
 		IDataSource datasource;
-		if(super.getDataSource()==null){
+		if (super.getDataSource() == null) {
 			IDataSet dataset = this.getDataSet();
 			datasource = dataset.getDataSource();
 
 			if (datasource == null) {
 				// if dataset has no datasource associated take it from request
-				String dataSourceLabel = getSpagoBIRequestContainer().get(DATASOURCE_LABEL) != null ? getSpagoBIRequestContainer().get(DATASOURCE_LABEL).toString()
-						: null;
+				String dataSourceLabel = getSpagoBIRequestContainer().get(DATASOURCE_LABEL) != null ? getSpagoBIRequestContainer().get(DATASOURCE_LABEL)
+						.toString() : null;
 				logger.debug("passed from server datasource " + dataSourceLabel);
 				datasource = getDataSourceServiceProxy().getDataSourceByLabel(dataSourceLabel);
 			}
 
-		}else{
+		} else {
 			datasource = super.getDataSource();
 		}
 
@@ -129,12 +129,12 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 	@Override
 	public Map addDatasetsToEnv() {
 		String federatedDatasetId = this.getAttributeAsString(FEDERATED_DATASET);
-		if(federatedDatasetId== null || federatedDatasetId.length()==0){
+		if (federatedDatasetId == null || federatedDatasetId.length() == 0) {
 			logger.debug("Not Found a federated dataset on the request");
 			return addSimpleDataSetToEnv();
 		}
-		
-		//loading federation
+
+		// loading federation
 		FederationDefinition dsf = loadFederationDefinition(federatedDatasetId);
 		logger.debug("Found a federated dataset on the request");
 		return addFederatedDatasetsToEnv(dsf, null);
@@ -149,43 +149,45 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		FederationDefinition federationDefinition = new FederationDefinition();
 		federationDefinition.setDescription(dataset.getDescription());
 		federationDefinition.setName(dataset.getName());
-		federationDefinition.setLabel(StringUtilities.left(FederationUtils.getDatasetFederationLabelSuffix()+((System.currentTimeMillis()%10000)),60));
+		federationDefinition.setLabel(StringUtilities.left(FederationUtils.getDatasetFederationLabelSuffix() + ((System.currentTimeMillis() % 10000)), 60));
 		federationDefinition.setDegenerated(true);
 		Set<IDataSet> sourceDatasets = new java.util.HashSet<IDataSet>();
 		dataset.setOrganization(getUserProfile().getOrganization());
 		sourceDatasets.add(dataset);
-		
+
 		federationDefinition.setSourceDatasets(sourceDatasets);
 
-//		logger.debug("send request to server for the federation creation");
-//		FederationClient fc = new FederationClient();
-//		try {
-//			federationDefinition = fc.addFederation(federationDefinition, getUserId());
-//		} catch (Exception e) {
-//			logger.error("Error saving the federated definition automatically generated in order to manage the creation datasets on the dataset "+dataset.getLabel(),e);
-//			throw new SpagoBIRuntimeException("Error saving the federated definition automatically generated in order to manage the creation datasets on the dataset "+dataset.getLabel(),e);
-//		}
-//		logger.debug("Federation created");
-		
+		// logger.debug("send request to server for the federation creation");
+		// FederationClient fc = new FederationClient();
+		// try {
+		// federationDefinition = fc.addFederation(federationDefinition, getUserId());
+		// } catch (Exception e) {
+		// logger.error("Error saving the federated definition automatically generated in order to manage the creation datasets on the dataset "+dataset.getLabel(),e);
+		// throw new
+		// SpagoBIRuntimeException("Error saving the federated definition automatically generated in order to manage the creation datasets on the dataset "+dataset.getLabel(),e);
+		// }
+		// logger.debug("Federation created");
+
 		return addFederatedDatasetsToEnv(federationDefinition, dataset);
 	}
 
 	/**
 	 * Loading the federation definition from the service
+	 * 
 	 * @param federationId
 	 */
-	public FederationDefinition loadFederationDefinition(String federationId){
-		logger.debug("Loading federation with id "+federationId);
+	public FederationDefinition loadFederationDefinition(String federationId) {
+		logger.debug("Loading federation with id " + federationId);
 		FederationClient fc = new FederationClient();
 		try {
-			return fc.getFederation(federationId,getUserId(), getDataSetServiceProxy());
+			return fc.getFederation(federationId, getUserId(), getDataSetServiceProxy());
 		} catch (Exception e) {
 			logger.error("Error loading the federation definition");
 			throw new SpagoBIEngineRuntimeException("Error loading the federation definition", e);
 		}
 	}
 
-	public Map addFederatedDatasetsToEnv(FederationDefinition dsf , IDataSet dataset) {
+	public Map addFederatedDatasetsToEnv(FederationDefinition dsf, IDataSet dataset) {
 
 		Assert.assertNotNull(dsf, "The federation id has to be not null");
 
@@ -194,10 +196,9 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		// substitute default engine's datasource with dataset one
 		this.setDataSource(cachedDataSource);
 		String datasetLabel = this.getAttributeAsString(DATASET_LABEL);
-		logger.debug("The label of the source dataset is "+datasetLabel);
-		
+		logger.debug("The label of the source dataset is " + datasetLabel);
+
 		Map env = super.getEnv();
-		
 
 		// update parameters into the dataset
 		logger.debug("The dataset is federated");
@@ -205,25 +206,25 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		String configurationJson = "";
 		logger.debug("The configuration is " + configurationJson);
 
-		//loading the source datasets
+		// loading the source datasets
 		logger.debug("Loading source datasets");
 		List<IDataSet> dataSets = new ArrayList<IDataSet>();
 		List<IDataSet> originalDataSets = new ArrayList<IDataSet>();
 		List<String> dsLabels = new ArrayList<String>();
 
-		if(dataset!=null){
-			//in case of qbe on a single dataset
+		if (dataset != null) {
+			// in case of qbe on a single dataset
 			dsLabels.add(dataset.getLabel());
 			originalDataSets.add(dataset);
-			
-		}else{
-			//in case of qbe on federation
+
+		} else {
+			// in case of qbe on federation
 			Iterator<IDataSet> sourceDatasets = dsf.getSourceDatasets().iterator();
 			while (sourceDatasets.hasNext()) {
-				IDataSet iDataSet = (IDataSet) sourceDatasets.next();
+				IDataSet iDataSet = sourceDatasets.next();
 				dsLabels.add(iDataSet.getLabel());
 				originalDataSets.add(iDataSet);
-			
+
 			}
 		}
 
@@ -236,31 +237,32 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		logger.debug("Setting user profile attributes into dataset...");
 		logger.debug(userAttributes);
 
-		//save in cache the derived datasets
+		// save in cache the derived datasets
 		logger.debug("Saving the datasets on cache");
 
-		JSONObject datasetPersistedLabels= null;
+		JSONObject datasetPersistedLabels = null;
 		try {
 			datasetPersistedLabels = FederationUtils.createDatasetsOnCache(dsf.getDataSetRelationKeysMap(), getUserId());
 		} catch (JSONException e1) {
 			logger.error("Error loading the dataset. Please check that all the dataset linked to this federation are still working", e1);
-			throw new SpagoBIEngineRuntimeException("Error loading the dataset. Please check that all the dataset linked to this federation are still working", e1);
+			throw new SpagoBIEngineRuntimeException("Error loading the dataset. Please check that all the dataset linked to this federation are still working",
+					e1);
 		}
 		for (int i = 0; i < dsLabels.size(); i++) {
 			String dsLabel = dsLabels.get(i);
-			//adds the link between dataset and cached table name
-			Assert.assertNotNull(datasetPersistedLabels.optString(dsLabel), "Not found the label name of the cache table for the datase "+dsLabel);
+			// adds the link between dataset and cached table name
+			Assert.assertNotNull(datasetPersistedLabels.optString(dsLabel), "Not found the label name of the cache table for the datase " + dsLabel);
 			try {
 				mapNameTable.put(dsLabel, datasetPersistedLabels.getString(dsLabel));
 			} catch (Exception e) {
-				logger.error("Error loading the dataset. Please check tha all the dataset linked to this federation are still working",e);
-				throw new SpagoBIEngineRuntimeException("Error loading the dataset. Please check that all the dataset linked to this federation are still working");
+				logger.error("Error loading the dataset. Please check tha all the dataset linked to this federation are still working", e);
+				throw new SpagoBIEngineRuntimeException(
+						"Error loading the dataset. Please check that all the dataset linked to this federation are still working");
 			}
 
 			IDataSet originalDataset = originalDataSets.get(i);
-			
-			
-			IDataSet cachedDataSet = FederationUtils.createDatasetOnCache(mapNameTable.get(dsLabel), originalDataset,cachedDataSource);
+
+			IDataSet cachedDataSet = FederationUtils.createDatasetOnCache(mapNameTable.get(dsLabel), originalDataset, cachedDataSource);
 			cachedDataSet.setUserProfileAttributes(userAttributes);
 			cachedDataSet.setPersistTableName(mapNameTable.get(dsLabel));
 			cachedDataSet.setParamsMap(env);
@@ -269,27 +271,23 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 			dataSets.add(cachedDataSet);
 		}
 
-		
 		logger.debug("Adding relationships on envinronment");
 		JSONObject relations = dsf.getRelationshipsAsJSONObject();
 
 		env.put(EngineConstants.ENV_RELATIONS, relations);
-		env.put(EngineConstants.ENV_DATASET_CACHE_MAP,mapNameTable);
-		env.put(EngineConstants.ENV_RELATIONS,relations);
+		env.put(EngineConstants.ENV_DATASET_CACHE_MAP, mapNameTable);
+		env.put(EngineConstants.ENV_RELATIONS, relations);
 		env.put(EngineConstants.ENV_DATASETS, dataSets);
 		env.put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
 		env.put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
-		env.put(EngineConstants.ENV_FEDERATION,dsf);
+		env.put(EngineConstants.ENV_FEDERATION, dsf);
 		env.put(EngineConstants.ENV_DATASOURCE, cachedDataSource);
 
 		logger.debug(env);
 		env.put(EngineConstants.ENV_LOCALE, getLocale());
 
-
 		return env;
 	}
-
-
 
 	/**
 	 * Gets the datasource of the cache
@@ -298,8 +296,8 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 	 */
 	private IDataSource getCacheDataSource() {
 		logger.debug("Loading the cache datasource");
-		String datasourceLabel = (String)getSpagoBIRequestContainer().get(EngineConstants.ENV_DATASOURCE_FOR_CACHE);
-		logger.debug("The datasource for cahce is "+datasourceLabel);
+		String datasourceLabel = (String) getSpagoBIRequestContainer().get(EngineConstants.ENV_DATASOURCE_FOR_CACHE);
+		logger.debug("The datasource for cahce is " + datasourceLabel);
 		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceLabel);
 		logger.debug("cache datasource loaded");
 		return dataSource;
@@ -309,7 +307,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 	 * This method solves the following issue: SQLDataSet defines the SQL statement directly considering the names' of the wrapped dataset fields, but, in case
 	 * of QbeDataSet, the fields' names are "it.eng.spagobi......Entity.fieldName" and not the name of the persistence table!!! We modify the dataset's metadata
 	 * in order to fix this.
-	 *
+	 * 
 	 * @param dataset
 	 *            The persisted Qbe dataset
 	 * @param descriptor
@@ -322,17 +320,17 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 	// IDataSet.getPersistTableDescriptor in order to permit the
 	// IDataSetTableDescriptor to go with its dataset.
 	// TODO merge with it.eng.spagobi.engines.worksheet.services.initializers.WorksheetEngineStartAction.adjustMetadataForQbeDataset
-//	private void adjustMetadataForQbeDataset(IDataSet dataset, IDataSetTableDescriptor descriptor) {
-//		IMetaData metadata = dataset.getMetadata();
-//		int columns = metadata.getFieldCount();
-//		for (int i = 0; i < columns; i++) {
-//			IFieldMetaData fieldMetadata = metadata.getFieldMeta(i);
-//			String newName = descriptor.getColumnName(fieldMetadata.getName());
-//			fieldMetadata.setName(newName);
-//			fieldMetadata.setProperty("uniqueName", newName);
-//		}
-//		dataset.setMetadata(metadata);
-//	}
+	// private void adjustMetadataForQbeDataset(IDataSet dataset, IDataSetTableDescriptor descriptor) {
+	// IMetaData metadata = dataset.getMetadata();
+	// int columns = metadata.getFieldCount();
+	// for (int i = 0; i < columns; i++) {
+	// IFieldMetaData fieldMetadata = metadata.getFieldMeta(i);
+	// String newName = descriptor.getColumnName(fieldMetadata.getName());
+	// fieldMetadata.setName(newName);
+	// fieldMetadata.setProperty("uniqueName", newName);
+	// }
+	// dataset.setMetadata(metadata);
+	// }
 
 	@Override
 	protected boolean tolerateMissingDatasource() {
