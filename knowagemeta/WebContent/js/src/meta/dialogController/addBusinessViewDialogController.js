@@ -2,7 +2,7 @@
  *
  */
 
-function addBusinessViewController($scope,sbiModule_translate,physicalModel){
+function addBusinessViewController($scope,sbiModule_translate,physicalModel,businessModelServices){
 	$scope.translate=sbiModule_translate;
 	$scope.physicalModel=physicalModel;
 
@@ -29,6 +29,7 @@ function addBusinessViewController($scope,sbiModule_translate,physicalModel){
 
 	$scope.create = function() {
 		 alert("save")
+		 businessModelServices.createRequestRest({})
 		    $mdDialog.hide();
 		};
 	  $scope.cancel = function() {

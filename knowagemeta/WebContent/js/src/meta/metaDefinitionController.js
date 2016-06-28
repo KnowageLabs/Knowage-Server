@@ -12,12 +12,27 @@ app.factory("dialogScope",function(){
 app.service("businessModelServices",function(sbiModule_jsonServices){
 	var bms=this;
 	this.businessModelObserver;
+	this.observerObject;
+	this.cleanedObserverObject=[];
+
+	this.cleanObserverObject=function(){
+		var data=angular.extend([],bms.observerObject)
+		for(var i=0;i<data.length;i++){
+			 for(var j=0;j<data[i].columns.length;j++){
+				 delete data[i].columns[j].$parent;
+			 }
+		 }
+		 angular.copy(data,bms.cleanedObserverObject);
+	}
 
 	this.observe=function(observer){
-		bms.businessModelObserve=sbiModule_jsonServices.observe(observer);
+		bms.observerObject=observer;
+		bms.cleanObserverObject();
+		bms.businessModelObserve=sbiModule_jsonServices.observe(bms.cleanedObserverObject);
 	};
 
 	this.generateDiff=function(){
+		bms.cleanObserverObject();
 		return sbiModule_jsonServices.generate(bms.businessModelObserve);
 	}
 
