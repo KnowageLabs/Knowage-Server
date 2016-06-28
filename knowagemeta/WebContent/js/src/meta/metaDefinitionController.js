@@ -22,9 +22,44 @@ app.service("businessModelServices",function(sbiModule_jsonServices){
 	}
 
 	this.createRequestRest=function(myJson){
+		var diff=bms.generateDiff();
+
+		for(var i=0;i<diff.length;i++){
+			var arrsp=diff[i].path.split("/");
+			var split=false;
+
+			switch(arrsp[arrsp.length-1]){
+				case "checked":
+					split=true;
+					break;
+				case "expanded":
+					split=true;
+					break;
+				case "visible":
+					split=true;
+					break;
+				case "$$hashKey":
+					split=true;
+					break;
+				case "$parent":
+					split=true;
+					break;
+				case "type":
+					// TO-DO this value is added by component-tree... check if are some property with this value
+					split=true;
+					break;
+
+			}
+
+			if(split){
+				diff.splice(i,1);
+				i--;
+			}
+		}
+
 		var resp={
 				data : myJson,
-				diff : bmf.generateDiff()
+				diff : diff
 		};
 		return resp;
 	}
@@ -60,7 +95,7 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 		dataToSend.physicalModel = $scope.removeCircularDependency(angular.extend([],$scope.physicalModel));
 		dataToSend.businessModel =  $scope.removeCircularDependency(angular.extend([],$scope.businessModel));
 
-		sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", dataToSend)
+		sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", businessModelServices.createRequestRest(dataToSend))
 		.then(
 				function(response) {
 
