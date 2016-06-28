@@ -1026,7 +1026,8 @@
 									//if mandatory and is unique default value
 									if(response.data.result.root.length==1 &&
 											execProperties.parametersData.documentParameters[z].mandatory && 
-											execProperties.parametersData.documentParameters[z].selectionType=='LIST' ){
+											(execProperties.parametersData.documentParameters[z].selectionType=='LIST' ||
+													execProperties.parametersData.documentParameters[z].selectionType=='COMBOBOX')){
 											console.log('setting default value ', response.data.result.root[0].value);
 											execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
 													[response.data.result.root[0].value]	: response.data.result.root[0].value;
