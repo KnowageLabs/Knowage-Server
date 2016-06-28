@@ -178,8 +178,8 @@
 		
 		<!-- lov combobox single and multiple input -->
 		
-		<md-icon ng-show="parameter.lovNotDefine" md-font-icon="fa fa-info-circle">
-			  <md-tooltip ng-if="parameter.lovNotDefine">{{sbiModule_translate.load("sbi.execution.parameter.lovnotdefined")}} </md-tooltip>
+		<md-icon ng-show="parameter.lovNotDefine && parameter.selectionType=='COMBOBOX'" md-font-icon="fa fa-info-circle">
+			  <md-tooltip >{{sbiModule_translate.load("sbi.execution.parameter.lovnotdefined")}} </md-tooltip>
 	    </md-icon>
 		<md-input-container class="md-block">
 			<label ng-if="parameter.selectionType=='COMBOBOX'" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' ">
