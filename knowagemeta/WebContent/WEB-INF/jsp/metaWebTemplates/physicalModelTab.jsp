@@ -1,7 +1,7 @@
 <md-content layout="row" flex layout-fill ng-controller="metaModelCreationPhysicalController">
 	<md-content layout="row" flex="30" class="md-whiteframe-9dp"  layout-margin >
 		<component-tree id="pmTree" layout-fill style="position:absolute"
-			ng-model="physicalModel"
+			ng-model="meta.physicalModels"
 			highlights-selected-item="true"   
 			subnode-key="columns" 
 			click-function="selectPhysicalModel(node)"

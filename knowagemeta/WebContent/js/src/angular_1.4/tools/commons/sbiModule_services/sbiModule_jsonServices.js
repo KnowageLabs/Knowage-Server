@@ -21,8 +21,8 @@ angular.module("sbiModule").service("sbiModule_jsonServices",function(sbiModule_
 		return jsonpatch.validate( patches, obj);
 	}
 
-	this.apply=function(myObje,patch){
-		return jsonpatch.apply( myobj, patches );
+	this.apply=function(myObje,patch,validate){
+		return jsonpatch.apply( myObje, patch,validate );
 	}
 
 	/*!

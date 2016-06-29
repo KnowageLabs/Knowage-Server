@@ -9,31 +9,40 @@ app.factory("dialogScope",function(){
 	return window.parent.angular.element(window.frameElement).scope() || {};
 })
 
-app.service("businessModelServices",function(sbiModule_jsonServices){
+app.service("metaModelServices",function(sbiModule_jsonServices){
 	var bms=this;
-	this.businessModelObserver;
+	this.metaModelObserver; //the observer on the original object without the $parent
+	this.originalMetaModelObserver; //the observer on the original object
 	this.observerObject;
-	this.cleanedObserverObject=[];
+	this.cleanedObserverObject={};
 
 	this.cleanObserverObject=function(){
-		var data=angular.extend([],bms.observerObject)
-		for(var i=0;i<data.length;i++){
-			 for(var j=0;j<data[i].columns.length;j++){
-				 delete data[i].columns[j].$parent;
-			 }
-		 }
+		var data=angular.extend({},bms.observerObject)
+		for(key in data){
+
+			for(var i=0;i<data[key].length;i++){
+				for(var j=0;j<data[key][i].columns.length;j++){
+					delete data[key][i].columns[j].$parent;
+				}
+			}
+		}
 		 angular.copy(data,bms.cleanedObserverObject);
 	}
 
-	this.observe=function(observer){
-		bms.observerObject=observer;
+	this.observe=function(observerObj){
+		bms.observerObject=observerObj;
+		bms.originalMetaModelObserver=sbiModule_jsonServices.observe(bms.observerObject);
 		bms.cleanObserverObject();
-		bms.businessModelObserve=sbiModule_jsonServices.observe(bms.cleanedObserverObject);
+		bms.metaModelObserve=sbiModule_jsonServices.observe(bms.cleanedObserverObject);
 	};
 
 	this.generateDiff=function(){
 		bms.cleanObserverObject();
-		return sbiModule_jsonServices.generate(bms.businessModelObserve);
+		return sbiModule_jsonServices.generate(bms.metaModelObserve);
+	}
+
+	this.applyPatch=function (patch,validate){
+		sbiModule_jsonServices.apply(bms.observerObject,patch,validate);
 	}
 
 	this.createRequestRest=function(myJson){
@@ -80,11 +89,11 @@ app.service("businessModelServices",function(sbiModule_jsonServices){
 	}
 })
 
-app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','businessModelServices', metaDefinitionControllerFunction ]);
+app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices', metaDefinitionControllerFunction ]);
 
 
 
-function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,businessModelServices) {
+function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices) {
 	$scope.translate = sbiModule_translate;
 	$scope.steps = {
 		current : 0
@@ -94,9 +103,10 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 	$scope.physicalModels = []; // array of table to transform in physical model
 	$scope.businessModels = []; // array of table to transform in business model
 
-	$scope.physicalModel = [];
-	$scope.businessModel = [];
+//	$scope.physicalModel = [];
+//	$scope.businessModel = [];
 
+	$scope.meta={physicalModels:[],businessModels:[]};
 
 
 
@@ -110,7 +120,8 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 //		dataToSend.physicalModel = $scope.removeCircularDependency(angular.extend([],$scope.physicalModel));
 //		dataToSend.businessModel =  $scope.removeCircularDependency(angular.extend([],$scope.businessModel));
 
-		sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", businessModelServices.createRequestRest(dataToSend))
+
+		sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", metaModelServices.createRequestRest(dataToSend))
 		.then(
 				function(response) {
 
@@ -159,12 +170,11 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 				.then(
 						function(response) {
 							$scope.steps.current = 1;
-							angular.copy(response.data.businessModel,
-									$scope.businessModel);
-							angular.copy(response.data.physicalModel,
-									$scope.physicalModel);
+//							angular.copy(response.data.businessModel,$scope.businessModel);
+//							angular.copy(response.data.physicalModel,$scope.physicalModel);
+							angular.copy(response.data,$scope.meta);
 
-							businessModelServices.observe($scope.businessModel);
+							metaModelServices.observe($scope.meta);
 
 						},
 						function(response) {

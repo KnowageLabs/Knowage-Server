@@ -1,7 +1,7 @@
 <angular-list-detail ng-controller="metaModelCreationBusinessController">
 	<list label="'BusinessModelName'" layout="column">
 		<component-tree id="bcmTree"  style="margin:0px"
-				ng-model="businessModel"
+				ng-model="meta.businessModels"
 				highlights-selected-item="true"   
 				subnode-key="columns" 
 				click-function="selectBusinessModel(node)"

@@ -22,10 +22,6 @@
 				</md-input-container>
 
 				<div layout="row">
-						<md-input-container flex id="right_ch" > 
-							<label>{{translate.load("sbi.meta.business.relationship.target.business.class.name")}}</label>							
-							<input ng-model="selectedBusinessModel.name" disabled>	 </input>
-						</md-input-container>
 						
 						<md-input-container flex id="left_ch"> 
 							<label>{{translate.load("sbi.meta.business.relationship.source.business.class.name")}}</label>						
@@ -35,11 +31,16 @@
 								</md-option> 
 							</md-select> 
 	 					</md-input-container>
+	 					
+						<md-input-container flex id="right_ch" > 
+							<label>{{translate.load("sbi.meta.business.relationship.target.business.class.name")}}</label>							
+							<input ng-model="selectedBusinessModel.name" disabled>	 </input>
+						</md-input-container>
 				</div>
 			
 			<associator-directive flex 
-			source-model="simpleLeft" 
-			target-model="simpleRight" 
+			source-model="simpleRight" 
+			target-model="simpleLeft" 
 			source-name="name" 
 			target-name="name" 
 			associated-item="links" 

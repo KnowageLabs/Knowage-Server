@@ -75,7 +75,7 @@ public class MetaService {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 * 
+	 *
 	 * @param dsId
 	 * @return
 	 */
@@ -537,8 +537,8 @@ public class MetaService {
 			physicalModelJson.put(new JSONObject(JsonConverter.objectToJson(physicalTable, physicalTable.getClass())));
 			physicalTableMap.put(physicalTable.getName(), j);
 		}
-		translatedModel.put("physicalModel", physicalModelJson);
-		translatedModel.put("businessModel", businessModelJson);
+		translatedModel.put("physicalModels", physicalModelJson);
+		translatedModel.put("businessModels", businessModelJson);
 		return translatedModel;
 	}
 

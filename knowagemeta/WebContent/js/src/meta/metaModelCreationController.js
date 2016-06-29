@@ -5,8 +5,8 @@ angular.module('metaManager').controller('metaModelCreationPhysicalController', 
 angular.module('metaManager').controller('metaModelCreationBusinessController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config',metaModelCreationBusinessControllerFunction ]);
 angular.module('metaManager').controller('businessModelPropertyController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelPropertyControllerFunction ]);
 angular.module('metaManager').controller('businessModelAttributeController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelAttributeControllerFunction ]);
-angular.module('metaManager').controller('businessModelInboundController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config','businessModelServices',businessModelInboundControllerFunction ]);
-angular.module('metaManager').controller('businessModelOutboundController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config','businessModelServices',businessModelOutboundControllerFunction ]);
+angular.module('metaManager').controller('businessModelInboundController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config','metaModelServices',businessModelInboundControllerFunction ]);
+angular.module('metaManager').controller('businessModelOutboundController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config','metaModelServices',businessModelOutboundControllerFunction ]);
 
 
 function metaModelCreationControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout) {
@@ -178,7 +178,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 		$mdDialog.show({
 			controller: addBusinessModelController,
 			preserveScope: true,
-			locals: {businessModel:$scope.businessModel, physicalModel: $scope.physicalModel},
+			locals: {businessModel:$scope.meta.businessModels, physicalModel: $scope.meta.physicalModels},
 			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addBusinessModel.jsp',
 			clickOutsideToClose:true,
 			escapeToClose :true,
@@ -190,7 +190,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 		$mdDialog.show({
 			controller: addBusinessViewController,
 			preserveScope: true,
-			locals: {businessModel:$scope.businessModel, originalPhysicalModel: $scope.physicalModel},
+			locals: {businessModel:$scope.meta.businessModels, originalPhysicalModel: $scope.meta.physicalModels},
 			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addBusinessView.jsp',
 			clickOutsideToClose:true,
 			escapeToClose :true,
@@ -273,10 +273,9 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 			}
 		}
 }
-function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,businessModelServices){
+function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,metaModelServices){
 	$scope.isInbound = function(item) {
-		return angular.equals(item.sourceTableName,
-				$scope.selectedBusinessModel.name);
+		return angular.equals(item.sourceTableName,$scope.selectedBusinessModel.uniqueName);
 	}
 
 	$scope.inboundColumns = [{label:'Name',name:'name'},
@@ -302,7 +301,7 @@ function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiM
 			$mdDialog.show({
 				controller: inboundModelPageControllerFunction,
 				preserveScope: true,
-				locals: {businessModel:$scope.businessModel, selectedBusinessModel:$scope.selectedBusinessModel, sbiModule_restServices:sbiModule_restServices,businessModelServices:businessModelServices},
+				locals: {businessModel:$scope.meta.businessModels, selectedBusinessModel:$scope.selectedBusinessModel, sbiModule_restServices:sbiModule_restServices,metaModelServices:metaModelServices},
 				templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/inboundModel.jsp',
 				clickOutsideToClose:true,
 				escapeToClose :true,
@@ -318,10 +317,9 @@ function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiM
 
 }
 
-function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,businessModelServices){
+function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,metaModelServices){
 	$scope.isOutbound = function(item) {
-		return !angular.equals(item.sourceTableName,
-				$scope.selectedBusinessModel.name);
+		return !angular.equals(item.sourceTableName,$scope.selectedBusinessModel.uniqueName);
 	}
 
 	$scope.outboundColumns = [{label:'Name',name:'name'},
@@ -347,7 +345,7 @@ function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbi
 		$mdDialog.show({
 			controller: outboundModelPageControllerFunction,
 			preserveScope: true,
-			locals: {businessModel:$scope.businessModel, selectedBusinessModel:$scope.selectedBusinessModel, sbiModule_restServices:sbiModule_restServices,businessModelServices:businessModelServices},
+			locals: {businessModel:$scope.meta.businessModels, selectedBusinessModel:$scope.selectedBusinessModel, sbiModule_restServices:sbiModule_restServices,metaModelServices:metaModelServices},
 			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/outboundModel.jsp',
 			clickOutsideToClose:true,
 			escapeToClose :true,
@@ -362,12 +360,11 @@ function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbi
 }
 
 
-function inboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout, businessModel, selectedBusinessModel,businessModelServices){
+function inboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout, businessModel, selectedBusinessModel,metaModelServices){
 	$scope.translate = sbiModule_translate;
 	$scope.cardinality = [{name:'1 to 1',value:'one-to-one'},{name:'1 to N',value:'one-to-many'},{name:'N to 1',value:'many-to-one'},
 	                      {name:' 1* to 1',value:'optional-one-to-one'},{name:'1 to 1*',value:'one-to-optional-one'},{name:'1* to N',value:'optional-one-to-many'},
 	                      {name:'1 to N*',value:'one-to-optional-many'}, {name:'N* to 1',value:'optional-many-to-one'}, {name:'N to 1*',value:'many-to-optional-one'}];
-	$scope.businessModelServices = businessModelServices;
 	$scope.businessName;
 	$scope.businessModel = angular.copy(businessModel);
 	$scope.selectedBusinessModel = angular.copy(selectedBusinessModel);
@@ -399,25 +396,24 @@ function inboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translat
 	$scope.createInbound = function(){
 		$scope.dataSend.sourceColumns = [];
 		$scope.dataSend.destinationColumns = [];
-		$scope.dataSend.sourceTableName = $scope.selectedBusinessModel.uniqueName;
-		$scope.dataSend.destinationTableName = $scope.rightElement.uniqueName;
-		$scope.simpleRight.forEach(function(entry) {
+		$scope.dataSend.sourceTableName = $scope.rightElement.uniqueName;
+		$scope.dataSend.destinationTableName = $scope.selectedBusinessModel.uniqueName;
+		$scope.simpleLeft.forEach(function(entry) {
 			if (entry.links.length > 0){
-				$scope.dataSend.sourceColumns.push(entry.uname);
-				$scope.dataSend.destinationColumns.push(entry.links[0].uname);
-				var send = $scope.businessModelServices.createRequestRest($scope.dataSend);
-				sbiModule_restServices.promisePost("1.0/metaWeb","addBusinessRelation",send)
-				.then(function(response){
-					console.log(response.data);
-				}
-				,function(response){
-					console.log(response.data);
-			})
+				$scope.dataSend.destinationColumns.push(entry.uname);
+				$scope.dataSend.sourceColumns.push(entry.links[0].uname);
 			}
-
 		});
 
-		console.log($scope.dataSend);
+		var send = metaModelServices.createRequestRest($scope.dataSend);
+		sbiModule_restServices.promisePost("1.0/metaWeb","addBusinessRelation",send)
+		.then(function(response){
+			metaModelServices.applyPatch(response.data);
+		}
+		,function(response){
+			sbiModule_restServices.errorHandler(response.data,"");
+		})
+
 	}
 
 	$scope.cancel = function(){
@@ -426,7 +422,7 @@ function inboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translat
 
 	$scope.checkData = function(){
 		var x = 0;
-		$scope.simpleRight.forEach(function(item){
+		$scope.simpleLeft.forEach(function(item){
 			if (item.links.length > 0)
 				x += 1;
 		});
@@ -434,7 +430,7 @@ function inboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translat
 		}
 }
 
-function outboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout, businessModel, selectedBusinessModel){
+function outboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout, businessModel, selectedBusinessModel,metaModelServices){
 	$scope.translate = sbiModule_translate;
 	$scope.cardinality = [{name:'1 to 1',value:'one-to-one'},{name:'1 to N',value:'one-to-many'},{name:'N to 1',value:'many-to-one'},
 	                      {name:' 1* to 1',value:'optional-one-to-one'},{name:'1 to 1*',value:'one-to-optional-one'},{name:'1* to N',value:'optional-one-to-many'},
@@ -476,19 +472,18 @@ function outboundModelPageControllerFunction($scope,$mdDialog, sbiModule_transla
 			if (entry.links.length > 0){
 				$scope.dataSend.sourceColumns.push(entry.name);
 				$scope.dataSend.destinationColumns.push(entry.links[0].name);
-				var send = $scope.businessModelServices.createRequestRest($scope.dataSend);
-				sbiModule_restServices.promisePost("1.0/metaWeb","addBusinessRelation",send)
-				.then(function(response){
-					console.log(response.data);
-				}
-				,function(response){
-					console.log(response.data);
-			})
 			}
 
 		});
 
-		console.log($scope.dataSend);
+		var send = metaModelServices.createRequestRest($scope.dataSend);
+		sbiModule_restServices.promisePost("1.0/metaWeb","addBusinessRelation",send)
+		.then(function(response){
+			metaModelServices.applyPatch(response.data);
+		}
+		,function(response){
+			sbiModule_restServices.errorHandler(response.data,"");
+		})
 	}
 
 	$scope.cancel = function(){
