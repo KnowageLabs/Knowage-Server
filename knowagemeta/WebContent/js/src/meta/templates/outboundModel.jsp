@@ -1,19 +1,20 @@
 <md-dialog aria-label="Outboung Manager"   ng-cloak style="min-width:90%; min-height:90%;">
-  <md-toolbar>
+	<form name="newBMForm" layout="column" flex>
+  	<md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>OutBound</h2>
+        <h2>{{translate.load('sbi.meta.model.business.outbound')}}</h2>
        </div>
     </md-toolbar>
     <md-dialog-content flex>
-      <div class="md-dialog-content">
-   		<md-input-container class="md-block"> 
+	      <div class="md-dialog-content">
+	   		<md-input-container class="md-block"> 
 					<label>{{translate.load("sbi.meta.business.relationship.insert.name")}}</label>
-					<input type="text" ng-model="businessName">
+					<input type="text" ng-model="dataSend.name" required>
 				</md-input-container>
 					
 				<md-input-container flex> 
 						<label>{{translate.load("sbi.meta.business.relationship.cardinality")}}</label>
-						<md-select ng-model="cardinalityValue"> 
+						<md-select ng-model="dataSend.cardinality" required> 
 							<md-option	ng-repeat="card in cardinality" value="{{card.value}}">
 								{{card.name}} 
 							</md-option> 
@@ -28,30 +29,35 @@
 				
 						<md-input-container flex id="right_ch" > 
 							<label>{{translate.load("sbi.meta.business.relationship.target.business.class.name")}}</label>
-							<md-select  ng-model="rightElement" ng-model-options="{trackBy: '$value.uniqueName'}"> 
+							<md-select ng-model="rightElement" ng-model-options="{trackBy: '$value.uniqueName'}"> 
 								<md-option	ng-repeat="element in businessModel" ng-value="element" ng-click="alterTableToSimpleBound(element)">
 									{{element.name}} 
 								</md-option> 
 							</md-select> 
 						</md-input-container>
-
 				</div>
 			
-			<associator-directive flex source-model="simpleLeft" target-model="simpleRight"  source-name="name" target-name="name" associated-item="links" translate="translate">
+			<associator-directive flex 
+			source-model="simpleLeft" 
+			target-model="simpleRight"  
+			source-name="name"
+			target-name="name" 
+			associated-item="links" 
+			source-column-label="translate.load('sbi.meta.business.relationship.source.attributes')"
+			target-column-label="translate.load('sbi.meta.business.relationship.target.attributes')">
 			</associator-directive>
-			
-		
+
 			</div>
 			</md-dialog-content>
 			
 			 <md-dialog-actions layout="row">
 	             <span flex></span>
 			      <md-button ng-click="cancel()">
-			       Cancel
+			       {{translate.load('sbi.general.cancel')}}
 			      </md-button>
-			      <md-button ng-click="createOutbound()">
-			        Create
+			      <md-button ng-click="createOutbound()" ng-disabled="!newBMForm.$valid || checkData()">
+			        {{translate.load('sbi.generic.create')}}
 			      </md-button>
    			 </md-dialog-actions>
-			
+		</form>		
 </md-dialog>
