@@ -1031,7 +1031,6 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 		$scope.cookieArray = $localStorage.recents;
 		$scope.cookieArray.splice(index, 1);
-		$cookies.putObject('data', $scope.cookieArray);
 		$localStorage.recents = $scope.cookieArray;
 		if (item.name != null) {
 			$scope.deleteCC(item.name);
