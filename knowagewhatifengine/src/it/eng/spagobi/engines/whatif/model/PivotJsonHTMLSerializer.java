@@ -90,6 +90,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 	private static final String MODELCONFIG = "modelConfig";
 	private static final String HAS_PENDING_TRANSFORMATIONS = "hasPendingTransformations";
 	public static final String ROW_OFFSET = "ROW_OFFSET";
+	public static final String SUBSET_AXIS_LENGTH = "SUBSET_AXIS_LENGTH";
 	public static final String COLUMN_OFFSET = "COLUMN_OFFSET";
 	public static final String AXIS_LENGTH = "AXIS_LENGTH";
 	private static final String FORMULAS = "formulas";
@@ -240,6 +241,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 			
 			//used for translation from cellset of subset mdx to cellset of plain mdx
 			callback.addProperty(ROW_OFFSET, modelConfig.getStartRow() + i);
+			callback.addProperty(SUBSET_AXIS_LENGTH, model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
+			
 
 			if (!(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount() < 1)) {
 				

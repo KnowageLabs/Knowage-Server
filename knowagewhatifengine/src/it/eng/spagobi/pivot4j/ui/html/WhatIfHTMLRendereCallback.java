@@ -88,12 +88,16 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		Integer columnOffset =  (Integer) getProperty(PivotJsonHTMLSerializer.COLUMN_OFFSET);
 		Integer rowOffset = (Integer) getProperty(PivotJsonHTMLSerializer.ROW_OFFSET);
 		Integer axisLength = (Integer) getProperty(PivotJsonHTMLSerializer.AXIS_LENGTH);
+		Integer axisSubsetLength = (Integer) getProperty(PivotJsonHTMLSerializer.SUBSET_AXIS_LENGTH);
+		
+		int rowNumber = rowOffset+ Math.abs(ordinal/axisSubsetLength);
+		int columnNumber = columnOffset+ordinal%axisSubsetLength;
 		
 		//translate on rows
-		ordinal = axisLength*rowOffset+ordinal;
+		ordinal = axisLength*rowNumber;
 		
 		//translate on columns
-		ordinal = ordinal + columnOffset;
+		ordinal = ordinal + columnNumber;
 		
 		return ordinal;
 	}
