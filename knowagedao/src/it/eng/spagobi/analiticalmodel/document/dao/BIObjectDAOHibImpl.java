@@ -311,6 +311,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			Criteria criteria = aSession.createCriteria(SbiObjects.class);
 			criteria.add(labelCriterrion);
 			SbiObjects hibObject = (SbiObjects) criteria.uniqueResult();
+			if (hibObject == null) {
+				logger.error("Unable to load document whose label is equal to [" + label + "]");
+			}
 			if (hibObject != null) {
 				biObject = toBIObject(hibObject, aSession);
 			}
