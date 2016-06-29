@@ -279,16 +279,16 @@ function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiM
 	}
 
 	$scope.inboundColumns = [{label:'Name',name:'name'},
-	                      {label:'Source Table',name:'sourceTableName'},
-	                      {label:'Source Columns',name:'sourceColumns',transformer:function(data){
+	                      {label:'Source Table',name:'destinationTableName'},
+	                      {label:'Source Columns',name:'destinationColumns',transformer:function(data){
 	                    	  var ret = [];
 	                    	  data.forEach(function(entry) {
 	                    		    ret.push(entry.name);
 	                    		  }, this);
 	                    	  return ret.join(", ")
 	                      }},
-	                      {label:'Target Table',name:'destinationTableName'},
-	                      {label:'Target Columns',name:'destinationColumns',transformer:function(data){
+	                      {label:'Target Table',name:'sourceTableName'},
+	                      {label:'Target Columns',name:'sourceColumns',transformer:function(data){
 	                    	  var retD = [];
 	                    	  data.forEach(function(entry) {
 	                    		    retD.push(entry.name);
@@ -396,12 +396,12 @@ function inboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translat
 	$scope.createInbound = function(){
 		$scope.dataSend.sourceColumns = [];
 		$scope.dataSend.destinationColumns = [];
-		$scope.dataSend.sourceTableName = $scope.rightElement.uniqueName;
-		$scope.dataSend.destinationTableName = $scope.selectedBusinessModel.uniqueName;
+		$scope.dataSend.sourceTableName = $scope.selectedBusinessModel.uniqueName;
+		$scope.dataSend.destinationTableName = $scope.rightElement.uniqueName;
 		$scope.simpleLeft.forEach(function(entry) {
 			if (entry.links.length > 0){
-				$scope.dataSend.destinationColumns.push(entry.uname);
-				$scope.dataSend.sourceColumns.push(entry.links[0].uname);
+				$scope.dataSend.destinationColumns.push(entry.links[0].uname);
+				$scope.dataSend.sourceColumns.push(entry.uname);
 			}
 		});
 
@@ -449,7 +449,7 @@ function outboundModelPageControllerFunction($scope,$mdDialog, sbiModule_transla
 		if(model){
 			if(model.columns)
 				model.columns.forEach(function(item){
-					a.push({name:item.name, links:[]});
+					a.push({name:item.name,uname:item.uniqueName, links:[]});
 					});
 				}
 		return a;
@@ -466,12 +466,12 @@ function outboundModelPageControllerFunction($scope,$mdDialog, sbiModule_transla
 	$scope.createOutbound = function(){
 		$scope.dataSend.sourceColumns = [];
 		$scope.dataSend.destinationColumns = [];
-		$scope.dataSend.sourceTableName = $scope.selectedBusinessModel.uniqueName;
-		$scope.dataSend.destinationTableName = $scope.rightElement.uniqueName;
+		$scope.dataSend.sourceTableName = $scope.rightElement.uniqueName;
+		$scope.dataSend.destinationTableName = $scope.selectedBusinessModel.uniqueName;
 		$scope.simpleRight.forEach(function(entry) {
 			if (entry.links.length > 0){
-				$scope.dataSend.sourceColumns.push(entry.name);
-				$scope.dataSend.destinationColumns.push(entry.links[0].name);
+				$scope.dataSend.sourceColumns.push(entry.uname);
+				$scope.dataSend.destinationColumns.push(entry.links[0].uname);
 			}
 
 		});
