@@ -52,7 +52,7 @@
 	*#	
 	#if ($chartType == "radar")	
 		pane: {
-	    	size: '95%',
+	    	size: '90%',
 	    },	    
     #end
 
