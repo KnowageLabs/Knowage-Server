@@ -12,6 +12,7 @@ import it.eng.knowage.meta.model.business.BusinessModel;
 import it.eng.knowage.meta.model.business.BusinessModelFactory;
 import it.eng.knowage.meta.model.business.BusinessRelationship;
 import it.eng.knowage.meta.model.business.BusinessTable;
+import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.filter.PhysicalTableFilter;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
@@ -33,7 +34,6 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -150,22 +150,27 @@ public class MetaService {
 	@Path("/addBusinessModel")
 	public Response addBusinessModel(@Context HttpServletRequest req) {
 		try {
-			EmfXmiSerializer serializer = new EmfXmiSerializer();
-
 			String jsonString = RestUtilities.readBody(req);
-			JSONObject json = new JSONObject(jsonString);
+			JSONObject jsonRoot = new JSONObject(jsonString);
 
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+			JSONObject oldJsonModel = createJson(model);
 
-			if (json.has("diff")) {
+			if (jsonRoot.has("diff")) {
 				ObjectMapper mapper = new ObjectMapper();
-				JsonNode patch = mapper.readTree(json.getString("diff"));
+				JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
 				applyPatch(patch, model);
 			}
 
-			JSONObject emptyModelJson = createJson(model);
+			JSONObject json = jsonRoot.getJSONObject("data");
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode newBM = mapper.readTree(json.toString());
+			applyBusinessModel(newBM, model);
 
-			// TODO
+			JSONObject jsonModel = createJson(model);
+			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+
+			return Response.ok(patch.toString()).build();
 		} catch (IOException | JSONException e) {
 			logger.error(e);
 		} catch (SpagoBIException e) {
@@ -191,49 +196,15 @@ public class MetaService {
 			}
 
 			JSONObject json = jsonRoot.getJSONObject("data");
+
+			// Setting uniqueName equals to name because front-end sends only a "name" field
 			String name = json.getString("name");
-
-			// TODO remove this
 			json.put("uniqueName", name);
-
-			// String destTableName = json.getString("destinationTable");
-			// String sourceTableName = json.getString("sourceTable");
-			// JSONArray destCols = json.getJSONArray("destinationColumns");
-			// JSONArray sourceCols = json.getJSONArray("sourceColumns");
 
 			BusinessModel bm = model.getBusinessModels().get(0);
 
 			JsonNode rel = mapper.readTree(json.toString());
 			applyRelationships(rel, bm);
-
-			// BusinessRelationship rel = BusinessModelFactory.eINSTANCE.createBusinessRelationship();
-			// rel.setModel(bm);
-			// rel.setName(name);
-			// rel.getProperties();
-			// rel.getPropertyTypes();
-			// rel.getPhysicalForeignKey();
-			// BusinessColumnSet destColumnSet = BusinessModelFactory.eINSTANCE.createBusinessColumnSet();
-			// destColumnSet.setName(destTableName);
-			// rel.setDestinationTable(destColumnSet);
-			// BusinessColumnSet sourceColumnSet = BusinessModelFactory.eINSTANCE.createBusinessColumnSet();
-			// sourceColumnSet.setName(sourceTableName);
-			// rel.setSourceTable(sourceColumnSet);
-			//
-			// for (int i = 0; i < destCols.length(); i++) {
-			// String colName = destCols.getString(i);
-			// BusinessColumn bc = BusinessModelFactory.eINSTANCE.createBusinessColumn();
-			// // bc.setUniqueName(colName);
-			//
-			// rel.getDestinationColumns().add(bc);
-			// }
-			//
-			// for (int i = 0; i < sourceCols.length(); i++) {
-			// String colName = sourceCols.getString(i);
-			// BusinessColumn bc = BusinessModelFactory.eINSTANCE.createBusinessColumn();
-			// bc.setUniqueName(colName);
-			// rel.getSourceColumns().add(bc);
-			// }
-			// bm.getRelationships().add(rel);
 
 			JSONObject jsonModel = createJson(model);
 			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
@@ -256,7 +227,7 @@ public class MetaService {
 		// "D:/Sviluppo/Athena/knowagemeta-unit-test/workspaces/metadata/it.eng.knowage.meta.generator/templates";
 		// File projectRootFolder = new File("D:/Sviluppo/Athena/knowagemeta-unit-test/workspaces/metadata/it.eng.knowage.meta.generator");
 		// jpaMappingJarGenerator.setLibDir(new File(projectRootFolder, "libs/eclipselink"));
-		jpaMappingJarGenerator.setLibs(new String[] { "org.eclipse.persistence.core_2.1.2.jar", "javax.persistence_2.0.1.jar" });
+		jpaMappingJarGenerator.setLibs(new String[] { "org.eclipse.persistence.core_2.1.2.jar", "javax.persistence-2.0.1.jar" });
 		try {
 			// java.nio.file.Path outFile = Files.createTempFile("model_", "_tmp");
 			java.nio.file.Path outDir = Files.createTempDirectory("model_");
@@ -276,6 +247,38 @@ public class MetaService {
 			e.printStackTrace();
 		}
 		return Response.serverError().build();
+	}
+
+	private void applyBusinessModel(JsonNode newBM, Model model) {
+		String name = newBM.get("name").textValue();
+		String description = newBM.get("description").textValue();
+		String table = newBM.get("physicalModel").textValue();
+		Iterator<JsonNode> colIterator = newBM.get("selectedColumns").elements();
+
+		BusinessModel bm = model.getBusinessModels().get(0);
+
+		BusinessTable bt = BusinessModelFactory.eINSTANCE.createBusinessTable();
+		PhysicalTable pt = model.getPhysicalModels().get(0).getTable(table);
+		bt.setModel(bm);
+		bm.getBusinessTables().add(bt);
+		bt.setName(name);
+		bt.setDescription(description);
+		bt.setPhysicalTable(pt);
+		bt.setDescription(description);
+		new BusinessModelInitializer().getPropertiesInitializer().addProperties(bt);
+
+		while (colIterator.hasNext()) {
+			JsonNode col = colIterator.next();
+			String colName = col.textValue();
+			BusinessColumn bc = BusinessModelFactory.eINSTANCE.createBusinessColumn();
+			SimpleBusinessColumn sbc = BusinessModelFactory.eINSTANCE.createSimpleBusinessColumn();
+			bt.getSimpleBusinessColumns().add(sbc);
+			sbc.setName(colName);
+			sbc.setPhysicalColumn(pt.getColumn(colName));
+			sbc.setTable(bt);
+			new BusinessModelInitializer().getPropertiesInitializer().addProperties(bc);
+		}
+
 	}
 
 	private Model getModel(Integer id) {
@@ -490,23 +493,9 @@ public class MetaService {
 		}
 	}
 
-	private Field getField(Class clazz, String fieldName) {
-		Field f = null;
-		if (clazz != null) {
-			try {
-				f = clazz.getDeclaredField(fieldName);
-			} catch (NoSuchFieldException | SecurityException e) {
-			}
-			if (f == null) {
-				return getField(clazz.getSuperclass(), fieldName);
-			}
-		}
-		return f;
-	}
-
 	private String cleanPath(String path) {
 		// path = path.replaceAll("^/physicalModel/", "/physicalModels/0/tables/").replaceAll("^/businessModel/", "/businessModels/0/businessTables/");
-		path = "/businessModels" + path;
+		// path = "/businessModels" + path;
 		Pattern p = Pattern.compile("(/)(\\d)");
 		Matcher m = p.matcher(path);
 		// StringBuffer s = new StringBuffer("/businessTables");
