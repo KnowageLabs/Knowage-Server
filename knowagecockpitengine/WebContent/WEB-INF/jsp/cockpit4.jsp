@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
 
+<%@page import="it.eng.spagobi.services.common.SsoServiceInterface"%>
 <%@page import="it.eng.spago.base.SourceBean"%>
 <%@page import="it.eng.spagobi.services.common.EnginConf"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
@@ -137,32 +138,32 @@ author: Andrea Gioia (andrea.gioia@eng.it)
     
     StringBuffer chartDesignerUrlTemp = new StringBuffer("/"+chartEngineContextName+"/api/1.0/pages/edit_cockpit");
     StringBuffer chartRuntimeUrlTemp = new StringBuffer("/"+chartEngineContextName+"/api/1.0/pages/execute_cockpit");
-    StringBuffer chartRuntimeUrlPing = new StringBuffer("/"+chartEngineContextName+"/api/1.0/engine/ping");
+    StringBuffer chartRuntimeUrlPingTemp = new StringBuffer("/"+chartEngineContextName+"/api/1.0/engine/ping");
     
     chartDesignerUrlTemp.append(param2);
     chartRuntimeUrlTemp.append(param2);
-    chartRuntimeUrlPing.append(param2);
+    chartRuntimeUrlPingTemp.append(param2);
     
     chartDesignerUrlTemp.append(param3);
     chartRuntimeUrlTemp.append(param3);
-    chartRuntimeUrlPing.append(param3);
+    chartRuntimeUrlPingTemp.append(param3);
     
     chartDesignerUrlTemp.append("&"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
     chartRuntimeUrlTemp.append("&"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
-    chartRuntimeUrlPing.append("&"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
+    chartRuntimeUrlPingTemp.append("&"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
     
     chartDesignerUrlTemp.append("&"+SpagoBIConstants.SBI_COUNTRY+"="+locale.getCountry());
     chartRuntimeUrlTemp.append("&"+SpagoBIConstants.SBI_COUNTRY+"="+locale.getCountry());
-    chartRuntimeUrlPing.append("&"+SpagoBIConstants.SBI_COUNTRY+"="+locale.getCountry());
+    chartRuntimeUrlPingTemp.append("&"+SpagoBIConstants.SBI_COUNTRY+"="+locale.getCountry());
     
     //chartDesignerUrlTemp.append("&document=159");
     
     Map testMap = new HashMap();
-    testMap.put("user_id", userId);
-    
+    testMap.put(SsoServiceInterface.USER_ID, userId);
     
     String chartDesignerUrl = StringEscapeUtils.escapeJavaScript(GeneralUtilities.getUrl(chartDesignerUrlTemp.toString(), testMap));
     String chartRuntimeUrl = StringEscapeUtils.escapeJavaScript(GeneralUtilities.getUrl(chartRuntimeUrlTemp.toString(), testMap));
+    String chartRuntimeUrlPing = StringEscapeUtils.escapeJavaScript(GeneralUtilities.getUrl(chartRuntimeUrlPingTemp.toString(), testMap));
 
     
 %>
