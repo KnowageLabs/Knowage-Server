@@ -4,10 +4,10 @@ import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.component.AbstractSvgViewerEngineComponent;
 import it.eng.knowage.engines.svgviewer.datamart.provider.IDataMartProvider;
 import it.eng.knowage.engines.svgviewer.map.provider.IMapProvider;
-import it.eng.knowage.engines.svgviewer.map.renderer.configurator.AbstractMapRendererConfigurator;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 // TODO: Auto-generated Javadoc
 /**
  * The Class AbstractMapRenderer. *
- * 
+ *
  * @author Andrea Gioia
  */
 public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implements IMapRenderer {
@@ -45,18 +45,17 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.AbstractGeoEngineComponent#init(java.lang.Object)
 	 */
 	@Override
 	public void init(Object conf) throws SvgViewerEngineException {
 		super.init(conf);
-		AbstractMapRendererConfigurator.configure(this, getConf());
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#renderMap(it.eng.spagobi.engines.geo.map.provider.IMapProvider,
 	 * it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider, java.lang.String)
 	 */
@@ -67,7 +66,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#renderMap(it.eng.spagobi.engines.geo.map.provider.IMapProvider,
 	 * it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider)
 	 */
@@ -137,7 +136,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#getLayer(java.lang.String)
 	 */
 	@Override
@@ -147,7 +146,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#addLayer(it.eng.spagobi.engines.geo.map.renderer.Layer)
 	 */
 	@Override
@@ -157,7 +156,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#getLayerNames()
 	 */
 	@Override
@@ -189,7 +188,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#clearLayers()
 	 */
 	@Override
@@ -198,6 +197,8 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 	}
 
 	public GuiSettings getGuiSettings() {
+		if (guiSettings == null)
+			guiSettings = new GuiSettings();
 		return guiSettings;
 	}
 
@@ -212,6 +213,19 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 	@Override
 	public void setSelectedMeasureName(String selectedMeasureName) {
 		this.selectedMeasureName = selectedMeasureName;
+	}
+
+	public void setSelectedMeasureName(Map measures) {
+		for (Iterator iterator = measures.keySet().iterator(); iterator.hasNext();) {
+			String key = (String) iterator.next();
+			Measure measure = (Measure) measures.get(key);
+			if (measure.isSelected()) {
+				this.selectedMeasureName = measure.getColumnId();
+				logger.debug("Active measure is [" + measure.getColumnId() + "]");
+				return;
+			}
+		}
+		logger.debug("Active measure not defined !! ");
 	}
 
 }

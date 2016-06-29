@@ -8,11 +8,9 @@ import it.eng.spago.base.SourceBeanException;
 
 import org.apache.log4j.Logger;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AbstractMapProviderConfigurator.
  *
- * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class AbstractMapProviderConfigurator {
 

@@ -18,9 +18,6 @@ import java.util.Set;
  */
 public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent implements IDataMartProvider {
 
-	/** The meta data. */
-	// private DataSetMetaData metaData;
-
 	/** The Hierarchies Members */
 	private Map<String, HierarchyMember> hierarchyMembers;
 
@@ -31,7 +28,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 	private String selectedHierarchyName;
 
 	/** The selected level name. */
-	private String selectedLevelName;
+	private String selectedLevelName; // is used again?
 
 	/** The selected member name. */
 	private String selectedMemberName;
@@ -45,7 +42,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.AbstractGeoEngineComponent#init(java.lang.Object)
 	 */
 	@Override
@@ -56,7 +53,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getDataSet()
 	 */
 	@Override
@@ -66,7 +63,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getDataDetails(java.lang.String)
 	 */
 	@Override
@@ -76,7 +73,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getHierarchyNames()
 	 */
 	@Override
@@ -89,7 +86,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getHierarchy(java.lang.String)
 	 */
 	@Override
@@ -102,7 +99,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedHierarchy()
 	 */
 	@Override
@@ -115,7 +112,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedLevel()
 	 */
 	@Override
@@ -126,25 +123,6 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 		}
 		return null;
 	}
-
-	// /**
-	// * Gets the meta data.
-	// *
-	// * @return the meta data
-	// */
-	// public DataSetMetaData getMetaData() {
-	// return metaData;
-	// }
-	//
-	// /**
-	// * Sets the meta data.
-	// *
-	// * @param metaData
-	// * the new meta data
-	// */
-	// public void setMetaData(DataSetMetaData metaData) {
-	// this.metaData = metaData;
-	// }
 
 	/**
 	 * Sets the hierarchies.
@@ -159,7 +137,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedHierarchyName()
 	 */
 	@Override
@@ -169,7 +147,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#setSelectedHierarchyName(java.lang.String)
 	 */
 	@Override
@@ -179,7 +157,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedLevelName()
 	 */
 	@Override
@@ -189,7 +167,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#setSelectedLevelName(java.lang.String)
 	 */
 	@Override

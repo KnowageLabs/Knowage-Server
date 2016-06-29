@@ -1,13 +1,9 @@
 package it.eng.knowage.engines.svgviewer.map.renderer.configurator;
 
-import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
-import it.eng.knowage.engines.svgviewer.map.renderer.AbstractMapRenderer;
-import it.eng.knowage.engines.svgviewer.map.renderer.GuiSettings;
 import it.eng.knowage.engines.svgviewer.map.renderer.ILabelProducer;
 import it.eng.knowage.engines.svgviewer.map.renderer.Layer;
 import it.eng.knowage.engines.svgviewer.map.renderer.Measure;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 
 import java.util.HashMap;
@@ -28,52 +24,6 @@ public class AbstractMapRendererConfigurator {
 	public static transient Logger logger = Logger.getLogger(AbstractMapRendererConfigurator.class);
 
 	/**
-	 * Configure.
-	 *
-	 * @param abstractMapRenderer
-	 *            the abstract map renderer
-	 * @param conf
-	 *            the conf
-	 *
-	 * @throws SvgViewerEngineException
-	 *             the geo engine exception
-	 */
-	public static void configure(AbstractMapRenderer abstractMapRenderer, Object conf) throws SvgViewerEngineException {
-		SourceBean confSB = null;
-
-		if (conf instanceof String) {
-			try {
-				confSB = SourceBean.fromXMLString((String) conf);
-			} catch (SourceBeanException e) {
-				logger.error("Impossible to parse configuration block for MapRenderer", e);
-				throw new SvgViewerEngineException("Impossible to parse configuration block for MapRenderer", e);
-			}
-		} else {
-			confSB = (SourceBean) conf;
-		}
-
-		if (confSB != null) {
-			SourceBean measuresConfigurationSB = (SourceBean) confSB.getAttribute("MEASURES");
-			String defaultMeasureName = (String) measuresConfigurationSB.getAttribute("default_kpi");
-			if (!StringUtilities.isEmpty(defaultMeasureName)) {
-				abstractMapRenderer.setSelectedMeasureName(defaultMeasureName);
-			}
-			Map measures = getMeasures(measuresConfigurationSB);
-
-			// Layers are getted through member object
-			// SourceBean layersConfigurationSB = (SourceBean) confSB.getAttribute("LAYERS");
-			// Map layers = getLayers(layersConfigurationSB);
-
-			SourceBean guiSettingsConfigurationSB = (SourceBean) confSB.getAttribute("GUI_SETTINGS");
-			GuiSettings guiSettings = getGuiSettings(guiSettingsConfigurationSB);
-
-			abstractMapRenderer.setMeasures(measures);
-			// abstractMapRenderer.setLayers(layers);
-			abstractMapRenderer.setGuiSettings(guiSettings);
-		}
-	}
-
-	/**
 	 * Gets the measures.
 	 *
 	 * @param measuresConfigurationSB
@@ -81,7 +31,7 @@ public class AbstractMapRendererConfigurator {
 	 *
 	 * @return the measures
 	 */
-	private static Map getMeasures(SourceBean measuresConfigurationSB) {
+	public static Map getMeasures(SourceBean measuresConfigurationSB) {
 		Map measures;
 		List measureList;
 		SourceBean measureSB;
@@ -93,6 +43,8 @@ public class AbstractMapRendererConfigurator {
 		String attributeValue;
 
 		measures = new HashMap();
+
+		String defaultMeasureName = (String) measuresConfigurationSB.getAttribute("default_kpi");
 
 		measureList = measuresConfigurationSB.getAttributeAsList("KPI");
 		for (int i = 0; i < measureList.size(); i++) {
@@ -151,6 +103,11 @@ public class AbstractMapRendererConfigurator {
 			}
 			measure.setColurCalculatorParameters(colurCalculatorParameters);
 
+			// set default kpi
+			if (!StringUtilities.isEmpty(defaultMeasureName) && defaultMeasureName.equals(measure.getColumnId())) {
+				measure.setSelected(true);
+			}
+
 			measures.put(measure.getColumnId().toUpperCase(), measure);
 		}
 
@@ -199,99 +156,6 @@ public class AbstractMapRendererConfigurator {
 		}
 
 		return layers;
-	}
-
-	private static GuiSettings getGuiSettings(SourceBean guiSettingsConfigurationSB) {
-		GuiSettings guiSettings = null;
-		SourceBean windowSettingsSB;
-		SourceBean labelSettingsSB;
-
-		SourceBean settingsSB;
-		List params;
-
-		guiSettings = new GuiSettings();
-
-		if (guiSettingsConfigurationSB == null)
-			return guiSettings;
-
-		params = guiSettingsConfigurationSB.getAttributeAsList("PARAM");
-		if (params != null) {
-			addSettings(guiSettings.getGeneralSettings(), params);
-		}
-
-		windowSettingsSB = (SourceBean) guiSettingsConfigurationSB.getAttribute("WINDOWS");
-
-		if (windowSettingsSB != null) {
-			settingsSB = (SourceBean) windowSettingsSB.getAttribute("DEFAULTS");
-			if (settingsSB != null) {
-				params = settingsSB.getAttributeAsList("PARAM");
-				if (params != null) {
-					addSettings(guiSettings.getWindowDefaultSettings(), params);
-				}
-			}
-
-			settingsSB = (SourceBean) windowSettingsSB.getFilteredSourceBeanAttribute("WINDOW", "name", "navigation");
-			if (settingsSB != null) {
-				guiSettings.getNavigationWindowSettings().put("name", "navigation");
-				params = settingsSB.getAttributeAsList("PARAM");
-				if (params != null) {
-					addSettings(guiSettings.getNavigationWindowSettings(), params);
-				}
-			}
-
-			settingsSB = (SourceBean) windowSettingsSB.getFilteredSourceBeanAttribute("WINDOW", "name", "measures");
-			if (settingsSB != null) {
-				guiSettings.getMeasureWindowSettings().put("name", "measures");
-				params = settingsSB.getAttributeAsList("PARAM");
-				if (params != null) {
-					addSettings(guiSettings.getMeasureWindowSettings(), params);
-				}
-			}
-
-			settingsSB = (SourceBean) windowSettingsSB.getFilteredSourceBeanAttribute("WINDOW", "name", "layers");
-			if (settingsSB != null) {
-				guiSettings.getLayersWindowSettings().put("name", "layers");
-				params = settingsSB.getAttributeAsList("PARAM");
-				if (params != null) {
-					addSettings(guiSettings.getLayersWindowSettings(), params);
-				}
-			}
-
-			settingsSB = (SourceBean) windowSettingsSB.getFilteredSourceBeanAttribute("WINDOW", "name", "detail");
-			if (settingsSB != null) {
-				guiSettings.getDetailWindowSettings().put("name", "detail");
-				params = settingsSB.getAttributeAsList("PARAM");
-				if (params != null) {
-					addSettings(guiSettings.getDetailWindowSettings(), params);
-				}
-			}
-
-			settingsSB = (SourceBean) windowSettingsSB.getFilteredSourceBeanAttribute("WINDOW", "name", "legend");
-			if (settingsSB != null) {
-				guiSettings.getLegendWindowSettings().put("name", "legend");
-				params = settingsSB.getAttributeAsList("PARAM");
-				if (params != null) {
-					addSettings(guiSettings.getLegendWindowSettings(), params);
-				}
-			}
-
-			settingsSB = (SourceBean) windowSettingsSB.getFilteredSourceBeanAttribute("WINDOW", "name", "colourpicker");
-			if (settingsSB != null) {
-				params = settingsSB.getAttributeAsList("PARAM");
-				guiSettings.getColourpickerWindowSettings().put("name", "colourpicker");
-				if (params != null) {
-					addSettings(guiSettings.getColourpickerWindowSettings(), params);
-				}
-			}
-		}
-
-		labelSettingsSB = (SourceBean) guiSettingsConfigurationSB.getAttribute("LABELS");
-		if (labelSettingsSB != null) {
-			Map labelProducers = getLabelProducers(labelSettingsSB);
-			guiSettings.setLabelProducers(labelProducers);
-		}
-
-		return guiSettings;
 	}
 
 	/**
@@ -365,7 +229,7 @@ public class AbstractMapRendererConfigurator {
 		 * { value = paramValue; } else if(paramValue.startsWith("{") && paramValue.endsWith("}")) { value = paramValue; } else if(paramValue.startsWith("[") &&
 		 * paramValue.endsWith("]")) { value = paramValue; } else if(paramValue.startsWith("function") && paramValue.endsWith("}")) { value = paramValue; } else
 		 * {
-		 * 
+		 *
 		 * }
 		 */
 

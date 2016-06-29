@@ -121,6 +121,8 @@ onload="init(evt);">
 		}
 		
 		function initApplication(evt) {	
+		
+		//debugger;
       		
 			if (document.documentElement.suspendRedraw) {
 				suspendProcess = document.documentElement.suspendRedraw(30000);
@@ -497,7 +499,7 @@ onload="init(evt);">
 			
 			//set current topic in mapApp object
 			myMapApp.curKpi = radioId;
-			
+
 			var measure = sbi.geo.conf.measures[ getCurrentKpiIndex() ];
   			
 			var child = myMapApp.targetLayer.firstChild;

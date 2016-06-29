@@ -1,6 +1,7 @@
 package it.eng.knowage.engines.svgviewer.dataset;
 
 import it.eng.knowage.engines.svgviewer.map.renderer.Layer;
+import it.eng.knowage.engines.svgviewer.map.renderer.Measure;
 
 import java.util.Map;
 
@@ -10,18 +11,18 @@ import java.util.Map;
  * @author Antonella Giachino (antonella.giachino@eng.it)
  */
 /**
- * @author giachino
+ * @author Antonella Giachino (antonella.giachino@eng.it)
  *
  */
 public class HierarchyMember {
 
 	private String name;
 	private String dsMeasure;
-	private String dsConfig;
 	private Integer level;
 
 	private DataSetMetaData dsMetaData;
 	private Map<String, Layer> layers;
+	private Map<String, Measure> measures;
 
 	private boolean isActive;
 
@@ -53,21 +54,6 @@ public class HierarchyMember {
 	 */
 	public void setDsMeasure(String dsMeasure) {
 		this.dsMeasure = dsMeasure;
-	}
-
-	/**
-	 * @return the dsConfig
-	 */
-	public String getDsConfig() {
-		return dsConfig;
-	}
-
-	/**
-	 * @param dsConfig
-	 *            the dsConfig to set
-	 */
-	public void setDsConfig(String dsConfig) {
-		this.dsConfig = dsConfig;
 	}
 
 	/**
@@ -113,6 +99,21 @@ public class HierarchyMember {
 	 */
 	public void setLayers(Map<String, Layer> layers) {
 		this.layers = layers;
+	}
+
+	/**
+	 * @return the measures
+	 */
+	public Map<String, Measure> getMeasures() {
+		return measures;
+	}
+
+	/**
+	 * @param measures
+	 *            the measures to set
+	 */
+	public void setMeasures(Map<String, Measure> measures) {
+		this.measures = measures;
 	}
 
 	/**

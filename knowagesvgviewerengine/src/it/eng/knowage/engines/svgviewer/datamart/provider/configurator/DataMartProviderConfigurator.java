@@ -72,6 +72,7 @@ public class DataMartProviderConfigurator {
 				throw new SvgViewerEngineException("Impossible to load dataset with data", e);
 			}
 
+			// @TODO delete if the dataset will be defined ONLY BY the template
 			// ...otherwise get dataset associated to the document...
 			dataSet = (IDataSet) datamartProvider.getEnv().get(EngineConstants.ENV_DATASET);
 			if (dataSet != null) {

@@ -2,11 +2,9 @@ package it.eng.knowage.engines.svgviewer.map.renderer;
 
 import java.util.Properties;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Measure.
  *
- * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class Measure {
 

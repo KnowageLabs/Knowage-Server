@@ -139,6 +139,11 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		try {
 			loadDataMartTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.loadDatamart");
 			dataMart = datamartProvider.getDataMart();
+			// load active members' layers and measures
+			HierarchyMember activeMember = datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName());
+			setLayers(activeMember.getLayers());
+			setMeasures(activeMember.getMeasures());
+			setSelectedMeasureName(activeMember.getMeasures());
 		} finally {
 			if (loadDataMartTotalTimeMonitor != null)
 				loadDataMartTotalTimeMonitor.stop();
@@ -216,8 +221,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				logger.debug("Selected measure index [" + selectedMeasureIndexIndex + "]");
 				conf.put("selected_measure_index", selectedMeasureIndexIndex);
 				conf.put("measures", measures);
-				HierarchyMember activeMember = datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName());
-				setLayers(activeMember.getLayers());
+
 				JSONArray layers = getLayersConfigurationScript(targetMap);
 				// String targetLayer = datamartProvider.getSelectedLevel().getFeatureName();
 				String targetLayer = dataMart.getTargetFeatureName();
@@ -1510,20 +1514,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @throws JSONException
 	 */
 	public JSONObject getGUIConfigurationScript() throws JSONException {
-		JSONObject guiSettings;
+		JSONObject guiSettings = new JSONObject();
 		String pVal = null;
-
-		pVal = (String) getEnv().get(SvgViewerEngineConstants.ENV_IS_WINDOWS_ACTIVE);
-		boolean activeWindow = pVal == null || pVal.equalsIgnoreCase("TRUE");
-		if (!activeWindow) {
-			getGuiSettings().getColourpickerWindowSettings().put("visible",
-					SvgViewerEngineConfig.getInstance().isWindowVisibleInEmbeddedMode("colourpicker", false));
-			getGuiSettings().getDetailWindowSettings().put("visible", SvgViewerEngineConfig.getInstance().isWindowVisibleInEmbeddedMode("detail", false));
-			getGuiSettings().getLayersWindowSettings().put("visible", SvgViewerEngineConfig.getInstance().isWindowVisibleInEmbeddedMode("layers", false));
-			getGuiSettings().getLegendWindowSettings().put("visible", SvgViewerEngineConfig.getInstance().isWindowVisibleInEmbeddedMode("legend", true));
-			getGuiSettings().getMeasureWindowSettings().put("visible", SvgViewerEngineConfig.getInstance().isWindowVisibleInEmbeddedMode("measures", false));
-			getGuiSettings().navigationWindowSettings.put("visible", SvgViewerEngineConfig.getInstance().isWindowVisibleInEmbeddedMode("navigation", false));
-		}
 
 		guiSettings = getGuiSettings().toJSON();
 

@@ -132,23 +132,24 @@ public class SvgViewerEngineComponentFactory {
 	public static IMapRenderer buildMapRenderer(SourceBean template, Map env) throws SvgViewerEngineException {
 		IMapRenderer mapRenderer = null;
 		SourceBean confSB = null;
-		String className = null;
+		String className = SvgViewerEngineConstants.DEFAULT_MAP_RENDERER;
+		logger.warn("The default MapRenderer implementation will be used: [" + className + "]");
 
 		logger.debug("IN");
-		confSB = (SourceBean) template.getAttribute(SvgViewerEngineConstants.MAP_RENDERER_TAG);
-		if (confSB == null) {
-			logger.warn("Cannot find MapRenderer configuration settings: tag name " + SvgViewerEngineConstants.MAP_RENDERER_TAG);
-			logger.info("MapRenderer configuration settings must be injected at execution time");
-			return null;
-		}
-		className = (String) confSB.getAttribute(SvgViewerEngineConstants.CLASS_NAME_ATTRIBUTE);
-		if (className == null) {
-			className = SvgViewerEngineConstants.DEFAULT_MAP_RENDERER;
-			logger.warn("Cannot find MapRenderer class attribute: " + SvgViewerEngineConstants.CLASS_NAME_ATTRIBUTE);
-			logger.warn("The default MapRenderer implementation will be used: [" + className + "]");
-		}
-		logger.debug("Map renderer class: " + className);
-		logger.debug("Map renderer configuration: " + confSB);
+		// confSB = (SourceBean) template.getAttribute(SvgViewerEngineConstants.MAP_RENDERER_TAG);
+		// if (confSB == null) {
+		// logger.warn("Cannot find MapRenderer configuration settings: tag name " + SvgViewerEngineConstants.MAP_RENDERER_TAG);
+		// logger.info("MapRenderer configuration settings must be injected at execution time");
+		// return null;
+		// }
+		// className = (String) confSB.getAttribute(SvgViewerEngineConstants.CLASS_NAME_ATTRIBUTE);
+		// if (className == null) {
+		// className = SvgViewerEngineConstants.DEFAULT_MAP_RENDERER;
+		// logger.warn("Cannot find MapRenderer class attribute: " + SvgViewerEngineConstants.CLASS_NAME_ATTRIBUTE);
+		// logger.warn("The default MapRenderer implementation will be used: [" + className + "]");
+		// }
+		// logger.debug("Map renderer class: " + className);
+		// logger.debug("Map renderer configuration: " + confSB);
 
 		mapRenderer = (IMapRenderer) build(className, confSB, env);
 		logger.debug("OUT");
