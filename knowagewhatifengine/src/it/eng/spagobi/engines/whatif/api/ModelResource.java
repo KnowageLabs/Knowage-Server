@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
@@ -43,9 +43,10 @@ import javax.ws.rs.core.Response;
 
 import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONObject;
 import org.olap4j.CellSet;
@@ -467,38 +468,49 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@GET
 	@Path("/exceltest")
 	public void excelFillExample() {
-		XSSFWorkbook wb = null;
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		OutputStream out = null;
+
 		InputStream fileInputStream = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream("it/eng/spagobi/tools/dataset/service/export_dataset_template.xlsm");
+				.getResourceAsStream("it/eng/spagobi/engines/whatif/model/export_dataset_template.xlsm");
+
 		try {
-			wb = new XSSFWorkbook();
-			FileOutputStream fileOut = new FileOutputStream("workbook.xlsx");
+
+			XSSFWorkbook workbook = new XSSFWorkbook(OPCPackage.open(fileInputStream));
+
+			if (workbook != null) {
+
+				Sheet sheet = workbook.getSheetAt(0);
+				Row row = sheet.createRow(2);
+
+			}
+
+			try {
+				Date date = new Date();
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hh:mm");
+				String ime = "OlapTableExport" + "_" + format.format(date);
+
+				getServletResponse().setHeader("Content-Disposition", "attachment" + "; filename=\"" + ime + ".xlsm" + "\";");
+				response.setContentType("application/vnd.ms-excel.sheet.macroEnabled.12");
+				out = getServletResponse().getOutputStream();
+				workbook.write(out);
+				getServletResponse().getOutputStream().flush();
+				getServletResponse().getOutputStream().close();
+			} catch (IOException e) {
+				logger.error("write output file stream error " + e.getMessage());
+				throw new SpagoBIServiceException("test", "Impossible to write output file xls error", e);
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (InvalidFormatException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
-			logger.error("Input Output Exception " + e.getMessage());
-			throw new SpagoBIServiceException("Name", "Impossible to get xlsm export template file ", e);
+			e.printStackTrace();
 		}
 
-		if (wb != null) {
-			XSSFSheet sheet = wb.createSheet("test sheet");
-			XSSFRow row = sheet.createRow(1);
-			for (int i = 0; i < 20; i++) {
-				XSSFCell cell = row.createCell(i);
-				cell.setCellValue("" + i);
-			}
-		}
-		OutputStream out;
-		try {
-			String ime = "test";
-			getServletResponse().setHeader("Content-Disposition", "attachment" + "; filename=\"" + ime + ".xlsm" + "\";");
-			getServletResponse().setContentType("application/octet-stream");
-			out = getServletResponse().getOutputStream();
-			wb.write(out);
-			getServletResponse().getOutputStream().flush();
-			getServletResponse().getOutputStream().close();
-		} catch (IOException e) {
-			logger.error("write output file stream error " + e.getMessage());
-			throw new SpagoBIServiceException("test", "Impossible to write output file xls error", e);
-		}
 	}
 
 	private String getExportFileName() {
