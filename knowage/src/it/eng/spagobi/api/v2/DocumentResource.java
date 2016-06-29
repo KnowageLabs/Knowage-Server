@@ -747,7 +747,11 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 
 			values = new ArrayList<String>();
 			columnName = null;
-			manualInput = parameterUse.getManualInput().intValue() == 1;
+
+			Integer manualInputInteger = parameterUse.getManualInput();
+			if (manualInputInteger != null) {
+				manualInput = manualInputInteger.intValue() == 1;
+			}
 
 			if (!manualInput) {
 				IParameterDAO parameterDAO = DAOFactory.getParameterDAO();
