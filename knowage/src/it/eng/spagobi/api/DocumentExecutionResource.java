@@ -350,7 +350,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					int strLength = jsonParameters.getString(objParameter.getId()).toString().length();
 					String jsonParamRet = jsonParameters.getString(objParameter.getId()).toString().substring(1, strLength - 1);
 					if (objParameter.isMultivalue()) {
-						jsonParamRet.replaceAll("\"", "'");
+						jsonParamRet = jsonParamRet.replaceAll("\"", "'");
 					}
 					jsonParameters.put(objParameter.getId(), jsonParamRet);
 				}
