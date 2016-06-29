@@ -1905,19 +1905,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public List<Scorecard> listScorecardByKpi(final Integer id, final Integer version, boolean full) {
-		List<SbiKpiScorecard> lst = list(new ICriterion<SbiKpiScorecard>() {
+	public List<Scorecard> listScorecardByKpi(final Integer id, final Integer version, final boolean full) {
+		return executeOnTransaction(new IExecuteOnTransaction<List<Scorecard>>() {
 			@Override
-			public Criteria evaluate(Session session) {
-				return session.createCriteria(SbiKpiScorecard.class).createAlias("sbiKpiKpis", "_kpis").add(Restrictions.eq("_kpis.sbiKpiKpiId.id", id))
-						.add(Restrictions.eq("_kpis.sbiKpiKpiId.version", version));
+			public List<Scorecard> execute(Session session) throws Exception {
+				List<SbiKpiScorecard> sbiKpiScorecards = session.createCriteria(SbiKpiScorecard.class).createAlias("sbiKpiKpis", "_kpis")
+						.add(Restrictions.eq("_kpis.sbiKpiKpiId.id", id)).add(Restrictions.eq("_kpis.sbiKpiKpiId.version", version)).list();
+				List<Scorecard> scorecards = new ArrayList<>();
+				for (SbiKpiScorecard sbiKpiScorecard : sbiKpiScorecards) {
+					scorecards.add(from(sbiKpiScorecard, full));
+				}
+				return scorecards;
 			}
 		});
-		List<Scorecard> scorecardList = new ArrayList<>();
-		for (SbiKpiScorecard sbiKpiScorecard : lst) {
-			scorecardList.add(from(sbiKpiScorecard, full));
-		}
-		return scorecardList;
 	}
 
 	@Override
