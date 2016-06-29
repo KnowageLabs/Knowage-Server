@@ -415,6 +415,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 					$scope.resetMatrix();
 					flag=false;
 				}else if(flag){
+					$scope.kpi.cardinality = {};
 					angular.copy(obj,$scope.kpi.cardinality); 
 					$scope.$broadcast ('activateCardinalityEvent');
 				}
