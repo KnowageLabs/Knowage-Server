@@ -329,10 +329,8 @@
 		domainNm="Data Set Type" valueDs="SbiCkanDataSet" />
 	<DOMAIN valueCd="Federated" valueNm="SbiFederatedDataSet" domainCd="DATA_SET_TYPE"
 		domainNm="Data Set Type" valueDs="SbiFederatedDataSet" />
-	<DOMAIN valueCd="Cat1" valueNm="Cat1" domainCd="CATEGORY_TYPE"
-		domainNm="Category Type" valueDs="Cat1" />
-	<DOMAIN valueCd="Cat2" valueNm="Cat2" domainCd="CATEGORY_TYPE"
-		domainNm="Category Type" valueDs="Cat2" />
+	<DOMAIN valueCd="Default_Dataset_Category" valueNm="Default Dataset Category" domainCd="CATEGORY_TYPE"
+		domainNm="Category Type" valueDs="Default Dataset Category" />
 	<DOMAIN valueCd="DEVELOPMENT" valueNm="sbidomains.permissiononfolder.nm.dev"
 		domainCd="PERMISSION_ON_FOLDER" domainNm="Permission on folder"
 		valueDs="sbidomains.permissiononfolder.ds.dev" />
@@ -367,13 +365,9 @@
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
 	<DOMAIN valueCd="Double" valueNm="Double" domainCd="DS_META_VALUE"
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
-	<DOMAIN valueCd="SBI Model Category 1" valueNm="SBI Model Category 1"
-		domainCd="BM_CATEGORY" domainNm="Category Meta Model" valueDs="Category Meta Model" />
-	<DOMAIN valueCd="SBI Model Category 2" valueNm="SBI Model Category 2"
-		domainCd="BM_CATEGORY" domainNm="Category Meta Model" valueDs="Category Meta Model" />
+	<DOMAIN valueCd="Default_Model_Category" valueNm="Default Model Category"
+		domainCd="BM_CATEGORY" domainNm="Category Meta Model" valueDs="Default Model Category" />
 
-	<DOMAIN valueCd="GEOBI" valueNm="GEOBI" domainCd="CATEGORY_TYPE"
-		domainNm="Category Type" valueDs="GEOBI" />
 	<DOMAIN valueCd="hierarchy" valueNm="hierarchy" domainCd="DS_META_PROPERTY"
 		domainNm="Data Set Metadata Property" valueDs="Data Set Metadata Property" />
 	<DOMAIN valueCd="hierarchy_level" valueNm="hierarchy_level"
