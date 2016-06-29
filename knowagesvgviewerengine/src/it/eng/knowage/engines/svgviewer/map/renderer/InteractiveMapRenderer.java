@@ -179,6 +179,9 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 			SVGMapMerger.mergeMap(targetMap, masterMap, null, "targetMap");
 
+			// hide/show elements if specified in the dataset
+			hideElements(masterMap, dataMart);
+
 			if (includeScript) {
 				includeScripts(masterMap);
 			} else {
@@ -894,6 +897,62 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		colorRangeArray = (String[]) colorRangeList.toArray(new String[0]);
 
 		return colorRangeArray;
+	}
+
+	/**
+	 * Hide elements inside the SVG if specified in the datamart
+	 *
+	 * @param map
+	 *            the map
+	 * @param datamart
+	 *            the datamart
+	 */
+	private void hideElements(SVGDocument map, DataMart datamart) {
+		IDataStore dataStore = datamart.getDataStore();
+
+		Assert.assertNotNull(dataStore, "DataStore cannot be null");
+
+		IMetaData dataStoreMeta = dataStore.getMetaData();
+		Assert.assertNotNull(dataStore, "DataStoreMeta cannot be null");
+
+		// find the geoID field
+		List list = dataStoreMeta.findFieldMeta("ROLE", "GEOID");
+		if (list.size() == 0) {
+			return;
+		}
+		IFieldMetaData geoIdMetaData = (IFieldMetaData) list.get(0);
+
+		// find field with visibility values
+		List listVis = dataStoreMeta.findFieldMeta("ROLE", "VISIBILITY");
+		if (listVis.size() == 0) {
+			return;
+		}
+		IFieldMetaData visibilityIdMetaData = (IFieldMetaData) listVis.get(0);
+
+		for (int i = 0; i < dataStore.getRecordsCount(); i++) {
+			IRecord aRecord = dataStore.getRecordAt(i);
+			List<IField> fields = aRecord.getFields();
+
+			IField geoIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(geoIdMetaData.getName()));
+			IField visibilityIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(visibilityIdMetaData.getName()));
+
+			if (geoIdField != null && visibilityIdField != null) {
+				String id_element = (String) geoIdField.getValue();
+				String elementVisibility = (String) visibilityIdField.getValue();
+
+				if (elementVisibility.equalsIgnoreCase("false")) {
+					Element elementToHide = map.getElementById(id_element);
+					if (elementToHide.hasAttribute("style")) {
+						String elementStyle = elementToHide.getAttribute("style");
+						elementStyle = elementStyle + ";display:none";
+						elementToHide.setAttribute("style", elementStyle);
+					} else {
+						elementToHide.setAttribute("style", "display:none");
+					}
+				}
+			}
+		}
+
 	}
 
 	/**

@@ -15,19 +15,8 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
     $mdSidenav('svgSideNav').toggle();
   };
     
-
-  
-  //Call functions when the SVG is loaded
-  angular.element(document.getElementById('svgContainer')).ready(function() {
-	  //retrieve Measures
-	  //$scope.getMeasures();
-	  //retrieve Layers
-	 // $scope.getLayers();	
-	 
-  });
   
   $window.document.addEventListener("SVGLoaded", function(e) {
-	 // alert(e.detail); // Prints "Example of an event"
 	  //retrieve Measures
 	  $scope.getMeasures();
 	  //retrieve Layers

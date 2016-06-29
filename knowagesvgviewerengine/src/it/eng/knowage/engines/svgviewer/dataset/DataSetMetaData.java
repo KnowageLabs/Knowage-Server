@@ -144,6 +144,28 @@ public class DataSetMetaData {
 	}
 
 	/**
+	 * Gets the geo id column name.
+	 *
+	 * @param hierarchyName
+	 *            the hierarchy name
+	 *
+	 * @return the geo id column name
+	 */
+	public String getVisibilityColumnName() {
+		Set names = getColumnNames();
+		if (names != null) {
+			Iterator it = names.iterator();
+			while (it.hasNext()) {
+				String columnName = (String) it.next();
+				if (isVisibilityColumn(columnName)) {
+					return getColumnProperty(columnName, "column_id");
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Gets the level name.
 	 *
 	 * @param hierarchyName
@@ -189,6 +211,18 @@ public class DataSetMetaData {
 	 */
 	public boolean isGeoIdColumn(String columnName) {
 		return "geoid".equalsIgnoreCase(getColumnType(columnName));
+	}
+
+	/**
+	 * Checks if is visibility column.
+	 *
+	 * @param columnName
+	 *            the column name
+	 *
+	 * @return true, if is visibility column
+	 */
+	public boolean isVisibilityColumn(String columnName) {
+		return "visibility".equalsIgnoreCase(getColumnType(columnName));
 	}
 
 	/**

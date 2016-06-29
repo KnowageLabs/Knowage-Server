@@ -110,6 +110,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 				}
 
 				String columnId = metaData.getGeoIdColumnName();
+				String visibilityColumnId = metaData.getVisibilityColumnName();
 				dataStoreMeta.setIdField(dataStoreMeta.getFieldIndex(columnId));
 				String[] measureColumnNames = (String[]) metaData.getMeasureColumnNames().toArray(new String[0]);
 
@@ -137,6 +138,15 @@ public class DataMartProvider extends AbstractDataMartProvider {
 							continue;
 						}
 						dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(measureColumnNames[i])).setProperty("ROLE", "MEASURE");
+
+					}
+
+					if (visibilityColumnId != null) {
+						IField visibilityField = record.getFieldAt(dataStoreMeta.getFieldIndex(visibilityColumnId));
+						String value = "" + visibilityField.getValue();
+						if (value != null && !value.trim().equals("")) {
+							dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(visibilityColumnId)).setProperty("ROLE", "VISIBILITY");
+						}
 
 					}
 				}
@@ -288,7 +298,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.AbstractDatasetProvider#getDataDetails(java.lang.String)
 	 */
 	@Override
