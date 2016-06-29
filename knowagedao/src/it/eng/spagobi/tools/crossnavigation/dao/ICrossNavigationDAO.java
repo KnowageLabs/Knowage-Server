@@ -18,10 +18,12 @@
 package it.eng.spagobi.tools.crossnavigation.dao;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.crossnavigation.bo.NavigationDetail;
 import it.eng.spagobi.tools.crossnavigation.bo.SimpleNavigation;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation;
+import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
 
 import java.util.List;
 
@@ -47,5 +49,14 @@ public interface ICrossNavigationDAO extends ISpagoBIDao {
 	public List<SbiCrossNavigation> listNavigationsByDocumentAndParameters(Integer documentId, List<Integer> inputParameters, List<Integer> outputParameters,
 			Session session);
 
+	public List<SbiCrossNavigationPar> listNavigationsByParameters(Integer paramId, Session session);
+
+	public List<SbiCrossNavigationPar> listNavigationsByCrossNavParId(Integer crossNavId, Session session);
+
+	public void deleteByBIObjectParameter(BIObjectParameter biObjectParameter, Session session);
+
 	public void deleteByDocument(BIObject document, Session session);
+
+	public SbiCrossNavigation loadSbiCrossNavigationById(Integer id, Session session);
+
 }

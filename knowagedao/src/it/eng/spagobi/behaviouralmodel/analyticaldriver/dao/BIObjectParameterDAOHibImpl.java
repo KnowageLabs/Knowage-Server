@@ -28,6 +28,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.crossnavigation.dao.ICrossNavigationDAO;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -469,6 +470,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 				ObjParview aObjParviewFather = (ObjParview) itObjParviewsFather.next();
 				objParviewDAO.eraseObjParviewIfExists(aObjParviewFather, aSession);
 			}
+
+			// Delete CROSS NAVIGATION PARAMETER
+			ICrossNavigationDAO crossNavigationDao = DAOFactory.getCrossNavigationDAO();
+			crossNavigationDao.deleteByBIObjectParameter(aBIObjectParameter, aSession);
+
 		}
 
 		aSession.delete(hibObjPar);

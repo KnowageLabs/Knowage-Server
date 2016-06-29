@@ -430,6 +430,49 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		cnp.setSbiCrossNavigation(cn);
 		return cnp;
 	}
+
+	@Override
+	public void deleteByBIObjectParameter(BIObjectParameter biObjectParameter, Session session) {
+
+		List<SbiCrossNavigationPar> cnParToRemove = listNavigationsByParameters(biObjectParameter.getId(), session);
+		List<Integer> crossNavigation = new ArrayList<Integer>();
+		// Delete FROM CROSS_NAVIFATION_PAR
+		for (SbiCrossNavigationPar cn : cnParToRemove) {
+			session.delete(cn);
+			if (!crossNavigation.contains(cn.getSbiCrossNavigation().getId()))
+				crossNavigation.add(cn.getSbiCrossNavigation().getId());
+		}
+		// Delete FROM CROSS_NAVIGATION
+		for (Integer scnId : crossNavigation) {
+			List<SbiCrossNavigationPar> sbiCrossPar = listNavigationsByCrossNavParId(scnId, session);
+			if (sbiCrossPar == null || sbiCrossPar.size() == 0) {
+				SbiCrossNavigation snc = loadSbiCrossNavigationById(scnId, session);
+				session.delete(snc);
+			}
+
+		}
+
+	}
+
+	@Override
+	public List<SbiCrossNavigationPar> listNavigationsByParameters(Integer paramId, Session session) {
+		// return session.createCriteria(SbiCrossNavigationPar.class).add(Restrictions.eq("toKeyId", paramId)).list();
+		return session
+				.createCriteria(SbiCrossNavigationPar.class)
+				.add(Restrictions.or(Restrictions.eq("toKeyId", paramId),
+						Restrictions.and(Restrictions.eq("fromKeyId", paramId), Restrictions.eq("fromType", 1)))).list();
+
+	}
+
+	@Override
+	public List<SbiCrossNavigationPar> listNavigationsByCrossNavParId(Integer crossNavId, Session session) {
+		return session.createCriteria(SbiCrossNavigationPar.class).add(Restrictions.eq("sbiCrossNavigation.id", crossNavId)).list();
+	}
+
+	@Override
+	public SbiCrossNavigation loadSbiCrossNavigationById(Integer id, Session session) {
+		return (SbiCrossNavigation) session.createCriteria(SbiCrossNavigation.class).add(Restrictions.eq("id", id)).uniqueResult();
+	}
 }
 
 class crossNavigationParameters {
