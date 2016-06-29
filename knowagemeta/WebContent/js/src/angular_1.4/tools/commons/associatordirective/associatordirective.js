@@ -15,6 +15,7 @@ associatorDirective.directive("associatorDirective",function(){
 				dragOptions:"=?",
 				beforeDeleteAssociation:"&?",
 				afterDeleteAssociation:"&?",
+				multivalue:"=?"
 			},
 			 link: function (scope, element, attrs, ctrl, transclude) {
 
@@ -83,7 +84,7 @@ associatorDirective.directive('draggable', function() {
     }
 });
 
-associatorDirective.directive('droppable', function() {
+associatorDirective.directive('droppable', function($timeout) {
     return {
         scope: {
         	drop: '&', // parent
@@ -103,7 +104,7 @@ associatorDirective.directive('droppable', function() {
         			    	accept=scope.$parent.dragOptions.accept(ev,scope.item) ;
                 	    }
 
-        			    if (scope.item[scope.$parent.associatedItem]!=undefined && scope.item[scope.$parent.associatedItem].length > 0){
+        			    if (scope.$parent.multivalue!=true &&  scope.item[scope.$parent.associatedItem]!=undefined && scope.item[scope.$parent.associatedItem].length > 0){
         			    	accept=false;
         			    }
 
@@ -156,7 +157,15 @@ associatorDirective.directive('droppable', function() {
         			    	if(scope.item[scope.$parent.associatedItem]==undefined){
         			    		scope.item[scope.$parent.associatedItem]=[];
         			    	}
+        			    	if(scope.$parent.multivalue==true && scope.item[scope.$parent.associatedItem].indexOf(scope.$parent.sourceModel[data])!=-1){
+        			    		var classList=this.classList;
+        			    		 classList.add('errorClass');
+        			    		 $timeout(function(){
+        			    			 classList.remove('errorClass');
+        			    		 },500)
 
+        			    		return
+        			    	}
         			    	scope.item[scope.$parent.associatedItem].push(scope.$parent.sourceModel[data]);
 
         			    	if (scope.$root.$$phase != '$apply' && scope.$root.$$phase != '$digest') {

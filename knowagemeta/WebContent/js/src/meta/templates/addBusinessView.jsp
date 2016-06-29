@@ -8,17 +8,16 @@
 		<md-dialog-content flex > 
 			<div class="md-dialog-content" layout="column">
 				
-				<expander-box title="translate.load('sbi.meta.model.physical')" expanded="true">
-					<angular-table flex id='newBViewTableColumn' ng-model="physicalModel"
-					columns='bvTableColumns'
-				 	show-search-bar=true 
-				 	no-pagination="true"
-				 	multi-select="true"
-				 	selected-item="tmpBnssView.physicalModels"
-				 	></angular-table>
-				</expander-box>
-				
-				<md-content layout="column" layout-padding>
+				<angular-table  ng-show="steps.current==0" flex id='newBViewTableColumn'
+				ng-model="physicalModel"
+				columns='bvTableColumns'
+			 	show-search-bar=true 
+			 	no-pagination="true"
+			 	multi-select="true"
+			 	selected-item="tmpBnssView.physicalModels"
+			 	></angular-table>
+			
+				<div ng-if="steps.current==1" layout="column" flex>
 					<div layout="row" >
 						<md-input-container flex>
 							<label>{{translate.load("sbi.meta.business.relationship.source.table")}}</label>
@@ -48,28 +47,29 @@
 						target-column-label="translate.load('sbi.meta.business.relationship.target.attributes')"
 						drag-options="dragOptionsFunct"
 						after-delete-association=afterClearItem(item)
+						multivalue=true
 						>
 					</associator-directive>
-				</md-content>
 				
 				
 				
 				
-				<expander-box title="Riepilogo" expanded="true">
-				 
-					<md-list class="md-dense" flex >
-        				<md-list-item     ng-repeat="item in summary"  ng-click="null" layout="row">
-        					<span flex=40>{{item.source}}</span>
-	        				<span flex  ><i class="fa fa-link" aria-hidden="true"></i></span>
-	        				<span flex=40>{{item.target}}</span>
-	        				 <md-button   class="md-secondary md-icon-button " ng-click="deleteRelationship(item)">
-	        				 <md-icon md-font-icon="fa fa-trash"></md-icon>
-        				 </md-button>
-        				 <md-divider ng-if="!$last"></md-divider>
-			    		</md-list-item>
-			    	</md-list>
-				
-				</expander-box>
+					<expander-box title="translate.load('sbi.meta.new.businessview.summary')" expanded="true">
+					 
+						<md-list class="md-dense" flex >
+	        				<md-list-item     ng-repeat="item in summary"  ng-click="null" layout="row">
+		        				<span flex=40>{{item.links[0].$parent.name}}.{{item.links[0].name}}</span>
+		        				<span flex  ><i class="fa fa-link" aria-hidden="true"></i></span>
+	        					<span flex=40>{{item.$parent.name}}.{{item.name}}</span>
+		        				 <md-button   class="md-secondary md-icon-button " ng-click="deleteRelationship(item)">
+		        				 <md-icon md-font-icon="fa fa-trash"></md-icon>
+	        				 </md-button>
+	        				 <md-divider ng-if="!$last"></md-divider>
+				    		</md-list-item>
+				    	</md-list>
+					
+					</expander-box>
+				</div>
 				
 				
 				
@@ -80,8 +80,15 @@
 			<span flex></span>
 			<md-button ng-click="cancel()">
 				{{translate.load("sbi.general.cancel")}}
+			</md-button> 
+			
+			<md-button  ng-if="steps.current==0" ng-click="next()" ng-disabled="tmpBnssView.physicalModels.length==0" >
+				{{translate.load("sbi.generic.next")}}
 			</md-button>
-			<md-button   ng-click="create()" ng-disabled="!newBVForm.$valid ">
+			<md-button ng-if="steps.current==1"  ng-click="back()"  >
+				{{translate.load("sbi.generic.back")}}
+			</md-button>
+			<md-button  ng-if="steps.current==1" ng-click="create()" ng-disabled="!newBVForm.$valid ">
 				{{translate.load("sbi.generic.update")}}
 			</md-button>
 		</md-dialog-actions>

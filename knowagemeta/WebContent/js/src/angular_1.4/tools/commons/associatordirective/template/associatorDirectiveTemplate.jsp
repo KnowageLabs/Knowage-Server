@@ -48,4 +48,16 @@
 			.parametersList > div {padding:3px;}
 			.parametersList li {border:0;padding: 2px;border:0!important;}
 			button.md-raised {margin-top:22px;}
+			
+			.parametersList>md-list{
+			border: 1px solid #a9c3db;
+			}
+			.parametersList>md-list md-list-item.over{
+			background-color: rgba(128, 128, 128, 0.32);
+ 			border: 1px dashed;
+			}
+			.parametersList>md-list md-list-item.errorClass{
+			background-color: rgba(255, 0, 0, 0.29);
+ 			border: 1px dashed red;
+			}
 		</style>
