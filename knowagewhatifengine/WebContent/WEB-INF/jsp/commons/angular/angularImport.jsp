@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-sanitize/angular-sanitize.js"></script>
 	<!-- angular-cookies  -->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-cookies/angular-cookies.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-cookies/ngStorage.js"></script>
 	<!-- context menu -->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
 	

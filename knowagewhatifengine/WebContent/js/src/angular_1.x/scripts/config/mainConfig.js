@@ -22,5 +22,6 @@ angular.module('olap.configuration', [
                                       'angular_table', 
                                       'ngSanitize',
                                       'ngDraggable',
-                                      'ngCookies'
+                                      'ngCookies',
+                                      'ngStorage'
                                       ]);

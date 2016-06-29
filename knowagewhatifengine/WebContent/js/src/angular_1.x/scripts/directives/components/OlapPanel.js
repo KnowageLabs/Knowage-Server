@@ -32,7 +32,7 @@ angular
 var downlf;
 function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
-		toastr, $cookies, sbiModule_docInfo, sbiModule_config) {
+		toastr, $cookies,$localStorage, sbiModule_docInfo, sbiModule_config) {
 
 	downlf = function(type) {
 		$scope.exportOlap(type);
@@ -935,7 +935,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					checkForDuplicates(namedMember);
 
 					$scope.cookieArray.push(namedMember);
-					$cookies.putObject('data', $scope.cookieArray);
+					$localStorage.recents = $scope.cookieArray;
 					cleanCC();
 					sbiModule_messaging.showSuccessMessage("Member is saved",
 							'Success');
@@ -965,7 +965,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		checkForDuplicates(namedSet);
 
 		$scope.cookieArray.push(namedSet);
-		$cookies.putObject('data', $scope.cookieArray);
+		$localStorage.recents = $scope.cookieArray;
 		cleanCC();
 		sbiModule_messaging.showSuccessMessage("Set is saved", 'Success');
 
@@ -991,10 +991,12 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 	}
 
 	$scope.getFromCookies = function() {
+		
+		
 
-		if ($cookies.getObject('data') != undefined) {
+		if ($localStorage.recents.length > 0 ) {
 
-			$scope.cookieArray = $cookies.getObject('data');
+			$scope.cookieArray = $localStorage.recents;
 			console.log($scope.cookieArray);
 		} else {
 			console.log("no cookies");
@@ -1027,10 +1029,10 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 	$scope.deleteFromCookie = function(index, item) {
 
-		$scope.cookieArray = $cookies.getObject('data');
+		$scope.cookieArray = $localStorage.recents;
 		$scope.cookieArray.splice(index, 1);
 		$cookies.putObject('data', $scope.cookieArray);
-		$scope.cookieArray = $cookies.getObject('data');
+		$localStorage.recents = $scope.cookieArray;
 		if (item.name != null) {
 			$scope.deleteCC(item.name);
 			$scope.selectedMDXFunction = {};

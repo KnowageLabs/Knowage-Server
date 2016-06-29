@@ -1,4 +1,17 @@
 
+md-toolbar.md-knowage-theme {
+     background-color: #3b678c !important;
+     color: #fff !important
+}
+
+md-toolbar.md-knowage-theme .md-toolbar-tools {
+    height: 40px;
+    font-size: 15px;
+    text-transform: uppercase;
+    font-weight: 600
+}
+
+
 @font-face {
     font-family: 'Roboto';
     src: url("../fonts/roboto/Roboto-Regular-webfont.eot");
@@ -77,6 +90,7 @@
     font-style: italic
 }
 
+
 .kn-list {
     background: #eceff1;
     border-right: 2px solid gray
@@ -130,10 +144,6 @@
     font-family: Roboto, Verdana, Geneva, Arial, Helvetica, sans-serif
 }
 
-md-list.md-knowage-theme.flex {
-	
-	padding: 5px !important;
-}
 
 angular-table table>tbody>tr>td {
     font-size: 16px;
@@ -271,10 +281,6 @@ angular-table table>tbody>tr>td button.actionButton:hover {
     background-color: #C0C9D0 !important
 }
 
-angular-table table>tbody>tr>td button.actionButton md-icon {
-    line-height: 25px !important
-}
-
 @-moz-document url-prefix() {
     angular-table table>tbody>tr>td {
         text-overflow: inherit
@@ -301,6 +307,10 @@ angular-table angular-table-actions {
 angular-table angular-table-actions md-input-container.tableSearchBar .closeSearchBar {
     left: 100%;
     margin-left: -15px
+}
+
+angular-table .fakeTable md-checkbox.md-knowage-theme {
+    margin: 0
 }
 
 angular-table .fakeTable tr th:first-child *:not(md-checkbox) div:not(.md-icon) {
@@ -492,6 +502,18 @@ angular-table .principalTable>thead>tr>th {
     padding-bottom: 0px !important
 }
 
+angular-table md-radio-button ._md-container {
+    left: 20px;
+    top: 10px
+}
+
+@-moz-document url-prefix() {
+    angular-table md-radio-button ._md-container {
+        left: 20px;
+        top: 0px
+    }
+}
+
 
 .md-button.md-knowage-theme.md-fab {
     top: 10px
@@ -510,9 +532,14 @@ md-input-container.md-knowage-theme .md-input {
     border-color: #3b678c
 }
 
+md-input-container .md-errors-spacer{
+	display:none;
+}
+
 md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused .md-input {
     border-color: #3b678c
 }
+
 
 md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused md-icon {
     color: #3b678c
