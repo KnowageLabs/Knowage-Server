@@ -141,7 +141,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 		for(var i=0;i<$scope.exportedRoles.length;i++){
 			var index = $scope.indexInList($scope.exportedRoles[i],$scope.currentRoles );
 			if(index==-1){
-				var text = sbiModule_translate.load("sbi.importusers.importfailed");
+				var text = sbiModule_translate.load("sbi.importusers.importfailed")+$scope.exportedRoles[i].name+" "+sbiModule_translate.load("sbi.importusers.importfailed2");
 				$scope.showAction(text);
 				return false;
 				
