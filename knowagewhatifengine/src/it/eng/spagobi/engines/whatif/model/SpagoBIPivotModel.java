@@ -71,8 +71,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	private SpagoBICrossNavigationConfig crossNavigation;
 	private List<TargetClickable> targetsClickable;
 	private List<Member> sortPosMembers1;
-	private QueryAdapter sbiQueryAdapter;
-
+	
 	public List<Member> getSortPosMembers1() {
 		sortPosMembers1 = new ArrayList<Member>();
 		if (isSorting() && getSortPosMembers() != null) {
@@ -129,6 +128,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		}
 		return true;
 	};
+
 
 	@Override
 	public synchronized CellSet getCellSet() {

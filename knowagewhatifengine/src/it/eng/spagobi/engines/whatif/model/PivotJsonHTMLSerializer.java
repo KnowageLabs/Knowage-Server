@@ -89,9 +89,9 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 	private static final String MDXFORMATTED = "mdxFormatted";
 	private static final String MODELCONFIG = "modelConfig";
 	private static final String HAS_PENDING_TRANSFORMATIONS = "hasPendingTransformations";
-	private static final String POSITION = "position";
-	private static final String AXIS = "axis";
-	private static final String SLICERS = "slicers";
+	public static final String ROW_OFFSET = "ROW_OFFSET";
+	public static final String COLUMN_OFFSET = "COLUMN_OFFSET";
+	public static final String AXIS_LENGTH = "AXIS_LENGTH";
 	private static final String FORMULAS = "formulas";
 	private static final int PAGES_COUNT = WhatIfEngineConfig.getInstance().getPivotTableLoadCount();;
 
@@ -221,18 +221,32 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		Map<Integer, String> tables = new HashMap<Integer, String>();
 
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss.SSS");
-		String time = "Serilize start " + format.format(new Date());
+		
+		int axisLength = model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount();
+		
 		// System.out.println(time);
 		int pages = Math.round(PAGES_COUNT / 2);
+		
+		//used for translation from cellset of subset mdx to cellset of plain mdx
+		callback.addProperty(COLUMN_OFFSET, modelConfig.getStartColumn());
+		callback.addProperty(AXIS_LENGTH, axisLength);
+		
+		
 		for (int i = -pages; i < pages; i++) {
 
 			writer.getBuffer().setLength(0);
 			model.removeSubset();
 			model.setSubset(modelConfig.getStartRow() + i, modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
+			
+			//used for translation from cellset of subset mdx to cellset of plain mdx
+			callback.addProperty(ROW_OFFSET, modelConfig.getStartRow() + i);
+
 			if (!(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount() < 1)) {
+				
 
+				
 				renderer.render(model, callback);
-
+				
 				try {
 					writer.flush();
 					writer.close();

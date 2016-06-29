@@ -50,6 +50,7 @@ import org.pivot4j.util.RenderPropertyUtils;
 import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
 import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
 import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
+import it.eng.spagobi.engines.whatif.model.PivotJsonHTMLSerializer;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -60,14 +61,43 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private boolean measureOnRows;
 	private Map<Integer, String> positionMeasureMap;
 	private boolean initialized = false;
-
+	private Map<String, Object> properties;
+	
 	public WhatIfHTMLRendereCallback(Writer writer) {
 		super(writer);
 		memberPositions = new HashMap<Member, Integer>();
 		showProperties = true;
 		setRowHeaderLevelPadding(20);
+		properties = new HashMap<String, Object>();
+	}
+	
+	public Object getProperty(String key) {
+		return properties.get(key);
 	}
 
+	public void addProperty(String key, Object value) {
+		properties.put(key, value);
+	}
+
+	/**
+	 * Translate the ordinal from the system of subsetted mdx to the system of the plain mdx cell set 
+	 * @param ordinal
+	 * @return
+	 */
+	private int getOrdinalNoSubset(int ordinal){
+		Integer columnOffset =  (Integer) getProperty(PivotJsonHTMLSerializer.COLUMN_OFFSET);
+		Integer rowOffset = (Integer) getProperty(PivotJsonHTMLSerializer.ROW_OFFSET);
+		Integer axisLength = (Integer) getProperty(PivotJsonHTMLSerializer.AXIS_LENGTH);
+		
+		//translate on rows
+		ordinal = axisLength*rowOffset+ordinal;
+		
+		//translate on columns
+		ordinal = ordinal + columnOffset;
+		
+		return ordinal;
+	}
+	
 	@Override
 	protected Map<String, String> getCellAttributes(TableRenderContext context) {
 
@@ -88,7 +118,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 			int colId = context.getColumnIndex();
 			int rowId = context.getRowIndex();
-			int positionId = context.getCell().getOrdinal();
+			int positionId = getOrdinalNoSubset(context.getCell().getOrdinal());
 			String value = context.getCell().getFormattedValue();
 			// String memberUniqueName = context.getMember().getUniqueName();
 			if (context.getCell().getValue() != null && context.getCell().getFormattedValue() != null) {
@@ -167,7 +197,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 		if (!isEmptyNonPropertyCell(context)) {
 			if (context.getCellType() == CellTypes.VALUE && context.getCell() != null) {
-				int ordinal = context.getCell().getOrdinal();
+				
 				if (context.getRenderer().getEnableDrillThrough()) {
 
 					// Map<String, String> attributes = new TreeMap<String,
@@ -398,7 +428,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 					int colId = context.getColumnIndex();
 					int rowId = context.getRowIndex();
-					int positionId = context.getCell().getOrdinal();
+					int positionId = getOrdinalNoSubset(context.getCell().getOrdinal());
 					String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
 					attributes.put("src", "../img/cross-navigation.png");
 					attributes.put("ng-click", "cellClickCreateCrossNavigationMenu('" + positionId + "');$event.stopPropagation();");
