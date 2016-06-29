@@ -141,15 +141,19 @@ author: Andrea Gioia (andrea.gioia@eng.it)
     
     chartDesignerUrlTemp.append(param2);
     chartRuntimeUrlTemp.append(param2);
+    chartRuntimeUrlPing.append(param2);
     
     chartDesignerUrlTemp.append(param3);
     chartRuntimeUrlTemp.append(param3);
+    chartRuntimeUrlPing.append(param3);
     
     chartDesignerUrlTemp.append("&"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
     chartRuntimeUrlTemp.append("&"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
+    chartRuntimeUrlPing.append("&"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
     
     chartDesignerUrlTemp.append("&"+SpagoBIConstants.SBI_COUNTRY+"="+locale.getCountry());
     chartRuntimeUrlTemp.append("&"+SpagoBIConstants.SBI_COUNTRY+"="+locale.getCountry());
+    chartRuntimeUrlPing.append("&"+SpagoBIConstants.SBI_COUNTRY+"="+locale.getCountry());
     
     //chartDesignerUrlTemp.append("&document=159");
     
