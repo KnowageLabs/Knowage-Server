@@ -470,7 +470,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	var searchedBefore = false;
-	
+		
 	/**
 	 * Function that is called when user is starting a search among some document collection (dataset,
 	 * analysis, documents, etc.).
@@ -502,7 +502,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 				
 				$timeout
 				(
-					function() {	
+					function() {
 						
 						switch($scope.currentOptionMainMenu!=$scope.resetOption ? $scope.currentOptionMainMenu : $scope.resetOption) {
 						
@@ -542,7 +542,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 							case "documents":
 								$scope.documentsOfSelectedFolder= $scope.documentsOfSelectedFolderInitial;
 							    $scope.clearSearch = false;
-                                break;							
+					            break;							
 							/**
 							 * SEARCH FOR RECENT
 							 */
@@ -562,6 +562,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 								  $scope.clearSearch = false;
 								break;
 						}
+						
 					}, 1000
 				);
 				
@@ -653,8 +654,17 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	 * Preview (execute) a particular document.
 	 */
 	$scope.executeDocument = function(document) {
+		
 		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");		
-		$documentViewer.openDocument(document.id, document.label, document.name);
+		$documentViewer.openDocument(document.id, document.label, document.name, $scope);
+		
+		/**
+		 * After opening (executing) a document listen for the 'documentClosed' event that will be fired from the 'documentViewer.js', i.e. the controller that the 
+		 * 'openDocument' function is referring to. The event will be fired when user closes an executed document. This information will be used to re-call the GET
+		 * method towards the REST service that collects the last (recently) executed documents. This way the Workspace's RECENT view will be up-to-date.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$scope.$on("documentClosed", function() { $scope.loadRecentDocumentExecutionsForUser(); });
 		
 	}
 	

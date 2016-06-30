@@ -52,7 +52,17 @@ function recentController($scope,sbiModule_restServices,sbiModule_translate,$doc
 	} ];
 	
 	$scope.executeRecent = function(document) {
-		$documentViewer.openDocument(document.objId, document.documentLabel, document.documentName);
+		
+		$documentViewer.openDocument(document.objId, document.documentLabel, document.documentName, $scope);
+		
+		/**
+		 * After opening (executing) a document listen for the 'documentClosed' event that will be fired from the 'documentViewer.js', i.e. the controller that the 
+		 * 'openDocument' function is referring to. The event will be fired when user closes an executed document. This information will be used to re-call the GET
+		 * method towards the REST service that collects the last (recently) executed documents. This way the Workspace's RECENT view will be up-to-date.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$scope.$on("documentClosed", function() { $scope.loadRecentDocumentExecutionsForUser(); });
+		
 	}
 	
 }

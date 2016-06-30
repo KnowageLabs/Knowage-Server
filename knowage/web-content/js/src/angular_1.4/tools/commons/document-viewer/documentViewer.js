@@ -12,7 +12,15 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 		});
 	}
 	
-	this.openDocument=function(documentId,documentLabel,documentName){
+	/**
+	 * @param localScope The parameter added for the implementation of the Workspace, but can be used in any other interface (catalog, implementation).
+	 * It represents the scope of that interface (e.g. the scope of the Workspace) and it is used for firing an event (Angular broadcast) towards that 
+	 * interface, so it can be informed that the document that is executed from it is e.g. closed (user clicked on the X sign for closing the iframe that 
+	 * contained executed document). This scope object can be used whenever and wherever we need it in this controller, not only when the executed 
+	 * document is closed.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	this.openDocument=function(documentId,documentLabel,documentName,localScope){
 
 		$mdDialog.show({
 			controller: openDocumentController,
@@ -24,7 +32,7 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 //			clickOutsideToClose:false,
 //			escapeToClose :false,
 			fullscreen: true,
-			locals:{documentId:documentId,documentLabel:documentLabel,documentName:documentName}
+			locals:{documentId:documentId,documentLabel:documentLabel,documentName:documentName,localScope:localScope}
 			
 		}) .then(function() { 
 			
@@ -32,7 +40,7 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 	
 	};
 	
-	function openDocumentController($scope,sbiModule_config,documentId,documentLabel,documentName){
+	function openDocumentController($scope,sbiModule_config,documentId,documentLabel,documentName,localScope){
 		var pathUrl="";
 		pathUrl+="&OBJECT_ID="+documentId;
 		pathUrl+="&OBJECT_LABEL="+documentLabel;
@@ -41,6 +49,17 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 		$scope.documentViewerUrl=sbiModule_config.adapterPath+'?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&IS_SOURCE_DOCUMENT=true&SBI_EXECUTION_ID=null'+pathUrl
 		
 		$scope.closeDocument=function(){
+			
+			/**
+			 * If the 'openDocument' function is called without the fourth parameter, 'localScope' (the scope of the interface that executed a document), this
+			 * input parameter will not be defined and we will just skip broadcasting (firing an event). Otherwise, we will fire an event that will inform the
+			 * interface from which we called the document execution that the document is closed (in this case). 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			if (localScope) {				
+				localScope.$broadcast("documentClosed");
+			}
+			
 			$mdDialog.hide();
 		}
 
