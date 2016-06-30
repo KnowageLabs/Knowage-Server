@@ -33,13 +33,14 @@ function addBusinessModelController($scope,$mdDialog,sbiModule_translate,busines
 			sbiModule_restServices.promisePost("1.0/metaWeb","addBusinessModel",obj2snd)
 			.then(function(response){
 				metaModelServices.applyPatch(response.data);
+			    $mdDialog.hide();
 			}
 			,function(response){
 				sbiModule_restServices.errorHandler(response.data,"");
 			})
-		    $mdDialog.hide();
 		};
-	  $scope.cancel = function() {
+
+		$scope.cancel = function() {
 	    $mdDialog.cancel();
 	  };
 }

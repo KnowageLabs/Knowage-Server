@@ -409,11 +409,11 @@ function inboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translat
 		sbiModule_restServices.promisePost("1.0/metaWeb","addBusinessRelation",send)
 		.then(function(response){
 			metaModelServices.applyPatch(response.data);
+		    $mdDialog.hide();
 		}
 		,function(response){
 			sbiModule_restServices.errorHandler(response.data,"");
 		})
-
 	}
 
 	$scope.cancel = function(){
@@ -480,6 +480,7 @@ function outboundModelPageControllerFunction($scope,$mdDialog, sbiModule_transla
 		sbiModule_restServices.promisePost("1.0/metaWeb","addBusinessRelation",send)
 		.then(function(response){
 			metaModelServices.applyPatch(response.data);
+		    $mdDialog.hide();
 		}
 		,function(response){
 			sbiModule_restServices.errorHandler(response.data,"");
