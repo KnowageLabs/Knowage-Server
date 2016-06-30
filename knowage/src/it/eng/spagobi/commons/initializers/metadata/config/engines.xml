@@ -62,11 +62,12 @@
 		mainUrl="/knowagecommonjengine/servlet/AdapterHTTP" driverNm="it.eng.spagobi.engines.drivers.commonj.CommonjDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="ETL" useDataSet="false"
 		useDataSource="false" encrypt="0" />
-	<ENGINE label="knowagesmartfilteren" name="Smart Filter Engine"
+		
+	<!-- ENGINE label="knowagesmartfilteren" name="Smart Filter Engine"
 		descr=" Smart Filter Engine" mainUrl="/knowageqbeengine/servlet/AdapterHTTP"
 		driverNm="it.eng.spagobi.engines.drivers.smartfilter.SmartFilterDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="SMART_FILTER" useDataSet="true"
-		useDataSource="true" encrypt="0" />
+		useDataSource="true" encrypt="0" / -->
 	<ENGINE label="knowagegisengine" name="Gis Engine" descr="Gis Engine"
 		mainUrl="/knowagegeoreportengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.gis.GisDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="MAP" useDataSet="true"

@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <USER_FUNCTIONALITIES>
+
+<!--
+	<USER_FUNCTIONALITY productType="KnowageBD" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement" />
+<USER_FUNCTIONALITY productType="KnowageER" name="Timespan" description="Timespan" />
+<USER_FUNCTIONALITY productType="KnowageER" name="Calendar" description="Calendar" />
+<USER_FUNCTIONALITY productType="KnowageER" name="FunctionsCatalog" description="FunctionsCatalog" />
+
+
+-->
 	<!-- Knowage BD Functionalities -->
 	<USER_FUNCTIONALITY productType="KnowageBD" name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement" />
@@ -38,7 +47,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="HotLinkManagement" description="HotLinkManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ObjMetadataManagement" description="ObjMetadataManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ProfileManagement" description="ProfileManagement" />
-	<USER_FUNCTIONALITY productType="KnowageBD" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement" />
+
 	<USER_FUNCTIONALITY productType="KnowageBD" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality" />
@@ -59,10 +68,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="StaticWidget" description="StaticWidget" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
-	<USER_FUNCTIONALITY productType="KnowageBD" name="Calendar" description="Calendar" />
-	<USER_FUNCTIONALITY productType="KnowageBD" name="FunctionsCatalog" description="FunctionsCatalog" />
-	<USER_FUNCTIONALITY productType="KnowageBD" name="KpiManagement" description="KpiManagement" />
-	
+
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -102,7 +108,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="HotLinkManagement" description="HotLinkManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ObjMetadataManagement" description="ObjMetadataManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ProfileManagement" description="ProfileManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageSI" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement"/>
@@ -137,8 +142,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="StaticWidget" description="StaticWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="TemporalDimension" description="TemporalDimension" />
-	<USER_FUNCTIONALITY productType="KnowageSI" name="Calendar" description="Calendar" />
-	<USER_FUNCTIONALITY productType="KnowageSI" name="KpiManagement" description="KpiManagement" />
 	
 	
 	<!-- Authorizations for KnowageER -->
@@ -179,11 +182,10 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="HotLinkManagement" description="HotLinkManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ObjMetadataManagement" description="ObjMetadataManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ProfileManagement" description="ProfileManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageER" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImagesManagement" description="ImagesManagement" />
-	<USER_FUNCTIONALITY productType="KnowageER" name="Timespan" description="Timespan" />
+	
 	<USER_FUNCTIONALITY productType="KnowageER" name="CreateChartFunctionality" description="CreateChartFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="TemplateManagement" description="TemplateManagement" />	
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpDocument" description="ImpExpDocument"/>	
@@ -199,8 +201,7 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentScheduling" description="DocumentScheduling" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="SchedulingDistributedOutput" description="SchedulingDistributedOutput" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="SharedDevelopment" description="SharedDevelopment" />
-	<USER_FUNCTIONALITY productType="KnowageER" name="Calendar" description="Calendar" />
-	<USER_FUNCTIONALITY productType="KnowageER" name="KpiManagement" description="KpiManagement" />
+
 	
 	
 	<!-- Authorizations for KnowagePM -->
@@ -224,7 +225,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentTestManagement" description="DocumentTestManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentUserManagement" description="DocumentUserManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
-	<USER_FUNCTIONALITY productType="KnowagePM" name="FunctionsCatalog" description="FunctionsCatalog" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImagesManagement" description="ImagesManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpDocument" description="ImpExpDocument"/>	
@@ -248,7 +248,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="TemplateManagement" description="TemplateManagement" />	
 	<USER_FUNCTIONALITY productType="KnowagePM" name="Timespan" description="Timespan" />
-	<USER_FUNCTIONALITY productType="KnowagePM" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="WorkspaceManagement" description="WorkspaceManagement"/>	
