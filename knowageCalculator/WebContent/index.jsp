@@ -11,8 +11,12 @@
 		<script src="libraries/angular_1.4/angular-animate.min.js"></script>
 		
 		<!-- Angular Material Libraries -->
-		<script src="libraries/angular-material_0.10.0/angular-material.js"></script>
-		<link rel="stylesheet" href="libraries/angular-material_0.10.0/angular-material.min.css">
+		<!-- <script src="libraries/angular-material_0.10.0/angular-material.js"></script>
+		<link rel="stylesheet" href="libraries/angular-material_0.10.0/angular-material.min.css"> -->
+		
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.0.8/angular-material.min.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.0.8/angular-material.min.js"></script>
+		
 		
 		<!--  Angular Table and relative utility libraries -->
 		<script type="text/javascript" src="libraries/contextmenu/ng-context-menu.min.js"></script>
@@ -52,17 +56,29 @@
 			</md-card-title>
 			<md-card-content>
 			
-			<div layout-gt-sm="row" layout="column"  flex layout-align="center center">
-				<!-- ho dovuto spezzare in due l'elenco per far si che fosse responsive, se riesci a fare 2 ng-repeat è meglio -->
-	
-				<div class="kn-product" ng-repeat="item in ctrl.items" ng-click="ctrl.addProduct(item)">
-					<img ng-src="img/{{item}}.png" class="kn-product-logo {{ctrl.itemDetail[item].selected}}"/>			
-					<md-tooltip md-direction="bottom">
-						{{ctrl.itemDetail[item].name}}
-					</md-tooltip>
-				</div> 
-				
+			
+			<div layout-gt-sm="row" layout="column"  flex layout-align="center center">			
+				<div layout="row" layout-padding >
+					<div class="kn-product" ng-repeat="item in ctrl.items track by $index" ng-if="$index<4" ng-click="ctrl.addProduct(item)">
+						<img ng-src="img/{{item}}.png" class="kn-product-logo {{ctrl.itemDetail[item].selected}}"/>			
+						<md-tooltip md-direction="bottom">
+							{{ctrl.itemDetail[item].name}}
+						</md-tooltip>
+					</div> 
+				</div>
+				<div layout="row" layout-padding >
+					<div class="kn-product" ng-repeat="item in ctrl.items track by $index" ng-if="$index>3" ng-click="ctrl.addProduct(item)">
+						<img ng-src="img/{{item}}.png" class="kn-product-logo {{ctrl.itemDetail[item].selected}}"/>			
+						<md-tooltip md-direction="bottom">
+							{{ctrl.itemDetail[item].name}}
+						</md-tooltip>
+					</div> 
+				</div>
 			</div>
+			
+			
+			
+			
 			<div layout="row" layout-padding layout-margin layout-align="center center">
 				<md-input-container>
 				<label>Number of cores</label>
@@ -74,28 +90,45 @@
 				</md-input-container>
 			</div>
 			</md-card-content>
+			
+			
+			
+			
+				<div layout="row" ng-if="ctrl.showSimpleResults">
+					<div layout="column" layout-align="center center" flex flex-gt-sm="30" flex-offset-gt-sm="20">
+						<md-list>
+							<md-list-item class="list-toolbar silver">
+								<span flex >Cost silver Subscription</span>
+							</md-list-item>
+							<md-list-item>
+								<span flex>{{ctrl.silverCost}}</span>
+							</md-list-item>
+						</md-list>
+					</div>
+					<div layout="column" layout-align="center center" flex flex-gt-sm="30">
+						<md-list>
+							<md-list-item class="list-toolbar gold">
+								<span flex >Cost golden Subscription</span>
+							</md-list-item>
+							<md-list-item>
+								<span flex> {{ctrl.goldCost}} &euro;</span>
+							</md-list-item>
+						</md-list>
+					</div>
+				</div>		
+				
+			
+			
+			
+			
+			
+			
+			
 			<md-card-actions layout="row" layout-align="end center">
 			<md-button  class="md-raised md-primary" ng-click="ctrl.getCost()">Calculate</md-button>
 			</md-card-actions>
 			</md-card>
 		</md-content>
-		
-		
-		<md-content layout-padding layout-xs="column" layout="row" ng-if="ctrl.showSimpleResults"> 
-			<md-card layout="column" flex>
-				
-					<p>
-						Cost silver Subscription = {{ctrl.silverCost}} &euro;
-					</p>
-				
-					<p>	
-						Cost gold Subscription   = {{ctrl.goldCost}} &euro;	
-					</p>		
-					
-			</md-card>	
-		</md-content>
-		 
-		
 		
 		
 		
@@ -119,12 +152,12 @@
 			<md-list>
 				<md-list-item class="list-toolbar">
 					<span flex >Products</span>
-					<span flex>Max 1 client</span>
-					<span flex>Max 20 clients</span>
-					<span flex>Max 50 clients</span>
-					<span flex>Max 100 clients</span>
-					<span flex>Max 200 clients</span>
-					<span flex>Unlimited clients</span>
+					<span flex>Max 1 client </br> (New sale | Maintaintenance)</span>
+					<span flex>Max 20 clients </br> (New sale | Maintaintenance)</span>
+					<span flex>Max 50 clients </br> (New sale | Maintaintenance)</span>
+					<span flex>Max 100 clients </br> (New sale | Maintaintenance)</span>
+					<span flex>Max 200 clients </br> (New sale | Maintaintenance)</span>
+					<span flex>Unlimited clients </br> (New sale | Maintaintenance)</span>
 				</md-list-item>
 				<md-list-item  ng-class-even="'list-even'" ng-class-odd="'list-odd'" ng-repeat="product in ctrl.productsOEMintDataSilver">
 					<span flex hide-xs hide-sm layout="row"> <!--  togliere layout= row se si vogliono mettere le scritte -->
@@ -163,12 +196,12 @@
 			<md-list>
 				<md-list-item class="list-toolbar">
 					<span flex >Products</span>
-					<span flex>Max 1 client</span>
-					<span flex>Max 20 clients</span>
-					<span flex>Max 50 clients</span>
-					<span flex>Max 100 clients</span>
-					<span flex>Max 200 clients</span>
-					<span flex>Unlimited clients</span>
+					<span flex>Max 1 client </br> (New sale | Maintaintenance)</span>
+					<span flex>Max 20 clients </br> (New sale | Maintaintenance)</span>
+					<span flex>Max 50 clients </br> (New sale | Maintaintenance)</span>
+					<span flex>Max 100 clients </br> (New sale | Maintaintenance)</span>
+					<span flex>Max 200 clients </br> (New sale | Maintaintenance)</span>
+					<span flex>Unlimited clients </br> (New sale | Maintaintenance)</span>
 				</md-list-item>
 				<md-list-item  ng-class-even="'list-even'" ng-class-odd="'list-odd'" ng-repeat="product in ctrl.productsOEMintDataGold">
 					<span flex hide-xs hide-sm layout="row"> <!--  togliere layout= row se si vogliono mettere le scritte -->

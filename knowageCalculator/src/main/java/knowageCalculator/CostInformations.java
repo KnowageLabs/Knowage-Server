@@ -27,6 +27,7 @@ import org.json.JSONObject;
 public class CostInformations {
 
 	static private Logger logger = Logger.getLogger(CostInformations.class);
+	private URL input = Thread.currentThread().getContextClassLoader().getResource("listino_knowage_calcolatrice_v7_USED.xls");
 
 	@POST
 	@Path("/calculateCostISVorSubscription")
@@ -96,9 +97,10 @@ public class CostInformations {
 			 * for(int j=0;j<products.size();j++) { System.out.println(products.get(j)); }
 			 */
 
-			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			// ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			// URL input = classLoader.getResource("listino_knowage.v4_calcolaticeLAST.xls");
-			URL input = classLoader.getResource("listino_knowage_calcolatrice_v6.xls");
+			// URL input = classLoader.getResource("listino_knowage_calcolatrice_v6.xls");
+			// URL input = classLoader.getResource("listino_knowage_calcolatrice_v7_USED.xls");
 			String xlsFilePath = input.getFile();// .substring(1);
 			logger.debug("reading xls file from:" + xlsFilePath);
 			File f = new File(xlsFilePath);
@@ -171,8 +173,9 @@ public class CostInformations {
 				products.add(selected.getString(i));
 			}
 
-			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			URL input = classLoader.getResource("listino_knowage.v4_calcolaticeLAST.xls");
+			// ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			// URL input = classLoader.getResource("listino_knowage.v4_calcolaticeLAST.xls");
+			// URL input = classLoader.getResource("listino_knowage_calcolatrice_v7_USED.xls");
 			String xlsFilePath = input.getFile();// .substring(1);
 			logger.debug("reading xls file from:" + xlsFilePath);
 			File f = new File(xlsFilePath);
@@ -188,14 +191,23 @@ public class CostInformations {
 
 			if (modality.equals("OEM_INT")) {
 				double licensePercentageEII = configurationSheet.getRow(1).getCell(1).getNumericCellValue();
-				double priceHypothesys = configurationSheet.getRow(2).getCell(1).getNumericCellValue();
+				double licenseEIIPrice = configurationSheet.getRow(2).getCell(1).getNumericCellValue();
 				double minPriceOneUserOEM_INT = configurationSheet.getRow(6).getCell(1).getNumericCellValue();
-				// double basicPriceOneUser = Double.max(licensePercentageEII * priceHypothesys, minPriceOneUserOEM_INT);
-				double basicPriceOneUser = -1;
-				if ((licensePercentageEII * priceHypothesys) > minPriceOneUserOEM_INT) {
-					basicPriceOneUser = licensePercentageEII * priceHypothesys;
+				// double basicPriceOneUser = Double.max(licensePercentageEII * licenseEIIPrice, minPriceOneUserOEM_INT);
+				double basicPriceOneUserNewSale = -1;
+				if ((licensePercentageEII * licenseEIIPrice) > minPriceOneUserOEM_INT) {
+					basicPriceOneUserNewSale = licensePercentageEII * licenseEIIPrice;
 				} else {
-					basicPriceOneUser = minPriceOneUserOEM_INT;
+					basicPriceOneUserNewSale = minPriceOneUserOEM_INT;
+				}
+
+				// double basicPriceOneUser = Double.max(licensePercentageEII * maintenancePrice, minPriceOneUserOEM_INT);
+				double onlyMaintenancePrice = configurationSheet.getRow(7).getCell(1).getNumericCellValue();
+				double basicPriceOneUserMaintenance = -1;
+				if ((licensePercentageEII * onlyMaintenancePrice) > minPriceOneUserOEM_INT) {
+					basicPriceOneUserMaintenance = licensePercentageEII * onlyMaintenancePrice;
+				} else {
+					basicPriceOneUserMaintenance = minPriceOneUserOEM_INT;
 				}
 
 				// System.out.println("basicPriceOneUser:"+basicPriceOneUser);
@@ -255,14 +267,25 @@ public class CostInformations {
 							deltaWeightsTot = deltaWeightsTot + subfuncWeightMap.get(subfunc);
 						}
 
-						double price = (basicPriceOneUser * deltaWeightsTot / referenceProductGroupWeight) * cat;
+						double price = (basicPriceOneUserNewSale * deltaWeightsTot / referenceProductGroupWeight) * cat;
+						double maintenancePrice = (basicPriceOneUserMaintenance * deltaWeightsTot / referenceProductGroupWeight) * cat;
+
 						if (cat == 300) {
+							// New Sale prices
 							silverRow.put("Unlimited_max_number_of_clients_price", price);
 							goldRow.put("Unlimited_max_number_of_clients_price", price * (1 + increasePercentageForGoldSubscription));
+							// Maintenance prices
+							silverRow.put("Unlimited_max_number_of_clients_maintenance_price", maintenancePrice);
+							goldRow.put("Unlimited_max_number_of_clients_maintenance_price", maintenancePrice * (1 + increasePercentageForGoldSubscription));
 
 						} else {
+							// New Sale prices
 							silverRow.put("max_" + cat + "_clients_price", price);
 							goldRow.put("max_" + cat + "_clients_price", price * (1 + increasePercentageForGoldSubscription));
+							// Maintenance prices
+							silverRow.put("max_" + cat + "_clients_maintenance_price", maintenancePrice);
+							goldRow.put("max_" + cat + "_clients_maintenance_price", maintenancePrice * (1 + increasePercentageForGoldSubscription));
+
 						}
 					}
 					silverTable.put(silverRow);
@@ -293,8 +316,9 @@ public class CostInformations {
 		List<Double> prices = new ArrayList<Double>();
 
 		try {
-			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			URL input = classLoader.getResource("listino_knowage.v4_calcolaticeLAST.xls");
+			// ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			// URL input = classLoader.getResource("listino_knowage.v4_calcolaticeLAST.xls");
+			// URL input = classLoader.getResource("listino_knowage_calcolatrice_v7_USED.xls");
 			String xlsFilePath = input.getFile();// .substring(1)
 
 			logger.debug("reading xls file from:" + xlsFilePath);
@@ -386,6 +410,11 @@ public class CostInformations {
 		HSSFRow row = null;
 		HSSFCell weightCell = null;
 		HSSFCell subFuncCell = null;
+		HSSFCell macroFuncCell = null;
+
+		int macroFunctionColIdx = 2; // index of 'Macrofunzione' column on Excel sheet - ADDED
+		int subFunctionColIdx = 3; // index of 'Sottofunzione' column on Excel sheet
+		int weightColIdx = 1;
 
 		double weight = 0;
 		String subFunc = null;
@@ -394,11 +423,13 @@ public class CostInformations {
 		{
 			row = sheet.getRow(rowIndex);
 			if (row != null) {
-				weightCell = row.getCell(1);
-				subFuncCell = row.getCell(3);
+				weightCell = row.getCell(weightColIdx); // idx=1
+				subFuncCell = row.getCell(subFunctionColIdx); // idx=3
+				macroFuncCell = row.getCell(macroFunctionColIdx); // idx=2 - ADDED
+
 				if (weightCell != null && subFuncCell != null) {
 					weight = weightCell.getNumericCellValue();
-					subFunc = subFuncCell.getStringCellValue();
+					subFunc = macroFuncCell.getStringCellValue() + "_" + subFuncCell.getStringCellValue(); // macroFuncCell.getStringCellValue()+"_" - ADDED
 					subFuncWeightMap.put(subFunc, weight);
 				}
 			}
@@ -424,7 +455,10 @@ public class CostInformations {
 		for (String product : productColMap.keySet()) {
 			HSSFRow row = null;
 			HSSFCell subFuncCell = null;
+			HSSFCell macroFuncCell = null; // ADDED
 			HSSFCell xCell = null;
+
+			int macroFunctionColIdx = 2; // index of 'Macrofunzione' column on Excel sheet - ADDED
 			int subFunctionColIdx = 3; // index of 'Sottofunzione' column on Excel sheet
 			Set<String> subFunc = new HashSet<String>();
 
@@ -433,11 +467,14 @@ public class CostInformations {
 				row = sheet.getRow(rowIndex);
 				if (row != null) {
 					subFuncCell = row.getCell(subFunctionColIdx);
+					macroFuncCell = row.getCell(macroFunctionColIdx); // ADDED
+
 					xCell = row.getCell(productColMap.get(product));
 
-					if (subFuncCell != null && xCell != null) {
+					if (subFuncCell != null && macroFuncCell != null && xCell != null) { // macroFuncCell != null - ADDED
 						if (xCell.getStringCellValue().equals("X")) {
-							subFunc.add(subFuncCell.getStringCellValue());
+							subFunc.add(macroFuncCell.getStringCellValue() + "_" + subFuncCell.getStringCellValue()); // macroFuncCell.getStringCellValue()+"_"+-
+																														// ADDED
 						}
 					}
 				}

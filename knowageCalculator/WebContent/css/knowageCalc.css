@@ -65,12 +65,18 @@ md-list.md-kn-theme {
 md-list.md-kn-theme md-list-item span{
 	font-size: 12px;
 }
-md-list.md-kn-theme .layout-padding{
+/*md-list.md-kn-theme .layout-padding{
 	padding-bottom:0px;
 	padding-top:0px;
+}*/
+
+md-input-container.md-kn-theme
+{
+	min-width:20%;
 }
+
 md-card.md-kn-theme {
-	padding:0 !important;
+	padding:0 !important; 
 }
 .list-toolbar {
 	font-weight: bold;
@@ -111,6 +117,13 @@ md-card.md-kn-theme {
 }
 
 
-
+.silver {
+	background-color: silver;
+	color: black;
+}
+.gold {
+	background-color: gold;
+	color: black;
+}
 
 
