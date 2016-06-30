@@ -1749,6 +1749,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	private Scorecard from(SbiKpiScorecard sbiScorecard, boolean full) {
+		return from(sbiScorecard, full, null);
+	}
+	
+	private Scorecard from(SbiKpiScorecard sbiScorecard, boolean full, Map<String, String> attributesValues) {
 		Scorecard scorecard = new Scorecard();
 		scorecard.setId(sbiScorecard.getId());
 		scorecard.setName(sbiScorecard.getName());
@@ -1767,7 +1771,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					for (SbiKpiKpi sbiKpi : sbiTarget.getSbiKpiKpis()) {
 						SbiKpiThreshold threshold = load(SbiKpiThreshold.class, sbiKpi.getThresholdId());
 						KpiExecution kpi = from(new KpiExecution(), sbiKpi, threshold, true);
-						calculateKpiStatus(kpi);
+						calculateKpiStatus(kpi, attributesValues);
 						ScorecardStatus scorecardStatus = new ScorecardStatus();
 						scorecardStatus.setStatusEnum(kpi.getStatus());
 						ssForTarget.add(scorecardStatus);
@@ -1814,8 +1818,13 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return scorecard;
 	}
 
-	private void calculateKpiStatus(KpiExecution kpi) {
-		List<KpiValue> values = findKpiValues(kpi.getId(), kpi.getVersion(), null, null, new HashMap<String, String>());
+	private void calculateKpiStatus(KpiExecution kpi) {	
+		calculateKpiStatus(kpi, null);
+	}
+
+	private void calculateKpiStatus(KpiExecution kpi, Map<String, String> attributesValues) {
+		attributesValues = attributesValues  != null ? attributesValues :  new HashMap<String, String>();
+		List<KpiValue> values = findKpiValues(kpi.getId(), null, null, null, attributesValues);
 		if (values != null && !values.isEmpty()) {
 			KpiValue kpiValue = values.get(values.size() - 1);
 			double value = kpiValue.getManualValue() != null ? kpiValue.getManualValue().doubleValue() : kpiValue.getComputedValue();
@@ -1922,10 +1931,15 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public Scorecard loadScorecard(final Integer id) {
+		return loadScorecard(id, null);
+	}
+
+	@Override
+	public Scorecard loadScorecard(final Integer id, final Map<String, String> attributesValues) {
 		return executeOnTransaction(new IExecuteOnTransaction<Scorecard>() {
 			@Override
 			public Scorecard execute(Session session) throws Exception {
-				return from((SbiKpiScorecard) session.load(SbiKpiScorecard.class, id), true);
+				return from((SbiKpiScorecard) session.load(SbiKpiScorecard.class, id), true, attributesValues);
 			}
 		});
 	}

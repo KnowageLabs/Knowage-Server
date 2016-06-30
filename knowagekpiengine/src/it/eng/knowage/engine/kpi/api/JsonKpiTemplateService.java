@@ -83,39 +83,20 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 
 			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 			JSONObject jsonTemplate = RestUtilities.readBodyAsJSONObject(req);
+			
+			Calendar startDate = Calendar.getInstance();
 
-			if (StringUtilities.isEmpty(result)) {
-				result = KpiEngineDataUtil.loadJsonData(jsonTemplate);
-			}
+			// LOading Scorecard or Target
+			Map<String, String> attributesValues = buildAttributeValuesMap(jsonTemplate, startDate);
+
+			result = KpiEngineDataUtil.loadJsonData(jsonTemplate, attributesValues);
+			
 			if (jsonTemplate.getJSONObject("chart").getString("type").equals("kpi")) {
-				Calendar startDate = Calendar.getInstance();
 				JSONObject objTemp = new JSONObject();
 				List<KpiValue> kpiValues;
-				Map<String, String> attributesValues = new TreeMap<String, String>();
-				String historycalSeries = jsonTemplate.getJSONObject("chart").getJSONObject("options").getJSONObject("history").getString("units");
-				if (historycalSeries.equals("day")) {
-					startDate.add(Calendar.DAY_OF_MONTH, -1);
-				} else if (historycalSeries.equals("week")) {
-					startDate.add(Calendar.DAY_OF_MONTH, -7);
-				} else if (historycalSeries.equals("month")) {
-					startDate.add(Calendar.MONTH, -1);
-				} else if (historycalSeries.equals("quarter")) {
-					startDate.add(Calendar.MONTH, -3);
-				} else if (historycalSeries.equals("year")) {
-					startDate.add(Calendar.YEAR, -1);
-				}
 
 				if (jsonTemplate.getJSONObject("chart").getJSONObject("data").get("kpi") instanceof JSONObject) {
 					objTemp = jsonTemplate.getJSONObject("chart").getJSONObject("data").getJSONObject("kpi");
-					String s = parameterMap.toString();
-					String[] couples = s.replace("{", "").replace("}", "").split(",");
-					for (String c : couples) {
-						String[] keyvalue = c.split("=");
-						if (keyvalue.length != 1) {
-							attributesValues.put(keyvalue[0].trim(), keyvalue[1].trim());
-						}
-
-					}
 					kpiValues = DAOFactory.getKpiDAO().findKpiValues(objTemp.getInt("id"), null, startDate.getTime(), new Date(), attributesValues);
 					String result2 = new ObjectMapper().writeValueAsString(kpiValues);
 					array.put(result2);
@@ -123,15 +104,6 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 					kpiValues = new ArrayList<>();
 					for (int i = 0; i < jsonTemplate.getJSONObject("chart").getJSONObject("data").getJSONArray("kpi").length(); i++) {
 						objTemp = jsonTemplate.getJSONObject("chart").getJSONObject("data").getJSONArray("kpi").getJSONObject(i);
-						String s = parameterMap.toString();
-						String[] couples = s.replace("{", "").replace("}", "").split(",");
-						for (String c : couples) {
-							String[] keyvalue = c.split("=");
-							if (keyvalue.length != 1) {
-								attributesValues.put(keyvalue[0].trim(), keyvalue[1].trim());
-							}
-
-						}
 						kpiValues = DAOFactory.getKpiDAO().findKpiValues(objTemp.getInt("id"), null, startDate.getTime(), new Date(), attributesValues);
 						String result2 = new ObjectMapper().writeValueAsString(kpiValues);
 						array.put(result2);
@@ -154,6 +126,35 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 			e.printStackTrace();
 		}
 		return "";
+	}
+
+	Map<String, String> buildAttributeValuesMap(JSONObject jsonTemplate, Calendar startDate) throws JSONException {
+		Map<String, String> attributesValues = new TreeMap<String, String>();
+		if (jsonTemplate.getJSONObject("chart").getString("type").equals("kpi")) {
+			String historycalSeries = jsonTemplate.getJSONObject("chart").getJSONObject("options").getJSONObject("history").getString("units");
+			if (historycalSeries.equals("day")) {
+				startDate.add(Calendar.DAY_OF_MONTH, -1);
+			} else if (historycalSeries.equals("week")) {
+				startDate.add(Calendar.DAY_OF_MONTH, -7);
+			} else if (historycalSeries.equals("month")) {
+				startDate.add(Calendar.MONTH, -1);
+			} else if (historycalSeries.equals("quarter")) {
+				startDate.add(Calendar.MONTH, -3);
+			} else if (historycalSeries.equals("year")) {
+				startDate.add(Calendar.YEAR, -1);
+			}
+		}
+
+		String s = parameterMap.toString();
+		String[] couples = s.replace("{", "").replace("}", "").split(",");
+		for (String c : couples) {
+			String[] keyvalue = c.split("=");
+			if (keyvalue.length != 1) {
+				attributesValues.put(keyvalue[0].trim(), keyvalue[1].trim());
+			}
+			
+		}
+		return attributesValues;
 	}
 
 }

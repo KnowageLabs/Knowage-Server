@@ -17,6 +17,9 @@
  */
 package it.eng.knowage.engine.util;
 
+import java.util.Calendar;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +35,7 @@ import it.eng.spagobi.services.serialization.JsonConverter;
 public class KpiEngineDataUtil extends AbstractHibernateDAO {
 	public static transient Logger logger = Logger.getLogger(KpiEngineDataUtil.class);
 
-	public static String loadJsonData(JSONObject jsonTemplate) {
+	public static String loadJsonData(JSONObject jsonTemplate, Map<String, String> attributesValues) {
 
 		JSONArray result = new JSONArray();
 		try {
@@ -40,7 +43,7 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 			JSONObject chart = jo.getJSONObject("chart");
 			JSONArray array = new JSONArray();
 			if (chart.getString("type").equals("scorecard")) {
-				Scorecard card = DAOFactory.getKpiDAO().loadScorecard(chart.getJSONObject("data").getJSONObject("scorecard").getInt("id"));
+				Scorecard card = DAOFactory.getKpiDAO().loadScorecard(chart.getJSONObject("data").getJSONObject("scorecard").getInt("id"), attributesValues);
 				JSONObject object = new JSONObject(JsonConverter.objectToJson(card, card.getClass()));
 				JSONObject tempResult = new JSONObject();
 				tempResult.put("scorecard", object);

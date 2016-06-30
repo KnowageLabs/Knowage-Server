@@ -40,6 +40,7 @@ import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -340,4 +341,6 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public Date loadLastKpiValueTimeRunByKpiId(final Integer kpiId);
 
 	public List<SbiKpiThresholdValue> listThresholdValueByIds(Collection<Integer> thresholdValueIds);
+
+	public Scorecard loadScorecard(Integer id, Map<String, String> attributesValues);
 }
