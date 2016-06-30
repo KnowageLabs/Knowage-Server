@@ -226,7 +226,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiObjects hibBIObject = (SbiObjects) aSession.load(SbiObjects.class, biObjectID);
-			toReturn = toBIObject(hibBIObject, aSession);
+			if (hibBIObject != null) {
+				toReturn = toBIObject(hibBIObject, aSession);
+			} else {
+				logger.error("Unable to load document whose id is equal to [" + biObjectID + "]");
+			}
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he);
@@ -268,9 +272,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, id.intValue());
 			SbiObjects hibObject = (SbiObjects) hqlQuery.uniqueResult();
-			if (hibObject == null)
-				return null;
-			biObject = toBIObject(hibObject, aSession);
+			if (hibObject != null) {
+				biObject = toBIObject(hibObject, aSession);
+			} else {
+				logger.error("Unable to load document whose id is equal to [" + id + "]");
+			}
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he);
@@ -360,10 +366,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			logger.debug("hibernate criteria filled:" + criteria);
 			SbiObjects hibObject = (SbiObjects) criteria.uniqueResult();
 			logger.debug("hibernate object retrived:" + hibObject);
-			if (hibObject == null) {
-				return null;
+			if (hibObject != null) {
+				biObject = toBIObject(hibObject, aSession);
+			} else {
+				logger.error("Unable to load document whose id is equal to [" + id + "]");
 			}
-			biObject = toBIObject(hibObject, aSession);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he);
@@ -1327,7 +1334,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects()
 	 */
 	@Override
@@ -1477,7 +1484,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects(java.lang.String)
 	 */
 	@Override
@@ -1520,7 +1527,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects()
 	 */
 	@Override
@@ -1592,7 +1599,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjectsFromInitialPath(java.lang.String)
 	 */
 	@Override
@@ -1645,7 +1652,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjectsFromInitialPath(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -1697,7 +1704,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectForDetail(java.lang.String)
 	 */
 	@Override
@@ -1716,9 +1723,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hqlQuery.setSerializable(0, path);
 
 			SbiObjects hibObject = (SbiObjects) hqlQuery.uniqueResult();
-			if (hibObject == null)
-				return null;
-			biObject = toBIObject(hibObject, aSession);
+			if (hibObject != null) {
+				biObject = toBIObject(hibObject, aSession);
+			} else {
+				logger.error("Unable to load document whose path is equal to [" + path + "]");
+			}
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he);
