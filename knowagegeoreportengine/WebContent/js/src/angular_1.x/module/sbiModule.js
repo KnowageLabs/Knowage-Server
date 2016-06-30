@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-var sbiM=angular.module('sbiModule',[]);
+var sbiM=angular.module('sbiModule',['toastr']);
 sbiM.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('indigo').accentPalette('blue-grey');
 });
@@ -54,6 +54,35 @@ sbiM.service('sbiModule_translate', function() {
 		return messageResource.get(key, sf);
 	};
 });
+
+sbiM.service('sbiModule_messaging',function(toastr){
+	this.showErrorMessage = function(msg,title){
+		
+		toastr.error(msg,title, {
+			  closeButton: true
+		});
+	};
+	this.showWarningMessage = function(msg,title){
+		
+		toastr.warning(msg,title, {
+			  closeButton: true
+		});
+	};
+	this.showInfoMessage = function(msg,title){
+		
+		toastr.info(msg,title, {
+			  closeButton: true
+		});
+	};
+	this.showSuccessMessage = function(msg,title){
+		
+		toastr.success(msg,title, {
+			  closeButton: true
+			});
+	};
+	
+});
+
 
 sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModule_logger,$mdDialog,$q,sbiModule_translate) {
 	var alteredContextPath=null;

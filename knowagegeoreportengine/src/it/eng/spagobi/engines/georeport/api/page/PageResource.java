@@ -64,6 +64,9 @@ public class PageResource extends AbstractChartEngineResource {
 			// urls.put("execute", "/WEB-INF/jsp/geoReport.jsp");
 			urls.put("execute", "/WEB-INF/jsp/geoReport.jsp");
 
+			pages.put("edit", new JSONObject("{name: 'edit', description: 'the geo edit page', parameters: []}"));
+			urls.put("edit", "/WEB-INF/jsp/geoEdit.jsp");
+
 		} catch (JSONException t) {
 			logger.error(t);
 		}
@@ -107,13 +110,22 @@ public class PageResource extends AbstractChartEngineResource {
 				// TODO put this not in session but in context
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				break;
+			case "edit":
+				String saveTemplateForEdit = getIOManager().getTemplateAsString(true);
+				String templateString = saveTemplateForEdit != null ? saveTemplateForEdit : buildBaseTemplate().toString();
+				engineInstance = GeoReportEngine.createInstance(templateString, getIOManager().getEnv());
 
+				engineInstance.getEnv().put(EngineConstants.ENV_DOCUMENT_LABEL, getIOManager().getRequest().getParameter("DOCUMENT_LABEL"));
+
+				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				break;
 			default:
 				dispatchUrl = "/WEB-INF/jsp/error.jsp";
 				break;
 			}
 
-			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
+			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of
+			// RestEasy Wrapper
 			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
 			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
@@ -125,7 +137,8 @@ public class PageResource extends AbstractChartEngineResource {
 		}
 	}
 
-	// executeTest is substituted from the servelet Test like all External Engines (creates a new session for the engine)
+	// executeTest is substituted from the servelet Test like all External
+	// Engines (creates a new session for the engine)
 	// @GET
 	// @Path("/executeTest")
 	// @Produces(MediaType.APPLICATION_JSON)
@@ -148,5 +161,15 @@ public class PageResource extends AbstractChartEngineResource {
 	// logger.debug("OUT");
 	// }
 	// }
+
+	private JSONObject buildBaseTemplate() {
+		JSONObject template;
+
+		logger.debug("IN");
+		template = new JSONObject();
+		logger.debug("OUT");
+
+		return template;
+	}
 
 }

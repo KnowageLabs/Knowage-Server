@@ -32,7 +32,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoCrossNavMultiselect/geoCrossNavMultiselectController.js"></script>	
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoDownload/geoDownloadController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoSave/geoSaveController.js"></script>
- 
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoTemplateBuild/geoEditController.js"></script> 
  
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jspdf/jspdf.min.js"></script>
 <!--  <script src="http://mrrio.github.io/jsPDF/dist/jspdf.min.js"></script> -->

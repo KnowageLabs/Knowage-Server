@@ -197,7 +197,7 @@ function checkFormVisibility(docType, engineValue) {
 	var type = docType.substring(ind+1);
 	// hide template dynamic creation button for olap document 
 	var divLinkConf = document.getElementById("link_obj_conf");
-	if(type=="OLAP" || type=="SMART_FILTER" || engineDriver[engineValue].toLowerCase().indexOf("chart.chartdriver")>-1
+	if(type=="OLAP" || type=="SMART_FILTER" || type=="MAP" || engineDriver[engineValue].toLowerCase().indexOf("chart.chartdriver")>-1
 			|| engineDriver[engineValue].toLowerCase().indexOf("kpi.kpidriver")>-1) {
 		divLinkConf.style.display="inline";
 	} else {
@@ -1087,7 +1087,7 @@ function saveDocument(goBack) {
 			     
 			     if ((BIobjTypecode.equalsIgnoreCase("OLAP") && ! EngineDriverClass.equals("it.eng.spagobi.engines.drivers.whatif.WhatIfDriver"))
 			       || BIobjTypecode.equalsIgnoreCase("SMART_FILTER")
-			       || BIobjTypecode.equalsIgnoreCase("CHART") || BIobjTypecode.equalsIgnoreCase("KPI"))
+			       || BIobjTypecode.equalsIgnoreCase("CHART") || BIobjTypecode.equalsIgnoreCase("KPI") || BIobjTypecode.equalsIgnoreCase("MAP"))
 			     	styleDivLinkConf = " style='display:inline' ";
 			     else
 			     	styleDivLinkConf = " style='display:none' ";
@@ -1127,7 +1127,7 @@ function saveDocument(goBack) {
 									
 									@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 								*/
-								if (currDataSetIdValue.toString().equals("") && !BIobjTypecode.equalsIgnoreCase("KPI"))
+								if (currDataSetIdValue.toString().equals("") && !BIobjTypecode.equalsIgnoreCase("KPI") && !BIobjTypecode.equalsIgnoreCase("MAP"))
 								{
 									hrefConf = "javascript:alert('"
 											+ msgBuilder.getMessage(
