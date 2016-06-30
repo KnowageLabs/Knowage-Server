@@ -233,11 +233,9 @@ public class MetaService {
 			JSONObject json = jsonRoot.getJSONObject("data");
 			String name = json.getString("name");
 			String description = json.getString("description");
-			String sourceTableName = json.getString("sourceTableName");
-			String destinationTableName = json.getString("destinationTableName");
 
-			JSONArray sourceColumns = json.getJSONArray("sourceColumns");
-			JSONArray destinationColumns = json.getJSONArray("destinationColumns");
+			JSONObject relationships = json.getJSONObject("relationships");
+			JSONArray physicaltables = json.getJSONArray("physicaltable");
 
 			BusinessModel bm = model.getBusinessModels().get(0);
 			BusinessView bw = BusinessModelFactory.eINSTANCE.createBusinessView();
@@ -245,28 +243,45 @@ public class MetaService {
 			model.getBusinessModels().get(0).getBusinessViews().add(bw);
 			bw.setName(name);
 			bw.setDescription(description);
+
+			for (int i = 0; i < physicaltables.length(); i++) {
+				String ptName = physicaltables.getString(i);
+				PhysicalTable pt = model.getPhysicalModels().get(0).getTable(ptName);
+				bw.getPhysicalTables().add(pt);
+			}
+			// Creating relationship
 			BusinessViewInnerJoinRelationship bvRel = BusinessModelFactory.eINSTANCE.createBusinessViewInnerJoinRelationship();
 			bvRel.setModel(bm);
 			bw.getJoinRelationships().add(bvRel);
-			PhysicalTable sourceTable = model.getPhysicalModels().get(0).getTable(sourceTableName);
-			// bvRel.setSourceTable(sourceTable);
-			PhysicalTable destinationTable = model.getPhysicalModels().get(0).getTable(destinationTableName);
-			// bvRel.setDestinationTable(destinationTable);
 
-			for (int i = 0; i < sourceColumns.length(); i++) {
-				JSONObject jsonCol = sourceColumns.getJSONObject(i);
-				String tableName = jsonCol.getString("tableName");
-				String colName = jsonCol.getString("colName");
-				PhysicalColumn col = model.getPhysicalModels().get(0).getTable(tableName).getColumn(colName);
-				bvRel.getSourceColumns().add(col);
-			}
+			Iterator<String> relationshipsIterator = relationships.keys();
+			while (relationshipsIterator.hasNext()) {
+				String tableName = relationshipsIterator.next();
+				PhysicalTable sourceTable = model.getPhysicalModels().get(0).getTable(tableName);
 
-			for (int i = 0; i < sourceColumns.length(); i++) {
-				JSONObject jsonCol = destinationColumns.getJSONObject(i);
-				String tableName = jsonCol.getString("tableName");
-				String colName = jsonCol.getString("colName");
-				PhysicalColumn col = model.getPhysicalModels().get(0).getTable(tableName).getColumn(colName);
-				bvRel.getDestinationColumns().add(col);
+				JSONObject sourceColumns = relationships.getJSONObject(tableName);
+				Iterator<String> sourceColumnsIterator = sourceColumns.keys();
+				while (sourceColumnsIterator.hasNext()) {
+					String sourceColumnName = sourceColumnsIterator.next();
+					PhysicalColumn sourceColumn = sourceTable.getColumn(sourceColumnName);
+
+					bvRel.getSourceColumns().add(sourceColumn);
+
+					JSONObject destinationTables = sourceColumns.getJSONObject(sourceColumnName);
+					Iterator<String> destinationTablesIterator = destinationTables.keys();
+					while (destinationTablesIterator.hasNext()) {
+						String destinationTableName = destinationTablesIterator.next();
+						PhysicalTable destinationTable = model.getPhysicalModels().get(0).getTable(destinationTableName);
+
+						JSONArray destinationColumns = destinationTables.getJSONArray(destinationTableName);
+						for (int x = 0; x < destinationColumns.length(); x++) {
+							String destColName = destinationColumns.getString(x);
+							PhysicalColumn destCol = destinationTable.getColumn(destColName);
+
+							bvRel.getDestinationColumns().add(destCol);
+						}
+					}
+				}
 			}
 
 			JSONObject jsonModel = createJson(model);
