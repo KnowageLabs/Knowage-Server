@@ -540,7 +540,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 								 * 
 								 */
 							case "documents":
-								$scope.documentsOfSelectedFolder= $scope.documentsOfSelectedFolderInitial;
+								$scope.documentsOfSelectedFolder = $scope.documentsOfSelectedFolderInitial;
 							    $scope.clearSearch = false;
 					            break;							
 							/**
@@ -662,9 +662,12 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		 * After opening (executing) a document listen for the 'documentClosed' event that will be fired from the 'documentViewer.js', i.e. the controller that the 
 		 * 'openDocument' function is referring to. The event will be fired when user closes an executed document. This information will be used to re-call the GET
 		 * method towards the REST service that collects the last (recently) executed documents. This way the Workspace's RECENT view will be up-to-date.
+		 * 
+		 * Also, load all folders and their content (document) for the DOCUMENTS (Organizer) view, because user could add an executed document to the Workspace.
+		 * 
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		$scope.$on("documentClosed", function() { $scope.loadRecentDocumentExecutionsForUser(); });
+		$scope.$on("documentClosed", function() { $scope.loadRecentDocumentExecutionsForUser(); $scope.loadAllFolders(); });
 		
 	}
 	
