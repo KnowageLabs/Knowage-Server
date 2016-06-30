@@ -12,8 +12,11 @@ import it.eng.knowage.meta.model.business.BusinessModel;
 import it.eng.knowage.meta.model.business.BusinessModelFactory;
 import it.eng.knowage.meta.model.business.BusinessRelationship;
 import it.eng.knowage.meta.model.business.BusinessTable;
+import it.eng.knowage.meta.model.business.BusinessView;
+import it.eng.knowage.meta.model.business.BusinessViewInnerJoinRelationship;
 import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.filter.PhysicalTableFilter;
+import it.eng.knowage.meta.model.physical.PhysicalColumn;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
@@ -75,7 +78,7 @@ public class MetaService {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 *
+	 * 
 	 * @param dsId
 	 * @return
 	 */
@@ -205,6 +208,70 @@ public class MetaService {
 
 			JsonNode rel = mapper.readTree(json.toString());
 			applyRelationships(rel, bm);
+
+			JSONObject jsonModel = createJson(model);
+			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+
+			return Response.ok(patch.toString()).build();
+		} catch (IOException | JSONException e) {
+			logger.error(e);
+		} catch (SpagoBIException e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
+		return Response.serverError().build();
+	}
+
+	@POST
+	@Path("/addBusinessView")
+	public Response addBusinessView(@Context HttpServletRequest req) {
+		try {
+			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+			JSONObject oldJsonModel = createJson(model);
+
+			ObjectMapper mapper = new ObjectMapper();
+			if (jsonRoot.has("diff")) {
+				JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
+				applyPatch(patch, model);
+			}
+
+			JSONObject json = jsonRoot.getJSONObject("data");
+			String name = json.getString("name");
+			String description = json.getString("description");
+			String sourceTableName = json.getString("sourceTableName");
+			String destinationTableName = json.getString("destinationTableName");
+
+			JSONArray sourceColumns = json.getJSONArray("sourceColumns");
+			JSONArray destinationColumns = json.getJSONArray("destinationColumns");
+
+			BusinessModel bm = model.getBusinessModels().get(0);
+			BusinessView bw = BusinessModelFactory.eINSTANCE.createBusinessView();
+			bw.setModel(bm);
+			bw.setName(name);
+			bw.setDescription(description);
+			BusinessViewInnerJoinRelationship bvRel = BusinessModelFactory.eINSTANCE.createBusinessViewInnerJoinRelationship();
+			bvRel.setModel(bm);
+			bw.getJoinRelationships().add(bvRel);
+			PhysicalTable sourceTable = model.getPhysicalModels().get(0).getTable(sourceTableName);
+			bvRel.setSourceTable(sourceTable);
+			PhysicalTable destinationTable = model.getPhysicalModels().get(0).getTable(destinationTableName);
+			bvRel.setDestinationTable(destinationTable);
+
+			for (int i = 0; i < sourceColumns.length(); i++) {
+				JSONObject jsonCol = sourceColumns.getJSONObject(i);
+				String tableName = jsonCol.getString("tableName");
+				String colName = jsonCol.getString("colName");
+				PhysicalColumn col = model.getPhysicalModels().get(0).getTable(tableName).getColumn(colName);
+				bvRel.getSourceColumns().add(col);
+			}
+
+			for (int i = 0; i < sourceColumns.length(); i++) {
+				JSONObject jsonCol = destinationColumns.getJSONObject(i);
+				String tableName = jsonCol.getString("tableName");
+				String colName = jsonCol.getString("colName");
+				PhysicalColumn col = model.getPhysicalModels().get(0).getTable(tableName).getColumn(colName);
+				bvRel.getDestinationColumns().add(col);
+			}
 
 			JSONObject jsonModel = createJson(model);
 			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
