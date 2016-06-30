@@ -43,6 +43,7 @@ app.service("metaModelServices",function(sbiModule_jsonServices){
 
 	this.applyPatch=function (patch,validate){
 		sbiModule_jsonServices.apply(bms.observerObject,patch,validate);
+		bms.generateDiff(); //create for avoid return data to backend
 	}
 
 	this.createRequestRest=function(myJson){

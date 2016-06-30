@@ -2,7 +2,7 @@
  *
  */
 
-function addBusinessModelController($scope,$mdDialog,sbiModule_translate,businessModel,physicalModel){
+function addBusinessModelController($scope,$mdDialog,sbiModule_translate,businessModel,physicalModel,metaModelServices,sbiModule_restServices){
 	$scope.translate=sbiModule_translate;
 	$scope.physicalModel=physicalModel;
 	$scope.tmpBnssModel={physicalModel:{columns:[]},selectedColumns:[]};
@@ -13,7 +13,30 @@ function addBusinessModelController($scope,$mdDialog,sbiModule_translate,busines
 
 
 	 $scope.create = function() {
-		 alert("save")
+			var send = metaModelServices.createRequestRest($scope.tmpBnssModel);
+			var obj2snd = {};
+			obj2snd.data = {};
+
+			obj2snd.data.physicalModel = send.data.physicalModel.name;
+			obj2snd.data.selectedColumns = [];
+			send.data.selectedColumns.forEach(function(entry) {
+				obj2snd.data.selectedColumns.push(entry.name);
+    		  });
+
+			if (obj2snd.data.description !== undefined)
+				obj2snd.data.description = send.data.description;
+			else
+				obj2snd.data.description = "";
+			obj2snd.diff = send.diff;
+			obj2snd.data.name = send.data.name;
+
+			sbiModule_restServices.promisePost("1.0/metaWeb","addBusinessModel",obj2snd)
+			.then(function(response){
+				metaModelServices.applyPatch(response.data);
+			}
+			,function(response){
+				sbiModule_restServices.errorHandler(response.data,"");
+			})
 		    $mdDialog.hide();
 		};
 	  $scope.cancel = function() {
