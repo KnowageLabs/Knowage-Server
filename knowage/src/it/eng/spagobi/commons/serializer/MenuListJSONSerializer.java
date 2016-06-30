@@ -76,7 +76,6 @@ public class MenuListJSONSerializer implements Serializer {
 	public static final String HELP = "HELP";
 
 	private static final String HREF_DOC_BROWSER = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
-
 	private static final String HREF_DOC_BROWSER_ANGULAR = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 
 	/**
@@ -316,7 +315,12 @@ public class MenuListJSONSerializer implements Serializer {
 		workspace.put(SCALE, "large");
 		workspace.put(TARGET, "_self");
 		workspace.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_WORKSPACE + "');");
-		tempMenuList.put(workspace);
+		/*
+		 * REMOVE WORKSPACE OUT OF THE MAIN MENU 30.06.
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		// tempMenuList.put(workspace);
 
 		String strSbiSocialAnalysisStatus = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE");
 		boolean sbiSocialAnalysisStatus = "TRUE".equalsIgnoreCase(strSbiSocialAnalysisStatus);
