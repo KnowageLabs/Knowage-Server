@@ -1,6 +1,5 @@
 package it.eng.knowage.engines.svgviewer.map.renderer;
 
-import it.eng.knowage.engines.svgviewer.SvgViewerEngineConfig;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
@@ -186,6 +185,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 			// hide/show elements if specified in the dataset
 			hideElements(masterMap, dataMart);
+			// add labels if specified in the dataset
+			addLabels(masterMap, dataMart);
 
 			if (includeScript) {
 				includeScripts(masterMap);
@@ -904,6 +905,73 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	}
 
 	/**
+	 * Add labels inside the SVG if specified in the datamart
+	 *
+	 * @param map
+	 *            the map
+	 * @param datamart
+	 *            the datamart
+	 */
+	private void addLabels(SVGDocument map, DataMart datamart) {
+		IDataStore dataStore = datamart.getDataStore();
+
+		Assert.assertNotNull(dataStore, "DataStore cannot be null");
+
+		IMetaData dataStoreMeta = dataStore.getMetaData();
+		Assert.assertNotNull(dataStore, "DataStoreMeta cannot be null");
+
+		// find field with labels values
+		List listLabel = dataStoreMeta.findFieldMeta("ROLE", "LABEL");
+		if (listLabel.size() == 0) {
+			return;
+		}
+		IFieldMetaData labelsIdMetaData = (IFieldMetaData) listLabel.get(0);
+
+		for (int i = 0; i < dataStore.getRecordsCount(); i++) {
+			IRecord aRecord = dataStore.getRecordAt(i);
+			List<IField> fields = aRecord.getFields();
+
+			IField field = aRecord.getFieldAt(dataStoreMeta.getIdFieldIndex());
+			String id = (String) field.getValue();
+
+			String centroideId = "centroidi_" + id;
+			Element centroide = map.getElementById(centroideId);
+			if (centroide != null) {
+
+				IField labelField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(labelsIdMetaData.getName()));
+				Element labelGroup = null;
+				if (fields.size() > 0) {
+					labelGroup = map.createElement("g");
+				} else {
+					return;
+				}
+				labelGroup.setAttribute("transform", "translate(" + centroide.getAttribute("cx") + "," + centroide.getAttribute("cy") + ") scale(1)");
+				labelGroup.setAttribute("display", "inherit");
+
+				Element label = map.createElement("text");
+				label.setAttribute("x", "0");
+				label.setAttribute("y", "0");
+				label.setAttribute("text-anchor", "middle");
+				label.setAttribute("font-family", "Arial,Helvetica");
+				label.setAttribute("font-size", "12px");
+				label.setAttribute("font-style", "normal");
+				label.setAttribute("fill", "black");
+
+				Node labelText = map.createTextNode((String) labelField.getValue());
+				label.appendChild(labelText);
+
+				labelGroup.appendChild(label);
+
+				if (labelGroup != null) {
+					// append labels to default layer "valori"
+					Element valuesLayer = map.getElementById("valori");
+					valuesLayer.appendChild(labelGroup);
+				}
+			}
+		}
+	}
+
+	/**
 	 * Hide elements inside the SVG if specified in the datamart
 	 *
 	 * @param map
@@ -939,7 +1007,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 			IField geoIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(geoIdMetaData.getName()));
 			IField visibilityIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(visibilityIdMetaData.getName()));
-
+			
 			if (geoIdField != null && visibilityIdField != null) {
 				String id_element = (String) geoIdField.getValue();
 				String elementVisibility = (String) visibilityIdField.getValue();
