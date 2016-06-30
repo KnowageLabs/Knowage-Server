@@ -7,16 +7,26 @@
 		</md-toolbar>
 		<md-dialog-content flex > 
 			<div class="md-dialog-content" layout="column">
-				
-				<angular-table  ng-show="steps.current==0" flex id='newBViewTableColumn'
-				ng-model="physicalModel"
-				columns='bvTableColumns'
-			 	show-search-bar=true 
-			 	no-pagination="true"
-			 	multi-select="true"
-			 	selected-item="tmpBnssView.physicalModels"
-			 	></angular-table>
-			
+				<div ng-if="steps.current==0" layout="column" flex>
+					 <md-input-container class="md-block">
+						<label>name***</label>
+						<input ng-model="tmpBnssView.name">
+					</md-input-container>
+					
+					<md-input-container class="md-block">
+						<label>Description****</label>
+						<textarea  ng-model="tmpBnssView.description"></textarea>
+					</md-input-container>
+					
+					<angular-table  flex id='newBViewTableColumn'
+					ng-model="physicalModel"
+					columns='bvTableColumns'
+				 	show-search-bar=true 
+				 	no-pagination="true"
+				 	multi-select="true"
+				 	selected-item="tmpBnssView.physicalModels"
+				 	></angular-table>
+				</div>
 				<div ng-if="steps.current==1" layout="column" flex>
 					<div layout="row" >
 						<md-input-container flex>
