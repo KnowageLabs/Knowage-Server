@@ -247,15 +247,16 @@ public class MetaService {
 			BusinessModel bm = model.getBusinessModels().get(0);
 			BusinessView bw = BusinessModelFactory.eINSTANCE.createBusinessView();
 			bw.setModel(bm);
+			model.getBusinessModels().get(0).getBusinessViews().add(bw);
 			bw.setName(name);
 			bw.setDescription(description);
 			BusinessViewInnerJoinRelationship bvRel = BusinessModelFactory.eINSTANCE.createBusinessViewInnerJoinRelationship();
 			bvRel.setModel(bm);
 			bw.getJoinRelationships().add(bvRel);
 			PhysicalTable sourceTable = model.getPhysicalModels().get(0).getTable(sourceTableName);
-			bvRel.setSourceTable(sourceTable);
+			// bvRel.setSourceTable(sourceTable);
 			PhysicalTable destinationTable = model.getPhysicalModels().get(0).getTable(destinationTableName);
-			bvRel.setDestinationTable(destinationTable);
+			// bvRel.setDestinationTable(destinationTable);
 
 			for (int i = 0; i < sourceColumns.length(); i++) {
 				JSONObject jsonCol = sourceColumns.getJSONObject(i);
@@ -576,9 +577,8 @@ public class MetaService {
 
 	private JSONObject createJson(Model model) throws JSONException {
 		JSONObject translatedModel = new JSONObject();
-		JSONArray physicalModelJson = new JSONArray();
 		Map<String, Integer> physicalTableMap = new HashMap<>();
-		EList<PhysicalTable> physicalTables = model.getPhysicalModels().get(0).getTables();
+
 		JSONArray businessModelJson = new JSONArray();
 		Iterator<BusinessTable> businessModelsIterator = model.getBusinessModels().get(0).getBusinessTables().iterator();
 		while (businessModelsIterator.hasNext()) {
@@ -588,13 +588,24 @@ public class MetaService {
 			bmJson.put("physicalTable", new JSONObject().put("physicalTableIndex", physicalTableMap.get(tabelName)));
 			businessModelJson.put(bmJson);
 		}
+
+		JSONArray physicalModelJson = new JSONArray();
+		EList<PhysicalTable> physicalTables = model.getPhysicalModels().get(0).getTables();
 		for (int j = 0; j < physicalTables.size(); j++) {
 			PhysicalTable physicalTable = physicalTables.get(j);
 			physicalModelJson.put(new JSONObject(JsonConverter.objectToJson(physicalTable, physicalTable.getClass())));
 			physicalTableMap.put(physicalTable.getName(), j);
 		}
+
+		JSONArray businessViewJson = new JSONArray();
+		List<BusinessView> businessViews = model.getBusinessModels().get(0).getBusinessViews();
+		for (int j = 0; j < businessViews.size(); j++) {
+			BusinessView businessView = businessViews.get(j);
+			businessViewJson.put(new JSONObject(JsonConverter.objectToJson(businessView, businessView.getClass())));
+		}
 		translatedModel.put("physicalModels", physicalModelJson);
 		translatedModel.put("businessModels", businessModelJson);
+		translatedModel.put("businessViews", businessViewJson);
 		return translatedModel;
 	}
 
