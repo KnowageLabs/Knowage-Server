@@ -88,6 +88,15 @@ try{
 	e.printStackTrace();
 }
 
+/*
+	These two variables are needed for checking if the "Add to workspace" should be available for the current user. This option is available when 
+	the document is executed and it serves to add link to that particular document in the Organizer (Documents view) in the Workspace (for that 
+	particular user). Variables are at disposal for using for other purposes as well.
+	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+*/
+boolean isAdmin = UserUtilities.isAdministrator(userProfile);
+boolean isSuperAdmin = (Boolean)((UserProfile)userProfile).getIsSuperadmin();
+
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -248,13 +257,22 @@ if(executionRoleNames.size() > 0) {
 								
 								<span class="divider">{{translate.load("sbi.execution.executionpage.toolbar.shortcuts")}}</span>
 					            
-					            <md-menu-item class="md-indent">
-					                <md-icon class="fa fa-suitcase"></md-icon>
-					            	<md-button ng-disabled="false" class="toolbar-button-custom" ng-click="urlViewPointService.addToWorkspace()"
-					            			aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}">
-				            			{{translate.load('sbi.execution.executionpage.toolbar.savemyworkspace')}}
-					                </md-button>
-					            </md-menu-item>
+					            <%
+									/*
+										Disable the "Add to workspace" option from the drop-down menu when the document is executed (three dots icon in the second toolbar)
+										when the user is admin or superadmin, since those two roles cannot have their own workspace.
+										@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+									*/
+					            	if(!(isAdmin==true || isSuperAdmin==true)) {
+								%>
+						            <md-menu-item class="md-indent" ng-hide=" || isSuperAdmin">
+						                <md-icon class="fa fa-suitcase"></md-icon>
+						            	<md-button ng-disabled="false" class="toolbar-button-custom" ng-click="urlViewPointService.addToWorkspace()"
+						            			aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}">
+					            			{{translate.load('sbi.execution.executionpage.toolbar.savemyworkspace')}}
+						                </md-button>
+						            </md-menu-item>
+					            <% } %>
 					            
 					            <!--  
 					            <md-menu-item class="md-indent">
