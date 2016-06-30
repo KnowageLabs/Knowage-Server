@@ -329,7 +329,7 @@
 		domainNm="Data Set Type" valueDs="SbiCkanDataSet" />
 	<DOMAIN valueCd="Federated" valueNm="SbiFederatedDataSet" domainCd="DATA_SET_TYPE"
 		domainNm="Data Set Type" valueDs="SbiFederatedDataSet" />
-	<DOMAIN valueCd="Default_Dataset_Category" valueNm="Default Dataset Category" domainCd="CATEGORY_TYPE"
+	<DOMAIN valueCd="Default Dataset Category" valueNm="Default Dataset Category" domainCd="CATEGORY_TYPE"
 		domainNm="Category Type" valueDs="Default Dataset Category" />
 	<DOMAIN valueCd="DEVELOPMENT" valueNm="sbidomains.permissiononfolder.nm.dev"
 		domainCd="PERMISSION_ON_FOLDER" domainNm="Permission on folder"
@@ -365,7 +365,7 @@
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
 	<DOMAIN valueCd="Double" valueNm="Double" domainCd="DS_META_VALUE"
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
-	<DOMAIN valueCd="Default_Model_Category" valueNm="Default Model Category"
+	<DOMAIN valueCd="Default Model Category" valueNm="Default Model Category"
 		domainCd="BM_CATEGORY" domainNm="Category Meta Model" valueDs="Default Model Category" />
 
 	<DOMAIN valueCd="hierarchy" valueNm="hierarchy" domainCd="DS_META_PROPERTY"

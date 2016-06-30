@@ -99,7 +99,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		for(int i=0; i< catTypesCd.size(); i++){
 			Domain domain = (Domain)catTypesCd.get(i);
 			JSONArray temp = new JSONArray();
-			temp.put(domain.getValueName());
+			temp.put(domain.getValueCd());
 			catTypesArray.put(temp);
 		}
 	}	
