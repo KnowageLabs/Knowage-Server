@@ -4,8 +4,8 @@
 
 function addBusinessViewController($scope,sbiModule_translate,originalPhysicalModel,metaModelServices,$mdDialog){
 	$scope.translate=sbiModule_translate;
-	$scope.physicalModel=angular.extend([],originalPhysicalModel);
-
+	$scope.physicalModel=[];
+	angular.copy(originalPhysicalModel,$scope.physicalModel);
 	$scope.tmpBnssView={physicalModels:[]};
 	$scope.bvTableColumns=[{label:sbiModule_translate.load("sbi.generic.name"),name:"name"}];
 	$scope.summary=[];
@@ -29,7 +29,6 @@ function addBusinessViewController($scope,sbiModule_translate,originalPhysicalMo
 			for(var col=0;col<$scope.physicalModel[i].columns.length;col++){
 				if($scope.physicalModel[i].columns[col].hasOwnProperty("links") && $scope.physicalModel[i].columns[col].links.length>0){
 					$scope.summary.push($scope.physicalModel[i].columns[col]);
-//					$scope.summary.push({source:$scope.physicalModel[i].columns[col].name, target: $scope.physicalModel[i].columns[col].links[0].name});
 				}
 			}
 		}
@@ -38,8 +37,9 @@ function addBusinessViewController($scope,sbiModule_translate,originalPhysicalMo
 		}
 	}
 
-	$scope.deleteRelationship=function(item){
-		item.links=[];
+	$scope.deleteRelationship=function(item,rel){
+
+		item.links.splice(item.links.indexOf(rel),1);
 		$scope.updateSummary();
 	}
 

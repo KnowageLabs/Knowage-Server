@@ -1,7 +1,7 @@
 
 
 		<div layout="row" id="assDirApp">
-			<div layout="column" flex="50" class="parametersList">
+			<div layout="column" flex class="parametersList">
 				<md-toolbar class="secondaryToolbar md-knowage-theme" >
 					<div class="md-toolbar-tools ">
 <!-- 						<h1>{{translate.load("sbi.meta.business.relationship.source.attributes");}}</h1> -->
@@ -23,14 +23,20 @@
 					</div>
 				</md-toolbar> 
 					<md-list class="md-dense"  flex>
-        				<md-list-item class="secondary-button-padding" id="target-{{$index}}" 
-        				  ng-repeat="item in targetModel" droppable item="item"  ng-click="null" layout="row" >
+        				<md-list-item class="secondary-button-padding" id="target-{{$index}}" ng-repeat="item in targetModel" droppable item="item"  ng-click="null" layout="row" >
 	        				<span flex=40>{{item[targetName]}}</span>
-	        				<span flex ng-if="item[associatedItem].length>0" ><i class="fa fa-link" aria-hidden="true"></i></span>
-	        				<span flex=40 ng-if="item[associatedItem].length>0" >{{item[associatedItem][0][sourceName]}}</span>
-	        				 <md-button  ng-if="item[associatedItem].length>0" class="md-secondary md-icon-button " ng-click="deleteRelationship(item)">
+	        				<span  flex ng-if="item[associatedItem].length>0" ><i class="fa fa-link" aria-hidden="true"></i></span>
+	        				<span flex=40 layout="column">
+		        				<span layout="row" ng-repeat="linkedItem in item[associatedItem]">
+		        					<span >{{getAssociatedParentName(linkedItem)}}{{linkedItem[sourceName]}}</span>
+		        					<md-button  ng-if="item[associatedItem].length>1" class="md-icon-button "  aria-label="delete relationship" ng-click="deleteRelationship(item,$index)">
+	        							<md-icon md-font-icon="fa fa-times"></md-icon>
+        							</md-button>
+		        				</span>
+	        				</span>
+	        				<md-button  ng-if="item[associatedItem].length>0" class="md-secondary md-icon-button " aria-label="delete relationship" ng-click="deleteRelationship(item)">
 	        				 <md-icon md-font-icon="fa fa-trash"></md-icon>
-        				 </md-button>
+        					</md-button>
         				 <md-divider ng-if="!$last"></md-divider>
         				</md-list-item>
 			    	</md-list>
@@ -59,5 +65,9 @@
 			.parametersList>md-list md-list-item.errorClass{
 			background-color: rgba(255, 0, 0, 0.29);
  			border: 1px dashed red;
+			}
+			
+			.parametersList>md-list md-list-item.multyValue>.md-button>._md-list-item-inner{
+			height: 100%!important;
 			}
 		</style>

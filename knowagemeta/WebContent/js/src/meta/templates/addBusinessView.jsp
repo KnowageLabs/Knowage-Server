@@ -48,23 +48,24 @@
 						drag-options="dragOptionsFunct"
 						after-delete-association=afterClearItem(item)
 						multivalue=true
+						associated-parent-path="$parent.name"
 						>
 					</associator-directive>
 				
 				
 				
 				
-					<expander-box title="translate.load('sbi.meta.new.businessview.summary')" expanded="true">
+					<expander-box title="translate.load('sbi.meta.new.businessview.summary')" expanded="true" layout="column">
 					 
-						<md-list class="md-dense" flex >
-	        				<md-list-item     ng-repeat="item in summary"  ng-click="null" layout="row">
-		        				<span flex=40>{{item.links[0].$parent.name}}.{{item.links[0].name}}</span>
+						<md-list class="md-dense noPadding" flex ng-repeat="item in summary">
+	        				<md-list-item     ng-repeat="rel in item.links"  ng-click="null" layout="row">
+		        				<span flex=40>{{rel.$parent.name}}.{{rel.name}}</span>
 		        				<span flex  ><i class="fa fa-link" aria-hidden="true"></i></span>
 	        					<span flex=40>{{item.$parent.name}}.{{item.name}}</span>
-		        				 <md-button   class="md-secondary md-icon-button " ng-click="deleteRelationship(item)">
+		        				 <md-button   class="md-secondary md-icon-button "  aria-label="delete relationship" ng-click="deleteRelationship(item,rel)">
 		        				 <md-icon md-font-icon="fa fa-trash"></md-icon>
 	        				 </md-button>
-	        				 <md-divider ng-if="!$last"></md-divider>
+	        				 <md-divider></md-divider>
 				    		</md-list-item>
 				    	</md-list>
 					
