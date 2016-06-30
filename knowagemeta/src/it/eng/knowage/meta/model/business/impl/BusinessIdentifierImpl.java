@@ -40,27 +40,26 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Business Identifier</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Business Identifier</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link it.eng.knowage.meta.model.business.impl.BusinessIdentifierImpl#getModel <em>Model</em>}</li>
- *   <li>{@link it.eng.knowage.meta.model.business.impl.BusinessIdentifierImpl#getTable <em>Table</em>}</li>
- *   <li>{@link it.eng.knowage.meta.model.business.impl.BusinessIdentifierImpl#getColumns <em>Columns</em>}</li>
- *   <li>{@link it.eng.knowage.meta.model.business.impl.BusinessIdentifierImpl#getPhysicalPrimaryKey <em>Physical Primary Key</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.business.impl.BusinessIdentifierImpl#getModel <em>Model</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.business.impl.BusinessIdentifierImpl#getTable <em>Table</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.business.impl.BusinessIdentifierImpl#getColumns <em>Columns</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.business.impl.BusinessIdentifierImpl#getPhysicalPrimaryKey <em>Physical Primary Key</em>}</li>
  * </ul>
  * </p>
- *
+ * 
  * @generated
  */
 public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessIdentifier {
 	/**
-	 * The cached value of the '{@link #getTable() <em>Table</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * The cached value of the '{@link #getTable() <em>Table</em>}' reference. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @see #getTable()
 	 * @generated
 	 * @ordered
@@ -68,9 +67,8 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	protected BusinessColumnSet table;
 
 	/**
-	 * The cached value of the '{@link #getColumns() <em>Columns</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * The cached value of the '{@link #getColumns() <em>Columns</em>}' reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @see #getColumns()
 	 * @generated
 	 * @ordered
@@ -78,9 +76,8 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	protected EList<BusinessColumn> columns;
 
 	/**
-	 * The cached value of the '{@link #getPhysicalPrimaryKey() <em>Physical Primary Key</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * The cached value of the '{@link #getPhysicalPrimaryKey() <em>Physical Primary Key</em>}' reference. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @see #getPhysicalPrimaryKey()
 	 * @generated
 	 * @ordered
@@ -88,8 +85,8 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	protected PhysicalPrimaryKey physicalPrimaryKey;
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	protected BusinessIdentifierImpl() {
@@ -97,8 +94,8 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -107,30 +104,34 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
+	@JsonIgnore
 	public BusinessModel getModel() {
-		if (eContainerFeatureID() != BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL) return null;
-		return (BusinessModel)eContainer();
+		if (eContainerFeatureID() != BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL)
+			return null;
+		return (BusinessModel) eContainer();
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public NotificationChain basicSetModel(BusinessModel newModel, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject)newModel, BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL, msgs);
+		msgs = eBasicSetContainer((InternalEObject) newModel, BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL, msgs);
 		return msgs;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public void setModel(BusinessModel newModel) {
 		if (newModel != eInternalContainer() || (eContainerFeatureID() != BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL && newModel != null)) {
 			if (EcoreUtil.isAncestor(this, newModel))
@@ -139,23 +140,24 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			if (newModel != null)
-				msgs = ((InternalEObject)newModel).eInverseAdd(this, BusinessModelPackage.BUSINESS_MODEL__IDENTIFIERS, BusinessModel.class, msgs);
+				msgs = ((InternalEObject) newModel).eInverseAdd(this, BusinessModelPackage.BUSINESS_MODEL__IDENTIFIERS, BusinessModel.class, msgs);
 			msgs = basicSetModel(newModel, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
+			if (msgs != null)
+				msgs.dispatch();
+		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL, newModel, newModel));
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public BusinessColumnSet getTable() {
 		if (table != null && table.eIsProxy()) {
-			InternalEObject oldTable = (InternalEObject)table;
-			table = (BusinessColumnSet)eResolveProxy(oldTable);
+			InternalEObject oldTable = (InternalEObject) table;
+			table = (BusinessColumnSet) eResolveProxy(oldTable);
 			if (table != oldTable) {
 				if (eNotificationRequired())
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, BusinessModelPackage.BUSINESS_IDENTIFIER__TABLE, oldTable, table));
@@ -165,8 +167,8 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public BusinessColumnSet basicGetTable() {
@@ -174,10 +176,11 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public void setTable(BusinessColumnSet newTable) {
 		BusinessColumnSet oldTable = table;
 		table = newTable;
@@ -186,10 +189,11 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public EList<BusinessColumn> getColumns() {
 		if (columns == null) {
 			columns = new EObjectResolvingEList<BusinessColumn>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_IDENTIFIER__COLUMNS);
@@ -198,25 +202,27 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public PhysicalPrimaryKey getPhysicalPrimaryKey() {
 		if (physicalPrimaryKey != null && physicalPrimaryKey.eIsProxy()) {
-			InternalEObject oldPhysicalPrimaryKey = (InternalEObject)physicalPrimaryKey;
-			physicalPrimaryKey = (PhysicalPrimaryKey)eResolveProxy(oldPhysicalPrimaryKey);
+			InternalEObject oldPhysicalPrimaryKey = (InternalEObject) physicalPrimaryKey;
+			physicalPrimaryKey = (PhysicalPrimaryKey) eResolveProxy(oldPhysicalPrimaryKey);
 			if (physicalPrimaryKey != oldPhysicalPrimaryKey) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, BusinessModelPackage.BUSINESS_IDENTIFIER__PHYSICAL_PRIMARY_KEY, oldPhysicalPrimaryKey, physicalPrimaryKey));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, BusinessModelPackage.BUSINESS_IDENTIFIER__PHYSICAL_PRIMARY_KEY,
+							oldPhysicalPrimaryKey, physicalPrimaryKey));
 			}
 		}
 		return physicalPrimaryKey;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public PhysicalPrimaryKey basicGetPhysicalPrimaryKey() {
@@ -224,175 +230,177 @@ public class BusinessIdentifierImpl extends ModelObjectImpl implements BusinessI
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public void setPhysicalPrimaryKey(PhysicalPrimaryKey newPhysicalPrimaryKey) {
 		PhysicalPrimaryKey oldPhysicalPrimaryKey = physicalPrimaryKey;
 		physicalPrimaryKey = newPhysicalPrimaryKey;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BusinessModelPackage.BUSINESS_IDENTIFIER__PHYSICAL_PRIMARY_KEY, oldPhysicalPrimaryKey, physicalPrimaryKey));
+			eNotify(new ENotificationImpl(this, Notification.SET, BusinessModelPackage.BUSINESS_IDENTIFIER__PHYSICAL_PRIMARY_KEY, oldPhysicalPrimaryKey,
+					physicalPrimaryKey));
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL:
-				if (eInternalContainer() != null)
-					msgs = eBasicRemoveFromContainer(msgs);
-				return basicSetModel((BusinessModel)otherEnd, msgs);
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL:
+			if (eInternalContainer() != null)
+				msgs = eBasicRemoveFromContainer(msgs);
+			return basicSetModel((BusinessModel) otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL:
-				return basicSetModel(null, msgs);
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL:
+			return basicSetModel(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
 		switch (eContainerFeatureID()) {
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL:
-				return eInternalContainer().eInverseRemove(this, BusinessModelPackage.BUSINESS_MODEL__IDENTIFIERS, BusinessModel.class, msgs);
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL:
+			return eInternalContainer().eInverseRemove(this, BusinessModelPackage.BUSINESS_MODEL__IDENTIFIERS, BusinessModel.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL:
-				return getModel();
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__TABLE:
-				if (resolve) return getTable();
-				return basicGetTable();
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__COLUMNS:
-				return getColumns();
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__PHYSICAL_PRIMARY_KEY:
-				if (resolve) return getPhysicalPrimaryKey();
-				return basicGetPhysicalPrimaryKey();
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL:
+			return getModel();
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__TABLE:
+			if (resolve)
+				return getTable();
+			return basicGetTable();
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__COLUMNS:
+			return getColumns();
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__PHYSICAL_PRIMARY_KEY:
+			if (resolve)
+				return getPhysicalPrimaryKey();
+			return basicGetPhysicalPrimaryKey();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL:
-				setModel((BusinessModel)newValue);
-				return;
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__TABLE:
-				setTable((BusinessColumnSet)newValue);
-				return;
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__COLUMNS:
-				getColumns().clear();
-				getColumns().addAll((Collection<? extends BusinessColumn>)newValue);
-				return;
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__PHYSICAL_PRIMARY_KEY:
-				setPhysicalPrimaryKey((PhysicalPrimaryKey)newValue);
-				return;
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL:
+			setModel((BusinessModel) newValue);
+			return;
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__TABLE:
+			setTable((BusinessColumnSet) newValue);
+			return;
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__COLUMNS:
+			getColumns().clear();
+			getColumns().addAll((Collection<? extends BusinessColumn>) newValue);
+			return;
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__PHYSICAL_PRIMARY_KEY:
+			setPhysicalPrimaryKey((PhysicalPrimaryKey) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL:
-				setModel((BusinessModel)null);
-				return;
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__TABLE:
-				setTable((BusinessColumnSet)null);
-				return;
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__COLUMNS:
-				getColumns().clear();
-				return;
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__PHYSICAL_PRIMARY_KEY:
-				setPhysicalPrimaryKey((PhysicalPrimaryKey)null);
-				return;
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL:
+			setModel((BusinessModel) null);
+			return;
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__TABLE:
+			setTable((BusinessColumnSet) null);
+			return;
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__COLUMNS:
+			getColumns().clear();
+			return;
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__PHYSICAL_PRIMARY_KEY:
+			setPhysicalPrimaryKey((PhysicalPrimaryKey) null);
+			return;
 		}
 		super.eUnset(featureID);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL:
-				return getModel() != null;
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__TABLE:
-				return table != null;
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__COLUMNS:
-				return columns != null && !columns.isEmpty();
-			case BusinessModelPackage.BUSINESS_IDENTIFIER__PHYSICAL_PRIMARY_KEY:
-				return physicalPrimaryKey != null;
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__MODEL:
+			return getModel() != null;
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__TABLE:
+			return table != null;
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__COLUMNS:
+			return columns != null && !columns.isEmpty();
+		case BusinessModelPackage.BUSINESS_IDENTIFIER__PHYSICAL_PRIMARY_KEY:
+			return physicalPrimaryKey != null;
 		}
 		return super.eIsSet(featureID);
 	}
-	
+
 	// =========================================================================
 	// Utility methods
 	// =========================================================================
-	
-	
+
 	@Override
 	public EList<ModelPropertyType> getPropertyTypes() {
 		return getModel().getParentModel().getPropertyTypes();
 	}
-	
+
 	@Override
-	public List<SimpleBusinessColumn> getSimpleBusinessColumns(){
+	public List<SimpleBusinessColumn> getSimpleBusinessColumns() {
 		EList<BusinessColumn> businessColumns = getColumns();
 		List<SimpleBusinessColumn> simpleColumns = new ArrayList<SimpleBusinessColumn>();
-		
-		for(BusinessColumn column : businessColumns){
-			if (column instanceof SimpleBusinessColumn){
-				simpleColumns.add((SimpleBusinessColumn)column);
+
+		for (BusinessColumn column : businessColumns) {
+			if (column instanceof SimpleBusinessColumn) {
+				simpleColumns.add((SimpleBusinessColumn) column);
 			}
 		}
 		return simpleColumns;
 	}
 
-
-} //BusinessIdentifierImpl
+} // BusinessIdentifierImpl

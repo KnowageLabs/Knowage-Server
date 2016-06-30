@@ -20,18 +20,27 @@ package it.eng.knowage.meta.generator.utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.Files;
+
 /**
  * This class is used by Knowage Meta to compile generated java class and to create JAR file.
- *
+ * 
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public class Compiler {
 
@@ -39,16 +48,18 @@ public class Compiler {
 	private File binDir;
 	private File libDir;
 
+	private final File logDir;
+
 	/**
 	 * necessary libraries to compile Java Classes
 	 */
-	private List<File> libs;
+	private final List<File> libs;
 
 	private static Logger logger = LoggerFactory.getLogger(Compiler.class);
 
 	/**
 	 * Costructor
-	 *
+	 * 
 	 * @param srcDir
 	 *            Source directory
 	 * @param binDir
@@ -58,7 +69,9 @@ public class Compiler {
 	 * @param srcPackage
 	 *            the package of the source code
 	 */
-	public Compiler(File srcDir, File binDir, File libDir, String srcPackage) {
+	public Compiler(File srcDir, File binDir, File libDir, String srcPackage, File logDir) {
+		this.logDir = logDir.getAbsoluteFile();
+
 		this.srcDir = srcDir.getAbsoluteFile();
 		logger.debug("src dir set to [{}]", this.srcDir);
 
@@ -73,26 +86,73 @@ public class Compiler {
 
 	/**
 	 * Compile all the generated java classes
-	 *
+	 * 
 	 * @return boolean : true if the compiler has worked well.
 	 */
 	public boolean compile() {
+
 		boolean result = false;
+
+		// File[] files1 = ... ; // input for first compilation task
+		// File[] files2 = ... ; // input for second compilation task
+
+		List<File> files = new ArrayList<>();
+		for (File f : Files.fileTreeTraverser().preOrderTraversal(this.srcDir).toList()) {
+			if (f.isFile() && f.getName().endsWith("java")) {
+				files.add(f);
+			}
+		}
+		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
+
+		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(files);
+		result = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits).call();
+
+		// Iterable<? extends JavaFileObject> compilationUnits2 =
+		// fileManager.getJavaFileObjects(files2);
+		// compiler.getTask(null, fileManager, null, null, null, compilationUnits2).call();
+		FileWriter fw = null;
+		try {
+			if (!diagnostics.getDiagnostics().isEmpty()) {
+				fw = new FileWriter(logDir.getAbsolutePath() + File.separatorChar + "metacompiler_out.log", true);
+				for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+					fw.append(MessageFormat.format("Error on line {0} in {1}\n", diagnostic.getLineNumber(), diagnostic.getSource().toUri()));
+					diagnostic.getSource().getCharContent(true);
+					// System.out.format("Error on line %d in %s%n",
+					// diagnostic.getLineNumber(),
+					// diagnostic.getSource().toUri());
+				}
+				fw.close();
+			}
+		} catch (IOException e) {
+			// TODO
+			e.printStackTrace();
+		} finally {
+			if (fw != null)
+				try {
+					fw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		;
 
 		logger.trace("IN");
 
-		String command = "\"" + srcDir + "\" -classpath \"" + getClasspath() + "\" -d \"" + binDir + "\" -source 1.5";
-		logger.info("Compile command is equal to [{}]", command);
-
-		PrintWriter error;
-		PrintWriter out;
-		try {
-			error = new PrintWriter(new FileWriter("./log/knowage/metacompiler_errors.log", true));
-			out = new PrintWriter(new FileWriter("./log/knowage/metacompiler_out.log", true));
-			result = org.eclipse.jdt.core.compiler.batch.BatchCompiler.compile(command, out, error, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		// String command = "\"" + srcDir + "\" -classpath \"" + getClasspath() + "\" -d \"" + binDir + "\" -source 1.5";
+		// logger.info("Compile command is equal to [{}]", command);
+		//
+		// PrintWriter error;
+		// PrintWriter out;
+		// try {
+		// error = new PrintWriter(new FileWriter(logDir.getAbsolutePath() + File.separatorChar + "metacompiler_errors.log", true));
+		// out = new PrintWriter(new FileWriter(logDir.getAbsolutePath() + File.separatorChar + "metacompiler_out.log", true));
+		// result = org.eclipse.jdt.core.compiler.batch.BatchCompiler.compile(command, out, error, null);
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
 
 		logger.info("Mapping files compiled succesfully: [{}]", result);
 

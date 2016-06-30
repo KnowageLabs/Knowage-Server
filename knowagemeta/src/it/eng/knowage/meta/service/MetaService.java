@@ -116,15 +116,9 @@ public class MetaService {
 
 			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 
-			// Assert.assertTrue(json.has("physicalModel"), "physicalModel is mandatory");
-			// Assert.assertTrue(json.has("businessModel"), "businessModel is mandatory");
-
-			// Model model = createEmptyModel(json);
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 
 			serializer.serialize(model, new File("c:\\test.sbimodel_old.txt"));
-
-			// JsonNode patch = JsonDiff.asJson(mapper.readTree(emptyModelJson.toString()), actualJson);
 
 			ObjectMapper mapper = new ObjectMapper();
 			if (jsonRoot.has("diff")) {
@@ -137,6 +131,7 @@ public class MetaService {
 			JsonNode actualJson = mapper.readTree(jsonModel.toString());
 			applyRelationships(actualJson, model);
 
+			// TODO save sbimodel to db
 			serializer.serialize(model, new File("c:\\test.sbimodel_new.txt"));
 			System.out.println("!!! model generation ended !!!");
 
@@ -291,10 +286,6 @@ public class MetaService {
 	public Response buildModel(@QueryParam("id") Integer id, @Context HttpServletRequest req) {
 		Model model = getModel(id);
 		JpaMappingJarGenerator jpaMappingJarGenerator = new JpaMappingJarGenerator();
-		// JpaMappingJarGenerator.defaultTemplateFolderPath =
-		// "D:/Sviluppo/Athena/knowagemeta-unit-test/workspaces/metadata/it.eng.knowage.meta.generator/templates";
-		// File projectRootFolder = new File("D:/Sviluppo/Athena/knowagemeta-unit-test/workspaces/metadata/it.eng.knowage.meta.generator");
-		// jpaMappingJarGenerator.setLibDir(new File(projectRootFolder, "libs/eclipselink"));
 		jpaMappingJarGenerator.setLibs(new String[] { "org.eclipse.persistence.core_2.1.2.jar", "javax.persistence-2.0.1.jar" });
 		try {
 			// java.nio.file.Path outFile = Files.createTempFile("model_", "_tmp");

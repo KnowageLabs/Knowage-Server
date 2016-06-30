@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
@@ -38,12 +38,16 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
 	private File libDir;
 	private File binDir;
+	private File logDir;
 
 	public static final String DEFAULT_BIN_DIR = "build";
 	public static final String DEFAULT_LIB_DIR = "libs";
+	public static final String DEFAULT_LOG_DIR = "logs";
 
-	private String[] libs = { "org.eclipse.persistence.core_2.1.1.v20100817-r8050.jar", "javax.persistence_2.0.1.v201006031150.jar",
-			"hibernate-spatial-1.1.1.jar", "jts-1.13.jar", "hibernate3.6.2.jar" };
+	// private String[] libs = { "org.eclipse.persistence.core_2.1.1.v20100817-r8050.jar", "javax.persistence_2.0.1.v201006031150.jar",
+	// "hibernate-spatial-1.1.1.jar", "jts-1.13.jar", "hibernate3.6.2.jar" };
+	private String[] libs = { "org.eclipse.persistence.core_2.1.1.v20100817-r8050.jar", "javax.persistence_2.0.1.jar", "hibernate-spatial-1.1.1.jar",
+			"jts-1.13.jar", "hibernate3.6.2.jar" };
 
 	private static Logger logger = LoggerFactory.getLogger(JpaMappingClassesGenerator.class);
 
@@ -70,6 +74,8 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 			libDir = (libDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libDir;
 			logger.debug("lib dir is equal to [{}]", libDir);
 
+			logDir = logDir == null ? new File(outputDir, DEFAULT_LOG_DIR) : logDir;
+
 			model = (BusinessModel) o;
 
 			// Get Package Name
@@ -78,7 +84,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 			// Call Java Compiler
 			Compiler compiler;
 
-			compiler = new Compiler(getSrcDir(), binDir, libDir, packageName.replace(".", "/"));
+			compiler = new Compiler(getSrcDir(), binDir, libDir, packageName.replace(".", "/"), logDir);
 			compiler.addLibs(libs);
 
 			boolean compiled = compiler.compile();
