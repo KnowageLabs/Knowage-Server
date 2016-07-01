@@ -1,7 +1,7 @@
 
 
 <script>
-var sbiM=angular.module('sbiModule',["toastr"]);
+var sbiM=angular.module('sbiModule',["toastr","ngSanitize"]);
 
 // sbiM.config(function($mdThemingProvider) {
 // 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
@@ -255,7 +255,7 @@ sbiM.service('sbiModule_translate', function() {
 	
 });
 
-sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, sbiModule_config,sbiModule_logger,$mdDialog) {
+sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, sbiModule_config, sbiModule_logger, $mdDialog, $sanitize) {
 	
 	var alteredContextPath=null;
 
@@ -447,7 +447,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		
 		var alert = $mdDialog.confirm()
 		.title(titleFin)
-		.content(textFin)
+		.htmlContent(textFin)
 		.ariaLabel('error') 
 		.ok(sbiModule_translate.load('sbi.general.ok'))
 		return $mdDialog.show(alert); //can use the finally function
