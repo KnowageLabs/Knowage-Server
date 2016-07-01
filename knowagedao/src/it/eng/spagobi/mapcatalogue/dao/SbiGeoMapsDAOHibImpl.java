@@ -149,6 +149,59 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 	}
 
 	/**
+	 * Load map by name and level.
+	 *
+	 * @param name
+	 *            the name
+	 *
+	 * @param level
+	 *            the level
+	 *
+	 * @return the geo map
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.mapcatalogue.dao.geo.bo.dao.ISbiGeoMapsDAO#loadMapByNameLevel(string)
+	 */
+	@Override
+	public GeoMap loadMapByNameAndLevel(String name, String level) throws EMFUserError {
+		GeoMap biMap = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			Query hqlQuery = tmpSession.createQuery(" from SbiGeoMaps m " + "where m.name = :name " + "and m.level = :level");
+
+			hqlQuery.setString("name", name);
+			hqlQuery.setInteger("level", Integer.valueOf(level));
+
+			SbiGeoMaps hibMap = (SbiGeoMaps) hqlQuery.uniqueResult();
+
+			if (hibMap == null) {
+				logger.error("SVG with name [" + name + "] and level [" + level + "] non found in catalogue. ");
+				return null;
+			}
+			biMap = hibMap.toGeoMap();
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+		}
+		return biMap;
+	}
+
+	/**
 	 * Modify map.
 	 *
 	 * @param aMap
