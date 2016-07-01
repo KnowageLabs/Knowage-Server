@@ -407,7 +407,7 @@ onload="init(evt);">
 	                       var textNode = document.createTextNode(text);
 	                       valueLabel.appendChild(textNode);
 	                      
-	                       var valuesLayer = document.getElementById("valori");
+	                       var valuesLayer = document.getElementById("_labels_layer");
 	                       valuesLayer.appendChild(valueLabel);
 	                       valueLabel.setAttribute("transform", "translate(" + centroide.getAttributeNS(null, "cx")+ " " + centroide.getAttributeNS(null, "cy") + ") scale(" + sbi.geo.conf.gui_settings.valueScale + ")");
 	                       
@@ -993,7 +993,7 @@ onload="init(evt);">
     
 				
 				<g stroke-linecap="square " fill="white" stroke-linejoin="miter" id="grafici" stroke="black" stroke-width="0.2">	</g>
-				<g stroke-linecap="square " fill="white" stroke-linejoin="miter" id="valori" stroke="black" stroke-width="0.2">	</g>
+				<g stroke-linecap="square " fill="white" stroke-linejoin="miter" id="_labels_layer" stroke="black" stroke-width="0.2">	</g>
 				
 				</g>
 				</g>

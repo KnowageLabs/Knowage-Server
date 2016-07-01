@@ -964,7 +964,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 				if (labelGroup != null) {
 					// append labels to default layer "valori"
-					Element valuesLayer = map.getElementById("valori");
+					Element valuesLayer = map.getElementById("_labels_layer");
 					valuesLayer.appendChild(labelGroup);
 				}
 			}
@@ -1007,7 +1007,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 			IField geoIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(geoIdMetaData.getName()));
 			IField visibilityIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(visibilityIdMetaData.getName()));
-			
+
 			if (geoIdField != null && visibilityIdField != null) {
 				String id_element = (String) geoIdField.getValue();
 				String elementVisibility = (String) visibilityIdField.getValue();
