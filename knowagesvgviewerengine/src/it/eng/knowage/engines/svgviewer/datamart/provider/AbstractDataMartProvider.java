@@ -27,8 +27,8 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 	/** The selected hierarchy name. */
 	private String selectedHierarchyName;
 
-	/** The selected level name. */
-	private String selectedLevelName; // is used again?
+	/** The selected level. */
+	private String selectedLevel;
 
 	/** The selected member name. */
 	private String selectedMemberName;
@@ -42,7 +42,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.AbstractGeoEngineComponent#init(java.lang.Object)
 	 */
 	@Override
@@ -53,7 +53,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getDataSet()
 	 */
 	@Override
@@ -63,7 +63,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getDataDetails(java.lang.String)
 	 */
 	@Override
@@ -73,7 +73,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getHierarchyNames()
 	 */
 	@Override
@@ -86,7 +86,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getHierarchy(java.lang.String)
 	 */
 	@Override
@@ -99,7 +99,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedHierarchy()
 	 */
 	@Override
@@ -112,17 +112,17 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedLevel()
 	 */
-	@Override
-	public Hierarchy.Level getSelectedLevel() {
-		Hierarchy selectedHierarchy = getSelectedHierarchy();
-		if (selectedHierarchy != null) {
-			return selectedHierarchy.getLevel(selectedLevelName);
-		}
-		return null;
-	}
+	// @Override
+	// public Hierarchy.Level getSelectedLevel() {
+	// Hierarchy selectedHierarchy = getSelectedHierarchy();
+	// if (selectedHierarchy != null) {
+	// return selectedHierarchy.getLevel(selectedLevel);
+	// }
+	// return null;
+	// }
 
 	/**
 	 * Sets the hierarchies.
@@ -137,7 +137,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedHierarchyName()
 	 */
 	@Override
@@ -147,7 +147,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#setSelectedHierarchyName(java.lang.String)
 	 */
 	@Override
@@ -157,22 +157,22 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedLevelName()
 	 */
 	@Override
-	public String getSelectedLevelName() {
-		return selectedLevelName;
+	public String getSelectedLevel() {
+		return selectedLevel;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#setSelectedLevelName(java.lang.String)
+	 * 
+	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#setSelectedLevel(java.lang.String)
 	 */
 	@Override
-	public void setSelectedLevelName(String selectedLevelName) {
-		this.selectedLevelName = selectedLevelName;
+	public void setSelectedLevel(String selectedLevel) {
+		this.selectedLevel = selectedLevel;
 	}
 
 	/**

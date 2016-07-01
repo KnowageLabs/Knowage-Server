@@ -2,7 +2,6 @@ package it.eng.knowage.engines.svgviewer.datamart.provider;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
-import it.eng.knowage.engines.svgviewer.dataset.provider.Hierarchy;
 import it.eng.knowage.engines.svgviewer.dataset.provider.Link;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -26,12 +25,14 @@ import org.apache.log4j.Logger;
  */
 public class AddLinkFieldsTransformer implements IDataStoreTransformer {
 	String[] measureColumnNames;
-	Hierarchy.Level level;
+	// Hierarchy.Level level;
+	String level;
 	Map env;
 
 	public static transient Logger logger = Logger.getLogger(AddLinkFieldsTransformer.class);
 
-	public AddLinkFieldsTransformer(String[] measureColumnNames, Hierarchy.Level level, Map env) {
+	// public AddLinkFieldsTransformer(String[] measureColumnNames, Hierarchy.Level level, Map env) {
+	public AddLinkFieldsTransformer(String[] measureColumnNames, String level, Map env) {
 		this.measureColumnNames = measureColumnNames;
 		this.level = level;
 		this.env = env;
@@ -47,7 +48,8 @@ public class AddLinkFieldsTransformer implements IDataStoreTransformer {
 			String measureFiledName = fieldMeta.getName();
 
 			String linkFiledName = measureFiledName + "_LINK";
-			Link link = level.getLink(measureFiledName);
+			// Link link = level.getLink(measureFiledName);
+			Link link = null;
 			addLinkField(linkFiledName, link, dataStore);
 		}
 

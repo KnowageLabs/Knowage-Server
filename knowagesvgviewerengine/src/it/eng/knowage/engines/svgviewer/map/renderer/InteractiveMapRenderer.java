@@ -705,30 +705,30 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 		// add legend
 		Element windowBackground = masterMap.createElement("rect");
-		windowBackground.setAttribute("width", "241");
-		windowBackground.setAttribute("height", "200");
-		windowBackground.setAttribute("fill", "#fffce6");
-		windowBackground.setAttribute("stroke", "dimgray");
-		windowBackground.setAttribute("stroke-width", "1");
-		windowBackground.setAttribute("display", "inherit");
+		// windowBackground.setAttribute("width", "241");
+		// windowBackground.setAttribute("height", "200");
+		// windowBackground.setAttribute("fill", "#fffce6");
+		// windowBackground.setAttribute("stroke", "dimgray");
+		// windowBackground.setAttribute("stroke-width", "1");
+		// windowBackground.setAttribute("display", "inherit");
 
 		Element windowTitleBar = masterMap.createElement("rect");
-		windowTitleBar.setAttribute("width", "241");
-		windowTitleBar.setAttribute("height", "17");
-		windowTitleBar.setAttribute("fill", "steelblue");
-		windowTitleBar.setAttribute("stroke", "dimgray");
-		windowTitleBar.setAttribute("stroke-width", "1.5");
-		windowTitleBar.setAttribute("display", "inherit");
+		// windowTitleBar.setAttribute("width", "241");
+		// windowTitleBar.setAttribute("height", "17");
+		// windowTitleBar.setAttribute("fill", "steelblue");
+		// windowTitleBar.setAttribute("stroke", "dimgray");
+		// windowTitleBar.setAttribute("stroke-width", "1.5");
+		// windowTitleBar.setAttribute("display", "inherit");
 
 		Element windowTitle = masterMap.createElement("text");
-		windowTitle.setAttribute("x", "3");
-		windowTitle.setAttribute("y", "14");
-		windowTitle.setAttribute("font-family", "Arial,Helvetica");
-		windowTitle.setAttribute("font-size", "14px");
-		windowTitle.setAttribute("fill", "white");
-		windowTitle.setAttribute("startOffset", "0");
-		Node windowTitleText = masterMap.createTextNode("Legenda");
-		windowTitle.appendChild(windowTitleText);
+		// windowTitle.setAttribute("x", "3");
+		// windowTitle.setAttribute("y", "14");
+		// windowTitle.setAttribute("font-family", "Arial,Helvetica");
+		// windowTitle.setAttribute("font-size", "14px");
+		// windowTitle.setAttribute("fill", "white");
+		// windowTitle.setAttribute("startOffset", "0");
+		// Node windowTitleText = masterMap.createTextNode("Legenda");
+		// windowTitle.appendChild(windowTitleText);
 
 		Element windowBody = masterMap.createElement("g");
 		for (int i = 0; i < col_kpi_array.length; i++) {
@@ -782,11 +782,11 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			windowBody.appendChild(labelBox);
 		}
 
-		Element legend = masterMap.getElementById("legend");
-		legend.appendChild(windowBackground);
-		legend.appendChild(windowTitleBar);
-		legend.appendChild(windowTitle);
-		legend.appendChild(windowBody);
+		// Element legend = masterMap.getElementById("legend");
+		// legend.appendChild(windowBackground);
+		// legend.appendChild(windowTitleBar);
+		// legend.appendChild(windowTitle);
+		// legend.appendChild(windowBody);
 
 		// add labels
 		Node labelText;
@@ -1583,15 +1583,17 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 */
 	public JSONObject getGUIConfigurationScript() throws JSONException {
 		JSONObject guiSettings = new JSONObject();
-		String pVal = null;
+		// String pVal = null;
 
 		guiSettings = getGuiSettings().toJSON();
 
-		if (getEnv().get(SvgViewerEngineConstants.ENV_IS_DAFAULT_DRILL_NAV) != null) {
-			pVal = (String) getEnv().get(SvgViewerEngineConstants.ENV_IS_DAFAULT_DRILL_NAV);
-			boolean defaultDrillNav = pVal == null || pVal.equalsIgnoreCase("TRUE");
-			guiSettings.put("defaultDrillNav", defaultDrillNav);
-		}
+		// if (getEnv().get(SvgViewerEngineConstants.ENV_IS_DAFAULT_DRILL_NAV) != null) {
+		// pVal = (String) getEnv().get(SvgViewerEngineConstants.ENV_IS_DAFAULT_DRILL_NAV);
+		// boolean defaultDrillNav = pVal == null || pVal.equalsIgnoreCase("TRUE");
+		// guiSettings.put("defaultDrillNav", defaultDrillNav);
+		// }
+
+		guiSettings.put("defaultDrillNav", true);
 
 		return guiSettings;
 	}

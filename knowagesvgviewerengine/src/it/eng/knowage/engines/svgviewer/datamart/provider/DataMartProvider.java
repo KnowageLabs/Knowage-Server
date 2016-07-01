@@ -15,6 +15,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 
@@ -23,11 +24,9 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-// TODO: Auto-generated Javadoc
 /**
  * This class wrap an object of type IDataSet
  *
- * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class DataMartProvider extends AbstractDataMartProvider {
 
@@ -162,8 +161,8 @@ public class DataMartProvider extends AbstractDataMartProvider {
 					}
 				}
 
-				// IDataStoreTransformer dddLinkFieldTransformer = new AddLinkFieldsTransformer(measureColumnNames, getSelectedLevel(), this.getEnv());
-				// dddLinkFieldTransformer.transform(dataStore);
+				IDataStoreTransformer dddLinkFieldTransformer = new AddLinkFieldsTransformer(measureColumnNames, getSelectedLevel(), this.getEnv());
+				dddLinkFieldTransformer.transform(dataStore);
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 				throw new SvgViewerEngineException("Impossible to get DataMart");
@@ -309,7 +308,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.AbstractDatasetProvider#getDataDetails(java.lang.String)
 	 */
 	@Override

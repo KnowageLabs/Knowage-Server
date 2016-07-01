@@ -24,7 +24,8 @@ public class Link {
 	private Map parameters;
 
 	/** The Constant DEFAULT_BASE_URL. */
-	public static final String DEFAULT_BASE_URL = "javascript:void(0)";
+	// public static final String DEFAULT_BASE_URL = "javascript:void(0)";
+	public static final String DEFAULT_BASE_URL = "javascript:alert('Mi hai chiamato???')";
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(Link.class);

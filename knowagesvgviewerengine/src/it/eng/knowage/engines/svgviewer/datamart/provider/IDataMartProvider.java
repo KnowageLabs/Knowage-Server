@@ -55,19 +55,19 @@ public interface IDataMartProvider extends ISvgViewerEngineComponent {
 	String getSelectedHierarchyName();
 
 	/**
-	 * Sets the selected level name.
+	 * Sets the selected level.
 	 *
-	 * @param levelName
-	 *            the new selected level name
+	 * @param level
+	 *            the new selected level
 	 */
-	void setSelectedLevelName(String levelName);
+	void setSelectedLevel(String level);
 
 	/**
-	 * Gets the selected level name.
+	 * Gets the selected level.
 	 *
-	 * @return the selected level name
+	 * @return the selected level
 	 */
-	String getSelectedLevelName();
+	String getSelectedLevel();
 
 	/**
 	 * Gets the hierarchy names.
@@ -93,12 +93,12 @@ public interface IDataMartProvider extends ISvgViewerEngineComponent {
 	 */
 	Hierarchy getSelectedHierarchy();
 
-	/**
-	 * Gets the selected level.
-	 *
-	 * @return the selected level
-	 */
-	Hierarchy.Level getSelectedLevel();
+	// /**
+	// * Gets the selected level.
+	// *
+	// * @return the selected level
+	// */
+	// Hierarchy.Level getSelectedLevel();
 
 	/**
 	 * Sets the selected member name.

@@ -228,7 +228,9 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 		return true;
 	}
 
-	public File renderMap(String format) throws SvgViewerEngineException {
+	public File renderMap(String format, String level) throws SvgViewerEngineException {
+		// update the selected level
+		getDataMartProvider().setSelectedLevel(level);
 		return getMapRenderer().renderMap(getMapProvider(), getDataMartProvider(), format);
 	}
 

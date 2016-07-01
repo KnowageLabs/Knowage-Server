@@ -32,11 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -53,11 +52,14 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	@Path("/drawMap")
 	@GET
 	@Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
-	public Response drawMap(@Context HttpServletRequest req) {
+	// public Response drawMap(@Context HttpServletRequest req) {
+	public Response drawMap(@QueryParam("level") String level) {
 		logger.debug("IN");
 		try {
 			// TODO: let the output format to be configurable with a parameter
-			File maptmpfile = getEngineInstance().renderMap("dsvg");
+			// Integer actualLevel = getLevel(level);
+
+			File maptmpfile = getEngineInstance().renderMap("dsvg", level);
 			byte[] data = Files.readAllBytes(maptmpfile.toPath());
 
 			ResponseBuilder response = Response.ok(data);
@@ -81,10 +83,12 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	@Path("/getMeasures")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getMeasures(@Context HttpServletRequest req) {
+	// public Response getMeasures(@Context HttpServletRequest req) {
+	public Response getMeasures(@QueryParam("level") String level) {
 		logger.debug("IN");
 		try {
-			SourceBean memberSB = getActiveMemberSB(req);
+			// SourceBean memberSB = getActiveMemberSB(req);
+			SourceBean memberSB = getActiveMemberSB(level);
 			SourceBean measuresConfigurationSB = (SourceBean) memberSB.getAttribute("MEASURES");
 
 			Map measures = getMeasures(measuresConfigurationSB);
@@ -108,10 +112,12 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	@Path("/getLayers")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getLayers(@Context HttpServletRequest req) {
+	// public Response getLayers(@Context HttpServletRequest req) {
+	public Response getLayers(@QueryParam("level") String level) {
 		logger.debug("IN");
 		try {
-			SourceBean memberSB = getActiveMemberSB(req);
+			// SourceBean memberSB = getActiveMemberSB(req);
+			SourceBean memberSB = getActiveMemberSB(level);
 			SourceBean measuresConfigurationSB = (SourceBean) memberSB.getAttribute("LAYERS");
 			// SourceBean measuresConfigurationSB = (SourceBean) confSB.getAttribute("LAYERS");
 
@@ -246,22 +252,34 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		return measures;
 	}
 
-	private SourceBean getActiveMemberSB(HttpServletRequest req) {
+	private SourceBean getActiveMemberSB(String level) {
 		SourceBean toReturn = null;
+
+		Integer actualLevel = getLevel(level);
 
 		SourceBean templateSB = getEngineInstance().getTemplate();
 		SourceBean confSB = (SourceBean) templateSB.getAttribute(SvgViewerEngineConstants.DATAMART_PROVIDER_TAG);
 		SourceBean hierarchySB = (SourceBean) confSB.getAttribute("HIERARCHY");
 		List members = hierarchySB.getAttributeAsList(SvgViewerEngineConstants.MEMBER_TAG);
 
-		// @TODO gestire l'acquisizione del membro dinamicamente: ora prende il primo, recuperarlo dalla request
-		for (int i = 0; i < members.size(); i++) {
-			logger.debug("Parsing member  [" + i + "]");
-			toReturn = (SourceBean) members.get(i);
-			break;
+		for (int i = 1; i <= members.size(); i++) {
+			if (i == actualLevel + 1) {
+				logger.debug("Parsing member  [" + i + "]");
+				toReturn = (SourceBean) members.get(i - 1);
+				break;
+			}
 		}
-
+		// @TODO gestire caso in cui non esiste il membro con il livello cercato
 		return toReturn;
 	}
 
+	private Integer getLevel(String actualLevelStr) {
+
+		// String actualLevelStr = (String) req.getAttribute("level");
+		Integer actualLevel = 0; // default is the first level
+		if (actualLevelStr != null)
+			actualLevel = Integer.valueOf(actualLevelStr);
+
+		return actualLevel;
+	}
 }

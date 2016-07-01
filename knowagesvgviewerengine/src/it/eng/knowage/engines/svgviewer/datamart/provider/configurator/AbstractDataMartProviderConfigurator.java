@@ -149,6 +149,7 @@ public class AbstractDataMartProviderConfigurator {
 	private static String getSelectedMemberName(Map<String, HierarchyMember> membersMap) {
 		// @TODO : gestire l'acquisizione del membro / livello da visualizzare.
 		// Per ora prende sempre il primo
+
 		String toReturn = null;
 
 		for (Iterator iterator = membersMap.keySet().iterator(); iterator.hasNext();) {
