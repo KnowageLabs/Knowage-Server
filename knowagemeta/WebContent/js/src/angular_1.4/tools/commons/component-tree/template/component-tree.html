@@ -61,6 +61,7 @@
 	<div class="{{classLayout}}" id ="{{id}}">
 		<!-- create the tree structure -->
 		<div id="tree-container" ui-tree="optionsDragDrop" data-drag-delay="500" data-drag-enabled="{{enableDrag==true}}" >	
+			<span ng-if="treeRootName!=undefined" >{{treeRootName}}</span>
 			<ol id="{{id}}-tree-root" ui-tree-nodes ng-model="folders" id="tree-root">
 				<li layout="column" layout-align="start stretch" ng-repeat="node in folders" ui-tree-node
 						ng-include="'componentTreeHtmlScript'"

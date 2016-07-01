@@ -78,7 +78,7 @@ public class MetaService {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 * 
+	 *
 	 * @param dsId
 	 * @return
 	 */
@@ -232,7 +232,7 @@ public class MetaService {
 
 			JSONObject json = jsonRoot.getJSONObject("data");
 			String name = json.getString("name");
-			String description = json.getString("description");
+			String description = json.optString("description");
 
 			JSONObject relationships = json.getJSONObject("relationships");
 			JSONArray physicaltables = json.getJSONArray("physicaltable");
@@ -301,10 +301,10 @@ public class MetaService {
 			return Response.ok(patch.toString()).build();
 		} catch (IOException | JSONException e) {
 			logger.error(e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		} catch (SpagoBIException e) {
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
-		return Response.serverError().build();
 	}
 
 	@GET

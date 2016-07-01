@@ -1,6 +1,6 @@
 <angular-list-detail ng-controller="metaModelCreationBusinessController">
-	<list label="'BusinessModelName'" layout="column">
-		<component-tree id="bcmTree"  style="margin:0px"
+	<list label="'BusinessModelName'" layout="column"> 
+		<component-tree id="bcmTree"  style="margin:0px" ng-show="meta.businessModels.length>0"
 				ng-model="meta.businessModels"
 				highlights-selected-item="true"   
 				subnode-key="columns" 
@@ -13,11 +13,32 @@
 				interceptor="businessModelTreeInterceptor"
 				static-tree=true
 				expand-on-click=false
+				tree-root-name="translate.load('sbi.meta.businessclass')"
 			></component-tree>
+
+<!-- 
+				click-function="selectBusinessModel(node)"
+				is-folder-fn="businessModel_isFolder(node)"
+				folder-icon-fn="businesslModel_getlevelIcon(node)"
+				open-folder-icon-fn="businesslModel_getlevelIcon(node)"
+				interceptor="businessModelTreeInterceptor"
+
+ -->
+		<component-tree id="bvmTree"  style="margin:0px" ng-show="meta.businessViews.length>0"
+				ng-model="meta.businessViews"
+				highlights-selected-item="true"   
+				subnode-key="columns" 
+				hide-progress=true
+				not-hide-on-load = true
+				static-tree=true
+				expand-on-click=false
+				tree-root-name="translate.load('sbi.meta.businessview')"
+			></component-tree>
+			
 	</list>
 	<extra-list-button>
-		<md-button ng-click="addBusinessModel()">add BusinessModel</md-button>
-		<md-button ng-click="addBusinessView()">add BusinessView</md-button>
+		<md-button ng-click="addBusinessModel()">{{translate.load('sbi.meta.new.businessclass')}}</md-button>
+		<md-button ng-if="meta.businessModels.length>0" ng-click="addBusinessView()">{{translate.load('sbi.meta.new.businessview')}}</md-button>
 	</extra-list-button>
 	
 	<detail label="selectedBusinessModel.name==undefined ? '' : selectedBusinessModel.name "  ng-if="selectedBusinessModel.name!=undefined" >

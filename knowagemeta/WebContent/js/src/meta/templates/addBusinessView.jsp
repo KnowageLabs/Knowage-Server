@@ -9,15 +9,25 @@
 			<div class="md-dialog-content" layout="column">
 				<div ng-if="steps.current==0" layout="column" flex>
 					 <md-input-container class="md-block">
-						<label>name***</label>
-						<input ng-model="tmpBnssView.name">
+						<label>{{translate.load("sbi.generic.name")}}</label>
+						<input ng-model="tmpBnssView.name" required>
 					</md-input-container>
 					
 					<md-input-container class="md-block">
-						<label>Description****</label>
-						<textarea  ng-model="tmpBnssView.description"></textarea>
+						<label>{{translate.load("sbi.generic.descr")}}</label>
+						<textarea  ng-model="tmpBnssView.description" ></textarea>
 					</md-input-container>
 					
+					
+					<md-input-container flex>
+						<label>{{translate.load("sbi.meta.business.relationship.source.business.class.name")}}</label>
+						<md-select ng-model="tmpBnssView.sourceBusinessClass"  >
+							<md-option ng-repeat="bm in businessModel"  ng-value="bm.name" required >
+							{{bm.name}}
+							</md-option>
+						</md-select>
+					</md-input-container>		
+						
 					<angular-table  flex id='newBViewTableColumn'
 					ng-model="physicalModel"
 					columns='bvTableColumns'
@@ -93,7 +103,7 @@
 				{{translate.load("sbi.general.cancel")}}
 			</md-button> 
 			
-			<md-button  ng-if="steps.current==0" ng-click="next()" ng-disabled="tmpBnssView.physicalModels.length==0" >
+			<md-button  ng-if="steps.current==0" ng-click="next()" ng-disabled="!newBVForm.$valid || tmpBnssView.physicalModels.length==0" >
 				{{translate.load("sbi.generic.next")}}
 			</md-button>
 			<md-button ng-if="steps.current==1"  ng-click="back()"  >

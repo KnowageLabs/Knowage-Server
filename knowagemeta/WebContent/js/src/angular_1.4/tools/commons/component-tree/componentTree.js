@@ -1,7 +1,7 @@
 /**
  * @authors Alessio Conese (alessio.conese@eng.it)
  * @authors Benedetto Milazzo (benedetto.milazzo@eng.it)
- * 
+ *
  * N.B. Component in WIP
  */
 
@@ -82,7 +82,8 @@
 								hideProgress : '=?',
 								notHideOnLoad : "=?",
 								interceptor : "=?",
-								expandOnClick : "=?"
+								expandOnClick : "=?",
+								treeRootName : "=?"
 							},
 							controller : componentTreeControllerFunction,
 							controllerAs : 'ctrl',

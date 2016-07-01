@@ -17,7 +17,8 @@ app.service("metaModelServices",function(sbiModule_jsonServices){
 	this.cleanedObserverObject={};
 
 	this.cleanObserverObject=function(){
-		var data=angular.extend({},bms.observerObject)
+		var data={};
+		angular.copy(bms.observerObject,data);
 		for(key in data){
 
 			for(var i=0;i<data[key].length;i++){
@@ -113,15 +114,6 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 
 	$scope.saveModel=function(){
 		var dataToSend={};
-//		dataToSend.datasourceId = $scope.datasourceId;
-//		dataToSend.physicalModels = $scope.physicalModels;
-//		dataToSend.businessModels = $scope.businessModels;
-//		// TODO set model name here
-//		dataToSend.modelName = 'test_model_hard_coded';
-//		dataToSend.physicalModel = $scope.removeCircularDependency(angular.extend([],$scope.physicalModel));
-//		dataToSend.businessModel =  $scope.removeCircularDependency(angular.extend([],$scope.businessModel));
-
-
 		sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", metaModelServices.createRequestRest(dataToSend))
 		.then(
 				function(response) {
@@ -138,8 +130,8 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 	}
 
 	$scope.continueToMeta = function() {
-			if ($scope.businessModels.length == 0) {
-				sbiModule_restServices.errorHandler(sbiModule_translate.load("sbi.meta.model.business.select.required"), "");
+			if ($scope.physicalModels.length == 0) {
+				sbiModule_restServices.errorHandler(sbiModule_translate.load("sbi.meta.model.physical.select.required"), "");
 			} else {
 				$scope.createMeta();
 			}
@@ -171,8 +163,6 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 				.then(
 						function(response) {
 							$scope.steps.current = 1;
-//							angular.copy(response.data.businessModel,$scope.businessModel);
-//							angular.copy(response.data.physicalModel,$scope.physicalModel);
 							angular.copy(response.data,$scope.meta);
 
 							metaModelServices.observe($scope.meta);
