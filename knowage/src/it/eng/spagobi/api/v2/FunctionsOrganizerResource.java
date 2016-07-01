@@ -9,6 +9,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.workspace.dao.IFunctionsOrganizerDAO;
 import it.eng.spagobi.workspace.metadata.SbiFunctionsOrganizer;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -22,6 +23,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 
 @Path("/2.0/organizer/folders")
 @ManageAuthorization
@@ -44,10 +46,34 @@ public class FunctionsOrganizerResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public SbiFunctionsOrganizer createFolder(SbiFunctionsOrganizer folder) throws EMFUserError {
-		foldersOrganizerDAO = DAOFactory.getFunctionsOrganizerDAO();
-		foldersOrganizerDAO.setUserProfile(getUserProfile());
-		SbiFunctionsOrganizer sfo = foldersOrganizerDAO.createFolder(folder);
-		return sfo;
+
+		try {
+
+			foldersOrganizerDAO = DAOFactory.getFunctionsOrganizerDAO();
+			foldersOrganizerDAO.setUserProfile(getUserProfile());
+			SbiFunctionsOrganizer sfo = foldersOrganizerDAO.createFolder(folder);
+			return sfo;
+
+		} catch (HibernateException he) {
+
+			/**
+			 * If the value of the state is 23000, the user is trying to make a duplicate entry. In our case, user is trying to create a new folder with the
+			 * same code value. Inform user about this exception (problem) and throw it to the client side.
+			 *
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			String state = ((SQLException) he.getCause().getCause()).getSQLState();
+
+			if (state.equals("23000")) {
+				logger.error("Duplicate key entry while creating a new folder", he);
+				throw new SpagoBIRuntimeException("sbi.workspace.organizer.folder.error.duplicateentry", he);
+			} else {
+				logger.error("Error saving federation", he);
+				throw new SpagoBIRuntimeException("sbi.workspace.organizer.folder.error.create", he);
+			}
+
+		}
+
 	}
 
 	@DELETE

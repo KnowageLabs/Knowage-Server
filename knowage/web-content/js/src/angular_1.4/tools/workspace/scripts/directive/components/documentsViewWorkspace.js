@@ -221,8 +221,15 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 				$scope.clearForm();
 		        $scope.loadAllFolders();
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
-			}, function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			}, function(response) {	
+				
+				/**
+				 * Added the part of the code for translation of the coded error message that comes from the server side when the creation of 
+				 * new folder is not possible.
+				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
+				
 			});
 			
 		}
