@@ -140,7 +140,10 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 					var urlName=inputParameter[parin].urlName;
 					for(var key in navObj.navigationParams){
 						if(navObj.navigationParams[key].value.isInput==true && angular.equals(navObj.navigationParams[key].value.label,urlName)){
-							respStr[key]=inputParameter[parin].parameterValue;
+							//respStr[key]=inputParameter[parin].parameterValue;
+							respStr[key]=parseInputParameterValue(inputParameter[parin]);
+							
+							
 						}
 					}
 				}
@@ -159,6 +162,23 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			return respStr;
 		};
 		
+		
+		function parseInputParameterValue(param){
+			if(param.type=="DATE" ){
+				//back date server format 
+				return sbiModule_dateServices.formatDate(param.parameterValue, sbiModule_config.serverDateFormat );
+				//return sbiModule_dateServices.getDateFromFormat(value, param.dateFormat)
+				 			
+			}else{
+				return param.parameterValue;
+			}
+			
+		}
+		
+		
+		
+		
+		
 		function parseParameterValue(param,value){
 			//TO-DO verificare i tuipi numerici se sono interi o double 
 			//mettere i try catch
@@ -172,7 +192,9 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			}
 			
 			if(param.inputParameterType=="DATE" || (param.type!=undefined && param.type.valueCd=="DATE")){
-				  return sbiModule_dateServices.getDateFromFormat(value, param.dateFormat)
+				//back date server format 
+				return sbiModule_dateServices.formatDate(sbiModule_dateServices.getDateFromFormat(value, param.dateFormat),sbiModule_config.serverDateFormat );
+				//return sbiModule_dateServices.getDateFromFormat(value, param.dateFormat)
 				 			
 			}
 			if(param.inputParameterType=="NUM" || (param.type!=undefined && param.type.valueCd=="NUM")){

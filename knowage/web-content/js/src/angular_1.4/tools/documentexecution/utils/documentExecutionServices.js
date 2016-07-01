@@ -319,7 +319,7 @@
 	documentExecutionModule.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config,docExecute_exportService
 			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories,$q,$filter,$timeout
-			,docExecute_dependencyService,sbiModule_messaging, $http) {
+			,docExecute_dependencyService,sbiModule_messaging, $http,sbiModule_dateServices ) {
 		
 		var serviceScope = this;	
 //		serviceScope.documentUrl = '';
@@ -531,7 +531,11 @@
 							if(parameter.type=='NUM'){
 								parameter.parameterValue = parseFloat(params[parameter.urlName],10);
 							}else if(parameter.type=='DATE'){
-								parameter.parameterValue= new Date(params[parameter.urlName]);
+								
+								//parameter.parameterValue= new Date(params[parameter.urlName]);
+								//set parameter date server
+								parameter.parameterValue= sbiModule_dateServices.getDateFromFormat(params[parameter.urlName], sbiModule_config.serverDateFormat);
+								 
 							}else if(parameter.type=='DATE_RANGE'){
 								var dateRange = params[parameter.urlName];
 								var dateRangeArr = dateRange.split('_');
