@@ -68,6 +68,11 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 
 	private IDataSet dataSet;
 
+
+	public boolean isFederated(){
+		return true;
+	}
+	
 	@Override
 	public IDataSet getDataSet() {
 		logger.debug("IN");
