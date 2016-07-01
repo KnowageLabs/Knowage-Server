@@ -104,14 +104,18 @@ public class QbeDataSet extends ConfigurableDataSet {
 		// this.setDatamarts(dataSetConfig.getDatamarts());
 		// this.setJsonQuery(dataSetConfig.getJsonQuery());
 
-		IDataSource dataSource = DataSourceFactory.getDataSource(dataSetConfig.getDataSource());
-		this.setDataSource(dataSource);
+		setDatasourceInternal(dataSetConfig);
 
 		// (dataSetConfig.getDataSourcePersist() != null) {
 		// IDataSource dataSourcePersist = DataSourceFactory.getDataSource( dataSetConfig.getDataSourcePersist() ) ;
 		// this.setDataSourcePersist(dataSourcePersist);
 		// }
 
+	}
+	
+	protected void setDatasourceInternal(SpagoBiDataSet dataSetConfig){
+		IDataSource dataSource = DataSourceFactory.getDataSource(dataSetConfig.getDataSource());
+		this.setDataSource(dataSource);
 	}
 
 	public QbeDataSet(AbstractQbeDataSet ds) {

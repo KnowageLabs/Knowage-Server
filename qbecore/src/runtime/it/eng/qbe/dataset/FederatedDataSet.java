@@ -26,9 +26,12 @@ import it.eng.qbe.datasource.dataset.DataSetDriver;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -81,6 +84,15 @@ public class FederatedDataSet extends QbeDataSet {
 			logger.error("Error loading the map dataset->cached dataset table name", e);
 			throw new SpagoBIEngineRuntimeException("Error loading the map dataset->cached dataset table name", e);
 		}
+	}
+	
+	protected void setDatasourceInternal(SpagoBiDataSet dataSetConfig){
+		SpagoBiDataSource ds = dataSetConfig.getDataSource();
+		if(ds==null){
+			ds = dataSetConfig.getDataSourceForReading();
+		}
+		IDataSource dataSource = DataSourceFactory.getDataSource(ds);
+		this.setDataSource(dataSource);
 	}
 
 	public FederatedDataSet(FederationDefinition federation, String userId) {
