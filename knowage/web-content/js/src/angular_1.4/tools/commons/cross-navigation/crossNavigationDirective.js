@@ -16,7 +16,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 		//chartType,documentName, documentParameters, categoryName, categoryValue, serieName, serieValue, groupingCategoryName, groupingCategoryValue, stringParameters
 		this.navigateTo=function(outputParameter,inputParameter,targetDocument,docLabel){
 			 
-			sbiModule_restServices.promiseGet("1.0/crossNavigation",this.crossNavigationSteps.currentDocument.name+"/loadCrossNavigationByDocument")
+			sbiModule_restServices.promiseGet("1.0/crossNavigation",this.crossNavigationSteps.currentDocument.label+"/loadCrossNavigationByDocument")
 			.then(function(response){
 				 
 				var navObj=response.data;
@@ -102,7 +102,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			+ '&OBJECT_NAME=' + doc.document.name
 			+"&CROSS_PARAMETER="+parameterStr
 			;
-			cns.crossNavigationSteps.stepControl.insertBread({name:doc.document.label,id:doc.document.id,url:targetUrl});
+			cns.crossNavigationSteps.stepControl.insertBread({name:doc.document.name,label:doc.document.label,id:doc.document.id,url:targetUrl});
 		};
 		
 		this.responseToStringParameter=function(navObj,outputParameter,inputParameter){

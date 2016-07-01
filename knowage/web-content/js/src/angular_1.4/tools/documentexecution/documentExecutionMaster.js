@@ -67,7 +67,7 @@ $scope.executeSourceDocument = function() {
 		var laodSourceDocToCross=function(){
 			$timeout(function(){
 				if($crossNavigationHelper.crossNavigationSteps.stepControl.insertBread){
-					$crossNavigationHelper.crossNavigationSteps.stepControl.insertBread({name:sourceDocumentExecProperties.OBJECT_LABEL,id:sourceDocumentExecProperties.OBJECT_ID,url:url});
+					$crossNavigationHelper.crossNavigationSteps.stepControl.insertBread({name:sourceDocumentExecProperties.OBJECT_NAME,label:sourceDocumentExecProperties.OBJECT_LABEL,id:sourceDocumentExecProperties.OBJECT_ID,url:url});
 				}else{
 					laodSourceDocToCross();
 				}
