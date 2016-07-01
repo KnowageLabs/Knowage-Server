@@ -37,8 +37,35 @@
 			
 	</list>
 	<extra-list-button>
-		<md-button ng-click="addBusinessModel()">{{translate.load('sbi.meta.new.businessclass')}}</md-button>
-		<md-button ng-if="meta.businessModels.length>0" ng-click="addBusinessView()">{{translate.load('sbi.meta.new.businessview')}}</md-button>
+		
+		
+		<md-menu>
+			<md-button aria-label="Create" class="md-fab" ng-click="$mdOpenMenu($event)">
+			  <md-icon md-menu-origin  md-font-icon="fa fa-plus" class="md-primary"></md-icon>
+			</md-button>
+			<md-menu-content width="4">
+			  <md-menu-item>
+			    <md-button ng-click="addBusinessModel()">
+			      <md-icon md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
+			    	 {{translate.load('sbi.meta.new.businessclass')}}
+			    </md-button>
+			  </md-menu-item>
+			  
+			<md-menu-item ng-if="meta.businessModels.length>0">
+			  <md-button ng-click="addBusinessView()">
+			    <md-icon md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
+					 {{translate.load('sbi.meta.new.businessview')}}
+			  </md-button>
+			</md-menu-item>
+			
+			</md-menu-content>
+	</md-menu>
+		
+		
+		
+		
+		
+		
 	</extra-list-button>
 	
 	<detail label="selectedBusinessModel.name==undefined ? '' : selectedBusinessModel.name "  ng-if="selectedBusinessModel.name!=undefined" >

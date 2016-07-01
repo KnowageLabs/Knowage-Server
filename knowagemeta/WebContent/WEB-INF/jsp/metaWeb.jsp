@@ -124,4 +124,8 @@ md-tabs.md-knowage-theme .md-tab.md-active{
     font-weight: 500;
 }
 
+expander-box{
+background: white;
+}
+
 </style>
