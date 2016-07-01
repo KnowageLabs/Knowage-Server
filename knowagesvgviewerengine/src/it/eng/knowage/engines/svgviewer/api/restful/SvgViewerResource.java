@@ -22,8 +22,12 @@ import it.eng.knowage.engines.svgviewer.api.AbstractSvgViewerEngineResource;
 import it.eng.knowage.engines.svgviewer.map.renderer.Layer;
 import it.eng.knowage.engines.svgviewer.map.renderer.Measure;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.mapcatalogue.bo.GeoMap;
+import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -39,6 +43,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+
+import sun.misc.BASE64Encoder;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -131,6 +137,75 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@Path("/drillMap")
+	@GET
+	@Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
+	public Response drillMap(@QueryParam("level") String level, @QueryParam("name") String name) {
+		logger.debug("IN");
+		try {
+
+			// 1. load the new configuration by the template
+			SourceBean memberSB = getActiveMemberSB(level);
+			if (memberSB == null) {
+				logger.debug("Template dosen't contains configuration about level [" + level + "].");
+				// throw new SpagoBIServiceException("DrillMap", "Template dosen't contains configuration about level [" + level + "].");
+			}
+
+			// 2. load drilled map throught DAO
+			GeoMap drilledMap = DAOFactory.getSbiGeoMapsDAO().loadMapByNameAndLevel(name, level);
+			if (drilledMap == null) {
+				logger.error("SVG with name [" + name + "] and level [" + level + "] doesn't exist into the Map Catalogue.");
+				// throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), null);
+				throw new SpagoBIServiceException("DrillMap", "SVG with name [" + name + "] and level [" + level + "] doesn't exist into the Map Catalogue.");
+			}
+
+			// check the correct member
+			if (!getProperty("name", memberSB).equals(drilledMap.getMemberName())) {
+				logger.error("SVG in catalogue with name [" + name + "] and level [" + level + "] hasn't the required member with name ["
+						+ getProperty("name", memberSB) + "].");
+				throw new SpagoBIServiceException("DrillMap", "SVG in catalogue with name [" + name + "] and level [" + level
+						+ "] hasn't the required member with name [" + getProperty("name", memberSB) + "].");
+			}
+
+			// 3. load drilled dataset
+			String dataset = getProperty("measure_dataset", memberSB);
+
+			// 4. update datamartProvider and mapProvider objects
+			getEngineInstance().getDataMartProvider().setSelectedMemberName(getProperty("name", memberSB));
+			getEngineInstance().getDataMartProvider().setSelectedLevel(level);
+			getEngineInstance().getDataMartProvider().getDataMart().setTargetFeatureName(getProperty("name", memberSB));
+
+			// 5. return the new SVG
+			byte[] template = DAOFactory.getBinContentDAO().getBinContent(drilledMap.getBinId());
+
+			if (template == null) {
+				logger.error("Template map is empty. Try uploadyng the svg.");
+				throw new SpagoBIServiceException("DrillMap", "Template map is empty. Try uploadyng the svg.");
+			}
+			BASE64Encoder bASE64Encoder = new BASE64Encoder();
+			Content content = new Content();
+			content.setContent(bASE64Encoder.encode(template));
+			logger.debug("template read");
+			content.setFileName(name + ".svg");
+
+			// File maptmpfile = getEngineInstance().renderMap("dsvg", level);
+			// byte[] data = Files.readAllBytes(maptmpfile.toPath());
+			//
+			// ResponseBuilder response = Response.ok(data);
+			// response.header("Content-Disposition", "inline; filename=map.svg");
+			// return response.build();
+
+			ResponseBuilder response = Response.ok("Servizio terminato correttamente... ma è da finire!!! :D");
+			return response.build();
+
+		} catch (Exception e) {
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+		} finally {
+			logger.debug("OUT");
+		}
+
 	}
 
 	/** Utility methods ******************************************************************************************************/
@@ -263,23 +338,26 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		List members = hierarchySB.getAttributeAsList(SvgViewerEngineConstants.MEMBER_TAG);
 
 		for (int i = 1; i <= members.size(); i++) {
-			if (i == actualLevel + 1) {
+			if (i == actualLevel) {
 				logger.debug("Parsing member  [" + i + "]");
 				toReturn = (SourceBean) members.get(i - 1);
 				break;
 			}
 		}
-		// @TODO gestire caso in cui non esiste il membro con il livello cercato
 		return toReturn;
 	}
 
 	private Integer getLevel(String actualLevelStr) {
 
 		// String actualLevelStr = (String) req.getAttribute("level");
-		Integer actualLevel = 0; // default is the first level
+		Integer actualLevel = 1; // default is the first level
 		if (actualLevelStr != null)
 			actualLevel = Integer.valueOf(actualLevelStr);
 
 		return actualLevel;
+	}
+
+	private String getProperty(String key, SourceBean memberSB) {
+		return (String) memberSB.getAttribute(key);
 	}
 }
