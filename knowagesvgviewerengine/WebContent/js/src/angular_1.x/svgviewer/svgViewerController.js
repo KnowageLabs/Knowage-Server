@@ -5,11 +5,10 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	    $mdThemingProvider.setDefaultTheme('knowage');
 	}]);
 
-app.controller('SvgViewerController', ['$scope','sbiModule_restServices','$mdSidenav','sbiModule_logger','$window',SvgViewerControllerFunction] );
+app.controller('SvgViewerController', ['$scope','sbiModule_restServices','$mdSidenav','sbiModule_logger','$window','sbiModule_config','$rootScope',SvgViewerControllerFunction] );
 		
-function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,sbiModule_logger,$window)	{
+function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,sbiModule_logger,$window,sbiModule_config,$rootScope)	{
   $scope.isSidenavOpen = false;
-  $scope.layerSelected = true;
     
   $scope.openSideNav = function() {
     $mdSidenav('svgSideNav').toggle();
@@ -24,6 +23,11 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  $scope.getLegendColors();
 	});
   
+  $window.document.addEventListener("SVGElementClicked", function(e) {
+	  
+	  //alert("Clicked element with id "+e.detail);  
+	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drawMap";
+	});
   
   /**
    * Loads the measures list with a REST service
@@ -61,6 +65,11 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 				  if (data.hasOwnProperty("errors")) {
 					  sbiModule_logger.log("layers not retrivied");
 				  } else {
+					  
+					  for (var key in data) {
+						  //force all layers to be selected by default
+						  data[key].selected = true;
+					  }
 					  $scope.layers = data;
 					  sbiModule_logger.trace("layers correctly retrivied",data);		
 

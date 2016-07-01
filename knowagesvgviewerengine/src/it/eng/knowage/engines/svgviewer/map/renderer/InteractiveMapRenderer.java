@@ -1132,7 +1132,17 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 			Element featureElement = (Element) tmpMap.get("path");
 			// linkElement.appendChild(featureElement);
-			featureElement.setAttribute("onclick", (String) tmpMap.get("link"));
+
+			if (featureElement.hasAttribute("style")) {
+				String elementStyle = featureElement.getAttribute("style");
+				elementStyle = elementStyle + ";cursor:pointer";
+				featureElement.setAttribute("style", elementStyle);
+			} else {
+				featureElement.setAttribute("style", "cursor:pointer");
+			}
+
+			String elementId = featureElement.getAttribute("id");
+			featureElement.setAttribute("onclick", "javascript:clickedElement('" + elementId + "')");
 
 			targetLayer.appendChild(featureElement);
 			Node lf = map.createTextNode("\n");

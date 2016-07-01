@@ -64,7 +64,7 @@
 			           	<span layout-padding>Layers</span>	           
 			           </md-toolbar>
 					   <div layout="row" layout-wrap layout-padding>
-						    <md-checkbox class="noPadding" flex="100" ng-model="layerSelected"  ng-repeat="(key,prop) in layers track by $index" ng-click="changeSelectedLayer(prop.name,!layerSelected)">
+						    <md-checkbox class="noPadding" flex="100" ng-model="prop.selected"  ng-repeat="(key,prop) in layers track by $index" ng-click="changeSelectedLayer(prop.name,!prop.selected)">
 						      	{{prop.description}}                 
 						     </md-checkbox>     
 					    </div>			    
