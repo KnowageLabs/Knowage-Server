@@ -127,9 +127,9 @@ public class MetaService {
 			}
 
 			// TODO Check if this is still needed
-			JSONObject jsonModel = createJson(model);
-			JsonNode actualJson = mapper.readTree(jsonModel.toString());
-			applyRelationships(actualJson, model);
+			// JSONObject jsonModel = createJson(model);
+			// JsonNode actualJson = mapper.readTree(jsonModel.toString());
+			// applyRelationships(actualJson, model);
 
 			// TODO save sbimodel to db
 			serializer.serialize(model, new File("c:\\test.sbimodel_new.txt"));
@@ -237,6 +237,9 @@ public class MetaService {
 			JSONObject relationships = json.getJSONObject("relationships");
 			JSONArray physicaltables = json.getJSONArray("physicaltable");
 
+			String sourceBusinessClass = json.getString("sourceBusinessClass");
+			BusinessTable mainBT = model.getBusinessModels().get(0).getBusinessTableByUniqueName(sourceBusinessClass);
+
 			BusinessModel bm = model.getBusinessModels().get(0);
 			BusinessView bw = BusinessModelFactory.eINSTANCE.createBusinessView();
 			bw.setModel(bm);
@@ -244,10 +247,18 @@ public class MetaService {
 			bw.setName(name);
 			bw.setDescription(description);
 
+			bw.getColumns().addAll(mainBT.getColumns());
+
 			for (int i = 0; i < physicaltables.length(); i++) {
 				String ptName = physicaltables.getString(i);
 				PhysicalTable pt = model.getPhysicalModels().get(0).getTable(ptName);
 				bw.getPhysicalTables().add(pt);
+				for (PhysicalColumn pc : pt.getColumns()) {
+					SimpleBusinessColumn sbc = BusinessModelFactory.eINSTANCE.createSimpleBusinessColumn();
+					sbc.setPhysicalColumn(pc);
+					System.out.println("colname:" + sbc.isIdentifier());
+					bw.getSimpleBusinessColumns().add(sbc);
+				}
 			}
 			// Creating relationship
 			BusinessViewInnerJoinRelationship bvRel = BusinessModelFactory.eINSTANCE.createBusinessViewInnerJoinRelationship();
@@ -351,6 +362,7 @@ public class MetaService {
 			sbc.setPhysicalColumn(pt.getColumn(colName));
 			sbc.setTable(bt);
 			new BusinessModelInitializer().getPropertiesInitializer().addProperties(bc);
+			new BusinessModelInitializer().getPropertiesInitializer().addProperties(sbc);
 		}
 
 	}
