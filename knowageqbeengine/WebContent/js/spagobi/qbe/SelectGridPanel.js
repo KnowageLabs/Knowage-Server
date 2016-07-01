@@ -849,46 +849,57 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 			checked: false,
 			boxLabel: LN('sbi.qbe.selectgridpanel.buttons.text.distinct')
 		});
-		
-		this.toolbar = new Ext.Toolbar({
-			items: [
-			  this.distinctCheckBox,'-',
-			 {
+		var common1 =[ this.distinctCheckBox,'-'];
+		var cc = [ {
 		        text: LN('sbi.qbe.selectgridpanel.buttons.text.add'),
-		        tooltip: LN('sbi.qbe.selectgridpanel.buttons.tt.add'),
-		        iconCls:'option',
-		        hidden: (this.enableTbAddCalculatedBtn === false),
-		        listeners: {
-				  'click': {
-					fn: function(){this.showInLineCalculatedFieldWizard(null);},
-					scope: this
-				  }
-		        }
-		     },'-',{
-	            text: LN('sbi.qbe.selectgridpanel.buttons.text.hide'),
-	            tooltip: LN('sbi.qbe.selectgridpanel.buttons.tt.hide'),
-	            hidden: (this.enableTbHideNonvisibleBtn === false),
-	            enableToggle: true,
-	            iconCls:'option',
-	            listeners: {
-	            	'toggle': {
- 						fn: this.hideNonVisibleRows,
- 						scope: this
- 					}
-	            }
-	          },'-',{
-	            text: LN('sbi.qbe.selectgridpanel.buttons.text.deleteall'),
-	            tooltip: LN('sbi.qbe.selectgridpanel.buttons.tt.deleteall'),
-	            hidden: (this.enableTbDeleteAllBtn === false),
-	            iconCls:'remove',
-	            listeners: {
-	            	'click': {
- 						fn: this.deleteFields,
- 						scope: this
- 					}
-	            }
-	        }]
-		});
+ 		        tooltip: LN('sbi.qbe.selectgridpanel.buttons.tt.add'),
+ 		        iconCls:'option',
+ 		        hidden: (this.enableTbAddCalculatedBtn === false),
+ 		        listeners: {
+ 				  'click': {
+ 					fn: function(){this.showInLineCalculatedFieldWizard(null);},
+ 					scope: this
+ 				  }
+ 		        }
+ 		     },'-'];
+		var common2 = [
+			   			 
+			 			{
+			 	            text: LN('sbi.qbe.selectgridpanel.buttons.text.hide'),
+			 	            tooltip: LN('sbi.qbe.selectgridpanel.buttons.tt.hide'),
+			 	            hidden: (this.enableTbHideNonvisibleBtn === false),
+			 	            enableToggle: true,
+			 	            iconCls:'option',
+			 	            listeners: {
+			 	            	'toggle': {
+			  						fn: this.hideNonVisibleRows,
+			  						scope: this
+			  					}
+			 	            }
+			 	          },'-',{
+			 	            text: LN('sbi.qbe.selectgridpanel.buttons.text.deleteall'),
+			 	            tooltip: LN('sbi.qbe.selectgridpanel.buttons.tt.deleteall'),
+			 	            hidden: (this.enableTbDeleteAllBtn === false),
+			 	            iconCls:'remove',
+			 	            listeners: {
+			 	            	'click': {
+			  						fn: this.deleteFields,
+			  						scope: this
+			  					}
+			 	            }
+			 	        }];
+		
+		if(Sbi.config.isFromFederation){
+			this.toolbar = new Ext.Toolbar({
+				items: common1.concat(common2)
+			});
+		}else{
+			this.toolbar = new Ext.Toolbar({
+				items: common1.concat(cc).concat(common2)
+			});
+		}
+		
+		
 	}
 	
 

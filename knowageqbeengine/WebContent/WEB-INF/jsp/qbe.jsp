@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- 
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
+<%@page import="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineFromFederationStartAction"%>
 <%@page import="it.eng.qbe.datasource.jpa.JPADataSource"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=UTF-8" 
@@ -82,6 +83,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	}
 	isPowerUser = profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY);
 	
+	boolean isFromFederation = (Boolean)ResponseContainer.getResponseContainer().getServiceResponse().getAttribute("IS_FEDERATED");
+
 	qbeEngineConfig = QbeEngineConfig.getInstance();
     
 	
@@ -144,6 +147,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			Sbi.config.crosstabCellLimit = <%= crosstabCellLimit %>;
 			Sbi.config.crosstabCalculatedFieldsDecimalePrecison = <%= crosstabCalculatedFieldsDecimalePrecison %>;
 			Sbi.config.contextName = '<%= spagobiContext %>';
+			Sbi.config.isFromFederation = <%= isFromFederation %>;
 			
 			var url = {
 		    	host: '<%= request.getServerName()%>'

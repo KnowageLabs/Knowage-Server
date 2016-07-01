@@ -55,6 +55,8 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
 	public static final String REGISTRY_CONFIGURATION = "REGISTRY_CONFIGURATION";
 
+		public static final String IS_FEDERATED = "IS_FEDERATED";
+
 	/** Logger component. */
 	private static transient Logger logger = Logger.getLogger(QbeEngineStartAction.class);
 
@@ -125,27 +127,6 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 				JSONObject registryConfJSON = serializer.serialize(registryConf);
 				setAttribute(REGISTRY_CONFIGURATION, registryConfJSON);
 
-				// add also serialization of drivers values
-				// List<RegistryConfiguration.Filter> filters = registryConf.getFilters();
-				//
-				// String driversStringToPass = "";
-				// for (Iterator iterator = filters.iterator(); iterator.hasNext();) {
-				// RegistryConfiguration.Filter filter = (RegistryConfiguration.Filter) iterator.next();
-				// if(filter.getPresentationType().equals(RegistryConfigurationXMLParser.PRESENTATION_TYPE_DRIVER)){
-				// String driverName = filter.getDriverName();
-				//
-				// Object values = getAttributeAsList(driverName);
-				// setAttribute(driverName, values);
-				// driversStringToPass+=driverName+": "+values+",";
-				// }
-				// }
-				// if(driversStringToPass.endsWith(",")) {
-				// int length = driversStringToPass.length();
-				// driversStringToPass = driversStringToPass.substring(0, length-1 );
-				// }
-				// if(!driversStringToPass.equals(""))setAttribute("ANALYTICAL_DRIVERS", driversStringToPass);
-				//
-
 			} else {
 				logger.debug("Qbe document");
 				getServiceResponse().setAttribute("DOCTYPE", "QBE");
@@ -182,6 +163,9 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 			setAttribute(LANGUAGE, locale.getLanguage());
 			setAttribute(COUNTRY, locale.getCountry());
 
+			
+			setAttribute(IS_FEDERATED, isFederated());
+
 		} catch (Throwable e) {
 			SpagoBIEngineStartupException serviceException = null;
 
@@ -207,6 +191,11 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 
 	}
 
+	
+	public boolean isFederated(){
+		return false;
+	}
+	
 	public Map addDatasetsToEnv() {
 		Map env = getEnv();
 		return env;
