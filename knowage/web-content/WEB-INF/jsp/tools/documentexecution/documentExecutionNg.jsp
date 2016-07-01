@@ -256,14 +256,14 @@ if(executionRoleNames.size() > 0) {
 								<%} %>
 								
 								<span class="divider">{{translate.load("sbi.execution.executionpage.toolbar.shortcuts")}}</span>
-					            
+					             <!-- 
 					            <%
 									/*
 										Disable the "Add to workspace" option from the drop-down menu when the document is executed (three dots icon in the second toolbar)
 										when the user is admin or superadmin, since those two roles cannot have their own workspace.
 										@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-									*/
-					            	if(!(isAdmin==true || isSuperAdmin==true)) {
+									
+					            	if(!(isAdmin==true || isSuperAdmin==true)) {*/
 								%>
 						            <md-menu-item class="md-indent">
 						                <md-icon class="fa fa-suitcase"></md-icon>
@@ -272,9 +272,9 @@ if(executionRoleNames.size() > 0) {
 					            			{{translate.load('sbi.execution.executionpage.toolbar.savemyworkspace')}}
 						                </md-button>
 						            </md-menu-item>
-					            <% } %>
+					            <% /*}*/ %>
 					            
-					            <!--  
+					            
 					            <md-menu-item class="md-indent">
 					                <md-icon class="fa fa-heart"></md-icon>
 					            	<md-button ng-disabled="false" class="toolbar-button-custom" ng-click="urlViewPointService.openFavoriteDefinitionForm()"
