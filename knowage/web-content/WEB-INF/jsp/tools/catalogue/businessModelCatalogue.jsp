@@ -155,12 +155,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       				
       				<% if(isAdmin || isTec){ %>
       				
-      				 <md-button ng-if="metaWebFunctionality" class="md-raised" aria-label="Profile" ng-click="createBusinessModels()" ng-disabled="selectedBusinessModel.dataSourceLabel==undefined">
-						Meta web
+      				<md-button ng-if="metaWebFunctionality" class="md-raised" aria-label="Profile" ng-click="createBusinessModels()" ng-disabled="selectedBusinessModel.dataSourceLabel==undefined">
+						{{translate.load("sbi.bm.metaweb")}}
 					</md-button>
 					
-					<md-input-container flex>
-			          <md-switch ng-model="metaWebFunctionality" >{{translate.load("enable.meta.web")}}</md-switch>
+					<md-input-container ng-show="selectedBusinessModel.id!=undefined" flex>
+			          <md-switch ng-model="metaWebFunctionality" >{{translate.load("sbi.bm.metaweb.enable")}}</md-switch>
 			        </md-input-container>
 					<%} %>
       				

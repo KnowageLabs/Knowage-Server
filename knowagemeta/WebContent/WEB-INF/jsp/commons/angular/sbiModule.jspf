@@ -1,7 +1,7 @@
 
 
 <script>
-var sbiM=angular.module('sbiModule',[]);
+var sbiM=angular.module('sbiModule',["ngSanitize"]);
 
 // sbiM.config(function($mdThemingProvider) {
 // 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
@@ -413,7 +413,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		
 		var alert = $mdDialog.confirm()
 		.title(titleFin)
-		.content(textFin)
+		.htmlContent(textFin)
 		.ariaLabel('error') 
 		.ok(sbiModule_translate.load('sbi.general.ok'))
 		return $mdDialog.show(alert); //can use the finally function

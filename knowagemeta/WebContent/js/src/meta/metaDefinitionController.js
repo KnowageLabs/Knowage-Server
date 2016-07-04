@@ -114,6 +114,8 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 
 	$scope.saveModel=function(){
 		var dataToSend={};
+		dataToSend.name=bmName;
+		dataToSend.id=bmId;
 		sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", metaModelServices.createRequestRest(dataToSend))
 		.then(
 				function(response) {

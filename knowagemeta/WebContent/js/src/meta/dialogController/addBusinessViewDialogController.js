@@ -49,6 +49,7 @@ function addBusinessViewController($scope,sbiModule_restServices,sbiModule_trans
 	var tmpData={};
 	tmpData.name=$scope.tmpBnssView.name;
 	tmpData.description=$scope.tmpBnssView.description;
+	tmpData.sourceBusinessClass=$scope.tmpBnssView.sourceBusinessClass;
 	tmpData.physicaltable=[];
 	tmpData.relationships={};
 

@@ -683,7 +683,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					escapeToClose :true,
 					fullscreen: true,
 //					locals:{url:sbiModule_config.contextName+'/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp&datasourceId='+dsId}
-					locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId}
+					locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name}
 				});
 			}
 };

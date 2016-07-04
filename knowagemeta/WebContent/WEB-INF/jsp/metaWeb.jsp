@@ -33,10 +33,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <%
 String datasourceId= request.getParameter("datasourceId");
+String bmName= request.getParameter("bmName");
+String bmId= request.getParameter("bmId");
 %>
 
 <script> 
 var datasourceId='<%= datasourceId%>';
+var bmId='<%= bmId%>';
+var bmName='<%= bmName%>';
 </script>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>meta Definition</title>
@@ -50,6 +54,10 @@ var datasourceId='<%= datasourceId%>';
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/addBusinessViewDialogController.js"></script>
 </head>
 <body ng-controller="metaDefinitionController" layout="column" ng-switch on="steps.current">
+
+<div loading ng-show="showEl" layout-fill style="position:fixed;z-index: 500;background:rgba(0,0,0, 0.3);">
+	<md-progress-circular  md-mode="indeterminate" style="top:50%;left:50%" ></md-progress-circular>
+</div>
 	<md-toolbar>
 		<h1 class="md-toolbar-tools" layout="row">
 			<span flex>{{translate.load("sbi.meta.definition")}}</span>
