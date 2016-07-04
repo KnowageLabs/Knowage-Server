@@ -66,14 +66,14 @@ public interface ISbiGeoMapsDAO extends ISpagoBIDao {
 	 * Loads all detail information for map whose level is equal to <code>level</code> and name is equal <code>name</code>.
 	 *
 	 * @param name
-	 *            The name for the map to load
+	 *            The member for the map to load
 	 * @param level
 	 *            The level for the map to load
 	 * @return An <code>map</code> object containing all loaded information
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public GeoMap loadMapByNameAndLevel(String name, String level) throws EMFUserError;
+	public GeoMap loadMapByMemberAndLevel(String member, String level) throws EMFUserError;
 
 	/**
 	 * Loads all detail information for all maps. For each of them, detail information is stored into an <code>map</code> object. After that, all maps are
