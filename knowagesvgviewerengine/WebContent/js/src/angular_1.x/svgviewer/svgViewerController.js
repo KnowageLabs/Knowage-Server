@@ -26,7 +26,8 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   $window.document.addEventListener("SVGElementClicked", function(e) {
 	  
 	  //alert("Clicked element with id "+e.detail);  
-	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drawMap";
+	  //TODO: to change
+	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?name=map_room&level=2";
 	});
   
   /**
