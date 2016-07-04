@@ -49,7 +49,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 
 /**
- * @author giachino
+ * @author giachino antonella
  *
  */
 public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoMapsDAO {
@@ -149,10 +149,10 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 	}
 
 	/**
-	 * Load map by member and level.
+	 * Load map by name and level.
 	 *
-	 * @param member
-	 *            the member
+	 * @param name
+	 *            the name
 	 *
 	 * @param level
 	 *            the level
@@ -165,7 +165,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 	 * @see it.eng.spagobi.mapcatalogue.dao.geo.bo.dao.ISbiGeoMapsDAO#loadMapByNameLevel(string)
 	 */
 	@Override
-	public GeoMap loadMapByMemberAndLevel(String member, String level) throws EMFUserError {
+	public GeoMap loadMapByNameAndLevel(String name, String level) throws EMFUserError {
 		GeoMap biMap = null;
 		Session tmpSession = null;
 		Transaction tx = null;
@@ -173,15 +173,15 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			Query hqlQuery = tmpSession.createQuery(" from SbiGeoMaps m " + "where m.memberName = :member " + "and m.level = :level");
+			Query hqlQuery = tmpSession.createQuery(" from SbiGeoMaps m " + "where m.name = :name " + "and m.level = :level");
 
-			hqlQuery.setString("member", member);
+			hqlQuery.setString("name", name);
 			hqlQuery.setInteger("level", Integer.valueOf(level));
 
 			SbiGeoMaps hibMap = (SbiGeoMaps) hqlQuery.uniqueResult();
 
 			if (hibMap == null) {
-				logger.error("SVG with name [" + member + "] and level [" + level + "] non found in catalogue. ");
+				logger.error("SVG with name [" + name + "] and level [" + level + "] non found in catalogue. ");
 				return null;
 			}
 			biMap = hibMap.toGeoMap();
