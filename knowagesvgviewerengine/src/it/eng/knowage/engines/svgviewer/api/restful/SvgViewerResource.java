@@ -142,7 +142,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	@Path("/drillMap")
 	@GET
 	@Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
-	public Response drillMap(@QueryParam("level") String level, @QueryParam("name") String name) {
+	public Response drillMap(@QueryParam("level") String level, @QueryParam("member") String member) {
 		logger.debug("IN");
 		try {
 
@@ -154,19 +154,12 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			}
 
 			// 2. load drilled map throught DAO
-			GeoMap drilledMap = DAOFactory.getSbiGeoMapsDAO().loadMapByNameAndLevel(name, level);
+			GeoMap drilledMap = DAOFactory.getSbiGeoMapsDAO().loadMapByMemberAndLevel(member, level);
 			if (drilledMap == null) {
-				logger.error("SVG with name [" + name + "] and level [" + level + "] doesn't exist into the Map Catalogue.");
+				logger.error("SVG with name [" + member + "] and level [" + level + "] doesn't exist into the Map Catalogue.");
 				// throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), null);
-				throw new SpagoBIServiceException("DrillMap", "SVG with name [" + name + "] and level [" + level + "] doesn't exist into the Map Catalogue.");
-			}
-
-			// check the correct member
-			if (!getProperty("name", memberSB).equals(drilledMap.getMemberName())) {
-				logger.error("SVG in catalogue with name [" + name + "] and level [" + level + "] hasn't the required member with name ["
-						+ getProperty("name", memberSB) + "].");
-				throw new SpagoBIServiceException("DrillMap", "SVG in catalogue with name [" + name + "] and level [" + level
-						+ "] hasn't the required member with name [" + getProperty("name", memberSB) + "].");
+				throw new SpagoBIServiceException("DrillMap", "SVG with member name [" + member + "] and level [" + level
+						+ "] doesn't exist into the Map Catalogue.");
 			}
 
 			// 3. load drilled dataset
@@ -188,7 +181,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			Content content = new Content();
 			content.setContent(bASE64Encoder.encode(template));
 			logger.debug("template read");
-			content.setFileName(name + ".svg");
+			content.setFileName(member + ".svg");
 
 			// File maptmpfile = getEngineInstance().renderMap("dsvg", level);
 			// byte[] data = Files.readAllBytes(maptmpfile.toPath());
