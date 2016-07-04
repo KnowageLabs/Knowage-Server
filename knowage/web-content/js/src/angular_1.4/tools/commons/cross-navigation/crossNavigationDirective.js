@@ -165,8 +165,12 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 		
 		function parseInputParameterValue(param){
 			if(param.type=="DATE" ){
-				//back date server format 
-				return sbiModule_dateServices.formatDate(param.parameterValue, sbiModule_config.serverDateFormat );
+				//back date server format
+				if(param.parameterValue!=''){
+					return sbiModule_dateServices.formatDate(param.parameterValue, sbiModule_config.serverDateFormat );
+				}else{
+					return '';
+				}
 				//return sbiModule_dateServices.getDateFromFormat(value, param.dateFormat)
 				 			
 			}else{
