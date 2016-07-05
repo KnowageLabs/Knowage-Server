@@ -30,14 +30,14 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  //alert("Clicked element with id "+e.detail);  
 	  //TODO: to change
 	  $scope.currentLevel = $scope.currentLevel +1;
-	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?name=map_room&level="+$scope.currentLevel;
+	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?name="+e.detail+"&level="+$scope.currentLevel;
 	});
   
   /**
    * Loads the measures list with a REST service
    * */
   $scope.getMeasures = function(){
-	  sbiModule_restServices.get("1.0/svgviewer", 'getMeasures').success(
+	  sbiModule_restServices.get("1.0/svgviewer", 'getMeasures','level='+$scope.currentLevel).success(
 			  function(data, status, headers, config) {
 				  if (data.hasOwnProperty("errors")) {
 					  sbiModule_logger.log("measures not retrivied");
@@ -64,7 +64,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
    * Loads the measures list with a REST service
    * */
   $scope.getLayers = function(){
-	  sbiModule_restServices.get("1.0/svgviewer", 'getLayers').success(
+	  sbiModule_restServices.get("1.0/svgviewer", 'getLayers','level='+$scope.currentLevel).success(
 			  function(data, status, headers, config) {
 				  if (data.hasOwnProperty("errors")) {
 					  sbiModule_logger.log("layers not retrivied");
