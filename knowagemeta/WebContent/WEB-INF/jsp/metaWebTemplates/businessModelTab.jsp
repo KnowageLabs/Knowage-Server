@@ -16,29 +16,28 @@
 				tree-root-name="translate.load('sbi.meta.businessclass')"
 			></component-tree>
 
-<!-- 
-				click-function="selectBusinessModel(node)"
-				is-folder-fn="businessModel_isFolder(node)"
-				folder-icon-fn="businesslModel_getlevelIcon(node)"
-				open-folder-icon-fn="businesslModel_getlevelIcon(node)"
-				interceptor="businessModelTreeInterceptor"
 
- -->
 		<component-tree id="bvmTree"  style="margin:0px" ng-show="meta.businessViews.length>0"
 				ng-model="meta.businessViews"
 				highlights-selected-item="true"   
 				subnode-key="columns" 
 				hide-progress=true
-				not-hide-on-load = true
+				interceptor="businessViewTreeInterceptor"
 				static-tree=true
+				not-hide-on-load = true
 				expand-on-click=false
+				click-function="selectBusinessModel(node)"
+				is-folder-fn="businessModel_isFolder(node)"
+				folder-icon-fn="businesslModel_getlevelIcon(node)"
+				open-folder-icon-fn="businesslModel_getlevelIcon(node)"
 				tree-root-name="translate.load('sbi.meta.businessview')"
 			></component-tree>
 			
 	</list>
+	
+	
+	
 	<extra-list-button>
-		
-		
 		<md-menu>
 			<md-button aria-label="Create" class="md-fab" ng-click="$mdOpenMenu($event)">
 			  <md-icon md-menu-origin  md-font-icon="fa fa-plus" class="md-primary"></md-icon>
@@ -61,14 +60,11 @@
 			</md-menu-content>
 	</md-menu>
 		
-		
-		
-		
-		
-		
 	</extra-list-button>
 	
+	
 	<detail label="selectedBusinessModel.name==undefined ? '' : selectedBusinessModel.name "  ng-if="selectedBusinessModel.name!=undefined" >
+	
 		<md-tabs flex>
 			<md-tab id="propertiestab" label="{{translate.load('sbi.udp.udpList')}}">
 				<md-content layout="column" ng-controller="businessModelPropertyController">
@@ -147,5 +143,12 @@
 		</md-tabs>
 		
 	</detail>
+	<extra-button ng-if="selectedBusinessModel.name!=undefined">
+		<md-button ng-click="deleteCurrentBusiness()">
+				<md-icon md-font-icon="fa fa-trash" class=""></md-icon>
+				{{translate.load('sbi.generic.delete')}}
+		</md-button>
+	</extra-button>
+	
 </angular-list-detail>
 

@@ -52,12 +52,16 @@ var bmName='<%= bmName%>';
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/metaModelDefinitionController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/addBusinessModelDialogController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/addBusinessViewDialogController.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/refreshPhysicalModelController.js"></script>
 </head>
 <body ng-controller="metaDefinitionController" layout="column" ng-switch on="steps.current">
 
-<div loading ng-show="showEl" layout-fill style="position:fixed;z-index: 500;background:rgba(0,0,0, 0.3);">
-	<md-progress-circular  md-mode="indeterminate" style="top:50%;left:50%" ></md-progress-circular>
-</div>
+<!-- <div loading  layout-fill style="position:fixed;z-index: 500;background:rgba(0,0,0, 0.3);"> -->
+<!-- 	<md-progress-circular  md-mode="indeterminate" style="top:50%;left:50%" ></md-progress-circular> -->
+<!-- </div> -->
+
+<rest-loading></rest-loading>
+
 	<md-toolbar>
 		<h1 class="md-toolbar-tools" layout="row">
 			<span flex>{{translate.load("sbi.meta.definition")}}</span>
@@ -120,7 +124,7 @@ angular-table#datasourceStructureListTable .centerHeadText{
 color: gold !important;
 }
 
-component-tree#bcmTree>div , component-tree#pmTree>div{
+component-tree#bcmTree>div ,component-tree#bvmTree>div , component-tree#pmTree>div{
 margin:20px;
 }
 

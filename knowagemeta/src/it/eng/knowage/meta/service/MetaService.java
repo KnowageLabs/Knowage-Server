@@ -3,6 +3,7 @@ package it.eng.knowage.meta.service;
 import it.eng.knowage.meta.generator.jpamapping.JpaMappingJarGenerator;
 import it.eng.knowage.meta.initializer.BusinessModelInitializer;
 import it.eng.knowage.meta.initializer.PhysicalModelInitializer;
+import it.eng.knowage.meta.initializer.properties.PhysicalModelPropertiesFromFileInitializer;
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelFactory;
 import it.eng.knowage.meta.model.ModelPropertyType;
@@ -30,6 +31,7 @@ import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -38,6 +40,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,6 +50,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -245,6 +249,8 @@ public class MetaService {
 			bw.setModel(bm);
 			model.getBusinessModels().get(0).getBusinessViews().add(bw);
 			bw.setName(name);
+			// TO-DO generate real unique name
+			bw.setUniqueName("uniq-" + name);
 			bw.setDescription(description);
 
 			bw.getColumns().addAll(mainBT.getColumns());
@@ -256,7 +262,7 @@ public class MetaService {
 				for (PhysicalColumn pc : pt.getColumns()) {
 					SimpleBusinessColumn sbc = BusinessModelFactory.eINSTANCE.createSimpleBusinessColumn();
 					sbc.setPhysicalColumn(pc);
-					System.out.println("colname:" + sbc.isIdentifier());
+					// System.out.println("colname:" + sbc.isIdentifier());
 					bw.getSimpleBusinessColumns().add(sbc);
 				}
 			}
@@ -332,6 +338,90 @@ public class MetaService {
 			e.printStackTrace();
 		}
 		return Response.serverError().build();
+	}
+
+	@POST
+	@Path("/deleteBusinessClass")
+	public Response deleteBusinessClass(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
+
+		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		JSONObject oldJsonModel = createJson(model);
+
+		ObjectMapper mapper = new ObjectMapper();
+		if (jsonRoot.has("diff")) {
+			JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
+			applyPatch(patch, model);
+		}
+
+		JSONObject json = jsonRoot.getJSONObject("data");
+		String bmName = json.getString("name");
+		model.getBusinessModels().get(0).deleteBusinessTableByUniqueName(bmName);
+
+		JSONObject jsonModel = createJson(model);
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+
+		return Response.ok(patch.toString()).build();
+
+	}
+
+	@POST
+	@Path("/deleteBusinessView")
+	public Response deleteBusinessView(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
+		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		JSONObject oldJsonModel = createJson(model);
+
+		ObjectMapper mapper = new ObjectMapper();
+		if (jsonRoot.has("diff")) {
+			JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
+			applyPatch(patch, model);
+		}
+
+		JSONObject json = jsonRoot.getJSONObject("data");
+		String bmName = json.getString("name");
+		model.getBusinessModels().get(0).deleteBusinessViewByUniqueName(bmName);
+
+		JSONObject jsonModel = createJson(model);
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+
+		return Response.ok(patch.toString()).build();
+	}
+
+	@GET
+	@Path("/updatePhysicalModel")
+	public Response updatePhysicalModel(@Context HttpServletRequest req) throws ClassNotFoundException, NamingException, SQLException, JSONException {
+		PhysicalModelInitializer physicalModelInitializer = new PhysicalModelInitializer();
+		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+
+		PhysicalModel phyMod = model.getPhysicalModels().get(0);
+		DataSource dataSource = new DataSource();
+		dataSource.setLabel(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME).getValue());
+		dataSource.setUrlConnection(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL).getValue());
+		dataSource.setDriver(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER).getValue());
+		dataSource.setUser(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME).getValue());
+		dataSource.setPwd(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD).getValue());
+		dataSource.setHibDialectClass("");
+		dataSource.setHibDialectName("");
+		dataSource.getConnection();
+		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
+		List<String> missingColumns = physicalModelInitializer.getMissingColumnsNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
+		List<String> removingItems = physicalModelInitializer.getRemovedTablesAndColumnsNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
+		JSONObject resp = new JSONObject();
+		resp.put("missingTables", new JSONArray(JsonConverter.objectToJson(missingTables, missingTables.getClass())));
+		resp.put("missingColumns", new JSONArray(JsonConverter.objectToJson(missingColumns, missingColumns.getClass())));
+		resp.put("removingItems", new JSONArray(JsonConverter.objectToJson(removingItems, removingItems.getClass())));
+		return Response.ok(resp.toString()).build();
+	}
+
+	@POST
+	@Path("/updatePhysicalModel")
+	public Response applyUpdatePhysicalModel(@Context HttpServletRequest req) throws ClassNotFoundException, NamingException, SQLException, JSONException,
+			IOException {
+		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
+		List<String> tables = (List<String>) JsonConverter.jsonToObject(json.getString("tables"), List.class);
+
+		return Response.ok().build();
 	}
 
 	private void applyBusinessModel(JsonNode newBM, Model model) {

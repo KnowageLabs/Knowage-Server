@@ -1,6 +1,7 @@
-<md-content layout="row" flex layout-fill ng-controller="metaModelCreationPhysicalController">
-	<md-content layout="row" flex="30" class="md-whiteframe-9dp"  layout-margin >
-		<component-tree id="pmTree" layout-fill style="position:absolute"
+<angular-list-detail ng-controller="metaModelCreationPhysicalController">
+	<list label="'BusinessModelName'" layout="column"> 
+
+		<component-tree id="pmTree"  style="margin:0px"
 			ng-model="meta.physicalModels"
 			highlights-selected-item="true"   
 			subnode-key="columns" 
@@ -8,18 +9,32 @@
 			hide-progress=true
 			not-hide-on-load = true
 			folder-icon-fn="physicalModel_getlevelIcon(node)"
-			open-folder-icon-fn="getOpenFolderIcons(node)"
+			open-folder-icon-fn="physicalModel_getlevelIcon(node)"
 			is-folder-fn="physicalModel_isFolder(node)"
+			expand-on-click=false
 		></component-tree>
 		
-	</md-content>
+	</list>
 	
-	<md-content layout="column" flex class="md-whiteframe-9dp"   ng-if="selectedPhysicalModel.name!=undefined" >
-		<md-toolbar class="md-theme-indigo">
-			<h1 class="md-toolbar-tools">{{selectedPhysicalModel.name}}</h1>
-		</md-toolbar>
-
-		<md-tabs flex>
+	<extra-list-button>
+		<md-menu>
+			<md-button aria-label="Create" class="md-fab" ng-click="$mdOpenMenu($event)">
+			  <md-icon md-menu-origin  md-font-icon="fa fa-plus" class="md-primary"></md-icon>
+			</md-button>
+			<md-menu-content width="4">
+			  <md-menu-item>
+			    <md-button ng-click="refreshPhysicalModel()">
+			      <md-icon md-font-icon="fa fa-download" md-menu-align-target></md-icon>
+			    	 {{translate.load('sbi.meta.update.physicalModel')}}
+			    </md-button>
+			  </md-menu-item>
+			</md-menu-content>
+		</md-menu>
+		
+	</extra-list-button>
+	
+	<detail label="selectedPhysicalModel.name==undefined ? '' : selectedPhysicalModel.name "  ng-if="selectedPhysicalModel.name!=undefined" >
+		<md-tabs flex>	
 			<md-tab id="propertiestab" label="{{translate.load('sbi.udp.udpList')}}">
 				<md-content layout="column"  >
 				
@@ -44,5 +59,5 @@
 			<md-tab id="fkTab" label="{{translate.load('sbi.meta.model.business.fk')}}">
 			</md-tab>
 		</md-tabs>
-	</md-content>
-</md-content>
+	</detail>
+</angular-list-detail>

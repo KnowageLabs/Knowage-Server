@@ -63,13 +63,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * <li>{@link it.eng.knowage.meta.model.business.impl.BusinessModelImpl#getJoinRelationships <em>Join Relationships</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @generated
  */
 public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel {
 	/**
 	 * The cached value of the '{@link #getPhysicalModel() <em>Physical Model</em>}' reference. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getPhysicalModel()
 	 * @generated
 	 * @ordered
@@ -78,7 +78,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * The cached value of the '{@link #getTables() <em>Tables</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getTables()
 	 * @generated
 	 * @ordered
@@ -87,7 +87,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * The cached value of the '{@link #getRelationships() <em>Relationships</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getRelationships()
 	 * @generated
 	 * @ordered
@@ -96,7 +96,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * The cached value of the '{@link #getIdentifiers() <em>Identifiers</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getIdentifiers()
 	 * @generated
 	 * @ordered
@@ -105,7 +105,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * The cached value of the '{@link #getDomains() <em>Domains</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getDomains()
 	 * @generated
 	 * @ordered
@@ -115,7 +115,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 	/**
 	 * The cached value of the '{@link #getJoinRelationships() <em>Join Relationships</em>}' containment reference list. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @see #getJoinRelationships()
 	 * @generated
 	 * @ordered
@@ -124,7 +124,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	protected BusinessModelImpl() {
@@ -133,7 +133,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -143,7 +143,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -155,7 +155,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	public NotificationChain basicSetParentModel(Model newParentModel, NotificationChain msgs) {
@@ -165,7 +165,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -187,7 +187,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -206,7 +206,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	public PhysicalModel basicGetPhysicalModel() {
@@ -215,7 +215,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -228,7 +228,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -243,7 +243,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -257,7 +257,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -271,7 +271,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -285,7 +285,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -299,7 +299,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -326,7 +326,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -350,7 +350,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -364,7 +364,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -392,7 +392,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -431,7 +431,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -464,7 +464,7 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -644,6 +644,41 @@ public class BusinessModelImpl extends ModelObjectImpl implements BusinessModel 
 	@Override
 	public EList<ModelPropertyType> getPropertyTypes() {
 		return getParentModel().getPropertyTypes();
+	}
+
+	@Override
+	public BusinessView getBusinessViewByUniqueName(String uniqueName) {
+
+		if (uniqueName == null)
+			return null;
+
+		for (BusinessView table : getBusinessViews()) {
+			if (uniqueName.equalsIgnoreCase(table.getUniqueName())) {
+				return table;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public boolean deleteBusinessViewByUniqueName(String uniqueName) {
+		BusinessView targetTabe = getBusinessViewByUniqueName(uniqueName);
+		if (targetTabe != null) {
+			// remove the identifier of the business table
+			BusinessIdentifier removedIdentifier = targetTabe.getIdentifier();
+			if (removedIdentifier != null) {
+				getIdentifiers().remove(removedIdentifier);
+			}
+
+			// remove relationships of this business table
+			List<BusinessRelationship> removedRelationships = targetTabe.getRelationships();
+			getRelationships().removeAll(removedRelationships);
+
+			getTables().remove(targetTabe);
+			return true;
+		}
+		return false;
+
 	}
 
 } // BusinessModelImpl

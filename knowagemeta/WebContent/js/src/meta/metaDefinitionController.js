@@ -30,7 +30,7 @@ app.service("metaModelServices",function(sbiModule_jsonServices){
 		 angular.copy(data,bms.cleanedObserverObject);
 	}
 
-	this.observe=function(observerObj){
+	this.observe=function(observerObj){debugger
 		bms.observerObject=observerObj;
 		bms.originalMetaModelObserver=sbiModule_jsonServices.observe(bms.observerObject);
 		bms.cleanObserverObject();
@@ -128,7 +128,6 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 	$scope.closeMetaDefinition = function() {
 		//TO-DO chiedere conferma prima di chiudere
 		dialogScope.closeMetaWeb();
-		alert("chiude")
 	}
 
 	$scope.continueToMeta = function() {
