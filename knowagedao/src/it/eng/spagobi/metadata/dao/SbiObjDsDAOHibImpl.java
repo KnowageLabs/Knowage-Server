@@ -237,7 +237,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 		try {
 			Engine engineObj = biObj.getEngine();
 			if (!engineObj.getLabel().toLowerCase().contains("cockpit") && !engineObj.getLabel().toLowerCase().contains("console")
-					&& !engineObj.getLabel().toLowerCase().contains("composit")) {
+					&& !engineObj.getLabel().toLowerCase().contains("composit") && !engineObj.getLabel().toLowerCase().contains("svgviewer")) {
 
 				Integer objId = biObj.getId();
 				logger.debug("Document ID used for insert relation is: " + objId);
