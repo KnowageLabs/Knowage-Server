@@ -41,6 +41,14 @@
 			z-index: 2;
 			
 		} 
+		
+		.backButton {
+			position:absolute;
+			top:0px;
+			right:0px;
+			z-index: 2;
+			
+		} 
 	</style>
 	</head>
 
@@ -79,6 +87,9 @@
 			        </md-sidenav>
 			        <md-button class="sidenavOpenButton" ng-click="openSideNav()">
 			              <i class="fa fa-2x fa-bar-chart" aria-hidden="true"></i>
+			        </md-button>
+			        <md-button class="backButton" ng-click="goToPreviousLevel()">
+			              <i class="fa fa-2x fa-arrow-circle-left" aria-hidden="true"></i>
 			        </md-button>
 			         <md-content layout-fill layout="column">
 			            

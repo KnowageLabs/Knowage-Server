@@ -15,6 +15,16 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   $scope.openSideNav = function() {
     $mdSidenav('svgSideNav').toggle();
   };
+  
+  //TODO: to test and change
+  $scope.goToPreviousLevel = function(){
+	  $scope.currentLevel = $scope.currentLevel - 1;
+	  if ($scope.currentLevel == 1){
+		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?level="+$scope.currentLevel;
+	  } else {
+		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?name="+e.detail+"&level="+$scope.currentLevel;
+	  }
+  }
     
   
   $window.document.addEventListener("SVGLoaded", function(e) {
