@@ -279,6 +279,16 @@
 		<unzip src="../../../knowagekpiengine/dist/knowagekpiengine.war" dest="${tomcat.home}/webapps/knowagekpiengine" />
 	</target>
 	
+	<target name="create.knowagemeta.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowagemeta/ant" />
+	</target>
+	<target name="deploy.knowagemeta.war" depends="create.knowage.utils.jar,create.knowagemeta.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowagemeta" />
+		<delete dir="${tomcat.home}/webapps/knowagemeta" />
+		<mkdir dir="${tomcat.home}/webapps/knowagemeta" />
+		<unzip src="../../../knowagemeta/dist/knowagemeta.war" dest="${tomcat.home}/webapps/knowagemeta" />
+	</target>
+	
 	<target name="deploy.highcharts-export-web.war" depends="">
 		<delete dir="${tomcat.home}/work/Catalina/localhost/highcharts-export-web" />
 		<delete dir="${tomcat.home}/webapps/highcharts-export-web" />
@@ -366,6 +376,10 @@
 		
 		<antcall target="create.knowagekpiengine.war" />
 		<copy file="../../../knowagekpiengine/dist/knowagekpiengine.war" 
+        todir="../../../dist" overwrite="true" />
+		
+		<antcall target="create.knowagemeta.war" />
+		<copy file="../../../knowagemeta/dist/knowagemeta.war" 
         todir="../../../dist" overwrite="true" />
 
 		<antcall target="create.knowage.war" />
@@ -473,6 +487,7 @@
 		<!-- antcall target="deploy.SpagoBIConsoleEngine.war" /-->
 		<antcall target="deploy.knowagechartengine.war" />
 		<antcall target="deploy.knowagekpiengine.war" />
+		<antcall target="deploy.knowagemeta.war" />
 		<!-- antcall target="deploy.SpagoBIMobileEngine.war" /-->
 		<antcall target="deploy.knowagenetworkengine.war" />
 		<antcall target="deploy.knowagewhatifengine.war" />
@@ -560,6 +575,9 @@
 		<delete dir="../../../knowagechartengine/dist"/>
 		<delete dir="../../../knowagekpiengine/ant-build"/>
 		<delete dir="../../../knowagekpiengine/dist"/>
+		
+		<delete dir="../../../knowagemeta/ant-build"/>
+		<delete dir="../../../knowagemeta/dist"/>
 		<!--
 		<delete dir="../../../SpagoBIMobileEngine/ant-build"/>
 		<delete dir="../../../SpagoBIMobileEngine/dist"/>
@@ -667,6 +685,7 @@
 		-->
 		<ant dir="../knowagechartengine/ant" target="javadoc"/>
 		<ant dir="../knowagekpiengine/ant" target="javadoc"/>
+		<ant dir="../knowagemeta/ant" target="javadoc"/>
 		<!-- 
 		<ant dir="../SpagoBIMobileEngine/ant" target="javadoc"/>
 		-->
@@ -705,6 +724,8 @@
 		-->
 		<ant dir="../knowagechartengine/ant" target="package"/>
 		<ant dir="../knowagekpiengine/ant" target="package"/>
+		<ant dir="../knowagemeta/ant" target="package"/>
+		
 		<!--
 		<ant dir="../SpagoBIMobileEngine/ant" target="package"/>
 		-->
