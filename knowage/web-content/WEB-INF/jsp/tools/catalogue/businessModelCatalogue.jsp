@@ -117,7 +117,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        <md-input-container class="md-block" >
 					<label>{{translate.load("sbi.ds.name")}}</label>
 					<input ng-change="checkChange()" ng-model="selectedBusinessModel.name" required
-						 ng-maxlength="100"> 
+						 ng-maxlength="100">
+						 <div ng-message="required" ng-show='selectedBusinessModel.name==undefined  || selectedBusinessModel.name==""'>Field is required</div>
 				</md-input-container>
 				</div>
 				
@@ -145,13 +146,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				       <md-select  aria-label="aria-label"
 				        ng-model="selectedBusinessModel.dataSourceLabel" ng-change="checkChange()"> <md-option
 				        ng-repeat="d in listOfDatasources" value="{{d.DATASOURCE_LABEL}}">{{d.DATASOURCE_LABEL}} </md-option>
-				       </md-select> 
+				       </md-select>
+				       <div ng-message="required" ng-show='selectedBusinessModel.dataSourceLabel==undefined'>Field is required</div>
 				</md-input-container>
 				</div>
 				
 				<div layout="row" layout-wrap layout-align="start center">
 					<label ng-if="!metaWebFunctionality"  class="buttonLabel">{{translate.load("sbi.ds.file.upload.button")}}:</label>
       				<file-upload ng-if="!metaWebFunctionality"  flex ng-model="fileObj" id="businessModelFile" ng-change="checkChange()"flex></file-upload>
+      				
       				
       				<% if(isAdmin || isTec){ %>
       				
@@ -173,6 +176,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<%} %>
       				
 				</div>
+				<div ng-message="required" style="color:red" ng-show="fileObj.file==undefined && selectedBusinessModel.id == undefined">File is required</div>
 
 				
 			</md-card-content>

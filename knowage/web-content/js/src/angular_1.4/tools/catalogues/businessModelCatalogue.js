@@ -586,8 +586,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				return false;				
 			}
 		};
-		
-		
+
 		//import CWM Metamodel informations
 		$scope.importCWMFile = function(bmId) {	
 			var confirm = $mdDialog
@@ -629,6 +628,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 			}
 		}
+		
 		
 		 $scope.confirm = $mdDialog
 	      .confirm()
