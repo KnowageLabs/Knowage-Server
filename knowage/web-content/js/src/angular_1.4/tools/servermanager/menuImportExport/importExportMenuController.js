@@ -129,7 +129,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 		for(var i=0;i<$scope.menu.length;i++){
 			var index = $scope.indexObjectsInList($scope.menu[i],$scope.currentObjects );
 			if(index==-1){
-				$scope.showAction("missing objects");
+				$scope.showAction(sbiModule_translate.load("sbi.importmenu.errormissingobj"));
 				return false;
 				
 			}
