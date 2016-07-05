@@ -21,12 +21,14 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
     $mdSidenav('svgSideNav').toggle();
   };
   
+  //Go back to the previous level
   //TODO: to test and change
   $scope.goToPreviousLevel = function(){
 	  $scope.currentLevel = $scope.currentLevel - 1;
 	  
 	  var pathElement = $scope.drillPathStack.pop();
-	  
+	  $scope.currentId = pathElement.id;
+
 	  
 	  if (pathElement.level == 1){
 		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?level="+pathElement.level;

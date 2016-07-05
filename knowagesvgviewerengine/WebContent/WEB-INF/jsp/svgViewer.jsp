@@ -85,10 +85,10 @@
 					     	 [{{legend.tresholds[$index] | number:2}} - {{legend.tresholds[$index+1] | number:2}}] 
 					     </md-card>        
 			        </md-sidenav>
-			        <md-button class="sidenavOpenButton" ng-click="openSideNav()">
+			        <md-button class="sidenavOpenButton" ng-click="openSideNav()" title="Open options panel">
 			              <i class="fa fa-2x fa-bar-chart" aria-hidden="true"></i>
 			        </md-button>
-			        <md-button class="backButton" ng-click="goToPreviousLevel()">
+			        <md-button class="backButton" ng-click="goToPreviousLevel()" ng-show="showBackButton" title="Go back to previous level">
 			              <i class="fa fa-2x fa-arrow-circle-left" aria-hidden="true"></i>
 			        </md-button>
 			         <md-content layout-fill layout="column">
