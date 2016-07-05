@@ -9,6 +9,8 @@ app.controller('SvgViewerController', ['$scope','sbiModule_restServices','$mdSid
 		
 function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,sbiModule_logger,$window,sbiModule_config,$rootScope)	{
   $scope.isSidenavOpen = false;
+  
+  $scope.currentLevel = 1;
     
   $scope.openSideNav = function() {
     $mdSidenav('svgSideNav').toggle();
@@ -27,7 +29,8 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  
 	  //alert("Clicked element with id "+e.detail);  
 	  //TODO: to change
-	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?name=map_room&level=2";
+	  $scope.currentLevel = $scope.currentLevel +1;
+	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?name=map_room&level="+$scope.currentLevel;
 	});
   
   /**

@@ -176,9 +176,9 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			SvgViewerEngineInstance engineInstance = getEngineInstance();
 
 			DataMartProvider dataMartProvider = (DataMartProvider) engineInstance.getDataMartProvider();
-			DataMartProviderConfigurator.configure(dataMartProvider, memberSB.toString());
 			dataMartProvider.setSelectedMemberName(getProperty("name", memberSB));
 			dataMartProvider.setSelectedLevel(level);
+			DataMartProviderConfigurator.configure(dataMartProvider, memberSB.toString());
 			dataMartProvider.getDataMart().setTargetFeatureName(getProperty("name", memberSB));
 
 			SOMapProvider mapProvider = (SOMapProvider) engineInstance.getMapProvider();
