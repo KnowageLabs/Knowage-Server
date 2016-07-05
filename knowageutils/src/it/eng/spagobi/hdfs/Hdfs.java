@@ -203,7 +203,7 @@ public class Hdfs {
 		return false;
 	}
 
-	private FileSystem initializeFileSystem(Configuration conf) {
+	public FileSystem initializeFileSystem(Configuration conf) {
 		logger.debug("Initialize HDFS FileSystem");
 		if (fs == null) {
 			try {
