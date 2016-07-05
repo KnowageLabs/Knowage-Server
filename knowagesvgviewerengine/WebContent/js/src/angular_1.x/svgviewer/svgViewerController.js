@@ -60,7 +60,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  //alert("Clicked element with id "+e.detail);  
 	  $scope.currentLevel = $scope.currentLevel +1;
 	  $scope.currentId = e.detail;
-	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?name="+e.detail+"&level="+$scope.currentLevel;
+	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+e.detail+"&level="+$scope.currentLevel;
 	  
 	  if  ($scope.currentLevel > 1){
 		  $scope.showBackButton = true;
