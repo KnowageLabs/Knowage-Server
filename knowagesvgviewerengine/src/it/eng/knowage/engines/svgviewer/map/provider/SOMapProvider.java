@@ -16,11 +16,8 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.log4j.Logger;
 import org.w3c.dom.svg.SVGDocument;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class SOMapProvider.
- *
- * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class SOMapProvider extends AbstractMapProvider {
 
@@ -40,7 +37,7 @@ public class SOMapProvider extends AbstractMapProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.provider.AbstractMapProvider#init(java.lang.Object)
 	 */
 	@Override
@@ -52,7 +49,7 @@ public class SOMapProvider extends AbstractMapProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.provider.AbstractMapProvider#getSVGMapDOMDocument(java.lang.String)
 	 */
 	@Override
@@ -83,7 +80,7 @@ public class SOMapProvider extends AbstractMapProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.provider.AbstractMapProvider#getSVGMapStreamReader(java.lang.String)
 	 */
 	@Override
@@ -132,7 +129,7 @@ public class SOMapProvider extends AbstractMapProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.provider.AbstractMapProvider#getMapNamesByFeature(java.lang.String)
 	 */
 	@Override
@@ -142,11 +139,21 @@ public class SOMapProvider extends AbstractMapProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.provider.AbstractMapProvider#getFeatureNamesInMap(java.lang.String)
 	 */
 	@Override
 	public List getFeatureNamesInMap(String mapName) throws Exception {
 		return getMapCatalogueServiceProxy().getFeatureNamesInMap(mapName);
+	}
+
+	/**
+	 * Sets the map catalogue service proxy.
+	 *
+	 * @param mapCatalogueServiceProxy
+	 *            the new map catalogue service proxy
+	 */
+	public void getConf(MapCatalogueAccessUtils mapCatalogueServiceProxy) {
+		this.mapCatalogueServiceProxy = mapCatalogueServiceProxy;
 	}
 }

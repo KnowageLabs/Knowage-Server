@@ -62,11 +62,12 @@ public class AbstractDataMartProviderConfigurator {
 
 			selectedHierarchyName = getSelectedHierarchyName(confSB);
 			hierarchyMembers = getHierarchyMembers(confSB);
-			selectedMemberName = getSelectedMemberName(hierarchyMembers);
+			selectedMemberName = getDefaultMemberName(hierarchyMembers);
 
 			abstractDatasetProvider.setHierarchyMembers(hierarchyMembers);
 			abstractDatasetProvider.setSelectedHierarchyName(selectedHierarchyName);
 			abstractDatasetProvider.setSelectedMemberName(selectedMemberName);
+			abstractDatasetProvider.setSelectedLevel("1");
 		}
 	}
 
@@ -139,43 +140,28 @@ public class AbstractDataMartProviderConfigurator {
 	}
 
 	/**
-	 * Gets the selected hierarchy name.
+	 * Gets the default (level=1) member of the hierarchy. If it doesn't exist into the template returns the first member found.
 	 *
 	 * @param membersMap
 	 *            the map with all members
 	 *
-	 * @return the selected member name
+	 * @return the default member name
 	 */
-	private static String getSelectedMemberName(Map<String, HierarchyMember> membersMap) {
-		// @TODO : gestire l'acquisizione del membro / livello da visualizzare.
-		// Per ora prende sempre il primo
-
+	private static String getDefaultMemberName(Map<String, HierarchyMember> membersMap) {
 		String toReturn = null;
-
+		int idx = 0;
 		for (Iterator iterator = membersMap.keySet().iterator(); iterator.hasNext();) {
-			toReturn = (String) iterator.next();
-			break;
-		}
-
-		return toReturn;
-	}
-
-	/**
-	 * Gets the selected hierarchy name.
-	 *
-	 * @param membersMap
-	 *            the map with all members
-	 *
-	 * @return the selected measure name
-	 */
-	private static String getSelectedMeasureName(Map<String, HierarchyMember> membersMap) {
-		// @TODO : gestire l'acquisizione della misura da visualizzare.
-		// Per ora prende sempre il primo
-		String toReturn = null;
-
-		for (Iterator iterator = membersMap.keySet().iterator(); iterator.hasNext();) {
-			toReturn = (String) iterator.next();
-			break;
+			String key = (String) iterator.next();
+			HierarchyMember member = membersMap.get(key);
+			if (idx == 0) {
+				toReturn = key;
+			}
+			if (member.getLevel() == 1) {
+				toReturn = key;
+				break;
+			}
+			idx++;
+			logger.error("Member with level [1]  not found into the template. Returned the first member found [" + key + "]! Check the template.");
 		}
 
 		return toReturn;

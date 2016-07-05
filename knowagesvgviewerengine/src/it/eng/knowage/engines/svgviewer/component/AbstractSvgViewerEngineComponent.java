@@ -4,11 +4,9 @@ import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 
 import java.util.Map;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AbstractGeoEngineComponent.
  *
- * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class AbstractSvgViewerEngineComponent implements ISvgViewerEngineComponent {
 
@@ -20,7 +18,7 @@ public class AbstractSvgViewerEngineComponent implements ISvgViewerEngineCompone
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.IGeoEngineComponent#init(java.lang.Object)
 	 */
 	@Override
@@ -39,7 +37,7 @@ public class AbstractSvgViewerEngineComponent implements ISvgViewerEngineCompone
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.IGeoEngineComponent#setEnv(java.util.Map)
 	 */
 	@Override

@@ -74,28 +74,28 @@ public class DataMartProviderConfigurator {
 
 			// @TODO delete if the dataset will be defined ONLY BY the template
 			// ...otherwise get dataset associated to the document...
-			dataSet = (IDataSet) datamartProvider.getEnv().get(EngineConstants.ENV_DATASET);
-			if (dataSet != null) {
-				datamartProvider.setDs(dataSet);
-				return;
-			}
-
-			// ... at last try to get dataset from the template
-			SourceBean dataSetSB = (SourceBean) confSB.getAttribute(SvgViewerEngineConstants.DATASET_TAG);
-			if (dataSetSB == null) {
-				logger.warn("Cannot find dataset configuration settings: tag name " + SvgViewerEngineConstants.DATASET_TAG);
-				logger.info("Dataset configuration settings must be injected at execution time");
-			} else {
-				dataSource = getDataSource(dataSetSB);
-				query = getQuery(dataSetSB);
-
-				if (datamartProvider.getEnv().get(EngineConstants.ENV_DATASOURCE) != null) {
-					dataSource = (DataSource) datamartProvider.getEnv().get(EngineConstants.ENV_DATASOURCE);
-				}
-
-				datamartProvider.setDataSource(dataSource);
-				datamartProvider.setQuery(query);
-			}
+			// dataSet = (IDataSet) datamartProvider.getEnv().get(EngineConstants.ENV_DATASET);
+			// if (dataSet != null) {
+			// datamartProvider.setDs(dataSet);
+			// return;
+			// }
+			//
+			// // ... at last try to get dataset from the template
+			// SourceBean dataSetSB = (SourceBean) confSB.getAttribute(SvgViewerEngineConstants.DATASET_TAG);
+			// if (dataSetSB == null) {
+			// logger.warn("Cannot find dataset configuration settings: tag name " + SvgViewerEngineConstants.DATASET_TAG);
+			// logger.info("Dataset configuration settings must be injected at execution time");
+			// } else {
+			// dataSource = getDataSource(dataSetSB);
+			// query = getQuery(dataSetSB);
+			//
+			// if (datamartProvider.getEnv().get(EngineConstants.ENV_DATASOURCE) != null) {
+			// dataSource = (DataSource) datamartProvider.getEnv().get(EngineConstants.ENV_DATASOURCE);
+			// }
+			//
+			// datamartProvider.setDataSource(dataSource);
+			// datamartProvider.setQuery(query);
+			// }
 
 		}
 	}

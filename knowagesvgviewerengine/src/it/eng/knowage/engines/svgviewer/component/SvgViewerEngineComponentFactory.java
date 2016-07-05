@@ -193,7 +193,7 @@ public class SvgViewerEngineComponentFactory {
 		logger.debug("Dataset provider configuration: " + confSB);
 
 		dataMartProvider = (IDataMartProvider) build(className, confSB, env);
-		;
+
 		logger.debug("OUT");
 
 		return dataMartProvider;

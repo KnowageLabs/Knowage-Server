@@ -31,7 +31,6 @@ import it.eng.knowage.engines.svgviewer.map.renderer.configurator.InteractiveMap
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.mapcatalogue.bo.GeoMap;
-import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -51,8 +50,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import sun.misc.BASE64Encoder;
-
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  *
@@ -65,14 +62,13 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	@Path("/drawMap")
 	@GET
 	@Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
-	// public Response drawMap(@Context HttpServletRequest req) {
 	public Response drawMap(@QueryParam("level") String level) {
 		logger.debug("IN");
 		try {
 			// TODO: let the output format to be configurable with a parameter
-			// Integer actualLevel = getLevel(level);
-
-			File maptmpfile = getEngineInstance().renderMap("dsvg", level);
+			DataMartProvider dataMartProvider = (DataMartProvider) getEngineInstance().getDataMartProvider();
+			dataMartProvider.setSelectedLevel(level);
+			File maptmpfile = getEngineInstance().renderMap("dsvg");
 			byte[] data = Files.readAllBytes(maptmpfile.toPath());
 
 			ResponseBuilder response = Response.ok(data);
@@ -96,11 +92,9 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	@Path("/getMeasures")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	// public Response getMeasures(@Context HttpServletRequest req) {
 	public Response getMeasures(@QueryParam("level") String level) {
 		logger.debug("IN");
 		try {
-			// SourceBean memberSB = getActiveMemberSB(req);
 			SourceBean memberSB = getActiveMemberSB(level);
 			SourceBean measuresConfigurationSB = (SourceBean) memberSB.getAttribute("MEASURES");
 
@@ -125,14 +119,11 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	@Path("/getLayers")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	// public Response getLayers(@Context HttpServletRequest req) {
 	public Response getLayers(@QueryParam("level") String level) {
 		logger.debug("IN");
 		try {
-			// SourceBean memberSB = getActiveMemberSB(req);
 			SourceBean memberSB = getActiveMemberSB(level);
 			SourceBean measuresConfigurationSB = (SourceBean) memberSB.getAttribute("LAYERS");
-			// SourceBean measuresConfigurationSB = (SourceBean) confSB.getAttribute("LAYERS");
 
 			Map measures = getLayers(measuresConfigurationSB);
 			ResponseBuilder response = Response.ok(measures);
@@ -153,14 +144,27 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		logger.debug("IN");
 		try {
 
+			// 0. Define internal objects
+			SvgViewerEngineInstance engineInstance = getEngineInstance();
+			DataMartProvider dataMartProvider = (DataMartProvider) engineInstance.getDataMartProvider();
+			SOMapProvider mapProvider = (SOMapProvider) engineInstance.getMapProvider();
+			InteractiveMapRenderer mapRenderer = (InteractiveMapRenderer) engineInstance.getMapRenderer();
+
 			// 1. load the new configuration by the template
 			SourceBean memberSB = getActiveMemberSB(level);
 			if (memberSB == null) {
-				logger.debug("Template dosen't contains configuration about level [" + level + "].");
-				// throw new SpagoBIServiceException("DrillMap", "Template dosen't contains configuration about level [" + level + "].");
+				logger.error("Template dosen't contains configuration about level [" + level + "].");
+				throw new SpagoBIServiceException("DrillMap", "Template dosen't contains configuration about level [" + level + "].");
 			}
 
 			// 2. load drilled map throught DAO
+			// if is the first level and name is null get the map from the datamart provider
+			if (level.equals("1") && name == null) {
+				name = mapProvider.getDefaultMapName();
+			} else if (name == null) {
+				logger.error("Name	 map of level [" + level + "] not found in request.");
+				throw new SpagoBIServiceException("DrillMap", "Name map of level [" + level + "] not found in request.");
+			}
 			GeoMap drilledMap = DAOFactory.getSbiGeoMapsDAO().loadMapByNameAndLevel(name, level);
 			if (drilledMap == null) {
 				logger.error("SVG with name [" + name + "] and level [" + level + "] doesn't exist into the Map Catalogue.");
@@ -169,47 +173,31 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 						+ "] doesn't exist into the Map Catalogue.");
 			}
 
-			// 3. load drilled dataset
-			// String dataset = getProperty("measure_dataset", memberSB);
-
-			// 4. update datamartProvider and mapProvider objects
-			SvgViewerEngineInstance engineInstance = getEngineInstance();
-
-			DataMartProvider dataMartProvider = (DataMartProvider) engineInstance.getDataMartProvider();
+			// 3. update datamartProvider and mapProvider objects
 			dataMartProvider.setSelectedMemberName(getProperty("name", memberSB));
 			dataMartProvider.setSelectedLevel(level);
 			DataMartProviderConfigurator.configure(dataMartProvider, memberSB.toString());
 			dataMartProvider.getDataMart().setTargetFeatureName(getProperty("name", memberSB));
 
-			SOMapProvider mapProvider = (SOMapProvider) engineInstance.getMapProvider();
 			SOMapProviderConfigurator.configure(mapProvider, memberSB.toString());
 			mapProvider.setSelectedMapName(drilledMap.getName());
 
-			InteractiveMapRenderer mapRenderer = (InteractiveMapRenderer) engineInstance.getMapRenderer();
 			InteractiveMapRendererConfigurator.configure(mapRenderer, memberSB.toString());
 
-			// 5. return the new SVG
+			// 4. return the new SVG
 			byte[] template = DAOFactory.getBinContentDAO().getBinContent(drilledMap.getBinId());
 
 			if (template == null) {
 				logger.error("Template map is empty. Try uploadyng the svg.");
 				throw new SpagoBIServiceException("DrillMap", "Template map is empty. Try uploadyng the svg.");
 			}
-			BASE64Encoder bASE64Encoder = new BASE64Encoder();
-			Content content = new Content();
-			content.setContent(bASE64Encoder.encode(template));
-			logger.debug("template read");
-			content.setFileName(name + ".svg");
 
-			File maptmpfile = getEngineInstance().renderMap("dsvg", level);
+			File maptmpfile = getEngineInstance().renderMap("dsvg");
 			byte[] data = Files.readAllBytes(maptmpfile.toPath());
 
 			ResponseBuilder response = Response.ok(data);
 			response.header("Content-Disposition", "inline; filename=map.svg");
 			return response.build();
-
-			// ResponseBuilder response = Response.ok("Servizio terminato correttamente... ma è da finire!!! :D");
-			// return response.build();
 
 		} catch (Exception e) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
@@ -360,7 +348,6 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 
 	private Integer getLevel(String actualLevelStr) {
 
-		// String actualLevelStr = (String) req.getAttribute("level");
 		Integer actualLevel = 1; // default is the first level
 		if (actualLevelStr != null)
 			actualLevel = Integer.valueOf(actualLevelStr);
@@ -371,4 +358,5 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	private String getProperty(String key, SourceBean memberSB) {
 		return (String) memberSB.getAttribute(key);
 	}
+
 }

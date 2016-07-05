@@ -103,4 +103,14 @@ public interface IMapProvider extends ISvgViewerEngineComponent {
 	 *             the exception
 	 */
 	List getFeatureNamesInMap(String mapName) throws Exception;
+
+	/**
+	 * Gets default map from the MapProvider
+	 *
+	 * @return the default map name
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	String getDefaultMapName() throws Exception;
 }

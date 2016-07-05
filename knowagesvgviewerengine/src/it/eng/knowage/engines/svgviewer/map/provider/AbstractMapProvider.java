@@ -3,6 +3,7 @@ package it.eng.knowage.engines.svgviewer.map.provider;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.component.AbstractSvgViewerEngineComponent;
 import it.eng.knowage.engines.svgviewer.map.provider.configurator.AbstractMapProviderConfigurator;
+import it.eng.spago.base.SourceBean;
 
 import java.util.List;
 
@@ -123,4 +124,9 @@ public class AbstractMapProvider extends AbstractSvgViewerEngineComponent implem
 		return null;
 	}
 
+	@Override
+	public String getDefaultMapName() throws Exception {
+		SourceBean confSB = (SourceBean) getConf();
+		return (String) confSB.getAttribute("map_name");
+	}
 }
