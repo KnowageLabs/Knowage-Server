@@ -9,8 +9,13 @@ app.controller('SvgViewerController', ['$scope','sbiModule_restServices','$mdSid
 		
 function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,sbiModule_logger,$window,sbiModule_config,$rootScope)	{
   $scope.isSidenavOpen = false;
+  $scope.showBackButton = false;
   
   $scope.currentLevel = 1;
+  $scope.currentId = null;
+  
+  //stack that contains the drill path elements
+  $scope.drillPathStack = [];
     
   $scope.openSideNav = function() {
     $mdSidenav('svgSideNav').toggle();
@@ -19,10 +24,18 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   //TODO: to test and change
   $scope.goToPreviousLevel = function(){
 	  $scope.currentLevel = $scope.currentLevel - 1;
-	  if ($scope.currentLevel == 1){
-		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?level="+$scope.currentLevel;
+	  
+	  var pathElement = $scope.drillPathStack.pop();
+	  
+	  
+	  if (pathElement.level == 1){
+		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?level="+pathElement.level;
 	  } else {
-		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?name="+e.detail+"&level="+$scope.currentLevel;
+		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+pathElement.id+"&level="+pathElement.level;
+	  }
+	  
+	  if($scope.currentLevel == 1){
+		  $scope.showBackButton = false;
 	  }
   }
     
@@ -35,12 +48,23 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  $scope.getLegendColors();
 	});
   
+  //Listener called when an element on the svg is clicked
   $window.document.addEventListener("SVGElementClicked", function(e) {
 	  
+	  //update drill path with stack
+	  var pathElement = new Object();
+	  pathElement.level = $scope.currentLevel;
+	  pathElement.id = $scope.currentId;
+	  $scope.drillPathStack.push(pathElement);
+	  
 	  //alert("Clicked element with id "+e.detail);  
-	  //TODO: to change
 	  $scope.currentLevel = $scope.currentLevel +1;
+	  $scope.currentId = e.detail;
 	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?name="+e.detail+"&level="+$scope.currentLevel;
+	  
+	  if  ($scope.currentLevel > 1){
+		  $scope.showBackButton = true;
+	  }
 	});
   
   /**
