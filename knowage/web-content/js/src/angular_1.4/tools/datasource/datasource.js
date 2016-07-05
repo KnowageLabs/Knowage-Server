@@ -420,7 +420,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	                    	color:'#153E7E',
 	                    	action:function(item,event){
 
-	                    		$scope.deleteItem(item);
+	                    		$scope.confirmDelete(item);
 	                    	},
 	                    	 visible: function(row) {
 	             				return row.userIn==$scope.currentUser || $scope.isSuperAdmin ? true : false;
@@ -450,6 +450,22 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					sbiModule_translate.load("sbi.general.yes")).cancel(
 							sbiModule_translate.load("sbi.general.No"));
 
+	
+	
+	 $scope.confirmDelete = function(item,ev) {
+		    var confirm = $mdDialog.confirm()
+		          .title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
+		          .content(sbiModule_translate.load("sbi.catalogues.toast.confirm.content"))
+		          .ariaLabel("confirm_delete")
+		          .targetEvent(ev)
+		          .ok(sbiModule_translate.load("sbi.general.continue"))
+		          .cancel(sbiModule_translate.load("sbi.general.cancel"));
+		    $mdDialog.show(confirm).then(function() {
+		    	$scope.deleteItem(item);
+		    }, function() {
+		
+		    });
+		  };
 };
 
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
