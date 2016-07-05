@@ -198,15 +198,12 @@
 	             iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/40/mydata.png"
 	             iconCls="web"/>
 	    
-	<!-- 
-		REMOVE WORKSPACE OUT OF THE MAIN MENU 30.06.
-		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
- 	-->         
-	<!-- <ITEM code="workspace" title="Workspace"
+      
+	<ITEM code="workspace" title="Workspace"
 				   functionality="DocumentDevManagement"
 				   url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp" 
 				   iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/40/mydata.png" 
-				   iconCls="work"/>  -->
+				   iconCls="work"/>  
 							
 	<ITEM	code="analyticalModel" 
 			title="#menu.AnalyticalModel"

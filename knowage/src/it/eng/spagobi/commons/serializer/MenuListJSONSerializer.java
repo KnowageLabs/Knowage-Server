@@ -315,12 +315,7 @@ public class MenuListJSONSerializer implements Serializer {
 		workspace.put(SCALE, "large");
 		workspace.put(TARGET, "_self");
 		workspace.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_WORKSPACE + "');");
-		/*
-		 * REMOVE WORKSPACE OUT OF THE MAIN MENU 30.06.
-		 * 
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
-		// tempMenuList.put(workspace);
+		tempMenuList.put(workspace);
 
 		String strSbiSocialAnalysisStatus = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE");
 		boolean sbiSocialAnalysisStatus = "TRUE".equalsIgnoreCase(strSbiSocialAnalysisStatus);
