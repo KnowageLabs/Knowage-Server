@@ -6,6 +6,8 @@
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext/5.1.0/patch/EXTJS16166.js'/></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/d3/d3.js'/></script>
 
+<%-- Ext lib overrides --%>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/overrides/overrides.js'/></script> 
 
 <!-- Additional Ext overrides and application-specific includes here -->
 <%
@@ -21,4 +23,3 @@
 	Ext.Ajax.timeout = 300000;
 	Ext.BLANK_IMAGE_URL = '${pageContext.request.contextPath}/js/lib/ext/4.2.1/resources/themes/images/default/tree/s.gif';
 </script>
-	      
