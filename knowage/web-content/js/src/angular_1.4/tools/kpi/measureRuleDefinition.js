@@ -14,7 +14,7 @@ function measureRuleMasterControllerFunction($scope,sbiModule_translate,$mdDialo
 	$scope.detailProperty={};
 	$scope.originalRule={};
 	$scope.selectedTab={'tab':0};
-	$scope.showCircularMetadata = true;
+//	$scope.showCircularMetadata = true;
 	$scope.updateListRule=function(){
 		$scope.$broadcast("updateListRule");
 	}
@@ -103,12 +103,13 @@ function DialogSaveController($scope, $mdDialog,$mdToast,currentRule,originalRul
 }
 function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,sbiModule_restServices,sbiModule_config,$q,$angularListDetail){
 	$scope.translate = sbiModule_translate;
-	$scope.showCircular = false;
+//	$scope.showCircular = false;
 	$scope.getLabelToBar = function (){
 		return $scope.currentRule.name == undefined ? $scope.translate.load('sbi.kpi.measure.new') : $scope.currentRule.name;
 	}
 
 	$scope.loadMetadata=function(){
+//		$scope.showCircularMetadata = true;
 		var deferred = $q.defer();
 		$scope.loadPlaceholder();
 		var postData={
@@ -116,14 +117,16 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 		} 
 		sbiModule_restServices.promisePost("1.0/kpi","queryPreview",postData)
 		.then(function(response){
-			$scope.showCircularMetadata = false;
+
 			$scope.detailProperty.queryChanged=false;
 			$scope.columnToRuleOutputs(response.data.columns);
+//			$scope.showCircularMetadata = false;
 			deferred.resolve();
 		},function(response){
-			$scope.showCircularMetadata = false;
+
 			sbiModule_restServices.errorHandler(response.data,""+sbiModule_translate.load("sbi.kpi.rule.load.metadata.error")+""+sbiModule_translate.load("sbi.kpi.rule.query.wrong"));
 			$scope.clearPreviewAndMetadata(true,true);
+//			$scope.showCircularMetadata = false;
 			deferred.reject();
 		});
 
@@ -131,7 +134,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 	}
 
 	$scope.loadPreview=function(checkPlaceholder){
-		$scope.showCircular =true;
+//		$scope.showCircular =true;
 		$scope.loadPlaceholder();
 
 		if(checkPlaceholder!=true ||  (checkPlaceholder==true && !$scope.havePlaceholder())){
@@ -143,12 +146,12 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 
 			sbiModule_restServices.promisePost("1.0/kpi","queryPreview",postData)
 			.then(function(response){
-				$scope.showCircular =false;
+//				$scope.showCircular =false;
 				$scope.detailProperty.queryChanged=false;
 				$scope.columnToRuleOutputs(response.data.columns);
 				angular.copy(response.data,$scope.detailProperty.previewData);
 			},function(response){
-				$scope.showCircular =false;
+//				$scope.showCircular =false;
 				sbiModule_restServices.errorHandler(response.data,""+sbiModule_translate.load("sbi.kpi.rule.load.preview.error")+""+sbiModule_translate.load("sbi.kpi.rule.query.wrong"));
 				$scope.clearPreviewAndMetadata(true,false);
 
@@ -214,7 +217,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 
 
 	$scope.saveMeasureFunction=function(){ 
-		$scope.showCircular = true;
+//		$scope.showCircular = true;
 		$scope.checkValiditymeasureRule().then(function(){
 			$mdDialog.show({
 				controller: DialogSaveController,
@@ -232,12 +235,12 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 				}
 			})
 			.then(function(answer) {
-				$scope.showCircular = false;
+//				$scope.showCircular = false;
 			}, function() {
-				$scope.showCircular = false;
+//				$scope.showCircular = false;
 			});
 		},function(response){
-			$scope.showCircular = false;
+//			$scope.showCircular = false;
 			if(response.hasOwnProperty("data")){
 				sbiModule_restServices.errorHandler(response.data); 
 			}else if(response.hasOwnProperty("text") || response.hasOwnProperty("title")){
@@ -450,7 +453,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 	$scope.translate=sbiModule_translate;
 
 	$scope.newMeasureFunction=function(){
-		$scope.showCircularMetadata = true;	
+//		$scope.showCircularMetadata = true;	
 		angular.copy($scope.emptyRule,$scope.currentRule);
 		angular.copy($scope.emptyRule,$scope.originalRule);
 		angular.copy($scope.emptyProperty,$scope.detailProperty);
@@ -493,7 +496,7 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 	};
 
 	$scope.measureClickFunction=function(item){
-		$scope.showCircularMetadata = true;	
+//		$scope.showCircularMetadata = true;	
 		$scope.loadRuleById(item.ruleId,item.ruleVersion,false);
 	};
 

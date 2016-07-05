@@ -21,8 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <div layout="row" layout-wrap> 
 <md-card class="md-whiteframe-3dp metadataTabs" ng-repeat=" mtdValue in currentRule.ruleOutputs ">
-
-  
   <md-toolbar>
       <div class="md-toolbar-tools"  class="alertIconMissingAlias" >  
          <span ng-if="::(!aliasExtist(mtdValue.alias) && !aliasUsedByMeasure(mtdValue.alias))">
@@ -46,9 +44,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       
 		 
 </md-toolbar> 
-<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircularMetadata" layout-fill>
-     	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
- 	</div>
+<!-- <div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircularMetadata" layout-fill> -->
+<!--      	<md-progress-circular md-mode="indeterminate" ></md-progress-circular> -->
+<!-- </div> -->
 <md-card-content layout="column">
  <md-input-container class="md-block">
         <label> {{translate.load("sbi.generic.tipology")}}</label>
