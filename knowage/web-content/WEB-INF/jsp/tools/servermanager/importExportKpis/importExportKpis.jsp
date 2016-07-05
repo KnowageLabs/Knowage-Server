@@ -92,6 +92,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<div layout="row" layout-wrap>
 						<md-checkbox flex style="line-height: 61px;"  ng-model="scorecardsAndRelatedKpis" aria-label="Include scorecards and related KPIs">Include scoreacards and related KPIs</md-checkbox>
 					</div>
+					<div layout="row" layout-wrap>
+						<md-checkbox flex style="line-height: 61px;"  ng-model="schedulersAndRelatedKpis" aria-label="Include KPI schedulers and related KPIs">Include KPI schedulers and related KPIs</md-checkbox>
+					</div>
 					<div id="lista">
 						<div layout="row" layout-wrap>
 							<div>

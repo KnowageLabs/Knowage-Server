@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+	<class name="it.eng.spagobi.kpi.metadata.SbiKpiExecutionFilter" table="SBI_KPI_EXECUTION_FILTER">
+        <composite-id name="sbiKpiExecutionFilterId" class="it.eng.spagobi.kpi.metadata.SbiKpiExecutionFilterId" >
+        	<key-property name="placeholderId" column="PLACEHOLDER_ID" type="int" />
+        	<key-property name="executionId" column="EXECUTION_ID" type="int" />
+        	<key-property name="kpiVersion" column="KPI_VERSION" type="int" />
+			<key-property name="kpiId" column="KPI_ID" type="int" />
+        </composite-id>
+        
+        <many-to-one name="sbiKpiPlaceholder" class="it.eng.spagobi.kpi.metadata.SbiKpiPlaceholder" column="PLACEHOLDER_ID" insert="false" update="false" />
+        <many-to-one name="sbiKpiExecution" class="it.eng.spagobi.kpi.metadata.SbiKpiExecution" column="EXECUTION_ID" insert="false" update="false" />
+        <many-to-one name="sbiKpiKpi" class="it.eng.spagobi.kpi.metadata.SbiKpiKpi" insert="false" update="false" >
+        	<column name="KPI_VERSION" />
+        	<column name="KPI_ID" />
+        </many-to-one>
+        
+        <property name="typeId" column="TYPE_ID" type="integer" />
+        <many-to-one name="type" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" insert="false" update="false">
+            <column name="TYPE_ID" />
+        </many-to-one>
+        
+        <property name="value" column="VALUE" type="string" length="40" />
+        
+		<filter name="tenantFilter" condition="organization=:tenant"/> 
+	</class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

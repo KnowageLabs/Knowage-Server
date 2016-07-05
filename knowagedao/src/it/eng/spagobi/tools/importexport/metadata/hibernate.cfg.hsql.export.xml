@@ -69,6 +69,8 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiAlias.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRuleOutput.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRule.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiExecution.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiExecutionFilter.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiTarget.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiTargetValue.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiThresholdValue.hbm.xml" />
