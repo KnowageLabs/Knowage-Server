@@ -154,15 +154,19 @@ md-checkbox.md-knowage-theme .md-icon {
     border-color: $baseColor;
 }
 
-md-radio-button.md-knowage-theme .md-on {
+md-radio-group.md-knowage-theme .md-checked .md-ink-ripple {
+  color: $ternaryColor;
+}
+
+md-radio-button.md-knowage-theme ._md-on {
     background-color: $baseColor;
 }
 
-md-radio-button.md-knowage-theme .md-off {
+md-radio-button.md-knowage-theme ._md-off {
     border-color: $inactiveLabelColor;
 }
 
-md-radio-button.md-knowage-theme.md-checked .md-off {
+md-radio-button.md-knowage-theme.md-checked ._md-off {
     border-color: $inactiveLabelColor;
 }
 
