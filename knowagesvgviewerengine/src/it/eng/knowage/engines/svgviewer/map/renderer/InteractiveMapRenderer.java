@@ -179,7 +179,13 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			mergeAndDecorateMapTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.mergeAndDecorateMap");
 
 			addData(targetMap, dataMart);
-			addLink(targetMap, dataMart);
+			// add links only if it isn't the last level
+			Integer intSelectedLevel = (datamartProvider.getSelectedLevel() == null) ? 0 : Integer.valueOf(datamartProvider.getSelectedLevel());
+			if (intSelectedLevel < datamartProvider.getHierarchyMembersNames().size()) {
+				addLink(targetMap, dataMart);
+			} else {
+				logger.debug("Not added drillable link because it\'s the last level! ");
+			}
 
 			SVGMapMerger.mergeMap(targetMap, masterMap, null, "targetMap");
 

@@ -70,11 +70,11 @@ public interface IDataMartProvider extends ISvgViewerEngineComponent {
 	String getSelectedLevel();
 
 	/**
-	 * Gets the hierarchy names.
+	 * Gets the hierarchy member names.
 	 *
-	 * @return the hierarchy names
+	 * @return the hierarchy member names
 	 */
-	Set getHierarchyNames();
+	Set getHierarchyMembersNames();
 
 	/**
 	 * Gets the hierarchy.
