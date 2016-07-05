@@ -140,7 +140,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	@Path("/drillMap")
 	@GET
 	@Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
-	public Response drillMap(@QueryParam("level") String level, @QueryParam("name") String name) {
+	public Response drillMap(@QueryParam("level") String level, @QueryParam("member") String member) {
 		logger.debug("IN");
 		try {
 
@@ -159,17 +159,22 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 
 			// 2. load drilled map throught DAO
 			// if is the first level and name is null get the map from the datamart provider
-			if (level.equals("1") && name == null) {
-				name = mapProvider.getDefaultMapName();
-			} else if (name == null) {
+			String name;
+			if (level.equals("1") && member == null) {
+				// name = mapProvider.getDefaultMapName();
+				member = getProperty("name", memberSB);
+			} else if (member == null) {
 				logger.error("Name	 map of level [" + level + "] not found in request.");
 				throw new SpagoBIServiceException("DrillMap", "Name map of level [" + level + "] not found in request.");
 			}
-			GeoMap drilledMap = DAOFactory.getSbiGeoMapsDAO().loadMapByNameAndLevel(name, level);
+
+			String hierarchy = dataMartProvider.getSelectedHierarchyName();
+			GeoMap drilledMap = DAOFactory.getSbiGeoMapsDAO().loadMapByHierarchyKey(hierarchy, member, level);
 			if (drilledMap == null) {
-				logger.error("SVG with name [" + name + "] and level [" + level + "] doesn't exist into the Map Catalogue.");
+				logger.error("SVG with hierarchyName [" + hierarchy + "], memberName [" + member + "] and level [" + level
+						+ "] doesn't exist into the Map Catalogue.");
 				// throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), null);
-				throw new SpagoBIServiceException("DrillMap", "SVG with member name [" + name + "] and level [" + level
+				throw new SpagoBIServiceException("DrillMap", "SVG with member name [" + member + "] and level [" + level
 						+ "] doesn't exist into the Map Catalogue.");
 			}
 
