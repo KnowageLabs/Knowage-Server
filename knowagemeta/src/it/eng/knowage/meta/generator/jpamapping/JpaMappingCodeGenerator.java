@@ -612,6 +612,8 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	@Override
 	public void hideTechnicalResources() {
+		throw new UnsupportedOperationException("If you need this method uncomment it, but you'll have problems with libraries");
+		/*
 		logger.debug("IN");
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		try {
@@ -634,6 +636,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 			throw new GenerationException("Error in hiding technical model folders", e);
 		}
 		logger.debug("OUT");
+		*/
 
 	}
 
