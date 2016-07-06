@@ -1,4 +1,5 @@
 <%-- this is part of sbiModule.js --%>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <script>
 var sbiM=angular.module('sbiModule');
 
@@ -23,7 +24,8 @@ sbiM.factory('sbiModule_config',function(){
 		 docDatasetLabel: "<%=docDatasetLabel%>",
 		 docDatasetName: "<%=docDatasetName%>",
 		 visibleDataSet: "<%=visibleDataSet%>",
-		 externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>/"
+		 externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>/",
+		 adapterPath:'<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>'
 	};
 });
 </script>

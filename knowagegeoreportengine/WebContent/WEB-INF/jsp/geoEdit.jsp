@@ -25,12 +25,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <%@include file="/WEB-INF/jsp/commons/angular/geoImport.jsp"%>
+
+<!-- document-viewer -->
+<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/document-viewer/documentViewer.js"></script>
+
 <title>{{translate.load("gisengine.designer.title")}}</title>
 <script>
- var documentLabel='<%=docLabel%>'
+ var documentLabel='<%=docLabel%>';
  console.log(documentLabel);
- var dataset='<%=docDatasetLabel%>'
- var docTemplate= '<%=template%>'
+ var dataset='<%=docDatasetLabel%>';
+ var docTemplate= '<%=template%>';
 </script>
 </head>
 <body ng-controller="geoTemplateBuildController">
@@ -39,7 +43,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<h2 class="md-flex" >{{translate.load("gisengine.designer.title")}}</h2>
 	</div>
 	<span flex></span>
+	<md-button class="md-primary" ng-click="editMap()">{{translate.load("gisengine.designer.edit.map")}}</md-button>
+
 	<md-button class="md-primary" ng-click="saveTemplate()">{{translate.load("sbi.generic.save")}}</md-button>
+
 </md-toolbar>
 <md-whiteframe class="md-whiteframe-2dp relative" layout-fill layout-margin flex  >
 <!-- map name always visible -->

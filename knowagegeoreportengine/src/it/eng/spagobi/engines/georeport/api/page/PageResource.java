@@ -61,8 +61,10 @@ public class PageResource extends AbstractChartEngineResource {
 
 		try {
 			pages.put("execute", new JSONObject("{name: 'execute', description: 'the georeport execution page', parameters: []}"));
-			// urls.put("execute", "/WEB-INF/jsp/geoReport.jsp");
 			urls.put("execute", "/WEB-INF/jsp/geoReport.jsp");
+			
+			pages.put("edit_map", new JSONObject("{name: 'execute', description: 'the georeport execution page', parameters: []}"));
+			urls.put("edit_map", "/WEB-INF/jsp/geoReport.jsp");
 
 			pages.put("edit", new JSONObject("{name: 'edit', description: 'the geo edit page', parameters: []}"));
 			urls.put("edit", "/WEB-INF/jsp/geoEdit.jsp");
@@ -103,23 +105,21 @@ public class PageResource extends AbstractChartEngineResource {
 		try {
 
 			String savedTemplate = getIOManager().getTemplateAsString();
-			switch (pageName) {
 
+			switch (pageName) {
 			case "execute":
 				engineInstance = GeoReportEngine.createInstance(savedTemplate, getIOManager().getEnv());
-				// TODO put this not in session but in context
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				break;
 			case "edit":
 				String saveTemplateForEdit = getIOManager().getTemplateAsString(true);
 				String templateString = saveTemplateForEdit != null ? saveTemplateForEdit : buildBaseTemplate().toString();
 				engineInstance = GeoReportEngine.createInstance(templateString, getIOManager().getEnv());
-
 				engineInstance.getEnv().put(EngineConstants.ENV_DOCUMENT_LABEL, getIOManager().getRequest().getParameter("DOCUMENT_LABEL"));
-
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				break;
 			default:
+				logger.error("pageName not defined");
 				dispatchUrl = "/WEB-INF/jsp/error.jsp";
 				break;
 			}

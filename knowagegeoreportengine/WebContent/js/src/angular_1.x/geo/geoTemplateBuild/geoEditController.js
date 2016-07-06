@@ -1,7 +1,7 @@
 (function() {
 
 	var app = angular.module('geoTemplateBuild', [ 'ngMaterial',
-			'angular_table', 'sbiModule', 'expander-box' ]);
+			'angular_table', 'sbiModule', 'expander-box','document_viewer' ]);
 	app.config([ '$mdThemingProvider', function($mdThemingProvider) {
 		$mdThemingProvider.theme('knowage')
 		$mdThemingProvider.setDefaultTheme('knowage');
@@ -9,11 +9,11 @@
 
 	app.controller('geoTemplateBuildController',
 			[ '$scope', 'sbiModule_translate', 'sbiModule_restServices',
-					'sbiModule_config', "$mdDialog",'sbiModule_messaging',
+					'sbiModule_config', "$mdDialog",'sbiModule_messaging','$documentViewer',
 					geoTemplateBuildControllerFunction ]);
 
 	function geoTemplateBuildControllerFunction($scope, sbiModule_translate,
-			sbiModule_restServices, sbiModule_config, $mdDialog, sbiModule_messaging) {
+			sbiModule_restServices, sbiModule_config, $mdDialog, sbiModule_messaging,$documentViewer) {
 		
 		$scope.template=angular.fromJson(docTemplate);
 		console.log($scope.template);
@@ -59,6 +59,13 @@
 		}
 		
 		$scope.loadLayers();
+		
+		$scope.editMap = function() {
+			debugger;
+			sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath+"restful-services/");
+
+			$documentViewer.editDocumentByLabel($scope.docLabel, $scope, "edit_map");
+		}
 		
 		$scope.saveTemplate = function() {
 			console.log("IN save template");
