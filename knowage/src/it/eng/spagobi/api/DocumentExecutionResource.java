@@ -20,43 +20,6 @@ package it.eng.spagobi.api;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_OPTIONS_KEY;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_QUANTITY_JSON;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE_JSON;
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.RequestContainerAccess;
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
-import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
-import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
-import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.serializer.SerializationException;
-import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
-import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
 import java.text.Format;
@@ -90,6 +53,45 @@ import org.safehaus.uuid.UUIDGenerator;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.RequestContainerAccess;
+import it.eng.spago.base.SessionContainer;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
+import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
+import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
+import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
+import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/documentexecution")
 @ManageAuthorization
@@ -230,28 +232,35 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String ret = "";
 
 		if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.OLAP_TYPE_CODE)) {
-			if (reqVal.getJSONObject("parameters").length() > 0) {
-				String subViewObjectID = reqVal.getJSONObject("parameters").getString("subobj_id");
-				String subViewObjectName = reqVal.getJSONObject("parameters").getString("subobj_name");
-				String subViewObjectDescription = reqVal.getJSONObject("parameters").getString("subobj_description");
-				String subViewObjectVisibility = reqVal.getJSONObject("parameters").getString("subobj_visibility");
+			JSONObject parameters = reqVal.getJSONObject("parameters");
+			if (parameters.length() > 0) {
 
-				ret = ret + "&" + AbstractEngineStartAction.SUBOBJ_ID + "=" + subViewObjectID + "&" + AbstractEngineStartAction.SUBOBJ_NAME + "="
-						+ subViewObjectName;
+				String subViewObjectID = parameters.optString("subobj_id");
+				String subViewObjectName = parameters.optString("subobj_name");
+				String subViewObjectDescription = parameters.optString("subobj_description");
+				String subViewObjectVisibility = parameters.optString("subobj_visibility");
 
-				if (!subViewObjectDescription.isEmpty())
-					ret = ret + "&" + AbstractEngineStartAction.SUBOBJ_DESCRIPTION + "=" + subViewObjectDescription;
-
-				ret = ret + "&" + AbstractEngineStartAction.SUBOBJ_VISIBILITY + "=" + subViewObjectVisibility;
+				if (!StringUtilities.isEmpty(subViewObjectID)) {
+					ret += "&" + AbstractEngineStartAction.SUBOBJ_ID + "=" + subViewObjectID;
+				}
+				if (!StringUtilities.isEmpty(subViewObjectName)) {
+					ret += "&" + AbstractEngineStartAction.SUBOBJ_NAME + "=" + subViewObjectName;
+				}
+				if (!StringUtilities.isEmpty(subViewObjectDescription)) {
+					ret += "&" + AbstractEngineStartAction.SUBOBJ_DESCRIPTION + "=" + subViewObjectDescription;
+				}
+				if (!StringUtilities.isEmpty(subViewObjectVisibility)) {
+					ret += "&" + AbstractEngineStartAction.SUBOBJ_VISIBILITY + "=" + subViewObjectVisibility;
+				}
 			}
 		}
 
 		// REPORT BIRT - JASPER
 		// MOBILE
-		if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.REPORT_TYPE_CODE)
-				&& obj.getEngine() != null
-				&& (obj.getEngine().getLabel().equals(SpagoBIConstants.BIRT_ENGINE_LABEL) || obj.getEngine().getLabel()
-						.equals(SpagoBIConstants.JASPER_ENGINE_LABEL)) && req.getHeader("User-Agent").indexOf("Mobile") != -1) {
+		if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.REPORT_TYPE_CODE) && obj.getEngine() != null
+				&& (obj.getEngine().getLabel().equals(SpagoBIConstants.BIRT_ENGINE_LABEL)
+						|| obj.getEngine().getLabel().equals(SpagoBIConstants.JASPER_ENGINE_LABEL))
+				&& req.getHeader("User-Agent").indexOf("Mobile") != -1) {
 			ret = ret + "&outputType=PDF";
 		}
 		// COCKPIT
@@ -283,9 +292,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						if (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
 							// CONVERT DATE FORMAT FROM DEFAULT TO SERVER
 							value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
-							// GeneralUtilities.getLocaleDateFormat(permanentSession),
-									SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), objParameter.getDefaultValues().get(0)
-											.getValue().toString().split("#")[0]);
+									// GeneralUtilities.getLocaleDateFormat(permanentSession),
+									SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"),
+									objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0]);
 						}
 
 						// DEFAULT DATE RANGE FIELD : {date_2W#format}
@@ -296,7 +305,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 							dateRange = dateRange.replace(range, "");
 							// CONVERT DATE FORMAT FROM DEFAULT TO Server
 							value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
-							// GeneralUtilities.getLocaleDateFormat(permanentSession)
+									// GeneralUtilities.getLocaleDateFormat(permanentSession)
 									SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), dateRange);
 							value = value + range;
 						} else {
@@ -416,8 +425,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
 
-			parameterAsMap
-					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
+			parameterAsMap.put("allowInternalNodeSelection",
+					objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
 			if (jsonParameters.has(objParameter.getId())) {
 				documentUrlManager.refreshParameterForFilters(objParameter.getAnalyticalDocumentParameter(), jsonParameters);
@@ -556,8 +565,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return Response.ok(resultAsMap).build();
 	}
 
-	private ArrayList<HashMap<String, Object>> manageDataRange(BIObject biObject, String executionRole, String biparameterId) throws EMFUserError,
-			SerializationException, JSONException, IOException {
+	private ArrayList<HashMap<String, Object>> manageDataRange(BIObject biObject, String executionRole, String biparameterId)
+			throws EMFUserError, SerializationException, JSONException, IOException {
 
 		BIObjectParameter biObjectParameter = null;
 		List parameters = biObject.getBiObjectParameters();
@@ -869,8 +878,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		addMetadata(generalMetadata, name, value, null);
 	}
 
-	private void addMetadata(JSONArray generalMetadata, String name, String value, Integer id) throws JsonMappingException, JsonParseException, JSONException,
-			IOException {
+	private void addMetadata(JSONArray generalMetadata, String name, String value, Integer id)
+			throws JsonMappingException, JsonParseException, JSONException, IOException {
 		JSONObject data = new JSONObject();
 		if (id != null) {
 			data.put("id", id);
@@ -880,8 +889,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		generalMetadata.put(data);
 	}
 
-	private void addTextMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id) throws JSONException,
-			JsonMappingException, JsonParseException, IOException {
+	private void addTextMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id)
+			throws JSONException, JsonMappingException, JsonParseException, IOException {
 		JSONArray jsonArray = metadataMap.get(type);
 		if (jsonArray == null) {
 			jsonArray = new JSONArray();
