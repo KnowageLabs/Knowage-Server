@@ -27,6 +27,8 @@ angular.module('folder_view', ['ngMaterial'])
 			selectedRow:"=?",
 			tableSpeedMenuOption:"=?",
 			selectedFolder:"=?",
+			// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			searchingOrganizer: "=?",
 			selectFolderAction:"&",
 			deleteFolderAction:"&"
 		},

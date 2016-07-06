@@ -39,13 +39,16 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	$scope.breadCrumbControl;
 	$scope.documentsOfSelectedFolder=[];
 	$scope.documentsOfSelectedFolderInitial=[];
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	$scope.documentsFromAllFolders=[];
+	
 	$scope.destFolder=undefined;
 	$scope.selectedFolder=undefined;
 	
 	$scope.showDocumentDetails = function() {
 		return $scope.showDocumentInfo && $scope.isSelectedDocumentValid();
 	};
-
 
 	$scope.isSelectedDocumentValid = function() {
 		return $scope.selectedDocument !== undefined;
@@ -135,21 +138,30 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	
 	$scope.deleteFolder = function(folder) {
 		var confirm = $mdDialog.confirm()
-		.title(sbiModule_translate.load("sbi.workspace.folder.delete.confirm.dialog"))
-		.content(sbiModule_translate.load("sbi.workspace.folder.delete.confirm"))
-		.ariaLabel('delete folder') 
-		.ok(sbiModule_translate.load("sbi.general.yes"))
-		.cancel(sbiModule_translate.load("sbi.general.No"));
-			$mdDialog.show(confirm).then(function() {
-				sbiModule_restServices.promiseDelete("2.0/organizer/folders",folder.functId)
-				.then(function(response) {
-					$scope.loadAllFolders();
-					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.folder.delete.success'),sbiModule_translate.load('sbi.generic.success'));
-
-				},function(response) {
-					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
-				});
-		});
+						.title(sbiModule_translate.load("sbi.workspace.folder.delete.confirm.dialog"))
+						.content(sbiModule_translate.load("sbi.workspace.folder.delete.confirm"))
+						.ariaLabel('delete folder') 
+						.ok(sbiModule_translate.load("sbi.general.yes"))
+						.cancel(sbiModule_translate.load("sbi.general.No"));
+							$mdDialog.show(confirm).then(function() {
+								sbiModule_restServices.promiseDelete("2.0/organizer/folders",folder.functId)
+								.then(function(response) {
+									$scope.loadAllFolders();
+									sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.folder.delete.success'),sbiModule_translate.load('sbi.generic.success'));
+				
+								},function(response) {
+									
+									//sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+									
+									/**
+									 * Provide a toast with an error message that informs user that he cannot delete a folder. The reason for that could be 
+									 * at least one subfolder or at least one document that the folder contains.
+									 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+									 */
+									sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.workspace.organizer.folder.error.delete'),"Error!");
+									
+								});
+						});
 	}
 	
 	$scope.loadAllFolders = function() {
@@ -164,8 +176,6 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
-	
-
 	
 	$scope.openFolder = function(folder){
 		//console.log(folder);
@@ -186,8 +196,6 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		$scope.loadDocumentsForFolder(folder);
 	}
 	
-
-	
 	$scope.addNewFolder  = function(){
 		$mdDialog.show({
 			  scope:$scope,
@@ -202,13 +210,25 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	function AddNewFolderController($scope,$mdDialog,$http){
 		
 		$scope.createFolder = function() {
-			
+		
+			/**
+			 * The Code value is encoded for the 'path' parameter, since it can contain special characters (such as \,/,?,%,@ etc.), as well as Name can.
+			 * The reason we do this is because the path parameter on the server side could be read right, EVEN THOUGH this path parameter is not ever
+			 * used in the current implementation (not for getting existing folders and files, neither for posting new ones, nor for deleting existing
+			 * ones). All operations are performed with the ID of the folder and document, so Code/Name are not interfering ever in this process. Hence, 
+			 * the encoding is done for preventing problems in some future implementation when this parameter could be used when performing such operations.
+			 * 
+			 * NOTE: Another approach, which bypasses the encoding of the path, is a preventing the user of specifying such special characters when creating
+			 * a new folder. This functionality is performed in the old interface - Functionalities management.
+			 * 
+			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
 			$scope.folder = {
 				    "parentFunct": $scope.selectedFolder.functId,
 				    "code": $scope.folder.code,
 				    "name": $scope.folder.name,
 				    "descr": $scope.folder.descr,
-				    "path": $scope.selectedFolder.path+"/"+$scope.folder.code,
+				    "path": $scope.selectedFolder.path+"/"+encodeURIComponent($scope.folder.code),
 				    "prog": 1
 				  }
 			if($scope.folder.descr==null){
@@ -235,7 +255,16 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		}
 		
 		$scope.closeDialog = function() {
+			
+			/**
+			 * When closing a form, clear its content. This should be necessary, because the user could leave the form filled with data and just close it
+			 * without saving it.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			$scope.clearForm();
+			
 			$mdDialog.cancel();
+			
 		}
 		
 		$scope.clearForm = function() {
@@ -289,24 +318,63 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		$scope.selectedFolder=item;
 		$scope.loadFolderContent();
 		$scope.loadDocumentsForFolder($scope.selectedFolder);
+		
+		/**
+		 * When moving through the folder structure via the breadcrumb in the Organizer, hide the document detail if shown. For example, if the user is
+		 * inside the root/Folder1 and it selects the document inside of it, the right-side navigation panel will appear with the document details. If 
+		 * the user then moves to the 'root' folder, the detail panel should be hidden.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$scope.showOrganizerDocumentInfo = false;
 	}
 	
 	$scope.loadDocumentsForFolder=function(folder){
+		
 		$scope.documentsOfSelectedFolder=[];
-		if(folder != undefined){
-		sbiModule_restServices.promiseGet("2.0/organizer/documents",folder.functId)
-		.then(function(response) {
-			angular.copy(response.data,$scope.documentsOfSelectedFolder); 
-			angular.copy(response.data,$scope.documentsOfSelectedFolderInitial); 
-			console.info("[LOAD END]: Loading of documents.");
-		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
-		});
+		
+		if(folder != undefined) {
+			
+			sbiModule_restServices.promiseGet("2.0/organizer/documents",folder.functId)
+				.then(function(response) {
+					
+					angular.copy(response.data,$scope.documentsOfSelectedFolder);
+					angular.copy(response.data,$scope.documentsOfSelectedFolderInitial); 
+					
+					/**
+					 * Only the 'root' folder has the parent folder that is NULL. Only when having this one, we can provide
+					 * collecting of all documents that are inside the Organizer (in the root or in some folder).
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+					 */
+					if (folder.parentFunct == null) {
+						$scope.loadAllOrganizerDocuments();
+					}
+					
+					console.info("[LOAD END]: Loading of documents.");
+					
+				},function(response){
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+				});
 		}
 	}
 	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	$scope.loadAllOrganizerDocuments = function() {
+		
+		sbiModule_restServices.promiseGet("2.0/organizer/documents","")
+			.then(
+					function(response) {
+						angular.copy(response.data,$scope.documentsFromAllFolders);
+						console.info("[LOAD END]: Loading of all documents from all Organizer folders.");
+					},
+					
+					function(response){
+						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+					}
+				);
+		
+	}
+	
 	$scope.executeDocumentFromOrganizer=function(document){
-		console.log(document);
 		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");		
 		$documentViewer.openDocument(document.biObjId, document.documentLabel, document.documentName);
 	}
@@ -348,7 +416,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	}
 	
 	function  MoveDocumentToFolderController($scope,$mdDialog,doc){
-		console.log($scope.foldersForTree);
+//		console.log($scope.foldersForTree);
 		$scope.closeFolderTree=function(){
 			$scope.destFolder=undefined;
     		$mdDialog.cancel();
@@ -367,10 +435,9 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		
 		$scope.executeMovingDocument=function(){
 			if($scope.destFolder!=undefined){
-				
 				if($scope.selectedFolder.functId==$scope.destFolder.functId){
 					sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.workspace.organizer.move.to.same.destination.folder'),sbiModule_translate.load('sbi.generic.info'));
-				}else{
+				}else{					
 					sbiModule_restServices.promisePut("2.0/organizer/documents/"+doc.biObjId+"/"+$scope.selectedFolder.functId,$scope.destFolder.functId)
 					.then(function(response) {
 						sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.organizer.folder.move.success'),sbiModule_translate.load('sbi.generic.success'));
@@ -378,7 +445,16 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 						$scope.selectOrganizerDocument(undefined);
 						$scope.closeFolderTree();
 					},function(response) {
-						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+						
+//						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+						
+						/**
+						 * Provide a toast with an error message that informs user that he cannot delete a folder. The reason for that could be 
+						 * at least one subfolder or at least one document that the folder contains.
+						 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+						sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message),"Error!");
+						
 					});
 				}				
 			}

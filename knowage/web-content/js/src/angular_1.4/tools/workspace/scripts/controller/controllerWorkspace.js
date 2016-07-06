@@ -101,6 +101,13 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	$scope.toggleLeftNav = function(){
 		$mdSidenav('left').toggle();
 	}
+	
+	/**
+	 * Flag is rised if user is searching for a document in the Organizer. Needed as indicator for handling the 
+	 * right-side navigation panel appearance and for the breadcrumb appearance control.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.organizerSearch = false;
 
 	var recentDocumentsLoaded = false;
 	var favoritesDocumentsLoaded = false;
@@ -284,7 +291,14 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 			
 		}
 		else {
-			$scope.resetSearchedData = false;
+			
+			/**
+			 * Not needed.
+			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+//			$scope.resetSearchedData = false;
+//			$scope.resetSearchedData = true;
+			
 			$scope.resetOption = item.name.toLowerCase();
 		}
 				
@@ -469,18 +483,94 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	 * field, as well as to reload all analysis documents that were filtered just before option change.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	var searchedBefore = false;
+	var searchedBefore = false;		
+	
+	var searchCleanAndReload = function() {
 		
+		switch($scope.currentOptionMainMenu!=$scope.resetOption ? $scope.currentOptionMainMenu : $scope.resetOption) {
+		
+			/**
+			 * SEARCH FOR ANALYSIS
+			 */
+			case "analysis":	
+				angular.copy($scope.cockpitAnalysisDocsInitial,$scope.cockpitAnalysisDocs);
+				$scope.clearSearch = false;
+				$scope.currentOptionMainMenu==$scope.resetOption ? $scope.resetSearchedData = false : null;
+				$scope.organizerSearch = false;
+				break;
+			
+			/**
+			 * SEARCH FOR DATASETS
+			 */
+			case "datasets":
+				angular.copy($scope.datasetsInitial,$scope.datasets); 
+				angular.copy($scope.myDatasetsInitial,$scope.myDatasets);
+				angular.copy($scope.enterpriseDatasetsInitial,$scope.enterpriseDatasets);
+				angular.copy($scope.sharedDatasetsInitial,$scope.sharedDatasets);
+				angular.copy($scope.ckanDatasetsListInitial,$scope.ckanDatasetsList);
+				$scope.clearSearch = false;
+				$scope.currentOptionMainMenu==$scope.resetOption ? $scope.resetSearchedData = false : null;
+				$scope.organizerSearch = false;
+				break;
+			
+			/**
+			 * SEARCH FOR FAVORITES
+			 */
+			case "favorites":
+				$scope.favoriteDocumentsList = $scope.favoriteDocumentsInitial;
+				$scope.clearSearch = false;
+				$scope.currentOptionMainMenu==$scope.resetOption ? $scope.resetSearchedData = false : null;
+				$scope.organizerSearch = false;
+				break;
+				
+			
+			/**
+			 * SEARCH IN SELECTED FOLDER IN THE ORGANIZER 
+			 */
+			case "documents":				
+				$scope.clearSearch = false;
+			    $scope.organizerSearch = false;
+			    $scope.documentsOfSelectedFolder = $scope.documentsOfSelectedFolderInitial;
+				$scope.currentOptionMainMenu==$scope.resetOption ? $scope.resetSearchedData = false : null;			    
+	            break;	
+	            
+			/**
+			 * SEARCH FOR RECENT
+			 */
+			case "recent":								
+				$scope.organizerSearch = false;
+				$scope.clearSearch = false;
+				$scope.recentDocumetnsList = $scope.recentDocumentsInitial;		
+				$scope.currentOptionMainMenu==$scope.resetOption ? $scope.resetSearchedData = false : null;
+				break;
+				
+			case "models":
+				angular.copy($scope.federationDefinitionsInitial,$scope.federationDefinitions); 
+			    angular.copy($scope.businessModelsInitial,$scope.businessModels);
+			    $scope.clearSearch = false;
+			    $scope.currentOptionMainMenu==$scope.resetOption ? $scope.resetSearchedData = false : null;
+			    $scope.organizerSearch = false;
+			    break;
+			    
+			case "smartfilters":
+				  angular.copy($scope.smartFiltersListInitial,$scope.smartFiltersList);
+				  $scope.clearSearch = false;
+				  $scope.currentOptionMainMenu==$scope.resetOption ? $scope.resetSearchedData = false : null;
+				  $scope.organizerSearch = false;
+				break;
+		}
+		
+	};
+	
 	/**
 	 * Function that is called when user is starting a search among some document collection (dataset,
 	 * analysis, documents, etc.).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.setSearchInput = function(newSearchInput) {		
+				
+		($scope.searchInput!="") ? $scope.resetSearchedData = true : null;		
 		
-		($scope.searchInput!="") ? $scope.resetSearchedData = true : null;
-		$scope.searchInput = newSearchInput;
-
 		var currentOptionMainMenu = $scope.currentOptionMainMenu;		
 		
 		/**
@@ -496,76 +586,24 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		
 		if (newSearchInput=="") { 
 
-			if ($scope.resetSearchedData==true) {
+			/**
+			 * If the search field is cleared (previously it had some content), unselect potentially selected document
+			 * and close the right-side navigation panel. 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			if ($scope.searchInput!=""){
 				
+				$scope.selectedDocument = null;
+				$scope.selectDocument(undefined);
+				
+				$scope.showOrganizerDocumentInfo = null;
+				$scope.selectOrganizerDocument(undefined);
+				
+			}
+			
+			if ($scope.resetSearchedData==true) {				
 				$scope.clearSearch = true;
-				
-				$timeout
-				(
-					function() {
-						
-						switch($scope.currentOptionMainMenu!=$scope.resetOption ? $scope.currentOptionMainMenu : $scope.resetOption) {
-						
-							/**
-							 * SEARCH FOR ANALYSIS
-							 */
-							case "analysis":	
-								angular.copy($scope.cockpitAnalysisDocsInitial,$scope.cockpitAnalysisDocs);
-								$scope.clearSearch = false;
-								break;
-							
-							/**
-							 * SEARCH FOR DATASETS
-							 */
-							case "datasets":
-								angular.copy($scope.datasetsInitial,$scope.datasets); 
-								angular.copy($scope.myDatasetsInitial,$scope.myDatasets);
-								angular.copy($scope.enterpriseDatasetsInitial,$scope.enterpriseDatasets);
-								angular.copy($scope.sharedDatasetsInitial,$scope.sharedDatasets);
-								angular.copy($scope.ckanDatasetsListInitial,$scope.ckanDatasetsList);
-								$scope.clearSearch = false;
-								break;
-							
-							/**
-							 * SEARCH FOR FAVORITES
-							 */
-							case "favorites":
-								$scope.favoriteDocumentsList = $scope.favoriteDocumentsInitial;
-								$scope.clearSearch = false;
-								break;
-								
-							
-								/**
-								 * SEARCH IN SELECTED FOLDER IN ORGANIZER
-								 * 
-								 */
-							case "documents":
-								$scope.documentsOfSelectedFolder = $scope.documentsOfSelectedFolderInitial;
-							    $scope.clearSearch = false;
-					            break;							
-							/**
-							 * SEARCH FOR RECENT
-							 */
-							case "recent":
-								$scope.recentDocumetnsList = $scope.recentDocumentsInitial;
-								$scope.clearSearch = false;
-								break;
-								
-							case "models":
-								angular.copy($scope.federationDefinitionsInitial,$scope.federationDefinitions); 
-							    angular.copy($scope.businessModelsInitial,$scope.businessModels);
-							    $scope.clearSearch = false;
-							    break;
-							    
-							case "smartfilters":
-								  angular.copy($scope.smartFiltersListInitial,$scope.smartFiltersList);
-								  $scope.clearSearch = false;
-								break;
-						}
-						
-					}, 1000
-				);
-				
+				searchCleanAndReload();				
 			}			
 			
 		}
@@ -573,6 +611,16 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 			
 			$scope.searching = true;			
 			$scope.clearSearch = false;
+			
+			/**
+			 * If the search is started, unselect potentially selected document and close the right-side navigation panel. 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			$scope.selectedDocument = null;
+			$scope.selectDocument(undefined);
+			
+			$scope.showOrganizerDocumentInfo = null;
+			$scope.selectOrganizerDocument(undefined);
 			
 			$timeout
 			(
@@ -611,8 +659,10 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 							break;
 						
 						case "documents":
-							$scope.documentsOfSelectedFolder=filterThroughCollection(newSearchInput,$scope.documentsOfSelectedFolderInitial,"documentName");
+							$scope.documentsOfSelectedFolder = filterThroughCollection(newSearchInput,$scope.documentsFromAllFolders,"documentName");
 							$scope.searching = false;
+							// Rise the flag that user is searching inside the Organizer. (author: danristo)
+							$scope.organizerSearch = true;
 							break;
 							
 						/**
@@ -646,7 +696,14 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 				}, 1000
 			);
 			
-		}			
+		}
+		
+		/**
+		 * Set the current search content to the new one. We are doing this on the end of the function, in order to have the
+		 * correct information about the previous search sequence when comparing to the new one (ar the beginning).
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$scope.searchInput = newSearchInput;
 					
 	}
 

@@ -103,10 +103,19 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 
 			tx.commit();
 		} catch (HibernateException he) {
+
 			logger.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
+
+			/**
+			 * Throw this specific exception so the service that called the Hibernate method can handle it and forward the information about the error towards
+			 * the client (final user).
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			throw new HibernateException(he);
 
 		} finally {
 			if (aSession != null) {

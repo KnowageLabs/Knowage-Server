@@ -32,6 +32,16 @@
 		min-height: calc(100% - 60px);
 	}
 	
+	/*
+		The amount of pixels subtracted from the total height is increased, since the Organizer possess the
+		breadcrumb on the top of the right-side detail panel (documents container).
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/
+	.md-whiteframe-5dp-rightPanelDocuments-organizer {
+		height: calc(100% - 120px);
+		min-height: calc(100% - 120px);
+	}
+	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
 	@-moz-document url-prefix() { 
 		.md-whiteframe-5dp-rightPanelDocuments {

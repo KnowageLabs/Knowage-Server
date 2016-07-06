@@ -32,6 +32,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -39,6 +40,69 @@ import org.hibernate.criterion.Restrictions;
 public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements IObjFuncOrganizerDAO {
 
 	private static transient Logger logger = Logger.getLogger(ObjFuncOrganizerHIBDAOImpl.class);
+
+	/**
+	 * The method that collects all Organizer documents available for current user. It does not look for a particular folder, but rather for all documents that
+	 * exist for the user.
+	 *
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	@Override
+	public List loadAllOrganizerDocuments() {
+
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+
+		List listOfDocuments = null;
+		List toReturn = new ArrayList();
+
+		try {
+
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQuery = aSession.createQuery(" from SbiObjFuncOrganizer");
+
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+
+				SbiObjFuncOrganizer hibObj = (SbiObjFuncOrganizer) it.next();
+				toReturn.add(toDocumentOrganizer(hibObj));
+
+			}
+
+			tx.commit();
+
+		}
+
+		catch (HibernateException he) {
+			
+			logException(he);			
+			logger.error("HibernateException", he);
+			
+			if (tx != null)
+				tx.rollback();
+			
+			/**
+			 * Throw this specific exception so the service that called the Hibernate method can handle it and 
+			 * forward the information about the error towards the client (final user).
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			throw new HibernateException(he);
+		}
+
+		finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
 
 	@Override
 	public List loadDocumentsByFolder(Integer folderId) {
@@ -109,10 +173,21 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
+
 			logException(he);
+
 			logger.error("HibernateException", he);
+
 			if (tx != null)
 				tx.rollback();
+
+			/**
+			 * Throw this specific exception so the service that called the Hibernate method can handle it and 
+			 * forward the information about the error towards the client (final user).
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			throw new HibernateException(he);
+
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen()) {
@@ -184,10 +259,27 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 			loadAndUpdateDocumentInOrganizerById(documentId, sourceFolderId, destinationFolderId, aSession);
 			tx.commit();
 		} catch (HibernateException he) {
+
 			logException(he);
-			logger.error("Error while deleting the document from organizer.", he);
+
+			/**
+			 * The new line is more accurate and precise than the commented one (the old one).
+			 *
+			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			// logger.error("Error while deleting the document from organizer.", he);
+			logger.error("Error while moving the document to another (different) folder.", he);
+
 			if (tx != null)
 				tx.rollback();
+
+			/**
+			 * Throw this specific exception so the service that called the Hibernate method can handle it and 
+			 * forward the information about the error towards the client (final user).
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			throw new HibernateException(he);
+
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())

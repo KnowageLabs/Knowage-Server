@@ -32,4 +32,13 @@ public interface IObjFuncOrganizerDAO extends ISpagoBIDao {
 
 	public void moveDocumentToDifferentFolder(Integer documentId, Integer sourceFolderId, Integer destinationFolderId);
 
+	/**
+	 * The method that collects all Organizer documents available for current user. It does not look for a particular folder, but rather for all documents that
+	 * exist for the user.
+	 * 
+	 * @return The list of all documents available in the user's Organizer.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	public List loadAllOrganizerDocuments();
+
 }

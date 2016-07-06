@@ -418,7 +418,9 @@
 				if(response.data.errors[0].message=="not-enabled-to-call-service"){
 					response.data.errors[0].message=sbiModule_translate.load('sbi.workspace.user.role.constraint');
 				}
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load('sbi.generic.error'));
+				
+				// @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
 			});
 		};
 			
