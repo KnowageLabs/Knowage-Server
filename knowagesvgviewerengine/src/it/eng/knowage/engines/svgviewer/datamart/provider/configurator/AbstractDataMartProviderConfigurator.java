@@ -63,6 +63,7 @@ public class AbstractDataMartProviderConfigurator {
 			selectedHierarchyName = getSelectedHierarchyName(confSB);
 			hierarchyMembers = getHierarchyMembers(confSB);
 			selectedMemberName = getDefaultMemberName(hierarchyMembers);
+			List membersLst = getHierarchyMembersList(confSB);
 
 			abstractDatasetProvider.setHierarchyMembers(hierarchyMembers);
 			abstractDatasetProvider.setSelectedHierarchyName(selectedHierarchyName);
@@ -262,6 +263,7 @@ public class AbstractDataMartProviderConfigurator {
 
 		try {
 			List members = hierarchySB.getAttributeAsList(SvgViewerEngineConstants.MEMBER_TAG);
+			// List members = getHierarchyMembersList(confSB);
 			boolean foundActive = false;
 			for (int i = 0; i < members.size(); i++) {
 				memberSB = null;
@@ -269,6 +271,8 @@ public class AbstractDataMartProviderConfigurator {
 					logger.debug("Parsing member  [" + i + "]");
 					memberSB = (SourceBean) members.get(i);
 
+					String hierarchy = (String) hierarchySB.getAttribute("name");
+					logger.debug("Member [" + i + "] hierarchy [" + hierarchy + "]");
 					String name = (String) memberSB.getAttribute("name");
 					logger.debug("Member [" + i + "] name [" + name + "]");
 					String dsMeasure = (String) memberSB.getAttribute("measure_dataset");
@@ -288,6 +292,7 @@ public class AbstractDataMartProviderConfigurator {
 							+ SvgViewerEngineConstants.DATASET_CONFIG + "] cannot be null");
 
 					HierarchyMember member = new HierarchyMember();
+					member.setHierarchy(hierarchy);
 					member.setName(name);
 					member.setDsMeasure(dsMeasure);
 					member.setLevel(Integer.valueOf(level));
@@ -330,7 +335,7 @@ public class AbstractDataMartProviderConfigurator {
 				}
 			}
 		} catch (Throwable t) {
-			SvgViewerEngineRuntimeException e = new SvgViewerEngineRuntimeException("An error occurred while parsing metadata [" + hierarchySB + "]", t);
+			SvgViewerEngineRuntimeException e = new SvgViewerEngineRuntimeException("An error occurred while parsing metadata [" + memberSB + "]", t);
 			e.addHint("Download document template and fix the problem that have coused the syntax/semantic error");
 			throw e;
 		} finally {
@@ -403,6 +408,20 @@ public class AbstractDataMartProviderConfigurator {
 		}
 
 		return hierarchies;
+	}
+
+	private static List getHierarchyMembersList(SourceBean confSB) {
+		SourceBean hierarchySB = null;
+		try {
+			hierarchySB = (SourceBean) confSB.getAttribute("HIERARCHY");
+			return hierarchySB.getAttributeAsList(SvgViewerEngineConstants.MEMBER_TAG);
+		} catch (Throwable t) {
+			SvgViewerEngineRuntimeException e = new SvgViewerEngineRuntimeException("An error occurred while parsing metadata [" + hierarchySB + "]", t);
+			e.addHint("Download document template and fix the problem that have coused the syntax/semantic error");
+			throw e;
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 }

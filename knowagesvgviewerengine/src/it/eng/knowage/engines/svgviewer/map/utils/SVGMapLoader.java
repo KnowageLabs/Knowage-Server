@@ -1,5 +1,6 @@
 package it.eng.knowage.engines.svgviewer.map.utils;
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.services.content.bo.Content;
 
 import java.io.File;
@@ -7,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -19,11 +21,9 @@ import org.w3c.dom.svg.SVGDocument;
 
 import sun.misc.BASE64Decoder;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class SVGMapLoader.
  *
- * @author Andrea Gioia
  */
 public class SVGMapLoader {
 
@@ -126,5 +126,26 @@ public class SVGMapLoader {
 	 */
 	public static XMLStreamReader getMapAsStream(String url) throws FileNotFoundException, XMLStreamException {
 		return xmlInputFactory.createXMLStreamReader(new FileInputStream(url));
+	}
+
+	public static String getDefaultMemberName(List confSBList) {
+		String toReturn = null;
+		int idx = 0;
+		for (int i = 0; i < confSBList.size(); i++) {
+			SourceBean memberSB = (SourceBean) confSBList.get(i);
+			if (i == 0) {
+				toReturn = (String) memberSB.getAttribute("name");
+			}
+			if (memberSB.getAttribute("name") == "1") {
+				toReturn = (String) memberSB.getAttribute("name");
+				break;
+			}
+			idx++;
+			logger.error("Member with level [1]  not found into the template. Returned the first member found [" + (String) memberSB.getAttribute("name")
+					+ "]! Check the template.");
+		}
+
+		return toReturn;
+
 	}
 }

@@ -1,10 +1,14 @@
 package it.eng.knowage.engines.svgviewer.map.provider;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
+import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.knowage.engines.svgviewer.map.provider.configurator.SOMapProviderConfigurator;
 import it.eng.knowage.engines.svgviewer.map.utils.SVGMapLoader;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.mapcatalogue.bo.GeoMap;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.utilities.callbacks.mapcatalogue.MapCatalogueAccessUtils;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,6 +19,8 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.svg.SVGDocument;
+
+import sun.misc.BASE64Encoder;
 
 /**
  * The Class SOMapProvider.
@@ -60,6 +66,58 @@ public class SOMapProvider extends AbstractMapProvider {
 
 		try {
 			map = mapCatalogueServiceProxy.readMap(mapName);
+		} catch (Exception e) {
+			logger.error("An error occurred while invoking mapCatalogueService method: readMap()");
+			throw new SvgViewerEngineException("Impossible to load map from map catalogue", e);
+		}
+
+		try {
+
+			svgDocument = svgMapLoader.loadMapAsDocument(map);
+		} catch (IOException e) {
+			logger.error("Impossible to load map from map catalogue");
+			throw new SvgViewerEngineException("Impossible to load map from map catalogue", e);
+		}
+
+		logger.debug("OUT");
+
+		return svgDocument;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see it.eng.spagobi.engines.geo.map.provider.AbstractMapProvider#getSVGMapDOMDocument(java.lang.String)
+	 */
+	@Override
+	public SVGDocument getSVGMapDOMDocument(HierarchyMember member) throws SvgViewerEngineException {
+		logger.debug("IN.memberName=" + member.getName());
+		SVGDocument svgDocument = null;
+		Content map = null;
+
+		try {
+			GeoMap drilledMap = DAOFactory.getSbiGeoMapsDAO().loadMapByHierarchyKey(member.getHierarchy(), member.getName(), member.getLevel().toString());
+			if (drilledMap == null) {
+				logger.error("SVG with hierarchyName [" + member.getHierarchy() + "], memberName [" + member.getName() + "] and level [" + member.getLevel()
+						+ "] doesn't exist into the Map Catalogue.");
+				// throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), null);
+				throw new SpagoBIServiceException("DrillMap", "SVG with hierarchyName [" + member.getHierarchy() + "], memberName [" + member.getName()
+						+ "] and level [" + member.getLevel() + "] doesn't exist into the Map Catalogue.");
+			}
+
+			map = new Content();
+
+			byte[] template = DAOFactory.getBinContentDAO().getBinContent(drilledMap.getBinId());
+
+			if (template == null) {
+				logger.info("Template map is empty. Try uploadyng the svg.");
+				return null;
+			}
+			BASE64Encoder bASE64Encoder = new BASE64Encoder();
+			map.setContent(bASE64Encoder.encode(template));
+			logger.debug("template read");
+			map.setFileName(member.getName() + ".svg");
+
 		} catch (Exception e) {
 			logger.error("An error occurred while invoking mapCatalogueService method: readMap()");
 			throw new SvgViewerEngineException("Impossible to load map from map catalogue", e);

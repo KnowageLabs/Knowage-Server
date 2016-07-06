@@ -1,10 +1,7 @@
 package it.eng.knowage.engines.svgviewer.map.provider.configurator;
 
-import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.map.provider.AbstractMapProvider;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
 
 import org.apache.log4j.Logger;
 
@@ -29,23 +26,7 @@ public class AbstractMapProviderConfigurator {
 	 *             the geo engine exception
 	 */
 	public static void configure(AbstractMapProvider abstractMapProvider, Object conf) throws SvgViewerEngineException {
-		SourceBean confSB = null;
 
-		if (conf instanceof String) {
-			try {
-				confSB = SourceBean.fromXMLString((String) conf);
-			} catch (SourceBeanException e) {
-				logger.error("Impossible to parse configuration block for MapProvider", e);
-				throw new SvgViewerEngineException("Impossible to parse configuration block for MapProvider", e);
-			}
-		} else {
-			confSB = (SourceBean) conf;
-		}
-
-		if (confSB != null) {
-			String mapName = (String) confSB.getAttribute(SvgViewerEngineConstants.MAP_NAME_TAG);
-			abstractMapProvider.setSelectedMapName(mapName);
-		}
 	}
 
 }

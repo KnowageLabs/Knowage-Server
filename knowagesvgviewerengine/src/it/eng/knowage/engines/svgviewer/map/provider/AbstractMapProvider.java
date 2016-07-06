@@ -2,6 +2,7 @@ package it.eng.knowage.engines.svgviewer.map.provider;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.component.AbstractSvgViewerEngineComponent;
+import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.knowage.engines.svgviewer.map.provider.configurator.AbstractMapProviderConfigurator;
 import it.eng.spago.base.SourceBean;
 
@@ -12,16 +13,17 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.log4j.Logger;
 import org.w3c.dom.svg.SVGDocument;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AbstractMapProvider.
  *
- * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class AbstractMapProvider extends AbstractSvgViewerEngineComponent implements IMapProvider {
 
 	/** The selected map name. */
 	private String selectedMapName;
+
+	/** The selected map name. */
+	private HierarchyMember selectedHierarchyMember;
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(AbstractMapProvider.class);
@@ -84,6 +86,11 @@ public class AbstractMapProvider extends AbstractSvgViewerEngineComponent implem
 		return null;
 	}
 
+	@Override
+	public SVGDocument getSVGMapDOMDocument(HierarchyMember member) throws SvgViewerEngineException {
+		return getSVGMapDOMDocument(member);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -129,4 +136,20 @@ public class AbstractMapProvider extends AbstractSvgViewerEngineComponent implem
 		SourceBean confSB = (SourceBean) getConf();
 		return (String) confSB.getAttribute("map_name");
 	}
+
+	/**
+	 * @return the selectedHierarchyMember
+	 */
+	public HierarchyMember getSelectedHierarchyMember() {
+		return selectedHierarchyMember;
+	}
+
+	/**
+	 * @param selectedHierarchyMember
+	 *            the selectedHierarchyMember to set
+	 */
+	public void setSelectedHierarchyMember(HierarchyMember selectedHierarchyMember) {
+		this.selectedHierarchyMember = selectedHierarchyMember;
+	}
+
 }

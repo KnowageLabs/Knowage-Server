@@ -16,6 +16,7 @@ import java.util.Map;
  */
 public class HierarchyMember {
 
+	private String hierarchy;
 	private String name;
 	private String dsMeasure;
 	private Integer level;
@@ -25,6 +26,21 @@ public class HierarchyMember {
 	private Map<String, Measure> measures;
 
 	private boolean isActive;
+
+	/**
+	 * @return the hierarchy
+	 */
+	public String getHierarchy() {
+		return hierarchy;
+	}
+
+	/**
+	 * @param hierarchy
+	 *            the hierarchy to set
+	 */
+	public void setHierarchy(String hierarchy) {
+		this.hierarchy = hierarchy;
+	}
 
 	/**
 	 * @return the name

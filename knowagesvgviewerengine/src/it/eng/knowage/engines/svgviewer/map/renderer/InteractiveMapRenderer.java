@@ -167,7 +167,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		// load target map
 		try {
 			loadTargetMapTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.loadTargetMap");
-			targetMap = mapProvider.getSVGMapDOMDocument();
+			targetMap = mapProvider.getSVGMapDOMDocument(mapProvider.getSelectedHierarchyMember());
 		} finally {
 			if (loadTargetMapTotalTimeMonitor != null)
 				loadTargetMapTotalTimeMonitor.stop();

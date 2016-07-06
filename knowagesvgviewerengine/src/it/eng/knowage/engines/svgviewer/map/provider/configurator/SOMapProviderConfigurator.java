@@ -2,20 +2,18 @@ package it.eng.knowage.engines.svgviewer.map.provider.configurator;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
+import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.knowage.engines.svgviewer.map.provider.SOMapProvider;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.callbacks.mapcatalogue.MapCatalogueAccessUtils;
 
 import org.apache.log4j.Logger;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class SOMapProviderConfigurator.
  *
- * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class SOMapProviderConfigurator {
 
@@ -34,24 +32,14 @@ public class SOMapProviderConfigurator {
 	 *             the geo engine exception
 	 */
 	public static void configure(SOMapProvider soMapProvider, Object conf) throws SvgViewerEngineException {
-		SourceBean confSB = null;
 
-		if (conf instanceof String) {
-			try {
-				confSB = SourceBean.fromXMLString((String) conf);
-			} catch (SourceBeanException e) {
-				logger.error("Impossible to parse configuration block for DataSetProvider", e);
-				throw new SvgViewerEngineException("Impossible to parse configuration block for DataSetProvider", e);
-			}
-		} else {
-			confSB = (SourceBean) conf;
-		}
+		MapCatalogueAccessUtils mapCatalogueServiceProxy = (MapCatalogueAccessUtils) soMapProvider.getEnv().get(
+				SvgViewerEngineConstants.ENV_MAPCATALOGUE_SERVICE_PROXY);
+		soMapProvider.setMapCatalogueServiceProxy(mapCatalogueServiceProxy);
 
-		if (confSB != null) {
-			MapCatalogueAccessUtils mapCatalogueServiceProxy = (MapCatalogueAccessUtils) soMapProvider.getEnv().get(
-					SvgViewerEngineConstants.ENV_MAPCATALOGUE_SERVICE_PROXY);
-			soMapProvider.setMapCatalogueServiceProxy(mapCatalogueServiceProxy);
-		}
+		if (conf instanceof HierarchyMember)
+			soMapProvider.setSelectedHierarchyMember((HierarchyMember) conf);
+
 	}
 
 	/**

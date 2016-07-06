@@ -2,6 +2,7 @@ package it.eng.knowage.engines.svgviewer.map.provider;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.component.ISvgViewerEngineComponent;
+import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 
 import java.util.List;
 
@@ -9,11 +10,9 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.w3c.dom.svg.SVGDocument;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface IMapProvider.
  *
- * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public interface IMapProvider extends ISvgViewerEngineComponent {
 
@@ -64,6 +63,19 @@ public interface IMapProvider extends ISvgViewerEngineComponent {
 	SVGDocument getSVGMapDOMDocument(String mapName) throws SvgViewerEngineException;
 
 	/**
+	 * Gets the sVG map dom document.
+	 *
+	 * @param member
+	 *            the active member
+	 *
+	 * @return the sVG map dom document
+	 *
+	 * @throws GeoEngineException
+	 *             the geo engine exception
+	 */
+	SVGDocument getSVGMapDOMDocument(HierarchyMember member) throws SvgViewerEngineException;
+
+	/**
 	 * Gets the selected map name.
 	 *
 	 * @return the selected map name
@@ -77,6 +89,11 @@ public interface IMapProvider extends ISvgViewerEngineComponent {
 	 *            the new selected map name
 	 */
 	void setSelectedMapName(String mapName);
+
+	/**
+	 * Gets the selected member.
+	 */
+	HierarchyMember getSelectedHierarchyMember();
 
 	/**
 	 * Gets the map names by feature.

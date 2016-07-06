@@ -22,6 +22,7 @@ import it.eng.knowage.engines.svgviewer.SvgViewerEngineInstance;
 import it.eng.knowage.engines.svgviewer.api.AbstractSvgViewerEngineResource;
 import it.eng.knowage.engines.svgviewer.datamart.provider.DataMartProvider;
 import it.eng.knowage.engines.svgviewer.datamart.provider.configurator.DataMartProviderConfigurator;
+import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.knowage.engines.svgviewer.map.provider.SOMapProvider;
 import it.eng.knowage.engines.svgviewer.map.provider.configurator.SOMapProviderConfigurator;
 import it.eng.knowage.engines.svgviewer.map.renderer.InteractiveMapRenderer;
@@ -29,8 +30,6 @@ import it.eng.knowage.engines.svgviewer.map.renderer.Layer;
 import it.eng.knowage.engines.svgviewer.map.renderer.Measure;
 import it.eng.knowage.engines.svgviewer.map.renderer.configurator.InteractiveMapRendererConfigurator;
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.mapcatalogue.bo.GeoMap;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -157,46 +156,31 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 				throw new SpagoBIServiceException("DrillMap", "Template dosen't contains configuration about level [" + level + "].");
 			}
 
-			// 2. load drilled map throught DAO
-			// if is the first level and name is null get the map from the datamart provider
-			String name;
+			// 2. updated key informations
 			if (level.equals("1") && member == null) {
 				// name = mapProvider.getDefaultMapName();
 				member = getProperty("name", memberSB);
 			} else if (member == null) {
-				logger.error("Name	 map of level [" + level + "] not found in request.");
+				logger.error("Name map of level [" + level + "] not found in request.");
 				throw new SpagoBIServiceException("DrillMap", "Name map of level [" + level + "] not found in request.");
 			}
-
 			String hierarchy = dataMartProvider.getSelectedHierarchyName();
-			GeoMap drilledMap = DAOFactory.getSbiGeoMapsDAO().loadMapByHierarchyKey(hierarchy, member, level);
-			if (drilledMap == null) {
-				logger.error("SVG with hierarchyName [" + hierarchy + "], memberName [" + member + "] and level [" + level
-						+ "] doesn't exist into the Map Catalogue.");
-				// throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), null);
-				throw new SpagoBIServiceException("DrillMap", "SVG with member name [" + member + "] and level [" + level
-						+ "] doesn't exist into the Map Catalogue.");
-			}
 
-			// 3. update datamartProvider and mapProvider objects
+			// 3. update internal objects (datamartProvider and mapProvider)
 			dataMartProvider.setSelectedMemberName(getProperty("name", memberSB));
 			dataMartProvider.setSelectedLevel(level);
 			DataMartProviderConfigurator.configure(dataMartProvider, memberSB.toString());
 			dataMartProvider.getDataMart().setTargetFeatureName(getProperty("name", memberSB));
 
-			SOMapProviderConfigurator.configure(mapProvider, memberSB.toString());
-			mapProvider.setSelectedMapName(drilledMap.getName());
-
+			HierarchyMember hierMember = dataMartProvider.getHierarchyMember(dataMartProvider.getSelectedMemberName());
+			hierMember.setHierarchy(hierarchy);
+			hierMember.setName(member);
+			hierMember.setLevel(Integer.valueOf(level));
+			SOMapProviderConfigurator.configure(mapProvider, hierMember);
+			mapProvider.setSelectedMapName(mapProvider.getSelectedMapName());
 			InteractiveMapRendererConfigurator.configure(mapRenderer, memberSB.toString());
 
 			// 4. return the new SVG
-			byte[] template = DAOFactory.getBinContentDAO().getBinContent(drilledMap.getBinId());
-
-			if (template == null) {
-				logger.error("Template map is empty. Try uploadyng the svg.");
-				throw new SpagoBIServiceException("DrillMap", "Template map is empty. Try uploadyng the svg.");
-			}
-
 			File maptmpfile = getEngineInstance().renderMap("dsvg");
 			byte[] data = Files.readAllBytes(maptmpfile.toPath());
 

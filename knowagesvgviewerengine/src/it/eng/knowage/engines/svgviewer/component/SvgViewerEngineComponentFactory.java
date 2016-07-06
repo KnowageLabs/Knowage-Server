@@ -3,6 +3,7 @@ package it.eng.knowage.engines.svgviewer.component;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.datamart.provider.IDataMartProvider;
+import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.knowage.engines.svgviewer.map.provider.IMapProvider;
 import it.eng.knowage.engines.svgviewer.map.renderer.IMapRenderer;
 import it.eng.spago.base.SourceBean;
@@ -13,11 +14,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class GeoEngineComponentFactory.
  *
- * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class SvgViewerEngineComponentFactory {
 
@@ -89,28 +88,19 @@ public class SvgViewerEngineComponentFactory {
 	 * @throws GeoEngineException
 	 *             the geo engine exception
 	 */
-	public static IMapProvider buildMapProvider(SourceBean template, Map env) throws SvgViewerEngineException {
+	public static IMapProvider buildMapProvider(HierarchyMember member, Map env) throws SvgViewerEngineException {
 		IMapProvider mapProvider = null;
 		SourceBean confSB = null;
 		String className = null;
 
 		logger.debug("IN");
-		confSB = (SourceBean) template.getAttribute(SvgViewerEngineConstants.MAP_PROVIDER_TAG);
-		if (confSB == null) {
-			logger.warn("Cannot find MapProvider configuration settings: tag name " + SvgViewerEngineConstants.MAP_PROVIDER_TAG);
-			logger.info("MapProvider configuration settings must be injected at execution time");
-			return null;
-		}
-		className = (String) confSB.getAttribute(SvgViewerEngineConstants.CLASS_NAME_ATTRIBUTE);
-		if (className == null) {
-			className = SvgViewerEngineConstants.DEFAULT_MAP_PROVIDER;
-			logger.warn("Cannot find MapProvider class attribute: " + SvgViewerEngineConstants.CLASS_NAME_ATTRIBUTE);
-			logger.warn("The default MapProvider implementation will be used: [" + className + "]");
-		}
+
+		className = SvgViewerEngineConstants.DEFAULT_MAP_PROVIDER;
 		logger.debug("Map provider class: " + className);
 		logger.debug("Map provider configuration: " + confSB);
 
-		mapProvider = (IMapProvider) build(className, confSB, env);
+		// mapProvider = (IMapProvider) build(className, confSB, env);
+		mapProvider = (IMapProvider) build(className, member, env);
 		logger.debug("IN");
 
 		return mapProvider;
@@ -131,27 +121,12 @@ public class SvgViewerEngineComponentFactory {
 	 */
 	public static IMapRenderer buildMapRenderer(SourceBean template, Map env) throws SvgViewerEngineException {
 		IMapRenderer mapRenderer = null;
-		SourceBean confSB = null;
+
 		String className = SvgViewerEngineConstants.DEFAULT_MAP_RENDERER;
+
 		logger.warn("The default MapRenderer implementation will be used: [" + className + "]");
-
 		logger.debug("IN");
-		// confSB = (SourceBean) template.getAttribute(SvgViewerEngineConstants.MAP_RENDERER_TAG);
-		// if (confSB == null) {
-		// logger.warn("Cannot find MapRenderer configuration settings: tag name " + SvgViewerEngineConstants.MAP_RENDERER_TAG);
-		// logger.info("MapRenderer configuration settings must be injected at execution time");
-		// return null;
-		// }
-		// className = (String) confSB.getAttribute(SvgViewerEngineConstants.CLASS_NAME_ATTRIBUTE);
-		// if (className == null) {
-		// className = SvgViewerEngineConstants.DEFAULT_MAP_RENDERER;
-		// logger.warn("Cannot find MapRenderer class attribute: " + SvgViewerEngineConstants.CLASS_NAME_ATTRIBUTE);
-		// logger.warn("The default MapRenderer implementation will be used: [" + className + "]");
-		// }
-		// logger.debug("Map renderer class: " + className);
-		// logger.debug("Map renderer configuration: " + confSB);
-
-		mapRenderer = (IMapRenderer) build(className, confSB, env);
+		mapRenderer = (IMapRenderer) build(className, null, env);
 		logger.debug("OUT");
 
 		return mapRenderer;

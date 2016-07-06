@@ -82,9 +82,10 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 			// this.guiSettings = new JSONObject(template);
 
 			logger.debug("IN");
-
-			setMapProvider(SvgViewerEngineComponentFactory.buildMapProvider(template, env));
 			setDataMartProvider(SvgViewerEngineComponentFactory.buildDataMartProvider(template, env));
+			// setMapProvider(SvgViewerEngineComponentFactory.buildMapProvider(getDataMartProvider().getSelectedMemberName(), env));
+			setMapProvider(SvgViewerEngineComponentFactory.buildMapProvider(
+					getDataMartProvider().getHierarchyMember(getDataMartProvider().getSelectedMemberName()), env));
 			setMapRenderer(SvgViewerEngineComponentFactory.buildMapRenderer(template, env));
 			propertiesPanelPosition = initPropertiesPanelPosition(template);
 			logger.info("MapProvider class: " + getMapProvider().getClass().getName());
@@ -342,46 +343,6 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 			geoException.setDescription(description);
 			throw geoException;
 		}
-
-		// Hierarchy selectedHierarchy = getDataMartProvider().getHierarchy(selectedHierarchyName);
-		// if (selectedHierarchy == null) {
-		// SvgViewerEngineException geoException;
-		// logger.error("Selected hierarchy [" + selectedHierarchyName + "] does not exist");
-		// String description = "Selected hierarchy [" + selectedHierarchyName + "] does not exist";
-		// List hints = new ArrayList();
-		// hints.add("Check if hierarchy name is correct");
-		// hints.add("Check if a hierarchy named " + selectedHierarchyName + "  has been defined. Defined hierarachy are: "
-		// + Arrays.toString(getDataMartProvider().getHierarchyNames().toArray()));
-		// geoException = new SvgViewerEngineException("Configuration error");
-		// geoException.setDescription(description);
-		// // geoException.setHints(hints);
-		// throw geoException;
-		// }
-		//
-		// String selectedLevelName = getDataMartProvider().getSelectedLevelName();
-		// if (selectedLevelName == null) {
-		// SvgViewerEngineException geoException;
-		// logger.error("Select level name is not defined");
-		// String description = "Select level name is not defined";
-		// geoException = new SvgViewerEngineException("Configuration error");
-		// geoException.setDescription(description);
-		// throw geoException;
-		// }
-		//
-		// Hierarchy.Level selectedLevel = selectedHierarchy.getLevel(selectedLevelName);
-		// if (selectedLevel == null) {
-		// SvgViewerEngineException geoException;
-		// logger.error("Selected level [" + selectedHierarchyName + "] does not exist in selected hierarchy [" + selectedHierarchyName + "]");
-		// String description = "Selected level [" + selectedHierarchyName + "] does not exist in selected hierarchy [" + selectedHierarchyName + "]";
-		// List hints = new ArrayList();
-		// hints.add("Check if level name is correct");
-		// hints.add("Check if a level named " + selectedLevelName + "  is defined into hierarachy " + selectedHierarchyName + ". " + "Defined level are: "
-		// + Arrays.toString(selectedHierarchy.getLevelNames().toArray()));
-		// geoException = new SvgViewerEngineException("Configuration error");
-		// geoException.setDescription(description);
-		// // geoException.setHints(hints);
-		// throw geoException;
-		// }
 	}
 
 	public boolean isVisibleDataSet() {
