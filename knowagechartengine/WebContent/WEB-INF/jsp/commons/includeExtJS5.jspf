@@ -6,9 +6,6 @@
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext/5.1.0/patch/EXTJS16166.js'/></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/d3/d3.js'/></script>
 
-<%-- Ext lib overrides --%>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/overrides/overrides.js'/></script> 
-
 <!-- Additional Ext overrides and application-specific includes here -->
 <%
 	if(request.getParameter("theme")!=null && !request.getParameter("theme").equals("")){
