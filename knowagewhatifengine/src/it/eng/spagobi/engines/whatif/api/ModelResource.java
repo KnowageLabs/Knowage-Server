@@ -17,17 +17,20 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -42,11 +45,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.axis.utils.ByteArrayOutputStream;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONObject;
 import org.olap4j.CellSet;
@@ -66,6 +70,7 @@ import it.eng.spagobi.engines.whatif.export.ExportConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.engines.whatif.model.Util;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmFactory;
@@ -467,23 +472,53 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 	@GET
 	@Path("/exceltest")
-	public void excelFillExample() {
+	public void excelFillExample() throws IOException, Exception {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		File result = exportExcelForMerging();
 		OutputStream out = null;
 
-		InputStream fileInputStream = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream("it/eng/spagobi/engines/whatif/model/export_dataset_template.xlsm");
+		URL resourceLocation = Thread.currentThread().getContextClassLoader().getResource("it/eng/spagobi/engines/whatif/model/export_dataset_template.xlsm");
 
+		FileInputStream fileInputStream1 = new FileInputStream(new File(resourceLocation.toURI().getPath()));
+		FileInputStream fileInputStream2 = new FileInputStream(result);
+
+		Map map = getEnv();
+		map.put("MDX", model.getMdx());
 		try {
 
-			XSSFWorkbook workbook = new XSSFWorkbook(OPCPackage.open(fileInputStream));
+			XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream1);
+			HSSFWorkbook exportedOlapWorkbook = new HSSFWorkbook(fileInputStream2);
 
-			if (workbook != null) {
+			workbook = Util.merge(workbook, exportedOlapWorkbook.getSheetAt(0));
+			XSSFSheet params = workbook.createSheet("parameters");
+			if (map != null) {
+				XSSFRow header = params.createRow(0);
+				XSSFRow row = params.createRow(1);
 
-				Sheet sheet = workbook.getSheetAt(0);
-				Row row = sheet.createRow(2);
+				int keyIndex = 0;
+				int valueIndex = 0;
+				int columnSize = 0;
+				Iterator it = map.entrySet().iterator();
+				while (it.hasNext()) {
+					Map.Entry pair = (Map.Entry) it.next();
+
+					if (pair.getKey().toString().equalsIgnoreCase("DOCUMENT_LABEL") || pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_ID")
+							|| pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_VERSION_ID") || pair.getKey().toString().equalsIgnoreCase("DOCUMENT_ID")
+							|| pair.getKey().toString().equalsIgnoreCase("user_id") || pair.getKey().toString().equalsIgnoreCase("MDX")) {
+
+						XSSFCell headerCell = header.createCell(keyIndex++);
+						XSSFCell valueCell = row.createCell(valueIndex++);
+						headerCell.setCellValue(pair.getKey().toString());
+						valueCell.setCellValue(pair.getValue().toString());
+						params.autoSizeColumn(columnSize++);
+
+					}
+
+					it.remove();
+
+				}
 
 			}
 
@@ -504,11 +539,9 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			}
 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (InvalidFormatException e) {
-			e.printStackTrace();
+			logger.error("File not found");
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Impossible to write to file");
 		}
 
 	}
@@ -544,6 +577,38 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 	private HttpServletResponse getServletResponse() {
 		return response;
+	}
+
+	private File exportExcelForMerging() {
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+		ExcelExporter exporter = new ExcelExporter(out);
+		ExportConfig exportConfig = WhatIfEngineConfig.getInstance().getExportProperties();
+		if (exportConfig.getFontFamily() != null)
+			exporter.setFontFamily(exportConfig.getFontFamily());
+		if (exportConfig.getFontSize() != null)
+			exporter.setFontSize(exportConfig.getFontSize());
+
+		TableRenderer render = new TableRenderer();
+
+		// adds the calculated fields before rendering the model
+		model.applyCal();
+		render.render(model, exporter);
+
+		// restore the query without calculated fields
+		model.restoreQuery();
+		byte[] outputByte = out.toByteArray();
+
+		File file = new File(System.getProperty("java.io.tmpdir") + "\\table.xls");
+		try {
+			FileUtils.writeByteArrayToFile(file, outputByte);
+		} catch (IOException e) {
+			logger.error("Impossible to write to file");
+		}
+		return file;
 	}
 
 }
