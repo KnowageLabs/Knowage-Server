@@ -62,6 +62,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpUsers" description="ImpExpUsers"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpKpis" description="ImpExpKpis"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpGlossary" description="ImpExpGlossary"/>
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpScheduler" description="ImpExpScheduler"/>
 	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MultisheetCockpit" description="MultisheetCockpit" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ChartWidget" description="ChartWidget" />
@@ -128,6 +129,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpKpis" description="ImpExpKpis"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpGlossary" description="ImpExpGlossary"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpScheduler" description="ImpExpScheduler"/>	
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="InstallConfig" description="InstallConfig" />
@@ -195,6 +197,7 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpKpis" description="ImpExpKpis"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpGlossary" description="ImpExpGlossary"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpScheduler" description="ImpExpScheduler"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="InstallConfig" description="InstallConfig" />
@@ -231,6 +234,8 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpMenu" description="ImpExpMenu"/>	
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpResources" description="ImpExpResources"/>	
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpUsers" description="ImpExpUsers"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpGlossary" description="ImpExpGlossary"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpScheduler" description="ImpExpScheduler"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="InstallConfig" description="InstallConfig" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="KpiManagement" description="KpiManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="LovsManagement" description="LovsManagement"/>

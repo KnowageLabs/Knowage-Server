@@ -42,6 +42,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 	$scope.currentMenu=[];
 	$scope.currentRoles=[];
 	$scope.exportedRoles=[];
+	$scope.exportedObjects = [];
 	$scope.tree=[];
 	$scope.treeCopy=[];
 	$scope.treeInTheDB=[];
@@ -72,12 +73,14 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 					$scope.currentRoles=[];
 					$scope.exportedRoles=[];
 					$scope.tree=[];
+					$scope.exportedObjects = [];
 					$scope.treeCopy=[];
 					$scope.treeInTheDB=[];
 					//get response
 					$scope.currentRoles=data.currentRoles;
 					$scope.exportedRoles=data.exportedRoles;
 					$scope.currentObjects = data.currentObjects;
+					$scope.exportedObjects = data.exportedObjects;
 					$scope.menu = data.menu;
 					if($scope.checkRole() && $scope.checkObjects()){
 						//if role is not present stop the import.
@@ -127,12 +130,19 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 	};
 	$scope.checkObjects = function(){
 		for(var i=0;i<$scope.menu.length;i++){
-			var index = $scope.indexObjectsInList($scope.menu[i],$scope.currentObjects );
-			if(index==-1){
-				$scope.showAction(sbiModule_translate.load("sbi.importmenu.errormissingobj"));
-				return false;
-				
+			if($scope.menu[i].objId!=null){
+				var index = $scope.indexObjectsInList($scope.menu[i],$scope.exportedObjects );
+				if(index!=-1){
+					var index2 = $scope.indexObjectsInListByLabel($scope.exportedObjects[index],$scope.currentObjects );
+					if(index2 == -1){
+						$scope.showAction(sbiModule_translate.load("sbi.importmenu.errormissingobj"));
+						return false;
+					}
+
+				}
+			
 			}
+			
 		}
 		return true;
 	};
@@ -158,8 +168,12 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 			//missing user
 			$scope.removeCircularDependences($scope.tree);
 			
-			
-			sbiModule_restServices.post("1.0/serverManager/importExport/menu","addmissingmenu",$scope.tree)
+			var conf = {
+					"tree": $scope.tree,
+					"obj" : $scope.exportedObjects,
+					"rolesFromFile": $scope.exportedRoles
+			}
+			sbiModule_restServices.post("1.0/serverManager/importExport/menu","addmissingmenu",conf)
 			.success(function(data, status, headers, config) {
 				if(data.STATUS=="OK"){
 					$scope.showConfirm(sbiModule_translate.load("sbi.importusers.importuserok"));
@@ -178,8 +192,12 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 			//override
 			//remove the field $parent (add from the directive component-tree) because make the tree a circular object
 			$scope.removeCircularDependences($scope.tree);
-						
-			sbiModule_restServices.post("1.0/serverManager/importExport/menu","overridemenu",$scope.tree)
+						var conf = {
+								"tree": $scope.tree,
+								"obj" : $scope.exportedObjects,
+								"rolesFromFile": $scope.exportedRoles
+						}
+			sbiModule_restServices.post("1.0/serverManager/importExport/menu","overridemenu",conf)
 			.success(function(data, status, headers, config) {
 				if(data.STATUS=="OK"){
 					$scope.showConfirm(sbiModule_translate.load("sbi.importusers.importuserok"));
@@ -265,13 +283,25 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
-			if(object.label==item.labelObj){
+			if(object.id==item.objId){
 				return i;
 			}
 		}
 
 		return -1;
 	};
+	
+	
+	$scope.indexObjectsInListByLabel = function(item, list){
+		for (var i = 0; i < list.length; i++) {
+			var object = list[i];
+			if(object.label==item.label){
+				return i;
+			}
+		}
+
+		return -1;
+	}
 	$scope.showConfirm = function(text) {
 	    // Appending dialog to document.body to cover sidenav in docs app
 	    var confirm = $mdDialog.alert()

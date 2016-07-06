@@ -319,6 +319,10 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpGlossary" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpGlossary" roleType="TEST_ROLE" />
 	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpScheduler" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpScheduler" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpScheduler" roleType="TEST_ROLE" />
+	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ManageCrossNavigation" roleType="TEST_ROLE" />

@@ -294,6 +294,9 @@
 			<ITEM title="#menu.ImpExpGlossary" functionality="ImpExpGlossary"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportGlossary/importExportGlossaryTemplate.jsp" /> 
 			
+			<!--<ITEM title="#menu.ImpExpScheduler" functionality="ImpExpScheduler"
+				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportScheduler/importExportSchedulerTemplate.jsp" /> 
+			  -->
 			<ITEM title="#menu.InstallConf" functionality="InstallConfig"
 				url="${SPAGOBI_CONTEXT}/restful-services/2.0/installconfig"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
