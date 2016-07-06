@@ -107,6 +107,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	public static final String SUBOBJ_NAME = "metadata.subobjName";
 	public static final String METADATA = "METADATA";
 	public static final String NODE_ID_SEPARATOR = "___SEPA__";
+	public static final String EDIT_MODE_ON = "true";
 
 	public static String MODE_SIMPLE = "simple";
 	// public static String MODE_COMPLETE = "complete";
@@ -200,7 +201,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			engineParam = BuildEngineUrlString(requestVal, obj, req, isForExport, cockpitSelections);
 
-			resultAsMap.put("url", url + "&SBI_EXECUTION_ID=" + sbiExecutionId + engineParam);
+			url += "&SBI_EXECUTION_ID=" + sbiExecutionId;
+			url += engineParam;
+
+			String editMode = requestVal.optString("EDIT_MODE");
+			if(!StringUtilities.isEmpty(editMode)) {
+				url += "&EDIT_MODE="+editMode;
+			}
+			
+			resultAsMap.put("url", url);
 			if (errorList != null && !errorList.isEmpty()) {
 				resultAsMap.put("errors", errorList);
 			}

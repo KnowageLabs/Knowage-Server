@@ -42,7 +42,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'OBJECT_NAME' : 		'<%= request.getParameter("OBJECT_NAME") != null ? request.getParameter("OBJECT_NAME") : aRequestContainer.getServiceRequest().getAttribute("OBJECT_NAME") %>',
 				'isSourceDocument' : 	'<%= request.getParameter("IS_SOURCE_DOCUMENT") != null ? request.getParameter("IS_SOURCE_DOCUMENT") : aRequestContainer.getServiceRequest().getAttribute("IS_SOURCE_DOCUMENT") %>',
 				'SBI_EXECUTION_ID' : '',
-				'MENU_PARAMETERS' : 	'<%= aRequestContainer.getServiceRequest().getAttribute("PARAMETERS") %>'
+				'MENU_PARAMETERS' : 	'<%= aRequestContainer.getServiceRequest().getAttribute("PARAMETERS") %>',
+				'EDIT_MODE': '<%= request.getParameter("EDIT_MODE") != null ? request.getParameter("EDIT_MODE") : aRequestContainer.getServiceRequest().getAttribute("EDIT_MODE")  %>'
 				
 			  	
 		};

@@ -2,10 +2,20 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 .service('$documentViewer',function($mdDialog,sbiModule_config,sbiModule_restServices){ 
 	 
 	var dwS=this;
-	this.openDocumentByLabel=function(docLabel){
+	this.openDocumentByLabel=function(docLabel,localScope){
 		sbiModule_restServices.promiseGet("1.0/documents",docLabel).then(
 		function(response){
-			dwS.openDocument(response.data.id,response.data.label,response.data.name);
+			dwS.openDocument(response.data.id,response.data.label,response.data.name,localScope);
+		},
+		function(response){
+			sbiModule_restServices.errorHandler(response.data,"");
+		});
+	}
+
+	this.editDocumentByLabel=function(docLabel,localScope,editMode){
+		sbiModule_restServices.promiseGet("1.0/documents",docLabel).then(
+		function(response){
+			dwS.editDocument(response.data.id,response.data.label,response.data.name,localScope,editMode?editMode:"edit");
 		},
 		function(response){
 			sbiModule_restServices.errorHandler(response.data,"");
@@ -21,7 +31,15 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	this.openDocument=function(documentId,documentLabel,documentName,localScope){
-
+		this.executeDocument(documentId,documentLabel,documentName,localScope,false);
+	};
+	
+	this.editDocument=function(documentId,documentLabel,documentName,localScope,editMode){
+		this.executeDocument(documentId,documentLabel,documentName,localScope,editMode);
+		
+	};
+	
+	this.executeDocument = function (documentId,documentLabel,documentName,localScope, editMode) {
 		$mdDialog.show({
 			controller: openDocumentController,
 			template: '<md-dialog aria-label="Open document"  style="width: 100%;  height: 100%;max-width: 100%;  max-height: 100%;" ng-cloak>'+
@@ -32,21 +50,23 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 //			clickOutsideToClose:false,
 //			escapeToClose :false,
 			fullscreen: true,
-			locals:{documentId:documentId,documentLabel:documentLabel,documentName:documentName,localScope:localScope}
+			locals:{documentId:documentId,documentLabel:documentLabel,documentName:documentName,localScope:localScope, editMode:editMode}
 			
 		}) .then(function() { 
 			
 	    } );
+	}
 	
-	};
-	
-	function openDocumentController($scope,sbiModule_config,documentId,documentLabel,documentName,localScope){
+	function openDocumentController($scope,sbiModule_config,documentId,documentLabel,documentName,localScope,editMode){
 		var pathUrl="";
 		pathUrl+="&OBJECT_ID="+documentId;
 		pathUrl+="&OBJECT_LABEL="+documentLabel;
 		pathUrl+="&OBJECT_NAME="+documentName;
-		
-		$scope.documentViewerUrl=sbiModule_config.adapterPath+'?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&IS_SOURCE_DOCUMENT=true&SBI_EXECUTION_ID=null'+pathUrl
+
+		$scope.documentViewerUrl = sbiModule_config.adapterPath+'?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&IS_SOURCE_DOCUMENT=true&SBI_EXECUTION_ID=null'+pathUrl
+		if(editMode) {
+			$scope.documentViewerUrl += "&EDIT_MODE="+editMode
+		}
 		
 		$scope.closeDocument=function(){
 			

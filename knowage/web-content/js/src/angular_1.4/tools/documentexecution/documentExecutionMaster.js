@@ -62,7 +62,8 @@ $scope.executeSourceDocument = function() {
 			+ '&MENU_PARAMETERS=' + encodeURIComponent(JSON.stringify(menuParams)).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&")
 			+ '&LIGHT_NAVIGATOR_DISABLED=TRUE'
 			+ '&SBI_EXECUTION_ID=null'
-			+ '&OBJECT_NAME=' + sourceDocumentExecProperties.OBJECT_NAME;
+			+ '&OBJECT_NAME=' + sourceDocumentExecProperties.OBJECT_NAME
+			+ '&EDIT_MODE=' + sourceDocumentExecProperties.EDIT_MODE;
 		
 		var laodSourceDocToCross=function(){
 			$timeout(function(){
