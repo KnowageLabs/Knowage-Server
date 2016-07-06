@@ -37,7 +37,10 @@
 		// indicators
 		$scope.datasetIndicators = [];
 		$scope.measureFields = [];
-
+       
+		// if there is no template at all
+		$scope.editDisabled = $scope.template.mapName==undefined; 
+		
 		$scope.loadLayers = function() {
 			sbiModule_restServices
 					.alterContextPath(sbiModule_config.externalBasePath);
@@ -86,6 +89,7 @@
 		sbiModule_restServices.promisePost("restful-services/1.0/documents",
 				"saveGeoReportTemplate", temp).then(
 				function(response) {
+					$scope.template=template;
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('gisengine.designer.tempate.save.message'),sbiModule_translate.load('gisengine.designer.tempate.save.success'));
 				},
 				function(response) {
@@ -94,10 +98,13 @@
 				});
 			}
 
-			console.log(template);
+			
 		}
 
-		
+		$scope.editMap= function(){
+			console.log("IN EDIT");
+			
+		}
 
 		$scope.tableFunctionSingleLayer = {
 			translate : sbiModule_translate,
@@ -341,8 +348,10 @@
 					return template;
 				} else {
 					// from interface no more than one layer can be selected
-					template.targetLayerConf = {};
-					template.targetLayerConf.label = $scope.selectedLayer[0].name;
+					template.targetLayerConf=[];
+					var layerConf = {};
+					layerConf.label=$scope.selectedLayer[0].name;
+					template.targetLayerConf.push (layerConf);
 				}
 				
 				if($scope.datasetJoinColumns.length==0){
@@ -433,7 +442,7 @@
 	    	if($scope.isDatasetChosen){
 				if($scope.template.targetLayerConf){
 				for (var i = 0; i < $scope.layerCatalogs.length; i++) {
-					if($scope.layerCatalogs[i].name === $scope.template.targetLayerConf.label){
+					if($scope.layerCatalogs[i].name === $scope.template.targetLayerConf[0].label){
 						$scope.selectedLayer.push($scope.layerCatalogs[i]);
 					}
 				}
