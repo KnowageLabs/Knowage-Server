@@ -12,6 +12,7 @@
 			open-folder-icon-fn="physicalModel_getlevelIcon(node)"
 			is-folder-fn="physicalModel_isFolder(node)"
 			expand-on-click=false
+			interceptor="physicalModelTreeInterceptor"
 		></component-tree>
 		
 	</list>

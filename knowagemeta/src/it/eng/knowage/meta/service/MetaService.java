@@ -403,7 +403,6 @@ public class MetaService {
 		dataSource.setPwd(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD).getValue());
 		dataSource.setHibDialectClass("");
 		dataSource.setHibDialectName("");
-		dataSource.getConnection();
 		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
 		List<String> missingColumns = physicalModelInitializer.getMissingColumnsNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
 		List<String> removingItems = physicalModelInitializer.getRemovedTablesAndColumnsNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
@@ -418,10 +417,28 @@ public class MetaService {
 	@Path("/updatePhysicalModel")
 	public Response applyUpdatePhysicalModel(@Context HttpServletRequest req) throws ClassNotFoundException, NamingException, SQLException, JSONException,
 			IOException {
+		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		JSONObject oldJsonModel = createJson(model);
+
 		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
 		List<String> tables = (List<String>) JsonConverter.jsonToObject(json.getString("tables"), List.class);
+		PhysicalModelInitializer physicalModelInitializer = new PhysicalModelInitializer();
+		physicalModelInitializer.setRootModel(model);
+		PhysicalModel originalPM = model.getPhysicalModels().get(0);
+		List<String> currTables = new ArrayList<String>();
+		for (PhysicalTable pt : originalPM.getTables()) {
+			currTables.add(pt.getName());
+		}
+		currTables.addAll(tables);
 
-		return Response.ok().build();
+		PhysicalModel phyMod = physicalModelInitializer.initializeLigth(originalPM.getConnection(), currTables);
+		physicalModelInitializer.updateModel(originalPM, phyMod, tables);
+
+		JSONObject jsonModel = createJson(model);
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+
+		return Response.ok(patch.toString()).build();
 	}
 
 	private void applyBusinessModel(JsonNode newBM, Model model) {

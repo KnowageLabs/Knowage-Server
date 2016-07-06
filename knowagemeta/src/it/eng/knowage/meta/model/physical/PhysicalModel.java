@@ -20,13 +20,17 @@ package it.eng.knowage.meta.model.physical;
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelObject;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
+
+import javax.naming.NamingException;
 
 import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc --> A representation of the model object '<em><b>Physical Model</b></em>'. <!-- end-user-doc -->
- * 
+ *
  * <p>
  * The following features are supported:
  * <ul>
@@ -40,7 +44,7 @@ import org.eclipse.emf.common.util.EList;
  * <li>{@link it.eng.knowage.meta.model.physical.PhysicalModel#getForeignKeys <em>Foreign Keys</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalModel()
  * @model
  * @generated
@@ -52,7 +56,7 @@ public interface PhysicalModel extends ModelObject {
 	 * If the meaning of the '<em>Database Name</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Database Name</em>' attribute.
 	 * @see #setDatabaseName(String)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalModel_DatabaseName()
@@ -64,7 +68,7 @@ public interface PhysicalModel extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalModel#getDatabaseName <em>Database Name</em>}' attribute. <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Database Name</em>' attribute.
 	 * @see #getDatabaseName()
@@ -78,7 +82,7 @@ public interface PhysicalModel extends ModelObject {
 	 * If the meaning of the '<em>Database Version</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Database Version</em>' attribute.
 	 * @see #setDatabaseVersion(String)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalModel_DatabaseVersion()
@@ -90,7 +94,7 @@ public interface PhysicalModel extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalModel#getDatabaseVersion <em>Database Version</em>}' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Database Version</em>' attribute.
 	 * @see #getDatabaseVersion()
@@ -104,7 +108,7 @@ public interface PhysicalModel extends ModelObject {
 	 * If the meaning of the '<em>Catalog</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Catalog</em>' attribute.
 	 * @see #setCatalog(String)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalModel_Catalog()
@@ -116,7 +120,7 @@ public interface PhysicalModel extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalModel#getCatalog <em>Catalog</em>}' attribute. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Catalog</em>' attribute.
 	 * @see #getCatalog()
@@ -130,7 +134,7 @@ public interface PhysicalModel extends ModelObject {
 	 * If the meaning of the '<em>Schema</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Schema</em>' attribute.
 	 * @see #setSchema(String)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalModel_Schema()
@@ -142,7 +146,7 @@ public interface PhysicalModel extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalModel#getSchema <em>Schema</em>}' attribute. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Schema</em>' attribute.
 	 * @see #getSchema()
@@ -157,7 +161,7 @@ public interface PhysicalModel extends ModelObject {
 	 * If the meaning of the '<em>Parent Model</em>' reference isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Parent Model</em>' container reference.
 	 * @see #setParentModel(Model)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalModel_ParentModel()
@@ -170,7 +174,7 @@ public interface PhysicalModel extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalModel#getParentModel <em>Parent Model</em>}' container reference. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Parent Model</em>' container reference.
 	 * @see #getParentModel()
@@ -186,7 +190,7 @@ public interface PhysicalModel extends ModelObject {
 	 * If the meaning of the '<em>Tables</em>' containment reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Tables</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalModel_Tables()
 	 * @see it.eng.knowage.meta.model.physical.PhysicalTable#getModel
@@ -203,7 +207,7 @@ public interface PhysicalModel extends ModelObject {
 	 * If the meaning of the '<em>Primary Keys</em>' reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Primary Keys</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalModel_PrimaryKeys()
 	 * @see it.eng.knowage.meta.model.physical.PhysicalPrimaryKey#getModel
@@ -220,7 +224,7 @@ public interface PhysicalModel extends ModelObject {
 	 * If the meaning of the '<em>Foreign Keys</em>' reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Foreign Keys</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalModel_ForeignKeys()
 	 * @see it.eng.knowage.meta.model.physical.PhysicalForeignKey#getModel
@@ -243,9 +247,10 @@ public interface PhysicalModel extends ModelObject {
 
 	/**
 	 * Return foreign keys that have the passed tale as source or destination table
-	 * 
+	 *
 	 * @return
 	 */
 	List<PhysicalForeignKey> getForeignKeysInvolvingTable(PhysicalTable table);
 
+	Connection getConnection() throws ClassNotFoundException, NamingException, SQLException;
 } // PhysicalModel

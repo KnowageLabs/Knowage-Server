@@ -1,7 +1,8 @@
 
-function refreshPhysicalModelController($scope,sbiModule_restServices,sbiModule_translate){
+function refreshPhysicalModelController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,metaModelServices ){
 	$scope.translate=sbiModule_translate;
 	$scope.changedItem={};
+	$scope.steps={current:0};
 	$scope.updateObj={selectedtable:[]};
 	sbiModule_restServices.promiseGet("1.0/metaWeb","updatePhysicalModel")
 	.then(
@@ -41,10 +42,15 @@ function refreshPhysicalModelController($scope,sbiModule_restServices,sbiModule_
 		sbiModule_restServices.promisePost("1.0/metaWeb","updatePhysicalModel",dataToSend)
 		.then(
 				function(response){
-
+					metaModelServices.applyPatch(response.data);
+					$mdDialog.hide();
 				},
 				function(response){
 					sbiModule_restServices.errorHandler(response.data,"Error while attempt to refresh physical model");
 				});
 	}
+
+	$scope.cancel = function() {
+	    $mdDialog.cancel();
+	  };
 }

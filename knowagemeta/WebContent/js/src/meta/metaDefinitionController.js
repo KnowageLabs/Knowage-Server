@@ -30,7 +30,7 @@ app.service("metaModelServices",function(sbiModule_jsonServices){
 		 angular.copy(data,bms.cleanedObserverObject);
 	}
 
-	this.observe=function(observerObj){debugger
+	this.observe=function(observerObj){
 		bms.observerObject=observerObj;
 		bms.originalMetaModelObserver=sbiModule_jsonServices.observe(bms.observerObject);
 		bms.cleanObserverObject();
