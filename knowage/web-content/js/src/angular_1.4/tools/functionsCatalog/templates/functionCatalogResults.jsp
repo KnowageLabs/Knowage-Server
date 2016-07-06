@@ -1,18 +1,35 @@
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/sbi_default/css/FunctionsCatalog/functionsCatalog.css">
+
+
 <md-dialog aria-label='{{"sbi.functionscatalog.executionresult.executionresult"}}' ng-cloack>
 
 	<form>
-    	<md-toolbar>
-	      <div class="md-toolbar-tools">
-	        	<h2 ng-if="!isDemo">{{translate.load("sbi.functionscatalog.executionresult.demoexecutionresult")}}</h2>
-	        	<h2 ng-if="isDemo">{{translate.load("sbi.functionscatalog.executionresult.executionresult")}}</h2> 
-	        <span flex></span>
-	        <md-button class="md-icon-button" ng-click="cancel()">
-	        </md-button>
-	      </div>
-	    </md-toolbar>
+		<div ng-if='error==""'>
+	    	<md-toolbar>
+		      <div class="md-toolbar-tools">
+		        	<h2 ng-if="isDemo">{{translate.load("sbi.functionscatalog.executionresult.demoexecutionresult")}}</h2>
+		        	<h2 ng-if="!isDemo">{{translate.load("sbi.functionscatalog.executionresult.executionresult")}}</h2> 
+		        <span flex></span>
+		        <md-button class="md-icon-button" ng-click="cancel()">
+		        </md-button>
+		      </div>
+		    </md-toolbar>
+		</div>    
+		
+		<div ng-if='error!=""'>
+	    	<md-toolbar id="error-message">
+		      <div class="md-toolbar-tools">
+		        	<h2 ng-if="isDemo">{{translate.load("sbi.functionscatalog.executionresult.demoexecutionresult")}}</h2>
+		        	<h2 ng-if="!isDemo">{{translate.load("sbi.functionscatalog.executionresult.executionresult")}}</h2> 
+		        <span flex></span>
+		        <md-button class="md-icon-button" ng-click="cancel()">
+		        </md-button>
+		      </div>
+		    </md-toolbar>
+		</div>    
 		
 		<md-dialog-content>
-		    <md-tabs md-selected="selectedIndex" md-autoselect md-dynamic-height>
+		    <md-tabs md-selected="selectedIndex" md-autoselect md-dynamic-height ng-if="results.length>0"> 
       			<md-tab ng-repeat="res in results" label="{{res.resultName}}">
         			 <div class="md-padding"
         			 ng-if="res.resultType.toLowerCase()=='text'">
@@ -22,7 +39,7 @@
         			 ng-if="res.resultType.toLowerCase()=='dataset'">
           				{{translate.load("sbi.functionscatalog.executionresult.spagobidatasetsaved")}}&nbsp;{{res.result}}
           				
-      				
+      				 
        					<div ng-if="truncate">
 						{{translate.load("sbi.functionscatalog.executionresult.firstrowspreview")}}
 						</div>
@@ -45,7 +62,10 @@
         			</div>
       			</md-tab>
    	 		</md-tabs>    	
-			    	
+			<div ng-if='error!=""'>
+				{{error}}
+				{{translate.load("sbi.functionscatalog.executionresult.seelogfileforotherinformation")}}
+			</div>    	
 			    	
 		</md-dialog-content>
 

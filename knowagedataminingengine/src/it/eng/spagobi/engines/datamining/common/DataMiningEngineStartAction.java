@@ -19,33 +19,18 @@ package it.eng.spagobi.engines.datamining.common;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.engines.datamining.DataMiningEngine;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
-import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
-import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
-import it.eng.spagobi.engines.datamining.model.DataMiningScript;
-import it.eng.spagobi.engines.datamining.model.Output;
-import it.eng.spagobi.engines.datamining.model.Variable;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplate;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplateParseException;
-import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
-import it.eng.spagobi.functions.metadata.SbiFunctionInputDataset;
-import it.eng.spagobi.functions.metadata.SbiFunctionInputVariable;
-import it.eng.spagobi.functions.metadata.SbiFunctionOutput;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -71,8 +56,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Path("/")
@@ -146,10 +129,8 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 				// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
 				servletRequest = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
 				response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
-				// C:\Users\piovani\apache-tomcat-7.0.67-Trunk\webapps\knowagedataminingengine\WEB-INF\jsp
 				servletRequest.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(servletRequest, response);
 
-				// response.sendRedirect("C:/Users/piovani/apache-tomcat-7.0.67-Trunk/webapps/knowagedataminingengine/WEB-INF/jsp/DataMining.jsp");
 			} catch (Exception e) {
 				logger.error("Error starting the Data Mining engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
 				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while forwarding the execution to the jsp "
@@ -198,78 +179,7 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 
 		try {
 
-			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
-			function = fcDAO.getCatalogFunctionById(functionId);
-
-			DataMiningTemplate template = new DataMiningTemplate();
-			template.setLanguage(function.getLanguage());
-
-			Set<SbiFunctionInputDataset> datasets = function.getSbiFunctionInputDatasets();
-			List<DataMiningDataset> dataminingDatasets = new ArrayList<DataMiningDataset>();
-
-			for (SbiFunctionInputDataset dataset : datasets) {
-				DataMiningDataset d = new DataMiningDataset();
-				IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
-				int dsId = dataset.getId().getDsId();
-				IDataSet iDataset = dsDAO.loadDataSetById(dsId);
-				d.setLabel(iDataset.getLabel());
-				d.setSpagobiLabel(iDataset.getLabel());
-				d.setCanUpload(true);
-				d.setName(iDataset.getName());
-				d.setFileName(iDataset.getName() + ".csv");
-				// d.setType(iDataset.getDsType());
-				d.setType("Dataset"); // or DataMiningConstants.DATASET_OUTPUT or DataMiningConstants.SPAGOBI_DS_OUTPUT, the dataminingEngine differences
-										// spagoBI datasets from file datasets created when executing a document
-
-				d.setOptions("sep=','");
-				d.setReadType("csv"); // Default dataset is CSV file
-				dataminingDatasets.add(d);
-			}
-			template.setDatasets(dataminingDatasets);
-
-			Set<SbiFunctionInputVariable> variables = function.getSbiFunctionInputVariables();
-			Set<SbiFunctionOutput> outputs = function.getSbiFunctionOutputs();
-
-			DataMiningCommand c = new DataMiningCommand();
-			c.setLabel("CatalogCommand");
-			c.setName("CatalogCommand");
-			c.setScriptName("CatalogScript");
-
-			List<Variable> vars = new ArrayList<Variable>();
-			List<Output> outs = new ArrayList<Output>();
-
-			for (SbiFunctionInputVariable v : variables) {
-				Variable var = new Variable();
-				var.setName(v.getId().getVarName());
-				var.setValue(v.getVarValue());
-				vars.add(var);
-			}
-			for (SbiFunctionOutput o : outputs) {
-				Output out = new Output();
-				out.setOuputLabel(o.getId().getLabel());
-				out.setOutputName(o.getId().getLabel()); // Name=label
-				IDomainDAO domainsDAO = DAOFactory.getDomainDAO();
-				String type = domainsDAO.loadDomainById(o.getOutType()).getValueName();
-				out.setOutputType(type);
-				out.setOutputMode("auto"); // TODO: ??? can't figure out what auto means...
-				out.setOutputName(o.getId().getLabel());
-				out.setOutputValue(o.getId().getLabel());
-				outs.add(out);
-			}
-			c.setVariables(vars);
-			c.setOutputs(outs);
-
-			List<DataMiningCommand> commands = new ArrayList<DataMiningCommand>();
-			commands.add(c);
-			template.setCommands(commands);
-
-			List<DataMiningScript> dataMiningScripts = new ArrayList<DataMiningScript>();
-			String scriptCode = function.getScript();
-			DataMiningScript script = new DataMiningScript();
-			script.setName("CatalogScript");
-			script.setCode(scriptCode);
-			dataMiningScripts.add(script);
-			template.setScripts(dataMiningScripts);
+			DataMiningTemplate template = FunctionExecutionUtils.initializeTemplateByFunctionId(functionId);
 
 			// -----------------
 
@@ -282,22 +192,15 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 				engineException.addHint("Check the document's template");
 				throw engineException;
 			} catch (SpagoBIEngineRuntimeException e) {
-				throw e;
+				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while generating the engine instance.", e);
 			} catch (Exception e) {
 				logger.error("Error starting the Data Mining engine: error while generating the engine instance.", e);
-				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while generating the engine instance.", e);
+				throw new Exception("Error starting the Data Mining engine: error while generating the engine instance.", e);
 			}
 			logger.debug("Engine instance succesfully created");
 
-			getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, dataMiningEngineInstance);
 			try {
-				// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
-				servletRequest = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-				response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
-
-				response.setContentType("text/html");
-				response.setCharacterEncoding("UTF-8");
-				List<DataMiningResult> dataminingExecutionResults = FunctionExecutor.executeFunction(dataMiningEngineInstance, getUserProfile());
+				List<DataMiningResult> dataminingExecutionResults = FunctionExecutor.executeCatalogFunction(dataMiningEngineInstance, getUserProfile());
 				serviceResponse = new JSONArray();
 				for (DataMiningResult r : dataminingExecutionResults) {
 					JSONObject o = new JSONObject();
@@ -305,43 +208,21 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 					o.put("result", r.getResult());
 					if (r.getOutputType().equalsIgnoreCase("Image")) {
 						o.put("resultName", r.getPlotName());
-					} else { // Dataset Output o Text Output
+					} else { // Dataset Output or Text Output
 						o.put("resultName", r.getVariablename());
 					}
+
 					serviceResponse.put(o);
 				}
 
 			} catch (Exception e) {
-				logger.error("Error starting the Data Mining engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
-				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while forwarding the execution to the jsp "
-						+ SUCCESS_REQUEST_DISPATCHER_URL, e);
-			}
 
-			if (getAuditServiceProxy() != null) {
-				getAuditServiceProxy().notifyServiceEndEvent();
+				logger.error("Error getting datamining engine execution results!", e);
+				throw new SpagoBIEngineRuntimeException("Error getting datamining engine execution results!", e);
 			}
-
 		} catch (Exception e) {
-			logger.error("Error starting the Data Mining engine", e);
-			if (getAuditServiceProxy() != null) {
-				getAuditServiceProxy().notifyServiceErrorEvent(e.getMessage());
-			}
-
-			SpagoBIEngineStartupException serviceException = this.getWrappedException(e);
-
-			getExecutionSession().setAttributeInSession(STARTUP_ERROR, serviceException);
-			try {
-				// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
-				servletRequest = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-				response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
-
-				servletRequest.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL).forward(servletRequest, response);
-
-			} catch (Exception ex) {
-				logger.error("Error starting the Data Mining engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
-				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while forwarding the execution to the jsp "
-						+ FAILURE_REQUEST_DISPATCHER_URL, ex);
-			}
+			logger.error("Error creating or starting the Data Mining engine, or problems getting execution results!", e);
+			throw new SpagoBIEngineRuntimeException("Error creating or starting the Data Mining engine, or problems getting execution results!", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -392,157 +273,17 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 				}
 
 			}
-		} catch (JSONException e) {
-			logger.error("Error parsing new execution data", e);
-			throw new SpagoBIEngineRuntimeException("Error parsing new execution data", e);
-		} catch (JsonParseException e) {
-			logger.error("Error parsing new execution data", e);
-			throw new SpagoBIEngineRuntimeException("Error parsing new execution data", e);
-		} catch (JsonMappingException e) {
-			logger.error("Error parsing new execution data", e);
-			throw new SpagoBIEngineRuntimeException("Error parsing new execution data", e);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error("Error parsing new execution data", e);
 			throw new SpagoBIEngineRuntimeException("Error parsing new execution data", e);
 		}
 
 		logger.debug("Creating engine instance ...");
-
 		try {
 
-			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
-			function = fcDAO.getCatalogFunctionById(functionId);
-
-			DataMiningTemplate template = new DataMiningTemplate();
-			template.setLanguage(function.getLanguage());
-
-			Set<SbiFunctionInputDataset> datasets = function.getSbiFunctionInputDatasets();
-			List<DataMiningDataset> dataminingDatasets = new ArrayList<DataMiningDataset>();
-
-			for (SbiFunctionInputDataset dataset : datasets) {
-				DataMiningDataset d = new DataMiningDataset();
-				IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
-				int dsId = dataset.getId().getDsId();
-				IDataSet iDataset = dsDAO.loadDataSetById(dsId);// *
-				String labelDemoDS = iDataset.getLabel();
-				if (datasetsInMap.containsKey(labelDemoDS)) // map element format: <demoLabel:replacingLabel>
-				{
-					// String replacingDSlabel = datasetsInMap.get(labelDemoDS);
-					String datasetHavingReplacingDSlabel = datasetsInMap.get(labelDemoDS);
-					JSONObject dsHavingReplacingDSlabel = new JSONObject(datasetHavingReplacingDSlabel);
-					String replacingDSlabel = dsHavingReplacingDSlabel.getString("label");
-
-					if (replacingDSlabel != null && (!replacingDSlabel.equals(""))) { // if a replacing dataset isn't specified, associate the demo dataset
-						IDataSet ds = dsDAO.loadDataSetByLabel(replacingDSlabel);
-						if (ds != null) // if a replacing dataset isn't specified, associate the demo dataset
-						{
-							iDataset = ds;
-						}
-						// else //just set *
-						// {
-						// iDataset = dsDAO.loadDataSetById(dsId);
-						// }
-
-					}
-				}
-				// else
-				// {
-				// iDataset = dsDAO.loadDataSetById(dsId);
-				// }
-				d.setLabel(iDataset.getLabel());
-				d.setSpagobiLabel(iDataset.getLabel()); // Important! used label is spagobiLabel!
-				d.setCanUpload(true);
-				d.setName(iDataset.getName());
-				d.setFileName(iDataset.getName() + ".csv");
-				// d.setType(iDataset.getDsType());
-				d.setType("Dataset"); // // or DataMiningConstants.DATASET_OUTPUT or DataMiningConstants.SPAGOBI_DS_OUTPUT, the dataminingEngine differences
-				// spagoBI datasets from file datasets created when executing a document
-
-				d.setOptions("sep=','");
-				d.setReadType("csv"); // Default dataset is CSV file
-				dataminingDatasets.add(d);
-			}
-			template.setDatasets(dataminingDatasets);
-
-			Set<SbiFunctionInputVariable> variables = function.getSbiFunctionInputVariables();
-			Set<SbiFunctionOutput> outputs = function.getSbiFunctionOutputs();
-
-			DataMiningCommand c = new DataMiningCommand();
-			c.setLabel("CatalogCommand");
-			c.setName("CatalogCommand");
-			c.setScriptName("CatalogScript");
-
-			List<Variable> vars = new ArrayList<Variable>();
-			List<Output> outs = new ArrayList<Output>();
-
-			for (SbiFunctionInputVariable v : variables) {
-				Variable var = new Variable();
-				String varName = v.getId().getVarName();
-				var.setName(varName);
-				String varValue = "";
-				if (variablesInMap.containsKey(varName)) // map element format: <demoVarName:replacingVALUE>
-				{
-					String replacingVariableValue = variablesInMap.get(varName);
-					if (!replacingVariableValue.equals("") && replacingVariableValue != null) // se non c'è un replacing variable value associato, associa il //
-																								// val demo
-					{
-						varValue = replacingVariableValue;
-					} else {
-						varValue = v.getVarValue();
-					}
-				} else // variable not present in input map, use demo variable
-				{
-					varValue = v.getVarValue();
-				}
-
-				var.setValue(varValue);
-				vars.add(var);
-			}
-
-			HashMap<String, String> mapImageAndTextOut = new HashMap<String, String>();
-			mapImageAndTextOut.putAll(textOutMap);
-			mapImageAndTextOut.putAll(imageOutMap);
-
-			for (SbiFunctionOutput o : outputs) {
-				Output out = new Output();
-				String label = o.getId().getLabel();
-				String oldLabel = o.getId().getLabel(); // old label is the value of the dataframe variable containing dataset value in script!!
-				if (datasetsOutMap.containsKey(label)) {
-					String replacingDatasetOutLabel = datasetsOutMap.get(label);
-					if (!replacingDatasetOutLabel.equals("") && replacingDatasetOutLabel != null) {
-						label = replacingDatasetOutLabel;
-					}
-
-				} else if (mapImageAndTextOut.containsKey(label)) {
-					String replacingOutLabel = mapImageAndTextOut.get(label);
-					if (!replacingOutLabel.equals("") && replacingOutLabel != null) {
-						label = replacingOutLabel;
-					}
-				}
-				out.setOuputLabel(label);
-				out.setOutputName(label); // Name=label
-				out.setOutputValue(oldLabel); // aggiunto, prima era label --> è il nome del dataset nello script(?)
-				IDomainDAO domainsDAO = DAOFactory.getDomainDAO();
-				String type = domainsDAO.loadDomainById(o.getOutType()).getValueName();
-				out.setOutputType(type);
-				out.setOutputMode("auto"); // TODO: ??? can't figure out what auto means...
-				outs.add(out);
-			}
-			c.setVariables(vars);
-			c.setOutputs(outs);
-
-			List<DataMiningCommand> commands = new ArrayList<DataMiningCommand>();
-			commands.add(c);
-			template.setCommands(commands);
-
-			List<DataMiningScript> dataMiningScripts = new ArrayList<DataMiningScript>();
-			String scriptCode = function.getScript();
-			DataMiningScript script = new DataMiningScript();
-			script.setName("CatalogScript");
-			script.setCode(scriptCode);
-			dataMiningScripts.add(script);
-			template.setScripts(dataMiningScripts);
-
+			// Every map is in the form <OldValue,NewValue>
+			DataMiningTemplate template = FunctionExecutionUtils.getTemplateWithReplacingValues(functionId, body, variablesInMap, datasetsInMap,
+					datasetsOutMap, textOutMap, imageOutMap);
 			// -----------------
 
 			try {
@@ -561,59 +302,26 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 			}
 			logger.debug("Engine instance succesfully created");
 
-			getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, dataMiningEngineInstance);
-			try {
-				// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
-				servletRequest = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-				response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+			// getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, dataMiningEngineInstance);
 
-				response.setContentType("text/html");
-				response.setCharacterEncoding("UTF-8");
-				List<DataMiningResult> dataminingExecutionResults = FunctionExecutor.executeFunction(dataMiningEngineInstance, getUserProfile());
-				serviceResponse = new JSONArray();
-				for (DataMiningResult r : dataminingExecutionResults) {
-					JSONObject o = new JSONObject();
-					o.put("resultType", r.getOutputType());
-					o.put("result", r.getResult());
-					if (r.getOutputType().equalsIgnoreCase("Image")) {
-						o.put("resultName", r.getPlotName());
-					} else { // Dataset Output o Text Output
-						o.put("resultName", r.getVariablename());
-					}
-					serviceResponse.put(o);
+			List<DataMiningResult> dataminingExecutionResults = FunctionExecutor.executeCatalogFunction(dataMiningEngineInstance, getUserProfile());
+			serviceResponse = new JSONArray();
+			for (DataMiningResult r : dataminingExecutionResults) {
+				JSONObject o = new JSONObject();
+				o.put("resultType", r.getOutputType());
+				o.put("result", r.getResult());
+				if (r.getOutputType().equalsIgnoreCase("Image")) {
+					o.put("resultName", r.getPlotName());
+				} else { // Dataset Output o Text Output
+					o.put("resultName", r.getVariablename());
 				}
-
-			} catch (Exception e) {
-				logger.error("Error starting the Data Mining engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
-				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while forwarding the execution to the jsp "
-						+ SUCCESS_REQUEST_DISPATCHER_URL, e);
-			}
-
-			if (getAuditServiceProxy() != null) {
-				getAuditServiceProxy().notifyServiceEndEvent();
+				serviceResponse.put(o);
 			}
 
 		} catch (Exception e) {
-			logger.error("Error starting the Data Mining engine", e);
-			if (getAuditServiceProxy() != null) {
-				getAuditServiceProxy().notifyServiceErrorEvent(e.getMessage());
-			}
+			logger.error("Error starting the Data Mining engine or getting datamining engine execution results!", e);
+			throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine or getting datamining engine execution results!", e);
 
-			SpagoBIEngineStartupException serviceException = this.getWrappedException(e);
-
-			getExecutionSession().setAttributeInSession(STARTUP_ERROR, serviceException);
-			try {
-				// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
-				servletRequest = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-				response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
-
-				servletRequest.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL).forward(servletRequest, response);
-
-			} catch (Exception ex) {
-				logger.error("Error starting the Data Mining engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
-				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while forwarding the execution to the jsp "
-						+ FAILURE_REQUEST_DISPATCHER_URL, ex);
-			}
 		} finally {
 			logger.debug("OUT");
 		}

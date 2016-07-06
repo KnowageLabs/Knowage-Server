@@ -139,18 +139,18 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 		return result;
 	}
 
-	public void externalExecution(String fileName, IEngUserProfile userProfile, HashMap paramsFilled) throws Exception { // never called
-		logger.debug("IN");
-		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
-
-		setupEnvonmentForExternal();
-		logger.debug("Set up environment");
-		// evaluates script code
-		scriptExecutor.evalExternalScript(fileName, paramsFilled);
-		logger.debug("Executed script");
-		logger.debug("OUT");
-
-	}
+	// public void externalExecution(String fileName, IEngUserProfile userProfile, HashMap paramsFilled) throws Exception { // never called
+	// logger.debug("IN");
+	// List<DataMiningResult> results = new ArrayList<DataMiningResult>();
+	//
+	// setupEnvonmentForExternal();
+	// logger.debug("Set up environment");
+	// // evaluates script code
+	// scriptExecutor.evalExternalScript(fileName, paramsFilled);
+	// logger.debug("Executed script");
+	// logger.debug("OUT");
+	//
+	// }
 
 	public void updateDatasetInWorkspace(DataMiningDataset ds, IEngUserProfile userProfile) throws IOException {
 		logger.debug("IN");

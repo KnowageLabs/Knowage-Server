@@ -23,3 +23,8 @@
 {
 	padding-top:30;
 }
+
+#error-message
+{
+	background-color: red !important;
+}

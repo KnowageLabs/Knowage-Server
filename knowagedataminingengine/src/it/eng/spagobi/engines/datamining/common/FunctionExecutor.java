@@ -8,6 +8,7 @@ import it.eng.spagobi.engines.datamining.compute.DataMiningRExecutor;
 import it.eng.spagobi.engines.datamining.compute.IDataMiningExecutor;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public class FunctionExecutor {
 
-	public static List<DataMiningResult> executeFunction(DataMiningEngineInstance dataminingEngineInstance, UserProfile userProfile) {
+	public static List<DataMiningResult> executeCatalogFunction(DataMiningEngineInstance dataminingEngineInstance, UserProfile userProfile) {
 		List<DataMiningCommand> commands = dataminingEngineInstance.getCommands();
 		HashMap params = (HashMap) dataminingEngineInstance.getAnalyticalDrivers();
 		IDataMiningExecutor executor = null;
@@ -23,9 +24,8 @@ public class FunctionExecutor {
 		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
 		if (dataminingEngineInstance.getLanguage().equals("Python")) {
 			executor = new DataMiningPythonExecutor(dataminingEngineInstance, userProfile);
-		} else {
+		} else if (dataminingEngineInstance.getLanguage().equals("R")) {
 			executor = new DataMiningRExecutor(dataminingEngineInstance, userProfile);
-
 		}
 
 		for (DataMiningCommand c : commands) {
@@ -35,8 +35,7 @@ public class FunctionExecutor {
 					result = executor.execute(params, c, o, userProfile, true, "function_catalog");
 					results.add(result);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new SpagoBIRuntimeException("Error adding dataminingengine execution results", e);
 				}
 			}
 		}

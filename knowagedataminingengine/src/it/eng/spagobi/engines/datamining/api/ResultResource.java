@@ -90,6 +90,7 @@ public class ResultResource extends AbstractDataMiningEngineService {
 
 		// Instantiate an R or a Python executor depending on LANGUAGE tag in xml file
 		IDataMiningExecutor executor = null;
+		// TODO Factory pattern: in case language is not supported, throw an Exception
 		if (dataMiningEngineInstance.getLanguage() == null) {
 			dataMiningEngineInstance.setLanguage("R");
 		}
@@ -97,10 +98,6 @@ public class ResultResource extends AbstractDataMiningEngineService {
 			executor = new DataMiningPythonExecutor(dataMiningEngineInstance, profile);
 		} else if (dataMiningEngineInstance.getLanguage().equalsIgnoreCase("R")) {
 			executor = new DataMiningRExecutor(dataMiningEngineInstance, profile);
-		} else {
-			logger.debug("Unknown language specified, setting to default: R");
-			executor = new DataMiningRExecutor(dataMiningEngineInstance, profile);
-
 		}
 
 		List<DataMiningCommand> commands = null;

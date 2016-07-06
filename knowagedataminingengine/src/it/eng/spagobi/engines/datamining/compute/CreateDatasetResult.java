@@ -4,6 +4,7 @@ public class CreateDatasetResult {
 	private int pythonExecutionError = 0; // -1 =error
 	private String datasetlabel = null;
 	private String rExecutionError = null;
+	private String ptyhonExecutionCodeWithError = null;
 
 	public CreateDatasetResult(int pythonExecutionError, String datasetlabel) {
 		this.pythonExecutionError = pythonExecutionError;
@@ -20,6 +21,14 @@ public class CreateDatasetResult {
 
 	public void setPythonExecutionError(int executionError) {
 		this.pythonExecutionError = executionError;
+	}
+
+	public String getPythonExecutionCodeWithError() {
+		return ptyhonExecutionCodeWithError;
+	}
+
+	public void setPythonExecutionCodeWithError(String ptyhonExecutionCodeWithError) {
+		this.ptyhonExecutionCodeWithError = ptyhonExecutionCodeWithError;
 	}
 
 	public String getDatasetlabel() {

@@ -506,6 +506,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 		$scope.translate=translate;
 		$scope.isDemo=isDemo;
 		$scope.truncate=false;
+		$scope.error="";
 		$scope.dataset = {rows:[]}; 
 		for (var res in $scope.results) {
 			  if ($scope.results.hasOwnProperty(res)) { 
@@ -515,7 +516,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 					  $scope.results[res].imageString="data:image/png;base64," +$scope.results[res].result;
 			      }
 			    //logger.info($scope.results[res].imageString);
-				  if($scope.results[res].resultType=="dataset"||$scope.results[res].resultType=="Dataset")
+				  if($scope.results[res].resultType=="dataset"||$scope.results[res].resultType=="Dataset"||$scope.results[res].resultType=="spagobi_ds")
 				  {
 					  	var datasetLabel=$scope.results[res].result;
 						sbiModule_restServices.post("1.0/datasets",datasetLabel+"/content")
@@ -559,16 +560,17 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 								}
 
 							}	
+
 							
-							
-							
-							
-							
-							
-							
-							
-						}); 
-				  }	  
+						}
+						
+						
+						); 
+				  }	
+				  if(res=="errors")
+				  {
+					$scope.error=$scope.results.errors[0].localizedMessage+"\n"+$scope.results.errors[0].message;	
+				  }	
 			  }
 			}
 		
@@ -649,7 +651,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 			{
 				for(var i=0;i<$scope.demoData.outputItems.length;i++)
 				{
-					if(demoData.outputItems[i].type=="Dataset")
+					if(demoData.outputItems[i].type=="Dataset"||demoData.outputItems[i].type=="dataset"||demoData.outputItems[i].type=="spabobi_ds")
 					{
 						$scope.numDSout=$scope.numDSout+1;
 					}	

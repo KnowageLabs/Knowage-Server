@@ -39,6 +39,8 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -76,6 +78,7 @@ public class PythonOutputExecutor {
 		// output
 		// output -->if script --> execute script then prepare output
 		int resPythonExecution = 1;
+		String codeToExec = null;
 
 		DataMiningResult res = new DataMiningResult();
 		if (!PyLib.isPythonRunning()) {
@@ -120,17 +123,23 @@ public class PythonOutputExecutor {
 			}
 
 			// In case the system where Datamining engine is running isn't a X server (doesn't have $DISPLAY variable initialized)
-			PyLib.execScript("import matplotlib\n" + "matplotlib.use('Agg')\n");
+			codeToExec = "import matplotlib\n" + "matplotlib.use('Agg')\n";
+			PyLib.execScript(codeToExec);
 
 			res.setVariablename(outVal);// could be multiple value
 										// comma separated
 			String plotName = out.getOutputName();
 
-			resPythonExecution = PyLib.execScript("import os\n" + "os.chdir(r'" + strDir + "')\n");
+			codeToExec = "import os\n" + "os.chdir(r'" + strDir + "')\n";
+			resPythonExecution = PyLib.execScript(codeToExec);
 
 			if (resPythonExecution < 0) {
-				res.setError("Python error");
-				return res;
+				logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec + "EXECUTION FAILED\n"
+						+ "See log file for other details\n");
+				throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec
+						+ "EXECUTION FAILED\n" + "See log file for other details\n");
+				// res.setError(e.getMessage());
+				// return res;
 			}
 
 			logger.debug("Plot file name " + plotName);
@@ -138,26 +147,37 @@ public class PythonOutputExecutor {
 			// function recalling a function inside the main script (auto)
 			// to produce an image result
 			if (function == null) {
-				PyLib.execScript("temporaryPlotVariableToPrintOnFile=" + out.getOuputLabel() + "\n");
-				resPythonExecution = PyLib.execScript("temporaryPlotVariableToPrintOnFile.savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n");
+				codeToExec = "temporaryPlotVariableToPrintOnFile=" + out.getOuputLabel() + "\n" + "temporaryPlotVariableToPrintOnFile.savefig('" + plotName
+						+ "." + OUTPUT_PLOT_EXTENSION + "')\n";
+				resPythonExecution = PyLib.execScript(codeToExec);
 				if (resPythonExecution < 0) {
-					res.setError("Python error");
+					SpagoBIRuntimeException e = new SpagoBIRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n"
+							+ codeToExec + "EXECUTION FAILED\n" + "See log file for other details\n");
+					e.printStackTrace();
+					logger.error(e);
+					res.setError(e.getMessage());
 					return res;
 				}
 			} else if (function != null) {
 				if (outVal == null || outVal.equals("")) {
-					PyLib.execScript("temporaryPlotVariableToPrintOnFile=" + function + "\n");
-					resPythonExecution = PyLib.execScript("temporaryPlotVariableToPrintOnFile.savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n");
+					codeToExec = "temporaryPlotVariableToPrintOnFile=" + function + "\n" + "temporaryPlotVariableToPrintOnFile.savefig('" + plotName + "."
+							+ OUTPUT_PLOT_EXTENSION + "')\n";
+					resPythonExecution = PyLib.execScript(codeToExec);
 					if (resPythonExecution < 0) {
-						res.setError("Python error");
-						return res;
+						logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec + "EXECUTION FAILED\n"
+								+ "See log file for other details\n");
+						throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec
+								+ "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
 				} else {
-					PyLib.execScript("temporaryPlotVariableToPrintOnFile=" + function + "(" + outVal + ")\n");
-					resPythonExecution = PyLib.execScript("temporaryPlotVariableToPrintOnFile.savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n");
+					codeToExec = "temporaryPlotVariableToPrintOnFile=" + function + "(" + outVal + ")\n" + "temporaryPlotVariableToPrintOnFile.savefig('"
+							+ plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n";
+					resPythonExecution = PyLib.execScript(codeToExec);
 					if (resPythonExecution < 0) {
-						res.setError("Python error");
-						return res;
+						logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec + "EXECUTION FAILED\n"
+								+ "See log file for other details\n");
+						throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec
+								+ "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
 
 				}
@@ -172,9 +192,6 @@ public class PythonOutputExecutor {
 						+ plotName + "." + OUTPUT_PLOT_EXTENSION);
 				logger.debug("Deleted temp image");
 			}
-			/*
-			 * } }
-			 */
 
 		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.TEXT_OUTPUT) && outVal != null && out.getOutputName() != null) {
 			logger.debug("Text output");
@@ -184,11 +201,14 @@ public class PythonOutputExecutor {
 					outVal = out.getOuputLabel();
 					res.setVariablename(outVal);// could be multiple value
 
-					PyLib.execScript(outVal + "=" + function);
-					resPythonExecution = PyLib.execScript(outVal + "=str(" + outVal + ")"); // to get output as a String
+					codeToExec = outVal + "=" + function + "\n" + outVal + "=str(" + outVal + ")\n";
+					resPythonExecution = PyLib.execScript(codeToExec); // to get output as a String
 					if (resPythonExecution < 0) {
-						res.setError("Python error");
-						return res;
+
+						logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec + "EXECUTION FAILED\n"
+								+ "See log file for other details\n");
+						throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec
+								+ "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
 
 					String pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
@@ -198,12 +218,13 @@ public class PythonOutputExecutor {
 					// res.setVariablename(outVal);// could be multiple value
 					String noArgFunctionExecuted = function + "(" + outVal + ")";
 					res.setVariablename(noArgFunctionExecuted);
-
-					PyLib.execScript(outVal + "=" + function + "(" + outVal + ")");
-					resPythonExecution = PyLib.execScript(outVal + "=str(" + outVal + ")"); // to get output as a String
+					codeToExec = outVal + "=" + function + "(" + outVal + ")" + "\n" + outVal + "=str(" + outVal + ")";
+					resPythonExecution = PyLib.execScript(codeToExec); // to get output as a String
 					if (resPythonExecution < 0) {
-						res.setError("Python error");
-						return res;
+						logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec + "EXECUTION FAILED\n"
+								+ "See log file for other details\n");
+						throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec
+								+ "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
 
 					String pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
@@ -214,10 +235,13 @@ public class PythonOutputExecutor {
 
 			} else { // function="" or no function (simple case)
 				res.setVariablename(outVal);// could be multiple value
-				resPythonExecution = PyLib.execScript(outVal + "=str(" + outVal + ")"); // to get output as a String
+				codeToExec = outVal + "=str(" + outVal + ")";
+				resPythonExecution = PyLib.execScript(codeToExec); // to get output as a String
 				if (resPythonExecution < 0) {
-					res.setError("Python error");
-					return res;
+					logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec + "EXECUTION FAILED\n"
+							+ "See log file for other details\n");
+					throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec
+							+ "EXECUTION FAILED\n" + "See log file for other details\n");
 				}
 				String pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
 				res.setOutputType(out.getOutputType());
@@ -240,14 +264,19 @@ public class PythonOutputExecutor {
 					res.setVariablename(outVal);// could be multiple value
 					creationResult = createAndPersistDatasetProductByFunction(profile, outVal, out, function, userId, documentLabel);
 					if (creationResult.getPythonExecutionError() < 0) {
-						res.setError("Python error");
-						return res;
+						logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n"
+								+ creationResult.getPythonExecutionCodeWithError() + "EXECUTION FAILED\n" + "See log file for other details\n");
+						throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n"
+								+ creationResult.getPythonExecutionCodeWithError() + "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
 
-					resPythonExecution = PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String
+					codeToExec = outVal + "=" + outVal + ".to_json()\n";
+					resPythonExecution = PyLib.execScript(codeToExec); // to get output as a String
 					if (resPythonExecution < 0) {
-						res.setError("Python error");
-						return res;
+						logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec + "EXECUTION FAILED\n"
+								+ "See log file for other details\n");
+						throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec
+								+ "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
 
 					pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
@@ -258,8 +287,10 @@ public class PythonOutputExecutor {
 					creationResult = createAndPersistDatasetProductByFunction(profile, outVal, out, noArgFunctionExecuted, userId, documentLabel);
 
 					if (creationResult.getPythonExecutionError() < 0) {
-						res.setError("Python error");
-						return res;
+						logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n"
+								+ creationResult.getPythonExecutionCodeWithError() + "EXECUTION FAILED\n" + "See log file for other details\n");
+						throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n"
+								+ creationResult.getPythonExecutionCodeWithError() + "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
 
 					// PyLib.execScript(outVal + "=" + function + "(" + outVal + ")");
@@ -271,23 +302,27 @@ public class PythonOutputExecutor {
 				res.setVariablename(outVal);// could be multiple value
 				creationResult = createAndPersistDataset(profile, outVal, out, userId, documentLabel);
 				if (creationResult.getPythonExecutionError() < 0) {
-					res.setError("Python error");
-					return res;
+					logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n"
+							+ creationResult.getPythonExecutionCodeWithError() + "EXECUTION FAILED\n" + "See log file for other details\n");
+					throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n"
+							+ creationResult.getPythonExecutionCodeWithError() + "EXECUTION FAILED\n" + "See log file for other details\n");
 				}
+				codeToExec = outVal + "=" + outVal + ".to_json()\n";
 				resPythonExecution = PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String
 				if (resPythonExecution < 0) {
-					res.setError("Python error");
-					return res;
+					logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec + "EXECUTION FAILED\n"
+							+ "See log file for other details\n");
+					throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec
+							+ "EXECUTION FAILED\n" + "See log file for other details\n");
 				}
 
 				pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
 			}
 
-			// res.setOutputType("text");
-			res.setOutputType("Dataset");
+			res.setOutputType("Dataset"); // or DataMiningConstants.DATASET
 			// res.setResult("" + pythonResult); //return Json
 			// res.setResult("SpagoBi dataset saved, visible from Data Set section in Document Browser, with label :" + creationResult.getDatasetlabel());
-			res.setResult(creationResult.getDatasetlabel());
+			res.setResult(creationResult.getDatasetlabel()); // returns only the label
 			logger.debug("Evaluated result");
 
 		}
@@ -355,6 +390,7 @@ public class PythonOutputExecutor {
 		logger.debug("IN");
 
 		int resPythonExecution = 1;
+		String codeToExec = null;
 
 		CreateDatasetResult createDatasetResult = new CreateDatasetResult();
 		String spagoBiDatasetname = userId + "_" + documentLabel + "_" + out.getOuputLabel();
@@ -373,12 +409,6 @@ public class PythonOutputExecutor {
 		dataSet.setResourcePath(resPath);
 
 		JSONObject configurationObj = new JSONObject();
-		// configurationObj.put("fileType", "CSV");
-		// configurationObj.put("csvDelimiter", ",");
-		// configurationObj.put("csvQuote", "'"); // Alternativa "\""
-		// configurationObj.put("fileName", spagoBiDatasetname + ".csv");
-		// // configurationObj.put("fileName", outVal + ".csv");
-		// configurationObj.put("encoding", "UTF-8");
 
 		configurationObj.put(DataSetConstants.FILE_TYPE, "CSV");
 		configurationObj.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, ",");
@@ -392,11 +422,13 @@ public class PythonOutputExecutor {
 		String confString = configurationObj.toString();
 		dataSet.setConfiguration(confString);
 
-		PyLib.execScript("import os\n" + "import pandas\n" + "os.chdir(r'" + path + "')\n");
-		PyLib.execScript(outVal + "=" + "pandas.DataFrame(" + outVal + ")\n");
-		resPythonExecution = PyLib.execScript(outVal + ".to_csv('" + spagoBiDatasetname + ".csv'" + ",index=False)\n");
+		codeToExec = "import os\n" + "import pandas\n" + "os.chdir(r'" + path + "')\n" + outVal + "=" + "pandas.DataFrame(" + outVal + ")\n" + outVal
+				+ ".to_csv('" + spagoBiDatasetname + ".csv'" + ",index=False , quotechar=\"'\")\n";
+
+		resPythonExecution = PyLib.execScript(codeToExec);
 		if (resPythonExecution < 0) {
 			createDatasetResult.setPythonExecutionError(resPythonExecution);
+			createDatasetResult.setPythonExecutionCodeWithError(codeToExec);
 			return createDatasetResult;
 		}
 
@@ -445,7 +477,7 @@ public class PythonOutputExecutor {
 		if (storeToHDFS) {
 			moveToHdfs((HdfsDataSet) dataSet);
 		}
-		// check label is already present; insert or modify dependengly
+		// check label is already present; insert or modify dependently
 		IDataSet iDataSet = dataSetDAO.loadDataSetByLabel(spagoBiDatasetname);
 
 		// loadActiveDataSetByLabel(label);
@@ -466,6 +498,7 @@ public class PythonOutputExecutor {
 	private static CreateDatasetResult createAndPersistDatasetProductByFunction(IEngUserProfile profile, String outVal, Output out, String function,
 			String userId, String documentLabel) throws Exception {
 		logger.debug("IN");
+		String codeToExec = null;
 		int resPythonExecution = 1;
 		CreateDatasetResult creationResult = new CreateDatasetResult();
 		DataMiningResult res = new DataMiningResult();
@@ -505,12 +538,14 @@ public class PythonOutputExecutor {
 		String confString = configurationObj.toString();
 		dataSet.setConfiguration(confString);
 
-		PyLib.execScript("import os\n" + "import pandas\n" + "os.chdir(r'" + path + "')\n");
-		PyLib.execScript(outVal + "=" + "pandas.DataFrame(" + function + ")\n");
-		resPythonExecution = PyLib.execScript(outVal + ".to_csv('" + spagoBiDatasetname + ".csv'" + ",index=False)\n");
+		codeToExec = "import os\n" + "import pandas\n" + "os.chdir(r'" + path + "')\n" + outVal + "=" + "pandas.DataFrame(" + function + ")\n" + outVal + "="
+				+ "pandas.DataFrame(" + function + ")\n" + outVal + ".to_csv('" + spagoBiDatasetname + ".csv'" + ",index=False, quotechar=\"'\")\n";
+
+		resPythonExecution = PyLib.execScript(codeToExec);
 
 		if (resPythonExecution < 0) {
 			creationResult.setPythonExecutionError(resPythonExecution);
+			creationResult.setPythonExecutionCodeWithError(codeToExec);
 			return creationResult;
 		}
 
@@ -559,7 +594,7 @@ public class PythonOutputExecutor {
 		if (storeToHDFS) {
 			moveToHdfs((HdfsDataSet) dataSet);
 		}
-		// check label is already present; insert or modify dependengly
+		// check label is already present; insert or modify dependently
 		IDataSet iDataSet = dataSetDAO.loadDataSetByLabel(spagoBiDatasetname);
 
 		// loadActiveDataSetByLabel(label);

@@ -253,14 +253,6 @@ public class ROutputExecutor {
 						res.setError("R execution error:" + creationResult.getRExecutionError());
 						return res;
 					}
-
-					/*
-					 * resPythonExecution = PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String if (resPythonExecution < 0) {
-					 * res.setError("Python error"); return res; } pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
-					 * 
-					 * rexp=re.parseAndEval(arg0); if (rexp.inherits("try-error")) { logger.debug("Script contains error(s)"); res.setError(rexp.asString()); }
-					 */
-
 				} else {
 					// res.setVariablename(outVal);// could be multiple value
 					noArgFunctionExecuted = function + "(" + outVal + ")";
@@ -271,10 +263,7 @@ public class ROutputExecutor {
 						res.setError("R execution error:" + creationResult.getRExecutionError());
 						return res;
 					}
-					// PyLib.execScript(outVal + "=" + function + "(" + outVal + ")");
-					// PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String
 
-					// pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
 				}
 
 			} else { // function="" or no function (simple case)
@@ -284,11 +273,10 @@ public class ROutputExecutor {
 					res.setError("R execution error:" + creationResult.getRExecutionError());
 					return res;
 				}
-				/*
-				 * resPythonExecution = PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String if (resPythonExecution < 0) {
-				 * res.setError("Python error"); return res; }
-				 */
 
+				// Code to eventually return a JSON
+				// resPythonExecution = PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String if (resPythonExecution < 0) {
+				// res.setError("Python error"); return res; }
 				// pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
 			}
 
@@ -593,9 +581,9 @@ public class ROutputExecutor {
 		File file = new File(datasetDirPath);
 		if (!file.exists()) {
 			if (file.mkdirs()) {
-				System.out.println("Directory is created!");
+				logger.debug(datasetDirPath + " Directory is created!");
 			} else {
-				System.out.println("Failed to create directory!");
+				logger.debug("Failed to create directory " + datasetDirPath);
 			}
 		}
 

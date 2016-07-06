@@ -21,6 +21,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +47,8 @@ public class PythonDatasetsExecutor {
 	protected String evalDatasetsNeeded(HashMap paramsFilled) throws IOException, Exception {
 
 		logger.debug("IN");
+		String codeToExec = null;
+
 		if (PyLib.isPythonRunning() && dataminingInstance.getDatasets() != null && !dataminingInstance.getDatasets().isEmpty()) {
 			for (Iterator dsIt = dataminingInstance.getDatasets().iterator(); dsIt.hasNext();) {
 				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
@@ -58,18 +61,20 @@ public class PythonDatasetsExecutor {
 				if (ds.getType().equalsIgnoreCase("file")) {
 					// String strPathUploadedFile = PythonOutputExecutor.getDatasetsDirectoryPath();
 					String strPathUploadedFile = DataMiningUtils.getUserResourcesPath(profile) + ds.getName();
-					resPythonExecution = PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n");
+					codeToExec = "import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n";
+					resPythonExecution = PyLib.execScript(codeToExec);
 					if (resPythonExecution < 0) {
-						throw new Exception("Python script execution error");
+						throw new SpagoBIRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonDatasetExecutor.java:\n" + "\t"
+								+ codeToExec + "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
 					if (ds.getReadType() == null) {
 						ds.setReadType("csv");
 					}
-
-					resPythonExecution = PyLib.execScript(ds.getName() + " = pandas.read_" + ds.getReadType() + "('" + ds.getFileName() + "'," + options
-							+ ")\n");
+					codeToExec = ds.getName() + " = pandas.read_" + ds.getReadType() + "('" + ds.getFileName() + "'," + options + ")\n";
+					resPythonExecution = PyLib.execScript(codeToExec);
 					if (resPythonExecution < 0) {
-						throw new Exception("Python script execution error");
+						throw new SpagoBIRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonDatasetExecutor.java:\n" + codeToExec
+								+ "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
 
 				} else if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET) || ds.getType().equalsIgnoreCase(DataMiningConstants.SPAGOBI_DS)) {
@@ -82,13 +87,20 @@ public class PythonDatasetsExecutor {
 
 					File file = new File(csvToEval);
 					String csvPath = file.getParent();
-					resPythonExecution = PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + csvPath + "')\n");
+					codeToExec = "import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + csvPath + "')\n";
+					resPythonExecution = PyLib.execScript(codeToExec);
 					if (resPythonExecution < 0) {
-						throw new Exception("Python script execution error");
+						throw new SpagoBIRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonDatasetExecutor.java:\n" + codeToExec
+								+ "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
-					resPythonExecution = PyLib.execScript(ds.getName() + " = pandas.read_" + "csv('" + ds.getName() + ".csv'," + "sep=','" + ")\n");
+					String datasetFileName = ds.getFileName();
+
+					codeToExec = ds.getName() + " = pandas.read_" + "csv('" + datasetFileName + "', " + ds.getOptions() + ")\n";
+					resPythonExecution = PyLib.execScript(codeToExec);
+
 					if (resPythonExecution < 0) {
-						throw new Exception("Python script execution error");
+						throw new SpagoBIRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonDatasetExecutor.java:\n" + codeToExec
+								+ "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
 				}
 
@@ -100,6 +112,8 @@ public class PythonDatasetsExecutor {
 
 	protected boolean getAndEvalDefaultDataset(DataMiningDataset ds) throws IOException, Exception { // never used
 		logger.debug("IN");
+
+		String codeToExec = null;
 		// checks relative path
 		String relPathToDefDS = ds.getDefaultDS();
 		if (relPathToDefDS == null || relPathToDefDS.equals("")) {
@@ -121,13 +135,17 @@ public class PythonDatasetsExecutor {
 		if (ds.getType().equalsIgnoreCase("file")) {
 			if (ds.getReadType().equalsIgnoreCase("csv")) {
 				String strPathUploadedFile = DataMiningUtils.getUserResourcesPath(profile).toString() + ds.getName();
-				resPythonExecution = PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n");
+				codeToExec = "import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n";
+				resPythonExecution = PyLib.execScript(codeToExec);
 				if (resPythonExecution < 0) {
-					throw new Exception("Python script execution error");
+					throw new SpagoBIRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonDatasetExecutor.java:\n" + codeToExec
+							+ "EXECUTION FAILED\n" + "See log file for other details\n");
 				}
-				resPythonExecution = PyLib.execScript(ds.getName() + " = pandas.read_csv('" + defDSRelPath + "'," + ds.getOptions() + ")\n");
+				codeToExec = ds.getName() + " = pandas.read_csv('" + defDSRelPath + "'," + ds.getOptions() + ")\n";
+				resPythonExecution = PyLib.execScript(codeToExec);
 				if (resPythonExecution < 0) {
-					throw new Exception("Python script execution error");
+					throw new SpagoBIRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonDatasetExecutor.java:\n" + codeToExec
+							+ "EXECUTION FAILED\n" + "See log file for other details\n");
 				}
 			}
 		}
@@ -138,6 +156,7 @@ public class PythonDatasetsExecutor {
 
 	protected void updateDataset(DataMiningDataset ds) throws IOException, Exception { // never used
 		logger.debug("IN");
+		String codeToExec = null;
 		File fileDSDir = new File(DataMiningUtils.getUserResourcesPath(profile) + ds.getName());
 		// /find file in dir
 		File[] dsfiles = fileDSDir.listFiles();
@@ -150,13 +169,17 @@ public class PythonDatasetsExecutor {
 			if (ds.getType().equalsIgnoreCase("file")) {
 				if (ds.getReadType().equalsIgnoreCase("csv")) {
 					String strPathUploadedFile = DataMiningUtils.getUserResourcesPath(profile).toString() + ds.getName();
-					resPythonExecution = PyLib.execScript("import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n");
+					codeToExec = "import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + strPathUploadedFile + "')\n";
+					resPythonExecution = PyLib.execScript(codeToExec);
 					if (resPythonExecution < 0) {
-						throw new Exception("Python script execution error");
+						throw new SpagoBIRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonDatasetExecutor.java:\n" + codeToExec
+								+ "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
-					resPythonExecution = PyLib.execScript(ds.getName() + " = pandas.read_csv('" + fileDSPath + "'," + ds.getOptions() + ")\n");
+					codeToExec = ds.getName() + " = pandas.read_csv('" + fileDSPath + "'," + ds.getOptions() + ")\n";
+					resPythonExecution = PyLib.execScript(codeToExec);
 					if (resPythonExecution < 0) {
-						throw new Exception("Python script execution error");
+						throw new SpagoBIRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonDatasetExecutor.java:\n" + codeToExec
+								+ "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
 				}
 			}
