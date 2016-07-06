@@ -53,7 +53,7 @@
 	</head>
 
 	
-	<body>        
+	<body class="kn-svgviewer">        
         
 			<div ng-app="svgViewerApp">
 			    <div ng-controller="SvgViewerController">

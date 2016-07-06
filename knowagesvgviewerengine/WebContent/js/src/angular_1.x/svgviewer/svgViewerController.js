@@ -10,9 +10,9 @@ app.controller('SvgViewerController', ['$scope','sbiModule_restServices','$mdSid
 function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,sbiModule_logger,$window,sbiModule_config,$rootScope)	{
   $scope.isSidenavOpen = false;
   $scope.showBackButton = false;
-  
+  //initialize for the first level
   $scope.currentLevel = 1;
-  $scope.currentId = null;
+  $scope.currentMember = null;
   
   //stack that contains the drill path elements
   $scope.drillPathStack = [];
@@ -22,18 +22,17 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   };
   
   //Go back to the previous level
-  //TODO: to test and change
   $scope.goToPreviousLevel = function(){
 	  $scope.currentLevel = $scope.currentLevel - 1;
 	  
 	  var pathElement = $scope.drillPathStack.pop();
-	  $scope.currentId = pathElement.id;
+	  $scope.currentMember = pathElement.member;
 
 	  
 	  if (pathElement.level == 1){
 		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?level="+pathElement.level;
 	  } else {
-		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+pathElement.id+"&level="+pathElement.level;
+		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+pathElement.member+"&level="+pathElement.level;
 	  }
 	  
 	  if($scope.currentLevel == 1){
@@ -52,16 +51,15 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   
   //Listener called when an element on the svg is clicked
   $window.document.addEventListener("SVGElementClicked", function(e) {
-	  
 	  //update drill path with stack
 	  var pathElement = new Object();
 	  pathElement.level = $scope.currentLevel;
-	  pathElement.id = $scope.currentId;
+	  pathElement.member = $scope.currentMember;
 	  $scope.drillPathStack.push(pathElement);
 	  
 	  //alert("Clicked element with id "+e.detail);  
 	  $scope.currentLevel = $scope.currentLevel +1;
-	  $scope.currentId = e.detail;
+	  $scope.currentMember = e.detail;
 	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+e.detail+"&level="+$scope.currentLevel;
 	  
 	  if  ($scope.currentLevel > 1){
