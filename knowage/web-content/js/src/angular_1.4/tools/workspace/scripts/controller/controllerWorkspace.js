@@ -279,26 +279,16 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		if ($scope.searchInput!="") {
-			
-			$scope.resetSearchedData = true;
-			
-			if ($scope.currentOptionMainMenu==item.name.toLowerCase()) {
-				$scope.resetOption = item.name.toLowerCase();
-			}
-			else {
-				$scope.resetOption = $scope.currentOptionMainMenu;
-			}
-			
+			$scope.resetSearchedData = true;			
+			$scope.resetOption = ($scope.currentOptionMainMenu==item.name.toLowerCase()) ? item.name.toLowerCase() : $scope.currentOptionMainMenu;		
 		}
 		else {
 			
 			/**
-			 * Not needed.
+			 * Needed for reseting of the searched data when changing options in the left menu.
 			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
-//			$scope.resetSearchedData = false;
-//			$scope.resetSearchedData = true;
-			
+			$scope.resetSearchedData = true;			
 			$scope.resetOption = item.name.toLowerCase();
 		}
 				

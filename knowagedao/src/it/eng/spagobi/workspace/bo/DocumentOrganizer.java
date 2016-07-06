@@ -41,14 +41,35 @@ public class DocumentOrganizer extends HotLink {
 	private Integer functId;
 	private Integer biObjId;
 
+	/**
+	 * Added for the tooltip for a document when searching through Organizer documents. The goal is to see from which folder the document that is hovered comes,
+	 * to see the full path.
+	 *
+	 * NOTE: This is not really used on the client side, since this parameter provides the path that contains the code of the document, instead of its name.
+	 * Since the name is displayed for the document, the user could not know for which folder which code corresponds. The DB table should be extended so to
+	 * contain also a full path with the name of each folder's name in it.
+	 *
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	private String documentPath;
+
 	public DocumentOrganizer() {
 		super();
 	}
 
-	public DocumentOrganizer(Integer functId, Integer biObjId) {
+	public DocumentOrganizer(Integer functId, Integer biObjId, String documentPath) {
 		super();
 		this.functId = functId;
 		this.biObjId = biObjId;
+		this.documentPath = documentPath;
+	}
+
+	public String getDocumentPath() {
+		return documentPath;
+	}
+
+	public void setDocumentPath(String documentPath) {
+		this.documentPath = documentPath;
 	}
 
 	public Integer getFunctId() {

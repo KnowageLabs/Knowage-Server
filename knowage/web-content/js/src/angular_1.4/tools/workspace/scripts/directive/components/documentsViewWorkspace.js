@@ -389,9 +389,40 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 			$mdDialog.show(confirm).then(function() {
 				sbiModule_restServices.promiseDelete("2.0/organizer/documents/"+document.functId,document.biObjId)
 				.then(function(response) {
+					
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.organizer.document.delete.success'),sbiModule_translate.load('sbi.generic.success'));
-					$scope.loadDocumentsForFolder($scope.selectedFolder);
+					
 					$scope.selectOrganizerDocument(undefined);
+					
+					if ($scope.searchInput!="") {
+						/**
+						 * If some dataset is removed from the filtered set of datasets, clear the search input, since all datasets are refreshed.
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+						$scope.searchInput = "";
+						
+						/**
+						 * When deleting document from the Analysis interface, run the re-loading of documents in the Organizer, so they will be re-collected 
+						 * after deletion of one of the documents available in the Analysis interface, that could on the other side be inside the Organizer 
+						 * as well. E.g. physical removing of a document inside the Analysis, to which there is a (one or more) link inside the Organizer, 
+						 * should be followed by the removal of that link (links) inside the Organizer.
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+						$scope.loadAllFolders();
+						
+						/**
+						 * Set the indicator of state of searching (we are not searching in the Organizer anymore) so the breadcrumb could be showed again
+						 * on the top of the Organizer (Documents) interface.
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+						$scope.organizerSearch = false;
+						
+					}
+					else {
+						$scope.loadDocumentsForFolder($scope.selectedFolder);
+					}
+					
+					
 				},function(response) {
 					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 				});

@@ -11,16 +11,29 @@
 							click-function="clickDocument(item);">
 						</angular-table>
 					 
-					
 					<!-- Document Grid View -->
 					<div layout="row"  layout-wrap ng-hide="showGridView!=true " >
 					<md-card class="documentCard" ng-repeat="document in ngModel| orderBy:orderingDocumentCards" ng-class="{'md-whiteframe-15dp' : selectedDocument==document }">
 			        <md-card-title>
 				          <md-card-title-text>
 				            <p class=" ellipsis">{{document.documentName}}</p>
-				             <md-tooltip md-delay="1500">
-				              {{document.documentName}}
-				            </md-tooltip>
+			             		
+			             		<!-- 
+			             			For future development: the tooltip for the searched (filtered) document inside the Organizer that will show to user the full path
+			             			to it, since the breadcrumb is removed when searching and all documents filtering result is displayed to user. This way, if there 
+			             			is more than one document in different folders, the user could be able to see path for every single result. For this we would need
+			             			a new column inside the DB for Organizer (table 'sbi_functions_organizer'), that will contain descriptive path with the document name
+			             			instead of its code in the path.
+			             			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			             		 -->
+			             		<md-tooltip md-delay="1500" ng-if="searchingOrganizer">
+				            	  	{{document.documentName}}
+			            		</md-tooltip>
+				            
+				            	<md-tooltip md-delay="1500" ng-if="!searchingOrganizer">
+				              		{{document.documentName}}
+				            	</md-tooltip>
+				            	
 				          </md-card-title-text>
 				    </md-card-title>
 			        <div class="md-card-image document_browser_image_{{document.documentType}}"   ng-click="clickDocument(document);" ></div>
@@ -43,7 +56,7 @@
 			          
 			          <md-button class="md-icon-button" aria-label="Delete document" ng-click="deleteDocumentAction({doc:document});">
 			            <md-icon md-font-icon="fa fa-trash fa-2x"></md-icon>
-			            <md-tooltip md-delay="1000"> {{translate.load("sbi.documentbrowser.delete")}}</md-tooltip>
+			            <md-tooltip md-delay="1000"> {{translate.load("sbi.workspace.organizer.document.delete.tooltip")}}</md-tooltip>
 			          </md-button>
 			          
 			        </md-card-actions>

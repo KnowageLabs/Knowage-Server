@@ -178,9 +178,18 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 										
 										/**
 										 * If some dataset is removed from the filtered set of datasets, clear the search input, since all datasets are refreshed.
-										 *  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+										 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 										 */
 										$scope.searchInput = "";
+										
+										/**
+										 * When deleting document from the Analysis interface, run the re-loading of documents in the Organizer, so they will be re-collected 
+										 * after deletion of one of the documents available in the Analysis interface, that could on the other side be inside the Organizer 
+										 * as well. E.g. physical removing of a document inside the Analysis, to which there is a (one or more) link inside the Organizer, 
+										 * should be followed by the removal of that link (links) inside the Organizer.
+										 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+										 */
+										$scope.loadAllFolders();
 										
 										console.info("[DELETE END]: Delete of Analysis Cockpit document with the label '" + document.label + "' is done successfully.");
 									},

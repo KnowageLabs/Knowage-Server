@@ -265,7 +265,7 @@ if(executionRoleNames.size() > 0) {
 									*/
 					            	if(!(isAdmin==true || isSuperAdmin==true)) {
 								%>
-						            <md-menu-item class="md-indent" ng-hide=" || isSuperAdmin">
+						            <md-menu-item class="md-indent">
 						                <md-icon class="fa fa-suitcase"></md-icon>
 						            	<md-button ng-disabled="false" class="toolbar-button-custom" ng-click="urlViewPointService.addToWorkspace()"
 						            			aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}">

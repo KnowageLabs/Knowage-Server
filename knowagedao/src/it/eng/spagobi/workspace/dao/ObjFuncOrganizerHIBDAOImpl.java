@@ -79,16 +79,17 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 		}
 
 		catch (HibernateException he) {
-			
-			logException(he);			
+
+			logException(he);
 			logger.error("HibernateException", he);
-			
+
 			if (tx != null)
 				tx.rollback();
-			
+
 			/**
-			 * Throw this specific exception so the service that called the Hibernate method can handle it and 
-			 * forward the information about the error towards the client (final user).
+			 * Throw this specific exception so the service that called the Hibernate method can handle it and forward the information about the error towards
+			 * the client (final user).
+			 * 
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			throw new HibernateException(he);
@@ -182,8 +183,9 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 				tx.rollback();
 
 			/**
-			 * Throw this specific exception so the service that called the Hibernate method can handle it and 
-			 * forward the information about the error towards the client (final user).
+			 * Throw this specific exception so the service that called the Hibernate method can handle it and forward the information about the error towards
+			 * the client (final user).
+			 * 
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			throw new HibernateException(he);
@@ -274,8 +276,9 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 				tx.rollback();
 
 			/**
-			 * Throw this specific exception so the service that called the Hibernate method can handle it and 
-			 * forward the information about the error towards the client (final user).
+			 * Throw this specific exception so the service that called the Hibernate method can handle it and forward the information about the error towards
+			 * the client (final user).
+			 * 
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			throw new HibernateException(he);
@@ -301,6 +304,18 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 		toReturn.setDocumentDescription(sbiObj.getDescr());
 		toReturn.setDocumentType(sbiObj.getObjectTypeCode());
 		toReturn.setFunctId(hibObj.getId().getSbiFunctionsOrganizer().getFunctId());
+		
+		/**
+		 * Added for the tooltip for a document when searching through Organizer documents. The goal is to see from which folder the document that is hovered comes,
+		 * to see the full path.
+		 *
+		 * NOTE: This is not really used on the client side, since this parameter provides the path that contains the code of the document, instead of its name.
+		 * Since the name is displayed for the document, the user could not know for which folder which code corresponds. The DB table should be extended so to
+		 * contain also a full path with the name of each folder's name in it.
+		 *
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		toReturn.setDocumentPath(hibObj.getId().getSbiFunctionsOrganizer().getPath());
 
 		return toReturn;
 	}

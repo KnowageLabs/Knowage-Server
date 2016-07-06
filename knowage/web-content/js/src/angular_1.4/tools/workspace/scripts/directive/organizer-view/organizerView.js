@@ -27,6 +27,8 @@ angular.module('organizer_view', ['ngMaterial'])
 			selectedRow:"=?",
 			tableSpeedMenuOption:"=?",
 			selectedDocument:"=?",
+			// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			searchingOrganizer: "=?",
 			selectDocumentAction:"&",
 			deleteDocumentAction:"&",
 			executeDocumentAction:"&",
@@ -43,9 +45,8 @@ angular.module('organizer_view', ['ngMaterial'])
 });
 
 function organizerViewControllerFunction($scope,sbiModule_translate){
-	
+
 	$scope.clickDocument=function(item){
-		
 		 $scope.selectDocumentAction({doc: item});
 	}
 	
