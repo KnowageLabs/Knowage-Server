@@ -338,7 +338,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		JpaMappingJarGenerator jpaMappingJarGenerator = new JpaMappingJarGenerator();
 
-		System.out.println(req.getServletContext().getRealPath(File.separator));
+		logger.debug(req.getServletContext().getRealPath(File.separator));
 
 		String libDir = req.getServletContext().getRealPath(File.separator) + "WEB-INF" + File.separator + "lib" + File.separator;
 
