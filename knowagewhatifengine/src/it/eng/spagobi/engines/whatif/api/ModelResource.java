@@ -74,7 +74,9 @@ import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.model.Util;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmFactory;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmSingleton;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
 import it.eng.spagobi.engines.whatif.parser.Lexer;
@@ -618,10 +620,22 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		XSSFRow urlRow = params.createRow(0);
 		XSSFRow mdxRow = params.createRow(1);
 		XSSFRow axisRow = params.createRow(2);
+		XSSFRow algorithms = params.createRow(3);
 		XSSFCell urlCell = urlRow.createCell(0);
 		XSSFCell mdxCell = mdxRow.createCell(0);
 		XSSFCell axisRowsCell = axisRow.createCell(0);
 		XSSFCell axisColumnsCell = axisRow.createCell(1);
+		int keyIndex = 0;
+		Map<String, AllocationAlgorithmDefinition> allocationAlgorithms = AllocationAlgorithmSingleton.getInstance().getAllocationAlgorithms();
+		Iterator ita = allocationAlgorithms.entrySet().iterator();
+		while (ita.hasNext()) {
+			Map.Entry pair = (Map.Entry) ita.next();
+			XSSFCell algorithmsCell = algorithms.createCell(keyIndex++);
+			algorithmsCell.setCellValue(pair.getKey().toString());
+
+			ita.remove();
+		}
+
 		urlCell.setCellValue(url);
 		mdxCell.setCellValue(mdx);
 		axisRowsCell.setCellValue(axisRows);
