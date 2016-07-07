@@ -129,7 +129,7 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 	docAss.DocumentLike= function(ele,itemsPerPage){
 		
 			docAss.showSearchDocPreloader = true;
-			var item="Page=1&ItemPerPage="+itemsPerPage+"&label=" + ele;
+			var item="Page=1&ItemPerPage="+itemsPerPage+"&name=" + ele + "&label=" + ele;
 			docAss.loadDocList(item)
 		}
 
