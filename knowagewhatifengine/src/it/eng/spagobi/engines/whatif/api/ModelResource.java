@@ -475,66 +475,21 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@Path("/exceltest")
 	public void excelFillExample(@Context ServletContext context) throws IOException, Exception {
 
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		File result = exportExcelForMerging();
 
 		OutputStream out = null;
 
 		URL resourceLocation = Thread.currentThread().getContextClassLoader().getResource("it/eng/spagobi/engines/whatif/model/export_dataset_template.xlsm");
-
 		FileInputStream fileInputStream1 = new FileInputStream(new File(resourceLocation.toURI().getPath()));
 		FileInputStream fileInputStream2 = new FileInputStream(result);
 
-		Map<String, String> map = getEnv();
-		map.put("MDX", model.getMdx());
-		map.put("document", getEnv().get("DOCUMENT_ID").toString());
-
-		String url = map.get("SBI_HOST") + context.getContextPath() + "/restful-services/startwhatif/test/?";
-		String mdx = "";
-		int axisRows = model.getCellSet().getAxes().get(0).getPositionCount();
-		int axisColumns = model.getCellSet().getAxes().get(1).getPositionCount();
-
-		Iterator it = map.entrySet().iterator();
-		int index = 0;
-		while (it.hasNext()) {
-			Map.Entry pair = (Map.Entry) it.next();
-
-			if (pair.getKey().toString().equalsIgnoreCase("DOCUMENT_LABEL") || pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_ID")
-					|| pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_VERSION_ID") || pair.getKey().toString().equalsIgnoreCase("document")
-					|| pair.getKey().toString().equalsIgnoreCase("user_id")) {
-				++index;
-				if (index != 1) {
-					url += "&";
-				}
-				url += pair.getKey() + "=" + pair.getValue();
-
-			} else if (pair.getKey().toString().equalsIgnoreCase("MDX")) {
-				mdx = pair.getValue().toString();
-			}
-
-			it.remove();
-
-		}
 		try {
 
 			XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream1);
 			HSSFWorkbook exportedOlapWorkbook = new HSSFWorkbook(fileInputStream2);
 
 			workbook = Util.merge(workbook, exportedOlapWorkbook.getSheetAt(0));
-			XSSFSheet params = workbook.createSheet("parameters");
-			XSSFRow urlRow = params.createRow(0);
-			XSSFRow mdxRow = params.createRow(1);
-			XSSFRow axisRow = params.createRow(2);
-			XSSFCell urlCell = urlRow.createCell(0);
-			XSSFCell mdxCell = mdxRow.createCell(0);
-			XSSFCell axisRowsCell = axisRow.createCell(0);
-			XSSFCell axisColumnsCell = axisRow.createCell(1);
-			urlCell.setCellValue(url);
-			mdxCell.setCellValue(mdx);
-			axisRowsCell.setCellValue(axisRows);
-			axisColumnsCell.setCellValue(axisColumns);
-
+			workbook = writeParamsToExcel(context, workbook);
 			try {
 				Date date = new Date();
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hh:mm");
@@ -623,6 +578,56 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			logger.error("Impossible to write to file");
 		}
 		return file;
+	}
+
+	private XSSFWorkbook writeParamsToExcel(ServletContext context, XSSFWorkbook workbook) {
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		Map<String, String> map = getEnv();
+		map.put("MDX", model.getMdx());
+		map.put("document", getEnv().get("DOCUMENT_ID").toString());
+
+		String url = map.get("SBI_HOST") + context.getContextPath() + "/restful-services/startwhatif/test/?";
+		String mdx = "";
+		int axisRows = model.getCellSet().getAxes().get(0).getPositionCount();
+		int axisColumns = model.getCellSet().getAxes().get(1).getPositionCount();
+
+		Iterator it = map.entrySet().iterator();
+		int index = 0;
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry) it.next();
+
+			if (pair.getKey().toString().equalsIgnoreCase("DOCUMENT_LABEL") || pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_ID")
+					|| pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_VERSION_ID") || pair.getKey().toString().equalsIgnoreCase("document")
+					|| pair.getKey().toString().equalsIgnoreCase("user_id")) {
+				++index;
+				if (index != 1) {
+					url += "&";
+				}
+				url += pair.getKey() + "=" + pair.getValue();
+
+			} else if (pair.getKey().toString().equalsIgnoreCase("MDX")) {
+				mdx = pair.getValue().toString();
+			}
+
+			it.remove();
+
+		}
+		XSSFSheet params = workbook.getSheetAt(1);
+		XSSFRow urlRow = params.createRow(0);
+		XSSFRow mdxRow = params.createRow(1);
+		XSSFRow axisRow = params.createRow(2);
+		XSSFCell urlCell = urlRow.createCell(0);
+		XSSFCell mdxCell = mdxRow.createCell(0);
+		XSSFCell axisRowsCell = axisRow.createCell(0);
+		XSSFCell axisColumnsCell = axisRow.createCell(1);
+		urlCell.setCellValue(url);
+		mdxCell.setCellValue(mdx);
+		axisRowsCell.setCellValue(axisRows);
+		axisColumnsCell.setCellValue(axisColumns);
+
+		return workbook;
 	}
 
 }
