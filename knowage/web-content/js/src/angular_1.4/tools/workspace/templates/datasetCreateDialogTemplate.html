@@ -63,10 +63,7 @@
                            				</md-option>
 			                        </md-select>
 			                        
-			                     </md-input-container>
-			                     
-
-			                  
+			                     </md-input-container>			                     
 						
 			               
 						<div flex=100 layout="row" layout-align="start center">
@@ -96,12 +93,13 @@
 	                     			{{translate.load("sbi.workspace.dataset.wizard.upload")}}
              					</md-button>
 		                  	</div>
+		                  	
 						</div>
 						
 						<div layout="row" flex=100 ng-if="dataset.fileName!='' && !changingFile">
 					 		
 					 		<label layout-align="center center" class="buttonLabel">
-					 			Uploaded file: <strong>{{dataset.fileName}}</strong>
+					 			{{translate.load("sbi.workspace.dataset.wizard.file.uploaded")}}: <strong>{{dataset.fileName}}</strong>
 				 			</label>
 				 			
 						 <span flex></span>
@@ -176,10 +174,18 @@
 		                  	</div>
 						</div>
 							
-					</div>
-					
-					<!-- XLS file is uploaded -->
-					<div layout="row" flex ng-if="dataset.fileType=='XLS'">
+					</div>					
+												
+		    	</div>
+			    	
+		    </md-whiteframe>
+			    
+		    <md-whiteframe ng-if="dataset.fileType=='XLS'" flex layout="column" layout-margin class="md-whiteframe-5dp threeCombosThreeNumFields">          
+		        
+		        <div layout="row">	
+			        
+			        <!-- XLS file is uploaded --> 
+					<div layout="row" flex >
 						
 						<div layout="row" layout-wrap flex=30>
 	                  		<div flex=90 layout-align="center center">

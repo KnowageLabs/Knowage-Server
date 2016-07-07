@@ -9,95 +9,111 @@
 		  		
 		  		<md-tabs flex layout-fill class="rightPanelDocuments">
 			  
-    <md-tab id="my-dataset" label="{{translate.load('sbi.workspace.dataset.my')}}" flex ng-click="switchDatasetsTab('myDataSet')">
-       <md-tab-body>
- 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="myDatasets"
-		show-grid-view="showGridView"
-		show-qbe-enabled="true"
-		show-detail-dataset-enabled="true"
-		share-dataset-enabled="true"
-		share-dataset-action="shareDataset(ds)"
-		selected-dataset=selectedDataset
-		select-dataset-action="selectDataset(ds);"
-		show-qbe-dataset-action="showQbeDataset(ds);"
-		preview-dataset-action= "previewDataset(ds);"
-		show-detail-dataset-action="editFileDataset(ds);"
-		delete-dataset-action="deleteDataset(ds);"
- 	  ></dataset-view>	
- 	 </md-tab-body>
- 	</md-tab>  
- 	<md-tab id="enterprise-dataset" label="{{translate.load('sbi.workspace.dataset.enterprise')}}" flex ng-click="switchDatasetsTab('enterpriseDataSet')">
-     <md-tab-body>
- 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="enterpriseDatasets"
-		show-grid-view="showGridView"
-		show-qbe-enabled="true"
-		show-detail-dataset-enabled="false"
-		share-dataset-enabled="false"
-	    selected-dataset=selectedDataset
-		select-dataset-action="selectDataset(ds);"
-		show-qbe-dataset-action="showQbeDataset(ds);"
-		preview-dataset-action= "previewDataset(ds);"
- 	  ></dataset-view>		
- 	    </md-tab-body>
- 	</md-tab>  
- 	<md-tab label="{{translate.load('sbi.workspace.dataset.shared')}}" flex ng-click="switchDatasetsTab('sharedDataSet')">
-      <md-tab-body>
- 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="sharedDatasets"
-		show-grid-view="showGridView"
-		show-qbe-enabled="true"
-		show-detail-dataset-enabled="false"
-		share-dataset-enabled="false"
-	    selected-dataset=selectedDataset
-		select-dataset-action="selectDataset(ds);"
-		show-qbe-dataset-action="showQbeDataset(ds);"
-		preview-dataset-action= "previewDataset(ds);"
- 	  ></dataset-view>	
- 	 </md-tab-body>
- 	</md-tab>  
- 	<md-tab label="{{translate.load('sbi.workspace.dataset.ckan')}}" flex ng-click="switchDatasetsTab('ckanDataSet')">
- 	 	<md-tab-body>
- 	 	 <div layout="row" flex>
- 	 	   <span flex></span>
- 	 	  	<md-input-container flex=30>
-          		<md-select ng-model="selectedCkanRepo" placeholder="{{translate.load('sbi.workspace.dataset.ckan.repository')}}">
-    			<md-option ng-value="repository" ng-repeat="repository in ckanRepos">{{ repository.name }}</md-option>
-  			    </md-select>
-            </md-input-container>
- 	 	   	<md-button class="md-icon-button" title="Load" aria-label="Load" ng-show=true ng-click="loadCkanDatasets()" style="padding-top:4px;">
-			   <md-icon md-font-icon="fa fa-globe"></md-icon>
-		</md-button>
-		<span flex></span>
- 	 	 </div>
- 	 	 <div flex>
- 	 	 <ckan-view class="kn-documentBrowser" style='overflow: auto;'
- 	 	  	ng-model="ckanDatasetsList"
-			show-grid-view="showGridView"
-			selected-ckan=selectedCkan
-			select-ckan-action="selectCkan(ckan);"
-			show-detail-ckan-action="showDetailCkan(ckan);"
-			edit-ckan-action="editCkan(ckan);"
- 	 	 >
- 	 	 </ckan-view>
- 	 	 </div>
- 	 	</md-tab-body>
- 	</md-tab>
- 	<md-tab label="{{translate.load('sbi.workspace.dataset.all')}}" flex ng-click="switchDatasetsTab('allDataSet')">
-      <md-tab-body>
- 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="datasets"
-		show-grid-view="showGridView"
-		show-qbe-enabled="true"
-		show-detail-dataset-enabled="false"
-		share-dataset-enabled="false"
-		selected-dataset=selectedDataset
-		select-dataset-action="selectDataset(ds);"
-		show-qbe-dataset-action="showQbeDataset(ds);"
-		preview-dataset-action= "previewDataset(ds);"
-		
- 	  ></dataset-view>	
- 	  </md-tab-body>
- 	</md-tab>    
-   </md-tabs>
-   </md-content>
+				    <md-tab id="my-dataset" label="{{translate.load('sbi.workspace.dataset.my')}}" flex ng-click="switchDatasetsTab('myDataSet')">
+				       
+				       <md-tab-body>
+				       
+					 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="myDatasets"
+							show-grid-view="showGridView"
+							show-qbe-enabled="true"
+							show-detail-dataset-enabled="true"
+							share-dataset-enabled="true"
+							share-dataset-action="shareDataset(ds)"
+							selected-dataset=selectedDataset
+							select-dataset-action="selectDataset(ds);"
+							show-qbe-dataset-action="showQbeDataset(ds);"
+							preview-dataset-action= "previewDataset(ds);"
+							show-detail-dataset-action="editFileDataset(ds);"
+							delete-dataset-action="deleteDataset(ds);"
+					 	  ></dataset-view>	
+					 	  
+				 	 	</md-tab-body>
+				 	 	
+			 		</md-tab>  
+			 		
+				 	<md-tab id="enterprise-dataset" label="{{translate.load('sbi.workspace.dataset.enterprise')}}" flex ng-click="switchDatasetsTab('enterpriseDataSet')">
+				     	<md-tab-body>
+					 	  	<dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="enterpriseDatasets"
+								show-grid-view="showGridView"
+								show-qbe-enabled="true"
+								show-detail-dataset-enabled="false"
+								share-dataset-enabled="false"
+							    selected-dataset=selectedDataset
+								select-dataset-action="selectDataset(ds);"
+								show-qbe-dataset-action="showQbeDataset(ds);"
+								preview-dataset-action= "previewDataset(ds);"
+					 	  	></dataset-view>		
+				 	    </md-tab-body>
+				 	</md-tab> 
+				 	 
+				 	<md-tab label="{{translate.load('sbi.workspace.dataset.shared')}}" flex ng-click="switchDatasetsTab('sharedDataSet')">
+				      	<md-tab-body>
+					 	  	<dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="sharedDatasets"
+								show-grid-view="showGridView"
+								show-qbe-enabled="true"
+								show-detail-dataset-enabled="false"
+								share-dataset-enabled="false"
+							    selected-dataset=selectedDataset
+								select-dataset-action="selectDataset(ds);"
+								show-qbe-dataset-action="showQbeDataset(ds);"
+								preview-dataset-action= "previewDataset(ds);"
+					 	  	></dataset-view>	
+				 	 	</md-tab-body>
+				 	</md-tab>  
+				 	
+				 	<md-tab label="{{translate.load('sbi.workspace.dataset.ckan')}}" flex ng-click="switchDatasetsTab('ckanDataSet')">
+				 	 	
+				 	 	<md-tab-body>
+				 	 	
+				 	 	 <div layout="row" flex>
+					 	 	   <span flex></span>
+					 	 	  	<md-input-container flex=30>
+					          		<md-select ng-model="selectedCkanRepo" placeholder="{{translate.load('sbi.workspace.dataset.ckan.repository')}}">
+					    			<md-option ng-value="repository" ng-repeat="repository in ckanRepos">{{ repository.name }}</md-option>
+					  			    </md-select>
+					            </md-input-container>
+					 	 	   	<md-button class="md-icon-button" title="Load" aria-label="Load" ng-show=true ng-click="loadCkanDatasets()" style="padding-top:4px;">
+								   <md-icon md-font-icon="fa fa-globe"></md-icon>
+							</md-button>
+							<span flex></span>
+				 	 	 </div>
+				 	 	 
+				 	 	 <div flex>
+				 	 	 
+					 	 	 <ckan-view class="kn-documentBrowser" style='overflow: auto;'
+					 	 	  	ng-model="ckanDatasetsList"
+								show-grid-view="showGridView"
+								selected-ckan=selectedCkan
+								select-ckan-action="selectCkan(ckan);"
+								show-detail-ckan-action="showDetailCkan(ckan);"
+								edit-ckan-action="editCkan(ckan);"
+					 	 	 >
+					 	 	 </ckan-view>
+				 	 	 
+				 	 	 </div>
+				 	 	 
+				 	 	</md-tab-body>
+				 	 	
+				 	</md-tab>
+				 	
+				 	<md-tab label="{{translate.load('sbi.workspace.dataset.all')}}" flex ng-click="switchDatasetsTab('allDataSet')">
+				      	<md-tab-body>
+					 	  	<dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="datasets"
+								show-grid-view="showGridView"
+								show-qbe-enabled="true"
+								show-detail-dataset-enabled="false"
+								share-dataset-enabled="false"
+								selected-dataset=selectedDataset
+								select-dataset-action="selectDataset(ds);"
+								show-qbe-dataset-action="showQbeDataset(ds);"
+								preview-dataset-action= "previewDataset(ds);"							
+					 	  	></dataset-view>	
+				 	  	</md-tab-body>
+				 	</md-tab>    
+				 	
+   				</md-tabs>
+   				
+   			</md-content>
 
 		</md-content>
 	
