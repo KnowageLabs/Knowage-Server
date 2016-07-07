@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,15 +22,29 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.whatif.WhatIfEngine;
 import it.eng.spagobi.engines.whatif.WhatIfEngineAnalysisState;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmFactory;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmSingleton;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
+import it.eng.spagobi.engines.whatif.parser.Lexer;
+import it.eng.spagobi.engines.whatif.parser.parser;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplateParseException;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.engines.rest.AbstractEngineStartRestService;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,7 +54,9 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -48,6 +64,10 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.olap4j.OlapDataSource;
+import org.pivot4j.PivotModel;
 
 @Path("/startwhatif")
 public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
@@ -55,7 +75,7 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 	// INPUT PARAMETERS
 	public static final String LANGUAGE = "SBI_LANGUAGE";
 	public static final String COUNTRY = "SBI_COUNTRY";
-	
+
 	// OUTPUT PARAMETERS
 
 	// SESSION PARAMETRES
@@ -71,13 +91,136 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 	private static final String SUCCESS_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf2.jsp";
 	private static final String FAILURE_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/errors/startupError.jsp";
 
-	@GET
+	@POST
 	@Path("/test")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String test() {
-		return "test";
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String test(@javax.ws.rs.core.Context HttpServletRequest req) {
+		WhatIfEngineInstance whatIfEngineInstance = null;
+		String body = null;
+		JSONObject jo = null;
+		String mdx = null;
+		Integer ordinal = null;
+		String expression = null;
+
+		try {
+			body = RestUtilities.readBody(req);
+			jo = new JSONObject(body);
+			mdx = jo.getString("mdx");
+			ordinal = jo.getInt("ordinal");
+			expression = jo.getString("expression");
+		} catch (JSONException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		logger.debug("IN");
+
+		logger.debug("Creating engine instance ...");
+
+		try {
+			whatIfEngineInstance = WhatIfEngine.createInstance(mdx, getEnv());
+			whatIfEngineInstance.setAlgorithmInUse(AllocationAlgorithmSingleton.getInstance().getDefaultAllocationAlgorithm().getClassName());
+
+		} catch (WhatIfTemplateParseException e) {
+			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Template not valid", e);
+			engineException.setDescription(e.getCause().getMessage());
+			engineException.addHint("Check the document's template");
+			throw engineException;
+		} catch (Exception e) {
+			logger.error("Error starting the What-If engine: error while generating the engine instance.", e);
+			throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while generating the engine instance.", e);
+		}
+		logger.debug("Engine instance succesfully created");
+
+		// loads subobjects
+		whatIfEngineInstance.setAnalysisMetadata(getAnalysisMetadata());
+		if (getAnalysisStateRowData() != null) {
+			logger.debug("Loading subobject [" + whatIfEngineInstance.getAnalysisMetadata().getName() + "] ...");
+			try {
+				WhatIfEngineAnalysisState analysisState = new WhatIfEngineAnalysisState();
+				analysisState.load(getAnalysisStateRowData());
+				whatIfEngineInstance.setAnalysisState(analysisState);
+			} catch (Throwable t) {
+				logger.error("Error loading the subobject", t);
+				throw new SpagoBIRestServiceException("sbi.olap.start.load.subobject.error", getLocale(), "Error loading the subobject", t);
+			}
+			logger.debug("Subobject [" + whatIfEngineInstance.getAnalysisMetadata().getName() + "] succesfully loaded");
+		}
+
+		SpagoBIPivotModel model = (SpagoBIPivotModel) whatIfEngineInstance.getPivotModel();
+
+		model.setMdx(mdx);
+		model.initialize();
+
+		setValue(ordinal, expression, model, whatIfEngineInstance);
+		model.refresh();
+
+		int a = model.getCellSet().getAxes().get(0).getPositionCount();
+		int b = model.getCellSet().getAxes().get(1).getPositionCount();
+
+		int c = a * b;
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < c; i++) {
+
+			sb.append(String.valueOf(model.getCellSet().getCell(i).getValue()));
+			sb.append(';');
+
+		}
+
+		return sb.toString();
+
 	}
-	
+
+	private void setValue(Integer ordinal, String expression, PivotModel model, WhatIfEngineInstance ei) {
+		logger.debug("IN : ordinal = [" + ordinal + "]");
+
+		// check if a version has been selected in the cube
+		// ((SpagoBIPivotModel)
+		// ei.getPivotModel()).getActualVersionSlicer(ei.getModelConfig());
+
+		logger.debug("expression = [" + expression + "]");
+		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) model.getCellSet();
+		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(ordinal);
+		OlapDataSource olapDataSource = ei.getOlapDataSource();
+
+		Double value = null;
+		try {
+			Lexer lex = new Lexer(new java.io.StringReader(expression));
+			parser par = new parser(lex);
+			par.setWhatIfInfo(cellWrapper, model, olapDataSource, ei);
+			value = (Double) par.parse().value;
+		} catch (Exception e) {
+			logger.debug("Error parsing What-if metalanguage expression", e);
+			String errorMessage = e.getMessage().replace(": Couldn't repair and continue parse", "");
+			throw new SpagoBIEngineRestServiceRuntimeException(errorMessage, this.getLocale(), e);
+		}
+
+		String algorithm = ei.getAlgorithmInUse();
+		logger.debug("Resolving the allocation algorithm");
+		logger.debug("The class of the algorithm is [" + algorithm + "]");
+		IAllocationAlgorithm allocationAlgorithm;
+
+		try {
+			Map<String, Object> properties = new HashMap<String, Object>();
+			properties.put(DefaultWeightedAllocationAlgorithm.ENGINEINSTANCE_PROPERTY, ei);
+			allocationAlgorithm = AllocationAlgorithmFactory.getAllocationAlgorithm(algorithm, ei, properties);
+		} catch (SpagoBIEngineException e) {
+			logger.error(e);
+			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.error", getLocale(), e);
+		}
+
+		CellTransformation transformation = new CellTransformation(value, cellWrapper.getValue(), cellWrapper, allocationAlgorithm);
+		cellSetWrapper.applyTranformation(transformation);
+
+		logger.debug("OUT");
+
+	}
+
 	@GET
 	@Path("/")
 	@Produces("text/html")
@@ -85,7 +228,6 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 		logger.debug("Starting WHATIF");
 		startAction(true);
 	}
-
 
 	public void startAction(boolean whatif) {
 		logger.debug("IN");
@@ -95,13 +237,12 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 
 		try {
 			SourceBean templateBean = getTemplateAsSourceBean();
-			
+
 			logger.debug("User Id: " + getUserId());
 			logger.debug("Audit Id: " + getAuditId());
 			logger.debug("Document Id: " + getDocumentId());
 			logger.debug("Template: " + templateBean);
 
-			
 			if (getAuditServiceProxy() != null) {
 				logger.debug("Audit enabled: [TRUE]");
 				getAuditServiceProxy().notifyServiceStartEvent();
@@ -114,7 +255,7 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 			logger.debug("Creating engine instance ...");
 
 			try {
-				whatIfEngineInstance = WhatIfEngine.createInstance(templateBean,whatif, getEnv());
+				whatIfEngineInstance = WhatIfEngine.createInstance(templateBean, whatif, getEnv());
 			} catch (WhatIfTemplateParseException e) {
 				SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Template not valid", e);
 				engineException.setDescription(e.getCause().getMessage());
@@ -150,8 +291,8 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 				request.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(request, response);
 			} catch (Exception e) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
-				throw new SpagoBIEngineRuntimeException(
-						"Error starting the What-If engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
+				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp "
+						+ SUCCESS_REQUEST_DISPATCHER_URL, e);
 			}
 
 			if (getAuditServiceProxy() != null) {
@@ -171,8 +312,8 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 				request.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL).forward(request, response);
 			} catch (Exception ex) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
-				throw new SpagoBIEngineRuntimeException(
-						"Error starting the What-If engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
+				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp "
+						+ FAILURE_REQUEST_DISPATCHER_URL, ex);
 			}
 		} finally {
 			logger.debug("OUT");

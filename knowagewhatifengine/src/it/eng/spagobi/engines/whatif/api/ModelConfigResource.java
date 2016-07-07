@@ -74,6 +74,13 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 			config.setStartColumn(modelconfig.getStartColumn());
 			config.setColumnSet(modelconfig.getColumnSet());
 			config.setColumnCount(modelconfig.getColumnCount());
+			config.setSortingEnabled(modelconfig.getSortingEnabled());
+			config.setAxisToSort(modelconfig.getAxisToSort());
+			config.setAxis(modelconfig.getAxis());
+			config.setSortingPositionUniqueName(modelconfig.getSortingPositionUniqueName());
+			config.setSortMode(modelconfig.getSortMode());
+			config.setTopBottomCount(modelconfig.getTopBottomCount());
+
 		} catch (SerializationException e) {
 			logger.error(e.getMessage());
 		} catch (IOException e1) {

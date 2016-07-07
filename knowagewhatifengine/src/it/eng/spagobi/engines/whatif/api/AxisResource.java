@@ -77,10 +77,6 @@ public class AxisResource extends AbstractWhatIfEngineService {
 			transform.setSwapAxes(true);
 
 		}
-		// model.setSorting(false);
-		if (model.isSorting()) {
-			model.swapAxisSort(ei.getModelConfig());
-		}
 
 		String table = renderModel(model);
 		logger.debug("OUT");
@@ -125,7 +121,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		getAxisBusiness().moveDimensionToOtherAxis(fromAxisPos, toAxisPos, hierarchyName);
-		model.setSorting(false);
+
 		model.removeSubset();
 
 		model.removeOrder(Axis.ROWS);

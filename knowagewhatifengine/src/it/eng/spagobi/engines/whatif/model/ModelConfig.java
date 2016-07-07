@@ -45,7 +45,14 @@ public class ModelConfig implements Serializable {
 	private Boolean showCompactProperties;
 	private Boolean suppressEmpty;
 	private Boolean enableDrillThrough;
+
 	private Boolean sortingEnabled;
+	private int axisToSort;
+	private int axis;
+	private String sortingPositionUniqueName;
+	private String sortMode;
+	private int topBottomCount;
+
 	private int startRow;
 	private int rowsSet;
 	private int rowCount;
@@ -107,6 +114,46 @@ public class ModelConfig implements Serializable {
 
 	public void setSortingEnabled(Boolean sortingEnabled) {
 		this.sortingEnabled = sortingEnabled;
+	}
+
+	public int getAxisToSort() {
+		return axisToSort;
+	}
+
+	public void setAxisToSort(int axisToSort) {
+		this.axisToSort = axisToSort;
+	}
+
+	public int getAxis() {
+		return axis;
+	}
+
+	public void setAxis(int axis) {
+		this.axis = axis;
+	}
+
+	public String getSortingPositionUniqueName() {
+		return sortingPositionUniqueName;
+	}
+
+	public void setSortingPositionUniqueName(String sortingPositionUniqueName) {
+		this.sortingPositionUniqueName = sortingPositionUniqueName;
+	}
+
+	public String getSortMode() {
+		return sortMode;
+	}
+
+	public void setSortMode(String sortMode) {
+		this.sortMode = sortMode;
+	}
+
+	public int getTopBottomCount() {
+		return topBottomCount;
+	}
+
+	public void setTopBottomCount(int topBottomCount) {
+		this.topBottomCount = topBottomCount;
 	}
 
 	private Integer actualVersion = null;
@@ -357,6 +404,10 @@ public class ModelConfig implements Serializable {
 		this.suppressEmpty = source.suppressEmpty;
 		this.actualVersion = source.actualVersion = null;
 		this.sortingEnabled = source.sortingEnabled;
+		this.axisToSort = source.axisToSort;
+		this.axis = source.axis;
+		this.sortingPositionUniqueName = source.sortingPositionUniqueName;
+		this.topBottomCount = source.topBottomCount;
 		this.status = source.status;
 		this.locker = source.locker;
 

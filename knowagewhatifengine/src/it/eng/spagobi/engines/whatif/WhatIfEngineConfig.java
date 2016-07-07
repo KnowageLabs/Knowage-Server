@@ -190,6 +190,35 @@ public class WhatIfEngineConfig {
 		return olapDataSource;
 	}
 
+	public OlapDataSource getOlapDataSource(IDataSource ds, String reference, Locale locale) {
+
+		String connectionString = null;
+		Properties connectionProps = new Properties();
+
+		logger.debug("The datasource is jdbc");
+		if (ds.checkIsJndi()) {
+			connectionProps.put("DataSource", ds.getJndi());
+			connectionString = "jdbc:mondrian:DataSource=" + ds.getJndi();
+		} else {
+			connectionProps.put("JdbcUser", ds.getUser());
+			connectionProps.put("JdbcPassword", ds.getPwd());
+			connectionProps.put("JdbcDrivers", ds.getDriver());
+			connectionString = "jdbc:mondrian:Jdbc=" + ds.getUrlConnection();
+		}
+		connectionProps.put("Catalog", reference);
+		connectionProps.put("Provider", "Mondrian");
+		connectionProps.put("Locale", locale.toString());
+
+		logger.debug("The connection string is " + connectionString);
+
+		OlapDataSource olapDataSource = new SimpleOlapDataSource();
+
+		((SimpleOlapDataSource) olapDataSource).setConnectionString(connectionString);
+		((SimpleOlapDataSource) olapDataSource).setConnectionProperties(connectionProps);
+
+		return olapDataSource;
+	}
+
 	private void defineSchemaProcessorProperties(Properties connectionProps, WhatIfTemplate template, IEngUserProfile profile, Map env) {
 		List<String> userProfileAttributes = template.getProfilingUserAttributes();
 		// SpagoBIFilterDynamicSchemaProcessor extends

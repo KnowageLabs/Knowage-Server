@@ -204,6 +204,16 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		 */
 
 		model.setNonEmpty(suppressEmpty);
+		/*******************************************************/
+		if (modelConfig.getSortingEnabled()) {
+
+			if (modelConfig.getSortingPositionUniqueName() != null) {
+				model.sortModel(modelConfig.getAxisToSort(), modelConfig.getAxis(), modelConfig.getSortingPositionUniqueName(), modelConfig.getSortMode());
+			}
+
+		}
+
+		/*******************************************************/
 		modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
 		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 		// model.setSubset(modelConfig.getStartRow() + 1,

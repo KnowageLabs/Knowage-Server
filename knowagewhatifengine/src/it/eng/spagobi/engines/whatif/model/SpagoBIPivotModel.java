@@ -57,6 +57,8 @@ import org.pivot4j.mdx.Literal;
 import org.pivot4j.mdx.MdxStatement;
 import org.pivot4j.mdx.QueryAxis;
 import org.pivot4j.mdx.Syntax;
+import org.pivot4j.sort.SortCriteria;
+import org.pivot4j.sort.SortMode;
 import org.pivot4j.transform.ChangeSlicer;
 import org.pivot4j.transform.SwapAxes;
 import org.pivot4j.util.OlapUtils;
@@ -109,24 +111,29 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	 */
 	@Override
 	public boolean isSorting(Position position) {
-		if (sortPosMembers1 == null) {
-			return false;
-		}
-		if (sortPosMembers1.size() != position.getMembers().size()) {
+		if (position != null) {
+			if (sortPosMembers1 == null) {
+				return false;
+			}
+			if (sortPosMembers1.size() != position.getMembers().size()) {
+				return false;
+			}
+
+			for (int i = 0; i < sortPosMembers1.size(); i++) {
+				Member member1 = sortPosMembers1.get(i);
+				Member member2 = position.getMembers().get(i);
+				// any null does not compare
+				if (member1 == null) {
+					return false;
+				} else if (!OlapUtils.equals(member1, member2)) {
+					return false;
+				}
+			}
+			return true;
+		} else {
 			return false;
 		}
 
-		for (int i = 0; i < sortPosMembers1.size(); i++) {
-			Member member1 = sortPosMembers1.get(i);
-			Member member2 = position.getMembers().get(i);
-			// any null does not compare
-			if (member1 == null) {
-				return false;
-			} else if (!OlapUtils.equals(member1, member2)) {
-				return false;
-			}
-		}
-		return true;
 	};
 
 
@@ -162,11 +169,11 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 			String queryString = CalculatedMemberManager.injectCalculatedFieldsIntoMdxQuery(this);
 			setMdx(queryString);
 			this.getCellSet();
+
 		} catch (Exception e) {
 
-			 this.getCalculatedFields().remove(this.getCalculatedFields().size()
-			- 1);
-			 restoreQuery();
+			this.getCalculatedFields().remove(this.getCalculatedFields().size() - 1);
+			restoreQuery();
 
 			throw new SpagoBIEngineRuntimeException("Error calculating the field", e);
 		}
@@ -506,7 +513,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		return 0;
 	}
 
-	public void swapAxisSort(ModelConfig modelConfig) {
+	public void swapAxisSort() {
 		CellSetAxis rows = getCellSet().getAxes().get(Axis.ROWS.axisOrdinal());
 		CellSetAxis columns = getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal());
 		this.setSorting(true);
@@ -539,6 +546,43 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 		}
 		fireModelChanged();
+	}
+
+	public void sortModel(Integer axisToSortpos, Integer axis, String positionUniqueName, String sortMode) {
+
+		CellSetAxis axisToSort = null;
+		CellSetAxis axisM = null;
+		this.setSorting(true);
+
+		this.removeSubset();
+		this.removeOrder(Axis.ROWS);
+		this.removeOrder(Axis.COLUMNS);
+		axisToSort = this.getCellSet().getAxes().get(axisToSortpos);
+		axisM = this.getCellSet().getAxes().get(axis);
+
+		List<Position> positions = axisM.getPositions();
+
+		Position position = CubeUtilities.getPosition(positions, positionUniqueName);
+
+		if (position != null) {
+			if (!this.isSorting(position)) {
+				while (this.getSortCriteria() != null) {
+					SortCriteria nextSortCriteria = SortMode.fromName(sortMode).nextMode(this.getSortCriteria());
+					this.setSortCriteria(nextSortCriteria);
+				}
+				SortCriteria nextSortCriteria = SortMode.fromName(sortMode).nextMode(this.getSortCriteria());
+				this.setSortCriteria(nextSortCriteria);
+			}
+			if (this.getSortCriteria() != null) {
+
+				this.sort(axisToSort, position);
+				this.getSortPosMembers1();
+
+			}
+		}
+		this.swapAxisSort();
+		fireModelChanged();
+
 	}
 
 	public OlapConnection getSbiConnection() {

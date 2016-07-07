@@ -71,6 +71,22 @@ public class WhatIfEngine {
 		return whatIfEngineInstance;
 	}
 
+	public static WhatIfEngineInstance createInstance(String initialMDX, Map env) {
+
+		WhatIfEngineInstance whatIfEngineInstance = null;
+		logger.debug("IN");
+		try {
+			whatIfEngineInstance = new WhatIfEngineInstance(initialMDX, env);
+			initSerializers();
+		} catch (Exception e) {
+			logger.error("OUT", e);
+			throw new SpagoBIEngineRuntimeException("error", e);
+
+		}
+
+		return whatIfEngineInstance;
+	}
+
 	private static void initSerializers() {
 		PivotJsonSerializer pjs = new PivotJsonSerializer();
 		SerializationManager.registerSerializer(pjs.getFormat(), pjs);

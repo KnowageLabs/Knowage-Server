@@ -18,6 +18,16 @@
 
 package it.eng.spagobi.engines.whatif.api;
 
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.ResultSetConverter;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
@@ -52,19 +62,8 @@ import org.pivot4j.transform.DrillExpandMember;
 import org.pivot4j.transform.DrillExpandPosition;
 import org.pivot4j.transform.DrillReplace;
 import org.pivot4j.transform.DrillThrough;
-import org.pivot4j.transform.SwapAxes;
 import org.pivot4j.ui.collector.NonInternalPropertyCollector;
 import org.pivot4j.ui.command.DrillDownCommand;
-
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.model.ModelConfig;
-import it.eng.spagobi.engines.whatif.model.ResultSetConverter;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/member")
 public class MemberResource extends AbstractWhatIfEngineService {
@@ -449,6 +448,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@Path("/sort")
 	public String sort(@javax.ws.rs.core.Context HttpServletRequest req) {
 		init();
+		ModelConfig modelConfig = this.getModelConfig();
 		JSONObject jo;
 		int axisToSort = 0;
 		int axis = 0;
@@ -456,15 +456,15 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		String sortMode = null;
 		int topBottomCount = 0;
 		String body;
-
+		model.setSorting(true);
 		try {
 			body = RestUtilities.readBody(req);
 			jo = new JSONObject(body);
-			axisToSort = jo.getInt("axisToSort");
-			axis = jo.getInt("axis");
-			positionUniqueName = jo.getString("positionUniqueName");
-			sortMode = jo.getString("sortMode");
-			topBottomCount = jo.getInt("topBottomCount");
+			modelConfig.setAxisToSort(jo.getInt("axisToSort"));
+			modelConfig.setAxis(jo.getInt("axis"));
+			modelConfig.setSortingPositionUniqueName(jo.getString("positionUniqueName"));
+			modelConfig.setSortMode(jo.getString("sortMode"));
+			modelConfig.setTopBottomCount(jo.getInt("topBottomCount"));
 
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -473,14 +473,11 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		model.setTopBottomCount(topBottomCount);
-		model.setSorting(true);
+		model.setTopBottomCount(modelConfig.getTopBottomCount());
 
-		SortCriteria nextSortCriteria = SortMode.fromName(sortMode).nextMode(model.getSortCriteria());
+		SortCriteria nextSortCriteria = SortMode.fromName(modelConfig.getSortMode()).nextMode(model.getSortCriteria());
 		model.setSortCriteria(nextSortCriteria);
 
-		sortModel(axisToSort, axis, positionUniqueName, sortMode);
-		model.setSorting(true);
 		return renderModel(model);
 	}
 
@@ -511,51 +508,6 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		CellSet cellSet = model.getCellSet();
 
 		return cellSet.getAxes().get(axisPos);
-
-	}
-
-	private void sortModel(Integer axisToSortpos, Integer axis, String positionUniqueName, String sortMode) {
-
-		CellSetAxis axisToSort = null;
-		CellSetAxis axisM = null;
-
-		SwapAxes transform = model.getTransform(SwapAxes.class);
-
-		model.removeSubset();
-		model.removeOrder(Axis.ROWS);
-		model.removeOrder(Axis.COLUMNS);
-		axisToSort = getAxis(axisToSortpos);
-		axisM = getAxis(axis);
-
-		List<Position> positions = axisM.getPositions();
-
-		Position position = CubeUtilities.getPosition(positions, positionUniqueName);
-
-		if (transform.isSwapAxes()) {
-
-			axisToSort = axisM;
-
-		}
-		if (!model.isSorting(position)) {
-			while (model.getSortCriteria() != null) {
-				SortCriteria nextSortCriteria = SortMode.fromName(sortMode).nextMode(model.getSortCriteria());
-				model.setSortCriteria(nextSortCriteria);
-			}
-			SortCriteria nextSortCriteria = SortMode.fromName(sortMode).nextMode(model.getSortCriteria());
-			model.setSortCriteria(nextSortCriteria);
-		}
-		if (model.getSortCriteria() != null) {
-
-			model.sort(axisToSort, position);
-			model.getSortPosMembers1();
-
-			if (model.getSortCriteria().equals(SortCriteria.BOTTOMCOUNT) || model.getSortCriteria().equals(SortCriteria.TOPCOUNT)) {
-				modelConfig.setStartRow(0);
-				modelConfig.setStartColumn(0);
-
-			}
-
-		}
 
 	}
 

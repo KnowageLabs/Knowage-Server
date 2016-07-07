@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -71,13 +71,95 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 	private boolean standalone = false;
 	private IDataSource dataSourceForWriting;
 	private String algorithmInUse = null;// the allocation algorithm used
-	private boolean whatif= false; //are in what if context?
+	private boolean whatif = false; // are in what if context?
 
 	// to spread the edited value
 
 	protected WhatIfEngineInstance(Object template, boolean whatif, Map env) {
-		this(WhatIfTemplateParser.getInstance() != null ? WhatIfTemplateParser.getInstance().parse(template) : null,  whatif, env);
+		this(WhatIfTemplateParser.getInstance() != null ? WhatIfTemplateParser.getInstance().parse(template) : null, whatif, env);
 		this.whatif = whatif;
+	}
+
+	public WhatIfEngineInstance(String initialMDX, Map env) {
+		super(env);
+
+		includes = WhatIfEngine.getConfig().getIncludes();
+
+		try {
+			Class.forName("mondrian.olap4j.MondrianOlap4jDriver");
+			Class.forName("org.olap4j.OlapWrapper");
+
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Cannot load Mondrian Olap4j Driver", e);
+		}
+		String reference = initMondrianSchema(env);
+		;
+		this.setMondrianSchemaFilePath(reference);
+
+		IDataSource ds = (IDataSource) env.get(EngineConstants.ENV_DATASOURCE);
+		IEngUserProfile profile = (IEngUserProfile) env.get(EngineConstants.ENV_USER_PROFILE);
+
+		olapDataSource = WhatIfEngineConfig.getInstance().getOlapDataSource(ds, reference, this.getLocale());
+
+		// pivotModel = new PivotModelImpl(olapDataSource);
+		pivotModel = new SpagoBIPivotModel(olapDataSource);
+		pivotModel.setLocale(this.getLocale());
+
+		logger.debug("Initial MDX is [" + initialMDX + "]");
+		pivotModel.setMdx(initialMDX);
+		pivotModel.initialize();
+		// execute the MDX now
+		try {
+			pivotModel.getCellSet();
+		} catch (Exception e) {
+			Throwable rootException = e;
+			while (rootException.getCause() != null) {
+				rootException = rootException.getCause();
+			}
+			throw new SpagoBIEngineRuntimeException("Error while executing MDX statement: " + rootException.getMessage(), e);
+		}
+
+		// init configs
+		modelConfig = new ModelConfig(pivotModel);
+
+		// init artifact informations
+
+		Integer artifactID = getArtifactId(getEnv());
+		modelConfig.setArtifactID(artifactID);
+		logger.debug("Artifact ID is " + artifactID);
+		String status = getArtifactStatus(getEnv());
+		logger.debug("Artifact status is " + status);
+		modelConfig.setStatus(status);
+
+		String locker = getArtifactLocker(getEnv());
+		logger.debug("Artifact locker is " + locker);
+		modelConfig.setLocker(locker);
+		logger.debug("Init the datatsource fro writing");
+		if (this.whatif) {
+			dataSourceForWriting = initDataSourceForWriting();
+		}
+
+		// init toolbar
+
+		try {
+			writeBackManager = new WriteBackManager(pivotModel.getCube().getName(), new MondrianDriver(reference));
+		} catch (SpagoBIEngineException e) {
+			logger.debug("Exception creating the whatif component", e);
+			throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(),
+					"Exception creating the whatif component", e);
+		}
+		// init the default algorithm
+		try {
+			String algorithmInUse = AllocationAlgorithmSingleton.getInstance().getDefaultAllocationAlgorithm().getClassName();
+			setAlgorithmInUse(algorithmInUse);
+		} catch (NoAllocationAlgorithmFoundException e) {
+			logger.error("No allocatio algorithm found", e);
+			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.no.found.error", getLocale(), e);
+		}
+
+		standalone = false;
+
+		logger.debug("OUT");
 	}
 
 	public WhatIfEngineInstance(WhatIfTemplate template, boolean whatif, Map env) {
@@ -146,13 +228,12 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 
 		// init configs
 		modelConfig = new ModelConfig(pivotModel);
-		if(whatif){
+		if (whatif) {
 			modelConfig.setScenario(template.getScenario());
 		}
-		
+
 		modelConfig.setAliases(template.getAliases());
 
-		
 		// init artifact informations
 		if (!template.isStandAlone()) {
 			Integer artifactID = getArtifactId(getEnv());
@@ -166,10 +247,10 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 			logger.debug("Artifact locker is " + locker);
 			modelConfig.setLocker(locker);
 			logger.debug("Init the datatsource fro writing");
-			if(this.whatif){
+			if (this.whatif) {
 				dataSourceForWriting = initDataSourceForWriting();
 			}
-			
+
 			SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) pivotModel;
 			if (template.getCrossNavigation() != null) {
 				modelConfig.setCrossNavigation(template.getCrossNavigation());
