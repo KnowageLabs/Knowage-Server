@@ -1,3 +1,20 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 (function() {
 
 	var app = angular.module('geoTemplateBuild', [ 'ngMaterial',
@@ -65,6 +82,22 @@
 			sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath+"restful-services/");
 
 			$documentViewer.editDocumentByLabel($scope.docLabel, $scope, "edit_map");
+			
+			$scope.$on("documentClosed", function() { 
+				sbiModule_restServices
+				.alterContextPath(sbiModule_config.externalBasePath);
+		sbiModule_restServices.promiseGet("restful-services/1.0/documents",
+				$scope.docLabel+"/template")
+				.then(
+						function(response) {
+							console.log(response.data);
+							$scope.template=angular.fromJson(response.data);
+						},
+						function(response) {
+							sbiModule_restServices.errorHandler(
+									response.data, "error loading layers");
+						});
+			});
 		}
 		
 		$scope.saveTemplate = function() {
@@ -105,11 +138,6 @@
 				});
 			}
 
-			
-		}
-
-		$scope.editMap= function(){
-			console.log("IN EDIT");
 			
 		}
 
