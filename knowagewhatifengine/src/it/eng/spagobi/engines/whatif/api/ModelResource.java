@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -472,11 +473,12 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 	@GET
 	@Path("/exceltest")
-	public void excelFillExample() throws IOException, Exception {
+	public void excelFillExample(@Context ServletContext context) throws IOException, Exception {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		File result = exportExcelForMerging();
+
 		OutputStream out = null;
 
 		URL resourceLocation = Thread.currentThread().getContextClassLoader().getResource("it/eng/spagobi/engines/whatif/model/export_dataset_template.xlsm");
@@ -484,8 +486,36 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		FileInputStream fileInputStream1 = new FileInputStream(new File(resourceLocation.toURI().getPath()));
 		FileInputStream fileInputStream2 = new FileInputStream(result);
 
-		Map map = getEnv();
+		Map<String, String> map = getEnv();
 		map.put("MDX", model.getMdx());
+		map.put("document", getEnv().get("DOCUMENT_ID").toString());
+
+		String url = map.get("SBI_HOST") + context.getContextPath() + "/restful-services/startwhatif/test/?";
+		String mdx = "";
+		int axisRows = model.getCellSet().getAxes().get(0).getPositionCount();
+		int axisColumns = model.getCellSet().getAxes().get(1).getPositionCount();
+
+		Iterator it = map.entrySet().iterator();
+		int index = 0;
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry) it.next();
+
+			if (pair.getKey().toString().equalsIgnoreCase("DOCUMENT_LABEL") || pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_ID")
+					|| pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_VERSION_ID") || pair.getKey().toString().equalsIgnoreCase("document")
+					|| pair.getKey().toString().equalsIgnoreCase("user_id")) {
+				++index;
+				if (index != 1) {
+					url += "&";
+				}
+				url += pair.getKey() + "=" + pair.getValue();
+
+			} else if (pair.getKey().toString().equalsIgnoreCase("MDX")) {
+				mdx = pair.getValue().toString();
+			}
+
+			it.remove();
+
+		}
 		try {
 
 			XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream1);
@@ -493,34 +523,17 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 			workbook = Util.merge(workbook, exportedOlapWorkbook.getSheetAt(0));
 			XSSFSheet params = workbook.createSheet("parameters");
-			if (map != null) {
-				XSSFRow header = params.createRow(0);
-				XSSFRow row = params.createRow(1);
-
-				int keyIndex = 0;
-				int valueIndex = 0;
-				int columnSize = 0;
-				Iterator it = map.entrySet().iterator();
-				while (it.hasNext()) {
-					Map.Entry pair = (Map.Entry) it.next();
-
-					if (pair.getKey().toString().equalsIgnoreCase("DOCUMENT_LABEL") || pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_ID")
-							|| pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_VERSION_ID") || pair.getKey().toString().equalsIgnoreCase("DOCUMENT_ID")
-							|| pair.getKey().toString().equalsIgnoreCase("user_id") || pair.getKey().toString().equalsIgnoreCase("MDX")) {
-
-						XSSFCell headerCell = header.createCell(keyIndex++);
-						XSSFCell valueCell = row.createCell(valueIndex++);
-						headerCell.setCellValue(pair.getKey().toString());
-						valueCell.setCellValue(pair.getValue().toString());
-						params.autoSizeColumn(columnSize++);
-
-					}
-
-					it.remove();
-
-				}
-
-			}
+			XSSFRow urlRow = params.createRow(0);
+			XSSFRow mdxRow = params.createRow(1);
+			XSSFRow axisRow = params.createRow(2);
+			XSSFCell urlCell = urlRow.createCell(0);
+			XSSFCell mdxCell = mdxRow.createCell(0);
+			XSSFCell axisRowsCell = axisRow.createCell(0);
+			XSSFCell axisColumnsCell = axisRow.createCell(1);
+			urlCell.setCellValue(url);
+			mdxCell.setCellValue(mdx);
+			axisRowsCell.setCellValue(axisRows);
+			axisColumnsCell.setCellValue(axisRows);
 
 			try {
 				Date date = new Date();
@@ -596,6 +609,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		// adds the calculated fields before rendering the model
 		model.applyCal();
+		model.removeSubset();
 		render.render(model, exporter);
 
 		// restore the query without calculated fields
