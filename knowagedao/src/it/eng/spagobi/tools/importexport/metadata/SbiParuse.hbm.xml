@@ -43,6 +43,16 @@
         <property name="maximizerEnabled" type="boolean">
             <column name="maximizer_enabled"/>
         </property>
+        
+        <property name="valueSelection" type="string">
+			<column name="value_selection" length="20" not-null="false" />
+		</property>
+		<property name="selectedLayer" type="string">
+			<column name="selected_layer" length="100" />
+		</property>
+		<property name="selectedLayerProp" type="string">
+			<column name="SELECTED_LAYER_PROP" length="40" />
+		</property> 
         <set name="sbiParuseDets" inverse="true">
             <key>
                 <column name="use_id" not-null="true" />
