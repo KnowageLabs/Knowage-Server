@@ -172,7 +172,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<option value="nodeEmpty"><spagobi:message key="SBISet.menu.nodeEmpty" /></option>
 			<option value="nodeDocument" <%= menu.getObjId() != null ? "selected" : ""%>><spagobi:message key="SBISet.menu.nodeDocument" /></option>
 			<option value="nodeStaticPage" <%= menu.getStaticPage() != null && !menu.getStaticPage().trim().equals("") ? "selected" : ""%>><spagobi:message key="SBISet.menu.nodeStaticPage" /></option>
-			<option value="nodeFunctionality" <%= menu.getFunctionality() != null && !menu.getFunctionality().trim().equals("") ? "selected" : ""%>><spagobi:message key="SBISet.menu.nodeFunctionality" /></option>
 			<option value="nodeExternalApp" <%= menu.getExternalApplicationUrl() != null && !menu.getExternalApplicationUrl().trim().equals("") ? "selected" : ""%>><spagobi:message key="SBISet.menu.nodeExternalApp" /></option>
 		</select>
 		</div>
@@ -180,22 +179,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<%
 		String toggledDivs = null;
 		String currentVisibleDiv = null;
-		toggledDivs = "['nodeDocument','nodeStaticPage', 'nodeFunctionality', 'nodeExternalApp']";
+		toggledDivs = "['nodeDocument','nodeStaticPage', 'nodeExternalApp']";
 		currentVisibleDiv = "'nodeEmpty'";
 		if (menu.getObjId() != null) {
-			toggledDivs = "['nodeEmpty','nodeStaticPage', 'nodeFunctionality', 'nodeExternalApp']";
+			toggledDivs = "['nodeEmpty','nodeStaticPage', 'nodeExternalApp']";
 			currentVisibleDiv = "'nodeDocument'";
 		}
 		if (menu.getStaticPage() != null && !menu.getStaticPage().trim().equals("")) {
-			toggledDivs = "['nodeEmpty','nodeDocument', 'nodeFunctionality', 'nodeExternalApp']";
+			toggledDivs = "['nodeEmpty','nodeDocument', 'nodeExternalApp']";
 			currentVisibleDiv = "'nodeStaticPage'";
 		}
-		if (menu.getFunctionality() != null && !menu.getFunctionality().trim().equals("")) {
-			toggledDivs = "['nodeEmpty','nodeDocument','nodeStaticPage', 'nodeExternalApp']";
-			currentVisibleDiv = "'nodeFunctionality'";
-		}
 		if (menu.getExternalApplicationUrl() != null && !menu.getExternalApplicationUrl().trim().equals("")) {
-			toggledDivs = "['nodeEmpty','nodeDocument','nodeStaticPage', 'nodeFunctionality']";
+			toggledDivs = "['nodeEmpty','nodeDocument','nodeStaticPage']";
 			currentVisibleDiv = "'nodeExternalApp'";
 		}
 		%>
@@ -611,122 +606,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</div>
 	</div>
 	 
-	<div id="nodeFunctionality">
-		<div class='div_detail_label'>
-			<span class='portlet-form-field-label'>
-				<spagobi:message key = "SBISet.menu.functionality" />
-			</span>
-		</div>
-		<div class='div_detail_form'> 
-			<select name="functionality" size="1" class='portlet-form-input-field' onchange="changeInitialPathVisibility(this);">
-				<option value="<%= SpagoBIConstants.DOCUMENT_BROWSER_USER %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.DOCUMENT_BROWSER_USER)) ? "selected='selected'" : ""%>>
-					<spagobi:message key="menu.Browser" />
-				</option>
-				<!--  
-				<option value="<%= SpagoBIConstants.DOCUMENT_MANAGEMENT_USER %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER)) ? "selected='selected'" : ""%>>
-					<spagobi:message key="tree.objectstree.name" />
-				-->	
-				</option>
-				<option value="<%= SpagoBIConstants.WORKLIST_MANAGEMENT %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.WORKLIST_MANAGEMENT)) ? "selected='selected'" : ""%>>
-					<spagobi:message key="menu.Worklist" />
-				</option>
-				<option value="<%= SpagoBIConstants.HOTLINK_MANAGEMENT %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.HOTLINK_MANAGEMENT)) ? "selected='selected'" : ""%>>
-					<spagobi:message key="menu.HotLink" />
-				</option>
-				<option value="<%= SpagoBIConstants.DISTRIBUTIONLIST_USER %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.DISTRIBUTIONLIST_USER)) ? "selected='selected'" : ""%>>
-					<spagobi:message key="menu.DistributionListList" />
-				</option>
-				<option value="<%= SpagoBIConstants.EVENTS_MANAGEMENT %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.EVENTS_MANAGEMENT)) ? "selected='selected'" : ""%>>
-					<spagobi:message key="menu.Events" />
-				</option>
-                <option value="<%= SpagoBIConstants.FINAL_USERS_MANAGEMENT %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.FINAL_USERS_MANAGEMENT)) ? "selected='selected'" : ""%>>
-                    <spagobi:message key="menu.Users" />
-                </option>
-			</select>
-		</div>
-		
-		<script>
-		function changeInitialPathVisibility(selectObj) {
-			var initialPathDiv = document.getElementById('initialPathDiv');
-			var selectedOption = selectObj.options[selectObj.selectedIndex];
-			if (selectedOption.value == '<%= SpagoBIConstants.DOCUMENT_BROWSER_USER %>') { 
-				initialPathDiv.style.display = 'inline';
-			} else {
-				initialPathDiv.style.display = 'none';
-			}
-		}
-		</script>
-		
-		<%-- Documents tree initial path div --%>
-		<div id="initialPathDiv" name="initialPathDiv" style="display: <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.DOCUMENT_BROWSER_USER)) ? "inline" : "none" %>"> 
-			<div class='div_detail_label'>	 
-				 <span class='portlet-form-field-label'>
-					<spagobi:message key = "SBISet.menu.initialPath" />
-				</span>
-			</div>
-			<div class='div_detail_form'>
-				<input class='portlet-form-input-field' type="text" size="50" readonly="readonly" onchange="checkForErrorImg();"
-						name="initialPath" id="initialPath" value="<%= menu.getInitialPath() != null ? StringEscapeUtils.escapeHtml(menu.getInitialPath()) : "" %>" maxlength="400" />
-				<a href='javascript:void(0);' id="initialPathLink" style="text-decoration:none;">
-					<img src="<%=urlBuilder.getResourceLinkByTheme(request, "/img/detail.gif", currTheme) %>" title="Lookup" alt="Lookup" />
-				</a>
-				<%
-				ILowFunctionalityDAO functionalityDAO = DAOFactory.getLowFunctionalityDAO();
-				List folders = functionalityDAO.loadAllLowFunctionalities(false);
-				// if the menu has a initial path set, checks if it exists
-				if (menu.getInitialPath() != null && !menu.getInitialPath().equals("")) {
-					Iterator fodlersIter = folders.iterator();
-					boolean pathFound = false;
-					while (fodlersIter.hasNext()) {
-						LowFunctionality folder = (LowFunctionality) fodlersIter.next();
-						pathFound = folder.getPath().equals(menu.getInitialPath());
-						if (pathFound) break;
-					}
-					if (!pathFound) {
-						%>
-						<img id="pathNotFoundErrorImg" name="pathNotFoundErrorImg" style="display:inline;"
-							src="<%=urlBuilder.getResourceLinkByTheme(request, "/img/error16.gif", currTheme) %>" 
-							title="<spagobi:message key = "SBISet.detailMenu.relatedPathNotFound" />" 
-							alt="<spagobi:message key = "SBISet.detailMenu.relatedPathNotFound" />" />
-						<%
-					}
-				}
-				%>
-			</div>
-		</div>
-		
-		<script>
-		var win_initialPath;
-		Ext.get('initialPathLink').on('click', function(){
-			if(!win_initialPath){
-				win_initialPath = new Ext.Window({
-					id:'popup_initialPath',
-					title:"<%= JavaScript.escapeText(msgBuilder.getMessage("SBISet.menu.selectInitialPath", "messages", request)) %>",
-					contentEl: 'divInitialPathSelection',
-					layout:'fit',
-					width:500,
-					height:350,
-					closeAction:'hide',
-					plain: true,
-					autoScroll: true,
-					maximizable: true,
-					style: 'background-color: white;'
-				});
-			};
-			win_initialPath.show();
-		});
-		</script>
-		
-		<script>
-		function checkForErrorImg() {
-			var errorPathImg = document.getElementById('pathNotFoundErrorImg');
-			if (errorPathImg) errorPathImg.style.display = 'none';
-		}
-		</script>
-		<%-- End documents tree initial path div --%>
-		
-	</div>
-
 	<!-- Div for initial path selection -->
 	<div style="display:none">
 		<div id="divInitialPathSelection" name="divInitialPathSelection" style='background-color:white;'>
@@ -743,6 +622,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	   	treeFunct.config.useSelection = false;
 	   	treeFunct.add(-100,-1,'<%= StringEscapeUtils.escapeJavaScript(nameTree) %>');
 	   	<%
+        ILowFunctionalityDAO functionalityDAO = DAOFactory.getLowFunctionalityDAO();
+        List folders = functionalityDAO.loadAllLowFunctionalities(false);
 	   	Iterator fodlersIter = folders.iterator();
 	   	String imgFolder = urlBuilder.getResourceLinkByTheme(request, "/img/treefolder.gif", currTheme);
 		String imgFolderOp = urlBuilder.getResourceLinkByTheme(request, "/img/treefolderopen.gif", currTheme);
