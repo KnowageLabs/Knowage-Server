@@ -31,23 +31,31 @@ $calendarHeaderBackground: $baseColor;
 $calendarHeaderTextColor: white;
 $cardActionIconsColor: $toolbarButtonColor;
 
+
 /* FONTS & ICONS */
 $headerFontWeight: 	600;
-$tabFontWeight: 	$headerFontWeight;
-$fabIconSize: 		1.4em;
-$smallFontSize:		1em;
-$headerFontSize: 	.8em;
-$tableFontSize: 	1.2em;
+$tabFontWeight: 	400;
+$fabIconSize: 		18px;
+$smallFontSize:		12px;
+$headerFontSize: 	16px;
+$tableFontSize: 	16px;
 
 /* PADDINGS */
-$standardPadding: 	.8em;
-$tabPadding: 		.6em;
+$standardPadding: 	10px;
+$tabPadding: 		8px;
 
 
 /* DIMENSIONS */
-$toolbarHeight: 3.6em;
+$toolbarHeight: 40px;
+$inputHeight: 40px;
+$browseButtonLineHeight : 40px;
+$angularTableTRHeight: 36px;
+
+/* DIMENSIONS in EM 
+$toolbarHeight: 2em;
+$inputHeight: 2em;
 $browseButtonLineHeight : 4em;
-$angularTableTRHeight: 2em;
+$angularTableTRHeight: 2em;*/
 
 /* WORKSPACE */
 $progCirculWorkspaceDiam: 75;

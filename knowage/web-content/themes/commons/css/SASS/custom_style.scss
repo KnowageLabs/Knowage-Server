@@ -37,13 +37,13 @@
  
 // Toolbar elements  
 md-toolbar.md-knowage-theme {
-		min-height: 40px;
+		min-height: $toolbarHeight;
         outline: none;
-		height: 40px;
+		height: $toolbarHeight;
 		background-color: $headerBackground !important;
 		color: $lightTextColor !important;
 		.md-toolbar-tools {
-			height: 40px;
+			height: $toolbarHeight;
 			font-size: $headerFontSize;
 			text-transform: uppercase;
 			font-weight: $headerFontWeight;
@@ -68,7 +68,7 @@ md-toolbar.ternaryToolbar.md-knowage-theme {
 md-input-container.md-knowage-theme {
   +label {
       padding: 0;
-      line-height: 40px;
+      line-height: $inputHeight;
     }
   md-checkbox {
     margin-bottom: 0;
@@ -584,9 +584,6 @@ form {
   md-input-container {
     padding: 0;
   }
-}
-md-pagination-wrapper {
-  width: auto !important;
 }
 .searchInput.md-input-has-value, .searchInput.md-input-focused {
   label {
