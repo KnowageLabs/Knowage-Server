@@ -101,8 +101,14 @@ onload="init(evt);">
 		})();
 		
 		function clickedElement(idElement){
-			//Launch an event to announce that we are at the end of the script executions
+			//Launch an event to announce that an element was clicked
 			var event = new CustomEvent("SVGElementClicked", { "detail": idElement });
+			window.parent.document.dispatchEvent(event);
+		}
+		
+		function clickedElementCrossNavigation(idElement){
+			//Launch an event to announce that an element was clicked and cross navigation is called
+			var event = new CustomEvent("SVGElementClickedCrossNavigation", { "detail": idElement });
 			window.parent.document.dispatchEvent(event);
 		}
 		
