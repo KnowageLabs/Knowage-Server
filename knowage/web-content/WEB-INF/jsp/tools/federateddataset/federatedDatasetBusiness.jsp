@@ -106,6 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<angular-list
 							layout-fill 
 							id="availableDatasets" 
+							layout-margin
 							ng-model="ctrl.list" 
 							item-name="name"
 							show-search-bar=true
