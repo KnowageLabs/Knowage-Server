@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.tools.catalogue.dao;
 
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
+import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
+import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,17 +40,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
-
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.tools.catalogue.bo.Content;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
-import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
-import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
-import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaModelsDAO {
 
@@ -552,7 +552,91 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			hibContent.setCreationUser(content.getCreationUser());
 			hibContent.setFileName(content.getFileName());
 			hibContent.setProg(nextProg);
+			hibContent.setFileModel(content.getFileModel());
 			hibContent.setContent(content.getContent());
+			hibContent.setDimension(content.getDimension());
+			SbiMetaModel sbiModel = (SbiMetaModel) session.load(SbiMetaModel.class, modelId);
+			hibContent.setModel(sbiModel);
+			updateSbiCommonInfo4Insert(hibContent);
+			session.save(hibContent);
+			transaction.commit();
+
+		} catch (Exception e) {
+			logException(e);
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("An unexpected error occured while saving model content [" + content + "]", e);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+
+		logger.debug("OUT");
+
+	}
+
+	@Override
+	public void modifyMetaModelContent(Integer modelId, Content content, Integer metaModelContentId) {
+
+		LogMF.debug(logger, "IN: content = [{0}]", content);
+
+		Session session = null;
+		Transaction transaction = null;
+
+		try {
+			if (content == null) {
+				throw new IllegalArgumentException("Input parameter [content] cannot be null");
+			}
+			if (modelId == null) {
+				throw new IllegalArgumentException("Input parameter [modelId] cannot be null");
+			}
+
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch (Exception e) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+			}
+
+			// set to not active the current active template
+			String hql = " update SbiMetaModelContent mmc set mmc.active = false where mmc.active = true and mmc.model.id = ? ";
+			Query query = session.createQuery(hql);
+			query.setInteger(0, modelId.intValue());
+			logger.debug("Updates the current content of model " + modelId + " with active = false.");
+			query.executeUpdate();
+			// get the next prog for the new content
+			Integer maxProg = null;
+			Integer nextProg = null;
+			hql = " select max(mmc.prog) as maxprog from SbiMetaModelContent mmc where mmc.model.id = ? ";
+			query = session.createQuery(hql);
+			query.setInteger(0, modelId.intValue());
+			List result = query.list();
+			Iterator it = result.iterator();
+			while (it.hasNext()) {
+				maxProg = (Integer) it.next();
+			}
+			logger.debug("Current max prog : " + maxProg);
+			if (maxProg == null) {
+				nextProg = new Integer(1);
+			} else {
+				nextProg = new Integer(maxProg.intValue() + 1);
+			}
+			logger.debug("Next prog: " + nextProg);
+
+			// store the model content
+			SbiMetaModelContent hibContent = (SbiMetaModelContent) session.load(SbiMetaModelContent.class, metaModelContentId);
+			hibContent.setActive(new Boolean(true));
+			hibContent.setCreationDate(content.getCreationDate());
+			hibContent.setCreationUser(content.getCreationUser());
+			hibContent.setFileName(content.getFileName());
+			hibContent.setProg(nextProg);
+			hibContent.setContent(content.getContent());
+			hibContent.setFileModel(content.getFileModel());
+
 			hibContent.setDimension(content.getDimension());
 			SbiMetaModel sbiModel = (SbiMetaModel) session.load(SbiMetaModel.class, modelId);
 			hibContent.setModel(sbiModel);
@@ -839,13 +923,39 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			toReturn.setActive(hibContent.getActive());
 			toReturn.setFileName(hibContent.getFileName());
 			toReturn.setDimension(hibContent.getDimension());
+			toReturn.setProg(hibContent.getProg());
 			if (loadByteContent) {
 				toReturn.setContent(hibContent.getContent());
+				toReturn.setFileModel(hibContent.getFileModel());
 			}
+
+			toReturn.setHasContent((hibContent.getContent() != null) ? true : false);
+			toReturn.setHasFileModel((hibContent.getFileModel() != null) ? true : false);
+
 		}
 		logger.debug("OUT");
 		return toReturn;
 	}
+
+	// redundant
+	// private Content toContentWeb(SbiMetaModelContent hibContent, boolean loadByteContent) {
+	// logger.debug("IN");
+	// Content toReturn = null;
+	// if (hibContent != null) {
+	// toReturn = new Content();
+	// toReturn.setId(hibContent.getId());
+	// toReturn.setCreationUser(hibContent.getCreationUser());
+	// toReturn.setCreationDate(hibContent.getCreationDate());
+	// toReturn.setActive(hibContent.getActive());
+	// toReturn.setFileName(hibContent.getFileName());
+	// toReturn.setDimension(hibContent.getDimension());
+	// if (loadByteContent) {
+	// toReturn.setContent(hibContent.getFileModel());
+	// }
+	// }
+	// logger.debug("OUT");
+	// return toReturn;
+	// }
 
 	@Override
 	public void setActiveVersion(Integer modelId, Integer contentId) {
@@ -905,8 +1015,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 	}
 
 	/**
-	 * Locks model designed by Model id, returns the userId that locks the model
-	 * (that could be different from current user if it was already blocked)
+	 * Locks model designed by Model id, returns the userId that locks the model (that could be different from current user if it was already blocked)
 	 */
 	@Override
 	public String lockMetaModel(Integer metaModelId, String userId) {
@@ -971,9 +1080,8 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 	}
 
 	/**
-	 * Unlock model designed by MetaModel id, returns user currently locking the
-	 * model, that will be null if method has success, but could be from a
-	 * different user if fails
+	 * Unlock model designed by MetaModel id, returns user currently locking the model, that will be null if method has success, but could be from a different
+	 * user if fails
 	 */
 	@Override
 	public String unlockMetaModel(Integer metaModelId, String userId) {
@@ -1046,6 +1154,97 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 
 		logger.debug("OUT");
 		return userLocking;
+	}
+
+	@Override
+	public Content loadActiveMetaModelWebContentByName(String modelName) {
+		LogMF.debug(logger, "IN: name = [{0}]", modelName);
+
+		Content toReturn = null;
+		Session session = null;
+		Transaction transaction = null;
+
+		try {
+			if (modelName == null) {
+				throw new IllegalArgumentException("Input parameter [modelName] cannot be null");
+			}
+
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch (Exception e) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+			}
+
+			Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.name = ? and mmc.active = true ");
+			query.setString(0, modelName);
+			SbiMetaModelContent hibContent = (SbiMetaModelContent) query.uniqueResult();
+			logger.debug("Content loaded");
+
+			toReturn = toContent(hibContent, true);
+
+			transaction.rollback();
+		} catch (Exception e) {
+			logException(e);
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("An unexpected error occured while loading active content for model with id [" + modelName + "]", e);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+
+		LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
+		return toReturn;
+	}
+
+	@Override
+	public Content lastFileModelMeta(Integer modelId) {
+		LogMF.debug(logger, "IN: id = [{0}]", modelId);
+
+		Content toReturn = new Content();
+		Session session = null;
+		Transaction transaction = null;
+
+		try {
+			if (modelId == null) {
+				throw new IllegalArgumentException("Input parameter [modelId] cannot be null");
+			}
+
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch (Exception e) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+			}
+
+			Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.id = ? and mmc.fileModel is not null order by mmc.prog desc");
+			query.setInteger(0, modelId);
+			List<SbiMetaModelContent> list = query.list();
+			if (list != null && list.size() > 0) {
+				toReturn = toContent(list.get(0), true);
+			}
+			transaction.rollback();
+		} catch (Exception e) {
+			logException(e);
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("An unexpected error occured while loading active content for model with id [" + modelId + "]", e);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+
+		LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
+		return toReturn;
 	}
 
 }

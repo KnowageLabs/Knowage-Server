@@ -201,11 +201,12 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	@Override
 	public void generate(ModelObject o, String outputDir) {
-		generate(o, outputDir, false);
+		generate(o, outputDir, false, null);
 	}
 
 	@Override
-	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping) {
+	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libDir) {
+
 		BusinessModel model;
 
 		logger.trace("IN");
@@ -253,7 +254,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	/**
 	 * Delete the file and all it's children
-	 * 
+	 *
 	 * @param file
 	 */
 	private void deleteFile(File file) {
@@ -278,7 +279,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	/**
 	 * Generate the JPA Mapping of one BusinessModel in one outputFile
-	 * 
+	 *
 	 * @param model
 	 *            BusinessModel
 	 * @param outputFile
@@ -347,7 +348,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	/**
 	 * This method create a single java class file
-	 * 
+	 *
 	 * @param templateFile
 	 * @param businessTable
 	 * @param jpaTable
@@ -375,7 +376,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	/**
 	 * This method create a single java class file
-	 * 
+	 *
 	 * @param templateFile
 	 * @param businessTable
 	 * @param views
@@ -404,7 +405,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	/**
 	 * This method create a single java class file
-	 * 
+	 *
 	 * @param templateFile
 	 * @param businessTable
 	 * @param jpaView

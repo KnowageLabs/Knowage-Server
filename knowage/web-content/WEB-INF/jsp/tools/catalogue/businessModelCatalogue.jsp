@@ -162,7 +162,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						{{translate.load("sbi.bm.metaweb")}}
 					</md-button>
 					
-					<md-input-container ng-show="selectedBusinessModel.id!=undefined" flex>
+					<md-button ng-if="metaWebFunctionality && togenerate" class="md-raised" aria-label="Profile" ng-click="buildBusinessModels()" ng-disabled="selectedBusinessModel.dataSourceLabel==undefined">
+						{{translate.load("sbi.bm.generate")}}
+					</md-button>
+					
+					<md-input-container ng-show="selectedBusinessModel.id!=unRdefined" flex>
 			          <md-switch ng-model="metaWebFunctionality" >{{translate.load("sbi.bm.metaweb.enable")}}</md-switch>
 			        </md-input-container>
 					<%} %>

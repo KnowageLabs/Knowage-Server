@@ -17,9 +17,21 @@
  */
 package it.eng.spagobi.api.v2;
 
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,16 +55,6 @@ import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.tools.catalogue.bo.Content;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 @Path("/2.0/businessmodels")
 @ManageAuthorization
@@ -96,17 +98,51 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("{bmId}/versions")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public List<Content> getBusinessModelVersions(@PathParam("bmId") Integer bmId) {
+	public Response getBusinessModelVersions(@PathParam("bmId") Integer bmId) {
 		logger.debug("IN");
-
+		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 		List<Content> versions = null;
+		List<Content> versionsToShow = new ArrayList<Content>();
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
 
 			versions = businessModelsDAO.loadMetaModelVersions(bmId);
+			for (Content version : versions) {
+				Content v = new Content();
+				v = version;
+				if (version.getFileName().endsWith(".sbimodel")) {
+					v.setFileName(version.getFileName().substring(0, version.getFileName().length() - 9));
+				}
+				if (version.getFileName().endsWith(".jar") && version.getHasFileModel() && version.getHasFileModel()) {
+					v.setFileName(version.getFileName().substring(0, version.getFileName().length() - 4));
+				}
+				v.setFileName(v.getFileName());
+				versionsToShow.add(v);
+			}
 
-			return versions;
+			// last filemodel
+			boolean togenerate = false;
+			Content lastFileModelContent = businessModelsDAO.lastFileModelMeta(bmId);
+			if (lastFileModelContent != null && lastFileModelContent.getFileName() != null) {
+
+				if (lastFileModelContent.getFileModel() != null && lastFileModelContent.getContent() == null) {
+					togenerate = true;
+				}
+
+				// String fileModelName = lastFileModelContent.getFileName().replace(".sbimodel", "") + ".jar";
+				// for (Content version : versions) {
+				// if (fileModelName.equals(version.getFileName()) && version.getProg().equals(lastFileModelContent.getProg() + 1)) {
+				// togenerate = false;
+				// break;
+				// }
+				// }
+
+			}
+
+			// return versions;
+			resultAsMap.put("versions", versionsToShow);
+			resultAsMap.put("togenerate", togenerate);
 
 		} catch (Exception e) {
 			logger.error("An error occurred while getting versions of business model with id:" + bmId, e);
@@ -115,6 +151,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
+		return Response.ok(resultAsMap).build();
 	}
 
 	/**
@@ -144,8 +181,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Get version of business model with {bmId} and with specified version id
-	 * {vId}
+	 * Get version of business model with {bmId} and with specified version id {vId}
 	 **/
 	@GET
 	@Path("{bmId}/versions/{vId}")
@@ -179,7 +215,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
 	public Response uploadFile(@MultipartForm MultipartFormDataInput input, @PathParam("bmId") int bmId) {
 
-		//System.out.println();
+		// System.out.println();
 		Content content = new Content();
 		byte[] bytes = null;
 
@@ -226,21 +262,31 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	 * Get file from data base for download with specified id (in progress)
 	 **/
 	@GET
-	@Path("{bmId}/versions/{vId}/file")
+	@Path("{bmId}/versions/{vId}/{filetype}/file")
 	// @Produces("application/octet-stream")
-	public Response downloadFile(@PathParam("vId") Integer vId) {
+	public Response downloadFile(@PathParam("vId") Integer vId, @PathParam("filetype") String filetype) {
 		Content c = null;
 		byte[] b = null;
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		logger.debug("IN");
-
+		String filename = "";
 		try {
 			c = businessModelsDAO.loadMetaModelContentById(vId);
-			b = c.getContent();
-
+			filename = c.getFileName();
+			if (filetype.equals("SBIMODULE")) {
+				if (filename.endsWith(".sbimodule")) {
+					filename = filename.substring(0, filename.length() - 9);
+				}
+				if (filename.endsWith(".jar")) {
+					filename = filename.substring(0, filename.length() - 4);
+				}
+				b = c.getFileModel();
+			} else {
+				b = c.getContent();
+			}
 			ResponseBuilder response = Response.ok(b);
-			response.header("Content-Disposition", "attachment; filename=" + c.getFileName());
+			response.header("Content-Disposition", "attachment; filename=" + filename);
 			// response.header("Content-type", "application/octet-stream");
 			return response.build();
 		} catch (Exception e) {
@@ -336,8 +382,8 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			return businessModelsDAO.loadActiveMetaModelContentById(bmId);
 		} catch (Exception e) {
 			logger.error("An error occurred while updating active version of business model with id:" + bmId, e);
-			throw new SpagoBIRestServiceException("An error occurred while updating active version of business model with id:" + bmId, buildLocaleFromSession(),
-					e);
+			throw new SpagoBIRestServiceException("An error occurred while updating active version of business model with id:" + bmId,
+					buildLocaleFromSession(), e);
 
 		} finally {
 			logger.debug("OUT");

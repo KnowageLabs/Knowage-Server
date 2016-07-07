@@ -119,7 +119,7 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 		sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", metaModelServices.createRequestRest(dataToSend))
 		.then(
 				function(response) {
-
+					sbiModule_restServices.errorHandler(sbiModule_translate.load("sbi.catalogues.toast.updated"), "");
 				},function(response) {
 					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.meta.model.generate.error"));
 				});

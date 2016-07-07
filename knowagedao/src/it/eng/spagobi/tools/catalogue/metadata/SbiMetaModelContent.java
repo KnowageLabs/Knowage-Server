@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,27 +21,28 @@ import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 import java.util.Date;
 
-
 public class SbiMetaModelContent extends SbiHibernateModel {
 
-	// Fields    
+	// Fields
 
 	private Integer id;
-	
+
 	private SbiMetaModel model;
-	
+
 	private byte[] content;
-	
+
 	private String fileName;
-	
+
+	private byte[] fileModel;
+
 	private Integer prog;
-	
+
 	private Date creationDate;
-	
+
 	private Boolean active;
-	
+
 	private String dimension = null;
-	
+
 	private String creationUser = null;
 
 	public Integer getId() {
@@ -74,6 +75,14 @@ public class SbiMetaModelContent extends SbiHibernateModel {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	public byte[] getFileModel() {
+		return fileModel;
+	}
+
+	public void setFileModel(byte[] fileModel) {
+		this.fileModel = fileModel;
 	}
 
 	public Integer getProg() {
@@ -117,4 +126,3 @@ public class SbiMetaModelContent extends SbiHibernateModel {
 	}
 
 }
-

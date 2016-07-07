@@ -47,17 +47,18 @@ public class JpaMappingJarGenerator extends JpaMappingClassesGenerator {
 
 	@Override
 	public void generate(ModelObject o, String outputDir) {
-		generate(o, outputDir, false);
+		generate(o, outputDir, false, null);
 	}
 
 	@Override
-	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping) {
+	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libsDir) {
+
 		logger.trace("IN");
 
 		try {
 			// The output dir is the model directory plus the business model name
 			outputDir = outputDir + File.separator + o.getName();
-			super.generate(o, outputDir, isUpdatableMapping);
+			super.generate(o, outputDir, isUpdatableMapping, libsDir);
 
 			distDir = (distDir == null) ? new File(baseOutputDir, DEFAULT_DIST_DIR) : distDir;
 			jarFileName = (jarFileName == null) ? DEFAULT_JAR_FILE_NAME : jarFileName;
@@ -84,7 +85,7 @@ public class JpaMappingJarGenerator extends JpaMappingClassesGenerator {
 	 */
 	/*
 	 * @Override public void hideTechnicalResources() { logger.debug("IN"); super.hideTechnicalResources();
-	 *
+	 * 
 	 * File baseOutputDir = getBaseOutputDir(); File distDir = getDistDir(); IWorkspace workspace = ResourcesPlugin.getWorkspace(); try { if (baseOutputDir !=
 	 * null && baseOutputDir.exists()) { IProject proj = workspace.getRoot().getProject(baseOutputDir.getParentFile().getParentFile().getName()); IFolder
 	 * iFolder = proj.getFolder(baseOutputDir.getParentFile().getName() + "\\" + baseOutputDir.getName()); if (iFolder.exists()) { iFolder.setHidden(true);
@@ -94,12 +95,12 @@ public class JpaMappingJarGenerator extends JpaMappingClassesGenerator {
 	 * baseOutputDir.getName() + "\\" + JpaMappingCodeGenerator.DEFAULT_SRC_DIR); iFolderSource.setHidden(true); iFolderSource.setDerived(true, null); } if
 	 * (iFolder.exists() || iFolderDist.exists()) { workspace.getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 	 * proj.refreshLocal(IResource.DEPTH_INFINITE, null); } } else { logger.warn("Exception occurred before creating distDir: no resource to hide"); }
-	 *
+	 * 
 	 * } else { logger.warn("Exception occurred before creating baseoutputDir: no resource to hide"); }
-	 *
+	 * 
 	 * } catch (CoreException e) { logger.error("Error in hiding technical model folders ", e); throw new
 	 * GenerationException("Error in hiding technical model folders", e); } logger.debug("OUT");
-	 *
+	 * 
 	 * }
 	 */
 

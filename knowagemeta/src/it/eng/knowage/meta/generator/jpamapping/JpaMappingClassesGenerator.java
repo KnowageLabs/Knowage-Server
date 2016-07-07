@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
@@ -46,8 +46,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
 	// private String[] libs = { "org.eclipse.persistence.core_2.1.1.v20100817-r8050.jar", "javax.persistence_2.0.1.v201006031150.jar",
 	// "hibernate-spatial-1.1.1.jar", "jts-1.13.jar", "hibernate3.6.2.jar" };
-	private String[] libs = { "org.eclipse.persistence.core_2.1.1.v20100817-r8050.jar", "javax.persistence_2.0.1.jar", "hibernate-spatial-1.1.1.jar",
-			"jts-1.13.jar", "hibernate3.6.2.jar" };
+	private String[] libs = { "javax.persistence-2.0.1.jar", "hibernate-3.6.2.jar" };
 
 	private static Logger logger = LoggerFactory.getLogger(JpaMappingClassesGenerator.class);
 
@@ -57,21 +56,23 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
 	@Override
 	public void generate(ModelObject o, String outputDir) {
-		generate(o, outputDir, false);
+		generate(o, outputDir, false, null);
 	}
 
 	@Override
-	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping) {
+	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libsDir) {
+
 		logger.trace("IN");
 
 		try {
 			BusinessModel model;
 
-			super.generate(o, outputDir, isUpdatableMapping);
+			super.generate(o, outputDir, isUpdatableMapping, libsDir);
 
 			binDir = (binDir == null) ? new File(outputDir, DEFAULT_BIN_DIR) : binDir;
 			logger.debug("src dir is equal to [{}]", getSrcDir());
-			libDir = (libDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libDir;
+			// libDir = (libDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libDir;
+			libDir = (libsDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libsDir;
 			logger.debug("lib dir is equal to [{}]", libDir);
 
 			logDir = logDir == null ? new File(outputDir, DEFAULT_LOG_DIR) : logDir;
@@ -99,7 +100,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 			FileUtilities.copyFile(new File(srcDir, "qbe.properties"), binDir);
 			FileUtilities.copyFile(new File(srcDir, "relationships.json"), binDir);
 			FileUtilities.copyFile(new File(srcDir, "cfields_meta.xml"), binDir);
-			FileUtilities.copyFile(new File(srcDir, "hierarchies.xml"), binDir);
+			// FileUtilities.copyFile(new File(srcDir, "hierarchies.xml"), binDir);
 			FileUtilities.copyFile(new File(srcDir, "META-INF/persistence.xml"), new File(binDir, "META-INF"));
 
 		} catch (Throwable t) {

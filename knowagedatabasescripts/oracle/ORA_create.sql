@@ -1287,8 +1287,9 @@ CREATE TABLE SBI_META_MODELS (
 CREATE TABLE SBI_META_MODELS_VERSIONS (
         ID                   INTEGER NOT NULL,
         MODEL_ID             INTEGER NOT NULL,
-        CONTENT              BLOB NOT NULL,
-        NAME                 VARCHAR2(100),  
+        CONTENT              BLOB,
+        NAME                 VARCHAR2(100), 
+        FILE_MODEL           BLOB,
         PROG                 INTEGER,
         CREATION_DATE        TIMESTAMP DEFAULT NULL,
         CREATION_USER        VARCHAR2(50) NOT NULL ,

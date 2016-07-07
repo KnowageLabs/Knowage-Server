@@ -40,6 +40,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.fileClicked =false;
 	$scope.fileCWMClicked =false;
 
+	$scope.togenerate = false;
 
 	angular.element(document).ready(function () {
         $scope.getData();
@@ -134,9 +135,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	}
 	
-	$scope.downloadFile = function(item,ev){
-
-					var link = "/restful-services/2.0/businessmodels/"+$scope.selectedBusinessModel.id+"/versions/"+item.id+"/file";
+	$scope.downloadFile = function(item,ev,filetype){
+					
+					var link = "/restful-services/2.0/businessmodels/"+$scope.selectedBusinessModel.id+"/versions/"+item.id+"/"+filetype+"/file";
 					sbiModule_download.getLink(link);
 
 	}
@@ -172,10 +173,25 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 $scope.bmSpeedMenu2= [
 	                       {
 	                    	   label:sbiModule_translate.load("sbi.generic.download"),
-		                       icon:'fa fa-download',
+		                       icon:'fa fa-file-archive-o',
+		                       //color:'#153E7E',
+		                       visible : function (a,b){
+		                    	   if(a.hasContent){return true;}else{return false;}
+		                       },
+		                       action:function(item,event){
+		                    	   $scope.downloadFile(item,event,'CONTENT');
+		                       }
+	                       },
+	                       
+	                       {
+	                    	   label:sbiModule_translate.load("sbi.generic.download"),
+		                       icon:'fa fa-file-code-o',
+		                       visible : function (a,b){
+		                    	   if(a.hasFileModel){return true;}else{return false;}
+		                       },
 		                       //color:'#153E7E',
 		                       action:function(item,event){
-		                    	   $scope.downloadFile(item,event);
+		                    	   $scope.downloadFile(item,event,'SBIMODULE');
 		                       }
 	                       },
 	                       
@@ -250,13 +266,17 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			.then(function(response) {
 				$scope.versionLoadingShow = true;
 					$scope.bmVersions = [];
-					
 					setTimeout(function(){
-						$scope.bmVersions = response.data;
-  					activeFlagStyle();
-  					millisToDate($scope.bmVersions);
-  					$scope.versionLoadingShow = false;
-  					$scope.$apply();
+						
+						
+						$scope.togenerate=response.data.togenerate
+						
+						
+						$scope.bmVersions = response.data.versions;
+	  					activeFlagStyle();
+	  					millisToDate($scope.bmVersions);
+	  					$scope.versionLoadingShow = false;
+	  					$scope.$apply();
 					 },600);	  		
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -654,6 +674,22 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			 $scope.bmVersionsActive = item.id;
 		 }
 
+		 
+		 $scope.buildBusinessModels=function(){
+			 console.log('build jar for : ' + $scope.selectedBusinessModel.name);
+			 sbiModule_restServices.alterContextPath("/knowagemeta");
+			 sbiModule_restServices.promiseGet("1.0/metaWeb", "buildModel/"+$scope.selectedBusinessModel.name+"/"+$scope.selectedBusinessModel.id+"?user_id="+sbiModule_user.userId)  //TO CHANGE
+						.then(
+								function(response) {
+									sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'check');
+									$scope.getVersions($scope.selectedBusinessModel.id);
+								},
+								function(response) {
+									sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.datasource.error"));
+								});
+
+			 //sbiModule_restServices.alterContextPath("/knowage");
+		 }
 		 
 		 $scope.createBusinessModels=function(){
 	 

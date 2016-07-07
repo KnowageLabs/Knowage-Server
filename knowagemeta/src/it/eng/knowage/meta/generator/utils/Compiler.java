@@ -20,6 +20,7 @@ package it.eng.knowage.meta.generator.utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +39,9 @@ import com.google.common.io.Files;
 
 /**
  * This class is used by Knowage Meta to compile generated java class and to create JAR file.
- * 
+ *
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class Compiler {
 
@@ -59,7 +60,7 @@ public class Compiler {
 
 	/**
 	 * Costructor
-	 * 
+	 *
 	 * @param srcDir
 	 *            Source directory
 	 * @param binDir
@@ -86,7 +87,7 @@ public class Compiler {
 
 	/**
 	 * Compile all the generated java classes
-	 * 
+	 *
 	 * @return boolean : true if the compiler has worked well.
 	 */
 	public boolean compile() {
@@ -141,18 +142,20 @@ public class Compiler {
 
 		logger.trace("IN");
 
-		// String command = "\"" + srcDir + "\" -classpath \"" + getClasspath() + "\" -d \"" + binDir + "\" -source 1.5";
-		// logger.info("Compile command is equal to [{}]", command);
-		//
-		// PrintWriter error;
-		// PrintWriter out;
-		// try {
-		// error = new PrintWriter(new FileWriter(logDir.getAbsolutePath() + File.separatorChar + "metacompiler_errors.log", true));
-		// out = new PrintWriter(new FileWriter(logDir.getAbsolutePath() + File.separatorChar + "metacompiler_out.log", true));
-		// result = org.eclipse.jdt.core.compiler.batch.BatchCompiler.compile(command, out, error, null);
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
+		String command = "\"" + srcDir + "\" -classpath \"" + getClasspath() + "\" -d \"" + binDir + "\" -source 1.5";
+		logger.info("Compile command is equal to [{}]", command);
+
+		PrintWriter error;
+		PrintWriter out;
+		try {
+			error = new PrintWriter(new FileWriter(logDir.getAbsolutePath() + File.separatorChar + "metacompiler_errors.log", true));
+			out = new PrintWriter(new FileWriter(logDir.getAbsolutePath() + File.separatorChar + "metacompiler_out.log", true));
+
+			result = org.eclipse.jdt.core.compiler.batch.BatchCompiler.compile(command, out, error, null);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		logger.info("Mapping files compiled succesfully: [{}]", result);
 

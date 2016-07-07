@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -53,27 +53,27 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 	public static String CATEGORY = "category";
 	public static String DATA_SOURCE_LABEL = "data_source_label";
 	public static String ACTIVE_CONTENT_ID = "active_content_id";
-	
+
 	@Override
 	public void doService() {
-		
+
 		logger.debug("IN");
-		
+
 		try {
-		
+
 			IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 			dao.setUserProfile(this.getUserProfile());
-			
+
 			MetaModel model = getMetaModelFromRequest();
 			LogMF.debug(logger, "Model read from request : [{0}]", model);
-			
+
 			Content content = getContentFromRequest();
 			LogMF.debug(logger, "Content read from request : [{0}]", content);
-			
+
 			HashMap logParameters = new HashMap<String, String>();
 			logParameters.put("MODEL", model.toString());
 			String logOperation = null;
-			
+
 			try {
 				if (isNew(model)) {
 					MetaModel existing = dao.loadMetaModelByName(model.getName());
@@ -94,7 +94,7 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 					dao.modifyMetaModel(model);
 					logger.debug("Model [" + model + "] updated");
 				}
-				
+
 				if (content != null) {
 					dao.insertMetaModelContent(model.getId(), content);
 					logger.debug("Content [" + content + "] inserted");
@@ -105,61 +105,66 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 						dao.setActiveVersion(model.getId(), activeContentId);
 					}
 				}
-				
+
 			} catch (SpagoBIServiceException e) {
 				throw e;
 			} catch (Throwable t) {
-				AuditLogUtilities.updateAudit(getHttpRequest(), this.getUserProfile(), logOperation, logParameters , "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(), this.getUserProfile(), logOperation, logParameters, "KO");
 				throw new SpagoBIServiceException(this.getActionName(), "Error while saving meta model", t);
 			}
-			
-			AuditLogUtilities.updateAudit(getHttpRequest(), this.getUserProfile(), logOperation, logParameters , "OK");
-			
+
+			AuditLogUtilities.updateAudit(getHttpRequest(), this.getUserProfile(), logOperation, logParameters, "OK");
+
 			try {
 				JSONObject result = new JSONObject();
 				result.put("id", model.getId());
-				replayToClient( result.toString() , null );
+				replayToClient(result.toString(), null);
 			} catch (Exception e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the response to the client", e);
 			}
-			
+
 		} catch (Throwable t) {
 			SpagoBIServiceException e = SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, t);
-			replayToClient( null, e );
+			replayToClient(null, e);
 		} finally {
 			logger.debug("OUT");
 		}
-		
+
 	}
-	
-    /*
-     * see Ext.form.BasicForm for file upload
-     */
+
+	/*
+	 * see Ext.form.BasicForm for file upload
+	 */
 	private void replayToClient(final String msg, final SpagoBIServiceException e) {
-		
+
 		try {
-			
-			writeBackToClient(  new IServiceResponse() {
-				
+
+			writeBackToClient(new IServiceResponse() {
+
+				@Override
 				public boolean isInline() {
 					return false;
 				}
-				
+
+				@Override
 				public int getStatusCode() {
-					if ( e != null) {
+					if (e != null) {
 						return JSONResponse.FAILURE;
 					}
 					return JSONResponse.SUCCESS;
 				}
-				
+
+				@Override
 				public String getFileName() {
 					return null;
 				}
-				
+
+				@Override
 				public String getContentType() {
 					return "text/html";
 				}
-				
+
+				@Override
 				public String getContent() throws IOException {
 					try {
 						JSONObject toReturn = new JSONObject();
@@ -172,7 +177,7 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 					}
 				}
 			});
-			
+
 		} catch (IOException ioException) {
 			logger.error("Impossible to write back the responce to the client", ioException);
 		}
@@ -191,20 +196,19 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 		}
 	}
 
-	
 	private boolean isNew(MetaModel model) {
 		return model.getId() == 0;
 	}
 
 	private MetaModel getMetaModelFromRequest() {
-		Integer id = getAttributeAsInteger( ID );
-		String name = getAttributeAsString( NAME );
-		String description = getAttributeAsString( DESCRIPTION );
+		Integer id = getAttributeAsInteger(ID);
+		String name = getAttributeAsString(NAME);
+		String description = getAttributeAsString(DESCRIPTION);
 		String category = getAttributeAsString(CATEGORY);
 		String dataSourceLabel = getAttributeAsString(DATA_SOURCE_LABEL);
 		Integer categoryValue = null;
-		if (StringUtilities.isNotEmpty(category)){
-			categoryValue = getAttributeAsInteger( CATEGORY );		
+		if (StringUtilities.isNotEmpty(category)) {
+			categoryValue = getAttributeAsInteger(CATEGORY);
 		}
 		MetaModel model = new MetaModel();
 		model.setId(id);
@@ -214,7 +218,7 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 		model.setDataSourceLabel(dataSourceLabel);
 		return model;
 	}
-	
+
 	private Content getContentFromRequest() {
 		Content content = null;
 		FileItem uploaded = (FileItem) getAttribute("UPLOADED_FILE");
@@ -226,14 +230,14 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 			UserProfile userProfile = (UserProfile) this.getUserProfile();
 			content.setCreationUser(userProfile.getUserId().toString());
 			content.setCreationDate(new Date());
-			content.setDimension(Long.toString(uploaded.getSize()/1000)+" KByte");
+			content.setDimension(Long.toString(uploaded.getSize() / 1000) + " KByte");
 			content.setFileName(fileName);
-	        byte[] uplCont = uploaded.get();
-	        content.setContent(uplCont);
+			byte[] uplCont = uploaded.get();
+			content.setContent(uplCont);
 		} else {
 			logger.debug("Uploaded file missing or it is empty");
 		}
 		return content;
 	}
-	
+
 }

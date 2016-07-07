@@ -37,11 +37,16 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -55,10 +60,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.Pointer;
 import org.apache.log4j.Logger;
@@ -75,7 +81,7 @@ import com.flipkart.zjsonpatch.JsonDiff;
 
 @ManageAuthorization
 @Path("/1.0/metaWeb")
-public class MetaService {
+public class MetaService extends AbstractSpagoBIResource {
 	private static Logger logger = Logger.getLogger(MetaService.class);
 	private static final String DEFAULT_MODEL_NAME = "modelName";
 	private static final String EMF_MODEL = "EMF_MODEL";
@@ -117,27 +123,38 @@ public class MetaService {
 	public Response generateModel(@Context HttpServletRequest req) {
 		try {
 			EmfXmiSerializer serializer = new EmfXmiSerializer();
-
 			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
-
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
-
-			serializer.serialize(model, new File("c:\\test.sbimodel_old.txt"));
-
 			ObjectMapper mapper = new ObjectMapper();
+
+			Assert.assertTrue(jsonRoot.has("data"), "data model is mandatory");
+			JSONObject jsonData = jsonRoot.getJSONObject("data");
+			String modelName = jsonData.getString("name");
+			Integer modelId = jsonData.getInt("id");
+
 			if (jsonRoot.has("diff")) {
 				JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
 				applyPatch(patch, model);
 			}
-
-			// TODO Check if this is still needed
-			// JSONObject jsonModel = createJson(model);
-			// JsonNode actualJson = mapper.readTree(jsonModel.toString());
-			// applyRelationships(actualJson, model);
-
-			// TODO save sbimodel to db
-			serializer.serialize(model, new File("c:\\test.sbimodel_new.txt"));
-			System.out.println("!!! model generation ended !!!");
+			ByteArrayOutputStream filee = new ByteArrayOutputStream();
+			serializer.serialize(model, filee);
+			// System.out.println("!!! model generation ended !!!");
+			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+			Content content = new Content();
+			byte[] bytes = filee.toByteArray();// FileUtils.readFileToByteArray(filee);
+			content.setFileName(modelName + ".sbimodel");
+			content.setFileModel(bytes);
+			content.setCreationDate(new Date());
+			UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			TenantManager.setTenant(new Tenant(profile.getOrganization()));
+			content.setCreationUser(profile.getUserId().toString());
+			Content metaModelContent = businessModelsDAO.loadActiveMetaModelContentByName(modelName);
+			if (metaModelContent == null || metaModelContent.getFileModel() == null
+					|| (metaModelContent.getFileModel() != null && metaModelContent.getContent() != null)) {
+				businessModelsDAO.insertMetaModelContent(modelId, content);
+			} else {
+				businessModelsDAO.modifyMetaModelContent(modelId, content, metaModelContent.getId());
+			}
 
 			return Response.ok().build();
 		} catch (IOException | JSONException e) {
@@ -314,30 +331,44 @@ public class MetaService {
 	}
 
 	@GET
-	@Path("/buildModel")
-	public Response buildModel(@QueryParam("id") Integer id, @Context HttpServletRequest req) {
-		Model model = getModel(id);
+	@Path("/buildModel/{name}/{modelid}")
+	public Response buildModel(@PathParam("name") String name, @PathParam("modelid") Integer modelid, @Context HttpServletRequest req) { // ,
+		Model model = getModelWeb(name);
+		// meta model version (content)
+
 		JpaMappingJarGenerator jpaMappingJarGenerator = new JpaMappingJarGenerator();
-		jpaMappingJarGenerator.setLibs(new String[] { "org.eclipse.persistence.core_2.1.2.jar", "javax.persistence-2.0.1.jar" });
+
+		System.out.println(req.getServletContext().getRealPath(File.separator));
+
+		String libDir = req.getServletContext().getRealPath(File.separator) + "WEB-INF" + File.separator + "lib" + File.separator;
+
+		// jpaMappingJarGenerator.setLibs(new String[] { "hibernate-3.6.2.jar", "javax.persistence-2.0.1.jar" });
+		String filename = name + ".jar";
+		jpaMappingJarGenerator.setJarFileName(filename);
 		try {
 			// java.nio.file.Path outFile = Files.createTempFile("model_", "_tmp");
 			java.nio.file.Path outDir = Files.createTempDirectory("model_");
-			jpaMappingJarGenerator.generate(model.getBusinessModels().get(0), outDir.toString());
+			jpaMappingJarGenerator.generate(model.getBusinessModels().get(0), outDir.toString(), false, new File(libDir));// new File(libDir)
 			IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 			dao.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
-			Content content = new Content();
-			// convert the uploaded file to input stream
-			// InputStream inputStream = inputPart.getBody(InputStream.class, null);
-			// bytes = IOUtils.toByteArray(inputStream);
-			// content.setContent(bytes);
-			// content.setCreationDate(new Date());
-			// content.setCreationUser(getUserProfile().getUserName().toString());
-			// dao.insertMetaModelContent(id, content );
+
+			String tmpDirJarFile = outDir + File.separator + model.getBusinessModels().get(0).getName() + File.separator + "dist";
+			InputStream inputStream = new FileInputStream(tmpDirJarFile + File.separator + filename);
+			byte[] bytes = IOUtils.toByteArray(inputStream);
+			// Content content = new Content();
+			Content content = dao.lastFileModelMeta(modelid);
+			content.setCreationDate(new Date());
+			content.setCreationUser(getUserProfile().getUserName().toString());
+			content.setContent(bytes);
+			content.setFileName(filename);
+			// dao.insertMetaModelContent(modelid, content);
+			dao.modifyMetaModelContent(modelid, content, content.getId());
+
 		} catch (IOException e) {
-			// TODO
 			e.printStackTrace();
+			return Response.serverError().build();
 		}
-		return Response.serverError().build();
+		return Response.ok().build();
 	}
 
 	@POST
@@ -479,6 +510,14 @@ public class MetaService {
 		File f = new File("c:\\test.sbimodel_new.txt");
 		EmfXmiSerializer serializer = new EmfXmiSerializer();
 		return serializer.deserialize(f);
+	}
+
+	private Model getModelWeb(String modelName) {
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+		Content metaModelContent = businessModelsDAO.loadActiveMetaModelWebContentByName(modelName);
+		ByteArrayInputStream bis = new ByteArrayInputStream(metaModelContent.getFileModel());
+		EmfXmiSerializer serializer = new EmfXmiSerializer();
+		return serializer.deserialize(bis);
 	}
 
 	private void applyRelationships(JsonNode actualJson, Model model) {

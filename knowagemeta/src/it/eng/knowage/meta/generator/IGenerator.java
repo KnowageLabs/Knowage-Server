@@ -19,9 +19,11 @@ package it.eng.knowage.meta.generator;
 
 import it.eng.knowage.meta.model.ModelObject;
 
+import java.io.File;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public interface IGenerator {
 
@@ -32,7 +34,8 @@ public interface IGenerator {
 	 * @param outputDir
 	 * @param isUpdatableMapping
 	 */
-	void generate(ModelObject o, String outputDir, boolean isUpdatableMapping);
+	void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libsDir);
 
 	void generate(ModelObject o, String outputDir);
+
 }
