@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * <!-- begin-user-doc --> A representation of the model object '<em><b>Physical Column</b></em>'. <!-- end-user-doc -->
- * 
+ *
  * <p>
  * The following features are supported:
  * <ul>
@@ -40,7 +40,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * <li>{@link it.eng.knowage.meta.model.physical.PhysicalColumn#getTable <em>Table</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalColumn()
  * @model
  * @generated
@@ -52,7 +52,7 @@ public interface PhysicalColumn extends ModelObject {
 	 * If the meaning of the '<em>Comment</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Comment</em>' attribute.
 	 * @see #setComment(String)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalColumn_Comment()
@@ -64,7 +64,7 @@ public interface PhysicalColumn extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalColumn#getComment <em>Comment</em>}' attribute. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Comment</em>' attribute.
 	 * @see #getComment()
@@ -78,7 +78,7 @@ public interface PhysicalColumn extends ModelObject {
 	 * If the meaning of the '<em>Data Type</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Data Type</em>' attribute.
 	 * @see #setDataType(String)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalColumn_DataType()
@@ -90,7 +90,7 @@ public interface PhysicalColumn extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalColumn#getDataType <em>Data Type</em>}' attribute. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Data Type</em>' attribute.
 	 * @see #getDataType()
@@ -104,7 +104,7 @@ public interface PhysicalColumn extends ModelObject {
 	 * If the meaning of the '<em>Type Name</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Type Name</em>' attribute.
 	 * @see #setTypeName(String)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalColumn_TypeName()
@@ -116,7 +116,7 @@ public interface PhysicalColumn extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalColumn#getTypeName <em>Type Name</em>}' attribute. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Type Name</em>' attribute.
 	 * @see #getTypeName()
@@ -130,7 +130,7 @@ public interface PhysicalColumn extends ModelObject {
 	 * If the meaning of the '<em>Size</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Size</em>' attribute.
 	 * @see #setSize(int)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalColumn_Size()
@@ -142,7 +142,7 @@ public interface PhysicalColumn extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalColumn#getSize <em>Size</em>}' attribute. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Size</em>' attribute.
 	 * @see #getSize()
@@ -156,7 +156,7 @@ public interface PhysicalColumn extends ModelObject {
 	 * If the meaning of the '<em>Octect Length</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Octect Length</em>' attribute.
 	 * @see #setOctectLength(int)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalColumn_OctectLength()
@@ -168,7 +168,7 @@ public interface PhysicalColumn extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalColumn#getOctectLength <em>Octect Length</em>}' attribute. <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Octect Length</em>' attribute.
 	 * @see #getOctectLength()
@@ -182,7 +182,7 @@ public interface PhysicalColumn extends ModelObject {
 	 * If the meaning of the '<em>Decimal Digits</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Decimal Digits</em>' attribute.
 	 * @see #setDecimalDigits(int)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalColumn_DecimalDigits()
@@ -194,7 +194,7 @@ public interface PhysicalColumn extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalColumn#getDecimalDigits <em>Decimal Digits</em>}' attribute. <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Decimal Digits</em>' attribute.
 	 * @see #getDecimalDigits()
@@ -208,7 +208,7 @@ public interface PhysicalColumn extends ModelObject {
 	 * If the meaning of the '<em>Radix</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Radix</em>' attribute.
 	 * @see #setRadix(int)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalColumn_Radix()
@@ -220,7 +220,7 @@ public interface PhysicalColumn extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalColumn#getRadix <em>Radix</em>}' attribute. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Radix</em>' attribute.
 	 * @see #getRadix()
@@ -234,7 +234,7 @@ public interface PhysicalColumn extends ModelObject {
 	 * If the meaning of the '<em>Default Value</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Default Value</em>' attribute.
 	 * @see #setDefaultValue(String)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalColumn_DefaultValue()
@@ -246,7 +246,7 @@ public interface PhysicalColumn extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalColumn#getDefaultValue <em>Default Value</em>}' attribute. <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Default Value</em>' attribute.
 	 * @see #getDefaultValue()
@@ -260,7 +260,7 @@ public interface PhysicalColumn extends ModelObject {
 	 * If the meaning of the '<em>Nullable</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Nullable</em>' attribute.
 	 * @see #setNullable(boolean)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalColumn_Nullable()
@@ -272,7 +272,7 @@ public interface PhysicalColumn extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalColumn#isNullable <em>Nullable</em>}' attribute. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Nullable</em>' attribute.
 	 * @see #isNullable()
@@ -286,7 +286,7 @@ public interface PhysicalColumn extends ModelObject {
 	 * If the meaning of the '<em>Position</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Position</em>' attribute.
 	 * @see #setPosition(int)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalColumn_Position()
@@ -298,7 +298,7 @@ public interface PhysicalColumn extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalColumn#getPosition <em>Position</em>}' attribute. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Position</em>' attribute.
 	 * @see #getPosition()
@@ -313,7 +313,7 @@ public interface PhysicalColumn extends ModelObject {
 	 * If the meaning of the '<em>Table</em>' reference isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Table</em>' container reference.
 	 * @see #setTable(PhysicalTable)
 	 * @see it.eng.knowage.meta.model.physical.PhysicalModelPackage#getPhysicalColumn_Table()
@@ -327,7 +327,7 @@ public interface PhysicalColumn extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.physical.PhysicalColumn#getTable <em>Table</em>}' container reference. <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Table</em>' container reference.
 	 * @see #getTable()
@@ -344,5 +344,7 @@ public interface PhysicalColumn extends ModelObject {
 	boolean isPrimaryKey();
 
 	boolean isPartOfCompositePrimaryKey();
+
+	PhysicalColumn clone();
 
 } // PhysicalColumn

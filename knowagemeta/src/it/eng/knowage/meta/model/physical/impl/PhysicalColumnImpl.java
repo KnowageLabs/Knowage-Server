@@ -21,6 +21,7 @@ import it.eng.knowage.meta.model.ModelProperty;
 import it.eng.knowage.meta.model.ModelPropertyType;
 import it.eng.knowage.meta.model.impl.ModelObjectImpl;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
+import it.eng.knowage.meta.model.physical.PhysicalModelFactory;
 import it.eng.knowage.meta.model.physical.PhysicalModelPackage;
 import it.eng.knowage.meta.model.physical.PhysicalPrimaryKey;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
@@ -53,13 +54,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * <li>{@link it.eng.knowage.meta.model.physical.impl.PhysicalColumnImpl#getTable <em>Table</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @generated
  */
 public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColumn {
 	/**
 	 * The default value of the '{@link #getComment() <em>Comment</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getComment()
 	 * @generated
 	 * @ordered
@@ -68,7 +69,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The cached value of the '{@link #getComment() <em>Comment</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getComment()
 	 * @generated
 	 * @ordered
@@ -77,7 +78,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The default value of the '{@link #getDataType() <em>Data Type</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getDataType()
 	 * @generated
 	 * @ordered
@@ -86,7 +87,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The cached value of the '{@link #getDataType() <em>Data Type</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getDataType()
 	 * @generated
 	 * @ordered
@@ -95,7 +96,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The default value of the '{@link #getTypeName() <em>Type Name</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getTypeName()
 	 * @generated
 	 * @ordered
@@ -104,7 +105,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The cached value of the '{@link #getTypeName() <em>Type Name</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getTypeName()
 	 * @generated
 	 * @ordered
@@ -113,7 +114,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The default value of the '{@link #getSize() <em>Size</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getSize()
 	 * @generated
 	 * @ordered
@@ -122,7 +123,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The cached value of the '{@link #getSize() <em>Size</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getSize()
 	 * @generated
 	 * @ordered
@@ -131,7 +132,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The default value of the '{@link #getOctectLength() <em>Octect Length</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getOctectLength()
 	 * @generated
 	 * @ordered
@@ -140,7 +141,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The cached value of the '{@link #getOctectLength() <em>Octect Length</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getOctectLength()
 	 * @generated
 	 * @ordered
@@ -149,7 +150,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The default value of the '{@link #getDecimalDigits() <em>Decimal Digits</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getDecimalDigits()
 	 * @generated
 	 * @ordered
@@ -158,7 +159,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The cached value of the '{@link #getDecimalDigits() <em>Decimal Digits</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getDecimalDigits()
 	 * @generated
 	 * @ordered
@@ -167,7 +168,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The default value of the '{@link #getRadix() <em>Radix</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getRadix()
 	 * @generated
 	 * @ordered
@@ -176,7 +177,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The cached value of the '{@link #getRadix() <em>Radix</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getRadix()
 	 * @generated
 	 * @ordered
@@ -185,7 +186,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The default value of the '{@link #getDefaultValue() <em>Default Value</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getDefaultValue()
 	 * @generated
 	 * @ordered
@@ -194,7 +195,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The cached value of the '{@link #getDefaultValue() <em>Default Value</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getDefaultValue()
 	 * @generated
 	 * @ordered
@@ -203,7 +204,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The default value of the '{@link #isNullable() <em>Nullable</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #isNullable()
 	 * @generated
 	 * @ordered
@@ -212,7 +213,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The cached value of the '{@link #isNullable() <em>Nullable</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #isNullable()
 	 * @generated
 	 * @ordered
@@ -221,7 +222,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The default value of the '{@link #getPosition() <em>Position</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getPosition()
 	 * @generated
 	 * @ordered
@@ -230,7 +231,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * The cached value of the '{@link #getPosition() <em>Position</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getPosition()
 	 * @generated
 	 * @ordered
@@ -239,7 +240,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	protected PhysicalColumnImpl() {
@@ -248,7 +249,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -258,7 +259,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -268,7 +269,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -281,7 +282,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -291,7 +292,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -304,7 +305,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -314,7 +315,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -327,7 +328,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -337,7 +338,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -350,7 +351,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -360,7 +361,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -373,7 +374,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -383,7 +384,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -396,7 +397,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -406,7 +407,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -419,7 +420,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -429,7 +430,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -442,7 +443,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -452,7 +453,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -465,7 +466,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -475,7 +476,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -488,7 +489,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -505,7 +506,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	public NotificationChain basicSetTable(PhysicalTable newTable, NotificationChain msgs) {
@@ -515,7 +516,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -537,7 +538,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -553,7 +554,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -567,7 +568,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -581,7 +582,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -615,7 +616,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -660,7 +661,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -705,7 +706,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -739,7 +740,7 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -815,6 +816,17 @@ public class PhysicalColumnImpl extends ModelObjectImpl implements PhysicalColum
 		if (isPrimaryKey() == false)
 			return false;
 		return (getTable().getPrimaryKey().getColumns().size() > 1);
+	}
+
+	@Override
+	public PhysicalColumn clone() {
+		PhysicalColumn cloned = PhysicalModelFactory.eINSTANCE.createPhysicalColumn();
+		cloned.setDescription(this.getDescription());
+		cloned.setId(this.getId());
+		cloned.setName(this.getName());
+		cloned.setTable(this.getTable());
+		cloned.setUniqueName(this.getUniqueName());
+		return cloned;
 	}
 
 	@Override

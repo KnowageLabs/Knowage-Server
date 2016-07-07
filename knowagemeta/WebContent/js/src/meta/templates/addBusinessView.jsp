@@ -21,8 +21,8 @@
 					
 					<md-input-container flex>
 						<label>{{translate.load("sbi.meta.business.relationship.source.business.class.name")}}</label>
-						<md-select ng-model="tmpBnssView.sourceBusinessClass"  >
-							<md-option ng-repeat="bm in businessModel"  ng-value="bm.name" required >
+						<md-select ng-model="tmpBnssView.sourceBusinessClass" required >
+							<md-option ng-repeat="bm in businessModel"  ng-value="bm.name"  >
 							{{bm.name}}
 							</md-option>
 						</md-select>

@@ -22,6 +22,7 @@ import it.eng.knowage.meta.model.ModelPropertyType;
 import it.eng.knowage.meta.model.business.BusinessColumn;
 import it.eng.knowage.meta.model.business.BusinessColumnSet;
 import it.eng.knowage.meta.model.business.BusinessIdentifier;
+import it.eng.knowage.meta.model.business.BusinessModelFactory;
 import it.eng.knowage.meta.model.business.BusinessModelPackage;
 import it.eng.knowage.meta.model.impl.ModelObjectImpl;
 
@@ -43,13 +44,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * <li>{@link it.eng.knowage.meta.model.business.impl.BusinessColumnImpl#getTable <em>Table</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @generated
  */
 public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColumn {
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	protected BusinessColumnImpl() {
@@ -58,7 +59,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -68,7 +69,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -81,7 +82,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	public NotificationChain basicSetTable(BusinessColumnSet newTable, NotificationChain msgs) {
@@ -91,7 +92,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -113,7 +114,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -129,7 +130,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -143,7 +144,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -157,7 +158,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -171,7 +172,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -186,7 +187,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -201,7 +202,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -249,6 +250,17 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 	@Override
 	public boolean isFilteredByRoleVisibility() {
 		return isPropertyFilled("behavioural.notEnabledRoles");
+	}
+
+	@Override
+	public BusinessColumn clone() {
+		BusinessColumn cloned = BusinessModelFactory.eINSTANCE.createBusinessColumn();
+		cloned.setDescription(this.getDescription());
+		cloned.setId(this.getId());
+		cloned.setName(this.getName());
+		cloned.setTable(this.getTable());
+		cloned.setUniqueName(this.getUniqueName());
+		return cloned;
 	}
 
 	private boolean isPropertyFilled(String propertyName) {

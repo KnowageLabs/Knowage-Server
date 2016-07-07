@@ -21,14 +21,14 @@ import it.eng.knowage.meta.model.ModelObject;
 
 /**
  * <!-- begin-user-doc --> A representation of the model object '<em><b>Business Column</b></em>'. <!-- end-user-doc -->
- * 
+ *
  * <p>
  * The following features are supported:
  * <ul>
  * <li>{@link it.eng.knowage.meta.model.business.BusinessColumn#getTable <em>Table</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @see it.eng.knowage.meta.model.business.BusinessModelPackage#getBusinessColumn()
  * @model
  * @generated
@@ -41,7 +41,7 @@ public interface BusinessColumn extends ModelObject {
 	 * If the meaning of the '<em>Table</em>' reference isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Table</em>' container reference.
 	 * @see #setTable(BusinessColumnSet)
 	 * @see it.eng.knowage.meta.model.business.BusinessModelPackage#getBusinessColumn_Table()
@@ -54,7 +54,7 @@ public interface BusinessColumn extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.business.BusinessColumn#getTable <em>Table</em>}' container reference. <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Table</em>' container reference.
 	 * @see #getTable()
@@ -74,4 +74,5 @@ public interface BusinessColumn extends ModelObject {
 
 	boolean isFilteredByRoleVisibility();
 
+	BusinessColumn clone();
 } // BusinessColumn

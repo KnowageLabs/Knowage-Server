@@ -144,7 +144,7 @@
 		
 	</detail>
 	<extra-button ng-if="selectedBusinessModel.name!=undefined">
-		<md-button ng-click="deleteCurrentBusiness()">
+		<md-button ng-if="selectedBusinessModel.columns!=undefined" ng-click="deleteCurrentBusiness()">
 				<md-icon md-font-icon="fa fa-trash" class=""></md-icon>
 				{{translate.load('sbi.generic.delete')}}
 		</md-button>

@@ -260,29 +260,28 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			String sourceBusinessClass = json.getString("sourceBusinessClass");
 			BusinessTable mainBT = model.getBusinessModels().get(0).getBusinessTableByUniqueName(sourceBusinessClass);
-
+			BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
 			BusinessModel bm = model.getBusinessModels().get(0);
 			BusinessView bw = BusinessModelFactory.eINSTANCE.createBusinessView();
 			bw.setModel(bm);
 			model.getBusinessModels().get(0).getBusinessViews().add(bw);
 			bw.setName(name);
 			// TO-DO generate real unique name
-			bw.setUniqueName("uniq-" + name);
+			bw.setUniqueName("uniq_" + name.toLowerCase().replaceAll(" ", "_"));
 			bw.setDescription(description);
 
-			bw.getColumns().addAll(mainBT.getColumns());
-
+			physicaltables.put(mainBT.getPhysicalTable().getName());
 			for (int i = 0; i < physicaltables.length(); i++) {
 				String ptName = physicaltables.getString(i);
 				PhysicalTable pt = model.getPhysicalModels().get(0).getTable(ptName);
 				bw.getPhysicalTables().add(pt);
-				for (PhysicalColumn pc : pt.getColumns()) {
-					SimpleBusinessColumn sbc = BusinessModelFactory.eINSTANCE.createSimpleBusinessColumn();
-					sbc.setPhysicalColumn(pc);
-					// System.out.println("colname:" + sbc.isIdentifier());
-					bw.getSimpleBusinessColumns().add(sbc);
+
+				EList<PhysicalColumn> ptcol = pt.getColumns();
+				for (int pci = 0; pci < ptcol.size(); pci++) {
+					businessModelInitializer.addColumn(ptcol.get(pci), bw);
 				}
 			}
+
 			// Creating relationship
 			BusinessViewInnerJoinRelationship bvRel = BusinessModelFactory.eINSTANCE.createBusinessViewInnerJoinRelationship();
 			bvRel.setModel(bm);
@@ -318,6 +317,7 @@ public class MetaService extends AbstractSpagoBIResource {
 				}
 			}
 
+			// TO-DO aggiungere identify
 			JSONObject jsonModel = createJson(model);
 			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 
@@ -485,6 +485,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		bt.setModel(bm);
 		bm.getBusinessTables().add(bt);
 		bt.setName(name);
+		bt.setUniqueName(name.toLowerCase().replaceAll(" ", "_"));
 		bt.setDescription(description);
 		bt.setPhysicalTable(pt);
 		bt.setDescription(description);
