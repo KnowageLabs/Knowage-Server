@@ -533,7 +533,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			urlCell.setCellValue(url);
 			mdxCell.setCellValue(mdx);
 			axisRowsCell.setCellValue(axisRows);
-			axisColumnsCell.setCellValue(axisRows);
+			axisColumnsCell.setCellValue(axisColumns);
 
 			try {
 				Date date = new Date();
