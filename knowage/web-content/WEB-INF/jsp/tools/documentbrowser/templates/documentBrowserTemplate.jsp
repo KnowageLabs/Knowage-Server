@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-toolbar class="documentBrowserToolbar " >
 				<div class="md-toolbar-tools" layout="row" layout-align="center center">
 					<!-- Folders button -->
-					<md-button class="md-icon-button" title="Folders" aria-label="Folders"  hide-gt-md ng-hide="showSearchView" ng-click="toggleFolders()">
+					<md-button class="md-icon-button" title="Folders" aria-label="Folders"  hide-gt-sm ng-hide="showSearchView" ng-click="toggleFolders()">
 						  <md-icon md-font-icon="fa fa-bars"></md-icon>
 					</md-button>
 					
