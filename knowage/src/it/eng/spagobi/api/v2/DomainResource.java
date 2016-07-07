@@ -55,7 +55,6 @@ public class DomainResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Domain> getDomains() {
 		logger.debug("IN");
@@ -82,7 +81,6 @@ public class DomainResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Domain getSingleDomain(@PathParam("id") Integer id) {
 		logger.debug("IN");
@@ -182,7 +180,6 @@ public class DomainResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/listByCode/{code}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public List<Domain> getDomainsByCode(@PathParam("code") String code) {
 		logger.debug("IN");
