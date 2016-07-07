@@ -216,7 +216,8 @@ md-tab-content md-content.md-knowage-theme {
 
 // Dialog Buttons
 a.md-button.md-knowage-theme.md-primary, .md-button.md-knowage-theme.md-primary {
-    color: $baseColor;
+    color: $lightTextColor;
+    background-color: $baseColor;
 }
 a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.md-primary.md-raised {
     &:not([disabled]) {
