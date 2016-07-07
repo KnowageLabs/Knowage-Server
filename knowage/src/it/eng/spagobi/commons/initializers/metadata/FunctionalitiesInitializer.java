@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -97,7 +98,14 @@ public class FunctionalitiesInitializer extends SpagoBIInitializer {
 				Query hqlQuery = aSession.createQuery(hql);
 				hqlQuery.setParameter(0, userFunctionalityName);
 				hqlQuery.setParameter(1, productType.getProductTypeId(), Hibernate.INTEGER);
-				SbiUserFunctionality aUserFunctionality = (SbiUserFunctionality) hqlQuery.uniqueResult();
+				SbiUserFunctionality aUserFunctionality;
+				try {
+					aUserFunctionality = (SbiUserFunctionality) hqlQuery.uniqueResult();
+				} catch (HibernateException he) {
+					throw new SpagoBIRuntimeException("The user functionality [" + userFunctionalityName + "] for the product type [" + productType.getLabel()
+							+ "," + productType.getProductTypeId() + "] returns more than one result.");
+				}
+
 				if (aUserFunctionality == null) {
 					aUserFunctionality = new SbiUserFunctionality();
 					aUserFunctionality.setName(userFunctionalityName);
