@@ -185,7 +185,6 @@ public class CacheResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/enable")
-	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateCache(String body) { // JSON obj
 
