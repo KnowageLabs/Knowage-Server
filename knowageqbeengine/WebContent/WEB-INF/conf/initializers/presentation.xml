@@ -20,7 +20,7 @@
 			 
 	<MAPPING business_type="ACTION" 
 			 business_name="QBE_ENGINE_EDIT_DATASET_START_ACTION" 
-			 publisher_name="QBE_ENGINE_EDIT_DATASET_START_ACTION_PUBLISHER"/> 
+			 publisher_name="QBE_ENGINE_EDIT_DATASET_START_ACTION_PUBLISHER"/>
 			 
 	<MAPPING business_type="ACTION" 
 			 business_name="FORM_ENGINE_START_ACTION" 
@@ -43,6 +43,17 @@
 	<!-- ******************** -->
 	<!--  end dataset build   -->
 	<!-- ******************** -->
+	
+		<!-- ******************** -->
+	<!--  start dataset build -->
+	<!-- ******************** -->
+	<MAPPING business_type="ACTION" 
+			 business_name="BUILD_FEDERATED_DATASET_START_ACTION" 
+			 publisher_name="BUILD_QBE_DATASET_START_ACTION_PUBLISHER"/>
+	<!-- ******************** -->
+	<!--  end dataset build   -->
+	<!-- ******************** -->
+	
 			 
 	<!-- REGISTRY_ENGINE view presentation -->
 	<MAPPING business_type="ACTION" 

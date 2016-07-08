@@ -164,6 +164,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	String qbeEngineBaseUrl = null;
 	StringBuffer qbeEngineBuildDatasetUrl = new StringBuffer();
 	StringBuffer qbeEngineGetDatamartsUrl = new StringBuffer();
+	StringBuffer qbeEngineBuildFederatedDatasetUrl = new StringBuffer();
 	List engines = DAOFactory.getEngineDAO().loadAllEngines();
 	Iterator it = engines.iterator();
 	while (it.hasNext()) {
@@ -173,9 +174,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			qbeEngineBaseUrl = engine.getUrl();
 			qbeEngineBuildDatasetUrl.append(qbeEngineBaseUrl);
 			qbeEngineGetDatamartsUrl.append(qbeEngineBaseUrl);
+			qbeEngineBuildFederatedDatasetUrl.append(qbeEngineBaseUrl);
 			break;
 		}
 	}
+	qbeEngineBuildFederatedDatasetUrl.append("?ACTION_NAME=BUILD_FEDERATED_DATASET_START_ACTION");
+	if (!GeneralUtilities.isSSOEnabled()) {
+		qbeEngineBuildFederatedDatasetUrl.append("&" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier);
+	}
+	qbeEngineBuildFederatedDatasetUrl.append("&" + QbeDriver.PARAM_NEW_SESSION + "=TRUE");
+	qbeEngineBuildFederatedDatasetUrl.append("&" + SpagoBIConstants.SBI_LANGUAGE + "=" + curr_language);
+	qbeEngineBuildFederatedDatasetUrl.append("&" + SpagoBIConstants.SBI_COUNTRY + "=" + curr_country);
+	
+	
+	
 	qbeEngineBuildDatasetUrl.append("?ACTION_NAME=BUILD_QBE_DATASET_START_ACTION");
 	qbeEngineGetDatamartsUrl.append("?ACTION_NAME=GET_DATAMARTS_NAMES");
 	if (!GeneralUtilities.isSSOEnabled()) {
@@ -213,6 +225,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     
     Sbi.config.qbeDatasetBuildUrl = '<%= StringEscapeUtils.escapeJavaScript(qbeEngineBuildDatasetUrl.toString()) %>';
     Sbi.config.qbeGetDatamartsUrl = '<%= StringEscapeUtils.escapeJavaScript(qbeEngineGetDatamartsUrl.toString()) %>';
+    Sbi.config.qbeFederatedDatasetBuildUrl = '<%= StringEscapeUtils.escapeJavaScript(qbeEngineBuildFederatedDatasetUrl.toString()) %>';
 
     // for DataStorePanel.js
     Sbi.config.queryLimit = {};

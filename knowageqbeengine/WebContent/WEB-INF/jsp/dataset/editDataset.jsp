@@ -78,7 +78,6 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 	isPowerUser = profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY);
 	
 	qbeEngineConfig = QbeEngineConfig.getInstance();
-    
 	
     // settings for max records number limit
     resultLimit = qbeEngineConfig.getResultLimit();
@@ -97,8 +96,7 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
     if(documentIdO != null) { 
 		SbiDocumentServiceProxy proxy = new SbiDocumentServiceProxy(profile.getUserUniqueIdentifier().toString(), session);
 		jSonPars = proxy.getDocumentAnalyticalDriversJSON(Integer.valueOf(documentIdO.toString()), locale.getLanguage(), locale.getCountry());
-    }
-    
+    }    
 %>
 
 
@@ -123,9 +121,9 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 	
 	<body>
 	
-    	<script type="text/javascript">  
+    	<script type="text/javascript"> 
 			Sbi.config = {};
-	
+			
 			Sbi.config.queryVersion = <%= QbeEngineStaticVariables.CURRENT_QUERY_VERSION %>;
 			Sbi.config.queryLimit = {};
 			Sbi.config.queryLimit.maxRecords = <%= resultLimit != null ? "" + resultLimit.intValue() : "undefined" %>;
@@ -133,7 +131,6 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 			Sbi.config.queryValidation = {};
 			Sbi.config.queryValidation.isEnabled = <%= isQueryValidationEnabled %>;
 			Sbi.config.queryValidation.isBlocking = <%= isQueryValidationBlocking %>;
-	  	
 			var url = {
 		    	host: '<%= request.getServerName()%>'
 		    	, port: '<%= request.getServerPort()%>'
@@ -179,7 +176,7 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 	      	qbeConfig.westConfig = {};
 	      	qbeConfig.westConfig.datamartsName = <%= datamartNamesBuffer.toString() %>;
 
-	      	qbeConfig.externalServicesConfig = <%= qbeEngineInstance.getTemplate().getExternalServiceConfigurationsAsJSONArray() %>;
+	      	qbeConfig.externalServicesConfig = [];
 
 	      	qbeConfig.crosstab = {};
 	      	qbeConfig.crosstab.crosstabTemplate = {};
@@ -196,7 +193,6 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 	        	var parametersStore = new Sbi.qbe.DocumentParametersStore({});
 	        	var parametersInfo = <%=jSonPars%>;	        	
 	        	parametersStore.loadData(parametersInfo);
-	        	
 	       		qbeConfig.documentParametersStore = parametersStore;
 
 	       		// if user is a power user, instantiate and show also the QueryBuilderPanel
@@ -209,7 +205,7 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 	       			, region: 'south'
 	       			, height: 155
 	       		});
-
+				console.log("meh")
 	           	qbe = new Sbi.qbe.QbePanel(qbeConfig);
 	           	var viewport = new Ext.Viewport(qbe);  
 	           	<%if (isPowerUser && isFromCross.equalsIgnoreCase("false")) {%>
@@ -238,6 +234,8 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
             		var parameters = message.data.qbeParameters;
             		qbe.setParameters( parameters );
             		qbe.setQueriesCatalogue( queriesCatalogue );
+            		console.log(queriesCatalogue);
+            		console.log("nikola")
             	} else {
             		alert('editDataset.jsp: Unknown message');
             	}

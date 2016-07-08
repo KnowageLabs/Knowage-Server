@@ -148,6 +148,8 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 			this.qbeDataSetBuilder.destroy();
 			this.qbeDataSetBuilder = null;
 		}
+		this.federatedDataSetBuilder = null;
+
 		this.manageFormsEnabling();
 		this.fileUploaded = false; // reset to default
 		this.hasDocumentsAssociated = rec.get("hasDocumentsAssociated");
@@ -765,6 +767,7 @@ Ext
 							'Custom':this.customDataDetail,
 							'Web Service':this.WSDetail,
 							'Qbe':this.qbeQueryDetail,
+							'Federated': this.federatedQueryDetail,
 							'Flat':this.flatDetail,
 							'Ckan':this.ckanDetail,
 							'REST':this.restDetail
@@ -1551,9 +1554,25 @@ Ext
 							triggerClass : 'x-form-search-trigger',
 							editable : false
 						});
+						
+						this.federatedJSONQuery = new Ext.form.TriggerField({
+							name : 'federatedJSONQuery',
+							valueField : 'federatedJSONQuery',
+							width : 350,
+							fieldLabel : 'Qbe Query as',
+							triggerClass : 'x-form-search-trigger',
+							editable : false
+						});
+						
 						this.qbeJSONQuery.on("render", function(field) {
 							field.trigger.on("click", function(e) {
 								this.jsonTriggerFieldHandler();
+							}, this);
+						}, this);
+						
+						this.federatedJSONQuery.on("render", function(field) {
+							field.trigger.on("click", function(e) {
+								this.jsonTriggerFieldHandlerFederatedDataset();
 							}, this);
 						}, this);
 
@@ -1668,6 +1687,27 @@ Ext
 									items : [ this.detailQbeDataSource,
 											this.qbeDatamarts,
 											this.qbeSQLQuery, this.qbeJSONQuery ]
+								});
+											
+						this.federatedQueryDetail = new Ext.form.FieldSet(
+								{
+									labelWidth : 120,
+									defaults : {
+										// width : 280,
+										border : true
+									},
+									defaultType : 'textfield',
+									autoHeight : true,
+									autoScroll : true,
+									border : true,
+									style : {
+										"margin-left" : "3px",
+										"margin-top" : "0px",
+										"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
+												: "-5px")
+												: "3px"
+									},
+									items : [ this.federatedJSONQuery ]
 								});
 
 						this.jClassDetail = new Ext.form.FieldSet(
@@ -2038,7 +2078,7 @@ Ext
 							items : [ this.manageParsGrid ],
 							scope : this
 						});
-
+						
 						this.typeTab = new Ext.Panel(
 								{
 									title : LN('sbi.generic.type'),
@@ -2070,6 +2110,7 @@ Ext
 												this.queryDetail,
 												this.WSDetail, this.fileDetail,
 												this.qbeQueryDetail,
+												this.federatedQueryDetail,
 												this.flatDetail,
 												this.ckanDetail,
 												this.restDetail,
@@ -3606,7 +3647,10 @@ Ext
 					,
 					setValues : function(record) {
 						record.data.jclassNameForCustom = record.data.jclassName;
+						record.data.federatedJSONQuery = record.data.qbeJSONQuery;
+						this.federationId = record.json.federationId;
 						this.getForm().loadRecord(record);
+						
 						//workaround for grid value (grid not recognized as a form field)
 						this.restRequestHeadersDetail.setValue(record.data[ns.restFields[ns.INDEX_REQUEST_HEADERS]]);
 						this.restJsonPathAttributesDetails.setValue(record.data[ns.restFields[ns.INDEX_REQUEST_JSON_PATH_ATTRIBUTES]]);
@@ -4031,9 +4075,79 @@ Ext
 						var parameters = qbeQuery.data.parameters;
 						this.manageParsGrid.loadItems([]);
 						this.manageParsGrid.loadItems(parameters);
+					},
+					
+					manageFederatedQbeQuery : function(theQbeDatasetBuilder, qbeQuery) {
+						var jsonQuery = qbeQuery.data.jsonQuery;
+						this.qbeJSONQuery.setValue(Ext.util.JSON
+								.encode(jsonQuery));
+						var sqlQuery = qbeQuery.data.sqlQuery.sql;
+						this.qbeSQLQuery.setValue(sqlQuery);
+						var parameters = qbeQuery.data.parameters;
+						this.manageParsGrid.loadItems([]);
+						this.manageParsGrid.loadItems(parameters);
 					}
 
 					,
+					jsonTriggerFieldHandlerFederatedDataset : function(){
+						var values = this.getValues();
+						var dataSource = values['qbeDataSource'];
+						this.initFederatedDataSetBuilder(dataSource, this.federationId);
+						this.federatedDataSetBuilder.show();
+					},
+					
+					initFederatedDataSetBuilder : function(dataSource, federationId) {
+						if (this.federatedDataSetBuilder === null) {
+							this.initNewFederatedDataSetBuilder(dataSource,
+									federationId);
+							return;
+						}
+						if (this.mustRefreshFederatedQbeView(dataSource, federationId)) {
+							this.federatedDataSetBuilder.destroy();
+							this.initNewFederatedDataSetBuilder(dataSource,
+									federationId);
+							return;
+						}
+					},
+					
+					initNewFederatedDataSetBuilder : function(dataSource,
+							federationId) {
+						this.federatedDataSetBuilder = new Sbi.tools.dataset.FederatedDatasetBuilder(
+								{
+									dataSource : dataSource,
+									federationId : federationId,
+									jsonQuery : this.federatedJSONQuery.getValue(),
+									qbeParameters : this.manageParsGrid
+											.getParsArray(),
+									modal : true,
+									width : this.getWidth() - 50,
+									height : this.getHeight() - 50,
+									listeners : {
+										hide : {
+											fn : function(theQbeDatasetBuilder) {
+												theQbeDatasetBuilder
+														.getQbeQuery(); // asynchronous
+											},
+											scope : this
+										},
+										gotqbequery : {
+											fn : this.manageFederatedQbeQuery,
+											scope : this
+										}
+									}
+								});
+					},
+					
+					mustRefreshFederatedQbeView : function(dataSource, federationId) {
+						if (dataSource == this.federatedDataSetBuilder
+								.getDataSource()
+								&& federationId == this.federatedDataSetBuilder
+										.getFederationtId()) {
+							return false;
+						}
+						return true;
+					},
+					
 					jsonTriggerFieldHandler : function() {
 						// alert("jsonTriggerFieldHandler");
 						var values = this.getValues();
@@ -4081,9 +4195,8 @@ Ext
 									datamart, datasetId);
 							return;
 						}
-					}
-
-					,
+					},
+					
 					initNewQbeDataSetBuilder : function(datasourceLabel,
 							datamart, datasetId) {
 						this.qbeDataSetBuilder = new Sbi.tools.dataset.QbeDatasetBuilder(
@@ -4112,8 +4225,8 @@ Ext
 									}
 								});
 					}
-
 					,
+					
 					mustRefreshQbeView : function(datasourceLabel, datamart,
 							datasetId) {
 						if (datasourceLabel == this.qbeDataSetBuilder
@@ -4128,7 +4241,8 @@ Ext
 					}
 
 					// METHOD TO BE OVERRIDDEN IN EXTENDED ELEMENT!!!!!
-					,
+					,					
+					
 					info : function() {
 						var win_info_2;
 						if (!win_info_2) {

@@ -122,6 +122,7 @@ public class DataSetJSONSerializer implements Serializer {
 	public static final String CKAN_ID = "ckanId";
 	public static final String FEDERATION_ID = "federationId";
 
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
@@ -327,6 +328,13 @@ public class DataSetJSONSerializer implements Serializer {
 					result.put(QBE_JSON_QUERY, jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 					result.put(QBE_DATA_SOURCE, jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
 					result.put(QBE_DATAMARTS, jsonConf.getString(DataSetConstants.QBE_DATAMARTS));
+				} else if (type.equalsIgnoreCase(DataSetConstants.FEDERATED)) {
+					// result.put(QBE_SQL_QUERY,
+					// jsonConf.getString(DataSetConstants.QBE_SQL_QUERY));
+					result.put(QBE_JSON_QUERY, jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
+					result.put(QBE_DATA_SOURCE, jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
+					result.put(QBE_DATA_SOURCE, jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
+					result.put(FEDERATION_ID, ds.getDatasetFederation().getFederation_id());
 				} else if (type.equalsIgnoreCase(DataSetConstants.WEB_SERVICE)) {
 					String ws_address = jsonConf.getString(DataSetConstants.WS_ADDRESS);
 					if (ws_address != null) {
@@ -494,7 +502,7 @@ public class DataSetJSONSerializer implements Serializer {
 					SourceBean columns = (SourceBean) source.getAttribute("COLUMNLIST");
 					JSONArray columnsJSONArray = new JSONArray();
 
-					if(columns!=null){
+					if (columns != null) {
 						List<SourceBean> rows = columns.getAttributeAsList("COLUMN");
 						for (int i = 0; i < rows.size(); i++) {
 							SourceBean row = rows.get(i);
@@ -532,7 +540,7 @@ public class DataSetJSONSerializer implements Serializer {
 
 					}
 				}
-					
+
 			}
 
 		}

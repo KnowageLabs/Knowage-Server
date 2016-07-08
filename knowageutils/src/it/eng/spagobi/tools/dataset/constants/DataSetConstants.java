@@ -81,6 +81,7 @@ public class DataSetConstants {
 	public static final String JAVA_CLASS = "Java Class";
 	public static final String WEB_SERVICE = "Web Service";
 	public static final String QBE = "Qbe";
+	public static final String FEDERATED = "Federated";
 	public static final String FLAT = "Flat";
 	public static final String DS_REST_NAME = "REST";
 

@@ -201,6 +201,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/tools/dataset/QbeDatasetBuilder.js")%>'></script>
 <script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/tools/dataset/FederatedDatasetBuilder.js")%>'></script>
+<script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/tools/dataset/PreviewWindow.js")%>'></script>
 <script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/tools/dataset/CustomDataGrid.js")%>'></script>

@@ -59,6 +59,13 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<!-- BUILD FEDERATED DATASET start action -->
+	<ACTION name="BUILD_FEDERATED_DATASET_START_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.BuildQbeFromFederatedDatasetStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 	<!-- REGISTRY_ENGINE start action -->
 	<ACTION name="REGISTRY_ENGINE_START_ACTION" 
 			class="it.eng.spagobi.engines.qbe.services.initializers.RegistryEngineStartAction" 
