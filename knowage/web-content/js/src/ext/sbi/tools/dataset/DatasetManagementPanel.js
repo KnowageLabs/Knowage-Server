@@ -3648,7 +3648,7 @@ Ext
 					setValues : function(record) {
 						record.data.jclassNameForCustom = record.data.jclassName;
 						record.data.federatedJSONQuery = record.data.qbeJSONQuery;
-						this.federationId = record.json.federationId;
+						this.federationId = record.json ? record.json.federationId : null;
 						this.getForm().loadRecord(record);
 						
 						//workaround for grid value (grid not recognized as a form field)
