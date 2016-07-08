@@ -238,7 +238,7 @@ function kpiExportFuncController(sbiModule_download, sbiModule_translate,
 			"responseType" : "arraybuffer"
 		};
 		sbiModule_restServices.post("1.0/serverManager/importExport/kpis",
-				"downloadExportFile", data, config).success(
+				"downloadArchive", data, config).success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						showToast(data.errors[0].message, 4000);
@@ -300,7 +300,7 @@ function kpiImportFuncController(sbiModule_download, sbiModule_device, $scope,
 					$scope.stepControl.resetBreadCrumb();
 					$scope.stepControl.insertBread({
 						name : sbiModule_translate.load(
-								'SBISet.impexp.exportedRoles',
+								'SBISet.impexp.exportedKpis',
 								'component_impexp_messages')
 					});
 					$scope.finishImport();

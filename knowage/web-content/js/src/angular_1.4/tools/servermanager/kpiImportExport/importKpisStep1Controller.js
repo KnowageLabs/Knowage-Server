@@ -21,13 +21,14 @@ function importKpiStep1FuncController(sbiModule_download, sbiModule_device,
 					"kpis": $scope.IEDConf.roles.selectedKpis,
 					"overwrite": $scope.IEDConf.overwriteMode,
 					"targetsAndRelatedKpis": $scope.IEDConf.targetsAndRelatedKpis,
-					"scorecardsAndRelatedKpis": $scope.IEDConf.scorecardsAndRelatedKpis
+					"scorecardsAndRelatedKpis": $scope.IEDConf.scorecardsAndRelatedKpis,
+					"schedulersAndRelatedKpis": $scope.IEDConf.schedulersAndRelatedKpis
 			}
 			// Import
 //			alert(JSON.stringify(data));
 //			$scope.stopImport($scope.translate.load("sbi.importkpis.importkpiok"));
 			sbiModule_restServices
-				.post("1.0/serverManager/importExport/kpis","importKpis", data)
+				.post("1.0/serverManager/importExport/kpis","import", data)
 				.success(function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						$scope.stopImport(data.errors[0].message);

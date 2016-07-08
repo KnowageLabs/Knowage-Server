@@ -1378,6 +1378,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
+	public Integer getRuleIdByName(final String name, boolean activeOnly) {
+		if (activeOnly)
+			return getRuleIdByName(name);
+		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
+			@Override
+			public Integer execute(Session session) throws Exception {
+				return (Integer) session.createCriteria(SbiKpiRule.class).add(Restrictions.eq("name", name)).setProjection(Property.forName("sbiKpiRuleId.id"))
+						.addOrder(Order.desc("sbiKpiRuleId.version")).setMaxResults(1).uniqueResult();
+			}
+		});
+	}
+
+	@Override
 	public Integer getRuleIdByName(final String name) {
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
@@ -1751,7 +1764,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	private Scorecard from(SbiKpiScorecard sbiScorecard, boolean full) {
 		return from(sbiScorecard, full, null);
 	}
-	
+
 	private Scorecard from(SbiKpiScorecard sbiScorecard, boolean full, Map<String, String> attributesValues) {
 		Scorecard scorecard = new Scorecard();
 		scorecard.setId(sbiScorecard.getId());
@@ -1818,12 +1831,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return scorecard;
 	}
 
-	private void calculateKpiStatus(KpiExecution kpi) {	
+	private void calculateKpiStatus(KpiExecution kpi) {
 		calculateKpiStatus(kpi, null);
 	}
 
 	private void calculateKpiStatus(KpiExecution kpi, Map<String, String> attributesValues) {
-		attributesValues = attributesValues  != null ? attributesValues :  new HashMap<String, String>();
+		attributesValues = attributesValues != null ? attributesValues : new HashMap<String, String>();
 		List<KpiValue> values = findKpiValues(kpi.getId(), null, null, null, attributesValues);
 		if (values != null && !values.isEmpty()) {
 			KpiValue kpiValue = values.get(values.size() - 1);

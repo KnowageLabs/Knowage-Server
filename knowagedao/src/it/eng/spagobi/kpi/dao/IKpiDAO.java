@@ -40,7 +40,6 @@ import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -141,6 +140,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public Rule loadLastActiveRule(Integer id);
 
 	public Integer getRuleIdByName(String name);
+
+	public Integer getRuleIdByName(String name, boolean activeOnly);
 
 	public Integer createDomainIfNotExists(Domain domain);
 
