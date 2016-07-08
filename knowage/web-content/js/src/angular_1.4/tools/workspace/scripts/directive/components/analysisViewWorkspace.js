@@ -112,7 +112,7 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 		
 		var confirm = $mdDialog
 						.confirm()
-						.title($scope.translate.load("sbi.workspace.analysis.clone.document.confirm.title"))
+						.title($scope.translate.load("sbi.workspace.clone.confirm.title"))
 						.content($scope.translate.load("sbi.workspace.analysis.clone.document.confirm.msg"))
 						.ariaLabel('delete Document') 
 						.ok($scope.translate.load("sbi.general.yes"))
@@ -153,7 +153,7 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 		
 		var confirm = $mdDialog
 						.confirm()
-						.title(sbiModule_translate.load("sbi.workspace.analysis.delete.document.confirm.title"))
+						.title(sbiModule_translate.load("sbi.workspace.delete.confirm.title"))
 						.content(sbiModule_translate.load("sbi.workspace.analysis.delete.document.confirm.msg"))
 						.ariaLabel('delete Document') 
 						.ok(sbiModule_translate.load("sbi.general.yes"))

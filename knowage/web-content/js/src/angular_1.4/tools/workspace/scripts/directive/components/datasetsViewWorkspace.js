@@ -176,7 +176,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		var label= dataset.label;
 		
 		var confirm = $mdDialog.confirm()
-		.title(sbiModule_translate.load("sbi.federationdefinition.confirm.dialog"))
+		.title(sbiModule_translate.load("sbi.workspace.delete.confirm.title"))
 		.content(sbiModule_translate.load("sbi.workspace.dataset.delete.confirm"))
 		.ariaLabel('delete Document') 
 		.ok(sbiModule_translate.load("sbi.general.yes"))

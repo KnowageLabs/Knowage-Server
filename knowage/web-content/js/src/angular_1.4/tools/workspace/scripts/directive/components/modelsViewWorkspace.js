@@ -179,7 +179,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.federationdefinition.models.delete")+"["+usedInDatasets+"]", sbiModule_translate.load("sbi.generic.error"));
 		} else {
 			var confirm = $mdDialog.confirm()
-			.title(sbiModule_translate.load("sbi.federationdefinition.confirm.dialog"))
+			.title(sbiModule_translate.load("sbi.workspace.delete.confirm.title"))
 			.content(sbiModule_translate.load("sbi.federationdefinition.confirm.delete"))
 			.ariaLabel('delete Document') 
 			.ok(sbiModule_translate.load("sbi.general.yes"))

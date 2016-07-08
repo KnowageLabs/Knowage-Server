@@ -138,7 +138,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	
 	$scope.deleteFolder = function(folder) {
 		var confirm = $mdDialog.confirm()
-						.title(sbiModule_translate.load("sbi.workspace.folder.delete.confirm.dialog"))
+						.title(sbiModule_translate.load("sbi.workspace.delete.confirm.title"))
 						.content(sbiModule_translate.load("sbi.workspace.folder.delete.confirm"))
 						.ariaLabel('delete folder') 
 						.ok(sbiModule_translate.load("sbi.general.yes"))
@@ -381,8 +381,8 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	
 	$scope.deleteDocumentFromOrganizer = function(document) {
 		var confirm = $mdDialog.confirm()
-		.title(sbiModule_translate.load("sbi.workspace.folder.delete.confirm.dialog"))
-		.content(sbiModule_translate.load("sbi.workspace.organizer.document.delete.confirm"))
+		.title(sbiModule_translate.load("sbi.workspace.remove.confirm.title"))
+		.content(sbiModule_translate.load("sbi.workspace.organizer.document.remove.confirm"))
 		.ariaLabel('delete documentOrganizer') 
 		.ok(sbiModule_translate.load("sbi.general.yes"))
 		.cancel(sbiModule_translate.load("sbi.general.No"));
@@ -390,7 +390,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 				sbiModule_restServices.promiseDelete("2.0/organizer/documents/"+document.functId,document.biObjId)
 				.then(function(response) {
 					
-					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.organizer.document.delete.success'),sbiModule_translate.load('sbi.generic.success'));
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.organizer.document.remove.success'),sbiModule_translate.load('sbi.generic.success'));
 					
 					$scope.selectOrganizerDocument(undefined);
 					
