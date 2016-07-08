@@ -829,7 +829,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		}
 		PhysicalTableFilter physicalTableFilter = new PhysicalTableFilter(physicalTableToIncludeInBusinessModel);
 		BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
-		businessModelInitializer.initialize("pippoBusiness", physicalTableFilter, physicalModel);
+		businessModelInitializer.initialize(modelName, physicalTableFilter, physicalModel);
 
 		return model;
 	}

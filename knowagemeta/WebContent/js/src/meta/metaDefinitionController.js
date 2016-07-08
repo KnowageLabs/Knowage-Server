@@ -196,7 +196,8 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 		dataToSend.physicalModels = $scope.physicalModels;
 		dataToSend.businessModels = $scope.businessModels;
 		// TODO set model name here
-		dataToSend.modelName = 'test_model_hard_coded';
+		//dataToSend.modelName = 'test_model_hard_coded';
+		dataToSend.modelName = bmName;
 
 		sbiModule_restServices.promisePost("1.0/metaWeb", "create", dataToSend)
 				.then(
