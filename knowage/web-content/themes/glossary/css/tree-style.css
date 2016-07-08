@@ -166,11 +166,11 @@ ol.collapsed li{
 .treeInfoIcon{
 	float: left !important;
     margin: 2px 0 0 0 !important;
-    line-height: 15px !important;
-    width: 15px !important;
-    height: 15px !important;
+    line-height: 100% !important;
+    width: 20px !important;
+    height: 20px !important;
     min-height: 0 !important;
-    border: 1px solid green;
+    padding: 0px !important;
 }
 
 .treeInfoIcon md-icon{
