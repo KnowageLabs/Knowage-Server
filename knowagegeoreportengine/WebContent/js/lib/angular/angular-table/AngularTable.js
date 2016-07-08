@@ -1,6 +1,6 @@
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
- * v1.0.0
+ * v1.0.1
  * 
  */
 var scripts = document.getElementsByTagName("script");
@@ -132,6 +132,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                     tmpColData.comparatorColumn=col[i].comparatorColumn;
                                                     tmpColData.transformer=col[i].transformer;
                                                     tmpColData.customClass=col[i].customClass;
+                                                    tmpColData.hideTooltip=col[i].hideTooltip;
                                                 } else {
                                                     //only the col name
                                                     tmpColData.label = col[i];

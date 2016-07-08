@@ -154,7 +154,7 @@ table>tbody>tr>td button.actionButton{
     }
      
     table>tbody>tr>td button.actionButton md-icon{	
-   line-height: 25px!important;
+        /*line-height: 25px!important; ANGULAR MATERIAL NEW VERSION DEBUG */
     }
 
 @-moz-document url-prefix() {
@@ -185,10 +185,14 @@ angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
     left: 100%;
     margin-left: -15px;
 }
+.fakeTable md-checkbox.md-knowage-theme{
+    margin: 0;
+}
 
 .fakeTable tr th:first-child *:not(md-checkbox) div:not(.md-icon) {
     margin-left: $standardPadding;
 }
+
 .principalTable tr th:first-child *:not(md-checkbox) div:not(.md-icon) {
     margin-left: $standardPadding;
 }
@@ -361,6 +365,17 @@ display: none;
 .principalTable>thead>tr>th{
 	padding-top: 0px!important;
     padding-bottom: 0px!important;
+}
+md-radio-button ._md-container {
+    left: 20px;
+    top: 10px;
+}
+
+@-moz-document url-prefix() {
+    md-radio-button ._md-container {
+        left: 20px;
+        top: 0px;
+    }
 }
 
 
