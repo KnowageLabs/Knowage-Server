@@ -17,12 +17,24 @@
  */
 package it.eng.spagobi.engines.drivers.svgviewer;
 
+import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
+import it.eng.spagobi.engines.drivers.DefaultOutputParameter.TYPE;
 import it.eng.spagobi.engines.drivers.generic.GenericDriver;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
 public class SvgViewerDriver extends GenericDriver {
+
+	@Override
+	public List<DefaultOutputParameter> getDefaultOutputParameters() {
+		List<DefaultOutputParameter> ret = new ArrayList<>();
+		ret.add(new DefaultOutputParameter("ELEMENT_ID", TYPE.String));
+		return ret;
+	}
 
 }
