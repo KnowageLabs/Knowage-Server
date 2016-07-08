@@ -67,6 +67,22 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  }
 	});
   
+  //Listener called when an element on the svg is clicked and cross navigation is required
+  //TODO: to complete
+  $window.document.addEventListener("SVGElementClickedCrossNavigation", function(e) {
+	  	var driversParameter = getDriverParameters();
+	  	//alert(driversParameter);
+	  	
+	  	//fake data just for test
+	  	var crossData=[];
+	  	//var testObject = new Object();
+	  	//testObject.param1 = "passato dalla cross"
+	  	//crossData.push(testObject);
+		parent.execExternalCrossNavigation(crossData,driversParameter,undefined,driversParameter.DOCUMENT_LABEL);
+
+	});
+  
+  
   /**
    * Loads the measures list with a REST service
    * */
