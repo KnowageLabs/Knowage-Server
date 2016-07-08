@@ -1,5 +1,14 @@
 package it.eng.spagobi.api.v2;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.metadata.dao.ISbiMetaDocTabRelDAO;
+import it.eng.spagobi.metadata.dao.ISbiMetaTableDAO;
+import it.eng.spagobi.metadata.metadata.SbiMetaDocTabRel;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,17 +20,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.metadata.dao.ISbiMetaDocTabRelDAO;
-import it.eng.spagobi.metadata.dao.ISbiMetaTableDAO;
-import it.eng.spagobi.metadata.metadata.SbiMetaDocTabRel;
-import it.eng.spagobi.metadata.metadata.SbiMetaTable;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
 
 @Path("2.0/metaDocumetRelationResource")
 @ManageAuthorization
@@ -45,10 +43,10 @@ public class MetaDocumetRelationResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	// TODO insert correct Functionalities
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	public List<SbiMetaDocTabRel> getAll() throws EMFUserError {
 		init();
 		List<SbiMetaDocTabRel> documentRelations = null;
@@ -58,10 +56,10 @@ public class MetaDocumetRelationResource extends AbstractSpagoBIResource {
 		return documentRelations;
 	}
 
+	// TODO insert correct Functionalities
 	@GET
 	@Path("/document/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	public List<SbiMetaTable> getByDocId(@PathParam("id") Integer documentId) {
 		init();
 		List<SbiMetaDocTabRel> relations = new ArrayList<>();
@@ -80,10 +78,10 @@ public class MetaDocumetRelationResource extends AbstractSpagoBIResource {
 		return tables;
 	}
 
+	// TODO insert correct Functionalities
 	@POST
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	public void insert(@PathParam("id") Integer id, SbiMetaTable table) throws EMFUserError {
 
 		sbiMetaDocTabRelDAO = DAOFactory.getSbiMetaDocTabRelDAO();
@@ -95,9 +93,9 @@ public class MetaDocumetRelationResource extends AbstractSpagoBIResource {
 
 	}
 
+	// TODO insert correct Functionalities
 	@DELETE
 	@Path("/{id}/{tableID}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	public void delete(@PathParam("id") Integer id, @PathParam("tableID") Integer tableID) {
 
 		init();
