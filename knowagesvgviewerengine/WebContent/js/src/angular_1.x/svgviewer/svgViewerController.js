@@ -68,7 +68,6 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	});
   
   //Listener called when an element on the svg is clicked and cross navigation is required
-  //TODO: to complete
   $window.document.addEventListener("SVGElementClickedCrossNavigation", function(e) {
 	  	var driversParameter = getDriverParameters();
 	  	
