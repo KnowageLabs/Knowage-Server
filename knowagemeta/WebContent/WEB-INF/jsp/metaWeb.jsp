@@ -35,14 +35,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 String datasourceId= request.getParameter("datasourceId");
 String bmName= request.getParameter("bmName");
 String bmId= request.getParameter("bmId");
-String editModel= request.getParameter("editModel");
 %>
 
 <script> 
 var datasourceId='<%= datasourceId%>';
 var bmId='<%= bmId%>';
 var bmName='<%= bmName%>';
-var editModel=<%= editModel%>;
+var translatedModel=<%= translatedModel%>;
 </script>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>meta Definition</title>

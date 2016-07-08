@@ -17,11 +17,18 @@
  */
 package it.eng.knowage.meta.service;
 
+import it.eng.knowage.meta.model.Model;
+import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +42,7 @@ import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.json.JSONObject;
 
 /**
  * @authors
@@ -79,6 +87,40 @@ public class PageResource {
 			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 			ioManager.getHttpSession().setAttribute("ioManager", ioManager);
 			ioManager.getHttpSession().setAttribute("userProfile", userProfile);
+
+			// ----------------------load the sbiModel if present-----------------------------------------
+			Integer bmId = Integer.parseInt(request.getParameter("bmId"));
+
+			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+			businessModelsDAO.setUserProfile(userProfile);
+			EmfXmiSerializer serializer = new EmfXmiSerializer();
+			Content lastFileModelContent = businessModelsDAO.lastFileModelMeta(bmId);
+			InputStream is = null;
+			if (lastFileModelContent != null) {
+				byte[] sbiModel = lastFileModelContent.getFileModel();
+				if (sbiModel != null) {
+					is = new ByteArrayInputStream(sbiModel);
+				} else {
+					// try to get the sbiModel inside the jar
+					byte[] jar = lastFileModelContent.getContent();
+					if (jar != null) {
+						// open the jar and find the sbimodel file
+
+					} else {
+						// SbiModel not found
+					}
+
+				}
+			}
+
+			if (is != null) {
+				Model model = serializer.deserialize(is);
+				request.getSession().setAttribute(MetaService.EMF_MODEL, model);
+				JSONObject translatedModel = MetaService.createJson(model);
+				ioManager.getHttpSession().setAttribute("translatedModel", translatedModel.toString());
+			}
+
+			// -------------------------------------------------------------------------------------------
 
 			response.setContentType("text/html");
 			response.setCharacterEncoding("UTF-8");

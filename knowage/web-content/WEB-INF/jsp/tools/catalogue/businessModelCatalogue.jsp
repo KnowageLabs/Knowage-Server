@@ -76,9 +76,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<angular-list-detail show-detail="showMe">
 		<list label='translate.load("sbi.tools.catalogue.metaModelsCatalogue")' new-function="createBusinessModel"> 
 
-			
-				
-
 					<angular-table 
 						flex
 						id="businessModelList_id"
@@ -91,8 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						click-function ="leftTableClick(item)"
 						selected-item="selectedBusinessModels"
 						speed-menu-option="bmSpeedMenu"					
-					>						
-					</angular-table>
+					></angular-table>
 
 		</list>
 		
@@ -105,8 +101,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		
           <md-card>
-	        <md-card-content>
-	        <div flex=100>
+	        <md-card-content layout="column">
 		        <md-input-container class="md-block" >
 					<label>{{translate.load("sbi.ds.name")}}</label>
 					<input ng-model="selectedBusinessModel.name" name="name" required ng-maxlength="100">
@@ -114,25 +109,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			          <div ng-message="required">Name is required.</div>
 			        </div>
 				</md-input-container>
-				</div>
 				
-				<div flex=100>
 				<md-input-container class="md-block">
 					<label>{{translate.load("sbi.ds.description")}}</label>
 					<input ng-model="selectedBusinessModel.description"	ng-maxlength="100" > 
 				</md-input-container>
-				</div>
 				
-				<div flex=100>
 				<md-input-container class="md-block"> 
 					<label>{{translate.load("sbi.ds.catType")}}</label>
 				   <md-select  aria-label="aria-label" ng-model="selectedBusinessModel.category" >
 				    <md-option  ng-repeat="c in listOfCategories" value="{{c.VALUE_ID}}">{{c.VALUE_NM}} </md-option>
 				   </md-select> 
 				</md-input-container>
-				</div>
 				
-				<div flex=100>
 				<md-input-container class="md-block"> 
 					<label>{{translate.load("sbi.ds.dataSource")}}</label>
 				       <md-select  aria-label="aria-label" required name="ds"
@@ -144,7 +133,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       		</div>
 				       
 				</md-input-container>
-				</div>
 				
 				<div layout="row" layout-wrap layout-align="start center">
 					<label ng-if="!metaWebFunctionality"  class="buttonLabel">{{translate.load("sbi.ds.file.upload.button")}}:</label>
@@ -175,11 +163,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<%} %>
       				
 				</div>
-				
-				
 			</md-card-content>
 	      </md-card>
-	      <md-card>
+	      
+	      <md-card ng-if="bmVersions!=undefined && bmVersions.length>0">
 
 	      	<md-toolbar class="secondaryToolbar">
 		      <div class="md-toolbar-tools">
@@ -256,7 +243,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					id="bmVersions_id"
 					ng-model="bmVersions"
 					columns='[
-						{"label":"ACTIVE","name":"ACTION", "size":"60px"},
+						{"label":"ACTIVE","name":"ACTION", "size":"100px"},
 						{"label":"FILE NAME","name":"fileName"},
 						{"label":"CREATOR","name":"creationUser"},
 						{"label":"CREATION DATE","name":"creationDate"}

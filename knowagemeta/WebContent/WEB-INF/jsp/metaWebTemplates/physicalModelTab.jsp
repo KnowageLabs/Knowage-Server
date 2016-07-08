@@ -57,7 +57,10 @@
 				</md-content>
 			</md-tab>
 			
-			<md-tab id="fkTab" label="{{translate.load('sbi.meta.model.business.fk')}}">
+			<md-tab ng-if="selectedPhysicalModel.columns!=undefined" id="fkTab" label="{{translate.load('sbi.meta.model.business.fk')}}">
+				<angular-table  id="fktable" ng-model="selectedPhysicalModel.foreignKeys" columns="fkTableColumns"  no-pagination=true flex>
+				</angular-table>
+			
 			</md-tab>
 		</md-tabs>
 	</detail>

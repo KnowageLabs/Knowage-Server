@@ -104,6 +104,35 @@ function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate
 		});
 	}
 
+
+	$scope.fkTableColumns=[
+		                       {
+		                    	   label:sbiModule_translate.load("sbi.generic.name"),
+		                    	   name:'name'
+		                       },
+		                       {
+		                    	   label:sbiModule_translate.load("sbi.meta.source.columns"),
+		                    	   name:'sourceColumns',
+		                    	   transformer:function(item){
+			                    		var toret=[];
+			                    		for(var i=0;i<item.length;i++){
+			                    			 toret.push(item[i].tableName+"."+item[i].name);
+			                    		}
+			                    		return toret.join(",");
+		                    	   }
+		                       },
+		                       {
+		                    	   label:sbiModule_translate.load("sbi.meta.target.columns"),
+		                    	   name:'destinationColumns',
+		                    	   transformer:function(item){
+		                    		   var toret=[];
+			                    		for(var i=0;i<item.length;i++){
+			                    			 toret.push(item[i].tableName+"."+item[i].name);
+			                    		}
+			                    		return toret.join(",");
+		                    	   }
+		                       }
+	                       ]
 }
 
 function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,metaModelServices){

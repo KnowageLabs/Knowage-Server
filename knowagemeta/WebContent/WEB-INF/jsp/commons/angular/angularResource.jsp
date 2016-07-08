@@ -30,7 +30,6 @@
 	IMessageBuilder msgBuilder = null;
 	String sbiMode = null;
 
-	
 	// create message builder
 	msgBuilder = MessageBuilderFactory.getMessageBuilder();
 	EngineStartServletIOManager ioManager= (EngineStartServletIOManager) request.getSession().getAttribute("ioManager");
@@ -55,6 +54,8 @@
 		defaultRole = ((UserProfile)userProfile).getDefaultRole();		
 		
 	}
+	
+	String translatedModel= (String) request.getSession().getAttribute("translatedModel");
 	
 %>
 

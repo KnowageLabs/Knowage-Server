@@ -84,7 +84,7 @@ import com.flipkart.zjsonpatch.JsonDiff;
 public class MetaService extends AbstractSpagoBIResource {
 	private static Logger logger = Logger.getLogger(MetaService.class);
 	private static final String DEFAULT_MODEL_NAME = "modelName";
-	private static final String EMF_MODEL = "EMF_MODEL";
+	public static final String EMF_MODEL = "EMF_MODEL";
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
@@ -127,7 +127,6 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			EmfXmiSerializer serializer = new EmfXmiSerializer();
 			Content lastFileModelContent = businessModelsDAO.lastFileModelMeta(bmId);
-			lastFileModelContent.getFileModel();
 			InputStream is = new ByteArrayInputStream(lastFileModelContent.getFileModel());
 			Model model = serializer.deserialize(is);
 			req.getSession().setAttribute(EMF_MODEL, model);
@@ -766,7 +765,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		return s.toString();
 	}
 
-	private JSONObject createJson(Model model) throws JSONException {
+	public static JSONObject createJson(Model model) throws JSONException {
 		JSONObject translatedModel = new JSONObject();
 		Map<String, Integer> physicalTableMap = new HashMap<>();
 

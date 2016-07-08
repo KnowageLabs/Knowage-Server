@@ -40,7 +40,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.fileCWMClicked =false;
 
 	$scope.togenerate = false;
-	$scope.haveSbiModel = false;
 
 	angular.element(document).ready(function () {
         $scope.getData();
@@ -66,7 +65,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			$scope.fileClicked = false;
 			$scope.fileCWMClicked = false;
 			$scope.togenerate = false;
-			$scope.haveSbiModel = false;
 			$scope.isDirty=false;
 			$scope.isCWMDirty = false;
 			
@@ -255,11 +253,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				$scope.versionLoadingShow = true;
 					$scope.bmVersions = [];
 					setTimeout(function(){
-						
-						
 						$scope.togenerate=response.data.togenerate
-						$scope.haveSbiModel=response.data.haveSbiModel
-						
 						
 						$scope.bmVersions = response.data.versions;
 	  					activeFlagStyle();
@@ -649,7 +643,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 		 
 		 $scope.buildBusinessModels=function(){
-			 console.log('build jar for : ' + $scope.selectedBusinessModel.name);
 			 sbiModule_restServices.alterContextPath("/knowagemeta");
 			 sbiModule_restServices.promiseGet("1.0/metaWeb", "buildModel/"+$scope.selectedBusinessModel.name+"/"+$scope.selectedBusinessModel.id+"?user_id="+sbiModule_user.userId)  //TO CHANGE
 						.then(
@@ -692,7 +685,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					escapeToClose :true,
 					fullscreen: true,
 //					locals:{url:sbiModule_config.contextName+'/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp&datasourceId='+dsId}
-					locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name+"&editModel="+$scope.haveSbiModel}
+					locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name}
 				}).then(function(){
 					//refresh
 					$scope.getVersions($scope.selectedBusinessModel.id);
