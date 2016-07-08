@@ -1,5 +1,16 @@
 package it.eng.spagobi.api.v2;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.metadata.dao.ISbiMetaSourceDAO;
+import it.eng.spagobi.metadata.dao.ISbiMetaTableDAO;
+import it.eng.spagobi.metadata.metadata.SbiMetaSource;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -12,19 +23,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
-import it.eng.spagobi.metadata.dao.ISbiMetaSourceDAO;
-import it.eng.spagobi.metadata.dao.ISbiMetaTableDAO;
-import it.eng.spagobi.metadata.metadata.SbiMetaSource;
-import it.eng.spagobi.metadata.metadata.SbiMetaTable;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("2.0/metaSourceResource")
 @ManageAuthorization
@@ -47,10 +45,10 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	// TODO insert correct Functionalities
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	public List<SbiMetaSource> getAll() throws EMFUserError {
 		List<SbiMetaSource> sources = null;
 
@@ -61,20 +59,20 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 		return sources;
 	}
 
+	// TODO insert correct Functionalities
 	@GET
 	@Path("/{sourceId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	public SbiMetaSource getById(@PathParam("sourceId") Integer sourceId) throws EMFUserError {
 		init();
 		SbiMetaSource sbiMetaSource = sbiMetaSourceDAO.loadSourceByID(sourceId);
 		return sbiMetaSource;
 	}
 
+	// TODO insert correct Functionalities
 	@GET
 	@Path("/{sourceId}/metatables")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	public List<SbiMetaTable> getAllTables(@PathParam("sourceId") Integer sourceId) throws EMFUserError {
 		List<SbiMetaTable> metaTables = null;
 		sbiMetaSourceDAO = DAOFactory.getSbiMetaSourceDAO();
@@ -88,10 +86,10 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 		return metaTables;
 	}
 
+	// TODO insert correct Functionalities
 	@GET
 	@Path("/{sourceId}/metatables/{tableId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	public SbiMetaTable getTableById(@PathParam("sourceId") Integer sourceId, @PathParam("tableId") Integer tableId) {
 		init();
 
@@ -133,11 +131,11 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 		return metaTableId;
 	}
 
+	// TODO insert correct Functionalities
 	@PUT
 	@Path("/{sourceId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	public SbiMetaSource modify(@Valid SbiMetaSource sbiMetaSource, @PathParam("sourceId") Integer sourceId) {
 		logger.debug("IN");
 		init();
