@@ -501,6 +501,7 @@ public class SpagoBIConstants {
 	public static final String MANAGE_DOC_LINKS_PAGE = "ManageDocLinksPage";
 	public static final String CREATE_TIMESPAN = "CreateTimepan";
 
+	public static final String DOMAIN_WRITE = "DomainWrite";
 	public static final String DOMAIN_MANAGEMENT = "DomainManagement";
 	public static final String CONFIG_MANAGEMENT = "ConfigManagement";
 	public static final String USER_DATA_PROPERTIES_MANAGEMENT = "UserDefinedPropertyManagement";

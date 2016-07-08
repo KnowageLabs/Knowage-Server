@@ -102,7 +102,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_WRITE })
 	@Consumes("application/json")
 	public Response insertDomain(@Valid Domain body) {
 
@@ -132,7 +132,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_WRITE })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateDomain(@PathParam("id") Integer id, @Valid Domain body) {
 
@@ -162,7 +162,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_WRITE })
 	public Response deleteDomain(@PathParam("id") Integer id) {
 
 		IDomainDAO domainsDao = null;

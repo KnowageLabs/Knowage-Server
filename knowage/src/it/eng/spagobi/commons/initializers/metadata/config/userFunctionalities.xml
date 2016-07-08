@@ -47,7 +47,6 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="HotLinkManagement" description="HotLinkManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ObjMetadataManagement" description="ObjMetadataManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ProfileManagement" description="ProfileManagement" />
-
 	<USER_FUNCTIONALITY productType="KnowageBD" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality" />
@@ -69,7 +68,8 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="StaticWidget" description="StaticWidget" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
-
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DomainWrite" description="DomainWrite" />
+	
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -144,6 +144,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="StaticWidget" description="StaticWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="TemporalDimension" description="TemporalDimension" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="DomainWrite" description="DomainWrite" />
 	
 	
 	<!-- Authorizations for KnowageER -->
@@ -186,8 +187,7 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="ProfileManagement" description="ProfileManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageER" name="ImagesManagement" description="ImagesManagement" />
-	
+	<USER_FUNCTIONALITY productType="KnowageER" name="ImagesManagement" description="ImagesManagement" />	
 	<USER_FUNCTIONALITY productType="KnowageER" name="CreateChartFunctionality" description="CreateChartFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="TemplateManagement" description="TemplateManagement" />	
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpDocument" description="ImpExpDocument"/>	
@@ -204,7 +204,7 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentScheduling" description="DocumentScheduling" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="SchedulingDistributedOutput" description="SchedulingDistributedOutput" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="SharedDevelopment" description="SharedDevelopment" />
-
+	<USER_FUNCTIONALITY productType="KnowageER" name="DomainWrite" description="DomainWrite" />
 	
 	
 	<!-- Authorizations for KnowagePM -->
@@ -256,4 +256,5 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="WorkspaceManagement" description="WorkspaceManagement"/>	
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DomainWrite" description="DomainWrite" />
 </USER_FUNCTIONALITIES>

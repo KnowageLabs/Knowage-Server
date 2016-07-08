@@ -396,6 +396,8 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalog" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalog" roleType="MODEL_ADMIN" />
 	
-	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DomainWrite" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DomainWrite" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DomainWrite" roleType="MODEL_ADMIN" />
 	
 </ROLE_TYPE_USER_FUNCTIONALITIES>
