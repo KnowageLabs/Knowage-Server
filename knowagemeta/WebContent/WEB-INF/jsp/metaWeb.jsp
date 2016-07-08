@@ -53,6 +53,9 @@ var translatedModel=<%= translatedModel%>;
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/metaModelDefinitionController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/addBusinessModelDialogController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/addBusinessViewDialogController.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/addInboundRelationship.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/addOutboundRelationship.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/addCalculatedFieldController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/refreshPhysicalModelController.js"></script>
 </head>
 <body ng-controller="metaDefinitionController" layout="column" ng-switch on="steps.current">

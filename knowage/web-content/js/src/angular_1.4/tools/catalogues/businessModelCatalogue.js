@@ -31,6 +31,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.selectedBusinessModels=[];	//Selected Business Models table multiselect
 	$scope.selectedVersions=[];			//Selected BM Versions table multiselect
 	$scope.selectedBusinessModel = {}; //Selected model for editing or new model data
+	$scope.savedBusinessModel = {}; 
 	$scope.bmVersionsRadio;
 	$scope.bmVersionsActive;
 	$scope.fileObj ={};
@@ -57,8 +58,10 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 	
 	$scope.createBusinessModel = function(){
-		if(!$scope.isDirty){
-			$scope.selectedBusinessModel = {};
+		if(angular.equals($scope.savedBusinessModel,$scope.selectedBusinessModel)){
+		//no change	
+			angular.copy({},$scope.selectedBusinessModel);
+			angular.copy($scope.selectedBusinessModel,$scope.savedBusinessModel);
 			$scope.bmVersions=[];
 			$scope.isNew = true;
 			$scope.showMe = true;
@@ -68,18 +71,26 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			$scope.isDirty=false;
 			$scope.isCWMDirty = false;
 			$scope.metaWebFunctionality=false;
-		}
-		else{
+			$scope.businessModelForm.$setPristine();
+			$scope.businessModelForm.$setUntouched();
+		}else{
 			$mdDialog.show($scope.confirm).then(function(){
-		    	$scope.isDirty=false;   
-		    	$scope.isCWMDirty = false;
-		    	$scope.selectedBusinessModel={};
-		    	$scope.showMe=true;
-		    },
-		     function(){		       
-		    	  $scope.showMe = true;
-		      });
+				angular.copy({},$scope.selectedBusinessModel);
+				angular.copy($scope.selectedBusinessModel,$scope.savedBusinessModel);
+				$scope.bmVersions=[];
+				$scope.isNew = true;
+				$scope.showMe = true;
+				$scope.fileClicked = false;
+				$scope.fileCWMClicked = false;
+				$scope.togenerate = false;
+				$scope.isDirty=false;
+				$scope.isCWMDirty = false;
+				$scope.metaWebFunctionality=false;
+				$scope.businessModelForm.$setPristine();
+				$scope.businessModelForm.$setUntouched();
+		    });
 		}
+		
 	}
 	
 	
@@ -111,27 +122,42 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	}
 	
 	$scope.leftTableClick = function(item){
-		$scope.isNew = false;
-		if($scope.isDirty){
-		    $mdDialog.show($scope.confirm).then(function(){
-		    	$scope.isDirty=false;   
-		    	$scope.isCWMDirty = false;
-		    	$scope.selectedBusinessModel=angular.copy(item);
-		    	$scope.getVersions(item.id);
-		    	$scope.showMe=true;
-		    },
-		     function(){		       
-		    	  $scope.showMe = true;
-		      });
-		      
-		     }else{		    
-		    	 $scope.selectedBusinessModel=angular.copy(item);
-		    	 console.log("selecetd bm:");
-		    	 console.log($scope.selectedBusinessModel);
-		    	 $scope.getVersions(item.id);
-		    	 $scope.showMe=true;
-		     }
-
+		
+		if(angular.equals($scope.savedBusinessModel,$scope.selectedBusinessModel)){
+			//no change	
+				angular.copy(item,$scope.selectedBusinessModel);
+				angular.copy($scope.selectedBusinessModel,$scope.savedBusinessModel);
+				$scope.bmVersions=[];
+				$scope.getVersions(item.id);
+				$scope.isNew = false;
+				$scope.showMe = true;
+				$scope.fileClicked = false;
+				$scope.fileCWMClicked = false;
+				$scope.togenerate = false;
+				$scope.isDirty=false;
+				$scope.isCWMDirty = false;
+				$scope.metaWebFunctionality=false;
+				$scope.businessModelForm.$setPristine();
+				$scope.businessModelForm.$setUntouched();
+			}else{
+				$mdDialog.show($scope.confirm).then(function(){
+					angular.copy(item,$scope.selectedBusinessModel);
+					angular.copy($scope.selectedBusinessModel,$scope.savedBusinessModel);
+					$scope.bmVersions=[];
+					$scope.getVersions(item.id);
+					$scope.isNew = false;
+					$scope.showMe = true;
+					$scope.fileClicked = false;
+					$scope.fileCWMClicked = false;
+					$scope.togenerate = false;
+					$scope.isDirty=false;
+					$scope.isCWMDirty = false;
+					$scope.metaWebFunctionality=false;
+					$scope.businessModelForm.$setPristine();
+					$scope.businessModelForm.$setUntouched();
+			    });
+			}
+		
 	}
 	
 	$scope.downloadFile = function(item,ev,filetype){
@@ -300,11 +326,11 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				.then(function(response) {
 					
 					$scope.selectedBusinessModel.id = response.data.id;
+					angular.copy($scope.selectedBusinessModel,$scope.savedBusinessModel);
 					$scope.businessModelList.push(response.data);
 					$scope.selectedVersions=[];
 					$scope.isDirty = false;			
 					$scope.isCWMDirty = false;
-					
 					if($scope.fileObj.fileName !== undefined)
 						$scope.saveBusinessModelFile();
 					$scope.$apply();
@@ -326,7 +352,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 						
 						sbiModule_restServices.promisePut("2.0/businessmodels/" + $scope.selectedBusinessModel.id+"/versions/"+ $scope.bmVersionsActive,"")
 						.then(function(response) {
-				
+							angular.copy($scope.selectedBusinessModel,$scope.savedBusinessModel);
 						}, function(response) {
 							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 							

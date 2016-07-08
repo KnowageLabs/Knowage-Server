@@ -97,7 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				cancel-function="cancel"
 				disable-save-button="!businessModelForm.$valid"
 				show-save-button="showMe" show-cancel-button="showMe">
-		   <form name="businessModelForm">
+		   <form name="businessModelForm" novalidate >
 		
 		
           <md-card>
@@ -105,9 +105,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        <md-input-container class="md-block" >
 					<label>{{translate.load("sbi.ds.name")}}</label>
 					<input ng-model="selectedBusinessModel.name" name="name" required ng-maxlength="100">
-					<div ng-messages="businessModelForm.name.$error">
-			          <div ng-message="required">Name is required.</div>
-			        </div>
+<!-- 					<div ng-messages="businessModelForm.name.$error"> -->
+<!-- 			          <div ng-message="required">Name is required.</div> -->
+<!-- 			        </div> -->
 				</md-input-container>
 				
 				<md-input-container class="md-block">
@@ -128,9 +128,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				        ng-model="selectedBusinessModel.dataSourceLabel"> <md-option
 				        ng-repeat="d in listOfDatasources" value="{{d.DATASOURCE_LABEL}}">{{d.DATASOURCE_LABEL}} </md-option>
 				       </md-select>
-				       <div ng-messages="businessModelForm.ds.$error">
-			        	  <div ng-message="required">Datasource is required.</div>
-			       		</div>
+<!-- 				       <div ng-messages="businessModelForm.ds.$error"> -->
+<!-- 			        	  <div ng-message="required">Datasource is required.</div> -->
+<!-- 			       		</div> -->
 				       
 				</md-input-container>
 				

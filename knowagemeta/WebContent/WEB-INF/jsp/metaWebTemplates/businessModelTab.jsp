@@ -99,6 +99,12 @@
 				<md-content layout  layout-fill ng-controller="businessModelAttributeController">
 					<angular-table id="bmAttr" ng-model="selectedBusinessModel.simpleBusinessColumns"
 					 columns="selectedBusinessModelAttributes" scope-functions="selectedBusinessModelAttributesScopeFunctions" no-pagination=true flex>
+					 	<queue-table>
+							<div layout="row"> 
+								<span flex></span>
+								<md-button type="button" class="md-knowage-theme md-raised" id="add-element" ng-click="scopeFunctions.addCalculatedField();">{{scopeFunctions.translate.load("sbi.meta.add.calculated.field")}}</md-button>
+							</div>
+						</queue-table> 
 					</angular-table>
 				</md-content>
 				
