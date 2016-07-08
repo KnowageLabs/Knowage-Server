@@ -1696,7 +1696,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	private File getMasterMapFile(boolean interactiveMasterMap) {
 		File file = null;
 		if (interactiveMasterMap) {
-			file = new File(ConfigSingleton.getRootPath() + "/maps/spagobigeo.svg");
+			file = new File(ConfigSingleton.getRootPath() + "/maps/knowage_svgmaster.svg");
 		} else {
 			file = new File(ConfigSingleton.getRootPath() + "/maps/export_spagobigeo.svg");
 		}
