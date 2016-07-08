@@ -96,7 +96,7 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.FEDERATED_DATASET_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public FederationDefinition getFederationByID(@PathParam("id") Integer id) {
 		try {
@@ -111,8 +111,7 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Saves the federation definition in the db. Gets the definition from the
-	 * body of the request
+	 * Saves the federation definition in the db. Gets the definition from the body of the request
 	 *
 	 * @param req
 	 * @return
@@ -158,8 +157,7 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Saves the federation definition in the db. Gets the definition from the
-	 * body of the request
+	 * Saves the federation definition in the db. Gets the definition from the body of the request
 	 *
 	 * @param req
 	 * @return
