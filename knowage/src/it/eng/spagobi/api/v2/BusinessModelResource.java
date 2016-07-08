@@ -215,7 +215,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	 **/
 	@POST
 	@Path("/{bmId}/versions")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.META_MODELS_CATALOGUE_MANAGEMENT })
 	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
 	public Response uploadFile(@MultipartForm MultipartFormDataInput input, @PathParam("bmId") int bmId) {
 
