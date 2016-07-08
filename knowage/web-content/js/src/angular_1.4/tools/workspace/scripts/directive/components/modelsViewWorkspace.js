@@ -19,7 +19,6 @@
 angular
 	.module('models_view_workspace', [])
 
-
 	/**
 	 * The HTML content of the Recent view (recent documents).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -38,6 +37,16 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	$scope.federationDefinitionsInitial=[];
 	
 	$scope.selectedModel = undefined;
+	
+	/**
+	 * The Business Model interface is improved: when models are set to be viewed as a list - the 'Label' column is removed (since there 
+	 * is no 'label' property of this object) and the 'Description' column is provided instead. Columns for Federation models remain the
+	 * same. Their columns are now just separated (independent).
+	 * @author Ana Tomic (atomic, ana.tomic@mht.net)
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.tableColumnsFederation = [{"label":"Label","name":"label"},{"label":"Name","name":"name"}]; 
+	$scope.tableColumnsModels = [{"label":"Name","name":"name"}, {"label":"Description","name":"description"}]; 
 
 	$scope.showModelInfo = false;
 	$scope.idsOfFederationDefinitionsUsediNFederatedDatasets = [];
@@ -77,8 +86,6 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
-	
-	
 	
 	//TODO move business models to separate controller
     $scope.loadBusinessModels= function(){
@@ -238,13 +245,16 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 			 $scope.loadFederations();
 		}
 		
+		$scope.cancelFederationDialog = function() {
+			 $mdDialog.cancel();	
+		}
+		
 		if(federation!==undefined){
-		var id =federation.federation_id;
-		var label = federation.label;
-		$scope.iframeUrl=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp&id="+id+"&label="+label;
-		}else{
-			
-		$scope.iframeUrl=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp";	
+			var id =federation.federation_id;
+			var label = federation.label;
+			$scope.iframeUrl=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp&id="+id+"&label="+label;
+		}else{			
+			$scope.iframeUrl=sbiModule_config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp";	
 		}
 		
 		}

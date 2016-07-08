@@ -15,6 +15,7 @@
 						 	
 						 	<federation-view class="kn-documentBrowser" flex  style='overflow: auto;' ng-model="businessModels"
 									selected-federation=selectedModel
+									table-columns=tableColumnsModels
 									select-federation-action="selectModel(federation);"
 									show-grid-view="showGridView"
 									edit-enabled=false
@@ -32,6 +33,7 @@
 						 	<federation-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="federationDefinitions"
 								show-grid-view="showGridView"
 								selected-federation=selectedModel
+								table-columns=tableColumnsFederation
 								select-federation-action="selectModel(federation);"
 								edit-enabled=true
 								edit-federation-action="editFederation(fed)"

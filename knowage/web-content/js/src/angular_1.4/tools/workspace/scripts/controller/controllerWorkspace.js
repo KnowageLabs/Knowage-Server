@@ -49,7 +49,8 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	$scope.federationDefinitions=[];
 	$scope.businessModels=[];
 	$scope.favoriteDocumentsList = [];
-	$scope.recentDocumetnsList = [];
+	$scope.recentDocumentsList = [];
+	
 	/**
 	 * variables for data management
 	 */
@@ -282,6 +283,25 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		if ($scope.currentOptionMainMenu!=newLeftMenuItemPicked) {
+			
+			/**
+			 * If user moves between the options in the left menu (changes option), the selected document/dataset/model should
+			 * be deselected and the right side navigation panel should be hidden (removed). This means, that if user e.g. selects
+			 * one document in the Analysis option and then goes to e.g. Models, the selected document will be deselected (will not
+			 * be highlight) and the right navigation detail panel will not appear when returning back to Analysis option.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			$scope.selectedDocument = null;
+			$scope.selectDocument(undefined);
+			
+			$scope.showOrganizerDocumentInfo = null;
+			$scope.selectOrganizerDocument(undefined);				
+
+			$scope.showDatasetInfo = null;
+			$scope.selectDataset(undefined);
+			
+			$scope.showModelInfo = null;
+			$scope.selectModel(undefined);
 			
 			/**
 			 * Handle the situation of clicking on the left menu option, keeping track of the state of the search input field. In the if-block 
@@ -542,7 +562,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 			case "recent":								
 				$scope.organizerSearch = false;
 				$scope.clearSearch = false;
-				$scope.recentDocumetnsList = $scope.recentDocumentsInitial;		
+				$scope.recentDocumentsList = $scope.recentDocumentsInitial;		
 				$scope.currentOptionMainMenu==$scope.resetOption ? $scope.resetSearchedData = false : null;
 				break;
 				
@@ -590,7 +610,8 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 
 			/**
 			 * If the search field is cleared (previously it had some content), unselect potentially selected document
-			 * and close the right-side navigation panel. 
+			 * and close the right-side navigation panel. Do this for all documents, datasets and models in the Workspace 
+			 * (for all available options from the left menu). 
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if ($scope.searchInput!=""){
@@ -599,7 +620,13 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 				$scope.selectDocument(undefined);
 				
 				$scope.showOrganizerDocumentInfo = null;
-				$scope.selectOrganizerDocument(undefined);
+				$scope.selectOrganizerDocument(undefined);				
+
+				$scope.showDatasetInfo = null;
+				$scope.selectDataset(undefined);
+				
+				$scope.showModelInfo = null;
+				$scope.selectModel(undefined);
 				
 			}
 			
@@ -615,7 +642,8 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 			$scope.clearSearch = false;
 			
 			/**
-			 * If the search is started, unselect potentially selected document and close the right-side navigation panel. 
+			 * If the search is started, unselect potentially selected document and close the right-side navigation panel. Do this for all documents,
+			 * datasets and models in the Workspace (for all available options from the left menu). 
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			$scope.selectedDocument = null;
@@ -623,6 +651,12 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 			
 			$scope.showOrganizerDocumentInfo = null;
 			$scope.selectOrganizerDocument(undefined);
+			
+			$scope.showDatasetInfo = null;
+			$scope.selectDataset(undefined);
+			
+			$scope.showModelInfo = null;
+			$scope.selectModel(undefined);
 			
 			$timeout
 			(
@@ -635,20 +669,16 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 						/**
 						 * SEARCH FOR ANALYSIS
 						 */
-						case "analysis":
-							
-								var allAnalysisDocsFinal = [];
-								$scope.cockpitAnalysisDocs = filterThroughCollection(newSearchInput,$scope.cockpitAnalysisDocsInitial,"name");
-
-								$scope.searching = false;
-							
+						case "analysis":					
+							$scope.cockpitAnalysisDocs = filterThroughCollection(newSearchInput,$scope.cockpitAnalysisDocsInitial,"name");
+							$scope.searching = false;							
 							break;
 						
 						/**
 						 * SEARCH FOR RECENT
 						 */
 						case "recent":
-							$scope.recentDocumetnsList = filterThroughCollection(newSearchInput,$scope.recentDocumentsInitial,"documentName");
+							$scope.recentDocumentsList = filterThroughCollection(newSearchInput,$scope.recentDocumentsInitial,"documentName");
 							$scope.searching = false;
 							break;
 						

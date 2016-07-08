@@ -42,7 +42,7 @@ angular
 	    
 	});
 
-function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,sbiModule_user,$mdDialog,$mdSidenav,$documentViewer,$qbeViewer) {
+function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,sbiModule_user,sbiModule_messaging,$mdDialog,$mdSidenav,$documentViewer,$qbeViewer) {
 	
 	$scope.cockpitAnalysisDocsInitial = [];	
 	$scope.activeTabAnalysis = null;	
@@ -133,7 +133,11 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 										$scope.cockpitAnalysisDocs.push(response.data);
 									}
 									
-									console.info("[CLONE END]: The cloning of a selected '" + document.label + "' went successfully.");	
+									console.info("[CLONE END]: The cloning of a selected '" + document.label + "' went successfully.");
+									
+									// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+									sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.analysis.clone.document.success.msg')
+																				,sbiModule_translate.load('sbi.generic.success'));
 								},
 								
 								function(response) {
@@ -191,7 +195,18 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 										 */
 										$scope.loadAllFolders();
 										
+										/**
+										 * The document that does not exist anymore (removed from Analysis documents) and previously appeared in the Recent documents (recently 
+										 * executed ones), should be removed from this option as well (from Recent). So, provide a reload of recently executed documents.
+										 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+										 */
+										$scope.loadRecentDocumentExecutionsForUser();
+										
 										console.info("[DELETE END]: Delete of Analysis Cockpit document with the label '" + document.label + "' is done successfully.");
+										
+										// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+										sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.analysis.delete.document.success.msg')
+												,sbiModule_translate.load('sbi.generic.success'));
 									},
 								
 									function(response) {

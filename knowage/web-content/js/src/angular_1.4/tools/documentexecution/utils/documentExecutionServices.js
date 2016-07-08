@@ -413,7 +413,7 @@
 			sbiModule_restServices.promisePost('2.0/organizer/documents',execProperties.executionInstance.OBJECT_ID)
 			.then(function(response) {
 				console.log("[POST]: SUCCESS!");
-				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.browser.document.addedToWorkscpace"), sbiModule_translate.load('sbi.generic.success'));
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.browser.document.addedToWorkspace"), sbiModule_translate.load('sbi.generic.success'));
 			}, function(response) {
 				if(response.data.errors[0].message=="not-enabled-to-call-service"){
 					response.data.errors[0].message=sbiModule_translate.load('sbi.workspace.user.role.constraint');

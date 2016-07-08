@@ -240,7 +240,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 				$mdDialog.cancel();
 				$scope.clearForm();
 		        $scope.loadAllFolders();
-				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.workspace.folder.add.success.msg"), sbiModule_translate.load('sbi.generic.success'));
 			}, function(response) {	
 				
 				/**

@@ -28,18 +28,21 @@ angular
 	});
 
 function recentController($scope,sbiModule_restServices,sbiModule_translate,$documentViewer){
+	
 	$scope.translate=sbiModule_translate;
-	$scope.loadRecentDocumentExecutionsForUser =function(){
+	
+	$scope.loadRecentDocumentExecutionsForUser = function(){
 		sbiModule_restServices.promiseGet("2.0/recents","")
 		.then(function(response) {
 			console.info("[LOAD START]: Loading of Recent documents is started.");
-			angular.copy(response.data,$scope.recentDocumetnsList);
-			$scope.recentDocumentsInitial = $scope.recentDocumetnsList;
+			angular.copy(response.data,$scope.recentDocumentsList);
+			$scope.recentDocumentsInitial = $scope.recentDocumentsList;
 			console.info("[LOAD END]: Loading of Recent documents is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
+	
 	$scope.loadRecentDocumentExecutionsForUser();
 	
 	$scope.recentSpeedMenu=[{

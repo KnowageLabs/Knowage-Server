@@ -37,6 +37,14 @@ angular.module('federation_view', ['ngMaterial'])
 			//executeDocumentAction:"&",
 			orderingFederationCards:"=?",
 			showBusinessModels:"=?",
+			
+			/**
+			 * This property will provide the information which columns the federation view directive should expect, since they
+			 * are different for Business Models and Federation Models.
+			 * @author Ana Tomic (atomic, ana.tomic@mht.net)
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			tableColumns:"=?"
 		},
 		
 		link: function (scope, elem, attrs) { 
