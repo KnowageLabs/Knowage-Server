@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,17 +11,15 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.api.v2;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
@@ -29,8 +27,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,9 +62,9 @@ public class MondrianResource extends AbstractSpagoBIResource {
 	@Context
 	private UriInfo uri;
 
+	// TODO insert correct Functionalities
 	@GET
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Artifact> getAll() {
 
@@ -88,9 +84,9 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		return new ArrayList<Artifact>();
 	}
 
+	// TODO insert correct Functionalities
 	@GET
 	@Path("/{ID}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public Artifact getById(@PathParam("ID") int id) {
 
@@ -110,9 +106,9 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		return artifact;
 	}
 
+	// TODO insert correct Functionalities
 	@GET
 	@Path("/{ID}/versions")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Content> getAllContent(@PathParam("ID") int id) {
 
@@ -133,9 +129,9 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		return versions;
 	}
 
+	// TODO insert correct Functionalities
 	@GET
 	@Path("/{ID}/versions/{contentID}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public Content getContent(@PathParam("ID") int id, @PathParam("contentID") int contentId) {
 
@@ -156,9 +152,9 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		return null;
 	}
 
+	// TODO insert correct Functionalities
 	@GET
 	@Path("/{ID}/versions/{contentID}/file")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	@Produces({ MediaType.APPLICATION_OCTET_STREAM })
 	public Response getContentFile(@PathParam("ID") Integer id, @PathParam("contentID") Integer contentId) {
 
@@ -166,13 +162,13 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		Content content = artifactDAO.loadArtifactContentById(contentId);
 		byte[] file = content.getContent();
 		String s = new String(file);
-		//System.out.println(s);
+		// System.out.println(s);
 		try {
 
 			ResponseBuilder response = Response.ok(file);
 			response.header("Content-Disposition", "attachment; filename=" + content.getFileName());
 			response.header("filename", content.getFileName());
-			//System.out.println(uri.getAbsolutePath());
+			// System.out.println(uri.getAbsolutePath());
 			return response.build();
 
 		} catch (Exception e) {
@@ -182,9 +178,9 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		return Response.status(Status.BAD_REQUEST).entity("Error ").build();
 	}
 
+	// TODO insert correct Functionalities
 	@POST
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response add(@Valid Artifact artifact) {
 
@@ -212,9 +208,9 @@ public class MondrianResource extends AbstractSpagoBIResource {
 
 	}
 
+	// TODO insert correct Functionalities
 	@POST
 	@Path("/{ID}/versions")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
 	public Response uploadFile(@MultipartForm MultipartFormDataInput input, @PathParam("ID") int artifactId) {
 
@@ -244,10 +240,10 @@ public class MondrianResource extends AbstractSpagoBIResource {
 
 				artifactDAO.insertArtifactContent(artifactId, content);
 				String encodedContentId = URLEncoder.encode("" + content.getId(), "UTF-8");
-				//System.out.println(new URI(uri.getAbsolutePath() + encodedContentId));
+				// System.out.println(new URI(uri.getAbsolutePath() + encodedContentId));
 			} catch (IOException e) {
 				e.printStackTrace();
-			} 
+			}
 
 		} else {
 			return Response.status(Status.BAD_REQUEST).build();
@@ -258,9 +254,9 @@ public class MondrianResource extends AbstractSpagoBIResource {
 
 	}
 
+	// TODO insert correct Functionalities
 	@PUT
 	@Path("/{ID}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response update(@PathParam("ID") int artifactId, @Valid Artifact artifact) {
 
@@ -305,9 +301,9 @@ public class MondrianResource extends AbstractSpagoBIResource {
 
 	}
 
+	// TODO insert correct Functionalities
 	@DELETE
 	@Path("/{ID}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	public Response delete(@PathParam("ID") int artifactId) {
 
 		try {
@@ -336,21 +332,19 @@ public class MondrianResource extends AbstractSpagoBIResource {
 	 *
 	 * @UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	 *
-	 * @Consumes(MediaType.APPLICATION_JSON) public Response
-	 * deleteSelectedArtifacts(Integer[] selectedIds) {
+	 * @Consumes(MediaType.APPLICATION_JSON) public Response deleteSelectedArtifacts(Integer[] selectedIds) {
 	 *
 	 * try { for (Integer selectedId : selectedIds) { delete(selectedId); }
 	 *
-	 * return Response.ok().build(); } catch (Exception e) {
-	 * logger.error("Error while deleting url of the new resource", e); throw
-	 * new SpagoBIRestServiceException(getLocale(), e); }
+	 * return Response.ok().build(); } catch (Exception e) { logger.error("Error while deleting url of the new resource", e); throw new
+	 * SpagoBIRestServiceException(getLocale(), e); }
 	 *
 	 * }
 	 */
 
+	// TODO insert correct Functionalities
 	@DELETE
 	@Path("/{ID}/versions/{contentID}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	public Response deleteContent(@PathParam("ID") int artifactId, @PathParam("contentID") int contentId) {
 
 		try {
@@ -388,17 +382,12 @@ public class MondrianResource extends AbstractSpagoBIResource {
 	 *
 	 * @UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	 *
-	 * @Consumes(MediaType.APPLICATION_JSON) public Response
-	 * deleteSelectedVersions(@PathParam("ID") int id, Integer[] selectedIds) {
+	 * @Consumes(MediaType.APPLICATION_JSON) public Response deleteSelectedVersions(@PathParam("ID") int id, Integer[] selectedIds) {
 	 *
-	 * try { for (Integer selectedId : selectedIds) { deleteContent(id,
-	 * selectedId); }
+	 * try { for (Integer selectedId : selectedIds) { deleteContent(id, selectedId); }
 	 *
-	 * return Response.ok().build(); } catch (Exception e) {
-	 * logger.error("Error while deleting url of the new resource", e); throw
-	 * new
-	 * SpagoBIRuntimeException("Error while deleting url of the new resource",
-	 * e); }
+	 * return Response.ok().build(); } catch (Exception e) { logger.error("Error while deleting url of the new resource", e); throw new
+	 * SpagoBIRuntimeException("Error while deleting url of the new resource", e); }
 	 *
 	 * }
 	 */
