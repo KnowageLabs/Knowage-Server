@@ -71,13 +71,13 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   //TODO: to complete
   $window.document.addEventListener("SVGElementClickedCrossNavigation", function(e) {
 	  	var driversParameter = getDriverParameters();
-	  	//alert(driversParameter);
 	  	
-	  	//fake data just for test
+	  	//pass the clicked element id as output parameter
+	  	var clickedElement = e.detail;
 	  	var crossData=[];
-	  	//var testObject = new Object();
-	  	//testObject.param1 = "passato dalla cross"
-	  	//crossData.push(testObject);
+	  	var object = new Object();
+	  	object.ELEMENT_ID = clickedElement;
+	  	crossData.push(object);
 		parent.execExternalCrossNavigation(crossData,driversParameter,undefined,driversParameter.DOCUMENT_LABEL);
 
 	});
