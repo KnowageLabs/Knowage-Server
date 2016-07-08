@@ -273,146 +273,158 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	 */
 	$scope.leftMenuItemPicked = function(item) {
 		
+		var newLeftMenuItemPicked = item.name.toLowerCase();
+		
 		/**
-		 * Handle the situation of clicking on the left menu option, keeping track of the state of the search input field. In the if-block 
-		 * we should reload the data - re-initialize (after clearing the search field).
+		 * If user picks the same option from the left menu as the one that is already selected, do nothing. The right detail 
+		 * panel (that contains documents, datasets and folders - depending on the option that is picked) will remain in the
+		 * same state as before clicking.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		if ($scope.searchInput!="") {
-			$scope.resetSearchedData = true;			
-			$scope.resetOption = ($scope.currentOptionMainMenu==item.name.toLowerCase()) ? item.name.toLowerCase() : $scope.currentOptionMainMenu;		
-		}
-		else {
+		if ($scope.currentOptionMainMenu!=newLeftMenuItemPicked) {
 			
 			/**
-			 * Needed for reseting of the searched data when changing options in the left menu.
-			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 * Handle the situation of clicking on the left menu option, keeping track of the state of the search input field. In the if-block 
+			 * we should reload the data - re-initialize (after clearing the search field).
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
-			$scope.resetSearchedData = true;			
-			$scope.resetOption = item.name.toLowerCase();
-		}
+			if ($scope.searchInput!="") {
+				$scope.resetSearchedData = true;			
+				$scope.resetOption = ($scope.currentOptionMainMenu==item.name.toLowerCase()) ? item.name.toLowerCase() : $scope.currentOptionMainMenu;		
+			}
+			else {
 				
-		$scope.currentOptionMainMenu = item.name.toLowerCase();
-		$scope.selectMenuItem(item);
-		
-		/**
-		 * If the previously selected item from the left main menu was one of three suboptions of the 'Data' option (Datasets, Models, SmartFilters) and the newly selected
-		 * item is not among those three, whilst the Data option is collapsed, unselect the Data option.
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
-		var isSuboptionActiveTemp = $scope.currentOptionMainMenu=="models" || $scope.currentOptionMainMenu=="datasets" || $scope.currentOptionMainMenu=="smartfilters";
+				/**
+				 * Needed for reseting of the searched data when changing options in the left menu.
+				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				$scope.resetSearchedData = true;			
+				$scope.resetOption = item.name.toLowerCase();
+			}
+					
+			$scope.currentOptionMainMenu = item.name.toLowerCase();
+			$scope.selectMenuItem(item);
 			
-		if (!isSuboptionActiveTemp && $scope.isSuboptionActive) {
-			$scope.suboptionActive = false;
-		}
-	
-		if (searchedBefore) {
-			$scope.searchInput = "";			
-			$scope.setSearchInput($scope.searchInput);
-		}
+			/**
+			 * If the previously selected item from the left main menu was one of three suboptions of the 'Data' option (Datasets, Models, SmartFilters) and the newly selected
+			 * item is not among those three, whilst the Data option is collapsed, unselect the Data option.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			var isSuboptionActiveTemp = $scope.currentOptionMainMenu=="models" || $scope.currentOptionMainMenu=="datasets" || $scope.currentOptionMainMenu=="smartfilters";
+				
+			if (!isSuboptionActiveTemp && $scope.isSuboptionActive) {
+				$scope.suboptionActive = false;
+			}
 		
-		/**
-		 * Unselect the already selected document when changing the option in the left menu.
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
-		$scope.selectedDocument = undefined;
-		
-		/**
-		 * Provide loading for different Workspace options from the left main menu only when it is chosen (clicked)
-		 * for the first time (after loading the main page). By default, the Recent documents are displayed first.
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
-		switch($scope.currentOptionMainMenu) {
+			if (searchedBefore) {
+				$scope.searchInput = "";			
+				$scope.setSearchInput($scope.searchInput);
+			}
 			
-			case "analysis":
+			/**
+			 * Unselect the already selected document when changing the option in the left menu.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			$scope.selectedDocument = undefined;
+			
+			/**
+			 * Provide loading for different Workspace options from the left main menu only when it is chosen (clicked)
+			 * for the first time (after loading the main page). By default, the Recent documents are displayed first.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			switch($scope.currentOptionMainMenu) {
 				
-				if ($scope.analysisDocumentsLoaded==false) {
-					console.info("[LOAD START]: Loading of Analysis documents is started.");
-					$scope.loadAllMyAnalysisDocuments();
-					$scope.analysisDocumentsLoaded = true;
-				}
-
-				break;
-
-			case "favorites":
-				
-				if (favoritesDocumentsLoaded==false) {
-					console.info("[LOAD START]: Loading of Favorites documents is started.");
-					$scope.loadFavoriteDocumentExecutionsForUser();
-					favoritesDocumentsLoaded = true;
-				}
-				
-				break;
-				
-			case "documents":
-				
-				if (organizerDocumentsLoaded==false) {
-					console.info("[LOAD START]: Loading of Organizer documents is started.");
-					$scope.loadAllFolders();
-					organizerDocumentsLoaded = true;
-				}
-				
-				break;
-				
-			case "datasets":
-				
-				if ($scope.datasetsDocumentsLoaded==false) {
+				case "analysis":
 					
-					console.info("[LOAD START]: Loading of Datasets is started.");
-					
-//					if ($scope.reloadMyData==true) {
-//						console.info("[LOAD]: Not derivated datasets additionaly, because of reloading of MyData.");
-//						$scope.loadNotDerivedDatasets();
-//					}
-					
-					$scope.loadDatasets();
-					$scope.loadMyDatasets();
-					$scope.loadEnterpriseDatasets();
-					$scope.loadSharedDatasets();
-						
-					$scope.datasetsDocumentsLoaded = true;
-					$scope.reloadMyData==false;
-				}
-				else {
-					if ($scope.reloadMyData==true) {
-						console.info("[LOAD]: Not derivated datasets, All datasets and  My Datasets, because of reloading of MyData.");
-						$scope.loadNotDerivedDatasets();
-						$scope.loadDatasets();
-			        	$scope.loadMyDatasets();
-			        	$scope.reloadMyData = false;
+					if ($scope.analysisDocumentsLoaded==false) {
+						console.info("[LOAD START]: Loading of Analysis documents is started.");
+						$scope.loadAllMyAnalysisDocuments();
+						$scope.analysisDocumentsLoaded = true;
 					}
-				}
-				
-				break;
+
+					break;
+
+				case "favorites":
+					
+					if (favoritesDocumentsLoaded==false) {
+						console.info("[LOAD START]: Loading of Favorites documents is started.");
+						$scope.loadFavoriteDocumentExecutionsForUser();
+						favoritesDocumentsLoaded = true;
+					}
+					
+					break;
+					
+				case "documents":
+					
+					if (organizerDocumentsLoaded==false) {
+						console.info("[LOAD START]: Loading of Organizer documents is started.");
+						$scope.loadAllFolders();
+						organizerDocumentsLoaded = true;
+					}
+					
+					break;
+					
+				case "datasets":
+					
+					if ($scope.datasetsDocumentsLoaded==false) {
+						
+						console.info("[LOAD START]: Loading of Datasets is started.");
+						
+//						if ($scope.reloadMyData==true) {
+//							console.info("[LOAD]: Not derivated datasets additionaly, because of reloading of MyData.");
+//							$scope.loadNotDerivedDatasets();
+//						}
+						
+						$scope.loadDatasets();
+						$scope.loadMyDatasets();
+						$scope.loadEnterpriseDatasets();
+						$scope.loadSharedDatasets();
 							
-			case "models":
-				
-				if (modelsDocumentsLoaded==false) {
+						$scope.datasetsDocumentsLoaded = true;
+						$scope.reloadMyData==false;
+					}
+					else {
+						if ($scope.reloadMyData==true) {
+							console.info("[LOAD]: Not derivated datasets, All datasets and  My Datasets, because of reloading of MyData.");
+							$scope.loadNotDerivedDatasets();
+							$scope.loadDatasets();
+				        	$scope.loadMyDatasets();
+				        	$scope.reloadMyData = false;
+						}
+					}
 					
-					console.info("[LOAD START]: Loading of Models is started.");
+					break;
+								
+				case "models":
 					
-					$scope.loadFederations();
-					$scope.loadBusinessModels();
+					if (modelsDocumentsLoaded==false) {
+						
+						console.info("[LOAD START]: Loading of Models is started.");
+						
+						$scope.loadFederations();
+						$scope.loadBusinessModels();
+						
+						modelsDocumentsLoaded = true;
+					}
 					
-					modelsDocumentsLoaded = true;
-				}
-				
-				break;
-				
-			case "smartfilters":
-				
-				if (smartFiltersDocumentsLoaded==false) {
+					break;
 					
-					console.info("[LOAD START]: Loading of Smart filters is started.");					
-					/**
-					 * TODO: Add functionality for loading all smart filters.
-					 */		
-					$scope.loadSmartFilters();
-					smartFiltersDocumentsLoaded = true;
-				}
-				
-				break;
-				
+				case "smartfilters":
+					
+					if (smartFiltersDocumentsLoaded==false) {
+						
+						console.info("[LOAD START]: Loading of Smart filters is started.");					
+						/**
+						 * TODO: Add functionality for loading all smart filters.
+						 */		
+						$scope.loadSmartFilters();
+						smartFiltersDocumentsLoaded = true;
+					}
+					
+					break;
+					
+			}
+			
 		}
 		
 	}
