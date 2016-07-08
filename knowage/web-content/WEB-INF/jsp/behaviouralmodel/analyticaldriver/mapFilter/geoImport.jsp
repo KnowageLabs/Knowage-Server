@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- openlayer import -->
 
-<link rel="stylesheet" href="http://openlayers.org/en/v3.10.1/css/ol.css" type="text/css">
-<script src="http://openlayers.org/en/v3.10.1/build/ol.js" type="text/javascript"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/openlayers/3.x.x/ol.js"></script> 
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/openlayers/3.x.x/ol.css" type="text/css">
 
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script>
