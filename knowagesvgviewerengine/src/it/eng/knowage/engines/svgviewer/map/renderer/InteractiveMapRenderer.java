@@ -13,6 +13,7 @@ import it.eng.knowage.engines.svgviewer.map.utils.SVGMapMerger;
 import it.eng.knowage.engines.svgviewer.map.utils.SVGMapSaver;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -179,9 +180,46 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			mergeAndDecorateMapTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.mergeAndDecorateMap");
 
 			addData(targetMap, dataMart);
-			// add links only if it isn't the last level
+
+			// add cross link ONLY if it's required by the template (at the moment is mutual exclusive with the drill link)
+			boolean useCrossNav = false;
+			if (datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName()).getEnableCross()) {
+				useCrossNav = true;
+				logger.debug("Required cross navigation for member [" + datamartProvider.getSelectedHierarchyName() + "]. "
+						+ " Checking presence of cross navigation definition...");
+				try {
+					boolean isCrossable = DAOFactory.getCrossNavigationDAO().documentIsCrossable((String) this.getEnv().get("DOCUMENT_LABEL"));
+					// if (isCrossable) {
+					// logger.debug("... The cross navigation is founded. Define the link url...");
+					// JSONArray crossNavJSON = DAOFactory.getCrossNavigationDAO().loadNavigationByDocument((String) this.getEnv().get("DOCUMENT_LABEL"));
+					// if (crossNavJSON.length() == 0) {
+					// logger.debug("The cross navigation hasn't got any parameters. ");
+					// } else {
+					// addCrossLink(targetMap, dataMart, crossNavJSON);
+					// }
+					// } else {
+					// logger.debug("... The cross navigation for the document isn't present." + " Please, check its definition through the GUI.");
+					// }
+					if (isCrossable) {
+						logger.debug("... The cross navigation is founded. Define the link url...");
+						addCrossLink(targetMap, dataMart);
+					} else {
+						logger.debug("... The cross navigation for the document isn't present." + " Please, check its definition through the GUI.");
+					}
+
+				} catch (Throwable t) {
+					SvgViewerEngineException geoException;
+					logger.error("Impossible to create a temporary file", t);
+					String description = "Impossible to create a temporary file";
+					geoException = new SvgViewerEngineException("Impossible to render map", t);
+					geoException.setDescription(description);
+					throw geoException;
+				}
+			}
+
+			// add drill links ONLY if it isn't the last level
 			Integer intSelectedLevel = (datamartProvider.getSelectedLevel() == null) ? 0 : Integer.valueOf(datamartProvider.getSelectedLevel());
-			if (intSelectedLevel < datamartProvider.getHierarchyMembersNames().size()) {
+			if (!useCrossNav && intSelectedLevel < datamartProvider.getHierarchyMembersNames().size()) {
 				addLink(targetMap, dataMart);
 			} else {
 				logger.debug("Not added drillable link because it\'s the last level! ");
@@ -1149,6 +1187,125 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 			String elementId = featureElement.getAttribute("id");
 			featureElement.setAttribute("onclick", "javascript:clickedElement('" + elementId + "')");
+
+			targetLayer.appendChild(featureElement);
+			Node lf = map.createTextNode("\n");
+			targetLayer.appendChild(lf);
+
+			// targetLayer.appendChild(linkElement);
+			// Node lf = map.createTextNode("\n");
+			// targetLayer.appendChild(lf);
+		}
+
+		// deletes duplicate path
+		boolean isNew = false;
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node childNode = nodeList.item(i);
+			SVGElement childOrig = null;
+			if (childNode instanceof SVGElement) {
+				try {
+					childOrig = (SVGElement) childNode;
+				} catch (ClassCastException e) {
+
+					logger.debug("DynamicMapRenderer :: addLinK : Element Generic", e);
+
+				}
+				String childId = "";
+				String column_id = "";
+				if (childOrig != null) {
+					childId = childOrig.getId();
+					column_id = childId.replaceAll(datamart.getTargetFeatureName() + "_", "");
+				}
+				Iterator it = lstLink.iterator();
+				isNew = false;
+				while (it.hasNext()) {
+					String tmpMapVal = (String) ((Map) it.next()).get("column_id");
+					if (column_id.equals(tmpMapVal)) {
+						isNew = true;
+						break;
+					}
+				}
+				// if (isNew && childOrig != null) map.removeChild(childOrig);
+			}
+		}
+
+	}
+
+	private void addCrossLink(SVGDocument map, DataMart datamart) {
+
+		IDataStore dataStore;
+		IMetaData dataStoreMeta;
+		List list;
+		IFieldMetaData filedMeta;
+
+		dataStore = datamart.getDataStore();
+		Assert.assertNotNull(dataStore, "DataStore cannot be null");
+
+		dataStoreMeta = dataStore.getMetaData();
+		Assert.assertNotNull(dataStore, "DataStoreMeta cannot be null");
+
+		list = dataStoreMeta.findFieldMeta("ROLE", "CROSSNAVLINK");
+		logger.debug("Number of links per feature is equals to [" + list.size() + "]");
+		if (list.size() == 0) {
+			return;
+		}
+		filedMeta = (IFieldMetaData) list.get(0);
+
+		Element targetLayer = map.getElementById(datamart.getTargetFeatureName());
+		NodeList nodeList = targetLayer.getChildNodes();
+		Map mapLink = null;
+		List lstLink = new ArrayList();
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node childNode = nodeList.item(i);
+			try {
+				if (childNode instanceof Element) {
+					SVGElement childOrig = (SVGElement) childNode;
+					String childId = childOrig.getId();
+					String column_id = childId.replaceAll(datamart.getTargetFeatureName() + "_", "");
+
+					IRecord record = dataStore.getRecordByID(column_id);
+					if (record == null) {
+						logger.warn("No data available for feature [" + column_id + "]");
+						continue;
+					}
+
+					IField filed = record.getFieldAt(dataStoreMeta.getFieldIndex(filedMeta.getName()));
+
+					String link = "" + filed.getValue();
+
+					if (link != null) {
+						mapLink = new HashMap();
+						mapLink.put("column_id", column_id);
+						mapLink.put("path", childOrig);
+						mapLink.put("link", link);
+						lstLink.add(mapLink);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		// adds href links
+		for (int j = 0; j < lstLink.size(); j++) {
+			Map tmpMap = (Map) lstLink.get(j);
+			Element linkElement = map.createElement("a");
+			linkElement.setAttribute("xlink:href", (String) tmpMap.get("link"));
+			// linkElement.setAttribute("target", "_parent");
+
+			Element featureElement = (Element) tmpMap.get("path");
+			// linkElement.appendChild(featureElement);
+
+			if (featureElement.hasAttribute("style")) {
+				String elementStyle = featureElement.getAttribute("style");
+				elementStyle = elementStyle + ";cursor:pointer";
+				featureElement.setAttribute("style", elementStyle);
+			} else {
+				featureElement.setAttribute("style", "cursor:pointer");
+			}
+
+			String elementId = featureElement.getAttribute("id");
+			featureElement.setAttribute("onclick", "javascript:clickedElementCrossNavigation('" + elementId + "')");
 
 			targetLayer.appendChild(featureElement);
 			Node lf = map.createTextNode("\n");

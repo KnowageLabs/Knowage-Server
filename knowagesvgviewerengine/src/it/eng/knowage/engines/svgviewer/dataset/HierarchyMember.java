@@ -20,6 +20,7 @@ public class HierarchyMember {
 	private String name;
 	private String dsMeasure;
 	private Integer level;
+	private Boolean enableCross;
 
 	private DataSetMetaData dsMetaData;
 	private Map<String, Layer> layers;
@@ -145,6 +146,21 @@ public class HierarchyMember {
 	 */
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	/**
+	 * @return the enableCross
+	 */
+	public Boolean getEnableCross() {
+		return enableCross;
+	}
+
+	/**
+	 * @param enableCross
+	 *            the enableCross to set
+	 */
+	public void setEnableCross(Boolean enableCross) {
+		this.enableCross = enableCross;
 	}
 
 }

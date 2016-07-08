@@ -281,6 +281,9 @@ public class AbstractDataMartProviderConfigurator {
 					logger.debug("Member [" + i + "] config_dataset [" + dsConfig + "]");
 					String level = (String) memberSB.getAttribute("level");
 					logger.debug("Member [" + i + "] level [" + level + "]");
+					String enableCross = (memberSB.getAttribute("enableExternalCross") == null) ? "false" : (String) memberSB
+							.getAttribute("enableExternalCross");
+					logger.debug("Member [" + i + "] enableExternalCross [" + enableCross + "]");
 
 					Assert.assertNotNull(name, "Attribute [" + SvgViewerEngineConstants.MEMBER_NAME + "] of tag [" + SvgViewerEngineConstants.MEMBER_NAME
 							+ "] cannot be null");
@@ -296,6 +299,7 @@ public class AbstractDataMartProviderConfigurator {
 					member.setName(name);
 					member.setDsMeasure(dsMeasure);
 					member.setLevel(Integer.valueOf(level));
+					member.setEnableCross(new Boolean(enableCross));
 
 					// get metadata informations
 					DataSetMetaData dsMetadata = getMetaData(memberSB);
