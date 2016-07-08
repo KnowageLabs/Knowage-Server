@@ -25,6 +25,7 @@ import it.eng.knowage.meta.model.serializer.ModelPropertyFactory;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tenant.Tenant;
@@ -41,17 +42,21 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,6 +77,8 @@ import org.eclipse.emf.common.util.EList;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -825,6 +832,66 @@ public class MetaService extends AbstractSpagoBIResource {
 		businessModelInitializer.initialize("pippoBusiness", physicalTableFilter, physicalModel);
 
 		return model;
+	}
+
+	public static byte[] extractSbiModelFromJar(Content content) {
+		byte[] ret = null;
+
+		// read jar
+		byte[] contentBytes = content.getContent();
+
+		JarFile jar = null;
+		FileOutputStream output = null;
+		java.io.InputStream is = null;
+
+		try {
+			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
+			UUID uuidObj = uuidGen.generateTimeBasedUUID();
+			String idCas = uuidObj.toString().replaceAll("-", "");
+			logger.debug("create temp file for jar");
+			String path = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + idCas + ".jar";
+			logger.debug("temp file for jar " + path);
+			File filee = new File(path);
+			output = new FileOutputStream(filee);
+			IOUtils.write(contentBytes, output);
+
+			jar = new JarFile(filee);
+			logger.debug("jar file created ");
+
+			Enumeration enumEntries = jar.entries();
+			while (enumEntries.hasMoreElements()) {
+				JarEntry fileEntry = (java.util.jar.JarEntry) enumEntries.nextElement();
+				logger.debug("jar content " + fileEntry.getName());
+
+				if (fileEntry.getName().endsWith("sbimodel")) {
+					logger.debug("found model file " + fileEntry.getName());
+					is = jar.getInputStream(fileEntry);
+					byte[] byteContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
+					return byteContent;
+
+				}
+
+			}
+		} catch (IOException e1) {
+			logger.error("the model file could not be taken by datamart.jar due to error ", e1);
+			return null;
+		} finally {
+			try {
+
+				if (jar != null)
+					jar.close();
+				if (output != null)
+					output.close();
+				if (is != null)
+					is.close();
+			} catch (IOException e) {
+				logger.error("error in closing streams");
+			}
+			logger.debug("OUT");
+		}
+		logger.error("the model file could not be taken by datamart.jar");
+		return null;
+
 	}
 
 	public static void main2(String[] args) {

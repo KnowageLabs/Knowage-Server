@@ -67,7 +67,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			$scope.togenerate = false;
 			$scope.isDirty=false;
 			$scope.isCWMDirty = false;
-			
+			$scope.metaWebFunctionality=false;
 		}
 		else{
 			$mdDialog.show($scope.confirm).then(function(){
