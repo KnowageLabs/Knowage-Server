@@ -17,7 +17,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.isCWMDirty = false;
 	$scope.showMe = false;				//boolean
 	$scope.versionLoadingShow;
-	$scope.bmLoadingShow;
 	$scope.bmImportingShow;
 	$scope.bmCWMProcessingShow;
 	$scope.bmCWMImportingShow;
@@ -41,6 +40,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.fileCWMClicked =false;
 
 	$scope.togenerate = false;
+	$scope.haveSbiModel = false;
 
 	angular.element(document).ready(function () {
         $scope.getData();
@@ -65,7 +65,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			$scope.showMe = true;
 			$scope.fileClicked = false;
 			$scope.fileCWMClicked = false;
-			
+			$scope.togenerate = false;
+			$scope.haveSbiModel = false;
 			$scope.isDirty=false;
 			$scope.isCWMDirty = false;
 			
@@ -216,22 +217,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 
 		 sbiModule_restServices.promiseGet("2.0", 'businessmodels')
 			.then(function(response) {
-				
-				$scope.bmLoadingShow = true;
-					$scope.businessModelList = [];
-					
-					if(response.data.length == 0)
-						$scope.bmLoadingShow = false;
-					setTimeout(function(){
-  					for(var i = 0; i < response.data.length; i++){
-  						$scope.businessModelList.push(response.data[i]);
-  						$scope.bmLoadingShow = false;
-  						$scope.$apply();
-		  			}
-					},1000);	
-			
+				angular.copy(response.data,$scope.businessModelList)
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				sbiModule_restServices.errorHandler(response.data, 'Error');
 			});	
 	 }
 	 
@@ -270,6 +258,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 						
 						
 						$scope.togenerate=response.data.togenerate
+						$scope.haveSbiModel=response.data.haveSbiModel
 						
 						
 						$scope.bmVersions = response.data.versions;
@@ -518,22 +507,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			$scope.fileCWMClicked = true;  // tells that file input has been clicked
 		}
 		
-		//check if is name dirty 
-		$scope.checkChange = function(){
-
-			if($scope.selectedBusinessModel.name === undefined || $scope.selectedBusinessModel.name === "" 
-				|| ( $scope.selectedBusinessModel.id === undefined && $scope.fileObj.file == undefined) 
-				|| ( $scope.selectedBusinessModel.dataSourceLabel == undefined || $scope.selectedBusinessModel.dataSourceLabel == null)
-			){
-					$scope.isDirty = false;
-			}
-			else{
-				$scope.isDirty = true;
-				
-			}
-			
-			//$scope.isDirty = true;
-		}
+	
 		
 		//check if is name dirty 
 		$scope.checkCWMChange = function(){
@@ -597,7 +571,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		
 		$scope.saveBtnDisabled = function(){
 			if($scope.selectedBusinessModel.name === undefined || $scope.selectedBusinessModel.name === "" 
-				|| ( $scope.selectedBusinessModel.id === undefined && $scope.fileObj.file == undefined) 
 				|| ( $scope.selectedBusinessModel.dataSourceLabel == undefined || $scope.selectedBusinessModel.dataSourceLabel == null)
 			){
 					return true;
@@ -719,8 +692,13 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					escapeToClose :true,
 					fullscreen: true,
 //					locals:{url:sbiModule_config.contextName+'/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp&datasourceId='+dsId}
-					locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name}
-				});
+					locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name+"&editModel="+$scope.haveSbiModel}
+				}).then(function(){
+					//refresh
+					$scope.getVersions($scope.selectedBusinessModel.id);
+				})
+				
+				;
 			}
 };
 

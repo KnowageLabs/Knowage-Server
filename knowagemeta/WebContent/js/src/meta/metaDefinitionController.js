@@ -91,24 +91,68 @@ app.service("metaModelServices",function(sbiModule_jsonServices){
 	}
 })
 
-app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices', metaDefinitionControllerFunction ]);
+app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval', metaDefinitionControllerFunction ]);
 
 
 
-function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices) {
+function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices,$interval) {
 	$scope.translate = sbiModule_translate;
+	$scope.physicalModelTreeInterceptor = {};
+	$scope.businessModelTreeInterceptor = {};
+	$scope.businessViewTreeInterceptor = {};
 	$scope.steps = {
 		current : 0
 	};
+
+
+
+	$scope.loadSbiModel=function(){
+		sbiModule_restServices.promiseGet("1.0/metaWeb", "loadSbiModel/"+bmId)
+		.then(
+				function(response) {
+
+					angular.copy(response.data,$scope.meta);
+					metaModelServices.observe($scope.meta);
+
+					var refreshPMT= $interval(function() {
+				        if ($scope.physicalModelTreeInterceptor.refreshTree!=undefined) {
+				        	  $interval.cancel(refreshPMT);
+				        		$scope.physicalModelTreeInterceptor.refreshTree();
+				          }
+				        }, 500,10);
+
+					var refreshBMT= $interval(function() {
+				        if ($scope.businessModelTreeInterceptor.refreshTree!=undefined) {
+				        	  $interval.cancel(refreshBMT);
+				        		$scope.businessModelTreeInterceptor.refreshTree();
+				          }
+				        }, 500,10);
+
+					var refreshBVT= $interval(function() {
+				        if ($scope.businessViewTreeInterceptor.refreshTree!=undefined) {
+				        	  $interval.cancel(refreshBVT);
+				        		$scope.businessViewTreeInterceptor.refreshTree();
+				          }
+				        }, 500,10);
+
+				},
+				function(response) {
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.datasource.error"));
+				});
+	}
+
+	if(editModel==true){
+		$scope.steps.current=1;
+		$scope.loadSbiModel();
+	}
 	$scope.datasourceId = datasourceId;
-	$scope.meta = {};
+	$scope.meta={physicalModels:[],businessModels:[],businessViews:[]};
 	$scope.physicalModels = []; // array of table to transform in physical model
 	$scope.businessModels = []; // array of table to transform in business model
 
 //	$scope.physicalModel = [];
 //	$scope.businessModel = [];
 
-	$scope.meta={physicalModels:[],businessModels:[]};
 
 
 
@@ -173,7 +217,8 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 							sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.datasource.error"));
 						});
 
-	}
+	};
+
 
 }
 

@@ -118,6 +118,29 @@ public class MetaService extends AbstractSpagoBIResource {
 		return Response.serverError().build();
 	}
 
+	@GET
+	@Path("/loadSbiModel/{bmId}")
+	public Response loadSbiModel(@PathParam("bmId") Integer bmId, @Context HttpServletRequest req) {
+		try {
+			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+			businessModelsDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+
+			EmfXmiSerializer serializer = new EmfXmiSerializer();
+			Content lastFileModelContent = businessModelsDAO.lastFileModelMeta(bmId);
+			lastFileModelContent.getFileModel();
+			InputStream is = new ByteArrayInputStream(lastFileModelContent.getFileModel());
+			Model model = serializer.deserialize(is);
+			req.getSession().setAttribute(EMF_MODEL, model);
+
+			JSONObject translatedModel = createJson(model);
+
+			return Response.ok(translatedModel.toString()).build();
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(), t);
+		}
+	}
+
 	@POST
 	@Path("/generateModel")
 	public Response generateModel(@Context HttpServletRequest req) {

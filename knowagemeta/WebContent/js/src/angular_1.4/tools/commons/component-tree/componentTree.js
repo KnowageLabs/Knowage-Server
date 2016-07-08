@@ -92,6 +92,13 @@
 								return {
 									pre : function(scope, element, attrs, ctrl,
 											transclud) {
+
+										if (scope.interceptor != undefined) {
+											scope.interceptor.refreshTree = function() {
+												scope.refreshTree();
+											}
+										}
+
 									},
 
 									post : function(scope, element, attrs,
@@ -407,11 +414,7 @@
 
 										scope.seeTree = true;
 
-										if (scope.interceptor != undefined) {
-											scope.interceptor.refreshTree = function() {
-												scope.refreshTree();
-											}
-										}
+
 									}
 								};
 							}

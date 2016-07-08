@@ -72,17 +72,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <title>Business Model Catalogue</title>
 </head>
 <body  class="bodyStyle businessModelCatalog" ng-controller="businessModelCatalogueController as ctrl">
+<rest-loading></rest-loading>
 	<angular-list-detail show-detail="showMe">
 		<list label='translate.load("sbi.tools.catalogue.metaModelsCatalogue")' new-function="createBusinessModel"> 
 
-				<div layout-align="space-around" layout="row" style="height:100%" ng-show="bmLoadingShow">
-     				<md-progress-circular 
-        	 			class=" md-hue-4"
-        				md-mode="indeterminate" 
-        				md-diameter="70"       
-        				style="height:100%;">
-      				</md-progress-circular>
-      			</div> 
+			
 				
 
 					<angular-table 
@@ -105,37 +99,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<detail label='selectedBusinessModel.name==undefined? "" : selectedBusinessModel.name'  
 				save-function="saveBusinessModel"
 				cancel-function="cancel"
-				disable-save-button="saveBtnDisabled()"
+				disable-save-button="!businessModelForm.$valid"
 				show-save-button="showMe" show-cancel-button="showMe">
+		   <form name="businessModelForm">
 		
 		
-		
-          <form id="businessModelForm">
           <md-card>
 	        <md-card-content>
 	        <div flex=100>
 		        <md-input-container class="md-block" >
 					<label>{{translate.load("sbi.ds.name")}}</label>
-					<input ng-change="checkChange()" ng-model="selectedBusinessModel.name" required
-						 ng-maxlength="100">
-						 <div ng-message="required" ng-show='selectedBusinessModel.name==undefined  || selectedBusinessModel.name==""'>Field is required</div>
+					<input ng-model="selectedBusinessModel.name" name="name" required ng-maxlength="100">
+					<div ng-messages="businessModelForm.name.$error">
+			          <div ng-message="required">Name is required.</div>
+			        </div>
 				</md-input-container>
 				</div>
 				
 				<div flex=100>
 				<md-input-container class="md-block">
 					<label>{{translate.load("sbi.ds.description")}}</label>
-					<input ng-model="selectedBusinessModel.description"
-						ng-maxlength="100" ng-change="checkChange()"> 
+					<input ng-model="selectedBusinessModel.description"	ng-maxlength="100" > 
 				</md-input-container>
 				</div>
 				
 				<div flex=100>
 				<md-input-container class="md-block"> 
 					<label>{{translate.load("sbi.ds.catType")}}</label>
-				   <md-select  aria-label="aria-label"
-				    ng-model="selectedBusinessModel.category" ng-change="checkChange()"> <md-option
-				    ng-repeat="c in listOfCategories" value="{{c.VALUE_ID}}">{{c.VALUE_NM}} </md-option>
+				   <md-select  aria-label="aria-label" ng-model="selectedBusinessModel.category" >
+				    <md-option  ng-repeat="c in listOfCategories" value="{{c.VALUE_ID}}">{{c.VALUE_NM}} </md-option>
 				   </md-select> 
 				</md-input-container>
 				</div>
@@ -143,17 +135,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<div flex=100>
 				<md-input-container class="md-block"> 
 					<label>{{translate.load("sbi.ds.dataSource")}}</label>
-				       <md-select  aria-label="aria-label"
-				        ng-model="selectedBusinessModel.dataSourceLabel" ng-change="checkChange()"> <md-option
+				       <md-select  aria-label="aria-label" required name="ds"
+				        ng-model="selectedBusinessModel.dataSourceLabel"> <md-option
 				        ng-repeat="d in listOfDatasources" value="{{d.DATASOURCE_LABEL}}">{{d.DATASOURCE_LABEL}} </md-option>
 				       </md-select>
-				       <div ng-message="required" ng-show='selectedBusinessModel.dataSourceLabel==undefined'>Field is required</div>
+				       <div ng-messages="businessModelForm.ds.$error">
+			        	  <div ng-message="required">Datasource is required.</div>
+			       		</div>
+				       
 				</md-input-container>
 				</div>
 				
 				<div layout="row" layout-wrap layout-align="start center">
 					<label ng-if="!metaWebFunctionality"  class="buttonLabel">{{translate.load("sbi.ds.file.upload.button")}}:</label>
-      				<file-upload ng-if="!metaWebFunctionality"  flex ng-model="fileObj" id="businessModelFile" ng-change="checkChange()"flex></file-upload>
+      				<file-upload ng-if="!metaWebFunctionality"  flex ng-model="fileObj" id="businessModelFile" flex></file-upload>
       				
       				
       				<% if(isAdmin || isTec){ %>
@@ -180,8 +175,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<%} %>
       				
 				</div>
-				<div ng-message="required" style="color:red" ng-show="fileObj.file==undefined && selectedBusinessModel.id == undefined">File is required</div>
-
+				
 				
 			</md-card-content>
 	      </md-card>
@@ -255,7 +249,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	      <md-card-content layout="column">
 	      	
-				<md-radio-group ng-model="bmVersionsActive" ng-change="checkChange()">
+				<md-radio-group ng-model="bmVersionsActive" >
 				
 				<angular-table
 					ng-show="!versionLoadingShow"
@@ -281,8 +275,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						
 	      </md-card-content>
 	      </md-card>
-	      </form>
 
+	      </form>
 		</detail>
 	</angular-list-detail>
 </body>

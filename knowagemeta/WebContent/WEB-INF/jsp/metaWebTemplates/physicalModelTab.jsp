@@ -1,20 +1,20 @@
 <angular-list-detail ng-controller="metaModelCreationPhysicalController">
 	<list label="'BusinessModelName'" layout="column"> 
-
-		<component-tree id="pmTree"  style="margin:0px"
-			ng-model="meta.physicalModels"
-			highlights-selected-item="true"   
-			subnode-key="columns" 
-			click-function="selectPhysicalModel(node)"
-			hide-progress=true
-			not-hide-on-load = true
-			folder-icon-fn="physicalModel_getlevelIcon(node)"
-			open-folder-icon-fn="physicalModel_getlevelIcon(node)"
-			is-folder-fn="physicalModel_isFolder(node)"
-			expand-on-click=false
-			interceptor="physicalModelTreeInterceptor"
-		></component-tree>
-		
+		<span ng-if="meta.physicalModels.length>0">
+			<component-tree id="pmTree"  style="margin:0px"
+				ng-model="meta.physicalModels"
+				highlights-selected-item="true"   
+				subnode-key="columns" 
+				click-function="selectPhysicalModel(node)"
+				hide-progress=true
+				not-hide-on-load = true
+				folder-icon-fn="physicalModel_getlevelIcon(node)"
+				open-folder-icon-fn="physicalModel_getlevelIcon(node)"
+				is-folder-fn="physicalModel_isFolder(node)"
+				expand-on-click=false
+				interceptor="physicalModelTreeInterceptor"
+			></component-tree>
+		</span>
 	</list>
 	
 	<extra-list-button>

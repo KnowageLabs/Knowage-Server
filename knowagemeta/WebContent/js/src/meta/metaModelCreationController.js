@@ -16,7 +16,7 @@ function metaModelCreationControllerFunction($scope, sbiModule_translate,sbiModu
 
 function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config) {
 	$scope.selectedPhysicalModel = {};
-	$scope.physicalModelTreeInterceptor = {};
+
 	$scope.currentPhysicalModelParameterCategories = [];
 
 	$scope.selectPhysicalModel = function(node) {
@@ -109,8 +109,7 @@ function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate
 function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,metaModelServices){
 	$scope.selectedBusinessModel = {};
 	$scope.currentBusinessModelParameterCategories = [];
-	$scope.businessModelTreeInterceptor = {};
-	$scope.businessViewTreeInterceptor = {};
+
 
 
 	$scope.tmpBMWatcher={};

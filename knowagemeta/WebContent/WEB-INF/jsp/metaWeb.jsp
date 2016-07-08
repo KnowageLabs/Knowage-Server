@@ -35,12 +35,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 String datasourceId= request.getParameter("datasourceId");
 String bmName= request.getParameter("bmName");
 String bmId= request.getParameter("bmId");
+String editModel= request.getParameter("editModel");
 %>
 
 <script> 
 var datasourceId='<%= datasourceId%>';
 var bmId='<%= bmId%>';
 var bmName='<%= bmName%>';
+var editModel=<%= editModel%>;
 </script>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>meta Definition</title>
@@ -67,7 +69,7 @@ var bmName='<%= bmName%>';
 			<span flex>{{translate.load("sbi.meta.definition")}}</span>
 			 <md-button ng-click="closeMetaDefinition()">{{translate.load("sbi.general.close")}}</md-button>
 			 <md-button ng-click="continueToMeta()" ng-if="steps.current==0">{{translate.load("sbi.general.continue")}}</md-button>
-			 <md-button ng-click="gobackToMetaDefinition()" ng-if="steps.current==1">{{translate.load("sbi.generic.back")}}</md-button>
+<!-- 			 <md-button ng-click="gobackToMetaDefinition()" ng-if="steps.current==1">{{translate.load("sbi.generic.back")}}</md-button> -->
 			 <md-button ng-click="saveModel()" ng-if="steps.current==1">{{translate.load("sbi.generic.update")}}</md-button>
 		</h1>
 	</md-toolbar>

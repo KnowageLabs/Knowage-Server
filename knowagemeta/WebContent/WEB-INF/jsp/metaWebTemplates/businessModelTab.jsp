@@ -1,23 +1,24 @@
 <angular-list-detail ng-controller="metaModelCreationBusinessController">
 	<list label="'BusinessModelName'" layout="column"> 
-		<component-tree id="bcmTree"  style="margin:0px" ng-show="meta.businessModels.length>0"
-				ng-model="meta.businessModels"
-				highlights-selected-item="true"   
-				subnode-key="columns" 
-				click-function="selectBusinessModel(node)"
-				hide-progress=true
-				not-hide-on-load = true
-				is-folder-fn="businessModel_isFolder(node)"
-				folder-icon-fn="businesslModel_getlevelIcon(node)"
-				open-folder-icon-fn="businesslModel_getlevelIcon(node)"
-				interceptor="businessModelTreeInterceptor"
-				static-tree=true
-				expand-on-click=false
-				tree-root-name="translate.load('sbi.meta.businessclass')"
-			></component-tree>
-
-
-		<component-tree id="bvmTree"  style="margin:0px" ng-show="meta.businessViews.length>0"
+		<span ng-if="meta.businessModels.length>0">
+			<component-tree id="bcmTree"  style="margin:0px" 
+					ng-model="meta.businessModels"
+					highlights-selected-item="true"   
+					subnode-key="columns" 
+					click-function="selectBusinessModel(node)"
+					hide-progress=true
+					not-hide-on-load = true
+					is-folder-fn="businessModel_isFolder(node)"
+					folder-icon-fn="businesslModel_getlevelIcon(node)"
+					open-folder-icon-fn="businesslModel_getlevelIcon(node)"
+					interceptor="businessModelTreeInterceptor"
+					static-tree=true
+					expand-on-click=false
+					tree-root-name="translate.load('sbi.meta.businessclass')"
+				></component-tree>
+		</span>
+	<span ng-if="meta.businessViews.length>0">
+		<component-tree id="bvmTree"  style="margin:0px" 
 				ng-model="meta.businessViews"
 				highlights-selected-item="true"   
 				subnode-key="columns" 
@@ -32,7 +33,7 @@
 				open-folder-icon-fn="businesslModel_getlevelIcon(node)"
 				tree-root-name="translate.load('sbi.meta.businessview')"
 			></component-tree>
-			
+		</span>	
 	</list>
 	
 	

@@ -123,6 +123,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 			// last filemodel
 			boolean togenerate = false;
+			boolean haveSbiModel = true;
 			Content lastFileModelContent = businessModelsDAO.lastFileModelMeta(bmId);
 			if (lastFileModelContent != null && lastFileModelContent.getFileName() != null) {
 
@@ -138,11 +139,14 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 				// }
 				// }
 
+			} else {
+				haveSbiModel = false;
 			}
 
 			// return versions;
 			resultAsMap.put("versions", versionsToShow);
 			resultAsMap.put("togenerate", togenerate);
+			resultAsMap.put("haveSbiModel", haveSbiModel);
 
 		} catch (Exception e) {
 			logger.error("An error occurred while getting versions of business model with id:" + bmId, e);
