@@ -25,6 +25,7 @@ import it.eng.knowage.meta.model.business.BusinessModel;
 
 import java.io.File;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 	public static final String DEFAULT_BIN_DIR = "build";
 	public static final String DEFAULT_LIB_DIR = "libs";
 	public static final String DEFAULT_LOG_DIR = "logs";
+	private static final String SBI_MODEL_FILE_NAME = "sbimodel";
 
 	// private String[] libs = { "org.eclipse.persistence.core_2.1.1.v20100817-r8050.jar", "javax.persistence_2.0.1.v201006031150.jar",
 	// "hibernate-spatial-1.1.1.jar", "jts-1.13.jar", "hibernate3.6.2.jar" };
@@ -56,18 +58,18 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
 	@Override
 	public void generate(ModelObject o, String outputDir) {
-		generate(o, outputDir, false, null);
+		generate(o, outputDir, false, null, null);
 	}
 
 	@Override
-	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libsDir) {
+	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libsDir, byte[] fileModel) {
 
 		logger.trace("IN");
 
 		try {
 			BusinessModel model;
 
-			super.generate(o, outputDir, isUpdatableMapping, libsDir);
+			super.generate(o, outputDir, isUpdatableMapping, libsDir, null);
 
 			binDir = (binDir == null) ? new File(outputDir, DEFAULT_BIN_DIR) : binDir;
 			logger.debug("src dir is equal to [{}]", getSrcDir());
@@ -101,6 +103,12 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 			FileUtilities.copyFile(new File(srcDir, "relationships.json"), binDir);
 			FileUtilities.copyFile(new File(srcDir, "cfields_meta.xml"), binDir);
 			// FileUtilities.copyFile(new File(srcDir, "hierarchies.xml"), binDir);
+
+			if (fileModel != null) {
+				File sbimodel = new File(binDir + File.separator + SBI_MODEL_FILE_NAME);
+				FileUtils.writeByteArrayToFile(sbimodel, fileModel);
+			}
+
 			FileUtilities.copyFile(new File(srcDir, "META-INF/persistence.xml"), new File(binDir, "META-INF"));
 
 		} catch (Throwable t) {

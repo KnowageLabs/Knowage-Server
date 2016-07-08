@@ -47,18 +47,18 @@ public class JpaMappingJarGenerator extends JpaMappingClassesGenerator {
 
 	@Override
 	public void generate(ModelObject o, String outputDir) {
-		generate(o, outputDir, false, null);
+		generate(o, outputDir, false, null, null);
 	}
 
 	@Override
-	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libsDir) {
+	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libsDir, byte[] fileModel) {
 
 		logger.trace("IN");
 
 		try {
 			// The output dir is the model directory plus the business model name
 			outputDir = outputDir + File.separator + o.getName();
-			super.generate(o, outputDir, isUpdatableMapping, libsDir);
+			super.generate(o, outputDir, isUpdatableMapping, libsDir, fileModel);
 
 			distDir = (distDir == null) ? new File(baseOutputDir, DEFAULT_DIST_DIR) : distDir;
 			jarFileName = (jarFileName == null) ? DEFAULT_JAR_FILE_NAME : jarFileName;

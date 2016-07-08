@@ -368,18 +368,21 @@ public class MetaService extends AbstractSpagoBIResource {
 		// jpaMappingJarGenerator.setLibs(new String[] { "hibernate-3.6.2.jar", "javax.persistence-2.0.1.jar" });
 		String filename = name + ".jar";
 		jpaMappingJarGenerator.setJarFileName(filename);
+		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
+		Content content = dao.lastFileModelMeta(modelid);
 		try {
 			// java.nio.file.Path outFile = Files.createTempFile("model_", "_tmp");
 			java.nio.file.Path outDir = Files.createTempDirectory("model_");
-			jpaMappingJarGenerator.generate(model.getBusinessModels().get(0), outDir.toString(), false, new File(libDir));// new File(libDir)
-			IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
+
+			jpaMappingJarGenerator.generate(model.getBusinessModels().get(0), outDir.toString(), false, new File(libDir), content.getFileModel());
+
 			dao.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
 
 			String tmpDirJarFile = outDir + File.separator + model.getBusinessModels().get(0).getName() + File.separator + "dist";
 			InputStream inputStream = new FileInputStream(tmpDirJarFile + File.separator + filename);
 			byte[] bytes = IOUtils.toByteArray(inputStream);
 			// Content content = new Content();
-			Content content = dao.lastFileModelMeta(modelid);
+
 			content.setCreationDate(new Date());
 			content.setCreationUser(getUserProfile().getUserName().toString());
 			content.setContent(bytes);

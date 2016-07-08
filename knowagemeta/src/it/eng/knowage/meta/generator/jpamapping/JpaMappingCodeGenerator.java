@@ -41,11 +41,6 @@ import java.util.List;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -201,11 +196,11 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	@Override
 	public void generate(ModelObject o, String outputDir) {
-		generate(o, outputDir, false, null);
+		generate(o, outputDir, false, null, null);
 	}
 
 	@Override
-	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libDir) {
+	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libDir, byte[] fileModel) {
 
 		BusinessModel model;
 
@@ -615,29 +610,15 @@ public class JpaMappingCodeGenerator implements IGenerator {
 	public void hideTechnicalResources() {
 		throw new UnsupportedOperationException("If you need this method uncomment it, but you'll have problems with libraries");
 		/*
-		logger.debug("IN");
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		try {
-			if (baseOutputDir != null && baseOutputDir.exists()) {
-				IProject proj = workspace.getRoot().getProject(baseOutputDir.getParentFile().getParentFile().getName());
-				workspace.getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
-				IFolder iFolder = proj.getFolder(baseOutputDir.getParentFile().getName() + "\\" + baseOutputDir.getName());
-				if (iFolder.exists()) {
-					iFolder.setHidden(true);
-					iFolder.setTeamPrivateMember(true);
-					iFolder.setDerived(true, null);
-					iFolder.getParent().refreshLocal(IResource.DEPTH_INFINITE, null);
-					proj.refreshLocal(IResource.DEPTH_INFINITE, null);
-				}
-			} else {
-				logger.warn("Exception occurred before creating baseoutputDir: no resource to hide");
-			}
-		} catch (Exception e) {
-			logger.error("Error in hiding technical model folders ", e);
-			throw new GenerationException("Error in hiding technical model folders", e);
-		}
-		logger.debug("OUT");
-		*/
+		 * logger.debug("IN"); IWorkspace workspace = ResourcesPlugin.getWorkspace(); try { if (baseOutputDir != null && baseOutputDir.exists()) { IProject proj
+		 * = workspace.getRoot().getProject(baseOutputDir.getParentFile().getParentFile().getName()); workspace.getRoot().refreshLocal(IResource.DEPTH_INFINITE,
+		 * null); IFolder iFolder = proj.getFolder(baseOutputDir.getParentFile().getName() + "\\" + baseOutputDir.getName()); if (iFolder.exists()) {
+		 * iFolder.setHidden(true); iFolder.setTeamPrivateMember(true); iFolder.setDerived(true, null);
+		 * iFolder.getParent().refreshLocal(IResource.DEPTH_INFINITE, null); proj.refreshLocal(IResource.DEPTH_INFINITE, null); } } else {
+		 * logger.warn("Exception occurred before creating baseoutputDir: no resource to hide"); } } catch (Exception e) {
+		 * logger.error("Error in hiding technical model folders ", e); throw new GenerationException("Error in hiding technical model folders", e); }
+		 * logger.debug("OUT");
+		 */
 
 	}
 

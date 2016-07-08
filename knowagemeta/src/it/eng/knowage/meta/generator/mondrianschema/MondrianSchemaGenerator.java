@@ -208,11 +208,11 @@ public class MondrianSchemaGenerator implements IGenerator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.IGenerator#generate(it.eng.knowage.meta.model.ModelObject, java.lang.String, boolean)
 	 */
 	@Override
-	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libsDir) {
+	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libsDir, byte[] fileModel) {
 		// TODO Auto-generated method stub
 
 	}
