@@ -597,7 +597,7 @@ sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModu
 	
 	this.showDocumentHelpOnLine=function(label){
 		sbiModule_restServices.promiseGet('1.0/documents',label).then(function(response){
-		var data='DOCUMENT='+response.data.id+'&LABEL='+response.data.label+''+(response.data.dataSetId!=undefined? "&DATASET="+response.data.dataSetId : '')
+		var data='DOCUMENT='+response.data.id+'&LABEL='+response.data.name+''+(response.data.dataSetId!=undefined? "&DATASET="+response.data.dataSetId : '')
 			holServ.show(data);
 		},function(response){
 			alert("Errore "+response.data.errors[0].message);
