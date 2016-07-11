@@ -161,25 +161,22 @@
 			</md-tab>
 		
 			<md-tab id="joinRelationshipTab" label="{{translate.load('sbi.meta.joinRelationships')}}" ng-if="selectedBusinessModel.joinRelationships!=undefined">
-				<md-content layout  layout-fill >
-				<md-list class="md-dense noPadding" flex ng-repeat="item in selectedBusinessModel.joinRelationships">
-	        				<md-list-item     ng-repeat="rel in item.links"  ng-click="null" layout="row">
-		        				<span flex=40>{{rel.$parent.name}}.{{rel.name}}</span>
+				<md-content layout="column"  layout-fill >
+					<md-list class="md-dense noPadding"  ng-repeat="item in selectedBusinessModel.joinRelationships">
+	        				<md-list-item ng-repeat="rel in item.sourceColumns"  ng-click="null" layout="row">
+		        				<span flex=40>{{item.sourceTable.name}}.{{rel.name}}</span>
 		        				<span flex  ><i class="fa fa-link" aria-hidden="true"></i></span>
-	        					<span flex=40>{{item.$parent.name}}.{{item.name}}</span>
-		        				 <md-button   class="md-secondary md-icon-button "  aria-label="delete relationship" ng-click="deleteRelationship(item,rel)">
-		        				 <md-icon md-font-icon="fa fa-trash"></md-icon>
-	        				 </md-button>
-	        				 <md-divider></md-divider>
+	        					<span flex=40>{{item.destinationTable.name}}.{{item.destinationColumns[$index].name}}</span>
+	        					<md-divider></md-divider>
 				    		</md-list-item>
 				    	</md-list>
 				</md-content>				
 				
-				<md-content layout  layout-fill ng-controller="businessViewJoinRelationshipsController">
-					<angular-table id="bmJoinRel" ng-model="selectedBusinessModel.joinRelationships"
-					 columns="selectedBusinessViewJoinRelationships" no-pagination=true flex>
-					</angular-table>
-				</md-content>
+<!-- 				<md-content layout  layout-fill ng-controller="businessViewJoinRelationshipsController"> -->
+<!-- 					<angular-table id="bmJoinRel" ng-model="selectedBusinessModel.joinRelationships" -->
+<!-- 					 columns="selectedBusinessViewJoinRelationships" no-pagination=true flex> -->
+<!-- 					</angular-table> -->
+<!-- 				</md-content> -->
 				
 			</md-tab>
 		</md-tabs>
