@@ -18,16 +18,6 @@
 
 package it.eng.spagobi.engines.whatif.api;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.model.ModelConfig;
-import it.eng.spagobi.engines.whatif.model.ResultSetConverter;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
@@ -64,6 +54,16 @@ import org.pivot4j.transform.DrillReplace;
 import org.pivot4j.transform.DrillThrough;
 import org.pivot4j.ui.collector.NonInternalPropertyCollector;
 import org.pivot4j.ui.command.DrillDownCommand;
+
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.ResultSetConverter;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/member")
 public class MemberResource extends AbstractWhatIfEngineService {
@@ -258,7 +258,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 			filter = paramsObj.getString("filters");
 		} catch (Exception e) {
-			// TODO: handle exception
+			logger.error("Error reading body", e);
 		}
 
 		try {
@@ -314,7 +314,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error making JSON", e);
 		}
 		return array.toString();
 	}
@@ -332,7 +332,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 			name = paramsObj.getString("memberUniqueName");
 		} catch (Exception e) {
-			// TODO: handle exception
+			logger.error("Error reading body", e);
 		}
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -367,7 +367,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 			ordinal = paramsObj.getInt("ordinal");
 		} catch (Exception e) {
-			// TODO: handle exception
+			logger.error("Error reading body", e);
 		}
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
@@ -379,10 +379,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 			set = transform.drillThrough(cell);
 			array = ResultSetConverter.convertResultSetIntoJSON(set);
-			// //System.out.println(array);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error in drillThrough", e);
 		}
 		return array.toString();
 	}
@@ -405,7 +403,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			max = paramsObj.getInt("max");
 			col = paramsObj.getString("levels");
 		} catch (Exception e) {
-
+			logger.error("Error reading body", e);
 		}
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
@@ -467,11 +465,10 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			modelConfig.setTopBottomCount(jo.getInt("topBottomCount"));
 
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+
+			logger.error("Error reading body", e1);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error making JSON", e);
 		}
 		model.setTopBottomCount(modelConfig.getTopBottomCount());
 

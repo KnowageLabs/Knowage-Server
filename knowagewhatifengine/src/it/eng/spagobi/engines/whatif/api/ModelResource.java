@@ -621,18 +621,23 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		XSSFRow mdxRow = params.createRow(1);
 		XSSFRow axisRow = params.createRow(2);
 		XSSFRow algorithms = params.createRow(3);
+		XSSFRow editCube = params.createRow(4);
 		XSSFCell urlCell = urlRow.createCell(0);
 		XSSFCell mdxCell = mdxRow.createCell(0);
 		XSSFCell axisRowsCell = axisRow.createCell(0);
 		XSSFCell axisColumnsCell = axisRow.createCell(1);
+		XSSFCell editCubeCell = editCube.createCell(0);
 		int keyIndex = 0;
 		Map<String, AllocationAlgorithmDefinition> allocationAlgorithms = AllocationAlgorithmSingleton.getInstance().getAllocationAlgorithms();
 		Iterator ita = allocationAlgorithms.entrySet().iterator();
 		while (ita.hasNext()) {
 			Map.Entry pair = (Map.Entry) ita.next();
-			XSSFCell algorithmsCell = algorithms.createCell(keyIndex++);
-			algorithmsCell.setCellValue(pair.getKey().toString());
 
+			if (!pair.getKey().toString().equalsIgnoreCase("Fix values")) {
+
+				XSSFCell algorithmsCell = algorithms.createCell(keyIndex++);
+				algorithmsCell.setCellValue(pair.getKey().toString());
+			}
 			ita.remove();
 		}
 
@@ -640,7 +645,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		mdxCell.setCellValue(mdx);
 		axisRowsCell.setCellValue(axisRows);
 		axisColumnsCell.setCellValue(axisColumns);
-
+		editCubeCell.setCellValue(ei.getEditCubeName());
 		return workbook;
 	}
 
