@@ -76,19 +76,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								show-select-glossary=false show-search-bar=true show-info=true></glossary-tree> 
 					</md-content> 
 				</md-tab> 
-				<% if( canSeeAdmin){ %>
+				
 				<md-tab label='{{translate.load("sbi.generic.navigation");}}' md-on-select="global.init('navigation')"> 
 					<md-content	class="abs100"> 
 					<%@include file="/WEB-INF/jsp/tools/glossary/technicaluser/glossary_navigation.jspf"%>
 					</md-content> 
 				</md-tab> 
-				<%} %> 
+				
+				<% if(canSeeAdmin ){ %>
 				<md-tab label='{{translate.load("sbi.generic.document.management");}}'
 						md-on-select="global.init('docAssoc')"> 
 					<md-content class="abs100">
 					<%@include file="/WEB-INF/jsp/tools/glossary/technicaluser/documents_and_wordsAssociations.jspf"%>
 					</md-content> 
 				</md-tab> 
+				<%} %> 
 				<% if(canSeeAdmin){ %>
 				<md-tab label='{{translate.load("sbi.generic.dataset.management");}}' md-on-select="global.init('datasetAssoc')">
 					<md-content class="abs100">
