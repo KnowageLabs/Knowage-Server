@@ -881,7 +881,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	private String cleanPath(String path) {
-		// path = path.replaceAll("^/physicalModel/", "/physicalModels/0/tables/").replaceAll("^/businessModel/", "/businessModels/0/businessTables/");
+		path = path.replaceAll("^/physicalModels", "/businessModels/0/tables").replaceAll("^/businessModels", "/businessModels/0/businessTables");
 		// path = "/businessModels" + path;
 		Pattern p = Pattern.compile("(/)(\\d)");
 		Matcher m = p.matcher(path);
