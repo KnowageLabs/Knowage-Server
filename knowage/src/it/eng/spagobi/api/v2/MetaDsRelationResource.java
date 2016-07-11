@@ -1,14 +1,5 @@
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.metadata.dao.ISbiMetaDsTabRel;
-import it.eng.spagobi.metadata.dao.ISbiMetaTableDAO;
-import it.eng.spagobi.metadata.metadata.SbiMetaDsTabRel;
-import it.eng.spagobi.metadata.metadata.SbiMetaTable;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +11,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.metadata.dao.ISbiMetaDsTabRel;
+import it.eng.spagobi.metadata.dao.ISbiMetaTableDAO;
+import it.eng.spagobi.metadata.metadata.SbiMetaDsTabRel;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 
 @Path("2.0/metaDsRelationResource")
 @ManageAuthorization
@@ -38,12 +40,11 @@ public class MetaDsRelationResource extends AbstractSpagoBIResource {
 			sbiMetaTableDao = DAOFactory.getSbiMetaTableDAO();
 
 		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error in initialization", e);
 		}
 	}
 
-	// TODO insert correct Functionalities
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASET_MANAGEMENT })
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -53,13 +54,12 @@ public class MetaDsRelationResource extends AbstractSpagoBIResource {
 		try {
 			relations = sbiMetaDsTabRelDAO.loadAllRelations();
 		} catch (EMFUserError e) {
-
-			e.printStackTrace();
+			logger.error("Error getting all relations", e);
 		}
 		return relations;
 	}
 
-	// TODO insert correct Functionalities
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASET_MANAGEMENT })
 	@GET
 	@Path("/dataset/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -75,13 +75,12 @@ public class MetaDsRelationResource extends AbstractSpagoBIResource {
 				tables.add(table);
 			}
 		} catch (EMFUserError e) {
-
-			e.printStackTrace();
+			logger.error("Error getting relation with id: " + datasetId, e);
 		}
 		return tables;
 	}
 
-	// TODO insert correct Functionalities
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASET_MANAGEMENT })
 	@POST
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -96,7 +95,7 @@ public class MetaDsRelationResource extends AbstractSpagoBIResource {
 
 	}
 
-	// TODO insert correct Functionalities
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASET_MANAGEMENT })
 	@DELETE
 	@Path("/{id}/{tableID}")
 	public void delete(@PathParam("id") Integer id, @PathParam("tableID") Integer tableID) {
@@ -110,7 +109,7 @@ public class MetaDsRelationResource extends AbstractSpagoBIResource {
 
 		} catch (EMFUserError e) {
 
-			e.printStackTrace();
+			logger.error("Error deleting relation", e);
 		}
 	}
 

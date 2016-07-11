@@ -1,14 +1,5 @@
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.metadata.dao.ISbiMetaDocTabRelDAO;
-import it.eng.spagobi.metadata.dao.ISbiMetaTableDAO;
-import it.eng.spagobi.metadata.metadata.SbiMetaDocTabRel;
-import it.eng.spagobi.metadata.metadata.SbiMetaTable;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +11,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.metadata.dao.ISbiMetaDocTabRelDAO;
+import it.eng.spagobi.metadata.dao.ISbiMetaTableDAO;
+import it.eng.spagobi.metadata.metadata.SbiMetaDocTabRel;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 
 @Path("2.0/metaDocumetRelationResource")
 @ManageAuthorization
@@ -38,12 +40,12 @@ public class MetaDocumetRelationResource extends AbstractSpagoBIResource {
 			sbiMetaTableDao = DAOFactory.getSbiMetaTableDAO();
 
 		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			logger.error("Error in initialization", e);
 		}
 	}
 
-	// TODO insert correct Functionalities
+	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT })
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -56,7 +58,7 @@ public class MetaDocumetRelationResource extends AbstractSpagoBIResource {
 		return documentRelations;
 	}
 
-	// TODO insert correct Functionalities
+	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT })
 	@GET
 	@Path("/document/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -72,13 +74,12 @@ public class MetaDocumetRelationResource extends AbstractSpagoBIResource {
 				tables.add(table);
 			}
 		} catch (EMFUserError e) {
-
-			e.printStackTrace();
+			logger.error("Error getting relation with id: " + documentId, e);
 		}
 		return tables;
 	}
 
-	// TODO insert correct Functionalities
+	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT })
 	@POST
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -93,7 +94,7 @@ public class MetaDocumetRelationResource extends AbstractSpagoBIResource {
 
 	}
 
-	// TODO insert correct Functionalities
+	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT })
 	@DELETE
 	@Path("/{id}/{tableID}")
 	public void delete(@PathParam("id") Integer id, @PathParam("tableID") Integer tableID) {
@@ -107,7 +108,7 @@ public class MetaDocumetRelationResource extends AbstractSpagoBIResource {
 
 		} catch (EMFUserError e) {
 
-			e.printStackTrace();
+			logger.error("Error deleting relation", e);
 		}
 	}
 }
