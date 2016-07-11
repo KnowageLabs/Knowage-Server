@@ -1725,6 +1725,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     	var cockpitSelections = Sbi.config.executionContext.COCKPIT_SELECTIONS || "" ;
     	
     	/*
+    	console.log('cockpitSelections -> \"' + cockpitSelections + '\"');
     	isForExport = true ;
     	cockpitSelections = '{"Clone_UnitsByMonth":{"Province":["(\'OR\')"]},"Inventory_UnitsByMonth":{"Province":["(\'OR\')"]}}';
     	 */
@@ -2134,6 +2135,10 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		if(response !== undefined && response.statusText=="OK") {
     		var r = response.responseText || response.responseXML;
 			if(Sbi.isValorized(r)) {
+				
+				var cleanedSelectionsForExport = r.replace(/\('(.*?)'\)/g, function(match, $1) {return ($1);});
+				this.updateCockpitSelections(cleanedSelectionsForExport);
+				
 				if(r.indexOf("error.mesage.description")>=0){
 					Sbi.exception.ExceptionHandler.handleFailure(response);
 				} else {
@@ -2240,5 +2245,27 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		}
 
     	Sbi.trace("[StoreManager.onAssociativeSelectionsApplied]: OUT");
+    }
+    
+    , updateCockpitSelections : function (stringifiedSelections) {
+    	
+    	var mainPanel = Ext.getElementById("mainPanel");
+    	
+    	var COCKPIT_SELECTIONS_CONTAINER = "cockpitSelectionsContainer";
+    	
+    	var cockpitSelectionsContainerToDelete = Ext.getElementById(COCKPIT_SELECTIONS_CONTAINER);
+    	
+    	if (cockpitSelectionsContainerToDelete) {
+    		cockpitSelectionsContainerToDelete.parentNode.removeChild(cockpitSelectionsContainerToDelete);
+    	}
+    	
+    	if(stringifiedSelections.trim() != "") {
+	    	var cockpitSelectionsContainer = document.createElement('span');
+	    	cockpitSelectionsContainer.id = COCKPIT_SELECTIONS_CONTAINER;
+	    	cockpitSelectionsContainer.style.display = "none";
+	    	
+	    	cockpitSelectionsContainer.innerHTML = stringifiedSelections;
+	    	mainPanel.appendChild(cockpitSelectionsContainer);
+    	}
     }
 });

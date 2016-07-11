@@ -109,7 +109,7 @@
 			data.role= execProperties.selectedRole.name;
 			
 			// getting cockpit selections
-			var documentFrame= window.frames["documentFrame"]; // document iframe reference
+			var documentFrame = document.getElementById("documentFrame"); // document iframe reference
 			
 			var csvData = null;
 			if(exportType.toLowerCase() != 'pdf') {

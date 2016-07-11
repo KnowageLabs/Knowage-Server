@@ -31,8 +31,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-cookies.js"></script>
 
 <!-- angular-material-->
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
+
+<%
+// Angular Material 1.1.0 compresses the document viewer during document executing in phantomJs browser
+// then during exports of documents we use Material 0.10.0
+String importAngularMaterialForExport = null;
+importAngularMaterialForExport = (String)(request.getParameter(SpagoBIConstants.IS_FOR_EXPORT));
+
+if(importAngularMaterialForExport == null) {
+%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
+<%
+} else if(("true").equalsIgnoreCase(importAngularMaterialForExport)) {
+%>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
+<%
+}
+%>
 
 
 <!-- angular tree -->

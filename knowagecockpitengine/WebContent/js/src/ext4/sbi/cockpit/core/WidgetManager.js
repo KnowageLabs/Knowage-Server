@@ -323,7 +323,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		this.fireEvent('selectionChange');
 		Sbi.storeManager.loadAllStores();
 		
-		this.updateCockpitSelections(null);
+		Sbi.storeManager.updateCockpitSelections(null);
 
 		Sbi.trace("[WidgetManager.clearSelections]: OUT");
 	}
@@ -662,6 +662,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     		Sbi.warn("[WidgetManager.applySelectionsOnAssociationGroup]: Input parameter [associationGroup] is undefined");
     		return;
     	}
+    	
     	var selections = this.getSelectionsByAssociations();
 
     	for(var widgetId in this.selections)  {
@@ -681,7 +682,6 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	this.setChartWidgetsAssociationsSelections(associationGroup, selections, widget, withDoc);
 
     	//alert("[WidgetManager.applySelectionsOnAssociationGroup]: " + Sbi.toSource(selections));
-    	
     	if(!withDoc){
     		Sbi.storeManager.loadStoresByAssociations( associationGroup,  selections);
     	}
@@ -718,32 +718,54 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 
     	this.fireEvent('selectionChange');
     	
-    	var currentSelection = this.getSelectionsByStores();
-    	this.updateCockpitSelections(currentSelection);
-
+    	if(!Sbi.isValorized(associationGroup)) {
+    		var currentSelection = this.getSelectionsByStores();
+    		
+    		var stringifiedSelections = JSON.stringify(
+    				this.cleanCockpitSelectionsForExport(currentSelection)
+    		);
+    		
+    		Sbi.storeManager.updateCockpitSelections(stringifiedSelections);
+    	}
+    	
     	Sbi.trace("[WidgetManager.onSelection]: OUT");
     }
     
-    
-    , updateCockpitSelections : function (selections) {
-    	var stringifiedSelections = selections != null ? JSON.stringify(selections) : "";
+    , cleanCockpitSelectionsForExport : function (selections) {
+    	var result = {};
     	
-    	var mainPanel = Ext.getElementById("mainPanel");
+    	var keys = Object.keys(selections);
     	
-    	var cockpitSelectionsContainerToDelete = Ext.getElementById("cockpitSelectionsContainer");
-    	
-    	if (cockpitSelectionsContainerToDelete) {
-    		delete cockpitSelectionsContainerToDelete;
+    	for(var i = 0; i < keys.length; i++) {
+    		var key = keys[i];
+    		
+    		var selectionIsEmpty = this.isSelectionEmpty(selections[key]);
+    		
+    		if(!selectionIsEmpty) {
+    			result[key] = selections[key];
+    		}
     	}
-
-    	var cockpitSelectionsContainer = document.createElement('span');
-    	cockpitSelectionsContainer.id = "cockpitSelectionsContainer";
-    	cockpitSelectionsContainer.style.display = "none";
-    	
-    	cockpitSelectionsContainer.innerHTML = stringifiedSelections;
-    	mainPanel.appendChild(cockpitSelectionsContainer);
+    
+    	return result;
     }
-	/**
+    
+    , isSelectionEmpty : function (selection) {
+    	var keys = Object.keys(selection);
+    	
+    	for(var i = 0; i < keys.length; i++) {
+    		var key = keys[i];
+    		
+    		var item = selection[key];
+    		
+    		if(Array.isArray(item) && item.length > 0) {
+    			return false;
+    		}
+    	}
+    	
+    	return true;
+    }
+
+    /**
 	 * Set selections for chart widgets
 	 */
 	, setChartWidgetsSelections: function(widgetManager, widget){				
