@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.engines.whatif;
 
+import java.io.Serializable;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.olap4j.OlapConnection;
+import org.olap4j.OlapDataSource;
+import org.pivot4j.PivotModel;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -44,17 +55,6 @@ import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 import it.eng.spagobi.writeback4j.WriteBackManager;
 import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
 
-import java.io.Serializable;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.olap4j.OlapConnection;
-import org.olap4j.OlapDataSource;
-import org.pivot4j.PivotModel;
-
 public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance implements Serializable {
 
 	private static final long serialVersionUID = 1329486982941461093L;
@@ -80,7 +80,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		this.whatif = whatif;
 	}
 
-	public WhatIfEngineInstance(String initialMDX, Map env) {
+	public WhatIfEngineInstance(String initialMDX, Map env, String cubeName) {
 		super(env);
 
 		includes = WhatIfEngine.getConfig().getIncludes();
@@ -142,7 +142,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		// init toolbar
 
 		try {
-			writeBackManager = new WriteBackManager(pivotModel.getCube().getName(), new MondrianDriver(reference));
+			writeBackManager = new WriteBackManager(cubeName, new MondrianDriver(reference));
 		} catch (SpagoBIEngineException e) {
 			logger.debug("Exception creating the whatif component", e);
 			throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(),

@@ -18,13 +18,13 @@
 
 package it.eng.spagobi.engines.whatif;
 
-import it.eng.spagobi.engines.whatif.model.PivotJsonSerializer;
-import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.engines.whatif.model.PivotJsonSerializer;
+import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
@@ -71,12 +71,12 @@ public class WhatIfEngine {
 		return whatIfEngineInstance;
 	}
 
-	public static WhatIfEngineInstance createInstance(String initialMDX, Map env) {
+	public static WhatIfEngineInstance createInstance(String initialMDX, Map env, String editCube) {
 
 		WhatIfEngineInstance whatIfEngineInstance = null;
 		logger.debug("IN");
 		try {
-			whatIfEngineInstance = new WhatIfEngineInstance(initialMDX, env);
+			whatIfEngineInstance = new WhatIfEngineInstance(initialMDX, env, editCube);
 			initSerializers();
 		} catch (Exception e) {
 			logger.error("OUT", e);
