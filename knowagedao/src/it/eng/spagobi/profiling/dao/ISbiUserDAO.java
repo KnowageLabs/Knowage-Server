@@ -1,5 +1,5 @@
 /*
- * Knowage, Open Source Business Intelligence suite 
+ * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
  * 
  * Knowage is free software: you can redistribute it and/or modify
@@ -28,6 +28,7 @@ import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bo.UserBO;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface ISbiUserDAO extends ISpagoBIDao {
 
@@ -54,6 +55,8 @@ public interface ISbiUserDAO extends ISpagoBIDao {
 	public ArrayList<SbiUser> loadSbiUsers() throws EMFUserError;
 
 	public ArrayList<UserBO> loadUsers() throws EMFUserError;
+
+	public List<UserBO> loadUsers(QueryFilters filters) throws EMFUserError;
 
 	public void updateSbiUser(SbiUser user, Integer userID) throws EMFUserError;
 

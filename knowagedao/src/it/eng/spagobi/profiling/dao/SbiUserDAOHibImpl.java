@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A. 
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
  * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -108,6 +108,42 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		}
 		logger.debug("OUT");
 		return toReturn;
+	}
+
+	public List<UserBO> loadUsers(QueryFilters filters) throws EMFUserError {
+		logger.debug("IN");
+		List<UserBO> results = new ArrayList<UserBO>();
+		Session aSession = null;
+		Transaction tx = null;
+
+		Query hibernateQuery;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			hibernateQuery = this.getQueryForUsersList(aSession, filters);
+			List users = hibernateQuery.list();
+
+			for (Iterator iterator = users.iterator(); iterator.hasNext();) {
+				SbiUser sbiUser = (SbiUser) iterator.next();
+
+				results.add(toUserBO(sbiUser));
+			}
+
+			return results;
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
 	}
 
 	/**
