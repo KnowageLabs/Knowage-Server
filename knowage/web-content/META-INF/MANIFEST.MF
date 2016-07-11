@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 
 Name: Knowage.war
-Implementation-Version: 1.2.0
+Implementation-Version: 1.3.0
 Implementation-Title: Knowage
 

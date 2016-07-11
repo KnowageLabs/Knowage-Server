@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: KnowageWhatIfEngine.war
 Implementation-Title: KnowageWhatIfEngine
-Implementation-Version: 1.2.0
+Implementation-Version: 1.3.0
 Mondrian-Version: 3.6.1

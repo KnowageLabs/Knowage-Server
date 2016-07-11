@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: KnowageChartEngine.war
 Implementation-Title: KnowageChartEngine
-Implementation-Version: 1.2.0
+Implementation-Version: 1.3.0
 
