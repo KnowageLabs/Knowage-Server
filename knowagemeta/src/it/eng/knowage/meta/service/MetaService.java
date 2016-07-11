@@ -3,6 +3,7 @@ package it.eng.knowage.meta.service;
 import it.eng.knowage.meta.generator.jpamapping.JpaMappingJarGenerator;
 import it.eng.knowage.meta.initializer.BusinessModelInitializer;
 import it.eng.knowage.meta.initializer.PhysicalModelInitializer;
+import it.eng.knowage.meta.initializer.descriptor.CalculatedFieldDescriptor;
 import it.eng.knowage.meta.initializer.properties.PhysicalModelPropertiesFromFileInitializer;
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelFactory;
@@ -401,6 +402,41 @@ public class MetaService extends AbstractSpagoBIResource {
 			return Response.serverError().build();
 		}
 		return Response.ok().build();
+	}
+
+	@POST
+	@Path("/setCalculatedBM")
+	public Response setCalculatedBM(@Context HttpServletRequest req) {
+
+		// request
+
+		JSONObject jsonRoot;
+		try {
+			jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+			JSONObject jsonData = jsonRoot.getJSONObject("data");
+			String name = jsonData.getString("name");
+			String expression = jsonData.getString("expression");
+			String dataType = jsonData.getString("dataType");
+			String sourceTableName = jsonData.getString("sourceTableName");
+
+			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+			BusinessModel bm = model.getBusinessModels().get(0);
+			BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
+			CalculatedFieldDescriptor cfd = new CalculatedFieldDescriptor(name, expression, dataType, sourceBcs);
+
+			BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
+			businessModelInitializer.addCalculatedColumn(cfd);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Response.serverError().build();
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return Response.serverError().build();
+		}
+		// Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		return Response.ok().build();
+
 	}
 
 	@POST
