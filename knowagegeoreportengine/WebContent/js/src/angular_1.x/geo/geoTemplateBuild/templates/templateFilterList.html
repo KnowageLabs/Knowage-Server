@@ -1,7 +1,7 @@
 <md-dialog aria-label="Select Filter" class="flex2" ng-cloak style="height:80%">
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h1>Layer list</h1>
+        <h1>Filter list list</h1>
         <span flex></span>
 		<md-button class="md-primary" ng-click="changeSelectedFilters()">
           	{{translate.load('gisengine.desiner.save')}}
@@ -12,13 +12,22 @@
       </div>
     </md-toolbar>
     <md-dialog-content layout="column" class="mdDialogSize">
-     <div class="md-dialog-content" layout="column" style="height:90%">
+    
+     <div class="md-dialog-content" layout="row" style="height:90%">
+    
 		<angular-table layout-fill
 		id='dinamicFilterTable' ng-model="allFilters"
 		columns='[{"label":"Filter","name":"property"}]'
 		columns-search='["property"]' show-search-bar=true multi-select=true selected-item="newFilter" 
 		highlights-selected-item="true"
 		></angular-table>
+       <angular-table layout-fill
+		id='driversTable' ng-model="allDriverParamteres"
+		columns='[{"label":"Analytical driver parameter","name":"label"}]'
+		columns-search='["label"]' show-search-bar=true multi-select=true selected-item="newDriverParameter" 
+		highlights-selected-item="true"
+		></angular-table>
 		</div>
+		
    	 </md-dialog-content>
 </md-dialog>

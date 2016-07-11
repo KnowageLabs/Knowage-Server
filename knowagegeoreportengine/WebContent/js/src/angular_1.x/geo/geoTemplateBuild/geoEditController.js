@@ -31,21 +31,20 @@
 
 	function geoTemplateBuildControllerFunction($scope, sbiModule_translate,
 			sbiModule_restServices, sbiModule_config, $mdDialog, sbiModule_messaging,$documentViewer) {
+	//	console.log(params);
 		
 		$scope.template=angular.fromJson(docTemplate);
-		console.log($scope.template);
 		$scope.docLabel=documentLabel;
-      console.log($scope.docLabel);
       
-      
-        
 		$scope.translate = sbiModule_translate;
 		$scope.layerCatalogs = [];
 		$scope.selectedLayer = [];
 		$scope.selectedFilters = [];
 		$scope.allFilters = [];
-
-		// dataset variables
+	 
+		$scope.allDriverParamteres=[];
+		$scope.selectedDriverParamteres = [];
+		
 		$scope.selectedDatasetLabel = dataset;
 		$scope.isDatasetChosen = $scope.selectedDatasetLabel != '';
 		$scope.datasetFields = [];
@@ -105,16 +104,6 @@
 			var template = buildTemplate();
 			if (template.error) {
 				
-//				var confirm = $mdDialog.confirm()
-//				.title(sbiModule_translate.load("gisengine.designer.tempate.error"))
-//				.content(template.error)
-//				.ariaLabel('gisTemplateError') 
-//				.ok(sbiModule_translate.load("gisengine.info.message.yes"));
-//				
-//				$mdDialog.show(confirm).then(function(){
-//					$mdDialog.cancel();
-//				});
-             
 				sbiModule_messaging.showWarningMessage(template.error,sbiModule_translate.load('gisengine.designer.tempate.error'));
 	
 				
@@ -130,6 +119,7 @@
 				"saveGeoReportTemplate", temp).then(
 				function(response) {
 					$scope.template=template;
+					$scope.editDisabled = false;
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('gisengine.designer.tempate.save.message'),sbiModule_translate.load('gisengine.designer.tempate.save.success'));
 				},
 				function(response) {
@@ -140,7 +130,26 @@
 
 			
 		}
-
+		
+		$scope.loadAnalyticalDrivers= function(){
+			sbiModule_restServices
+			.alterContextPath(sbiModule_config.externalBasePath);
+	        sbiModule_restServices.promiseGet("restful-services/1.0/documents",
+			$scope.docLabel+"/parameters")
+			.then(
+					function(response) {
+						console.log(response.data.results);
+						angular.copy(response.data.results,$scope.allDriverParamteres);
+						initializeLayerFilters();
+					},
+					function(response) {
+						sbiModule_restServices.errorHandler(
+								response.data, "error loading analytical driver parameters");
+					});
+		}
+		$scope.loadAnalyticalDrivers();
+		
+		
 		$scope.tableFunctionSingleLayer = {
 			translate : sbiModule_translate,
 			loadListLayers : function(item, evt) {
@@ -233,6 +242,7 @@
 				$scope.loadAllFilters();
 
 				$scope.newFilter = [];
+				$scope.newDriverParameter=[];
 				$mdDialog
 						.show({
 							controller : DialogControllerFilter,
@@ -448,7 +458,7 @@
 				}
 				
 				
-				if($scope.selectedFilters.length==0){
+				if($scope.selectedFilters.length==0 && $scope.selectedDriverParameters.length == 0 ){
 					template.error = sbiModule_translate
 					.load('gisengine.designer.tempate.nofilters');
 					return template;
@@ -456,6 +466,9 @@
 					template.analitycalFilter=[];
 					for (var i = 0; i < $scope.selectedFilters.length; i++) {
 						template.analitycalFilter.push($scope.selectedFilters[i].property);
+					}
+					for (var i = 0; i < $scope.selectedDriverParamteres.length; i++) {
+						template.analitycalFilter.push($scope.selectedDriverParamteres[i].url);
 					}
 				}
 			}
@@ -470,7 +483,7 @@
 			}
 			initializeDatasetJoinColumns();
 			initializeIndicators();
-			initializeLayerFilters();
+			//initializeLayerFilters();
 			}
 
 		function initializeSelectedLayer(){
@@ -533,12 +546,30 @@
 		function initializeLayerFilters(){
 			if($scope.template.analitycalFilter){
 				for (var i = 0; i < $scope.template.analitycalFilter.length; i++) {
-					var filter={};
-					filter.property=$scope.template.analitycalFilter[i];
-					$scope.selectedFilters.push(filter);
+					var driver= false;
+				     for (var j = 0; j < $scope.allDriverParamteres.length; j++) {
+				    	 driver=false;
+						if($scope.template.analitycalFilter[i]===$scope.allDriverParamteres[i].url){
+							$scope.selectedDriverParamteres.push($scope.allDriverParamteres[i]);
+							driver=true;
+						}else{
+							var filter={};
+							filter.property=$scope.template.analitycalFilter[i];
+							$scope.selectedFilters.push(filter);
+						}
+						
+					}
+				     if(!driver){
+				    	 var filter={};
+							filter.property=$scope.template.analitycalFilter[i];
+							$scope.selectedFilters.push(filter);
+				     }
+					
 				}
 			}
 		}
+		
+		
 		
 		initializeFromTemplate();
 	}
@@ -593,9 +624,11 @@
 	function DialogControllerFilter($scope, $mdDialog) {
 		$scope.closeFilterDialog = function() {
 			$scope.newFilter = [];
+			$scope.newDriverParameter = [];
 			$mdDialog.cancel();
 		}
-
+        
+		 
 		$scope.changeSelectedFilters = function() {
 			for (var i = 0; i < $scope.newFilter.length; i++) {
 
@@ -603,6 +636,15 @@
 					$scope.selectedFilters.push($scope.newFilter[i]);
 				}
 			}
+			
+			for (var i = 0; i < $scope.newDriverParameter.length; i++) {
+
+				if ($scope.selectedDriverParamteres.indexOf($scope.newDriverParameter[i])==-1) {
+					$scope.selectedDriverParamteres.push($scope.newDriverParameter[i]);
+				}
+			}
+			
+			console.log($scope.selectedDriverParamteres);
 			$mdDialog.cancel();
 		}
 

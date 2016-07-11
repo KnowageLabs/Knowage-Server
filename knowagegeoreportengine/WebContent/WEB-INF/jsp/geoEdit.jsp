@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  console.log(documentLabel);
  var dataset='<%=docDatasetLabel%>';
  var docTemplate= '<%=template%>';
+ var params= '<%=analyticalDriversJson%>';
 </script>
 </head>
 <body ng-controller="geoTemplateBuildController">
@@ -43,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<h2 class="md-flex" >{{translate.load("gisengine.designer.title")}}</h2>
 	</div>
 	<span flex></span>
-	<md-button class="md-primary" ng-click="editMap()">{{translate.load("gisengine.designer.edit.map")}}</md-button>
+	<md-button class="md-primary" ng-click="editMap()" ng-disabled="editDisabled" >{{translate.load("gisengine.designer.edit.map")}}</md-button>
 
 	<md-button class="md-primary" ng-click="saveTemplate()">{{translate.load("sbi.generic.save")}}</md-button>
 
@@ -57,19 +58,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <input type="text" ng-model="mapName">
 </md-input-container>
 </div>
-<!-- select layer always visible -->
-<!--  	<md-toolbar  class="miniheadimportexport" layout="row" > -->
-<!-- 	<div class="md-toolbar-tools" flex> -->
-<!-- 		<h2 class="md-flex" >{{translate.load("gisengine.designer.layer.select")}}</h2> -->
-<!-- 	</div> -->
-<!-- 	</md-toolbar> -->
-<!-- 	<div layout="row" flex> -->
-<!-- 		<md-input-container flex=30> -->
-<!--   <md-select ng-model="template.layer" placeholder="{{translate.load('gisengine.designer.layer.select')}}"> -->
-<!--     <md-option ng-value="opt.label" ng-repeat="opt in layerCatalogs">{{ opt.name }}</md-option> -->
-<!--   </md-select> -->
-<!-- </md-input-container> -->
-<!-- 	</div> -->
 <!-- SINGLE SELECT FROM LAYER CATALOG  WHEN DATASET IS CHOSEN-->
 	<expander-box id="layersList" color="white" ng-if="isDatasetChosen" expanded="true" title="translate.load('gisengine.designer.layer.select')">
 	<md-whiteframe class="md-whiteframe-4dp layout-padding " flex layout layout-margin  > 
@@ -111,9 +99,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<!-- CHOSING LAYER FILTERS visible if there is no dataset-->
 	<expander-box id="filterSelectBox" color="white" ng-if="!isDatasetChosen" expanded="false" title="translate.load('gisengine.designer.layer.filters')">
 	<md-whiteframe class="md-whiteframe-4dp layout-padding " flex layout layout-margin style ="height: 40%;" > 
-
+        <div layout="row">
  		<angular-table flex  
-		id='tableLayerMultiSelect' ng-model="selectedFilters"
+		id='tableFilters' ng-model="selectedFilters"
 		columns='[{"label":"Filter","name":"property"}]'
 		columns-search='["name"]' show-search-bar=true
 		scope-functions='tableFunctionFilters' speed-menu-option='filtersSpeedMenu'
@@ -124,7 +112,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-button ng-click="scopeFunctions.loadFilters()">{{scopeFunctions.translate.load('gisengine.designer.layer.filters.add')}}</md-button>
 			</div>
 		</queue-table> 
-		</angular-table>	
+		</angular-table>
+		<angular-table flex  
+		id='tableDriver' ng-model="selectedDriverParamteres"
+		columns='[{"label":"Driver parameter","name":"label"}]'
+		columns-search='["name"]' show-search-bar=true
+		scope-functions='tableFunctionFilters' speed-menu-option='filtersSpeedMenu'
+		>
+		<queue-table>
+			<div layout="row"> 
+				<span flex></span>
+				<md-button ng-click="scopeFunctions.loadFilters()">{{scopeFunctions.translate.load('gisengine.designer.layer.filters.add')}}</md-button>
+			</div>
+		</queue-table> 
+		</angular-table>
+		</div>	
    </md-whiteframe>       
 	</expander-box>
 	<!-- DATASET JOIN COLUMNS INTERFACE -->
@@ -132,7 +134,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<md-whiteframe class="md-whiteframe-4dp layout-padding " flex layout layout-margin style ="height: 40%;" > 
 	    <angular-table flex  
 		id='datasetJoinColumnsTable' ng-model="datasetJoinColumns"
-		columns='[{"label":"Dataset join column","name":"datasetColumnView"},{"label":"Layer join column","name":"layerColumnView"}]'
+		columns='[{"label":"Dataset join column","name":"datasetColumnView","hideTooltip":true},{"label":"Layer join column","name":"layerColumnView","hideTooltip":true}]'
 		columns-search='["datasetColumn","layerColumn"]' show-search-bar=true
 		scope-functions='tableFunctionsJoin' speed-menu-option='datasetJoinSpeedMenu'
 		>
@@ -150,7 +152,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<md-whiteframe class="md-whiteframe-4dp layout-padding " flex layout layout-margin style ="height: 40%;" > 
 	    <angular-table flex  
 		id='indicatorsTable' ng-model="datasetIndicators"
-		columns='[{"label":"Measure","name":"indicatorNameView"},{"label":"Lable","name":"indicatorLabelView"}]'
+		columns='[{"label":"Measure","name":"indicatorNameView","hideTooltip":true},{"label":"Lable","name":"indicatorLabelView","hideTooltip":true}]'
 		columns-search='["indicatorName","indicatorLabel"]' show-search-bar=true
 		scope-functions='tableFunctionIndicator' speed-menu-option='indicatorsSpeedMenu'
 		>
