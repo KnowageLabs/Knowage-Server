@@ -49,7 +49,9 @@ public interface ICrossNavigationDAO extends ISpagoBIDao {
 	public List<SbiCrossNavigation> listNavigationsByDocumentAndParameters(Integer documentId, List<Integer> inputParameters, List<Integer> outputParameters,
 			Session session);
 
-	public List<SbiCrossNavigationPar> listNavigationsByParameters(Integer paramId, Session session);
+	public List<SbiCrossNavigationPar> listNavigationsByInputParameters(Integer paramId, Session session);
+
+	public List<SbiCrossNavigationPar> listNavigationsByOutputParameters(Integer paramId, Session session);
 
 	public List<SbiCrossNavigationPar> listNavigationsByCrossNavParId(Integer crossNavId, Session session);
 

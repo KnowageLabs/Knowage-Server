@@ -726,7 +726,11 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			throw new SpagoBIRuntimeException("Error while retrieving parameters", e);
 		}
 
-		parameterDAO.removeParameter(id);
+		try {
+			parameterDAO.removeParameter(id);
+		} catch (EMFUserError e) {
+			e.printStackTrace();
+		}
 
 		return Response.ok().build();
 	}

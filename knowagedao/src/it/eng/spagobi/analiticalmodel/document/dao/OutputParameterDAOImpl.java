@@ -17,19 +17,27 @@
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.tools.crossnavigation.dao.ICrossNavigationDAO;
+import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation;
+import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOutputParameterDAO {
@@ -91,8 +99,52 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 	}
 
 	@Override
-	public void removeParameter(Integer id) {
-		delete(SbiOutputParameter.class, id);
+	public void removeParameter(Integer id) throws EMFUserError {
+
+		Session aSession = null;
+		Transaction tx = null;
+		ICrossNavigationDAO crossNavigationDao = DAOFactory.getCrossNavigationDAO();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiOutputParameter sop = load(SbiOutputParameter.class, id);
+			aSession.delete(sop);
+
+			List<SbiCrossNavigationPar> cnParToRemove = crossNavigationDao.listNavigationsByOutputParameters(id, aSession);
+			List<Integer> crossNavigation = new ArrayList<Integer>();
+			// Delete FROM CROSS_NAVIFATION_PAR
+			for (SbiCrossNavigationPar cn : cnParToRemove) {
+				aSession.delete(cn);
+				if (!crossNavigation.contains(cn.getSbiCrossNavigation().getId()))
+					crossNavigation.add(cn.getSbiCrossNavigation().getId());
+			}
+			// Delete FROM CROSS_NAVIGATION
+			for (Integer scnId : crossNavigation) {
+				List<SbiCrossNavigationPar> sbiCrossPar = crossNavigationDao.listNavigationsByCrossNavParId(scnId, aSession);
+				if (sbiCrossPar == null || sbiCrossPar.size() == 0) {
+					SbiCrossNavigation snc = crossNavigationDao.loadSbiCrossNavigationById(scnId, aSession);
+					aSession.delete(snc);
+				}
+
+			}
+
+			// commit all changes
+			tx.commit();
+		} catch (HibernateException he) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} catch (Exception ex) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
 	}
 
 	@Override
