@@ -1,5 +1,5 @@
 /*
- * Knowage, Open Source Business Intelligence suite
+ * Knowage, Open Source Business Intelligence suite 
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
  * 
  * Knowage is free software: you can redistribute it and/or modify
@@ -28,45 +28,43 @@ import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bo.UserBO;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-public interface ISbiUserDAO extends ISpagoBIDao{
-	
+public interface ISbiUserDAO extends ISpagoBIDao {
+
 	public SbiUser loadSbiUserByUserId(String userId) throws EMFUserError;
-	
+
 	public SbiUser loadSbiUserById(Integer id) throws EMFUserError;
-	
-//	public UserBO loadUserById(Integer id) throws EMFUserError;
-	
+
+	// public UserBO loadUserById(Integer id) throws EMFUserError;
+
 	public void deleteSbiUserById(Integer id) throws EMFUserError;
-	
+
 	public void deleteSbiUserAttributeById(Integer id, Integer attrId) throws EMFUserError;
-	
+
 	public Integer saveSbiUser(SbiUser user) throws EMFUserError;
-	
+
 	public void updateSbiUserRoles(SbiExtUserRoles role) throws EMFUserError;
-	
+
 	public void updateSbiUserAttributes(SbiUserAttributes attribute) throws EMFUserError;
-	
+
 	public ArrayList<SbiExtRoles> loadSbiUserRolesById(Integer id) throws EMFUserError;
-	
+
 	public ArrayList<SbiUserAttributes> loadSbiUserAttributesById(Integer id) throws EMFUserError;
-	
+
 	public ArrayList<SbiUser> loadSbiUsers() throws EMFUserError;
-	
+
 	public ArrayList<UserBO> loadUsers() throws EMFUserError;
-	
+
 	public void updateSbiUser(SbiUser user, Integer userID) throws EMFUserError;
-	
+
 	public Integer fullSaveOrUpdateSbiUser(SbiUser user) throws EMFUserError;
-	
+
 	public PagedList<UserBO> loadUsersPagedList(QueryFilters filters, Integer offset, Integer fetchSize) throws EMFUserError;
-	
+
 	public void checkUserId(String userId, Integer id) throws EMFUserError;
-	
+
 	public Integer isUserIdAlreadyInUse(String userId);
-	
-//	public PagedList<UserBO> loadSbiUserListFiltered(String hsql,Integer offset, Integer fetchSize) throws EMFUserError;
+
+	// public PagedList<UserBO> loadSbiUserListFiltered(String hsql,Integer offset, Integer fetchSize) throws EMFUserError;
 
 }
