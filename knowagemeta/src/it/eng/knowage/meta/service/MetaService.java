@@ -3,8 +3,10 @@ package it.eng.knowage.meta.service;
 import it.eng.knowage.meta.generator.jpamapping.JpaMappingJarGenerator;
 import it.eng.knowage.meta.initializer.BusinessModelInitializer;
 import it.eng.knowage.meta.initializer.PhysicalModelInitializer;
+import it.eng.knowage.meta.initializer.descriptor.BusinessRelationshipDescriptor;
 import it.eng.knowage.meta.initializer.descriptor.BusinessViewInnerJoinRelationshipDescriptor;
 import it.eng.knowage.meta.initializer.descriptor.CalculatedFieldDescriptor;
+import it.eng.knowage.meta.initializer.properties.BusinessModelPropertiesFromFileInitializer;
 import it.eng.knowage.meta.initializer.properties.PhysicalModelPropertiesFromFileInitializer;
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelFactory;
@@ -370,10 +372,28 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			// Copy relationships
 			Iterator<BusinessRelationship> sourceRelIterator = sourceBusinessClass.getRelationships().iterator();
+			BusinessModelFactory.eINSTANCE.createBusinessRelationship();
 			while (sourceRelIterator.hasNext()) {
-				// bw.
-				// BusinessRelationship businessRelationship = sourceRelIterator.next();
-				// businessRelationship.getSourceTable()
+				BusinessRelationship sourceRel = sourceRelIterator.next();
+				String relationshipName = sourceRel.getName();
+				BusinessColumnSet source = null;
+				if (sourceRel.getSourceTable().getUniqueName().equals(sourceBusinessClass.getUniqueName())) {
+					source = bw;
+				} else {
+					source = sourceRel.getSourceTable();
+				}
+				BusinessColumnSet destination = null;
+				if (sourceRel.getDestinationTable().getUniqueName().equals(sourceBusinessClass.getUniqueName())) {
+					destination = bw;
+				} else {
+					destination = sourceRel.getDestinationTable();
+				}
+				ModelPropertyType cardinalityType = sourceRel.getPropertyType(BusinessModelPropertiesFromFileInitializer.RELATIONSHIP_CARDINALITY);
+				String cardinality = sourceRel.getProperties().get(cardinalityType.getId()).getValue();
+				List<BusinessColumn> destinationCol = sourceRel.getDestinationColumns();
+				List<BusinessColumn> sourceCol = sourceRel.getSourceColumns();
+				businessModelInitializer.addRelationship(new BusinessRelationshipDescriptor(source, destination, sourceCol, destinationCol, cardinality,
+						relationshipName));
 			}
 
 			// Add identifiers
