@@ -70,7 +70,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 	private SpagoBIPivotModel model;
 	private ModelConfig modelConfig;
-	private static String factCountUniqueName = "[Measures].[Fact Count]" ;
+	private static String factCountUniqueName = "[Measures].[Fact Count]";
 
 	private void init() {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -168,11 +168,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			memberUniqueName = jo.getString("memberUniqueName");
 
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			logger.error("Error reading body", e1);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error serializing JSON", e);
 		}
 
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
@@ -292,7 +290,27 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 						List<Member> temp = level.getMembers();
 						for (Member member : temp) {
-							if(!member.getUniqueName().equals(factCountUniqueName)){//removes the Fact Count measure. It's a fake measures added from mondrian to ensure that cube has an atomic cell count
+							if (!member.getUniqueName().equals(factCountUniqueName)) {// removes
+																						// the
+																						// Fact
+																						// Count
+																						// measure.
+																						// It's
+																						// a
+																						// fake
+																						// measures
+																						// added
+																						// from
+																						// mondrian
+																						// to
+																						// ensure
+																						// that
+																						// cube
+																						// has
+																						// an
+																						// atomic
+																						// cell
+																						// count
 								JSONObject levelsObject = new JSONObject();
 								levelsObject.put("caption", member.getCaption());
 								levelsObject.put("uniqueName", member.getUniqueName());
