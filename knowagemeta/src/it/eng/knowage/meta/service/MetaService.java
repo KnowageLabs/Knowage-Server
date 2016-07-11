@@ -100,7 +100,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 *
+	 * 
 	 * @param dsId
 	 * @return
 	 */
@@ -303,9 +303,13 @@ public class MetaService extends AbstractSpagoBIResource {
 			bm.addBusinessView(bw);
 			bw.setDescription(description);
 
-			physicaltables.put(sourceBusinessClass.getPhysicalTable().getName());
+			// Add source table if it has not been selected
+			boolean addSourceTable = true;
 			for (int i = 0; i < physicaltables.length(); i++) {
 				String ptName = physicaltables.getString(i);
+				if (ptName.equals(sourceBusinessClass.getPhysicalTable().getName())) {
+					addSourceTable = false;
+				}
 				PhysicalTable pt = physicalModel.getTable(ptName);
 				bw.getPhysicalTables().add(pt);
 
@@ -314,11 +318,9 @@ public class MetaService extends AbstractSpagoBIResource {
 					businessModelInitializer.addColumn(ptcol.get(pci), bw);
 				}
 			}
-
-			// Creating inner relationships
-			// BusinessViewInnerJoinRelationship bvRel = BusinessModelFactory.eINSTANCE.createBusinessViewInnerJoinRelationship();
-			// bvRel.setModel(bm);
-			// bw.getJoinRelationships().add(bvRel);
+			if (addSourceTable) {
+				physicaltables.put(sourceBusinessClass.getPhysicalTable().getName());
+			}
 
 			List<BusinessViewInnerJoinRelationshipDescriptor> innerJoinRelationshipDescriptors = new ArrayList<>();
 
@@ -332,8 +334,6 @@ public class MetaService extends AbstractSpagoBIResource {
 				while (sourceColumnsIterator.hasNext()) {
 					String sourceColumnName = sourceColumnsIterator.next();
 					PhysicalColumn sourceColumn = sourceTable.getColumn(sourceColumnName);
-
-					// bvRel.getSourceColumns().add(sourceColumn);
 
 					JSONObject destinationTables = sourceColumns.getJSONObject(sourceColumnName);
 					Iterator<String> destinationTablesIterator = destinationTables.keys();
@@ -357,7 +357,6 @@ public class MetaService extends AbstractSpagoBIResource {
 							PhysicalColumn destCol = destinationTable.getColumn(destColName);
 
 							innerJoinRelationshipDescriptor.getDestinationColumns().add(destCol);
-							// bvRel.getDestinationColumns().add(destCol);
 						}
 					}
 				}
