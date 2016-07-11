@@ -18,6 +18,7 @@
 					<VALIDATOR validatorName="MAXLENGTH" arg0="160"/>
 				</FIELD>
 				<FIELD name="name" label="#SBISet.eng.NameField">
+    				<VALIDATOR validatorName="MANDATORY"/>
 					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
 					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
 				</FIELD>	
