@@ -11,6 +11,7 @@ import it.eng.knowage.meta.model.ModelFactory;
 import it.eng.knowage.meta.model.ModelPropertyType;
 import it.eng.knowage.meta.model.business.BusinessColumn;
 import it.eng.knowage.meta.model.business.BusinessColumnSet;
+import it.eng.knowage.meta.model.business.BusinessIdentifier;
 import it.eng.knowage.meta.model.business.BusinessModel;
 import it.eng.knowage.meta.model.business.BusinessModelFactory;
 import it.eng.knowage.meta.model.business.BusinessRelationship;
@@ -289,18 +290,18 @@ public class MetaService extends AbstractSpagoBIResource {
 			JSONObject relationships = json.getJSONObject("relationships");
 			JSONArray physicaltables = json.getJSONArray("physicaltable");
 
-			String sourceBusinessClass = json.getString("sourceBusinessClass");
+			String sourceBusinessClassName = json.getString("sourceBusinessClass");
 			BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
 			BusinessModel bm = model.getBusinessModels().get(0);
 			PhysicalModel physicalModel = model.getPhysicalModels().get(0);
 
-			BusinessTable mainBT = bm.getBusinessTableByUniqueName(sourceBusinessClass);
+			BusinessTable sourceBusinessClass = bm.getBusinessTableByUniqueName(sourceBusinessClassName);
 			BusinessView bw = BusinessModelFactory.eINSTANCE.createBusinessView();
 			bw.setName(name);
 			bm.addBusinessView(bw);
 			bw.setDescription(description);
 
-			physicaltables.put(mainBT.getPhysicalTable().getName());
+			physicaltables.put(sourceBusinessClass.getPhysicalTable().getName());
 			for (int i = 0; i < physicaltables.length(); i++) {
 				String ptName = physicaltables.getString(i);
 				PhysicalTable pt = physicalModel.getTable(ptName);
@@ -353,7 +354,7 @@ public class MetaService extends AbstractSpagoBIResource {
 							String destColName = destinationColumns.getString(x);
 							PhysicalColumn destCol = destinationTable.getColumn(destColName);
 
-							innerJoinRelationshipDescriptor.getSourceColumns().add(destCol);
+							innerJoinRelationshipDescriptor.getDestinationColumns().add(destCol);
 							// bvRel.getDestinationColumns().add(destCol);
 						}
 					}
@@ -368,8 +369,17 @@ public class MetaService extends AbstractSpagoBIResource {
 			}
 
 			// Copy relationships
+			Iterator<BusinessRelationship> sourceRelIterator = sourceBusinessClass.getRelationships().iterator();
+			while (sourceRelIterator.hasNext()) {
+				// bw.
+				// BusinessRelationship businessRelationship = sourceRelIterator.next();
+				// businessRelationship.getSourceTable()
+			}
 
-			// TODO add identify
+			// Add identifiers
+			BusinessIdentifier identifier = sourceBusinessClass.getIdentifier();
+			businessModelInitializer.addIdentifier(identifier.getName(), bw, identifier.getColumns());
+
 			JSONObject jsonModel = createJson(model);
 			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 
