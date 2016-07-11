@@ -222,6 +222,14 @@ associatorDirective.directive('droppable', function($timeout) {
         			    	if(scope.$parent.dragOptions && scope.$parent.dragOptions.hasOwnProperty("dropEnd")){
         			    		scope.$parent.dragOptions.dropEnd(ev,scope.$parent.sourceModel[data],scope.item);
         			    	}
+        			    }else{
+        			    	var classList=this.classList;
+   			    		 classList.add('errorClass');
+   			    		 $timeout(function(){
+   			    			 classList.remove('errorClass');
+   			    		 },500)
+
+   			    		return
         			    }
 
         		        return false;

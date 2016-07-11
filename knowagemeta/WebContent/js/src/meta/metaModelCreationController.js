@@ -6,7 +6,7 @@ angular.module('metaManager').controller('metaModelCreationBusinessController', 
 angular.module('metaManager').controller('businessModelPropertyController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelPropertyControllerFunction ]);
 angular.module('metaManager').controller('businessModelAttributeController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config',businessModelAttributeControllerFunction ]);
 
-angular.module('metaManager').controller('calculatedBusinessColumnsController', [ '$scope','sbiModule_translate', 'sbiModule_restServices','$mdDialog','sbiModule_config',calculatedBusinessColumnsControllerFunction ]);
+angular.module('metaManager').controller('calculatedBusinessColumnsController', [ '$scope','sbiModule_translate', 'sbiModule_restServices','$mdDialog','sbiModule_config','metaModelServices',calculatedBusinessColumnsControllerFunction ]);
 angular.module('metaManager').controller('businessViewJoinRelationshipsController', [ '$scope','sbiModule_translate', 'sbiModule_restServices',businessViewJoinRelationshipsControllerFunction ]);
 
 
@@ -385,7 +385,7 @@ $scope.selectedBusinessViewJoinRelationships=[
 }
 
 
-function calculatedBusinessColumnsControllerFunction($scope,sbiModule_translate, sbiModule_restServices,$mdDialog,sbiModule_config){
+function calculatedBusinessColumnsControllerFunction($scope,sbiModule_translate, sbiModule_restServices,$mdDialog,sbiModule_config,metaModelServices ){
 	$scope.selectedBusinessModelCalculatedBusinessColumns=[
 		                                              {
 		                                            	  label:sbiModule_translate.load("sbi.generic.name"),
@@ -409,5 +409,37 @@ function calculatedBusinessColumnsControllerFunction($scope,sbiModule_translate,
 			fullscreen: true
 		}).then(function(){
 		});
+	}
+
+	$scope.calculatedFieldSpeedOption=[{
+					label : 'delete',
+					icon:'fa fa-trash' ,
+					backgroundColor:'transparent',
+					color:'black',
+					action : function(item,event) {
+						$scope.deleteCalculatedField(item);
+					}
+					 }
+			];
+
+	$scope.deleteCalculatedField=function(item){
+		 var confirm = $mdDialog.confirm()
+		 .title(sbiModule_translate.load("sbi.meta.delete.calculatedField"))
+		 .ariaLabel('delete Calculated')
+		 .ok(sbiModule_translate.load("sbi.general.continue"))
+		 .cancel(sbiModule_translate.load("sbi.general.cancel"));
+		   $mdDialog.show(confirm).then(function() {
+
+			   //delete the item;
+			   sbiModule_restServices.promisePost("1.0/metaWeb", "deleteCalculatedField",metaModelServices.createRequestRest({name:item.name,sourceTableName:$scope.selectedBusinessModel.uniqueName}))
+			   .then(function(response){
+					metaModelServices.applyPatch(response.data);
+			   },function(response){
+				   sbiModule_restServices.errorHandler(response.data,"Error while delete item");
+			   })
+
+
+		   }, function() {
+		   });
 	}
 }

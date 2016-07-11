@@ -19,6 +19,16 @@ function addBusinessViewController($scope,sbiModule_restServices,sbiModule_trans
 	$scope.dragOptionsFunct={
 			dropEnd:function(ev,source,target){
 				$scope.updateSummary();
+			},
+			beforeDrop:function(ev,source,target){
+				if(target.links){
+					for(var i=0;i<target.links.length;i++){
+						if(angular.equals(target.links[i].tableName,source.tableName)){
+							return false;
+						}
+					}
+				}
+				return true
 			}
 	}
 	$scope.afterClearItem=function(item){

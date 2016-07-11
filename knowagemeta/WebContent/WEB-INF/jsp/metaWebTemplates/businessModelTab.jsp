@@ -107,7 +107,10 @@
 			<md-tab id="calculatedColumnsTab" label="{{translate.load('sbi.meta.business.calculatedField')}}" ng-if="selectedBusinessModel.calculatedBusinessColumns!=undefined">
 				<md-content layout  layout-fill ng-controller="calculatedBusinessColumnsController">
 					<angular-table id="bmAttr" ng-model="selectedBusinessModel.calculatedBusinessColumns"
-					 columns="selectedBusinessModelCalculatedBusinessColumns" scope-functions="selectedBusinessModelCalculatedBusinessColumnsScopeFunctions" no-pagination=true flex>
+					columns="selectedBusinessModelCalculatedBusinessColumns"
+					scope-functions="selectedBusinessModelCalculatedBusinessColumnsScopeFunctions"
+					speed-menu-option="calculatedFieldSpeedOption"
+					no-pagination=true flex>
 					 	<queue-table>
 							<div layout="row"> 
 								<span flex></span>
@@ -157,7 +160,7 @@
 				</md-content>
 			</md-tab>
 		
-			<md-tab id="attributesTab" label="{{translate.load('sbi.meta.joinRelationships')}}" ng-if="selectedBusinessModel.joinRelationships!=undefined">
+			<md-tab id="joinRelationshipTab" label="{{translate.load('sbi.meta.joinRelationships')}}" ng-if="selectedBusinessModel.joinRelationships!=undefined">
 				<md-content layout  layout-fill >
 				<md-list class="md-dense noPadding" flex ng-repeat="item in selectedBusinessModel.joinRelationships">
 	        				<md-list-item     ng-repeat="rel in item.links"  ng-click="null" layout="row">
