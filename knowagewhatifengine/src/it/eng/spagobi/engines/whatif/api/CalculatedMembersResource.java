@@ -18,18 +18,6 @@
 
 package it.eng.spagobi.engines.whatif.api;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMember;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
-import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
-import it.eng.spagobi.engines.whatif.model.ModelConfig;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +39,18 @@ import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 import org.pivot4j.PivotModel;
+
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMember;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
+import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/calculatedmembers")
 public class CalculatedMembersResource extends AbstractWhatIfEngineService {
@@ -156,8 +156,9 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 			hierarchyUniqueName = jo.getString("hierarchyUniqueName");
 
 		} catch (IOException e1) { // TODO Auto-generated catch block
-			e1.printStackTrace();
+			logger.error("Error reading body", e1);
 		} catch (JSONException e) {
+			logger.error("Error making JSON", e);
 		}
 
 		logger.debug("expression= " + calculatedFieldFormula);
@@ -217,11 +218,9 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 			calculatedFieldName = jo.getString("calculatedFieldName");
 
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			logger.error("Error reading body", e1);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error making JSON", e);
 		}
 		logger.debug("Deleting of calculated member with name" + calculatedFieldName);
 		if (model.removeCalculatedField(calculatedFieldName)) {

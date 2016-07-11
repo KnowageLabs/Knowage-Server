@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.axis.AxisDimensionManager;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.model.ModelConfig;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +32,13 @@ import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 import org.pivot4j.PivotModel;
 import org.pivot4j.transform.SwapAxes;
+
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.axis.AxisDimensionManager;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/axis")
 public class AxisResource extends AbstractWhatIfEngineService {
@@ -114,8 +114,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 			toAxisPos = paramsObj.getInt("toAxis");
 			hierarchyName = paramsObj.getString("hierarchy");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error reading body", e);
 		}
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -170,8 +169,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 			direction = paramsObj.getInt("direction");
 			axisPos = paramsObj.getInt("axis");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error reading body", e);
 		}
 
 		getAxisBusiness().moveHierarchy(axisPos, hierarchyUniqueName, newPosition, direction);
@@ -217,8 +215,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 			hierarchyPosition = paramsObj.getInt("hierarchyPosition");
 			axisPos = paramsObj.getInt("axis");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error reading body", e);
 		}
 
 		Hierarchy h = getAxisBusiness().updateHierarchyOnAxis(axisPos, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition);

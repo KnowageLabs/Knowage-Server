@@ -86,8 +86,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			memberName = paramsObj.getString("member");
 			multiSelection = paramsObj.getBoolean("multi");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error reading body", e);
 		}
 
 		ChangeSlicer ph = model.getTransform(ChangeSlicer.class);
@@ -134,8 +133,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			node = paramsObj.getString("node");
 			axis = paramsObj.getInt("axis");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error reading body", e);
 		}
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -264,8 +262,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			showS = paramsObj.getBoolean("showS");
 			axis = paramsObj.getInt("axis");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error reading body", e);
 		}
 
 		int lastDepth = -1;
@@ -319,8 +316,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			}
 
 		} catch (OlapException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			logger.error("Error while adding nodes", e1);
 		}
 		JSONArray serializedobject = new JSONArray();
 
@@ -328,8 +324,8 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			NodeFilter nodeFilter = (NodeFilter) iterator.next();
 			try {
 				serializedobject.put(nodeFilter.serialize());
-			} catch (JSONException e) { // TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (JSONException e) {
+				logger.error("Error serializing JSON", e);
 			}
 		}
 
