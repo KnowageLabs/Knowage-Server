@@ -438,36 +438,34 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/setCalculatedBM")
-	public Response setCalculatedBM(@Context HttpServletRequest req) {
+	public Response setCalculatedBM(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
 
-		// request
+		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 
-		JSONObject jsonRoot;
-		try {
-			jsonRoot = RestUtilities.readBodyAsJSONObject(req);
-			JSONObject jsonData = jsonRoot.getJSONObject("data");
-			String name = jsonData.getString("name");
-			String expression = jsonData.getString("expression");
-			String dataType = jsonData.getString("dataType");
-			String sourceTableName = jsonData.getString("sourceTableName");
+		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		JSONObject oldJsonModel = createJson(model);
 
-			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
-			BusinessModel bm = model.getBusinessModels().get(0);
-			BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
-			CalculatedFieldDescriptor cfd = new CalculatedFieldDescriptor(name, expression, dataType, sourceBcs);
+		JSONObject jsonData = jsonRoot.getJSONObject("data");
+		String name = jsonData.getString("name");
+		String expression = jsonData.getString("expression");
+		String dataType = jsonData.getString("dataType");
+		String sourceTableName = jsonData.getString("sourceTableName");
 
-			BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
-			businessModelInitializer.addCalculatedColumn(cfd);
+		BusinessModel bm = model.getBusinessModels().get(0);
+		BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
+		CalculatedFieldDescriptor cfd = new CalculatedFieldDescriptor(name, expression, dataType, sourceBcs);
 
-		} catch (IOException e) {
-			e.printStackTrace();
-			return Response.serverError().build();
-		} catch (JSONException e) {
-			e.printStackTrace();
-			return Response.serverError().build();
+		BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
+		businessModelInitializer.addCalculatedColumn(cfd);
+
+		ObjectMapper mapper = new ObjectMapper();
+		if (jsonRoot.has("diff")) {
+			JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
+			applyPatch(patch, model);
 		}
-		// Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
-		return Response.ok().build();
+		JSONObject jsonModel = createJson(model);
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+		return Response.ok(patch.toString()).build();
 
 	}
 
