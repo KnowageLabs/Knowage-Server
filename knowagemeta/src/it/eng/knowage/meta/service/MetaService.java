@@ -20,6 +20,7 @@ import it.eng.knowage.meta.model.business.BusinessRelationship;
 import it.eng.knowage.meta.model.business.BusinessTable;
 import it.eng.knowage.meta.model.business.BusinessView;
 import it.eng.knowage.meta.model.business.BusinessViewInnerJoinRelationship;
+import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
 import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.filter.PhysicalTableFilter;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
@@ -479,12 +480,47 @@ public class MetaService extends AbstractSpagoBIResource {
 		BusinessModel bm = model.getBusinessModels().get(0);
 		BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
 		CalculatedFieldDescriptor cfd = new CalculatedFieldDescriptor(name, expression, dataType, sourceBcs);
-
 		BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
 		businessModelInitializer.addCalculatedColumn(cfd);
 
 		JSONObject jsonModel = createJson(model);
 		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+		return Response.ok(patch.toString()).build();
+
+	}
+
+	@POST
+	@Path("/deleteCalculatedField")
+	public Response deleteCalculatedField(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
+
+		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		JSONObject oldJsonModel = createJson(model);
+
+		ObjectMapper mapper = new ObjectMapper();
+		if (jsonRoot.has("diff")) {
+			JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
+			applyPatch(patch, model);
+		}
+
+		JSONObject json = jsonRoot.getJSONObject("data");
+		String name = json.getString("name");
+		String sourceTableName = json.getString("sourceTableName");
+
+		BusinessModel bm = model.getBusinessModels().get(0);
+		BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
+		List<CalculatedBusinessColumn> cbcList = sourceBcs.getCalculatedBusinessColumns();
+		Iterator<CalculatedBusinessColumn> i = cbcList.iterator();
+		while (i.hasNext()) {
+			CalculatedBusinessColumn cbc = i.next();
+			if (cbc.getName().equals(name)) {
+				i.remove();
+			}
+		}
+
+		JSONObject jsonModel = createJson(model);
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+
 		return Response.ok(patch.toString()).build();
 
 	}
