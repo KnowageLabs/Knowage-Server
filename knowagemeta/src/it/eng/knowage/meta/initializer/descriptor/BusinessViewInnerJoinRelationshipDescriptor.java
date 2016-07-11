@@ -17,24 +17,30 @@
  */
 package it.eng.knowage.meta.initializer.descriptor;
 
-
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author cortella
- *
+ * 
  */
 public class BusinessViewInnerJoinRelationshipDescriptor {
 	private String relationshipName;
 	private PhysicalTable sourceTable, destinationTable;
-	private java.util.List<PhysicalColumn> sourceColumns, destinationColumns;
+	private List<PhysicalColumn> sourceColumns = new ArrayList<>();
+	private List<PhysicalColumn> destinationColumns = new ArrayList<>();
 	private int relationCardinality;
-	
-	
-	public BusinessViewInnerJoinRelationshipDescriptor(PhysicalTable source, PhysicalTable destination, java.util.List<PhysicalColumn> sourceCol, java.util.List<PhysicalColumn> destinationCol, int cardinality, String relationshipName){
+
+	public BusinessViewInnerJoinRelationshipDescriptor(PhysicalTable source, PhysicalTable destination) {
+		sourceTable = source;
+		destinationTable = destination;
+	}
+
+	public BusinessViewInnerJoinRelationshipDescriptor(PhysicalTable source, PhysicalTable destination, java.util.List<PhysicalColumn> sourceCol,
+			java.util.List<PhysicalColumn> destinationCol, int cardinality, String relationshipName) {
 		sourceTable = source;
 		destinationTable = destination;
 		sourceColumns = new ArrayList<PhysicalColumn>();
@@ -45,8 +51,50 @@ public class BusinessViewInnerJoinRelationshipDescriptor {
 		this.relationshipName = relationshipName;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((destinationTable == null) ? 0 : destinationTable.hashCode());
+		result = prime * result + ((sourceTable == null) ? 0 : sourceTable.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BusinessViewInnerJoinRelationshipDescriptor other = (BusinessViewInnerJoinRelationshipDescriptor) obj;
+		if (destinationTable == null) {
+			if (other.destinationTable != null)
+				return false;
+		} else if (!destinationTable.equals(other.destinationTable))
+			return false;
+		if (sourceTable == null) {
+			if (other.sourceTable != null)
+				return false;
+		} else if (!sourceTable.equals(other.sourceTable))
+			return false;
+		return true;
+	}
+
 	/**
-	 * @param sourceTable the sourceTable to set
+	 * @param sourceTable
+	 *            the sourceTable to set
 	 */
 	public void setSourceTable(PhysicalTable sourceTable) {
 		this.sourceTable = sourceTable;
@@ -60,7 +108,8 @@ public class BusinessViewInnerJoinRelationshipDescriptor {
 	}
 
 	/**
-	 * @param destinationTable the destinationTable to set
+	 * @param destinationTable
+	 *            the destinationTable to set
 	 */
 	public void setDestinationTable(PhysicalTable destinationTable) {
 		this.destinationTable = destinationTable;
@@ -74,7 +123,8 @@ public class BusinessViewInnerJoinRelationshipDescriptor {
 	}
 
 	/**
-	 * @param sourceColumns the sourceColumns to set
+	 * @param sourceColumns
+	 *            the sourceColumns to set
 	 */
 	public void setSourceColumns(java.util.List<PhysicalColumn> sourceColumns) {
 		this.sourceColumns = sourceColumns;
@@ -88,7 +138,8 @@ public class BusinessViewInnerJoinRelationshipDescriptor {
 	}
 
 	/**
-	 * @param destinationColumns the destinationColumns to set
+	 * @param destinationColumns
+	 *            the destinationColumns to set
 	 */
 	public void setDestinationColumns(java.util.List<PhysicalColumn> destinationColumns) {
 		this.destinationColumns = destinationColumns;
@@ -102,7 +153,8 @@ public class BusinessViewInnerJoinRelationshipDescriptor {
 	}
 
 	/**
-	 * @param relationCardinality the relationCardinality to set
+	 * @param relationCardinality
+	 *            the relationCardinality to set
 	 */
 	public void setRelationCardinality(int relationCardinality) {
 		this.relationCardinality = relationCardinality;
@@ -116,7 +168,8 @@ public class BusinessViewInnerJoinRelationshipDescriptor {
 	}
 
 	/**
-	 * @param relationshipName the relationshipName to set
+	 * @param relationshipName
+	 *            the relationshipName to set
 	 */
 	public void setRelationshipName(String relationshipName) {
 		this.relationshipName = relationshipName;
@@ -128,5 +181,5 @@ public class BusinessViewInnerJoinRelationshipDescriptor {
 	public String getRelationshipName() {
 		return relationshipName;
 	}
-	
+
 }

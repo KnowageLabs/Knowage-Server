@@ -17,10 +17,6 @@ public class ModelPropertyFactory extends AbstractFactory {
 
 	@Override
 	public boolean createObject(JXPathContext context, Pointer pointer, Object parent, String name, int index) {
-		System.out.println("pointer:" + pointer);
-		System.out.println("parent:" + parent);
-		System.out.println("name:" + name);
-		System.out.println("index:" + index);
 		if ((parent instanceof BusinessTableImpl) && "relationships".equals(name)) {
 			BusinessTableImpl bt = ((BusinessTableImpl) parent);
 			BusinessRelationship br = BusinessModelFactory.eINSTANCE.createBusinessRelationship();
@@ -38,12 +34,8 @@ public class ModelPropertyFactory extends AbstractFactory {
 		} else if ((parent instanceof ModelPropertyMapEntryImpl)) {
 			ModelPropertyMapEntryImpl map = ((ModelPropertyMapEntryImpl) parent);
 			map.setKey(name);
-			// map.setValue(ModelFactory.eINSTANCE.createModelProperty());
-			// map.getValue().setPropertyType(ModelFactory.eINSTANCE.createModelPropertyType());
-			System.out.println("map.getValue().getPropertyType()=" + map.getValue().getPropertyType());
 			return true;
-		}// context.getPointer("/businessTables[1]/columns[4]/properties[@name='structural.visible']/propertyType/id")
-			// context.getPointer("/businessTables[1]/columns[4]/properties[@key='structural.visible']")
+		}
 		return false;
 	}
 }

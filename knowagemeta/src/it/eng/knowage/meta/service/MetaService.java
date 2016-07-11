@@ -3,6 +3,7 @@ package it.eng.knowage.meta.service;
 import it.eng.knowage.meta.generator.jpamapping.JpaMappingJarGenerator;
 import it.eng.knowage.meta.initializer.BusinessModelInitializer;
 import it.eng.knowage.meta.initializer.PhysicalModelInitializer;
+import it.eng.knowage.meta.initializer.descriptor.BusinessViewInnerJoinRelationshipDescriptor;
 import it.eng.knowage.meta.initializer.descriptor.CalculatedFieldDescriptor;
 import it.eng.knowage.meta.initializer.properties.PhysicalModelPropertiesFromFileInitializer;
 import it.eng.knowage.meta.model.Model;
@@ -96,7 +97,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 *
+	 * 
 	 * @param dsId
 	 * @return
 	 */
@@ -289,21 +290,20 @@ public class MetaService extends AbstractSpagoBIResource {
 			JSONArray physicaltables = json.getJSONArray("physicaltable");
 
 			String sourceBusinessClass = json.getString("sourceBusinessClass");
-			BusinessTable mainBT = model.getBusinessModels().get(0).getBusinessTableByUniqueName(sourceBusinessClass);
 			BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
 			BusinessModel bm = model.getBusinessModels().get(0);
+			PhysicalModel physicalModel = model.getPhysicalModels().get(0);
+
+			BusinessTable mainBT = bm.getBusinessTableByUniqueName(sourceBusinessClass);
 			BusinessView bw = BusinessModelFactory.eINSTANCE.createBusinessView();
-			bw.setModel(bm);
-			model.getBusinessModels().get(0).getBusinessViews().add(bw);
 			bw.setName(name);
-			// TO-DO generate real unique name
-			bw.setUniqueName("uniq_" + name.toLowerCase().replaceAll(" ", "_"));
+			bm.addBusinessView(bw);
 			bw.setDescription(description);
 
 			physicaltables.put(mainBT.getPhysicalTable().getName());
 			for (int i = 0; i < physicaltables.length(); i++) {
 				String ptName = physicaltables.getString(i);
-				PhysicalTable pt = model.getPhysicalModels().get(0).getTable(ptName);
+				PhysicalTable pt = physicalModel.getTable(ptName);
 				bw.getPhysicalTables().add(pt);
 
 				EList<PhysicalColumn> ptcol = pt.getColumns();
@@ -312,15 +312,17 @@ public class MetaService extends AbstractSpagoBIResource {
 				}
 			}
 
-			// Creating relationship
-			BusinessViewInnerJoinRelationship bvRel = BusinessModelFactory.eINSTANCE.createBusinessViewInnerJoinRelationship();
-			bvRel.setModel(bm);
-			bw.getJoinRelationships().add(bvRel);
+			// Creating inner relationships
+			// BusinessViewInnerJoinRelationship bvRel = BusinessModelFactory.eINSTANCE.createBusinessViewInnerJoinRelationship();
+			// bvRel.setModel(bm);
+			// bw.getJoinRelationships().add(bvRel);
+
+			List<BusinessViewInnerJoinRelationshipDescriptor> innerJoinRelationshipDescriptors = new ArrayList<>();
 
 			Iterator<String> relationshipsIterator = relationships.keys();
 			while (relationshipsIterator.hasNext()) {
 				String tableName = relationshipsIterator.next();
-				PhysicalTable sourceTable = model.getPhysicalModels().get(0).getTable(tableName);
+				PhysicalTable sourceTable = physicalModel.getTable(tableName);
 
 				JSONObject sourceColumns = relationships.getJSONObject(tableName);
 				Iterator<String> sourceColumnsIterator = sourceColumns.keys();
@@ -328,26 +330,46 @@ public class MetaService extends AbstractSpagoBIResource {
 					String sourceColumnName = sourceColumnsIterator.next();
 					PhysicalColumn sourceColumn = sourceTable.getColumn(sourceColumnName);
 
-					bvRel.getSourceColumns().add(sourceColumn);
+					// bvRel.getSourceColumns().add(sourceColumn);
 
 					JSONObject destinationTables = sourceColumns.getJSONObject(sourceColumnName);
 					Iterator<String> destinationTablesIterator = destinationTables.keys();
 					while (destinationTablesIterator.hasNext()) {
 						String destinationTableName = destinationTablesIterator.next();
-						PhysicalTable destinationTable = model.getPhysicalModels().get(0).getTable(destinationTableName);
+						PhysicalTable destinationTable = physicalModel.getTable(destinationTableName);
+
+						BusinessViewInnerJoinRelationshipDescriptor innerJoinRelationshipDescriptor = new BusinessViewInnerJoinRelationshipDescriptor(
+								sourceTable, destinationTable);
+						int index = innerJoinRelationshipDescriptors.indexOf(innerJoinRelationshipDescriptor);
+						if (index < 0) {
+							innerJoinRelationshipDescriptors.add(innerJoinRelationshipDescriptor);
+						} else {
+							innerJoinRelationshipDescriptor = innerJoinRelationshipDescriptors.get(index);
+						}
+						innerJoinRelationshipDescriptor.getSourceColumns().add(sourceColumn);
 
 						JSONArray destinationColumns = destinationTables.getJSONArray(destinationTableName);
 						for (int x = 0; x < destinationColumns.length(); x++) {
 							String destColName = destinationColumns.getString(x);
 							PhysicalColumn destCol = destinationTable.getColumn(destColName);
 
-							bvRel.getDestinationColumns().add(destCol);
+							innerJoinRelationshipDescriptor.getSourceColumns().add(destCol);
+							// bvRel.getDestinationColumns().add(destCol);
 						}
 					}
 				}
 			}
 
-			// TO-DO aggiungere identify
+			// Adding relationships to BusinessView
+			for (BusinessViewInnerJoinRelationshipDescriptor businessViewInnerJoinRelationshipDescriptor : innerJoinRelationshipDescriptors) {
+				BusinessViewInnerJoinRelationship innerJoinRelationship = businessModelInitializer.addBusinessViewInnerJoinRelationship(bm,
+						businessViewInnerJoinRelationshipDescriptor);
+				bw.getJoinRelationships().add(innerJoinRelationship);
+			}
+
+			// Copy relationships
+
+			// TODO add identify
 			JSONObject jsonModel = createJson(model);
 			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 
@@ -930,29 +952,4 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	}
 
-	public static void main2(String[] args) {
-		Pattern p = Pattern.compile("(/)(\\d)(/)");
-		String input = "/physicalModel/0/columns/0/name";
-		Matcher m = p.matcher(input);
-		StringBuffer s = new StringBuffer();
-		while (m.find()) {
-			System.out.println(m.group(2));
-			m.appendReplacement(s, "[" + String.valueOf(1 + Integer.parseInt(m.group(2))) + "]/");
-		}
-		System.out.println(">" + s.toString());
-		System.exit(0);
-	}
-
-	public static void main(String[] args) {
-		Pattern p = Pattern.compile("(/)(\\d)(/)");
-		String input = "/physicalModel/0/columns/0/name";
-		Matcher m = p.matcher(input);
-		StringBuffer s = new StringBuffer();
-		while (m.find()) {
-			System.out.println(m.group(2));
-			m.appendReplacement(s, "[" + String.valueOf(1 + Integer.parseInt(m.group(2))) + "]/");
-		}
-		System.out.println(">" + s.toString());
-		System.exit(0);
-	}
 }

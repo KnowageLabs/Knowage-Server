@@ -28,7 +28,7 @@ import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc --> A representation of the model object '<em><b>Business Model</b></em>'. <!-- end-user-doc -->
- *
+ * 
  * <p>
  * The following features are supported:
  * <ul>
@@ -41,7 +41,7 @@ import org.eclipse.emf.common.util.EList;
  * <li>{@link it.eng.knowage.meta.model.business.BusinessModel#getJoinRelationships <em>Join Relationships</em>}</li>
  * </ul>
  * </p>
- *
+ * 
  * @see it.eng.knowage.meta.model.business.BusinessModelPackage#getBusinessModel()
  * @model
  * @generated
@@ -54,7 +54,7 @@ public interface BusinessModel extends ModelObject {
 	 * If the meaning of the '<em>Parent Model</em>' reference isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 *
+	 * 
 	 * @return the value of the '<em>Parent Model</em>' container reference.
 	 * @see #setParentModel(Model)
 	 * @see it.eng.knowage.meta.model.business.BusinessModelPackage#getBusinessModel_ParentModel()
@@ -67,7 +67,7 @@ public interface BusinessModel extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.business.BusinessModel#getParentModel <em>Parent Model</em>}' container reference. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @param value
 	 *            the new value of the '<em>Parent Model</em>' container reference.
 	 * @see #getParentModel()
@@ -81,7 +81,7 @@ public interface BusinessModel extends ModelObject {
 	 * If the meaning of the '<em>Physical Model</em>' reference isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 *
+	 * 
 	 * @return the value of the '<em>Physical Model</em>' reference.
 	 * @see #setPhysicalModel(PhysicalModel)
 	 * @see it.eng.knowage.meta.model.business.BusinessModelPackage#getBusinessModel_PhysicalModel()
@@ -93,7 +93,7 @@ public interface BusinessModel extends ModelObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.business.BusinessModel#getPhysicalModel <em>Physical Model</em>}' reference. <!-- begin-user-doc
 	 * --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @param value
 	 *            the new value of the '<em>Physical Model</em>' reference.
 	 * @see #getPhysicalModel()
@@ -109,7 +109,7 @@ public interface BusinessModel extends ModelObject {
 	 * If the meaning of the '<em>Tables</em>' reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 *
+	 * 
 	 * @return the value of the '<em>Tables</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.business.BusinessModelPackage#getBusinessModel_Tables()
 	 * @see it.eng.knowage.meta.model.business.BusinessColumnSet#getModel
@@ -126,7 +126,7 @@ public interface BusinessModel extends ModelObject {
 	 * If the meaning of the '<em>Relationships</em>' reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 *
+	 * 
 	 * @return the value of the '<em>Relationships</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.business.BusinessModelPackage#getBusinessModel_Relationships()
 	 * @see it.eng.knowage.meta.model.business.BusinessRelationship#getModel
@@ -143,7 +143,7 @@ public interface BusinessModel extends ModelObject {
 	 * If the meaning of the '<em>Identifiers</em>' containment reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 *
+	 * 
 	 * @return the value of the '<em>Identifiers</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.business.BusinessModelPackage#getBusinessModel_Identifiers()
 	 * @see it.eng.knowage.meta.model.business.BusinessIdentifier#getModel
@@ -160,7 +160,7 @@ public interface BusinessModel extends ModelObject {
 	 * If the meaning of the '<em>Domains</em>' containment reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 *
+	 * 
 	 * @return the value of the '<em>Domains</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.business.BusinessModelPackage#getBusinessModel_Domains()
 	 * @see it.eng.knowage.meta.model.business.BusinessDomain#getModel
@@ -177,7 +177,7 @@ public interface BusinessModel extends ModelObject {
 	 * If the meaning of the '<em>Join Relationships</em>' containment reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 *
+	 * 
 	 * @return the value of the '<em>Join Relationships</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.business.BusinessModelPackage#getBusinessModel_JoinRelationships()
 	 * @see it.eng.knowage.meta.model.business.BusinessViewInnerJoinRelationship#getModel
@@ -201,7 +201,7 @@ public interface BusinessModel extends ModelObject {
 
 	/**
 	 * Returns the tables (business table or business view) whose unique name is equal to uniqueName if any, null otherwise.
-	 *
+	 * 
 	 * @param uniqueName
 	 *            the unique name of the table to look for
 	 * @return the table whose unique name is equal to uniqueName if any, null otherwise.
@@ -211,7 +211,7 @@ public interface BusinessModel extends ModelObject {
 	/**
 	 * @deprecated This method is conceptually wrong because to one table name can be associated multiple Tables. This method implementation return only the
 	 *             first table whose name match the name parameter. Use getTableByUniqueName instead.
-	 *
+	 * 
 	 * @param name
 	 *            the name of the table to look for
 	 * @return the first table whose name is equal to parameter name
@@ -230,7 +230,7 @@ public interface BusinessModel extends ModelObject {
 
 	/**
 	 * Returns the business table (business view are not included in the search) whose unique name is equal to uniqueName if any, null otherwise.
-	 *
+	 * 
 	 * @param uniqueName
 	 *            the unique name of the business table to look for
 	 * @return the business table whose unique name is equal to uniqueName if any, null otherwise.
@@ -239,7 +239,7 @@ public interface BusinessModel extends ModelObject {
 
 	/**
 	 * Return a list of all business tables whose name is equal to '<em>name</em>'.
-	 *
+	 * 
 	 * @param physicalTable
 	 *            the name to search for
 	 * @return a list of all business tables whose name is equal to '<em>name</em>'. Never return null. If there are no business tables associated with the
@@ -249,7 +249,7 @@ public interface BusinessModel extends ModelObject {
 
 	/**
 	 * Return a list of all business tables associated with the given physicalTable.
-	 *
+	 * 
 	 * @param physicalTable
 	 *            a physicalTable
 	 * @return a list of all business tables associated with the given physicalTable. Never return null. If there are no business tables associated with the
@@ -259,7 +259,7 @@ public interface BusinessModel extends ModelObject {
 
 	/**
 	 * Return a list of all business tables associated with the the physical table whose name is equal to name.
-	 *
+	 * 
 	 * @param name
 	 *            the name of the target physical table
 	 * @return a list of all business tables associated with the the physical table whose name is equal to name. Never return null. If there are no business
@@ -269,7 +269,7 @@ public interface BusinessModel extends ModelObject {
 
 	/**
 	 * Delete the businessTable whose unique name is equal to parameter uniqueName.
-	 *
+	 * 
 	 * @param uniqueName
 	 *            the unique name of the business table to delete
 	 * @return true if a table with the given unique name exists false otherwise
@@ -287,7 +287,7 @@ public interface BusinessModel extends ModelObject {
 
 	/**
 	 * Return a list of all business view associated with the the physical table whose name is equal to name.
-	 *
+	 * 
 	 * @param name
 	 *            the name of the target physical table
 	 * @return a list of all business tables associated with the the physical table whose name is equal to name. Never return null. If there are no business
@@ -297,11 +297,13 @@ public interface BusinessModel extends ModelObject {
 
 	/**
 	 * Delete the businessView whose unique name is equal to parameter uniqueName.
-	 *
+	 * 
 	 * @param uniqueName
 	 *            the unique name of the business table to delete
 	 * @return true if a table with the given unique name exists false otherwise
 	 */
 	boolean deleteBusinessViewByUniqueName(String uniqueName);
+
+	void addBusinessView(BusinessView businessView);
 
 } // BusinessModel

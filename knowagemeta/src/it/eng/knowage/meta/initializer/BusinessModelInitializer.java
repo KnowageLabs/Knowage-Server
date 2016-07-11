@@ -51,7 +51,7 @@ import org.eclipse.emf.common.util.EList;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public class BusinessModelInitializer {
 
@@ -585,7 +585,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Create a BusinessView using the data from a BusinessTable and the added PhysicalTable with a specified join path
-	 *
+	 * 
 	 * @return BusinessView created
 	 */
 	public BusinessView upgradeBusinessTableToBusinessView(BusinessTable businessTable,
@@ -643,10 +643,18 @@ public class BusinessModelInitializer {
 		return businessView;
 	}
 
+	public BusinessView createBusinessViewFromBusinessTable(BusinessTable businessTable) {
+		return upgradeBusinessTableToBusinessView(businessTable, false);
+	}
+
+	public BusinessView upgradeBusinessTableToBusinessView(BusinessTable businessTable) {
+		return upgradeBusinessTableToBusinessView(businessTable, true);
+	}
+
 	/**
 	 * Upgrade BusinessTable to BusinessView without using Join Paths
 	 */
-	public BusinessView upgradeBusinessTableToBusinessView(BusinessTable businessTable) {
+	public BusinessView upgradeBusinessTableToBusinessView(BusinessTable businessTable, boolean deleteSourceTable) {
 		BusinessView businessView;
 		BusinessModel businessModel = businessTable.getModel();
 		Collection<BusinessColumn> businessColumns = businessTable.getColumns();
@@ -688,7 +696,9 @@ public class BusinessModelInitializer {
 			getPropertiesInitializer().addProperties(businessView);
 
 			// destroy Business Table
-			businessModel.getTables().remove(businessTable);
+			if (deleteSourceTable) {
+				businessModel.getTables().remove(businessTable);
+			}
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to initialize business view", t);
 		}
@@ -697,7 +707,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Transform a BusinessView with only one PhysicalTable in the corresponding BusinessTable
-	 *
+	 * 
 	 * @param businessView
 	 * @return businessTable
 	 */
@@ -821,7 +831,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Create BusinessViewInnerJoinRelationship from a BusinessViewInnerJoinRelationshipDescriptor
-	 *
+	 * 
 	 * @param businessModel
 	 * @return
 	 */
@@ -855,7 +865,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Remove BusinessViewInnerJoinRelationship from a BusinessViewInnerJoinRelationshipDescriptor
-	 *
+	 * 
 	 * @param businessModel
 	 * @return
 	 */
@@ -885,7 +895,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Check if the relationships defined in the model respect the constraints required for Hibernate
-	 *
+	 * 
 	 * @return the collection of incorrect relationships
 	 */
 	public List<Pair<BusinessRelationship, Integer>> checkRelationshipsConstraints(BusinessModel businessModel) {
