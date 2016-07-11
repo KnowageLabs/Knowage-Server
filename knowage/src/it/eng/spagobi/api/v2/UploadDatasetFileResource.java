@@ -150,7 +150,7 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 
 			// check if the extension is valid (XLS, CSV)
 			if (!"CSV".equalsIgnoreCase(fileExtension) && !"XLS".equalsIgnoreCase(fileExtension)) {
-				throw new SpagoBIServiceException(getActionName(), "The uploaded file has an invalid extension. Choose a CSV or XLS file.");
+				throw new SpagoBIServiceException(getActionName(), "The selected file has an invalid extension. Choose a CSV or an XLS file");
 			}
 
 			return fileExtension.toUpperCase();

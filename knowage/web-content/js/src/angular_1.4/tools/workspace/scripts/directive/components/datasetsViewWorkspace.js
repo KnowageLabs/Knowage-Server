@@ -172,7 +172,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	
 	
 	$scope.deleteDataset=function(dataset){
-		console.log(dataset);
+	
+//		console.log(dataset);
+
 		var label= dataset.label;
 		
 		var confirm = $mdDialog.confirm()
@@ -200,8 +202,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			});
 		});
 		
-}
-	
+	}	
 	
 	$scope.showDatasetDetails = function() {
 		return $scope.showDatasetInfo && $scope.isSelectedDatasetValid();

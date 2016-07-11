@@ -248,7 +248,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 				 * new folder is not possible.
 				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
-				sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
 				
 			});
 			

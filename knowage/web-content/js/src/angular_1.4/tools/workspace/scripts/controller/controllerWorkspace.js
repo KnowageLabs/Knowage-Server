@@ -160,6 +160,13 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	$scope.metadataType = $scope.metadataTypes[0];
 	$scope.metadataId = 1;
 	
+	$scope.csvEncodingDefault = "UTF-8";
+	$scope.csvDelimiterDefault = ",";
+	$scope.csvQuoteDefault = "\"";
+	$scope.skipRowsDefault = 0;
+	$scope.limitRowsDefault = null;
+	$scope.xslSheetNumberDefault = 1;
+	
 	/**
      * Initialize all the data needed for the 'dataset' object that we are sending towards the server when going to the Step 2 and ones that we are using
      * internally (such as 'limitPreviewChecked'). This initialization should be done whenever we are opening the Dataset wizard, since the behavior should 
@@ -167,22 +174,22 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
      */
 	$scope.initializeDatasetWizard = function(dataset) {
-		
+
 		$scope.dataset.fileType = dataset!=undefined ? dataset.fileType : "";
 		$scope.dataset.fileName = dataset!=undefined ? dataset.fileName : "";
 		
 		$scope.limitPreviewChecked = false;
 		
-		$scope.dataset.csvEncoding = dataset!=undefined ? dataset.csvEncoding : "UTF-8"; 
-		$scope.dataset.csvDelimiter = dataset!=undefined ? dataset.csvDelimiter : ","; 
-		$scope.dataset.csvQuote = dataset!=undefined ?dataset.csvQuote : "\""; 
+		$scope.dataset.csvEncoding = dataset!=undefined ? dataset.csvEncoding : $scope.csvEncodingDefault; 
+		$scope.dataset.csvDelimiter = dataset!=undefined ? dataset.csvDelimiter : $scope.csvDelimiterDefault; 
+		$scope.dataset.csvQuote = dataset!=undefined ? dataset.csvQuote : $scope.csvQuoteDefault; 
 		
-		$scope.dataset.skipRows = dataset!=undefined ? Number(dataset.skipRows) : 0;
-		$scope.dataset.limitRows = dataset!=undefined ? dataset.limitRows : null;
-		$scope.dataset.xslSheetNumber = dataset!=undefined ? Number(dataset.xslSheetNumber) : 1;
+		$scope.dataset.skipRows = dataset!=undefined ? Number(dataset.skipRows) : $scope.skipRowsDefault;
+		$scope.dataset.limitRows = dataset!=undefined ? dataset.limitRows : $scope.limitRowsDefault;
+		$scope.dataset.xslSheetNumber = dataset!=undefined ? Number(dataset.xslSheetNumber) : $scope.xslSheetNumberDefault;
 				
 		$scope.dataset.catTypeVn = dataset!=undefined ? dataset.catTypeVn : "";
-		$scope.dataset.catTypeId = dataset!=undefined ? Number(dataset.catTypeId) : null;		
+		$scope.dataset.catTypeId = dataset!=undefined ? Number(dataset.catTypeId) : null;
 		
 		$scope.dataset.id = dataset!=undefined ? dataset.id : "";
 		$scope.dataset.label = dataset!=undefined ? dataset.label : "";

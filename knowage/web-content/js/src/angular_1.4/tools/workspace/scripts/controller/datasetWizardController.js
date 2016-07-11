@@ -67,7 +67,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			$scope.dataset.limitRows = "";
 		
 		if ($scope.dataset.xslSheetNumber == null)
-			$scope.dataset.xslSheetNumber = "";
+			$scope.dataset.xslSheetNumber = 1;
 		
 		$scope.dataset.meta = JSON.stringify($scope.dataset.meta);
 		
@@ -114,7 +114,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				}
 				else {
 					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
-					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), 'Error!');
+					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
 				}
 			}, 
 				
@@ -123,7 +123,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			// or server returns response with an error status.
 				console.info("[FAILURE]: The form cannot be submitted because of some failure.");
 				console.log(response);
-				sbiModule_messaging.showErrorMessage("Failure!", 'Error!');
+				sbiModule_messaging.showErrorMessage("Failure!", sbiModule_translate.load('sbi.generic.failure'));
 			}
 		);
 	}
@@ -215,7 +215,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				else {
 					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
 					$scope.validationStatus = false;
-					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), 'Error!');
+					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
 				}
 			}, 
 			
@@ -225,7 +225,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				console.info("[FAILURE]: The form cannot be submitted because of some failure.");
 				console.log(response);
 				$scope.validationStatus = false;
-				sbiModule_messaging.showErrorMessage("Failure!", 'Error!');
+				sbiModule_messaging.showErrorMessage("Failure!", sbiModule_translate.load('sbi.generic.failure'));
 			}
 		);
 	}
@@ -266,6 +266,9 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			},function(response){
 				sbiModule_restServices.errorHandler(response.data,translate.load('sbi.workspace.dataset.fail'));
 			});*/
+		
+		//console.log("FINAL RESULT:");
+		//console.log($scope.dataset);
 		
 		$http
 		(
@@ -311,7 +314,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				else {
 					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
 					$scope.validationStatus = false;
-					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), 'Error!');
+					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
 				}
 			}, 
 			
@@ -339,7 +342,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				$scope.searchInput = "";
 				
 //					$scope.validationStatus = false;
-//					sbiModule_messaging.showErrorMessage("Failure!", 'Error!');
+//					sbiModule_messaging.showErrorMessage("Failure!", sbiModule_translate.load('sbi.generic.failure'));
 			}
 		);
 		
@@ -555,17 +558,31 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				function(data,status,headers,config){
 					
 					if(data.hasOwnProperty("errors")){						
-						console.info("[UPLOAD]: DATA HAS ERRORS PROPERTY!");		
-						sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, 'Error!');
+						console.info("[UPLOAD]: DATA HAS ERRORS PROPERTY!");
+						sbiModule_messaging.showErrorMessage(sbiModule_translate.load(data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
 					}
 					else {
-					
+						
 						console.info("[UPLOAD]: SUCCESS!");
-						sbiModule_messaging.showSuccessMessage($scope.fileObj.fileName+" successfully uploaded", 'Success!');
+						
+						sbiModule_messaging.showSuccessMessage(sbiModule_translate.format(sbiModule_translate.load('sbi.workspace.dataset.wizard.upload.success'), 
+								$scope.fileObj.fileName), translate.load('sbi.generic.success'));
 					
 						$scope.file={};
 						$scope.dataset.fileType = data.fileType;
 						$scope.dataset.fileName = data.fileName;
+						
+						/**
+						 * When user re-uploads a file, we should reset all fields that we have on the bottom panel of the Step 1, for both file types 
+						 * (CSV and XLS), so the user can start from the scratch when defining new/modifying existing file dataset. 
+						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+						 */
+						$scope.dataset.csvEncoding = $scope.csvEncodingDefault;
+						$scope.dataset.csvDelimiter = $scope.csvDelimiterDefault;
+						$scope.dataset.csvQuote = $scope.csvQuoteDefault;
+						$scope.dataset.skipRows = $scope.skipRowsDefault;
+						$scope.dataset.limitRows = $scope.limitRowsDefault;
+						$scope.dataset.xslSheetNumber = $scope.xslSheetNumberDefault;
 						
 						/**
 						 * Whenever we upload a file, keep the track of its name, in order to indicate when the new one is browsed but not uploaded.
@@ -577,8 +594,8 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 						
 					}
 				}).error(function(data, status, headers, config) {
-					console.info("[UPLOAD]: FAIL! Status: "+status);
-					sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, 'Error!');
+					console.info("[UPLOAD]: FAIL! Status: "+status);					
+					sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, sbiModule_translate.load('sbi.generic.failure'));
 				});
     	
     }
