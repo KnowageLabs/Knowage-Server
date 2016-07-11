@@ -1,5 +1,5 @@
 <angular-list-detail ng-controller="metaModelCreationPhysicalController">
-	<list label="'BusinessModelName'" layout="column"> 
+	<list label="translate.load('sbi.glossary.tables')" layout="column"> 
 		<span ng-if="meta.physicalModels.length>0">
 			<component-tree id="pmTree"  style="margin:0px"
 				ng-model="meta.physicalModels"

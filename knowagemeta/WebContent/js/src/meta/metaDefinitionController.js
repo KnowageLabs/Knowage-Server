@@ -91,11 +91,11 @@ app.service("metaModelServices",function(sbiModule_jsonServices){
 	}
 })
 
-app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval', metaDefinitionControllerFunction ]);
+app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval','$angularListDetail', metaDefinitionControllerFunction ]);
 
 
 
-function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices,$interval) {
+function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices,$interval,$angularListDetail) {
 	$scope.translate = sbiModule_translate;
 	$scope.physicalModelTreeInterceptor = {};
 	$scope.businessModelTreeInterceptor = {};
@@ -138,7 +138,7 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 	}
 
 	if(translatedModel!=undefined){
-		$scope.steps.current=1;
+		$angularListDetail.goToDetail();
 		$scope.loadSbiModel(translatedModel);
 	}
 
@@ -173,6 +173,7 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 				sbiModule_restServices.errorHandler(sbiModule_translate.load("sbi.meta.model.physical.select.required"), "");
 			} else {
 				$scope.createMeta();
+				$angularListDetail.goToDetail();
 			}
 	};
 

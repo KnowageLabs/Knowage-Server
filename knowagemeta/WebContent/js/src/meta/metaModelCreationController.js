@@ -6,6 +6,9 @@ angular.module('metaManager').controller('metaModelCreationBusinessController', 
 angular.module('metaManager').controller('businessModelPropertyController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelPropertyControllerFunction ]);
 angular.module('metaManager').controller('businessModelAttributeController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config',businessModelAttributeControllerFunction ]);
 
+angular.module('metaManager').controller('calculatedBusinessColumnsController', [ '$scope','sbiModule_translate', 'sbiModule_restServices','$mdDialog','sbiModule_config',calculatedBusinessColumnsControllerFunction ]);
+angular.module('metaManager').controller('businessViewJoinRelationshipsController', [ '$scope','sbiModule_translate', 'sbiModule_restServices',businessViewJoinRelationshipsControllerFunction ]);
+
 
 function metaModelCreationControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout) {
 
@@ -341,17 +344,65 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 				} else {
 					$scope.selectedBusinessModel.columns.splice(index, 1);
 				}
-			},
-			addCalculatedField : function(){
-				$scope.addCalculatedField();
 			}
 		}
 
+}
+
+
+
+
+
+function businessViewJoinRelationshipsControllerFunction($scope,sbiModule_translate, sbiModule_restServices){
+$scope.selectedBusinessViewJoinRelationships=[
+               		                       {
+            		                    	   label:sbiModule_translate.load("sbi.generic.name"),
+            		                    	   name:'name'
+            		                       },
+            		                       {
+            		                    	   label:sbiModule_translate.load("sbi.meta.source.columns"),
+            		                    	   name:'sourceColumns',
+            		                    	   transformer:function(item){
+            			                    		var toret=[];
+            			                    		for(var i=0;i<item.length;i++){
+            			                    			 toret.push(item[i].tableName+"."+item[i].name);
+            			                    		}
+            			                    		return toret.join(",");
+            		                    	   }
+            		                       },
+            		                       {
+            		                    	   label:sbiModule_translate.load("sbi.meta.target.columns"),
+            		                    	   name:'destinationColumns',
+            		                    	   transformer:function(item){
+            		                    		   var toret=[];
+            			                    		for(var i=0;i<item.length;i++){
+            			                    			 toret.push(item[i].tableName+"."+item[i].name);
+            			                    		}
+            			                    		return toret.join(",");
+            		                    	   }
+            		                       }
+            	                       ]
+}
+
+
+function calculatedBusinessColumnsControllerFunction($scope,sbiModule_translate, sbiModule_restServices,$mdDialog,sbiModule_config){
+	$scope.selectedBusinessModelCalculatedBusinessColumns=[
+		                                              {
+		                                            	  label:sbiModule_translate.load("sbi.generic.name"),
+		                                            	  name:'name'
+		                                              }
+	                                              ]
+	$scope.selectedBusinessModelCalculatedBusinessColumnsScopeFunctions={
+			translate:sbiModule_translate,
+			addCalculatedField : function(){
+				$scope.addCalculatedField();
+			}
+	}
 	$scope.addCalculatedField=function(){
 		$mdDialog.show({
 			controller: addCalculatedFieldController,
 			preserveScope: true,
-			locals: {businessModel:$scope.meta.businessModels},
+			locals: {selectedBusinessModel:$scope.selectedBusinessModel},
 			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addCalculatedField.jsp',
 			clickOutsideToClose:true,
 			escapeToClose :true,
@@ -360,8 +411,3 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 		});
 	}
 }
-
-
-
-
-

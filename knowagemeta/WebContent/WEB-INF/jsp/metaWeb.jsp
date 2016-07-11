@@ -65,18 +65,9 @@ var translatedModel=<%= translatedModel%>;
 <!-- </div> -->
 
 <rest-loading></rest-loading>
-
-	<md-toolbar>
-		<h1 class="md-toolbar-tools" layout="row">
-			<span flex>{{translate.load("sbi.meta.definition")}}</span>
-			 <md-button ng-click="closeMetaDefinition()">{{translate.load("sbi.general.close")}}</md-button>
-			 <md-button ng-click="continueToMeta()" ng-if="steps.current==0">{{translate.load("sbi.general.continue")}}</md-button>
-<!-- 			 <md-button ng-click="gobackToMetaDefinition()" ng-if="steps.current==1">{{translate.load("sbi.generic.back")}}</md-button> -->
-			 <md-button ng-click="saveModel()" ng-if="steps.current==1">{{translate.load("sbi.generic.update")}}</md-button>
-		</h1>
-	</md-toolbar>
-	<md-content ng-controller="metaModelDefinitionController" flex layout ng-switch-when="0">
-		<angular-table flex id='datasourceStructureListTable' ng-model=dataSourceStructure
+	<angular-list-detail full-screen=true>
+		<list layout="column" ng-controller="metaModelDefinitionController"> 
+			<angular-table flex id='datasourceStructureListTable' ng-model=dataSourceStructure
 				columns='datasourceStructureColumnsList'
 				scope-functions='datasourceStructureScopeFunctions'
 			 	show-search-bar=true no-pagination="true"
@@ -89,29 +80,34 @@ var translatedModel=<%= translatedModel%>;
 				 		<md-checkbox aria-label='check all business' ng-checked='scopeFunctions.allBusinessModelAreChecked()' ng-click='scopeFunctions.toggleAllBusinessModel()'>  {{scopeFunctions.translate.load("sbi.meta.model.business.selectAll")}}</md-checkbox>
 			 		</div>
 			 	</queue-table>
-	 	 </angular-table>
+	 		 </angular-table>
+		</list>
+		<extra-list-button>
+		 <md-button ng-click="closeMetaDefinition()">{{translate.load("sbi.general.close")}}</md-button>
+		 <md-button ng-click="continueToMeta()" >{{translate.load("sbi.general.continue")}}</md-button>
+		</extra-list-button>
+		<extra-button>
+		 <md-button ng-click="closeMetaDefinition()">{{translate.load("sbi.general.close")}}</md-button>
+		</extra-button>
+		<detail id="metaWebView" ng-controller="metaModelCreationController" save-function="saveModel" >
+			<md-tabs flex>
+				<md-tab id="businessTab">
+					<md-tab-label>{{translate.load("sbi.meta.model.business")}}</md-tab-label>
+					<md-tab-body >
+						<%@include	file="./metaWebTemplates/businessModelTab.jsp"%>
+					</md-tab-body>
+				</md-tab>
+				
+				<md-tab id="physicalTab">
+					<md-tab-label>{{translate.load("sbi.meta.model.physical")}}</md-tab-label>
+					<md-tab-body>
+						<%@include	file="./metaWebTemplates/physicalModelTab.jsp"%>
+					</md-tab-body>
+				</md-tab>
+			</md-tabs>
+		</detail>
+	</angular-list-detail>	
 	
-	</md-content>
-	
-	<md-content ng-controller="metaModelCreationController" flex layout ng-switch-when="1">
-		
-		<md-tabs flex>
-			<md-tab id="businessTab">
-				<md-tab-label>{{translate.load("sbi.meta.model.business")}}</md-tab-label>
-				<md-tab-body >
-					<%@include	file="./metaWebTemplates/businessModelTab.jsp"%>
-				</md-tab-body>
-			</md-tab>
-			
-			<md-tab id="physicalTab">
-				<md-tab-label>{{translate.load("sbi.meta.model.physical")}}</md-tab-label>
-				<md-tab-body>
-					<%@include	file="./metaWebTemplates/physicalModelTab.jsp"%>
-				</md-tab-body>
-			</md-tab>
-		</md-tabs>
-
-	</md-content>
 
 </body>
 </html>
@@ -142,6 +138,14 @@ md-tabs.md-knowage-theme .md-tab.md-active{
 
 expander-box{
 background: white;
+}
+
+#metaWebView.kn-detail>md-content.kn-detail-content,#metaWebView.kn-detail>md-content.kn-detail-content>md-tabs{
+margin: 0!important
+}
+
+.kn-detail .md-button.md-knowage-theme.md-fab {
+    top: 19px;
 }
 
 </style>

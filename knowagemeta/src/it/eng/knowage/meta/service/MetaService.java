@@ -98,7 +98,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 * 
+	 *
 	 * @param dsId
 	 * @return
 	 */
@@ -437,13 +437,19 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	@POST
-	@Path("/setCalculatedBM")
+	@Path("/setCalculatedField")
 	public Response setCalculatedBM(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
 
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		JSONObject oldJsonModel = createJson(model);
+
+		ObjectMapper mapper = new ObjectMapper();
+		if (jsonRoot.has("diff")) {
+			JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
+			applyPatch(patch, model);
+		}
 
 		JSONObject jsonData = jsonRoot.getJSONObject("data");
 		String name = jsonData.getString("name");
@@ -458,11 +464,6 @@ public class MetaService extends AbstractSpagoBIResource {
 		BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
 		businessModelInitializer.addCalculatedColumn(cfd);
 
-		ObjectMapper mapper = new ObjectMapper();
-		if (jsonRoot.has("diff")) {
-			JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
-			applyPatch(patch, model);
-		}
 		JSONObject jsonModel = createJson(model);
 		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 		return Response.ok(patch.toString()).build();

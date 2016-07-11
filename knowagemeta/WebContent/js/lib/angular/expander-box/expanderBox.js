@@ -12,7 +12,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 		template:"<md-toolbar layout=\"row\" ng-click=\"toggle()\">" +
 		"<span class=\"md-toolbar-tools flex\" >" +
 		"<span id=\"customToolbarContent\" layout=\"row\"></span>"+
-		"{{title}}" +
+		"{{title}}{{label}}" +
 		"</span>" +
 		"<span id=\"customToolbarActionContent\" layout=\"row\"></span>"+
 		"<md-button   class=\"md-icon-button\" aria-label=\"More\"><md-icon class=\"fa fa-chevron-{{expanded?'up':'down'}}\"></md-icon></md-button>"+
@@ -28,7 +28,8 @@ angular.module('expander-box', [ 'ngMaterial'])
 			title:"=",
 			locals:"=?",
 			expanded:"=?",
-			layout:"@?"
+			layout:"@?",
+			label:"="
 
 		},
 		link: function(scope, element, attrs, ctrl, transclude) {

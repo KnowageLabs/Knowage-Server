@@ -123,6 +123,9 @@ public class PageResource {
 				request.getSession().setAttribute(MetaService.EMF_MODEL, model);
 				JSONObject translatedModel = MetaService.createJson(model);
 				ioManager.getHttpSession().setAttribute("translatedModel", translatedModel.toString());
+			} else {
+				request.getSession().removeAttribute(MetaService.EMF_MODEL);
+				ioManager.getHttpSession().removeAttribute("translatedModel");
 			}
 
 			// -------------------------------------------------------------------------------------------

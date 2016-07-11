@@ -1,5 +1,5 @@
 <angular-list-detail ng-controller="metaModelCreationBusinessController">
-	<list label="'BusinessModelName'" layout="column"> 
+	<list label="translate.load('sbi.meta.businessclass')+'/'+translate.load('sbi.meta.businessview')" layout="column"> 
 		<span ng-if="meta.businessModels.length>0">
 			<component-tree id="bcmTree"  style="margin:0px" 
 					ng-model="meta.businessModels"
@@ -99,10 +99,19 @@
 				<md-content layout  layout-fill ng-controller="businessModelAttributeController">
 					<angular-table id="bmAttr" ng-model="selectedBusinessModel.simpleBusinessColumns"
 					 columns="selectedBusinessModelAttributes" scope-functions="selectedBusinessModelAttributesScopeFunctions" no-pagination=true flex>
+					 	</angular-table>
+				</md-content>
+				
+			</md-tab>
+			
+			<md-tab id="calculatedColumnsTab" label="{{translate.load('sbi.meta.business.calculatedField')}}" ng-if="selectedBusinessModel.calculatedBusinessColumns!=undefined">
+				<md-content layout  layout-fill ng-controller="calculatedBusinessColumnsController">
+					<angular-table id="bmAttr" ng-model="selectedBusinessModel.calculatedBusinessColumns"
+					 columns="selectedBusinessModelCalculatedBusinessColumns" scope-functions="selectedBusinessModelCalculatedBusinessColumnsScopeFunctions" no-pagination=true flex>
 					 	<queue-table>
 							<div layout="row"> 
 								<span flex></span>
-								<md-button type="button" class="md-knowage-theme md-raised" id="add-element" ng-click="scopeFunctions.addCalculatedField();">{{scopeFunctions.translate.load("sbi.meta.add.calculated.field")}}</md-button>
+								<md-button type="button" class="md-knowage-theme md-raised" id="add-element" ng-click="scopeFunctions.addCalculatedField();">{{scopeFunctions.translate.load("sbi.meta.business.calculatedField.add")}}</md-button>
 							</div>
 						</queue-table> 
 					</angular-table>
@@ -146,6 +155,29 @@
 						</queue-table> 
 					 </angular-table>
 				</md-content>
+			</md-tab>
+		
+			<md-tab id="attributesTab" label="{{translate.load('sbi.meta.joinRelationships')}}" ng-if="selectedBusinessModel.joinRelationships!=undefined">
+				<md-content layout  layout-fill >
+				<md-list class="md-dense noPadding" flex ng-repeat="item in selectedBusinessModel.joinRelationships">
+	        				<md-list-item     ng-repeat="rel in item.links"  ng-click="null" layout="row">
+		        				<span flex=40>{{rel.$parent.name}}.{{rel.name}}</span>
+		        				<span flex  ><i class="fa fa-link" aria-hidden="true"></i></span>
+	        					<span flex=40>{{item.$parent.name}}.{{item.name}}</span>
+		        				 <md-button   class="md-secondary md-icon-button "  aria-label="delete relationship" ng-click="deleteRelationship(item,rel)">
+		        				 <md-icon md-font-icon="fa fa-trash"></md-icon>
+	        				 </md-button>
+	        				 <md-divider></md-divider>
+				    		</md-list-item>
+				    	</md-list>
+				</md-content>				
+				
+				<md-content layout  layout-fill ng-controller="businessViewJoinRelationshipsController">
+					<angular-table id="bmJoinRel" ng-model="selectedBusinessModel.joinRelationships"
+					 columns="selectedBusinessViewJoinRelationships" no-pagination=true flex>
+					</angular-table>
+				</md-content>
+				
 			</md-tab>
 		</md-tabs>
 		
