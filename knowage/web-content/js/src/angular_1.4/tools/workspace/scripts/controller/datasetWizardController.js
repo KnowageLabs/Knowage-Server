@@ -79,7 +79,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				method: 'POST',
 				url: sbiModule_config.host+'/knowage/restful-services/selfservicedataset/testDataSet',
 				data: $scope.dataset,
-				params:params,
+				params: params,
 				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 				
 				transformRequest: function(obj) {
@@ -114,6 +114,8 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				}
 				else {
 					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
+					// Reset the meta after first unsuccessful try to go to Step 2 (danristo)
+					$scope.dataset.meta = [];
 					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
 				}
 			}, 
