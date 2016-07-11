@@ -241,6 +241,8 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		
 	$scope.chooseCategory = function(category) {
 		
+		console.log(category);
+		
 		/**
 		 * For the combo box that contains the chosen category type for the Dataset that we are creating.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
