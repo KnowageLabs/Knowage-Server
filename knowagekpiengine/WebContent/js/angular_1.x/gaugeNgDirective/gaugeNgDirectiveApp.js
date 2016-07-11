@@ -419,7 +419,7 @@
 		
 		$scope.getTargetPercentage = function() {
 			if($scope.value && $scope.targetValue && $scope.targetValue != 0) {
-				return ($scope.value * 100 / $scope.targetValue) + "% ";
+				return ($scope.value * 100 / $scope.targetValue).toFixed(1) + "% ";
 			} else {
 				return "";
 			}
