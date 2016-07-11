@@ -538,7 +538,7 @@
 			controller: kpiLinearGaugeCtrl,
 			scope: {
 				gaugeId: '=',
-				label: '=',
+				label: '@',
 				size: '=',
 				minValue: '=',
 				maxValue: '=',
