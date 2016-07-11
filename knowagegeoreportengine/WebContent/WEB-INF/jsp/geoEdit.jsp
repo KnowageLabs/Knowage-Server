@@ -32,10 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <title>{{translate.load("gisengine.designer.title")}}</title>
 <script>
  var documentLabel='<%=docLabel%>';
- console.log(documentLabel);
  var dataset='<%=docDatasetLabel%>';
  var docTemplate= '<%=template%>';
- var params= '<%=analyticalDriversJson%>';
 </script>
 </head>
 <body ng-controller="geoTemplateBuildController">
