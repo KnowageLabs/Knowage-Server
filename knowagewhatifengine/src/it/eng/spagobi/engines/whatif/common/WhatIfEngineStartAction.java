@@ -17,33 +17,6 @@
  */
 package it.eng.spagobi.engines.whatif.common;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.engines.whatif.WhatIfEngine;
-import it.eng.spagobi.engines.whatif.WhatIfEngineAnalysisState;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmFactory;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmSingleton;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
-import it.eng.spagobi.engines.whatif.parser.Lexer;
-import it.eng.spagobi.engines.whatif.parser.parser;
-import it.eng.spagobi.engines.whatif.template.WhatIfTemplateParseException;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.ParametersDecoder;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
-import it.eng.spagobi.utilities.engines.rest.AbstractEngineStartRestService;
-import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,6 +41,32 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.olap4j.OlapDataSource;
 import org.pivot4j.PivotModel;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.engines.whatif.WhatIfEngine;
+import it.eng.spagobi.engines.whatif.WhatIfEngineAnalysisState;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmFactory;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
+import it.eng.spagobi.engines.whatif.parser.Lexer;
+import it.eng.spagobi.engines.whatif.parser.parser;
+import it.eng.spagobi.engines.whatif.template.WhatIfTemplateParseException;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.ParametersDecoder;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
+import it.eng.spagobi.utilities.engines.rest.AbstractEngineStartRestService;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/startwhatif")
 public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
@@ -100,6 +99,8 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 		String body = null;
 		JSONObject jo = null;
 		String mdx = null;
+		String algorithm = null;
+		String editCubeName = null;
 		Integer ordinal = null;
 		String expression = null;
 
@@ -109,12 +110,12 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 			mdx = jo.getString("mdx");
 			ordinal = jo.getInt("ordinal");
 			expression = jo.getString("expression");
+			algorithm = jo.getString("algorithm");
+			editCubeName = jo.getString("editCubeName");
 		} catch (JSONException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
+			logger.error("Cant read JSON", e2);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Cant get JSON", e);
 		}
 
 		logger.debug("IN");
@@ -122,8 +123,10 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 		logger.debug("Creating engine instance ...");
 
 		try {
-			whatIfEngineInstance = WhatIfEngine.createInstance(mdx, getEnv());
-			whatIfEngineInstance.setAlgorithmInUse(AllocationAlgorithmSingleton.getInstance().getDefaultAllocationAlgorithm().getClassName());
+
+			whatIfEngineInstance = WhatIfEngine.createInstance(mdx, getEnv(), editCubeName);
+
+			whatIfEngineInstance.setAlgorithmInUse(algorithm);
 
 		} catch (WhatIfTemplateParseException e) {
 			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Template not valid", e);
@@ -291,8 +294,8 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 				request.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(request, response);
 			} catch (Exception e) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
-				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp "
-						+ SUCCESS_REQUEST_DISPATCHER_URL, e);
+				throw new SpagoBIEngineRuntimeException(
+						"Error starting the What-If engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
 			}
 
 			if (getAuditServiceProxy() != null) {
@@ -312,8 +315,8 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 				request.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL).forward(request, response);
 			} catch (Exception ex) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
-				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp "
-						+ FAILURE_REQUEST_DISPATCHER_URL, ex);
+				throw new SpagoBIEngineRuntimeException(
+						"Error starting the What-If engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
 			}
 		} finally {
 			logger.debug("OUT");
