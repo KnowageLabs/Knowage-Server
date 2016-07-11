@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
@@ -54,23 +55,46 @@ public class RolesResource extends AbstractSpagoBIResource {
 	private final String charset = "; charset=UTF-8";
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getRoles() {
 		IRoleDAO rolesDao = null;
-		List<Role> fullList = null;
+		List<Role> filteredList = null;
 
 		try {
+			List<Role> fullList = null;
 
 			rolesDao = DAOFactory.getRoleDAO();
 			rolesDao.setUserProfile(getUserProfile());
 			fullList = rolesDao.loadAllRoles();
-			return Response.ok(fullList).build();
+
+			IEngUserProfile profile = this.getUserProfile();
+			if (profile.isAbleToExecuteAction(SpagoBIConstants.PROFILE_MANAGEMENT)) {
+				filteredList = fullList;
+			} else {
+				// user with FINAL_USERS_MANAGEMENT (users with neither
+				// FINAL_USERS_MANAGEMENT nor PROFILE_MANAGEMENT are blocked by
+				// the
+				// business_map.xml therefore they cannot execute this action)
+				filteredList = this.filterRolesListForFinalUser(fullList);
+			}
+
+			return Response.ok(filteredList).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
+	}
+
+	private List<Role> filterRolesListForFinalUser(List<Role> allRoles) {
+		List<Role> toReturn = new ArrayList<Role>();
+		for (Role role : allRoles) {
+			if (role.getRoleTypeCD().equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_USER)) {
+				toReturn.add(role);
+			}
+		}
+		return toReturn;
 	}
 
 	@GET

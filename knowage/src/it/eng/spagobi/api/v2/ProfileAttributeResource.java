@@ -55,7 +55,7 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<ProfileAttribute> getProfileAttributes() {
 		ISbiAttributeDAO objDao = null;

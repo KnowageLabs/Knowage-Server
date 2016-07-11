@@ -105,7 +105,9 @@ public class MenuListJSONSerializer implements Serializer {
 	private static final String HREF_MANAGE_TENANT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagementAngular.jsp";
 	private static final String HREF_MANAGE_UDP = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/udp/manageUdpAngular.jsp";
 
-	private static final String HREF_USERS = "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_USER_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+	//private static final String HREF_USERS = "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_USER_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+
+	private static final String HREF_USERS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp";
 
 	private static final String HREF_MANAGE_LOVS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp";
 	private static final String HREF_WORKSPACE = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp";

@@ -17,6 +17,25 @@
  */
 package it.eng.spagobi.api.v2;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.dao.QueryFilters;
+import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.profiling.bean.SbiUserAttributes;
+import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
+import it.eng.spagobi.profiling.bo.UserBO;
+import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.profiling.dao.SbiUserDAOHibImpl;
+import it.eng.spagobi.profiling.dao.filters.FinalUsersFilter;
+import it.eng.spagobi.security.Password;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -37,29 +56,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.profiling.bean.SbiUser;
-import it.eng.spagobi.profiling.bean.SbiUserAttributes;
-import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
-import it.eng.spagobi.profiling.bo.UserBO;
-import it.eng.spagobi.profiling.dao.ISbiUserDAO;
-import it.eng.spagobi.profiling.dao.SbiUserDAOHibImpl;
-import it.eng.spagobi.security.Password;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
 @Path("/2.0/users")
 @ManageAuthorization
 public class UserResource extends AbstractSpagoBIResource {
 	private final String charset = "; charset=UTF-8";
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getUserList() {
@@ -67,10 +70,20 @@ public class UserResource extends AbstractSpagoBIResource {
 		List<UserBO> fullList = null;
 
 		try {
+			IEngUserProfile profile = getUserProfile();
+			QueryFilters qp = new QueryFilters();
+			if (profile.isAbleToExecuteAction(SpagoBIConstants.PROFILE_MANAGEMENT)) {
+				// administrator: he can see every user
+			} else {
+				// user with FINAL_USERS_MANAGEMENT (users with neither
+				// FINAL_USERS_MANAGEMENT nor PROFILE_MANAGEMENT are blocked by the
+				// business_map.xml therefore they cannot execute this action)
+				qp.add(new FinalUsersFilter());
+			}
 
 			usersDao = DAOFactory.getSbiUserDAO();
 			usersDao.setUserProfile(getUserProfile());
-			fullList = usersDao.loadUsers();
+			fullList = usersDao.loadUsers(qp);
 			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
@@ -79,7 +92,7 @@ public class UserResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getUserById(@PathParam("id") Integer id) {
@@ -102,7 +115,7 @@ public class UserResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertUser(@Valid UserBO body) {
 
@@ -164,7 +177,7 @@ public class UserResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateUser(@PathParam("id") Integer id, @Valid UserBO body) {
 
@@ -226,7 +239,7 @@ public class UserResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
 	public Response deleteCheck(@PathParam("id") Integer id) {
 
 		ISbiUserDAO usersDao = null;
