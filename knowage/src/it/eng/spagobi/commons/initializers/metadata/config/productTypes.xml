@@ -34,4 +34,14 @@
 		<ENGINE label="knowagekpiengine" />
 		<ENGINE label="knowagechartengine" />
 	</PRODUCT_TYPE>
+	<PRODUCT_TYPE label="KnowageLI" active="true">
+		<ENGINE label="knowagesvgviewerengine" />
+		<ENGINE label="knowagegisengine" />
+		<ENGINE label="knowagegeoengine" />
+		<ENGINE label="knowageqbeengine" />
+	</PRODUCT_TYPE>
+	<PRODUCT_TYPE label="KnowagePA" active="true">
+		<ENGINE label="knowagedataminingengine" />
+		<ENGINE label="knowagewhatifengine" />
+	</PRODUCT_TYPE>
 </PRODUCT_TYPES>

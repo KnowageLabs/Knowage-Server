@@ -5,5 +5,7 @@
 		<PRODUCT name="KnowageSI" active="true"/>
 		<PRODUCT name="KnowageER" active="true"/>
 		<PRODUCT name="KnowagePM" active="true"/>
+		<PRODUCT name="KnowageLI" active="true"/>
+		<PRODUCT name="KnowagePA" active="true"/>
 	</TENANT>
 </TENANTS>

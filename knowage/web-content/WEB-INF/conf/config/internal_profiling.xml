@@ -132,6 +132,54 @@
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowagePM" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
-		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>	
+		<AUTHORIZATION productType="KnowagePM" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT"/>
+		
+		<!-- Authorizations for KnowageLI -->
+		<AUTHORIZATION productType="KnowageLI" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="ENABLE_DATASET_PERSISTENCE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT" />	
+		<AUTHORIZATION productType="KnowageLI" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="GLOSSARY" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_CALENDAR" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT" />	
+		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT" />	
+		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_SUBSCRIPTIONS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT" />
+		
+		<!-- Authorizations for KnowagePA -->
+		<AUTHORIZATION productType="KnowagePA" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_DATASET_PERSISTENCE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT" />	
+		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="GLOSSARY" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_CALENDAR" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT" />	
+		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT" />	
+		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_KPI_VALUE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_SUBSCRIPTIONS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowagePA" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT" />
 	</DEFAULT_AUTHORIZATIONS>
 </INTERNAL_PROFILING_INITIALIZER>
