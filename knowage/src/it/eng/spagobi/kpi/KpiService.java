@@ -1005,21 +1005,60 @@ public class KpiService {
 			for (List<String> m : kpimap.values()) {
 				usedMeasureList.addAll(m);
 			}
-			Set<String> newMeasureList = new HashSet<>();
+			Set<String> newRuleOutputList = new HashSet<>();
 			for (RuleOutput ro : rule.getRuleOutputs()) {
-				newMeasureList.add(ro.getAlias());
+				newRuleOutputList.add(ro.getAlias());
 			}
-			usedMeasureList.removeAll(newMeasureList);
+			usedMeasureList.removeAll(newRuleOutputList);
 			for (String name : usedMeasureList) {
 				for (Entry<Kpi, List<String>> kpi : kpimap.entrySet()) {
 					if (kpi.getValue().contains(name)) {
-						measureAndKpi.add("'" + name + "' used by '" + kpi.getKey().getName() + "'");
+						measureAndKpi.add("\"" + name + "\" used by \"" + kpi.getKey().getName() + "\"");
 						break;
 					}
 				}
 			}
 			if (!measureAndKpi.isEmpty()) {
 				jsError.addErrorKey("newKpi.rule.usedByKpi.save.error", StringUtils.join(measureAndKpi, ", "));
+			}
+
+			// Checking if any removed attribute is linked to a kpi (if so we cannot save this rule)
+			if (!kpimap.isEmpty()) {
+				Set<String> usedAttributes = new HashSet<>();
+				Map<String, List<String>> kpis = new HashMap<>();
+				for (Kpi kpi : kpimap.keySet()) {
+					try {
+						JSONArray measures = new JSONObject(kpi.getCardinality()).getJSONArray("measureList");
+						for (int i = 0; i < measures.length(); i++) {
+							Iterator<String> attributesIterator = measures.getJSONObject(i).getJSONObject("attributes").keys();
+							while (attributesIterator.hasNext()) {
+								String attribute = attributesIterator.next();
+								usedAttributes.add(attribute);
+								if (kpis.get(kpi.getName()) == null) {
+									kpis.put(kpi.getName(), new ArrayList<String>());
+								}
+								kpis.get(kpi.getName()).add(attribute);
+							}
+						}
+					} catch (JSONException e) {
+						logger.error("Error while trying to read measureList/attributes from kpi [id=" + kpi.getId() + "|version=" + kpi.getVersion() + "]", e);
+					}
+				}
+				if (!usedAttributes.isEmpty()) {
+					Collection<String> attributesError = new HashSet<>();
+					usedAttributes.removeAll(newRuleOutputList);
+					for (String name : usedAttributes) {
+						for (Entry<String, List<String>> kpi : kpis.entrySet()) {
+							if (kpi.getValue().contains(name)) {
+								attributesError.add("\"" + name + "\" used by \"" + kpi.getKey() + "\"");
+								break;
+							}
+						}
+					}
+					if (!attributesError.isEmpty()) {
+						jsError.addErrorKey("newKpi.rule.attributeUsedByKpi.save.error", StringUtils.join(attributesError, ", "));
+					}
+				}
 			}
 
 			// Checking if there are placeholders that are not set in a scheduler
