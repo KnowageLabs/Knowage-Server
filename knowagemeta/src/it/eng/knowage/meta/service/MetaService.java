@@ -274,44 +274,80 @@ public class MetaService extends AbstractSpagoBIResource {
 			applyDiff(jsonRoot, model);
 
 			JSONObject json = jsonRoot.getJSONObject("data");
-			String name = json.getString("name");
-			String description = json.optString("description");
 
 			JSONObject relationships = json.getJSONObject("relationships");
-			JSONArray physicaltables = json.getJSONArray("physicaltable");
 
-			String sourceBusinessClassName = json.getString("sourceBusinessClass");
 			BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
 			BusinessModel bm = model.getBusinessModels().get(0);
 			PhysicalModel physicalModel = model.getPhysicalModels().get(0);
 
-			BusinessTable sourceBusinessClass = bm.getBusinessTableByUniqueName(sourceBusinessClassName);
-			BusinessView bw = BusinessModelFactory.eINSTANCE.createBusinessView();
-			bw.setName(name);
-			bm.addBusinessView(bw);
-			bw.setDescription(description);
+			BusinessView bw = null;
+			if (json.has("viewUniqueName")) {
+				bw = bm.getBusinessViewByUniqueName(json.getString("viewUniqueName"));
+				// Clearing old join relationships
+				bw.getJoinRelationships().clear();
+			} else {
+				bw = BusinessModelFactory.eINSTANCE.createBusinessView();
+				bw.setName(json.getString("name"));
+				bm.addBusinessView(bw);
+				bw.setDescription(json.optString("description"));
 
-			// Adding source table only if it has not been selected
-			boolean addSourceTable = true;
-			for (int i = 0; i < physicaltables.length(); i++) {
-				String ptName = physicaltables.getString(i);
-				if (ptName.equals(sourceBusinessClass.getPhysicalTable().getName())) {
-					addSourceTable = false;
+				BusinessTable sourceBusinessClass = bm.getBusinessTableByUniqueName(json.getString("sourceBusinessClass"));
+
+				// Adding source table only if it has not been selected
+				JSONArray physicaltables = json.getJSONArray("physicaltable");
+				boolean addSourceTable = true;
+				for (int i = 0; i < physicaltables.length(); i++) {
+					String ptName = physicaltables.getString(i);
+					if (ptName.equals(sourceBusinessClass.getPhysicalTable().getName())) {
+						addSourceTable = false;
+					}
+					PhysicalTable pt = physicalModel.getTable(ptName);
+					bw.getPhysicalTables().add(pt);
+
+					EList<PhysicalColumn> ptcol = pt.getColumns();
+					for (int pci = 0; pci < ptcol.size(); pci++) {
+						businessModelInitializer.addColumn(ptcol.get(pci), bw);
+					}
 				}
-				PhysicalTable pt = physicalModel.getTable(ptName);
-				bw.getPhysicalTables().add(pt);
-
-				EList<PhysicalColumn> ptcol = pt.getColumns();
-				for (int pci = 0; pci < ptcol.size(); pci++) {
-					businessModelInitializer.addColumn(ptcol.get(pci), bw);
+				if (addSourceTable) {
+					physicaltables.put(sourceBusinessClass.getPhysicalTable().getName());
 				}
-			}
-			if (addSourceTable) {
-				physicaltables.put(sourceBusinessClass.getPhysicalTable().getName());
-			}
 
+				// Copy relationships
+				Iterator<BusinessRelationship> sourceRelIterator = sourceBusinessClass.getRelationships().iterator();
+				BusinessModelFactory.eINSTANCE.createBusinessRelationship();
+				while (sourceRelIterator.hasNext()) {
+					BusinessRelationship sourceRel = sourceRelIterator.next();
+					String relationshipName = sourceRel.getName();
+					BusinessColumnSet source = null;
+					if (sourceRel.getSourceTable().getUniqueName().equals(sourceBusinessClass.getUniqueName())) {
+						source = bw;
+					} else {
+						source = sourceRel.getSourceTable();
+					}
+					BusinessColumnSet destination = null;
+					if (sourceRel.getDestinationTable().getUniqueName().equals(sourceBusinessClass.getUniqueName())) {
+						destination = bw;
+					} else {
+						destination = sourceRel.getDestinationTable();
+					}
+					ModelPropertyType cardinalityType = sourceRel.getPropertyType(BusinessModelPropertiesFromFileInitializer.RELATIONSHIP_CARDINALITY);
+					String cardinality = sourceRel.getProperties().get(cardinalityType.getId()).getValue();
+					List<BusinessColumn> destinationCol = sourceRel.getDestinationColumns();
+					List<BusinessColumn> sourceCol = sourceRel.getSourceColumns();
+					businessModelInitializer.addRelationship(new BusinessRelationshipDescriptor(source, destination, sourceCol, destinationCol, cardinality,
+							relationshipName));
+				}
+
+				// Add identifiers
+				BusinessIdentifier identifier = sourceBusinessClass.getIdentifier();
+				businessModelInitializer.addIdentifier(identifier.getName(), bw, identifier.getColumns());
+
+			}
 			List<BusinessViewInnerJoinRelationshipDescriptor> innerJoinRelationshipDescriptors = new ArrayList<>();
 
+			// Calculating join relationships to add to BusinessView
 			Iterator<String> relationshipsIterator = relationships.keys();
 			while (relationshipsIterator.hasNext()) {
 				String tableName = relationshipsIterator.next();
@@ -350,42 +386,12 @@ public class MetaService extends AbstractSpagoBIResource {
 				}
 			}
 
-			// Adding relationships to BusinessView
+			// Adding join relationships to BusinessView
 			for (BusinessViewInnerJoinRelationshipDescriptor businessViewInnerJoinRelationshipDescriptor : innerJoinRelationshipDescriptors) {
 				BusinessViewInnerJoinRelationship innerJoinRelationship = businessModelInitializer.addBusinessViewInnerJoinRelationship(bm,
 						businessViewInnerJoinRelationshipDescriptor);
 				bw.getJoinRelationships().add(innerJoinRelationship);
 			}
-
-			// Copy relationships
-			Iterator<BusinessRelationship> sourceRelIterator = sourceBusinessClass.getRelationships().iterator();
-			BusinessModelFactory.eINSTANCE.createBusinessRelationship();
-			while (sourceRelIterator.hasNext()) {
-				BusinessRelationship sourceRel = sourceRelIterator.next();
-				String relationshipName = sourceRel.getName();
-				BusinessColumnSet source = null;
-				if (sourceRel.getSourceTable().getUniqueName().equals(sourceBusinessClass.getUniqueName())) {
-					source = bw;
-				} else {
-					source = sourceRel.getSourceTable();
-				}
-				BusinessColumnSet destination = null;
-				if (sourceRel.getDestinationTable().getUniqueName().equals(sourceBusinessClass.getUniqueName())) {
-					destination = bw;
-				} else {
-					destination = sourceRel.getDestinationTable();
-				}
-				ModelPropertyType cardinalityType = sourceRel.getPropertyType(BusinessModelPropertiesFromFileInitializer.RELATIONSHIP_CARDINALITY);
-				String cardinality = sourceRel.getProperties().get(cardinalityType.getId()).getValue();
-				List<BusinessColumn> destinationCol = sourceRel.getDestinationColumns();
-				List<BusinessColumn> sourceCol = sourceRel.getSourceColumns();
-				businessModelInitializer.addRelationship(new BusinessRelationshipDescriptor(source, destination, sourceCol, destinationCol, cardinality,
-						relationshipName));
-			}
-
-			// Add identifiers
-			BusinessIdentifier identifier = sourceBusinessClass.getIdentifier();
-			businessModelInitializer.addIdentifier(identifier.getName(), bw, identifier.getColumns());
 
 			JSONObject jsonModel = createJson(model);
 			ObjectMapper mapper = new ObjectMapper();
