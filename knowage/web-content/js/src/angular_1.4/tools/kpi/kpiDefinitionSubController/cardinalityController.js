@@ -1,7 +1,7 @@
-app.controller('kpiDefinitionCardinalityController', ['$scope','sbiModule_translate', kpiDefinitionCardinalityControllerFunction ]);
+app.controller('kpiDefinitionCardinalityController', ['$scope','sbiModule_translate','sbiModule_restServices', kpiDefinitionCardinalityControllerFunction ]);
 
 
-function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
+function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate,sbiModule_restServices){
 	$scope.translate=sbiModule_translate;
 	$scope.attributesList=[];
 	$scope.indexOfMeasure=-1;
@@ -65,11 +65,46 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate){
 						}
 					}
 				}
+				
 			}
+			
+			//add if there are new attribute
+			$scope.retryNewAttributes();
 		}
-		
 
 	};
+	
+	$scope.retryNewAttributes = function(){
+		sbiModule_restServices.promisePost("1.0/kpi", 'buildCardinalityMatrix',$scope.kpi.definition.measures)
+				.then(function(response){ 
+					for(var i=0;i<response.data.length;i++){
+						//check if missing attribute
+						var obj = response.data[i];
+						for(var j=0;j<$scope.kpi.cardinality.measureList.length;j++){
+							
+							if(obj['measureName'] == $scope.kpi.cardinality.measureList[j]['measureName']){
+								var obj2 = $scope.kpi.cardinality.measureList[j]['attributes'];
+								var numberKeys = Object.keys(obj2);
+								if(numberKeys.length !=  Object.keys(obj['attributes']).length){
+									for(var k = numberKeys.length +1; k<=Object.keys(obj['attributes']).length;k++ ){
+										var obj3 = $scope.kpi.cardinality.measureList[j]['attributes'];
+										obj3[Object.keys(obj['attributes'])[k-1]]= obj['attributes'][Object.keys(obj['attributes'])[k-1]];
+										
+										if($scope.attributesList.indexOf(Object.keys(obj['attributes'])[k-1])==-1){
+											$scope.attributesList.push(Object.keys(obj['attributes'])[k-1]);
+										}
+									}
+									
+								}
+							}
+						
+						}
+					}
+				},function(response) {
+					$scope.errorHandler(response.data,"");
+				})
+
+	}
 	$scope.getAllMeasure();
 
 	$scope.toggleCell=function(attr,measure){
