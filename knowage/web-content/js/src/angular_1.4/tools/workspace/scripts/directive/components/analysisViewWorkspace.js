@@ -222,10 +222,20 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	 * TODO:
 	 * Create a new Cockpit document.
 	 */
+	
 	$scope.addNewAnalysisDocument = function() {
 		console.info("[NEW COCKPIT - START]: Open page for adding a new Cockpit document.");
 	    // cockpit service url from dataset parameters because sbiModule.config engineUrls not visible for user
-		window.location.href = datasetParameters.cockpitServiceUrl + '&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";
+		
+   	 $mdDialog.show({
+		  scope:$scope,
+		  preserveScope: true,
+	      controller: CreateNewAnalysisController,
+	      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',  
+	      clickOutsideToClose:true,
+	      escapeToClose :true,
+	      fullscreen: true
+	    })
 	}
 	
 	/**
@@ -243,5 +253,13 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	 		}
 	 	} 
  	];
+	
+	function CreateNewAnalysisController($scope,$mdDialog){
+		$scope.iframeUrl = datasetParameters.cockpitServiceUrl + '&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";
+		$scope.cancelDialog = function() {
+			$scope.loadAllMyAnalysisDocuments();
+			 $mdDialog.cancel();
+		}
+	}
 	
 }

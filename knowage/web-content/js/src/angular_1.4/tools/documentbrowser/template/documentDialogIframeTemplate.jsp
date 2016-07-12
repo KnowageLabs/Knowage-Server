@@ -14,7 +14,7 @@
 					
 					<span flex></span>
 		       	 	
-		       	 	<md-button ng-click="cancelFederationDialog()" class="md-icon-button">
+		       	 	<md-button ng-click="cancelDialog()" class="md-icon-button">
 		          		<md-icon md-font-icon="fa fa-times-circle-o"></md-icon>
 		       	 	</md-button>
 		       	 	

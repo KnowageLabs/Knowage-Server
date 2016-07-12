@@ -245,7 +245,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 			 $scope.loadFederations();
 		}
 		
-		$scope.cancelFederationDialog = function() {
+		$scope.cancelDialog = function() {
 			 $mdDialog.cancel();	
 		}
 		
