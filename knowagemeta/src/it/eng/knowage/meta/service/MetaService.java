@@ -315,19 +315,19 @@ public class MetaService extends AbstractSpagoBIResource {
 			Iterator<String> relationshipsIterator = relationships.keys();
 			while (relationshipsIterator.hasNext()) {
 				String tableName = relationshipsIterator.next();
-				PhysicalTable sourceTable = physicalModel.getTable(tableName);
+				PhysicalTable destinationTable = physicalModel.getTable(tableName);
 
-				JSONObject sourceColumns = relationships.getJSONObject(tableName);
-				Iterator<String> sourceColumnsIterator = sourceColumns.keys();
-				while (sourceColumnsIterator.hasNext()) {
-					String sourceColumnName = sourceColumnsIterator.next();
-					PhysicalColumn sourceColumn = sourceTable.getColumn(sourceColumnName);
+				JSONObject destinationColumns = relationships.getJSONObject(tableName);
+				Iterator<String> destinationColumnsIterator = destinationColumns.keys();
+				while (destinationColumnsIterator.hasNext()) {
+					String destinationColumnName = destinationColumnsIterator.next();
+					PhysicalColumn destinationColumn = destinationTable.getColumn(destinationColumnName);
 
-					JSONObject destinationTables = sourceColumns.getJSONObject(sourceColumnName);
-					Iterator<String> destinationTablesIterator = destinationTables.keys();
-					while (destinationTablesIterator.hasNext()) {
-						String destinationTableName = destinationTablesIterator.next();
-						PhysicalTable destinationTable = physicalModel.getTable(destinationTableName);
+					JSONObject sourceTables = destinationColumns.getJSONObject(destinationColumnName);
+					Iterator<String> sourceTablesIterator = sourceTables.keys();
+					while (sourceTablesIterator.hasNext()) {
+						String sourceTableName = sourceTablesIterator.next();
+						PhysicalTable sourceTable = physicalModel.getTable(sourceTableName);
 
 						BusinessViewInnerJoinRelationshipDescriptor innerJoinRelationshipDescriptor = new BusinessViewInnerJoinRelationshipDescriptor(
 								sourceTable, destinationTable);
@@ -337,14 +337,14 @@ public class MetaService extends AbstractSpagoBIResource {
 						} else {
 							innerJoinRelationshipDescriptor = innerJoinRelationshipDescriptors.get(index);
 						}
-						innerJoinRelationshipDescriptor.getSourceColumns().add(sourceColumn);
+						innerJoinRelationshipDescriptor.getDestinationColumns().add(destinationColumn);
 
-						JSONArray destinationColumns = destinationTables.getJSONArray(destinationTableName);
-						for (int x = 0; x < destinationColumns.length(); x++) {
-							String destColName = destinationColumns.getString(x);
-							PhysicalColumn destCol = destinationTable.getColumn(destColName);
+						JSONArray sourceColumns = sourceTables.getJSONArray(sourceTableName);
+						for (int x = 0; x < sourceColumns.length(); x++) {
+							String sourceColName = sourceColumns.getString(x);
+							PhysicalColumn sourceCol = sourceTable.getColumn(sourceColName);
 
-							innerJoinRelationshipDescriptor.getDestinationColumns().add(destCol);
+							innerJoinRelationshipDescriptor.getSourceColumns().add(sourceCol);
 						}
 					}
 				}
