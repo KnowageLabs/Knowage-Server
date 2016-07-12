@@ -36,10 +36,15 @@ public class DistributedLockFactory {
 
 	@SuppressWarnings("rawtypes")
 	public static IMap getDistributedMap(String instanceName, String mapName) {
-		logger.debug("Getting or creating Hazelcast instance with name [" + instanceName + "]");
-		ClasspathXmlConfig cfg = new ClasspathXmlConfig("hazelcast.xml");
-		cfg.setInstanceName(instanceName);
-		HazelcastInstance hz = Hazelcast.getOrCreateHazelcastInstance(cfg);
+		logger.debug("Getting Hazelcast instance with name [" + instanceName + "]");
+		HazelcastInstance hz = Hazelcast.getHazelcastInstanceByName(instanceName);
+		if (hz == null) {
+			logger.debug("No Hazelcast instance with name [" + instanceName + "] found");
+			logger.debug("Creating Hazelcast instance with name [" + instanceName + "]");
+			ClasspathXmlConfig cfg = new ClasspathXmlConfig("hazelcast.xml");
+			cfg.setInstanceName(instanceName);
+			hz = Hazelcast.newHazelcastInstance(cfg);
+		}
 		logger.debug("Getting Hazelcast map with name [" + mapName + "]");
 		return hz.getMap(mapName);
 	}
