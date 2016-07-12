@@ -130,17 +130,17 @@
 		<unzip src="../../../knowagebirtreportengine/dist/knowagebirtreportengine.war" dest="${tomcat.home}/webapps/knowagebirtreportengine" />
 	</target>
 
-	<!--
-	<target name="create.SpagoBIGeoEngine.war" depends="create.knowage.utils.jar">
-		<ant dir="../SpagoBIGeoEngine/ant" />
+	
+	<target name="create.knowagesvgviewerengine.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowagesvgviewerengine/ant" />
 	</target>
-	<target name="deploy.SpagoBIGeoEngine.war" depends="create.knowage.utils.jar,create.SpagoBIGeoEngine.war">
-		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIGeoEngine" />
-		<delete dir="${tomcat.home}/webapps/SpagoBIGeoEngine" />
-		<mkdir dir="${tomcat.home}/webapps/SpagoBIGeoEngine" />
-		<unzip src="../../../SpagoBIGeoEngine/dist/SpagoBIGeoEngine.war" dest="${tomcat.home}/webapps/SpagoBIGeoEngine" />
+	<target name="deploy.knowagesvgviewerengine.war" depends="create.knowage.utils.jar,create.knowagesvgviewerengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowagesvgviewerengine" />
+		<delete dir="${tomcat.home}/webapps/knowagesvgvieverengine" />
+		<mkdir dir="${tomcat.home}/webapps/knowagesvgviewerengine" />
+		<unzip src="../../../knowagesvgviewerengine/dist/knowagesvgviewerengine.war" dest="${tomcat.home}/webapps/knowagesvgviewerengine" />
 	</target>
-	 -->
+	
 
 	<target name="create.knowagegeoreportengine.war" depends="create.knowage.utils.jar">
 		<ant dir="../knowagegeoreportengine/ant" />
@@ -151,8 +151,6 @@
 		<mkdir dir="${tomcat.home}/webapps/knowagegeoreportengine" />
 		<unzip src="../../../knowagegeoreportengine/dist/knowagegeoreportengine.war" dest="${tomcat.home}/webapps/knowagegeoreportengine" />
 	</target>
-
-
 
 	<target name="create.knowagecockpitengine.war" depends="create.knowage.utils.jar,create.knowage.dao.jar,create.qbe.core.jar">
 		<ant dir="../knowagecockpitengine/ant" />
@@ -393,14 +391,11 @@
 
 	    <antcall target="create.knowagejasperreportengine.war" />
 	    <copy file="../../../knowagejasperreportengine/dist/knowagejasperreportengine.war" 
-	    todir="../../../dist" overwrite="true" />
-
+	    todir="../../../dist" overwrite="true" />	
 		
-		<!--
-		<antcall target="create.SpagoBIGeoEngine.war" />
-		<copy file="../../../SpagoBIGeoEngine/dist/SpagoBIGeoEngine.war" 
-        todir="../../../dist" overwrite="true" />
--->
+		<antcall target="create.knowagesvgviewerengine.war" />
+		<copy file="../../../knowagesvgviewerengine/dist/knowagesvgviewerengine.war" todir="../../../dist" overwrite="true" />
+
 		<antcall target="create.knowagegeoreportengine.war" />
 		<copy file="../../../knowagegeoreportengine/dist/knowagegeoreportengine.war" todir="../../../dist" overwrite="true" />
 
@@ -474,7 +469,7 @@
 	<target name="deploy.all" >
 		<antcall target="deploy.knowage.war" />
 		<antcall target="deploy.knowagebirtreportengine.war" />
-		<!-- antcall target="deploy.SpagoBIGeoEngine.war" /-->
+		<antcall target="deploy.knowagesvgviewerengine.war" />
 		<antcall target="deploy.knowagegeoreportengine.war" />
 		<antcall target="deploy.knowagecockpitengine.war" />
 		<antcall target="deploy.knowagejasperreportengine.war" />
@@ -532,9 +527,10 @@
 		<delete dir="../../../SpagoBIXMLSecurityProvider/dist"/>
 		<delete dir="../../../SpagoBILdapSecurityProvider/ant-build"/>
 		<delete dir="../../../SpagoBILdapSecurityProvider/dist"/>
-		<delete dir="../../../SpagoBIGeoEngine/ant-build"/>
-		<delete dir="../../../SpagoBIGeoEngine/dist"/>
 		-->
+		<delete dir="../../../knowagesvgviewerengine/ant-build"/>
+		<delete dir="../../../knowagesvgviewerengine/dist"/>
+		
 		<delete dir="../../../knowagegeoreportengine/ant-build"/>
 		<delete dir="../../../knowagecockpitengine/ant-build"/>
 		<delete dir="../../../knowagegeoreportengine/dist"/>
@@ -656,9 +652,9 @@
 		<ant dir="../knowagebirtreportengine/ant" target="javadoc"/>
 		<!--
 		<ant dir="../SpagoBIExoSecurityProvider/ant" target="javadoc"/>
-		<ant dir="../SpagoBIOAuth2SecurityProvider/ant" target="javadoc"/>
-		<ant dir="../SpagoBIGeoEngine/ant" target="javadoc"/>
+		<ant dir="../SpagoBIOAuth2SecurityProvider/ant" target="javadoc"/>		
 		-->
+		<ant dir="../knowagesvgviewerengine/ant" target="javadoc"/>
 		<ant dir="../knowagegeoreportengine/ant" target="javadoc"/>
 		<ant dir="../knowagecockpitengine/ant" target="javadoc"/>
 
@@ -699,9 +695,9 @@
 	<target name="package.all" >
 		<ant dir="../knowage/ant" target="package"/>
 		<ant dir="../knowagebirtreportengine/ant" target="package"/>
-		<!--
-		<ant dir="../SpagoBIGeoEngine/ant" target="package"/>
-		-->
+
+		<ant dir="../knowagesvgviewerengine/ant" target="package"/>
+
 		<ant dir="../knowagegeoreportengine/ant" target="package"/>
 		<ant dir="../knowagecockpitengine/ant" target="package"/>
 		
