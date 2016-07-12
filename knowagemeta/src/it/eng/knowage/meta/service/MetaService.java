@@ -86,6 +86,7 @@ import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -101,7 +102,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 *
+	 * 
 	 * @param dsId
 	 * @return
 	 */
@@ -167,10 +168,8 @@ public class MetaService extends AbstractSpagoBIResource {
 			String modelName = jsonData.getString("name");
 			Integer modelId = jsonData.getInt("id");
 
-			if (jsonRoot.has("diff")) {
-				JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
-				applyPatch(patch, model);
-			}
+			applyDiff(jsonRoot, model);
+
 			ByteArrayOutputStream filee = new ByteArrayOutputStream();
 			serializer.serialize(model, filee);
 			// System.out.println("!!! model generation ended !!!");
@@ -210,11 +209,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 			JSONObject oldJsonModel = createJson(model);
 
-			if (jsonRoot.has("diff")) {
-				ObjectMapper mapper = new ObjectMapper();
-				JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
-				applyPatch(patch, model);
-			}
+			applyDiff(jsonRoot, model);
 
 			JSONObject json = jsonRoot.getJSONObject("data");
 			ObjectMapper mapper = new ObjectMapper();
@@ -243,11 +238,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			JSONObject oldJsonModel = createJson(model);
 
-			ObjectMapper mapper = new ObjectMapper();
-			if (jsonRoot.has("diff")) {
-				JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
-				applyPatch(patch, model);
-			}
+			applyDiff(jsonRoot, model);
 
 			JSONObject json = jsonRoot.getJSONObject("data");
 
@@ -257,6 +248,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			BusinessModel bm = model.getBusinessModels().get(0);
 
+			ObjectMapper mapper = new ObjectMapper();
 			JsonNode rel = mapper.readTree(json.toString());
 			applyRelationships(rel, bm);
 
@@ -280,11 +272,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 			JSONObject oldJsonModel = createJson(model);
 
-			ObjectMapper mapper = new ObjectMapper();
-			if (jsonRoot.has("diff")) {
-				JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
-				applyPatch(patch, model);
-			}
+			applyDiff(jsonRoot, model);
 
 			JSONObject json = jsonRoot.getJSONObject("data");
 			String name = json.getString("name");
@@ -304,7 +292,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			bm.addBusinessView(bw);
 			bw.setDescription(description);
 
-			// Add source table if it has not been selected
+			// Adding source table only if it has not been selected
 			boolean addSourceTable = true;
 			for (int i = 0; i < physicaltables.length(); i++) {
 				String ptName = physicaltables.getString(i);
@@ -401,6 +389,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			businessModelInitializer.addIdentifier(identifier.getName(), bw, identifier.getColumns());
 
 			JSONObject jsonModel = createJson(model);
+			ObjectMapper mapper = new ObjectMapper();
 			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 
 			return Response.ok(patch.toString()).build();
@@ -465,11 +454,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		JSONObject oldJsonModel = createJson(model);
 
-		ObjectMapper mapper = new ObjectMapper();
-		if (jsonRoot.has("diff")) {
-			JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
-			applyPatch(patch, model);
-		}
+		applyDiff(jsonRoot, model);
 
 		JSONObject jsonData = jsonRoot.getJSONObject("data");
 		String name = jsonData.getString("name");
@@ -484,6 +469,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		businessModelInitializer.addCalculatedColumn(cfd);
 
 		JSONObject jsonModel = createJson(model);
+		ObjectMapper mapper = new ObjectMapper();
 		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 		return Response.ok(patch.toString()).build();
 
@@ -534,17 +520,14 @@ public class MetaService extends AbstractSpagoBIResource {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		JSONObject oldJsonModel = createJson(model);
 
-		ObjectMapper mapper = new ObjectMapper();
-		if (jsonRoot.has("diff")) {
-			JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
-			applyPatch(patch, model);
-		}
+		applyDiff(jsonRoot, model);
 
 		JSONObject json = jsonRoot.getJSONObject("data");
 		String bmName = json.getString("name");
 		model.getBusinessModels().get(0).deleteBusinessTableByUniqueName(bmName);
 
 		JSONObject jsonModel = createJson(model);
+		ObjectMapper mapper = new ObjectMapper();
 		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 
 		return Response.ok(patch.toString()).build();
@@ -558,17 +541,14 @@ public class MetaService extends AbstractSpagoBIResource {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		JSONObject oldJsonModel = createJson(model);
 
-		ObjectMapper mapper = new ObjectMapper();
-		if (jsonRoot.has("diff")) {
-			JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
-			applyPatch(patch, model);
-		}
+		applyDiff(jsonRoot, model);
 
 		JSONObject json = jsonRoot.getJSONObject("data");
 		String bmName = json.getString("name");
 		model.getBusinessModels().get(0).deleteBusinessViewByUniqueName(bmName);
 
 		JSONObject jsonModel = createJson(model);
+		ObjectMapper mapper = new ObjectMapper();
 		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 
 		return Response.ok(patch.toString()).build();
@@ -759,6 +739,13 @@ public class MetaService extends AbstractSpagoBIResource {
 		// br.setPhysicalForeignKey();
 	}
 
+	private void applyDiff(JSONObject jsonRoot, Model model) throws SpagoBIException, JsonProcessingException, IOException, JSONException {
+		if (jsonRoot.has("diff")) {
+			JsonNode patch = new ObjectMapper().readTree(jsonRoot.getString("diff"));
+			applyPatch(patch, model);
+		}
+	}
+
 	private void applyPatch(JsonNode patch, Model model) throws SpagoBIException {
 		System.out.println(patch.toString());
 		Iterator<JsonNode> elements = patch.elements();
@@ -881,12 +868,20 @@ public class MetaService extends AbstractSpagoBIResource {
 		}
 	}
 
+	/**
+	 * Used to convert a path coming from a frontend jsonDiff in a path as expected by jxpath. Frontend model is something like {physicalModels:[...],
+	 * businessModels:[...]} and it has to be converted to backend model structure that is something like
+	 * {businessModels:[tables:[...]],businessModels:[businessTables:[...]]} Furthermore jsonDiff is zero-based numbering but jxpath is 1-based numbering
+	 * Another difference is that jsonDiff's notation used to select a property of a nth element of a collection is "parent/n/property" but jxpath does same
+	 * selection in this way "parent[n]/property"
+	 * 
+	 * @param path
+	 * @return path cleaned
+	 */
 	private String cleanPath(String path) {
 		path = path.replaceAll("^/physicalModels", "/businessModels/0/tables").replaceAll("^/businessModels", "/businessModels/0/businessTables");
-		// path = "/businessModels" + path;
 		Pattern p = Pattern.compile("(/)(\\d)");
 		Matcher m = p.matcher(path);
-		// StringBuffer s = new StringBuffer("/businessTables");
 		StringBuffer s = new StringBuffer();
 		while (m.find()) {
 			m.appendReplacement(s, "[" + String.valueOf(1 + Integer.parseInt(m.group(2))) + "]");
