@@ -91,7 +91,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		disable-save-button="isDisabled()"
 		show-save-button="showMe" show-cancel-button="showMe">
 			
-			
+		
+		<md-tabs md-dynamic-height md-border-bottom="">
+		<md-tab label='{{translate.load("sbi.generic.details");}}'>
+		<md-content>	
 		<form name="attributeForm" ng-submit="attributeForm.$valid">
 			
 		<md-card>
@@ -218,6 +221,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										
 						</angular-table>
 			
+			
 				</md-radio-group>
 			
 				
@@ -226,6 +230,71 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      </md-card>
 
 			</form>
+			</md-content>
+	     	</md-tab>
+	     		<md-tab label='{{translate.load("sbi.generic.workflow");}}'>
+	     			<md-contet layout="row">
+	     				<md-card flex>
+	     					<md-toolbar class="md-hue-2">
+		     					<div class="md-toolbar-tools">
+									<i class="fa fa-bars " style="padding-right:10px"></i>
+									<h2 class="md-flex" >Available users</h2>
+									<span flex=""></span>					
+								</div>
+	     					</md-toolbar>
+	     					
+	     					<md-content  layout-padding>
+								<angular-table
+									layout-fill
+									id="availableUsers" 
+									ng-model="availableUsersList" 
+									columns='[
+										{"label":"Username","name":"userId"},
+										{"label":"Name","name":"fullName"}
+									]'
+									show-search-bar=true
+									click-function="moveToWorkflow(item,true)"
+									style="overflow:hidden"	
+								>					
+								</angular-table>
+							</md-content>
+	     				</md-card>
+	     				
+	     				<md-card flex>
+	     					<md-toolbar class="md-hue-2">
+	     						<div class="md-toolbar-tools">
+									<i class="fa fa-bars " style="padding-right:10px"></i>
+									<h2 class="md-flex" style="margin-right: 45%">Users work flow</h2>
+									<md-button class="md-icon-button" style="background-color:white;" ng-show="isStartVisible()" ng-click="startWorkflow(selectedMondrianSchema.id)">
+										<md-tooltip md-direction="bottom">
+								          Start workflow
+								        </md-tooltip>
+          								<md-icon md-font-icon="fa-play-circle" class="fa fa-2x" style="color:#008800"></md-icon>
+        							</md-button>
+									<span flex=""></span>												
+								</div>
+								
+	     					</md-toolbar>
+	     					
+	     					<md-content  layout-padding>
+								<angular-table
+								layout-fill
+								id="selectedUsers" 
+								ng-model="wfSelectedUserList" 
+								columns='[
+									{"label":"Username","name":"userId"},
+									{"label":"Name","name":"fullName"}
+								]'
+								show-search-bar=true
+								speed-menu-option ="workflowSpeedMenu"
+								style="overflow:hidden"	
+								>					
+								</angular-table>
+							</md-content>
+	     				</md-card>
+	     			</md-contet>
+	     		</md-tab>
+			</md-tabs>
 			</detail>	
 	</angular-list-detail>
 

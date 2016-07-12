@@ -89,6 +89,7 @@ import it.eng.spagobi.tools.udp.dao.IUdpValueDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.wapp.dao.IMenuDAO;
 import it.eng.spagobi.wapp.dao.IMenuRolesDAO;
+import it.eng.spagobi.whatif.dao.IWhatifWorkflowDAO;
 import it.eng.spagobi.workspace.dao.IFunctionsOrganizerDAO;
 import it.eng.spagobi.workspace.dao.IObjFuncOrganizerDAO;
 
@@ -948,6 +949,10 @@ public class DAOFactory {
 
 	public static IFunctionsOrganizerDAO getFunctionsOrganizerDAO() throws EMFUserError {
 		return (IFunctionsOrganizerDAO) createDAOInstance("IFunctionsOrganizerDAO");
+	}
+
+	public static IWhatifWorkflowDAO getWhatifWorkflowDAO() throws EMFUserError {
+		return (IWhatifWorkflowDAO) createDAOInstance("IWhatifWorkflowDAO");
 	}
 
 	public static IObjFuncOrganizerDAO getObjFuncOrganizerDAO() throws EMFUserError {

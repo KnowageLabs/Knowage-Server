@@ -27,7 +27,221 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	$scope.file ={};
 	$scope.isDirty = false;
 	
+	//workflow variables
+	$scope.isStartedWf=false;
+	$scope.allUsers =[];
+	$scope.availableUsersList=[];
+	$scope.wfSelectedUserList =[];
+	$scope.wfEdited = false;//is edited?
+	$scope.wfStarted = false;//is still editable
+	$scope.wfExists = false;
+	var startAfterCreation;
+	
+	//workflow methods
+	$scope.moveToWorkflow = function(item, fromInterface){
+		if(!fromInterface)
+			goodToGo = true;
+		else if(!$scope.isStartedWf)
+				goodToGo = true;
+		else
+			goodToGo = false;
+			
+		if(goodToGo){
+			$scope.wfEdited = true;
+			var index = $scope.availableUsersList.indexOf(item);
+			
+			$scope.wfSelectedUserList.push(item);
+			
+			$scope.availableUsersList.splice(index,1);
+		}
+		else{
+			sbiModule_messaging.showInfoMessage("Workflow is already started", 'Info');
+		}
+	}
+	
+	$scope.removeFromWorkflow = function(item){
+		$scope.wfEdited = true;
+		var index = $scope.wfSelectedUserList.indexOf(item);
+		
+		$scope.availableUsersList.push(item);
+		
+		$scope.wfSelectedUserList.splice(index,1);
+	}
+	
+	loadAllUsers = function(){
+		sbiModule_restServices.promiseGet("2.0/users","")
+		.then(function(response) {
+			$scope.allUsers =response.data;
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});
+	};
+	
+	isWorkflowStarted = function(modelId){
+		sbiModule_restServices.promiseGet("2.0/workflow/isStarted/"+modelId,"")
+		.then(function(response) {
+			if(response.data > 0)
+				$scope.isStartedWf = true;
+			else
+				$scope.isStartedWf = false;
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});	
+	};
+	
+	loadUsersInWF = function(modelId){
+		sbiModule_restServices.promiseGet("2.0/workflow/"+modelId,"")
+		.then(function(response) {
+			$scope.availableUsersList=[];
+			$scope.availableUsersList = $scope.allUsers.slice();
+			$scope.wfSelectedUserList =[];
 
+			if(response.data.length > 0){
+				$scope.wfExists = true;
+				for(var i=0; i<response.data.length;i++){
+					for(var j=0;j< $scope.availableUsersList.length;j++){
+						if(response.data[i] == $scope.availableUsersList[j].id){
+							$scope.moveToWorkflow($scope.availableUsersList[j],false);
+							break;
+						}
+					}
+				}
+				$scope.wfEdited = false;
+			}
+			else{
+				$scope.wfExists = false;
+			}
+			
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});
+	};
+	
+	$scope.createNewWorkflow = function(mid){
+		var toSend = {}
+		toSend.workflowArr = $scope.wfSelectedUserList;
+		toSend.modelId = mid;
+		var encoded = encodeURI('workflow');
+		
+		sbiModule_restServices.promisePost("2.0",encoded,toSend).then(
+				function(response){
+					$scope.wfEdited = false;
+					sbiModule_messaging.showSuccessMessage("Workflow created", 'Success');
+					if(startAfterCreation)
+						$scope.startWorkflow(mid);
+				},
+				function(response){
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				});
+	};
+	
+	$scope.startWorkflow = function(modelId){
+		if(modelId != undefined){
+			sbiModule_restServices.promisePut("2.0/workflow/startWorkflow/"+modelId,"")
+			.then(function(response) {
+				$scope.isStartedWf = true;
+				sbiModule_messaging.showSuccessMessage("Workflow started", 'Success');
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});
+		}
+		else{
+			startAfterCreation = true;
+		}
+	};
+	
+	updateWorkflow = function(mid){
+		var toSend = {}
+		toSend.workflowArr = $scope.wfSelectedUserList;
+		toSend.modelId = mid;
+		var encoded = encodeURI('workflow/update');
+		
+		sbiModule_restServices.promisePut("2.0",encoded,toSend).then(
+				function(response){
+					
+					sbiModule_messaging.showSuccessMessage("Workflow updated", 'Success');
+					
+				},
+				function(response){
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				});
+	};
+	
+	moveUserInWf = function(direction, id){
+		$scope.wfEdited = true;
+		var index = getIndexOfId(id);
+		var len = $scope.wfSelectedUserList.length;
+		var pom;
+		
+		if(direction == "up" && index > 0){
+			pom = $scope.wfSelectedUserList[index-1];
+			$scope.wfSelectedUserList[index-1] = $scope.wfSelectedUserList[index];
+			$scope.wfSelectedUserList[index] = pom;
+		}
+		if(direction == "down" && index < len-1){
+			pom = $scope.wfSelectedUserList[index+1];
+			$scope.wfSelectedUserList[index+1] = $scope.wfSelectedUserList[index];
+			$scope.wfSelectedUserList[index] = pom;
+		}
+	};
+	
+	getIndexOfId = function(id){
+		for(var i=0; i<$scope.wfSelectedUserList.length;i++){
+			if($scope.wfSelectedUserList[i].id == id)
+				return i;
+		}
+	};
+	
+	$scope.isStartVisible = function(){
+		if($scope.wfSelectedUserList.length == 0 || $scope.isStartedWf){
+			return false;
+		}
+		else{
+			return true;
+		}
+	};
+	
+	$scope.workflowSpeedMenu = [
+	    {
+	    	label:"Move up",
+	    	icon:'fa fa-arrow-circle-up',
+	    	color:'#1E9144',
+	    	visible:function(){
+	    		return !$scope.isStartedWf;	    			
+	    	},
+	    	action:function(item,event){
+	    		moveUserInWf("up", item.id);
+	    	}
+	    },
+	    {
+	    	label:"Move down",
+	    	icon:'fa fa-arrow-circle-down',
+	    	color:'#1E9144',
+	    	visible:function(){
+	    		return !$scope.isStartedWf;	    			
+	    	},
+	    	action:function(item,event){
+	    		moveUserInWf("down", item.id);
+	    	}
+	    },
+	    {
+	    	label:"Remove from workflow",
+	    	icon:'fa fa-times-circle',
+	    	color:'#aa0000',
+	    	visible:function(){
+	    		return !$scope.isStartedWf;	    			
+	    	},
+	    	action:function(item,event){
+	    		$scope.removeFromWorkflow(item);
+	    	}
+	    }
+	];
+	
+	//old Dragan stuff
 	$scope.isDisabled = function(){
 		if($scope.selectedMondrianSchema.id == undefined){
 			if($scope.selectedMondrianSchema.name == undefined || $scope.selectedMondrianSchema.name=="" || $scope.file.file == undefined)
@@ -70,7 +284,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	
 	angular.element(document).ready(function () {
         $scope.getMondrianSchemas();
-		
+        loadAllUsers();
 		
     });
 	
@@ -172,6 +386,12 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 
 	};
 	$scope.createMondrianSchema = function(){
+		startAfterCreation = false;
+		$scope.isStartedWf = false;
+		$scope.wfEdited = false;
+		$scope.availableUsersList = [];
+		$scope.availableUsersList = $scope.allUsers.slice(); //load all users
+		$scope.wfSelectedUserList =[]; // clear selected when creatig new
 		
 		if($scope.isDirty){
 			$mdDialog.show($scope.confirm).then(function(){
@@ -202,6 +422,8 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	
 	//CLICK FUNCTION FOR CATALOQUE TABLE
 	$scope.catalogueClickFunction = function(item){
+		loadUsersInWF(item.id); // loading users for existing document legit state of catalog
+		isWorkflowStarted(item.id);
 		
 		if(item!=$scope.selectedMondrianSchema){
 			if($scope.isDirty){
@@ -340,7 +562,8 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 					$scope.uploadFile();
 					
 				}
-			
+			if($scope.wfEdited)
+				$scope.createNewWorkflow(response.data.id);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
@@ -377,6 +600,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	//PUT MODIFY MONDRIAN SCHEMA
 	$scope.modifyMondrianSchema = function(){
 		$scope.isDirty = false;
+		var mId = $scope.selectedMondrianSchema.id;
 		sbiModule_restServices.promisePut($scope.servicePath,$scope.selectedMondrianSchema.id,$scope.selectedMondrianSchema)
 		.then(function(response) {
 			
@@ -398,6 +622,11 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 			$scope.uploadFile();
 			
 		}
+		
+		if($scope.wfEdited && !$scope.wfExists)
+			$scope.createNewWorkflow(mId);
+		if($scope.wfEdited && $scope.wfExists)
+			updateWorkflow(mId);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
