@@ -52,30 +52,41 @@ function datasetWizardMetaController($scope,$mdDialog,sbiModule_translate){
 		console.log($scope.metadataType);
 	}
 	
-    $scope.tableColumns=[
-                         {
-                          name:"columnView", 
-                          label:"Column"
-                         
-                         },
-                         {
-                             name:"pnameView",
-                             label:"Attribute"
-                         },
-                         {
-                             name:"pvalueView",
-                             label:"Value"
-                         }
-                         ];
+    $scope.tableColumns = 
+    [
+	     {
+	      name:"columnView", 
+	      label:"Column",
+	      hideTooltip:true
+	     },
+	     
+	     {
+	         name:"pnameView",
+	         label:"Attribute",
+	         hideTooltip:true
+	     },
+	     
+	     {
+	         name:"pvalueView",
+	         label:"Value",
+	         hideTooltip:true
+	     }
+     ];
     
-    $scope.tableDataset=[{
-        name:"pnameView",
-        label:"Attribute"
-    },
-    {
-        name:"pvalueView",
-        label:"Value"
-    }];
+    $scope.tableDataset=
+	[
+	 	{
+	        name:"pnameView",
+	        label:"Attribute",
+	        hideTooltip:true
+	    },
+	    
+	    {
+	        name:"pvalueView",
+	        label:"Value",
+	        hideTooltip:true
+	    }
+    ];
     
     $scope.table=[];
     
