@@ -62,7 +62,7 @@ public class PageResource extends AbstractChartEngineResource {
 		try {
 			pages.put("execute", new JSONObject("{name: 'execute', description: 'the georeport execution page', parameters: []}"));
 			urls.put("execute", "/WEB-INF/jsp/geoReport.jsp");
-			
+
 			pages.put("edit_map", new JSONObject("{name: 'execute', description: 'the georeport execution page', parameters: []}"));
 			urls.put("edit_map", "/WEB-INF/jsp/geoReport.jsp");
 
@@ -116,6 +116,7 @@ public class PageResource extends AbstractChartEngineResource {
 				String templateString = saveTemplateForEdit != null ? saveTemplateForEdit : buildBaseTemplate().toString();
 				engineInstance = GeoReportEngine.createInstance(templateString, getIOManager().getEnv());
 				engineInstance.getEnv().put(EngineConstants.ENV_DOCUMENT_LABEL, getIOManager().getRequest().getParameter("DOCUMENT_LABEL"));
+				engineInstance.getEnv().put(EngineConstants.ENV_IS_TECHNICAL_USER, getIOManager().getRequest().getParameter("IS_TECHNICAL_USER"));
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				break;
 			default:

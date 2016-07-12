@@ -31,11 +31,11 @@
 
 	function geoTemplateBuildControllerFunction($scope, sbiModule_translate,
 			sbiModule_restServices, sbiModule_config, $mdDialog, sbiModule_messaging,$documentViewer) {
-	//	console.log(params);
-		
+		console.log(isTechnicalUser);
+		$scope.tecnicalUser= isTechnicalUser;
 		$scope.template=angular.fromJson(docTemplate);
 		$scope.docLabel=documentLabel;
-      
+        
 		$scope.translate = sbiModule_translate;
 		$scope.layerCatalogs = [];
 		$scope.selectedLayer = [];
@@ -47,6 +47,9 @@
 		
 		$scope.selectedDatasetLabel = dataset;
 		$scope.isDatasetChosen = $scope.selectedDatasetLabel != '';
+		$scope.datasetLabel= $scope.selectedDatasetLabel != ''? $scope.selectedDatasetLabel:$scope.translate.load('gisengine.desiner.datasetNotChosen');
+		$scope.allDatasets=[];
+		
 		$scope.datasetFields = [];
 		$scope.datasetJoinColumns = [];
 
@@ -56,6 +59,49 @@
        
 		// if there is no template at all
 		$scope.editDisabled = $scope.template.mapName==undefined; 
+		
+		$scope.choseDataset= function(){
+			console.log("IN CHOSE DATASET")
+			sbiModule_restServices
+			.alterContextPath(sbiModule_config.externalBasePath);
+			sbiModule_restServices.promiseGet("restful-services/1.0/datasets", "mydata")
+			.then(
+					function(response) {
+						$scope.allDatasets=[];
+						angular.copy(response.data.root,$scope.allDatasets);
+						$mdDialog
+						.show({
+							controller : DialogControllerDataset,
+							templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateDatasetList.html',
+							clickOutsideToClose : false,
+							preserveScope : true,
+							scope : $scope
+						});
+
+				        
+					},
+					function(response) {
+						sbiModule_restServices.errorHandler(
+								response.data, "error loading datasets");
+					});
+		}
+		
+		$scope.clearDataset= function(){
+			$scope.selectedDatasetLabel = '';
+			$scope.isDatasetChosen = false;
+			$scope.datasetLabel= $scope.translate.load('gisengine.desiner.datasetNotChosen');
+			$scope.resetAllVariables();
+			
+		}
+		
+		$scope.resetAllVariables= function(){
+			$scope.selectedLayer = [];
+			$scope.selectedFilters = [];
+			$scope.selectedDriverParamteres = [];
+			$scope.datasetJoinColumns = [];
+			$scope.datasetIndicators = [];
+	
+		}
 		
 		$scope.loadLayers = function() {
 			sbiModule_restServices
@@ -580,7 +626,7 @@
 			$scope.newLayerCatalog = [];
 		}
 		$scope.closeDialog = function() {
-			$scope.newLayerCatalog = undefined;
+			//$scope.newLayerCatalog = undefined;
 			$mdDialog.cancel();
 		}
 
@@ -656,6 +702,24 @@
 			return false;
 		}
 
+	}
+	
+	function DialogControllerDataset ($scope,$mdDialog){
+		$scope.closeDatasetDialog = function() {
+			
+			$mdDialog.cancel();
+		}
+		
+		$scope.changeSelectedDataset=function(){
+			$scope.selectedDatasetLabel = $scope.chosenDataset.label;
+			$scope.isDatasetChosen = true;
+			$scope.datasetLabel= $scope.chosenDataset.label;
+			$scope.resetAllVariables();
+			$scope.loadDatasetColumns ($scope.chosenDataset.label); 
+			
+			$mdDialog.cancel();
+			
+		}
 	}
 
 })();

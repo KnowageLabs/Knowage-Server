@@ -19,6 +19,7 @@ package it.eng.spagobi.engines.drivers.gis;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
@@ -51,6 +52,7 @@ public class GisDriver extends GenericDriver {
 		parameters.put(DOCUMENT_ID, documentId);
 		String documentLabel = obj.getLabel();
 		parameters.put(DOCUMENT_LABEL, documentLabel);
+		parameters.put(IS_TECHNICAL_USER, UserUtilities.isTechnicalUser(profile));
 		applySecurity(parameters, profile);
 		EngineURL engineURL = new EngineURL(url.replace("/execute", "/edit"), parameters);
 		logger.debug("OUT");
@@ -84,6 +86,7 @@ public class GisDriver extends GenericDriver {
 		parameters.put(DOCUMENT_ID, documentId);
 		String documentLabel = obj.getLabel();
 		parameters.put(DOCUMENT_LABEL, documentLabel);
+		parameters.put(IS_TECHNICAL_USER, UserUtilities.isTechnicalUser(profile));
 		applySecurity(parameters, profile);
 		EngineURL engineURL = new EngineURL(url.replace("/execute", "/edit"), parameters);
 		logger.debug("OUT");

@@ -89,6 +89,7 @@
 	String driverParams = new JSONObject(driverParamsMap).toString(0);
 	
 	String editMode = request.getParameter("EDIT_MODE");
+	String isUserTechnical = request.getParameter("IS_TECHNICAL_USER");
 	
 %>
 

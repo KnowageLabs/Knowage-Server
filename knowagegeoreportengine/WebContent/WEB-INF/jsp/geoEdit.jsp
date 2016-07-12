@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  var documentLabel='<%=docLabel%>';
  var dataset='<%=docDatasetLabel%>';
  var docTemplate= '<%=template%>';
+ var isTechnicalUser = '<%=isUserTechnical%>';
 </script>
 </head>
 <body ng-controller="geoTemplateBuildController">
@@ -55,6 +56,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <label>{{translate.load("gisengine.designer.mapname")}}</label>
   <input type="text" ng-model="mapName">
 </md-input-container>
+</div>
+<div layout="row" flex ng-if="!tecnicalUser">
+<label>{{datasetLabel}}</label>
+  <md-button class="md-fab md-mini md-primary" ng-if="!isDatasetChosen" ng-click="choseDataset()" aria-label="Add dataset">
+          <md-icon class="fa fa-plus-circle fa-2x"></md-icon>
+        </md-button>
+    <md-button class="md-fab md-mini md-primary" ng-if="isDatasetChosen" ng-click="clearDataset()" aria-label="Clear dataset">
+          <md-icon class="fa fa-minus-circle fa-2x"></md-icon>
+        </md-button>      
 </div>
 <!-- SINGLE SELECT FROM LAYER CATALOG  WHEN DATASET IS CHOSEN-->
 	<expander-box id="layersList" color="white" ng-if="isDatasetChosen" expanded="true" title="translate.load('gisengine.designer.layer.select')">
