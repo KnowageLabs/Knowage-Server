@@ -37,7 +37,6 @@
 	<PRODUCT_TYPE label="KnowageLI" active="true">
 		<ENGINE label="knowagesvgviewerengine" />
 		<ENGINE label="knowagegisengine" />
-		<ENGINE label="knowagegeoengine" />
 		<ENGINE label="knowageqbeengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowagePA" active="true">

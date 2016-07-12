@@ -27,10 +27,6 @@
 		driverNm="it.eng.spagobi.engines.drivers.birt.BirtReportDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="REPORT" useDataSet="false"
 		useDataSource="true" encrypt="0" />
-	<ENGINE label="knowagegeoengine" name="Geo Engine" descr="Geo Engine"
-		mainUrl="/knowagegeoengine/servlet/AdapterHTTP" driverNm="it.eng.spagobi.engines.drivers.geo.GeoDriver"
-		engineTypeCd="EXT" classNm="" biobjTypeCd="MAP" useDataSet="true"
-		useDataSource="true" encrypt="0" />
 	<ENGINE label="knowagejpivotengine" name="JPivot Engine" descr="JPivot Mondrian Engine"
 		mainUrl="/knowagejpivotengine/JPivotServlet" driverNm="it.eng.spagobi.engines.drivers.jpivot.JPivotDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="OLAP" useDataSet="false"
