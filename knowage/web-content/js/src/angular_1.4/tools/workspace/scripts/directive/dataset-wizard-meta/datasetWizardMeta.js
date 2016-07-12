@@ -73,7 +73,7 @@ function datasetWizardMetaController($scope,$mdDialog,sbiModule_translate){
 	     }
      ];
     
-    $scope.tableDataset=
+    $scope.tableDataset =
 	[
 	 	{
 	        name:"pnameView",

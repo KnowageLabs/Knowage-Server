@@ -196,9 +196,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 				 *  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
 				$scope.searchInput = "";
-			},function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.RemoteException.message,sbiModule_translate.load('sbi.workspace.dataset.delete.error'));
-				//sbiModule_restServices.errorHandler(response.data.message,sbiModule_translate.load('sbi.workspace.dataset.delete.error'));
+			},function(response) {				
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message,sbiModule_translate.load('sbi.generic.error'));
 			});
 		});
 		

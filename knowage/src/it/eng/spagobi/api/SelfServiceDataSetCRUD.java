@@ -453,7 +453,17 @@ public class SelfServiceDataSetCRUD {
 				logger.debug("Persistence ended succesfully!");
 			}
 
-			return ("{id:" + newId + " }");
+			/**
+			 * Provide a valid JSON with the information of the saved dataset's ID (negative value, namely -1, means we are updating an already existing
+			 * dataset, otherwise we are saving a new dataset.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			JSONObject jo = new JSONObject();
+			jo.put("id", newId);
+
+			return jo.toString();
+
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
 			updateAudit(request, profile, "DATA_SET.SAVE", null, "ERR");

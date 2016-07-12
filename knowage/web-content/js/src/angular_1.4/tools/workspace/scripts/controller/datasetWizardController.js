@@ -269,9 +269,6 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				sbiModule_restServices.errorHandler(response.data,translate.load('sbi.workspace.dataset.fail'));
 			});*/
 		
-		//console.log("FINAL RESULT:");
-		//console.log($scope.dataset);
-		
 		$http
 		(
 			{
@@ -297,54 +294,55 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		.then
 		(
 			function successCallback(response) {
-
-				console.log("SUCCESS aaaaa");					
-				console.log(response.data);
 				
 				if (!response.data.errors) {
-					console.info("[SUCCESS]: The Step 2 form is submitted successfully.");
-					// Take the meta data from resulting JSON object (needed for the table's header)
-					$scope.validationStatus = true;
-					$scope.resultMetaDataStep2 = [];
-					$scope.resultRowsStep2 = [];
-					angular.copy(response.data.metaData.fields,$scope.resultMetaDataStep2);
-					// Take all results (pure data) for rows of the Angular table
-					angular.copy(response.data.rows,$scope.resultRowsStep2);
-					$scope.collectHeadersForStep3Preview();
-					$scope.datasetWizardView = $scope.datasetWizardView +1;
+				
+					console.info("[SUCCESS]: The Step 4 form is submitted successfully. The file dataset is saved");
+					
+					/**
+					 * If some dataset is removed from the filtered set of datasets, clear the search input, since all datasets are refreshed.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					$scope.searchInput = "";
+					
+					/**
+					 * After successful saving a file dataset, close the dialog (Dataset wizard). Also, reload necessary datasets after a new dataset 
+					 * creation or a modification of an existing dataset).
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					$scope.closeDatasetCreateDialog();
+					$scope.reloadMyData();
+					
+					/**
+					 * If the ID value of the response data is negative (-1), that means that we edited (changed, modified) an existing file dataset.
+					 * Otherwise, a new dataset is created and its ID is returned.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					if (response.data.id >= 0) {						
+						sbiModule_messaging.showSuccessMessage(sbiModule_translate.format(sbiModule_translate.load('sbi.workspace.dataset.wizard.submit.success.save.msg'), 
+								response.config.data.name), translate.load('sbi.generic.success'));						
+					}
+					else {
+						sbiModule_messaging.showSuccessMessage(sbiModule_translate.format(sbiModule_translate.load('sbi.workspace.dataset.wizard.submit.success.update.msg'), 
+								response.config.data.name), translate.load('sbi.generic.success'));
+					}					
+					
 				}
 				else {
+					
 					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
-					$scope.validationStatus = false;
 					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
+					
 				}
 			}, 
 			
 			function errorCallback(response) {
 			// called asynchronously if an error occurs
 			// or server returns response with an error status.
-				console.info("[FAILURE]: The form cannot be submitted because of some failure.");
-				console.log(response);
+				console.info("[FAILURE]: The form cannot be submitted because of some failure.");			
 				
-				/**
-				 * NOTE: Temporary solution!
-				 * WORKAROUND
-				 * TODO
-				 * @author Danilo Ristovski
-				 */
-				$scope.closeDatasetCreateDialog();
-			//	$scope.loadMyDatasets();
-			//	$scope.loadDatasets();
-				$scope.reloadMyData();
-				
-				/**
-				 * If some dataset is removed from the filtered set of datasets, clear the search input, since all datasets are refreshed.
-				 *  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				$scope.searchInput = "";
-				
-//					$scope.validationStatus = false;
-//					sbiModule_messaging.showErrorMessage("Failure!", sbiModule_translate.load('sbi.generic.failure'));
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.workspace.dataset.wizard.submit.failure.msg'), 
+						sbiModule_translate.load('sbi.generic.failure'));
 			}
 		);
 		
