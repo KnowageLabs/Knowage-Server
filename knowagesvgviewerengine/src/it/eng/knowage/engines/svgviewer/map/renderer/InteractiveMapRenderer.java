@@ -1058,13 +1058,16 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 				if (elementVisibility.equalsIgnoreCase("false")) {
 					Element elementToHide = map.getElementById(id_element);
-					if (elementToHide.hasAttribute("style")) {
-						String elementStyle = elementToHide.getAttribute("style");
-						elementStyle = elementStyle + ";display:none";
-						elementToHide.setAttribute("style", elementStyle);
-					} else {
-						elementToHide.setAttribute("style", "display:none");
+					if (elementToHide != null) {
+						if (elementToHide.hasAttribute("style")) {
+							String elementStyle = elementToHide.getAttribute("style");
+							elementStyle = elementStyle + ";display:none";
+							elementToHide.setAttribute("style", elementStyle);
+						} else {
+							elementToHide.setAttribute("style", "display:none");
+						}
 					}
+
 				}
 			}
 		}
