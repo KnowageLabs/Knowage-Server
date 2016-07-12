@@ -161,7 +161,6 @@ public class MetaService extends AbstractSpagoBIResource {
 			EmfXmiSerializer serializer = new EmfXmiSerializer();
 			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
-			ObjectMapper mapper = new ObjectMapper();
 
 			Assert.assertTrue(jsonRoot.has("data"), "data model is mandatory");
 			JSONObject jsonData = jsonRoot.getJSONObject("data");
@@ -172,10 +171,10 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			ByteArrayOutputStream filee = new ByteArrayOutputStream();
 			serializer.serialize(model, filee);
-			// System.out.println("!!! model generation ended !!!");
+
 			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 			Content content = new Content();
-			byte[] bytes = filee.toByteArray();// FileUtils.readFileToByteArray(filee);
+			byte[] bytes = filee.toByteArray();
 			content.setFileName(modelName + ".sbimodel");
 			content.setFileModel(bytes);
 			content.setCreationDate(new Date());
@@ -483,11 +482,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		JSONObject oldJsonModel = createJson(model);
 
-		ObjectMapper mapper = new ObjectMapper();
-		if (jsonRoot.has("diff")) {
-			JsonNode patch = mapper.readTree(jsonRoot.getString("diff"));
-			applyPatch(patch, model);
-		}
+		applyDiff(jsonRoot, model);
 
 		JSONObject json = jsonRoot.getJSONObject("data");
 		String name = json.getString("name");
@@ -507,6 +502,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		}
 
 		JSONObject jsonModel = createJson(model);
+		ObjectMapper mapper = new ObjectMapper();
 		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
 		return Response.ok(patch.toString()).build();
 
@@ -581,6 +577,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/updatePhysicalModel")
+	@SuppressWarnings("unchecked")
 	public Response applyUpdatePhysicalModel(@Context HttpServletRequest req) throws ClassNotFoundException, NamingException, SQLException, JSONException,
 			IOException {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
@@ -641,44 +638,12 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	}
 
-	private Model getModel(Integer id) {
-		// TODO get file from db
-		File f = new File("c:\\test.sbimodel_new.txt");
-		EmfXmiSerializer serializer = new EmfXmiSerializer();
-		return serializer.deserialize(f);
-	}
-
 	private Model getModelWeb(String modelName) {
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		Content metaModelContent = businessModelsDAO.loadActiveMetaModelWebContentByName(modelName);
 		ByteArrayInputStream bis = new ByteArrayInputStream(metaModelContent.getFileModel());
 		EmfXmiSerializer serializer = new EmfXmiSerializer();
 		return serializer.deserialize(bis);
-	}
-
-	private void applyRelationships(JsonNode actualJson, Model model) {
-		Iterator<JsonNode> btIterator = actualJson.get("businessModel").elements();
-		BusinessModel bm = model.getBusinessModels().get(0);
-		EList<BusinessRelationship> relationships = bm.getRelationships();
-		relationships.clear();
-		Map<String, Boolean> relationshipMap = new HashMap<>();
-		while (btIterator.hasNext()) {
-			JsonNode bt = btIterator.next();
-			JsonNode rels = bt.get("relationships");
-			if (rels != null && !rels.isNull()) {
-				Iterator<JsonNode> relIndex = rels.elements();
-				while (relIndex.hasNext()) {
-					JsonNode rel = relIndex.next();
-					String uniqueName = rel.get("uniqueName").textValue();
-					if (!Boolean.TRUE.equals(relationshipMap.get(uniqueName))) {
-						relationshipMap.put(uniqueName, Boolean.TRUE);
-						applyRelationships(rel, bm);
-					}
-				}
-				System.out.println("relationships: " + relationships.size());
-			}
-		}
-		bm.getBusinessTables().iterator();
 	}
 
 	private void applyRelationships(JsonNode rel, BusinessModel bm) {
@@ -735,8 +700,8 @@ public class MetaService extends AbstractSpagoBIResource {
 				br.setProperty(propType, jsonNode.get("value").textValue());
 			}
 		}
-		// This field should be null (in relationship)
-		// br.setPhysicalForeignKey();
+		// This field should be null (in relationship) so it is left unset
+		// br.setPhysicalForeignKey(null);
 	}
 
 	private void applyDiff(JSONObject jsonRoot, Model model) throws SpagoBIException, JsonProcessingException, IOException, JSONException {
@@ -747,7 +712,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	private void applyPatch(JsonNode patch, Model model) throws SpagoBIException {
-		System.out.println(patch.toString());
+		logger.debug("applyPatch:" + patch != null ? patch.toString() : "null");
 		Iterator<JsonNode> elements = patch.elements();
 		JXPathContext context = JXPathContext.newContext(model);
 		context.setFactory(new ModelPropertyFactory());
@@ -757,7 +722,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			String path = jsonNode.get("path").textValue();
 
 			if (toSkip(path)) {
-				System.out.println("skipping " + path);
+				logger.debug("skipping " + path);
 				continue;
 			}
 
@@ -766,7 +731,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			switch (operation.toUpperCase()) {
 			case "ADD":
 				JsonNode node = jsonNode.get("value");
-				System.out.println("add " + node.asText());
+				logger.debug("add " + node.asText());
 				addJson(node, path, context);
 				break;
 			case "REMOVE":
@@ -778,7 +743,7 @@ public class MetaService extends AbstractSpagoBIResource {
 				break;
 			case "MOVE":
 				String from = cleanPath(jsonNode.get("from").textValue());
-				System.out.println("move from [" + from + "] to [" + path + "]");
+				logger.debug("moving from [" + from + "] to [" + path + "]");
 				Object obj = context.getPointer(from).getNode();
 				remove(from, context);
 				// addValue(obj, path, context);
@@ -793,7 +758,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	private boolean toSkip(String path) {
 		if (path.equals("/datasourceId") || path.equals("/modelName") || path.equals("/physicalModels") || path.equals("/businessModels")
 				|| path.contains("/physicalColumn/") || path.contains("/simpleBusinessColumns") || path.contains("relationships")) {
-			System.out.println("skipping " + path);
+			logger.debug("skipping " + path);
 			return true;
 		}
 		return false;
@@ -816,7 +781,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		if (path.matches(".*\\]$")) {
 			int i = path.lastIndexOf("[");
 			Pointer obj = context.getPointer(path);
-			System.out.println("REMOVE > " + path + " > " + obj.getNode());
+			logger.debug("REMOVE > " + path + " > " + obj.getNode());
 			Pointer coll = context.getPointer(path.substring(0, i));
 			((List<?>) coll.getNode()).remove(obj.getNode());
 		} else {
@@ -827,12 +792,12 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	private void addJson(JsonNode obj, String topath, JXPathContext context) throws SpagoBIException {
 		if (toSkip(topath)) {
-			System.out.println("skipping " + topath);
+			logger.debug("skipping " + topath);
 			return;
 		}
 
 		if (obj.isArray()) {
-			System.out.println("isArray! " + obj);
+			logger.debug("isArray! " + obj);
 			int i = 1;
 			for (JsonNode jsonNode : obj) {
 				addJson(jsonNode, topath + "[" + i + "]", context);
@@ -851,17 +816,16 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addValue(String obj, String topath, JXPathContext context) throws SpagoBIException {
-		System.out.println("ADD > " + obj + " > " + topath);
+		logger.debug("ADD > " + obj + " > " + topath);
 		if (topath.endsWith("]")) {
 			int i = topath.lastIndexOf("[");
-			int j = topath.lastIndexOf("]");
 			Pointer toColl = context.getPointer(topath.substring(0, i));
 			if (toColl.getNode() instanceof List) {
 				if (!((List) toColl.getNode()).contains(obj)) {
 					((List) toColl.getNode()).add(obj);
 				}
-				// ((List) toColl.getNode()).add(Integer.parseInt(topath.substring(i + 1, j)) - 1, obj);
 			}
 		} else {
 			replace(obj, topath, context);
@@ -924,6 +888,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		return translatedModel;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Model createEmptyModel(JSONObject json) throws JSONException {
 		Assert.assertTrue(json.has("datasourceId"), "datasourceId is mandatory");
 		Assert.assertTrue(json.has("physicalModels"), "physicalModels is mandatory");
@@ -952,10 +917,8 @@ public class MetaService extends AbstractSpagoBIResource {
 		return model;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static byte[] extractSbiModelFromJar(Content content) {
-		byte[] ret = null;
-
-		// read jar
 		byte[] contentBytes = content.getContent();
 
 		JarFile jar = null;
