@@ -72,7 +72,7 @@
 		mainUrl="/knowagegeoreportengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.gis.GisDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="MAP" useDataSet="true"
 		useDataSource="true" encrypt="0" />
-	<ENGINE label="knowagesvgviewerengine" name="Gis Engine" descr="SVG Viewer Engine"
+	<ENGINE label="knowagesvgviewerengine" name="SVG Viewer Engine" descr="SVG Viewer Engine"
 		mainUrl="/knowagesvgviewerengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.svgviewer.SvgViewerDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="MAP" useDataSet="false"
 		useDataSource="false" encrypt="0" />
