@@ -68,6 +68,32 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeExcept
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.olap4j.OlapDataSource;
+import org.pivot4j.PivotModel;
+
 @Path("/startwhatif")
 public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 
@@ -103,13 +129,14 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 		String editCubeName = null;
 		Integer ordinal = null;
 		String expression = null;
+		JSONArray newValues = null;
 
 		try {
 			body = RestUtilities.readBody(req);
 			jo = new JSONObject(body);
+			newValues = jo.getJSONArray("newValues");
 			mdx = jo.getString("mdx");
-			ordinal = jo.getInt("ordinal");
-			expression = jo.getString("expression");
+
 			algorithm = jo.getString("algorithm");
 			editCubeName = jo.getString("editCubeName");
 		} catch (JSONException e2) {
@@ -158,8 +185,18 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 
 		model.setMdx(mdx);
 		model.initialize();
+		for (int i = 0; i < newValues.length(); i++) {
+			try {
+				JSONObject newValue = newValues.getJSONObject(i);
+				ordinal = newValue.getInt("ordinal");
+				expression = newValue.getString("expression");
+				setValue(ordinal, expression, model, whatIfEngineInstance);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
-		setValue(ordinal, expression, model, whatIfEngineInstance);
 		model.refresh();
 
 		int a = model.getCellSet().getAxes().get(0).getPositionCount();
