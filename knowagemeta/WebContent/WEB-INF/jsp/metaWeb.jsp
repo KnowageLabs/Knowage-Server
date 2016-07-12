@@ -62,7 +62,7 @@ var translatedModel=<%= translatedModel%>;
 
 <rest-loading></rest-loading>
 	<angular-list-detail full-screen=true>
-		<list layout="column" ng-controller="metaModelDefinitionController"> 
+		<list layout="column" label="bmName" ng-controller="metaModelDefinitionController"> 
 			<angular-table flex id='datasourceStructureListTable' ng-model=dataSourceStructure
 				columns='datasourceStructureColumnsList'
 				scope-functions='datasourceStructureScopeFunctions'
@@ -85,7 +85,7 @@ var translatedModel=<%= translatedModel%>;
 		<extra-button>
 		 <md-button ng-click="closeMetaDefinition()">{{translate.load("sbi.general.close")}}</md-button>
 		</extra-button>
-		<detail id="metaWebView" ng-controller="metaModelCreationController" save-function="saveModel" >
+		<detail id="metaWebView" label="bmName" ng-controller="metaModelCreationController" save-function="saveModel" >
 			<md-tabs flex>
 				<md-tab id="businessTab">
 					<md-tab-label>{{translate.load("sbi.meta.model.business")}}</md-tab-label>

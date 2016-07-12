@@ -91,11 +91,11 @@ app.service("metaModelServices",function(sbiModule_jsonServices){
 	}
 })
 
-app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval','$angularListDetail', metaDefinitionControllerFunction ]);
+app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval','$angularListDetail','$mdDialog', metaDefinitionControllerFunction ]);
 
 
 
-function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices,$interval,$angularListDetail) {
+function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices,$interval,$angularListDetail,$mdDialog) {
 	$scope.translate = sbiModule_translate;
 	$scope.physicalModelTreeInterceptor = {};
 	$scope.businessModelTreeInterceptor = {};
@@ -104,6 +104,7 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 		current : 0
 	};
 	$scope.datasourceId = datasourceId;
+	$scope.bmName=bmName;
 	$scope.meta={physicalModels:[],businessModels:[],businessViews:[]};
 	$scope.physicalModels = []; // array of table to transform in physical model
 	$scope.businessModels = []; // array of table to transform in business model
@@ -154,8 +155,16 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 	}
 
 	$scope.closeMetaDefinition = function() {
-		//TO-DO chiedere conferma prima di chiudere
-		dialogScope.closeMetaWeb();
+		 var confirm = $mdDialog.confirm()
+		 .title(sbiModule_translate.load("sbi.meta.meta.exit"))
+		 .ariaLabel('exit meta')
+		 .ok(sbiModule_translate.load("sbi.general.continue"))
+		 .cancel(sbiModule_translate.load("sbi.general.cancel"));
+		   $mdDialog.show(confirm).then(function() {
+			   dialogScope.closeMetaWeb();
+		   });
+
+
 	}
 
 	$scope.continueToMeta = function() {
