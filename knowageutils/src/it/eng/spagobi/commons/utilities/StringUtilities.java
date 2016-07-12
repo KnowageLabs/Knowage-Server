@@ -649,7 +649,7 @@ public class StringUtilities {
 				}
 			} catch (Throwable e) {
 				// try to read engine_config settings
-				if((SourceBean) EnginConf.getInstance().getConfig().getAttribute("DATA_SET_NULL_VALUE")!=null){
+				if ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("DATA_SET_NULL_VALUE") != null) {
 					nullValueString = ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("DATA_SET_NULL_VALUE")).getCharacters();
 				}
 				if (nullValueString != null) {
@@ -913,7 +913,7 @@ public class StringUtilities {
 			if (!(value.startsWith("'") && value.endsWith("'"))) {
 				toReturn = "'" + value + "'";
 			}
-		} else if (type.equalsIgnoreCase("NUMBER")) {
+		} else if (type.equalsIgnoreCase("NUMBER") || type.equalsIgnoreCase("NUM")) {
 
 			if ((value.startsWith("'") && value.endsWith("'"))) {
 				toReturn = value.substring(1, value.length() - 1);
