@@ -509,18 +509,19 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		BusinessModel bm = model.getBusinessModels().get(0);
 		BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
-		List<CalculatedBusinessColumn> cbcList = sourceBcs.getCalculatedBusinessColumns();
-		Iterator<CalculatedBusinessColumn> i = cbcList.iterator();
+		List<BusinessColumn> cbcList = sourceBcs.getColumns();
+		Iterator<BusinessColumn> i = cbcList.iterator();
 		while (i.hasNext()) {
-			CalculatedBusinessColumn cbc = i.next();
-			if (cbc.getName().equals(name)) {
-				i.remove();
+			BusinessColumn column = i.next();
+			if (column instanceof CalculatedBusinessColumn) {
+				if (column.getName().equals(name)) {
+					i.remove();
+				}
 			}
 		}
 
 		JSONObject jsonModel = createJson(model);
 		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
-
 		return Response.ok(patch.toString()).build();
 
 	}
