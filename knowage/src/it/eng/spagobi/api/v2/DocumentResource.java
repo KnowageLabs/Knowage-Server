@@ -52,6 +52,7 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.indexing.IndexingConstants;
 import it.eng.spagobi.commons.utilities.indexing.LuceneSearcher;
+import it.eng.spagobi.kpi.utils.JSError;
 import it.eng.spagobi.sdk.documents.bo.SDKDocument;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
 import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
@@ -102,7 +103,7 @@ import com.jamonapi.MonitorFactory;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
- *
+ * 
  */
 @Path("/2.0/documents")
 public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
@@ -694,6 +695,10 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 	public Response addOutputParameter(String body) {
 		OutputParameter op = (OutputParameter) JsonConverter.jsonToValidObject(body, OutputParameter.class);
 
+		if (op.getType() == null) {
+			return Response.ok(new JSError().addError("sbi.document.outparam.type.mandatory").toString()).build();
+		}
+
 		IOutputParameterDAO parameterDAO = null;
 		try {
 			parameterDAO = DAOFactory.getOutputParameterDAO();
@@ -716,20 +721,13 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 	@DELETE
 	@Path("/{id}/deleteOutParam")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response removeOutputParameter(@PathParam("id") Integer id) {
-		IOutputParameterDAO parameterDAO = null;
+	public Response removeOutputParameter(@PathParam("id") Integer id, @Context HttpServletRequest req) {
 		try {
-			parameterDAO = DAOFactory.getOutputParameterDAO();
+			IOutputParameterDAO parameterDAO = DAOFactory.getOutputParameterDAO();
 			parameterDAO.setUserProfile(getUserProfile());
-		} catch (EMFUserError e) {
-			logger.error("Error while retrieving parameters", e);
-			throw new SpagoBIRuntimeException("Error while retrieving parameters", e);
-		}
-
-		try {
 			parameterDAO.removeParameter(id);
 		} catch (EMFUserError e) {
-			e.printStackTrace();
+			throw new SpagoBIRuntimeException("Error while deleting parameter with id " + id);
 		}
 
 		return Response.ok().build();
