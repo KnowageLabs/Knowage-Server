@@ -1030,7 +1030,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 		 		//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
 		 		
 		 		// Hidden again for WORKSPACE, because we are wrapping a Cockpit main panel inside the iframe. (danristo)
-		 		, hidden: window.name!="angularIframe"
+		 		, hidden: window.name!="angularIframe" || Sbi.config.environment=='WORKSPACE'
 		 			
 //	 			/**
 //	 			 * DEPRECATED: If we are coming from the Workspace's interface (web page) to the interface for creation of the new Cockpit document, provide the closing button
