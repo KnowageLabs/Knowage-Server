@@ -108,16 +108,10 @@ function metaModelDefinitionControllerFunction($scope, sbiModule_translate,sbiMo
 		sbiModule_restServices.promiseGet("2.0/datasources","structure/" + $scope.datasourceId)
 				.then(
 						function(response) {
-							angular.copy($scope
-									.sourceStructureBeautify(response.data),
-									$scope.dataSourceStructure);
+							angular.copy($scope.sourceStructureBeautify(response.data),$scope.dataSourceStructure);
 						},
 						function(response) {
-							sbiModule_restServices
-									.errorHandler(
-											response.data,
-											sbiModule_translate
-													.load("sbi.kpi.rule.load.datasource.error"));
+							sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.datasource.error"));
 						});
 	}
 

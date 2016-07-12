@@ -60,10 +60,6 @@ var translatedModel=<%= translatedModel%>;
 </head>
 <body ng-controller="metaDefinitionController" layout="column" ng-switch on="steps.current">
 
-<!-- <div loading  layout-fill style="position:fixed;z-index: 500;background:rgba(0,0,0, 0.3);"> -->
-<!-- 	<md-progress-circular  md-mode="indeterminate" style="top:50%;left:50%" ></md-progress-circular> -->
-<!-- </div> -->
-
 <rest-loading></rest-loading>
 	<angular-list-detail full-screen=true>
 		<list layout="column" ng-controller="metaModelDefinitionController"> 

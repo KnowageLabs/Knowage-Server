@@ -106,7 +106,7 @@
 			<md-button  ng-if="steps.current==0" ng-click="next()" ng-disabled="!newBVForm.$valid || tmpBnssView.physicalModels.length==0" >
 				{{translate.load("sbi.generic.next")}}
 			</md-button>
-			<md-button ng-if="steps.current==1"  ng-click="back()"  >
+			<md-button ng-if="steps.current==1 && editMode!=true" ng-disabled="summary.length>0"  ng-click="back()"  >
 				{{translate.load("sbi.generic.back")}}
 			</md-button>
 			<md-button  ng-if="steps.current==1" ng-click="create()" ng-disabled="!newBVForm.$valid ">

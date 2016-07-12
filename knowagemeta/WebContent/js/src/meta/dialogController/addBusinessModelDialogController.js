@@ -36,7 +36,7 @@ function addBusinessModelController($scope,$mdDialog,sbiModule_translate,busines
 			    $mdDialog.hide();
 			}
 			,function(response){
-				sbiModule_restServices.errorHandler(response.data,"");
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
 			})
 		};
 

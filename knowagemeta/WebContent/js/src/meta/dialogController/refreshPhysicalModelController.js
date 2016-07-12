@@ -11,7 +11,7 @@ function refreshPhysicalModelController($scope,sbiModule_restServices,sbiModule_
 				$scope.convertTables();
 			},
 			function(response){
-				sbiModule_restServices.errorHandler(response.data,"Error while attempt to refresh physical model");
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.meta.model.physical.update.error"));
 			});
 
 	$scope.convertTables=function(){
@@ -46,7 +46,7 @@ function refreshPhysicalModelController($scope,sbiModule_restServices,sbiModule_
 					$mdDialog.hide();
 				},
 				function(response){
-					sbiModule_restServices.errorHandler(response.data,"Error while attempt to refresh physical model");
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.meta.model.physical.update.error"));
 				});
 	}
 

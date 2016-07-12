@@ -110,10 +110,8 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 
 
 	$scope.loadSbiModel=function(translatedModel){
-
 		angular.copy(translatedModel,$scope.meta);
 		metaModelServices.observe($scope.meta);
-
 		var refreshPMT= $interval(function() {
 	        if ($scope.physicalModelTreeInterceptor.refreshTree!=undefined) {
 	        	  $interval.cancel(refreshPMT);
@@ -141,14 +139,6 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 		$angularListDetail.goToDetail();
 		$scope.loadSbiModel(translatedModel);
 	}
-
-
-
-//	$scope.physicalModel = [];
-//	$scope.businessModel = [];
-
-
-
 
 	$scope.saveModel=function(){
 		var dataToSend={};
@@ -196,8 +186,6 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 		dataToSend.datasourceId = $scope.datasourceId;
 		dataToSend.physicalModels = $scope.physicalModels;
 		dataToSend.businessModels = $scope.businessModels;
-		// TODO set model name here
-		//dataToSend.modelName = 'test_model_hard_coded';
 		dataToSend.modelName = bmName;
 
 		sbiModule_restServices.promisePost("1.0/metaWeb", "create", dataToSend)
@@ -214,14 +202,10 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 						});
 
 	};
-
-
 }
-
 
 angular.module('metaManager').filter('filterByCategory', function() {
 	return function(items, categoryName) {
-
 		var filtered = [];
 		angular.forEach(items, function(item) {
 			if (angular.equals(item.key.split(".")[0], categoryName)) {

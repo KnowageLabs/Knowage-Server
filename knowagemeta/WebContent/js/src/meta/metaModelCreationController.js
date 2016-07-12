@@ -1,11 +1,8 @@
 angular.module('metaManager').controller('metaModelCreationController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',metaModelCreationControllerFunction ]);
-
 angular.module('metaManager').controller('metaModelCreationPhysicalController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config',metaModelCreationPhysicalControllerFunction ]);
-
 angular.module('metaManager').controller('metaModelCreationBusinessController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config','metaModelServices',metaModelCreationBusinessControllerFunction ]);
 angular.module('metaManager').controller('businessModelPropertyController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelPropertyControllerFunction ]);
 angular.module('metaManager').controller('businessModelAttributeController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config',businessModelAttributeControllerFunction ]);
-
 angular.module('metaManager').controller('calculatedBusinessColumnsController', [ '$scope','sbiModule_translate', 'sbiModule_restServices','$mdDialog','sbiModule_config','metaModelServices',calculatedBusinessColumnsControllerFunction ]);
 angular.module('metaManager').controller('businessViewJoinRelationshipsController', [ '$scope','sbiModule_translate', 'sbiModule_restServices',businessViewJoinRelationshipsControllerFunction ]);
 
@@ -97,8 +94,8 @@ function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate
 			preserveScope: true,
 			locals: {businessModel:$scope.meta.businessModels, physicalModel: $scope.meta.physicalModels},
 			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/refreshPhysicalModel.jsp',
-			clickOutsideToClose:true,
-			escapeToClose :true,
+			clickOutsideToClose:false,
+			escapeToClose :false,
 			fullscreen: true
 		}).then(function(){
 			$scope.physicalModelTreeInterceptor.refreshTree();
@@ -139,15 +136,11 @@ function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate
 function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,metaModelServices){
 	$scope.selectedBusinessModel = {};
 	$scope.currentBusinessModelParameterCategories = [];
-
-
-
 	$scope.tmpBMWatcher={};
 	$scope.$watch(function() {
 		var tmpSBM = {};
 		angular.copy($scope.selectedBusinessModel, tmpSBM);
 		delete tmpSBM.$parent;
-
 		return tmpSBM;
 	}, function(newValue, oldValue) {
 		if (!angular.equals(newValue, oldValue)) {
@@ -228,25 +221,26 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			preserveScope: true,
 			locals: {businessModel:$scope.meta.businessModels, physicalModel: $scope.meta.physicalModels},
 			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addBusinessModel.jsp',
-			clickOutsideToClose:true,
-			escapeToClose :true,
+			clickOutsideToClose:false,
+			escapeToClose :false,
 			fullscreen: true
 		});
 	}
 
-	$scope.addBusinessView=function(){
+	$scope.addBusinessView=function(editMode){
 		$mdDialog.show({
 			controller: addBusinessViewController,
 			preserveScope: true,
-			locals: {businessModel:$scope.meta.businessModels, originalPhysicalModel: $scope.meta.physicalModels},
+			locals: {businessModel:$scope.meta.businessModels, originalPhysicalModel: $scope.meta.physicalModels,selectedBusinessModel: $scope.selectedBusinessModel,editMode:editMode},
 			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addBusinessView.jsp',
-			clickOutsideToClose:true,
-			escapeToClose :true,
+			clickOutsideToClose:false,
+			escapeToClose :false,
 			fullscreen: true
 		}).then(function(){
 			$scope.businessViewTreeInterceptor.refreshTree();
 		});
 	}
+
 
 	$scope.deleteCurrentBusiness=function(){
 		var isBusinessClass=!$scope.selectedBusinessModel.hasOwnProperty("joinRelationships");
@@ -257,13 +251,12 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 		 .ok(sbiModule_translate.load("sbi.general.continue"))
 		 .cancel(sbiModule_translate.load("sbi.general.cancel"));
 		   $mdDialog.show(confirm).then(function() {
-
 			   //delete the item;
 			   sbiModule_restServices.promisePost("1.0/metaWeb",(isBusinessClass ? "deleteBusinessClass" : "deleteBusinessView"),metaModelServices.createRequestRest({name:$scope.selectedBusinessModel.uniqueName}))
 			   .then(function(response){
 					metaModelServices.applyPatch(response.data);
 			   },function(response){
-				   sbiModule_restServices.errorHandler(response.data,"Error while delete item");
+				   sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
 			   })
 
 
@@ -404,15 +397,15 @@ function calculatedBusinessColumnsControllerFunction($scope,sbiModule_translate,
 			preserveScope: true,
 			locals: {selectedBusinessModel:$scope.selectedBusinessModel},
 			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addCalculatedField.jsp',
-			clickOutsideToClose:true,
-			escapeToClose :true,
+			clickOutsideToClose:false,
+			escapeToClose :false,
 			fullscreen: true
 		}).then(function(){
 		});
 	}
 
 	$scope.calculatedFieldSpeedOption=[{
-					label : 'delete',
+					label : sbiModule_translate.load("sbi.generic.delete"),
 					icon:'fa fa-trash' ,
 					backgroundColor:'transparent',
 					color:'black',
@@ -435,7 +428,7 @@ function calculatedBusinessColumnsControllerFunction($scope,sbiModule_translate,
 			   .then(function(response){
 					metaModelServices.applyPatch(response.data);
 			   },function(response){
-				   sbiModule_restServices.errorHandler(response.data,"Error while delete item");
+				   sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
 			   })
 
 

@@ -70,7 +70,7 @@
 			<md-tab id="propertiestab" label="{{translate.load('sbi.udp.udpList')}}">
 				<md-content layout="column" ng-controller="businessModelPropertyController">
 				
-					<expander-box layout="column" layout-margin expanded="true" title="'Misc'" background-color="transparent" color="black" >
+					<expander-box layout="column" layout-margin expanded="true" label="'Misc'" background-color="transparent" color="black" >
 						<md-input-container ng-repeat="prop in businessModelMiscInfo "  >
 							<label>{{prop.label}}</label>
 							 <input ng-model="selectedBusinessModel[prop.name]" >
@@ -78,7 +78,7 @@
 					
 					</expander-box>	
 				
-					<expander-box layout-margin layout="column" expanded="true" title="catProp" background-color="transparent" color="black" ng-repeat="catProp in currentBusinessModelParameterCategories">
+					<expander-box layout-margin layout="column" expanded="true" label="catProp" background-color="transparent" color="black" ng-repeat="catProp in currentBusinessModelParameterCategories">
 						<md-input-container ng-repeat="prop in selectedBusinessModel.properties | filterByCategory:catProp"
 						ng-init="prop.value.value= (prop.value.value==undefined || prop.value.value==null) ? prop.value.propertyType.defaultValue : prop.value.value">
 							<label>{{prop.value.propertyType.name}}</label>
@@ -162,21 +162,23 @@
 		
 			<md-tab id="joinRelationshipTab" label="{{translate.load('sbi.meta.joinRelationships')}}" ng-if="selectedBusinessModel.joinRelationships!=undefined">
 				<md-content layout="column"  layout-fill >
-					<md-list class="md-dense noPadding"  ng-repeat="item in selectedBusinessModel.joinRelationships">
+					<div flex layout="column" style="overflow: auto;">
+						<md-list class="md-dense noPadding"  ng-repeat="item in selectedBusinessModel.joinRelationships">
 	        				<md-list-item ng-repeat="rel in item.sourceColumns"  ng-click="null" layout="row">
 		        				<span flex=40>{{item.sourceTable.name}}.{{rel.name}}</span>
 		        				<span flex  ><i class="fa fa-link" aria-hidden="true"></i></span>
 	        					<span flex=40>{{item.destinationTable.name}}.{{item.destinationColumns[$index].name}}</span>
 	        					<md-divider></md-divider>
 				    		</md-list-item>
-				    	</md-list>
+					    </md-list>
+					</div>
+					<div layout="row">
+						<span flex> </span>
+						<md-button type="button" class="md-knowage-theme md-raised"  ng-click="addBusinessView(true);">{{translate.load("sbi.meta.business.joinRelationship.edit")}}</md-button>
+					</div>
+							
+					
 				</md-content>				
-				
-<!-- 				<md-content layout  layout-fill ng-controller="businessViewJoinRelationshipsController"> -->
-<!-- 					<angular-table id="bmJoinRel" ng-model="selectedBusinessModel.joinRelationships" -->
-<!-- 					 columns="selectedBusinessViewJoinRelationships" no-pagination=true flex> -->
-<!-- 					</angular-table> -->
-<!-- 				</md-content> -->
 				
 			</md-tab>
 		</md-tabs>

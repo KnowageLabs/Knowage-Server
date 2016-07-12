@@ -5,16 +5,16 @@ function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiM
 	}
 
 	$scope.inboundColumns = [{label:'Name',name:'name'},
-	                      {label:'Source Table',name:'destinationTableName'},
-	                      {label:'Source Columns',name:'destinationColumns',transformer:function(data){
+	                      {label:sbiModule_translate.load("sbi.meta.source.table") ,name:'destinationTableName'},
+	                      {label:sbiModule_translate.load("sbi.meta.source.columns"),name:'destinationColumns',transformer:function(data){
 	                    	  var ret = [];
 	                    	  data.forEach(function(entry) {
 	                    		    ret.push(entry.name);
 	                    		  }, this);
 	                    	  return ret.join(", ")
 	                      }},
-	                      {label:'Target Table',name:'sourceTableName'},
-	                      {label:'Target Columns',name:'sourceColumns',transformer:function(data){
+	                      {label:sbiModule_translate.load("sbi.meta.target.table"),name:'sourceTableName'},
+	                      {label:sbiModule_translate.load("sbi.meta.target.columns"),name:'sourceColumns',transformer:function(data){
 	                    	  var retD = [];
 	                    	  data.forEach(function(entry) {
 	                    		    retD.push(entry.name);

@@ -4,17 +4,17 @@ function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbi
 		return !angular.equals(item.sourceTableName,$scope.selectedBusinessModel.uniqueName);
 	}
 
-	$scope.outboundColumns = [{label:'Name',name:'name'},
-		                      {label:'Source Table',name:'destinationTableName'},
-		                      {label:'Source Columns',name:'destinationColumns',transformer:function(data){
+	$scope.outboundColumns = [{label:sbiModule_translate.load("sbi.generic.name"),name:'name'},
+		                      {label:sbiModule_translate.load("sbi.meta.source.table"),name:'destinationTableName'},
+		                      {label:sbiModule_translate.load("sbi.meta.source.columns"),name:'destinationColumns',transformer:function(data){
 		                    	  var retD = [];
 		                    	  data.forEach(function(entry) {
 		                    		    retD.push(entry.name);
 		                    		  }, this);
 		                    	  return retD.join(", ")
 		                      }},
-		                      {label:'Target Table',name:'sourceTableName'},
-		                      {label:'Target Columns',name:'sourceColumns',transformer:function(data){
+		                      {label:sbiModule_translate.load("sbi.meta.target.table"),name:'sourceTableName'},
+		                      {label:sbiModule_translate.load("sbi.meta.target.columns"),name:'sourceColumns',transformer:function(data){
 		                    	  var ret = [];
 		                    	  data.forEach(function(entry) {
 		                    		    ret.push(entry.name);

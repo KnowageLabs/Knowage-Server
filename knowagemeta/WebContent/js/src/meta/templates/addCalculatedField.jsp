@@ -29,11 +29,11 @@
 	   		<div flex layout="column" layout-margin>
 	   			<div layout="row">
 		   			 <md-input-container  flex class="md-block" >
-			            <label>Name</label>
+			            <label>{{translate.load('sbi.generic.name')}}</label>
 			            <input ng-model="calcField.name" required>
 			          </md-input-container>
 			          <md-input-container flex class="md-block" >
-			            <label>Type</label>
+			            <label>{{translate.load('sbi.generic.type')}}</label>
 			            <md-select ng-model="calcField.dataType">
 			              <md-option ng-repeat="cfType in type" ng-value="cfType.name">
 			                {{cfType.label}}

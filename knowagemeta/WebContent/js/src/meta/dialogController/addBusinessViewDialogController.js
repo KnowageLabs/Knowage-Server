@@ -2,7 +2,7 @@
  *
  */
 
-function addBusinessViewController($scope,sbiModule_restServices,sbiModule_translate,originalPhysicalModel,businessModel,metaModelServices,$mdDialog){
+function addBusinessViewController($scope,sbiModule_restServices,sbiModule_translate,originalPhysicalModel,businessModel,metaModelServices,$mdDialog,selectedBusinessModel,editMode){
 	$scope.translate=sbiModule_translate;
 	$scope.businessModel=businessModel;
 	$scope.physicalModel=[];
@@ -10,27 +10,11 @@ function addBusinessViewController($scope,sbiModule_restServices,sbiModule_trans
 	$scope.tmpBnssView={physicalModels:[]};
 	$scope.bvTableColumns=[{label:sbiModule_translate.load("sbi.generic.name"),name:"name"}];
 	$scope.summary=[];
-
+	$scope.editMode=editMode;
 	$scope.sourceTable;
 	$scope.targetTable;
-
 	$scope.steps={current:0};
 
-	$scope.dragOptionsFunct={
-			dropEnd:function(ev,source,target){
-				$scope.updateSummary();
-			},
-			beforeDrop:function(ev,source,target){
-				if(target.links){
-					for(var i=0;i<target.links.length;i++){
-						if(angular.equals(target.links[i].tableName,source.tableName)){
-							return false;
-						}
-					}
-				}
-				return true
-			}
-	}
 	$scope.afterClearItem=function(item){
 		$scope.updateSummary();
 	}
@@ -48,6 +32,62 @@ function addBusinessViewController($scope,sbiModule_restServices,sbiModule_trans
 		}
 	}
 
+	$scope.getItemIndex=function(list,name){
+		for(var i=0;i<list.length;i++){
+			if(angular.equals(list[i].name,name)){
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	if(editMode==true){
+		$scope.steps.current=1;
+		//copy the physical tables
+		angular.copy(selectedBusinessModel.physicalTables,$scope.tmpBnssView.physicalModels);
+		for(var x=0;x<$scope.tmpBnssView.physicalModels.length;x++){
+			for(var y=0;y<$scope.tmpBnssView.physicalModels[x].columns.length;y++){
+				$scope.tmpBnssView.physicalModels[x].columns[y].$parent=$scope.tmpBnssView.physicalModels[x];
+			}
+		}
+
+
+		for(var i=0;i<selectedBusinessModel.joinRelationships.length;i++){
+			var rel=selectedBusinessModel.joinRelationships[i];
+			var destTab=$scope.tmpBnssView.physicalModels[$scope.getItemIndex($scope.tmpBnssView.physicalModels,rel.destinationTable.name)];
+			var sourceTab=$scope.tmpBnssView.physicalModels[$scope.getItemIndex($scope.tmpBnssView.physicalModels,rel.sourceTable.name)];
+			for(var dc=0;dc<rel.destinationColumns.length;dc++){
+				var destCol= destTab.columns[$scope.getItemIndex(destTab.columns,rel.destinationColumns[dc].name)];
+				var sourceCol= sourceTab.columns[$scope.getItemIndex(sourceTab.columns,rel.sourceColumns[dc].name)];
+				if(!destCol.hasOwnProperty("links")){
+					destCol.links=[];
+				}
+				destCol.links.push(sourceCol);
+			}
+
+		}
+
+		$scope.updateSummary();
+	}
+
+
+	$scope.dragOptionsFunct={
+			dropEnd:function(ev,source,target){
+				$scope.updateSummary();
+			},
+			beforeDrop:function(ev,source,target){
+				if(target.links){
+					for(var i=0;i<target.links.length;i++){
+						if(angular.equals(target.links[i].tableName,source.tableName)){
+							return false;
+						}
+					}
+				}
+				return true
+			}
+	}
+
+
 	$scope.deleteRelationship=function(item,rel){
 
 		item.links.splice(item.links.indexOf(rel),1);
@@ -57,16 +97,21 @@ function addBusinessViewController($scope,sbiModule_restServices,sbiModule_trans
 
 	$scope.create = function() {
 	var tmpData={};
-	tmpData.name=$scope.tmpBnssView.name;
-	tmpData.description=$scope.tmpBnssView.description;
-	tmpData.sourceBusinessClass=$scope.tmpBnssView.sourceBusinessClass;
-	tmpData.physicaltable=[];
+	if(editMode){
+		tmpData.viewUniqueName=selectedBusinessModel.uniqueName;
+	}else{
+		tmpData.name=$scope.tmpBnssView.name;
+		tmpData.description=$scope.tmpBnssView.description;
+		tmpData.sourceBusinessClass=$scope.tmpBnssView.sourceBusinessClass;
+		tmpData.physicaltable=[];
+	}
 	tmpData.relationships={};
 
 	for(var i=0;i<$scope.tmpBnssView.physicalModels.length;i++){
 		var tmpDataObj=$scope.tmpBnssView.physicalModels[i];
-		tmpData.physicaltable.push(tmpDataObj.name);
-
+		if(!editMode){
+			tmpData.physicaltable.push(tmpDataObj.name);
+		}
 		for(var col=0;col<$scope.tmpBnssView.physicalModels[i].columns.length;col++){
 			if($scope.tmpBnssView.physicalModels[i].columns[col].hasOwnProperty("links") && $scope.tmpBnssView.physicalModels[i].columns[col].links.length>0){
 				//check if the table is present in the relationships object
@@ -107,7 +152,7 @@ function addBusinessViewController($scope,sbiModule_restServices,sbiModule_trans
 				$mdDialog.hide();
 			}
 			,function(response){
-				sbiModule_restServices.errorHandler(response.data,"Error while create Business view");
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.meta.businessview.create.error"));
 			})
 
 

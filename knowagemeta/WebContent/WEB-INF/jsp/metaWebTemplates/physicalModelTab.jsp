@@ -39,7 +39,7 @@
 			<md-tab id="propertiestab" label="{{translate.load('sbi.udp.udpList')}}">
 				<md-content layout="column"  >
 				
-					<expander-box layout="column" layout-margin expanded="true" title="'Misc'" background-color="transparent" color="black" >
+					<expander-box layout="column" layout-margin expanded="true" label="'Misc'" background-color="transparent" color="black" >
 						<md-input-container ng-repeat="prop in physicalModelMiscInfo "  >
 							<label>{{prop.label}}</label>
 							 <input ng-model="selectedPhysicalModel[prop.name]" disabled>
@@ -47,7 +47,7 @@
 					
 					</expander-box>									
 				
-					<expander-box layout="column" layout-margin expanded="true" title="catProp" background-color="transparent" color="black" ng-repeat="catProp in currentPhysicalModelParameterCategories">
+					<expander-box layout="column" layout-margin expanded="true" label="catProp" background-color="transparent" color="black" ng-repeat="catProp in currentPhysicalModelParameterCategories">
 						<md-input-container ng-repeat="prop in selectedPhysicalModel.properties | filterByCategory:catProp"
 						ng-init="prop.value.value= (prop.value.value==undefined || prop.value.value==null) ? prop.value.propertyType.defaultValue : prop.value.value">
 							<label>{{prop.value.propertyType.name}}</label>
