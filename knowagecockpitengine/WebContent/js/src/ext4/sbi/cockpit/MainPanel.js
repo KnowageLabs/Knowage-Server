@@ -1020,11 +1020,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 	 		, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 	 	}));
 		 
-		/**
-		 * If we are coming from the Workspace's interface (web page) to the interface for creation of the new Cockpit document, provide the closing button
-		 * for the Cockpit interface (web page). When clicking on it, it will retunr us back to the Workspace main wbe page (interace).
-		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
+		
 			tbItems.push( new Ext.Button({
 			 	id: 'closeAngular'
 		 		, iconCls: 'delete-icon-tab'
@@ -1032,7 +1028,16 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 		 		, scope: this
 		 		, handler:  this.onCloseAngularAction
 		 		//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
-		 		, hidden: window.name!="angularIframe" && Sbi.config.environment!='WORKSPACE'
+		 		
+		 		// Hidden again for WORKSPACE, because we are wrapping a Cockpit main panel inside the iframe. (danristo)
+		 		, hidden: window.name!="angularIframe"
+		 			
+//	 			/**
+//	 			 * DEPRECATED: If we are coming from the Workspace's interface (web page) to the interface for creation of the new Cockpit document, provide the closing button
+//	 			 * for the Cockpit interface (web page). When clicking on it, it will retunr us back to the Workspace main wbe page (interace).
+//	 			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+//	 			 */
+//		 		, hidden: window.name!="angularIframe" && Sbi.config.environment!='WORKSPACE'
 		 	}));
 	 
 		/*
