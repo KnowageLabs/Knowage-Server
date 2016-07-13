@@ -17,31 +17,6 @@
  */
 package it.eng.spagobi.engines.whatif.common;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.olap4j.OlapDataSource;
-import org.pivot4j.PivotModel;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.whatif.WhatIfEngine;
@@ -153,8 +128,6 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 
 			whatIfEngineInstance = WhatIfEngine.createInstance(mdx, getEnv(), editCubeName);
 
-			whatIfEngineInstance.setAlgorithmInUse(algorithm);
-
 		} catch (WhatIfTemplateParseException e) {
 			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Template not valid", e);
 			engineException.setDescription(e.getCause().getMessage());
@@ -190,10 +163,11 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 				JSONObject newValue = newValues.getJSONObject(i);
 				ordinal = newValue.getInt("ordinal");
 				expression = newValue.getString("expression");
+				algorithm = newValue.getString("algorithm");
+				whatIfEngineInstance.setAlgorithmInUse(algorithm);
 				setValue(ordinal, expression, model, whatIfEngineInstance);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Cant read JSON", e);
 			}
 		}
 
@@ -331,8 +305,8 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 				request.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(request, response);
 			} catch (Exception e) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
-				throw new SpagoBIEngineRuntimeException(
-						"Error starting the What-If engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
+				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp "
+						+ SUCCESS_REQUEST_DISPATCHER_URL, e);
 			}
 
 			if (getAuditServiceProxy() != null) {
@@ -352,8 +326,8 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 				request.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL).forward(request, response);
 			} catch (Exception ex) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
-				throw new SpagoBIEngineRuntimeException(
-						"Error starting the What-If engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
+				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp "
+						+ FAILURE_REQUEST_DISPATCHER_URL, ex);
 			}
 		} finally {
 			logger.debug("OUT");
