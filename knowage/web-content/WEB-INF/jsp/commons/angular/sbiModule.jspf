@@ -154,7 +154,10 @@ sbiM.factory('sbiModule_user',function(){
 		for(Object fun :  userProfile.getFunctionalities()){ %>
 		user.functionalities.push('<%=StringEscapeUtils.escapeJavaScript(fun.toString())%>');
 		<% } }%>
-		
+	
+	user.isAbleTo=function(func){
+		return user.functionalities.indexOf(func)!=-1;
+	}
 	return user;
 });
 
@@ -577,9 +580,16 @@ sbiM.service('sbiModule_download', function(sbiModule_config,sbiModule_logger, s
 	};
 });
 
-sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModule_translate,sbiModule_config,sbiModule_restServices) {
+sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModule_translate,sbiModule_user,sbiModule_restServices) {
 	var holServ=this;
+	this.isAbleToGlossary=function(){
+		return sbiModule_user.isAbleTo("Glossary") &&  sbiModule_user.isAbleTo("ManageGlossaryTechnical");
+	};
 	this.show=function(data){
+		if(!this.isAbleToGlossary()){
+			sbiModule_restServices.errorHandler(sbiModule_translate.load("sbi.glossary.notEnableToTelpOnline"));
+			return
+		}
 		$mdDialog.show({
 			controller: function($scope,$mdDialog,translate){
     	  		$scope.translate=translate;
@@ -596,6 +606,10 @@ sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModu
 	};
 	
 	this.showDocumentHelpOnLine=function(label){
+		if(!this.isAbleToGlossary()){
+			sbiModule_restServices.errorHandler(sbiModule_translate.load("sbi.glossary.notEnableToTelpOnline"));
+			return
+		}
 		sbiModule_restServices.promiseGet('1.0/documents',label).then(function(response){
 		var data='DOCUMENT='+response.data.id+'&LABEL='+response.data.name+''+(response.data.dataSetId!=undefined? "&DATASET="+response.data.dataSetId : '')
 			holServ.show(data);

@@ -332,6 +332,11 @@
 		$scope.openHelpOnLine = function() {	
 			sbiModule_helpOnLine.showDocumentHelpOnLine($scope.executionInstance.OBJECT_LABEL);
 		};
+		
+		$scope.execShowHelpOnLine = function(data) {	
+			sbiModule_helpOnLine.show(data);
+		};
+		
 					
 		/*
 		 * EXECUTE PARAMS
@@ -462,3 +467,7 @@ var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, tar
 var execExternalCrossNavigation=function(outputParameters,inputParameters,targetCrossNavigation,docLabel){ 
 	angular.element(frameElement).scope().$parent.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel);
 };
+
+var execShowHelpOnLine=function(data){
+	angular.element(frameElement).scope().$parent.execShowHelpOnLine(data);
+}
