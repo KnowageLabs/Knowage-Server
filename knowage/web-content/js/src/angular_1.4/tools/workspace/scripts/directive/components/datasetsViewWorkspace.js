@@ -80,7 +80,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	$scope.prevUploadedFile = null;
 	
 	$scope.datasetSavedFromQbe = false;
-	
+		
     $scope.markNotDerived=function(datasets){
     	
     	for(i=0;i<datasets.length;i++){
@@ -356,9 +356,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	
     }
     
-    $scope.getPreviewSet= function(dataset){
+    $scope.getPreviewSet= function(dataset){    	
     	
-
     	params={};
     	params.start=$scope.startPreviewIndex;
     	params.limit=$scope.itemsPerPage;
@@ -385,7 +384,16 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			//$scope.startPreviewIndex=$scope.startPreviewIndex=0+20;
 			
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.preview.error'));
+			
+			// COMMENTED BY: danristo
+//			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.preview.error'));
+			
+			/**
+			 * Handling the error while trying to preview the dataset.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message),sbiModule_translate.load('sbi.generic.error'));
+			
 		});
     	
     	
