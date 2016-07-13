@@ -126,10 +126,6 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="MapCatalogueManagement" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="MapFeaturesManagement" roleType="ADMIN" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="MapFeaturesManagement" roleType="DEV_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="MenuManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ModifyRefresh" roleType="ADMIN" />
@@ -399,5 +395,17 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DomainWrite" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DomainWrite" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DomainWrite" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SpatialDimension" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SpatialDimension" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SpatialDimension" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SpatialDimension" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SpatialDimension" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GisWebDesigner" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GisWebDesigner" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GisWebDesigner" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GisWebDesigner" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GisWebDesigner" roleType="MODEL_ADMIN" />
 	
 </ROLE_TYPE_USER_FUNCTIONALITIES>
