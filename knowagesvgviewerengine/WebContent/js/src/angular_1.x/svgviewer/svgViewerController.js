@@ -13,6 +13,8 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   //initialize for the first level
   $scope.currentLevel = 1;
   $scope.currentMember = null;
+  //optional
+  $scope.currentParent = null;
   
   //stack that contains the drill path elements
   $scope.drillPathStack = [];
@@ -27,12 +29,17 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  
 	  var pathElement = $scope.drillPathStack.pop();
 	  $scope.currentMember = pathElement.member;
+	  $scope.currentParent = pathElement.parent;
 
 	  
 	  if (pathElement.level == 1){
 		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?level="+pathElement.level;
 	  } else {
-		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+pathElement.member+"&level="+pathElement.level;
+		  var urlToCall = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+pathElement.member+"&level="+pathElement.level;
+		  if (pathElement.parent != undefined && pathElement.parent != null){
+			  urlToCall = urlToCall + "&parent=" + pathElement.parent;
+		  }
+		  document.getElementById('svgContainer').src = urlToCall;
 	  }
 	  
 	  if($scope.currentLevel == 1){
@@ -55,6 +62,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  var pathElement = new Object();
 	  pathElement.level = $scope.currentLevel;
 	  pathElement.member = $scope.currentMember;
+	  pathElement.parent = $scope.currentParent;
 	  $scope.drillPathStack.push(pathElement);
 	  
 	  //alert("Clicked element with id "+e.detail);  
@@ -63,10 +71,12 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  //check if the member name is specified in the dataset configuration o directly from the svg id
 	  if (e.detail.memberName != undefined && e.detail.memberName != null){
 		  $scope.currentMember = e.detail.memberName;
+		  $scope.currentParent = e.detail.idElement;
 		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+e.detail.memberName+"&level="+$scope.currentLevel+"&parent="+e.detail.idElement;
 	  } else {
 		  //get svg element's id 
 		  $scope.currentMember = e.detail.idElement;
+		  $scope.currentParent = null;
 		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+e.detail.idElement+"&level="+$scope.currentLevel;
 	  }
 	  
