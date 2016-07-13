@@ -54,9 +54,11 @@ import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -111,6 +113,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	public static final String BUSINESS_COLUMN_TYPE = "structural.columntype";
 
 	public static final String DATABASE_SOURCE_TYPE = "database";
+	public static final String METADATA_DIR = "metadata";
 
 	@GET
 	@Path("/")
@@ -391,6 +394,60 @@ public class MetadataResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	/*
+	 * File Upload to local temp directory
+	 */
+	@POST
+	@Path("/upload")
+	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_METADATA_MANAGEMENT })
+	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
+	public Response uploadFile(@MultipartForm MultipartFormDataInput input) {
+
+		byte[] bytes = null;
+
+		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+		for (String key : uploadForm.keySet()) {
+
+			List<InputPart> inputParts = uploadForm.get(key);
+
+			for (InputPart inputPart : inputParts) {
+
+				try {
+
+					MultivaluedMap<String, String> header = inputPart.getHeaders();
+					if (getFileName(header) != null) {
+
+						// convert the uploaded file to input stream
+						InputStream inputStream = inputPart.getBody(InputStream.class, null);
+
+						bytes = IOUtils.toByteArray(inputStream);
+
+						String saveDirectoryPath = SpagoBIUtilities.getResourcePath() + "/" + METADATA_DIR + "/" + getUserProfile().getUserName().toString();
+						File saveDirectory = new File(saveDirectoryPath);
+						if (!(saveDirectory.exists() && saveDirectory.isDirectory())) {
+							saveDirectory.mkdirs();
+						}
+						String tempFile = saveDirectoryPath + "/" + getFileName(header);
+						File tempFileToSave = new File(tempFile);
+						tempFileToSave.createNewFile();
+						DataOutputStream os = new DataOutputStream(new FileOutputStream(tempFileToSave));
+						os.write(bytes);
+						os.close();
+
+					}
+
+				} catch (IOException e) {
+					throw new SpagoBIRuntimeException("Error inserting new file metadataContent ", e);
+				}
+
+			}
+
+		}
+
+		return Response.status(200).build();
+
 	}
 
 	/**

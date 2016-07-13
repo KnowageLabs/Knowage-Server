@@ -20,40 +20,6 @@ package it.eng.spagobi.api;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_OPTIONS_KEY;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_QUANTITY_JSON;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE_JSON;
-
-import java.io.IOException;
-import java.text.Format;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.SessionContainer;
@@ -75,9 +41,11 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
@@ -92,6 +60,45 @@ import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.Format;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 @Path("/1.0/documentexecution")
 @ManageAuthorization
@@ -124,6 +131,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
 
 	private static final String[] VISIBLE_COLUMNS = new String[] { VALUE_FIELD, LABEL_FIELD, DESCRIPTION_FIELD };
+	private static final String METADATA_DIR = "metadata";
 
 	private class DocumentExecutionException extends Exception {
 		private static final long serialVersionUID = -1882998632783944575L;
@@ -205,10 +213,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			url += engineParam;
 
 			String editMode = requestVal.optString("EDIT_MODE");
-			if(!StringUtilities.isEmpty(editMode)) {
-				url += "&EDIT_MODE="+editMode;
+			if (!StringUtilities.isEmpty(editMode)) {
+				url += "&EDIT_MODE=" + editMode;
 			}
-			
+
 			resultAsMap.put("url", url);
 			if (errorList != null && !errorList.isEmpty()) {
 				resultAsMap.put("errors", errorList);
@@ -266,10 +274,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		// REPORT BIRT - JASPER
 		// MOBILE
-		if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.REPORT_TYPE_CODE) && obj.getEngine() != null
-				&& (obj.getEngine().getLabel().equals(SpagoBIConstants.BIRT_ENGINE_LABEL)
-						|| obj.getEngine().getLabel().equals(SpagoBIConstants.JASPER_ENGINE_LABEL))
-				&& req.getHeader("User-Agent").indexOf("Mobile") != -1) {
+		if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.REPORT_TYPE_CODE)
+				&& obj.getEngine() != null
+				&& (obj.getEngine().getLabel().equals(SpagoBIConstants.BIRT_ENGINE_LABEL) || obj.getEngine().getLabel()
+						.equals(SpagoBIConstants.JASPER_ENGINE_LABEL)) && req.getHeader("User-Agent").indexOf("Mobile") != -1) {
 			ret = ret + "&outputType=PDF";
 		}
 		// COCKPIT
@@ -301,9 +309,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						if (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
 							// CONVERT DATE FORMAT FROM DEFAULT TO SERVER
 							value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
-									// GeneralUtilities.getLocaleDateFormat(permanentSession),
-									SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"),
-									objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0]);
+							// GeneralUtilities.getLocaleDateFormat(permanentSession),
+									SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), objParameter.getDefaultValues().get(0)
+											.getValue().toString().split("#")[0]);
 						}
 
 						// DEFAULT DATE RANGE FIELD : {date_2W#format}
@@ -314,7 +322,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 							dateRange = dateRange.replace(range, "");
 							// CONVERT DATE FORMAT FROM DEFAULT TO Server
 							value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
-									// GeneralUtilities.getLocaleDateFormat(permanentSession)
+							// GeneralUtilities.getLocaleDateFormat(permanentSession)
 									SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), dateRange);
 							value = value + range;
 						} else {
@@ -434,8 +442,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
 
-			parameterAsMap.put("allowInternalNodeSelection",
-					objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
+			parameterAsMap
+					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
 			if (jsonParameters.has(objParameter.getId())) {
 				documentUrlManager.refreshParameterForFilters(objParameter.getAnalyticalDocumentParameter(), jsonParameters);
@@ -574,8 +582,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return Response.ok(resultAsMap).build();
 	}
 
-	private ArrayList<HashMap<String, Object>> manageDataRange(BIObject biObject, String executionRole, String biparameterId)
-			throws EMFUserError, SerializationException, JSONException, IOException {
+	private ArrayList<HashMap<String, Object>> manageDataRange(BIObject biObject, String executionRole, String biparameterId) throws EMFUserError,
+			SerializationException, JSONException, IOException {
 
 		BIObjectParameter biObjectParameter = null;
 		List parameters = biObject.getBiObjectParameters();
@@ -750,7 +758,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Produces a json of document metadata grouped by typeCode ("GENERAL_META", "LONG_TEXT", "SHORT_TEXT")
+	 * Produces a json of document metadata grouped by typeCode ("GENERAL_META", "LONG_TEXT", "SHORT_TEXT","FILE")
 	 *
 	 * @param id
 	 *            of document
@@ -813,10 +821,21 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				Iterator it = metadata.iterator();
 				while (it.hasNext()) {
 					ObjMetadata objMetadata = (ObjMetadata) it.next();
-					ObjMetacontent objMetacontent = DAOFactory.getObjMetacontentDAO().loadObjMetacontent(objMetadata.getObjMetaId(), objectId, subObjectId);
-					addTextMetadata(documentMetadataMap, objMetadata.getDataTypeCode(), objMetadata.getName(),
-							objMetacontent != null && objMetacontent.getContent() != null ? new String(objMetacontent.getContent()) : "",
-							objMetadata.getObjMetaId());
+					if (!objMetadata.getDataTypeCode().equals("FILE")) {
+						ObjMetacontent objMetacontent = DAOFactory.getObjMetacontentDAO().loadObjMetacontent(objMetadata.getObjMetaId(), objectId, subObjectId);
+						addTextMetadata(documentMetadataMap, objMetadata.getDataTypeCode(), objMetadata.getName(),
+								objMetacontent != null && objMetacontent.getContent() != null ? new String(objMetacontent.getContent()) : "",
+								objMetadata.getObjMetaId());
+					} else if (objMetadata.getDataTypeCode().equals("FILE")) {
+						ObjMetacontent objMetacontent = DAOFactory.getObjMetacontentDAO().loadObjMetacontent(objMetadata.getObjMetaId(), objectId, subObjectId);
+						addTextFileMetadata(documentMetadataMap, objMetadata.getDataTypeCode(), objMetadata.getName(),
+								objMetacontent != null && objMetacontent.getContent() != null ? new String(objMetacontent.getContent()) : "",
+								objMetadata.getObjMetaId(),
+								objMetacontent != null && objMetacontent.getAdditionalInfo() != null ? objMetacontent.getAdditionalInfo() : ""); // additionalInfo
+																																					// contains
+																																					// file
+																																					// name!
+					}
 				}
 			}
 
@@ -840,6 +859,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			Integer biobjectId = params.getInt("id");
 			Integer subobjectId = params.has("subobjectId") ? params.getInt("subobjectId") : null;
 			String jsonMeta = params.getString("jsonMeta");
+			byte[] bytes = null;
 
 			logger.debug("Object id = " + biobjectId);
 			logger.debug("Subobject id = " + subobjectId);
@@ -849,7 +869,22 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				JSONObject aMetadata = metadata.getJSONObject(i);
 				Integer metadataId = aMetadata.getInt("id");
 				String text = aMetadata.getString("value");
+				boolean isFileMetadata = !aMetadata.isNull("fileToSave");
+				boolean newFileUploaded = false;
+				String fileName = null;
+				if (isFileMetadata) {
+					JSONObject fileMetadataObject = aMetadata.getJSONObject("fileToSave");
+					newFileUploaded = !fileMetadataObject.isNull("fileName");
+					if (newFileUploaded) // file to save is uploaded
+					{
+						fileName = fileMetadataObject.getString("fileName");
+					}
+
+				}
+
 				ObjMetacontent aObjMetacontent = dao.loadObjMetacontent(metadataId, biobjectId, subobjectId);
+				String filePath = SpagoBIUtilities.getResourcePath() + "/" + METADATA_DIR + "/" + getUserProfile().getUserName().toString();
+
 				if (aObjMetacontent == null) {
 					logger.debug("ObjMetacontent for metadata id = " + metadataId + ", biobject id = " + biobjectId + ", subobject id = " + subobjectId
 							+ " was not found, creating a new one...");
@@ -857,14 +892,31 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					aObjMetacontent.setObjmetaId(metadataId);
 					aObjMetacontent.setBiobjId(biobjectId);
 					aObjMetacontent.setSubobjId(subobjectId);
-					aObjMetacontent.setContent(text.getBytes("UTF-8"));
 					aObjMetacontent.setCreationDate(new Date());
 					aObjMetacontent.setLastChangeDate(new Date());
+
+					if (isFileMetadata) {
+						if (newFileUploaded) {
+							bytes = getFileByteArray(filePath, fileName);
+							aObjMetacontent.setContent(bytes);
+							aObjMetacontent.setAdditionalInfo(fileName);
+						}
+					} else {
+						aObjMetacontent.setContent(text.getBytes("UTF-8"));
+					}
 					dao.insertObjMetacontent(aObjMetacontent);
 				} else {
 					logger.debug("ObjMetacontent for metadata id = " + metadataId + ", biobject id = " + biobjectId + ", subobject id = " + subobjectId
 							+ " was found, it will be modified...");
-					aObjMetacontent.setContent(text.getBytes("UTF-8"));
+					if (isFileMetadata) {
+						if (newFileUploaded) {
+							bytes = getFileByteArray(filePath, fileName);
+							aObjMetacontent.setContent(bytes);
+							aObjMetacontent.setAdditionalInfo(fileName);
+						}
+					} else {
+						aObjMetacontent.setContent(text.getBytes("UTF-8"));
+					}
 					aObjMetacontent.setLastChangeDate(new Date());
 					dao.modifyObjMetacontent(aObjMetacontent);
 				}
@@ -883,12 +935,72 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return Response.ok().build();
 	}
 
-	private void addMetadata(JSONArray generalMetadata, String name, String value) throws JsonMappingException, JsonParseException, JSONException, IOException {
-		addMetadata(generalMetadata, name, value, null);
+	/**
+	 * Produces a json with a bynary content of a metadata file and its name
+	 *
+	 * @param id
+	 *            of document
+	 * @param id
+	 *            of subObject
+	 * @param id
+	 *            of a metaData
+	 * @param httpRequest
+	 * @return a response with a json
+	 * @throws EMFUserError
+	 */
+	@GET
+	@Path("/{id}/{metadataObjectId}/documentfilemetadata")
+	public Response documentFileMetadata(@PathParam("id") Integer objectId, @PathParam("metadataObjectId") Integer metaObjId,
+			@Context HttpServletRequest httpRequest) throws EMFUserError {
+		try {
+			Integer subObjectId = null;
+			IObjMetacontentDAO metacontentDAO = DAOFactory.getObjMetacontentDAO();
+
+			ObjMetacontent metacontent = metacontentDAO.loadObjMetacontent(metaObjId, objectId, subObjectId);
+			String fileName = metacontent.getAdditionalInfo();
+			int binaryContentId = metacontent.getBinaryContentId();
+			IBinContentDAO binaryContentDAO = DAOFactory.getBinContentDAO();
+			byte[] fileContent = binaryContentDAO.getBinContent(binaryContentId);
+
+			ResponseBuilder response = Response.ok(fileContent);
+			response.header("Content-Disposition", "attachment; filename=" + fileName);
+			return response.build();
+
+		} catch (Exception e) {
+			logger.error(httpRequest.getPathInfo(), e);
+			throw new SpagoBIRuntimeException("Error returning file.", e);
+		}
+
 	}
 
-	private void addMetadata(JSONArray generalMetadata, String name, String value, Integer id)
-			throws JsonMappingException, JsonParseException, JSONException, IOException {
+	@SuppressWarnings("resource")
+	private byte[] getFileByteArray(String filePath, String fileName) throws IOException {
+
+		filePath = filePath + "/" + fileName;
+		File file = new File(filePath);
+		FileInputStream fis = null;
+		byte[] bFile = null;
+		try {
+			fis = new FileInputStream(file);
+			bFile = new byte[(int) file.length()];
+
+			// convert file into array of bytes
+			fis = new FileInputStream(file);
+			fis.read(bFile);
+			fis.close();
+		} catch (IOException e) {
+			throw new IOException("Error reading " + filePath + " file.", e);
+		}
+		return bFile;
+
+	}
+
+	private void addMetadata(JSONArray generalMetadata, String name, String value) throws JsonMappingException, JsonParseException, JSONException, IOException {
+		addMetadata(generalMetadata, name, value, null, null);
+	}
+
+	private void addMetadata(JSONArray generalMetadata, String name, String value, Integer id, String type) throws JsonMappingException, JsonParseException,
+			JSONException, IOException {
 		JSONObject data = new JSONObject();
 		if (id != null) {
 			data.put("id", id);
@@ -898,13 +1010,39 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		generalMetadata.put(data);
 	}
 
-	private void addTextMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id)
-			throws JSONException, JsonMappingException, JsonParseException, IOException {
+	private void addTextMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id) throws JSONException,
+			JsonMappingException, JsonParseException, IOException {
 		JSONArray jsonArray = metadataMap.get(type);
 		if (jsonArray == null) {
 			jsonArray = new JSONArray();
 		}
-		addMetadata(jsonArray, name, value, id);
+		// if (type.equals("FILE")) { // Avoid to put file content in response message
+		// value = "File content is present on server but not sent in this message";
+		// }
+		addMetadata(jsonArray, name, value, id, type);
+		metadataMap.put(type, jsonArray);
+	}
+
+	private void addTextFileMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id, String metadataFileName)
+			throws JSONException, JsonMappingException, JsonParseException, IOException {
+
+		JSONArray jsonArray = metadataMap.get(type);
+		if (jsonArray == null) {
+			jsonArray = new JSONArray();
+		}
+		if (type.equals("FILE")) { // Avoid to put file contet in response message
+			value = "";
+		}
+
+		JSONObject data = new JSONObject();
+		if (id != null) {
+			data.put("id", id);
+		}
+		data.put("name", name);
+		data.put("value", value);
+		data.put("savedFile", metadataFileName); // savedFile instead of uploadedFile!!
+		jsonArray.put(data);
+
 		metadataMap.put(type, jsonArray);
 	}
 
@@ -988,6 +1126,36 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		}
 		return date;
+	}
+
+	private static void addToZipFile(String filePath, String fileName, ZipOutputStream zos) throws FileNotFoundException, IOException {
+
+		File file = new File(filePath + "/" + fileName);
+		FileInputStream fis = new FileInputStream(file);
+		ZipEntry zipEntry = new ZipEntry(fileName);
+		zos.putNextEntry(zipEntry);
+
+		byte[] bytes = new byte[1024];
+		int length;
+		while ((length = fis.read(bytes)) >= 0) {
+			zos.write(bytes, 0, length);
+		}
+
+		zos.closeEntry();
+		fis.close();
+	}
+
+	private static void deleteDirectoryContent(File path) {
+		if (path.exists()) {
+			File[] files = path.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory()) {
+					deleteDirectoryContent(files[i]);
+				} else {
+					files[i].delete();
+				}
+			}
+		}
 	}
 
 }

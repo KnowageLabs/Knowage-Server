@@ -293,6 +293,8 @@
 		domainNm="Predefined data type for metadata" valueDs="Predefined data type LONG TEXT for metadata" />
 	<DOMAIN valueCd="SHORT_TEXT" valueNm="SHORT_TEXT" domainCd="OBJMETA_DATA_TYPE"
 		domainNm="Predefined data type for metadata" valueDs="Predefined data type SHORT TEXT for metadata" />
+	<DOMAIN valueCd="FILE" valueNm="FILE" domainCd="OBJMETA_DATA_TYPE"
+		domainNm="Predefined data type for metadata" valueDs="Predefined data type FILE for metadata" />			
 	<DOMAIN valueCd="ACCESSIBLE_HTML" valueNm="Accessible Html"
 		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="Accessible HTML" />
 	<DOMAIN valueCd="Boolean" valueNm="Udp Boolean Type" domainCd="UDP_TYPE"

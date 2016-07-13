@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
+
   <% boolean canModify = false;
  	 if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY)) {
  			canModify = true;
@@ -44,7 +45,41 @@
 					</md-tab>
 				</md-tabs>
 			</expander-box>
-			  </div>
+			
+			<expander-box  id="attachments" color="white" background-color="rgb(63,81,181)" expanded="false" title="metadataDlgCtrl.lblAttachments" toolbar-class="secondaryToolbar"> 
+				<!--   metadataDlgCtrl.file: {{metadataDlgCtrl.file}} -->
+
+				<!-- <table flex>
+					  <tr ng-repeat="fileMeta in metadataDlgCtrl.file">
+					    <td> Metadata name:</td>
+					    <td> {{fileMeta.name}}</td>
+					    <td> &nbsp; Saved file: </td>
+					    <td> {{fileMeta.savedFile}}	 </td>
+					    <td> <md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.download(fileMeta.id)">Download</md-button></td> 
+					    <td> <file-upload id="id_file_upload-{{$index}}" ng-model="fileMeta.fileToSave" ng-disabled=false></file-upload> </td>
+						<td> <md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.uploadFile(fileMeta.fileToSave)">Upload</md-button> </td>							 	
+					  </tr>
+				</table>	-->		
+				
+				
+				<md-list>
+					<md-list-item ng-repeat="fileMeta in metadataDlgCtrl.file" class="noright" flex>
+					    <div flex=30%> Metadata&nbsp;name:</div>
+					    <div flex=20%> {{fileMeta.name}}</div>
+					    <div flex=20%> &nbsp;Saved&nbsp;file: </div>
+					    <div flex=10%> {{fileMeta.savedFile}}</div> 
+					    <file-upload id="id_file_upload-{{$index}}" ng-model="fileMeta.fileToSave" ng-disabled=false></file-upload>
+						<md-button  flex=10% class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.uploadFile(fileMeta.fileToSave)">Upload</md-button>		
+						<md-button flex=10% class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.download(fileMeta.id,fileMeta.savedFile)">Download</md-button>				 	
+					</<md-list-item>
+				</md-list>		
+					
+
+			</expander-box>
+			
+			
+			
+		</div>
 
 
 	

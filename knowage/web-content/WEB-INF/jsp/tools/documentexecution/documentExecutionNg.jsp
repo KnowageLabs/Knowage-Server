@@ -353,7 +353,7 @@ if(executionRoleNames.size() > 0) {
 		(function() {
 			
 			angular.module('documentExecutionModule', 
-					['ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list','cross_navigation']);
+					['ngMaterial', 'ui.tree', 'sbiModule', 'document_tree', 'componentTreeModule', 'angular_table', 'ngSanitize', 'expander-box', 'ngAnimate', 'ngWYSIWYG','angular_list','cross_navigation','file_upload']);
 			
 			
 			

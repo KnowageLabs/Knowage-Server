@@ -25,5 +25,8 @@
         <property name="lastChangeDate" type="timestamp">
             <column name="LAST_CHANGE_DATE" length="19" not-null="true" />
         </property>
+        <property name="additionalInfo" type="string">
+            <column name="ADDITIONAL_INFO" length="255" not-null="false" />
+        </property>        
     </class>
 </hibernate-mapping>
