@@ -1069,6 +1069,7 @@ public class KpiService {
 					placeholderNames.add(placeholder.getName());
 				}
 				List<String> kpiNames = new ArrayList<>();
+				boolean anyScheduler = false;
 				for (Kpi kpi : kpimap.keySet()) {
 					List<KpiScheduler> schedulerList = kpiDao.listSchedulerAndFiltersByKpi(kpi.getId(), kpi.getVersion(), true);
 					for (KpiScheduler kpiScheduler : schedulerList) {
@@ -1077,8 +1078,11 @@ public class KpiService {
 						}
 					}
 					kpiNames.add(kpi.getName());
+					if (schedulerList.size() > 0) {
+						anyScheduler = true;
+					}
 				}
-				if (!placeholderNames.isEmpty()) {
+				if (!placeholderNames.isEmpty() && anyScheduler) {
 					jsError.addWarningKey("newKpi.rule.placeholdersMustBeSet.save.error", StringUtils.join(placeholderNames, ", "),
 							StringUtils.join(kpiNames, ", "));
 				}
