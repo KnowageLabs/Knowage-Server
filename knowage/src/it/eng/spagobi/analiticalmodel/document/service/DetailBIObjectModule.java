@@ -98,7 +98,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.dispatching.module.AbstractModule#init(it.eng.spago.base.SourceBean)
 	 */
 	@Override
@@ -1046,7 +1046,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			obj = biobjDAO.loadBIObjectForDetail(obj.getId());
 
 			// Save relation between dataset and document (1:1) (for Data Lineage/Impact Analysis)
-			DAOFactory.getSbiObjDsDAO().insertUniqueRelationFromObj(obj);
+			// DAOFactory.getSbiObjDsDAO().insertUniqueRelationFromObj(obj);
+			DAOFactory.getSbiObjDsDAO().insertRelationsFromObj(obj);
 
 			/*
 			 * indexes biobject by modifying document in index

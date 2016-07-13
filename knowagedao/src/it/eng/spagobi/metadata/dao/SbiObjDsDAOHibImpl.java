@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.metadata.dao;
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -44,6 +45,8 @@ import org.json.JSONObject;
  *
  */
 public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjDsDAO {
+
+	private String[] enginesNoChecked = { "birt", "cockpit", "console", "composit", "kpi", "svgviewer" };
 
 	static private Logger logger = Logger.getLogger(SbiDsBcDAOHibImpl.class);
 
@@ -225,7 +228,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 	/**
 	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS (Only objects with UNIQUE relation 1 to 1 with the dataset: NO
-	 * COCKPIT, CONSOLE, DOCUMENT COMPOSITION )
+	 * COCKPIT, CONSOLE, DOCUMENT COMPOSITION, ... )
 	 *
 	 * @param biObj
 	 *            the document object
@@ -236,8 +239,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 		try {
 			Engine engineObj = biObj.getEngine();
-			if (!engineObj.getLabel().toLowerCase().contains("cockpit") && !engineObj.getLabel().toLowerCase().contains("console")
-					&& !engineObj.getLabel().toLowerCase().contains("composit") && !engineObj.getLabel().toLowerCase().contains("svgviewer")) {
+			if (useUniqueDataset(engineObj.getLabel())) {
 
 				Integer objId = biObj.getId();
 				logger.debug("Document ID used for insert relation is: " + objId);
@@ -360,8 +362,79 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 	}
 
 	/**
+	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS
+	 *
+	 * @param biObj
+	 *            the document object
+	 */
+	private void insertRelationFromSVG(BIObject obj) throws EMFUserError {
+		logger.debug("IN");
+
+		try {
+			// 0. get template with configuration
+			String template = new String(obj.getActiveTemplate().getContent());
+			SourceBean templateSB = SourceBean.fromXMLString(template);
+
+			HashMap<Integer, Boolean> lstDsInsertedForObj = new HashMap<Integer, Boolean>();
+			// 1. search used datasets
+			SourceBean dmSB = (SourceBean) templateSB.getAttribute("DATAMART_PROVIDER");
+			SourceBean hierarchySB = (SourceBean) dmSB.getAttribute("HIERARCHY");
+
+			// 2. delete all relations between document and datasets if exist
+			DAOFactory.getSbiObjDsDAO().deleteObjDsbyObjId(obj.getId());
+
+			List members = hierarchySB.getAttributeAsList("MEMBER");
+			// 3. insert the new relations between document and datasets
+			int numInserted = 0;
+			for (int i = 0; i < members.size(); i++) {
+				SourceBean memberSB = null;
+				try {
+					logger.debug("Parsing member  [" + i + "]");
+					memberSB = (SourceBean) members.get(i);
+
+					String dsLabel = (String) memberSB.getAttribute("measure_dataset");
+					logger.debug("Insert relation for dataset with label [" + dsLabel + "]");
+
+					VersionedDataSet ds = ((VersionedDataSet) DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel));
+					// insert only relations with new ds
+					if (lstDsInsertedForObj.get(ds.getId()) != null) {
+						continue;
+					}
+					String dsOrganization = ds.getOrganization();
+					logger.debug("Dataset organization used for insert relation is: " + dsOrganization);
+					Integer dsVersion = ds.getVersionNum();
+					logger.debug("Dataset version used for insert relation is: " + dsVersion);
+
+					// creating relation object
+					SbiMetaObjDs relObjDs = new SbiMetaObjDs();
+					SbiMetaObjDsId relObjDsId = new SbiMetaObjDsId();
+					relObjDsId.setDsId(ds.getId());
+					relObjDsId.setOrganization(dsOrganization);
+					relObjDsId.setVersionNum(dsVersion);
+					relObjDsId.setObjId(obj.getId());
+					relObjDs.setId(relObjDsId);
+
+					DAOFactory.getSbiObjDsDAO().insertObjDs(relObjDs);
+					lstDsInsertedForObj.put(ds.getId(), true);
+					numInserted++;
+
+				} catch (Throwable t) {
+					throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+				}
+			} // for
+			if (numInserted == 0) {
+				logger.debug("The document doesn't use any dataset! ");
+			}
+		} catch (Exception e) {
+			logger.error("An error occured while inserting relation between SVG document and its datasets. Error:  " + e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		}
+		logger.debug("OUT");
+	}
+
+	/**
 	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS (Only objects with UNIQUE relation 1 to 1 with the dataset: NO
-	 * COCKPIT, CONSOLE, DOCUMENT COMPOSITION )
+	 * COCKPIT, CONSOLE, DOCUMENT COMPOSITION, ... )
 	 *
 	 * @param biObj
 	 *            the document object
@@ -375,7 +448,9 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 			if (engineObj.getLabel().toLowerCase().contains("cockpit")) {
 				insertRelationFromCockpit(biObj);
-			} else if (!engineObj.getLabel().toLowerCase().contains("console") && !engineObj.getLabel().toLowerCase().contains("composit")) {
+			} else if (engineObj.getLabel().toLowerCase().contains("svgviewer")) {
+				insertRelationFromSVG(biObj);
+			} else if (useUniqueDataset(engineObj.getLabel())) {
 				insertUniqueRelationFromObj(biObj);
 			}
 		} catch (Exception e) {
@@ -469,6 +544,26 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 			}
 		}
 		logger.debug("OUT");
+	}
+
+	/**
+	 * Returns true if the engine uses standard dataset management (1:1 with the document)
+	 *
+	 * @param engineLabel
+	 *            : the engine label
+	 *
+	 * @return true if the engine use standard dataset (1:1), false otherwise
+	 *
+	 */
+	private boolean useUniqueDataset(String engineLabel) {
+		boolean toReturn = true;
+		for (String e : enginesNoChecked) {
+			if (engineLabel.toLowerCase().contains(e)) {
+				toReturn = false;
+				break;
+			}
+		}
+		return toReturn;
 	}
 
 }
