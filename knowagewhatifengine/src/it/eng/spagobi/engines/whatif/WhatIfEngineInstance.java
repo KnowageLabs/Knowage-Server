@@ -265,6 +265,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		// init toolbar
 		modelConfig.setToolbarMenuButtons(template.getToolbarMenuButtons());
 		modelConfig.setToolbarVisibleButtons(template.getToolbarVisibleButtons());
+		modelConfig.setToolbarClickedButtons(template.getToolbarClickedButtons());
 
 		WriteBackEditConfig writeBackConfig = modelConfig.getWriteBackConf();
 		if (writeBackConfig != null) {

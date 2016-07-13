@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.writeback4j.SbiAliases;
-import it.eng.spagobi.writeback4j.SbiScenario;
-import it.eng.spagobi.writeback4j.SbiScenarioVariable;
-import it.eng.spagobi.writeback4j.WriteBackEditConfig;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +27,13 @@ import org.pivot4j.transform.NonEmpty;
 import org.pivot4j.ui.command.DrillDownCommand;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.writeback4j.SbiAliases;
+import it.eng.spagobi.writeback4j.SbiScenario;
+import it.eng.spagobi.writeback4j.SbiScenarioVariable;
+import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 
 public class ModelConfig implements Serializable {
 
@@ -166,6 +166,7 @@ public class ModelConfig implements Serializable {
 
 	private List<String> toolbarVisibleButtons;
 	private List<String> toolbarMenuButtons;
+	private List<String> toolbarClickedButtons;
 
 	private Map<String, String> dimensionHierarchyMap;
 
@@ -391,6 +392,14 @@ public class ModelConfig implements Serializable {
 		this.crossNavigation = crossNavigation;
 	}
 
+	public List<String> getToolbarClickedButtons() {
+		return toolbarClickedButtons;
+	}
+
+	public void setToolbarClickedButtons(List<String> toolbarClickedButtons) {
+		this.toolbarClickedButtons = toolbarClickedButtons;
+	}
+
 	/**
 	 * Updates the values of the object coping the values of another
 	 * configuration.. Not all the modification are copied, id est Scenario and
@@ -413,6 +422,7 @@ public class ModelConfig implements Serializable {
 
 		this.toolbarVisibleButtons = source.toolbarVisibleButtons;
 		this.toolbarMenuButtons = source.toolbarMenuButtons;
+		this.toolbarClickedButtons = source.toolbarClickedButtons;
 
 		this.dimensionHierarchyMap = source.dimensionHierarchyMap;
 	}

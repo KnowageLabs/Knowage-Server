@@ -17,6 +17,14 @@
  */
 package it.eng.spagobi.engines.whatif.template;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -31,14 +39,6 @@ import it.eng.spagobi.writeback4j.SbiAliases;
 import it.eng.spagobi.writeback4j.SbiScenario;
 import it.eng.spagobi.writeback4j.SbiScenarioVariable;
 import it.eng.spagobi.writeback4j.WriteBackEditConfig;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
@@ -74,6 +74,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static String PROP_USER_ATTRIBUTE_NAME = "name";
 	public static final String TAG_TOOLBAR = "TOOLBAR";
 	public static final String TAG_VISIBLE = "visible";
+	public static final String TAG_CLICKED = "CLICKED";
 	public static final String TAG_MENU = "menu";
 	public static final String TRUE = "true";
 	public static final String TAG_CONNECTION = "CONNECTION";
@@ -167,7 +168,8 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 
 			// TODO:
 			// OSMOSIT
-			// Check for cross navigation configuration and button adding in toolbar
+			// Check for cross navigation configuration and button adding in
+			// toolbar
 			SourceBean crossNavigation = (SourceBean) template.getAttribute(TAG_CROSS_NAVIGATION);
 			if (crossNavigation != null) {
 				SpagoBICrossNavigationConfig cninfo = new SpagoBICrossNavigationConfig(crossNavigation);
@@ -285,6 +287,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		String name;
 		String visible;
 		String menu;
+		String clicked;
 		SourceBean value;
 
 		logger.debug("IN. loading the toolbar config");
@@ -293,6 +296,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 
 			List<String> toolbarVisibleButtons = new ArrayList<String>();
 			List<String> toolbarMenuButtons = new ArrayList<String>();
+			List<String> toolbarClickedButtons = new ArrayList<String>();
 
 			logger.debug(TAG_TOOLBAR + ": " + toolbarSB);
 			toolbarButtons = toolbarSB.getContainedAttributes();
@@ -304,11 +308,15 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 						value = (SourceBean) aToolbarButton.getValue();
 						visible = (String) value.getAttribute(TAG_VISIBLE);
 						menu = (String) value.getAttribute(TAG_MENU);
+						clicked = (String) value.getAttribute(TAG_CLICKED);
 						if (visible != null && visible.equalsIgnoreCase(TRUE)) {
 							if (menu != null && menu.equalsIgnoreCase(TRUE)) {
 								toolbarMenuButtons.add(name);
 							} else {
 								toolbarVisibleButtons.add(name);
+							}
+							if (clicked != null && clicked.equalsIgnoreCase(TRUE)) {
+								toolbarClickedButtons.add(name);
 							}
 						}
 					}
@@ -317,6 +325,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 				logger.debug("Updating the toolbar in the template");
 				toReturn.setToolbarMenuButtons(toolbarMenuButtons);
 				toReturn.setToolbarVisibleButtons(toolbarVisibleButtons);
+				toReturn.setToolbarClickedButtons(toolbarClickedButtons);
 			}
 		} else {
 			logger.debug(TAG_TOOLBAR + ": no toolbar buttons defined in the template");

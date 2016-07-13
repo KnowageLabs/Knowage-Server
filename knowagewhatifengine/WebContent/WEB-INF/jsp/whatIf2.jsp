@@ -16,6 +16,7 @@
 <script>
 	var JSsbiExecutionID = '<%= sbiExecutionID %>'
 	var toolbarVisibleBtns = '<%= whatIfEngineInstance.getModelConfig().getToolbarVisibleButtons() %>'
+	var toolbarClickedBtns = '<%= whatIfEngineInstance.getModelConfig().getToolbarClickedButtons() %>'
 	var drillType = '<%= whatIfEngineInstance.getModelConfig().getDrillType() %>'
 	var locker = '<%= whatIfEngineInstance.getModelConfig().getLocker() %>'
 	var status = '<%= whatIfEngineInstance.getModelConfig().getStatus()%>'
