@@ -59,8 +59,17 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  
 	  //alert("Clicked element with id "+e.detail);  
 	  $scope.currentLevel = $scope.currentLevel +1;
-	  $scope.currentMember = e.detail;
-	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+e.detail+"&level="+$scope.currentLevel;
+	  
+	  //check if the member name is specified in the dataset configuration o directly from the svg id
+	  if (e.detail.memberName != undefined && e.detail.memberName != null){
+		  $scope.currentMember = e.detail.memberName;
+		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+e.detail.memberName+"&level="+$scope.currentLevel+"&parent="+e.detail.idElement;
+	  } else {
+		  //get svg element's id 
+		  $scope.currentMember = e.detail.idElement;
+		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+e.detail.idElement+"&level="+$scope.currentLevel;
+	  }
+	  
 	  
 	  if  ($scope.currentLevel > 1){
 		  $scope.showBackButton = true;

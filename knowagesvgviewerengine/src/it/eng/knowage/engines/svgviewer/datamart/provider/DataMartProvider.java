@@ -111,6 +111,9 @@ public class DataMartProvider extends AbstractDataMartProvider {
 				String columnId = metaData.getGeoIdColumnName();
 				String visibilityColumnId = metaData.getVisibilityColumnName();
 				String labelsColumnId = metaData.getLabelsColumnName();
+				String drillColumnId = metaData.getDrillColumnName();
+				String parentColumnId = metaData.getParentColumnName();
+				String selectedParent = getSelectedParentName();
 
 				dataStoreMeta.setIdField(dataStoreMeta.getFieldIndex(columnId));
 				String[] measureColumnNames = (String[]) metaData.getMeasureColumnNames().toArray(new String[0]);
@@ -122,6 +125,17 @@ public class DataMartProvider extends AbstractDataMartProvider {
 				Iterator it = dataStore.iterator();
 				while (it.hasNext()) {
 					IRecord record = (IRecord) it.next();
+
+					// check if parentid is specified to filter the datastore
+					if (parentColumnId != null && selectedParent != null) {
+						IField parentColumnField = record.getFieldAt(dataStoreMeta.getFieldIndex(parentColumnId));
+						String parentColumnFieldValue = (String) parentColumnField.getValue();
+						if (!selectedParent.equals(parentColumnFieldValue)) {
+							// skip this record because is filtered out
+							it.remove();
+							continue;
+						}
+					}
 
 					IField field;
 
@@ -156,6 +170,15 @@ public class DataMartProvider extends AbstractDataMartProvider {
 						String value = "" + labelsField.getValue();
 						if (value != null && !value.trim().equals("")) {
 							dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(labelsColumnId)).setProperty("ROLE", "LABEL");
+						}
+
+					}
+
+					if (drillColumnId != null) {
+						IField drillIdField = record.getFieldAt(dataStoreMeta.getFieldIndex(drillColumnId));
+						String value = "" + drillIdField.getValue();
+						if (value != null && !value.trim().equals("")) {
+							dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(drillColumnId)).setProperty("ROLE", "DRILLID");
 						}
 
 					}
@@ -308,7 +331,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.AbstractDatasetProvider#getDataDetails(java.lang.String)
 	 */
 	@Override

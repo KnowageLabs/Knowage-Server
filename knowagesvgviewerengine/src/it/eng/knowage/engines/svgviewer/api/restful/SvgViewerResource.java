@@ -139,7 +139,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	@Path("/drillMap")
 	@GET
 	@Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
-	public Response drillMap(@QueryParam("level") String level, @QueryParam("member") String member) {
+	public Response drillMap(@QueryParam("level") String level, @QueryParam("member") String member, @QueryParam("parent") String parent) {
 		logger.debug("IN");
 		try {
 
@@ -167,6 +167,10 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			String hierarchy = dataMartProvider.getSelectedHierarchyName();
 
 			// 3. update internal objects (datamartProvider and mapProvider)
+			if (parent != null && parent.length() > 0) {
+				dataMartProvider.setSelectedParentName(parent);
+			}
+
 			dataMartProvider.setSelectedMemberName(getProperty("name", memberSB));
 			dataMartProvider.setSelectedLevel(level);
 			DataMartProviderConfigurator.configure(dataMartProvider, memberSB.toString());

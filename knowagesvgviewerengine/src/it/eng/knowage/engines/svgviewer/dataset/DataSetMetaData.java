@@ -148,6 +148,25 @@ public class DataSetMetaData {
 	 *
 	 * @return the geo id column name
 	 */
+	public String getDrillColumnName() {
+		Set names = getColumnNames();
+		if (names != null) {
+			Iterator it = names.iterator();
+			while (it.hasNext()) {
+				String columnName = (String) it.next();
+				if (isDrillColumn(columnName)) {
+					return getColumnProperty(columnName, "column_id");
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the visibility id column name.
+	 *
+	 * @return the visibility id column name
+	 */
 	public String getVisibilityColumnName() {
 		Set names = getColumnNames();
 		if (names != null) {
@@ -155,6 +174,25 @@ public class DataSetMetaData {
 			while (it.hasNext()) {
 				String columnName = (String) it.next();
 				if (isVisibilityColumn(columnName)) {
+					return getColumnProperty(columnName, "column_id");
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the visibility id column name.
+	 *
+	 * @return the visibility id column name
+	 */
+	public String getParentColumnName() {
+		Set names = getColumnNames();
+		if (names != null) {
+			Iterator it = names.iterator();
+			while (it.hasNext()) {
+				String columnName = (String) it.next();
+				if (isParentColumn(columnName)) {
 					return getColumnProperty(columnName, "column_id");
 				}
 			}
@@ -230,6 +268,18 @@ public class DataSetMetaData {
 	}
 
 	/**
+	 * Checks if is parent id column.
+	 *
+	 * @param columnName
+	 *            the column name
+	 *
+	 * @return true, if is geo id column
+	 */
+	public boolean isParentColumn(String columnName) {
+		return "parentid".equalsIgnoreCase(getColumnType(columnName));
+	}
+
+	/**
 	 * Checks if is geo id column.
 	 *
 	 * @param columnName
@@ -251,6 +301,18 @@ public class DataSetMetaData {
 	 */
 	public boolean isVisibilityColumn(String columnName) {
 		return "visibility".equalsIgnoreCase(getColumnType(columnName));
+	}
+
+	/**
+	 * Checks if is drill column.
+	 *
+	 * @param columnName
+	 *            the column name
+	 *
+	 * @return true, if is drill column
+	 */
+	public boolean isDrillColumn(String columnName) {
+		return "drillid".equalsIgnoreCase(getColumnType(columnName));
 	}
 
 	/**

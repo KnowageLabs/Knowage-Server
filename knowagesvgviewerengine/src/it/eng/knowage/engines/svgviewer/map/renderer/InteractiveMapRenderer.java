@@ -1135,6 +1135,13 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		}
 		filedMeta = (IFieldMetaData) list.get(0);
 
+		// search if there is a drill id specified in the dataset
+		IFieldMetaData fieldDrillIdMeta = null;
+		List listDrillId = dataStoreMeta.findFieldMeta("ROLE", "DRILLID");
+		if (listDrillId.size() > 0) {
+			fieldDrillIdMeta = (IFieldMetaData) listDrillId.get(0);
+		}
+
 		Element targetLayer = map.getElementById(datamart.getTargetFeatureName());
 		NodeList nodeList = targetLayer.getChildNodes();
 		Map mapLink = null;
@@ -1162,6 +1169,11 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 						mapLink.put("column_id", column_id);
 						mapLink.put("path", childOrig);
 						mapLink.put("link", link);
+						if (fieldDrillIdMeta != null) {
+							IField drillField = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldDrillIdMeta.getName()));
+							String drillIdValue = "" + drillField.getValue();
+							mapLink.put("drill_id", drillIdValue);
+						}
 						lstLink.add(mapLink);
 					}
 				}
@@ -1187,9 +1199,17 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			} else {
 				featureElement.setAttribute("style", "cursor:pointer");
 			}
-
+			String drillId = null;
+			if (tmpMap.get("drill_id") != null) {
+				drillId = (String) tmpMap.get("drill_id");
+			}
 			String elementId = featureElement.getAttribute("id");
-			featureElement.setAttribute("onclick", "javascript:clickedElement('" + elementId + "')");
+			if (drillId == null) {
+				featureElement.setAttribute("onclick", "javascript:clickedElement('" + elementId + "')");
+			} else {
+				featureElement.setAttribute("onclick", "javascript:clickedElement('" + elementId + "','" + drillId + "')");
+
+			}
 
 			targetLayer.appendChild(featureElement);
 			Node lf = map.createTextNode("\n");
