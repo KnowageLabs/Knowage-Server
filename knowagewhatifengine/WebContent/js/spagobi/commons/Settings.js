@@ -50,7 +50,8 @@ olapSet.service('olapSharedSettings',function(){
 				minSearchLength:4,
 				filterDialogWidth:'60%',
 				filterDialogHeight:'80%',
-				disableManualEditingCC: false
+				disableManualEditingCC: false,
+				persistNewVersionTransformations: 1800000
 		};
 		
 		return {

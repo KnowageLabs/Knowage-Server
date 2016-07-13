@@ -46,6 +46,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.showMdxDial = "/main/toolbar/showMdx.html";
 	$scope.sortSetDial = "/main/toolbar/sortingSettings.html";
 	$scope.filterDial = "/main/filter/filterDialog.html"
+	$scope.saveAsNew = "/main/toolbar/saveAsNew.html"
 
 	$scope.filterDialogWidth = olapSharedSettings.getSettings().filterDialogWidth;
 	$scope.filterDialogHeight = olapSharedSettings.getSettings().filterDialogHeight;

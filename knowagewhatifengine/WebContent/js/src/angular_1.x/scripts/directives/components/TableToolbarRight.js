@@ -43,7 +43,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.tableName = "WHATIFOUTPUTTABLE";
 	$scope.outputType = $scope.outputTypes.length > 0 ? $scope.outputTypes[0].value:'';
 	$scope.outputVersion ;
-	$scope.saveAsName = "";
+	$scope.saveAsName = "Version Name Example";
 	$scope.saveAsDescription ="";
 	whatifToolbarButtonsVisible=[];
 	$scope.lockerClass = "";
@@ -450,13 +450,18 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	  }
 	  
 	  $scope.saveAsFunction = function(){
-		  console.log($scope.saveAsDescription +"<-description   name-> "+$scope.saveAsName);
+		  $timeout(func);
+		  if($scope.saveAsDescription == undefined)
+			  $scope.saveAsDescription ="";
+		  
+		  sbiModule_restServices.promisePost
+			("1.0","/model/saveAs/"+ $scope.saveAsName+"/"+$scope.saveAsDescription+"?SBI_EXECUTION_ID="+ JSsbiExecutionID)
+			.then(function(response) {
+				console.log(response.data);
+				sbiModule_messaging.showInfoMessage("New version saved", 'Info');
+		  },function(response){
+			  sbiModule_messaging.showErrorMessage("An error occurred while saving new version", 'Error'); 
+		  });
 	  }
-	  
-	  $scope.isSaveAsDisabled = function(){
-		  if($scope.saveAsName.length < 0)
-			  return true;
-		  else
-			  return false;
-	  }
+
 };
