@@ -206,9 +206,9 @@ Sbi.commons.Format = function(){
 	    		nullValue: ''
     		});
         	
-        	if(v === true){
+        	if(v === true || v === "true"){
         		 v = format.trueSymbol;
-            } else if(v === false){
+            } else if(v === false || v === "false"){
             	 v = format.falseSymbol;
             } else {
             	 v = format.nullValue;
