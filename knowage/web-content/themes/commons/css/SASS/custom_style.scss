@@ -591,3 +591,16 @@ form {
     display: none;
   }
 }
+
+md-menu-content._md-menu-bar-menu .divider {
+  padding-left: $standardLeftPadding;
+  margin-top: $standardMarginTop;
+  color: $baseColor;
+  font-size: $smallFontSize;
+}
+.md-indent .md-button {
+  line-height: 30px;
+} 
+md-menu-content._md-menu-bar-menu.md-dense md-menu-item.md-indent>md-icon {
+  line-height: 20px;
+}
