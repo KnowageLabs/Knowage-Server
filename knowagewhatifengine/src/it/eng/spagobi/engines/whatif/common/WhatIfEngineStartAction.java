@@ -112,7 +112,6 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 			newValues = jo.getJSONArray("newValues");
 			mdx = jo.getString("mdx");
 
-			algorithm = jo.getString("algorithm");
 			editCubeName = jo.getString("editCubeName");
 		} catch (JSONException e2) {
 			logger.error("Cant read JSON", e2);
