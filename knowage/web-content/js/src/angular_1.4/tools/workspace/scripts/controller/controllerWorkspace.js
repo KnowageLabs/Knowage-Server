@@ -594,6 +594,24 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	};
 	
 	/**
+	 * Function for hiding a right-side navigation (detail) panel for all left menu options (wherever we are).
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.hideRightSidePanel = function() {
+		$scope.selectedDocument = null;
+		$scope.selectDocument(undefined);
+		
+		$scope.showOrganizerDocumentInfo = null;
+		$scope.selectOrganizerDocument(undefined);				
+
+		$scope.showDatasetInfo = null;
+		$scope.selectDataset(undefined);
+		
+		$scope.showModelInfo = null;
+		$scope.selectModel(undefined);
+	}
+	
+	/**
 	 * Function that is called when user is starting a search among some document collection (dataset,
 	 * analysis, documents, etc.).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -625,17 +643,19 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 			 */
 			if ($scope.searchInput!=""){
 				
-				$scope.selectedDocument = null;
-				$scope.selectDocument(undefined);
+//				$scope.selectedDocument = null;
+//				$scope.selectDocument(undefined);
+//				
+//				$scope.showOrganizerDocumentInfo = null;
+//				$scope.selectOrganizerDocument(undefined);				
+//
+//				$scope.showDatasetInfo = null;
+//				$scope.selectDataset(undefined);
+//				
+//				$scope.showModelInfo = null;
+//				$scope.selectModel(undefined);
 				
-				$scope.showOrganizerDocumentInfo = null;
-				$scope.selectOrganizerDocument(undefined);				
-
-				$scope.showDatasetInfo = null;
-				$scope.selectDataset(undefined);
-				
-				$scope.showModelInfo = null;
-				$scope.selectModel(undefined);
+				$scope.hideRightSidePanel();
 				
 			}
 			

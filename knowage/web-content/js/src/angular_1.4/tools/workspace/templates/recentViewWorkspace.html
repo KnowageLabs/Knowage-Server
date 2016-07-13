@@ -39,6 +39,11 @@
 							<md-button  class="md-icon-button" ng-show="false" aria-label="Organizer" ng-click="addToOrganizerAction({doc:document});">
 			            		<md-icon  md-font-icon="fa fa-plus-circle"></md-icon>
 			          		</md-button>
+			          		
+			          		<!-- @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) -->
+			          		<md-button title="{{translate.load('sbi.workspace.dataset.detail.close')}}" aria-label="Close Recent Details" class="md-icon-button" ng-click="hideRightSidePanel()">
+									<md-icon md-font-icon="fa fa-times" ></md-icon>
+							</md-button>
 
 			</div>
 		</md-toolbar>
