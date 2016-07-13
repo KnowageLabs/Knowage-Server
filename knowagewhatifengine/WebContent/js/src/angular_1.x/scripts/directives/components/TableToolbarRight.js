@@ -29,8 +29,8 @@ angular.module('sbi_table_toolbar',[])
 function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_download) {
 	
 	var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
-	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon"];
-	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT","BUTTON_SORTING_SETTINGS","BUTTON_CC","BUTTON_SORTING","BUTTON_EDITABLE_EXCEL_EXPORT"]
+	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon","BUTTON_EDITABLE_EXCEL_EXPORT"];
+	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT","BUTTON_SORTING_SETTINGS","BUTTON_CC","BUTTON_SORTING"]
 	$scope.clickedButtons = [];
 	$scope.outputWizardDescription = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.description');
 	$scope.outputWizardTitle = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.title');
@@ -43,6 +43,8 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.tableName = "WHATIFOUTPUTTABLE";
 	$scope.outputType = $scope.outputTypes.length > 0 ? $scope.outputTypes[0].value:'';
 	$scope.outputVersion ;
+	$scope.saveAsName = "";
+	$scope.saveAsDescription ="";
 	whatifToolbarButtonsVisible=[];
 	$scope.lockerClass = "";
 	$scope.showFile = false;
@@ -90,6 +92,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		}
 	};
 	var exportBtn = {};
+	var exportEditableBtn = {};
 	var result;
 	
 	whatIfBtns = function(status){
@@ -102,7 +105,10 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				
 				if(exportBtn.img == "BUTTON_EXPORT_OUTPUT"){
 					$scope.whatifToolbarButtons.push(exportBtn);
-				}			
+				}
+				if(exportEditableBtn.img == "BUTTON_EDITABLE_EXCEL_EXPORT"){
+					$scope.whatifToolbarButtons.push(exportEditableBtn);
+				}
 				
 			}
 				
@@ -127,6 +133,8 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			btn.img =i[0];//"../img/show_parent_members.png"// url(../img/show_parent_members.png);
 			btn.name =i[0];
 			
+			if(btn.name == "BUTTON_EDITABLE_EXCEL_EXPORT")
+				exportEditableBtn = btn;
 			if(btn.name == "BUTTON_EXPORT_OUTPUT")
 				exportBtn = btn;
 			if(btn.name == "BUTTON_DRILL_THROUGH")
@@ -217,7 +225,11 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			case "BUTTON_EDITABLE_EXCEL_EXPORT":
 				$scope.exportDynamic();
 				//sendModelConfig = false;
-				break;	
+				break;
+			case "BUTTON_SAVE_NEW":
+				$scope.showDialog(null,$scope.saveAsNew);
+				sendModelConfig = false;
+				break;
 				
 			default:
 				console.log("something else clicked");
@@ -435,5 +447,16 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  console.log($scope.subObject);
 		  $scope.subObject.saveSubObject();
 		  $scope.closeDialog();
+	  }
+	  
+	  $scope.saveAsFunction = function(){
+		  console.log($scope.saveAsDescription +"<-description   name-> "+$scope.saveAsName);
+	  }
+	  
+	  $scope.isSaveAsDisabled = function(){
+		  if($scope.saveAsName.length < 0)
+			  return true;
+		  else
+			  return false;
 	  }
 };
