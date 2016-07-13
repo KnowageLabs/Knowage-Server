@@ -598,6 +598,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.hideRightSidePanel = function() {
+		
 		$scope.selectedDocument = null;
 		$scope.selectDocument(undefined);
 		
@@ -609,6 +610,10 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		
 		$scope.showModelInfo = null;
 		$scope.selectModel(undefined);
+		
+		$scope.showCkanInfo = null;
+		$scope.selectCkan(undefined);
+		
 	}
 	
 	/**
