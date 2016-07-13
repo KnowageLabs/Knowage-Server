@@ -589,7 +589,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		config.useCockpitEngine = this.useCockpitEngine;
 		config.useWSEngine = this.useWSEngine;
 		config.useQbeEngine = this.useQbeEngine;
-		config.useGeoEngine = this.useGeoEngine;
+		config.useGeoEngine = false;
 		config.isNew = true;
 	
 		this.wizardWin =  Ext.create('Sbi.adhocreporting.MyAnalysisWizard',config);	
