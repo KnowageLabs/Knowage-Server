@@ -80,7 +80,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	$scope.prevUploadedFile = null;
 	
 	$scope.datasetSavedFromQbe = false;
-	
+		
     $scope.markNotDerived=function(datasets){
     	
     	for(i=0;i<datasets.length;i++){
@@ -317,12 +317,20 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     }
     
     $scope.previewDataset= function(dataset){
-    	console.log(dataset);
-    	$scope.datasetInPreview=dataset;
+    	
+    	console.log("DATASET FOR PREVIEW: ",dataset);
+    	
+    	$scope.datasetInPreview=dataset;    	
     	$scope.disableBack=true;
-    	if(dataset.meta.dataset.length>0){
-    	$scope.totalItemsInPreview=dataset.meta.dataset[0].pvalue;
-    	$scope.previewPaginationEnabled=true;
+    	
+    	/**
+    	 * The paginated dataset preview should contain the 'resultNumber' inside the 'dataset' property. If not, disable the
+    	 * pagination in the toolbar of the preview dataset dialog.
+    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	 */
+    	if(dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber"){
+    		$scope.totalItemsInPreview=dataset.meta.dataset[0].pvalue;
+    		$scope.previewPaginationEnabled=true;
     	}else{
     		$scope.previewPaginationEnabled=false;
     	}
@@ -356,9 +364,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	
     }
     
-    $scope.getPreviewSet= function(dataset){
+    $scope.getPreviewSet= function(dataset){    	
     	
-
     	params={};
     	params.start=$scope.startPreviewIndex;
     	params.limit=$scope.itemsPerPage;
@@ -590,7 +597,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			sbiModule_restServices.errorHandler(response.data,"error");
 		});
 		
-		}
+		
+	}
 	}
 	
 	$scope.showCkanDetails = function() {
