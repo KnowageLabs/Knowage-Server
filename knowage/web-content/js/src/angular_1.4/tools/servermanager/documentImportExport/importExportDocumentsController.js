@@ -111,7 +111,8 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			exportSubObj : false,
 			exportSnapshots : false,
 			exportCrossNav : false,
-			exportBirt : false
+			exportBirt : false,
+			exportScheduler : false
 	};
 
 	$scope.restServices.get("2.0", "folders","includeDocs=true")
@@ -134,7 +135,8 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 				"EXPORT_SUB_OBJ":$scope.checkboxs.exportSubObj,
 				"EXPORT_SNAPSHOT":$scope.checkboxs.exportSnapshots,
 				"EXPORT_CROSSNAV":$scope.checkboxs.exportCrossNav,
-				"EXPORT_BIRT": $scope.checkboxs.exportBirt};
+				"EXPORT_BIRT": $scope.checkboxs.exportBirt, 
+				"EXPORT_SCHEDULER": $scope.exportScheduler};
 		
 		for (var i =0 ; i < $scope.selected.length;i++){
 			if ($scope.selected[i].type == "biObject"){

@@ -110,6 +110,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									ng-model="checkboxs.exportCrossNav" aria-label="Export cross">Export Cross Navigation</md-checkbox>
 								<md-checkbox class="little-check"
 									ng-model="checkboxs.exportBirt" aria-label="Export BIRT">Export BIRT translations</md-checkbox>
+								<!-- <md-checkbox class="little-check"
+									ng-model="checkboxs.exportScheduler" aria-label="Export sched">Export Scheduler</md-checkbox>
+						 -->
 							</div>
 							<div layout-padding>
 								<!--
