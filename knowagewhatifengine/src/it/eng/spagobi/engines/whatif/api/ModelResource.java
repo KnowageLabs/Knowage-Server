@@ -474,7 +474,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	}
 
 	@GET
-	@Path("/exceltest")
+	@Path("/exceledit")
 	public void excelFillExample(@Context ServletContext context) throws IOException, Exception {
 
 		File result = exportExcelForMerging();
@@ -582,7 +582,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		return file;
 	}
 
-	private XSSFWorkbook writeParamsToExcel(ServletContext context, XSSFWorkbook workbook) {
+	private XSSFWorkbook writeParamsToExcel(ServletContext context, XSSFWorkbook workbook) throws OlapException {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
@@ -627,6 +627,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		XSSFCell axisRowsCell = axisRow.createCell(0);
 		XSSFCell axisColumnsCell = axisRow.createCell(1);
 		XSSFCell editCubeCell = editCube.createCell(0);
+
 		int keyIndex = 0;
 		Map<String, AllocationAlgorithmDefinition> allocationAlgorithms = AllocationAlgorithmSingleton.getInstance().getAllocationAlgorithms();
 		Iterator ita = allocationAlgorithms.entrySet().iterator();
@@ -645,7 +646,21 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		mdxCell.setCellValue(mdx);
 		axisRowsCell.setCellValue(axisRows);
 		axisColumnsCell.setCellValue(axisColumns);
-		editCubeCell.setCellValue(ei.getEditCubeName());
+		try {
+			editCubeCell.setCellValue(ei.getEditCubeName());
+		} catch (NullPointerException e) {
+			editCubeCell.setCellValue("");
+		}
+
+		XSSFSheet cellsToChange = workbook.getSheetAt(2);
+		XSSFRow ccrow = cellsToChange.createRow(0);
+		XSSFCell ordinalCell = ccrow.createCell(0);
+		XSSFCell ordinalCellValue = ccrow.createCell(1);
+		XSSFCell defaultAlgorithm = ccrow.createCell(2);
+		ordinalCell.setCellValue(0);
+		ordinalCellValue.setCellValue(model.getCellSet().getCell(0).getDoubleValue());
+		defaultAlgorithm.setCellValue("Proportional");
+
 		return workbook;
 	}
 

@@ -114,6 +114,23 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 				});
 	}
 
+	$scope.exportDynamic = function() {
+		
+		var encoded = encodeURI("1.0/model/exceledit?SBI_EXECUTION_ID="
+				+ JSsbiExecutionID);
+		sbiModule_restServices.promiseGet(encoded, "").then(
+				function(response) {
+					$scope.handleResponse(response);
+				},
+				function(response) {
+					sbiModule_messaging.showErrorMessage(
+							"An error occured during download of excel",
+							'Error');
+
+				});
+	}
+	
+	
 	$scope.getCollections = function() {
 
 		var toSend = {};

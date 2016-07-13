@@ -213,7 +213,12 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				$scope.enableDisableSorting();
 				changeIcon(name);
 				sendModelConfig = false;
+				break;
+			case "BUTTON_EDITABLE_EXCEL_EXPORT":
+				$scope.exportDynamic();
+				//sendModelConfig = false;
 				break;	
+				
 			default:
 				console.log("something else clicked");
 		}
