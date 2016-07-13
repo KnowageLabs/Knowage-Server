@@ -80,7 +80,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	$scope.prevUploadedFile = null;
 	
 	$scope.datasetSavedFromQbe = false;
-		
+	
     $scope.markNotDerived=function(datasets){
     	
     	for(i=0;i<datasets.length;i++){
@@ -356,8 +356,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	
     }
     
-    $scope.getPreviewSet= function(dataset){    	
+    $scope.getPreviewSet= function(dataset){
     	
+
     	params={};
     	params.start=$scope.startPreviewIndex;
     	params.limit=$scope.itemsPerPage;
@@ -565,6 +566,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.ckanDatasetsListInitial=[];
 	$scope.loadCkanDatasets=function(){
 		var repo=$scope.selectedCkanRepo;
+		
+		if(repo.url==undefined){
+			sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.workspace.dataset.ckan.selectRepo'),sbiModule_translate.load('sbi.workspace.dataset.ckan.noRepository'));
+		}else{
 		params={};
 		params.isTech=false;
 		params.showDerivedDataset=false;
@@ -585,7 +590,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			sbiModule_restServices.errorHandler(response.data,"error");
 		});
 		
-		
+		}
 	}
 	
 	$scope.showCkanDetails = function() {
