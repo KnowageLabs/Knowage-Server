@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.service;
 
+import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -1567,6 +1568,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			dataSet.setDataSourceForReading(cache.getDataSource());
 			dataSet.setDataSourceForWriting(cache.getDataSource());
 			jsonDsConfig = new JSONObject(dataSet.getConfiguration());
+			
+			//update the json query getting the one passed from the qbe editor
+			String jsonQuery = getAttributeAsString(DataSetConstants.QBE_JSON_QUERY);
+			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
+			((FederatedDataSet)(((VersionedDataSet)dataSet).getWrappedDataset())).setJsonQuery(jsonQuery);
 
 		}
 

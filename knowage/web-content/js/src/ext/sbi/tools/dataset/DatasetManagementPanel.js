@@ -1559,7 +1559,7 @@ Ext
 							name : 'federatedJSONQuery',
 							valueField : 'federatedJSONQuery',
 							width : 350,
-							fieldLabel : 'Qbe Query as',
+							fieldLabel : 'Qbe Query',
 							triggerClass : 'x-form-search-trigger',
 							editable : false
 						});
@@ -4082,6 +4082,8 @@ Ext
 						this.qbeJSONQuery.setValue(Ext.util.JSON
 								.encode(jsonQuery));
 						var sqlQuery = qbeQuery.data.sqlQuery.sql;
+						this.federatedJSONQuery.setValue(Ext.util.JSON
+								.encode(jsonQuery));
 						this.qbeSQLQuery.setValue(sqlQuery);
 						var parameters = qbeQuery.data.parameters;
 						this.manageParsGrid.loadItems([]);
