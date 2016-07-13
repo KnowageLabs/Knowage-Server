@@ -319,6 +319,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.previewDataset= function(dataset){
     	console.log(dataset);
     	$scope.datasetInPreview=dataset;
+    	$scope.disableBack=true;
     	if(dataset.meta.dataset.length>0){
     	$scope.totalItemsInPreview=dataset.meta.dataset[0].pvalue;
     	$scope.previewPaginationEnabled=true;
@@ -329,8 +330,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
         
     	if($scope.totalItemsInPreview < $scope.itemsPerPage){
     		 $scope.endPreviewIndex= $scope.totalItemsInPreview	
+    		 $scope.disableNext=true;
     	}else{
     		 $scope.endPreviewIndex = $scope.itemsPerPage;
+    		 $scope.disableNext=false;
     	}
     	
     	
@@ -458,10 +461,20 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	 if($scope.startPreviewIndex-$scope.itemsPerPage < 0){
     		 $scope.startPreviewIndex=0; 
     		 $scope.endPreviewIndex=$scope.itemsPerPage;
+    		 $scope.disableBack=true;
+    		 $scope.disableNext=false;
     	 }else{
     		 $scope.endPreviewIndex=$scope.startPreviewIndex;
              $scope.startPreviewIndex= $scope.startPreviewIndex-$scope.itemsPerPage;
-         
+             if($scope.startPreviewIndex-$scope.itemsPerPage < 0){
+            	 $scope.startPreviewIndex=0; 
+        		 $scope.endPreviewIndex=$scope.itemsPerPage;
+        		 $scope.disableBack=true;
+        		 $scope.disableNext=false;
+             }else{
+             $scope.disableBack=false;
+             $scope.disableNext=false;
+             }
     	 }
     
     	 $scope.getPreviewSet($scope.datasetInPreview);
@@ -471,14 +484,35 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     
     $scope.getNextPreviewSet= function(){
     	 if($scope.startPreviewIndex+$scope.itemsPerPage > $scope.totalItemsInPreview){
-    		 $scope.startPreviewIndex=$scope.totalItemsInPreview-($scope.totalItemsInPreview%$scope.itemsPerPage);
+  
+    		 $scope.startPreviewIndex=$scope.totalItemsInPreview-($scope.totalItemsInPreview%$scope.itemsPerPage);  		
     		 $scope.endPreviewIndex=$scope.totalItemsInPreview;
+    		 $scope.disableNext=true;
+    		 $scope.disableBack=false;
     	 }else if($scope.startPreviewIndex+$scope.itemsPerPage == $scope.totalItemsInPreview){
     		 $scope.startPreviewIndex=$scope.totalItemsInPreview-$scope.itemsPerPage;
     		 $scope.endPreviewIndex=$scope.totalItemsInPreview;
+    		 $scope.disableNext=true;
+    		 $scope.disableBack=false;
     	 } else{
               $scope.startPreviewIndex= $scope.startPreviewIndex+$scope.itemsPerPage;
               $scope.endPreviewIndex=$scope.endPreviewIndex+$scope.itemsPerPage;
+              
+              if($scope.endPreviewIndex >= $scope.totalItemsInPreview){
+            	  if($scope.endPreviewIndex == $scope.totalItemsInPreview){
+            		  $scope.startPreviewIndex=$scope.totalItemsInPreview-$scope.itemsPerPage;
+            	  }else{
+            	  $scope.startPreviewIndex=$scope.totalItemsInPreview-($scope.totalItemsInPreview%$scope.itemsPerPage);
+            	  }
+         		 $scope.endPreviewIndex=$scope.totalItemsInPreview;
+         		 $scope.disableNext=true;
+         		 $scope.disableBack=false;
+         	 }else{
+              
+              
+              $scope.disableNext=false;
+              $scope.disableBack=false;
+         	 }
     	 }   
     	 
     	 

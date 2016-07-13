@@ -13,13 +13,13 @@
    
    <md-toolbar class="documentBrowserToolbar secondaryToolbar" ng-show="previewPaginationEnabled" >
 			<div class="md-toolbar-tools" layout="row" layout-align="center center">
-			   <md-button class="md-fab md-mini" aria-label="backPagination" ng-click="getBackPreviewSet()">
+			   <md-button class="md-fab md-mini" aria-label="backPagination" ng-disabled="disableBack" ng-click="getBackPreviewSet()">
          <md-icon class="fa fa-angle-double-left"></md-icon>
        </md-button>
        <span flex></span>
        <div>{{startPreviewIndex+1 +'&nbsp-&nbsp'+ endPreviewIndex + '&nbsp/&nbsp'+totalItemsInPreview}} </div>
        <span flex></span>
-            <md-button class="md-fab md-mini" aria-label="forwardPagination" ng-click="getNextPreviewSet()">
+            <md-button class="md-fab md-mini" aria-label="forwardPagination" ng-disabled="disableNext" ng-click="getNextPreviewSet()">
          <md-icon class="fa fa-angle-double-right"></md-icon>
        </md-button>
    </div>
