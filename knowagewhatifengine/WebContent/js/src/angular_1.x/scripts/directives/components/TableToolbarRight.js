@@ -30,7 +30,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	
 	var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
 	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon"];
-	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT","BUTTON_SORTING_SETTINGS","BUTTON_CC","BUTTON_SORTING"]
+	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT","BUTTON_SORTING_SETTINGS","BUTTON_CC","BUTTON_SORTING","BUTTON_EDITABLE_EXCEL_EXPORT"]
 	$scope.clickedButtons = [];
 	$scope.outputWizardDescription = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.description');
 	$scope.outputWizardTitle = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.title');

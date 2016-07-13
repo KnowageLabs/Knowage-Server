@@ -55,7 +55,9 @@
 .BUTTON_HIDE_EMPTY_CLICKED{
 	background-image: url(../img/empty_rows_clicked.png);
 }
-
+.BUTTON_EDITABLE_EXCEL_EXPORT{
+		background-image: url(../img/editable_excel.png);
+}
 .knowage-blue {
 	background-color: #3b678c !important;
     min-height: 0px !important;
