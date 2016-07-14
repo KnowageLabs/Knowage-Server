@@ -224,7 +224,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				break;
 			case "BUTTON_EDITABLE_EXCEL_EXPORT":
 				$scope.exportDynamic();
-				//sendModelConfig = false;
+				sendModelConfig = false;
 				break;
 			case "BUTTON_SAVE_NEW":
 				$scope.showDialog(null,$scope.saveAsNew);
