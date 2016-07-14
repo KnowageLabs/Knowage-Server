@@ -22,21 +22,16 @@ function funzione(sbiModule_translate,$filter, sbiModule_restServices, $q, $scop
 	s.type=type;
 
 	s.loadWord=function(item,story){
-		sbiModule_restServices.get("1.0/glossary", "getWord", item)
-		.success(function(data, status, headers, config) {
-			if (data.hasOwnProperty("errors")) {
-				console.error(sbiModule_translate.load("sbi.glossary.load.error"));
-			} else if (data.Status == "NON OK") {
-				console.error(sbiModule_translate.load(data.Message));
-				s.selectedWord={noDataFound:sbiModule_translate.load(data.Message)}
-			}else {
+		sbiModule_restServices.promiseGet("1.0/glossary", "getWord", item)
+		.then(function(response, status, headers, config) {
+			 
 				if(story==undefined){
 					s.breadControl.resetBreadCrumb();
 				}
-				s.breadControl.insertBread(data);
-			}
-		}).error(function(data, status, headers, config) {
-			console.error("dati n on ottenuti "+data);
+				s.breadControl.insertBread(response.data);
+			 
+		},function(response, status, headers, config) {
+			sbiModule_restServices.errorHandler(response.data,"")
 		});
 	}
 
@@ -132,7 +127,7 @@ function funzione(sbiModule_translate,$filter, sbiModule_restServices, $q, $scop
 		console.log("loadDatasetInfo");
 		if(value=="null"){
 			//alter the context path because this services is called also from a services with context path = knowagecockpit...
-			sbiModule_restServices.alterContextPath('knowage');
+			sbiModule_restServices.alterContextPath('/knowage');
 			s.loadDataset("DATASET_LABEL="+label);
 		}else{
 			s.loadDataset("DATASET_ID="+value);
@@ -142,7 +137,7 @@ function funzione(sbiModule_translate,$filter, sbiModule_restServices, $q, $scop
 		ite += "&DATAMART=" + parameter1 ;
 		s.loadDatamart(ite);
 	}else if(type=='WORD'){
-		sbiModule_restServices.alterContextPath('knowage');
+		sbiModule_restServices.alterContextPath('/knowage');
 		s.loadWord("WORD_NAME="+label);
 	}
 	s.showInfoWORD=function(item,story){

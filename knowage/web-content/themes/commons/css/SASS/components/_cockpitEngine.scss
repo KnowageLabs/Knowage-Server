@@ -1,0 +1,202 @@
+.kn-cockpit {
+    .md-button.md-fab {
+        z-index: 1000;
+    }
+    /*.gridster {
+        background-color: transparent;
+        background-image: linear-gradient(0deg, transparent 24%, rgba(0, 0, 0, 0.05) 25%, rgba(0, 0, 0, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 0, 0, 0.05) 75%, rgba(0, 0, 0, 0.05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(0, 0, 0, 0.05) 25%, rgba(0, 0, 0, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 0, 0, 0.05) 75%, rgba(0, 0, 0, 0.05) 76%, transparent 77%, transparent);
+        height: 100%;
+        background-size: 26px 26px;
+    }*/
+    .toolbarFab {
+        position:absolute;
+        top: 0;
+        right: 10px;
+        md-icon {
+            vertical-align: baseline;
+        }
+    }
+
+    md-toolbar {
+        &.miniToolbar {
+            background-color: $baseColor;
+            height: 36px;
+            min-height: 36px;
+            line-height: 36px;
+
+            .md-toolbar-tools {
+                height: 36px;
+            }
+        }
+    }
+
+    .custom-chips {
+        display: block;
+        font-size: 12px;
+        padding: 0 0 8px 3px;
+        vertical-align: middle;
+        md-chip{
+            cursor: default;
+            border-radius: 16px;
+            display: block;
+            height: 32px;
+            line-height: 32px;
+            margin: 8px 8px 0 0;
+            padding: 0 12px;
+            float: left;
+            box-sizing: border-box;
+            max-width: 100%;
+            position: relative;
+            background: rgb(224,224,224);
+            color: rgb(66,66,66);
+        }
+    }
+
+    .md-button.md-knowage-theme.md-fab:not([disabled]):hover {
+        background-color: darken($baseColor, 15%);
+    }
+
+    md-fab-toolbar {
+        position: absolute;
+        right: 0;
+        width: 100%;
+
+        .md-fab-toolbar-wrapper {
+            height: 48px;
+        }
+
+        md-toolbar {
+            .md-toolbar-tools {
+                span {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    /* OPENED TOOLBAR */
+    md-fab-toolbar.md-is-open {
+        background-color: $baseColor !important;
+
+        .md-button.md-knowage-theme.md-fab {
+            background-color: $baseColor !important;
+        }
+
+        position: relative;
+
+        .md-fab-toolbar-wrapper {
+            height: 40px;
+            background-color: $baseColor;
+        }
+
+        md-toolbar {
+            height: 40px;
+            background-color: $baseColor;
+            min-height: 40px;
+
+            .md-toolbar-tools {
+                height: 40px;
+
+                span {
+                    display: inline-flex;
+                }
+            }
+        }
+    }
+
+    .fadeOut {
+        transition: 0.3s linear all;
+        opacity: 0;
+    }
+
+    .fadeIn {
+        transition: 0.9s linear all;
+        opacity: 1;
+    }
+
+    .gridster-item md-card-title md-toolbar {
+        min-height: 32px;
+    }
+
+    .gridster-item md-card-title md-toolbar .md-toolbar-tools {
+        height: 32px;
+    }
+
+    .gridster-item md-card-title md-toolbar .md-toolbar-tools button,
+    md-toolbar.miniToolbar .md-toolbar-tools button {
+        height: 42px;
+        width: 42px;
+    }
+
+    /*body.gridBackground {
+        background-image: linear-gradient(0deg, transparent 24%, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 1) 26%, transparent 27%, transparent 74%, rgba(0, 0, 0, 1) 75%, rgba(0, 0, 0, 1) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 1) 26%, transparent 27%, transparent 74%, rgba(0, 0, 0, 1) 75%, rgba(0, 0, 0, 1) 76%, transparent 77%, transparent);
+        background-size: 15px 15px;
+        background-position: 4px 14px;
+    }*/
+
+    .dragCursor {
+        cursor: move;
+    }
+
+    @-moz-document url-prefix() {
+        md-card-title {
+            width: 100%;
+        }
+    }
+
+    /* CUSTOM CARDS */
+    md-card.md-knowage-theme.placedWidget {
+        box-shadow: none;
+        border-radius: 0;
+        border: 1px dashed #ccc;
+
+        md-toolbar.md-knowage-theme {
+            background-color: transparent;
+            color: $baseColor;
+
+            .md-toolbar-tools {
+                padding: 0 8px;
+
+                span {
+                    font-weight: 200;
+                    font-size: 14px;
+                }
+                md-icon {
+                    color: $baseColor;
+                }
+            }
+        }
+        &.shadowedBox {
+            box-shadow: 0px 2px 2px #ccc;
+        }
+        &.noTitle {
+            md-card-title {
+                display: none;
+            }
+        }
+    }
+
+    /* WIDGET CARDS */
+    .searchWidget {
+        border: 0;
+        border-bottom: 3px solid white;
+        background-color: transparent;
+        color: white;
+        font-family: "Roboto";
+        height: 40px;
+    }
+    md-card.md-knowage-theme.widget {
+        md-card-title {
+            margin: 16px;
+        }
+        md-card-content {
+            background-size: contain;
+            min-height: 150px;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+        max-height: 300px;
+        height: 300px;
+    }
+
+}
