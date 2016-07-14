@@ -309,6 +309,8 @@
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpKpis" roleType="ADMIN" />
 	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpMetadata" roleType="ADMIN" />
+	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpCatalog" roleType="ADMIN" />
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImpExpGlossary" roleType="ADMIN" />

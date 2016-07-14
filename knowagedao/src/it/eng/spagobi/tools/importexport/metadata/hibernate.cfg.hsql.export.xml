@@ -77,6 +77,11 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiThreshold.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiScorecard.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiPlaceholder.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaJob.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaSource.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaTable.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaJobSource.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaJobTable.hbm.xml" />
         
         <!-- old kpi 
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiResources.hbm.xml" />\

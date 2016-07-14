@@ -60,6 +60,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpMenu" description="ImpExpMenu"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpUsers" description="ImpExpUsers"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpKpis" description="ImpExpKpis"/>	
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpMetadata" description="ImpExpMetadata"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpGlossary" description="ImpExpGlossary"/>
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpScheduler" description="ImpExpScheduler"/>
 	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
@@ -127,6 +128,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpResources" description="ImpExpResources"/>	
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpUsers" description="ImpExpUsers"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpKpis" description="ImpExpKpis"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpMetadata" description="ImpExpMetadata"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpGlossary" description="ImpExpGlossary"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpScheduler" description="ImpExpScheduler"/>	
@@ -194,6 +196,7 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpResources" description="ImpExpResources"/>	
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpUsers" description="ImpExpUsers"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpKpis" description="ImpExpKpis"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpMetadata" description="ImpExpMetadata"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpGlossary" description="ImpExpGlossary"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpScheduler" description="ImpExpScheduler"/>
@@ -293,6 +296,7 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpDocument" description="ImpExpDocument" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpGlossary" description="ImpExpGlossary" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpKpis" description="ImpExpKpis" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpMetadata" description="ImpExpMetadata" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpMenu" description="ImpExpMenu" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpResources" description="ImpExpResources" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpScheduler" description="ImpExpScheduler" />
@@ -357,6 +361,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpDocument" description="ImpExpDocument" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpGlossary" description="ImpExpGlossary" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpKpis" description="ImpExpKpis" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpMetadata" description="ImpExpMetadata" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpMenu" description="ImpExpMenu" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpResources" description="ImpExpResources" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpScheduler" description="ImpExpScheduler" />
