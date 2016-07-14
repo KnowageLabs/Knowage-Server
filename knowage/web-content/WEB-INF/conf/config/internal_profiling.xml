@@ -87,6 +87,7 @@
 		<AUTHORIZATION productType="KnowageBD" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageBD" authorizationName="ENABLE_DATASET_PERSISTENCE" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageBD" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageBD" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>	
 		
 		<!-- Authorizations for KnowageSI -->
@@ -101,6 +102,7 @@
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageSI" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageSI" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
@@ -150,6 +152,7 @@
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_SUBSCRIPTIONS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageLI" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
 		
 		<!-- Authorizations for KnowagePA -->
 		<AUTHORIZATION productType="KnowagePA" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
