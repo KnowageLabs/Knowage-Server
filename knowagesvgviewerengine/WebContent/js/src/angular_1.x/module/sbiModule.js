@@ -16,7 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
+//var sbiM=angular.module('sbiModule',['toastr']);
 var sbiM=angular.module('sbiModule',[]);
+
+
 sbiM.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('indigo').accentPalette('blue-grey');
 });
@@ -44,6 +47,34 @@ sbiM.service('sbiModule_logger',function(){
 
 });
 
+sbiM.service('sbiModule_messaging',function(toastr){
+	this.showErrorMessage = function(msg,title){
+		
+		toastr.error(msg,title, {
+			  closeButton: true
+		});
+	};
+	this.showWarningMessage = function(msg,title){
+		
+		toastr.warning(msg,title, {
+			  closeButton: true
+		});
+	};
+	this.showInfoMessage = function(msg,title){
+		
+		toastr.info(msg,title, {
+			  closeButton: true
+		});
+	};
+	this.showSuccessMessage = function(msg,title){
+		
+		toastr.success(msg,title, {
+			  closeButton: true
+			});
+	};
+	
+});
+
 sbiM.service('sbiModule_translate', function() {
 	this.addMessageFile = function(file){
 		messageResource.load([file,"messages"], function(){});
@@ -55,7 +86,7 @@ sbiM.service('sbiModule_translate', function() {
 	};
 });
 
-sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModule_logger,$mdDialog) {
+sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiModule_logger,$mdDialog) {
 	var alteredContextPath=null;
 
 	this.alterContextPath=function(cpat){
@@ -118,5 +149,124 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 		return $mdDialog.show(alert); //can use the finally function
 	};
 	
+	/*
+	NEW METHODS
+	*/
+	var genericErrorHandling = function(data, status, headers, config, deferred) {
+  		deferred.reject(data, status, headers, config);
+	};
+	
+	var handleResponse = function(data, status, headers, config, deferred) {
+		if(data.data != null){
+			if ( data.data.hasOwnProperty("errors")) {
+				
+				genericErrorHandling(data, status, headers, config, deferred);
+			} else {
+				deferred.resolve(data, status, headers, config);
+			}	
+		}else{
+			if ( data.status == 201) {
+				deferred.resolve(data, status, headers, config);
+				
+			} else {
+				genericErrorHandling(data, status, headers, config, deferred);
+			}	
+			
+		}
+		
+	};
+	// SAMPLE METHOD, this will be the implementation
+	this.promiseGet = function(endP_path, req_Path, item, conf) {
+		var deferred = $q.defer();
+		
+		// Required for passing JSON on a GET request
+		if (item == undefined || item==null) {
+			item = "";
+		}else {
+			item = "?" + 
+				encodeURIComponent(item)
+				.replace(/'/g,"%27")
+				.replace(/"/g,"%22")
+				.replace(/%3D/g,"=")
+				.replace(/%26/g,"&");
+		}
+		
+		sbiModule_logger.trace("GET: " +endP_path+"/"+ req_Path + "" + item, conf);
+		
+		deferred.notify('About to call async function');
+
+		$http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item, conf)
+			.then(
+					function successCallback(data, status, headers, config) {
+						handleResponse(data, status, headers, config, deferred);
+				  	}, 
+				  	function errorCallback(data, status, headers, config) {
+				  		genericErrorHandling(data, status, headers, config, deferred);
+				  	}
+			);
+
+		return deferred.promise;
+	};
+	
+	this.promisePost = function(endP_path, req_Path, item, conf) {
+		var deferred = $q.defer();
+		
+		sbiModule_logger.trace("POST: " +endP_path+"/"+ req_Path + "" + item, conf);
+		
+		deferred.notify('About to call async function');
+
+		$http.post(getBaseUrl(endP_path) + "" + req_Path , item, conf)
+			.then(
+					function successCallback(data, status, headers, config) {
+						handleResponse(data, status, headers, config, deferred);
+				  	}, 
+				  	function errorCallback(data, status, headers, config) {
+				  		genericErrorHandling(data, status, headers, config, deferred);
+				  	}
+			);
+
+		return deferred.promise;
+	};
+	
+	this.promisePut = function(endP_path, req_Path, item, conf) {
+		var deferred = $q.defer();
+		
+		sbiModule_logger.trace("PUT: " +endP_path+"/"+ req_Path + "" + item, conf);
+		
+		deferred.notify('About to call async function');
+
+		$http.put(getBaseUrl(endP_path) + "" + req_Path , item, conf)
+			.then(
+					function successCallback(data, status, headers, config) {
+						handleResponse(data, status, headers, config, deferred);
+				  	}, 
+				  	function errorCallback(data, status, headers, config) {
+				  		genericErrorHandling(data, status, headers, config, deferred);
+				  	}
+			);
+
+		return deferred.promise;
+	};
+	
+	this.promiseDelete = function(endP_path, req_Path, item, conf) {
+		var deferred = $q.defer();
+		
+		sbiModule_logger.trace("DELETE: " +endP_path+"/"+ req_Path + "" + item, conf);
+		
+		deferred.notify('About to call async function');
+		(item == undefined || item==null) ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
+		
+		$http.delete(getBaseUrl(endP_path) + "" + req_Path+""+item, conf)
+			.then(
+					function successCallback(data, status, headers, config) {
+						handleResponse(data, status, headers, config, deferred);
+				  	}, 
+				  	function errorCallback(data, status, headers, config) {
+				  		genericErrorHandling(data, status, headers, config, deferred);
+				  	}
+			);
+
+		return deferred.promise;
+	};
 
 });

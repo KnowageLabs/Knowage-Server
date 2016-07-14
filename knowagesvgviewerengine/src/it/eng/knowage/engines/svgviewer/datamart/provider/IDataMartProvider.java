@@ -1,6 +1,7 @@
 package it.eng.knowage.engines.svgviewer.datamart.provider;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
 import it.eng.knowage.engines.svgviewer.component.ISvgViewerEngineComponent;
 import it.eng.knowage.engines.svgviewer.dataset.DataMart;
 import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
@@ -21,10 +22,10 @@ public interface IDataMartProvider extends ISvgViewerEngineComponent {
 	 *
 	 * @return the data set
 	 *
-	 * @throws GeoEngineException
-	 *             the geo engine exception
+	 * @throws SvgViewerEngineRuntimeException
+	 *             the svgviewer engine exception
 	 */
-	DataMart getDataMart() throws SvgViewerEngineException;
+	DataMart getDataMart() throws SvgViewerEngineRuntimeException;
 
 	/**
 	 * Gets the data details.

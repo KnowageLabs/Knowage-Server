@@ -76,12 +76,22 @@
 			        </md-button>
 			         <md-content layout-fill layout="column">
 			            
-			            <div id="container" layout-fill>
+			            <div id="container" layout-fill>			            
 							<iframe id="svgContainer" 
-								src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'
+							    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'  
 								width="100%" height="100%" frameborder="0"
 								style="background-color: white;"> 
-							</iframe>
+							</iframe>  
+							<!--<iframe id="svgContainer" 
+							    srcdoc="{{svgContent}}"
+								width="100%" height="100%" frameborder="0"
+								style="background-color: white;"> 
+							</iframe>-->
+							 <!-- <iframe ng-if="!svgContent.errors" id="svgContainer"   ng-cloak
+							    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'  
+								width="100%" height="100%" frameborder="0"
+								style="background-color: white;"> 
+							</iframe>   -->
 						</div>
 			          </md-content>
 			    </div>

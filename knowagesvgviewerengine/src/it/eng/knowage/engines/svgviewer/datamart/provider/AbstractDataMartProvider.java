@@ -1,6 +1,7 @@
 package it.eng.knowage.engines.svgviewer.datamart.provider;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
 import it.eng.knowage.engines.svgviewer.component.AbstractSvgViewerEngineComponent;
 import it.eng.knowage.engines.svgviewer.datamart.provider.configurator.AbstractDataMartProviderConfigurator;
 import it.eng.knowage.engines.svgviewer.dataset.DataMart;
@@ -60,7 +61,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getDataSet()
 	 */
 	@Override
-	public DataMart getDataMart() throws SvgViewerEngineException {
+	public DataMart getDataMart() throws SvgViewerEngineRuntimeException {
 		return null;
 	}
 

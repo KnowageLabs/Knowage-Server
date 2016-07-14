@@ -1,6 +1,7 @@
 package it.eng.knowage.engines.svgviewer.map.provider;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
 import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.knowage.engines.svgviewer.map.provider.configurator.SOMapProviderConfigurator;
 import it.eng.knowage.engines.svgviewer.map.utils.SVGMapLoader;
@@ -59,7 +60,7 @@ public class SOMapProvider extends AbstractMapProvider {
 	 * @see it.eng.spagobi.engines.geo.map.provider.AbstractMapProvider#getSVGMapDOMDocument(java.lang.String)
 	 */
 	@Override
-	public SVGDocument getSVGMapDOMDocument(String mapName) throws SvgViewerEngineException {
+	public SVGDocument getSVGMapDOMDocument(String mapName) throws SvgViewerEngineRuntimeException {
 		logger.debug("IN.mapName=" + mapName);
 		SVGDocument svgDocument = null;
 		Content map = null;
@@ -68,7 +69,7 @@ public class SOMapProvider extends AbstractMapProvider {
 			map = mapCatalogueServiceProxy.readMap(mapName);
 		} catch (Exception e) {
 			logger.error("An error occurred while invoking mapCatalogueService method: readMap()");
-			throw new SvgViewerEngineException("Impossible to load map from map catalogue", e);
+			throw new SvgViewerEngineRuntimeException("Impossible to load map from map catalogue", e);
 		}
 
 		try {
@@ -76,7 +77,7 @@ public class SOMapProvider extends AbstractMapProvider {
 			svgDocument = svgMapLoader.loadMapAsDocument(map);
 		} catch (IOException e) {
 			logger.error("Impossible to load map from map catalogue");
-			throw new SvgViewerEngineException("Impossible to load map from map catalogue", e);
+			throw new SvgViewerEngineRuntimeException("Impossible to load map from map catalogue", e);
 		}
 
 		logger.debug("OUT");
@@ -90,7 +91,7 @@ public class SOMapProvider extends AbstractMapProvider {
 	 * @see it.eng.spagobi.engines.geo.map.provider.AbstractMapProvider#getSVGMapDOMDocument(java.lang.String)
 	 */
 	@Override
-	public SVGDocument getSVGMapDOMDocument(HierarchyMember member) throws SvgViewerEngineException {
+	public SVGDocument getSVGMapDOMDocument(HierarchyMember member) throws SvgViewerEngineRuntimeException {
 		logger.debug("IN.memberName=" + member.getName());
 		SVGDocument svgDocument = null;
 		Content map = null;
@@ -120,7 +121,7 @@ public class SOMapProvider extends AbstractMapProvider {
 
 		} catch (Exception e) {
 			logger.error("An error occurred while invoking mapCatalogueService method: readMap()");
-			throw new SvgViewerEngineException("Impossible to load map from map catalogue", e);
+			throw new SvgViewerEngineRuntimeException("Impossible to load map from map catalogue", e);
 		}
 
 		try {
@@ -128,7 +129,7 @@ public class SOMapProvider extends AbstractMapProvider {
 			svgDocument = svgMapLoader.loadMapAsDocument(map);
 		} catch (IOException e) {
 			logger.error("Impossible to load map from map catalogue");
-			throw new SvgViewerEngineException("Impossible to load map from map catalogue", e);
+			throw new SvgViewerEngineRuntimeException("Impossible to load map from map catalogue", e);
 		}
 
 		logger.debug("OUT");

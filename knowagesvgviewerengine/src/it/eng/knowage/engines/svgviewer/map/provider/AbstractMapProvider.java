@@ -1,6 +1,7 @@
 package it.eng.knowage.engines.svgviewer.map.provider;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
 import it.eng.knowage.engines.svgviewer.component.AbstractSvgViewerEngineComponent;
 import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.knowage.engines.svgviewer.map.provider.configurator.AbstractMapProviderConfigurator;
@@ -37,7 +38,7 @@ public class AbstractMapProvider extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.AbstractGeoEngineComponent#init(java.lang.Object)
 	 */
 	@Override
@@ -48,7 +49,7 @@ public class AbstractMapProvider extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.map.provider.IMapProvider#getSVGMapStreamReader()
 	 */
 	@Override
@@ -58,7 +59,7 @@ public class AbstractMapProvider extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.map.provider.IMapProvider#getSVGMapStreamReader(java.lang.String)
 	 */
 	@Override
@@ -68,32 +69,32 @@ public class AbstractMapProvider extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.map.provider.IMapProvider#getSVGMapDOMDocument()
 	 */
 	@Override
-	public SVGDocument getSVGMapDOMDocument() throws SvgViewerEngineException {
+	public SVGDocument getSVGMapDOMDocument() throws SvgViewerEngineRuntimeException {
 		return getSVGMapDOMDocument(selectedMapName);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.map.provider.IMapProvider#getSVGMapDOMDocument(java.lang.String)
 	 */
 	@Override
-	public SVGDocument getSVGMapDOMDocument(String mapName) throws SvgViewerEngineException {
+	public SVGDocument getSVGMapDOMDocument(String mapName) throws SvgViewerEngineRuntimeException {
 		return null;
 	}
 
 	@Override
-	public SVGDocument getSVGMapDOMDocument(HierarchyMember member) throws SvgViewerEngineException {
+	public SVGDocument getSVGMapDOMDocument(HierarchyMember member) throws SvgViewerEngineRuntimeException {
 		return getSVGMapDOMDocument(member);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.map.provider.IMapProvider#getSelectedMapName()
 	 */
 	@Override
@@ -103,7 +104,7 @@ public class AbstractMapProvider extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.map.provider.IMapProvider#setSelectedMapName(java.lang.String)
 	 */
 	@Override
@@ -113,7 +114,7 @@ public class AbstractMapProvider extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.map.provider.IMapProvider#getMapNamesByFeature(java.lang.String)
 	 */
 	@Override
@@ -123,7 +124,7 @@ public class AbstractMapProvider extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.map.provider.IMapProvider#getFeatureNamesInMap(java.lang.String)
 	 */
 	@Override
@@ -140,6 +141,7 @@ public class AbstractMapProvider extends AbstractSvgViewerEngineComponent implem
 	/**
 	 * @return the selectedHierarchyMember
 	 */
+	@Override
 	public HierarchyMember getSelectedHierarchyMember() {
 		return selectedHierarchyMember;
 	}

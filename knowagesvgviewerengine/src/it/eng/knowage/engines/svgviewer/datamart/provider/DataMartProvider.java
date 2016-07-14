@@ -1,6 +1,7 @@
 package it.eng.knowage.engines.svgviewer.datamart.provider;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
 import it.eng.knowage.engines.svgviewer.datamart.provider.configurator.DataMartProviderConfigurator;
 import it.eng.knowage.engines.svgviewer.dataset.DataMart;
 import it.eng.knowage.engines.svgviewer.dataset.DataSetMetaData;
@@ -54,20 +55,20 @@ public class DataMartProvider extends AbstractDataMartProvider {
 	}
 
 	@Override
-	public DataMart getDataMart() throws SvgViewerEngineException {
+	public DataMart getDataMart() throws SvgViewerEngineRuntimeException {
 
 		DataMart dataMart = null;
 		IDataSet dataSet;
 
 		dataSet = (IDataSet) getEnv().get(EngineConstants.ENV_DATASET);
 
-		if (dataSet == null) {
-			JDBCDataSet jdbcDataSet = new JDBCDataSet();
-			jdbcDataSet.setQuery(query);
-			jdbcDataSet.setDataSource(dataSource);
-			dataSet = jdbcDataSet;
-			dataSet.setParamsMap(getEnv());
-		}
+		// if (dataSet == null) {
+		// JDBCDataSet jdbcDataSet = new JDBCDataSet();
+		// jdbcDataSet.setQuery(query);
+		// jdbcDataSet.setDataSource(dataSource);
+		// dataSet = jdbcDataSet;
+		// dataSet.setParamsMap(getEnv());
+		// }
 
 		if (dataSet.hasBehaviour(QuerableBehaviour.class.getName())) {
 			QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
@@ -80,7 +81,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 				logger.warn("success!!");
 			} catch (Throwable e) {
 				logger.error("failure!!", e);
-				throw new SvgViewerEngineException("Impossible to load data from dataset", e);
+				throw new SvgViewerEngineRuntimeException("Impossible to load data from dataset", e);
 			}
 
 			IDataStore dataStore = dataSet.getDataStore();
@@ -188,7 +189,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 				dddLinkFieldTransformer.transform(dataStore);
 			} catch (Exception e) {
 				logger.error(e.getMessage());
-				throw new SvgViewerEngineException("Impossible to get DataMart");
+				throw new SvgViewerEngineRuntimeException("Impossible to get DataMart");
 			}
 		}
 
@@ -331,7 +332,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.AbstractDatasetProvider#getDataDetails(java.lang.String)
 	 */
 	@Override

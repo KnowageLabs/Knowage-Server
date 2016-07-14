@@ -1,6 +1,7 @@
 package it.eng.knowage.engines.svgviewer.map.renderer;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
 import it.eng.knowage.engines.svgviewer.component.ISvgViewerEngineComponent;
 import it.eng.knowage.engines.svgviewer.datamart.provider.IDataMartProvider;
 import it.eng.knowage.engines.svgviewer.map.provider.IMapProvider;
@@ -30,7 +31,7 @@ public interface IMapRenderer extends ISvgViewerEngineComponent {
 	 * @throws GeoEngineException
 	 *             the geo engine exception
 	 */
-	public File renderMap(IMapProvider mapProvider, IDataMartProvider datamartProvider, String outputFormat) throws SvgViewerEngineException;
+	public File renderMap(IMapProvider mapProvider, IDataMartProvider datamartProvider, String outputFormat) throws SvgViewerEngineRuntimeException;
 
 	/**
 	 * Render map.

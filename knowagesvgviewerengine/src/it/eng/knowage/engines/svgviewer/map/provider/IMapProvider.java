@@ -1,6 +1,7 @@
 package it.eng.knowage.engines.svgviewer.map.provider;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
 import it.eng.knowage.engines.svgviewer.component.ISvgViewerEngineComponent;
 import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 
@@ -47,7 +48,7 @@ public interface IMapProvider extends ISvgViewerEngineComponent {
 	 * @throws GeoEngineException
 	 *             the geo engine exception
 	 */
-	SVGDocument getSVGMapDOMDocument() throws SvgViewerEngineException;
+	SVGDocument getSVGMapDOMDocument() throws SvgViewerEngineRuntimeException;
 
 	/**
 	 * Gets the sVG map dom document.
@@ -73,7 +74,7 @@ public interface IMapProvider extends ISvgViewerEngineComponent {
 	 * @throws GeoEngineException
 	 *             the geo engine exception
 	 */
-	SVGDocument getSVGMapDOMDocument(HierarchyMember member) throws SvgViewerEngineException;
+	SVGDocument getSVGMapDOMDocument(HierarchyMember member) throws SvgViewerEngineRuntimeException;
 
 	/**
 	 * Gets the selected map name.

@@ -8,6 +8,7 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 app.controller('SvgViewerController', ['$scope','sbiModule_restServices','$mdSidenav','sbiModule_logger','$window','sbiModule_config','$rootScope',SvgViewerControllerFunction] );
 		
 function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,sbiModule_logger,$window,sbiModule_config,$rootScope)	{
+
   $scope.isSidenavOpen = false;
   $scope.showBackButton = false;
   //initialize for the first level
@@ -18,6 +19,23 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   
   //stack that contains the drill path elements
   $scope.drillPathStack = [];
+
+//  
+//  $scope.getSVGContent  = function (){
+//	  	 sbiModule_restServices.promiseGet("1.0/svgviewer/drawMap","")
+//				.then(function(response) {
+////					 document.getElementById('svgContainer').srcdoc = response.data;
+//					return response.data;
+//				}, function(response) {
+////					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
+//					alert(response.data.errors[0].message); //TODO sostiruire con il toast
+//					return response.data;
+//				});
+//  }
+//
+//  //get the SVG content 
+//  $scope.svgContent = $scope.getSVGContent();
+//  $scope.svgUrl= '/api/1.0/svgviewer/drawMap';
     
   $scope.openSideNav = function() {
     $mdSidenav('svgSideNav').toggle();

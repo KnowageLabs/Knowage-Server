@@ -23,6 +23,7 @@ import it.eng.knowage.engines.svgviewer.api.AbstractSvgViewerEngineResource;
 import it.eng.knowage.engines.svgviewer.datamart.provider.DataMartProvider;
 import it.eng.knowage.engines.svgviewer.datamart.provider.configurator.DataMartProviderConfigurator;
 import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
+import it.eng.knowage.engines.svgviewer.interceptor.RestExceptionMapper;
 import it.eng.knowage.engines.svgviewer.map.provider.SOMapProvider;
 import it.eng.knowage.engines.svgviewer.map.provider.configurator.SOMapProviderConfigurator;
 import it.eng.knowage.engines.svgviewer.map.renderer.InteractiveMapRenderer;
@@ -60,22 +61,26 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 
 	@Path("/drawMap")
 	@GET
-	@Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
+	@Produces({ MediaType.APPLICATION_SVG_XML, MediaType.APPLICATION_JSON })
+	// @Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
 	public Response drawMap(@QueryParam("level") String level) {
 		logger.debug("IN");
 		try {
-			// TODO: let the output format to be configurable with a parameter
 			DataMartProvider dataMartProvider = (DataMartProvider) getEngineInstance().getDataMartProvider();
 			dataMartProvider.setSelectedLevel(level);
 			File maptmpfile = getEngineInstance().renderMap("dsvg");
 			byte[] data = Files.readAllBytes(maptmpfile.toPath());
 
 			ResponseBuilder response = Response.ok(data);
+			response.header("Content-Type", SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8");
 			response.header("Content-Disposition", "inline; filename=map.svg");
 			return response.build();
 
 		} catch (Exception e) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+			// return a json with the exception
+			RestExceptionMapper re = new RestExceptionMapper();
+			Response response = re.toResponse((RuntimeException) e);
+			return response;
 		} finally {
 			logger.debug("OUT");
 		}
@@ -138,7 +143,8 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 
 	@Path("/drillMap")
 	@GET
-	@Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
+	// @Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
+	@Produces({ MediaType.APPLICATION_SVG_XML, MediaType.APPLICATION_JSON })
 	public Response drillMap(@QueryParam("level") String level, @QueryParam("member") String member, @QueryParam("parent") String parent) {
 		logger.debug("IN");
 		try {
@@ -189,11 +195,16 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			byte[] data = Files.readAllBytes(maptmpfile.toPath());
 
 			ResponseBuilder response = Response.ok(data);
+			response.header("Content-Type", SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8");
 			response.header("Content-Disposition", "inline; filename=map.svg");
 			return response.build();
 
 		} catch (Exception e) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+			// throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+			// return a json with the exception
+			RestExceptionMapper re = new RestExceptionMapper();
+			Response response = re.toResponse((RuntimeException) e);
+			return response;
 		} finally {
 			logger.debug("OUT");
 		}

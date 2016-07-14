@@ -229,7 +229,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 		return true;
 	}
 
-	public File renderMap(String format) throws SvgViewerEngineException {
+	public File renderMap(String format) throws SvgViewerEngineRuntimeException {
 		return getMapRenderer().renderMap(getMapProvider(), getDataMartProvider(), format);
 	}
 

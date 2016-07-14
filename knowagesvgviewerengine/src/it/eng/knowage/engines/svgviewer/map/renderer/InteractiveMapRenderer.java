@@ -80,7 +80,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	}
 
 	@Override
-	public File renderMap(IMapProvider mapProvider, IDataMartProvider datamartProvider, String outputFormat) throws SvgViewerEngineException {
+	public File renderMap(IMapProvider mapProvider, IDataMartProvider datamartProvider, String outputFormat) throws SvgViewerEngineRuntimeException {
 
 		Monitor totalTimeMonitor = null;
 		Monitor totalTimePerFormatMonitor = null;
@@ -124,7 +124,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @throws SvgViewerEngineException
 	 *             the geo engine exception
 	 */
-	private File renderDSVGMap(IMapProvider mapProvider, IDataMartProvider datamartProvider, boolean includeScript) throws SvgViewerEngineException {
+	private File renderDSVGMap(IMapProvider mapProvider, IDataMartProvider datamartProvider, boolean includeScript) throws SvgViewerEngineRuntimeException {
 
 		SVGDocument targetMap;
 		SVGDocument masterMap = null;
@@ -154,12 +154,12 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			loadMasterMapTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.loadMasterMap");
 			masterMap = svgMapLoader.loadMapAsDocument(getMasterMapFile(true));
 		} catch (IOException e) {
-			SvgViewerEngineException geoException;
+			SvgViewerEngineRuntimeException svgException;
 			logger.error("Impossible to load map from file: " + getMasterMapFile(true));
 			String description = "Impossible to load map from file: " + getMasterMapFile(true);
-			geoException = new SvgViewerEngineException("Impossible to render map", e);
-			geoException.setDescription(description);
-			throw geoException;
+			svgException = new SvgViewerEngineRuntimeException("Impossible to render map", e);
+			svgException.setDescription(description);
+			throw svgException;
 		} finally {
 			if (loadMasterMapTotalTimeMonitor != null)
 				loadMasterMapTotalTimeMonitor.stop();
@@ -208,18 +208,19 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 					}
 
 				} catch (Throwable t) {
-					SvgViewerEngineException geoException;
+					SvgViewerEngineRuntimeException svgException;
 					logger.error("Impossible to create a temporary file", t);
 					String description = "Impossible to create a temporary file";
-					geoException = new SvgViewerEngineException("Impossible to render map", t);
-					geoException.setDescription(description);
-					throw geoException;
+					svgException = new SvgViewerEngineRuntimeException("Impossible to render map", t);
+					svgException.setDescription(description);
+					throw svgException;
 				}
 			}
 
 			// add drill links ONLY if it isn't the last level
-			Integer intSelectedLevel = (datamartProvider.getSelectedLevel() == null) ? 0 : Integer.valueOf(datamartProvider.getSelectedLevel());
-			if (!useCrossNav && intSelectedLevel < datamartProvider.getHierarchyMembersNames().size()) {
+			int intSelectedLevel = (datamartProvider.getSelectedLevel() == null) ? 1 : Integer.parseInt(datamartProvider.getSelectedLevel());
+			int totalLevels = datamartProvider.getHierarchyMembersNames().size();
+			if (!useCrossNav && (intSelectedLevel < totalLevels)) {
 				addLink(targetMap, dataMart);
 			} else {
 				logger.debug("Not added drillable link because it\'s the last level! ");
@@ -304,12 +305,12 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				localeJSON.put("groupingSeparator", new Character(dfs.getGroupingSeparator()).toString());
 				conf.put("locale", localeJSON);
 			} catch (JSONException e1) {
-				SvgViewerEngineException geoException;
+				SvgViewerEngineRuntimeException svgException;
 				logger.error("Impossible to create sbi.geo.conf", e1);
 				String description = "Impossible to create sbi.geo.conf";
-				geoException = new SvgViewerEngineException("Impossible to create sbi.geo.conf", e1);
-				geoException.setDescription(description);
-				throw geoException;
+				svgException = new SvgViewerEngineRuntimeException("Impossible to create sbi.geo.conf", e1);
+				svgException.setDescription(description);
+				throw svgException;
 			}
 
 			scriptText.setNodeValue("sbi = {};\n sbi.geo = {};\n sbi.geo.conf = " + conf.toString());
@@ -317,46 +318,46 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			try {
 				tmpMap = getTempFile();
 			} catch (IOException e) {
-				SvgViewerEngineException geoException;
+				SvgViewerEngineRuntimeException svgException;
 				logger.error("Impossible to create a temporary file", e);
 				String description = "Impossible to create a temporary file";
-				geoException = new SvgViewerEngineException("Impossible to render map", e);
-				geoException.setDescription(description);
-				throw geoException;
+				svgException = new SvgViewerEngineRuntimeException("Impossible to render map", e);
+				svgException.setDescription(description);
+				throw svgException;
 			} catch (Throwable t) {
-				SvgViewerEngineException geoException;
+				SvgViewerEngineRuntimeException svgException;
 				logger.error("Impossible to create a temporary file", t);
 				String description = "Impossible to create a temporary file";
-				geoException = new SvgViewerEngineException("Impossible to render map", t);
-				geoException.setDescription(description);
-				throw geoException;
+				svgException = new SvgViewerEngineRuntimeException("Impossible to render map", t);
+				svgException.setDescription(description);
+				throw svgException;
 			}
 			try {
 				SVGMapSaver.saveMap(masterMap, tmpMap);
 			} catch (FileNotFoundException e) {
-				SvgViewerEngineException geoException;
+				SvgViewerEngineRuntimeException svgException;
 				logger.error("Impossible to save map on temporary file " + tmpMap, e);
 				String str = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
 				String description = "Impossible to save map on temporary file " + tmpMap + ". Root cause: " + str;
-				geoException = new SvgViewerEngineException("Impossible to render map", e);
-				geoException.setDescription(description);
-				throw geoException;
+				svgException = new SvgViewerEngineRuntimeException("Impossible to render map", e);
+				svgException.setDescription(description);
+				throw svgException;
 			} catch (TransformerException e) {
-				SvgViewerEngineException geoException;
+				SvgViewerEngineRuntimeException svgException;
 				logger.error("Impossible to save map on temporary file " + tmpMap, e);
 				String str = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
 				String description = "Impossible to save map on temporary file " + tmpMap + ". Root cause: " + str;
-				geoException = new SvgViewerEngineException("Impossible to render map", e);
-				geoException.setDescription(description);
-				throw geoException;
+				svgException = new SvgViewerEngineRuntimeException("Impossible to render map", e);
+				svgException.setDescription(description);
+				throw svgException;
 			} catch (Throwable t) {
-				SvgViewerEngineException geoException;
+				SvgViewerEngineRuntimeException svgException;
 				logger.error("Impossible to save map on temporary file " + tmpMap, t);
 				String str = t.getMessage() != null ? t.getMessage() : t.getClass().getName();
 				String description = "Impossible to save map on temporary file " + tmpMap + ". Root cause: " + str;
-				geoException = new SvgViewerEngineException("Impossible to render map", t);
-				geoException.setDescription(description);
-				throw geoException;
+				svgException = new SvgViewerEngineRuntimeException("Impossible to render map", t);
+				svgException.setDescription(description);
+				throw svgException;
 			}
 		} finally {
 			if (mergeAndDecorateMapTotalTimeMonitor != null)
@@ -379,8 +380,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @throws SvgViewerEngineException
 	 *             the geo engine exception
 	 */
-	private File renderSVGMap(IMapProvider mapProvider, IDataMartProvider datamartProvider) throws SvgViewerEngineException {
-
+	private File renderSVGMap(IMapProvider mapProvider, IDataMartProvider datamartProvider) throws SvgViewerEngineRuntimeException {
 		SVGDocument targetMap;
 		SVGDocument masterMap;
 
@@ -392,12 +392,12 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		try {
 			masterMap = svgMapLoader.loadMapAsDocument(getMasterMapFile(false));
 		} catch (IOException e) {
-			SvgViewerEngineException geoException;
+			SvgViewerEngineRuntimeException svgException;
 			logger.error("Impossible to load map from file: " + getMasterMapFile(true));
 			String description = "Impossible to load map from file: " + getMasterMapFile(true);
-			geoException = new SvgViewerEngineException("Impossible to render map", e);
-			geoException.setDescription(description);
-			throw geoException;
+			svgException = new SvgViewerEngineRuntimeException("Impossible to render map", e);
+			svgException.setDescription(description);
+			throw svgException;
 		}
 
 		decorateMap(masterMap, targetMap, datamart);
@@ -411,31 +411,31 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		try {
 			tmpMap = getTempFile();
 		} catch (IOException e) {
-			SvgViewerEngineException geoException;
+			SvgViewerEngineRuntimeException svgException;
 			logger.error("Impossible to create a temporary file", e);
 			String description = "Impossible to create a temporary file";
-			geoException = new SvgViewerEngineException("Impossible to render map", e);
-			geoException.setDescription(description);
-			throw geoException;
+			svgException = new SvgViewerEngineRuntimeException("Impossible to render map", e);
+			svgException.setDescription(description);
+			throw svgException;
 		}
 		try {
 			SVGMapSaver.saveMap(masterMap, tmpMap);
 		} catch (FileNotFoundException e) {
-			SvgViewerEngineException geoException;
+			SvgViewerEngineRuntimeException svgException;
 			logger.error("Impossible to save map on temporary file " + tmpMap, e);
 			String str = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
 			String description = "Impossible to save map on temporary file " + tmpMap + ". Root cause: " + str;
-			geoException = new SvgViewerEngineException("Impossible to render map", e);
-			geoException.setDescription(description);
-			throw geoException;
+			svgException = new SvgViewerEngineRuntimeException("Impossible to render map", e);
+			svgException.setDescription(description);
+			throw svgException;
 		} catch (TransformerException e) {
-			SvgViewerEngineException geoException;
+			SvgViewerEngineRuntimeException svgException;
 			logger.error("Impossible to save map on temporary file " + tmpMap, e);
 			String str = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
 			String description = "Impossible to save map on temporary file " + tmpMap + ". Root cause: " + str;
-			geoException = new SvgViewerEngineException("Impossible to render map", e);
-			geoException.setDescription(description);
-			throw geoException;
+			svgException = new SvgViewerEngineRuntimeException("Impossible to render map", e);
+			svgException.setDescription(description);
+			throw svgException;
 		}
 
 		return tmpMap;

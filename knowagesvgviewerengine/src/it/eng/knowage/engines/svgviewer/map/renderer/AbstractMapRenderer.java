@@ -1,6 +1,7 @@
 package it.eng.knowage.engines.svgviewer.map.renderer;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
 import it.eng.knowage.engines.svgviewer.component.AbstractSvgViewerEngineComponent;
 import it.eng.knowage.engines.svgviewer.datamart.provider.IDataMartProvider;
 import it.eng.knowage.engines.svgviewer.map.provider.IMapProvider;
@@ -45,7 +46,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.AbstractGeoEngineComponent#init(java.lang.Object)
 	 */
 	@Override
@@ -55,18 +56,18 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#renderMap(it.eng.spagobi.engines.geo.map.provider.IMapProvider,
 	 * it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider, java.lang.String)
 	 */
 	@Override
-	public File renderMap(IMapProvider mapProvider, IDataMartProvider datamartProvider, String outputType) throws SvgViewerEngineException {
+	public File renderMap(IMapProvider mapProvider, IDataMartProvider datamartProvider, String outputType) throws SvgViewerEngineRuntimeException {
 		return null;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#renderMap(it.eng.spagobi.engines.geo.map.provider.IMapProvider,
 	 * it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider)
 	 */
@@ -136,7 +137,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#getLayer(java.lang.String)
 	 */
 	@Override
@@ -146,7 +147,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#addLayer(it.eng.spagobi.engines.geo.map.renderer.Layer)
 	 */
 	@Override
@@ -156,7 +157,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#getLayerNames()
 	 */
 	@Override
@@ -188,7 +189,7 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.map.renderer.IMapRenderer#clearLayers()
 	 */
 	@Override
