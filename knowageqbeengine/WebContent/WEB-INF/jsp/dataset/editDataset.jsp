@@ -205,7 +205,6 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 	       			, region: 'south'
 	       			, height: 155
 	       		});
-				console.log("meh")
 	           	qbe = new Sbi.qbe.QbePanel(qbeConfig);
 	           	var viewport = new Ext.Viewport(qbe);  
 	           	<%if (isPowerUser && isFromCross.equalsIgnoreCase("false")) {%>
@@ -234,8 +233,6 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
             		var parameters = message.data.qbeParameters;
             		qbe.setParameters( parameters );
             		qbe.setQueriesCatalogue( queriesCatalogue );
-            		console.log(queriesCatalogue);
-            		console.log("nikola")
             	} else {
             		alert('editDataset.jsp: Unknown message');
             	}
