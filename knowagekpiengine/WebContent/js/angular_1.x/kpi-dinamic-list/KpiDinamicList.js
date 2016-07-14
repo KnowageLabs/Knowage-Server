@@ -172,10 +172,10 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 						+ '<label>' + sbiModule_translate.load('sbi.kpiedit.prefixSuffixValue') + '</label>'
 						+ '<input type="text" name="max" ng-model="row.prefixSuffixValue" maxlength="3" ng-pattern="/^.{0,3}$/"/>'
 					+'</md-input-container>';
-				obj["isSuffix"] = kpiItem.isSuffix;
+				obj["isSuffix"] = (kpiItem.isSuffix != undefined && kpiItem.isSuffix != '') ? kpiItem.isSuffix : false;	
 				obj["isSuffixHTML"] = 
 					'<div layout-align="center center" layout="row">'
-						+ '<md-checkbox aria-label="Switch" ng-init="row.isSuffix=' + kpiItem.isSuffix + '" ng-model="row.isSuffix">' 
+						+ '<md-checkbox aria-label="Switch" ng-init="row.isSuffix=' + obj["isSuffix"] + '" ng-model="row.isSuffix">' 
 						+ '</md-checkbox>'
 						+ '<span ng-show="row.isSuffix==false">' + sbiModule_translate.load('sbi.kpiedit.prefix') + '</span>'
 						+ '<span ng-show="row.isSuffix==true">' + sbiModule_translate.load('sbi.kpiedit.suffix')+ '</span>'

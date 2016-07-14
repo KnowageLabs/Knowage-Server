@@ -351,10 +351,10 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 					+ '<input type="text" name="max" ng-model="row.prefixSuffixValue" maxlength="3"/>'
 					+'</md-input-container>';
 				
-				obj["isSuffix"] = selectedKpi.isSuffix;
+				obj["isSuffix"] = (selectedKpi.isSuffix != undefined && selectedKpi.isSuffix != '') ? selectedKpi.isSuffix : false;
 				obj["isSuffixHTML"] = 
 					'<div layout-align="center center" layout="row">'
-						+ '<md-checkbox aria-label="Switch" ng-init="row.isSuffix=' + selectedKpi.isSuffix + '" ng-model="row.isSuffix">' 
+						+ '<md-checkbox aria-label="Switch" ng-init="row.isSuffix=' + obj["isSuffix"] + '" ng-model="row.isSuffix">' 
 						+ '</md-checkbox>'
 						+ '<span ng-show="row.isSuffix==false">' + sbiModule_translate.load('sbi.kpiedit.prefix') + '</span>'
 						+ '<span ng-show="row.isSuffix==true">' + sbiModule_translate.load('sbi.kpiedit.suffix')+ '</span>'
