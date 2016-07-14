@@ -97,7 +97,6 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		this.setMondrianSchemaFilePath(reference);
 
 		IDataSource ds = (IDataSource) env.get(EngineConstants.ENV_DATASOURCE);
-		IEngUserProfile profile = (IEngUserProfile) env.get(EngineConstants.ENV_USER_PROFILE);
 
 		olapDataSource = WhatIfEngineConfig.getInstance().getOlapDataSource(ds, reference, this.getLocale());
 
