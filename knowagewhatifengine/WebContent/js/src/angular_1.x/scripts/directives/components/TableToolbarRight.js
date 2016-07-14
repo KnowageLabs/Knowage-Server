@@ -231,6 +231,15 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				sendModelConfig = false;
 				break;
 				
+			case "BUTTON_SAVE":
+				persistTransformations();
+				sendModelConfig = false;
+				break;
+			case "BUTTON_UNDO":
+				undo();
+				sendModelConfig = false;
+				break;
+				
 			default:
 				console.log("something else clicked");
 		}
@@ -335,7 +344,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath );
 		  
 		  sbiModule_restServices.promisePost
-			("1.0",'/locker/'+ id+"/"+type)
+			("1.0",'/locker/'+ id)
 			.then(function(response) {
 				status = response.data.status;
 				locker = response.data.locker;
@@ -366,6 +375,27 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	  flushCache = function(){
 		  sbiModule_restServices.promisePost
 			("1.0",'/cache/?SBI_EXECUTION_ID='+ JSsbiExecutionID)
+			.then(function(response) {
+						$scope.handleResponse(response);
+		  },function(response){
+			  sbiModule_messaging.showErrorMessage("An error occured while refreshing", 'Error'); 
+		  });
+	  };
+
+	  
+	  persistTransformations = function(){
+		  sbiModule_restServices.promisePost
+			("1.0",'/model/persistTransformations/?SBI_EXECUTION_ID='+ JSsbiExecutionID)
+			.then(function(response) {
+						$scope.handleResponse(response);
+		  },function(response){
+			  sbiModule_messaging.showErrorMessage("An error occured while refreshing", 'Error'); 
+		  });
+	  };
+	  
+	  undo = function(){
+		  sbiModule_restServices.promisePost
+			("1.0",'/model/undo/?SBI_EXECUTION_ID='+ JSsbiExecutionID)
 			.then(function(response) {
 						$scope.handleResponse(response);
 		  },function(response){
