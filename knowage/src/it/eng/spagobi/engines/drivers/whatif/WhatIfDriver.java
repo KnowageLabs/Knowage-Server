@@ -176,16 +176,26 @@ public class WhatIfDriver extends GenericDriver {
 
 		logger.debug("Artifact id is " + artifactId);
 
-		Boolean locked = artifact.getModelLocked();
-		String locker = artifact.getModelLocker();
-		WhatIfWorkflowManager wfm = new WhatIfWorkflowManager();
+		int did = artifact.getId();
+		
 
-		int did = artifact.getCurrentContentId();
+		WhatIfWorkflowManager wfm = new WhatIfWorkflowManager();
+		
+		
+		
+		//Boolean locked = artifact.getModelLocked();
+		String locker;
+		try {
+			locker = wfm.getActiveUser(did);
+		} catch (EMFUserError e) {
+			logger.error("Error loading locker user",e);
+			throw new SpagoBIRuntimeException("Error loading locker user",e);
+		}
 
 		// List<WhatifWorkflow> l = wfm.getWorkflowByDocumentId(1);
 		// String lockerTemp = wfm.getLockerUser(1);
 
-		if (locked == null || locked == false) {
+		if (locker==null) {
 			logger.debug("Artifact with id " + artifactId + " is unlocked");
 			statusToReturn = SpagoBIConstants.SBI_ARTIFACT_VALUE_UNLOCKED;
 		} else {

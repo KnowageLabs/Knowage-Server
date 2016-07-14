@@ -17,30 +17,30 @@
  */
 package it.eng.spagobi.engines.drivers.whatif.manager;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.whatif.dao.IWhatifWorkflowDAO;
+
+import org.apache.log4j.Logger;
 
 public class WhatIfWorkflowManager {
 
-	IWhatifWorkflowDAO iwfd = null;
+	private static transient Logger logger = Logger.getLogger(WhatIfWorkflowManager.class);
+	
+	 public String getActiveUser(int modelId) throws EMFUserError {
+		 logger.debug("Loading active user for model "+modelId);
+		 IWhatifWorkflowDAO iwfd = DAOFactory.getWhatifWorkflowDAO();
+		 String user = iwfd.getActiveUserIdByModel(modelId);
+		 logger.debug("Loaded active user "+user);
+		 return user;
+	 };
+	 
+	 public void goNextUser(int modelId) throws EMFUserError {
+		 logger.debug("pass control to next user for model "+modelId);
+		 IWhatifWorkflowDAO iwfd = DAOFactory.getWhatifWorkflowDAO();
+		 iwfd.goNextUserByModel(modelId);
+		 logger.debug("Done passing controll to next user for model "+modelId);
+	 };
 
-	// public List<WhatifWorkflow> getWorkflowByDocumentId(int id) {
-	//
-	// try {
-	//
-	// iwfd = DAOFactory.getWhatifWorkflowDAO();
-	// return iwfd.loadWorkflowByDocumentId(id);
-	// } catch (EMFUserError e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	//
-	// return null;
-	// };
 
-	/*
-	 * public String getLockerUser(int docId) { try { iwfd =
-	 * DAOFactory.getWhatifWorkflowDAO(); return iwfd.loadLockerUser(docId); }
-	 * catch (EMFUserError e) { // TODO Auto-generated catch block
-	 * e.printStackTrace(); } return ""; }
-	 */
 }
