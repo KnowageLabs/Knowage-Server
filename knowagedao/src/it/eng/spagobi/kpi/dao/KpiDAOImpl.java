@@ -2345,14 +2345,15 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) throws Exception {
-
-				String hql = " from SbiKpiValue WHERE kpiId =?";
-				Query q = session.createQuery(hql);
-				q.setInteger(0, id);
-				List<SbiKpiValue> kpiValue = q.list();
+				List<SbiKpiValue> kpiValue = session.createCriteria(SbiKpiValue.class).add(Restrictions.eq("kpiId", id)).addOrder(Order.desc("timeRun"))
+						.setMaxResults(1).list();
+				// String hql = " from SbiKpiValue WHERE kpiId =?";
+				// Query q = session.createQuery(hql);
+				// q.setInteger(0, id);
+				// List<SbiKpiValue> kpiValue = q.list();
 
 				if (kpiValue.size() != 0) {
-					return kpiValue.get(kpiValue.size() - 1).getKpiVersion();
+					return kpiValue.get(0).getKpiVersion();
 				} else {
 					return null;
 				}
