@@ -11,6 +11,15 @@ sbiM.factory('sbiModule_config',function(){
 	return {
     	contextName: '<%= GeneralUtilities.getSpagoBiContext() %>',
     	contextLogo: '<%= urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logo.png", currTheme)%>',
+    	contextMetaName: '<%= GeneralUtilities.getSpagoBiContext() %>meta',
+    	
+    	// Engines
+    	qbeEngineContextName: '<%= GeneralUtilities.getSpagoBiContext() %>qbeengine',
+    	birtReportEngineContextName: '<%= GeneralUtilities.getSpagoBiContext() %>birtreportengine',
+    	dataMiningContextName: '<%= GeneralUtilities.getSpagoBiContext() %>dataminingengine',
+    	whatIfEngineContextName: '<%= GeneralUtilities.getSpagoBiContext() %>whatifengine',
+    	olapEngineContextName: '<%= GeneralUtilities.getSpagoBiContext() %>olapengine',
+    	
     	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
     	adapterPathNoContext : '<%= GeneralUtilities.getSpagoAdapterHttpUrl() %>',
     	host: '<%= GeneralUtilities.getSpagoBiHost() %>',

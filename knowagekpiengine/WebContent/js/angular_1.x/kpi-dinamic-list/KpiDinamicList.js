@@ -1,7 +1,13 @@
+(function() {
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	
 angular.module('dinamic-list', ['ngMaterial','sbiModule'])
 .directive('dinamicList', function() {
 	return {
-		templateUrl: '/knowagekpiengine/js/angular_1.x/kpi-dinamic-list/template/kpi-dinamic-list.html',
+//		templateUrl: '/knowagekpiengine/js/angular_1.x/kpi-dinamic-list/template/kpi-dinamic-list.html',
+		templateUrl: currentScriptPath + 'template/kpi-dinamic-list.html',
 		controller: dinamicListController,
 		scope: {
 			ngModel:'=',
@@ -271,3 +277,4 @@ function DialogControllerKPI($scope,$mdDialog,items,kpi,kpiAllList,kpiSelected,m
 
 
 }
+})();

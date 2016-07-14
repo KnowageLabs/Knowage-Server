@@ -15,10 +15,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+(function() {
+
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	
 angular.module('favorite_view', ['ngMaterial'])
 .directive('favoriteView', function() {
 	return {
-		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/favorite-view/favorite-view.html',
+//		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/favorite-view/favorite-view.html',
+		templateUrl: currentScriptPath + 'favorite-view.html',
 		controller: favoriteViewControllerFunction,
 		priority: 10,
 		scope: {
@@ -52,3 +59,4 @@ function favoriteViewControllerFunction($scope,sbiModule_translate){
 	
 	$scope.translate=sbiModule_translate;
 }
+})();

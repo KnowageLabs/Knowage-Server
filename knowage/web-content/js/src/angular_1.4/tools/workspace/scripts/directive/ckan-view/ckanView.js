@@ -15,11 +15,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+(function() {
 
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	
 angular.module('ckan_view', ['ngMaterial'])
 .directive('ckanView', function() {
 	return {
-		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/ckan-view/ckan-view.html',
+//		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/ckan-view/ckan-view.html',
+		templateUrl: currentScriptPath + 'ckan-view.html',
 		controller: ckanViewControllerFunction,
 		 priority: 10,
 		scope: {
@@ -62,3 +68,5 @@ function ckanViewControllerFunction($scope,sbiModule_translate){
 	$scope.translate= sbiModule_translate;
 
 }
+	
+})();

@@ -1,7 +1,13 @@
+(function() {
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	
 angular.module('angular_time_picker', ['ngMaterial'])
 .directive('angularTimePicker', function() {
   return {
-    templateUrl: '/knowage/js/src/angular_1.4/tools/commons/angular-time-picker//angular-time-picker.html',
+//	  templateUrl: '/knowage/js/src/angular_1.4/tools/commons/angular-time-picker//angular-time-picker.html',
+    templateUrl: currentScriptPath + 'angular-time-picker.html',
     controller: angularTimePickerFunction,
     scope: {
     	ngModel:'=',
@@ -119,4 +125,4 @@ function angularTimePickerFunction($scope){
 			}, true);
 	
 	}
-
+})();

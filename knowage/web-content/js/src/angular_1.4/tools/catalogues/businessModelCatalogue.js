@@ -669,7 +669,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 
 		 
 		 $scope.buildBusinessModels=function(){
-			 sbiModule_restServices.alterContextPath("/knowagemeta");
+//			 sbiModule_restServices.alterContextPath("/knowagemeta");
+			 sbiModule_restServices.alterContextPath(sbiModule_config.contextMetaName);
 			 sbiModule_restServices.promiseGet("1.0/metaWeb", "buildModel/"+$scope.selectedBusinessModel.name+"/"+$scope.selectedBusinessModel.id+"?user_id="+sbiModule_user.userId)  //TO CHANGE
 						.then(
 								function(response) {
@@ -711,7 +712,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					escapeToClose :true,
 					fullscreen: true,
 //					locals:{url:sbiModule_config.contextName+'/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/meta/metaDefinition.jsp&datasourceId='+dsId}
-					locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name}
+//					locals:{url:"/knowagemeta/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name}
+					locals:{url:sbiModule_config.contextMetaName + "/restful-services/1.0/pages/edit?datasourceId="+dsId+"&user_id="+sbiModule_user.userId+"&bmId="+$scope.selectedBusinessModel.id+"&bmName="+$scope.selectedBusinessModel.name}
 				}).then(function(){
 					//refresh
 					$scope.getVersions($scope.selectedBusinessModel.id);

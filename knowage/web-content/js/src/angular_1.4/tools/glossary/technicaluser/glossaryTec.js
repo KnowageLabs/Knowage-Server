@@ -8,10 +8,10 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
 
 
-app.controller('ControllerDataSet', [ "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_dataset ]);
-app.controller('Controller', [ "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_documenti ]);
-app.controller('Controller_navigation', [ "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast","$window","sbiModule_config",'$documentViewer', funzione_navigazione ]);
-app.controller('Controller_tec', [ "$scope","sbiModule_translate","sbiModule_restServices","$mdToast","$timeout", funzione_tec ]);
+app.controller('ControllerDataSet', [ "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_dataset ]);
+app.controller('Controller', [ "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_documenti ]);
+app.controller('Controller_navigation', [ "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast","$window","sbiModule_config",'$documentViewer', funzione_navigazione ]);
+app.controller('Controller_tec', [ "$scope", "sbiModule_config", "sbiModule_translate","sbiModule_restServices","$mdToast","$timeout", funzione_tec ]);
 
 
 var global;
@@ -20,7 +20,7 @@ var docAss;
 var dsAss;
 
 //--------------------------------------------------------------------------globale------------------------------------------------------------
-function funzione_tec($scope,sbiModule_translate,sbiModule_restServices,$mdToast,$timeout) {
+function funzione_tec($scope, sbiModule_config, sbiModule_translate,sbiModule_restServices,$mdToast,$timeout) {
 	global=this;
 	$scope.translate=sbiModule_translate;
 	global.glossary;
@@ -81,7 +81,7 @@ function funzione_tec($scope,sbiModule_translate,sbiModule_restServices,$mdToast
 
 
 //--------------------------------------------------------------------------assoc_doc----------------------------------------------------------
-function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
+function funzione_associazione_documenti(sbiModule_config, sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
 	docAss=this;
 	docAss.listDoc;
 	docAss.sizeDoc=0;
@@ -490,7 +490,7 @@ function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServ
 
 
 //--------------------------------------------------------------------------assoc_dataset----------------------------------------------------------
-function funzione_associazione_dataset(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
+function funzione_associazione_dataset(sbiModule_config, sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
 	datasetAss=this;
 	datasetAss.listDataset;
 	datasetAss.sizeDataset=0;
@@ -948,7 +948,7 @@ function hidePreloader(pre) {
 
 //--------------------------------------------------------------------------navigazione--------------------------------------------------------
 
-function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast,$window,sbiModule_config,$documentViewer) {
+function funzione_navigazione(sbiModule_config, sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast,$window,sbiModule_config,$documentViewer) {
 	navi=this;
 	global.initializer.navigation={state:false,scope:navi};
 	navi.pagination={};
@@ -1160,7 +1160,8 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 
 						})
 			},
-			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
+//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
+			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
 			clickOutsideToClose :true
 		})
 	}
@@ -1200,7 +1201,8 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 							global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 						})
 			},
-			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_document.html',
+//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_document.html',
+			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/info_document.html',
 			targetEvent : ev,
 			clickOutsideToClose :true
 		})
@@ -1227,7 +1229,8 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 						})
 
 			},
-			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_dataset.html',
+//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_dataset.html',
+			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/info_dataset.html',
 			targetEvent : ev,
 			clickOutsideToClose :true
 		})
@@ -1248,7 +1251,8 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 						})
 
 			},
-			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_bness_cls.html',
+//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_bness_cls.html',
+			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/info_bness_cls.html',
 			targetEvent : ev,
 			clickOutsideToClose :true
 		})
@@ -1271,7 +1275,8 @@ function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $
 						})
 
 			},
-			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_table.html',
+//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_table.html',
+			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/glossary/commons/templates/info_table.html',
 			targetEvent : ev,
 			clickOutsideToClose :true
 		})

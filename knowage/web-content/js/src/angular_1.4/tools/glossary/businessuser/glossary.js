@@ -1,3 +1,9 @@
+(function() {
+
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	
 var app = angular.module('glossaryWordManager', [ 'ngMaterial', 'ui.tree',
                                                   'angularUtils.directives.dirPagination', 'ng-context-menu',
                                                   'sbiModule', 'glossary_tree', 'angular_list','angular-list-detail' ]);
@@ -741,7 +747,8 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 				}
 			},
-			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-glossary.html'
+//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-glossary.html'
+			templateUrl :  currentScriptPath + '../commons/templates/dialog-new-glossary.html'
 		})
 	};
 
@@ -895,7 +902,8 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 			},
 
 			// "/knowage/js/dialog-new-glossary.html"
-			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-glossary.html'
+//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-glossary.html'
+			templateUrl : currentScriptPath + '../commons/templates/dialog-new-glossary.html'
 		});
 	};
 	// <!-- tree -->
@@ -1586,7 +1594,8 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				}
 
 			},
-			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/new.logical.node.dialog.html',
+//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/new.logical.node.dialog.html',
+			templateUrl : currentScriptPath + '../commons/templates/new.logical.node.dialog.html',
 			parent : angular.element(document.body),
 
 		})
@@ -1625,7 +1634,8 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 										})
 			},
-			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
+//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
+			templateUrl : currentScriptPath + '../commons/templates/info_word.html',
 			clickOutsideToClose : true
 		});
 	}
@@ -1920,3 +1930,5 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 //	 ];
 
 }
+	
+})();

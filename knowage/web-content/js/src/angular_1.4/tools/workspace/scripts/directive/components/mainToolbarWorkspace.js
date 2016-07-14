@@ -16,6 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+(function() {
+
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	
 angular
 	.module('main_toolbar_workspace', ['ngMaterial'])
 
@@ -23,7 +29,8 @@ angular
 		 return {			 
 		      restrict: 'E',
 		      replace: 'true',
-		      templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/mainToolbarWorkspace.html',
+//		      templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/mainToolbarWorkspace.html',
+		      templateUrl: currentScriptPath + '../../../templates/mainToolbarWorkspace.html',
 		      controller: toolbarController
 		  };	  
 	});
@@ -38,3 +45,4 @@ function toolbarController($scope,$mdSidenav,sbiModule_translate){
 	}
 	
 }
+})();

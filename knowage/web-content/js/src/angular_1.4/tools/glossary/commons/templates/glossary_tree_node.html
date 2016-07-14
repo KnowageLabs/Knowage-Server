@@ -87,8 +87,10 @@
 	ng-init="item.CHILD=item.CHILD!=undefined?item.CHILD:[]"
 	ui-tree-nodes="options" ng-model="item.CHILD"
 	ng-class="{hideChildren: collapsed}">
+	
+<!-- 		ng-include="'/knowage/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tree_node.html'" -->
 	<li ng-repeat="item in item.CHILD" ui-tree-node data-collapsed="true"
-		ng-include="'/knowage/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tree_node.html'"
+		ng-include="glossaryTreeNodePath"
 		class="figlioVisibile"></li>
 	<li ng-repeat="n in [1]" ui-tree-node class="addFiglioBox"></li>
 </ol>

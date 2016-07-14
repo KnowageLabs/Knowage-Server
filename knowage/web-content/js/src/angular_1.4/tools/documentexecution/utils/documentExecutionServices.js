@@ -462,7 +462,9 @@
 		
 		serviceScope.getOlapType = function(){
 			
-			if (execProperties.executionInstance.ENGINE_LABEL == "knowagewhatifengine" || execProperties.executionInstance.ENGINE_LABEL == "knowageolapengine")
+//			if (execProperties.executionInstance.ENGINE_LABEL == "knowagewhatifengine" || execProperties.executionInstance.ENGINE_LABEL == "knowageolapengine")
+			if (execProperties.executionInstance.ENGINE_LABEL == sbiModule_config.whatIfEngineContextName 
+					|| execProperties.executionInstance.ENGINE_LABEL == sbiModule_config.olapEngineContextName)
 				return true;
 			else
 				return false;

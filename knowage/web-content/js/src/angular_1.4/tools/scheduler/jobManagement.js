@@ -632,7 +632,8 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					$mdDialog.cancel();
 				};
 			},
-			templateUrl : '/knowage/js/src/angular_1.4/tools/scheduler/templates/dialog-document-selection.html'
+//			templateUrl : '/knowage/js/src/angular_1.4/tools/scheduler/templates/dialog-document-selection.html'
+			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/scheduler/templates/dialog-document-selection.html'
 		});
 	}
 	
@@ -776,7 +777,8 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					$mdDialog.cancel();
 				};
 			},
-			templateUrl : '/knowage/js/src/angular_1.4/tools/scheduler/templates/dialog-trigger-info.html'
+//			templateUrl : '/knowage/js/src/angular_1.4/tools/scheduler/templates/dialog-trigger-info.html'
+			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/scheduler/templates/dialog-trigger-info.html'
 		});
 	}
 	
@@ -1405,7 +1407,8 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				
 				activityEventCtrl.initJobsValues(jobName, jobGroup, triggerName, triggerGroup);
 			},
-			templateUrl : '/knowage/js/src/angular_1.4/tools/scheduler/templates/dialog-trigger.jsp'
+//			templateUrl : '/knowage/js/src/angular_1.4/tools/scheduler/templates/dialog-trigger.jsp'
+			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/scheduler/templates/dialog-trigger.jsp'
 		});
 	}
 };

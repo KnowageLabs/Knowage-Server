@@ -67,9 +67,10 @@
 		<ol ui-tree-nodes="options" ng-model="glossary.SBI_GL_CONTENTS"
 				ng-class="{hideChildren: collapsed}">
 
-			<li ng-repeat="item in glossary.SBI_GL_CONTENTS" ui-tree-node
-					data-collapsed="true"
-					ng-include="'/knowage/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tree_node.html'"></li>
+<!-- 			<li ng-repeat="item in glossary.SBI_GL_CONTENTS" ui-tree-node data-collapsed="true"
+					ng-include="'/knowage/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tree_node.html'"></li> -->
+			<li ng-repeat="item in glossary.SBI_GL_CONTENTS" ui-tree-node data-collapsed="true"
+					ng-include="glossaryTreeNodePath"></li>
 			<li ng-if="glossary.SBI_GL_CONTENTS.length == 0 "
 					ng-repeat="n in [1]" data-nodrag ui-tree-node class="addFiglioBox"></li>
 		</ol>

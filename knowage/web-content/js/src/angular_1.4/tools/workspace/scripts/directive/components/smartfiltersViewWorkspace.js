@@ -16,6 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+(function() {
+	
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	
 angular
 	.module('smartfilters_view_workspace', [])
 
@@ -27,7 +33,8 @@ angular
 		 return {
 		      restrict: 'E',
 		      replace: 'true',
-		      templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/smartfiltersViewWorkspace.html',
+//		      templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/smartfiltersViewWorkspace.html',
+		      templateUrl: currentScriptPath + '../../../templates/smartfiltersViewWorkspace.html',
 		      controller: smartfiltersController
 		  };
 	});
@@ -68,3 +75,4 @@ angular
 		
     
 }
+})();

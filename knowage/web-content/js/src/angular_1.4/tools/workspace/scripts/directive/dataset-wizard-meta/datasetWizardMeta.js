@@ -16,6 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+(function() {
+
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	
 angular
 	.module('dataset_wizard_meta', [])
 
@@ -23,7 +29,8 @@ angular
 		 return {			 
 		      restrict: 'E',
 		      replace: 'true',
-		      templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/dataset-wizard-meta/datasetWizardMeta.html',
+//		      templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/dataset-wizard-meta/datasetWizardMeta.html',
+		      templateUrl: currentScriptPath + 'datasetWizardMeta.html',
 		      controller: datasetWizardMetaController
 		  };	  
 	});
@@ -174,3 +181,4 @@ function datasetWizardMetaController($scope,$mdDialog,sbiModule_translate){
     }
                          ];
 }
+})();

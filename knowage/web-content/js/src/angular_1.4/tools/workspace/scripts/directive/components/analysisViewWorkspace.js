@@ -20,7 +20,12 @@
  * Controller for Analysis view of the Workspace.
  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
+(function() {
 
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	
 angular
 	.module('analysis_view_workspace', [])
 	/**
@@ -30,7 +35,8 @@ angular
 		 return {			 
 		      restrict: 'E',
 		      replace: 'true',
-		      templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/analysisViewWorkspace.html',
+//		      templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/analysisViewWorkspace.html',
+		      templateUrl: currentScriptPath + '../../../templates/analysisViewWorkspace.html',
 		      controller: analysisController
 		  };	  
 	})
@@ -263,3 +269,5 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	}
 	
 }
+
+})();

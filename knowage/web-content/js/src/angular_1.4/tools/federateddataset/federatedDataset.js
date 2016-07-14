@@ -20,6 +20,7 @@ app
 		 "$scope",
 		 "$mdDialog", 
 		 "$timeout",
+		 "sbiModule_config",
 		 "sbiModule_translate",
 		 "sbiModule_restServices",
 		 "sbiModule_messaging",
@@ -34,6 +35,7 @@ function federationDefinitionFunction
 		$scope,
 		$mdDialog, 
 		$timeout,
+		sbiModule_config, 
 		sbiModule_translate, 
 		sbiModule_restServices,
 		sbiModule_messaging
@@ -41,6 +43,8 @@ function federationDefinitionFunction
 	
 	//current scope
 	ctr = this;
+	
+	$scope.sbiModuleConfig = sbiModule_config;
 	
 	//creating translate variable that is accessible from the global scope, and can be used as an expression inside html
 	$scope.translate = sbiModule_translate;
@@ -284,7 +288,8 @@ function federationDefinitionFunction
 							
 						}
 					},
-					templateUrl: '/knowage/js/src/angular_1.4/tools/federateddataset/commons/templates/saveFederatedDatasetTemp.html',
+//					templateUrl: '/knowage/js/src/angular_1.4/tools/federateddataset/commons/templates/saveFederatedDatasetTemp.html',
+					templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/federateddataset/commons/templates/saveFederatedDatasetTemp.html',
 					targetEvent: ev
 				});
 		}
@@ -696,7 +701,8 @@ function federationDefinitionFunction
 			.show({
 				scope: $scope,
 				preserveScope: true,				
-				templateUrl: '/knowage/js/src/angular_1.4/tools/federateddataset/commons/templates/datasetDetails.html',
+//				templateUrl: '/knowage/js/src/angular_1.4/tools/federateddataset/commons/templates/datasetDetails.html',
+				templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/federateddataset/commons/templates/datasetDetails.html',
 				$event: param
 			});
 	}

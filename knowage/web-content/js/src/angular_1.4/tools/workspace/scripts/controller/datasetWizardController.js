@@ -77,7 +77,8 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		(
 			{
 				method: 'POST',
-				url: sbiModule_config.host+'/knowage/restful-services/selfservicedataset/testDataSet',
+//				url: sbiModule_config.host+'/knowage/restful-services/selfservicedataset/testDataSet',
+				url: sbiModule_config.host + sbiModule_config.contextName + '/restful-services/selfservicedataset/testDataSet',
 				data: $scope.dataset,
 				params: params,
 				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -178,7 +179,8 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		(
 			{
 				method: 'POST',
-				url: sbiModule_config.host+'/knowage/restful-services/selfservicedataset/getDataStore',
+//				url: sbiModule_config.host+'/knowage/restful-services/selfservicedataset/getDataStore',
+				url: sbiModule_config.host + sbiModule_config.contextName + '/restful-services/selfservicedataset/getDataStore',
 				data: $scope.dataset,
 				params: params,
 				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -273,7 +275,8 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		(
 			{
 				method: 'POST',
-				url: sbiModule_config.host+'/knowage/restful-services/selfservicedataset/save',
+//				url: sbiModule_config.host+'/knowage/restful-services/selfservicedataset/save',
+				url: sbiModule_config.host + sbiModule_config.contextName + '/restful-services/selfservicedataset/save',
 				data: $scope.dataset,
 				params: params,
 				headers: {'Content-Type': 'application/x-www-form-urlencoded'},

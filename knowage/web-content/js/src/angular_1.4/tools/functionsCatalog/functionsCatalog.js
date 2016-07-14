@@ -337,7 +337,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 	
 	$scope.applyDemoItem=function(item,event){ 
 		
-		sbiModule_restServices.alterContextPath("/knowagedataminingengine");
+//		sbiModule_restServices.alterContextPath("/knowagedataminingengine");
+		sbiModule_restServices.alterContextPath(sbiModule_config.dataMiningContextName);
 		var functionId=item.id;
 		
 		$log.info("userId ", $scope.userId);
@@ -358,7 +359,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 					
 		});
 		
-		sbiModule_restServices.alterContextPath("/knowage");
+//		sbiModule_restServices.alterContextPath("/knowage");
+		sbiModule_restServices.alterContextPath(sbiModule_config.contextName);
 		
 	};
 	
@@ -727,7 +729,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 			logger.info("body: ", body);
 				
 			
-			sbiModule_restServices.alterContextPath("/knowagedataminingengine");
+//			sbiModule_restServices.alterContextPath("/knowagedataminingengine");
+			sbiModule_restServices.alterContextPath(sbiModule_config.dataMiningContextName);
 			sbiModule_restServices.post("executeFunctionWithNewData",$scope.functionId+"/?user_id="+$scope.userId,body)
 			.success(function(executionResult)
 			{			

@@ -1,7 +1,14 @@
+(function() {
+
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	
 angular.module('glossary_tree', ['ng-context-menu','ngMaterial','ui.tree', 'sbiModule'])
 .directive('glossaryTree', function() {
   return {
-    templateUrl: '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/glossary-tree.html',
+//	  templateUrl: '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/glossary-tree.html',
+    templateUrl: currentScriptPath + 'templates/glossary-tree.html',
     controller: controllerFunction,
     scope: {
     	treeId: '@',
@@ -82,6 +89,8 @@ function controllerFunction($scope,sbiModule_restServices,sbiModule_translate,$m
 	$scope.isDefined = function(obj){return ($scope.functionality.indexOf(obj)!=-1)};
 	$scope.preloaderTree=false;
 	$scope.searchNode;
+	
+	$scope.glossaryTreeNodePath =  currentScriptPath + 'templates/glossary_tree_node.html';
 	 
 	$scope.loadAllGloss=function(){
 		  console.log("load glossa")
@@ -236,7 +245,8 @@ function controllerFunction($scope,sbiModule_restServices,sbiModule_translate,$m
 
 						})
 			},
-			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
+//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
+			templateUrl : currentScriptPath + 'templates/info_word.html',
 			clickOutsideToClose :true
 		})
 	}
@@ -261,7 +271,8 @@ function controllerFunction($scope,sbiModule_restServices,sbiModule_translate,$m
 
 						})
 			},
-			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_content.html',
+//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_content.html',
+			templateUrl : currentScriptPath + 'templates/info_content.html',
 			clickOutsideToClose :true
 		})
 	}
@@ -286,4 +297,4 @@ function controllerFunction($scope,sbiModule_restServices,sbiModule_translate,$m
 }
 
 
-       
+})();

@@ -1,7 +1,14 @@
+(function() {
+	
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	
 angular.module('bread_crumb', ['ngMaterial'])
 .directive('breadCrumb', function() {
 	return {
-		templateUrl: '/knowage/js/src/angular_1.4/tools/commons/templates/bread_crumb.html',
+//		templateUrl: '/knowage/js/src/angular_1.4/tools/commons/templates/bread_crumb.html',
+		templateUrl: currentScriptPath + 'templates/bread_crumb.html',
 		controller: breadCrumbControllerFunction,
 		scope: {
 			ngModel:'=',
@@ -75,4 +82,5 @@ function breadCrumbControllerFunction($scope){
 		s.selectedIndex=s.ngModel.length-1;
 		s.selectedItem=item;
 	};
-}
+}	
+})();
