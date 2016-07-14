@@ -1,3 +1,28 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.services.content.bo.Content;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.List;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+import org.apache.batik.util.XMLResourceDescriptor;
+import org.apache.log4j.Logger;
+import org.w3c.dom.svg.SVGDocument;
+
+import sun.misc.BASE64Decoder;
+d a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.knowage.engines.svgviewer.map.utils;
 
 import it.eng.spago.base.SourceBean;
