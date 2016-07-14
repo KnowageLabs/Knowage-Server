@@ -755,6 +755,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 	public void deleteTenant(SbiTenant aTenant) throws EMFUserError {
 
 		logger.debug("deleteTenant IN");
+		logger.debug("tentant is equal to [" + aTenant.getName() + "]");
 		Session aSession = null;
 		Connection jdbcConnection = null;
 		InputStream is = null;
@@ -771,7 +772,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				while ((str = reader.readLine()) != null) {
 					if (!str.trim().startsWith("--")) {
 						PreparedStatement statement = jdbcConnection.prepareStatement(str);
-						// logger.debug("\n"+str+"\n");
+						logger.debug("\n" + str + "\n");
 						statement.setString(1, aTenant.getName());
 						statement.execute();
 						statement.close();
