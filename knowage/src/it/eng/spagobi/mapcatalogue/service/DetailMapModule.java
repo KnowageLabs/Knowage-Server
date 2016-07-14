@@ -550,7 +550,8 @@ public class DetailMapModule extends AbstractHttpModule {
 		Integer id = new Integer(idStr);
 		String description = (String) serviceRequest.getAttribute("DESCR");
 		String name = (String) serviceRequest.getAttribute("NAME");
-		String format = (String) serviceRequest.getAttribute("FORMAT");
+		// String format = (String) serviceRequest.getAttribute("FORMAT");
+		String format = "SVG";
 		String hierarchyName = (String) serviceRequest.getAttribute("HIERARCHY_NAME");
 		String strLevel = (String) serviceRequest.getAttribute("LEVEL");
 		Integer level = new Integer(strLevel);

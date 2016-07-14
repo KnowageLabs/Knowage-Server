@@ -235,6 +235,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			</div>
 		</div> 
+		<!-- 
 		<div class='div_detail_label'>
 			<span class='portlet-form-field-label'>	
 				<spagobi:message key = "SBIMapCatalogue.columnFormat" />
@@ -247,10 +248,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				   format = "";
 			   }
 		%>
+		
 			<select class='portlet-form-input-field' name="FORMAT" >
 				<option value="" <% if (format.equalsIgnoreCase("")) out.print(" selected='selected' ");  %>>&nbsp;</option>
 				<option value="SVG" <% if (format.equalsIgnoreCase("SVG")) out.print(" selected='selected' ");  %>>SVG</option>
 			</select>
+		-->
 	   </div>
 	
 	
@@ -415,11 +418,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 	var name = document.mapForm.NAME.value;
 	var description = document.mapForm.DESCR.value;	
-	var format = document.mapForm.FORMAT.value;
+	
 
 	if ((name != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(map.getName()))%>')
 		|| (description != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(map.getDescr()))%>')
-		|| (format != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(map.getFormat()))%>')
 		|| fileUploadChanged=='true') {
 			
 		biMapFormModified = 'true';

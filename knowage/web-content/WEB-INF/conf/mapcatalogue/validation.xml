@@ -22,6 +22,18 @@
 				    <VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)])*$"/>
 					<VALIDATOR validatorName="MAXLENGTH" arg0="40"/>					
 				</FIELD>
+				 <FIELD name="HIERARCHY_NAME" label="#SBIMapCatalogue.columnHierarchy">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+				</FIELD>
+				 <FIELD name="LEVEL" label="#SBIMapCatalogue.columnLevel">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+				 <FIELD name="MEMBER_NAME" label="#SBIMapCatalogue.columnMember">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+				</FIELD>
 			</FIELDS>
 		</VALIDATION>
 		<VALIDATION blocking="false" validators="">
