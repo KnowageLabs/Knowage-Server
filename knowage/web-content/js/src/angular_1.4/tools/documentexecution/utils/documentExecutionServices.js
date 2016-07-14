@@ -334,6 +334,7 @@
 					role:role,
 					SBI_EXECUTION_ID:execProperties.executionInstance.SBI_EXECUTION_ID,
 					parameters: params,
+					EDIT_MODE:execProperties.executionInstance.EDIT_MODE
 			};
 			
 			if (!!(execProperties.executionInstance.IS_FOR_EXPORT)) {

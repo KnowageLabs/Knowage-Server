@@ -35,7 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecutionMaster.js")%>"></script>
 	<script type="text/javascript">
 	angular.module('documentExecutionMasterModule').factory('sourceDocumentExecProperties', function() {
-		
 		var obj = { 
 				'OBJECT_ID' : 			'<%= request.getParameter("OBJECT_ID") != null ? request.getParameter("OBJECT_ID") : aRequestContainer.getServiceRequest().getAttribute("OBJECT_ID")  %>', 
 				'OBJECT_LABEL' : 		'<%= request.getParameter("OBJECT_LABEL") != null ? request.getParameter("OBJECT_LABEL") : aRequestContainer.getServiceRequest().getAttribute("OBJECT_LABEL") %>',

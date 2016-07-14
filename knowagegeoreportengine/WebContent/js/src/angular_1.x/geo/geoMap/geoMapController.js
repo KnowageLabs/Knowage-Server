@@ -29,7 +29,8 @@ angular.module('geoModule')
 		controller: geoMapControllerFunction,
 		transclude: true,
 		scope: {
-			mapId:"@"
+			mapId:"@",
+			showSaveButton:"=?"
 		}
 	}
 });

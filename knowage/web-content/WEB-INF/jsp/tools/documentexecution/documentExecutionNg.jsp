@@ -367,6 +367,7 @@ if(executionRoleNames.size() > 0) {
 					executionInstance: {
 						'OBJECT_ID' : <%= request.getParameter("OBJECT_ID") %>,
 						'OBJECT_LABEL' : '<%= request.getParameter("OBJECT_LABEL") %>',
+						'EDIT_MODE' : '<%= request.getParameter("EDIT_MODE") %>',
 						'OBJECT_NAME' : '<%= obj.getName() %>',
 						'OBJECT_TYPE_CODE' : '',
 						'isFromCross' : false,

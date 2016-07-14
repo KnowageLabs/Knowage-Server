@@ -54,7 +54,6 @@ $scope.executeSourceDocument = function() {
 				    );
 			}
 		}
-		
 		var url = sbiModule_config.contextName 
 			+ '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp'
 			+ '&OBJECT_ID=' + sourceDocumentExecProperties.OBJECT_ID

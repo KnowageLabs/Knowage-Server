@@ -19,9 +19,8 @@
 
 </head>
 <body class="mapBodyStyle">
-
 <div ng-controller="mapCtrl" ng-cloak layout-fill>
-	<geo-map map-id='myMap'  layout-fill></geo-map>
+	<geo-map map-id='myMap' show-save-button='<%="edit_map".equals(editMode) %>' layout-fill></geo-map>
 </div>
 
 </body>

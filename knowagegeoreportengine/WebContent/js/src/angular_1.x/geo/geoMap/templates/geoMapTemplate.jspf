@@ -7,14 +7,13 @@
       		</md-button>
 			<div id="popup-content" class="ol-popup-content"></div>
 		</div>
-		<div layout="row" layout-wrap layout-align="end end"
-			style="bottom: 0; right: 0; position: absolute;">
+		<div layout="row" 	style="bottom: 0; right: 0; position: absolute;">
+		<span flex></span>
 			<geo-legend id="legend" ng-if="!geoModule_template.noDatasetReport"></geo-legend>
 			<geo-distance-calculator id="calculator"></geo-distance-calculator>
 			<geo-download></geo-download>
-			<%if("edit_map".equals(editMode))  { %>
-			<geo-save></geo-save>
-			<%} %>
+			
+			<geo-save ng-show="showSaveButton==true"></geo-save>
 		</div>
 	</div>
 
