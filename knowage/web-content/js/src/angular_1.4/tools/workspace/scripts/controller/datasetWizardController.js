@@ -102,7 +102,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				if (!response.data.errors) {
 					console.info("[SUCCESS]: The Step 1 form is submitted successfully.");
 					$scope.datasetWizardView = $scope.datasetWizardView +1;
-					console.log(response.data);
+					
 					//set meta to empty
 					$scope.dataset.meta=[];
 					angular.copy(response.data.meta,$scope.dataset.meta);
@@ -210,6 +210,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					$scope.validationStatus = true;
 					$scope.resultMetaDataStep2 = [];
 					$scope.resultRowsStep2 = [];
+					console.log(response);
 					angular.copy(response.data.metaData.fields,$scope.resultMetaDataStep2);
 					// Take all results (pure data) for rows of the Angular table
 					angular.copy(response.data.rows,$scope.resultRowsStep2);
@@ -255,6 +256,8 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		params.SBI_EXECUTION_ID = -1;
 		params.isTech = false;
 		params.showOnlyOwner=true;
+		
+		console.log($scope.dataset);
 			
 		/*sbiModule_restServices.promisePost("selfservicedataset","save?SBI_EXECUTION_ID=-1&isTech=false&showOnlyOwner=true&showDerivedDataset=false","",str)
 			.then(function(response) {
@@ -297,7 +300,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		.then
 		(
 			function successCallback(response) {
-				
+				console.log(response);
 				if (!response.data.errors) {
 				
 					console.info("[SUCCESS]: The Step 4 form is submitted successfully. The file dataset is saved");
@@ -602,19 +605,79 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				});
     	
     }
-	
-	$scope.prepareMetaForView=function(){
-		$scope.prepareMetaValue($scope.dataset.meta.columns);
-		for(i=0; i< $scope.dataset.meta.columns.length;i++){
+		
+	$scope.prepareMetaForView = function(item,index){				
+		
+		/**
+		 * If the user just opens the Dataset wizard dialog and goes to the Step 2, the grid will be initialized with the saved (when updating/editing) or with the
+		 * default (when creating a new File dataset) data. In that situation, the 'item' and 'index' will be undefined. These two values are defined only when user
+		 * clicks on the Value column comboboxes for Field type of the particular column. They tell us the type of the Field type (ATTRIBUTE or MEASURE). So, this
+		 * variable will be true only when just opening (entering) the Step 2.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		var initialization = !item && !index;
+		
+		$scope.prepareMetaValue($scope.dataset.meta.columns,item,index);
+				
+		for(i=0; i< $scope.dataset.meta.columns.length;i++) {
+			
 			loc = $scope.dataset.meta.columns[i];
-		var pname = loc.pname;
-		loc.dsMetaValue=[];
-		loc.dsMetaValue=$scope.filterMetaValue(pname);	
-		loc.columnView='<md-select aria-label="column-view" ng-model=row.column class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumns" value="{{col.columnName}}">{{col.columnName}}</md-option></md-select>';
-		loc.pnameView='<md-select aria-label="pname-view" ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsMetaProperty" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.filterMetaValues(col.VALUE_CD,row)">{{col.VALUE_NM}}</md-option></md-select>';
-		loc.pvalueView='<md-select aria-label="pvalue-view"ng-model=row.pvalue class="noMargin"><md-option ng-repeat="col in row.dsMetaValue" value="{{col.VALUE_CD}}">{{col.VALUE_NM}}</md-option></md-select>';	
-		}	
-	}
+			
+			var pname = loc.pname;
+
+			loc.dsMetaValue=[];
+			
+			/**
+			 * If initializing (entering) the Step 2, the expression (pname=="type") will indicate that we are dealing with the Type type of the Attribute column 
+			 * (possible values of these combo boxes: String, Integer, Double). In that case, inspect the subsequent Field type type (ATTRIBUTE or MEASURE) and in
+			 * the case it is a MEASURE, remove the String item from the current Type combobox, since the MEASURE can be only Integer/Double. Otherwise, if the
+			 * Attribute column value is the Field type, just proceed with the filtering of metadata. 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+			 */			
+			if (initialization) {	
+				
+				if (pname=="type")
+					loc.dsMetaValue = $scope.filterMetaValue(pname,undefined,i,undefined,$scope.dataset.meta.columns[i+1].pvalue);
+				else
+					loc.dsMetaValue = $scope.filterMetaValue(pname,undefined,i,undefined);
+				
+			}				
+			// Click
+			else  {
+				
+				if (index-1==i) 
+					loc.dsMetaValue = $scope.filterMetaValue($scope.dataset.meta.columns[index-1].pname,item,i,index);	
+				else {
+					
+					if (pname=="type")
+						loc.dsMetaValue = $scope.filterMetaValue(pname,undefined,i,undefined,$scope.dataset.meta.columns[i+1].pvalue);
+					else
+						loc.dsMetaValue = $scope.filterMetaValue(pname,undefined,i,undefined);
+					
+				}
+			}
+			
+			/**
+			 * danristo
+			 */
+			loc.indexOfRow = i;
+			
+			/**
+			 * Change the GUI element type for first two columns of the Step 2 of the Dataset wizard, from combo box ('md-select') to the label (fixed value).
+			 * This is done as a temporary solution - besides this, these things are removed: 'Columns/Dataset' combo box, 'Add new row' button, 'Clear all' 
+			 * button, delete row item in each row. The only dynamic behavior has the 'Value' column, since we can choose between Integer and Double for MEASURES
+			 * and an additional String option for ATTRIBUTES, so for this reason we are keeping the combo box element.
+			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+//				loc.columnView='<md-select aria-label="column-view" ng-model=row.column class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumns" value="{{col.columnName}}">{{col.columnName}}</md-option></md-select>';
+//				loc.pnameView='<md-select aria-label="pname-view" ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsMetaProperty" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.filterMetaValues(col.VALUE_CD,row)">{{col.VALUE_NM}}</md-option></md-select>';
+		
+			loc.columnView='<label>{{row.column}}</label>';
+			loc.pnameView='<label>{{row.pname}}</label>';
+			loc.pvalueView='<md-select aria-label="pvalue-view" ng-model=row.pvalue class="noMargin"><md-option ng-repeat="col in row.dsMetaValue" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.valueChanged(col,row.indexOfRow)">{{col.VALUE_NM}}</md-option></md-select>';
+		
+		}
+	}	
 	
 	$scope.prepareDatasetForView = function() {
 		var datasets = $scope.dataset.meta.dataset
@@ -624,44 +687,71 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		}
 	}
 	
-	$scope.filterMetaValue = function(pname){
+	$scope.filterMetaValue = function(pname,item,i,index,myFieldType){
+		
 		var filteredMetaValues = [];
+		
+		/**
+		 * A flag that will indicate if the "String" item in the Value column combobox for the belonging Field type row for the current column
+		 * should be excluded. It does if one of two cases specified below are true.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+		 */
+		var insertString = true;
+		
+		/**
+		 * Cases in which the "String" item in the Field type should be excluded:
+		 * 
+		 * myFieldType=="MEASURE": 
+		 * 		If initializing (entering) the Step 2, inspect the next Field type value and if it is a MEASURE, remove the "String" values 
+		 * 		from the current Type row (since the column of the MEASURE field type cannot be a String). If it is not a MEASURE, i.e. if 
+		 * 		it is an ATTRIBUTE, continue with initializing items in the Type combobox for particular row without any modification (include 
+		 * 		the "String" item as well).
+		 * 
+		 * index && item=="MEASURE":
+		 * 		If the user clicks on some Field type combobox (the combo in the Value column in the Step 2) and choose a MEASURE, its 
+		 * 		belonging Type value (for the same column, e.g. Country) should exclude the "String" item. In that case the "index" input 
+		 * 		parameter is defined.
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+		 */
+		if (myFieldType=="MEASURE" || index && item=="MEASURE")
+			insertString = false;
+		
 		if(pname.toLowerCase()==="type".toLowerCase()){
-			for(j=0;j<$scope.dsMetaValue.length;j++){
-			 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="string".toLowerCase()||
-					 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="double".toLowerCase()||
-					 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="integer".toLowerCase()){
-				 filteredMetaValues.push($scope.dsMetaValue[j]);
-			 }    			
-		}
 			
+			for(j=0;j<$scope.dsMetaValue.length;j++){ 
+
+				 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="string".toLowerCase() && insertString || 
+						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="double".toLowerCase()||
+						 $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="integer".toLowerCase()){
+					 filteredMetaValues.push($scope.dsMetaValue[j]);
+				 }    			
+			}			
 			
 		}else if(pname.toLowerCase()==="fieldType".toLowerCase()){
 			for(j=0;j<$scope.dsMetaValue.length;j++){
    			 if($scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="attribute".toLowerCase()||
    			    $scope.dsMetaValue[j].VALUE_CD.toLowerCase()==="measure".toLowerCase()){
    				filteredMetaValues.push($scope.dsMetaValue[j]);
-   			 }
-   				
+   			 }   				
    			
    			}
 			
-		}else{
-			
-			angular.copy($scope.dsMetaValue,filteredMetaValues);
-			
+		}else{			
+			angular.copy($scope.dsMetaValue,filteredMetaValues);			
 		}
+		
 		return filteredMetaValues;
 	}
 	
 	$scope.prepareMetaValue=function(values){
-		
+				
 		for(i=0;i<values.length;i++){
 			
 			if (values[i].pname.toUpperCase() == 'type'.toUpperCase()){
 				values[i].pname=values[i].pname.toLowerCase();
 				typeValue = values[i].pvalue;
-				typeValue = typeValue.replace("java.lang.","");
+				typeValue = typeValue!=null ? typeValue.replace("java.lang.","") : null;
 				values[i].pvalue = typeValue;
 			}
 		}

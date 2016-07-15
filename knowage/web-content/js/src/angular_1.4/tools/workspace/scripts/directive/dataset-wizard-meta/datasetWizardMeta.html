@@ -1,19 +1,34 @@
 <div>
  
-	<md-input-container class="md-block">
+ 	<!-- 
+ 		Remove the combobox that offers Columns/Dataset on the top of the Step 2. Current implementation does not include
+ 		the Dataset item to be available.
+ 		@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ 	 -->
+	<!-- <md-input-container class="md-block">
 	
 		<md-select 	aria-label="aria-label" ng-model="metadataType.value" 
 					placeholder="{{translate.load('sbi.workspace.dataset.wizard.metadatatype')}}">
 			<md-option 	ng-repeat="m in metadataTypes track by $index"  value="{{m.value}}">
 				{{m.name}} 
 			</md-option> 
-		</md-select>
+		</md-select> 
 		
-	</md-input-container>
+	</md-input-container> -->
 	
-	<div ng-if="metadataType.value==1" class="step2DefDataTableContainer">
+	<!-- 
+		REMOVED WHEN THE COMBO WITH COLUMNS/DATASET WAS REMOVED.
+		@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	-->
+	<!-- <div ng-if="metadataType.value==1" class="step2DefDataTableContainer"> -->
+	<div ng-if="metadataType.value==1">
 	
-  		<angular-table
+		<!-- 
+			TEMPORARY SOLUTION: the button for removing separate rows are removed (hidden) because the interface 
+			and the logic need improvement ('deleteMeta').  
+			@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 -->
+  		<!-- <angular-table
 						id="columnsMeta"
 						ng-model=dataset.meta.columns
 						columns="tableColumns"
@@ -21,9 +36,23 @@
 						scope-functions="metaScopeFunctions"
 					    speed-menu-option=deleteMeta
 						no-pagination=true	
+						class="step2DefDataTable"> -->
+						
+		<angular-table
+						id="columnsMeta"
+						ng-model=dataset.meta.columns
+						columns="tableColumns"
+						show-search-bar=false
+						scope-functions="metaScopeFunctions"
+						no-pagination=true	
 						class="step2DefDataTable">
 					
-					<queue-table>
+					<!-- 
+						TEMPORARY SOLUTION: the 'Clear all' and 'Add new row' buttons are removed (hidden) because the interface and the logic
+						need improvement.  
+						@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 -->
+					<!-- <queue-table>
 						
 						<md-button 	class="md-raised" ng-click="scopeFunctions.addNewMetaRow()"
 									title="{{scopeFunctions.translate.load('sbi.workspace.dataset.wizard.metadatatype.addNewMetaRow')}}">
@@ -37,7 +66,7 @@
 							{{scopeFunctions.translate.load('sbi.workspace.dataset.wizard.metadatatype.clearall')}}
 						</md-button>
 						
-					</queue-table>
+					</queue-table> -->
 					
 		</angular-table>
 		
@@ -54,8 +83,13 @@
 						scope-functions="metaScopeFunctions"
 					   	no-pagination=true	
 					   	class="step2DefDataTable">
-												
-					<queue-table>
+						
+					<!-- 
+						TEMPORARY SOLUTION: the 'Clear all' and 'Add new row' buttons are removed (hidden) because the interface and the logic
+						need improvement.  
+						@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 	-->						
+					<!-- <queue-table>
 					
 						<md-button 	class="md-raised" ng-click="scopeFunctions.addNewDatasetRow()"
 									title="{{scopeFunctions.translate.load('sbi.workspace.dataset.wizard.metadatatype.addNewDatasetRow')}}">
@@ -67,9 +101,9 @@
 						<md-button 	class="md-raised" ng-click="scopeFunctions.clearAllDatasets()"
 									title="{{scopeFunctions.translate.load('sbi.workspace.dataset.wizard.metadatatype.clearAllDatasetRows')}}">
 							{{scopeFunctions.translate.load('sbi.workspace.dataset.wizard.metadatatype.clearall')}}
-						</md-button>
+						</md-button>  
 						
-					</queue-table>
+					</queue-table> -->
 					
 		</angular-table>
 		

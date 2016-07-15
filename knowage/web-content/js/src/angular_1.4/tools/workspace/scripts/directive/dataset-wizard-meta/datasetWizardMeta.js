@@ -97,7 +97,7 @@ function datasetWizardMetaController($scope,$mdDialog,sbiModule_translate){
     
     $scope.table=[];
     
-    $scope.metaScopeFunctions={
+    $scope.metaScopeFunctions={    		    		
     	translate: sbiModule_translate,	
     	datasetColumns:$scope.datasetColumns,
     	dsMetaProperty:$scope.dsMetaProperty,
@@ -129,6 +129,17 @@ function datasetWizardMetaController($scope,$mdDialog,sbiModule_translate){
     		
     	}
     };
+    
+    /**
+     * A click-listener function that will take care when user clicks on the Value combo that is aligned with the particular 
+     * Field type row, in order to indicate that we are changing this value. This information will be useful when user picks
+     * e.g. a MEASURE, in which case the previous row of type Type (it belonging column, e.g. city) will remove its "String"
+     * item, since the MEASURE cannot be if type String.
+     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+     */
+    $scope.metaScopeFunctions.valueChanged = function(item,index) {    	
+    	(item.VALUE_CD=="MEASURE" || item.VALUE_CD=="ATTRIBUTE") ? $scope.prepareMetaForView(item.VALUE_CD,index) : null;    	
+    }
     
     $scope.deleteMetaColumn=function(item){
     	var index=$scope.dataset.meta.columns.indexOf(item);

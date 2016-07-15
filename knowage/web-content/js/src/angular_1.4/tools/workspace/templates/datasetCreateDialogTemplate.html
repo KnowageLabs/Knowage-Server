@@ -235,9 +235,19 @@
                	<h2>{{translate.load('sbi.workspace.dataset.wizard.load')}} &#10137; {{translate.load('sbi.ds.wizard.metadata')}}</h2>
                	<span flex></span>
            	 	</div>
-         	</md-toolbar>
-         
+         	</md-toolbar>         
+                  
          	<md-content flex class="loadFilePadding step2DefDataCardContent">
+         		
+         		<!-- 
+         			Remove the label that informs us that we can set only settings available for Columns option 
+         			(not those for Dataset option - removed for now).
+         			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+         		 -->
+         		<!-- <md-input-container flex class="md-block" style="padding-bottom: 25px;">
+					<label>Columns</label> 
+				</md-input-container>  -->
+         	
 	            <form>
 	               <dataset-wizard-meta></dataset-wizard-meta>
 	            </form>
