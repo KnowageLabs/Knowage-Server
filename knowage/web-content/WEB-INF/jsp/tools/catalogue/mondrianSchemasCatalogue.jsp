@@ -286,7 +286,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									{"label":"Name","name":"fullName"}
 								]'
 								show-search-bar=true
-								speed-menu-option ="workflowSpeedMenu"
+								speed-menu-option ="!isStartedWf ? workflowSpeedMenu : workflowSpeedMenuSt"
 								style="overflow:hidden"	
 								>					
 								</angular-table>

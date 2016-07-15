@@ -36,6 +36,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	$scope.wfStarted = false;//is still editable
 	$scope.wfExists = false;
 	var startAfterCreation;
+	$scope.userInProg ;
 	
 	//workflow methods
 	$scope.moveToWorkflow = function(item, fromInterface){
@@ -81,8 +82,10 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	isWorkflowStarted = function(modelId){
 		sbiModule_restServices.promiseGet("2.0/workflow/isStarted/"+modelId,"")
 		.then(function(response) {
-			if(response.data > 0)
+			if(response.data > 0){
 				$scope.isStartedWf = true;
+				$scope.userInProg = response.data;
+			}
 			else
 				$scope.isStartedWf = false;
 		}, function(response) {
@@ -241,6 +244,20 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	    }
 	];
 	
+	$scope.workflowSpeedMenuSt = [
+	                    	    
+	    {
+	    	label:"Active user",
+	    	icon:'fa fa-check-circle',
+	    	color:'#1E9144',
+	    	visible:function(item){
+	    		if(item.id == $scope.userInProg)
+	    			return true;
+	    		else
+	    			return false;
+	    	}
+	    }
+	];
 	//old Dragan stuff
 	$scope.isDisabled = function(){
 		if($scope.selectedMondrianSchema.id == undefined){
