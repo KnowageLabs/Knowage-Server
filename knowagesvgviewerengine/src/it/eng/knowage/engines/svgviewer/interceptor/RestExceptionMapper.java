@@ -22,8 +22,9 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
 import java.io.UnsupportedEncodingException;
 
-import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -88,16 +89,18 @@ public class RestExceptionMapper implements ExceptionMapper<RuntimeException> {
 			bytesResponse = serializedMessages.toString().getBytes();
 		}
 
-		Response response = Response.status(500).entity(bytesResponse).header(HttpHeaders.CONTENT_ENCODING, "UTF8").build();
+		// Response response = Response.status(500).entity(bytesResponse).header(HttpHeaders.CONTENT_ENCODING, "UTF8").build();
+		// return response;
 
-		// ResponseBuilder response = Response.ok(errors);
-		// response.header("Content-Type", MediaType.APPLICATION_JSON + "; charset=UTF-8");
-		// response.status(500);
-		// return response.build();
+		String msgError = "An error occoured loading SVG: [" + e.getLocalizedMessage() + "] " + e.getCause();
+		ResponseBuilder response = Response.ok(msgError);
+		response.status(500);
+		response.header("Content-Type", MediaType.APPLICATION_JSON + "; charset=UTF-8");
+		response.header("Content-Disposition", "inline; filename=map.svg");
 
 		logger.debug("RestExceptionMapper:toResponse OUT");
+		return response.build();
 
-		return response;
 	}
 
 }

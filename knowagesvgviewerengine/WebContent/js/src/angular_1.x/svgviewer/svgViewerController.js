@@ -36,23 +36,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   
   //stack that contains the drill path elements
   $scope.drillPathStack = [];
-
-//  
-//  $scope.getSVGContent  = function (){
-//	  	 sbiModule_restServices.promiseGet("1.0/svgviewer/drawMap","")
-//				.then(function(response) {
-////					 document.getElementById('svgContainer').srcdoc = response.data;
-//					return response.data;
-//				}, function(response) {
-////					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
-//					alert(response.data.errors[0].message); //TODO sostiruire con il toast
-//					return response.data;
-//				});
-//  }
-//
-//  //get the SVG content 
-//  $scope.svgContent = $scope.getSVGContent();
-//  $scope.svgUrl= '/api/1.0/svgviewer/drawMap';
+  $noError = false;
     
   $scope.openSideNav = function() {
     $mdSidenav('svgSideNav').toggle();
@@ -89,10 +73,13 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  //retrieve Layers
 	  $scope.getLayers();
 	  $scope.getLegendColors();
+	  
+	  $scope.noError = true;
 	});
   
   //Listener called when an element on the svg is clicked
   $window.document.addEventListener("SVGElementClicked", function(e) {
+
 	  //update drill path with stack
 	  var pathElement = new Object();
 	  pathElement.level = $scope.currentLevel;
@@ -119,6 +106,8 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  if  ($scope.currentLevel > 1){
 		  $scope.showBackButton = true;
 	  }
+	  $scope.noError = false;
+	  $scope.$apply();
 	});
   
   //Listener called when an element on the svg is clicked and cross navigation is required
@@ -152,8 +141,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 							  $scope.measureValue = $scope.measures[propt].columnId;
 						  }
 					  }
-					  sbiModule_logger.trace("measures correctly retrivied",data);		
-
+					  sbiModule_logger.trace("measures correctly retrivied",data);							  
 				  }
 			  }).error(function(data, status, headers, config) {
 				  sbiModule_logger.log("measures not retrivied");

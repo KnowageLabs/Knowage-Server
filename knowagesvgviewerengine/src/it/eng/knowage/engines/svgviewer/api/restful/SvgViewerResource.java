@@ -143,8 +143,8 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 
 	@Path("/drillMap")
 	@GET
-	// @Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
-	@Produces({ MediaType.APPLICATION_SVG_XML, MediaType.APPLICATION_JSON })
+	@Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
+	// @Produces({ MediaType.APPLICATION_SVG_XML, MediaType.APPLICATION_JSON })
 	public Response drillMap(@QueryParam("level") String level, @QueryParam("member") String member, @QueryParam("parent") String parent) {
 		logger.debug("IN");
 		try {
@@ -195,7 +195,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			byte[] data = Files.readAllBytes(maptmpfile.toPath());
 
 			ResponseBuilder response = Response.ok(data);
-			response.header("Content-Type", SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8");
+			// response.header("Content-Type", SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8");
 			response.header("Content-Disposition", "inline; filename=map.svg");
 			return response.build();
 

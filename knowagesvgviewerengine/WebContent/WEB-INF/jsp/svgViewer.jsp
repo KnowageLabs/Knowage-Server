@@ -15,7 +15,7 @@
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%
-
+	
 %>
 
 
@@ -40,7 +40,7 @@
         
 			<div ng-app="svgViewerApp">
 			    <div ng-controller="SvgViewerController">
-			        <md-sidenav layout="column" md-component-id="svgSideNav"  class="md-sidenav-<%= propertiesPanelPosition %>"  >
+			        <md-sidenav layout="column" md-component-id="svgSideNav" ng-show="noError" class="md-sidenav-<%= propertiesPanelPosition %>"  >
 			           <md-toolbar class="secondaryToolbar" layout="row" layout-align="start center"> 
 			           	<span layout-padding>Measures </span>	           
 			           </md-toolbar>
@@ -68,10 +68,10 @@
 					     	 [{{legend.tresholds[$index] | number:2}} - {{legend.tresholds[$index+1] | number:2}}] 
 					     </md-card>        
 			        </md-sidenav>
-			        <md-button class="sidenavOpenButton" ng-click="openSideNav()" title="Open options panel">
+			        <md-button class="sidenavOpenButton" ng-click="openSideNav()"  ng-show="noError"  title="Open options panel">
 			              <i class="fa fa-2x fa-bar-chart" aria-hidden="true"></i>
 			        </md-button>
-			        <md-button class="backButton" ng-click="goToPreviousLevel()" ng-show="showBackButton" title="Go back to previous level">
+			        <md-button class="backButton" ng-click="goToPreviousLevel()" ng-show="showBackButton"  ng-show="noError"  title="Go back to previous level">
 			              <i class="fa fa-2x fa-arrow-circle-left" aria-hidden="true"></i>
 			        </md-button>
 			         <md-content layout-fill layout="column">
@@ -82,16 +82,6 @@
 								width="100%" height="100%" frameborder="0"
 								style="background-color: white;"> 
 							</iframe>  
-							<!--<iframe id="svgContainer" 
-							    srcdoc="{{svgContent}}"
-								width="100%" height="100%" frameborder="0"
-								style="background-color: white;"> 
-							</iframe>-->
-							 <!-- <iframe ng-if="!svgContent.errors" id="svgContainer"   ng-cloak
-							    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'  
-								width="100%" height="100%" frameborder="0"
-								style="background-color: white;"> 
-							</iframe>   -->
 						</div>
 			          </md-content>
 			    </div>
