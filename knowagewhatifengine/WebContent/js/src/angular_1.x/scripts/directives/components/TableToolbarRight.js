@@ -26,24 +26,26 @@ angular.module('sbi_table_toolbar',[])
 	}
 });
 
-function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_download) {
+function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_download,olapSharedSettings) {
 	
 	var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
 	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon","BUTTON_EDITABLE_EXCEL_EXPORT"];
 	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT","BUTTON_SORTING_SETTINGS","BUTTON_CC","BUTTON_SORTING"]
+	var saveAsTimeout = olapSharedSettings.getSettings().persistNewVersionTransformations;
 	$scope.clickedButtons = [];
 	$scope.outputWizardDescription = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.description');
 	$scope.outputWizardTitle = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.title');
 	$scope.outputWizardTypeLabel = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type');
 	$scope.outputTypes = [{name:'table',value:'table'},{name:'file',value:'csv'}]
 	$scope.outputVersions = []; //TODO
+	$scope.versionsForDelete = [];
 	$scope.lockTooltip;
 	$scope.DTEnabled = false;
 	$scope.delimiter = "|";
 	$scope.tableName = "WHATIFOUTPUTTABLE";
 	$scope.outputType = $scope.outputTypes.length > 0 ? $scope.outputTypes[0].value:'';
 	$scope.outputVersion ;
-	$scope.saveAsName = "Version Name Example";
+	$scope.saveAsName = "";
 	$scope.saveAsDescription ="";
 	whatifToolbarButtonsVisible=[];
 	$scope.lockerClass = "";
@@ -230,7 +232,10 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				$scope.showDialog(null,$scope.saveAsNew);
 				sendModelConfig = false;
 				break;
-				
+			case "BUTTON_VERSION_MANAGER":
+				$scope.showDialog(null,$scope.deleteVersionDialog);
+				sendModelConfig = false;
+				break;
 			case "BUTTON_SAVE":
 				persistTransformations();
 				sendModelConfig = false;
@@ -381,7 +386,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			  sbiModule_messaging.showErrorMessage("An error occured while refreshing", 'Error'); 
 		  });
 	  };
-
+	  
 	  
 	  persistTransformations = function(){
 		  sbiModule_restServices.promisePost
@@ -480,12 +485,11 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	  }
 	  
 	  $scope.saveAsFunction = function(){
-		  $timeout(func);
 		  if($scope.saveAsDescription == undefined)
 			  $scope.saveAsDescription ="";
 		  
 		  sbiModule_restServices.promisePost
-			("1.0","/model/saveAs/"+ $scope.saveAsName+"/"+$scope.saveAsDescription+"?SBI_EXECUTION_ID="+ JSsbiExecutionID)
+			("1.0","/model/saveAs/"+ $scope.saveAsName+"/"+$scope.saveAsDescription+"?SBI_EXECUTION_ID="+ JSsbiExecutionID,null,{timeout:saveAsTimeout})
 			.then(function(response) {
 				console.log(response.data);
 				sbiModule_messaging.showInfoMessage("New version saved", 'Info');
@@ -493,5 +497,44 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			  sbiModule_messaging.showErrorMessage("An error occurred while saving new version", 'Error'); 
 		  });
 	  }
+	  
+	  $scope.exists = function(id){
+		  return $scope.versionsForDelete.indexOf(id) > -1;
+	  }
+	  
+	  $scope.selectForDelete = function(id){
+		  var idx = $scope.versionsForDelete.indexOf(id);
+		  
+		  if(idx > -1)
+			  $scope.versionsForDelete.splice(idx,1);
+		  else
+			  $scope.versionsForDelete.push(id);
+	  }
+	  
+	  $scope.selectUnselectAll = function(){
+		  if($scope.versionsForDelete.length == $scope.outputVersions.length){
+			  $scope.versionsForDelete = [];
+		  }
+		  else{
+			  $scope.versionsForDelete = [];
+			  for(var i=0;i < $scope.outputVersions.length;i++){
+				  $scope.versionsForDelete.push($scope.outputVersions[i].id);
+			  }
+		  }
+	  }
+	  
+	  $scope.deleteVersions = function(){
+		  
+		  var path ='/version/delete/'+ $scope.versionsForDelete+'?SBI_EXECUTION_ID='+JSsbiExecutionID; 
 
+		 sbiModule_restServices.promisePost("1.0",path)
+			.then(function(response) {
+				sbiModule_messaging.showErrorMessage("Versions successfully deleted", 'Info');
+				$scope.getVersions();
+				$scope.closeDialog(null);
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage("An error occured while deleting versions", 'Error');
+				
+			});
+	  }
 };
