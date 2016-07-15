@@ -235,6 +235,63 @@ public class UserUtilities {
 		}
 	}
 
+	public static boolean hasDeveloperRole(IEngUserProfile profile) {
+		Assert.assertNotNull(profile, "Object in input is null");
+		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		try {
+			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+			Collection<String> roles = profile.getRoles();
+			for (String role : roles) {
+				Role r = roleDAO.loadByName(role);
+				String roleCode = r.getRoleTypeCD();
+				if (roleCode.equalsIgnoreCase("DEV_ROLE")) {
+					return true;
+				}
+			}
+			return false;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting user's information", e);
+		}
+	}
+
+	public static boolean hasAdminRole(IEngUserProfile profile) {
+		Assert.assertNotNull(profile, "Object in input is null");
+		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		try {
+			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+			Collection<String> roles = profile.getRoles();
+			for (String role : roles) {
+				Role r = roleDAO.loadByName(role);
+				String roleCode = r.getRoleTypeCD();
+				if (roleCode.equalsIgnoreCase("ADMIN") || roleCode.equalsIgnoreCase("MODEL_ADMIN")) {
+					return true;
+				}
+			}
+			return false;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting user's information", e);
+		}
+	}
+
+	public static boolean hasUserRole(IEngUserProfile profile) {
+		Assert.assertNotNull(profile, "Object in input is null");
+		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		try {
+			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+			Collection<String> roles = profile.getRoles();
+			for (String role : roles) {
+				Role r = roleDAO.loadByName(role);
+				String roleCode = r.getRoleTypeCD();
+				if (roleCode.equalsIgnoreCase("USER") || roleCode.equalsIgnoreCase("TEST_ROLE")) {
+					return true;
+				}
+			}
+			return false;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting user's information", e);
+		}
+	}
+
 	public static boolean isTester(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
 		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
