@@ -96,6 +96,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	var exportBtn = {};
 	var exportEditableBtn = {};
 	var result;
+	$scope.wiMsg ="";
+	$scope.wiMessageNeeded = false;
+	
 	
 	whatIfBtns = function(status){
 			if(status == 'locked_by_user')
@@ -331,15 +334,20 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  if(s=="locked_by_user"){
 			  $scope.lockerClass="unlock-icon"; 
 			  $scope.lockTooltip = sbiModule_translate.load('sbi.olap.toolbar.unlock');
+			  $scope.wiMessageNeeded = false;
 		  }
 		  if(s=="locked_by_other"){
 			  $scope.lockerClass="lock-other-icon";
 			  $scope.lockTooltip = sbiModule_translate.load('sbi.olap.toolbar.lock_other');
 			  $scope.lockTooltip += " "+locker;
+			  $scope.wiMsg = sbiModule_translate.load('sbi.olap.toolbar.lock_other') +" "+locker;
+			  $scope.wiMessageNeeded = true;
 		  }
 		  if(s=="unlocked"){
 			  $scope.lockerClass="lock-icon";
 			  $scope.lockTooltip = sbiModule_translate.load('sbi.olap.toolbar.lock');
+			  $scope.wiMsg = "Workflow finished";
+			  $scope.wiMessageNeeded = true;
 		  }
 	  };
 	  

@@ -59,11 +59,12 @@
 </md-grid-list>
 
 <div class="menu-text" ng-show="wiGridNeeded">What If</div>
+<div class="what-if-msg" ng-if="wiMessageNeeded">{{wiMsg}}</div>
 <md-grid-list
         md-cols="3" 
         md-row-height="50px"
          ng-show="wiGridNeeded">
-    <md-grid-tile>
+    <md-grid-tile  ng-if="!wiMessageNeeded">
     	<md-button class="right-toolbar-menu {{lockerClass}}"  ng-click="lockFunction()">
     		<md-tooltip md-direction="bottom">
 				{{lockTooltip}}

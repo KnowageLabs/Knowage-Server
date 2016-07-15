@@ -880,3 +880,8 @@ md-option[selected], md-select-menu md-option[selected]{
 	border-left: 0.5px solid black;
 	font-size: 66%
 }
+
+.what-if-msg{
+	font-size: 70%;
+	padding-left: 10px;
+}
