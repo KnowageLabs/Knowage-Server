@@ -66,16 +66,39 @@
 				 	 	<md-tab-body>
 				 	 	
 				 	 	 <div layout="row" flex>
+				 	 	 
 					 	 	   <span flex></span>
+					 	 	  	
 					 	 	  	<md-input-container flex=30>
+					          		
 					          		<md-select ng-model="selectedCkanRepo" placeholder="{{translate.load('sbi.workspace.dataset.ckan.repository')}}">
-					    			<md-option ng-value="repository" ng-repeat="repository in ckanRepos">{{ repository.name }}</md-option>
+					    			
+					    				<!-- 
+					    					When clicking on the CKAN repository combobox item, the data from this repository will download after running a
+					    					dedicated function of our scope. 
+					    					@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					    				 -->
+						    			<md-option ng-value="repository" ng-repeat="repository in ckanRepos" ng-click="loadCkanDatasets(repository)">
+						    				{{ repository.name }}
+					    				</md-option>
+				    				
 					  			    </md-select>
+					  			    
 					            </md-input-container>
-					 	 	   	<md-button class="md-icon-button" title="Load" aria-label="Load" ng-show=true ng-click="loadCkanDatasets()" style="padding-top:4px;">
-								   <md-icon md-font-icon="fa fa-globe"></md-icon>
+					            
+					            <!-- 
+					            	Instead of having a dedicated Load button next to the combo (for loading specified (picked) data source in the combobox),
+					            	we will listen to the click event in the combo itself and consequently fire a function that is responsible for loading
+					            	the data (this remote data coming from the specified repository).
+					            	@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					             -->
+				 	 	   	 	<!--<md-button class="md-icon-button ckanButton" title="{{translate.load('sbi.generic.load')}}" aria-label="Load" ng-show=true ng-click="loadCkanDatasets()" style="width:200px">
+								<md-icon md-font-icon="fa fa-globe" class="ckanButtonIcon">&nbsp; {{translate.load('sbi.workspace.dataset.ckan.loadbutton')}}</md-icon> -->
+								 
 							</md-button>
+							
 							<span flex></span>
+							
 				 	 	 </div>
 				 	 	 
 				 	 	 <div flex>

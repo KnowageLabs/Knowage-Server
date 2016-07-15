@@ -307,7 +307,7 @@
 							            style="position:absolute;"
 							            ng-model="resultRowsStep2"
 										columns="allHeadersForStep3Preview" 
-										no-pagination=true
+										no-pagination=false
 										show-search-bar=false>
 							</angular-table>
 						
@@ -320,13 +320,14 @@
          	</md-content>      	
          	
       	</md-card>
-     	<!-- CARD 3 (END) -->
-     	
+      	
      	<!-- Validation status text: the validation state after going from the Step 2 to the Step 3 -->
       	<p 	ng-show="validationStatus && datasetWizardView==3" 
       		class="step3ValidationText {{validationStatus ? 'validStatusColor' : 'invalidStatusColor'}}">
       		{{validationStatus ? translate.load("sbi.ds.metadata.msgOK") : translate.load("sbi.ds.metadata.msgKO")}}
    		</p>
+   		
+   		<!-- CARD 3 (END) -->
       	
       	<!-- CARD 4 (START) -->
       	<div ng-if="datasetWizardView==4">

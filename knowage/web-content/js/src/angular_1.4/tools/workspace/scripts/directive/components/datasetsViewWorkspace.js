@@ -577,8 +577,20 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.selectedCkanRepo={};
     $scope.ckanDatasetsList=[];
     $scope.ckanDatasetsListInitial=[];
-	$scope.loadCkanDatasets=function(){
-		var repo=$scope.selectedCkanRepo;
+
+    /**
+     * If the CKAN repository is picked by simple clicking on the combobox that contains repository targets, then we need to send
+     * an information about that repository - the picked repository itself. For that reason and for that case, the input parameter
+     * is provided. Instead, if the Load button is about to be returned back, we would not need this input parameter anymore. We will
+     * get it from our scope.
+     * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+     */
+	$scope.loadCkanDatasets=function(selectedCkanRepo) {
+		
+		var repo = selectedCkanRepo;
+		
+		// The implementation when the Load button is present and clicked. (danristo)
+//		var repo=$scope.selectedCkanRepo;
 		
 		if(repo.url==undefined){
 			sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.workspace.dataset.ckan.selectRepo'),sbiModule_translate.load('sbi.workspace.dataset.ckan.noRepository'));
