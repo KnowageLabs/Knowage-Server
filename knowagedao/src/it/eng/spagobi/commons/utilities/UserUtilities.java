@@ -240,11 +240,11 @@ public class UserUtilities {
 		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
-			Collection<String> roles = profile.getRoles();
+			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
 				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase("DEV_ROLE")) {
+				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_DEV) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_TEST)) {
 					return true;
 				}
 			}
@@ -254,16 +254,16 @@ public class UserUtilities {
 		}
 	}
 
-	public static boolean hasAdminRole(IEngUserProfile profile) {
+	public static boolean hasAdministratorRole(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
 		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
-			Collection<String> roles = profile.getRoles();
+			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
 				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase("ADMIN") || roleCode.equalsIgnoreCase("MODEL_ADMIN")) {
+				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
 					return true;
 				}
 			}
@@ -278,11 +278,11 @@ public class UserUtilities {
 		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
-			Collection<String> roles = profile.getRoles();
+			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
 				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase("USER") || roleCode.equalsIgnoreCase("TEST_ROLE")) {
+				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_USER)) {
 					return true;
 				}
 			}
