@@ -545,7 +545,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 
 		 sbiModule_restServices.promisePost("1.0",path)
 			.then(function(response) {
-				sbiModule_messaging.showErrorMessage("Versions successfully deleted", 'Info');
+				sbiModule_messaging.showSuccessMessage("Versions successfully deleted", 'Success');
 				$scope.getVersions();
 				$scope.closeDialog(null);
 			}, function(response) {
