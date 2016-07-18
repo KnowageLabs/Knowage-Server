@@ -44,10 +44,20 @@ function recentController($scope,sbiModule_restServices,sbiModule_translate,$doc
 			console.info("[LOAD START]: Loading of Recent documents is started.");
 			angular.copy(response.data,$scope.recentDocumentsList);
 			$scope.recentDocumentsInitial = $scope.recentDocumentsList;
+			$scope.convertTimestampToDate();
 			console.info("[LOAD END]: Loading of Recent documents is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
+	}
+	
+	$scope.convertTimestampToDate = function(){
+		for (var i = 0; i < $scope.recentDocumentsInitial.length; i++) {
+			var timestamp = $scope.recentDocumentsInitial[i].requestTime;
+			var date = new Date(timestamp);
+			var dateString = date.toLocaleString();
+			$scope.recentDocumentsInitial[i].requestTime = dateString;
+		}	
 	}
 	
 	$scope.loadRecentDocumentExecutionsForUser();

@@ -176,12 +176,22 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		.then(function(response) {
 			angular.copy(response.data,$scope.folders); // all folders
 			//angular.copy(response.data,$scope.foldersForTree);
+			$scope.convertTimestampToDateFolders();
 			$scope.loadFolderContent();
 			$scope.loadDocumentsForFolder($scope.selectedFolder);
 			console.info("[LOAD END]: Loading of users folders is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
+	}
+	
+	$scope.convertTimestampToDateFolders = function(){
+		for (var i = 0; i < $scope.folders.length; i++) {
+			var timestamp = $scope.folders[i].timeIn;
+			var date = new Date(timestamp);
+			var dateString = date.toLocaleString();
+			$scope.folders[i].timeIn = dateString;
+		}	
 	}
 	
 	$scope.openFolder = function(folder){

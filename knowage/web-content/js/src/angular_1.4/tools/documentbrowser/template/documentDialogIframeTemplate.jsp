@@ -8,7 +8,7 @@
 				@author Ana Tomic (atomic, ana.tomic@mht.net)
 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)				
 			 -->
-			<md-toolbar class="documentBrowserToolbar" ng-cloak ng-if="cancelDialog!=undefined">
+			<md-toolbar class="secondaryToolbar" ng-cloak ng-if="cancelDialog!=undefined">
 			
 				<div layout="row">
 					

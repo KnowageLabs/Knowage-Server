@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -39,24 +39,28 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
-	
+
 	private static transient Logger logger = Logger.getLogger(DbAuditImpl.class);
-	
+
 	/**
 	 * Insert audit.
-	 * 
-	 * @param aSbiAudit the a sbi audit
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
+	 *
+	 * @param aSbiAudit
+	 *            the a sbi audit
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
 	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#insertAudit(it.eng.spagobi.bo.SbiAudit)
 	 */
+	@Override
 	public void insertAudit(SbiAudit aSbiAudit) throws EMFUserError {
 		logger.debug("IN");
 		Session session = null;
 		Transaction tx = null;
 		try {
-			session = getSession();;
+			session = getSession();
+			;
 			tx = session.beginTransaction();
 			if (aSbiAudit.getSbiObject() == null) {
 				Integer objectId = aSbiAudit.getDocumentId();
@@ -86,26 +90,33 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			if (session != null) {
-				if (session.isOpen()) session.close();
+				if (session.isOpen())
+					session.close();
 			}
 			logger.debug("OUT");
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#loadAllAudits()
 	 */
+	@Override
 	public List loadAllAudits() throws EMFUserError {
 		logger.debug("IN");
 		logger.error("this method is not implemented!!");
 		logger.debug("OUT");
 		return null;
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditByID(java.lang.Integer)
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditByID(java.lang.Integer)
 	 */
+	@Override
 	public SbiAudit loadAuditByID(Integer id) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
@@ -154,18 +165,23 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 			logger.debug("OUT");
 		}
 		return aSbiAudit;
 	}
-	
 
-	/* (non-Javadoc)
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#modifyAudit(it.eng.spagobi.monitoring.metadata.SbiAudit)
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * it.eng.spagobi.monitoring.dao.IAuditDAO#modifyAudit(it.eng.spagobi.monitoring
+	 * .metadata.SbiAudit)
 	 */
+	@Override
 	public void modifyAudit(SbiAudit aSbiAudit) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
@@ -173,7 +189,8 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			// TODO forse mettere un controllo per vedere se ci sono sbiobject e sbiengine?
+			// TODO forse mettere un controllo per vedere se ci sono sbiobject e
+			// sbiengine?
 			updateSbiCommonInfo4Update(aSbiAudit);
 			aSession.saveOrUpdate(aSbiAudit);
 			tx.commit();
@@ -183,17 +200,23 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 			logger.debug("OUT");
-		}	
+		}
 
 	}
 
-	/* (non-Javadoc)
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditsByDocumentLabel(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditsByDocumentLabel(java
+	 * .lang.String)
 	 */
+	@Override
 	public List loadAuditsByDocumentLabel(String documentLabel) throws EMFUserError {
 		logger.debug("IN");
 		logger.error("this method is not implemented!!");
@@ -201,9 +224,14 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditsByEngineLabel(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditsByEngineLabel(java.
+	 * lang.String)
 	 */
+	@Override
 	public List loadAuditsByEngineLabel(String engineLabel) throws EMFUserError {
 		logger.debug("IN");
 		logger.error("this method is not implemented!!");
@@ -211,9 +239,14 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditsByUserName(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * it.eng.spagobi.monitoring.dao.IAuditDAO#loadAuditsByUserName(java.lang
+	 * .String)
 	 */
+	@Override
 	public List loadAuditsByUserName(String userName) throws EMFUserError {
 		logger.debug("IN");
 		logger.error("this method is not implemented!!");
@@ -221,16 +254,20 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#eraseAudit(java.lang.Integer)
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * it.eng.spagobi.monitoring.dao.IAuditDAO#eraseAudit(java.lang.Integer)
 	 */
+	@Override
 	public void eraseAudit(Integer id) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
-			tx = aSession.beginTransaction();			
+			tx = aSession.beginTransaction();
 			SbiAudit sbiAudit = (SbiAudit) aSession.load(SbiAudit.class, id);
 			aSession.delete(sbiAudit);
 			tx.commit();
@@ -243,19 +280,25 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 			logger.error(ex);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100); 
-		}	finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 			logger.debug("OUT");
 		}
-		
+
 	}
 
-	/* (non-Javadoc)
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#getMostPopular(java.util.Collection, int)
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * it.eng.spagobi.monitoring.dao.IAuditDAO#getMostPopular(java.util.Collection
+	 * , int)
 	 */
+	@Override
 	public List getMostPopular(Collection roles, int limit) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
@@ -269,40 +312,41 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 			Iterator it = roles.iterator();
 			while (it.hasNext()) {
 				String roleName = (String) it.next();
-				//usergroups += "'" + roleName + "'";
-				//if (it.hasNext()) usergroups += ",";
-				 if (!userGroups.contains(roleName)) userGroups.add(roleName);
+				// usergroups += "'" + roleName + "'";
+				// if (it.hasNext()) usergroups += ",";
+				if (!userGroups.contains(roleName))
+					userGroups.add(roleName);
 			}
 			StringBuffer hql = new StringBuffer();
 			hql.append("select ");
 			hql.append("		count(a.sbiObject.biobjId), ");
-			hql.append(	"		a.sbiObject.biobjId, ");
-			hql.append(	"		a.sbiObject.label, ");
-			hql.append(	"		a.sbiObject.name, ");
-			hql.append(	"		a.sbiObject.descr, ");
-			hql.append(	"		a.sbiObject.objectTypeCode, ");
-			hql.append(	"		a.subObjId, ");
-			hql.append(	"		a.subObjName, ");
-			hql.append(	"		a.documentParameters, ");
-			hql.append(	"		a.sbiEngine.name "); 
-			hql.append(	"from ");
-			hql.append(	"		SbiAudit a ");
-			hql.append(	"where 	");
-			hql.append(	"		a.sbiObject is not null and ");
-			hql.append(	"		a.sbiEngine is not null and ");
-			hql.append(	"		a.sbiObject.label not like 'SBI_%' and ");
-			hql.append(	"		a.userGroup in (:USER_GROUPS) and ");
-			hql.append(	"		(a.sbiSubObject is null or a.sbiSubObject.subObjId = a.subObjId) ");
-			hql.append(	"group by 	a.sbiObject.biobjId, ");
-			hql.append(	"			a.sbiObject.label, ");
-			hql.append(	"			a.sbiObject.name, ");
-			hql.append(	"			a.sbiObject.descr, ");
-			hql.append(	"			a.sbiObject.objectTypeCode, ");
-			hql.append(	"			a.subObjId, ");
-			hql.append(	"			a.subObjName, ");
-			hql.append(	"			a.documentParameters, ");
-			hql.append(	"			a.sbiEngine.name ");
-			hql.append(	"order by count(a.sbiObject.biobjId) desc ");
+			hql.append("		a.sbiObject.biobjId, ");
+			hql.append("		a.sbiObject.label, ");
+			hql.append("		a.sbiObject.name, ");
+			hql.append("		a.sbiObject.descr, ");
+			hql.append("		a.sbiObject.objectTypeCode, ");
+			hql.append("		a.subObjId, ");
+			hql.append("		a.subObjName, ");
+			hql.append("		a.documentParameters, ");
+			hql.append("		a.sbiEngine.name ");
+			hql.append("from ");
+			hql.append("		SbiAudit a ");
+			hql.append("where 	");
+			hql.append("		a.sbiObject is not null and ");
+			hql.append("		a.sbiEngine is not null and ");
+			hql.append("		a.sbiObject.label not like 'SBI_%' and ");
+			hql.append("		a.userGroup in (:USER_GROUPS) and ");
+			hql.append("		(a.sbiSubObject is null or a.sbiSubObject.subObjId = a.subObjId) ");
+			hql.append("group by 	a.sbiObject.biobjId, ");
+			hql.append("			a.sbiObject.label, ");
+			hql.append("			a.sbiObject.name, ");
+			hql.append("			a.sbiObject.descr, ");
+			hql.append("			a.sbiObject.objectTypeCode, ");
+			hql.append("			a.subObjId, ");
+			hql.append("			a.subObjName, ");
+			hql.append("			a.documentParameters, ");
+			hql.append("			a.sbiEngine.name ");
+			hql.append("order by count(a.sbiObject.biobjId) desc ");
 			Query hqlQuery = aSession.createQuery(hql.toString());
 			hqlQuery.setParameterList("USER_GROUPS", userGroups);
 			hqlQuery.setMaxResults(limit);
@@ -316,19 +360,25 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 			logger.error(ex);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100); 
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 			logger.debug("OUT");
 		}
 		return toReturn;
 	}
 
-	/* (non-Javadoc)
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#getMyRecentlyUsed(java.lang.String, int)
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * it.eng.spagobi.monitoring.dao.IAuditDAO#getMyRecentlyUsed(java.lang.String
+	 * , int)
 	 */
+	@Override
 	public List getMyRecentlyUsed(String userId, int limit) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
@@ -342,35 +392,35 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			StringBuffer hql = new StringBuffer();
-			hql.append(	"select ");
-			hql.append(	"		max(a.requestTime), ");
-			hql.append(	"		a.sbiObject.biobjId, ");
-			hql.append(	"		a.sbiObject.label, ");
-			hql.append(	"		a.sbiObject.name, ");
-			hql.append(	"		a.sbiObject.descr, ");
-			hql.append(	"		a.sbiObject.objectTypeCode, ");
-			hql.append(	"		a.subObjId, ");
-			hql.append(	"		a.subObjName, ");
-			hql.append(	"		a.documentParameters, ");
-			hql.append(	"		a.sbiEngine.name "); 
-			hql.append(	"from ");
-			hql.append(	"		SbiAudit a ");
-			hql.append(	"where 	");
-			hql.append(	"		a.sbiObject is not null and ");
-			hql.append(	"		a.sbiEngine is not null and ");
-			hql.append(	"		a.sbiObject.label not like 'SBI_%' and ");
-			hql.append(	"		a.userName = ? and ");
-			hql.append(	"		(a.sbiSubObject is null or a.sbiSubObject.subObjId = a.subObjId) ");
-			hql.append(	"group by 	a.sbiObject.biobjId, ");
-			hql.append(	"			a.sbiObject.label, ");
-			hql.append(	"			a.sbiObject.name, ");
-			hql.append(	"			a.sbiObject.descr, ");
-			hql.append(	"			a.sbiObject.objectTypeCode, ");
-			hql.append(	"			a.subObjId, ");
-			hql.append(	"			a.subObjName, ");
-			hql.append(	"			a.documentParameters, ");
-			hql.append(	"			a.sbiEngine.name ");
-			hql.append(	"order by max(a.requestTime) desc ");
+			hql.append("select ");
+			hql.append("		max(a.requestTime), ");
+			hql.append("		a.sbiObject.biobjId, ");
+			hql.append("		a.sbiObject.label, ");
+			hql.append("		a.sbiObject.name, ");
+			hql.append("		a.sbiObject.descr, ");
+			hql.append("		a.sbiObject.objectTypeCode, ");
+			hql.append("		a.subObjId, ");
+			hql.append("		a.subObjName, ");
+			hql.append("		a.documentParameters, ");
+			hql.append("		a.sbiEngine.name ");
+			hql.append("from ");
+			hql.append("		SbiAudit a ");
+			hql.append("where 	");
+			hql.append("		a.sbiObject is not null and ");
+			hql.append("		a.sbiEngine is not null and ");
+			hql.append("		a.sbiObject.label not like 'SBI_%' and ");
+			hql.append("		a.userName = ? and ");
+			hql.append("		(a.sbiSubObject is null or a.sbiSubObject.subObjId = a.subObjId) ");
+			hql.append("group by 	a.sbiObject.biobjId, ");
+			hql.append("			a.sbiObject.label, ");
+			hql.append("			a.sbiObject.name, ");
+			hql.append("			a.sbiObject.descr, ");
+			hql.append("			a.sbiObject.objectTypeCode, ");
+			hql.append("			a.subObjId, ");
+			hql.append("			a.subObjName, ");
+			hql.append("			a.documentParameters, ");
+			hql.append("			a.sbiEngine.name ");
+			hql.append("order by max(a.requestTime) desc ");
 			Query hqlQuery = aSession.createQuery(hql.toString());
 			hqlQuery.setString(0, userId);
 			hqlQuery.setMaxResults(limit);
@@ -384,33 +434,41 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 			logger.error(ex);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100); 
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 			logger.debug("OUT");
 		}
 		return toReturn;
 	}
-	
+
 	private Object toHotLink(Object[] row) {
 		HotLink toReturn = new HotLink();
+		long servermiliseconds = ((Timestamp) row[0]).getTime();
 		toReturn.setObjId((Integer) row[1]);
 		toReturn.setDocumentLabel((String) row[2]);
 		toReturn.setDocumentName((String) row[3]);
 		toReturn.setDocumentDescription((String) row[4]);
 		toReturn.setDocumentType((String) row[5]);
+		toReturn.setRequestTime(servermiliseconds);
 		toReturn.setSubObjId((Integer) row[6]);
 		toReturn.setSubObjName((String) row[7]);
 		toReturn.setParameters((String) row[8]);
 		toReturn.setEngineName((String) row[9]);
 		return toReturn;
 	}
-	
-	/* (non-Javadoc)
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#getLastExecution(java.lang.Integer)
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * it.eng.spagobi.monitoring.dao.IAuditDAO#getLastExecution(java.lang.Integer
+	 * )
 	 */
+	@Override
 	public SbiAudit getLastExecution(Integer objId) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
@@ -424,32 +482,32 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			StringBuffer hql = new StringBuffer();
-			hql.append(	"select ");
-			hql.append(	"		max(a.executionStartTime)");
-			hql.append(	"from ");
-			hql.append(	"		SbiAudit a ");
-			hql.append(	"where 	");
-			hql.append(	"		a.sbiObject is not null and ");
-			hql.append(	"		a.sbiObject.biobjId = ? ");
+			hql.append("select ");
+			hql.append("		max(a.executionStartTime)");
+			hql.append("from ");
+			hql.append("		SbiAudit a ");
+			hql.append("where 	");
+			hql.append("		a.sbiObject is not null and ");
+			hql.append("		a.sbiObject.biobjId = ? ");
 			Query hqlQuery = aSession.createQuery(hql.toString());
 			hqlQuery.setInteger(0, objId.intValue());
 			Timestamp date = (Timestamp) hqlQuery.uniqueResult();
 			toReturn.setDocumentId(objId);
 			toReturn.setExecutionStartTime(date);
-			
+
 			StringBuffer hql2 = new StringBuffer();
-			hql2.append(	"select ");
-			hql2.append(	"		a.userName, ");
-			hql2.append(	"		a.documentParameters, ");
-			hql2.append(	"		a.requestTime, ");
-			hql2.append(	"		a.executionEndTime, ");
-			hql2.append(	"		a.executionState ");
-			hql2.append(	"from ");
-			hql2.append(	"		SbiAudit a ");
-			hql2.append(	"where 	");
-			hql2.append(	"		a.sbiObject is not null and ");
-			hql2.append(	"		a.sbiObject.biobjId = ? and ");	
-			hql2.append(	"		a.executionStartTime = ? ");
+			hql2.append("select ");
+			hql2.append("		a.userName, ");
+			hql2.append("		a.documentParameters, ");
+			hql2.append("		a.requestTime, ");
+			hql2.append("		a.executionEndTime, ");
+			hql2.append("		a.executionState ");
+			hql2.append("from ");
+			hql2.append("		SbiAudit a ");
+			hql2.append("where 	");
+			hql2.append("		a.sbiObject is not null and ");
+			hql2.append("		a.sbiObject.biobjId = ? and ");
+			hql2.append("		a.executionStartTime = ? ");
 			Query hqlQuery2 = aSession.createQuery(hql2.toString());
 			hqlQuery2.setInteger(0, objId.intValue());
 			hqlQuery2.setTimestamp(1, date);
@@ -459,30 +517,36 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 			toReturn.setDocumentParameters((String) row[1]);
 			toReturn.setRequestTime((Timestamp) row[2]);
 			toReturn.setExecutionEndTime((Timestamp) row[3]);
-			toReturn.setExecutionState((String) row[4]);			
-			
+			toReturn.setExecutionState((String) row[4]);
+
 		} catch (Exception ex) {
 			logger.error(ex);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100); 
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 			logger.debug("OUT");
 		}
 		return toReturn;
 	}
-	
-	/* (non-Javadoc)
-	 * @see it.eng.spagobi.monitoring.dao.IAuditDAO#getMediumExecTime(java.lang.Integer)
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * it.eng.spagobi.monitoring.dao.IAuditDAO#getMediumExecTime(java.lang.Integer
+	 * )
 	 */
+	@Override
 	public Double getMediumExecTime(Integer objId) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		Double toReturn = new Double(0) ;
+		Double toReturn = new Double(0);
 		if (objId == null) {
 			logger.warn("The object id in input is null or empty.");
 			return toReturn;
@@ -491,36 +555,40 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			StringBuffer hql = new StringBuffer();
-			hql.append(	"select ");
-			hql.append(	"		a.executionTime ");
-			hql.append(	"from ");
-			hql.append(	"		SbiAudit a ");
-			hql.append(	"where 	");
-			hql.append(	"		a.sbiObject is not null and ");
-			hql.append(	"		a.sbiObject.biobjId = ? ");
+			hql.append("select ");
+			hql.append("		a.executionTime ");
+			hql.append("from ");
+			hql.append("		SbiAudit a ");
+			hql.append("where 	");
+			hql.append("		a.sbiObject is not null and ");
+			hql.append("		a.sbiObject.biobjId = ? ");
 			Query hqlQuery = aSession.createQuery(hql.toString());
 			hqlQuery.setInteger(0, objId.intValue());
 			List l = hqlQuery.list();
-			int x = 0 ;
-			int count = 1 ;
-			if (!l.isEmpty()){
+			int x = 0;
+			int count = 1;
+			if (!l.isEmpty()) {
 				Iterator it = l.iterator();
-				while(it.hasNext()){
-					Integer tosum = (Integer)it.next();
-					if (tosum != null ){ x = x + tosum.intValue() ;
-					count ++ ;			}		
+				while (it.hasNext()) {
+					Integer tosum = (Integer) it.next();
+					if (tosum != null) {
+						x = x + tosum.intValue();
+						count++;
+					}
 				}
 			}
-			if (x != 0) toReturn =new Double( x / count) ;
-			
+			if (x != 0)
+				toReturn = new Double(x / count);
+
 		} catch (Exception ex) {
 			logger.error(ex);
 			if (tx != null)
 				tx.rollback();
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100); 
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 			logger.debug("OUT");
 		}
