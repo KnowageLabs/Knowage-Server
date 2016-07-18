@@ -2258,7 +2258,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			String attributeValue = attributesValues.get(attributeName);
 			if (attributeValue == null) {
 				if (ProcessKpiJob.INCLUDE_IGNORED_NON_TEMPORAL_ATTRIBUTES_INTO_KPI_VALUE_LOGICAL_KEY) {
-					attributeValue = "ALL";
+					attributeValue = ProcessKpiJob.CARDINALITY_ALL;
 				} else {
 					continue;
 				}
@@ -2301,11 +2301,14 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				}
 				if (!logicalKey.isEmpty())
 					criteria.add(Restrictions.eq("logicalKey", logicalKey));
-				criteria.add(Restrictions.eq("theDay", ifNull(temporalValues.get("DAY"), "ALL")));
-				criteria.add(Restrictions.eq("theWeek", ifNull(temporalValues.get("WEEK"), "ALL")));
-				criteria.add(Restrictions.eq("theMonth", ifNull(temporalValues.get("MONTH"), "ALL")));
-				criteria.add(Restrictions.eq("theQuarter", ifNull(temporalValues.get("QUARTER"), "ALL")));
-				criteria.add(Restrictions.eq("theYear", ifNull(temporalValues.get("YEAR"), "ALL")));
+				criteria.add(Restrictions.eq("theDay", ifNull(temporalValues.get("DAY"), ProcessKpiJob.CARDINALITY_ALL)));
+				criteria.add(Restrictions.eq("theWeek", ifNull(temporalValues.get("WEEK"), ProcessKpiJob.CARDINALITY_ALL)));
+				criteria.add(Restrictions.eq("theMonth", ifNull(temporalValues.get("MONTH"), ProcessKpiJob.CARDINALITY_ALL)));
+				criteria.add(Restrictions.eq("theQuarter", ifNull(temporalValues.get("QUARTER"), ProcessKpiJob.CARDINALITY_ALL)));
+				
+				// TODO [dadav] if temporalValues.get("YEAR") == null then use MAX(YEAR)
+				criteria.add(Restrictions.eq("theYear", ifNull(temporalValues.get("YEAR"), ProcessKpiJob.CARDINALITY_ALL)));
+				
 				if (computedAfter == null && computedBefore == null) {
 					criteria.addOrder(Order.desc("timeRun")).setMaxResults(1).uniqueResult();
 				} else {
@@ -2345,21 +2348,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) throws Exception {
-				List<SbiKpiValue> kpiValue = session.createCriteria(SbiKpiValue.class).add(Restrictions.eq("kpiId", id)).addOrder(Order.desc("timeRun"))
-						.setMaxResults(1).list();
-				// String hql = " from SbiKpiValue WHERE kpiId =?";
-				// Query q = session.createQuery(hql);
-				// q.setInteger(0, id);
-				// List<SbiKpiValue> kpiValue = q.list();
-
-				if (kpiValue.size() != 0) {
-					return kpiValue.get(0).getKpiVersion();
-				} else {
-					return null;
-				}
+				Criteria c = session.createCriteria(SbiKpiValue.class);
+				c.add(Restrictions.eq("kpiId", id));
+				c.add(Restrictions.eq("theDay", ProcessKpiJob.CARDINALITY_ALL));
+				c.add(Restrictions.eq("theWeek", ProcessKpiJob.CARDINALITY_ALL));
+				c.add(Restrictions.eq("theMonth", ProcessKpiJob.CARDINALITY_ALL));
+				c.add(Restrictions.eq("theQuarter", ProcessKpiJob.CARDINALITY_ALL));
+				// theYear is not included on this query because theYear doesn't always contain 'ALL' value
+				c.setProjection(Projections.max("kpiVersion"));
+				return (Integer) c.uniqueResult();
 			}
 		});
-
 	}
 
 	@Override

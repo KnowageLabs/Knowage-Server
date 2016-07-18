@@ -65,6 +65,8 @@ import org.quartz.JobExecutionException;
 
 @SuppressWarnings("rawtypes")
 public class ProcessKpiJob extends AbstractSuspendableJob {
+	public static final String CARDINALITY_ALL = "ALL";
+	
 	static private Logger logger = Logger.getLogger(ProcessKpiJob.class);
 
 	// Only SQL is supported.
@@ -756,12 +758,12 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 					if (temporalType != null) {
 						// Temporal attribute
 						if (!EXCLUDE_TEMPORAL_ATTRIBUTES_FROM_KPI_VALUE_LOGICAL_KEY) {
-							logicalKeyPairs.put(attributeName.toUpperCase(), "ALL");
+							logicalKeyPairs.put(attributeName.toUpperCase(), CARDINALITY_ALL);
 						}
 					} else {
 						// Non-temporal attribute
 						if (INCLUDE_IGNORED_NON_TEMPORAL_ATTRIBUTES_INTO_KPI_VALUE_LOGICAL_KEY) {
-							logicalKeyPairs.put(attributeName.toUpperCase(), "ALL");
+							logicalKeyPairs.put(attributeName.toUpperCase(), CARDINALITY_ALL);
 						}
 					}
 				}
@@ -787,11 +789,11 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				result.setErrorCount(result.getErrorCount() + (nullValue ? 1 : 0));
 				result.setSuccessCount(result.getSuccessCount() + (nullValue ? 0 : 1));
 				result.setTotalCount(result.getTotalCount() + 1);
-				Object theDay = ifNull(temporalValues.get("DAY"), "ALL");
-				Object theWeek = ifNull(temporalValues.get("WEEK"), "ALL");
-				Object theMonth = ifNull(temporalValues.get("MONTH"), "ALL");
-				Object theQuarter = ifNull(temporalValues.get("QUARTER"), "ALL");
-				Object theYear = ifNull(temporalValues.get("YEAR"), "ALL");
+				Object theDay = ifNull(temporalValues.get("DAY"), CARDINALITY_ALL);
+				Object theWeek = ifNull(temporalValues.get("WEEK"), CARDINALITY_ALL);
+				Object theMonth = ifNull(temporalValues.get("MONTH"), CARDINALITY_ALL);
+				Object theQuarter = ifNull(temporalValues.get("QUARTER"), CARDINALITY_ALL);
+				Object theYear = ifNull(temporalValues.get("YEAR"), CARDINALITY_ALL);
 				String insertSql = "INSERT INTO SBI_KPI_VALUE (id, kpi_id, kpi_version, logical_key, time_run, computed_value,"
 						+ " the_day, the_week, the_month, the_quarter, the_year, state) VALUES (" + (++lastId) + ", " + parsedKpi.id + "," + parsedKpi.version
 						+ ",'" + logicalKey.toString().replaceAll("'", "''") + "',?, coalesce(" + (nullValue ? "0" : value) + ", 0) ,'" + theDay + "','" + theWeek + "','"
