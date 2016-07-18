@@ -139,6 +139,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 	$scope.member;
 	$scope.selecetedMultiHierUN;
+	$scope.selectedVersion = null;
 
 	$scope.handleResponse = function(response) {
 		$scope.tableSubsets=null;

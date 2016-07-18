@@ -17,34 +17,6 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
-import it.eng.spagobi.engines.whatif.export.ExportConfig;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.engines.whatif.model.Util;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmFactory;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmSingleton;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
-import it.eng.spagobi.engines.whatif.parser.Lexer;
-import it.eng.spagobi.engines.whatif.parser.parser;
-import it.eng.spagobi.engines.whatif.version.VersionManager;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-import it.eng.spagobi.writeback4j.mondrian.CacheManager;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -90,6 +62,36 @@ import org.pivot4j.PivotModel;
 import org.pivot4j.ui.fop.FopExporter;
 import org.pivot4j.ui.poi.ExcelExporter;
 import org.pivot4j.ui.table.TableRenderer;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
+import it.eng.spagobi.engines.whatif.export.ExportConfig;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.engines.whatif.model.Util;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmFactory;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmSingleton;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
+import it.eng.spagobi.engines.whatif.parser.Lexer;
+import it.eng.spagobi.engines.whatif.parser.parser;
+import it.eng.spagobi.engines.whatif.version.VersionManager;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 @Path("/1.0/model")
 public class ModelResource extends AbstractWhatIfEngineService {
@@ -586,11 +588,18 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
-		Map<String, String> map = getEnv();
+		Map map = getEnv();
+
+		IEngUserProfile profile = (IEngUserProfile) map.get("ENV_USER_PROFILE");
+		if (profile instanceof UserProfile) {
+			UserProfile spagoBIUserProfile = (UserProfile) profile;
+			map.put("organization", spagoBIUserProfile.getOrganization());
+
+		}
 		map.put("MDX", model.getMdx());
 		map.put("document", getEnv().get("DOCUMENT_ID").toString());
 
-		String url = map.get("SBI_HOST") + context.getContextPath() + "/restful-services/startwhatif/test/?";
+		String url = map.get("SBI_HOST") + context.getContextPath() + "/restful/startwhatif/test/?";
 		String mdx = "";
 		int axisRows = model.getCellSet().getAxes().get(1).getPositionCount();
 		int axisColumns = model.getCellSet().getAxes().get(0).getPositionCount();
@@ -602,7 +611,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 			if (pair.getKey().toString().equalsIgnoreCase("DOCUMENT_LABEL") || pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_ID")
 					|| pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_VERSION_ID") || pair.getKey().toString().equalsIgnoreCase("document")
-					|| pair.getKey().toString().equalsIgnoreCase("user_id")) {
+					|| pair.getKey().toString().equalsIgnoreCase("user_id") || pair.getKey().toString().equalsIgnoreCase("organization")) {
 				++index;
 				if (index != 1) {
 					url += "&";

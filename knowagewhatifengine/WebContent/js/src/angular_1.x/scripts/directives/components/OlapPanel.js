@@ -116,9 +116,18 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 	$scope.exportDynamic = function() {
 		
-		var encoded = encodeURI("1.0/model/exceledit?SBI_EXECUTION_ID="+ JSsbiExecutionID);
+		console.log($scope.selectedVersion);
+		
+		if($scope.selectedVersion == null){
+			sbiModule_messaging.showErrorMessage("You must slice on Version first",'Error');
+					
+		}else{
+			var encoded = encodeURI("1.0/model/exceledit?SBI_EXECUTION_ID="+ JSsbiExecutionID);
+			window.open(sbiModule_restServices.getCompleteBaseUrl(encoded));
+		}
+		
 				
-		window.open(sbiModule_restServices.getCompleteBaseUrl(encoded));
+		
 		
 	}
 	
