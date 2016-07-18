@@ -18,6 +18,7 @@
 package it.eng.spagobi.engines.whatif.common;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.whatif.WhatIfEngine;
 import it.eng.spagobi.engines.whatif.WhatIfEngineAnalysisState;
@@ -58,6 +59,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
@@ -75,6 +77,8 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 	// INPUT PARAMETERS
 	public static final String LANGUAGE = "SBI_LANGUAGE";
 	public static final String COUNTRY = "SBI_COUNTRY";
+	private String userId;
+	private String tenant;
 
 	// OUTPUT PARAMETERS
 
@@ -95,7 +99,7 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 	@Path("/test")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String test(@javax.ws.rs.core.Context HttpServletRequest req) {
+	public String test(@javax.ws.rs.core.Context HttpServletRequest req, @QueryParam("user_id") String userId, @QueryParam("tenant") String tenant) {
 		WhatIfEngineInstance whatIfEngineInstance = null;
 		String body = null;
 		JSONObject jo = null;
@@ -105,6 +109,8 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 		Integer ordinal = null;
 		String expression = null;
 		JSONArray newValues = null;
+		this.userId = userId;
+		this.tenant = tenant;
 
 		try {
 			body = RestUtilities.readBody(req);
@@ -369,6 +375,7 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 		env.put(EngineConstants.ENV_DATASOURCE, ds);
 
 		env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
+
 		env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
 		env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy());
 		env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy());
@@ -458,6 +465,15 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 	@Override
 	public HttpServletRequest getServletRequest() {
 		return ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+	}
+
+	@Override
+	public UserProfile getUserProfile() {
+		if (userId != null) {
+			return new UserProfile(userId, tenant);
+		}
+		return super.getUserProfile();
+
 	}
 
 }
