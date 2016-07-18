@@ -82,10 +82,6 @@ public interface IDataSet {
 
 	void setOwner(String owner);
 
-	boolean isPublic();
-
-	void setPublic(boolean isPublic);
-
 	String getUserIn();
 
 	void setUserIn(String userIn);

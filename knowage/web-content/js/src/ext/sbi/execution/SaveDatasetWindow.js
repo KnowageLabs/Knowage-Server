@@ -43,7 +43,6 @@ Sbi.execution.SaveDatasetWindow = function(config) {
 	this.addEvents('save');
 	
 	this.initServices();
-	this.initScopeStore();
 	this.initForm();
 	
 	var c = Ext.apply({}, config, {
@@ -119,20 +118,6 @@ Ext.extend(Sbi.execution.SaveDatasetWindow, Ext.Window, {
 			anchor: '95%',
 			fieldLabel: LN('sbi.generic.descr') 
 		});
-		this.scopeField = new Ext.form.ComboBox({
-		    fieldLabel: LN('sbi.generic.scope') ,
-		    mode : 'local',
-		    store: this.scopesStore,
-		    displayField: 'description',
-		    valueField: 'value',
-		    allowBlank: false,
-    	   	editable: false,
-    	   	forceSelection : true,
-    	   	hidden: false
-		});
-		
-		//default value
-		this.scopeField.setValue(this.scopesStore.getAt(1).get('value'));
 		
 	    this.datasetForm = new Ext.FormPanel({
 	        columnWidth: 0.6
@@ -152,7 +137,7 @@ Ext.extend(Sbi.execution.SaveDatasetWindow, Ext.Window, {
 	                 //"margin-left": "4px",
 	                 //"margin-top": "10px"
 	             }
-	             , items :  [ this.labelField, this.nameField, this.descriptionField, this.scopeField ]
+	             , items :  [ this.labelField, this.nameField, this.descriptionField ]
 	    	}
 	    });
 	    
@@ -164,7 +149,6 @@ Ext.extend(Sbi.execution.SaveDatasetWindow, Ext.Window, {
       	formState.label = this.labelField.getValue();
       	formState.name = this.nameField.getValue();
       	formState.description = this.descriptionField.getValue();
-      	formState.publicDS = this.scopeField.getValue() === 'true';
       	return formState;
     }
 	
@@ -238,19 +222,6 @@ Ext.extend(Sbi.execution.SaveDatasetWindow, Ext.Window, {
   		} else {
   			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
   		}  	
-	}
-	
-	,
-	initScopeStore : function () {
-    	var scopeComboBoxData = [
-    		['true',LN('sbi.generic.scope.public')],
-    		['false',LN('sbi.generic.scope.private')]
-    	];
-    		
-    	this.scopesStore = new Ext.data.SimpleStore({
-    		fields: ['value', 'description'],
-    		data : scopeComboBoxData 
-    	}); 
 	}
 	
 });

@@ -81,12 +81,13 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	if (isFromCross == null) {
 		isFromCross = "false";
 	}
-	isPowerUser = profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY);
+	isPowerUser = true;//profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY);
 	
 	boolean isFromFederation = (Boolean)ResponseContainer.getResponseContainer().getServiceResponse().getAttribute("IS_FEDERATED");
 
 	qbeEngineConfig = QbeEngineConfig.getInstance();
     
+	boolean isTech  = qbeEngineInstance.isTechnicalUser();
 	
     // settings for max records number limit
     resultLimit = qbeEngineConfig.getResultLimit();
@@ -148,6 +149,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			Sbi.config.crosstabCalculatedFieldsDecimalePrecison = <%= crosstabCalculatedFieldsDecimalePrecison %>;
 			Sbi.config.contextName = '<%= spagobiContext %>';
 			Sbi.config.isFromFederation = <%= isFromFederation %>;
+			Sbi.config.isTechnicalUser = <%= isTech %>;
 			
 			var url = {
 		    	host: '<%= request.getServerName()%>'

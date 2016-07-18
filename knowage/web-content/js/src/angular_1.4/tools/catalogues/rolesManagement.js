@@ -164,7 +164,24 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		}else{
 			$scope.disable = true;
 		}
-
+		//The admin has all the DataSets associated 
+		if ($scope.selectedRole.roleTypeCD == "ADMIN") {
+			//Store a backup copy of the selected DataSet and select all the DataSets
+			$scope.ds_category_backup = angular.copy($scope.ds_category); 
+			$scope.ds_category = [].concat($scope.roleDataSetCategories);
+		}else{
+			//restore previous DataSet selection
+			$scope.ds_category = [];
+			if ($scope.ds_category_backup != undefined){
+				for ( var i = 0 ; i <  $scope.ds_category_backup.length ; i++){
+					for (var j = 0 ; j < $scope.roleDataSetCategories.length; j++){
+						if ($scope.roleDataSetCategories[j].VALUE_NM == $scope.ds_category_backup[i].VALUE_NM){
+							$scope.ds_category.push($scope.roleDataSetCategories[j]);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/*

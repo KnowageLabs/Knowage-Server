@@ -61,6 +61,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	// over result-set paging)
 	IStatement statement;
 
+	boolean isTechnicalUser;
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(QbeEngineInstance.class);
 
@@ -381,6 +382,14 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 			throw new SpagoBIEngineRuntimeException("Datasource for writing not defined!");
 		}
 		return datasource;
+	}
+
+	public boolean isTechnicalUser() {
+		return isTechnicalUser;
+	}
+
+	public void setTechnicalUser(boolean isTechnicalUser) {
+		this.isTechnicalUser = isTechnicalUser;
 	}
 
 }

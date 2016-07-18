@@ -266,17 +266,6 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		}
 
 		@Override
-		public boolean isPublic() {
-
-			return false;
-		}
-
-		@Override
-		public void setPublic(boolean isPublic) {
-
-		}
-
-		@Override
 		public String getUserIn() {
 
 			return null;

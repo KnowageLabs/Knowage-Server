@@ -30,6 +30,7 @@ Sbi.service.ServiceRegistry = function(config) {
 	    , port: '8080'
 	    , contextPath: 'knowage'
 	    , controllerPath: 'servlet/AdapterHTTP'    
+	    , restServicesPath: 'restful-services' 
 	});
 	
 	this.baseParams = Ext.apply({}, config.baseParams || {}, {
@@ -180,11 +181,13 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
 		var url = Ext.apply({}, s.baseUrl || {}, this.baseUrl);
 	
 		if(isAbsolute) {
-			baseUrlStr = url.protocol + '://' + url.host + ":" + url.port + '/' + url.contextPath + '/' + url.restServicesPath;
+			baseUrlStr = url.protocol + '://' + url.host + ":" + url.port + '/' + url.contextPath;
 		} else {
-			baseUrlStr = '/' + url.contextPath+ '/' + url.restServicesPath;
+			baseUrlStr = '/' + url.contextPath;
 		}
-	
+		if (url.restServicesPath != undefined && url.restServicesPath.length > 0){
+    		baseUrlStr = baseUrlStr + '/' + url.restServicesPath;
+    	}
 		return  baseUrlStr;
 	}
 	, getContextUrlStr: function(s) {

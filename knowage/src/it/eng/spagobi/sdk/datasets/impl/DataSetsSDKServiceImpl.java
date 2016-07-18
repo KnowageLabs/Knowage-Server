@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -54,31 +54,32 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 
 	static private Logger logger = Logger.getLogger(DataSetsSDKServiceImpl.class);
 
+	@Override
 	public SDKDataSet getDataSet(Integer dataSetId) throws NotAllowedOperationException {
 		SDKDataSet toReturn = null;
 		logger.debug("IN: dataSetId in input = " + dataSetId);
-		
+
 		this.setTenant();
-		
+
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
 			if (dataSetId == null) {
 				logger.warn("DataSet identifier in input is null!");
 				return null;
 			}
-			
+
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(getUserProfile());
 			IDataSet dataSet = dao.loadDataSetById(dataSetId);
-			
+
 			if (dataSet == null) {
 				logger.warn("DataSet with identifier [" + dataSetId + "] not existing.");
 				return null;
 			}
 			toReturn = new SDKObjectsConverter().fromSpagoBiDataSetToSDKDataSet(dataSet.toSpagoBiDataSet());
-		} catch(NotAllowedOperationException e) {
+		} catch (NotAllowedOperationException e) {
 			throw e;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Error while retrieving SDKEngine list", e);
 			logger.debug("Returning null");
 			return null;
@@ -89,28 +90,29 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		return toReturn;
 	}
 
+	@Override
 	public SDKDataSet[] getDataSets() throws NotAllowedOperationException {
 		SDKDataSet[] toReturn = null;
 		logger.debug("IN");
-		
+
 		this.setTenant();
-		
+
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
-			
+
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(getUserProfile());
 			List dataSetList = dao.loadDataSets();
-			
+
 			toReturn = new SDKDataSet[dataSetList.size()];
 			for (int i = 0; i < dataSetList.size(); i++) {
 				IDataSet dataSet = (IDataSet) dataSetList.get(i);
 				SDKDataSet sdkDataSet = new SDKObjectsConverter().fromSpagoBiDataSetToSDKDataSet(dataSet.toSpagoBiDataSet());
 				toReturn[i] = sdkDataSet;
 			}
-		} catch(NotAllowedOperationException e) {
+		} catch (NotAllowedOperationException e) {
 			throw e;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Error while retrieving SDKEngine list", e);
 			logger.debug("Returning null");
 			return null;
@@ -121,14 +123,15 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		return toReturn;
 	}
 
+	@Override
 	public SDKDataStoreMetadata getDataStoreMetadata(SDKDataSet sdkDataSet) throws NotAllowedOperationException, MissingParameterValue, InvalidParameterValue {
 		SDKDataStoreMetadata toReturn = null;
-		IMetaData dsMeta=null;
+		IMetaData dsMeta = null;
 		Integer dataSetId = null;
 		logger.debug("IN");
-		
+
 		this.setTenant();
-		
+
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
 			if (sdkDataSet == null) {
@@ -146,28 +149,26 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				return null;
 			}
 
-			// First I try recovering dsMetadataField, only if not present I try executing the dataset, 
+			// First I try recovering dsMetadataField, only if not present I try executing the dataset,
 
-			String dsMetadata=dataSet.getDsMetadata();
-			if(dsMetadata!=null){
-				try{
+			String dsMetadata = dataSet.getDsMetadata();
+			if (dsMetadata != null) {
+				try {
 					dsMeta = new DatasetMetadataParser().xmlToMetadata(dsMetadata);
 
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					logger.warn("error in parsing, recover metadata executing again the dataset! ", e);
 				}
 			}
 
-			if(dsMeta==null)	
-			{
+			if (dsMeta == null) {
 				logger.warn("error in parsing, recover metadata executing again the dataset! ");
 				Map parameters = new HashMap();
 				List parametersToFill = null;
-				String parametersXML=dataSet.toSpagoBiDataSet().getParameters();
-				if(parametersXML!=null && !((parametersXML.trim()).equals(""))){
-					DataSetParametersList dsParam=new DataSetParametersList(parametersXML);
-					parametersToFill=dsParam.getItems();				
+				String parametersXML = dataSet.toSpagoBiDataSet().getParameters();
+				if (parametersXML != null && !((parametersXML.trim()).equals(""))) {
+					DataSetParametersList dsParam = new DataSetParametersList(parametersXML);
+					parametersToFill = dsParam.getItems();
 				}
 				if (parametersToFill != null && parametersToFill.size() > 0) {
 					Iterator it = parametersToFill.iterator();
@@ -181,7 +182,8 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 						String[] values = sdkParameter.getValues();
 						logger.debug("Values set for parameter [" + aDataSetParameterItem.getName() + "] are: " + values);
 						if (values == null || values.length == 0) {
-							logger.error("SDKDataSetParameter contains no values for DataSetParameterItem with name [" + aDataSetParameterItem.getName() + "]!!");
+							logger.error("SDKDataSetParameter contains no values for DataSetParameterItem with name [" + aDataSetParameterItem.getName()
+									+ "]!!");
 							throw new MissingParameterValue(aDataSetParameterItem.getName());
 						}
 						checkParameterValues(values, aDataSetParameterItem);
@@ -193,19 +195,19 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				dataSet.setParamsMap(parameters);
 				dataSet.loadData();
 				IDataStore dataStore = dataSet.getDataStore();
-				dsMeta = (MetaData) dataStore.getMetaData();
+				dsMeta = dataStore.getMetaData();
 
 			}
 
-			toReturn = new SDKObjectsConverter().fromDataStoreMetadataToSDKDataStoreMetadata((MetaData)dsMeta);
+			toReturn = new SDKObjectsConverter().fromDataStoreMetadataToSDKDataStoreMetadata((MetaData) dsMeta);
 
-		} catch(NotAllowedOperationException e) {
+		} catch (NotAllowedOperationException e) {
 			throw e;
-		} catch(MissingParameterValue e) {
+		} catch (MissingParameterValue e) {
 			throw e;
-		} catch(InvalidParameterValue e) {
+		} catch (InvalidParameterValue e) {
 			throw e;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Error while retrieving SDKDataStoreMetadata for dataset with id = " + dataSetId, e);
 			logger.debug("Returning null");
 			return null;
@@ -215,14 +217,15 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		}
 		return toReturn;
 	}
-	
+
+	@Override
 	public Integer saveDataset(SDKDataSet sdkDataSet) throws NotAllowedOperationException {
 		logger.debug("IN");
 		Integer dataSetId = null;
 		Integer toReturn = null;
-		
+
 		this.setTenant();
-		
+
 		try {
 			IEngUserProfile profile = getUserProfile();
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
@@ -230,9 +233,9 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				logger.warn("SDKDataSet in input is null!");
 				return null;
 			}
-			//defines the new dataset from the sdk object
-			IDataSet sbiDataset = new SDKObjectsConverter().fromSDKDatasetToBIDataset(sdkDataSet);	
-			
+			// defines the new dataset from the sdk object
+			IDataSet sbiDataset = new SDKObjectsConverter().fromSDKDatasetToBIDataset(sdkDataSet);
+
 			try {
 				Map parameters = sbiDataset.getParamsMap();
 				if (parameters == null) {
@@ -241,7 +244,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				}
 				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
 				parameters.put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
-				
+
 				sbiDataset.loadData();
 				IMetaData metadata = sbiDataset.getDataStore().getMetaData();
 				sbiDataset.setMetadata(metadata);
@@ -251,11 +254,11 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			} catch (Throwable t) {
 				logger.error("Cannot retrieve dataset's metadata", t);
 			}
-			
+
 			dataSetId = sdkDataSet.getId();
 			logger.debug("Looking for dataset with id = " + dataSetId);
-			if (dataSetId == null){
-				logger.warn("DataSet with identifier [" + dataSetId + "] not found. Create it!");		
+			if (dataSetId == null) {
+				logger.warn("DataSet with identifier [" + dataSetId + "] not found. Create it!");
 				IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
 				dataSetDao.setUserProfile(profile);
 				toReturn = dataSetDao.insertDataSet(sbiDataset);
@@ -264,21 +267,20 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				} else {
 					logger.error("DataSet not modified!!");
 				}
-			}else{
-				logger.warn("DataSet with identifier [" + dataSetId + "] found. Modified it!");			
+			} else {
+				logger.warn("DataSet with identifier [" + dataSetId + "] found. Modified it!");
 				IDataSetDAO datasetDAO = DAOFactory.getDataSetDAO();
 				datasetDAO.setUserProfile(profile);
 
 				// if going in update must not change visibility settings
 				IDataSet datasetPrevious = datasetDAO.loadDataSetById(dataSetId);
 
-				logger.debug("keep previous settings as organization "+datasetPrevious.getOrganization()+" anbd visibility public: "+datasetPrevious.isPublic());
+				logger.debug("keep previous settings as organization " + datasetPrevious.getOrganization());
 				sbiDataset.setOrganization(datasetPrevious.getOrganization());
-				sbiDataset.setPublic(datasetPrevious.isPublic());
 				datasetDAO.modifyDataSet(sbiDataset);
-			}		
-			
-		} catch(Exception e) {
+			}
+
+		} catch (Exception e) {
 			logger.error("Error while saving dataset", e);
 			return null;
 			// TODO: throw an exception when error rises
@@ -286,18 +288,20 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			this.unsetTenant();
 			logger.debug("OUT");
 		}
-		
+
 		return toReturn;
 	}
+
 	/**
-	 * 
+	 *
 	 */
-	public String executeDataSet(String label, SDKDataSetParameter[] params) throws NotAllowedOperationException{
+	@Override
+	public String executeDataSet(String label, SDKDataSetParameter[] params) throws NotAllowedOperationException {
 		String toReturn = null;
 		logger.debug("IN: label in input = " + label);
-		
+
 		this.setTenant();
-		
+
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
 			if (label == null) {
@@ -311,19 +315,19 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				logger.warn("DataSet with label [" + label + "] not existing.");
 				return null;
 			}
-			if (params!=null && params.length>0){
-				HashMap parametersFilled= new HashMap();
-				for(int i=0; i< params.length; i++){
+			if (params != null && params.length > 0) {
+				HashMap parametersFilled = new HashMap();
+				for (int i = 0; i < params.length; i++) {
 					SDKDataSetParameter par = params[i];
-					parametersFilled.put(par.getName(),par.getValues()[0]);
-					logger.debug("Add parameter: "+par.getName()+"/"+par.getValues()[0]);
-				}				
+					parametersFilled.put(par.getName(), par.getValues()[0]);
+					logger.debug("Add parameter: " + par.getName() + "/" + par.getValues()[0]);
+				}
 				dataSet.setParamsMap(parametersFilled);
 			}
-			
-			
-			//add the jar retriver in case of a Qbe DataSet
-			if (dataSet instanceof QbeDataSet || (dataSet instanceof VersionedDataSet && ((VersionedDataSet)dataSet).getWrappedDataset() instanceof QbeDataSet )) {
+
+			// add the jar retriver in case of a Qbe DataSet
+			if (dataSet instanceof QbeDataSet
+					|| (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof QbeDataSet)) {
 				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
 				Map parameters = dataSet.getParamsMap();
 				if (parameters == null) {
@@ -332,16 +336,16 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				}
 				dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
 			}
-			
+
 			dataSet.loadData();
-			//toReturn = dataSet.getDataStore().toXml();
-			
-			JSONDataWriter writer= new JSONDataWriter();
-			toReturn = (writer.write(dataSet.getDataStore())).toString(); 
-			
-		} catch(NotAllowedOperationException e) {
+			// toReturn = dataSet.getDataStore().toXml();
+
+			JSONDataWriter writer = new JSONDataWriter();
+			toReturn = (writer.write(dataSet.getDataStore())).toString();
+
+		} catch (NotAllowedOperationException e) {
 			throw e;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Error while retrieving SDKEngine list", e);
 			logger.debug("Returning null");
 			return null;
@@ -351,8 +355,8 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		}
 		return toReturn;
 	}
-	private String getParameterValues(String[] values,
-			DataSetParameterItem dataSetParameterItem) {
+
+	private String getParameterValues(String[] values, DataSetParameterItem dataSetParameterItem) {
 		logger.debug("IN");
 		StringBuffer toReturn = new StringBuffer();
 		try {
@@ -390,20 +394,16 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		return toReturn.toString();
 	}
 
-	private void checkParameterValues(String[] values,
-			DataSetParameterItem dataSetParameterItem) throws InvalidParameterValue {
+	private void checkParameterValues(String[] values, DataSetParameterItem dataSetParameterItem) throws InvalidParameterValue {
 		logger.debug("IN");
 		try {
 			String parameterType = dataSetParameterItem.getType();
 			if (parameterType.equalsIgnoreCase("Number")) {
 				for (int i = 0; i < values.length; i++) {
 					String value = values[i];
-					if (GenericValidator.isBlankOrNull(value) || 
-							(!(GenericValidator.isInt(value) 
-									|| GenericValidator.isFloat(value) 
-									|| GenericValidator.isDouble(value)
-									|| GenericValidator.isShort(value)
-									|| GenericValidator.isLong(value)))) {
+					if (GenericValidator.isBlankOrNull(value)
+							|| (!(GenericValidator.isInt(value) || GenericValidator.isFloat(value) || GenericValidator.isDouble(value)
+									|| GenericValidator.isShort(value) || GenericValidator.isLong(value)))) {
 						InvalidParameterValue error = new InvalidParameterValue();
 						error.setParameterName(dataSetParameterItem.getName());
 						error.setParameterType(parameterType);
@@ -418,8 +418,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		}
 	}
 
-	private SDKDataSetParameter findRelevantSDKDataSetParameter(
-			DataSetParameterItem dataSetParameterItem, SDKDataSet sdkDataSet) {
+	private SDKDataSetParameter findRelevantSDKDataSetParameter(DataSetParameterItem dataSetParameterItem, SDKDataSet sdkDataSet) {
 		logger.debug("IN");
 		SDKDataSetParameter toReturn = null;
 		try {

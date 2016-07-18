@@ -52,7 +52,6 @@
             "skipRows",
             "limitRows",
             "xslSheetNumber",
-            "isPublic",
             "owner",
             "userIn",
             "dateIn",

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -87,7 +87,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 	public List<SbiDataSet> loadSbiDataSets() {
 		return loadDataSets(null, null, null, null, null, null, null, true);
 	}
-	
+
 	@Override
 	public List<SbiDataSet> loadNotDerivedSbiDataSets() {
 		return loadDataSets(null, null, null, null, null, null, null, false);
@@ -157,16 +157,9 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			// create statement
 			String statement = "from SbiDataSet h where h.active = ?";
 			if (owner != null) {
-				if (includePublic != null && includePublic == true) {
-					String ownedCondition = includeOwned ? "h.owner = ?" : "h.owner != ?";
-					statement += " and (" + ownedCondition + " or h.publicDS = ?) ";
-				} else {
-					String ownedCondition = includeOwned ? "h.owner = ?" : "h.owner != ?";
-					statement += " and " + ownedCondition + " ";
-				}
+				String ownedCondition = includeOwned ? "h.owner = ?" : "h.owner != ?";
+				statement += " and " + ownedCondition + " ";
 			}
-			if (scope != null)
-				statement += " and h.publicDS = ? ";
 			if (type != null)
 				statement += " and h.scope.valueCd = ? ";
 			if (category != null)
@@ -182,12 +175,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			query.setBoolean(paramIndex++, true);
 			if (owner != null) {
 				query.setString(paramIndex++, owner);
-				if (includePublic != null && includePublic == true) {
-					query.setBoolean(paramIndex++, true);
-				}
 			}
-			if (scope != null)
-				query.setBoolean(paramIndex++, "PUBLIC".equalsIgnoreCase(scope));
 			if (type != null)
 				query.setString(paramIndex++, type);
 			if (category != null)

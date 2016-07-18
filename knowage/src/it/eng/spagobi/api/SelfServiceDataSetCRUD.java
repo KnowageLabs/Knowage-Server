@@ -505,14 +505,6 @@ public class SelfServiceDataSetCRUD {
 			HashMap<String, String> logParam = new HashMap();
 
 			logParam.put("LABEL", ds.getLabel());
-			if (ds.isPublic()) {
-				// If dataset is shared change it to unshared (from public to
-				// private)
-				ds.setPublic(false);
-			} else {
-				// Share dataset (from private to public)
-				ds.setPublic(true);
-			}
 			String type = getDatasetTypeName(ds.getDsType());
 			ds.setDsType(type);
 
@@ -525,7 +517,7 @@ public class SelfServiceDataSetCRUD {
 
 			int newId = ds.getId();
 
-			return ("{\"id\":" + newId + ", \"isPublic\":" + ds.isPublic() + " }");
+			return ("{\"id\":" + newId + " }");
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
 			updateAudit(req, profile, "DATA_SET.SHARE", null, "ERR");
@@ -690,17 +682,18 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	private boolean checkScopeChange(IDataSet currentDataset, IDataSet updatedDataset) throws Exception {
-		if ((currentDataset != null) && (updatedDataset != null)) {
-			if (currentDataset instanceof VersionedDataSet) {
-				currentDataset = ((VersionedDataSet) currentDataset).getWrappedDataset();
-			}
-			if (currentDataset.isPublic() == updatedDataset.isPublic()) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-		return false;
+		// if ((currentDataset != null) && (updatedDataset != null)) {
+		// if (currentDataset instanceof VersionedDataSet) {
+		// currentDataset = ((VersionedDataSet) currentDataset).getWrappedDataset();
+		// }
+		// if (currentDataset.isPublic() == updatedDataset.isPublic()) {
+		// return false;
+		// } else {
+		// return true;
+		// }
+		// }
+		// TODO
+		return true;
 	}
 
 	private boolean checkCategoryChange(IDataSet currentDataset, IDataSet updatedDataset) throws Exception {
@@ -1185,7 +1178,6 @@ public class SelfServiceDataSetCRUD {
 		String catTypeVn = request.getParameter("catTypeVn");
 		String meta = request.getParameter(DataSetConstants.METADATA);
 		String scopeCd = DataSetConstants.DS_SCOPE_USER;
-		Boolean isPublic = Boolean.valueOf((request.getParameter("isPublicDS") == null) ? "false" : request.getParameter("isPublicDS"));
 
 		type = getDatasetTypeName(type);
 		IDataSet toReturn = null;
@@ -1254,7 +1246,6 @@ public class SelfServiceDataSetCRUD {
 		}
 		logger.debug("Category code is :  " + categoryCode);
 		toReturn.setCategoryId(categoryCode);
-		toReturn.setPublic(isPublic);
 
 		return toReturn;
 	}

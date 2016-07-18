@@ -31,7 +31,6 @@ Sbi.qbe.SaveDatasetWindow = function(config) {
 	this.addEvents('returnToMyAnalysis');
 	
 	this.initServices();
-	this.initScopeStore();
 	this.initForm();
 	
 	var c = Ext.apply({}, config, {
@@ -68,10 +67,24 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 		var params = {
 			LIGHT_NAVIGATOR_DISABLED: 'TRUE'
 		};
+		
+		var scopeParams = {
+				DOMAIN_TYPE : 'DS_SCOPE',
+				EXT_VERSION : '3',
+				LIGHT_NAVIGATOR_DISABLED : params.LIGHT_NAVIGATOR_DISABLED
+		};
 
 		this.services['saveDatasetService'] = Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'SAVE_DATASET_USER_ACTION'
 			, baseParams: params
+		});
+		this.services["getScopeCd"]= Sbi.config.remoteServiceRegistry.getRestServiceUrl({
+			serviceName: 'domainsforfinaluser/listValueDescriptionByType',
+			baseParams: scopeParams
+		});
+		this.services["getDsCategories"]= Sbi.config.remoteServiceRegistry.getRestServiceUrl({
+			serviceName: 'domainsforfinaluser/ds-categories',
+			baseParams: params
 		});
 		
 	}
@@ -106,29 +119,64 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 			anchor: '95%',
 			fieldLabel: LN('sbi.generic.descr') 
 		});
-		this.scopeField = new Ext.form.ComboBox({
-			id: 'scopeCombo',
-		    fieldLabel: LN('sbi.generic.scope') ,
-		    selectOnFocus:true,
-		    mode : 'local',
-		    triggerAction: 'all',
-		    queryMode:'local',
-		    store: this.scopesStore,
-		    displayField: 'description',
-		    valueField: 'value',
-		    allowBlank: false,
-    	   	editable: false,
-    	   	forceSelection : true
-		});
 		
+		var hideCombos = Sbi.config.isTechnicalUser == false;
 		
 		this.initPersistPanel();
-		
 		this.initMetadataPanel();
+		this.categoriesStore = this.createCategoriesStore();
+		this.scopeCdStore = this.createScopeCdStore();
 		
-		//default value
-		this.scopeField.setValue(this.scopesStore.getAt(0).get('value'));
-	    
+		this.categoriesCombo = new Ext.form.ComboBox({
+			id : 'catTypeVn',
+			name : 'catTypeVn',
+			fieldLabel: LN('sbi.ds.catType'),
+		    typeAhead: true,
+		    hidden : hideCombos,
+		    hideLabel : hideCombos,
+		    triggerAction: 'all',
+		    allowBlank : true,
+		    editable : false,
+		    lazyRender:true,
+		    mode: 'local',
+		    width : 300,
+		    store: this.categoriesStore,
+		    valueField: 'VALUE_ID',
+		    displayField : 'VALUE_CD'
+		});
+		
+		this.scopeCdCombo = new Ext.form.ComboBox({
+			id: 'scopeCd',
+			name : 'scopeCd',
+			fieldLabel: LN('sbi.ds.scope'),
+			typeAhead: true,
+			hidden : hideCombos,
+			hideLabel : hideCombos,
+			triggerAction: 'all',
+			lazyRender:true,
+			editable : false,
+			allowBlank : true,
+			mode: 'local',
+			width : 300,
+			store: this.scopeCdStore,
+			valueField: 'VALUE_ID',
+			displayField : 'VALUE_CD'
+		});
+		
+		this.scopeCdCombo.addListener('select', function() {
+			var selected = this.getRawValue();
+			if (selected != null || selected != undefined){
+				selected = selected.toUpperCase();
+				var catTypeCombo = Ext.getCmp('catTypeVn');
+				if (selected == 'ENTERPRISE' || selected == 'TECHNICAL'){
+					catTypeCombo.allowBlank = false;
+				}else{
+					catTypeCombo.allowBlank = true;
+				}
+				catTypeCombo.validate();
+			}
+		});
+		
 	    var  genericForm = new Ext.Panel({
 	        columnWidth: 0.6
 	        , height : 300
@@ -149,7 +197,7 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 	                 //"margin-left": "4px",
 	                 //"margin-top": "10px"
 	             }
-	             , items :  [ this.labelField, this.nameField, this.descriptionField, this.scopeField]
+	             , items :  [ this.labelField, this.nameField, this.descriptionField, this.scopeCdCombo, this.categoriesCombo]
 
 	        }
 	    });
@@ -225,15 +273,63 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 	    });
 	    
 	}
+	, createCategoriesStore: function(){
+		var categoriesStore = new Ext.data.JsonStore({
+			url: this.services['getDsCategories'],
+			fields: ["VALUE_NM","VALUE_DS","VALUE_ID","VALUE_CD"]
+		});
+		
+		categoriesStore.on('loadexception', function(store, options, response, e) {
+			var msg = '';
+			var content = Ext.util.JSON.decode( response.responseText );
+  			if(content !== undefined) {
+  				msg += content.serviceName + ' : ' + content.message;
+  			} else {
+  				msg += 'Server response is empty';
+  			}
 	
-	,
+			Sbi.exception.ExceptionHandler.showErrorMessage(msg, response.statusText);
+		});
+		
+    	categoriesStore.load();
+    	
+    	return categoriesStore;
+	}
+	, createScopeCdStore: function(){
+		
+		var scopeStore = new Ext.data.JsonStore({
+			url: this.services['getScopeCd'],
+			root : 'domains',
+			fields: ["VALUE_NM","VALUE_DS","VALUE_ID","VALUE_CD"],
+			listeners: {
+			    load : function() {
+			    	var combo = Ext.getCmp('scopeCd');
+		            combo.setValue(this.getAt(0).data.VALUE_ID);
+			    }
+			}
+		});
+		
+		scopeStore.on('loadexception', function(store, options, response, e) {
+			var msg = '';
+			var content = Ext.util.JSON.decode( response.responseText );
+  			if(content !== undefined) {
+  				msg += content.serviceName + ' : ' + content.message;
+  			} else {
+  				msg += 'Server response is empty';
+  			}
+	
+			Sbi.exception.ExceptionHandler.showErrorMessage(msg, response.statusText);
+		});
+		
+		scopeStore.load();
+    	
+    	return scopeStore;
+	},
 	getFormState : function() {
       	var formState = {};
       	formState.label = this.labelField.getValue();
       	formState.name = this.nameField.getValue();
       	formState.description = this.descriptionField.getValue();
-      	formState.isPublic = this.scopeField.getValue() === 'true';
-      	
 
       	formState.isPersisted = this.persistPanel.isPersisted.getValue();
       	formState.isScheduled = this.persistPanel.isScheduled.getValue();
@@ -242,6 +338,14 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
       	formState.endDateField = this.persistPanel.endDateField.getValue();
       	formState.schedulingCronLine = this.persistPanel.schedulingCronLine.getValue();
       	
+      	if (this.scopeCdCombo.getRawValue() != null && this.scopeCdCombo.getRawValue().length > 0){
+      		formState.scopeId = this.scopeCdCombo.getValue();
+      		formState.scopeCd = this.scopeCdCombo.getRawValue();
+      	}
+     	if (this.categoriesCombo.getRawValue() != null && this.categoriesCombo.getRawValue().length > 0){
+	      	formState.categoryId = this.categoriesCombo.getValue();
+	      	formState.categoryCd = this.categoriesCombo.getRawValue();
+     	}
     	var meta = this.metadataPanel.getValues()
       	
     	formState.meta = Ext.util.JSON.encode(meta);
@@ -304,18 +408,6 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
   		}  	
 	}
 	
-	,
-	initScopeStore : function () {
-    	var scopeComboBoxData = [
-    		['true',LN('sbi.generic.scope.public')],
-    		['false',LN('sbi.generic.scope.private')]
-    	];
-    		
-    	this.scopesStore = new Ext.data.SimpleStore({
-    		fields: ['value', 'description'],
-    		data : scopeComboBoxData 
-    	}); 
-	}
 	,
 	initPersistPanel : function () {
 		this.persistPanel = new Sbi.qbe.PersistOptions({});

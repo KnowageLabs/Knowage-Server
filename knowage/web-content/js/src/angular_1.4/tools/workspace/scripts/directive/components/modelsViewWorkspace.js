@@ -153,7 +153,9 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
         
 		var federationId = federation.federation_id;
 		
-		var url = datasetParameters.qbeEditFederationServiceUrl + '&FEDERATION_ID=' + federationId;
+		var url = datasetParameters.qbeEditFederationServiceUrl 
+			+ '&FEDERATION_ID=' + federationId 
+			+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 		
 		$qbeViewer.openQbeInterface($scope,url);
 		
@@ -236,9 +238,10 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 
 		var modelName= businessModel.name;
 		var dataSource=businessModel.dataSourceLabel;
-		var url= datasetParameters.qbeFromBMServiceUrl
+		var url = datasetParameters.qbeFromBMServiceUrl
 		        +'&MODEL_NAME='+modelName
-		        +'&DATA_SOURCE_LABEL='+ dataSource;
+		        +'&DATA_SOURCE_LABEL='+ dataSource
+		        + (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 		       
 		// $window.location.href=url;
 		$qbeViewer.openQbeInterface($scope,url);

@@ -104,8 +104,6 @@ Ext.define('Sbi.tools.dataset.QbeDataSetsWizard', {
          {label: LN('sbi.ds.name'), name:"name", type:"text", mandatory:true, readOnly:(!this.isOwner), value:this.record.name},
          {label: LN('sbi.ds.description'), name:"description", type:"textarea", readOnly:(!this.isOwner), value:this.record.description}];
 		toReturn.push({label:LN('sbi.ds.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", readOnly:!this.isOwner, value:this.record.catTypeId, data:this.categoriesStore});
-		var valueScope = (this.record.isPublic==true)?'true':'false' ;
-		toReturn.push({label:LN('sbi.ds.scope'), name:"isPublicDS", type:"combo", valueCol:"field", descCol:"value", readOnly:!this.isOwner, value:valueScope, data:this.scopeStore});
 		
 		return toReturn;
 	}

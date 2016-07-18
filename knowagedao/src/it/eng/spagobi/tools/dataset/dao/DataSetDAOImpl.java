@@ -17,12 +17,19 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.federateddataset.dao.SbiFederationDefinitionDAOHibImpl;
 import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
@@ -40,12 +47,15 @@ import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -294,16 +304,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			// create statement
 			String statement = "from SbiDataSet h where h.active = ?";
 			if (owner != null) {
-				if (includePublic != null && includePublic == true) {
-					String ownedCondition = includeOwned ? "h.owner = ?" : "h.owner != ?";
-					statement += " and (" + ownedCondition + " or h.publicDS = ?) ";
-				} else {
-					String ownedCondition = includeOwned ? "h.owner = ?" : "h.owner != ?";
-					statement += " and " + ownedCondition + " ";
-				}
+				String ownedCondition = includeOwned ? "h.owner = ?" : "h.owner != ?";
+				statement += " and " + ownedCondition + " ";
 			}
-			if (scope != null)
-				statement += " and h.publicDS = ? ";
 			if (type != null)
 				statement += " and h.scope.valueCd = ? ";
 			if (category != null)
@@ -320,12 +323,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			query.setBoolean(paramIndex++, true);
 			if (owner != null) {
 				query.setString(paramIndex++, owner);
-				if (includePublic != null && includePublic == true) {
-					query.setBoolean(paramIndex++, true);
-				}
 			}
-			if (scope != null)
-				query.setBoolean(paramIndex++, "PUBLIC".equalsIgnoreCase(scope));
 			if (type != null)
 				query.setString(paramIndex++, type);
 			if (category != null)
@@ -492,8 +490,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			} else {
 				hibDataSet.setOwner(dataSet.getOwner());
 			}
-
-			hibDataSet.setPublicDS(dataSet.isPublic());
 
 			session.save(hibDataSet);
 
@@ -676,11 +672,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 					if (Integer.valueOf(sbiDatasetVersion.getId().getVersionNum()) != null) {
 						Integer dsId = sbiDatasetVersion.getId().getDsId();
-						Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ? and (h.publicDS = ? or h.owner = ?) ");
+						Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ? and h.owner = ? ");
 						hibQuery.setBoolean(0, false);
 						hibQuery.setInteger(1, dsId);
-						hibQuery.setBoolean(2, true);
-						hibQuery.setString(3, owner);
+						hibQuery.setString(2, owner);
 
 						List<SbiDataSet> olderTemplates = hibQuery.list();
 						if (olderTemplates != null && !olderTemplates.isEmpty()) {
@@ -773,11 +768,16 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				listQuery.setMaxResults(fetchSize);
 
 			List sbiActiveDatasetsList = listQuery.list();
+			List<Domain> devCategories = new LinkedList<Domain>();
+			boolean isDev = fillDevCategories(devCategories);
 
 			if (sbiActiveDatasetsList != null && !sbiActiveDatasetsList.isEmpty()) {
 				Iterator it = sbiActiveDatasetsList.iterator();
 				while (it.hasNext()) {
 					SbiDataSet hibDataSet = (SbiDataSet) it.next();
+					if (isDev && checkDevCategoties(devCategories, hibDataSet) == false) {
+						continue;
+					}
 					IDataSet ds = DataSetFactory.toDataSet(hibDataSet, this.getUserProfile());
 					List<IDataSet> oldDsVersion = new ArrayList();
 
@@ -817,6 +817,54 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return toReturn;
 	}
 
+	/*
+	 * The DEV role can see only with his categories. This function check if the DEV role has the necessary category
+	 */
+	private boolean checkDevCategoties(List<Domain> devCategories, SbiDataSet hibDataSet) {
+		if (hibDataSet.getCategory() == null) {
+			return true;
+		}
+		Integer dsCategory = hibDataSet.getCategory().getValueId();
+		for (Domain dom : devCategories) {
+			if (dom.getValueId().equals(dsCategory)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean fillDevCategories(List<Domain> devCategories) {
+		try {
+			UserProfile profile = (UserProfile) getUserProfile();
+			boolean isDev = UserUtilities.hasDeveloperRole(profile) && !UserUtilities.hasAdminRole(profile);
+			if (isDev) {
+				IRoleDAO rolesDao = DAOFactory.getRoleDAO();
+				rolesDao.setUserProfile(profile);
+				Collection<String> roles = profile.getRolesForUse();
+				Iterator<String> itRoles = roles.iterator();
+				while (itRoles.hasNext()) {
+					String roleName = itRoles.next();
+					Role role = rolesDao.loadByName(roleName);
+					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
+					List<Domain> categories = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+					for (RoleMetaModelCategory r : ds) {
+						Iterator itCategories = categories.iterator();
+						while (itCategories.hasNext()) {
+							Domain dom = (Domain) itCategories.next();
+							if (r.getCategoryId().equals(dom.getValueId())) {
+								devCategories.add(dom);
+							}
+						}
+					}
+				}
+			}
+			return isDev;
+		} catch (EMFUserError | EMFInternalError e) {
+			logger.error("Impossible to check categories for role DEV" + e);
+			throw new SpagoBIRuntimeException("Impossible to check categories for role DEV" + e);
+		}
+	}
+
 	/**
 	 * Returns List of all existent IDataSets with current active version for the owner
 	 *
@@ -824,14 +872,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	 *            starting element
 	 * @param fetchSize
 	 *            number of elements to retrieve
-	 * @param isPublic
-	 *            to false if just private datasets
 	 * @return List of all existent IDataSets with current active version
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
 	@Override
-	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize, String owner, Boolean isPublic) {
+	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize, String owner) {
 
 		List<IDataSet> toReturn;
 		Session session;
@@ -872,14 +918,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				fetchSize = (fetchSize > 0) ? Math.min(fetchSize, resultNumber.intValue()) : resultNumber.intValue();
 			}
 
-			Query listQuery = session.createQuery("from SbiDataSet h where h.active = ? and (h.publicDS = ? or h.owner = ?) order by h.name ");
+			Query listQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.owner = ? order by h.name ");
 			listQuery.setBoolean(0, true);
-			if (isPublic == null || isPublic) {
-				listQuery.setBoolean(1, true);
-			} else {
-				listQuery.setBoolean(1, false);
-			}
-			listQuery.setString(2, owner);
+			listQuery.setString(1, owner);
 			listQuery.setFirstResult(offset);
 			if (fetchSize > 0)
 				listQuery.setMaxResults(fetchSize);
@@ -895,15 +936,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 					if (Integer.valueOf(hibDataSet.getId().getDsId()) != null) {
 						Integer dsId = hibDataSet.getId().getDsId();
-						Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?  and (h.publicDS = ? or h.owner = ?)  ");
+						Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?  and h.owner = ?  ");
 						hibQuery.setBoolean(0, false);
 						hibQuery.setInteger(1, dsId);
-						if (isPublic == null || isPublic) {
-							hibQuery.setBoolean(2, true);
-						} else {
-							hibQuery.setBoolean(2, false);
-						}
-						hibQuery.setString(3, owner);
+						hibQuery.setString(2, owner);
 
 						List<SbiDataSet> olderTemplates = hibQuery.list();
 						if (olderTemplates != null && !olderTemplates.isEmpty()) {
@@ -1308,7 +1344,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibDataSet.setSbiVersionIn(sbiVersionIn);
 				hibDataSet.setTimeIn(currentTStamp);
 				// hibDataSet.setOrganization(hibDataSet.getCommonInfo().getOrganization());
-				hibDataSet.setPublicDS(dataSet.isPublic());
 
 				if (dataSet.getDatasetFederation() != null) {
 					SbiFederationDefinition federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
@@ -1806,39 +1841,39 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 		/*
 		 * SbiDataSet hibNew = null;
-		 *
+		 * 
 		 * if(hibDataSet instanceof SbiFileDataSet){ hibNew = new SbiFileDataSet();
 		 * ((SbiFileDataSet)hibNew).setFileName(((SbiFileDataSet)hibDataSet).getFileName()); }
-		 *
+		 * 
 		 * if(hibDataSet instanceof SbiQueryDataSet){ hibNew = new SbiQueryDataSet();
 		 * ((SbiQueryDataSet)hibNew).setQuery(((SbiQueryDataSet)hibDataSet).getQuery());
 		 * ((SbiQueryDataSet)hibNew).setQueryScript(((SbiQueryDataSet)hibDataSet).getQueryScript());
 		 * ((SbiQueryDataSet)hibNew).setQueryScriptLanguage(((SbiQueryDataSet)hibDataSet).getQueryScriptLanguage()); }
-		 *
+		 * 
 		 * if(hibDataSet instanceof SbiWSDataSet){ hibNew = new SbiWSDataSet(); ((SbiWSDataSet)hibNew ).setAdress(((SbiWSDataSet)hibDataSet).getAdress());
 		 * ((SbiWSDataSet)hibNew ).setOperation(((SbiWSDataSet)hibDataSet).getOperation()); }
-		 *
+		 * 
 		 * if(hibDataSet instanceof SbiScriptDataSet){ hibNew =new SbiScriptDataSet(); ((SbiScriptDataSet) hibNew
 		 * ).setScript(((SbiScriptDataSet)hibDataSet).getScript()); ((SbiScriptDataSet) hibNew
 		 * ).setLanguageScript(((SbiScriptDataSet)hibDataSet).getLanguageScript());
-		 *
+		 * 
 		 * }
-		 *
+		 * 
 		 * if(hibDataSet instanceof SbiJClassDataSet){ hibNew =new SbiJClassDataSet(); ((SbiJClassDataSet) hibNew
 		 * ).setJavaClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName()); }
-		 *
+		 * 
 		 * if(hibDataSet instanceof SbiCustomDataSet){ hibNew =new SbiCustomDataSet(); ((SbiCustomDataSet) hibNew
 		 * ).setCustomData(((SbiCustomDataSet)hibDataSet).getCustomData()); ((SbiCustomDataSet) hibNew
 		 * ).setJavaClassName(((SbiCustomDataSet)hibDataSet).getJavaClassName()); }
-		 *
+		 * 
 		 * if(hibDataSet instanceof SbiQbeDataSet){ hibNew =new SbiQbeDataSet(); ((SbiQbeDataSet) hibNew
 		 * ).setSqlQuery(((SbiQbeDataSet)hibDataSet).getSqlQuery()); ((SbiQbeDataSet) hibNew ).setJsonQuery(((SbiQbeDataSet)hibDataSet).getJsonQuery());
 		 * ((SbiQbeDataSet) hibNew ).setDataSource(((SbiQbeDataSet)hibDataSet).getDataSource()); ((SbiQbeDataSet) hibNew
 		 * ).setDatamarts(((SbiQbeDataSet)hibDataSet).getDatamarts());
-		 *
-		 *
+		 * 
+		 * 
 		 * }
-		 *
+		 * 
 		 * hibNew.setCategory(hibDataSet.getCategory()); hibNew.setDsMetadata(hibDataSet.getDsMetadata()); hibNew.setMetaVersion(hibDataSet.getMetaVersion());
 		 * hibNew.setParameters(hibDataSet.getParameters()); hibNew.setPivotColumnName(hibDataSet.getPivotColumnName());
 		 * hibNew.setPivotColumnValue(hibDataSet.getPivotColumnValue()); hibNew.setPivotRowName(hibDataSet.getPivotRowName());

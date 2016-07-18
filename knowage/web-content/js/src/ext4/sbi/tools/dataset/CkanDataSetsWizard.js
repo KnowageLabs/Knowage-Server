@@ -357,8 +357,6 @@ Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 				 //If true a new file is uploaded
 				 values.fileUploaded = this.fileUploaded;
 				 //Scope of the dataset (default is private otherwise is public-shared)
-				 var valueScope = (this.record.isPublic==true)?'true':'false' ;
-				 values.isPublicDS = valueScope;
 				 var datasetMetadata = this.fieldsStep2.getFormState();
 				 values.datasetMetadata = Ext.JSON.encode(datasetMetadata) ;
 				 values.limitPreview = this.checkLimitPreview.getValue();
@@ -402,8 +400,6 @@ Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 			//If true a new file is uploaded
 			values.fileUploaded = thisPanel.params.fileUploaded;
 			//Scope of the dataset (default is private otherwise is public-shared)
-			var valueScope = (this.record.isPublic==true)?'true':'false' ;
-			values.isPublicDS = valueScope;
 			values.type = 'Ckan';
 			values.ckanUrl = this.ckanUrl;
 			values.ckanId = this.ckanId;

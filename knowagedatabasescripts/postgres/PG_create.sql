@@ -836,7 +836,6 @@ CREATE TABLE SBI_DATA_SET (
 	   CONFIGURATION          TEXT NULL,  
 	   FEDERATION_ID          INTEGER,	   
 	   OWNER 				  VARCHAR(50),
-	   IS_PUBLIC 			  BOOLEAN DEFAULT FALSE,
 	   USER_IN                VARCHAR(100) NOT NULL,
 	   USER_UP                VARCHAR(100),
 	   USER_DE                VARCHAR(100),

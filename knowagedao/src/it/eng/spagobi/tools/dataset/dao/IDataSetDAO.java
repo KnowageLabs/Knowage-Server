@@ -82,7 +82,7 @@ public interface IDataSetDAO extends ISpagoBIDao {
 
 	public List<IDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize, String owner);
 
-	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize, String owner, Boolean isPublic);
+	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize, String owner);
 
 	/**
 	 * @deprecated

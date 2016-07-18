@@ -277,7 +277,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		var label= dataset.label;
 		
 		var url= datasetParameters.qbeFromDataSetServiceUrl
-		       +'&dataset_label='+label;
+		       +'&dataset_label='+label
+		       + (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 
 		 //$window.location.href=url;
 		$qbeViewer.openQbeInterface($scope,url);

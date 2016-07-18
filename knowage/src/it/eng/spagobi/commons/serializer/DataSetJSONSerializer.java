@@ -94,7 +94,6 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String FLAT_TABLE_NAME = "flatTableName";
 	private static final String DATA_SOURCE_FLAT = "dataSourceFlat";
 
-	private static final String IS_PUBLIC = "isPublic";
 	private static final String OWNER = "owner";
 
 	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
@@ -384,7 +383,6 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(IS_PERSISTED, ds.isPersisted());
 			result.put(IS_PERSISTED_HDFS, ds.isPersistedHDFS());
 			result.put(PERSIST_TABLE_NAME, ds.getPersistTableName());
-			result.put(IS_PUBLIC, ds.isPublic());
 			result.put(OWNER, ds.getOwner());
 			result.put(DATE_IN, ds.getDateIn());
 			result.put(SCOPE_CD, ds.getScopeCd());

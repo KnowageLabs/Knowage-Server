@@ -422,16 +422,6 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	@Override
-	public boolean isPublic() {
-		return wrappedDataset.isPublic();
-	}
-
-	@Override
-	public void setPublic(boolean publicDS) {
-		wrappedDataset.setPublic(publicDS);
-	}
-
-	@Override
 	public String getOwner() {
 		return wrappedDataset.getOwner();
 	}

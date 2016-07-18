@@ -928,7 +928,6 @@ CREATE TABLE SBI_DATA_SET (
 	   PERSIST_TABLE_NAME     VARCHAR2(50),
 	   CONFIGURATION          CLOB NULL,    	   	   
 	   OWNER 				  VARCHAR2(50),
-	   IS_PUBLIC 			  SMALLINT DEFAULT 0,
 	   USER_IN                VARCHAR2(100) NOT NULL,
 	   USER_UP                VARCHAR2(100),
 	   USER_DE                VARCHAR2(100),

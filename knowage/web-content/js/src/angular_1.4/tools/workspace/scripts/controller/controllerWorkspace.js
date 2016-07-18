@@ -245,27 +245,6 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	$scope.chooseEncoding = function(encodingObj) {
 		$scope.dataset.csvEncoding = encodingObj;
 	}
-		
-	$scope.chooseCategory = function(category) {
-		
-		console.log(category);
-		
-		/**
-		 * For the combo box that contains the chosen category type for the Dataset that we are creating.
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
-		$scope.category = category.VALUE_NM;
-		
-		/**
-		 * For the 'dataset' object that will be sent to the service when calling the Step 2.
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
-		$scope.dataset.catTypeVn = category.VALUE_CD;
-		$scope.dataset.catTypeId = category.VALUE_ID;
-		
-		$scope.categorySet = category.VALUE_NM;
-		
-	}
 	
 	/**
 	 * Function for toggling the state of the checkbox for the 'Limit preview' option (Step 1).

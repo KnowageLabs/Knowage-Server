@@ -23,7 +23,6 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	$scope.fileObj={};
 	$scope.datasetWizardView=1;
 	$scope.datasetCategories = [];
-	$scope.datasetCategoryType = [];
 	$scope.dsGenMetaProperty = [];
 	$scope.dsMetaProperty = [];
 	$scope.dsMetaValue = [];
@@ -453,14 +452,6 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			//console.log(response.data);
 			if(b=="") {
 			angular.copy(response.data,$scope.datasetCategories)
-			} else if(b=="?DOMAIN_TYPE=CATEGORY_TYPE"){
-				angular.copy(response.data,$scope.datasetCategoryType)
-				/**
-				 * Initialize the category type for the new Dataset when the Dataset wizard appears in the Workspace. The initial value should be the first one in an
-				 * array of all category types that are available (i.e. 'Cat1').
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				$scope.chooseCategory($scope.datasetCategoryType[0]);
 			} else if(b=="?DOMAIN_TYPE=DS_GEN_META_PROPERTY"){
 				angular.copy(response.data,$scope.dsGenMetaProperty)
 			} else if(b=="?DOMAIN_TYPE=DS_META_PROPERTY"){
@@ -473,84 +464,6 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		});
 	}
 	
-	 // calls new service for dataset category type
-	loadDatasetCategories = function() {
-
-		sbiModule_restServices.promiseGet("domainsforfinaluser","ds-categories")
-		.then(function(response) {
-			
-			angular.copy(response.data,$scope.datasetCategoryType);	
-			
-			/**
-			 * ============================
-			 * CATEGORIES ORDERING [START]:
-			 * ============================
-			 * datasetCategoryTypeUnordered: 
-			 * 		- all available categories (objects) that are not ordered (initial array of categories).
-			 * datasetCategoryTypeOrdered: 
-			 * 		- all available categories (objects) that are ordered, after sorting of their IDs in ascending way.
-			 * minCatId: 
-			 * 		- the lowest ID among all categories, in order to show the first one (with the lowest ID) as a default when creating a new DS.
-			 * tempCatId: 
-			 * 		- temporary variable that keeps the ID of the current category.
-			 * arrayUnordered: 
-			 * 		- an unordered array of IDs of an initial category array (IDs of all categories before their ordering according to ascending order of their IDs).
-			 * arrayOrdered:
-			 * 		- an ordered array of IDs (ascending order of IDs of all categories, that are initially not ordered).
-			 * 
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			var datasetCategoryTypeUnordered = $scope.datasetCategoryType;
-			var datasetCategoryTypeOrdered = [];
-			
-			var minCatId = null;
-			var tempCatId = null;
-			
-			var arrayUnordered = [];
-			var arrayOrdered = [];
-						
-			for (i=0; i<datasetCategoryTypeUnordered.length; i++) {
-				
-				tempCatId = datasetCategoryTypeUnordered[i].VALUE_ID;				
-				(minCatId==null || tempCatId < minCatId) ? minCatId = tempCatId : null;					
-				arrayUnordered.push(tempCatId);		
-				
-			}	
-	
-			angular.copy(arrayUnordered,arrayOrdered);
-			arrayOrdered.sort();
-			
-			for (i=0; i<arrayOrdered.length; i++) {
-				datasetCategoryTypeOrdered[i] = datasetCategoryTypeUnordered[arrayUnordered.indexOf(arrayOrdered[i])];
-			}
-			
-			angular.copy(datasetCategoryTypeOrdered,$scope.datasetCategoryType);
-			
-			/**
-			 * If we are not in edition mode (not editing already existing DS, but creating a new one), take the first category among ordered ones and set them to the 
-			 * model, so the combo box can be initialized with the right value (the name of category that has the lowest ID among all of available categories). However,
-			 * if we are editing an already existing DS, we are already having these information (category name and ID) since when defining it, we set this value in the
-			 * Step 1. For that reason, skip this block of code and take values already having in these two properties of the model.
-			 */
-			if ($scope.editingDatasetFile==false) {
-				$scope.dataset.catTypeVn = $scope.datasetCategoryType[0].VALUE_NM;
-				$scope.dataset.catTypeId = $scope.datasetCategoryType[0].VALUE_ID;
-			}			
-			/**
-			 * ============================
-			 * CATEGORIES ORDERING [END]
-			 * ============================ 
-			 */
-			
-			
-		},function(response){
-			sbiModule_restServices.errorHandler(response.data,"failed to load dataset categories");
-		});
-		
-		
-	}	
-	
-	loadDatasetCategories();
 	loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","");
 	//loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=CATEGORY_TYPE");
 	loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_GEN_META_PROPERTY");

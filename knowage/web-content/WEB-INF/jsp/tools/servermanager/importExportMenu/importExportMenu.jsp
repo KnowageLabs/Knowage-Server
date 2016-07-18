@@ -90,7 +90,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-toolbar> 
 						<div class="md-toolbar-tools">{{translate.load("sbi.importusers.import")}}</div>
 					</md-toolbar>
-						<md-card-content>
+						<md-card-content ng-controller="importController">
 							<div layout="row" layout-wrap layout-align="center center">
 								<file-upload flex id="AssociationFileUploadImport" ng-model="importFile"></file-upload>
 								<md-button ng-click="upload($event)" aria-label="upload Menu"

@@ -929,7 +929,7 @@ Ext
 						var confO=this.configurationObject;
 						confO.fields = [ 'id', 'name',
 								'label', 'description', 'dsTypeCd',
-								'catTypeVn', 'isPublic', 'usedByNDocs',
+								'catTypeVn', 'usedByNDocs',
 								'fileName', 'fileType', 'csvDelimiter',
 								'csvQuote', 'skipRows', 'limitRows',
 								'xslSheetNumber', 'query', 'queryScript',
@@ -961,7 +961,6 @@ Ext
 									description : '',
 									dsTypeCd : '',
 									catTypeVn : '',
-									isPublic : '',
 									usedByNDocs : 0,
 									csvDelimiter : '',
 									fileType : '',
@@ -1154,15 +1153,6 @@ Ext
 							autoLoad : false
 						});
 
-						this.isPublicStore = new Ext.data.SimpleStore(
-								{
-									fields : [ 'value', 'field', 'description' ],
-									data : [
-											[ true, 'Public',
-													'Everybody can view this datset' ],
-											[ false, 'Private',
-													'The saved dataset will be visible only to you' ] ]
-								});
 
 						// START list of detail fields
 						this.detailFieldId = new Ext.form.TextField({
@@ -1224,6 +1214,7 @@ Ext
 						};
 
 						var detailFieldCatType = {
+							id : 'catTypeVn',
 							name : 'catTypeVn',
 							store : this.catTypesStore,
 							width : 350,
@@ -1241,29 +1232,11 @@ Ext
 							xtype : 'combo'
 						};
 
-						var scopeField = new Ext.form.ComboBox({
-							name : 'isPublic',
-							store : this.isPublicStore,
-							width : 350,
-							fieldLabel : LN('sbi.ds.scope'),
-							displayField : 'field',
-							valueField : 'value',
-							typeAhead : true,
-							forceSelection : true,
-							mode : 'local',
-							triggerAction : 'all',
-							selectOnFocus : true,
-							editable : false,
-							allowBlank : true,
-							validationEvent : true,
-							xtype : 'combo'
-						});
-
 						var scopeCdField = new Ext.form.ComboBox({
 							name : 'scopeCd',
 							store : this.scopeStore,
 							width : 350,
-							// fieldLabel : LN('sbi.ds.scope'),
+							fieldLabel : LN('sbi.ds.scope'),
 							displayField : 'scopeCd',
 							valueField : 'scopeCd',
 							typeAhead : true,
@@ -1276,7 +1249,22 @@ Ext
 							validationEvent : true,
 							xtype : 'combo'
 						});
+						
 						// END list of detail fields
+						
+						scopeCdField.addListener('select', function() {
+							var selected = this.getValue();  
+							if (selected != null || selected != undefined){
+								selected = selected.toUpperCase();
+								var catTypeCombo = Ext.getCmp('catTypeVn');
+								if (selected == 'ENTERPRISE' || selected == 'TECHNICAL'){
+									catTypeCombo.allowBlank = false;
+								}else{
+									catTypeCombo.allowBlank = true;
+								}
+								catTypeCombo.validate();
+							}
+						});
 
 						var c = {};
 						this.manageDatasetFieldMetadataGrid = new Sbi.tools.ManageDatasetFieldMetadata(
@@ -1370,8 +1358,8 @@ Ext
 										items : [ detailFieldLabel,
 												detailFieldName,
 												detailFieldDescr,
-												detailFieldCatType, scopeField,
 												scopeCdField,
+												detailFieldCatType, 
 												this.manageDsVersionsPanel,
 												this.detailFieldUserIn,
 												this.detailFieldDateIn,
@@ -3143,7 +3131,6 @@ Ext
 							description : '',
 							dsTypeCd : '',
 							catTypeVn : '',
-							isPublic : '',
 							usedByNDocs : 0,
 							csvDelimiter : '',
 							fileType : '',
@@ -3267,7 +3254,6 @@ Ext
 							description : actualValues['description'],
 							dsTypeCd : values['dsTypeCd'],
 							catTypeVn : values['catTypeVn'],
-							isPublic : values['isPublic'],
 							usedByNDocs : values['usedByNDocs'],
 							fileName : values['fileName'],
 							csvDelimiter : values['csvDelimiter'],
@@ -3344,7 +3330,6 @@ Ext
 							description : values['description'],
 							dsTypeCd : values['dsTypeCd'],
 							catTypeVn : values['catTypeVn'],
-							isPublic : values['isPublic'],
 							usedByNDocs : values['usedByNDocs'],
 							fileName : values['fileName'],
 							csvDelimiter : values['csvDelimiter'],
@@ -3417,7 +3402,6 @@ Ext
 							description : values['description'],
 							dsTypeCd : values['dsTypeCd'],
 							catTypeVn : values['catTypeVn'],
-							isPublic : values['isPublic'],
 							usedByNDocs : values['usedByNDocs'],
 							fileName : values['fileName'],
 							csvDelimiter : values['csvDelimiter'],
@@ -3491,7 +3475,6 @@ Ext
 //						record.set('usedByNDocs', 0); ?? why it was forced to 0 ?? It causes issue KNOWAGE-67
 						record.set('dsTypeCd', values['dsTypeCd']);
 						record.set('catTypeVn', values['catTypeVn']);
-						record.set('isPublic', values['isPublic']);
 						record.set('fileName', values['fileName']);
 						record.set('csvDelimiter', values['csvDelimiter']);
 						record.set('skipRows', values['skipRows']);

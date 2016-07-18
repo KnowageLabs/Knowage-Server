@@ -407,29 +407,29 @@ public class SDKObjectsConverter {
 
 			/*
 			 * // file dataset toReturn.setFileName(spagoBiDataSet.getFileName());
-			 * 
+			 *
 			 * // jdbc dataset toReturn.setJdbcQuery(spagoBiDataSet.getQuery()); toReturn.setJdbcQueryScript(spagoBiDataSet.getQueryScript());
 			 * toReturn.setJdbcQueryScriptLanguage(spagoBiDataSet.getQueryScriptLanguage()); if (spagoBiDataSet.getDataSource() != null) {
 			 * toReturn.setJdbcDataSourceId(spagoBiDataSet.getDataSource().getId()); }
-			 * 
+			 *
 			 * // web service dataset toReturn.setWebServiceAddress(spagoBiDataSet.getAdress()); toReturn.setWebServiceOperation(spagoBiDataSet.getOperation());
-			 * 
+			 *
 			 * // script dataset toReturn.setScriptText(spagoBiDataSet.getScript()); toReturn.setScriptLanguage(spagoBiDataSet.getLanguageScript());
-			 * 
+			 *
 			 * // java dataset toReturn.setJavaClassName(spagoBiDataSet.getJavaClassName());
-			 * 
+			 *
 			 * toReturn.setJsonQuery(spagoBiDataSet.getJsonQuery()); toReturn.setDatamarts(spagoBiDataSet.getDatamarts());
 			 * toReturn.setCustomData(spagoBiDataSet.getCustomData());
 			 */
 			/*
 			 * String type = null;
-			 * 
+			 *
 			 * if ( ScriptDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "SCRIPT"; } else if ( JDBCDataSet.DS_TYPE.equals(
 			 * spagoBiDataSet.getType() ) ) { type = "JDBC_QUERY"; } else if ( JavaClassDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type =
 			 * "JAVA_CLASS"; } else if ( WebServiceDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "WEB_SERVICE"; } else if (
 			 * FileDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "FILE"; } else { logger.error("Dataset type [" + spagoBiDataSet.getType() +
 			 * "] unknown."); type = "UNKNOWN"; }
-			 * 
+			 *
 			 * toReturn.setType(type);
 			 */
 			toReturn.setType(spagoBiDataSet.getType());
@@ -653,9 +653,6 @@ public class SDKObjectsConverter {
 			}
 			if (dataset.getNumberingRows() != null) {
 				ds.setNumRows(dataset.getNumberingRows());
-			}
-			if (dataset.get_public() != null) {
-				ds.setPublic(dataset.get_public());
 			}
 
 			// dsDetail.setDsMetadata(dataset.getXXX);

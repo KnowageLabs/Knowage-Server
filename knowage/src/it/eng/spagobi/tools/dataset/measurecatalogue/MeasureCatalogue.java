@@ -365,8 +365,7 @@ public class MeasureCatalogue implements Observer {
 		Set<MeasureCatalogueMeasure> filteredMeasures = new HashSet<MeasureCatalogueMeasure>();
 		for (Iterator iterator = measures.iterator(); iterator.hasNext();) {
 			MeasureCatalogueMeasure measureCatalogueMeasure = (MeasureCatalogueMeasure) iterator.next();
-			if (isAdminUser || measureCatalogueMeasure.getDataSet().isPublic()
-					|| (!owner.equals(null) && owner.equals(measureCatalogueMeasure.getDataSet().getOwner()))) {
+			if (isAdminUser || (!owner.equals(null) && owner.equals(measureCatalogueMeasure.getDataSet().getOwner()))) {
 				filteredMeasures.add(measureCatalogueMeasure);
 			}
 		}

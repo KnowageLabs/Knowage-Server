@@ -548,11 +548,6 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 								this.store.load({reset:true});
 								this.viewPanel.refresh();
 								var result = JSON.parse(response.responseText);
-								if (result.isPublic) {
-									Sbi.exception.ExceptionHandler.showInfoMessage('Dataset shared');
-								} else {
-									Sbi.exception.ExceptionHandler.showInfoMessage('Dataset unshared');
-								}
 							}
 						}
 					} else {

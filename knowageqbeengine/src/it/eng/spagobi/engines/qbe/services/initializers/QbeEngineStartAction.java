@@ -55,7 +55,8 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
 	public static final String REGISTRY_CONFIGURATION = "REGISTRY_CONFIGURATION";
 
-		public static final String IS_FEDERATED = "IS_FEDERATED";
+	public static final String IS_FEDERATED = "IS_FEDERATED";
+	public static final String IS_TECHNICAL_USER = "isTechnicalUser";
 
 	/** Logger component. */
 	private static transient Logger logger = Logger.getLogger(QbeEngineStartAction.class);
@@ -163,8 +164,12 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 			setAttribute(LANGUAGE, locale.getLanguage());
 			setAttribute(COUNTRY, locale.getCountry());
 
-			
 			setAttribute(IS_FEDERATED, isFederated());
+
+			if (getServiceRequest().containsAttribute(IS_TECHNICAL_USER)) {
+				String isTech = (String) getServiceRequest().getAttribute(IS_TECHNICAL_USER);
+				qbeEngineInstance.setTechnicalUser(Boolean.valueOf(isTech));
+			}
 
 		} catch (Throwable e) {
 			SpagoBIEngineStartupException serviceException = null;
@@ -191,11 +196,10 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 
 	}
 
-	
-	public boolean isFederated(){
+	public boolean isFederated() {
 		return false;
 	}
-	
+
 	public Map addDatasetsToEnv() {
 		Map env = getEnv();
 		return env;

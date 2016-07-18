@@ -30,6 +30,7 @@ import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 import java.net.URI;
@@ -151,7 +152,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 			role = rolesDao.loadByID(id);
 			List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
 			List<RoleMetaModelCategory> resp = new ArrayList<>();
-			List<SbiDomains> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+			List<SbiDomains> array = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
 			for (RoleMetaModelCategory r : ds) {
 				for (SbiDomains dom : array) {
 					if (r.getCategoryId().equals(dom.getValueId())) {

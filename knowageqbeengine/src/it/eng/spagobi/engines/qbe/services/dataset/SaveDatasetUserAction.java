@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -68,9 +68,9 @@ import com.jamonapi.MonitorFactory;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
- * 
+ *
  *         This action is intended for final users; it saves a new dataset.
- * 
+ *
  */
 public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 
@@ -86,8 +86,11 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 	public static final String LABEL = "LABEL";
 	public static final String NAME = "NAME";
 	public static final String DESCRIPTION = "DESCRIPTION";
-	public static final String IS_PUBLIC = "isPublic";
 	public static final String FLAT_TABLE_NAME = "flatTableName";
+	public static final String SCOPE_CD = "scopeCd";
+	public static final String SCOPE_ID = "scopeId";
+	public static final String CATEGORY_CD = "categoryCd";
+	public static final String CATEGORY_ID = "categoryId";
 
 	// loggers
 	private static Logger logger = Logger.getLogger(SaveDatasetUserAction.class);
@@ -157,25 +160,25 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		AbstractQbeDataSet qbeDataset = (AbstractQbeDataSet) dataset;
 
 		QbeDataSet newDataset;
-		
+
 		UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
 		// if its a federated dataset we've to add the dependent datasets
 		if (getEnv().get(EngineConstants.ENV_FEDERATION) != null) {
 
-			FederationDefinition federation = (FederationDefinition)getEnv().get(EngineConstants.ENV_FEDERATION);
-//			Object relations = (getEnv().get(EngineConstants.ENV_RELATIONS));
-//			if (relations != null) {
-//				federation.setRelationships(relations.toString());
-//			} else {
-//				logger.debug("No relation defined " + relations);
-//			}
-//
-//			federation.setLabel((getEnv().get(EngineConstants.ENV_FEDERATED_ID).toString()));
-//			federation.setFederation_id(new Integer((String) (getEnv().get(EngineConstants.ENV_FEDERATED_ID))));
+			FederationDefinition federation = (FederationDefinition) getEnv().get(EngineConstants.ENV_FEDERATION);
+			// Object relations = (getEnv().get(EngineConstants.ENV_RELATIONS));
+			// if (relations != null) {
+			// federation.setRelationships(relations.toString());
+			// } else {
+			// logger.debug("No relation defined " + relations);
+			// }
+			//
+			// federation.setLabel((getEnv().get(EngineConstants.ENV_FEDERATED_ID).toString()));
+			// federation.setFederation_id(new Integer((String) (getEnv().get(EngineConstants.ENV_FEDERATED_ID))));
 
-			newDataset = new FederatedDataSet(federation, (String)profile.getUserId());
-			//((FederatedDataSet) newDataset).setDependentDataSets(federation.getSourceDatasets());
+			newDataset = new FederatedDataSet(federation, (String) profile.getUserId());
+			// ((FederatedDataSet) newDataset).setDependentDataSets(federation.getSourceDatasets());
 			newDataset.setDataSourceForWriting((IDataSource) getEnv().get(EngineConstants.ENV_DATASOURCE));
 			newDataset.setDataSourceForReading((IDataSource) getEnv().get(EngineConstants.ENV_DATASOURCE));
 		} else {
@@ -186,17 +189,39 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		newDataset.setName(getAttributeAsString(NAME));
 		newDataset.setDescription(getAttributeAsString(DESCRIPTION));
 
-		newDataset.setPublic(getAttributeAsBoolean(IS_PUBLIC, Boolean.TRUE));
+		String scopeCd = null;
+		Integer scopeId = null;
+		String categoryCd = null;
+		Integer categoryId = null;
 
-		newDataset.setCategoryCd(dataset.getCategoryCd());
-		newDataset.setCategoryId(dataset.getCategoryId());
+		if (getAttributeAsInteger(SCOPE_ID) != null) {
+			scopeCd = getAttributeAsString(SCOPE_CD);
+			scopeId = getAttributeAsInteger(SCOPE_ID);
+		} else {
+			scopeCd = SpagoBIConstants.DS_SCOPE_USER;
+		}
 
-		
+		if (getAttributeAsInteger(CATEGORY_ID) != null) {
+			categoryCd = getAttributeAsString(CATEGORY_CD);
+			categoryId = getAttributeAsInteger(CATEGORY_ID);
+		} else {
+			categoryCd = dataset.getCategoryCd();
+			categoryId = dataset.getCategoryId();
+		}
+		if (categoryId == null
+				&& (scopeCd.equalsIgnoreCase(SpagoBIConstants.DS_SCOPE_TECHNICAL) || scopeCd.equalsIgnoreCase(SpagoBIConstants.DS_SCOPE_ENTERPRISE))) {
+			getErrorHandler().addError(
+					new EMFValidationError(EMFErrorSeverity.ERROR, "category", "Dataset Enterprise or Technical must have a category", new ArrayList()));
+			validateInput();
+		}
+		newDataset.setScopeCd(scopeCd);
+		newDataset.setScopeId(scopeId);
+		newDataset.setCategoryCd(categoryCd);
+		newDataset.setCategoryId(categoryId);
+
 		String owner = profile.getUserId().toString();
 		// saves owner of the dataset
 		newDataset.setOwner(owner);
-		// saves scope which is always "USER"
-		newDataset.setScopeCd(SpagoBIConstants.DS_SCOPE_USER);
 
 		String metadata = getMetadataAsString(dataset);
 		logger.debug("Dataset's metadata: [" + metadata + "]");
@@ -331,8 +356,6 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		flatFataSet.setLabel(getAttributeAsString(LABEL));
 		flatFataSet.setName(getAttributeAsString(NAME));
 		flatFataSet.setDescription(getAttributeAsString(DESCRIPTION));
-
-		flatFataSet.setPublic(getAttributeAsBoolean(IS_PUBLIC, Boolean.TRUE));
 
 		flatFataSet.setCategoryCd(dataset.getCategoryCd());
 		flatFataSet.setCategoryId(dataset.getCategoryId());

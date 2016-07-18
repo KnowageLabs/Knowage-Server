@@ -44,7 +44,7 @@ angular
 		};
 		
 		function openQbeInterfaceController($scope,url) {
-			
+
 			$scope.documentViewerUrl = url;
 			
 			$scope.closeDocument = function() {

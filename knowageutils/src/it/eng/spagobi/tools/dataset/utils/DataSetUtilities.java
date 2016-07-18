@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -69,11 +69,10 @@ public class DataSetUtilities {
 			return true;
 		}
 		String owner = profile.getUserUniqueIdentifier().toString();
-
-		return (dataset.isPublic() || (!owner.equals(null) && owner.equals(dataset.getOwner())));
+		return (!owner.equals(null) && owner.equals(dataset.getOwner()));
 	}
-	
-	public static boolean isExecutableByUser(boolean isPublic, String ownerDataSet, IEngUserProfile profile) {
+
+	public static boolean isExecutableByUser(String ownerDataSet, IEngUserProfile profile) {
 		if (profile == null) {
 			return false;
 		}
@@ -82,8 +81,7 @@ public class DataSetUtilities {
 			return true;
 		}
 		String owner = profile.getUserUniqueIdentifier().toString();
-
-		return (isPublic|| (!owner.equals(null) && owner.equals(ownerDataSet)));
+		return (!owner.equals(null) && owner.equals(ownerDataSet));
 	}
 
 	public static boolean isAdministrator(IEngUserProfile profile) {

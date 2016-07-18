@@ -498,7 +498,6 @@ public class DataSetFactory {
 				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());
 				ds.setOwner(sbiDataSet.getOwner());
-				ds.setPublic(sbiDataSet.isPublicDS());
 				ds.setUserIn(sbiDataSet.getCommonInfo().getUserIn());
 				ds.setDateIn(sbiDataSet.getCommonInfo().getTimeIn());
 				versionDS = new VersionedDataSet(ds, Integer.valueOf(sbiDataSet.getId().getVersionNum()), sbiDataSet.isActive());
@@ -771,7 +770,6 @@ public class DataSetFactory {
 				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());
 				ds.setOwner(sbiDataSet.getOwner());
-				ds.setPublic(sbiDataSet.is_public());
 				ds.setUserIn(sbiDataSet.getOwner());
 				ds.setDateIn(new Date());
 
@@ -1106,7 +1104,6 @@ public class DataSetFactory {
 				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());
 				ds.setOwner(sbiDataSet.getOwner());
-				ds.setPublic(sbiDataSet.isPublicDS());
 				ds.setUserIn(sbiDataSet.getCommonInfo().getUserIn());
 				ds.setDateIn(sbiDataSet.getCommonInfo().getTimeIn());
 				versionDS = new VersionedDataSet(ds, Integer.valueOf(sbiDataSet.getId().getVersionNum()), sbiDataSet.isActive());

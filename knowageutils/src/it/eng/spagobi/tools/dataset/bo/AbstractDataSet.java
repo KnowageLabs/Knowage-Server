@@ -113,7 +113,6 @@ public abstract class AbstractDataSet implements IDataSet {
 	protected List noActiveVersions;
 
 	protected String owner;
-	protected boolean isPublic;
 
 	protected Integer scopeId;
 	protected String scopeCd;
@@ -170,7 +169,6 @@ public abstract class AbstractDataSet implements IDataSet {
 		setScheduled(dataSet.isScheduled());
 		SpagoBiDataSource dsDataSourceForReading = dataSet.getDataSourceForReading();
 		setDataSourceForReading(dsDataSourceForReading != null ? DataSourceFactory.getDataSource(dsDataSourceForReading) : null);
-		setPublic(dataSet.is_public());
 		setScopeId(dataSet.getScopeId());
 		setScopeCd(dataSet.getScopeCd());
 		setOwner(dataSet.getOwner());
@@ -205,7 +203,6 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setScheduled(isScheduled());
 		IDataSource dataSourceForReading = getDataSourceForReading();
 		sbd.setDataSourceForReading(dataSourceForReading != null ? dataSourceForReading.toSpagoBiDataSource() : null);
-		sbd.set_public(isPublic());
 
 		sbd.setDsMetadata(getDsMetadata());
 
@@ -680,23 +677,6 @@ public abstract class AbstractDataSet implements IDataSet {
 	@Override
 	public void setOwner(String owner) {
 		this.owner = owner;
-	}
-
-	/**
-	 * @return the isPublic
-	 */
-	@Override
-	public boolean isPublic() {
-		return isPublic;
-	}
-
-	/**
-	 * @param isPublic
-	 *            the isPublic to set
-	 */
-	@Override
-	public void setPublic(boolean isPublic) {
-		this.isPublic = isPublic;
 	}
 
 	// ===============================================

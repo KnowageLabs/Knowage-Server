@@ -26,9 +26,13 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
@@ -36,6 +40,7 @@ import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.hdfs.Hdfs;
@@ -93,6 +98,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -651,7 +657,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		try {
 			List dsTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.DATA_SET_TYPE);
 			getSessionContainer().setAttribute("dsTypesList", dsTypesList);
-			List catTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+			List catTypesList = getCategories();
 			getSessionContainer().setAttribute("catTypesList", catTypesList);
 			List dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();
 			getSessionContainer().setAttribute("dataSourceList", dataSourceList);
@@ -673,6 +679,40 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		} catch (EMFUserError e) {
 			logger.error(e.getMessage(), e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypesRetrieve", e);
+		}
+	}
+
+	public List getCategories() {
+		IRoleDAO rolesDao = null;
+		Role role = new Role();
+		try {
+			UserProfile profile = (UserProfile) this.getUserProfile();
+			rolesDao = DAOFactory.getRoleDAO();
+			rolesDao.setUserProfile(profile);
+			if (UserUtilities.hasDeveloperRole(profile) && !UserUtilities.hasAdminRole(profile)) {
+				List<Domain> categoriesDev = new ArrayList<>();
+				Collection<String> roles = profile.getRolesForUse();
+				Iterator<String> itRoles = roles.iterator();
+				while (itRoles.hasNext()) {
+					String roleName = itRoles.next();
+					role = rolesDao.loadByName(roleName);
+					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
+					List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+					for (RoleMetaModelCategory r : ds) {
+						for (Domain dom : array) {
+							if (r.getCategoryId().equals(dom.getValueId())) {
+								categoriesDev.add(dom);
+							}
+						}
+					}
+				}
+				return categoriesDev;
+			} else {
+				return DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+			}
+		} catch (Exception e) {
+			logger.error("Role with selected id: " + role.getId() + " doesn't exists", e);
+			throw new SpagoBIRuntimeException("Item with selected id: " + role.getId() + " doesn't exists", e);
 		}
 	}
 
@@ -788,9 +828,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					if (trasfTypeCd != null && !trasfTypeCd.equals("")) {
 						ds = setTransformer(ds, trasfTypeCd);
 					}
-
-					Boolean isPublic = getAttributeAsBoolean(DataSetConstants.IS_PUBLIC);
-					ds.setPublic(isPublic);
 
 					IDataSet dsRecalc = null;
 
@@ -1568,11 +1605,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			dataSet.setDataSourceForReading(cache.getDataSource());
 			dataSet.setDataSourceForWriting(cache.getDataSource());
 			jsonDsConfig = new JSONObject(dataSet.getConfiguration());
-			
-			//update the json query getting the one passed from the qbe editor
+
+			// update the json query getting the one passed from the qbe editor
 			String jsonQuery = getAttributeAsString(DataSetConstants.QBE_JSON_QUERY);
 			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
-			((FederatedDataSet)(((VersionedDataSet)dataSet).getWrappedDataset())).setJsonQuery(jsonQuery);
+			((FederatedDataSet) (((VersionedDataSet) dataSet).getWrappedDataset())).setJsonQuery(jsonQuery);
 
 		}
 
