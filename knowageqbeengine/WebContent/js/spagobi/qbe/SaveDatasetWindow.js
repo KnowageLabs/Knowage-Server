@@ -81,10 +81,12 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 		this.services["getScopeCd"]= Sbi.config.remoteServiceRegistry.getRestServiceUrl({
 			serviceName: 'domainsforfinaluser/listValueDescriptionByType',
 			baseParams: scopeParams
+			, isAbsolute : false
 		});
 		this.services["getDsCategories"]= Sbi.config.remoteServiceRegistry.getRestServiceUrl({
 			serviceName: 'domainsforfinaluser/ds-categories',
 			baseParams: params
+			, isAbsolute : false
 		});
 		
 	}
