@@ -18,15 +18,11 @@
 package it.eng.spagobi.commons.domains;
 
 import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,27 +53,9 @@ public class DomainCRUDForFinalUser extends DomainCRUD {
 	@Path("/ds-categories")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public String getDataSetCategoriesByUser(@Context HttpServletRequest req) {
-		IRoleDAO rolesDao = null;
 		Set<Domain> categories = new HashSet<Domain>();
 		try {
-			List<String> roleNames = (List<String>) getUserProfile().getRoles();
-			if (!roleNames.isEmpty()) {
-				rolesDao = DAOFactory.getRoleDAO();
-				rolesDao.setUserProfile(getUserProfile());
-				List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
-				for (String roleName : roleNames) {
-					Role role = rolesDao.loadByName(roleName);
-					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
-					for (RoleMetaModelCategory r : ds) {
-						for (Domain dom : array) {
-							if (r.getCategoryId().equals(dom.getValueId())) {
-								categories.add(dom);
-							}
-						}
-
-					}
-				}
-			}
+			categories = UserUtilities.getDataSetCategoriesByUser(getUserProfile());
 			return translate(categories, getLocale(req)).toString();
 		} catch (Exception e) {
 			logger.error("Impossible to get role dataset categories for user [" + getUserProfile() + "]", e);

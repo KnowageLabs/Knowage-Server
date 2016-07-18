@@ -27,6 +27,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -51,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -884,7 +886,7 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
-	 *
+	 * 
 	 * is this method in the right place?
 	 */
 
@@ -955,6 +957,35 @@ public class UserUtilities {
 
 		return toReturn;
 
+	}
+
+	public static Set<Domain> getDataSetCategoriesByUser(IEngUserProfile profile) {
+		IRoleDAO rolesDao = null;
+		Set<Domain> categories = new HashSet<Domain>();
+		try {
+			List<String> roleNames = (List<String>) profile.getRoles();
+			if (!roleNames.isEmpty()) {
+				rolesDao = DAOFactory.getRoleDAO();
+				rolesDao.setUserProfile(profile);
+				List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+				for (String roleName : roleNames) {
+					Role role = rolesDao.loadByName(roleName);
+					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
+					for (RoleMetaModelCategory r : ds) {
+						for (Domain dom : array) {
+							if (r.getCategoryId().equals(dom.getValueId())) {
+								categories.add(dom);
+							}
+						}
+
+					}
+				}
+			}
+			return categories;
+		} catch (Exception e) {
+			logger.error("Impossible to get role dataset categories for user [" + profile + "]", e);
+			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]", e);
+		}
 	}
 
 }

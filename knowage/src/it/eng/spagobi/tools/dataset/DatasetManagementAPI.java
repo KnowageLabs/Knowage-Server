@@ -69,6 +69,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -83,11 +84,9 @@ import org.json.JSONObject;
 import commonj.work.Work;
 
 /**
- * DataLayer facade class. It manage the access to SpagoBI's datasets. It is
- * built on top of the dao. It manages all complex operations that involve more
- * than a simple CRUD operations over the dataset. It also manages user's
- * profilation and autorization. Other class must access dataset through this
- * class and not calling directly the DAO.
+ * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
+ * simple CRUD operations over the dataset. It also manages user's profilation and autorization. Other class must access dataset through this class and not
+ * calling directly the DAO.
  *
  * @author gavardi, gioia
  *
@@ -403,10 +402,8 @@ public class DatasetManagementAPI {
 					dataStore = cachedResultSet;
 					addLastCacheDate(cache, dataStore, dataSet);
 					/*
-					 * since the datastore, at this point, is a JDBC datastore,
-					 * it does not contain information about
-					 * measures/attributes, fields' name and alias... therefore
-					 * we adjust its metadata
+					 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and
+					 * alias... therefore we adjust its metadata
 					 */
 					adjustMetadata((DataStore) dataStore, dataSet, null);
 					dataSet.decode(dataStore);
@@ -580,9 +577,8 @@ public class DatasetManagementAPI {
 			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
 
 			/*
-			 * since the datastore, at this point, is a JDBC datastore, it does
-			 * not contain information about measures/attributes, fields' name
-			 * and alias... therefore we adjust its metadata
+			 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias...
+			 * therefore we adjust its metadata
 			 */
 			this.adjustMetadata((DataStore) dataStore, dataSet, null);
 
@@ -690,15 +686,34 @@ public class DatasetManagementAPI {
 				userId = this.getUserId();
 			}
 			List<IDataSet> dataSets = getDataSetDAO().loadDatasetsSharedWithUser(userId, true);
+			Set<Domain> categories = UserUtilities.getDataSetCategoriesByUser(getUserProfile());
+			List<IDataSet> validDataSets = filterDatasetsByUser(dataSets, categories);
+
 			// for (IDataSet dataSet : dataSets) {
 			// checkQbeDataset(dataSet);
 			// }
-			return dataSets;
+			return validDataSets;
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private List<IDataSet> filterDatasetsByUser(List<IDataSet> dataSets, Set<Domain> categories) {
+		List<IDataSet> validDataSets = new LinkedList<IDataSet>();
+		for (IDataSet ds : dataSets) {
+			Integer idCategory = ds.getCategoryId();
+			if (idCategory != null) {
+				for (Domain dom : categories) {
+					if (idCategory.equals(dom.getValueId())) {
+						validDataSets.add(ds);
+						break;
+					}
+				}
+			}
+		}
+		return validDataSets;
 	}
 
 	public List<IDataSet> getUncertifiedDataSet() {
@@ -863,14 +878,10 @@ public class DatasetManagementAPI {
 				// entity id is not found on base query selected fields
 
 				/*
-				 * columnName = "Count"; if
-				 * (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) {
-				 * toReturn
-				 * .append(AggregationFunctions.COUNT_FUNCTION.apply("*")); }
-				 * else { logger.error("Entity id " + aMeasure.getEntityId() +
-				 * " not found on the base query!!!!"); throw new
-				 * RuntimeException("Entity id " + aMeasure.getEntityId() +
-				 * " not found on the base query!!!!"); }
+				 * columnName = "Count"; if (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) { toReturn
+				 * .append(AggregationFunctions.COUNT_FUNCTION.apply("*")); } else { logger.error("Entity id " + aMeasure.getEntityId() +
+				 * " not found on the base query!!!!"); throw new RuntimeException("Entity id " + aMeasure.getEntityId() + " not found on the base query!!!!");
+				 * }
 				 */
 			} else {
 				if (function != AggregationFunctions.NONE_FUNCTION) {
@@ -977,8 +988,7 @@ public class DatasetManagementAPI {
 	}
 
 	/**
-	 * The association is valid if number of records froma ssociation is less
-	 * than Maximum of single datasets
+	 * The association is valid if number of records froma ssociation is less than Maximum of single datasets
 	 *
 	 * @param dsLabel1
 	 * @param dsLabel2
