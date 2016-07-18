@@ -262,7 +262,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	$scope.selectFilter = function(item){
 		selectedFlag = true;
-		oldSelectedFilter = $scope.filterSelected[$scope.filterAxisPosition];//ex:$scope.filterAxisPosition
+		oldSelectedFilter = angular.copy($scope.filterSelected[$scope.filterAxisPosition]);//ex:$scope.filterAxisPosition
 		h = $scope.filterCardList[$scope.filterAxisPosition].uniqueName;
 		m = item.uniqueName;
 		$scope.filterSelected[$scope.filterAxisPosition].caption = item.name;
@@ -273,12 +273,13 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		
 		if(selectedFlag){
 			if(oldSelectedFilter.caption != "..."){
-				$scope.filterSelected[$scope.filterAxisPosition].caption = oldSelectedFilter.name;
+				$scope.filterSelected[$scope.filterAxisPosition].caption = oldSelectedFilter.caption;
 				$scope.filterSelected[$scope.filterAxisPosition].uniqueName = oldSelectedFilter.uniqueName;
 			}				
-			else	
+			else{
 				$scope.filterSelected[$scope.filterAxisPosition].caption = "...";
 				$scope.filterSelected[$scope.filterAxisPosition].uniqueName = "";
+			}				
 			
 			selectedFlag = false;
 		}
@@ -621,10 +622,15 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		
 		var cutProp = cutArray[ind];
 		
+		if(name == undefined){
+			name = oldSelectedFilter.caption;
+		}
+		
 		if(name.length <= cutProp)
 			return name;
 		else
 			return name.substring(0,cutProp)+"...";
+		
 		
 	};
 	
