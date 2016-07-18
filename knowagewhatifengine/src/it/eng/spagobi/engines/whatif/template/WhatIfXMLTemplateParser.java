@@ -310,11 +310,12 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 						menu = (String) value.getAttribute(TAG_MENU);
 						clicked = (String) value.getAttribute(TAG_CLICKED);
 						if (visible != null && visible.equalsIgnoreCase(TRUE)) {
-							if (menu != null && menu.equalsIgnoreCase(TRUE)) {
-								toolbarMenuButtons.add(name);
-							} else {
-								toolbarVisibleButtons.add(name);
-							}
+							/*
+							 * if (menu != null && menu.equalsIgnoreCase(TRUE))
+							 * { toolbarMenuButtons.add(name); } else {
+							 */
+							toolbarVisibleButtons.add(name);
+							// }
 							if (clicked != null && clicked.equalsIgnoreCase(TRUE)) {
 								toolbarClickedButtons.add(name);
 							}

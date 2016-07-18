@@ -30,8 +30,10 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	
 	var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
 	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon","BUTTON_EDITABLE_EXCEL_EXPORT"];
-	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT","BUTTON_SORTING_SETTINGS","BUTTON_CC","BUTTON_SORTING"]
+	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT","BUTTON_SORTING_SETTINGS","BUTTON_CC","BUTTON_SORTING","BUTTON_ALGORITHMS"]
 	var saveAsTimeout = olapSharedSettings.getSettings().persistNewVersionTransformations;
+	$scope.availAlgorithms = [];
+	$scope.activeAlg;
 	$scope.clickedButtons = [];
 	$scope.outputWizardDescription = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.type.description');
 	$scope.outputWizardTitle = sbiModule_translate.load('sbi.olap.toolbar.export.wizard.title');
@@ -96,6 +98,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	var exportBtn = {};
 	var exportEditableBtn = {};
 	var result;
+	var algsLoaded = false;
 	$scope.wiMsg ="";
 	$scope.wiMessageNeeded = false;
 	
@@ -247,7 +250,12 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				undo();
 				sendModelConfig = false;
 				break;
-				
+			case "BUTTON_ALGORITHMS":
+				if(!algsLoaded)
+					loadAlgorithms();
+				$scope.showDialog(null, $scope.allocationAlgDialog);
+				sendModelConfig = false;
+				break;
 			default:
 				console.log("something else clicked");
 		}
@@ -542,6 +550,35 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				$scope.closeDialog(null);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("An error occured while deleting versions", 'Error');
+				
+			});
+	  }
+	  
+	  loadAlgorithms = function(){
+		  var path ='/allocationalgorithm/?SBI_EXECUTION_ID='+JSsbiExecutionID;
+		  
+		  sbiModule_restServices.promiseGet("1.0",path)
+			.then(function(response) {
+				$scope.availAlgorithms = response.data;
+				for(var i=0; i< response.data.length;i++){
+					if(response.data[i].defaultAlgorithm)
+						$scope.activeAlg = response.data[i];
+				}
+				algsLoaded = true;
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage("An error occured while loading alghorithms", 'Error');
+				
+			});
+	  }
+	  
+	  $scope.setAlgorithm = function(){
+		  var path ='/allocationalgorithm/' + $scope.activeAlg.className + '?SBI_EXECUTION_ID='+JSsbiExecutionID;
+		  sbiModule_restServices.promisePost("1.0",path)
+			.then(function(response) {
+				
+				sbiModule_messaging.showSuccessMessage("Algorithm sucessfully updated", 'Success');
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage("An error occured while setting alghorithm", 'Error');
 				
 			});
 	  }

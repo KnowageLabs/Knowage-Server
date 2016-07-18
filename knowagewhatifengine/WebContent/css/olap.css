@@ -63,6 +63,10 @@
     min-height: 0px !important;
 }
 
+.BUTTON_ALGORITHMS{
+	background-image: url(../img/alg_btn.png);
+}
+
 .top-alignment{
 	height:8%;
 }

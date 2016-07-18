@@ -45,9 +45,10 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.saveSubObjectDial = "/main/savesubobject/saving_subobject_dialog.html";
 	$scope.showMdxDial = "/main/toolbar/showMdx.html";
 	$scope.sortSetDial = "/main/toolbar/sortingSettings.html";
-	$scope.filterDial = "/main/filter/filterDialog.html"
-	$scope.saveAsNew = "/main/toolbar/saveAsNew.html"
-	$scope.deleteVersionDialog = "/main/toolbar/deleteVersion.html"
+	$scope.filterDial = "/main/filter/filterDialog.html";
+	$scope.saveAsNew = "/main/toolbar/saveAsNew.html";
+	$scope.deleteVersionDialog = "/main/toolbar/deleteVersion.html";
+	$scope.allocationAlgDialog = "/main/toolbar/allocationAlg.html";
 
 	$scope.filterDialogWidth = olapSharedSettings.getSettings().filterDialogWidth;
 	$scope.filterDialogHeight = olapSharedSettings.getSettings().filterDialogHeight;
