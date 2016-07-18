@@ -456,7 +456,7 @@ public class SelfServiceDataSetCRUD {
 			/**
 			 * Provide a valid JSON with the information of the saved dataset's ID (negative value, namely -1, means we are updating an already existing
 			 * dataset, otherwise we are saving a new dataset.
-			 * 
+			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			JSONObject jo = new JSONObject();
@@ -693,8 +693,8 @@ public class SelfServiceDataSetCRUD {
 		// }
 		// }
 		// TODO
-		return true;
-	}
+				return true;
+			}
 
 	private boolean checkCategoryChange(IDataSet currentDataset, IDataSet updatedDataset) throws Exception {
 		if ((currentDataset != null) && (updatedDataset != null)) {
@@ -1754,13 +1754,20 @@ public class SelfServiceDataSetCRUD {
 						}
 						// Type is a mandatory property
 						else if (propertyName.equalsIgnoreCase("Type")) {
-							if (propertyValue.equalsIgnoreCase("Integer")) {
+
+							/**
+							 * Check also if the 'propertyValue' represents the full-class name (with the package in its name). Since this is a valid
+							 * alternative for the short-class name, this will not cause any inconsistency, nor errors.
+							 * 
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */
+							if (propertyValue.equalsIgnoreCase("Integer") || propertyValue.equalsIgnoreCase("java.lang.Integer")) {
 								Class type = Class.forName("java.lang.Integer");
 								ifmd.setType(type);
-							} else if (propertyValue.equalsIgnoreCase("Double")) {
+							} else if (propertyValue.equalsIgnoreCase("Double") || propertyValue.equalsIgnoreCase("java.lang.Double")) {
 								Class type = Class.forName("java.lang.Double");
 								ifmd.setType(type);
-							} else if (propertyValue.equalsIgnoreCase("String")) {
+							} else if (propertyValue.equalsIgnoreCase("String") || propertyValue.equalsIgnoreCase("java.lang.String")) {
 								Class type = Class.forName("java.lang.String");
 								ifmd.setType(type);
 							} else {

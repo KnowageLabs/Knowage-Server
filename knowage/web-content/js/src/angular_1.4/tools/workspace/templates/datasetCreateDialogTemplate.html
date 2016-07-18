@@ -49,54 +49,55 @@
 		         	
 					<form>
 			               
-						<div layout="row" layout-wrap>
-							<div flex=100 layout="row" layout-align="start center">
-				                  <label class="checkboxPadding">{{translate.load('sbi.workspace.dataset.wizard.limit')}}</label> 
-				                  <md-input-container class="md-block">
-				                     <md-checkbox 	aria-label="Checkbox 1" 
-				                     				ng-model="limitPreviewChecked" ng-checked="toggleLimitPreview()">
-	           						</md-checkbox>
-				                  </md-input-container>
-							</div>
-				               
-							<div layout="row" flex=100  layout-align="start center" ng-show="dataset.fileName=='' || changingFile">
-			                  	
-			                  	<label layout-align="center center" class="buttonLabel">
-			                  		{{translate.load("sbi.ds.wizard.selectFile")}}:
-		                  		</label>
-			                  	
-			                  	<file-upload 	flex ng-model="fileObj" id="datasetFile" 
-			                  					ng-click="fileChange();checkChange();fileObjTakeBackup()" 
-				                  				title="{{translate.load('sbi.workspace.dataset.wizard.browsefile.tooltip')}}">
-	                			</file-upload>
-			                  	
-			                  	<div class="uploadButton">
-				                    <md-button 	ng-click="uploadFile()" class="md-raised" 
-				                     			ng-disabled="!fileObj.fileName || (changingFile && dataset.fileName==fileObj.fileName)" 
-				                     			title="{{datasetWizStep1UploadButtonTitle()}}">
-		                     			{{translate.load("sbi.workspace.dataset.wizard.upload")}}
-	             					</md-button>
-			                  	</div>
-			                  	
-							</div>
-							
-							<div layout="row" flex=100 ng-if="dataset.fileName!='' && !changingFile">
-						 		
-						 		<label layout-align="center center" class="buttonLabel">
-						 			{{translate.load("sbi.workspace.dataset.wizard.file.uploaded")}}: <strong>{{dataset.fileName}}</strong>
-					 			</label>
-					 			
-							 <span flex></span>
-							  
-							  	<div class="uploadButton">
-							    <md-button 	ng-click="changeUploadedFile()" ng-show="!ckanInWizard" class="md-raised" 
-							    			title="{{translate.load('sbi.workspace.dataset.wizard.file.change.tooltip')}}">
-		                     			{{translate.load("sbi.workspace.dataset.wizard.file.change")}}
-	             				</md-button>
-	           					</div>
-	             				
-							</div>
-		                </div>
+						<div layout="row" layout-wrap>			                 
+			          			               
+						<div flex=100 layout="row" layout-align="start center">
+			                  <label class="checkboxPadding">{{translate.load('sbi.workspace.dataset.wizard.limit')}}</label> 
+			                  <md-input-container class="md-block">
+			                     <md-checkbox 	aria-label="Checkbox 1" 
+			                     				ng-model="limitPreviewChecked" ng-checked="toggleLimitPreview()">
+           						</md-checkbox>
+			                  </md-input-container>
+						</div>
+			               
+						<div layout="row" flex=100  layout-align="start center" ng-show="dataset.fileName=='' || changingFile">
+		                  	
+		                  	<label layout-align="center center" class="buttonLabel">
+		                  		{{translate.load("sbi.ds.wizard.selectFile")}}:
+	                  		</label>
+		                  	
+		                  	<file-upload 	flex ng-model="fileObj" id="datasetFile" 
+		                  					ng-click="fileChange();checkChange();fileObjTakeBackup()" 
+			                  				title="{{translate.load('sbi.workspace.dataset.wizard.browsefile.tooltip')}}">
+                			</file-upload>
+		                  	
+		                  	<div class="uploadButton">
+			                    <md-button 	ng-click="uploadFile()" class="md-raised" 
+			                     			ng-disabled="!fileObj.fileName || (changingFile && dataset.fileName==fileObj.fileName)" 
+			                     			title="{{datasetWizStep1UploadButtonTitle()}}">
+	                     			{{translate.load("sbi.workspace.dataset.wizard.upload")}}
+             					</md-button>
+		                  	</div>
+		                  	
+						</div>
+						
+						<div layout="row" flex=100 ng-if="dataset.fileName!='' && !changingFile">
+					 		
+					 		<label layout-align="center center" class="buttonLabel">
+					 			{{translate.load("sbi.workspace.dataset.wizard.file.uploaded")}}: <strong>{{dataset.fileName}}</strong>
+				 			</label>
+				 			
+						 <span flex></span>
+						  
+						  	<div class="uploadButton">
+						    <md-button 	ng-click="changeUploadedFile()" ng-show="!ckanInWizard" class="md-raised" 
+						    			title="{{translate.load('sbi.workspace.dataset.wizard.file.change.tooltip')}}">
+	                     			{{translate.load("sbi.workspace.dataset.wizard.file.change")}}
+             				</md-button>
+           					</div>
+             				
+						</div>
+			               </div>
 					</form>
 		            
 		       	</md-card-content>
@@ -305,11 +306,16 @@
          	
       	</md-card>
       	
+      	<!-- 
+      		REMOVED: Since the Step 2 cannot provide invalid data (invalid combinations for meta data - for columns), this Step 3 GUI element is removed.
+      		We are always going to have valid (type, field type) pairs on the Step 2.
+      		@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+      	 -->
      	<!-- Validation status text: the validation state after going from the Step 2 to the Step 3 -->
-      	<p 	ng-show="validationStatus && datasetWizardView==3" 
+      	<!-- <p 	ng-show="validationStatus && datasetWizardView==3" 
       		class="step3ValidationText {{validationStatus ? 'validStatusColor' : 'invalidStatusColor'}}">
       		{{validationStatus ? translate.load("sbi.ds.metadata.msgOK") : translate.load("sbi.ds.metadata.msgKO")}}
-   		</p>
+   		</p> -->
    		
    		<!-- CARD 3 (END) -->
       	
