@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
@@ -48,7 +48,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
 	// private String[] libs = { "org.eclipse.persistence.core_2.1.1.v20100817-r8050.jar", "javax.persistence_2.0.1.v201006031150.jar",
 	// "hibernate-spatial-1.1.1.jar", "jts-1.13.jar", "hibernate3.6.2.jar" };
-	private String[] libs = { "javax.persistence-2.0.1.jar", "hibernate-3.6.2.jar" };
+	private String[] libs = { "javax.persistence-2.0.1.jar", "hibernate-3.6.2.jar", "jts-1.13.jar" };
 
 	private static Logger logger = LoggerFactory.getLogger(JpaMappingClassesGenerator.class);
 
@@ -93,8 +93,8 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 			boolean compiled = compiler.compile();
 
 			if (!compiled) {
-				throw new GenerationException(
-						"Impossible to compile mapping code. Please check compilation errors in file [/log/knowage/metacompiler_errors.log]");
+				throw new GenerationException("Impossible to compile mapping code. Please check compilation errors in file [" + logDir + File.separator
+						+ "metacompiler_errors.log]");
 			}
 
 			FileUtilities.copyFile(new File(srcDir, "views.json"), binDir);
