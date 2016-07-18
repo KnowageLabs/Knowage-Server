@@ -195,7 +195,7 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query q = aSession.createSQLQuery("UPDATE sbi_whatif_workflow SET state = :stateValue WHERE model_id = :mId AND sequence = 0");
+			Query q = aSession.createSQLQuery("UPDATE SBI_WHATIF_WORKFLOW SET state = :stateValue WHERE model_id = :mId AND sequence = 0");
 			q.setParameter("stateValue", STATE_INPROGRESS);
 			q.setParameter("mId", modelId);
 			q.executeUpdate();
@@ -232,7 +232,7 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 
 			for (int i = 0; i < workflow.size(); i++) {
 				if (!toAdd.contains(workflow.get(i).getUserId())) {
-					Query q = aSession.createSQLQuery("UPDATE sbi_whatif_workflow SET sequence = :seq WHERE model_id = :mId AND user_id = :uId");
+					Query q = aSession.createSQLQuery("UPDATE SBI_WHATIF_WORKFLOW SET sequence = :seq WHERE model_id = :mId AND user_id = :uId");
 					q.setParameter("seq", i);
 					q.setParameter("mId", workflow.get(i).getModelId());
 					q.setParameter("uId", workflow.get(i).getUserId());
@@ -341,7 +341,7 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 				if(state.equals(STATE_INPROGRESS)){//if we've found the active user
 					//we set value to done
 					logger.debug("Actual active user is "+actual.getUserId());
-					Query q = aSession.createSQLQuery("UPDATE sbi_whatif_workflow SET state = :st WHERE model_id = :mId AND user_id = :uId");
+					Query q = aSession.createSQLQuery("UPDATE SBI_WHATIF_WORKFLOW SET state = :st WHERE model_id = :mId AND user_id = :uId");
 					q.setParameter("st", STATE_DONE);
 					q.setParameter("mId", modelId);
 					q.setParameter("uId", actual.getUserId());
@@ -351,7 +351,7 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 					if(i<existing.size()-1){
 						SbiWhatifWorkflow next = existing.get(i+1);
 						logger.debug("Actual active user is "+actual.getUserId());
-						Query q1 = aSession.createSQLQuery("UPDATE sbi_whatif_workflow SET state = :st WHERE model_id = :mId AND user_id = :uId");
+						Query q1 = aSession.createSQLQuery("UPDATE SBI_WHATIF_WORKFLOW SET state = :st WHERE model_id = :mId AND user_id = :uId");
 						q1.setParameter("st", STATE_INPROGRESS);
 						q1.setParameter("mId", modelId);
 						q1.setParameter("uId", next.getUserId());
