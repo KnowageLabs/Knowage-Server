@@ -17,6 +17,10 @@
       description="Data Source Connection Name"
       category="Connection" defaultValue="connection name" />
    
+      <type id="connection.jndi.name" name="Connection jndi name"
+      description="Data Source Connection jndi name"
+      category="Connection" defaultValue="jndi" />
+
       <type id="connection.url" name="Connection Url"
       description="Data Source Connection Url"
       category="Connection" defaultValue="url" />

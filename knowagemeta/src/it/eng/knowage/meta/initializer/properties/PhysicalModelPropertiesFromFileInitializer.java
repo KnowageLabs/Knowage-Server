@@ -54,6 +54,7 @@ public class PhysicalModelPropertiesFromFileInitializer implements IPropertiesIn
 	private Document document;
 	public static final String CONNECTION_NAME = "connection.name";
 	public static final String CONNECTION_URL = "connection.url";
+	public static final String CONNECTION_JNDI_NAME = "connection.jndi.name";
 	public static final String CONNECTION_USERNAME = "connection.username";
 	public static final String CONNECTION_PASSWORD = "connection.password";
 	public static final String CONNECTION_DATABASENAME = "connection.databasename";

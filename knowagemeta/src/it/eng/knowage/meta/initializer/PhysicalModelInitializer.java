@@ -138,6 +138,10 @@ public class PhysicalModelInitializer {
 			getPropertiesInitializer().addProperties(model);
 
 			// Setting Connection properties values
+			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JNDI_NAME, ds.getJndi());
+			logger.debug("PhysicalModel Property: Jndi name is [{}] "
+					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JNDI_NAME).getValue());
+
 			model.setProperty(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME, connectionName);
 			logger.debug("PhysicalModel Property: Connection name is [{}] "
 					+ model.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME).getValue());

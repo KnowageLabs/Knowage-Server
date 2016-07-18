@@ -402,6 +402,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			logger.error(e);
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		} catch (SpagoBIException e) {
+			logger.error(e);
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
 	}
@@ -416,7 +417,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		logger.debug(req.getServletContext().getRealPath(File.separator));
 
-		String libDir = req.getServletContext().getRealPath(File.separator) + "WEB-INF" + File.separator + "lib" + File.separator;
+		String libDir = req.getServletContext().getRealPath(File.separator) + File.separator + "WEB-INF" + File.separator + "lib" + File.separator;
 
 		// jpaMappingJarGenerator.setLibs(new String[] { "hibernate-3.6.2.jar", "javax.persistence-2.0.1.jar" });
 		String filename = name + ".jar";
@@ -574,6 +575,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		PhysicalModel phyMod = model.getPhysicalModels().get(0);
 		DataSource dataSource = new DataSource();
 		dataSource.setLabel(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME).getValue());
+		dataSource.setJndi(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JNDI_NAME).getValue());
 		dataSource.setUrlConnection(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL).getValue());
 		dataSource.setDriver(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER).getValue());
 		dataSource.setUser(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME).getValue());
@@ -859,7 +861,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	 */
 	private String cleanPath(String path) {
 		path = path.replaceAll("^/physicalModels", "/businessModels/0/tables").replaceAll("^/businessModels", "/businessModels/0/businessTables");
-		Pattern p = Pattern.compile("(/)(\\d)");
+		Pattern p = Pattern.compile("(/)(\\d+)");
 		Matcher m = p.matcher(path);
 		StringBuffer s = new StringBuffer();
 		while (m.find()) {
