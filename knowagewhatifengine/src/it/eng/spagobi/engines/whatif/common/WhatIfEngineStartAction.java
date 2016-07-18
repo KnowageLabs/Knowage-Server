@@ -77,8 +77,8 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 	// INPUT PARAMETERS
 	public static final String LANGUAGE = "SBI_LANGUAGE";
 	public static final String COUNTRY = "SBI_COUNTRY";
-	private String userId;
-	private String tenant;
+	private String userId = null;
+	private String tenant = null;
 
 	// OUTPUT PARAMETERS
 
