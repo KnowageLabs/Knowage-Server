@@ -593,7 +593,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		IEngUserProfile profile = (IEngUserProfile) map.get("ENV_USER_PROFILE");
 		if (profile instanceof UserProfile) {
 			UserProfile spagoBIUserProfile = (UserProfile) profile;
-			map.put("organization", spagoBIUserProfile.getOrganization());
+			map.put("tenant", spagoBIUserProfile.getOrganization());
 
 		}
 		map.put("MDX", model.getMdx());
@@ -611,7 +611,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 			if (pair.getKey().toString().equalsIgnoreCase("DOCUMENT_LABEL") || pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_ID")
 					|| pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_VERSION_ID") || pair.getKey().toString().equalsIgnoreCase("document")
-					|| pair.getKey().toString().equalsIgnoreCase("user_id") || pair.getKey().toString().equalsIgnoreCase("organization")) {
+					|| pair.getKey().toString().equalsIgnoreCase("user_id") || pair.getKey().toString().equalsIgnoreCase("tenant")) {
 				++index;
 				if (index != 1) {
 					url += "&";
