@@ -29,6 +29,28 @@ import static it.eng.spagobi.tools.glossary.util.Util.fromUdpLight;
 import static it.eng.spagobi.tools.glossary.util.Util.fromWord;
 import static it.eng.spagobi.tools.glossary.util.Util.fromWordLight;
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.mongodb.util.JSON;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -59,27 +81,6 @@ import it.eng.spagobi.tools.udp.bo.Udp;
 import it.eng.spagobi.tools.udp.dao.IUdpDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.mongodb.util.JSON;
 
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
@@ -602,7 +603,7 @@ public class GlossaryService {
 	@GET
 	@Path("/getDataSetInfo")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
+	@UserConstraint(functionalities = { SpagoBIConstants.GLOSSARY, SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
 	public String getDataSetInfo(@Context HttpServletRequest req) {
 
 		try {
@@ -788,7 +789,7 @@ public class GlossaryService {
 	@GET
 	@Path("/getWord")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS, SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
+	@UserConstraint(functionalities = { SpagoBIConstants.GLOSSARY, SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS, SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
 	public String getWord(@Context HttpServletRequest req) {
 		try {
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();

@@ -144,7 +144,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		
 		var author = LN('sbi.generic.author');
 		var currentUser = this.config.user;
-		var buttonHelpOnLine= Sbi.user.functionalities.indexOf("Glossary")!=-1 && Sbi.user.functionalities.indexOf("ManageGlossaryBusiness")!=-1 ? '<li class="MyDataHelpOnLine"><a id="MHOL" href="#" title="Show Help OnLine"></a></li>' : "";
+		var buttonHelpOnLine= Sbi.user.functionalities.indexOf("Glossary")!=-1 ? '<li class="MyDataHelpOnLine"><a id="MHOL" href="#" title="Show Help OnLine"></a></li>' : "";
 		var buttonExportCSV= '<li class="MyDataExportExcel" style="padding-top : 3px;"><a id="MEEX" href="#" title="Export"></a></li>';
 		
 		
