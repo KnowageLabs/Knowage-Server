@@ -17,6 +17,16 @@
  */
 package it.eng.spagobi.commons.utilities;
 
+import it.eng.spago.error.EMFErrorCategory;
+import it.eng.spago.error.EMFErrorHandler;
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,16 +44,6 @@ import javax.naming.NamingException;
 
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
-
-import it.eng.spago.error.EMFErrorCategory;
-import it.eng.spago.error.EMFErrorHandler;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Contains some SpagoBI's general utilities.
@@ -631,6 +631,9 @@ public class SpagoBIUtilities {
 				String propertyValue = System.getProperty(propertyName);
 				logger.debug("Property with name = [" + propertyName + "] has value = [" + propertyValue + "]");
 				if (propertyValue != null && !propertyValue.trim().equals("")) {
+					if (propertyValue.endsWith(File.separator) && toReturn.substring(endIndex + 1).startsWith(File.separator)) {
+						propertyValue = propertyValue.substring(0, propertyValue.length() - File.separator.length());
+					}
 					toReturn = toReturn.substring(0, beginIndex) + propertyValue + toReturn.substring(endIndex + 1);
 				} else {
 					logger.warn("Property with name = [" + propertyName + "] has no proper value.");
