@@ -1,0 +1,36 @@
+{
+  "name": "dirPagination",
+  "main": "dirPagination.js",
+  "version": "1.0.0",
+  "description": "Pagination component",
+  "moduleType": [
+    "amd",
+    "es6",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "pagination"
+  ],
+  "authors": [
+    "Long Hoang"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/longhn",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "1.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.0.0",
+    "commit": "466d3922ec33ad9522ceb86c425518f343a49c8d"
+  },
+  "_source": "https://github.com/longhn/dirPagination.git",
+  "_target": "^1.0.0",
+  "_originalSource": "dirPagination"
+}

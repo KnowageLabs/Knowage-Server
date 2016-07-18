@@ -1,0 +1,140 @@
+wysiwyg-edit .tinyeditor
+	border: 1px solid #bbb
+	padding: 0 1px 1px
+	font: 12px Verdana,Arial
+	iframe
+		border: none
+		background: white
+		overflow-x: hidden
+	.sizer
+		min-height: 200px
+		height: 400px
+		position: relative
+	.resizer
+		background: url('images/resize.gif') 15px 15px no-repeat
+		float: right
+		height: 32px
+		width: 32px
+		cursor: ns-resize
+	.tinyeditor-header
+		height: auto
+		border-bottom: 1px solid #bbb
+		background: url('images/header-bg.gif') repeat
+		padding-top: 1px
+		select
+			float: left
+			width: 220px
+			border: 1px solid #cccccc
+			background-color: #ffffff
+			height: 30px
+			line-height: 30px
+		/*margin-top:5px
+		.tinyeditor-buttons-group
+			.tinyeditor-font
+			/*margin-left:12px
+			.tinyeditor-size
+				margin: 0 3px
+			.tinyeditor-style
+				margin-right: 12px
+			.tinyeditor-divider
+				float: left
+				width: 1px
+				height: 30px
+				background: #ccc
+			.tinyeditor-control
+				float: left
+				width: 34px
+				height: 30px
+				cursor: pointer
+				background-image: url('images/icons.png')
+				background-position-x: 0px
+				&:hover
+					background-color: #fff
+					background-position-x: 34px
+				&.pressed
+					background-color: #D0CFCF
+			.tinyeditor-control-fa
+				background-image: none
+				position: relative
+				i
+					font-size: 16px
+					margin: 8px 5px 0 10px
+					color: #555
+				div.hr
+					border: 1px solid #555
+					margin: 15px 10px
+			float: left
+			height: 31px
+			&:after
+				clear: left
+	.tinyeditor-footer
+		height: 32px
+		border-top: 1px solid #bbb
+		background: #f5f5f5
+		margin-top: 10px
+		.toggle
+			float: left
+			background: url('images/icons.png') -34px 2px no-repeat
+			padding: 9px 13px 0 31px
+			height: 23px
+			border-right: 1px solid #ccc
+			cursor: pointer
+			color: #666
+			&:hover
+				background-color: #fff
+	.resize
+		float: right
+		height: 32px
+		width: 32px
+		background: url('images/resize.gif') 15px 15px no-repeat
+		cursor: s-resize
+	.tinyeditor-header .tinyeditor-buttons-group .tinyeditor-control
+		.ngp-colors-grid
+			position: absolute
+			left: 0
+			top: 30px
+			background-color: white
+			width: 192px
+			border: black solid 2px
+			padding: 0
+			margin: 0
+			z-index: 100
+			> li
+				list-style: none
+				border: white solid 2px
+				float: left
+				width: 20px
+				height: 20px
+				&:hover
+					opacity: 0.7
+		.ngp-symbols-grid
+			position: absolute
+			left: 0
+			top: 30px
+			background-color: white
+			width: 384px
+			border: black solid 2px
+			padding: 0
+			margin: 0
+			z-index: 100
+			> li
+				list-style: none
+				border: rgb(231, 231, 231) solid 1px
+				float: left
+				width: 30px
+				height: 30px
+				text-align: center
+				font-size: 1.3em
+				&:hover
+					opacity: 0.7
+					font-size: 1.7em
+
+@media only screen and (max-width: 500px)
+	wysiwyg-edit .tinyeditor .tinyeditor-header .tinyeditor-buttons-group
+		.tinyeditor-font, .tinyeditor-size, .tinyeditor-style
+			width: 80px
+
+@media only screen and (max-width: 768px)
+	wysiwyg-edit .tinyeditor .tinyeditor-header .tinyeditor-buttons-group
+		.tinyeditor-font, .tinyeditor-size, .tinyeditor-style
+			width: 80px
