@@ -456,13 +456,141 @@ public class KpiService {
 				logger.debug("preSaveRule OUT");
 				return out;
 			}
+			// check if temporal attribute are correct
+			String query = rule.getDefinition();
+
+			List<RuleOutput> ruleOutput = rule.getRuleOutputs();
 			out = Response.ok().build();
+
+			for (RuleOutput ruleOut : ruleOutput) {
+
+				if (ruleOut.getType().getValueCd().equals("TEMPORAL_ATTRIBUTE")) {
+					// 1 - Hierarchy is mandatory
+					if (ruleOut.getHierarchy() == null) {
+						jsError.addErrorKey("Set type of Temporal attribute", "Set type of Temporal attribute");
+
+						out = Response.ok(jsError.toString()).build();
+						logger.debug("Set type of Temporal attribute");
+					} else {
+
+						// 2 - Number of records should not exceed the size of the selected hierarchy
+						boolean toManyValues = checkValuesNumberForTemporalAttributes(req, rule, query, ruleOut);
+						if (toManyValues) {
+							jsError.addErrorKey("Error: too many values for temporal attribute", "Error: too many values for temporal attribute");
+							out = Response.ok(jsError.toString()).build();
+							logger.debug("Error: too many values for temporal attribute");
+							break;
+						}
+
+						// 3 - All the records should be coherent with the selected temporal level
+						boolean isValid = checkValuesFormatForTemporalAttributes(req, rule, query, ruleOut);
+						if (!isValid) {
+							String errMsg = "Error on temporal attributes " + ruleOut.getAlias() + " contains not allowed data for type: "
+									+ ruleOut.getHierarchy().getValueCd();
+							jsError.addErrorKey(errMsg, errMsg);
+							out = Response.ok(jsError.toString()).build();
+							logger.debug(errMsg);
+							break;
+						}
+					}
+				}
+			}
+			// System.out.println(resp.toString());
+			// executeQuery(rule.getDataSourceId(), query, 1, rule.getPlaceholders(), getProfile(req));
+
 			logger.debug("preSaveRule OUT");
 			return out;
 		} catch (Exception e) {
 			logger.error("preSaveRule ", e);
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
+	}
+
+	private boolean checkValuesFormatForTemporalAttributes(HttpServletRequest req, Rule rule, String query, RuleOutput ruleOut)
+			throws EMFUserError, EMFInternalError, JSONException {
+		boolean isValid = true;
+		String distinctQuery = "SELECT DISTINCT " + ruleOut.getAlias() + " FROM ( " + query + ") _alias";
+		JSONObject distinctResult = executeQuery(rule.getDataSourceId(), distinctQuery, 0, rule.getPlaceholders(), getProfile(req));
+		// check Temporal Attribute...
+		String columnName = "";
+		JSONArray distinctResultColumns = distinctResult.getJSONArray("columns");
+		for (int i = 0; i < distinctResultColumns.length(); i++) {
+			JSONObject distinctValuesColumn = distinctResultColumns.getJSONObject(i);
+			if (distinctValuesColumn.getString("label").equals(ruleOut.getAlias())) {
+				columnName = distinctValuesColumn.getString("name");
+				break;
+			}
+		}
+		if ("".equals(columnName)) {
+			isValid = false;
+		} else {
+			JSONArray distinctResultRows = distinctResult.getJSONArray("rows");
+			for (int j = 0; j < distinctResultRows.length(); j++) {
+				Integer testingValue = null;
+				try {
+					testingValue = new Integer(distinctResultRows.getJSONObject(j).getString(columnName));
+				} catch (NumberFormatException e) {
+					isValid = false;
+					break;
+				}
+				if (ruleOut.getHierarchy().getValueCd().equals("QUARTER")) {
+					if (testingValue < 1 || testingValue > 4) {
+						isValid = false;
+						break;
+					}
+				} else if (ruleOut.getHierarchy().getValueCd().equals("YEAR")) {
+					if (testingValue < 0 || testingValue > 3000) {
+						isValid = false;
+						break;
+					}
+
+				} else if (ruleOut.getHierarchy().getValueCd().equals("MONTH")) {
+					if (testingValue < 1 || testingValue > 12) {
+						isValid = false;
+						break;
+					}
+				} else if (ruleOut.getHierarchy().getValueCd().equals("WEEK_OF_YEAR")) {
+					if (testingValue < 1 || testingValue > 52) {
+						isValid = false;
+						break;
+					}
+				} else if (ruleOut.getHierarchy().getValueCd().equals("DAY")) {
+					if (testingValue < 1 || testingValue > 31) {
+						isValid = false;
+						break;
+					}
+				}
+
+			}
+		}
+		return isValid;
+	}
+
+	private boolean checkValuesNumberForTemporalAttributes(HttpServletRequest req, Rule rule, String query, RuleOutput ruleOut)
+			throws JSONException, EMFUserError, EMFInternalError {
+		String countQuery = "SELECT count(distinct " + ruleOut.getAlias() + ") as totRows  FROM ( " + query + ") _alias";
+		JSONObject countResult = executeQuery(rule.getDataSourceId(), countQuery, 0, rule.getPlaceholders(), getProfile(req));
+		Integer maxSize = 0;
+
+		switch (ruleOut.getHierarchy().getValueCd()) {
+		case "QUARTER":
+			maxSize = 4;
+			break;
+		case "MONTH":
+			maxSize = 12;
+			break;
+		case "WEEK_OF_YEAR":
+			maxSize = 52;
+			break;
+		case "DAY":
+			maxSize = 31;
+			break;
+		default:
+			break;
+		}
+		Integer countResultValue = countResult.getJSONArray("rows").getJSONObject(0).getInt("column_1");
+		boolean toManyValues = maxSize > 0 && countResultValue > maxSize;
+		return toManyValues;
 	}
 
 	@POST
