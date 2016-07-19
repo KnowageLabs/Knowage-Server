@@ -178,7 +178,7 @@ if(executionRoleNames.size() > 0) {
 					</md-button>
 		<%} %>
 					
-	                <md-button class="md-icon-button" aria-label="{{::translate.load('sbi.generic.helpOnLine')}}" ng-click="openHelpOnLine()"
+	                <md-button class="md-icon-button"  ng-if="checkHelpOnline()"  aria-label="{{::translate.load('sbi.generic.helpOnLine')}}" ng-click="openHelpOnLine()"
 	                		title="{{::translate.load('sbi.generic.helpOnLine')}}">
 						 <md-icon md-font-icon="fa fa-book"></md-icon>
 					</md-button>

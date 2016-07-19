@@ -594,7 +594,8 @@ sbiM.service('sbiModule_download', function(sbiModule_config,sbiModule_logger, s
 sbiM.service('sbiModule_helpOnLine', function(sbiModule_config,$mdDialog,sbiModule_translate,sbiModule_user,sbiModule_restServices) {
 	var holServ=this;
 	this.isAbleToGlossary=function(){
-		return sbiModule_user.isAbleTo("Glossary") &&  sbiModule_user.isAbleTo("ManageGlossaryTechnical");
+		return sbiModule_user.isAbleTo("Glossary");
+// 		 &&  sbiModule_user.isAbleTo("ManageGlossaryTechnical");
 	};
 	this.show=function(data){
 		if(!this.isAbleToGlossary()){

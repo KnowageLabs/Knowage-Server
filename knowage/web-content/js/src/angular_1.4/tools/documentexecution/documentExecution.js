@@ -329,6 +329,10 @@
 		};
 
 
+		$scope.checkHelpOnline = function(){
+			return sbiModule_user.isAbleTo("Glossary");
+		}
+		
 		$scope.openHelpOnLine = function() {	
 			sbiModule_helpOnLine.showDocumentHelpOnLine($scope.executionInstance.OBJECT_LABEL);
 		};
