@@ -294,8 +294,8 @@ if(executionRoleNames.size() > 0) {
 								<%} %>
 								
 								<md-menu-item class="md-indent">
-					            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.show.olap.customized')}}"
-					            			class="toolbar-button-custom" ng-click="urlViewPointService.getOlapDocs()" ng-if="urlViewPointService.getOlapType()">
+					            	<md-button ng-show="urlViewPointService.showOlapMenu" aria-label="{{translate.load('sbi.execution.executionpage.toolbar.show.olap.customized')}}"
+					            			class="toolbar-button-custom" ng-click="urlViewPointService.getOlapDocs()" >
 					            			{{translate.load('sbi.execution.executionpage.toolbar.show.olap.customized')}}
 
 					                </md-button>

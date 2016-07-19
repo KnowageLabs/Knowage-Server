@@ -322,6 +322,7 @@
 			,docExecute_dependencyService,sbiModule_messaging, $http,sbiModule_dateServices ) {
 		
 		var serviceScope = this;	
+		serviceScope.showOlapMenu = false;
 //		serviceScope.documentUrl = '';
 		serviceScope.frameLoaded = true;
 		serviceScope.exportation=[];
@@ -368,6 +369,7 @@
 						//SETTING EXPORT BUTTON
 						serviceScope.exportation = docExecute_exportService.exportationHandlers[data['typeCode']];
 						execProperties.executionInstance.ENGINE_LABEL=data['engineLabel'];
+						serviceScope.showOlapMenu = serviceScope.getOlapType();
 						//SETTING URL SBI EXECUTION ID
 						if(data['sbiExecutionId'] && data['sbiExecutionId'].length>0){
 							execProperties.executionInstance.SBI_EXECUTION_ID=data['sbiExecutionId']; 

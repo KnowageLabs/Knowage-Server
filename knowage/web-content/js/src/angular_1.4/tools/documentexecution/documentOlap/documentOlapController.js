@@ -51,7 +51,7 @@
 					 sbiModule_restServices.promiseDelete("1.0/olapsubobjects", 'removeOlapSubObject', 
 								"idObj=" + item.id)
 						.then(function(response){  
-							serviceScope.olapList.splice($index,1);
+							docExecute_urlViewPointService.olapList.splice($index,1);
 						},function(response){
 							sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.alert.load.error"));
 						});
