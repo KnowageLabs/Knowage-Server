@@ -25,7 +25,7 @@
 	var scripts = document.getElementsByTagName("script");
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
-	
+
 angular
 	.module('analysis_view_workspace', [])
 	/**
@@ -80,7 +80,10 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 								case "DOCUMENT_COMPOSITE": 
 									$scope.cockpitAnalysisDocs.push($scope.allAnalysisDocs[i]); 
 									break;	
-									
+								case "MAP":
+								case "DOCUMENT_COMPOSITE": 
+									$scope.cockpitAnalysisDocs.push($scope.allAnalysisDocs[i]); 
+									break;	
 							}
 							
 						}
@@ -243,7 +246,24 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	      fullscreen: true
 	    })
 	}
-	
+	/**
+	 * add new geo document
+	 */
+	$scope.addNewGeoMap = function() {
+		console.info("[NEW GEO - START]: Open page for adding a new geo map document.");
+		//console.log(datasetParameters);
+   	 $mdDialog.show({
+		  scope:$scope,
+		  preserveScope: true,
+	      controller: CreateNewGeoMapController,
+	      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',  
+	      clickOutsideToClose:true,
+	      escapeToClose :true,
+	      fullscreen: true
+	    });
+   	 
+  
+	}
 	/**
 	 * The immediate Run (preview) button functionality for the Analysis documents (for List view of documents). 
 	 */
@@ -268,6 +288,17 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 		}
 	}
 	
+	function CreateNewGeoMapController($scope,$mdDialog){
+		//console.log(sbiModule_user.isTechnicalUser);
+		$scope.iframeUrl = datasetParameters.georeportServiceUrl+'&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER='+ sbiModule_user.isTechnicalUser;
+		
+		$scope.cancelMapDesignerDialog = function() {
+			$scope.loadAllMyAnalysisDocuments();
+			$mdDialog.cancel();
+		}
+		
+	 	
+	}
+	
 }
-
 })();

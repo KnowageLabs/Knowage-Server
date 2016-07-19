@@ -171,7 +171,7 @@ public class SelfServiceDatasetAction {
 			logger.info("Engine not found. Error: ", r);
 		}
 		if (georeportEngine != null) {
-			String baseEditUrl = georeportEngine.getUrl().replace("GeoReportEngineStartAction", "GeoReportEngineStartEditAction");
+			String baseEditUrl = georeportEngine.getUrl().replace("execute", "edit");
 			georeportEditActionUrl = GeneralUtilities.getUrl(baseEditUrl, parametersMap);
 			LogMF.debug(logger, "Georeport edit service invocation url is equal to [{}]", georeportEditActionUrl);
 		}

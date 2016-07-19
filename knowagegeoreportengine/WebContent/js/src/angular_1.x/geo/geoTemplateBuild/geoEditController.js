@@ -1,3 +1,20 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 (function() {
 
 	var app = angular.module('geoTemplateBuild', [ 'ngMaterial',
@@ -9,28 +26,30 @@
 
 	app.controller('geoTemplateBuildController',
 			[ '$scope', 'sbiModule_translate', 'sbiModule_restServices',
-					'sbiModule_config', "$mdDialog",'sbiModule_messaging','$documentViewer',
+					'sbiModule_config', "$mdDialog",'sbiModule_messaging','$documentViewer', '$http', '$window',
 					geoTemplateBuildControllerFunction ]);
 
 	function geoTemplateBuildControllerFunction($scope, sbiModule_translate,
-			sbiModule_restServices, sbiModule_config, $mdDialog, sbiModule_messaging,$documentViewer) {
-		
+			sbiModule_restServices, sbiModule_config, $mdDialog, sbiModule_messaging,$documentViewer,$http, $window) {
+		//console.log(sbiModule_config);
+		$scope.tecnicalUser= isTechnicalUser==="true";
 		$scope.template=angular.fromJson(docTemplate);
-		console.log($scope.template);
 		$scope.docLabel=documentLabel;
-      console.log($scope.docLabel);
-      
-      
         
 		$scope.translate = sbiModule_translate;
 		$scope.layerCatalogs = [];
 		$scope.selectedLayer = [];
 		$scope.selectedFilters = [];
 		$scope.allFilters = [];
-
-		// dataset variables
+	 
+		$scope.allDriverParamteres=[];
+		$scope.selectedDriverParamteres = [];
+		
 		$scope.selectedDatasetLabel = dataset;
 		$scope.isDatasetChosen = $scope.selectedDatasetLabel != '';
+		$scope.datasetLabel= $scope.selectedDatasetLabel != ''? $scope.selectedDatasetLabel:$scope.translate.load('gisengine.desiner.datasetNotChosen');
+		$scope.allDatasets=[];
+		
 		$scope.datasetFields = [];
 		$scope.datasetJoinColumns = [];
 
@@ -41,13 +60,56 @@
 		// if there is no template at all
 		$scope.editDisabled = $scope.template.mapName==undefined; 
 		
+		$scope.choseDataset= function(){
+			console.log("IN CHOSE DATASET")
+			sbiModule_restServices
+			.alterContextPath(sbiModule_config.externalBasePath);
+			sbiModule_restServices.promiseGet("restful-services/1.0/datasets", "mydata")
+			.then(
+					function(response) {
+						$scope.allDatasets=[];
+						angular.copy(response.data.root,$scope.allDatasets);
+						$mdDialog
+						.show({
+							controller : DialogControllerDataset,
+							templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateDatasetList.html',
+							clickOutsideToClose : false,
+							preserveScope : true,
+							scope : $scope
+						});
+
+				        
+					},
+					function(response) {
+						sbiModule_restServices.errorHandler(
+								response.data, "error loading datasets");
+					});
+		}
+		
+		$scope.clearDataset= function(){
+			$scope.selectedDatasetLabel = '';
+			$scope.isDatasetChosen = false;
+			$scope.datasetLabel= $scope.translate.load('gisengine.desiner.datasetNotChosen');
+			$scope.resetAllVariables();
+			
+		}
+		
+		$scope.resetAllVariables= function(){
+			$scope.selectedLayer = [];
+			$scope.selectedFilters = [];
+			$scope.selectedDriverParamteres = [];
+			$scope.datasetJoinColumns = [];
+			$scope.datasetIndicators = [];
+	
+		}
+		
 		$scope.loadLayers = function() {
 			sbiModule_restServices
 					.alterContextPath(sbiModule_config.externalBasePath);
 			sbiModule_restServices.promiseGet("restful-services/layers", "")
 					.then(
 							function(response) {
-								console.log(response.data.root);
+								//console.log(response.data.root);
 								angular.copy(response.data.root,
 										$scope.layerCatalogs);
 								initializeSelectedLayer();
@@ -61,32 +123,57 @@
 		$scope.loadLayers();
 		
 		$scope.editMap = function() {
+			debugger;
 			sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath+"restful-services/");
 
 			$documentViewer.editDocumentByLabel($scope.docLabel, $scope, "edit_map");
+			
+			$scope.$on("documentClosed", function() { 
+				if($scope.tecnicalUser){
+				sbiModule_restServices
+				.alterContextPath(sbiModule_config.externalBasePath);
+		sbiModule_restServices.promiseGet("restful-services/1.0/documents",
+				$scope.docLabel+"/template")
+				.then(
+						function(response) {
+							//console.log(response.data);
+							$scope.template=angular.fromJson(response.data);
+						},
+						function(response) {
+							sbiModule_restServices.errorHandler(
+									response.data, "error loading layers");
+						});
+				}else{
+					$scope.cancelBuildTemplate();
+				}
+			});
 		}
 		
 		$scope.saveTemplate = function() {
 			console.log("IN save template");
-			var template = buildTemplate();
+			var template = $scope.buildTemplate();
 			if (template.error) {
 				
-//				var confirm = $mdDialog.confirm()
-//				.title(sbiModule_translate.load("gisengine.designer.tempate.error"))
-//				.content(template.error)
-//				.ariaLabel('gisTemplateError') 
-//				.ok(sbiModule_translate.load("gisengine.info.message.yes"));
-//				
-//				$mdDialog.show(confirm).then(function(){
-//					$mdDialog.cancel();
-//				});
-             
 				sbiModule_messaging.showWarningMessage(template.error,sbiModule_translate.load('gisengine.designer.tempate.error'));
 	
 				
 			}else{
 				// call service that will save the template
 				//then redirect to gis document for configuring style
+				if($scope.docLabel==''){
+					
+					
+					$mdDialog
+					.show({
+						controller : DialogControllerSaveDoc,
+						templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateSaveNewMapDocument.html',
+						clickOutsideToClose : false,
+						preserveScope : true,
+						scope : $scope
+
+					});
+					
+				}else{
 				var temp={};
 				temp.TEMPLATE=template;
 				temp.DOCUMENT_LABEL= $scope.docLabel;
@@ -96,6 +183,7 @@
 				"saveGeoReportTemplate", temp).then(
 				function(response) {
 					$scope.template=template;
+					$scope.editDisabled = false;
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('gisengine.designer.tempate.save.message'),sbiModule_translate.load('gisengine.designer.tempate.save.success'));
 				},
 				function(response) {
@@ -103,12 +191,34 @@
 							"error saving template");
 				});
 			}
-
+			}
 			
 		}
-
-	
-
+		
+		$scope.loadAnalyticalDrivers= function(){
+			
+			sbiModule_restServices
+			.alterContextPath(sbiModule_config.externalBasePath);
+	        sbiModule_restServices.promiseGet("restful-services/1.0/documents",
+			$scope.docLabel+"/parameters")
+			.then(
+					function(response) {
+						//console.log(response.data.results);
+						angular.copy(response.data.results,$scope.allDriverParamteres);
+						initializeLayerFilters();
+					},
+					function(response) {
+						sbiModule_restServices.errorHandler(
+								response.data, "error loading analytical driver parameters");
+					});
+		}
+		
+		if($scope.docLabel != ''){
+			$scope.loadAnalyticalDrivers();
+		}
+		
+		
+		
 		$scope.tableFunctionSingleLayer = {
 			translate : sbiModule_translate,
 			loadListLayers : function(item, evt) {
@@ -201,6 +311,7 @@
 				$scope.loadAllFilters();
 
 				$scope.newFilter = [];
+				$scope.newDriverParameter=[];
 				$mdDialog
 						.show({
 							controller : DialogControllerFilter,
@@ -239,7 +350,7 @@
 			sbiModule_restServices.promiseGet("restful-services/1.0/datasets",
 					label + "/fields").then(
 					function(response) {
-						console.log(response.data);
+						//console.log(response.data);
 						angular.copy(response.data.results,
 								$scope.datasetFields);
 						$scope.loadMeasures();
@@ -275,7 +386,7 @@
 				datasetColumn : '',
 				layerColumn : '',
 				datasetColumnView : '<md-select ng-model=row.datasetColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumnsStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
-				layerColumnView : '<md-input-container class="md-block"><label>layer join column</label><input type="text" ng-model="row.layerColumn" required></md-input-container>'
+				//layerColumnView : '<md-input-container class="md-block"><label>layer join column</label><input type="text" ng-model="row.layerColumn" required></md-input-container>'
 			};
 
 			$scope.datasetJoinColumns.push(newRow);
@@ -304,12 +415,12 @@
 		};
 
 		$scope.tableFunctionIndicator.addIndicator = function() {
-			console.log($scope.tableFunctionIndicator.datasetMeasuresStore);
+			//console.log($scope.tableFunctionIndicator.datasetMeasuresStore);
 			var newRow = {
 				indicatorName : '',
 				indicatorLabel : '',
 				indicatorNameView : '<md-select ng-model=row.indicatorName class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetMeasuresStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
-				indicatorLabelView : '<md-input-container class="md-block"><label>indicator label</label><input type="text" ng-model="row.indicatorLabel"></md-input-container>'
+				//indicatorLabelView : '<md-input-container class="md-block"><label>indicator label</label><input type="text" ng-model="row.indicatorLabel"></md-input-container>'
 			};
 
 			$scope.datasetIndicators.push(newRow);
@@ -331,7 +442,7 @@
 			}
 		}
 
-		function buildTemplate() {
+		$scope.buildTemplate= function() {
 			var template ={};
 			angular.copy($scope.template,template);
 
@@ -416,16 +527,16 @@
 				}
 				
 				
-				if($scope.selectedFilters.length==0){
-					template.error = sbiModule_translate
-					.load('gisengine.designer.tempate.nofilters');
-					return template;
-				}else{
+				
+				
 					template.analitycalFilter=[];
 					for (var i = 0; i < $scope.selectedFilters.length; i++) {
 						template.analitycalFilter.push($scope.selectedFilters[i].property);
 					}
-				}
+					for (var i = 0; i < $scope.selectedDriverParamteres.length; i++) {
+						template.analitycalFilter.push($scope.selectedDriverParamteres[i].url);
+					}
+				
 			}
 
 			return template;
@@ -438,7 +549,7 @@
 			}
 			initializeDatasetJoinColumns();
 			initializeIndicators();
-			initializeLayerFilters();
+			//initializeLayerFilters();
 			}
 
 		function initializeSelectedLayer(){
@@ -474,7 +585,7 @@
 							datasetColumn : dsJoinCols[i],
 							layerColumn :layerJoinCols[i],
 							datasetColumnView : '<md-select ng-model=row.datasetColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumnsStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
-							layerColumnView : '<md-input-container class="md-block"><label>layer join column</label><input type="text" ng-model="row.layerColumn" required></md-input-container>'
+							//layerColumnView : '<md-input-container class="md-block"><label>layer join column</label><input type="text" ng-model="row.layerColumn" required></md-input-container>'
 						};
 
 						$scope.datasetJoinColumns.push(newRow);
@@ -489,7 +600,7 @@
 							indicatorName : $scope.template.indicators[i].name,
 							indicatorLabel :$scope.template.indicators[i].label,
 							indicatorNameView : '<md-select ng-model=row.indicatorName class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetMeasuresStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
-							indicatorLabelView : '<md-input-container class="md-block"><label>indicator label</label><input type="text" ng-model="row.indicatorLabel"></md-input-container>'						
+						//	indicatorLabelView : '<md-input-container class="md-block"><label>indicator label</label><input type="text" ng-model="row.indicatorLabel"></md-input-container>'						
 					};
 					
 
@@ -501,15 +612,43 @@
 		function initializeLayerFilters(){
 			if($scope.template.analitycalFilter){
 				for (var i = 0; i < $scope.template.analitycalFilter.length; i++) {
-					var filter={};
-					filter.property=$scope.template.analitycalFilter[i];
-					$scope.selectedFilters.push(filter);
+					var driver= false;
+				     for (var j = 0; j < $scope.allDriverParamteres.length; j++) {
+				    	 driver=false;
+						if($scope.template.analitycalFilter[i]===$scope.allDriverParamteres[i].url){
+							$scope.selectedDriverParamteres.push($scope.allDriverParamteres[i]);
+							driver=true;
+						}else{
+							var filter={};
+							filter.property=$scope.template.analitycalFilter[i];
+							$scope.selectedFilters.push(filter);
+						}
+						
+					}
+				     if(!driver){
+				    	 var filter={};
+							filter.property=$scope.template.analitycalFilter[i];
+							$scope.selectedFilters.push(filter);
+				     }
+					
 				}
 			}
 		}
 		
+		
+		
 		initializeFromTemplate();
+		
+		$scope.cancelBuildTemplate=function(){
+		
+			if($window.frameElement.name==="angularIframe"){
+				 $window.parent.angular.element(window.frameElement).scope().cancelMapDesignerDialog();	
+			}
+		}
 	}
+	
+	
+	
 	// dialog controllers
 	function DialogControllerLayerList($scope, $mdDialog, multiSelect) {
 		$scope.multiSelect = multiSelect;
@@ -517,7 +656,7 @@
 			$scope.newLayerCatalog = [];
 		}
 		$scope.closeDialog = function() {
-			$scope.newLayerCatalog = undefined;
+			//$scope.newLayerCatalog = undefined;
 			$mdDialog.cancel();
 		}
 
@@ -561,9 +700,11 @@
 	function DialogControllerFilter($scope, $mdDialog) {
 		$scope.closeFilterDialog = function() {
 			$scope.newFilter = [];
+			$scope.newDriverParameter = [];
 			$mdDialog.cancel();
 		}
-
+        
+		 
 		$scope.changeSelectedFilters = function() {
 			for (var i = 0; i < $scope.newFilter.length; i++) {
 
@@ -571,6 +712,15 @@
 					$scope.selectedFilters.push($scope.newFilter[i]);
 				}
 			}
+			
+			for (var i = 0; i < $scope.newDriverParameter.length; i++) {
+
+				if ($scope.selectedDriverParamteres.indexOf($scope.newDriverParameter[i])==-1) {
+					$scope.selectedDriverParamteres.push($scope.newDriverParameter[i]);
+				}
+			}
+			
+			//console.log($scope.selectedDriverParamteres);
 			$mdDialog.cancel();
 		}
 
@@ -582,6 +732,82 @@
 			return false;
 		}
 
+	}
+	
+	function DialogControllerDataset ($scope,$mdDialog){
+		$scope.closeDatasetDialog = function() {
+			
+			$mdDialog.cancel();
+		}
+		
+		$scope.changeSelectedDataset=function(){
+			$scope.selectedDatasetLabel = $scope.chosenDataset.label;
+			$scope.isDatasetChosen = true;
+			$scope.datasetLabel= $scope.chosenDataset.label;
+			$scope.resetAllVariables();
+			$scope.loadDatasetColumns ($scope.chosenDataset.label); 
+			
+			$mdDialog.cancel();
+			
+		}
+	}
+	
+	function DialogControllerSaveDoc ($scope,$mdDialog,$http, sbiModule_config,sbiModule_translate,sbiModule_messaging,sbiModule_restServices){
+         $scope.closeSaveDocDialog = function() {
+			
+			$mdDialog.cancel();
+			$scope.newMapName=undefined;
+			$scope.newMapDescription= undefined;
+		}
+         
+        $scope.saveNewMapDoc=function(){
+        	console.log("SAVE");
+        	var d = new Date();
+    		var docLabel = 'geomap_' + d.getTime()%10000000; 
+        	var template = $scope.buildTemplate();
+        	var descr= $scope.newMapDescription ? $scope.newMapDescription : '';
+        	var datasetLabel= $scope.selectedDatasetLabel;
+        	var formData={};
+        	formData.name=$scope.newMapName;
+        	formData.label=docLabel;
+        	formData.description= descr;
+        	formData.typeid= "MAP";
+        	formData.template= JSON.stringify(template);
+        	formData.dataset_label=datasetLabel;
+        	
+            var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+sbiModule_config.adapterPath;
+        	url=url+"?ACTION_NAME=SAVE_DOCUMENT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&standardUrl=true&MESSAGE_DET=DOC_SAVE";
+        	url=url+"&user_id="+sbiModule_config.userId;
+            $http({
+        		  method: 'POST',
+        		  url: url,
+        		  data: formData,
+        		  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+  				
+  				transformRequest: function(obj) {
+  					
+  					var str = [];
+  					
+  					for(var p in obj)
+  						str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+  					
+  					return str.join("&");
+  					
+  				}
+        		}).then(function successCallback(response) {
+        			$scope.docLabel=docLabel;
+        			$scope.template=template;
+					$scope.editDisabled = false;
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('gisengine.designer.tempate.save.message'),sbiModule_translate.load('gisengine.designer.tempate.save.success'));
+        		    $mdDialog.cancel(); 
+        		}, function errorCallback(response) {
+        			sbiModule_restServices.errorHandler(response.data,
+					"error saving template");
+        		  });
+        	
+        	
+        }
+         
 	}
 
 })();

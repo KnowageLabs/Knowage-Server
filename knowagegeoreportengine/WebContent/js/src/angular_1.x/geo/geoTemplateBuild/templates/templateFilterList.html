@@ -15,18 +15,20 @@
     
      <div class="md-dialog-content" layout="row" style="height:90%">
     
-		<angular-table layout-fill
+		<angular-table flex
 		id='dinamicFilterTable' ng-model="allFilters"
 		columns='[{"label":"Filter","name":"property"}]'
 		columns-search='["property"]' show-search-bar=true multi-select=true selected-item="newFilter" 
 		highlights-selected-item="true"
 		></angular-table>
-       <angular-table layout-fill
+		<div flex ng-if="allDriverParamteres.length">
+       <angular-table flex
 		id='driversTable' ng-model="allDriverParamteres"
 		columns='[{"label":"Analytical driver parameter","name":"label"}]'
 		columns-search='["label"]' show-search-bar=true multi-select=true selected-item="newDriverParameter" 
 		highlights-selected-item="true"
 		></angular-table>
+	    </div>
 		</div>
 		
    	 </md-dialog-content>

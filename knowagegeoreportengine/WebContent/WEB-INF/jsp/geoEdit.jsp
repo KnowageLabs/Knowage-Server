@@ -46,7 +46,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<md-button class="md-primary" ng-click="editMap()" ng-disabled="editDisabled" >{{translate.load("gisengine.designer.edit.map")}}</md-button>
 
 	<md-button class="md-primary" ng-click="saveTemplate()">{{translate.load("sbi.generic.save")}}</md-button>
-
+    <md-button class="md-primary" ng-if="!tecnicalUser" ng-click="cancelBuildTemplate()">{{translate.load("sbi.generic.cancel")}}</md-button>
+    
 </md-toolbar>
 <md-whiteframe class="md-whiteframe-2dp relative" layout-fill layout-margin flex  >
 <!-- map name always visible -->
@@ -57,8 +58,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <input type="text" ng-model="mapName">
 </md-input-container>
 </div>
+<!-- CHOSE DATA SET FOR FINAL USER -->
 <div layout="row" flex ng-if="!tecnicalUser">
-<label>{{datasetLabel}}</label>
+<label flex=20>{{datasetLabel}}</label>
   <md-button class="md-fab md-mini md-primary" ng-if="!isDatasetChosen" ng-click="choseDataset()" aria-label="Add dataset">
           <md-icon class="fa fa-plus-circle fa-2x"></md-icon>
         </md-button>
@@ -121,7 +123,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 		</queue-table> 
 		</angular-table>
-		<angular-table flex  
+		<div flex ng-if="allDriverParamteres.length">
+		<angular-table flex 
 		id='tableDriver' ng-model="selectedDriverParamteres"
 		columns='[{"label":"Driver parameter","name":"label"}]'
 		columns-search='["name"]' show-search-bar=true
@@ -134,6 +137,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 		</queue-table> 
 		</angular-table>
+		</div>
 		</div>	
    </md-whiteframe>       
 	</expander-box>
@@ -142,9 +146,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<md-whiteframe class="md-whiteframe-4dp layout-padding " flex layout layout-margin style ="height: 40%;" > 
 	    <angular-table flex  
 		id='datasetJoinColumnsTable' ng-model="datasetJoinColumns"
-		columns='[{"label":"Dataset join column","name":"datasetColumnView","hideTooltip":true},{"label":"Layer join column","name":"layerColumnView","hideTooltip":true}]'
+		columns='[{"label":"Dataset join column","name":"datasetColumnView","hideTooltip":true},{"label":"Layer join column","name":"layerColumn","editable":true,"hideTooltip":true}]'
 		columns-search='["datasetColumn","layerColumn"]' show-search-bar=true
 		scope-functions='tableFunctionsJoin' speed-menu-option='datasetJoinSpeedMenu'
+		allow-edit="true"
 		>
 		<queue-table>
 			<div layout="row"> 
@@ -160,9 +165,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<md-whiteframe class="md-whiteframe-4dp layout-padding " flex layout layout-margin style ="height: 40%;" > 
 	    <angular-table flex  
 		id='indicatorsTable' ng-model="datasetIndicators"
-		columns='[{"label":"Measure","name":"indicatorNameView","hideTooltip":true},{"label":"Lable","name":"indicatorLabelView","hideTooltip":true}]'
+		columns='[{"label":"Measure","name":"indicatorNameView","hideTooltip":true},{"label":"Lable","name":"indicatorLabel","hideTooltip":true,"editable":true}]'
 		columns-search='["indicatorName","indicatorLabel"]' show-search-bar=true
 		scope-functions='tableFunctionIndicator' speed-menu-option='indicatorsSpeedMenu'
+		allow-edit="true"
 		>
 		<queue-table>
 			<div layout="row"> 

@@ -1,0 +1,34 @@
+<md-dialog aria-label="Save map" class="flex2" ng-cloak style="height:50%;width:60%">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h1>{{translate.load('sbi.generic.savenewmap')}}</h1>
+        <span flex></span>
+		<md-button class="md-primary" ng-disabled="saveMapForm.$invalid" ng-click="saveNewMapDoc()">
+          	{{translate.load('gisengine.desiner.save')}}
+        </md-button>
+		<md-button class="md-primary" ng-click="closeSaveDocDialog()">
+			{{translate.load('gisengine.desiner.close')}} 
+        </md-button>
+      </div>
+	
+    </md-toolbar>
+    <md-dialog-content layout="column" class="mdDialogSize">
+     <div class="md-dialog-content" layout="column" >
+		  <form name="saveMapForm">
+
+            <div layout="row">
+			<md-input-container flex> <label>{{translate.load("sbi.geo.controlpanel.savewin.name");}}</label>
+			<input  id="name" ng-model="newMapName" name="name" required>
+			 <div ng-messages="saveMapForm.code.$error" ng-if="saveMapForm.name.$dirty && !newMapName.length">
+							<div ng-message="required">{{translate.load("gisengine.designer.tempate.error");}}</div>
+						</div>
+			 </md-input-container>
+            </div>
+            <div layout="row">
+			<md-input-container flex> <label>{{translate.load("sbi.geo.controlpanel.savewin.description");}}</label>
+			<input ng-model='newMapDescription'/> </md-input-container>
+            </div>
+		</form>
+		</div>
+   	 </md-dialog-content>
+</md-dialog>
