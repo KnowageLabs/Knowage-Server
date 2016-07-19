@@ -63,6 +63,9 @@ import org.pivot4j.ui.fop.FopExporter;
 import org.pivot4j.ui.poi.ExcelExporter;
 import org.pivot4j.ui.table.TableRenderer;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
@@ -300,7 +303,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	public String increaseVersion(@PathParam("name") String name, @PathParam("descr") String descr) {
 		logger.debug("IN");
 		logOperation("Save As");
-
+		Monitor totalTime = MonitorFactory.start("WhatIfEngine.increaseVersion.totalTime");
 		if (name.equals(VERSION_FAKE_DESCR)) {
 			name = null;
 		}
@@ -320,7 +323,9 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		logTransormations();
 		logger.debug("OUT");
-		return renderModel(model);
+		String toReturn = renderModel(model);
+		totalTime.stop();
+		return toReturn;
 	}
 
 	@POST

@@ -41,6 +41,9 @@ import org.olap4j.metadata.Member;
 import org.pivot4j.PivotModel;
 import org.pivot4j.transform.ChangeSlicer;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 public class VersionManager {
 
 	public static transient Logger logger = Logger.getLogger(VersionManager.class);
@@ -73,7 +76,7 @@ public class VersionManager {
 	 */
 	public PivotModel persistNewVersionProcedure(Integer version, Integer newVersion, String name, String descr) throws WhatIfPersistingTransformationException {
 		logger.debug("IN");
-
+		Monitor persistNewVersionProcedure = MonitorFactory.start("WhatIfEngine.increaseVersion.persistNewVersionProcedure");
 		Connection connection;
 		IDataSource dataSource = instance.getDataSource();
 
@@ -105,6 +108,7 @@ public class VersionManager {
 
 			logger.debug("Set new version as actual");
 			instance.getModelConfig().setActualVersion(newVersion);
+			setNextVersionSlicer(newVersion);
 
 		} catch (WhatIfPersistingTransformationException we) {
 			logger.error("Error persisting the trasformations in the new version a new version", we);
@@ -114,6 +118,7 @@ public class VersionManager {
 			throw new SpagoBIEngineRestServiceRuntimeException("versionresource.generic.error", instance.getLocale(), e);
 		} finally {
 			logger.debug("Closing the SAVE AS connection");
+			persistNewVersionProcedure.stop();
 			try {
 				connection.close();
 			} catch (SQLException e) {
@@ -123,8 +128,7 @@ public class VersionManager {
 			logger.debug("SAVE AS connection closed");
 		}
 
-		setNextVersionSlicer(newVersion);
-
+		
 		logger.debug("OUT");
 		return instance.getPivotModel();
 
@@ -213,7 +217,7 @@ public class VersionManager {
 	}
 
 	public void deleteVersions(String versionIds) {
-
+		Monitor deleteAction = MonitorFactory.start("WhatIfEngine.deleteVersion.onlyDeleteMethod");
 		if (versionIds == null || versionIds.length() == 0) {
 			logger.debug("No version to delete");
 			return;
@@ -231,9 +235,8 @@ public class VersionManager {
 		}
 
 		try {
-			logger.error("Deleting versions " + versionIds);
+			logger.debug("Deleting versions " + versionIds);
 			versionDAO.deleteVersions(connection, versionIds);
-
 			logger.debug("Reload Model");
 			new ModelUtilities().reloadModel(instance, instance.getPivotModel());
 
@@ -241,6 +244,7 @@ public class VersionManager {
 			logger.error("Error deleting the versions " + versionIds, e);
 			throw new SpagoBIEngineRestServiceRuntimeException("versionresource.generic.error", instance.getLocale(), e);
 		} finally {
+			deleteAction.stop();
 			logger.debug("Closing the connection");
 			try {
 				connection.close();

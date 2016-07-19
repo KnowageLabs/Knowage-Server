@@ -37,6 +37,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 /**
  * @author Giulio Gavardi (giulio.gavardi@eng.it)
  * 
@@ -97,7 +100,8 @@ public class VersionDAO {
 
 	public String increaseActualVersion(Connection connection, Integer lastVersion, Integer newVersion, String name, String descr) throws SpagoBIEngineException {
 		logger.debug("IN");
-
+		Monitor increaseActualVersionDAO = MonitorFactory.start("WhatIfEngine.increaseVersion.increaseActualVersionDAO.all");
+		Monitor increaseActualVersionDAOBuild = MonitorFactory.start("WhatIfEngine.increaseVersion.increaseActualVersionDAO.buildSQL");
 		if (descr == null) {
 			name = "" + newVersion;
 			descr = "" + newVersion;
@@ -119,17 +123,22 @@ public class VersionDAO {
 
 			logger.debug("Inserting in the cube the new version");
 			sqlInsertIntoVirtual = buildInserttoDuplicateDataStatment(lastVersion, newVersion);
+			
+			increaseActualVersionDAOBuild.stop();
+			Monitor increaseActualVersionDAOExe = MonitorFactory.start("WhatIfEngine.increaseVersion.increaseActualVersionDAO.executeSQL");
+			
 			logger.debug("The query for the new version is " + sqlInsertIntoVirtual);
 			insertStatement = new SqlInsertStatement(sqlInsertIntoVirtual);
 			insertStatement.executeStatement(connection);
-
+			increaseActualVersionDAOExe.stop();
+			
 			long dateAfter = System.currentTimeMillis();
 			logger.debug("Time to insert the new version " + (dateAfter - dateBefore));
 		} catch (SpagoBIEngineException e) {
 			logger.error("Error in increasing version procedure: error when duplicating data and changing version", e);
 			throw e;
 		}
-
+		increaseActualVersionDAO.stop();
 		logger.debug("OUT");
 		return sqlInsertIntoVirtual;
 	}
@@ -188,17 +197,28 @@ public class VersionDAO {
 	public void deleteVersions(Connection connection, String versionIds) throws Exception {
 		logger.debug("IN");
 		logger.debug("Deleting the versions " + versionIds + " from the cube");
+		
+		Monitor deleteSQL = MonitorFactory.start("WhatIfEngine.deleteVersion.deleteMethodDAO.all");
 		String sqlQuery = "delete from " + editCubeTableName + " where " + getVersionColumnName() + " in (" + versionIds + ")";
+
+		Monitor deleteSQLExeCube = MonitorFactory.start("WhatIfEngine.deleteVersion.deleteMethodDAO.executeSQL.cube");
 		SqlUpdateStatement queryStatement = new SqlUpdateStatement(sqlQuery);
 		queryStatement.executeStatement(connection);
-
+		deleteSQLExeCube.stop();
+		
+		
 		logger.debug("Deleting the versions " + versionIds + " from the version dimension");
 		sqlQuery = "delete from " + getVersionTableName() + " where " + getVersionColumnName() + " in (" + versionIds + ")";
+		
+		
+		Monitor deleteSQLExeVersion = MonitorFactory.start("WhatIfEngine.deleteVersion.deleteMethodDAO.executeSQL.version");
 		queryStatement = new SqlUpdateStatement(sqlQuery);
 		queryStatement.executeStatement(connection);
-
+		deleteSQLExeVersion.stop();
+		
 		logger.debug("Version deleted");
 		logger.debug("OUT");
+		deleteSQL.stop();
 	}
 
 	private String getVersionColumnName() {

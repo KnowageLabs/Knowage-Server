@@ -34,6 +34,9 @@ import javax.ws.rs.PathParam;
 import org.apache.log4j.Logger;
 import org.pivot4j.PivotModel;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 @Path("/1.0/version")
 public class VersionResource extends AbstractWhatIfEngineService {
 
@@ -84,14 +87,16 @@ public class VersionResource extends AbstractWhatIfEngineService {
 	 */
 	@POST
 	@Path("/delete/{versionsToDelete}")
-	public String increaseVersion(@PathParam("versionsToDelete") String versionsToDelete) {
+	public String deleteVersion(@PathParam("versionsToDelete") String versionsToDelete) {
 		logger.debug("IN");
+		Monitor totalTimeMonitor = MonitorFactory.start("WhatIfEngine.deleteVersion.totalTime");
 		getVersionBusiness().deleteVersions(versionsToDelete);
 		logger.debug("OUT");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 		String table = renderModel(model);
 		logger.debug("OUT");
+		totalTimeMonitor.stop();
 		return table;
 	}
 
