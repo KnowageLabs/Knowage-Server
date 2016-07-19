@@ -89,7 +89,7 @@ public class VersionResource extends AbstractWhatIfEngineService {
 	@Path("/delete/{versionsToDelete}")
 	public String deleteVersion(@PathParam("versionsToDelete") String versionsToDelete) {
 		logger.debug("IN");
-		Monitor totalTimeMonitor = MonitorFactory.start("WhatIfEngine.deleteVersion.totalTime");
+		Monitor totalTimeMonitor = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.VersionResource.deleteVersion.totalTime");
 		getVersionBusiness().deleteVersions(versionsToDelete);
 		logger.debug("OUT");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();

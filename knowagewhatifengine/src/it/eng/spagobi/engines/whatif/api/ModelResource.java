@@ -303,7 +303,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	public String increaseVersion(@PathParam("name") String name, @PathParam("descr") String descr) {
 		logger.debug("IN");
 		logOperation("Save As");
-		Monitor totalTime = MonitorFactory.start("WhatIfEngine.increaseVersion.totalTime");
+		Monitor totalTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.ModelResource.increaseVersion.totalTime");
 		if (name.equals(VERSION_FAKE_DESCR)) {
 			name = null;
 		}

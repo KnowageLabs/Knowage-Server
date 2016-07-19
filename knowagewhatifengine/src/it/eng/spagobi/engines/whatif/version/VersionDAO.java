@@ -100,7 +100,7 @@ public class VersionDAO {
 
 	public String increaseActualVersion(Connection connection, Integer lastVersion, Integer newVersion, String name, String descr) throws SpagoBIEngineException {
 		logger.debug("IN");
-		Monitor increaseActualVersionDAO = MonitorFactory.start("WhatIfEngine.increaseVersion.increaseActualVersionDAO.all");
+		Monitor increaseActualVersionDAO = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.WhatIfEngineInstance.VersionDAO.increaseVersion.increaseActualVersionDAO.all");
 		Monitor increaseActualVersionDAOBuild = MonitorFactory.start("WhatIfEngine.increaseVersion.increaseActualVersionDAO.buildSQL");
 		if (descr == null) {
 			name = "" + newVersion;
@@ -125,7 +125,7 @@ public class VersionDAO {
 			sqlInsertIntoVirtual = buildInserttoDuplicateDataStatment(lastVersion, newVersion);
 			
 			increaseActualVersionDAOBuild.stop();
-			Monitor increaseActualVersionDAOExe = MonitorFactory.start("WhatIfEngine.increaseVersion.increaseActualVersionDAO.executeSQL");
+			Monitor increaseActualVersionDAOExe = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.WhatIfEngineInstance.VersionDAO.increaseVersion.increaseActualVersionDAO.executeSQL");
 			
 			logger.debug("The query for the new version is " + sqlInsertIntoVirtual);
 			insertStatement = new SqlInsertStatement(sqlInsertIntoVirtual);
@@ -198,10 +198,10 @@ public class VersionDAO {
 		logger.debug("IN");
 		logger.debug("Deleting the versions " + versionIds + " from the cube");
 		
-		Monitor deleteSQL = MonitorFactory.start("WhatIfEngine.deleteVersion.deleteMethodDAO.all");
+		Monitor deleteSQL = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.WhatIfEngineInstance.VersionDAO.deleteVersion.deleteMethodDAO.all");
 		String sqlQuery = "delete from " + editCubeTableName + " where " + getVersionColumnName() + " in (" + versionIds + ")";
 
-		Monitor deleteSQLExeCube = MonitorFactory.start("WhatIfEngine.deleteVersion.deleteMethodDAO.executeSQL.cube");
+		Monitor deleteSQLExeCube = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.WhatIfEngineInstance.VersionDAO.deleteVersion.deleteMethodDAO.executeSQL.cube");
 		SqlUpdateStatement queryStatement = new SqlUpdateStatement(sqlQuery);
 		queryStatement.executeStatement(connection);
 		deleteSQLExeCube.stop();
@@ -211,7 +211,7 @@ public class VersionDAO {
 		sqlQuery = "delete from " + getVersionTableName() + " where " + getVersionColumnName() + " in (" + versionIds + ")";
 		
 		
-		Monitor deleteSQLExeVersion = MonitorFactory.start("WhatIfEngine.deleteVersion.deleteMethodDAO.executeSQL.version");
+		Monitor deleteSQLExeVersion = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.WhatIfEngineInstance.VersionDAO.deleteVersion.deleteMethodDAO.executeSQL.version");
 		queryStatement = new SqlUpdateStatement(sqlQuery);
 		queryStatement.executeStatement(connection);
 		deleteSQLExeVersion.stop();

@@ -76,7 +76,7 @@ public class VersionManager {
 	 */
 	public PivotModel persistNewVersionProcedure(Integer version, Integer newVersion, String name, String descr) throws WhatIfPersistingTransformationException {
 		logger.debug("IN");
-		Monitor persistNewVersionProcedure = MonitorFactory.start("WhatIfEngine.increaseVersion.persistNewVersionProcedure");
+		Monitor persistNewVersionProcedure = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.WhatIfEngineInstance.VersionDAO.increaseVersion.persistNewVersionProcedure");
 		Connection connection;
 		IDataSource dataSource = instance.getDataSource();
 
@@ -217,7 +217,7 @@ public class VersionManager {
 	}
 
 	public void deleteVersions(String versionIds) {
-		Monitor deleteAction = MonitorFactory.start("WhatIfEngine.deleteVersion.onlyDeleteMethod");
+		Monitor deleteAction = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.WhatIfEngineInstance.VersionDAO.deleteVersion.onlyDeleteMethod");
 		if (versionIds == null || versionIds.length() == 0) {
 			logger.debug("No version to delete");
 			return;
