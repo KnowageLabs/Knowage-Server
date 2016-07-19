@@ -679,9 +679,7 @@ public class UserUtilities {
 		logger.debug("IN");
 		List<String> licenseFunctionalities = new ArrayList<String>();
 		try {
-			Class<?> c = Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseSingleton");
-			Method getInstanceMethod = c.getMethod("getInstance", null);
-			Object licenseManager = getInstanceMethod.invoke(null, null);
+			Class<?> licenseManager = Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
 			Method readFunctionalitiesMethod = licenseManager.getClass().getMethod("readFunctionalityByLicense", SpagoBIUserProfile.class);
 			Set<String> functionalities = (Set<String>) readFunctionalitiesMethod.invoke(licenseManager, user);
 			if (functionalities != null) {

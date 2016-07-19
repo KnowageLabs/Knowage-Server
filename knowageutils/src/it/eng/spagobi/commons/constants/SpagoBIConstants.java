@@ -346,6 +346,7 @@ public class SpagoBIConstants {
 	public static final String TENANT_MANAGEMENT = "TenantManagement";
 	public static final String READ_ENGINES_MANAGEMENT = "ReadEnginesManagement";
 	public static final String CACHE_MANAGEMENT = "CacheManagement";
+	public static final String LICENSE_MANAGEMENT = "LicenseManagement";
 	// ---end
 	public static final String DATASET_MANAGEMENT = "DatasetManagement";
 	public static final String FUNCTIONALITIES_MANAGEMENT = "FunctionalitiesManagement";
