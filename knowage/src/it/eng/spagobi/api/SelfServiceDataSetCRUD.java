@@ -121,7 +121,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
- * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini (monica.franceschini@eng.it)
+ * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini
+ *          (monica.franceschini@eng.it)
  */
 @Path("/selfservicedataset")
 public class SelfServiceDataSetCRUD {
@@ -488,7 +489,8 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	/*
-	 * Change the scope of the dataset. If the dataset is private change it to public (SHARE) If the dataset is public change it to private (UNSHARE)
+	 * Change the scope of the dataset. If the dataset is private change it to
+	 * public (SHARE) If the dataset is public change it to private (UNSHARE)
 	 */
 	@POST
 	@Path("/share")
@@ -499,6 +501,15 @@ public class SelfServiceDataSetCRUD {
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(profile);
 			int id = Integer.valueOf(req.getParameter("id"));
+			Integer catTypeId;
+			String catTypeCd;
+			try {
+				catTypeId = Integer.valueOf(req.getParameter("catTypeId"));
+				catTypeCd = String.valueOf(req.getParameter("catTypeCd"));
+			} catch (NumberFormatException e) {
+				catTypeId = null;
+				catTypeCd = null;
+			}
 
 			IDataSet ds = dao.loadDataSetById(id);
 
@@ -507,7 +518,8 @@ public class SelfServiceDataSetCRUD {
 			logParam.put("LABEL", ds.getLabel());
 			String type = getDatasetTypeName(ds.getDsType());
 			ds.setDsType(type);
-
+			ds.setCategoryId(catTypeId);
+			ds.setCategoryCd(catTypeCd);
 			dao.modifyDataSet(ds);
 
 			// Notifications Management -----------------------------------
@@ -517,7 +529,13 @@ public class SelfServiceDataSetCRUD {
 
 			int newId = ds.getId();
 
-			return ("{\"id\":" + newId + " }");
+			JSONObject jo = new JSONObject();
+			jo.put("id", newId);
+			jo.put("catTypeId", ds.getCategoryId());
+			jo.put("catTypeCd", ds.getCategoryCd());
+
+			return jo.toString();
+
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
 			updateAudit(req, profile, "DATA_SET.SHARE", null, "ERR");
@@ -684,7 +702,8 @@ public class SelfServiceDataSetCRUD {
 	private boolean checkScopeChange(IDataSet currentDataset, IDataSet updatedDataset) throws Exception {
 		// if ((currentDataset != null) && (updatedDataset != null)) {
 		// if (currentDataset instanceof VersionedDataSet) {
-		// currentDataset = ((VersionedDataSet) currentDataset).getWrappedDataset();
+		// currentDataset = ((VersionedDataSet)
+		// currentDataset).getWrappedDataset();
 		// }
 		// if (currentDataset.isPublic() == updatedDataset.isPublic()) {
 		// return false;
@@ -1427,8 +1446,10 @@ public class SelfServiceDataSetCRUD {
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
 		if (originalDatasetFile.exists()) {
 			/*
-			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
-			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to
+			 * the specified destination file. The directory holding the
+			 * destination file is created if it does not exist. If the
+			 * destination file exists, then this method will overwrite it.
 			 */
 			try {
 				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
@@ -1451,8 +1472,10 @@ public class SelfServiceDataSetCRUD {
 
 		if (hdfs.exists(filePath)) {
 			/*
-			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
-			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to
+			 * the specified destination file. The directory holding the
+			 * destination file is created if it does not exist. If the
+			 * destination file exists, then this method will overwrite it.
 			 */
 			String newDatasetPath = fileNewPath + newFileName + "." + fileType.toLowerCase();
 			hdfs.mkdirsParent(newDatasetPath);

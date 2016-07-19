@@ -86,6 +86,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	$scope.prevUploadedFile = null;
 	
 	$scope.datasetSavedFromQbe = false;
+	
+	$scope.datasetTemp = null;
 		
     $scope.markNotDerived=function(datasets){
     	
@@ -244,31 +246,132 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		}
 	};
 	
+	$scope.shareDatasetWithCategories = function(dataset){
+		$scope.loadDsCategoriesAndHandleEvent(dataset);
+		$scope.dataset = dataset;
+	}
+	
+	 $scope.showAlert = function() {
+		    $mdDialog.show(
+		      $mdDialog.alert()
+		        .clickOutsideToClose(true)
+		        .title(sbiModule_translate.load('sbi.workspace.categories.alert.dialog'))
+		        .textContent(sbiModule_translate.load('sbi.workspace.categories.alert.msg'))
+		        .ariaLabel('Alert Dialog Categories')
+		        .ok(sbiModule_translate.load('sbi.general.ok'))
+		    );
+		  };
+
+	
+	$scope.showCategoriesDialog = function() {
+		$mdDialog.show({
+			  scope:$scope,
+			  preserveScope: true,
+		      controller: DialogShareDatasetController,
+		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/shareDatasetDialogTemplate.html',  
+		      clickOutsideToClose:false,
+		      escapeToClose :false,
+		      locals:{
+		      }
+		    });
+	}
+	
+	$scope.applySelectedCategory = function(dataset) {
+		$scope.shareDataset($scope.dataset)
+		$mdDialog.cancel();
+	}
+	
+	$scope.loadDsCategoriesAndHandleEvent = function(dataset) {
+    	sbiModule_restServices.promiseGet("domainsforfinaluser","ds-categories")
+		.then(function(response) {
+			$scope.datasetCategoryType = [];
+			angular.copy(response.data,$scope.datasetCategoryType);
+			if($scope.datasetCategoryType.length==0){
+				$scope.showAlert();
+			} else if($scope.datasetCategoryType.length==1){
+				$scope.shareDataset(dataset);
+			} else {
+				$scope.showCategoriesDialog();
+			}
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,"error");
+		});
+	}
+	
+    function DialogShareDatasetController($scope,$mdDialog){
+    	    	
+    	$scope.closeShareDialog=function(){
+    		$mdDialog.cancel();
+    	}
+    }
+		
     $scope.shareDataset=function(dataset){
-    	//console.log("in share");
-//    	console.log(dataset);
+    	var dsCatType = $scope.datasetCategoryType;
     	var id=dataset.id;
-//    	console.log(id);
+    	var catTypeId = null;
+    	var catTypeCd = null;
+    	if(dsCatType.length==1){
+    		catTypeId = dsCatType[0].VALUE_ID;
+    		catTypeCd =  dsCatType[0].VALUE_CD;
+    	} else {
+    		for (var i = 0; i < dsCatType.length; i++) {
+				if($scope.datasetTemp.catTypeId==dsCatType[i].VALUE_ID){
+					catTypeCd=dsCatType[i].VALUE_CD;
+					catTypeId=dsCatType[i].VALUE_ID;
+					break;
+				}
+			}
+    	}    	
+
         params={};
     	params.id=id;
+    	params.catTypeId = catTypeId;
+    	params.catTypeCd = catTypeCd;
     	config={};
     	config.params=params;
     	
     	sbiModule_restServices.promisePost("selfservicedataset/share","","",config)
 		.then(function(response) {
-//			          console.log(response);
-			          // binds changed value to object
-			          dataset.isPublic=response.data.isPublic;
-			          if(response.data.isPublic){
-			          sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.share.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));
-			          }else{
-			        	  
-			            sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.unshare.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));	  
-			          }
+			 dataset.catTypeId=response.data.catTypeId;
+			 dataset.catTypeCd=response.data.catTypeCd;
+			 
+	          if(response.data.catTypeId!=null){
+	        	  sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.share.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));
+	          }else{
+	        	  
+	            sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.unshare.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));	  
+	          }
+			         
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.fail'));
 		});
     	
+    }
+    
+    $scope.unshareDataset = function(dataset){
+    	var id=dataset.id;
+    	var catTypeId = null;
+    	var catTypeCd = null;
+    	params={};
+    	params.id=id;
+    	params.catTypeId = catTypeId;
+    	params.catTypeCd = catTypeCd;
+    	config={};
+    	config.params=params;
+    	
+    	sbiModule_restServices.promisePost("selfservicedataset/share","","",config)
+		.then(function(response) {
+			 dataset.catTypeId=response.data.catTypeId;
+			 dataset.catTypeCd=response.data.catTypeCd;
+	          if(response.data.catTypeId==null){
+	        	  sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.unshare.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));
+	          }else{
+	        	  sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.fail'));          	  
+	          }      
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.fail'));
+		});
+    	$mdDialog.cancel();
     }
     
     $scope.showQbeDataset= function(dataset){
@@ -757,7 +860,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	}
     	
     }
-
+    	
     $scope.editFileDataset = function (arg) {
     	
     	  $scope.initializeDatasetWizard(arg);
