@@ -28,3 +28,7 @@
 {
 	background-color: red !important;
 }
+
+.my-disable{
+    pointer-events:none;
+}

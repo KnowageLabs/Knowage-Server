@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -178,9 +179,15 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		hibFunctionCatalogItem.setName(functionItem.getName());
 		hibFunctionCatalogItem.setDescription(functionItem.getDescription());
 		hibFunctionCatalogItem.setScript(functionItem.getScript());
+		hibFunctionCatalogItem.setOwner(functionItem.getOwner());
+		hibFunctionCatalogItem.setLabel(functionItem.getLabel());
+		hibFunctionCatalogItem.setType(functionItem.getType());
+
+		List<String> keywords = functionItem.getKeywords();
+		String keywordsString = StringUtils.join(keywords.iterator(), ",");
+		hibFunctionCatalogItem.setKeywords(keywordsString);
 
 		return hibFunctionCatalogItem;
-
 	}
 
 	@Override
@@ -244,6 +251,11 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			hibCatFunction.setName(updatedCatalogFunction.getName());
 			hibCatFunction.setDescription(updatedCatalogFunction.getDescription());
 			hibCatFunction.setScript(updatedCatalogFunction.getScript());
+			hibCatFunction.setOwner(updatedCatalogFunction.getOwner());
+			hibCatFunction.setKeywords(StringUtils.join(updatedCatalogFunction.getKeywords().iterator(), ","));
+			hibCatFunction.setLabel(updatedCatalogFunction.getLabel());
+			hibCatFunction.setType(updatedCatalogFunction.getType());
+
 			updateSbiCommonInfo4Update(hibCatFunction);
 			session.saveOrUpdate(hibCatFunction);
 			transaction.commit();
@@ -317,6 +329,49 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			Assert.assertNotNull(session, "session cannot be null");
 			transaction = session.beginTransaction();
 			sbiCatalogFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, functionId);
+			transaction.commit();
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("An error occured while reading Catalog Functions from DB", t);
+
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return sbiCatalogFunction;
+
+	}
+
+	@Override
+	public SbiCatalogFunction getCatalogFunctionByLabel(String organization, String functionLabel) {
+
+		Session session;
+		Transaction transaction = null;
+		SbiCatalogFunction sbiCatalogFunction = null;
+
+		logger.debug("IN");
+
+		session = null;
+		try {
+
+			session = getSession();
+			Assert.assertNotNull(session, "session cannot be null");
+			transaction = session.beginTransaction();
+			// sbiCatalogFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, functionId);
+			// TODO mettere una hibernate Query
+
+			String hql = "FROM SbiCatalogFunction F WHERE F.commonInfo.organization = ? and F.label = ?";
+			Query query = session.createQuery(hql);
+			query.setString(0, organization);
+			query.setString(1, functionLabel);
+			List<SbiCatalogFunction> results = query.list();
+			sbiCatalogFunction = results.get(0);
+
 			transaction.commit();
 
 		} catch (Throwable t) {

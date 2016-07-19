@@ -24,7 +24,19 @@
         <property name="script" type="string">
             <column name="SCRIPT" length="4000" not-null="true" />
         </property>
-
+        <property name="owner" type="string">
+            <column name="OWNER" />
+        </property>
+        <property name="keywords" type="string">
+            <column name="KEYWORDS" />
+        </property>
+        <property name="label" type="string">
+            <column name="LABEL" />
+        </property>
+        <property name="type" type="string">
+            <column name="TYPE" />
+        </property>
+        
 		<component name="commonInfo" insert="true" update="true" 
 		      class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 		        <property name="userIn" type="string">

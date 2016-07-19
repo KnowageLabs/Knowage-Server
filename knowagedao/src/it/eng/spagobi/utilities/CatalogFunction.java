@@ -6,15 +6,41 @@ import java.util.List;
 import java.util.Map;
 
 public class CatalogFunction {
+
 	private int functionId;
 	private String name;
 	private String description;
 	private String language;
 	private String script;
+	private String owner;
+	private String label;
+	private String type;
 
 	private Map<String, String> inputVariables = new HashMap<String, String>();
 	private List<String> inputDatasets = new ArrayList<String>();
 	private Map<String, String> outputs = new HashMap<String, String>();
+
+	private List<String> keywords = new ArrayList<String>();;
+
+	public CatalogFunction(int functionId, String name, String description, String language, String script, String owner, String label, String type,
+			Map<String, String> inputVariables, List<String> inputDatasets, Map<String, String> outputs, List<String> keywords) {
+		super();
+		this.functionId = functionId;
+		this.name = name;
+		this.description = description;
+		this.language = language;
+		this.script = script;
+		this.owner = owner;
+		this.label = label;
+		this.type = type;
+		this.inputVariables = inputVariables;
+		this.inputDatasets = inputDatasets;
+		this.outputs = outputs;
+		this.keywords = keywords;
+	}
+
+	public CatalogFunction() {
+	}
 
 	public int getFunctionId() {
 		return functionId;
@@ -78,6 +104,38 @@ public class CatalogFunction {
 
 	public void setOutputs(Map<String, String> outputs) {
 		this.outputs = outputs;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
+	public List<String> getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(List<String> keywords) {
+		this.keywords = keywords;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

@@ -1,5 +1,6 @@
 package it.eng.spagobi.engines.datamining.common;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
@@ -30,111 +31,73 @@ public class FunctionExecutionUtils {
 	public static DataMiningTemplate initializeTemplateByFunctionId(int functionId) {
 		SbiCatalogFunction function = null;
 		ICatalogFunctionDAO fcDAO = null;
-		DataMiningTemplate template = null;
-		IDataSetDAO dsDAO = null;
 		try {
 			fcDAO = DAOFactory.getCatalogFunctionDAO();
-			dsDAO = DAOFactory.getDataSetDAO();
-
-			function = fcDAO.getCatalogFunctionById(functionId);
-
-			template = new DataMiningTemplate();
-			template.setLanguage(function.getLanguage());
-
-			Set<SbiFunctionInputDataset> datasets = function.getSbiFunctionInputDatasets();
-			List<DataMiningDataset> dataminingDatasets = new ArrayList<DataMiningDataset>();
-
-			for (SbiFunctionInputDataset dataset : datasets) {
-				DataMiningDataset d = new DataMiningDataset();
-				// IDataSetDAO dsDAO;
-				// try {
-				// dsDAO = DAOFactory.getDataSetDAO();
-				// } catch (EMFUserError e) {
-				// // TODO Auto-generated catch block
-				// e.printStackTrace();
-				// }
-				int dsId = dataset.getId().getDsId();
-				IDataSet iDataset = dsDAO.loadDataSetById(dsId);
-				// Controllo se dataset è di tipo file, del tipo previsto (e.g. csv)
-				d.setLabel(iDataset.getLabel());
-				d.setSpagobiLabel(iDataset.getLabel());
-				d.setCanUpload(true);
-				d.setName(iDataset.getName());
-				d.setType("Dataset"); // or DataMiningConstants.DATASET_OUTPUT or DataMiningConstants.SPAGOBI_DS_OUTPUT, the dataminingEngine differences
-										// spagoBI datasets from file datasets created when executing a document
-				JSONObject confObj = new JSONObject(iDataset.getConfiguration());
-
-				d.setFileName(confObj.getString("fileName"));
-				// d.setFileName(iDataset.getName() + ".csv");
-				d.setOptions("sep='" + confObj.getString("csvDelimiter") + "'");
-				// d.setOptions("sep=','");
-				d.setReadType(confObj.getString("fileType").toLowerCase());
-				// d.setReadType("csv"); // Default dataset is CSV file
-				dataminingDatasets.add(d);
-			}
-			template.setDatasets(dataminingDatasets);
-
-			Set<SbiFunctionInputVariable> variables = function.getSbiFunctionInputVariables();
-			Set<SbiFunctionOutput> outputs = function.getSbiFunctionOutputs();
-
-			DataMiningCommand c = new DataMiningCommand();
-			c.setLabel("CatalogCommand");
-			c.setName("CatalogCommand");
-			c.setScriptName("CatalogScript");
-
-			List<Variable> vars = new ArrayList<Variable>();
-			List<Output> outs = new ArrayList<Output>();
-
-			for (SbiFunctionInputVariable v : variables) {
-				Variable var = new Variable();
-				var.setName(v.getId().getVarName());
-				var.setValue(v.getVarValue());
-				vars.add(var);
-			}
-			for (SbiFunctionOutput o : outputs) {
-				Output out = new Output();
-				out.setOuputLabel(o.getId().getLabel());
-				out.setOutputName(o.getId().getLabel()); // Name=label
-				IDomainDAO domainsDAO = DAOFactory.getDomainDAO();
-				String type = domainsDAO.loadDomainById(o.getOutType()).getValueName();
-				out.setOutputType(type);
-				out.setOutputMode("auto"); // TODO: ??? can't figure out what auto means...
-				out.setOutputName(o.getId().getLabel());
-				out.setOutputValue(o.getId().getLabel());
-				outs.add(out);
-			}
-			c.setVariables(vars);
-			c.setOutputs(outs);
-
-			List<DataMiningCommand> commands = new ArrayList<DataMiningCommand>();
-			commands.add(c);
-			template.setCommands(commands);
-
-			List<DataMiningScript> dataMiningScripts = new ArrayList<DataMiningScript>();
-			String scriptCode = function.getScript();
-			DataMiningScript script = new DataMiningScript();
-			script.setName("CatalogScript");
-			script.setCode(scriptCode);
-			dataMiningScripts.add(script);
-			template.setScripts(dataMiningScripts);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (EMFUserError e1) {
+			throw new SpagoBIRuntimeException("Error getting catalog function DAO", e1);
 		}
+		function = fcDAO.getCatalogFunctionById(functionId);
+		DataMiningTemplate template = getDataMiningTemplate(function);
 		return template;
 
+	}
+
+	public static DataMiningTemplate initializeTemplateByOrgAndLabel(String organization, String functionLabel) {
+
+		SbiCatalogFunction function = null;
+		ICatalogFunctionDAO fcDAO = null;
+		try {
+			fcDAO = DAOFactory.getCatalogFunctionDAO();
+		} catch (EMFUserError e1) {
+			throw new SpagoBIRuntimeException("Error getting catalog function DAO", e1);
+		}
+		function = fcDAO.getCatalogFunctionByLabel(organization, functionLabel);
+
+		DataMiningTemplate template = getDataMiningTemplate(function);
+		return template;
 	}
 
 	public static DataMiningTemplate getTemplateWithReplacingValues(int functionId, String body, Map<String, String> variablesInMap,
 			Map<String, String> datasetsInMap, Map<String, String> datasetsOutMap, Map<String, String> textOutMap, Map<String, String> imageOutMap) {
 		SbiCatalogFunction function = null;
-		DataMiningTemplate template = null;
-
+		ICatalogFunctionDAO fcDAO = null;
 		try {
+			fcDAO = DAOFactory.getCatalogFunctionDAO();
+		} catch (EMFUserError e1) {
+			throw new SpagoBIRuntimeException("Error getting catalog function DAO", e1);
+		}
+		function = fcDAO.getCatalogFunctionById(functionId);
+		DataMiningTemplate template = getTemplateWithReplacingValuesFromFunction(function, body, variablesInMap, datasetsInMap, datasetsOutMap, textOutMap,
+				imageOutMap);
 
-			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
-			function = fcDAO.getCatalogFunctionById(functionId);
+		return template;
 
+	}
+
+	public static DataMiningTemplate getTemplateWithReplacingValuesByFuncLabel(String functionLabel, String organization, String body,
+			Map<String, String> variablesInMap, Map<String, String> datasetsInMap, Map<String, String> datasetsOutMap, Map<String, String> textOutMap,
+			Map<String, String> imageOutMap) {
+
+		SbiCatalogFunction function = null;
+		ICatalogFunctionDAO fcDAO = null;
+		try {
+			fcDAO = DAOFactory.getCatalogFunctionDAO();
+		} catch (EMFUserError e1) {
+			throw new SpagoBIRuntimeException("Error getting catalog function DAO", e1);
+		}
+		function = fcDAO.getCatalogFunctionByLabel(organization, functionLabel);
+		DataMiningTemplate template = getTemplateWithReplacingValuesFromFunction(function, body, variablesInMap, datasetsInMap, datasetsOutMap, textOutMap,
+				imageOutMap);
+
+		return template;
+
+	}
+
+	private static DataMiningTemplate getTemplateWithReplacingValuesFromFunction(SbiCatalogFunction function, String body, Map<String, String> variablesInMap,
+			Map<String, String> datasetsInMap, Map<String, String> datasetsOutMap, Map<String, String> textOutMap, Map<String, String> imageOutMap) {
+		// Maps contain values to use instead of function values
+		DataMiningTemplate template = null;
+		try {
 			template = new DataMiningTemplate();
 			template.setLanguage(function.getLanguage());
 
@@ -263,6 +226,88 @@ public class FunctionExecutionUtils {
 			throw new SpagoBIRuntimeException("Error creating a template to instantiate datamining engine, replacing demo input and outputs with new ones.", e);
 		}
 
+		return template;
+
+	}
+
+	private static DataMiningTemplate getDataMiningTemplate(SbiCatalogFunction function) {
+		DataMiningTemplate template = null;
+		IDataSetDAO dsDAO = null;
+		try {
+			dsDAO = DAOFactory.getDataSetDAO();
+
+			template = new DataMiningTemplate();
+			template.setLanguage(function.getLanguage());
+
+			Set<SbiFunctionInputDataset> datasets = function.getSbiFunctionInputDatasets();
+			List<DataMiningDataset> dataminingDatasets = new ArrayList<DataMiningDataset>();
+
+			for (SbiFunctionInputDataset dataset : datasets) {
+				DataMiningDataset d = new DataMiningDataset();
+				int dsId = dataset.getId().getDsId();
+				IDataSet iDataset = dsDAO.loadDataSetById(dsId);
+				// Controllo se dataset è di tipo file, del tipo previsto (e.g. csv)
+				d.setLabel(iDataset.getLabel());
+				d.setSpagobiLabel(iDataset.getLabel());
+				d.setCanUpload(true);
+				d.setName(iDataset.getName());
+				d.setType("Dataset"); // or DataMiningConstants.DATASET_OUTPUT or DataMiningConstants.SPAGOBI_DS_OUTPUT, the dataminingEngine differences
+										// spagoBI datasets from file datasets created when executing a document
+				JSONObject confObj = new JSONObject(iDataset.getConfiguration());
+
+				d.setFileName(confObj.getString("fileName"));
+				d.setOptions("sep='" + confObj.getString("csvDelimiter") + "'");
+				d.setReadType(confObj.getString("fileType").toLowerCase());
+				dataminingDatasets.add(d);
+			}
+			template.setDatasets(dataminingDatasets);
+
+			Set<SbiFunctionInputVariable> variables = function.getSbiFunctionInputVariables();
+			Set<SbiFunctionOutput> outputs = function.getSbiFunctionOutputs();
+
+			DataMiningCommand c = new DataMiningCommand();
+			c.setLabel("CatalogCommand");
+			c.setName("CatalogCommand");
+			c.setScriptName("CatalogScript");
+
+			List<Variable> vars = new ArrayList<Variable>();
+			List<Output> outs = new ArrayList<Output>();
+
+			for (SbiFunctionInputVariable v : variables) {
+				Variable var = new Variable();
+				var.setName(v.getId().getVarName());
+				var.setValue(v.getVarValue());
+				vars.add(var);
+			}
+			for (SbiFunctionOutput o : outputs) {
+				Output out = new Output();
+				out.setOuputLabel(o.getId().getLabel());
+				out.setOutputName(o.getId().getLabel()); // Name=label
+				IDomainDAO domainsDAO = DAOFactory.getDomainDAO();
+				String type = domainsDAO.loadDomainById(o.getOutType()).getValueName();
+				out.setOutputType(type);
+				out.setOutputMode("auto");
+				out.setOutputName(o.getId().getLabel());
+				out.setOutputValue(o.getId().getLabel());
+				outs.add(out);
+			}
+			c.setVariables(vars);
+			c.setOutputs(outs);
+
+			List<DataMiningCommand> commands = new ArrayList<DataMiningCommand>();
+			commands.add(c);
+			template.setCommands(commands);
+
+			List<DataMiningScript> dataMiningScripts = new ArrayList<DataMiningScript>();
+			String scriptCode = function.getScript();
+			DataMiningScript script = new DataMiningScript();
+			script.setName("CatalogScript");
+			script.setCode(scriptCode);
+			dataMiningScripts.add(script);
+			template.setScripts(dataMiningScripts);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return template;
 	}
 

@@ -17,7 +17,10 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 	private String description;
 	private String language;
 	private String script;
-
+	private String owner;
+	private String keywords;
+	private String label;
+	private String type;
 	private Set sbiFunctionInputVariables = new HashSet(0);
 	private Set sbiFunctionOutputs = new HashSet(0);
 	private Set sbiFunctionInputDatasets = new HashSet(0);
@@ -25,12 +28,17 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 	public SbiCatalogFunction() {
 	}
 
-	public SbiCatalogFunction(int functionId, String name, String description, String language, String script) {
+	public SbiCatalogFunction(int functionId, String name, String description, String language, String script, String owner, String keywords, String label,
+			String type) {
 		this.functionId = functionId;
 		this.name = name;
 		this.description = description;
 		this.language = language;
 		this.script = script;
+		this.owner = owner;
+		this.keywords = keywords;
+		this.label = label;
+		this.type = type;
 	}
 
 	public int getFunctionId() {
@@ -95,6 +103,38 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 
 	public void setSbiFunctionInputDatasets(Set sbiFunctionInputDatasets) {
 		this.sbiFunctionInputDatasets = sbiFunctionInputDatasets;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
+	public String getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(String keywords) {
+		this.keywords = keywords;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

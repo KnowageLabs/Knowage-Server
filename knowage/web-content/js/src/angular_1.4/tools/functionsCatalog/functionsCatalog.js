@@ -1,35 +1,45 @@
 
-var app = angular.module('functionsCatalogControllerModule',['ngMaterial', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload','angular-list-detail','ngSanitize','ui.codemirror']);
+var app = angular.module('functionsCatalogControllerModule',['ngMaterial', 'angular_list', 'angular_table','sbiModule', 'angular_2_col','file_upload','angular-list-detail','ngSanitize','ui.codemirror','ngWYSIWYG','ngSanitize']);
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
-app.controller('functionsCatalogController',["sbiModule_config","sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","$log", "sbiModule_download","sbiModule_messaging","$sce",functionsCatalogFunction]);
+app.filter("htmlSafe", ['$sce', function($sce) {
+    return function(htmlCode){
+        return $sce.trustAsHtml(htmlCode);
+    };
+}]);   
+app.controller('functionsCatalogController',["sbiModule_config","sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","$log", "sbiModule_download","sbiModule_messaging","$sce","$compile",functionsCatalogFunction]);
 
-function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$log,sbiModule_download,sbiModule_messaging,$sce){
+function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$log,sbiModule_download,sbiModule_messaging,$sce,$compile){
 
 	$scope.showDetail=false;
-	$scope.shownFunction={"language":"Python"};
+	$scope.shownFunction={"language":"Python", "owner":$scope.ownerUserName, "keywords":[]};
 	$scope.datasetLabelList=[];
 	$scope.datasetNamesList=[];
 	$scope.datasets=[];
 	$scope.tableSelectedFunction={};
 	$scope.tableSelectedFunction.language="Python";
 	$scope.languages=["Python","R"];
-	$scope.outputTypes=["Dataset","Text", "Image"];
-	$scope.inputTypes=["Simple Input", "Dataset Input"]
+	$scope.outputTypes=["Dataset","Text", "Image"]; 
+	$scope.inputTypes=["Simple Input", "Dataset Input"];
+	$scope.functionTypesList=[];
 	$scope.simpleInputs=[]; //=Input variables
-	$scope.inputDatasets=[];	 
+	$scope.inputDatasets=[];	
 	$scope.varIndex=0;
 	$scope.datasetsIndex=0;
-	/*$scope.functionsList=[{"id":1,"name":"AVG","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script": "b=1;\n"},
-	                       {"id":2,"name":"Variance","inputDatasets":[] , "inputVariables":[], "outputItems":[] , "language":"R", "script": "c=2;\n"}];*/
 	$scope.functionsList=[];
+	$scope.emptyStr=" ";
+    $scope.editorConfig = {
+            sanitize: false
+        };
+	
+	
 		
-	$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[],"language":"Python", "script":"","description":""};	
+	$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[],"language":"Python", "script":"","description":"", "owner":$scope.ownerUserName, "keywords":[], "label":"" };	
 	$scope.cleanNewFunction=function()
 	{
-		$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script":"","description":""};	
+		$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script":"","description":"", "owner":$scope.ownerUserName, "keywords":[], "label":""};	
 	}
 	$scope.datasetLabelsList=[];
 	$scope.saveOrUpdateFlag="";
@@ -138,6 +148,27 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 		});			
 	}	
 	
+	
+	$scope.obtainFunctionTypesRESTcall=function()
+	{		
+		sbiModule_restServices.get("2.0/domains","listByCode/"+"FUNCTION_TYPE")
+		.success(function(data)
+		{			
+				$log.info("Domains returned", data);
+				
+				for(var i=0;i<data.length;i++)
+				{
+					if(data[i].valueCd!="All")
+					{	
+						$scope.functionTypesList.push(data[i]);
+					}	
+				}	
+				
+				//$scope.functionTypesList=data;
+				
+		});			
+	}	
+	
 	$scope.obtainDatasetLabelsRESTcall=function()
 	{		
 		sbiModule_restServices.get("2.0/datasets","listDataset")
@@ -154,7 +185,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 			{
 				$scope.datasetLabelsList.push(datasets.item[d].label);
 				$scope.datasetNamesList.push(datasets.item[d].name);
-				
 			}
 			$log.info("Dataset labels list", $scope.datasetLabelsList);			
 	
@@ -211,7 +241,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 						
 						$scope.cleanNewFunction=function()
 						{
-							$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script":"", "description":""};	
+							$scope.newFunction={"id":"" ,"name":"","inputDatasets":[] , "inputVariables":[] , "outputItems":[], "language":"Python", "script":"", "description":"", "owner":$scope.ownerUserName, "keywords":[], "label":""};	
 						}
 						$scope.shownFunction=$scope.newFunction;
 		
@@ -301,12 +331,27 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
     		icon:'fa fa-trash',
     		action:function(item,event){
     			$scope.deleteFunction(item,event);
-    		}
-    }
+    		},
+    		visible: function(row,column) {
+                if(row.owner==$scope.ownerUserName || isAdminGlobal)
+                {
+                	return true;
+                }	
+                else
+                {
+                	return false;
+                }	
+    			return row.owner==$scope.ownerUserName ? true : false
+    		}    
+    };
+
     if(isAdminGlobal)
     {
     	$scope.acSpeedMenu.push(deleteIcon);
-    }	
+    }else if(isDevGlobal)
+    {
+    	$scope.acSpeedMenu.push(deleteIcon);
+    }
 	
 	
 	
@@ -486,12 +531,11 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate, sbiModu
 	
 	
 	//----------------------------------------------Application Logic-----------------------------------------
-	
-	
-	
+
 	
 	$scope.obtainDatasetLabelsRESTcall();
 	$scope.obtainCatalogFunctionsRESTcall();
+	$scope.obtainFunctionTypesRESTcall();
 	
 	//----------------------------------------------Controllers-----------------------------------------------
 

@@ -108,9 +108,13 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			String description = jsonObj.getString("description");
 			String language = jsonObj.getString("language");
 			String script = jsonObj.getString("script");
+			String owner = jsonObj.getString("owner");
+			String label = jsonObj.getString("label");
+			String type = jsonObj.getString("type");
 
 			JSONArray jsonInputDatasets = jsonObj.getJSONArray("inputDatasets");
 			JSONArray jsonInputVariables = jsonObj.getJSONArray("inputVariables");
+			JSONArray jsonKeywords = jsonObj.getJSONArray("keywords");
 
 			JSONArray outputItems = jsonObj.getJSONArray("outputItems");
 
@@ -139,12 +143,21 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				String outLabel = outputItemJSON.getString("label");
 				String outType = outputItemJSON.getString("type");
 				outputs.put(outLabel, outType);
-
 			}
+
+			List<String> keywordsList = new ArrayList<String>();
+			for (int i = 0; i < jsonKeywords.length(); i++) {
+				keywordsList.add(jsonKeywords.getString(i));
+			}
+
 			itemToInsert.setName(name);
 			itemToInsert.setDescription(description);
 			itemToInsert.setLanguage(language);
 			itemToInsert.setScript(script);
+			itemToInsert.setOwner(owner);
+			itemToInsert.setKeywords(keywordsList);
+			itemToInsert.setLabel(label);
+			itemToInsert.setType(type);
 
 			catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
 			catalogFunctionId = catalogFunctionDAO.insertCatalogFunction(itemToInsert, inputDatasets, inputVariables, outputs);
@@ -177,10 +190,14 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			String description = jsonObj.getString("description");
 			String language = jsonObj.getString("language");
 			String script = jsonObj.getString("script");
+			String owner = jsonObj.getString("owner");
+			String label = jsonObj.getString("label");
+			String type = jsonObj.getString("type");
 
 			JSONArray jsonInputDatasets = jsonObj.getJSONArray("inputDatasets");
 			JSONArray jsonInputVariables = jsonObj.getJSONArray("inputVariables");
 			JSONArray outputItems = jsonObj.getJSONArray("outputItems");
+			JSONArray keywords = jsonObj.getJSONArray("keywords");
 
 			Map<String, String> inputVariables = new HashMap<String, String>();
 			List<String> inputDatasets = new ArrayList<String>();
@@ -204,13 +221,23 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				String outType = outputItemJSON.getString("type");
 				outputs.put(outLabel, outType);
 			}
+			List<String> keyList = new ArrayList<String>();
+			for (int i = 0; i < keywords.length(); i++) {
+				String key = keywords.getString(i);
+				keyList.add(key);
+			}
+
 			itemToInsert.setName(name);
 			itemToInsert.setDescription(description);
 			itemToInsert.setLanguage(language);
 			itemToInsert.setScript(script);
+			itemToInsert.setOwner(owner);
 			itemToInsert.setInputDatasets(inputDatasets);
 			itemToInsert.setOutputs(outputs);
 			itemToInsert.setInputVariables(inputVariables);
+			itemToInsert.setKeywords(keyList);
+			itemToInsert.setLabel(label);
+			itemToInsert.setType(type);
 
 			catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
 			catalogFunctionDAO.setUserProfile(getUserProfile());
@@ -253,8 +280,13 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			ret.put("description", sbiFunction.getDescription());
 			ret.put("language", sbiFunction.getLanguage());
 			ret.put("script", sbiFunction.getScript());
+			ret.put("owner", sbiFunction.getOwner());
+			ret.put("label", sbiFunction.getLabel());
+			ret.put("type", sbiFunction.getType());
+
 			JSONArray inputVariables = new JSONArray();
 			JSONArray inputDatasets = new JSONArray();
+			JSONArray keywords = new JSONArray();
 
 			for (Object obj : sbiFunction.getSbiFunctionInputVariables()) {
 				JSONObject objToInsert = new JSONObject();
@@ -297,6 +329,16 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				objToInsert.put("type", typeName);
 				outputItems.put(objToInsert);
 			}
+
+			String keywordsString = sbiFunction.getKeywords();
+			if (keywordsString != null && !keywordsString.equals("")) {
+				String[] keywordArray = keywordsString.split(",");
+				for (String keyword : keywordArray) {
+					keywords.put(keyword);
+				}
+			}
+
+			ret.put("keywords", keywords);
 			ret.put("inputVariables", inputVariables);
 			ret.put("inputDatasets", inputDatasets);
 

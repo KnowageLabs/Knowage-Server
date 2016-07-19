@@ -21,4 +21,6 @@ public interface ICatalogFunctionDAO extends ISpagoBIDao {
 
 	public SbiCatalogFunction getCatalogFunctionById(int functionId);
 
+	public SbiCatalogFunction getCatalogFunctionByLabel(String organization, String functionLabel);
+
 }
