@@ -6,7 +6,9 @@ var sbiM=angular.module('sbiModule',["toastr","ngSanitize"]);
 // sbiM.config(function($mdThemingProvider) {
 // 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
 // });
-
+<%
+String contextName = GeneralUtilities.getSpagoBiContext().replaceAll("^/", "");
+%>
 sbiM.factory('sbiModule_config',function(){ 
 	return {
     	contextName: '<%= GeneralUtilities.getSpagoBiContext() %>',
@@ -14,11 +16,11 @@ sbiM.factory('sbiModule_config',function(){
     	contextMetaName: '<%= GeneralUtilities.getSpagoBiContext() %>meta',
     	
     	// Engines
-    	qbeEngineContextName: '<%= GeneralUtilities.getSpagoBiContext() %>qbeengine',
-    	birtReportEngineContextName: '<%= GeneralUtilities.getSpagoBiContext() %>birtreportengine',
-    	dataMiningContextName: '<%= GeneralUtilities.getSpagoBiContext() %>dataminingengine',
-    	whatIfEngineContextName: '<%= GeneralUtilities.getSpagoBiContext() %>whatifengine',
-    	olapEngineContextName: '<%= GeneralUtilities.getSpagoBiContext() %>olapengine',
+    	qbeEngineContextName: '<%= contextName %>qbeengine',
+    	birtReportEngineContextName: '<%= contextName %>birtreportengine',
+    	dataMiningContextName: '<%= contextName %>dataminingengine',
+    	whatIfEngineContextName: '<%= contextName %>whatifengine',
+    	olapEngineContextName: '<%= contextName %>olapengine',
     	
     	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
     	adapterPathNoContext : '<%= GeneralUtilities.getSpagoAdapterHttpUrl() %>',
