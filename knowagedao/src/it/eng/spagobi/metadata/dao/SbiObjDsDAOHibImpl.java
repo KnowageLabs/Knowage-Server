@@ -372,7 +372,13 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 		try {
 			// 0. get template with configuration
-			String template = new String(obj.getActiveTemplate().getContent());
+			String template = null;
+			try {
+				template = new String(obj.getActiveTemplate().getContent());
+			} catch (Exception ex) {
+				logger.error("An error occured while recovering the template, so the relations between document and dataset cannot be inserted. Please check the template uploaded!");
+				return;
+			}
 			SourceBean templateSB = SourceBean.fromXMLString(template);
 
 			HashMap<Integer, Boolean> lstDsInsertedForObj = new HashMap<Integer, Boolean>();
