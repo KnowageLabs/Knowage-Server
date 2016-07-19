@@ -160,7 +160,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			.then(function(response) {
 				$scope.handleResponse(response);
 				checkShift();
-				updateFilterTracker();
+				//updateFilterTracker();
 				if(fromAxis == 1){
 					$scope.leftStart = 0;
 				}
@@ -573,7 +573,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	};
 	
 	//Initializing array filterSelected that is following selected dimension in filters 
-	$scope.initFilterList = function (){
+	/*$scope.initFilterList = function (){
 		$scope.filterSelected = [];
 		for(var i = 0; i < $scope.filterCardList.length;i++){
 			var x ={
@@ -583,7 +583,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 					};
 			$scope.filterSelected[i] = x;
 		}
-	};
+	};*/
 	
 	$scope.sendMdxQuery = function(mdx) {
 		var encoded = encodeURI("1.0/model/?SBI_EXECUTION_ID="+JSsbiExecutionID)
@@ -593,7 +593,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			checkShift();
 			$mdDialog.hide();
 			$scope.mdxQuery = "";
-			$scope.initFilterList();
+			//$scope.initFilterList();
 			
 			$scope.sendModelConfig($scope.modelConfig);
 			if($scope.modelConfig.whatIfScenario)
@@ -636,7 +636,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	updateFilterTracker = function(){
 		var oldSelected = $scope.filterSelected;
-		$scope.initFilterList();
+		//$scope.initFilterList();
 		for(var i=0; i<oldSelected.length;i++){			
 			for(var j=0; j<$scope.filterCardList.length;j++){
 				if(oldSelected[i].uniqueName.indexOf($scope.filterCardList[j].uniqueName)>-1){

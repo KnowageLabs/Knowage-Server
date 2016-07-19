@@ -146,7 +146,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.tableSubsets=null;
 		source = response.data;
 		$scope.modelConfig = source.modelConfig;
-		console.log($scope.modelConfig);
 		$scope.table = $sce.trustAsHtml(source.table);
 		$scope.tableSubsets=source.tables;
 		
@@ -160,14 +159,41 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.showMdxVar = source.mdxFormatted;
 		$scope.formulasData = source.formulas;
 		$scope.ready = true;
-
+		
+		handleSlicers(source.filters);
 		$scope.wiGridNeeded = response.data.modelConfig.whatIfScenario; //arsenije
 		if(firstLoad && $scope.modelConfig != undefined){
+
 			firstLoad = false;
 		}
 		source = null;
 	}
-
+	
+	handleSlicers = function(filters){
+		$scope.filterSelected = [];
+		for(var i=0; i<filters.length;i++){
+			var hier = filters[i].hierarchies;
+			var selPos = filters[i].selectedHierarchyPosition;
+			var posInAx = filters[i].positionInAxis;
+			var obj ={
+					caption:"...",
+					uniqueName:"",
+					visible:false
+					};
+			if(hier[selPos].slicers.length > 0){
+				obj.caption = hier[selPos].slicers[0].name;
+				obj.uniqueName = hier[selPos].slicers[0].uniqueName;
+				obj.visible = true;
+				
+				$scope.filterSelected[posInAx] = obj
+			}
+			else{
+				$scope.filterSelected[posInAx] = obj;
+			}
+				
+		}
+	}
+	
 	$scope.sendModelConfig = function(modelConfig) {
 		$scope.tableSubsets.length = 0;
 		var sentStartRow = $scope.modelConfig.startRow;
