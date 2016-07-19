@@ -680,7 +680,7 @@ public class UserUtilities {
 		List<String> licenseFunctionalities = new ArrayList<String>();
 		try {
 			Class<?> licenseManager = Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
-			Method readFunctionalitiesMethod = licenseManager.getClass().getMethod("readFunctionalityByLicense", SpagoBIUserProfile.class);
+			Method readFunctionalitiesMethod = licenseManager.getMethod("readFunctionalityByLicense", SpagoBIUserProfile.class);
 			Set<String> functionalities = (Set<String>) readFunctionalitiesMethod.invoke(licenseManager, user);
 			if (functionalities != null) {
 				licenseFunctionalities.addAll(functionalities);
@@ -884,7 +884,7 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
-	 * 
+	 *
 	 * is this method in the right place?
 	 */
 
