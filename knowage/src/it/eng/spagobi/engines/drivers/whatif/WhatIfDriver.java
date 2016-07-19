@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.engines.drivers.whatif;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -29,6 +30,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.engines.drivers.generic.GenericDriver;
@@ -97,12 +99,57 @@ public class WhatIfDriver extends GenericDriver {
 
 	@Override
 	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
-		return super.getEditDocumentTemplateBuildUrl(biobject, profile);
+		logger.debug("IN");
+		BIObject obj = null;
+		try {
+			obj = (BIObject) biobject;
+		} catch (ClassCastException cce) {
+			logger.error("The input object is not a BIObject type", cce);
+			return null;
+		}
+		Engine engine = obj.getEngine();
+		String url = engine.getUrl();
+		HashMap parameters = new HashMap();
+		String documentId = obj.getId().toString();
+		parameters.put("document", documentId);
+		parameters.put("forward", "editQuery.jsp");
+		applySecurity(parameters, profile);
+		byte[] template = null;
+		try {
+			ObjTemplate objTemplate = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(obj.getId());
+			if (objTemplate == null || objTemplate.getContent() == null || objTemplate.getContent().length == 0) {
+				throw new Exception("Document's template is empty");
+			}
+			template = objTemplate.getContent();
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while loading document's template", e);
+		}
+		addArtifactVersionId(template, parameters, profile, obj.getId());
+		EngineURL engineURL = new EngineURL(url, parameters);
+		logger.debug("OUT");
+		return engineURL;
 	}
 
 	@Override
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
-		return super.getNewDocumentTemplateBuildUrl(biobject, profile);
+		logger.debug("IN");
+		BIObject obj = null;
+		try {
+			obj = (BIObject) biobject;
+		} catch (ClassCastException cce) {
+			logger.error("The input object is not a BIObject type", cce);
+			return null;
+		}
+		Engine engine = obj.getEngine();
+		String url = engine.getUrl() + "/edit";
+		HashMap parameters = new HashMap();
+		String documentId = obj.getId().toString();
+		parameters.put("document", documentId);
+		parameters.put("forward", "edit.jsp");
+		applySecurity(parameters, profile);
+		EngineURL engineURL = new EngineURL(url, parameters);
+		logger.debug("OUT");
+		return engineURL;
 	}
 
 	protected Map addArtifactVersionId(byte[] template, Map pars, IEngUserProfile profile, int documentId) {
@@ -177,25 +224,22 @@ public class WhatIfDriver extends GenericDriver {
 		logger.debug("Artifact id is " + artifactId);
 
 		int did = artifact.getId();
-		
 
 		WhatIfWorkflowManager wfm = new WhatIfWorkflowManager();
-		
-		
-		
-		//Boolean locked = artifact.getModelLocked();
+
+		// Boolean locked = artifact.getModelLocked();
 		String locker;
 		try {
 			locker = wfm.getActiveUser(did);
 		} catch (EMFUserError e) {
-			logger.error("Error loading locker user",e);
-			throw new SpagoBIRuntimeException("Error loading locker user",e);
+			logger.error("Error loading locker user", e);
+			throw new SpagoBIRuntimeException("Error loading locker user", e);
 		}
 
 		// List<WhatifWorkflow> l = wfm.getWorkflowByDocumentId(1);
 		// String lockerTemp = wfm.getLockerUser(1);
 
-		if (locker==null) {
+		if (locker == null) {
 			logger.debug("Artifact with id " + artifactId + " is unlocked");
 			statusToReturn = SpagoBIConstants.SBI_ARTIFACT_VALUE_UNLOCKED;
 		} else {
