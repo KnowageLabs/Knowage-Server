@@ -56,15 +56,15 @@
 							}										
 						}
 					}
-
-			
 			}
+			$scope.showPreloader = false;
 		};
 		
 
 		$scope.init = function(){
 			sbiModule_restServices.promisePost("1.0/jsonKpiTemplate", "readKpiTemplate", $scope.documentData.template)
 			.then(function(response){ 
+				$scope.showPreloader = true;
 				var chart = $scope.documentData.template.chart;
 
 				$scope.gaugeValue = null;
@@ -105,9 +105,9 @@
 						}
 					}
 					}
-
 					
 					$scope.loadKpiValue();
+
 				} else { //scorecard
 					$scope.documentData.scorecard = JSON.parse(response.data.info)[0].scorecard;
 				}
