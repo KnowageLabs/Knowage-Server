@@ -87,6 +87,7 @@ import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAl
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
 import it.eng.spagobi.engines.whatif.parser.Lexer;
 import it.eng.spagobi.engines.whatif.parser.parser;
+import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.engines.whatif.version.VersionManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
@@ -103,6 +104,10 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	public static transient Logger logger = Logger.getLogger(ModelResource.class);
 	public static transient Logger auditlogger = Logger.getLogger("audit.stack");
 	private static final String VERSION_FAKE_DESCR = "sbiNoDescription";
+	private static final String TEMPLATE_MONDRIAN_SCHEMA = "mondranSchema";
+	
+	
+	
 	@Context
 	private HttpServletResponse response;
 
@@ -119,6 +124,54 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			versionManager = new VersionManager(ei);
 		}
 		return versionManager;
+	}
+	
+	
+	/*
+	 * This method creates a template. Than it will create a model on teh template and update the EngoneConfig setting the model
+	 * Body structure
+	{
+		
+		mondrianSchema: "mondrianSchema",
+		cube: "cube",
+		xmlaUrl: "xmlaUrl",
+		xmlaProperties:[{value:...,key:...},....],
+		
+	}
+	*/
+	@POST
+	@Path("/create")
+	@Produces("text/html; charset=UTF-8")
+	public void createNewModel() throws OlapException {
+		
+		JSONObject requestBody = null;
+		
+		try {
+			requestBody = RestUtilities.readBodyAsJSONObject(getServletRequest());
+
+
+			WhatIfTemplate template = new WhatIfTemplate();
+			String mdxQuery = "";//TODO: CREATE THE QUERY STARTING FROM SCHEMA RETRIVER
+			
+			template.setMdxQuery(mdxQuery);
+			template.setMondrianSchema(requestBody.getString(TEMPLATE_MONDRIAN_SCHEMA));
+			//template.setParameters(parameters); we'll see in a second phase
+			//template.setCrossNavigation(crossNavigation); for cross navigation on cell
+			//template.setTargetsClickable(targetsClickable); for cross navigation on member
+			//template.setProfilingUserAttributes(profilingnUserAttributes);  we'll see in a second phase
+			//template.setScenario(scenario); scenario info. cube from schema retriver
+			
+			//template.setToolbarVisibleButtons(toolbarVisibleButtons);
+			//template.setXmlaServerProperties(xmlaServerProperties);
+			
+			boolean whatif = false;//should true if a scenario exists
+			((WhatIfEngineInstance)this.getEngineInstance()).updateWhatIfEngineInstance(template, whatif, getEnv());
+			
+		
+		} catch (Exception e) {
+			String errorMessage = e.getMessage().replace(": Couldn't read request body", "");
+			throw new SpagoBIEngineRestServiceRuntimeException(errorMessage, this.getLocale(), e);
+		}
 	}
 
 	/**

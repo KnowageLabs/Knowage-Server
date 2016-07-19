@@ -62,9 +62,9 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 	public static transient Logger logger = Logger.getLogger(WhatIfEngineInstance.class);
 
 	// private JSONObject guiSettings;
-	private final List<String> includes;
-	private final OlapDataSource olapDataSource;
-	private final PivotModel pivotModel;
+	private List<String> includes;
+	private OlapDataSource olapDataSource;
+	private PivotModel pivotModel;
 	private ModelConfig modelConfig;
 	private String mondrianSchemaFilePath;
 	private WriteBackManager writeBackManager;
@@ -93,7 +93,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 			throw new RuntimeException("Cannot load Mondrian Olap4j Driver", e);
 		}
 		String reference = initMondrianSchema(env);
-		;
+		
 		this.setMondrianSchemaFilePath(reference);
 
 		IDataSource ds = (IDataSource) env.get(EngineConstants.ENV_DATASOURCE);
@@ -161,10 +161,19 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		logger.debug("OUT");
 	}
 
+	
+	public WhatIfEngineInstance( Map env) {
+		super(env);
+		logger.debug("OUT");
+	}
+	
 	public WhatIfEngineInstance(WhatIfTemplate template, boolean whatif, Map env) {
 		super(env);
-
-		includes = WhatIfEngine.getConfig().getIncludes();
+		updateWhatIfEngineInstance(template, whatif, env);
+		logger.debug("OUT");
+	}
+	
+	public void updateWhatIfEngineInstance(WhatIfTemplate template, boolean whatif, Map env) {
 
 		try {
 			Class.forName("mondrian.olap4j.MondrianOlap4jDriver");
@@ -288,7 +297,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		standalone = template.isStandAlone();
 
 		logger.debug("OUT");
-	}
+	}	
 
 	private String getInitialMDX(WhatIfTemplate template, Map env) {
 		String query = null;
@@ -511,5 +520,6 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 	public void setAlgorithmInUse(String algorithmInUse) {
 		this.algorithmInUse = algorithmInUse;
 	}
+
 
 }

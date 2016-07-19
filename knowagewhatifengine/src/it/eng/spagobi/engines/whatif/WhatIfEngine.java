@@ -70,6 +70,30 @@ public class WhatIfEngine {
 
 		return whatIfEngineInstance;
 	}
+	
+	/**
+	 * Creates the instance.
+	 *
+	 * @param env
+	 *            the env
+	 *
+	 * @return the WhatIf engine instance
+	 */
+	public static WhatIfEngineInstance createInstance(Map env) {
+
+		WhatIfEngineInstance whatIfEngineInstance = null;
+		logger.debug("IN");
+		try {
+			whatIfEngineInstance = new WhatIfEngineInstance( env);
+			initSerializers();
+		} catch (Exception e) {
+			logger.error("OUT", e);
+			throw new SpagoBIEngineRuntimeException("error", e);
+
+		}
+
+		return whatIfEngineInstance;
+	}
 
 	public static WhatIfEngineInstance createInstance(String initialMDX, Map env, String editCube) {
 

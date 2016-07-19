@@ -339,7 +339,7 @@ public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 		}
 	}
 
-	private SpagoBIEngineStartupException getWrappedException(Exception e) {
+	protected SpagoBIEngineStartupException getWrappedException(Exception e) {
 		SpagoBIEngineStartupException serviceException;
 		if (e instanceof SpagoBIEngineStartupException) {
 			serviceException = (SpagoBIEngineStartupException) e;
