@@ -65,6 +65,7 @@
 
 .BUTTON_ALGORITHMS{
 	background-image: url(../img/alg_btn.png);
+	    background-size: 30px;
 }
 
 .top-alignment{

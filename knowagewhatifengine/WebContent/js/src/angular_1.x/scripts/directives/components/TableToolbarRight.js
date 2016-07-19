@@ -239,6 +239,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				sendModelConfig = false;
 				break;
 			case "BUTTON_VERSION_MANAGER":
+				$scope.versionsForDelete = [];
 				$scope.showDialog(null,$scope.deleteVersionDialog);
 				sendModelConfig = false;
 				break;
@@ -515,11 +516,13 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  }else{
 			 content.descr = "sbiNoDescription";
 		  }
-
+		  
+		  
 		  sbiModule_restServices.promisePost
 			("1.0","/model/saveAs?SBI_EXECUTION_ID="+ JSsbiExecutionID,content,{timeout:saveAsTimeout})
 			.then(function(response) {
-				console.log(response.data);
+				$scope.handleResponse(response);
+				$scope.closeDialog(null);
 				sbiModule_messaging.showInfoMessage("New version saved", 'Info');
 		  },function(response){
 			  sbiModule_messaging.showErrorMessage("An error occurred while saving new version", 'Error'); 
