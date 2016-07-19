@@ -59,5 +59,9 @@
         <property name="defaultVal" type="string">
             <column name="default_val" length="40"   />
         </property>
-    </class>
+   		<filter name="tenantFilter" condition="organization=:tenant" />  
+ 	</class>
+ 	<filter-def name="tenantFilter">
+  		<filter-param name="tenant" type="string"/>
+ 	</filter-def>
 </hibernate-mapping>

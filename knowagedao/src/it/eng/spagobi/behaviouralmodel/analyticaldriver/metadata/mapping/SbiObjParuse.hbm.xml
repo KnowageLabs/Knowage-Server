@@ -72,5 +72,9 @@
          <property name="logicOperator" type="string">
             <column name="logic_operator" length="10" not-null="false" />
         </property>
-    </class>
+   		<filter name="tenantFilter" condition="organization=:tenant" />  
+ 	</class>
+ 	<filter-def name="tenantFilter">
+  		<filter-param name="tenant" type="string"/>
+ 	</filter-def>
 </hibernate-mapping>
