@@ -53,6 +53,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
@@ -298,11 +299,28 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	 *
 	 */
 	@POST
-	@Path("/saveAs/{name}/{descr}")
+	@Path("/saveAs")
 	@Produces("text/html; charset=UTF-8")
-	public String increaseVersion(@PathParam("name") String name, @PathParam("descr") String descr) {
+	public String increaseVersion() {
 		logger.debug("IN");
 		logOperation("Save As");
+		String name;
+		String descr;
+		
+		JSONObject json;
+		try {
+			json = RestUtilities.readBodyAsJSONObject(getServletRequest());
+			name = json.getString("name");
+			descr = json.getString("descr");
+		} catch (IOException e1) {
+			logger.error("Error loading the parameters from the request",e1);
+			throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e1);
+		} catch (JSONException e1) {
+			logger.error("Error loading the parameters from the request",e1);
+			throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e1);
+		}
+
+		
 		Monitor totalTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.ModelResource.increaseVersion.totalTime");
 		if (name.equals(VERSION_FAKE_DESCR)) {
 			name = null;

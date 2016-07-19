@@ -504,8 +504,20 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  if($scope.saveAsDescription == undefined)
 			  $scope.saveAsDescription ="";
 		  
+		  var content={};
+		  if($scope.saveAsName){
+			 content.name = $scope.saveAsName; 
+		  }else{
+			 content.name = "sbiNoDescription";
+		  }
+		  if($scope.saveAsDescription){
+			 content.descr = $scope.saveAsDescription; 
+		  }else{
+			 content.descr = "sbiNoDescription";
+		  }
+
 		  sbiModule_restServices.promisePost
-			("1.0","/model/saveAs/"+ $scope.saveAsName+"/"+$scope.saveAsDescription+"?SBI_EXECUTION_ID="+ JSsbiExecutionID,null,{timeout:saveAsTimeout})
+			("1.0","/model/saveAs?SBI_EXECUTION_ID="+ JSsbiExecutionID,content,{timeout:saveAsTimeout})
 			.then(function(response) {
 				console.log(response.data);
 				sbiModule_messaging.showInfoMessage("New version saved", 'Info');
