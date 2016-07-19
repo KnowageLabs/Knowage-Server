@@ -681,7 +681,7 @@ public class UserUtilities {
 		try {
 			Class<?> licenseManager = Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
 			Method readFunctionalitiesMethod = licenseManager.getMethod("readFunctionalityByLicense", SpagoBIUserProfile.class);
-			Set<String> functionalities = (Set<String>) readFunctionalitiesMethod.invoke(licenseManager, user);
+			Set<String> functionalities = (Set<String>) readFunctionalitiesMethod.invoke(null, user);
 			if (functionalities != null) {
 				licenseFunctionalities.addAll(functionalities);
 			}
@@ -884,7 +884,7 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
-	 *
+	 * 
 	 * is this method in the right place?
 	 */
 
