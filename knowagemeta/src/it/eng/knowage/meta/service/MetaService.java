@@ -24,7 +24,6 @@ import it.eng.knowage.meta.initializer.descriptor.BusinessRelationshipDescriptor
 import it.eng.knowage.meta.initializer.descriptor.BusinessViewInnerJoinRelationshipDescriptor;
 import it.eng.knowage.meta.initializer.descriptor.CalculatedFieldDescriptor;
 import it.eng.knowage.meta.initializer.properties.BusinessModelPropertiesFromFileInitializer;
-import it.eng.knowage.meta.initializer.properties.PhysicalModelPropertiesFromFileInitializer;
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelFactory;
 import it.eng.knowage.meta.model.ModelPropertyType;
@@ -119,7 +118,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 *
+	 * 
 	 * @param dsId
 	 * @return
 	 */
@@ -590,15 +589,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 
 		PhysicalModel phyMod = model.getPhysicalModels().get(0);
-		DataSource dataSource = new DataSource();
-		dataSource.setLabel(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME).getValue());
-		dataSource.setJndi(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JNDI_NAME).getValue());
-		dataSource.setUrlConnection(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL).getValue());
-		dataSource.setDriver(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER).getValue());
-		dataSource.setUser(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME).getValue());
-		dataSource.setPwd(phyMod.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD).getValue());
-		dataSource.setHibDialectClass("");
-		dataSource.setHibDialectName("");
+		DataSource dataSource = phyMod.getDataSource();
 		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
 		List<String> missingColumns = physicalModelInitializer.getMissingColumnsNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
 		List<String> removingItems = physicalModelInitializer.getRemovedTablesAndColumnsNames(dataSource.getConnection(), model.getPhysicalModels().get(0));
@@ -872,7 +863,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	 * {businessModels:[tables:[...]],businessModels:[businessTables:[...]]} Furthermore jsonDiff is zero-based numbering but jxpath is 1-based numbering
 	 * Another difference is that jsonDiff's notation used to select a property of a nth element of a collection is "parent/n/property" but jxpath does same
 	 * selection in this way "parent[n]/property"
-	 *
+	 * 
 	 * @param path
 	 * @return path cleaned
 	 */

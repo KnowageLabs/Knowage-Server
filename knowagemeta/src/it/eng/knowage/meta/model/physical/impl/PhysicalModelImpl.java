@@ -65,13 +65,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * <li>{@link it.eng.knowage.meta.model.physical.impl.PhysicalModelImpl#getForeignKeys <em>Foreign Keys</em>}</li>
  * </ul>
  * </p>
- *
+ * 
  * @generated
  */
 public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel {
 	/**
 	 * The default value of the '{@link #getDatabaseName() <em>Database Name</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getDatabaseName()
 	 * @generated
 	 * @ordered
@@ -80,7 +80,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * The cached value of the '{@link #getDatabaseName() <em>Database Name</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getDatabaseName()
 	 * @generated
 	 * @ordered
@@ -89,7 +89,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * The default value of the '{@link #getDatabaseVersion() <em>Database Version</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getDatabaseVersion()
 	 * @generated
 	 * @ordered
@@ -98,7 +98,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * The cached value of the '{@link #getDatabaseVersion() <em>Database Version</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getDatabaseVersion()
 	 * @generated
 	 * @ordered
@@ -107,7 +107,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * The default value of the '{@link #getCatalog() <em>Catalog</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getCatalog()
 	 * @generated
 	 * @ordered
@@ -116,7 +116,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * The cached value of the '{@link #getCatalog() <em>Catalog</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getCatalog()
 	 * @generated
 	 * @ordered
@@ -125,7 +125,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * The default value of the '{@link #getSchema() <em>Schema</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getSchema()
 	 * @generated
 	 * @ordered
@@ -134,7 +134,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * The cached value of the '{@link #getSchema() <em>Schema</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getSchema()
 	 * @generated
 	 * @ordered
@@ -143,7 +143,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * The cached value of the '{@link #getTables() <em>Tables</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getTables()
 	 * @generated
 	 * @ordered
@@ -152,7 +152,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * The cached value of the '{@link #getPrimaryKeys() <em>Primary Keys</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getPrimaryKeys()
 	 * @generated
 	 * @ordered
@@ -161,7 +161,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * The cached value of the '{@link #getForeignKeys() <em>Foreign Keys</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @see #getForeignKeys()
 	 * @generated
 	 * @ordered
@@ -170,7 +170,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	protected PhysicalModelImpl() {
@@ -179,7 +179,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -189,7 +189,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -199,7 +199,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -212,7 +212,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -222,7 +222,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -235,7 +235,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -245,7 +245,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -258,7 +258,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -268,7 +268,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -281,7 +281,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -293,7 +293,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	public NotificationChain basicSetParentModel(Model newParentModel, NotificationChain msgs) {
@@ -303,7 +303,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -325,7 +325,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -339,7 +339,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -353,7 +353,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -367,7 +367,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -390,7 +390,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -410,7 +410,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -424,7 +424,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -452,7 +452,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -492,7 +492,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -528,7 +528,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -556,7 +556,7 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 *
+	 * 
 	 * @generated
 	 */
 	@Override
@@ -607,16 +607,22 @@ public class PhysicalModelImpl extends ModelObjectImpl implements PhysicalModel 
 
 	@Override
 	public Connection getConnection() throws ClassNotFoundException, NamingException, SQLException {
+		return getDataSource().getConnection();
+	}
+
+	@Override
+	public DataSource getDataSource() throws ClassNotFoundException, NamingException, SQLException {
 
 		DataSource dataSource = new DataSource();
 		dataSource.setLabel(this.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_NAME).getValue());
+		dataSource.setJndi(this.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_JNDI_NAME).getValue());
 		dataSource.setUrlConnection(this.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_URL).getValue());
 		dataSource.setDriver(this.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DRIVER).getValue());
 		dataSource.setUser(this.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_USERNAME).getValue());
 		dataSource.setPwd(this.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_PASSWORD).getValue());
 		dataSource.setHibDialectClass("");
 		dataSource.setHibDialectName("");
-		return dataSource.getConnection();
+		return dataSource;
 	}
 
 	@Override
