@@ -43,16 +43,10 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		params.showOnlyOwner = true;
 		params.showDerivedDataset = false;		
 		
-//			$scope.dataset.id = "";
 		$scope.dataset.type = "File";
-//			$scope.dataset.label = "";
-//			$scope.dataset.name = ""
-//			$scope.dataset.description = "";
 		$scope.dataset.persist = false;
 		$scope.dataset.tablePrefix = datasetParameters.TABLE_NAME_PREFIX+sbiModule_user.userId+"_";
 		$scope.dataset.tableName = "";
-//		$scope.dataset.fileUploaded = false;
-		//console.log($scope.dataset);
 		
 		/**
 		 * If those three numeric fields are not provided, they will be NULL. For that reason, we redefined their values as an empty string, so they can be processed
@@ -99,8 +93,10 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			function successCallback(response) {
 
 				if (!response.data.errors) {
+					
 					console.info("[SUCCESS]: The Step 1 form is submitted successfully.");
-					$scope.datasetWizardView = $scope.datasetWizardView +1;
+					
+					$scope.datasetWizardView = $scope.datasetWizardView + 1;
 					
 					//set meta to empty
 					$scope.dataset.meta=[];

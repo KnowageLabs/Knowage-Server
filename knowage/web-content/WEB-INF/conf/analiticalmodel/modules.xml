@@ -92,8 +92,9 @@
 	        <SELECT_QUERY statement="SELECT_ALL_DATASET">
 	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
 	        	<PARAMETER type="TRUE_VALUE" value="true" scope="" />        	
-	        	<PARAMETER type="RELATIVE" value="user_id" scope="SESSION" />
-	        	<PARAMETER type="TRUE_VALUE" value="true" scope="" />        	        	
+	        	<PARAMETER type="RELATIVE" value="user_id" scope="SESSION" />  
+	        	<!-- @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) -->
+	        	<!-- <PARAMETER type="TRUE_VALUE" value="true" scope="" />  -->	        	
 	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
 	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
 	        </SELECT_QUERY>
