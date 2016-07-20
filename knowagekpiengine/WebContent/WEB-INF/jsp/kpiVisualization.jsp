@@ -186,6 +186,9 @@ author:
 	 	layout-fill layout  layout-align="center center" >
 	 <md-progress-circular md-mode="indeterminate" md-diameter="96" ></md-progress-circular>
 	</div> 
+	<div layout="row" flex layout-align="center center" id="preview" ng-show="showKpiLoader" layout-fill>
+     	<md-progress-circular md-mode="indeterminate" md-diameter="70" ></md-progress-circular>
+	</div>
 	<%
 	if(type.equalsIgnoreCase("kpi")) {
 		String model = (String)chartObj.get("model");

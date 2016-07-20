@@ -57,14 +57,14 @@
 						}
 					}
 			}
-			$scope.showPreloader = false;
+			$scope.showKpiLoader = false;
 		};
 		
 
 		$scope.init = function(){
+			$scope.showKpiLoader = true;
 			sbiModule_restServices.promisePost("1.0/jsonKpiTemplate", "readKpiTemplate", $scope.documentData.template)
 			.then(function(response){ 
-				$scope.showPreloader = true;
 				var chart = $scope.documentData.template.chart;
 
 				$scope.gaugeValue = null;
@@ -111,6 +111,10 @@
 				} else { //scorecard
 					$scope.documentData.scorecard = JSON.parse(response.data.info)[0].scorecard;
 				}
+			},
+			function(response){
+				$scope.showKpiLoader = false;
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.list.load.error"));
 			});
 		};
 		
