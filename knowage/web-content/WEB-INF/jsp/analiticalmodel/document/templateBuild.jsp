@@ -75,6 +75,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		title = msgBuilder.getMessage("SBIDev.docConf.templateBuild.editTemplateTitle", "messages", request);
 	}
     title += " : " + obj.getName();
+    boolean  isGis = obj.getEngine().getName().contains("Gis");
+    
 
    	// try to get from the preferences the height of the area
    	String heightArea = (String) ChannelUtilities.getPreferenceValue(aRequestContainer, "HEIGHT_AREA", "600");
@@ -111,27 +113,37 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <script>
 Ext.onReady(function(){
 
-    var backButton = new Ext.Toolbar.Button({
-    	iconCls: 'icon-back'
-		, scope: this
-		, handler : function() {window.location.href = '<%= backUrl %>';}
-    });
 
-    var items = ['->', backButton];
     
-    var toolbar = new Ext.Toolbar({
-      items: items
-    });
+    var iframeConf = {
+    		
+    			defaultSrc: '<%= StringEscapeUtils.escapeJavaScript(GeneralUtilities.getUrl(urlToCall.toString(), engineurl.getParameters())) %>'
+    			, autoLoad: true
+    	        , loadMask: true
+    	        , disableMessaging: true
+    	        
+    	        , renderTo: Sbi.user.ismodeweb ? undefined : 'edit_template_<%=requestIdentity%>'  
+    		};
+    
+    if(!<%= isGis %>){
+        var backButton = new Ext.Toolbar.Button({
+        	iconCls: 'icon-back'
+    		, scope: this
+    		, handler : function() {window.location.href = '<%= backUrl %>';}
+        });
 
-	var templateEditIFrame = new Ext.ux.ManagedIframePanel({
-		title: '<%= StringEscapeUtils.escapeJavaScript(title) %>'
-		, defaultSrc: '<%= StringEscapeUtils.escapeJavaScript(GeneralUtilities.getUrl(urlToCall.toString(), engineurl.getParameters())) %>'
-		, autoLoad: true
-        , loadMask: true
-        , disableMessaging: true
-        , tbar: toolbar
-        , renderTo: Sbi.user.ismodeweb ? undefined : 'edit_template_<%=requestIdentity%>'  
-	});
+        var items = ['->', backButton];
+        
+        var toolbar = new Ext.Toolbar({
+          items: items
+        });
+
+    	
+    	iframeConf.tbar = toolbar;
+    	iframeConf.title = '<%= StringEscapeUtils.escapeJavaScript(title) %>'
+    }
+    
+	var templateEditIFrame = new Ext.ux.ManagedIframePanel(iframeConf);
 
 	if (Sbi.user.ismodeweb) {
 		var viewport = new Ext.Viewport({
