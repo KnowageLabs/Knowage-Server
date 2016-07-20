@@ -492,7 +492,6 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			    	 	"dateIn",
 			    	 	"owner",
 			    	 	"refreshSeconds",
-			    	 	"isPublic",
 			    	 	"actions",
 			    	 	"exporters",
 			    	 	"decorators",
