@@ -89,9 +89,5 @@
             </key>
             <one-to-many class="it.eng.spagobi.commons.metadata.SbiOrganizationDatasource" />
         </set>
-    	<filter name="tenantFilter" condition="organization=:tenant" />  
- 	</class>
- 	<filter-def name="tenantFilter">
-  		<filter-param name="tenant" type="string"/>
- 	</filter-def>
+    </class>
 </hibernate-mapping>
