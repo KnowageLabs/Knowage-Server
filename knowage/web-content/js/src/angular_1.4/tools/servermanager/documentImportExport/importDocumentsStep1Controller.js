@@ -1,7 +1,7 @@
 angular.module('importExportDocumentModule').controller('importControllerStep1', ["$scope","importExportDocumentModule_importConf","sbiModule_restServices",importStep1FuncController]);
 
 function importStep1FuncController($scope,importExportDocumentModule_importConf,sbiModule_restServices ) {
-	
+	$scope.showCircular = false;
 	function roleInList(role,list){
 		for(var i in list){
 			if(list[i].name==role.name){
@@ -29,9 +29,7 @@ function importStep1FuncController($scope,importExportDocumentModule_importConf,
 	
 	$scope.saveRoleAssociation=function(){
 		if($scope.importType=='user'){
-			if($scope.importType=='user' && $scope.IEDConf.importPersonalFolder==true){
-				$scope.stepControl.insertBread({name: $scope.translate.load('SBISet.impexp.exportedEngines','component_impexp_messages')});
-			}else{
+			
 				var data={
 						"exportingUser":$scope.IEDConf.roles.exportingUser,
 						"type":$scope.IEDConf.typeSaveUser,
@@ -41,14 +39,19 @@ function importStep1FuncController($scope,importExportDocumentModule_importConf,
 				
 				sbiModule_restServices.post("1.0/serverManager/importExport/users","importUsers",data)
 				.success(function(data, status, headers, config) {
-				
+					
 					if(data.hasOwnProperty("errors")){
 						$scope.stopImport(data.errors[0].message);	
 					}else if(data.STATUS=="NON OK"){
 						 $scope.stopImport(data.SUBMESSAGE,$scope.translate.load(data.ERROR,'component_impexp_messages'));	
 					}
 					else if(data.STATUS=="OK"){
-						$scope.stopImport($scope.translate.load("sbi.importusers.importuserok"));	
+						if( $scope.IEDConf.importPersonalFolder==true){
+							$scope.stepControl.insertBread({name: $scope.translate.load('SBISet.impexp.exportedEngines','component_impexp_messages')});
+						}else{
+							$scope.stopImport($scope.translate.load("sbi.importusers.importuserok"));	
+						}
+						
 						}
 						
 					
@@ -56,11 +59,11 @@ function importStep1FuncController($scope,importExportDocumentModule_importConf,
 					$scope.stopImport(data);
 				})
 				
-			}
+			
 			
 			
 		}else{
-		
+			$scope.showCircular = true;
 			sbiModule_restServices.post("1.0/serverManager/importExport/document", 'associateRoles',getExportedRole())
 			.success(function(data, status, headers, config) {
 				 if(data.hasOwnProperty("errors")){
@@ -69,6 +72,7 @@ function importStep1FuncController($scope,importExportDocumentModule_importConf,
 					$scope.stopImport(data.ERROR);		
 				}
 				else if(data.STATUS=="OK"){
+					$scope.showCircular = false;
 					importExportDocumentModule_importConf.engines.exportedEngines=data.exportedEngines;
 					importExportDocumentModule_importConf.engines.currentEngines=data.currentEngines;
 					importExportDocumentModule_importConf.engines.associatedEngines=data.associatedEngines;

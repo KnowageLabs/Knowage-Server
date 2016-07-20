@@ -21,7 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <md-content  layout-column layout-wrap>
 <div layout="row" layout-align="end center">
-	<md-button ng-click="saveDatasourceAssociation()" class="md-raised">{{translate.load('Sbi.next','component_impexp_messages');}}</md-button> 
+	<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircular" layout-fill>
+     		<md-progress-circular md-mode="indeterminate" ></md-progress-circular> 
+  	</div>
+	<md-button ng-show="!showCircular" ng-click="saveDatasourceAssociation()" class="md-raised">{{translate.load('Sbi.next','component_impexp_messages');}}</md-button> 
 </div>
 <md-whiteframe  layout="row" layout-wrap class="sourceTargetToolbar md-whiteframe-1dp" >
 		<p flex="50">{{translate.load('sbi.hierarchies.source');}}</p>

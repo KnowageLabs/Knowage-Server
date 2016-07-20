@@ -1,6 +1,7 @@
 angular.module('importExportDocumentModule').controller('importControllerStep3', ["$scope","importExportDocumentModule_importConf","sbiModule_restServices",importStep3FuncController]);
 
 function importStep3FuncController($scope,importExportDocumentModule_importConf,sbiModule_restServices) {
+	$scope.showCircular = false;
 
 	function datasourcesInList(datasource,list){
 		for(var i in list){
@@ -29,6 +30,8 @@ function importStep3FuncController($scope,importExportDocumentModule_importConf,
 	}
 
 	$scope.saveDatasourceAssociation=function(){
+		$scope.showCircular = true;
+
 		sbiModule_restServices.post("1.0/serverManager/importExport/document", 'associateDatasources',getExportedDatasources())
 		.success(function(data, status, headers, config) {
 			console.log("data--->",data)
@@ -38,6 +41,8 @@ function importStep3FuncController($scope,importExportDocumentModule_importConf,
 				$scope.stopImport(data.ERROR);		
 			}
 			else if(data.STATUS=="OK"){
+				$scope.showCircular = false;
+
 				importExportDocumentModule_importConf.summary=data;
 
 				$scope.stepControl.insertBread({name: $scope.translate.load('sbi.execution.executionpage.toolbar.metadata')})

@@ -24,7 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <md-switch flex ng-model="overwriteMetaData" aria-label="Switch 1" ng-init="overwriteMetaData=false">
   {{translate.load('impexp.overwrite','component_impexp_messages');}} : {{ overwriteMetaData }}
   </md-switch>
-	<md-button ng-click="saveMetaDataAssociation()" class="md-raised">{{translate.load('SBISet.import','component_impexp_messages');}} </md-button> 
+  <div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircular" >
+     		<md-progress-circular md-mode="indeterminate" ></md-progress-circular> 
+  	</div>
+	<md-button ng-show="!showCircular" ng-click="saveMetaDataAssociation()" class="md-raised">{{translate.load('SBISet.import','component_impexp_messages');}} </md-button> 
 </div>
 
 <md-whiteframe  layout="row" layout-wrap class="sourceTargetToolbar md-whiteframe-1dp" >

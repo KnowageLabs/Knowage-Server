@@ -1,10 +1,11 @@
 angular.module('importExportDocumentModule').controller('importControllerStep4', ["$scope","importExportDocumentModule_importConf","sbiModule_restServices",importStep4FuncController]);
 
 function importStep4FuncController($scope,importExportDocumentModule_importConf,sbiModule_restServices) {
-	
-	
-	
+	$scope.showCircular = false;
+
 	$scope.saveMetaDataAssociation=function(){
+		$scope.showCircular = true;
+
 		var data={
 				"overwrite":$scope.overwriteMetaData, 
 			}
@@ -16,9 +17,12 @@ function importStep4FuncController($scope,importExportDocumentModule_importConf,
 			if(data.hasOwnProperty("errors")){
 				$scope.stopImport(data.errors[0].message);	
 			}else if(data.STATUS=="NON OK"){
-				$scope.stopImport(data.ERROR);		
+				$scope.stopImport(data.SUBMESSAGE,$scope.translate.load(data.ERROR,'component_impexp_messages'));	
+				
 			}
 			else if(data.STATUS=="OK"){
+				$scope.showCircular = false;
+
 				importExportDocumentModule_importConf.associationsFileName=data.associationsName;
 				importExportDocumentModule_importConf.logFileName=data.logFileName;
 				importExportDocumentModule_importConf.folderName=data.folderName;

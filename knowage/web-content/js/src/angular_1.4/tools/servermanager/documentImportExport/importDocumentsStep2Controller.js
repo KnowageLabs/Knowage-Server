@@ -1,7 +1,7 @@
 angular.module('importExportDocumentModule').controller('importControllerStep2', ["$scope","importExportDocumentModule_importConf","sbiModule_restServices",importStep2FuncController]);
 
 function importStep2FuncController($scope,importExportDocumentModule_importConf,sbiModule_restServices) {
-
+	$scope.showCircular = false;
 	function enginesInList(engine,list){
 		for(var i in list){
 			if(list[i].name==engine.name){
@@ -29,6 +29,7 @@ function importStep2FuncController($scope,importExportDocumentModule_importConf,
 	}
 
 	$scope.saveEngineAssociation=function(){
+		$scope.showCircular = true;
 		sbiModule_restServices.post("1.0/serverManager/importExport/document", 'associateEngines',getExportedEngines())
 		.success(function(data, status, headers, config) {
 			console.log("data--->",data)
@@ -38,6 +39,7 @@ function importStep2FuncController($scope,importExportDocumentModule_importConf,
 				$scope.stopImport(data.ERROR);		
 			}
 			else if(data.STATUS=="OK"){
+				$scope.showCircular = false;
 				importExportDocumentModule_importConf.datasources.currentDatasources=data.currentDatasources;
 				importExportDocumentModule_importConf.datasources.exportedDatasources=data.exportedDatasources;
 				importExportDocumentModule_importConf.datasources.associatedDatasources=data.associatedDatasources;

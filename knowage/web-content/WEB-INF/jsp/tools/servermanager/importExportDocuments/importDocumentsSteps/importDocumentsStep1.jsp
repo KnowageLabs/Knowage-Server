@@ -21,7 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <div  layout="column">
 	<div layout="row" layout-align="end center">
-		<md-button ng-click="saveRoleAssociation()" ng-if="IEDConf.importPersonalFolder" class="md-raised">{{translate.load('Sbi.next','component_impexp_messages');}}</md-button> 
+		<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircular" layout-fill>
+     		<md-progress-circular md-mode="indeterminate" ></md-progress-circular> 
+  		</div>
+		<md-button ng-show="!showCircular" ng-click="saveRoleAssociation()" ng-if="IEDConf.importPersonalFolder" class="md-raised">{{translate.load('Sbi.next','component_impexp_messages');}}</md-button> 
 		<md-button class="md-raised" ng-if="!IEDConf.importPersonalFolder" ng-click="saveRoleAssociation()" aria-label="upload Users" >{{translate.load("sbi.importusers.startimport");}}</md-button>
 		
 	</div>
