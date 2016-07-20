@@ -307,6 +307,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		
     $scope.shareDataset=function(dataset){
     	var dsCatType = $scope.datasetCategoryType;
+    	if(dsCatType.length==1&&dataset.catTypeId!=undefined){
+    		$scope.unshareDataset(dataset);
+    		return;
+    	}    	
     	var id=dataset.id;
     	var catTypeId = null;
     	var catTypeCd = null;

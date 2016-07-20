@@ -32,7 +32,7 @@
 								class="md-primary">
 							{{translate.load("sbi.general.close");}} </md-button> <md-button id="saveNewFolderBtn"
 								class="md-raised floatRightFederationButton" ng-click="applySelectedCategory(dataset)"
-								class="md-primary" ng-disabled="createFolderForm.$invalid">
+								class="md-primary" ng-disabled="!datasetTemp.catTypeId">
 							{{translate.load("sbi.generic.update");}} </md-button></div>
 			
 					</form>
