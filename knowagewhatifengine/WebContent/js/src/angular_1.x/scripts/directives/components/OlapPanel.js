@@ -478,6 +478,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		if ($scope.lastEditedFormula && $scope.lastEditedCell
 				&& id.startsWith($scope.lastEditedCell)) {
 			unformattedValue = $scope.lastEditedFormula;
+			$scope.cellValue = $scope.lastEditedFormula
 		} else {
 			var type = "float";
 			var originalValue = "";
@@ -487,7 +488,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 				unformattedValue = 0;
 			} else {
 				unformattedValue = parseFloat(originalValue.replace(',', '.'));// Sbi.whatif.commons.Format.cleanFormattedNumber(originalValue,
-																				// Sbi.locale.formats[type]);
+				$scope.cellValue = "";														// Sbi.locale.formats[type]);
 				console.log(originalValue);
 				console.log(unformattedValue);
 			}
@@ -501,9 +502,11 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 				return;
 			}
 
-			$scope.showEditCell(cell, id, originalValue);
+			
 
 		}
+		$scope.showEditCell(cell, id, originalValue);
+		
 	}
 
 	/**
@@ -585,7 +588,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		cell[0].style.setProperty('z-index', '500');
 		cell.css('width', cellWidth);
 		cell.css('transform', 'translatey(-14px)');
-		
+		$scope.id = id;
+		$scope.startVaue = startVaue;
+		$scope.originalValue = originalValue;
 		$mdDialog
 				.show({
 					scope : $scope,
@@ -596,14 +601,15 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 							if (e.keyCode === 13) {
 								$mdDialog.hide();
 
-								$scope.writeBackCell(id, $scope.cellValue,
-										startVaue, originalValue);
+								$scope.writeBackCell($scope.id, $scope.cellValue,
+										$scope.startVaue, $scope.originalValue);
 							}
 
 						}
 
 					},
-					template : "<md-dialog style='min-height: 30px;position: absolute;left: 0;top:0'><input md-autofocus ng-model='cellValue' type='text' style='width: 190px;transform:translateX(50px);' ng-keypress='closeDialog($event)'><input type='button'  ng-click='showFormulaDialog("+"\'"+$scope.cellValue+"\'"+","+startVaue+","+originalValue+")' style='position:absolute;left:0px;top:0px' value='f(x)'></md-dialog>",
+					template : "<md-dialog style='min-height: 30px;position: absolute;left: 0;top:0'><input md-autofocus ng-model='cellValue' type='text' style='width: 190px;transform:translateX(50px);' ng-keypress='closeDialog($event)'><input type='button'  ng-click='showFormulaDialog()' style='position:absolute;left:0px;top:0px' value='f(x)'></md-dialog>",
+					//'/knowagewhatifengine/html/template/main/toolbar/writeBackCellSmall.html'
 					onRemoving : function() {
 						cell.css('width', 'inherit');
 						cell[0].style.setProperty('position', 'relative',
@@ -621,17 +627,21 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		
 		
 	}
-	$scope.showFormulaDialog = function(cellValue,startValue,originalValue) {
+	$scope.showFormulaDialog = function() {
 
 		$mdDialog
 				.show({
 					scope : $scope,
 					preserveScope : true,
 					controller : function DialogController($scope, $mdDialog) {
-						$scope.myFunction = function() {
-							console.log(cellValue+" "+startValue+" "+originalValue)
-
+						$scope.sendFormula = function() {
+							$scope.writeBackCell($scope.id, $scope.cellValue,
+									$scope.startVaue, $scope.originalValue);
+							
+							$mdDialog.hide();
 						}
+						
+						
 
 					},
 					controllerAs : 'olapCtrl',
@@ -639,7 +649,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					// targetEvent : ev,
 					clickOutsideToClose : false,
 					hasBackdrop : false,
-					locals:{originalValue:originalValue}
+					//locals:{originalValue:originalValue}
 				});
 	}
 
