@@ -186,15 +186,23 @@ function checkSourceVisibility(engineName) {
  }
 
 function checkFormVisibility(docType, engineValue) {
+	
+	console.log("Type is : "+docType);
+	console.log("Engine is : "+engineValue)
+	
+	
 	if(!docType){
+		var pos = document.getElementById('doc_type').selectedIndex;
 		docType = document.getElementById('doc_type').options[pos].value;
+		
 	}
 	if(!engineValue){
 		engineValue=document.getElementById('doc_engine').value;
 	}
-		
+	console.log(docType);
 	var ind = docType.indexOf(",");
 	var type = docType.substring(ind+1);
+	
 	// hide template dynamic creation button for olap document 
 	var divLinkConf = document.getElementById("link_obj_conf");
 	if(type=="OLAP" || type=="SMART_FILTER" || type=="MAP" || engineDriver[engineValue].toLowerCase().indexOf("chart.chartdriver")>-1
@@ -1127,7 +1135,7 @@ function saveDocument(goBack) {
 									
 									@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 								*/
-								if (currDataSetIdValue.toString().equals("") && !BIobjTypecode.equalsIgnoreCase("KPI") && !BIobjTypecode.equalsIgnoreCase("MAP"))
+								if (currDataSetIdValue.toString().equals("") && !BIobjTypecode.equalsIgnoreCase("KPI") && !BIobjTypecode.equalsIgnoreCase("MAP") && !BIobjTypecode.equalsIgnoreCase("OLAP"))
 								{
 									hrefConf = "javascript:alert('"
 											+ msgBuilder.getMessage(
