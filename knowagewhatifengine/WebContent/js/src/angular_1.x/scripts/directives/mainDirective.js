@@ -35,5 +35,6 @@ angular.module('olap.directives', [
                                    'member_directive',
                                    'export_version_dialogs',
                                    'drill_down_command_directive',
-                                   'drill_up_command_directive'
+                                   'drill_up_command_directive',
+                                   'olap_designer'
                                    ]);

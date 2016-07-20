@@ -116,7 +116,6 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 	$scope.exportDynamic = function() {
 		
-		console.log($scope.selectedVersion);
 		
 		if($scope.selectedVersion == null){
 			sbiModule_messaging.showErrorMessage("You must slice on Version first",'Error');
@@ -125,10 +124,6 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 			var encoded = encodeURI("1.0/model/exceledit?SBI_EXECUTION_ID="+ JSsbiExecutionID);
 			window.open(sbiModule_restServices.getCompleteBaseUrl(encoded));
 		}
-		
-				
-		
-		
 	}
 	
 	
@@ -463,8 +458,13 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		if (modelStatus == 'locked_by_other' || modelStatus == 'unlocked') {
 			sbiModule_messaging.showErrorMessage(sbiModule_translate
 					.load('sbi.olap.writeback.edit.no.locked'), 'Error');
-			console.log('sbi.olap.writeback.edit.no.locked');
+
 			return;
+		}
+		if ($scope.selectedVersion == null){
+			sbiModule_messaging.showErrorMessage("You must slice on Version first",'Error');
+			return;
+			
 		}
 		if ($scope.modelConfig && $scope.isMeasureEditable(measureName)) {
 
@@ -557,7 +557,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 				// Value is a string/expression
 				unformattedValue = value;
 			}
-
+			
 			// update the last edited values
 			this.lastEditedFormula = unformattedValue;
 			var separatorIndex = id.lastIndexOf('!');

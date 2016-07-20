@@ -1,0 +1,59 @@
+<div layout="column">
+
+<md-toolbar  class="miniheadimportexport" layout="row">
+	<div class="md-toolbar-tools" flex>
+		<h2 class="md-flex" >Olap Designer</h2>
+	</div>
+	<span flex></span>
+	<md-button class="md-primary" ng-click="saveMDX()" ng-disabled="editDisabled" >Save</md-button>
+
+	
+
+</md-toolbar>
+
+<md-card layout-padding>
+
+<div layout="row" layout-wrap>
+      				<div flex=100>
+				       <md-input-container layout="column" flex=30> 
+				       <label>Select type of Template</label>
+				       <md-select
+				        ng-model="selectedType"
+				        ng-change="getCube(selectedType)"
+				        > <md-option 
+				        ng-repeat="l in templateTypeList track by $index" value="{{l.value}}">{{l.name}} </md-option>
+				       </md-select>
+				        </md-input-container>
+				   </div>
+			</div>				
+<md-divider ></md-divider>
+
+<div ng-if="selectedType == 'mondrian' " >
+
+<div layout="row" layout-wrap>
+      				<div flex=100>
+				       <md-input-container  layout="column" flex=30> 
+				       <label>Select Mondrian Schema</label>
+				       <md-select
+				        ng-model="selectedSchema"
+				        > <md-option 
+				        ng-repeat="l in schemasList track by $index" value="{{l}}">{{l.name}} </md-option>
+				       </md-select>
+				        </md-input-container>
+				   </div>
+
+
+</div>
+
+<div ng-if="selectedType == 'xmla' " >
+
+its xmlaa
+
+
+</div>
+
+</md-card>
+	
+
+
+</div>
