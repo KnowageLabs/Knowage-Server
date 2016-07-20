@@ -7,11 +7,15 @@
 	
 	<md-content class="dialog-style">
 	
-	<textarea style=height:50%;width:100%;'></textarea>
-	<div>
-	<md-button>Send</md-button>
-	</div>
-	
+	<textarea ng-model='cellValue' md-autofocus style=height:50%;width:100%;'></textarea>
+	<md-dialog-actions layout="row">
+			<md-button ng-click="myFunction()">
+				Save
+			</md-button>
+			<md-button ng-click="closeDialog()">
+				Cancel
+			</md-button>
+		</md-dialog-actions>
 		
 	</md-content>
 	
