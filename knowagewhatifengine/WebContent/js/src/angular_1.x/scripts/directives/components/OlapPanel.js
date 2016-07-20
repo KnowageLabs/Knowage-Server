@@ -641,6 +641,10 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 							$mdDialog.hide();
 						}
 						
+						$scope.closeFormulaDialog = function(){
+							$mdDialog.hide();
+						}
+						
 						
 
 					},
