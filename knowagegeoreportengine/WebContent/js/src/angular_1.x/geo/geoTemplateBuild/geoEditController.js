@@ -132,7 +132,7 @@
 				if($scope.tecnicalUser){
 				sbiModule_restServices
 				.alterContextPath(sbiModule_config.externalBasePath);
-		sbiModule_restServices.promiseGet("restful-services/1.0/documents",
+	         	sbiModule_restServices.promiseGet("restful-services/1.0/documents",
 				$scope.docLabel+"/template")
 				.then(
 						function(response) {
@@ -143,6 +143,8 @@
 							sbiModule_restServices.errorHandler(
 									response.data, "error loading layers");
 						});
+					
+					
 				}else{
 					$scope.cancelBuildTemplate();
 				}
@@ -643,7 +645,7 @@
 		
 		$scope.cancelBuildTemplateAdmin=function(){
 			 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+sbiModule_config.adapterPath;
-			 url+= "?PAGE=detailBIObjectPage&MESSAGEDET=DETAIL_SELECT&LIGHT_NAVIGATOR_BACK_TO=0";
+			 url+= "?PAGE=detailBIObjectPage&MESSAGEDET=DETAIL_SELECT&LIGHT_NAVIGATOR_BACK_TO=1";
 			 
 			 window.location.href=url;
 		}
