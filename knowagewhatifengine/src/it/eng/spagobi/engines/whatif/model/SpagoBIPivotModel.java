@@ -50,7 +50,6 @@ import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 import org.pivot4j.impl.PivotModelImpl;
 import org.pivot4j.impl.Quax;
-import org.pivot4j.impl.QueryAdapter;
 import org.pivot4j.mdx.Exp;
 import org.pivot4j.mdx.FunCall;
 import org.pivot4j.mdx.Literal;
@@ -73,7 +72,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	private SpagoBICrossNavigationConfig crossNavigation;
 	private List<TargetClickable> targetsClickable;
 	private List<Member> sortPosMembers1;
-	
+
 	public List<Member> getSortPosMembers1() {
 		sortPosMembers1 = new ArrayList<Member>();
 		if (isSorting() && getSortPosMembers() != null) {
@@ -87,26 +86,26 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 	/*
 	 * public void addCalucatedMembers(boolean add) {
-	 *
+	 * 
 	 * if (add) { QueryAxis qaRows = getQueryAxis(Axis.ROWS); QueryAxis
 	 * qaColumns = getQueryAxis(Axis.COLUMNS);
-	 *
+	 * 
 	 * Exp rowsExp = qaRows.getExp();
-	 *
+	 * 
 	 * List<Exp> rowsArgs = new ArrayList<Exp>(1); rowsArgs.add(rowsExp);
-	 *
+	 * 
 	 * FunCall rowsCC = new FunCall("AddCalculatedMembers", Syntax.Function,
 	 * rowsArgs); qaRows.setExp(rowsCC);
-	 *
+	 * 
 	 * Exp columnsExp = qaColumns.getExp();
-	 *
+	 * 
 	 * List<Exp> columsArgs = new ArrayList<Exp>(1); columsArgs.add(columnsExp);
-	 *
+	 * 
 	 * FunCall columnsCC = new FunCall("AddCalculatedMembers", Syntax.Function,
 	 * columsArgs); qaColumns.setExp(columnsCC); }
-	 *
+	 * 
 	 * fireModelChanged();
-	 *
+	 * 
 	 * }
 	 */
 	@Override
@@ -135,7 +134,6 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		}
 
 	};
-
 
 	@Override
 	public synchronized CellSet getCellSet() {
@@ -521,25 +519,25 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 		if (transform.isSwapAxes()) {
 			for (Position positionOnRows : rows.getPositions()) {
-				if (isSorting(positionOnRows)) {
+				if (isSorting(positionOnRows) & this.getSortCriteria() != null) {
 					sort(rows, positionOnRows);
 				}
 
 			}
 			for (Position positionOnColunms : columns.getPositions()) {
-				if (isSorting(positionOnColunms)) {
+				if (isSorting(positionOnColunms) & this.getSortCriteria() != null) {
 					sort(columns, positionOnColunms);
 				}
 			}
 		} else {
 			for (Position positionOnRows : rows.getPositions()) {
-				if (isSorting(positionOnRows)) {
+				if (isSorting(positionOnRows) & this.getSortCriteria() != null) {
 					sort(columns, positionOnRows);
 				}
 
 			}
 			for (Position positionOnColunms : columns.getPositions()) {
-				if (isSorting(positionOnColunms)) {
+				if (isSorting(positionOnColunms) & this.getSortCriteria() != null) {
 					sort(rows, positionOnColunms);
 				}
 			}
