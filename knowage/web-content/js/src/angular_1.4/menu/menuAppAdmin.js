@@ -156,6 +156,53 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
 			}
 			
 			
+			$scope.license = function license(){
+				$scope.toggleMenu();
+				var context=Sbi.config;
+				var parentEl = angular.element(document.body);
+				$scope.licenseData=[];			
+				
+	        	$http.get(Sbi.config.contextName+'/restful-services/1.0/license?onlyValid=true').success(function(data){
+				//$http.get(Sbi.config.contextName+'/restful-services/1.0/FunctionsCatalog').success(function(data){
+	        		console.log("License Data:", data);
+	        		$scope.licenseData=data;
+					$mdDialog.show({
+						parent: parentEl,
+						templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/license.jsp',
+						locals: {
+							title : LN('sbi.home.License'),
+							okMessage : LN('sbi.general.ok'),
+							licenseData :  $scope.licenseData
+						},
+						controller: licenseDialogController
+					});	
+	        	}).
+	        	error(function(error){
+	        		$scope.showAlert('Attention, ' + "Error Calling REST service for Menu. Please check if the server or connection is working.")
+	        	});
+				
+				
+				
+				
+		
+				
+				
+				
+				
+
+				
+				function licenseDialogController(scope, $mdDialog, title, okMessage,licenseData) {
+	        	        scope.title = title;
+	        	        scope.okMessage = okMessage;
+	        	        scope.licenseData = licenseData;
+	        	        scope.closeDialog = function() {
+	        	          $mdDialog.hide();
+	        	        }	        	        
+        	      }
+			}
+			
+			
+			
 			$scope.callExternalApp = function callExternalApp(url){
 				if (!Sbi.config.isSSOEnabled) {
 					if (url.indexOf("?") == -1) {
@@ -219,7 +266,14 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
 			
 			$scope.menuCall = function menuCall(url,type){
 				if (type == 'execDirectUrl'){
-					$scope.redirectIframe(url);
+					if(url=="showLicenseDialog")
+					{
+						$scope.license();
+					}	
+					else
+					{
+						$scope.redirectIframe(url);
+					}	
 				} else if (type == 'roleSelection'){
 					$scope.roleSelection();
 				} else if (type =="execUrl"){
@@ -235,6 +289,7 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
 				} else if (type == "languageSelection"){
 					$scope.languageSelection();
 				}
+				
 			}
         }
     };

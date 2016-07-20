@@ -410,4 +410,9 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GisWebDesigner" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GisWebDesigner" roleType="MODEL_ADMIN" />
 	
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="License" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="License" roleType="MODEL_ADMIN" />
+	
+	
 </ROLE_TYPE_USER_FUNCTIONALITIES>

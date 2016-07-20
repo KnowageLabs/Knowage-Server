@@ -305,7 +305,13 @@
 	        <ITEM   title="#menu.ETLMetadata"
 	                functionality="MetaModelsCatalogueManagement"
 	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/etlMetadataExtraction.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />					
+	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />
+	       	
+	       	<ITEM   title="#menu.license"
+	                functionality="License"
+	                url="showLicenseDialog" 
+	                />        
+	                					
 						
 	  	</ITEM>	 
 	  		

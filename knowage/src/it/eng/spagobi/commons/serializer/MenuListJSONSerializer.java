@@ -105,7 +105,7 @@ public class MenuListJSONSerializer implements Serializer {
 	private static final String HREF_MANAGE_TENANT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagementAngular.jsp";
 	private static final String HREF_MANAGE_UDP = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/udp/manageUdpAngular.jsp";
 
-	//private static final String HREF_USERS = "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_USER_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+	// private static final String HREF_USERS = "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_USER_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 
 	private static final String HREF_USERS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp";
 
@@ -466,6 +466,20 @@ public class MenuListJSONSerializer implements Serializer {
 			functionsCatalog.put(TARGET, "_self");
 			functionsCatalog.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_FUNCTIONS_CATALOG + "');");
 			tempMenuList.put(functionsCatalog);
+		}
+
+		if (isAbleTo(SpagoBIConstants.LICENSE, funcs)) {
+			JSONObject license = new JSONObject();
+			license.put(ICON_CLS, "style"); // TODO: change
+											// icon
+			license.put(TOOLTIP, messageBuilder.getMessage("menu.license", locale));
+			license.put(ICON_ALIGN, "top");
+			license.put(SCALE, "large");
+			license.put(TARGET, "_self");
+
+			// license.put(FIRST_URL, contextName + HREF_IMPEXP_CATALOG); //License open a dialog, no need for url!
+			tempMenuList.put(license);
+
 		}
 
 		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);

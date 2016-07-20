@@ -21,6 +21,7 @@
 %>
 <%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%>    
 
+
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
 <script>
 sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
@@ -109,7 +110,9 @@ Ext.onReady(function () {
 	
 </script>
 <!-- Include AngularJS application -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/menu/menuAppAdmin.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/menu/menuAppAdmin.js"></script> 
+
 
 
 <div data-ng-controller="menuCtrl" ng-app="menuAppAdmin">

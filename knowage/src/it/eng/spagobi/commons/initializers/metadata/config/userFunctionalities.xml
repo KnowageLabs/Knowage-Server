@@ -71,6 +71,8 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MapCatalogueManagement" description="MapCatalogueManagement" />
+	<USER_FUNCTIONALITY productType="KnowageBD" name="License" description="License" />
+	
 	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -147,6 +149,8 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="TemporalDimension" description="TemporalDimension" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DomainWrite" description="DomainWrite" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="License" description="License" />
+	
 	
 	<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -207,6 +211,8 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="SchedulingDistributedOutput" description="SchedulingDistributedOutput" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="SharedDevelopment" description="SharedDevelopment" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="DomainWrite" description="DomainWrite" />
+	<USER_FUNCTIONALITY productType="KnowageER" name="License" description="License" />
+	
 	
 	<!-- Authorizations for KnowagePM -->
 	<USER_FUNCTIONALITY productType="KnowagePM" name="AlertManagement" description="AlertManagement" />
@@ -258,6 +264,8 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="WorkspaceManagement" description="WorkspaceManagement"/>	
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DomainWrite" description="DomainWrite" />
+	<USER_FUNCTIONALITY productType="KnowagePM" name="License" description="License" />
+	
 	
 	<!-- Authorizations for KnowageLI -->
 	<USER_FUNCTIONALITY productType="KnowageLI" name="AnalyticalWidget" description="AnalyticalWidget" />
@@ -326,6 +334,8 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="WorklistManagement" description="WorklistManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="WorkspaceManagement" description="WorkspaceManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageLI" name="License" description="License" />
+	
 		
 	<!-- Authorizations for KnowagePA -->
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement" />
@@ -385,4 +395,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="WorklistManagement" description="WorklistManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="License" description="License" />
+	
 </USER_FUNCTIONALITIES>

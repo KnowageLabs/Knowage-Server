@@ -551,4 +551,7 @@ public class SpagoBIConstants {
 	public static final String DATE_RANGE_TYPE = "DATE_RANGE";
 	public static final String DATE_RANGE_OPTIONS_KEY = "options";
 	public static final String PREDEFINED_GROOVY_SCRIPT_FILE_NAME = "predefinedGroovyScript.groovy";
+
+	public static final String LICENSE = "License";
+
 }
