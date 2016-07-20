@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	<md-button class="md-primary" ng-click="saveTemplate()">{{translate.load("sbi.generic.save")}}</md-button>
     <md-button class="md-primary" ng-if="!tecnicalUser" ng-click="cancelBuildTemplate()">{{translate.load("sbi.generic.cancel")}}</md-button>
-    
+    <md-button class="md-primary" ng-if="tecnicalUser" ng-click="cancelBuildTemplateAdmin()">{{translate.load("sbi.generic.cancel")}}</md-button>
 </md-toolbar>
 <md-whiteframe class="md-whiteframe-2dp relative" layout-fill layout-margin flex  >
 <!-- map name always visible -->

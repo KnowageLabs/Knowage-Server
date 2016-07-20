@@ -61,7 +61,7 @@
 		$scope.editDisabled = $scope.template.mapName==undefined; 
 		
 		$scope.choseDataset= function(){
-			console.log("IN CHOSE DATASET")
+			console.log("IN CHOOSE DATASET")
 			sbiModule_restServices
 			.alterContextPath(sbiModule_config.externalBasePath);
 			sbiModule_restServices.promiseGet("restful-services/1.0/datasets", "mydata")
@@ -123,7 +123,7 @@
 		$scope.loadLayers();
 		
 		$scope.editMap = function() {
-			debugger;
+			//debugger;
 			sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath+"restful-services/");
 
 			$documentViewer.editDocumentByLabel($scope.docLabel, $scope, "edit_map");
@@ -146,6 +146,7 @@
 				}else{
 					$scope.cancelBuildTemplate();
 				}
+				
 			});
 		}
 		
@@ -177,6 +178,7 @@
 				var temp={};
 				temp.TEMPLATE=template;
 				temp.DOCUMENT_LABEL= $scope.docLabel;
+				
 				sbiModule_restServices
 				.alterContextPath(sbiModule_config.externalBasePath);
 		sbiModule_restServices.promisePost("restful-services/1.0/documents",
@@ -639,11 +641,20 @@
 		
 		initializeFromTemplate();
 		
+		$scope.cancelBuildTemplateAdmin=function(){
+			 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+sbiModule_config.adapterPath;
+			 url+= "?PAGE=detailBIObjectPage&MESSAGEDET=DETAIL_SELECT&LIGHT_NAVIGATOR_BACK_TO=0";
+			 
+			 window.location.href=url;
+		}
+		
 		$scope.cancelBuildTemplate=function(){
 		
 			if($window.frameElement.name==="angularIframe"){
 				 $window.parent.angular.element(window.frameElement).scope().cancelMapDesignerDialog();	
 			}
+		
+			
 		}
 	}
 	
