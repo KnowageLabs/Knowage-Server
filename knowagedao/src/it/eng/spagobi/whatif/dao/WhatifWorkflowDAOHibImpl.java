@@ -55,9 +55,10 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			for (int i = 0; i < newWorkflow.size(); i++)
+			for (int i = 0; i < newWorkflow.size(); i++){
+				updateSbiCommonInfo4Update(newWorkflow.get(i));
 				aSession.save(newWorkflow.get(i));
-
+			}
 			tx.commit();
 		} catch (HibernateException he) {
 			if (tx != null)
@@ -341,21 +342,28 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 				if(state.equals(STATE_INPROGRESS)){//if we've found the active user
 					//we set value to done
 					logger.debug("Actual active user is "+actual.getUserId());
-					Query q = aSession.createSQLQuery("UPDATE SBI_WHATIF_WORKFLOW SET state = :st WHERE model_id = :mId AND user_id = :uId");
-					q.setParameter("st", STATE_DONE);
-					q.setParameter("mId", modelId);
-					q.setParameter("uId", actual.getUserId());
-					q.executeUpdate();
+					Criteria criteria = getSession().createCriteria(SbiWhatifWorkflow.class);
+					Criterion rest1 = Restrictions.eq("model_id", modelId);
+					Criterion rest2 = Restrictions.eq("user_id", actual.getUserId());
+					criteria.add(Restrictions.and(rest1, rest2));
+					SbiWhatifWorkflow wf = (SbiWhatifWorkflow)criteria.uniqueResult();
+					wf.setState(STATE_DONE);
+					updateSbiCommonInfo4Update(wf);
+					aSession.update(wf);
+					
 					logger.debug("Done set state done to actual active user is "+actual.getUserId());
 					//if actual is not last user in workflow we enable next user
 					if(i<existing.size()-1){
 						SbiWhatifWorkflow next = existing.get(i+1);
 						logger.debug("Actual active user is "+actual.getUserId());
-						Query q1 = aSession.createSQLQuery("UPDATE SBI_WHATIF_WORKFLOW SET state = :st WHERE model_id = :mId AND user_id = :uId");
-						q1.setParameter("st", STATE_INPROGRESS);
-						q1.setParameter("mId", modelId);
-						q1.setParameter("uId", next.getUserId());
-						q1.executeUpdate();
+						Criteria criteria2 = getSession().createCriteria(SbiWhatifWorkflow.class);
+						Criterion rest2_1 = Restrictions.eq("model_id", modelId);
+						Criterion rest2_2 = Restrictions.eq("user_id", next.getUserId());
+						criteria2.add(Restrictions.and(rest2_1, rest2_2));
+						SbiWhatifWorkflow wf2 = (SbiWhatifWorkflow)criteria2.uniqueResult();
+						wf.setState(STATE_INPROGRESS);
+						updateSbiCommonInfo4Update(wf2);
+						aSession.update(wf2);
 						logger.debug("Done set state inprogress to next active user is "+next.getUserId());
 						return getUserName(next.getUserId());
 						
