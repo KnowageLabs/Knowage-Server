@@ -50,12 +50,19 @@
 	        </property> 
 	        <property name="sbiVersionUp" type="string">
 	            <column name="SBI_VERSION_UP" length="10" not-null="false" />
-	        </property> 
+	        </property>
 	        <property name="sbiVersionDe" type="string">
 	            <column name="SBI_VERSION_DE" length="10" not-null="false" />
 	        </property>                     
+	        <property name="organization" type="string">
+				<column length="20" name="ORGANIZATION" not-null="false" />
+			</property> 
 	  </component>
 
 	  
-    </class>
+   		<filter name="tenantFilter" condition="organization=:tenant" />  
+	</class>
+ 	<filter-def name="tenantFilter">
+  		<filter-param name="tenant" type="string"/>
+	</filter-def>
 </hibernate-mapping>

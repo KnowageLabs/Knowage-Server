@@ -76,8 +76,12 @@
 				class="it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizer" />
 		</set>
 		<filter condition="user_in=:user" name="userFilter" />
+		<filter name="tenantFilter" condition="organization=:tenant" />  
 	</class>
 	<filter-def name="userFilter">
 		<filter-param name="user" type="string" />
+	</filter-def>
+ 	<filter-def name="tenantFilter">
+  		<filter-param name="tenant" type="string"/>
 	</filter-def>
 </hibernate-mapping>

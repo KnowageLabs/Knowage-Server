@@ -50,5 +50,9 @@
         <many-to-one name="sbiUser" class="it.eng.spagobi.profiling.bean.SbiUser" update="false" insert="false" >
             <column name="ID" not-null="true" />
         </many-to-one>
-    </class>
+    	<filter name="tenantFilter" condition="organization=:tenant" />  
+	</class>
+ 	<filter-def name="tenantFilter">
+  		<filter-param name="tenant" type="string"/>
+	</filter-def>
 </hibernate-mapping>

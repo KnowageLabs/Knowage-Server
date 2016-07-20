@@ -71,5 +71,9 @@
         <property name="lastChangeDate" type="timestamp">
             <column name="last_change_date"/>
         </property>
-    </class>
+    	<filter name="tenantFilter" condition="organization=:tenant" />  
+	</class>
+ 	<filter-def name="tenantFilter">
+  		<filter-param name="tenant" type="string"/>
+	</filter-def>
 </hibernate-mapping>

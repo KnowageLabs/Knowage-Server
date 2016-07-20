@@ -55,5 +55,9 @@
 			insert="false" fetch="join">
 			<column name="ext_role_id" not-null="true" />
 		</many-to-one>
+		<filter name="tenantFilter" condition="organization=:tenant" />  
 	</class>
+ 	<filter-def name="tenantFilter">
+  		<filter-param name="tenant" type="string"/>
+	</filter-def>
 </hibernate-mapping>

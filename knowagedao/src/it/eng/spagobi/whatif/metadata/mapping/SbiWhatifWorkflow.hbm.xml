@@ -68,6 +68,10 @@
 		<property generated="never" lazy="false" name="modelId" type="integer">
 			<column length="20" name="MODEL_ID" />
 		</property>
+	 	<filter name="tenantFilter" condition="organization=:tenant" />  
 	</class>
+ 	<filter-def name="tenantFilter">
+  		<filter-param name="tenant" type="string"/>
+	</filter-def>
 
 </hibernate-mapping>

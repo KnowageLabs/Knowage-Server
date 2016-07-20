@@ -48,5 +48,9 @@
         <property name="user" type="string">
             <column name="user_event" length="40" not-null="true" />
         </property>        
-    </class>
+    	<filter name="tenantFilter" condition="organization=:tenant" />  
+	</class>
+ 	<filter-def name="tenantFilter">
+  		<filter-param name="tenant" type="string"/>
+	</filter-def>
 </hibernate-mapping>

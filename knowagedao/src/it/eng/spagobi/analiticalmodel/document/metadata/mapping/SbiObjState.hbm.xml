@@ -57,5 +57,9 @@
         <property name="note" type="string">
             <column name="note" length="300" />
         </property>
-    </class>
+    	<filter name="tenantFilter" condition="organization=:tenant" />  
+	</class>
+ 	<filter-def name="tenantFilter">
+  		<filter-param name="tenant" type="string"/>
+	</filter-def>
 </hibernate-mapping>

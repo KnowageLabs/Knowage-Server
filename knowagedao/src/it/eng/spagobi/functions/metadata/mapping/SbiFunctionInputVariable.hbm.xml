@@ -53,7 +53,9 @@
 		            <column name="ORGANIZATION" length="20" not-null="false" />
 		        </property>      
 		</component>
- 
-	     
-    </class>
+		<filter name="tenantFilter" condition="organization=:tenant" />  
+	</class>
+ 	<filter-def name="tenantFilter">
+  		<filter-param name="tenant" type="string"/>
+	</filter-def>
 </hibernate-mapping>
