@@ -252,19 +252,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</angular-table>
 							</md-content>
 	     				</md-card>
-	     				
+
 	     				<md-card flex>
 	     					<md-toolbar class="md-hue-2">
 	     						<div class="md-toolbar-tools">
-									<i class="fa fa-bars " style="padding-right:10px"></i>
-									<h2 class="md-flex" style="margin-right: 45%">Users work flow</h2>
-									<md-button class="md-icon-button" style="background-color:white;" ng-show="isStartVisible()" ng-click="startWorkflow(selectedMondrianSchema.id)">
+	     							<div style="width:5%">
+	     								<i class="fa fa-bars "></i>
+	     							</div>
+	     							<div style="width:75%">
+										<h2 class="md-flex" style="padding-left:10px;">Users work flow</h2>
+	     							</div>
+									<div style="width:20%">
+										<md-button class="md-fab mondrian-start-btn"  style="background-color:white!important;width:50px;height:50px;" ng-show="isStartVisible()" ng-click="startWorkflow(selectedMondrianSchema.id)">
 										<md-tooltip md-direction="bottom">
 								          Start workflow
 								        </md-tooltip>
-          								<md-icon md-font-icon="fa-play-circle" class="fa fa-2x" style="color:#008800"></md-icon>
+          								<md-icon md-font-icon="fa-play-circle" class="fa fa-2x" style="color:#008800; font-size:40px"></md-icon>
         							</md-button>
-									<span flex=""></span>												
+									</div>											
 								</div>
 								
 	     					</md-toolbar>
