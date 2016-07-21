@@ -230,7 +230,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	     				<md-card flex>
 	     					<md-toolbar class="md-hue-2">
 		     					<div class="md-toolbar-tools">
-									<i class="fa fa-bars " style="padding-right:10px"></i>
 									<h2 class="md-flex" >Available users</h2>
 									<span flex=""></span>					
 								</div>
@@ -256,10 +255,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	     				<md-card flex>
 	     					<md-toolbar class="md-hue-2">
 	     						<div class="md-toolbar-tools">
-	     							<div style="width:5%">
-	     								<i class="fa fa-bars "></i>
-	     							</div>
-	     							<div style="width:75%">
+	     							<div style="width:80%">
 										<h2 class="md-flex" style="padding-left:10px;">Users work flow</h2>
 	     							</div>
 									<div style="width:20%">
