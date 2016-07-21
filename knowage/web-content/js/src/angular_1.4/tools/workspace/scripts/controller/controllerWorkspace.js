@@ -382,7 +382,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 //							console.info("[LOAD]: Not derivated datasets additionaly, because of reloading of MyData.");
 //							$scope.loadNotDerivedDatasets();
 //						}
-						
+						$scope.loadNotDerivedDatasets();
 						$scope.loadDatasets();
 						$scope.loadMyDatasets();
 						$scope.loadEnterpriseDatasets();

@@ -165,12 +165,6 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		});
 	}
 	
-	/**
-	 * This function will be called immediately on the loading of the Workspace, because we need to have not derived datasets on the very beginning.
-	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	 */
-	$scope.loadNotDerivedDatasets();
-	
 	$scope.loadInitialForDatasets=function(){
 		angular.copy($scope.datasets,$scope.datasetsInitial); 
 		angular.copy($scope.myDatasets,$scope.myDatasetsInitial);
