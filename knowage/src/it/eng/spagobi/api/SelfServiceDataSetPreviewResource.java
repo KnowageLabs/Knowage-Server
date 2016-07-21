@@ -119,7 +119,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(profile);
 			IDataSet ds = dao.loadDataSetByLabel(label);
-			List<IDataSet> datsets = dao.loadMyDataDataSets(profile.getUserId().toString());
+			List<IDataSet> datsets = dao.loadMyDataDataSets(profile);
 
 			if (ds == null) {
 				logger.error("No dataset found with label " + label);

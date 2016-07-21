@@ -642,7 +642,7 @@ public class DatasetManagementAPI {
 
 	public List<IDataSet> getEnterpriseDataSet() {
 		try {
-			List<IDataSet> dataSets = getDataSetDAO().loadEnterpriseDataSets();
+			List<IDataSet> dataSets = getDataSetDAO().loadEnterpriseDataSets(getUserProfile());
 			// for (IDataSet dataSet : dataSets) {
 			// checkQbeDataset(dataSet);
 			// }
@@ -655,15 +655,9 @@ public class DatasetManagementAPI {
 	}
 
 	public List<IDataSet> getOwnedDataSet() {
-		return getOwnedDataSet(null);
-	}
-
-	public List<IDataSet> getOwnedDataSet(String userId) {
 		try {
-			if (userId == null) {
-				userId = this.getUserId();
-			}
-			List<IDataSet> dataSets = getDataSetDAO().loadDataSetsOwnedByUser(userId, true);
+
+			List<IDataSet> dataSets = getDataSetDAO().loadDataSetsOwnedByUser(getUserProfile(), true);
 			// for (IDataSet dataSet : dataSets) {
 			// checkQbeDataset(dataSet);
 			// }
@@ -677,17 +671,9 @@ public class DatasetManagementAPI {
 	}
 
 	public List<IDataSet> getSharedDataSet() {
-		return getSharedDataSet(null);
-	}
+		try{
+			List<IDataSet> validDataSets = getDataSetDAO().loadDatasetsSharedWithUser(getUserProfile(), true);
 
-	public List<IDataSet> getSharedDataSet(String userId) {
-		try {
-			if (userId == null) {
-				userId = this.getUserId();
-			}
-			List<IDataSet> dataSets = getDataSetDAO().loadDatasetsSharedWithUser(userId, true);
-			Set<Domain> categories = UserUtilities.getDataSetCategoriesByUser(getUserProfile());
-			List<IDataSet> validDataSets = filterDatasetsByUser(dataSets, categories);
 
 			// for (IDataSet dataSet : dataSets) {
 			// checkQbeDataset(dataSet);
@@ -717,15 +703,9 @@ public class DatasetManagementAPI {
 	}
 
 	public List<IDataSet> getUncertifiedDataSet() {
-		return getUncertifiedDataSet(null);
-	}
-
-	public List<IDataSet> getUncertifiedDataSet(String userId) {
 		try {
-			if (userId == null) {
-				userId = this.getUserId();
-			}
-			List<IDataSet> dataSets = getDataSetDAO().loadDatasetOwnedAndShared(userId);
+
+			List<IDataSet> dataSets = getDataSetDAO().loadDatasetOwnedAndShared(getUserProfile());
 			// for (IDataSet dataSet : dataSets) {
 			// checkQbeDataset(dataSet);
 			// }
@@ -737,17 +717,12 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	public List<IDataSet> getMyDataDataSet() {
-		return getMyDataDataSet(null);
-	}
 
-	public List<IDataSet> getMyDataDataSet(String userId) {
+	public List<IDataSet> getMyDataDataSet() {
 		try {
-			if (userId == null) {
-				userId = this.getUserId();
-			}
-			List<IDataSet> dataSets = getDataSetDAO().loadMyDataDataSets(userId);
-			dataSets = getFilteredDatasets(dataSets, getCategories(getUserProfile()));
+
+			List<IDataSet> dataSets = getDataSetDAO().loadMyDataDataSets(getUserProfile());
+
 			// for (IDataSet dataSet : dataSets) {
 			// checkQbeDataset(dataSet);
 			// }

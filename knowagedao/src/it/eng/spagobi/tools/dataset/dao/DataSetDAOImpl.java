@@ -57,6 +57,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -195,18 +196,18 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
-	public List<IDataSet> loadDataSetsOwnedByUser(String user, Boolean showDerivedDatasets) {
+	public List<IDataSet> loadDataSetsOwnedByUser(UserProfile user, Boolean showDerivedDatasets) {
 		return loadDataSetsByOwner(user, true, false, showDerivedDatasets);
 	}
 
 	@Override
-	public List<IDataSet> loadDataSetsByOwner(String owner, Boolean includeOwned, Boolean includePublic, Boolean showDerivedDatasets) {
-		return loadDataSets(owner, includeOwned, includePublic, null, null, null, null, showDerivedDatasets);
+	public List<IDataSet> loadDataSetsByOwner(UserProfile user, Boolean includeOwned, Boolean includePublic, Boolean showDerivedDatasets) {
+		return loadDataSets(user.getUserId().toString(), includeOwned, includePublic, null, null,  UserUtilities.getDataSetCategoriesByUser(user), null, showDerivedDatasets);
 	}
 
 	@Override
-	public List<IDataSet> loadEnterpriseDataSets() {
-		return loadDataSets(null, null, null, null, "ENTERPRISE", null, null, true);
+	public List<IDataSet> loadEnterpriseDataSets(UserProfile profile) {
+		return loadDataSets(null, null, null, null, "ENTERPRISE", UserUtilities.getDataSetCategoriesByUser(profile), null, true);
 	}
 
 	@Override
@@ -215,17 +216,17 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
-	public List<IDataSet> loadNotDerivedUserDataSets(String user) {
-		return loadDataSets(user, true, false, null, "USER", null, null, false);
+	public List<IDataSet> loadNotDerivedUserDataSets(UserProfile user) {
+		return loadDataSets(user.getUserId().toString(), true, false, null, "USER", UserUtilities.getDataSetCategoriesByUser(user), null, false);
 	}
 
 	@Override
-	public List<IDataSet> loadDatasetsSharedWithUser(String user, Boolean showDerivedDataset) {
-		return loadDataSets(user, false, false, "PUBLIC", "USER", null, null, showDerivedDataset);
+	public List<IDataSet> loadDatasetsSharedWithUser(UserProfile profile, Boolean showDerivedDataset) {
+		return loadDataSets(profile.getUserId().toString(), false, false, "PUBLIC", "USER", UserUtilities.getDataSetCategoriesByUser(profile), null, showDerivedDataset);
 	}
 
 	@Override
-	public List<IDataSet> loadDatasetOwnedAndShared(String user) {
+	public List<IDataSet> loadDatasetOwnedAndShared(UserProfile user) {
 		List<IDataSet> results = new ArrayList<IDataSet>();
 
 		List<IDataSet> owened = loadDataSetsOwnedByUser(user, true);
@@ -237,7 +238,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
-	public List<IDataSet> loadNotDerivedDatasetOwnedAndShared(String user) {
+	public List<IDataSet> loadNotDerivedDatasetOwnedAndShared(UserProfile user) {
 		List<IDataSet> results = new ArrayList<IDataSet>();
 
 		List<IDataSet> owened = loadDataSetsOwnedByUser(user, false);
@@ -249,12 +250,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
-	public List<IDataSet> loadCkanDataSets(String user) {
-		return loadDataSets(user, true, false, null, "USER", null, "SbiCkanDataSet", false);
+	public List<IDataSet> loadCkanDataSets(UserProfile user) {
+		return loadDataSets(user.getUserId().toString(), true, false, null, "USER", UserUtilities.getDataSetCategoriesByUser(user), "SbiCkanDataSet", false);
 	}
 
 	@Override
-	public List<IDataSet> loadMyDataDataSets(String user) {
+	public List<IDataSet> loadMyDataDataSets(UserProfile userProfile) {
 		List<IDataSet> results = new ArrayList<IDataSet>();
 
 		// "from SbiDataSet h where h.active = ? and ( "+
@@ -265,11 +266,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		// " ( h.publicDS = true and h.scope.valueCd ='USER' AND h.owner != ?) "+
 		// ")"
 
-		List<IDataSet> owened = loadDataSetsOwnedByUser(user, true);
+		List<IDataSet> owened = loadDataSetsOwnedByUser(userProfile, true);
 		results.addAll(owened);
-		List<IDataSet> shared = loadDatasetsSharedWithUser(user, true);
+		List<IDataSet> shared = loadDatasetsSharedWithUser(userProfile, true);
 		results.addAll(shared);
-		List<IDataSet> enterprise = loadEnterpriseDataSets();
+		List<IDataSet> enterprise = loadEnterpriseDataSets(userProfile);
 		results.addAll(enterprise);
 
 		return results;
@@ -287,7 +288,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
-	public List<IDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, String category,
+	public List<IDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, Set<Domain> categoryList,
 			String implementation, Boolean showDerivedDatasets) {
 
 		List<IDataSet> results;
@@ -302,32 +303,64 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			session = getSession();
 
 			// create statement
-			String statement = "from SbiDataSet h where h.active = ?";
+			StringBuffer statement = new StringBuffer("from SbiDataSet h where h.active = ?");
 			if (owner != null) {
 				String ownedCondition = includeOwned ? "h.owner = ?" : "h.owner != ?";
-				statement += " and " + ownedCondition + " ";
+				statement.append(" and " + ownedCondition + " ");
 			}
 			if (type != null)
-				statement += " and h.scope.valueCd = ? ";
-			if (category != null)
-				statement += " and h.category.valueCd = ? ";
+				statement.append(" and h.scope.valueCd = ? ");
+			
+			
+			if (categoryList != null){
+				logger.debug("We'll take in consideration categories");
+				if(categoryList.size()>0 ){
+					logger.debug("User has one or more categories");
+					if(owner!=null){
+						//the owner of the dataset can see dataste even if category is null
+						statement.append(" and (h.category.valueCd is null or ");
+					}else{
+						statement.append("and (");
+					}
+									
+					statement.append("  h.category.valueCd in (");
+					for(int i=0; i<categoryList.size(); i++){
+						statement.append("?,");
+					}
+					statement.replace(statement.length()-1, statement.length(), "");
+					statement.append(")) "); 
+				}else{
+					logger.debug("No categories for the user so we take just it's own datasets");
+					if(owner==null || !includeOwned){
+						logger.debug("Owner is not specified on the service so we should return no datasets");
+						return new ArrayList<IDataSet>();
+					}
+				}
+
+			}
+				
 			if (implementation != null)
-				statement += " and h.type = ? ";
+				statement.append(" and h.type = ? ");
 			if (showDerivedDatasets == false) {
-				statement += " and h.federation is null ";
+				statement.append(" and h.federation is null ");
 			}
 
 			// inject parameters
 			int paramIndex = 0;
-			Query query = session.createQuery(statement);
+			Query query = session.createQuery(statement.toString());
 			query.setBoolean(paramIndex++, true);
 			if (owner != null) {
 				query.setString(paramIndex++, owner);
 			}
 			if (type != null)
 				query.setString(paramIndex++, type);
-			if (category != null)
-				query.setString(paramIndex++, category);
+			if (categoryList != null && categoryList.size()>0){
+				Iterator<Domain> it = categoryList.iterator();
+				while (it.hasNext()) {
+					Domain type2 = (Domain) it.next();
+					query.setString(paramIndex++, type2.getValueName());
+				}
+			}
 			if (implementation != null)
 				query.setString(paramIndex++, implementation);
 

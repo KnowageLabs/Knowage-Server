@@ -161,15 +161,15 @@ public class SelfServiceDataSetCRUD {
 			if (!isTechDsMngr) {
 				if (showOnlyOwner != null && !showOnlyOwner.equalsIgnoreCase("true")) {
 					if (showDerivedDatasets) {
-						unfilteredDataSets = dataSetDao.loadDatasetOwnedAndShared(((UserProfile) profile).getUserId().toString());
+						unfilteredDataSets = dataSetDao.loadDatasetOwnedAndShared(((UserProfile) profile));
 					} else {
-						unfilteredDataSets = dataSetDao.loadNotDerivedDatasetOwnedAndShared(((UserProfile) profile).getUserId().toString());
+						unfilteredDataSets = dataSetDao.loadNotDerivedDatasetOwnedAndShared(((UserProfile) profile));
 					}
 				} else {
 					if (showDerivedDatasets) {
 						unfilteredDataSets = dataSetDao.loadUserDataSets(((UserProfile) profile).getUserId().toString());
 					} else {
-						unfilteredDataSets = dataSetDao.loadNotDerivedUserDataSets(((UserProfile) profile).getUserId().toString());
+						unfilteredDataSets = dataSetDao.loadNotDerivedUserDataSets(((UserProfile) profile));
 
 					}
 				}

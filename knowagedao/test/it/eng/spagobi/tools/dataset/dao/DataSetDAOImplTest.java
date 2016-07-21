@@ -67,7 +67,7 @@ public class DataSetDAOImplTest extends AbstractDAOTest {
 	 */
 
 	public void testLoadEnterpriseDataSets() {
-		List<IDataSet> dataSets = dataSetDao.loadEnterpriseDataSets();
+		List<IDataSet> dataSets = dataSetDao.loadEnterpriseDataSets(null);
 		assertNotNull("Impossible to load dataset", dataSets);
 	}
 
@@ -92,12 +92,12 @@ public class DataSetDAOImplTest extends AbstractDAOTest {
 	// }
 
 	public void testLoadDatasetOwnedAndShared() {
-		List<IDataSet> dataSets = dataSetDao.loadDatasetOwnedAndShared("astatuser");
+		List<IDataSet> dataSets = dataSetDao.loadDatasetOwnedAndShared(null);
 		assertNotNull("Impossible to load dataset", dataSets);
 	}
 
 	public void testLoadMyDataDataSets() {
-		List<IDataSet> dataSets = dataSetDao.loadMyDataDataSets("astatuser");
+		List<IDataSet> dataSets = dataSetDao.loadMyDataDataSets(null);
 		assertNotNull("Impossible to load dataset", dataSets);
 	}
 

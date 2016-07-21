@@ -17,11 +17,14 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Session;
 
@@ -40,29 +43,29 @@ public interface IDataSetDAO extends ISpagoBIDao {
 
 	public SbiDataSet loadSbiDataSetById(Integer id, Session session);
 
-	public List<IDataSet> loadDataSetsByOwner(String owner, Boolean includeOwned, Boolean includePublic, Boolean showDerivedDatasets);
+	public List<IDataSet> loadDataSetsByOwner(UserProfile user, Boolean includeOwned, Boolean includePublic, Boolean showDerivedDatasets);
 
-	public List<IDataSet> loadEnterpriseDataSets();
+	public List<IDataSet> loadEnterpriseDataSets(UserProfile user);
 
 	public List<IDataSet> loadUserDataSets(String user);
 
-	public List<IDataSet> loadNotDerivedUserDataSets(String user);
+	public List<IDataSet> loadNotDerivedUserDataSets(UserProfile user);
 
 	public List<IDataSet> loadFlatDatasets();
 
-	public List<IDataSet> loadDataSetsOwnedByUser(String user, Boolean showDerivedDatasets);
+	public List<IDataSet> loadDataSetsOwnedByUser(UserProfile user, Boolean showDerivedDatasets);
 
-	public List<IDataSet> loadDatasetsSharedWithUser(String user, Boolean showDerivedDatasets);
+	public List<IDataSet> loadDatasetsSharedWithUser(UserProfile user, Boolean showDerivedDatasets);
 
-	public List<IDataSet> loadDatasetOwnedAndShared(String user);
+	public List<IDataSet> loadDatasetOwnedAndShared(UserProfile user);
 
-	public List<IDataSet> loadNotDerivedDatasetOwnedAndShared(String user);
+	public List<IDataSet> loadNotDerivedDatasetOwnedAndShared(UserProfile user);
 
-	public List<IDataSet> loadCkanDataSets(String user);
+	public List<IDataSet> loadCkanDataSets(UserProfile user);
 
-	public List<IDataSet> loadMyDataDataSets(String owner);
+	public List<IDataSet> loadMyDataDataSets(UserProfile owner);
 
-	public List<IDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String visibility, String type, String category,
+	public List<IDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, Set<Domain> categoryList,
 			String implementation, Boolean showDerivedDatasets);
 
 	public List<IDataSet> loadDataSets();

@@ -102,18 +102,18 @@ public class GetCertificatedDatasets {
 
 			if (isTech != null && isTech.equals("true")) {
 				// if is technical dataset == ENTERPRISE --> get all ADMIN/DEV public datasets
-				unfilteredDataSets = dataSetDao.loadEnterpriseDataSets();
+				unfilteredDataSets = dataSetDao.loadEnterpriseDataSets((UserProfile)profile);
 			} else {
 				if (allMyDataDS != null && allMyDataDS.equals("true")) {
 					// get all the Datasets visible for the current user (MyData,Enterprise,Shared Datasets,Ckan)
-					unfilteredDataSets = dataSetDao.loadMyDataDataSets(((UserProfile) profile).getUserId().toString());
+					unfilteredDataSets = dataSetDao.loadMyDataDataSets(((UserProfile) profile));
 				} else if (ckanDS != null && ckanDS.equals("true")) {
 					ckanJSONArray = getOnlineCkanDatasets(profile, ckanRepository, ckanFilter, ckanOffset);
-					unfilteredDataSets = dataSetDao.loadCkanDataSets(((UserProfile) profile).getUserId().toString());
+					unfilteredDataSets = dataSetDao.loadCkanDataSets(((UserProfile) profile));
 					synchronizeDatasets(unfilteredDataSets, ckanJSONArray);
 				} else {
 					// else it is a custom dataset list --> get all datasets public with owner != user itself
-					unfilteredDataSets = dataSetDao.loadDatasetsSharedWithUser(((UserProfile) profile).getUserId().toString(), true);
+					unfilteredDataSets = dataSetDao.loadDatasetsSharedWithUser(((UserProfile) profile), true);
 				}
 			}
 			dataSets = getFilteredDatasets(unfilteredDataSets, categories);

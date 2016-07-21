@@ -32,14 +32,22 @@ public class UtilitiesDAOForTest {
 	public static void setUpDatabaseTestJNDI() throws Exception {
 		DAOConfig.setHibernateConfigurationFileFile(new File("../knowage/src/hibernate.cfg.xml"));
 
+		 try {
+		     Class.forName("org.hsqldb.jdbc.JDBCDriver" );
+		 } catch (Exception e) {
+		     System.err.println("ERROR: failed to load HSQLDB JDBC driver.");
+		     e.printStackTrace();
+		     return;
+		 }
+		
 		// Create initial context
 		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, MockFactory.class.getName());
 
 		// Construct DataSource
 		MysqlConnectionPoolDataSource ds = new MysqlConnectionPoolDataSource();
-		ds.setURL("jdbc:mysql://localhost/athenatest");
+		ds.setURL("jdbc:mysql://localhost/athena3");
 		ds.setUser("root");
-		ds.setPassword("");
+		ds.setPassword("root");
 
 		Context ic = new MockContext();
 		MockFactory.context = ic;
