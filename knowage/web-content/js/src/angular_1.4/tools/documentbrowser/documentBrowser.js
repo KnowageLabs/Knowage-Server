@@ -118,7 +118,7 @@ function documentBrowserFunction(
 				}else{
 					response.data[0].expanded=true;					
 				}
-				response.data[0].name='Root';
+				response.data[0].name='Functionalities';
 			}
 			angular.copy(response.data,$scope.folders);
 		},function(response){
