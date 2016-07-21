@@ -3,14 +3,14 @@ angular.module('documentBrowserModule')
 		[ '$mdMedia', '$scope', '$http', '$mdSidenav', 
 		  '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 
 		  'sbiModule_config', 'setFocus','$timeout', '$cookies', 
-		  'sbiModule_user','$interval','$q',documentBrowserFunction]);
+		  'sbiModule_user','$interval','$q','sbiModule_user',documentBrowserFunction]);
 
 function documentBrowserFunction(
 		$mdMedia, $scope, $http, $mdSidenav, 
 		$mdDialog, sbiModule_translate, sbiModule_restServices, 
 		sbiModule_config, setFocus,$timeout, $cookies,
-		sbiModule_user,$interval,$q) {
-	
+		sbiModule_user,$interval,$q,sbiModule_user) {
+	debugger;
 	$scope.translate=sbiModule_translate;
 	$scope.folders = [];
 	$scope.folderDocuments = [];
@@ -118,7 +118,7 @@ function documentBrowserFunction(
 				}else{
 					response.data[0].expanded=true;					
 				}
-				response.data[0].name='Root';
+				response.data[0].name=sbiModule_user.userId;
 			}
 			angular.copy(response.data,$scope.folders);
 		},function(response){
