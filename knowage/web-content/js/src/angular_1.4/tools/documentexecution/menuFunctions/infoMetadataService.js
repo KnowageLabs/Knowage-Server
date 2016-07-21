@@ -12,6 +12,31 @@
 		var lblAttachments = sbiModule_translate.load('sbi.execution.metadata.attachments');
 		
 
+		function getDate() {
+			
+			function addZero(i) {
+			    if (i < 10) {
+			        i = "0" + i;
+			    }
+			    return i;
+			}
+			
+		    var d = new Date();
+		    var h = addZero(d.getHours());
+		    var m = addZero(d.getMinutes());
+		    var hourMinute= h + ":" + m ;
+		    
+		    
+		    var dd = addZero(d.getDate());
+		    var mm = addZero(d.getMonth()+1); //January is 0!
+		    var yyyy =d.getFullYear();
+
+		    var today = mm+'/'+dd+'/'+yyyy;
+		    
+		    return today+" "+ hourMinute;
+		}
+		
+
 		
 		return {
 		openInfoMetadata : function(){
@@ -53,27 +78,28 @@
 		    		metadataDlgCtrl.uploadFile=function (fileToSave) {		  
 		    			if(fileToSave.file!=undefined && fileToSave.file!="" && fileToSave.file!=null)
 		    			{	
+		    			
 							//Upload file to local directory
 							multipartForm.post("2.0/metadata/"+"upload",fileToSave).success(   
 									
 									function(data,status,headers,config){
 										if(data.hasOwnProperty("errors")){						
 											console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");	
-						    				documentExecuteServices.showToast("Upload error", 1);  
+						    				documentExecuteServices.showToast("Upload error", 3);  
 	
 										}else{
-						    				documentExecuteServices.showToast("Upload successfull", 1);  
+						    				documentExecuteServices.showToast("Upload successfull", 3);  
 											console.log("[UPLOAD]: SUCCESS!");
 										}
 	
 									}).error(function(data, status, headers, config) {
 										console.log("[UPLOAD]: FAIL!"+status);
-					    				documentExecuteServices.showToast("Upload error", 1);  
+					    				documentExecuteServices.showToast("Upload error", 3);  
 									});
 		    			}
 		    			else
 		    			{
-		    				documentExecuteServices.showToast("Select a file to Upload!", 1);  
+		    				documentExecuteServices.showToast("Select a file to Upload!", 3);  
 							console.log("[UPLOAD]: SELECT A FILE TO UPLOAD!");
 		    			}	
 		    			
@@ -99,12 +125,21 @@
 			    			metadataDlgCtrl.shortText = response.data.SHORT_TEXT;
 				    		metadataDlgCtrl.longText = response.data.LONG_TEXT;
 				    		metadataDlgCtrl.file = response.data.FILE;
+				    		console.log("RECEIVED FILES: ",metadataDlgCtrl.file)
 				    		for(var i=0;i<metadataDlgCtrl.file.length;i++) 
 				    		{
 				    			if(metadataDlgCtrl.file[i].fileToSave==undefined || metadataDlgCtrl.file[i].fileToSave==null||metadataDlgCtrl.file[i].fileToSave=='')
 				    			{	
 				    				metadataDlgCtrl.file[i].fileToSave={};	// fileToUpload instead of uploadedFile
-				    			}	
+				    			}
+				    			//When there are saved files make its fileNames, saveDates and fileLabel visible for user
+				    			if(metadataDlgCtrl.file[i].savedFile!=undefined && metadataDlgCtrl.file[i].savedFile!=null && metadataDlgCtrl.file[i].savedFile!='')
+				    			{	
+					    			var fileItem=JSON.parse(metadataDlgCtrl.file[i].savedFile);
+					    			metadataDlgCtrl.file[i].fileName=fileItem.fileName;
+					    			metadataDlgCtrl.file[i].saveDate=fileItem.saveDate;
+					    			metadataDlgCtrl.file[i].fileLabel=fileItem.fileLabel;
+				    			} else{	metadataDlgCtrl.file[i].fileLabel=""; }
 				    		}	
 				    		
 			    		},function(response){
@@ -134,7 +169,7 @@
 		    			sbiModule_restServices.promisePost('1.0/documentexecution', 'saveDocumentMetadata', saveObj)
 		    			.then(function(response){
 		    				//documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
-		    				documentExecuteServices.showToast("Salvataggio OK", 1);
+		    				documentExecuteServices.showToast("Salvataggio OK", 3);
 		    				metadataDlgCtrl.getDocumentMetadataFunction(); 
 		    				
 		    				
@@ -143,6 +178,27 @@
 		    			});
 		    		}
 		    		
+		    		metadataDlgCtrl.cleanFile= function(metadataId){
+		    			//remove file from temp directory (if present) and from db
+		    			
+		    			objId=executionInstance.OBJECT_ID;
+		    			var subobjId="null";
+			    		if(executionInstance.SUBOBJECT_ID){
+			    			subobjId=executionInstance.SUBOBJECT_ID;
+			    		}
+
+			    				    		
+			    		sbiModule_restServices.promiseGet('1.0/documentexecution/'+objId+"/"+metadataId, 'deletefilemetadata').then(function(response){
+		    				//documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
+		    				documentExecuteServices.showToast("Rimozione effettuata", 3);
+		    				metadataDlgCtrl.getDocumentMetadataFunction(); 
+		    					
+		    			},function(response){
+		    				documentExecuteServices.showToast(response.data.errors[0].message, 5);
+		    			});
+			    		
+			    		
+		    		}
 		    		
 		    		metadataDlgCtrl.download = function(metadataId,savedFile){
 		    			if(savedFile!="" && savedFile!=null && savedFile!=undefined)
@@ -158,7 +214,7 @@
 		    			}
 		    			else
 		    			{
-		    				documentExecuteServices.showToast("No saved file to download!", 1);  
+		    				documentExecuteServices.showToast("No saved file to download!", 3);  
 							console.log("[DOWNLOAD]: NO FILE TO DOWNLOAD!");
 		    			}	
 		    		}

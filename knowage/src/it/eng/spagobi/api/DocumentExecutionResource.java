@@ -65,6 +65,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -834,7 +835,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 								objMetacontent != null && objMetacontent.getAdditionalInfo() != null ? objMetacontent.getAdditionalInfo() : ""); // additionalInfo
 																																					// contains
 																																					// file
-																																					// name!
+																																					// name! and
+																																					// file
+																																					// saved
+																																					// data
 					}
 				}
 			}
@@ -861,6 +865,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			String jsonMeta = params.getString("jsonMeta");
 			byte[] bytes = null;
 
+			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			Date date = new Date();
+			String saveFileDateString = dateFormat.format(date);
+
 			logger.debug("Object id = " + biobjectId);
 			logger.debug("Subobject id = " + subobjectId);
 
@@ -871,9 +879,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				String text = aMetadata.getString("value");
 				boolean isFileMetadata = !aMetadata.isNull("fileToSave");
 				boolean newFileUploaded = false;
+				String fileLabel = "";
+
 				String fileName = null;
 				if (isFileMetadata) {
 					JSONObject fileMetadataObject = aMetadata.getJSONObject("fileToSave");
+					if (!aMetadata.isNull("fileLabel")) {
+						fileLabel = aMetadata.getString("fileLabel");
+					}
+
 					newFileUploaded = !fileMetadataObject.isNull("fileName");
 					if (newFileUploaded) // file to save is uploaded
 					{
@@ -899,20 +913,38 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						if (newFileUploaded) {
 							bytes = getFileByteArray(filePath, fileName);
 							aObjMetacontent.setContent(bytes);
-							aObjMetacontent.setAdditionalInfo(fileName);
+							JSONObject uploadedFileWithDate = new JSONObject();
+							uploadedFileWithDate.put("fileName", fileName);
+							uploadedFileWithDate.put("saveDate", saveFileDateString);
+							uploadedFileWithDate.put("fileLabel", fileLabel);
+							aObjMetacontent.setAdditionalInfo(uploadedFileWithDate.toString());
+						} else { // metadata file, but file not uploaded yet
+							aObjMetacontent.setContent("".getBytes("UTF-8"));
+							JSONObject uploadedFileInfo = new JSONObject(aObjMetacontent.getAdditionalInfo());
+							uploadedFileInfo.put("fileLabel", fileLabel);
+							aObjMetacontent.setAdditionalInfo(uploadedFileInfo.toString());
 						}
 					} else {
 						aObjMetacontent.setContent(text.getBytes("UTF-8"));
 					}
 					dao.insertObjMetacontent(aObjMetacontent);
-				} else {
+				} else { // modify existing metadata
 					logger.debug("ObjMetacontent for metadata id = " + metadataId + ", biobject id = " + biobjectId + ", subobject id = " + subobjectId
 							+ " was found, it will be modified...");
 					if (isFileMetadata) {
 						if (newFileUploaded) {
 							bytes = getFileByteArray(filePath, fileName);
 							aObjMetacontent.setContent(bytes);
-							aObjMetacontent.setAdditionalInfo(fileName);
+							JSONObject uploadedFileWithDate = new JSONObject();
+							uploadedFileWithDate.put("fileName", fileName);
+							uploadedFileWithDate.put("saveDate", saveFileDateString);
+							uploadedFileWithDate.put("fileLabel", fileLabel);
+							aObjMetacontent.setAdditionalInfo(uploadedFileWithDate.toString());
+						} else { // metadata file, but file not uploaded yet
+							aObjMetacontent.setContent("".getBytes("UTF-8"));
+							JSONObject uploadedFileInfo = new JSONObject(aObjMetacontent.getAdditionalInfo());
+							uploadedFileInfo.put("fileLabel", fileLabel);
+							aObjMetacontent.setAdditionalInfo(uploadedFileInfo.toString());
 						}
 					} else {
 						aObjMetacontent.setContent(text.getBytes("UTF-8"));
@@ -957,13 +989,47 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			IObjMetacontentDAO metacontentDAO = DAOFactory.getObjMetacontentDAO();
 
 			ObjMetacontent metacontent = metacontentDAO.loadObjMetacontent(metaObjId, objectId, subObjectId);
-			String fileName = metacontent.getAdditionalInfo();
+			JSONObject additionalInfoJSON = new JSONObject(metacontent.getAdditionalInfo());
+			String fileName = additionalInfoJSON.getString("fileName");
+
 			int binaryContentId = metacontent.getBinaryContentId();
 			IBinContentDAO binaryContentDAO = DAOFactory.getBinContentDAO();
 			byte[] fileContent = binaryContentDAO.getBinContent(binaryContentId);
 
 			ResponseBuilder response = Response.ok(fileContent);
 			response.header("Content-Disposition", "attachment; filename=" + fileName);
+
+			return response.build();
+
+		} catch (Exception e) {
+			logger.error(httpRequest.getPathInfo(), e);
+			throw new SpagoBIRuntimeException("Error returning file.", e);
+		}
+
+	}
+
+	@GET
+	@Path("/{id}/{metadataObjectId}/deletefilemetadata")
+	// (delete a metacontent)
+	public Response cleanFileMetadata(@PathParam("id") Integer objectId, @PathParam("metadataObjectId") Integer metaObjId,
+			@Context HttpServletRequest httpRequest) throws EMFUserError {
+		try {
+			Integer subObjectId = null;
+			IObjMetacontentDAO metacontentDAO = DAOFactory.getObjMetacontentDAO();
+
+			ObjMetacontent metacontent = metacontentDAO.loadObjMetacontent(metaObjId, objectId, subObjectId);
+			JSONObject additionalInfoJSON = new JSONObject(metacontent.getAdditionalInfo());
+			String fileName = additionalInfoJSON.getString("fileName");
+
+			String filePath = SpagoBIUtilities.getResourcePath() + "/" + METADATA_DIR + "/" + getUserProfile().getUserName().toString() + "/" + fileName;
+			metacontentDAO.eraseObjMetadata(metacontent);
+
+			File metadataTempFile = new File(filePath);
+			if (metadataTempFile.exists()) {
+				metadataTempFile.delete();
+			}
+
+			ResponseBuilder response = Response.ok();
 			return response.build();
 
 		} catch (Exception e) {

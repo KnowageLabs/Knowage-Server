@@ -62,16 +62,25 @@
 				</table>	-->		
 				
 				
-				<md-list>
-					<md-list-item ng-repeat="fileMeta in metadataDlgCtrl.file" class="noright" flex>
-					    <div flex=30%> Metadata&nbsp;name:</div>
-					    <div flex=20%> {{fileMeta.name}}</div>
-					    <div flex=20%> &nbsp;Saved&nbsp;file: </div>
-					    <div flex=10%> {{fileMeta.savedFile}}</div> 
-					    <file-upload id="id_file_upload-{{$index}}" ng-model="fileMeta.fileToSave" ng-disabled=false></file-upload>
-						<md-button  flex=10% class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.uploadFile(fileMeta.fileToSave)">Upload</md-button>		
-						<md-button flex=10% class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.download(fileMeta.id,fileMeta.savedFile)">Download</md-button>				 	
-					</<md-list-item>
+					
+				<table flex>
+					  <tr ng-repeat="fileMeta in metadataDlgCtrl.file">
+					  	<td> <md-input-container> <label>Label</label><input ng-model="fileMeta.fileLabel" <%= canModify? "":"readonly" %> ></md-input-container></td>
+					    <td>&nbsp;Saved&nbsp;file: </td>
+					    <td>{{fileMeta.fileName}}</td> 
+					    <td> &nbsp;Save&nbsp;date: </td>
+					    <td>{{fileMeta.saveDate}}</td>
+					    <td><file-upload id="id_file_upload-{{$index}}" ng-model="fileMeta.fileToSave" ng-disabled=false ng-if=<%= canModify %>></file-upload></td>
+						<td><md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.uploadFile(fileMeta.fileToSave)" ng-if=<%= canModify %>>Upload</md-button></td>		
+						<td><md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.download(fileMeta.id,fileMeta.savedFile)" ng-if="fileMeta.fileName" >Download</md-button></td>
+						<td><md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.cleanFile(fileMeta.id)" ng-if=<%= canModify %>>Clean</md-button></td>						 	
+					  </tr>
+				</table>
+					
+
+					
+					
+					
 				</md-list>		
 					
 
