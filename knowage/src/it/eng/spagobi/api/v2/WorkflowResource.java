@@ -155,7 +155,10 @@ public class WorkflowResource extends AbstractSpagoBIResource {
 				if (!isNew) {
 					wfdao = DAOFactory.getWhatifWorkflowDAO();
 					int id = wfdao.idByUserAndModel(sbiwf.getUserId(), modelId);
-					sbiwf.setId(id);
+					if (id > -1) // -1 if user is not in database but inserted
+									// after this update isNew = false in this
+									// case
+						sbiwf.setId(id);
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block

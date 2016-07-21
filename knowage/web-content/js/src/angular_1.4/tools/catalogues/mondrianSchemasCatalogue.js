@@ -170,7 +170,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 					
 				},
 				function(response){
-					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					sbiModule_messaging.showErrorMessage("Error occured while updating workflow", 'Error');
 				});
 	};
 	
