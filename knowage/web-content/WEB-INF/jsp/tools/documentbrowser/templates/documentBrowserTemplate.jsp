@@ -203,9 +203,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	%>
 </div>
-</md-toolbar> <md-content layout-margin> <md-list> <md-list-item
+</md-toolbar> <md-content layout-margin> <md-list> <md-list-item layout="column"
 	class="md-2-line">
-<div class="md-list-item-text">
+<div class="md-list-item-text " flex>
 	<h3>
 		<b>{{translate.load("sbi.generic.descr")}}</b>
 	</h3>
