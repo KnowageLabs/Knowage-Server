@@ -96,7 +96,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					  <md-card>	
 						<md-toolbar class="miniheadfedsmall"  >
 							<div class="md-toolbar-tools">
-								<i class="fa fa-bars "></i>
 								<h2 class="md-flex" >{{translate.load("sbi.federationdefinition.datasets.avaliable");}}</h2>
 								<span flex=""></span>					
 							</div>
@@ -124,7 +123,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					 <md-card>
 						<md-toolbar class="miniheadfedsmall"  >
 							<div class="md-toolbar-tools">
-								<i class="fa fa-bars"></i>
 								<h2 class="md-flex" >{{translate.load("sbi.federationdefinition.datasets.selected");}}</h2>
 								<span flex=""></span>					
 							</div>
