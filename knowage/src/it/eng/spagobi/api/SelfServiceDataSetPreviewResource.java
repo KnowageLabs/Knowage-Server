@@ -131,7 +131,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			if (datsets != null) {
 				for (int i = 0; i < datsets.size(); i++) {
 					IDataSet datset = datsets.get(i);
-					if (datset.getLabel().equals(ds.getLabel()) && datset.getOwner().equals(profile.getUserId().toString())) {
+					if (datset.getLabel().equals(ds.getLabel())) {
 						isDatasetVisible = true;
 						break;
 					}
