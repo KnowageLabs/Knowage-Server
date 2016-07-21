@@ -39,10 +39,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- controller -->
 <script type="text/javascript"
 	src="/knowage/js/src/angular_1.4/tools/servermanager/importExportCatalogController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importExportDocumentsController.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/catalogImportExport/importCatalogStep0Controller.js"></script>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
 <link rel="stylesheet" type="text/css"
 	href="${pageContext.request.contextPath}/themes/glossary/css/bread-crumb.css">
+	
+	
+	
+<!-- 	breadCrumb -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/bread-crumb.css">	
+	
 </head>
 <body class="bodyStyle kn-importExportDocument">
 <rest-loading></rest-loading>
@@ -92,29 +101,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-tab-body> 
 				</md-tab> 
 				<md-tab label="Import" md-on-select="setTab('Import')" id="importTab" md-active="isSelectedTab('Import')">
-					<md-tab-body layout-fill ><md-card>
-					<md-toolbar  class="secondaryToolbar miniheadimportexport">
-						<div class="md-toolbar-tools">
-							<h2 class="md-flex" >{{translate.load("sbi.importusers.import")}}</h2>
-						</div>
-					</md-toolbar>
-					<md-card-content ng-cloak>
+					<md-tab-body layout-fill >
 					
-							<div layout="row" layout-wrap >
-								<file-upload flex id="AssociationFileUploadImport" ng-model="importFile"></file-upload>
-								<md-button ng-click="upload($event)" aria-label="upload Menu"
-										class="md-fab md-mini"  > <md-icon
-										md-font-icon="fa fa-upload"  >
-							</div>
-							<div layout="row" layout-wrap >
-								<md-radio-group layout="row" ng-model="typeSaveMenu">
-								      <md-radio-button value="Override" ng-click="reloadTree()">{{translate.load("sbi.importusers.override");}}</md-radio-button>
-								      <md-radio-button value="Missing" ng-click="reloadTree()">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
-								    </md-radio-group>
-								
-								<span flex></span>
-									<md-button class="md-raised" ng-click="save($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>
-							</div>
+					
+					<md-card >
+					<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl'></bread-crumb>
+<!-- 					<md-toolbar  class="secondaryToolbar miniheadimportexport"> -->
+<!-- 						<div class="md-toolbar-tools"> -->
+<!-- 							<h2 class="md-flex" >{{translate.load("sbi.importusers.import")}}</h2> -->
+<!-- 						</div> -->
+<!-- 					</md-toolbar> -->
+					<md-card-content ng-cloak layout-wrap  ng-cloak ng-switch="selectedStep">
+					
+					<!-- Upload file -->
+					<div class="importSteps" flex  ng-switch-when="0">
+					<div layout="row" layout-wrap >
+						<file-upload flex id="AssociationFileUploadImport" ng-model="importFile"></file-upload>
+						<md-button ng-click="upload($event)" aria-label="upload Menu"
+								class="md-fab md-mini"  > <md-icon
+								md-font-icon="fa fa-upload"  >
+					</div>
+					<div layout="row" layout-wrap >
+						<md-radio-group layout="row" ng-model="typeSaveMenu">
+						      <md-radio-button value="Override" ng-click="setTypeSaveMenu('Override')">{{translate.load("sbi.importusers.override");}}</md-radio-button>
+						      <md-radio-button value="Missing" ng-click="setTypeSaveMenu('Missing')">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
+						    </md-radio-group>
+						
+						<span flex></span>
+							<md-button class="md-raised" ng-click="associateddatasource($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>
+					</div>
 				
 					<div layout="column">
 						<md-checkbox ng-show="exportedDataset.length>0"
@@ -131,7 +146,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</angular-table>
 						 
 					</div>
-					</md-card-content></md-card>
+					
+					</div>
+					
+					<!-- Datasource -->
+					<div class="importSteps" flex ng-controller="importCatalogControllerStep0" ng-switch-when="1">
+						<%@include file="importCatalogStep0.jsp"%>
+					</div>
+					
+					
+					
+					</md-card-content>
+					</md-card>
 					</md-tab-body>
 			</md-tab>
 

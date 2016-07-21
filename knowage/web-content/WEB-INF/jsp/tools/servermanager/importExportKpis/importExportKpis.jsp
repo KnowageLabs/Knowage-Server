@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/servermanager/kpiImportExport/importExportKpisController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importExportDocumentsController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/kpiImportExport/importKpisStep0Controller.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/kpiImportExport/importKpisStep2Controller.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/kpiImportExport/importKpisStep1Controller.js"></script>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/importexport/css/importExportStyle.css">
 <%-- 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/generalStyle.css"> --%>
@@ -124,8 +125,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<div class="importSteps" flex ng-controller="importKpiControllerStep0" ng-switch-when="0">
 						<%@include file="./importKpisSteps/importKpisStep0.jsp"%>
 					</div>
+					
 					<div class="importSteps" flex ng-controller="importKpiControllerStep1" ng-switch-when="1">
 						<%@include file="./importKpisSteps/importKpisStep1.jsp"%>
+					</div>
+					<div class="importSteps" flex ng-controller="importKpiControllerStep2" ng-switch-when="2">
+						<%@include file="./importKpisSteps/importKpisStep12.jsp"%>
 					</div>
 				</md-card-content>
 				</md-card>

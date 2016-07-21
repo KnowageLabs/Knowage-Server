@@ -1,18 +1,17 @@
 angular.module('impExpKpis').controller(
-		'importKpiControllerStep1',
+		'importKpiControllerStep2',
 		[ 'sbiModule_download', 'sbiModule_device', "$scope", "$mdDialog",
 				"$timeout", "sbiModule_logger", "sbiModule_translate",
 				"sbiModule_restServices", "sbiModule_config",
 				"importExportDocumentModule_importConf", "$mdToast",
-				importKpiStep1FuncController ]);
+				importKpiStep2FuncController ]);
 
-function importKpiStep1FuncController(sbiModule_download, sbiModule_device,
+function importKpiStep2FuncController(sbiModule_download, sbiModule_device,
 		$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate,
 		sbiModule_restServices, sbiModule_config,
 		importExportDocumentModule_importConf, $mdToast)
 {
 	$scope.save = function(ev) {
-		console.log('step ds');
 		if ($scope.IEDConf.roles.selectedKpis.length == 0) {
 			// No KPI selected
 			$scope.showAction(sbiModule_translate.load("sbi.importkpis.anykpichecked"));
@@ -23,35 +22,48 @@ function importKpiStep1FuncController(sbiModule_download, sbiModule_device,
 					"overwrite": $scope.IEDConf.overwriteMode,
 					"targetsAndRelatedKpis": $scope.IEDConf.targetsAndRelatedKpis,
 					"scorecardsAndRelatedKpis": $scope.IEDConf.scorecardsAndRelatedKpis,
-					"schedulersAndRelatedKpis": $scope.IEDConf.schedulersAndRelatedKpis
+					"schedulersAndRelatedKpis": $scope.IEDConf.schedulersAndRelatedKpis,
+					"associateDatasources" : $scope.IEDConf.datasources.associatedDatasources,
+					"exportedDatasources" : $scope.IEDConf.datasources.exportedDatasources
 			}
 			// Import
 //			alert(JSON.stringify(data));
 //			$scope.stopImport($scope.translate.load("sbi.importkpis.importkpiok"));
 			sbiModule_restServices
-				.post("1.0/serverManager/importExport/kpis","associateDataSource", data)
+				.post("1.0/serverManager/importExport/kpis","import", data)
 				.success(function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						$scope.stopImport(data.errors[0].message);
+					} else if (data.success == false) {
+						$scope.stopImport(data.submessage, $scope.translate.load(data.error,'component_impexp_messages'));
+					} else if (data.success == true) {
+						$scope.stopImport($scope.translate.load("sbi.importkpis.importkpiok"));
 					}
-//					else if (data.success == false) {
-//						$scope.stopImport(data.submessage, $scope.translate.load(data.error,'component_impexp_messages'));
-//					} else if (data.success == true) {
-//						$scope.stopImport($scope.translate.load("sbi.importkpis.importkpiok"));
-//					}
-					
-					else if(data.STATUS=="OK"){
-						importExportDocumentModule_importConf.datasources.currentDatasources=data.currentDatasources;
-						importExportDocumentModule_importConf.datasources.exportedDatasources=data.exportedDatasources;
-						importExportDocumentModule_importConf.datasources.associatedDatasources=data.associatedDatasources;
-						$scope.stepControl.insertBread({name: $scope.translate.load('SBISet.impexp.exportedDS','component_impexp_messages')})
-					}
-					
-					
 				}).error(function(data, status, headers, config) {
 					$scope.stopImport(data);
 				})
 		}
 	}
+	
+	
+	$scope.checkDatasourceAssociated = function() {
+		
+		var associatedDS = $scope.IEDConf.datasources.associatedDatasources;
+		var exportedDS = $scope.IEDConf.datasources.exportedDatasources;
+		var countAssociatedDS = Object.keys(associatedDS).length;
+		
+		if(exportedDS.length == countAssociatedDS){
+			return false;
+		}else{
+			return true;
+		}
+		
+		
+		
+		
+		
+	}
+	
+	
 }
 	

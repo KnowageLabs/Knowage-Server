@@ -1,6 +1,6 @@
 var app = angular.module('impExpDataset', [ 'ngMaterial', 'ui.tree',
                                             'angularUtils.directives.dirPagination', 'ng-context-menu',
-                                            'angular_list', 'angular_table' ,'angular_list','sbiModule','file_upload', 'angular_2_col']);
+                                            'angular_list', 'angular_table' ,'angular_list','sbiModule','file_upload', 'angular_2_col','bread_crumb', 'importExportDocumentModule' ]);
 app.directive("fileread", [function () {
 	return {
 		scope: {
@@ -25,9 +25,28 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
 $mdThemingProvider.setDefaultTheme('knowage');
 }]);
-app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", funzione ]);
+app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast",
+                               "importExportDocumentModule_importConf", funzione ]);
 
-function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast) {
+
+//app.controller('catalogImportController', [ 'sbiModule_download',
+//                                		'sbiModule_device', "$scope", "$mdDialog", "$timeout",
+//                                		"sbiModule_logger", "sbiModule_translate", "sbiModule_restServices",
+//                                		"sbiModule_config", "$mdToast",
+//                                		"importExportDocumentModule_importConf", catalogImportFuncController ]);
+//
+//function catalogImportFuncController(sbiModule_download, sbiModule_device, $scope,
+//		$mdDialog, $timeout, sbiModule_logger, sbiModule_translate,
+//		sbiModule_restServices, sbiModule_config, $mdToast,
+//		importExportDocumentModule_importConf) {
+//	
+//	
+//	
+//	
+//
+//}
+
+function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast,importExportDocumentModule_importConf) {
 	$scope.translate = sbiModule_translate;
 	$scope.dataset = [];
 	$scope.datasetSelected = [];
@@ -47,6 +66,37 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.typeSaveMenu="";
 
 
+	$scope.stepItem = [ {
+		name : $scope.translate.load('sbi.ds.file.upload.button')
+	} ];
+	$scope.selectedStep = 0;
+	$scope.stepControl;
+	$scope.IEDConf = importExportDocumentModule_importConf;
+	$scope.IEDConf.exportedKpis = []; // TODO: remove after debug
+
+	$scope.finishImport = function() {
+		if (importExportDocumentModule_importConf.hasOwnProperty("resetData")) {
+			importExportDocumentModule_importConf.resetData();
+		}
+	}
+
+	$scope.stopImport = function(text, title) {
+		var titleFin = title || "";
+		var confirm = $mdDialog.confirm().title(titleFin).content(text)
+				.ariaLabel('error import').ok('OK')
+		$mdDialog.show(confirm).then(
+				function() {
+					$scope.stepControl.resetBreadCrumb();
+					$scope.stepControl.insertBread({
+						name : sbiModule_translate.load(
+								'sbi.impexp.catalog.upload',
+								'component_impexp_messages')
+					});
+					$scope.finishImport();
+				});
+	}
+	
+	
 
 	//export utilities 
 	$scope.loadAllDataset = function(){
@@ -229,6 +279,45 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		}
 	}
 
+	
+	$scope.setTypeSaveMenu = function(type){
+		$scope.typeSaveMenu = type;
+	}
+	
+	
+	$scope.associateddatasource = function(ev){
+		if($scope.typeSaveMenu == ""){
+			//if not selected a mode
+			$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.selectmode"));
+		}else if($scope.datasetSelected.length==0){
+			$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.selectds"));
+		}else{
+			var config={
+					"ds": $scope.datasetSelected,
+					"type":$scope.typeSaveMenu
+
+			}
+			sbiModule_restServices.promisePost("1.0/serverManager/importExport/catalog","associateDataSource",config)
+			.then(function(response, status, headers, config) {
+					
+				
+				
+				if(response.data.STATUS=="OK"){
+					importExportDocumentModule_importConf.datasources.currentDatasources=response.data.currentDatasources;
+					importExportDocumentModule_importConf.datasources.exportedDatasources=response.data.exportedDatasources;
+					importExportDocumentModule_importConf.datasources.associatedDatasources=response.data.associatedDatasources;
+					$scope.stepControl.insertBread({name: $scope.translate.load('sbi.impexp.exportedDS')})
+				}
+					
+					
+					
+			},function(response, status, headers, config) {
+				sbiModule_restServices.errorHandler(response.data,"");
+				$scope.showAction("Error");
+			})
+
+		}
+	}
 
 
 	$scope.setTab = function(Tab){
