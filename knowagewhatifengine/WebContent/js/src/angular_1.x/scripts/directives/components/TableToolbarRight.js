@@ -55,6 +55,8 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.showTable = false;
 	$scope.showOVDescription = false;
 	$scope.wiGridNeeded=false;
+	$scope.tableGridNeeded = true;
+	$scope.olapGridNeeded = true;
 	$scope.subObject ={
 			
 		name:"",
@@ -157,6 +159,11 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		}
 		whatifToolbarButtonsVisible = $scope.whatifToolbarButtons;
 		whatIfBtns(status);
+		
+		if($scope.olapToolbarButtons.length == 0)
+			$scope.olapGridNeeded = false;
+		if($scope.olapToolbarButtons.length == 0)
+			$scope.tableGridNeeded = false;
 	};
 	
 	filterClickedButtons = function(data){
