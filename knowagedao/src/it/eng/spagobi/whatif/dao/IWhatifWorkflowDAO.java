@@ -35,13 +35,16 @@ public interface IWhatifWorkflowDAO extends ISpagoBIDao {
 	public SbiWhatifWorkflow loadUsersWorkflow();
 
 	public int isWorkflowStarted(int modelId);
-	
+
 	public String getActiveUserIdByModel(int modelId);
-	
+
 	/**
 	 * Updates the workflow giving control to next user
+	 * 
 	 * @param modelId
 	 */
 	public String goNextUserByModel(int modelId);
+
+	public int idByUserAndModel(int userId, int modelId);
 
 }

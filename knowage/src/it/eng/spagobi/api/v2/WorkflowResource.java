@@ -42,7 +42,7 @@ public class WorkflowResource extends AbstractSpagoBIResource {
 			JSONObject paramsObj = new JSONObject(params);
 			JSONArray ja = paramsObj.getJSONArray("workflowArr");
 			int modelId = paramsObj.getInt("modelId");
-			List<SbiWhatifWorkflow> newWorkflow = createWFListFromJson(ja, modelId);
+			List<SbiWhatifWorkflow> newWorkflow = createWFListFromJson(ja, modelId, true);
 
 			iwfd = DAOFactory.getWhatifWorkflowDAO();
 			iwfd.createNewWorkflow(newWorkflow);
@@ -65,7 +65,7 @@ public class WorkflowResource extends AbstractSpagoBIResource {
 			JSONObject paramsObj = new JSONObject(params);
 			JSONArray ja = paramsObj.getJSONArray("workflowArr");
 			int modelId = paramsObj.getInt("modelId");
-			List<SbiWhatifWorkflow> newWorkflow = createWFListFromJson(ja, modelId);
+			List<SbiWhatifWorkflow> newWorkflow = createWFListFromJson(ja, modelId, false);
 
 			iwfd = DAOFactory.getWhatifWorkflowDAO();
 			iwfd.updateWorkflow(newWorkflow);
@@ -141,8 +141,9 @@ public class WorkflowResource extends AbstractSpagoBIResource {
 	// return null;
 	// };
 
-	private List<SbiWhatifWorkflow> createWFListFromJson(JSONArray array, int modelId) {
+	private List<SbiWhatifWorkflow> createWFListFromJson(JSONArray array, int modelId, boolean isNew) {
 		List<SbiWhatifWorkflow> toReturn = new ArrayList<>();
+		IWhatifWorkflowDAO wfdao = null;
 
 		for (int i = 0; i < array.length(); i++) {
 			SbiWhatifWorkflow sbiwf = new SbiWhatifWorkflow();
@@ -150,8 +151,16 @@ public class WorkflowResource extends AbstractSpagoBIResource {
 			try {
 				jo = array.getJSONObject(i);
 				sbiwf.setUserId(jo.getInt("id"));
+
+				if (!isNew) {
+					wfdao = DAOFactory.getWhatifWorkflowDAO();
+					int id = wfdao.idByUserAndModel(sbiwf.getUserId(), modelId);
+					sbiwf.setId(id);
+				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (EMFUserError e) {
 				e.printStackTrace();
 			}
 			sbiwf.setModelId(modelId);

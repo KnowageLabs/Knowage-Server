@@ -17,14 +17,6 @@
  */
 package it.eng.spagobi.whatif.dao;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.profiling.bean.SbiUser;
-import it.eng.spagobi.profiling.dao.ISbiUserDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.whatif.metadata.SbiWhatifWorkflow;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -38,6 +30,14 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.whatif.metadata.SbiWhatifWorkflow;
 
 public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IWhatifWorkflowDAO {
 
@@ -55,7 +55,7 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			for (int i = 0; i < newWorkflow.size(); i++){
+			for (int i = 0; i < newWorkflow.size(); i++) {
 				updateSbiCommonInfo4Update(newWorkflow.get(i));
 				aSession.save(newWorkflow.get(i));
 			}
@@ -79,10 +79,11 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	public String getActiveUserIdByModel(int modelId){
+
+	@Override
+	public String getActiveUserIdByModel(int modelId) {
 		logger.debug("IN");
-		logger.debug("loading the active user for the model "+modelId);
+		logger.debug("loading the active user for the model " + modelId);
 		try {
 			Criteria criteria = getSession().createCriteria(SbiWhatifWorkflow.class);
 			Criterion rest1 = Restrictions.eq("modelId", modelId);
@@ -90,28 +91,28 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 			criteria.add(Restrictions.and(rest1, rest2));
 
 			Object wf = criteria.uniqueResult();
-			if(wf==null){
+			if (wf == null) {
 				return null;
-			}else{
+			} else {
 				SbiWhatifWorkflow el = (SbiWhatifWorkflow) wf;
 				int userId = el.getUserId();
 				return getUserName(userId);
 			}
-			
+
 		} catch (Exception he) {
 			logger.error("Exception loading the active user in the worflow", he);
 			throw new SpagoBIRuntimeException("Exception loading the active user in the worflow", he);
-		} finally{
+		} finally {
 			logger.debug("OUT");
 		}
 	}
 
-	private String getUserName(int userId) throws EMFUserError{
+	private String getUserName(int userId) throws EMFUserError {
 		ISbiUserDAO userdao = DAOFactory.getSbiUserDAO();
 		SbiUser user = userdao.loadSbiUserById(userId);
 		return user.getUserId();
 	}
-	
+
 	public List<SbiWhatifWorkflow> getWorkflowByModel(int modelId) {
 		logger.debug("IN");
 		List<SbiWhatifWorkflow> list;
@@ -124,12 +125,12 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 			return criteria.list();
 
 		} catch (HibernateException he) {
-			logger.error("Error loading workflow for model"+ modelId, he);
-			throw new SpagoBIRuntimeException("Error loading workflow for model"+ modelId, he);
-		} 
-		
+			logger.error("Error loading workflow for model" + modelId, he);
+			throw new SpagoBIRuntimeException("Error loading workflow for model" + modelId, he);
+		}
+
 	}
-	
+
 	@Override
 	public List<Integer> getWorkflowUsersOfModel(int modelId) {
 		logger.debug("IN");
@@ -137,7 +138,6 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 		List<Integer> resultArray = new ArrayList<>();
 
 		try {
-
 
 			Criteria criteria = getSession().createCriteria(SbiWhatifWorkflow.class);
 			Criterion rest1 = Restrictions.eq("modelId", modelId);
@@ -154,7 +154,7 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 		} catch (HibernateException he) {
 			logger.error("Exception loading workflow users", he);
 			throw new SpagoBIRuntimeException("Exception loading workflow users", he);
-		} 
+		}
 		return resultArray;
 	}
 
@@ -183,7 +183,6 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 			return 0;
 		}
 
-
 	}
 
 	@Override
@@ -192,14 +191,23 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 		Session aSession = null;
 		Transaction tx = null;
 
+		List<SbiWhatifWorkflow> workflow = getWorkflowByModel(modelId);
+
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query q = aSession.createSQLQuery("UPDATE SBI_WHATIF_WORKFLOW SET state = :stateValue WHERE model_id = :mId AND sequence = 0");
-			q.setParameter("stateValue", STATE_INPROGRESS);
-			q.setParameter("mId", modelId);
-			q.executeUpdate();
+			for (int i = 0; i < workflow.size(); i++) {
+				SbiWhatifWorkflow wf = workflow.get(i);
+				if (wf.getSequcence() == 0) {
+					wf.setState(STATE_INPROGRESS);
+					updateSbiCommonInfo4Update(wf);
+					aSession.update(wf);
+					break;
+				}
+
+			}
+
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
@@ -233,11 +241,12 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 
 			for (int i = 0; i < workflow.size(); i++) {
 				if (!toAdd.contains(workflow.get(i).getUserId())) {
-					Query q = aSession.createSQLQuery("UPDATE SBI_WHATIF_WORKFLOW SET sequence = :seq WHERE model_id = :mId AND user_id = :uId");
-					q.setParameter("seq", i);
-					q.setParameter("mId", workflow.get(i).getModelId());
-					q.setParameter("uId", workflow.get(i).getUserId());
-					q.executeUpdate();
+					SbiWhatifWorkflow wf = workflow.get(i);
+
+					wf.setSequcence(i);
+					updateSbiCommonInfo4Update(wf);
+					aSession.update(wf);
+
 				} else {
 					wfToAdd.add(workflow.get(i));
 				}
@@ -324,56 +333,61 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 
 		return toReturn;
 	}
-	
-	public String goNextUserByModel(int modelId){
+
+	@Override
+	public String goNextUserByModel(int modelId) {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		List<SbiWhatifWorkflow> existing = getWorkflowByModel(modelId);
-		
 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-				for(int i=0; i<existing.size(); i++){
+			for (int i = 0; i < existing.size(); i++) {
 				SbiWhatifWorkflow actual = existing.get(i);
 				String state = actual.getState();
-				if(state.equals(STATE_INPROGRESS)){//if we've found the active user
-					//we set value to done
-					logger.debug("Actual active user is "+actual.getUserId());
+				if (state.equals(STATE_INPROGRESS)) {// if we've found the
+														// active user
+					// we set value to done
+					logger.debug("Actual active user is " + actual.getUserId());
 					Criteria criteria = getSession().createCriteria(SbiWhatifWorkflow.class);
 					Criterion rest1 = Restrictions.eq("model_id", modelId);
 					Criterion rest2 = Restrictions.eq("user_id", actual.getUserId());
 					criteria.add(Restrictions.and(rest1, rest2));
-					SbiWhatifWorkflow wf = (SbiWhatifWorkflow)criteria.uniqueResult();
+					SbiWhatifWorkflow wf = (SbiWhatifWorkflow) criteria.uniqueResult();
 					wf.setState(STATE_DONE);
 					updateSbiCommonInfo4Update(wf);
 					aSession.update(wf);
-					
-					logger.debug("Done set state done to actual active user is "+actual.getUserId());
-					//if actual is not last user in workflow we enable next user
-					if(i<existing.size()-1){
-						SbiWhatifWorkflow next = existing.get(i+1);
-						logger.debug("Actual active user is "+actual.getUserId());
+
+					logger.debug("Done set state done to actual active user is " + actual.getUserId());
+					// if actual is not last user in workflow we enable next
+					// user
+					if (i < existing.size() - 1) {
+						SbiWhatifWorkflow next = existing.get(i + 1);
+						logger.debug("Actual active user is " + actual.getUserId());
 						Criteria criteria2 = getSession().createCriteria(SbiWhatifWorkflow.class);
 						Criterion rest2_1 = Restrictions.eq("model_id", modelId);
 						Criterion rest2_2 = Restrictions.eq("user_id", next.getUserId());
 						criteria2.add(Restrictions.and(rest2_1, rest2_2));
-						SbiWhatifWorkflow wf2 = (SbiWhatifWorkflow)criteria2.uniqueResult();
+						SbiWhatifWorkflow wf2 = (SbiWhatifWorkflow) criteria2.uniqueResult();
 						wf.setState(STATE_INPROGRESS);
 						updateSbiCommonInfo4Update(wf2);
 						aSession.update(wf2);
-						logger.debug("Done set state inprogress to next active user is "+next.getUserId());
+						logger.debug("Done set state inprogress to next active user is " + next.getUserId());
+						tx.commit();
+
 						return getUserName(next.getUserId());
-						
-					}else{
+
+					} else {
 						logger.debug("No other user in the workflow");
+						tx.commit();
 					}
 					return null;
 				}
 			}
-			tx.commit();
+
 		} catch (Exception he) {
 			logger.error("Error setting passing the control to next user", he);
 			if (tx != null)
@@ -384,9 +398,32 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 				if (aSession.isOpen())
 					aSession.close();
 			}
-			logger.debug("Successfully pass controll to next user for model"+modelId);
+			logger.debug("Successfully pass controll to next user for model" + modelId);
 		}
 		return null;
 
+	}
+
+	@Override
+	public int idByUserAndModel(int userId, int modelId) {
+		logger.debug("IN");
+		logger.debug("loading the active user for the model " + modelId);
+
+		try {
+			Criteria criteria = getSession().createCriteria(SbiWhatifWorkflow.class);
+			Criterion rest1 = Restrictions.eq("modelId", modelId);
+			Criterion rest2 = Restrictions.eq("userId", userId);
+			criteria.add(Restrictions.and(rest1, rest2));
+
+			SbiWhatifWorkflow wf = (SbiWhatifWorkflow) criteria.uniqueResult();
+
+			return wf.getId();
+
+		} catch (Exception he) {
+			logger.error("Exception loading the active user in the worflow", he);
+			throw new SpagoBIRuntimeException("Exception loading the active user in the worflow", he);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 }
