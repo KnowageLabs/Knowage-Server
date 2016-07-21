@@ -47,7 +47,7 @@
 	    </component>        
         <set name="sbiAuthorizationsRoleses" table="SBI_AUTHORIZATIONS_ROLES">
             <key>
-                <column name="FUNCTIONALITY_ID" not-null="true" />
+                <column name="AUTHORIZATION_ID" not-null="true"/>
             </key>
             <one-to-many class="it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles" />
         </set>

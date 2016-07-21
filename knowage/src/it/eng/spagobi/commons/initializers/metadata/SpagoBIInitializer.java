@@ -20,14 +20,20 @@ package it.eng.spagobi.commons.initializers.metadata;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
 import it.eng.spagobi.commons.metadata.SbiProductType;
+import it.eng.spagobi.commons.metadata.SbiProductTypeEngine;
 import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.commons.metadata.SbiUserFunctionality;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -49,7 +55,7 @@ public abstract class SpagoBIInitializer extends AbstractHibernateDAO implements
 
 	static private Logger logger = Logger.getLogger(SpagoBIInitializer.class);
 
-	SpagoBIInitializer() {
+	protected SpagoBIInitializer() {
 		targetComponentName = "SpagoBI";
 	}
 
@@ -104,7 +110,7 @@ public abstract class SpagoBIInitializer extends AbstractHibernateDAO implements
 
 	public abstract void init(SourceBean config, Session hibernateSession);
 
-	SourceBean getConfiguration() throws Exception {
+	protected SourceBean getConfiguration() throws Exception {
 		logger.debug("IN");
 		InputStream is = null;
 		SourceBean toReturn = null;
@@ -180,5 +186,112 @@ public abstract class SpagoBIInitializer extends AbstractHibernateDAO implements
 		SbiOrganizationProductType result = (SbiOrganizationProductType) hibQuery.uniqueResult();
 		logger.debug("OUT");
 		return result;
+	}
+
+	protected void deleteProductType(Session hibernateSession, SbiProductType productType) {
+		logger.debug("IN");
+		try {
+			Integer productTypeId = productType.getProductTypeId();
+			Set<SbiProductTypeEngine> sbiProductTypeEngine = productType.getSbiProductTypeEngine();
+			for (SbiProductTypeEngine pte : sbiProductTypeEngine) {
+				deleteProductTypeEngine(hibernateSession, pte);
+			}
+
+			Set<SbiAuthorizations> sbiAuthorization = productType.getSbiAuthorizations();
+			for (SbiAuthorizations auth : sbiAuthorization) {
+				deleteAuthorization(hibernateSession, auth);
+			}
+
+			Set<SbiUserFunctionality> sbiUserFunc = productType.getSbiUserFunctionality();
+			for (SbiUserFunctionality uf : sbiUserFunc) {
+				deleteUserFunctionality(hibernateSession, uf);
+			}
+
+			Set<SbiOrganizationProductType> sbiOrganizationProductType = productType.getSbiOrganizationProductType();
+			for (SbiOrganizationProductType opt : sbiOrganizationProductType) {
+				deleteOrganizationProductType(hibernateSession, opt);
+			}
+
+			hibernateSession.delete(productType);
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An error occured while deletion of Product Type " + productType.getProductTypeId()
+					+ " in synchronization with Configuraion file", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	protected void deleteAuthorization(Session hibernateSession, SbiAuthorizations sbiAuthorization) {
+		logger.debug("IN");
+		try {
+			// Doesn't work check hibernate mapping to use this code
+			// Set<SbiAuthorizationsRoles> sbiAuthorizationsRoles = sbiAuthorization.getSbiAuthorizationsRoleses();
+			// for (SbiAuthorizationsRoles authRole : sbiAuthorizationsRoles) {
+			// deleteAuthorizationsRoles(hibernateSession, authRole);
+			// }
+
+			Integer authorizationId = sbiAuthorization.getId();
+
+			String hql = "delete from SbiAuthorizationsRoles a where a.id.authorizationId = :authorizationId";
+			Query query = hibernateSession.createQuery(hql);
+			query.setInteger("authorizationId", authorizationId);
+			query.executeUpdate();
+
+			hibernateSession.delete(sbiAuthorization);
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An error occured while deletion of Authorizations " + sbiAuthorization.getId()
+					+ " in synchronization with Configuraion file", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	protected void deleteProductTypeEngine(Session hibernateSession, SbiProductTypeEngine sbiProductTypeEngine) {
+		logger.debug("IN");
+		try {
+			hibernateSession.delete(sbiProductTypeEngine);
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An error occured while deletion of Engine " + sbiProductTypeEngine.getId()
+					+ " in synchronization with Configuraion file", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	protected void deleteUserFunctionality(Session hibernateSession, SbiUserFunctionality sbiUserFunc) {
+		logger.debug("IN");
+		try {
+			// automatically delete the SbiRoleTypeUserFunc related to the SbiUserFunctionality
+			hibernateSession.delete(sbiUserFunc);
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An error occured while deletion of User Functionality " + sbiUserFunc.getId()
+					+ " in synchronization with Configuraion file", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	protected void deleteAuthorizationsRoles(Session hibernateSession, SbiAuthorizationsRoles sbiAuthorizationsRoles) {
+		logger.debug("IN");
+		try {
+			hibernateSession.delete(sbiAuthorizationsRoles);
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An error occured while deletion of Authorizations Roles " + sbiAuthorizationsRoles.getId()
+					+ " in synchronization with Configuraion file", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	private void deleteOrganizationProductType(Session hibernateSession, SbiOrganizationProductType opt) {
+		logger.debug("IN");
+		try {
+			hibernateSession.delete(opt);
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An error occured while deletion of Organization Product Type " + opt.getId()
+					+ " in synchronization with Configuraion file", t);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 }

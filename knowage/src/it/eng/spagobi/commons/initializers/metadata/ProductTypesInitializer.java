@@ -52,13 +52,13 @@ public class ProductTypesInitializer extends SpagoBIInitializer {
 		try {
 			String hql = "from SbiProductType";
 			Query hqlQuery = hibernateSession.createQuery(hql);
-			List productTypes = hqlQuery.list();
+			List<SbiProductType> productTypes = hqlQuery.list();
 			if (productTypes.isEmpty()) {
 				logger.info("Product Type table is empty. Starting populating product type...");
 				writeProductTypes(hibernateSession);
 			} else {
 				logger.debug("Product Type table is already populated, only missing product types will be populated");
-				writeMissingProductTypes(hibernateSession);
+				synchronizeProductTypes(hibernateSession, productTypes);
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Ab unexpected error occured while initializing Product Types", t);
@@ -95,7 +95,7 @@ public class ProductTypesInitializer extends SpagoBIInitializer {
 		logger.debug("OUT");
 	}
 
-	private void writeMissingProductTypes(Session aSession) throws Exception {
+	private void synchronizeProductTypes(Session aSession, List<SbiProductType> productTypes) throws Exception {
 		logger.debug("IN");
 		SourceBean productTypesSB = getConfiguration();
 		if (productTypesSB == null) {
@@ -106,6 +106,24 @@ public class ProductTypesInitializer extends SpagoBIInitializer {
 			throw new Exception("No predefined product types found!!!");
 		}
 
+		// remove from DB the SbiProductType deleted in configuration file
+		for (SbiProductType pt : productTypes) {
+			boolean isInConfigFile = false;
+			String engLabelDB = pt.getLabel();
+			Iterator it = productTypesList.iterator();
+			while (it.hasNext()) {
+				SourceBean ptSB = (SourceBean) it.next();
+				String productTypeConfigFile = (String) ptSB.getAttribute("label");
+				if (productTypeConfigFile.equals(engLabelDB)) {
+					isInConfigFile = true;
+					break;
+				}
+			}
+			if (!isInConfigFile) {
+				deleteProductType(aSession, pt);
+			}
+		}
+		// insert missing ProductType
 		List alreadyExamined = new ArrayList();
 		Iterator it = productTypesList.iterator();
 		while (it.hasNext()) {

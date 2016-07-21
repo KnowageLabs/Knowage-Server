@@ -19,7 +19,6 @@ package it.eng.spagobi.security.init;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
@@ -28,6 +27,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.initializers.metadata.SpagoBIInitializer;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
@@ -45,35 +45,38 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 
-public class InternalSecurityInitializer implements InitializerIFace {
+public class InternalSecurityInitializer extends SpagoBIInitializer {
+
+	public InternalSecurityInitializer() {
+		targetComponentName = "InternalSecurity";
+		configurationFileName = "../conf/config/internal_profiling.xml";
+	}
 
 	private SourceBean _config = null;
 
 	static private Logger logger = Logger.getLogger(InternalSecurityInitializer.class);
 
 	@Override
-	public SourceBean getConfig() {
-		return _config;
-	}
-
-	@Override
-	public void init(SourceBean config) {
+	public void init(SourceBean config, Session hibernateSession) {
 
 		logger.debug("IN");
 
 		try {
-			if (config == null) {
+			config = getConfiguration();
+			_config = config;
+
+			if (_config == null) {
 				logger.warn("Security initialization aborted because the input parameter [config] is null");
 				return;
 			}
-
-			_config = config;
 
 			List<SbiAttribute> attributesList = initProfileAttributes(config);
 			List<Role> rolesList = initRoles(config);
@@ -480,15 +483,36 @@ public class InternalSecurityInitializer implements InitializerIFace {
 
 	public void initDefaultAuthorizations(SourceBean config) {
 		List<SourceBean> defaultAuthorizationsSB;
-
+		Session aSession = null;
 		logger.debug("IN");
 		try {
 			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
 			defaultAuthorizationsSB = config.getAttributeAsList("DEFAULT_AUTHORIZATIONS.AUTHORIZATION");
-
 			logger.debug("Succesfully read from configuration [" + defaultAuthorizationsSB.size() + "] defualt authorization(s)");
 
 			List<SbiAuthorizations> authorizations = DAOFactory.getRoleDAO().loadAllAuthorizations();
+
+			aSession = this.getSession();
+			// remove from DB the SbiAuthorizations deleted in configuration file
+			for (SbiAuthorizations auth : authorizations) {
+				boolean isInConfigFile = false;
+				String nameInDB = auth.getName();
+				String productTypeInDB = auth.getProductType().getLabel();
+				Iterator it = defaultAuthorizationsSB.iterator();
+				while (it.hasNext()) {
+					SourceBean authSB = (SourceBean) it.next();
+					String nameInFile = (String) authSB.getAttribute("authorizationName");
+					String productTypeInFile = (String) authSB.getAttribute("productType");
+					if (nameInFile.equals(nameInDB) && productTypeInFile.equals(productTypeInDB)) {
+						isInConfigFile = true;
+						break;
+					}
+				}
+				if (!isInConfigFile) {
+					deleteAuthorization(aSession, auth);
+				}
+
+			}
 
 			// create a Set of names with AuthorizationName-ProductTypeLabel
 			Set<String> authorizationsFound = new HashSet<String>();
@@ -529,6 +553,9 @@ public class InternalSecurityInitializer implements InitializerIFace {
 		} catch (Throwable t) {
 			logger.error("An unexpected error occurred while reading defualt profile attibutes", t);
 		} finally {
+			if (aSession != null && aSession.isOpen()) {
+				aSession.close();
+			}
 			logger.debug("OUT");
 		}
 

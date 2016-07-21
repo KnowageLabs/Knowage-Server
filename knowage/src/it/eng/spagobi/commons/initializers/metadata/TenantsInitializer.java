@@ -47,7 +47,7 @@ public class TenantsInitializer extends SpagoBIInitializer {
 	private static String TENANT_CONFIG_NAME_ATTRIBUTE = "name";
 
 	@Override
-	SourceBean getConfiguration() throws Exception {
+	protected SourceBean getConfiguration() throws Exception {
 		SourceBean config = (SourceBean) ConfigSingleton.getInstance().getAttribute(TENANTS_CONFIG_TAG_NAME);
 		if (config == null) {
 			throw new Exception("Tenants configuration not found!!!");

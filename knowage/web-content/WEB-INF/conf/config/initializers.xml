@@ -33,6 +33,6 @@
 	<!--  /LUCENE INDEXER -->
 	
 	<!-- INTERNAL PROFILING -->
-	<INITIALIZER class="it.eng.spagobi.security.init.InternalSecurityInitializer" config="INTERNAL_PROFILING_INITIALIZER" />
+	<INITIALIZER class="it.eng.spagobi.security.init.InternalSecurityInitializer" config="" />
 	
 </INITIALIZERS>

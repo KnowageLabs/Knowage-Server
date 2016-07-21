@@ -60,7 +60,7 @@ public class FunctionalitiesInitializer extends SpagoBIInitializer {
 			// } else {
 			// logger.debug("User functionality table is already populated");
 			// }
-			writeUserFunctionalities(hibernateSession);
+			synchronizeUserFunctionalities(hibernateSession);
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Ab unexpected error occured while initializeng Functionalities", t);
 		} finally {
@@ -68,7 +68,7 @@ public class FunctionalitiesInitializer extends SpagoBIInitializer {
 		}
 	}
 
-	private void writeUserFunctionalities(Session aSession) throws Exception {
+	private void synchronizeUserFunctionalities(Session aSession) throws Exception {
 		logger.debug("IN");
 		SourceBean userFunctionalitiesSB = getConfiguration();
 
@@ -85,6 +85,29 @@ public class FunctionalitiesInitializer extends SpagoBIInitializer {
 		if (userFunctionalitiesList == null || userFunctionalitiesList.isEmpty()) {
 			throw new Exception("No predefined user functionalities found!!!");
 		}
+
+		// remove from DB the User Functionalities deleted in config file
+		List<SbiUserFunctionality> sbiUserFunctionalityList = getsbiUserFunctionalities(aSession);
+		for (SbiUserFunctionality sbiUserFunc : sbiUserFunctionalityList) {
+			boolean isInConfigFile = false;
+			String nameInDB = sbiUserFunc.getName();
+			String productTypeInDB = sbiUserFunc.getProductType().getLabel();
+			Iterator it = userFunctionalitiesList.iterator();
+			while (it.hasNext()) {
+				SourceBean aUSerFunctionalitySB = (SourceBean) it.next();
+				String nameInFile = (String) aUSerFunctionalitySB.getAttribute("name");
+				String productTypeInFile = (String) aUSerFunctionalitySB.getAttribute("productType");
+				if (nameInFile.equals(nameInDB) && productTypeInFile.equals(productTypeInDB)) {
+					isInConfigFile = true;
+					break;
+				}
+			}
+			if (!isInConfigFile) {
+				deleteUserFunctionality(aSession, sbiUserFunc);
+			}
+
+		}
+		// insert in DB the missing element
 		Iterator it = userFunctionalitiesList.iterator();
 		while (it.hasNext()) {
 			SourceBean aUSerFunctionalitySB = (SourceBean) it.next();
@@ -153,6 +176,23 @@ public class FunctionalitiesInitializer extends SpagoBIInitializer {
 			}
 		}
 		logger.debug("OUT");
+	}
+
+	private List<SbiUserFunctionality> getsbiUserFunctionalities(Session hibernateSession) {
+		logger.debug("IN");
+		List<SbiUserFunctionality> userFuncList = null;
+		try {
+
+			String hql = "from SbiUserFunctionality f";
+			Query query = hibernateSession.createQuery(hql);
+			userFuncList = query.list();
+
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An error occured while retrieving User Functionalities during synchronization with Configuraion file", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		return userFuncList;
 	}
 
 }
