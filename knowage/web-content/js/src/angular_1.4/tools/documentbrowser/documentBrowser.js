@@ -118,7 +118,7 @@ function documentBrowserFunction(
 				}else{
 					response.data[0].expanded=true;					
 				}
-				response.data[0].name=sbiModule_user.userId;
+				response.data[0].name='Root';
 			}
 			angular.copy(response.data,$scope.folders);
 		},function(response){
