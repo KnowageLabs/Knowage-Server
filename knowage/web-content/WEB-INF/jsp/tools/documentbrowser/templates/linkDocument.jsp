@@ -42,7 +42,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  			backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO,"0");
  			backUrlPars.put("MESSAGEDET", "DETAIL_SELECT");
  			String backUrl = urlBuilder.getUrl(request, backUrlPars);
- 			System.out.println(backUrl);
  			 			
 		%>
 		
@@ -84,7 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 			<md-content layout-padding class="mainContainer" >
 			
-			<md-progress-circular loading ng-show="showEl" md-mode="indeterminate" md-diameter="75%" style="position:fixed;top:50%;left:50%;z-index: 500;background:rgba(255, 255, 255, 0);"></md-progress-circular>
+			<rest-loading></rest-loading>
 			
 			<md-select placeholder="Select Source" ng-model="source">
       		<md-option ng-value="source" ng-repeat="source in sourceList" ng-click="getTablesBySourceID(source.sourceId)">{{source.name}}</md-option>
@@ -97,7 +96,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					  <md-card>	
 						<md-toolbar class="miniheadfedsmall"  >
 							<div class="md-toolbar-tools">
-								<i class="fa fa-bars "></i>
 								<h2 class="md-flex" >Avaibile tables</h2>
 								<span flex=""></span>					
 							</div>
@@ -124,7 +122,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					 <md-card>
 						<md-toolbar class="miniheadfedsmall"  >
 							<div class="md-toolbar-tools">
-								<i class="fa fa-bars"></i>
 								<h2 class="md-flex" >Selected Tables</h2>
 								<span flex=""></span>					
 							</div>
