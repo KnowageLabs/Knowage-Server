@@ -1245,7 +1245,7 @@ Ext
 							triggerAction : 'all',
 							selectOnFocus : true,
 							editable : false,
-							allowBlank : true,
+							allowBlank : false,
 							validationEvent : true,
 							xtype : 'combo'
 						});
