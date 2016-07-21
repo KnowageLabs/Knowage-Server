@@ -110,9 +110,10 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 				tx.rollback();
 
 			/**
-			 * Throw this specific exception so the service that called the Hibernate method can handle it and forward the information about the error towards
-			 * the client (final user).
-			 * 
+			 * Throw this specific exception so the service that called the
+			 * Hibernate method can handle it and forward the information about
+			 * the error towards the client (final user).
+			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			throw new HibernateException(he);
@@ -185,8 +186,8 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 			tx = aSession.beginTransaction();
 			hibFunct = new SbiFunctionsOrganizer();
 			hibFunct.setCode(user);
-			hibFunct.setDescr("root");
-			hibFunct.setName("root");
+			hibFunct.setDescr(user);
+			hibFunct.setName("Home");
 			hibFunct.setPath("/" + user);
 			hibFunct.setParentFunct(null);
 			hibFunct.setProg(1);
