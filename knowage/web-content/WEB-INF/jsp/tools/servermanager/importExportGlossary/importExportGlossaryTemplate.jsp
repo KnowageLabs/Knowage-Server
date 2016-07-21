@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 </head>
 <body class="bodyStyle kn-importExportDocument" ng-app="impExpGlossary" >
+<rest-loading></rest-loading>
 	<div ng-controller="glossaryImportController " layout="column" layout-fill layout-wrap class="contentdemoBasicUsage">
 	
 	

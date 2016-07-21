@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 </head>
 <body class="bodyStyle kn-importExportDocument">
-
+<rest-loading></rest-loading>
 <div ng-controller="userImportExportController" layout="column" layout-wrap layout-fill>
 
 	

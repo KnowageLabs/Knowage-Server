@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	href="${pageContext.request.contextPath}/themes/glossary/css/bread-crumb.css">
 </head>
 <body class="bodyStyle kn-importExportDocument">
-
+<rest-loading></rest-loading>
 	<div ng-controller="Controller " layout="column" layout-wrap
 		layout-fill>
 		<md-toolbar class="miniheadimportexport">

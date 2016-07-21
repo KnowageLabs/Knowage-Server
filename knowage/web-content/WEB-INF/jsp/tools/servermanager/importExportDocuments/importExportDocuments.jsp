@@ -48,6 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 </head>
 <body class="bodyStyle kn-importExportDocument" ng-app="importExportDocumentModule" id="ng-app">
+<rest-loading></rest-loading>
 	<!-- TODO using correct message -->
 	<div ng-controller="importExportController " layout="column"
 		layout-fill layout-wrap class="contentdemoBasicUsage">
