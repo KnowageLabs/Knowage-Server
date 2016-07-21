@@ -3,14 +3,14 @@ angular.module('documentBrowserModule')
 		[ '$mdMedia', '$scope', '$http', '$mdSidenav', 
 		  '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 
 		  'sbiModule_config', 'setFocus','$timeout', '$cookies', 
-		  'sbiModule_user','$interval','$q','sbiModule_user',documentBrowserFunction]);
+		  'sbiModule_user','$interval','$q',documentBrowserFunction]);
 
 function documentBrowserFunction(
 		$mdMedia, $scope, $http, $mdSidenav, 
 		$mdDialog, sbiModule_translate, sbiModule_restServices, 
 		sbiModule_config, setFocus,$timeout, $cookies,
-		sbiModule_user,$interval,$q,sbiModule_user) {
-	debugger;
+		sbiModule_user,$interval,$q) {
+	
 	$scope.translate=sbiModule_translate;
 	$scope.folders = [];
 	$scope.folderDocuments = [];
