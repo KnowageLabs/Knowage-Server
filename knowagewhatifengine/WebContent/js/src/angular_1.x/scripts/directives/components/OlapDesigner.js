@@ -46,9 +46,27 @@ function olapDesignerController($scope, $timeout, $window, $mdDialog, $http, $sc
 			"address": "",
 			"parameters": []		
 	}
+	
 	angular.element(document).ready(function () { // on page load function
 		$scope.getMondrianSchemas();
     });
+	
+	$scope.addXmlaParameter=function(){ 
+	
+		
+		var parameter={};
+		$scope.xmlaObj.parameters.push(parameter);
+		console.log($scope.xmlaObj.parameters);
+		return parameter;
+		
+	}
+	
+	$scope.removeXmlaParameter=function(inputVariable){
+	
+		var index=$scope.xmlaObj.parameters.indexOf(inputVariable);		
+		$scope.xmlaObj.parameters.splice(index, 1);
+		console.log($scope.xmlaObj.parameters);
+	}
 	
 	$scope.getMondrianSchemas = function(){
 		
@@ -100,4 +118,3 @@ $scope.getCube = function(){
 
 };
 
-})();

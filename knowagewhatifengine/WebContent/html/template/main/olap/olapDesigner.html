@@ -70,6 +70,31 @@
 						</div>
 					</div>
 
+						<div>
+  							XMLA Parameters
+  							<i class="fa fa-plus-square" ng-click="input=addXmlaParameter()" aria-hidden="true" ></i>
+  							
+  							<div ng-repeat="p in xmlaObj.parameters" layout-gt-sm="row" layout-align="start center">
+
+	     						<div layout="row"> 								
+      								<md-input-container class="md-block" flex-gt-sm>
+            							<label>Parameter Name</label>
+        								<input ng-model="p.name">
+      								</md-input-container>
+      								
+      								<md-input-container class="md-block" flex-gt-sm>
+            							<label>Parameter Value</label>
+        								<input ng-model="p.value">
+      								</md-input-container>
+	     						</div> 						
+				      						
+	      						<div>
+									<i class="fa fa-minus-square" ng-click="output=removeXmlaParameter(i)" aria-hidden="true"></i> 	
+								</div>	      						
+  							</div>
+  						</div>
+
+
 
 </div>
 
