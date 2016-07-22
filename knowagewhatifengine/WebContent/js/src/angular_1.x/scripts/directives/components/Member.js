@@ -15,14 +15,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-(function() {
-	var scripts = document.getElementsByTagName("script");
-	var currentScriptPath = scripts[scripts.length - 1].src;
-	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
-	var contextBasePath = currentScriptPath + '../../../../../';
-
-angular.module('member_directive',[])
-	.directive('member', function (sbiModule_restServices,sbiModule_messaging,$mdDialog) {
+angular.module('member_directive',['sbiModule'])
+	.directive('member', function (sbiModule_restServices,sbiModule_messaging,$mdDialog,sbiModule_config) {
 	    return {
 	        restrict: 'A',
 	        
@@ -121,8 +115,7 @@ angular.module('member_directive',[])
 	    				parent: angular.element(document.body),
 	    				controllerAs : 'olapCtrl',
 //	    				templateUrl : '/knowagewhatifengine/html/template/main/toolbar/properties.html',
-	    				templateUrl : contextBasePath + 'html/template/main/toolbar/properties.html',
-	    				//targetEvent : ev,
+	    				templateUrl : sbiModule_config.contextName + '/html/template/main/toolbar/properties.html',
 	    				clickOutsideToClose : false,
 	    				hasBackdrop:false
 	    			});
@@ -143,4 +136,3 @@ angular.module('member_directive',[])
 	        }
 	    };
 	});
-})();

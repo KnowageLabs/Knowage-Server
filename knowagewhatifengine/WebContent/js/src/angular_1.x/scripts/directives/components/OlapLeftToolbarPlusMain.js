@@ -15,20 +15,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-(function() {
-	var scripts = document.getElementsByTagName("script");
-	var currentScriptPath = scripts[scripts.length - 1].src;
-	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
-	var contextBasePath = currentScriptPath + '../../../../../';
-
-angular.module('olap_left_toolbar_plus_main',[])
-	.directive('olapLeftToolbarPlusMain', function () {
+angular.module('olap_left_toolbar_plus_main',['sbiModule'])
+	.directive('olapLeftToolbarPlusMain', function (sbiModule_config) {
 		 return {
 		      restrict: 'E',
 		      replace: 'true',
 //		      templateUrl: '/knowagewhatifengine/html/template/main/olap/leftToolbarPlusMain.html'
-		      templateUrl: contextBasePath + 'html/template/main/olap/leftToolbarPlusMain.html'
+		      templateUrl: sbiModule_config.contextName + '/html/template/main/olap/leftToolbarPlusMain.html'
 		  };
 	});
-})();
