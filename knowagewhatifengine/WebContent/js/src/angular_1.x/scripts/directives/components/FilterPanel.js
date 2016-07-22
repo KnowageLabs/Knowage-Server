@@ -16,18 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 (function() {
-	var scripts = document.getElementsByTagName("script");
-	var currentScriptPath = scripts[scripts.length - 1].src;
-	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
-	var contextBasePath = currentScriptPath + '../../../../../';
+	
 
-angular.module('filter_panel',[])
-.directive('filterPanel',function(){
+angular.module('filter_panel',['sbiModule'])
+.directive('filterPanel',function(sbiModule_config){
 	return{
 		restrict: "E",
 		replace: 'true',
 //		templateUrl: '/knowagewhatifengine/html/template/main/filter/filterPanel.html',
-		templateUrl: contextBasePath + 'html/template/main/filter/filterPanel.html',
+		templateUrl: function(){
+	    	 return sbiModule_config.contextName+'/html/template/main/filter/filterPanel.html';
+	    	  
+	      },
 		controller: filterPanelController
 	}
 });

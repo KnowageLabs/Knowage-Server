@@ -16,54 +16,62 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 (function() {
-	var scripts = document.getElementsByTagName("script");
-	var currentScriptPath = scripts[scripts.length - 1].src;
-	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
-	var contextBasePath = currentScriptPath + '../../../../../';
-//  					/knowagewhatifengine/js/src/angular_1.x/scripts/directives/components/ExportVersionDialog.js
-
-var app = angular.module('export_version_dialogs',[]);
+						
+var app = angular.module('export_version_dialogs',['sbiModule']);
 
 app.directive('exportVersionWizard',
-	function(){
+	function(sbiModule_config){
 	return {
 	      restrict: 'E',
 	      replace: true,
-//	      templateUrl: '/knowagewhatifengine/html/template/right/export/exportWizard.html'
-	      templateUrl: contextBasePath + 'html/template/right/export/exportWizard.html'
+//	     
+	      templateUrl: function(){
+	    	 return sbiModule_config.contextName+'/html/template/right/export/exportWizard.html';
+	    	  
+	      }
+	    	 
 	  };
 	}
 )
 
 app.directive('exportVersionFileWizard', 
-	function(){
+	function(sbiModule_config){
 		return{
 			restrict:'E',
 			replace:true,
 //			templateUrl: '/knowagewhatifengine/html/template/right/export/exportWizardFile.html'
-			templateUrl: contextBasePath + 'html/template/right/export/exportWizardFile.html'
+			templateUrl: function(){
+		    	 return sbiModule_config.contextName+'/html/template/right/export/exportWizardFile.html';
+		    	  
+		      }
 		};
 	}
 )
 
 app.directive('exportVersionTableWizard', 
-	function(){
+	function(sbiModule_config){
 		return{
 			restrict:'E',
 			replace:true,
 //			templateUrl: '/knowagewhatifengine/html/template/right/export/exportWizardTable.html'
-			templateUrl: contextBasePath + 'html/template/right/export/exportWizardTable.html'
+			templateUrl: function(){
+		    	 return sbiModule_config.contextName+'/html/template/right/export/exportWizardTable.html';
+		    	  
+		      }
 		};
 	}
 )
 
 app.directive('exportVersionMsg', 
-	function(){
+	function(sbiModule_config){
 		return{
 			restrict:'E',
 			replace:true,
 //			templateUrl: '/knowagewhatifengine/html/template/right/export/exportWizardMessage.html'
-			templateUrl: contextBasePath + 'html/template/right/export/exportWizardMessage.html'
+			templateUrl: function(){
+		    	 return sbiModule_config.contextName+'/html/template/right/export/exportWizardMessage.html';
+		    	  
+		      }
 		};
 	}
 )

@@ -17,17 +17,18 @@
  */
 
 (function() {
-	var scripts = document.getElementsByTagName("script");
-	var currentScriptPath = scripts[scripts.length - 1].src;
-	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 	
-angular.module('sbi_chart_toolbar',[])
-.directive('sbiChartToolbar',function(){
+	
+angular.module('sbi_chart_toolbar',['sbiModule'])
+.directive('sbiChartToolbar',function(sbiModule_config){
 	return{
 		restrict:"E",
 		replace: true,
-//		templateUrl:'/knowagewhatifengine/html/template/right/chartToolbar.html'
-		templateUrl: currentScriptPath + '../../../../../html/template/right/chartToolbar.html'
+//		
+		templateUrl:  function(){
+	    	 return sbiModule_config.contextName+'/html/template/right/chartToolbar.html';
+	    	  
+	      }
 	}
 });
 
