@@ -216,7 +216,9 @@ md-card.md-knowage-theme {
     background-color: $tabBackground;
     display: block; 
     max-height: none !important;
-    //padding: $tabPadding;
+    &.flexCard{
+      display: flex;
+    }
 }
 
 md-tab-content md-content.md-knowage-theme {
