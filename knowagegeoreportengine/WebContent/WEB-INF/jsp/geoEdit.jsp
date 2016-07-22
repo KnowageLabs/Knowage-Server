@@ -81,7 +81,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<queue-table>
 			<div layout="row"> 
 				<span flex></span>
-				<md-button ng-click="scopeFunctions.loadListLayers()">{{scopeFunctions.translate.load('gisengine.designer.layer.change')}}</md-button>
+				<md-button ng-click="scopeFunctions.loadListLayers()">{{scopeFunctions.translate.load('gisengine.designer.layer.add')}}</md-button>
 			</div>
 		</queue-table> 
 		</angular-table>	
@@ -165,7 +165,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<md-whiteframe class="md-whiteframe-4dp layout-padding " flex layout layout-margin style ="height: 40%;" > 
 	    <angular-table flex  
 		id='indicatorsTable' ng-model="datasetIndicators"
-		columns='[{"label":"Measure","name":"indicatorNameView","hideTooltip":true},{"label":"Lable","name":"indicatorLabel","hideTooltip":true,"editable":true}]'
+		columns='[{"label":"Measure","name":"indicatorNameView","hideTooltip":true},{"label":"Label","name":"indicatorLabel","hideTooltip":true,"editable":true}]'
 		columns-search='["indicatorName","indicatorLabel"]' show-search-bar=true
 		scope-functions='tableFunctionIndicator' speed-menu-option='indicatorsSpeedMenu'
 		allow-edit="true"
