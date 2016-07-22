@@ -1,38 +1,66 @@
 <angular-list-detail ng-controller="metaModelCreationBusinessController">
 	<list label="translate.load('sbi.meta.businessclass')+'/'+translate.load('sbi.meta.businessview')" layout="column"> 
 		<span ng-if="meta.businessModels.length>0">
-			<component-tree id="bcmTree"  style="margin:0px" 
-					ng-model="meta.businessModels"
-					highlights-selected-item="true"   
-					subnode-key="columns" 
-					click-function="selectBusinessModel(node)"
-					hide-progress=true
-					not-hide-on-load = true
-					is-folder-fn="businessModel_isFolder(node)"
-					folder-icon-fn="businesslModel_getlevelIcon(node)"
-					open-folder-icon-fn="businesslModel_getlevelIcon(node)"
-					interceptor="businessModelTreeInterceptor"
-					static-tree=true
-					expand-on-click=false
-					tree-root-name="translate.load('sbi.meta.businessclass')"
-				></component-tree>
+			<md-subheader class="md-primary">{{translate.load('sbi.meta.businessclass')}}</md-subheader>
+			<md-list class="md-dense noPadding"  ng-repeat="bclass in meta.businessModels" flex>
+			  	<md-list-item class="md-long-text"  ng-click="selectBusinessModel(bclass)">
+			  		<md-icon ng-class="businesslModel_getlevelIcon(bclass)" ></md-icon>
+			  		<p>{{bclass.name}}</p>
+			  		<md-icon class="md-secondary" ng-click="bclass.expanded=!bclass.expanded" aria-label="Chat" ng-class="bclass.expanded==true ? 'fa-chevron-up' : 'fa-chevron-down'" md-font-icon="fa"></md-icon>
+			  	</md-list-item>
+			  	<md-list-item ng-if="bclass.expanded==true" style="padding-left: 30px;" class="md-long-text" ng-repeat="bcCol in bclass.columns" ng-click="selectBusinessModel(bcCol)">
+			  		<md-icon ng-class="businesslModel_getlevelIcon(bcCol)" ></md-icon>
+			  		<p>{{bcCol.name}}</p>
+			  	</md-list-item>
+			 </md-list>
+		
+		
+<!-- 			<component-tree id="bcmTree"  style="margin:0px"  -->
+<!-- 					ng-model="meta.businessModels" -->
+<!-- 					highlights-selected-item="true"    -->
+<!-- 					subnode-key="columns"  -->
+<!-- 					click-function="selectBusinessModel(node)" -->
+<!-- 					hide-progress=true -->
+<!-- 					not-hide-on-load = true -->
+<!-- 					is-folder-fn="businessModel_isFolder(node)" -->
+<!-- 					folder-icon-fn="businesslModel_getlevelIcon(node)" -->
+<!-- 					open-folder-icon-fn="businesslModel_getlevelIcon(node)" -->
+<!-- 					interceptor="businessModelTreeInterceptor" -->
+<!-- 					static-tree=true -->
+<!-- 					expand-on-click=false -->
+<!-- 					tree-root-name="translate.load('sbi.meta.businessclass')" -->
+<!-- 				></component-tree> -->
 		</span>
 	<span ng-if="meta.businessViews.length>0">
-		<component-tree id="bvmTree"  style="margin:0px" 
-				ng-model="meta.businessViews"
-				highlights-selected-item="true"   
-				subnode-key="columns" 
-				hide-progress=true
-				interceptor="businessViewTreeInterceptor"
-				static-tree=true
-				not-hide-on-load = true
-				expand-on-click=false
-				click-function="selectBusinessModel(node)"
-				is-folder-fn="businessModel_isFolder(node)"
-				folder-icon-fn="businesslModel_getlevelIcon(node)"
-				open-folder-icon-fn="businesslModel_getlevelIcon(node)"
-				tree-root-name="translate.load('sbi.meta.businessview')"
-			></component-tree>
+	
+			<md-subheader class="md-primary">{{translate.load('sbi.meta.businessview')}}</md-subheader>
+			<md-list class="md-dense noPadding"  ng-repeat="bview in meta.businessViews" flex>
+			  	<md-list-item class="md-long-text"  ng-click="selectBusinessModel(bview)">
+			  		<md-icon ng-class="businesslModel_getlevelIcon(bview)" ></md-icon>
+			  		<p>{{bview.name}}</p>
+			  		<md-icon class="md-secondary" ng-click="bview.expanded=!bview.expanded" aria-label="Chat" ng-class="bview.expanded==true ? 'fa-chevron-up' : 'fa-chevron-down'" md-font-icon="fa"></md-icon>
+			  	</md-list-item>
+			  	<md-list-item ng-if="bview.expanded==true" style="padding-left: 30px;" class="md-long-text" ng-repeat="bcCol in bview.columns" ng-click="selectBusinessModel(bcCol)">
+			  		<md-icon ng-class="businesslModel_getlevelIcon(bcCol)" ></md-icon>
+			  		<p>{{bcCol.name}}</p>
+			  	</md-list-item>
+			 </md-list>
+	
+<!-- 		<component-tree id="bvmTree"  style="margin:0px"  -->
+<!-- 				ng-model="meta.businessViews" -->
+<!-- 				highlights-selected-item="true"    -->
+<!-- 				subnode-key="columns"  -->
+<!-- 				hide-progress=true -->
+<!-- 				interceptor="businessViewTreeInterceptor" -->
+<!-- 				static-tree=true -->
+<!-- 				not-hide-on-load = true -->
+<!-- 				expand-on-click=false -->
+<!-- 				click-function="selectBusinessModel(node)" -->
+<!-- 				is-folder-fn="businessModel_isFolder(node)" -->
+<!-- 				folder-icon-fn="businesslModel_getlevelIcon(node)" -->
+<!-- 				open-folder-icon-fn="businesslModel_getlevelIcon(node)" -->
+<!-- 				tree-root-name="translate.load('sbi.meta.businessview')" -->
+<!-- 			></component-tree> -->
 		</span>	
 	</list>
 	

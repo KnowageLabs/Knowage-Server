@@ -201,8 +201,10 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 				.then(
 						function(response) {
 							$scope.steps.current = 1;
-							angular.copy(response.data,$scope.meta);
-
+							console.log("I"+new Date());
+							$scope.meta= response.data;
+//							angular.copy(response.data,$scope.meta);
+							console.log("F"+new Date());
 							metaModelServices.observe($scope.meta);
 
 						},
