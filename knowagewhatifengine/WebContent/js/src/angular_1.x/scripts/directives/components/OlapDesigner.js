@@ -6,7 +6,9 @@ angular.module('olap_designer', ['sbiModule'])
 					return {
 						restrict : "E",
 						replace : 'true',
-						templateUrl : sbiModule_config.contextName + '/html/template/main/olap/olapDesigner.html',
+						templateUrl : function() {
+						return sbiModule_config.contextName + '/html/template/main/olap/olapDesigner.html'	
+						}, 
 						controller : olapDesignerController
 					}
 				});

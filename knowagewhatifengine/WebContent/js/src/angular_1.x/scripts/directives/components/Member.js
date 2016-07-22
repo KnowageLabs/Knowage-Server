@@ -115,7 +115,9 @@ angular.module('member_directive',['sbiModule'])
 	    				parent: angular.element(document.body),
 	    				controllerAs : 'olapCtrl',
 //	    				templateUrl : '/knowagewhatifengine/html/template/main/toolbar/properties.html',
-	    				templateUrl : sbiModule_config.contextName + '/html/template/main/toolbar/properties.html',
+	    				templateUrl : function() {
+							return sbiModule_config.contextName + '/html/template/main/toolbar/properties.html'
+						},
 	    				clickOutsideToClose : false,
 	    				hasBackdrop:false
 	    			});

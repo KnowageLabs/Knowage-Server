@@ -24,7 +24,9 @@ angular
 					return {
 						restrict : "E",
 						replace : 'true',
-						templateUrl :  sbiModule_config.contextName + '/html/template/main/olap/olapPanel.html',
+						templateUrl : function(){
+						return sbiModule_config.contextName + '/html/template/main/olap/olapPanel.html'	
+						},   
 						controller : olapPanelController
 					}
 				});
@@ -347,7 +349,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 										parent : angular.element(document.body),
 										controllerAs : 'olapCtrl',
 //										templateUrl : '/knowagewhatifengine/html/template/main/toolbar/properties.html',
-										templateUrl : sbiModule_config.contextName + '/html/template/main/toolbar/properties.html',
+										templateUrl : function() {
+											return sbiModule_config.contextName + '/html/template/main/toolbar/properties.html'
+										},
 										clickOutsideToClose : false,
 										hasBackdrop : false
 									});
@@ -650,7 +654,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					},
 					controllerAs : 'olapCtrl',
 //					templateUrl : '/knowagewhatifengine/html/template/main/toolbar/writeBackCell.html',
-					templateUrl : sbiModule_config.contextName + '/html/template/main/toolbar/writeBackCell.html',
+					templateUrl : function() {
+						return sbiModule_config.contextName + '/html/template/main/toolbar/writeBackCell.html'
+					},
 					// targetEvent : ev,
 					clickOutsideToClose : false,
 					hasBackdrop : false,
@@ -704,7 +710,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					preserveScope : true,
 					controllerAs : 'olapCtrl',
 //					templateUrl : '/knowagewhatifengine/html/template/main/toolbar/drillThrough.html',
-					templateUrl : sbiModule_config.contextName + '/html/template/main/toolbar/drillThrough.html',
+					templateUrl : function() {
+						return sbiModule_config.contextName + '/html/template/main/toolbar/drillThrough.html'
+					},
 					targetEvent : ev,
 					clickOutsideToClose : true
 
@@ -731,7 +739,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					parent : angular.element(document.body),
 					controllerAs : 'olapCtrl',
 //					templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/calculatedFields.html',
-					templateUrl : sbiModule_config.contextName + '/html/template/main/calculatedfields/calculatedFields.html',
+					templateUrl : function() {
+						return sbiModule_config.contextName + '/html/template/main/calculatedfields/calculatedFields.html'
+					},
 					clickOutsideToClose : false,
 					hasBackdrop : false
 				});
@@ -794,7 +804,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					parent : angular.element(document.body),
 					controllerAs : 'olapCtrl',
 //					templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/argumentsDialog.html',
-					templateUrl : sbiModule_config.contextName + '/html/template/main/calculatedfields/argumentsDialog.html',
+					templateUrl : function() {
+						return sbiModule_config.contextName + '/html/template/main/calculatedfields/argumentsDialog.html'
+					},
 					clickOutsideToClose : false,
 					hasBackdrop : false
 				});
@@ -810,7 +822,9 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					parent : angular.element(document.body),
 					controllerAs : 'olapCtrl',
 //					templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/savedSets.html',
-					templateUrl : sbiModule_config.contextName + '/html/template/main/calculatedfields/savedSets.html',
+					templateUrl : function() {
+						return sbiModule_config.contextName + '/html/template/main/calculatedfields/savedSets.html'
+					},
 					clickOutsideToClose : true,
 					hasBackdrop : false
 				});

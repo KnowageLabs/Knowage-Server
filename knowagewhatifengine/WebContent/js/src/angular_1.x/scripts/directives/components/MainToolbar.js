@@ -22,7 +22,9 @@ angular.module('main_toolbar',['sbiModule'])
 			restrict: "E",
 			replace: 'true',
 //			templateUrl: '/knowagewhatifengine/html/template/main/toolbar/mainToolbar.html',
-			templateUrl: sbiModule_config.contextName + '/html/template/main/toolbar/mainToolbar.html',
+			templateUrl: function() {
+				return sbiModule_config.contextName + '/html/template/main/toolbar/mainToolbar.html'
+			},
 			controller: mainToolobarController
 		}
 	});
