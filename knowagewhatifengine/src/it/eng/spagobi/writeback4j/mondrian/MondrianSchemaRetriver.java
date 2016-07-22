@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,19 +11,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.spagobi.writeback4j.mondrian;
-
-import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.writeback4j.IMemberCoordinates;
-import it.eng.spagobi.writeback4j.ISchemaRetriver;
-import it.eng.spagobi.writeback4j.sql.TableEntry;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,11 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import mondrian.olap.MondrianDef;
-import mondrian.olap.MondrianDef.CubeDimension;
-import mondrian.olap.MondrianDef.Dimension;
-import mondrian.olap.MondrianDef.Measure;
 
 import org.apache.log4j.Logger;
 import org.eigenbase.xom.NodeDef;
@@ -48,9 +36,20 @@ import org.olap4j.metadata.Dimension.Type;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 
+import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.writeback4j.IMemberCoordinates;
+import it.eng.spagobi.writeback4j.ISchemaRetriver;
+import it.eng.spagobi.writeback4j.sql.TableEntry;
+import mondrian.olap.MondrianDef;
+import mondrian.olap.MondrianDef.CubeDimension;
+import mondrian.olap.MondrianDef.Dimension;
+import mondrian.olap.MondrianDef.Measure;
+
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- * 
+ *
  */
 public class MondrianSchemaRetriver implements ISchemaRetriver {
 
@@ -97,6 +96,77 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 		logger.debug("Cube for writing correctly loaded");
 	}
 
+	public MondrianSchemaRetriver(MondrianDriver driver) throws SpagoBIEngineException {
+		String catalogUri = driver.getOlapSchema();
+		File tmpFile = new File(catalogUri);
+		FileInputStream fis;
+		Parser xmlParser;
+
+		logger.debug("IN");
+		logger.debug("Loading the schema from the file " + catalogUri);
+
+		try {
+			fis = new FileInputStream(tmpFile);
+			xmlParser = XOMUtil.createDefaultParser();
+			schema = new MondrianDef.Schema(xmlParser.parse(fis));
+		} catch (FileNotFoundException e) {
+			logger.error("File not found Error loading the file with the schema with url " + catalogUri, e);
+			throw new SpagoBIEngineException("File not found Error loading the file with the schema with url " + catalogUri, e);
+		} catch (XOMException e) {
+			logger.error("Error loading the file with the schema with url " + catalogUri, e);
+			throw new SpagoBIEngineException("Error loading the file with the schema with url " + catalogUri, e);
+		}
+		logger.debug("File loaded ");
+		logger.debug("Cube for writing correctly loaded");
+	}
+
+	public List<String> getAllCubes() {
+		List<String> cubesList = new ArrayList<String>();
+		MondrianDef.Cube[] cubes = schema.cubes;
+		for (int i = 0; i < cubes.length; i++) {
+			cubesList.add(cubes[i].name);
+
+		}
+		return cubesList;
+	}
+
+	public String getFirstDimension(String cubeName) {
+
+		logger.debug("IN");
+		String toReturn = null;
+		MondrianDef.Cube[] cubes = schema.cubes;
+		for (int i = 0; i < cubes.length; i++) {
+			MondrianDef.Cube oldCube = cubes[i];
+			if (oldCube.name.equals(cubeName)) {
+				logger.debug("IN: getting first dimesion form the cube");
+				MondrianDef.CubeDimension[] dimensons = oldCube.dimensions;
+				MondrianDef.CubeDimension aDimension = dimensons[0];
+				toReturn = aDimension.name;
+
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+
+	}
+
+	public String getFirstMeasure(String cubeName) {
+
+		logger.debug("IN");
+		String toReturn = null;
+		MondrianDef.Cube[] cubes = schema.cubes;
+		for (int i = 0; i < cubes.length; i++) {
+			MondrianDef.Cube oldCube = cubes[i];
+			if (oldCube.name.equals(cubeName)) {
+
+				logger.debug("IN: loading the measure form the cube");
+				toReturn = oldCube.measures[0].column;
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
 	public IMemberCoordinates getMemberCordinates(Member member) {
 		logger.debug("IN");
 
@@ -119,7 +189,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 
 	/**
 	 * Get the Dimension that includes the level
-	 * 
+	 *
 	 * @param level
 	 * @return the dimension that includes the level
 	 */
@@ -143,7 +213,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 
 	/**
 	 * Gets the hierarchy of the level inside the passed dimension
-	 * 
+	 *
 	 * @param level
 	 * @param thisDimension
 	 * @return the hierarchy of the level inside the passed dimension
@@ -169,7 +239,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 	 * hierarchy of the member( root member, child, granchild, .... member) and
 	 * the level. We need this information because we want to know table and
 	 * column linked to the members
-	 * 
+	 *
 	 * @param member
 	 * @param mondrianHierarchy
 	 * @return the map Level-->Member of the level
@@ -204,7 +274,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 
 	/**
 	 * Gets the first n levels of a hierarchy
-	 * 
+	 *
 	 * @param levelsDepth
 	 *            the number of levels to get
 	 * @param aHierarchy
@@ -236,7 +306,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 
 	/**
 	 * Gets the name of the column of the measure
-	 * 
+	 *
 	 * @param member
 	 * @return
 	 * @throws SpagoBIEngineException
@@ -261,7 +331,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 
 	/**
 	 * Gets the column name for each measure
-	 * 
+	 *
 	 * @return
 	 */
 	public List<String> getMeasuresColumn() {
@@ -283,7 +353,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 
 	/**
 	 * Returns physical name of all columns of edit cube
-	 * 
+	 *
 	 * @return columns names list
 	 */
 

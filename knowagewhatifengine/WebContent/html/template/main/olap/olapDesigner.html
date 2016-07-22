@@ -19,14 +19,12 @@
 				       <label>Select type of Template</label>
 				       <md-select
 				        ng-model="selectedType"
-				        ng-change="getCube(selectedType)"
 				        > <md-option 
 				        ng-repeat="l in templateTypeList track by $index" value="{{l.value}}">{{l.name}} </md-option>
 				       </md-select>
 				        </md-input-container>
 				   </div>
 			</div>				
-<md-divider ></md-divider>
 
 <div ng-if="selectedType == 'mondrian' " >
 
@@ -35,9 +33,10 @@
 				       <md-input-container  layout="column" flex=30> 
 				       <label>Select Mondrian Schema</label>
 				       <md-select
-				        ng-model="selectedSchema"
+				        ng-model="selectedSchema.currentContentId"
+				        ng-change="getCube()"
 				        > <md-option 
-				        ng-repeat="l in schemasList track by $index" value="{{l}}">{{l.name}} </md-option>
+				        ng-repeat="l in schemasList track by $index" value="{{l.currentContentId}}">{{l.name}} </md-option>
 				       </md-select>
 				        </md-input-container>
 				   </div>
@@ -45,9 +44,31 @@
 
 </div>
 
+<div layout="row" layout-wrap ng-show="showCubes">
+      				<div flex=100>
+				       <md-input-container  layout="column" flex=30> 
+				       <label>Select Cube</label>
+				       <md-select
+				        ng-model="selectedCube.name"
+				        ng-change="setMDX()"
+				        > <md-option 
+				        ng-repeat="l in cubeList track by $index" value="{{l}}">{{l}} </md-option>
+				       </md-select>
+				        </md-input-container>
+				   </div>
+</div>
+
+</div>
 <div ng-if="selectedType == 'xmla' " >
 
-its xmlaa
+<div layout="row" layout-wrap>
+						<div flex=100>
+							<md-input-container  layout="column" flex=60>
+							<label>XMLA Address</label>
+							<input ng-model="xmlaObj.address">
+					       </md-input-container>
+						</div>
+					</div>
 
 
 </div>
