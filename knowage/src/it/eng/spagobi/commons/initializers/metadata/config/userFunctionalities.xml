@@ -67,9 +67,8 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MapCatalogueManagement" description="MapCatalogueManagement" />
-	<USER_FUNCTIONALITY productType="KnowageBD" name="License" description="License" />
-	<USER_FUNCTIONALITY productType="KnowageSI" name="ManageCrossNavigation" description="ManageCrossNavigation" />	
-    <USER_FUNCTIONALITY productType="KnowageSI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />  	
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ManageCrossNavigation" description="ManageCrossNavigation" />	
+    <USER_FUNCTIONALITY productType="KnowageBD" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />  	
 	
 	
 	<!-- Authorizations for KnowageSI -->
@@ -146,7 +145,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="TemporalDimension" description="TemporalDimension" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DomainWrite" description="DomainWrite" />
-	<USER_FUNCTIONALITY productType="KnowageSI" name="License" description="License" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="Calendar" description="Calendar" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="Timespan" description="Timespan" />	
 	
@@ -210,7 +208,6 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="SchedulingDistributedOutput" description="SchedulingDistributedOutput" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="SharedDevelopment" description="SharedDevelopment" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="DomainWrite" description="DomainWrite" />
-	<USER_FUNCTIONALITY productType="KnowageER" name="License" description="License" />
 	
 	
 	<!-- Authorizations for KnowagePM -->
@@ -247,7 +244,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="LovsManagement" description="LovsManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="LovsView" description="LovsView"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ManageCrossNavigation" description="ManageCrossNavigation" />
-    <USER_FUNCTIONALITY productType="KnowageSI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />	
+    <USER_FUNCTIONALITY productType="KnowagePM" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />	
 	<USER_FUNCTIONALITY productType="KnowagePM" name="MenuManagement" description="MenuManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ModifyRefresh" description="ModifyRefresh"/>
@@ -264,7 +261,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="WorkspaceManagement" description="WorkspaceManagement"/>	
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DomainWrite" description="DomainWrite" />
-	<USER_FUNCTIONALITY productType="KnowagePM" name="License" description="License" />
 	
 	
 	<!-- Authorizations for KnowageLI -->
@@ -312,7 +308,7 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="LovsManagement" description="LovsManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="LovsView" description="LovsView" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
-    <USER_FUNCTIONALITY productType="KnowageSI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />	
+    <USER_FUNCTIONALITY productType="KnowageLI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />	
 	<USER_FUNCTIONALITY productType="KnowageLI" name="MapCatalogueManagement" description="MapCatalogueManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="MenuManagement" description="MenuManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement" />
@@ -334,7 +330,6 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="WorklistManagement" description="WorklistManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="WorkspaceManagement" description="WorkspaceManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageLI" name="License" description="License" />
 	
 		
 	<!-- Authorizations for KnowagePA -->
@@ -379,7 +374,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="LovsManagement" description="LovsManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="LovsView" description="LovsView" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ManageCrossNavigation" description="ManageCrossNavigation" />
-    <USER_FUNCTIONALITY productType="KnowageSI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />	
+    <USER_FUNCTIONALITY productType="KnowagePA" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />	
 	<USER_FUNCTIONALITY productType="KnowagePA" name="MenuManagement" description="MenuManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ModifyRefresh" description="ModifyRefresh" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ObjMetadataManagement" description="ObjMetadataManagement" />
@@ -395,6 +390,5 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="WorklistManagement" description="WorklistManagement" />
-	<USER_FUNCTIONALITY productType="KnowagePA" name="License" description="License" />
 	
 </USER_FUNCTIONALITIES>
