@@ -68,6 +68,8 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MapCatalogueManagement" description="MapCatalogueManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="License" description="License" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ManageCrossNavigation" description="ManageCrossNavigation" />	
+    <USER_FUNCTIONALITY productType="KnowageSI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />  	
 	
 	
 	<!-- Authorizations for KnowageSI -->
@@ -245,6 +247,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="LovsManagement" description="LovsManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="LovsView" description="LovsView"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ManageCrossNavigation" description="ManageCrossNavigation" />
+    <USER_FUNCTIONALITY productType="KnowageSI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />	
 	<USER_FUNCTIONALITY productType="KnowagePM" name="MenuManagement" description="MenuManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ModifyRefresh" description="ModifyRefresh"/>
@@ -291,7 +294,6 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="DocumentUserManagement" description="DocumentUserManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="EventsManagement" description="EventsManagement" />
-	<USER_FUNCTIONALITY productType="KnowageLI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="FunctionalitiesManagement" description="FunctionalitiesManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="GeoLayersManagement" description="GeoLayersManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="GisWebDesigner" description="GisWebDesigner" />
@@ -310,6 +312,7 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="LovsManagement" description="LovsManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="LovsView" description="LovsView" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
+    <USER_FUNCTIONALITY productType="KnowageSI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />	
 	<USER_FUNCTIONALITY productType="KnowageLI" name="MapCatalogueManagement" description="MapCatalogueManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="MenuManagement" description="MenuManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement" />
@@ -359,7 +362,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="DocumentUserManagement" description="DocumentUserManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="EventsManagement" description="EventsManagement" />
-	<USER_FUNCTIONALITY productType="KnowagePA" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="FunctionalitiesManagement" description="FunctionalitiesManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="FunctionsCatalog" description="FunctionsCatalog" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="HotLinkManagement" description="HotLinkManagement" />
@@ -377,6 +379,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="LovsManagement" description="LovsManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="LovsView" description="LovsView" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ManageCrossNavigation" description="ManageCrossNavigation" />
+    <USER_FUNCTIONALITY productType="KnowageSI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />	
 	<USER_FUNCTIONALITY productType="KnowagePA" name="MenuManagement" description="MenuManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ModifyRefresh" description="ModifyRefresh" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ObjMetadataManagement" description="ObjMetadataManagement" />
