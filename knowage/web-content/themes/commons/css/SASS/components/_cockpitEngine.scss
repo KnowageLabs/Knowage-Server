@@ -167,6 +167,18 @@
             border-radius: 0;
             border: 1px dashed $bordersColor;
             
+            md-card-title{
+           	 flex: inherit;
+            }
+			.widgetActionButton{
+				position:absolute;
+				width: 100%;
+				top: 0;
+			}    	
+			.widgetActionButton>.md-button{
+				z-index: 2;
+			}
+    
 
             md-toolbar.md-knowage-theme {
                 background-color: transparent;
@@ -174,7 +186,19 @@
 
                 .md-toolbar-tools {
                     padding: 0 8px;
-
+                    span.editWidgetNameSpan{
+						z-index: 2;
+    					cursor: text;
+					}
+					.editWidgetNameInput>.md-button{
+						&.saveEditText>md-icon{
+							color:green;
+						}
+						&.cancelEditText>md-icon{
+							color:red;
+						}
+					}
+					
                     span {
                         font-weight: 200;
                         font-size: 14px;
@@ -239,15 +263,9 @@
     	min-width: 40px;
     	}
     	
-	.widgetActionButton{
-		position:absolute;
-		width: 100%;
-		top: 0;
-	}    	
-	.widgetActionButton>.md-button{
-		z-index: 2;
+	.selectedImage{
+		background-color:#a9c3db;
 	}
-    	
 }
 
 /* WIDGET DIALOG */
