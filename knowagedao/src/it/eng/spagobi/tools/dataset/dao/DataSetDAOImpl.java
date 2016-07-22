@@ -317,18 +317,20 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				if(categoryList.size()>0 ){
 					logger.debug("User has one or more categories");
 					if(owner!=null){
+						logger.debug("The owner can see all it's datasets");
 						//the owner of the dataset can see dataste even if category is null
-						statement.append(" and (h.category.valueCd is null or ");
+						//statement.append(" and (h.category.valueCd is null or ");
 					}else{
 						statement.append("and (");
-					}
+					
 									
-					statement.append("  h.category.valueCd in (");
-					for(int i=0; i<categoryList.size(); i++){
-						statement.append("?,");
+						statement.append("  h.category.valueCd in (");
+						for(int i=0; i<categoryList.size(); i++){
+							statement.append("?,");
+						}
+						statement.replace(statement.length()-1, statement.length(), "");
+						statement.append(")) "); 
 					}
-					statement.replace(statement.length()-1, statement.length(), "");
-					statement.append(")) "); 
 				}else{
 					logger.debug("No categories for the user so we take just it's own datasets");
 					if(owner==null || !includeOwned){
@@ -354,7 +356,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			if (type != null)
 				query.setString(paramIndex++, type);
-			if (categoryList != null && categoryList.size()>0){
+			if (categoryList != null && categoryList.size()>0 && owner==null){
 				Iterator<Domain> it = categoryList.iterator();
 				while (it.hasNext()) {
 					Domain type2 = (Domain) it.next();
