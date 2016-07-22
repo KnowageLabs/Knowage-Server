@@ -1,18 +1,12 @@
-(function() {
-	var scripts = document.getElementsByTagName("script");
-	var currentScriptPath = scripts[scripts.length - 1].src;
-	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
-	var contextBasePath = currentScriptPath + '../../../../../';
 
-angular.module('olap_designer', [])
+angular.module('olap_designer', ['sbiModule'])
 		.directive(
 				'olapDesigner',
-				function() {
+				function(sbiModule_config) {
 					return {
 						restrict : "E",
 						replace : 'true',
-//						templateUrl : '/knowagewhatifengine/html/template/main/olap/olapDesigner.html',
-						templateUrl : contextBasePath + 'html/template/main/olap/olapDesigner.html',
+						templateUrl : sbiModule_config.contextName + '/html/template/main/olap/olapDesigner.html',
 						controller : olapDesignerController
 					}
 				});
@@ -106,15 +100,8 @@ $scope.getCube = function(){
 		});	
 		};
 		$scope.saveMDX = function(){
-			sbiModule_restServices.promiseGet("/1.0/designer/cubes/getMDX/"+$scope.selectedSchema.currentContentId+"/"+$scope.selectedCube.name,"")
-			.then(function(response) {
-				mdx = response.data;
-				console.log(mdx);
-			}, function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-				
-			});	
-			};
+		console.log(mdx);		
+		};
 
 };
 
