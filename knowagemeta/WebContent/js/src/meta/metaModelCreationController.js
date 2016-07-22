@@ -137,21 +137,21 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 	$scope.selectedBusinessModel = {};
 	$scope.currentBusinessModelParameterCategories = [];
 	$scope.tmpBMWatcher={};
-//	$scope.$watch(function() {
-//		var tmpSBM = {};
-//		angular.copy($scope.selectedBusinessModel, tmpSBM);
-//		delete tmpSBM.$parent;
-//		return tmpSBM;
-//	}, function(newValue, oldValue) {
-//		if (!angular.equals(newValue, oldValue)) {
-//			angular.copy(newValue,$scope.tmpBMWatcher);
-//			$timeout(function(){
-//				if(angular.equals(newValue,$scope.tmpBMWatcher)){
-//					$scope.businessModelTreeInterceptor.refreshTree();
-//				}
-//			},500);
-//		}
-//	}, true);
+	$scope.$watch(function() {
+		var tmpSBM = {};
+		angular.copy($scope.selectedBusinessModel, tmpSBM);
+		delete tmpSBM.$parent;
+		return tmpSBM;
+	}, function(newValue, oldValue) {
+		if (!angular.equals(newValue, oldValue)) {
+			angular.copy(newValue,$scope.tmpBMWatcher);
+			$timeout(function(){
+				if(angular.equals(newValue,$scope.tmpBMWatcher)){
+					$scope.businessModelTreeInterceptor.refreshTree();
+				}
+			},500);
+		}
+	}, true);
 
 	$scope.selectBusinessModel = function(node) {
 		$scope.selectedBusinessModel = node;
