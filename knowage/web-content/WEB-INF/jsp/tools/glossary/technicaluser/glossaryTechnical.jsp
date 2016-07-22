@@ -49,18 +49,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 
 <!-- glossary tree -->
-<link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/tree-style.css">
-<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js"></script>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/tree-style.css">
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js"></script>
 
 <!-- document-viewer --> 
-<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/document-viewer/documentViewer.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/document-viewer/documentViewer.js"></script>
 
 <link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/glossary/glossaryTecCustomStyle.css", currTheme)%>">
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/glossary/generalStyle.css", currTheme)%>">
-<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/technicaluser/glossaryTec.js"></script>
-<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/technicaluser/glossaryTec_BusinessClass.js"></script>
-<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/technicaluser/glossaryTec_Table.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/glossary/technicaluser/glossaryTec.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/glossary/technicaluser/glossaryTec_BusinessClass.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/glossary/technicaluser/glossaryTec_Table.js"></script>
 
 </head>
 

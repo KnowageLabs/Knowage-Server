@@ -26,7 +26,6 @@ angular
 	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices) { 
 	 		
 		this.openQbeInterface = function($scope,url) {
-			
 			$mdDialog
 				.show
 				(	
@@ -34,7 +33,8 @@ angular
 						scope:$scope,
 						preserveScope: true,
 						controller: openQbeInterfaceController,
-						templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
+//						templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
+						templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 						fullscreen: true,
 						locals:{url:url}				
 					}

@@ -8,9 +8,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
  
 app.controller('Controller', 
-		[ "sbiModule_translate","$filter" ,"sbiModule_restServices", "$q", "$scope", "$timeout", funzione ]);
+		[ "sbiModule_translate", "sbiModule_config", "$filter" ,"sbiModule_restServices", "$q", "$scope", "$timeout", funzione ]);
 
-function funzione(sbiModule_translate,$filter, sbiModule_restServices, $q, $scope, $timeout) {
+function funzione(sbiModule_translate, sbiModule_config, $filter, sbiModule_restServices, $q, $scope, $timeout) {
 	s=$scope;
 	s.translate=sbiModule_translate;
 	s.selectedWord;
@@ -127,7 +127,8 @@ function funzione(sbiModule_translate,$filter, sbiModule_restServices, $q, $scop
 		console.log("loadDatasetInfo");
 		if(value=="null"){
 			//alter the context path because this services is called also from a services with context path = knowagecockpit...
-			sbiModule_restServices.alterContextPath('/knowage');
+//			sbiModule_restServices.alterContextPath('/knowage');
+			sbiModule_restServices.alterContextPath(sbiModule_config.contextName);
 			s.loadDataset("DATASET_LABEL="+label);
 		}else{
 			s.loadDataset("DATASET_ID="+value);
@@ -137,7 +138,8 @@ function funzione(sbiModule_translate,$filter, sbiModule_restServices, $q, $scop
 		ite += "&DATAMART=" + parameter1 ;
 		s.loadDatamart(ite);
 	}else if(type=='WORD'){
-		sbiModule_restServices.alterContextPath('/knowage');
+//		sbiModule_restServices.alterContextPath('/knowage');
+		sbiModule_restServices.alterContextPath(sbiModule_config.contextName);
 		s.loadWord("WORD_NAME="+label);
 	}
 	s.showInfoWORD=function(item,story){

@@ -1,9 +1,13 @@
 (function () {
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 	
 	angular.module('kpi-style', ['ngMaterial','sbiModule','color.picker'])
 	.directive('kpiStyle', function() {
 		return {
-			templateUrl: '/knowagekpiengine/js/angular_1.x/style/template/kpiStyle.html',
+//			templateUrl: '/knowagekpiengine/js/angular_1.x/style/template/kpiStyle.html',
+			templateUrl: currentScriptPath + 'template/kpiStyle.html',
 			controller: kpiStyleController,
 			scope: {
 				ngModel:'=',

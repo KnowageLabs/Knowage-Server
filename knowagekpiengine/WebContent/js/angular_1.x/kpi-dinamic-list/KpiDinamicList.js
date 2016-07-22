@@ -197,7 +197,8 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 		angular.copy(s.ngModel,s.selectedItem);
 		$mdDialog.show({
 			controller: DialogControllerKPI,
-			templateUrl: '/knowagekpiengine/js/angular_1.x/kpi-dinamic-list/template/kpi-dinamic-list-dialog.html',
+//			templateUrl: '/knowagekpiengine/js/angular_1.x/kpi-dinamic-list/template/kpi-dinamic-list-dialog.html',
+			templateUrl: sbiModule_config.contextName + '/js/angular_1.x/kpi-dinamic-list/template/kpi-dinamic-list-dialog.html',
 			clickOutsideToClose:true,
 			preserveScope:true,
 			locals: {items: deferred,kpi:s.kpi,kpiAllList:s.kpiAllList, kpiSelected: s.selectedItem,multiSelect:s.multiSelect}

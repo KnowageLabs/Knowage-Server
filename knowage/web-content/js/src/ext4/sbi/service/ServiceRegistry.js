@@ -41,7 +41,8 @@ Ext.define("Sbi.service.ServiceRegistry",{
 			protocol: 'http'     
 				, host: 'localhost'
 					, port: '8081'
-						, contextPath: 'knowage'
+//						, contextPath: 'knowage'
+						, contextPath: Sbi.config.contextName.replace(/^\//,'')
 							, controllerPath: 'servlet/AdapterHTTP' 
 								, restServicesPath: 'restful-services' 
 		});

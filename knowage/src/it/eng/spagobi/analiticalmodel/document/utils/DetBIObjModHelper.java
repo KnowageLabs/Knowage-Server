@@ -203,7 +203,8 @@ public class DetBIObjModHelper {
 		}
 
 		logger.debug("If engine requires datasource and datasource is not defined throw error");
-		if (engine != null && engine.getUseDataSource() && !engine.getLabel().equals("knowagegisengine")) {
+//		if (engine != null && engine.getUseDataSource() && !engine.getLabel().equals("knowagegisengine")) {
+		if (engine != null && engine.getUseDataSource() && !engine.getLabel().equals(SpagoBIConstants.GIS_ENGINE_LABEL)) {
 			if (ds == null) {
 				logger.error("Engine " + engine.getLabel() + " do requires datasource but it is nodt defined");
 				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, ObjectsTreeConstants.FUNCT_ID, "1087");

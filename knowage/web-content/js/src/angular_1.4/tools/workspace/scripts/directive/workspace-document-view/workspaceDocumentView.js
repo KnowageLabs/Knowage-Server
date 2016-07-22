@@ -15,11 +15,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+(function() {
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 angular.module('workspace_document_view', ['ngMaterial'])
 .directive('workspaceDocumentView', function() {
 	return {
-		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/workspace-document-view/workspace-document-view.html',
+//		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/workspace-document-view/workspace-document-view.html',
+		templateUrl: currentScriptPath + 'workspace-document-view.html',
 		controller: workspaceDocumentViewControllerFunction,
 		priority: 10,
 		scope: {
@@ -63,3 +68,4 @@ function workspaceDocumentViewControllerFunction($scope,sbiModule_translate){
 		 $scope.selectDocumentAction({doc: item});
 	}
 }
+})();

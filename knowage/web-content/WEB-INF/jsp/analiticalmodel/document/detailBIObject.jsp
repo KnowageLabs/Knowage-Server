@@ -935,7 +935,7 @@ function saveDocument(goBack) {
 					editOutputParametersMap.put(ObjectsTreeConstants.OBJECT_ID, obj.getId().toString());
 					String editOutputParameters = urlBuilder.getUrl(request, editOutputParametersMap);
 					%>
-					<a href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/outPars/manageOutputParameters.jsp?OBJECT_ID=<%=obj.getId().toString()%>">
+					<a href="${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/outPars/manageOutputParameters.jsp?OBJECT_ID=<%=obj.getId().toString()%>">
 						<img class='header-button-image-portlet-section' 
    				 			 title='<spagobi:message key = "sbi.detailbiobj.editOutputParameters" />' 
    				 			 src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/copytree.gif", currTheme)%>' 
@@ -959,7 +959,7 @@ function saveDocument(goBack) {
 						linkDoc.put(ObjectsTreeConstants.OBJECT_LABEL, obj.getLabel().toString());
 					String documentLink = urlBuilder.getUrl(request, linkDoc);
 					%>
-					<a href="/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentbrowser/templates/linkDocument.jsp?OBJECT_ID=<%=obj.getId().toString()%>&OBJECT_LABEL=<%=obj.getLabel().toString()%>">
+					<a href="${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentbrowser/templates/linkDocument.jsp?OBJECT_ID=<%=obj.getId().toString()%>&OBJECT_LABEL=<%=obj.getLabel().toString()%>">
 						<img class='header-button-image-portlet-section' 
    				 			 title='<spagobi:message key = "Link Document" />' 
    				 			 src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/linkDocument.png", currTheme)%>' 

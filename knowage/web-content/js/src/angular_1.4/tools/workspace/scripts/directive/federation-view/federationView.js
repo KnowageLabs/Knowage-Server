@@ -16,10 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+(function() {
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	
 angular.module('federation_view', ['ngMaterial'])
 .directive('federationView', function() {
 	return {
-		 templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/federation-view/federation-view.html',
+//		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/federation-view/federation-view.html',
+		 templateUrl: currentScriptPath + 'federation-view.html',
 		controller: federationViewControllerFunction,
 		 priority: 10,
 		scope: {
@@ -73,4 +79,5 @@ function federationViewControllerFunction($scope,sbiModule_translate){
 	}
 	
 	$scope.translate=sbiModule_translate;
-}
+};
+})();

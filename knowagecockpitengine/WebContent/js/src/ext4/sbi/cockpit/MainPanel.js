@@ -78,7 +78,6 @@ Sbi.cockpit.MainPanel = function(config) {
 		this.afterFirstRendering = true;
 	},this);
 };
-
 Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 
 	// =================================================================================================================
@@ -815,7 +814,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		else if (Sbi.config.environment=='WORKSPACE') {
-			window.location.href = "/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp&comingFrom='NewCockpit'";	
+//			window.location.href = "/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp&comingFrom='NewCockpit'";	
+			window.location.href = "/" + Sbi.mainContextName + "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/workspace/workspaceManagement.jsp&comingFrom='NewCockpit'";	
 		}
 		
 	}

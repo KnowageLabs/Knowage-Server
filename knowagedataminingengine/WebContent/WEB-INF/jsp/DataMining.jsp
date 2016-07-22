@@ -93,9 +93,14 @@ author:...
 		<%@include file="commons/angular/dataminingModule.jsp"%>
 		<%@include file="commons/includeMessageResource.jspf" %>
 		
+<%-- 
 		<script type="text/javascript" src="/knowagedataminingengine/js/src/angular_1.4/datamining/dataminingController.js"></script>
 		<link rel="stylesheet" type="text/css" href="/knowagedataminingengine/css/generalStyle.css">
 		<link rel="stylesheet" type="text/css" href="/knowagedataminingengine/css/datamining.css">	
+ --%>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/datamining/dataminingController.js"></script>
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/generalStyle.css">
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/datamining.css">	
 	</head>
 <body class="bodyStile" ng-controller="Controller" ng-class="{'loading-body' : pendingRequest > 0}" ng-cloak>
 	<div id="popupContainer">

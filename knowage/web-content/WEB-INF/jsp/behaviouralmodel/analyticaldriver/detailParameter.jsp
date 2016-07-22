@@ -650,7 +650,9 @@ if (modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_INS)) { %>
 				<th>Quantity</th>
 				<!-- add button: in the header -->
 				<th>
-					<a alt='Add option' title='Add option' href='javascript:addDateRangeTableOption()'><img src='/knowage/themes/sbi_default/img/new.png'></a>
+					<a alt='Add option' title='Add option' href='javascript:addDateRangeTableOption()'>
+<%-- 						<img src='/knowage/themes/sbi_default/img/new.png'></a> --%>
+						<img src='${pageContext.request.contextPath}/themes/sbi_default/img/new.png'></a>
 				</th>
 			</tr>
 		</table>
@@ -687,7 +689,8 @@ if (modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_INS)) { %>
 			var table=document.getElementById('dateRangeTableOptions');
 			var row=table.insertRow(-1);
 			var remove=row.insertCell(-1);
-			remove.innerHTML="<a alt='Remove option' title='Remove option' onclick='removeRow(this)'><img src='/knowage/themes/sbi_default/img/erase.gif'></a>"
+<%-- 			remove.innerHTML="<a alt='Remove option' title='Remove option' onclick='removeRow(this)'><img src='/knowage/themes/sbi_default/img/erase.gif'></a>" --%>
+			remove.innerHTML="<a alt='Remove option' title='Remove option' onclick='removeRow(this)'><img src='${pageContext.request.contextPath}/themes/sbi_default/img/erase.gif'></a>"
 			
 			var type=row.insertCell(-1);
 			type.innerHTML=getTypeCombo(currentDateRangeOptionId,opt?opt.type:null);

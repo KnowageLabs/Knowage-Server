@@ -44,13 +44,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <link rel="stylesheet" type="text/css"
-	href="/knowage/themes/commons/css/customStyle.css">
+	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
 
 <link rel="stylesheet" type="text/css"
 	href="${pageContext.request.contextPath}/themes/importexport/css/importExportStyle.css">
 <!-- controller -->
 <script type="text/javascript"
-	src="/knowage/js/src/angular_1.4/tools/servermanager/templateManagement.js"></script>
+	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/templateManagement.js"></script>
 
 </head>
 <body class="bodyStyle kn-templatemanagement">

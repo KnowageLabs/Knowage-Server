@@ -87,9 +87,14 @@ author:...
 	<head>
 		<%@include file="commons/angular/angularImport.jsp"%>
 		<%@include file="commons/angular/dataminingModule.jsp"%>
+		<%--
 		<script type="text/javascript" src="/knowagedataminingengine/js/src/angular_1.4/datamining/dataminingController.js"></script>
 		<link rel="stylesheet" type="text/css" href="/knowagedataminingengine/css/generalStyle.css">
 		<link rel="stylesheet" type="text/css" href="/knowagedataminingengine/css/datamining.css">	
+		--%>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/datamining/dataminingController.js"></script>
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/generalStyle.css">
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/datamining.css">	
 	</head>
 <body>
 	<div div ng-controller="Controller as ctrl" ng-cloak>
@@ -119,7 +124,8 @@ author:...
 							<input type='text' disabled ng-model="fileName"/>
 						</md-input-container>
 						<md-button class="md-fab md-raised" arial-label="Upload File" ng-click="uploadFile(cmd)">
-							<md-icon md-svg-src="/knowagedataminingengine/img/upload3.svg"></md-icon>
+<%-- 							<md-icon md-svg-src="/knowagedataminingengine/img/upload3.svg"></md-icon> --%>
+							<md-icon md-svg-src="${pageContext.request.contextPath}/img/upload3.svg"></md-icon>
 							<md-tooltip md-direction="bottom">
 	          					Upload File
 	        				</md-tooltip>

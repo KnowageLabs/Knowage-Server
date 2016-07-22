@@ -4357,7 +4357,8 @@ console.log(this.manageDatasetFieldMetadataGrid);
 							
 							var id = this.manageDatasetFieldMetadataGrid.record.json.id;
 							var label = this.manageDatasetFieldMetadataGrid.record.json.label;
-							document.location.href = "/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/linkDataset.jsp&id="+id+"&label="+label
+//							document.location.href = "/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/linkDataset.jsp&id="+id+"&label="+label
+							document.location.href = Sbi.config.contextName + "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/linkDataset.jsp&id="+id+"&label="+label
 
 						}
 						

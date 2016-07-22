@@ -43,11 +43,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 		
 		<!-- Style files included -->
-		<link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/generalStyle.css">
+<%-- 		<link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/generalStyle.css"> --%>
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/generalStyle.css">
 		
 		<!-- Javascript files included -->
+<%-- 
 		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
-		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/lovsManagement.js"></script>		
+		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/lovsManagement.js"></script>		 
+--%>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/catalogues/lovsManagement.js"></script>		
 		
 		<title>Insert title here</title>
 		

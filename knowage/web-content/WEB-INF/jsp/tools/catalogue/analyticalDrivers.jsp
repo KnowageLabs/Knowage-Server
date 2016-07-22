@@ -35,7 +35,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- Styles -->
 <script type="text/javascript" src=" "></script>
-<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/analyticalDrivers.js"></script>
+<!-- <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/analyticalDrivers.js"></script> -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/catalogues/analyticalDrivers.js"></script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Analytical Drivers Management</title>

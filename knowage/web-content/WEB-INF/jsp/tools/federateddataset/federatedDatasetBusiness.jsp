@@ -35,12 +35,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>{{translate.load("sbi.federationdefinition.title");}}</title>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/federateddataset/federatedDataset.js"></script>
+<%-- 
+		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/federateddataset/federatedDataset.js"></script> 
+--%>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/federateddataset/federatedDataset.js"></script>
 		<!-- 
 		<link rel="stylesheet" type="text/css" href="/knowage/themes/federateddataset/css/federateddatasetStyle.css">
 		<link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/generalStyle.css">
 		--> 
+<%-- 
 		<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css">
+--%>
+		<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
 		
 		<!-- Retrieveing datasets used in creating a federation definition, as well as the whole relationships column -->
 		<%

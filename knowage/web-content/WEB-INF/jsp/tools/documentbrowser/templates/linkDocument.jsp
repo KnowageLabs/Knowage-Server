@@ -61,8 +61,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>{{translate.load("Dataset Link");}}</title>
 		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+<%-- 
 		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/documentbrowser/linkDocument.js"></script>
 		<link rel="stylesheet" type="text/css"	href="/knowage/themes/commons/css/customStyle.css">
+ --%>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/documentbrowser/linkDocument.js"></script>
+		<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
 	
 		</head>
 

@@ -25,12 +25,12 @@ olapMod.config(['$mdThemingProvider', function($mdThemingProvider) {
  }]);
 
 olapMod.controller("olapController", [ "$scope", "$timeout", "$window",
-		"$mdDialog", "$http", '$sce', '$mdToast', '$mdSidenav',
+		"$mdDialog", "$http", '$sce', '$mdToast', '$mdSidenav', 'sbiModule_config',
 		'sbiModule_messaging', 'sbiModule_restServices', 'sbiModule_translate','sbiModule_docInfo',
 		'olapSharedSettings' ,olapFunction ]);
 
 function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
-		$mdToast, $mdSidenav, sbiModule_messaging, sbiModule_restServices,
+		$mdToast, $mdSidenav, sbiModule_config, sbiModule_messaging, sbiModule_restServices,
 		sbiModule_translate,sbiModule_docInfo, olapSharedSettings) {
 
 	//VARIABLES
@@ -40,7 +40,8 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.members = [];
 	$scope.selectedMember = {};
 
-	templateRoot = "/knowagewhatifengine/html/template";
+//	templateRoot = "/knowagewhatifengine/html/template";
+	templateRoot = sbiModule_config.contextName + "/html/template";
 	$scope.sendMdxDial = "/main/toolbar/sendMdx.html";
 	$scope.saveSubObjectDial = "/main/savesubobject/saving_subobject_dialog.html";
 	$scope.showMdxDial = "/main/toolbar/showMdx.html";

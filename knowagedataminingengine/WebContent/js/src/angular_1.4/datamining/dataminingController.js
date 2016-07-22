@@ -18,9 +18,9 @@
 
 var app = angular.module('dataMiningApp', ['ngMaterial', 'sbiModule']);
 
-app.controller('Controller', ['sbiModule_logger','datamining_template','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$timeout', '$mdDialog', dataMiningFunction ]);
+app.controller('Controller', ['sbiModule_logger', 'sbiModule_config', 'datamining_template','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$timeout', '$mdDialog', dataMiningFunction ]);
 
-function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_translate, sbiModule_restServices, $scope, $q, $timeout,  $mdDialog) {
+function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_template,sbiModule_translate, sbiModule_restServices, $scope, $q, $timeout,  $mdDialog) {
 	
 	/*****************************/
 	/** Initialization          **/
@@ -436,11 +436,13 @@ function dataMiningFunction (sbiModule_logger,datamining_template,sbiModule_tran
 			);
 	};
 	
+	debugger;
 	//Create a dialog containing an updating bar
 	$scope.showDialogUpdating = function (){
 		var parentEl = angular.element(document.body);
 		var dialog = $mdDialog.show({
-			templateUrl: '/knowagedataminingengine/js/src/angular_1.4/datamining/templates/dataminingDialog.html',
+//			templateUrl: '/knowagedataminingengine/js/src/angular_1.4/datamining/templates/dataminingDialog.html',
+			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/datamining/templates/dataminingDialog.html',
 			parent: parentEl,
 			locals : {
 				translate : $scope.translate

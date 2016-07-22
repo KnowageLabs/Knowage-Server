@@ -98,10 +98,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<tbody>
 		<tr>
 			<button type="button" onclick="javascript:observerLRLclose.saveResult()" >
+<%-- 
 				<img class="header-button-image-portlet-section" title="Save" src="/knowage/themes/sbi_default/img/tools/scheduler/save.png" alt="Save">
+--%>
+				<img class="header-button-image-portlet-section" title="Save" src="${pageContext.request.contextPath}/themes/sbi_default/img/tools/scheduler/save.png" alt="Save">
 			</button>
 			<button type="button" onclick="javascript:observerLRLclose.cancelResult()">
+<%-- 
 				<img class="header-button-image-portlet-section" title="Back" src="/knowage/themes/sbi_default/img/tools/scheduler/back.png" alt="Back">
+--%>
+				<img class="header-button-image-portlet-section" title="Back" src="${pageContext.request.contextPath}/themes/sbi_default/img/tools/scheduler/back.png" alt="Back">
 			</button>
 		</tr>
 			<!-- for each row design table row -->

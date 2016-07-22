@@ -78,7 +78,8 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 
 		$mdDialog.show({
 			controller: DialogControllerScorecard,
-			templateUrl: '/knowagekpiengine/js/angular_1.x/controllerBuildTemplate/templateScorecard/templateScorecardDialog.html',
+//			templateUrl: '/knowagekpiengine/js/angular_1.x/controllerBuildTemplate/templateScorecard/templateScorecardDialog.html',
+			templateUrl: sbiModule_config.contextName + '/js/angular_1.x/controllerBuildTemplate/templateScorecard/templateScorecardDialog.html',
 			clickOutsideToClose:true,
 			preserveScope:true,
 			locals: {items: deferred,allScorecard:$scope.allScorecard, scorecardSelected:$scope.scorecardSelected}

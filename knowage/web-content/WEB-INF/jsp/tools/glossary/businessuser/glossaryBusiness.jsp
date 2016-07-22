@@ -35,12 +35,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- glossary tree -->
 <link rel="stylesheet" type="text/css"
-	href="/knowage/themes/glossary/css/tree-style.css">
+	href="${pageContext.request.contextPath}/themes/glossary/css/tree-style.css">
 <script type="text/javascript"
-	src="/knowage/js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js"></script>
+	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js"></script>
 
 <script type="text/javascript"
-	src="/knowage/js/src/angular_1.4/tools/glossary/businessuser/glossary.js"></script>
+	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/glossary/businessuser/glossary.js"></script>
 <link rel="stylesheet" type="text/css"
 	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
 <link rel="stylesheet" type="text/css"

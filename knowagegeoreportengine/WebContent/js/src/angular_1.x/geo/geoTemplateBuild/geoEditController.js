@@ -72,7 +72,8 @@
 						$mdDialog
 						.show({
 							controller : DialogControllerDataset,
-							templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateDatasetList.html',
+//							templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateDatasetList.html',
+							templateUrl : sbiModule_config.contextName + '/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateDatasetList.html',
 							clickOutsideToClose : false,
 							preserveScope : true,
 							scope : $scope
@@ -123,7 +124,6 @@
 		$scope.loadLayers();
 		
 		$scope.editMap = function() {
-			//debugger;
 			sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath+"restful-services/");
 
 			$documentViewer.editDocumentByLabel($scope.docLabel, $scope, "edit_map");
@@ -169,7 +169,8 @@
 					$mdDialog
 					.show({
 						controller : DialogControllerSaveDoc,
-						templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateSaveNewMapDocument.html',
+//						templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateSaveNewMapDocument.html',
+						templateUrl : sbiModule_config.contextName + '/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateSaveNewMapDocument.html',
 						clickOutsideToClose : false,
 						preserveScope : true,
 						scope : $scope
@@ -231,7 +232,8 @@
 				$mdDialog
 						.show({
 							controller : DialogControllerLayerList,
-							templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateLayerList.html',
+//							templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateLayerList.html',
+							templateUrl : sbiModule_config.contextName + '/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateLayerList.html',
 							clickOutsideToClose : false,
 							preserveScope : true,
 							scope : $scope,
@@ -251,7 +253,8 @@
 				$mdDialog
 						.show({
 							controller : DialogControllerLayerList,
-							templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateLayerList.html',
+//							templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateLayerList.html',
+							templateUrl : sbiModule_config.contextName + '/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateLayerList.html',
 							clickOutsideToClose : false,
 							preserveScope : true,
 							scope : $scope,
@@ -319,7 +322,8 @@
 				$mdDialog
 						.show({
 							controller : DialogControllerFilter,
-							templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateFilterList.html',
+//							templateUrl : '/knowagegeoreportengine/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateFilterList.html',
+							templateUrl : sbiModule_config.contextName + '/js/src/angular_1.x/geo/geoTemplateBuild/templates/templateFilterList.html',
 							clickOutsideToClose : false,
 							preserveScope : true,
 							scope : $scope

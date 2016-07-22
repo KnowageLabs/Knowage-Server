@@ -458,10 +458,24 @@ public class SpagoBIConstants {
 	public static final String TEMPORARY_TABLE_ROOT_NAME = "SBI_TEMPORARY_TABLE_ROOT_NAME";
 	public static final String DROP_TEMPORARY_TABLE_ON_EXIT = "SBI_DROP_TEMPORARY_TABLE_ON_EXIT";
 
+	public static final String SOCIAL_ANALYSIS = "knowagesocialanalysis";
+	
 	public static final String CHART_TYPE_CODE = "CHART";
 	public static final String COCKPIT_ENGINE_NAME = "Cockpit Engine";
+	public static final String COCKPIT_ENGINE_LABEL = "knowagecockpitengine";
 	public static final String BIRT_ENGINE_LABEL = "knowagebirtreporteng";
+	public static final String BIRT_ENGINE_LABEL_2 = "knowagebirtreportengine";
 	public static final String JASPER_ENGINE_LABEL = "knowagejasperreporte";
+	public static final String JASPER_ENGINE_LABEL_2 = "knowagejasperreportengine";
+	public static final String GIS_ENGINE_LABEL = "knowagegisengine";
+	public static final String JPIVOT_ENGINE_LABEL = "knowagejpivotengine";
+	public static final String QBE_ENGINE_LABEL = "knowageqbeengine";
+	public static final String GEO_ENGINE_LABEL = "knowagegeoengine";
+	public static final String TALEND_ENGINE_LABEL = "knowagetalendengine";
+	public static final String CHART_ENGINE_LABEL = "knowagechartengine";
+	public static final String GEOREPORT_ENGINE_LABEL = "knowagegeoreportengine";
+	public static final String KPI_ENGINE_LABEL = "knowagekpiengine";
+	public static final String META_ENGINE_LABEL = "knowagemeta";
 
 	public static final String MONDRIAN_SCHEMA = "MONDRIAN_SCHEMA";
 	public static final String MONDRIAN_CUBE = "cube";

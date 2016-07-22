@@ -41,8 +41,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- Styles -->
 <link rel="stylesheet" type="text/css"
 	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
+<%-- <script type="text/javascript"
+	src="/knowage/js/src/angular_1.4/tools/catalogues/etlMetadataExtraction.js"></script> --%>
 <script type="text/javascript"
-	src="/knowage/js/src/angular_1.4/tools/catalogues/etlMetadataExtraction.js"></script>
+	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/catalogues/etlMetadataExtraction.js"></script>
 
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
