@@ -161,6 +161,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.formulasData = source.formulas;
 		$scope.ready = true;
 		
+		$scope.selectedVersion = source.modelConfig.actualVersion;
 		handleSlicers(source.filters);
 		$scope.wiGridNeeded = response.data.modelConfig.whatIfScenario; //arsenije
 		if(firstLoad && $scope.modelConfig != undefined){

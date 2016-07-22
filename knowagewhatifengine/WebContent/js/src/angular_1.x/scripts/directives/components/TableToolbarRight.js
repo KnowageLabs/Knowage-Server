@@ -569,17 +569,24 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	  
 	  $scope.deleteVersions = function(){
 		  
-		  var path ='/version/delete/'+ $scope.versionsForDelete+'?SBI_EXECUTION_ID='+JSsbiExecutionID; 
-
-		 sbiModule_restServices.promisePost("1.0",path)
-			.then(function(response) {
-				sbiModule_messaging.showSuccessMessage("Versions successfully deleted", 'Success');
-				$scope.getVersions();
-				$scope.closeDialog(null);
-			}, function(response) {
-				sbiModule_messaging.showErrorMessage("An error occured while deleting versions", 'Error');
-				
-			});
+		  var okToDelete = isOkToDeleteVersion($scope.versionsForDelete);
+		  
+		  if(okToDelete){
+			  var path ='/version/delete/'+ $scope.versionsForDelete+'?SBI_EXECUTION_ID='+JSsbiExecutionID; 
+			  
+				 sbiModule_restServices.promisePost("1.0",path)
+					.then(function(response) {
+						sbiModule_messaging.showSuccessMessage("Versions successfully deleted", 'Success');
+						$scope.getVersions();
+						$scope.closeDialog(null);
+					}, function(response) {
+						sbiModule_messaging.showErrorMessage("An error occured while deleting versions", 'Error');
+						
+					});  
+		  }
+		  else{
+			  sbiModule_messaging.showWarningMessage("You can not delete actual version please try again", 'Warning');
+		  }
 	  }
 	  
 	  loadAlgorithms = function(){
@@ -609,6 +616,15 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				sbiModule_messaging.showErrorMessage("An error occured while setting alghorithm", 'Error');
 				
 			});
+	  }
+	  
+	  isOkToDeleteVersion = function(versions){
+		  for(var i=0; i< versions.length;i++){
+			  if(versions[i].id == $scope.selectedVersion){
+				  return true;
+			  }
+		  }
+		  return false;
 	  }
 };
 })();
