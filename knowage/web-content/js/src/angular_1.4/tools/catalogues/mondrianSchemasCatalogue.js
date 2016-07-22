@@ -35,6 +35,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	$scope.wfEdited = false;//is edited?
 	$scope.wfStarted = false;//is still editable
 	$scope.wfExists = false;
+	var waitForSave = false;
 	var startAfterCreation;
 	$scope.userInProg ;
 	
@@ -114,6 +115,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 				$scope.wfEdited = false;
 			}
 			else{
+				waitForSave = true;
 				$scope.wfExists = false;
 			}
 			
@@ -132,8 +134,9 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 		sbiModule_restServices.promisePost("2.0",encoded,toSend).then(
 				function(response){
 					$scope.wfEdited = false;
+					waitForSave = false;
 					sbiModule_messaging.showSuccessMessage("Workflow created", 'Success');
-					if(startAfterCreation)
+					if(startAfterCreation)						
 						$scope.startWorkflow(mid);
 				},
 				function(response){
@@ -142,19 +145,25 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	};
 	
 	$scope.startWorkflow = function(modelId){
-		if(modelId != undefined){
-			sbiModule_restServices.promisePut("2.0/workflow/startWorkflow/"+modelId,"")
-			.then(function(response) {
-				$scope.isStartedWf = true;
-				sbiModule_messaging.showSuccessMessage("Workflow started", 'Success');
-			}, function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-				
-			});
+		if(!waitForSave){
+			if(modelId != undefined){
+				sbiModule_restServices.promisePut("2.0/workflow/startWorkflow/"+modelId,"")
+				.then(function(response) {
+					$scope.isStartedWf = true;
+					sbiModule_messaging.showSuccessMessage("Workflow started", 'Success');
+				}, function(response) {
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					
+				});
+			}
+			else{
+				startAfterCreation = true;
+			}
 		}
 		else{
-			startAfterCreation = true;
+			sbiModule_messaging.showInfoMessage("To start workflow you have to save schema first", 'Info');
 		}
+
 	};
 	
 	updateWorkflow = function(mid){
