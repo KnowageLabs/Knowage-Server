@@ -21,13 +21,15 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 	var contextBasePath = currentScriptPath + '../../../../../';
 
-angular.module('filter_tree_first_level',[])
-	.directive('filterTreeFirstLevel', function () {
+angular.module('filter_tree_first_level',['sbiModule'])
+	.directive('filterTreeFirstLevel', function (sbiModule_config) {
 		 return {
 		      restrict: 'E',
 		      replace: 'true',
 //		      templateUrl: '/knowagewhatifengine/html/template/main/filter/treeFirstLevel.html'
-		      templateUrl: contextBasePath + 'html/template/main/filter/treeFirstLevel.html'
+		      templateUrl: function(){
+		    	  sbiModule_config.contextName  + '/html/template/main/filter/treeFirstLevel.html'
+		    	  }
 		  };
 	});
 })();

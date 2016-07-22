@@ -21,13 +21,15 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 	var contextBasePath = currentScriptPath + '../../../../../';
 
-angular.module('sbi_side_nav',[])
-.directive('sbiSideNav',function(){
+angular.module('sbi_side_nav',['sbiModule'])
+.directive('sbiSideNav',function(sbiModule_config){
 	return{
 		restrict: "E",
 		replace: 'true',
 //		templateUrl: '/knowagewhatifengine/html/template/right/sideNavigation.html',
-		templateUrl: contextBasePath + 'html/template/right/sideNavigation.html',
+		templateUrl: function(){
+	    	  sbiModule_config.contextName  + '/html/template/right/sideNavigation.html'
+	    	  },
 		controller: sideNavigationController
 	}
 });

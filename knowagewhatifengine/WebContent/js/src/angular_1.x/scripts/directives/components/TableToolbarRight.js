@@ -21,13 +21,15 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 	var contextBasePath = currentScriptPath + '../../../../../';
 
-angular.module('sbi_table_toolbar',[])
-.directive('sbiTableToolbar',function(sbiModule_messaging){
+angular.module('sbi_table_toolbar',['sbiModule'])
+.directive('sbiTableToolbar',function(sbiModule_messaging,sbiModule_config){
 	return{
 		restrict:"E",
 		replace: true,
 //		templateUrl:'/knowagewhatifengine/html/template/right/tableToolbar.html',
-		templateUrl: contextBasePath + 'html/template/right/tableToolbar.html',
+		templateUrl: function(){
+			sbiModule_config.contextName + '/html/template/right/tableToolbar.html'
+		},
 		controller: tableToolobarController
 	}
 });

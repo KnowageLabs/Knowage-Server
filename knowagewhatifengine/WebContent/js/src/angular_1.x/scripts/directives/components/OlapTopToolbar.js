@@ -21,13 +21,15 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 	var contextBasePath = currentScriptPath + '../../../../../';
 
-angular.module('olap_top_toolbar',[])
-	.directive('olapTopToolbar', function () {
+angular.module('olap_top_toolbar',['sbiModule'])
+	.directive('olapTopToolbar', function (sbiModule_config) {
 		 return {
 		      restrict: 'E',
 		      replace: 'true',
 //		      templateUrl: '/knowagewhatifengine/html/template/main/olap/topToolbar.html'
-		      templateUrl: contextBasePath + 'html/template/main/olap/topToolbar.html'
+		      templateUrl: function(){
+		    	  sbiModule_config.contextName + '/html/template/main/olap/topToolbar.html'  
+		      }
 		  };
 	});
 })();
