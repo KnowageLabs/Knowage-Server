@@ -3,10 +3,6 @@
 
 <!--
 	<USER_FUNCTIONALITY productType="KnowageBD" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement" />
-<USER_FUNCTIONALITY productType="KnowageER" name="Timespan" description="Timespan" />
-<USER_FUNCTIONALITY productType="KnowageER" name="Calendar" description="Calendar" />
-<USER_FUNCTIONALITY productType="KnowageER" name="FunctionsCatalog" description="FunctionsCatalog" />
-
 
 -->
 	<!-- Knowage BD Functionalities -->
@@ -120,7 +116,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImagesManagement" description="ImagesManagement" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="Glossary" description="Glossary" />
-	<USER_FUNCTIONALITY productType="KnowageSI" name="Timespan" description="Timespan" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="CreateChartFunctionality" description="CreateChartFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="FederationDefinition" description="FederationDefinition" />
@@ -150,6 +145,8 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="TemporalDimension" description="TemporalDimension" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="License" description="License" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="Calendar" description="Calendar" />
+	<USER_FUNCTIONALITY productType="KnowageSI" name="Timespan" description="Timespan" />	
 	
 	
 	<!-- Authorizations for KnowageER -->
