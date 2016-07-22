@@ -280,7 +280,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		.then(function(response) {
 			$scope.datasetCategoryType = [];
 			angular.copy(response.data,$scope.datasetCategoryType);
-			if($scope.datasetCategoryType.length==0){
+			if(dataset.hasOwnProperty('catTypeId')&&$scope.datasetCategoryType.length==0){
+				$scope.unshareDataset(dataset);
+			} else if($scope.datasetCategoryType.length==0&&!dataset.hasOwnProperty('catTypeId')){
 				$scope.showAlert();
 			} else if($scope.datasetCategoryType.length==1){
 				$scope.shareDataset(dataset);
