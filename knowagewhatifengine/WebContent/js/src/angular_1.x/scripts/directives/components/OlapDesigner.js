@@ -1,3 +1,8 @@
+(function() {
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	var contextBasePath = currentScriptPath + '../../../../../';
 
 angular.module('olap_designer', [])
 		.directive(
@@ -6,7 +11,8 @@ angular.module('olap_designer', [])
 					return {
 						restrict : "E",
 						replace : 'true',
-						templateUrl : '/knowagewhatifengine/html/template/main/olap/olapDesigner.html',
+//						templateUrl : '/knowagewhatifengine/html/template/main/olap/olapDesigner.html',
+						templateUrl : contextBasePath + 'html/template/main/olap/olapDesigner.html',
 						controller : olapDesignerController
 					}
 				});
@@ -94,3 +100,4 @@ $scope.getCube = function(){
 
 };
 
+})();

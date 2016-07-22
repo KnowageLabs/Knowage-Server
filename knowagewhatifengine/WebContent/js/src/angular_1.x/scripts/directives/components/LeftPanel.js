@@ -15,11 +15,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+(function() {
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	var contextBasePath = currentScriptPath + '../../../../../';
+
 angular.module('left_panel',[])
 	.directive('leftPanel', function () {
 		 return {
 		      restrict: 'E',
 		      replace: 'true',
-		      templateUrl: '/knowagewhatifengine/html/template/left/leftPanel.html'
+//		      templateUrl: '/knowagewhatifengine/html/template/left/leftPanel.html'
+		      templateUrl: contextBasePath + 'html/template/left/leftPanel.html'
 		  };
 	});
+})();

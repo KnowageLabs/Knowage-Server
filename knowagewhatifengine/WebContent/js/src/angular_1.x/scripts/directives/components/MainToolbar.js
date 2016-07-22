@@ -15,13 +15,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+(function() {
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	var contextBasePath = currentScriptPath + '../../../../../';
 
 angular.module('main_toolbar',[])
 	.directive('mainToolbar',function(){
 		return{
 			restrict: "E",
 			replace: 'true',
-			templateUrl: '/knowagewhatifengine/html/template/main/toolbar/mainToolbar.html',
+//			templateUrl: '/knowagewhatifengine/html/template/main/toolbar/mainToolbar.html',
+			templateUrl: contextBasePath + 'html/template/main/toolbar/mainToolbar.html',
 			controller: mainToolobarController
 		}
 	});
@@ -138,3 +144,4 @@ angular.module('main_toolbar',[])
 			  }
 */
 	};
+})();

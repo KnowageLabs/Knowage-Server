@@ -16,11 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+(function() {
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	var contextBasePath = currentScriptPath + '../../../../../';
+
 angular.module('olap_left_toolbar_plus_main',[])
 	.directive('olapLeftToolbarPlusMain', function () {
 		 return {
 		      restrict: 'E',
 		      replace: 'true',
-		      templateUrl: '/knowagewhatifengine/html/template/main/olap/leftToolbarPlusMain.html'
+//		      templateUrl: '/knowagewhatifengine/html/template/main/olap/leftToolbarPlusMain.html'
+		      templateUrl: contextBasePath + 'html/template/main/olap/leftToolbarPlusMain.html'
 		  };
 	});
+})();

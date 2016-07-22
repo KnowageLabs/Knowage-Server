@@ -15,13 +15,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+(function() {
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	var contextBasePath = currentScriptPath + '../../../../../';
 
 angular.module('sbi_table_toolbar',[])
 .directive('sbiTableToolbar',function(sbiModule_messaging){
 	return{
 		restrict:"E",
 		replace: true,
-		templateUrl:'/knowagewhatifengine/html/template/right/tableToolbar.html',
+//		templateUrl:'/knowagewhatifengine/html/template/right/tableToolbar.html',
+		templateUrl: contextBasePath + 'html/template/right/tableToolbar.html',
 		controller: tableToolobarController
 	}
 });
@@ -605,3 +611,4 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			});
 	  }
 };
+})();

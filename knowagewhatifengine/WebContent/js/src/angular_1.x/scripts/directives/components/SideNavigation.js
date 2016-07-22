@@ -15,13 +15,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+(function() {
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	var contextBasePath = currentScriptPath + '../../../../../';
 
 angular.module('sbi_side_nav',[])
 .directive('sbiSideNav',function(){
 	return{
 		restrict: "E",
 		replace: 'true',
-		templateUrl: '/knowagewhatifengine/html/template/right/sideNavigation.html',
+//		templateUrl: '/knowagewhatifengine/html/template/right/sideNavigation.html',
+		templateUrl: contextBasePath + 'html/template/right/sideNavigation.html',
 		controller: sideNavigationController
 	}
 });
@@ -50,3 +56,4 @@ function sideNavigationController($scope, $timeout, $window, $mdDialog, $mdSiden
 		$scope.chartIcon= id == "chart" || id == "both"?true:false;
 	}
 }
+})();

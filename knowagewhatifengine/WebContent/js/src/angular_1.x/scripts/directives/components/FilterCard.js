@@ -15,13 +15,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+(function() {
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	var contextBasePath = currentScriptPath + '../../../../../';
 
-angular.module('filter_card',[])
+	angular.module('filter_card',[])
 	.directive('filterCard', function () {
 		 return {
 		      restrict: 'E',
 		      replace: 'true',
-		      templateUrl: '/knowagewhatifengine/html/template/main/filter/filterCard.html',
+//		      templateUrl: '/knowagewhatifengine/html/template/main/filter/filterCard.html',
+		      templateUrl: contextBasePath + 'html/template/main/filter/filterCard.html',
 		      controller:filterCardController
 		  };
 	});
@@ -65,3 +71,4 @@ function filterCardController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		});
 	};
 };
+})();

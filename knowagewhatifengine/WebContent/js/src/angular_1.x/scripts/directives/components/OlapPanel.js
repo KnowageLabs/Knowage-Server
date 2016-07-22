@@ -16,6 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+(function() {
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+	var contextBasePath = currentScriptPath + '../../../../../';
+
 angular
 		.module('olap_panel', [])
 		.directive(
@@ -24,7 +30,8 @@ angular
 					return {
 						restrict : "E",
 						replace : 'true',
-						templateUrl : '/knowagewhatifengine/html/template/main/olap/olapPanel.html',
+//						templateUrl : '/knowagewhatifengine/html/template/main/olap/olapPanel.html',
+						templateUrl : contextBasePath + 'html/template/main/olap/olapPanel.html',
 						controller : olapPanelController
 					}
 				});
@@ -346,7 +353,8 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 										preserveScope : true,
 										parent : angular.element(document.body),
 										controllerAs : 'olapCtrl',
-										templateUrl : '/knowagewhatifengine/html/template/main/toolbar/properties.html',
+//										templateUrl : '/knowagewhatifengine/html/template/main/toolbar/properties.html',
+										templateUrl : contextBasePath + 'html/template/main/toolbar/properties.html',
 										// targetEvent : ev,
 										clickOutsideToClose : false,
 										hasBackdrop : false
@@ -649,7 +657,8 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 					},
 					controllerAs : 'olapCtrl',
-					templateUrl : '/knowagewhatifengine/html/template/main/toolbar/writeBackCell.html',
+//					templateUrl : '/knowagewhatifengine/html/template/main/toolbar/writeBackCell.html',
+					templateUrl : contextBasePath + 'html/template/main/toolbar/writeBackCell.html',
 					// targetEvent : ev,
 					clickOutsideToClose : false,
 					hasBackdrop : false,
@@ -702,7 +711,8 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					scope : $scope,
 					preserveScope : true,
 					controllerAs : 'olapCtrl',
-					templateUrl : '/knowagewhatifengine/html/template/main/toolbar/drillThrough.html',
+//					templateUrl : '/knowagewhatifengine/html/template/main/toolbar/drillThrough.html',
+					templateUrl : contextBasePath + 'html/template/main/toolbar/drillThrough.html',
 					targetEvent : ev,
 					clickOutsideToClose : true
 
@@ -728,7 +738,8 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					preserveScope : true,
 					parent : angular.element(document.body),
 					controllerAs : 'olapCtrl',
-					templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/calculatedFields.html',
+//					templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/calculatedFields.html',
+					templateUrl : contextBasePath + 'html/template/main/calculatedfields/calculatedFields.html',
 					clickOutsideToClose : false,
 					hasBackdrop : false
 				});
@@ -790,7 +801,8 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					preserveScope : true,
 					parent : angular.element(document.body),
 					controllerAs : 'olapCtrl',
-					templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/argumentsDialog.html',
+//					templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/argumentsDialog.html',
+					templateUrl : contextBasePath + 'html/template/main/calculatedfields/argumentsDialog.html',
 					clickOutsideToClose : false,
 					hasBackdrop : false
 				});
@@ -805,7 +817,8 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					preserveScope : true,
 					parent : angular.element(document.body),
 					controllerAs : 'olapCtrl',
-					templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/savedSets.html',
+//					templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/savedSets.html',
+					templateUrl : contextBasePath + 'html/template/main/calculatedfields/savedSets.html',
 					clickOutsideToClose : true,
 					hasBackdrop : false
 				});
@@ -1120,3 +1133,4 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 };
 
+})();
