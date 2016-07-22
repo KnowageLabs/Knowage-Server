@@ -28,7 +28,7 @@ angular.module('olap_top_toolbar',['sbiModule'])
 		      replace: 'true',
 //		      templateUrl: '/knowagewhatifengine/html/template/main/olap/topToolbar.html'
 		      templateUrl: function(){
-		    	  sbiModule_config.contextName + '/html/template/main/olap/topToolbar.html'  
+		    	  return sbiModule_config.contextName + '/html/template/main/olap/topToolbar.html'  
 		      }
 		  };
 	});

@@ -28,7 +28,7 @@ angular.module('filter_tree_first_level',['sbiModule'])
 		      replace: 'true',
 //		      templateUrl: '/knowagewhatifengine/html/template/main/filter/treeFirstLevel.html'
 		      templateUrl: function(){
-		    	  sbiModule_config.contextName  + '/html/template/main/filter/treeFirstLevel.html'
+		    	  return sbiModule_config.contextName  + '/html/template/main/filter/treeFirstLevel.html'
 		    	  }
 		  };
 	});
