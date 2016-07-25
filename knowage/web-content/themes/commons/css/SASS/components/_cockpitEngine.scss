@@ -266,6 +266,17 @@
 	.selectedImage{
 		background-color:#a9c3db;
 	}
+	
+	.selectdemoSelectHeader.md-knowage-theme {
+        .demo-select-header {
+            .demo-header-searchbox {
+                margin-left: 10px;
+                line-height: 30px;
+                min-width: calc(100% - 35px);
+                padding-left: 10px;
+            }
+        }
+    }
 }
 
 /* WIDGET DIALOG */
@@ -356,21 +367,5 @@
             transition-timing-function: cubic-bezier(0.52, 1.64, 0.37, 0.66);
         }
     }
-
-	
-	
-    .selectdemoSelectHeader.md-knowage-theme {
-        .demo-select-header {
-            .demo-header-searchbox {
-                margin-left: 10px;
-                line-height: 30px;
-                min-width: calc(100% - 35px);
-                padding-left: 10px;
-            }
-        }
-    }
-    
-    
-	
 
 }
