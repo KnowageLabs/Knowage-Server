@@ -67,12 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tab-body> 
 				  <md-card>
 					<md-content ng-controller="exportController">
-						<div ng-if="flags.waitExport" layout="column" layout-padding
-							layout-align="space-around center">
-							<h3 class="md-subhead">{{translate.load("SBISet.importexport.opProg","component_impexp_messages");}}</h3>
-							<i class="fa fa-spinner fa-pulse fa-4x"></i>
 				
-						</div>
 						<div ng-if="flags.viewDownload" class="md-body-2 kn-info">
 							
 				

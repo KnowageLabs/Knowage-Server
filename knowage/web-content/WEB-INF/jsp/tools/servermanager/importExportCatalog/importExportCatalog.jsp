@@ -79,10 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								 <md-button	ng-show="!wait" ng-click="prepare($event)"	aria-label="download Dataset" class="md-fab md-mini">
 									<md-icon md-font-icon="fa fa-download"> </md-icon>
 								 </md-button>
-								 
-								<div ng-show="wait">
-									<i class="fa fa-spinner fa-spin fa-4x"></i>
-								</div>
+							
 							
 							</div>
 							<md-checkbox ng-checked="exists('Dataset',listType)" ng-click="toggle('Dataset',listType)">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>

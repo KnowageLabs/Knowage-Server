@@ -52,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 </head>
 <body class="bodyStyle kn-importExportDocument">
-
+<rest-loading></rest-loading>
 	<div ng-controller="metadataImportExportController" layout="column" layout-wrap layout-fill>
 		<md-toolbar class="miniheadimportexport">
 			<div class="md-toolbar-tools">
@@ -80,9 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-button ng-show="!wait" ng-click="prepare($event)" aria-label="download Metadata" class="md-fab md-mini">
 									<md-icon md-font-icon="fa fa-download fa-2x"> </md-icon>
 								</md-button>
-							<div ng-show="wait">
-								<i class="fa fa-spinner fa-spin fa-4x"></i>
-							</div>
+						
 							</md-input-container>
 						</div>
 					</div>
