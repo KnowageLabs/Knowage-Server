@@ -26,7 +26,7 @@
 angular
 	.module('workspace.controller', ['workspace.directive','workspace.configuration'])
 	.controller('workspaceController', ["$scope","$http","$mdDialog","$timeout","$mdSidenav","$documentViewer","sbiModule_translate","sbiModule_restServices","sbiModule_config","sbiModule_user","sbiModule_messaging","$qbeViewer", workspaceFunction])
-   .service('multipartForm',['$http',function($http){
+    .service('multipartForm',['$http',function($http){
 		
 		this.post = function(uploadUrl,data){
 			
@@ -184,9 +184,26 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		$scope.dataset.csvDelimiter = dataset!=undefined ? dataset.csvDelimiter : $scope.csvDelimiterDefault; 
 		$scope.dataset.csvQuote = dataset!=undefined ? dataset.csvQuote : $scope.csvQuoteDefault; 
 		
-		$scope.dataset.skipRows = dataset!=undefined ? Number(dataset.skipRows) : $scope.skipRowsDefault;
-		$scope.dataset.limitRows = dataset!=undefined ? dataset.limitRows : $scope.limitRowsDefault;
-		$scope.dataset.xslSheetNumber = dataset!=undefined ? Number(dataset.xslSheetNumber) : $scope.xslSheetNumberDefault;
+		$scope.dataset.skipRows = dataset!=undefined ? Number(dataset.skipRows) : Number($scope.skipRowsDefault);
+		
+		/**
+		 * Handle the limitRows property value deserialization (special case: it can be of a value NULL).
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		if (dataset!=undefined) {
+		
+			if (dataset.limitRows!=null && dataset.limitRows!="") {
+				$scope.dataset.limitRows = Number(dataset.limitRows);
+			}
+			else {
+				$scope.dataset.limitRows = dataset.limitRows;
+			}
+		}
+		else {			
+			$scope.dataset.limitRows = $scope.limitRowsDefault;			
+		}
+
+		$scope.dataset.xslSheetNumber = dataset!=undefined ? Number(dataset.xslSheetNumber) : Number($scope.xslSheetNumberDefault);
 				
 		$scope.dataset.catTypeVn = dataset!=undefined ? dataset.catTypeVn : "";
 		$scope.dataset.catTypeId = dataset!=undefined ? Number(dataset.catTypeId) : null;

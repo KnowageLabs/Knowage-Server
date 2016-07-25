@@ -137,6 +137,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		angular.copy($scope.dataset.meta.columns,$scope.dataset.datasetMetadata.columns);
   
 		c=$scope.dataset.datasetMetadata.columns;
+		
 		for (var i = 0; i < c.length; i++) {
 			delete c[i].columnView;
 			delete c[i].pvalueView;
@@ -145,6 +146,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		}
 		
 		d=$scope.dataset.datasetMetadata.dataset;
+		
 		for (var i = 0; i < d.length; i++) {
 			delete d[i].pvalueView;
 			delete d[i].pnameView;
@@ -529,9 +531,9 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		$scope.prepareMetaValue($scope.dataset.meta.columns,item,index);
 				
 		for(i=0; i< $scope.dataset.meta.columns.length;i++) {
-			
+							
 			loc = $scope.dataset.meta.columns[i];
-			
+						
 			var pname = loc.pname;
 
 			loc.dsMetaValue=[];
@@ -545,17 +547,20 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			 */			
 			if (initialization) {	
 				
-				if (pname=="type")
+				if (pname=="type") {
 					loc.dsMetaValue = $scope.filterMetaValue(pname,undefined,i,undefined,$scope.dataset.meta.columns[i+1].pvalue);
-				else
+				}					
+				else {
 					loc.dsMetaValue = $scope.filterMetaValue(pname,undefined,i,undefined);
+				}
 				
 			}				
 			// Click
 			else  {
-				
-				if (index-1==i) 
+								
+				if (index-1==i) {
 					loc.dsMetaValue = $scope.filterMetaValue($scope.dataset.meta.columns[index-1].pname,item,i,index);	
+				}
 				else {
 					
 					if (pname=="type")
@@ -570,6 +575,20 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			 * danristo
 			 */
 			loc.indexOfRow = i;
+
+			/**
+			 * If user selects the MEASURE field type after having a field type of ATTRIBUTE and type String for a particular data column, the first
+			 * item in the type combobox for a MEASURE field type will be selected (e.g. the Integer will be selected). This is implemented instead of
+			 * having an empty combo for type when performing this scenario.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			if (i%2==0 && loc.dsMetaValue && item) {
+				
+				if (item.toUpperCase()=="MEASURE" && loc.pvalue.toLowerCase()=="string") {
+					loc.pvalue = loc.dsMetaValue[0].VALUE_CD;					
+				}				
+				
+			}
 			
 			/**
 			 * Change the GUI element type for first two columns of the Step 2 of the Dataset wizard, from combo box ('md-select') to the label (fixed value).
@@ -654,7 +673,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	}
 	
 	$scope.prepareMetaValue=function(values){
-				
+		
 		for(i=0;i<values.length;i++){
 			
 			if (values[i].pname.toUpperCase() == 'type'.toUpperCase()){
