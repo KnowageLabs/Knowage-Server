@@ -86,14 +86,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-input-container>
 						</div>
 					</div>
-					<div layout="row" layout-wrap>
-						<md-checkbox flex style="line-height: 61px;"  ng-model="targetsAndRelatedKpis" aria-label="Include targets and related KPIs">Include targets and related KPIs</md-checkbox>
-					</div>
-					<div layout="row" layout-wrap>
-						<md-checkbox flex style="line-height: 61px;"  ng-model="scorecardsAndRelatedKpis" aria-label="Include scorecards and related KPIs">Include scoreacards and related KPIs</md-checkbox>
-					</div>
-					<div layout="row" layout-wrap>
-						<md-checkbox flex style="line-height: 61px;"  ng-model="schedulersAndRelatedKpis" aria-label="Include KPI schedulers and related KPIs">Include KPI schedulers and related KPIs</md-checkbox>
+		
+					<div layout-padding layout-gt-sm="row"
+								layout-align-gt-sm="start center" layout-sm="column"
+								layuout-align-sm="start start">
+						
+							<md-checkbox class="little-check"   ng-model="targetsAndRelatedKpis" aria-label="Include targets and related KPIs">Include targets and related KPIs</md-checkbox>
+							<md-checkbox class="little-check"  ng-model="scorecardsAndRelatedKpis" aria-label="Include scorecards and related KPIs">Include scoreacards and related KPIs</md-checkbox>
+							<md-checkbox class="little-check"   ng-model="schedulersAndRelatedKpis" aria-label="Include KPI schedulers and related KPIs">Include KPI schedulers and related KPIs</md-checkbox>
 					</div>
 					<div id="lista">
 						<div layout="row" layout-wrap>
