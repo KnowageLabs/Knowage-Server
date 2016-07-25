@@ -130,7 +130,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <title>Functions Catalog</title>
 </head>
 
-<body  class="bodyStyle" ng-controller="functionsCatalogController" ng-cloak ng-init="userId='<%=getUserId.toString()%>'; isAdmin=<%=adminView%>; ownerUserName='<%=userNameOwner.toString()%>'; isDev=<%=devView%>; isUser=<%=userView%>">  <!-- only one between isAdmin, isDev, isUser is true (see java code)-->
+<body  ng-controller="functionsCatalogController" class="bodyStyle kn-functionsCatalog" ng-cloak ng-init="userId='<%=getUserId.toString()%>'; isAdmin=<%=adminView%>; ownerUserName='<%=userNameOwner.toString()%>'; isDev=<%=devView%>; isUser=<%=userView%>">  <!-- only one between isAdmin, isDev, isUser is true (see java code)-->
 	
 	<angular-list-detail full-screen=true layout="column">
 		
@@ -146,7 +146,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<list label="Functions"  new-function="<%=addFunction%>" layout-column> 
 		
 			<md-content layout="column" >
-				<md-content layout="row"  flex="20">
+				<div layout="row">
 				
 					<md-card  ng-repeat="functionType in functionTypesList" ng-click="functionsList=filterByType(functionType)" flex>
 		        		<md-card-title flex>
@@ -167,9 +167,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		          		</md-card-title>
 
 		      		</md-card>
-				</md-content flex>	
+				</div>	
 					<div class="md-block" layout="row" layout-align="center center" >
-						<md-chips ng-model="searchKeywords" readonly=true> 
+						<md-chips ng-model="searchKeywords" readonly=true class="functionsChips"> 
 							<md-chip-template ng-click="chipFilter($chip)" >
 							{{$chip}}
 							</md-chip-template>
@@ -212,24 +212,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        		<md-tabs layout-fill> 
        		
        			<md-tab label='{{translate.load("sbi.functionscatalog.general");}}'>
-					<md-content layout-padding>
+					<md-card layout-padding layout="column">
 						
-						<md-input-container class="md-block">
+						<md-input-container class="md-block" flex>
         					<label>{{translate.load("sbi.functionscatalog.functionname");}}</label>
         					<input ng-model=shownFunction.name ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">  <!-- prima era !isAdmin senza apici-->
       					</md-input-container>
   
-  						<md-input-container class="md-block">
+  						<md-input-container class="md-block" flex>
         					<label>{{translate.load("sbi.functionscatalog.label");}}</label>
         					<input ng-model=shownFunction.label ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
       					</md-input-container>    					
       					
-      					<md-input-container class="md-block">
+      					<md-input-container class="md-block" flex>
         					<label>{{translate.load("sbi.functionscatalog.owner");}}</label>
         					<input ng-model=shownFunction.owner ng-disabled=true>
       					</md-input-container> 
 
-						<md-input-container class="md-block">
+						<md-input-container class="md-block" flex>
         					<label>{{translate.load("sbi.functionscatalog.type");}}</label>
         					<md-select ng-model=shownFunction.type ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
               					<md-option ng-repeat="functionType in functionTypesList" value="{{functionType.valueCd}}">
@@ -249,7 +249,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	          			<!-- <div ng-if="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))" ng-bind-html="$compile(shownFunction.description)"></div> -->
 	          				
         				
-        				<md-input-container class="md-block">
+        				<md-input-container class="md-block" flex>
         					<label>{{translate.load("sbi.functionscatalog.keywords");}}</label>
         					<br></br>        					
 							<md-chips ng-model="shownFunction.keywords" readonly="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))" ></md-chips>
@@ -257,7 +257,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						
  
         				
-					</md-content>
+					</md-card>
 				</md-tab>
        		
 				<md-tab label='{{translate.load("sbi.functionscatalog.input");}}'>
