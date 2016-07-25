@@ -140,7 +140,7 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 
 			for (var i = 0; i < list.length; i++) {
 				var object = list[i];
-				if(object.glossaryNm==item.glossaryNm){
+				if(object.glossaryId==item.glossaryId){
 					return i;
 				}
 			}
