@@ -36,8 +36,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -72,11 +74,83 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
 			fcDAO.setUserProfile(getUserProfile());
 			List<SbiCatalogFunction> functions = fcDAO.loadAllCatalogFunctions();
+
+			// Addition: return a field keyword_list containing random selected keywords
+			JSONArray keywordsArray = new JSONArray();
+			Set<String> keywordSet = new HashSet<String>();
+
 			for (SbiCatalogFunction f : functions) {
 				JSONObject funcJsonObject = sbiFunctionToJsonObject(f);
 				funcArray.put(funcJsonObject);
+				for (String key : f.getKeywords().split(",")) {
+					if (!key.equals("")) {
+						keywordSet.add(key);
+					}
+				}
 			}
+
+			// returning 10 random keywords from all functions keywords. Putting keywords into a set randomize the choice and delete duplicates
+			Object[] keywordSetArray = keywordSet.toArray();
+			for (int i = 0; i < Integer.min(keywordSetArray.length, 10); i++) {
+				keywordsArray.put(keywordSetArray[i]);
+			}
+
 			retObj.put("functions", funcArray);
+			retObj.put("keywords", keywordsArray);
+
+		} catch (Exception e) {
+			logger.error("Error returning all functions in the catalog");
+			throw new SpagoBIServiceException("REST service /", "Error retturning all functions ", e);
+		}
+
+		logger.debug("OUT");
+		return retObj.toString();
+
+	}
+
+	@GET
+	@Path("/{type}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG })
+	public String getCatalogFunctionsByType(@PathParam("type") String type) throws IOException {
+		logger.debug("IN");
+
+		JSONObject retObj = new JSONObject();
+
+		try {
+			JSONArray funcArray = new JSONArray();
+			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
+			fcDAO.setUserProfile(getUserProfile());
+			List<SbiCatalogFunction> allFunctions = fcDAO.loadAllCatalogFunctions();
+			List<SbiCatalogFunction> filteredFunctions = new ArrayList<SbiCatalogFunction>();
+			for (SbiCatalogFunction func : allFunctions) {
+				if (func.getType().equals(type)) {
+					filteredFunctions.add(func);
+				}
+			}
+
+			// Addition: return a field keyword_list containing random selected keywords
+			JSONArray keywordsArray = new JSONArray();
+			Set<String> keywordSet = new HashSet<String>();
+
+			for (SbiCatalogFunction f : filteredFunctions) {
+				JSONObject funcJsonObject = sbiFunctionToJsonObject(f);
+				funcArray.put(funcJsonObject);
+				for (String key : f.getKeywords().split(",")) {
+					if (!key.equals("")) {
+						keywordSet.add(key);
+					}
+				}
+			}
+
+			// returning 10 random keywords from all functions keywords. Putting keywords into a set randomize the choice and delete duplicates
+			Object[] keywordSetArray = keywordSet.toArray();
+			for (int i = 0; i < Integer.min(keywordSetArray.length, 10); i++) {
+				keywordsArray.put(keywordSetArray[i]);
+			}
+
+			retObj.put("functions", funcArray);
+			retObj.put("keywords", keywordsArray);
 
 		} catch (Exception e) {
 			logger.error("Error returning all functions in the catalog");

@@ -85,6 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	var isAdminGlobal=<%=adminView%>
 	var isUserGlobal=<%=userView%>
 	var isDevGlobal=<%=devView%>
+	var ownerUserName=<%=userNameOwner.toString()%>
 </script>
 
 
@@ -131,7 +132,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <body  class="bodyStyle" ng-controller="functionsCatalogController" ng-cloak ng-init="userId='<%=getUserId.toString()%>'; isAdmin=<%=adminView%>; ownerUserName='<%=userNameOwner.toString()%>'; isDev=<%=devView%>; isUser=<%=userView%>">  <!-- only one between isAdmin, isDev, isUser is true (see java code)-->
 	
-	<angular-list-detail show-detail="showDetail"  >
+	<angular-list-detail full-screen=true layout="column">
 		
 		<% 
 		String addFunction="";
@@ -141,22 +142,64 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		   } 
 		%>
 		
+		
 		<list label="Functions"  new-function="<%=addFunction%>" layout-column> 
-    		<angular-table
-    				id="functionsTable" 
-					flex
-					ng-show=true
-					ng-model="functionsList"
-					columns='[{"label":"Function Name","name":"name"}]' 
-					columns-search='["name","keywords","description"]'
-					show-search-bar=true
-					highlights-selected-item=true
-					speed-menu-option="acSpeedMenu"
-					click-function ="leftTableClick(item)"
-					selected-item="tableSelectedFunction"					
-			>						
-			</angular-table>
-    	
+		
+			<md-content layout="column" >
+				<md-content layout="row"  flex="20">
+				
+					<md-card  ng-repeat="functionType in functionTypesList" ng-click="functionsList=filterByType(functionType)" flex>
+		        		<md-card-title flex>
+		          			<md-card-title-text flex>
+		            			<span class="md-headline" flex>{{functionType.valueCd}}</span>
+		            			<span class="md-subhead" flex>{{functionType.domainName}}</span>
+		          			</md-card-title-text>
+		       			</md-card-title>
+
+		      		</md-card>
+		      		
+					<md-card  ng-click="functionsList=filterByType({valueCd:'All'})" flex> 
+		        		<md-card-title flex>
+		          			<md-card-title-text flex>
+		            			<span class="md-headline" flex>{{translate.load("sbi.functionscatalog.all")}}</span>
+		            			<span class="md-subhead" flex>{{translate.load("sbi.functionscatalog.allmessage")}}</span>
+		          			</md-card-title-text>
+		          		</md-card-title>
+
+		      		</md-card>
+				</md-content flex>	
+					<div class="md-block" layout="row" layout-align="center center" >
+						<md-chips ng-model="searchKeywords" readonly=true> 
+							<md-chip-template ng-click="chipFilter($chip)" >
+							{{$chip}}
+							</md-chip-template>
+						</md-chips>	
+					</div>
+					
+		    		<angular-table
+		    				id="functionsTable" 
+							flex
+							ng-show=true
+							ng-model="functionsList"
+							columns='[{"label":"Function Name","name":"name"}]' 
+							columns-search='["name","keywords","description"]'
+							show-search-bar=true
+							highlights-selected-item=true
+							speed-menu-option="acSpeedMenu"
+							click-function ="leftTableClick(item)"
+							selected-item="tableSelectedFunction"					
+					>						
+					</angular-table>
+		    	
+			
+		
+			</md-content>
+		
+
+
+			
+
+		
     	
     	 
     	</list>
@@ -210,7 +253,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         					<label>{{translate.load("sbi.functionscatalog.keywords");}}</label>
         					<br></br>        					
 							<md-chips ng-model="shownFunction.keywords" readonly="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))" ></md-chips>
-						</md-input-container
+						</md-input-container>
 						
  
         				
