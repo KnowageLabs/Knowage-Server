@@ -415,9 +415,13 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 			Criterion rest2 = Restrictions.eq("userId", userId);
 			criteria.add(Restrictions.and(rest1, rest2));
 
-			SbiWhatifWorkflow wf = (SbiWhatifWorkflow) criteria.uniqueResult();
+			List<SbiWhatifWorkflow> list = criteria.list();
 
-			return wf.getId();
+			if (list.isEmpty())
+				return -1; // in case there is new user inserted on update
+							// action
+			else
+				return list.get(0).getId();
 
 		} catch (Exception he) {
 			logger.error("Exception loading the active user in the worflow", he);

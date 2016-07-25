@@ -37,8 +37,8 @@ angular.module('sbi_table_toolbar',['sbiModule'])
 function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_download,olapSharedSettings) {
 	
 	var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
-	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon","BUTTON_EDITABLE_EXCEL_EXPORT"];
-	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT","BUTTON_SORTING_SETTINGS","BUTTON_CC","BUTTON_SORTING","BUTTON_ALGORITHMS"]
+	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon","BUTTON_EDITABLE_EXCEL_EXPORT","BUTTON_ALGORITHMS"];
+	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT","BUTTON_SORTING_SETTINGS","BUTTON_CC","BUTTON_SORTING"]
 	var saveAsTimeout = olapSharedSettings.getSettings().persistNewVersionTransformations;
 	$scope.availAlgorithms = [];
 	$scope.activeAlg;
@@ -537,7 +537,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			("1.0","/model/saveAs?SBI_EXECUTION_ID="+ JSsbiExecutionID,content,{timeout:saveAsTimeout})
 			.then(function(response) {
 				$scope.handleResponse(response);
-				$scope.closeDialog(null);
+				$mdDialog.hide();
 				sbiModule_messaging.showInfoMessage("New version saved", 'Info');
 		  },function(response){
 			  sbiModule_messaging.showErrorMessage("An error occurred while saving new version", 'Error'); 
