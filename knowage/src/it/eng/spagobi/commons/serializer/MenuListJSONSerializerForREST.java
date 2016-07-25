@@ -256,19 +256,22 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 							}
 
-							if (menuElem.getCode() != null && menuElem.getCode().equals("my_data_admin")) {
-								// admins and devs can see ONLY models tab,
-								// while tester can see datasets and models
-								if (UserUtilities.isTechDsManager(this.getUserProfile())) {
-									temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_MYDATA_ADMIN + "', '" + text + "')");
-									temp.put(FIRST_URL, contextName + HREF_MYDATA_ADMIN);
-									temp.put(LINK_TYPE, "execDirectUrl");
-								} else if (UserUtilities.isTester(this.getUserProfile())) {
-									temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_MYDATA + "', '" + text + "')");
-									temp.put(LINK_TYPE, "execDirectUrl");
-									temp.put(FIRST_URL, contextName + HREF_MYDATA);
-								}
-							}
+							/**
+							 * Commented by Danilo Ristovski (danristo)
+							 */
+							// if (menuElem.getCode() != null && menuElem.getCode().equals("my_data_admin")) {
+							// // admins and devs can see ONLY models tab,
+							// // while tester can see datasets and models
+							// if (UserUtilities.isTechDsManager(this.getUserProfile())) {
+							// temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_MYDATA_ADMIN + "', '" + text + "')");
+							// temp.put(FIRST_URL, contextName + HREF_MYDATA_ADMIN);
+							// temp.put(LINK_TYPE, "execDirectUrl");
+							// } else if (UserUtilities.isTester(this.getUserProfile())) {
+							// temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_MYDATA + "', '" + text + "')");
+							// temp.put(LINK_TYPE, "execDirectUrl");
+							// temp.put(FIRST_URL, contextName + HREF_MYDATA);
+							// }
+							// }
 
 							if (menuElem.getHasChildren()) {
 								List lstChildrenLev2 = menuElem.getLstChildren();
@@ -341,15 +344,21 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tempMenuList.put(createDoc);
 		}
 
-		if (isAbleTo(SpagoBIConstants.CREATE_DOCUMENT, funcs)) {
-			JSONObject createDoc = createMenuItem("create", HREF_PENCIL, messageBuilder.getMessage("menu.MyAnalysis", locale), true, null);
-			tempMenuList.put(createDoc);
-		}
+		/**
+		 * Commented by Danilo Ristovski (danristo)
+		 */
+		// if (isAbleTo(SpagoBIConstants.CREATE_DOCUMENT, funcs)) {
+		// JSONObject createDoc = createMenuItem("create", HREF_PENCIL, messageBuilder.getMessage("menu.MyAnalysis", locale), true, null);
+		// tempMenuList.put(createDoc);
+		// }
 
-		if (isAbleTo(SpagoBIConstants.SEE_MY_DATA, funcs)) {
-			JSONObject myData = createMenuItem("web", HREF_MYDATA, messageBuilder.getMessage("menu.MyData", locale), true, null);
-			tempMenuList.put(myData);
-		}
+		/**
+		 * Commented by Danilo Ristovski (danristo)
+		 */
+		// if (isAbleTo(SpagoBIConstants.SEE_MY_DATA, funcs)) {
+		// JSONObject myData = createMenuItem("web", HREF_MYDATA, messageBuilder.getMessage("menu.MyData", locale), true, null);
+		// tempMenuList.put(myData);
+		// }
 
 		// workspace is added unconditionally
 		JSONObject workspace = new JSONObject();

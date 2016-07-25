@@ -224,15 +224,18 @@ public class MenuListJSONSerializer implements Serializer {
 
 							}
 
-							if (menuElem.getCode() != null && menuElem.getCode().equals("my_data_admin")) {
-								// admins and devs can see ONLY models tab,
-								// while tester can see datasets and models
-								if (UserUtilities.isTechDsManager(this.getUserProfile())) {
-									temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_MYDATA_ADMIN + "', '" + text + "')");
-								} else if (UserUtilities.isTester(this.getUserProfile())) {
-									temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_MYDATA + "', '" + text + "')");
-								}
-							}
+							/**
+							 * Commented by Danilo Ristovski (danristo)
+							 */
+							// if (menuElem.getCode() != null && menuElem.getCode().equals("my_data_admin")) {
+							// // admins and devs can see ONLY models tab,
+							// // while tester can see datasets and models
+							// if (UserUtilities.isTechDsManager(this.getUserProfile())) {
+							// temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_MYDATA_ADMIN + "', '" + text + "')");
+							// } else if (UserUtilities.isTester(this.getUserProfile())) {
+							// temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_MYDATA + "', '" + text + "')");
+							// }
+							// }
 
 							if (menuElem.getHasChildren()) {
 
@@ -299,15 +302,21 @@ public class MenuListJSONSerializer implements Serializer {
 			tempMenuList.put(createDoc);
 		}
 
-		if (isAbleTo(SpagoBIConstants.CREATE_DOCUMENT, funcs)) {
-			JSONObject createDoc = createMenuItem("pencil", HREF_PENCIL, messageBuilder.getMessage("menu.MyAnalysis", locale), true, null);
-			tempMenuList.put(createDoc);
-		}
+		/**
+		 * Commented by Danilo Ristovski (danristo)
+		 */
+		// if (isAbleTo(SpagoBIConstants.CREATE_DOCUMENT, funcs)) {
+		// JSONObject createDoc = createMenuItem("pencil", HREF_PENCIL, messageBuilder.getMessage("menu.MyAnalysis", locale), true, null);
+		// tempMenuList.put(createDoc);
+		// }
 
-		if (isAbleTo(SpagoBIConstants.SEE_MY_DATA, funcs)) {
-			JSONObject myData = createMenuItem("my_data", HREF_MYDATA, messageBuilder.getMessage("menu.MyData", locale), true, null);
-			tempMenuList.put(myData);
-		}
+		/**
+		 * Commented by Danilo Ristovski (danristo)
+		 */
+		// if (isAbleTo(SpagoBIConstants.SEE_MY_DATA, funcs)) {
+		// JSONObject myData = createMenuItem("my_data", HREF_MYDATA, messageBuilder.getMessage("menu.MyData", locale), true, null);
+		// tempMenuList.put(myData);
+		// }
 
 		// workspace should always be visible
 		JSONObject workspace = new JSONObject();

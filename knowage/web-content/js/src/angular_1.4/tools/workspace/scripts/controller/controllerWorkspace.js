@@ -41,7 +41,7 @@ angular
 		}
 		
 	}]);
-;
+
 
 function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentViewer,sbiModule_translate,sbiModule_restServices,sbiModule_config,sbiModule_user,sbiModule_messaging) {
 
@@ -382,6 +382,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 //							console.info("[LOAD]: Not derivated datasets additionaly, because of reloading of MyData.");
 //							$scope.loadNotDerivedDatasets();
 //						}
+						
 						$scope.loadNotDerivedDatasets();
 						$scope.loadDatasets();
 						$scope.loadMyDatasets();
