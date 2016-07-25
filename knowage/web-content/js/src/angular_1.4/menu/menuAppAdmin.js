@@ -17,7 +17,7 @@
  */
 
 
-var myApp = angular.module('menuAppAdmin', ['ngMaterial']);
+var myApp = angular.module('menuAppAdmin', ['ngMaterial', 'sbiModule']);
 
 myApp.controller('menuCtrl', ['$scope','$mdDialog',
 	function ($scope,$mdDialog ) {
@@ -29,7 +29,7 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
 	}
 ]);
 
-myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
+myApp.directive('menuAside', ['$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', function($http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download) {
     return {
 
         restrict: 'E',
@@ -42,6 +42,9 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
         	    		curr_language: Sbi.config.curr_language
         	    	}
         	}).success(function(data){
+        		$scope.translate = sbiModule_translate;
+        		$scope.messaging = sbiModule_messaging;
+        		$scope.download = sbiModule_download;
         		$scope.links = [];
         		$scope.fixed = data.fixedMenu;
         		$scope.userName = data.userName;
@@ -156,7 +159,7 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
 			}
 			
 			
-			$scope.license = function license(){
+			$scope.openDialog = function openDialog(){
 				$scope.toggleMenu();
 				var context=Sbi.config;
 				var parentEl = angular.element(document.body);
@@ -164,6 +167,10 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
 				
 	        	$http.get(Sbi.config.contextName+'/restful-services/1.0/license?onlyValid=true').success(function(data){
 				//$http.get(Sbi.config.contextName+'/restful-services/1.0/FunctionsCatalog').success(function(data){
+	        		if (data.errors){
+						$scope.messaging.showErrorMessage(data.errors[0].message,$scope.translate.load('sbi.generic.error'));
+						return;
+					}
 	        		console.log("License Data:", data);
 	        		$scope.licenseData=data;
 					$mdDialog.show({
@@ -172,7 +179,11 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
 						locals: {
 							title : LN('sbi.home.License'),
 							okMessage : LN('sbi.general.ok'),
-							licenseData :  $scope.licenseData
+							licenseData :  $scope.licenseData,
+							config : Sbi.config,
+							translate : $scope.translate,
+							messaging : $scope.messaging,
+							download : $scope.download
 						},
 						controller: licenseDialogController
 					});	
@@ -181,27 +192,99 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
 	        		$scope.showAlert('Attention, ' + "Error Calling REST service for Menu. Please check if the server or connection is working.")
 	        	});
 				
-				
-				
-				
-		
-				
-				
-				
-				
-
-				
-				function licenseDialogController(scope, $mdDialog, title, okMessage,licenseData) {
-	        	        scope.title = title;
+	        	function licenseDialogController(scope, $mdDialog, title, okMessage,licenseData, config, translate, messaging, download) {
+	        			scope.title = title;
 	        	        scope.okMessage = okMessage;
 	        	        scope.licenseData = licenseData;
+	        	        scope.config = config;
+	        	        scope.translate = $scope.translate;
+						scope.messaging = $scope.messaging;
+						scope.download = $scope.download;
+	        	        
+	        	        var restLicense = {
+	        	        		base : scope.config.contextName + '/restful-services/1.0/license',
+	        	        		download : '/download',
+	        	        		upload : '/upload'
+	        	        }
+	        	        
+	        	        scope.setFile = function (file){
+	        	        	scope.file = file.files[0];
+	        	        	scope.$apply();
+	        	        }
+	        	        
+	        	        scope.uploadFile = function(){
+	        	        	if (scope.file){
+	        	        		var config = {
+	        	        				transformRequest:angular.identity,
+	        	        				headers:{'Content-Type': undefined}
+	        	        			};
+	        	        		
+	        	        		var formData = new FormData();
+	        	        		formData.append(scope.file.name,scope.file);
+
+	        	        		$http.post(restLicense.base + restLicense.upload ,formData,config)
+	        	        			.then(
+	        	        				function(response,status,headers,config){
+	        	        					if (response.data.errors){
+	        	        						scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
+	        	        					}else{
+	        	        						scope.file = undefined;
+	        	        						scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
+	        	        					}
+	        	        				},
+	        	        				function(response,status,headers,config){
+	        	        					if (response.data.errors){
+	        	        						scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
+	        	        					}else{
+	        	        						scope.messaging.showErrorMessage(scope.translate.load('sbi.ds.failedToUpload'),scope.translate.load('sbi.generic.error'));
+	        	        					}
+	        	        				})
+	        	        	}
+	        	        }
+	        	        
+	        	        scope.dowloadFile = function(license){
+	        	        	$http
+	        	        		.get(restLicense.base + restLicense.download + '/' + license.product)
+	        	        		.then(
+        	        				function(response,status,headers,config){
+        	        					if (response.data.errors){
+        	        						scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
+        	        					}else{
+        	        						var paramsString = response.headers("Content-Disposition");
+        	        						var arrayParam = paramsString.split(';');
+        	        						var fileName = "";
+        	        						var fileType = "";
+        	        						var extensionFile = "";
+        	        						for (var i = 0; i< arrayParam.length; i++){
+        	        							var p = arrayParam[i].toLowerCase();
+        	        							if (p.includes("filename")){
+        	        								fileName = arrayParam[i].split("=")[1]; 
+        	        							}else if (p.includes("filetype")){
+        	        								fileType = arrayParam[i].split("=")[1];
+        	        							}else if (p.includes("extensionfile")){
+        	        								extensionFile = arrayParam[i].split("=")[1];
+        	        							}
+        	        						}
+        	        						if (fileName && fileName.endsWith("." + extensionFile)){
+        	        							fileName = fileName.split("." + extensionFile)[0];
+        	        						}
+        	        						scope.download.getBlob(response.data,fileName,fileType,extensionFile);
+        	        						scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
+        	        					}
+        	        				},
+        	        				function(response,status,headers,config){
+        	        					if (response.data.errors){
+        	        						scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
+        	        					}else{
+        	        						scope.messaging.showErrorMessage(scope.translate.load('sbi.generic.genericError'),scope.translate.load('sbi.generic.error'));
+        	        					}
+        	        			});
+	        	        }
 	        	        scope.closeDialog = function() {
 	        	          $mdDialog.hide();
-	        	        }	        	        
+	        	        }
         	      }
 			}
-			
-			
 			
 			$scope.callExternalApp = function callExternalApp(url){
 				if (!Sbi.config.isSSOEnabled) {
@@ -266,14 +349,9 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
 			
 			$scope.menuCall = function menuCall(url,type){
 				if (type == 'execDirectUrl'){
-					if(url=="showLicenseDialog")
-					{
-						$scope.license();
-					}	
-					else
-					{
-						$scope.redirectIframe(url);
-					}	
+					$scope.redirectIframe(url);
+				}else if(type == "dialog"){
+					$scope.openDialog(url);
 				} else if (type == 'roleSelection'){
 					$scope.roleSelection();
 				} else if (type =="execUrl"){
@@ -289,7 +367,6 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
 				} else if (type == "languageSelection"){
 					$scope.languageSelection();
 				}
-				
 			}
         }
     };

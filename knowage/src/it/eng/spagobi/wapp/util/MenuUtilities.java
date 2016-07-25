@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,7 +27,6 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -59,25 +58,24 @@ public class MenuUtilities {
 	public static final String LIST_MENU = "LIST_MENU";
 
 	public static String getMenuPath(Menu menu, Locale locale) {
-		String path ="";
-		MessageBuilder msgBuild=new MessageBuilder();
+		String path = "";
+		MessageBuilder msgBuild = new MessageBuilder();
 		try {
 			if (menu.getParentId() == null) {
-				if (menu.getName().startsWith("#")){				
-					String titleCode = menu.getName().substring(1);									
-					path = msgBuild.getMessage(titleCode, locale);								
+				if (menu.getName().startsWith("#")) {
+					String titleCode = menu.getName().substring(1);
+					path = msgBuild.getMessage(titleCode, locale);
 				} else {
 					path = menu.getName();
 				}
 				return path;
 			} else {
-				Menu parent = DAOFactory.getMenuDAO().loadMenuByID(
-						menu.getParentId());
+				Menu parent = DAOFactory.getMenuDAO().loadMenuByID(menu.getParentId());
 				// can happen that parent is not found
 				if (parent == null) {
-					if (menu.getName().startsWith("#")){				
-						String titleCode = menu.getName().substring(1);									
-						path = msgBuild.getMessage(titleCode, locale);								
+					if (menu.getName().startsWith("#")) {
+						String titleCode = menu.getName().substring(1);
+						path = msgBuild.getMessage(titleCode, locale);
 					} else {
 						path = menu.getName();
 					}
@@ -92,8 +90,7 @@ public class MenuUtilities {
 		}
 	}
 
-	public static List filterListForUser(List menuList,
-			IEngUserProfile userProfile) {
+	public static List filterListForUser(List menuList, IEngUserProfile userProfile) {
 		List filteredMenuList = new ArrayList();
 		if (menuList != null && !menuList.isEmpty()) {
 			for (int i = 0; i < menuList.size(); i++) {
@@ -113,39 +110,41 @@ public class MenuUtilities {
 	}
 
 	/**
-	 * Gets the elements of menu relative by the user logged. It reaches the role from the request and 
-	 * asks to the DB all detail
-	 * menu information, by calling the method <code>loadMenuByRoleId</code>.
-	 *   
-	 * @param request The request Source Bean
-	 * @param response The response Source Bean
-	 * @throws EMFUserError If an exception occurs
-	 */   
+	 * Gets the elements of menu relative by the user logged. It reaches the role from the request and asks to the DB all detail menu information, by calling
+	 * the method <code>loadMenuByRoleId</code>.
+	 *
+	 * @param request
+	 *            The request Source Bean
+	 * @param response
+	 *            The response Source Bean
+	 * @throws EMFUserError
+	 *             If an exception occurs
+	 */
 	public static void getMenuItems(SourceBean request, SourceBean response, IEngUserProfile profile) throws EMFUserError {
-		try {	
+		try {
 			List lstFinalMenu = new ArrayList();
 			boolean technicalMenuLoaded = false;
 
-			Collection lstRolesForUser = ((UserProfile)profile).getRolesForUse();
+			Collection lstRolesForUser = ((UserProfile) profile).getRolesForUse();
 			logger.debug("** Roles for user: " + lstRolesForUser.size());
 
 			Object[] arrRoles = lstRolesForUser.toArray();
-			Integer levelItem = 1;			
-			for (int i=0; i< arrRoles.length; i++) {
+			Integer levelItem = 1;
+			for (int i = 0; i < arrRoles.length; i++) {
 				logger.debug("*** arrRoles[i]): " + arrRoles[i]);
-				Role role = (Role)DAOFactory.getRoleDAO().loadByName((String)arrRoles[i]);
-				if (role != null) {	
-					
-					List menuItemsForARole  = DAOFactory.getMenuRolesDAO().loadMenuByRoleId(role.getId());
+				Role role = DAOFactory.getRoleDAO().loadByName((String) arrRoles[i]);
+				if (role != null) {
+
+					List menuItemsForARole = DAOFactory.getMenuRolesDAO().loadMenuByRoleId(role.getId());
 					if (menuItemsForARole != null) {
 						mergeMenuItems(lstFinalMenu, menuItemsForARole);
 					} else {
-						logger.debug("Not found menu items for user role " + (String) arrRoles[i] );
+						logger.debug("Not found menu items for user role " + (String) arrRoles[i]);
 					}
-					
-					if (!technicalMenuLoaded && UserUtilities.isTechnicalUser(profile)){ 
-						//list technical user menu
-						technicalMenuLoaded = true;						
+
+					if (!technicalMenuLoaded && UserUtilities.isTechnicalUser(profile)) {
+						// list technical user menu
+						technicalMenuLoaded = true;
 						List firstLevelItems = ConfigSingleton.getInstance().getAttributeAsList("TECHNICAL_USER_MENU.ITEM");
 						Iterator it = firstLevelItems.iterator();
 						while (it.hasNext()) {
@@ -155,61 +154,63 @@ public class MenuUtilities {
 								lstFinalMenu.add(getAdminItemRec(itemSB, levelItem, profile, null));
 								levelItem++;
 							}
-						}						
-					}			      		        										
-				}
-				else
-					logger.debug("Role " + (String)arrRoles[i] + " not found on db");
+						}
+					}
+				} else
+					logger.debug("Role " + (String) arrRoles[i] + " not found on db");
 			}
 			response.setAttribute(LIST_MENU, lstFinalMenu);
 
 			logger.debug("List Menu Size " + lstFinalMenu.size());
-			//String menuMode = (configSingleton.getAttribute("SPAGOBI.MENU.mode")==null)?DEFAULT_LAYOUT_MODE:(String)configSingleton.getAttribute("SPAGOBI.MENU.mode");
-			//response.setAttribute(MENU_MODE, menuMode);
+			// String menuMode =
+			// (configSingleton.getAttribute("SPAGOBI.MENU.mode")==null)?DEFAULT_LAYOUT_MODE:(String)configSingleton.getAttribute("SPAGOBI.MENU.mode");
+			// response.setAttribute(MENU_MODE, menuMode);
 			response.setAttribute(MENU_MODE, DEFAULT_LAYOUT_MODE);
 
 		} catch (Exception ex) {
-			logger.error("Cannot fill response container" + ex.getLocalizedMessage());	
+			logger.error("Cannot fill response container" + ex.getLocalizedMessage());
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, MODULE_PAGE);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 500, new Vector(), params);
 		}
 	}
-	
+
 	/**
-	 * Gets the elements of menu relative by the user logged. It reaches the role from the request and 
-	 * asks to the DB all detail
-	 * menu information, by calling the method <code>loadMenuByRoleId</code>.
-	 *   
-	 * @param request The request Source Bean
-	 * @param response The response Source Bean
-	 * @throws EMFUserError If an exception occurs
-	 */   
+	 * Gets the elements of menu relative by the user logged. It reaches the role from the request and asks to the DB all detail menu information, by calling
+	 * the method <code>loadMenuByRoleId</code>.
+	 *
+	 * @param request
+	 *            The request Source Bean
+	 * @param response
+	 *            The response Source Bean
+	 * @throws EMFUserError
+	 *             If an exception occurs
+	 */
 	public static List getMenuItems(IEngUserProfile profile) throws EMFUserError {
-		try {	
+		try {
 			List lstFinalMenu = new ArrayList();
 			boolean technicalMenuLoaded = false;
 
-			Collection lstRolesForUser = ((UserProfile)profile).getRolesForUse();
+			Collection lstRolesForUser = ((UserProfile) profile).getRolesForUse();
 			logger.debug("** Roles for user: " + lstRolesForUser.size());
 
 			Object[] arrRoles = lstRolesForUser.toArray();
-			Integer levelItem = 1;			
-			for (int i=0; i< arrRoles.length; i++) {
+			Integer levelItem = 1;
+			for (int i = 0; i < arrRoles.length; i++) {
 				logger.debug("*** arrRoles[i]): " + arrRoles[i]);
-				Role role = (Role)DAOFactory.getRoleDAO().loadByName((String)arrRoles[i]);
-				if (role != null) {	
-					
-					List menuItemsForARole  = DAOFactory.getMenuRolesDAO().loadMenuByRoleId(role.getId());
+				Role role = DAOFactory.getRoleDAO().loadByName((String) arrRoles[i]);
+				if (role != null) {
+
+					List menuItemsForARole = DAOFactory.getMenuRolesDAO().loadMenuByRoleId(role.getId());
 					if (menuItemsForARole != null) {
 						mergeMenuItems(lstFinalMenu, menuItemsForARole);
 					} else {
-						logger.debug("Not found menu items for user role " + (String) arrRoles[i] );
+						logger.debug("Not found menu items for user role " + (String) arrRoles[i]);
 					}
-					
-					if (!technicalMenuLoaded && UserUtilities.isTechnicalUser(profile)){ 
-						//list technical user menu
-						technicalMenuLoaded = true;						
+
+					if (!technicalMenuLoaded && UserUtilities.isTechnicalUser(profile)) {
+						// list technical user menu
+						technicalMenuLoaded = true;
 						List firstLevelItems = ConfigSingleton.getInstance().getAttributeAsList("TECHNICAL_USER_MENU.ITEM");
 						Iterator it = firstLevelItems.iterator();
 						while (it.hasNext()) {
@@ -219,17 +220,16 @@ public class MenuUtilities {
 								lstFinalMenu.add(getAdminItemRec(itemSB, levelItem, profile, null));
 								levelItem++;
 							}
-						}						
-					}			      		        										
-				}
-				else
-					logger.debug("Role " + (String)arrRoles[i] + " not found on db");
-			}		
+						}
+					}
+				} else
+					logger.debug("Role " + (String) arrRoles[i] + " not found on db");
+			}
 
 			logger.debug("List Menu Size " + lstFinalMenu.size());
 			return lstFinalMenu;
 		} catch (Exception ex) {
-			logger.error("Cannot fill response container" + ex.getLocalizedMessage());	
+			logger.error("Cannot fill response container" + ex.getLocalizedMessage());
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, MODULE_PAGE);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 500, new Vector(), params);
@@ -241,8 +241,8 @@ public class MenuUtilities {
 			Menu aMenuItemForARole = (Menu) menuItemsForARole.get(j);
 			// if the final menu list does not contain a specific role menu item, it is inserted into the final list
 			int index = indexOf(finalMenuList, aMenuItemForARole);
-			if (index == -1) {						
-				finalMenuList.add(aMenuItemForARole);	
+			if (index == -1) {
+				finalMenuList.add(aMenuItemForARole);
 			} else {
 				// we have to recursively cycle on children if any
 				if (aMenuItemForARole.getHasChildren()) {
@@ -257,8 +257,11 @@ public class MenuUtilities {
 
 	/**
 	 * This method checks if the single item is visible from the technical user
-	 * @param itemSB the single item
-	 * @param profile the profile
+	 *
+	 * @param itemSB
+	 *            the single item
+	 * @param profile
+	 *            the profile
 	 * @return boolean value
 	 * @throws EMFInternalError
 	 */
@@ -273,19 +276,23 @@ public class MenuUtilities {
 
 	/**
 	 * This method checks if the single item has other sub-items visible from the technical user
-	 * @param itemSB the master item
-	 * @param profile the profile
+	 *
+	 * @param itemSB
+	 *            the master item
+	 * @param profile
+	 *            the profile
 	 * @return boolean value
 	 * @throws EMFInternalError
 	 */
-	private static  boolean isAbleToSeeContainedItems(SourceBean itemSB, IEngUserProfile profile) throws EMFInternalError {
+	private static boolean isAbleToSeeContainedItems(SourceBean itemSB, IEngUserProfile profile) throws EMFInternalError {
 		List subItems = itemSB.getAttributeAsList("ITEM");
-		if (subItems == null || subItems.isEmpty()) return false;
+		if (subItems == null || subItems.isEmpty())
+			return false;
 		Iterator it = subItems.iterator();
 		while (it.hasNext()) {
 			SourceBean subItem = (SourceBean) it.next();
 			String functionality = (String) subItem.getAttribute("functionality");
-			String group= (String)subItem.getAttribute("groupingMenu");
+			String group = (String) subItem.getAttribute("groupingMenu");
 			if (profile.isAbleToExecuteAction(functionality) || (group != null && group.equals("true"))) {
 				return true;
 			}
@@ -295,14 +302,16 @@ public class MenuUtilities {
 
 	/**
 	 * This method return a Menu type element recursivly with the technical user item (the item is created in memory, it isn't on db)
-	 * @param itemSB the technical item to add
+	 *
+	 * @param itemSB
+	 *            the technical item to add
 	 * @param father
 	 * @return
 	 */
-	private static Menu getAdminItemRec(SourceBean itemSB, Integer progStart, IEngUserProfile profile, Integer parent){
+	private static Menu getAdminItemRec(SourceBean itemSB, Integer progStart, IEngUserProfile profile, Integer parent) {
 		Menu node = new Menu();
-		try{
-			Integer menuId = new Integer(progStart*1000);
+		try {
+			Integer menuId = new Integer(progStart * 1000);
 			String functionality = (String) itemSB.getAttribute("functionality");
 			String code = (String) itemSB.getAttribute("code");
 			String titleCode = (String) itemSB.getAttribute("title");
@@ -310,11 +319,12 @@ public class MenuUtilities {
 			String url = (String) itemSB.getAttribute("url");
 			String iconCls = (String) itemSB.getAttribute("iconCls");
 			String groupingMenu = (String) itemSB.getAttribute("groupingMenu");
+			String linkType = (String) itemSB.getAttribute("linkType");
 
 			node.setParentId(parent);
-			node.setMenuId(menuId);	
-	
-			node.setCode(code);		
+			node.setMenuId(menuId);
+
+			node.setCode(code);
 
 			node.setProg(progStart);
 			node.setName(titleCode);
@@ -325,20 +335,21 @@ public class MenuUtilities {
 			node.setIconPath(iconUrl);
 			node.setAdminsMenu(true);
 			node.setIconCls(iconCls);
-			if(groupingMenu != null)
+			node.setLinkType(linkType);
+			if (groupingMenu != null)
 				node.setGroupingMenu(groupingMenu);
 
 			if (functionality == null) {
-				//father node
-				List subItems = itemSB.getAttributeAsList("ITEM");	
+				// father node
+				List subItems = itemSB.getAttributeAsList("ITEM");
 				Iterator it = subItems.iterator();
 				if (subItems == null || subItems.isEmpty())
 					node.setHasChildren(false);
-				else{
-					node.setHasChildren(true);			
+				else {
+					node.setHasChildren(true);
 					List lstChildren = new ArrayList();
 					while (it.hasNext()) {
-						//defines children
+						// defines children
 						SourceBean subItem = (SourceBean) it.next();
 						if (isAbleToSeeItem(subItem, profile)) {
 							Menu subNode = getAdminItemRec(subItem, progStart, profile, menuId);
@@ -359,14 +370,16 @@ public class MenuUtilities {
 		return node;
 	}
 
-
 	/**
 	 * Check if the menu element in input is already presents into the list
-	 * @param lst the list to check
-	 * @param menu the element to check
+	 *
+	 * @param lst
+	 *            the list to check
+	 * @param menu
+	 *            the element to check
 	 * @return the index of the input menu item or -1 if it is not found in the list
 	 */
-	public static int indexOf(List lst, Menu menu){
+	public static int indexOf(List lst, Menu menu) {
 		if (lst == null)
 			return -1;
 		for (int i = 0; i < lst.size(); i++) {

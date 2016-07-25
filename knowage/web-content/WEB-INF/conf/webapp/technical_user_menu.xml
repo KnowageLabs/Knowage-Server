@@ -308,8 +308,9 @@
 	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />
 	       	
 	       	<ITEM   title="#menu.license"
-	                functionality="License"
+	                functionality="LicenseManagement"
 	                url="showLicenseDialog" 
+	                linkType="dialog"
 	                />        
 	                					
 						

@@ -535,6 +535,7 @@ public class UserUtilities {
 		// superadminFunctionalities.add(SpagoBIConstants.READ_ENGINES_MANAGEMENT);
 		superadminFunctionalities.add(SpagoBIConstants.CONFIG_MANAGEMENT);
 		superadminFunctionalities.add(SpagoBIConstants.DOMAIN_MANAGEMENT);
+		superadminFunctionalities.add(SpagoBIConstants.LICENSE_MANAGEMENT);
 
 		return superadminFunctionalities;
 	}
@@ -884,7 +885,7 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
-	 * 
+	 *
 	 * is this method in the right place?
 	 */
 

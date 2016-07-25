@@ -629,7 +629,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tempMenuList.put(tenantManagementTechnical);
 		}
 
-		if (isAbleTo(SpagoBIConstants.LICENSE, funcs)) {
+		if (isAbleTo(SpagoBIConstants.LICENSE_MANAGEMENT, funcs)) {
 			JSONObject license = new JSONObject();
 			license.put(ICON_CLS, "style"); // TODO: change
 											// icon
@@ -846,7 +846,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				}
 				temp2.put(SRC, src);
 				temp2.put(HREF, url + ", '" + path + "')");
-				temp2.put(LINK_TYPE, "execDirectUrl");
+				String linkType = childElem.getLinkType() == null ? "execDirectUrl" : childElem.getLinkType();
+				temp2.put(LINK_TYPE, linkType);
 			}
 
 		}

@@ -413,15 +413,10 @@ String extTheme=ThemesManager.getTheExtTheme(currTheme);
 <%-- ---------------------------------------------------------------------- --%>
 <%-- INCLUDE Angular JS														--%>
 <%-- ---------------------------------------------------------------------- --%>
-	<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.js'></script>
-	<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-animate.min.js'></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
+	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/bootstrap/css/bootstrap.min.css">
 	<link id="spagobi-angular" rel="styleSheet"	href="${pageContext.request.contextPath}/themes/sbi_default/css/menuBar/style.css" type="text/css" />
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- INCLUDE JQuery															--%>

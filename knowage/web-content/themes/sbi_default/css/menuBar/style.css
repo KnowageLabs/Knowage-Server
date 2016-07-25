@@ -1263,3 +1263,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
 .iconBarAdmin li > a:focus{
 	background-color: #243C51;
 }
+
+md-list-item.license-item::before{
+	min-height: 0px !important;
+}
