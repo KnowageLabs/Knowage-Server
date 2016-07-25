@@ -261,18 +261,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	     				<md-card flex>
 	     					<md-toolbar class="md-hue-2">
-	     						<div class="md-toolbar-tools">
-	     							<div style="width:80%">
-										<h2 class="md-flex" style="padding-left:10px;">Users work flow</h2>
-	     							</div>
-									<div style="width:20%">
-										<md-button class="md-fab mondrian-start-btn"  style="background-color:white!important;width:50px;height:50px;" ng-show="isStartVisible()" ng-click="startWorkflow(selectedMondrianSchema.id)">
+	     						<div class="md-toolbar-tools" layout="row">
+										<h2 class="md-flex">Users work flow</h2>
+	     							<div flex></div>
+										<md-button class="md-icon-button mondrian-start-btn"  ng-show="isStartVisible()" ng-click="startWorkflow(selectedMondrianSchema.id)">
 										<md-tooltip md-direction="bottom">
 								          Start workflow
 								        </md-tooltip>
-          								<md-icon md-font-icon="fa-play-circle" class="fa fa-2x" style="color:#008800; font-size:40px"></md-icon>
-        							</md-button>
-									</div>											
+          								<md-icon md-font-icon="fa-play-circle" class="fa fa-2x"></md-icon>
+        							</md-button>										
 								</div>
 								
 	     					</md-toolbar>

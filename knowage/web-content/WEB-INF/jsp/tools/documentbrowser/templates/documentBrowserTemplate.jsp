@@ -125,7 +125,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	control='breadCrumbControl'
 	move-to-callback=moveBreadCrumbToFolder(item,index)></bread-crumb> <md-whiteframe
 	flex layout="column" class="md-whiteframe-5dp" layout-margin>
-<div layout="row" ng-show='showDocumentGridView'>
+<div layout="row" ng-show='showDocumentGridView' class="documentGridViewInput">
 	<md-input-container class="md-block" flex> <label>{{translate.load("sbi.ds.orderComboLabel")}}</label>
 	<md-select ng-model="selectedOrder"
 		ng-model-option="trackBy:'$value.id'"> <md-option
@@ -154,7 +154,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	flex ng-show="searchingDocuments"> <md-progress-circular
 	loading md-mode="indeterminate" md-diameter="75%"
 	style="position:fixed; top:50%; left:50%; z-index:500; background:rgba(255, 255, 255, 0);">
-</md-progress-circular> </md-content> <md-content layout="column" flex
+</md-progress-circular> </md-content> 
+
+<md-content layout="column" flex
 	ng-show="showSearchView && !searchingDocuments">
 <h3 class="md-title" ng-show="searchDocuments.length == 0">{{translate.load("sbi.browser.document.noDocument")}}</h3>
 <h3 class="md-title" ng-show="searchDocuments.length > 0">{{searchDocuments.length
@@ -164,9 +166,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	show-grid-view="showDocumentGridView"
 	table-speed-menu-option="documentTableButton"
 	selected-document=selectedDocument
-	select-document-action="selectDocument(doc);"> </document-view> </md-content> <md-sidenav
+	select-document-action="selectDocument(doc);"> 
+	</document-view> 
+	</md-content> 
+	<md-sidenav
 	class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp"
-	md-component-id="right" md-is-locked-open="$mdMedia('gt-md')"
+	md-component-id="right" md-is-locked-open="$mdMedia('gt-sm')"
 	ng-class="{'full-screen-sidenav': smallScreen}"
 	ng-show="showDocumentDetails()"> <md-toolbar
 	class="ternaryToolbar"> <!-- 					<h1 class="md-toolbar-tools" style="text-align:center; display:inline;">{{selectedDocument.name | limitEllipses:28}}</h1> -->

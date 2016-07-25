@@ -206,6 +206,13 @@ angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
 .principalTable tr td:first-child>span {
     margin-left: $standardPadding;
 }
+
+.principalTable tr td button.md-icon-button {
+    md-icon {
+        position: relative;
+        left: -$tabPadding/2;
+    }
+}
 /* pagination */
 
 

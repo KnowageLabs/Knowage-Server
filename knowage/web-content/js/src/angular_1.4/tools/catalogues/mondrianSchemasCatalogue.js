@@ -221,7 +221,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	    {
 	    	label:"Move up",
 	    	icon:'fa fa-arrow-circle-up',
-	    	color:'#1E9144',
+	    	color:'#3B678C',
 	    	visible:function(){
 	    		return !$scope.isStartedWf;	    			
 	    	},
@@ -232,7 +232,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	    {
 	    	label:"Move down",
 	    	icon:'fa fa-arrow-circle-down',
-	    	color:'#1E9144',
+	    	color:'#3B678C',
 	    	visible:function(){
 	    		return !$scope.isStartedWf;	    			
 	    	},
