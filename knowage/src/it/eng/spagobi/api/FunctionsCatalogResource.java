@@ -91,7 +91,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 			// returning 10 random keywords from all functions keywords. Putting keywords into a set randomize the choice and delete duplicates
 			Object[] keywordSetArray = keywordSet.toArray();
-			for (int i = 0; i < Integer.min(keywordSetArray.length, 10); i++) {
+			for (int i = 0; i < Math.min(keywordSetArray.length, 10); i++) {
 				keywordsArray.put(keywordSetArray[i]);
 			}
 
