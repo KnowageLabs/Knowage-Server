@@ -74,7 +74,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  		<angular-table flex 
 		id='table' ng-model="selectedLayer"
-		columns='[{"label":"Name","name":"name"},{"label":"Description","name":"descr"}]'
+		columns='[{"label":"ID","name":"layerId"},{"label":"Name","name":"name"},{"label":"Description","name":"descr"},{"label":"Type","name":"type"}]'
 		columns-search='["name"]' show-search-bar=false
 		scope-functions='tableFunctionSingleLayer' 
 		>
@@ -93,7 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
  		<angular-table flex  
 		id='tableLayerMultiSelect' ng-model="selectedLayer"
-		columns='[{"label":"Name","name":"name"},{"label":"Description","name":"descr"}]'
+		columns='[{"label":"ID","name":"layerId"},{"label":"Name","name":"name"},{"label":"Description","name":"descr"},{"label":"Type","name":"type"}]'
 		columns-search='["name"]' show-search-bar=true
 		scope-functions='tableFunctionMultiLayer' speed-menu-option='multipleLayerSpeedMenu'
 		>
