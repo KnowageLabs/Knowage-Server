@@ -99,9 +99,10 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	$scope.showGridView = true;
 	
 	// @author Davide Vernassa toggle navbar
-	$scope.toggleLeftNav = function(){
-		$mdSidenav('left').toggle();
-	}
+		$scope.toggleLeftNav = function(){
+			$mdSidenav('leftWorkspaceSideNav').toggle();
+		} 
+	
 	
 	/**
 	 * Flag is rised if user is searching for a document in the Organizer. Needed as indicator for handling the 

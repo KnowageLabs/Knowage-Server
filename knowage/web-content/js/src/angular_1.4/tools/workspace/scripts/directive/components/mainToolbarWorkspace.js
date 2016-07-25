@@ -37,7 +37,7 @@ angular
 
 function toolbarController($scope,$mdSidenav,sbiModule_translate){
 
-	$scope.openedSidebar = $mdSidenav('left').isOpen();
+	//$scope.openedSidebar = $mdSidenav('leftWorkspaceSideNav').isOpen();
 	$scope.translate = sbiModule_translate;
 	
 	$scope.toggleNav = function(){
