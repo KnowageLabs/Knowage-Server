@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<md-content>
 						<div layout="row" layout-wrap >
 						<div flex >
-							<md-input-container class="small counter"> <label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
+							<md-input-container class="md-block"> <label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
 							<input class="input_class" ng-model="nameExport" required
 								maxlength="100" ng-maxlength="100" md-maxlength="100" /> </md-input-container>
 						</div>

@@ -18,15 +18,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <md-content  layout="column" layout-wrap>
-	<div layout="row" layout-wrap  >
+	<div layout-padding layout-gt-sm="row" layout-align-gt-sm="start center" layout-sm="column">
+			<md-checkbox class="little-check" ng-model="IEDConf.overwriteMode" aria-label="Overwrite">Overwrite existing KPIs and rules</md-checkbox>
+			<md-checkbox class="little-check" ng-model="IEDConf.targetsAndRelatedKpis" aria-label="Import targets and related KPIs">Import targets and related KPIs</md-checkbox>
+			<md-checkbox class="little-check" ng-model="IEDConf.scorecardsAndRelatedKpis" aria-label="Import scorecards and related KPIs">Import scorecards and related KPIs</md-checkbox>
+			<md-checkbox class="little-check" ng-model="IEDConf.schedulersAndRelatedKpis" aria-label="Import KPI schedulers and related KPIs">Import KPI schedulers and related KPIs</md-checkbox>
+
+	</div>
+	<div layout="row" layout-wrap layout-align="end center" >
 		<md-input-container class="small counter"> 
 			<md-button ng-click="save($event)" aria-label="Start import" >{{translate.load("sbi.importkpis.startimport");}}</md-button>
 		</md-input-container>
 	</div>
-	<md-checkbox ng-model="IEDConf.overwriteMode" aria-label="Overwrite">Overwrite existing KPIs and rules</md-checkbox>
-	<md-checkbox ng-model="IEDConf.targetsAndRelatedKpis" aria-label="Import targets and related KPIs">Import targets and related KPIs</md-checkbox>
-	<md-checkbox ng-model="IEDConf.scorecardsAndRelatedKpis" aria-label="Import scorecards and related KPIs">Import scorecards and related KPIs</md-checkbox>
-	<md-checkbox ng-model="IEDConf.schedulersAndRelatedKpis" aria-label="Import KPI schedulers and related KPIs">Import KPI schedulers and related KPIs</md-checkbox>
+	
 	<div layout="row" flex>
 		<div flex style="position: relative;" >
 			<angular-table id="layerlist"
