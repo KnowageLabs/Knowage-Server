@@ -149,22 +149,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<div layout="row">
 				
 					<md-card  ng-repeat="functionType in functionTypesList" ng-click="functionsList=filterByType(functionType)" flex>
-		        		<md-card-title flex>
-		          			<md-card-title-text flex>
-		            			<span class="md-headline" flex>{{functionType.valueCd}}</span>
-		            			<span class="md-subhead" flex>{{functionType.domainName}}</span>
-		          			</md-card-title-text>
-		       			</md-card-title>
-
+						<md-card-content>
+		          				<span class="md-headline ng-binding" flex="">{{functionType.valueCd}}</span>
+		          				<br></br>
+                                <span class="md-subhead ng-binding" flex="">{{functionType.domainName}}</span>
+						<md-card-content>
+					
 		      		</md-card>
 		      		
 					<md-card  ng-click="functionsList=filterByType({valueCd:'All'})" flex> 
-		        		<md-card-title flex>
-		          			<md-card-title-text flex>
-		            			<span class="md-headline" flex>{{translate.load("sbi.functionscatalog.all")}}</span>
-		            			<span class="md-subhead" flex>{{translate.load("sbi.functionscatalog.allmessage")}}</span>
-		          			</md-card-title-text>
-		          		</md-card-title>
+						<md-card-content>
+		            			<span class="md-headline ng-binding" flex="">{{translate.load("sbi.functionscatalog.all")}}</span>
+		            			<br></br>
+		            			<span class="md-subhead ng-binding" flex="">{{translate.load("sbi.functionscatalog.allmessage")}}</span>
+						<md-card-content>
 
 		      		</md-card>
 				</div>	
@@ -187,7 +185,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							highlights-selected-item=true
 							speed-menu-option="acSpeedMenu"
 							click-function ="leftTableClick(item)"
-							selected-item="tableSelectedFunction"					
+							selected-item="tableSelectedFunction"
+							no-pagination=true					
 					>						
 					</angular-table>
 		    	
