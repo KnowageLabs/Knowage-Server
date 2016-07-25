@@ -206,17 +206,6 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 						+ " Checking presence of cross navigation definition...");
 				try {
 					boolean isCrossable = DAOFactory.getCrossNavigationDAO().documentIsCrossable((String) this.getEnv().get("DOCUMENT_LABEL"));
-					// if (isCrossable) {
-					// logger.debug("... The cross navigation is founded. Define the link url...");
-					// JSONArray crossNavJSON = DAOFactory.getCrossNavigationDAO().loadNavigationByDocument((String) this.getEnv().get("DOCUMENT_LABEL"));
-					// if (crossNavJSON.length() == 0) {
-					// logger.debug("The cross navigation hasn't got any parameters. ");
-					// } else {
-					// addCrossLink(targetMap, dataMart, crossNavJSON);
-					// }
-					// } else {
-					// logger.debug("... The cross navigation for the document isn't present." + " Please, check its definition through the GUI.");
-					// }
 					if (isCrossable) {
 						logger.debug("... The cross navigation is founded. Define the link url...");
 						addCrossLink(targetMap, dataMart);
@@ -242,6 +231,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			} else {
 				logger.debug("Not added drillable link because it\'s the last level! ");
 			}
+			// add tooltip with value or dataset column content
+			addTooltip(targetMap, dataMart);
 
 			SVGMapMerger.mergeMap(targetMap, masterMap, null, "targetMap");
 
@@ -459,7 +450,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	}
 
 	/**
-	 * Decorate map.
+	 * Decorate map. Used ONLY with renderSVGMap().
 	 *
 	 * @param masterMap
 	 *            the master map
@@ -726,11 +717,16 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 					String kpiValue = "" + field.getValue();
 					labelGroup.setAttribute("transform", "translate(" + centroide.getAttribute("cx") + "," + centroide.getAttribute("cy") + ") scale(40)");
 					labelGroup.setAttribute("display", "inherit");
-
+					// get correct anchor from the centroide throught property inkscape:label; for default uses 'middle'
+					String anchor = "middle";
+					if (centroide.getAttribute("inkscape:label").equals("start") || centroide.getAttribute("inkscape:label").equals("middle")
+							|| centroide.getAttribute("inkscape:label").equals("end")) {
+						anchor = centroide.getAttribute("inkscape:label");
+					}
 					Element label = masterMap.createElement("text");
 					label.setAttribute("x", "0");
 					label.setAttribute("y", "" + ((line++) * 16));
-					label.setAttribute("text-anchor", "middle");
+					label.setAttribute("text-anchor", anchor);
 					label.setAttribute("font-family", "Arial,Helvetica");
 					label.setAttribute("font-size", isFirst ? "16px" : "14px");
 					label.setAttribute("font-style", isFirst ? "normal" : "italic");
@@ -766,31 +762,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 		// add legend
 		Element windowBackground = masterMap.createElement("rect");
-		// windowBackground.setAttribute("width", "241");
-		// windowBackground.setAttribute("height", "200");
-		// windowBackground.setAttribute("fill", "#fffce6");
-		// windowBackground.setAttribute("stroke", "dimgray");
-		// windowBackground.setAttribute("stroke-width", "1");
-		// windowBackground.setAttribute("display", "inherit");
-
 		Element windowTitleBar = masterMap.createElement("rect");
-		// windowTitleBar.setAttribute("width", "241");
-		// windowTitleBar.setAttribute("height", "17");
-		// windowTitleBar.setAttribute("fill", "steelblue");
-		// windowTitleBar.setAttribute("stroke", "dimgray");
-		// windowTitleBar.setAttribute("stroke-width", "1.5");
-		// windowTitleBar.setAttribute("display", "inherit");
-
 		Element windowTitle = masterMap.createElement("text");
-		// windowTitle.setAttribute("x", "3");
-		// windowTitle.setAttribute("y", "14");
-		// windowTitle.setAttribute("font-family", "Arial,Helvetica");
-		// windowTitle.setAttribute("font-size", "14px");
-		// windowTitle.setAttribute("fill", "white");
-		// windowTitle.setAttribute("startOffset", "0");
-		// Node windowTitleText = masterMap.createTextNode("Legenda");
-		// windowTitle.appendChild(windowTitleText);
-
 		Element windowBody = masterMap.createElement("g");
 		for (int i = 0; i < col_kpi_array.length; i++) {
 			Double lb = trash_kpi_array[i].doubleValue();
@@ -842,12 +815,6 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			windowBody.appendChild(colorBox);
 			windowBody.appendChild(labelBox);
 		}
-
-		// Element legend = masterMap.getElementById("legend");
-		// legend.appendChild(windowBackground);
-		// legend.appendChild(windowTitleBar);
-		// legend.appendChild(windowTitle);
-		// legend.appendChild(windowBody);
 
 		// add labels
 		Node labelText;
@@ -1012,12 +979,33 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				Element label = map.createElement("text");
 				label.setAttribute("x", "0");
 				label.setAttribute("y", "0");
-				label.setAttribute("text-anchor", "middle");
+
 				label.setAttribute("font-family", "Arial,Helvetica");
 				label.setAttribute("font-size", "12px");
 				label.setAttribute("font-style", "normal");
 				label.setAttribute("fill", "black");
-
+				// label.setAttribute("text-anchor", "middle");
+				// get text-anchor property:
+				// 1. throught text-anchor property
+				// 2. throught style property
+				// 3. if it isn't found force 'middle' as default
+				String anchor = "middle";
+				String anchorProperty = centroide.getAttribute("text-anchor");
+				if (anchorProperty != null && anchorProperty.equals("start") || anchorProperty.equals("middle") || anchorProperty.equals("end")) {
+					anchor = anchorProperty;
+				} else {
+					String styleProperty = centroide.getAttribute("style");
+					int anchorPropertyPosStart = styleProperty.indexOf("text-anchor:");
+					int anchorPropertyPosEnd = styleProperty.indexOf(";", anchorPropertyPosStart);
+					if (null != styleProperty && anchorPropertyPosStart >= 0) {
+						anchorProperty = styleProperty.substring(anchorPropertyPosStart + 12, anchorPropertyPosEnd);
+						anchor = anchorProperty;
+						// clean the style from the anchor information
+						styleProperty = styleProperty.replace(styleProperty.substring(anchorPropertyPosStart, anchorPropertyPosEnd + 1), "");
+						centroide.setAttribute("style", styleProperty);
+					}
+				}
+				label.setAttribute("text-anchor", anchor);
 				Node labelText = map.createTextNode((String) labelField.getValue());
 				label.appendChild(labelText);
 
@@ -1073,18 +1061,39 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				String id_element = (String) geoIdField.getValue();
 				String elementVisibility = (String) visibilityIdField.getValue();
 
-				if (elementVisibility.equalsIgnoreCase("false")) {
-					Element elementToHide = map.getElementById(id_element);
-					if (elementToHide != null) {
-						if (elementToHide.hasAttribute("style")) {
-							String elementStyle = elementToHide.getAttribute("style");
-							elementStyle = elementStyle + ";display:none";
-							elementToHide.setAttribute("style", elementStyle);
-						} else {
-							elementToHide.setAttribute("style", "display:none");
-						}
+				// if (elementVisibility.equalsIgnoreCase("false")) {
+				// Element elementToHide = map.getElementById(id_element);
+				// if (elementToHide != null) {
+				// if (elementToHide.hasAttribute("style")) {
+				// String elementStyle = elementToHide.getAttribute("style");
+				// elementStyle = elementStyle + ";display:none";
+				// elementToHide.setAttribute("style", elementStyle);
+				// } else {
+				// elementToHide.setAttribute("style", "display:none");
+				// }
+				// }
+				// }
+
+				Element element = map.getElementById(id_element);
+				if (element != null) {
+					String displayStyle = "";
+					String elementStyle = element.getAttribute("style");
+					// get original display option if present
+					int displayStyleStart = elementStyle.indexOf("display:");
+					String displayStyleValue = "";
+					if (displayStyleStart >= 0) {
+						int displayStyleEnd = elementStyle.indexOf(";", displayStyleStart);
+						displayStyleValue = elementStyle.substring(displayStyleStart, displayStyleEnd + 1);
+						elementStyle = elementStyle.replace(displayStyleValue, ""); // clean old style
 					}
 
+					if (elementVisibility.equalsIgnoreCase("false")) {
+						displayStyle = elementStyle + ";display:none";
+					} else {
+						displayStyle = elementStyle;
+					}
+					// sets new visibility style for the element
+					element.setAttribute("style", displayStyle);
 				}
 			}
 		}
@@ -1225,7 +1234,6 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				featureElement.setAttribute("onclick", "javascript:clickedElement('" + elementId + "')");
 			} else {
 				featureElement.setAttribute("onclick", "javascript:clickedElement('" + elementId + "','" + drillId + "')");
-
 			}
 
 			targetLayer.appendChild(featureElement);
@@ -1390,6 +1398,122 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 	}
 
+	private void addTooltip(SVGDocument map, DataMart datamart) {
+
+		IDataStore dataStore;
+		IMetaData dataStoreMeta;
+
+		dataStore = datamart.getDataStore();
+		Assert.assertNotNull(dataStore, "DataStore cannot be null");
+
+		dataStoreMeta = dataStore.getMetaData();
+		Assert.assertNotNull(dataStore, "DataStoreMeta cannot be null");
+
+		// search if there is a tooltip column specified in the dataset
+		IFieldMetaData fieldTooltipIdMeta = null;
+		List listTooltip = dataStoreMeta.findFieldMeta("ROLE", "TOOLTIP");
+		if (listTooltip.size() > 0) {
+			fieldTooltipIdMeta = (IFieldMetaData) listTooltip.get(0);
+		}
+
+		Element targetLayer = map.getElementById(datamart.getTargetFeatureName());
+		NodeList nodeList = targetLayer.getChildNodes();
+		Map mapTooltip = null;
+		List lstTooltip = new ArrayList();
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node childNode = nodeList.item(i);
+			try {
+				if (childNode instanceof Element) {
+					SVGElement childOrig = (SVGElement) childNode;
+					String childId = childOrig.getId();
+					String column_id = childId.replaceAll(datamart.getTargetFeatureName() + "_", "");
+
+					IRecord record = dataStore.getRecordByID(column_id);
+					if (record == null) {
+						logger.warn("No data available for feature [" + column_id + "]");
+						continue;
+					}
+
+					String tooltip = "";
+					if (fieldTooltipIdMeta != null) {
+						IField field = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldTooltipIdMeta.getName()));
+						tooltip = "" + field.getValue();
+					}
+
+					mapTooltip = new HashMap();
+					mapTooltip.put("column_id", column_id);
+					mapTooltip.put("path", childOrig);
+					mapTooltip.put("tooltip", tooltip);
+					lstTooltip.add(mapTooltip);
+
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		// adds onmouse event
+		for (int j = 0; j < lstTooltip.size(); j++) {
+			Map tmpMap = (Map) lstTooltip.get(j);
+			Element featureElement = (Element) tmpMap.get("path");
+
+			// if (featureElement.hasAttribute("style")) {
+			// String elementStyle = featureElement.getAttribute("style");
+			// elementStyle = elementStyle + ";cursor:pointer";
+			// featureElement.setAttribute("style", elementStyle);
+			// } else {
+			// featureElement.setAttribute("style", "cursor:pointer");
+			// }
+			String tooltip = null;
+			if (tmpMap.get("tooltip") != null) {
+				tooltip = (String) tmpMap.get("tooltip");
+			}
+			String elementId = featureElement.getAttribute("id");
+			if (tooltip == null) {
+				featureElement.setAttribute("onmouseover", "javascript:showTooltipElement('" + elementId + "')");
+			} else {
+				featureElement.setAttribute("onmouseover", "javascript:showTooltipElement('" + elementId + "','" + tooltip + "')");
+			}
+			featureElement.setAttribute("onmousemove", "javascript:getMousePosition()");
+			featureElement.setAttribute("onmouseout", "javascript:hideTooltipElement()");
+			targetLayer.appendChild(featureElement);
+			Node lf = map.createTextNode("\n");
+			targetLayer.appendChild(lf);
+		}
+
+		// deletes duplicate path
+		boolean isNew = false;
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			Node childNode = nodeList.item(i);
+			SVGElement childOrig = null;
+			if (childNode instanceof SVGElement) {
+				try {
+					childOrig = (SVGElement) childNode;
+				} catch (ClassCastException e) {
+
+					logger.debug("DynamicMapRenderer :: addLinK : Element Generic", e);
+
+				}
+				String childId = "";
+				String column_id = "";
+				if (childOrig != null) {
+					childId = childOrig.getId();
+					column_id = childId.replaceAll(datamart.getTargetFeatureName() + "_", "");
+				}
+				Iterator it = lstTooltip.iterator();
+				isNew = false;
+				while (it.hasNext()) {
+					String tmpMapVal = (String) ((Map) it.next()).get("column_id");
+					if (column_id.equals(tmpMapVal)) {
+						isNew = true;
+						break;
+					}
+				}
+				// if (isNew && childOrig != null) map.removeChild(childOrig);
+			}
+		}
+	}
+
 	/**
 	 * Include scripts.
 	 *
@@ -1467,8 +1591,6 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 *            the script name
 	 */
 	private void includeScript(StringBuffer buffer, String scriptName) {
-		// File file = new File("D:/Documenti/Prototipi/Test/exo-portal-1.1.4-SpagoBI-2.0/webapps/SpagoBIGeoEngine/js/lib/svg-widgets/" + scriptName);
-
 		try {
 			URL scriptUrl = new URL((String) getEnv().get(SvgViewerEngineConstants.ENV_ABSOLUTE_CONTEXT_URL) + "/js/lib/svg-widgets/" + scriptName);
 			// URL scriptUrl = new URL("http://localhost:8080/SpagoBIGeoEngine" + "/js/lib/svg-widgets/" + scriptName);
@@ -1769,7 +1891,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			} else {
 				tempDir = new File(tempDirName);
 			}
-			result = new File(tempDir, "SpagoBIGeoEngine_" + System.currentTimeMillis() + "_tmpMap.svg");
+			result = new File(tempDir, "KnowageSVGViewerEngine_" + System.currentTimeMillis() + "_tmpMap.svg");
 			boolean isFileCreated = result.createNewFile();
 			if (isFileCreated) {
 				logger.debug("temp file successfully created: " + result);
@@ -1781,7 +1903,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			tempDirName = System.getProperty("java.io.tmpdir");
 			logger.debug("System temp directory will be used: " + tempDirName);
 			tempDir = new File(tempDirName);
-			result = File.createTempFile("SpagoBIGeoEngine_", "_tmpMap.svg", tempDir);
+			result = File.createTempFile("KnowageSVGViewerEngine_", "_tmpMap.svg", tempDir);
 			logger.debug("temp file successfully created: " + result);
 		}
 

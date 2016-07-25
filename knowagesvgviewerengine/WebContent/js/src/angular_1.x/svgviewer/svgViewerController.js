@@ -26,20 +26,30 @@ app.controller('SvgViewerController', ['$scope','sbiModule_restServices','$mdSid
 		
 function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,sbiModule_logger,$window,sbiModule_config,$rootScope)	{
 
-  $scope.isSidenavOpen = false;
-  $scope.showBackButton = false;
+  //$scope.isSidenavOpen 	= false;
+  $scope.showBackButton 		= false;
   //initialize for the first level
-  $scope.currentLevel = 1;
-  $scope.currentMember = null;
+  $scope.currentLevel 			= 1;
+  $scope.currentMember 			= null;
   //optional
-  $scope.currentParent = null;
+  $scope.currentParent 			= null;
+  $scope.svgWidth 				= null;
+  $scope.svgHeight 				= null;
+  $scope.numZoom 				= 0;  
+  $scope.sidenavOpened 			= false;
+  $scope.sidenavButtonOffset 	= 0;
+  
+  $scope.cursorX, $scope.cursorY;
+	
   
   //stack that contains the drill path elements
   $scope.drillPathStack = [];
   $noError = false;
     
   $scope.openSideNav = function() {
-    $mdSidenav('svgSideNav').toggle();
+    //$mdSidenav('svgSideNav').toggle();
+	  $scope.sidenavOpened = !$scope.sidenavOpened;
+
   };
   
   //Go back to the previous level
@@ -79,7 +89,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   
   //Listener called when an element on the svg is clicked
   $window.document.addEventListener("SVGElementClicked", function(e) {
-
+	  $scope.hideTooltip();
 	  //update drill path with stack
 	  var pathElement = new Object();
 	  pathElement.level = $scope.currentLevel;
@@ -112,6 +122,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   
   //Listener called when an element on the svg is clicked and cross navigation is required
   $window.document.addEventListener("SVGElementClickedCrossNavigation", function(e) {
+	  	$scope.hideTooltip();
 	  	var driversParameter = getDriverParameters();
 	  	
 	  	//pass the clicked element id as output parameter
@@ -123,6 +134,56 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 		parent.execExternalCrossNavigation(crossData,driversParameter,undefined,driversParameter.DOCUMENT_LABEL);
 
 	});
+  
+  //Listener called when an element on the svg is mouseovered and a tooltip is required
+  $window.document.addEventListener("SVGElementMouseOver", function(e) {
+	  	//get the element position
+	  	var mouseOverElement = e.detail;		  	
+	  	
+	  	var domIframe = document.getElementById("svgContainer");
+	  	var domEl = domIframe.contentDocument.getElementById(mouseOverElement.idElement);
+	  	if (domEl){	 	
+	  		//get element position
+	  		var viewportOffset = domEl.getBoundingClientRect();
+		  	var top = viewportOffset.top;
+		  	var left = viewportOffset.left;
+		  	var tooltipText = "";
+		  	
+		  	//get element content (as default shows the active measure)
+		  	if (!mouseOverElement.tooltipText){
+			  	var svgwin = $scope.getSVG('svgContainer');
+			  	var svgInfos = svgwin.myMapApp;
+			  	tooltipText = "<b>"+ svgInfos.curDescription +": </b>" +  domEl.getAttribute("attrib:"+svgInfos.curKpi);
+		  	}else{
+		  		tooltipText = mouseOverElement.tooltipText;
+		  	}	  	
+	  		
+		  	//shows the tooltip ONLY if its valorized
+		  	if (tooltipText && tooltipText.length > 0){
+		  		//update the div content
+			  	var domTooltip = document.getElementById("svgTooltip");
+			  	var w =  parseInt(domEl.getAttribute("width"));
+		  		domTooltip.style.left = left + parseInt(domEl.getAttribute("width")); //$scope.cursorX; 
+		  		domTooltip.style.top = top; //$scope.cursorY; 
+		  		domTooltip.innerHTML = tooltipText;
+		  		domTooltip.style.display = "block";
+		  	
+		  	}
+	  	}
+	});
+  
+  //Listener called when an element on the svg is mouseout and a tooltip must be hidden
+  $window.document.addEventListener("SVGElementMouseOut", function(e) {
+	  $scope.hideTooltip();
+//	  var domTooltip = document.getElementById("svgTooltip");
+//	  domTooltip.style.display = "none";
+  });
+  
+  
+  $window.document.addEventListener("SVGElementMouseMove", function(e) {
+			$scope.cursorX = e.pageX;
+			$scope.cursorY = e.pageY;
+  });
   
   
   /**
@@ -149,7 +210,10 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   };
 	
 	
-	
+  $scope.hideTooltip = function(){
+	  var domTooltip = document.getElementById("svgTooltip");
+	  domTooltip.style.display = "none";
+  }
 
   /**
    * Loads the measures list with a REST service
@@ -229,5 +293,48 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 		  $scope.legend.colors = svgwin.myMapApp.colArray;
 		  $scope.legend.tresholds = svgwin.myMapApp.threshArray;
 	  }
+  }
+  
+  /**
+   * Manage zoom 
+   * */
+  $scope.zoom = function(type, evt){
+	  var svgobj = $scope.getSVG('svgContainer'); 	//svg element
+	  var svgwin = document.getElementById("svgContainer"); //iframe element
+	  var viewBox = svgobj.myMainMap.mapSVG.getAttributeNS(null,"viewBox");
+	  var viewBoxArray = viewBox.split(" ");
+//	  set new iframe dimensions
+	  var iframe =  document.getElementById("svgContainer"); 
+	  var container = document.getElementById("container");
+	  var height = container.offsetHeight;
+	  var width = container.offsetWidth;
+	  
+	  var svgwidth = svgobj.myMainMap.mapSVG.getAttribute("width");
+	  var svgheight = svgobj.myMainMap.mapSVG.getAttribute("height");
+	  
+	  //sets default values
+	  if ($scope.svgHeight==null) $scope.svgHeight = 100; //alias 100%
+	  if ($scope.svgWidth==null) $scope.svgWidth = 100;
+	  
+	  if (type == 'zoomIn'){
+		  $scope.numZoom++;
+		  $scope.svgWidth =  100+(25*$scope.numZoom);
+		  $scope.svgHeight =  100+(25*$scope.numZoom);
+//		  svgobj.myMainMap.mapSVG.setAttributeNS(null,"width",  $scope.svgWidth + '%');
+//		  svgobj.myMainMap.mapSVG.setAttributeNS(null,"height", $scope.svgHeight + '%'); 
+	  }else if (type == 'zoomOut'){		  		  		 
+		  $scope.svgWidth =  100 + (25*$scope.numZoom)-25;
+		  $scope.svgHeight = 100 + (25*$scope.numZoom)-25;
+//		  svgobj.myMainMap.mapSVG.setAttributeNS(null,"width",  $scope.svgWidth + '%');
+//		  svgobj.myMainMap.mapSVG.setAttributeNS(null,"height", $scope.svgHeight + '%');
+		  $scope.numZoom--;	 
+	  }	  
+	  iframe.style.height = $scope.svgHeight + '%';   
+	  iframe.style.width = $scope.svgWidth + '%' ;
+	  
+//	  viewBox =  viewBoxArray[0]+" " +viewBoxArray[1] + " " + viewBoxArray[2] + " " + viewBoxArray[3];
+//	  svgobj.myMainMap.mapSVG.setAttributeNS(null,"viewBox", viewBox);
+	  //scale ONLY the svg
+//	  svgobj.zoomImageButtons(type, evt);
   }
 };

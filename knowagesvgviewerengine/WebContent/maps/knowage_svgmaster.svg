@@ -88,6 +88,27 @@ onload="init(evt);">
 			window.parent.document.dispatchEvent(event);
 		}
 		
+		function showTooltipElement(idElement, tooltipText){
+			//Launch an event to announce that an mouseover element was done
+			var eventDetail = new Object();
+			eventDetail.idElement = idElement;
+			eventDetail.tooltipText = tooltipText;
+			var event = new CustomEvent("SVGElementMouseOver", { "detail": eventDetail });
+			window.parent.document.dispatchEvent(event);
+		}
+		
+		function hideTooltipElement(){
+			var event = new CustomEvent("SVGElementMouseOut", {});
+			window.parent.document.dispatchEvent(event);
+		}
+		
+		function getMousePosition(){
+			//Launch an event to announce that an mousemove element was done
+			var event = new CustomEvent("SVGElementMouseMove", {});
+			window.parent.document.dispatchEvent(event);
+		}
+		
+		
 		//global variables for mapApp and map object
 		var myMapApp = new mapApp();
 		var myMainMap;
@@ -501,7 +522,7 @@ onload="init(evt);">
 			myMapApp.colArray = measure.colours;
 			myMapApp.threshArray = measure.thresholds;
 			myMapApp.curLabel = label;
-			
+			myMapApp.curDescription = measure.description;
 			if(myMapApp.Windows["legend"]) {
 			
   			var coulourBoxes = document.getElementById("coulourboxes");			
@@ -947,7 +968,7 @@ onload="init(evt);">
     <line x1="5.5" x2="-5.5" y1="5.5" y2="5.5" stroke="white" stroke-width="2"/></symbol>
     </defs>
 		
-    <title>SpagoBI Geo Engine</title>
+    <title>Knowage SVG Viewer Engine</title>
 		
 		
 	  

@@ -197,9 +197,9 @@ public class DataSetMetaData {
 	}
 
 	/**
-	 * Gets the visibility id column name.
+	 * Gets the parent id column name.
 	 *
-	 * @return the visibility id column name
+	 * @return the parent id column name
 	 */
 	public String getParentColumnName() {
 		Set names = getColumnNames();
@@ -252,6 +252,25 @@ public class DataSetMetaData {
 					if (hierarchyName.equalsIgnoreCase(getColumnProperty(columnName, "hierarchy"))) {
 						return getColumnProperty(columnName, "level");
 					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the tooltip id column name.
+	 *
+	 * @return the tooltip id column name
+	 */
+	public String getTooltipColumnName() {
+		Set names = getColumnNames();
+		if (names != null) {
+			Iterator it = names.iterator();
+			while (it.hasNext()) {
+				String columnName = (String) it.next();
+				if (isTooltipColumn(columnName)) {
+					return getColumnProperty(columnName, "column_id");
 				}
 			}
 		}
@@ -328,6 +347,18 @@ public class DataSetMetaData {
 	 */
 	public boolean isDrillColumn(String columnName) {
 		return "drillid".equalsIgnoreCase(getColumnType(columnName));
+	}
+
+	/**
+	 * Checks if is tooltip column.
+	 *
+	 * @param columnName
+	 *            the column name
+	 *
+	 * @return true, if is tooltip column
+	 */
+	public boolean isTooltipColumn(String columnName) {
+		return "tooltip".equalsIgnoreCase(getColumnType(columnName));
 	}
 
 	/**

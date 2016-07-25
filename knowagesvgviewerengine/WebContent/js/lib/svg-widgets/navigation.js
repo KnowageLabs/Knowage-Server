@@ -233,7 +233,7 @@ map.prototype.newViewBox = function(history) {
 	this.pixSize = this.curWidth / this.pixWidth;
 	this.zoomVal = this.maxWidth / this.curWidth * 100;
 	this.mapSVG.setAttributeNS(null,"viewBox",myViewBoxString);
-	myMapApp.zoomSlider.setValue(this.curWidth);
+	if (myMapApp.zoomSlider) myMapApp.zoomSlider.setValue(this.curWidth);
 
 	//reset line width of hightlightCross
 	if (this.highlightAttribs["stroke-width"]) {
@@ -257,7 +257,7 @@ map.prototype.newViewBox = function(history) {
 	    this.mapExtents.push({xmin:this.curxOrig,ymin:((this.curyOrig + this.curHeight) * -1),xmax:(this.curxOrig + this.curWidth),ymax:(this.curyOrig * -1)});
                this.curMapExtentIndex = (this.mapExtents.length - 1);
 	}
-	this.checkButtons();
+//	this.checkButtons();
 }
 
 map.prototype.backwardExtent = function() {

@@ -131,6 +131,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 				String drillColumnId = metaData.getDrillColumnName();
 				String parentColumnId = metaData.getParentColumnName();
 				String selectedParent = getSelectedParentName();
+				String tooltipColumnId = metaData.getTooltipColumnName();
 
 				dataStoreMeta.setIdField(dataStoreMeta.getFieldIndex(columnId));
 				String[] measureColumnNames = (String[]) metaData.getMeasureColumnNames().toArray(new String[0]);
@@ -155,8 +156,13 @@ public class DataMartProvider extends AbstractDataMartProvider {
 					}
 
 					IField field;
-
-					field = record.getFieldAt(dataStoreMeta.getFieldIndex(columnId));
+					try {
+						field = record.getFieldAt(dataStoreMeta.getFieldIndex(columnId));
+					} catch (Exception ex) {
+						logger.error("An error occured while getting the columnId [" + columnId + "] from the dataset. Check the query  and the template.");
+						throw new SvgViewerEngineRuntimeException("An error occured while gettin the columnId [" + columnId
+								+ "] from the dataset. Check the query and the template. ", ex);
+					}
 					String id = "" + field.getValue();
 					if ((id == null) || (id.trim().equals(""))) {
 						continue;
@@ -164,7 +170,14 @@ public class DataMartProvider extends AbstractDataMartProvider {
 					dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(columnId)).setProperty("ROLE", "GEOID");
 
 					for (int i = 0; i < measureColumnNames.length; i++) {
-						field = record.getFieldAt(dataStoreMeta.getFieldIndex(measureColumnNames[i]));
+						try {
+							field = record.getFieldAt(dataStoreMeta.getFieldIndex(measureColumnNames[i]));
+						} catch (Exception ex) {
+							logger.error("An error occured while getting the columnId [" + measureColumnNames[i]
+									+ "] from the dataset. Check the query  and the template.");
+							throw new SvgViewerEngineRuntimeException("An error occured while gettin the columnId [" + measureColumnNames[i]
+									+ "] from the dataset. Check the query and the template. ", ex);
+						}
 						String value = "" + field.getValue();
 						if ((value == null) || (value.trim().equals(""))) {
 							continue;
@@ -173,8 +186,16 @@ public class DataMartProvider extends AbstractDataMartProvider {
 
 					}
 
+					IField visibilityField;
 					if (visibilityColumnId != null) {
-						IField visibilityField = record.getFieldAt(dataStoreMeta.getFieldIndex(visibilityColumnId));
+						try {
+							visibilityField = record.getFieldAt(dataStoreMeta.getFieldIndex(visibilityColumnId));
+						} catch (Exception ex) {
+							logger.error("An error occured while getting the columnId [" + visibilityColumnId
+									+ "] from the dataset. Check the query  and the template.");
+							throw new SvgViewerEngineRuntimeException("An error occured while gettin the columnId [" + visibilityColumnId
+									+ "] from the dataset. Check the query and the template. ", ex);
+						}
 						String value = "" + visibilityField.getValue();
 						if (value != null && !value.trim().equals("")) {
 							dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(visibilityColumnId)).setProperty("ROLE", "VISIBILITY");
@@ -182,8 +203,33 @@ public class DataMartProvider extends AbstractDataMartProvider {
 
 					}
 
+					IField tooltipField;
+					if (tooltipColumnId != null) {
+						try {
+							tooltipField = record.getFieldAt(dataStoreMeta.getFieldIndex(tooltipColumnId));
+						} catch (Exception ex) {
+							logger.error("An error occured while getting the columnId [" + tooltipColumnId
+									+ "] from the dataset. Check the query  and the template.");
+							throw new SvgViewerEngineRuntimeException("An error occured while gettin the columnId [" + tooltipColumnId
+									+ "] from the dataset. Check the query and the template. ", ex);
+						}
+						String value = "" + tooltipField.getValue();
+						if (value != null && !value.trim().equals("")) {
+							dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(tooltipColumnId)).setProperty("ROLE", "TOOLTIP");
+						}
+
+					}
+
 					if (labelsColumnId != null) {
-						IField labelsField = record.getFieldAt(dataStoreMeta.getFieldIndex(labelsColumnId));
+						IField labelsField;
+						try {
+							labelsField = record.getFieldAt(dataStoreMeta.getFieldIndex(labelsColumnId));
+						} catch (Exception ex) {
+							logger.error("An error occured while getting the columnId [" + labelsColumnId
+									+ "] from the dataset. Check the query  and the template.");
+							throw new SvgViewerEngineRuntimeException("An error occured while gettin the columnId [" + labelsColumnId
+									+ "] from the dataset. Check the query and the template. ", ex);
+						}
 						String value = "" + labelsField.getValue();
 						if (value != null && !value.trim().equals("")) {
 							dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(labelsColumnId)).setProperty("ROLE", "LABEL");
@@ -192,7 +238,15 @@ public class DataMartProvider extends AbstractDataMartProvider {
 					}
 
 					if (drillColumnId != null) {
-						IField drillIdField = record.getFieldAt(dataStoreMeta.getFieldIndex(drillColumnId));
+						IField drillIdField;
+						try {
+							drillIdField = record.getFieldAt(dataStoreMeta.getFieldIndex(drillColumnId));
+						} catch (Exception ex) {
+							logger.error("An error occured while getting the columnId [" + drillColumnId
+									+ "] from the dataset. Check the query  and the template.");
+							throw new SvgViewerEngineRuntimeException("An error occured while gettin the columnId [" + drillColumnId
+									+ "] from the dataset. Check the query and the template. ", ex);
+						}
 						String value = "" + drillIdField.getValue();
 						if (value != null && !value.trim().equals("")) {
 							dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(drillColumnId)).setProperty("ROLE", "DRILLID");
@@ -205,7 +259,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 				dddLinkFieldTransformer.transform(dataStore);
 			} catch (Exception e) {
 				logger.error(e.getMessage());
-				throw new SvgViewerEngineRuntimeException("Impossible to get DataMart");
+				throw new SvgViewerEngineRuntimeException("Impossible to get DataMart. ", e);
 			}
 		}
 
