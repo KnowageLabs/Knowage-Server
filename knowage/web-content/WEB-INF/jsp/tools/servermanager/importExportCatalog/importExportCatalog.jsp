@@ -82,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 							
 							</div>
-							<md-checkbox ng-checked="exists('Dataset',listType)" ng-click="toggle('Dataset',listType)">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>
+							<md-checkbox ng-checked="exists('Dataset',listType)" ng-click="toggle('Dataset',listType)" ng-init="toggle('Dataset',listType)"">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>
 							<div flex layout ng-show="showDataset">
 								<angular-table id='datasetlist' ng-model=dataset
 									columns='[{"label":"Label","name":"label","size":"20px"},{"label":"Name","name":"name","size":"20px"}]'

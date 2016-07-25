@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {{translate.load('impexp.overwrite','component_impexp_messages');}} : {{ overwriteMetaData }}
   </md-switch>
 
-	<md-button ng-click="saveMetaDataAssociation()" class="md-raised">{{translate.load('SBISet.import','component_impexp_messages');}} </md-button> 
+	<md-button ng-click="saveMetaDataAssociation()" class="md-raised">{{translate.load('SBISet.start.import','component_impexp_messages');}} </md-button> 
 </div>
 
 <md-whiteframe  layout="row" layout-wrap class="sourceTargetToolbar md-whiteframe-1dp" >

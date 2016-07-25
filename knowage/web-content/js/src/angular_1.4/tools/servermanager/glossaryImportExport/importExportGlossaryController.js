@@ -46,7 +46,7 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 	$scope.glossaryPresentIdDB  =[];
 	//import variables
 	$scope.importFile = {};
-	$scope.typeSaveMenu = 'Missing';
+	$scope.typeSaveMenu = "Missing";
 	$scope.selectGlossaryToImport = [];
 	$scope.importingGlossary = [];
 	//export glossary

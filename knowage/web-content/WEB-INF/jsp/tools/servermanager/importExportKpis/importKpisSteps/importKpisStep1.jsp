@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</div>
 	<div layout="row" layout-wrap layout-align="end center" >
 		<md-input-container class="small counter"> 
-			<md-button ng-click="save($event)" aria-label="Start import" >{{translate.load("sbi.importkpis.startimport");}}</md-button>
+			<md-button ng-click="save($event)" aria-label="Start import" >{{translate.load("sbi.importkpis.next");}}</md-button>
 		</md-input-container>
 	</div>
 	

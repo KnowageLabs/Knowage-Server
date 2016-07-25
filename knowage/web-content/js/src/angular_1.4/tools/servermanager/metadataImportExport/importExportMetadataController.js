@@ -279,8 +279,7 @@ function metadataImportFuncController(sbiModule_download, sbiModule_device, $sco
 					$scope.stepControl.resetBreadCrumb();
 					$scope.stepControl.insertBread({
 						name : sbiModule_translate.load(
-								'SBISet.impexp.exportedMetadata',
-								'component_impexp_messages')
+								'sbi.ds.file.upload.button')
 					});
 					$scope.finishImport();
 				});

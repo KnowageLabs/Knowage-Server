@@ -63,7 +63,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.download = sbiModule_download;
 	$scope.flagUser = false;
 	$scope.flagCategory = false;
-	$scope.typeSaveMenu="";
+	$scope.typeSaveMenu="Missing";
 
 
 	$scope.stepItem = [ {

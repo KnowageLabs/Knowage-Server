@@ -46,6 +46,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 	$scope.tree=[];
 	$scope.treeCopy=[];
 	$scope.treeInTheDB=[];
+	$scope.typeSaveMenu="Missing";
 	
 
 	$scope.upload = function(ev){

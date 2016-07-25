@@ -102,15 +102,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					aria-label="Checkbox 1"><h4>{{translate.load("sbi.impexpusers.exportPersonalFolder");}}</h4></md-checkbox>
 			
 			
-				<md-checkbox ng-if="exportCheckboxs.exportPersonalFolder"  class="md-block"
+				<md-checkbox ng-disabled="!exportCheckboxs.exportPersonalFolder"  class="md-block"
 					ng-model="exportCheckboxs.exportSubObj" aria-label="Checkbox 1"><h4>{{translate.load("SBISet.importexport.expSubView","component_impexp_messages");}}</h4></md-checkbox>
 			
 			
-				<md-checkbox  ng-if="exportCheckboxs.exportPersonalFolder"  class="md-block"
+				<md-checkbox  ng-disabled="!exportCheckboxs.exportPersonalFolder"  class="md-block"
 					ng-model="exportCheckboxs.exportSnapshots" aria-label="Checkbox 1"><h4>{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</h4></md-checkbox>
 			
  				<md-button 
-					ng-show="!wait" ng-click="prepare($event)"
+					ng-disabled="wait" ng-click="prepare($event)"
 					aria-label="download Users" class="md-fab md-mini internalFab"> <md-icon
 					md-font-icon="fa fa-download fa-2x"> </md-icon> </md-button>
 
