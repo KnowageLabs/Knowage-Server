@@ -140,7 +140,7 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 
 			for (var i = 0; i < list.length; i++) {
 				var object = list[i];
-				if(object.GLOSSARY_ID==item.GLOSSARY_ID){
+				if(object.glossaryNm==item.glossaryNm){
 					return i;
 				}
 			}
@@ -153,6 +153,7 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 		
 	//import glossary
 		$scope.upload = function(ev){
+			$scope.glossaryImported = [];
 			if($scope.importFile.fileName == "" || $scope.importFile.fileName == undefined){
 				$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"));
 			}else{

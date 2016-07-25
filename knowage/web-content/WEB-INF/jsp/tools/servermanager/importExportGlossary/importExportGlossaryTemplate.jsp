@@ -53,51 +53,46 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-content flex layout-wrap class="mainContainer">
 			<md-tabs layout-fill class="absolute">
 				<md-tab	>
-				
 					<md-tab-label>{{translate.load("sbi.impexpglossary.export")}}</md-tab-label>
 					<md-tab-body>
 					<md-card>
 						<md-content>
 						<div layout="row" layout-wrap >
-						<div flex >
-							<md-input-container class="md-block"> <label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
-							<input class="input_class" ng-model="nameExport" required
-								maxlength="100" ng-maxlength="100" md-maxlength="100" /> </md-input-container>
-						</div>
-						
-			
-						<div>
-							<md-input-container class="small counter"> 
-							<md-button	ng-show="!wait" ng-click="prepare($event)"
-								aria-label="download Glossary" class="md-fab md-mini"> <md-icon
-								md-font-icon="fa fa-download fa-2x"> </md-icon> </md-button>
-			
-							</md-input-container>
-						</div>
-				</div>
-
-				<div id="lista">
-					<div layout="row" layout-wrap>
-						<div >
-							<md-checkbox  ng-checked="flagCheck" ng-click="selectAll()"><h4>{{translate.load("sbi.importusers.selectall");}}</h4></md-checkbox>
-						</div>
-						</div>
-						<div layout="row" layout-wrap flex>
-							<div flex="90" ng-repeat="us in glossary">
-								<md-checkbox ng-checked="exists(us, glossarySelected)"
-								ng-click="toggle(us, glossarySelected)"> {{us.GLOSSARY_NM}} </md-checkbox>
-				
+							<div flex >
+								<md-input-container class="md-block"> <label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
+								<input class="input_class" ng-model="nameExport" required
+									maxlength="100" ng-maxlength="100" md-maxlength="100" /> </md-input-container>
+							</div>
+							<div>
+								<md-input-container class="small counter"> 
+								<md-button	ng-show="!wait" ng-click="prepare($event)"
+									aria-label="download Glossary" class="md-fab md-mini"> <md-icon
+									md-font-icon="fa fa-download fa-2x"> </md-icon> </md-button>
+								</md-input-container>
 							</div>
 						</div>
-				</div>
+
+						<div id="lista">
+							<div layout="row" layout-wrap>
+								<div >
+									<md-checkbox  ng-checked="flagCheck" ng-click="selectAll()"><h4>{{translate.load("sbi.importusers.selectall");}}</h4></md-checkbox>
+								</div>
+								</div>
+								<div layout="row" layout-wrap flex>
+									<div flex="90" ng-repeat="us in glossary">
+										<md-checkbox ng-checked="exists(us, glossarySelected)"
+										ng-click="toggle(us, glossarySelected)"> {{us.GLOSSARY_NM}} </md-checkbox>
+									</div>
+								</div>
+						</div>
 					
-						</md-content>
-					</md-card>
-					</md-tab-body> 
-				</md-tab> 
+					</md-content>
+				</md-card>
+				</md-tab-body> 
+			</md-tab> 
 				
-				<md-tab id="importTab" > 
-					<md-tab-label>{{translate.load("sbi.impexpglossary.import")}}</md-tab-label>
+			<md-tab id="importTab" > 
+				<md-tab-label>{{translate.load("sbi.impexpglossary.import")}}</md-tab-label>
 					<md-tab-body> 
 						<md-card>
 						<div layout="row" layout-wrap >
@@ -106,8 +101,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								class="md-fab md-mini"  > <md-icon
 								md-font-icon="fa fa-upload"  >
 								</md-icon> </md-button>
-							</div>
-							<div layout="row" layout-wrap >
+						</div>
+						<div layout="row" layout-wrap >
 								<md-radio-group layout="row" ng-model="typeSaveMenu">
 								      <md-radio-button value="Override" >{{translate.load("sbi.importusers.override");}}</md-radio-button>
 								      <md-radio-button value="Missing">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
@@ -115,61 +110,61 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								
 								<span flex></span>
 								<md-button class="md-raised" ng-click="save($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>
-							</div>
+						</div>
 							
-							<div layout="row" flex>
-			<div ng-show="glossaryImported.length!=0 || importingGlossary.length!=0" flex >
-			<h4>{{translate.load("sbi.importusers.userimport");}}</h4>
-				 <angular-table id='layerlist' 
-					ng-model=glossaryImported
-					columns='[{"label":"","name":"glossaryNm"}]'
-					columnsSearch='["glossaryNm"]' 
-					show-search-bar=true
-					highlights-selected-item=true 
-					hide-table-head=true
-					menu-option=menuLayer 
-					multi-select=true
-					selected-item=selectGlossaryToImport
-					no-pagination=true
-					scope-functions=tableFunction>
-					</angular-table> 
-					
-			</div>
-			<div layout="column" layout-wrap  ng-show ="glossaryImported.length!=0 || importingGlossary.length!=0">
-				<div flex></div>
-					 	<md-button  class="md-fab md-mini"  ng-click="addGloss()"><md-icon
-							md-font-icon="fa fa-angle-right fa-2x"  >
-						</md-icon></md-button>
-					 	<md-button  class="md-fab md-mini"  ng-click="removeGloss()" ><md-icon
-							md-font-icon="fa fa-angle-left fa-2x" >
-						</md-icon></md-button>
-					<div flex></div>
-					 	<md-button  class="md-fab md-mini"  ng-click="addAllGloss()" ><md-icon
-							md-font-icon="fa fa-angle-double-right fa-2x"  >
-						</md-icon></md-button>
-					 	<md-button class="md-fab md-mini"  ng-click="removeAllGloss()"><md-icon
-							md-font-icon="fa fa-angle-double-left fa-2x"  >
-						</md-icon></md-button>
-					<div flex></div>
-				 </div>
-				<div flex ng-show="glossaryImported.length!=0 || importingGlossary.length!=0">
-				<h4>{{translate.load("sbi.importusers.userimporting");}}</h4>
-				<angular-table  id='layerlist2' 
-				ng-model=importingGlossary
-				columns='[{"label":"","name":"glossaryNm"}]'
-				columnsSearch='["glossaryNm"]' 
-				show-search-bar=true
-				highlights-selected-item=true 
-				menu-option=menuLayer 
-				multi-select=true
-				selected-item=selectGlossaryToImport
-				no-pagination=true
-				scope-functions=tableFunction
-				hide-table-head=true>
-			
-				
-			</div>
-	</div>
+						<div layout="row" flex>
+							<div ng-show="glossaryImported.length!=0 || importingGlossary.length!=0" flex >
+							<h4>{{translate.load("sbi.importusers.userimport");}}</h4>
+								 <angular-table id='layerlist' 
+									ng-model=glossaryImported
+									columns='[{"label":"","name":"glossaryNm"}]'
+									columnsSearch='["glossaryNm"]' 
+									show-search-bar=true
+									highlights-selected-item=true 
+									hide-table-head=true
+									menu-option=menuLayer 
+									multi-select=true
+									selected-item=selectGlossaryToImport
+									no-pagination=true
+									scope-functions=tableFunction>
+									</angular-table> 
+									
+							</div>
+							<div layout="column" layout-wrap  ng-show ="glossaryImported.length!=0 || importingGlossary.length!=0">
+								<div flex></div>
+									 	<md-button  class="md-fab md-mini"  ng-click="addGloss()"><md-icon
+											md-font-icon="fa fa-angle-right fa-2x"  >
+										</md-icon></md-button>
+									 	<md-button  class="md-fab md-mini"  ng-click="removeGloss()" ><md-icon
+											md-font-icon="fa fa-angle-left fa-2x" >
+										</md-icon></md-button>
+									<div flex></div>
+									 	<md-button  class="md-fab md-mini"  ng-click="addAllGloss()" ><md-icon
+											md-font-icon="fa fa-angle-double-right fa-2x"  >
+										</md-icon></md-button>
+									 	<md-button class="md-fab md-mini"  ng-click="removeAllGloss()"><md-icon
+											md-font-icon="fa fa-angle-double-left fa-2x"  >
+										</md-icon></md-button>
+									<div flex></div>
+								 </div>
+								<div flex ng-show="glossaryImported.length!=0 || importingGlossary.length!=0">
+									<h4>{{translate.load("sbi.importusers.userimporting");}}</h4>
+									<angular-table  id='layerlist2' 
+									ng-model=importingGlossary
+									columns='[{"label":"","name":"glossaryNm"}]'
+									columnsSearch='["glossaryNm"]' 
+									show-search-bar=true
+									highlights-selected-item=true 
+									menu-option=menuLayer 
+									multi-select=true
+									selected-item=selectGlossaryToImport
+									no-pagination=true
+									scope-functions=tableFunction
+									hide-table-head=true>
+								
+								
+								</div>
+							</div>
 							
 						</div>
 						</md-card>
