@@ -16,7 +16,7 @@
 	<PRODUCT_TYPE label="KnowageSI" active="true">
 		<ENGINE label="knowagebirtreporteng" />
 		<ENGINE label="knowageqbeengine" />
-		<ENGINE label="knowagesmartfilteren" />
+		<!-- <ENGINE label="knowagesmartfilteren" /> -->
 		<ENGINE label="knowagetalendengine" />
 		<ENGINE label="knowageprocessengine" />
 		<ENGINE label="knowagechartengine" />
