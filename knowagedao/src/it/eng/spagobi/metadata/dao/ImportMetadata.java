@@ -103,15 +103,17 @@ public class ImportMetadata extends AbstractHibernateDAO {
 				// for each table get the corresponding source
 				String sourceComponentName = sourceTable.getConnectionComponentName();
 				ETLRDBMSSource rdbmsSource = etlMetadata.getRDBMSSourceByComponentName(sourceComponentName);
-				// get corresponding unique name (key)
-				String sourceKey = rdbmsSource.getUniqueName();
-				String sourceName = etlMetadata.getSourceName(sourceKey);
+				if (rdbmsSource != null) {
+					// get corresponding unique name (key)
+					String sourceKey = rdbmsSource.getUniqueName();
+					String sourceName = etlMetadata.getSourceName(sourceKey);
 
-				// Check if that source was mapped in the properties file
-				SbiMetaSource sbiSource = sourcesMap.get(sourceName);
-				if (sbiSource != null) {
-					String tableName = sourceTable.getValue();
-					saveJobTable(aSession, sbiSource, tableName, ROLE_SOURCE, aJob);
+					// Check if that source was mapped in the properties file
+					SbiMetaSource sbiSource = sourcesMap.get(sourceName);
+					if (sbiSource != null) {
+						String tableName = sourceTable.getValue();
+						saveJobTable(aSession, sbiSource, tableName, ROLE_SOURCE, aJob);
+					}
 				}
 			}
 
@@ -121,16 +123,19 @@ public class ImportMetadata extends AbstractHibernateDAO {
 				// for each table get the corresponding source
 				String sourceComponentName = targetTable.getConnectionComponentName();
 				ETLRDBMSSource rdbmsSource = etlMetadata.getRDBMSSourceByComponentName(sourceComponentName);
-				// get corresponding unique name (key)
-				String sourceKey = rdbmsSource.getUniqueName();
-				String sourceName = etlMetadata.getSourceName(sourceKey);
+				if (rdbmsSource != null) {
+					// get corresponding unique name (key)
+					String sourceKey = rdbmsSource.getUniqueName();
+					String sourceName = etlMetadata.getSourceName(sourceKey);
 
-				// Check if that source was mapped in the properties file
-				SbiMetaSource sbiSource = sourcesMap.get(sourceName);
-				if (sbiSource != null) {
-					String tableName = targetTable.getValue();
-					saveJobTable(aSession, sbiSource, tableName, ROLE_TARGET, aJob);
+					// Check if that source was mapped in the properties file
+					SbiMetaSource sbiSource = sourcesMap.get(sourceName);
+					if (sbiSource != null) {
+						String tableName = targetTable.getValue();
+						saveJobTable(aSession, sbiSource, tableName, ROLE_TARGET, aJob);
+					}
 				}
+
 			}
 			// 5 - Retrieve source files
 			Set<String> sourceFiles = etlMetadata.getSourceFiles();
