@@ -105,6 +105,7 @@ $scope.getCube = function(item){
 			console.log($scope.selectedSchema);
 			$scope.template.mondrianSchema = $scope.selectedSchema.name;
 			$scope.template.mondrianSchemaId = $scope.selectedSchema.currentContentId;
+			$scope.template.id = $scope.selectedSchema.id;
 			$scope.template.mdxQuery = mdx; 
 			$scope.template.mondrianMdxQuery = mdx;
 			
