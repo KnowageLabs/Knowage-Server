@@ -18,13 +18,12 @@ function olapDesignerController($scope, $timeout, $window, $mdDialog, $http, $sc
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
 		toastr, $cookies, sbiModule_docInfo, sbiModule_config) {
 	
+	
+	$scope.template = {};
 	$scope.selectedType = null;
 	$scope.schemasList = [];
 	$scope.cubeList = [];
-	$scope.selectedSchema= {
-	"name": "",		
-	"currentContentId": null		
-	};
+	$scope.selectedSchema= {};
 	$scope.showCubes = false;
 	$scope.selectedCube = {
 	"name": ""				
@@ -78,8 +77,8 @@ function olapDesignerController($scope, $timeout, $window, $mdDialog, $http, $sc
 		
 	};
 	
-$scope.getCube = function(){
-		
+$scope.getCube = function(item){
+		$scope.selectedSchema = item;
 		sbiModule_restServices.promiseGet("/1.0/designer/cubes/"+$scope.selectedSchema.currentContentId,"")
 		.then(function(response) {
 			$scope.cubeList = response.data;
@@ -92,7 +91,7 @@ $scope.getCube = function(){
 	};
 	
 	$scope.setMDX = function(){
-		console.log($scope.selectedCube.name);
+		
 		sbiModule_restServices.promiseGet("/1.0/designer/cubes/getMDX/"+$scope.selectedSchema.currentContentId+"/"+$scope.selectedCube.name,"")
 		.then(function(response) {
 			mdx = response.data;
@@ -101,8 +100,30 @@ $scope.getCube = function(){
 			
 		});	
 		};
+		
+		 var prepareTemplate = function() {
+			console.log($scope.selectedSchema);
+			$scope.template.mondrianSchema = $scope.selectedSchema.name;
+			$scope.template.mondrianSchemaId = $scope.selectedSchema.currentContentId;
+			$scope.template.mdxQuery = mdx; 
+			$scope.template.mondrianMdxQuery = mdx;
+			
+		} 
+		
 		$scope.saveMDX = function(){
-		console.log(mdx);		
+			
+			prepareTemplate();
+		
+      	sbiModule_restServices.promisePost("1.0/designer/cubes","",angular.toJson($scope.template))
+    	.then(function(response) {
+		
+			sbiModule_messaging.showSuccessMessage("Partial Template successfully saved", 'Success!');
+		
+			
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});			
 		};
 
 };

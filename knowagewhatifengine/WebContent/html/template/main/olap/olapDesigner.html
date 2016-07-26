@@ -34,9 +34,8 @@
 				       <label>Select Mondrian Schema</label>
 				       <md-select
 				        ng-model="selectedSchema.currentContentId"
-				        ng-change="getCube()"
 				        > <md-option 
-				        ng-repeat="l in schemasList track by $index" value="{{l.currentContentId}}">{{l.name}} </md-option>
+				        ng-repeat="l in schemasList track by $index" value="{{l.currentContentId}}" ng-click="getCube(l)">{{l.name}} </md-option>
 				       </md-select>
 				        </md-input-container>
 				   </div>
