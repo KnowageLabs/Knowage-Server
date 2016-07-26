@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,29 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.profiling.dao;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 import it.eng.qbe.statement.hibernate.HQLStatement;
 import it.eng.qbe.statement.hibernate.HQLStatement.IConditionalOperator;
@@ -37,23 +55,6 @@ import it.eng.spagobi.profiling.dao.filters.FinalUsersFilter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
-
 public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserDAO {
 
 	static private Logger logger = Logger.getLogger(SbiUserDAOHibImpl.class);
@@ -64,7 +65,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 	/**
 	 * Load SbiUser by id.
-	 * 
+	 *
 	 * @param id
 	 *            the identifier /** Load SbiUser by id.
 	 * @param id
@@ -110,7 +111,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		return toReturn;
 	}
 
-	public List<UserBO> loadUsers(QueryFilters filters) throws EMFUserError {
+	@Override
+	public List<UserBO> loadUsers(QueryFilters filters, String dateFilter) throws EMFUserError {
 		logger.debug("IN");
 		List<UserBO> results = new ArrayList<UserBO>();
 		Session aSession = null;
@@ -127,8 +129,19 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 			for (Iterator iterator = users.iterator(); iterator.hasNext();) {
 				SbiUser sbiUser = (SbiUser) iterator.next();
+				if (dateFilter != null) {
+					if (sbiUser.getCommonInfo().getTimeUp() != null) {
+						if (sbiUser.getCommonInfo().getTimeUp().getTime() > new Date(dateFilter).getTime()
+								|| sbiUser.getCommonInfo().getTimeIn().getTime() > new Date(dateFilter).getTime()) {
+							results.add(toUserBO(sbiUser));
+						}
+					} else if (sbiUser.getCommonInfo().getTimeIn().getTime() > new Date(dateFilter).getTime()) {
+						results.add(toUserBO(sbiUser));
+					}
+				} else {
+					results.add(toUserBO(sbiUser));
+				}
 
-				results.add(toUserBO(sbiUser));
 			}
 
 			return results;
@@ -146,9 +159,14 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		}
 	}
 
+	@Override
+	public List<UserBO> loadUsers(QueryFilters filters) throws EMFUserError {
+		return loadUsers(filters, null);
+	}
+
 	/**
 	 * Insert SbiUser
-	 * 
+	 *
 	 * @param user
 	 * @throws EMFUserError
 	 */
@@ -181,7 +199,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 	/**
 	 * Update SbiUser
-	 * 
+	 *
 	 * @param user
 	 * @throws EMFUserError
 	 */
@@ -552,7 +570,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	/**
 	 * Check if the user identifier in input is valid (for insertion or modification) for the user with the input integer id. In case of user insertion, id
 	 * should be null.
-	 * 
+	 *
 	 * @param userId
 	 *            The user identifier to check
 	 * @param id
@@ -621,7 +639,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 	/**
 	 * From the Hibernate SbiUser at input, gives the corrispondent BI object (UserBO).
-	 * 
+	 *
 	 * @param sbiUser
 	 *            The Hibernate SbiUser
 	 * @return the corrispondent output <code>UserBO</code>
@@ -722,12 +740,12 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	//
 	// hibernateQuery = aSession.createQuery("from SbiUser su where su.id in (" +
 	// " select ur.id.id " +
-	// "	from " +
-	// "		SbiExtUserRoles ur, SbiExtRoles r " +
-	// "	where " +
-	// "		ur.id.extRoleId = r.extRoleId " +
-	// "	group by ur.id.id " +
-	// "	having sum(case when r.roleType.valueCd = 'USER' then 0 else 1 end) = 0) " +
+	// " from " +
+	// " SbiExtUserRoles ur, SbiExtRoles r " +
+	// " where " +
+	// " ur.id.extRoleId = r.extRoleId " +
+	// " group by ur.id.id " +
+	// " having sum(case when r.roleType.valueCd = 'USER' then 0 else 1 end) = 0) " +
 	// ") order by userId");
 	// hibernateQuery.setFirstResult(offset);
 	// if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);
@@ -779,7 +797,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 	/**
 	 * Get the SbiUser object with the input user identifier. The search method is CASE INSENSITIVE!!!
-	 * 
+	 *
 	 * @param userId
 	 *            The user identifier
 	 * @return the SbiUser object with the input user identifier

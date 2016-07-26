@@ -89,53 +89,63 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tab-body> 
 				<md-card>
 				<md-card-content layout="column" ng-controller="userExportController" >
-		<div layout="row" layout-align="center center" layout-wrap>
-			<div flex flex-sm="100" flex-xs="100">
-				<md-input-container class="md-block"> 
-					<label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
-					<input class="input_class" ng-model="nameExport" required
-					maxlength="100" ng-maxlength="100" md-maxlength="100" /> 
-				</md-input-container>
-			</div>
-			<div flex-sm="100" flex-xs="100" layout="row" layout-align="center center">
-				<md-checkbox ng-model="exportCheckboxs.exportPersonalFolder"  class="md-block"
-					aria-label="Checkbox 1"><h4>{{translate.load("sbi.impexpusers.exportPersonalFolder");}}</h4></md-checkbox>
-			
-			
-				<md-checkbox ng-disabled="!exportCheckboxs.exportPersonalFolder"  class="md-block"
-					ng-model="exportCheckboxs.exportSubObj" aria-label="Checkbox 1"><h4>{{translate.load("SBISet.importexport.expSubView","component_impexp_messages");}}</h4></md-checkbox>
-			
-			
-				<md-checkbox  ng-disabled="!exportCheckboxs.exportPersonalFolder"  class="md-block"
-					ng-model="exportCheckboxs.exportSnapshots" aria-label="Checkbox 1"><h4>{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</h4></md-checkbox>
-			
- 				<md-button 
-					ng-disabled="wait" ng-click="prepare($event)"
-					aria-label="download Users" class="md-fab md-mini internalFab"> <md-icon
-					md-font-icon="fa fa-download fa-2x"> </md-icon> </md-button>
-
-		</div>
-		</div>
-
-		<div id="lista">
-						<div layout="row" layout-wrap>
-							<div >
-							<md-checkbox  ng-checked="flagCheck" ng-click="selectAll()"><h4>{{translate.load("sbi.importusers.selectall");}}</h4></md-checkbox>
-							
-							</div>
+					<div layout="row" layout-align="center center" layout-wrap>
+						<div flex flex-sm="100" flex-xs="100">
+							<md-input-container class="md-block"> 
+								<label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
+								<input class="input_class" ng-model="nameExport" required
+								maxlength="100" ng-maxlength="100" md-maxlength="100" /> 
+							</md-input-container>
 						</div>
-						<div layout="row" layout-wrap flex>
-							<div flex="90" ng-repeat="us in users">
-								<md-checkbox ng-checked="exists(us, usersSelected)"
-									ng-click="toggle(us, usersSelected)"> {{ us.userId }} </md-checkbox>
-		
-							</div>
+						<div flex-sm="100" flex-xs="100" layout="row" layout-align="center center">
+							<md-checkbox ng-model="exportCheckboxs.exportPersonalFolder"  class="md-block"
+								aria-label="Checkbox 1"><h4>{{translate.load("sbi.impexpusers.exportPersonalFolder");}}</h4></md-checkbox>
+						
+						
+							<md-checkbox ng-disabled="!exportCheckboxs.exportPersonalFolder"  class="md-block"
+								ng-model="exportCheckboxs.exportSubObj" aria-label="Checkbox 1"><h4>{{translate.load("SBISet.importexport.expSubView","component_impexp_messages");}}</h4></md-checkbox>
+						
+						
+							<md-checkbox  ng-disabled="!exportCheckboxs.exportPersonalFolder"  class="md-block"
+								ng-model="exportCheckboxs.exportSnapshots" aria-label="Checkbox 1"><h4>{{translate.load("SBISet.importexport.expSnapshots","component_impexp_messages");}}</h4></md-checkbox>
+						
+			 				<md-button 
+								ng-show="!wait" ng-click="prepare($event)"
+								aria-label="download Users" class="md-fab md-mini internalFab"> <md-icon
+								md-font-icon="fa fa-download fa-2x"> </md-icon> </md-button>
+						
+			
 						</div>
 					</div>
-			
-					</md-card-content>
-					</md-card>
-					</md-tab-body>
+					<div layout-padding layout-gt-sm="row"	layout-align-gt-sm="start center" layout-sm="column">
+						<h4>{{translate.load("sbi.impexpuser.filterusers");}}:</h4>
+						<md-datepicker ng-model="filterDate" md-placeholder="Enter date"></md-datepicker>
+						<md-button class="md-icon-button" ng-click="filterUsers()">
+							<md-icon md-font-icon="fa fa-filter" aria-label="Filter"></md-icon>
+						</md-button>
+						<md-button class="md-icon-button" ng-click=removeFilter()>
+							<md-icon md-font-icon="fa fa-times" aria-label="Remove Filter"></md-icon>
+						</md-button>
+					</div>
+					<div id="lista">
+							<div layout="row" layout-wrap>
+									<div >
+										<md-checkbox  ng-checked="flagCheck" ng-click="selectAll()"><h4>{{translate.load("sbi.importusers.selectall");}}</h4></md-checkbox>
+										
+									</div>
+							</div>
+							<div layout="row" layout-wrap flex>
+									<div flex="90" ng-repeat="us in users">
+										<md-checkbox ng-checked="exists(us, usersSelected)"
+											ng-click="toggle(us, usersSelected)"> {{ us.userId }} </md-checkbox>
+					
+									</div>
+							</div>
+					</div>
+						
+				</md-card-content>
+				</md-card>
+				</md-tab-body>
 					
 				</md-tab>
 				

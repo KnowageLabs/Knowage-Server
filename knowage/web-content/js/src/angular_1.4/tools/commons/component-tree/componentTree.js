@@ -53,6 +53,7 @@
 				, notHideOnLoad : "=?"
 				, interceptor : "=?"
 				, expandOnClick :"=?"
+				, removeEmptyFolder :  '='
 			},
 			controller: componentTreeControllerFunction,
 			controllerAs: 'ctrl',
@@ -149,6 +150,25 @@
 							}
 						};
 
+						scope.showFolder = function(node){
+							if(scope.removeEmptyFolder){
+								if(node[subfoldersId].length==0 && node.biObjects.length==0){
+									return false;
+								}else{
+									if(node.biObjects.length>0){
+										return true;
+									}else{
+										for(var i=0;i<node[subfoldersId].length;i++){
+											if(scope.showFolder(node[subfoldersId][i])){
+												return true;
+											}
+										}
+										return false;
+									}
+								}
+							}else
+								return true;
+						}
 						scope.initializeFolders(scope.ngModel, null);
 						scope.ngModel = scope.createTreeStructure(scope.ngModel);
 						scope.folders = scope.ngModel;

@@ -49,6 +49,7 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 	$scope.typeSaveMenu = "Missing";
 	$scope.selectGlossaryToImport = [];
 	$scope.importingGlossary = [];
+	$scope.filterDate;
 	//export glossary
 	$scope.loadGlossaryList = function(){
 		
@@ -63,6 +64,28 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 	
 	$scope.loadGlossaryList();
 	
+	
+	$scope.filterGlossary = function(){
+		if($scope.filterDate!=undefined){
+			sbiModule_restServices.promiseGet("1.0/glossary","listGlossary","dateFilter="+$scope.filterDate)
+			.then(function(response){ 
+				angular.copy(response.data,$scope.glossary);
+
+			},function(response){
+			});
+		}else{
+			$scope.removeFilter();
+		}
+	}
+	
+	$scope.removeFilter = function(){
+		sbiModule_restServices.promiseGet("1.0/glossary","listGlossary")
+		.then(function(response){ 
+			angular.copy(response.data,$scope.glossary);
+
+		},function(response){
+		});
+	}
 	$scope.prepare = function(ev){
 		
 		if($scope.glossarySelected.length == 0){
@@ -140,7 +163,7 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 
 			for (var i = 0; i < list.length; i++) {
 				var object = list[i];
-				if(object.glossaryId==item.glossaryId){
+				if(object.GLOSSARY_ID==item.GLOSSARY_ID){
 					return i;
 				}
 			}
@@ -148,7 +171,17 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 			return -1;
 		};
 		
-		
+		$scope.indexGlossInList=function(item, list) {
+
+			for (var i = 0; i < list.length; i++) {
+				var object = list[i];
+				if(object.glossaryId==item.glossaryId){
+					return i;
+				}
+			}
+
+			return -1;
+		};
 		
 		
 	//import glossary
@@ -193,7 +226,7 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 			for(var i=0;i<$scope.selectGlossaryToImport.length;i++){
 
 				//add inf exportig user
-				var index = $scope.indexInList($scope.selectGlossaryToImport[i],$scope.importingGlossary);
+				var index = $scope.indexGlossInList($scope.selectGlossaryToImport[i],$scope.importingGlossary);
 				if(index!=-1){
 					//if present nothing action
 				}else{
@@ -202,7 +235,7 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 
 				}
 				//remove from IEDConf.exportedUser
-				var index = $scope.indexInList($scope.selectGlossaryToImport[i],$scope.glossaryImported);
+				var index = $scope.indexGlossInList($scope.selectGlossaryToImport[i],$scope.glossaryImported);
 				if(index!=-1){
 					//if present
 					$scope.glossaryImported.splice(index,1);
@@ -220,7 +253,7 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 
 			for(var i=0;i<$scope.selectGlossaryToImport.length;i++){
 				//add inf exportig user
-				var index = $scope.indexInList($scope.selectGlossaryToImport[i],$scope.glossaryImported);
+				var index = $scope.indexGlossInList($scope.selectGlossaryToImport[i],$scope.glossaryImported);
 				if(index!=-1){
 					//if present nothing action
 				}else{
@@ -229,7 +262,7 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 
 				}
 				//remove from IEDConf.roles.exportedUser
-				var index = $scope.indexInList($scope.selectGlossaryToImport[i],$scope.importingGlossary);
+				var index = $scope.indexGlossInList($scope.selectGlossaryToImport[i],$scope.importingGlossary);
 				if(index!=-1){
 					//if present
 					$scope.importingGlossary.splice(index,1);

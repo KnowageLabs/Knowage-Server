@@ -83,6 +83,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 							</div>
 							<md-checkbox ng-checked="exists('Dataset',listType)" ng-click="toggle('Dataset',listType)" ng-init="toggle('Dataset',listType)"">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>
+							<div ng-show="showDataset" layout-padding layout-gt-sm="row"
+								layout-align-gt-sm="start center" layout-sm="column">
+								<h4>{{translate.load("sbi.impexpcatalog.filtercatalog")}}:</h4>
+								<md-datepicker ng-model="filterDate" md-placeholder="Enter date"></md-datepicker>
+								<md-button class="md-icon-button" ng-click="filterDataset()">
+							 		<md-icon md-font-icon="fa fa-filter" aria-label="Filter"></md-icon>
+								 </md-button>
+								 <md-button class="md-icon-button" ng-click=loadAllDataset()>
+							 		<md-icon md-font-icon="fa fa-times" aria-label="Remove Filter"></md-icon>
+								 </md-button>
+							</div>
 							<div flex layout ng-show="showDataset">
 								<angular-table id='datasetlist' ng-model=dataset
 									columns='[{"label":"Label","name":"label","size":"20px"},{"label":"Name","name":"name","size":"20px"}]'

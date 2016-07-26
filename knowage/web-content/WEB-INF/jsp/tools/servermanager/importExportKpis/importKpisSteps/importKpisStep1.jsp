@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<angular-table id="layerlist"
 				ng-show="IEDConf.exportedKpis.length!=0"
 				ng-model="IEDConf.exportedKpis"
-				columns="[{'label':'ID','name':'id'},{'label':'Name','name':'name'},{'label':'Formula','name':'formula'},{'label':'Threshold','name':'thresholdName'},{'label':'Targets','name':'targetsNames'}]"
+				columns="[{'label':'Name','name':'name'},{'label':'Formula','name':'formula'},{'label':'Threshold','name':'thresholdName'},{'label':'Targets','name':'targetsNames'}]"
 				columnsSearch="['userId']" 
 				show-search-bar="false"
 				highlights-selected-item="true"

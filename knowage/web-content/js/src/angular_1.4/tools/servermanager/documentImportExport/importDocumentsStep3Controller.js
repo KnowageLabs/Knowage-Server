@@ -28,7 +28,19 @@ function importStep3FuncController($scope,importExportDocumentModule_importConf,
 		}
 		return expr;
 	}
-
+	$scope.checkDatasourceAssociated = function() {
+			
+			var associatedDS = $scope.IEDConf.datasources.associatedDatasources;
+			var exportedDS = $scope.IEDConf.datasources.exportedDatasources;
+			var countAssociatedDS = Object.keys(associatedDS).length;
+			
+			if(exportedDS.length == countAssociatedDS){
+				return false;
+			}else{
+				return true;
+			}
+			
+		}
 	$scope.saveDatasourceAssociation=function(){
 		$scope.showCircular = true;
 

@@ -30,6 +30,7 @@ import static it.eng.spagobi.tools.glossary.util.Util.fromWord;
 import static it.eng.spagobi.tools.glossary.util.Util.fromWordLight;
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +42,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -500,7 +502,7 @@ public class GlossaryService {
 	@Path("/listGlossary")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS, SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
-	public String listGlossary(@Context HttpServletRequest req) {
+	public String listGlossary(@Context HttpServletRequest req, @QueryParam("dateFilter") String dateFilter) {
 		try {
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -512,7 +514,21 @@ public class GlossaryService {
 			if (lst != null) {
 				for (Iterator<SbiGlGlossary> iterator = lst.iterator(); iterator.hasNext();) {
 					SbiGlGlossary sbiGlGlossary = iterator.next();
-					jarr.put(fromGlossaryLight(sbiGlGlossary));
+					if (dateFilter != null) {
+						if (sbiGlGlossary.getCommonInfo().getTimeUp() != null) {
+							if (sbiGlGlossary.getCommonInfo().getTimeIn().getTime() >= new Date(dateFilter).getTime()
+									|| sbiGlGlossary.getCommonInfo().getTimeUp().getTime() > new Date(dateFilter).getTime()) {
+								jarr.put(fromGlossaryLight(sbiGlGlossary));
+							}
+						} else {
+							if (sbiGlGlossary.getCommonInfo().getTimeIn().getTime() >= new Date(dateFilter).getTime()) {
+								jarr.put(fromGlossaryLight(sbiGlGlossary));
+							}
+						}
+					} else {
+						jarr.put(fromGlossaryLight(sbiGlGlossary));
+
+					}
 				}
 			}
 			return jarr.toString();

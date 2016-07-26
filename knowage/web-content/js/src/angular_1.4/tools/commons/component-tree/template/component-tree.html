@@ -1,5 +1,6 @@
 <!-- element of the tree, recursive call on this template to create the tree -->
 <script type="text/ng-template" id="componentTreeHtmlScript">
+
 <div layout="row" layout-align="start center" class="customTreeNode" >
 
 	<div layout="row" layout-align="start center">
@@ -41,8 +42,9 @@
 <ol id="{{id}}-tree-element-{{$parent.$index}}-{{$index}}"
 		ui-tree-nodes="" ng-model="node[subfoldersId]"
 		ng-if="node.expanded">
+
 	<li layout="column" layout-align="start stretch" ng-show="node.visible"
-			ng-repeat="node in node[subfoldersId]"
+			ng-repeat="node in node[subfoldersId]" ng-if="showFolder(node)"
 			ui-tree-node ng-include="'componentTreeHtmlScript'"></li>
 	<!--
 	<li ng-if="showFiles!=false && $parent.folder.biObjects !== undefined && $parent.folder.biObjects.length > 0"
@@ -75,11 +77,7 @@
 	</div>
 </div>
  
-<md-content class="waitingContainer" ng-hide="seeTree==true || hideProgress==true" 
-		layout="row" layout-padding layout-align="space-around center">
-	<md-progress-circular md-mode="indeterminate"></md-progress-circular>
-	<h4>Please wait...</h4>
-</md-content>
+
 
 <style>
 .menu-container {

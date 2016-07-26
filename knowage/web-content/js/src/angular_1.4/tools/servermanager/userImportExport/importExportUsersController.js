@@ -153,6 +153,30 @@ function userExportFuncController(sbiModule_download,sbiModule_translate,sbiModu
 	$scope.flagCheck=false;
 	$scope.nameExport="";
 	$scope.exportCheckboxs={};
+	$scope.filterDate;
+	
+	$scope.filterUsers = function(){
+		if($scope.filterDate!=undefined){
+			sbiModule_restServices.promiseGet("2.0", 'users', "dateFilter="+$scope.filterDate).then(
+					function(response, status, headers, config) {
+							$scope.users = response.data;
+					},function(response, status, headers, config) {
+						sbiModule_restServices.errorHandler(response.data,"");
+					})
+		
+		}else{
+			$scope.removeFilter();
+		}
+	}
+	
+	$scope.removeFilter = function(){
+		sbiModule_restServices.promiseGet("2.0", 'users').then(
+				function(response, status, headers, config) {
+						$scope.users = response.data;
+				},function(response, status, headers, config) {
+					sbiModule_restServices.errorHandler(response.data,"");
+				})
+	}
 	
 	$scope.selectAll = function(){
 		if(!$scope.flagCheck){

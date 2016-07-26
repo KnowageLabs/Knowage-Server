@@ -66,6 +66,7 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 	$scope.selectedStep=0;
 	$scope.stepControl;
 	$scope.IEDConf=importExportDocumentModule_importConf;
+	
 //	$scope.fileImport= {};
 //	$scope.associationsFileImport={};
 //	$scope.associations="noAssociations";
@@ -77,6 +78,8 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 			importExportDocumentModule_importConf.resetData();
 		}
 	}
+	
+
 	
 	$scope.stopImport=function(text){
 		 var confirm = $mdDialog.confirm()
@@ -100,7 +103,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 	$scope.log = sbiModule_logger;
 	$scope.selected =[] ;
 	$scope.folders=[];
-
+	$scope.filterDate;
 	$scope.fileAssociation = {};
 	$scope.flags = {
 			waitExport : false,
@@ -114,7 +117,44 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 			exportBirt : false,
 			exportScheduler : false
 	};
+	$scope.filterDocuments = function(){
+		if($scope.filterDate!=undefined){
+			$scope.restServices.get("2.0", "folders","dateFilter="+$scope.filterDate)
+			.success(function(data){
+				//if not errors in response, copy the data
+				if (data.errors === undefined){
+					$scope.folders=angular.copy(data);
+				}else{
+					$scope.folders=[];
+				}
+			})
+			.error(function(data, status){
+				$scope.folders=angular.copy(foldersJson);
+				$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);
+			});
 
+		}else{
+			$scope.removeFilter();
+
+		}
+	}
+	
+	$scope.removeFilter = function(){
+		$scope.filterDate = undefined;
+		$scope.restServices.get("2.0", "folders","includeDocs=true")
+		.success(function(data){
+			//if not errors in response, copy the data
+			if (data.errors === undefined){
+				$scope.folders=angular.copy(data);
+			}else{
+				$scope.folders=[];
+			}
+		})
+		.error(function(data, status){
+			$scope.folders=angular.copy(foldersJson);
+			$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);
+		});
+	}
 	$scope.restServices.get("2.0", "folders","includeDocs=true")
 	.success(function(data){
 		//if not errors in response, copy the data

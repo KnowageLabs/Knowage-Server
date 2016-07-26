@@ -64,7 +64,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.flagUser = false;
 	$scope.flagCategory = false;
 	$scope.typeSaveMenu="Missing";
-
+	$scope.filterDate;
 
 	$scope.stepItem = [ {
 		name : $scope.translate.load('sbi.ds.file.upload.button')
@@ -79,7 +79,22 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			importExportDocumentModule_importConf.resetData();
 		}
 	}
-
+	$scope.filterDataset = function(){
+		if($scope.filterDate!=undefined){
+			sbiModule_restServices.promiseGet("1.0/serverManager/importExport/catalog", 'getdataset',"dateFilter="+$scope.filterDate).then(
+					function(response, status, headers, config) {
+						$scope.dataset = response.data;
+					},function(response, status, headers, config) {
+						console.log("layer non Ottenuti " + status);
+						sbiModule_restServices.errorHandler(response.data,"");
+					})
+					.error(function(data, status){
+						$scope.log.error('GET RESULT error of ' + data + ' with status :' + status);
+					});
+		}else{
+			$scope.loadAllDataset();
+		}
+	}
 	$scope.stopImport = function(text, title) {
 		var titleFin = title || "";
 		var confirm = $mdDialog.confirm().title(titleFin).content(text)

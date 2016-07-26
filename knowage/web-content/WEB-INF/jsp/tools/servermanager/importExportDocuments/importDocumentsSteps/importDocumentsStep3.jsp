@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <md-content  layout-column layout-wrap>
 <div layout="row" layout-align="end center">
 	
-	<md-button  ng-click="saveDatasourceAssociation()" class="md-raised">{{translate.load('Sbi.next','component_impexp_messages');}}</md-button> 
+	<md-button  ng-click="saveDatasourceAssociation()" class="md-raised" ng-disabled="checkDatasourceAssociated()">{{translate.load('Sbi.next','component_impexp_messages');}}</md-button> 
 </div>
 <md-whiteframe  layout="row" layout-wrap class="sourceTargetToolbar md-whiteframe-1dp" >
 		<p flex="50">{{translate.load('sbi.hierarchies.source');}}</p>
@@ -46,7 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    		<md-input-container ng-if="IEDConf.datasources.associatedDatasources[expDatasources.dsId].fixed!=true"  flex="50">
 	        <label>Datasources</label>
 	        <md-select ng-model="IEDConf.datasources.associatedDatasources[expDatasources.dsId]">
-	        <md-option ng-value="{dsId:''}"></md-option>
+	       
 	          <md-option ng-repeat="currDatasources in IEDConf.datasources.currentDatasources" ng-value="currDatasources" ng-if="currentDatasourcesIsSelectable(currDatasources,expDatasources)">
 	            {{currDatasources.label}}
 	          </md-option>

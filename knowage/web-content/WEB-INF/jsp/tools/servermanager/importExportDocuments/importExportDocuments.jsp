@@ -96,8 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 							</div>
 							<div layout-padding layout-gt-sm="row"
-								layout-align-gt-sm="start center" layout-sm="column"
-								layuout-align-sm="start start">
+								layout-align-gt-sm="start center" layout-sm="column">
 								<md-checkbox class="little-check" ng-model="checkboxs.exportSubObj"
 									aria-label="Export sub views">{{translate.load("SBISet.importexport.expSubView","component_impexp_messages");}}</md-checkbox>
 								<md-checkbox class="little-check"
@@ -110,13 +109,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									ng-model="checkboxs.exportScheduler" aria-label="Export sched">Export Scheduler</md-checkbox>
 						 -->
 							</div>
+							<div layout-padding layout-gt-sm="row"
+								layout-align-gt-sm="start center" layout-sm="column">
+								<h4>{{translate.load("sbi.impexpdoc.filterdoc")}}:</h4>
+								<md-datepicker ng-model="filterDate" md-placeholder="Enter date"></md-datepicker>
+								<md-button class="md-icon-button" ng-click="filterDocuments()">
+							 		<md-icon md-font-icon="fa fa-filter" aria-label="Filter"></md-icon>
+								 </md-button>
+								 <md-button class="md-icon-button" ng-click="removeFilter()">
+							 		<md-icon md-font-icon="fa fa-times" aria-label="Remove Filter"></md-icon>
+								 </md-button>
+							</div>
 							<div layout-padding>
 								<!--
  								<document-tree ng-model="folders" id="impExpTree" create-tree="true"
 									selected-item="selected" multi-select="true" show-files="true">
 								</document-tree>
 								-->
-								<component-tree ng-model="folders" id="impExpTree" create-tree="true"
+								<component-tree ng-model="folders" remove-empty-folder=true id="impExpTree" create-tree="true"
 									selected-item="selected" multi-select="true" show-files="true">
 								</component-tree>
 							</div>

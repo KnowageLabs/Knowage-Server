@@ -71,7 +71,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</md-input-container>
 							</div>
 						</div>
-
+						<div  layout-padding layout-gt-sm="row"
+								layout-align-gt-sm="start center" layout-sm="column">
+								<h4>{{translate.load("sbi.impexpgloss.filtergloss")}}:</h4>
+								<md-datepicker ng-model="filterDate" md-placeholder="Enter date"></md-datepicker>
+								<md-button class="md-icon-button" ng-click="filterGlossary()">
+							 		<md-icon md-font-icon="fa fa-filter" aria-label="Filter"></md-icon>
+								 </md-button>
+								  <md-button class="md-icon-button" ng-click=removeFilter()>
+							 		<md-icon md-font-icon="fa fa-times" aria-label="Remove Filter"></md-icon>
+								 </md-button>
+							</div>
 						<div id="lista">
 							<div layout="row" layout-wrap>
 								<div >
