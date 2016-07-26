@@ -360,8 +360,10 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		IModelEntity timeDimension = getTimeDimension(getDataSource());
 
 		if (temporalDimension != null) {
-			HierarchicalDimensionField hierarchicalDimensionByEntity = temporalDimension
-					.getHierarchicalDimensionByEntity(temporalDimension.getType());
+			HierarchicalDimensionField hierarchicalDimensionByEntity = temporalDimension.getHierarchicalDimensionByEntity(temporalDimension.getType());
+			if (hierarchicalDimensionByEntity == null) {
+				throw new SpagoBIRuntimeException("Temporal dimension hierarchy is [null]");
+			}
 			Hierarchy defaultHierarchy = hierarchicalDimensionByEntity.getDefaultHierarchy();
 
 			List<Integer> whereFieldsIndexesToRemove = new LinkedList<Integer>();
