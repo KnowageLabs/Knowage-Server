@@ -17,7 +17,12 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -25,10 +30,13 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
+import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
@@ -66,8 +74,8 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 	@Path("/cubes/getMDX/{id}/{cubeName}")
 	@Produces(MediaType.TEXT_HTML)
 	public String getMDX(@PathParam("id") Integer id, @PathParam("cubeName") String cubeName) throws SpagoBIEngineException {
-		String mdx = "";
 		logger.debug("IN");
+		String mdx = "";
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		ArtifactServiceProxy artifactProxy = (ArtifactServiceProxy) ei.getEnv().get(EngineConstants.ENV_ARTIFACT_PROXY);
 		MondrianSchemaManager schemaManager = new MondrianSchemaManager(artifactProxy);
@@ -79,5 +87,30 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 		mdx = "select {[Measures].[" + firstMeasure + "]} on columns, {([" + firstDimension + "])} on rows from [" + cubeName + "]";
 		logger.debug("OUT");
 		return mdx;
+	}
+
+	@POST
+	@Path("/cubes")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void saveMdx(String body) throws SpagoBIEngineException, JSONException {
+		logger.debug("IN");
+
+		JSONObject obj = new JSONObject(body);
+		String currentArtifactId = obj.getString("mondrianSchemaId");
+		String artifactId = obj.getString("id");
+		List<String> userProfileAttributes = new ArrayList();
+
+		WhatIfTemplate template = new WhatIfTemplate();
+		template.setMondrianSchema(obj.getString("mondrianSchema"));
+		template.setMdxQuery(obj.getString("mdxQuery"));
+		template.setMondrianMdxQuery(obj.getString("mondrianMdxQuery"));
+		template.setProfilingUserAttributes(userProfileAttributes);
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		ei.getEnv().put("SBI_ARTIFACT_VERSION_ID", currentArtifactId);
+		ei.getEnv().put("SBI_ARTIFACT_ID", artifactId);
+		ei.updateWhatIfEngineInstance(template, false, ei.getEnv());
+
+		logger.debug("OUT");
 	}
 }
