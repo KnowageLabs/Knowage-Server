@@ -169,6 +169,7 @@
 		userFunctionality="ObjMetadataManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ProfileManagement" roleType="ADMIN" />
+<!--		
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="UserDefinedPropertyManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
@@ -179,6 +180,7 @@
 		userFunctionality="UserDefinedPropertyManagement" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="UserDefinedPropertyManagement" roleType="MODEL_ADMIN" />
+-->		
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="UserSaveDocumentFunctionality" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY

@@ -386,7 +386,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="TemplateManagement" description="TemplateManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="Timespan" description="Timespan" />
-	<USER_FUNCTIONALITY productType="KnowagePA" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="WorklistManagement" description="WorklistManagement" />
