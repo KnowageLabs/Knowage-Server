@@ -160,7 +160,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 			if (oldCube.name.equals(cubeName)) {
 
 				logger.debug("IN: loading the measure form the cube");
-				toReturn = oldCube.measures[0].column;
+				toReturn = oldCube.measures[0].name;
 			}
 		}
 		logger.debug("OUT");
