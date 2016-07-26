@@ -112,14 +112,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								md-font-icon="fa fa-upload"  >
 								</md-icon> </md-button>
 						</div>
-						<div layout="row" layout-wrap >
+						<div layout="row" layout-wrap ng-show="glossaryImported.length!=0 || importingGlossary.length!=0">
 								<md-radio-group layout="row" ng-model="typeSaveMenu">
 								      <md-radio-button value="Override" >{{translate.load("sbi.importusers.override");}}</md-radio-button>
 								      <md-radio-button value="Missing">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
 								 </md-radio-group>
 								
 								<span flex></span>
-								<md-button class="md-raised" ng-click="save($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>
+								<md-button ng-disabled="importingGlossary.length==0" class="md-raised" ng-click="save($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>
 						</div>
 							
 						<div layout="row" flex>
