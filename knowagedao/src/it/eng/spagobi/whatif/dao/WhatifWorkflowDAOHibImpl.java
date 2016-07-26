@@ -353,8 +353,8 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 					// we set value to done
 					logger.debug("Actual active user is " + actual.getUserId());
 					Criteria criteria = getSession().createCriteria(SbiWhatifWorkflow.class);
-					Criterion rest1 = Restrictions.eq("model_id", modelId);
-					Criterion rest2 = Restrictions.eq("user_id", actual.getUserId());
+					Criterion rest1 = Restrictions.eq("modelId", modelId);
+					Criterion rest2 = Restrictions.eq("userId", actual.getUserId());
 					criteria.add(Restrictions.and(rest1, rest2));
 					SbiWhatifWorkflow wf = (SbiWhatifWorkflow) criteria.uniqueResult();
 					wf.setState(STATE_DONE);
@@ -368,8 +368,8 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 						SbiWhatifWorkflow next = existing.get(i + 1);
 						logger.debug("Actual active user is " + actual.getUserId());
 						Criteria criteria2 = getSession().createCriteria(SbiWhatifWorkflow.class);
-						Criterion rest2_1 = Restrictions.eq("model_id", modelId);
-						Criterion rest2_2 = Restrictions.eq("user_id", next.getUserId());
+						Criterion rest2_1 = Restrictions.eq("modelId", modelId);
+						Criterion rest2_2 = Restrictions.eq("userId", next.getUserId());
 						criteria2.add(Restrictions.and(rest2_1, rest2_2));
 						SbiWhatifWorkflow wf2 = (SbiWhatifWorkflow) criteria2.uniqueResult();
 						wf.setState(STATE_INPROGRESS);

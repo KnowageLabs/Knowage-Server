@@ -381,7 +381,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath );
 		  
 		  sbiModule_restServices.promisePost
-			("1.0",'/locker/'+ id)
+			("1.0",'/locker/'+id)
 			.then(function(response) {
 				status = response.data.status;
 				locker = response.data.locker;

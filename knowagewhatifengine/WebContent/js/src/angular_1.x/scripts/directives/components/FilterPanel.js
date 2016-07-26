@@ -392,30 +392,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		item.collapsed = false;
 	};
 	
-	$scope.openFiltersDialog = function(ev, filter, node) {
-		$scope.clearLoadedData(filter.name);
-		var exist = false;
-		var position;
-		$scope.data=[];
-		$scope.filterDialogToolbarName = filter.name;
-		
-		for(var i = 0; i< $scope.dataPointers.length;i++){
-			if($scope.dataPointers[i] == uniqueName){
-				position = i;
-				exist = true;
-			}
-		}
-		
-		if(!exist)
-			$scope.getHierarchyMembers(uniqueName, axis, node);
-		else{
-			$scope.data = $scope.loadedData[position];
-		}
-		
-		$scope.showDialog(ev,$scope.filterDial);
-		
-	};
-	
 	/**
 	 * Drag and drop functionalities start
 	 **/	
@@ -524,23 +500,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	};
 
 	/**
-	 * Tree structure service
-	 **/
-	$scope.getHierarchyMembersSynchronus = function(uniqueName,axis,node){
-		
-		sbiModule_restServices.promiseGet
-		("1.0",'/hierarchy/'+ uniqueName+ '/filtertree2/'+ axis+ '?SBI_EXECUTION_ID='+ JSsbiExecutionID+ '&node='+node)
-		.then(function(response) {
-			  $scope.data = response.data;
-			  $scope.loadedData.push(response.data);
-			  $scope.dataPointers.push(uniqueName);
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage("error", 'Error');
-			
-		});	
-	};
-	
-	/**
 	 * Filter shift if necessary  
 	 **/
 	$scope.filterShift = function(direction) {
@@ -577,19 +536,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		
 		$scope.leftSliderNeeded = $scope.rows.length > $scope.maxRows? true : false;
 	};
-	
-	//Initializing array filterSelected that is following selected dimension in filters 
-	/*$scope.initFilterList = function (){
-		$scope.filterSelected = [];
-		for(var i = 0; i < $scope.filterCardList.length;i++){
-			var x ={
-					caption:"...",
-					uniqueName:"",
-					visible:false
-					};
-			$scope.filterSelected[i] = x;
-		}
-	};*/
+
 	
 	$scope.sendMdxQuery = function(mdx) {
 		var encoded = encodeURI("1.0/model/?SBI_EXECUTION_ID="+JSsbiExecutionID)
@@ -599,7 +546,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			checkShift();
 			$mdDialog.hide();
 			$scope.mdxQuery = "";
-			//$scope.initFilterList();
 			
 			$scope.sendModelConfig($scope.modelConfig);
 			if($scope.modelConfig.whatIfScenario)
@@ -618,7 +564,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		else	
 			return true;
 	};
-	//var fAxisCut = {'maxL':12, 'maxFWL':13,'maxSWL':3}
+	
 	$scope.cutName = function(name, axis, multi){
 		var ind = axis;
 		if(multi)
@@ -642,7 +588,6 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	updateFilterTracker = function(){
 		var oldSelected = $scope.filterSelected;
-		//$scope.initFilterList();
 		for(var i=0; i<oldSelected.length;i++){			
 			for(var j=0; j<$scope.filterCardList.length;j++){
 				if(oldSelected[i].uniqueName.indexOf($scope.filterCardList[j].uniqueName)>-1){
