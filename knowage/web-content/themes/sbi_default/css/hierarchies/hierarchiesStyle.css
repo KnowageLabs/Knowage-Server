@@ -199,7 +199,7 @@ resizer {
 }
 
 .list-item-small-selected {
-	background-color: #3B668C;
+	background-color: #3B668C !important;
 	border-style: dotted;
 	border-width: 1px;
 }

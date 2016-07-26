@@ -13,9 +13,11 @@ function funzione(sbiModule_translate, $scope){
 	$scope.technicalLoaded = false;
 	$scope.backupLoaded = false;
 	
+	//when Tab Technical is selected the first time load the content
 	$scope.loadTechnical = function(){
 		$scope.technicalLoaded = true;
 	}
+	//when Tab Backup is selected the first time load the content
 	$scope.loadBackup = function(){
 		$scope.backupLoaded = true;
 	}
