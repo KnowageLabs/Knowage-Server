@@ -325,7 +325,7 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="TemplateManagement" description="TemplateManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="Timespan" description="Timespan" />
-	<USER_FUNCTIONALITY productType="KnowageLI" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement" />
+	<!-- <USER_FUNCTIONALITY productType="KnowageLI" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement" /> -->
 	<USER_FUNCTIONALITY productType="KnowageLI" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="WorklistManagement" description="WorklistManagement" />
