@@ -137,4 +137,19 @@ public interface IDataMartProvider extends ISvgViewerEngineComponent {
 	 * @return the hierarchy member
 	 */
 	HierarchyMember getHierarchyMember(String name);
+
+	/**
+	 * Sets the selected member info.
+	 *
+	 * @param memberName
+	 *            the new selected member info
+	 */
+	void setSelectedMemberInfo(String info);
+
+	/**
+	 * Gets the selected member info.
+	 *
+	 * @return the selected member info
+	 */
+	String getSelectedMemberInfo();
 }

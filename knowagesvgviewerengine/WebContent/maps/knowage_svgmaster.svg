@@ -131,64 +131,62 @@ onload="init(evt);">
 		
 		function initApplication(evt) {	
 		
-		//debugger;
+		//debugger;		
       		
-			if (document.documentElement.suspendRedraw) {
-				suspendProcess = document.documentElement.suspendRedraw(30000);
-			}
+		if (document.documentElement.suspendRedraw) {
+			suspendProcess = document.documentElement.suspendRedraw(30000);
+		}
 		  			
 	
-		  for(i = 0; i < sbi.geo.conf.measures.length; i++) {	
-        var measure = sbi.geo.conf.measures[i];
-				
-        ThresholdsFactory.getThresholds( measure );
-				ColourRangesFactory.getColourRanges( measure );
-				
-			}
+	    for(i = 0; i < sbi.geo.conf.measures.length; i++) {	
+	        var measure = sbi.geo.conf.measures[i];						
+	        ThresholdsFactory.getThresholds( measure );
+			ColourRangesFactory.getColourRanges( measure );
+		}
 	
 			
-			initMainMap();			
-			initWindows();
+		initMainMap();			
+		initWindows();
+	
+			
+		myMapApp.loadStatus = document.getElementById("statusColorMap");
+      
+		if(myMapApp.Windows["basiclayer"]) {
+	        myMapApp.Windows["basiclayer"].createCheckBoxes();
+	    }
+      
+		if(myMapApp.Windows["detail"]) {
+        	myMapApp.Windows["detail"].initTabGroups();
+      	}
+			
+      	if(myMapApp.Windows["detail"]) {
+        	myMapApp.Windows["detail"].initDetailInfopanels();  
+      	} 
+			
+      	if(myMapApp.Windows["legend"]) {
+        	myMapApp.Windows["legend"].initLegendEntries();
+      	}
+      
+      	var target_layer = sbi.geo.conf.layers[ sbi.geo.conf.target_layer_index ];
+	  	myMapApp.targetLayer = document.getElementById( target_layer.name );
+			
+			
+      	if(myMapApp.Windows["thematic"]){ 
+        	myMapApp.Windows["thematic"].addThemes();
+      	} else {
+	      	var index = sbi.geo.conf.selected_measure_index >=0 ? sbi.geo.conf.selected_measure_index: 0;
+	        setKpi(sbi.geo.conf.measures[index].name,sbi.geo.conf.measures[index].name,sbi.geo.conf.measures[index].name);
+	    }
 		
 			
-		  myMapApp.loadStatus = document.getElementById("statusColorMap");
-      
-			if(myMapApp.Windows["basiclayer"]) {
-        myMapApp.Windows["basiclayer"].createCheckBoxes();
-      }
-      
-			if(myMapApp.Windows["detail"]) {
-        myMapApp.Windows["detail"].initTabGroups();
-      }
+		loadProjectSpecific();
 			
-      if(myMapApp.Windows["detail"]) {
-        myMapApp.Windows["detail"].initDetailInfopanels();  
-      } 
-			
-      if(myMapApp.Windows["legend"]) {
-        myMapApp.Windows["legend"].initLegendEntries();
-      }
-      
-      var target_layer = sbi.geo.conf.layers[ sbi.geo.conf.target_layer_index ];
-	  myMapApp.targetLayer = document.getElementById( target_layer.name );
-			
-			
-      if(myMapApp.Windows["thematic"]){ 
-        myMapApp.Windows["thematic"].addThemes();
-      } else {
-      	var index = sbi.geo.conf.selected_measure_index >=0 ? sbi.geo.conf.selected_measure_index: 0;
-        setKpi(sbi.geo.conf.measures[index].name,sbi.geo.conf.measures[index].name,sbi.geo.conf.measures[index].name);
-      }
-		
-			
-			loadProjectSpecific();
-			
-			if (document.documentElement.suspendRedraw) {
+		if (document.documentElement.suspendRedraw) {
 				document.documentElement.unsuspendRedraw(suspendProcess);
-			}
-			//debugger;
-			//Launch an event to announce that we are at the end of the script executions
-			var event = new CustomEvent("SVGLoaded", { "detail": "SVG is Loaded" });
+		}
+		//debugger;
+		//Launch an event to announce that we are at the end of the script executions
+		var event = new CustomEvent("SVGLoaded", { "detail": "SVG is Loaded" });
 			window.parent.document.dispatchEvent(event);
 		}
 			
@@ -243,6 +241,10 @@ onload="init(evt);">
 			
 			
 		}	
+		
+		function getInfoText(){
+			return sbi.geo.conf.info_text;
+		}
 		
 		function addLinks(node) {
 			var crossUrl;
@@ -490,14 +492,19 @@ onload="init(evt);">
 		
 		//TODO: replace myMapApp.curKpi with myMapApp.curKpiIndex then remove this function
 		function getCurrentKpiIndex() {
-      var kpiName = myMapApp.curKpi;
-      var measures = sbi.geo.conf.measures;
-      for(i = 0; i < measures.length; i++) {
-        if(measures[i].name === kpiName) return i;
-      }
-      
-      return -1;
-    }
+	      var kpiName = myMapApp.curKpi;
+	      var measures = sbi.geo.conf.measures;
+	      for(i = 0; i < measures.length; i++) {
+	        if(measures[i].name === kpiName) return i;
+	      }
+	      
+	      return -1;
+	    }
+	    
+	    function getInfoContent(){
+		    var infoText = myMapApp.infoText;    
+		    return infoText;
+		}
 		
 		function setKpi(cbId,radioId,label) {
 			//debugger;

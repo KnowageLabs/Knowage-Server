@@ -41,6 +41,11 @@
 			<div ng-app="svgViewerApp">
 			    <div ng-controller="SvgViewerController" layout="row">
 			        <md-sidenav layout="column"  ng-class="{'_md-locked-open':sidenavOpened}" id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="noError" class="md-sidenav-<%= propertiesPanelPosition %>"  >
+			         <md-toolbar class="secondaryToolbar" layout="row" layout-align="start center"  ng-show="showInfo"> 
+			           	<span layout-padding>Info </span>	           
+			           </md-toolbar>
+			           <div id="info" layout="row" layout-wrap  ng-show="showInfo" ng-bind-html="infoText">              	           
+			           </div>
 			           <md-toolbar class="secondaryToolbar" layout="row" layout-align="start center"> 
 			           	<span layout-padding>Measures </span>	           
 			           </md-toolbar>
@@ -69,7 +74,7 @@
 					     </md-card>        
 			        </md-sidenav>
 			        
-			        <md-button class="backButton" ng-click="goToPreviousLevel()" ng-show="showBackButton"  ng-show="noError"  title="Go back to previous level">
+			        <md-button class="backButton" ng-click="goToPreviousLevel()"  ng-show="noError && showBackButton"  title="Go back to previous level">
 			              <i class="fa fa-2x fa-arrow-circle-left" aria-hidden="true"></i>
 			        </md-button>
 			        <div layout="column" style="position:absolute;bottom:50px;right:50px;z-index:10000" >

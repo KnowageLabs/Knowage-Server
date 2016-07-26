@@ -278,6 +278,25 @@ public class DataSetMetaData {
 	}
 
 	/**
+	 * Gets the info id column name.
+	 *
+	 * @return the info id column name
+	 */
+	public String getInfoColumnName() {
+		Set names = getColumnNames();
+		if (names != null) {
+			Iterator it = names.iterator();
+			while (it.hasNext()) {
+				String columnName = (String) it.next();
+				if (isInfoColumn(columnName)) {
+					return getColumnProperty(columnName, "column_id");
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Gets the column type.
 	 *
 	 * @param columnName
@@ -359,6 +378,18 @@ public class DataSetMetaData {
 	 */
 	public boolean isTooltipColumn(String columnName) {
 		return "tooltip".equalsIgnoreCase(getColumnType(columnName));
+	}
+
+	/**
+	 * Checks if is info column.
+	 *
+	 * @param columnName
+	 *            the column name
+	 *
+	 * @return true, if is info column
+	 */
+	public boolean isInfoColumn(String columnName) {
+		return "info".equalsIgnoreCase(getColumnType(columnName));
 	}
 
 	/**

@@ -132,6 +132,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 				String parentColumnId = metaData.getParentColumnName();
 				String selectedParent = getSelectedParentName();
 				String tooltipColumnId = metaData.getTooltipColumnName();
+				String infoColumnId = metaData.getInfoColumnName();
 
 				dataStoreMeta.setIdField(dataStoreMeta.getFieldIndex(columnId));
 				String[] measureColumnNames = (String[]) metaData.getMeasureColumnNames().toArray(new String[0]);
@@ -160,7 +161,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 						field = record.getFieldAt(dataStoreMeta.getFieldIndex(columnId));
 					} catch (Exception ex) {
 						logger.error("An error occured while getting the columnId [" + columnId + "] from the dataset. Check the query  and the template.");
-						throw new SvgViewerEngineRuntimeException("An error occured while gettin the columnId [" + columnId
+						throw new SvgViewerEngineRuntimeException("An error occured while getting the GEO columnId [" + columnId
 								+ "] from the dataset. Check the query and the template. ", ex);
 					}
 					String id = "" + field.getValue();
@@ -175,7 +176,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 						} catch (Exception ex) {
 							logger.error("An error occured while getting the columnId [" + measureColumnNames[i]
 									+ "] from the dataset. Check the query  and the template.");
-							throw new SvgViewerEngineRuntimeException("An error occured while gettin the columnId [" + measureColumnNames[i]
+							throw new SvgViewerEngineRuntimeException("An error occured while getting the MEASURE columnId [" + measureColumnNames[i]
 									+ "] from the dataset. Check the query and the template. ", ex);
 						}
 						String value = "" + field.getValue();
@@ -193,7 +194,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 						} catch (Exception ex) {
 							logger.error("An error occured while getting the columnId [" + visibilityColumnId
 									+ "] from the dataset. Check the query  and the template.");
-							throw new SvgViewerEngineRuntimeException("An error occured while gettin the columnId [" + visibilityColumnId
+							throw new SvgViewerEngineRuntimeException("An error occured while getting the VISIBILITY columnId [" + visibilityColumnId
 									+ "] from the dataset. Check the query and the template. ", ex);
 						}
 						String value = "" + visibilityField.getValue();
@@ -210,7 +211,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 						} catch (Exception ex) {
 							logger.error("An error occured while getting the columnId [" + tooltipColumnId
 									+ "] from the dataset. Check the query  and the template.");
-							throw new SvgViewerEngineRuntimeException("An error occured while gettin the columnId [" + tooltipColumnId
+							throw new SvgViewerEngineRuntimeException("An error occured while getting the TOOLTIP columnId [" + tooltipColumnId
 									+ "] from the dataset. Check the query and the template. ", ex);
 						}
 						String value = "" + tooltipField.getValue();
@@ -227,7 +228,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 						} catch (Exception ex) {
 							logger.error("An error occured while getting the columnId [" + labelsColumnId
 									+ "] from the dataset. Check the query  and the template.");
-							throw new SvgViewerEngineRuntimeException("An error occured while gettin the columnId [" + labelsColumnId
+							throw new SvgViewerEngineRuntimeException("An error occured while getting the LABEL columnId [" + labelsColumnId
 									+ "] from the dataset. Check the query and the template. ", ex);
 						}
 						String value = "" + labelsField.getValue();
@@ -244,7 +245,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 						} catch (Exception ex) {
 							logger.error("An error occured while getting the columnId [" + drillColumnId
 									+ "] from the dataset. Check the query  and the template.");
-							throw new SvgViewerEngineRuntimeException("An error occured while gettin the columnId [" + drillColumnId
+							throw new SvgViewerEngineRuntimeException("An error occured while getting the DRILL columnId [" + drillColumnId
 									+ "] from the dataset. Check the query and the template. ", ex);
 						}
 						String value = "" + drillIdField.getValue();
@@ -253,6 +254,24 @@ public class DataMartProvider extends AbstractDataMartProvider {
 						}
 
 					}
+
+					IField infoField;
+					if (infoColumnId != null) {
+						try {
+							infoField = record.getFieldAt(dataStoreMeta.getFieldIndex(infoColumnId));
+						} catch (Exception ex) {
+							logger.error("An error occured while getting the columnId [" + infoColumnId
+									+ "] from the dataset. Check the query  and the template.");
+							throw new SvgViewerEngineRuntimeException("An error occured while getting the INFO columnId [" + infoColumnId
+									+ "] from the dataset. Check the query and the template. ", ex);
+						}
+						String value = "" + infoField.getValue();
+						if (value != null && !value.trim().equals("")) {
+							dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(infoColumnId)).setProperty("ROLE", "INFO");
+						}
+
+					}
+
 				}
 
 				IDataStoreTransformer dddLinkFieldTransformer = new AddLinkFieldsTransformer(measureColumnNames, getSelectedLevel(), this.getEnv());

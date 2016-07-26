@@ -22,9 +22,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	    $mdThemingProvider.setDefaultTheme('knowage');
 	}]);
 
-app.controller('SvgViewerController', ['$scope','sbiModule_restServices','$mdSidenav','sbiModule_logger','$window','sbiModule_config','$rootScope',SvgViewerControllerFunction] );
+app.controller('SvgViewerController', ['$scope','sbiModule_restServices','$mdSidenav','sbiModule_logger','$window','sbiModule_config','$rootScope','$sce',SvgViewerControllerFunction] );
 		
-function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,sbiModule_logger,$window,sbiModule_config,$rootScope)	{
+function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,sbiModule_logger,$window,sbiModule_config,$rootScope,$sce)	{
 
   //$scope.isSidenavOpen 	= false;
   $scope.showBackButton 		= false;
@@ -38,6 +38,8 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   $scope.numZoom 				= 0;  
   $scope.sidenavOpened 			= false;
   $scope.sidenavButtonOffset 	= 0;
+  $scope.infoText				= null;
+  $scope.showInfo				= false;
   
   $scope.cursorX, $scope.cursorY;
 	
@@ -82,14 +84,15 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  $scope.getMeasures();
 	  //retrieve Layers
 	  $scope.getLayers();
-	  $scope.getLegendColors();
+	  $scope.getLegendColors();	  
+	  $scope.getInfoText();
 	  
 	  $scope.noError = true;
 	});
   
   //Listener called when an element on the svg is clicked
   $window.document.addEventListener("SVGElementClicked", function(e) {
-	  $scope.hideTooltip();
+	  $scope.resetElements();
 	  //update drill path with stack
 	  var pathElement = new Object();
 	  pathElement.level = $scope.currentLevel;
@@ -179,6 +182,14 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 //	  domTooltip.style.display = "none";
   });
   
+  /**
+   * Reset informations about tooltip, info, ...
+   */
+  $scope.resetElements = function(){
+	  $scope.hideTooltip();
+	  $scope.showInfo = false;
+  }
+  
   
   $window.document.addEventListener("SVGElementMouseMove", function(e) {
 			$scope.cursorX = e.pageX;
@@ -209,7 +220,9 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 			  });
   };
 	
-	
+ /**
+ * Hide the tooltip div
+ */
   $scope.hideTooltip = function(){
 	  var domTooltip = document.getElementById("svgTooltip");
 	  domTooltip.style.display = "none";
@@ -238,8 +251,9 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 			  });
   };
 
-
-  //retrieve the SVG element from the specified container
+  /**
+   * Retrieve the SVG element from the specified container
+   */
   $scope.getSVG = function(containerId){
 	  var svgdoc = null;
 	  var svgwin = null;
@@ -265,6 +279,15 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  }
 
 	  return svgwin;
+  }
+  
+  /**
+   * Get the info's content and set specific div
+   */
+  $scope.getInfoText = function(){
+	  var svgwin = $scope.getSVG('svgContainer');
+      $scope.infoText =  $sce.trustAsHtml(svgwin.getInfoText());
+      $scope.showInfo =  ($scope.infoText != undefined  && $scope.infoText != null && $scope.infoText != "")
   }
   
   /**
@@ -296,7 +319,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   }
   
   /**
-   * Manage zoom 
+   * Manage zoom (max 200%)
    * */
   $scope.zoom = function(type, evt){
 	  var svgobj = $scope.getSVG('svgContainer'); 	//svg element

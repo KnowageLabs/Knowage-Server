@@ -37,7 +37,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -141,6 +141,33 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		}
 	}
 
+	/**
+	 * Retrieve the additional info from the dataset
+	 *
+	 * @param req
+	 * @return
+	 */
+	@Path("/getInfo")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getInfo(@QueryParam("level") String level) {
+		logger.debug("IN");
+		try {
+			SourceBean memberSB = getActiveMemberSB(level);
+			SourceBean measuresConfigurationSB = (SourceBean) memberSB.getAttribute("LAYERS");
+
+			Map measures = getLayers(measuresConfigurationSB);
+			ResponseBuilder response = Response.ok(measures);
+
+			return response.build();
+
+		} catch (Exception e) {
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
 	@Path("/drillMap")
 	@GET
 	@Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
@@ -219,7 +246,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		Properties attributes;
 		String attributeValue;
 
-		layers = new HashMap();
+		layers = new LinkedHashMap();
 
 		layerList = layersConfigurationSB.getAttributeAsList("LAYER");
 
@@ -259,7 +286,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		Measure measure;
 		String attributeValue;
 
-		measures = new HashMap();
+		measures = new LinkedHashMap();
 
 		String defaultMeasure = (String) measuresConfigurationSB.getAttribute("default_kpi");
 
