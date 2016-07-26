@@ -243,7 +243,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						itemsJSON.getJSONObject(i).put("hasFederationsAssociated", "true");
 
 				}
-				totalItemsNum = items.size();
 				JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
 				writeBackToClient(new JSONSuccess(responseJSON));
 

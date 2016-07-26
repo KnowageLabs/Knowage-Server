@@ -202,7 +202,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	@Override
 	public List<IDataSet> loadDataSetsByOwner(UserProfile user, Boolean includeOwned, Boolean includePublic, Boolean showDerivedDatasets) {
-		return loadDataSets(user.getUserId().toString(), includeOwned, includePublic, null, null,  UserUtilities.getDataSetCategoriesByUser(user), null, showDerivedDatasets);
+		return loadDataSets(user.getUserId().toString(), includeOwned, includePublic, null, null, UserUtilities.getDataSetCategoriesByUser(user), null,
+				showDerivedDatasets);
 	}
 
 	@Override
@@ -222,7 +223,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	@Override
 	public List<IDataSet> loadDatasetsSharedWithUser(UserProfile profile, Boolean showDerivedDataset) {
-		return loadDataSets(profile.getUserId().toString(), false, false, "PUBLIC", "USER", UserUtilities.getDataSetCategoriesByUser(profile), null, showDerivedDataset);
+		return loadDataSets(profile.getUserId().toString(), false, false, "PUBLIC", "USER", UserUtilities.getDataSetCategoriesByUser(profile), null,
+				showDerivedDataset);
 	}
 
 	@Override
@@ -310,37 +312,35 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			if (type != null)
 				statement.append(" and h.scope.valueCd = ? ");
-			
-			
-			if (categoryList != null){
+
+			if (categoryList != null) {
 				logger.debug("We'll take in consideration categories");
-				if(categoryList.size()>0 ){
+				if (categoryList.size() > 0) {
 					logger.debug("User has one or more categories");
-					if(owner!=null){
+					if (owner != null) {
 						logger.debug("The owner can see all it's datasets");
-						//the owner of the dataset can see dataste even if category is null
-						//statement.append(" and (h.category.valueCd is null or ");
-					}else{
+						// the owner of the dataset can see dataste even if category is null
+						// statement.append(" and (h.category.valueCd is null or ");
+					} else {
 						statement.append("and (");
-					
-									
+
 						statement.append("  h.category.valueCd in (");
-						for(int i=0; i<categoryList.size(); i++){
+						for (int i = 0; i < categoryList.size(); i++) {
 							statement.append("?,");
 						}
-						statement.replace(statement.length()-1, statement.length(), "");
-						statement.append(")) "); 
+						statement.replace(statement.length() - 1, statement.length(), "");
+						statement.append(")) ");
 					}
-				}else{
+				} else {
 					logger.debug("No categories for the user so we take just it's own datasets");
-					if(owner==null || !includeOwned){
+					if (owner == null || !includeOwned) {
 						logger.debug("Owner is not specified on the service so we should return no datasets");
 						return new ArrayList<IDataSet>();
 					}
 				}
 
 			}
-				
+
 			if (implementation != null)
 				statement.append(" and h.type = ? ");
 			if (showDerivedDatasets == false) {
@@ -356,10 +356,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			if (type != null)
 				query.setString(paramIndex++, type);
-			if (categoryList != null && categoryList.size()>0 && owner==null){
+			if (categoryList != null && categoryList.size() > 0 && owner == null) {
 				Iterator<Domain> it = categoryList.iterator();
 				while (it.hasNext()) {
-					Domain type2 = (Domain) it.next();
+					Domain type2 = it.next();
 					query.setString(paramIndex++, type2.getValueName());
 				}
 			}
@@ -787,32 +787,54 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 
-			Query countQuery = session.createQuery("select count(*) from SbiDataSet sb where sb.active = ? ");
-			countQuery.setBoolean(0, true);
-			Long resultNumber = (Long) countQuery.uniqueResult();
+			List<Domain> devCategories = new LinkedList<Domain>();
+			boolean isDev = fillDevCategories(devCategories);
+			Query listQuery;
+			if (isDev) {
+				List idsCat = createIdsCatogriesList(devCategories);
+				String owner = getUserProfile().getUserUniqueIdentifier().toString();
+				Query countQuery = session
+						.createQuery("select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.valueId  IN (:idsCat) or sb.owner = :owner) ");
+				countQuery.setBoolean(0, true);
+				countQuery.setParameterList("idsCat", idsCat);
+				countQuery.setString("owner", owner);
+				Long resultNumber = (Long) countQuery.uniqueResult();
 
-			offset = offset < 0 ? 0 : offset;
-			if (resultNumber > 0) {
-				fetchSize = (fetchSize > 0) ? Math.min(fetchSize, resultNumber.intValue()) : resultNumber.intValue();
+				offset = offset < 0 ? 0 : offset;
+				if (resultNumber > 0) {
+					fetchSize = (fetchSize > 0) ? Math.min(fetchSize, resultNumber.intValue()) : resultNumber.intValue();
+				}
+
+				listQuery = session
+						.createQuery("from SbiDataSet h where h.active = ? and (h.category.valueId IN (:idsCat) or h.owner = :owner) order by h.name");
+				listQuery.setBoolean(0, true);
+				listQuery.setParameterList("idsCat", idsCat);
+				listQuery.setString("owner", owner);
+				listQuery.setFirstResult(offset);
+			} else {
+				Query countQuery = session.createQuery("select count(*) from SbiDataSet sb where sb.active = ? ");
+				countQuery.setBoolean(0, true);
+				Long resultNumber = (Long) countQuery.uniqueResult();
+
+				offset = offset < 0 ? 0 : offset;
+				if (resultNumber > 0) {
+					fetchSize = (fetchSize > 0) ? Math.min(fetchSize, resultNumber.intValue()) : resultNumber.intValue();
+				}
+
+				listQuery = session.createQuery("from SbiDataSet h where h.active = ? order by h.name ");
+				listQuery.setBoolean(0, true);
+				listQuery.setFirstResult(offset);
 			}
 
-			Query listQuery = session.createQuery("from SbiDataSet h where h.active = ? order by h.name ");
-			listQuery.setBoolean(0, true);
-			listQuery.setFirstResult(offset);
 			if (fetchSize > 0)
 				listQuery.setMaxResults(fetchSize);
 
 			List sbiActiveDatasetsList = listQuery.list();
-			List<Domain> devCategories = new LinkedList<Domain>();
-			boolean isDev = fillDevCategories(devCategories);
 
 			if (sbiActiveDatasetsList != null && !sbiActiveDatasetsList.isEmpty()) {
 				Iterator it = sbiActiveDatasetsList.iterator();
 				while (it.hasNext()) {
 					SbiDataSet hibDataSet = (SbiDataSet) it.next();
-					if (isDev && checkDevCategoties(devCategories, hibDataSet) == false) {
-						continue;
-					}
 					IDataSet ds = DataSetFactory.toDataSet(hibDataSet, this.getUserProfile());
 					List<IDataSet> oldDsVersion = new ArrayList();
 
@@ -852,21 +874,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return toReturn;
 	}
 
-	/*
-	 * The DEV role can see only DataSet with his categories. This function check if the DEV role has the necessary category
-	 */
-	private boolean checkDevCategoties(List<Domain> devCategories, SbiDataSet hibDataSet) {
-		String user = getUserProfile().getUserUniqueIdentifier().toString();
-		if (hibDataSet.getCategory() == null && !user.equalsIgnoreCase(hibDataSet.getOwner())) {
-			return false;
-		}
-		Integer dsCategory = hibDataSet.getCategory().getValueId();
+	private List createIdsCatogriesList(List<Domain> devCategories) {
+		List<Integer> idsCat = new LinkedList<Integer>();
 		for (Domain dom : devCategories) {
-			if (dom.getValueId().equals(dsCategory)) {
-				return true;
-			}
+			idsCat.add(dom.getValueId());
 		}
-		return false;
+		return idsCat;
 	}
 
 	private boolean fillDevCategories(List<Domain> devCategories) {
@@ -1136,12 +1149,23 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		try {
 			session = getSession();
 			transaction = session.beginTransaction();
-
-			String hql = "select count(*) from SbiDataSet ds where ds.active = ? ";
-			Query hqlQuery = session.createQuery(hql);
-			hqlQuery.setBoolean(0, true);
-			resultNumber = (Long) hqlQuery.uniqueResult();
-
+			List<Domain> devCategories = new LinkedList<Domain>();
+			boolean isDev = fillDevCategories(devCategories);
+			if (isDev) {
+				List idsCat = createIdsCatogriesList(devCategories);
+				String owner = getUserProfile().getUserUniqueIdentifier().toString();
+				Query countQuery = session
+						.createQuery("select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.valueId IN (:idsCat) or owner = :owner)");
+				countQuery.setBoolean(0, true);
+				countQuery.setParameterList("idsCat", idsCat);
+				countQuery.setString("owner", owner);
+				resultNumber = (Long) countQuery.uniqueResult();
+			} else {
+				String hql = "select count(*) from SbiDataSet ds where ds.active = ? ";
+				Query hqlQuery = session.createQuery(hql);
+				hqlQuery.setBoolean(0, true);
+				resultNumber = (Long) hqlQuery.uniqueResult();
+			}
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
@@ -1877,39 +1901,39 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 		/*
 		 * SbiDataSet hibNew = null;
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiFileDataSet){ hibNew = new SbiFileDataSet();
 		 * ((SbiFileDataSet)hibNew).setFileName(((SbiFileDataSet)hibDataSet).getFileName()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiQueryDataSet){ hibNew = new SbiQueryDataSet();
 		 * ((SbiQueryDataSet)hibNew).setQuery(((SbiQueryDataSet)hibDataSet).getQuery());
 		 * ((SbiQueryDataSet)hibNew).setQueryScript(((SbiQueryDataSet)hibDataSet).getQueryScript());
 		 * ((SbiQueryDataSet)hibNew).setQueryScriptLanguage(((SbiQueryDataSet)hibDataSet).getQueryScriptLanguage()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiWSDataSet){ hibNew = new SbiWSDataSet(); ((SbiWSDataSet)hibNew ).setAdress(((SbiWSDataSet)hibDataSet).getAdress());
 		 * ((SbiWSDataSet)hibNew ).setOperation(((SbiWSDataSet)hibDataSet).getOperation()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiScriptDataSet){ hibNew =new SbiScriptDataSet(); ((SbiScriptDataSet) hibNew
 		 * ).setScript(((SbiScriptDataSet)hibDataSet).getScript()); ((SbiScriptDataSet) hibNew
 		 * ).setLanguageScript(((SbiScriptDataSet)hibDataSet).getLanguageScript());
-		 * 
+		 *
 		 * }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiJClassDataSet){ hibNew =new SbiJClassDataSet(); ((SbiJClassDataSet) hibNew
 		 * ).setJavaClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiCustomDataSet){ hibNew =new SbiCustomDataSet(); ((SbiCustomDataSet) hibNew
 		 * ).setCustomData(((SbiCustomDataSet)hibDataSet).getCustomData()); ((SbiCustomDataSet) hibNew
 		 * ).setJavaClassName(((SbiCustomDataSet)hibDataSet).getJavaClassName()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiQbeDataSet){ hibNew =new SbiQbeDataSet(); ((SbiQbeDataSet) hibNew
 		 * ).setSqlQuery(((SbiQbeDataSet)hibDataSet).getSqlQuery()); ((SbiQbeDataSet) hibNew ).setJsonQuery(((SbiQbeDataSet)hibDataSet).getJsonQuery());
 		 * ((SbiQbeDataSet) hibNew ).setDataSource(((SbiQbeDataSet)hibDataSet).getDataSource()); ((SbiQbeDataSet) hibNew
 		 * ).setDatamarts(((SbiQbeDataSet)hibDataSet).getDatamarts());
-		 * 
-		 * 
+		 *
+		 *
 		 * }
-		 * 
+		 *
 		 * hibNew.setCategory(hibDataSet.getCategory()); hibNew.setDsMetadata(hibDataSet.getDsMetadata()); hibNew.setMetaVersion(hibDataSet.getMetaVersion());
 		 * hibNew.setParameters(hibDataSet.getParameters()); hibNew.setPivotColumnName(hibDataSet.getPivotColumnName());
 		 * hibNew.setPivotColumnValue(hibDataSet.getPivotColumnValue()); hibNew.setPivotRowName(hibDataSet.getPivotRowName());
