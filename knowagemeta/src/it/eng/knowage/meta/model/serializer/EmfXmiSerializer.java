@@ -74,7 +74,6 @@ public class EmfXmiSerializer implements IModelSerializer {
 
 		// Add the book and writer objects to the contents.
 		resource.getContents().add(model);
-
 		// Save the contents of the resource to the file system.
 		try {
 			// resource.save(Collections.EMPTY_MAP);

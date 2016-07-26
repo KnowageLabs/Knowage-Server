@@ -68,6 +68,8 @@ public interface BusinessColumn extends ModelObject {
 
 	boolean isIdentifier();
 
+	void setIdentifier(boolean v);
+
 	boolean isFilteredByProfileAttribute();
 
 	boolean isPartOfCompositeIdentifier();
@@ -75,4 +77,5 @@ public interface BusinessColumn extends ModelObject {
 	boolean isFilteredByRoleVisibility();
 
 	BusinessColumn clone();
+
 } // BusinessColumn

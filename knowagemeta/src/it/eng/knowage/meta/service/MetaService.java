@@ -118,7 +118,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 * 
+	 *
 	 * @param dsId
 	 * @return
 	 */
@@ -763,7 +763,7 @@ public class MetaService extends AbstractSpagoBIResource {
 				remove(path, context);
 				break;
 			case "REPLACE":
-				String value = jsonNode.get("value").textValue();
+				String value = jsonNode.get("value").asText();
 				replace(value, path, context);
 				break;
 			case "MOVE":
@@ -789,7 +789,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		return false;
 	}
 
-	private void replace(Object value, String path, JXPathContext context) {
+	private void replace(Object value, String path, JXPathContext context) throws SpagoBIException {
 		try {
 			if (value instanceof TextNode)
 				value = ((TextNode) value).asText();
@@ -797,8 +797,7 @@ public class MetaService extends AbstractSpagoBIResource {
 				value = null;
 			context.createPathAndSetValue(path, value);
 		} catch (Throwable t) {
-			// TODO
-			t.printStackTrace();
+			throw new SpagoBIException("Error in replace", t);
 		}
 	}
 
@@ -863,7 +862,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	 * {businessModels:[tables:[...]],businessModels:[businessTables:[...]]} Furthermore jsonDiff is zero-based numbering but jxpath is 1-based numbering
 	 * Another difference is that jsonDiff's notation used to select a property of a nth element of a collection is "parent/n/property" but jxpath does same
 	 * selection in this way "parent[n]/property"
-	 * 
+	 *
 	 * @param path
 	 * @return path cleaned
 	 */

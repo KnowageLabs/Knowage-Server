@@ -27,13 +27,11 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Simple Business Column</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Simple Business Column</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link it.eng.knowage.meta.model.business.impl.SimpleBusinessColumnImpl#getPhysicalColumn <em>Physical Column</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.business.impl.SimpleBusinessColumnImpl#getPhysicalColumn <em>Physical Column</em>}</li>
  * </ul>
  * </p>
  *
@@ -41,9 +39,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  */
 public class SimpleBusinessColumnImpl extends BusinessColumnImpl implements SimpleBusinessColumn {
 	/**
-	 * The cached value of the '{@link #getPhysicalColumn() <em>Physical Column</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * The cached value of the '{@link #getPhysicalColumn() <em>Physical Column</em>}' reference. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 *
 	 * @see #getPhysicalColumn()
 	 * @generated
 	 * @ordered
@@ -51,8 +48,8 @@ public class SimpleBusinessColumnImpl extends BusinessColumnImpl implements Simp
 	protected PhysicalColumn physicalColumn;
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 *
 	 * @generated
 	 */
 	protected SimpleBusinessColumnImpl() {
@@ -60,8 +57,8 @@ public class SimpleBusinessColumnImpl extends BusinessColumnImpl implements Simp
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 *
 	 * @generated
 	 */
 	@Override
@@ -70,25 +67,27 @@ public class SimpleBusinessColumnImpl extends BusinessColumnImpl implements Simp
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 *
 	 * @generated
 	 */
+	@Override
 	public PhysicalColumn getPhysicalColumn() {
 		if (physicalColumn != null && physicalColumn.eIsProxy()) {
-			InternalEObject oldPhysicalColumn = (InternalEObject)physicalColumn;
-			physicalColumn = (PhysicalColumn)eResolveProxy(oldPhysicalColumn);
+			InternalEObject oldPhysicalColumn = (InternalEObject) physicalColumn;
+			physicalColumn = (PhysicalColumn) eResolveProxy(oldPhysicalColumn);
 			if (physicalColumn != oldPhysicalColumn) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, BusinessModelPackage.SIMPLE_BUSINESS_COLUMN__PHYSICAL_COLUMN, oldPhysicalColumn, physicalColumn));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, BusinessModelPackage.SIMPLE_BUSINESS_COLUMN__PHYSICAL_COLUMN, oldPhysicalColumn,
+							physicalColumn));
 			}
 		}
 		return physicalColumn;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 *
 	 * @generated
 	 */
 	public PhysicalColumn basicGetPhysicalColumn() {
@@ -96,74 +95,77 @@ public class SimpleBusinessColumnImpl extends BusinessColumnImpl implements Simp
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 *
 	 * @generated
 	 */
+	@Override
 	public void setPhysicalColumn(PhysicalColumn newPhysicalColumn) {
 		PhysicalColumn oldPhysicalColumn = physicalColumn;
 		physicalColumn = newPhysicalColumn;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BusinessModelPackage.SIMPLE_BUSINESS_COLUMN__PHYSICAL_COLUMN, oldPhysicalColumn, physicalColumn));
+			eNotify(new ENotificationImpl(this, Notification.SET, BusinessModelPackage.SIMPLE_BUSINESS_COLUMN__PHYSICAL_COLUMN, oldPhysicalColumn,
+					physicalColumn));
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 *
 	 * @generated
 	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case BusinessModelPackage.SIMPLE_BUSINESS_COLUMN__PHYSICAL_COLUMN:
-				if (resolve) return getPhysicalColumn();
-				return basicGetPhysicalColumn();
+		case BusinessModelPackage.SIMPLE_BUSINESS_COLUMN__PHYSICAL_COLUMN:
+			if (resolve)
+				return getPhysicalColumn();
+			return basicGetPhysicalColumn();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 *
 	 * @generated
 	 */
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case BusinessModelPackage.SIMPLE_BUSINESS_COLUMN__PHYSICAL_COLUMN:
-				setPhysicalColumn((PhysicalColumn)newValue);
-				return;
+		case BusinessModelPackage.SIMPLE_BUSINESS_COLUMN__PHYSICAL_COLUMN:
+			setPhysicalColumn((PhysicalColumn) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 *
 	 * @generated
 	 */
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case BusinessModelPackage.SIMPLE_BUSINESS_COLUMN__PHYSICAL_COLUMN:
-				setPhysicalColumn((PhysicalColumn)null);
-				return;
+		case BusinessModelPackage.SIMPLE_BUSINESS_COLUMN__PHYSICAL_COLUMN:
+			setPhysicalColumn((PhysicalColumn) null);
+			return;
 		}
 		super.eUnset(featureID);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 *
 	 * @generated
 	 */
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case BusinessModelPackage.SIMPLE_BUSINESS_COLUMN__PHYSICAL_COLUMN:
-				return physicalColumn != null;
+		case BusinessModelPackage.SIMPLE_BUSINESS_COLUMN__PHYSICAL_COLUMN:
+			return physicalColumn != null;
 		}
 		return super.eIsSet(featureID);
 	}
 
-} //SimpleBusinessColumnImpl
+} // SimpleBusinessColumnImpl

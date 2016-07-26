@@ -20,14 +20,12 @@ package it.eng.knowage.meta.model.business;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Simple Business Column</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> A representation of the model object '<em><b>Simple Business Column</b></em>'. <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link it.eng.knowage.meta.model.business.SimpleBusinessColumn#getPhysicalColumn <em>Physical Column</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.business.SimpleBusinessColumn#getPhysicalColumn <em>Physical Column</em>}</li>
  * </ul>
  * </p>
  *
@@ -37,13 +35,12 @@ import it.eng.knowage.meta.model.physical.PhysicalColumn;
  */
 public interface SimpleBusinessColumn extends BusinessColumn {
 	/**
-	 * Returns the value of the '<em><b>Physical Column</b></em>' reference.
-	 * <!-- begin-user-doc -->
+	 * Returns the value of the '<em><b>Physical Column</b></em>' reference. <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Physical Column</em>' reference isn't clear,
-	 * there really should be more of a description here...
+	 * If the meaning of the '<em>Physical Column</em>' reference isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 *
 	 * @return the value of the '<em>Physical Column</em>' reference.
 	 * @see #setPhysicalColumn(PhysicalColumn)
 	 * @see it.eng.knowage.meta.model.business.BusinessModelPackage#getSimpleBusinessColumn_PhysicalColumn()
@@ -53,10 +50,11 @@ public interface SimpleBusinessColumn extends BusinessColumn {
 	PhysicalColumn getPhysicalColumn();
 
 	/**
-	 * Sets the value of the '{@link it.eng.knowage.meta.model.business.SimpleBusinessColumn#getPhysicalColumn <em>Physical Column</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Physical Column</em>' reference.
+	 * Sets the value of the '{@link it.eng.knowage.meta.model.business.SimpleBusinessColumn#getPhysicalColumn <em>Physical Column</em>}' reference. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 *
+	 * @param value
+	 *            the new value of the '<em>Physical Column</em>' reference.
 	 * @see #getPhysicalColumn()
 	 * @generated
 	 */

@@ -243,6 +243,15 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 	}
 
 	@Override
+	public void setIdentifier(boolean v) {
+		if (true == v) {
+			getTable().getIdentifier().getColumns().add(this);
+		} else {
+			getTable().getIdentifier().getColumns().remove(this);
+		}
+	}
+
+	@Override
 	public boolean isFilteredByProfileAttribute() {
 		return isPropertyFilled("structural.attribute");
 	}
