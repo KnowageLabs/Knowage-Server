@@ -133,6 +133,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                     tmpColData.transformer=col[i].transformer;
                                                     tmpColData.customClass=col[i].customClass;
                                                     tmpColData.hideTooltip=col[i].hideTooltip;
+                                                    tmpColData.style=col[i].style;
                                                 } else {
                                                     //only the col name
                                                     tmpColData.label = col[i];
