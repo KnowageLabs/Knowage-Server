@@ -449,6 +449,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 							break;
 						}
 						
+						
+						/** A QUESTO PUNTO AGGREGO E CALCOLO IL VALORE */
 						if(firstRecordId.get(hierarchyFullColumnMap.get("YEAR")) != null) {
 							double finalValue = 0D;
 							boolean firstRecordFound = false;
@@ -468,6 +470,9 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 									finalRecord.getFieldAt(fieldIndex).setValue(finalValue);
 									break;
 								}
+							}
+							if(!firstRecordFound) {
+								finalRecord.getFieldAt(fieldIndex).setValue(0D);
 							}
 						}
 						else {
