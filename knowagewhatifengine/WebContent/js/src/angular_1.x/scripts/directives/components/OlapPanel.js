@@ -964,7 +964,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		toSend.calculatedFieldFormula = $scope.finalFormula;
 		toSend.parentMemberUniqueName = $scope.selectedMember.parentMember;
 		toSend.axisOrdinal = $scope.selectedMember.axisOrdinal;
-		
+		toSend.hierarchyUniqueName = $scope.selectedMember.hierarchyUniqueName;
 		var encoded = encodeURI('/calculatedmembers?SBI_EXECUTION_ID='
 				+ JSsbiExecutionID);
 		sbiModule_restServices.promisePost("1.0", encoded, toSend).then(
