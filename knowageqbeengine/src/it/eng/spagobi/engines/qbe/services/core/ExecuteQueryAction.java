@@ -438,7 +438,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 							String year = null;
 							
 							int parallelYearIndex = relativeYearIndex - temporalOperandParameter;
-							if(parallelYearIndex >= 0 && allYearsOnDWH.size() > parallelYearIndex -1 ) {
+							if(parallelYearIndex >= 0 && allYearsOnDWH.size() > parallelYearIndex ) {
 								year =  allYearsOnDWH.get(parallelYearIndex);
 							}
 							firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), year);
@@ -519,139 +519,6 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			}
 		}
 		return recordId;
-	}
-
-
-
-	private void handleTTTTTTimeAggregations(IDataStore dataStore) {
-		final String PY = "_PY_";
-		final String LY = "_LY_";
-		final String LM = "_LM_";
-		final String LW = "_LW_";
-		
-		Map<String, LinkedList<Integer>> groupedFieldsIndexMap = new LinkedHashMap<String, LinkedList<Integer>>();
-		
-		Map<Object, Record> finalResultMap = new LinkedHashMap<Object, Record>();
-		Integer yearIndex = null;
-		for (int fieldIndex = 0; fieldIndex < dataStore.getMetaData().getFieldCount(); fieldIndex++) {
-			String fieldAlias = dataStore.getMetaData().getFieldAlias(fieldIndex);
-
-			if(fieldAlias != null){
-				
-				extractGroupedFieldsIndexes(groupedFieldsIndexMap, fieldIndex, fieldAlias, PY);
-				extractGroupedFieldsIndexes(groupedFieldsIndexMap, fieldIndex, fieldAlias, LY);
-				extractGroupedFieldsIndexes(groupedFieldsIndexMap, fieldIndex, fieldAlias, LM);
-				extractGroupedFieldsIndexes(groupedFieldsIndexMap, fieldIndex, fieldAlias, LW);
-
-				if(yearIndex == null && fieldAlias.equals("YEAR")) {
-					yearIndex = fieldIndex;
-				}
-			}
-		}
-
-		IRecord r = new Record();
-		
-		IDataStore ds = new DataStore();
-		ds.appendRecord(r);
-		
-		LinkedList<Integer> pyFields = groupedFieldsIndexMap.get(PY);	
-		LinkedList<Integer> lyFields = groupedFieldsIndexMap.get(LY);
-		
-		// for each record 
-		for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
-			Record record = (Record) iterator.next();
-			List<IField> fields = record.getFields();
-
-			//for each field
-			for (int fieldIndex = 0; fieldIndex < fields.size(); fieldIndex++) {
-				IField currentField = fields.get(fieldIndex);
-				if(pyFields != null && pyFields.contains(fieldIndex)) {
-					Object currentKey = fields.get(yearIndex).getValue();
-					
-					Record finalRecord = finalResultMap.get(currentKey);
-					if(finalRecord == null) {
-						finalResultMap.put(currentKey, record);
-					}
-					else {
-						IField finalField = finalRecord.getFieldAt(fieldIndex);
-						if(finalField != null) {
-							double finalValue = Double.parseDouble(finalField.getValue() != null ? finalField.getValue().toString() : "0");
-							double currentValue = Double.parseDouble(currentField.getValue() != null ? currentField.getValue().toString() : "0");
-							// MAX MIN AVG COUNT ? ? ? 
-							finalField.setValue(finalValue+currentValue);
-						}
-					}
-				}
-			}
-		}
-
-		// UPDATING RESULTSET
-		// for each record 
-		for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
-			Record record = (Record) iterator.next();
-			List<IField> fields = record.getFields();
-			//for each field
-			for (int fieldIndex = 0; fieldIndex < fields.size(); fieldIndex++) {
-				IField currentField = fields.get(fieldIndex);
-				if(pyFields.contains(fieldIndex)) {
-					Object currentKey = fields.get(yearIndex).getValue();
-					Record finalRecord = finalResultMap.get(currentKey);
-					currentField.setValue(finalRecord.getFieldAt(fieldIndex).getValue());
-				}
-			}
-		}
-	}
-
-	private void extractGroupedFieldsIndexes(Map<String, LinkedList<Integer>> groupedFieldsIndexMap, int fieldIndex,
-			String fieldAlias, String groupingType) {
-		if(fieldAlias.contains(groupingType)) {
-			if(groupedFieldsIndexMap.get(groupingType) == null) {
-				groupedFieldsIndexMap.put(groupingType, new LinkedList<Integer>());
-			}
-			LinkedList<Integer> l = groupedFieldsIndexMap.get(groupingType);
-			l.add(fieldIndex);
-		}
-	}
-
-	private QueryGraph getQueryGraph(Query query) {
-		List<Relationship> toReturn = new ArrayList<Relationship>();
-		IModelStructure modelStructure = getDataSource().getModelStructure();
-		logger.debug("IModelStructure retrieved");
-		RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(getDataSource().getConfiguration().getModelName(), false);
-		logger.debug("RootEntitiesGraph retrieved");
-		Graph<IModelEntity, Relationship> graph = rootEntitiesGraph.getRootEntitiesGraph();
-		logger.debug("UndirectedGraph retrieved");
-		Set<Relationship> relationships = rootEntitiesGraph.getRelationships();
-		logger.debug("Set<Relationship> retrieved");
-		String serialized = this.getAttributeAsString(AMBIGUOUS_FIELDS_PATHS);
-		LogMF.debug(logger, AMBIGUOUS_FIELDS_PATHS + "is {0}", serialized);
-		List<ModelFieldPaths> list;
-		try {
-			list = deserializeList(serialized, relationships, modelStructure, query);
-		} catch (SerializationException e) {
-			throw new SpagoBIEngineRuntimeException("Error while deserializing list of relationships", e);
-		}
-		logger.debug("Paths deserialized");
-		QueryGraph queryGraph = null;
-		if (list != null && !list.isEmpty()) {
-			Iterator<ModelFieldPaths> it = list.iterator();
-			while (it.hasNext()) {
-				ModelFieldPaths modelFieldPaths = it.next();
-				Set<PathChoice> set = modelFieldPaths.getChoices();
-				Iterator<PathChoice> pathChoiceIterator = set.iterator();
-				while (pathChoiceIterator.hasNext()) {
-					PathChoice choice = pathChoiceIterator.next();
-					toReturn.addAll(choice.getRelations());
-				}
-			}
-			QueryGraphBuilder builder = new QueryGraphBuilder();
-			queryGraph = builder.buildGraphFromEdges(toReturn);
-		} else {
-			Set<IModelEntity> entities = query.getQueryEntities(getDataSource());
-			queryGraph = GraphManager.getDefaultCoverGraphInstance(QbeEngineConfig.getInstance().getDefaultCoverImpl()).getCoverGraph(graph, entities);
-		}
-		logger.debug("QueryGraph created");
-		return queryGraph;
 	}
 
 	public static List<ModelFieldPaths> deserializeList(String serialized, Collection<Relationship> relationShips, IModelStructure modelStructure, Query query)
