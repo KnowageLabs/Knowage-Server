@@ -890,3 +890,7 @@ md-option[selected], md-select-menu md-option[selected]{
 	font-size: 70%;
 	padding-left: 10px;
 }
+
+.leaf-paddin-filter{
+	padding-left: 60px;
+}
