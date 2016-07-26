@@ -13,6 +13,15 @@
 				<md-icon class="fa fa-arrow-circle-o-left fa-2x">
 			</md-button>
 			
+			<!-- VALIDATION BUTTON ON THE STEP 2 (danristo) -->
+			<!-- <md-button 	class="" ng-click="" 
+						ng-disabled="false"
+						title="Validate metadata"> 
+				 <md-icon ng-show="datasetWizardView==2" class="fa fa-check-square-o fa-2x"></md-icon> 	
+				<md-icon ng-show="datasetWizardView==2" class="fa fa-paper-plane fa-2x"></md-icon> 	
+				<md-icon ng-show="datasetWizardView==2" class="fa fa-check-square fa-2x"></md-icon> 	
+			</md-button> -->
+			
 			<md-button 	class="" ng-click="toggleDWVNext()" 
 						ng-disabled="nextOrSaveButtonCondition()"
 						title="{{datasetWizStep1NextButtonTitle()}}"> 
@@ -20,6 +29,8 @@
 				 <md-icon ng-show="datasetWizardView!=4" class="fa fa-arrow-circle-o-right fa-2x"></md-icon> 		
 				
 			</md-button>
+			
+			
 			
 			<md-button 	class="" ng-click="closeDatasetCreateDialog()" 
 						title="{{translate.load('sbi.workspace.dataset.wizard.closebutton.tooltip')}}">

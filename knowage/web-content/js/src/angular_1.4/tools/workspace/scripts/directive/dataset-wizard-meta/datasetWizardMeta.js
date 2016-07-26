@@ -77,6 +77,17 @@ function datasetWizardMetaController($scope,$mdDialog,sbiModule_translate){
 	         name:"pvalueView",
 	         label:"Value",
 	         hideTooltip:true
+	     },
+	     
+	     /**
+	      * A new column on the Step 2 of the Dataset wizard. It contains a graphic description of a validation state 
+	      * for all metadata column separately.
+	      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	      */
+	     {
+	    	 name: "metaValid",
+	    	 label: "Valid",
+	    	 hideTooltip: true
 	     }
      ];
     
@@ -137,8 +148,12 @@ function datasetWizardMetaController($scope,$mdDialog,sbiModule_translate){
      * item, since the MEASURE cannot be if type String.
      * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
      */
-    $scope.metaScopeFunctions.valueChanged = function(item,index) {    	
-    	(item.VALUE_CD=="MEASURE" || item.VALUE_CD=="ATTRIBUTE") ? $scope.prepareMetaForView(item.VALUE_CD,index) : null;    	
+    $scope.metaScopeFunctions.valueChanged = function(item,index) {
+    	    	
+    	if (item.VALUE_CD=="MEASURE" || item.VALUE_CD=="ATTRIBUTE") {
+    		$scope.prepareMetaForView(item.VALUE_CD,index);
+    	}
+    	
     }
     
     $scope.deleteMetaColumn=function(item){

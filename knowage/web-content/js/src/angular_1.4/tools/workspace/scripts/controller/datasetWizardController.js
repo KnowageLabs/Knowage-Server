@@ -32,12 +32,26 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	$scope.categorySet = null;
 	
 	/**
+	 * 'step2ValidationErrors' - contains the validation result. If there is not error after the validation, the property will
+	 * not be present in the retrieved JSON got after the validating process and this scope variable will be of a value NULL. 
+	 * Otherwise, the 'validationErrors' property appears as a part of the returning JSON (result of calling the validation).
+	 * 
+	 * 'step2ValidationFirstTime' - if the user tries at least once to validate the Step 2 (with or without a success), this 
+	 * property will contain the value of 'false'. This will indicate that the Step 2 "Valid" column can change its state (can
+	 * refresh the state of the validity of the particular type (for some metadata column).
+	 * 
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.step2ValidationErrors = null;
+	$scope.step2ValidationFirstTime = true;
+	
+	/**
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.submitStep1 = function() {
 		
 		var params = {};
-		
+				
 		params.SBI_EXECUTION_ID = -1;
 		params.isTech = false;
 		params.showOnlyOwner = true;
@@ -61,10 +75,15 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		
 		if ($scope.dataset.xslSheetNumber == null)
 			$scope.dataset.xslSheetNumber = 1;
+				
+		/** 
+		 * Make a copy of a metadata of the dataset, so we can retrieve this data when moving back to the Step 1 
+		 * from the Step 2 and then again forward to the Step 2. Remember the metadata that user set last time.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$scope.dataset.meta!="[]" ? $scope.metaDataCopy = angular.copy($scope.dataset.meta) : $scope.metaDataCopy=null;
 		
 		$scope.dataset.meta = JSON.stringify($scope.dataset.meta);
-		
-		//console.log($scope.dataset);
 		
 		$http
 		(
@@ -98,9 +117,20 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					
 					$scope.datasetWizardView = $scope.datasetWizardView + 1;
 					
-					//set meta to empty
-					$scope.dataset.meta=[];
-					angular.copy(response.data.meta,$scope.dataset.meta);
+					/**
+					 * If there was a non-empty metadata before submitting of the Step 1 (previously we were on the Step 2), 
+					 * retrieve the metadata.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					if ($scope.metaDataCopy!=null) {
+						$scope.dataset.meta = angular.copy($scope.metaDataCopy);
+					}
+					else {
+						//set meta to empty
+						$scope.dataset.meta=[];
+						angular.copy(response.data.meta,$scope.dataset.meta);
+					}
+					
 					angular.copy(response.data.datasetColumns,$scope.datasetColumns);
 					$scope.prepareMetaForView();
 					$scope.prepareDatasetForView();
@@ -197,27 +227,81 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		.then
 		(
 			function successCallback(response) {
-
-				console.log("SUCCESS");					
-				console.log(response.data);
 				
-				if (!response.data.errors) {
-					console.info("[SUCCESS]: The Step 2 form is submitted successfully.");
+				/**
+				 * If the response does not contain the validation errors after submitting the Step 2 for particular 
+				 * file dataset, then we are dealing with the valid metadata configuration (formatting).
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				if (!response.data.validationErrors) {
+					
+					console.info("[SUCCESS]: The Step 2 form is validated and submitted successfully!");
+										
+					/**
+					 * As far as we reach the Step 2 and try to validate the metadata, change the state of the flag that indicates that we tried to validate the
+					 * Step 2. When the flag is false, we are able to change the state of the 'Valid' column in the grid (angular-table) on the Step 2. Else, we
+					 * will see the initial grey field with the icon inside of it that indicates that the validation is pending (waiting for user to move to the
+					 * Step 3).
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					($scope.step2ValidationFirstTime == true) ? $scope.step2ValidationFirstTime = false : null;
+					
 					// Take the meta data from resulting JSON object (needed for the table's header)
-					$scope.validationStatus = true;
+					
 					$scope.resultMetaDataStep2 = [];
 					$scope.resultRowsStep2 = [];
-					console.log(response);
 					angular.copy(response.data.metaData.fields,$scope.resultMetaDataStep2);
+					
 					// Take all results (pure data) for rows of the Angular table
 					angular.copy(response.data.rows,$scope.resultRowsStep2);
 					$scope.collectHeadersForStep3Preview();
-					$scope.datasetWizardView = $scope.datasetWizardView +1;
+					
+					// Move to the next step (Step 3)
+					$scope.datasetWizardView = $scope.datasetWizardView + 1;
+					
+					/**
+					 * Set this indicator to NULL, since we do not have this property inside the response - the metadata
+					 * of the file dataset is valid. Also, inform user about the successful validation of the metadata.
+					 * Set the status of validation to true, in order to indicate that the metadata is well configured.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					$scope.step2ValidationErrors = null;
+					$scope.validationStatus = true;
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.workspace.dataset.wizard.metadata.validation.success.msg"),sbiModule_translate.load('sbi.generic.success'));
+					
+				}
+				/**
+				 * If the response however contains the property that indicated that there are some validation problems
+				 * (errors), handle the situation and inform user about it.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+				 */
+				else if(response.data.validationErrors) {
+					
+					console.warn("[VALIDATION ERRORS]: Validation failed!");
+
+					$scope.validationStatus = false;
+					
+					($scope.step2ValidationFirstTime == true) ? $scope.step2ValidationFirstTime = false : null;
+					
+					/**
+					 * Now, since we are having validation errors when submitting the Step 3, change the value of the
+					 * scope variable that contains these data.
+					 */
+					$scope.step2ValidationErrors = response.data.validationErrors;
+					
+					// "Refresh" the Step 2 table, in order to where the validation error appears.
+					$scope.prepareMetaForView();
+					$scope.prepareDatasetForView();
+					
+					// Inform the user about the validation error.
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.workspace.dataset.wizard.metadata.validation.error.msg"), sbiModule_translate.load('sbi.generic.error'));
+					
 				}
 				else {
 					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
 					$scope.validationStatus = false;
 					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
+					$scope.step2ValidationErrors = null;
 				}
 			}, 
 			
@@ -391,6 +475,18 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		if($scope.datasetWizardView>1&&$scope.datasetWizardView<5){ 
 			$scope.datasetWizardView = $scope.datasetWizardView -1;
 		}
+		
+		/**
+		 * Since the validation is performed, when coming to the Step 3 and then going back to the Step 2 (previously maybe it had wrong validation - some metadata
+		 * columns did not pass the validation (red X icon in the Valid column), re-prepare the metadata, so we can refresh the Step 2 metadata columns and their 
+		 * 'Valid' column in particular. This way, those rows (metadata columns, such as 'country') that previously did not pass the validation, now will be updated
+		 * with their "valid" state as passed (green check icon).
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)  
+		 */
+		if ($scope.datasetWizardView==2) {
+			$scope.prepareMetaForView();
+			$scope.prepareDatasetForView();
+		}
 	}
 		
 	/**
@@ -441,6 +537,12 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		 */
 		$scope.ckanInWizard=false;
 		
+		/**
+		 * Reset the indicator, so the next time Dataset wizard is opened, the Step 2 "Valid" column items (icons) will be set to their 
+		 * initial values - pending for validation.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+		 */
+		$scope.step2ValidationFirstTime = true;
 	}
 	
 	loadDatasetValues = function(a,b) {
@@ -601,9 +703,37 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 //				loc.pnameView='<md-select aria-label="pname-view" ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsMetaProperty" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.filterMetaValues(col.VALUE_CD,row)">{{col.VALUE_NM}}</md-option></md-select>';
 		
 			loc.columnView='<label>{{row.column}}</label>';
-			loc.pnameView='<label>{{row.pname}}</label>';
-			loc.pvalueView='<md-select aria-label="pvalue-view" ng-model=row.pvalue class="noMargin"><md-option ng-repeat="col in row.dsMetaValue" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.valueChanged(col,row.indexOfRow)">{{col.VALUE_NM}}</md-option></md-select>';
-		
+			loc.pnameView='<label>{{row.pname}}</label>';											
+			loc.pvalueView='<md-select aria-label="pvalue-view" ng-model=row.pvalue class="noMargin" style=styleString><md-option ng-repeat="col in row.dsMetaValue" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.valueChanged(col,row.indexOfRow)">{{col.VALUE_NM}}</md-option></md-select>';
+			
+			/**
+			 * Manage the Step 2 "Valid" column state according to the validation after submitting the Step 2.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			if ($scope.step2ValidationFirstTime==false) {
+				
+				var invalidType = $scope.step2ValidationErrors!=null && $scope.step2ValidationErrors[0]['column_'+i] && $scope.step2ValidationErrors[0]['column_'+i]!="";
+				//{{translate.load('')}}
+				
+				var msg = $scope.step2ValidationErrors[0]["column_"+i] ? $scope.step2ValidationErrors[0]["column_"+i] : "sbi.workspace.dataset.wizard.metadata.validation.success.title";
+				
+				var invalidColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-times fa-1x" class="invalidTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
+				var validColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-check fa-1x" class="validTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
+				
+				// Set the content of the "Valid" column for the current row to an appropriate state (passed/failed validation).
+				loc.metaValid = (invalidType) ? invalidColumnValidContent : validColumnValidContent;
+				
+			}
+			else {
+				
+				msg = "sbi.workspace.dataset.wizard.metadata.validation.pending.title";
+				
+				// Set the state of the Step 2 "Valid" column to the initial value - pending for the validation (default state).
+//				loc.metaValid = '<md-content><md-icon md-font-icon="fa fa-circle-o fa-1x" style="background-color: #e6e6e6; width: 55%; padding-left: 45%; height: 100%" title="Pending for validation check..."></md-icon></md-content>';
+				loc.metaValid = '<md-content><md-icon md-font-icon="fa fa-question fa-1x" class="defaultStateValidType" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
+				
+			}
+				
 		}
 	}	
 	

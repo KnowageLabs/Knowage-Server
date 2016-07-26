@@ -42,7 +42,6 @@ import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.hdfs.Hdfs;
@@ -77,10 +76,7 @@ import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.dataset.validation.ErrorField;
-import it.eng.spagobi.tools.dataset.validation.GeoDatasetValidatorFactory;
 import it.eng.spagobi.tools.dataset.validation.HierarchyLevel;
-import it.eng.spagobi.tools.dataset.validation.IDatasetValidator;
-import it.eng.spagobi.tools.dataset.validation.IDatasetValidatorFactory;
 import it.eng.spagobi.tools.dataset.validation.ValidationErrors;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.notification.AbstractEvent;
@@ -99,7 +95,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -121,8 +116,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
- * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini
- *          (monica.franceschini@eng.it)
+ * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini (monica.franceschini@eng.it)
  */
 @Path("/selfservicedataset")
 public class SelfServiceDataSetCRUD {
@@ -489,8 +483,7 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	/*
-	 * Change the scope of the dataset. If the dataset is private change it to
-	 * public (SHARE) If the dataset is public change it to private (UNSHARE)
+	 * Change the scope of the dataset. If the dataset is private change it to public (SHARE) If the dataset is public change it to private (UNSHARE)
 	 */
 	@POST
 	@Path("/share")
@@ -712,8 +705,8 @@ public class SelfServiceDataSetCRUD {
 		// }
 		// }
 		// TODO
-				return true;
-			}
+		return true;
+	}
 
 	private boolean checkCategoryChange(IDataSet currentDataset, IDataSet updatedDataset) throws Exception {
 		if ((currentDataset != null) && (updatedDataset != null)) {
@@ -992,44 +985,97 @@ public class SelfServiceDataSetCRUD {
 
 			// Dataset Validation ---------------------------------------------
 			if (datasetMetadata != null) {
+
 				ValidationErrors validationErrors = new ValidationErrors();
 
-				// validation of columns with specified Hierarchies and with
-				// numeric Type
-				Map<String, HierarchyLevel> hierarchiesColumnsToCheck = getHierarchiesColumnsToCheck(datasetMetadata);
+				/**
+				 * Validation now takes care of types that are set for related columns of the file dataset metadata. For example, if we are having a column
+				 * 'country', it contains names of countries that are specific for a dataset (such as USA, Italy, UK, etc.), so user should not set its type as
+				 * a numeric one (Integer/Double), but as a String instead. However, if user specifies this column as a numeric type, the validation should
+				 * inform him about this problem (bad formatting of the metadata column(s)). In this method we will try to convert first 1000 values from all
+				 * columns available to the type that user provide for their columns. If cast (converting) cannot happen (exception appears), we will add an
+				 * information about that to the ValidationErrors object.
+				 *
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
 
-				if (!hierarchiesColumnsToCheck.isEmpty()) {
-					// We get the category of the dataset and with this we
-					// search the appropriate validator
-					Integer categoryId = dataSet.getCategoryId();
+				/**
+				 * All records that the file dataset provides (all resulting rows).
+				 */
+				long records = dataStore.getRecordsCount();
 
-					if (categoryId != null) {
-						IDomainDAO domainDao = DAOFactory.getDomainDAO();
-						Domain domain = domainDao.loadDomainById(categoryId);
-						String categoryValueName = domain.getValueName();
+				/**
+				 * Get all metadata for the dataset and then pick only those related to the "columns" property. This way we get all columns that the file
+				 * dataset possess.
+				 */
+				JSONObject metadataDataset = new JSONObject(datasetMetadata);
+				JSONArray columns = metadataDataset.getJSONArray("columns");
 
-						// Validate only if there are the proper metadata set
-						IDatasetValidatorFactory geoValidatorFactory = new GeoDatasetValidatorFactory();
+				/**
+				 * Go through all columns that the file dataset has. First go through all rows for the first column, then through all of them in the second
+				 * column and so on.
+				 */
+				for (int i = 0; i < columns.length(); i++) {
 
-						IDatasetValidator geoValidator = geoValidatorFactory.getValidator(categoryValueName);
+					/**
+					 * Divide the metadata column index (i) by 2 in order to have a correct information about the real index of the column that is validated.
+					 * This is needed because we have 2 metadata columns for each file dataset column.
+					 */
+					int index = (int) Math.round(Math.floor(i / 2));
 
-						if (geoValidator != null) {
-							MessageBuilder msgBuild = new MessageBuilder();
-							Locale locale = msgBuild.getLocale(req);
-							geoValidator.setLocale(locale);
+					JSONObject jo = new JSONObject();
 
-							// Validate the dataset and return the fields not
-							// valid
-							ValidationErrors hierarchiesColumnsValidationErrors = geoValidator.validateDataset(dataStore, hierarchiesColumnsToCheck);
-							if (!hierarchiesColumnsValidationErrors.isEmpty()) {
-								validationErrors.addAll(hierarchiesColumnsValidationErrors);
+					/**
+					 * Go through all rows for a particular (current, i-th) column.
+					 */
+					for (int j = 0; j < records && j < 1000; j++) {
+
+						jo = (JSONObject) columns.get(i);
+						String pvalue = jo.opt("pvalue").toString().toUpperCase();
+
+						/**
+						 * Check if property value is not one of those that are common for field type (MEASURE/ATTRIBUTE), since we are not validating their
+						 * values, but rather those that are specified for types (Integer, Double, String). So, skip these two.
+						 */
+						if (!pvalue.equals("MEASURE") && !pvalue.equals("ATTRIBUTE")) {
+
+							/**
+							 * Try to convert a value that current field has to the type that is set for that field. If the converting (casting) does not go
+							 * well, an exception will be thrown and we will handle it by providing an information about the validation problem for that
+							 * particular cell.
+							 */
+							switch (pvalue) {
+
+							case "DOUBLE":
+
+								try {
+									Double.parseDouble((String) dataStore.getRecordAt(j).getFieldAt(index).getValue());
+								} catch (NumberFormatException nfe) {
+									logger.error("The cell cannot be formatted as a Double value", nfe);
+									validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
+											"sbi.workspace.dataset.wizard.metadata.validation.error.double.title");
+								}
+
+								break;
+
+							case "INTEGER":
+
+								try {
+									Integer.parseInt((String) dataStore.getRecordAt(j).getFieldAt(index).getValue());
+								} catch (NumberFormatException nfe) {
+									logger.error("The cell cannot be formatted as an Integer value", nfe);
+									validationErrors.addError(j, i, dataStore.getRecordAt(j).getFieldAt(index),
+											"sbi.workspace.dataset.wizard.metadata.validation.error.integer.title");
+								}
+
+								break;
 							}
-
 						}
 
 					}
 
 				}
+
 				if (!validationErrors.isEmpty()) {
 					// this create an array containing the fields with error for
 					// each rows
@@ -1446,10 +1492,8 @@ public class SelfServiceDataSetCRUD {
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
 		if (originalDatasetFile.exists()) {
 			/*
-			 * This method copies the contents of the specified source file to
-			 * the specified destination file. The directory holding the
-			 * destination file is created if it does not exist. If the
-			 * destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
+			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
 			 */
 			try {
 				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
@@ -1472,10 +1516,8 @@ public class SelfServiceDataSetCRUD {
 
 		if (hdfs.exists(filePath)) {
 			/*
-			 * This method copies the contents of the specified source file to
-			 * the specified destination file. The directory holding the
-			 * destination file is created if it does not exist. If the
-			 * destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
+			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
 			 */
 			String newDatasetPath = fileNewPath + newFileName + "." + fileType.toLowerCase();
 			hdfs.mkdirsParent(newDatasetPath);
@@ -1781,7 +1823,7 @@ public class SelfServiceDataSetCRUD {
 							/**
 							 * Check also if the 'propertyValue' represents the full-class name (with the package in its name). Since this is a valid
 							 * alternative for the short-class name, this will not cause any inconsistency, nor errors.
-							 * 
+							 *
 							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 							 */
 							if (propertyValue.equalsIgnoreCase("Integer") || propertyValue.equalsIgnoreCase("java.lang.Integer")) {
