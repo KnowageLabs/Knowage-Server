@@ -242,7 +242,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				break;
 			case "BUTTON_SORTING":
 				$scope.enableDisableSorting();
-				changeIcon(name);
+				//changeIcon(name);
 				sendModelConfig = false;
 				break;
 			case "BUTTON_EDITABLE_EXCEL_EXPORT":
@@ -326,6 +326,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		 sbiModule_restServices.promiseGet("1.0","/member/sort/disable?SBI_EXECUTION_ID="+JSsbiExecutionID)
 			.then(function(response) {
 				$scope.handleResponse(response);
+				
+				changeIcon("BUTTON_SORTING");
+				
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("An error occured while sorting", 'Error');
 				
