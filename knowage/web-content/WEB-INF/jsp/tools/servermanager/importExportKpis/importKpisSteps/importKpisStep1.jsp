@@ -17,7 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 
-<md-content  layout="column" layout-wrap>
+<md-content  layout-wrap>
+<div  layout="column">
 	<div layout-padding layout-gt-sm="row" layout-align-gt-sm="start center" layout-sm="column">
 			<md-checkbox class="little-check" ng-model="IEDConf.overwriteMode" aria-label="Overwrite">{{translate.load("sbi.impexpkpis.importkpi");}}</md-checkbox>
 			<md-checkbox class="little-check" ng-model="IEDConf.targetsAndRelatedKpis" aria-label="Import targets and related KPIs">{{translate.load("sbi.impexpkpis.importTarget");}}</md-checkbox>
@@ -29,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-button ng-click="save($event)" aria-label="Start import" >{{translate.load("sbi.importkpis.next");}}</md-button>
 		</md-input-container>
 	</div>
-	
+</div>	
 	<div layout="row" flex>
 		<div flex style="position: relative;" >
 			<angular-table id="layerlist"
