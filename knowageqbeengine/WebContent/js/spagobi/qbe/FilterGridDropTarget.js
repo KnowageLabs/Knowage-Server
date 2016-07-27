@@ -248,7 +248,16 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 		
 		node = ddSource.dragData.node;     
 		nodeType = node.attributes.type || node.attributes.attributes.type;
-		var nodeParentType = node.parentNode.attributes.type || node.parentNode.attributes.attributes.type
+		
+		var nodeParentType = null;
+
+		if(node.parentNode &&  node.parentNode.attributes){
+			nodeParentType = node.parentNode.attributes.type;
+		}
+		if(!nodeParentType && node.parentNode && node.parentNode.attributes && node.parentNode.attributes.attributes && node.parentNode.attributes.attributes.type){
+			nodeParentType = node.parentNode.attributes.attributes.type;
+		}
+
 		
 		if(colIndex) {
 			dropColDataIndex = this.targetGrid.getColumnModel().getDataIndex( colIndex );

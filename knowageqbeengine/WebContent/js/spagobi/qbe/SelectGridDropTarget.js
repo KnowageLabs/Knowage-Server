@@ -109,7 +109,14 @@ Ext.extend(Sbi.qbe.SelectGridDropTarget, Ext.dd.DropTarget, {
 	    var nodeType;
 	        		
 		nodeType = node.attributes.type || node.attributes.attributes.type;
-		var nodeParentType = node.parentNode.attributes.type || node.parentNode.attributes.attributes.type;
+		var nodeParentType = null;
+
+		if(node.parentNode &&  node.parentNode.attributes){
+			nodeParentType = node.parentNode.attributes.type;
+		}
+		if(!nodeParentType && node.parentNode && node.parentNode.attributes && node.parentNode.attributes.attributes && node.parentNode.attributes.attributes.type){
+			nodeParentType = node.parentNode.attributes.attributes.type;
+		}
 
 	    if(nodeType == Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
 	    	this.addSimpleNodeToSelect(node, rowIndex, recordBaseConfig);	        	
