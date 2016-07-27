@@ -42,23 +42,6 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   $scope.showInfo				= false;  
   $scope.cursorX, $scope.cursorY;
   
-  //togggle panel sections
-  $scope.accordianData = [
-              {
-                  "heading" : "HOLDEN",
-                  "content" : "GM Holden Ltd, commonly known as Holden, is an Australian automaker that operates in Australasia and is headquartered in Port Melbourne, Victoria. The company was founded in 1856 as a saddlery manufacturer in South Australia."
-              },
-              {
-                  "heading" : "FORD",
-                  "content" : "The Ford Motor Company (commonly referred to as simply Ford) is an American multinational automaker headquartered in Dearborn, Michigan, a suburb of Detroit. It was founded by Henry Ford and incorporated on June 16, 1903."
-              },
-              {
-                  "heading" : "TOYOTA",
-                  "content" : "Toyota Motor Corporation is a Japanese automotive manufacturer which was founded by Kiichiro Toyoda in 1937 as a spinoff from his father's company Toyota Industries, which is currently headquartered in Toyota, Aichi Prefecture, Japan."
-              }
-          ];
-	
-  
   //stack that contains the drill path elements
   $scope.drillPathStack = [];
   $noError = false;
@@ -180,8 +163,10 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 		  	if (tooltipText && tooltipText.length > 0){
 		  		//update the div content
 			  	var domTooltip = document.getElementById("svgTooltip");
-			  	var w =  parseInt(domEl.getAttribute("width"));
-		  		domTooltip.style.left = left + parseInt(domEl.getAttribute("width")); //$scope.cursorX; 
+			  	var wTooltip =  parseInt(domEl.getAttribute("width"));
+			  	var domLeftPanel = document.getElementById("svgInfoSidenav");
+			  	var wLeftPanel =  0 + parseInt(domLeftPanel.offsetWidth);
+		  		domTooltip.style.left = left + wLeftPanel + wTooltip; //$scope.cursorX; 
 		  		domTooltip.style.top = top; //$scope.cursorY; 
 		  		domTooltip.innerHTML = tooltipText;
 		  		domTooltip.style.display = "block";
