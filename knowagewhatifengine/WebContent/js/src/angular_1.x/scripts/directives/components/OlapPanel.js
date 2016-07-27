@@ -480,42 +480,47 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 			var cell = angular.element(document.querySelector("[id='" + id
 					+ "']"));
-			console.log(cell[0].childNodes[0].data);
-		}
-
-		// check if the user is editing the same cell twice. If so we present
-		// again the last formula
-		if ($scope.lastEditedFormula && $scope.lastEditedCell
-				&& id.startsWith($scope.lastEditedCell)) {
-			unformattedValue = $scope.lastEditedFormula;
-			$scope.cellValue = $scope.lastEditedFormula
-		} else {
-			var type = "float";
-			var originalValue = "";
-
-			originalValue = (cell[0].childNodes[0].data).trim();
-			if (originalValue == '') { // in case the cell was empty, we type 0
-				unformattedValue = 0;
-			} else {
-				unformattedValue = parseFloat(originalValue.replace(',', '.'));// Sbi.whatif.commons.Format.cleanFormattedNumber(originalValue,
-				$scope.cellValue = "";														// Sbi.locale.formats[type]);
-				console.log(originalValue);
-				console.log(unformattedValue);
-			}
-
-			// Sbi.error("Error loading the value of the cell to edit" + err);
-
-			// it's not possible to edit a cell with value 0
-			if (unformattedValue == 0) {
-				sbiModule_messaging.showErrorMessage(sbiModule_translate
-						.load('sbi.olap.writeback.edit.no.zero'), 'Error');
-				return;
-			}
-
 			
+			// check if the user is editing the same cell twice. If so we present
+			// again the last formula
+			if ($scope.lastEditedFormula && $scope.lastEditedCell
+					&& id.startsWith($scope.lastEditedCell)) {
+				unformattedValue = $scope.lastEditedFormula;
+				$scope.cellValue = $scope.lastEditedFormula
+			} else {
+				var type = "float";
+				var originalValue = "";
 
+				originalValue = (cell[0].childNodes[0].data).trim();
+				if (originalValue == '') { // in case the cell was empty, we type 0
+					unformattedValue = 0;
+				} else {
+					unformattedValue = parseFloat(originalValue.replace(',', '.'));// Sbi.whatif.commons.Format.cleanFormattedNumber(originalValue,
+					$scope.cellValue = "";														// Sbi.locale.formats[type]);
+					console.log(originalValue);
+					console.log(unformattedValue);
+				}
+
+				// Sbi.error("Error loading the value of the cell to edit" + err);
+
+				// it's not possible to edit a cell with value 0
+				if (unformattedValue == 0) {
+					sbiModule_messaging.showErrorMessage(sbiModule_translate
+							.load('sbi.olap.writeback.edit.no.zero'), 'Error');
+					return;
+				}
+
+				
+
+			}
+			$scope.showEditCell(cell, id, originalValue);
+			
+		}else{
+			sbiModule_messaging.showErrorMessage("Measure "+measureName+" is not editable",'Error');
 		}
-		$scope.showEditCell(cell, id, originalValue);
+
+		
+		
 		
 	}
 
