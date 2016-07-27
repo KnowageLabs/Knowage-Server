@@ -61,7 +61,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/qbe/SlotWizard.js'></script>
 <script type="text/javascript" src='../js/spagobi/qbe/InLineCalculatedFieldValidator.js'></script>
 		
-<script type="text/javascript" src='../js/spagobi/qbe/DocumentParametersGridPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/qbe/DocumentParametersStore.js'></script>
 <script type="text/javascript" src='../js/spagobi/qbe/HavingGridPanel.js'></script>
 

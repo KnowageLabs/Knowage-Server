@@ -881,10 +881,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 , initEastRegionPanel: function(c) {
 
 	this.queryCataloguePanel = new Sbi.qbe.QueryCataloguePanel({margins: '0 5 0 0', region: 'center'});
-	this.documentParametersGridPanel = c.parametersGridPanel || new Sbi.qbe.DocumentParametersGridPanel(
-			{margins: '0 0 0 0', region: 'south'}
-			, this.documentParametersStore
-	);
+
 	this.queryCataloguePanel.on('load', function() {
 		try{
 			var message = {};
@@ -936,7 +933,7 @@ toggleCenterPanelToItem : function (activeItemIndex) {
 		    	   scope: this
 		       }
 		       ],
-		       items: [this.queryCataloguePanel, this.documentParametersGridPanel]
+		       items: [this.queryCataloguePanel]
 	});
 
 
@@ -1459,13 +1456,11 @@ setQueriesCatalogue: function (queriesCatalogue) {
 
 ,
 getParameters: function () {
-	return this.documentParametersGridPanel.getParameters();
+	return new Array();
 }
 
 ,
 setParameters: function (parameters) {
-	this.documentParametersGridPanel.loadItems([]);
-	this.documentParametersGridPanel.loadItems(parameters);
 }
 
 });
