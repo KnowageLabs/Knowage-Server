@@ -226,7 +226,10 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 			documentDAO = DAOFactory.getBIObjectDAO();
 
 			String encodedDocumentLabels = jobDataMap.getString("documentLabels");
-			String[] documentLabels = encodedDocumentLabels.split(",");
+			String[] documentLabels = {};
+			if (!encodedDocumentLabels.trim().equals("")) {
+				documentLabels = encodedDocumentLabels.split(",");
+			}
 
 			Iterator itr = jobDataMap.keySet().iterator();
 			while (itr.hasNext()) {
@@ -309,8 +312,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 				}
 
 			} else {
-				logger.debug("No uniuqe mail case");
-
+				logger.debug("Not unique mail case");
 			}
 
 			// map for unique mail case
