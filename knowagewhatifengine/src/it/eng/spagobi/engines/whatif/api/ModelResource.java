@@ -740,7 +740,6 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		XSSFCell ordinalCell = ccrow.createCell(0);
 		XSSFCell ordinalCellValue = ccrow.createCell(1);
 		XSSFCell defaultAlgorithm = ccrow.createCell(2);
-		ordinalCell.setCellValue(0);
 
 		boolean finished = false;
 		for (int i = 0; i < maxOrdinal && !finished; i++) {
@@ -748,8 +747,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			if (c.isEmpty()) {
 				continue;
 			} else {
-				double cellValue = c.getDoubleValue();
-				ordinalCellValue.setCellValue(cellValue);
+				ordinalCell.setCellValue(c.getOrdinal());
+				ordinalCellValue.setCellValue(c.getDoubleValue());
 				finished = true;
 
 			}
