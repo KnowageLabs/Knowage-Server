@@ -335,6 +335,9 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 				if (index == -1) {
 					$scope.selectedBusinessModel.columns.push(row);
 				} else {
+					//remove the primaryKey
+					$scope.selectedBusinessModel.columns[index].identifier =false;
+					row.identifier =false;
 					$scope.selectedBusinessModel.columns.splice(index, 1);
 				}
 			}

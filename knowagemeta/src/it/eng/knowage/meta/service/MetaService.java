@@ -37,7 +37,6 @@ import it.eng.knowage.meta.model.business.BusinessTable;
 import it.eng.knowage.meta.model.business.BusinessView;
 import it.eng.knowage.meta.model.business.BusinessViewInnerJoinRelationship;
 import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
-import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.filter.PhysicalTableFilter;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
@@ -647,18 +646,12 @@ public class MetaService extends AbstractSpagoBIResource {
 		bt.setPhysicalTable(pt);
 		bt.setDescription(description);
 		new BusinessModelInitializer().getPropertiesInitializer().addProperties(bt);
+		BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
 
 		while (colIterator.hasNext()) {
 			JsonNode col = colIterator.next();
 			String colName = col.textValue();
-			BusinessColumn bc = BusinessModelFactory.eINSTANCE.createBusinessColumn();
-			SimpleBusinessColumn sbc = BusinessModelFactory.eINSTANCE.createSimpleBusinessColumn();
-			bt.getSimpleBusinessColumns().add(sbc);
-			sbc.setName(colName);
-			sbc.setPhysicalColumn(pt.getColumn(colName));
-			sbc.setTable(bt);
-			new BusinessModelInitializer().getPropertiesInitializer().addProperties(bc);
-			new BusinessModelInitializer().getPropertiesInitializer().addProperties(sbc);
+			businessModelInitializer.addColumn(pt.getColumn(colName), bt);
 		}
 
 	}
