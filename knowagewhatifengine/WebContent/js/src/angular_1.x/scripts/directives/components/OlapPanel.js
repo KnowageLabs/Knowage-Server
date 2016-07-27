@@ -91,6 +91,8 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 				function(response) {
 
 					$scope.handleResponse(response);
+					
+					
 				},
 				function(response) {
 					sbiModule_messaging.showErrorMessage(
@@ -106,7 +108,13 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 				+ JSsbiExecutionID);
 		sbiModule_restServices.promisePost(encoded, "").then(
 				function(response) {
+					//var row  = $scope.modelConfig.startColumn;
+					//var column = $scope.modelConfig.startRow;
+					
 					$scope.handleResponse(response);
+					//$scope.modelConfig.startColumn = row;
+					//$scope.modelConfig.startRow = column;
+					//$scope.scrollTo(row,column);
 				},
 				function(response) {
 					sbiModule_messaging.showErrorMessage(
@@ -526,11 +534,19 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 			} else {
 				var measures = ($scope.modelConfig.writeBackConf.editableMeasures);
 
-				for (measureNameCheck in measures) {
+			/*	for (measureNameCheck in measures) {
 					if (measureNameCheck === measureName)
 						;
 					var contained = measureName;
 					return contained;
+				}*/
+				
+				for (var i = 0;i<measures.length;i++) {
+					
+					if (measures[i] === measureName){
+						return true;
+					}
+						
 				}
 
 			}
