@@ -72,7 +72,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		if($scope.startDateTime && $scope.endDateTime){
 			$timeout(function(){
 				$scope.loadingExecutions = true;
-				sbiModule_restServices.get("2.0/scheduler", 'nextExecutions?start='+$scope.startDateTime+'&end='+$scope.endDateTime)
+				sbiModule_restServices.get("scheduler", 'nextExecutions?start='+$scope.startDateTime+'&end='+$scope.endDateTime)
 					.success(function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
 							$scope.executions = [];
