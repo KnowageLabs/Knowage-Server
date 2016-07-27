@@ -342,8 +342,7 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 		List<SbiWhatifWorkflow> existing = getWorkflowByModel(modelId);
 
 		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
+
 
 			for (int i = 0; i < existing.size(); i++) {
 				SbiWhatifWorkflow actual = existing.get(i);
@@ -351,6 +350,9 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 				if (state.equals(STATE_INPROGRESS)) {// if we've found the
 														// active user
 					// we set value to done
+					
+					aSession = getSession();
+					tx = aSession.beginTransaction();
 					logger.debug("Actual active user is " + actual.getUserId());
 					Criteria criteria = getSession().createCriteria(SbiWhatifWorkflow.class);
 					Criterion rest1 = Restrictions.eq("modelId", modelId);
@@ -360,7 +362,7 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 					wf.setState(STATE_DONE);
 					updateSbiCommonInfo4Update(wf);
 					aSession.update(wf);
-
+					
 					logger.debug("Done set state done to actual active user is " + actual.getUserId());
 					// if actual is not last user in workflow we enable next
 					// user
@@ -372,9 +374,9 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 						Criterion rest2_2 = Restrictions.eq("userId", next.getUserId());
 						criteria2.add(Restrictions.and(rest2_1, rest2_2));
 						SbiWhatifWorkflow wf2 = (SbiWhatifWorkflow) criteria2.uniqueResult();
-						wf.setState(STATE_INPROGRESS);
+						wf2.setState(STATE_INPROGRESS);
 						updateSbiCommonInfo4Update(wf2);
-						aSession.update(wf2);
+						aSession.saveOrUpdate(wf2);
 						logger.debug("Done set state inprogress to next active user is " + next.getUserId());
 						tx.commit();
 
