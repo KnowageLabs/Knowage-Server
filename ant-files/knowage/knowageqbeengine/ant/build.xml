@@ -226,7 +226,6 @@
 <file name='./spagobi/qbe/SlotWizard.js' />
 <file name='./spagobi/qbe/InLineCalculatedFieldValidator.js' />
 		
-<file name='./spagobi/qbe/DocumentParametersGridPanel.js' />
 <file name='./spagobi/qbe/DocumentParametersStore.js' />
 <file name='./spagobi/qbe/HavingGridPanel.js' />
 
