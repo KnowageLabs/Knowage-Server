@@ -41,7 +41,12 @@
 		$scope.selectedLayer = [];
 		$scope.selectedFilters = [];
 		$scope.allFilters = [];
-	 
+	    
+		
+		$scope.layerProperties=[];
+		
+		
+		
 		$scope.allDriverParamteres=[];
 		$scope.selectedDriverParamteres = [];
 		
@@ -97,6 +102,7 @@
 		
 		$scope.resetAllVariables= function(){
 			$scope.selectedLayer = [];
+			$scope.layerProperties=[];
 			$scope.selectedFilters = [];
 			$scope.selectedDriverParamteres = [];
 			$scope.datasetJoinColumns = [];
@@ -110,7 +116,7 @@
 			sbiModule_restServices.promiseGet("restful-services/layers", "")
 					.then(
 							function(response) {
-								//console.log(response.data.root);
+								console.log(response.data.root);
 								angular.copy(response.data.root,
 										$scope.layerCatalogs);
 								initializeSelectedLayer();
@@ -390,15 +396,37 @@
 		};
 
 		$scope.tableFunctionsJoin.addJoinColumn = function() {
-			var newRow = {
-				datasetColumn : '',
-				layerColumn : '',
-				datasetColumnView : '<md-select ng-model=row.datasetColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumnsStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
-				//layerColumnView : '<md-input-container class="md-block"><label>layer join column</label><input type="text" ng-model="row.layerColumn" required></md-input-container>'
-			};
+			if($scope.selectedLayer.length > 0){
+			 var layerId= $scope.selectedLayer[0].layerId;	
+			sbiModule_restServices
+			.alterContextPath(sbiModule_config.externalBasePath);
+	       sbiModule_restServices.promiseGet("restful-services/layers",
+			"getFilter", "id="+layerId).then(
+			function(response) {
+              
+				$scope.layerProperties= response.data;
+				$scope.tableFunctionsJoin.layerColumnsStore= $scope.layerProperties;
+				var newRow = {
+						datasetColumn : '',
+						layerColumn : '',
+						datasetColumnView : '<md-select ng-model=row.datasetColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumnsStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
+						layerColumnView : '<md-select ng-model=row.layerColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.layerColumnsStore" value="{{col.property}}">{{col.property}}</md-option></md-select>'
+					};
 
-			$scope.datasetJoinColumns.push(newRow);
+					$scope.datasetJoinColumns.push(newRow);
 
+
+			},
+			function(response) {
+				sbiModule_restServices.errorHandler(response.data,
+						"error loading layer filters");
+			});
+			
+			}else{
+				sbiModule_messaging.showWarningMessage(sbiModule_translate.load('gisengine.designer.layerFirst'),sbiModule_translate.load('gisengine.designer.layerMiss'));
+				
+			}
+			
 		}
 
 		$scope.datasetJoinSpeedMenu = [ {
@@ -454,13 +482,13 @@
 			var template ={};
 			angular.copy($scope.template,template);
 
-			if ($scope.mapName == undefined || $scope.mapName == '') {
-				template.error = sbiModule_translate
-						.load('gisengine.designer.tempate.noMapName');
-				return template;
-			} else {
-				template.mapName = $scope.mapName;
-			}
+//			if ($scope.mapName == undefined || $scope.mapName == '') {
+//				template.error = sbiModule_translate
+//						.load('gisengine.designer.tempate.noMapName');
+//				return template;
+//			} else {
+//				template.mapName = $scope.mapName;
+//			}
 
 			if ($scope.isDatasetChosen) {
 				// template building when dataset is selected
@@ -555,7 +583,7 @@
 			if($scope.template.mapName){
 			$scope.mapName=$scope.template.mapName;
 			}
-			initializeDatasetJoinColumns();
+			//initializeDatasetJoinColumns();
 			initializeIndicators();
 			//initializeLayerFilters();
 			}
@@ -569,6 +597,8 @@
 					}
 				}
 				}
+				initializeDatasetJoinColumns();
+				
 			}else{
 				if($scope.template.targetLayerConf){
 					for (var i = 0; i < $scope.layerCatalogs.length; i++) {
@@ -588,16 +618,40 @@
 				var dsJoinCols= $scope.template.datasetJoinColumns.split(',');
 				var layerJoinCols= $scope.template.layerJoinColumns.split(',');
 				
-				for (var i = 0; i < dsJoinCols.length; i++) {
-					var newRow = {
-							datasetColumn : dsJoinCols[i],
-							layerColumn :layerJoinCols[i],
-							datasetColumnView : '<md-select ng-model=row.datasetColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumnsStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
-							//layerColumnView : '<md-input-container class="md-block"><label>layer join column</label><input type="text" ng-model="row.layerColumn" required></md-input-container>'
-						};
+				 var layerId= $scope.selectedLayer[0].layerId;	
+				sbiModule_restServices
+				.alterContextPath(sbiModule_config.externalBasePath);
+		       sbiModule_restServices.promiseGet("restful-services/layers",
+				"getFilter", "id="+layerId).then(
+				function(response) {
+	               
+					$scope.layerProperties= response.data;
+					$scope.tableFunctionsJoin.layerColumnsStore= $scope.layerProperties;
+//					var newRow = {
+//							datasetColumn : '',
+//							layerColumn : '',
+//							datasetColumnView : '<md-select ng-model=row.datasetColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumnsStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
+//							layerColumnView : '<md-select ng-model=row.layerColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.layerColumnsStore" value="{{col.property}}">{{col.property}}</md-option></md-select>'
+//						};
+//
+//						$scope.datasetJoinColumns.push(newRow);
+						for (var i = 0; i < dsJoinCols.length; i++) {
+							var newRow = {
+									datasetColumn : dsJoinCols[i],
+									layerColumn :layerJoinCols[i],
+									datasetColumnView : '<md-select ng-model=row.datasetColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumnsStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
+									layerColumnView : '<md-select ng-model=row.layerColumn class="noMargin"><md-option ng-repeat="col in scopeFunctions.layerColumnsStore" value="{{col.property}}">{{col.property}}</md-option></md-select>'
+								};
 
-						$scope.datasetJoinColumns.push(newRow);
-				}
+								$scope.datasetJoinColumns.push(newRow);
+						}
+
+				},
+				function(response) {
+					sbiModule_restServices.errorHandler(response.data,
+							"error loading layer filters");
+				});
+					
 			}
 		}
 		
@@ -691,6 +745,7 @@
 						 */
 						
 						$scope.selectedFilters = [];
+						
 					}
 				}
 			
@@ -698,6 +753,8 @@
 			} else {
 				$scope.selectedLayer = [];
 				$scope.selectedLayer.push($scope.newLayerCatalog);
+				$scope.layerProperties = [];
+				$scope.datasetJoinColumns = [];
 			}
 
 			$mdDialog.cancel();

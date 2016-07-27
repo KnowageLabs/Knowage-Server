@@ -51,13 +51,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </md-toolbar>
 <md-whiteframe class="md-whiteframe-2dp relative" layout-fill layout-margin flex  >
 <!-- map name always visible -->
-<div layout="row" flex>
+<!-- <div layout="row" flex> -->
  
-<md-input-container flex=30>
-  <label>{{translate.load("gisengine.designer.mapname")}}</label>
-  <input type="text" ng-model="mapName">
-</md-input-container>
-</div>
+<!-- <md-input-container flex=30> -->
+<!--   <label>{{translate.load("gisengine.designer.mapname")}}</label> -->
+<!--   <input type="text" ng-model="mapName"> -->
+<!-- </md-input-container> -->
+<!-- </div> -->
 <!-- CHOSE DATA SET FOR FINAL USER -->
 <div layout="row" flex ng-if="!tecnicalUser">
 <label flex=20>{{datasetLabel}}</label>
@@ -146,7 +146,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<md-whiteframe class="md-whiteframe-4dp layout-padding " flex layout layout-margin style ="height: 40%;" > 
 	    <angular-table flex  
 		id='datasetJoinColumnsTable' ng-model="datasetJoinColumns"
-		columns='[{"label":"Dataset join column","name":"datasetColumnView","hideTooltip":true},{"label":"Layer join column","name":"layerColumn","editable":true,"hideTooltip":true}]'
+		columns='[{"label":"Dataset join column","name":"datasetColumnView","hideTooltip":true},{"label":"Layer join column","name":"layerColumnView","hideTooltip":true}]'
 		columns-search='["datasetColumn","layerColumn"]' show-search-bar=true
 		scope-functions='tableFunctionsJoin' speed-menu-option='datasetJoinSpeedMenu'
 		allow-edit="true"
