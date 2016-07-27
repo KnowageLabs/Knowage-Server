@@ -55,6 +55,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.olap4j.Cell;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.OlapDataSource;
@@ -105,9 +106,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	public static transient Logger auditlogger = Logger.getLogger("audit.stack");
 	private static final String VERSION_FAKE_DESCR = "sbiNoDescription";
 	private static final String TEMPLATE_MONDRIAN_SCHEMA = "mondranSchema";
-	
-	
-	
+
 	@Context
 	private HttpServletResponse response;
 
@@ -125,49 +124,48 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		}
 		return versionManager;
 	}
-	
-	
+
 	/*
-	 * This method creates a template. Than it will create a model on teh template and update the EngoneConfig setting the model
-	 * Body structure
-	{
-		
-		mondrianSchema: "mondrianSchema",
-		cube: "cube",
-		xmlaUrl: "xmlaUrl",
-		xmlaProperties:[{value:...,key:...},....],
-		
-	}
-	*/
+	 * This method creates a template. Than it will create a model on teh
+	 * template and update the EngoneConfig setting the model Body structure {
+	 *
+	 * mondrianSchema: "mondrianSchema", cube: "cube", xmlaUrl: "xmlaUrl",
+	 * xmlaProperties:[{value:...,key:...},....],
+	 *
+	 * }
+	 */
 	@POST
 	@Path("/create")
 	@Produces("text/html; charset=UTF-8")
 	public void createNewModel() throws OlapException {
-		
+
 		JSONObject requestBody = null;
-		
+
 		try {
 			requestBody = RestUtilities.readBodyAsJSONObject(getServletRequest());
 
-
 			WhatIfTemplate template = new WhatIfTemplate();
-			String mdxQuery = "";//TODO: CREATE THE QUERY STARTING FROM SCHEMA RETRIVER
-			
+			String mdxQuery = "";// TODO: CREATE THE QUERY STARTING FROM SCHEMA
+									// RETRIVER
+
 			template.setMdxQuery(mdxQuery);
 			template.setMondrianSchema(requestBody.getString(TEMPLATE_MONDRIAN_SCHEMA));
-			//template.setParameters(parameters); we'll see in a second phase
-			//template.setCrossNavigation(crossNavigation); for cross navigation on cell
-			//template.setTargetsClickable(targetsClickable); for cross navigation on member
-			//template.setProfilingUserAttributes(profilingnUserAttributes);  we'll see in a second phase
-			//template.setScenario(scenario); scenario info. cube from schema retriver
-			
-			//template.setToolbarVisibleButtons(toolbarVisibleButtons);
-			//template.setXmlaServerProperties(xmlaServerProperties);
-			
-			boolean whatif = false;//should true if a scenario exists
-			((WhatIfEngineInstance)this.getEngineInstance()).updateWhatIfEngineInstance(template, whatif, getEnv());
-			
-		
+			// template.setParameters(parameters); we'll see in a second phase
+			// template.setCrossNavigation(crossNavigation); for cross
+			// navigation on cell
+			// template.setTargetsClickable(targetsClickable); for cross
+			// navigation on member
+			// template.setProfilingUserAttributes(profilingnUserAttributes);
+			// we'll see in a second phase
+			// template.setScenario(scenario); scenario info. cube from schema
+			// retriver
+
+			// template.setToolbarVisibleButtons(toolbarVisibleButtons);
+			// template.setXmlaServerProperties(xmlaServerProperties);
+
+			boolean whatif = false;// should true if a scenario exists
+			((WhatIfEngineInstance) this.getEngineInstance()).updateWhatIfEngineInstance(template, whatif, getEnv());
+
 		} catch (Exception e) {
 			String errorMessage = e.getMessage().replace(": Couldn't read request body", "");
 			throw new SpagoBIEngineRestServiceRuntimeException(errorMessage, this.getLocale(), e);
@@ -359,21 +357,20 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		logOperation("Save As");
 		String name;
 		String descr;
-		
+
 		JSONObject json;
 		try {
 			json = RestUtilities.readBodyAsJSONObject(getServletRequest());
 			name = json.getString("name");
 			descr = json.getString("descr");
 		} catch (IOException e1) {
-			logger.error("Error loading the parameters from the request",e1);
+			logger.error("Error loading the parameters from the request", e1);
 			throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e1);
 		} catch (JSONException e1) {
-			logger.error("Error loading the parameters from the request",e1);
+			logger.error("Error loading the parameters from the request", e1);
 			throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e1);
 		}
 
-		
 		Monitor totalTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.ModelResource.increaseVersion.totalTime");
 		if (name.equals(VERSION_FAKE_DESCR)) {
 			name = null;
@@ -679,7 +676,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		String mdx = "";
 		int axisRows = model.getCellSet().getAxes().get(1).getPositionCount();
 		int axisColumns = model.getCellSet().getAxes().get(0).getPositionCount();
-
+		int maxOrdinal = axisRows * axisColumns;
 		Iterator it = map.entrySet().iterator();
 		int index = 0;
 		while (it.hasNext()) {
@@ -744,7 +741,21 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		XSSFCell ordinalCellValue = ccrow.createCell(1);
 		XSSFCell defaultAlgorithm = ccrow.createCell(2);
 		ordinalCell.setCellValue(0);
-		ordinalCellValue.setCellValue(model.getCellSet().getCell(0).getDoubleValue());
+
+		boolean finished = false;
+		for (int i = 0; i < maxOrdinal && !finished; i++) {
+			Cell c = model.getCellSet().getCell(i);
+			if (c.isEmpty()) {
+				continue;
+			} else {
+				double cellValue = c.getDoubleValue();
+				ordinalCellValue.setCellValue(cellValue);
+				finished = true;
+
+			}
+
+		}
+
 		defaultAlgorithm.setCellValue("Proportional");
 
 		return workbook;
