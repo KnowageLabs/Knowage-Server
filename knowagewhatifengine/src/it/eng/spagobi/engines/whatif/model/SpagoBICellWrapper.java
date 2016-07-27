@@ -95,6 +95,8 @@ public class SpagoBICellWrapper implements Cell {
 		if (o instanceof Number) {
 			Number number = (Number) o;
 			return number.doubleValue();
+		} else if ( o == null){
+			return 0;
 		}
 		throw new OlapException("not a number");
 	}
