@@ -39,9 +39,24 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   $scope.sidenavOpened 			= false;
   $scope.sidenavButtonOffset 	= 0;
   $scope.infoText				= null;
-  $scope.showInfo				= false;
-  
+  $scope.showInfo				= false;  
   $scope.cursorX, $scope.cursorY;
+  
+  //togggle panel sections
+  $scope.accordianData = [
+              {
+                  "heading" : "HOLDEN",
+                  "content" : "GM Holden Ltd, commonly known as Holden, is an Australian automaker that operates in Australasia and is headquartered in Port Melbourne, Victoria. The company was founded in 1856 as a saddlery manufacturer in South Australia."
+              },
+              {
+                  "heading" : "FORD",
+                  "content" : "The Ford Motor Company (commonly referred to as simply Ford) is an American multinational automaker headquartered in Dearborn, Michigan, a suburb of Detroit. It was founded by Henry Ford and incorporated on June 16, 1903."
+              },
+              {
+                  "heading" : "TOYOTA",
+                  "content" : "Toyota Motor Corporation is a Japanese automotive manufacturer which was founded by Kiichiro Toyoda in 1937 as a spinoff from his father's company Toyota Industries, which is currently headquartered in Toyota, Aichi Prefecture, Japan."
+              }
+          ];
 	
   
   //stack that contains the drill path elements
@@ -54,7 +69,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 
   };
   
-  //Go back to the previous level
+  //Goes back to the previous level
   $scope.goToPreviousLevel = function(){
 	  $scope.currentLevel = $scope.currentLevel - 1;
 	  
@@ -221,7 +236,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   };
 	
  /**
- * Hide the tooltip div
+ * Hides the tooltip div
  */
   $scope.hideTooltip = function(){
 	  var domTooltip = document.getElementById("svgTooltip");
@@ -252,7 +267,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   };
 
   /**
-   * Retrieve the SVG element from the specified container
+   * Retrieves the SVG element from the specified container
    */
   $scope.getSVG = function(containerId){
 	  var svgdoc = null;
@@ -282,7 +297,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   }
   
   /**
-   * Get the info's content and set specific div
+   * Gets the info's content and set specific div
    */
   $scope.getInfoText = function(){
 	  var svgwin = $scope.getSVG('svgContainer');
@@ -291,7 +306,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   }
   
   /**
-  * Change the selected measure and apply the color visualization
+  * Changes the selected measure and apply the color visualization
   * */  
   $scope.changeSelectedMeasure =  function(columnId,description)  {
 	  var svgwin = $scope.getSVG('svgContainer');
@@ -301,7 +316,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 
   }
   /**
-   * Show or hide a specific layer 
+   * Shows or hides a specific layer 
    * */  
   $scope.changeSelectedLayer =  function(layerName, showToggle)  {
 	  var svgwin = $scope.getSVG('svgContainer');
@@ -319,7 +334,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   }
   
   /**
-   * Manage zoom (max 200%)
+   * Manages zoom (max 200%)
    * */
   $scope.zoom = function(type, evt){
 	  var svgobj = $scope.getSVG('svgContainer'); 	//svg element
