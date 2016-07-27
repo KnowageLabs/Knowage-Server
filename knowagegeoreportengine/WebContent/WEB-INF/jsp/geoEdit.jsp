@@ -179,6 +179,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</angular-table>	
 	</md-whiteframe>
 	</expander-box>
+	<!-- DATASET FILTERS  -->
+	<expander-box id="datasetFilters" color="white" ng-if="isDatasetChosen" expanded="false" title="translate.load('gisengine.designer.dataset.filters')">
+	<md-whiteframe class="md-whiteframe-4dp layout-padding " flex layout layout-margin style ="height: 40%;" > 
+	    <angular-table flex  
+		id='indicatorsTable' ng-model="datasetFilters"
+		columns='[{"label":"Name","name":"dsFilterNameView","hideTooltip":true},{"label":"Label","name":"dsFilterLabel","hideTooltip":true,"editable":true}]'
+		columns-search='["dsFilterName","dsFilterLabel"]' show-search-bar=true
+		scope-functions='tableFunctionDatasetFilters' speed-menu-option='dsFiltersSpeedMenu'
+		allow-edit="true"
+		>
+		<queue-table>
+			<div layout="row"> 
+				<span flex></span>
+				<md-button ng-click="scopeFunctions.addDatasetFilter()">{{scopeFunctions.translate.load('gisengine.designer.dataset.dsfilters.add')}}</md-button>
+			</div>
+		</queue-table> 
+		</angular-table>	
+	</md-whiteframe>
+	</expander-box>
+	
  </md-whiteframe>
 </body>
 </html>

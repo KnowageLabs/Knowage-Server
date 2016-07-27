@@ -61,6 +61,10 @@
 		// indicators
 		$scope.datasetIndicators = [];
 		$scope.measureFields = [];
+		
+		//dataaset filters
+		$scope.datasetFilters=[];
+		$scope.attributeFields=[];
        
 		// if there is no template at all
 		$scope.editDisabled = $scope.template.mapName==undefined; 
@@ -107,6 +111,7 @@
 			$scope.selectedDriverParamteres = [];
 			$scope.datasetJoinColumns = [];
 			$scope.datasetIndicators = [];
+			$scope.datasetFilters=[];
 	
 		}
 		
@@ -161,6 +166,7 @@
 		$scope.saveTemplate = function() {
 			console.log("IN save template");
 			var template = $scope.buildTemplate();
+			console.log(template);
 			if (template.error) {
 				
 				sbiModule_messaging.showWarningMessage(template.error,sbiModule_translate.load('gisengine.designer.tempate.error'));
@@ -381,9 +387,12 @@
 			for (var i = 0; i < $scope.datasetFields.length; i++) {
 				if ($scope.datasetFields[i].nature === "measure") {
 					$scope.measureFields.push($scope.datasetFields[i]);
+				}else{
+					$scope.attributeFields.push($scope.datasetFields[i]);
 				}
 			}
 		}
+		
 
 		if ($scope.isDatasetChosen) {
 			$scope.loadDatasetColumns($scope.selectedDatasetLabel);
@@ -477,7 +486,42 @@
 				$scope.datasetIndicators.splice(index, 1);
 			}
 		}
+		
+		// DATASET FILTERS
+		
+		$scope.tableFunctionDatasetFilters = {
+				translate : sbiModule_translate,
+				datasetAttributeStore : $scope.attributeFields
+			};
+		
+		$scope.tableFunctionDatasetFilters.addDatasetFilter = function() {
+			//console.log($scope.tableFunctionIndicator.datasetMeasuresStore);
+			var newRow = {
+				dsFilterName : '',
+				dsFilterLabel : '',
+				dsFilterNameView : '<md-select ng-model=row.dsFilterName class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetAttributeStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
+				//indicatorLabelView : '<md-input-container class="md-block"><label>indicator label</label><input type="text" ng-model="row.indicatorLabel"></md-input-container>'
+			};
 
+			$scope.datasetFilters.push(newRow);
+
+		}
+		
+		$scope.dsFiltersSpeedMenu = [ {
+			label : 'remove',
+			icon : 'fa fa-trash',
+			action : function(item) {
+				$scope.removeDsFilterFromSelected(item);
+			}
+		} ];
+		
+		$scope.removeDsFilterFromSelected = function(item) {
+			var index = $scope.datasetFilters.indexOf(item);
+			if (index > -1) {
+				$scope.datasetFilters.splice(index, 1);
+			}
+		}
+		
 		$scope.buildTemplate= function() {
 			var template ={};
 			angular.copy($scope.template,template);
@@ -522,26 +566,21 @@
 					
 				}
 				
-				if($scope.datasetIndicators.length==0){
-					template.error = sbiModule_translate
-					.load('gisengine.designer.tempate.noIndicators');
-					return template;
-				}else{
-					template.indicators=[];
-					for (var i = 0; i < $scope.datasetIndicators.length; i++) {
-						if($scope.datasetIndicators[i].indicatorName != '' && $scope.datasetIndicators[i].indicatorLabel != ''){
-						var indicator={};
-						indicator.name=$scope.datasetIndicators[i].indicatorName;
-						indicator.label=$scope.datasetIndicators[i].indicatorLabel;
-						template.indicators.push(indicator);
+				
+					if($scope.datasetFilters.length > 0){
+					template.filters=[];
+					for (var i = 0; i < $scope.datasetFilters.length; i++) {
+						if($scope.datasetFilters[i].dsFilterName != '' && $scope.datasetFilters[i].dsFilterLabel != ''){
+						var filter={};
+						filter.name=$scope.datasetFilters[i].dsFilterName;
+						filter.label=$scope.datasetFilters[i].dsFilterLabel;
+						template.filters.push(filter);
 						}
-						if(template.indicators.length==0){
-							template.error = sbiModule_translate
-							.load('gisengine.designer.tempate.noIndicators');
-							return template;
-						}
+						
 					}
 				}
+				
+				
 				
 				
 
@@ -585,6 +624,7 @@
 			}
 			//initializeDatasetJoinColumns();
 			initializeIndicators();
+			initilizeDatasetFilters();
 			//initializeLayerFilters();
 			}
 
@@ -667,6 +707,22 @@
 					
 
 					$scope.datasetIndicators.push(newRow);
+			}
+		}
+		}
+		
+		function initilizeDatasetFilters(){
+			if($scope.template.filters){
+				for (var i = 0; i < $scope.template.filters.length; i++) {
+					var newRow = {
+							dsFilterName : $scope.template.filters[i].name,
+							dsFilterLabel :$scope.template.filters[i].label,
+							dsFilterNameView : '<md-select ng-model=row.dsFilterName class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetAttributeStore" value="{{col.id}}">{{col.id}}</md-option></md-select>',
+						//	indicatorLabelView : '<md-input-container class="md-block"><label>indicator label</label><input type="text" ng-model="row.indicatorLabel"></md-input-container>'						
+					};
+					
+
+					$scope.datasetFilters.push(newRow);
 			}
 		}
 		}
