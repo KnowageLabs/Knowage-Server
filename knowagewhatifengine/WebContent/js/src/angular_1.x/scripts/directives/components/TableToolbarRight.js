@@ -358,19 +358,24 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  }
 	  
 	  checkLock = function(s){
-		  if(s=="locked_by_user"){
+		  
+		  if($scope.modelConfig.whatIfScenario==false){
+			  $scope.lockTooltip = "";
+			  $scope.wiMessageNeeded = false;
+		  }
+		  else if(s=="locked_by_user"){
 			  $scope.lockerClass="unlock-icon"; 
 			  $scope.lockTooltip = sbiModule_translate.load('sbi.olap.toolbar.unlock');
 			  $scope.wiMessageNeeded = false;
 		  }
-		  if(s=="locked_by_other"){
+		  else if(s=="locked_by_other"){
 			  $scope.lockerClass="lock-other-icon";
 			  $scope.lockTooltip = sbiModule_translate.load('sbi.olap.toolbar.lock_other');
 			  $scope.lockTooltip += " "+locker;
 			  $scope.wiMsg = sbiModule_translate.load('sbi.olap.toolbar.lock_other') +" "+locker;
 			  $scope.wiMessageNeeded = true;
 		  }
-		  if(s=="unlocked"){
+		  else if(s=="unlocked"){
 			  $scope.lockerClass="lock-icon";
 			  $scope.lockTooltip = sbiModule_translate.load('sbi.olap.toolbar.lock');
 			  $scope.wiMsg = "Workflow finished";
@@ -378,7 +383,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  }
 	  };
 	  
-	  checkLock(status);
+	 
 	  
 	  function lockUnlock(type, id){
 		  sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath );

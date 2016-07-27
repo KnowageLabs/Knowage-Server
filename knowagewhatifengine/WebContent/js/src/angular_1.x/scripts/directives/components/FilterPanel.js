@@ -548,6 +548,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			$scope.mdxQuery = "";
 			
 			$scope.sendModelConfig($scope.modelConfig);
+			 checkLock(status);
 			if($scope.modelConfig.whatIfScenario)
 				$scope.getVersions();
 			axisSizeSetup();
