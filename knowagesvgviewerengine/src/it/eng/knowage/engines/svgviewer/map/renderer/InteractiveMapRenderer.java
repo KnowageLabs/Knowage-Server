@@ -430,43 +430,59 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		dataStoreMeta = dataStore.getMetaData();
 		Assert.assertNotNull(dataStore, "DataStoreMeta cannot be null");
 
-		// List elements (one for each specific columnId)
-		List listCrossNav = dataStoreMeta.findFieldMeta("ROLE", "CROSSNAVLINK");
-		List listDrillNav = dataStoreMeta.findFieldMeta("ROLE", "DRILLID");
-		List listTooltip = dataStoreMeta.findFieldMeta("ROLE", "TOOLTIP");
-		List listInfo = dataStoreMeta.findFieldMeta("ROLE", "INFO");
+		try {
+			// List elements (one for each specific columnId)
+			List listCrossNav = dataStoreMeta.findFieldMeta("ROLE", "CROSSNAVLINK");
+			List listDrillNav = dataStoreMeta.findFieldMeta("ROLE", "DRILLID");
+			List listTooltip = dataStoreMeta.findFieldMeta("ROLE", "TOOLTIP");
+			List listInfo = dataStoreMeta.findFieldMeta("ROLE", "INFO");
 
-		Element targetLayer = targetMap.getElementById(dataMart.getTargetFeatureName());
+			Element targetLayer = targetMap.getElementById(dataMart.getTargetFeatureName());
+			if (targetLayer == null) {
+				logger.error("Layer [" + dataMart.getTargetFeatureName() + "] doesn't exist for Hierarchy [" + datamartProvider.getSelectedHierarchyName()
+						+ "], MemberName [" + datamartProvider.getSelectedMemberName() + "] and Level [" + datamartProvider.getSelectedLevel()
+						+ "]. Please, check the template.");
+				String description = "Layer [" + dataMart.getTargetFeatureName() + "] doesn't exist for Hierarchy ["
+						+ datamartProvider.getSelectedHierarchyName() + "], MemberName [" + datamartProvider.getSelectedMemberName() + "] and Level ["
+						+ datamartProvider.getSelectedLevel() + "]. Please, check the template.";
+				SvgViewerEngineRuntimeException svgException;
+				svgException = new SvgViewerEngineRuntimeException("Layer [" + dataMart.getTargetFeatureName() + "] doesn't exist for Hierarchy ["
+						+ datamartProvider.getSelectedHierarchyName() + "], MemberName [" + datamartProvider.getSelectedMemberName() + "] and Level ["
+						+ datamartProvider.getSelectedLevel() + "]. Please, check the template.");
+				svgException.setDescription(description);
+				throw svgException;
+			}
 
-		NodeList nodeList = targetLayer.getChildNodes();
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			SVGElement child = null;
-			String column_id = null;
-			Node childNode = nodeList.item(i);
-			if (childNode instanceof Element) {
-				child = (SVGElement) childNode;
-				String childId = child.getId();
-				column_id = childId.replaceAll(dataMart.getTargetFeatureName() + "_", "");
+			NodeList nodeList = targetLayer.getChildNodes();
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				SVGElement child = null;
+				String column_id = null;
+				Node childNode = nodeList.item(i);
+				if (childNode instanceof Element) {
+					child = (SVGElement) childNode;
+					String childId = child.getId();
+					column_id = childId.replaceAll(dataMart.getTargetFeatureName() + "_", "");
 
-				IRecord record = dataStore.getRecordByID(column_id);
-				if (record == null) {
-					logger.warn("No data available for feature [" + column_id + "]");
-					continue;
-				}
+					IRecord record = dataStore.getRecordByID(column_id);
+					if (record == null) {
+						logger.warn("No data available for feature [" + column_id + "]");
+						continue;
+					}
 
-				// defines base list of element to decorate
-				mapElements = new HashMap();
+					// defines base list of element to decorate
+					mapElements = new HashMap();
+					mapElements.put("column_id", column_id);
 
-				// 1. addData details as attributes
-				addData(dataStore, child, record);
+					// 1. addData details as attributes
+					addData(dataStore, child, record);
+					mapElements.put("path", child);
 
-				// 2. add CROSS link ONLY if it's required by the template (at the moment is mutual exclusive with the drill link)
-				boolean useCrossNav = false;
-				if (datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName()).getEnableCross()) {
-					useCrossNav = true;
-					logger.debug("Required cross navigation for member [" + datamartProvider.getSelectedHierarchyName() + "]. "
-							+ " Checking presence of cross navigation definition...");
-					try {
+					// 2. add CROSS link ONLY if it's required by the template (at the moment is mutual exclusive with the drill link)
+					boolean useCrossNav = false;
+					if (datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName()).getEnableCross()) {
+						useCrossNav = true;
+						logger.debug("Required cross navigation for member [" + datamartProvider.getSelectedHierarchyName() + "]. "
+								+ " Checking presence of cross navigation definition...");
 						boolean isCrossable = DAOFactory.getCrossNavigationDAO().documentIsCrossable((String) this.getEnv().get("DOCUMENT_LABEL"));
 						if (isCrossable) {
 							String crossLink = addCrossLink(listCrossNav, record, dataStoreMeta);
@@ -474,126 +490,122 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 						} else {
 							logger.debug("... The cross navigation for the document isn't present." + " Please, check its definition through the GUI.");
 						}
+					}
 
-					} catch (Throwable t) {
-						SvgViewerEngineRuntimeException svgException;
-						logger.error("Impossible to create a temporary file", t);
-						String description = "Impossible to create a temporary file";
-						svgException = new SvgViewerEngineRuntimeException("Impossible to render map", t);
-						svgException.setDescription(description);
-						throw svgException;
+					// 3. add DRILL links ONLY if it isn't the last level
+					int intSelectedLevel = (datamartProvider.getSelectedLevel() == null) ? 1 : Integer.parseInt(datamartProvider.getSelectedLevel());
+					int totalLevels = datamartProvider.getHierarchyMembersNames().size();
+					if (!useCrossNav && (intSelectedLevel < totalLevels)) {
+						String drillLink = addLink(listCrossNav, record, dataStoreMeta);
+						String drillIdValue = addLinkDrillId(listDrillNav, record, dataStoreMeta);
+						mapElements.put("drill_id", drillIdValue);
+						mapElements.put("link_drill", drillLink);
+					}
+					// 4. add Tooltip
+					String tooltip = addTooltip(listTooltip, record, dataStoreMeta);
+					mapElements.put("tooltip", tooltip);
+					lstElements.add(mapElements);
+				}
+			}
+
+			// adds href links (element and event)
+			for (int j = 0; j < lstElements.size(); j++) {
+				Map tmpMap = (Map) lstElements.get(j);
+				Element featureElement = (Element) tmpMap.get("path");
+				String elementId = featureElement.getAttribute("id");
+
+				String linkType = null;
+				if (tmpMap.get("link_cross") != null) {
+					linkType = "cross";
+				} else if (tmpMap.get("link_drill") != null) {
+					linkType = "drill";
+				}
+
+				String linkUrl = (linkType != null && linkType.equals("cross")) ? (String) tmpMap.get("link_cross") : (String) tmpMap.get("link_drill");
+				if (linkUrl != null) {
+					String drillId = null;
+					if (tmpMap.get("drill_id") != null) {
+						drillId = (String) tmpMap.get("drill_id");
+					}
+					addHRefLinks(targetMap, featureElement, elementId, drillId, linkUrl, linkType);
+				}
+				// add tooltips events
+				String tooltip = null;
+				if (tmpMap.get("tooltip") != null) {
+					tooltip = (String) tmpMap.get("tooltip");
+				}
+				addTooltipEvents(featureElement, tooltip, elementId);
+
+				// append element to the targer svg
+				targetLayer.appendChild(featureElement);
+				Node lf = targetMap.createTextNode("\n");
+				targetLayer.appendChild(lf);
+			}
+
+			SVGMapMerger.mergeMap(targetMap, masterMap, null, "targetMap");
+
+			// decorate from datastore: labels and visibility
+			List listLabel = dataStoreMeta.findFieldMeta("ROLE", "LABEL");
+			// find the geoID field
+			List listID = dataStoreMeta.findFieldMeta("ROLE", "GEOID");
+			// find field with visibility values
+			List listVis = dataStoreMeta.findFieldMeta("ROLE", "VISIBILITY");
+
+			if (listLabel.size() == 0 && listID.size() == 0 && listVis.size() == 0) {
+				return;
+			}
+			IFieldMetaData labelsIdMetaData = (listLabel.size() > 0) ? (IFieldMetaData) listLabel.get(0) : null;
+			IFieldMetaData geoIdMetaData = (listID.size() > 0) ? (IFieldMetaData) listID.get(0) : null;
+			IFieldMetaData visibilityIdMetaData = (listVis.size() > 0) ? (IFieldMetaData) listVis.get(0) : null;
+
+			for (int i = 0; i < dataStore.getRecordsCount(); i++) {
+				IRecord aRecord = dataStore.getRecordAt(i);
+				List<IField> fields = aRecord.getFields();
+
+				IField field = aRecord.getFieldAt(dataStoreMeta.getIdFieldIndex());
+				String id = (String) field.getValue();
+
+				// 5. add LABELS
+				String centroideId = "centroidi_" + id;
+				Element centroide = masterMap.getElementById(centroideId);
+				if (centroide != null && labelsIdMetaData != null) {
+					IField labelField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(labelsIdMetaData.getName()));
+					Element labelGroup = null;
+					if (fields.size() > 0) {
+						labelGroup = masterMap.createElement("g");
+						addLabels(masterMap, centroide, labelGroup, aRecord, labelField);
+					}
+				}
+				// 6. manage visibility
+				if (geoIdMetaData != null && visibilityIdMetaData != null) {
+					IField geoIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(geoIdMetaData.getName()));
+					IField visibilityIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(visibilityIdMetaData.getName()));
+
+					if (geoIdField != null && visibilityIdField != null) {
+						showElements(masterMap, geoIdField, visibilityIdField);
 					}
 				}
 
-				// 3. add DRILL links ONLY if it isn't the last level
-				int intSelectedLevel = (datamartProvider.getSelectedLevel() == null) ? 1 : Integer.parseInt(datamartProvider.getSelectedLevel());
-				int totalLevels = datamartProvider.getHierarchyMembersNames().size();
-				if (!useCrossNav && (intSelectedLevel < totalLevels)) {
-					String drillLink = addLink(listCrossNav, record, dataStoreMeta);
-					String drillIdValue = addLinkDrillId(listDrillNav, record, dataStoreMeta);
-					mapElements.put("drill_id", drillIdValue);
-					mapElements.put("link_drill", drillLink);
-				}
-				// 4. add Tooltip
-				String tooltip = addTooltip(listTooltip, record, dataStoreMeta);
-				mapElements.put("tooltip", tooltip);
-
-				mapElements.put("column_id", column_id);
-				mapElements.put("path", child);
-				lstElements.add(mapElements);
-			}
-		}
-
-		// adds href links (element and event)
-		for (int j = 0; j < lstElements.size(); j++) {
-			Map tmpMap = (Map) lstElements.get(j);
-			Element featureElement = (Element) tmpMap.get("path");
-			String elementId = featureElement.getAttribute("id");
-
-			String linkType = null;
-			if (tmpMap.get("link_cross") != null) {
-				linkType = "cross";
-			} else if (tmpMap.get("link_drill") != null) {
-				linkType = "drill";
-			}
-
-			String linkUrl = (linkType != null && linkType.equals("cross")) ? (String) tmpMap.get("link_cross") : (String) tmpMap.get("link_drill");
-			if (linkUrl != null) {
-				String drillId = null;
-				if (tmpMap.get("drill_id") != null) {
-					drillId = (String) tmpMap.get("drill_id");
-				}
-				addHRefLinks(targetMap, featureElement, elementId, drillId, linkUrl, linkType);
-			}
-			// add tooltips events
-			String tooltip = null;
-			if (tmpMap.get("tooltip") != null) {
-				tooltip = (String) tmpMap.get("tooltip");
-			}
-			addTooltipEvents(featureElement, tooltip, elementId);
-
-			// append element to the targer svg
-			targetLayer.appendChild(featureElement);
-			Node lf = targetMap.createTextNode("\n");
-			targetLayer.appendChild(lf);
-		}
-
-		SVGMapMerger.mergeMap(targetMap, masterMap, null, "targetMap");
-
-		// decorate from datastore: labels and visibility
-		List listLabel = dataStoreMeta.findFieldMeta("ROLE", "LABEL");
-		// find the geoID field
-		List listID = dataStoreMeta.findFieldMeta("ROLE", "GEOID");
-		// find field with visibility values
-		List listVis = dataStoreMeta.findFieldMeta("ROLE", "VISIBILITY");
-
-		if (listLabel.size() == 0 && listID.size() == 0 && listVis.size() == 0) {
-			return;
-		}
-		IFieldMetaData labelsIdMetaData = (listLabel.size() > 0) ? (IFieldMetaData) listLabel.get(0) : null;
-		IFieldMetaData geoIdMetaData = (listID.size() > 0) ? (IFieldMetaData) listID.get(0) : null;
-		IFieldMetaData visibilityIdMetaData = (listVis.size() > 0) ? (IFieldMetaData) listVis.get(0) : null;
-
-		for (int i = 0; i < dataStore.getRecordsCount(); i++) {
-			IRecord aRecord = dataStore.getRecordAt(i);
-			List<IField> fields = aRecord.getFields();
-
-			IField field = aRecord.getFieldAt(dataStoreMeta.getIdFieldIndex());
-			String id = (String) field.getValue();
-
-			// 5. add LABELS
-			String centroideId = "centroidi_" + id;
-			Element centroide = masterMap.getElementById(centroideId);
-			if (centroide != null && labelsIdMetaData != null) {
-				IField labelField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(labelsIdMetaData.getName()));
-				Element labelGroup = null;
-				if (fields.size() > 0) {
-					labelGroup = masterMap.createElement("g");
-					addLabels(masterMap, centroide, labelGroup, aRecord, labelField);
+				// 7. add INFO content only one time (if it's configurated)
+				String infoText = null;
+				if (infoText == null) {
+					infoText = addInfoText(listInfo, aRecord, dataStoreMeta);
+					if (infoText != null) {
+						logger.debug("infoText is [" + infoText + "]");
+						datamartProvider.setSelectedMemberInfo(infoText);
+					} else {
+						logger.debug("Not Info text found");
+						datamartProvider.setSelectedMemberInfo(null);
+					}
 				}
 			}
-			// 6. manage visibility
-			if (geoIdMetaData != null && visibilityIdMetaData != null) {
-				IField geoIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(geoIdMetaData.getName()));
-				IField visibilityIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(visibilityIdMetaData.getName()));
-
-				if (geoIdField != null && visibilityIdField != null) {
-					showElements(masterMap, geoIdField, visibilityIdField);
-				}
-			}
-
-			// 7. add INFO content only one time (if it's configurated)
-			String infoText = null;
-			if (infoText == null) {
-				infoText = addInfoText(listInfo, aRecord, dataStoreMeta);
-				if (infoText != null) {
-					logger.debug("infoText is [" + infoText + "]");
-					datamartProvider.setSelectedMemberInfo(infoText);
-				} else {
-					logger.debug("Not Info text found");
-					datamartProvider.setSelectedMemberInfo(null);
-				}
-			}
+		} catch (Throwable t) {
+			SvgViewerEngineRuntimeException svgException;
+			logger.error("Impossible to decorate target SVG.", t);
+			String description = "Impossible to decorate target SVG.";
+			svgException = new SvgViewerEngineRuntimeException("Impossible to decorate target SVG.", t);
+			svgException.setDescription(description);
+			throw svgException;
 		}
 	}
 

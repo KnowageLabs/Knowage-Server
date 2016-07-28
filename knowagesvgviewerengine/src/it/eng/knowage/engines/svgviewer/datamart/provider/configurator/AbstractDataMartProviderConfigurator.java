@@ -78,7 +78,7 @@ public class AbstractDataMartProviderConfigurator {
 			String selectedMemberName = null;
 
 			selectedHierarchyName = getSelectedHierarchyName(confSB);
-			hierarchyMembers = getHierarchyMembers(confSB);
+			hierarchyMembers = getHierarchyMembers(confSB, abstractDatasetProvider.getEnv());
 			selectedMemberName = getDefaultMemberName(hierarchyMembers);
 			List membersLst = getHierarchyMembersList(confSB);
 
@@ -249,13 +249,14 @@ public class AbstractDataMartProviderConfigurator {
 					}
 					logger.debug("Column  [" + i + "] parsed succesfully");
 				} catch (Throwable t) {
+					logger.error("An error occurred while parsing column [" + columnSB + "]", t);
 					throw new SvgViewerEngineException("An error occurred while parsing column [" + columnSB + "]", t);
 				}
 			}
 
 		} catch (Throwable t) {
+			logger.error("An error occurred while parsing metadata [" + metadataSB + "]", t);
 			SvgViewerEngineRuntimeException e = new SvgViewerEngineRuntimeException("An error occurred while parsing metadata [" + metadataSB + "]", t);
-			e.addHint("Download document template and fix the problem that have coused the syntax/semantic error");
 			throw e;
 		} finally {
 			logger.debug("OUT");
@@ -272,7 +273,7 @@ public class AbstractDataMartProviderConfigurator {
 	 *
 	 * @return the selected hierarchy name
 	 */
-	private static Map<String, HierarchyMember> getHierarchyMembers(SourceBean confSB) {
+	private static Map<String, HierarchyMember> getHierarchyMembers(SourceBean confSB, Map env) {
 
 		Map<String, HierarchyMember> toReturn = new HashMap<String, HierarchyMember>();
 		SourceBean hierarchySB = (SourceBean) confSB.getAttribute("HIERARCHY");
@@ -288,18 +289,16 @@ public class AbstractDataMartProviderConfigurator {
 					logger.debug("Parsing member  [" + i + "]");
 					memberSB = (SourceBean) members.get(i);
 
-					String hierarchy = (String) hierarchySB.getAttribute("name");
+					String hierarchy = getMemberProperty("name", hierarchySB, env);
 					logger.debug("Member [" + i + "] hierarchy [" + hierarchy + "]");
-					String name = (String) memberSB.getAttribute("name");
+					String name = getMemberProperty("name", memberSB, env);
 					logger.debug("Member [" + i + "] name [" + name + "]");
-					String dsMeasure = (String) memberSB.getAttribute("measure_dataset");
+					String dsMeasure = getMemberProperty("measure_dataset", memberSB, env);
 					logger.debug("Member [" + i + "] measure_dataset [" + dsMeasure + "]");
-					String dsConfig = (String) memberSB.getAttribute("config_dataset");
-					logger.debug("Member [" + i + "] config_dataset [" + dsConfig + "]");
-					String level = (String) memberSB.getAttribute("level");
+					String level = getMemberProperty("level", memberSB, env);
 					logger.debug("Member [" + i + "] level [" + level + "]");
-					String enableCross = (memberSB.getAttribute("enableExternalCross") == null) ? "false" : (String) memberSB
-							.getAttribute("enableExternalCross");
+					String enableCross = getMemberProperty("enableExternalCross", memberSB, env);
+					enableCross = (enableCross == null) ? "false" : enableCross;
 					logger.debug("Member [" + i + "] enableExternalCross [" + enableCross + "]");
 
 					Assert.assertNotNull(name, "Attribute [" + SvgViewerEngineConstants.MEMBER_NAME + "] of tag [" + SvgViewerEngineConstants.MEMBER_NAME
@@ -344,6 +343,7 @@ public class AbstractDataMartProviderConfigurator {
 					logger.debug("Member  [" + i + "] parsed succesfully");
 					toReturn.put(name, member);
 				} catch (Throwable t) {
+					logger.error("An error occurred while parsing member [" + memberSB + "]", t);
 					throw new SvgViewerEngineException("An error occurred while parsing member [" + memberSB + "]", t);
 				}
 			}
@@ -356,6 +356,7 @@ public class AbstractDataMartProviderConfigurator {
 				}
 			}
 		} catch (Throwable t) {
+			logger.error("Error while parsing hierarchy members", t);
 			SvgViewerEngineRuntimeException e = new SvgViewerEngineRuntimeException("An error occurred while parsing metadata [" + memberSB + "]", t);
 			e.addHint("Download document template and fix the problem that have coused the syntax/semantic error");
 			throw e;
@@ -437,12 +438,26 @@ public class AbstractDataMartProviderConfigurator {
 			hierarchySB = (SourceBean) confSB.getAttribute("HIERARCHY");
 			return hierarchySB.getAttributeAsList(SvgViewerEngineConstants.MEMBER_TAG);
 		} catch (Throwable t) {
+			logger.error("An error occurred while parsing metadata [" + hierarchySB + "]", t);
 			SvgViewerEngineRuntimeException e = new SvgViewerEngineRuntimeException("An error occurred while parsing metadata [" + hierarchySB + "]", t);
-			e.addHint("Download document template and fix the problem that have coused the syntax/semantic error");
 			throw e;
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private static String getMemberProperty(String prop, SourceBean memberSB, Map env) {
+		String toReturn = null;
+		toReturn = (String) memberSB.getAttribute(prop);
+		// replace the member name with analytical driver value if it's required
+		if (toReturn != null && toReturn.indexOf("$P{") >= 0) {
+			int startPos = toReturn.indexOf("$P{") + 3;
+			int endPos = toReturn.indexOf("}", startPos);
+			String placeholder = toReturn.substring(startPos, endPos);
+			toReturn = (String) env.get(placeholder);
+			logger.debug("Member name value getted from analytical driver [" + placeholder + "] is [" + toReturn + "]");
+		}
+		return toReturn;
 	}
 
 }

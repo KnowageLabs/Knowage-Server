@@ -77,6 +77,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 		IDataSet dataSet;
 
 		dataSet = (IDataSet) getEnv().get(EngineConstants.ENV_DATASET);
+		dataSet.setParamsMap(getEnv());
 
 		// if (dataSet == null) {
 		// JDBCDataSet jdbcDataSet = new JDBCDataSet();
@@ -421,7 +422,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.AbstractDatasetProvider#getDataDetails(java.lang.String)
 	 */
 	@Override

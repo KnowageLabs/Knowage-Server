@@ -77,6 +77,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			return response.build();
 
 		} catch (Exception e) {
+			logger.error("Error while draw svg", e);
 			// return a json with the exception
 			RestExceptionMapper re = new RestExceptionMapper();
 			Response response = re.toResponse((RuntimeException) e);
@@ -108,6 +109,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			return response.build();
 
 		} catch (Exception e) {
+			logger.error("Error while getting measures", e);
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
 		} finally {
 			logger.debug("OUT");
@@ -135,33 +137,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			return response.build();
 
 		} catch (Exception e) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	/**
-	 * Retrieve the additional info from the dataset
-	 *
-	 * @param req
-	 * @return
-	 */
-	@Path("/getInfo")
-	@GET
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getInfo(@QueryParam("level") String level) {
-		logger.debug("IN");
-		try {
-			SourceBean memberSB = getActiveMemberSB(level);
-			SourceBean measuresConfigurationSB = (SourceBean) memberSB.getAttribute("LAYERS");
-
-			Map measures = getLayers(measuresConfigurationSB);
-			ResponseBuilder response = Response.ok(measures);
-
-			return response.build();
-
-		} catch (Exception e) {
+			logger.error("Error while getting layers", e);
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
 		} finally {
 			logger.debug("OUT");
@@ -229,6 +205,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		} catch (Exception e) {
 			// throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
 			// return a json with the exception
+			logger.error("Error while drilling svg ", e);
 			RestExceptionMapper re = new RestExceptionMapper();
 			Response response = re.toResponse((RuntimeException) e);
 			return response;
