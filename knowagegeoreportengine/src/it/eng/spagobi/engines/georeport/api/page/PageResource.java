@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.engines.georeport.api.page;
 
-import it.eng.spagobi.engines.georeport.GeoReportEngine;
-import it.eng.spagobi.engines.georeport.GeoReportEngineInstance;
-import it.eng.spagobi.engines.georeport.api.AbstractChartEngineResource;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -42,6 +35,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.engines.georeport.GeoReportEngine;
+import it.eng.spagobi.engines.georeport.GeoReportEngineInstance;
+import it.eng.spagobi.engines.georeport.api.AbstractChartEngineResource;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+
 @Path("/1.0/pages")
 @ManageAuthorization
 public class PageResource extends AbstractChartEngineResource {
@@ -54,7 +54,7 @@ public class PageResource extends AbstractChartEngineResource {
 	/**
 	 * TODO Tutte le pagine dell'engine
 	 *
-	 * */
+	 */
 	static {
 		pages = new HashMap<String, JSONObject>();
 		urls = new HashMap<String, String>();
@@ -108,8 +108,12 @@ public class PageResource extends AbstractChartEngineResource {
 
 			switch (pageName) {
 			case "execute":
-				engineInstance = GeoReportEngine.createInstance(savedTemplate, getIOManager().getEnv());
-				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				if (savedTemplate == null) {
+					dispatchUrl = "/WEB-INF/jsp/error.jsp";
+				} else {
+					engineInstance = GeoReportEngine.createInstance(savedTemplate, getIOManager().getEnv());
+					getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				}
 				break;
 			case "edit":
 				String saveTemplateForEdit = getIOManager().getTemplateAsString(true);
