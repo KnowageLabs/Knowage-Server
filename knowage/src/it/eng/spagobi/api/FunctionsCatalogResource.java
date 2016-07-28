@@ -18,9 +18,11 @@
 package it.eng.spagobi.api;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputDataset;
@@ -31,6 +33,7 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.CatalogFunction;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.IOException;
@@ -63,7 +66,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String getAllCatalogFunctions() throws IOException {
 		logger.debug("IN");
 
@@ -111,7 +114,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{type}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String getCatalogFunctionsByType(@PathParam("type") String type) throws IOException {
 		logger.debug("IN");
 
@@ -166,7 +169,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@Path("/insertCatalogFunction")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String insertCatalogFunction(String body) throws IOException {
 		logger.debug("IN");
 		ICatalogFunctionDAO catalogFunctionDAO = null;
@@ -182,7 +185,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			String description = jsonObj.getString("description");
 			String language = jsonObj.getString("language");
 			String script = jsonObj.getString("script");
-			String owner = jsonObj.getString("owner");
+			String owner = (String) getUserProfile().getUserUniqueIdentifier();
 			String label = jsonObj.getString("label");
 			String type = jsonObj.getString("type");
 
@@ -249,11 +252,14 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("updateCatalogFunction/{functionId}")
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String updateCatalogFunction(@PathParam("functionId") int functionId, String body) {
-
 		logger.debug("IN");
 		ICatalogFunctionDAO catalogFunctionDAO = null;
+
+		if (!hasPermission(functionId)) {
+			throw new SpagoBIRuntimeException("You are not owner or administrator. Permission denied.");
+		}
 
 		CatalogFunction itemToInsert = new CatalogFunction();
 		JSONObject response = new JSONObject();
@@ -264,7 +270,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			String description = jsonObj.getString("description");
 			String language = jsonObj.getString("language");
 			String script = jsonObj.getString("script");
-			String owner = jsonObj.getString("owner");
+			String owner = (String) getUserProfile().getUserUniqueIdentifier();
 			String label = jsonObj.getString("label");
 			String type = jsonObj.getString("type");
 
@@ -328,9 +334,15 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/deleteFunction/{functionId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String deleteCatalogFunction(@PathParam("functionId") int functionId) {
 		logger.debug("IN");
+
+		if (!hasPermission(functionId)) {
+			throw new SpagoBIRuntimeException("You are not owner or administrator. Permission denied.");
+		}
+
+		// Delete functionalities can be used by administrator and developer
 		JSONObject retObj = new JSONObject();
 		try {
 			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
@@ -422,5 +434,29 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			throw new SpagoBIServiceException("Error while insert catalog function", e);
 		}
 		return ret;
+	}
+
+	private boolean hasPermission(int functionId) {
+		try {
+			UserProfile profile = getUserProfile();
+			if (UserUtilities.hasAdministratorRole(profile)) {
+				return true;
+			} else { // is a developer
+				ICatalogFunctionDAO catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
+				catalogFunctionDAO.setUserProfile(profile);
+				SbiCatalogFunction function = catalogFunctionDAO.getCatalogFunctionById(functionId);
+				if (function == null) {
+					throw new SpagoBIRuntimeException("Impossible to find a function with ID [" + functionId + "]. Cannot update or delete.");
+				} else {
+					String userId = (String) profile.getUserUniqueIdentifier();
+					if (function.getOwner().equals(userId)) {
+						return true;
+					} else
+						return false;
+				}
+			}
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("Error while getting or using the DAO", e);
+		}
 	}
 }

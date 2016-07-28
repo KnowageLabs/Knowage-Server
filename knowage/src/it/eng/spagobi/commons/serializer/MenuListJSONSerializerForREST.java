@@ -422,7 +422,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tempMenuList.put(cacheManagement);
 		}
 
-		if (isAbleTo(SpagoBIConstants.FUNCTIONS_CATALOG, funcs)) {
+		if (isAbleTo(SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, funcs)) {
 			JSONObject functionsCatalog = new JSONObject();
 			functionsCatalog.put(ICON_CLS, "layers");
 			functionsCatalog.put(TOOLTIP, messageBuilder.getMessage("menu.FunctionsCatalog", locale));

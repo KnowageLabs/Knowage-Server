@@ -373,6 +373,7 @@ public class SpagoBIConstants {
 	public static final String PROFILE_ATTRIBUTES_MANAGEMENT = "ProfileAttributeManagement";
 	public static final String DATASOURCE_MANAGEMENT = "DataSourceManagement";
 	public static final String DATASOURCE_READ = "DataSourceRead";
+	public static final String DATASOURCE_BIG_DATA = "DataSourceBigData";
 	public static final String DISTRIBUTIONLIST_MANAGEMENT = "DistributionListManagement";
 	public static final String DISTRIBUTIONLIST_USER = "DistributionListUser";
 	public static final String DOCUMENT_DELETE_MANAGEMENT = "DocumentDeleteManagement";
@@ -459,7 +460,7 @@ public class SpagoBIConstants {
 	public static final String DROP_TEMPORARY_TABLE_ON_EXIT = "SBI_DROP_TEMPORARY_TABLE_ON_EXIT";
 
 	public static final String SOCIAL_ANALYSIS = "knowagesocialanalysis";
-	
+
 	public static final String CHART_TYPE_CODE = "CHART";
 	public static final String COCKPIT_ENGINE_NAME = "Cockpit Engine";
 	public static final String COCKPIT_ENGINE_LABEL = "knowagecockpitengine";
@@ -547,7 +548,8 @@ public class SpagoBIConstants {
 	public static final String META_MODEL_LIFECYCLE_MANAGEMENT = "MetaModelLifecycleManagement";
 
 	public static final String SHARED_DEVELOPMENT = "SharedDevelopment";
-	public static final String FUNCTIONS_CATALOG = "FunctionsCatalog";
+	public static final String FUNCTIONS_CATALOG_MANAGEMENT = "FunctionsCatalogManagement";
+	public static final String FUNCTIONS_CATALOG_USAGE = "FunctionsCatalogUsage";
 
 	public static final String TEMPORAL_DIMENSION = "TemporalDimension";
 	public static String CONFIG_STORE_TO_HDFS = "SPAGOBI.GENERIC_CONFIGURATION.DATASET_FILE_HDFS";
@@ -565,7 +567,5 @@ public class SpagoBIConstants {
 	public static final String DATE_RANGE_TYPE = "DATE_RANGE";
 	public static final String DATE_RANGE_OPTIONS_KEY = "options";
 	public static final String PREDEFINED_GROOVY_SCRIPT_FILE_NAME = "predefinedGroovyScript.groovy";
-
-	public static final String LICENSE = "License";
 
 }

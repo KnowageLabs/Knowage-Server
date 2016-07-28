@@ -235,7 +235,7 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 	@GET
 	@Path("/executeFunction/{organization}/{functionLabel}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG })
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String executeCatalogFunctionByLabel(@PathParam("functionLabel") String functionLabel, @PathParam("organization") String organization,
 			@Context HttpServletResponse response) throws IOException {
 
