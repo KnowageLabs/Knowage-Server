@@ -27,6 +27,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -58,6 +59,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -410,12 +413,75 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		template.setName("Template.xml");
 		template.setContent(xml.getBytes());
 		template.setDimension(Long.toString(xml.getBytes().length / 1000) + " KByte");
+
+		ArrayList<String> categoriesNames = new ArrayList<String>();
+
+		/**
+		 * Prepare categories that the SUNBURST chart document has in order to provide custom-made category output parameters for the cross-navigation.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		try {
+
+			JSONObject obj = new JSONObject(Xml.xml2json(xml));
+
+			Iterator keys = obj.keys();
+
+			JSONArray jaCategories = new JSONArray();
+
+			while (keys.hasNext()) {
+
+				String key = (String) keys.next();
+
+				if (key.equals("CHART") || key.equals("VALUES")) {
+
+					obj = (JSONObject) obj.opt(key);
+					keys = obj.keys();
+
+					// Use this while loop only if the chart type of the document is SUNBURST. (danristo)
+					if (key.equals("CHART") && !obj.opt("type").toString().equals("SUNBURST"))
+						break;
+				}
+
+				else if (key.equals("CATEGORY")) {
+
+					jaCategories = obj.optJSONArray(key);
+
+					for (int i = 0; i < jaCategories.length(); i++) {
+						JSONObject joT = (JSONObject) jaCategories.get(i);
+						categoriesNames.add((String) joT.opt("column"));
+					}
+
+				}
+
+			}
+
+			logger.info("Category names for the SUNBURST document are: " + categoriesNames);
+
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (TransformerFactoryConfigurationError e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (TransformerException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 		try {
 			IBIObjectDAO biObjectDao;
 			BIObject document;
 			biObjectDao = DAOFactory.getBIObjectDAO();
 			document = biObjectDao.loadBIObjectById(new Integer(docLabel));
-			documentManager.saveDocument(document, template);
+
+			if (categoriesNames.isEmpty()) {
+				documentManager.saveDocument(document, template);
+			} 
+			// Only in the case of the SUNBURST document chart type. (danristo)
+			else {
+				documentManager.saveDocument(document, template, categoriesNames);
+			}
+
 		} catch (EMFUserError e) {
 			logger.error("Error saving JSON Template to XML...", e);
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);

@@ -1330,10 +1330,10 @@ function renderSunburst(jsonObject,locale)
 	};
 	
 	/**
-	 * Cockpit handler - SUNBURST
+	 * Cockpit and chart cross-navigation handler - SUNBURST
 	 */
 	function clickFunction(d){
-		console.log(jsonObject.crossNavigation.crossNavigationDocumentParams);
+		
 		if(jsonObject.chart.isCockpit==true){
 			if(jsonObject.chart.outcomingEventsEnabled){
 //				paramethers=crossNavigationParams(d);
@@ -1358,9 +1358,44 @@ function renderSunburst(jsonObject,locale)
 				//categoryName:paramethers.categoryName,
 				stringParameters:paramethers
 			};
-			console.log(paramethers);
+			
 			var chartType="SUNBURST";
 			handleCrossNavigationTo(navigParams,chartType);
+		}
+		/**
+		 * Implementation for the new Cross Navigation Definition interface.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		else {
+			
+			/**
+			 * This variable will contain all the output parameters that the SUNBURST should possess: all category-custom named ones and the one
+			 * for the series item. Both will contain paired properties that represend the output parameter value and name, for both categories
+			 * and series item.
+			 */
+			var outputParams = {};
+			
+			/**
+			 * Collect all categories covered by the mouse (after clicking on some segment of the SUNBURST chart), so all those beginning from the
+			 * lowest layer to the one on which the user clicked. These categories will be taken as output parameter names and their values.
+			 */
+			var categoriesCovered = cockpitSelectionParams(d);			
+			
+			// Customize output parameter category names and values for the SUNBURST.
+			for (cat in categoriesCovered) {
+				outputParams[cat + "_NAME"] = cat;
+				outputParams[cat + "_VALUE"] = categoriesCovered[cat];
+			}
+			
+			// Specify output parameters series item name and value for the SUNBURST.
+			outputParams["SERIE_NAME"] = jsonObject.series.name;
+			outputParams["SERIE_VALUE"] = d.value;
+			
+			console.info("SUNBURST chart output parameters:", outputParams);
+						
+			// Calling the function for providing the cross-navigation from this chart to the target one (function is defined inside the d3js244Initializer.jsp).
+			handleCrossNavigationTo(outputParams,"SUNBURST");
+			
 		}
 		
 		
@@ -1380,19 +1415,20 @@ function renderSunburst(jsonObject,locale)
 		var categoryParams= cockpitSelectionParams(d);
 		
 		for(i=0;i<docParams.length;i++){
-				   p=docParams[i];
+			
+			   p=docParams[i];
+				   
 				for(cat in categoryParams){
 					var paramName= cat + "_NAME";
-					console.log(paramName);
+					
 					if(docParams[i].type===paramName){
 						toReturn+= docParams[i].urlName+ "="+cat+"&";
 					}
 					var paramValue=cat+"_VALUE";
-					console.log(paramValue);
+					
 					if(docParams[i].type===paramValue){
 						toReturn+= docParams[i].urlName+ "="+categoryParams[cat]+"&";
 					}
-				
 					
 				}
 				if(p.type==="SERIE_VALUE"){
@@ -1406,8 +1442,6 @@ function renderSunburst(jsonObject,locale)
 				if(p.type==="RELATIVE"){
 					toReturn+= docParams[i].urlName+ "="+p.value+"&";
 				}
-				
-			
 			
 		}
 		

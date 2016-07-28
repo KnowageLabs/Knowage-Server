@@ -767,6 +767,21 @@ function renderWordCloud(chartConf,locale){
 					
 					handleCrossNavigationTo(navigParams);
 				}
+				/**
+				 * Implementation for the new Cross Navigation Definition interface.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				else {
+					
+					/**
+					 * Collect all needed data for the cross-navigation (all output parameters for the WORDCLOUD chart document) and 
+					 * forward them towards the cross-navigation handler. The data represents all the output parameter categories and
+					 * the series item value and name pairs.
+					 */
+					var outputParams = fetchParamethers(d);
+					handleCrossNavigationTo(outputParams);
+					
+				}
 				
 			});
 			
@@ -872,54 +887,88 @@ function renderWordCloud(chartConf,locale){
 			
 			wordArea.on('mouseleave',function(d){
 				
-				tooltip.transition().duration(50).style("opacity","0");
-				
+				tooltip.transition().duration(50).style("opacity","0");				
 				
 			});
-			
-			
 			
 			}	
 		}
 		
 		function fetchSelectionParamethers(d){
+			
 			var param={};
-			for(j=0;j<chartConf.data[0].length;j++){
-				if(chartConf.data[0][j].name===d.text){
+			
+			for(j=0; j<chartConf.data[0].length; j++) {
+				
+				if(chartConf.data[0][j].name === d.text) {
+					
 					//param.categoryValue=chartConf.data[0][j].name;
 					//param.categoryName= chartConf.data[0][j].categoryName;
 					//param.serieValue=chartConf.data[0][j].value;
-					for(k=0;k<chartConf.data[0][j].categoryName.length;k++){
-						param[chartConf.data[0][j].categoryName[k]]=chartConf.data[0][j].name;
-						
+					
+					for(k=0; k<chartConf.data[0][j].categoryName.length; k++){
+						param[chartConf.data[0][j].categoryName[k]] = chartConf.data[0][j].name;						
 					}
 					
-					
 				}
-			}
-			
+				
+			}			
 			
 			return param;
 		}
 		
+		// OLD IMPLEMENTATION: commented by danristo
+//		function fetchParamethers(d){
+//			
+//			var param={
+//					"categoryName" : null,
+//					"categoryValue":null,
+//					"serieName":null,
+//					"serieValue":null,
+//					"groupingCategoryName":null,
+//					"groupingCategoryValue":null
+//			};
+//			for(j=0;j<chartConf.data[0].length;j++){
+//				if(chartConf.data[0][j].name===d.text){
+//					param.categoryValue=chartConf.data[0][j].name;
+//					param.serieValue=chartConf.data[0][j].value;
+//				}
+//			}
+//			return param;
+//		}
 		
-		
-		function fetchParamethers(d){
+		/**
+		 * Improved old implementation so it can handle the new cross-navigation handling implementation.
+		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		function fetchParamethers(d) {
 			
-			var param={
-					"categoryName" : null,
-					"categoryValue":null,
-					"serieName":null,
-					"serieValue":null,
-					"groupingCategoryName":null,
-					"groupingCategoryValue":null
+			var param = {
+					
+				"categoryName": null,
+				"categoryValue": null,
+				"serieName": null,
+				"serieValue": null,
+				"groupingCategoryName": null,
+				"groupingCategoryValue": null
+				
 			};
-			for(j=0;j<chartConf.data[0].length;j++){
-				if(chartConf.data[0][j].name===d.text){
-					param.categoryValue=chartConf.data[0][j].name;
-					param.serieValue=chartConf.data[0][j].value;
+			
+			for (j=0;j<chartConf.data[0].length;j++) {
+				
+				if(chartConf.data[0][j].name===d.text) {
+					
+					var item = chartConf.data[0][j];
+					
+					param.categoryName = item.categoryName[0];
+					param.categoryValue = item.name;				
+					param.serieValue = item.value;
+					param.serieName = item.seriesItemName;
+					
 				}
+				
 			}
+			
 			return param;
 		}
 		

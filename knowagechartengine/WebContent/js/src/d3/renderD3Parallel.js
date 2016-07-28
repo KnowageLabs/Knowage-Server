@@ -597,6 +597,7 @@ function renderParallelChart(data,locale){
 	foreground.on("click",clickLine);
 	
 	function clickLine(d){
+		
 		if(data.chart.isCockpit==true){
 			if(data.chart.outcomingEventsEnabled){
 			var paramethers=cockpitSelectionParamethers(d);
@@ -620,26 +621,48 @@ function renderParallelChart(data,locale){
 			};
 			handleCrossNavigationTo(navigParams);
 		}
+		/**
+		 * Implementation for the new Cross Navigation Definition interface.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		else {
+			
+			/**
+			 * Collect all needed data for the cross-navigation (all output parameters for the PARALLEL chart document) and 
+			 * forward them towards the cross-navigation handler. The data represents all the output parameter categories and
+			 * grouping categories value and name pairs.
+			 * 
+			 * NOTE: output parameters as series items are not taken into count at this time instance.
+			 */
+			var navigParams = crossNavigationParamethers(d);
+			handleCrossNavigationTo(navigParams);
+			
+		}
 	   
 	}
 	
-	function crossNavigationParamethers(d){
-		 var params={
-				    "categoryName" : null,
-					"categoryValue":null,
-					"serieName":null,
-					"serieValue":null,
-					"groupingCategoryName":null,
-					"groupingCategoryValue":null
-				   };	
-				   var category=data.chart.tooltip;
-				   params.categoryName=category;
-				   params.categoryValue=d[category];
-				   var groupCategory=data.chart.group;
-				   params.groupingCategoryName=groupCategory;
-				   params.groupingCategoryValue=d[groupCategory];
-				   
-				   return params;
+	function crossNavigationParamethers(d) {
+		 
+		var params = {
+				
+			"categoryName" : null,
+			"categoryValue":null,
+			"serieName":null,
+			"serieValue":null,
+			"groupingCategoryName":null,
+			"groupingCategoryValue":null
+			
+		};	
+		
+		var category=data.chart.tooltip;
+		params.categoryName=category;
+		params.categoryValue=d[category];
+		var groupCategory=data.chart.group;
+		params.groupingCategoryName=groupCategory;
+		params.groupingCategoryValue=d[groupCategory];
+	   
+		return params;
+		
 	}
 	
 	function cockpitSelectionParamethers(d){

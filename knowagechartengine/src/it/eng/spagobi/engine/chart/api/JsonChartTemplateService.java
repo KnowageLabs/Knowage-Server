@@ -106,7 +106,8 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			String jsonChartTemplate = ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);
 			jsonChartTemplate = ChartEngineUtil.replaceParameters(jsonChartTemplate, analyticalDrivers);
 
-			return jsonChartTemplate;
+			// @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			return jsonChartTemplate.trim();
 
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),

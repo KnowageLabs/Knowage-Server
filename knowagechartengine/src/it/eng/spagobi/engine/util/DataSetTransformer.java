@@ -75,7 +75,12 @@ public class DataSetTransformer {
 			}
 
 			if (serie != null) {
+				
 				record.put(serie.toString(), row.get(serieRawColumn).toString());
+				
+				// Added for the purposes of the cross-navigation execution. (author: danristo)
+				record.put("seriesItemName", serie.toString()); 
+				
 			}
 
 			result.put(new Integer(i), record);
@@ -168,6 +173,9 @@ public class DataSetTransformer {
 			}
 			jo.put("categoryName", categoryNames);
 			jo.put("value", value);
+
+			// Added for the purposes of the cross-navigation execution. (author: danristo)
+			jo.put("seriesItemName", serie.toString());
 			fr.put(jo);
 
 		}

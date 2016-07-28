@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -38,21 +38,21 @@ public interface IEngineDriver {
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 * 
+	 *
 	 * @param profile
 	 *            Profile of the user
 	 * @param roleName
 	 *            the name of the execution role
 	 * @param biobject
 	 *            the biobject
-	 * 
+	 *
 	 * @return Map The map of the execution call parameters
 	 */
 	public Map getParameterMap(Object biobject, IEngUserProfile profile, String roleName);
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 * 
+	 *
 	 * @param subObject
 	 *            SubObject to execute
 	 * @param profile
@@ -61,21 +61,21 @@ public interface IEngineDriver {
 	 *            the name of the execution role
 	 * @param object
 	 *            the object
-	 * 
+	 *
 	 * @return Map The map of the execution call parameters
 	 */
 	public Map getParameterMap(Object object, Object subObject, IEngUserProfile profile, String roleName);
 
 	/**
 	 * Returns the EngineURL for the creation of a new template for the document.
-	 * 
+	 *
 	 * @param biobject
 	 *            the biobject
 	 * @param profile
 	 *            the profile
-	 * 
+	 *
 	 * @return the EngineURL for the creation of a new template for the document
-	 * 
+	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -83,14 +83,14 @@ public interface IEngineDriver {
 
 	/**
 	 * Returns the EngineURL for the modification of the document template.
-	 * 
+	 *
 	 * @param biobject
 	 *            the biobject
 	 * @param profile
 	 *            the profile
-	 * 
+	 *
 	 * @return the EngineURL for the modification of the document template
-	 * 
+	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -98,13 +98,13 @@ public interface IEngineDriver {
 
 	/**
 	 * Returns the template elaborated.
-	 * 
+	 *
 	 * @param byte[] the template
 	 * @param profile
 	 *            the profile
-	 * 
+	 *
 	 * @return the byte[] with the modification of the document template
-	 * 
+	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -112,13 +112,13 @@ public interface IEngineDriver {
 
 	/**
 	 * Returns the template elaborated.
-	 * 
+	 *
 	 * @param byte[] the template
 	 * @param profile
 	 *            the profile
-	 * 
+	 *
 	 * @return the byte[] with the modification of the document template
-	 * 
+	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -127,5 +127,11 @@ public interface IEngineDriver {
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException;
 
 	public List<DefaultOutputParameter> getDefaultOutputParameters();
+
+	/**
+	 * Specially provided method for custom-made output category parameters for the SUNBURST chart.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	public List<DefaultOutputParameter> getSpecificOutputParameters(List categories);
 
 }

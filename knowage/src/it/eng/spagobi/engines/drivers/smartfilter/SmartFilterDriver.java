@@ -36,6 +36,7 @@ import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.AbstractDriver;
+import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
@@ -508,32 +509,32 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 		 * SourceBean.fromXMLString(originalQbeTempl); // from version 0 to version 1 worksheet change compensation: on version 0 the // worksheet definition
 		 * was inside QBE tag; on version 1 the QBE tag is inside // WORKSHEET tag if (confSB.getName().equalsIgnoreCase(TAG_QBE) ||
 		 * confSB.getName().equalsIgnoreCase(TAG_QBE_COMPOSITE) || confSB.getName().equalsIgnoreCase(TAG_SMART_FILTER)) {
-		 * 
+		 *
 		 * if (confSB.containsAttribute(TAG_WORKSHEET_DEFINITION)) { confSB.delAttribute(TAG_WORKSHEET_DEFINITION); } templateSB.setAttribute(confSB);
 		 * SourceBean wk_def_sb = new SourceBean(TAG_WORKSHEET_DEFINITION); wk_def_sb.setCharacters(workSheetDef); templateSB.setAttribute(wk_def_sb);
-		 * 
+		 *
 		 * if (workSheetQuery != null && !workSheetQuery.equals("")) { SourceBean query_sb = new SourceBean(QUERY); query_sb.setCharacters(workSheetQuery);
 		 * confSB.updAttribute(query_sb); }
-		 * 
+		 *
 		 * if (smartFilterValues != null && !smartFilterValues.equals("")) { SourceBean smartFilterValuesSB = new SourceBean(FORM_VALUES);
 		 * smartFilterValuesSB.setCharacters(smartFilterValues); confSB.updAttribute(smartFilterValuesSB); }
-		 * 
+		 *
 		 * } else {
-		 * 
+		 *
 		 * SourceBean qbeSB = null;
-		 * 
+		 *
 		 * if (confSB.containsAttribute(TAG_QBE)) { qbeSB = (SourceBean) confSB.getAttribute(TAG_QBE); } else if (confSB.containsAttribute(TAG_QBE_COMPOSITE)) {
 		 * qbeSB = (SourceBean) confSB.getAttribute(TAG_QBE_COMPOSITE); } else if (confSB.containsAttribute(TAG_SMART_FILTER)) { qbeSB = (SourceBean)
 		 * confSB.getAttribute(TAG_SMART_FILTER); }
-		 * 
+		 *
 		 * if (qbeSB != null) { templateSB.setAttribute(qbeSB); if (workSheetQuery != null && !workSheetQuery.equals("")) { SourceBean query_sb = new
 		 * SourceBean(QUERY); query_sb.setCharacters(workSheetQuery); qbeSB.updAttribute(query_sb); }
-		 * 
+		 *
 		 * if (smartFilterValues != null && !smartFilterValues.equals("")) { SourceBean smartFilterValuesSB = new SourceBean(FORM_VALUES);
 		 * smartFilterValuesSB.setCharacters(smartFilterValues); qbeSB.updAttribute(smartFilterValuesSB); } }
-		 * 
+		 *
 		 * SourceBean wk_def_sb = new SourceBean(TAG_WORKSHEET_DEFINITION); wk_def_sb.setCharacters(workSheetDef); templateSB.setAttribute(wk_def_sb); }
-		 * 
+		 *
 		 * String template = templateSB.toXML(false);
 		 */
 		String template = "";
@@ -567,6 +568,13 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 		// String template = templateSB.toXML(false);
 		String template = "";
 		return template;
+	}
+
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	@Override
+	public List<DefaultOutputParameter> getSpecificOutputParameters(List categories) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

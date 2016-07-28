@@ -265,6 +265,7 @@ function renderChordChart(jsonData,locale)
 			 	.style("opacity", opacityMouseOver);
 		    
 			tooltip.transition().duration(50).style("opacity","0");
+			
 			if(jsonData.chart.isCockpit==true){
 				if(jsonData.chart.outcomingEventsEnabled){
 					
@@ -296,6 +297,22 @@ function renderChordChart(jsonData,locale)
 					groupingCategoryValue:paramethers.groupingCategoryValue
 				};
 				handleCrossNavigationTo(navigParams);
+			}
+			/**
+			 * Implementation for the new Cross Navigation Definition interface.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			else {
+				
+				/**
+				 * Collect all needed data for the cross-navigation (all output parameters for the PARALLEL chart document) and 
+				 * forward them towards the cross-navigation handler.
+				 * 
+				 * NOTE: output parameters as series item name and category name are not taken into count at this time instance.
+				 */
+				var navigParams = crossNavigationParamethers(jsonData.data[0].rows[i]);
+				handleCrossNavigationTo(navigParams);
+				
 			}
 			
 		};

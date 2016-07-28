@@ -435,6 +435,23 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
+	 * Modify bi object (specially provided for custom-made output category parameters for the SUNBURST chart).
+	 *
+	 * @param obj
+	 *            the obj
+	 * @param objTemp
+	 *            the obj temp
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#modifyBIObjectWithoutVersioning(it.eng.spagobi.analiticalmodel.document.bo.BIObject)
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	@Override
+	public void modifyBIObject(BIObject obj, ObjTemplate objTemp, List categories) throws EMFUserError {
+		internalModify(obj, objTemp, false, categories);
+	}
+
+	/**
 	 * Modify bi object.
 	 *
 	 * @param obj
@@ -545,6 +562,140 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				// If Engine is changed, we have to load its specific output parameters and save them
 				hibBIObject.getSbiOutputParameters().clear();
 				hibBIObject.getSbiOutputParameters().addAll(loadDriverSpecificOutputParameters(hibBIObject));
+			}
+
+			tx.commit();
+
+			// update biobject template info
+			if (objTemp != null) {
+				try {
+					ObjTemplate oldTemp = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(biObject.getId());
+					// set the biobject id into ObjTemplate (it should not be necessary, but to avoid errors ...)
+					objTemp.setBiobjId(biObject.getId());
+					// insert or update new template
+					IObjTemplateDAO dao = DAOFactory.getObjTemplateDAO();
+					dao.setUserProfile(this.getUserProfile());
+					dao.insertBIObjectTemplate(objTemp, biObject);
+					// if the input document is a document composition and template is changed deletes existing parameters
+					// and creates all new parameters automatically
+					// (the parameters are recovered from all documents that compose general document)
+					if (loadParsDC && (oldTemp == null || objTemp.getId() == null || objTemp.getId().compareTo(oldTemp.getId()) != 0)) {
+						insertParametersDocComposition(biObject, objTemp, true);
+					}
+				} catch (Exception e) {
+					logger.error("Error during creation of document composition parameters : ", e);
+					throw new EMFUserError(EMFErrorSeverity.ERROR, e.getMessage());
+				}
+
+			}
+
+			logger.debug("OUT");
+		} catch (HibernateException he) {
+			logger.error(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+	}
+
+	/**
+	 * Updates the biobject data into database (specially provided for custom-made output category parameters for the SUNBURST chart).
+	 *
+	 * @param biObject
+	 *            The BI Object as input
+	 * @param objTemp
+	 *            The BIObject template
+	 * @throws EMFUserError
+	 *             If any exception occurred
+	 */
+	private void internalModify(BIObject biObject, ObjTemplate objTemp, boolean loadParsDC, List categories) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			SbiObjects hibBIObject = (SbiObjects) aSession.load(SbiObjects.class, biObject.getId());
+
+			boolean engineHasChanged = biObject.getEngine() != null && !hibBIObject.getSbiEngines().getEngineId().equals(biObject.getEngine().getId());
+
+			updateSbiCommonInfo4Update(hibBIObject);
+
+			SbiEngines hibEngine = (SbiEngines) aSession.load(SbiEngines.class, biObject.getEngine().getId());
+			hibBIObject.setSbiEngines(hibEngine);
+			SbiDataSource dSource = null;
+			if (biObject.getDataSourceId() != null) {
+				dSource = (SbiDataSource) aSession.load(SbiDataSource.class, biObject.getDataSourceId());
+			}
+			hibBIObject.setDataSource(dSource);
+
+			// SbiDataSet dSet = null;
+			// if (biObject.getDataSetId() != null) {
+			// Query hibQuery = aSession.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
+			// hibQuery.setBoolean(0, true);
+			// hibQuery.setInteger(1, biObject.getDataSetId());
+			// dSet = (SbiDataSet) hibQuery.uniqueResult();
+			// }
+			// // hibBIObject.setDataSet(dSet);
+			// hibBIObject.setDataSet((dSet == null) ? null : dSet.getId().getDsId());
+
+			hibBIObject.setDescr(biObject.getDescription());
+			hibBIObject.setLabel(biObject.getLabel());
+			hibBIObject.setName(biObject.getName());
+
+			if (biObject.getEncrypt() != null)
+				hibBIObject.setEncrypt(new Short(biObject.getEncrypt().shortValue()));
+			if (biObject.getVisible() != null)
+				hibBIObject.setVisible(new Short(biObject.getVisible().shortValue()));
+
+			hibBIObject.setProfiledVisibility(biObject.getProfiledVisibility());
+			hibBIObject.setRelName(biObject.getRelName());
+			SbiDomains hibState = (SbiDomains) aSession.load(SbiDomains.class, biObject.getStateID());
+			hibBIObject.setState(hibState);
+			hibBIObject.setStateCode(biObject.getStateCode());
+			SbiDomains hibObjectType = (SbiDomains) aSession.load(SbiDomains.class, biObject.getBiObjectTypeID());
+			hibBIObject.setObjectType(hibObjectType);
+			hibBIObject.setObjectTypeCode(biObject.getBiObjectTypeCode());
+
+			hibBIObject.setRefreshSeconds(biObject.getRefreshSeconds());
+			hibBIObject.setParametersRegion(biObject.getParametersRegion());
+			hibBIObject.setLockedByUser(biObject.getLockedByUser());
+			hibBIObject.setPreviewFile(biObject.getPreviewFile());
+
+			// functionalities erasing
+			Set hibFunctionalities = hibBIObject.getSbiObjFuncs();
+			for (Iterator it = hibFunctionalities.iterator(); it.hasNext();) {
+				aSession.delete(it.next());
+			}
+			// functionalities storing
+			Set hibObjFunc = new HashSet();
+			List functionalities = biObject.getFunctionalities();
+			for (Iterator it = functionalities.iterator(); it.hasNext();) {
+				Integer functId = (Integer) it.next();
+				SbiFunctions aSbiFunctions = (SbiFunctions) aSession.load(SbiFunctions.class, functId);
+				SbiObjFuncId aSbiObjFuncId = new SbiObjFuncId();
+				aSbiObjFuncId.setSbiFunctions(aSbiFunctions);
+				aSbiObjFuncId.setSbiObjects(hibBIObject);
+				SbiObjFunc aSbiObjFunc = new SbiObjFunc(aSbiObjFuncId);
+				updateSbiCommonInfo4Update(aSbiObjFunc);
+				aSession.save(aSbiObjFunc);
+				hibObjFunc.add(aSbiObjFunc);
+			}
+			hibBIObject.setSbiObjFuncs(hibObjFunc);
+
+			logger.debug("Update detail dataset");
+			DAOFactory.getBIObjDataSetDAO().updateObjectDetailDataset(biObject.getId(), biObject.getDataSetId(), aSession);
+
+			if (!categories.isEmpty()) {
+				// hibBIObject.getSbiOutputParameters().removeAll(loadDriverSpecificOutputParameters(hibBIObject));
+				hibBIObject.getSbiOutputParameters().clear();
+				// tx.commit();
+				hibBIObject.getSbiOutputParameters().addAll(loadDriverSpecificOutputParameters(hibBIObject, categories));
 			}
 
 			tx.commit();
@@ -2562,6 +2713,31 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			try {
 				IEngineDriver driver = (IEngineDriver) Class.forName(sbiObject.getSbiEngines().getDriverNm()).newInstance();
 				List<DefaultOutputParameter> params = driver.getDefaultOutputParameters();
+				for (DefaultOutputParameter defaultOutputParameter : params) {
+					SbiOutputParameter outputParameter = new SbiOutputParameter();
+					outputParameter.setBiobjId(sbiObject.getBiobjId());
+					outputParameter.setLabel(defaultOutputParameter.getParamName());
+					outputParameter.setParameterTypeId(getDefaultParameterMap().get(defaultOutputParameter.getParamType()).getValueId());
+					updateSbiCommonInfo4Insert(outputParameter);
+					ret.add(outputParameter);
+				}
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				logger.error("Error trying to load default output parameters for engine [" + sbiObject.getSbiEngines().getDriverNm() + "] ", e);
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Specially provided method for custom-made output category parameters for the SUNBURST chart.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	private List<SbiOutputParameter> loadDriverSpecificOutputParameters(SbiObjects sbiObject, List categories) {
+		List<SbiOutputParameter> ret = new ArrayList<>();
+		if (sbiObject.getSbiEngines() != null) {
+			try {
+				IEngineDriver driver = (IEngineDriver) Class.forName(sbiObject.getSbiEngines().getDriverNm()).newInstance();
+				List<DefaultOutputParameter> params = driver.getSpecificOutputParameters(categories);
 				for (DefaultOutputParameter defaultOutputParameter : params) {
 					SbiOutputParameter outputParameter = new SbiOutputParameter();
 					outputParameter.setBiobjId(sbiObject.getBiobjId());

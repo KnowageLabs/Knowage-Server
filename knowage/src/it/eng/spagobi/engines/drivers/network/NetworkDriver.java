@@ -36,6 +36,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.drivers.AbstractDriver;
+import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
@@ -44,6 +45,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -445,6 +447,13 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 
 	@Override
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	@Override
+	public List<DefaultOutputParameter> getSpecificOutputParameters(List categories) {
 		// TODO Auto-generated method stub
 		return null;
 	}

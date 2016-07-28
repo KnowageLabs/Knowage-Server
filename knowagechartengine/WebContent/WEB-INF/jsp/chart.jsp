@@ -209,15 +209,6 @@ author:
 </head>
 
 <%-- == BODY ========================================================== --%>
-<%-- <body style="display: flex;
-    width: 60%;
-     height: 100%;
-    padding: 10px; 
-    vertical-align: bottom;">
---%>
-
-<!-- <body style="width:50%; height:50%;"> -->
-<!-- <body style="height:50%; margin:0 0 0 25%;  overflow-x:hidden;  overflow-y:hidden"> -->
 <body>
 
 <% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) {%>

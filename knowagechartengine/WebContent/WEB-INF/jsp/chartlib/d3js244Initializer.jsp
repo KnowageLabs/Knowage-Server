@@ -105,77 +105,105 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	}
 	
-	
-	
-	
 	function handleCrossNavigationTo(e,chartType){
+			
 		if (!e.seriesOptions) {
-			if(chartType=="SUNBURST"){
-				if(parent.execExternalCrossNavigation){
-					var navData={
+			
+			if(chartType=="SUNBURST") {
+								
+				if(parent.execExternalCrossNavigation) {
+					
+					// OLD IMPLEMENTATION (comment by: danristo)
+					/* var navData={
 	            			chartType:	"SUNBURST",
 	            			documentName:e.crossNavigationDocumentName,
 	            			documentParameters:e.crossNavigationDocumentParams,
 	            			stringParameters:  e.stringParameters
-	            	};     
-					parent.execExternalCrossNavigation(navData,{},undefined,e.crossNavigationDocumentName); 
-	            }else{
-				
-				Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
-					    "SUNBURST",
-						e.crossNavigationDocumentName, 
-						e.crossNavigationDocumentParams,
-						null,
-						null,
-						null,
-						null,
-						null,
-					    null,
-					    e.stringParameters
-						);
+	            	}; */     
+					//parent.execExternalCrossNavigation(navData,{},undefined,e.crossNavigationDocumentName); 
+	            	
+	            	/*
+	            		Start the cross navigation according to the navigation parameters. This is the implementation that satisfied the new
+	            		cross-navigation implementation (the cross-navigation data is not persisted in the chart document template ever more).
+	            		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	            	*/
+	            	var navigParams = e;
+					parent.execExternalCrossNavigation(navigParams,{},undefined,undefined); 
+	            	
 	            }
-			}else{
+				else {
+				
+					Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
+						    "SUNBURST",
+							e.crossNavigationDocumentName, 
+							e.crossNavigationDocumentParams,
+							null,
+							null,
+							null,
+							null,
+							null,
+						    null,
+						    e.stringParameters
+							);
+	            }
 			
-			var chart = this;
-			//chart.showLoading('Loading...');
-			var categoryName=e.categoryName;
-			var categoryValue = e.categoryValue;
-			var serieName=e.serieName;
-			var serieValue = e.serieValue;
-			var groupingCategoryName=e.groupingCategoryName;
-			var groupingCategoryValue=e.groupingCategoryValue;
-			
-			if(parent.execExternalCrossNavigation){
-				var navData={
-            			chartType:	"D3CHART",
-            			documentName:e.crossNavigationDocumentName,
-            			documentParameters:e.crossNavigationDocumentParams,
-            			CATEGORY_NAME :categoryName,
-            			CATEGORY_VALUE :categoryValue,
-            			SERIE_NAME :serieName,
-            			SERIE_VALUE :serieValue,
-            			groupingCategoryName:groupingCategoryName,
-            			groupingCategoryValue:groupingCategoryValue,
-            			stringParameters:null
-            	};     
-				parent.execExternalCrossNavigation(navData,{},undefined,currentDocumentLabel); 
-            }else{
-			
-				Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
-						"D3CHART",
-						e.crossNavigationDocumentName, 
-						e.crossNavigationDocumentParams,
-						categoryName,
-						categoryValue,
-						serieName,
-						serieValue,
-						groupingCategoryName,
-						groupingCategoryValue
-						);
-           	 }
 			}
-			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
-			chart.hideLoading();
+			else {
+			
+				var chart = this;
+				//chart.showLoading('Loading...');
+				var categoryName=e.categoryName;
+				var categoryValue = e.categoryValue;
+				var serieName=e.serieName;
+				var serieValue = e.serieValue;
+				var groupingCategoryName=e.groupingCategoryName;
+				var groupingCategoryValue=e.groupingCategoryValue;
+							
+				if(parent.execExternalCrossNavigation) {
+					
+					var navData = {
+	            			chartType:	"D3CHART",
+	            			documentName:e.crossNavigationDocumentName,
+	            			documentParameters:e.crossNavigationDocumentParams,
+	            			CATEGORY_NAME: categoryName,
+	            			CATEGORY_VALUE: categoryValue,
+	            			SERIE_NAME: serieName,
+	            			SERIE_VALUE: serieValue,
+	            			
+	            			// OLD IMPLEMENTATION: commented by danristo
+	            			//groupingCategoryName: groupingCategoryName,
+	            			//groupingCategoryValue: groupingCategoryValue,
+	            			
+	            			// NEW IMPLEMENTATION: danristo
+	            			GROUPING_NAME: groupingCategoryName,
+	            			GROUPING_VALUE: groupingCategoryValue,
+	            			
+	            			stringParameters:null
+	            	};   
+					
+					parent.execExternalCrossNavigation(navData,{},undefined,undefined); 
+					
+            	}
+				else {
+					
+					Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
+							"D3CHART",
+							e.crossNavigationDocumentName, 
+							e.crossNavigationDocumentParams,
+							categoryName,
+							categoryValue,
+							serieName,
+							serieValue,
+							groupingCategoryName,
+							groupingCategoryValue
+							);
+	           	 	}
+				
+				}
+			
+				var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
+			
+				//chart.hideLoading();
 		}
 		
 	};

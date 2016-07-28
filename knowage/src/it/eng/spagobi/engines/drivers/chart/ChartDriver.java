@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -62,14 +62,14 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 * 
+	 *
 	 * @param profile
 	 *            Profile of the user
 	 * @param roleName
 	 *            the name of the execution role
 	 * @param analyticalDocument
 	 *            the biobject
-	 * 
+	 *
 	 * @return Map The map of the execution call parameters
 	 */
 	@Override
@@ -92,7 +92,7 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 * 
+	 *
 	 * @param analyticalDocumentSubObject
 	 *            SubObject to execute
 	 * @param profile
@@ -101,7 +101,7 @@ public class ChartDriver extends GenericDriver {
 	 *            the name of the execution role
 	 * @param analyticalDocument
 	 *            the object
-	 * 
+	 *
 	 * @return Map The map of the execution call parameters
 	 */
 	@Override
@@ -112,14 +112,14 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 * 
+	 *
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 * 
+	 *
 	 * @return the edits the document template build url
-	 * 
+	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -146,14 +146,14 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 * 
+	 *
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 * 
+	 *
 	 * @return the new document template build url
-	 * 
+	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -386,7 +386,7 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Replaces all messages reading by i18n table.
-	 * 
+	 *
 	 * @param sb
 	 *            the source bean
 	 */
@@ -436,6 +436,27 @@ public class ChartDriver extends GenericDriver {
 		ret.add(new DefaultOutputParameter("GROUPING_NAME", TYPE.String));
 		ret.add(new DefaultOutputParameter("GROUPING_VALUE", TYPE.String));
 		return ret;
+	}
+
+	/**
+	 * Custom method provided for the preparation of the output parameters for the SUNBURST chart type.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	@Override
+	public List<DefaultOutputParameter> getSpecificOutputParameters(List categories) {
+		
+		List<DefaultOutputParameter> ret = new ArrayList<>();
+
+		for (int i = 0; i < categories.size(); i++) {
+			ret.add(new DefaultOutputParameter(categories.get(i) + "_NAME", TYPE.String));
+			ret.add(new DefaultOutputParameter(categories.get(i) + "_VALUE", TYPE.String));
+		}
+
+		ret.add(new DefaultOutputParameter("SERIE_NAME", TYPE.String));
+		ret.add(new DefaultOutputParameter("SERIE_VALUE", TYPE.String));
+
+		return ret;
+		
 	}
 
 	public static void main(String[] args) {

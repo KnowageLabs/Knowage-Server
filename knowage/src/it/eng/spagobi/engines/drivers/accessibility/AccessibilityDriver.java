@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,19 +11,19 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.drivers.accessibility;
 
-import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.engines.drivers.AbstractDriver;
+import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
@@ -31,26 +31,29 @@ import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 
-public class AccessibilityDriver extends AbstractDriver implements
-		IEngineDriver {
+public class AccessibilityDriver extends AbstractDriver implements IEngineDriver {
 
 	static Logger logger = Logger.getLogger(AccessibilityDriver.class);
 
+	@Override
 	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 		logger.warn("Function not implemented");
 		throw new InvalidOperationRequest();
 	}
 
+	@Override
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 		logger.warn("Function not implemented");
 		throw new InvalidOperationRequest();
 	}
 
+	@Override
 	public Map getParameterMap(Object biobject, IEngUserProfile profile, String roleName) {
 		logger.debug("IN");
 		Map map = new Hashtable();
@@ -65,6 +68,7 @@ public class AccessibilityDriver extends AbstractDriver implements
 		return map;
 	}
 
+	@Override
 	public Map getParameterMap(Object object, Object subObject, IEngUserProfile profile, String roleName) {
 		return getParameterMap(object, profile, roleName);
 	}
@@ -110,8 +114,7 @@ public class AccessibilityDriver extends AbstractDriver implements
 						pars.put(biobjPar.getParameterUrlName(), value);
 					else
 						logger.warn("value encoded IS null");
-					logger.debug("Add parameter:"
-						+ biobjPar.getParameterUrlName() + "/" + value);
+					logger.debug("Add parameter:" + biobjPar.getParameterUrlName() + "/" + value);
 				} catch (Exception e) {
 					logger.error("Error while processing a BIParameter", e);
 				}
@@ -121,7 +124,15 @@ public class AccessibilityDriver extends AbstractDriver implements
 		return pars;
 	}
 
+	@Override
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	@Override
+	public List<DefaultOutputParameter> getSpecificOutputParameters(List categories) {
 		// TODO Auto-generated method stub
 		return null;
 	}

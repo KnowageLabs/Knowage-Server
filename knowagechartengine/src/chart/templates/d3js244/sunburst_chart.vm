@@ -291,6 +291,9 @@
 	*#
 	series: {
 	
+		## Added property for the cross-navigation output parameters managing on the front-end. (author: danristo)
+		name: '$serieName',
+	
 		#*
 			The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
 			"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
