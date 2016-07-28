@@ -458,7 +458,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				.then(function(response) {
 					var name = documentDownloadName();
 					sbiModule_messaging.showInfoMessage(sucessMsg, 'Info');
-					$scope.closeDialog(null);
+					$scope.closeDialogToolbarRight();
 					initDialogs();
 					if($scope.outputType == "csv"){
 						sbiModule_download.getPlain(response.data, name,"text/csv","csv")
@@ -513,7 +513,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	  $scope.cancelSavingSubObject = function(){
 		  
 		  console.log("closing Save customized view dialog");
-		  $scope.closeDialog();
+		  $scope.closeDialogToolbarRight();
 		  console.log("setting subObject to empty");
 		  $scope.subObject.setInitialState();
 	  }
@@ -521,7 +521,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	  $scope.saveSubObject = function(){
 		  console.log($scope.subObject);
 		  $scope.subObject.saveSubObject();
-		  $scope.closeDialog();
+		  $scope.closeDialogToolbarRight();
 	  }
 	  
 	  $scope.saveAsFunction = function(){
@@ -588,7 +588,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 					.then(function(response) {
 						sbiModule_messaging.showSuccessMessage("Versions successfully deleted", 'Success');
 						$scope.getVersions();
-						$scope.closeDialog(null);
+						$scope.closeDialogToolbarRight();
 					}, function(response) {
 						sbiModule_messaging.showErrorMessage("An error occured while deleting versions", 'Error');
 						
@@ -626,6 +626,10 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				sbiModule_messaging.showErrorMessage("An error occured while setting alghorithm", 'Error');
 				
 			});
+	  }
+	  
+	  $scope.closeDialogToolbarRight = function(){
+		  $mdDialog.hide();
 	  }
 	  
 	  isOkToDeleteVersion = function(versions){
