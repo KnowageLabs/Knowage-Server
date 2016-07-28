@@ -744,6 +744,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 	$scope.showCCWizard = function() {
 		
+		$localStorage.recents = [];
 		formulasSplit();
 		cleanCC();
 		
