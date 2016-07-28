@@ -26,6 +26,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ProfileAttributeManagement" description="ProfileAttributeManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DataSourceManagement" description="DataSourceManagement" />
     <USER_FUNCTIONALITY productType="KnowageBD" name="DataSourceRead" description="DataSourceRead" />
+    <USER_FUNCTIONALITY productType="KnowageBD" name="DataSourceBigData" description="DataSourceBigData" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentUserManagement" description="DocumentUserManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentDeleteManagement" description="DocumentDeleteManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentStateManagement" description="DocumentStateManagement" />
@@ -161,7 +162,6 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentAdminManagement" description="DocumentAdminManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="SchedulerManagement" description="SchedulerManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="EventsManagement" description="EventsManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageER" name="WorkspaceManagement" description="WorkspaceManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="WorklistManagement" description="WorklistManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentManagement" description="DocumentManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement"/>
@@ -217,6 +217,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="CreateChartFunctionality" description="CreateChartFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DataSourceManagement" description="DataSourceManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DataSourceRead" description="DataSourceRead"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="DataSourceBigData" description="DataSourceBigData" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DatasetManagement" description="DatasetManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentAdminManagement" description="DocumentAdminManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentAdministration" description="DocumentAdministration"/>
@@ -259,7 +260,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="Timespan" description="Timespan" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
-	<USER_FUNCTIONALITY productType="KnowagePM" name="WorkspaceManagement" description="WorkspaceManagement"/>	
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DomainWrite" description="DomainWrite" />
 	
 	
@@ -269,7 +269,6 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ConstraintManagement" description="ConstraintManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ConstraintView" description="ConstraintView" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="CreateChartFunctionality" description="CreateChartFunctionality" />
-	<USER_FUNCTIONALITY productType="KnowageLI" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="DataSourceManagement" description="DataSourceManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="DataSourceRead" description="DataSourceRead" />
@@ -358,7 +357,8 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="EventsManagement" description="EventsManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="FunctionalitiesManagement" description="FunctionalitiesManagement" />
-	<USER_FUNCTIONALITY productType="KnowagePA" name="FunctionsCatalog" description="FunctionsCatalog" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="FunctionsCatalogManagement" description="FunctionsCatalogManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="FunctionsCatalogUsage" description="FunctionsCatalogUsage" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="HotLinkManagement" description="HotLinkManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImagesManagement" description="ImagesManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpCatalog" description="ImpExpCatalog" />

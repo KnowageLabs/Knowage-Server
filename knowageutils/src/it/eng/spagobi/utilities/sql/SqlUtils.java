@@ -1,26 +1,29 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-  
+
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- 
+
  * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
-  
+
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.utilities.sql;
 
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,6 +43,8 @@ public class SqlUtils {
 	public static final String DIALECT_ORACLE9i10g = "org.hibernate.dialect.Oracle9Dialect";
 	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
 	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
+
+	private static Set<String> hiveLikeDatabases = new HashSet<String>(Arrays.asList("cassandra", "hive", "neo4j", "drill", "spark", "phoenix", "impala", "h2"));
 
 	static protected Logger logger = Logger.getLogger(SqlUtils.class);
 
@@ -187,12 +192,33 @@ public class SqlUtils {
 
 	}
 
-	public static boolean isHiveLikeDialect(String dialect) {
-		String dialectLowerCase = dialect.toLowerCase();
-		return (dialectLowerCase.contains("cassandra") || dialectLowerCase.contains("hive") || dialectLowerCase.contains("neo4j")
-				|| dialectLowerCase.contains("drill") || dialectLowerCase.contains("spark") || dialectLowerCase.contains("phoenix")
-				|| dialectLowerCase.contains("impala") || dialectLowerCase.contains("h2"));
+	public static Set<String> getHiveLikeDatabases() {
+		return hiveLikeDatabases;
 	}
 
+	public static Set<String> getBigDataDatabases() {
+		Set<String> hiveLikeDatabases = getHiveLikeDatabases();
+		hiveLikeDatabases.add("mongo");
+		return hiveLikeDatabases;
+	}
 
+	public static boolean isHiveLikeDialect(String dialect) {
+		String dialectLowerCase = dialect.toLowerCase();
+		for (String db : getHiveLikeDatabases()) {
+			if (dialectLowerCase.contains(db)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean isBigDataDialect(String dialect) {
+		String dialectLowerCase = dialect.toLowerCase();
+		for (String db : getBigDataDatabases()) {
+			if (dialectLowerCase.contains(db)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

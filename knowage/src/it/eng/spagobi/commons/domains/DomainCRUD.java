@@ -18,14 +18,18 @@
 package it.eng.spagobi.commons.domains;
 
 import it.eng.spago.base.Constants;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.DomainJSONSerializer;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -67,11 +71,13 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 		String type = req.getParameter(DOMAIN_TYPE);
 		String extVersion = req.getParameter(EXT_VERSION);
 
-		JSONObject datasorcesJSON = new JSONObject();
 		String result = null;
 		try {
 			domaindao = DAOFactory.getDomainDAO();
 			domains = domaindao.loadListDomainsByType(type);
+			if (type.equals("DIALECT_HIB")) {
+				filterDataSourceDomains(domains);
+			}
 			domainsJSONArray = translate(domains, getLocale(req));
 			domainsJSONObject.put("domains", domainsJSONArray);
 
@@ -90,6 +96,18 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 
 		return result;
 
+	}
+
+	private void filterDataSourceDomains(List<Domain> domains) throws EMFInternalError {
+		if (!getUserProfile().getFunctionalities().contains(SpagoBIConstants.DATASOURCE_BIG_DATA)) {
+			Iterator<Domain> iterator = domains.iterator();
+			while (iterator.hasNext()) {
+				Domain domain = iterator.next();
+				if (SqlUtils.isBigDataDialect(domain.getValueCd())) {
+					iterator.remove();
+				}
+			}
+		}
 	}
 
 	protected JSONArray translate(Collection<Domain> domains, Locale locale) throws JSONException {
