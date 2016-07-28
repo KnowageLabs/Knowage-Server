@@ -319,7 +319,7 @@
 	documentExecutionModule.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config,docExecute_exportService
 			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories,$q,$filter,$timeout
-			,docExecute_dependencyService,sbiModule_messaging, $http,sbiModule_dateServices ) {
+			,docExecute_dependencyService,sbiModule_messaging, $http,sbiModule_dateServices,$mdToast ) {
 		
 		var serviceScope = this;	
 		serviceScope.showOlapMenu = false;
@@ -378,6 +378,20 @@
 					},
 					function(response, status, headers, config) {
 						console.log('1.0/documentexecution ERROR: ', response.data);
+						var toast = $mdToast.simple()
+						.content("Error while execute parameter. "+response.data.errors[0].message)
+						.action('OK')
+						.highlightAction(false)
+						.hideDelay(3000)
+						.position('top')
+
+						$mdToast.show(toast).then(function(response) {
+
+							if ( response == 'ok' ) {
+
+
+							}
+						});
 //						sbiModule_restServices.errorHandler(response.data,"Error while attempt to load filters")
 //						.then(function(){
 //						if(response.data.errors[0].type=="missingRole" || response.data.errors[0].category=="VALIDATION_ERROR"){
@@ -394,6 +408,8 @@
 					});
 		};
 		
+		
+	
 		serviceScope.getViewpoints = function() {
 			execProperties.currentView.status = 'PARAMETERS';
 			execProperties.parameterView.status='FILTER_SAVED';
