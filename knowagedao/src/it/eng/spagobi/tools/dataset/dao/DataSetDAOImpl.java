@@ -17,6 +17,26 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -46,28 +66,10 @@ import it.eng.spagobi.tools.dataset.exceptions.DatasetInUseException;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * Implement CRUD operations over spagobi datsets
@@ -1602,6 +1604,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}
 			}
 
+			List<SbiGlDataSetWlist> glWlistToDelete = session.createCriteria(SbiGlDataSetWlist.class).add(Restrictions.eq("id.datasetId", datasetId)).list();
+			for (SbiGlDataSetWlist sbiGlDataSetWlist : glWlistToDelete) {
+				session.delete(sbiGlDataSetWlist);
+			}
+
 			transaction.commit();
 
 		}
@@ -1614,8 +1621,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				DatasetException de = (DatasetException) t;
 				throw de;
 			} else {
-				String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting dataset " + "whose id is equal to ["
-						+ datasetId + "]";
+				String msg = (t.getMessage() != null) ? t.getMessage()
+						: "An unexpected error occured while deleting dataset " + "whose id is equal to [" + datasetId + "]";
 				throw new SpagoBIDOAException(msg, t);
 			}
 		} finally {
@@ -1674,8 +1681,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting dataset " + "whose id is equal to ["
-					+ datasetId + "]";
+			String msg = (t.getMessage() != null) ? t.getMessage()
+					: "An unexpected error occured while deleting dataset " + "whose id is equal to [" + datasetId + "]";
 			throw new SpagoBIDOAException(msg, t);
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -1794,8 +1801,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while deleting dataset version" + "whose version num is equal to [" + datasetVersionNum
-					+ "]", t);
+			throw new SpagoBIDOAException(
+					"An unexpected error occured while deleting dataset version" + "whose version num is equal to [" + datasetVersionNum + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1861,8 +1868,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while deleting inactive versions of dataset " + "whose id is equal to [" + datasetId
-					+ "]", t);
+			throw new SpagoBIDOAException(
+					"An unexpected error occured while deleting inactive versions of dataset " + "whose id is equal to [" + datasetId + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
