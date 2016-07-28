@@ -97,16 +97,19 @@
 			
 			<md-tab id="attributesTab" label="{{translate.load('sbi.generic.attributes')}}" ng-if="selectedBusinessModel.columns!=undefined">
 				<md-content layout  layout-fill ng-controller="businessModelAttributeController">
-					<angular-table id="bmAttr" ng-model="selectedBusinessModel.simpleBusinessColumns"
+					<angular-table id="bmAttr" ng-model="meta.physicalModels[selectedBusinessModel.physicalTable.physicalTableIndex].columns"
 					 columns="selectedBusinessModelAttributes" scope-functions="selectedBusinessModelAttributesScopeFunctions" no-pagination=true flex>
 					 	</angular-table>
+<!-- 					<angular-table id="bmAttr" ng-model="selectedBusinessModel.simpleBusinessColumns" -->
+<!-- 					 columns="selectedBusinessModelAttributes" scope-functions="selectedBusinessModelAttributesScopeFunctions" no-pagination=true flex> -->
+<!-- 					 	</angular-table> -->
 				</md-content>
 				
 			</md-tab>
 			
 			<md-tab id="calculatedColumnsTab" label="{{translate.load('sbi.meta.business.calculatedField')}}" ng-if="selectedBusinessModel.calculatedBusinessColumns!=undefined">
 				<md-content layout  layout-fill ng-controller="calculatedBusinessColumnsController">
-					<angular-table id="bmAttr" ng-model="selectedBusinessModel.calculatedBusinessColumns"
+					<angular-table id="bmAttrCF" ng-model="selectedBusinessModel.calculatedBusinessColumns"
 					columns="selectedBusinessModelCalculatedBusinessColumns"
 					scope-functions="selectedBusinessModelCalculatedBusinessColumnsScopeFunctions"
 					speed-menu-option="calculatedFieldSpeedOption"

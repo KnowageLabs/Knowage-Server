@@ -2,7 +2,7 @@ angular.module('metaManager').controller('metaModelCreationController', [ '$scop
 angular.module('metaManager').controller('metaModelCreationPhysicalController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config',metaModelCreationPhysicalControllerFunction ]);
 angular.module('metaManager').controller('metaModelCreationBusinessController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config','metaModelServices',metaModelCreationBusinessControllerFunction ]);
 angular.module('metaManager').controller('businessModelPropertyController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelPropertyControllerFunction ]);
-angular.module('metaManager').controller('businessModelAttributeController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config',businessModelAttributeControllerFunction ]);
+angular.module('metaManager').controller('businessModelAttributeController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config','metaModelServices',businessModelAttributeControllerFunction ]);
 angular.module('metaManager').controller('calculatedBusinessColumnsController', [ '$scope','sbiModule_translate', 'sbiModule_restServices','$mdDialog','sbiModule_config','metaModelServices',calculatedBusinessColumnsControllerFunction ]);
 angular.module('metaManager').controller('businessViewJoinRelationshipsController', [ '$scope','sbiModule_translate', 'sbiModule_restServices',businessViewJoinRelationshipsControllerFunction ]);
 
@@ -275,15 +275,23 @@ function businessModelPropertyControllerFunction($scope, sbiModule_translate,sbi
 	}
 	];
 }
-function businessModelAttributeControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config){
+function businessModelAttributeControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,metaModelServices ){
 	$scope.selectedBusinessModelAttributes = [
 	                              			{
 	                              				label : sbiModule_translate.load("sbi.generic.name"),
-	                              				name : "name"
+	                              				name : "name",
+	                              				transformer: function(row){
+	                              					var bc=$scope.selectedBusinessModelAttributesScopeFunctions.BusinessColumnFromPc(row);
+	                              					if(bc==null){
+	                              						return row;
+	                              					}else{
+	                              						return bc.name;
+	                              					}
+
+	                              				}
 	                              			},
 	                              			{
-	                              				label : sbiModule_translate
-	                              						.load("sbi.meta.model.table.primaryKey"),
+	                              				label : sbiModule_translate.load("sbi.meta.model.table.primaryKey"),
 	                              				name : "identifier",
 	                              				transformer : function(row) {
 	                              					return "<md-checkbox ng-disabled='!scopeFunctions.existsBusinessModel(row)' ng-checked='scopeFunctions.isBusinessModelColumnPK(row)' ng-click='scopeFunctions.toggleBusinessModelColumnPK(row)' aria-label='isPrimaryKey'></md-checkbox>"
@@ -303,11 +311,33 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 
 	$scope.selectedBusinessModelAttributesScopeFunctions = {
 			translate:sbiModule_translate,
+			BusinessColumnFromPc:function(physicalColumnName){
+				for (var i = 0; i < $scope.selectedBusinessModel.columns.length; i++) {
+					if ($scope.selectedBusinessModel.columns[i].physicalColumn!=undefined && angular.equals( $scope.selectedBusinessModel.columns[i].physicalColumn.name, physicalColumnName)) {
+						return $scope.selectedBusinessModel.columns[i];
+					}
+				}
+				return null;
+			},
+			indexOfBcFromPt : function(bk) {
+				for (var i = 0; i < $scope.selectedBusinessModel.columns.length; i++) {
+					if ($scope.selectedBusinessModel.columns[i].physicalColumn!=undefined &&  angular.equals( $scope.selectedBusinessModel.columns[i].physicalColumn.name, bk.name)) {
+						return i;
+					}
+				}
+				return -1;
+			},
+			indexOfSimpleBcFromPt : function(bk) {
+				for (var i = 0; i < $scope.selectedBusinessModel.simpleBusinessColumns.length; i++) {
+					if (angular.equals($scope.selectedBusinessModel.simpleBusinessColumns[i].physicalColumn!=undefined &&  $scope.selectedBusinessModel.simpleBusinessColumns[i].physicalColumn.name, bk.name)) {
+						return i;
+					}
+				}
+				return -1;
+			},
 			indexOfBc : function(bk) {
 				for (var i = 0; i < $scope.selectedBusinessModel.columns.length; i++) {
-					if (angular.equals(
-							$scope.selectedBusinessModel.columns[i].uniqueName,
-							bk.uniqueName)) {
+					if (angular.equals( $scope.selectedBusinessModel.columns[i].uniqueName, bk.uniqueName)) {
 						return i;
 					}
 				}
@@ -315,7 +345,7 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 			},
 
 			isBusinessModelColumnPK : function(row) {
-				var index = this.indexOfBc(row);
+				var index = this.indexOfBcFromPt(row);
 				if (index != -1) {
 					return $scope.selectedBusinessModel.columns[index].identifier;
 				} else {
@@ -324,24 +354,65 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 
 			},
 			toggleBusinessModelColumnPK : function(row) {
-				var index = this.indexOfBc(row);
+				var index = this.indexOfBcFromPt(row);
 				$scope.selectedBusinessModel.columns[index].identifier = !$scope.selectedBusinessModel.columns[index].identifier;
 			},
 			existsBusinessModel : function(row) {
-				return (this.indexOfBc(row) != -1);
+				return (this.indexOfBcFromPt(row) != -1);
 			},
 			toggleBusinessModel : function(row) {
-				var index = this.indexOfBc(row);
+				var index = this.indexOfBcFromPt(row);
 				if (index == -1) {
-					$scope.selectedBusinessModel.columns.push(row);
+					var indexSimpleBC = this.indexOfSimpleBcFromPt(row);
+					if(indexSimpleBC!=-1){
+						var tmpbm=$scope.selectedBusinessModel.simpleBusinessColumns[indexSimpleBC];
+						delete tmpbm.$parent;
+						$scope.selectedBusinessModel.columns.push(tmpbm);
+					}else{
+						$scope.createBusinessColumnFromPhysicalColumns(row,$scope.selectedBusinessModel)
+					}
+
+
 				} else {
-					//remove the primaryKey
-					$scope.selectedBusinessModel.columns[index].identifier =false;
-					row.identifier =false;
-					$scope.selectedBusinessModel.columns.splice(index, 1);
+					var isPresentInCalcField=$scope.isPresentInCalculatedColumn($scope.selectedBusinessModel.columns[index],$scope.selectedBusinessModel);
+					if(isPresentInCalcField!=false){
+						sbiModule_restServices.errorHandler("This column is in connection with a calculated field " +isPresentInCalcField,"Unable to remove this column");
+					}else{
+						$scope.deleteBusinessColumn($scope.selectedBusinessModel.columns[index].uniqueName,$scope.selectedBusinessModel);
+					}
+
 				}
 			}
 		}
+
+	$scope.isPresentInCalculatedColumn=function(bc,businessModel){
+		for(var i=0;i<businessModel.calculatedBusinessColumns.length;i++){
+			for(var j=0;j<businessModel.calculatedBusinessColumns[i].referencedColumns.length;j++){
+				if(angular.equals(businessModel.calculatedBusinessColumns[i].referencedColumns[j].uniqueName,bc.uniqueName)){
+					return businessModel.calculatedBusinessColumns[i].uniqueName;
+				}
+			}
+
+		}
+		return false
+
+	}
+	$scope.createBusinessColumnFromPhysicalColumns=function(pc,businessModel){
+		sbiModule_restServices.promisePost("1.0/metaWeb", "createBusinessColumn",metaModelServices.createRequestRest({physicalTableName:pc.$parent.name,physicalColumnName:pc.name,businessModelUniqueName:businessModel.uniqueName}))
+		   .then(function(response){
+				metaModelServices.applyPatch(response.data);
+		   },function(response){
+			   sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
+		   })
+	}
+	$scope.deleteBusinessColumn=function(businessColumnUniqueName,businessModel){
+		sbiModule_restServices.promisePost("1.0/metaWeb", "deleteBusinessColumn",metaModelServices.createRequestRest({businessColumnUniqueName:businessColumnUniqueName ,businessModelUniqueName:businessModel.uniqueName}))
+		.then(function(response){
+			metaModelServices.applyPatch(response.data);
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
+		})
+	}
 
 }
 

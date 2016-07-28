@@ -44,13 +44,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * <li>{@link it.eng.knowage.meta.model.business.impl.BusinessColumnImpl#getTable <em>Table</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @generated
  */
 public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColumn {
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	protected BusinessColumnImpl() {
@@ -59,7 +59,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -69,7 +69,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -82,7 +82,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	public NotificationChain basicSetTable(BusinessColumnSet newTable, NotificationChain msgs) {
@@ -92,7 +92,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -114,7 +114,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -130,7 +130,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -144,7 +144,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -158,7 +158,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -172,7 +172,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -187,7 +187,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -202,7 +202,7 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -259,7 +259,9 @@ public class BusinessColumnImpl extends ModelObjectImpl implements BusinessColum
 				getTable().getModel().getIdentifiers().add(identifier);
 			}
 		} else {
-			getTable().getIdentifier().getColumns().remove(this);
+			if (getTable().getIdentifier() != null) {
+				getTable().getIdentifier().getColumns().remove(this);
+			}
 		}
 	}
 

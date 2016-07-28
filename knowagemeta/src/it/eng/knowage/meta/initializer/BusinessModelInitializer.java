@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.meta.initializer;
 
+import it.eng.knowage.meta.exception.KnowageMetaException;
 import it.eng.knowage.meta.initializer.descriptor.BusinessRelationshipDescriptor;
 import it.eng.knowage.meta.initializer.descriptor.BusinessViewInnerJoinRelationshipDescriptor;
 import it.eng.knowage.meta.initializer.descriptor.CalculatedFieldDescriptor;
@@ -51,7 +52,7 @@ import org.eclipse.emf.common.util.EList;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class BusinessModelInitializer {
 
@@ -305,8 +306,6 @@ public class BusinessModelInitializer {
 			calculatedBusinessColumn.setName(calculatedColumnDescriptor.getName());
 			calculatedBusinessColumn.setDescription("Calculated Column " + calculatedColumnDescriptor.getName());
 
-			businessColumnSet.getColumns().add(calculatedBusinessColumn);
-
 			getPropertiesInitializer().addProperties(calculatedBusinessColumn);
 			// set calculated column expression text
 			calculatedBusinessColumn.setProperty(BusinessModelPropertiesFromFileInitializer.CALCULATED_COLUMN_EXPRESSION,
@@ -317,6 +316,11 @@ public class BusinessModelInitializer {
 			// set column type
 			calculatedBusinessColumn.setProperty("structural.columntype", "attribute");
 
+			calculatedBusinessColumn.getReferencedColumns();
+
+			businessColumnSet.getColumns().add(calculatedBusinessColumn);
+		} catch (KnowageMetaException t) {
+			throw new KnowageMetaException(t.getMessage());
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to initialize calculted business column ", t);
 		}
@@ -585,7 +589,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Create a BusinessView using the data from a BusinessTable and the added PhysicalTable with a specified join path
-	 * 
+	 *
 	 * @return BusinessView created
 	 */
 	public BusinessView upgradeBusinessTableToBusinessView(BusinessTable businessTable,
@@ -707,7 +711,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Transform a BusinessView with only one PhysicalTable in the corresponding BusinessTable
-	 * 
+	 *
 	 * @param businessView
 	 * @return businessTable
 	 */
@@ -831,7 +835,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Create BusinessViewInnerJoinRelationship from a BusinessViewInnerJoinRelationshipDescriptor
-	 * 
+	 *
 	 * @param businessModel
 	 * @return
 	 */
@@ -865,7 +869,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Remove BusinessViewInnerJoinRelationship from a BusinessViewInnerJoinRelationshipDescriptor
-	 * 
+	 *
 	 * @param businessModel
 	 * @return
 	 */
@@ -895,7 +899,7 @@ public class BusinessModelInitializer {
 
 	/**
 	 * Check if the relationships defined in the model respect the constraints required for Hibernate
-	 * 
+	 *
 	 * @return the collection of incorrect relationships
 	 */
 	public List<Pair<BusinessRelationship, Integer>> checkRelationshipsConstraints(BusinessModel businessModel) {

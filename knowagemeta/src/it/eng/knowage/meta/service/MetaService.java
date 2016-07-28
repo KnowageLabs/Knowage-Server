@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.meta.service;
 
+import it.eng.knowage.meta.exception.KnowageMetaException;
 import it.eng.knowage.meta.generator.jpamapping.JpaMappingJarGenerator;
 import it.eng.knowage.meta.initializer.BusinessModelInitializer;
 import it.eng.knowage.meta.initializer.PhysicalModelInitializer;
@@ -37,6 +38,8 @@ import it.eng.knowage.meta.model.business.BusinessTable;
 import it.eng.knowage.meta.model.business.BusinessView;
 import it.eng.knowage.meta.model.business.BusinessViewInnerJoinRelationship;
 import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
+import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
+import it.eng.knowage.meta.model.business.impl.SimpleBusinessColumnImpl;
 import it.eng.knowage.meta.model.filter.PhysicalTableFilter;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
@@ -47,6 +50,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.services.rest.JSError;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tenant.Tenant;
@@ -117,7 +121,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 * 
+	 *
 	 * @param dsId
 	 * @return
 	 */
@@ -489,9 +493,13 @@ public class MetaService extends AbstractSpagoBIResource {
 			// Business view
 			sourceBcs = bm.getBusinessViewByUniqueName(sourceTableName);
 		}
-		CalculatedFieldDescriptor cfd = new CalculatedFieldDescriptor(name, expression, dataType, sourceBcs);
-		BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
-		businessModelInitializer.addCalculatedColumn(cfd);
+		try {
+			CalculatedFieldDescriptor cfd = new CalculatedFieldDescriptor(name, expression, dataType, sourceBcs);
+			BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
+			businessModelInitializer.addCalculatedColumn(cfd);
+		} catch (KnowageMetaException t) {
+			return Response.ok(new JSError().addError(t.getMessage()).toString()).build();
+		}
 
 		JSONObject jsonModel = createJson(model);
 		ObjectMapper mapper = new ObjectMapper();
@@ -620,6 +628,55 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		PhysicalModel phyMod = physicalModelInitializer.initializeLigth(originalPM.getConnection(), currTables);
 		physicalModelInitializer.updateModel(originalPM, phyMod, tables);
+
+		JSONObject jsonModel = createJson(model);
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+
+		return Response.ok(patch.toString()).build();
+	}
+
+	@POST
+	@Path("/createBusinessColumn")
+	public Response createBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
+		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		JSONObject oldJsonModel = createJson(model);
+
+		applyDiff(jsonRoot, model);
+
+		JSONObject json = jsonRoot.getJSONObject("data");
+		String physicalTableName = json.getString("physicalTableName");
+		String physicalColumnName = json.getString("physicalColumnName");
+		String businessModelUniqueName = json.getString("businessModelUniqueName");
+		PhysicalColumn physicalColumn = model.getPhysicalModels().get(0).getTable(physicalTableName).getColumn(physicalColumnName);
+		BusinessColumnSet currBM = model.getBusinessModels().get(0).getTableByUniqueName(businessModelUniqueName);
+		BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
+		businessModelInitializer.addColumn(physicalColumn, currBM);
+
+		JSONObject jsonModel = createJson(model);
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+
+		return Response.ok(patch.toString()).build();
+	}
+
+	@POST
+	@Path("/deleteBusinessColumn")
+	public Response deleteBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
+		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		JSONObject oldJsonModel = createJson(model);
+
+		applyDiff(jsonRoot, model);
+
+		JSONObject json = jsonRoot.getJSONObject("data");
+		String businessColumnUniqueName = json.getString("businessColumnUniqueName");
+		String businessModelUniqueName = json.getString("businessModelUniqueName");
+		BusinessColumnSet currBM = model.getBusinessModels().get(0).getTableByUniqueName(businessModelUniqueName);
+		SimpleBusinessColumn columnToDelete = currBM.getSimpleBusinessColumnByUniqueName(businessColumnUniqueName);
+		columnToDelete.setIdentifier(false);
+		currBM.getColumns().remove(columnToDelete);
 
 		JSONObject jsonModel = createJson(model);
 		ObjectMapper mapper = new ObjectMapper();
@@ -775,7 +832,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	private boolean toSkip(String path) {
 		if (path.equals("/datasourceId") || path.equals("/modelName") || path.equals("/physicalModels") || path.equals("/businessModels")
-				|| path.contains("/physicalColumn/") || path.contains("/simpleBusinessColumns") || path.contains("relationships")) {
+				|| path.contains("/physicalColumn/") || path.contains("/simpleBusinessColumns") || path.contains("relationships")
+				|| path.contains("referencedColumns")) {
 			logger.debug("skipping " + path);
 			return true;
 		}
@@ -790,6 +848,7 @@ public class MetaService extends AbstractSpagoBIResource {
 				value = null;
 			context.createPathAndSetValue(path, value);
 		} catch (Throwable t) {
+			t.printStackTrace();
 			throw new SpagoBIException("Error in replace", t);
 		}
 	}
@@ -800,6 +859,9 @@ public class MetaService extends AbstractSpagoBIResource {
 			Pointer obj = context.getPointer(path);
 			logger.debug("REMOVE > " + path + " > " + obj.getNode());
 			Pointer coll = context.getPointer(path.substring(0, i));
+			if (obj.getNode() instanceof SimpleBusinessColumnImpl) {
+				((SimpleBusinessColumnImpl) obj.getNode()).setIdentifier(false);
+			}
 			((List<?>) coll.getNode()).remove(obj.getNode());
 		} else {
 			// TODO
@@ -855,7 +917,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	 * {businessModels:[tables:[...]],businessModels:[businessTables:[...]]} Furthermore jsonDiff is zero-based numbering but jxpath is 1-based numbering
 	 * Another difference is that jsonDiff's notation used to select a property of a nth element of a collection is "parent/n/property" but jxpath does same
 	 * selection in this way "parent[n]/property"
-	 * 
+	 *
 	 * @param path
 	 * @return path cleaned
 	 */
@@ -875,6 +937,14 @@ public class MetaService extends AbstractSpagoBIResource {
 		JSONObject translatedModel = new JSONObject();
 		Map<String, Integer> physicalTableMap = new HashMap<>();
 
+		JSONArray physicalModelJson = new JSONArray();
+		EList<PhysicalTable> physicalTables = model.getPhysicalModels().get(0).getTables();
+		for (int j = 0; j < physicalTables.size(); j++) {
+			PhysicalTable physicalTable = physicalTables.get(j);
+			physicalModelJson.put(new JSONObject(JsonConverter.objectToJson(physicalTable, physicalTable.getClass())));
+			physicalTableMap.put(physicalTable.getName(), j);
+		}
+
 		JSONArray businessModelJson = new JSONArray();
 		Iterator<BusinessTable> businessModelsIterator = model.getBusinessModels().get(0).getBusinessTables().iterator();
 		while (businessModelsIterator.hasNext()) {
@@ -883,14 +953,6 @@ public class MetaService extends AbstractSpagoBIResource {
 			JSONObject bmJson = new JSONObject(JsonConverter.objectToJson(curr, curr.getClass()));
 			bmJson.put("physicalTable", new JSONObject().put("physicalTableIndex", physicalTableMap.get(tabelName)));
 			businessModelJson.put(bmJson);
-		}
-
-		JSONArray physicalModelJson = new JSONArray();
-		EList<PhysicalTable> physicalTables = model.getPhysicalModels().get(0).getTables();
-		for (int j = 0; j < physicalTables.size(); j++) {
-			PhysicalTable physicalTable = physicalTables.get(j);
-			physicalModelJson.put(new JSONObject(JsonConverter.objectToJson(physicalTable, physicalTable.getClass())));
-			physicalTableMap.put(physicalTable.getName(), j);
 		}
 
 		JSONArray businessViewJson = new JSONArray();
