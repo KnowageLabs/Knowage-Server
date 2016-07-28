@@ -101,7 +101,7 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 					if (dataStore.getMetaData() != null && dataStore.getMetaData().getFieldCount() > 0) {
 						for (int i = 0; i <= dataStore.getMetaData().getFieldCount() - 1; i++) {
 							XSSFCell cell = header.createCell(i + 1);
-							cell.setCellValue(dataStore.getMetaData().getFieldName(i));
+							cell.setCellValue(dataStore.getMetaData().getFieldAlias(i));
 							cell.setCellStyle(borderStyleHeader);
 						}
 					}
