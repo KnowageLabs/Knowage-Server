@@ -12,10 +12,10 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 		});
 	}
 
-	this.editDocumentByLabel=function(docLabel,localScope,editMode){
+	this.editDocumentByLabel=function(docLabel,localScope,editMode,navigator){
 		sbiModule_restServices.promiseGet("1.0/documents",docLabel).then(
 		function(response){
-			dwS.editDocument(response.data.id,response.data.label,response.data.name,localScope,editMode?editMode:"edit");
+			dwS.editDocument(response.data.id,response.data.label,response.data.name,localScope,editMode?editMode:"edit",navigator);
 		},
 		function(response){
 			sbiModule_restServices.errorHandler(response.data,"");
@@ -34,12 +34,12 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 		this.executeDocument(documentId,documentLabel,documentName,localScope,false);
 	};
 	
-	this.editDocument=function(documentId,documentLabel,documentName,localScope,editMode){
-		this.executeDocument(documentId,documentLabel,documentName,localScope,editMode);
+	this.editDocument=function(documentId,documentLabel,documentName,localScope,editMode,navigator){
+		this.executeDocument(documentId,documentLabel,documentName,localScope,editMode,navigator);
 		
 	};
 	
-	this.executeDocument = function (documentId,documentLabel,documentName,localScope, editMode) {
+	this.executeDocument = function (documentId,documentLabel,documentName,localScope, editMode, navigator) {
 		$mdDialog.show({
 			controller: openDocumentController,
 			template: '<md-dialog aria-label="Open document"  style="width: 100%;  height: 100%;max-width: 100%;  max-height: 100%;" ng-cloak>'+
@@ -50,14 +50,14 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 //			clickOutsideToClose:false,
 //			escapeToClose :false,
 			fullscreen: true,
-			locals:{documentId:documentId,documentLabel:documentLabel,documentName:documentName,localScope:localScope, editMode:editMode}
+			locals:{documentId:documentId,documentLabel:documentLabel,documentName:documentName,localScope:localScope, editMode:editMode, navigator:navigator}
 			
 		}) .then(function() { 
 			
 	    } );
 	}
 	
-	function openDocumentController($scope,sbiModule_config,documentId,documentLabel,documentName,localScope,editMode){
+	function openDocumentController($scope,sbiModule_config,documentId,documentLabel,documentName,localScope,editMode,navigator){
 		var pathUrl="";
 		pathUrl+="&OBJECT_ID="+documentId;
 		pathUrl+="&OBJECT_LABEL="+documentLabel;
@@ -66,6 +66,9 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 		$scope.documentViewerUrl = sbiModule_config.adapterPath+'?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&IS_SOURCE_DOCUMENT=true&SBI_EXECUTION_ID=null'+pathUrl
 		if(editMode) {
 			$scope.documentViewerUrl += "&EDIT_MODE="+editMode
+		}
+		if(navigator) {
+			$scope.documentViewerUrl += "&"+navigator
 		}
 		
 		$scope.closeDocument=function(){

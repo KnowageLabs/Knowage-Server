@@ -137,7 +137,7 @@
 		$scope.editMap = function() {
 			sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath+"restful-services/");
 
-			$documentViewer.editDocumentByLabel($scope.docLabel, $scope, "edit_map");
+			$documentViewer.editDocumentByLabel($scope.docLabel, $scope, "edit_map","LIGHT_NAVIGATOR_DISABLED=true");
 			
 			$scope.$on("documentClosed", function() { 
 				if($scope.tecnicalUser){
