@@ -19,6 +19,7 @@ package it.eng.spagobi.metadata.etl;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -50,6 +51,11 @@ public class ETLParser {
 	private String[] fileSourceComponents = { "tFileInputDelimited", "tFileInputExcel" };
 	private String[] fileTargetComponents = { "tFileOutputDelimited", "tFileOutputExcel" };
 
+	private static final String TABLE_SOURCE = "SOURCE";
+	private static final String TABLE_TARGET = "TARGET";
+	private static final String FILE_SOURCE = "FILE_SOURCE";
+	private static final String FILE_TARGET = "FILE_TARGET";
+
 	public ETLParser(Document document) {
 		this.document = document;
 	}
@@ -62,18 +68,28 @@ public class ETLParser {
 		// Get Source Tables
 		Set<ETLComponent> rdbmsSourceTables = getRDBMSSourceComponentsTables();
 		Set<ETLComponent> rdbmsMixedSourceTables = getRDBMSSourceMixedComponentsTables();
+		Set<ETLComponent> rdbmsNotedSourceTables = getRDBMSNotedTables(TABLE_SOURCE, rdbmsDataSources);
+
 		rdbmsSourceTables.addAll(rdbmsMixedSourceTables);
+		rdbmsSourceTables.addAll(rdbmsNotedSourceTables);
 
 		// Get Target Tables
 		Set<ETLComponent> rdbmsTargetTables = getRDBMSTargetComponentsTables();
 		Set<ETLComponent> rdbmsMixedTargetTables = getRDBMSTargetMixedComponentsTables();
+		Set<ETLComponent> rdbmsNotedTargetTables = getRDBMSNotedTables(TABLE_TARGET, rdbmsDataSources);
+
+		rdbmsTargetTables.addAll(rdbmsNotedTargetTables);
 		rdbmsTargetTables.addAll(rdbmsMixedTargetTables);
 
 		// Get Source Files
 		Set<String> fileSourceTables = getFileSourceComponentsLocations(contextName);
+		Set<String> fileNotedSource = getRDBMSNotedFiles(FILE_SOURCE);
+		fileSourceTables.addAll(fileNotedSource);
 
 		// Get Target Files
 		Set<String> fileTargetTables = getFileTargetComponentsLocations(contextName);
+		Set<String> fileNotedTarget = getRDBMSNotedFiles(FILE_TARGET);
+		fileTargetTables.addAll(fileNotedTarget);
 
 		ETLMetadata metadata = new ETLMetadata(rdbmsDataSources, rdbmsSourceTables, rdbmsTargetTables, fileSourceTables, fileTargetTables);
 
@@ -153,6 +169,115 @@ public class ETLParser {
 			tables.addAll(getMixedComponentInformations(rdbmsMixedComponents[i], "DBTABLE", "TABLE", "SOURCE"));
 		}
 		return tables;
+	}
+
+	/**
+	 * Get all RDBMS Tables of the passed role found inside note elements
+	 *
+	 * @param tableRole
+	 *            role of the table (SOURCE/TARGET)
+	 * @param rdbmsDataSources
+	 *            the data sources already found in a previous step
+	 * @throws XPathExpressionException
+	 */
+	public Set<ETLComponent> getRDBMSNotedTables(String tableRole, Set<ETLRDBMSSource> rdbmsDataSources) throws XPathExpressionException {
+		Set<ETLComponent> tables = new HashSet<ETLComponent>();
+
+		XPathFactory xPathfactory = XPathFactory.newInstance();
+		XPath xpath = xPathfactory.newXPath();
+		XPathExpression expr;
+
+		expr = xpath.compile("//note/@text");
+		String textValue = (String) expr.evaluate(document, XPathConstants.STRING);
+		if (textValue != null) {
+			// clean up the string from carriage return, new line symbols and comments
+			textValue = textValue.replaceAll("&#xD;", "");
+			textValue = textValue.replaceAll("&#xA;", "");
+			textValue = textValue.replaceAll("(\\r|\\n)", "");
+			textValue = textValue.replaceAll("/\\*.*\\*/", "");
+
+			StringTokenizer stringTokenizer = new StringTokenizer(textValue, ";");
+			String connectionLabel = null;
+			Set<String> tableNames = new HashSet<String>();
+
+			while (stringTokenizer.hasMoreElements()) {
+				String element = stringTokenizer.nextElement().toString();
+				// split single element to get values
+				String[] parts = element.split("=");
+
+				if (parts[0].equalsIgnoreCase("CONNECTION_LABEL")) {
+					// get Connection label
+					connectionLabel = parts[1];
+
+				} else if (parts[0].equalsIgnoreCase(tableRole)) {
+					// get a Table Name
+					String tableName = parts[1];
+					tableNames.add(tableName);
+				}
+			}
+
+			// check if the connection was specified
+			if (connectionLabel != null) {
+				// get the corresponding unique name of the connection
+				String connectionName = getETLRDBMSSourceNameByLabel(rdbmsDataSources, connectionLabel);
+				if (connectionName != null) {
+					// create ETLComponent for each table name found
+					for (String tableName : tableNames) {
+						ETLComponent component = new ETLComponent();
+						component.setValue(tableName);
+						component.setConnectionComponentName(connectionName);
+						tables.add(component);
+					}
+				}
+			}
+
+		}
+
+		return tables;
+	}
+
+	/**
+	 * Get all RDBMS Files of the passed role found inside note elements
+	 *
+	 * @param fileRole
+	 *            role of the table (FILE_SOURCE/FILE_TARGET)
+	 * @throws XPathExpressionException
+	 */
+	public Set<String> getRDBMSNotedFiles(String fileRole) throws XPathExpressionException {
+		Set<String> fileNames = new HashSet<String>();
+
+		XPathFactory xPathfactory = XPathFactory.newInstance();
+		XPath xpath = xPathfactory.newXPath();
+		XPathExpression expr;
+
+		expr = xpath.compile("//note/@text");
+		String textValue = (String) expr.evaluate(document, XPathConstants.STRING);
+		if (textValue != null) {
+			// clean up the string from carriage return, new line symbols and comments
+			textValue = textValue.replaceAll("&#xD;", "");
+			textValue = textValue.replaceAll("&#xA;", "");
+			textValue = textValue.replaceAll("(\\r|\\n)", "");
+			textValue = textValue.replaceAll("/\\*.*\\*/", "");
+
+			StringTokenizer stringTokenizer = new StringTokenizer(textValue, ";");
+
+			while (stringTokenizer.hasMoreElements()) {
+				String element = stringTokenizer.nextElement().toString();
+				// split single element to get values
+				String[] parts = element.split("=");
+
+				if (parts[0].equalsIgnoreCase(fileRole)) {
+					// get a file Name
+					String fileName = parts[1];
+					// remove * if contained in file name
+					fileName = fileName.replace("*", "_");
+					fileNames.add(fileName);
+				}
+			}
+
+		}
+
+		return fileNames;
 	}
 
 	/**
@@ -464,6 +589,21 @@ public class ETLParser {
 	// -----------------------------------------------------------------
 	// Utility Methods
 	// -----------------------------------------------------------------
+
+	/**
+	 * Search inside the retrievied ETL RDBMS Sources the one with the corresponding label and return the component name
+	 */
+	private String getETLRDBMSSourceNameByLabel(Set<ETLRDBMSSource> sources, String label) {
+		for (ETLRDBMSSource source : sources) {
+			String aLabel = source.getLabel();
+			if (aLabel.equalsIgnoreCase(label)) {
+				// found it!
+				return source.getComponentName();
+			}
+		}
+		// nothing found
+		return null;
+	}
 
 	/**
 	 * Print contents of a String Set to console
