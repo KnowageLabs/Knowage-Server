@@ -204,7 +204,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	</list>
     	
     	
-       <detail label='shownFunction.name==undefined? "Demo" : "Demo: "+shownFunction.name' save-function="saveFunction" 	cancel-function="cancelFunction"
+       <detail label='shownFunction.name==undefined? "" : shownFunction.name' save-function="saveFunction" 	cancel-function="cancelFunction"
        	disable-cancel-button=false
 		disable-save-button=false
 		show-save-button="isAdmin || (isDev && shownFunction.owner==ownerUserName)">
