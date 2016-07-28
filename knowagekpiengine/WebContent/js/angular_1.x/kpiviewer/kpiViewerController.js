@@ -110,6 +110,7 @@
 
 				} else { //scorecard
 					$scope.documentData.scorecard = JSON.parse(response.data.info)[0].scorecard;
+					$scope.showKpiLoader = false;
 				}
 			},
 			function(response){
