@@ -139,6 +139,25 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
+	
+	
+	@GET
+	@Path("/id/{id}")
+	@Produces(MediaType.TEXT_HTML)
+	public String getDataSetLabelById(@PathParam("id") String id) {
+		logger.debug("IN");
+		
+		IDataSetDAO datasetDao = null;
+		try {
+			datasetDao = DAOFactory.getDataSetDAO();
+		} catch (EMFUserError e) {
+			logger.error("Internal error", e);
+			throw new SpagoBIRuntimeException("Internal error", e);
+		}
+		IDataSet dataset = datasetDao.loadDataSetById(new Integer(id));
+		
+		return dataset.getLabel();
+	}
 
 	@POST
 	@Path("/{label}/content")
