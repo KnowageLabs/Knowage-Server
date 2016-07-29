@@ -67,7 +67,7 @@
 		$scope.attributeFields=[];
        
 		// if there is no template at all
-		$scope.editDisabled = $scope.template.mapName==undefined; 
+		$scope.editDisabled = $scope.template.targetLayerConf == undefined; 
 		
 		$scope.choseDataset= function(){
 			console.log("IN CHOOSE DATASET")
@@ -565,6 +565,28 @@
 					}
 					
 				}
+				 
+				if($scope.datasetIndicators.length==0){
+					template.error = sbiModule_translate
+					.load('gisengine.designer.tempate.noIndicators');
+					return template;
+				}else{
+					template.indicators=[];
+					for (var i = 0; i < $scope.datasetIndicators.length; i++) {
+						if($scope.datasetIndicators[i].indicatorName != '' && $scope.datasetIndicators[i].indicatorLabel != ''){
+						var indicator={};
+						indicator.name=$scope.datasetIndicators[i].indicatorName;
+						indicator.label=$scope.datasetIndicators[i].indicatorLabel;
+						template.indicators.push(indicator);
+						}
+						}
+						if(template.indicators.length==0){
+							template.error = sbiModule_translate
+							.load('gisengine.designer.tempate.noIndicators');
+							return template;
+						}
+						}
+				
 				
 				
 					if($scope.datasetFilters.length > 0){
