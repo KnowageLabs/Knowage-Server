@@ -9,7 +9,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 .directive('expanderBox',function() {
 	return {
 		transclude : true,
-		template:"<md-toolbar layout=\"row\" ng-click=\"toggle()\">" +
+		template:"<md-toolbar layout=\"row\" ng-click=\"toggle($event)\">" +
 		"<span class=\"md-toolbar-tools flex\" >" +
 		"<span id=\"customToolbarContent\" layout=\"row\"></span>"+
 		"{{title}}" +
@@ -98,7 +98,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 })
 
 function boxExpanderControllerFunction($scope){
-	$scope.toggle=function(){
+	$scope.toggle=function(event){
 		event.stopPropagation();
 		$scope.expanded=!$scope.expanded;
 	}
