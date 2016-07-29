@@ -111,16 +111,18 @@ $scope.getCube = function(item){
 			
 		} 
 		
-		$scope.saveMDX = function(){
+		
+$scope.saveMDX = function(){
 			
 			prepareTemplate();
 		
       	sbiModule_restServices.promisePost("1.0/designer/cubes","",angular.toJson($scope.template))
     	.then(function(response) {
+    		
+    		var url = sbiModule_config.contextName + "/restful-services/1.0/designer/cubes/start";
+    		console.log(url);
+    		$window.location = url;
 		
-			sbiModule_messaging.showSuccessMessage("Partial Template successfully saved", 'Success!');
-		
-			
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			

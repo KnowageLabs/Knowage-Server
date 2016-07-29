@@ -17,9 +17,13 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -29,10 +33,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
@@ -52,6 +58,8 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(DesignerResource.class);
 	private MondrianSchemaRetriver retriver = null;
+	private String reference;
+	private static final String SUCCESS_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf2.jsp";
 
 	@GET
 	@Path("/cubes/{id}")
@@ -59,10 +67,11 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 	public String getAllCubes(@PathParam("id") Integer id) throws SpagoBIEngineException {
 
 		logger.debug("IN");
+
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		ArtifactServiceProxy artifactProxy = (ArtifactServiceProxy) ei.getEnv().get(EngineConstants.ENV_ARTIFACT_PROXY);
 		MondrianSchemaManager schemaManager = new MondrianSchemaManager(artifactProxy);
-		String reference = schemaManager.getMondrianSchemaURI(id);
+		reference = schemaManager.getMondrianSchemaURI(id);
 		MondrianDriver driver = new MondrianDriver(reference);
 		retriver = new MondrianSchemaRetriver(driver);
 		JSONArray array = new JSONArray(retriver.getAllCubes());
@@ -91,7 +100,7 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 
 	@POST
 	@Path("/cubes")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces("text/html")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void saveMdx(String body) throws SpagoBIEngineException, JSONException {
 		logger.debug("IN");
@@ -99,7 +108,7 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 		JSONObject obj = new JSONObject(body);
 		String currentArtifactId = obj.getString("mondrianSchemaId");
 		String artifactId = obj.getString("id");
-		List<String> userProfileAttributes = new ArrayList();
+		List<String> userProfileAttributes = new ArrayList<String>();
 
 		WhatIfTemplate template = new WhatIfTemplate();
 		template.setMondrianSchema(obj.getString("mondrianSchema"));
@@ -107,10 +116,22 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 		template.setMondrianMdxQuery(obj.getString("mondrianMdxQuery"));
 		template.setProfilingUserAttributes(userProfileAttributes);
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		ei.getEnv().put("SBI_ARTIFACT_VERSION_ID", currentArtifactId);
-		ei.getEnv().put("SBI_ARTIFACT_ID", artifactId);
+		ei.getEnv().put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, currentArtifactId);
+		ei.getEnv().put(SpagoBIConstants.SBI_ARTIFACT_ID, artifactId);
 		ei.updateWhatIfEngineInstance(template, false, ei.getEnv());
-
 		logger.debug("OUT");
 	}
+
+	@GET
+	@Path("/cubes/start")
+	@Produces("text/html")
+	public void redirect() throws SpagoBIEngineException, ServletException, IOException {
+		logger.debug("IN");
+		HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+		HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+
+		request.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(request, response);
+
+	}
+
 }

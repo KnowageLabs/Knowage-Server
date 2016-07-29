@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -113,6 +115,7 @@ public class WhatIfDriver extends GenericDriver {
 		String documentId = obj.getId().toString();
 		parameters.put("document", documentId);
 		parameters.put("forward", "editQuery.jsp");
+
 		applySecurity(parameters, profile);
 		byte[] template = null;
 		try {
@@ -143,9 +146,16 @@ public class WhatIfDriver extends GenericDriver {
 		Engine engine = obj.getEngine();
 		String url = engine.getUrl() + "/edit";
 		HashMap parameters = new HashMap();
+
 		String documentId = obj.getId().toString();
 		parameters.put("document", documentId);
-		parameters.put("forward", "edit.jsp");
+		// CREATE EXECUTION ID
+		String sbiExecutionId = null;
+		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
+		UUID uuidObj = uuidGen.generateTimeBasedUUID();
+		sbiExecutionId = uuidObj.toString();
+		sbiExecutionId = sbiExecutionId.replaceAll("-", "");
+		parameters.put("SBI_EXECUTION_ID", sbiExecutionId);
 		applySecurity(parameters, profile);
 		EngineURL engineURL = new EngineURL(url, parameters);
 		logger.debug("OUT");
