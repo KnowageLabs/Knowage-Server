@@ -2,10 +2,9 @@
 	var scripts = document.getElementsByTagName("script");
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
-	
+
 var associatorDirective = angular.module('associator-directive', ['ngMaterial']);
 associatorDirective.directive("associatorDirective",function(){
-	debugger;
 		return {
 //			restrict: 'E',
 //			templateUrl:'/knowagemeta/js/src/angular_1.4/tools/commons/associatordirective/template/associatorDirectiveTemplate.jsp',

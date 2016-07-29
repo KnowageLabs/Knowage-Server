@@ -958,7 +958,15 @@ public class MetaService extends AbstractSpagoBIResource {
 		List<BusinessView> businessViews = model.getBusinessModels().get(0).getBusinessViews();
 		for (int j = 0; j < businessViews.size(); j++) {
 			BusinessView businessView = businessViews.get(j);
-			businessViewJson.put(new JSONObject(JsonConverter.objectToJson(businessView, businessView.getClass())));
+			JSONObject bcJson = new JSONObject(JsonConverter.objectToJson(businessView, businessView.getClass()));
+
+			List<PhysicalTable> ptList = businessView.getPhysicalTables();
+			JSONArray ptL = new JSONArray();
+			for (PhysicalTable pt : ptList) {
+				ptL.put(new JSONObject().put("physicalTableIndex", physicalTableMap.get(pt.getName())));
+			}
+			bcJson.put("physicalTables", ptL);
+			businessViewJson.put(bcJson);
 		}
 		translatedModel.put("physicalModels", physicalModelJson);
 		translatedModel.put("businessModels", businessModelJson);

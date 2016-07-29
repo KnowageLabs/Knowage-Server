@@ -44,7 +44,13 @@ function addBusinessViewController($scope,sbiModule_restServices,sbiModule_trans
 	if(editMode==true){
 		$scope.steps.current=1;
 		//copy the physical tables
-		angular.copy(selectedBusinessModel.physicalTables,$scope.tmpBnssView.physicalModels);
+		for(var pti=0;pti<selectedBusinessModel.physicalTables.length;pti++){
+			var tmppt={};
+			angular.copy(originalPhysicalModel[selectedBusinessModel.physicalTables[pti].physicalTableIndex],tmppt);
+			$scope.tmpBnssView.physicalModels.push(tmppt);
+		}
+
+
 		for(var x=0;x<$scope.tmpBnssView.physicalModels.length;x++){
 			for(var y=0;y<$scope.tmpBnssView.physicalModels[x].columns.length;y++){
 				$scope.tmpBnssView.physicalModels[x].columns[y].$parent=$scope.tmpBnssView.physicalModels[x];

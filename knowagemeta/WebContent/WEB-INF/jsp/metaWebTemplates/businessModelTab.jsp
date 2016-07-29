@@ -1,6 +1,6 @@
 <angular-list-detail ng-controller="metaModelCreationBusinessController">
 	<list label="translate.load('sbi.meta.businessclass')+'/'+translate.load('sbi.meta.businessview')" layout="column"> 
-		<span ng-if="meta.businessModels.length>0">
+		 <span ng-if="meta.businessModels.length>0">
 			<component-tree id="bcmTree"  style="margin:0px" 
 					ng-model="meta.businessModels"
 					highlights-selected-item="true"   
@@ -66,9 +66,9 @@
 	
 	<detail label="selectedBusinessModel.name==undefined ? '' : selectedBusinessModel.name "  ng-if="selectedBusinessModel.name!=undefined" >
 	
-		<md-tabs flex>
-			<md-tab id="propertiestab" label="{{translate.load('sbi.udp.udpList')}}">
-				<md-content layout="column" ng-controller="businessModelPropertyController">
+		<md-tabs flex >
+			<md-tab id="propertiestab" md-active="tabResource.selectedBusinessTab=='propertiestab'" md-on-select="tabResource.selectedBusinessTab='propertiestab'"  label="{{translate.load('sbi.udp.udpList')}}">
+				<md-content ng-if="tabResource.selectedBusinessTab=='propertiestab'"  layout="column" ng-controller="businessModelPropertyController">
 				
 					<expander-box layout="column" layout-margin expanded="true" label="'Misc'" background-color="transparent" color="black" >
 						<md-input-container ng-repeat="prop in businessModelMiscInfo "  >
@@ -95,9 +95,9 @@
 				</md-content>
 			</md-tab>
 			
-			<md-tab id="attributesTab" label="{{translate.load('sbi.generic.attributes')}}" ng-if="selectedBusinessModel.columns!=undefined">
-				<md-content layout  layout-fill ng-controller="businessModelAttributeController">
-					<angular-table id="bmAttr" ng-model="meta.physicalModels[selectedBusinessModel.physicalTable.physicalTableIndex].columns"
+			<md-tab id="attributesTab" md-active="tabResource.selectedBusinessTab=='attributesTab'" md-on-select="tabResource.selectedBusinessTab='attributesTab'" label="{{translate.load('sbi.generic.attributes')}}" ng-if="selectedBusinessModel.columns!=undefined">
+				<md-content  ng-if="tabResource.selectedBusinessTab=='attributesTab'" layout  layout-fill ng-controller="businessModelAttributeController">
+					<angular-table  id="bmAttr" ng-model="attributesList"
 					 columns="selectedBusinessModelAttributes" scope-functions="selectedBusinessModelAttributesScopeFunctions" no-pagination=true flex>
 					 	</angular-table>
 <!-- 					<angular-table id="bmAttr" ng-model="selectedBusinessModel.simpleBusinessColumns" -->
@@ -107,8 +107,8 @@
 				
 			</md-tab>
 			
-			<md-tab id="calculatedColumnsTab" label="{{translate.load('sbi.meta.business.calculatedField')}}" ng-if="selectedBusinessModel.calculatedBusinessColumns!=undefined">
-				<md-content layout  layout-fill ng-controller="calculatedBusinessColumnsController">
+			<md-tab id="calculatedColumnsTab" md-active="tabResource.selectedBusinessTab=='calculatedColumnsTab'" md-on-select="tabResource.selectedBusinessTab='calculatedColumnsTab'" label="{{translate.load('sbi.meta.business.calculatedField')}}" ng-if="selectedBusinessModel.calculatedBusinessColumns!=undefined">
+				<md-content ng-if="tabResource.selectedBusinessTab=='calculatedColumnsTab'" layout  layout-fill ng-controller="calculatedBusinessColumnsController">
 					<angular-table id="bmAttrCF" ng-model="selectedBusinessModel.calculatedBusinessColumns"
 					columns="selectedBusinessModelCalculatedBusinessColumns"
 					scope-functions="selectedBusinessModelCalculatedBusinessColumnsScopeFunctions"
@@ -125,8 +125,8 @@
 				
 			</md-tab>
 			
-			<md-tab id="inboundTab" label="{{translate.load('sbi.meta.model.business.inbound')}}"  ng-if="selectedBusinessModel.columns!=undefined">
-				<md-content layout  layout-fill ng-controller="businessModelInboundController">
+			<md-tab id="inboundTab" md-active="tabResource.selectedBusinessTab=='inboundTab'" md-on-select="tabResource.selectedBusinessTab='inboundTab'" label="{{translate.load('sbi.meta.model.business.inbound')}}"  ng-if="selectedBusinessModel.columns!=undefined">
+				<md-content ng-if="tabResource.selectedBusinessTab=='inboundTab'" layout  layout-fill ng-controller="businessModelInboundController">
 					<angular-table id="inbountTable"
 							    ng-model="selectedBusinessModel.relationships" 
 								show-search-bar=true
@@ -144,8 +144,8 @@
 				</md-content>
 			</md-tab>
 			
-			<md-tab id="outboundTab" label="{{translate.load('sbi.meta.model.business.outbound')}}"  ng-if="selectedBusinessModel.columns!=undefined">
-				<md-content layout  layout-fill ng-controller="businessModelOutboundController">
+			<md-tab id="outboundTab" md-active="tabResource.selectedBusinessTab=='outboundTab'" md-on-select="tabResource.selectedBusinessTab='outboundTab'" label="{{translate.load('sbi.meta.model.business.outbound')}}"  ng-if="selectedBusinessModel.columns!=undefined">
+				<md-content ng-if="tabResource.selectedBusinessTab=='outboundTab'" layout  layout-fill ng-controller="businessModelOutboundController">
 					<angular-table id="outbountTable"
 					 	ng-model="selectedBusinessModel.relationships" 
 					 	columns="outboundColumns"
@@ -163,8 +163,8 @@
 				</md-content>
 			</md-tab>
 		
-			<md-tab id="joinRelationshipTab" label="{{translate.load('sbi.meta.joinRelationships')}}" ng-if="selectedBusinessModel.joinRelationships!=undefined">
-				<md-content layout="column"  layout-fill >
+			<md-tab id="joinRelationshipTab" md-active="tabResource.selectedBusinessTab=='joinRelationshipTab'" md-on-select="tabResource.selectedBusinessTab='joinRelationshipTab'" label="{{translate.load('sbi.meta.joinRelationships')}}" ng-if="selectedBusinessModel.joinRelationships!=undefined">
+				<md-content  ng-if="tabResource.selectedBusinessTab=='joinRelationshipTab'" layout="column"  layout-fill >
 					<div flex layout="column" style="overflow: auto;">
 						<md-list class="md-dense noPadding"  ng-repeat="item in selectedBusinessModel.joinRelationships">
 	        				<md-list-item ng-repeat="rel in item.sourceColumns"  ng-click="null" layout="row">

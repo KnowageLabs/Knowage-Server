@@ -8,7 +8,7 @@ angular.module('metaManager').controller('businessViewJoinRelationshipsControlle
 
 
 function metaModelCreationControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout) {
-
+$scope.tabResource={selectedBusinessTab:"propertiestab"};
 
 }
 
@@ -154,9 +154,12 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 	}, true);
 
 	$scope.selectBusinessModel = function(node) {
+		$scope.tabResource.selectedBusinessTab="propertiestab";
 		$scope.selectedBusinessModel = node;
 		angular.copy(parametersBuilder.extractCategories($scope.selectedBusinessModel.properties),
 				$scope.currentBusinessModelParameterCategories);
+
+
 
 	};
 
@@ -255,6 +258,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			   sbiModule_restServices.promisePost("1.0/metaWeb",(isBusinessClass ? "deleteBusinessClass" : "deleteBusinessView"),metaModelServices.createRequestRest({name:$scope.selectedBusinessModel.uniqueName}))
 			   .then(function(response){
 					metaModelServices.applyPatch(response.data);
+					$scope.selectedBusinessModel=undefined;
 			   },function(response){
 				   sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.genericError"));
 			   })
@@ -276,6 +280,22 @@ function businessModelPropertyControllerFunction($scope, sbiModule_translate,sbi
 	];
 }
 function businessModelAttributeControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,metaModelServices ){
+	$scope.attributesList=[];
+
+	$scope.loadAttributesList=function(){
+		if($scope.selectedBusinessModel.hasOwnProperty("physicalTable")){
+			angular.copy($scope.meta.physicalModels[$scope.selectedBusinessModel.physicalTable.physicalTableIndex].columns,$scope.attributesList);
+		}else{
+			for(var i=0;i<$scope.selectedBusinessModel.physicalTables.length;i++){
+//				angular.extend($scope.attributesList,$scope.meta.physicalModels[$scope.selectedBusinessModel.physicalTables[i].physicalTableIndex].columns)
+				angular.copy($scope.attributesList.concat($scope.meta.physicalModels[$scope.selectedBusinessModel.physicalTables[i].physicalTableIndex].columns),$scope.attributesList);
+
+			}
+		}
+	}
+	//load attributes list the first time
+	$scope.loadAttributesList();
+
 	$scope.selectedBusinessModelAttributes = [
 	                              			{
 	                              				label : sbiModule_translate.load("sbi.generic.name"),
