@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <script type="text/javascript"
-	src="../js/lib/messageResource/messageResource.min.js"></script>
+	src="${pageContext.request.contextPath}/js/lib/messageResource/messageResource.min.js"></script>
 
 <script type="text/javascript">
 	//Function that gets the properties file's content in an synchronous way
