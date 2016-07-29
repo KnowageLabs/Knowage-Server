@@ -142,6 +142,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		//$scope.$apply();
 	}
 	
+	//Getting all buttons from XML and moving them inside grids(arrays) where they need to be
 	filterXMLResult = function(res) {
 		var regEx = /([A-Z]+_*)+/g;
 		var i;
@@ -174,6 +175,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			$scope.tableGridNeeded = false;
 	};
 	
+	//Getting clicked buttons trough XML (clicked="true")
 	filterClickedButtons = function(data){
 		var regEx = /([A-Z]+_*)+/g;
 		var i;
@@ -183,6 +185,8 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	}
 	
 	filterXMLResult(toolbarVisibleBtns);
+	
+	//Call off function remove comment bellow to get names of clicked buttons
 	//filterClickedButtons(toolbarClickedBtns);
 	
 	$scope.executeClicks = function(){
@@ -191,6 +195,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		}
 	}
 	
+	//Handling clicks on buttons inside filter panel right
 	$scope.btnFunctions = function(name){
 		var sendModelConfig = true;
 		
@@ -357,6 +362,8 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			});	
 		  }
 	  
+	  
+	  //checking the lock state of document in order to show/hide buttons and info
 	  checkLock = function(s){
 		  
 		  if($scope.modelConfig.whatIfScenario==false){
@@ -488,7 +495,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  
 	  };
 	  
+	  //function that handling changing of icon in order to know which button is clicked
 	  changeIcon = function(name){
+
 		  for(var i=0; i < $scope.tableToolbarButtons.length;i++){
 			  if($scope.tableToolbarButtons[i].name == name){
 				  if($scope.tableToolbarButtons[i].img == name){

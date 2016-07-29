@@ -98,6 +98,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	/**
 	 * Dialogs  
 	 **/
+	//Function for opening dialogs for every axis
 	$scope.openFiltersDialogAsync = function(ev, filter, node, index) {
 		
 		$scope.clearLoadedData(filter.uniqueName);
@@ -159,14 +160,12 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				 'hierarchy':member.selectedHierarchyUniqueName,
 				 'toAxis': member.axis
 		 }
-		 //var encoded = encodeURI('1.0/axis/'+fromAxis+'/moveDimensionToOtherAxis/'+member.selectedHierarchyUniqueName+'/'+member.axis+'?SBI_EXECUTION_ID='+JSsbiExecutionID);
 		 var encoded = encodeURI('1.0/axis/moveDimensionToOtherAxis?SBI_EXECUTION_ID='+JSsbiExecutionID);
 		 sbiModule_restServices.promisePost
 		 (encoded,"",toSend)
 			.then(function(response) {
 				$scope.handleResponse(response);
 				checkShift();
-				//updateFilterTracker();
 				if(fromAxis == 1){
 					$scope.leftStart = 0;
 				}
@@ -255,6 +254,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		
 	};
 	
+	//in order to send correct object to service children property witch is used for tree representation must be removed
 	removeChildren = function(){
 		for(var i=0; i<visibleSelected.length;i++){
 			if(visibleSelected[i].children != undefined){
@@ -266,6 +266,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		}
 	};
 	
+	//selecting filter (old selected filter is saved in order to leave interface consistent if user decide to cancel selection)
 	$scope.selectFilter = function(item){
 		selectedFlag = true;
 		oldSelectedFilter = angular.copy($scope.filterSelected[$scope.filterAxisPosition]);//ex:$scope.filterAxisPosition
@@ -275,6 +276,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$scope.filterSelected[$scope.filterAxisPosition].uniqueName = item.uniqueName;
 	};
 	
+	//Function for closing filter dialog (handling selected in order to leave interface in consistent state)
 	$scope.closeFiltersDialog = function() {
 		
 		if(selectedFlag){
@@ -304,6 +306,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$mdDialog.hide();
 	}
 	
+	//Save action called from filters axis=-1
 	filterSlice = function(){
 		var toSend = {
 			'hierarchy':filterFather,
@@ -325,6 +328,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		}
 	};
 	
+	//save action called from rows/columns axis=0/axis=1
 	filterPlaceMemberOnAxis = function(){
 		removeChildren();
 		clearSelectedList();
@@ -502,6 +506,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	/**
 	 * Filter shift if necessary  
 	 **/
+	//Function for scrolling trough filters/rows/columns if necessary  
 	$scope.filterShift = function(direction) {
 
 		$scope.filterCardList = shift(direction,$scope.filterCardList);
@@ -528,6 +533,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		return data;
 	};
 	
+	//setting visibility of shift buttons if needed
 	checkShift = function(){
 		$scope.shiftNeeded = $scope.filterCardList.length > $scope.numVisibleFilters ? true
 				: false;
@@ -559,6 +565,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		});	
 	};
 	
+	//Function for styling of search text box 
 	$scope.bgColor = function(){
 		if( $scope.searchText == "" || $scope.searchText.length>=  $scope.minNumOfLetters)
 			return false;
@@ -586,19 +593,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		
 		
 	};
-	
-	updateFilterTracker = function(){
-		var oldSelected = $scope.filterSelected;
-		for(var i=0; i<oldSelected.length;i++){			
-			for(var j=0; j<$scope.filterCardList.length;j++){
-				if(oldSelected[i].uniqueName.indexOf($scope.filterCardList[j].uniqueName)>-1){
-					$scope.filterSelected[j] = oldSelected[i];
-				}
-			}
-			
-		}
-	};
-	
+
+	//Dynamic setting for number of visible elements in filter/row/column axis without scroll buttons
+	//depends on size of actual html elements
 	axisSizeSetup = function(){
 		var taw = document.getElementById("topaxis").offsetWidth - 66;
 		var lah = document.getElementById("leftaxis").offsetHeight - 66;
