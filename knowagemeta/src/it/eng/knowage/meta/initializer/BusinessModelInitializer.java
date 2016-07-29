@@ -315,8 +315,12 @@ public class BusinessModelInitializer {
 					calculatedColumnDescriptor.getDataType());
 			// set column type
 			calculatedBusinessColumn.setProperty("structural.columntype", "attribute");
-
-			calculatedBusinessColumn.getReferencedColumns();
+			try {
+				calculatedBusinessColumn.getReferencedColumns();
+			} catch (KnowageMetaException t) {
+				calculatedBusinessColumn.setTable(null);
+				throw new KnowageMetaException(t.getMessage());
+			}
 
 			businessColumnSet.getColumns().add(calculatedBusinessColumn);
 		} catch (KnowageMetaException t) {

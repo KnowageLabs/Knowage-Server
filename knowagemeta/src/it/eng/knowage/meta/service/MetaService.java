@@ -121,7 +121,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 * 
+	 *
 	 * @param dsId
 	 * @return
 	 */
@@ -498,7 +498,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
 			businessModelInitializer.addCalculatedColumn(cfd);
 		} catch (KnowageMetaException t) {
-			return Response.ok(new JSError(getLocale()).addError(t.getMessage()).toString()).build();
+			return Response.ok(new JSError(buildLocaleFromSession()).addError(t.getMessage()).toString()).build();
 		}
 
 		JSONObject jsonModel = createJson(model);
@@ -916,7 +916,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	 * {businessModels:[tables:[...]],businessModels:[businessTables:[...]]} Furthermore jsonDiff is zero-based numbering but jxpath is 1-based numbering
 	 * Another difference is that jsonDiff's notation used to select a property of a nth element of a collection is "parent/n/property" but jxpath does same
 	 * selection in this way "parent[n]/property"
-	 * 
+	 *
 	 * @param path
 	 * @return path cleaned
 	 */
