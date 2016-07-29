@@ -186,7 +186,9 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 		
 	//import glossary
 		$scope.upload = function(ev){
+			$scope.importingGlossary = [];
 			$scope.glossaryImported = [];
+			$scope.glossaryPresentIdDB  =[];
 			if($scope.importFile.fileName == "" || $scope.importFile.fileName == undefined){
 				$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"));
 			}else{
