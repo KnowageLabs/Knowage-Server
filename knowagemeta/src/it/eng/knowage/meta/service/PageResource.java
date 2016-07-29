@@ -93,7 +93,7 @@ public class PageResource {
 
 			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 			businessModelsDAO.setUserProfile(userProfile);
-			EmfXmiSerializer serializer = new EmfXmiSerializer();
+
 			Content lastFileModelContent = businessModelsDAO.loadActiveMetaModelContentById(bmId);
 			InputStream is = null;
 			if (lastFileModelContent != null) {
@@ -106,6 +106,8 @@ public class PageResource {
 					if (jar != null) {
 						// open the jar and find the sbimodel file
 						byte[] jarSbiModel = MetaService.extractSbiModelFromJar(lastFileModelContent);
+						jarSbiModel = EmfXmiSerializer.checkCompatibility(jarSbiModel);
+
 						if (jarSbiModel != null) {
 							is = new ByteArrayInputStream(jarSbiModel);
 						} else {
@@ -119,6 +121,7 @@ public class PageResource {
 			}
 
 			if (is != null) {
+				EmfXmiSerializer serializer = new EmfXmiSerializer();
 				Model model = serializer.deserialize(is);
 				request.getSession().setAttribute(MetaService.EMF_MODEL, model);
 				JSONObject translatedModel = MetaService.createJson(model);

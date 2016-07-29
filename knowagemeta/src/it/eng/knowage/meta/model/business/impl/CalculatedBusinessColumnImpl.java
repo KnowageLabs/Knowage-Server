@@ -25,7 +25,6 @@ import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
@@ -44,7 +43,7 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	protected CalculatedBusinessColumnImpl() {
@@ -53,7 +52,7 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -70,10 +69,11 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 		String id = this.getPropertyType(CALCULATED_COLUMN_EXPRESSION).getId();
 		String expression = this.getProperties().get(id).getValue();
 
-		// retrieve columns objects from string
-		StringTokenizer stk = new StringTokenizer(expression, "+-|*/()");
-		while (stk.hasMoreTokens()) {
-			String operand = stk.nextToken().trim();
+		// retrieve columns objects from string v
+		String[] splittedExpr = expression
+				.split("(\\+|\\-|\\*|\\(|\\)|\\||\\/|GG_between_dates|MM_between_dates|AA_between_dates|GG_up_today|MM_up_today|AA_up_today)");
+		for (String operand : splittedExpr) {
+			operand = operand.trim();
 			List<SimpleBusinessColumn> businessColumns = businessColumnSet.getSimpleBusinessColumnsByName(operand);
 			if (businessColumns.isEmpty()) {
 				// throws exception

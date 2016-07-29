@@ -41,9 +41,9 @@ function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiM
 		                	  value:"/"
 		                  },
 		                  {
-		                	  label:"||",
+		                	  label:"|",
 		                	  name:sbiModule_translate.load("sbi.meta.business.calculatedField.or"),
-		                	  value:"||"
+		                	  value:"|"
 		                  }
 	                  ];
 	$scope.dateFunctions=[
