@@ -438,7 +438,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
  	    this.add(toolbarOpacMouseOver);
  	    
  	   /**
-		 * Percentage/absolute value type for displaying tooltip and breadcrumb values for slices that are covered with mouse cursor.
+		 * Percentage/absolute value type for displaying tooltip and breadcrumb values for slices that are covered with mouse cursor (SUNBURST).
 		 * NOTE: 'percAbsolSliceValue' is field container of the combo that offers these two types.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
@@ -465,7 +465,12 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 						 store: 
 						 {
 							 fields: [ 'typeValue', 'typeAbbr' ],                
-							 data: [ {"typeValue": "Absolute", "typeAbbr":'absolute'}, {"typeValue": "Percentage","typeAbbr":'percentage'} ]
+							 data: 
+							 [ 
+							   	{"typeValue": "Absolute", "typeAbbr":'absolute'}, 
+							   	{"typeValue": "Percentage","typeAbbr":'percentage'},
+							   	{"typeValue": "Combination","typeAbbr":'combination'}
+							 ]
 						 },
 			            
 						 displayField: 'typeValue',

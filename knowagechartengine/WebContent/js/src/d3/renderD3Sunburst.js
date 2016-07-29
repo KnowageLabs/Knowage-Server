@@ -611,6 +611,80 @@ function renderSunburst(jsonObject,locale)
 		 return arrayOfParents;
 	 };
 	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 function calculateAbsoluteValue(finalValueToDisplay,d) {
+		 
+		 var number = d.value;			
+			
+		/* 
+        	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
+        	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
+        	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
+        	is included into the formatting of the number that is going to be displayed, as well as precision. [JIRA 1060 and 1061]
+        	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ 		*/
+		switch(seriesItemScaleFactor.toUpperCase()) {
+   	
+      		case "EMPTY":
+      			
+      			finalValueToDisplay += number.toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
+      			
+      			break;
+      			
+      		case "K":	
+      			
+      			finalValueToDisplay += (number/Math.pow(10,3)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });      			
+      			finalValueToDisplay += "k";
+      			
+      			break;
+      			
+      		case "M":
+      			
+      			finalValueToDisplay += (number/Math.pow(10,6)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });      			
+      			finalValueToDisplay += "M";
+      			
+      			break;
+      			
+      		case "G":
+      			
+      			finalValueToDisplay += (number/Math.pow(10,9)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });      			
+      			finalValueToDisplay += "G";
+      			
+      			break;
+      			
+  			case "T":
+		
+  				finalValueToDisplay += (number/Math.pow(10,12)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });  				
+  				finalValueToDisplay += "T";
+		
+      			break;
+      			
+      		case "P":
+
+      			finalValueToDisplay += (number/Math.pow(10,15)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });      			
+      			finalValueToDisplay += "P";
+      			
+      			break;
+      			
+  			case "E":
+		
+  				finalValueToDisplay += (number/Math.pow(10,18)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
+				finalValueToDisplay += "E";
+				
+      			break;
+      			
+  			default:
+  				
+  				finalValueToDisplay += number.toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
+  				
+      			break;
+      	
+      	}
+			
+		return finalValueToDisplay;
+		 
+	 }
+	 
 	// Fade all but the current sequence, and show it in the breadcrumb trail.
 	function mouseover(d) 
 	{	
@@ -627,176 +701,37 @@ function renderSunburst(jsonObject,locale)
 	  		
 		var percentOrAbsSliceValueString = "";
 		
-//		var seriesItemPrecisionDefined = seriesItemPrecision!=null && seriesItemPrecision!="" && (seriesItemPrecision+"")!="0"; 
-		
 		/**
 		 * According to the type for dispalying the value of the slice that is covered via mouse (that user has chosen), display appropriate
 		 * value (percentage of the value that is covered (against the sum of all values) or absolute (real) value of the slice that is hovered.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		if (percAbsolSliceValue=="absolute") {
-			
-			var number = d.value;			
-			
-			/* 
-	        	The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), 
-	        	"G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display 
-	        	these abbreviations (number suffix) along with the scaled number. Apart form the scaling factor, the thousands separator
-	        	is included into the formatting of the number that is going to be displayed, as well as precision. [JIRA 1060 and 1061]
-	        	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	 		*/
-			switch(seriesItemScaleFactor.toUpperCase()) {
-          	
-	      		case "EMPTY":
-	      			
-	      			/* No selection is provided for the number to be displayed as the data label (pure value). */		      			
-//	      			if (number%1==0) {
-//	      				finalValueToDisplay += (number).toLocaleString(locale);	      				
-//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
-//	      			}
-//	      			else {
-//	      				finalValueToDisplay += (number).toFixed(seriesItemPrecision).toLocaleString(locale);
-//	      			}	 
-	      			
-	      			finalValueToDisplay += number.toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
-	      			
-	      			break;
-	      			
-	      		case "K":	
-	      			
-//	      			if (number/Math.pow(10,3)%1==0) {
-//	      				finalValueToDisplay += Number(number/Math.pow(10,3)).toLocaleString(locale);	      				
-//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
-//	      			}
-//	      			else {
-//	      				finalValueToDisplay += (number/Math.pow(10,3)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
-//	      			}
-	      			
-	      			finalValueToDisplay += (number/Math.pow(10,3)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
-	      			
-	      			finalValueToDisplay += "k";
-	      			
-	      			break;
-	      			
-	      		case "M":
-	      			
-//	      			if (number/Math.pow(10,6)%1==0) {
-//	      				finalValueToDisplay += Number(number/Math.pow(10,6)).toLocaleString(locale);	      				
-//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
-//	      			}
-//	      			else {
-//	      				finalValueToDisplay += (number/Math.pow(10,6)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision  });
-//	      			}	      			
-	      			
-	      			finalValueToDisplay += (number/Math.pow(10,6)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
-	      			
-	      			finalValueToDisplay += "M";
-	      			
-	      			break;
-	      			
-	      		case "G":
-
-//	      			if (number/Math.pow(10,9)%1==0) {
-//	      				finalValueToDisplay += Number(number/Math.pow(10,9)).toLocaleString(locale);	      				
-//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
-//	      			}
-//	      			else {
-//	      				finalValueToDisplay += (number/Math.pow(10,9)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision  });
-//	      			}
-	      			
-	      			finalValueToDisplay += (number/Math.pow(10,9)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
-	      			
-	      			finalValueToDisplay += "G";
-	      			
-	      			break;
-	      			
-	  			case "T":
-	  				
-//	  				if (number/Math.pow(10,12)%1==0) {
-//	      				finalValueToDisplay += Number(number/Math.pow(10,12)).toLocaleString(locale);	      				
-//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
-//	      			}
-//	      			else {
-//	      				finalValueToDisplay += (number/Math.pow(10,12)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision  });
-//	      			}
-      			
-	  				finalValueToDisplay += (number/Math.pow(10,12)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
-	  				
-      				finalValueToDisplay += "T";
-      			
-	      			break;
-	      			
-	      		case "P":
-
-//	      			if (number/Math.pow(10,15)%1==0) {
-//	      				finalValueToDisplay += Number(number/Math.pow(10,15)).toLocaleString(locale);	      				
-//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
-//	      			}
-//	      			else {
-//	      				finalValueToDisplay += (number/Math.pow(10,15)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision  });
-//	      			}
-    	      			
-	      			finalValueToDisplay += (number/Math.pow(10,15)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
-	      			
-	      			finalValueToDisplay += "P";
-	      			
-	      			break;
-	      			
-	  			case "E":
-	  				
-//	  				if (number/Math.pow(10,18)%1==0) {
-//	      				finalValueToDisplay += Number(number/Math.pow(10,18)).toLocaleString(locale);	      				
-//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
-//	      			}
-//	      			else {
-//	      				finalValueToDisplay += (number/Math.pow(10,18)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision  });
-//	      			}
-      			
-	  				finalValueToDisplay += (number/Math.pow(10,18)).toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
-	  				
-  					finalValueToDisplay += "E";
-  					
-	      			break;
-	      			
-	  			default:
-	  				
-	  				/* The same as for the case when user picked "no selection" - in case when the chart 
-	  				template does not contain the scale factor for current serie */
-//	  				if (number%1==0) {
-//	      				finalValueToDisplay += (number).toLocaleString(locale);	      				
-//	      				finalValueToDisplay += seriesItemPrecisionDefined ?  "." + "0".repeat(seriesItemPrecision) : "";
-//	      			}
-//	      			else {
-//	      				finalValueToDisplay += (number).toFixed(seriesItemPrecision).toLocaleString(locale);
-//	      			}	
-//	  			
-	  				finalValueToDisplay += number.toLocaleString(locale,{ minimumFractionDigits: seriesItemPrecision, maximumFractionDigits: seriesItemPrecision });
-	  				
-	      			break;
-	      	
-	      	}
-						
+		if (percAbsolSliceValue=="absolute") {			
+			finalValueToDisplay = calculateAbsoluteValue(finalValueToDisplay,d);						
 			finalValueToDisplay += (seriesItemSuffix!="" ? " " : "") + seriesItemSuffix;
-
 		}
-		else {
+		else if (percAbsolSliceValue=="relative") {
 			finalValueToDisplay += percentage + "%" + (seriesItemSuffix!="" ? " " : "") + seriesItemSuffix;
+		}
+		// If the user picked a combination of those two (absolute + percentage). (danristo)
+		else {
+			finalValueToDisplay = calculateAbsoluteValue(finalValueToDisplay,d);		
+			finalValueToDisplay += (seriesItemSuffix!="" ? " " : "") + seriesItemSuffix;			
+			finalValueToDisplay += " (" + percentage + "%)";		
 		}
 			
 	 	percentOrAbsSliceValueString = finalValueToDisplay;
 	  
-		if (percentage < 0.1 && percAbsolSliceValue=="percentage") 
-		{
+		if (percentage < 0.1 && percAbsolSliceValue=="percentage") {
 			percentOrAbsSliceValueString = "< 0.1%";
 		}
 	  
 	  /* If we already have move mouse over the chart, remove
 	   * previous content for the "explanation", i.e. move the
 	   * previous text inside the chart.  */
-	  if (d3.select("#explanation"+randomId)[0][0] != null)
-	  {
+	  if (d3.select("#explanation"+randomId)[0][0] != null) {
 		  d3.select("#explanation"+randomId).remove();
-		  d3.select("#percentage"+randomId).remove();
+		  d3.select("#percentage"+randomId).remove();		  
 	  }	  
 	  
 	  d3.select("#chart"+randomId)   	
