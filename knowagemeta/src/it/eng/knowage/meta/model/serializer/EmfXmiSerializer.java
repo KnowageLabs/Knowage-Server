@@ -19,6 +19,7 @@ package it.eng.knowage.meta.model.serializer;
 
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelPackage;
+import it.eng.knowage.meta.model.OldModelPackage;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +37,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public class EmfXmiSerializer implements IModelSerializer {
 
@@ -111,9 +112,9 @@ public class EmfXmiSerializer implements IModelSerializer {
 
 		// Register the package -- only needed for stand-alone!
 		ModelPackage libraryPackage = ModelPackage.eINSTANCE;
+		OldModelPackage oldLibraryPackage = OldModelPackage.eINSTANCE;
 
 		// Get the URI of the model file.
-		// URI uri = URI.createFileURI(new File("mylibrary.xmi").getAbsolutePath());
 		URI uri = URI.createURI(KNOWAGE_MODEL_URI);
 
 		// Demand load the resource for this file.
@@ -122,10 +123,7 @@ public class EmfXmiSerializer implements IModelSerializer {
 		model = null;
 		try {
 			resource.load(inputStream, Collections.EMPTY_MAP);
-			// resource.load(Collections.EMPTY_MAP);
 			model = (Model) resource.getContents().get(0);
-
-			// resource.save(System.out, Collections.EMPTY_MAP);
 		} catch (Throwable e) {
 			throw new RuntimeException("Impossible to deserialize model [" + model.getName() + "]", e);
 		}
