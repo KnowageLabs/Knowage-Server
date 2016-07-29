@@ -1,6 +1,9 @@
 package it.eng.spagobi.services.rest;
 
-//import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.utilities.messages.EngineMessageBundle;
+
+import java.text.MessageFormat;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,12 +12,14 @@ import org.json.JSONObject;
 public class JSError {
 	private static final String MESSAGE = "message";
 	private final JSONObject jsError = new JSONObject();
+	private final Locale locale;
 
 	private static enum MSG_TYPE {
 		errors, warnings
 	};
 
-	public JSError() {
+	public JSError(Locale locale) {
+		this.locale = locale;
 	}
 
 	public JSError addErrorKey(String msgKey, String... args) {
@@ -38,7 +43,7 @@ public class JSError {
 			if (!has(type)) {
 				jsError.put(type.name(), new JSONArray());
 			}
-			// get(type).put(new JSONObject().put(MESSAGE, getMessage(msg)));
+			get(type).put(new JSONObject().put(MESSAGE, getMessage(msg)));
 		} catch (JSONException e) {
 			throw new RuntimeException(e);
 		}
@@ -50,7 +55,7 @@ public class JSError {
 			if (!has(type)) {
 				jsError.put(type.name(), new JSONArray());
 			}
-			// get(type).put(new JSONObject().put(MESSAGE, getMessage(msgKey, args)));
+			get(type).put(new JSONObject().put(MESSAGE, getMessage(msgKey, args)));
 		} catch (JSONException e) {
 			throw new RuntimeException(e);
 		}
@@ -74,13 +79,13 @@ public class JSError {
 		return hasErrors() || hasWarnings() ? jsError.toString() : "";
 	}
 
-	// private static String getMessage(String key, String... args) {
-	// String msg = MessageBuilderFactory.getMessageBuilder().getMessage(key);
-	// if (args.length > 0) {
-	// msg = MessageFormat.format(msg, args);
-	// }
-	// return msg;
-	// }
+	private String getMessage(String key, String... args) {
+		String msg = EngineMessageBundle.getMessage(key, locale);
+		if (args.length > 0) {
+			msg = MessageFormat.format(msg, args);
+		}
+		return msg;
+	}
 
 	private JSONArray getErrors() {
 		return get(MSG_TYPE.errors);
