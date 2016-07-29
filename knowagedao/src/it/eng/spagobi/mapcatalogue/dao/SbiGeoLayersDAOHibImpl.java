@@ -966,9 +966,14 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	}
 
 	private boolean userIsAbilited(List<SbiGeoLayersRoles> roles, IEngUserProfile profile) {
-		if (UserUtilities.isAdministrator(profile) || roles == null) {
+		if (UserUtilities.isAdministrator(profile)) {
 			return true;
 		}
+
+		if (!UserUtilities.isAdministrator(profile) && roles == null) {
+			return false;
+		}
+
 		for (SbiGeoLayersRoles r : roles) {
 			Collection<String> rolesProfile;
 			try {
