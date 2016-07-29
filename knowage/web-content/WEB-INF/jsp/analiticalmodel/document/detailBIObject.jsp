@@ -205,12 +205,12 @@ function checkFormVisibility(docType, engineValue) {
 	
 	// hide template dynamic creation button for olap document 
 	var divLinkConf = document.getElementById("link_obj_conf");
-	if(type=="OLAP" || type=="SMART_FILTER" || type=="MAP" || engineDriver[engineValue].toLowerCase().indexOf("chart.chartdriver")>-1
+	if(type=="SMART_FILTER" || type=="MAP" || engineDriver[engineValue].toLowerCase().indexOf("chart.chartdriver")>-1
 			|| engineDriver[engineValue].toLowerCase().indexOf("kpi.kpidriver")>-1) {
 		divLinkConf.style.display="inline";
 	} else {
 		divLinkConf.style.display="none";
-	}
+	} // TODO REENABLE OLAP DESIGNER
 	
 }
 
