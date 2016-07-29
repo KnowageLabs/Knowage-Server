@@ -137,14 +137,14 @@
 		$scope.editMap = function() {
 			sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath+"restful-services/");
 
-			$documentViewer.editDocumentByLabel($scope.docLabel, $scope, "edit_map","LIGHT_NAVIGATOR_DISABLED=true");
+			$documentViewer.editDocumentByLabel($scope.docLabel, $scope, "edit_map");
 			
 			$scope.$on("documentClosed", function() { 
-				if($scope.tecnicalUser){
+				//if($scope.tecnicalUser){
 				sbiModule_restServices
 				.alterContextPath(sbiModule_config.externalBasePath);
 	         	sbiModule_restServices.promiseGet("restful-services/1.0/documents",
-				$scope.docLabel+"/template")
+				$scope.docLabel+"/usertemplate")
 				.then(
 						function(response) {
 							//console.log(response.data);
@@ -156,9 +156,9 @@
 						});
 					
 					
-				}else{
-					$scope.cancelBuildTemplate();
-				}
+				//}else{
+				//	$scope.cancelBuildTemplate();
+				//}
 				
 			});
 		}

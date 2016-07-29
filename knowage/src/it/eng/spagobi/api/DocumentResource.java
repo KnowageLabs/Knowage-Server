@@ -250,6 +250,39 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		return rb.build();
 	}
 
+	
+	
+	@GET
+	@Path("/{label}/usertemplate")
+	public Response getDocumentTemplateCheckUser(@PathParam("label") String label) {
+		BIObject document = documentManager.getDocument(label);
+		if (document == null)
+			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
+
+		//check if owner of document
+		if(!document.getCreationUser().equals(getUserProfile().getUserId()) || !document.getTenant().equals(getUserProfile().getOrganization())){
+			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label
+					+ "]");
+		}
+
+		ResponseBuilder rb;
+		ObjTemplate template = document.getActiveTemplate();
+
+		// The template has not been found
+		if (template == null)
+			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't contain a template");
+		try {
+			rb = Response.ok(template.getContent());
+		} catch (Exception e) {
+			logger.error("Error while getting document template", e);
+			throw new SpagoBIRuntimeException("Error while getting document template", e);
+		}
+
+		rb.header("Content-Disposition", "attachment; filename=" + document.getActiveTemplate().getName());
+		return rb.build();
+	}
+	
+	
 	// The file has to be put in a field called "file"
 	@POST
 	@Path("/{label}/template")
