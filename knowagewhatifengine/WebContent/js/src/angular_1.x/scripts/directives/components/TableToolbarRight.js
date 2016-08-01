@@ -62,6 +62,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.wiGridNeeded=false;
 	$scope.tableGridNeeded = true;
 	$scope.olapGridNeeded = true;
+	$scope.mode = false;
 	$scope.subObject ={
 			
 		name:"",
@@ -112,11 +113,17 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	var olapButtonNames = [];
 	var whatifButtonNames = ["unlock-icon","lock-icon"];
 	var tableButtonNames = [];
+	$scope.olapDesignerButtonNames = [];
 	
-	//var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
-	//var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon","BUTTON_EDITABLE_EXCEL_EXPORT","BUTTON_ALGORITHMS"];
-	//var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT","BUTTON_SORTING_SETTINGS","BUTTON_CC","BUTTON_SORTING"]
-	
+	enableEditBtns = function(mode) {
+		console.info(mode);
+		if (mode == 'edit') {
+			$scope.mode = true;
+		}else {
+			$scope.mode = false;
+		}
+	}
+
 	$scope.getToolbarButtons = function() {
     	sbiModule_restServices.promiseGet
 		("1.0",'/buttons')
@@ -149,7 +156,10 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 					break;	
 				case "OLAP_FUNCTIONS":
 					olapButtonNames.push($scope.buttons[i].name);
-					break;	
+					break;
+				case "OLAP_DESIGNER":
+					$scope.olapDesignerButtonNames.push($scope.buttons[i]);
+					break;		
 				default:
 					break;
 				}
@@ -213,6 +223,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		}
 		whatifToolbarButtonsVisible = $scope.whatifToolbarButtons;
 		whatIfBtns(status);
+		enableEditBtns(mode);
 		
 		if($scope.olapToolbarButtons.length == 0)
 			$scope.olapGridNeeded = false;
@@ -322,6 +333,15 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				$scope.showDialog(null, $scope.allocationAlgDialog);
 				sendModelConfig = false;
 				break;
+			case "BUTTON_SCENARIO_WIZARD":
+				console.info(name);
+				break;	
+			case "BUTTON_CROSSNAV_WIZARD":
+				console.info(name);
+				break;
+			case "BUTTON_WIZARD":
+				console.info(name);
+				break;	
 			default:
 				console.log("something else clicked");
 		}

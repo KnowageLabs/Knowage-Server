@@ -79,9 +79,24 @@
     	</md-button>
     </md-grid-tile>
 </md-grid-list>
+<div class="menu-text" ng-show="mode">Template editing</div>
+<md-grid-list
+        md-cols="2" 
+        md-row-height="50px"
+         md-gutter="5px"
+         ng-show="mode">
+  
+  <md-grid-tile ng-repeat="odb in olapDesignerButtonNames">
+    	<md-button class="right-toolbar-menu {{odb.name}}"  ng-click="btnFunctions(odb.name)">
+    		<md-tooltip md-direction="bottom">
+				{{odb.name}}
+			</md-tooltip>
+    	</md-button>
+  </md-grid-tile>
+</md-grid-list>
 
-<!--<md-button class="md-raised" style="bottom: 0;position: absolute;" ng-click="closeSideNav('right')">
-		Close
+
+<md-button class="md-raised" style="bottom: 0;position: absolute;" ng-show="mode" ng-click="saveTemplate()">
+	SAVE
 	</md-button>
- -->
 </div>

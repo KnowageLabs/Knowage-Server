@@ -149,6 +149,7 @@ public class WhatIfDriver extends GenericDriver {
 
 		String documentId = obj.getId().toString();
 		parameters.put("document", documentId);
+		parameters.put("mode", "edit");
 		// CREATE EXECUTION ID
 		String sbiExecutionId = null;
 		UUIDGenerator uuidGen = UUIDGenerator.getInstance();

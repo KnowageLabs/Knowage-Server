@@ -20,6 +20,7 @@
 	var drillType = '<%= whatIfEngineInstance.getModelConfig().getDrillType() %>'
 	var locker = '<%= whatIfEngineInstance.getModelConfig().getLocker() %>'
 	var status = '<%= whatIfEngineInstance.getModelConfig().getStatus()%>'
+	var mode = '<%= mode %>'
 </script>
 </head>
 <body ng-controller="olapController" >

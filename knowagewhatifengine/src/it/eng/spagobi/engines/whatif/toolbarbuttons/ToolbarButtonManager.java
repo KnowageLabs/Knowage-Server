@@ -44,6 +44,9 @@ public class ToolbarButtonManager {
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_EDITABLE_EXCEL_EXPORT", false, false, ToolbarButtonCategory.WHAT_IF.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_ALGORITHMS", false, false, ToolbarButtonCategory.WHAT_IF.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_FLUSH_CACHE", false, false, ToolbarButtonCategory.OLAP_FUNCTIONS.toString()));
+		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SCENARIO_WIZARD", false, false, ToolbarButtonCategory.OLAP_DESIGNER.toString()));
+		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_CROSSNAV_WIZARD", false, false, ToolbarButtonCategory.OLAP_DESIGNER.toString()));
+		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_WIZARD", false, false, ToolbarButtonCategory.OLAP_DESIGNER.toString()));
 	}
 
 	public static List<SbiToolbarButton> loadAllToolbarButtons() {

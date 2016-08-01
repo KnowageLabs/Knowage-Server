@@ -55,6 +55,7 @@ author:...
        String documentLabel = null;
        String documentId = null;
        String sbiExecutionID = null;   
+       String mode = null;
        ExecutionSession es = new ExecutionSession(request, request.getSession());
        
        
@@ -91,7 +92,12 @@ author:...
 	   // spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
 	   
 	   sbiExecutionID = request.getParameter("SBI_EXECUTION_ID" );
-	   
+	   if(request.getParameter("mode") != null){
+          mode = request.getParameter("mode");
+	}else{
+		 mode = "full" ;
+	}
+	  
 		
 	   
 %>

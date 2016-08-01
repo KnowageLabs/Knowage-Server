@@ -15,6 +15,7 @@
 <title>OLAP Designer</title>
 <script>
 	var JSsbiExecutionID = '<%= sbiExecutionID %>'
+	var mode = '<%= mode %>'
 	
 </script>
 </head>

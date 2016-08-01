@@ -44,6 +44,7 @@ function olapDesignerController($scope, $timeout, $window, $mdDialog, $http, $sc
 	
 	angular.element(document).ready(function () { // on page load function
 		$scope.getMondrianSchemas();
+		console.info(mode);
     });
 	
 	$scope.addXmlaParameter=function(){ 
@@ -79,7 +80,7 @@ function olapDesignerController($scope, $timeout, $window, $mdDialog, $http, $sc
 	
 $scope.getCube = function(item){
 		$scope.selectedSchema = item;
-		sbiModule_restServices.promiseGet("/1.0/designer/cubes/"+$scope.selectedSchema.currentContentId,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
+		sbiModule_restServices.promiseGet("1.0/designer/cubes/"+$scope.selectedSchema.currentContentId,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
 		.then(function(response) {
 			$scope.cubeList = response.data;
 			$scope.showCubes = true;
@@ -92,7 +93,7 @@ $scope.getCube = function(item){
 	
 	$scope.setMDX = function(){
 		
-		sbiModule_restServices.promiseGet("/1.0/designer/cubes/getMDX/"+$scope.selectedSchema.currentContentId+"/"+$scope.selectedCube.name,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
+		sbiModule_restServices.promiseGet("1.0/designer/cubes/getMDX/"+$scope.selectedSchema.currentContentId+"/"+$scope.selectedCube.name,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
 		.then(function(response) {
 			mdx = response.data;
 		}, function(response) {
@@ -111,34 +112,7 @@ $scope.getCube = function(item){
 			
 		} 
 		
-		/*
-$scope.saveMDX = function(){
-			
-			prepareTemplate();
-		
-      	sbiModule_restServices.promisePost("1.0/designer/cubes?SBI_EXECUTION_ID=" + JSsbiExecutionID,"",angular.toJson($scope.template))
-    	.then(function(response) {
-    	
-    		
-    		sbiModule_restServices.promiseGet("/1.0/designer/cubes/start","?SBI_EXECUTION_ID=" + JSsbiExecutionID)
-    		.then(function(response) {
-    		    document.write(response.data);
-    	        document.close();
-    			
-    		}, function(response) {
-    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-    			
-    		});	
-
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			
-		});			
-		};
-
-};
-*/
-
+	
 	
 $scope.saveMDX = function(){
 			
@@ -147,8 +121,8 @@ $scope.saveMDX = function(){
       	sbiModule_restServices.promisePost("1.0/designer/cubes?SBI_EXECUTION_ID=" + JSsbiExecutionID,"",angular.toJson($scope.template))
     	.then(function(response) {
     		
-    		var url = sbiModule_config.contextName + "/restful-services/1.0/designer/cubes/start?SBI_EXECUTION_ID=" + JSsbiExecutionID;
-    		console.log(url);
+    		var url = sbiModule_config.contextName + "/restful-services/1.0/designer/cubes/start?SBI_EXECUTION_ID=" + JSsbiExecutionID+"&mode="+mode;
+   
     		$window.location = url;
 		
 		}, function(response) {
