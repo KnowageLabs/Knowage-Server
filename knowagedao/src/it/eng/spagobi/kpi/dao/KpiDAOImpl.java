@@ -1534,7 +1534,13 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return executeOnTransaction(new IExecuteOnTransaction<Target>() {
 			@Override
 			public Target execute(Session session) throws Exception {
-				return from((SbiKpiTarget) session.createCriteria(SbiKpiTarget.class).add(Restrictions.eq("name", name)).setMaxResults(1).uniqueResult(), true);
+				Object target = session.createCriteria(SbiKpiTarget.class).add(Restrictions.eq("name", name)).setMaxResults(1).uniqueResult();
+				if(target != null){
+					return from((SbiKpiTarget) target, true);
+				}else{
+					return null;
+				}
+				
 			}
 		});
 	}
