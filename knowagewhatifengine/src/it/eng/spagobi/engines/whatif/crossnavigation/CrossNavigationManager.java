@@ -151,8 +151,8 @@ public class CrossNavigationManager {
 			}
 		}
 		if (result == null) {
-			logger.error("Could not find dimension");
-			throw new SpagoBIEngineRuntimeException("Could not find dimension");
+			logger.error("Could not find dimension"+dimensionName);
+			throw new SpagoBIEngineRuntimeException("Could not find dimension" +dimensionName);
 		}
 		logger.debug("Found dimension " + result.getUniqueName());
 
@@ -165,7 +165,9 @@ public class CrossNavigationManager {
 			}
 		}
 
-		return null;
+		logger.error("Could not find hierarchy"+hierarchyName+" in dimension "+dimensionName);
+		throw new SpagoBIEngineRuntimeException("Could not find hierarchy"+hierarchyName+" in dimension "+dimensionName);
+
 	}
 
 
