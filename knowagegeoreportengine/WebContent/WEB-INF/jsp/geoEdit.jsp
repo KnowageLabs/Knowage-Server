@@ -35,6 +35,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  var dataset='<%=docDatasetLabel%>';
  var docTemplate= '<%=template%>';
  var isTechnicalUser = '<%=isUserTechnical%>';
+ var datasetLabel='<%=datasetLabel%>';
+ if(datasetLabel==null){
+	 datasetLabel='';
+ }
 </script>
 </head>
 <body ng-controller="geoTemplateBuildController">

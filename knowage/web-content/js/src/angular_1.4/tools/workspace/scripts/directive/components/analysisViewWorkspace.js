@@ -89,7 +89,7 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 						}
 						
 						angular.copy($scope.cockpitAnalysisDocs,$scope.cockpitAnalysisDocsInitial);
-						
+						console.log($scope.cockpitAnalysisDocs);
 						console.info("[LOAD END]: Loading of Analysis Cockpit documents is finished.");
 					},
 					
@@ -265,6 +265,42 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
   
 	}
 	/**
+	 * Edit existing GEO document
+	 */
+	
+	$scope.editGeoDocument= function(document){
+		console.log(document);
+		if(document.dataset){
+			sbiModule_restServices.promiseGet("1.0/datasets/id", document.dataset)
+			.then(function(response) {
+			    //console.log(response);
+				$scope.openEditDialog(document.label,response.data);
+			},function(response){
+				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+			});
+		}else{
+			
+			$scope.openEditDialog(document.label,"");
+		}
+	}
+	
+	
+	$scope.openEditDialog=function(doclabel,dsLabel){
+		 $mdDialog.show({
+			  scope:$scope,
+			  preserveScope: true,
+		      controller: EditGeoMapController,
+		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/documentbrowser/template/documentDialogIframeTemplate.jsp',  
+		      clickOutsideToClose:true,
+		      escapeToClose :true,
+		      fullscreen: true,
+		      locals:{
+		    	  datasetLabel:dsLabel,
+		    	  documentLabel:doclabel
+		      }
+		    });
+	}
+	/**
 	 * The immediate Run (preview) button functionality for the Analysis documents (for List view of documents). 
 	 */
 	$scope.analysisSpeedMenu = 
@@ -279,7 +315,7 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	 		}
 	 	} 
  	];
-	
+
 	function CreateNewAnalysisController($scope,$mdDialog){
 		$scope.iframeUrl = datasetParameters.cockpitServiceUrl + '&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";
 		$scope.cancelDialog = function() {
@@ -290,7 +326,21 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 	
 	function CreateNewGeoMapController($scope,$mdDialog){
 		//console.log(sbiModule_user.isTechnicalUser);
-		$scope.iframeUrl = datasetParameters.georeportServiceUrl+'&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER='+ sbiModule_user.isTechnicalUser;
+		
+		$scope.iframeUrl = datasetParameters.georeportServiceUrl+'&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER='+ sbiModule_user.isTechnicalUser+"&DATASET_LABEL="+'';
+		
+		$scope.cancelMapDesignerDialog = function() {
+			$scope.loadAllMyAnalysisDocuments();
+			$mdDialog.cancel();
+		}
+		
+	 	
+	}
+	
+	function EditGeoMapController($scope,$mdDialog,datasetLabel,documentLabel){
+		//console.log(sbiModule_user.isTechnicalUser);
+		
+		$scope.iframeUrl = datasetParameters.georeportServiceUrl+'&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER='+ sbiModule_user.isTechnicalUser+'&DOCUMENT_LABEL='+documentLabel+'&DATASET_LABEL='+datasetLabel;
 		
 		$scope.cancelMapDesignerDialog = function() {
 			$scope.loadAllMyAnalysisDocuments();

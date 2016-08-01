@@ -40,6 +40,7 @@ angular.module('workspace_document_view', ['ngMaterial'])
 			cloneDocumentAction:"&",
 			addToOrganizerAction:"&",
 			addToFavoritesAction:"&",
+			editDocumentAction:"&",
 			orderingDocumentCards:"=?",
 			cloneEnabled:"=?",
 			deleteEnabled:"=?"	

@@ -50,8 +50,9 @@
 		$scope.allDriverParamteres=[];
 		$scope.selectedDriverParamteres = [];
 		
-		$scope.selectedDatasetLabel = dataset;
-		$scope.isDatasetChosen = $scope.selectedDatasetLabel != '';
+		$scope.selectedDatasetLabel = $scope.tecnicalUser ? dataset:datasetLabel;
+	
+		$scope.isDatasetChosen = $scope.selectedDatasetLabel != '' ;
 		$scope.datasetLabel= $scope.selectedDatasetLabel != ''? $scope.selectedDatasetLabel:$scope.translate.load('gisengine.desiner.datasetNotChosen');
 		$scope.allDatasets=[];
 		
@@ -68,6 +69,29 @@
        
 		// if there is no template at all
 		$scope.editDisabled = $scope.template.targetLayerConf == undefined; 
+		
+		$scope.loadTemplate= function(){
+			if(!$scope.tecnicalUser && $scope.docLabel != ''){
+				sbiModule_restServices
+				.alterContextPath(sbiModule_config.externalBasePath);
+	         	sbiModule_restServices.promiseGet("restful-services/1.0/documents",
+				$scope.docLabel+"/usertemplate")
+				.then(
+						function(response) {
+							console.log(response.data);
+							$scope.template=angular.fromJson(response.data);
+							$scope.editDisabled = $scope.template.targetLayerConf == undefined; 
+							initializeFromTemplate();
+						},
+						function(response) {
+							sbiModule_restServices.errorHandler(
+									response.data, "error loading layers");
+						});
+					
+			}
+		}
+		
+		$scope.loadTemplate();
 		
 		$scope.choseDataset= function(){
 			console.log("IN CHOOSE DATASET")

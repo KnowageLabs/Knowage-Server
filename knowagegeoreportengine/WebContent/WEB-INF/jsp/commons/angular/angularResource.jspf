@@ -70,7 +70,8 @@
 	docCommunity = (docCommunities == null || docCommunities.length == 0) ? "": docCommunities[0];
 	docFunctionalities= (engineInstance.getDocumentFunctionalities()==null)?new ArrayList():engineInstance.getDocumentFunctionalities();
 	visibleDataSet = (engineInstance.isVisibleDataSet());
-
+   
+	
 	includes = engineInstance.getIncludes();
 	
     // gets analytical driver
@@ -90,6 +91,7 @@
 	
 	String editMode = request.getParameter("EDIT_MODE");
 	String isUserTechnical = request.getParameter("IS_TECHNICAL_USER");
+	String datasetLabel = request.getParameter("DATASET_LABEL");
 	
 %>
 
