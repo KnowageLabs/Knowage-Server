@@ -72,7 +72,10 @@ function inboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translat
 		if(model){
 			if(model.columns)
 				model.columns.forEach(function(item){
-					a.push({name:item.name,uname:item.uniqueName, links:[]});
+					//add only the column ( not calculated field)
+					if(!item.hasOwnProperty("referencedColumns")){
+						a.push({name:item.name,uname:item.uniqueName, links:[]});
+					}
 					});
 				}
 		return a;
