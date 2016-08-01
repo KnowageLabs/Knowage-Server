@@ -35,7 +35,6 @@ import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Filter;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -149,24 +148,21 @@ public class AbstractHibernateDAO {
 			session.disableFilter(TENANT_FILTER_NAME);
 		}
 	}
-	
-	
-//	//enable specific filter
-//	
-//	public void enableFilter(String filterName, String parameterName,String parameterValue) {
-//		Filter filter = this.getSession().enableFilter(filterName);
-//		filter.setParameter(parameterName, parameterValue);
-//	}
-//
-//	public void disableFilter(String filterName) {
-//		Session sess=this.getSession();
-//		Filter filter = sess.getEnabledFilter(filterName);
-//		if (filter != null) {
-//			sess.disableFilter(filterName);
-//		}
-//	}
-	
-	
+
+	// //enable specific filter
+	//
+	// public void enableFilter(String filterName, String parameterName,String parameterValue) {
+	// Filter filter = this.getSession().enableFilter(filterName);
+	// filter.setParameter(parameterName, parameterValue);
+	// }
+	//
+	// public void disableFilter(String filterName) {
+	// Session sess=this.getSession();
+	// Filter filter = sess.getEnabledFilter(filterName);
+	// if (filter != null) {
+	// sess.disableFilter(filterName);
+	// }
+	// }
 
 	/**
 	 * usefull to update some property
@@ -288,7 +284,7 @@ public class AbstractHibernateDAO {
 		Session session = null;
 		T toReturn = null;
 
-LogMF.debug(logger, "IN: id = [{0}]", id);
+		LogMF.debug(logger, "IN: id = [{0}]", id);
 
 		try {
 			if (id == null) {
@@ -442,11 +438,6 @@ LogMF.debug(logger, "IN: id = [{0}]", id);
 			logger.debug("OUT");
 		}
 	}
-	
-	
-	
-	
-
 
 	public <T extends SbiHibernateModel> List<T> list(Class<T> clazz) {
 		if (clazz == null) {
@@ -520,6 +511,27 @@ LogMF.debug(logger, "IN: id = [{0}]", id);
 				session.close();
 			}
 			logger.debug("OUT: executeOnTransaction");
+		}
+		return returnObj;
+	}
+
+	/**
+	 * Executes the passed method inside a single transaction
+	 * 
+	 * @param executeOnTransaction
+	 * @return
+	 */
+	public <T> T executeOnTransaction(IExecuteOnTransaction<T> executeOnTransaction, Session session) {
+		T returnObj = null;
+		if (session == null) {
+			returnObj = executeOnTransaction(executeOnTransaction);
+		} else {
+			logger.debug("IN: executeOnTransaction with session");
+			try {
+				returnObj = executeOnTransaction.execute(session);
+			} catch (Throwable t) {
+				throw new SpagoBIDOAException("Error executing on transaction ", t);
+			}
 		}
 		return returnObj;
 	}
