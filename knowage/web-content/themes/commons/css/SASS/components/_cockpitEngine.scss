@@ -189,6 +189,8 @@
                     span.editWidgetNameSpan{
 						z-index: 2;
     					cursor: text;
+    					min-height:1em;
+    					min-width:1em;
 					}
 					.editWidgetNameInput>.md-button{
 						&.saveEditText>md-icon{
