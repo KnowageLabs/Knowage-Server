@@ -35,10 +35,7 @@ angular.module('sbi_table_toolbar',['sbiModule'])
 });
 
 function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_download,olapSharedSettings) {
-	
-	var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
-	var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon","BUTTON_EDITABLE_EXCEL_EXPORT","BUTTON_ALGORITHMS"];
-	var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT","BUTTON_SORTING_SETTINGS","BUTTON_CC","BUTTON_SORTING"]
+	  
 	var saveAsTimeout = olapSharedSettings.getSettings().persistNewVersionTransformations;
 	$scope.availAlgorithms = [];
 	$scope.activeAlg;
@@ -111,7 +108,54 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	var algsLoaded = false;
 	$scope.wiMsg ="";
 	$scope.wiMessageNeeded = false;
+		
+	var olapButtonNames = [];
+	var whatifButtonNames = ["unlock-icon","lock-icon"];
+	var tableButtonNames = [];
 	
+	//var olapButtonNames = ["BUTTON_MDX","BUTTON_EDIT_MDX","BUTTON_FLUSH_CACHE","BUTTON_EXPORT_XLS"];
+	//var whatifButtonNames= ["BUTTON_VERSION_MANAGER", "BUTTON_EXPORT_OUTPUT", "BUTTON_UNDO", "BUTTON_SAVE", "BUTTON_SAVE_NEW","lock-other-icon","unlock-icon","lock-icon","BUTTON_EDITABLE_EXCEL_EXPORT","BUTTON_ALGORITHMS"];
+	//var tableButtonNames = ["BUTTON_FATHER_MEMBERS","BUTTON_HIDE_SPANS","BUTTON_SHOW_PROPERTIES","BUTTON_HIDE_EMPTY","BUTTON_CALCULATED_MEMBERS","BUTTON_SAVE_SUBOBJECT","BUTTON_SORTING_SETTINGS","BUTTON_CC","BUTTON_SORTING"]
+	
+	$scope.getToolbarButtons = function() {
+    	sbiModule_restServices.promiseGet
+		("1.0",'/buttons')
+		.then(function(response) {
+			$scope.buttons = response.data;
+			$scope.classiffyToolbarButtons();
+			filterXMLResult(toolbarVisibleBtns);
+		 }, function(response) {
+			sbiModule_messaging.showErrorMessage("error", 'Error');
+		});
+    }
+	
+	$scope.getToolbarButtons();
+  	  
+	  $scope.classiffyToolbarButtons = function() {
+		  for (var i = 0; i < $scope.buttons.length; i++) {
+				
+				switch ($scope.buttons[i].category) {
+				case "DRILL_ON_DATA":
+					whatifButtonNames.push($scope.buttons[i].name);
+					break;
+				case "DRILL_ON_DIMENSION":
+					whatifButtonNames.push($scope.buttons[i].name);
+					break;
+				case "WHAT_IF":
+					whatifButtonNames.push($scope.buttons[i].name);
+					break;
+				case "TABLE_FUNCTIONS":
+					tableButtonNames.push($scope.buttons[i].name);
+					break;	
+				case "OLAP_FUNCTIONS":
+					olapButtonNames.push($scope.buttons[i].name);
+					break;	
+				default:
+					break;
+				}
+				
+			}
+	  }
 	
 	whatIfBtns = function(status){
 			if(status == 'locked_by_user')
@@ -144,6 +188,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	
 	//Getting all buttons from XML and moving them inside grids(arrays) where they need to be
 	filterXMLResult = function(res) {
+		
 		var regEx = /([A-Z]+_*)+/g;
 		var i;
 		while (i = regEx.exec(res)){
@@ -184,7 +229,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		}
 	}
 	
-	filterXMLResult(toolbarVisibleBtns);
+	
 	
 	//Call off function remove comment bellow to get names of clicked buttons
 	//filterClickedButtons(toolbarClickedBtns);
@@ -649,5 +694,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  }
 		  return false;
 	  }
+	  	  
+	  
 };
 })();
