@@ -141,13 +141,14 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  	//get the element position
 	  	var mouseOverElement = e.detail;		  	
 	  	
-	  	var domIframe = document.getElementById("svgContainer");
-	  	var domEl = domIframe.contentDocument.getElementById(mouseOverElement.idElement);
+	  	var domIframe 	= document.getElementById("svgContainer");
+	  	var domEl		= domIframe.contentDocument.getElementById(mouseOverElement.idElement);
 	  	if (domEl){	 	
 	  		//get element position
 	  		var viewportOffset = domEl.getBoundingClientRect();
-		  	var top = viewportOffset.top;
-		  	var left = viewportOffset.left;
+		  	var top = viewportOffset.top + document.documentElement.scrollTop;
+//		  	var left = viewportOffset.left  + viewportOffset.width + document.documentElement.scrollLeft;		  	
+		  	var left = viewportOffset.left  + document.documentElement.scrollLeft;
 		  	var tooltipText = "";
 		  	
 		  	//get element content (as default shows the active measure)
@@ -163,11 +164,20 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 		  	if (tooltipText && tooltipText.length > 0){
 		  		//update the div content
 			  	var domTooltip = document.getElementById("svgTooltip");
-			  	var wTooltip =  parseInt(domEl.getAttribute("width"));
+			  	var wEl = 0;
+//			  	if (domEl.localName == 'path'){
+//			  		var screenTCM = domEl.getScreenCTM();
+//			  		wEl = screenTCM + e;
+//			  	}else if (domEl.getAttribute("width")){
+//			  		wEl = parseInt(domEl.getAttribute("width"));
+//			  	}
 			  	var domLeftPanel = document.getElementById("svgInfoSidenav");
-			  	var wLeftPanel =  0 + parseInt(domLeftPanel.offsetWidth);
-		  		domTooltip.style.left = left + wLeftPanel + wTooltip; //$scope.cursorX; 
-		  		domTooltip.style.top = top; //$scope.cursorY; 
+			  	var wLeftPanel =  0 + parseInt(domLeftPanel.offsetWidth);		
+			  	left = left + wLeftPanel; 
+//		  		domTooltip.style.left = left + wLeftPanel + (viewportOffset.width/3); //$scope.cursorX; 
+		  		domTooltip.style.left = left + (viewportOffset.width/2); //$scope.cursorX; 
+//			  	domTooltip.style.left = left+(left/2);
+		  		domTooltip.style.top = top+(viewportOffset.height/3); //$scope.cursorY; 
 		  		domTooltip.innerHTML = tooltipText;
 		  		domTooltip.style.display = "block";
 		  	
@@ -192,8 +202,13 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   
   
   $window.document.addEventListener("SVGElementMouseMove", function(e) {
-			$scope.cursorX = e.pageX;
-			$scope.cursorY = e.pageY;
+//	  
+//			$scope.cursorX = e.x;
+//			$scope.cursorY = e.y;
+//	  		$scope.getSVG('svgContainer');
+//			$("body").mousemove(function(e){
+//				console.log(e.pageX);
+//			});
   });
   
   

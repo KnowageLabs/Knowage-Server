@@ -11,6 +11,8 @@
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
 
+
+
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
@@ -49,8 +51,7 @@
 	</head>
 
 	
-	<body class="kn-svgviewer">        
-        	
+	<body class="kn-svgviewer">               	
 			<!-- <div ng-app="svgViewerApp">
 			    <div ng-controller="SvgViewerController" layout="row">
 			        <md-sidenav layout="column"  ng-class="{'_md-locked-open':sidenavOpened}" id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="noError" class="md-sidenav-<%= propertiesPanelPosition %>"  >
