@@ -55,13 +55,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * <li>{@link it.eng.knowage.meta.model.business.impl.BusinessRelationshipImpl#getPhysicalForeignKey <em>Physical Foreign Key</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @generated
  */
 public class BusinessRelationshipImpl extends ModelObjectImpl implements BusinessRelationship {
 	/**
 	 * The cached value of the '{@link #getSourceTable() <em>Source Table</em>}' reference. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getSourceTable()
 	 * @generated
 	 * @ordered
@@ -70,7 +70,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * The cached value of the '{@link #getDestinationTable() <em>Destination Table</em>}' reference. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getDestinationTable()
 	 * @generated
 	 * @ordered
@@ -79,7 +79,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * The cached value of the '{@link #getSourceColumns() <em>Source Columns</em>}' reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getSourceColumns()
 	 * @generated
 	 * @ordered
@@ -88,7 +88,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * The cached value of the '{@link #getDestinationColumns() <em>Destination Columns</em>}' reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getDestinationColumns()
 	 * @generated
 	 * @ordered
@@ -97,7 +97,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * The cached value of the '{@link #getPhysicalForeignKey() <em>Physical Foreign Key</em>}' reference. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getPhysicalForeignKey()
 	 * @generated
 	 * @ordered
@@ -106,7 +106,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	protected BusinessRelationshipImpl() {
@@ -115,7 +115,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -125,7 +125,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -138,7 +138,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	public NotificationChain basicSetModel(BusinessModel newModel, NotificationChain msgs) {
@@ -148,7 +148,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -170,7 +170,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -198,7 +198,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	public BusinessColumnSet basicGetSourceTable() {
@@ -207,7 +207,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -220,7 +220,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -248,7 +248,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	public BusinessColumnSet basicGetDestinationTable() {
@@ -257,7 +257,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -271,7 +271,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -284,7 +284,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -298,7 +298,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -325,7 +325,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	public PhysicalForeignKey basicGetPhysicalForeignKey() {
@@ -334,7 +334,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -348,7 +348,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -364,7 +364,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -378,7 +378,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -392,7 +392,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -422,7 +422,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -455,7 +455,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -485,7 +485,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -538,6 +538,11 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 			}
 		}
 		return sourceSimpleColumns;
+	}
+
+	@Override
+	public void removeRelationship() {
+		getSourceTable().getModel().getRelationships().remove(this);
 	}
 
 } // BusinessRelationshipImpl

@@ -39,6 +39,7 @@ import it.eng.knowage.meta.model.business.BusinessView;
 import it.eng.knowage.meta.model.business.BusinessViewInnerJoinRelationship;
 import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
 import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
+import it.eng.knowage.meta.model.business.impl.BusinessRelationshipImpl;
 import it.eng.knowage.meta.model.business.impl.SimpleBusinessColumnImpl;
 import it.eng.knowage.meta.model.filter.PhysicalTableFilter;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
@@ -795,7 +796,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			String operation = jsonNode.get("op").textValue();
 			String path = jsonNode.get("path").textValue();
 
-			if (toSkip(path)) {
+			if (toSkip(path, operation)) {
 				logger.debug("skipping " + path);
 				continue;
 			}
@@ -829,10 +830,10 @@ public class MetaService extends AbstractSpagoBIResource {
 		}
 	}
 
-	private boolean toSkip(String path) {
+	private boolean toSkip(String path, String operation) {
 		if (path.equals("/datasourceId") || path.equals("/modelName") || path.equals("/physicalModels") || path.equals("/businessModels")
-				|| path.contains("/physicalColumn/") || path.contains("/simpleBusinessColumns") || path.contains("relationships")
-				|| path.contains("referencedColumns")) {
+				|| path.contains("/physicalColumn/") || path.contains("/simpleBusinessColumns")
+				|| (path.contains("relationships") && !operation.equals("remove")) || path.contains("referencedColumns")) {
 			logger.debug("skipping " + path);
 			return true;
 		}
@@ -861,6 +862,11 @@ public class MetaService extends AbstractSpagoBIResource {
 			if (obj.getNode() instanceof SimpleBusinessColumnImpl) {
 				((SimpleBusinessColumnImpl) obj.getNode()).setIdentifier(false);
 			}
+			if (obj.getNode() instanceof BusinessRelationshipImpl) {
+				((BusinessRelationshipImpl) obj.getNode()).removeRelationship();
+				return;
+			}
+
 			((List<?>) coll.getNode()).remove(obj.getNode());
 		} else {
 			// TODO
@@ -869,7 +875,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	private void addJson(JsonNode obj, String topath, JXPathContext context) throws SpagoBIException {
-		if (toSkip(topath)) {
+		if (toSkip(topath, "add")) {
 			logger.debug("skipping " + topath);
 			return;
 		}

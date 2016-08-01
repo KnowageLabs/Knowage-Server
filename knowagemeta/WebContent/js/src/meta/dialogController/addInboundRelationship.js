@@ -40,6 +40,16 @@ function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiM
 			addNewInbound:$scope.addNewInbound
 	};
 
+	$scope.inboundActionButton=[
+	                            {
+								label : 'delete',
+								 icon:'fa fa-trash' ,
+								action : function(item,event) {
+									$scope.selectedBusinessModel.relationships.splice($scope.selectedBusinessModel.relationships.indexOf(item),1);
+								 }
+                    			}
+						];
+
 
 }
 
@@ -96,7 +106,7 @@ function inboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translat
 		}
 		,function(response){
 			sbiModule_restServices.errorHandler(response.data,"");
-		})
+		});
 	}
 
 	$scope.cancel = function(){

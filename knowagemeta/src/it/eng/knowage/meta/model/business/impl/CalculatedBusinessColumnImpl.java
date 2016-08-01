@@ -26,6 +26,7 @@ import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 
@@ -74,6 +75,11 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 				.split("(\\+|\\-|\\*|\\(|\\)|\\||\\/|GG_between_dates|MM_between_dates|AA_between_dates|GG_up_today|MM_up_today|AA_up_today)");
 		for (String operand : splittedExpr) {
 			operand = operand.trim();
+
+			if (NumberUtils.isNumber(operand)) {
+				continue;
+			}
+
 			List<SimpleBusinessColumn> businessColumns = businessColumnSet.getSimpleBusinessColumnsByName(operand);
 			if (businessColumns.isEmpty()) {
 				// throws exception

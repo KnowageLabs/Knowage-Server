@@ -39,6 +39,16 @@ function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbi
 			translate:sbiModule_translate,
 			addNewOutbound:$scope.addNewOutbound
 	};
+
+	$scope.outboundActionButton=[
+	                            {
+								label : 'delete',
+								 icon:'fa fa-trash' ,
+								action : function(item,event) {
+									$scope.selectedBusinessModel.relationships.splice($scope.selectedBusinessModel.relationships.indexOf(item),1);
+								 }
+                    			}
+						];
 }
 
 

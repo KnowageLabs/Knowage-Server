@@ -133,6 +133,7 @@
 								no-pagination="true"
 								columns="inboundColumns"
 								scope-functions="inboundFunctions"
+								speed-menu-option=inboundActionButton
 								visible-row-function="isInbound(item)">
 								<queue-table>
 									<div layout="row"> 
@@ -152,6 +153,7 @@
 					 	show-search-bar=true
 					 	no-pagination="true"
 					 	scope-functions="outboundFunctions"
+					 	speed-menu-option=outboundActionButton
 					 	visible-row-function="isOutbound(item)">
 					 	<queue-table>
 							<div layout="row"> 
