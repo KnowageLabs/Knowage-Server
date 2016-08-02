@@ -44,7 +44,16 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 * Opens a new dialog for what-if scenario.
 	 */
 	$scope.openScenarioWizard = function(){
-		
+		$mdDialog
+		.show({
+			scope : $scope,
+			preserveScope : true,
+			parent : angular.element(document.body),
+			controllerAs : 'olapDesignerCtrl',
+			templateUrl : sbiModule_config.contextName + '/html/template/right/edit/scenarioWizard.html',
+			clickOutsideToClose : false,
+			hasBackdrop : false
+		});
 	}
 
 };
