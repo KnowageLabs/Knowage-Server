@@ -40,6 +40,14 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
 		toastr, $cookies, sbiModule_docInfo, sbiModule_config) {
 	
+	$scope.cubeList = [];
+	/**
+	 * SCENARIO is the temporary object that will be bind to olapTemplate if the scenario is defined.
+	 */
+	$scope.SCENARIO = {
+			name: "scenario",
+			editCube : ""
+	};		
 	/**
 	 * Array that hold cross navigation types
 	 */
@@ -52,6 +60,15 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		 "value": "member",
 		  "name": "From Member"	 
 	}];
+	
+	/**
+	 * Loads cubes and opens a new what-if scenario dialog.
+	 */
+	$scope.runScenarioWizard = function(){
+		$scope.getVersions();
+		$scope.getCubes();
+	}
+	
 	/**
 	 * Opens a new dialog for what-if scenario.
 	 */
@@ -67,6 +84,21 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 			hasBackdrop : false
 		});
 	}
+	
+	/**
+	 * Loads schema cubes.
+	 */
+	$scope.getCubes = function(){
+		sbiModule_restServices.promiseGet("1.0/designer/cubes/"+schemaID,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
+		.then(function(response) {
+			$scope.cubeList = response.data;
+			$scope.showCubes = true;
+			$scope.openScenarioWizard();
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
+		});	
+		
+	};
 	
 	/**
 	 * Opens a new dialog for crossnav definition.
@@ -85,6 +117,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		  });
 		
 	};
+	
 	/**
 	 * Opens a new dialog for crossnav definition.
 	 */
@@ -102,6 +135,17 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		  });
 		
 	};
+		
+	/**
+	 * Binds temporary scenario object to olapTemplate and after that sets the scenario to initial value.
+	 */
+	$scope.saveScenario = function() {
+		console.log($scope.SCENARIO);
+		$scope.SCENARIO = {
+				name: "scenario",
+				editCube : ""
+		};
+	}
 
 };
 

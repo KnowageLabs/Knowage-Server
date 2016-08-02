@@ -1,0 +1,37 @@
+<md-dialog style='width:50%;'>
+    
+   <md-toolbar class="knowage-blue dialog-toolbar">
+   		<h2 flex="flex" class="md-title">Scenario Wizard</h2>
+   </md-toolbar>
+   
+   <md-content>
+   
+   	   <!-- SCENARIO DESCRIPTION -->
+	   <div style="padding: 5px;">
+	 		<p class="md-body-1">Some description</p>   
+	   </div>
+	   
+	   <!-- EDIT CUBE NAME -->
+	   <div flex=100>
+	       <md-input-container  layout="column" flex=100> 
+	       <label>Select Cube</label>
+	       <md-select
+	        ng-model="SCENARIO.editCube"
+	        > <md-option 
+	        ng-repeat="l in cubeList track by $index" value="{{l}}">{{l}} </md-option>
+	       </md-select>
+	        </md-input-container>
+	   </div>
+  
+	   
+   </md-content>
+
+    <md-dialog-actions layout="row">
+     <md-button ng-click="saveScenario()" class="md-raised"  md-autofocus>
+        Save
+      </md-button>
+      <md-button ng-click="closeDialog()" class="md-raised" style="margin-right:20px;" >
+       Cancel
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

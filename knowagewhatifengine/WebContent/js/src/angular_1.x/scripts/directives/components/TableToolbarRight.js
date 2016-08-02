@@ -333,7 +333,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				sendModelConfig = false;
 				break;
 			case "BUTTON_SCENARIO_WIZARD":
-				$scope.openScenarioWizard();
+				$scope.runScenarioWizard();
 				sendModelConfig = false;
 				break;	
 			case "BUTTON_CROSSNAV_WIZARD":
