@@ -36,5 +36,6 @@ angular.module('olap.directives', [
                                    'export_version_dialogs',
                                    'drill_down_command_directive',
                                    'drill_up_command_directive',
-                                   'olap_designer'
+                                   'olap_designer',
+                                   'olap_designer_toolbar'
                                    ]);
