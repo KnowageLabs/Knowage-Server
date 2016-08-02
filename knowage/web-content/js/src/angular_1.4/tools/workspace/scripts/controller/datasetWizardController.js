@@ -122,7 +122,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					 * retrieve the metadata.
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
-					if ($scope.metaDataCopy!=null) {
+					if ($scope.metaDataCopy!=null && $scope.metaDataCopy.length>1) {
 						$scope.dataset.meta = angular.copy($scope.metaDataCopy);
 					}
 					else {
@@ -549,10 +549,13 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 
 		sbiModule_restServices.promiseGet(a,b)
 		.then(function(response) {
-			//console.log(response.data);
-			if(b=="") {
-			angular.copy(response.data,$scope.datasetCategories)
-			} else if(b=="?DOMAIN_TYPE=DS_GEN_META_PROPERTY"){
+			
+			// Categories are not used anymore in the Dataset wizard (commented by: danristo)
+//			if(b=="") {
+//			angular.copy(response.data,$scope.datasetCategories)
+//			} else if(b=="?DOMAIN_TYPE=DS_GEN_META_PROPERTY"){
+				
+			if(b=="?DOMAIN_TYPE=DS_GEN_META_PROPERTY"){
 				angular.copy(response.data,$scope.dsGenMetaProperty)
 			} else if(b=="?DOMAIN_TYPE=DS_META_PROPERTY"){
 				angular.copy(response.data,$scope.dsMetaProperty)
@@ -560,12 +563,14 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				angular.copy(response.data,$scope.dsMetaValue)
 			}
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,"faild to load data for"+b);
+			sbiModule_restServices.errorHandler(response.data,"failed to load data for"+b);
 		});
 	}
 	
-	loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","");
-	//loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=CATEGORY_TYPE");
+	// Categories are not used anymore in the Dataset wizard (commented by: danristo)
+//	loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","");	// commented by: danristo
+//	loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=CATEGORY_TYPE");
+	
 	loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_GEN_META_PROPERTY");
 	loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_PROPERTY");
 	loadDatasetValues("domainsforfinaluser/listValueDescriptionByType","?DOMAIN_TYPE=DS_META_VALUE");

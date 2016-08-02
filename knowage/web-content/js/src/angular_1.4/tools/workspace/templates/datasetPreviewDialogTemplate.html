@@ -26,19 +26,36 @@
    </md-toolbar>
    <br>
 
-<md-content flex style="height:85%">
-<angular-table 
-			id='previewDatasetTable'
-            flex
-            style="position:absolute;"
-            ng-model="previewDatasetModel"
-				columns="previewDatasetColumns" 
-				no-pagination="true" 
-				show-search-bar=false
-				full-width
-				>
-	</angular-table>
+	<!-- 
+		Provide checking if the client-side (Angular Table) pagination should be enabled. 
+		Two separate DIVs for this purpose. 
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	-->
+	<div flex style="height:85%" ng-if=paginationDisabled>
+		<angular-table 
+					id='previewDatasetTable'
+		            flex
+		            style="position:absolute;"
+		            ng-model="previewDatasetModel"
+					columns="previewDatasetColumns" 
+					no-pagination=true
+					show-search-bar=false
+					full-width>
+		</angular-table>	
+	 </div>
+	 
+	 <div flex style="height:85%" ng-if=!paginationDisabled>
+		<angular-table 
+					id='previewDatasetTable'
+		            flex
+		            style="position:absolute;"
+		            ng-model="previewDatasetModel"
+					columns="previewDatasetColumns" 
+					no-pagination=false
+					show-search-bar=false
+					full-width>
+		</angular-table>	
+	</div>
 	
- </md-content>
 </md-content>
 </md-dialog>

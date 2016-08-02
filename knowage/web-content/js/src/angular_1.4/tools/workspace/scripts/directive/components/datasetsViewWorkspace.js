@@ -50,8 +50,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     $scope.previewDatasetColumns=[];
     $scope.startPreviewIndex=0;
     $scope.endPreviewIndex=0;
-    $scope.totalItemsInPreview=0;
-    $scope.previewPaginationEnabled=true; 
+    $scope.totalItemsInPreview=-1;	// modified by: danristo
+    $scope.previewPaginationEnabled=true;     
+    $scope.paginationDisabled = null;
     
     $scope.itemsPerPage=15;
     $scope.datasetInPreview=undefined;
@@ -426,9 +427,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
        $window.location.href=url;
     }
     
-    $scope.previewDataset= function(dataset){
+    $scope.previewDataset = function(dataset){
     	
-    	console.log("DATASET FOR PREVIEW: ",dataset);
+    	console.info("DATASET FOR PREVIEW: ",dataset);
     	
     	$scope.datasetInPreview=dataset;    	
     	$scope.disableBack=true;
@@ -441,20 +442,27 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	if(dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber"){
     		$scope.totalItemsInPreview=dataset.meta.dataset[0].pvalue;
     		$scope.previewPaginationEnabled=true;
-    	}else{
+    	}
+    	else{
     		$scope.previewPaginationEnabled=false;
     	}
+    	
     	$scope.getPreviewSet($scope.datasetInPreview);
-        
-    	if($scope.totalItemsInPreview < $scope.itemsPerPage){
-    		 $scope.endPreviewIndex= $scope.totalItemsInPreview	
-    		 $scope.disableNext=true;
-    	}else{
-    		 $scope.endPreviewIndex = $scope.itemsPerPage;
-    		 $scope.disableNext=false;
-    	}
     	
-    	
+    	/**
+    	 * If the 'totalItemsInPreview' value is -1, that means that this property is not set according to the response (total 
+    	 * number of results - rows). For example, for the File dataset does not have this property set to some non-minus-one
+    	 * value.
+    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	 */
+		if($scope.totalItemsInPreview>-1 && $scope.totalItemsInPreview < $scope.itemsPerPage){
+   		 	$scope.endPreviewIndex= $scope.totalItemsInPreview	
+   		 	$scope.disableNext=true;
+       	}
+		else {
+   		 	$scope.endPreviewIndex = $scope.itemsPerPage;
+   		 	$scope.disableNext=false;
+       	}
     	
      	$mdDialog.show({
 			  scope:$scope,
@@ -469,17 +477,32 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		         // previewDatasetColumns:$scope.previewDatasetColumns 
 		      }
 		    });
-   
-    	
-    	
+       	
     }
-    
-    $scope.getPreviewSet= function(dataset){    	
+       
+    $scope.getPreviewSet = function(dataset){    
+    	
+    	var datasetType = dataset.dsTypeCd.toUpperCase();
+    	
+    	/**
+    	 * If the type of the dataset is File, set these flags so the pagination toolbar on the Preview dataset panel
+    	 * is hidden and the pagination is performed on the client-side. Other dataset types should have the server-side
+    	 * pagination (else-branch).
+    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	 */
+    	if (datasetType!="FILE") {
+    		 $scope.paginationDisabled = true;
+    		 $scope.previewPaginationEnabled = true;
+    	}
+    	else {
+    		$scope.paginationDisabled = false;
+    		$scope.previewPaginationEnabled = false;
+    	}
     	
     	params={};
-    	params.start=$scope.startPreviewIndex;
-    	params.limit=$scope.itemsPerPage;
-    	params.page=0;
+    	params.start = $scope.startPreviewIndex;
+    	params.limit = $scope.itemsPerPage;
+    	params.page = 0;
     	params.dataSetParameters=null;
     	params.sort=null;
     	params.valueFilter=null;
@@ -487,21 +510,33 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	params.columnsFilterDescription=null;
     	params.typeValueFilter=null;
     	params.typeFilter=null;
-    	
+    	    	
     	config={};
     	config.params=params;
+    	
     	sbiModule_restServices.promiseGet("selfservicedataset/values", dataset.label,"",config)
-		.then(function(response) {
-			//console.log(response.data);
-		    angular.copy(response.data.rows,$scope.previewDatasetModel);
-		    if( $scope.previewDatasetColumns.length==0){
-			$scope.createColumnsForPreview(response.data.metaData.fields);
-		    }
-		
+			.then(function(response) {			
+			
+				/**
+				 * If the responded dataset does not possess a metadata information (total amount of rows in the result)
+				 * take this property if provided.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				if (response.data.results) {
+					$scope.totalItemsInPreview = response.data.results;
+				}
+				
+			    angular.copy(response.data.rows,$scope.previewDatasetModel);
+			    
+			    if( $scope.previewDatasetColumns.length==0){
+			    	$scope.createColumnsForPreview(response.data.metaData.fields);				
+			    }		
 			
 			//$scope.startPreviewIndex=$scope.startPreviewIndex=0+20;
 			
-		},function(response){
+		},
+		
+		function(response){
 			
 			// COMMENTED BY: danristo
 //			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.preview.error'));
@@ -513,7 +548,6 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message),sbiModule_translate.load('sbi.generic.error'));
 			
 		});
-    	
     	
     }
     
@@ -602,13 +636,14 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
              $scope.disableNext=false;
              }
     	 }
-    
+    	
     	 $scope.getPreviewSet($scope.datasetInPreview);
     	 
     	
     }
     
-    $scope.getNextPreviewSet= function(){
+    $scope.getNextPreviewSet= function(){   	
+    	
     	 if($scope.startPreviewIndex+$scope.itemsPerPage > $scope.totalItemsInPreview){
   
     		 $scope.startPreviewIndex=$scope.totalItemsInPreview-($scope.totalItemsInPreview%$scope.itemsPerPage);  		
@@ -641,8 +676,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
          	 }
     	 }   
     	 
-    	 
-        	 $scope.getPreviewSet($scope.datasetInPreview);
+    	 $scope.getPreviewSet($scope.datasetInPreview);
         	 
     }
     
@@ -835,6 +869,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		
 		return toReturn;
 	}
+	
+	var prevScope = $scope;
     
     function DatasetPreviewController($scope,$mdDialog,$http){
 		
@@ -843,13 +879,71 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			 $scope.previewDatasetColumns=[];
 			 $scope.startPreviewIndex=0;
 			 $scope.endPreviewIndex=0;
-			 $scope.totalItemsInPreview=0;
+			 $scope.totalItemsInPreview=-1;	// modified by: danristo
 			 $scope.datasetInPreview=undefined;
-			 
+			 $scope.counter = 0;
 			 $mdDialog.cancel();	 
 	    }
 		
-		
+		// TODO: Remove this commented fucntion if not needed for sure.
+//		$scope.pageChanged = function(a,b,c,d,e) {
+//						
+//			console.log(b);
+//			console.log(c);
+//			params={};
+//	    	params.start=c*$scope.itemsPerPage;
+//	    	params.limit=$scope.itemsPerPage;
+//	    	params.page=c;
+//	    	params.dataSetParameters=null;
+//	    	params.sort=null;
+//	    	params.valueFilter=null;
+//	    	params.columnsFilter=null;
+//	    	params.columnsFilterDescription=null;
+//	    	params.typeValueFilter=null;
+//	    	params.typeFilter=null;
+//	    	
+//	    	//$scope.dataset.labelA = dataset.label;
+//	    	
+////	    	console.log(dataset.label);
+////	    	console.log($scope.itemsPerPage);
+////	    	console.log($scope.startPreviewIndex);
+//	    	
+//	    	config={};
+//	    	config.params=params;
+//			
+////			console.log(b);
+////			console.log(c);
+////			console.log(prevScope.dataset.labelA);
+////			
+////			config.params.start = (c-1)*b;
+////			config.params.limit = b;
+//			//config.params.page = c;
+//			
+//			sbiModule_restServices.promiseGet("selfservicedataset/values", prevScope.dataset.labelA,"",config)
+//			.then(function(response) {
+//				//console.log(response.data);
+//				console.log(response.data.rows);
+//			    angular.copy(response.data.rows,$scope.previewDatasetModel);
+//			    if( $scope.previewDatasetColumns.length==0){
+//				$scope.createColumnsForPreview(response.data.metaData.fields);
+//			    }
+//			
+//				
+//				//$scope.startPreviewIndex=$scope.startPreviewIndex=0+20;
+//				
+//			},function(response){
+//				
+//				// COMMENTED BY: danristo
+////				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.preview.error'));
+//				
+//				/**
+//				 * Handling the error while trying to preview the dataset.
+//				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+//				 */
+//				sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message),sbiModule_translate.load('sbi.generic.error'));
+//				
+//			});
+//		}
 		
 	}
 	
