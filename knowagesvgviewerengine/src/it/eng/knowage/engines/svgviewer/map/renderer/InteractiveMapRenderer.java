@@ -235,7 +235,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 				JSONArray layers = getLayersConfigurationScript(targetMap);
 				// String targetLayer = datamartProvider.getSelectedLevel().getFeatureName();
-				String targetLayer = dataMart.getTargetFeatureName();
+				// String targetLayer = dataMart.getTargetFeatureName();
+				String targetLayer = dataMart.getTargetFeatureName().get(0); // as default put the first selected layer
 				int targetLayerIndex = -1;
 				for (int i = 0; i < layers.length(); i++) {
 					JSONObject layer = (JSONObject) layers.get(i);
@@ -435,167 +436,171 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			List listCrossNav = dataStoreMeta.findFieldMeta("ROLE", "CROSSNAVLINK");
 			List listDrillNav = dataStoreMeta.findFieldMeta("ROLE", "DRILLID");
 			List listTooltip = dataStoreMeta.findFieldMeta("ROLE", "TOOLTIP");
+			List listCrossable = dataStoreMeta.findFieldMeta("ROLE", "CROSSABLE");
 			List listInfo = dataStoreMeta.findFieldMeta("ROLE", "INFO");
 
-			Element targetLayer = targetMap.getElementById(dataMart.getTargetFeatureName());
-			if (targetLayer == null) {
-				logger.error("Layer [" + dataMart.getTargetFeatureName() + "] doesn't exist for Hierarchy [" + datamartProvider.getSelectedHierarchyName()
-						+ "], MemberName [" + datamartProvider.getSelectedMemberName() + "] and Level [" + datamartProvider.getSelectedLevel()
-						+ "]. Please, check the template.");
-				String description = "Layer [" + dataMart.getTargetFeatureName() + "] doesn't exist for Hierarchy ["
-						+ datamartProvider.getSelectedHierarchyName() + "], MemberName [" + datamartProvider.getSelectedMemberName() + "] and Level ["
-						+ datamartProvider.getSelectedLevel() + "]. Please, check the template.";
-				SvgViewerEngineRuntimeException svgException;
-				svgException = new SvgViewerEngineRuntimeException("Layer [" + dataMart.getTargetFeatureName() + "] doesn't exist for Hierarchy ["
-						+ datamartProvider.getSelectedHierarchyName() + "], MemberName [" + datamartProvider.getSelectedMemberName() + "] and Level ["
-						+ datamartProvider.getSelectedLevel() + "]. Please, check the template.");
-				svgException.setDescription(description);
-				throw svgException;
-			}
+			for (int l = 0; l < dataMart.getTargetFeatureName().size(); l++) {
+				// Element targetLayer = targetMap.getElementById(dataMart.getTargetFeatureName());
+				Element targetLayer = targetMap.getElementById(dataMart.getTargetFeatureName().get(l));
+				if (targetLayer == null) {
+					logger.error("Layer [" + dataMart.getTargetFeatureName() + "] doesn't exist for Hierarchy [" + datamartProvider.getSelectedHierarchyName()
+							+ "], MemberName [" + datamartProvider.getSelectedMemberName() + "] and Level [" + datamartProvider.getSelectedLevel()
+							+ "]. Please, check the template.");
+					String description = "Layer [" + dataMart.getTargetFeatureName() + "] doesn't exist for Hierarchy ["
+							+ datamartProvider.getSelectedHierarchyName() + "], MemberName [" + datamartProvider.getSelectedMemberName() + "] and Level ["
+							+ datamartProvider.getSelectedLevel() + "]. Please, check the template.";
+					SvgViewerEngineRuntimeException svgException;
+					svgException = new SvgViewerEngineRuntimeException("Layer [" + dataMart.getTargetFeatureName() + "] doesn't exist for Hierarchy ["
+							+ datamartProvider.getSelectedHierarchyName() + "], MemberName [" + datamartProvider.getSelectedMemberName() + "] and Level ["
+							+ datamartProvider.getSelectedLevel() + "]. Please, check the template.");
+					svgException.setDescription(description);
+					throw svgException;
+				}
 
-			NodeList nodeList = targetLayer.getChildNodes();
-			for (int i = 0; i < nodeList.getLength(); i++) {
-				SVGElement child = null;
-				String column_id = null;
-				Node childNode = nodeList.item(i);
-				if (childNode instanceof Element) {
-					child = (SVGElement) childNode;
-					String childId = child.getId();
-					column_id = childId.replaceAll(dataMart.getTargetFeatureName() + "_", "");
+				NodeList nodeList = targetLayer.getChildNodes();
+				for (int i = 0; i < nodeList.getLength(); i++) {
+					SVGElement child = null;
+					String column_id = null;
+					Node childNode = nodeList.item(i);
+					if (childNode instanceof Element) {
+						child = (SVGElement) childNode;
+						String childId = child.getId();
+						column_id = childId.replaceAll(dataMart.getTargetFeatureName() + "_", "");
 
-					IRecord record = dataStore.getRecordByID(column_id);
-					if (record == null) {
-						logger.warn("No data available for feature [" + column_id + "]");
-						continue;
+						IRecord record = dataStore.getRecordByID(column_id);
+						if (record == null) {
+							logger.warn("No data available for feature [" + column_id + "]");
+							continue;
+						}
+
+						// defines base list of element to decorate
+						mapElements = new HashMap();
+						mapElements.put("column_id", column_id);
+
+						// 1. addData details as attributes
+						addData(dataStore, child, record);
+						mapElements.put("path", child);
+
+						// 2. add CROSS link ONLY if it's required by the template (at the moment is mutual exclusive with the drill link)
+						boolean useCrossNav = false;
+						if (datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName()).getEnableCross()) {
+							useCrossNav = true;
+							logger.debug("Required cross navigation for member [" + datamartProvider.getSelectedHierarchyName() + "]. "
+									+ " Checking presence of cross navigation definition...");
+							boolean isCrossable = DAOFactory.getCrossNavigationDAO().documentIsCrossable((String) this.getEnv().get("DOCUMENT_LABEL"));
+							if (isCrossable) {
+								String crossLink = addCrossLink(listCrossNav, listCrossable, record, dataStoreMeta);
+								mapElements.put("link_cross", crossLink);
+							} else {
+								logger.debug("... The cross navigation for the document isn't present." + " Please, check its definition through the GUI.");
+							}
+						}
+
+						// 3. add DRILL links ONLY if it isn't the last level
+						int intSelectedLevel = (datamartProvider.getSelectedLevel() == null) ? 1 : Integer.parseInt(datamartProvider.getSelectedLevel());
+						int totalLevels = datamartProvider.getHierarchyMembersNames().size();
+						if (!useCrossNav && (intSelectedLevel < totalLevels)) {
+							String drillLink = addLink(listCrossNav, listCrossable, record, dataStoreMeta);
+							String drillIdValue = addLinkDrillId(listDrillNav, record, dataStoreMeta);
+							mapElements.put("drill_id", drillIdValue);
+							mapElements.put("link_drill", drillLink);
+						}
+						// 4. add Tooltip
+						String tooltip = addTooltip(listTooltip, record, dataStoreMeta);
+						mapElements.put("tooltip", tooltip);
+						lstElements.add(mapElements);
+					}
+				}
+
+				// adds href links (element and event)
+				for (int j = 0; j < lstElements.size(); j++) {
+					Map tmpMap = (Map) lstElements.get(j);
+					Element featureElement = (Element) tmpMap.get("path");
+					String elementId = featureElement.getAttribute("id");
+
+					String linkType = null;
+					if (tmpMap.get("link_cross") != null) {
+						linkType = "cross";
+					} else if (tmpMap.get("link_drill") != null) {
+						linkType = "drill";
 					}
 
-					// defines base list of element to decorate
-					mapElements = new HashMap();
-					mapElements.put("column_id", column_id);
+					String linkUrl = (linkType != null && linkType.equals("cross")) ? (String) tmpMap.get("link_cross") : (String) tmpMap.get("link_drill");
+					if (linkUrl != null) {
+						String drillId = null;
+						if (tmpMap.get("drill_id") != null) {
+							drillId = (String) tmpMap.get("drill_id");
+						}
+						addHRefLinks(targetMap, featureElement, elementId, drillId, linkUrl, linkType);
+					}
+					// add tooltips events
+					String tooltip = null;
+					if (tmpMap.get("tooltip") != null) {
+						tooltip = (String) tmpMap.get("tooltip");
+					}
+					addTooltipEvents(featureElement, tooltip, elementId);
 
-					// 1. addData details as attributes
-					addData(dataStore, child, record);
-					mapElements.put("path", child);
+					// append element to the targer svg
+					targetLayer.appendChild(featureElement);
+					Node lf = targetMap.createTextNode("\n");
+					targetLayer.appendChild(lf);
+				}
 
-					// 2. add CROSS link ONLY if it's required by the template (at the moment is mutual exclusive with the drill link)
-					boolean useCrossNav = false;
-					if (datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName()).getEnableCross()) {
-						useCrossNav = true;
-						logger.debug("Required cross navigation for member [" + datamartProvider.getSelectedHierarchyName() + "]. "
-								+ " Checking presence of cross navigation definition...");
-						boolean isCrossable = DAOFactory.getCrossNavigationDAO().documentIsCrossable((String) this.getEnv().get("DOCUMENT_LABEL"));
-						if (isCrossable) {
-							String crossLink = addCrossLink(listCrossNav, record, dataStoreMeta);
-							mapElements.put("link_cross", crossLink);
-						} else {
-							logger.debug("... The cross navigation for the document isn't present." + " Please, check its definition through the GUI.");
+				SVGMapMerger.mergeMap(targetMap, masterMap, null, "targetMap");
+
+				// decorate from datastore: labels and visibility
+				List listLabel = dataStoreMeta.findFieldMeta("ROLE", "LABEL");
+				// find the geoID field
+				List listID = dataStoreMeta.findFieldMeta("ROLE", "GEOID");
+				// find field with visibility values
+				List listVis = dataStoreMeta.findFieldMeta("ROLE", "VISIBILITY");
+
+				if (listLabel.size() == 0 && listID.size() == 0 && listVis.size() == 0) {
+					return;
+				}
+				IFieldMetaData labelsIdMetaData = (listLabel.size() > 0) ? (IFieldMetaData) listLabel.get(0) : null;
+				IFieldMetaData geoIdMetaData = (listID.size() > 0) ? (IFieldMetaData) listID.get(0) : null;
+				IFieldMetaData visibilityIdMetaData = (listVis.size() > 0) ? (IFieldMetaData) listVis.get(0) : null;
+
+				for (int i = 0; i < dataStore.getRecordsCount(); i++) {
+					IRecord aRecord = dataStore.getRecordAt(i);
+					List<IField> fields = aRecord.getFields();
+
+					IField field = aRecord.getFieldAt(dataStoreMeta.getIdFieldIndex());
+					String id = (String) field.getValue();
+
+					// 5. add LABELS
+					String centroideId = "centroidi_" + id;
+					Element centroide = masterMap.getElementById(centroideId);
+					if (centroide != null && labelsIdMetaData != null) {
+						IField labelField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(labelsIdMetaData.getName()));
+						Element labelGroup = null;
+						if (fields.size() > 0) {
+							labelGroup = masterMap.createElement("g");
+							addLabels(masterMap, centroide, labelGroup, aRecord, labelField);
+						}
+					}
+					// 6. manage visibility
+					if (geoIdMetaData != null && visibilityIdMetaData != null) {
+						IField geoIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(geoIdMetaData.getName()));
+						IField visibilityIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(visibilityIdMetaData.getName()));
+
+						if (geoIdField != null && visibilityIdField != null) {
+							showElements(masterMap, geoIdField, visibilityIdField);
 						}
 					}
 
-					// 3. add DRILL links ONLY if it isn't the last level
-					int intSelectedLevel = (datamartProvider.getSelectedLevel() == null) ? 1 : Integer.parseInt(datamartProvider.getSelectedLevel());
-					int totalLevels = datamartProvider.getHierarchyMembersNames().size();
-					if (!useCrossNav && (intSelectedLevel < totalLevels)) {
-						String drillLink = addLink(listCrossNav, record, dataStoreMeta);
-						String drillIdValue = addLinkDrillId(listDrillNav, record, dataStoreMeta);
-						mapElements.put("drill_id", drillIdValue);
-						mapElements.put("link_drill", drillLink);
-					}
-					// 4. add Tooltip
-					String tooltip = addTooltip(listTooltip, record, dataStoreMeta);
-					mapElements.put("tooltip", tooltip);
-					lstElements.add(mapElements);
-				}
-			}
-
-			// adds href links (element and event)
-			for (int j = 0; j < lstElements.size(); j++) {
-				Map tmpMap = (Map) lstElements.get(j);
-				Element featureElement = (Element) tmpMap.get("path");
-				String elementId = featureElement.getAttribute("id");
-
-				String linkType = null;
-				if (tmpMap.get("link_cross") != null) {
-					linkType = "cross";
-				} else if (tmpMap.get("link_drill") != null) {
-					linkType = "drill";
-				}
-
-				String linkUrl = (linkType != null && linkType.equals("cross")) ? (String) tmpMap.get("link_cross") : (String) tmpMap.get("link_drill");
-				if (linkUrl != null) {
-					String drillId = null;
-					if (tmpMap.get("drill_id") != null) {
-						drillId = (String) tmpMap.get("drill_id");
-					}
-					addHRefLinks(targetMap, featureElement, elementId, drillId, linkUrl, linkType);
-				}
-				// add tooltips events
-				String tooltip = null;
-				if (tmpMap.get("tooltip") != null) {
-					tooltip = (String) tmpMap.get("tooltip");
-				}
-				addTooltipEvents(featureElement, tooltip, elementId);
-
-				// append element to the targer svg
-				targetLayer.appendChild(featureElement);
-				Node lf = targetMap.createTextNode("\n");
-				targetLayer.appendChild(lf);
-			}
-
-			SVGMapMerger.mergeMap(targetMap, masterMap, null, "targetMap");
-
-			// decorate from datastore: labels and visibility
-			List listLabel = dataStoreMeta.findFieldMeta("ROLE", "LABEL");
-			// find the geoID field
-			List listID = dataStoreMeta.findFieldMeta("ROLE", "GEOID");
-			// find field with visibility values
-			List listVis = dataStoreMeta.findFieldMeta("ROLE", "VISIBILITY");
-
-			if (listLabel.size() == 0 && listID.size() == 0 && listVis.size() == 0) {
-				return;
-			}
-			IFieldMetaData labelsIdMetaData = (listLabel.size() > 0) ? (IFieldMetaData) listLabel.get(0) : null;
-			IFieldMetaData geoIdMetaData = (listID.size() > 0) ? (IFieldMetaData) listID.get(0) : null;
-			IFieldMetaData visibilityIdMetaData = (listVis.size() > 0) ? (IFieldMetaData) listVis.get(0) : null;
-
-			for (int i = 0; i < dataStore.getRecordsCount(); i++) {
-				IRecord aRecord = dataStore.getRecordAt(i);
-				List<IField> fields = aRecord.getFields();
-
-				IField field = aRecord.getFieldAt(dataStoreMeta.getIdFieldIndex());
-				String id = (String) field.getValue();
-
-				// 5. add LABELS
-				String centroideId = "centroidi_" + id;
-				Element centroide = masterMap.getElementById(centroideId);
-				if (centroide != null && labelsIdMetaData != null) {
-					IField labelField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(labelsIdMetaData.getName()));
-					Element labelGroup = null;
-					if (fields.size() > 0) {
-						labelGroup = masterMap.createElement("g");
-						addLabels(masterMap, centroide, labelGroup, aRecord, labelField);
-					}
-				}
-				// 6. manage visibility
-				if (geoIdMetaData != null && visibilityIdMetaData != null) {
-					IField geoIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(geoIdMetaData.getName()));
-					IField visibilityIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(visibilityIdMetaData.getName()));
-
-					if (geoIdField != null && visibilityIdField != null) {
-						showElements(masterMap, geoIdField, visibilityIdField);
-					}
-				}
-
-				// 7. add INFO content only one time (if it's configurated)
-				String infoText = null;
-				if (infoText == null) {
-					infoText = addInfoText(listInfo, aRecord, dataStoreMeta);
-					if (infoText != null) {
-						logger.debug("infoText is [" + infoText + "]");
-						datamartProvider.setSelectedMemberInfo(infoText);
-					} else {
-						logger.debug("Not Info text found");
-						datamartProvider.setSelectedMemberInfo(null);
+					// 7. add INFO content only one time (if it's configurated)
+					String infoText = null;
+					if (infoText == null) {
+						infoText = addInfoText(listInfo, aRecord, dataStoreMeta);
+						if (infoText != null) {
+							logger.debug("infoText is [" + infoText + "]");
+							datamartProvider.setSelectedMemberInfo(infoText);
+						} else {
+							logger.debug("Not Info text found");
+							datamartProvider.setSelectedMemberInfo(null);
+						}
 					}
 				}
 			}
@@ -780,7 +785,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		}
 		logger.debug(Arrays.toString(col_kpi_array));
 
-		Element targetLayer = targetMap.getElementById(datamart.getTargetFeatureName());
+		// Element targetLayer = targetMap.getElementById(datamart.getTargetFeatureName());
+		Element targetLayer = targetMap.getElementById(datamart.getTargetFeatureName().get(0)); // for default uses the fist element (old version)
 
 		NodeList nodeList = targetLayer.getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
@@ -1107,7 +1113,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 *            the label field
 	 */
 	private void addLabels(SVGDocument masterMap, Element centroide, Element labelGroup, IRecord aRecord, IField labelField) {
-
+		logger.debug("IN");
 		labelGroup.setAttribute("transform", "translate(" + centroide.getAttribute("cx") + "," + centroide.getAttribute("cy") + ") scale(1)");
 		labelGroup.setAttribute("display", "inherit");
 
@@ -1164,29 +1170,44 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 *            the visibility field
 	 */
 	private void showElements(SVGDocument masterMap, IField geoIdField, IField visibilityIdField) {
+		logger.debug("IN");
+
 		String id_element = (String) geoIdField.getValue();
 		String elementVisibility = (String) visibilityIdField.getValue();
-		Element element = masterMap.getElementById(id_element);
-		if (element != null) {
-			String displayStyle = "";
-			String elementStyle = element.getAttribute("style");
-			// get original display option if present
-			int displayStyleStart = elementStyle.indexOf("display:");
-			String displayStyleValue = "";
-			if (displayStyleStart >= 0) {
-				int displayStyleEnd = elementStyle.indexOf(";", displayStyleStart);
-				displayStyleValue = elementStyle.substring(displayStyleStart, displayStyleEnd + 1);
-				elementStyle = elementStyle.replace(displayStyleValue, ""); // clean old style
-			}
+		try {
+			Element element = masterMap.getElementById(id_element);
+			if (element != null) {
+				String displayStyle = "";
+				String elementStyle = element.getAttribute("style");
+				// get original display option if present
+				int displayStyleStart = elementStyle.indexOf("display:");
+				String displayStyleValue = "";
+				if (displayStyleStart >= 0) {
+					int displayStyleEnd = -1;
+					try {
+						displayStyleEnd = elementStyle.indexOf(";", displayStyleStart);
+						displayStyleValue = elementStyle.substring(displayStyleStart, displayStyleEnd + 1);
+					} catch (StringIndexOutOfBoundsException se) {
+						logger.error("An error occured while getting style content of element with id [" + id_element
+								+ "]. Please, check that ALL the style elements into the SVG have the final [;] char. Ex: [display:none;]");
+						throw se;
+					}
+					elementStyle = elementStyle.replace(displayStyleValue, ""); // clean old style
+				}
 
-			if (elementVisibility.equalsIgnoreCase("false")) {
-				displayStyle = elementStyle + ";display:none";
-			} else {
-				displayStyle = elementStyle;
+				if (elementVisibility.equalsIgnoreCase("false")) {
+					displayStyle = elementStyle + ";display:none;";
+				} else {
+					displayStyle = elementStyle;
+				}
+				// sets new visibility style for the element
+				element.setAttribute("style", displayStyle);
 			}
-			// sets new visibility style for the element
-			element.setAttribute("style", displayStyle);
+		} catch (Exception e) {
+			logger.error("An error occured while managing show property for the element [" + id_element + "]");
+			throw e;
 		}
+		logger.debug("OUT");
 	}
 
 	/**
@@ -1201,6 +1222,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 *            the record with data
 	 */
 	private void addData(IDataStore dataStore, Element child, IRecord record) {
+		logger.debug("IN");
 		List fields = record.getFields();
 		for (int j = 0; j < fields.size(); j++) {
 			if (j == dataStore.getMetaData().getIdFieldIndex()) {
@@ -1210,7 +1232,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			child.setAttribute("attrib:" + dataStore.getMetaData().getFieldAlias(j), "" + field.getValue());
 		}
 		child.setAttribute("attrib:nome", child.getAttribute("id"));
-
+		logger.debug("OUT");
 	}
 
 	/**
@@ -1224,21 +1246,31 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @param record
 	 *            the record with data
 	 */
-	private String addLink(List listCrossNav, IRecord record, IMetaData dataStoreMeta) {
+	private String addLink(List listCrossNav, List listCrossable, IRecord record, IMetaData dataStoreMeta) {
+		logger.debug("IN");
 		String toReturn = "";
 		logger.debug("Number of links per feature is equals to [" + listCrossNav.size() + "]");
 		if (listCrossNav.size() == 0) {
 			return null;
 		}
+		boolean isCrossable = true;
+		if (listCrossable.size() > 0) {
+			IFieldMetaData fieldMetaCrossable = (IFieldMetaData) listCrossable.get(0);
+			IField fieldCrosstable = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMetaCrossable.getName()));
+			isCrossable = (((String) fieldCrosstable.getValue()).equalsIgnoreCase("false")) ? false : true;
+		}
+		if (!isCrossable)
+			return null;
 		IFieldMetaData fieldMeta = (IFieldMetaData) listCrossNav.get(0);
 		IField filed = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMeta.getName()));
 		String link = "" + filed.getValue();
 		toReturn = link;
-
+		logger.debug("OUT");
 		return toReturn;
 	}
 
 	private String addLinkDrillId(List listDrillNav, IRecord record, IMetaData dataStoreMeta) {
+		logger.debug("IN");
 		String toReturn = null;
 		// search if there is a drill id specified in the dataset
 		IFieldMetaData fieldDrillIdMeta = null;
@@ -1250,6 +1282,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			String drillIdValue = "" + drillField.getValue();
 			toReturn = drillIdValue;
 		}
+		logger.debug("OUT");
 		return toReturn;
 	}
 
@@ -1264,7 +1297,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @param record
 	 *            the record with data
 	 */
-	private String addCrossLink(List listCrossNav, IRecord record, IMetaData dataStoreMeta) {
+	private String addCrossLink(List listCrossNav, List listCrossable, IRecord record, IMetaData dataStoreMeta) {
+		logger.debug("IN");
 		String toReturn = null;
 		logger.debug("... The cross navigation is founded. Define the link url...");
 		// List list = dataStoreMeta.findFieldMeta("ROLE", "CROSSNAVLINK");
@@ -1272,10 +1306,19 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		if (listCrossNav.size() == 0) {
 			return null;
 		}
+		boolean isCrossable = true;
+		if (listCrossable.size() > 0) {
+			IFieldMetaData fieldMetaCrossable = (IFieldMetaData) listCrossable.get(0);
+			IField fieldCrosstable = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMetaCrossable.getName()));
+			isCrossable = (((String) fieldCrosstable.getValue()).equalsIgnoreCase("false")) ? false : true;
+		}
+		if (!isCrossable)
+			return null;
+
 		IFieldMetaData fieldMeta = (IFieldMetaData) listCrossNav.get(0);
 		IField field = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMeta.getName()));
 		toReturn = "" + field.getValue();
-
+		logger.debug("OUT");
 		return toReturn;
 	}
 
@@ -1290,6 +1333,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 *            the data store
 	 */
 	private String addTooltip(List listTooltip, IRecord record, IMetaData dataStoreMeta) {
+		logger.debug("IN");
 		String toReturn = null;
 		IFieldMetaData fieldTooltipIdMeta = null;
 		// List listTooltip = dataStoreMeta.findFieldMeta("ROLE", "TOOLTIP");
@@ -1300,6 +1344,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			IField field = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldTooltipIdMeta.getName()));
 			toReturn = "" + field.getValue();
 		}
+		logger.debug("OUT");
 		return toReturn;
 	}
 
@@ -1314,6 +1359,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 *            the data store
 	 */
 	private String addInfoText(List listInfo, IRecord record, IMetaData dataStoreMeta) {
+		logger.debug("IN");
 		String toReturn = null;
 		IFieldMetaData fieldInfoIdMeta = null;
 		if (listInfo.size() > 0) {
@@ -1323,6 +1369,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			IField field = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldInfoIdMeta.getName()));
 			toReturn = "" + field.getValue();
 		}
+		logger.debug("OUT");
 		return toReturn;
 
 	}
@@ -1345,6 +1392,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 *
 	 */
 	private void addHRefLinks(SVGDocument targetMap, Element featureElement, String elementId, String drillId, String linkUrl, String linkType) {
+		logger.debug("IN");
 		Element linkCrossElement = targetMap.createElement("a");
 		linkCrossElement.setAttribute("xlink:href", linkUrl);
 
@@ -1365,6 +1413,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				featureElement.setAttribute("onclick", "javascript:clickedElement('" + elementId + "','" + drillId + "')");
 			}
 		}
+		logger.debug("OUT");
 	}
 
 	/**
@@ -1379,6 +1428,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 *
 	 */
 	private void addTooltipEvents(Element featureElement, String tooltip, String elementId) {
+		logger.debug("IN");
 
 		if (tooltip == null) {
 			featureElement.setAttribute("onmouseover", "javascript:showTooltipElement('" + elementId + "')");
@@ -1387,7 +1437,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		}
 		featureElement.setAttribute("onmousemove", "javascript:getMousePosition()");
 		featureElement.setAttribute("onmouseout", "javascript:hideTooltipElement()");
-
+		logger.debug("OUT");
 	}
 
 	/**

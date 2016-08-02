@@ -197,6 +197,25 @@ public class DataSetMetaData {
 	}
 
 	/**
+	 * Gets the crossable id column name.
+	 *
+	 * @return the crossable id column name
+	 */
+	public String getCrossableColumnName() {
+		Set names = getColumnNames();
+		if (names != null) {
+			Iterator it = names.iterator();
+			while (it.hasNext()) {
+				String columnName = (String) it.next();
+				if (isCrossableColumn(columnName)) {
+					return getColumnProperty(columnName, "column_id");
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Gets the parent id column name.
 	 *
 	 * @return the parent id column name
@@ -354,6 +373,18 @@ public class DataSetMetaData {
 	 */
 	public boolean isVisibilityColumn(String columnName) {
 		return "visibility".equalsIgnoreCase(getColumnType(columnName));
+	}
+
+	/**
+	 * Checks if is crossable column.
+	 *
+	 * @param columnName
+	 *            the column name
+	 *
+	 * @return true, if is crossable column
+	 */
+	public boolean isCrossableColumn(String columnName) {
+		return "crossable".equalsIgnoreCase(getColumnType(columnName));
 	}
 
 	/**

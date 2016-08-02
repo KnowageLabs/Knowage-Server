@@ -36,7 +36,9 @@ import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -110,24 +112,29 @@ public class DataMartProvider extends AbstractDataMartProvider {
 			try {
 				HierarchyMember activeMember = getHierarchyMember(getSelectedMemberName());
 				DataSetMetaData metaData = activeMember.getDsMetaData();
-				String firstLayerName = "";
+				String firstLayerName = null;
+				List<String> lstLayers = new ArrayList();
 				for (String key : activeMember.getLayers().keySet()) {
 					Layer layer = activeMember.getLayers().get(key);
 					if (layer.isSelected()) {
-						firstLayerName = layer.getName();
-						dataMart.setTargetFeatureName(layer.getName());
+						lstLayers.add(layer.getName());
 						logger.debug("Set active layer [" + layer.getName() + "]");
-						break;
+						if (firstLayerName == null) {
+							firstLayerName = layer.getName();
+						}
 					}
 				}
+				dataMart.setTargetFeatureName(lstLayers);
 				// if no layer setted through the template property, sets the first one
 				if (dataMart.getTargetFeatureName() == null) {
-					dataMart.setTargetFeatureName(firstLayerName);
+
+					dataMart.setTargetFeatureName(lstLayers);
 					logger.debug("No layer has property selected to true. So, set as active layer the first one: [" + firstLayerName + "]");
 				}
 
 				String columnId = metaData.getGeoIdColumnName();
 				String visibilityColumnId = metaData.getVisibilityColumnName();
+				String crossableColumnId = metaData.getCrossableColumnName();
 				String labelsColumnId = metaData.getLabelsColumnName();
 				String drillColumnId = metaData.getDrillColumnName();
 				String parentColumnId = metaData.getParentColumnName();
@@ -202,7 +209,22 @@ public class DataMartProvider extends AbstractDataMartProvider {
 						if (value != null && !value.trim().equals("")) {
 							dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(visibilityColumnId)).setProperty("ROLE", "VISIBILITY");
 						}
+					}
 
+					IField crossableField;
+					if (crossableColumnId != null) {
+						try {
+							crossableField = record.getFieldAt(dataStoreMeta.getFieldIndex(crossableColumnId));
+						} catch (Exception ex) {
+							logger.error("An error occured while getting the columnId [" + crossableColumnId
+									+ "] from the dataset. Check the query  and the template.");
+							throw new SvgViewerEngineRuntimeException("An error occured while getting the VISIBILITY columnId [" + crossableColumnId
+									+ "] from the dataset. Check the query and the template. ", ex);
+						}
+						String value = "" + crossableField.getValue();
+						if (value != null && !value.trim().equals("")) {
+							dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(crossableColumnId)).setProperty("ROLE", "CROSSABLE");
+						}
 					}
 
 					IField tooltipField;

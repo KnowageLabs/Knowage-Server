@@ -152,7 +152,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 		  	var tooltipText = "";
 		  	
 		  	//get element content (as default shows the active measure)
-		  	if (!mouseOverElement.tooltipText){
+		  	if (!mouseOverElement.tooltipText || mouseOverElement.tooltipText == "null"){
 			  	var svgwin = $scope.getSVG('svgContainer');
 			  	var svgInfos = svgwin.myMapApp;
 			  	tooltipText = "<b>"+ svgInfos.curDescription +": </b>" +  domEl.getAttribute("attrib:"+svgInfos.curKpi);

@@ -19,6 +19,8 @@ package it.eng.knowage.engines.svgviewer.dataset;
 
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
+import java.util.List;
+
 /**
  * The Class DataSet.
  *
@@ -40,7 +42,7 @@ public class DataMart {
 	}
 
 	/** The target feature name. */
-	private String targetFeatureName;
+	private List<String> targetFeatureName;
 
 	/**
 	 * Constructor.
@@ -50,21 +52,21 @@ public class DataMart {
 	}
 
 	/**
-	 * Gets the target feature name.
+	 * Gets the target feature names.
 	 *
-	 * @return the target feature name
+	 * @return the target feature names
 	 */
-	public String getTargetFeatureName() {
+	public List<String> getTargetFeatureName() {
 		return targetFeatureName;
 	}
 
 	/**
-	 * Sets the target feature name.
+	 * Sets the target feature names.
 	 *
 	 * @param targetFeatureName
-	 *            the new target feature name
+	 *            the new target feature names
 	 */
-	public void setTargetFeatureName(String targetFeatureName) {
+	public void setTargetFeatureName(List<String> targetFeatureName) {
 		this.targetFeatureName = targetFeatureName;
 	}
 
