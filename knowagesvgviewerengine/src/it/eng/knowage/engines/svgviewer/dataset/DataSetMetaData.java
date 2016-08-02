@@ -201,13 +201,13 @@ public class DataSetMetaData {
 	 *
 	 * @return the crossable id column name
 	 */
-	public String getCrossableColumnName() {
+	public String getCrossTypeColumnName() {
 		Set names = getColumnNames();
 		if (names != null) {
 			Iterator it = names.iterator();
 			while (it.hasNext()) {
 				String columnName = (String) it.next();
-				if (isCrossableColumn(columnName)) {
+				if (isCrossTypeColumn(columnName)) {
 					return getColumnProperty(columnName, "column_id");
 				}
 			}
@@ -383,8 +383,8 @@ public class DataSetMetaData {
 	 *
 	 * @return true, if is crossable column
 	 */
-	public boolean isCrossableColumn(String columnName) {
-		return "crossable".equalsIgnoreCase(getColumnType(columnName));
+	public boolean isCrossTypeColumn(String columnName) {
+		return "crosstype".equalsIgnoreCase(getColumnType(columnName));
 	}
 
 	/**

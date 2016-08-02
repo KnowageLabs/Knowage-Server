@@ -436,7 +436,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			List listCrossNav = dataStoreMeta.findFieldMeta("ROLE", "CROSSNAVLINK");
 			List listDrillNav = dataStoreMeta.findFieldMeta("ROLE", "DRILLID");
 			List listTooltip = dataStoreMeta.findFieldMeta("ROLE", "TOOLTIP");
-			List listCrossable = dataStoreMeta.findFieldMeta("ROLE", "CROSSABLE");
+			List listCrossType = dataStoreMeta.findFieldMeta("ROLE", "CROSSTYPE");
 			List listInfo = dataStoreMeta.findFieldMeta("ROLE", "INFO");
 
 			for (int l = 0; l < dataMart.getTargetFeatureName().size(); l++) {
@@ -482,14 +482,22 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 						mapElements.put("path", child);
 
 						// 2. add CROSS link ONLY if it's required by the template (at the moment is mutual exclusive with the drill link)
-						boolean useCrossNav = false;
-						if (datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName()).getEnableCross()) {
+						boolean useCrossNav = false; // default
+						// check the dynamic cross type definition (throught the dataset)
+						if (listCrossType.size() > 0) {
+							IFieldMetaData fieldMetaCrossable = (IFieldMetaData) listCrossType.get(0);
+							IField fieldCrosstable = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMetaCrossable.getName()));
+							useCrossNav = (((String) fieldCrosstable.getValue()).equalsIgnoreCase("cross")) ? true : false;
+						}
+						if (listCrossType.size() == 0 && datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName()).getEnableCross()) {
 							useCrossNav = true;
+						}
+						if (useCrossNav) {
 							logger.debug("Required cross navigation for member [" + datamartProvider.getSelectedHierarchyName() + "]. "
 									+ " Checking presence of cross navigation definition...");
 							boolean isCrossable = DAOFactory.getCrossNavigationDAO().documentIsCrossable((String) this.getEnv().get("DOCUMENT_LABEL"));
 							if (isCrossable) {
-								String crossLink = addCrossLink(listCrossNav, listCrossable, record, dataStoreMeta);
+								String crossLink = addCrossLink(listCrossNav, record, dataStoreMeta);
 								mapElements.put("link_cross", crossLink);
 							} else {
 								logger.debug("... The cross navigation for the document isn't present." + " Please, check its definition through the GUI.");
@@ -500,7 +508,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 						int intSelectedLevel = (datamartProvider.getSelectedLevel() == null) ? 1 : Integer.parseInt(datamartProvider.getSelectedLevel());
 						int totalLevels = datamartProvider.getHierarchyMembersNames().size();
 						if (!useCrossNav && (intSelectedLevel < totalLevels)) {
-							String drillLink = addLink(listCrossNav, listCrossable, record, dataStoreMeta);
+							String drillLink = addLink(listCrossNav, record, dataStoreMeta);
 							String drillIdValue = addLinkDrillId(listDrillNav, record, dataStoreMeta);
 							mapElements.put("drill_id", drillIdValue);
 							mapElements.put("link_drill", drillLink);
@@ -1246,21 +1254,14 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @param record
 	 *            the record with data
 	 */
-	private String addLink(List listCrossNav, List listCrossable, IRecord record, IMetaData dataStoreMeta) {
+	private String addLink(List listCrossNav, IRecord record, IMetaData dataStoreMeta) {
 		logger.debug("IN");
 		String toReturn = "";
 		logger.debug("Number of links per feature is equals to [" + listCrossNav.size() + "]");
 		if (listCrossNav.size() == 0) {
 			return null;
 		}
-		boolean isCrossable = true;
-		if (listCrossable.size() > 0) {
-			IFieldMetaData fieldMetaCrossable = (IFieldMetaData) listCrossable.get(0);
-			IField fieldCrosstable = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMetaCrossable.getName()));
-			isCrossable = (((String) fieldCrosstable.getValue()).equalsIgnoreCase("false")) ? false : true;
-		}
-		if (!isCrossable)
-			return null;
+
 		IFieldMetaData fieldMeta = (IFieldMetaData) listCrossNav.get(0);
 		IField filed = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMeta.getName()));
 		String link = "" + filed.getValue();
@@ -1297,7 +1298,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @param record
 	 *            the record with data
 	 */
-	private String addCrossLink(List listCrossNav, List listCrossable, IRecord record, IMetaData dataStoreMeta) {
+	private String addCrossLink(List listCrossNav, IRecord record, IMetaData dataStoreMeta) {
 		logger.debug("IN");
 		String toReturn = null;
 		logger.debug("... The cross navigation is founded. Define the link url...");
@@ -1306,14 +1307,6 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		if (listCrossNav.size() == 0) {
 			return null;
 		}
-		boolean isCrossable = true;
-		if (listCrossable.size() > 0) {
-			IFieldMetaData fieldMetaCrossable = (IFieldMetaData) listCrossable.get(0);
-			IField fieldCrosstable = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMetaCrossable.getName()));
-			isCrossable = (((String) fieldCrosstable.getValue()).equalsIgnoreCase("false")) ? false : true;
-		}
-		if (!isCrossable)
-			return null;
 
 		IFieldMetaData fieldMeta = (IFieldMetaData) listCrossNav.get(0);
 		IField field = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMeta.getName()));

@@ -134,7 +134,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 
 				String columnId = metaData.getGeoIdColumnName();
 				String visibilityColumnId = metaData.getVisibilityColumnName();
-				String crossableColumnId = metaData.getCrossableColumnName();
+				String crossTypeColumnId = metaData.getCrossTypeColumnName();
 				String labelsColumnId = metaData.getLabelsColumnName();
 				String drillColumnId = metaData.getDrillColumnName();
 				String parentColumnId = metaData.getParentColumnName();
@@ -212,18 +212,18 @@ public class DataMartProvider extends AbstractDataMartProvider {
 					}
 
 					IField crossableField;
-					if (crossableColumnId != null) {
+					if (crossTypeColumnId != null) {
 						try {
-							crossableField = record.getFieldAt(dataStoreMeta.getFieldIndex(crossableColumnId));
+							crossableField = record.getFieldAt(dataStoreMeta.getFieldIndex(crossTypeColumnId));
 						} catch (Exception ex) {
-							logger.error("An error occured while getting the columnId [" + crossableColumnId
+							logger.error("An error occured while getting the columnId [" + crossTypeColumnId
 									+ "] from the dataset. Check the query  and the template.");
-							throw new SvgViewerEngineRuntimeException("An error occured while getting the VISIBILITY columnId [" + crossableColumnId
+							throw new SvgViewerEngineRuntimeException("An error occured while getting the VISIBILITY columnId [" + crossTypeColumnId
 									+ "] from the dataset. Check the query and the template. ", ex);
 						}
 						String value = "" + crossableField.getValue();
 						if (value != null && !value.trim().equals("")) {
-							dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(crossableColumnId)).setProperty("ROLE", "CROSSABLE");
+							dataStoreMeta.getFieldMeta(dataStoreMeta.getFieldIndex(crossTypeColumnId)).setProperty("ROLE", "CROSSTYPE");
 						}
 					}
 
