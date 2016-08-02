@@ -32,6 +32,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.EngineUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
@@ -55,7 +56,8 @@ public class WhatIfDriver extends GenericDriver {
 		byte[] template = this.getTemplateAsByteArray(biobject);
 		BIObject b = (BIObject) biobject;
 		int documentId = b.getId();
-		pars = addArtifactVersionId(template, pars, profile, documentId);
+		Engine engine = b.getEngine();
+		pars = addArtifactVersionId(template, pars, profile, documentId, engine);
 		pars = addArtifactId(template, pars, profile);
 		pars = applyDatasourceForWriting(pars, (BIObject) biobject);
 		return pars;
@@ -67,7 +69,8 @@ public class WhatIfDriver extends GenericDriver {
 		byte[] template = this.getTemplateAsByteArray(biobject);
 		BIObject b = (BIObject) biobject;
 		int documentId = b.getId();
-		pars = addArtifactVersionId(template, pars, profile, documentId);
+		Engine engine = b.getEngine();
+		pars = addArtifactVersionId(template, pars, profile, documentId, engine);
 		pars = addArtifactId(template, pars, profile);
 		pars = applyDatasourceForWriting(pars, (BIObject) biobject);
 		return pars;
@@ -127,7 +130,7 @@ public class WhatIfDriver extends GenericDriver {
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while loading document's template", e);
 		}
-		addArtifactVersionId(template, parameters, profile, obj.getId());
+		addArtifactVersionId(template, parameters, profile, obj.getId(),engine);
 		EngineURL engineURL = new EngineURL(url, parameters);
 		logger.debug("OUT");
 		return engineURL;
@@ -163,7 +166,7 @@ public class WhatIfDriver extends GenericDriver {
 		return engineURL;
 	}
 
-	protected Map addArtifactVersionId(byte[] template, Map pars, IEngUserProfile profile, int documentId) {
+	protected Map addArtifactVersionId(byte[] template, Map pars, IEngUserProfile profile, int documentId, Engine engine) {
 		SourceBean sb = null;
 		try {
 			sb = SourceBean.fromXMLString(new String(template));
@@ -184,8 +187,11 @@ public class WhatIfDriver extends GenericDriver {
 
 		pars.put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, content.getId());
 
-		// add info if artifact is locked
-		addArtifactStausInfo(pars, artifact.getId(), profile, documentId);
+		if(EngineUtilities.isWhatIf(engine)){
+			// add info if artifact is locked
+			addArtifactStausInfo(pars, artifact.getId(), profile, documentId);
+		}
+
 
 		return pars;
 
