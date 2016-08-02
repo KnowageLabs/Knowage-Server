@@ -123,9 +123,13 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 	public List<String> getAllCubes() {
 		List<String> cubesList = new ArrayList<String>();
 		MondrianDef.Cube[] cubes = schema.cubes;
+		MondrianDef.VirtualCube[] virtualCubes = schema.virtualCubes;
 		for (int i = 0; i < cubes.length; i++) {
 			cubesList.add(cubes[i].name);
 
+		}
+		for (int i = 0; i < virtualCubes.length; i++) {
+			cubesList.add(virtualCubes[i].name);
 		}
 		return cubesList;
 	}
