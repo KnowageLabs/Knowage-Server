@@ -647,6 +647,39 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
+	
+	@GET
+	@Path("/mydatanoparams")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getMyDataDataSetWithoutParameters(@QueryParam("typeDoc") String typeDoc) {
+		logger.debug("IN");
+		try {
+			List<IDataSet> dataSets;
+			List<IDataSet> dataSetsNoParams = new ArrayList<IDataSet>();
+			if (UserUtilities.isAdministrator(getUserProfile())) {
+				dataSets = getDatasetManagementAPI().getAllDataSet();
+			} else {
+				dataSets = getDatasetManagementAPI().getMyDataDataSet();
+			}
+			
+			if(dataSets!=null){
+				for (Iterator iterator = dataSets.iterator(); iterator.hasNext();) {
+					IDataSet iDataSet = (IDataSet) iterator.next();
+					Map params = iDataSet.getParamsMap();
+					if(params ==null || params.isEmpty()){
+						dataSetsNoParams.add(iDataSet);
+					}
+				}
+			}
+
+			return serializeDataSets(dataSetsNoParams, typeDoc);
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
 
 	// ===================================================================
 	// UTILITY METHODS
