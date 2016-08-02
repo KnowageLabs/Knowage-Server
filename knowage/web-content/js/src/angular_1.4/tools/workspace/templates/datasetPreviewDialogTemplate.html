@@ -1,9 +1,18 @@
 <md-dialog  flex style="height:100%; width:100%; max-height:100%; max-width:100%" ng-cloak>
   	<md-content flex>
    	<md-toolbar>
-   	
-     <div class="md-toolbar-tools">
-       <h2>{{translate.load('sbi.workspace.dataset.datasetpreview.title')}}</h2>
+ 
+     <div class="md-toolbar-tools layout-align-center-center layout-row">
+      	
+      	<!-- 
+      		Provide an information about the name of the dataset that is previewed, as well as the icon that represents the
+      		Datasets option in the Workspace.
+      		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+      	 -->
+      	<i class="fa fa-database"></i>
+    	&nbsp;&nbsp;
+       	<h2>{{translate.load('sbi.workspace.dataset.datasetpreview.title')}}: {{datasetInPreview.label}} - {{datasetInPreview.name}}</h2> 
+       	
        <span flex></span>
        <md-button id="close-preview" class="md-icon-button" ng-click="closeDatasetPreviewDialog()">
          <md-icon class="fa fa-times-circle-o fa-2x"></md-icon>

@@ -198,6 +198,15 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		//console.log(folder);
 		$scope.selectOrganizerDocument(undefined);
 	
+		/**
+		 * Only for the need of the breadcrumb in the Organizer, rename the root folder that is originally name "root"
+		 * with the value of "HOME". This will not change the DB value (the persisted value) of the root folder name.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		if (folder.name=="root") {
+			folder.name = "HOME";
+		}
+	
 		//$scope.breadModel.push(folder);
 		$scope.breadCrumbControl.insertBread(folder);	
 		$scope.selectedFolder=folder;
@@ -447,6 +456,21 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	}
 	
 	$scope.moveDocumentToFolder=function(document){
+		
+		/**
+		 * Only for the need of the tree structure of folders in the Organizer (when moving a document into some folder), 
+		 * rename the root folder that is originally name "root" with the value of "HOME". This will not change the DB value 
+		 * (the persisted value) of the root folder name.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		var folders = $scope.folders;
+		
+		for (i=0; i<$scope.folders.length; i++) {
+			if ($scope.folders[i].name=="root") {
+				$scope.folders[i].name = "HOME";
+				break;
+			}
+		}
 		
 		angular.copy($scope.folders,$scope.foldersForTree);
 		$mdDialog.show({
