@@ -148,6 +148,7 @@ public class CrossNavigationManager {
 			Dimension dimension = iterator.next();
 			if (dimension.getUniqueName().equals("[" + dimensionName + "]")) {
 				result = dimension;
+				break;
 			}
 		}
 		if (result == null) {
