@@ -40,6 +40,16 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
 		toastr, $cookies, sbiModule_docInfo, sbiModule_config) {
 	
+	
+	var crossNavType = null;
+	$scope.crossNavTypeList = [{
+	   	 "value": "cell",
+		  "name": "From Cell"	 
+	}, 
+	{
+		 "value": "member",
+		  "name": "From Member"	 
+	}];
 	/**
 	 * Opens a new dialog for what-if scenario.
 	 */
@@ -55,6 +65,41 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 			hasBackdrop : false
 		});
 	}
+	
+	/**
+	 * Opens a new dialog for crossnav definition.
+	 */
+	$scope.openCrossNavWizard = function() {
+		
+		 $mdDialog
+		  .show({
+		   scope : $scope,
+		   preserveScope : true,
+		   parent : angular.element(document.body),
+		   controllerAs : 'olapDesignerCtrl',
+		   templateUrl : sbiModule_config.contextName + '/html/template/right/edit/crossNavWizardS1.html',
+		   clickOutsideToClose : false,
+		   hasBackdrop : false
+		  });
+		
+	};
+	/**
+	 * Opens a new dialog for crossnav definition.
+	 */
+	$scope.nextCNStep = function() {
+		
+		 $mdDialog
+		  .show({
+		   scope : $scope,
+		   preserveScope : true,
+		   parent : angular.element(document.body),
+		   controllerAs : 'olapDesignerCtrl',
+		   templateUrl : sbiModule_config.contextName + '/html/template/right/edit/crossNavWizardS2.html',
+		   clickOutsideToClose : false,
+		   hasBackdrop : false
+		  });
+		
+	};
 
 };
 

@@ -59,7 +59,6 @@ function olapDesignerController($scope, $timeout, $window, $mdDialog, $http, $sc
 	
 	angular.element(document).ready(function () { // on page load function
 		$scope.getMondrianSchemas();
-		console.info(mode);
     });
 	
 	$scope.addXmlaParameter=function(){ 
@@ -136,7 +135,7 @@ $scope.saveMDX = function(){
       	sbiModule_restServices.promisePost("1.0/designer/cubes?SBI_EXECUTION_ID=" + JSsbiExecutionID,"",angular.toJson($scope.template))
     	.then(function(response) {
     		
-    		var url = sbiModule_config.contextName + "/restful-services/1.0/designer/cubes/start?SBI_EXECUTION_ID=" + JSsbiExecutionID+"&mode="+mode;
+    		var url = sbiModule_config.contextName + "/restful-services/1.0/designer/cubes/start?SBI_EXECUTION_ID=" + JSsbiExecutionID+"&mode="+mode+"&schemaID="+$scope.selectedSchema.id;
    
     		$window.location = url;
 		

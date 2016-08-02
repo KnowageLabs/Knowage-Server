@@ -56,6 +56,7 @@ author:...
        String documentId = null;
        String sbiExecutionID = null;   
        String mode = null;
+       String schemaID = null;
        ExecutionSession es = new ExecutionSession(request, request.getSession());
        
        
@@ -98,6 +99,9 @@ author:...
 		 mode = "full" ;
 	}
 	  
+	   if(request.getParameter("schemaID") != null){
+		   schemaID = request.getParameter("schemaID");
+		}
 		
 	   
 %>

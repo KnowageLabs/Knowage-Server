@@ -116,7 +116,6 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.olapDesignerButtonNames = [];
 	
 	enableEditBtns = function(mode) {
-		console.info(mode);
 		if (mode == 'edit') {
 			$scope.mode = true;
 		}else {
@@ -335,12 +334,15 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				break;
 			case "BUTTON_SCENARIO_WIZARD":
 				$scope.openScenarioWizard();
+				sendModelConfig = false;
 				break;	
 			case "BUTTON_CROSSNAV_WIZARD":
-				console.info(name);
+				$scope.openCrossNavWizard();
+				sendModelConfig = false;
 				break;
 			case "BUTTON_WIZARD":
-				console.info(name);
+				$scope.openButtonWizard();
+				sendModelConfig = false;
 				break;	
 			default:
 				console.log("something else clicked");
