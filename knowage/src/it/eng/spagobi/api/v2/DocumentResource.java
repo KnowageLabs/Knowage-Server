@@ -24,6 +24,7 @@ import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
@@ -111,6 +112,8 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 
 	@Override
 	public String getDocumentParameters(String label) {
+		
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
@@ -210,7 +213,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			logger.error("Error while try to retrieve the specified parameter", e);
 			throw new SpagoBIRuntimeException("Error while try to retrieve the specified parameter", e);
 		}
-
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null) {
 			logger.error("Document with label [" + label + "] doesn't exist");
@@ -249,7 +252,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			logger.error("Error while retrieving parameters", e);
 			throw new SpagoBIRuntimeException("Error while retrieving parameters", e);
 		}
-
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
@@ -284,7 +287,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			logger.error("Error while retrieving parameters", e);
 			throw new SpagoBIRuntimeException("Error while retrieving parameters", e);
 		}
-
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
@@ -322,7 +325,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			logger.error("Error while try to retrieve the specified parameter", e);
 			throw new SpagoBIRuntimeException("Error while try to retrieve the specified parameter", e);
 		}
-
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null) {
 			logger.error("Document with label [" + label + "] doesn't exist");
@@ -352,7 +355,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		SDKDocumentParameter[] parameters = null;
 		if (!body.isEmpty())
 			parameters = (SDKDocumentParameter[]) JsonConverter.jsonToValidObject(body, SDKDocumentParameter[].class);
-
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
@@ -707,7 +710,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			logger.error("Error while retrieving parameters", e);
 			throw new SpagoBIRuntimeException("Error while retrieving parameters", e);
 		}
-
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(op.getBiObjectId());
 		if (document == null) {
 			throw new SpagoBIRuntimeException("Document with id [" + op.getBiObjectId() + "] doesn't exist");

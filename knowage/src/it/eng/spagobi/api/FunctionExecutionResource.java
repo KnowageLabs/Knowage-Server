@@ -108,7 +108,6 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 	}
 
 	static protected Logger logger = Logger.getLogger(FunctionExecutionResource.class);
-	protected AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 
 	/**
 	 * @return { executionURL: 'http:...', errors: 1 - 'role missing' 2 -'Missing paramters' [list of missing mandatory filters ] 3 -'operation not allowed' [if

@@ -78,7 +78,6 @@ import org.json.JSONObject;
 public class DocumentResource extends AbstractSpagoBIResource {
 	static protected Logger logger = Logger.getLogger(DocumentResource.class);
 
-	protected AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 
 	@GET
 	@Path("/")
@@ -124,6 +123,8 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	public Response insertDocument(String body) {
 		BIObject document = (BIObject) JsonConverter.jsonToValidObject(body, BIObject.class);
 
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		
 		document.setTenant(getUserProfile().getOrganization());
 		document.setCreationUser((String) getUserProfile().getUserId());
 
@@ -160,6 +161,8 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentDetails(@PathParam("label") String label) {
+		
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
@@ -187,6 +190,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response updateDocument(@PathParam("label") String label, String body) {
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject oldDocument = documentManager.getDocument(label);
 		if (oldDocument == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
@@ -206,6 +210,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/{label}")
 	public Response deleteDocument(@PathParam("label") String label) {
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
@@ -225,6 +230,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{label}/template")
 	public Response getDocumentTemplate(@PathParam("label") String label) {
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
@@ -255,6 +261,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{label}/usertemplate")
 	public Response getDocumentTemplateCheckUser(@PathParam("label") String label) {
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
@@ -288,6 +295,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/{label}/template")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response addDocumentTemplate(@PathParam("label") String label, MultipartFormDataInput input) {
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
@@ -342,6 +350,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDocumentParameters(@PathParam("label") String label) {
 		logger.debug("IN");
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		try {
 			List<JSONObject> parameters = documentManager.getDocumentParameters(label);
 			JSONArray paramsJSON = writeParameters(parameters);
@@ -363,6 +372,8 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		JSONObject geoTemplate = jsonData.getJSONObject("TEMPLATE");
 		String layerLabel = jsonData.getString("DOCUMENT_LABEL");
 
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		
 		ObjTemplate template = new ObjTemplate();
 		template.setName(layerLabel + "_Template.json");
 		template.setContent(geoTemplate.toString().getBytes());
@@ -442,6 +453,8 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	// ===================================================================
 
 	private void saveTemplate(String docLabel, String xml) {
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		
 		ObjTemplate template = new ObjTemplate();
 		template.setName("Template.xml");
 		template.setContent(xml.getBytes());
