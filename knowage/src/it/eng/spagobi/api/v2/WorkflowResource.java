@@ -68,11 +68,10 @@ public class WorkflowResource extends AbstractSpagoBIResource {
 			List<SbiWhatifWorkflow> newWorkflow = createWFListFromJson(ja, modelId, false);
 
 			iwfd = DAOFactory.getWhatifWorkflowDAO();
-			iwfd.updateWorkflow(newWorkflow);
+			iwfd.updateWorkflow(newWorkflow, modelId);
 			return Response.status(200).build();
 		} catch (Exception e) {
-			// TODO: handle exception
-			logger.error("An error occured while creating workflow");
+			logger.error("An error occured while creating workflow",e);
 			return Response.status(500).build();
 		}
 	}

@@ -66,4 +66,8 @@ public class EngineUtilities {
 		}
 		return engineType;
 	}
+	
+	public static boolean isWhatIf(Engine engine){
+		return engine.getLabel().contains("whatif");
+	}
 }
