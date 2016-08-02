@@ -22,6 +22,7 @@
 	var status = '<%= whatIfEngineInstance.getModelConfig().getStatus()%>'
 	var mode = '<%= mode %>'
 	var schemaID = '<%= schemaID %>'
+	var cubeName = '<%= cubeName %>'
 	
 </script>
 </head>
