@@ -24,7 +24,7 @@ import it.eng.spagobi.whatif.metadata.SbiWhatifWorkflow;
 
 public interface IWhatifWorkflowDAO extends ISpagoBIDao {
 
-	public void updateWorkflow(List<SbiWhatifWorkflow> workflow);
+	public void updateWorkflow(List<SbiWhatifWorkflow> workflow, int mId);
 
 	public void createNewWorkflow(List<SbiWhatifWorkflow> newWorkflow);
 

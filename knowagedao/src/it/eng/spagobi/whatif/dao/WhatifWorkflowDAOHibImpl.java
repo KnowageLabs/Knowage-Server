@@ -223,11 +223,11 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 	}
 
 	@Override
-	public void updateWorkflow(List<SbiWhatifWorkflow> workflow) {
+	public void updateWorkflow(List<SbiWhatifWorkflow> workflow, int mId) {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		int mId = workflow.get(0).getModelId();
+		
 		List<Integer> existing = getWorkflowUsersOfModel(mId);
 		List<Integer> toRemove = toRemove(workflow, existing);
 		List<Integer> toAdd = toAdd(workflow, existing);
