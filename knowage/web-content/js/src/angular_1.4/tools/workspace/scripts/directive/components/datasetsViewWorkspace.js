@@ -435,6 +435,13 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	$scope.disableBack=true;
     	
     	/**
+    	 * Variable that serves as indicator if the dataset metadata exists and if it contains the 'resultNumber' 
+    	 * property (e.g. Query datasets).
+    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	 */ 
+    	var dsRespHasResultNumb = dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber";
+    	
+    	/**
     	 * The paginated dataset preview should contain the 'resultNumber' inside the 'dataset' property. If not, disable the
     	 * pagination in the toolbar of the preview dataset dialog.
     	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -450,19 +457,22 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	$scope.getPreviewSet($scope.datasetInPreview);
     	
     	/**
-    	 * If the 'totalItemsInPreview' value is -1, that means that this property is not set according to the response (total 
-    	 * number of results - rows). For example, for the File dataset does not have this property set to some non-minus-one
-    	 * value.
+    	 * Execute this if-else block only if there is already an information about the total amount of rows in the dataset metadata.
+    	 * In other words, it should be executed for the e.g. Query dataset, since it has this property in its meta.
     	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	 */
-		if($scope.totalItemsInPreview>-1 && $scope.totalItemsInPreview < $scope.itemsPerPage){
-   		 	$scope.endPreviewIndex= $scope.totalItemsInPreview	
-   		 	$scope.disableNext=true;
-       	}
-		else {
-   		 	$scope.endPreviewIndex = $scope.itemsPerPage;
-   		 	$scope.disableNext=false;
-       	}
+    	if (dsRespHasResultNumb) {
+    		
+    		if($scope.totalItemsInPreview < $scope.itemsPerPage) {
+    			$scope.endPreviewIndex = $scope.totalItemsInPreview;
+    			$scope.disableNext = true;
+    		}
+    		else {
+    		 	$scope.endPreviewIndex = $scope.itemsPerPage;
+    		 	$scope.disableNext = false;
+    		}
+    		
+    	}
     	
      	$mdDialog.show({
 			  scope:$scope,
@@ -516,7 +526,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	
     	sbiModule_restServices.promiseGet("selfservicedataset/values", dataset.label,"",config)
 			.then(function(response) {			
-			
+						
+				var totalItemsInPreviewInit = angular.copy($scope.totalItemsInPreview);
+				
 				/**
 				 * If the responded dataset does not possess a metadata information (total amount of rows in the result)
 				 * take this property if provided.
@@ -524,7 +536,27 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 				 */
 				if (response.data.results) {
 					$scope.totalItemsInPreview = response.data.results;
-				}
+				}	
+				
+		    	/**
+		    	 * If the the initial 'totalItemsInPreview' value is -1, that means that this property is not set yet or there is no this property in the response 
+		    	 * (total number of results - rows). This serves just to initialize the indicators used in the if-else block (such as 'endPreviewIndex'), in order 
+		    	 * to initialize the preview of the dataset types that do not have 'resultNumber' property in their 'meta'. This temporary variable should be -1
+		    	 * only on the first call of this function.
+		    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		    	 */
+				if(totalItemsInPreviewInit==-1) {
+										
+					if ($scope.totalItemsInPreview < $scope.itemsPerPage) {
+		   		 		$scope.endPreviewIndex = $scope.totalItemsInPreview	
+		   		 		$scope.disableNext = true;
+					}
+					else {
+			   		 	$scope.endPreviewIndex = $scope.itemsPerPage;
+			   		 	$scope.disableNext = false;
+			       	}
+					
+		       	}
 				
 			    angular.copy(response.data.rows,$scope.previewDatasetModel);
 			    
@@ -618,12 +650,14 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     }	
     
     $scope.getBackPreviewSet=function(){
+    	
     	 if($scope.startPreviewIndex-$scope.itemsPerPage < 0){
     		 $scope.startPreviewIndex=0; 
     		 $scope.endPreviewIndex=$scope.itemsPerPage;
     		 $scope.disableBack=true;
     		 $scope.disableNext=false;
-    	 }else{
+    	 }
+    	 else{
     		 $scope.endPreviewIndex=$scope.startPreviewIndex;
              $scope.startPreviewIndex= $scope.startPreviewIndex-$scope.itemsPerPage;
              if($scope.startPreviewIndex-$scope.itemsPerPage < 0){
@@ -638,7 +672,6 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	 }
     	
     	 $scope.getPreviewSet($scope.datasetInPreview);
-    	 
     	
     }
     
