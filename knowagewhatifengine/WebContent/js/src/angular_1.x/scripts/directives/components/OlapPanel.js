@@ -562,41 +562,44 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.writeBackCell = function(id, value, startValue, originalValue) {
 		console.log("writeBackCell");
 		var type = "float";
-		if (startValue) {
-			startValue = parseFloat(startValue);// Sbi.whatif.commons.Format.cleanFormattedNumber(startValue,
-												// Sbi.locale.formats[type]);
-		}
-		if (value != startValue) {
-			var position = "";
-			var unformattedValue = value;
-
-			if (id) {
-				var endPositionIndex = id.indexOf("!");
-				position = id.substring(0, endPositionIndex);
+		if(value!==""){
+			if (startValue) {
+				startValue = parseFloat(startValue);// Sbi.whatif.commons.Format.cleanFormattedNumber(startValue,
+													// Sbi.locale.formats[type]);
 			}
+			if (value != startValue) {
+				var position = "";
+				var unformattedValue = value;
 
-			if (!isNaN(value)) {
-				// Value is a number
-				unformattedValue = parseFloat(value);// Sbi.whatif.commons.Format.formatInJavaDouble(value,
-														// Sbi.locale.formats[type]);
+				if (id) {
+					var endPositionIndex = id.indexOf("!");
+					position = id.substring(0, endPositionIndex);
+				}
+
+				if (!isNaN(value)) {
+					// Value is a number
+					unformattedValue = parseFloat(value);// Sbi.whatif.commons.Format.formatInJavaDouble(value,
+															// Sbi.locale.formats[type]);
+				} else {
+					// Value is a string/expression
+					unformattedValue = value;
+				}
+				
+				// update the last edited values
+				this.lastEditedFormula = unformattedValue;
+				var separatorIndex = id.lastIndexOf('!');
+				this.lastEditedCell = id.substring(0, separatorIndex);
+				
+				$scope.sendWriteBackCellService(position, unformattedValue);
 			} else {
-				// Value is a string/expression
-				unformattedValue = value;
+				/*
+				 * Sbi.debug("The new value is the same as the old one"); var cell =
+				 * Ext.get(id); cell.dom.childNodes[0].data = originalValue;
+				 */
+				console.log(originalValue);
 			}
-			
-			// update the last edited values
-			this.lastEditedFormula = unformattedValue;
-			var separatorIndex = id.lastIndexOf('!');
-			this.lastEditedCell = id.substring(0, separatorIndex);
-			
-			$scope.sendWriteBackCellService(position, unformattedValue);
-		} else {
-			/*
-			 * Sbi.debug("The new value is the same as the old one"); var cell =
-			 * Ext.get(id); cell.dom.childNodes[0].data = originalValue;
-			 */
-			console.log(originalValue);
 		}
+		
 	}
 
 	$scope.showEditCell = function(cell, id, originalValue) {
