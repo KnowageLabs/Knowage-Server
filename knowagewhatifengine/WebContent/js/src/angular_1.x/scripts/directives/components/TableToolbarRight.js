@@ -62,7 +62,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.wiGridNeeded=false;
 	$scope.tableGridNeeded = true;
 	$scope.olapGridNeeded = true;
-	$scope.mode = false;
+	$scope.olapMode = false;
 	$scope.subObject ={
 			
 		name:"",
@@ -117,9 +117,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	
 	enableEditBtns = function(mode) {
 		if (mode == 'edit') {
-			$scope.mode = true;
+			$scope.olapMode = true;
 		}else {
-			$scope.mode = false;
+			$scope.olapMode = false;
 		}
 	}
 

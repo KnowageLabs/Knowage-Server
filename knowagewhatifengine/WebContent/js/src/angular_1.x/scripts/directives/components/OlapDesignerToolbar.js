@@ -40,8 +40,10 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
 		toastr, $cookies, sbiModule_docInfo, sbiModule_config) {
 	
-	
-	var crossNavType = null;
+	/**
+	 * Array that hold cross navigation types
+	 */
+	$scope.crossNavType = null;
 	$scope.crossNavTypeList = [{
 	   	 "value": "cell",
 		  "name": "From Cell"	 
