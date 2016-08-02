@@ -103,7 +103,7 @@
 			console.log("IN CHOOSE DATASET")
 			sbiModule_restServices
 			.alterContextPath(sbiModule_config.externalBasePath);
-			sbiModule_restServices.promiseGet("restful-services/1.0/datasets", "mydata")
+			sbiModule_restServices.promiseGet("restful-services/1.0/datasets", "mydatanoparams")
 			.then(
 					function(response) {
 						$scope.allDatasets=[];
