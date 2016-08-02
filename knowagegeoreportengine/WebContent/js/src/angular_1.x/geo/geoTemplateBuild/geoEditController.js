@@ -56,6 +56,8 @@
 		$scope.datasetLabel= $scope.selectedDatasetLabel != ''? $scope.selectedDatasetLabel:$scope.translate.load('gisengine.desiner.datasetNotChosen');
 		$scope.allDatasets=[];
 		
+		$scope.disableChooseDs= false;
+		
 		$scope.datasetFields = [];
 		$scope.datasetJoinColumns = [];
 
@@ -81,7 +83,11 @@
 							console.log(response.data);
 							$scope.template=angular.fromJson(response.data);
 							$scope.editDisabled = $scope.template.targetLayerConf == undefined; 
+							if($scope.template.targetLayerConf != undefined){
+								$scope.disableChooseDs= true;
+							}
 							initializeFromTemplate();
+							
 						},
 						function(response) {
 							sbiModule_restServices.errorHandler(
@@ -121,10 +127,12 @@
 		}
 		
 		$scope.clearDataset= function(){
+			
 			$scope.selectedDatasetLabel = '';
 			$scope.isDatasetChosen = false;
 			$scope.datasetLabel= $scope.translate.load('gisengine.desiner.datasetNotChosen');
 			$scope.resetAllVariables();
+		
 			
 		}
 		
@@ -254,7 +262,7 @@
 					});
 		}
 		
-		if($scope.docLabel != ''){
+		if($scope.tecnicalUser && $scope.docLabel != ''){
 			$scope.loadAnalyticalDrivers();
 		}
 		
@@ -671,7 +679,9 @@
 			//initializeDatasetJoinColumns();
 			initializeIndicators();
 			initilizeDatasetFilters();
-			//initializeLayerFilters();
+			if(!$scope.tecnicalUser){
+			initializeLayerFilters();
+			}
 			}
 
 		function initializeSelectedLayer(){

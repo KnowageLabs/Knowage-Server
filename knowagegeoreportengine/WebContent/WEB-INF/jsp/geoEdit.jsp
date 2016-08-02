@@ -65,10 +65,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- CHOSE DATA SET FOR FINAL USER -->
 <div layout="row" flex ng-if="!tecnicalUser">
 <label flex=20>{{datasetLabel}}</label>
-  <md-button class="md-fab md-mini md-primary" ng-if="!isDatasetChosen" ng-click="choseDataset()" aria-label="Add dataset">
+  <md-button class="md-fab md-mini md-primary" ng-if="!isDatasetChosen && !disableChooseDs" ng-click="choseDataset()" aria-label="Add dataset">
           <md-icon class="fa fa-plus-circle fa-2x"></md-icon>
         </md-button>
-    <md-button class="md-fab md-mini md-primary" ng-if="isDatasetChosen" ng-click="clearDataset()" aria-label="Clear dataset">
+    <md-button class="md-fab md-mini md-primary" ng-if="isDatasetChosen && !disableChooseDs" ng-click="clearDataset()" aria-label="Clear dataset">
           <md-icon class="fa fa-minus-circle fa-2x"></md-icon>
         </md-button>      
 </div>
