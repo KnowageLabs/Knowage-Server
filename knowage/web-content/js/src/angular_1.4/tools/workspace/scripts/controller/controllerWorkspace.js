@@ -515,7 +515,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	var searchedBefore = false;		
 	
 	var searchCleanAndReload = function() {
-		
+				
 		switch($scope.currentOptionMainMenu!=$scope.resetOption ? $scope.currentOptionMainMenu : $scope.resetOption) {
 		
 			/**
@@ -569,7 +569,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 			case "recent":								
 				$scope.organizerSearch = false;
 				$scope.clearSearch = false;
-				$scope.recentDocumentsList = $scope.recentDocumentsInitial;		
+				$scope.recentDocumentsList = $scope.recentDocumentsInitial;	
 				$scope.currentOptionMainMenu==$scope.resetOption ? $scope.resetSearchedData = false : null;
 				break;
 				
@@ -634,65 +634,66 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		
 		var filteredCollection = [];
 		
-		var collectionForFiltering = null;		
+		var collectionForFiltering = null;	
 		
-		if (newSearchInput=="") { 
-
-			/**
-			 * If the search field is cleared (previously it had some content), unselect potentially selected document
-			 * and close the right-side navigation panel. Do this for all documents, datasets and models in the Workspace 
-			 * (for all available options from the left menu). 
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			if ($scope.searchInput!=""){
+		// COMMENTED BY: danristo (DEPRECATED: no need to timout, since the 'debounce' is used over the model in the HTML)	
+//		$timeout
+//		(
+//			function() {
 				
-//				$scope.selectedDocument = null;
-//				$scope.selectDocument(undefined);
-//				
-//				$scope.showOrganizerDocumentInfo = null;
-//				$scope.selectOrganizerDocument(undefined);				
-//
-//				$scope.showDatasetInfo = null;
-//				$scope.selectDataset(undefined);
-//				
-//				$scope.showModelInfo = null;
-//				$scope.selectModel(undefined);
-				
-				$scope.hideRightSidePanel();
-				
-			}
-			
-			if ($scope.resetSearchedData==true) {				
-				$scope.clearSearch = true;
-				searchCleanAndReload();				
-			}			
-			
-		}
-		else {
-			
-			$scope.searching = true;			
-			$scope.clearSearch = false;
-			
-			/**
-			 * If the search is started, unselect potentially selected document and close the right-side navigation panel. Do this for all documents,
-			 * datasets and models in the Workspace (for all available options from the left menu). 
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			$scope.selectedDocument = null;
-			$scope.selectDocument(undefined);
-			
-			$scope.showOrganizerDocumentInfo = null;
-			$scope.selectOrganizerDocument(undefined);
-			
-			$scope.showDatasetInfo = null;
-			$scope.selectDataset(undefined);
-			
-			$scope.showModelInfo = null;
-			$scope.selectModel(undefined);
-			
-			$timeout
-			(
-				function() {
+				if (newSearchInput=="") { 
+		
+					/**
+					 * If the search field is cleared (previously it had some content), unselect potentially selected document
+					 * and close the right-side navigation panel. Do this for all documents, datasets and models in the Workspace 
+					 * (for all available options from the left menu). 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					if ($scope.searchInput!=""){
+						
+		//				$scope.selectedDocument = null;
+		//				$scope.selectDocument(undefined);
+		//				
+		//				$scope.showOrganizerDocumentInfo = null;
+		//				$scope.selectOrganizerDocument(undefined);				
+		//
+		//				$scope.showDatasetInfo = null;
+		//				$scope.selectDataset(undefined);
+		//				
+		//				$scope.showModelInfo = null;
+		//				$scope.selectModel(undefined);
+						
+						$scope.hideRightSidePanel();
+						
+					}
+					
+					if ($scope.resetSearchedData==true) {				
+						$scope.clearSearch = true;
+						searchCleanAndReload();	
+					}			
+					
+				}
+				else {
+					
+					$scope.searching = true;			
+					$scope.clearSearch = false;
+					
+					/**
+					 * If the search is started, unselect potentially selected document and close the right-side navigation panel. Do this for all documents,
+					 * datasets and models in the Workspace (for all available options from the left menu). 
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					$scope.selectedDocument = null;
+					$scope.selectDocument(undefined);
+					
+					$scope.showOrganizerDocumentInfo = null;
+					$scope.selectOrganizerDocument(undefined);
+					
+					$scope.showDatasetInfo = null;
+					$scope.selectDataset(undefined);
+					
+					$scope.showModelInfo = null;
+					$scope.selectModel(undefined);
 					
 					!searchedBefore ? searchedBefore = true : null;
 					
@@ -755,12 +756,13 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 							$scope.smartFiltersList = filterThroughCollection(newSearchInput,$scope.smartFiltersListInitial,"name");
 							$scope.searching = false;
 							break;
-					}	
+					}			
 					
-				}, 1000
-			);
-			
-		}
+				}
+				
+				// COMMENTED BY: danristo (DEPRECATED: no need to timout, since the 'debounce' is used over the model in the HTML)					
+				//				}, 1000
+				//			);
 		
 		/**
 		 * Set the current search content to the new one. We are doing this on the end of the function, in order to have the

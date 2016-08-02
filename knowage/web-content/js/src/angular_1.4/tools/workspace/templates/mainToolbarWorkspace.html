@@ -9,7 +9,7 @@
 			
 			<div flex>
 				<!-- Title -->
-				<h1>MY WORKSPACE</h1>
+				<h1>{{translate.load("sbi.workspace.maintoolbar.title")}}</h1>
 			</div>
 		
 			<!--  customize-view-workspace></customize-view-workspace-->
@@ -22,10 +22,15 @@
 				</md-button>
 				
 				<!-- Search input -->
+				<!-- 
+					By setting 'ng-model-options' attribute 'debounce' property value, we are delaying the execution of the 'ng-change' function
+					since the Angular now waits for that amount of time to pass the model's change (update the model after that time). 
+					@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 -->
 			    <md-input-container class="searchInput" hide show-gt-sm>
 					<input 	class="workspaceSearchInput" type="text" id="searchInput" ng-model="searchInput" 
 							title="{{translate.load('sbi.workspace.mainmenu.search.tooltip')}}" focus-on="searchInput" 
-							ng-change="setSearchInput(searchInput)">
+							ng-change="setSearchInput(searchInput)" ng-model-options='{ debounce: 200 }'>
 				</md-input-container>
 				
 				<!-- Search clear -->
