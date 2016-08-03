@@ -263,7 +263,29 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	  */
 	 $scope.closeDialogOlapDesigner = function() {
 		 $mdDialog.hide();
-	 } 
+	 }
+	 
+	 /**
+	  * Adds variable map(name,value) object to scenario property array variable.
+	  */
+	 $scope.addVariable=function(){ 
+			var variable={};
+			if($scope.scenario.variables==undefined){
+				$scope.scenario.variables = [];
+			}			
+			$scope.scenario.variables.push(variable);
+			console.log($scope.scenario.variables);
+			return variable;
+	 }
+	 
+	 /**
+	  * Removes selected variable from array property of $scope.scenario object.
+	  */
+	 $scope.removeVariable=function(inputVariable){
+			var index=$scope.scenario.variables.indexOf(inputVariable);		
+			$scope.scenario.variables.splice(index, 1);
+			console.log($scope.scenario.variables);
+		}
 	
 	
 

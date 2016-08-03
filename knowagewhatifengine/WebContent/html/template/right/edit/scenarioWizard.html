@@ -43,6 +43,28 @@
         </fieldset>
         </md-whiteframe>
 	   
+	   <div style="padding: 5px;">
+  							Variables
+			<i class="fa fa-plus-square" ng-click="addVariable()" aria-hidden="true" ></i>
+			
+			<div ng-repeat="p in scenario.variables" layout-gt-sm="row" layout-align="start center">
+						<div layout="row"> 								
+								<md-input-container class="md-block" flex-gt-sm>
+      							<label>Parameter Name</label>
+  								<input ng-model="p.name">
+								</md-input-container>
+								
+								<md-input-container class="md-block" flex-gt-sm>
+      							<label>Parameter Value</label>
+  								<input ng-model="p.value">
+								</md-input-container>
+						</div> 						
+    						
+ 						<div>
+							<i class="fa fa-minus-square" ng-click="removeVariable(i)" aria-hidden="true"></i> 	
+						</div>	      						
+			</div>
+		</div>
   
 	   
    </md-content>
