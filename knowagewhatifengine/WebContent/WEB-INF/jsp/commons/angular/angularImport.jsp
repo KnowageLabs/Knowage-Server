@@ -58,5 +58,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<!-- angular list -->
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/angular-list/angular-list.css">
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-list/AngularList.js"></script>	
+	
+	<!-- expander box -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/expander-box/expanderBox.js"></script>
 		
 	<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>

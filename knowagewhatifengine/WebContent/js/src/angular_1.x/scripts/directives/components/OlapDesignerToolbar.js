@@ -70,6 +70,26 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	}
 	
 	/**
+	 * Object that holds Nav from member
+	 */
+	$scope.crossNavfromMemberObj = {
+			"uniqueName" : "",
+			"clickParameter": {
+				"name": "",
+				"value":"{0}"
+			}
+	};
+	
+	$scope.crossNavfromCellObj = {
+			 "name":"",
+             "scope":"",
+             "dimension":"",
+             "hierarchy":"",
+             "level":""
+			
+	};
+	
+	/**
 	 * Opens a new dialog for what-if scenario.
 	 */
 	$scope.openScenarioWizard = function(){
@@ -135,7 +155,18 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		  });
 		
 	};
-		
+	/**
+	 * Function that dynamically assign ng-model
+	 */
+	$scope.changeNgModel = function(type,input) {
+		console.info(type);
+		if(type == 'member' && input == 'value'){
+			return "crossNavfromMemberObj.uniqueName";
+		}else if (type == 'member' && input == 'name'){
+			return "crossNavfromMemberObj.clickParameter.name";
+		} 
+	};
+	
 	/**
 	 * Binds temporary scenario object to olapTemplate and after that sets the scenario to initial value.
 	 */
