@@ -8,7 +8,7 @@
    
    	   <!-- SCENARIO DESCRIPTION -->
 	   <div style="padding: 5px;">
-	 		<p class="md-body-1">Some description</p>   
+	 		<p class="md-body-1">Selecting an edit cube and an editable measure is mandatory.</p>   
 	   </div>
 	   
 	   <!-- EDIT CUBE NAME -->
@@ -16,12 +16,33 @@
 	       <md-input-container  layout="column" flex=100> 
 	       <label>Select Cube</label>
 	       <md-select
-	        ng-model="SCENARIO.editCube"
+	        ng-model="scenario.editCube"
 	        > <md-option 
 	        ng-repeat="l in cubeList track by $index" value="{{l}}">{{l}} </md-option>
 	       </md-select>
 	        </md-input-container>
 	   </div>
+	   
+	   
+	   <!-- EDITABLE MEASURES -->
+	   <md-whiteframe class="md-whiteframe-4dp layout-padding " flex layout layout-margin style ="height: 40%;" >
+	   <fieldset flex>
+          <legend >Editable measures</legend>
+          <div style="padding: 5px;">
+          <div>
+            <md-checkbox aria-label="Select All" ng-checked="isChecked()" md-indeterminate="isIndeterminate()" ng-click="toggleAll()">
+              <span ng-if="isChecked()">Un-</span>Select All
+            </md-checkbox>
+          </div>
+            <div style="padding-left: 30px;" flex="100" ng-repeat="item in measuresList">
+              <md-checkbox ng-checked="exists(item)" ng-click="toggle(item)">
+               {{ item.name }}
+              </md-checkbox>
+            </div>
+          </div>
+        </fieldset>
+        </md-whiteframe>
+	   
   
 	   
    </md-content>
@@ -30,7 +51,7 @@
      <md-button ng-click="saveScenario()" class="md-raised"  md-autofocus>
         Save
       </md-button>
-      <md-button ng-click="closeDialog()" class="md-raised" style="margin-right:20px;" >
+      <md-button ng-click="closeDialogOlapDesigner()" class="md-raised" style="margin-right:20px;" >
        Cancel
       </md-button>
     </md-dialog-actions>

@@ -44,9 +44,10 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	/**
 	 * SCENARIO is the temporary object that will be bind to olapTemplate if the scenario is defined.
 	 */
-	$scope.SCENARIO = {
+	$scope.scenario = {
 			name: "scenario",
-			editCube : ""
+			editCube : "",
+			measures: []
 	};		
 	/**
 	 * Array that hold cross navigation types
@@ -65,7 +66,6 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 * Loads cubes and opens a new what-if scenario dialog.
 	 */
 	$scope.runScenarioWizard = function(){
-		$scope.getVersions();
 		$scope.getCubes();
 	}
 	
@@ -113,11 +113,29 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		.then(function(response) {
 			$scope.cubeList = response.data;
 			$scope.showCubes = true;
+			$scope.getAllMeasures();
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
+		});		
+	};
+	
+	/**
+	 * Loads all measures.
+	 */
+	$scope.getAllMeasures = function(){
+		sbiModule_restServices.promiseGet("1.0/designer/measures/"+schemaID + "/"+ cubeName,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
+		.then(function(response) {
+			$scope.measuresList = [];
+			
+			for (var i = 0; i < response.data.length; i++) {
+				var measuresListItem = { name: ""};
+				measuresListItem.name = response.data[i];
+				$scope.measuresList.push(measuresListItem);
+			}
 			$scope.openScenarioWizard();
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
 		});	
-		
 	};
 	
 	/**
@@ -155,28 +173,99 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		  });
 		
 	};
+	
 	/**
 	 * Function that dynamically assign ng-model
 	 */
 	$scope.changeNgModel = function(type,input) {
-		console.info(type);
 		if(type == 'member' && input == 'value'){
 			return "crossNavfromMemberObj.uniqueName";
 		}else if (type == 'member' && input == 'name'){
 			return "crossNavfromMemberObj.clickParameter.name";
 		} 
 	};
-	
+		
 	/**
-	 * Binds temporary scenario object to olapTemplate and after that sets the scenario to initial value.
+	 * Binds temporary scenario object to olap template object via service after validation check.
 	 */
 	$scope.saveScenario = function() {
-		console.log($scope.SCENARIO);
-		$scope.SCENARIO = {
-				name: "scenario",
-				editCube : ""
-		};
+		
+	    if($scope.scenario.editCube==""&&$scope.scenario.measures.length==0){
+			sbiModule_messaging.showErrorMessage("Selecting a cube and a measure is mandatory. ", 'Validation error');
+			console.log($scope.scenario)
+		}
+	    else if($scope.scenario.editCube==""){
+			sbiModule_messaging.showErrorMessage("You didn't select a cube. Selecting a cube is mandatory. ", 'Validation error');	
+		}
+		else if($scope.scenario.measures.length==0){
+			sbiModule_messaging.showErrorMessage("You didn't select a measure. Selecting a measure is mandatory. ", 'Validation error');	
+		}
+	    else {
+			console.log($scope.scenario)
+			$mdDialog.hide();
+			$scope.scenario = {
+					name: "scenario",
+					editCube : "",
+					measures: []
+			};
+		}	
 	}
+	
+	/**
+	 * Changes the state of the selected checkbox item. [editable measures]
+	 */
+	$scope.toggle = function (item) {
+	   var idx = $scope.scenario.measures.indexOf(item);
+	   if (idx > -1) {
+		   $scope.scenario.measures.splice(idx, 1);
+	   }
+	   else {
+	    $scope.scenario.measures.push(item);
+	   }
+	 };
+	 
+	 /**
+	  * Used for ng-change directive on single checkbox item. 
+	  * If this expression evaluates as truthy, the 'md-checked' css class is added to the checkbox and it will appear checked.[editable measures]
+	  */
+	 $scope.exists = function (item) {
+	   return $scope.scenario.measures.indexOf(item) > -1;
+	 };
+
+	 /**
+	  * Used for md-indeterminate 
+	  */
+	 $scope.isIndeterminate = function() {
+	   return ($scope.scenario.measures.length !== 0 &&
+	       $scope.scenario.measures.length !== $scope.measuresList.length);
+	 };
+
+	 /**
+	  * Used for Select All check box to determine if all check boxes are checked.
+	  */
+	 $scope.isChecked = function() {
+	   return $scope.scenario.measures.length === $scope.measuresList.length;
+     };
+
+     /**
+	  * Selects or un-selects all measures check boxes.
+	  */
+	 $scope.toggleAll = function() {
+	   if ($scope.scenario.measures.length === $scope.measuresList.length) {
+		   $scope.scenario.measures = [];
+	   } else if ($scope.scenario.measures.length === 0 || $scope.scenario.measures.length > 0) {
+		   $scope.scenario.measures = $scope.measuresList.slice(0);
+	   }
+	 };
+	 
+	 /**
+	  * Closes dialog in olap designer.
+	  */
+	 $scope.closeDialogOlapDesigner = function() {
+		 $mdDialog.hide();
+	 } 
+	
+	
 
 };
 
