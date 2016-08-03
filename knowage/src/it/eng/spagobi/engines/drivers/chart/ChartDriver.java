@@ -440,11 +440,12 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Custom method provided for the preparation of the output parameters for the SUNBURST chart type.
+	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	@Override
 	public List<DefaultOutputParameter> getSpecificOutputParameters(List categories) {
-		
+
 		List<DefaultOutputParameter> ret = new ArrayList<>();
 
 		for (int i = 0; i < categories.size(); i++) {
@@ -456,7 +457,44 @@ public class ChartDriver extends GenericDriver {
 		ret.add(new DefaultOutputParameter("SERIE_VALUE", TYPE.String));
 
 		return ret;
-		
+
+	}
+
+	/**
+	 * When the type of the chart document is one of those that should have these default output parameters (listed below), but some of those are not needed (in
+	 * special cases, for types such as WORDCLOUD, PARALLEL and CHORD), remove them from the list of available output parameters.
+	 *
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	@Override
+	public List<DefaultOutputParameter> getSpecificOutputParameters(String specificChartType) {
+
+		List<DefaultOutputParameter> ret = new ArrayList<>();
+
+		DefaultOutputParameter dopCategoryName = new DefaultOutputParameter("CATEGORY_NAME", TYPE.String);
+		DefaultOutputParameter dopCategoryValue = new DefaultOutputParameter("CATEGORY_VALUE", TYPE.String);
+		DefaultOutputParameter dopSerieName = new DefaultOutputParameter("SERIE_NAME", TYPE.String);
+		DefaultOutputParameter dopSerieValue = new DefaultOutputParameter("SERIE_VALUE", TYPE.String);
+		DefaultOutputParameter dopGroupingName = new DefaultOutputParameter("GROUPING_NAME", TYPE.String);
+		DefaultOutputParameter dopGroupingValue = new DefaultOutputParameter("GROUPING_VALUE", TYPE.String);
+
+		ret.add(dopCategoryName);
+		ret.add(dopCategoryValue);
+		ret.add(dopSerieName);
+		ret.add(dopSerieValue);
+		ret.add(dopGroupingName);
+		ret.add(dopGroupingValue);
+
+		if (specificChartType.toUpperCase().equals("WORDCLOUD") || specificChartType.toUpperCase().equals("CHORD")) {
+			ret.remove(dopGroupingName);
+			ret.remove(dopGroupingValue);
+		} else if (specificChartType.toUpperCase().equals("PARALLEL")) {
+			ret.remove(dopSerieName);
+			ret.remove(dopSerieValue);
+		}
+
+		return ret;
+
 	}
 
 	public static void main(String[] args) {

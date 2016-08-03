@@ -70,6 +70,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -77,7 +79,6 @@ import org.json.JSONObject;
 @Path("/1.0/documents")
 public class DocumentResource extends AbstractSpagoBIResource {
 	static protected Logger logger = Logger.getLogger(DocumentResource.class);
-
 
 	@GET
 	@Path("/")
@@ -124,7 +125,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		BIObject document = (BIObject) JsonConverter.jsonToValidObject(body, BIObject.class);
 
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-		
+
 		document.setTenant(getUserProfile().getOrganization());
 		document.setCreationUser((String) getUserProfile().getUserId());
 
@@ -161,7 +162,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentDetails(@PathParam("label") String label) {
-		
+
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
@@ -256,8 +257,6 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		return rb.build();
 	}
 
-	
-	
 	@GET
 	@Path("/{label}/usertemplate")
 	public Response getDocumentTemplateCheckUser(@PathParam("label") String label) {
@@ -266,8 +265,8 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
-		//check if owner of document
-		if(!document.getCreationUser().equals(getUserProfile().getUserId()) || !document.getTenant().equals(getUserProfile().getOrganization())){
+		// check if owner of document
+		if (!document.getCreationUser().equals(getUserProfile().getUserId()) || !document.getTenant().equals(getUserProfile().getOrganization())) {
 			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label
 					+ "]");
 		}
@@ -288,8 +287,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		rb.header("Content-Disposition", "attachment; filename=" + document.getActiveTemplate().getName());
 		return rb.build();
 	}
-	
-	
+
 	// The file has to be put in a field called "file"
 	@POST
 	@Path("/{label}/template")
@@ -373,7 +371,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		String layerLabel = jsonData.getString("DOCUMENT_LABEL");
 
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-		
+
 		ObjTemplate template = new ObjTemplate();
 		template.setName(layerLabel + "_Template.json");
 		template.setContent(geoTemplate.toString().getBytes());
@@ -454,7 +452,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 
 	private void saveTemplate(String docLabel, String xml) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-		
+
 		ObjTemplate template = new ObjTemplate();
 		template.setName("Template.xml");
 		template.setContent(xml.getBytes());
@@ -463,7 +461,28 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		ArrayList<String> categoriesNames = new ArrayList<String>();
 
 		/**
-		 * Prepare categories that the SUNBURST chart document has in order to provide custom-made category output parameters for the cross-navigation.
+		 * 'allSpecificChartTypes': Array of all chart types that need some default (generic) output parameters to be removed from the list of final output
+		 * parameters for the document of that chart type. For example, the WORDCLOUD chart type does not need a GROUPING_NAME and GROUPING_VALUE output
+		 * parameters, so these two will be removed from the predefined (standard) list of output parameters (it will have only SERIE_NAME, SERIE_VALUE,
+		 * CATEGORY_NAME, CATEGORY_VALUE parameters).
+		 *
+		 * 'specificChartType': If the type of the chart document that is saved is one of those in the following list, we will record it and manage further
+		 * functions accordingly.
+		 *
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		String[] allSpecificChartTypes = { "PARALLEL", "WORDCLOUD", "CHORD" };
+		List specificChartTypes = Arrays.asList(allSpecificChartTypes);
+		String specificChartType = "";
+
+		/**
+		 * Two exclusive scenarios:
+		 *
+		 * (1) Prepare categories that the SUNBURST chart document has in order to provide custom-made category output parameters for the cross-navigation.
+		 *
+		 * (2) Get the type of the chart document that is about to be saved in order to manage its output parameters if its type is one of those listed in the
+		 * 'specificChartTypes'.
+		 *
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		try {
@@ -483,9 +502,20 @@ public class DocumentResource extends AbstractSpagoBIResource {
 					obj = (JSONObject) obj.opt(key);
 					keys = obj.keys();
 
-					// Use this while loop only if the chart type of the document is SUNBURST. (danristo)
-					if (key.equals("CHART") && !obj.opt("type").toString().equals("SUNBURST"))
-						break;
+					// Use this while loop only if the chart type of the document is SUNBURST or one of those special chart types. (danristo)
+					if (key.equals("CHART")) {
+
+						// If the type of the chart document that is about to be saved amongst those listed above (special cases). (danristo)
+						if (specificChartTypes.indexOf(obj.opt("type").toString()) >= 0) {
+							// Get that specific type of the chart document that is in process of saving. (danristo)
+							specificChartType = (String) specificChartTypes.get(specificChartTypes.indexOf(obj.opt("type").toString()));
+							break;
+						} else if (!obj.opt("type").toString().equals("SUNBURST")) {
+							break;
+						}
+
+					}
+
 				}
 
 				else if (key.equals("CATEGORY")) {
@@ -520,12 +550,15 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			biObjectDao = DAOFactory.getBIObjectDAO();
 			document = biObjectDao.loadBIObjectById(new Integer(docLabel));
 
-			if (categoriesNames.isEmpty()) {
-				documentManager.saveDocument(document, template);
-			} 
-			// Only in the case of the SUNBURST document chart type. (danristo)
-			else {
+			// Only in the case of the SUNBURST document chart type, this variable will be not empty. (danristo)
+			if (!categoriesNames.isEmpty()) {
 				documentManager.saveDocument(document, template, categoriesNames);
+			}
+			// If the type of the chart document is amongst those listed on the beginning of the method. (danristo)
+			else if (!specificChartType.equals("")) {
+				documentManager.saveDocument(document, template, specificChartType);
+			} else {
+				documentManager.saveDocument(document, template);
 			}
 
 		} catch (EMFUserError e) {

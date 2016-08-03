@@ -143,7 +143,7 @@ public class GeoDriver extends AbstractDriver implements IEngineDriver {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.drivers.IEngineDriver#getEditDocumentTemplateBuildUrl(java.lang.Object, it.eng.spago.security.IEngUserProfile)
 	 */
 	@Override
@@ -154,7 +154,7 @@ public class GeoDriver extends AbstractDriver implements IEngineDriver {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.drivers.IEngineDriver#getNewDocumentTemplateBuildUrl(java.lang.Object, it.eng.spago.security.IEngUserProfile)
 	 */
 	@Override
@@ -301,6 +301,13 @@ public class GeoDriver extends AbstractDriver implements IEngineDriver {
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	@Override
 	public List<DefaultOutputParameter> getSpecificOutputParameters(List categories) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	@Override
+	public List<DefaultOutputParameter> getSpecificOutputParameters(String specificChartType) {
 		// TODO Auto-generated method stub
 		return null;
 	}

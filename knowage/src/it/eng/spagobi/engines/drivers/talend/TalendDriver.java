@@ -195,4 +195,11 @@ public class TalendDriver extends AbstractDriver implements IEngineDriver {
 		return null;
 	}
 
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	@Override
+	public List<DefaultOutputParameter> getSpecificOutputParameters(String specificChartType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

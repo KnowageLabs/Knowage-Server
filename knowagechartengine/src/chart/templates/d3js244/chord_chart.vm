@@ -354,6 +354,14 @@
 						#end
 	},
 	
+	#*
+		Provide the name of the series item in order to enable complete output parameters binding.
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*#
+	series: {
+		name: '$serie.name'
+	},
+	
 	categories: $datasettransformer.getColumnNames($columnsNeeded),
 	
 	data:

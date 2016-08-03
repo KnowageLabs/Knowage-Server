@@ -305,13 +305,14 @@ function renderChordChart(jsonData,locale)
 			else {
 				
 				/**
-				 * Collect all needed data for the cross-navigation (all output parameters for the PARALLEL chart document) and 
+				 * Collect all needed data for the cross-navigation (all output parameters for the CHORD chart document) and 
 				 * forward them towards the cross-navigation handler.
-				 * 
 				 * NOTE: output parameters as series item name and category name are not taken into count at this time instance.
 				 */
 				var navigParams = crossNavigationParamethers(jsonData.data[0].rows[i]);
-				handleCrossNavigationTo(navigParams);
+				navigParams["CATEGORY_NAME"] = jsonData.categories[0].value;
+				navigParams["SERIE_NAME"] = jsonData.series.name;
+				handleCrossNavigationTo(navigParams,"CHORD");
 				
 			}
 			
@@ -320,15 +321,19 @@ function renderChordChart(jsonData,locale)
 	
 	function crossNavigationParamethers(d){
 		
-		var param={
-			"categoryName":null,
-			"categoryValue":null,
-			"serieName":null,
-			"serieValue":null,
-			"groupingCategoryName":null,
-			"groupingCategoryValue":null
+		/**
+		 * Only four output paramters needed for the CHORD chart type (namely, no need for GROUPING_NAME and GROUPING_VALUE - not used).
+		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		var param = {
+			"CATEGORY_NAME":null,
+			"CATEGORY_VALUE":null,
+			"SERIE_NAME":null,
+			"SERIE_VALUE":null
 		};
-		param.categoryValue=d.column_0;
+		
+		param.CATEGORY_VALUE=d.column_0;
+		
 		serie=0;
 		
 		for(property in d){
@@ -336,9 +341,10 @@ function renderChordChart(jsonData,locale)
 				serie=serie+d[property];
 			}
 		}
-	   param.serieValue=serie;	
 		
-	   return param;
+		param.SERIE_VALUE=serie;	
+		
+		return param;
 	}
 	
 	

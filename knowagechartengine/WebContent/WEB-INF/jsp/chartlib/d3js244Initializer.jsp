@@ -148,6 +148,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            }
 			
 			}
+			/*
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			*/
+			else if (chartType=="CHORD") {
+				
+				var navigParams = e;
+				parent.execExternalCrossNavigation(navigParams,{},undefined,undefined);
+				
+			}
 			else {
 			
 				var chart = this;

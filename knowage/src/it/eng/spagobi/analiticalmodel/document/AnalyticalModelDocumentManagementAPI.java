@@ -326,6 +326,7 @@ public class AnalyticalModelDocumentManagementAPI {
 
 	/**
 	 * Custom method specially created for and used only by the SUNBURST chart document.
+	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	public boolean saveDocument(BIObject document, ObjTemplate template, List categories) {
@@ -338,6 +339,45 @@ public class AnalyticalModelDocumentManagementAPI {
 			try {
 				// Provide information for the specific output categories parameters. (danristo)
 				documentDAO.modifyBIObject(document, template, categories);
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("Impossible to update object [" + document.getLabel() + "]", t);
+			}
+			overwrite = true;
+			logger.debug("Document [" + document.getLabel() + "] succesfully updated");
+		} else {
+			try {
+				Integer id = documentDAO.insertBIObject(document, template);
+				document.setId(id);
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("Impossible to insert object [" + document.getLabel() + "]", t);
+			}
+
+			overwrite = false;
+			logger.debug("Document with [" + document.getLabel() + "] succesfully inserted with id [" + document.getId() + "]");
+		}
+
+		return overwrite;
+	}
+
+	/**
+	 * Custom method specially created for some chart types (such as WORDCLOUD, CHORD and PARALLEL) that need some default (generic) output parameters to be
+	 * removed from the list of final output parameters for the document of that chart type. For example, the WORDCLOUD chart type does not need a GROUPING_NAME
+	 * and GROUPING_VALUE output parameters, so these two will be removed from the predefined (standard) list of output parameters (it will have only
+	 * SERIE_NAME, SERIE_VALUE, CATEGORY_NAME, CATEGORY_VALUE parameters). According to this input information (a 'specificChartType' value), further methods
+	 * will manage this list accordingly.
+	 *
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	public boolean saveDocument(BIObject document, ObjTemplate template, String specificChartType) {
+
+		Boolean overwrite;
+
+		Assert.assertNotNull(document, "Input parameter [document] cannot be null");
+
+		if (isAnExistingDocument(document)) {
+			try {
+				// Provide information for the specific output categories parameters. (danristo)
+				documentDAO.modifyBIObject(document, template, specificChartType);
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("Impossible to update object [" + document.getLabel() + "]", t);
 			}

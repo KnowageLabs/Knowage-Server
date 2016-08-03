@@ -393,8 +393,18 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
 	 * Specially provided method for custom-made output category parameters for the SUNBURST chart.
+	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	void modifyBIObject(BIObject obj, ObjTemplate objTemp, List categories) throws EMFUserError;
+
+	/**
+	 * Method used for special chart types, that need exclusion of some of default output parameters).
+	 *
+	 * Example: WORDCLOUD, PARALLEL and CHORD chart types.
+	 *
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	void modifyBIObject(BIObject obj, ObjTemplate objTemp, String specificChartTypes) throws EMFUserError;
 
 }

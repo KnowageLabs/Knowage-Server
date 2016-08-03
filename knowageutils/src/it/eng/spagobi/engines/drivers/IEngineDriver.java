@@ -130,8 +130,18 @@ public interface IEngineDriver {
 
 	/**
 	 * Specially provided method for custom-made output category parameters for the SUNBURST chart.
+	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	public List<DefaultOutputParameter> getSpecificOutputParameters(List categories);
+
+	/**
+	 * Method used for special chart types, that need exclusion of some of default output parameters).
+	 *
+	 * Example: WORDCLOUD, PARALLEL and CHORD chart types.
+	 *
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	public List<DefaultOutputParameter> getSpecificOutputParameters(String specificChartType);
 
 }
