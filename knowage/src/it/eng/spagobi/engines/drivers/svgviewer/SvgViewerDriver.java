@@ -33,6 +33,9 @@ public class SvgViewerDriver extends GenericDriver {
 	@Override
 	public List<DefaultOutputParameter> getDefaultOutputParameters() {
 		List<DefaultOutputParameter> ret = new ArrayList<>();
+		ret.add(new DefaultOutputParameter("HIERARCHY", TYPE.String));
+		ret.add(new DefaultOutputParameter("LEVEL", TYPE.String));
+		ret.add(new DefaultOutputParameter("MEMBER", TYPE.String));
 		ret.add(new DefaultOutputParameter("ELEMENT_ID", TYPE.String));
 		return ret;
 	}

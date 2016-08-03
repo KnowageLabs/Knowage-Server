@@ -196,7 +196,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 			mergeAndDecorateMapTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.mergeAndDecorateMap");
 
-			decorateMap(targetMap, masterMap, datamartProvider, dataMart);
+			decorateMap(targetMap, masterMap, datamartProvider, dataMart, mapProvider);
 
 			if (includeScript) {
 				includeScripts(masterMap);
@@ -418,7 +418,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @param datamart
 	 *            the datamart
 	 */
-	private void decorateMap(SVGDocument targetMap, SVGDocument masterMap, IDataMartProvider datamartProvider, DataMart dataMart) {
+	private void decorateMap(SVGDocument targetMap, SVGDocument masterMap, IDataMartProvider datamartProvider, DataMart dataMart, IMapProvider mapProvider) {
 
 		IDataStore dataStore;
 		IMetaData dataStoreMeta;
@@ -433,6 +433,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 		try {
 			// List elements (one for each specific columnId)
+			// find the geoID field
+			List listID = dataStoreMeta.findFieldMeta("ROLE", "GEOID");
 			List listCrossNav = dataStoreMeta.findFieldMeta("ROLE", "CROSSNAVLINK");
 			List listDrillNav = dataStoreMeta.findFieldMeta("ROLE", "DRILLID");
 			List listTooltip = dataStoreMeta.findFieldMeta("ROLE", "TOOLTIP");
@@ -497,8 +499,12 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 									+ " Checking presence of cross navigation definition...");
 							boolean isCrossable = DAOFactory.getCrossNavigationDAO().documentIsCrossable((String) this.getEnv().get("DOCUMENT_LABEL"));
 							if (isCrossable) {
-								String crossLink = addCrossLink(listCrossNav, record, dataStoreMeta);
-								mapElements.put("link_cross", crossLink);
+								// JSONObject crossLink = addCrossLink(listCrossNav, record, dataStoreMeta, datamartProvider);
+								JSONArray crossData = addCrossData(listID, record, dataStoreMeta, datamartProvider, mapProvider);
+								// mapElements.put("link_cross", crossLink);
+								if (crossData != null)
+									mapElements.put("crossData", crossData);
+								mapElements.put("link_cross", "javascript:void(0)");
 							} else {
 								logger.debug("... The cross navigation for the document isn't present." + " Please, check its definition through the GUI.");
 							}
@@ -508,14 +514,16 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 						int intSelectedLevel = (datamartProvider.getSelectedLevel() == null) ? 1 : Integer.parseInt(datamartProvider.getSelectedLevel());
 						int totalLevels = datamartProvider.getHierarchyMembersNames().size();
 						if (!useCrossNav && (intSelectedLevel < totalLevels)) {
-							String drillLink = addLink(listCrossNav, record, dataStoreMeta);
+							// String drillLink = addLink(listCrossNav, record, dataStoreMeta);
 							String drillIdValue = addLinkDrillId(listDrillNav, record, dataStoreMeta);
 							mapElements.put("drill_id", drillIdValue);
-							mapElements.put("link_drill", drillLink);
+							// mapElements.put("link_drill", drillLink);
+							mapElements.put("link_drill", "javascript:void(0)");
 						}
 						// 4. add Tooltip
 						String tooltip = addTooltip(listTooltip, record, dataStoreMeta);
 						mapElements.put("tooltip", tooltip);
+						// add complete element to the final list
 						lstElements.add(mapElements);
 					}
 				}
@@ -539,7 +547,13 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 						if (tmpMap.get("drill_id") != null) {
 							drillId = (String) tmpMap.get("drill_id");
 						}
-						addHRefLinks(targetMap, featureElement, elementId, drillId, linkUrl, linkType);
+
+						if (linkType.equals("cross")) {
+							JSONArray jsonValue = (JSONArray) tmpMap.get("crossData");
+							addHRefLinksCross(targetMap, featureElement, jsonValue, datamartProvider);
+						} else {
+							addHRefLinksDrill(targetMap, featureElement, elementId, drillId, linkUrl);
+						}
 					}
 					// add tooltips events
 					String tooltip = null;
@@ -558,8 +572,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 				// decorate from datastore: labels and visibility
 				List listLabel = dataStoreMeta.findFieldMeta("ROLE", "LABEL");
-				// find the geoID field
-				List listID = dataStoreMeta.findFieldMeta("ROLE", "GEOID");
+				// // find the geoID field
+				// List listID = dataStoreMeta.findFieldMeta("ROLE", "GEOID");
 				// find field with visibility values
 				List listVis = dataStoreMeta.findFieldMeta("ROLE", "VISIBILITY");
 
@@ -1288,7 +1302,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	}
 
 	/**
-	 * Adds the cross link.
+	 * Adds the cross data link.
 	 *
 	 * @param datastore
 	 *            the data store
@@ -1298,19 +1312,53 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @param record
 	 *            the record with data
 	 */
-	private String addCrossLink(List listCrossNav, IRecord record, IMetaData dataStoreMeta) {
+	private JSONArray addCrossData(List listCrossNav, IRecord record, IMetaData dataStoreMeta, IDataMartProvider datamartProvider, IMapProvider mapProvider)
+			throws Exception {
 		logger.debug("IN");
-		String toReturn = null;
+		JSONArray toReturn = new JSONArray();
 		logger.debug("... The cross navigation is founded. Define the link url...");
-		// List list = dataStoreMeta.findFieldMeta("ROLE", "CROSSNAVLINK");
 		logger.debug("Number of links per feature is equals to [" + listCrossNav.size() + "]");
 		if (listCrossNav.size() == 0) {
 			return null;
 		}
 
-		IFieldMetaData fieldMeta = (IFieldMetaData) listCrossNav.get(0);
-		IField field = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMeta.getName()));
-		toReturn = "" + field.getValue();
+		try {
+			// add hierarchy key information
+			HierarchyMember hierMember = mapProvider.getSelectedHierarchyMember();
+			JSONObject jsonData = new JSONObject();
+			// jsonData.put("HIERARCHY", datamartProvider.getSelectedHierarchyName());
+			jsonData.put("HIERARCHY", hierMember.getHierarchy());
+			toReturn.put(jsonData);
+
+			jsonData = new JSONObject();
+			jsonData.put("LEVEL", hierMember.getLevel());
+			toReturn.put(jsonData);
+
+			jsonData = new JSONObject();
+			jsonData.put("MEMBER", hierMember.getName());
+			toReturn.put(jsonData);
+
+			jsonData = new JSONObject();
+			IFieldMetaData fieldMeta = (IFieldMetaData) listCrossNav.get(0);
+			IField field = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMeta.getName()));
+			jsonData.put("ELEMENT_ID", "" + field.getValue());
+			toReturn.put(jsonData);
+
+			// add record dataset information
+			IMetaData fieldsMeta = record.getDataStore().getMetaData();
+			for (int f = 0; f < record.getFields().size(); f++) {
+				IField recField = record.getFields().get(f);
+				String recFieldName = fieldsMeta.getFieldMeta(f).getName();
+				Object recFieldValue = recField.getValue();
+				jsonData = new JSONObject();
+				jsonData.put(recFieldName, "" + recFieldValue);
+				toReturn.put(jsonData);
+			}
+
+		} catch (Exception e) {
+			logger.error("An error occured while defining object with element values for external cross navigation. ");
+			throw e;
+		}
 		logger.debug("OUT");
 		return toReturn;
 	}
@@ -1384,7 +1432,25 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 *            the link type ('cross' or 'drill')
 	 *
 	 */
-	private void addHRefLinks(SVGDocument targetMap, Element featureElement, String elementId, String drillId, String linkUrl, String linkType) {
+	private void addHRefLinksCross(SVGDocument targetMap, Element featureElement, JSONArray JSONValues, IDataMartProvider datamatProvider) {
+		logger.debug("IN");
+		Element linkCrossElement = targetMap.createElement("a");
+		linkCrossElement.setAttribute("xlink:href", "javascript:void(0)");
+
+		if (featureElement.hasAttribute("style")) {
+			String elementStyle = featureElement.getAttribute("style");
+			elementStyle = elementStyle + ";cursor:pointer";
+			featureElement.setAttribute("style", elementStyle);
+		} else {
+			featureElement.setAttribute("style", "cursor:pointer");
+		}
+
+		featureElement.setAttribute("onclick", "javascript:clickedElementCrossNavigation('" + JSONValues.toString() + "')");
+
+		logger.debug("OUT");
+	}
+
+	private void addHRefLinksDrill(SVGDocument targetMap, Element featureElement, String elementId, String drillId, String linkUrl) {
 		logger.debug("IN");
 		Element linkCrossElement = targetMap.createElement("a");
 		linkCrossElement.setAttribute("xlink:href", linkUrl);
@@ -1397,15 +1463,12 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			featureElement.setAttribute("style", "cursor:pointer");
 		}
 
-		if (linkType.equals("cross")) {
-			featureElement.setAttribute("onclick", "javascript:clickedElementCrossNavigation('" + elementId + "')");
-		} else if (linkType.equals("drill")) {
-			if (drillId == null) {
-				featureElement.setAttribute("onclick", "javascript:clickedElement('" + elementId + "')");
-			} else {
-				featureElement.setAttribute("onclick", "javascript:clickedElement('" + elementId + "','" + drillId + "')");
-			}
+		if (drillId == null) {
+			featureElement.setAttribute("onclick", "javascript:clickedElement('" + elementId + "')");
+		} else {
+			featureElement.setAttribute("onclick", "javascript:clickedElement('" + elementId + "','" + drillId + "')");
 		}
+
 		logger.debug("OUT");
 	}
 

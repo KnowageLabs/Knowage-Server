@@ -126,12 +126,22 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  	$scope.hideTooltip();
 	  	var driversParameter = getDriverParameters();
 	  	
-	  	//pass the clicked element id as output parameter
-	  	var clickedElement = e.detail;
-	  	var crossData=[];
-	  	var object = new Object();
-	  	object.ELEMENT_ID = clickedElement;
-	  	crossData.push(object);
+	  	//pass the values element as output parameter
+
+//	  	var clickedElement = e.detail;
+//	  	var crossData=[];
+//	  	var object = new Object();
+//	  	object.ELEMENT_ID = clickedElement;
+//	  	crossData.push(object);
+	  	
+	  	var crossData = JSON.parse(e.detail);
+//	  	var crossData=[];
+//		if(Array.isArray(crossDataJson)){
+//			for(var key in crossDataJson){
+//				crossData.push(key, crossDataJson[key]);
+//			}
+//		}
+	  	
 		parent.execExternalCrossNavigation(crossData,driversParameter,undefined,driversParameter.DOCUMENT_LABEL);
 
 	});

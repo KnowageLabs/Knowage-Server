@@ -195,6 +195,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			hierMember.setLevel(Integer.valueOf(level));
 			SOMapProviderConfigurator.configure(mapProvider, hierMember);
 			mapProvider.setSelectedMapName(mapProvider.getSelectedMapName());
+
 			InteractiveMapRendererConfigurator.configure(mapRenderer, memberSB.toString());
 
 			// 4. return the new SVG
