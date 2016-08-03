@@ -147,8 +147,12 @@ public class PythonOutputExecutor {
 			// function recalling a function inside the main script (auto)
 			// to produce an image result
 			if (function == null) {
-				codeToExec = "temporaryPlotVariableToPrintOnFile=" + out.getOuputLabel() + "\n" + "temporaryPlotVariableToPrintOnFile.savefig('" + plotName
-						+ "." + OUTPUT_PLOT_EXTENSION + "')\n";
+				// codeToExec = "temporaryPlotVariableToPrintOnFile=" + out.getOuputLabel() + "\n" + "temporaryPlotVariableToPrintOnFile.savefig('" + plotName
+				// + "." + OUTPUT_PLOT_EXTENSION + "')\n" + "temporaryPlotVariableToPrintOnFile.gcf().clear()\n"
+				// + "temporaryPlotVariableToPrintOnFile.gcf().clear()\n" + "temporaryPlotVariableToPrintOnFile.gcf().clear()\n";
+				codeToExec = out.getOuputLabel() + ".savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n" + out.getOuputLabel() + ".gcf().clear()\n"
+						+ out.getOuputLabel() + ".gcf().clear()\n";
+
 				resPythonExecution = PyLib.execScript(codeToExec);
 				if (resPythonExecution < 0) {
 					SpagoBIRuntimeException e = new SpagoBIRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n"
@@ -158,10 +162,14 @@ public class PythonOutputExecutor {
 					res.setError(e.getMessage());
 					return res;
 				}
+
 			} else if (function != null) {
 				if (outVal == null || outVal.equals("")) {
-					codeToExec = "temporaryPlotVariableToPrintOnFile=" + function + "\n" + "temporaryPlotVariableToPrintOnFile.savefig('" + plotName + "."
-							+ OUTPUT_PLOT_EXTENSION + "')\n";
+					// codeToExec = "temporaryPlotVariableToPrintOnFile=" + function + "\n" + "temporaryPlotVariableToPrintOnFile.savefig('" + plotName + "."
+					// + OUTPUT_PLOT_EXTENSION + "')\n" + "temporaryPlotVariableToPrintOnFile.gcf().clear()\n"
+					// + "temporaryPlotVariableToPrintOnFile.gcf().clear()\n" + "temporaryPlotVariableToPrintOnFile.gcf().clear()\n";
+					// ;
+					codeToExec = function + ".savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n" + function + ".gcf().clear()\n";
 					resPythonExecution = PyLib.execScript(codeToExec);
 					if (resPythonExecution < 0) {
 						logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec + "EXECUTION FAILED\n"
