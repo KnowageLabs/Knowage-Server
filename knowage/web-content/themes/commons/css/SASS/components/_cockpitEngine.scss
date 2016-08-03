@@ -54,7 +54,12 @@
             color: rgb(66,66,66);
         }
     }
-
+	.customTableWidgetConfiguration {
+	    position: absolute;
+   		width: 90%;
+   		height: 90%;
+   		margin: 2% 5%;
+	}
     .md-button.md-knowage-theme.md-fab:not([disabled]):hover {
         background-color: darken($baseColor, 15%);
     }
