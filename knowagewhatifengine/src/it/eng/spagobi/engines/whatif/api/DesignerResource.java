@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
+import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
+import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
+import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,17 +48,6 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
-import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
-import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
-import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
 
 /**
  * @author spetrovic
@@ -129,9 +129,25 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 		logger.debug("IN");
 		HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
 		HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
-
 		request.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(request, response);
+	}
 
+	@GET
+	@Path("/measures/{id}/{cubeName}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getAllMeasures(@PathParam("id") Integer id, @PathParam("cubeName") String cubeName) throws SpagoBIEngineException {
+
+		logger.debug("IN");
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		ArtifactServiceProxy artifactProxy = (ArtifactServiceProxy) ei.getEnv().get(EngineConstants.ENV_ARTIFACT_PROXY);
+		MondrianSchemaManager schemaManager = new MondrianSchemaManager(artifactProxy);
+		reference = schemaManager.getMondrianSchemaURI(id);
+		MondrianDriver driver = new MondrianDriver(reference);
+		retriver = new MondrianSchemaRetriver(driver);
+		JSONArray array = new JSONArray(retriver.getAllMeasures(cubeName));
+		logger.debug("OUT");
+		return array.toString();
 	}
 
 }

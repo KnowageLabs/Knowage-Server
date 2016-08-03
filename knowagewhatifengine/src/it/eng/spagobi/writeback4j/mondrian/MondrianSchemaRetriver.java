@@ -18,6 +18,13 @@
 
 package it.eng.spagobi.writeback4j.mondrian;
 
+import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.writeback4j.IMemberCoordinates;
+import it.eng.spagobi.writeback4j.ISchemaRetriver;
+import it.eng.spagobi.writeback4j.sql.TableEntry;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,6 +32,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import mondrian.olap.MondrianDef;
+import mondrian.olap.MondrianDef.CubeDimension;
+import mondrian.olap.MondrianDef.Dimension;
+import mondrian.olap.MondrianDef.Measure;
 
 import org.apache.log4j.Logger;
 import org.eigenbase.xom.NodeDef;
@@ -35,17 +47,6 @@ import org.olap4j.OlapException;
 import org.olap4j.metadata.Dimension.Type;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
-
-import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.writeback4j.IMemberCoordinates;
-import it.eng.spagobi.writeback4j.ISchemaRetriver;
-import it.eng.spagobi.writeback4j.sql.TableEntry;
-import mondrian.olap.MondrianDef;
-import mondrian.olap.MondrianDef.CubeDimension;
-import mondrian.olap.MondrianDef.Dimension;
-import mondrian.olap.MondrianDef.Measure;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
@@ -169,6 +170,24 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 		}
 		logger.debug("OUT");
 		return toReturn;
+	}
+
+	public List<String> getAllMeasures(String cubeName) {
+		List<String> measuresList = new ArrayList<String>();
+		logger.debug("IN");
+		String toReturn = null;
+		MondrianDef.Cube[] cubes = schema.cubes;
+		for (int i = 0; i < cubes.length; i++) {
+			MondrianDef.Cube oldCube = cubes[i];
+			if (oldCube.name.equals(cubeName)) {
+				logger.debug("IN: loading the measure form the cube");
+				for (int j = 0; j < oldCube.measures.length; j++) {
+					measuresList.add(oldCube.measures[j].name);
+				}
+			}
+		}
+		logger.debug("OUT");
+		return measuresList;
 	}
 
 	public IMemberCoordinates getMemberCordinates(Member member) {
