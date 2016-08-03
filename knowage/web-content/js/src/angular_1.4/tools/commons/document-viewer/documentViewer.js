@@ -28,10 +28,15 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 	 * interface, so it can be informed that the document that is executed from it is e.g. closed (user clicked on the X sign for closing the iframe that 
 	 * contained executed document). This scope object can be used whenever and wherever we need it in this controller, not only when the executed 
 	 * document is closed.
+	 * @param executedFrom The parameter that will indicate the page that we are coming from to the document execution page. Originally, this parameter
+	 * was introduced for the need of the Workspace Organizer option, where user can execute a document. If so, the "Add to my workspace" option should
+	 * not appear in the menu of the executed document (since this option adds label to the document into the Organizer and we execute it form there).
+	 * NOTE: This parameter can be used also for other pages and other needs - you can send a string value that will indicate the starting point of the
+	 * document execution (the previous page).
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	this.openDocument=function(documentId,documentLabel,documentName,localScope){
-		this.executeDocument(documentId,documentLabel,documentName,localScope,false);
+	this.openDocument=function(documentId,documentLabel,documentName,localScope,executedFrom){		
+		this.executeDocument(documentId,documentLabel,documentName,localScope,false,executedFrom);
 	};
 	
 	this.editDocument=function(documentId,documentLabel,documentName,localScope,editMode){
@@ -39,7 +44,13 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 		
 	};
 	
-	this.executeDocument = function (documentId,documentLabel,documentName,localScope, editMode) {
+	/**
+	 * The 'localScope' and 'executedFrom' values (input parameters) will be forwarded to the controller. The second one will be forwarded to 
+	 * the 'documentExecutionNg.jsp' page, where it will be originally be used for determining whether the "Add to my workspace" from the menu 
+	 * of the executed document should be removed. 
+	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)  
+	 */
+	this.executeDocument = function (documentId,documentLabel,documentName,localScope, editMode,executedFrom) {
 		$mdDialog.show({
 			controller: openDocumentController,
 			template: '<md-dialog aria-label="Open document"  style="width: 100%;  height: 100%;max-width: 100%;  max-height: 100%;" ng-cloak>'+
@@ -50,19 +61,26 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 //			clickOutsideToClose:false,
 //			escapeToClose :false,
 			fullscreen: true,
-			locals:{documentId:documentId,documentLabel:documentLabel,documentName:documentName,localScope:localScope, editMode:editMode}
+			locals:{documentId:documentId,documentLabel:documentLabel,documentName:documentName,localScope:localScope, editMode:editMode,executedFrom:executedFrom}
 			
 		}) .then(function() { 
 			
 	    } );
 	}
 	
-	function openDocumentController($scope,sbiModule_config,documentId,documentLabel,documentName,localScope,editMode){
+	function openDocumentController($scope,sbiModule_config,documentId,documentLabel,documentName,localScope,editMode,executedFrom){
 		var pathUrl="";
 		pathUrl+="&OBJECT_ID="+documentId;
 		pathUrl+="&OBJECT_LABEL="+documentLabel;
 		pathUrl+="&OBJECT_NAME="+documentName;
-
+		
+		/**
+		 * Indicator for the starting point of the document execution, i.e. the page (option, surrounding) from which we come to the
+		 * document execution page (originally, this input parameter is used for needs of the Workspace Organizer - WORKSPACE_ORGANIZER).
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		pathUrl += "&EXEC_FROM=" + executedFrom;
+		
 		$scope.documentViewerUrl = sbiModule_config.adapterPath+'?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&IS_SOURCE_DOCUMENT=true&SBI_EXECUTION_ID=null'+pathUrl
 		if(editMode) {
 			$scope.documentViewerUrl += "&EDIT_MODE="+editMode
@@ -70,7 +88,6 @@ angular.module('document_viewer', [ 'ngMaterial' ,'sbiModule'])
 		
 		//do not add this request into the stack
 		$scope.documentViewerUrl += "&"+"LIGHT_NAVIGATOR_DISABLED=true";
-		
 		
 		$scope.closeDocument=function(){
 			

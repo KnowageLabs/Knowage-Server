@@ -54,6 +54,7 @@ $scope.executeSourceDocument = function() {
 				    );
 			}
 		}
+		
 		var url = sbiModule_config.contextName 
 			+ '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp'
 			+ '&OBJECT_ID=' + sourceDocumentExecProperties.OBJECT_ID
@@ -62,7 +63,15 @@ $scope.executeSourceDocument = function() {
 			+ '&LIGHT_NAVIGATOR_DISABLED=TRUE'
 			+ '&SBI_EXECUTION_ID=null'
 			+ '&OBJECT_NAME=' + sourceDocumentExecProperties.OBJECT_NAME
-			+ '&EDIT_MODE=' + sourceDocumentExecProperties.EDIT_MODE;
+			+ '&EDIT_MODE=' + sourceDocumentExecProperties.EDIT_MODE
+			/**
+			 * Getting the starting point of the document execution (JSP page from which we go to the document execution page) from
+			 * the 'documentViewer.js'. This information will be forwarded towards the 'documentExecutionNg.jsp', where it will be
+			 * used eventually. Originally, used for needs of the execution of the document from the Workspace Organizer, but it can
+			 * be used for other starting points, as well.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			+ '&EXEC_FROM=' + sourceDocumentExecProperties.EXEC_FROM; 
 		
 		var laodSourceDocToCross=function(){
 			$timeout(function(){

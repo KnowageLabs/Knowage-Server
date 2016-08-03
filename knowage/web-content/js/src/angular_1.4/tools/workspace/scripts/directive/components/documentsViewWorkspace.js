@@ -401,8 +401,20 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	}
 	
 	$scope.executeDocumentFromOrganizer=function(document){
-		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");		
-		$documentViewer.openDocument(document.biObjId, document.documentLabel, document.documentName);
+		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");	
+
+		/**
+		 * When opening (executing) a document from the Organizer of the Workspace, notify the document executing JSP page that
+		 * we are coming from the Organizer, so the page can hide the "Add to my workspace" option on the menu that is available 
+		 * on the page where document is executed. This option, when picked, creates a label to the executed document inside the
+		 * Organizer of the Workspace and since we (in this case) execute it from the Organizer, there is no need for this menu
+		 * option. For that reason, we send parameter with the "WORKSPACE_ORGANIZER" value to the 'openDocument' function.
+		 * 
+		 * NOTE: 'null' is the value for the parameter of the current scope (since we do not need this information).
+		 * 
+		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$documentViewer.openDocument(document.biObjId,document.documentLabel,document.documentName,null,"WORKSPACE_ORGANIZER");
 	}
 	
 	$scope.deleteDocumentFromOrganizer = function(document) {

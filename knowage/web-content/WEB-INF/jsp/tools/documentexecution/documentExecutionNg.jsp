@@ -44,12 +44,28 @@ String isFromDocumentWidget = null;
 String isForExport = null;
 String cockpitSelections = null;
 
+// author: danristo
+String executedFrom = null;
+
 try{
 	profile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	
 	obj = (BIObject) aServiceResponse.getAttribute(SpagoBIConstants.OBJECT);
 	objId = (String)(request.getParameter(SpagoBIConstants.OBJECT_ID));
 	objLabel = request.getParameter(SpagoBIConstants.OBJECT_LABEL) != null ? ((String)request.getParameter(SpagoBIConstants.OBJECT_LABEL)) : obj.getLabel();
+	
+	/*
+		This request parameter is sent from the controller of the document execution application (documentViewer.js) and it
+		serves as indicator of the previous page, i.e. the starting point of the document execution - from where the execution
+		started. Originally, this option was used for needs of the Workspace Organizer. Namely, if this parameter indicates
+		that we are coming from this instance (the Organizer), we should have remove the "Add to my workspace" option from the
+		document execution menu.
+		
+		NOTE: This parameter can be used for forwarding information from other starting points (pages), as well.
+		
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/
+	executedFrom = (String)(request.getParameter("EXEC_FROM"));
 	
 	isFromDocumentWidget = (String)(request.getParameter("IS_FROM_DOCUMENT_WIDGET"));
 	isForExport = (String)(request.getParameter(SpagoBIConstants.IS_FOR_EXPORT));
@@ -96,6 +112,9 @@ try{
 */
 boolean isAdmin = UserUtilities.isAdministrator(userProfile);
 boolean isSuperAdmin = (Boolean)((UserProfile)userProfile).getIsSuperadmin();
+		
+// author: danristo
+boolean isAbleToExecuteAction = userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_SNAPSHOTS_FUNCTIONALITY);
 
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -131,6 +150,19 @@ if(executionRoleNames.size() > 0) {
 	</head>
 
 	<body class="kn-documentExecution" ng-app="documentExecutionModule" ng-controller="documentExecutionController" layout="row" ng-cloak >
+		
+		<!--
+			Move these Java variables to the Javascript so they can eventually be attached to the scope of the controller
+			of the document execution application (page). They will then be used for binding on this page, later on. 
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+		-->
+		<script type="text/javascript">
+			var executedFrom = '<%=executedFrom%>';
+			var isAdmin = <%=isAdmin%>;
+			var isSuperAdmin = <%=isSuperAdmin%>;
+			var isAbleToExecuteAction = <%=isAbleToExecuteAction%>;
+		</script>
+	
 		<div  layout-fill ng-hide="hideProgressCircular.status" style="z-index: 10000; position: absolute; background-color: rgba(0, 0, 0, 0.21);">
 	   		<md-progress-circular md-mode="indeterminate" md-diameter="60" 
 					style="left: 50%;top: 50%;margin-left: -30px;margin-top: -30px;"></md-progress-circular>
@@ -255,51 +287,70 @@ if(executionRoleNames.size() > 0) {
 					            </md-menu-item>
 								<%} %>
 								
-								<span class="divider">{{translate.load("sbi.execution.executionpage.toolbar.shortcuts")}}</span>
-					     		
-					     		<%
-									/*
-										Disable the "Add to workspace" option from the drop-down menu when the document is executed (three dots icon in the second toolbar)
-										when the user is admin or superadmin, since those two roles cannot have their own workspace.
-										@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-									*/
-					            	if(!(isAdmin==true || isSuperAdmin==true)) {
-								%>
-						            <md-menu-item class="md-indent">
+								<!-- 
+									-----------------------------------------------------------------
+									--------------------------- SHORTCUTS ---------------------------
+									-----------------------------------------------------------------
+								-->
+								<!-- 
+									This DIV will gather all the DOM items, starting from the "Shortcuts" label and ending with the last option
+									under it. If there are no options available (for themselves), we will disable this DOM element (the DIV) 
+									completely, in order not to leave this label (for shortcuts) alone. Here we have all criteria gathered along
+									in one ng-if directive - this includes all criteria from all different options under the "Shortcuts" labels.
+									@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+								-->
+								<div ng-if="!(executedFrom=='WORKSPACE_ORGANIZER'||isAdmin||isSuperAdmin) || isAbleToExecuteAction || urlViewPointService.showOlapMenu">
+									
+									<span class="divider">{{translate.load("sbi.execution.executionpage.toolbar.shortcuts")}}</span>
+						     		
+					     			<!-- 
+					     				Provided an ng-if criteria for this menu option for the executed document (whether it should be available).
+					     				@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				     				-->
+						            <md-menu-item class="md-indent" ng-if="!(isAdmin||isSuperAdmin||executedFrom=='WORKSPACE_ORGANIZER')">
 						                <md-icon class="fa fa-suitcase"></md-icon>
 						            	<md-button ng-disabled="false" class="toolbar-button-custom" ng-click="urlViewPointService.addToWorkspace()"
 						            			aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}">
 					            			{{translate.load('sbi.execution.executionpage.toolbar.savemyworkspace')}}
 						                </md-button>
 						            </md-menu-item>
-					            <% } %>
-					            
-					            <!--  
-					            <md-menu-item class="md-indent">
-					                <md-icon class="fa fa-heart"></md-icon>
-					            	<md-button ng-disabled="false" class="toolbar-button-custom" ng-click="urlViewPointService.openFavoriteDefinitionForm()"
-					            			aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}">
-				            			{{translate.load('sbi.execution.executionpage.toolbar.addbookmark')}}
-					                </md-button>
-					            </md-menu-item>
-					            -->
-				            	
-								<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_SNAPSHOTS_FUNCTIONALITY)) { %>
-				                <md-menu-item class="md-indent">
-					            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}"
-					            			class="toolbar-button-custom" ng-click="urlViewPointService.getSchedulers()">
-	                                	{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}
-					                </md-button>
-					            </md-menu-item>
-								<%} %>
+						           
+						            <!--  
+						            <md-menu-item class="md-indent">
+						                <md-icon class="fa fa-heart"></md-icon>
+						            	<md-button ng-disabled="false" class="toolbar-button-custom" ng-click="urlViewPointService.openFavoriteDefinitionForm()"
+						            			aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}">
+					            			{{translate.load('sbi.execution.executionpage.toolbar.addbookmark')}}
+						                </md-button>
+						            </md-menu-item>
+						            -->
+					            	
+					            	<!-- 
+					     				Provided an ng-if criteria for this menu option for the executed document (whether it should be available).
+					     				@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				     				-->
+					                <md-menu-item class="md-indent" ng-if="isAbleToExecuteAction">
+						            	<md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}"
+						            			class="toolbar-button-custom" ng-click="urlViewPointService.getSchedulers()">
+		                                	{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}
+						                </md-button>
+						            </md-menu-item>
+									
+									<!-- 
+					     				Provided an ng-if criteria for this menu option for the executed document (whether it should be available).
+					     				@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				     				-->
+									<md-menu-item class="md-indent" ng-if="urlViewPointService.showOlapMenu">
+						            	<md-button  aria-label="{{translate.load('sbi.execution.executionpage.toolbar.show.olap.customized')}}"
+						            			class="toolbar-button-custom" ng-click="urlViewPointService.getOlapDocs()" >
+						            			{{translate.load('sbi.execution.executionpage.toolbar.show.olap.customized')}}
+	
+						                </md-button>
+						            </md-menu-item>
+						            
+								</div> 
 								
-								<md-menu-item class="md-indent">
-					            	<md-button ng-show="urlViewPointService.showOlapMenu" aria-label="{{translate.load('sbi.execution.executionpage.toolbar.show.olap.customized')}}"
-					            			class="toolbar-button-custom" ng-click="urlViewPointService.getOlapDocs()" >
-					            			{{translate.load('sbi.execution.executionpage.toolbar.show.olap.customized')}}
-
-					                </md-button>
-					            </md-menu-item>
+								<!-- SHORTCUTS: end -->
 								
 							</md-menu-content>
 						</md-menu>

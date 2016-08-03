@@ -67,6 +67,17 @@
 		$scope.sidenavCenter = null;
 		$scope.filterDropping = null; 
 		
+		/**
+		 * Add these 'documentExecutionNg.jsp' Javascript variables to the scope of the document execution controller and use them
+		 * for managing the view part of the application (e.g. whether the "Add to my workspace" document execution menu option (or
+		 * some other one) should be shown). They will be used for binding on this JSP page.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$scope.executedFrom = executedFrom.toUpperCase();
+		$scope.isAdmin = isAdmin;
+		$scope.isSuperAdmin = isSuperAdmin;
+		$scope.isAbleToExecuteAction = isAbleToExecuteAction;
+		
 		if ($scope.executionInstance.SidenavOri === 'north'){
 			$scope.sidenavCenter = "center left";
 			$scope.filterDropping = "row"; 

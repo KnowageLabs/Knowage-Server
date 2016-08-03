@@ -35,6 +35,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecutionMaster.js")%>"></script>
 	<script type="text/javascript">
 	angular.module('documentExecutionMasterModule').factory('sourceDocumentExecProperties', function() {
+		/*
+			EXEC_FROM added for the need of the Workspace Organizer as a starting point of the document execution.
+			NOTE: Can be used for other document execution starting points, as well.
+			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		*/ 
 		var obj = { 
 				'OBJECT_ID' : 			'<%= request.getParameter("OBJECT_ID") != null ? request.getParameter("OBJECT_ID") : aRequestContainer.getServiceRequest().getAttribute("OBJECT_ID")  %>', 
 				'OBJECT_LABEL' : 		'<%= request.getParameter("OBJECT_LABEL") != null ? request.getParameter("OBJECT_LABEL") : aRequestContainer.getServiceRequest().getAttribute("OBJECT_LABEL") %>',
@@ -42,7 +47,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'isSourceDocument' : 	'<%= request.getParameter("IS_SOURCE_DOCUMENT") != null ? request.getParameter("IS_SOURCE_DOCUMENT") : aRequestContainer.getServiceRequest().getAttribute("IS_SOURCE_DOCUMENT") %>',
 				'SBI_EXECUTION_ID' : '',
 				'MENU_PARAMETERS' : 	'<%= aRequestContainer.getServiceRequest().getAttribute("PARAMETERS") %>',
-				'EDIT_MODE': '<%= request.getParameter("EDIT_MODE") != null ? request.getParameter("EDIT_MODE") : aRequestContainer.getServiceRequest().getAttribute("EDIT_MODE")  %>'
+				'EDIT_MODE': '<%= request.getParameter("EDIT_MODE") != null ? request.getParameter("EDIT_MODE") : aRequestContainer.getServiceRequest().getAttribute("EDIT_MODE")  %>',
+				'EXEC_FROM': '<%=request.getParameter("EXEC_FROM")%>' 
 				
 			  	
 		};
