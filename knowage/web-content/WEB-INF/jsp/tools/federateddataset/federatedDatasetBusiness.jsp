@@ -49,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
 		
 		<!-- Retrieveing datasets used in creating a federation definition, as well as the whole relationships column -->
+		<script> var listaNewEditMode = [];
 		<%
 		 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
 			String relString = "";
@@ -61,8 +62,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					Set<IDataSet> datasets = obj.getSourceDatasets();
 					List<String> listOfDatasetLabels = new ArrayList<String>();
 					if(datasets!=null){
-						for(IDataSet ds : datasets){
-							listOfDatasetLabels.add(ds.getLabel());
+						int counter = 0;
+						for(IDataSet ds : datasets){%>
+							listaNewEditMode[<%= counter++ %>] = "<%=ds.getLabel() %>";
+						<%
 						}
 					}
 					lisOfDSL = listOfDatasetLabels.toString();
@@ -70,6 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 		%>
+		</script>
 		
 		<!-- Making lisOfDSL and relString avaliable for use in federatedDataset.js -->
 		<script>

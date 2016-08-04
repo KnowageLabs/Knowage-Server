@@ -40,7 +40,6 @@ function federationDefinitionFunction
 		sbiModule_restServices,
 		sbiModule_messaging
 ) {
-	
 	//current scope
 	ctr = this;
 	
@@ -713,30 +712,26 @@ function federationDefinitionFunction
     
     
 	ctr.loadDatasetsEditMode = function(){
-
-        	if(value!=null){
-        		var arr = value.replace(/ /g,'')
-        		var array = arr.substring(1,arr.length-1);
-        		var array1 = array.split(',');
-        		for (var i = 0; i < array1.length; i++) {
-    				for (var j = 0; j < ctr.listAllO.length; j++) {
-        				if(ctr.listAllO[j].label==array1[i]){
-        					for (var k = 0; k < ctr.list.length; k++) {
-    							if(ctr.list[k].name==ctr.listAllO[j].name) {
-    								var index = ctr.list.indexOf(ctr.list[k]);
-    								if(index != -1) {
-    									ctr.list.splice(index,1);
-    								}
-    							}
-    						}
-        					ctr.listaNew.push(ctr.listAllO[j])
-        					ctr.listaNewDatasets.push(ctr.listAllO[j].label);        					
-        				} else {
-        					
-        				}
-        			}
-    			}
-        	}
+        	
+		for (var i = 0; i < listaNewEditMode.length; i++) {
+			for (var j = 0; j < ctr.listAllO.length; j++) {
+				if(ctr.listAllO[j].label==listaNewEditMode[i]){
+					for (var k = 0; k < ctr.list.length; k++) {
+						if(ctr.list[k].name==ctr.listAllO[j].name) {
+							var index = ctr.list.indexOf(ctr.list[k]);
+							if(index != -1) {
+								ctr.list.splice(index,1);
+							}
+						}
+					}
+					ctr.listaNew.push(ctr.listAllO[j])
+					ctr.listaNewDatasets.push(ctr.listAllO[j].label);        					
+				} else {
+					
+				}
+			}
+		}
+        	
     }
 	
 	ctr.removeAllClasses = function() {
