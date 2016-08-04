@@ -32,3 +32,4 @@
 
 <!-- SERVICES -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/spagobi/commons/Settings.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/services/OlapTemplateService.js"></script>

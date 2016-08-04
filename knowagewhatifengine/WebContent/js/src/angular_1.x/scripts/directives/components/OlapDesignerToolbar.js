@@ -38,7 +38,7 @@ angular.module('olap_designer_toolbar', ['sbiModule'])
 
 function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
-		toastr, $cookies, sbiModule_docInfo, sbiModule_config) {
+		toastr, $cookies, sbiModule_docInfo, sbiModule_config,OlapTemplateService) {
 	
 	/**
 	 * TOOLBAR is the array of button objects to send to olap template object.

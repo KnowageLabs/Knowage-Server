@@ -28,6 +28,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,9 +42,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.commons.io.FileUtils;
@@ -53,6 +57,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.olap4j.Cell;
@@ -68,8 +73,13 @@ import org.pivot4j.ui.table.TableRenderer;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
@@ -90,6 +100,7 @@ import it.eng.spagobi.engines.whatif.parser.Lexer;
 import it.eng.spagobi.engines.whatif.parser.parser;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.engines.whatif.version.VersionManager;
+import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -125,53 +136,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		return versionManager;
 	}
 
-	/*
-	 * This method creates a template. Than it will create a model on teh
-	 * template and update the EngoneConfig setting the model Body structure {
-	 *
-	 * mondrianSchema: "mondrianSchema", cube: "cube", xmlaUrl: "xmlaUrl",
-	 * xmlaProperties:[{value:...,key:...},....],
-	 *
-	 * }
-	 */
-	@POST
-	@Path("/create")
-	@Produces("text/html; charset=UTF-8")
-	public void createNewModel() throws OlapException {
-
-		JSONObject requestBody = null;
-
-		try {
-			requestBody = RestUtilities.readBodyAsJSONObject(getServletRequest());
-
-			WhatIfTemplate template = new WhatIfTemplate();
-			String mdxQuery = "";// TODO: CREATE THE QUERY STARTING FROM SCHEMA
-									// RETRIVER
-
-			template.setMdxQuery(mdxQuery);
-			template.setMondrianSchema(requestBody.getString(TEMPLATE_MONDRIAN_SCHEMA));
-			// template.setParameters(parameters); we'll see in a second phase
-			// template.setCrossNavigation(crossNavigation); for cross
-			// navigation on cell
-			// template.setTargetsClickable(targetsClickable); for cross
-			// navigation on member
-			// template.setProfilingUserAttributes(profilingnUserAttributes);
-			// we'll see in a second phase
-			// template.setScenario(scenario); scenario info. cube from schema
-			// retriver
-
-			// template.setToolbarVisibleButtons(toolbarVisibleButtons);
-			// template.setXmlaServerProperties(xmlaServerProperties);
-
-			boolean whatif = false;// should true if a scenario exists
-			((WhatIfEngineInstance) this.getEngineInstance()).updateWhatIfEngineInstance(template, whatif, getEnv());
-
-		} catch (Exception e) {
-			String errorMessage = e.getMessage().replace(": Couldn't read request body", "");
-			throw new SpagoBIEngineRestServiceRuntimeException(errorMessage, this.getLocale(), e);
-		}
-	}
-
+	
 	/**
 	 * Executes the mdx query. If the mdx is null it executes the query of the
 	 * model
@@ -758,6 +723,24 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		defaultAlgorithm.setCellValue("Proportional");
 
 		return workbook;
+	}
+	
+	private void saveTemplate(String docLabel, String xml) {
+		ObjTemplate template = new ObjTemplate();
+		template.setName("JohnyGAy.xml");
+		template.setContent(xml.getBytes());
+		template.setDimension(Long.toString(xml.getBytes().length / 1000) + " KByte");
+		IBIObjectDAO documentDAO;
+		try {
+			documentDAO = DAOFactory.getBIObjectDAO();
+			BIObject document = documentDAO.loadBIObjectByLabel(docLabel);
+			Integer id = documentDAO.insertBIObject(document, template);
+		} catch (EMFUserError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 }
