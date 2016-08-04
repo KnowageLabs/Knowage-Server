@@ -44,14 +44,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript"
 	src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.5.1/jquery-1.5.1.js")%>"></script>
 
-<!--  HighCharts -->
+<!--  HighCharts 
 <script type="text/javascript"
 	src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/highcharts.js")%>"></script>
 <script type="text/javascript"
 	src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/highcharts-more.js")%>"></script>
 <script type="text/javascript"
 	src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/modules/exporting.js")%>"></script>
-
+-->
 <%! private static transient Logger logger = Logger.getLogger(ExecuteDocumentAction.class);%>
 
 <%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
