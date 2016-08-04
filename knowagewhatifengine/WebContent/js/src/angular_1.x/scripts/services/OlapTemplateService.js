@@ -17,6 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * @author Dragan Pirkovic
+ * angular service for building Template for olap document in json format
+ */
+
 
 angular.module('olap_designer_toolbar')
 		.service('OlapTemplateService',function(){
@@ -24,7 +29,7 @@ angular.module('olap_designer_toolbar')
 			const SCENARIO_NAME = "scenario";
 			this.template = {};
 			var olap={};
-			/*var cubeName = "foodMart";
+			var cubeName = "foodMart";
 			var mdxQueryObj = {
 					"mdxQuery":"SELECT {[Measures].[Unit Sales]} ON COLUMNS, {[Product]} ON ROWS FROM [Sales_V]",
 					"clickables":[
@@ -90,21 +95,40 @@ angular.module('olap_designer_toolbar')
 			                      ]
 		    
 			console.log('Hello from OlapTemplateService');
-			*/
+			
+			
+			/*
+			 * 
+			 */
+			
+			/*
+			 * Template object getter
+			 */
 			this.getTemplateObject = function(){
 				return this.template;
 			}
 			
+			/*
+			 * Final Template object Json
+			 */
 			this.getTempateJson = function(){
 				if(this.getTemplateObject()){
 					return angular.toJson(this.getTemplateObject());
 				}
 			}
 			
+			
+			/*
+			 * Setter for Template object
+			 */
 			this.setTemplateObject = function(templateObject){
 				this.templateObject = templateObject;
 			}
 			
+			
+			/*
+			 * Getter for olap Tag 
+			 */
 			this.getOlapTag = function(){
 				
 				if(this.getTemplateObject()){
@@ -117,6 +141,9 @@ angular.module('olap_designer_toolbar')
 				}
 			}
 			
+			/*
+			 * Setter for olap tag
+			 */
 			this.setOlapTag = function(olap){
 				if(this.getTemplateObject()){
 					
@@ -127,11 +154,16 @@ angular.module('olap_designer_toolbar')
 				}
 			}
 			
+			/*
+			 * Deleting olap tag
+			 */
 			this.deleteOlapTag = function(){
 				delete this.getTemplateObject().olap;
 			}
 			
-			
+			/*
+			 * Getter for cube tag
+			 */
 			this.getCubeTag = function(){
 				if(this.getOlapTag()){	
 					return this.getOlapTag().cube;
@@ -141,12 +173,21 @@ angular.module('olap_designer_toolbar')
 				
 			}
 			
+			/*
+			 * Getting cube reference(cube name)
+			 */
 			this.getCubeReference = function(){
 				if(this.getCubeTag()){
 					return this.getCubeTag().reference;
 				}
 			}
 			
+			/*
+			 * Setter for cube tag
+			 * @param cubeName type string
+			 * return boolean 
+			 * true if setting is successful
+			 */
 			this.setCubeTag = function(cubeName){
 				if(this.getOlapTag()){
 					if(!this.getCubeTag()){
@@ -168,7 +209,9 @@ angular.module('olap_designer_toolbar')
 				return true;
 			}
 			
-			
+			/*
+			 * Deleting cube tag
+			 */
 			this.deleteCubeTag = function(){
 				if(this.getOlapTag()){
 					 delete this.getOlapTag().cube;
@@ -178,6 +221,9 @@ angular.module('olap_designer_toolbar')
 				
 			}
 			
+			/*
+			 * Getter for mdxQueryTag object
+			 */
 			this.getMdxQueryTag = function(){
 				if(this.getOlapTag()){	
 					return this.getOlapTag().MDXQUERY;
@@ -187,6 +233,10 @@ angular.module('olap_designer_toolbar')
 				
 			}
 			
+			/*
+			 * Getting mdx query
+			 */
+			
 			this.getMdxQuery = function(){
 				if(this.getMdxQueryTag()){
 					return this.getMdxQueryTag().XML_TAG_TEXT_CONTENT;
@@ -195,6 +245,10 @@ angular.module('olap_designer_toolbar')
 				}
 			}
 			
+			/*
+			 * Getting array of clickables objects ( crossnavigation for member)
+			 * 
+			 */
 			this.getMdxQueryClickables = function(){
 				if(this.getMdxQueryTag()){
 					return this.getMdxQueryTag().clickable;
@@ -203,6 +257,25 @@ angular.module('olap_designer_toolbar')
 				}
 			}
 			
+			
+			/*
+			 * Setter for MdxQuery tag
+			 * return boolean 
+			 * true if setting is successful 
+			 * @param mdxQueryObj
+			 * 
+			 * @object definition  mdxQueryObj
+			 * mandatory mdxQueryObj properties:
+			 * mdxQuery
+			 * optional mdxQueryObj properties:
+			 * clickables(array of clickable object)
+			 * 
+			 * @object definition  clickable
+			 * mandatory clickable properties:
+			 * name
+			 * clickParameter
+			 * 
+			 */
 			this.setMdxQueryTag = function(mdxQueryObj){
 				if(this.getOlapTag()){
 					 if(!this.getMdxQueryTag()){
@@ -283,6 +356,12 @@ angular.module('olap_designer_toolbar')
 				}
 			}
 			
+			/*
+			 * Setter for MDXMondrianQuery tag
+			 * @param MDXMondrianQuery 
+			 * return boolean 
+			 * true if setting is successful
+			 */
 			this.setMDXMondrianQueryTag = function(MDXMondrianQuery){
 				if(this.getOlapTag()){
 					 if(!this.getMDXMondrianQueryTag()){
@@ -348,6 +427,12 @@ angular.module('olap_designer_toolbar')
 				return scenarioObj;
 			}
 			
+			/*
+			 * Setter for scenario tag
+			 * @param cubeName type string
+			 * return boolean 
+			 * true if setting is successful
+			 */
 			this.setScenarioTag = function(scenario){
 				if(this.getOlapTag()){
 					 if(scenario.editCube&&scenario.editCube!==""&&scenario.measures&&scenario.measures.constructor === Array&&scenario.measures.length>0){
@@ -430,6 +515,12 @@ angular.module('olap_designer_toolbar')
 				return crossNavigation;
 			}
 			
+			/*
+			 * Setter for scenario tag
+			 * @param cubeName type string
+			 * return boolean 
+			 * true if setting is successful
+			 */
 			this.setCrossNavigationTag = function(crossNavigation){
 				if(this.getOlapTag()){
 					 if(crossNavigation&&crossNavigation.constructor === Array&&crossNavigation.length>0){
@@ -446,7 +537,6 @@ angular.module('olap_designer_toolbar')
 							 var parameter = crossNavigation[i];
 							 
 							 if(parameter.name&&
-								parameter.scope&&
 								parameter.dimension&&
 								parameter.hierarchy&&
 								parameter.level){
@@ -454,7 +544,7 @@ angular.module('olap_designer_toolbar')
 								 this.getCrossNavigationTag().PARAMETERS.PARAMETER.push(parameter);
 								 
 							 }else{
-								 console.log("Bad format of parameter!!!Mandatory properties:name,scope,dimension,hierarchy,level");
+								 console.log("Bad format of parameter!!!Mandatory properties:name,dimension,hierarchy,level");
 								 this.deleteCrossNavigationTag();
 								 return  false;
 								 
@@ -509,7 +599,12 @@ angular.module('olap_designer_toolbar')
 				}
 				return toolbarButtons;
 			}
-			
+			/*
+			 * Setter for scenario tag
+			 * @param cubeName type string
+			 * return boolean 
+			 * true if setting is successful
+			 */
 			this.setToolbarTag = function(toolbarButtons){
 				
 				if(toolbarButtons&&toolbarButtons.constructor === Array&&toolbarButtons.length>0){
@@ -553,7 +648,7 @@ angular.module('olap_designer_toolbar')
 			 this.setOlapTag(olap);
 			 console.log(angular.toJson(this.template));
 			 
-			 /*
+			 
 			 var cubeSuccess = this.setCubeTag(cubeName);
 			 console.log("cubeSuccess "+ cubeSuccess);
 			 console.log(angular.toJson(this.template));
@@ -610,5 +705,5 @@ angular.module('olap_designer_toolbar')
 			 console.log(angular.toJson(this.template));
 			 this.deleteCubeTag();
 			 console.log(angular.toJson(this.template));
-			 */
+			 
 		})
