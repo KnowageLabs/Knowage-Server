@@ -147,6 +147,8 @@ INSERT INTO @tbldroplist (TblName) VALUES ('SBI_CATALOG_FUNCTION');
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_OBJ_FUNC_ORGANIZER');
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_FUNCTIONS_ORGANIZER');
 
+INSERT INTO @tbldroplist (TblName) VALUES ('SBI_WHATIF_WORKFLOW');
+
 
 DECLARE tblcursor CURSOR FOR
 SELECT TblName FROM @tbldroplist
