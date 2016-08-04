@@ -74,7 +74,6 @@ import com.jamonapi.MonitorFactory;
 
 public class InteractiveMapRenderer extends AbstractMapRenderer {
 
-	private boolean closeLink = false;
 	private SVGMapLoader svgMapLoader;
 
 	/** Logger component. */
@@ -435,7 +434,6 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			// List elements (one for each specific columnId)
 			// find the geoID field
 			List listID = dataStoreMeta.findFieldMeta("ROLE", "GEOID");
-			List listCrossNav = dataStoreMeta.findFieldMeta("ROLE", "CROSSNAVLINK");
 			List listDrillNav = dataStoreMeta.findFieldMeta("ROLE", "DRILLID");
 			List listTooltip = dataStoreMeta.findFieldMeta("ROLE", "TOOLTIP");
 			List listCrossType = dataStoreMeta.findFieldMeta("ROLE", "CROSSTYPE");
@@ -467,7 +465,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 					if (childNode instanceof Element) {
 						child = (SVGElement) childNode;
 						String childId = child.getId();
-						column_id = childId.replaceAll(dataMart.getTargetFeatureName() + "_", "");
+						column_id = childId;
 
 						IRecord record = dataStore.getRecordByID(column_id);
 						if (record == null) {
@@ -485,6 +483,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 						// 2. add CROSS link ONLY if it's required by the template (at the moment is mutual exclusive with the drill link)
 						boolean useCrossNav = false; // default
+						String defaultUrl = "javascript:void(0)";
 						// check the dynamic cross type definition (throught the dataset)
 						if (listCrossType.size() > 0) {
 							IFieldMetaData fieldMetaCrossable = (IFieldMetaData) listCrossType.get(0);
@@ -499,12 +498,10 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 									+ " Checking presence of cross navigation definition...");
 							boolean isCrossable = DAOFactory.getCrossNavigationDAO().documentIsCrossable((String) this.getEnv().get("DOCUMENT_LABEL"));
 							if (isCrossable) {
-								// JSONObject crossLink = addCrossLink(listCrossNav, record, dataStoreMeta, datamartProvider);
 								JSONArray crossData = addCrossData(listID, record, dataStoreMeta, datamartProvider, mapProvider);
-								// mapElements.put("link_cross", crossLink);
 								if (crossData != null)
 									mapElements.put("crossData", crossData);
-								mapElements.put("link_cross", "javascript:void(0)");
+								mapElements.put("link_cross", defaultUrl);
 							} else {
 								logger.debug("... The cross navigation for the document isn't present." + " Please, check its definition through the GUI.");
 							}
@@ -514,11 +511,9 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 						int intSelectedLevel = (datamartProvider.getSelectedLevel() == null) ? 1 : Integer.parseInt(datamartProvider.getSelectedLevel());
 						int totalLevels = datamartProvider.getHierarchyMembersNames().size();
 						if (!useCrossNav && (intSelectedLevel < totalLevels)) {
-							// String drillLink = addLink(listCrossNav, record, dataStoreMeta);
 							String drillIdValue = addLinkDrillId(listDrillNav, record, dataStoreMeta);
 							mapElements.put("drill_id", drillIdValue);
-							// mapElements.put("link_drill", drillLink);
-							mapElements.put("link_drill", "javascript:void(0)");
+							mapElements.put("link_drill", defaultUrl);
 						}
 						// 4. add Tooltip
 						String tooltip = addTooltip(listTooltip, record, dataStoreMeta);
@@ -572,8 +567,6 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 				// decorate from datastore: labels and visibility
 				List listLabel = dataStoreMeta.findFieldMeta("ROLE", "LABEL");
-				// // find the geoID field
-				// List listID = dataStoreMeta.findFieldMeta("ROLE", "GEOID");
 				// find field with visibility values
 				List listVis = dataStoreMeta.findFieldMeta("ROLE", "VISIBILITY");
 
@@ -1257,33 +1250,6 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		logger.debug("OUT");
 	}
 
-	/**
-	 * Adds the drill link.
-	 *
-	 * @param datastore
-	 *            the data store
-	 *
-	 * @param child
-	 *            the child element
-	 * @param record
-	 *            the record with data
-	 */
-	private String addLink(List listCrossNav, IRecord record, IMetaData dataStoreMeta) {
-		logger.debug("IN");
-		String toReturn = "";
-		logger.debug("Number of links per feature is equals to [" + listCrossNav.size() + "]");
-		if (listCrossNav.size() == 0) {
-			return null;
-		}
-
-		IFieldMetaData fieldMeta = (IFieldMetaData) listCrossNav.get(0);
-		IField filed = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMeta.getName()));
-		String link = "" + filed.getValue();
-		toReturn = link;
-		logger.debug("OUT");
-		return toReturn;
-	}
-
 	private String addLinkDrillId(List listDrillNav, IRecord record, IMetaData dataStoreMeta) {
 		logger.debug("IN");
 		String toReturn = null;
@@ -1345,6 +1311,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			toReturn.put(jsonData);
 
 			// add record dataset information
+			// @TODO: aggiungere solo i field che sono veramente usati nella cross definition
 			IMetaData fieldsMeta = record.getDataStore().getMetaData();
 			for (int f = 0; f < record.getFields().size(); f++) {
 				IField recField = record.getFields().get(f);
@@ -1900,16 +1867,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 */
 	public JSONObject getGUIConfigurationScript() throws JSONException {
 		JSONObject guiSettings = new JSONObject();
-		// String pVal = null;
 
 		guiSettings = getGuiSettings().toJSON();
-
-		// if (getEnv().get(SvgViewerEngineConstants.ENV_IS_DAFAULT_DRILL_NAV) != null) {
-		// pVal = (String) getEnv().get(SvgViewerEngineConstants.ENV_IS_DAFAULT_DRILL_NAV);
-		// boolean defaultDrillNav = pVal == null || pVal.equalsIgnoreCase("TRUE");
-		// guiSettings.put("defaultDrillNav", defaultDrillNav);
-		// }
-
 		guiSettings.put("defaultDrillNav", true);
 
 		return guiSettings;
