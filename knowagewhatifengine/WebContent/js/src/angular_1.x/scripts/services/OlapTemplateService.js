@@ -615,7 +615,7 @@ angular.module('olap_designer_toolbar')
 					
 					for(var i = 0;i<toolbarButtons.length;i++){
 						
-						if(toolbarButtons[i].name&&toolbarButtons[i].visible&&toolbarButtons[i].clicked){
+						if(toolbarButtons[i].hasOwnProperty("name")&&toolbarButtons[i].hasOwnProperty("visible")&&toolbarButtons[i].hasOwnProperty("clicked")){
 							this.getOlapTag().TOOLBAR[toolbarButtons[i].name] = {};
 							this.getOlapTag().TOOLBAR[toolbarButtons[i].name].visible = toolbarButtons[i].visible;
 							this.getOlapTag().TOOLBAR[toolbarButtons[i].name].clicked = toolbarButtons[i].clicked;
