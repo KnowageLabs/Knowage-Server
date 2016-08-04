@@ -189,7 +189,9 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 * Binds temporary scenario object to olap template object via service after validation check.
 	 */
 	$scope.saveScenario = function() {
-		
+		if($scope.scenario.variables.length==0){
+			delete $scope.scenario.variables;
+		}
 	    if($scope.scenario.editCube==""&&$scope.scenario.measures.length==0){
 			sbiModule_messaging.showErrorMessage("Selecting a cube and a measure is mandatory. ", 'Validation error');
 			console.log($scope.scenario)
@@ -272,7 +274,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 			var variable={};
 			if($scope.scenario.variables==undefined){
 				$scope.scenario.variables = [];
-			}			
+			}
 			$scope.scenario.variables.push(variable);
 			console.log($scope.scenario.variables);
 			return variable;
@@ -285,7 +287,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 			var index=$scope.scenario.variables.indexOf(inputVariable);		
 			$scope.scenario.variables.splice(index, 1);
 			console.log($scope.scenario.variables);
-		}
+	 }
 	
 	
 
