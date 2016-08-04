@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,23 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.wapp.dao;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.wapp.bo.Menu;
+import it.eng.spagobi.wapp.metadata.SbiMenu;
+import it.eng.spagobi.wapp.metadata.SbiMenuRole;
+import it.eng.spagobi.wapp.metadata.SbiMenuRoleId;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,18 +43,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
-
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.wapp.bo.Menu;
-import it.eng.spagobi.wapp.metadata.SbiMenu;
-import it.eng.spagobi.wapp.metadata.SbiMenuRole;
-import it.eng.spagobi.wapp.metadata.SbiMenuRoleId;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -429,8 +429,6 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 	/*
 	 * Import Menu
-	 *
-	 *
 	 */
 
 	@Override
@@ -504,6 +502,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 				SbiMenuRoleId id = new SbiMenuRoleId(hibMenu.getMenuId(), roles.get(k).getExtRoleId());
 				// SbiExtUserRoles useRole = new SbiExtUserRoles(id, us);
 				SbiMenuRole menuRole = new SbiMenuRole(id, hibMenu, roles.get(k));
+				this.updateSbiCommonInfo4Insert(menuRole);
 
 				tmpSession.save(menuRole);
 			}
