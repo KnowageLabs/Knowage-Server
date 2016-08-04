@@ -29,6 +29,7 @@ angular.module('olap_designer_toolbar')
 			const SCENARIO_NAME = "scenario";
 			this.template = {};
 			var olap={};
+			/*
 			var cubeName = "foodMart";
 			var mdxQueryObj = {
 					"mdxQuery":"SELECT {[Measures].[Unit Sales]} ON COLUMNS, {[Product]} ON ROWS FROM [Sales_V]",
@@ -95,7 +96,7 @@ angular.module('olap_designer_toolbar')
 			                      ]
 		    
 			console.log('Hello from OlapTemplateService');
-			
+			*/
 			
 			/*
 			 * 
@@ -647,7 +648,7 @@ angular.module('olap_designer_toolbar')
 			
 			 this.setOlapTag(olap);
 			 console.log(angular.toJson(this.template));
-			 
+			 /*
 			 
 			 var cubeSuccess = this.setCubeTag(cubeName);
 			 console.log("cubeSuccess "+ cubeSuccess);
@@ -705,5 +706,5 @@ angular.module('olap_designer_toolbar')
 			 console.log(angular.toJson(this.template));
 			 this.deleteCubeTag();
 			 console.log(angular.toJson(this.template));
-			 
+			 */
 		})
