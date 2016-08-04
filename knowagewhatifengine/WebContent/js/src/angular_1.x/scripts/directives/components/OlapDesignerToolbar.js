@@ -46,6 +46,12 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	$scope.toolbar = [];
 	
 	$scope.cubeList = [];
+	
+	var mdxQueryObj = {
+		     "mdxQuery":"SELECT {[Measures].[Unit Sales]} ON COLUMNS, {[Product]} ON ROWS FROM [Sales_V]",
+		     "clickables":[]
+	}
+	
 	/**
 	 * SCENARIO is the temporary object that will be bind to olapTemplate if the scenario is defined.
 	 */
@@ -156,6 +162,9 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 * Opens a new dialog for crossnav definition.
 	 */
 	$scope.openCrossNavWizard = function() {
+		
+		$scope.crossNavType = null;
+		
 		 $mdDialog
 		  .show({
 		   scope : $scope,
@@ -374,9 +383,27 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	$scope.saveCN = function(type) {
 		if(type == 'member'){
 			clickableArray.push($scope.crossNavfromMemberObj);
+			
+			console.log(clickableArray);
 		}else if (type == 'cell') {
 			parameter.push($scope.crossNavfromCellObj);
+			console.log(parameter);
 		}
+		if(type == 'member' && clickableArray.length > 0){
+			mdxQueryObj.clickables = clickableArray;
+			var success = OlapTemplateService.setMdxQueryTag(mdxQueryObj);
+			if(success){
+				console.log(OlapTemplateService.getTempateJson());
+			}
+			
+		}else if (type == 'cell' && parameter.length > 0) {
+			var success = OlapTemplateService.setCrossNavigationTag(parameter);
+			if(success){
+				console.log(OlapTemplateService.getTempateJson());
+			}
+			
+		}
+		 $scope.closeDialogOlapDesigner()
 	}
 	
 };
