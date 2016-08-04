@@ -77,6 +77,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	/**
 	 * Object that holds Nav from member
 	 */
+	var clickableArray = [];
 	$scope.crossNavfromMemberObj = {
 			"uniqueName" : "",
 			"clickParameter": {
@@ -84,16 +85,24 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 				"value":"{0}"
 			}
 	};
-	
+	var parameter = [];
 	$scope.crossNavfromCellObj = {
 			 "name":"",
-             "scope":"",
              "dimension":"",
              "hierarchy":"",
              "level":""
-			
 	};
+	$scope.cellForShowObj = {
+		"name":""	
+	}
 	
+	var formatCellNavigation = function() {
+		$scope.cellForShowObj.name = 'dimension='+$scope.selectedMember.dimension+' '+'hierarchy='+$scope.selectedMember.hierarchyUniqueName+' '+'level='+$scope.selectedMember.level;
+		$scope.crossNavfromCellObj.dimension = $scope.selectedMember.dimension;
+		$scope.crossNavfromCellObj.hierarchy = $scope.selectedMember.hierarchyUniqueName;
+		$scope.crossNavfromCellObj.level = $scope.selectedMember.level;
+		console.log($scope.crossNavfromCellObj);
+	}
 	/**
 	 * Opens a new dialog for what-if scenario.
 	 */
@@ -147,7 +156,6 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 * Opens a new dialog for crossnav definition.
 	 */
 	$scope.openCrossNavWizard = function() {
-		
 		 $mdDialog
 		  .show({
 		   scope : $scope,
@@ -177,19 +185,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		   hasBackdrop : false
 		  });
 		
-	};
-	
-	/**
-	 * Function that dynamically assign ng-model
-	 */
-	$scope.changeNgModel = function(type,input) {
-		if(type == 'member' && input == 'value'){
-			return "crossNavfromMemberObj.uniqueName";
-		}else if (type == 'member' && input == 'name'){
-			return "crossNavfromMemberObj.clickParameter.name";
-		} 
-	};
-		
+	};	
 	/**
 	 * Binds temporary scenario object to olap template object via service after validation check.
 	 */
@@ -348,5 +344,40 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	
 	
 
+	
+	$scope.enterSelectMode = function() {
+		
+		$mdDialog.hide();
+		toastr
+				.info(
+						'Click ok to finish selection<br /><br /><md-button class="md-raised">OK</md-button>',
+						{
+							allowHtml : true,
+							timeOut : 0,
+							extendedTimeOut : 0,
+
+							onTap : function() {
+								if($scope.crossNavType == 'member'){
+									$scope.crossNavfromMemberObj.uniqueName = $scope.selectedMember.uniqueName;
+								}else if ($scope.crossNavType == 'cell') {
+									formatCellNavigation();
+								}
+								
+								$scope.nextCNStep();
+								toastr.clear();
+
+							}
+
+						});
+	}
+	
+	$scope.saveCN = function(type) {
+		if(type == 'member'){
+			clickableArray.push($scope.crossNavfromMemberObj);
+		}else if (type == 'cell') {
+			parameter.push($scope.crossNavfromCellObj);
+		}
+	}
+	
 };
 

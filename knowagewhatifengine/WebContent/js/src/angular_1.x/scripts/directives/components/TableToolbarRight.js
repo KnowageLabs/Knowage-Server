@@ -62,7 +62,6 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.wiGridNeeded=false;
 	$scope.tableGridNeeded = true;
 	$scope.olapGridNeeded = true;
-	$scope.olapMode = false;
 	$scope.subObject ={
 			
 		name:"",

@@ -22,7 +22,8 @@ angular.module('member_directive',['sbiModule'])
 	        
 	        link: function (scope, $element, attrs) {
 	           
-	           
+	        	
+	        	
 	            for(var i =0;i< scope.members.length;i++){
 	            	if(scope.members[i].position===attrs.position&&scope.members[i].uniqueName===attrs.uniquename){
 	            		
@@ -45,14 +46,36 @@ angular.module('member_directive',['sbiModule'])
 	            
 	            var onClick = function($event,toaster){
 	            	
+	            	
+	            	if(scope.olapMode){
+	            		var className = $element[0].className;
+	            		
+	            		if( className == 'pivot-table-selected'){
+	            			$element[0].className = 'pivot-table th';
+	            		}else {
+	            			$element[0].className = 'pivot-table-selected';
+						}
+	            		
+	            		$event.preventDefault()
+		        	 	$event.stopPropagation();
+		        		 	scope.selectedMember.uniqueName = attrs.uniquename;
+				            scope.selectedMember.level = attrs.level;
+				            scope.selectedMember.dimension = attrs.dimensionuniquename;
+				            scope.selectedMember.parentMember = attrs.parentmember;
+				            scope.selectedMember.axisOrdinal = attrs.axisordinal;
+				            scope.selectedMember.hierarchyUniqueName = attrs.hierarchyuniquename;
+				            scope.selectedMember.position = attrs.position;
+				           
+	            	}
+	            	
 	            	if(scope.selectedAgument){
 	            		
-	            	
 
 	        	 	$event.preventDefault()
 	        	 	$event.stopPropagation();
 	        		 	scope.selectedMember.uniqueName = attrs.uniquename;
 			            scope.selectedMember.level = attrs.level;
+			            scope.selectedMember.dimension = attrs.dimensionuniquename;
 			            scope.selectedMember.parentMember = attrs.parentmember;
 			            scope.selectedMember.axisOrdinal = attrs.axisordinal;
 			            scope.selectedMember.hierarchyUniqueName = attrs.hierarchyuniquename;

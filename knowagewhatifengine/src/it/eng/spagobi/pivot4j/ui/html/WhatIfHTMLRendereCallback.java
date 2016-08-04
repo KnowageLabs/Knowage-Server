@@ -62,7 +62,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private Map<Integer, String> positionMeasureMap;
 	private boolean initialized = false;
 	private Map<String, Object> properties;
-	
+
 	public WhatIfHTMLRendereCallback(Writer writer) {
 		super(writer);
 		memberPositions = new HashMap<Member, Integer>();
@@ -70,7 +70,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		setRowHeaderLevelPadding(20);
 		properties = new HashMap<String, Object>();
 	}
-	
+
 	public Object getProperty(String key) {
 		return properties.get(key);
 	}
@@ -80,28 +80,30 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	}
 
 	/**
-	 * Translate the ordinal from the system of subsetted mdx to the system of the plain mdx cell set 
+	 * Translate the ordinal from the system of subsetted mdx to the system of
+	 * the plain mdx cell set
+	 *
 	 * @param ordinal
 	 * @return
 	 */
-	private int getOrdinalNoSubset(int ordinal){
-		Integer columnOffset =  (Integer) getProperty(PivotJsonHTMLSerializer.COLUMN_OFFSET);
+	private int getOrdinalNoSubset(int ordinal) {
+		Integer columnOffset = (Integer) getProperty(PivotJsonHTMLSerializer.COLUMN_OFFSET);
 		Integer rowOffset = (Integer) getProperty(PivotJsonHTMLSerializer.ROW_OFFSET);
 		Integer axisLength = (Integer) getProperty(PivotJsonHTMLSerializer.AXIS_LENGTH);
 		Integer axisSubsetLength = (Integer) getProperty(PivotJsonHTMLSerializer.SUBSET_AXIS_LENGTH);
-		
-		int rowNumber = rowOffset+ Math.abs(ordinal/axisSubsetLength);
-		int columnNumber = columnOffset+ordinal%axisSubsetLength;
-		
-		//translate on rows
-		ordinal = axisLength*rowNumber;
-		
-		//translate on columns
+
+		int rowNumber = rowOffset + Math.abs(ordinal / axisSubsetLength);
+		int columnNumber = columnOffset + ordinal % axisSubsetLength;
+
+		// translate on rows
+		ordinal = axisLength * rowNumber;
+
+		// translate on columns
 		ordinal = ordinal + columnNumber;
-		
+
 		return ordinal;
 	}
-	
+
 	@Override
 	protected Map<String, String> getCellAttributes(TableRenderContext context) {
 
@@ -127,7 +129,6 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			// String memberUniqueName = context.getMember().getUniqueName();
 			if (context.getCell().getValue() != null && context.getCell().getFormattedValue() != null) {
 				double dd = Double.parseDouble(context.getCell().getValue().toString());
-
 				String formatedValue = context.getCell().getFormattedValue();
 				// if (formatedValue.contains("style")) {
 				String style;
@@ -160,13 +161,13 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			String uniqueName = context.getMember().getUniqueName();
 			String level = context.getMember().getLevel().getUniqueName();
 			String dimensionType = null;
+			String dimensionUniqueName = context.getMember().getDimension().getName();
 			String hierarchyUniqueName = context.getMember().getHierarchy().getUniqueName();
 			String position = context.getPosition().getMembers().toString();
 			try {
 				dimensionType = context.getMember().getDimension().getDimensionType().xmlaName();
 			} catch (OlapException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
 			}
 			String parentMember = null;
 
@@ -182,6 +183,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			// uniqueName + "','" + axis + "')");
 
 			attributes.put("axisOrdinal", String.valueOf(axisOrdinal));
+			attributes.put("dimensionUniqueName", dimensionUniqueName);
 			attributes.put("dimensionType", dimensionType);
 			attributes.put("parentMember", parentMember);
 			attributes.put("uniqueName", uniqueName);
@@ -201,7 +203,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 		if (!isEmptyNonPropertyCell(context)) {
 			if (context.getCellType() == CellTypes.VALUE && context.getCell() != null) {
-				
+
 				if (context.getRenderer().getEnableDrillThrough()) {
 
 					// Map<String, String> attributes = new TreeMap<String,
@@ -412,8 +414,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					if (d != 0) {
 						context.getMember();
 						attributes.put("src", "../img/arrow-up.png");
-						attributes.put("ng-click", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','"
-								+ context.getHierarchy().getUniqueName() + "' )");
+						attributes.put("ng-click",
+								"drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + context.getHierarchy().getUniqueName() + "' )");
 						startElement("img", attributes);
 						endElement("img");
 					}
@@ -622,8 +624,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					attributes.put("src", "../img/noSortColumns.png");
 				}
 
-				attributes.put("ng-click", "sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString()
-						+ "' ); $event.stopPropagation();");
+				attributes.put("ng-click",
+						"sort(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' ); $event.stopPropagation();");
 
 				startElement("img", attributes);
 				endElement("img");

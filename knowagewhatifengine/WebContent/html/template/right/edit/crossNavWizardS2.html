@@ -15,23 +15,41 @@ For example: suppose you want to create a parameter on dimension="Product" hiera
 
    </p>
    
-   <div layout="row" layout-wrap>
+   <div layout="row" layout-wrap ng-if="crossNavType == 'cell'">
 						<div flex=100>
 							<md-input-container class="md-block">
 							<label>Member Name</label>
-							<input ng-model="changeNgModel(crossNavType,'value')"> 
+							<input ng-model="cellForShowObj.name"> 
+							</md-input-container>
+						</div>
+	</div>
+   
+   <div layout="row" layout-wrap ng-if="crossNavType == 'member'">
+						<div flex=100>
+							<md-input-container class="md-block">
+							<label>Member Name</label>
+							<input ng-model="crossNavfromMemberObj.uniqueName"> 
 							</md-input-container>
 						</div>
 	</div>
 	
-	<md-button class="md-raised" ng-click="enterSelectMode($index,argument)" style="float: right;">
+	<md-button class="md-raised" ng-click="enterSelectMode()" style="float: right;">
        Select from table
      </md-button>
-   <div layout="row" layout-wrap>
+   <div layout="row" layout-wrap ng-if="crossNavType == 'cell'">
 						<div flex=100>
 							<md-input-container class="md-block">
 							<label>Parameter Name</label>
-							<input ng-model="changeNgModel(crossNavType,'name')"> 
+							<input ng-model="crossNavfromCellObj.name"> 
+							</md-input-container>
+						</div>
+	</div>
+	
+	  <div layout="row" layout-wrap ng-if="crossNavType == 'member'">
+						<div flex=100>
+							<md-input-container class="md-block">
+							<label>Parameter Name</label>
+							<input ng-model="crossNavfromMemberObj.clickParameter.name"> 
 							</md-input-container>
 						</div>
 	</div>
@@ -39,7 +57,7 @@ For example: suppose you want to create a parameter on dimension="Product" hiera
  	</div>
 	</md-content>
     <md-dialog-actions layout="row">
-    	<md-button ng-click="saveCN()" class="md-raised"  md-autofocus>
+    	<md-button ng-click="saveCN(crossNavType)" class="md-raised"  md-autofocus>
        Finish
       </md-button>
       <md-button ng-click="closeDialog()" class="md-raised" style="margin-right:20px;" >

@@ -108,6 +108,8 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 	$scope.modelConfig;
 	$scope.filterDialogToolbarName;
+	// flag for showing olap designer specific stuff
+	$scope.olapMode = false;
 
 	$scope.showSiblings = true;
 	$scope.sortingSetting;

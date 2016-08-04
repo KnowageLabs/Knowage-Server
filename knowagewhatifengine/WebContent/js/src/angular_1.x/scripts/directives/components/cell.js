@@ -17,7 +17,7 @@
  */
 
 angular.module('cell_directive',[])
-	.directive('cell', function () {
+	.directive('cell', function (sbiModule_restServices,sbiModule_messaging) {
 	    return {
 	        restrict: 'A',
 	        link: function (scope, element, attrs) {
