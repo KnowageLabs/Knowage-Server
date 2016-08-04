@@ -40,6 +40,11 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
 		toastr, $cookies, sbiModule_docInfo, sbiModule_config) {
 	
+	/**
+	 * TOOLBAR is the array of button objects to send to olap template object.
+	 */
+	$scope.toolbar = [];
+	
 	$scope.cubeList = [];
 	/**
 	 * SCENARIO is the temporary object that will be bind to olapTemplate if the scenario is defined.
@@ -288,6 +293,58 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 			$scope.scenario.variables.splice(index, 1);
 			console.log($scope.scenario.variables);
 	 }
+	 
+	 /**
+	  * Opens dialog with table of buttons to be selected as visible, and checked.
+	  */
+	 $scope.openButtonWizard = function() {
+		 $scope.toolbar = $scope.buttons;
+		 $mdDialog
+			.show({
+				scope : $scope,
+				preserveScope : true,
+				parent : angular.element(document.body),
+				controllerAs : 'olapDesignerCtrl',
+				templateUrl : sbiModule_config.contextName + '/html/template/right/edit/olapDesignerButtonsWizard.html',
+				clickOutsideToClose : false,
+				hasBackdrop : false
+			});
+	 }
+	 
+	 /**
+	  * Calls service to bind temporary buttons object to olap template object.
+	  */
+	 $scope.saveTemplateButtons = function() {
+		 console.log($scope.toolbar)
+	 }
+	 
+	 /**
+	  * Defining columns property for angular table with id="olapDesignerButtonsList"
+	  */
+	 $scope.olapDesignerButtonsColumns = [
+                                          {
+                                              label:"Label",
+                                              name:"name",
+                                              size:"200px"
+                                          },
+                                          {
+                                              label:"Visible",
+                                              name:"visible",
+                                              hideTooltip:true,
+                                              transformer:function(){
+                                                  return " <md-checkbox ng-model='row.visible' aria-label='buttonVisible'></md-checkbox>";
+                                              }
+                                          },
+                                          {
+                                              label:"Clicked",
+                                              name:"clicked",
+                                              hideTooltip:true,
+                                              transformer:function(){
+                                                  return " <md-checkbox ng-model='row.clicked' aria-label='buttonClicked'></md-checkbox>";
+                                              }
+                                          }
+                                          
+                                          ]
 	
 	
 

@@ -1,0 +1,31 @@
+<md-dialog style='width:50%;'>
+    
+   <md-toolbar class="knowage-blue dialog-toolbar">
+   		<h2 flex="flex" class="md-title">Buttons Wizard</h2>
+   </md-toolbar>
+   
+   <md-content>
+   
+   		   <angular-table
+						layout-fill
+						id="olapDesignerButtonsList"
+						ng-model="toolbar"
+						columns='olapDesignerButtonsColumns'
+						show-search-bar=false
+						highlights-selected-item=false
+						click-function="loadSelectedDataSource(item)"
+						no-pagination=true
+					>
+			</angular-table>	   
+	   
+   </md-content>
+
+    <md-dialog-actions layout="row">
+     <md-button ng-click="saveTemplateButtons()" class="md-raised"  md-autofocus>
+        Save
+      </md-button>
+      <md-button ng-click="closeDialogOlapDesigner()" class="md-raised" style="margin-right:20px;" >
+       Cancel
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>
