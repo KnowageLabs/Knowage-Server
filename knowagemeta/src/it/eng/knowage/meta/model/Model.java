@@ -18,9 +18,12 @@
 package it.eng.knowage.meta.model;
 
 import it.eng.knowage.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.business.BusinessView;
 import it.eng.knowage.meta.model.olap.OlapModel;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
+
+import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 
@@ -135,5 +138,7 @@ public interface Model extends ModelObject {
 	ModelPropertyCategory getPropertyCategory(String name);
 
 	DataSource getDataSource();
+
+	List<BusinessView> getBusinessViews();
 
 } // Model

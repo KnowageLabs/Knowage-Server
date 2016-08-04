@@ -136,18 +136,20 @@ function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate
 function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,metaModelServices){
 	$scope.selectedBusinessModel = {};
 	$scope.currentBusinessModelParameterCategories = [];
-	$scope.tmpBMWatcher={};
+	var pendingRefresh=0;
 	$scope.$watch(function() {
-		var tmpSBM = {};
-		angular.copy($scope.selectedBusinessModel, tmpSBM);
-		delete tmpSBM.$parent;
-		return tmpSBM;
+		return $scope.selectedBusinessModel;
 	}, function(newValue, oldValue) {
-		if (!angular.equals(newValue, oldValue)) {
-			angular.copy(newValue,$scope.tmpBMWatcher);
+		if (!(angular.equals(newValue, oldValue) && newValue.expanded==oldValue.expanded)) {
+			pendingRefresh++;
 			$timeout(function(){
-				if(angular.equals(newValue,$scope.tmpBMWatcher)){
-					$scope.businessModelTreeInterceptor.refreshTree();
+				pendingRefresh--;
+				if(pendingRefresh==0){
+					if($scope.selectedBusinessModel.hasOwnProperty("joinRelationships")){
+						$scope.businessViewTreeInterceptor.refreshTree();
+					}else{
+						$scope.businessModelTreeInterceptor.refreshTree();
+					}
 				}
 			},500);
 		}
@@ -234,7 +236,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 		$mdDialog.show({
 			controller: addBusinessViewController,
 			preserveScope: true,
-			locals: {businessModel:$scope.meta.businessModels, originalPhysicalModel: $scope.meta.physicalModels,selectedBusinessModel: $scope.selectedBusinessModel,editMode:editMode},
+			locals: { originalPhysicalModel: $scope.meta.physicalModels,selectedBusinessModel: $scope.selectedBusinessModel,editMode:editMode},
 			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addBusinessView.jsp',
 			clickOutsideToClose:false,
 			escapeToClose :false,

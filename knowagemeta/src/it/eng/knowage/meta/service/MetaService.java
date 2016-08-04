@@ -21,16 +21,13 @@ import it.eng.knowage.meta.exception.KnowageMetaException;
 import it.eng.knowage.meta.generator.jpamapping.JpaMappingJarGenerator;
 import it.eng.knowage.meta.initializer.BusinessModelInitializer;
 import it.eng.knowage.meta.initializer.PhysicalModelInitializer;
-import it.eng.knowage.meta.initializer.descriptor.BusinessRelationshipDescriptor;
 import it.eng.knowage.meta.initializer.descriptor.BusinessViewInnerJoinRelationshipDescriptor;
 import it.eng.knowage.meta.initializer.descriptor.CalculatedFieldDescriptor;
-import it.eng.knowage.meta.initializer.properties.BusinessModelPropertiesFromFileInitializer;
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelFactory;
 import it.eng.knowage.meta.model.ModelPropertyType;
 import it.eng.knowage.meta.model.business.BusinessColumn;
 import it.eng.knowage.meta.model.business.BusinessColumnSet;
-import it.eng.knowage.meta.model.business.BusinessIdentifier;
 import it.eng.knowage.meta.model.business.BusinessModel;
 import it.eng.knowage.meta.model.business.BusinessModelFactory;
 import it.eng.knowage.meta.model.business.BusinessRelationship;
@@ -312,16 +309,16 @@ public class MetaService extends AbstractSpagoBIResource {
 				bm.addBusinessView(bw);
 				bw.setDescription(json.optString("description"));
 
-				BusinessTable sourceBusinessClass = bm.getBusinessTableByUniqueName(json.getString("sourceBusinessClass"));
+				// BusinessTable sourceBusinessClass = bm.getBusinessTableByUniqueName(json.getString("sourceBusinessClass"));
 
 				// Adding source table only if it has not been selected
 				JSONArray physicaltables = json.getJSONArray("physicaltable");
-				boolean addSourceTable = true;
+				// boolean addSourceTable = true;
 				for (int i = 0; i < physicaltables.length(); i++) {
 					String ptName = physicaltables.getString(i);
-					if (ptName.equals(sourceBusinessClass.getPhysicalTable().getName())) {
-						addSourceTable = false;
-					}
+					// if (ptName.equals(sourceBusinessClass.getPhysicalTable().getName())) {
+					// addSourceTable = false;
+					// }
 					PhysicalTable pt = physicalModel.getTable(ptName);
 					bw.getPhysicalTables().add(pt);
 
@@ -330,39 +327,39 @@ public class MetaService extends AbstractSpagoBIResource {
 						businessModelInitializer.addColumn(ptcol.get(pci), bw);
 					}
 				}
-				if (addSourceTable) {
-					physicaltables.put(sourceBusinessClass.getPhysicalTable().getName());
-				}
+				// if (addSourceTable) {
+				// physicaltables.put(sourceBusinessClass.getPhysicalTable().getName());
+				// }
 
 				// Copy relationships
-				Iterator<BusinessRelationship> sourceRelIterator = sourceBusinessClass.getRelationships().iterator();
-				BusinessModelFactory.eINSTANCE.createBusinessRelationship();
-				while (sourceRelIterator.hasNext()) {
-					BusinessRelationship sourceRel = sourceRelIterator.next();
-					String relationshipName = sourceRel.getName();
-					BusinessColumnSet source = null;
-					if (sourceRel.getSourceTable().getUniqueName().equals(sourceBusinessClass.getUniqueName())) {
-						source = bw;
-					} else {
-						source = sourceRel.getSourceTable();
-					}
-					BusinessColumnSet destination = null;
-					if (sourceRel.getDestinationTable().getUniqueName().equals(sourceBusinessClass.getUniqueName())) {
-						destination = bw;
-					} else {
-						destination = sourceRel.getDestinationTable();
-					}
-					ModelPropertyType cardinalityType = sourceRel.getPropertyType(BusinessModelPropertiesFromFileInitializer.RELATIONSHIP_CARDINALITY);
-					String cardinality = sourceRel.getProperties().get(cardinalityType.getId()).getValue();
-					List<BusinessColumn> destinationCol = sourceRel.getDestinationColumns();
-					List<BusinessColumn> sourceCol = sourceRel.getSourceColumns();
-					businessModelInitializer.addRelationship(new BusinessRelationshipDescriptor(source, destination, sourceCol, destinationCol, cardinality,
-							relationshipName));
-				}
-
-				// Add identifiers
-				BusinessIdentifier identifier = sourceBusinessClass.getIdentifier();
-				businessModelInitializer.addIdentifier(identifier.getName(), bw, identifier.getColumns());
+				// Iterator<BusinessRelationship> sourceRelIterator = sourceBusinessClass.getRelationships().iterator();
+				// BusinessModelFactory.eINSTANCE.createBusinessRelationship();
+				// while (sourceRelIterator.hasNext()) {
+				// BusinessRelationship sourceRel = sourceRelIterator.next();
+				// String relationshipName = sourceRel.getName();
+				// BusinessColumnSet source = null;
+				// if (sourceRel.getSourceTable().getUniqueName().equals(sourceBusinessClass.getUniqueName())) {
+				// source = bw;
+				// } else {
+				// source = sourceRel.getSourceTable();
+				// }
+				// BusinessColumnSet destination = null;
+				// if (sourceRel.getDestinationTable().getUniqueName().equals(sourceBusinessClass.getUniqueName())) {
+				// destination = bw;
+				// } else {
+				// destination = sourceRel.getDestinationTable();
+				// }
+				// ModelPropertyType cardinalityType = sourceRel.getPropertyType(BusinessModelPropertiesFromFileInitializer.RELATIONSHIP_CARDINALITY);
+				// String cardinality = sourceRel.getProperties().get(cardinalityType.getId()).getValue();
+				// List<BusinessColumn> destinationCol = sourceRel.getDestinationColumns();
+				// List<BusinessColumn> sourceCol = sourceRel.getSourceColumns();
+				// businessModelInitializer.addRelationship(new BusinessRelationshipDescriptor(source, destination, sourceCol, destinationCol, cardinality,
+				// relationshipName));
+				// }
+				//
+				// // Add identifiers
+				// BusinessIdentifier identifier = sourceBusinessClass.getIdentifier();
+				// businessModelInitializer.addIdentifier(identifier.getName(), bw, identifier.getColumns());
 
 			}
 			List<BusinessViewInnerJoinRelationshipDescriptor> innerJoinRelationshipDescriptors = new ArrayList<>();

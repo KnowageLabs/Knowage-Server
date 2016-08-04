@@ -97,14 +97,9 @@
 			
 			<md-tab id="attributesTab" md-active="tabResource.selectedBusinessTab=='attributesTab'" md-on-select="tabResource.selectedBusinessTab='attributesTab'" label="{{translate.load('sbi.generic.attributes')}}" ng-if="selectedBusinessModel.columns!=undefined">
 				<md-content  ng-if="tabResource.selectedBusinessTab=='attributesTab'" layout  layout-fill ng-controller="businessModelAttributeController">
-					<angular-table  id="bmAttr" ng-model="attributesList"
-					 columns="selectedBusinessModelAttributes" scope-functions="selectedBusinessModelAttributesScopeFunctions" no-pagination=true flex>
-					 	</angular-table>
-<!-- 					<angular-table id="bmAttr" ng-model="selectedBusinessModel.simpleBusinessColumns" -->
-<!-- 					 columns="selectedBusinessModelAttributes" scope-functions="selectedBusinessModelAttributesScopeFunctions" no-pagination=true flex> -->
-<!-- 					 	</angular-table> -->
+					<angular-table  id="bmAttr" ng-model="attributesList" columns="selectedBusinessModelAttributes" scope-functions="selectedBusinessModelAttributesScopeFunctions" no-pagination=true flex>
+					 </angular-table>
 				</md-content>
-				
 			</md-tab>
 			
 			<md-tab id="calculatedColumnsTab" md-active="tabResource.selectedBusinessTab=='calculatedColumnsTab'" md-on-select="tabResource.selectedBusinessTab='calculatedColumnsTab'" label="{{translate.load('sbi.meta.business.calculatedField')}}" ng-if="selectedBusinessModel.calculatedBusinessColumns!=undefined">

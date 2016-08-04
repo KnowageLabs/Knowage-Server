@@ -21,15 +21,19 @@ import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelPackage;
 import it.eng.knowage.meta.model.ModelPropertyCategory;
 import it.eng.knowage.meta.model.ModelPropertyType;
+import it.eng.knowage.meta.model.business.BusinessColumnSet;
 import it.eng.knowage.meta.model.business.BusinessModel;
 import it.eng.knowage.meta.model.business.BusinessModelPackage;
+import it.eng.knowage.meta.model.business.BusinessView;
 import it.eng.knowage.meta.model.olap.OlapModel;
 import it.eng.knowage.meta.model.olap.OlapModelPackage;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalModelPackage;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
@@ -53,13 +57,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * <li>{@link it.eng.knowage.meta.model.impl.ModelImpl#getPropertyCategories <em>Property Categories</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @generated
  */
 public class ModelImpl extends ModelObjectImpl implements Model {
 	/**
 	 * The cached value of the '{@link #getPhysicalModels() <em>Physical Models</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getPhysicalModels()
 	 * @generated
 	 * @ordered
@@ -68,7 +72,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * The cached value of the '{@link #getBusinessModels() <em>Business Models</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getBusinessModels()
 	 * @generated
 	 * @ordered
@@ -77,7 +81,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * The cached value of the '{@link #getOlapModels() <em>Olap Models</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getOlapModels()
 	 * @generated
 	 * @ordered
@@ -86,7 +90,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * The cached value of the '{@link #getPropertyTypes() <em>Property Types</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getPropertyTypes()
 	 * @generated
 	 * @ordered
@@ -96,7 +100,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 	/**
 	 * The cached value of the '{@link #getPropertyCategories() <em>Property Categories</em>}' containment reference list. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @see #getPropertyCategories()
 	 * @generated
 	 * @ordered
@@ -105,7 +109,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	protected ModelImpl() {
@@ -114,7 +118,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -124,7 +128,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -139,7 +143,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -154,7 +158,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -168,7 +172,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -181,7 +185,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -194,7 +198,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -213,7 +217,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -235,7 +239,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -257,7 +261,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -290,7 +294,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -317,7 +321,7 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -359,6 +363,21 @@ public class ModelImpl extends ModelObjectImpl implements Model {
 		dataSource.setHibDialectClass("");
 		dataSource.setHibDialectName("");
 		return dataSource;
+	}
+
+	@Override
+	public List<BusinessView> getBusinessViews() {
+		List<BusinessView> views = new ArrayList<BusinessView>();
+		EList<BusinessColumnSet> tbs = getBusinessModels().get(0).getTables();
+		if (tbs != null) {
+			for (BusinessColumnSet businessColumnSet : tbs) {
+				if (businessColumnSet instanceof BusinessView) {
+					BusinessView bv = (BusinessView) businessColumnSet;
+					views.add(bv);
+				}
+			}
+		}
+		return views;
 	}
 
 } // ModelImpl

@@ -2,9 +2,9 @@
  *
  */
 
-function addBusinessViewController($scope,sbiModule_restServices,sbiModule_translate,originalPhysicalModel,businessModel,metaModelServices,$mdDialog,selectedBusinessModel,editMode){
+function addBusinessViewController($scope,sbiModule_restServices,sbiModule_translate,originalPhysicalModel,metaModelServices,$mdDialog,selectedBusinessModel,editMode){
 	$scope.translate=sbiModule_translate;
-	$scope.businessModel=businessModel;
+//	$scope.businessModel=businessModel;
 	$scope.physicalModel=[];
 	angular.copy(originalPhysicalModel,$scope.physicalModel);
 	$scope.tmpBnssView={physicalModels:[]};
