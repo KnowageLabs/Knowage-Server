@@ -436,7 +436,7 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 			);
 	};
 	
-	debugger;
+	//debugger;
 	//Create a dialog containing an updating bar
 	$scope.showDialogUpdating = function (){
 		var parentEl = angular.element(document.body);
