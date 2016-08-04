@@ -41,7 +41,7 @@
 	<extra-list-button>
 		<md-menu>
 			<md-button aria-label="Create" class="md-fab" ng-click="$mdOpenMenu($event)">
-			  <md-icon md-menu-origin  md-font-icon="fa fa-plus" class="md-primary"></md-icon>
+			  <md-icon md-menu-origin  md-font-icon="fa fa-bars" class="md-primary"></md-icon>
 			</md-button>
 			<md-menu-content width="4">
 			  <md-menu-item>

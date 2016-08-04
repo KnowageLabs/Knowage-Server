@@ -52,10 +52,20 @@
 					<div layout="column" flex>
 						<div layout="row">
 							<div layout="row" flex >
-				   				 <md-button class="md-raised" flex aria-label="{{func.name}}" ng-repeat="func in functions" ng-click="addFunc(func)">{{func.label}}</md-button>
+				   				 <md-button class="md-raised" flex aria-label="{{func.name}}" ng-repeat="func in functions" ng-click="addFunc(func)">
+				   				 	{{func.label}}
+				   				 	<md-tooltip md-delay=700>
+							        	{{func.name}}
+							        </md-tooltip>
+				   				 </md-button>
 				   			</div>
 				   			<div layout="row" flex>
-				   				 <md-button class="md-raised" flex aria-label="{{func.name}}" ng-repeat="func in dateFunctions" ng-click="addFunc(func)">{{func.label}}</md-button>
+				   				 <md-button class="md-raised" flex aria-label="{{func.name}}" ng-repeat="func in dateFunctions" ng-click="addFunc(func)">
+				   				 	{{func.label}}
+				   				 	<md-tooltip md-delay=700>
+							        	{{func.name}}
+							        </md-tooltip>
+				   				 </md-button>
 				   			</div>
 						</div>
 						<textarea flex ng-model="calcField.expression"  rows=4  md-select-on-focus></textarea>
