@@ -83,7 +83,8 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 					$scope.currentObjects = data.currentObjects;
 					$scope.exportedObjects = data.exportedObjects;
 					$scope.menu = data.menu;
-					if($scope.checkRole() && $scope.checkObjects()){
+					//if($scope.checkRole() && $scope.checkObjects()){
+					if($scope.checkObjects()){
 						//if role is not present stop the import.
 						$scope.currentMenu = data.currentMenu;
 						$scope.parseToTree($scope.menu,$scope.tree);
