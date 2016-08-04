@@ -225,7 +225,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiObjects hibBIObject = (SbiObjects) aSession.load(SbiObjects.class, biObjectID);
+			SbiObjects hibBIObject = (SbiObjects) aSession.get(SbiObjects.class, biObjectID);
 			if (hibBIObject != null) {
 				toReturn = toBIObject(hibBIObject, aSession);
 			} else {
@@ -1456,7 +1456,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		// create empty biobject
 		BIObject aBIObject = new BIObject();
 		// set type (type code and id)
-		aBIObject.setBiObjectTypeCode(hibBIObject.getObjectTypeCode());
+		if (hibBIObject.getObjectTypeCode() != null) {
+			aBIObject.setBiObjectTypeCode(hibBIObject.getObjectTypeCode());
+		}
 		if (hibBIObject.getObjectType() != null) {
 			aBIObject.setBiObjectTypeID(hibBIObject.getObjectType().getValueId());
 		}
