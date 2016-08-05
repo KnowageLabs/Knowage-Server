@@ -32,7 +32,7 @@ angular.module('filter_panel',['sbiModule'])
 	}
 });
 
-function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate) {
+function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_docInfo, toastr ) {
 	
 	var visibleSelected = [];
 	var visibleSelectedTracker = [];
@@ -44,6 +44,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	var selectedFlag = false;
 	
 	var cutArray = [12, 11, 10, 9, 6]; //array with maximum lengths for card
+	 
+	
 	
 	var typeMsgWarn =sbiModule_translate.load('sbi.common.warning');
 	$scope.loadingFilter = true;
@@ -53,6 +55,13 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$scope.sendMdxQuery('null');
 		
 	});
+	
+	// for designer parameters binding
+	$scope.adParams=[];
+	$scope.profileAttributes=[];
+	$scope.lastSelectedFilter=undefined;
+	$scope.bindMode=false;
+	
 	
 	
 	$scope.clearLoadedData = function(name){
@@ -268,6 +277,28 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	//selecting filter (old selected filter is saved in order to leave interface consistent if user decide to cancel selection)
 	$scope.selectFilter = function(item){
+		console.log(item);
+	     
+		if($scope.bindEnabled){
+			$scope.lastSelectedFilter=item; 
+			$scope.bindMode=true;
+			toastr
+			.info(
+					'Select parameter you want to bind <br /><br /><md-button class="md-raised">OK</md-button>',
+					{
+						allowHtml : true,
+						timeOut : 0,
+						extendedTimeOut : 0,
+
+						onTap : function() {
+							$scope.bindMode=false;
+							toastr.clear();
+
+						}
+
+					});
+		}
+		
 		selectedFlag = true;
 		oldSelectedFilter = angular.copy($scope.filterSelected[$scope.filterAxisPosition]);//ex:$scope.filterAxisPosition
 		h = $scope.filterCardList[$scope.filterAxisPosition].uniqueName;
@@ -314,6 +345,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			'multi':false
 		};
 		
+		console.log(toSend);
+		
 		if(filterFather != undefined && m!= undefined){
 			var encoded = encodeURI('1.0/hierarchy/slice?SBI_EXECUTION_ID='+ JSsbiExecutionID);
 			sbiModule_restServices.promisePost
@@ -347,8 +380,33 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		
 	//Called when checkbox is clicked in row/column on front end
 	$scope.checkboxSelected = function(data){
+		
 		data.visible = !data.visible;
+		
+		console.log(data);
 		if(data.visible){
+			
+			if($scope.bindEnabled){
+				$scope.lastSelectedFilter=data; 
+				$scope.bindMode=true;
+				toastr
+				.info(
+						'Select parameter you want to bind <br /><br /><md-button class="md-raised">OK</md-button>',
+						{
+							allowHtml : true,
+							timeOut : 0,
+							extendedTimeOut : 0,
+
+							onTap : function() {
+								$scope.bindMode=false;
+								toastr.clear();
+
+							}
+
+						});
+			}
+			
+			
 			visibleSelected.push(data);
 		}
 		else{
@@ -593,6 +651,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		
 		
 	};
+	
+
 
 	//Dynamic setting for number of visible elements in filter/row/column axis without scroll buttons
 	//depends on size of actual html elements
@@ -605,5 +665,61 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$scope.numVisibleFilters = Math.round(faw/200);
 
 	};
+	
+	$scope.loadAnalyticalDrivers= function(){
+		   
+		   sbiModule_restServices
+			.alterContextPath(sbiModule_config.externalBasePath);
+		   sbiModule_restServices.promiseGet("1.0/documents/",
+					sbiModule_docInfo.label+"/parameters")
+					.then(
+							function(response) {
+							     console.log(response.data);
+							     $scope.adParams=[];
+							     $scope.adParams=response.data.results;
+							     
+							     for (var i = 0; i < $scope.adParams.length; i++) {
+									$scope.adParams[i].replace = '';
+									$scope.adParams[i].bindObj= null;
+								}
+							    
+							},
+							function(response) {
+								
+							});
+		   
+		   
+		   
+	   }
+	   
+	   
+	   $scope.loadAnalyticalDrivers();
+	   
+	   $scope.loadProfileAttributes= function (){
+		   
+		   sbiModule_restServices
+			.alterContextPath(sbiModule_config.externalBasePath);
+		   sbiModule_restServices.promiseGet("2.0/attributes", "")
+					.then(
+							function(response) {
+								
+							     
+							    $scope.profileAttributes= response.data;
+							    
+							    for (var i = 0; i < $scope.profileAttributes.length; i++) {
+									$scope.profileAttributes[i].replace = '';
+									$scope.profileAttributes[i].bindObj= null;
+								}
+							    
+							    
+							},
+							function(response) {
+								
+							});
+		   
+	   }
+	   
+	   $scope.loadProfileAttributes();
+	
 };
 })();

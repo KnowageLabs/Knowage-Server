@@ -37,5 +37,6 @@ angular.module('olap.directives', [
                                    'drill_down_command_directive',
                                    'drill_up_command_directive',
                                    'olap_designer',
-                                   'olap_designer_toolbar'
+                                   'olap_designer_toolbar',
+                                   'filters_parameters_list'
                                    ]);

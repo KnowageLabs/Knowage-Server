@@ -16,6 +16,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/OlapLeftToolbarPlusMain.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/TreeDeeperLevels.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/TreeFirstLevel.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/FilterParametersList.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/LeftPanel.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/SideNavigation.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/scripts/directives/components/TableToolbarRight.js"></script>
