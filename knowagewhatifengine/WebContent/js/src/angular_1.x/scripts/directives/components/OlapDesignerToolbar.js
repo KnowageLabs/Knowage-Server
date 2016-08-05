@@ -429,9 +429,19 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	  * Sends final template json to beckend.
 	  */
 	 $scope.sendOlapJsonTemplate = function() {
-		
-		 OlapTemplateService.setMDXMondrianQueryTag( $scope.showMdxVar);
-		 //to be done: call service for sending the json
+		 
+		 OlapTemplateService.setMDXMondrianQueryTag($scope.showMdxVar);
+		 sbiModule_restServices.alterContextPath("/knowage");
+		 console.log(sbiModule_config.externalBasePath)
+		 sbiModule_restServices.promisePost("1.0/documents/",sbiModule_docInfo.id+'/saveOlapTemplate', OlapTemplateService.getTempateJson())
+			.then(function(response) {
+				console.log("[POST]: SUCCESS!");
+				sbiModule_messaging.showSuccessMessage("XML template successfully created", 'Success');
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			});
+		 
+		 
 	 }
 	
 	
