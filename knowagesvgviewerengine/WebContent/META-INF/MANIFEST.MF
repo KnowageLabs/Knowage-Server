@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: KnowageSVGViewerEngine.war
 Implementation-Title: KnowageSVGViewerEngine
-Implementation-Version: 1.0
+Implementation-Version: 1.3.0
 
