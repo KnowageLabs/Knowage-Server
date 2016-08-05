@@ -59,6 +59,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
@@ -360,6 +361,40 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+	
+	@POST
+	@Path("/{docID}/saveOlapTemplate")
+	@Produces(MediaType.TEXT_XML)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String saveOlapTemplate(@PathParam("docID")String docId) {
+		String xml = null;
+		JSONObject json;
+		
+			 try {
+				json = RestUtilities.readBodyAsJSONObject(getServletRequest());
+				xml = JSONTemplateUtilities.convertJsonToXML(json);
+				
+
+			} catch ( JSONException e) {
+				String errorMessage = e.getMessage().replace(": Couldn't read request body", "");
+				throw new SpagoBIRuntimeException(errorMessage);
+			} catch (IOException e) {
+				String errorMessage = e.getMessage().replace(": Couldn't read request body", "");
+				throw new SpagoBIRuntimeException(errorMessage);
+			} catch (ParserConfigurationException e) {
+				String errorMessage = e.getMessage().replace(": Error while parsing json to xml", "");
+				throw new SpagoBIRuntimeException(errorMessage);
+			}
+
+			
+
+		
+			 saveTemplate(docId, xml);
+
+		
+
+		return xml;
 	}
 
 	@SuppressWarnings("unused")
