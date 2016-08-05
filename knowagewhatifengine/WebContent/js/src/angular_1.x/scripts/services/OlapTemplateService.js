@@ -29,78 +29,6 @@ angular.module('olap_designer_toolbar')
 			const SCENARIO_NAME = "scenario";
 			this.template = {};
 			var olap={};
-			/*
-			var cubeName = "foodMart";
-			var mdxQueryObj = {
-					"mdxQuery":"SELECT {[Measures].[Unit Sales]} ON COLUMNS, {[Product]} ON ROWS FROM [Sales_V]",
-					"clickables":[
-					             {
-					            	 "uniqueName":"[Product].[Product Family]",
-					                 "clickParameter":{"name":"ParProdFamily","value":"{0}"}
-					             },
-					             {
-					            	 "uniqueName":"[Product].[Product Name]",
-					                 "clickParameter":{"name":"ParProdFamily","value":"{0}"}
-					             }
-					             
-					             
-					             ]
-			
-					
-			
-					
-			};
-			var MDXMondrianQuery = "SELECT {[Measures].[Unit Sales]} ON COLUMNS, {[Product]} ON ROWS FROM [Sales_V]";
-			var scenario =  {
-				     
-				      "editCube": "Sales_Edit",
-				      
-				      "measures": [{"name":"Store Sales"},{"name":"Store Cost"}]
-				       
-				      ,
-				      "variables": [
-				        {
-				          "name": "var",
-				          "value": "5"
-				        },
-				        {
-				          "name": "PD",
-				          "value": "[Product].[Drink.Dairy]",
-				          "type": "string"
-				        }
-				      ]
-				    }
-			
-			var crossNavigation = 
-		                [
-		                    {
-		                    "name":"family",
-		                    "scope":"relative",
-		                    "dimension":"Product",
-		                    "hierarchy":"[Product]",
-		                    "level":"[Product].[Product Family]"
-		                    },
-		                    {
-			                    "name":"dragan",
-			                    "scope":"relative",
-			                    "dimension":"Product",
-			                    "hierarchy":"[Product]",
-			                    "level":"[Product].[Product Family]"
-			                    }
-		                    ]
-		            ;
-			
-			var toolbarButtons = [
-			                      {"name":"BUTTON_FATHER_MEMBERS","visible":"true","clicked":"true"},
-			                      {"name":"BUTTON_HIDE_SPANS","visible":"true","clicked":"true"}
-			                      ]
-		    
-			console.log('Hello from OlapTemplateService');
-			*/
-			
-			/*
-			 * 
-			 */
 			
 			/*
 			 * Template object getter
@@ -129,6 +57,7 @@ angular.module('olap_designer_toolbar')
 			
 			/*
 			 * Getter for olap Tag 
+			 * @return object
 			 */
 			this.getOlapTag = function(){
 				
@@ -164,6 +93,8 @@ angular.module('olap_designer_toolbar')
 			
 			/*
 			 * Getter for cube tag
+			 * @return cube object
+			 * {"reference":"cubeName"}
 			 */
 			this.getCubeTag = function(){
 				if(this.getOlapTag()){	
@@ -175,7 +106,9 @@ angular.module('olap_designer_toolbar')
 			}
 			
 			/*
-			 * Getting cube reference(cube name)
+			 * Getting cube reference
+			 * @return string
+			 * 
 			 */
 			this.getCubeReference = function(){
 				if(this.getCubeTag()){
@@ -224,6 +157,14 @@ angular.module('olap_designer_toolbar')
 			
 			/*
 			 * Getter for mdxQueryTag object
+			 * @return mdxQueryTag object
+			 * {"mdxQuery":"SELECT {[Measures].[Unit Sales]} ON COLUMNS, {[Product]} ON ROWS FROM [Sales_V]",
+               "clickable":[{
+        						"uniqueName":"[Product].[Product Name]",
+         						"clickParameter":{"name":"ParProdFamily","value":"{0}"}
+    						}
+    						]
+   				}
 			 */
 			this.getMdxQueryTag = function(){
 				if(this.getOlapTag()){	
@@ -236,6 +177,7 @@ angular.module('olap_designer_toolbar')
 			
 			/*
 			 * Getting mdx query
+			 * @return mdx type string
 			 */
 			
 			this.getMdxQuery = function(){
@@ -247,8 +189,11 @@ angular.module('olap_designer_toolbar')
 			}
 			
 			/*
-			 * Getting array of clickables objects ( crossnavigation for member)
-			 * 
+			 * Getter for clickables 
+			 * @return 	type	array
+			 * [{"uniqueName":"[Product].[Product Name]",
+         		 "clickParameter":{"name":"ParProdFamily","value":"{0}"}
+         	   ]
 			 */
 			this.getMdxQueryClickables = function(){
 				if(this.getMdxQueryTag()){
@@ -267,15 +212,7 @@ angular.module('olap_designer_toolbar')
 			 * 
 			 * @object definition  mdxQueryObj
 			 * mandatory mdxQueryObj properties:
-			 * mdxQuery
-			 * optional mdxQueryObj properties:
-			 * clickables(array of clickable object)
-			 * 
-			 * @object definition  clickable
-			 * mandatory clickable properties:
-			 * name
-			 * clickParameter
-			 * 
+			 * mdxQuery		type 	string
 			 */
 			this.setMdxQueryTag = function(mdxQueryObj){
 				if(this.getOlapTag()){
@@ -287,7 +224,7 @@ angular.module('olap_designer_toolbar')
 						 this.getMdxQueryTag().XML_TAG_TEXT_CONTENT = mdxQueryObj.mdxQuery;
 						 
 						 
-						 if(mdxQueryObj.clickables){
+						/* if(mdxQueryObj.clickables){
 							 if(mdxQueryObj.clickables.constructor === Array&&mdxQueryObj.clickables.length>0){
 								 this.getMdxQueryTag().clickable = [];
 								 	for(var i= 0;i<mdxQueryObj.clickables.length;i++){
@@ -312,7 +249,7 @@ angular.module('olap_designer_toolbar')
 								 return false;
 							 }
 						 }
-						 
+						 */
 							
 					 }else{
 						 console.log("Bad format of mdxQueryObj!!!Mandatory property: mdxQuery ") ;
@@ -328,6 +265,75 @@ angular.module('olap_designer_toolbar')
 				}
 				return true;
 			}
+			
+			
+			/*
+			 * Setter for Clikable tag
+			 * return boolean 
+			 * true if setting is successful 
+			 * @param clikables type array
+			 * 
+			 * @array definition:clickables
+			 * mandatory clickables elements
+			 * clikable type object
+			 *  
+			 * @object definition:  clickable
+			 * mandatory clickable properties:
+			 * name				type	string
+			 * clickParameter	type	object
+			 * 
+			 * @object definition: clickParameter
+			 * mandatory clickParameter properties:
+			 * name		type 	string
+			 * value	type	string
+			 * 
+			 */
+			this.setClickableTag = function(clikables){
+				if(this.getOlapTag()){
+					
+					if(!this.getMdxQueryTag()){
+						 this.getOlapTag().MDXQUERY = {};
+					 }
+					
+					
+						 if(clickables&&clickables.constructor === Array&&clickables.length>0){
+							 this.getMdxQueryTag().clickable = [];
+							 	for(var i= 0;i<clickables.length;i++){
+							 		var clickable = clickables[i];
+							 		if(clickable&&clickable.uniqueName&&clickable.clickParameter){
+							 			if(clickable.clickParameter.name&&clickable.clickParameter.value){
+							 				 this.getMdxQueryTag().clickable.push(clickable);
+							 			}else{
+							 				console.log("Bad format of clickParameter!!!Mandatory properties: name,value ");
+							 				this.deleteMdxQueryTag();
+							 				return false;
+							 			}
+							 		}else{
+							 			console.log("Bad format of clickable!!!Mandatory properties: uniqueName,clickParameter ");
+							 			this.deleteMdxQueryTag();
+							 			return false;
+							 		}
+							 	}
+						 }else{
+							 console.log("Bad format of clickables!!!Mandatory clickables is array of clickable ");
+							 this.deleteMdxQueryTag();
+							 return false;
+						 }
+					 
+					
+					
+				}else{
+					
+					console.log("Olap object is undefined!!!");
+					return false;
+				}
+				
+				return true;
+			}
+			
+			/*
+			 * Deleting MdxQuery tag
+			 */
 			
 			this.deleteMdxQueryTag = function(){
 				if(this.getOlapTag()){
@@ -346,6 +352,11 @@ angular.module('olap_designer_toolbar')
 				
 			}
 			
+			/*
+			 * Getter for MDXMondrianQuery
+			 * @return MDXMondrianQuery	type string
+			 */
+			
 			this.getMDXMondrianQuery = function(){
 				if(this.getOlapTag()){
 					if(this.getMDXMondrianQueryTag()){
@@ -359,9 +370,10 @@ angular.module('olap_designer_toolbar')
 			
 			/*
 			 * Setter for MDXMondrianQuery tag
-			 * @param MDXMondrianQuery 
+			 * @param MDXMondrianQuery 	type string
 			 * return boolean 
 			 * true if setting is successful
+			 * 
 			 */
 			this.setMDXMondrianQueryTag = function(MDXMondrianQuery){
 				if(this.getOlapTag()){
@@ -386,6 +398,9 @@ angular.module('olap_designer_toolbar')
 				
 			}
 			
+			/*
+			 * Deleting MDXMondrianQuery tag
+			 */
 			this.deleteMDXMondrianQueryTag = function(){
 				if(this.getOlapTag()){
 					 delete this.getOlapTag().MDXMondrianQuery;
@@ -394,6 +409,32 @@ angular.module('olap_designer_toolbar')
 				}
 			}
 			
+			
+			
+			/*
+			 * Getter of scenarioTag
+			 * @return	scenarioTag type object
+			 * "{
+			 * 	"name": "scenario",
+      			"editCube": "Sales_Edit",
+      			"initialVersion": "1",
+      			"MEASURE": [
+       						{"XML_TAG_TEXT_CONTENT": "Store Sales"},
+       						{ "XML_TAG_TEXT_CONTENT":"Store Cost"}
+      						],
+      			"VARIABLE": [
+        						{
+          						"name": "var",
+          						"value": "5"
+        						},
+        						{
+          						"name": "PD",
+          						"value": "[Product].[Drink.Dairy]",
+          						"type": "string"
+        						}
+      						]
+    			}
+			 */
 			this.getScenarioTag = function(){
 				if(this.getOlapTag()){	
 					return this.getOlapTag().SCENARIO;
@@ -402,6 +443,23 @@ angular.module('olap_designer_toolbar')
 				}
 				
 			}
+			
+			/*
+			 * Getter for scenario object
+			 * @return scenario		type	object
+			 * {
+			 * 	"name":"scenario",
+			 * 	"editCube":"SalesEdit",
+			 * 	"measures":[
+			 * 					{"name":"Store Cost"},
+			 * 					{"name":"Store Sales"}
+			 * 			   ],
+			 * 	"variables":[
+			 * 					 {"name": "var","value": "5"},
+        	 *					 {"name": "PD","value": "[Product].[Drink.Dairy]","type": "string"}
+			 * 				]
+			 * }
+			 */
 			
 			this.getScenarioObject = function(){
 				var scenarioObj = {};
@@ -430,9 +488,36 @@ angular.module('olap_designer_toolbar')
 			
 			/*
 			 * Setter for scenario tag
-			 * @param cubeName type string
+			 * @param scenario type object 
 			 * return boolean 
 			 * true if setting is successful
+			 * 
+			 * @object definition: scenario
+			 * mandatory scenario properties:
+			 * name		type	string
+			 * editCube	type	string
+			 * measures	type	array
+			 * 
+			 * optional scenario properties:
+			 * variables	type	array
+			 * 
+			 * @array definition: measures
+			 * mandatory measures elements :
+			 * measure	type	object
+			 * 
+			 * @object definition: measure
+			 * mandatory measure properties :
+			 * name 	type	string
+			 * 
+			 * @array definition: variables
+			 * mandatory variables elements :
+			 * variable		type	object
+			 * 
+			 * @object definition: variable
+			 * mandatory variable properties:
+			 * name		type	string
+			 * value	type	string
+			 *
 			 */
 			this.setScenarioTag = function(scenario){
 				if(this.getOlapTag()){
@@ -486,6 +571,9 @@ angular.module('olap_designer_toolbar')
 				
 			}
 			
+			/*
+			 * Deleting Scenario tag
+			 */
 			this.deleteScenarioTag = function(){
 				if(this.getOlapTag()){
 					 delete this.getOlapTag().SCENARIO;
@@ -493,7 +581,23 @@ angular.module('olap_designer_toolbar')
 					console.log("Olap object is undefined!!!");
 				}
 			}
-			
+			/*
+			 * Getter for CrossNavigationTag
+			 * @returns CrossNavigationTag	type	object
+			 * {
+        		"PARAMETERS":{
+                			"PARAMETER":[
+                    						{
+                    						"name":"family",
+                    						"scope":"relative",
+                    						"dimension":"Product",
+                    						"hierarchy":"[Product]",
+                    						"level":"[Product].[Product Family]"
+                    						}
+                    					]
+            				}
+    			}
+			 */
 			this.getCrossNavigationTag = function(){
 				if(this.getOlapTag()){	
 					return this.getOlapTag().CROSS_NAVIGATION;
@@ -502,7 +606,20 @@ angular.module('olap_designer_toolbar')
 				}
 				
 			}
-			
+			/*
+			 * Getter for CrossNavigation
+			 * @return CrossNavigation	type	array
+			 * [
+			 * 	 {
+                 "name":"family",
+                 "scope":"relative",
+                 "dimension":"Product",
+                 "hierarchy":"[Product]",
+                 "level":"[Product].[Product Family]"
+                  }
+			 * ]
+			 * 
+			 */
 			this.getCrossNavigation = function(){
 				var crossNavigation;
 				
@@ -517,10 +634,21 @@ angular.module('olap_designer_toolbar')
 			}
 			
 			/*
-			 * Setter for scenario tag
-			 * @param cubeName type string
+			 * Setter for crossNavigation tag
+			 * @param crossNavigation type array
 			 * return boolean 
 			 * true if setting is successful
+			 * 
+			 * @array definition:  crossNavigation
+			 * mandatory crossNavigation elements:
+			 * parameter 	type	object
+			 *
+			 *@object definition: parameter
+			 * mandatory parameter properties:
+			 * name 		type	string
+			 * dimension	type	string
+			 * hierarchy	type	string
+			 * level		type	string
 			 */
 			this.setCrossNavigationTag = function(crossNavigation){
 				if(this.getOlapTag()){
@@ -570,6 +698,9 @@ angular.module('olap_designer_toolbar')
 				
 			}
 			
+			/*
+			 * Deleting CrossNavigation tag
+			 */
 			this.deleteCrossNavigationTag = function(){
 				if(this.getOlapTag()){
 					 delete this.getOlapTag().CROSS_NAVIGATION;
@@ -577,6 +708,19 @@ angular.module('olap_designer_toolbar')
 					console.log("Olap object is undefined!!!");
 				}
 			}
+			
+			/*
+			 * Getter for Toolbar tag
+			 * @return getToolbarTag	type	object
+			 * {
+       			"BUTTON_FATHER_MEMBERS" :{"visible":"true","clicked":"true"},
+       			"BUTTON_HIDE_SPANS" :{"visible":"true","clicked":"true"},
+       			"BUTTON_SHOW_PROPERTIES" :{"visible":"true","clicked":"true"},
+       			"BUTTON_HIDE_EMPTY" :{"visible":"true","clicked":"true"},
+       			"BUTTON_EXPORT_OUTPUT" :{"visible":"true","clicked":"true"},
+       			"BUTTON_FLUSH_CACHE" :{"visible":"true","clicked":"true"}
+       			}
+			 */
 			
 			this.getToolbarTag = function(){
 				if(this.getOlapTag()){	
@@ -586,6 +730,18 @@ angular.module('olap_designer_toolbar')
 				}
 			}
 			
+			/*
+			 * Getter for toolbarButtons
+			 * @return toolbarButtons	type	array
+			 * [
+       				{"name":"BUTTON_FATHER_MEMBERS","visible":"true","clicked":"true"},
+       				{"name":"BUTTON_HIDE_SPANS","visible":"true","clicked":"true"},
+       				{"name":"BUTTON_SHOW_PROPERTIES","visible":"true","clicked":"true"},
+       				{"name":"BUTTON_HIDE_EMPTY","visible":"true","clicked":"true"},
+       				{"name":"BUTTON_EXPORT_OUTPUT","visible":"true","clicked":"true"},
+       				{"name":"BUTTON_FLUSH_CACHE","visible":"true","clicked":"true"}
+       			]
+			 */
 			this.getToolbarButtons = function(){
 				var toolbarButtons =[];
 				if(this.getToolbarTag()){
@@ -601,10 +757,20 @@ angular.module('olap_designer_toolbar')
 				return toolbarButtons;
 			}
 			/*
-			 * Setter for scenario tag
-			 * @param cubeName type string
+			 * Setter for toolbarButtons tag
+			 * @param toolbarButtons type array
 			 * return boolean 
 			 * true if setting is successful
+			 * 
+			 * @array definition: toolbarButtons
+			 * mandatory toolbarButtons elements:
+			 * button object
+			 * 
+			 * @object definition: button
+			 * mandatory button properties:
+			 * name 	type string
+			 * visible 	type boolean
+			 * clicked 	type boolean
 			 */
 			this.setToolbarTag = function(toolbarButtons){
 				
@@ -635,6 +801,9 @@ angular.module('olap_designer_toolbar')
 				return false;
 			}
 			
+			/*
+			 * Deleting CrossNavigation tag
+			 */
 			this.deleteToolbarTag = function(){
 				if(this.getOlapTag()){
 					 delete this.getOlapTag().TOOLBAR;
@@ -644,67 +813,7 @@ angular.module('olap_designer_toolbar')
 			}
 			
 			
-			
-			
 			 this.setOlapTag(olap);
 			 console.log(angular.toJson(this.template));
-			 /*
-			 
-			 var cubeSuccess = this.setCubeTag(cubeName);
-			 console.log("cubeSuccess "+ cubeSuccess);
-			 console.log(angular.toJson(this.template));
-			 
-			 
-			 var mdxQuerySuccess = this.setMdxQueryTag(mdxQueryObj);
-			 console.log("mdxQuerySuccess "+ mdxQuerySuccess);
-			 console.log(angular.toJson(this.template));
-			 
-			 var mDXMondrianQuerySuccess = this.setMDXMondrianQueryTag(MDXMondrianQuery);
-			 console.log("mDXMondrianQuerySuccess "+mDXMondrianQuerySuccess);
-			 console.log(angular.toJson(this.template));
-			 
-			 var scenarioSuccess = this.setScenarioTag(scenario);
-			 console.log("scenarioSuccess "+scenarioSuccess);
-			 console.log(angular.toJson(this.template));
-			 
-			 var crossNavigationSuccess = this.setCrossNavigationTag(crossNavigation);
-			 console.log("crossNavigationSuccess "+crossNavigationSuccess);
-			 console.log(angular.toJson(this.template));
-			 
-			 var toolbarSuccess =  this.setToolbarTag(toolbarButtons);
-			 console.log("toolbarSuccess "+toolbarSuccess);
-			 console.log(angular.toJson(this.template));
-			 
-			 console.log("Cube ");
-			 console.log(this.getCubeReference());
-			 console.log("Scenario ");
-			 console.log(this.getScenarioObject());
-			 console.log("MdxQuery ");
-			 console.log(this.getMdxQuery());
-			 console.log("Clickables ");
-			 console.log(this.getMdxQueryClickables());
-			 console.log("MdxMondrianQuery ");
-			 console.log(this.getMDXMondrianQuery());
-			 console.log("CrossNavigation ");
-			 console.log(this.getCrossNavigation());
-			 console.log("Toolbar buttons ");
-			 console.log(this.getToolbarButtons());
-			 
-			 this.deleteCubeTag();
-			 console.log(angular.toJson(this.template));
-			 this.deleteMdxQueryTag();
-			 console.log(angular.toJson(this.template));
-			 this.deleteMDXMondrianQueryTag();
-			 console.log(angular.toJson(this.template));
-			 this.deleteScenarioTag();
-			 console.log(angular.toJson(this.template));
-			 this.deleteCrossNavigationTag();
-			 console.log(angular.toJson(this.template));
-			 this.deleteToolbarTag();
-			 console.log(angular.toJson(this.template));
-			 this.deleteOlapTag();
-			 console.log(angular.toJson(this.template));
-			 this.deleteCubeTag();
-			 console.log(angular.toJson(this.template));
-			 */
+			
 		})
