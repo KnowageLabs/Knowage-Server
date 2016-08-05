@@ -330,6 +330,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		 OlapTemplateService.setToolbarTag($scope.toolbar);
 		 console.log(OlapTemplateService.getTempateJson());
 		 console.log(OlapTemplateService.getToolbarButtons());
+		 $scope.closeDialogOlapDesigner()
 	 }
 	 
 	 /**
@@ -423,14 +424,27 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 }
 	 
 	 $scope.appendCubeObjectToJsonTemplate();
+	 
+	 String.prototype.replaceAll = function(search, replace) {
+	      if (replace === undefined) {
+	          return this.toString();
+	      }
+	      return this.split(search).join(replace);
+	  }
 	
 	 /**
 	  * Calls service to bind temporary MDXMondrianQuery object to olap template json.
 	  * Sends final template json to beckend.
 	  */
 	 $scope.sendOlapJsonTemplate = function() {
-		 
-		 OlapTemplateService.setMDXMondrianQueryTag($scope.showMdxVar);
+		 var mdxvar = $scope.showMdxVar;
+		 mdxvar = mdxvar.replaceAll('&nbsp;', ' ');
+		 mdxvar = mdxvar.replaceAll('<br>','')
+		 $scope.programerDragance = {
+				 mdxQuery : mdxvar
+		 }
+		 OlapTemplateService.setMDXMondrianQueryTag(mdxvar);
+		 OlapTemplateService.setMdxQueryTag($scope.programerDragance);
 		 sbiModule_restServices.alterContextPath("/knowage");
 		 console.log(sbiModule_config.externalBasePath)
 		 sbiModule_restServices.promisePost("1.0/documents/",sbiModule_docInfo.id+'/saveOlapTemplate', OlapTemplateService.getTempateJson())
