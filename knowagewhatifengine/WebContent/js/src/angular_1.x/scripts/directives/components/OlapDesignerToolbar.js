@@ -47,9 +47,8 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	
 	$scope.cubeList = [];
 	
-	var mdxQueryObj = {
-		     "mdxQuery":"SELECT {[Measures].[Unit Sales]} ON COLUMNS, {[Product]} ON ROWS FROM [Sales_V]",
-		     "clickables":[]
+	$scope.mdxQueryObj = {
+			"mdxQuery" : ""   
 	}
 	
 	/**
@@ -64,6 +63,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 * Array that hold cross navigation types
 	 */
 	$scope.crossNavType = null;
+	$scope.showCNType = false;
 	$scope.crossNavTypeList = [{
 	   	 "value": "cell",
 		  "name": "From Cell"	 
@@ -73,16 +73,23 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		  "name": "From Member"	 
 	}];
 	
-	/**
-	 * MDXMondrianQuery object for the json template.
-	 */
-	$scope.MDXMondrianQuery = {};
-	
+	$scope.crossNavList = [];
 	/**
 	 * Loads cubes and opens a new what-if scenario dialog.
 	 */
 	$scope.runScenarioWizard = function(){
 		$scope.getCubes();
+	}
+	
+	
+	
+	$scope.initMDX = function() {
+		 var mdxvar = $scope.showMdxVar;
+		 mdxvar = mdxvar.replaceAll('&nbsp;', ' ');
+		 mdxvar = mdxvar.replaceAll('<br>','')
+		 $scope.mdxQueryObj.mdxQuery = mdxvar
+		 OlapTemplateService.setMDXMondrianQueryTag(mdxvar);
+		 OlapTemplateService.setMdxQueryTag($scope.mdxQueryObj);
 	}
 	
 	/**
@@ -107,12 +114,26 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		"name":""	
 	}
 	
+	/**
+	 * Function that check validity of finish button
+	 */
+	$scope.checkCNValidity = function(type){
+		
+		if(type =='cell' && $scope.crossNavfromCellObj.name =='' || type =='member' && $scope.crossNavfromMemberObj.clickParameter.name ==''){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	  * Formats cell object for saving
+	  */
 	var formatCellNavigation = function() {
 		$scope.cellForShowObj.name = 'dimension='+$scope.selectedMember.dimension+' '+'hierarchy='+$scope.selectedMember.hierarchyUniqueName+' '+'level='+$scope.selectedMember.level;
 		$scope.crossNavfromCellObj.dimension = $scope.selectedMember.dimension;
 		$scope.crossNavfromCellObj.hierarchy = $scope.selectedMember.hierarchyUniqueName;
 		$scope.crossNavfromCellObj.level = $scope.selectedMember.level;
-		console.log($scope.crossNavfromCellObj);
 	}
 	/**
 	 * Opens a new dialog for what-if scenario.
@@ -169,6 +190,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	$scope.openCrossNavWizard = function() {
 		
 		$scope.crossNavType = null;
+		$scope.readCNJson();
 		
 		 $mdDialog
 		  .show({
@@ -281,6 +303,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	  */
 	 $scope.closeDialogOlapDesigner = function() {
 		 $mdDialog.hide();
+		 $scope.showCNType = false
 	 }
 	 
 	 /**
@@ -326,7 +349,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	  * Calls service to bind temporary buttons object to olap template object.
 	  */
 	 $scope.saveTemplateButtons = function() {
-		 console.log($scope.toolbar)
+		 console.log($scope.toolbar);
 		 OlapTemplateService.setToolbarTag($scope.toolbar);
 		 console.log(OlapTemplateService.getTempateJson());
 		 console.log(OlapTemplateService.getToolbarButtons());
@@ -360,10 +383,89 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
                                           }
                                           
                                           ]
-	
-	
+	 /**
+	  * Defining columns property for angular table with id="olapDesignerCrossNavList"
+	  */
+	$scope.olapDesignerCrossNavColumns = [
+	                                      
+											{
+											    label:"Name",
+											    name:"name",
+											},
+											{
+											    label:"Type",
+											    name:"type",
+											    hideTooltip:true,
+											
+											},
+											/*{
+											    label:"Description",
+											    name:"description",
+											    hideTooltip:true,
+											    size:"300px"
+											}*/
 
-	
+											]
+	 /**
+	  * Delete button table with id="olapDesignerCrossNavList"
+	  */
+	 $scope.cnSpeedMenu= [
+	                         {
+	                            label:sbiModule_translate.load("Delete"),
+	                            icon:'fa fa-trash',
+	                            action:function(item,event){
+	                                
+	                            	$scope.confirmDelete(item,event);
+	                            }
+	                         }
+	                        ];
+	 /**
+	  * Confirming deletion of item in table with id="olapDesignerCrossNavList"
+	  */
+	 $scope.confirmDelete = function(item,ev) {
+		    var confirm = $mdDialog.confirm()
+		          .title("Confirm Delete")
+		          .content("Are you sure that you want to delete this item?")
+		          .ariaLabel("confirm_delete")
+		          .targetEvent(ev)
+		          .ok("Continue")
+		          .cancel("Cancel");
+		    $mdDialog.show(confirm).then(function() {
+		    	$scope.deleteCNItem(item);
+		    }, function() {
+		
+		    });
+		  };
+	/**
+	* Function that enables adding new cross navigation
+	*/ 
+	 $scope.addNewCN = function() {
+		
+		if ($scope.showCNType == false)
+			$scope.showCNType = true;
+		
+		$scope.crossNavfromCellObj = {
+				 "name":"",
+	             "dimension":"",
+	             "hierarchy":"",
+	             "level":""
+		};
+		$scope.cellForShowObj = {
+			"name":""	
+		};
+		$scope.crossNavfromMemberObj = {
+				"uniqueName" : "",
+				"clickParameter": {
+					"name": "",
+					"value":"{0}"
+				}
+		};
+		
+	}
+
+	 /**
+	  * Select mode for selecting member in table
+	  */
 	$scope.enterSelectMode = function() {
 		
 		$mdDialog.hide();
@@ -390,30 +492,148 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 						});
 	}
 	
+	
+	/**
+	  * Saving crossnavigation in template json
+	  */
 	$scope.saveCN = function(type) {
 		if(type == 'member'){
 			clickableArray.push($scope.crossNavfromMemberObj);
 			
-			console.log(clickableArray);
 		}else if (type == 'cell') {
 			parameter.push($scope.crossNavfromCellObj);
-			console.log(parameter);
 		}
 		if(type == 'member' && clickableArray.length > 0){
-			mdxQueryObj.clickables = clickableArray;
-			var success = OlapTemplateService.setMdxQueryTag(mdxQueryObj);
-			if(success){
-				console.log(OlapTemplateService.getTempateJson());
+			$scope.initMDX();
+			if(OlapTemplateService.getMdxQueryTag){
+				var success = OlapTemplateService.setClickableTag(clickableArray);
+				if(success){
+
+					sbiModule_messaging.showSuccessMessage('Successfully saved', 'Success');
+					$scope.crossNavfromMemberObj = {
+							"uniqueName" : "",
+							"clickParameter": {
+								"name": "",
+								"value":"{0}"
+							}
+					};
+				}
 			}
+			
 			
 		}else if (type == 'cell' && parameter.length > 0) {
 			var success = OlapTemplateService.setCrossNavigationTag(parameter);
 			if(success){
-				console.log(OlapTemplateService.getTempateJson());
+
+				sbiModule_messaging.showSuccessMessage('Successfully saved', 'Success');
+				$scope.crossNavfromCellObj = {
+						 "name":"",
+			             "dimension":"",
+			             "hierarchy":"",
+			             "level":""
+				};
+				$scope.cellForShowObj = {
+					"name":""	
+				}
+				
 			}
 			
 		}
 		 $scope.closeDialogOlapDesigner()
+	}
+	
+	/**
+
+	  * Reading from json to fill table
+	  */
+	$scope.readCNJson = function() {
+
+
+		
+
+		$scope.crossNavList= [];
+		var tempCellCN = [];
+		var tempMemberCN =[];
+		
+
+		if( OlapTemplateService.getCrossNavigation() != undefined){
+
+			 tempCellCN = OlapTemplateService.getCrossNavigation();
+			for (var i = 0; i < tempCellCN.length; i++) {
+				tempCellCN[i].type ="From Cell";
+				//tempCellCN[i].description = $scope.cellForShowObj.name;
+				$scope.crossNavList.push(tempCellCN[i]);
+			}
+
+		}else{
+			console.log("Cross Navigation tag is empty")
+		}
+		
+		if( OlapTemplateService.getMdxQueryTag() != undefined){
+			tempMemberCN = OlapTemplateService.getMdxQueryClickables();
+			for (var i = 0; i < tempMemberCN.length; i++) {
+				tempMemberCN[i].type ="From Member";
+				tempMemberCN[i].name = tempMemberCN[i].clickParameter.name
+				$scope.crossNavList.push(tempMemberCN[i]);
+			}
+			
+		}else{
+			console.log("Clickable tag is empty")
+		}
+		
+	}
+	
+	/**
+	  * Function that deletes cross navigation
+	  */
+
+	$scope.deleteCNItem = function(item) {
+		if(item.type == "From Cell"){
+			OlapTemplateService.deleteParamFromCrossNavigationTag(item);
+		}
+		if(item.type == "From Member"){
+			OlapTemplateService.deleteParamFromClickables(item);
+		}
+		$scope.readCNJson();
+		$scope.openCrossNavWizard();
+		
+		
+	}
+	
+	$scope.editCNItem = function(item) {
+		console.log("editing...");
+		var tempCellCN = [];
+		var tempMemberCN =[];
+		console.log(item);
+		if(item.type == "From Cell"){
+			$scope.crossNavType = 'cell';
+			 tempCellCN = OlapTemplateService.getCrossNavigation();
+			 for (var i = 0; i < tempCellCN.length; i++) {
+					if (item.name === tempCellCN[i].name) {
+						console.log("same one in editing")
+						$scope.cellForShowObj.name = 'dimension='+item.dimension+' '+'hierarchy='+item.hierarchy+' '+'level='+item.level;
+						$scope.crossNavfromCellObj.name = item.name;
+						$scope.crossNavfromCellObj.dimension = item.dimension;
+						$scope.crossNavfromCellObj.hierarchy = item.hierarchy;
+						$scope.crossNavfromCellObj.level = item.level
+					}
+				} 
+		}
+		if(item.type == "From Member"){
+			$scope.crossNavType = 'member';
+			tempMemberCN = OlapTemplateService.getMdxQueryClickables();
+			 for (var i = 0; i < tempMemberCN.length; i++) {
+					if (item.name === tempMemberCN[i].name) {
+						console.log("same one in editing")
+						$scope.crossNavfromMemberObj.uniqueName = item.uniqueName;
+						$scope.crossNavfromMemberObj.clickParameter.name = item.name;
+					}
+				} 
+		}
+		
+
+		$scope.nextCNStep();
+		
 	}
 	
 	/**
@@ -437,16 +657,9 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	  * Sends final template json to beckend.
 	  */
 	 $scope.sendOlapJsonTemplate = function() {
-		 var mdxvar = $scope.showMdxVar;
-		 mdxvar = mdxvar.replaceAll('&nbsp;', ' ');
-		 mdxvar = mdxvar.replaceAll('<br>','')
-		 $scope.programerDragance = {
-				 mdxQuery : mdxvar
-		 }
-		 OlapTemplateService.setMDXMondrianQueryTag(mdxvar);
-		 OlapTemplateService.setMdxQueryTag($scope.programerDragance);
+		
+		 $scope.initMDX();
 		 sbiModule_restServices.alterContextPath("/knowage");
-		 console.log(sbiModule_config.externalBasePath)
 		 sbiModule_restServices.promisePost("1.0/documents/",sbiModule_docInfo.id+'/saveOlapTemplate', OlapTemplateService.getTempateJson())
 			.then(function(response) {
 				console.log("[POST]: SUCCESS!");

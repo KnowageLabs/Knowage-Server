@@ -288,7 +288,7 @@ angular.module('olap_designer_toolbar')
 			 * value	type	string
 			 * 
 			 */
-			this.setClickableTag = function(clikables){
+			this.setClickableTag = function(clickables){
 				if(this.getOlapTag()){
 					
 					if(!this.getMdxQueryTag()){
@@ -707,6 +707,26 @@ angular.module('olap_designer_toolbar')
 				}else{
 					console.log("Olap object is undefined!!!");
 				}
+			}
+			
+			this.deleteParamFromClickables = function(item) {
+				var array = this.getMdxQueryClickables();
+				for (var i = 0; i <array.length; i++) {
+					if(item.name == array[i].name){
+						array.splice(i, 1);
+					}
+				}
+				this.setClickableTag(array);
+			}
+			
+			this.deleteParamFromCrossNavigationTag = function(item){
+				var array = this.getCrossNavigation();
+				for (var i = 0; i <array.length; i++) {
+					if(item.name == array[i].name){
+						array.splice(i, 1);
+					}
+				}
+				this.setCrossNavigationTag(array);
 			}
 			
 			/*
