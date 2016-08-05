@@ -328,6 +328,7 @@
 			if (index != null) {
 				$scope.selectedLayer.splice(index, 1);
 			}
+			
 
 		}
 
@@ -385,14 +386,20 @@
 		} ];
 
 		$scope.removeFilterFromSelected = function(item) {
-			var index = null;
-			for (var i = 0; i < $scope.selectedFilters.length; i++) {
-
-				if (item.property == $scope.selectedFilters[i].property)
-					index = i;
-			}
-			if (index != null) {
-				$scope.selectedFilters.splice(index, 1);
+//			var index = null;
+//			for (var i = 0; i < $scope.selectedFilters.length; i++) {
+//
+//				if (item.property == $scope.selectedFilters[i].property)
+//					index = i;
+//			}
+//			if (index != null) {
+//				$scope.selectedFilters.splice(index, 1);
+//			}
+			
+			var index= $scope.selectedDriverParamteres.indexOf(item);
+			if(index > -1){
+				
+				$scope.selectedDriverParamteres.splice(index,1);
 			}
 		}
 
@@ -433,7 +440,7 @@
 
 		$scope.tableFunctionsJoin = {
 			translate : sbiModule_translate,
-			datasetColumnsStore : $scope.datasetFields
+			datasetColumnsStore : $scope.attributeFields
 		};
 
 		$scope.tableFunctionsJoin.addJoinColumn = function() {
@@ -659,9 +666,9 @@
 				
 				
 					template.analitycalFilter=[];
-					for (var i = 0; i < $scope.selectedFilters.length; i++) {
-						template.analitycalFilter.push($scope.selectedFilters[i].property);
-					}
+//					for (var i = 0; i < $scope.selectedFilters.length; i++) {
+//						template.analitycalFilter.push($scope.selectedFilters[i].property);
+//					}
 					for (var i = 0; i < $scope.selectedDriverParamteres.length; i++) {
 						template.analitycalFilter.push($scope.selectedDriverParamteres[i].url);
 					}
@@ -789,21 +796,21 @@
 					var driver= false;
 				     for (var j = 0; j < $scope.allDriverParamteres.length; j++) {
 				    	 driver=false;
-						if($scope.template.analitycalFilter[i]===$scope.allDriverParamteres[i].url){
-							$scope.selectedDriverParamteres.push($scope.allDriverParamteres[i]);
+						if($scope.template.analitycalFilter[i]===$scope.allDriverParamteres[j].url){
+							$scope.selectedDriverParamteres.push($scope.allDriverParamteres[j]);
 							driver=true;
 						}else{
-							var filter={};
-							filter.property=$scope.template.analitycalFilter[i];
-							$scope.selectedFilters.push(filter);
+//							var filter={};
+//							filter.property=$scope.template.analitycalFilter[i];
+//							$scope.selectedFilters.push(filter);
 						}
 						
 					}
-				     if(!driver){
-				    	 var filter={};
-							filter.property=$scope.template.analitycalFilter[i];
-							$scope.selectedFilters.push(filter);
-				     }
+//				     if(!driver){
+//				    	 var filter={};
+//							filter.property=$scope.template.analitycalFilter[i];
+//							$scope.selectedFilters.push(filter);
+//				     }
 					
 				}
 			}

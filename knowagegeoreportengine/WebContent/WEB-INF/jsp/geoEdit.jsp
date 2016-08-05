@@ -111,26 +111,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    </md-whiteframe>       
 	</expander-box>
 	<!-- CHOSING LAYER FILTERS visible if there is no dataset-->
-	<expander-box id="filterSelectBox" color="white" ng-if="!isDatasetChosen" expanded="false" title="translate.load('gisengine.designer.layer.filters')">
+	<expander-box id="filterSelectBox" color="white" ng-if="!isDatasetChosen && allDriverParamteres.length" expanded="false" title="translate.load('gisengine.designer.layer.filters')">
 	<md-whiteframe class="md-whiteframe-4dp layout-padding " flex layout layout-margin style ="height: 40%;" > 
         <div layout="row">
- 		<angular-table flex  
-		id='tableFilters' ng-model="selectedFilters"
-		columns='[{"label":"Filter","name":"property"}]'
-		columns-search='["name"]' show-search-bar=true
-		scope-functions='tableFunctionFilters' speed-menu-option='filtersSpeedMenu'
-		>
-		<queue-table>
-			<div layout="row"> 
-				<span flex></span>
-				<md-button ng-click="scopeFunctions.loadFilters()">{{scopeFunctions.translate.load('gisengine.designer.layer.filters.add')}}</md-button>
-			</div>
-		</queue-table> 
-		</angular-table>
+<!--  		<angular-table flex   -->
+<!-- 		id='tableFilters' ng-model="selectedFilters" -->
+<!-- 		columns='[{"label":"Filter","name":"property"}]' -->
+<!-- 		columns-search='["name"]' show-search-bar=true -->
+<!-- 		scope-functions='tableFunctionFilters' speed-menu-option='filtersSpeedMenu' -->
+<!-- 		> -->
+<!-- 		<queue-table> -->
+<!-- 			<div layout="row">  -->
+<!-- 				<span flex></span> -->
+<!-- 				<md-button ng-click="scopeFunctions.loadFilters()">{{scopeFunctions.translate.load('gisengine.designer.layer.filters.add')}}</md-button> -->
+<!-- 			</div> -->
+<!-- 		</queue-table>  -->
+<!-- 		</angular-table> -->
 		<div flex ng-if="allDriverParamteres.length">
 		<angular-table flex 
 		id='tableDriver' ng-model="selectedDriverParamteres"
-		columns='[{"label":"Driver parameter","name":"label"}]'
+		columns='[{"label":"Driver parameter","name":"label"},{"label":"URL","name":"url"}]'
 		columns-search='["name"]' show-search-bar=true
 		scope-functions='tableFunctionFilters' speed-menu-option='filtersSpeedMenu'
 		>
