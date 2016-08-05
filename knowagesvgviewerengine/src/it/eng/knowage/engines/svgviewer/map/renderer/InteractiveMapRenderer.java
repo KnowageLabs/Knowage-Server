@@ -1194,6 +1194,10 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			if (element != null) {
 				String displayStyle = "";
 				String elementStyle = element.getAttribute("style");
+				// clean style from ;;
+				if (elementStyle.indexOf(";;") >= 0) {
+					elementStyle = elementStyle.replaceAll(";;", ";");
+				}
 				// get original display option if present
 				int displayStyleStart = elementStyle.indexOf("display:");
 				String displayStyleValue = "";
