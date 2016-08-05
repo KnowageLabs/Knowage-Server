@@ -1197,11 +1197,39 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				// get original display option if present
 				int displayStyleStart = elementStyle.indexOf("display:");
 				String displayStyleValue = "";
+
+				// if (displayStyleStart >= 0) {
+				// int displayStyleEnd = -1;
+				// try {
+				// displayStyleEnd = elementStyle.indexOf(";", displayStyleStart);
+				// displayStyleValue = elementStyle.substring(displayStyleStart, displayStyleEnd + 1);
+				// } catch (StringIndexOutOfBoundsException se) {
+				// logger.error("An error occured while getting style content of element with id [" + id_element
+				// + "]. Please, check that ALL the style elements into the SVG have the final [;] char. Ex: [display:none;]");
+				// throw se;
+				// }
+				// elementStyle = elementStyle.replace(displayStyleValue, ""); // clean old style
+				// }
+
+				// Manage 'display:none' or 'display:none;' properties
 				if (displayStyleStart >= 0) {
 					int displayStyleEnd = -1;
+					String displayContent = "";
 					try {
-						displayStyleEnd = elementStyle.indexOf(";", displayStyleStart);
-						displayStyleValue = elementStyle.substring(displayStyleStart, displayStyleEnd + 1);
+						// case with ; or other properties
+						if (elementStyle.length() >= displayStyleStart + 13) {
+							displayContent = elementStyle.substring(displayStyleStart, displayStyleStart + 13);
+						} else {
+							// case without ';'. Style value is : style="display:none"
+							displayContent = elementStyle.substring(displayStyleStart, displayStyleStart + 12);
+						}
+						displayContent = displayContent.trim();
+						if (displayContent.indexOf("none") >= 0) {
+							displayStyleEnd = displayStyleStart + 12;
+							if (displayContent.indexOf(";") > 0)
+								displayStyleEnd = displayStyleEnd + 1;
+						}
+						displayStyleValue = elementStyle.substring(displayStyleStart, displayStyleEnd);
 					} catch (StringIndexOutOfBoundsException se) {
 						logger.error("An error occured while getting style content of element with id [" + id_element
 								+ "]. Please, check that ALL the style elements into the SVG have the final [;] char. Ex: [display:none;]");
