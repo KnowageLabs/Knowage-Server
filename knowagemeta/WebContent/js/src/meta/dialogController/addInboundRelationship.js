@@ -27,7 +27,7 @@ function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiM
 			$mdDialog.show({
 				controller: inboundModelPageControllerFunction,
 				preserveScope: true,
-				locals: {businessModel:$scope.meta.businessModels, selectedBusinessModel:$scope.selectedBusinessModel, sbiModule_restServices:sbiModule_restServices,metaModelServices:metaModelServices},
+				locals: {businessModel:$scope.meta.businessModels,businessViews:$scope.meta.businessViews, selectedBusinessModel:$scope.selectedBusinessModel, sbiModule_restServices:sbiModule_restServices,metaModelServices:metaModelServices},
 				templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/inboundModel.jsp',
 				clickOutsideToClose:true,
 				escapeToClose :true,
@@ -53,13 +53,14 @@ function businessModelInboundControllerFunction($scope, sbiModule_translate,sbiM
 
 }
 
-function inboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout, businessModel, selectedBusinessModel,metaModelServices){
+function inboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout, businessModel, selectedBusinessModel,metaModelServices,businessViews){
 	$scope.translate = sbiModule_translate;
 	$scope.cardinality = [{name:'1 to 1',value:'one-to-one'},{name:'1 to N',value:'one-to-many'},{name:'N to 1',value:'many-to-one'},
 	                      {name:' 1* to 1',value:'optional-one-to-one'},{name:'1 to 1*',value:'one-to-optional-one'},{name:'1* to N',value:'optional-one-to-many'},
 	                      {name:'1 to N*',value:'one-to-optional-many'}, {name:'N* to 1',value:'optional-many-to-one'}, {name:'N to 1*',value:'many-to-optional-one'}];
 	$scope.businessName;
 	$scope.businessModel = angular.copy(businessModel);
+	$scope.businessViews = angular.copy(businessViews);
 	$scope.selectedBusinessModel = angular.copy(selectedBusinessModel);
 	$scope.leftElement = {};
 	$scope.rightElement = {};

@@ -322,7 +322,7 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 	                              				}
 	                              			},
 	                              			{
-	                              				label : sbiModule_translate.load("inUse"),
+	                              				label : sbiModule_translate.load("sbi.meta.model.inuse"),
 	                              				name : "added",
 	                              				transformer : function(row) {
 	                              					return "<md-checkbox ng-checked='scopeFunctions.existsBusinessModel(row)' ng-click='scopeFunctions.toggleBusinessModel(row)' aria-label='isPrimaryKey'></md-checkbox>"
@@ -330,6 +330,14 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 	                              			}
 
 	                              	];
+
+	// add referenced table if is a business view
+	if($scope.selectedBusinessModel.hasOwnProperty("joinRelationships")){
+		$scope.selectedBusinessModelAttributes.push({
+														label : sbiModule_translate.load("sbi.meta.model.sourcetable"),
+										  				name : "tableName",
+										  			});
+	}
 
 	$scope.selectedBusinessModelAttributesScopeFunctions = {
 			translate:sbiModule_translate,

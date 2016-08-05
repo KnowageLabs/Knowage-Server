@@ -424,6 +424,89 @@ public class MetaService extends AbstractSpagoBIResource {
 		}
 	}
 
+	@POST
+	@Path("/addPhysicalColumnToBusinessView")
+	public Response addPhysicalColumnToBusinessView(@Context HttpServletRequest req) {
+		try {
+			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+			JSONObject oldJsonModel = createJson(model);
+
+			applyDiff(jsonRoot, model);
+
+			JSONObject json = jsonRoot.getJSONObject("data");
+
+			BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
+			BusinessModel bm = model.getBusinessModels().get(0);
+			PhysicalModel physicalModel = model.getPhysicalModels().get(0);
+
+			BusinessView bw = bm.getBusinessViewByUniqueName(json.getString("viewUniqueName"));
+
+			JSONArray physicaltables = json.getJSONArray("physicalTables");
+			for (int i = 0; i < physicaltables.length(); i++) {
+				String ptName = physicaltables.getString(i);
+				PhysicalTable pt = physicalModel.getTable(ptName);
+				bw.getPhysicalTables().add(pt);
+
+				EList<PhysicalColumn> ptcol = pt.getColumns();
+				for (int pci = 0; pci < ptcol.size(); pci++) {
+					businessModelInitializer.addColumn(ptcol.get(pci), bw);
+				}
+			}
+
+			JSONObject jsonModel = createJson(model);
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+
+			return Response.ok(patch.toString()).build();
+		} catch (IOException | JSONException e) {
+			logger.error(e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} catch (SpagoBIException e) {
+			logger.error(e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
+	}
+
+	@POST
+	@Path("/deletePhysicalColumnfromBusinessView")
+	public Response deletePhysicalColumnfromBusinessView(@Context HttpServletRequest req) {
+		try {
+			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+			JSONObject oldJsonModel = createJson(model);
+
+			applyDiff(jsonRoot, model);
+
+			JSONObject json = jsonRoot.getJSONObject("data");
+
+			BusinessModel bm = model.getBusinessModels().get(0);
+			PhysicalModel physicalModel = model.getPhysicalModels().get(0);
+
+			BusinessView bw = bm.getBusinessViewByUniqueName(json.getString("viewUniqueName"));
+
+			PhysicalTable pt = physicalModel.getTable(json.getString("physicalTable"));
+			bw.getPhysicalTables().remove(pt);
+
+			EList<PhysicalColumn> ptcol = pt.getColumns();
+			for (int pci = 0; pci < ptcol.size(); pci++) {
+				bw.getColumns().remove(ptcol.get(pci));
+			}
+
+			JSONObject jsonModel = createJson(model);
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+
+			return Response.ok(patch.toString()).build();
+		} catch (IOException | JSONException e) {
+			logger.error(e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} catch (SpagoBIException e) {
+			logger.error(e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
+	}
+
 	@GET
 	@Path("/buildModel/{name}/{modelid}")
 	public Response buildModel(@PathParam("name") String name, @PathParam("modelid") Integer modelid, @Context HttpServletRequest req) { // ,
@@ -725,11 +808,19 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		String sourceTableName = rel.get("sourceTableName").asText().toLowerCase();
 		String destinationTableName = rel.get("destinationTableName").asText().toLowerCase();
-
 		BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
+		if (sourceBcs == null) {
+			// check if is a business view
+			sourceBcs = bm.getBusinessViewByUniqueName(sourceTableName);
+		}
+
 		br.setSourceTable(sourceBcs);
 
 		BusinessColumnSet destBcs = bm.getBusinessTableByUniqueName(destinationTableName);
+		if (destBcs == null) {
+			// check if is a business view
+			destBcs = bm.getBusinessViewByUniqueName(destinationTableName);
+		}
 		br.setDestinationTable(destBcs);
 
 		if (rel.has("id"))

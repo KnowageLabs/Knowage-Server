@@ -33,6 +33,9 @@
 								<md-option	ng-repeat="element in businessModel" ng-value="element" ng-click="alterTableToSimpleBound(element)">
 									{{element.name}} 
 								</md-option> 
+								<md-option	ng-repeat="element in businessViews" ng-value="element" ng-click="alterTableToSimpleBound(element)">
+									{{element.name}} 
+								</md-option> 
 							</md-select> 
 						</md-input-container>
 				</div>

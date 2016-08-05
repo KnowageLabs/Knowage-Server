@@ -27,7 +27,7 @@ function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbi
 		$mdDialog.show({
 			controller: outboundModelPageControllerFunction,
 			preserveScope: true,
-			locals: {businessModel:$scope.meta.businessModels, selectedBusinessModel:$scope.selectedBusinessModel, sbiModule_restServices:sbiModule_restServices,metaModelServices:metaModelServices},
+			locals: {businessModel:$scope.meta.businessModels,businessViews:$scope.meta.businessViews, selectedBusinessModel:$scope.selectedBusinessModel, sbiModule_restServices:sbiModule_restServices,metaModelServices:metaModelServices},
 			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/outboundModel.jsp',
 			clickOutsideToClose:true,
 			escapeToClose :true,
@@ -52,13 +52,14 @@ function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbi
 }
 
 
-function outboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout, businessModel, selectedBusinessModel,metaModelServices){
+function outboundModelPageControllerFunction($scope,$mdDialog, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout, businessModel, selectedBusinessModel,metaModelServices,businessViews){
 	$scope.translate = sbiModule_translate;
 	$scope.cardinality = [{name:'1 to 1',value:'one-to-one'},{name:'1 to N',value:'one-to-many'},{name:'N to 1',value:'many-to-one'},
 	                      {name:' 1* to 1',value:'optional-one-to-one'},{name:'1 to 1*',value:'one-to-optional-one'},{name:'1* to N',value:'optional-one-to-many'},
 	                      {name:'1 to N*',value:'one-to-optional-many'}, {name:'N* to 1',value:'optional-many-to-one'}, {name:'N to 1*',value:'many-to-optional-one'}];
 	$scope.businessName;
-	$scope.businessModel = businessModel;
+	$scope.businessModel = angular.copy(businessModel);
+	$scope.businessViews = angular.copy(businessViews);
 	$scope.selectedBusinessModel = selectedBusinessModel;
 	$scope.leftElement = {};
 	$scope.rightElement = {};

@@ -181,6 +181,28 @@
 				</md-content>				
 				
 			</md-tab>
+			
+			<md-tab id="physicalTablesTab" md-active="tabResource.selectedBusinessTab=='physicalTablesTab'" md-on-select="tabResource.selectedBusinessTab='physicalTablesTab'" label="{{translate.load('sbi.meta.table.physical')}}" ng-if="selectedBusinessModel.joinRelationships!=undefined">
+				<md-content  ng-if="tabResource.selectedBusinessTab=='physicalTablesTab'" layout="column"  layout-fill ng-controller="bvPhisicalTablesController">
+					
+						<angular-table id="bvPhisicalTablesTab"
+					 	ng-model="selectedBusinessModel.physicalTables" 
+					 	columns="bvPhisicalTablesTabColumns"
+					 	show-search-bar=true
+					 	no-pagination="true"
+					 	scope-functions="bvPhisicalTablesTabFunctions"
+					 	speed-menu-option=bvPhisicalTablesTabActionButton >
+					 	<queue-table>
+							<div layout="row"> 
+								<span flex></span>
+								<md-button type="button" class="md-knowage-theme md-raised" id="add-element" ng-click="scopeFunctions.addNewPhysicalTable();">{{scopeFunctions.translate.load("sbi.general.add")}}</md-button>
+							</div>
+						</queue-table> 
+					 </angular-table>	
+					
+				</md-content>				
+				
+			</md-tab>
 		</md-tabs>
 		
 	</detail>
