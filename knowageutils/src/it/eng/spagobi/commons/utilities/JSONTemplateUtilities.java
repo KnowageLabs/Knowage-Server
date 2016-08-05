@@ -34,6 +34,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class JSONTemplateUtilities {
+	
+	private static String XML_TAG_TEXT_CONTENT = "XML_TAG_TEXT_CONTENT";
 
 	public static String convertJsonToXML(JSONObject json) throws ParserConfigurationException, JSONException, IOException {
 		String xml;
@@ -85,7 +87,16 @@ public class JSONTemplateUtilities {
 			}
 
 			else {
-				parent.setAttribute(key, value.toString());
+				//if json object has property XML_TAG_TEXT_CONTENT in tag will be set text content 
+				// else it will be added as a attribute 
+				// added by @Dragan Pirkovic
+				if(key.equals(XML_TAG_TEXT_CONTENT)){
+					parent.setTextContent(value.toString());
+				}else{
+					parent.setAttribute(key, value.toString());
+				}
+				
+				
 			}
 		}
 
