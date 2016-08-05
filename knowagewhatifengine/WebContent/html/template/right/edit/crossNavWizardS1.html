@@ -1,13 +1,34 @@
 
 <md-dialog style='width:50%;'>
     
-      <md-toolbar class="knowage-blue dialog-toolbar">
-		<h2 flex="flex" class="md-title">Cross Navigation Definition</h2>
-	</md-toolbar>
+     <md-toolbar  class="miniheadimportexport" layout="row">
+	<div class="md-toolbar-tools" flex>
+		<h2 class="md-flex" >Cross Navigation Definition</h2>
+	</div>
+	<span flex></span>
+	<md-button class="md-raised" ng-click="addNewCN()" ng-disabled="editDisabled" >Add New</md-button>
+
+
+	
+
+</md-toolbar>
       
       
       <md-content> 
-    <div style="padding: 5px;">
+      <div style="height: 50%;">
+      <angular-table
+						flex
+						id="olapDesignerCrossNavList"
+						ng-model="crossNavList"
+						columns='olapDesignerCrossNavColumns'
+						show-search-bar=false
+						highlights-selected-item=false
+						no-pagination=true
+					>
+		</angular-table>	   
+      </div>
+      
+    <div style="padding: 5px;" ng-show="showCNType">
    <p class="md-body-1">Select the type of cross navigation below</p>
    <div layout="row" layout-wrap>
       				<div flex=100>
@@ -26,7 +47,7 @@
  	</div>
 	</md-content>
     <md-dialog-actions layout="row">
-    	<md-button ng-click="nextCNStep()" class="md-raised"  md-autofocus>
+    	<md-button ng-click="nextCNStep()" class="md-raised"  md-autofocus ng-disabled="crossNavType == null">
         Next
       </md-button>
       <md-button ng-click="closeDialogOlapDesigner()" class="md-raised" style="margin-right:20px;" >

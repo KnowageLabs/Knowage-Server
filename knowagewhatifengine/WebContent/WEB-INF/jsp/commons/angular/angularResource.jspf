@@ -57,6 +57,7 @@ author:...
        String sbiExecutionID = null;   
        String mode = null;
        String schemaID = null;
+       String schemaName = null;
        String cubeName = null;
        ExecutionSession es = new ExecutionSession(request, request.getSession());
        
@@ -106,6 +107,10 @@ author:...
 	   if(request.getParameter("cubeName") != null){
 		   cubeName = request.getParameter("cubeName");
 		}
+	   if(request.getParameter("schemaName") != null){
+		   schemaName = request.getParameter("schemaName");
+		}
+	   
 	   
 %>
 
