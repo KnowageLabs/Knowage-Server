@@ -105,31 +105,94 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 		}
 	};
 
-	
-	$scope.parseToTree = function(arr, dest){
-		for(var i=0;i<arr.length;i++){
-			if(arr[i].parentId==false || arr[i].parentId==null ){
-				arr[i]["children"]=[];
-				dest.push(arr[i]);
-			}
-		}
-		
-		for(var i=0;i<arr.length;i++){
-			if(arr[i].parentId==false ||arr[i].parentId==null  ){
-				//it is  a father, no action
+	$scope.parseToTree=function(source,dest){
+		for(var index=0;index<source.length;index++){
+			var tmpEle=source[index];
+			if(tmpEle.parentId==null){
+				tmpEle.children=[];
+				dest.push(tmpEle);
+				source.splice(source.indexOf(tmpEle),1);
 			}else{
-				//it is a child 
-				for(var j=0;j<dest.length;j++){
-					if(dest[j].menuId==arr[i].parentId){
-						//arr[i].parentId=dest[j].name;
-						arr[i]["parentName"]=dest[j].name;
-						dest[j]["children"].push(arr[i]); 
-						
+				//controllo se il padre è presente
+				var par=null;
+				for(var i=0;i<dest.length;i++){
+					
+					var xx=getParentById(dest[i],tmpEle.parentId);
+					if(xx!=null){
+						par=xx;
+						break;
 					}
+					
+				}
+				if(par!=null){
+					tmpEle.children=[];
+					
+					par.children.push(tmpEle);
+					source.splice(source.indexOf(tmpEle),1);
 				}
 			}
 		}
+		if(source.length>0){
+			$scope.parseToTree(source,dest);
+		}
+	}
+	
+	 
+	
+	function getParentById(element, matchingTitle){
+	     if(element.menuId == matchingTitle){
+	          return element;
+	     }else if (element.children != null){
+	          var i;
+	          var result = null;
+	          for(i=0; result == null && i < element.children.length; i++){
+	               result = getParentById(element.children[i], matchingTitle);
+	          }
+	          return result;
+	     }
+	     return null;
+	}
+	
+	
+	
+	
+	$scope.removeCircularDependences = function(tree){
+		for(var i=0;i<tree.length;i++){
+			delete tree[i].$parent;
+			if(tree[i].children.length!=0){
+			//	for(var j=0;j<tree[i].children.length;j++){
+					//delete tree[i].children[j].$parent
+					$scope.removeCircularDependences(tree[i].children);
+			//	}
+			}
+				
+		}
 	};
+	
+//	$scope.parseToTree = function(arr, dest){
+//		for(var i=0;i<arr.length;i++){
+//			if(arr[i].parentId==false || arr[i].parentId==null ){
+//				arr[i]["children"]=[];
+//				dest.push(arr[i]);
+//			}
+//		}
+//		
+//		for(var i=0;i<arr.length;i++){
+//			if(arr[i].parentId==false ||arr[i].parentId==null  ){
+//				//it is  a father, no action
+//			}else{
+//				//it is a child 
+//				for(var j=0;j<dest.length;j++){
+//					if(dest[j].menuId==arr[i].parentId){
+//						//arr[i].parentId=dest[j].name;
+//						arr[i]["parentName"]=dest[j].name;
+//						dest[j]["children"].push(arr[i]); 
+//						
+//					}
+//				}
+//			}
+//		}
+//	};
 	$scope.checkObjects = function(){
 		for(var i=0;i<$scope.menu.length;i++){
 			if($scope.menu[i].objId!=null){
@@ -166,16 +229,16 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 	$scope.save = function(ev){
 		if($scope.tree.length==0){
 			$scope.showAction(sbiModule_translate.load("sbi.importusers.anyuserchecked"))
-		}else if($scope.typeSaveMenu == 'Missing' ){
-			//missing user
+
+		}else if($scope.typeSaveMenu == 'Override' || $scope.typeSaveMenu == 'Missing'){
 			$scope.removeCircularDependences($scope.tree);
-			
 			var conf = {
 					"tree": $scope.tree,
 					"obj" : $scope.exportedObjects,
-					"rolesFromFile": $scope.exportedRoles
+					"rolesFromFile": $scope.exportedRoles,
+					"overwrite" : $scope.typeSaveMenu == 'Override'
 			}
-			sbiModule_restServices.post("1.0/serverManager/importExport/menu","addmissingmenu",conf)
+			sbiModule_restServices.post("1.0/serverManager/importExport/menu","importMenuInDB",conf)
 			.success(function(data, status, headers, config) {
 				if(data.STATUS=="OK"){
 					$scope.showConfirm(sbiModule_translate.load("sbi.importusers.importuserok"));
@@ -190,30 +253,6 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 			}).error(function(data, status, headers, config) {
 				console.log("ERRORS "+status,4000);
 			})
-		}else if($scope.typeSaveMenu == 'Override'){
-			//override
-			//remove the field $parent (add from the directive component-tree) because make the tree a circular object
-			$scope.removeCircularDependences($scope.tree);
-						var conf = {
-								"tree": $scope.tree,
-								"obj" : $scope.exportedObjects,
-								"rolesFromFile": $scope.exportedRoles
-						}
-			sbiModule_restServices.post("1.0/serverManager/importExport/menu","overridemenu",conf)
-			.success(function(data, status, headers, config) {
-				if(data.STATUS=="OK"){
-					$scope.showConfirm(sbiModule_translate.load("sbi.importusers.importuserok"));
-					$scope.reload();
-				
-				}else{
-					$scope.showAction(data.ERROR)
-				}
-			
-			}).error(function(data, status, headers, config) {
-				console.log("ERRORS "+status,4000);
-			})
-		
-			
 		}else if($scope.tree.length!=0){
 			$scope.showAction(sbiModule_translate.load("sbi.importmenu.selectmode"));
 		}
@@ -258,17 +297,17 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 		
 		
 		
-	$scope.removeCircularDependences = function(tree){
-		for(var i=0;i<tree.length;i++){
-			delete tree[i].$parent;
-			if(tree[i].children.length!=0){
-				for(var j=0;j<tree[i].children.length;j++){
-					delete tree[i].children[j].$parent
-				}
-			}
-				
-		}
-	};
+//	$scope.removeCircularDependences = function(tree){
+//		for(var i=0;i<tree.length;i++){
+//			delete tree[i].$parent;
+//			if(tree[i].children.length!=0){
+//				for(var j=0;j<tree[i].children.length;j++){
+//					delete tree[i].children[j].$parent
+//				}
+//			}
+//				
+//		}
+//	};
 	
 	$scope.indexInList=function(item, list) {
 

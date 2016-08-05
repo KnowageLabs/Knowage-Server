@@ -503,7 +503,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 				// SbiExtUserRoles useRole = new SbiExtUserRoles(id, us);
 				SbiMenuRole menuRole = new SbiMenuRole(id, hibMenu, roles.get(k));
 				this.updateSbiCommonInfo4Insert(menuRole);
-
+				updateSbiCommonInfo4Insert(menuRole);
 				tmpSession.save(menuRole);
 			}
 
