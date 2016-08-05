@@ -39,7 +39,7 @@ angular.module('olap_designer_toolbar', ['sbiModule'])
 function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
 		toastr, $cookies, sbiModule_docInfo, sbiModule_config,OlapTemplateService) {
-	
+		
 	/**
 	 * TOOLBAR is the array of button objects to send to olap template object.
 	 */
@@ -72,6 +72,11 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		 "value": "member",
 		  "name": "From Member"	 
 	}];
+	
+	/**
+	 * MDXMondrianQuery object for the json template.
+	 */
+	$scope.MDXMondrianQuery = {};
 	
 	/**
 	 * Loads cubes and opens a new what-if scenario dialog.
@@ -199,9 +204,11 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 * Binds temporary scenario object to olap template object via service after validation check.
 	 */
 	$scope.saveScenario = function() {
-		if($scope.scenario.variables.length==0){
-			delete $scope.scenario.variables;
-		}
+		if($scope.scenario.hasOwnProperty('variables')){
+			if($scope.scenario.variables.length==0){
+				delete $scope.scenario.variables;
+			}
+		}		
 	    if($scope.scenario.editCube==""&&$scope.scenario.measures.length==0){
 			sbiModule_messaging.showErrorMessage("Selecting a cube and a measure is mandatory. ", 'Validation error');
 			console.log($scope.scenario)
@@ -213,13 +220,12 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 			sbiModule_messaging.showErrorMessage("You didn't select a measure. Selecting a measure is mandatory. ", 'Validation error');	
 		}
 	    else {
-			console.log($scope.scenario)
+			OlapTemplateService.setScenarioTag($scope.scenario);
+			console.log(OlapTemplateService.getTempateJson());
 			$mdDialog.hide();
-			$scope.scenario = {
-					name: "scenario",
-					editCube : "",
-					measures: []
-			};
+			console.log($scope.scenario)
+			console.log(OlapTemplateService.getScenarioObject());
+			//$scope.scenario = OlapTemplateService.getScenarioObject();
 		}	
 	}
 	
@@ -321,6 +327,9 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	  */
 	 $scope.saveTemplateButtons = function() {
 		 console.log($scope.toolbar)
+		 OlapTemplateService.setToolbarTag($scope.toolbar);
+		 console.log(OlapTemplateService.getTempateJson());
+		 console.log(OlapTemplateService.getToolbarButtons());
 	 }
 	 
 	 /**
@@ -405,6 +414,26 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		}
 		 $scope.closeDialogOlapDesigner()
 	}
+	
+	/**
+	  * Calls service to bind temporary cube object to olap template object.
+	  */
+	 $scope.appendCubeObjectToJsonTemplate = function() {
+		 OlapTemplateService.setCubeTag(schemaName);
+	 }
+	 
+	 $scope.appendCubeObjectToJsonTemplate();
+	
+	 /**
+	  * Calls service to bind temporary MDXMondrianQuery object to olap template json.
+	  * Sends final template json to beckend.
+	  */
+	 $scope.sendOlapJsonTemplate = function() {
+		
+		 OlapTemplateService.setMDXMondrianQueryTag( $scope.showMdxVar);
+		 //to be done: call service for sending the json
+	 }
+	
 	
 };
 
