@@ -466,7 +466,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 /**
 	  * Select mode for selecting member in table
 	  */
-	$scope.enterSelectMode = function() {
+	$scope.enterSelectModeCN = function() {
 		
 		$mdDialog.hide();
 		toastr
