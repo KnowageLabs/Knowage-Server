@@ -352,8 +352,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			sbiModule_restServices.promisePost
 			(encoded,"",toSend)
 			.then(function(response) {
+				  $scope.handleResponse(response);
 				  $scope.selectedVersion=response.data.modelConfig.actualVersion;
-				  $scope.table = $sce.trustAsHtml(response.data.table);
+				  //$scope.table = $sce.trustAsHtml(response.data.table);
 				  $scope.filterSelected[$scope.filterAxisPosition].visible = true;//ex:$scope.filterAxisPosition
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage("An error occured", 'Error');
