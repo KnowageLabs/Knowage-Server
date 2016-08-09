@@ -3845,5 +3845,5 @@ ALTER TABLE SBI_OBJECTS ADD CONSTRAINT FK_SBI_OBJECTS_5 FOREIGN KEY (ENGINE_ID) 
 ALTER TABLE SBI_DATA_SET DROP IS_PUBLIC;
 
 -- 09.08.2016 Alberto Ghedin: refactoring whatif start actions
-update SBI_ENGINES set MAIN_URL="/knowagewhatifengine/restful-services/startolap" where label = "knowageolapengine";
-update SBI_ENGINES set MAIN_URL="/knowagewhatifengine/restful-services/startwhatif" where label = "knowagewhatifengine";
+update SBI_ENGINES set MAIN_URL="/knowagewhatifengine/restful-services/olap/startolap" where label = "knowageolapengine";
+update SBI_ENGINES set MAIN_URL="/knowagewhatifengine/restful-services/olap/startwhatif" where label = "knowagewhatifengine";
