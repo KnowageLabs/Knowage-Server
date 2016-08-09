@@ -156,7 +156,7 @@ angular.module('member_directive',['sbiModule'])
 	    		});
 	        	
 	        }
-	            }
+	            
 	            
 	           
 	         $element.bind('click', onClick);
