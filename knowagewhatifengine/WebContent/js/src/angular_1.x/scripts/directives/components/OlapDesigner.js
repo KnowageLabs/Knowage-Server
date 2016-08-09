@@ -135,7 +135,7 @@ $scope.saveMDX = function(){
       	sbiModule_restServices.promisePost("1.0/designer/cubes?SBI_EXECUTION_ID=" + JSsbiExecutionID,"",angular.toJson($scope.template))
     	.then(function(response) {
     		
-    		var url = sbiModule_config.contextName + "/restful-services/1.0/designer/cubes/start?SBI_EXECUTION_ID="
+    		var url = sbiModule_config.contextName + "/restful-services/pages/execute?SBI_EXECUTION_ID="
     		+ JSsbiExecutionID+"&mode="+mode+"&schemaID="+$scope.selectedSchema.id+"&cubeName="+$scope.selectedCube.name+"&schemaName="+$scope.selectedSchema.name;
    
     		$window.location = url;

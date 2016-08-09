@@ -52,15 +52,6 @@ public class WriteBackEditConfig implements Serializable {
 		this.editableMeasures = editableMeasures;
 	}
 
-	public Integer getInitialVersion() {
-		if (initalVersion == null) {
-			return 0;
-		}
-		return initalVersion;
-	}
 
-	public void setInitialVersion(Integer defaultVersion) {
-		this.initalVersion = defaultVersion;
-	}
 
 }

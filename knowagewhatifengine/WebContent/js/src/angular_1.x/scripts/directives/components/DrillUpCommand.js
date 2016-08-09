@@ -39,6 +39,6 @@ angular.module('drill_up_command_directive',[])
 		               
 		            });
 	        },
-	        template : "<img src='../img/minus.gif'>"//<img src='../img/plus.gif'></img>
+	        template : "<img src='../../img/minus.gif'>"//<img src='../img/plus.gif'></img>
 	    };
 	});

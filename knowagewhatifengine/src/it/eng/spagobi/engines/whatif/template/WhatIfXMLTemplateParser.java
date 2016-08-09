@@ -393,15 +393,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			logger.debug(TAG_SCENARIO + ":the editable measures are " + editableMeasures);
 		}
 
-		String initialVersion = (String) scenarioSB.getAttribute(WhatIfXMLTemplateParser.INITIAL_VERSION_ATTRIBUTE);
-		if (initialVersion != null && initialVersion.length() > 0) {
-			try {
-				writeBackConfig.setInitialVersion(new Integer(initialVersion));
-				logger.debug("The inital version is " + initialVersion);
-			} catch (Exception e) {
-				logger.error("Error loading the inital version from the template " + initialVersion);
-			}
-		}
+
 
 		writeBackConfig.setEditCubeName(editCube);
 		logger.debug(TAG_SCENARIO + ":the edit cube is " + editCube);

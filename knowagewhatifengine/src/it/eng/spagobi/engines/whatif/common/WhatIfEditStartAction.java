@@ -32,7 +32,7 @@ import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 
-@Path("/startwhatif")
+@Path("/olap/startwhatif")
 public class WhatIfEditStartAction extends WhatIfEngineStartAction {
 
 	public static transient Logger logger = Logger.getLogger(WhatIfEditStartAction.class);

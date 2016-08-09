@@ -16,9 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.spagobi.engines.whatif;
-
-import it.eng.spagobi.engines.whatif.common.WhatIfEngineStartAction;
+package it.eng.spagobi.engines.whatif.common;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -26,7 +24,7 @@ import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
 
-@Path("/startolap")
+@Path("/olap/startolap")
 public class OlapEngineStartAction extends WhatIfEngineStartAction {
 
 	public static transient Logger logger = Logger.getLogger(OlapEngineStartAction.class);
