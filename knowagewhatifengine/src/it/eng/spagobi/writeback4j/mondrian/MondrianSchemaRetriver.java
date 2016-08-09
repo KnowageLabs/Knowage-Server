@@ -223,8 +223,18 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 			MondrianDef.VirtualCube oldCube = virtualCube[i];
 			if (oldCube.name.equals(cubeName)) {
 				logger.debug("IN: loading the measure form the cube");
-				for (int j = 0; j < oldCube.measures.length; j++) {
-					measuresList.add(oldCube.measures[j].name);
+				if (oldCube.name.equals(cubeName)) {
+					logger.debug("IN: loading the measure form the cube");
+					for (int j = 0; j < oldCube.measures.length; j++) {
+						if (oldCube.measures[j].name.startsWith("[")) {
+							toReturn = oldCube.measures[j].name;
+							int indexOfFirstLeftBracket = toReturn.lastIndexOf("[");
+							int indexOfFirstRightBracket = toReturn.lastIndexOf("]");
+							toReturn = toReturn.substring(indexOfFirstLeftBracket, indexOfFirstRightBracket + 1);
+							toReturn = toReturn.substring(1, toReturn.length() - 1);
+						}
+						measuresList.add(toReturn);
+					}
 				}
 			}
 		}

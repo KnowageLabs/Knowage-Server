@@ -243,11 +243,12 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		}
 	    else {
 			OlapTemplateService.setScenarioTag($scope.scenario);
-			console.log(OlapTemplateService.getTempateJson());
-			$mdDialog.hide();
+			sbiModule_messaging.showSuccessMessage('Successfully added scenario to template', 'Success');
 			console.log($scope.scenario)
+			console.log($scope.scenario);
+			console.log(OlapTemplateService.getTempateJson());
+			$mdDialog.hide();			
 			console.log(OlapTemplateService.getScenarioObject());
-			//$scope.scenario = OlapTemplateService.getScenarioObject();
 		}	
 	}
 	
@@ -352,6 +353,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 $scope.saveTemplateButtons = function() {
 		 console.log($scope.toolbar);
 		 OlapTemplateService.setToolbarTag($scope.toolbar);
+		 sbiModule_messaging.showSuccessMessage('Successfully added buttons to template', 'Success');
 		 console.log(OlapTemplateService.getTempateJson());
 		 console.log(OlapTemplateService.getToolbarButtons());
 		 $scope.closeDialogOlapDesigner()
@@ -513,7 +515,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 				var success = OlapTemplateService.setClickableTag(clickableArray);
 				if(success){
 
-					sbiModule_messaging.showSuccessMessage('Successfully saved', 'Success');
+					sbiModule_messaging.showSuccessMessage('Successfully added cross navigation to template', 'Success');
 					$scope.crossNavfromMemberObj = {
 							"uniqueName" : "",
 							"clickParameter": {
