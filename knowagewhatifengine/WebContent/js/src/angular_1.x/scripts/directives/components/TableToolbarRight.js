@@ -140,12 +140,12 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  for (var i = 0; i < $scope.buttons.length; i++) {
 				
 				switch ($scope.buttons[i].category) {
-				case "DRILL_ON_DATA":
+				/*case "DRILL_ON_DATA":
 					whatifButtonNames.push($scope.buttons[i].name);
 					break;
 				case "DRILL_ON_DIMENSION":
 					whatifButtonNames.push($scope.buttons[i].name);
-					break;
+					break;*/
 				case "WHAT_IF":
 					whatifButtonNames.push($scope.buttons[i].name);
 					break;
