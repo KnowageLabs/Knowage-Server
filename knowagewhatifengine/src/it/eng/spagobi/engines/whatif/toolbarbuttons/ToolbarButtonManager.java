@@ -36,11 +36,11 @@ public class ToolbarButtonManager {
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SORTING", false, false, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SHOW_PROPERTIES", false, false, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_HIDE_EMPTY", false, false, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
+		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SAVE_SUBOBJECT", false, false, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SAVE_NEW", false, false, ToolbarButtonCategory.WHAT_IF.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_UNDO", false, false, ToolbarButtonCategory.WHAT_IF.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_VERSION_MANAGER", false, false, ToolbarButtonCategory.WHAT_IF.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_EXPORT_OUTPUT", false, false, ToolbarButtonCategory.WHAT_IF.toString()));
-		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SAVE_SUBOBJECT", false, false, ToolbarButtonCategory.WHAT_IF.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_EDITABLE_EXCEL_EXPORT", false, false, ToolbarButtonCategory.WHAT_IF.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_ALGORITHMS", false, false, ToolbarButtonCategory.WHAT_IF.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_FLUSH_CACHE", false, false, ToolbarButtonCategory.OLAP_FUNCTIONS.toString()));
