@@ -332,6 +332,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	  * Opens dialog with table of buttons to be selected as visible, and checked.
 	  */
 	 $scope.openButtonWizard = function() {
+		 
 		 $scope.toolbar = $scope.buttons;
 		 $mdDialog
 			.show({
@@ -378,11 +379,13 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
                                               name:"clicked",
                                               hideTooltip:true,
                                               transformer:function(){
-                                                  return " <md-checkbox ng-model='row.clicked' aria-label='buttonClicked'></md-checkbox>";
+                                                  return " <md-checkbox ng-model='row.clicked' ng-disabled='{{row.clickable==false}}' aria-label='buttonClicked'></md-checkbox>";
                                               }
                                           }
                                           
                                           ]
+	 
+	 
 	 /**
 	  * Defining columns property for angular table with id="olapDesignerCrossNavList"
 	  */
@@ -436,6 +439,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		
 		    });
 		  };
+		  
 	/**
 	* Function that enables adding new cross navigation
 	*/ 
@@ -547,9 +551,6 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	  * Reading from json to fill table
 	  */
 	$scope.readCNJson = function() {
-
-
-		
 
 		$scope.crossNavList= [];
 		var tempCellCN = [];

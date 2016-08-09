@@ -140,12 +140,23 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 		logger.debug("IN");
 		String toReturn = null;
 		MondrianDef.Cube[] cubes = schema.cubes;
+		MondrianDef.VirtualCube[] virtualCubes = schema.virtualCubes;
 		for (int i = 0; i < cubes.length; i++) {
 			MondrianDef.Cube oldCube = cubes[i];
 			if (oldCube.name.equals(cubeName)) {
 				logger.debug("IN: getting first dimesion form the cube");
 				MondrianDef.CubeDimension[] dimensons = oldCube.dimensions;
 				MondrianDef.CubeDimension aDimension = dimensons[0];
+				toReturn = aDimension.name;
+
+			}
+		}
+		for (int i = 0; i < virtualCubes.length; i++) {
+			MondrianDef.VirtualCube oldCube = virtualCubes[i];
+			if (oldCube.name.equals(cubeName)) {
+				logger.debug("IN: getting first dimesion form the cube");
+				MondrianDef.VirtualCubeDimension[] dimensons = oldCube.dimensions;
+				MondrianDef.VirtualCubeDimension aDimension = dimensons[0];
 				toReturn = aDimension.name;
 
 			}
@@ -160,12 +171,33 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 		logger.debug("IN");
 		String toReturn = null;
 		MondrianDef.Cube[] cubes = schema.cubes;
+		MondrianDef.VirtualCube[] virtualCubes = schema.virtualCubes;
 		for (int i = 0; i < cubes.length; i++) {
 			MondrianDef.Cube oldCube = cubes[i];
 			if (oldCube.name.equals(cubeName)) {
 
 				logger.debug("IN: loading the measure form the cube");
-				toReturn = oldCube.measures[0].name;
+				if (oldCube.measures[0].visible == null || oldCube.measures[0].visible == true) {
+					toReturn = oldCube.measures[0].name;
+				}
+
+			}
+		}
+		for (int i = 0; i < virtualCubes.length; i++) {
+			MondrianDef.VirtualCube oldCube = virtualCubes[i];
+			if (oldCube.name.equals(cubeName)) {
+
+				logger.debug("IN: loading the measure form the virtual cube");
+				if (oldCube.measures[0].visible == null || oldCube.measures[0].visible == true) {
+					if (oldCube.measures[0].name.startsWith("[")) {
+						toReturn = oldCube.measures[0].name;
+						int indexOfFirstLeftBracket = toReturn.lastIndexOf("[");
+						int indexOfFirstRightBracket = toReturn.lastIndexOf("]");
+						toReturn = toReturn.substring(indexOfFirstLeftBracket, indexOfFirstRightBracket + 1);
+						toReturn = toReturn.substring(1, toReturn.length() - 1);
+					}
+
+				}
 			}
 		}
 		logger.debug("OUT");
@@ -177,8 +209,18 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 		logger.debug("IN");
 		String toReturn = null;
 		MondrianDef.Cube[] cubes = schema.cubes;
+		MondrianDef.VirtualCube[] virtualCube = schema.virtualCubes;
 		for (int i = 0; i < cubes.length; i++) {
 			MondrianDef.Cube oldCube = cubes[i];
+			if (oldCube.name.equals(cubeName)) {
+				logger.debug("IN: loading the measure form the cube");
+				for (int j = 0; j < oldCube.measures.length; j++) {
+					measuresList.add(oldCube.measures[j].name);
+				}
+			}
+		}
+		for (int i = 0; i < virtualCube.length; i++) {
+			MondrianDef.VirtualCube oldCube = virtualCube[i];
 			if (oldCube.name.equals(cubeName)) {
 				logger.debug("IN: loading the measure form the cube");
 				for (int j = 0; j < oldCube.measures.length; j++) {

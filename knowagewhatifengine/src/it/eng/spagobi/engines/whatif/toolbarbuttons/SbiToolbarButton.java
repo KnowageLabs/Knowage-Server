@@ -23,6 +23,15 @@ public class SbiToolbarButton {
 	private boolean visible;
 	private boolean clicked;
 	private String category;
+	private boolean clickable;
+
+	public boolean isClickable() {
+		return clickable;
+	}
+
+	public void setClickable(boolean clickable) {
+		this.clickable = clickable;
+	}
 
 	public String getName() {
 		return name;
@@ -56,11 +65,12 @@ public class SbiToolbarButton {
 		this.category = category;
 	}
 
-	public SbiToolbarButton(String name, boolean visible, boolean clicked, String category) {
+	public SbiToolbarButton(String name, boolean visible, boolean clicked, boolean clickable, String category) {
 		super();
 		this.name = name;
 		this.visible = visible;
 		this.clicked = clicked;
+		this.clickable = clickable;
 		this.category = category;
 	}
 

@@ -104,6 +104,10 @@ angular.module('member_directive',['sbiModule'])
 				            	
 				            	
 				            }
+			            }/*else if(scope.selectedAgument.expected_value==='Member_Expression'){
+			            	scope.members = [];
+			            	scope.members.push(angular.copy(scope.selectedMember));
+			            	$element[0].className = 'pivot-table-selected';*/
 			            }else{
 			            	if(!contains){
 				            	if(scope.members.length>0&&scope.selectedMember.hierarchyUniqueName===scope.members[0].hierarchyUniqueName
