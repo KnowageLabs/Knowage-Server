@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	//Initialization of the messageResource object
 	messageResource.init({
-  		filePath : '../../../js/spagobi/messages/'
+  		filePath : '../../js/spagobi/messages/'
   		, defaultLocale : 'en_US'
   		, ajaxFunction : getSynch
 	});
