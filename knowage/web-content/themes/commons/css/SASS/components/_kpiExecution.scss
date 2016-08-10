@@ -29,4 +29,9 @@
 	.kpiLinearGauge {
 		max-height: 60px;
 	}
+	kpi-list-document {
+		@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+			flex: inherit !important;
+		}
+	}
 }
