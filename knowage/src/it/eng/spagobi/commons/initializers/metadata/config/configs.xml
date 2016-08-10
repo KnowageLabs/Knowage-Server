@@ -502,5 +502,8 @@
 	<CONFIG label="IMAGE_GALLERY.MAX_TENANT_IMAGES" name="Max number of images uploadable per tenant" description="Max number of images uploadable per tenant" isActive="true" valueCheck="100" valueType="NUM" category="IMAGE_GALLERY"/>
 	<CONFIG label="SPAGOBI.GENERIC_CONFIGURATION.DATASET_FILE_HDFS" name="Store dataset file in hdfs" description="Store dataset file in hdfs" isActive="false" valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION" />
 
+	<CONFIG label="IMPORTEXPORT.IMPORT_FILE_MAX_SIZE" name="IMPORTEXPORT.IMPORT_FILE_MAX_SIZE" description="IMPORTEXPORT.IMPORT_FILE_MAX_SIZE" isActive="true" valueCheck="15000000" valueType="STRING" category="GENERIC_CONFIGURATION" />
+
+		
 </CONFIGS>
 
