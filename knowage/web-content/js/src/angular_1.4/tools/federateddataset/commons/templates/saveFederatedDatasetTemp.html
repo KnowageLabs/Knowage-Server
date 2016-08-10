@@ -1,4 +1,4 @@
-<md-dialog aria-label="saveFederatedDatasetTemp" style="width: 80%; overflow-y: visible;">
+<md-dialog aria-label="saveFederatedDatasetTemp" class="saveFederationDefinitionTemplate">
  <div>
 	<md-toolbar class="miniheadfederation">
 		<div class="md-toolbar-tools">
@@ -11,7 +11,7 @@
 					<form name="saveFDSForm" layout="column">
 					
 						
-						<md-input-container flex class="md-block"> 
+						<md-input-container flex class="md-block saveFederationDefinitionTemplateInputContainerBottomPadding"> 
 						<label>{{translate.load("sbi.federationdefinition.template.label");}}</label> 
 						<input ng-model="federateddataset.label" name="label" required>
 						<div ng-messages="saveFDSForm.label.$error" ng-if="saveFDSForm.label.$dirty && !federateddataset.label.length">
@@ -19,7 +19,7 @@
 						</div>
 						</md-input-container>
 					
-						<md-input-container flex class="md-block"> 
+						<md-input-container flex class="md-block saveFederationDefinitionTemplateInputContainerBottomPadding"> 
 						<label>{{translate.load("sbi.federationdefinition.template.name");}}</label> 
 						<input ng-model="federateddataset.name" name="name" required>
 						<div ng-messages="saveFDSForm.name.$error" ng-if="saveFDSForm.name.$dirty && !federateddataset.name.length">
@@ -27,7 +27,7 @@
 						</div>
 						</md-input-container>
 												
-						<md-input-container flex class="md-block"> 
+						<md-input-container flex class="md-block saveFederationDefinitionTemplateInputContainerBottomPadding"> 
 	        				<label>{{translate.load("sbi.federationdefinition.template.description");}}</label>
 	        				<input ng-model='federateddataset.description'></input>
       					</md-input-container>
