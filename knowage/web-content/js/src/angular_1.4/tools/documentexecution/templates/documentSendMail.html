@@ -1,31 +1,24 @@
-<!-- 
-<md-dialog id="dialogSendMail" layout="column" aria-label="Select type of download"  ng-cloak>
--->
-<md-dialog id="dialogSendMail" flex layout="column" aria-label="Select type of download" ng-cloak 
-	style="min-height: 80%; max-height: 95%">
+<md-dialog id="dialogSendMail" flex layout="column" aria-label="Send mail" ng-cloak 
+	md-dynamic-height>
 	
-<!-- 	<md-toolbar> -->
-<!-- 		<div class="md-toolbar-tools"> -->
-<!-- 	  		<h2 style="font-size: 20px; text-align: center; width: 100%;">{{translate.load("sbi.execution.sendmail.headerTitle")}}</h2> -->
-<!-- 		</div> -->
-<!-- 	</md-toolbar> -->
-	
-	<md-tabs md-border-bottom flex>
-		<md-tab>
-			<md-tab-label >{{translate.load("sbi.execution.sendmail.headerTitle")}}</md-tab-label>
-			<md-tab-body>
-			  	<md-dialog-content class="sticky-container">
+	<md-toolbar>
+	      <div class="md-toolbar-tools">
+	        <h2>{{translate.load("sbi.execution.sendmail.headerTitle")}}</h2>
+	        
+	      </div>
+	    </md-toolbar>
+			  	<md-dialog-content class="sticky-container" layout-padding>
 					<div layout="row">
 						<div flex="100">
-							<md-input-container>
+							<md-input-container class="md-block">
 								<label>{{translate.load("sbi.execution.sendmail.mailto")}}</label> 
-								<input ng-model="sendMailCtrl.mail.TO" type="text" md-maxlength="40" maxlength="40" >
+								<input ng-model="sendMailCtrl.mail.TO" type="text" >
 							</md-input-container>
 						</div>
 					</div>
 					<div layout="row">
 						<div flex="100">
-							<md-input-container>
+							<md-input-container class="md-block">
 								<label>{{translate.load("sbi.execution.sendmail.cc")}}</label>
 								<input ng-model="sendMailCtrl.mail.CC" type="text" md-maxlength="160" maxlength="160">
 							</md-input-container>
@@ -33,7 +26,7 @@
 					</div>
 					<div layout="row">
 						<div flex="100">
-							<md-input-container>
+							<md-input-container class="md-block">
 								<label>{{translate.load("sbi.execution.sendmail.object")}}</label>
 								<input ng-model="sendMailCtrl.mail.OBJECT" type="text" md-maxlength="160" maxlength="160">
 							</md-input-container>
@@ -47,33 +40,32 @@
 			  		<div></div>
 			  		
 			  		<div layout="row">
-						<div flex="100">
-							<md-input-container>
+						<div flex="50">
+							<md-input-container class="md-block">
 								<label>{{translate.load("sbi.execution.sendmail.login")}}</label>
-								<input ng-model="sendMailCtrl.mail.LOGIN" type="text" md-maxlength="160" maxlength="160">
+								<input ng-model="sendMailCtrl.mail.LOGIN" type="text" >
 							</md-input-container>
 						</div>
-					</div>
-			  		
-					<div layout="row">
-						<div flex="100">
-							<md-input-container>
+
+						<div flex="50">
+							<md-input-container class="md-block">
 								<label>{{translate.load("sbi.execution.sendmail.password")}}</label>
-								<input ng-model="sendMailCtrl.mail.PASSWORD" type="password" md-maxlength="160" maxlength="160">
+								<input ng-model="sendMailCtrl.mail.PASSWORD" type="password" >
 							</md-input-container>
 						</div>
-					</div>
-					<div layout="row">
+						</div>
+						<div layout="row">
+
 						<div flex="100">
-							<md-input-container>
+							<md-input-container class="md-block">
 								<label>{{translate.load("sbi.execution.sendmail.replayto")}}</label>
-								<input ng-model="sendMailCtrl.mail.REPLAYTO" type="text" md-maxlength="160" maxlength="160">
+								<input ng-model="sendMailCtrl.mail.REPLAYTO" type="text" >
 							</md-input-container>
 						</div>
 					</div>
 			  	</md-dialog-content>
 			  	
-			  	<div class="footer" layout="row">
+			  	<md-dialog-actions layout="row">
 			  		<span flex></span>
 				    <md-button ng-click="sendMailCtrl.annulla()" class="md-raised">
 				  		{{translate.load("sbi.general.cancel")}}
@@ -82,8 +74,7 @@
 				 			ng-disabled="!sendMailCtrl.mail.TO">
 				  		{{translate.load("sbi.execution.sendmail.headerTitle")}}
 				  	</md-button>
-	 	 		</div>
-			</md-tab-body>				
-		</md-tab>
-	</md-tabs>
+	 	 		</md-dialog-actions>
+
+	<md-dialog-content>
 </md-dialog>
