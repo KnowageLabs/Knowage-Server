@@ -25,8 +25,8 @@
 				<md-checkbox ng-show="true" ng-model="showSiblings" aria-label="Show bros" style="display:initial;">
 					<span style="font-size: 10px">{{showSiblings?'Show siblings':'Hide siblings'}}</span>
 				</md-checkbox>
-				<!-- put here olap mode NIKOLAAAAAAAAAAAAA :P-->
-				<md-checkbox ng-show="true" ng-model="bindEnabled" aria-label="Show bros" style="display:initial;">
+				
+				<md-checkbox ng-show="olapMode" ng-model="bindEnabled" aria-label="Show bros" style="display:initial;">
 					<span style="font-size: 10px">{{bindEnabled?'Disable binding':'Enable binding'}}</span>
 				</md-checkbox>
 				
