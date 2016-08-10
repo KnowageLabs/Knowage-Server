@@ -27,6 +27,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -266,8 +267,9 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
-		// check if owner of document
-		if (!document.getCreationUser().equals(getUserProfile().getUserId()) || !document.getTenant().equals(getUserProfile().getOrganization())) {
+		// check if owner of document or administrator
+		
+		if (!document.getTenant().equals(getUserProfile().getOrganization()) || (!UserUtilities.isAdministrator(getUserProfile()) && !document.getCreationUser().equals(getUserProfile().getUserId()))) {
 			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label
 					+ "]");
 		}
