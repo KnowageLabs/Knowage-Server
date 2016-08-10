@@ -5,7 +5,7 @@
  			canModify = true;
   
   } %>
-<md-dialog id="metadataDlg" aria-label="{{::metadataDlgCtrl.lblTitle}}" layout="column" flex class="metadataDialog">
+<md-dialog id="metadataDlg" aria-label="{{::metadataDlgCtrl.lblTitle}}" layout="column" flex class="metadataDialog" md-dynamic-height>
 		
 	
 		<md-toolbar >
