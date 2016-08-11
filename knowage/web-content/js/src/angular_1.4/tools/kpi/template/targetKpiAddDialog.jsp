@@ -1,4 +1,4 @@
-<md-dialog aria-label="Add KPI association" ng-cloak class="flex2" style="height:80%">
+<md-dialog aria-label="Add KPI association" ng-cloak class="flex2">
 		<md-toolbar>
 			<div class="md-toolbar-tools">
 				<h1>{{translate.load("sbi.kpi.addkpiassociation")}}</h1>

@@ -91,7 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </script>
 
 </head>
-<body>
+<body class="kn-target-kpi">
 	<angular-list-detail ng-controller="targetDefinitionController" full-screen="true">
 		<list label="translate.load('sbi.target.list')" ng-controller="listController" new-function="addTarget">
 			<angular-table  flex
