@@ -618,3 +618,12 @@ md-menu-content._md-menu-bar-menu .divider {
 md-menu-content._md-menu-bar-menu.md-dense md-menu-item.md-indent>md-icon {
   line-height: 20px;
 }
+
+/* IE11 fix */
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  md-checkbox.md-knowage-theme.md-checked ._md-icon:after {
+    transform: rotate(135deg);
+    top:10px;
+  }
+}
