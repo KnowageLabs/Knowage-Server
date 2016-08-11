@@ -21,6 +21,8 @@ import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.AssociativeLogicManager;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
@@ -32,6 +34,7 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.Operand;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.AssociationAnalyzer;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
@@ -119,29 +122,29 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	public String getNotDerivedDataSets(String typeDoc, String callback) {
 		logger.debug("IN");
 
-		ISbiDataSetDAO dsDAO;
+		IDataSetDAO dsDAO;
 		try {
-			dsDAO = DAOFactory.getSbiDataSetDAO();
+			dsDAO = DAOFactory.getDataSetDAO();
 		} catch (EMFUserError e) {
 			logger.error("Error while looking for datasets", e);
 			throw new SpagoBIRuntimeException("Error while looking for datasets", e);
 		}
 
-		List<SbiDataSet> dataSets = dsDAO.loadNotDerivedSbiDataSets();
-		List<SbiDataSet> toBeReturned = new ArrayList<SbiDataSet>();
-
-		for (SbiDataSet dataset : dataSets) {
-			if (DataSetUtilities.isExecutableByUser(dataset.getOwner(), getUserProfile()))
-				toBeReturned.add(dataset);
-		}
-
+		List<IDataSet> toBeReturned = dsDAO.loadNotDerivedDataSets(getUserProfile());
+		
+		try {
 		logger.debug("OUT");
 		if (callback == null || callback.isEmpty())
-			return JsonConverter.objectToJson(toBeReturned, toBeReturned.getClass());
-		else {
-			String jsonString = JsonConverter.objectToJson(toBeReturned, toBeReturned.getClass());
+			
+				return ((JSONArray) SerializerFactory.getSerializer("application/json").serialize(toBeReturned, buildLocaleFromSession())).toString();
 
-			return callback + "(" + jsonString + ")";
+			else {
+				String jsonString = ((JSONArray) SerializerFactory.getSerializer("application/json").serialize(toBeReturned, buildLocaleFromSession())).toString();
+	
+				return callback + "(" + jsonString + ")";
+			}
+		} catch (SerializationException e) {
+			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
 	}
 

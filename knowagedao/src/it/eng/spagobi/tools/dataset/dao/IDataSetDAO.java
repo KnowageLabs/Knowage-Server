@@ -50,7 +50,9 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public List<IDataSet> loadUserDataSets(String user);
 
 	public List<IDataSet> loadNotDerivedUserDataSets(UserProfile user);
-
+	
+	public List<IDataSet> loadNotDerivedDataSets(UserProfile user);
+	
 	public List<IDataSet> loadFlatDatasets();
 
 	public List<IDataSet> loadDataSetsOwnedByUser(UserProfile user, Boolean showDerivedDatasets);

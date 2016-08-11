@@ -222,6 +222,19 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	public List<IDataSet> loadNotDerivedUserDataSets(UserProfile user) {
 		return loadDataSets(user.getUserId().toString(), true, false, null, "USER", UserUtilities.getDataSetCategoriesByUser(user), null, false);
 	}
+	
+	public List<IDataSet> loadNotDerivedDataSets(UserProfile user){
+		List<IDataSet> results = new ArrayList<IDataSet>();
+
+		List<IDataSet> owened = loadDataSetsOwnedByUser(user, false);
+		results.addAll(owened);
+		List<IDataSet> shared = loadDatasetsSharedWithUser(user, false);
+		results.addAll(shared);
+		List<IDataSet> enterprise = loadEnterpriseDataSets(user);
+		results.addAll(enterprise);
+
+		return results;
+	}
 
 	@Override
 	public List<IDataSet> loadDatasetsSharedWithUser(UserProfile profile, Boolean showDerivedDataset) {

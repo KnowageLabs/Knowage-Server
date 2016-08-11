@@ -29,8 +29,6 @@ public interface ISbiDataSetDAO extends ISpagoBIDao {
 
 	public List<SbiDataSet> loadSbiDataSets();
 
-	public List<SbiDataSet> loadNotDerivedSbiDataSets();
-
 	public List<SbiDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, String category,
 			String implementation, Boolean showDerivedDatasets);
 

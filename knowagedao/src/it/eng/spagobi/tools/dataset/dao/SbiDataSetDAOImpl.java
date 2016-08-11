@@ -88,10 +88,6 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 		return loadDataSets(null, null, null, null, null, null, null, true);
 	}
 
-	@Override
-	public List<SbiDataSet> loadNotDerivedSbiDataSets() {
-		return loadDataSets(null, null, null, null, null, null, null, false);
-	}
 
 	@Override
 	public SbiDataSet loadSbiDataSetByIdAndOrganiz(Integer id, String organiz) {
