@@ -153,7 +153,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 								id: data[i].kpiId,
 								version: data[i].kpiVersion,
 								name: data[i].kpi.name,
-								category: null,
+								category: '',
 								date: this.formatDate(data[i].kpi.dateCreation),
 								author: data[i].kpi.author,
 								value: data[i].value
@@ -294,7 +294,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 							values: [], // Not needed yet
 							category:
 								typeof data[i].category != 'undefined' && data[i].category != null 
-								? data[i].category : null
+								? data[i].category : ''
 						}
 					}
 				}
