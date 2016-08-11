@@ -44,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,11 +65,11 @@ public class FederatedDataSet extends QbeDataSet {
 	private FederationDefinition federation;
 	private String userId = "";
 
-	public FederatedDataSet(SpagoBiDataSet dataSetConfig) {
+	public FederatedDataSet(SpagoBiDataSet dataSetConfig, HttpSession session) {
 		super(dataSetConfig);
 
 		federation = new FederationDefinition();
-		setDependentDataSets((SpagoBiDataSet[]) dataSetConfig.getDependentDataSets());
+		setDependentDataSets((SpagoBiDataSet[]) dataSetConfig.getDependentDataSets(),session);
 
 		federation.setLabel(dataSetConfig.getFederationlabel());
 		federation.setFederation_id(dataSetConfig.getFederationId());
@@ -138,10 +140,10 @@ public class FederatedDataSet extends QbeDataSet {
 		federation.setSourceDatasets(sourceDatasetsSet);
 	}
 
-	public void setDependentDataSets(SpagoBiDataSet[] sourceDatasets) {
+	public void setDependentDataSets(SpagoBiDataSet[] sourceDatasets, HttpSession session) {
 		Set<IDataSet> sourceDatasetsSet = new HashSet<IDataSet>();
 		for (int i = 0; i < sourceDatasets.length; i++) {
-			IDataSet iDataSet = DataSetFactory.getDataSet(sourceDatasets[i], getUserIn());
+			IDataSet iDataSet = DataSetFactory.getDataSet(sourceDatasets[i], getUserIn(),session);
 			sourceDatasetsSet.add(iDataSet);
 		}
 		federation.setSourceDatasets(sourceDatasetsSet);

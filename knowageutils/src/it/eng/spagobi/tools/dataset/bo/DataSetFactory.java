@@ -112,8 +112,17 @@ public class DataSetFactory {
 
 		}
 		try {
-			c = Class.forName(className).getConstructor(SpagoBiDataSet.class);
-			object = c.newInstance(dataSetConfig);
+			
+			
+			
+			if(className.toLowerCase().contains("federated")){
+				c = Class.forName(className).getConstructor(SpagoBiDataSet.class,HttpSession.class);
+				object = c.newInstance(dataSetConfig, session);
+			}else{
+				c = Class.forName(className).getConstructor(SpagoBiDataSet.class);
+				object = c.newInstance(dataSetConfig);
+			}
+			
 			dataSet = (IDataSet) object;
 
 			logger.debug("Check if the dataset type is a Qbe dataset");

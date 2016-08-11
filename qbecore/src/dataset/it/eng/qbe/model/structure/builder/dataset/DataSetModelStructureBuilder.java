@@ -168,7 +168,7 @@ public class DataSetModelStructureBuilder extends AbstractModelStructureBuilder 
 
 		IModelField datamartField;
 
-		if (entity.getDsType().equals("it.eng.qbe.dataset.qbedataset")) {
+		if (fieldUniqueName.contains("it.eng.spagobi.meta")) {
 			datamartField = dataMartEntity.addNormalField(keyPrefix + alias);
 			datamartField.setName(alias);
 		} else {
