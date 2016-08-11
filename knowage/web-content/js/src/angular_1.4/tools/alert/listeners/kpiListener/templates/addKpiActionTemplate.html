@@ -16,14 +16,14 @@
     </md-toolbar>
     <md-dialog-content flex layout >
       <div class="md-dialog-content" flex layout="column"> 
-       <md-input-container>
+       <md-input-container class="md-block">
         <label>{{translate.load("sbi.generic.type")}}</label>
         <md-select ng-model="currentAction.idAction" >
           <md-option ng-repeat="type in actionType" value="{{type.id}}" ng-click="changeCurrentActionType(type)">{{type.name}}</md-option>
         </md-select>
       </md-input-container> 
       
-      <md-input-container>
+      <md-input-container class="md-block">
 	    	<label>{{translate.load("sbi.kpis.threshold")}}</label>
 	        <md-select ng-model="currentAction.thresholdValues" multiple >
 	          <md-option ng-repeat="threshVal in kpi.threshold.thresholdValues" value="{{threshVal.id}}">

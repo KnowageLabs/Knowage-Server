@@ -29,8 +29,14 @@
 	.kpiLinearGauge {
 		max-height: 60px;
 	}
-	kpi-list-document {
-		@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+
+}
+
+/* IE11 fix */
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.kn-kpiExecution {
+		kpi-list-document {
 			flex: inherit !important;
 		}
 	}

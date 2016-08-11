@@ -3,6 +3,7 @@
   'variables',
   'mixins',
   'fonts',
+  'components/alerts',
   'components/layerCatalogue',
   'components/navbar',
   'components/federatedDataset',
@@ -615,8 +616,4 @@ md-menu-content._md-menu-bar-menu .divider {
 } 
 md-menu-content._md-menu-bar-menu.md-dense md-menu-item.md-indent>md-icon {
   line-height: 20px;
-}
-
-md-dialog.md-knowage-theme {
-  margin: auto;
 }

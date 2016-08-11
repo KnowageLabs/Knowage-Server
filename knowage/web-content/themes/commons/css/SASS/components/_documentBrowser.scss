@@ -362,3 +362,13 @@
 		font-size: .8em;
 	}
 }
+
+/* IE11 FIX */
+
+@media all and (-ms-high-contrast:none) {
+	.kn-documentBrowser{
+		.documentGridViewInput {
+			margin-top: 30px;
+		}
+	}
+}
