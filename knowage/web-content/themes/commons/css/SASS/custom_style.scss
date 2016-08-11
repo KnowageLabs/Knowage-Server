@@ -624,7 +624,8 @@ md-menu-content._md-menu-bar-menu.md-dense md-menu-item.md-indent>md-icon {
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
   md-checkbox.md-knowage-theme.md-checked ._md-icon:after {
-    transform: rotate(135deg);
-    top:10px;
+/*    transform: rotate(135deg);
+    top:10px;*/
+    height: 13.33px;
   }
 }
