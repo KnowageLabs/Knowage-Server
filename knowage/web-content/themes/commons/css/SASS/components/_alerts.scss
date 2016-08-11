@@ -3,8 +3,8 @@
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
 	.addKpiAction {
 		md-dialog-content {
-			display: block;
-			flex: none;
+			display: block !important;
+			flex: none !important;
 		}
 	}
 }

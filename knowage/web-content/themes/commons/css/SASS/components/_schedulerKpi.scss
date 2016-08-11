@@ -210,3 +210,13 @@ text-align: center;
 	height: 20px;
 }
 }
+
+/*IE11 FIX */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.kn-schedulerKpi {
+		.kn-list {
+			display: block !important;
+			flex: none !important;
+		}
+	}
+}
