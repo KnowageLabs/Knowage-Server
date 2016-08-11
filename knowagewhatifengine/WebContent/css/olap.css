@@ -894,3 +894,9 @@ md-option[selected], md-select-menu md-option[selected]{
 .leaf-paddin-filter{
 	padding-left: 60px;
 }
+
+.filter-dialog-dimensions {  
+    min-width:350px; 
+    width: 80%; 
+    height: 60%;
+}
