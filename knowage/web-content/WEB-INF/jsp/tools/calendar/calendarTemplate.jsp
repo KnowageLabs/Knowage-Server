@@ -106,6 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<angular-table flex ng-show="selectCalendar.realDateGenerated.length>0" layout-fill 
 					id='dayslist' ng-model=selectCalendar.realDateGenerated
 					columns=columns
+					no-pagination=false
 					highlights-selected-item=true click-function=""
 					scope-functions=tableFunction <%= canSee? "speed-menu-option=measureMenuOption ":"" %>
 					current-page-number = "tablePage" initial-sorting="'date'"> </angular-table>
