@@ -28,3 +28,14 @@
 	}
 
 }
+
+/* IE11 FIX */
+
+@media all and (-ms-high-contrast:none) {
+	.kn-scorecardKpiDefinition{
+		.kpiSelectionDialog {
+			height: 100%;
+		display: block;
+		}
+	}
+}

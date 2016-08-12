@@ -69,7 +69,7 @@
       </div>
     </md-toolbar>
 
-       <md-dialog-content layout style="height:90%;">
+       <md-dialog-content class="kpiSelectionDialog">
 		<angular-table
 		id='targetListTable' ng-model=arrayToShow
 		columns='[{"label":"Status","name":"kpiSemaphore","size":"60px"}, {"label":"KPI Name","name":"name"},{"label":"Category","name":"category.translatedValueName"},{"label":"Date","name":"dateCreation"},{"label":"Author","name":"author"}]'
