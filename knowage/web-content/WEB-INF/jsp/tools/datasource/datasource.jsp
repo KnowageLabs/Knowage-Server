@@ -163,7 +163,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 										<!-- URL -->
 										<div layout="row">
-										<md-input-container flex class="md-block" >
+										<md-input-container flex="100" class="md-block" >
 													<label>{{translate.load("sbi.datasource.type.jdbc.url")}}</label>
 													<input ng-change="setDirty()"  ng-model="selectedDataSource.urlConnection" required
 														ng-maxlength="500" ng-readonly="readOnly">
@@ -175,7 +175,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 										<!-- USER -->
 										<div layout="row">
-										<md-input-container flex class="md-block" >
+										<md-input-container flex="100" class="md-block" >
 												<label>{{translate.load("sbi.datasource.type.jdbc.user")}}</label>
 												<input ng-change="setDirty()"  ng-model="selectedDataSource.user"
 													ng-maxlength="50" ng-readonly="readOnly"> </md-input-container>
@@ -184,7 +184,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 										<!-- PASSWORD -->
 										<div layout="row">				
-										<md-input-container flex class="md-block" >
+										<md-input-container flex="100" class="md-block" >
 												<label>{{translate.load("sbi.datasource.type.jdbc.password")}}</label>
 												<input ng-change="setDirty()"  type="password" name="password" ng-model="selectedDataSource.pwd"
 													ng-maxlength="50" ng-readonly="readOnly"> </md-input-container>
@@ -193,7 +193,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 										<!-- DRIVER -->
 										<div layout="row">
-										<md-input-container flex class="md-block" >
+										<md-input-container flex="100" class="md-block" >
 													<label>{{translate.load("sbi.datasource.driver")}}</label>
 													<input ng-change="setDirty()"  ng-model="selectedDataSource.driver" required
 														ng-maxlength="160" ng-readonly="readOnly">
