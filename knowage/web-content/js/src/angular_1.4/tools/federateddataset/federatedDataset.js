@@ -106,6 +106,19 @@ function federationDefinitionFunction
 					}
 					if(!dataset.metadata.fieldsMeta){
 						dataset.metadata.fieldsMeta = [];
+						if(dataset.meta && dataset.meta.columns){
+							var columnsJson ={};
+							for(c in dataset.meta.columns){
+								if(dataset.meta.columns[c].pname=="fieldAlias"){
+									columnsJson[dataset.meta.columns[c].column]=dataset.meta.columns[c].pvalue;
+								}
+								
+							}
+							for(column in columnsJson){
+								var aMeta={name:column, alias:columnsJson[column]};
+								dataset.metadata.fieldsMeta.push(aMeta);
+							}
+						}
 					}
 					angular.forEach(dataset.metadata.fieldsMeta, function(listField){
 						
@@ -136,6 +149,19 @@ function federationDefinitionFunction
 				}
 				if(!dataset.metadata.fieldsMeta){
 					dataset.metadata.fieldsMeta = [];
+					if(dataset.meta && dataset.meta.columns){
+						var columnsJson ={};
+						for(c in dataset.meta.columns){
+							if(dataset.meta.columns[c].pname=="fieldAlias"){
+								columnsJson[dataset.meta.columns[c].column]=dataset.meta.columns[c].pvalue;
+							}
+							
+						}
+						for(column in columnsJson){
+							var aMeta={name:column, alias:columnsJson[column]};
+							dataset.metadata.fieldsMeta.push(aMeta);
+						}
+					}
 				}
 				angular.forEach(dataset.metadata.fieldsMeta, function(listField){
 					listField.selected =  false;

@@ -515,6 +515,13 @@ public class DataSetJSONSerializer implements Serializer {
 							fieldTypeJSONObject.put("pname", "fieldType");
 							fieldTypeJSONObject.put("pvalue", fieldType);
 							columnsJSONArray.put(fieldTypeJSONObject);
+							
+							String fieldAlias = (String) row.getAttribute("alias");
+							JSONObject fieldAliasJSONObject = new JSONObject();
+							fieldAliasJSONObject.put("column", columnName);
+							fieldAliasJSONObject.put("pname", "fieldAlias");
+							fieldAliasJSONObject.put("pvalue", fieldAlias);
+							columnsJSONArray.put(fieldAliasJSONObject);
 
 							List<SourceBean> properties = row.getAttributeAsList("PROPERTY");
 							for (int j = 0; j < properties.size(); j++) {
