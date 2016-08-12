@@ -721,6 +721,14 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				
 				;
 			}
+		 
+		 $scope.isEdit = function(model) {
+			 if(model.hasOwnProperty('id')){
+				 return true;
+			 } else {
+				 return false;
+			 }
+		 }
 };
 
 

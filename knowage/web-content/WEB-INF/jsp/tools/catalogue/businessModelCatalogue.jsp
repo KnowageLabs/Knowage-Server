@@ -106,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        <md-card-content layout="column">
 		        <md-input-container class="md-block" >
 					<label>{{translate.load("sbi.ds.name")}}</label>
-					<input ng-model="selectedBusinessModel.name" name="name" required ng-maxlength="100">
+					<input ng-disabled="isEdit(selectedBusinessModel)"  ng-model="selectedBusinessModel.name" name="name" required ng-maxlength="100">
 <!-- 					<div ng-messages="businessModelForm.name.$error"> -->
 <!-- 			          <div ng-message="required">Name is required.</div> -->
 <!-- 			        </div> -->
