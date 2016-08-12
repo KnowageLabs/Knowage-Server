@@ -154,3 +154,6 @@ CREATE TABLE SBI_WHATIF_WORKFLOW(
 ALTER TABLE SBI_WHATIF_WORKFLOW 				ADD CONSTRAINT FK_SBI_MODEL_WORKFLOW			FOREIGN KEY (MODEL_ID) 			REFERENCES SBI_ARTIFACTS(ID)					ON DELETE CASCADE;
 ALTER TABLE SBI_WHATIF_WORKFLOW 				ADD CONSTRAINT FK_SBI_USER_WORKFLOW			FOREIGN KEY (USER_ID) 				REFERENCES SBI_USER(ID) ON DELETE CASCADE;
 
+-- 09.08.2016 Alberto Ghedin: refactoring whatif start actions
+update SBI_ENGINES set MAIN_URL="/knowagewhatifengine/restful-services/olap/startolap" where label = "knowageolapengine";
+update SBI_ENGINES set MAIN_URL="/knowagewhatifengine/restful-services/olap/startwhatif" where label = "knowagewhatifengine";
