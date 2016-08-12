@@ -207,6 +207,7 @@ angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
     margin-left: $standardPadding;
 }
 
+
 .principalTable tr td button.md-icon-button {
     md-icon {
         position: relative;
@@ -393,5 +394,10 @@ md-radio-button ._md-container {
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
   angular-table{
     width: 100%;
+    
+    .principalTable tr td:first-child > md-checkbox div:not(.md-icon) {
+        margin-left: $standardPadding;
+    }
+
   }
 }
