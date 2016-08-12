@@ -302,7 +302,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 							} else {
 								if (context.getAxis() == Axis.ROWS && !isPropertyCell(context)) {
 
-									attributes.put("src", "../img/nodrill.png");
+									attributes.put("src", "../../img/nodrill.png");
 									attributes.put("style", "padding : 2px");
 									startElement("img", attributes);
 									endElement("img");
@@ -319,7 +319,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				} else {
 					if (context.getAxis() == Axis.ROWS && !isPropertyCell(context)) {
 
-						attributes.put("src", "../img/nodrill.png");
+						attributes.put("src", "../../img/nodrill.png");
 						attributes.put("style", "padding : 2px");
 						startElement("img", attributes);
 						endElement("img");
