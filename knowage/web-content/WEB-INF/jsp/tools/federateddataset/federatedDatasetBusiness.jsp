@@ -187,7 +187,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											highlights-selected-item="isDSCountained(dataset.label)"
 											selected-item="ctrl.myselectedvariable[dataset.label]"
 											click-function="ctrl.selectDeselect(item, listId)"
-											class="noScrol"									
+											class="noScrol"
+											no-pagination="true"									
 										>
 										</angular-list>
 									</md-content>
