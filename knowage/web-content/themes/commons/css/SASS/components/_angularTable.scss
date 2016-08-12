@@ -395,9 +395,5 @@ md-radio-button ._md-container {
   angular-table{
     width: 100% !important;
 
-    .principalTable tr td:first-child > md-checkbox div:not(.md-icon) {
-        margin-left: $standardPadding;
-    }
-
   }
 }
