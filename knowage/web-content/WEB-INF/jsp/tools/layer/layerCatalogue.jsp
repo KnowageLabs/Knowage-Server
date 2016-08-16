@@ -80,12 +80,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<angular-list-detail ng-controller="Controller"
 		 show-detail="showme">
 	<list label='translate.load("sbi.layercatalogue")' new-function="loadLayerList"> 
-	<angular-table flex
-		id='layerlist' ng-model=layerList
+	<angular-table 
+		flex
+		id='layerlist' 
+		ng-model=layerList
 		columns='[{"label":"Name","name":"name"},{"label":"Type","name":"type","size":"60px"},{"label":" ","name":"icon","size":"30px"}]'
-		columnsSearch='["name","type", "layerURL"]' show-search-bar=true
-		highlights-selected-item=true click-function="loadLayerList(item);"
-		speed-menu-option=menuLayer scope-functions=tableFunction> </angular-table>
+		columns-search='["name","type", "layerURL"]' 
+		show-search-bar=true
+		highlights-selected-item=true 
+		click-function="loadLayerList(item);"
+		speed-menu-option=menuLayer 
+		scope-functions=tableFunction> </angular-table>
 
 	</list> 
 	<detail label='selectedLayer.label==undefined? "" : selectedLayer.label'  save-function="saveLayer"
