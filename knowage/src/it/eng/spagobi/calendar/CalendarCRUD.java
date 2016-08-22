@@ -1,7 +1,24 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package it.eng.spagobi.calendar;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +31,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.json.JSONArray;
@@ -31,151 +49,311 @@ import it.eng.spagobi.tools.calendar.dao.ICalendarDAO;
 import it.eng.spagobi.tools.calendar.metadata.Calendar;
 import it.eng.spagobi.tools.calendar.metadata.CalendarAttributeDomain;
 import it.eng.spagobi.tools.calendar.metadata.CalendarConfiguration;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @ManageAuthorization
 @Path("/calendar")
 public class CalendarCRUD {
-	private SessionFactory aidaSession = null;
-	private Session session = null;
+
+	private static Logger logger = Logger.getLogger(CalendarCRUD.class);
 
 	@GET
 	@Path("/{id}/getCalendarById")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public void getCalendarById(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError, UnsupportedEncodingException, JSONException {
-		aidaSession = CalendarUtilities.getHibSessionAida();
-		session = aidaSession.openSession();
-		ICalendarDAO dao = getCalendarDAO(req);
-		Calendar cal = dao.loadCalendarById(id, session);
+	public void getCalendarById(@PathParam("id") Integer id, @Context HttpServletRequest req) {
+		SessionFactory aidaSession = null;
+		Session session = null;
+		try {
+			aidaSession = CalendarUtilities.getHibSessionAida();
 
-		System.out.println(cal.getCalendar());
-		closeSession();
+			session = aidaSession.openSession();
+			ICalendarDAO dao = getCalendarDAO(req);
+			logger.debug("load Calendar by Id");
+			Calendar cal = dao.loadCalendarById(id, session);
+
+		} catch (EMFUserError e) {
+			// TODO Auto-generated catch block
+			logger.error("saveCalendar error ", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} finally {
+
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+			if (aidaSession != null) {
+				aidaSession.close();
+			}
+		}
 	}
 
 	@GET
 	@Path("/{id}/getInfoCalendarById")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getInfoCalendarById(@PathParam("id") Integer id, @Context HttpServletRequest req)
-			throws EMFUserError, UnsupportedEncodingException, JSONException {
-		aidaSession = CalendarUtilities.getHibSessionAida();
-		session = aidaSession.openSession();
-		ICalendarDAO dao = getCalendarDAO(req);
-		Calendar cal = dao.loadCalendarById(id, session);
-		List<CalendarConfiguration> listDays = dao.loadCalendarDays(cal.getCalendarId(), session);
+	public Response getInfoCalendarById(@PathParam("id") Integer id, @Context HttpServletRequest req) {
+		SessionFactory aidaSession = null;
+		Session session = null;
+		logger.debug("open Session");
+		try {
+			aidaSession = CalendarUtilities.getHibSessionAida();
 
-		Response ret = Response.ok(JsonConverter.objectToJson(listDays, listDays.getClass())).build();
-		closeSession();
-		return ret;
+			session = aidaSession.openSession();
+
+			ICalendarDAO dao = getCalendarDAO(req);
+			logger.debug("load Calendar by Id");
+			Calendar cal = dao.loadCalendarById(id, session);
+			logger.debug("load Calendar Days");
+			List<CalendarConfiguration> listDays = dao.loadCalendarDays(cal.getCalendarId(), session);
+
+			Response ret = Response.ok(JsonConverter.objectToJson(listDays, listDays.getClass())).build();
+
+			return ret;
+
+		} catch (EMFUserError e) {
+			// TODO Auto-generated catch block
+			logger.error("getInfoCalendarById error ", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} finally {
+
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+			if (aidaSession != null) {
+				aidaSession.close();
+			}
+		}
 	}
 
 	@GET
 	@Path("/getDomains")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getDomains(@Context HttpServletRequest req) throws EMFUserError, UnsupportedEncodingException, JSONException {
-		aidaSession = CalendarUtilities.getHibSessionAida();
-		session = aidaSession.openSession();
-		ICalendarDAO dao = getCalendarDAO(req);
-		List<CalendarAttributeDomain> domains = dao.loadCalendarDomains(session);
-		closeSession();
-		return Response.ok(JsonConverter.objectToJson(domains, domains.getClass())).build();
+	public Response getDomains(@Context HttpServletRequest req) {
+		SessionFactory aidaSession = null;
+		Session session = null;
+
+		try {
+			aidaSession = CalendarUtilities.getHibSessionAida();
+
+			session = aidaSession.openSession();
+			ICalendarDAO dao = getCalendarDAO(req);
+			logger.debug("load Calendar Attribute Domains");
+			List<CalendarAttributeDomain> domains = dao.loadCalendarDomains(session);
+
+			return Response.ok(JsonConverter.objectToJson(domains, domains.getClass())).build();
+		} catch (EMFUserError e) {
+			// TODO Auto-generated catch block
+			logger.error("getInfoCalendarById error ", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} finally {
+
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+			if (aidaSession != null) {
+				aidaSession.close();
+			}
+		}
 	}
 
 	@GET
 	@Path("/getCalendarList")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getCalendarList(@Context HttpServletRequest req) throws EMFUserError, UnsupportedEncodingException, JSONException {
-		aidaSession = CalendarUtilities.getHibSessionAida();
-		session = aidaSession.openSession();
-		ICalendarDAO dao = getCalendarDAO(req);
-		List<Calendar> cal = dao.loadCalendarList(session);
+	public Response getCalendarList(@Context HttpServletRequest req) {
+		SessionFactory aidaSession = null;
+		Session session = null;
+		try {
+			aidaSession = CalendarUtilities.getHibSessionAida();
 
-		closeSession();
-		return Response.ok(JsonConverter.objectToJson(cal, cal.getClass())).build();
+			session = aidaSession.openSession();
+			ICalendarDAO dao = getCalendarDAO(req);
+
+			logger.debug("load Calendar List");
+			List<Calendar> cal = dao.loadCalendarList(session);
+
+			return Response.ok(JsonConverter.objectToJson(cal, cal.getClass())).build();
+		} catch (EMFUserError e) {
+			// TODO Auto-generated catch block
+			logger.error("getInfoCalendarById error ", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} finally {
+
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+			if (aidaSession != null) {
+				aidaSession.close();
+			}
+		}
 	}
 
 	@POST
 	@Path("{id}/generateCalendarDays")
-	public Response generateCalendarDays(@PathParam("id") Integer id, @Context HttpServletRequest req)
-			throws EMFUserError, UnsupportedEncodingException, JSONException {
-		aidaSession = CalendarUtilities.getHibSessionAida();
-		session = aidaSession.openSession();
-		ICalendarDAO dao = getCalendarDAO(req);
+	public Response generateCalendarDays(@PathParam("id") Integer id, @Context HttpServletRequest req) {
+		SessionFactory aidaSession = null;
+		Session session = null;
+		try {
+			aidaSession = CalendarUtilities.getHibSessionAida();
 
-		List<CalendarConfiguration> daysGenerated = dao.generateCalendarDays(id, session);
-		List<CalendarConfiguration> listDays = dao.loadCalendarDays(id, session);
-		closeSession();
-		return Response.ok(JsonConverter.objectToJson(listDays, listDays.getClass())).build();
+			session = aidaSession.openSession();
+			ICalendarDAO dao = getCalendarDAO(req);
+			logger.debug("Generate Calendar Days");
+			List<CalendarConfiguration> daysGenerated = dao.generateCalendarDays(id, session);
+			logger.debug("load Calendar days");
+			List<CalendarConfiguration> listDays = dao.loadCalendarDays(id, session);
 
+			return Response.ok(JsonConverter.objectToJson(listDays, listDays.getClass())).build();
+		} catch (EMFUserError e) {
+			// TODO Auto-generated catch block
+			logger.error("getInfoCalendarById error ", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} finally {
+
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+			if (aidaSession != null) {
+				aidaSession.close();
+			}
+		}
 	}
 
 	@POST
 	@Path("/saveCalendar")
-	public String saveCalendar(@Context HttpServletRequest req) throws EMFUserError, UnsupportedEncodingException, JSONException {
+	public String saveCalendar(@Context HttpServletRequest req) {
 		JSONObject requestBodyJSON;
-		aidaSession = CalendarUtilities.getHibSessionAida();
-		session = aidaSession.openSession();
-		ICalendarDAO dao = getCalendarDAO(req);
+		SessionFactory aidaSession = null;
+		Session session = null;
 		try {
-			requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
-			Integer idInserted = dao.saveCalendar(requestBodyJSON, session);
+			aidaSession = CalendarUtilities.getHibSessionAida();
+			session = aidaSession.openSession();
+			ICalendarDAO dao = getCalendarDAO(req);
 
-			closeSession();
+			requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+			logger.debug("save Calendar");
+			Integer idInserted = dao.saveCalendar(requestBodyJSON, session);
 
 			return "" + idInserted + "";
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("saveCalendar error ", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} catch (EMFUserError e) {
+			logger.error("saveCalendar error ", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} catch (JSONException e) {
+			logger.error("saveCalendar error ", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} finally {
+
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+			if (aidaSession != null) {
+				aidaSession.close();
+			}
 		}
-		return null;
+
 	}
 
 	@POST
 	@Path("{id}/updateDaysGenerated")
-	public String updateDaysGenerated(@PathParam("id") Integer id, @Context HttpServletRequest req)
-			throws EMFUserError, UnsupportedEncodingException, JSONException {
+	public String updateDaysGenerated(@PathParam("id") Integer id, @Context HttpServletRequest req) {
 		JSONArray requestBodyJSON;
-		aidaSession = CalendarUtilities.getHibSessionAida();
-		session = aidaSession.openSession();
-		ICalendarDAO dao = getCalendarDAO(req);
+		SessionFactory aidaSession = null;
+		Session session = null;
 		try {
-			requestBodyJSON = RestUtilities.readBodyAsJSONArray(req);
-			dao.updateDaysGenerated(requestBodyJSON, session, id);
+			aidaSession = CalendarUtilities.getHibSessionAida();
+			session = aidaSession.openSession();
+			ICalendarDAO dao = getCalendarDAO(req);
 
-			closeSession();
+			requestBodyJSON = RestUtilities.readBodyAsJSONArray(req);
+			logger.debug("Update Days Generated");
+			dao.updateDaysGenerated(requestBodyJSON, session, id);
 
 			return "";
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("updateDaysGenerated error ", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} catch (EMFUserError e) {
+			logger.error("updateDaysGenerated error ", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} catch (JSONException e) {
+			logger.error("updateDaysGenerated error ", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} finally {
+
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+			if (aidaSession != null) {
+				aidaSession.close();
+			}
 		}
-		return null;
 	}
 
 	@POST
 	@Path("{id}/deleteCalendar")
-	public void deleteCalendar(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError, UnsupportedEncodingException, JSONException {
-		aidaSession = CalendarUtilities.getHibSessionAida();
-		session = aidaSession.openSession();
-		ICalendarDAO dao = getCalendarDAO(req);
+	public void deleteCalendar(@PathParam("id") Integer id, @Context HttpServletRequest req) {
+		SessionFactory aidaSession = null;
+		Session session = null;
+		try {
+			aidaSession = CalendarUtilities.getHibSessionAida();
 
-		dao.deleteCalendar(id, session);
-		closeSession();
+			session = aidaSession.openSession();
+			ICalendarDAO dao = getCalendarDAO(req);
+			logger.debug("delete Calendar");
+			dao.deleteCalendar(id, session);
+
+		} catch (EMFUserError e) {
+			logger.error("updateDaysGenerated error ", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} finally {
+
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+			if (aidaSession != null) {
+				aidaSession.close();
+			}
+		}
 
 	}
 
 	@POST
 	@Path("{id}/deleteDayofCalendar")
-	public void deleteDayofCalendar(@PathParam("id") Integer id, @Context HttpServletRequest req)
-			throws EMFUserError, UnsupportedEncodingException, JSONException {
-		aidaSession = CalendarUtilities.getHibSessionAida();
-		session = aidaSession.openSession();
-		ICalendarDAO dao = getCalendarDAO(req);
+	public void deleteDayofCalendar(@PathParam("id") Integer id, @Context HttpServletRequest req) {
+		SessionFactory aidaSession = null;
+		Session session = null;
+		try {
+			aidaSession = CalendarUtilities.getHibSessionAida();
 
-		dao.deleteDayofCalendar(id, session);
-		closeSession();
+			session = aidaSession.openSession();
+			ICalendarDAO dao = getCalendarDAO(req);
+			logger.debug("Delete Days of Calendar");
+			dao.deleteDayofCalendar(id, session);
 
+		} catch (EMFUserError e) {
+			logger.error("updateDaysGenerated error ", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} finally {
+
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+			if (aidaSession != null) {
+				aidaSession.close();
+			}
+		}
 	}
 
 	private static IEngUserProfile getProfile(HttpServletRequest req) {
@@ -191,14 +369,4 @@ public class CalendarCRUD {
 
 	}
 
-	private void closeSession() {
-
-		if (session != null) {
-			if (session.isOpen())
-				session.close();
-		}
-		if (aidaSession != null) {
-			aidaSession.close();
-		}
-	}
 }
