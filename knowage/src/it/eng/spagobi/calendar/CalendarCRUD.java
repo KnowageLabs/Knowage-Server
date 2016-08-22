@@ -74,7 +74,7 @@ public class CalendarCRUD {
 
 		} catch (EMFUserError e) {
 			// TODO Auto-generated catch block
-			logger.error("saveCalendar error ", e);
+			logger.error("getCalendarById error ", e);
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		} finally {
 
@@ -144,7 +144,7 @@ public class CalendarCRUD {
 			return Response.ok(JsonConverter.objectToJson(domains, domains.getClass())).build();
 		} catch (EMFUserError e) {
 			// TODO Auto-generated catch block
-			logger.error("getInfoCalendarById error ", e);
+			logger.error("getDomains error ", e);
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		} finally {
 
@@ -176,7 +176,7 @@ public class CalendarCRUD {
 			return Response.ok(JsonConverter.objectToJson(cal, cal.getClass())).build();
 		} catch (EMFUserError e) {
 			// TODO Auto-generated catch block
-			logger.error("getInfoCalendarById error ", e);
+			logger.error("getCalendarList error ", e);
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		} finally {
 
@@ -208,7 +208,7 @@ public class CalendarCRUD {
 			return Response.ok(JsonConverter.objectToJson(listDays, listDays.getClass())).build();
 		} catch (EMFUserError e) {
 			// TODO Auto-generated catch block
-			logger.error("getInfoCalendarById error ", e);
+			logger.error("generateCalendarDays error ", e);
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		} finally {
 
@@ -313,7 +313,7 @@ public class CalendarCRUD {
 			dao.deleteCalendar(id, session);
 
 		} catch (EMFUserError e) {
-			logger.error("updateDaysGenerated error ", e);
+			logger.error("deleteCalendar error ", e);
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		} finally {
 
@@ -342,7 +342,7 @@ public class CalendarCRUD {
 			dao.deleteDayofCalendar(id, session);
 
 		} catch (EMFUserError e) {
-			logger.error("updateDaysGenerated error ", e);
+			logger.error("deleteDayofCalendar error ", e);
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		} finally {
 
