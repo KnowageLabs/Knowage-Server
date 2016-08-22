@@ -87,7 +87,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 									</div>
 								</md-toolbar>
 								
-								<md-content layout="column" layout-wrap flex>
+								<md-content layout="row" layout-wrap flex>
 									<angular-table flex
 										id='schedulelist' ng-model=ctrl.selectedJob.triggers
 										columns='[{"label":translate.load("sbi.generic.name"),"name":"triggerName","size":"200px"},
