@@ -58,6 +58,7 @@ var translatedModel=<%= translatedModel%>;
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/addCalculatedFieldController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/refreshPhysicalModelController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/bvPhisicalTablesController.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/editTemporalHierarchyController.js"></script>
 </head>
 <body ng-controller="metaDefinitionController" layout="column" ng-switch on="steps.current">
 
@@ -145,4 +146,17 @@ margin: 0!important
     top: 19px;
 }
 
+.fullScreenPanel {
+	    position: absolute;
+   		width: 90%;
+   		height: 90%;
+   		margin: 2% 5%;
+	}
+	
+.flexCard{
+     display: flex !important;
+   }
+.md-scroll-mask {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    }
 </style>

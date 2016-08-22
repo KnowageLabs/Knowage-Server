@@ -15,7 +15,7 @@
 			       </div>
 			    </md-toolbar>
 				<div flex  style="overflow: auto;" >
-					<md-listflex>
+					<md-list flex>
 			   		   	<md-list-item ng-repeat="col in selectedBusinessModel.simpleBusinessColumns" ng-click="addCol(col)">
 			   		   		{{col.name}}
 			   		   		<md-divider></md-divider>

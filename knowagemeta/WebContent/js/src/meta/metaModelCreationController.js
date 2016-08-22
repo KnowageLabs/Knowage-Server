@@ -1,6 +1,6 @@
 angular.module('metaManager').controller('metaModelCreationController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',metaModelCreationControllerFunction ]);
 angular.module('metaManager').controller('metaModelCreationPhysicalController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config',metaModelCreationPhysicalControllerFunction ]);
-angular.module('metaManager').controller('metaModelCreationBusinessController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config','metaModelServices',metaModelCreationBusinessControllerFunction ]);
+angular.module('metaManager').controller('metaModelCreationBusinessController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config','metaModelServices','$mdPanel',metaModelCreationBusinessControllerFunction ]);
 angular.module('metaManager').controller('businessModelPropertyController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout',businessModelPropertyControllerFunction ]);
 angular.module('metaManager').controller('businessModelAttributeController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config','metaModelServices',businessModelAttributeControllerFunction ]);
 angular.module('metaManager').controller('calculatedBusinessColumnsController', [ '$scope','sbiModule_translate', 'sbiModule_restServices','$mdDialog','sbiModule_config','metaModelServices',calculatedBusinessColumnsControllerFunction ]);
@@ -133,7 +133,7 @@ function metaModelCreationPhysicalControllerFunction($scope, sbiModule_translate
 	                       ]
 }
 
-function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,metaModelServices){
+function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,metaModelServices,$mdPanel){
 	$scope.selectedBusinessModel = {};
 	$scope.currentBusinessModelParameterCategories = [];
 	var pendingRefresh=0;
@@ -160,11 +160,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 		$scope.selectedBusinessModel = node;
 		angular.copy(parametersBuilder.extractCategories($scope.selectedBusinessModel.properties),
 				$scope.currentBusinessModelParameterCategories);
-
-
-
 	};
-
 
 	$scope.getBusinessModelType=function(bm){
 		var prop=bm.properties;
@@ -184,6 +180,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			}
 		}
 	};
+
 	$scope.businessModelIconType={
 			"generic" :"fa fa-table",
 			"cube":"fa fa-cube",
@@ -194,7 +191,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			"measure":"fa fa-barcode",
 			"attribute":"fa fa-circle-o",
 			"calendar":"fa fa-calendar-check-o",
-	}
+	};
 
 	$scope.businesslModel_getlevelIcon = function(node) {
 		if (node.hasOwnProperty("simpleBusinessColumns")) {
@@ -210,15 +207,15 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			return $scope.businessModelIconType[$scope.getBusinessModelColumnsType(node)];
 
 		}
-	}
+	};
+
 	$scope.businessModel_isFolder = function(node) {
 		if (node.hasOwnProperty("simpleBusinessColumns")) {
 			return !node.expanded;
 		}else{
 			return true
 		}
-	}
-
+	};
 
 	$scope.addBusinessModel=function(){
 		$mdDialog.show({
@@ -230,7 +227,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 			escapeToClose :false,
 			fullscreen: true
 		});
-	}
+	};
 
 	$scope.addBusinessView=function(editMode){
 		$mdDialog.show({
@@ -244,8 +241,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 		}).then(function(){
 			$scope.businessViewTreeInterceptor.refreshTree();
 		});
-	}
-
+	};
 
 	$scope.deleteCurrentBusiness=function(){
 		var isBusinessClass=!$scope.selectedBusinessModel.hasOwnProperty("joinRelationships");
@@ -268,9 +264,30 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 
 		   }, function() {
 		   });
+	};
+
+	$scope.editTemporalHierarchy=function(){
+		var config = {
+				attachTo:  angular.element(document.body),
+				controller: editTemporalHierarchyController,
+				disableParentScroll: true,
+				templateUrl: sbiModule_config.contextName + '/js/src/meta/templates/editTemporalHierarchy.jsp',
+				position: $mdPanel.newPanelPosition().absolute().center(),
+				fullscreen :true,
+				hasBackdrop: true,
+				clickOutsideToClose: false,
+				escapeToClose: false,
+				focusOnOpen: true,
+				preserveScope: true,
+				locals: {selectedBusinessModel:$scope.selectedBusinessModel},
+
+		};
+
+		$mdPanel.open(config);
 	}
 
 }
+
 function businessModelPropertyControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout){
 	$scope.businessModelMiscInfo = [ {
 		name : "name",
@@ -281,6 +298,7 @@ function businessModelPropertyControllerFunction($scope, sbiModule_translate,sbi
 	}
 	];
 }
+
 function businessModelAttributeControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,metaModelServices ){
 	$scope.attributesList=[];
 
@@ -446,10 +464,6 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 
 }
 
-
-
-
-
 function businessViewJoinRelationshipsControllerFunction($scope,sbiModule_translate, sbiModule_restServices){
 $scope.selectedBusinessViewJoinRelationships=[
                		                       {
@@ -480,7 +494,6 @@ $scope.selectedBusinessViewJoinRelationships=[
             		                       }
             	                       ]
 }
-
 
 function calculatedBusinessColumnsControllerFunction($scope,sbiModule_translate, sbiModule_restServices,$mdDialog,sbiModule_config,metaModelServices ){
 	$scope.selectedBusinessModelCalculatedBusinessColumns=[
