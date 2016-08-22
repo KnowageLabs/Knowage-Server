@@ -418,9 +418,9 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 							Operand left = new Operand(
 									new String[] { temporalDimension.getType() + ":" + temporalDimensionId },
 									temporalDimension.getName() + ":" + temporalDimensionId, "Field Content",
-									new String[] {}, null);
+									new String[] {""}, new String[] {""}, "");
 							Operand maxRight = new Operand(new String[] { currentPeriod.getId().toString() },
-									currentPeriod.getId().toString(), "Static Content", new String[] {}, null);
+									currentPeriod.getId().toString(), "Static Content", new String[] {""}, new String[] {""}, "");
 
 							String maxFilterId = "TimeFilterMax" + timeFilterIndex;
 							WhereField maxWhereField = new WhereField(maxFilterId, maxFilterId, false, left,
@@ -431,7 +431,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 							int oldestPeriodIndex = currentPeriodIndex - offset > 0 ? currentPeriodIndex - offset : 0;
 							TemporalRecord oldestPeriod = allPeriodsStartingDate.get(oldestPeriodIndex);
 							Operand minRight = new Operand(new String[] { oldestPeriod.getId().toString() },
-									oldestPeriod.getId().toString(), "Static Content", new String[] {}, null);
+									oldestPeriod.getId().toString(), "Static Content", new String[] {""}, new String[] {""}, "");
 
 							String minFilterId = "TimeFilterMax" + timeFilterIndex;
 							WhereField minWhereField = new WhereField(minFilterId, minFilterId, false, left,
@@ -506,10 +506,9 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 									(Integer) currentTime.getId());
 							whereFieldsIndexesToRemove.add(whereFieldIndex);
 							Operand left = new Operand(new String[] { timeDimension.getType() + ":" + timeDimensionId },
-									timeDimension.getName() + ":" + timeDimensionId, "Field Content", new String[] {},
-									null);
+									timeDimension.getName() + ":" + timeDimensionId, "Field Content", new String[] {""}, new String[] {""}, "");
 							Operand maxRight = new Operand(new String[] { currentTime.getId().toString() },
-									currentTime.getId().toString(), "Static Content", new String[] {}, null);
+									currentTime.getId().toString(), "Static Content", new String[] {""}, new String[] {""}, "");
 
 							String maxFilterId = "TimeFilterMax" + timeFilterIndex;
 							WhereField maxWhereField = new WhereField(maxFilterId, maxFilterId, false, left,
@@ -520,7 +519,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 							int oldestPeriodIndex = currentPeriodIndex - offset > 0 ? currentPeriodIndex - offset : 0;
 							TemporalRecord oldestPeriod = allPeriodsStartingDate.get(oldestPeriodIndex);
 							Operand minRight = new Operand(new String[] { oldestPeriod.getId().toString() },
-									oldestPeriod.getId().toString(), "Static Content", new String[] {}, null);
+									oldestPeriod.getId().toString(), "Static Content", new String[] {""}, new String[] {""}, "");
 
 							String minFilterId = "TimeFilterMax" + timeFilterIndex;
 							WhereField minWhereField = new WhereField(minFilterId, minFilterId, false, left,
@@ -718,7 +717,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 					yearsInWhere, allYearsOnDWHString, relativeYearIndex, hierarchyFullColumnMap, distinctPeriods,
 					currentPeriodValuyesByType);
 			if (yearsToBeAddedToWhereClause.size() > 0) {
-	
+				boolean yersAdded = false;
 				if (whereFields.size() > 0) {
 					for (WhereField wField : whereFields) {
 						if (wField.getLeftOperand().values != null && wField.getLeftOperand().values.length > 0
@@ -729,20 +728,23 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 							yearsToBeAddedToWhereClause.add(wField.getRightOperand().values[0] + "");
 							Operand right = new Operand(
 									yearsToBeAddedToWhereClause.toArray(new String[yearsToBeAddedToWhereClause.size()]),
-									"YEAR", "Static Content", new String[] {}, null);
+									"YEAR", "Static Content", new String[] {""}, new String[] {""}, "");
 	
 							wField.setRightOperand(right);
 							wField.setOperator("IN");
+							yersAdded = true;
 							break;
 						}
 					}
-				} else {
+				}
+				
+				if(!yersAdded) {
 					Operand left = new Operand(new String[] { hierarchyFullColumnMap.get("YEAR") },
-							hierarchyFullColumnMap.get("YEAR"), "Field Content", new String[] {}, null);
+							hierarchyFullColumnMap.get("YEAR"), "Field Content", new String[] {""}, new String[] {""}, "");
 	
 					Operand right = new Operand(
 							yearsToBeAddedToWhereClause.toArray(new String[yearsToBeAddedToWhereClause.size()]), "YEAR",
-							"Static Content", new String[] {}, null);
+							"Static Content", new String[] {""}, new String[] {""}, "");
 					query.addWhereField("ParallelYear", "ParallelYear", false, left, "IN", right, "AND");
 				}
 	
@@ -850,8 +852,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		for (String levelType : inlineFilterFieldTypes) {
 			if (!temporalFieldTypesInSelectOrWhere.contains(levelType)) {
 				String levelColumn = hierarchyFullColumnMap.get(levelType);
-				Operand left = new Operand(new String[] { levelColumn }, levelColumn, "Field Content", new String[] {},
-						null);
+				Operand left = new Operand(new String[] { levelColumn }, levelColumn, "Field Content", new String[] {""}, new String[] {""}, "");
 
 				TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId,
 						hierarchyColumnMap.get(levelType), new Date());
@@ -859,8 +860,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				if ((currentPeriod != null)) {
 					currentPeriodValue = currentPeriod.getPeriod() + "";
 				}
-				Operand right = new Operand(new String[] { currentPeriodValue }, levelType, "Static Content",
-						new String[] {}, null);
+				Operand right = new Operand(new String[] { currentPeriodValue }, levelType, "Static Content", new String[] {""}, new String[] {""}, "");
 				query.addWhereField("current_" + levelType, "current_" + levelType, false, left, "EQUALS TO", right,
 						"AND");
 				query.updateWhereClauseStructure();
@@ -1292,10 +1292,9 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			String temporalDimensionDateField = getDateField(temporalDimension);
 
 			Operand left = new Operand(new String[] { temporalDimension.getType() + ":" + temporalDimensionDateField },
-					temporalDimension.getName() + ":" + temporalDimensionDateField, "Field Content", new String[] {},
-					null);
+					temporalDimension.getName() + ":" + temporalDimensionDateField, "Field Content", new String[] {""}, new String[] {""}, "");
 			Operand right = new Operand(new String[] { new SimpleDateFormat("dd/MM/yyyy").format(actualTime) },
-					new SimpleDateFormat("dd/MM/yyyy").format(actualTime), "Static Content", new String[] {}, null);
+					new SimpleDateFormat("dd/MM/yyyy").format(actualTime), "Static Content", new String[] {""}, new String[] {""}, "");
 			currentPeriodQuery.addWhereField("Filter1", "Filter1", false, left, "EQUALS TO", right, "AND");
 			ExpressionNode newFilterNode = new ExpressionNode("NODE_CONST", "$F{" + "Filter1" + "}");
 			currentPeriodQuery.setWhereClauseStructure(newFilterNode);
@@ -1338,10 +1337,10 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		String timeDimensionIdField = "ID";
 
 		Operand left = new Operand(new String[] { timeDimension.getType() + ":" + timeDimensionIdField },
-				timeDimension.getName() + ":" + timeDimensionIdField, "Field Content", new String[] {}, null);
+				timeDimension.getName() + ":" + timeDimensionIdField, "Field Content", new String[] {""}, new String[] {""}, "");
 
 		Operand right = new Operand(new String[] { new SimpleDateFormat("HHmm").format(actualTime) },
-				new SimpleDateFormat("HHmm").format(actualTime), "Static Content", new String[] {}, null);
+				new SimpleDateFormat("HHmm").format(actualTime), "Static Content", new String[] {""}, new String[] {""}, "");
 
 		currentTimeQuery.addWhereField("Filter1", "Filter1", false, left, "EQUALS TO", right, "AND");
 		ExpressionNode newFilterNode = new ExpressionNode("NODE_CONST", "$F{" + "Filter1" + "}");
