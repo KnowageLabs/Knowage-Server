@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -36,7 +36,7 @@ import org.apache.commons.httpclient.NameValuePair;
 /**
  * This data proxy makes REST calls. Providing all attributes (address, type of method, etc..) it make a http call and read the data store from the response
  * using the provided reader.
- * 
+ *
  * @author fabrizio
  *
  */
@@ -107,6 +107,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 		}
 	}
 
+	@Override
 	public IDataStore load(IDataReader dataReader) {
 		try {
 			Helper.checkNotNull(dataReader, "dataReader");
@@ -119,6 +120,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 			}
 
 			Assert.assertNotNull(responseBody, "responseBody is null");
+			dataReader.setCalculateResultNumberEnabled(calculateResultNumberOnLoad);
 			IDataStore res = dataReader.read(responseBody);
 			Assert.assertNotNull(res, "datastore is null");
 			return res;
@@ -139,7 +141,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 			if (fetchSize != FETCH_SIZE_NOT_DEFINED) {
 				res.add(new NameValuePair(fetchSizeParam, Integer.toString(fetchSize)));
 			}
-		} 
+		}
 
 		if (maxResultsParam != null && maxResults != MAX_RESULT_NOT_DEFINED) {
 			res.add(new NameValuePair(maxResultsParam, Integer.toString(maxResults)));

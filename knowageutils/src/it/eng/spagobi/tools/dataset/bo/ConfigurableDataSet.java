@@ -123,7 +123,7 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 			// check if the proxy is able to manage results limit
 			if (dataProxy.isMaxResultsSupported()) {
 				dataProxy.setMaxResults(maxResults);
-			} else if (dataReader.isOffsetSupported()) {
+			} else if (dataReader.isMaxResultsSupported()) {
 				dataReader.setMaxResults(maxResults);
 			} else {
 

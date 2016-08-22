@@ -265,7 +265,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/loadAssociativeSelections")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAssociativeSelections(@QueryParam("associationGroup") String associationGroupString, @QueryParam("selections") String selectionsString,
-			@QueryParam("datasets") String datasetsString) {
+			@QueryParam("datasets") String datasetsString, @QueryParam("realTime") String realTimeString) {
 		logger.debug("IN");
 
 		try {
@@ -325,7 +325,10 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				}
 			}
 
-			AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociationToColumnMap, filtersMap);
+			// TODO: Manage real time here!
+			Set<String> realtimeDatasets = new HashSet<String>();
+
+			AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociationToColumnMap, filtersMap, realtimeDatasets);
 			manager.setUserProfile(getUserProfile());
 
 			Map<EdgeGroup, Set<String>> egdegroupToValuesMap = manager.process();
@@ -387,10 +390,11 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStorePost(@PathParam("label") String label, @QueryParam("parameters") String parameters,
-			@QueryParam("aggregations") String aggregations, @QueryParam("storeId") String storeId, String selections) {
+			@QueryParam("aggregations") String aggregations, @QueryParam("storeId") String storeId, String selections, @QueryParam("offset") Integer offset,
+			@QueryParam("size") Integer fetchSize, @QueryParam("realtime") boolean isRealtime) {
 		logger.debug("IN");
 		try {
-			return getDataStore(label, parameters, selections, aggregations);
+			return getDataStore(label, parameters, selections, aggregations, offset, fetchSize, isRealtime);
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} finally {

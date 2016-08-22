@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -424,9 +424,9 @@ public class DataStore implements IDataStore {
 		for (int i = 0; i < fieldCount; i++) {
 			String columnName = this.metaData.getFieldName(i);
 
-			if(columnName.contains(":")){
+			if (columnName.contains(":")) {
 				columnNames[i] = this.metaData.getFieldAlias(i);
-			}else{
+			} else {
 				columnNames[i] = columnName;
 			}
 			Class type = this.metaData.getFieldType(i);
@@ -485,6 +485,64 @@ public class DataStore implements IDataStore {
 		dataStore.getMetaData().setProperty("resultNumber", resultCount);
 
 		return dataStore;
+	}
+
+	@Override
+	public DataSet getMetaModelResultSet(String sqlQuery) {
+		// **************************************************************************************************************
+		// ***** This part build data structures used to convert a SpagoBI DataStore into an MetaModel DataContext ******
+		// **************************************************************************************************************
+		int fieldCount = this.metaData.getFieldCount();
+
+		String[] columnNames = new String[fieldCount];
+		ColumnType[] columnTypes = new ColumnType[fieldCount];
+		HashMap<String, FieldType> fieldTypes = new HashMap<String, FieldType>();
+
+		Collection<Object[]> arrays = new ArrayList<Object[]>();
+
+		for (int i = 0; i < fieldCount; i++) {
+			String columnName = this.metaData.getFieldName(i);
+
+			if (columnName.contains(":")) {
+				columnNames[i] = this.metaData.getFieldAlias(i);
+			} else {
+				columnNames[i] = columnName;
+			}
+			Class type = this.metaData.getFieldType(i);
+			if (type == Integer.class) {
+				columnTypes[i] = ColumnType.INTEGER;
+			} else if (type == Double.class) {
+				columnTypes[i] = ColumnType.DOUBLE;
+			} else {
+				columnTypes[i] = ColumnType.STRING;
+			}
+			fieldTypes.put(columnName, this.metaData.getFieldMeta(i).getFieldType());
+		}
+		for (Object r : this.records) {
+			IRecord record = (IRecord) r;
+			Object[] row = new Object[fieldCount];
+			for (int i = 0; i < fieldCount; i++) {
+				row[i] = record.getFieldAt(i).getValue();
+			}
+			arrays.add(row);
+		}
+
+		// *************************************************************************************************
+		// ****** This part create a DataContext for doing aggregation and filter define by the query ******
+		// *************************************************************************************************
+
+		String uniqueTableName = UUID.randomUUID().toString().replace('-', '_');
+		SimpleTableDef dataStoreDef = new SimpleTableDef(uniqueTableName, columnNames, columnTypes);
+		ArrayTableDataProvider dataStoreTableProvider = new ArrayTableDataProvider(dataStoreDef, arrays);
+		DataContext dataContext = new PojoDataContext(DEFAULT_SCHEMA_NAME, dataStoreTableProvider);
+
+		// Change table name to be concurrency-safe
+		String newSqlQuery = sqlQuery.replace(DEFAULT_TABLE_NAME, uniqueTableName);
+		Query query = dataContext.parseQuery(newSqlQuery);
+		CompiledQuery cQuery = dataContext.compileQuery(query);
+		DataSet dataSet = dataContext.executeQuery(cQuery);
+
+		return dataSet;
 	}
 
 	private IFieldMetaData getFieldMetaDataFromSelectItem(SelectItem selectItem, HashMap<String, FieldType> fieldTypes) {

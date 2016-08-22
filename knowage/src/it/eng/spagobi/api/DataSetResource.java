@@ -23,7 +23,6 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.deserializer.DeserializerFactory;
@@ -73,7 +72,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -289,13 +287,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getDataStore(@PathParam("label") String label, @QueryParam("parameters") String parameters, @QueryParam("selections") String selections // the
-			, @QueryParam("aggregations") String aggregations // the aggregation
-																// to apply to
-																// the joined
-																// dataset
-	) {
-
+	public String getDataStore(@PathParam("label") String label, @QueryParam("parameters") String parameters, @QueryParam("selections") String selections,
+			@QueryParam("aggregations") String aggregations, @QueryParam("offset") Integer offset, @QueryParam("size") Integer fetchSize,
+			@QueryParam("realtime") boolean isRealtime) {
 		logger.debug("IN");
 
 		try {
@@ -319,21 +313,26 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				}
 			}
 
-			int maxResults;
-			try {
-				maxResults = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
-			} catch (NumberFormatException nfe) {
-				logger.debug("The value of SPAGOBI.API.DATASET.MAX_ROWS_NUMBER config must be an integer");
-				maxResults = -1;
-			}
-
-			UserProfile profile = getUserProfile();
-
-			HttpSession session = this.getServletRequest().getSession();
 			IDataStore dataStore = null;
 
-			dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, maxResults, getParametersMap(parameters), groupCriteria, filterCriteria,
-					projectionCriteria);
+			if (offset == null || offset.intValue() < 0 || fetchSize == null || fetchSize.intValue() < 0) {
+				logger.debug("Offset is equals to [" + offset + "] and fetch size equals to [" + fetchSize + "]. Set them to [-1] by default.");
+				offset = -1;
+				fetchSize = -1;
+			}
+
+			try {
+				int maxResults = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
+				if (fetchSize.intValue() > maxResults) {
+					throw new SpagoBIRuntimeException("The fetch size parameter [" + fetchSize
+							+ "] must be a smaller than SPAGOBI.API.DATASET.MAX_ROWS_NUMBER value [" + maxResults + "]");
+				}
+			} catch (NumberFormatException nfe) {
+				throw new SpagoBIRuntimeException("The value of SPAGOBI.API.DATASET.MAX_ROWS_NUMBER config must be set as a valid integer", nfe);
+			}
+
+			dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, isRealtime, getParametersMap(parameters), groupCriteria,
+					filterCriteria, projectionCriteria);
 
 			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
@@ -859,14 +858,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 * @param profile
 	 * @param datasetsJSONArray
 	 * @param typeDocWizard
-	 *            Usato dalla my analysis per visualizzare solo i dataset su cui
-	 *            è possi bile costruire un certo tipo di analisi selfservice.
-	 *            Al momento filtra la lista dei dataset solo nel caso del GEO
-	 *            in cui vengono eliminati tutti i dataset che non contengono un
-	 *            riferimento alla dimensione spaziale. Ovviamente il fatto che
-	 *            un metodo che si chiama putActions filtri in modo silente la
-	 *            lista dei dataset è una follia che andrebbe rifattorizzata al
-	 *            più presto.
+	 *            Usato dalla my analysis per visualizzare solo i dataset su cui è possi bile costruire un certo tipo di analisi selfservice. Al momento filtra
+	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
+	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
+	 *            rifattorizzata al più presto.
 	 * @return
 	 * @throws JSONException
 	 * @throws EMFInternalError
@@ -984,8 +979,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Check if the association passed is valid ',' is valid if number of record
-	 * from association is lower than maximum of single datasets
+	 * Check if the association passed is valid ',' is valid if number of record from association is lower than maximum of single datasets
 	 *
 	 * @param association
 	 */
@@ -1018,8 +1012,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Persist a dataset list in cache, or use a persisted dataset if its
-	 * datasource match with the cache datasource
+	 * Persist a dataset list in cache, or use a persisted dataset if its datasource match with the cache datasource
 	 *
 	 * @param labels
 	 */
@@ -1042,6 +1035,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 				String tableName = null;
 				if (dataSet.isPersisted() && dataSet.getDataSourceForWriting().getDsId() == cache.getDataSource().getDsId()) {
+					tableName = dataSet.getTableNameForReading();
+				} else if (dataSet.isFlatDataset() && dataSet.getDataSource().getDsId() == cache.getDataSource().getDsId()) {
 					tableName = dataSet.getTableNameForReading();
 				} else {
 					DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();

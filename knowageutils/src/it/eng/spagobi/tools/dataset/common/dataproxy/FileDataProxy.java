@@ -65,6 +65,7 @@ public class FileDataProxy extends AbstractDataProxy {
 			String filePath = getCompleteFilePath();
 			inputStream = new FileInputStream(filePath);
 			dataReader.setMaxResults(this.getMaxResultsReader());
+			dataReader.setCalculateResultNumberEnabled(calculateResultNumberOnLoad);
 			dataStore = dataReader.read(inputStream);
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Impossible to load dataset", t);

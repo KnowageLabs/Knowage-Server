@@ -104,6 +104,8 @@ public class DatasetManagementAPI {
 	public static final String NAME = "NAME";
 	public static final String TYPE = "TYPE";
 
+	private static final int METAMODEL_LIMIT = 5000;
+
 	static private Logger logger = Logger.getLogger(DatasetManagementAPI.class);
 
 	// ==============================================================================
@@ -358,7 +360,7 @@ public class DatasetManagementAPI {
 		logger.debug("OUT");
 	}
 
-	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues,
+	public IDataStore getDataStore(String label, int offset, int fetchSize, boolean isRealtime, Map<String, String> parametersValues,
 			List<GroupCriteria> groupCriteria, List<FilterCriteria> filterCriteria, List<ProjectionCriteria> projectionCriteria) {
 
 		try {
@@ -366,7 +368,13 @@ public class DatasetManagementAPI {
 			// checkQbeDataset(dataSet);
 			IDataStore dataStore = null;
 
-			if (!dataSet.isPersisted()) {
+			if (dataSet.isPersisted()) {
+				dataStore = queryPersistedDataset(groupCriteria, filterCriteria, projectionCriteria, dataSet, offset, fetchSize);
+			} else if (dataSet.isFlatDataset()) {
+				dataStore = queryFlatDataset(groupCriteria, filterCriteria, projectionCriteria, dataSet, offset, fetchSize);
+			} else if (isRealtime) {
+				dataStore = queryRealtimeDataset(parametersValues, groupCriteria, filterCriteria, projectionCriteria, dataSet, offset, fetchSize);
+			} else {
 				dataSet.setParamsMap(parametersValues);
 				List<JSONObject> parameters = getDataSetParameters(label);
 				if (parameters.size() > parametersValues.size()) {
@@ -377,14 +385,14 @@ public class DatasetManagementAPI {
 				SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 				cache.setUserProfile(userProfile);
 
-				IDataStore cachedResultSet = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
+				IDataStore cachedResultSet = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria, offset, fetchSize);
 
 				if (cachedResultSet == null) {
 					dataSet.loadData();
 					IDataStore baseDataStore = dataSet.getDataStore();
-					if (baseDataStore.getRecordsCount() > 10000) {
+					if (baseDataStore.getRecordsCount() > METAMODEL_LIMIT) {
 						cache.put(dataSet, baseDataStore);
-						dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
+						dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria, offset, fetchSize);
 						if (dataStore == null) {
 							throw new CacheException("An unexpected error occured while executing method");
 						}
@@ -392,11 +400,11 @@ public class DatasetManagementAPI {
 						dataSet.decode(dataStore);
 					} else {
 						// TODO: here we actually already have the datastore,
-						// therefore we could optimize this step...
+						// therefore we could optimize this step by avoiding to get the dataStore again...
 						dataStore = cache.refresh(dataSet, false);
 						// if result was not cached put refresh date as now
 						dataStore.setCacheDate(new Date());
-						dataStore = dataStore.aggregateAndFilterRecords(generateQuery(groupCriteria, filterCriteria, projectionCriteria, maxResults));
+						dataStore = dataStore.aggregateAndFilterRecords(generateQuery(groupCriteria, filterCriteria, projectionCriteria, offset, fetchSize));
 					}
 				} else {
 					dataStore = cachedResultSet;
@@ -408,24 +416,15 @@ public class DatasetManagementAPI {
 					adjustMetadata((DataStore) dataStore, dataSet, null);
 					dataSet.decode(dataStore);
 				}
-			} else {
-				dataStore = queryPersistedDataset(groupCriteria, filterCriteria, projectionCriteria, dataSet);
 			}
-			limitDataStoreRecords((DataStore) dataStore, maxResults);
+			// TODO: caso in cui non riesco a effettuare la pagina lato datasource... pagino direttamente sulla lista di record...
+			// pageDataStoreRecords((DataStore) dataStore, offset, fetchSize);
 			return dataStore;
 
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {
 			logger.debug("OUT");
-		}
-	}
-
-	protected void limitDataStoreRecords(DataStore dataStore, int maxResults) {
-		List records = dataStore.getRecords();
-		int size = records.size();
-		if (size > maxResults) {
-			records.subList(maxResults, size).clear();
 		}
 	}
 
@@ -574,7 +573,7 @@ public class DatasetManagementAPI {
 																					// this
 																					// case
 			List<GroupCriteria> groupCriteria = this.getGroupCriteria(label, crosstabDefinition);
-			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
+			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria, 0, 0);
 
 			/*
 			 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias...
@@ -671,9 +670,8 @@ public class DatasetManagementAPI {
 	}
 
 	public List<IDataSet> getSharedDataSet() {
-		try{
+		try {
 			List<IDataSet> validDataSets = getDataSetDAO().loadDatasetsSharedWithUser(getUserProfile(), true);
-
 
 			// for (IDataSet dataSet : dataSets) {
 			// checkQbeDataset(dataSet);
@@ -716,7 +714,6 @@ public class DatasetManagementAPI {
 			logger.debug("OUT");
 		}
 	}
-
 
 	public List<IDataSet> getMyDataDataSet() {
 		try {
@@ -1141,7 +1138,7 @@ public class DatasetManagementAPI {
 		return toReturn;
 	}
 
-	private String generateQuery(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int maxResults) {
+	private String generateQuery(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int offset, int fetchSize) {
 		SelectBuilder sqlBuilder = new SelectBuilder();
 		sqlBuilder.from(DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME);
 
@@ -1213,7 +1210,17 @@ public class DatasetManagementAPI {
 			}
 		}
 
-		String queryText = sqlBuilder.toString() + " LIMIT " + maxResults;
+		String queryText = sqlBuilder.toString();
+
+		// LIMIT condition
+		if (fetchSize > -1) {
+			queryText += " LIMIT " + fetchSize;
+
+			// OFFSET condition
+			if (offset > -1) {
+				queryText += " OFFSET " + offset;
+			}
+		}
 		logger.debug("Cached dataset access query is equal to [" + queryText + "]");
 
 		return queryText;
@@ -1296,13 +1303,48 @@ public class DatasetManagementAPI {
 		return statement;
 	}
 
-	private IDataStore queryPersistedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, IDataSet dataSet) {
+	private IDataStore queryPersistedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, IDataSet dataSet,
+			int offset, int fetchSize) {
+		String tableName = dataSet.getPersistTableName();
+		return queryDataset(tableName, groups, filters, projections, dataSet, offset, fetchSize);
+	}
+
+	private IDataStore queryFlatDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, IDataSet dataSet,
+			int offset, int fetchSize) {
+		String tableName = dataSet.getFlatTableName();
+		return queryDataset(tableName, groups, filters, projections, dataSet, offset, fetchSize);
+	}
+
+	private IDataStore queryRealtimeDataset(Map<String, String> parametersValues, List<GroupCriteria> groups, List<FilterCriteria> filters,
+			List<ProjectionCriteria> projections, IDataSet dataSet, int offset, int fetchSize) {
+		dataSet.setParamsMap(parametersValues);
+
+		List<JSONObject> parameters = getDataSetParameters(dataSet.getLabel());
+		if (parameters.size() > parametersValues.size()) {
+			String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
+			throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
+		}
+
+		dataSet.loadData();
+		IDataStore dataStore = dataSet.getDataStore();
+		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
+			dataStore = dataStore.aggregateAndFilterRecords(generateQuery(groups, filters, projections, offset, fetchSize));
+			dataStore.setCacheDate(new Date());
+		} else {
+			throw new SpagoBIRuntimeException("Impossible to return data: the dataStore is [null], or it returns more than [" + METAMODEL_LIMIT
+					+ "] rows: it cannot be processed as realtime dataset.");
+		}
+
+		return dataStore;
+	}
+
+	private IDataStore queryDataset(String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
+			IDataSet dataSet, int offset, int fetchSize) {
 
 		logger.debug("IN");
 
 		DataStore toReturn = null;
 		String label = dataSet.getLabel();
-		String tableName = dataSet.getPersistTableName();
 		IDataSource dataSource = dataSet.getDataSourceForWriting();
 		logger.debug("Loading data from [" + label + "] to gather its metadata...");
 		dataSet.loadData(0, 1, 1);
@@ -1442,7 +1484,7 @@ public class DatasetManagementAPI {
 			String queryText = sqlBuilder.toString();
 			logger.debug("Persisted dataset access query is equal to [" + queryText + "]");
 
-			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+			IDataStore dataStore = dataSource.executeStatement(queryText, offset, fetchSize);
 			toReturn = (DataStore) dataStore;
 
 		} else {

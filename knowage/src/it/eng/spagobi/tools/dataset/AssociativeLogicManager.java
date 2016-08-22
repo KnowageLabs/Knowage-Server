@@ -26,6 +26,8 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
@@ -45,9 +47,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.NamingException;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.data.Row;
 import org.jgrapht.graph.Pseudograph;
 
 /**
@@ -59,37 +65,41 @@ public class AssociativeLogicManager {
 
 	private final static int IN_CLAUSE_LIMIT = 999;
 
-	private final IDataSource dataSource;
+	private final IDataSource cacheDataSource;
 	private final ICache cache;
 	private Map<EdgeGroup, Set<String>> edgeGroupValues;
 	private final Map<String, Map<String, String>> datasetToAssociations;
 	private Map<String, Set<EdgeGroup>> datasetToEdgeGroup;
 	private Map<EdgeGroup, Set<String>> edgeGroupToDataset;
 	private final Pseudograph<String, LabeledEdge<String>> graph;
-	private final Map<String, String> datasetToCachedTable;
+	private final Map<String, String> datasetToTableName;
 	private final Map<String, IDataSource> datasetToDataSource;
+	private final Map<String, IDataStore> datasetToDataStore;
 	private final Map<String, String> selections;
+	private final Set<String> realtimeDatasets;
 
 	private UserProfile userProfile;
 
 	static private Logger logger = Logger.getLogger(AssociativeLogicManager.class);
 
 	public AssociativeLogicManager(Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
-			Map<String, String> selections) {
+			Map<String, String> selections, Set<String> realtimeDatasets) {
 		this.graph = graph;
 		this.datasetToAssociations = datasetToAssociations;
 		this.selections = selections;
+		this.realtimeDatasets = realtimeDatasets;
 
-		this.datasetToCachedTable = new HashMap<String, String>();
+		this.datasetToTableName = new HashMap<String, String>();
 		this.datasetToDataSource = new HashMap<String, IDataSource>();
-		this.dataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
+		this.datasetToDataStore = new HashMap<String, IDataStore>();
+		this.cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 		this.cache = SpagoBICacheManager.getCache();
 
 		this.userProfile = null;
 	}
 
 	public Map<EdgeGroup, Set<String>> process() throws Exception {
-		if (dataSource == null) {
+		if (cacheDataSource == null) {
 			throw new SpagoBIException("Unable to get cache datasource, the value of [dataSource] is [null]");
 		}
 		if (cache == null) {
@@ -120,15 +130,21 @@ public class AssociativeLogicManager {
 		for (String v1 : graph.vertexSet()) {
 			// the vertex is the dataset label
 			IDataSet dataSet = dataSetDao.loadDataSetByLabel(v1);
-			if (dataSet.isPersisted()) {
-				datasetToCachedTable.put(v1, dataSet.getPersistTableName());
+			if (realtimeDatasets.contains(v1)) {
+				dataSet.loadData();
+				datasetToDataStore.put(v1, dataSet.getDataStore());
+			} else if (dataSet.isPersisted()) {
+				datasetToTableName.put(v1, dataSet.getPersistTableName());
 				datasetToDataSource.put(v1, dataSet.getDataSourceForWriting());
+			} else if (dataSet.isFlatDataset()) {
+				datasetToTableName.put(v1, dataSet.getFlatTableName());
+				datasetToDataSource.put(v1, dataSet.getDataSource());
 			} else {
 				String signature = dataSetDao.loadDataSetByLabel(v1).getSignature();
 				CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
 				String tableName = cacheItem.getTable();
-				datasetToCachedTable.put(v1, tableName);
-				datasetToDataSource.put(v1, dataSource);
+				datasetToTableName.put(v1, tableName);
+				datasetToDataSource.put(v1, cacheDataSource);
 			}
 		}
 	}
@@ -148,42 +164,10 @@ public class AssociativeLogicManager {
 							EdgeGroup group = new EdgeGroup(edges);
 							datasetToEdgeGroup.get(v1).add(group);
 
-							String tableName = getCachedTableName(v1);
-
+							String tableName = getTableName(v1);
 							// PreparedStatement stmt = getPreparedQuery(dataSource.getConnection(), columnNames, cacheItem.getTable());
 							String query = "SELECT DISTINCT " + getColumnNames(group.getOrderedEdgeNames(), v1) + " FROM " + tableName;
-							Connection connection = null;
-							Statement stmt = null;
-							ResultSet rs = null;
-							Set<String> tuple = null;
-							try {
-								connection = getDataSource(v1).getConnection();
-								stmt = connection.createStatement();
-								rs = stmt.executeQuery(query);
-								tuple = getTupleOfValues(rs);
-							} finally {
-								if (rs != null) {
-									try {
-										rs.close();
-									} catch (SQLException e) {
-										logger.debug(e);
-									}
-								}
-								if (stmt != null) {
-									try {
-										stmt.close();
-									} catch (SQLException e) {
-										logger.debug(e);
-									}
-								}
-								if (connection != null) {
-									try {
-										connection.close();
-									} catch (SQLException e) {
-										logger.debug(e);
-									}
-								}
-							}
+							Set<String> tuple = getTupleOfValues(v1, query);
 
 							if (!edgeGroupValues.containsKey(group)) {
 								edgeGroupValues.put(group, tuple);
@@ -206,44 +190,26 @@ public class AssociativeLogicManager {
 		}
 	}
 
-	private String getCachedTableName(String datasetLabel) {
-		return datasetToCachedTable.get(datasetLabel);
-	}
-
-	private IDataSource getDataSource(String datasetLabel) {
-		return datasetToDataSource.get(datasetLabel);
-	}
-
-	private String getColumnNames(String associationNamesString, String datasetName) {
-		String[] associationNames = associationNamesString.split(",");
-		List<String> columnNames = new ArrayList<String>();
-		for (String associationName : associationNames) {
-			String columnName = AbstractJDBCDataset.encapsulateColumnName(datasetToAssociations.get(datasetName).get(associationName),
-					getDataSource(datasetName));
-			columnNames.add(columnName);
-		}
-		return StringUtils.join(columnNames.iterator(), ",");
-	}
-
-	@SuppressWarnings("unchecked")
-	private void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, String filter) throws Exception {
-		Set<EdgeGroup> groups = datasetToEdgeGroup.get(dataset);
-		String tableName = getCachedTableName(dataset);
-
-		// iterate over all the associations
-		for (EdgeGroup group : groups) {
-			String columnNames = getColumnNames(group.getOrderedEdgeNames(), dataset);
-			String query = "SELECT DISTINCT " + columnNames + " FROM " + tableName + " WHERE " + filter;
-
+	private Set<String> getTupleOfValues(String dataSet, String query) throws ClassNotFoundException, NamingException, SQLException {
+		Set<String> tuple = new HashSet<String>(0);
+		if (realtimeDatasets.contains(dataSet)) {
+			IDataStore dataStore = datasetToDataStore.get(dataSet);
+			if (dataStore != null) {
+				org.apache.metamodel.data.DataSet rs = dataStore.getMetaModelResultSet(query);
+				tuple = getTupleOfValues(rs);
+			} else {
+				throw new SpagoBIRuntimeException("Error while retrieving the DataStore for real-time dataset with label [" + dataSet
+						+ "]. It is impossible to get values from it.");
+			}
+		} else {
 			Connection connection = null;
-			Statement statement = null;
+			Statement stmt = null;
 			ResultSet rs = null;
-			Set<String> distinctValues = null;
 			try {
-				connection = getDataSource(dataset).getConnection();
-				statement = connection.createStatement();
-				rs = statement.executeQuery(query);
-				distinctValues = getTupleOfValues(rs);
+				connection = getDataSource(dataSet).getConnection();
+				stmt = connection.createStatement();
+				rs = stmt.executeQuery(query);
+				tuple = getTupleOfValues(rs);
 			} finally {
 				if (rs != null) {
 					try {
@@ -252,9 +218,9 @@ public class AssociativeLogicManager {
 						logger.debug(e);
 					}
 				}
-				if (statement != null) {
+				if (stmt != null) {
 					try {
-						statement.close();
+						stmt.close();
 					} catch (SQLException e) {
 						logger.debug(e);
 					}
@@ -267,6 +233,50 @@ public class AssociativeLogicManager {
 					}
 				}
 			}
+		}
+		return tuple;
+	}
+
+	private String getTableName(String datasetLabel) {
+		String tableName;
+		if (realtimeDatasets.contains(datasetLabel)) {
+			tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
+		} else {
+			tableName = datasetToTableName.get(datasetLabel);
+		}
+		return tableName;
+	}
+
+	private IDataSource getDataSource(String datasetLabel) {
+		if (realtimeDatasets.contains(datasetLabel)) {
+			return null; // with null, AbstractJDBCDataset.encapsulateColumnName returns an empty string
+		} else {
+			return datasetToDataSource.get(datasetLabel);
+		}
+	}
+
+	private String getColumnNames(String associationNamesString, String datasetName) {
+		String[] associationNames = associationNamesString.split(",");
+		List<String> columnNames = new ArrayList<String>();
+		IDataSource dataSource = getDataSource(datasetName);
+		for (String associationName : associationNames) {
+			String columnName = AbstractJDBCDataset.encapsulateColumnName(datasetToAssociations.get(datasetName).get(associationName), dataSource);
+			columnNames.add(columnName);
+		}
+		return StringUtils.join(columnNames.iterator(), ",");
+	}
+
+	@SuppressWarnings("unchecked")
+	private void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, String filter) throws Exception {
+		Set<EdgeGroup> groups = datasetToEdgeGroup.get(dataset);
+		String tableName = getTableName(dataset);
+
+		// iterate over all the associations
+		for (EdgeGroup group : groups) {
+			String columnNames = getColumnNames(group.getOrderedEdgeNames(), dataset);
+			String query = "SELECT DISTINCT " + columnNames + " FROM " + tableName + " WHERE " + filter;
+
+			Set<String> distinctValues = getTupleOfValues(dataset, query);
 
 			Set<String> baseSet = edgeGroupValues.get(group);
 			Set<String> intersection = new HashSet<String>(CollectionUtils.intersection(baseSet, distinctValues));
@@ -321,6 +331,26 @@ public class AssociativeLogicManager {
 					tuple += ",";
 				}
 				Object item = rs.getObject(i);
+				tuple += stringDelimiter + (item == null ? null : item.toString()) + stringDelimiter;
+			}
+			tuple += ")";
+			tuples.add(tuple);
+		}
+		return tuples;
+	}
+
+	private Set<String> getTupleOfValues(DataSet rs) {
+		String tuple;
+		String stringDelimiter = "'";
+		Set<String> tuples = new HashSet<String>();
+		while (rs.next()) {
+			tuple = "(";
+			for (int i = 1; i <= rs.getSelectItems().length; i++) {
+				Row row = rs.getRow();
+				if (i != 1) {
+					tuple += ",";
+				}
+				Object item = row.getValue(i);
 				tuple += stringDelimiter + (item == null ? null : item.toString()) + stringDelimiter;
 			}
 			tuple += ")";

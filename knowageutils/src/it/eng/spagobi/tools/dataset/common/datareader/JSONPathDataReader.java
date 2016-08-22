@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -81,7 +81,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 	private static final String ORION_JSON_PATH_ITEMS = "$.contextResponses[*].contextElement";
 
 	static private Logger logger = Logger.getLogger(JSONPathDataReader.class);
-	
+
 	public static class JSONPathAttribute {
 		private final String name;
 		private final String jsonPathValue;
@@ -175,42 +175,71 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private void addData(String data, DataStore dataStore, MetaData dataStoreMeta, List<Object> parsedData) throws ParseException {
 
+		boolean checkMaxResults = false;
+		if ((maxResults > 0)) {
+			checkMaxResults = true;
+		}
+
+		boolean paginated = false;
+		logger.debug("Reading data ...");
+		if (isPaginationSupported() && getOffset() >= 0 && getFetchSize() >= 0) {
+			logger.debug("Offset is equal to [" + getOffset() + "] and fetchSize is equal to [" + getFetchSize() + "]");
+			paginated = true;
+		} else {
+			logger.debug("Offset and fetch size not set");
+		}
+
+		int rowFetched = 0;
 		for (Object o : parsedData) {
-			IRecord record = new Record(dataStore);
+			if ((!paginated && (!checkMaxResults || (rowFetched < maxResults)))
+					|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize)) && (!checkMaxResults || (rowFetched - offset < maxResults)))) {
 
-			for (int j = 0; j < dataStoreMeta.getFieldCount(); j++) {
-				IFieldMetaData fieldMeta = dataStoreMeta.getFieldMeta(j);
-				Object propAttr = fieldMeta.getProperty(ATTRIBUTES_DIRECTLY);
-				if (propAttr != null && (Boolean) propAttr) {
-					// managed after this process
-					continue;
-				}
-				String jsonPathValue = (String) fieldMeta.getProperty(JSON_PATH_VALUE_METADATA_PROPERTY);
-				Assert.assertNotNull(jsonPathValue != null, "jsonPathValue!=null");
-				// can be fixed (not real JSONPath) or null (after value calculation)
-				String stringValue = isRealJsonPath(jsonPathValue) ? getJSONPathValue(o, jsonPathValue) : jsonPathValue;
-				IFieldMetaData fm = fieldMeta;
-				Class<?> type = fm.getType();
-				if (type == null) {
-					// dinamically defined, from json data path
-					String typeString = getJSONPathValue(o, (String) fieldMeta.getProperty(JSON_PATH_TYPE_METADATA_PROPERTY));
-					Assert.assertNotNull(typeString, "type of jsonpath type");
-					type = getType(typeString);
-					fm.setType(type);
-					if (type.equals(Date.class)) {
-						setDateTypeFormat(fm, typeString);
+				IRecord record = new Record(dataStore);
+
+				for (int j = 0; j < dataStoreMeta.getFieldCount(); j++) {
+					IFieldMetaData fieldMeta = dataStoreMeta.getFieldMeta(j);
+					Object propAttr = fieldMeta.getProperty(ATTRIBUTES_DIRECTLY);
+					if (propAttr != null && (Boolean) propAttr) {
+						// managed after this process
+						continue;
 					}
+					String jsonPathValue = (String) fieldMeta.getProperty(JSON_PATH_VALUE_METADATA_PROPERTY);
+					Assert.assertNotNull(jsonPathValue != null, "jsonPathValue!=null");
+					// can be fixed (not real JSONPath) or null (after value calculation)
+					String stringValue = isRealJsonPath(jsonPathValue) ? getJSONPathValue(o, jsonPathValue) : jsonPathValue;
+					IFieldMetaData fm = fieldMeta;
+					Class<?> type = fm.getType();
+					if (type == null) {
+						// dinamically defined, from json data path
+						String typeString = getJSONPathValue(o, (String) fieldMeta.getProperty(JSON_PATH_TYPE_METADATA_PROPERTY));
+						Assert.assertNotNull(typeString, "type of jsonpath type");
+						type = getType(typeString);
+						fm.setType(type);
+						if (type.equals(Date.class)) {
+							setDateTypeFormat(fm, typeString);
+						}
+					}
+					Assert.assertNotNull(type != null, "type!=null");
+
+					IField field = new Field(getValue(stringValue, fm));
+					record.appendField(field);
 				}
-				Assert.assertNotNull(type != null, "type!=null");
+				if (useDirectlyAttributes) {
+					manageDirectlyAttributes(o, record, dataStoreMeta, dataStore);
+				}
 
-				IField field = new Field(getValue(stringValue, fm));
-				record.appendField(field);
+				dataStore.appendRecord(record);
 			}
-			if (useDirectlyAttributes) {
-				manageDirectlyAttributes(o, record, dataStoreMeta, dataStore);
-			}
+			rowFetched++;
+		}
+		logger.debug("Read [" + rowFetched + "] records");
+		logger.debug("Insert [" + dataStore.getRecordsCount() + "] records");
 
-			dataStore.appendRecord(record);
+		if (this.isCalculateResultNumberEnabled()) {
+			logger.debug("Calculation of result set number is enabled");
+			dataStore.getMetaData().setProperty("resultNumber", new Integer(rowFetched));
+		} else {
+			logger.debug("Calculation of result set number is NOT enabled");
 		}
 	}
 
@@ -307,9 +336,9 @@ public class JSONPathDataReader extends AbstractDataReader {
 		try {
 			res = JsonPath.read(o, jsonPathValue);
 		} catch (PathNotFoundException e) {
-			logger.debug("JPath not found "+jsonPathValue);
+			logger.debug("JPath not found " + jsonPathValue);
 		}
-		
+
 		if (res == null) {
 			return null;
 		}
@@ -567,5 +596,20 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	public boolean isUseDirectlyAttributes() {
 		return useDirectlyAttributes;
+	}
+
+	@Override
+	public boolean isOffsetSupported() {
+		return true;
+	}
+
+	@Override
+	public boolean isFetchSizeSupported() {
+		return true;
+	}
+
+	@Override
+	public boolean isMaxResultsSupported() {
+		return true;
 	}
 }

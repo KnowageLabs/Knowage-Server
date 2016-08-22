@@ -264,19 +264,20 @@ public class SQLDBCache implements ICache {
 	}
 
 	/*
-	 * (non-Javadoc)
+	 * (non-Javadoc)int
 	 *
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet, java.util.List, java.util.List, java.util.List)
 	 */
 
 	@Override
-	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections) {
-		IDataStore dataStore = null;
-
+	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int offset,
+			int fetchSize) {
 		logger.debug("IN");
+
+		IDataStore dataStore = null;
 		try {
 			if (dataSet != null) {
-				dataStore = getInternal(dataSet, groups, filters, projections);
+				dataStore = getInternal(dataSet, groups, filters, projections, offset, fetchSize);
 			} else {
 				logger.warn("Input parameter [dataSet] is null");
 			}
@@ -292,7 +293,8 @@ public class SQLDBCache implements ICache {
 		return dataStore;
 	}
 
-	public IDataStore getInternal(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections) {
+	public IDataStore getInternal(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int offset,
+			int fetchSize) {
 		logger.debug("IN");
 
 		try {
@@ -302,7 +304,7 @@ public class SQLDBCache implements ICache {
 				logger.debug("Not found resultSet with signature [" + resultsetSignature + "] inside the Cache");
 				return null;
 			}
-			return queryStandardCachedDataset(groups, filters, projections, resultsetSignature);
+			return queryStandardCachedDataset(groups, filters, projections, resultsetSignature, offset, fetchSize);
 
 		} finally {
 			logger.debug("OUT");
@@ -418,7 +420,7 @@ public class SQLDBCache implements ICache {
 	}
 
 	private IDataStore queryStandardCachedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
-			String resultsetSignature) {
+			String resultsetSignature, int offset, int fetchSize) {
 
 		DataStore toReturn = null;
 
@@ -701,7 +703,7 @@ public class SQLDBCache implements ICache {
 
 						logger.debug("Cached dataset access query is equal to [" + queryText + "]");
 
-						IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+						IDataStore dataStore = dataSource.executeStatement(queryText, offset, fetchSize);
 						toReturn = (DataStore) dataStore;
 
 						List<Integer> breakIndexes = (List<Integer>) cacheItem.getProperty("BREAK_INDEXES");

@@ -85,6 +85,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		}
 	}
 
+	@Override
 	public IDataStore read(Object data) {
 		DataStore dataStore = null;
 
@@ -155,6 +156,16 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			} else {
 				rowsLimit = sheet.getPhysicalNumberOfRows();
 			}
+
+			boolean paginated = false;
+			logger.debug("Reading data ...");
+			if (isPaginationSupported() && getOffset() >= 0 && getFetchSize() >= 0) {
+				logger.debug("Offset is equal to [" + getOffset() + "] and fetchSize is equal to [" + getFetchSize() + "]");
+				paginated = true;
+			} else {
+				logger.debug("Offset and fetch size not set");
+			}
+
 			int rowFetched = 0;
 
 			/**
@@ -178,11 +189,6 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				 */
 				if (r > initialRow || r == 0) {
 
-					if (checkMaxResults) {
-						if (rowFetched >= maxResults) {
-							break;
-						}
-					}
 					HSSFRow row = sheet.getRow(r);
 					if (row == null) {
 						continue;
@@ -205,8 +211,11 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 						}
 					} else {
 						try {
-							IRecord record = parseRow(dataStore, row);
-							dataStore.appendRecord(record);
+							if ((!paginated && (!checkMaxResults || (rowFetched < maxResults)))
+									|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize)) && (!checkMaxResults || (rowFetched - offset < maxResults)))) {
+								IRecord record = parseRow(dataStore, row);
+								dataStore.appendRecord(record);
+							}
 							rowFetched++;
 
 						} catch (Throwable t) {
@@ -216,6 +225,15 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 
 				}
 
+			}
+			logger.debug("Read [" + rowFetched + "] records");
+			logger.debug("Insert [" + dataStore.getRecordsCount() + "] records");
+
+			if (this.isCalculateResultNumberEnabled()) {
+				logger.debug("Calculation of result set number is enabled");
+				dataStore.getMetaData().setProperty("resultNumber", new Integer(rowFetched));
+			} else {
+				logger.debug("Calculation of result set number is NOT enabled");
 			}
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to parse XLS file", t);
@@ -350,6 +368,21 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 	 */
 	public void setNumberOfColumns(int numberOfColumns) {
 		this.numberOfColumns = numberOfColumns;
+	}
+
+	@Override
+	public boolean isOffsetSupported() {
+		return true;
+	}
+
+	@Override
+	public boolean isFetchSizeSupported() {
+		return true;
+	}
+
+	@Override
+	public boolean isMaxResultsSupported() {
+		return true;
 	}
 
 }
