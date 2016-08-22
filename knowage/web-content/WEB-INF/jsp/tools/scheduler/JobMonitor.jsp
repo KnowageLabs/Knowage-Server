@@ -41,7 +41,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 <angular-list-detail ng-controller="Controller" full-screen="true">
 	<list label="'Scheduler Monitor'" layout-column>
 
-		<md-card style="margin-bottom: 0px;">
+		<md-card>
 			<md-card-content layout="row" layout-align="space-between center">
 			
 				<label>{{translate.load("scheduler.startdate","component_scheduler_messages")}}:</label>
@@ -91,6 +91,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				current-page-number = "tablePage"
 				page-changed-function = "pageChanged(searchValue, itemsPerPage, currentPageNumber, columnsSearch, columnOrdering, reverseOrdering)">
 		</angular-table>
+		
+		<div flex></div>
 	</list>
 </angular-list-detail>
 </body>
