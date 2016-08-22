@@ -53,6 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <body class="bodyStyle">
+<rest-loading></rest-loading>
 	<angular-list-detail ng-controller="Controller"
 		 full-screen=true>
 	<list label='translate.load("sbi.calendar")' <%= canSee? "new-function='newCalendar'":"" %>> 
@@ -91,17 +92,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 				<div layout="row"> 
 					<span flex></span>
-					<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircularGenera">
+					<!-- <div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircularGenera">
 				     	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
-				 	</div>
+				 	</div> -->
 					<md-button <%= canSee? "ng-click='generate()'":"" %> ng-disabled ="selectCalendar.realDateGenerated.length>0 || disableGenera" ng-show="!showCircularGenera && selectCalendar.calendarId!=undefined ">Genera</md-button>
 				</div>
 				<div  <%= canSee? "style='display:none'":"" %> style="position:absolute; z-index:1000;background:transparent;" layout-fill>
 				</div>
 				</md-whiteframe>
-				<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="generating" layout-fill>
+				<!-- <div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="generating" layout-fill>
 			     	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
-			 	</div>
+			 	</div> -->
 				<md-whiteframe ng-show="selectCalendar.realDateGenerated.length>0"  class="md-whiteframe-4dp layout-padding" layout-margin>
 				<angular-table flex ng-show="selectCalendar.realDateGenerated.length>0" layout-fill 
 					id='dayslist' ng-model=selectCalendar.realDateGenerated
