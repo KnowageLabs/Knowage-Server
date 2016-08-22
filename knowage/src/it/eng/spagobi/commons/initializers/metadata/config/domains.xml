@@ -403,11 +403,11 @@
 		domainNm="Layer Type" valueDs="Layer Type" />
 	<DOMAIN valueCd="OSM" valueNm="OSM" domainCd="LAYER_TYPE"
 		domainNm="Layer Type" valueDs="Layer Type" />
-	<DOMAIN valueCd="USER" valueNm="User" domainCd="DS_SCOPE"
+	<DOMAIN valueCd="USER" valueNm="USER" domainCd="DS_SCOPE"
 		domainNm="Dataset scope" valueDs="Dataset scope" />
-	<DOMAIN valueCd="ENTERPRISE" valueNm="Enterprise" domainCd="DS_SCOPE"
+	<DOMAIN valueCd="ENTERPRISE" valueNm="ENTERPRISE" domainCd="DS_SCOPE"
 		domainNm="Dataset scope" valueDs="Dataset scope" />
-	<DOMAIN valueCd="TECHNICAL" valueNm="Technical" domainCd="DS_SCOPE"
+	<DOMAIN valueCd="TECHNICAL" valueNm="TECHNICAL" domainCd="DS_SCOPE"
 		domainNm="Dataset scope" valueDs="Dataset scope" />
 
 	<DOMAIN valueCd="licence" valueNm="licence" domainCd="DS_GEN_META_PROPERTY"
