@@ -423,7 +423,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			} else {
 				for(var i=0; i < ctrl.selectedJob.triggers.length; i++){
 					if(ctrl.selectedTrigger == ctrl.selectedJob.triggers[i]){
-						ctrl.selectedJob.triggers.splice(i);
+						ctrl.selectedJob.triggers.splice(i, 1);
 						break;
 					}
 				}
