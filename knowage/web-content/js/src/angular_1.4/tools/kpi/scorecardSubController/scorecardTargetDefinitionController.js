@@ -73,7 +73,18 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 			}
 		}
 	}
+	$scope.parseCategoryKpi = function(){
+		if($scope.currentTarget !=undefined || $scope.currentTarget.kpis != undefined){
+			for(var i =0;i<$scope.currentTarget.kpis.length;i++){
+				if($scope.currentTarget.kpis[i].category == null){
+					$scope.currentTarget.kpis[i].category = {"translatedValueName" : " "};
+				}
+			}
+		}
+		
+	}
 	
+	$scope.parseCategoryKpi();
 	$scope.parseDate = function(date){
 		result = "";
 		if(date == "d/m/Y"){
@@ -94,6 +105,9 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 				//parse date based on language selected
 				obj["datacreation"]=$filter('date')(response.data[i].dateCreation, dateFormat);
 				obj.kpiSemaphore="<kpi-semaphore-indicator indicator-color=\"'"+obj.status+"'\"></kpi-semaphore-indicator>";
+				if(obj.category == null){
+					obj.category = {"translatedValueName" : " "};
+				}
 				$scope.kpiList.push(obj);
 			}
 		},function(response){
@@ -119,6 +133,11 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 				tmpTargetKpis: tmpTargetKpis}
 		})
 		.then(function(data) {
+			for(var i=0;i<data.length;i++){
+				if(data[i].category == null){
+					data[i].category = {"translatedValueName" : " "};
+				}
+			}
 		angular.copy(data,$scope.currentTarget.kpis);
 		$timeout(function(){
 				$scope.updateCriterionPriority();
@@ -129,6 +148,11 @@ function scorecardTargetDefinitionControllerFunction($scope,sbiModule_translate,
 
 	var DialogControllerKPI= function($scope,kpiList,tmpTargetKpis){
 		$scope.kpiAllList=kpiList;
+		for(var i=0;i<$scope.kpiAllList.length;i++){
+			if($scope.kpiAllList[i].category == null){
+				$scope.kpiAllList[i].category = {"translatedValueName" : " "};
+			}
+		}
 		$scope.kpiSelected=tmpTargetKpis;
 		
 		$scope.saveKpiToTarget=function(){
