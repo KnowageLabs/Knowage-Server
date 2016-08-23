@@ -1,6 +1,7 @@
 package it.eng.spagobi.tools.alert.action;
 
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.alert.exception.AlertActionException;
@@ -8,6 +9,7 @@ import it.eng.spagobi.tools.alert.job.AbstractAlertAction;
 
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -168,6 +170,11 @@ public class SendMail extends AbstractAlertAction {
 
 	private static String getConfigValue(String key) {
 		return SingletonConfig.getInstance().getConfigValue(key);
+	}
+
+	@Override
+	public List<SbiHibernateModel> exportAction(String actionParams) {
+		return new ArrayList<SbiHibernateModel>();
 	}
 
 }

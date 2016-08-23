@@ -296,6 +296,9 @@
 				
 			<ITEM title="#menu.ImpExpGlossary" functionality="ImpExpGlossary"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportGlossary/importExportGlossaryTemplate.jsp" /> 
+						
+			<ITEM title="#menu.ImpExpAlerts" functionality="ImpExpAlerts"
+				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportAlerts/importExportAlerts.jsp" /> 
 			
 			<!--<ITEM title="#menu.ImpExpScheduler" functionality="ImpExpScheduler"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportScheduler/importExportSchedulerTemplate.jsp" /> 

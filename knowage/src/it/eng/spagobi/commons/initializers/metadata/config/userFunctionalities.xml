@@ -59,6 +59,7 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpKpis" description="ImpExpKpis"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpMetadata" description="ImpExpMetadata"/>	
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpGlossary" description="ImpExpGlossary"/>
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpAlerts" description="ImpExpAlerts"/>
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ImpExpScheduler" description="ImpExpScheduler"/>
 	<USER_FUNCTIONALITY productType="KnowageBD" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MultisheetCockpit" description="MultisheetCockpit" />
@@ -130,6 +131,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpMetadata" description="ImpExpMetadata"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpGlossary" description="ImpExpGlossary"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpAlerts" description="ImpExpAlerts"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImpExpScheduler" description="ImpExpScheduler"/>	
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
@@ -200,6 +202,7 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpMetadata" description="ImpExpMetadata"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpCatalog" description="ImpExpCatalog"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpGlossary" description="ImpExpGlossary"/>
+	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpAlerts" description="ImpExpAlerts"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImpExpScheduler" description="ImpExpScheduler"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
@@ -239,6 +242,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpResources" description="ImpExpResources"/>	
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpUsers" description="ImpExpUsers"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpGlossary" description="ImpExpGlossary"/>
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpAlerts" description="ImpExpAlerts"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImpExpScheduler" description="ImpExpScheduler"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="InstallConfig" description="InstallConfig" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="KpiManagement" description="KpiManagement" />
@@ -297,6 +301,7 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpCatalog" description="ImpExpCatalog" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpDocument" description="ImpExpDocument" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpGlossary" description="ImpExpGlossary" />
+	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpAlerts" description="ImpExpAlerts"/>
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpKpis" description="ImpExpKpis" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpMetadata" description="ImpExpMetadata" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ImpExpMenu" description="ImpExpMenu" />
@@ -364,6 +369,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpCatalog" description="ImpExpCatalog" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpDocument" description="ImpExpDocument" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpGlossary" description="ImpExpGlossary" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpAlerts" description="ImpExpAlerts"/>
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpKpis" description="ImpExpKpis" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpMetadata" description="ImpExpMetadata" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpMenu" description="ImpExpMenu" />

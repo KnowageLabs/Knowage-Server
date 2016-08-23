@@ -2,14 +2,18 @@ package it.eng.spagobi.tools.alert.listener;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.kpi.bo.KpiValue;
 import it.eng.spagobi.kpi.bo.ThresholdValue;
+import it.eng.spagobi.kpi.metadata.SbiKpiKpi;
+import it.eng.spagobi.kpi.metadata.SbiKpiKpiId;
 import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.alert.exception.AlertListenerException;
 import it.eng.spagobi.tools.alert.job.AbstractAlertListener;
+import it.eng.spagobi.tools.alert.metadata.SbiAlertAction;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,6 +34,30 @@ public class KpiListener extends AbstractAlertListener {
 
 	private final Set<ThresholdValue> thresholds = new HashSet<>();
 	private final Map<Integer, List<KpiValue>> valueMap = new HashMap<>();
+
+	@Override
+	public List<SbiHibernateModel> export(String jsonParameters) {
+		List<SbiHibernateModel> ret = new ArrayList<SbiHibernateModel>();
+		InputParameter par = (InputParameter) JsonConverter.jsonToObject(jsonParameters, InputParameter.class);
+
+		SbiKpiKpi sbiKpiKpi = new SbiKpiKpi();
+		SbiKpiKpiId sbiKpiKpiId = new SbiKpiKpiId();
+		sbiKpiKpiId.setId(par.getKpiId());
+		sbiKpiKpiId.setVersion(par.getKpiVersion());
+		sbiKpiKpi.setSbiKpiKpiId(sbiKpiKpiId);
+		ret.add(sbiKpiKpi);
+		if (par.getActions() != null) {
+			for (Action action : par.getActions()) {
+				if (action.getIdAction() != null) {
+					SbiAlertAction alertAction = new SbiAlertAction();
+					alertAction.setId(action.getIdAction());
+					ret.add(alertAction);
+				}
+			}
+		}
+
+		return ret;
+	}
 
 	@Override
 	public void executeListener(String jsonParameters) throws AlertListenerException {

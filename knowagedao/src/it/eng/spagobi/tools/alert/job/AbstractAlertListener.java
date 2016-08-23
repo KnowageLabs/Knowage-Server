@@ -3,6 +3,7 @@ package it.eng.spagobi.tools.alert.job;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
@@ -17,6 +18,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -110,6 +112,13 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 			e.printStackTrace(new PrintWriter(sw));
 			writeAlertLog(listenerParams, actionId, actionParams, "Error executing action. " + sw.toString());
 		}
+	}
+
+	protected List<SbiHibernateModel> exportAction(Object listenerParamsObj, Integer actionId, Object actionParamsObj) throws EMFUserError,
+			AlertListenerException {
+		String actionParams = JsonConverter.objectToJson(actionParamsObj, actionParamsObj.getClass()).toString();
+		IAlertAction action = getActionInstance(actionId);
+		return action.exportAction(actionParams);
 	}
 
 	public Integer getListenerId() {

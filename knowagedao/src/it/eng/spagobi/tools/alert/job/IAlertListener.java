@@ -1,6 +1,9 @@
 package it.eng.spagobi.tools.alert.job;
 
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.tools.alert.exception.AlertListenerException;
+
+import java.util.List;
 
 public interface IAlertListener {
 
@@ -9,4 +12,5 @@ public interface IAlertListener {
 
 	public void executeListener(String jsonOptions) throws AlertListenerException;
 
+	public List<SbiHibernateModel> export(String jsonParameters);
 }

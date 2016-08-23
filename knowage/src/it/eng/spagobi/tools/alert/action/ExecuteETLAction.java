@@ -4,12 +4,16 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionController;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
 import it.eng.spagobi.tools.alert.exception.AlertActionException;
 import it.eng.spagobi.tools.alert.job.AbstractAlertAction;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -54,6 +58,33 @@ public class ExecuteETLAction extends AbstractAlertAction {
 			logger.error("Send mail failed", e);
 			throw new AlertActionException("Executing ETL failed", e);
 		}
+
+	}
+
+	@Override
+	public List<SbiHibernateModel> exportAction(String actionParams) {
+		List<SbiHibernateModel> ret = new ArrayList<SbiHibernateModel>();
+
+		if (actionParams != null && !actionParams.isEmpty()) {
+			JSONObject json;
+			try {
+				json = new JSONObject(new JSONObject(actionParams).getString("jsonActionParameters"));
+				if (json.has("listDocIdSelected")) {
+					JSONArray ids = json.getJSONArray("listDocIdSelected");
+					for (int i = 0; i < ids.length(); i++) {
+						Integer id = ids.getJSONObject(i).getInt("DOCUMENT_ID");
+						SbiObjects sbiObject = new SbiObjects();
+						sbiObject.setBiobjId(id);
+						ret.add(sbiObject);
+
+					}
+				}
+			} catch (JSONException e) {
+				logger.error(e);
+			}
+		}
+
+		return ret;
 
 	}
 }
