@@ -625,7 +625,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 					hierarchyFullColumnMap, hierarchyColumnMap);
 
 			// recupero tutti i campi temporali presenti nella query
-			Set<String> temporalFieldTypesInSelect = getTemporalFieldsInSelect(selectFields, hierarchyFullColumnMap);
+			Set<String> temporalFieldTypesInSelect = getTemporalFieldsInSelect(query.getSelectFields(false), hierarchyFullColumnMap);
 
 			// definisco quali campi andranno ricalcolati
 			Map<String, Map<String, String>> inlineFilteredSelectFields = updateInlineFilteredSelectFieldsAliases(
