@@ -18,7 +18,7 @@
 <title>GeoReport</title>
 
 </head>
-<body class="mapBodyStyle">
+<body class="mapBodyStyle kn-geoReport">
 <div ng-controller="mapCtrl" ng-cloak layout-fill>
 	<geo-map map-id='myMap' show-save-button='<%="edit_map".equals(editMode) %>' layout-fill></geo-map>
 </div>
