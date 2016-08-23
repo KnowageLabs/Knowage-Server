@@ -8,20 +8,20 @@
 	</md-button>
 
 	<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id='menu' md-is-locked-open="openRigthMenu" layout="column">
-		<md-toolbar class="md-theme-light" layout="row" layout-wrap
-			layout-align="center center">
-			<div class="md-toolbar-tools" style="    height: 100%;    width: 100%;    text-align: center;">
-				
+		<section class="md-sidenav-right-wrapper">
+			<md-toolbar class="md-theme-light" style="display: flex; flex: 0 0 auto;">
+				<div class="md-toolbar-tools" style="height: 100%; width: 100%; text-align: center;">
 					<i class="fa fa-crosshairs"></i>
-					<span style="    height: 100%;    width: 100%;    line-height: 23px;">{{translate.load("gisengine.rigthMenu.locationIntelligence")}}</span>
-			</div>
-		</md-toolbar> 
-		<md-content class=" no-padding"  flex  layout> 
+					<span style="height: 100%; width: 100%; line-height: 23px;">{{translate.load("gisengine.rigthMenu.locationIntelligence")}}</span>
+				</div>
+			</md-toolbar>
+		</section>
+		<md-content style="height: 100%;" class="no-padding" layout> 
 			<md-tabs class="mini-tabs" ng-class="{hiddenTabs:template.noDatasetReport==true}" flex>
 				<md-tab id="GEOMAP" ng-if="template.noDatasetReport!=true"> 
 					<md-tab-label>{{translate.load("gisengine.rigthMenu.tabs.geomap")}} </md-tab-label> 
 					<md-tab-body>
-						<geo-map-menu id="map"></geo-layers>
+						<geo-map-menu id="map"></geo-map-menu>
 					</md-tab-body>
 				</md-tab>
 				<md-tab id="LAYER"> 

@@ -99,7 +99,11 @@ geo-download {
 	height: 100%;
 }
 
-#geoRigthMenu .md-sidenav-right>md-toolbar {
+/*
+#geoRigthMenu .md-sidenav-right>md-toolbar,
+*/
+#geoRigthMenu .md-sidenav-right .md-sidenav-right-wrapper md-toolbar 
+{
 	min-height: 23px;
 	height: 26px;
 }

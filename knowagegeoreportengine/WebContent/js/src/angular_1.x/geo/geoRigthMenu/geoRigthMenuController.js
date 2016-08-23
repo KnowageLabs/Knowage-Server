@@ -42,7 +42,8 @@ function geoRigthMenuControllerFunction($scope,$timeout,$map,sbiModule_translate
 		$scope.openRigthMenu=!$scope.openRigthMenu;
 		$timeout(function() {
 			$map.updateSize();
-		}, 500);
+			$map.render();
+		}, 1200);
 	};
 	
 	
