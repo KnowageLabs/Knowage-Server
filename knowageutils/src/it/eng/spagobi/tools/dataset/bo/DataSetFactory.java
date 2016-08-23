@@ -41,7 +41,6 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
  */
 public class DataSetFactory {
 
@@ -112,18 +111,21 @@ public class DataSetFactory {
 
 		}
 		try {
-			
-			
-			
-			if(className.toLowerCase().contains("federated")){
-				c = Class.forName(className).getConstructor(SpagoBiDataSet.class,HttpSession.class);
+
+			if (className.toLowerCase().contains("federated")) {
+				c = Class.forName(className).getConstructor(SpagoBiDataSet.class, HttpSession.class);
 				object = c.newInstance(dataSetConfig, session);
-			}else{
+			} else {
 				c = Class.forName(className).getConstructor(SpagoBiDataSet.class);
 				object = c.newInstance(dataSetConfig);
 			}
-			
+
 			dataSet = (IDataSet) object;
+
+			logger.debug("Check if the dataset type is a JDBC dataset");
+			if (className.equals(JDBCDataSet.class.getName())) {
+				dataSet.setParameters(dataSetConfig.getParameters());
+			}
 
 			logger.debug("Check if the dataset type is a Qbe dataset");
 
