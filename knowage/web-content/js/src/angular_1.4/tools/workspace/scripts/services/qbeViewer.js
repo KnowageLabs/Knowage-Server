@@ -67,8 +67,18 @@ angular
 				 * Take the frame that keeps the QBE ExtJS page (inside the 'qbe' property - defined inside the qbe.jsp), so we can access functions
 				 * inside the QbePanel.js (the page). We need 'openSaveDataSetWizard' function in order to save the dataset from the QBE.
 				 */
-				var frame = window.frames['documentViewerIframe'];
-				frame.contentWindow.qbe.openSaveDataSetWizard('TRUE');				
+				/**
+				 * These two lines are commented, since the IE has a problem with taking the 'contentWindow' property of the current frame. 
+				 * At the same time, extraction of the 'contentWindow' through the 'document' object works fine (and represents almost the
+				 * same solution) in all three browsers: IE, Mozilla, Chrome.
+				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				// OLD IMPLEMENTATION
+//				var frame = window.frames['documentViewerIframe'];				
+//				frame.contentWindow.qbe.openSaveDataSetWizard('TRUE');
+				
+				// NEW IMPLEMENTATION
+				document.getElementById("documentViewerIframe").contentWindow.qbe.openSaveDataSetWizard("TRUE");
 				
 				/**
 				 * Catch the 'save' event that is fired when the DS is persisted (saved) after confirming the dataset wizard inside the QBE (as a 
