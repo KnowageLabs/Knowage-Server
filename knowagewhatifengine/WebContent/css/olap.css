@@ -68,13 +68,24 @@
 	    background-size: 30px;
 }
 
+/*changed by @nsimovic*/
 .top-alignment{
-	height:8%;
+	height:100%;
 }
 
-@-moz-document url-prefix() { 
-  .top-alignment {
-     height:75%;
+/*added by @nsimovic*/
+.table-alignment {
+     position:absolute;
+     top:0px;
+     max-width: calc(100% - 52px);
+  }  
+
+/*added by @nsimovic*/
+ @-moz-document url-prefix() { 
+  .table-alignment {
+     position:absolute;
+     top:20px;
+     max-width: calc(100% - 52px);
   }  
 }
 
@@ -668,7 +679,7 @@ md-dialog.fullscreen-dialog {
 	.top-axis{
 		position: absolute;
 		width: 100%;
-		bottom: calc(100% - 90px);
+		bottom: calc(100% - 110px);
 	}
 }
 md-option[selected], md-select-menu md-option[selected]{
