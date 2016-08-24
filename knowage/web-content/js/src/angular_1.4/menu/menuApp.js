@@ -62,7 +62,7 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
         	$scope.showAlert = function(title,messageText){
                 var alert = $mdDialog.alert()
                 .title(title)
-                .content('<br/><div>'+messageText+'</div>')
+                .content(messageText)
                 .ok('Close');
                   $mdDialog
                     .show( alert )

@@ -83,7 +83,7 @@ myApp.directive('menuAside', ['$http','$mdDialog','$mdToast', 'sbiModule_messagi
         	$scope.showAlert = function(title,messageText){
                 var alert = $mdDialog.alert()
                 .title(title)
-                .content('<br/><div>'+messageText+'</div>')
+                .content(messageText)
                 .ok('Close');
                   $mdDialog
                     .show( alert )
