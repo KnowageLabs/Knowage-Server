@@ -53,7 +53,7 @@
     <APPLICATION code="FinalUsersManagement" 
                  title="#menu.Users"  
                  functionality="FinalUsersManagement" 
-                 link="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+                 link="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
                  iconUrl="${SPAGOBI_CONTEXT}/img/wapp/users.png">
     </APPLICATION>
     

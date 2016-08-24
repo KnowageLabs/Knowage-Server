@@ -37,15 +37,15 @@
 			iconCls="supervisor_account">
 			<ITEM	title="#menu.Attributes"
 					functionality="ProfileManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/profileAttributesManagement.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/profileAttributesManagement.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/rolesynch16.png" />
 			<ITEM	title="#menu.Roles"
 					functionality="ProfileManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/rolesManagement.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/rolesManagement.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/roles.png" />		
 			<ITEM	title="#menu.Users"
 					functionality="ProfileManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/users.png" />
 			<ITEM	title="#menu.menuconfiguration"
 					functionality="MenuManagement"
@@ -83,7 +83,7 @@
 				iconCls="style">
 	        <ITEM   title="#menu.MetaModelsCatalogue"
 	                functionality="MetaModelsCatalogueManagement"
-	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/businessModelCatalogue.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/businessModelCatalogue.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />	                
 	        <ITEM   title="#menu.MondrianCatalogue"
 	                functionality="ArtifactCatalogueManagement"
@@ -308,7 +308,7 @@
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
 	        <ITEM   title="#menu.ETLMetadata"
 	                functionality="MetaModelsCatalogueManagement"
-	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/etlMetadataExtraction.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/etlMetadataExtraction.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />
 	       	
 	       	<ITEM   title="#menu.license"
