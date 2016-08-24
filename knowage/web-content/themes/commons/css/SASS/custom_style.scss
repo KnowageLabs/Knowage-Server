@@ -47,7 +47,7 @@
 .capitalize {
     text-transform: capitalize;
 }
- 
+::-ms-clear { display: none !important;width : 0;  height: 0; }
 // Toolbar elements  
 md-toolbar.md-knowage-theme {
 		min-height: $toolbarHeight;
