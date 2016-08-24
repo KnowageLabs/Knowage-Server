@@ -29,16 +29,13 @@
             <column name="ROLE" length="100" />
         </property>         
         
-        <set name="sbiMetaJobSources" table="sbi_meta_job_source" inverse="true" lazy="false" fetch="select">
-            <key>
-                <column name="SOURCE_ID" not-null="true" />
-            </key>
-            <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaJobSource" />
-        </set>
+<!--         <set name="sbiMetaJobSources" table="sbi_meta_job_source" inverse="true" lazy="false" fetch="select"> -->
+<!--             <key> -->
+<!--                 <column name="SOURCE_ID" not-null="true" /> -->
+<!--             </key> -->
+<!--             <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaJobSource" /> -->
+<!--         </set> -->
 
-        <filter name="tenantFilter" condition="organization=:tenant"/> 
+        
     </class>
-    <filter-def name="tenantFilter">
-		<filter-param name="tenant" type="string"/>
-	</filter-def>
 </hibernate-mapping>

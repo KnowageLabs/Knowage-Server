@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 12-apr-2016 10.43.25 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.metadata.metadata.SbiMetaDsTabRel" table="SBI_META_DATASET_REL" >
+       <id name="relationId" type="java.lang.Integer">
+            <column name="DS_TABLE_REL_ID" />
+        </id>
+        <property name="datasetId">
+	            <column name="DATASET_ID" not-null="true"/>
+	    </property>
+	    <property name="tableId">
+	            <column name="TABLE_ID" not-null="true"/>
+	    </property>
+    </class>
+</hibernate-mapping>

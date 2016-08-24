@@ -65,7 +65,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.flagCategory = false;
 	$scope.typeSaveMenu="Missing";
 	$scope.filterDate;
-
+	
+	
 	$scope.stepItem = [ {
 		name : $scope.translate.load('sbi.ds.file.upload.button')
 	} ];
@@ -258,6 +259,9 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 					$scope.flagCategory = response.data.flagDomain;
 					if($scope.flagCategory){
 						$scope.exportedDataset = response.data.exportedDataset;
+						//opendataset
+						$scope.showDatasetImported = true;
+						
 					}else{
 
 						if(!$scope.flagCategory){

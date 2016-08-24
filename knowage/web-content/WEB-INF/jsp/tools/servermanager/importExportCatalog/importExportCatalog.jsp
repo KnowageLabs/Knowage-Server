@@ -141,6 +141,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 					<div layout="column">
 						<md-checkbox ng-show="exportedDataset.length>0"
+							ng-init="toggle('DatasetImported',listTypeImported)"
 							ng-checked="exists('DatasetImported',listTypeImported)"
 							ng-click="toggle('DatasetImported',listTypeImported)">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>
 						<h4 ng-show="showDatasetImported">{{translate.load("sbi.importexportcatalog.messagesfederated");}}</h4>

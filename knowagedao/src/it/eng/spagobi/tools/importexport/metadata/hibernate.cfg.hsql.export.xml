@@ -134,6 +134,8 @@
       <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlert.hbm.xml" />
       <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlertListener.hbm.xml" />
       <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlertAction.hbm.xml" />
+      
+      <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaDatasetTableRelation.hbm.xml" />
         
                 <!-- User Defined Attributes -->
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdp.hbm.xml" />

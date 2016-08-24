@@ -23,21 +23,18 @@
             </key>
             <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaTableColumn" />
         </set-->        
-        <set name="sbiMetaJobTables" table="sbi_meta_job_table" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="TABLE_ID" not-null="true" />
-            </key>
-            <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaJobTable" />
-        </set>
+<!--         <set name="sbiMetaJobTables" table="sbi_meta_job_table" inverse="true" lazy="true" fetch="select"> -->
+<!--             <key> -->
+<!--                 <column name="TABLE_ID" not-null="true" /> -->
+<!--             </key> -->
+<!--             <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaJobTable" /> -->
+<!--         </set> -->
         <!--set name="sbiMetaTableBcs" table="sbi_meta_table_bc" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="TABLE_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.metadata.metadata.SbiMetaTableBc" />
         </set-->
-        <filter name="tenantFilter" condition="organization=:tenant"/> 
     </class>
-     <filter-def name="tenantFilter">
-		<filter-param name="tenant" type="string"/>
-	</filter-def>
+    
 </hibernate-mapping>
