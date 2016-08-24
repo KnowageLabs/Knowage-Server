@@ -59,6 +59,7 @@
 	font-family: Verdana;
 	background: #f5f5f5;
 	white-space: nowrap;
+	text-align: left;
 }
 
 .pivot-table td{
