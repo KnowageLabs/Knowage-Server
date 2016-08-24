@@ -29,6 +29,9 @@ import javax.ws.rs.core.Context;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 /**
  * PublisherService Rest service can be used to display a jsp. It can be called passing the
  * request parameter "PUBLISHER" containing the uri to the requested resource.
@@ -39,30 +42,57 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
  */
 
 @Path("/publish")
-public class PublisherService {
+public class PublisherService extends AbstractSpagoBIResource {
+
 	@Context
 	private HttpServletResponse servletResponse;
 
 	private static Logger logger = Logger.getLogger(PublisherService.class);
-	private static String PUBLISHER ="PUBLISHER";
+	private static final String PUBLISHER ="PUBLISHER";
+	private static final String JSP_PATH = "/WEB-INF/jsp/";
 
 	@GET
 	public void publish(@Context HttpServletRequest req) {
 
 		try {
 			
-			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-		    HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
-			
 			String publisher = request.getParameter(PUBLISHER);
+			
+			if(!isPublisherValid(publisher)  ) {
+				logger.error("The user " + getUserProfile().getUserUniqueIdentifier() + " is trying to read a secured file content using publisher");
+				throw new IllegalAccessException("Unauthorized access to a system resource.");
+			}
+			
 			if (publisher != null) {
-				request.getRequestDispatcher(publisher).forward(request,
-						response);
+				request.getRequestDispatcher(publisher).forward(request, response);
 			}
 
 		} catch (Exception e) {
 			logger.error("Error forwarding request", e);
+			throw new SpagoBIServiceException("publish", e.getMessage());
 		}
+	}
+
+	/* Vulnerability patch: allows only jsp publishing */
+	private boolean isPublisherValid(String publisher) {
+		boolean isValid = true;
+		
+		if(isValid && publisher == null) {
+			isValid = false;
+		}
+
+		if(isValid && !publisher.startsWith(JSP_PATH)) {
+				isValid = false;
+		}
+		String publisherNoParameters = publisher.indexOf("?") < 0 ? publisher : publisher.substring(0, publisher.indexOf("?")); 
+		if(isValid && !publisherNoParameters.toLowerCase().endsWith("jsp")){
+			isValid = false;
+		}
+		if(isValid && publisherNoParameters.contains("../")) {
+			isValid = false;
+		}
+		
+		return isValid;
 	}
 
 }
