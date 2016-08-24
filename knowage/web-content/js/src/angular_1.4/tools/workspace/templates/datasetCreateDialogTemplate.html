@@ -8,9 +8,9 @@
 	   
 			<span flex></span> 
 	         
-			<md-button 	class="" ng-click="toggleDWVBack()" ng-if="datasetWizardView>1" 
+			<md-button 	ng-if="datasetWizardView>1" ng-click="toggleDWVBack()" 
 						title="{{translate.load('sbi.workspace.dataset.wizard.backbutton.tooltip')}}"> 
-				<md-icon class="fa fa-arrow-circle-o-left fa-2x">
+				<md-icon class="fa fa-arrow-circle-o-left fa-2x"></md-icon>	
 			</md-button>
 			
 			<!-- VALIDATION BUTTON ON THE STEP 2 (danristo) -->
@@ -22,19 +22,16 @@
 				<md-icon ng-show="datasetWizardView==2" class="fa fa-check-square fa-2x"></md-icon> 	
 			</md-button> -->
 			
-			<md-button 	class="" ng-click="toggleDWVNext()" 
+			<md-button 	ng-click="toggleDWVNext()" 
 						ng-disabled="nextOrSaveButtonCondition()"
 						title="{{datasetWizStep1NextButtonTitle()}}"> 
-				 <md-icon ng-show="datasetWizardView==4" class="fa fa-floppy-o fa-2x"></md-icon> 
-				 <md-icon ng-show="datasetWizardView!=4" class="fa fa-arrow-circle-o-right fa-2x"></md-icon> 		
-				
-			</md-button>
+				 <md-icon ng-if="datasetWizardView==4" class="fa fa-floppy-o fa-2x"></md-icon>
+				 <md-icon ng-if="datasetWizardView!=4" class="fa fa-arrow-circle-o-right fa-2x"></md-icon>				
+			</md-button>			
 			
-			
-			
-			<md-button 	class="" ng-click="closeDatasetCreateDialog()" 
+			<md-button 	ng-click="closeDatasetCreateDialog()" 
 						title="{{translate.load('sbi.workspace.dataset.wizard.closebutton.tooltip')}}">
-				 <md-icon class="fa fa-times-circle-o fa-2x"></md-icon> 
+				 <md-icon class="fa fa-times-circle-o fa-2x"></md-icon>
 			</md-button>
             
 		</div>

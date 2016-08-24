@@ -1021,7 +1021,11 @@ public class SelfServiceDataSetCRUD {
 					 * Divide the metadata column index (i) by 2 in order to have a correct information about the real index of the column that is validated.
 					 * This is needed because we have 2 metadata columns for each file dataset column.
 					 */
-					int index = (int) Math.round(Math.floor(i / 2));
+					/*
+					 * Modified after the 'fieldAlias' property is provided. Since it appears two times for each metadata item, we will have 4 rows for each
+					 * column. A temporary value is 4. If the 'fieldAlias' is unique, this value should be changed to 3. (danristo)
+					 */
+					int index = (int) Math.round(Math.floor(i / 4));
 
 					JSONObject jo = new JSONObject();
 
