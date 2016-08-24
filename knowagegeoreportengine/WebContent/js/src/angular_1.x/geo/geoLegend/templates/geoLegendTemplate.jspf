@@ -2,7 +2,7 @@
 
     <div layout="column" layout-wrap ng-if="template.analysisType=='choropleth'"> 
 	    <div layout="row" layout-wrap ng-repeat="items in thematizer.legendItem.choroplet" >
-	    	<div class="colorbox" style="background-color: {{items.color}}"></div>
+	    	<div class="colorbox" ng-style="getColor(items)"></div>
 	    	<span>{{items.from}}-{{items.to}} ({{items.item}})</span>
 	    </div>
 			
@@ -14,7 +14,7 @@
 	 
 	 <div layout="column" layout-wrap ng-if="template.analysisType=='chart'">
 		<div layout="row" layout-wrap ng-repeat="items in template.analysisConf.chart"  ng-if="template.selectedMultiIndicator[$index]!=undefined">
-	    	<div class="colorbox" style="background-color: {{items}}"></div>
+	    	<div class="colorbox" ng-style="getColor(items)"></div>
 	    	<span>{{template.selectedMultiIndicator[$index].header}}</span>
 	    </div>
 	 </div>

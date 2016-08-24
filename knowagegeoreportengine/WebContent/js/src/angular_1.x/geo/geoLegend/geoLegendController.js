@@ -42,6 +42,9 @@ function geoLegendControllerFunction($scope,$mdDialog,geoModule_template,geoModu
 	$scope.translate=sbiModule_translate;
 	$scope.legendItem=[];
 
+	$scope.getColor = function(color){
+		return {"background-color": color.color };
+	}
 	$scope.$watch(function() {
 		return  geoModule_template.analysisConf.choropleth;
 	}, function(newValue, oldValue) {
