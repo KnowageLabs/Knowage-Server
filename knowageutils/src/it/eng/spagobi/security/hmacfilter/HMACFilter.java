@@ -41,9 +41,9 @@ import javax.servlet.http.HttpServletRequest;
  * This class implements a HMAC ( https://en.wikipedia.org/wiki/Hash-based_message_authentication_code ) filter. The shared {@link HMACFilter#key} is
  * initialized by filter configuration. It's used internally by the engines. The HMAC key is configured through JNDI : {@link HMACFilter#HMAC_JNDI_LOOKUP}. See
  * web.xml of knowage project for configuring the Filter.
- *
+ * 
  * @author fabrizio
- *
+ * 
  */
 public class HMACFilter implements Filter {
 
@@ -86,12 +86,19 @@ public class HMACFilter implements Filter {
 			throw new IllegalArgumentException("request not instance of HttpServletRequest");
 		}
 		HttpServletRequest req = (HttpServletRequest) request;
+
+		checkHMAC(req, tokenValidator, key);
+
+		chain.doFilter(req, response);
+	}
+
+	public static void checkHMAC(HttpServletRequest req, HMACTokenValidator tokenValidator, String key) throws HMACSecurityException, IOException {
 		// it permits to read body more than once
 		req = new MultiReadHttpServletRequest(req);
 
-		checkUniqueToken(req);
+		checkUniqueToken(req, tokenValidator);
 
-		String signature = calcSignature(req);
+		String signature = calcSignature(req, key);
 		String signatureClient = getSignatureClient(req);
 		if (signatureClient == null) {
 			throw new HMACSecurityException("Signature of request not present.");
@@ -100,10 +107,9 @@ public class HMACFilter implements Filter {
 			throw new HMACSecurityException("Signature of request is not correct.");
 		}
 
-		chain.doFilter(req, response);
 	}
 
-	private void checkUniqueToken(HttpServletRequest req) throws HMACSecurityException {
+	private static void checkUniqueToken(HttpServletRequest req, HMACTokenValidator tokenValidator) throws HMACSecurityException {
 		String uniqueToken = getUniqueToken(req);
 		if (uniqueToken == null) {
 			throw new HMACSecurityException("HMAC token is not present.");
@@ -111,7 +117,7 @@ public class HMACFilter implements Filter {
 		tokenValidator.validate(uniqueToken);
 	}
 
-	private String calcSignature(HttpServletRequest req) throws IOException {
+	private static String calcSignature(HttpServletRequest req, String key) throws IOException {
 		if (key == null || key.isEmpty()) {
 			key = EnginConf.getInstance().getHmacKey();
 			if (key == null || key.isEmpty()) {
@@ -144,12 +150,12 @@ public class HMACFilter implements Filter {
 		return res.toString();
 	}
 
-	private String getParamsString(HttpServletRequest req) {
+	private static String getParamsString(HttpServletRequest req) {
 		String res = req.getQueryString();
 		return res == null ? "" : res;
 	}
 
-	private String getSignatureClient(HttpServletRequest req) {
+	private static String getSignatureClient(HttpServletRequest req) {
 		return req.getHeader(HMAC_SIGNATURE_HEADER);
 	}
 
@@ -170,7 +176,7 @@ public class HMACFilter implements Filter {
 
 	/**
 	 * http://example.com:80/docs/books/tutorial/index.html?name=networking -> /docs/books/tutorial/index.html
-	 *
+	 * 
 	 * @param req
 	 * @return
 	 */
