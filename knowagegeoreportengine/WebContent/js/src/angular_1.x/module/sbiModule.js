@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-var sbiM=angular.module('sbiModule',['toastr']);
+var sbiM=angular.module('sbiModule',['toastr','ngSanitize']);
 sbiM.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('indigo').accentPalette('blue-grey');
 });
@@ -257,6 +257,8 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 				for(var i=0;i<text.errors.length;i++){
 					textFin+=sbiModule_translate.load(text.errors[i].message)+" <br> ";
 				}
+			}else if(text.hasOwnProperty("data")){
+				textFin=text.data;
 			}else{
 				textFin=sbiModule_translate.load(JSON.stringify(text));
 			}
@@ -266,7 +268,7 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 		
 		var alert = $mdDialog.alert()
 		.title(titleFin)
-		.content(textFin)
+		.htmlContent(textFin)
 		.ariaLabel('error') 
 		.ok('OK') 
 		return $mdDialog.show(alert); //can use the finally function
