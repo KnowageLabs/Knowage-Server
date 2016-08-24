@@ -21,6 +21,7 @@ import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IProductTypeDAO;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.catalogue.bo.Content;
@@ -87,6 +88,10 @@ public class PageResource {
 			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 			ioManager.getHttpSession().setAttribute("ioManager", ioManager);
 			ioManager.getHttpSession().setAttribute("userProfile", userProfile);
+
+			IProductTypeDAO ptdao = DAOFactory.getProductTypeDAO();
+			ptdao.setUserProfile(userProfile);
+			ioManager.getHttpSession().setAttribute("productTypes", ptdao.loadCurrentTenantProductTypes());
 
 			// ----------------------load the sbiModel if present-----------------------------------------
 			Integer bmId = Integer.parseInt(request.getParameter("bmId"));

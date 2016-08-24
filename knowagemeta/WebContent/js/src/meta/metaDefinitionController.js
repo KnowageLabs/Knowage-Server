@@ -227,6 +227,37 @@ angular.module('metaManager').filter('filterByCategory', function() {
 	};
 });
 
+angular.module('metaManager').filter('filterByProductType', function(sbiModule_config) {
+	return function(items, prop) {
+
+		if(angular.equals(prop.value.propertyType.name,"Type")){
+			if(sbiModule_config.productTypes.indexOf("KnowageLI")==-1){
+				//remove spatial dimension
+				var sdInd=items.indexOf("dimension");
+				if(sdInd!=-1){
+					items.splice(sdInd,1);
+				}
+			}
+
+			if(sbiModule_config.productTypes.indexOf("KnowageSI")==-1){
+				//remove temporal dimension
+				var tdInd=items.indexOf("temporal dimension");
+				if(tdInd!=-1){
+					items.splice(tdInd,1);
+				}
+
+				var tdInd=items.indexOf("time dimension");
+				if(tdInd!=-1){
+					items.splice(tdInd,1);
+				}
+
+			}
+		}
+		return items;
+
+	};
+});
+
 angular.module('metaManager').service("parametersBuilder", function() {
 	this.extractCategories = function(properties) {
 		var propertiesCat = [];

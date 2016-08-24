@@ -101,7 +101,7 @@
 		<DAO name="CommunityDAO" implementation="it.eng.spagobi.community.dao.SbiCommunityDAOImpl" />
 
 		<DAO name="GeoLayersDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoLayersDAOHibImpl" />
-
+		<DAO name="ProductTypeDAO" implementation="it.eng.spagobi.commons.dao.ProductTypeDAOHibImpl" />
 		<DAO name="CacheDAO" implementation="it.eng.spagobi.cache.dao.CacheDAOHibImpl" />
 		
 		<DAO name="ISbiMetaSourceDAO" implementation="it.eng.spagobi.metadata.dao.SbiMetaSourceDAOHibImpl"/>

@@ -36,4 +36,6 @@ public interface IProductTypeDAO extends ISpagoBIDao {
 
 	List<String> loadOrganizzationProductTypeEngines(String tenant, String productTypeLabel);
 
+	List<String> loadCurrentTenantProductTypes();
+
 }

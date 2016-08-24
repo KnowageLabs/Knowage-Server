@@ -7,14 +7,20 @@ var sbiM=angular.module('sbiModule',["ngSanitize"]);
 // 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
 // });
 
-sbiM.factory('sbiModule_config',function(){ 
-	return {
+sbiM.factory('sbiModule_config',function(){
+	var conf= {
 		contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',    
 		externalBasePath: '<%= GeneralUtilities.getSpagoBiContext() %>',
  		clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',  // the date format to be used when communicating with server
 		clientServerTimestampFormat: '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>',   // the timestamp format to be used when communicating with server
 		serverDateFormat: '<%= GeneralUtilities.getServerDateFormat() %>',
+		productTypes:[]
 	};
+	<% for(String pr : productTypes) { 	%>
+	conf.productTypes.push('<%=pr%>');
+	<% } %>
+	
+	return conf;
 });
 
 // sbiM.config(function($mdDateLocaleProvider) {

@@ -135,4 +135,21 @@ public class ProductTypeDAOHibImpl extends AbstractHibernateDAO implements IProd
 
 	}
 
+	@Override
+	public List<String> loadCurrentTenantProductTypes() {
+
+		List<String> orgEngs = list(new ICriterion() {
+			@Override
+			public Criteria evaluate(Session session) {
+				Criteria criteria = session.createCriteria(SbiProductType.class);
+				criteria.createAlias("sbiOrganizationProductType", "_sbiOrganizationProductType");
+				criteria.createAlias("_sbiOrganizationProductType.sbiOrganizations", "_sbiOrganizations");
+				criteria.add(Restrictions.eq("_sbiOrganizations.name", getTenant()));
+				return criteria.setProjection(Projections.projectionList().add(org.hibernate.criterion.Property.forName("label").as("productLabel")));
+			}
+		});
+		return orgEngs;
+
+	}
+
 }

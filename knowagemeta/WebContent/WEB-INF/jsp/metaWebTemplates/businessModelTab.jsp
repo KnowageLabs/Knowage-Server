@@ -75,7 +75,11 @@
 							<label>{{prop.label}}</label>
 							 <input ng-model="selectedBusinessModel[prop.name]" >
 						</md-input-container>
-					
+						
+						<md-input-container ng-if="selectedBusinessModel.physicalTable!=undefined" >
+							<label>{{translate.load("sbi.meta.table.physical")}}</label>
+							 <input ng-model="meta.physicalModels[selectedBusinessModel.physicalTable.physicalTableIndex].name" disabled>
+						</md-input-container>
 					</expander-box>	
 				
 					<expander-box layout-margin layout="column" expanded="true" label="catProp" background-color="transparent" color="black" ng-repeat="catProp in currentBusinessModelParameterCategories">
@@ -84,7 +88,7 @@
 						ng-init="prop.value.value= (prop.value.value==undefined || prop.value.value==null) ? prop.value.propertyType.defaultValue : prop.value.value">
 							<label>{{prop.value.propertyType.name}}</label>
 							<md-select ng-model="prop.value.value" ng-if="prop.value.propertyType.admissibleValues.length!=0">
-								<md-option ng-repeat="admissibleValue in prop.value.propertyType.admissibleValues" value="{{admissibleValue}}" >
+								<md-option ng-repeat="admissibleValue in prop.value.propertyType.admissibleValues | filterByProductType:prop " value="{{admissibleValue}}" >
 									{{admissibleValue}}
 								</md-option>
 							</md-select>

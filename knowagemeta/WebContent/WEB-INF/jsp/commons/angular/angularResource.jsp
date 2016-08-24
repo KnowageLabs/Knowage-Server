@@ -34,6 +34,7 @@
 	msgBuilder = MessageBuilderFactory.getMessageBuilder();
 	EngineStartServletIOManager ioManager= (EngineStartServletIOManager) request.getSession().getAttribute("ioManager");
 	
+	List<String> productTypes = (List<String>) request.getSession().getAttribute("productTypes") ;
 	Locale locale= locale =ioManager.getLocale();
 
 	
