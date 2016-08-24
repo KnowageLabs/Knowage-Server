@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
@@ -102,7 +102,9 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 			FileUtilities.copyFile(new File(srcDir, "qbe.properties"), binDir);
 			FileUtilities.copyFile(new File(srcDir, "relationships.json"), binDir);
 			FileUtilities.copyFile(new File(srcDir, "cfields_meta.xml"), binDir);
-			// FileUtilities.copyFile(new File(srcDir, "hierarchies.xml"), binDir);
+			if (new File(srcDir + "" + File.separator + "hierarchies.xml").exists()) {
+				FileUtilities.copyFile(new File(srcDir, "hierarchies.xml"), binDir);
+			}
 
 			if (fileModel != null) {
 				File sbimodel = new File(binDir + File.separator + SBI_MODEL_FILE_NAME);

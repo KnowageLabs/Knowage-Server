@@ -17,25 +17,22 @@
  */
 package it.eng.knowage.meta.model.olap;
 
-import java.util.List;
-
 import it.eng.knowage.meta.model.ModelObject;
-import it.eng.knowage.meta.model.business.BusinessColumn;
 import it.eng.knowage.meta.model.business.BusinessColumnSet;
 
 import org.eclipse.emf.common.util.EList;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Dimension</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> A representation of the model object '<em><b>Dimension</b></em>'. <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link it.eng.knowage.meta.model.olap.Dimension#getTable <em>Table</em>}</li>
- *   <li>{@link it.eng.knowage.meta.model.olap.Dimension#getHierarchies <em>Hierarchies</em>}</li>
- *   <li>{@link it.eng.knowage.meta.model.olap.Dimension#getModel <em>Model</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.olap.Dimension#getTable <em>Table</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.olap.Dimension#getHierarchies <em>Hierarchies</em>}</li>
+ * <li>{@link it.eng.knowage.meta.model.olap.Dimension#getModel <em>Model</em>}</li>
  * </ul>
  * </p>
  *
@@ -45,13 +42,12 @@ import org.eclipse.emf.common.util.EList;
  */
 public interface Dimension extends ModelObject {
 	/**
-	 * Returns the value of the '<em><b>Table</b></em>' reference.
-	 * <!-- begin-user-doc -->
+	 * Returns the value of the '<em><b>Table</b></em>' reference. <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Table</em>' reference isn't clear,
-	 * there really should be more of a description here...
+	 * If the meaning of the '<em>Table</em>' reference isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 *
 	 * @return the value of the '<em>Table</em>' reference.
 	 * @see #setTable(BusinessColumnSet)
 	 * @see it.eng.knowage.meta.model.olap.OlapModelPackage#getDimension_Table()
@@ -61,42 +57,41 @@ public interface Dimension extends ModelObject {
 	BusinessColumnSet getTable();
 
 	/**
-	 * Sets the value of the '{@link it.eng.knowage.meta.model.olap.Dimension#getTable <em>Table</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Table</em>' reference.
+	 * Sets the value of the '{@link it.eng.knowage.meta.model.olap.Dimension#getTable <em>Table</em>}' reference. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 *
+	 * @param value
+	 *            the new value of the '<em>Table</em>' reference.
 	 * @see #getTable()
 	 * @generated
 	 */
 	void setTable(BusinessColumnSet value);
 
 	/**
-	 * Returns the value of the '<em><b>Hierarchies</b></em>' containment reference list.
-	 * The list contents are of type {@link it.eng.knowage.meta.model.olap.Hierarchy}.
-	 * It is bidirectional and its opposite is '{@link it.eng.knowage.meta.model.olap.Hierarchy#getDimension <em>Dimension</em>}'.
-	 * <!-- begin-user-doc -->
+	 * Returns the value of the '<em><b>Hierarchies</b></em>' containment reference list. The list contents are of type
+	 * {@link it.eng.knowage.meta.model.olap.Hierarchy}. It is bidirectional and its opposite is '{@link it.eng.knowage.meta.model.olap.Hierarchy#getDimension
+	 * <em>Dimension</em>}'. <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Hierarchies</em>' reference list isn't clear,
-	 * there really should be more of a description here...
+	 * If the meaning of the '<em>Hierarchies</em>' reference list isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 *
 	 * @return the value of the '<em>Hierarchies</em>' containment reference list.
 	 * @see it.eng.knowage.meta.model.olap.OlapModelPackage#getDimension_Hierarchies()
 	 * @see it.eng.knowage.meta.model.olap.Hierarchy#getDimension
 	 * @model opposite="dimension" containment="true" required="true"
 	 * @generated
 	 */
+
 	EList<Hierarchy> getHierarchies();
 
 	/**
-	 * Returns the value of the '<em><b>Model</b></em>' container reference.
-	 * It is bidirectional and its opposite is '{@link it.eng.knowage.meta.model.olap.OlapModel#getDimensions <em>Dimensions</em>}'.
-	 * <!-- begin-user-doc -->
+	 * Returns the value of the '<em><b>Model</b></em>' container reference. It is bidirectional and its opposite is '
+	 * {@link it.eng.knowage.meta.model.olap.OlapModel#getDimensions <em>Dimensions</em>}'. <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Model</em>' reference isn't clear,
-	 * there really should be more of a description here...
+	 * If the meaning of the '<em>Model</em>' reference isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 *
 	 * @return the value of the '<em>Model</em>' container reference.
 	 * @see #setModel(OlapModel)
 	 * @see it.eng.knowage.meta.model.olap.OlapModelPackage#getDimension_Model()
@@ -104,19 +99,18 @@ public interface Dimension extends ModelObject {
 	 * @model opposite="dimensions" transient="false"
 	 * @generated
 	 */
+	@JsonIgnore
 	OlapModel getModel();
 
 	/**
-	 * Sets the value of the '{@link it.eng.knowage.meta.model.olap.Dimension#getModel <em>Model</em>}' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Model</em>' container reference.
+	 * Sets the value of the '{@link it.eng.knowage.meta.model.olap.Dimension#getModel <em>Model</em>}' container reference. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 *
+	 * @param value
+	 *            the new value of the '<em>Model</em>' container reference.
 	 * @see #getModel()
 	 * @generated
 	 */
 	void setModel(OlapModel value);
-	
-	
-
 
 } // Dimension

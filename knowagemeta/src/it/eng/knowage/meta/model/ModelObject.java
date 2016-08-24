@@ -21,6 +21,8 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * <!-- begin-user-doc --> A representation of the model object '<em><b>Object</b></em>'. <!-- end-user-doc -->
  *
@@ -47,7 +49,7 @@ public interface ModelObject extends EObject {
 	 * If the meaning of the '<em>Id</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Id</em>' attribute.
 	 * @see #setId(String)
 	 * @see it.eng.knowage.meta.model.ModelPackage#getModelObject_Id()
@@ -58,7 +60,7 @@ public interface ModelObject extends EObject {
 
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.ModelObject#getId <em>Id</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Id</em>' attribute.
 	 * @see #getId()
@@ -72,7 +74,7 @@ public interface ModelObject extends EObject {
 	 * If the meaning of the '<em>Name</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
 	 * @see it.eng.knowage.meta.model.ModelPackage#getModelObject_Name()
@@ -83,7 +85,7 @@ public interface ModelObject extends EObject {
 
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.ModelObject#getName <em>Name</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Name</em>' attribute.
 	 * @see #getName()
@@ -97,7 +99,7 @@ public interface ModelObject extends EObject {
 	 * If the meaning of the '<em>Unique Name</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Unique Name</em>' attribute.
 	 * @see #setUniqueName(String)
 	 * @see it.eng.knowage.meta.model.ModelPackage#getModelObject_UniqueName()
@@ -109,7 +111,7 @@ public interface ModelObject extends EObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.ModelObject#getUniqueName <em>Unique Name</em>}' attribute. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Unique Name</em>' attribute.
 	 * @see #getUniqueName()
@@ -123,7 +125,7 @@ public interface ModelObject extends EObject {
 	 * If the meaning of the '<em>Description</em>' attribute isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Description</em>' attribute.
 	 * @see #setDescription(String)
 	 * @see it.eng.knowage.meta.model.ModelPackage#getModelObject_Description()
@@ -135,7 +137,7 @@ public interface ModelObject extends EObject {
 	/**
 	 * Sets the value of the '{@link it.eng.knowage.meta.model.ModelObject#getDescription <em>Description</em>}' attribute. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
-	 * 
+	 *
 	 * @param value
 	 *            the new value of the '<em>Description</em>' attribute.
 	 * @see #getDescription()
@@ -150,7 +152,7 @@ public interface ModelObject extends EObject {
 	 * If the meaning of the '<em>Properties</em>' map isn't clear, there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * 
+	 *
 	 * @return the value of the '<em>Properties</em>' map.
 	 * @see it.eng.knowage.meta.model.ModelPackage#getModelObject_Properties()
 	 * @model mapType="it.eng.knowage.meta.model.ModelPropertyMapEntry<org.eclipse.emf.ecore.EString, it.eng.knowage.meta.model.ModelProperty>"
@@ -162,6 +164,7 @@ public interface ModelObject extends EObject {
 	// Utility methods
 	// =========================================================================
 
+	@JsonIgnore
 	EList<ModelPropertyType> getPropertyTypes();
 
 	ModelPropertyType getPropertyType(String name);

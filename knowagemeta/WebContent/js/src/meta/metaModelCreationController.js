@@ -279,7 +279,7 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 				escapeToClose: false,
 				focusOnOpen: true,
 				preserveScope: true,
-				locals: {selectedBusinessModel:$scope.selectedBusinessModel},
+				locals: {selectedBusinessModel:$scope.selectedBusinessModel,originalOlapModels:$scope.meta.olapModels},
 
 		};
 

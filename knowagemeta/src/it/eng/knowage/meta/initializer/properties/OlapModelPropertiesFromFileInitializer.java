@@ -75,7 +75,7 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 			 * TODO REVIEW FOR PORTING
 			 */
 			// File propertiesFile = RL.getFile("properties/customOlapProperties.xml");
-			InputStream is = getClass().getClassLoader().getResourceAsStream("customOlapProperties.xml");
+			InputStream is = getClass().getClassLoader().getResourceAsStream("it/eng/knowage/meta/initializer/properties/custom/customOlapProperties.xml");
 			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = domFactory.newDocumentBuilder();
 			document = builder.parse(is);

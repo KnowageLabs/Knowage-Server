@@ -25,6 +25,8 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * <!-- begin-user-doc --> A representation of the model object '<em><b>Hierarchy</b></em>'. <!-- end-user-doc -->
  *
@@ -82,6 +84,7 @@ public interface Hierarchy extends ModelObject {
 	 * @model opposite="hierarchies" transient="false"
 	 * @generated
 	 */
+	@JsonIgnore
 	Dimension getDimension();
 
 	/**

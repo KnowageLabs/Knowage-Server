@@ -80,7 +80,7 @@
 				
 					<expander-box layout-margin layout="column" expanded="true" label="catProp" background-color="transparent" color="black" ng-repeat="catProp in currentBusinessModelParameterCategories">
 						<md-input-container ng-repeat="prop in selectedBusinessModel.properties | filterByCategory:catProp"
-						ng-class=" {'md-icon-right' : prop.value.value=='temporal dimension'  }"
+						ng-class=" {'md-icon-right' : (prop.value.value=='temporal dimension' || prop.value.value=='time dimension')  }"
 						ng-init="prop.value.value= (prop.value.value==undefined || prop.value.value==null) ? prop.value.propertyType.defaultValue : prop.value.value">
 							<label>{{prop.value.propertyType.name}}</label>
 							<md-select ng-model="prop.value.value" ng-if="prop.value.propertyType.admissibleValues.length!=0">
@@ -93,6 +93,7 @@
 							
 							<!-- edit temporal hierarchy button -->
 							<md-icon ng-if="prop.value.value=='temporal dimension'" ng-click="editTemporalHierarchy()" md-font-icon=" fa fa-sitemap" ></md-icon>
+							<md-icon ng-if="prop.value.value=='time dimension'" ng-click="editTemporalHierarchy()" md-font-icon=" fa fa-sitemap" ></md-icon>
 						</md-input-container>
 					</expander-box>
 				</md-content>

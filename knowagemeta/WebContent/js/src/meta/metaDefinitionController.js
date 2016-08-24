@@ -22,8 +22,10 @@ app.service("metaModelServices",function(sbiModule_jsonServices){
 		for(key in data){
 
 			for(var i=0;i<data[key].length;i++){
-				for(var j=0;j<data[key][i].columns.length;j++){
-					delete data[key][i].columns[j].$parent;
+				if(key!="olapModels"){
+					for(var j=0;j<data[key][i].columns.length;j++){
+						delete data[key][i].columns[j].$parent;
+					}
 				}
 			}
 		}

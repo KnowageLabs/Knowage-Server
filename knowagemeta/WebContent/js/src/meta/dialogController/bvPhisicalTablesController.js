@@ -25,8 +25,7 @@ function bvPhisicalTablesControllerFunction($scope,sbiModule_translate,$mdDialog
 										physicalTable:$scope.meta.physicalModels[item.physicalTableIndex].name
 									};
 
-									alert("ToDo");
-									return;
+
 									sbiModule_restServices.promisePost("1.0/metaWeb", "deletePhysicalColumnfromBusinessView",metaModelServices.createRequestRest(dataToSend))
 									   .then(function(response){
 											metaModelServices.applyPatch(response.data);

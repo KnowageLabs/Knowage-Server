@@ -20,9 +20,13 @@ package it.eng.knowage.meta.service;
 import it.eng.knowage.meta.exception.KnowageMetaException;
 import it.eng.knowage.meta.generator.jpamapping.JpaMappingJarGenerator;
 import it.eng.knowage.meta.initializer.BusinessModelInitializer;
+import it.eng.knowage.meta.initializer.OlapModelInitializer;
 import it.eng.knowage.meta.initializer.PhysicalModelInitializer;
 import it.eng.knowage.meta.initializer.descriptor.BusinessViewInnerJoinRelationshipDescriptor;
 import it.eng.knowage.meta.initializer.descriptor.CalculatedFieldDescriptor;
+import it.eng.knowage.meta.initializer.descriptor.HierarchyDescriptor;
+import it.eng.knowage.meta.initializer.descriptor.HierarchyLevelDescriptor;
+import it.eng.knowage.meta.initializer.properties.OlapModelPropertiesFromFileInitializer;
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelFactory;
 import it.eng.knowage.meta.model.ModelPropertyType;
@@ -39,6 +43,10 @@ import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.business.impl.BusinessRelationshipImpl;
 import it.eng.knowage.meta.model.business.impl.SimpleBusinessColumnImpl;
 import it.eng.knowage.meta.model.filter.PhysicalTableFilter;
+import it.eng.knowage.meta.model.olap.Dimension;
+import it.eng.knowage.meta.model.olap.Hierarchy;
+import it.eng.knowage.meta.model.olap.Level;
+import it.eng.knowage.meta.model.olap.OlapModel;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
@@ -486,12 +494,18 @@ public class MetaService extends AbstractSpagoBIResource {
 			BusinessView bw = bm.getBusinessViewByUniqueName(json.getString("viewUniqueName"));
 
 			PhysicalTable pt = physicalModel.getTable(json.getString("physicalTable"));
-			bw.getPhysicalTables().remove(pt);
+			// bw.getPhysicalTables().remove(pt);
 
-			EList<PhysicalColumn> ptcol = pt.getColumns();
-			for (int pci = 0; pci < ptcol.size(); pci++) {
-				bw.getColumns().remove(ptcol.get(pci));
+			Iterator<BusinessColumn> colsIterator = bw.getColumns().iterator();
+			while (colsIterator.hasNext()) {
+				BusinessColumn businessColumn = colsIterator.next();
+				if (pt.getColumn(businessColumn.getUniqueName()) != null) {
+					colsIterator.remove();
+				}
 			}
+			/*
+			 * EList<PhysicalColumn> ptcol = pt.getColumns(); for (int pci = 0; pci < ptcol.size(); pci++) { bw.getColumns().remove(ptcol.get(pci)); }
+			 */
 
 			JSONObject jsonModel = createJson(model);
 			ObjectMapper mapper = new ObjectMapper();
@@ -758,6 +772,92 @@ public class MetaService extends AbstractSpagoBIResource {
 		SimpleBusinessColumn columnToDelete = currBM.getSimpleBusinessColumnByUniqueName(businessColumnUniqueName);
 		columnToDelete.setIdentifier(false);
 		currBM.getColumns().remove(columnToDelete);
+
+		JSONObject jsonModel = createJson(model);
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+
+		return Response.ok(patch.toString()).build();
+	}
+
+	@POST
+	@Path("/alterTemporalHierarchy")
+	public Response alterTemporalHierarchy(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
+		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		JSONObject oldJsonModel = createJson(model);
+		applyDiff(jsonRoot, model);
+		JSONObject json = jsonRoot.getJSONObject("data");
+
+		String businessModelUniqueName = json.getString("businessModelUniqueName");
+		JSONArray hierarchy = json.getJSONArray("hierarchy");
+
+		OlapModelInitializer omInit = new OlapModelInitializer();
+		if (model.getOlapModels().size() == 0) {
+			omInit.setRootModel(model);
+			omInit.initialize(model.getName());
+		}
+		OlapModel olapModel = model.getOlapModels().get(0);
+
+		// remove the dimension associated if present
+		Iterator<Dimension> dimIter = olapModel.getDimensions().iterator();
+		while (dimIter.hasNext()) {
+			Dimension dim = dimIter.next();
+			if (dim.getTable().getUniqueName().equals(businessModelUniqueName)) {
+				dimIter.remove();
+				break;
+			}
+		}
+
+		// create the new dimension
+
+		BusinessColumnSet currBM = model.getBusinessModels().get(0).getTableByUniqueName(businessModelUniqueName);
+		Dimension dim = omInit.addDimension(olapModel, currBM);
+
+		// create the hierarchy
+		for (int i = 0; i < hierarchy.length(); i++) {
+			JSONObject obj = hierarchy.getJSONObject(i);
+			HierarchyDescriptor hierarchyDescriptor = new HierarchyDescriptor();
+			hierarchyDescriptor.setName(obj.getString("name"));
+			JSONObject prop = obj.optJSONObject("properties");
+			if (prop != null) {
+				if (prop.has("hasall")) {
+					hierarchyDescriptor.setHasAll(prop.getBoolean("hasall"));
+				}
+				if (prop.has("defaultHierarchy")) {
+					hierarchyDescriptor.setDefaultHierarchy(prop.getBoolean("defaultHierarchy"));
+				}
+				if (prop.has("allmembername")) {
+					hierarchyDescriptor.setAllMemberName(prop.getString("allmembername"));
+				}
+			}
+
+			Hierarchy hie = omInit.addHierarchy(dim, hierarchyDescriptor);
+
+			if (obj.has("levels")) {
+				JSONArray levels = obj.getJSONArray("levels");
+				for (int l = 0; l < levels.length(); l++) {
+					JSONObject tmplev = levels.getJSONObject(l);
+					HierarchyLevelDescriptor levelDescriptor = new HierarchyLevelDescriptor();
+					levelDescriptor.setName(tmplev.getString("name"));
+					levelDescriptor.setBusinessColumn(currBM.getSimpleBusinessColumnByUniqueName(tmplev.getJSONObject("column").getString("uniqueName")));
+					if (tmplev.has("properties")) {
+						for (int pr = 0; pr < tmplev.getJSONArray("properties").length(); pr++) {
+							JSONObject tmpPro = tmplev.getJSONArray("properties").getJSONObject(pr);
+							if (tmpPro.getString("key").equals(OlapModelPropertiesFromFileInitializer.LEVEL_TYPE)) {
+								levelDescriptor.setLevelType(tmpPro.getJSONObject("value").getString("value"));
+							}
+						}
+					} else if (tmplev.has("leveltype")) {
+						levelDescriptor.setLevelType(tmplev.getString("leveltype"));
+					}
+					Level lev = omInit.addHierarchyLevel(hie, levelDescriptor);
+
+				}
+
+			}
+
+		}
 
 		JSONObject jsonModel = createJson(model);
 		ObjectMapper mapper = new ObjectMapper();
@@ -1062,9 +1162,32 @@ public class MetaService extends AbstractSpagoBIResource {
 			bcJson.put("physicalTables", ptL);
 			businessViewJson.put(bcJson);
 		}
+		JSONArray olapModelJson = new JSONArray();
+		Iterator<OlapModel> olapIterator = model.getOlapModels().iterator();
+		while (olapIterator.hasNext()) {
+			OlapModel olapModel = olapIterator.next();
+			JSONObject omJson = new JSONObject(JsonConverter.objectToJson(olapModel, olapModel.getClass()));
+
+			JSONArray dimension = omJson.getJSONArray("dimensions");
+			for (int i = 0; i < dimension.length(); i++) {
+				JSONObject currDim = dimension.getJSONObject(i);
+				currDim.put("table", currDim.getJSONObject("table").getString("uniqueName"));
+
+				JSONArray hier = currDim.getJSONArray("hierarchies");
+				for (int h = 0; h < hier.length(); h++) {
+					JSONObject currHier = hier.getJSONObject(h);
+					currHier.put("table", currHier.getJSONObject("table").getString("uniqueName"));
+				}
+
+			}
+
+			olapModelJson.put(omJson);
+		}
 		translatedModel.put("physicalModels", physicalModelJson);
 		translatedModel.put("businessModels", businessModelJson);
 		translatedModel.put("businessViews", businessViewJson);
+		translatedModel.put("olapModels", olapModelJson);
+		System.out.print(translatedModel.toString());
 		return translatedModel;
 	}
 

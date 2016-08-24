@@ -14,7 +14,7 @@
 						<input ng-model="currentHierarchy.name">
 					</md-input-container>
 					<div flex layout-align="center center" layout=row>
-						<md-checkbox   ng-model="currentHierarchy.isDefaultHierarchy" aria-label="hasAll" class="noMargin">
+						<md-checkbox   ng-model="currentHierarchy.properties.defaultHierarchy" aria-label="hasAll" class="noMargin">
 							{{translate.load("sbi.meta.isDefaultHierarchy")}}
 						</md-checkbox>
 						 
@@ -22,13 +22,13 @@
 				</div>
 				<div layout=row flex >
 					<div flex layout-align="center center" layout=row>
-						<md-checkbox  ng-model="currentHierarchy.hasAll" aria-label="hasAll" class="noMargin">
+						<md-checkbox  ng-model="currentHierarchy.properties.hasall" aria-label="hasAll" class="noMargin">
 							{{translate.load("sbi.meta.hasAll")}}
 						</md-checkbox>
 					</div>
 					<md-input-container class="md-block  " flex  >
 						<label>{{translate.load("sbi.meta.model.all.member.name")}}</label>
-						<input ng-model="currentHierarchy.allMemberName" ng-disabled="currentHierarchy.hasAll!=true">
+						<input ng-model="currentHierarchy.properties.allmembername" ng-disabled="currentHierarchy.properties.hasall!=true">
 					</md-input-container>
 				</div>
 			</div>
@@ -51,10 +51,10 @@
 				</md-whiteframe>
 				
 				<angular-table id="attrTable" class="md-whiteframe-1dp" flex 
-				ng-model="currentHierarchy.attributes"
-				columns="attributesColumns"
-				speed-menu-option="attributesActions"
-				scope-functions="attributesTableScope"
+				ng-model="currentHierarchy.levels"
+				columns="levelsColumns"
+				speed-menu-option="levelsActions"
+				scope-functions="levelsTableScope"
 				>
 				</angular-table>
 			</div>
@@ -68,7 +68,7 @@
       <md-button ng-click="cancelConfiguration()" >
         {{translate.load('sbi.generic.cancel')}}
       </md-button>
-      <md-button ng-disabled=" currentHierarchy.attributes==undefined || currentHierarchy.attributes.length==0" ng-click="saveConfiguration()"  >
+      <md-button ng-disabled=" currentHierarchy.levels==undefined || currentHierarchy.levels.length==0" ng-click="saveConfiguration()"  >
         {{translate.load('sbi.generic.save')}}
       </md-button>
 

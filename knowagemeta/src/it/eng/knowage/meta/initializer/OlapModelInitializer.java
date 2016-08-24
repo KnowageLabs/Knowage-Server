@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class OlapModelInitializer {
 
@@ -68,8 +68,8 @@ public class OlapModelInitializer {
 				olapModel.setParentModel(getRootModel());
 			}
 			getPropertiesInitializer().addProperties(olapModel);
-
 		} catch (Throwable t) {
+			t.printStackTrace();
 			throw new RuntimeException("Impossible to initialize olap model", t);
 		}
 
