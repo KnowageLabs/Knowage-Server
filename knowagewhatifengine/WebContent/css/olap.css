@@ -744,9 +744,18 @@ md-option[selected], md-select-menu md-option[selected]{
 
 .filter-panel-empty{
 	height:80px; 
-	padding-left:42px; 
-	padding-top:32px; 
-	width:100%";
+	padding-left:42px;
+	
+	/* 
+		Changed in order to center the text content inside the DIV that has not items 
+		@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/ 
+	/*padding-top:30px;*/
+	display: flex;
+	justify-content: center;
+	flex-direction: column; 
+	
+	width:100%;
 }
 
 .dialog-msg{
@@ -783,8 +792,10 @@ md-option[selected], md-select-menu md-option[selected]{
 }
 
 .top-axis-element{
-	height:80%;
-	margin-right: 10px;
+	/* height:80%; */
+	margin-right:10px;
+	/* Empiric approach (danristo) */
+	max-height:27px;
 }
 
 .left-axis{
