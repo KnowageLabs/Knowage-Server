@@ -72,6 +72,21 @@
 	</filter>
  	END OAUTH 2 -->
 
+	<!-- OutcomeHMACFilter --> 
+	<filter>
+		<filter-name>OutcomeHMACFilter</filter-name>
+		<filter-class>it.eng.spagobi.security.filter.OutcomeHMACFilter</filter-class>
+		<init-param>
+			<param-name>USERNAME_IN_SESSION</param-name>
+			<param-value>userId</param-value>
+		</init-param>
+		<description>todo</description>
+	</filter>
+	<filter-mapping>
+		<filter-name>OutcomeHMACFilter</filter-name>
+		<url-pattern>/restful-services/publish/*</url-pattern>
+	</filter-mapping>
+	
 	<!-- This filter tries to create the user profile object before AdapterHTTP servlet execution -->
 	<filter>
 		<filter-name>ProfileFilter</filter-name>
