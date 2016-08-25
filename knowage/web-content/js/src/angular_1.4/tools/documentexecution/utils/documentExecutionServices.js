@@ -384,21 +384,21 @@
 						.highlightAction(false)
 						.hideDelay(3000)
 						.position('top')
-
-						$mdToast.show(toast).then(function(response) {
-
-							if ( response == 'ok' ) {
-
-
-							}
-						});
+						//cehck code error
+						if(response.data.errors[0].type!="missingRole" && response.data.errors[0].errorCode!="9001"){
+							$mdToast.show(toast).then(function(response) {
+								if ( response == 'ok' ) {
+								}
+							});
+						}
+						
 //						sbiModule_restServices.errorHandler(response.data,"Error while attempt to load filters")
 //						.then(function(){
 //						if(response.data.errors[0].type=="missingRole" || response.data.errors[0].category=="VALIDATION_ERROR"){
 //						docExecute_paramRolePanelService.toggleParametersPanel(true);
 //						}
 //						}); 
-						if(response.data.errors[0].type=="missingRole" || response.data.errors[0].category=="VALIDATION_ERROR"){
+						if(response.data.errors[0].type=="missingRole" || response.data.errors[0].errorCode=="9001"){
 							docExecute_paramRolePanelService.toggleParametersPanel(true);
 						}else{
 							sbiModule_restServices.errorHandler(response.data,response.data.errors[0].message);
