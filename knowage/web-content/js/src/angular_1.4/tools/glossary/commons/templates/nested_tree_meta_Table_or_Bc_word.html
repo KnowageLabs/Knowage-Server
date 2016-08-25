@@ -7,7 +7,7 @@
 		<md-list>
 			<md-list-item  layout="row" ng-click="this.toggle()">  
 			<div class="indicator-child"></div> 
-			<md-icon style="margin-left: -8px;margin-top: 1px;" ng-class="{'fa fa-angle-down' : !collapsed , 'fa fa-angle-right' : collapsed}"></md-icon>
+			<md-icon style="margin-left: -8px;margin-top: 5px;" ng-class="{'fa fa-angle-down' : !collapsed , 'fa fa-angle-right' : collapsed}"></md-icon>
 			<p >{{item.name}}</p>
 			 
 			<md-progress-circular
@@ -30,7 +30,7 @@
 		<md-list class="noPadding"> 
 			<md-list-item layout="row">
 				<div class="indicator-child"></div>
-				<md-icon ng-disabled="true"   md-font-icon="fa fa-angle-right " style="margin-left: -8px;margin-top: 1px;" > </md-icon>
+				<md-icon ng-disabled="true"   md-font-icon="fa fa-angle-right " style="margin-left: -8px;margin-top: -5px;" > </md-icon>
 				<p flex >{{itemW.WORD}}</p>
  				<md-icon   md-font-icon="fa fa-times" ng-click="removeWordFromData(item,itemW)" aria-label="delete word"  ></md-icon> 
       

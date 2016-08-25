@@ -28,7 +28,7 @@
 		<!-- 			center BOX WORD -->
 		<div flex="25" class="boxItemGlo">
 			<div layout="column" class="documentListBox">
-				<div style="height: 50%">
+				<div flex="50" layout="column">
 					<md-toolbar class="md-blue xs-head">
 						<div class="md-toolbar-tools">
 							<div>
@@ -37,7 +37,7 @@
 						</div>
 					</md-toolbar>
 
-					<md-content layout-padding class="ToolbarBox xsToolbar noBorder ">
+					<md-content flex layout-padding class="ToolbarBox xsToolbar noBorder ">
 						<angular-list layout-fill id='wordDS' ng-model=ctrl.SelfWords
 								item-name='WORD' enable-drag=false enable-clone=true
 								drag-drop-options=ctrl.TreeOptionsDataset_Word
@@ -45,7 +45,7 @@
 								speed-menu-option=ctrl.datasetWordSpeedMenuOpt></angular-list>
 					</md-content>
 				</div>
-				<div style="height: 50%">
+				<div flex="50" layout="column">
 					<md-toolbar class="md-blue xs-head">
 						<div class="md-toolbar-tools">
 							<div>{{translate.load("sbi.ds.metadata.column.column");}} /
@@ -53,8 +53,7 @@
 						</div>
 					</md-toolbar>
 
-					<md-content layout-padding
-							style="height:Calc(100% - 32px); padding-bottom: 8px;">
+					<md-content layout-padding flex style=" padding-bottom: 8px;">
 	
 						<p ng-if="ctrl.words.length==0 && ctrl.selectedDataset!=undefined">{{translate.load("sbi.mydata.notbookmarkeddataset");}}</p>
 						<p ng-if="ctrl.words.length==0 && ctrl.selectedDataset==undefined ">{{translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p>
