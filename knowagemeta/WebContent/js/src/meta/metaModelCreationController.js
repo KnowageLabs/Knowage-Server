@@ -298,6 +298,16 @@ function businessModelPropertyControllerFunction($scope, sbiModule_translate,sbi
 		label : sbiModule_translate.load("description")
 	}
 	];
+
+
+	$scope.initRoleVisibility=function(rv,val){
+		if(!angular.equals("",val)){
+			angular.copy(val.split(";"),rv );
+		}
+	}
+	$scope.buildRoleVisibility=function(rv,val){
+		val.value=rv.join(";");
+	}
 }
 
 function businessModelAttributeControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,metaModelServices ){

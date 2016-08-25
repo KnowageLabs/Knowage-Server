@@ -93,12 +93,23 @@
 								</md-option>
 							</md-select>
 							
-							<input ng-if="prop.value.propertyType.admissibleValues.length==0 && prop.key!='structural.attribute' " ng-model="prop.value.value">
+							<input ng-if="prop.value.propertyType.admissibleValues.length==0 
+							&& prop.key!='structural.attribute' 
+							&& prop.key!='behavioural.notEnabledRoles'" ng-model="prop.value.value">
 							
-<!-- 							profile role visibility -->
-							<md-select ng-model="prop.value.value" ng-if="prop.key=='structural.attribute'" multiple >
+							<!--profile attributes visibility -->
+							<md-select ng-model="prop.value.value" ng-if="prop.key=='structural.attribute'" >
 								<md-option  ng-repeat="admissibleValue in sbiModule_config.profileAttributes  " value="{{admissibleValue}}" >
 									{{admissibleValue}}
+								</md-option>
+							</md-select>
+							
+							<!--profile role visibility -->
+						 
+							<md-select ng-model="tmpRoleVisibility" ng-if="prop.key=='behavioural.notEnabledRoles'" multiple 
+							ng-init="tmpRoleVisibility=[];initRoleVisibility(tmpRoleVisibility,prop.value.value)" md-on-close="buildRoleVisibility(tmpRoleVisibility,prop.value)">
+								<md-option  ng-repeat="role in sbiModule_config.avaiableRoles" value="{{role}}" >
+									{{role}}
 								</md-option>
 							</md-select>
 							

@@ -16,6 +16,7 @@ sbiM.factory('sbiModule_config',function(){
 		serverDateFormat: '<%= GeneralUtilities.getServerDateFormat() %>',
 		productTypes:[],
 		profileAttributes:[],
+		avaiableRoles:[]
 	};
 	<% for(String pr : productTypes) { 	%>
 	conf.productTypes.push('<%=pr%>');
@@ -23,6 +24,10 @@ sbiM.factory('sbiModule_config',function(){
 	
 	<% for(String pr : profileAttributes) { 	%>
 	conf.profileAttributes.push('<%=pr%>');
+	<% } %>
+	
+	<% for(String ar : avaiableRoles) { 	%>
+	conf.avaiableRoles.push('<%=ar%>');
 	<% } %>
 	
 	return conf;

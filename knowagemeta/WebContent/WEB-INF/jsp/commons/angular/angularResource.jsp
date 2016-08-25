@@ -36,6 +36,7 @@
 	
 	List<String> productTypes = (List<String>) request.getSession().getAttribute("productTypes") ;
 	List<String> profileAttributes = (List<String>) request.getSession().getAttribute("profileAttributes") ;
+	List<String> avaiableRoles = (List<String>) request.getSession().getAttribute("avaiableRoles") ;
 	
 	
 	Locale locale= locale =ioManager.getLocale();

@@ -19,9 +19,11 @@ package it.eng.knowage.meta.service;
 
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
+import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IProductTypeDAO;
+import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
@@ -103,11 +105,19 @@ public class PageResource {
 			objDao.setUserProfile(userProfile);
 			List<SbiAttribute> attrList = objDao.loadSbiAttributes();
 			List<String> attl = new ArrayList<>();
-			;
 			for (SbiAttribute att : attrList) {
 				attl.add(att.getAttributeName());
 			}
 			ioManager.getHttpSession().setAttribute("profileAttributes", attl);
+
+			// load roles
+			IRoleDAO rdao = DAOFactory.getRoleDAO();
+			List<Role> rlist = rdao.loadAllRoles();
+			List<String> rolL = new ArrayList<>();
+			for (Role ro : rlist) {
+				rolL.add(ro.getName());
+			}
+			ioManager.getHttpSession().setAttribute("avaiableRoles", rolL);
 
 			// ----------------------load the sbiModel if present-----------------------------------------
 			Integer bmId = Integer.parseInt(request.getParameter("bmId"));
