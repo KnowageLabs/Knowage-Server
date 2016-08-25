@@ -109,7 +109,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		$mdSidenav('rightOrganizer').toggle();
 	};
 
-	$scope.selectOrganizerDocument= function ( document ) {
+	$scope.selectOrganizerDocument = function ( document ) {
 		if (document !== undefined) {
 			$scope.lastDocumentSelected = document;
 		}
