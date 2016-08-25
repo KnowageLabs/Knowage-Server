@@ -417,7 +417,7 @@ function federationDefinitionFunction
 		
 		var confirm = $mdDialog
 		.confirm()
-		.title(sbiModule_translate.load("sbi.federationdefinition.confirm.delete"))
+		.title(sbiModule_translate.load("sbi.federationdefinition.confirm.delete.dialog"))
 		.content(
 				sbiModule_translate
 				.load("sbi.federationdefinition.confirm.delete.content"))
