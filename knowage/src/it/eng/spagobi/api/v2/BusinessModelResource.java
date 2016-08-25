@@ -280,6 +280,8 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 				}
 				if (filename.endsWith(".jar")) {
 					filename = filename.substring(0, filename.length() - 4);
+					// filename is a sbimodule
+					filename = filename + ".sbimodule";
 				}
 				b = c.getFileModel();
 			} else {
