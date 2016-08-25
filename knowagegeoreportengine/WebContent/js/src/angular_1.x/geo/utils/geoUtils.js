@@ -237,7 +237,19 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 					if(fields[i].hasOwnProperty("role")){
 						if(fields[i].role=="MEASURE"){
 							if(templ_indic.length==0 || templ_indic.indexOf(fields[i].header)>-1){
-								geoModule_indicators.push(fields[i]);
+								var expFields=angular.copy(fields[i]);
+								//load the label
+								for(var l=0;l<geoModule_template.indicators.length;l++){
+									if(angular.equals(geoModule_template.indicators[l].name,expFields.header)){
+										expFields.label=geoModule_template.indicators[l].label;
+										break;
+									}
+								}
+								if(expFields.label==undefined){
+									expFields.label=expFields.header;
+								}
+								
+								geoModule_indicators.push(expFields);
 							}
 
 						}else if(fields[i].role=="ATTRIBUTE"){

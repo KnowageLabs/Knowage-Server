@@ -14,14 +14,14 @@
 	<expander-box id="indicator"  expanded='true' title='translate.load("gisengine.info.message.indicator")' ng-switch on="template.analysisType=='chart'">
 		<md-radio-group ng-model="template.selectedIndicator" ng-switch-when="false">
 			<md-radio-button ng-repeat="ind in indicators" ng-click="updateMap()" class="md-primary" ng-value="ind">
-				{{ind.header}} 
+				{{ind.label}} 
 			</md-radio-button>
 		</md-radio-group>
 		
 		<div ng-switch-when="true">
 			<md-checkbox ng-repeat="ind in indicators"
 				ng-click="toggleIndicator(ind)" class="md-primary"
-				ng-checked="exist(ind)"> {{ind.header}} </md-checkbox>
+				ng-checked="exist(ind)"> {{ind.label}} </md-checkbox>
 		</div>
 		
 	</expander-box>
