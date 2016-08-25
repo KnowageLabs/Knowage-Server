@@ -57,13 +57,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * <li>{@link it.eng.knowage.meta.model.business.impl.BusinessColumnSetImpl#getColumns <em>Columns</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @generated
  */
 public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessColumnSet {
 	/**
 	 * The cached value of the '{@link #getColumns() <em>Columns</em>}' containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @see #getColumns()
 	 * @generated
 	 * @ordered
@@ -72,7 +72,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	protected BusinessColumnSetImpl() {
@@ -81,7 +81,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -91,7 +91,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -104,7 +104,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	public NotificationChain basicSetModel(BusinessModel newModel, NotificationChain msgs) {
@@ -114,7 +114,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -136,7 +136,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -150,7 +150,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -169,7 +169,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -185,7 +185,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -199,7 +199,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -215,7 +215,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
@@ -235,7 +235,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -253,7 +253,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
+	 *
 	 * @generated
 	 */
 	@Override
@@ -390,7 +390,7 @@ public class BusinessColumnSetImpl extends ModelObjectImpl implements BusinessCo
 	@Override
 	public CalculatedBusinessColumn getCalculatedBusinessColumn(String name) {
 		for (int i = 0; i < getCalculatedBusinessColumns().size(); i++) {
-			if (getCalculatedBusinessColumns().get(i).getName().equals(name)) {
+			if (getCalculatedBusinessColumns().get(i).getUniqueName().equals(name)) {
 				return getCalculatedBusinessColumns().get(i);
 			}
 		}

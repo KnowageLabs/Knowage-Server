@@ -505,14 +505,14 @@ function calculatedBusinessColumnsControllerFunction($scope,sbiModule_translate,
 	$scope.selectedBusinessModelCalculatedBusinessColumnsScopeFunctions={
 			translate:sbiModule_translate,
 			addCalculatedField : function(){
-				$scope.addCalculatedField();
+				$scope.addCalculatedField(false);
 			}
 	}
-	$scope.addCalculatedField=function(){
+	$scope.addCalculatedField=function(editMode,currentCF){
 		$mdDialog.show({
 			controller: addCalculatedFieldController,
 			preserveScope: true,
-			locals: {selectedBusinessModel:$scope.selectedBusinessModel},
+			locals: {selectedBusinessModel:$scope.selectedBusinessModel,editMode:editMode,currentCF:currentCF},
 			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addCalculatedField.jsp',
 			clickOutsideToClose:false,
 			escapeToClose :false,
@@ -521,15 +521,25 @@ function calculatedBusinessColumnsControllerFunction($scope,sbiModule_translate,
 		});
 	}
 
-	$scope.calculatedFieldSpeedOption=[{
-					label : sbiModule_translate.load("sbi.generic.delete"),
-					icon:'fa fa-trash' ,
-					backgroundColor:'transparent',
-					color:'black',
-					action : function(item,event) {
-						$scope.deleteCalculatedField(item);
-					}
-					 }
+	$scope.calculatedFieldSpeedOption=[
+	                                   {
+										label : sbiModule_translate.load("sbi.generic.delete"),
+										icon:'fa fa-trash' ,
+										backgroundColor:'transparent',
+										color:'black',
+										action : function(item,event) {
+											$scope.deleteCalculatedField(item);
+										}
+										 },
+	                                   {
+	                                	   label : sbiModule_translate.load("sbi.generic.edit"),
+	                                	   icon:'fa fa-pencil' ,
+	                                	   backgroundColor:'transparent',
+	                                	   color:'black',
+	                                	   action : function(item,event) {
+	                                		   $scope.addCalculatedField(true,item);
+	                                	   }
+	                                   }
 			];
 
 	$scope.deleteCalculatedField=function(item){

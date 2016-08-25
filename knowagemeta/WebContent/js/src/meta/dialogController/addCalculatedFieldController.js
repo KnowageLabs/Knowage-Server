@@ -1,14 +1,33 @@
-function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiModule_restServices, selectedBusinessModel,metaModelServices){
+function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiModule_restServices, selectedBusinessModel,metaModelServices,editMode,currentCF){
 	$scope.translate=sbiModule_translate;
 	$scope.selectedBusinessModel=selectedBusinessModel;
 	$scope.type=[{label:sbiModule_translate.load("sbi.lookup.asString"),name:"String"},{label:sbiModule_translate.load("sbi.lookup.asNumber"),name:"Number"}]
+
 	$scope.calcField={expression:"",dataType:$scope.type[0].name};
+	if(editMode){
+		$scope.calcField.name=currentCF.name
+
+		for(var i=0;i<currentCF.properties.length;i++){
+			if(angular.equals(currentCF.properties[i].key,"structural.datatype")){
+				$scope.calcField.dataType=currentCF.properties[i].value.value
+			}
+			if(angular.equals(currentCF.properties[i].key,"structural.expression")){
+				$scope.calcField.expression=currentCF.properties[i].value.value
+			}
+		}
+	}
+
 	$scope.cancel = function(){
 		$mdDialog.cancel();
 	};
 	$scope.createCalculatedField=function(){
 		 var dataToSend=metaModelServices.createRequestRest($scope.calcField);
 		 dataToSend.data.sourceTableName=selectedBusinessModel.uniqueName;
+		 dataToSend.data.editMode=editMode;
+		 if(editMode){
+			 dataToSend.data.uniquename=currentCF.uniqueName;
+		 }
+
 		sbiModule_restServices.promisePost("1.0/metaWeb","setCalculatedField",dataToSend)
 		.then(function(response){
 			metaModelServices.applyPatch(response.data);

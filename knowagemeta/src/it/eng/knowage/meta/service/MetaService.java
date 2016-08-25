@@ -581,6 +581,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		String expression = jsonData.getString("expression");
 		String dataType = jsonData.getString("dataType");
 		String sourceTableName = jsonData.getString("sourceTableName");
+		Boolean editMode = jsonData.getBoolean("editMode");
 
 		BusinessModel bm = model.getBusinessModels().get(0);
 		BusinessColumnSet sourceBcs = bm.getBusinessTableByUniqueName(sourceTableName);
@@ -591,7 +592,13 @@ public class MetaService extends AbstractSpagoBIResource {
 		try {
 			CalculatedFieldDescriptor cfd = new CalculatedFieldDescriptor(name, expression, dataType, sourceBcs);
 			BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
-			businessModelInitializer.addCalculatedColumn(cfd);
+			if (editMode) {
+				String uniquename = jsonData.getString("uniquename");
+				businessModelInitializer.editCalculatedColumn(sourceBcs.getCalculatedBusinessColumn(uniquename), cfd);
+			} else {
+				businessModelInitializer.addCalculatedColumn(cfd);
+			}
+
 		} catch (KnowageMetaException t) {
 			return Response.ok(new JSError(buildLocaleFromSession()).addError(t.getMessage()).toString()).build();
 		}
@@ -1187,7 +1194,6 @@ public class MetaService extends AbstractSpagoBIResource {
 		translatedModel.put("businessModels", businessModelJson);
 		translatedModel.put("businessViews", businessViewJson);
 		translatedModel.put("olapModels", olapModelJson);
-		System.out.print(translatedModel.toString());
 		return translatedModel;
 	}
 
