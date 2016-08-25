@@ -65,53 +65,60 @@
 						               
 									<div layout="row" layout-wrap>			                 
 						          			               
-									<div flex=100 layout="row" layout-align="start center">
-						                  <label class="checkboxPadding">{{translate.load('sbi.workspace.dataset.wizard.limit')}}</label> 
-						                  <md-input-container class="md-block">
-						                     <md-checkbox 	aria-label="Checkbox 1" 
-						                     				ng-model="limitPreviewChecked" ng-checked="toggleLimitPreview()">
-			           						</md-checkbox>
-						                  </md-input-container>
-									</div>
-						               
-									<div layout="row" flex=100  layout-align="start center" ng-show="dataset.fileName=='' || changingFile">
-					                  	
-					                  	<label layout-align="center center" class="buttonLabel">
-					                  		{{translate.load("sbi.ds.wizard.selectFile")}}:
-				                  		</label>
-					                  	
-					                  	<file-upload 	flex ng-model="fileObj" id="datasetFile" 
-					                  					ng-click="fileChange();checkChange();fileObjTakeBackup()" 
-						                  				title="{{translate.load('sbi.workspace.dataset.wizard.browsefile.tooltip')}}">
-			                			</file-upload>
-					                  	
-					                  	<div class="uploadButton">
-						                    <md-button 	ng-click="uploadFile()" class="md-raised" 
-						                     			ng-disabled="!fileObj.fileName || (changingFile && dataset.fileName==fileObj.fileName)" 
-						                     			title="{{datasetWizStep1UploadButtonTitle()}}">
-				                     			{{translate.load("sbi.workspace.dataset.wizard.upload")}}
-			             					</md-button>
-					                  	</div>
-					                  	
-									</div>
+										<div flex=100 layout="row" layout-align="start center" class="workspaceLabelCheckboxContainer">
+										
+						                  	<label class="workspaceLabelForCheckBox">
+							                  	{{translate.load('sbi.workspace.dataset.wizard.limit')}}
+				                  			</label> 
+							                  
+						                  	<md-input-container class="md-block workspaceLimitCheckboxContainer">
+						                     	<md-checkbox 	aria-label="Checkbox 1" 
+							                     				ng-model="limitPreviewChecked" ng-checked="toggleLimitPreview()" class="workspaceCheckbox">
+				           						</md-checkbox>
+						                  	</md-input-container>
+						                  	
+										</div>
+							               
+										<div layout="row" flex=100 layout-align="start center" ng-show="dataset.fileName=='' || changingFile">
+						                  	
+						                  	<label layout-align="center center">
+						                  		{{translate.load("sbi.ds.wizard.selectFile")}}:
+					                  		</label>
+						                  	
+						                  	<file-upload 	flex ng-model="fileObj" id="datasetFile" 
+						                  					ng-click="fileChange();checkChange();fileObjTakeBackup()" 
+							                  				title="{{translate.load('sbi.workspace.dataset.wizard.browsefile.tooltip')}}">
+				                			</file-upload>
+						                  	
+						                  	<div class="">
+							                    <md-button 	ng-click="uploadFile()" class="md-raised" 
+							                     			ng-disabled="!fileObj.fileName || (changingFile && dataset.fileName==fileObj.fileName)" 
+							                     			title="{{datasetWizStep1UploadButtonTitle()}}">
+					                     			{{translate.load("sbi.workspace.dataset.wizard.upload")}}
+				             					</md-button>
+						                  	</div>
+						                  	
+										</div>
+										
+										<div layout="row" flex=100 ng-if="dataset.fileName!='' && !changingFile">
+									 		
+									 		<label layout-align="center center" class="workspaceLabelButtonFileLoaded">
+									 			{{translate.load("sbi.workspace.dataset.wizard.file.uploaded")}}: <strong>{{dataset.fileName}}</strong>
+								 			</label>
+								 			
+										 <span flex></span>
+										  
+										  	<div class="">
+										    <md-button 	ng-click="changeUploadedFile()" ng-show="!ckanInWizard" class="md-raised" 
+										    			title="{{translate.load('sbi.workspace.dataset.wizard.file.change.tooltip')}}">
+					                     			{{translate.load("sbi.workspace.dataset.wizard.file.change")}}
+				             				</md-button>
+				           					</div>
+				             				
+										</div>
 									
-									<div layout="row" flex=100 ng-if="dataset.fileName!='' && !changingFile">
-								 		
-								 		<label layout-align="center center" class="buttonLabel">
-								 			{{translate.load("sbi.workspace.dataset.wizard.file.uploaded")}}: <strong>{{dataset.fileName}}</strong>
-							 			</label>
-							 			
-									 <span flex></span>
-									  
-									  	<div class="uploadButton">
-									    <md-button 	ng-click="changeUploadedFile()" ng-show="!ckanInWizard" class="md-raised" 
-									    			title="{{translate.load('sbi.workspace.dataset.wizard.file.change.tooltip')}}">
-				                     			{{translate.load("sbi.workspace.dataset.wizard.file.change")}}
-			             				</md-button>
-			           					</div>
-			             				
-									</div>
-						               </div>
+					               </div>
+					               
 								</form>
 					            
 					       	</md-card-content>
@@ -121,7 +128,7 @@
 			         
 			         	<!-- <md-whiteframe flex layout="column" layout-margin class="md-whiteframe-5dp md-whiteframe-5dp-rightPanelDocuments"> -->
 			         		
-			       		<md-card ng-if="dataset.fileType=='CSV'" flex layout="column" layout-margin class="md-whiteframe-5dp threeCombosThreeNumFields">         		
+			       		<md-card ng-if="dataset.fileType=='CSV'" flex layout="column" layout-margin class="md-whiteframe-5dp threeCombosThreeNumFields xlsCsvConfigParams">         		
 			         		
 			         		<div layout="row">								
 						              
@@ -179,7 +186,7 @@
 						    	
 					    </md-card>
 						    
-					    <md-card ng-if="dataset.fileType=='XLS'" flex layout="column" layout-margin class="md-whiteframe-5dp threeCombosThreeNumFields">          
+					    <md-card ng-if="dataset.fileType=='XLS'" flex layout="column" layout-margin class="md-whiteframe-5dp threeCombosThreeNumFields xlsCsvConfigParams">          
 					        
 					        <div layout="row">	
 						        
@@ -336,7 +343,9 @@
 			      	<!-- CARD 4 (START) -->
 			      	<div ng-if="datasetWizardView==4">
 			        
-						<md-whiteframe flex layout="column" layout-margin class="md-whiteframe-5dp">
+					<!-- 	<md-whiteframe flex layout="column" layout-margin class="md-whiteframe-5dp"> -->
+						
+						<md-card layout="column">
 							
 							<md-toolbar class="secondaryToolbar">
 					         	<div class="md-toolbar-tools">
@@ -345,7 +354,7 @@
 					            </div>
 							</md-toolbar>
 					         
-							<md-content class="loadFilePadding">
+							<md-card-content class="loadFilePadding">
 					         	
 								<form name="formForSaving">
 						               
@@ -370,13 +379,18 @@
 						                  </div>
 									</div>
 									
-						           	<div flex=50 layout="row">
-				                  		<label class="checkboxPadding">{{translate.load("sbi.ds.isPersisted")}}</label> 
-				                  		<md-input-container class="small counter step4BottomPadding">
+						           	<div flex=50 layout="row" layout-align="start center" class="workspaceLabelCheckboxContainer">
+						           	
+				                  		<label class="workspaceLabelForCheckBox">
+				                  			{{translate.load("sbi.ds.isPersisted")}}:
+			                  			</label> 
+				                  		
+				                  		<md-input-container class="small counter workspacePersistCheckboxContainer">
 				                     		<md-checkbox 	aria-label="Checkbox 2" 
-					                     					ng-model="dataset.persist" ng-checked="">
+					                     					ng-model="dataset.persist" ng-checked="" class="workspaceCheckbox">
 											</md-checkbox>
 				                  		</md-input-container>
+				                  		
 									</div>
 									
 									<div layout="row">
@@ -399,9 +413,9 @@
 									
 								</form>					
 					            
-					       	</md-content>
+					       	</md-card-content>
 					       	
-				       	</md-whiteframe>
+				       	</md-card>
 			         
 			         </div>
 			      	<!-- CARD 4 (END) -->

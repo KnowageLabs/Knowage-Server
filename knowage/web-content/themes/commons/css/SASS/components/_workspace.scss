@@ -423,4 +423,47 @@
 	    min-width: 50%;
 	    max-width: 50%;
 	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .xlsCsvConfigParams {
+	 	margin:8px !important; 
+	 	width: 98%; /* empiric approach (danristo) */
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .workspaceLabelCheckboxContainer {
+	 	height: 30px; 
+	 	margin: 5px 0px 10px 0px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 .workspaceLabelForCheckBox {
+ 		height: 25px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 .workspaceLimitCheckboxContainer {
+	 	height: 30px; 
+	 	width: 30px; 
+	 	margin-left: 6px; 
+	 	padding: 0px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .workspaceCheckbox {
+	 	height: 30px; 
+	 	width: 30px;
+	 	margin: 0px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .workspacePersistCheckboxContainer {
+	 	margin-left: 6px; 
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .workspaceLabelButtonFileLoaded {
+	 	margin-top: 14px; 
+	 	margin-bottom: 8px;
+	 }
 }
