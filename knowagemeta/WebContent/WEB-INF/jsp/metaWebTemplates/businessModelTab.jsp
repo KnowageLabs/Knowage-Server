@@ -93,7 +93,14 @@
 								</md-option>
 							</md-select>
 							
-							<input ng-model="prop.value.value" ng-if="prop.value.propertyType.admissibleValues.length==0">
+							<input ng-if="prop.value.propertyType.admissibleValues.length==0 && prop.key!='structural.attribute' " ng-model="prop.value.value">
+							
+<!-- 							profile role visibility -->
+							<md-select ng-model="prop.value.value" ng-if="prop.key=='structural.attribute'" multiple >
+								<md-option  ng-repeat="admissibleValue in sbiModule_config.profileAttributes  " value="{{admissibleValue}}" >
+									{{admissibleValue}}
+								</md-option>
+							</md-select>
 							
 							<!-- edit temporal hierarchy button -->
 							<md-icon ng-if="prop.value.value=='temporal dimension'" ng-click="editTemporalHierarchy()" md-font-icon=" fa fa-sitemap" ></md-icon>

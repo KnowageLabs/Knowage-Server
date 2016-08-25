@@ -23,6 +23,8 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IProductTypeDAO;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.profiling.bean.SbiAttribute;
+import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
@@ -30,7 +32,9 @@ import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -89,9 +93,21 @@ public class PageResource {
 			ioManager.getHttpSession().setAttribute("ioManager", ioManager);
 			ioManager.getHttpSession().setAttribute("userProfile", userProfile);
 
+			// load product types
 			IProductTypeDAO ptdao = DAOFactory.getProductTypeDAO();
 			ptdao.setUserProfile(userProfile);
 			ioManager.getHttpSession().setAttribute("productTypes", ptdao.loadCurrentTenantProductTypes());
+
+			// load profile attributes
+			ISbiAttributeDAO objDao = DAOFactory.getSbiAttributeDAO();
+			objDao.setUserProfile(userProfile);
+			List<SbiAttribute> attrList = objDao.loadSbiAttributes();
+			List<String> attl = new ArrayList<>();
+			;
+			for (SbiAttribute att : attrList) {
+				attl.add(att.getAttributeName());
+			}
+			ioManager.getHttpSession().setAttribute("profileAttributes", attl);
 
 			// ----------------------load the sbiModel if present-----------------------------------------
 			Integer bmId = Integer.parseInt(request.getParameter("bmId"));

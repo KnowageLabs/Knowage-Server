@@ -35,6 +35,9 @@
 	EngineStartServletIOManager ioManager= (EngineStartServletIOManager) request.getSession().getAttribute("ioManager");
 	
 	List<String> productTypes = (List<String>) request.getSession().getAttribute("productTypes") ;
+	List<String> profileAttributes = (List<String>) request.getSession().getAttribute("profileAttributes") ;
+	
+	
 	Locale locale= locale =ioManager.getLocale();
 
 	
