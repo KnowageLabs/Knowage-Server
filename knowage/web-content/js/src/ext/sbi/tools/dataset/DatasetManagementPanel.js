@@ -776,6 +776,15 @@ Ext
 						//make details visible based on combo
 						var dsTypeSelected = record.get('dsTypeCd');
 						if (dsTypeSelected!=null) {
+							
+							// disable persistence if FLAT
+							if (dsTypeSelected == 'Flat') {
+								this.isPersisted.setValue(false);
+								this.isPersisted.disable();
+							} else {
+								this.isPersisted.enable();
+							}
+							
 							var detail=details[dsTypeSelected];
 							if (detail!=null) {
 								detail.setVisible(true);
