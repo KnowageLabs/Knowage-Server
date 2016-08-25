@@ -204,6 +204,10 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 				}
 			});	
 			
+			 
+			if(attrs.removeNoFlicker!=undefined ){
+				element[0].querySelector("div.md-container>md-content ").classList.remove("md-no-flicker");
+			}
 			transclude(scope,function(clone,scope) {
 				var contElem=element[0].querySelector("div.md-container>md-content ")
 				angular.element(contElem).append(clone);

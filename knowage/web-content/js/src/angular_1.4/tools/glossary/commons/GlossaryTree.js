@@ -10,6 +10,7 @@ angular.module('glossary_tree', ['ng-context-menu','ngMaterial','ui.tree', 'sbiM
 //	  templateUrl: '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/glossary-tree.html',
     templateUrl: currentScriptPath + 'templates/glossary-tree.html',
     controller: controllerFunction,
+    replace:true,
     scope: {
     	treeId: '@',
         treeOptions:'=',

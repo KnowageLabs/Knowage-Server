@@ -26,8 +26,11 @@ angular
         link: function($scope, $element, $attrs) {
           var opened = false;
 
-          function open(event, menuElement) {
-            menuElement.addClass('open');
+          function open(event, element) {
+        	 var menuElement=element.menuElement 
+        	 var targetElement=element.element 
+            
+        	 menuElement.addClass('open');
 
             var doc = $document[0].documentElement;
             var docLeft = (window.pageXOffset || doc.scrollLeft) -
@@ -83,7 +86,7 @@ angular
                 $scope.callback({ $event: event });
               });
               $scope.$apply(function() {
-                open(event, ContextMenuService.menuElement);
+                open(event, ContextMenuService);
               });
             }
           });
