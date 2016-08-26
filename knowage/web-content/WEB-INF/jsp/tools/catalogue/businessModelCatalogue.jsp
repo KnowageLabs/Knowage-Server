@@ -121,6 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<label>{{translate.load("sbi.ds.catType")}}</label>
 				   <md-select  aria-label="aria-label" ng-model="selectedBusinessModel.category" >
 				    <md-option  ng-repeat="c in listOfCategories" value="{{c.VALUE_ID}}">{{c.VALUE_NM}} </md-option>
+				    <md-option value="{{null}}"></md-option>
 				   </md-select> 
 				</md-input-container>
 				
