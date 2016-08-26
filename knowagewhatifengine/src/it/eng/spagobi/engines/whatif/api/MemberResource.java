@@ -88,8 +88,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		// System.out.println(time);
 		init();
 		model.removeSubset();
-		String str = RestUtilities.readBody(req);
-		JSONObject jo = new JSONObject(str);
+		JSONObject jo = RestUtilities.readBodyAsJSONObject(req);
 
 		// System.out.println(model.getCurrentMdx());
 		// The ROWS axis
@@ -156,11 +155,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		int memberPosition = 0;
 		String positionUniqueName = null;
 		String memberUniqueName = null;
-		String body;
 
 		try {
-			body = RestUtilities.readBody(req);
-			jo = new JSONObject(body);
+			jo = RestUtilities.readBodyAsJSONObject(req);
 			axis = jo.getInt("axis");
 			position = jo.getInt("position");
 			memberPosition = jo.getInt("memberPosition");
@@ -252,8 +249,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		String filter = null;
 
 		try {
-			String params = RestUtilities.readBody(req);
-			JSONObject paramsObj = new JSONObject(params);
+			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 
 			filter = paramsObj.getString("filters");
 		} catch (Exception e) {
@@ -348,8 +344,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		String name = null;
 
 		try {
-			String params = RestUtilities.readBody(req);
-			JSONObject paramsObj = new JSONObject(params);
+			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 
 			name = paramsObj.getString("memberUniqueName");
 		} catch (Exception e) {
@@ -383,8 +378,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		int ordinal = 0;
 
 		try {
-			String params = RestUtilities.readBody(req);
-			JSONObject paramsObj = new JSONObject(params);
+			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 
 			ordinal = paramsObj.getInt("ordinal");
 		} catch (Exception e) {
@@ -417,8 +411,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		int max = 0;
 
 		try {
-			String params = RestUtilities.readBody(req);
-			JSONObject paramsObj = new JSONObject(params);
+			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 
 			ordinal = paramsObj.getInt("ordinal");
 			max = paramsObj.getInt("max");
@@ -474,11 +467,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		String positionUniqueName = null;
 		String sortMode = null;
 		int topBottomCount = 0;
-		String body;
 		model.setSorting(true);
 		try {
-			body = RestUtilities.readBody(req);
-			jo = new JSONObject(body);
+			jo = RestUtilities.readBodyAsJSONObject(req);
 			modelConfig.setAxisToSort(jo.getInt("axisToSort"));
 			modelConfig.setAxis(jo.getInt("axis"));
 			modelConfig.setSortingPositionUniqueName(jo.getString("positionUniqueName"));

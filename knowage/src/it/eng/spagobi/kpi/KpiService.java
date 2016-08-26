@@ -137,7 +137,7 @@ public class KpiService {
 		logger.debug("buildCardinalityMatrix IN");
 		Response out;
 		try {
-			String arrayOfMeasures = RestUtilities.readBody(req);
+			String arrayOfMeasures = RestUtilities.readBodyAsJSONObject(req).toString();
 			List<String> measureList = (List) JsonConverter.jsonToObject(arrayOfMeasures, List.class);
 			IKpiDAO dao = getKpiDAO(req);
 			List<Cardinality> lst = dao.buildCardinality(measureList);
@@ -145,6 +145,9 @@ public class KpiService {
 			logger.debug("buildCardinalityMatrix OUT");
 			return out;
 		} catch (IOException e) {
+			logger.error("buildCardinalityMatrix error ", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		} catch (JSONException e) {
 			logger.error("buildCardinalityMatrix error ", e);
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		}
@@ -157,7 +160,7 @@ public class KpiService {
 		Response out;
 		try {
 			logger.debug("listPlaceholderByMeasures IN");
-			String arrayOfMeasures = RestUtilities.readBody(req);
+			String arrayOfMeasures = RestUtilities.readBodyAsJSONObject(req).toString();
 			List measureList = (List) JsonConverter.jsonToObject(arrayOfMeasures, List.class);
 			IKpiDAO dao = getKpiDAO(req);
 			List<String> lst = dao.listPlaceholderByMeasures(measureList);
@@ -165,6 +168,9 @@ public class KpiService {
 			logger.debug("listPlaceholderByMeasures OUT");
 			return out;
 		} catch (IOException e) {
+			logger.error("ListPlaceHolderByMeasures  ", e);
+			logger.error(req.getPathInfo(), e);
+		} catch (JSONException e) {
 			logger.error("ListPlaceHolderByMeasures  ", e);
 			logger.error(req.getPathInfo(), e);
 		}
@@ -433,7 +439,7 @@ public class KpiService {
 		logger.debug("preSaveRule IN");
 		Response out;
 		try {
-			String obj = RestUtilities.readBody(req);
+			String obj = RestUtilities.readBodyAsJSONObject(req).toString();
 			Rule rule = (Rule) JsonConverter.jsonToObject(obj, Rule.class);
 
 			// Checking if query executes
@@ -601,7 +607,7 @@ public class KpiService {
 		Response out;
 		IKpiDAO dao = getKpiDAO(req);
 		try {
-			String requestVal = RestUtilities.readBody(req);
+			String requestVal = RestUtilities.readBodyAsJSONObject(req).toString();
 			Rule rule = (Rule) JsonConverter.jsonToObject(requestVal, Rule.class);
 			Integer id = rule.getId();
 			Integer version = rule.getVersion();
@@ -706,7 +712,7 @@ public class KpiService {
 		Response out;
 		IKpiDAO dao = getKpiDAO(req);
 		try {
-			String requestVal = RestUtilities.readBody(req);
+			String requestVal = RestUtilities.readBodyAsJSONObject(req).toString();
 			Kpi kpi = (Kpi) JsonConverter.jsonToObject(requestVal, Kpi.class);
 
 			JSError jsError = new JSError();
@@ -849,7 +855,7 @@ public class KpiService {
 		logger.debug("saveTarget IN");
 		Response out;
 		try {
-			String requestVal = RestUtilities.readBody(req);
+			String requestVal = RestUtilities.readBodyAsJSONObject(req).toString();
 			Target target = (Target) JsonConverter.jsonToObject(requestVal, Target.class);
 			IKpiDAO dao = getKpiDAO(req);
 			JSError errors = check(target, dao);
@@ -921,7 +927,7 @@ public class KpiService {
 		logger.debug("saveSchedulerKPI IN");
 		Response out;
 		try {
-			String requestVal = RestUtilities.readBody(req);
+			String requestVal = RestUtilities.readBodyAsJSONObject(req).toString();
 			KpiScheduler scheduler = (KpiScheduler) JsonConverter.jsonToObject(requestVal, KpiScheduler.class);
 			checkMandatory(scheduler);
 			checkValidity(scheduler);
@@ -1069,7 +1075,7 @@ public class KpiService {
 		logger.debug("saveScorecard IN");
 		Response out;
 		try {
-			String requestVal = RestUtilities.readBody(req);
+			String requestVal = RestUtilities.readBodyAsJSONObject(req).toString();
 			Scorecard scorecard = (Scorecard) JsonConverter.jsonToObject(requestVal, Scorecard.class);
 			scorecard.setCreationDate(new Date());
 			check(scorecard);

@@ -85,9 +85,9 @@ public class MultiReadHttpServletRequestTest {
 		protected void doPost(HttpServletRequest r, HttpServletResponse resp) throws ServletException, IOException {
 			arrived = true;
 			MultiReadHttpServletRequest req = new MultiReadHttpServletRequest(r);
-			body = RestUtilities.readBody(req);
+			body = RestUtilities.readBodyXSSUnsafe(req);
 			// read twice
-			body2 = RestUtilities.readBody(req);
+			body2 = RestUtilities.readBodyXSSUnsafe(req);
 		}
 
 	}

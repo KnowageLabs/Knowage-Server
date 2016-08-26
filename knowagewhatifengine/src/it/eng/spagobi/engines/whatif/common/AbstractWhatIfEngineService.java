@@ -149,7 +149,7 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 		String membersString = null;
 
 		try {
-			membersString = RestUtilities.readBody(getServletRequest());
+			membersString = RestUtilities.readBodyXSSUnsafe(getServletRequest());
 			TypeReference<List<SbiMember>> type = new TypeReference<List<SbiMember>>() {
 			};
 			sbiMembers = (List<SbiMember>) deserialize(membersString, type);

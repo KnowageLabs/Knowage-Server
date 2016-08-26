@@ -145,10 +145,8 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 		int axisOrdinal = 0;
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 
-		String body;
 		try {
-			body = RestUtilities.readBody(req);
-			jo = new JSONObject(body);
+			jo = RestUtilities.readBodyAsJSONObject(req);
 			calculatedFieldName = jo.getString("calculatedFieldName");
 			calculatedFieldFormula = jo.getString("calculatedFieldFormula");
 			parentMemberUniqueName = jo.getString("parentMemberUniqueName");
@@ -210,11 +208,9 @@ public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = ei.getSpagoBIPivotModel();
 		String calculatedFieldName = null;
-		String body;
 		JSONObject jo;
 		try {
-			body = RestUtilities.readBody(req);
-			jo = new JSONObject(body);
+			jo = RestUtilities.readBodyAsJSONObject(req);
 			calculatedFieldName = jo.getString("calculatedFieldName");
 
 		} catch (IOException e1) {

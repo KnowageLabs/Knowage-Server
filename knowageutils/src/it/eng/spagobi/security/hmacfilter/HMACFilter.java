@@ -128,7 +128,7 @@ public class HMACFilter implements Filter {
 			}
 		}
 
-		String body = RestUtilities.readBody(req);
+		String body = RestUtilities.readBodyXSSUnsafe(req);
 		String queryPath = getQueryPath(req);
 		String paramsString = getParamsString(req);
 		String uniqueToken = getUniqueToken(req);

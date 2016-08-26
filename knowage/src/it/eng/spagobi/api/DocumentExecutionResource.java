@@ -920,9 +920,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 							aObjMetacontent.setAdditionalInfo(uploadedFileWithDate.toString());
 						} else { // metadata file, but file not uploaded yet
 							aObjMetacontent.setContent("".getBytes("UTF-8"));
-							JSONObject uploadedFileInfo = new JSONObject(aObjMetacontent.getAdditionalInfo());
-							uploadedFileInfo.put("fileLabel", fileLabel);
-							aObjMetacontent.setAdditionalInfo(uploadedFileInfo.toString());
+							if(aObjMetacontent.getAdditionalInfo() != null) {
+								JSONObject uploadedFileInfo = new JSONObject(aObjMetacontent.getAdditionalInfo());
+								uploadedFileInfo.put("fileLabel", fileLabel);
+								aObjMetacontent.setAdditionalInfo(uploadedFileInfo.toString());
+							}
 						}
 					} else {
 						aObjMetacontent.setContent(text.getBytes("UTF-8"));
@@ -942,9 +944,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 							aObjMetacontent.setAdditionalInfo(uploadedFileWithDate.toString());
 						} else { // metadata file, but file not uploaded yet
 							aObjMetacontent.setContent("".getBytes("UTF-8"));
-							JSONObject uploadedFileInfo = new JSONObject(aObjMetacontent.getAdditionalInfo());
-							uploadedFileInfo.put("fileLabel", fileLabel);
-							aObjMetacontent.setAdditionalInfo(uploadedFileInfo.toString());
+							if(aObjMetacontent.getAdditionalInfo() != null) {
+								JSONObject uploadedFileInfo = new JSONObject(aObjMetacontent.getAdditionalInfo());
+								uploadedFileInfo.put("fileLabel", fileLabel);
+								aObjMetacontent.setAdditionalInfo(uploadedFileInfo.toString());
+							}
 						}
 					} else {
 						aObjMetacontent.setContent(text.getBytes("UTF-8"));

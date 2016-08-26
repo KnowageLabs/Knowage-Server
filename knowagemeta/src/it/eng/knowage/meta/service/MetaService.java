@@ -227,8 +227,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	@Path("/addBusinessModel")
 	public Response addBusinessModel(@Context HttpServletRequest req) {
 		try {
-			String jsonString = RestUtilities.readBody(req);
-			JSONObject jsonRoot = new JSONObject(jsonString);
+			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);;
 
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 			JSONObject oldJsonModel = createJson(model);

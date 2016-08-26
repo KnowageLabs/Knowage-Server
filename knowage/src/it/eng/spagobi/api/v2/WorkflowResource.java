@@ -38,8 +38,7 @@ public class WorkflowResource extends AbstractSpagoBIResource {
 	public Response insertNewWorkflow(@javax.ws.rs.core.Context HttpServletRequest req) {
 		logger.debug("IN");
 		try {
-			String params = RestUtilities.readBody(req);
-			JSONObject paramsObj = new JSONObject(params);
+			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 			JSONArray ja = paramsObj.getJSONArray("workflowArr");
 			int modelId = paramsObj.getInt("modelId");
 			List<SbiWhatifWorkflow> newWorkflow = createWFListFromJson(ja, modelId, true);
@@ -61,8 +60,7 @@ public class WorkflowResource extends AbstractSpagoBIResource {
 	public Response updateWorkflow(@javax.ws.rs.core.Context HttpServletRequest req) {
 		logger.debug("IN");
 		try {
-			String params = RestUtilities.readBody(req);
-			JSONObject paramsObj = new JSONObject(params);
+			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 			JSONArray ja = paramsObj.getJSONArray("workflowArr");
 			int modelId = paramsObj.getInt("modelId");
 			List<SbiWhatifWorkflow> newWorkflow = createWFListFromJson(ja, modelId, false);

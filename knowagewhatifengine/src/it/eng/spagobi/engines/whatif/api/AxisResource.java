@@ -107,8 +107,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		int toAxisPos = 0;
 		String hierarchyName = null;
 		try {
-			String params = RestUtilities.readBody(req);
-			JSONObject paramsObj = new JSONObject(params);
+			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 
 			fromAxisPos = paramsObj.getInt("fromAxis");
 			toAxisPos = paramsObj.getInt("toAxis");
@@ -161,8 +160,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		int direction = -2;
 		int axisPos = -2;
 		try {
-			String params = RestUtilities.readBody(req);
-			JSONObject paramsObj = new JSONObject(params);
+			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 
 			hierarchyUniqueName = paramsObj.getString("hierarchy");
 			newPosition = paramsObj.getInt("newPosition");
@@ -207,8 +205,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		int hierarchyPosition = -1;
 
 		try {
-			String params = RestUtilities.readBody(req);
-			JSONObject paramsObj = new JSONObject(params);
+			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 
 			newHierarchyUniqueName = paramsObj.getString("newHierarchyUniqueName");
 			oldHierarchyUniqueName = paramsObj.getString("oldHierarchyUniqueName");

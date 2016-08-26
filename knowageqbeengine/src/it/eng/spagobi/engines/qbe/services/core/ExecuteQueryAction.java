@@ -206,7 +206,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			Set<String> temporalFieldTypesInQuery = query.getTemporalFieldTypesInQuery();
 			Map<String, List<String>> distinctPeriods = query.getDistinctPeriods();
 			
-			// per comodit� riorganizzo i periodi per type
+			// per comodità riorganizzo i periodi per type
 			Map<String, List<String>> distinctPeriodsByType = new HashMap<>();
 			for (String type : hierarchyFullColumnMap.keySet()) {
 				distinctPeriodsByType.put(type, distinctPeriods.get( hierarchyFullColumnMap.get(type)));	
@@ -486,7 +486,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 					}
 				}
 				
-				logger.debug(rowLog);
+				System.out.println(rowLog);
 				
 			}
 			

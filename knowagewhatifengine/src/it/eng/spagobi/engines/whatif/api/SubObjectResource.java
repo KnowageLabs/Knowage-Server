@@ -47,12 +47,10 @@ public class SubObjectResource extends AbstractWhatIfEngineService {
 		String description = null;
 		String scope = null;
 		JSONObject jo;
-		String requestBody = null;
 		EngineAnalysisMetadata analysisMetadata = null;
 
 		try {
-			requestBody = RestUtilities.readBody(req);
-			jo = new JSONObject(requestBody);
+			jo = RestUtilities.readBodyAsJSONObject(req);
 			name = jo.getString("name");
 			description = jo.getString("description");
 			scope = jo.getString("scope");

@@ -110,7 +110,7 @@ public class CrossNavigationService {
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
 	public Response save(@Context HttpServletRequest req) throws JSONException {
 		try {
-			String requestVal = RestUtilities.readBody(req);
+			String requestVal = RestUtilities.readBodyAsJSONObject(req).toString();
 			NavigationDetail nd = (NavigationDetail) JsonConverter.jsonToObject(requestVal, NavigationDetail.class);
 			ICrossNavigationDAO dao = DAOFactory.getCrossNavigationDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -149,8 +149,7 @@ public class CrossNavigationService {
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
 	public Response remove(@Context HttpServletRequest req) {
 		try {
-			String requestVal = RestUtilities.readBody(req);
-			JSONObject o = new JSONObject(requestVal);
+			JSONObject o = RestUtilities.readBodyAsJSONObject(req);
 			ICrossNavigationDAO dao = DAOFactory.getCrossNavigationDAO();
 			dao.delete(o.getInt("id"));
 		} catch (Exception e) {

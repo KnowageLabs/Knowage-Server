@@ -17,9 +17,11 @@
  */
 package it.eng.spagobi.utilities.filters;
 
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
@@ -62,8 +64,14 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
         String value = super.getHeader(name);
         return stripXSS(value);
     }
+    
+    @Override
+    public ServletInputStream getInputStream() throws IOException {
+    	
+    	return super.getInputStream();
+    }
 
-    protected static String stripXSS(String value){
+    public static String stripXSS(String value){
     	logger.debug("IN");
     	String initialValue = value;
         if (value != null) {
@@ -135,6 +143,16 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
             
             aPattern = Pattern.compile("&lt;a(.*?)&lt;/a&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
             value = aPattern.matcher(value).replaceAll("");
+            
+            // Avoid anything between a tags
+            Pattern buttonPattern = Pattern.compile("<button(.*?)</button>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+            value = buttonPattern.matcher(value).replaceAll("");
+            
+            buttonPattern = Pattern.compile("<button(.*?/)>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+            value = buttonPattern.matcher(value).replaceAll("");
+            
+            buttonPattern = Pattern.compile("&lt;button(.*?)&lt;/button&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+            value = buttonPattern.matcher(value).replaceAll("");
             
             // Example value ="<object data=\"javascript:alert('XSS')\"></object>"
             // Avoid anything between script tags

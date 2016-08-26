@@ -104,7 +104,7 @@ public class EditExcelStartAction extends WhatIfEngineStartAction {
 		this.tenant = tenant;
 
 		try {
-			body = RestUtilities.readBody(req);
+			body = RestUtilities.readBodyXSSUnsafe(req);
 			jo = new JSONObject(body);
 			newValues = jo.getJSONArray("newValues");
 			mdx = jo.getString("mdx");

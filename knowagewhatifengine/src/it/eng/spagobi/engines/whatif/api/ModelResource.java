@@ -153,7 +153,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		String requestBody = "";
 
 		try {
-			requestBody = RestUtilities.readBody(getServletRequest());
+			requestBody = RestUtilities.readBodyXSSUnsafe(getServletRequest());
 		} catch (IOException e) {
 			String errorMessage = e.getMessage().replace(": Couldn't read request body", "");
 			throw new SpagoBIEngineRestServiceRuntimeException(errorMessage, this.getLocale(), e);

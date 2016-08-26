@@ -57,7 +57,7 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 		String modelConfig;
 
 		try {
-			modelConfig = RestUtilities.readBody(getServletRequest());
+			modelConfig = RestUtilities.readBodyXSSUnsafe(getServletRequest());
 
 			modelconfig = (ModelConfig) deserialize(modelConfig, ModelConfig.class);
 

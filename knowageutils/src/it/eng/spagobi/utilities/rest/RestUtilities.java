@@ -27,6 +27,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -45,13 +46,17 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.util.ParameterParser;
 import org.apache.commons.httpclient.util.URIUtil;
+import org.apache.htrace.fasterxml.jackson.databind.jsonFormatVisitors.JsonAnyFormatVisitor;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.hazelcast.com.eclipsesource.json.JsonObject;
+
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.filters.XSSRequestWrapper;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 public class RestUtilities {
@@ -82,15 +87,31 @@ public class RestUtilities {
 	}
 
 	/**
-	 * Reads the body of a request and return it as a string
+	 * @deprecated 
+	 * This function could give problem with XSS. <br/>
+	 * Inplace of this, please use one of <br/>
+	 * {@link #readBodyAsJSONObject(HttpServletRequest request)} which returns a JSONObject <br/>
+	 * {@link #readBodyAsJSONArray(HttpServletRequest request)} which returns a JSONArray <br/>
+	 * {@link #readBodyXSSUnsafe(HttpServletRequest request)} which returns a String <br/>
+	 *
+	 */
+	@Deprecated
+	public static String readBody(HttpServletRequest request) throws IOException {
+		return readBodyXSSUnsafe(request);
+	}
+
+	/**
+	 * Reads the body of a request and return it as a string<br/>
+	 *
+	 * <b>Warning:</b> this method does not provide protection against 
+	 * XSS attaks. Use it only if you know what you are doing. 
 	 *
 	 * @param request
 	 *            the HttpServletRequest request
 	 * @return the body
 	 * @throws IOException
 	 */
-	public static String readBody(HttpServletRequest request) throws IOException {
-
+	public static String readBodyXSSUnsafe(HttpServletRequest request) throws IOException {
 		StringBuilder stringBuilder = new StringBuilder();
 		BufferedReader bufferedReader = null;
 		try {
@@ -116,6 +137,7 @@ public class RestUtilities {
 	/**
 	 *
 	 * Reads the body of a request and return it as a JSONObject
+	 * <b>Fiters content against XSS attacks</b>
 	 *
 	 * @param request
 	 *            the HttpServletRequest request
@@ -124,16 +146,21 @@ public class RestUtilities {
 	 * @throws JSONException
 	 */
 	public static JSONObject readBodyAsJSONObject(HttpServletRequest request) throws IOException, JSONException {
-		String requestBody = RestUtilities.readBody(request);
+		String requestBody = RestUtilities.readBodyXSSUnsafe(request);
 		if (requestBody == null || requestBody.equals("")) {
 			return new JSONObject();
 		}
-		return new JSONObject(requestBody);
+		final JSONObject jsonObject = new JSONObject(requestBody);
+
+		stripXSSJsonObject(jsonObject);
+		
+		return jsonObject;
 	}
 
 	/**
 	 *
 	 * Reads the body of a request and return it as a JSONOArray
+	 * <b>Fiters content against XSS attacks</b>
 	 *
 	 * @param request
 	 *            the HttpServletRequest request
@@ -142,8 +169,41 @@ public class RestUtilities {
 	 * @throws JSONException
 	 */
 	public static JSONArray readBodyAsJSONArray(HttpServletRequest request) throws IOException, JSONException {
-		String requestBody = RestUtilities.readBody(request);
-		return JSONUtils.toJSONArray(requestBody);
+		String requestBody = RestUtilities.readBodyXSSUnsafe(request);
+		return (JSONArray) stripXSSJsonObject(JSONUtils.toJSONArray(requestBody));
+	}
+
+	private static Object stripXSSJsonObject(Object o) throws JSONException {
+		if(o instanceof JSONObject) {
+			JSONObject inJsonObject = (JSONObject) o;
+			final Iterator<String> keys = inJsonObject.keys();
+			while(keys.hasNext()) {
+				final String key = keys.next();
+				final Object object = inJsonObject.get(key);
+				if(object instanceof String) {
+					inJsonObject.put(key, XSSRequestWrapper.stripXSS((String)object));
+				}
+				else if (object instanceof JSONObject) {
+					stripXSSJsonObject((JSONObject)object);
+				}
+				else if (object instanceof JSONArray) {
+					JSONArray ja = (JSONArray)object;
+					for (int i = 0; i < ja.length() ; i++) {
+						ja.put(i, stripXSSJsonObject(ja.get(i)));
+					}
+				}
+			}
+		}
+		else if(o instanceof JSONObject) {
+			o = XSSRequestWrapper.stripXSS((String)o);
+		}
+		else if (o instanceof JSONArray) {
+			JSONArray ja = (JSONArray)o;
+			for (int i = 0; i < ja.length() ; i++) {
+				ja.put(i, stripXSSJsonObject(ja.get(i)));
+			}
+		}
+		return o;
 	}
 
 	public static enum HttpMethod {

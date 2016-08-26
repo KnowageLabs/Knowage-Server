@@ -79,8 +79,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		Member member = null;
 
 		try {
-			String params = RestUtilities.readBody(req);
-			JSONObject paramsObj = new JSONObject(params);
+			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 
 			hierarchyName = paramsObj.getString("hierarchy");
 			memberName = paramsObj.getString("member");
@@ -126,8 +125,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		String node = null;
 
 		try {
-			String params = RestUtilities.readBody(req);
-			JSONObject paramsObj = new JSONObject(params);
+			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 
 			hierarchyUniqueName = paramsObj.getString("hierarchy");
 			node = paramsObj.getString("node");
@@ -254,8 +252,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		boolean showS = false;
 
 		try {
-			String params = RestUtilities.readBody(req);
-			JSONObject paramsObj = new JSONObject(params);
+			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 
 			hierarchyUniqueName = paramsObj.getString("hierarchy");
 			name = paramsObj.getString("name");
@@ -409,8 +406,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		PivotModel model = ei.getPivotModel();
 
 		try {
-			String params = RestUtilities.readBody(req);
-			JSONObject paramsObj = new JSONObject(params);
+			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 
 			axis = paramsObj.getInt("axis");
 			hier = paramsObj.getString("hierarchy");
