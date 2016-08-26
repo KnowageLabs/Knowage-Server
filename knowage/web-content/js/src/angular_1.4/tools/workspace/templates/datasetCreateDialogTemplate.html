@@ -44,7 +44,7 @@
 			      
 				</md-toolbar>
 			   
-				<md-content flex class="knowageGrey">
+				<md-content flex class="">
 			      
 					<!-- CARD 1 (START) -->
 					<!--<md-card ng-if="datasetWizardView==1">-->
@@ -106,7 +106,7 @@
 									 			{{translate.load("sbi.workspace.dataset.wizard.file.uploaded")}}: <strong>{{dataset.fileName}}</strong>
 								 			</label>
 								 			
-										 <span flex></span>
+										 	<span flex></span>
 										  
 										  	<div class="">
 										    <md-button 	ng-click="changeUploadedFile()" ng-show="!ckanInWizard" class="md-raised" 
@@ -128,9 +128,9 @@
 			         
 			         	<!-- <md-whiteframe flex layout="column" layout-margin class="md-whiteframe-5dp md-whiteframe-5dp-rightPanelDocuments"> -->
 			         		
-			       		<md-card ng-if="dataset.fileType=='CSV'" flex layout="column" layout-margin class="md-whiteframe-5dp threeCombosThreeNumFields xlsCsvConfigParams">         		
+			       		<md-card ng-if="dataset.fileType=='CSV'" layout="column" class="threeCombosThreeNumFields">         		
 			         		
-			         		<div layout="row">								
+			         		<div layout="row" class="threeCombosLayout">								
 						              
 						        <!-- CSV file is uploaded --> 
 								<div layout="row" flex >
@@ -186,9 +186,9 @@
 						    	
 					    </md-card>
 						    
-					    <md-card ng-if="dataset.fileType=='XLS'" flex layout="column" layout-margin class="md-whiteframe-5dp threeCombosThreeNumFields xlsCsvConfigParams">          
+					    <md-card ng-if="dataset.fileType=='XLS'" layout="column" class="threeCombosThreeNumFields">          
 					        
-					        <div layout="row">	
+					        <div layout="row" class="threeCombosLayout">	
 						        
 						        <!-- XLS file is uploaded --> 
 								<div layout="row" flex >
@@ -374,7 +374,7 @@
 						                  <div flex>
 						                     <md-input-container class="small counter">
 						                        <label>{{translate.load("sbi.generic.descr")}}</label> 
-						                        <textarea rows="2" cols="50" ng-model="dataset.description" style="overflow:auto;auto-scroll:true"></textarea>
+						                        <textarea rows="2" cols="50" ng-model="dataset.description" class="workspaceDatasetDescription"></textarea>
 						                     </md-input-container>
 						                  </div>
 									</div>
@@ -393,15 +393,15 @@
 				                  		
 									</div>
 									
-									<div layout="row">
-										<label ng-show="dataset.persist" class="step4BottomPadding">
+									<div ng-show="dataset.persist" layout="row" class="workspacePersistDatasetLabel">
+										<label class="step4BottomPadding">
 											{{translate.load('sbi.workspace.dataset.wizard.tableprefix.label')}} <strong>{{dataset.tablePrefix}}</strong>
 										</label>
 									</div>
 									
-									<div layout="row" layout-wrap>
+									<div ng-show="dataset.persist" layout="row" layout-wrap class="workspacePersistDatasetTableName">
 						                  <div flex>
-						                     <md-input-container class="small counter" ng-show="dataset.persist">
+						                     <md-input-container class="small counter" >
 						                        <label>{{translate.load("sbi.ds.persistTableName")}}</label> 
 						                        <input ng-model="dataset.tableName">
 						                        <div  ng-messages="formForSaving.lbl.$error" ng-show="dataset.persist && dataset.tableName==''">

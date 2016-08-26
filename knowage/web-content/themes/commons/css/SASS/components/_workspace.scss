@@ -132,9 +132,8 @@
 	}*/
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	// Not used anymore (danristo)
 	md-tab-content {
-		/*top: 5px;*/
+		top: 5px;
 	}
 	
 	.datasetWizardPadding{
@@ -192,8 +191,10 @@
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	.mdDialogDatasetWizard {
-		height:65%; 
-		max-height:65%; 
+		/*height:65%; 
+		max-height:65%;*/
+		height:100%; 
+		max-height:100%; 
 		width: 100%;
     	max-width: 100%;
     	min-width:100%;
@@ -213,6 +214,11 @@
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	.threeCombosThreeNumFields {
 		background-color: #FFFFFF !important;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.threeCombosLayout {
+		padding: 10px 10px 0px 10px;
 	}
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -282,12 +288,12 @@
 	}
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
-	@-moz-document url-prefix() { 
+	/*@-moz-document url-prefix() { 
 		.step2DefDataTable {
 			height: auto; 
 			min-height: auto;
 		}
-	}
+	}*/
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
 	.uploadButton {
@@ -399,6 +405,7 @@
 	 
 	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 	 .dsCreateCatalogContainerOne {
+	 	height: 65%;
 	 	display: flex; 
 	 	flex-direction: column; 
 	 	min-width: 100%;
@@ -407,19 +414,21 @@
 	 
 	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 	 .dsCreateCatalogContainerTwo {
+	 	height: 100%;
 	 	align-items: center;
 	    display: flex;
-	    flex-direction: column;
+	    /*flex-direction: column;*/
 	    justify-content: center;
-	    margin: 1em;
+	    /*margin: 1em;*/
 	 }
 	 
 	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 	 .dsCreateCatalogContainerThree {
+	 	height: 100%;
 	    align-items: center;
 	    justify-content: center;
 	    margin: 1em;
-	    padding: 2em;
+	   /* padding: 2em;*/
 	    min-width: 50%;
 	    max-width: 50%;
 	 }
@@ -465,5 +474,21 @@
 	 .workspaceLabelButtonFileLoaded {
 	 	margin-top: 14px; 
 	 	margin-bottom: 8px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .workspacePersistDatasetLabel {
+	 	height: 30px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)  
+	 .workspacePersistDatasetTableName {
+	 	height: 80px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)  
+	 .workspaceDatasetDescription {
+	 	overflow:auto;
+	 	auto-scroll:true;
 	 }
 }
