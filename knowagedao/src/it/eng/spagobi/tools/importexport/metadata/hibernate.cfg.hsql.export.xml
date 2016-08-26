@@ -63,6 +63,7 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlWlist.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlWord.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlDataSetWlist.hbm.xml" />
+         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiGlDocWlist.hbm.xml" />
     
         
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiCrossNavigation.hbm.xml" />
