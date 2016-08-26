@@ -401,13 +401,17 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 		sbiModule_restServices.promisePost('2.0/datasources/test','',testJSON)
 		.then(function(response) {
-			sbiModule_messaging.showInfoMessage("Ok, parameters are correct", 'Information!');
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.datasource.testing.ok"), sbiModule_translate.load("sbi.datasource.info.msg"));
 		}, function(response) {
-			if (response.data.errors[0].message=="") {
-				sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.ds.error.testing.datasource"), 'Error');
-			} else {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			}
+			if(response.data.hasOwnProperty('RemoteException')){
+				sbiModule_messaging.showErrorMessage(response.data.RemoteException.message, sbiModule_translate.load("sbi.datasource.error.msg"));
+			}else{
+				if (response.data.errors[0].message=="") {
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.ds.error.testing.datasource"), sbiModule_translate.load("sbi.datasource.error.msg"));
+				} else {
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.datasource.error.msg"));
+				}			}
+			
 		});
 	}
 
