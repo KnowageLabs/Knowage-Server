@@ -52,11 +52,20 @@ angular
 				$mdDialog.hide();
 				
 				if ($scope.datasetSavedFromQbe==true) {
+					
 					console.info("[RELOAD]: Reload all necessary datasets (its different categories)");
+					
 					$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyData() : $scope.reloadMyData = true;
-					if($scope.currentOptionMainMenu=="models"&&$scope.currentModelsTab=="federations"){
-						$scope.getFederatedDatasets();
+					
+					if($scope.currentOptionMainMenu=="models"){
+						
+						if ($scope.currentModelsTab=="federations") {
+							// If the suboption of the Data option is Federations.
+							$scope.getFederatedDatasets();
+						}
+						
 					}
+					
 					$scope.datasetSavedFromQbe = false;
 				}	
 			}
@@ -84,7 +93,7 @@ angular
 				 * Catch the 'save' event that is fired when the DS is persisted (saved) after confirming the dataset wizard inside the QBE (as a 
 				 * result of calling the 'openSaveDataSetWizard' function.	
 				 */			 
-				frame.contentWindow.qbe.on("save", function() {$scope.datasetSavedFromQbe = true;})
+				document.getElementById("documentViewerIframe").contentWindow.qbe.on("save", function() {$scope.datasetSavedFromQbe = true;})
 				
 			}
 	

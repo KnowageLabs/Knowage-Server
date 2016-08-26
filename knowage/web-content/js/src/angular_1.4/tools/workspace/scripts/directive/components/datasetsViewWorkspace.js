@@ -95,6 +95,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	for(i=0;i<datasets.length;i++){
     		
     		if($scope.notDerivedDatasets.indexOf(datasets[i].label)>-1){
+    			
     			datasets[i].derivated=false;
     			
     		}else{
@@ -158,7 +159,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	$scope.loadNotDerivedDatasets= function(){
 		sbiModule_restServices.promiseGet("2.0/datasets/listNotDerivedDataset", "")
 		.then(function(response) {
-			//angular.copy(response.data,$scope.notDerivedDatasets);
+			//angular.copy(response.data,$scope.notDerivedDatasets);			
 			$scope.extractNotDerivedLabels(response.data);
 			console.info("[LOAD END]: Loading of Not derived datasets is finished.");
 		},function(response){
@@ -376,8 +377,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     }
     
     $scope.showQbeDataset= function(dataset){
-    	console.log(dataset);
-
+    	
 		var label= dataset.label;
 		
 		var url= datasetParameters.qbeFromDataSetServiceUrl
@@ -386,9 +386,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 
 		 //$window.location.href=url;
 		$qbeViewer.openQbeInterface($scope,url);
+		
     }
     
     $scope.extractNotDerivedLabels= function(datasets){
+    	
     	for(i=0;i<datasets.length;i++){
     		$scope.notDerivedDatasets.push(datasets[i].label);
     	}
