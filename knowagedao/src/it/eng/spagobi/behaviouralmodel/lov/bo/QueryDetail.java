@@ -105,6 +105,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
 	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
 	public static final String DIALECT_TERADATA = "org.hibernate.dialect.TeradataDialect";
+	public static final String DIALECT_ORACLE_SPATIAL = "org.hibernatespatial.oracle.CustomOracleSpatialDialect";
 
 	/**
 	 * constructor.
@@ -334,12 +335,12 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 */
 	@Override
 	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> bIObjectParameters, Locale locale)
- 			throws Exception {
-		return getLovResult(profile, dependencies, bIObjectParameters, locale, false);
-	} 
-	 
-	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale, boolean getAllColumns)
 			throws Exception {
+		return getLovResult(profile, dependencies, bIObjectParameters, locale, false);
+	}
+
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale,
+			boolean getAllColumns) throws Exception {
 		logger.debug("IN");
 		Map<String, String> parameters = getParametersNameToValueMap(BIObjectParameters);
 		String statement = getWrappedStatement(dependencies, BIObjectParameters);
@@ -692,6 +693,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 				ALIAS_DELIMITER = "\"";
 			} else if (databaseDialect.equalsIgnoreCase(DIALECT_ORACLE9i10g)) {
 				ALIAS_DELIMITER = "\"";
+			} else if (databaseDialect.equalsIgnoreCase(DIALECT_ORACLE_SPATIAL)) {
+				ALIAS_DELIMITER = "\"";
 			} else if (databaseDialect.equalsIgnoreCase(DIALECT_POSTGRES)) {
 				ALIAS_DELIMITER = "\"";
 			} else if (databaseDialect.equalsIgnoreCase(DIALECT_SQLSERVER)) {
@@ -854,15 +857,15 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			dataResult = sqlCommand.execute();
 			ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
 			SourceBean result = scrollableDataResult.getSourceBean();
-			
+
 			List<String> colNames = Arrays.asList(scrollableDataResult.getColumnNames());
 			List rows = result.getAttributeAsList(DataRow.ROW_TAG);
-			//insert all the columns name in the first row, so after all the columns will be present and returned to the client
-			if (getAllColumns && rows.size() > 0){
+			// insert all the columns name in the first row, so after all the columns will be present and returned to the client
+			if (getAllColumns && rows.size() > 0) {
 				SourceBean rowBean = (SourceBean) rows.get(0);
-				for (int i = 0 ; i < colNames.size(); i++){
-					String  col = colNames.get(i).toString();
-					if (!rowBean.containsAttribute(col)){
+				for (int i = 0; i < colNames.size(); i++) {
+					String col = colNames.get(i).toString();
+					if (!rowBean.containsAttribute(col)) {
 						rowBean.setAttribute(col, "");
 					}
 				}
@@ -1128,7 +1131,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName ()
 	 */
 	@Override
@@ -1138,7 +1141,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName (java.lang.String)
 	 */
 	@Override
@@ -1148,7 +1151,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames ()
 	 */
 	@Override
@@ -1158,7 +1161,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames (java.util.List)
 	 */
 	@Override
@@ -1168,7 +1171,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
@@ -1178,7 +1181,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName( java.lang.String)
 	 */
 	@Override
@@ -1188,7 +1191,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
@@ -1198,7 +1201,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames (java.util.List)
 	 */
 	@Override
