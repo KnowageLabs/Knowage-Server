@@ -47,7 +47,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        <label>Datasources</label>
 	        <md-select ng-model="IEDConf.datasources.associatedDatasources[expDatasources.dsId]">
 	       
-	          <md-option ng-repeat="currDatasources in IEDConf.datasources.currentDatasources" ng-value="currDatasources" ng-if="currentDatasourcesIsSelectable(currDatasources,expDatasources)">
+	          <md-option ng-repeat="currDatasources in IEDConf.datasources.currentDatasources" ng-value="currDatasources" > 
+	          <!-- ng-if="currentDatasourcesIsSelectable(currDatasources,expDatasources)" -->
 	            {{currDatasources.label}}
 	          </md-option>
 	        </md-select>
