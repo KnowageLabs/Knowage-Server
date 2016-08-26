@@ -96,7 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</div>
 							<div flex layout ng-show="showDataset">
 								<angular-table id='datasetlist' ng-model=dataset
-									columns='[{"label":"Label","name":"label","size":"20px"},{"label":"Name","name":"name","size":"20px"}]'
+									columns='[{"label":"Label","name":"label"},{"label":"Name","name":"name"}]'
 									columnsSearch='["label"]' show-search-bar=true
 									highlights-selected-item=true multi-select=true
 									selected-item=datasetSelected no-pagination=true
