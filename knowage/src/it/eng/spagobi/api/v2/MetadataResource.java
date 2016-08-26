@@ -17,22 +17,22 @@
  */
 package it.eng.spagobi.api.v2;
 
+import it.eng.knowage.meta.model.Model;
+import it.eng.knowage.meta.model.ModelObject;
+import it.eng.knowage.meta.model.ModelProperty;
+import it.eng.knowage.meta.model.business.BusinessColumn;
+import it.eng.knowage.meta.model.business.BusinessModel;
+import it.eng.knowage.meta.model.business.BusinessTable;
+import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
+import it.eng.knowage.meta.model.physical.PhysicalColumn;
+import it.eng.knowage.meta.model.physical.PhysicalModel;
+import it.eng.knowage.meta.model.physical.PhysicalTable;
+import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
+import it.eng.knowage.meta.model.serializer.IModelSerializer;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.meta.model.Model;
-import it.eng.spagobi.meta.model.ModelObject;
-import it.eng.spagobi.meta.model.ModelProperty;
-import it.eng.spagobi.meta.model.business.BusinessColumn;
-import it.eng.spagobi.meta.model.business.BusinessModel;
-import it.eng.spagobi.meta.model.business.BusinessTable;
-import it.eng.spagobi.meta.model.business.SimpleBusinessColumn;
-import it.eng.spagobi.meta.model.physical.PhysicalColumn;
-import it.eng.spagobi.meta.model.physical.PhysicalModel;
-import it.eng.spagobi.meta.model.physical.PhysicalTable;
-import it.eng.spagobi.meta.model.serializer.EmfXmiSerializer;
-import it.eng.spagobi.meta.model.serializer.IModelSerializer;
 import it.eng.spagobi.metadata.cwm.CWMImplType;
 import it.eng.spagobi.metadata.cwm.CWMMapperFactory;
 import it.eng.spagobi.metadata.cwm.ICWM;
@@ -140,7 +140,15 @@ public class MetadataResource extends AbstractSpagoBIResource {
 				logger.error("datamart.jar not found for metamodel with id " + businessModelId);
 				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(), "datamart.jar not found for metamodel with id " + businessModelId);
 			}
-			byte[] metamodelTemplateBytes = getModelFileFromJar(modelContent);
+			byte[] metamodelTemplateBytes = null;
+			// first, try to get directly the file model (.sbimodel) if created with MetaWeb
+			metamodelTemplateBytes = modelContent.getFileModel();
+			if (metamodelTemplateBytes == null) {
+				// old style, search the .sbimodel inside the datamart.jar
+				metamodelTemplateBytes = getModelFileFromJar(modelContent);
+
+			}
+
 			if (metamodelTemplateBytes == null) {
 				logger.error("Metamodel file not found inside datamart.jar");
 				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(), "Metamodel file not found inside datamart.jar");
