@@ -396,9 +396,13 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		if(testJSON.hasOwnProperty("userIn")) {
 			delete testJSON.userIn;
 		}
-
-		console.log(angular.toJson(testJSON));
-
+		
+		if(testJSON.readOnly=="1"){
+			testJSON.readOnly=true;
+		} else if(testJSON.readOnly=="0"){
+			testJSON.readOnly=false;
+		}
+		
 		sbiModule_restServices.promisePost('2.0/datasources/test','',testJSON)
 		.then(function(response) {
 			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.datasource.testing.ok"), sbiModule_translate.load("sbi.datasource.info.msg"));
