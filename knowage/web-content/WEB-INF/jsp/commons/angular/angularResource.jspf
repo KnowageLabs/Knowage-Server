@@ -3,6 +3,7 @@
 <%-- ---------------------------------------------------------------------- --%>
 
 <!-- this imports are used for language controls  -->
+<%@page import="it.eng.spago.configuration.ConfigSingleton"%>
 <%@page import="it.eng.spago.base.*"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
@@ -106,7 +107,15 @@
 		defaultRole = ((UserProfile)userProfile).getDefaultRole();		
 		
 	}
-	 
+	
+	ConfigSingleton serverConfig = ConfigSingleton.getInstance();
+
+	Integer importFileMaxSizeMB = 10 * 1024 * 1024;
+	SourceBean maxSizeSB = (SourceBean) serverConfig.getAttribute("IMPORTEXPORT.IMPORT_FILE_MAX_SIZE");
+	if (maxSizeSB != null) {
+		String maxSizeStr = maxSizeSB.getCharacters();
+		importFileMaxSizeMB = new Integer(maxSizeStr);
+	}
 	
 %>
 

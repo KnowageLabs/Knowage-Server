@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <div layout="row" layout-wrap>
-	<file-upload flex id="fileUploadImport" ng-model="IEDConf.fileImport"></file-upload>
+	<file-upload flex id="fileUploadImport" ng-model="IEDConf.fileImport" file-max-size="<%=importFileMaxSizeMB%>" ></file-upload>
 	<md-button class="md-fab md-fab-mini"
 			ng-disabled="isInvalidImportStep0Form();"
 			aria-label="{{translate.load('SBISet.import','component_impexp_messages')}} {{translate.load('sbi.ds.wizard.file')}}"
@@ -61,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<div layout="row">
 			<label>{{translate.load('impexp.savedAss','component_impexp_messages')}}</label>
 			<file-upload flex id="AssociationFileUploadImport"
-					ng-model="IEDConf.associationsFileImport"></file-upload>
+					ng-model="IEDConf.associationsFileImport" file-max-size="<%=importFileMaxSizeMB%>" ></file-upload>
 		</div>
 	</div>
 </div>

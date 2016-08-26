@@ -106,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-tab-body> 
 						<md-card>
 						<div layout="row" layout-wrap >
-								<file-upload flex id="AssociationFileUploadImport" ng-model="importFile"></file-upload>
+								<file-upload flex id="AssociationFileUploadImport" ng-model="importFile" file-max-size="<%=importFileMaxSizeMB%>" ></file-upload>
 								<md-button ng-click="upload($event)" aria-label="upload Menu"
 								class="md-fab md-mini"  > <md-icon
 								md-font-icon="fa fa-upload"  >

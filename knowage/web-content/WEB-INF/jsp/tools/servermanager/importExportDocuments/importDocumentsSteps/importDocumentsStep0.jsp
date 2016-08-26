@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <div layout="row" layout-wrap layout-align="center center">
-	<file-upload flex id="fileUploadImport" ng-model="IEDConf.fileImport"></file-upload>
+	<file-upload flex id="fileUploadImport" ng-model="IEDConf.fileImport" file-max-size="<%=importFileMaxSizeMB%>" ></file-upload>
 	<md-button class="md-fab md-mini"  ng-disabled="isInvalidImportStep0Form();" aria-label="{{translate.load('SBISet.import','component_impexp_messages');}} {{translate.load('sbi.ds.wizard.file');}}" ng-click="importFile()">
        			<md-icon class="fa fa-upload fa-2x"></md-icon>
    			 </md-button>	 

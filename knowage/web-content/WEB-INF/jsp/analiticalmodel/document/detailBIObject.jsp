@@ -108,7 +108,15 @@ function versionTemplateSelected () {
 	versionTemplateChanged = 'true';
 }
 
-function fileToUploadInserted() {
+function fileToUploadInserted(element) {
+	var max = 10 * 1024 * 1024;
+	var inputFile = element;
+    if (inputFile.files && inputFile.files[0].size > max) {
+    	element.value = '';
+    	alert("File too big. Max size is: "+max/1024/1024+" MB.");
+    	return false;
+    }
+	
 	fileUploadChanged = 'true';
 	fileDeleted = 'false';
 }
@@ -904,7 +912,7 @@ function saveDocument(goBack) {
 					</div>
 					<div class='div_detail_form'>
 						<input class='portlet-form-input-field' type="file" 
-			      		       name="previewFile" id="previewFile" onchange='fileToUploadInserted()' />
+			      		       name="previewFile" id="previewFile" onchange='fileToUploadInserted(this)' />
 
 <% if(obj.getPreviewFile() != null) {%>
 
@@ -1078,7 +1086,7 @@ function saveDocument(goBack) {
 					</div>
 					<div class='div_detail_form'>
 						<input class='portlet-form-input-field' type="file" 
-			      		       name="uploadFile" id="uploadFile" onchange='fileToUploadInserted()' />
+			      		       name="uploadFile" id="uploadFile" onchange='fileToUploadInserted(this)' />
 					</div>
 				</div>	
 				

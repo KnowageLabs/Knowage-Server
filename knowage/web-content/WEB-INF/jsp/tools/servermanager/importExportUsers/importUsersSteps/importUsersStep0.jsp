@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div layout="row" layout-wrap layout-align="center center">
 			
 							<div flex >
-								<file-upload flex id="AssociationFileUploadImport" ng-model="IEDConf.fileImport"></file-upload>
+								<file-upload flex id="AssociationFileUploadImport" ng-model="IEDConf.fileImport" file-max-size="<%=importFileMaxSizeMB%>" ></file-upload>
 							</div>
 							
 								<md-button ng-click="upload($event)" aria-label="upload Users"
