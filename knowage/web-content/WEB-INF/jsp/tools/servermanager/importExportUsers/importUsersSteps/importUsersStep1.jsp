@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<span flex></span>
 		<p flex="45">{{translate.load('sbi.modelinstances.target');}}</p>
 	</md-whiteframe >
-	 
+	 <h3>{{translate.load('sbi.importexpuser.notimportuserpresent');}}</h3>
 	<div layout="row" flex>
 			<div flex style="position: relative;" >
 				 <angular-table ng-show="IEDConf.roles.exportedUser.length!=0" id='layerlist' 
