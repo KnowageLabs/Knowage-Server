@@ -46,15 +46,15 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 /**
- * 
- * 
+ *
+ *
  * @author Salvo Lupo
- * 
+ *
  */
 public class OutcomeHMACFilter implements Filter {
 	private static transient Logger logger = Logger.getLogger(OutcomeHMACFilter.class);
 	/**
-	 * 
+	 *
 	 */
 	private static final String KEY_CONFIG_NAME = "hmacKey";
 
@@ -70,7 +70,7 @@ public class OutcomeHMACFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		System.out.println("AfterHMAC Filter");
+		logger.debug("AfterHMAC Filter");
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpSession session = httpRequest.getSession();
 
@@ -152,7 +152,7 @@ public class OutcomeHMACFilter implements Filter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.Filter#destroy()
 	 */
 	@Override
