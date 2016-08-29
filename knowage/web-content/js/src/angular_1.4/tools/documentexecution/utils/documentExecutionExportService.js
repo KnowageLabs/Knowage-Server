@@ -8,7 +8,9 @@
 		
 		dee.getExportationUrl = function(format,paramsExportType,actionPath){
 			console.log('sbiModule_config.contextName ' , sbiModule_config);
-			var urlService = sbiModule_config.host+actionPath+'?';
+			// https://production.eng.it/jira/browse/KNOWAGE-1443
+			// actionPath has no '/' at the beginning
+			var urlService = sbiModule_config.host + '/' + actionPath+'?';
 			var sbiContext = 'SBICONTEXT='+sbiModule_config.contextName
 			var docName = '&documentName='+execProperties.executionInstance.OBJECT_LABEL;
 			var sbiExeRole = '&SBI_EXECUTION_ROLE='+execProperties.selectedRole.name;
