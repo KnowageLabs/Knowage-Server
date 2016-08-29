@@ -1,14 +1,14 @@
-<md-dialog aria-label="Calculated field Manager"   ng-cloak style="min-width:90%; min-height:90%;">
-	<form name="newCFForm" layout="column" flex>
+<md-dialog aria-label="Calculated field Manager"   ng-cloak layout="column" style="min-width:90%; min-height:90%;">
   	<md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>{{translate.load('sbi.meta.model.calculatedField')}}</h2>
+        <h2>{{translate.load('sbi.meta.model.calculatedfield')}}</h2>
        </div>
     </md-toolbar>
+	<form name="newCFForm" layout="column" flex>
     <md-dialog-content flex layout >
 		<div class="md-dialog-content" flex layout="row">
 		
-			<md-whiteframe class="md-whiteframe-1dp" layout="column">
+			<md-whiteframe class="md-whiteframe-1dp" layout="column" style="min-width:200px">
 				<md-toolbar>
 			      <div class="md-toolbar-tools">
 			        <h2>{{translate.load('sbi.meta.columns')}}</h2>
@@ -45,7 +45,7 @@
 	   			<md-whiteframe class="md-whiteframe-1dp" layout="column" flex>
 					<md-toolbar>
 				      <div class="md-toolbar-tools">
-				        <h2>{{translate.load('sbi.meta.formula')}}</h2>
+				        <h2>{{translate.load('sbi.kpi.formula')}}</h2>
 				       </div>
 				    </md-toolbar>
 				
