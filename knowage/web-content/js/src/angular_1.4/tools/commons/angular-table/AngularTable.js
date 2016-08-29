@@ -482,32 +482,44 @@ function TableControllerFunction($scope, $timeout) {
 
     // pagination item
     $scope.changeWordItemPP = function () {
-        if (angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox'))[0] == undefined) {
-            return;
-        }
 
-        var box = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox'))[0]
-        if (box == undefined) {
-            return;
-        }
+    	if($scope.box==undefined){
+    		var box = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox'))[0]
+    		if (box == undefined) {
+    			return;
+    		}
+    		$scope.box=box;
+    	}
+    	
+    	if($scope.tableContainer==undefined){
+    		var tableContainer = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #angularFullTableContentBox'))[0];
+    		if (tableContainer != undefined) {
+    			$scope.tableContainer=tableContainer;
+    		}
+    	}
+    	
+    	if($scope.headButton==undefined){
+    		var headButton = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.fakeTable thead'))[0];
+    		if (headButton != undefined) {
+    			$scope.headButton=headButton;
+    		}
+    	}
+    	
+    	if($scope.listItemTemplBox==undefined){
+    		var listItemTemplBox = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.principalTable tbody tr'))[0];
+    		if (listItemTemplBox != undefined) {
+    			$scope.listItemTemplBox=listItemTemplBox;
+    		}
+    	}
 
-//		var tableAction=angular.element(document.querySelector('angular-table.'+$scope.id+'ItemBox angular-table-actions'))[0];
-//		var footerTab= angular.element(document.querySelector('angular-table.'+$scope.id+'ItemBox angular-table-footer'))[0];
-        var tableContainer = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #angularFullTableContentBox'))[0];
-        var headButton = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.fakeTable thead'))[0];
-        var listItemTemplBox = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.principalTable tbody tr'))[0];
 
-//		var boxHeight = box.offsetHeight;
-//		var tableActionHeight=  tableAction==undefined? 0 : tableAction.offsetHeight ;
-//		var footerTabHeigth= footerTab==undefined? 0 : footerTab.offsetHeight ;
-        var headButtonHeight = headButton == undefined ? 0 : headButton.offsetHeight;
-        var listItemTemplBoxHeight = listItemTemplBox == undefined ? 32 : listItemTemplBox.offsetHeight;
-        var tableContainerHeight = tableContainer == undefined ? 32 : tableContainer.offsetHeight;
+    	var tableContainerHeight = $scope.tableContainer == undefined ? 32 : $scope.tableContainer.offsetHeight;
+        var headButtonHeight = $scope.headButton == undefined ? 0 : $scope.headButton.offsetHeight;
+        var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 32 : $scope.listItemTemplBox.offsetHeight;
 
 
         var nit = parseInt((tableContainerHeight - headButtonHeight) / listItemTemplBoxHeight);
 
-//		var nit = parseInt((boxHeight - tableActionHeight - footerTabHeigth -headButtonHeight) / listItemTemplBoxHeight);
         $scope.itemsPerPage = (nit <= 0 || isNaN(nit)) ? 0 : nit;
         if (firstLoad) {
             $scope.pageChangedFunction({

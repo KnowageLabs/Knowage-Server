@@ -1,10 +1,10 @@
-<md-dialog aria-label="Outboung Manager"   ng-cloak style="min-width:90%; min-height:90%;">
-  	<form name="newBMForm" layout="column" flex>
+<md-dialog aria-label="Outboung Manager"  layout="column" ng-cloak style="width:90%; height:90%;">
   	<md-toolbar>
       <div class="md-toolbar-tools">
         <h2>{{translate.load('sbi.meta.model.business.inbound')}}</h2>
        </div>
     </md-toolbar>
+  	<form name="newBMForm" layout="column" flex>
     <md-dialog-content flex> 
           <div class="md-dialog-content"> 
    			<md-input-container class="md-block"> 
