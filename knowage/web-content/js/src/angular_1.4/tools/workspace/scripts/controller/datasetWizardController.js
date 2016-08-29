@@ -38,12 +38,28 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	 * 
 	 * 'step2ValidationFirstTime' - if the user tries at least once to validate the Step 2 (with or without a success), this 
 	 * property will contain the value of 'false'. This will indicate that the Step 2 "Valid" column can change its state (can
-	 * refresh the state of the validity of the particular type (for some metadata column).
-	 * 
+	 * refresh the state of the validity of the particular type (for some metadata column).	 * 
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.step2ValidationErrors = null;
 	$scope.step2ValidationFirstTime = true;
+	
+	/**
+	 * The metadata of the already uploaded file. It will contain up-to-date state of the dataset metadata, namely it will keep
+	 * all changes that the user provided for the metadata of the current dataset (whether it change them or not). When the new
+	 * file is uploaded for the current (already existing) dataset, this variable will be refreshed with the new content (the
+	 * default one for that file).
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.metaDataCopy = null;
+	
+	/**
+	 * The name of the newly uploaded file for the current dataset. It will server for comparing with the old file name in order
+	 * to keep or reset the metadata of the previous file that was uploaded. Namely, when the file is changed (a new one is uploaded
+	 * the metadata should be reset (the service should be called and the new metadata should be returned and applied).
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.changedFileName = null;
 	
 	/**
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -81,7 +97,16 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		 * from the Step 2 and then again forward to the Step 2. Remember the metadata that user set last time.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		$scope.dataset.meta!="[]" ? $scope.metaDataCopy = angular.copy($scope.dataset.meta) : $scope.metaDataCopy=null;
+		$scope.dataset.meta!="[]" ? $scope.metaDataCopy = angular.copy($scope.dataset.meta) : $scope.metaDataCopy = null;
+		
+		/**
+		 * If we open the dataset wizard for the current dataset for the first time, set the dataset file name keeper
+		 * to the name of the just opened dataset.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		if ($scope.changedFileName == null) {
+			$scope.changedFileName = $scope.dataset.fileName;
+		}
 		
 		$scope.dataset.meta = JSON.stringify($scope.dataset.meta);
 		
@@ -122,36 +147,56 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					 * retrieve the metadata.
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
-					if ($scope.metaDataCopy!=null && $scope.metaDataCopy.length>1) {
+					var isMetaDataCopyArray = Array.isArray($scope.metaDataCopy);
+					
+					/**
+					 * criteria1 - if the metaDataCopy (and at the same time current meta data) is not an array (it is an object) and
+					 * it is not a null (reset to the initial value) - it contains the current metadata (columns and dataset).
+					 * criteria2 - if the metaDataCopy (and at the same time current meta data) is an array (it is not an object) and
+					 * it is not of length of zero - it contains the current metadata (columns and dataset).
+					 * criteria3 - if the file is not changed (if the uploaded file is the same as before).
+					 */
+					var criteria1 = !isMetaDataCopyArray && $scope.metaDataCopy != null;
+					var criteria2 = isMetaDataCopyArray && $scope.metaDataCopy.length>0;
+					var criteria3 = $scope.changedFileName == $scope.dataset.fileName;
+					
+					if ((criteria1 || criteria2) && criteria3) {
 						$scope.dataset.meta = angular.copy($scope.metaDataCopy);
 					}
 					else {
-						//set meta to empty
-						$scope.dataset.meta=[];
-						angular.copy(response.data.meta,$scope.dataset.meta);
+						// Reset the metadata
+						$scope.dataset.meta = {};
+						$scope.dataset.meta = angular.copy(response.data.meta);
+						$scope.changedFileName = $scope.dataset.fileName;
 					}
-					
+			
 					angular.copy(response.data.datasetColumns,$scope.datasetColumns);
+					
 					$scope.prepareMetaForView();
 					$scope.prepareDatasetForView();
 					
 					// Set a flag to indicate that we are not changing uploaded file any more (the 'Change file' button will appear when returning back to the Step 1.
 					$scope.changingFile = false;
+					
 				}
 				else {
+					
 					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
 					// Reset the meta after first unsuccessful try to go to Step 2 (danristo)
 					$scope.dataset.meta = [];
 					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
+					
 				}
 			}, 
 				
 			function errorCallback(response) {
-			// called asynchronously if an error occurs
-			// or server returns response with an error status.
+				
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
 				console.info("[FAILURE]: The form cannot be submitted because of some failure.");
 				console.log(response);
 				sbiModule_messaging.showErrorMessage("Failure!", sbiModule_translate.load('sbi.generic.failure'));
+				
 			}
 		);
 	}
@@ -251,7 +296,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					$scope.resultMetaDataStep2 = [];
 					$scope.resultRowsStep2 = [];
 					angular.copy(response.data.metaData.fields,$scope.resultMetaDataStep2);
-					
+										
 					// Take all results (pure data) for rows of the Angular table
 					angular.copy(response.data.rows,$scope.resultRowsStep2);
 					$scope.collectHeadersForStep3Preview();
@@ -338,7 +383,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		params.isTech = false;
 		params.showOnlyOwner=true;
 		
-		console.log($scope.dataset);
+//		console.log($scope.dataset);
 			
 		/*sbiModule_restServices.promisePost("selfservicedataset","save?SBI_EXECUTION_ID=-1&isTech=false&showOnlyOwner=true&showDerivedDataset=false","",str)
 			.then(function(response) {
@@ -372,7 +417,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					for(var p in obj)
 						str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
 					
-					console.log(str.join("&"));
+//					console.log(str.join("&"));
 					return str.join("&");
 					
 				},
@@ -381,7 +426,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		.then
 		(
 			function successCallback(response) {
-				console.log(response);
+
 				if (!response.data.errors) {
 				
 					console.info("[SUCCESS]: The Step 4 form is submitted successfully. The file dataset is saved");
@@ -398,7 +443,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
 					$scope.closeDatasetCreateDialog();
-					$scope.reloadMyData();
+					$scope.reloadMyDataFn();
 					
 					/**
 					 * If the ID value of the response data is negative (-1), that means that we edited (changed, modified) an existing file dataset.
@@ -720,7 +765,8 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				var invalidType = $scope.step2ValidationErrors!=null && $scope.step2ValidationErrors[0]['column_'+i] && $scope.step2ValidationErrors[0]['column_'+i]!="";
 				//{{translate.load('')}}
 				
-				var msg = $scope.step2ValidationErrors[0]["column_"+i] ? $scope.step2ValidationErrors[0]["column_"+i] : "sbi.workspace.dataset.wizard.metadata.validation.success.title";
+				// If type is invalid and there are validation errors in response.
+				var msg = invalidType && $scope.step2ValidationErrors[0]["column_"+i] ? $scope.step2ValidationErrors[0]["column_"+i] : "sbi.workspace.dataset.wizard.metadata.validation.success.title";
 				
 				var invalidColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-times fa-1x" class="invalidTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
 				var validColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-check fa-1x" class="validTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';

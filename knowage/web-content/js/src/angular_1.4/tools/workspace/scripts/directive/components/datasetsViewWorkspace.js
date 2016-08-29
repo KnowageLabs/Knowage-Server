@@ -192,7 +192,8 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			sbiModule_restServices.promiseDelete("1.0/datasets",label)
 			.then(function(response) {
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.delete.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));
-				$scope.reloadMyData();
+
+				$scope.reloadMyDataFn();				
 				$scope.selectDataset(undefined);
 				
 				/**
@@ -718,7 +719,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     /**
      * function that is called after adding new dataset, to syncronize model
      */
-    $scope.reloadMyData=function(){
+    $scope.reloadMyDataFn = function() {
     	
     	$scope.loadNotDerivedDatasets();
 
@@ -840,9 +841,6 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		      locals:{ckan:ckan }
 		    })
 	}
-	
-	
-	
 	
 	$scope.editCkan=function(ckan){
 		//console.log(ckan);

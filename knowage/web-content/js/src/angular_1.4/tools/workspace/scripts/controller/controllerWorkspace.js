@@ -178,6 +178,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 
 		$scope.dataset.fileType = dataset!=undefined ? dataset.fileType : "";
 		$scope.dataset.fileName = dataset!=undefined ? dataset.fileName : "";
+		$scope.datasetInitialFileName = $scope.dataset.fileName;
 		
 		$scope.limitPreviewChecked = false;
 		
