@@ -1,3 +1,4 @@
+
 <%--
 Knowage, Open Source Business Intelligence suite
 Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
@@ -174,9 +175,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-input-container>
 
 
-					<div layout="row"   class="chipsNewWordDiv">
+					<div layout="row"   class="chipsNewWordDiv" flex>
 		
-						<md-input-container class="input-chips-container md-block" ng-class="{ 'md-input-has-value-copy' : ctrl.newWord.LINK.length > 0  }">
+						<md-input-container flex class="input-chips-container md-block" ng-class="{ 'md-input-has-value-copy' : ctrl.newWord.LINK.length > 0  }">
 							<label>{{translate.load("sbi.glossary.link");}}</label>
 							<div id="chipsTree" ui-tree="ctrl.TreeOptionsChips"
 								data-drag-enabled="true" data-drag-delay="500"
