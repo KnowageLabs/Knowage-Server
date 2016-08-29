@@ -20,6 +20,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.bmImportingShow;
 	$scope.bmCWMProcessingShow;
 	$scope.bmCWMImportingShow;
+	$scope.bmCWMDisableImportButton = true;
+	
 	$scope.isNew;
 	$scope.metaWebFunctionality=false;
 	
@@ -525,6 +527,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		
 		$scope.fileCWMChange = function(){
 			$scope.fileCWMClicked = true;  // tells that file input has been clicked
+			$scope.bmCWMDisableImportButton = false;
+
 		}
 		
 	
@@ -616,6 +620,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			if( $scope.fileObjCWM.fileName !== undefined){
 				$mdDialog.show(confirm).then(function() {
 					$scope.bmCWMImportingShow = true;
+					$scope.bmCWMDisableImportButton = true;
 					//Upload file
 					multipartForm.post("2.0/metadata/"+bmId+"/importCWM",$scope.fileObjCWM).success(
 
@@ -631,11 +636,13 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 									$scope.fileObjCWM = {};
 								}
 								$scope.bmCWMImportingShow = false;
+								$scope.bmCWMDisableImportButton = true;
 
 							}).error(function(data, status, headers, config) {
 								console.log("[UPLOAD]: FAIL!"+status);
 								sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.ds.failedToUpload"), 'Error');
 								$scope.bmCWMImportingShow = false;
+								$scope.bmCWMDisableImportButton = true;
 							});
 				});
 

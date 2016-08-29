@@ -211,7 +211,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<label flex  class="buttonLabel">{{translate.load("sbi.metadata.cwm.import.file.upload")}}:</label>
 		        <file-upload flex ng-model="fileObjCWM" id="cwmFile" ng-click="fileCWMChange();checkCWMChange()"></file-upload>
             	<div flex>
-               		 <md-button  ng-click="importCWMFile(selectedBusinessModel.id)" ng-disabled="bmCWMImportingShow" class="md-raised">{{translate.load("sbi.metadata.cwm.import.button")}}</md-button>
+               		 <md-button  ng-click="importCWMFile(selectedBusinessModel.id)" ng-disabled="bmCWMDisableImportButton" class="md-raised">{{translate.load("sbi.metadata.cwm.import.button")}}</md-button>
             	</div>
                	
 
