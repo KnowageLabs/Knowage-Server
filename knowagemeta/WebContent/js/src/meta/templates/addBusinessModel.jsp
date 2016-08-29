@@ -1,12 +1,12 @@
-<md-dialog aria-label="add Business model" ng-cloak style="min-width:90%; min-height:90%;">
+<md-dialog aria-label="add Business model" layout="column" ng-cloak style="min-width:90%; min-height:90%;height:90%;">
 	<form name="newBMForm" layout="column" flex>
 		<md-toolbar>
 			<div class="md-toolbar-tools">
 				<h2>{{translate.load("sbi.meta.new.businessmodel")}}</h2>
 			</div>
 		</md-toolbar>
-		<md-dialog-content flex > 
-		 <div class="md-dialog-content" layout="column">
+		<md-dialog-content flex layout="column"> 
+		 <div class="md-dialog-content" layout="column" flex>
 				<md-input-container    class="md-block"  >
 					<label>{{translate.load("sbi.generic.name")}}</label>
 					<input ng-model="tmpBnssModel.name" required>

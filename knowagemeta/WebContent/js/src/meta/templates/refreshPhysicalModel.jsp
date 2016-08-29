@@ -1,4 +1,4 @@
-<md-dialog aria-label="refresh physical model" ng-cloak style="min-width:90%; min-height:90%;">
+<md-dialog aria-label="refresh physical model" layout="column" ng-cloak style="min-width:90%; min-height:90%;height:90%;">
 	<form name="refreshPMForm" layout="column" flex>
 		<md-toolbar>
 			<div class="md-toolbar-tools">
