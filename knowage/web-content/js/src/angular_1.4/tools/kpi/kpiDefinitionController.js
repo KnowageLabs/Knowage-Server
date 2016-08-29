@@ -434,8 +434,13 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.resetMatrix = function(){
 		$scope.kpi.cardinality.measureList=[];
 		if(Object.keys($scope.kpi.definition).length!=0){
-			var definition = $scope.kpi.definition;
-			sbiModule_restServices.promisePost("1.0/kpi", 'buildCardinalityMatrix',$scope.kpi.definition.measures).then(
+			var definition = {};
+			for(var i=0;i<$scope.kpi.definition.measures.length;i++ ){
+				
+				var meas = $scope.kpi.definition.measures[i];
+				definition[i] = meas;
+			}
+			sbiModule_restServices.promisePost("1.0/kpi", 'buildCardinalityMatrix',definition).then(
 					function(response) {
 						if (response.data.hasOwnProperty("errors")) {
 							$scope.showAction(response.data);

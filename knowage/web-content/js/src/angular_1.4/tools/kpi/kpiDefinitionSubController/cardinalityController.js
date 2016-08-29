@@ -75,7 +75,13 @@ function kpiDefinitionCardinalityControllerFunction($scope,sbiModule_translate,s
 	};
 	
 	$scope.retryNewAttributes = function(){
-		sbiModule_restServices.promisePost("1.0/kpi", 'buildCardinalityMatrix',$scope.kpi.definition.measures)
+		var definition = {};
+		for(var i=0;i<$scope.kpi.definition.measures.length;i++ ){
+			
+			var meas = $scope.kpi.definition.measures[i];
+			definition[i] = meas;
+		}
+		sbiModule_restServices.promisePost("1.0/kpi", 'buildCardinalityMatrix',definition)
 				.then(function(response){ 
 					for(var i=0;i<response.data.length;i++){
 						//check if missing attribute
