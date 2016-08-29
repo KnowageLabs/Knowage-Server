@@ -112,7 +112,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
 	 */
 	@Override
@@ -125,7 +125,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.GenericServlet#destroy()
 	 */
 	@Override
@@ -136,7 +136,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest , javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
@@ -569,6 +569,10 @@ public class BirtReportServlet extends HttpServlet {
 			templateFileName = "report";
 		IRenderOption renderOption = null;
 
+		Map userProfileAttrs = UserProfileUtils.getProfileAttributes(profile);
+		Map context = getTaskContext(userId, params, request, resPathJNDI, userProfileAttrs);
+		// Map context = BirtUtility.getAppContext(request);
+
 		if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.PDF_RENDER_FORMAT)) {
 			renderOption = new PDFRenderOption();
 			renderOption.setOutputFormat(IBirtConstants.PDF_RENDER_FORMAT);
@@ -623,7 +627,7 @@ public class BirtReportServlet extends HttpServlet {
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".ps");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(DataExtractionParameterUtil.EXTRACTION_FORMAT_CSV)) {
 			logger.debug(" Output format parameter is CSV. Create document obj .");
-			prepareCSVRender(reportParams, request, design, userId, documentId, profile, kpiUrl, response);
+			prepareCSVRender(reportParams, request, design, userId, documentId, profile, kpiUrl, response, context);
 			return;
 
 		} else {
@@ -635,9 +639,6 @@ public class BirtReportServlet extends HttpServlet {
 			response.setHeader("Content-Type", "text/html");
 		}
 
-		Map userProfileAttrs = UserProfileUtils.getProfileAttributes(profile);
-		Map context = getTaskContext(userId, params, request, resPathJNDI, userProfileAttrs);
-		// Map context = BirtUtility.getAppContext(request);
 		task.setAppContext(context);
 		renderOption.setOutputStream(response.getOutputStream());
 		task.setRenderOption(renderOption);
@@ -757,6 +758,8 @@ public class BirtReportServlet extends HttpServlet {
 
 	/**
 	 * This method injects the HTML footer into the report HTML output. See injectHTMLHeader method
+	 * 
+	 * @param context
 	 */
 	/*
 	 * commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library protected void
@@ -769,7 +772,7 @@ public class BirtReportServlet extends HttpServlet {
 	 */
 
 	private void prepareCSVRender(Map reportParams, HttpServletRequest request, IReportRunnable design, String userId, String documentId,
-			IEngUserProfile profile, String kpiUrl, HttpServletResponse response) throws Exception {
+			IEngUserProfile profile, String kpiUrl, HttpServletResponse response, Map context) throws Exception {
 		logger.debug("IN");
 
 		// Create task to run the report
@@ -790,7 +793,6 @@ public class BirtReportServlet extends HttpServlet {
 
 		String nameFile = getJRTempDirName(getServletContext(), executionId) + "csvreport.rptdocument";
 
-		Map context = BirtUtility.getAppContext(request);
 		CSVtask.setAppContext(context);
 
 		// Run the report and create the rptdocument
