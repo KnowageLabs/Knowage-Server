@@ -149,7 +149,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 				});
 			};
 			
-			ctr.listDocuments = function(clickOnSelectedDocFunction){
+			ctr.listDocuments = function(clickOnSelectedDocFunction,item){
 				$mdDialog.show({
 					controller: DialogController,
 					templateUrl: 'dialog1.tmpl.html',
@@ -165,17 +165,31 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 					scope.closeDialog = function() {
 						$mdDialog.hide();
 					};
+					scope.changeDocPage=function(searchValue, itemsPerPage, currentPageNumber , columnsSearch,columnOrdering, reverseOrdering){
+						if(searchValue==undefined || searchValue.trim().lenght==0 ){
+							searchValue='';
+						}
+						var item="Page="+currentPageNumber+"&ItemPerPage="+itemsPerPage+"&label=" + searchValue;
+						scope.loadListDocuments(item);
+					};
 					scope.clickOnSelectedDoc = clickOnSelectedDoc;
 					scope.translate = translate;
 					scope.loading = true;
-					sbiModule_restServices.promiseGet("2.0/documents", "listDocument").then(
-					function(response){
-						scope.loading = false;
-						scope.listDoc = response.data.item;},
-					function(response){
-							sbiModule_restServices.errorHandler(response.data,"")
-						}
-					) 
+					scope.totalCount = 0
+					scope.loadListDocuments = function(item){
+						sbiModule_restServices.promiseGet("2.0/documents", "listDocument",item).then(
+								function(response){
+									scope.loading = false;
+									scope.listDoc = response.data.item;
+									scope.totalCount = response.data.itemCount;
+								},
+									
+								function(response){
+										sbiModule_restServices.errorHandler(response.data,"")
+									}
+								) 
+					}
+				
 				}
 			};
 			
@@ -222,7 +236,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 					}
 				}
 			};
-			
+		
 			ctr.getTypeLabel = function(type){
 				if(type==0){
 					return s.translate.load('sbi.crossnavigation.output');

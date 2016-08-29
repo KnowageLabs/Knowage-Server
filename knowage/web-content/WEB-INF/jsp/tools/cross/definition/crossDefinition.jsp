@@ -104,14 +104,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</div>
 	</md-toolbar>
 	 
-	<md-content  flex layout style="position: relative;">
-		<angular-table flex
-		id="docList"  style="position: absolute;"
+	<md-content  flex layout>
+		<angular-table flex	id="docList" 
 			ng-model="listDoc" item-name="DOCUMENT_NAME"
 			show-item-tooltip="false" highlights-selected-item="true"
 			columns='[{"label":"Label","name":"DOCUMENT_NM"}, {"label":"Name","name":"DOCUMENT_NAME"}, {"label":"Description","name":"DOCUMENT_DESCR"}, {"label":"Author","name":"DOCUMENT_AUTH"}]'
 			show-search-bar="true"
-			no-pagination="true" scope-functions = tableFunction 
+			columns-search='["DOCUMENT_NM","DOCUMENT_NAME"]'
+			total-item-count = totalCount
+			scope-functions = tableFunction 
+			page-changed-function="changeDocPage(searchValue, itemsPerPage, currentPageNumber , columnsSearch,columnOrdering, reverseOrdering)"
+
 			click-function="clickOnSelectedDoc(item,listId,closeDialog)">
 		</angular-list>
 	</md-content>	 
@@ -136,7 +139,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					show-search-bar=true
 					highlights-selected-item=true
 					click-function="ctrl.navigationList.loadSelectedNavigation(item)"
-					speed-menu-option="ctrl.navigationList.dsSpeedMenu"					
+					speed-menu-option="ctrl.navigationList.dsSpeedMenu"
+										
 				>						
 			</angular-table>
 			<div ng-show="ctrl.navigationList.loadingSpinner" class="loadingSpinner">
