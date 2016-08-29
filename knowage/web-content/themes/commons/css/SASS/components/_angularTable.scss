@@ -393,10 +393,9 @@ md-radio-button ._md-container {
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
   angular-table{
-    width: auto !important;
-    .tablePaginationFix {
-        flex: 1;
-        box-sizing: border-box;
-    }
+     
+    #angularFullTableContentBox{
+	overflow:auto;
+	}
   }
 }
