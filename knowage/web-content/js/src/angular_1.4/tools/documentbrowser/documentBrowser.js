@@ -1,4 +1,3 @@
-angular.module('documentBrowserModule')
 .controller('documentBrowserController', 
 		[ '$mdMedia', '$scope', '$http', '$mdSidenav', 
 		  '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 
@@ -374,7 +373,8 @@ function documentBrowserFunction(
 
 app.filter("asDate", function () {
     return function (input) {
-        return new Date(input);
+        checkedInput = (input != null) ? input.replace(/-/g, '/') : input;
+        return new Date(checkedInput);
     }
 });
 
