@@ -9,7 +9,8 @@
 					</div>
 				</md-toolbar> 
 					<md-list class="md-dense"  flex>
-        				<md-list-item id="source-{{$index}}"   ng-repeat="item in sourceModel"  draggable item="item" ng-click="null">
+        				<md-list-item id="source-{{$index}}" ciao  ng-repeat="item in sourceModel"  draggable item="item" ng-click="$event.stopPropagation();$event.preventDefault();">
+<!--         				 <md-icon md-font-icon=" fa fa-plus"></md-icon> -->
         				 {{item[sourceName]}}
         				 <md-divider ng-if="!$last"></md-divider>
 			    		</md-list-item>

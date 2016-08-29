@@ -80,22 +80,50 @@ function associatorDirectiveController($scope){
 
 	}
 }
-associatorDirective.directive('draggable', function() {
+associatorDirective.directive('draggable', function( $window) {
     return {
         scope: {
         	item: '='
         },
         link: function(scope, element) {
-	        // this gives us the native JS object
+
+        	//check if is IE
+        	//detecting IE
+        	var isIE=false;
+        	var userAgent = $window.navigator.userAgent;
+    		var detectIEregexp = "";
+    		if (userAgent.indexOf('MSIE') != -1){ // IE 9/10
+    			detectIEregexp = /MSIE (\d+\.\d+);/ //test for MSIE x.x
+
+    		} else if (
+    				/Trident.*rv[ :]*(\d+\.\d+)/.test(userAgent)
+    				&& !(/Edge(\/)/.test(userAgent))
+    		){ // IE 11 // if no "MSIE" string in userAgent
+    			detectIEregexp = /Trident.*rv[ :]*(\d+\.\d+)/;
+    		} else { // IE Edge
+    			detectIEregexp = /Mozilla.*Edge\/(12.\d+)/;
+    		}
+
+
+    		if (detectIEregexp.test(userAgent)){ //if some form of IE
+    			isIE=true;
+    		 }
+
+        	// this gives us the native JS object
 	        var el = element[0];
 
-	        el.draggable = true;
+	        if(!isIE){
+	        	el.draggable=true
+	        }else{
+	        	element.find("button")[0].draggable=true;
+	        }
+
 
 	        el.addEventListener(
 	            'dragstart',
 	            function(e) {
 	                e.dataTransfer.effectAllowed = 'move';
-	                e.dataTransfer.setData('itemIndex', this.id.split("-")[1]);
+	                e.dataTransfer.setData('text', this.id.split("-")[1]);
 	                this.classList.add('drag');
 	                return false;
 	            },
@@ -152,7 +180,7 @@ associatorDirective.directive('droppable', function($timeout) {
             el.addEventListener(
             	    'dragover',
             	    function(ev) {
-            	    	var data = ev.dataTransfer.getData("itemIndex");
+            	    	var data = ev.dataTransfer.getData("text");
 
             	    	var accept=true;
         			    if(scope.$parent.dragOptions && scope.$parent.dragOptions.hasOwnProperty("accept")){
@@ -201,7 +229,7 @@ associatorDirective.directive('droppable', function($timeout) {
         		        if (ev.stopPropagation) ev.stopPropagation();
 
         		        this.classList.remove('over');
-        		        var data = ev.dataTransfer.getData("itemIndex");
+        		        var data = ev.dataTransfer.getData("text");
 
         			    var executeDrop=true;
         			    if(scope.$parent.dragOptions && scope.$parent.dragOptions.hasOwnProperty("beforeDrop")){

@@ -1,4 +1,4 @@
-<md-dialog aria-label="Calculated field Manager"   ng-cloak layout="column" style="min-width:90%; min-height:90%;">
+<md-dialog aria-label="Calculated field Manager"   ng-cloak layout="column" style="min-width:90%; min-height:90%;height:90%;">
   	<md-toolbar>
       <div class="md-toolbar-tools">
         <h2>{{translate.load('sbi.meta.model.calculatedfield')}}</h2>

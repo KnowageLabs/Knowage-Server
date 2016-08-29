@@ -88,7 +88,7 @@ var translatedModel=<%= translatedModel%>;
 		 <md-button ng-click="closeMetaDefinition()">{{translate.load("sbi.general.close")}}</md-button>
 		</extra-button>
 		<detail id="metaWebView" label="bmName" ng-controller="metaModelCreationController" save-function="saveModel" >
-			<md-tabs flex>
+			<md-tabs flex class="metaTabs">
 				<md-tab id="businessTab">
 					<md-tab-label>{{translate.load("sbi.meta.model.business")}}</md-tab-label>
 					<md-tab-body >
@@ -159,4 +159,12 @@ margin: 0!important
 .md-scroll-mask {
     background-color: rgba(0, 0, 0, 0.5) !important;
     }
+    
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+
+	md-tabs.metaTabs>md-tabs-content-wrapper>md-tab-content>div{
+	height: 100%;
+	}
+
+}
 </style>
