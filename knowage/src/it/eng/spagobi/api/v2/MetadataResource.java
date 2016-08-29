@@ -115,6 +115,13 @@ public class MetadataResource extends AbstractSpagoBIResource {
 	public static final String DATABASE_SOURCE_TYPE = "database";
 	public static final String METADATA_DIR = "metadata";
 
+	public static final String KNOWAGE_MODEL_URI = "it.eng.knowage";
+	public static final String SPAGOBI_MODEL_URI = "it.eng.spagobi";
+	public static final String KNOWAGE_MODEL_URI_SLASH = "it/eng/knowage";
+	public static final String SPAGOBI_MODEL_URI_SLASH = "it/eng/spagobi";
+	public static final String KNOWAGE_MODEL_INITALIZER = "value=\"StandardKnowageBusinessModelInitializer\"";
+	public static final String SPAGOBI_MODEL_INITALIZER = "value=\"StandardSpagobiBusinessModelInitializer\"";
+
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -153,6 +160,8 @@ public class MetadataResource extends AbstractSpagoBIResource {
 				logger.error("Metamodel file not found inside datamart.jar");
 				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(), "Metamodel file not found inside datamart.jar");
 			}
+			// compatibility check and change for Meta Web
+			metamodelTemplateBytes = checkCompatibility(metamodelTemplateBytes);
 
 			// 2 - Read the metamodel and convert to object
 			ByteArrayInputStream bis = new ByteArrayInputStream(metamodelTemplateBytes);
@@ -294,11 +303,21 @@ public class MetadataResource extends AbstractSpagoBIResource {
 				logger.error("datamart.jar not found for metamodel with id " + businessModelId);
 				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(), "datamart.jar not found for metamodel with id " + businessModelId);
 			}
-			byte[] metamodelTemplateBytes = getModelFileFromJar(modelContent);
+			byte[] metamodelTemplateBytes = null;
+			// first, try to get directly the file model (.sbimodel) if created with MetaWeb
+			metamodelTemplateBytes = modelContent.getFileModel();
+			if (metamodelTemplateBytes == null) {
+				// old style, search the .sbimodel inside the datamart.jar
+				metamodelTemplateBytes = getModelFileFromJar(modelContent);
+
+			}
+
 			if (metamodelTemplateBytes == null) {
 				logger.error("Metamodel file not found inside datamart.jar");
 				throw new SpagoBIRestServiceException(null, buildLocaleFromSession(), "Metamodel file not found inside datamart.jar");
 			}
+			// compatibility check and change for Meta Web
+			metamodelTemplateBytes = checkCompatibility(metamodelTemplateBytes);
 
 			// 2 - Read the metamodel and convert to object
 			ByteArrayInputStream bis = new ByteArrayInputStream(metamodelTemplateBytes);
@@ -675,6 +694,15 @@ public class MetadataResource extends AbstractSpagoBIResource {
 		// toReturn.setDataSource(smDS);
 
 		return toReturn;
+	}
+
+	// convert a model with knowage prefix to spagobi prefix (legacy for model created with Meta Web)
+	public static byte[] checkCompatibility(byte[] byteModel) {
+		String metaModelSerialized = new String(byteModel);
+		metaModelSerialized = metaModelSerialized.replace(KNOWAGE_MODEL_URI, SPAGOBI_MODEL_URI);
+		metaModelSerialized = metaModelSerialized.replace(KNOWAGE_MODEL_URI_SLASH, SPAGOBI_MODEL_URI_SLASH);
+		metaModelSerialized = metaModelSerialized.replace(KNOWAGE_MODEL_INITALIZER, SPAGOBI_MODEL_INITALIZER);
+		return metaModelSerialized.getBytes();
 	}
 
 }
