@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
@@ -107,11 +107,9 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 			}
 
 			if (fileModel != null) {
-				File sbimodel = new File(binDir + File.separator + SBI_MODEL_FILE_NAME);
+				String sbimodelName = binDir + File.separator + o.getName() + "." + SBI_MODEL_FILE_NAME;
+				File sbimodel = new File(sbimodelName);
 				FileUtils.writeByteArrayToFile(sbimodel, fileModel);
-
-				File sbimodel2 = new File(srcDir + File.separator + o.getName() + "." + SBI_MODEL_FILE_NAME);
-				FileUtils.writeByteArrayToFile(sbimodel2, fileModel);
 			}
 
 			FileUtilities.copyFile(new File(srcDir, "META-INF/persistence.xml"), new File(binDir, "META-INF"));
