@@ -118,11 +118,6 @@ md-toolbar.md-knowage-theme .md-toolbar-tools .md-button:not[disabled] {
 
 // Input fields
 
-md-input-container.md-knowage-theme  {
-	.md-input {
-		border-color: $inputLineColor;
-	}
-}
 md-input-container.md-knowage-theme .md-errors-spacer {
     min-height: 0;
 }
