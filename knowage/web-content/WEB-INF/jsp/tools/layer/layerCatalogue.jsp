@@ -141,8 +141,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					{{translate.load("sbi.tools.layer.baseLayer")}}
 				</md-checkbox> </md-input-container>
 
-
-				<div flex=25>
+			<div layout="row">
+			<div layout="column" flex>
+				<div flex>
 					<md-input-container class="md-block"> <label>{{translate.load("sbi.tools.layer.props.type")}}</label>
 					<md-select
 						placeholder='{{translate.load("sbi.generic.select")}} {{translate.load("sbi.tools.layer.props.type")}}'
@@ -152,10 +153,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						ng-repeat="type in listType" value="{{type.value}}">{{type.label}}</md-option>
 					</md-select> </md-input-container>
 				</div>
-			<div style="margin-top: 0px; margin-left: 15px;">
-				<md-select-label ng-show="!flagtype">{{selectedLayer.type}}</md-select-label>
+				<div flex style="margin-top: 0px; margin-left: 15px;">
+					<md-select-label ng-show="!flagtype">{{selectedLayer.type}}</md-select-label>
+				</div>
+				</div>
+				<div ng-if="selectedLayer.type == 'File'" flex="50">
+					<file-upload  flex id="layerFile" ng-model="selectedLayer.layerFile"  ng-init ="selectedLayer.layerFile = {}"></file-upload>
+				</div>
+				<span flex></span>
 			</div>
-
+			<div layout="row" layout-wrap ng-show="pathFileCheck">
+				<p>
+					{{translate.load("sbi.layer.pathfile")}}: <b>{{selectedLayer.pathFile}}</b>
+				</p>
+			</div>
 				<div flex=100>
 					<md-input-container class="md-block"> <label>{{translate.load("sbi.tools.layer.props.label")}}</label>
 					<input class="input_class" ng-model="selectedLayer.layerLabel"
@@ -185,26 +196,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						required type="number" min="0"> </md-input-container>
 				</div>
 			<br>
-			<div layout="row" layout-wrap ng-show="pathFileCheck">
-				<p>
-					{{translate.load("sbi.layer.pathfile")}}: <b>{{selectedLayer.pathFile}}</b>
-				</p>
-			</div>
+
 
 			<!-- inizio campi variabili -->
-			<div layout="row" layout-wrap ng-if="selectedLayer.type == 'File'">
-				<!--<div flex=3 style="margin-top: 10px;">
-						<md-icon md-font-icon="fa fa-upload"></md-icon>
-					</div>
-					  -->
-				<div flex=100>
-					<md-input-container class="md-block"> <input
-						id="layerFile" ng-model="selectedLayer.layerFile" type="file"
-						fileread="selectedLayer.layerFile" accept=".json"> </md-input-container>
-
-				</div>
-			</div>
-
 			<div layout="row" layout-wrap
 				ng-if="selectedLayer.type == 'WFS' || selectedLayer.type == 'WMS' || selectedLayer.type == 'TMS' ">
 				<!--<div flex=3 style="margin-top: 25px;">

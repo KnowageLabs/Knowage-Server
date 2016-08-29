@@ -5,7 +5,9 @@
 var scripts = document.getElementsByTagName("script")
 var currentScriptPathFileUpload = scripts[scripts.length-1].src;
 
-angular.module('file_upload', [ 'ngMaterial'])
+var defaultFileMaxSize = 10 * 1024 * 1024; // 10 MB
+
+angular.module('file_upload', [ 'ngMaterial', 'sbiModule'])
 .directive('fileUpload',
 		function($compile) {
 	return {
@@ -17,6 +19,7 @@ angular.module('file_upload', [ 'ngMaterial'])
 				, id : "@"
 				, label : '=?'
 				, ngDisabled : '=?'
+				, fileMaxSize : '=?'
 			},
 	    controller: FileUploadControllerFunction,
 	    controllerAs: 'ctrl',
@@ -39,8 +42,28 @@ angular.module('file_upload', [ 'ngMaterial'])
 });
 
 
-function FileUploadControllerFunction($scope,$timeout){
+function FileUploadControllerFunction($scope,$timeout,$mdDialog,sbiModule_translate){
 	$scope.setFile = function (element){
+		
+	var max = $scope.fileMaxSize != undefined ? $scope.fileMaxSize : defaultFileMaxSize;
+		
+		var inputFile = element;
+	    if (inputFile.files && inputFile.files[0].size > max) {
+	        
+	    	$mdDialog.show(
+		      $mdDialog.alert()
+		        .parent(angular.element(document.body))
+		        .clickOutsideToClose(true)
+		        .title('Error')
+		        .textContent('File too large. Max file size is: '+max/1024/1024 + 'MB')
+		        .ariaLabel('File too large')
+		        .ok(sbiModule_translate.load('sbi.general.ok'))
+		    );
+	    	
+	        inputFile.value = null; // Clear the field.
+	        return;
+	    }
+	    
 		$scope.ngModel.file = element.files[0];
 		$scope.fileName = element.files[0] !== undefined ? element.files[0].name : '';
 		$scope.ngModel.fileName = element.files[0] !== undefined ? element.files[0].name : '';

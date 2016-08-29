@@ -1,6 +1,6 @@
 var app = angular.module('layerWordManager', [ 'ngMaterial', 'ui.tree',
                                                'angularUtils.directives.dirPagination', 'ng-context-menu',
-                                               'angular_list', 'angular_table' ,'sbiModule', 'angular-list-detail']);
+                                               'angular_list', 'angular_table' ,'sbiModule', 'angular-list-detail','file_upload']);
 
 
 var EmptyLayer = {
