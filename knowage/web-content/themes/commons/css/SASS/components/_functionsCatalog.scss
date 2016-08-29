@@ -1,4 +1,15 @@
 .kn-functionsCatalog {
+	md-input-container.md-knowage-theme {
+		.md-errors-spacer {
+			min-height: 24px;
+		}
+	}
+	.customCodeMirrorLabel {
+	    -webkit-transform: translate3d(0,6px,0) scale(.75) !important;
+	    transform: translate3d(0,6px,0) scale(.75) !important;
+	    transition: -webkit-transform cubic-bezier(.25,.8,.25,1) .4s,width cubic-bezier(.25,.8,.25,1) .4s !important;
+	    transition: transform cubic-bezier(.25,.8,.25,1) .4s,width cubic-bezier(.25,.8,.25,1) .4s !important;
+	}
 	.functionsChips {
 		border-bottom: none;
 		md-chips-wrap {
@@ -11,5 +22,15 @@
 	.md-headline {
 		clear:both;
 		display: block;
+	}
+	.functionsCard {
+		.md-headline {
+			font-size: $headerFontSize;
+			text-transform: uppercase;
+		}
+		.smallGrey {
+		  color: lighten($smallTextColor,10%);
+		  font-size: $smallFontSize;
+		}
 	}
 }

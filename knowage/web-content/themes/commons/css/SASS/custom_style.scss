@@ -619,6 +619,16 @@ md-menu-content._md-menu-bar-menu .divider {
 md-menu-content._md-menu-bar-menu.md-dense md-menu-item.md-indent>md-icon {
   line-height: 20px;
 }
+.noMdError {
+  .md-errors-spacer {
+    min-height: 0 !important;
+  }
+}
+.smallInputs {
+  md-input-container {
+    margin: 10px 0 !important;
+  }
+}
 
 /* IE11 fix */
 
