@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <md-content  layout="column" layout-wrap>	
 	
-
-	<div layout="row" layout-wrap  >
+<div layout="column">	
+	<div layout="row" layout-wrap  flex>
 		<div flex >
 			<md-radio-group layout="row" ng-model="IEDConf.typeSaveUser">
 		      <md-radio-button value="Override" >{{translate.load("sbi.importusers.override");}}</md-radio-button>
@@ -34,16 +34,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</md-input-container>
 		
 	</div>	
-		
-	<md-whiteframe  layout="row" layout-wrap class="sourceTargetToolbar md-whiteframe-1dp" >
-		<p flex="45">{{translate.load('sbi.hierarchies.source');}}</p>
-		<span flex></span>
-		<p flex="45">{{translate.load('sbi.modelinstances.target');}}</p>
-	</md-whiteframe >
-	 <h3>{{translate.load('sbi.importexpuser.notimportuserpresent');}}</h3>
-	<div layout="row" flex>
-			<div flex style="position: relative;" >
-				 <angular-table ng-show="IEDConf.roles.exportedUser.length!=0" id='layerlist' 
+	
+		<md-whiteframe  flex layout="row" layout-wrap class="sourceTargetToolbar md-whiteframe-1dp" >
+			<p flex="45">{{translate.load('sbi.hierarchies.source');}}</p>
+			<span flex></span>
+			<p flex="45">{{translate.load('sbi.modelinstances.target');}}</p>
+		</md-whiteframe >
+		 <h3 flex>{{translate.load('sbi.importexpuser.notimportuserpresent');}}</h3>
+		<div layout="row" flex>
+			<div flex  >
+				 <angular-table ng-show="IEDConf.roles.exportingUser.length!=0 || IEDConf.roles.exportedUser.length!=0" id='layerlist' 
 					ng-model=IEDConf.roles.exportedUser
 					columns='[{"label":"","name":"userId"}]'
 					columnsSearch='["userId"]' 
@@ -77,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			 </div>
 			<div flex style="position: relative;" >
 	
-				<angular-table ng-show="IEDConf.roles.exportingUser.length!=0" id='layerlist2' 
+				<angular-table ng-show="IEDConf.roles.exportingUser.length!=0 || IEDConf.roles.exportedUser.length!=0"  id='layerlist2' 
 				ng-model=IEDConf.roles.exportingUser
 				columns='[{"label":"","name":"userId"}]'
 				columnsSearch='["userId"]' 
@@ -93,5 +93,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 			</div>
 	</div>
-
+	</div>
 </md-content>
