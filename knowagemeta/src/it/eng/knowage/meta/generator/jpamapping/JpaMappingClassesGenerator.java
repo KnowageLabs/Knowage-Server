@@ -107,6 +107,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 			}
 
 			if (fileModel != null) {
+				// model file is copied inside bin folder so that it will be included in jar
 				String sbimodelName = binDir + File.separator + o.getName() + "." + SBI_MODEL_FILE_NAME;
 				File sbimodel = new File(sbimodelName);
 				FileUtils.writeByteArrayToFile(sbimodel, fileModel);
