@@ -24,7 +24,7 @@
 			</div>
 			<div flex=50>
 				<md-input-container class="small counter" class="small counter" ng-if="filter.type.valueCd=='FIXED_VALUE'">
-					<label>{{translate.load("sbi.behavioural.lov.details.label")}}</label>
+					<label>{{translate.load("sbi.generic.value")}}</label>
 					<input class="input_class" ng-model="filter.value" required> 
 				</md-input-container>
 				<md-select aria-label="aria-label" ng-model="filter.value"  ng-if="filter.type.valueCd=='TEMPORAL_FUNCTIONS'">
