@@ -75,12 +75,12 @@ geoM.factory('baseLayer', function(geoModule_constant) {
 					"type" : "png",
 					"displayOutsideMaxExtent" : true
 				}
-			},
-			"OSM" : {
-				"type" : "OSM",
-				"category" : "Default",
-				"label" : "OSM"
 			}
+//			,"OSM" : {
+//				"type" : "OSM",
+//				"category" : "Default",
+//				"label" : "OSM"
+//			}
 	};
 
 	return baseLayersConf;
