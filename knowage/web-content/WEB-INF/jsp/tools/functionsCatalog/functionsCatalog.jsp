@@ -148,7 +148,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-content layout="column" >
 				<div layout-gt-xs="row" layout="column">
 				
-					<md-card  class="functionsCard"  ng-repeat="functionType in functionTypesList" ng-click="functionsList=filterByType(functionType)" ng-style="background-image:url({{functionType.valueDescription}})" flex>
+					<md-card  class="functionsCard"  ng-repeat="functionType in functionTypesList" ng-click="functionsList=filterByType(functionType)" ng-style="{'background-image':functionType.valueDescription}" flex>
 						<md-card-content>
 		          				<span class="md-headline ng-binding" flex="">{{functionType.valueCd}}</span>
                                 <span class="md-subhead ng-binding smallGrey" flex="">{{functionType.domainName}}</span>

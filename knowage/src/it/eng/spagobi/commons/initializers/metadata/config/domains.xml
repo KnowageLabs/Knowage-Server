@@ -535,16 +535,16 @@
 		domainCd="FUNCTION_OUTPUT" domainNm="Function output type domain" valueDs="Undefined" />
 		
 	<DOMAIN valueCd="Text Analysis" valueNm="Text Analysis"
-		domainCd="FUNCTION_TYPE" domainNm="Make sense of unstructured text" valueDs="" />	
+		domainCd="FUNCTION_TYPE" domainNm="Make sense of unstructured text" valueDs="url(../../knowage/themes/commons/img/functions_catalog_images/text.png)" />	
 	
 	<DOMAIN valueCd="Machine Learning" valueNm="Machine Learning"
-		domainCd="FUNCTION_TYPE" domainNm="Teach your app to teach himself" valueDs="" />	
+		domainCd="FUNCTION_TYPE" domainNm="Teach your app to teach himself" valueDs="url(../../knowage/themes/commons/img/functions_catalog_images/degree.png)" ></DOMAIN>	
 		
 	<DOMAIN valueCd="Computer Vision" valueNm="Computer Vision"
-		domainCd="FUNCTION_TYPE" domainNm="Identify objects in images" valueDs="themes/commons/img/functions_catalog_images/eye.png" />		
+		domainCd="FUNCTION_TYPE" domainNm="Identify objects in images" valueDs="url(../../knowage/themes/commons/img/functions_catalog_images/eye.png)" ></DOMAIN>		
 			
 	<DOMAIN valueCd="Utilities" valueNm="Utilities"
-		domainCd="FUNCTION_TYPE" domainNm="Ready to use microservices" valueDs="../../themes/commons/img/functions_catalog_images/memory.png" ></DOMAIN>				
+		domainCd="FUNCTION_TYPE" domainNm="Ready to use microservices" valueDs="url(../../knowage/themes/commons/img/functions_catalog_images/memory.png)" ></DOMAIN>				
 			
 	<DOMAIN valueCd="All" valueNm="All"
 		domainCd="FUNCTION_TYPE" domainNm="All kind of functions" valueDs="all.png" />				
