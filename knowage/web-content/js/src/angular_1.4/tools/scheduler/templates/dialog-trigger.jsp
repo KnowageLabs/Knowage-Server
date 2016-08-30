@@ -10,7 +10,13 @@
 			</h2>
 		</div>
 	</md-toolbar>
-	<form layout="column" name="triggerForm" ng-submit="triggerForm.$valid && activityEventCtrl.saveEvent(triggerForm.$valid,true)" class="wordForm" novalidate>
+	<form layout="column" name="triggerForm" class="wordForm" novalidate
+			ng-submit="triggerForm.$valid && activityEventCtrl.saveEvent(triggerForm.$valid,true) &&
+			(activityEventCtrl.selectedDocument.saveassnapshot
+			|| activityEventCtrl.selectedDocument.saveasfile
+			|| activityEventCtrl.selectedDocument.saveasdocument
+			|| activityEventCtrl.selectedDocument.sendtojavaclass
+			|| activityEventCtrl.selectedDocument.sendmail)">
 	<md-dialog-content  layout="column" style="max-height:810px; ">
 	
 		<md-tabs class="mozScroll hideTabs" md-dynamic-height md-border-bottom>
@@ -201,6 +207,14 @@
 						</md-chip-template> 
 					</md-chips>
 					
+					<span class="validation-messages" style="padding: 8px;" ng-hide="activityEventCtrl.selectedDocument.saveassnapshot
+								|| activityEventCtrl.selectedDocument.saveasfile
+								|| activityEventCtrl.selectedDocument.saveasdocument
+								|| activityEventCtrl.selectedDocument.sendtojavaclass
+								|| activityEventCtrl.selectedDocument.sendmail">
+						{{translate.load("sbi.alert.listener.kpi.action.add.new")}}
+					</span>
+				        
 					<span ng-if="!(activityEventCtrl.selectedDocument!=undefined && activityEventCtrl.selectedDocument.length!=0)">
 						{{translate.load("scheduler.jobhasnodocument", "component_scheduler_messages")}}</span>
 					
@@ -562,7 +576,12 @@
 					</md-tooltip>
 				</div>
 				 -->
-				<md-button type="submit" class="md-primary" ng-disabled="!triggerForm.$valid">
+				<md-button type="submit" class="md-primary"
+						ng-disabled="!triggerForm.$valid || !(activityEventCtrl.selectedDocument.saveassnapshot
+								|| activityEventCtrl.selectedDocument.saveasfile
+								|| activityEventCtrl.selectedDocument.saveasdocument
+								|| activityEventCtrl.selectedDocument.sendtojavaclass
+								|| activityEventCtrl.selectedDocument.sendmail)">
 					{{translate.load("scheduler.save", "component_scheduler_messages")}}
 				</md-button>
 		</md-dialog-actions>
