@@ -24,6 +24,27 @@
 		display: block;
 	}
 	.functionsCard {
+		text-align: center;
+		background: {
+			repeat: no-repeat;
+			position: right -20px top -10px;
+			color: $lightTextColor;
+		}
+		&.image_245 {
+			background-image: url('../img/functions_catalog_images/memory.png');
+		}
+		&.image_244 {
+			background-image: url('../img/functions_catalog_images/eye.png');
+		}
+		&.image_243 {
+			background-image: url('../img/functions_catalog_images/degree.png');
+		}
+		&.image_242 {
+			background-image: url('../img/functions_catalog_images/text.png');
+		}
+		&.image_all {
+			background-image: url('../img/functions_catalog_images/all.png');
+		}
 		.md-headline {
 			font-size: $headerFontSize;
 			text-transform: uppercase;
