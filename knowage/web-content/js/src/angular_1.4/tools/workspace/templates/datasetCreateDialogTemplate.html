@@ -275,11 +275,7 @@
 			         
 			         	<md-content flex class="loadFilePadding step3PreviewPanel">
 				            
-				            <form>
-				               
 				               <!-- VALIDATION DATA -->
-				               	               
-							    <md-content flex>
 									
 									<!-- 			    
 							    	<md-toolbar class="documentBrowserToolbar secondaryToolbar">
@@ -307,22 +303,19 @@
 							    	<br> 
 							    	-->
 							
-							 		<md-content flex class="step3PreviewTable">
+							 		<md-content flex class="step3PreviewTableContainer">
 							 		
 										<angular-table 
 										            flex
-										            style="position:absolute;"
+										            id="step3PreviewTable"
+										            class="step3PreviewTable"
 										            ng-model="resultRowsStep2"
 													columns="allHeadersForStep3Preview" 
 													no-pagination=false
 													show-search-bar=false>
 										</angular-table>
 									
-							 		</md-content>
-							 		
-								</md-content>	
-								               
-				            </form>
+							 		</md-content>							 		
 				            
 			         	</md-content>      	
 			         	

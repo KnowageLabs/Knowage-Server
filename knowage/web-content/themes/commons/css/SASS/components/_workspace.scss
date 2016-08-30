@@ -236,9 +236,17 @@
 	}
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step3PreviewTableContainer {
+		/* Old values - before fixing the problem with the Angular table's size (danristo) */
+		/*height: 95%; 
+		max-height: 95%;*/
+		height: 100%; 
+		max-height: 100%;		
+	}
+	
 	.step3PreviewTable {
-		height: 95%; 
-		max-height: 95%;
+		position: absolute;
+		height: 100%;
 	}
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
