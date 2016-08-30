@@ -13,7 +13,8 @@ function executionLogControllerFunction($scope,sbiModule_translate,$mdDialog, sb
 							if($scope.kpiValueExecLogList[i].outputPresent){
 								$scope.kpiValueExecLogList[i]["icon"] = '<md-button class="md-icon-button" ng-click="scopeFunctions.download(row,$event)" > <md-icon md-font-icon="fa fa-download" style=" margin-top: 6px ; color: #153E7E;"></md-icon> </md-button>';
 							}
-							$scope.kpiValueExecLogList[i].timeRun = sbiModule_dateServices.formatDate(new Date($scope.kpiValueExecLogList[i].timeRun));
+							var date = new Date($scope.kpiValueExecLogList[i].timeRun);
+							$scope.kpiValueExecLogList[i].timeRun = sbiModule_dateServices.formatDate(date)+"	"+sbiModule_dateServices.formatDate(date,'HH:mm:ss');
 						}
 					},function(response) {
 						sbiModule_restServices.errorHandler(response.data,"");
