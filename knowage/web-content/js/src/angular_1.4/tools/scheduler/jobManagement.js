@@ -1111,8 +1111,8 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							if (data.hasOwnProperty("errors")) {
 								console.error(sbiModule_translate.load("sbi.glossary.error.save"));
 							} else if (data.Status == "NON OK") {
-								console.error("errori salvataggio",data.errors);
-								ctrl.showToastError(sbiModule_translate.load("sbi.glossary.error.save") + " " + data.errors);
+								console.error("errori salvataggio",data.Errors[0]);
+								ctrl.showToastError(sbiModule_translate.load("sbi.glossary.error.save") + " " + data.Errors[0]);
 							} else {
 								ctrl.showToastOk(sbiModule_translate.load("sbi.glossary.success.save"));
 								activityEventCtrl.disableName=true;
