@@ -90,7 +90,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	
 	$scope.datasetTemp = null;
 		
-    $scope.markNotDerived=function(datasets){
+    $scope.markNotDerived = function(datasets){
     	
     	for(i=0;i<datasets.length;i++){
     		
@@ -108,7 +108,17 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	 * load all datasets
 	 */
 	$scope.loadDatasets = function(){
-		console.log(arguments);
+
+		/**
+		 * 'functionsToCall' - array of functions in this scope (that load different dataset types) that we expect to 
+		 * load after the one that loads all not derived datasets.
+		 * 'indexForNextFn' - index of the one that should be loaded next (if there is one - if not, array item on this
+		 * index should be undefined).
+		 * 
+		 * NOTE: This goes for all subsequent functions in this scope, for loading other dataset types.
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
 		var functionsToCall = arguments[0][0];
 		var indexForNextFn = arguments[0][1];
 		
@@ -119,15 +129,36 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			angular.copy($scope.datasets,$scope.datasetsInitial);
 			console.info("[LOAD END]: Loading of All datasets is finished.");
 			
-//			alert("loadDatasets");
+			/**
+			 * After this REST call (loading all datasets), call the next one (the one with the index 
+			 * of indexForNextFn+1 in the array of all functions that are expected to be called after
+			 * this. If there are no other datasets that should be loaded (after this one), do nothing.
+			 * 
+			 * NOTE: This goes for all subsequent functions in this scope, for loading other dataset types.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 			
 		},function(response){
+			
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+			
+			/**
+			 * Even if the REST call of this one was unsuccessful, call the next one (the one with the index 
+			 * of indexForNextFn+1 in the array of all functions that are expected to be called after this. 
+			 * If there are no other datasets that should be loaded (after this one), do nothing.
+			 * 
+			 * NOTE: This goes for all subsequent functions in this scope, for loading other dataset types.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 		});
+		
 	}
 
-	$scope.loadMyDatasets= function(){
+	$scope.loadMyDatasets = function(){
 		
 		var functionsToCall = arguments[0][0];
 		var indexForNextFn = arguments[0][1];
@@ -138,16 +169,18 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			$scope.markNotDerived($scope.myDatasets);
 			angular.copy($scope.myDatasets,$scope.myDatasetsInitial);
 			console.info("[LOAD END]: Loading of My datasets is finished.");
-			
-//			alert("loadMyDatasets");
+
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 			
 		},function(response){
+			
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
+			
 		});
 	}
 	
-	$scope.loadEnterpriseDatasets= function(){
+	$scope.loadEnterpriseDatasets = function(){
 		
 		var functionsToCall = arguments[0][0];
 		var indexForNextFn = arguments[0][1];
@@ -158,16 +191,18 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			$scope.markNotDerived($scope.enterpriseDatasets);
 			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
 			console.info("[LOAD END]: Loading of Enterprised datasets is finished.");
-			
-//			alert("loadEnterpriseDatasets");
+
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 			
 		},function(response){
+			
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
+			
 		});
 	}
 	
-	$scope.loadSharedDatasets= function(){
+	$scope.loadSharedDatasets = function(){
 		
 		var functionsToCall = arguments[0][0];
 		var indexForNextFn = arguments[0][1];
@@ -178,30 +213,56 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			$scope.markNotDerived($scope.sharedDatasets);
 		    angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
 			console.info("[LOAD END]: Loading of Shared datasets is finished.");
-			
-//			alert("loadSharedDatasets");
+
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 			
 		},function(response){
+			
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
+			
 		});
 	}
 	
 	$scope.loadNotDerivedDatasets = function(){
 		
+		/**
+		 * We are getting names of all functions in this scope that we need to call after loading not
+		 * derived datasets. These names are sent in a form of an array of strings, where each of these
+		 * strings represent the name of the function that should be called. At the same time, the order
+		 * of those strings is set appropriately. This way we will call RETS services for loading specific
+		 * dataset type(s) in cascade, instead of their almost simultaneous call.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
 		var functionsToCall = arguments;			
 		
 		sbiModule_restServices.promiseGet("2.0/datasets/listNotDerivedDataset", "")
-		.then(function(response) {
-			//angular.copy(response.data,$scope.notDerivedDatasets);			
-			$scope.extractNotDerivedLabels(response.data);
+		.then(function(response) {		
 			
-//			alert("loadNotDerivedDatasets");
+			//angular.copy(response.data,$scope.notDerivedDatasets);			
+			$scope.extractNotDerivedLabels(response.data);			
+			console.info("[LOAD END]: Loading of Not derived datasets is finished.");	
+			
+			/**
+			 * After this REST call (loading all not derived datasets), call the next one (the one
+			 * with the index of 1 in the array of all functions that are expected to be called after
+			 * this. If there are no other datasets that should be loaded (after this one), do nothing.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
 			functionsToCall[0] ? $scope[functionsToCall[0]]([functionsToCall,1]) : null;
 			
-			console.info("[LOAD END]: Loading of Not derived datasets is finished.");
 		},function(response){
+			
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+			
+			/**
+			 * Even if the REST call of this one was unsuccessful, call the next one (the one
+			 * with the index of 1 in the array of all functions that are expected to be called after
+			 * this. If there are no other datasets that should be loaded (after this one), do nothing.
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			functionsToCall[0] ? $scope[functionsToCall[0]]([functionsToCall,1]) : null;
+			
 		});
 	}
 	

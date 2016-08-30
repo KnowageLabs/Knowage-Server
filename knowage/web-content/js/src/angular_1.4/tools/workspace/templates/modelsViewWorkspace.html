@@ -28,8 +28,10 @@
 				 	 	
 		 			</md-tab> 
 		   
-	<md-tab id="fedtab" label="{{translate.load('sbi.workspace.models.federation')}}" ng-click="switchModelsTab('federations')" flex>
+					<md-tab id="fedtab" label="{{translate.load('sbi.workspace.models.federation')}}" ng-click="switchModelsTab('federations')" flex>
+				         
 				         <md-tab-body>
+						 	
 						 	<federation-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="federationDefinitions"
 								show-grid-view="showGridView"
 								selected-federation=selectedModel
@@ -44,6 +46,7 @@
 						 	  ></federation-view>	
                     
 				        </md-tab-body>
+				        
 			 		</md-tab>  
 				 	
 	  		 	</md-tabs>

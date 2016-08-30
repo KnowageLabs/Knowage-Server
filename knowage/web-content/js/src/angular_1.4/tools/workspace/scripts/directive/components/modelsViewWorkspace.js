@@ -82,7 +82,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	
 	$scope.getFederatedDatasets();
 	
-	$scope.loadFederations=function(){
+	$scope.loadFederations = function(){
 		sbiModule_restServices.promiseGet("federateddataset", "")
 		.then(function(response) {
 			angular.copy(response.data,$scope.federationDefinitions);
@@ -140,7 +140,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		}
 	};
 	
-	$scope.showQbeModel=function(model){
+	$scope.showQbeModel = function(model){
 		
 		if($scope.currentModelsTab=='federations'){
 			$scope.showQbeFederation(model);
@@ -149,8 +149,8 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		}
 	}
 	
-	$scope.showQbeFederation= function(federation){
-        
+	$scope.showQbeFederation = function(federation){
+
 		var federationId = federation.federation_id;
 		
 		var url = datasetParameters.qbeEditFederationServiceUrl 
@@ -249,13 +249,18 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	
 	function DialogEditFederationController($scope,$mdDialog,sbiModule_config,federation){
 	
-		$scope.closeFederationDialog=function(){
-			 $mdDialog.cancel();	 
-			 $scope.loadFederations();
+		/**
+		 * The function that will be called when a set time is counted and the iframe of the Federation is closed automatically.
+		 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$scope.closeFederationDialog = function(){
+			 $mdDialog.cancel(); 
+			 $scope.loadFederations();			 
 		}
 		
 		$scope.cancelDialog = function() {
 			 $mdDialog.cancel();	
+			 $scope.loadFederations();	// Refresh the federation models list in the workspace after closing the iframe manually. (danristo)
 		}
 		
 		if(federation!==undefined){
