@@ -395,9 +395,10 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 	}
 	
 	$scope.showSaveTargetDialog = function() {
+		var deferred = $q.defer();
 		$mdDialog.show({
 			controller:
-				function ($scope, $mdDialog, targetCategories, targetCategory, translate) {
+				function ($scope, $mdDialog, items,targetCategories, targetCategory, translate) {
 					$scope.translate = sbiModule_translate;
 					$scope.targetCategory = targetCategory;
 					$scope.targetCategories = targetCategories;
@@ -406,6 +407,17 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					}
 					$scope.apply = function() {
 						$mdDialog.hide($scope.targetCategory);
+						items.resolve($scope.targetCategory);
+					}
+					$scope.searchTextChange=function(searchTerm){
+						if(($scope.targetCategory==undefined || $scope.targetCategory=="") && searchTerm!=""){
+							$scope.tmpSearchterm=searchTerm; 
+							$timeout(function(){
+								if($scope.tmpSearchterm==searchTerm){
+									$scope.targetCategory={valueCd:angular.uppercase(searchTerm)}; 
+								}
+							},500)
+						}
 					}
 					$scope.querySearchCategory = function(query) {
 						var results = query ? $scope.targetCategories.filter( createFilterFor(query) ) : [];
@@ -429,14 +441,14 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			templateUrl: 'templatesaveTarget.html',
 			clickOutsideToClose: true,
 			preserveScope: true,
-			locals: {
+			locals: {items:deferred,
 				targetCategories: $scope.targetCategories,
 				targetCategory: typeof $scope.target.category != 'undefined' ? $scope.target.category : null,
 				translate:sbiModule_translate
 			}
 		})
-		.then(function(targetCategory) {
-			$scope.target.category = targetCategory;
+		.then(function(answer) {
+			$scope.target.category = angular.copy(answer);
 			$scope.saveTarget();
 		}, function() {
 			
