@@ -107,19 +107,31 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 	/**
 	 * load all datasets
 	 */
-	$scope.loadDatasets= function(){
+	$scope.loadDatasets = function(){
+		console.log(arguments);
+		var functionsToCall = arguments[0][0];
+		var indexForNextFn = arguments[0][1];
+		
 		sbiModule_restServices.promiseGet("2.0/datasets/mydata", "")
-		.then(function(response) {
+		.then(function(response) {			
 			angular.copy(response.data.root,$scope.datasets);
 			$scope.markNotDerived($scope.datasets);
 			angular.copy($scope.datasets,$scope.datasetsInitial);
 			console.info("[LOAD END]: Loading of All datasets is finished.");
+			
+//			alert("loadDatasets");
+			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
+			
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
 		});
 	}
 
 	$scope.loadMyDatasets= function(){
+		
+		var functionsToCall = arguments[0][0];
+		var indexForNextFn = arguments[0][1];
+		
 		sbiModule_restServices.promiseGet("2.0/datasets/owned", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.myDatasets);
@@ -127,40 +139,66 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			angular.copy($scope.myDatasets,$scope.myDatasetsInitial);
 			console.info("[LOAD END]: Loading of My datasets is finished.");
 			
+//			alert("loadMyDatasets");
+			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
+			
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
 		});
 	}
 	
 	$scope.loadEnterpriseDatasets= function(){
+		
+		var functionsToCall = arguments[0][0];
+		var indexForNextFn = arguments[0][1];
+		
 		sbiModule_restServices.promiseGet("2.0/datasets/enterprise", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.enterpriseDatasets);
 			$scope.markNotDerived($scope.enterpriseDatasets);
 			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
 			console.info("[LOAD END]: Loading of Enterprised datasets is finished.");
+			
+//			alert("loadEnterpriseDatasets");
+			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
+			
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
 		});
 	}
 	
 	$scope.loadSharedDatasets= function(){
+		
+		var functionsToCall = arguments[0][0];
+		var indexForNextFn = arguments[0][1];
+		
 		sbiModule_restServices.promiseGet("2.0/datasets/shared", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.sharedDatasets);
 			$scope.markNotDerived($scope.sharedDatasets);
 		    angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
 			console.info("[LOAD END]: Loading of Shared datasets is finished.");
+			
+//			alert("loadSharedDatasets");
+			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
+			
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
 		});
 	}
 	
-	$scope.loadNotDerivedDatasets= function(){
+	$scope.loadNotDerivedDatasets = function(){
+		
+		var functionsToCall = arguments;			
+		
 		sbiModule_restServices.promiseGet("2.0/datasets/listNotDerivedDataset", "")
 		.then(function(response) {
 			//angular.copy(response.data,$scope.notDerivedDatasets);			
 			$scope.extractNotDerivedLabels(response.data);
+			
+//			alert("loadNotDerivedDatasets");
+			functionsToCall[0] ? $scope[functionsToCall[0]]([functionsToCall,1]) : null;
+			
 			console.info("[LOAD END]: Loading of Not derived datasets is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
@@ -721,11 +759,15 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
      */
     $scope.reloadMyDataFn = function() {
     	
-    	$scope.loadNotDerivedDatasets();
+//    	$scope.loadNotDerivedDatasets("loadDatasets","loadMyDatasets");
 
-    	if ($scope.datasetsDocumentsLoaded==true) {
-    		$scope.loadDatasets();
-        	$scope.loadMyDatasets();
+    	if ($scope.datasetsDocumentsLoaded == true) {
+//    		$scope.loadDatasets();
+//        	$scope.loadMyDatasets();
+    		$scope.loadNotDerivedDatasets("loadDatasets","loadMyDatasets");
+    	}
+    	else {
+    		$scope.loadNotDerivedDatasets();
     	}
     	
     }

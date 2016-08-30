@@ -402,14 +402,15 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 //							$scope.loadNotDerivedDatasets();
 //						}
 						
-						$scope.loadNotDerivedDatasets();
-						$scope.loadDatasets();
-						$scope.loadMyDatasets();
-						$scope.loadEnterpriseDatasets();
-						$scope.loadSharedDatasets();
+						$scope.loadNotDerivedDatasets("loadDatasets","loadMyDatasets","loadEnterpriseDatasets","loadSharedDatasets");
+//						$scope.loadDatasets();
+//						$scope.loadMyDatasets();
+//						$scope.loadEnterpriseDatasets();
+//						$scope.loadSharedDatasets();
 							
 						$scope.datasetsDocumentsLoaded = true;
-						$scope.reloadMyData==false;
+						$scope.reloadMyData = false;
+						
 					}
 					else {
 						if ($scope.reloadMyData==true) {
