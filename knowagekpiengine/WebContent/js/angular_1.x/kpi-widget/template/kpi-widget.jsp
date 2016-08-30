@@ -32,7 +32,7 @@
 			</h3>
 		</div>
 		
-		<kpi-linear-gauge
+		<kpi-linear-gauge style="overflow-x : hidden;"
 			gauge-id="widgetId"
 			label="label"
 			size="gaugeSize"
