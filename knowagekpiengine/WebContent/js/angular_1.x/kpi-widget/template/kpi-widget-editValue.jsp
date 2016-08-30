@@ -1,4 +1,4 @@
-<md-dialog aria-label="Select Function" flex ng-cloak>
+<md-dialog aria-label="Select Function" style="width:100%" ng-cloak>
   <md-whiteframe class="md-whiteframe-4dp  "  > 
     <md-toolbar>
       <div class="md-toolbar-tools">
