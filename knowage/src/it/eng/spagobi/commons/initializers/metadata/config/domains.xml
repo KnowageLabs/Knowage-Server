@@ -541,12 +541,12 @@
 		domainCd="FUNCTION_TYPE" domainNm="Teach your app to teach himself" valueDs="" />	
 		
 	<DOMAIN valueCd="Computer Vision" valueNm="Computer Vision"
-		domainCd="FUNCTION_TYPE" domainNm="Identify objects in images" valueDs="" />		
+		domainCd="FUNCTION_TYPE" domainNm="Identify objects in images" valueDs="themes/commons/img/functions_catalog_images/eye.png" />		
 			
 	<DOMAIN valueCd="Utilities" valueNm="Utilities"
-		domainCd="FUNCTION_TYPE" domainNm="Ready to use microservices" valueDs="" />				
+		domainCd="FUNCTION_TYPE" domainNm="Ready to use microservices" valueDs="../../themes/commons/img/functions_catalog_images/memory.png" ></DOMAIN>				
 			
 	<DOMAIN valueCd="All" valueNm="All"
-		domainCd="FUNCTION_TYPE" domainNm="All kind of functions" valueDs="" />				
+		domainCd="FUNCTION_TYPE" domainNm="All kind of functions" valueDs="all.png" />				
 			
 </DOMAINS>
