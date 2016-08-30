@@ -40,6 +40,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 
 public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaModelsDAO {
 
@@ -401,7 +402,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				Criterion aCriterion = Expression.eq("label", model.getDataSourceLabel());
 				Criteria criteria = session.createCriteria(SbiDataSource.class);
 				criteria.add(aCriterion);
-
+				criteria.add(Restrictions.eq("commonInfo.organization", getTenant()));
 				SbiDataSource datasource = (SbiDataSource) criteria.uniqueResult();
 
 				hibModel.setDataSource(datasource);
