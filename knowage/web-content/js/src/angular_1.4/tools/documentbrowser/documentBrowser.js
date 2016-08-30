@@ -1,3 +1,4 @@
+angular.module('documentBrowserModule')
 .controller('documentBrowserController', 
 		[ '$mdMedia', '$scope', '$http', '$mdSidenav', 
 		  '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 
