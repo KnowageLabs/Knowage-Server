@@ -120,7 +120,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </script>
 
 </head>
-<body class="kn-target-kpi">
+<body class="kn-schedulerKpi">
 	<angular-list-detail ng-controller="schedulerKpiController" full-screen=true >
 		<list label="translate.load('sbi.kpi.listscheduler')"  ng-controller="listSchedulerController" new-function="addScheduler" >
 		<div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircular" layout-fill>
