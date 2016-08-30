@@ -181,7 +181,7 @@ author:
 
 </head>
 
-<body ng-controller="kpiViewerController" ng-init="init()" 	class="kn-kpiExecution">
+<body ng-controller="kpiViewerController" ng-init="init()" layout="column"	class="kn-kpiExecution">
 	<div ng-if="showPreloader" style=" position: absolute;background-color: white;z-index: 100000000000;"
 	 	layout-fill layout  layout-align="center center" >
 	 <md-progress-circular md-mode="indeterminate" md-diameter="96" ></md-progress-circular>
@@ -236,7 +236,7 @@ author:
 	<%
 		} else if(model.equalsIgnoreCase("list")) {
 	%>
-	<kpi-list-document kpi-items="kpiItems" layout="row"></kpi-list-document>
+	<kpi-list-document flex kpi-items="kpiItems" layout="row"></kpi-list-document>
 	<%
 		}
 	} else if(type.equalsIgnoreCase("scorecard")) {
