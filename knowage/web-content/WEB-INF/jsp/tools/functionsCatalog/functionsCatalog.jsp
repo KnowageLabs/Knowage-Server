@@ -347,7 +347,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-toolbar>	
 						<md-card-content>
 							<md-list>
-								<md-list-item ng-if="shownFunction.inputVariables.length==0" class="messageItem" layout-align="center center">
+								<md-list-item ng-if="shownFunction.outputItems.length==0" class="messageItem" layout-align="center center">
 									&emsp;&emsp;{{translate.load("sbi.functionscatalog.nooutputexpected");}}
 								</md-list-item>
 								<md-list-item ng-repeat="o in shownFunction.outputItems">
