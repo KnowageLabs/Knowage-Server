@@ -841,7 +841,6 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					{label: sbiModule_translate.load("scheduler.lastweek", "component_scheduler_messages"), value: '5'}, 
 				];
 				
-				activityEventCtrl.useFixedFolderInfo = sbiModule_translate.load("scheduler.help.useFixedFolder", "component_scheduler_messages");
 				activityEventCtrl.useFolderDatasetInfo = sbiModule_translate.load("scheduler.help.useFolderDataset", "component_scheduler_messages");
 				activityEventCtrl.useFixedRecipientsInfo = sbiModule_translate.load("scheduler.help.useFixedRecipients", "component_scheduler_messages");
 				activityEventCtrl.useDatasetInfo = sbiModule_translate.load("scheduler.help.useDataset", "component_scheduler_messages");

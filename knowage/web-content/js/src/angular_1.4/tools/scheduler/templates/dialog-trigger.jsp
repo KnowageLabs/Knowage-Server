@@ -319,12 +319,6 @@
 										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useFixedFolder">
 											{{translate.load("scheduler.fixedFolder", "component_scheduler_messages")}}
 										</md-checkbox>
-								 		<md-button type="button" id="fixedFolder" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.useFixedFolderFlag = !activityEventCtrl.useFixedFolderFlag" >
-								 			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
-								 		</md-button>
-								 		<md-card ng-show="activityEventCtrl.useFixedFolderFlag">
-											<span ng-bind-html="activityEventCtrl.useFixedFolderInfo"></span>
-										</md-card>
 									</div>
 								
 									<div ng-if="activityEventCtrl.selectedDocument.useFixedFolder==true">
@@ -361,13 +355,14 @@
 									</div>
 								
 									<div layout="row" class="checkboxRow">
-										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useFolderDataset">
+										<md-checkbox style="margin-bottom: 0px;" aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useFolderDataset">
 											{{translate.load("scheduler.useFolderDataset", "component_scheduler_messages")}}
 										</md-checkbox>
+										<div flex></div>
 										<md-button type="button" id="useFolderDataset" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.useFolderDatasetFlag = !activityEventCtrl.useFolderDatasetFlag" >
 								 			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
 								 		</md-button>
-								 		<md-card ng-show="activityEventCtrl.useFolderDatasetFlag">
+								 		<md-card flex ng-show="activityEventCtrl.useFolderDatasetFlag">
 											<span ng-bind-html="activityEventCtrl.useFolderDatasetInfo"></span>
 										</md-card>
 									</div>
@@ -426,14 +421,15 @@
 								<md-content layout-padding class="borderBox">
 								
 									<div layout="row" class="checkboxRow">
-										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useFixedRecipients"
+										<md-checkbox style="margin-bottom: 0px;" aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useFixedRecipients"
 												ng-change="activityEventCtrl.updateUseFixedRecipients()">
 											{{translate.load("scheduler.fixedRecipients", "component_scheduler_messages")}}
 										</md-checkbox>
+										<div flex></div>
 										<md-button type="button" id="useFixedRecipients" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.useFixedRecipientsFlag = !activityEventCtrl.useFixedRecipientsFlag" >
 								 			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
 								 		</md-button>
-								 		<md-card ng-show="activityEventCtrl.useFixedRecipientsFlag">
+								 		<md-card flex ng-show="activityEventCtrl.useFixedRecipientsFlag">
 											<span ng-bind-html="activityEventCtrl.useFixedRecipientsInfo"></span>
 										</md-card>
 									</div>
@@ -445,14 +441,15 @@
 									</md-input-container>
 							
 									<div layout="row" class="checkboxRow" ng-if="activityEventCtrl.selectedDocument.parameters.length!=0">
-										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useDataset"
+										<md-checkbox style="margin-bottom: 0px;" aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useDataset"
 												ng-change="activityEventCtrl.updateUseDataset()">
 											{{translate.load("scheduler.useDatasetList", "component_scheduler_messages")}}
 										</md-checkbox>
+										<div flex></div>
 										<md-button type="button" id="useDataset" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.useDatasetFlag = !activityEventCtrl.useDatasetFlag" >
 								 			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
 								 		</md-button>
-								 		<md-card ng-show="activityEventCtrl.useDatasetFlag">
+								 		<md-card flex ng-show="activityEventCtrl.useDatasetFlag">
 											<span ng-bind-html="activityEventCtrl.useDatasetInfo"></span>
 										</md-card>
 									</div>
@@ -473,14 +470,15 @@
 									</md-input-container>
 								
 									<div layout="row" class="checkboxRow">
-										<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useExpression"
+										<md-checkbox style="margin-bottom: 0px;" aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useExpression"
 												ng-change="activityEventCtrl.updateUseExpression()">
 											{{translate.load("scheduler.useExpression", "component_scheduler_messages")}}
 										</md-checkbox>
+										<div flex></div>
 										<md-button type="button" id="useExpression" class="md-icon-button md-mini" aria-label="help" ng-click="activityEventCtrl.useExpressionFlag = !activityEventCtrl.useExpressionFlag" >
 								 			<md-icon md-font-icon="fa fa-info-circle fa-2x" ></md-icon>
 								 		</md-button>
-										<md-card ng-show="activityEventCtrl.useExpressionFlag">
+										<md-card flex ng-show="activityEventCtrl.useExpressionFlag">
 											<span ng-bind-html="activityEventCtrl.useExpressionInfo"></span>
 										</md-card>
 									</div>
