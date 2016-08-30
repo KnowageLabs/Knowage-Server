@@ -712,7 +712,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					},
 					template:   '<md-dialog aria-label="Open meta"  style="width: 100%;  height: 100%;max-width: 100%;  max-height: 100%;" ng-cloak>'+
 								'<md-dialog-content flex layout="column" class="metaContent" >'+
-								'<iframe flex class=" noBorder" ng-src="{{metaUrl}}" name="metaIframe"></iframe>'+ 
+								'<iframe layout-fill class=" noBorder" ng-src="{{metaUrl}}" name="metaIframe"></iframe>'+ 
 								'</md-dialog-content> '+
 								'</md-dialog>',  
 					clickOutsideToClose:true,
