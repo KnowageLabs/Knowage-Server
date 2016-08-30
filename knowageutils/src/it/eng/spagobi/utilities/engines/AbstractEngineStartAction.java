@@ -718,7 +718,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 		if (datasourceLabel != null) {
 			IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceLabel);
-			if (dataSource.checkIsMultiSchema()) {
+			if (dataSource != null && dataSource.checkIsMultiSchema()) {
 				logger.debug("Datasource [" + dataSource.getLabel() + "] is defined on multi schema");
 				try {
 					logger.debug("Retriving target schema for datasource [" + dataSource.getLabel() + "]");

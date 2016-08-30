@@ -25,7 +25,10 @@
         <property name="modelLocker" type="string">
             <column name="MODEL_LOCKER" length="200" not-null="false" />
         </property>
-		 
+		  <many-to-one
+		   class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" fetch="join" name="dataSource">
+		   <column name="DATA_SOURCE_ID" not-null="false"/>
+		 </many-to-one>
 	</class>
 
 </hibernate-mapping>
