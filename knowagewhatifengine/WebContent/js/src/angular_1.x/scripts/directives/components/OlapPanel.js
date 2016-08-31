@@ -483,6 +483,13 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 			
 			// check if the user is editing the same cell twice. If so we present
 			// again the last formula
+			if (!String.prototype.startsWith) {
+				  String.prototype.startsWith = function(searchString, position) {
+				    position = position || 0;
+				    return this.indexOf(searchString, position) === position;
+				  };
+				}
+			
 			if ($scope.lastEditedFormula && $scope.lastEditedCell
 					&& id.startsWith($scope.lastEditedCell)) {
 				unformattedValue = $scope.lastEditedFormula;
@@ -1149,5 +1156,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		return false;
 
 	}
+	
+	
 
 };
