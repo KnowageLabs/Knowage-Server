@@ -19,13 +19,13 @@
 					<span ng-if="checkLabelIsSuffix()">&nbsp;{{valuePrefixSuffix}}</span>
 				</div>
 			</div>
-			<div flex class="kpiValue">
+			<div flex class="kpiValue" ng-show="getTargetToShow()!='-'">
 				<h3 class="">{{translate.load("sbi.kpi.widget.target")}}</h3>
 				<h1>{{getTargetToShow()}}</h1>
 			</div>
 			
 		</div>
-		<div layout="row" layout-align="center center" ng-if="showTargetPercentage" class="kpiValue">
+		<div layout="row" layout-align="center center" ng-if="showTargetPercentage && getPercentage()!='-'" class="kpiValue">
 			<h1 >{{getPercentage()}}</h1>&nbsp;
 			<h3 class="">
 				{{translate.load("sbi.kpi.widget.percentage.oftarget")}}
