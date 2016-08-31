@@ -448,7 +448,13 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			}
 		})
 		.then(function(answer) {
-			$scope.target.category = angular.copy(answer);
+			if(answer ==undefined){
+				$scope.target.category = "";
+
+			}else{
+				$scope.target.category = angular.copy(answer);
+
+			}
 			$scope.saveTarget();
 		}, function() {
 			
