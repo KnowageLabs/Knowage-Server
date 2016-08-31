@@ -25,7 +25,6 @@ import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
 import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
@@ -143,7 +142,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	}
 
 	static protected Logger logger = Logger.getLogger(DocumentExecutionResource.class);
-	
 
 	/**
 	 * @return { executionURL: 'http:...', errors: 1 - 'role missing' 2 -'Missing paramters' [list of missing mandatory filters ] 3 -'operation not allowed' [if
@@ -278,7 +276,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.REPORT_TYPE_CODE)
 				&& obj.getEngine() != null
 				&& (obj.getEngine().getLabel().equals(SpagoBIConstants.BIRT_ENGINE_LABEL) || obj.getEngine().getLabel()
-						.equals(SpagoBIConstants.JASPER_ENGINE_LABEL)) && req.getHeader("User-Agent").indexOf("Mobile") != -1) {
+						.equals(SpagoBIConstants.JASPER_ENGINE_LABEL))
+				&& (req.getHeader("User-Agent").indexOf("Mobile") != -1 || req.getHeader("User-Agent").indexOf("iPad") != -1 || req.getHeader("User-Agent")
+						.indexOf("iPhone") != -1)) {
 			ret = ret + "&outputType=PDF";
 		}
 		// COCKPIT
