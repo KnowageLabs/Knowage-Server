@@ -90,8 +90,9 @@
 							
 						},
 						function(response) {
-							sbiModule_restServices.errorHandler(
-									response.data, "error loading layers");
+							sbiModule_messaging.showErrorMessage(response.data,"error loading layers");
+							//sbiModule_restServices.errorHandler(
+							//		response.data, "error loading layers");
 						});
 					
 			}
@@ -121,8 +122,9 @@
 				        
 					},
 					function(response) {
-						sbiModule_restServices.errorHandler(
-								response.data, "error loading datasets");
+						sbiModule_messaging.showErrorMessage(response.data,"error loading datasets");
+						//sbiModule_restServices.errorHandler(
+						//		response.data, "error loading datasets");
 					});
 		}
 		
@@ -159,8 +161,9 @@
 								initializeSelectedLayer();
 							},
 							function(response) {
-								sbiModule_restServices.errorHandler(
-										response.data, "error loading layers");
+								sbiModule_messaging.showErrorMessage(response.data,"error loading layers");
+								//sbiModule_restServices.errorHandler(
+								//		response.data, "error loading layers");
 							});
 		}
 		
@@ -183,8 +186,9 @@
 							$scope.template=angular.fromJson(response.data);
 						},
 						function(response) {
-							sbiModule_restServices.errorHandler(
-									response.data, "error loading layers");
+							sbiModule_messaging.showErrorMessage(response.data,"error loading tempalte");
+							//sbiModule_restServices.errorHandler(
+							//		response.data, "error loading layers");
 						});
 					
 					
@@ -236,8 +240,9 @@
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('gisengine.designer.tempate.save.message'),sbiModule_translate.load('gisengine.designer.tempate.save.success'));
 				},
 				function(response) {
-					sbiModule_restServices.errorHandler(response.data,
-							"error saving template");
+					sbiModule_messaging.showErrorMessage(response.data,"error saving tempate");
+					//sbiModule_restServices.errorHandler(response.data,
+					//		"error saving template");
 				});
 			}
 			}
@@ -257,8 +262,9 @@
 						initializeLayerFilters();
 					},
 					function(response) {
-						sbiModule_restServices.errorHandler(
-								response.data, "error loading analytical driver parameters");
+						sbiModule_messaging.showErrorMessage(response.data,"error loading analytical driver parameters");
+						//sbiModule_restServices.errorHandler(
+						//		response.data, "error loading analytical driver parameters");
 					});
 		}
 		
@@ -345,8 +351,9 @@
 
 					},
 					function(response) {
-						sbiModule_restServices.errorHandler(response.data,
-								"error loading layer filters");
+						sbiModule_messaging.showErrorMessage(response.data,"error loading layer filters");
+						//sbiModule_restServices.errorHandler(response.data,
+						//		"error loading layer filters");
 					});
 		}
 
@@ -416,8 +423,10 @@
 
 					},
 					function(response) {
-						sbiModule_restServices.errorHandler(response.data,
-								"error loading layer dataset columns");
+						sbiModule_messaging.showErrorMessage(response.data,"error loading layer dataset columns");
+
+						//sbiModule_restServices.errorHandler(response.data,
+						//		"error loading layer dataset columns");
 					});
 		}
 
@@ -466,8 +475,11 @@
 
 			},
 			function(response) {
-				sbiModule_restServices.errorHandler(response.data,
-						"error loading layer filters");
+				
+				sbiModule_messaging.showErrorMessage(response.data,"error loading layer filters");
+
+				//sbiModule_restServices.errorHandler(response.data,
+				//		"error loading layer filters");
 			});
 			
 			}else{
@@ -751,8 +763,10 @@
 
 				},
 				function(response) {
-					sbiModule_restServices.errorHandler(response.data,
-							"error loading layer filters");
+					sbiModule_messaging.showErrorMessage(response.data,"error loading layer filters");
+
+					//sbiModule_restServices.errorHandler(response.data,
+					//		"error loading layer filters");
 				});
 					
 			}
@@ -994,8 +1008,10 @@
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('gisengine.designer.tempate.save.message'),sbiModule_translate.load('gisengine.designer.tempate.save.success'));
         		    $mdDialog.cancel(); 
         		}, function errorCallback(response) {
-        			sbiModule_restServices.errorHandler(response.data,
-					"error saving template");
+    				sbiModule_messaging.showErrorMessage(response.data,"error saving template");
+
+        			//sbiModule_restServices.errorHandler(response.data,
+					//"error saving template");
         		  });
         	
         	
