@@ -783,15 +783,12 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				InputStream inputstream = path.openStream();
 				BufferedReader br = new BufferedReader(new InputStreamReader(inputstream));
 				String c;
+				c = br.readLine();
+				obj = new JSONObject(c);
 
-				do {
-					c = br.readLine();
-
-					obj = new JSONObject(c);
-				} while (c != null);
 			}
 			// load properties of wfs
-			if (!layerDef.get("layer_url").equals(null)) {
+			if (!layerDef.get("layer_url").equals("null")) {
 				if (typeWFS.equals("kml")) {
 					URL url = new URL(getOutputFormatKML(layerDef.getString("layer_url")));
 					obj = new JSONObject();
