@@ -524,21 +524,22 @@ if (modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_INS)) { %>
 <%}%>
 
 
-
-
-
-
-
-
-
 		</div>	     
 
-		<div class='div_detail_label'>
+		<% String dateRangeDisplay ="";
+			if(parameter.getType().equals(SpagoBIConstants.DATE_RANGE_TYPE)){
+				dateRangeDisplay="none";
+			}
+		%>
+		<div class='div_detail_label' style='display : <%=dateRangeDisplay%>;'>
 			<span class='portlet-form-field-label'>
 				<spagobi:message key="SBIDev.paramUse.mapInputCheck" />
 			</span>
 		</div>
-		<div class='div_detail_form'>
+		
+		
+		
+		<div class='div_detail_form'  style='display : <%=dateRangeDisplay%>;'>
 			
 			<input type="radio" name="valueSelection" <%=disabled%> id ="valueSelection" value="map_in" 
 					<% if(valueSelection.equals("map_in")) { out.println(" checked='checked' "); } %> onClick = "lovControl(this.value);" ></input>
@@ -556,26 +557,26 @@ if (modality.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_INS)) { %>
 					name="mapInputSelectedLayerProp" placeholder="<spagobi:message key="SBIDev.paramUse.mapInputSelectLayerProperty" />" 
 					value="<%=selectedLayerProp != null ? selectedLayerProp : "" %>" maxlength="40" <%=readonly%> />
 		</div>
-	
-		<div class='div_detail_label'>
+		
+		<div class='div_detail_label' style='display : <%=dateRangeDisplay%>;'>
 			<span class='portlet-form-field-label'>
 				<spagobi:message key="SBIDev.paramUse.manInputCheck" />
 			</span>
 		</div>
-		<div class='div_detail_form'>
+		<div class='div_detail_form' style='display : <%=dateRangeDisplay%>;'>
 			
 			<input type="radio"  name="valueSelection" <%=disabled%> id ="valueSelection" value="man_in" <% if(valueSelection.equals("man_in")) { out.println(" checked='checked' "); } %> onClick = "lovControl(this.value);" ></input>
 		</div>
 	
-		<div class='div_detail_label'>
+		<div class='div_detail_label' style='display : <%=dateRangeDisplay%>;'>
 			<span class='portlet-form-field-label'>
 				<spagobi:message key = "SBIDev.paramUse.maximizerEnabled" />
 			</span>
 		</div>
-		<div class='div_detail_form'>
+		<div class='div_detail_form' style='display : <%=dateRangeDisplay%>;'>
 			<input type="checkbox" name="maximizerEnabled" <%=maximizerDisabled%> id ="maximizerEnabled" value="true" <% if(maximizerEnabled) { out.println(" checked='checked' "); } %>></input>
 		</div>
-	
+		
 		<% 
 		String defaultLovName = null;
 	    Integer idLovForDefault = paruse.getIdLovForDefault() != null ? paruse.getIdLovForDefault() : -1;
