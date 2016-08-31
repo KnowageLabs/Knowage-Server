@@ -104,7 +104,7 @@ public class AlertService {
 	@Path("/save")
 	public Response save(@Context HttpServletRequest req) throws EMFUserError {
 		try {
-			String str = RestUtilities.readBodyAsJSONArray(req).toString();
+			String str = RestUtilities.readBodyAsJSONObject(req).toString();
 			Alert alert = (Alert) JsonConverter.jsonToObject(str, Alert.class);
 			JSError jsError = new JSError();
 			check(alert, jsError);
