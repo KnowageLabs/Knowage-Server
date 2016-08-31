@@ -8,7 +8,7 @@ app.controller('targetDefinitionController', ['$scope', 'sbiModule_config', 'sbi
 
 function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_translate, sbiModule_restServices, $mdDialog, $filter, $q, $mdToast, $angularListDetail, $timeout) {
 	$scope.translate = sbiModule_translate;
-	
+	$scope.emptyCategory = {};
 	this.formatDate = function(dts) {
 		this.convertDateFormat = function(date) {
 			result = "";
@@ -448,8 +448,8 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 			}
 		})
 		.then(function(answer) {
-			if(answer ==undefined){
-				$scope.target.category = "";
+			if(answer ==""){
+				$scope.target.category = $scope.emptyCategory;
 
 			}else{
 				$scope.target.category = angular.copy(answer);
