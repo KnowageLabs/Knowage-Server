@@ -649,13 +649,14 @@ if(list==undefined)return false;
 
 		sbiModule_restServices.get("layers","getDownload","id="+item.layerId+",typeWFS="+$scope.typeWFS).success(
 				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
+					if (data == null) {
+						$scope.showAction($scope.translate.load("sbi.layercatalogue.errorretrylayer"));
 						console.log("layer non Ottenuti");
 					} else {
 						var text ;						
 
 						if($scope.typeWFS == 'geojson'){
-							$scope.download.getPlain(data, item.label, 'text/json', 'json');
+							$scope.download.getPlain(JSON.stringify(data), item.label, 'text/json', 'json');
 						} else if($scope.typeWFS == 'kml' || $scope.typeWFS == 'shp'){
 							$scope.download.getLink(data.url);
 						}
@@ -663,12 +664,27 @@ if(list==undefined)return false;
 					}
 				}).error(function(data, status, headers, config) {
 					console.log("layer non Ottenuti " + status);
-
+					$scope.showAction($scope.translate.load("sbi.layercatalogue.errorretrylayer"));
 				});
 
 
 	}
+	$scope.showAction = function(text) {
+		var toast = $mdToast.simple()
+		.content(text)
+		.action('OK')
+		.highlightAction(false)
+		.hideDelay(5000)
+		.position('top')
 
+		$mdToast.show(toast).then(function(response) {
+
+			if ( response == 'ok' ) {
+
+
+			}
+		});
+	}
 	$scope.showDetails = function(item){
 		$scope.selectedLayer=item;	
 
