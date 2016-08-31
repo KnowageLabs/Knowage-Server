@@ -73,42 +73,51 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 	                        {
 	                        	label:"  ",
 	                        	name:"move",
-	                        	size:"70px"
+	                        	size:"70px",
+	                        	hideTooltip:true
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.thresholds.position"),
 	                        	name:"position",
+	                        	hideTooltip:true
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.browser.searchpanel.attributes.label"),
 	                        	name:"inputLable",
+	                        	hideTooltip:true
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.thresholds.min"),
 	                        	name:"includeNumericInputMin",
-	                        	size: "60px"
+	                        	size: "60px",
+	                        	hideTooltip:true
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.thresholds.includemin"),
-	                        	name:"includeMinCheck"
+	                        	name:"includeMinCheck",
+	                        	hideTooltip:true
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.thresholds.max"),
 	                        	name:"includeNumericInputMax",
-	                        	size: "60px"
+	                        	size: "60px",
+	                        	hideTooltip:true
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.thresholds.includemax"),
-	                        	name:"includeMaxCheck"
+	                        	name:"includeMaxCheck",
+	                        	hideTooltip:true
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.thresholds.severity"),
-	                        	name:"comboSeverity"
+	                        	name:"comboSeverity",
+	                        	hideTooltip:true
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.thresholds.color"),
 	                        	name:"selectColor",
-	                        	size:"90px"
+	                        	size:"90px",
+	                        	hideTooltip:true
 	                        },
 	                        
 	                        ];

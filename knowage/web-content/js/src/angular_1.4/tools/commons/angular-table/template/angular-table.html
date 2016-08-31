@@ -1,4 +1,4 @@
-<!-- v1.0.1 -->
+<!-- v1.0.2 -->
 <!-- <div id="angularTableTemplate" class="{{id}}ItemBox layout-fill layout-column" style="position:absolute;"> -->
 
 <angular-table-actions layout="row" layout-align="end center">
@@ -45,7 +45,7 @@
 <script type="text/ng-template" id="headThTemplate.html">
 <th ng-repeat="val in tableColumns" width="{{val.size}}" ng-class="val.customClass">
 
-	<div id="headDiv{{$index}}"  ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--'" ng-click="orderBy(val)"  ng-class="{ 'black': val.name==column_ordering}">
+	<div id="headDiv{{$index}}"  ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--' && val.name!='--ROW_DETAIL--'" ng-click="orderBy(val)"  ng-class="{ 'black': val.name==column_ordering}">
 		
 		<md-icon  ng-class="{ 'hidden': val.name!=column_ordering.name ,'fa fa-arrow-down' : (val.name==column_ordering.name && reverse_col_ord) ,'fa fa-arrow-up' : (val.name==column_ordering.name && !reverse_col_ord)}"></md-icon>
 		<span >{{val.label}}</span>
@@ -62,13 +62,17 @@
 	pagination-id='id+"PaginationTable"' total-items='totalItemCount' current-page='currentPageNumber'
 	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) )}"  class="animate-repeat-tablerow"
  	ng-if="isVisibleRowFunction(row)">
-
-<td ng-repeat="column in tableColumns"  ng-click="clickItem(row,getColumnValue(row,column.name),$event,$parent.$index)" ng-dblclick="startEdit(row,column,getColumnValue(row,column.name),$event)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}" ng-style="getDynamicValue(column.style,row,column)">
-		<span ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--'" dynamichtml="getColumnValue(row,column.name,column.transformer)"   ng-show="!allowEdit || (allowEdit && !row.editing) || (allowEdit && row.editing && !column.editable)">
+	<td ng-repeat="column in tableColumns"  ng-click="clickItem(row,getColumnValue(row,column.name),$event,$parent.$index)" ng-dblclick="startEdit(row,column,getColumnValue(row,column.name),$event)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}" ng-style="getDynamicValue(column.style,row,column)">
+		<span ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--' && column.name!='--ROW_DETAIL--'" dynamichtml="getColumnValue(row,column.name,column.transformer)"   ng-show="!allowEdit || (allowEdit && !row.editing) || (allowEdit && row.editing && !column.editable)">
 			<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom">{{getColumnValue(row,column.name,column.transformer)}}</md-tooltip>
 		</span>
-		<input ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--'" ng-show="allowEdit && row.editing && column.editable" ng-model="row[column.name]" ng-blur="doneEdit(row,column,getColumnValue(row,column.name),$event)" autofocus />
+		<input ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--' && column.name!='--ROW_DETAIL--'" ng-show="allowEdit && row.editing && column.editable" ng-model="row[column.name]" ng-blur="doneEdit(row,column,getColumnValue(row,column.name),$event)" autofocus />
 		
+		<md-button ng-init="exp=false" class="md-icon-button rowExpanderButton" ng-if="column.name=='--ROW_DETAIL--'" aria-label="expander row" ng-click="$event.stopPropagation();showRowDetail($event);exp=!exp;">
+        	<md-icon md-font-icon="fa " ng-class="{'fa-chevron-up': exp,'fa-chevron-down':!exp}"></md-icon>
+      	</md-button>
+
+
 		<i ng-if="column.name=='--DRAG_AND_DROP--'" ui-tree-handle class="fa fa-bars "></i>
 
 		<md-checkbox ng-if="column.name=='--MULTISELECT--'" ng-checked="isSelected(row)" ng-click="clickItem(row,getColumnValue(row,column.name),$event)" aria-label="selected item checked"> </md-checkbox>
