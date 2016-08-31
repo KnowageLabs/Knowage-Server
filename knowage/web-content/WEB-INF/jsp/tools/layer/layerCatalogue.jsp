@@ -276,36 +276,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</md-tab>
 		<md-tab label="Filter" md-on-select="setTab('Filter')"
 			md-active="isSelectedTab('Filter')" ng-click="loadFilter();">
-		<md-card>	
-			<div layout="column"  layout-fill>
-		<md-toolbar class="md-blue minihead ">
-	
-		<div class="md-toolbar-tools" layout="row" layout-wrap >
-			<div flex=50 >
-				<h2>{{translate.load("sbi.layerfilter");}}</h2>
-			</div>
-			<div flex=50 >
-				<h2>{{translate.load("sbi.layerfilteradded");}}</h2>
-			</div>
-		</div>
-		</md-toolbar>
-		 <md-content  layout="row" layout-wrap flex class="layerFilterContent">
-		
-			<div flex=50 class="layerFilter">
-				<angular-list class="mozSelect" 
-					layout-fill id='sx' ng-model=filter item-name='property'
-					click-function="addFilter(item)" show-search-bar=true />
-			</div>
-			<div flex=50 class="layerFilter">
-				<angular-list class="mozSelect" 
-					layout-fill id='right' ng-model=filter_set item-name='property'
-					click-function="removeFilter(item)" show-search-bar=true
-					speed-menu-option="removeIcon" />
-
+			<md-card layout-fill>	
+				<md-card-content layout="column"  layout-fill class="noPadding">
+					<md-toolbar class="md-blue minihead ">
+						<div class="md-toolbar-tools" layout="row" layout-wrap >
+							<div flex=50 >
+								<h2>{{translate.load("sbi.layerfilter");}}</h2>
+							</div>
+							<div flex=50 >
+								<h2>{{translate.load("sbi.layerfilteradded");}}</h2>
+							</div>
+						</div>
+					</md-toolbar>
+			 		<md-content  layout="row" layout-wrap flex class="layerFilterContent">
 			
-		</div>
-		</md-content> 
-		</div></md-card></md-tab>
+						<div flex style="border-right: 1px solid lightgray;" layout="column">
+							<angular-list flex class="mozSelect" 
+								layout-fill id='sx' ng-model=filter item-name='property'
+								click-function="addFilter(item)" show-search-bar=true />
+						</div>
+						<div flex class="" layout="column">
+							<angular-list flex class="mozSelect" 
+								layout-fill id='right' ng-model=filter_set item-name='property'
+								click-function="removeFilter(item)" show-search-bar=true
+								speed-menu-option="removeIcon" />
+						</div>
+					</md-content> 
+				</md-card-content>
+			</md-card>
+		</md-tab>
 		</md-tabs>
 	</div>
 
