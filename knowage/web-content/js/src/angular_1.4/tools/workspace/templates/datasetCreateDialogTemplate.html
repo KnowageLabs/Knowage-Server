@@ -234,7 +234,7 @@
 					<!-- </md-card>CARD 1 (END) -->
 			      
 					<!-- CARD 2 (START) -->
-			      	<md-card ng-if="datasetWizardView==2">
+			      	<md-card ng-if="datasetWizardView==2" class="step2And3Card">
 			         
 			         	<md-toolbar class="secondaryToolbar">
 			            	<div class="md-toolbar-tools">
@@ -254,7 +254,7 @@
 								<label>Columns</label> 
 							</md-input-container>  -->
 			         	
-				            <form>
+				            <form class="step2Height">
 				               <dataset-wizard-meta></dataset-wizard-meta>
 				            </form>
 				            
@@ -264,7 +264,7 @@
 			      	<!-- CARD 2 (END) -->
 			     
 			      	<!-- CARD 3 (START) -->
-			      	<md-card ng-if="datasetWizardView==3">
+			      	<md-card ng-if="datasetWizardView==3" class="step2And3Card">
 			      	
 			         	<md-toolbar class="secondaryToolbar">
 				            <div class="md-toolbar-tools">
@@ -273,7 +273,9 @@
 				            </div>
 			         	</md-toolbar>
 			         
-			         	<md-content flex class="loadFilePadding step3PreviewPanel">
+			         	<!-- <md-content flex class="loadFilePadding step3PreviewPanel"> -->
+			         	
+			         	<md-content flex class="loadFilePadding step2DefDataCardContent">
 				            
 				               <!-- VALIDATION DATA -->
 									

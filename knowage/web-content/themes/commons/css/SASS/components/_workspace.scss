@@ -291,6 +291,27 @@
 		}
 	}
 	
+	/* CSS class for IE9 and above. */
+	@media screen and (min-width:0\0) and (min-resolution: +72dpi) {
+		
+		.step2And3Card {
+			height: 97%;
+		}
+		
+		.step2DefDataCardContent {
+			height: calc(100% - 40px);
+			max-height: calc(100% - 40px);
+		}
+		
+		.step2Height {
+			height: 100%;
+		}
+		
+		.step3PreviewTable {
+			width: 100%;
+		}
+	}
+	
 	md-tab-content {
 		overflow-x: hidden;
 	}

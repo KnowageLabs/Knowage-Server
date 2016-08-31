@@ -142,7 +142,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			
 		},function(response){
 			
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+//			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+			
+			sbiModule_messaging.showErrorMessage("The All datasets could not be loaded", sbiModule_translate.load('sbi.generic.error'));
 			
 			/**
 			 * Even if the REST call of this one was unsuccessful, call the next one (the one with the index 
@@ -174,7 +176,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			
 		},function(response){
 			
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+//			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+			
+			sbiModule_messaging.showErrorMessage("The My datasets could not be loaded", sbiModule_translate.load('sbi.generic.error'));
+			
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 			
 		});
@@ -196,7 +201,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			
 		},function(response){
 			
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+//			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+			
+			sbiModule_messaging.showErrorMessage("The Enterprise datasets could not be loaded", sbiModule_translate.load('sbi.generic.error'));
+			
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 			
 		});
@@ -218,7 +226,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			
 		},function(response){
 			
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+//			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+			
+			sbiModule_messaging.showErrorMessage("The Shared datasets could not be loaded", sbiModule_translate.load('sbi.generic.error'));
+			
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 			
 		});
