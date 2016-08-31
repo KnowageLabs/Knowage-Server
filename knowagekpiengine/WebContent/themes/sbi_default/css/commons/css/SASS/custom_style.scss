@@ -257,3 +257,17 @@ a.md-button.md-knowage-theme.md-primary, .md-button.md-knowage-theme.md-primary 
 .noBorder{
 	border:0px;
 }
+
+
+	@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+/* IE10+ CSS styles go here */
+
+.flex {
+  -ms-flex: 1 auto;
+  -webkit-box-flex: 1 auto;
+  -webkit-flex: 1 auto;
+          flex: 1;
+   width:100%;
+   margin:0px !important;
+}
+}

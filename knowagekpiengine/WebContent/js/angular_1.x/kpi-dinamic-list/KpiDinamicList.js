@@ -25,7 +25,24 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 	var s=$scope;
 	s.translate=sbiModule_translate;
 	s.kpiAllList = [];
-	s.tableKpisColumn = [];
+	s.tableKpisColumnList=[
+		                     {"label": sbiModule_translate.load('sbi.generic.name') ,"name":"name"},
+		                     {"label": sbiModule_translate.load('sbi.kpi.category'),"name":"valueCd"},
+		                     {"label": sbiModule_translate.load('sbi.kpiedit.range.minvalue'),"name":"rangeMinValueHTML"},
+		                     {"label": sbiModule_translate.load('sbi.kpiedit.range.maxvalue'),"name":"rangeMaxValueHTML"},
+		                     {"label": sbiModule_translate.load('sbi.kpiedit.prefixSuffixValue'),"name":"prefixSuffixValueHTML"},
+		                     {"label": sbiModule_translate.load('sbi.kpiedit.isSuffix'),"name":"isSuffixHTML"}
+		                  ];
+	s.tableKpisColumnWidget=[
+		                     {"label": sbiModule_translate.load('sbi.generic.name'),"name":"name"},
+		                     {"label": sbiModule_translate.load('sbi.kpi.category'),"name":"valueCd"},
+		                     {"label": sbiModule_translate.load('sbi.kpiedit.viewas'),"name":"vieweAsList"},
+		                     {"label": sbiModule_translate.load('sbi.kpiedit.range.minvalue'),"name":"rangeMinValueHTML"},
+		                     {"label": sbiModule_translate.load('sbi.kpiedit.range.maxvalue'),"name":"rangeMaxValueHTML"},
+		                     {"label": sbiModule_translate.load('sbi.kpiedit.prefixSuffixValue'),"name":"prefixSuffixValueHTML"},
+		                     {"label": sbiModule_translate.load('sbi.kpiedit.isSuffix'),"name":"isSuffixHTML"}
+		                  ];
+	s.typeOfVisualization = s.typeChart;
 	s.tableFunction={
 			translate:sbiModule_translate,
 			
@@ -73,45 +90,12 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 	}
 	
 	s.$watch('typeChart' , function(newValue,oldValue){
-		if(newValue=='list'){
-			s.tableKpisColumn=[
-				                     {"label": sbiModule_translate.load('sbi.generic.name') ,"name":"name"},
-				                     {"label": sbiModule_translate.load('sbi.kpi.category'),"name":"valueCd"},
-				                     {"label": sbiModule_translate.load('sbi.kpiedit.range.minvalue'),"name":"rangeMinValueHTML"},
-				                     {"label": sbiModule_translate.load('sbi.kpiedit.range.maxvalue'),"name":"rangeMaxValueHTML"},
-				                     {"label": sbiModule_translate.load('sbi.kpiedit.prefixSuffixValue'),"name":"prefixSuffixValueHTML"},
-				                     {"label": sbiModule_translate.load('sbi.kpiedit.isSuffix'),"name":"isSuffixHTML"}
-				                  ];
-		}else{
-			s.tableKpisColumn=[
-				                     {"label": sbiModule_translate.load('sbi.generic.name'),"name":"name"},
-				                     {"label": sbiModule_translate.load('sbi.kpi.category'),"name":"valueCd"},
-				                     {"label": sbiModule_translate.load('sbi.kpiedit.viewas'),"name":"vieweAsList"},
-				                     {"label": sbiModule_translate.load('sbi.kpiedit.range.minvalue'),"name":"rangeMinValueHTML"},
-				                     {"label": sbiModule_translate.load('sbi.kpiedit.range.maxvalue'),"name":"rangeMaxValueHTML"},
-				                     {"label": sbiModule_translate.load('sbi.kpiedit.prefixSuffixValue'),"name":"prefixSuffixValueHTML"},
-				                     {"label": sbiModule_translate.load('sbi.kpiedit.isSuffix'),"name":"isSuffixHTML"}
-				                  ];
-		}
+		s.typeOfVisualization = newValue;
 		
 	});
 		
 	
-	s.setColumns = function(){
-		if(s.typeChart=='list'){
-			s.tableKpisColumn=[
-				                     {"label":"Name","name":"name"},
-				                     {"label":"Category","name":"valueCd"},
-				                  ];
-		}else{
-			s.tableKpisColumn=[
-				                     {"label":"Name","name":"name"},
-				                     {"label":"Category","name":"valueCd"},
-				                     {"label":"View As","name":"vieweAsList"}
-				                  ];
-		}
-	}
-	s.setColumns();
+
 	s.removeKpi = function(item){
 		var confirm = $mdDialog.confirm()
 		.title(s.translate.load("sbi.kpi.measure.delete.title"))
