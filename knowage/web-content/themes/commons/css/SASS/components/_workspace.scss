@@ -279,29 +279,39 @@
 	// WHEN COLUMNS/DATASET COMBO WAS MOVED FROM THE STEP 2 OF THE DATASET WIZARD
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	.step2DefDataCardContent {
-		height: 80%;
-		max-height: 80%;
+		height: calc(100% - 40px);
+		max-height: calc(100% - 40px);
+	}
+	
+	.step2And3Card {
+			height: calc(100% - 56px);
 	}
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
 	@-moz-document url-prefix() { 
-		.step2DefDataCardContent {
+		/*.step2DefDataCardContent {
 			height: 87%;
 			max-height: 87%;
+		}*/
+		
+		.step2And3Card {
+			height: calc(100% - 16px);
 		}
 	}
+	
+	
 	
 	/* CSS class for IE9 and above. */
 	@media screen and (min-width:0\0) and (min-resolution: +72dpi) {
 		
 		.step2And3Card {
-			height: 97%;
+			height: calc(100% - 16px);
 		}
 		
-		.step2DefDataCardContent {
+		/*.step2DefDataCardContent {
 			height: calc(100% - 40px);
 			max-height: calc(100% - 40px);
-		}
+		}*/
 		
 		.step2Height {
 			height: 100%;

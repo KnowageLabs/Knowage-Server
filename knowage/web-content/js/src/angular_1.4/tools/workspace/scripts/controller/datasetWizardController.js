@@ -229,8 +229,9 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		
 		$scope.dataset.datasetMetadata = JSON.stringify($scope.dataset.datasetMetadata);
 		$scope.dataset.limitPreview = $scope.limitPreviewChecked;
-		$scope.dataset.page = 1;
-		$scope.dataset.start = "";
+		
+		$scope.dataset.page = 1; 		
+		$scope.dataset.start = "";		
 		$scope.dataset.page = 10;
 		
 		/**
@@ -241,7 +242,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			$scope.dataset.label = "";
 		}
 		
-		//console.log($scope.dataset);
+//		console.log($scope.dataset);
 			
 		var params = {};
 			
