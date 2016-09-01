@@ -123,13 +123,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<detail save-function="parseFormula" cancel-function="cancel" label="getKpiName()">
  		<div layout="row" class="absolute" layout-fill>
 		<md-tabs flex md-selected='selectedTab.tab' class="hidden-overflow-orizontal">
-				<md-tab id="tab1" style="padding-right: 20px; padding-left: 20px;">
-       				<md-tab-label>{{translate.load("sbi.kpi.formula")}}<span ng-show="formulaModified.value">*</span></md-tab-label>
+				<md-tab id="tab1" >
+       				<md-tab-label>{{translate.load("sbi.kpi.formula")}}<span ng-if="formulaModified.value">*</span></md-tab-label>
         			<md-tab-body>
         			<%@include	file="./kpiTemplate/formulaTemplate.jsp"%>
 					</md-tab-body>
 				</md-tab>
-				<md-tab id="tab2" md-on-select="setCardinality()" style="padding-right: 20px; padding-left: 20px;">
+				<md-tab id="tab2" md-on-select="setCardinality()">
        				<md-tab-label >{{translate.load("sbi.kpi.cardinality")}}</md-tab-label>
         			<md-tab-body >
         			<%@include	file="./kpiTemplate/cardinalityTemplate.jsp"%>
@@ -143,7 +143,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-tab-body>
 				</md-tab>
 				 -->
-				<md-tab id="tab4" md-on-select="loadThreshold()" style="padding-right: 20px; padding-left: 20px;">
+				<md-tab id="tab4" md-on-select="loadThreshold()" >
        				<md-tab-label>{{translate.load("sbi.kpis.threshold")}}</md-tab-label>
         			<md-tab-body>
         			<%@include	file="./kpiTemplate/thresholdTemplate.jsp"%>
