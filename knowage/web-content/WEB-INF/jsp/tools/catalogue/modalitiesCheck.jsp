@@ -48,9 +48,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  		<list label='translate.load("sbi.modalities.check.title.constraints")' new-function="createConstraints"> 
 		
     <md-tabs md-dynamic-height md-selected="selectedTab" md-border-bottom="">
-      <md-tab label='{{translate.load("sbi.modalities.check.title.configurable");}}' ng-click="clearRight(selectedTab)">
-        
-        <angular-table 
+      <md-tab style="height:85%;" label='{{translate.load("sbi.modalities.check.title.configurable");}}' ng-click="clearRight(selectedTab)">
+        <md-content flex style="height:85%;">
+        <angular-table style="height:85%;"
                         flex
 						id="TestItemList_id"
 						ng-model="ItemList"
@@ -65,11 +65,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						speed-menu-option="ccSpeedMenu" >
 										
 					</angular-table>  
-         
+         </md-content>
       </md-tab>
-      <md-tab label='{{translate.load("sbi.modalities.check.title.predefined");}}' ng-click="clearRight(selectedTab)">
+      <md-tab style="height:85%;" label='{{translate.load("sbi.modalities.check.title.predefined");}}' ng-click="clearRight(selectedTab)">
+       <md-content flex style="height:85%;">
          <angular-table 
-                        
+                        style="height:85%;"
                         flex
 						id="predefined_id"
 						ng-model="PredefinedList"
@@ -83,7 +84,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						highlights-selected-item=true
 						click-function="loadPredefined(item)">										
 					</angular-table>
-         
+           </md-content>
       </md-tab>
     </md-tabs>
    </list>
@@ -96,7 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <md-card layout-padding  ng-show="showme">
 					<div layout="row" layout-wrap>
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.label")}}</label>
 							<input name="lbl" ng-model="SelectedConstraint.label" ng-required="true"
 							ng-maxlength="20" ng-change="setDirty()">
@@ -111,7 +112,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<div layout="row" layout-wrap>
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.name")}}</label>
 							<input name="name" ng-model="SelectedConstraint.name"  ng-required = "true"
 						    ng-maxlength="40" ng-change="setDirty()">
@@ -127,7 +128,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<div layout="row" layout-wrap>
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.description")}}</label>
 							<input ng-model="SelectedConstraint.description"
 					        ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
@@ -136,7 +137,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				<div layout="row" layout-wrap>
       				<div flex=100>
-				       <md-input-container class="small counter" > 
+				       <md-input-container class="md-block" > 
 				       <label>{{translate.load("sbi.modalities.check.details.check_type")}}</label>
 				       <md-select  aria-label="dropdown" placeholder ="Check Type"
 				       	name ="dropdown" 
@@ -154,7 +155,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
      			<div layout="row" layout-wrap>
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{label}}</label>
 							<input ng-model="SelectedConstraint.firstValue" 
 						    ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
@@ -163,7 +164,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 				<div layout="row" layout-wrap ng-show ="additionalField">
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.modalities.check.details.rangeMax")}}</label>
 							<input ng-model="SelectedConstraint.secondValue" 
 						    ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
@@ -174,7 +175,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <md-card layout-padding ng-show="showpred">
 					<div layout="row" layout-wrap>
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.label")}}</label>
 							<input ng-model="PredefinedItem.label" ng-readonly="true">
 							 </md-input-container>
@@ -183,7 +184,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<div layout="row" layout-wrap>
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.name")}}</label>
 							<input ng-model="PredefinedItem.name"  ng-readonly="true">
 						     </md-input-container>
@@ -192,7 +193,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<div layout="row" layout-wrap>
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.description")}}</label>
 							<textarea ng-model="PredefinedItem.description" ng-readonly="true"></textarea>
 					         </md-input-container>
@@ -203,7 +204,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 				<div layout="row" layout-wrap>
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.modalities.check.details.check_type")}}</label>
 							<input ng-model="PredefinedItem.valueTypeCd" ng-readonly="true">
 						     </md-input-container>

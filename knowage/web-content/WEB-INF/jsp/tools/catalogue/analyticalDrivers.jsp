@@ -81,18 +81,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		cancel-function="cancel"
 		disable-save-button="!attributeForm.$valid"
 		show-save-button="showme" show-cancel-button="showme">
-		<form name="attributeForm" ng-submit="attributeForm.$valid && save()"
-		
-		<md-card>
-	        <md-card-content>
+		<form name="attributeForm" ng-submit="attributeForm.$valid && save()">
+	
 		      
 		     <md-tabs md-dynamic-height md-selected="selectedTab" md-border-bottom="">
 			<md-tab label='{{translate.load("sbi.analytical.drivers.details");}}'>
-			<md-content flex 
-			class="ToolbarBox miniToolbar noBorder mozTable">
+			<md-card>
+			<md-content layout-padding>
 			<div layout="row" layout-wrap>
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.label")}}</label>
 							<input name="lbl" ng-model="selectedDriver.label" ng-required="true"
 							ng-maxlength="20" ng-change="setDirty()">
@@ -107,7 +105,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<div layout="row" layout-wrap>
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.name")}}</label>
 							<input name="name" ng-model="selectedDriver.name"  ng-required = "true"
 						    ng-maxlength="40" ng-change="setDirty()">
@@ -123,7 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<div layout="row" layout-wrap>
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.description")}}</label>
 							<input ng-model="selectedDriver.description"
 					        ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
@@ -146,35 +144,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</div>
 					</div>
 				
-				 <div layout="row" layout-wrap>
+				 <div >
 			   <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedDriver.functional" aria-label="driver">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       
 			        <label>{{translate.load("sbi.analytical.drivers.functional")}}</label>
-			       </div>
+			     
 			   </div>
-			   <div layout="row" layout-wrap>
+			   <div >
 			    <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedDriver.temporal" aria-label="driver">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       
 			        <label>{{translate.load("sbi.analytical.drivers.temporal")}}</label>
-			       </div>
+			       
 			   </div>
 			
-			</md-content> </md-tab> 
+			</md-content>
+			</md-card>
+			 </md-tab> 
 			<md-tab label='{{translate.load("sbi.analytical.drivers.usemode.details");}}' ng-if="showadMode"> 
-			<md-content flex 
-			class="ToolbarBox miniToolbar noBorder mozTable">
+			<md-card>
+			<md-content layout-padding>
 				
 					<div layout="row" layout-wrap>
 						<div flex=100>
-							 <md-input-container class="small counter">
+							 <md-input-container class="md-block">
 								<label>{{translate.load("sbi.ds.label")}}</label>
 								<input name="lbl" ng-model="selectedParUse.label" ng-required="selectedTab == 1"
 								ng-maxlength="20" ng-change="setDirty()">
@@ -189,7 +189,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<div layout="row" layout-wrap>
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.name")}}</label>
 							<input name="name" ng-model="selectedParUse.name"  ng-required = "selectedTab == 1"
 						    ng-maxlength="40" ng-change="setDirty()">
@@ -205,7 +205,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<div layout="row" layout-wrap>
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.description")}}</label>
 							<input ng-model="selectedParUse.description"
 					        ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
@@ -234,7 +234,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     				<div ng-show= "selectedParUse.valueSelection == 'lov'">
 						<div layout="row" layout-wrap>
 	      				<div flex=100>
-					       <md-input-container class="small counter" > 
+					       <md-input-container class="md-block"> 
 					       <label>{{translate.load("sbi.analytical.drivers.usemode.lovdate")}}</label>
 					       <md-select  aria-label="dropdown"
 					       	name ="dropdown" 
@@ -252,7 +252,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					    </div>
 					    <div layout="row" layout-wrap>
 	      				<div flex=100>
-					       <md-input-container class="small counter" > 
+					       <md-input-container class="md-block" > 
 					       <label>{{translate.load("sbi.generic.select")}}</label>
 					       <md-select  aria-label="dropdown"
 					       	name ="dropdown" 
@@ -270,7 +270,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<div ng-show= "selectedParUse.valueSelection == 'map_in'">
 						<div layout="row" layout-wrap>
 	      				<div flex=100>
-					       <md-input-container class="small counter" > 
+					       <md-input-container class="md-block"> 
 					       <label>{{translate.load("sbi.analytical.drivers.usemode.mapinput.layer")}}</label>
 					       <md-select  aria-label="dropdown"
 					       	name ="dropdown" 
@@ -286,7 +286,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					    </div>
 					   	<div layout="row" layout-wrap>
 						<div flex=100>
-							<md-input-container class="small counter">
+							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.analytical.drivers.usemode.mapinput.layer.prop")}}</label>
 							<input ng-model="selectedParUse.selectedLayerProp"
 					        ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
@@ -295,15 +295,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 					
     				
-    				<div layout="row" layout-wrap  ng-if = "selectedParUse.valueSelection != 'map_in'">
+    				<div  ng-if = "selectedParUse.valueSelection != 'map_in'">
 			    <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedParUse.maximizerEnabled" aria-label="driver">
 			        </md-checkbox> 
 			       </md-input-container>
-			       <div flex=3 style="line-height: 40px">
+			       
 			        <label>{{translate.load("sbi.analytical.drivers.usemode.expandable")}}</label>
-			       </div>
+			        
 			   		</div>
 			   		
     				<label>{{translate.load("sbi.generic.defaultValue")}}</label>
@@ -325,7 +325,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<div ng-show= "selectedParUse.defaultrg == 'lov'">
 						<div layout="row" layout-wrap>
 	      				<div flex=100>
-					       <md-input-container class="small counter" > 
+					       <md-input-container class="md-block" > 
 					       <label>{{translate.load("sbi.analytical.drivers.usemode.lovdate")}}</label>
 					       <md-select  aria-label="dropdown"
 					       	name ="dropdown" 
@@ -333,7 +333,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					        ng-model="selectedParUse.idLovForDefault"> <md-option 
 					        ng-repeat="l in listDate track by $index" value="{{l.id}}">{{l.name}} </md-option>
 					       </md-select>
-					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.idLovForDefault== -1">
+					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.idLovForDefault == -1">
 					        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 					      </div>   
 					        </md-input-container>
@@ -344,7 +344,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<div ng-show= "selectedParUse.defaultrg == 'pickup'">
 						<div layout="row" layout-wrap ng-if="selectedParUse.valueSelection != 'map_in'">
 	      				<div flex=100>
-					       <md-input-container class="small counter" > 
+					       <md-input-container class="md-block" > 
 					       <label>{{translate.load("sbi.generic.select")}}</label>
 					       <md-select  aria-label="dropdown"
 					       	name ="dropdown" 
@@ -395,13 +395,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 				    </div>	
 				 </md-content>
+				 </md-card>
 				    </div>
 				   
 				 </md-content> </md-tab></md-tabs> </md-content> 
 		      
 				
-			</md-card-content>
-	      </md-card>
 		
 		
 		
