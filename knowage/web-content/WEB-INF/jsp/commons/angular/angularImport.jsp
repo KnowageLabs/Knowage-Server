@@ -82,6 +82,7 @@ if(importAngularMaterialForExport == null) {
 
 <!-- angular table -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js"></script>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-table/AngularTable.css">
 
 <!-- document tree -->

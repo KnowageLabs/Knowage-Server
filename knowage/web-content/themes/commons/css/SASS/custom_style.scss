@@ -633,4 +633,9 @@ md-menu-content._md-menu-bar-menu.md-dense md-menu-item.md-indent>md-icon {
     top:10px;*/
     padding-top: 11px;
   }
+  
+  md-select-menu[multiple] md-option[selected]._md-checkbox-enabled ._md-icon::after{
+    padding-top: 11px;
+  }
+  
 }
