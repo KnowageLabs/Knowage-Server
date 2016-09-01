@@ -359,10 +359,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					    </div>
 					    </div>
 				    </div>
-				    <md-toolbar class="md-blue minihead md-toolbar-tools" 
-												style="margin-top:15px" >
-										{{translate.load("sbi.users.roles");}}
-					</md-toolbar>
+				 </md-content>
+				 </md-card>
+				    
+				    <md-card>
+				    <md-content layout-padding>
+					<md-toolbar class="secondaryToolbar">
+				      <div class="md-toolbar-tools">
+				        <h2>
+				          <span>{{translate.load("sbi.users.roles");}}</span>
+				        </h2>
+				   
+				      </div>
+				    </md-toolbar>
+				   
 					
 				    <div layout="row" layout-wrap flex>
 					<div flex="25" ng-repeat="role in rolesList">
@@ -380,11 +390,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired.role");}}</div>
 					</div>  
 					</md-input-container>
-				     <md-toolbar class="md-blue minihead md-toolbar-tools" 
-												style="margin-top:15px" >
-										{{translate.load("sbi.modalities.check.title.predefined");}}
-					</md-toolbar>
+					</md-content>
+				 </md-card>
 					
+				<md-card>
+				  <md-content layout-padding>	
+					<md-toolbar class="secondaryToolbar">
+				      <div class="md-toolbar-tools">
+				        <h2>
+				          <span>{{translate.load("sbi.modalities.check.title.predefined");}}</span>
+				        </h2>
+				   
+				      </div>
+				    </md-toolbar>
+				    
 					<div layout="row" layout-wrap flex>
 					<div flex="25" ng-repeat="check in checksList">
 						<md-checkbox 
@@ -394,9 +413,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-checkbox>
 					</div>
 				    </div>	
-				 </md-content>
-				 </md-card>
+				 
 				    </div>
+				    
+				    </md-content>
+				 </md-card>
+				    
 				   
 				 </md-content> </md-tab></md-tabs> </md-content> 
 		      
