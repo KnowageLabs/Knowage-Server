@@ -18,6 +18,8 @@
 package it.eng.spagobi.rest.publishers;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -75,24 +77,7 @@ public class PublisherService extends AbstractSpagoBIResource {
 
 	/* Vulnerability patch: allows only jsp publishing */
 	private boolean isPublisherValid(String publisher) {
-		boolean isValid = true;
-		
-		if(isValid && publisher == null) {
-			isValid = false;
-		}
-
-		if(isValid && !publisher.startsWith(JSP_PATH)) {
-				isValid = false;
-		}
-		String publisherNoParameters = publisher.indexOf("?") < 0 ? publisher : publisher.substring(0, publisher.indexOf("?")); 
-		if(isValid && !publisherNoParameters.toLowerCase().endsWith("jsp")){
-			isValid = false;
-		}
-		if(isValid && publisherNoParameters.contains("../")) {
-			isValid = false;
-		}
-		
-		return isValid;
+		return publisher != null && publisher.matches("^/WEB-INF/jsp/((?!\\.\\.\\\\).*)\\.jsp(\\?.*)?$");
 	}
 
 }
