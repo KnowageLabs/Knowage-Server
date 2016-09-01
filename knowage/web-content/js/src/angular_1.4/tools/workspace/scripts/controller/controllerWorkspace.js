@@ -814,7 +814,29 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 		 * 
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		$scope.$on("documentClosed", function() { $scope.loadRecentDocumentExecutionsForUser(); $scope.loadAllFolders(); });
+		$scope.$on(
+						"documentClosed", 
+					
+						function() { 		
+							
+							/**
+							 * 'loadRecentDocumentExecutionsForUser' 
+							 * 		- reload all recent documents (since the new one is executed)
+							 * 'loadAllFolders' 
+							 * 		- reload all folders (the content of the entire Organizer), since user might add
+							 * 		the executed document (cockpit) to the Workspace, i.e. to its Organizer.
+							 * 'loadAllMyAnalysisDocuments' 
+							 * 		- reload all Analysis documents (cockpits), since the executed document
+							 * 		could be edited or the new one could be created according to the one that is executed.
+							 * 
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */  
+							$scope.loadRecentDocumentExecutionsForUser(); 
+							$scope.loadAllFolders(); 
+							$scope.loadAllMyAnalysisDocuments();	
+							
+						}
+					);
 		
 	}
 	
