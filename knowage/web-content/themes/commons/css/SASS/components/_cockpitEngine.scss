@@ -11,6 +11,30 @@
         top: 0;
     }
     
+    .sheetMenuPanel{
+        width: 200px;
+    	margin-left: -24px;
+    	box-shadow : 0 1px 5px 0 rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12);
+    	md-list{
+    		background-color: white;
+    	}
+    }
+    
+    .openSheetMenuIconButton{
+    	position: absolute;
+	    color: black;
+	    margin: 0;
+	    padding: 0;
+	    top: 8px;
+	    width: 24px;
+	    height: 24px;
+	    min-height: 24px;
+    	&:hover{
+    	    background-color: rgba(158,158,158,0.2)!important;
+    		}
+    }
+    
+    
     .toolbarFab {
         position:absolute;
         top: 0;
