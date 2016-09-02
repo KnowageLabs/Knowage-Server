@@ -19,7 +19,9 @@ package it.eng.spagobi.commons.filters;
 
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.DefaultCipher;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -56,7 +58,7 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
- *
+ * 
  *         This filter tries to build the user profile object, using the user identifier
  */
 
@@ -88,6 +90,13 @@ public class ProfileFilter implements Filter {
 					SessionContainer sessionContainer = new SessionContainer(true);
 					requestContainer.setSessionContainer(sessionContainer);
 					session.setAttribute(Constants.REQUEST_CONTAINER, requestContainer);
+				}
+				ResponseContainer responseContainer = (ResponseContainer) session.getAttribute(Constants.RESPONSE_CONTAINER);
+				if (responseContainer == null) {
+					responseContainer = new ResponseContainer();
+					SourceBean serviceResponse = new SourceBean(Constants.SERVICE_RESPONSE);
+					responseContainer.setServiceResponse(serviceResponse);
+					session.setAttribute(Constants.RESPONSE_CONTAINER, responseContainer);
 				}
 				SessionContainer sessionContainer = requestContainer.getSessionContainer();
 				SessionContainer permanentSession = sessionContainer.getPermanentContainer();
@@ -269,12 +278,12 @@ public class ProfileFilter implements Filter {
 	/**
 	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
 	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
-	 *
+	 * 
 	 * @param httpRequest
 	 *            The http request
-	 *
+	 * 
 	 * @return the current user unique identified
-	 *
+	 * 
 	 * @throws Exception
 	 *             in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
 	 */
