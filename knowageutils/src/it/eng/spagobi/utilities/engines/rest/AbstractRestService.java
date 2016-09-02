@@ -28,9 +28,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 /**
  * The Class AbstractRestService.
- *
+ * 
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
 public abstract class AbstractRestService {
@@ -39,7 +42,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Creates the context manager
-	 *
+	 * 
 	 * @return ExecutionSession container of the execution manager
 	 */
 	public ExecutionSession getExecutionSession() {
@@ -51,7 +54,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Gets the what if engine instance.
-	 *
+	 * 
 	 * @return the console engine instance
 	 */
 	public IEngineInstance getEngineInstance() {
@@ -60,7 +63,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Check if the number is null
-	 *
+	 * 
 	 * @param value
 	 *            the value to check
 	 * @return true if the value is null
@@ -71,7 +74,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Check if the string is null
-	 *
+	 * 
 	 * @param value
 	 *            the value to check
 	 * @return true if the value is null
@@ -82,7 +85,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Check if the string is null or ""
-	 *
+	 * 
 	 * @param value
 	 *            the value to check
 	 * @return true if the value is null or ""
@@ -113,11 +116,11 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Gets the HttpServletRequest.. A standard implementation is to get the HttpServletRequest from the context.. The implementing class can be:
-	 *
+	 * 
 	 * public class XXXEngineService extends AbstractRestService{
-	 *
+	 * 
 	 * @Context protected HttpServletRequest servletRequest;
-	 *
+	 * 
 	 *          public HttpServletRequest getServletRequest(){ return servletRequest; }
 	 * @return the HttpServletRequest
 	 */
@@ -157,5 +160,13 @@ public abstract class AbstractRestService {
 
 	public Integer getAttributeAsInteger(String attrName) {
 		return getExecutionSession().getAttributeAsInteger(attrName);
+	}
+
+	public JSONObject getAttributeAsJSONObject(String attrName) {
+		return getExecutionSession().getAttributeAsJSONObject(attrName);
+	}
+
+	public JSONArray getAttributeAsJSONArray(String attrName) {
+		return getExecutionSession().getAttributeAsJSONArray(attrName);
 	}
 }

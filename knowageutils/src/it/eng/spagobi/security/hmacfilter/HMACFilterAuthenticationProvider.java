@@ -33,9 +33,9 @@ import org.jboss.resteasy.client.ClientRequest;
 
 /**
  * Provide client HMAC authentication for {@link HMACFilter}.
- *
+ * 
  * @author fabrizio
- *
+ * 
  */
 public class HMACFilterAuthenticationProvider {
 
@@ -56,7 +56,7 @@ public class HMACFilterAuthenticationProvider {
 
 	/**
 	 * For REST Easy {@link ClientRequest}
-	 *
+	 * 
 	 * @param req
 	 * @throws HMACSecurityException
 	 */
@@ -72,19 +72,19 @@ public class HMACFilterAuthenticationProvider {
 			throw new HMACSecurityException("Problems while signing the request", e);
 		}
 
-		req.header(HMACFilter.HMAC_TOKEN_HEADER, token);
-		req.header(HMACFilter.HMAC_SIGNATURE_HEADER, signature);
+		req.header(HMACUtils.HMAC_TOKEN_HEADER, token);
+		req.header(HMACUtils.HMAC_SIGNATURE_HEADER, signature);
 	}
 
 	private String getSignature(ClientRequest req, String token) throws IOException, Exception {
-		String res = HMACFilter.sign(getQueryPath(req), getParamsString(req), getBody(req), token, key, getHeaders(req));
+		String res = HMACUtils.sign(getQueryPath(req), getParamsString(req), getBody(req), token, key, getHeaders(req));
 		return res;
 	}
 
 	private static String getHeaders(ClientRequest req) {
 		MultivaluedMap<String, String> headers = req.getHeaders();
 		StringBuilder res = new StringBuilder();
-		for (String name : HMACFilter.HEADERS_SIGNED) {
+		for (String name : HMACUtils.HEADERS_SIGNED) {
 			List<String> values = headers.get(name); // only 1 value admitted
 			if (values == null) {
 				// header not present

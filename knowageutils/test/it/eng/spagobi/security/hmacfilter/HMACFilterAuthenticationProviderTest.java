@@ -1,20 +1,20 @@
 /*
-* Knowage, Open Source Business Intelligence suite
-* Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-*
-* Knowage is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Affero General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* Knowage is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.spagobi.security.hmacfilter;
 
 import java.io.ByteArrayInputStream;
@@ -73,7 +73,7 @@ public class HMACFilterAuthenticationProviderTest {
 		ClientRequest request = new ClientRequest("http://localhost:8080/hmac", httpExecutor);
 		request.queryParameter("a", "b");
 		request.queryParameter("c", "d");
-		request.header(HMACFilter.HEADERS_SIGNED.get(0), "z");
+		request.header(HMACUtils.HEADERS_SIGNED.get(0), "z");
 		request.header("r", "f");
 		provider.provideAuthentication(request);
 		ClientResponse<?> resp = request.get();
@@ -86,7 +86,7 @@ public class HMACFilterAuthenticationProviderTest {
 		ClientRequest request = new ClientRequest("http://localhost:8080/hmac", httpExecutor);
 		request.queryParameter("a", "b");
 		request.queryParameter("c", "d");
-		request.header(HMACFilter.HEADERS_SIGNED.get(0), "z");
+		request.header(HMACUtils.HEADERS_SIGNED.get(0), "z");
 		request.header("r", "f");
 		provider = new HMACFilterAuthenticationProvider("cde", new SystemTimeHMACTokenValidator(HMACFilter.MAX_TIME_DELTA_DEFAULT_MS));
 		provider.provideAuthentication(request);
@@ -101,7 +101,7 @@ public class HMACFilterAuthenticationProviderTest {
 		request.queryParameter("a", "b");
 		request.queryParameter("c", "d");
 		request.header("r", "f");
-		request.header(HMACFilter.HEADERS_SIGNED.get(0), "z");
+		request.header(HMACUtils.HEADERS_SIGNED.get(0), "z");
 		provider.provideAuthentication(request);
 		HMACFilterTest.stopHMACFilterServer();
 		HMACFilterTest.startHMACFilterServer(HeaderChanges.class);
@@ -131,7 +131,7 @@ public class HMACFilterAuthenticationProviderTest {
 			HttpServletRequestWrapper hsrw = new HttpServletRequestWrapper((HttpServletRequest) request) {
 				@Override
 				public String getHeader(String name) {
-					if (name.equals(HMACFilter.HEADERS_SIGNED.get(0))) {
+					if (name.equals(HMACUtils.HEADERS_SIGNED.get(0))) {
 						changed = true;
 						return "manInTheMiddle";
 					}
@@ -152,7 +152,7 @@ public class HMACFilterAuthenticationProviderTest {
 		ClientRequest request = new ClientRequest("http://localhost:8080/hmac", httpExecutor);
 		request.queryParameter("a", "b");
 		request.queryParameter("c", "d");
-		request.header(HMACFilter.HEADERS_SIGNED.get(0), "z");
+		request.header(HMACUtils.HEADERS_SIGNED.get(0), "z");
 		request.header("r", "f");
 		provider = new HMACFilterAuthenticationProvider(HMACFilterTest.key, new HMACTokenValidator() {
 
@@ -177,7 +177,7 @@ public class HMACFilterAuthenticationProviderTest {
 		ClientRequest request = new ClientRequest("http://localhost:8080/hmac", httpExecutor);
 		request.queryParameter("a", "b"); // with also params in URI
 		request.queryParameter("c", "d");
-		request.header(HMACFilter.HEADERS_SIGNED.get(0), "z");
+		request.header(HMACUtils.HEADERS_SIGNED.get(0), "z");
 		request.header("r", "f");
 		request.body(MediaType.TEXT_PLAIN, "k=t&r=f");
 		provider.provideAuthentication(request);
@@ -191,7 +191,7 @@ public class HMACFilterAuthenticationProviderTest {
 		ClientRequest request = new ClientRequest("http://localhost:8080/hmac", httpExecutor);
 		request.queryParameter("a", "b"); // with also params in URI
 		request.queryParameter("c", "d");
-		request.header(HMACFilter.HEADERS_SIGNED.get(0), "z");
+		request.header(HMACUtils.HEADERS_SIGNED.get(0), "z");
 		request.header("r", "f");
 		request.body(MediaType.TEXT_PLAIN, "abcdhjk");
 		// without providing authentication
@@ -205,7 +205,7 @@ public class HMACFilterAuthenticationProviderTest {
 		ClientRequest request = new ClientRequest("http://localhost:8080/hmac", httpExecutor);
 		request.queryParameter("a", "b"); // with also params in URI
 		request.queryParameter("c", "d");
-		request.header(HMACFilter.HEADERS_SIGNED.get(0), "z");
+		request.header(HMACUtils.HEADERS_SIGNED.get(0), "z");
 		request.header("r", "f");
 		byte[] body = new byte[] { 12, 100, 24, 38 };
 		request.body(MediaType.APPLICATION_OCTET_STREAM_TYPE, new ByteArrayInputStream(body));

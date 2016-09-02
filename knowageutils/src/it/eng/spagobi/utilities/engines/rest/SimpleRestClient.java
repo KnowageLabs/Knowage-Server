@@ -19,8 +19,8 @@ package it.eng.spagobi.utilities.engines.rest;
 
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.security.hmacfilter.HMACFilter;
 import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
+import it.eng.spagobi.security.hmacfilter.HMACUtils;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.dataset.ckan.CKANClient;
 import it.eng.spagobi.utilities.Helper;
@@ -38,7 +38,7 @@ import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
 
 /**
- *
+ * 
  * @author Alberto Ghedin (alberto.ghedin@eng.it), Giulio Gavardi(giulio.gavardi@eng.it)
  */
 
@@ -60,7 +60,7 @@ public class SimpleRestClient {
 	public SimpleRestClient() {
 		String key = EnginConf.getInstance().getHmacKey();
 		if (key == null || key.isEmpty()) {
-			key = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(HMACFilter.HMAC_JNDI_LOOKUP));
+			key = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(HMACUtils.HMAC_JNDI_LOOKUP));
 		}
 		if (key == null || key.isEmpty()) {
 			logger.warn("HMAC key not found. Requests will not be authenticated.");
@@ -71,7 +71,7 @@ public class SimpleRestClient {
 
 	/**
 	 * Invokes a rest service in get and return response
-	 *
+	 * 
 	 * @param parameters
 	 *            the parameters of the request
 	 * @param serviceUrl
@@ -87,7 +87,7 @@ public class SimpleRestClient {
 
 	/**
 	 * Invokes a rest service in post and return response
-	 *
+	 * 
 	 * @param parameters
 	 *            the parameters of the request
 	 * @param serviceUrl
@@ -155,9 +155,9 @@ public class SimpleRestClient {
 			throw new RuntimeException("Request failed with HTTP error code : " + response.getStatus());
 		}
 
-		logger.debug("Rest query status "+response.getStatus());
-		//logger.debug("Rest query status info "+response.getStatusInfo());
-		logger.debug("Rest query status getReasonPhrase "+response.getResponseStatus().getReasonPhrase());
+		logger.debug("Rest query status " + response.getStatus());
+		// logger.debug("Rest query status info "+response.getStatusInfo());
+		logger.debug("Rest query status getReasonPhrase " + response.getResponseStatus().getReasonPhrase());
 		logger.debug("OUT");
 		return response;
 	}

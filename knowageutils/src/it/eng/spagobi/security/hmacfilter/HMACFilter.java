@@ -18,16 +18,9 @@
 
 package it.eng.spagobi.security.hmacfilter;
 
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.utilities.rest.RestUtilities;
+import static it.eng.spagobi.security.hmacfilter.HMACUtils.checkHMAC;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -47,23 +40,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class HMACFilter implements Filter {
 
-	public static final String AUTHORIZATION_USER_HEADER = "Authorization";
-
-	public static List<String> HEADERS_SIGNED = Arrays.asList(AUTHORIZATION_USER_HEADER);
-
-	static {
-		// ensure that must be sorted and not modifiable
-		Collections.sort(HEADERS_SIGNED);
-		HEADERS_SIGNED = Collections.unmodifiableList(HEADERS_SIGNED);
-	}
-
-	public static final String HMAC_JNDI_LOOKUP = "SPAGOBI_HMAC.HMAC_JNDI_LOOKUP";
-
 	public static final String DEFAULT_ENCODING = "UTF-8";
-
-	public static final String HMAC_TOKEN_HEADER = "HMAC_Token";
-
-	public static final String HMAC_SIGNATURE_HEADER = "HMAC_Signature";
 
 	public static final String KEY_CONFIG_NAME = "hmacKey";
 
@@ -90,98 +67,6 @@ public class HMACFilter implements Filter {
 		checkHMAC(req, tokenValidator, key);
 
 		chain.doFilter(req, response);
-	}
-
-	public static void checkHMAC(HttpServletRequest req, HMACTokenValidator tokenValidator, String key) throws HMACSecurityException, IOException {
-		// it permits to read body more than once
-		req = new MultiReadHttpServletRequest(req);
-
-		checkUniqueToken(req, tokenValidator);
-
-		String signature = calcSignature(req, key);
-		String signatureClient = getSignatureClient(req);
-		if (signatureClient == null) {
-			throw new HMACSecurityException("Signature of request not present.");
-		}
-		if (!signature.equals(signatureClient)) {
-			throw new HMACSecurityException("Signature of request is not correct.");
-		}
-
-	}
-
-	private static void checkUniqueToken(HttpServletRequest req, HMACTokenValidator tokenValidator) throws HMACSecurityException {
-		String uniqueToken = getUniqueToken(req);
-		if (uniqueToken == null) {
-			throw new HMACSecurityException("HMAC token is not present.");
-		}
-		tokenValidator.validate(uniqueToken);
-	}
-
-	private static String calcSignature(HttpServletRequest req, String key) throws IOException {
-		if (key == null || key.isEmpty()) {
-			key = EnginConf.getInstance().getHmacKey();
-			if (key == null || key.isEmpty()) {
-				key = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(HMAC_JNDI_LOOKUP));
-			}
-			if (key == null || key.isEmpty()) {
-				throw new IllegalStateException("key is null or empty");
-			}
-		}
-
-		String body = RestUtilities.readBodyXSSUnsafe(req);
-		String queryPath = getQueryPath(req);
-		String paramsString = getParamsString(req);
-		String uniqueToken = getUniqueToken(req);
-		String headers = getHeadersString(req);
-		String signature = sign(queryPath, paramsString, body, uniqueToken, key, headers);
-		return signature;
-	}
-
-	private static String getHeadersString(HttpServletRequest req) {
-		StringBuilder res = new StringBuilder();
-		for (String header : HEADERS_SIGNED) {
-			String value = req.getHeader(header);
-			if (value == null) {
-				continue;
-			}
-			res.append(header);
-			res.append(value);
-		}
-		return res.toString();
-	}
-
-	private static String getParamsString(HttpServletRequest req) {
-		String res = req.getQueryString();
-		return res == null ? "" : res;
-	}
-
-	private static String getSignatureClient(HttpServletRequest req) {
-		return req.getHeader(HMAC_SIGNATURE_HEADER);
-	}
-
-	public static String sign(String queryPath, String paramsString, String body, String uniqueToken, String key, String headers) throws IOException {
-		StringBuilder res = new StringBuilder(queryPath);
-		res.append(paramsString);
-		res.append(body);
-		res.append(uniqueToken);
-		res.append(headers);
-		res.append(key);
-		String s = res.toString();
-		return StringUtilities.sha256(s);
-	}
-
-	private static String getUniqueToken(HttpServletRequest req) {
-		return req.getHeader(HMAC_TOKEN_HEADER);
-	}
-
-	/**
-	 * http://example.com:80/docs/books/tutorial/index.html?name=networking -> /docs/books/tutorial/index.html
-	 * 
-	 * @param req
-	 * @return
-	 */
-	private static String getQueryPath(HttpServletRequest req) {
-		return req.getRequestURI();
 	}
 
 	@Override
