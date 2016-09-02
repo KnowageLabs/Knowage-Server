@@ -543,10 +543,10 @@ function TableControllerFunction($scope, $timeout) {
     $scope.internal_reverse_col_ord = false;
     $scope.itemsPerPage=3; //initial value
 
-    $scope.getDynamicValue=function(item,row,column){
+    $scope.getDynamicValue=function(item,row,column,index){
     	if(item==null || item==undefined) return ;
     	
-    	return angular.isFunction(item) ? item(row,column) : item;
+    	return angular.isFunction(item) ? item(row,column,index) : item;
     }
     
     $scope.searchItem = function (searchVal) {
