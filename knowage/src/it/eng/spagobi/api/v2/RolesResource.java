@@ -47,6 +47,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -118,21 +119,24 @@ public class RolesResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
-	@Path("/loadRoleByName/{roleName}")
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public Response getRoleByName(@PathParam("roleName") String roleName) {
+	@Path("/idsByNames")
+	public Response getRolesIdsByName(@QueryParam("name") String[] roleNames) {
 		IRoleDAO rolesDao = null;
-
+		List roles = new ArrayList<>();
 		try {
-			Role role = new Role();
-			rolesDao = DAOFactory.getRoleDAO();
-			rolesDao.setUserProfile(getUserProfile());
-			role = rolesDao.loadByName(roleName);
-			return Response.ok(role).build();
+			for (int i = 0; i < roleNames.length; i++) {
+				Role role = new Role();
+				rolesDao = DAOFactory.getRoleDAO();
+				rolesDao.setUserProfile(getUserProfile());
+				role = rolesDao.loadByName(roleNames[i]);
+				roles.add(role.getId());
+			}
+
+			return Response.ok(roles).build();
 		} catch (Exception e) {
-			logger.error("Role with selected id: " + roleName + " doesn't exists", e);
-			throw new SpagoBIRestServiceException("Item with selected id: " + roleName + " doesn't exists", buildLocaleFromSession(), e);
+			logger.error("Role with selected id: " + roles + " doesn't exists", e);
+			throw new SpagoBIRestServiceException("Item with selected id: " + roles + " doesn't exists", buildLocaleFromSession(), e);
 		}
 	}
 

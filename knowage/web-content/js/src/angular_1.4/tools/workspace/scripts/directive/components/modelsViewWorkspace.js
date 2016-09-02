@@ -112,8 +112,9 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		});
 	}
         
-    $scope.loadBusinessModels= function(){
-    	sbiModule_restServices.promiseGet("2.0/domains", queryParamRolesIds())
+    $scope.loadBusinessModelsCategories= function(roleIds){
+    	
+    	sbiModule_restServices.promiseGet("2.0/domains", queryParamRolesIds(roleIds))
 		.then(function(response) {
 			$scope.handleBusinessModels(response.data);
 		},function(response){
@@ -122,35 +123,30 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
     	
 	}
     
-    queryParamRolesIds = function(){
-
+    queryParamRolesIds = function(roleIds){
 		   var q="?";
-
-		   for(var i=0; i<$scope.rolesIds.length;i++){
-			   q+="id="+$scope.rolesIds[i]+"&";
+		   for(var i=0; i<roleIds.length;i++){
+			   q+="id="+roleIds[i]+"&";
 		   }
-
 		   return q;
-
+	};
+	
+	 queryParamRolesNames = function(){
+		   var q="?";
+		   for(var i=0; i<sbiModule_user.roles.length;i++){
+			   q+="name="+sbiModule_user.roles[i]+"&";
+		   }
+		   return q;
 	};
     
-    $scope.loadRoleByName= function(name){
-    	
-    	sbiModule_restServices.promiseGet("2.0/roles/loadRoleByName", name)
+    $scope.loadBusinessModels= function(){
+    	sbiModule_restServices.promiseGet("2.0/roles/idsByNames", queryParamRolesNames())
 		.then(function(response) {
-			$scope.rolesIds.push(response.data.id);
+			$scope.loadBusinessModelsCategories(response.data);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.roles.error'));
 		});
 	}
-    
-    $scope.loadRolesIds = function() {
-    	for (var i = 0; i < sbiModule_user.roles.length; i++) {
-    		$scope.loadRoleByName(sbiModule_user.roles[i]);
-		}
-    }
-    
-    $scope.loadRolesIds();
 	
 	$scope.showModelDetails = function() {
 		return $scope.showModelInfo && $scope.isSelectedModelValid();
