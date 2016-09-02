@@ -95,13 +95,13 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	}
 	
 	//TODO move business models to separate controller
-    $scope.handleBusinessModels= function(){
+    $scope.handleBusinessModels= function(categoriesForUser){
     	sbiModule_restServices.promiseGet("2.0/businessmodels", "")
 		.then(function(response) {
 			//angular.copy(response.data,$scope.businessModels);
 			for (var i = 0; i < response.data.length; i++) {
-				for (var j = 0; j < $scope.categoriesForUser.length; j++) {
-					if($scope.categoriesForUser[j].valueId == response.data[i].category) {
+				for (var j = 0; j < categoriesForUser.length; j++) {
+					if(categoriesForUser[j].valueId == response.data[i].category) {
 						$scope.businessModels.push(response.data[i]);
 					}
 				}
@@ -116,11 +116,11 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
     $scope.loadBusinessModels= function(){
     	sbiModule_restServices.promiseGet("2.0/domains", queryParamRolesIds())
 		.then(function(response) {
-			angular.copy(response.data,$scope.categoriesForUser);
-			$scope.handleBusinessModels();
+			$scope.handleBusinessModels(response.data);
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
+    	
 	}
     
     queryParamRolesIds = function(){
