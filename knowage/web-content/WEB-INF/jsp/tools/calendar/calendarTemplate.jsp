@@ -103,8 +103,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<!-- <div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="generating" layout-fill>
 			     	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
 			 	</div> -->
-				<md-whiteframe ng-show="selectCalendar.realDateGenerated.length>0"  class="md-whiteframe-4dp layout-padding" layout-margin>
-				<angular-table flex ng-show="selectCalendar.realDateGenerated.length>0" layout-fill 
+				<md-whiteframe ng-show="selectCalendar.realDateGenerated.length>0"  class="md-whiteframe-4dp layout-padding" layout-margin layout="column">
+				<angular-table  ng-show="selectCalendar.realDateGenerated.length>0" 
 					id='dayslist' ng-model=selectCalendar.realDateGenerated
 					columns=columns
 					no-pagination=false
