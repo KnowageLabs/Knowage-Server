@@ -119,6 +119,25 @@ public class RolesResource extends AbstractSpagoBIResource {
 
 	@GET
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@Path("/loadRoleByName/{roleName}")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public Response getRoleByName(@PathParam("roleName") String roleName) {
+		IRoleDAO rolesDao = null;
+
+		try {
+			Role role = new Role();
+			rolesDao = DAOFactory.getRoleDAO();
+			rolesDao.setUserProfile(getUserProfile());
+			role = rolesDao.loadByName(roleName);
+			return Response.ok(role).build();
+		} catch (Exception e) {
+			logger.error("Role with selected id: " + roleName + " doesn't exists", e);
+			throw new SpagoBIRestServiceException("Item with selected id: " + roleName + " doesn't exists", buildLocaleFromSession(), e);
+		}
+	}
+
+	@GET
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
 	@Path("/categories/{id}")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getMetaModelCategoriesById(@PathParam("id") Integer id) {

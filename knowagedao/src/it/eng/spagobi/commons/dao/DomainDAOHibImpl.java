@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,6 +22,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiProductType;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
@@ -47,6 +49,45 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 
 	// logger component
 	private static Logger logger = Logger.getLogger(DomainDAOHibImpl.class);
+
+	@Override
+	public List loadListMetaModelDomainsByRole(Integer roleId) throws SpagoBIRuntimeException {
+
+		Session aSession = null;
+		Transaction tx = null;
+
+		List realResult = new ArrayList();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			SQLQuery query = aSession.createSQLQuery("select category_id from sbi_ext_roles_category where ext_role_id=" + roleId);
+			List hibList = query.list();
+
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				// realResult.add(toDomain((SbiDomains) it.next()));
+				realResult.add(it.next());
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new SpagoBIRuntimeException(he.getMessage());
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+
+		return realResult;
+
+	}
 
 	/**
 	 * Load list domains by type.
@@ -64,8 +105,9 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	@Override
 	public List loadListDomainsByType(String domainType) throws EMFUserError {
 		/*
-		 * <STATEMENT name="SELECT_LIST_DOMAINS" query="SELECT T.VALUE_NM AS VALUE_NAME, T.VALUE_ID AS VALUE_ID, T.VALUE_CD AS VALUE_CD FROM SBI_DOMAINS T WHERE
-		 * DOMAIN_CD = ? "/>
+		 * <STATEMENT name="SELECT_LIST_DOMAINS" query="SELECT T.VALUE_NM AS
+		 * VALUE_NAME, T.VALUE_ID AS VALUE_ID, T.VALUE_CD AS VALUE_CD FROM
+		 * SBI_DOMAINS T WHERE DOMAIN_CD = ? "/>
 		 */
 		Session aSession = null;
 		Transaction tx = null;
@@ -187,13 +229,15 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 *
-	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String, java.lang.String)
+	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String,
+	 *      java.lang.String)
 	 */
 	@Override
 	public Domain loadDomainByCodeAndValue(String codeDomain, String codeValue) throws EMFUserError {
 		/*
-		 * <STATEMENT name="SELECT_DOMAIN_FROM_CODE_VALUE" query="SELECT D.VALUE_NM AS VALUE_NAME, D.VALUE_ID AS VALUE_ID, D.VALUE_CD AS VALUE_CD FROM
-		 * SBI_DOMAINS D WHERE DOMAIN_CD = ? AND VALUE_CD = ? "/>
+		 * <STATEMENT name="SELECT_DOMAIN_FROM_CODE_VALUE" query="SELECT
+		 * D.VALUE_NM AS VALUE_NAME, D.VALUE_ID AS VALUE_ID, D.VALUE_CD AS
+		 * VALUE_CD FROM SBI_DOMAINS D WHERE DOMAIN_CD = ? AND VALUE_CD = ? "/>
 		 */
 		Domain aDomain = null;
 		Session aSession = null;
@@ -244,13 +288,15 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 *
-	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String, java.lang.String)
+	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String,
+	 *      java.lang.String)
 	 */
 	@Override
 	public SbiDomains loadSbiDomainByCodeAndValue(String codeDomain, String codeValue) throws EMFUserError {
 		/*
-		 * <STATEMENT name="SELECT_DOMAIN_FROM_CODE_VALUE" query="SELECT D.VALUE_NM AS VALUE_NAME, D.VALUE_ID AS VALUE_ID, D.VALUE_CD AS VALUE_CD FROM
-		 * SBI_DOMAINS D WHERE DOMAIN_CD = ? AND VALUE_CD = ? "/>
+		 * <STATEMENT name="SELECT_DOMAIN_FROM_CODE_VALUE" query="SELECT
+		 * D.VALUE_NM AS VALUE_NAME, D.VALUE_ID AS VALUE_ID, D.VALUE_CD AS
+		 * VALUE_CD FROM SBI_DOMAINS D WHERE DOMAIN_CD = ? AND VALUE_CD = ? "/>
 		 */
 		SbiDomains aSbiDomains = null;
 		Session aSession = null;
@@ -287,7 +333,8 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	}
 
 	/**
-	 * From the hibernate domain object at input, gives the corrispondent <code>Domain</code> object.
+	 * From the hibernate domain object at input, gives the corrispondent
+	 * <code>Domain</code> object.
 	 *
 	 * @param hibDomain
 	 *            The hybernate Domain object
@@ -354,7 +401,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadListDomains()
 	 */
 	@Override
@@ -388,7 +435,8 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	}
 
 	/**
-	 * to the hibernate domain object at input, from the corrispondent <code>Domain</code> object.
+	 * to the hibernate domain object at input, from the corrispondent
+	 * <code>Domain</code> object.
 	 *
 	 * @param Domain
 	 *            object

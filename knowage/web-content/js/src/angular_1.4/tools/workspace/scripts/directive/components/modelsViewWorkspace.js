@@ -38,10 +38,11 @@ angular
 		  };	  
 	});
 
-function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_messaging,$qbeViewer){
+function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_messaging,$qbeViewer, sbiModule_user){
 	$scope.businessModelsInitial=[];
 	$scope.federationDefinitionsInitial=[];
-	
+	$scope.rolesIds = [];
+	$scope.categoriesForUser = [];
 	$scope.selectedModel = undefined;
 	
 	/**
@@ -94,16 +95,63 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	}
 	
 	//TODO move business models to separate controller
-    $scope.loadBusinessModels= function(){
+    $scope.handleBusinessModels= function(){
     	sbiModule_restServices.promiseGet("2.0/businessmodels", "")
 		.then(function(response) {
-			angular.copy(response.data,$scope.businessModels);
+			//angular.copy(response.data,$scope.businessModels);
+			for (var i = 0; i < response.data.length; i++) {
+				for (var j = 0; j < $scope.categoriesForUser.length; j++) {
+					if($scope.categoriesForUser[j].valueId == response.data[i].category) {
+						$scope.businessModels.push(response.data[i]);
+					}
+				}
+			}
 			angular.copy($scope.businessModels,$scope.businessModelsInitial);
 			console.info("[LOAD END]: Loading of Business models is finished.");
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 		});
 	}
+        
+    $scope.loadBusinessModels= function(){
+    	sbiModule_restServices.promiseGet("2.0/domains", queryParamRolesIds())
+		.then(function(response) {
+			angular.copy(response.data,$scope.categoriesForUser);
+			$scope.handleBusinessModels();
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+		});
+	}
+    
+    queryParamRolesIds = function(){
+
+		   var q="?";
+
+		   for(var i=0; i<$scope.rolesIds.length;i++){
+			   q+="id="+$scope.rolesIds[i]+"&";
+		   }
+
+		   return q;
+
+	};
+    
+    $scope.loadRoleByName= function(name){
+    	
+    	sbiModule_restServices.promiseGet("2.0/roles/loadRoleByName", name)
+		.then(function(response) {
+			$scope.rolesIds.push(response.data.id);
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+		});
+	}
+    
+    $scope.loadRolesIds = function() {
+    	for (var i = 0; i < sbiModule_user.roles.length; i++) {
+    		$scope.loadRoleByName(sbiModule_user.roles[i]);
+		}
+    }
+    
+    $scope.loadRolesIds();
 	
 	$scope.showModelDetails = function() {
 		return $scope.showModelInfo && $scope.isSelectedModelValid();

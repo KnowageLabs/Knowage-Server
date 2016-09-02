@@ -40,6 +40,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -197,5 +198,43 @@ public class DomainResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 		return dom;
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public List<Domain> getCategoriesOfRoles(@QueryParam("id") int[] ids) {
+		logger.debug("IN");
+		IDomainDAO domainsDao = null;
+		List allRolesCategories = new ArrayList<>();
+		List<Domain> metaModelCategories;
+		List<Domain> rolesMetaModelCategories = new ArrayList<Domain>();
+		try {
+			domainsDao = DAOFactory.getDomainDAO();
+			domainsDao.setUserProfile(getUserProfile());
+			for (int i = 0; i < ids.length; i++) {
+				List tempL = domainsDao.loadListMetaModelDomainsByRole(ids[i]);
+				for (int j = 0; j < tempL.size(); j++) {
+					if (!allRolesCategories.contains(tempL.get(j))) {
+						allRolesCategories.add(tempL.get(j));
+					}
+				}
+			}
+			metaModelCategories = domainsDao.loadListDomainsByType("BM_CATEGORY");
+			Integer[] arrayAllRolesCategories = new Integer[allRolesCategories.size()];
+			allRolesCategories.toArray(arrayAllRolesCategories);
+			for (int i = 0; i < arrayAllRolesCategories.length; i++) {
+				for (int j = 0; j < metaModelCategories.size(); j++) {
+					if (metaModelCategories.get(j).getValueId().equals(arrayAllRolesCategories[i])) {
+						rolesMetaModelCategories.add(metaModelCategories.get(j));
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error while getting domain " + ids, e);
+			throw new SpagoBIRuntimeException("Error while getting domain " + ids, e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return rolesMetaModelCategories;
 	}
 }
