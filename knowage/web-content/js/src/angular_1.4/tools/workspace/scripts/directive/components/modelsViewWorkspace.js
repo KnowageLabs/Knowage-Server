@@ -90,7 +90,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 			angular.copy($scope.federationDefinitions,$scope.federationDefinitionsInitial);
 			console.info("[LOAD END]: Loading of Federation definitions is finished.");
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.federations.load.error'));
 		});
 	}
 	
@@ -109,7 +109,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 			angular.copy($scope.businessModels,$scope.businessModelsInitial);
 			console.info("[LOAD END]: Loading of Business models is finished.");
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.categories.error'));
 		});
 	}
         
@@ -118,7 +118,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		.then(function(response) {
 			$scope.handleBusinessModels(response.data);
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.bmmodels.load.error'));
 		});
     	
 	}
@@ -141,7 +141,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		.then(function(response) {
 			$scope.rolesIds.push(response.data.id);
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.roles.error'));
 		});
 	}
     
