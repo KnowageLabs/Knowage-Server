@@ -54,6 +54,7 @@
 				, interceptor : "=?"
 				, expandOnClick :"=?"
 				, removeEmptyFolder :  '='
+				, serverLoading : "=?"
 			},
 			controller: componentTreeControllerFunction,
 			controllerAs: 'ctrl',
@@ -355,7 +356,7 @@
 				node.expanded = !node.expanded;
 			}
 			
-			if(doClickAction){
+			if(doClickAction || $scope.serverLoading){
 				$scope.setSelected(node);
 			}
 			

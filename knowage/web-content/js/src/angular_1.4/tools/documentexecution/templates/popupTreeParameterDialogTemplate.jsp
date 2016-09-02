@@ -19,6 +19,8 @@
 				text-to-show-key="description" drag-enabled="false"
 				multi-select="::paramDialogCtrl.tempParameter.multivalue"
 				click-function="paramDialogCtrl.setTreeParameterValue(node)"
+				expand-on-click=true
+				server-loading=true
 				is-folder-fn="paramDialogCtrl.isFolderFn(node)"
 				is-open-folder-fn="paramDialogCtrl.isOpenFolderFn(node)"
 				is-leaf-fn="paramDialogCtrl.isDocumentFn(node)"
