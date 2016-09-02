@@ -51,7 +51,29 @@ function editTemporalHierarchyController($scope,sbiModule_translate,sbiModule_re
 		                         {
 		                        	label:sbiModule_translate.load("sbi.generic.name"),
 		                        	name:"name"
-		                         }
+		                         },
+
+		                         {
+		                        	 label:sbiModule_translate.load("sbi.meta.isDefaultHierarchy"),
+		                        	 name:"l",
+		                        	 transformer:function(row){
+		                        		 return '<md-checkbox ng-checked="row.properties.defaultHierarchy==true" ng-click="scopeFunctions.toggleDefault(row)"></md-checkbox>';
+
+		                        	 }
+		                         },
+
+		                         {
+		                        	 label:sbiModule_translate.load("sbi.meta.hierarchy"),
+		                        	 name:"levels",
+		                        	 transformer:function(levels){
+		                        		 var lis=[];
+		                        		 angular.forEach(levels,function(item){
+		                        			 this.push(item.name)
+		                        		 },lis)
+		                        		 return lis.join(" - ");
+		                        	 }
+		                         },
+
 	                         ];
 
 
@@ -135,6 +157,14 @@ function editTemporalHierarchyController($scope,sbiModule_translate,sbiModule_re
 			translate:sbiModule_translate,
 			manageHierarchy:function(){
 				$scope.manageHierarchy();
+			},
+			toggleDefault:function(row){
+				angular.forEach($scope.hierarchyList,function(item,index){
+					if(item.properties==undefined){
+						item.properties={}
+					}
+					item.properties.defaultHierarchy=angular.equals(item,row);
+				})
 			}
 	}
 
@@ -146,9 +176,11 @@ function addTemporalHierarchyController($scope,sbiModule_translate,$mdPanel,mdPa
 	$scope.columns=angular.copy($scope.selectedBusinessModel.simpleBusinessColumns)
 
 	$scope.currentHierarchy= {};
-
+	if(hierarchyList.length==0){
+		$scope.currentHierarchy.properties={defaultHierarchy:true};
+	}
 	if(currentHierarchy==undefined){
-		$scope.currentHierarchy.name=$scope.selectedBusinessModel.name
+		$scope.currentHierarchy.name="";
 	}else{
 		$scope.currentHierarchy=currentHierarchy;
 
@@ -172,9 +204,11 @@ function addTemporalHierarchyController($scope,sbiModule_translate,$mdPanel,mdPa
 			//alter
 		}
 		mdPanelRef.close();
+		$scope.$destroy();
 	};
 	$scope.cancelConfiguration=function(){
 		mdPanelRef.close();
+		$scope.$destroy();
 	};
 
 	$scope.addCol=function(item,index){
@@ -183,7 +217,8 @@ function addTemporalHierarchyController($scope,sbiModule_translate,$mdPanel,mdPa
 		}
 		var newItem={
 				name:item.name,
-				leveltype: "none",
+				uniqueName:item.uniqueName,
+				leveltype: $scope.levelType[$scope.levelType.length-1].name,
 				column:angular.copy(item)
 		}
 
@@ -304,6 +339,15 @@ function addTemporalHierarchyController($scope,sbiModule_translate,$mdPanel,mdPa
 			leveltype:$scope.levelType
 	}
 
+	$scope.isValidHierarchy=function(){
+		if($scope.currentHierarchy.levels==undefined || $scope.currentHierarchy.levels.length==0){
+			return false;
+		}
+		if(angular.equals($scope.currentHierarchy.name.trim(),"")){
+			return false;
+		}
 
+		return true;
+	}
 
 }

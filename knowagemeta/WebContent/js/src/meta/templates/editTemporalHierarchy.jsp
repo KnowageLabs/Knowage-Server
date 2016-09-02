@@ -7,7 +7,7 @@
 	      </div>
 	    </md-toolbar>
     <md-content flex layout="column">
-		<angular-table id="hierarchyTable" class="md-whiteframe-1dp" flex 
+		<angular-table ng-show="hierarchyList!=undefined && hierarchyList.length>0" id="hierarchyTable" class="md-whiteframe-1dp" flex 
 				ng-model="hierarchyList"
 				columns="hierarchyColumns"
 				speed-menu-option="hierarchyActions"
@@ -20,6 +20,13 @@
 					</div>
 				</queue-table>
 		</angular-table>
+		
+		<div flex layout="column"  layout-align="center center" ng-if="hierarchyList==undefined || hierarchyList.length==0">
+		
+		<h1>{{translate.load("sbi.meta.hierarchy.emptyList")}}</h1>
+		 <md-button class="md-raised" ng-click="manageHierarchy()">{{translate.load("sbi.generic.add")}}</md-button>
+		</div>
+		
     </md-content>
 </md-card-content>
     

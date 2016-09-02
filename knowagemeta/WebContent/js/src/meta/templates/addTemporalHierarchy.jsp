@@ -13,12 +13,12 @@
 						<label>{{translate.load("sbi.generic.name")}}</label>
 						<input ng-model="currentHierarchy.name">
 					</md-input-container>
-					<div flex layout-align="center center" layout=row>
-						<md-checkbox   ng-model="currentHierarchy.properties.defaultHierarchy" aria-label="hasAll" class="noMargin">
-							{{translate.load("sbi.meta.isDefaultHierarchy")}}
-						</md-checkbox>
+<!-- 					<div flex layout-align="center center" layout=row> -->
+<!-- 						<md-checkbox   ng-model="currentHierarchy.properties.defaultHierarchy" aria-label="hasAll" class="noMargin"> -->
+<!-- 							{{translate.load("sbi.meta.isDefaultHierarchy")}} -->
+<!-- 						</md-checkbox> -->
 						 
-					</div>
+<!-- 					</div> -->
 				</div>
 				<div layout=row flex >
 					<div flex layout-align="center center" layout=row>
@@ -68,7 +68,7 @@
       <md-button ng-click="cancelConfiguration()" >
         {{translate.load('sbi.generic.cancel')}}
       </md-button>
-      <md-button ng-disabled=" currentHierarchy.levels==undefined || currentHierarchy.levels.length==0" ng-click="saveConfiguration()"  >
+      <md-button ng-disabled="!isValidHierarchy()" ng-click="saveConfiguration()"  >
         {{translate.load('sbi.generic.save')}}
       </md-button>
 
