@@ -27,27 +27,28 @@
 				 	 	</md-tab-body>
 				 	 	
 		 			</md-tab> 
-		   
-					<md-tab id="fedtab" label="{{translate.load('sbi.workspace.models.federation')}}" ng-click="switchModelsTab('federations')" flex>
-				         
-				         <md-tab-body>
-						 	
-						 	<federation-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="federationDefinitions"
-								show-grid-view="showGridView"
-								selected-federation=selectedModel
-								table-columns=tableColumnsFederation
-								select-federation-action="selectModel(federation);"
-								edit-enabled=true
-								edit-federation-action="editFederation(fed)"
-								delete-enabled=true
-								delete-federation-action="deleteFederation(fed)"
-								show-federation-action="showQbeFederation(fed)"
-								show-business-models=false
-						 	  ></federation-view>	
-                    
-				        </md-tab-body>
-				        
-			 		</md-tab>  
+		   			<div ng-if="federationsEnabled()" >
+						<md-tab id="fedtab" label="{{translate.load('sbi.workspace.models.federation')}}" ng-click="switchModelsTab('federations')" flex>
+					         
+					         	<md-tab-body >
+							 	
+							 	<federation-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="federationDefinitions"
+									show-grid-view="showGridView"
+									selected-federation=selectedModel
+									table-columns=tableColumnsFederation
+									select-federation-action="selectModel(federation);"
+									edit-enabled=true
+									edit-federation-action="editFederation(fed)"
+									delete-enabled=true
+									delete-federation-action="deleteFederation(fed)"
+									show-federation-action="showQbeFederation(fed)"
+									show-business-models=false
+							 	  ></federation-view>	
+	                    
+					        </md-tab-body>
+					               
+				 		</md-tab>  
+			 		</div>
 				 	
 	  		 	</md-tabs>
 	  		 

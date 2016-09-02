@@ -58,12 +58,11 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	$scope.showModelInfo = false;
 	$scope.idsOfFederationDefinitionsUsediNFederatedDatasets = [];
 	$scope.allFederatedDatasets = [];
-	
+		
 	$scope.federationsEnabled= function (){
-		return datasetProperties.CAN_USE_FEDERATED_DATASET_AS_FINAL_USER === "true";
-
+		return datasetParameters.CAN_USE_FEDERATED_DATASET_AS_FINAL_USER === "true";
 	}
-	
+		
 	$scope.getFederatedDatasets = function() {
 		sbiModule_restServices.promiseGet("1.0/datasets", "")
 		.then(function(response) {
