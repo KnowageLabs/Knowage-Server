@@ -20,7 +20,13 @@ package it.eng.spagobi.authentication.handler;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.authentication.utility.AuthenticationUtility;
+import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
+import it.eng.spagobi.security.hmacfilter.HMACUtils;
+import it.eng.spagobi.security.hmacfilter.SystemTimeHMACTokenValidator;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,8 +35,7 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-
-
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author 
@@ -39,13 +44,18 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  **/
 
 /**
- * Authenticates where the presented password is valid. 
+ * Authenticates where the presented password is valid.
  */
 public class BaseAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 	protected static Logger logger = Logger.getLogger(BaseAuthenticationHandler.class);
-	
-    protected boolean authenticateUsernamePasswordInternal(UsernamePasswordCredentials credentials) 
-    	throws AuthenticationException {
+
+	private final static long MAX_TIME_DELTA_DEFAULT_MS = 30000;
+
+	@Autowired
+	private String hmacKey;
+
+	@Override
+	protected boolean authenticateUsernamePasswordInternal(UsernamePasswordCredentials credentials) throws AuthenticationException {
 		logger.debug("IN");
 
 		String username = credentials.getUsername();
@@ -64,9 +74,7 @@ public class BaseAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 			List pars = new LinkedList();
 			// CASE INSENSITVE SEARCH ON USER ID
 			pars.add(username.toUpperCase());
-			lstResult = utility.executeQuery(
-					"SELECT PASSWORD FROM SBI_USER WHERE UPPER(USER_ID) = ?",
-					pars);
+			lstResult = utility.executeQuery("SELECT PASSWORD FROM SBI_USER WHERE UPPER(USER_ID) = ?", pars);
 		} catch (Exception e) {
 			logger.error("Error while check pwd: " + e);
 			throw new RuntimeException("Cannot authenticate user", e);
@@ -76,23 +84,71 @@ public class BaseAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 			logger.error("No user with the specified user identifier : [" + username + "]");
 			throw new BadCredentialsAuthenticationException();
 		}
-		
+
 		if (lstResult.size() > 1) {
-			logger.error("There are different users with the same user identifier : " + username + ". " +
-					"Remember that the check is case INSENSITIVE");
-			throw new RuntimeException("There are different users with the same user identifier : " + username + ". " +
-					"Remember that the check is case INSENSITIVE");
+			logger.error("There are different users with the same user identifier : " + username + ". " + "Remember that the check is case INSENSITIVE");
+			throw new RuntimeException("There are different users with the same user identifier : " + username + ". "
+					+ "Remember that the check is case INSENSITIVE");
 		}
-		
+
 		// gets the pwd presents in db
 		SourceBeanAttribute sbAttribute = (SourceBeanAttribute) lstResult.get(0);
 		SourceBean value = (SourceBean) sbAttribute.getValue();
 		correctPassword = (String) value.getAttribute("PASSWORD");
 
+		/**
+		 * Handling authentication by hmac (used by phantomjs)
+		 */
+		if (!encrPass.equals(correctPassword)) {
+			return testHmac(username, password);
+		}
 		logger.debug("OUT");
-		return encrPass.equals(correctPassword);
-    }
-    
-    
+		return true;
+	}
+
+	/**
+	 * @param username
+	 * @param password
+	 * @throws AuthenticationException
+	 */
+	private boolean testHmac(String username, String password) throws AuthenticationException {
+		String[] ss = password.split("\\|");
+		if (ss.length == 3) {
+			String urlString = ss[0];
+			String uniqueToken = ss[1];
+			String hmacString = ss[2];
+			try {
+				URL url = new URL(urlString);
+				HMACUtils.checkHMAC(url.getPath() + url.getQuery(), "" + uniqueToken, hmacString, new SystemTimeHMACTokenValidator(MAX_TIME_DELTA_DEFAULT_MS),
+						getHmacKey());
+				return true;
+			} catch (MalformedURLException e) {
+				logger.error("CAS Authentication - not valid hmac");
+				throw new BadCredentialsAuthenticationException();
+			} catch (HMACSecurityException e) {
+				logger.error("CAS Authentication - not valid hmac");
+				throw new BadCredentialsAuthenticationException();
+			} catch (IOException e) {
+				logger.error("CAS Authentication - not valid hmac");
+				throw new BadCredentialsAuthenticationException();
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @return the hmacKey
+	 */
+	public String getHmacKey() {
+		return hmacKey;
+	}
+
+	/**
+	 * @param hmacKey
+	 *            the hmacKey to set
+	 */
+	public void setHmacKey(String hmacKey) {
+		this.hmacKey = hmacKey;
+	}
 
 }

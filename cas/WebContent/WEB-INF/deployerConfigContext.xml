@@ -90,7 +90,7 @@
 					class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
 					+-->
 				<bean
-					class="it.eng.spagobi.authentication.handler.BaseAuthenticationHandler" />
+					class="it.eng.spagobi.authentication.handler.BaseAuthenticationHandler" p:hmacKey-ref="hmacKeyJndi" />
 			</list>
 		</property>
 	</bean>
