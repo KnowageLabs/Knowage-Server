@@ -63,7 +63,7 @@
 				
 		dee.exportDocumentChart = function(exportType){
 			var frame = window.frames["documentFrame"];
-			frame.contentWindow.exportChart(exportType);
+			frame.exportChart(exportType);
 		};	
 
 		dee.exportGeoTo = function (format, contentUrl) {	
@@ -71,7 +71,7 @@
 			if(execProperties.executionInstance.ENGINE_LABEL=='knowagegisengine'){
 				//GIS
 				var frame = window.frames["documentFrame"];
-				frame.contentWindow.downlf();
+				frame.downlf();
 			}else{
 				//GEO (knowagegeoengine)
 				var paramsExportType = '&ACTION_NAME=DRAW_MAP_ACTION&inline=false';
@@ -89,7 +89,7 @@
 			
 		dee.exportOlapTo= function (format, contentUrl) {
 			var frame = window.frames["documentFrame"];
-			frame.contentWindow.downlf(format);
+			frame.downlf(format);
 		};
 			
 
