@@ -162,5 +162,13 @@ function leftMenuController($scope, sbiModule_translate, sbiModule_user){
 		$scope.selectedMenuItem.selected=true; // mark new selected true
 		
 	}
+	
+	$scope.optionVisibility = function(option){
+		if(option.name=="Data"){
+			return false;
+		} else {
+			return option.submenuOptions==undefined && option.visible;
+		}
+	}
 }
 })();
