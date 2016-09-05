@@ -45,6 +45,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  */
@@ -76,17 +79,26 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 
 	public SvgViewerEngineInstance(SourceBean template, Map env) {
 		super(env);
+		Monitor totalMonitor = null;
 
 		try {
 			// TODO: MC uncomment this, just test
 			// this.guiSettings = new JSONObject(template);
 
 			logger.debug("IN");
+			totalMonitor = MonitorFactory.start("GeoEngine.SvgViewerEngineInstance.totalMonitor");
+
+			Monitor setDataMartProviderMonitor = MonitorFactory.start("GeoEngine.SvgViewerEngineInstance.setDataMartProvider");
 			setDataMartProvider(SvgViewerEngineComponentFactory.buildDataMartProvider(template, env));
+			setDataMartProviderMonitor.stop();
 			// setMapProvider(SvgViewerEngineComponentFactory.buildMapProvider(getDataMartProvider().getSelectedMemberName(), env));
+			Monitor setMapProviderMonitor = MonitorFactory.start("GeoEngine.SvgViewerEngineInstance.setMapProvider");
 			setMapProvider(SvgViewerEngineComponentFactory.buildMapProvider(
 					getDataMartProvider().getHierarchyMember(getDataMartProvider().getSelectedMemberName()), env));
+			setMapProviderMonitor.stop();
+			Monitor setMapRendererMonitor = MonitorFactory.start("GeoEngine.SvgViewerEngineInstance.setMapRenderer");
 			setMapRenderer(SvgViewerEngineComponentFactory.buildMapRenderer(template, env));
+			setMapRendererMonitor.stop();
 			propertiesPanelPosition = initPropertiesPanelPosition(template);
 			logger.info("MapProvider class: " + getMapProvider().getClass().getName());
 			logger.info("DatasetProvider class: " + getDataMartProvider().getClass().getName());
@@ -99,6 +111,10 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 			logger.debug("OUT");
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Impossible to parse template", t);
+		} finally {
+			if (totalMonitor != null) {
+				totalMonitor.stop();
+			}
 		}
 
 		// includes = SvgViewerEngine.getConfig().getIncludes();
