@@ -28,6 +28,9 @@ import it.eng.spagobi.utilities.callbacks.mapcatalogue.MapCatalogueAccessUtils;
 
 import org.apache.log4j.Logger;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 /**
  * The Class SOMapProviderConfigurator.
  *
@@ -49,13 +52,17 @@ public class SOMapProviderConfigurator {
 	 *             the geo engine exception
 	 */
 	public static void configure(SOMapProvider soMapProvider, Object conf) throws SvgViewerEngineException {
+		Monitor mapCatalogueServiceProxyMonitor = MonitorFactory.start("GeoEngine.SOMapProviderConfigurator.configure.mapCatalogueServiceProxy");
 
 		MapCatalogueAccessUtils mapCatalogueServiceProxy = (MapCatalogueAccessUtils) soMapProvider.getEnv().get(
 				SvgViewerEngineConstants.ENV_MAPCATALOGUE_SERVICE_PROXY);
+
 		soMapProvider.setMapCatalogueServiceProxy(mapCatalogueServiceProxy);
 
 		if (conf instanceof HierarchyMember)
 			soMapProvider.setSelectedHierarchyMember((HierarchyMember) conf);
+
+		mapCatalogueServiceProxyMonitor.stop();
 
 	}
 

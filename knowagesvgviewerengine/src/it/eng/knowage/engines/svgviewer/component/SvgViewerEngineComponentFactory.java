@@ -31,6 +31,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 /**
  * The Class GeoEngineComponentFactory.
  *
@@ -83,8 +86,12 @@ public class SvgViewerEngineComponentFactory {
 		}
 
 		logger.debug("Component " + geoEngineComponentClassName + " created succesfully");
+		Monitor setEnvMonitor = MonitorFactory.start("GeoEngine.SvgViewerEngineComponentFactory.setEnv");
 		geoEngineComponent.setEnv(env);
+		setEnvMonitor.stop();
+		Monitor initMonitor = MonitorFactory.start("GeoEngine.SvgViewerEngineComponentFactory.init");
 		geoEngineComponent.init(conf);
+		initMonitor.stop();
 		logger.debug("Component " + geoEngineComponentClassName + " configurated succesfully");
 
 		logger.debug("OUT");
