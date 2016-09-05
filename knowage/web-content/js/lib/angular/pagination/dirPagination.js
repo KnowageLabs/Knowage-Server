@@ -28,7 +28,7 @@
     angular.module(moduleName, [])
         .directive('dirPaginate', ['$compile', '$parse', 'paginationService', dirPaginateDirective])
         .directive('dirPaginateNoCompile', noCompileDirective)
-        .directive('dirPaginationControls', ['paginationService', 'paginationTemplate', dirPaginationControlsDirective])
+        .directive('dirPaginationControls', ['paginationService', 'paginationTemplate','$timeout', dirPaginationControlsDirective])
         .filter('itemsPerPage', ['paginationService', itemsPerPageFilter])
         .service('paginationService', paginationService)
         .provider('paginationTemplate', paginationTemplateProvider)
@@ -209,7 +209,7 @@
         $templateCache.put('angularUtils.directives.dirPagination.template', '<ul class="pagination" ng-if="1 < pages.length || !autoHide"><li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }"><a href="" ng-click="setCurrent(1)">&laquo;</a></li><li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }"><a href="" ng-click="setCurrent(pagination.current - 1)">&lsaquo;</a></li><li ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == \'...\' || ( ! autoHide && pages.length === 1 ) }"><a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a></li><li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }"><a href="" ng-click="setCurrent(pagination.current + 1)">&rsaquo;</a></li><li ng-if="boundaryLinks"  ng-class="{ disabled : pagination.current == pagination.last }"><a href="" ng-click="setCurrent(pagination.last)">&raquo;</a></li></ul>');
     }
 
-    function dirPaginationControlsDirective(paginationService, paginationTemplate) {
+    function dirPaginationControlsDirective(paginationService, paginationTemplate,$timeout) {
 
         var numberRegex = /^\d+$/;
 
@@ -293,6 +293,26 @@
                     paginationService.setCurrentPage(paginationId, num);
                 }
             };
+            
+            
+            scope.tmpSearchCurrPage;
+            scope.setCurrentFromInput=function(num){
+            	if(angular.equals(num.trim(),"")){
+            		return num
+            	}
+            	
+            	if(isNaN(parseInt(num)) || parseInt(num)>scope.pagination.last ){
+            		 return scope.pagination.current;
+            	}
+            	scope.tmpSearchCurrPage=num;
+            	$timeout(function(){
+            		
+            		if(scope.tmpSearchCurrPage==num){
+            			scope.setCurrent(num);
+            		}
+            	},500) 
+            	 return num;
+            }
 
             /**
              * Custom "track by" function which allows for duplicate "..." entries on long lists,

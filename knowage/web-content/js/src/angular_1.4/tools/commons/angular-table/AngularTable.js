@@ -363,12 +363,9 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                 restrict: 'A',
                 replace: true,
                 link: function (scope, ele, attrs) {
-                    var watch=scope.$watch(attrs.dynamichtml, function (html) {
-                    	if(html!=undefined){
-                    		ele.html(html);
-                    		$compile(ele.contents())(scope);
-                    		watch();
-                    	}
+                    scope.$watch(attrs.dynamichtml, function (html) {
+                        ele.html(html);
+                        $compile(ele.contents())(scope);
                     });
                 }
             };
