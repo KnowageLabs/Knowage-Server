@@ -31,6 +31,9 @@ import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 /**
  *
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -46,6 +49,8 @@ public class AbstractSvgViewerEngineResource extends AbstractRestService {
 	public static transient Logger logger = Logger.getLogger(AbstractSvgViewerEngineResource.class);
 
 	public EngineStartServletIOManager getIOManager() {
+		Monitor getIOManagerMonitor = MonitorFactory.start("GeoEngine.AbstractSvgViewerEngineResource.getIOManager");
+
 		EngineStartServletIOManager ioManager = null;
 
 		try {
@@ -59,6 +64,7 @@ public class AbstractSvgViewerEngineResource extends AbstractRestService {
 		} catch (Exception e) {
 			throw new RuntimeException("An unexpected error occured while inizializing ioManager", e);
 		}
+		getIOManagerMonitor.stop();
 
 		return ioManager;
 	}
@@ -82,7 +88,7 @@ public class AbstractSvgViewerEngineResource extends AbstractRestService {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.utilities.engines.rest.AbstractRestService#getServletRequest ()
 	 */
 	@Override

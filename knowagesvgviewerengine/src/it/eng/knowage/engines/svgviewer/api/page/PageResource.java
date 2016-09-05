@@ -142,11 +142,20 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 	}
 
 	private Map getEngineEnv() throws Exception {
+		Monitor userProfileMonitor = MonitorFactory.start("GeoEngine.pageResource.userProfile");
+
 		UserProfile userProfile = (UserProfile) getIOManager().getParameterFromSession(IEngUserProfile.ENG_USER_PROFILE);
 		String userUniqueIdentifier = (String) userProfile.getUserUniqueIdentifier();
 
+		userProfileMonitor.stop();
+
+		Monitor mapCatalogueMonitor = MonitorFactory.start("GeoEngine.pageResource.mapCatalogue");
+
 		MapCatalogueAccessUtils mapCatalogueServiceProxy = new MapCatalogueAccessUtils(getHttpSession(), userUniqueIdentifier);
 		String standardHierarchy = mapCatalogueServiceProxy.getStandardHierarchy();
+
+		mapCatalogueMonitor.stop();
+		Monitor getEnvMonitor = MonitorFactory.start("GeoEngine.pageResource.getEnv");
 
 		Map env = getIOManager().getEnv();
 
@@ -158,6 +167,8 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 		env.put(SvgViewerEngineConstants.ENV_CONTEXT_URL, getContextUrl());
 
 		env.put(SvgViewerEngineConstants.ENV_ABSOLUTE_CONTEXT_URL, getAbsoluteContextUrl());
+
+		getEnvMonitor.stop();
 
 		return env;
 	}
