@@ -35,7 +35,7 @@ public class JSError {
 		return addMsg(msg, MSG_TYPE.warnings);
 	}
 
-	public JSError addMsg(String msg, MSG_TYPE type) {
+	private JSError addMsg(String msg, MSG_TYPE type) {
 		try {
 			if (!has(type)) {
 				jsError.put(type.name(), new JSONArray());
@@ -47,7 +47,7 @@ public class JSError {
 		return this;
 	}
 
-	public JSError addMsgKey(String msgKey, MSG_TYPE type, String... args) {
+	private JSError addMsgKey(String msgKey, MSG_TYPE type, String... args) {
 		try {
 			if (!has(type)) {
 				jsError.put(type.name(), new JSONArray());
