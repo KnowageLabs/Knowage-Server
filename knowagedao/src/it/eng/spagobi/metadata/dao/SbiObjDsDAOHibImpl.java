@@ -24,12 +24,14 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.metadata.metadata.SbiMetaObjDs;
 import it.eng.spagobi.metadata.metadata.SbiMetaObjDsId;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -37,16 +39,14 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
- *
+ * 
  */
 public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjDsDAO {
 
-	private String[] enginesNoChecked = { "birt", "cockpit", "console", "composit", "kpi", "svgviewer" };
+	private final String[] enginesNoChecked = { "birt", "cockpit", "console", "composit", "kpi", "svgviewer" };
 
 	static private Logger logger = Logger.getLogger(SbiDsBcDAOHibImpl.class);
 
@@ -229,7 +229,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 	/**
 	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS (Only objects with UNIQUE relation 1 to 1 with the dataset: NO
 	 * COCKPIT, CONSOLE, DOCUMENT COMPOSITION, ... )
-	 *
+	 * 
 	 * @param biObj
 	 *            the document object
 	 */
@@ -302,7 +302,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 	/**
 	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS
-	 *
+	 * 
 	 * @param biObj
 	 *            the document object
 	 */
@@ -311,44 +311,37 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 		logger.debug("IN");
 		try {
 			// 0. get template with configuration
-			String template = new String(obj.getActiveTemplate().getContent());
-			JSONObject configJSON = new JSONObject(template);
-			HashMap<Integer, Boolean> lstDsInsertedForObj = new HashMap<Integer, Boolean>();
-			// 1. search used datasets
-			JSONObject storeConfJSON = configJSON.getJSONObject("storesConf");
-			if (storeConfJSON != null) {
+			String driverName = obj.getEngine().getDriverName();
+			if (driverName != null && !"".equals(driverName)) {
+				IEngineDriver driver = (IEngineDriver) Class.forName(driverName).newInstance();
+				ArrayList<String> datasetsAssociated = driver.getDatasetAssociated(obj.getActiveTemplate().getContent());
+				if (datasetsAssociated != null) {
+					HashMap<Integer, Boolean> lstDsInsertedForObj = new HashMap<Integer, Boolean>();
+					for (Iterator<String> iterator = datasetsAssociated.iterator(); iterator.hasNext();) {
+						String dsLabel = iterator.next();
+						logger.debug("Insert relation for dataset with label [" + dsLabel + "]");
+						VersionedDataSet ds = ((VersionedDataSet) DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel));
+						// insert only relations with new ds
+						if (lstDsInsertedForObj.get(ds.getId()) != null) {
+							continue;
+						}
+						String dsOrganization = ds.getOrganization();
+						logger.debug("Dataset organization used for insert relation is: " + dsOrganization);
+						Integer dsVersion = ds.getVersionNum();
+						logger.debug("Dataset version used for insert relation is: " + dsVersion);
 
-				JSONArray lstStoresJSON = storeConfJSON.getJSONArray("stores");
+						// creating relation object
+						SbiMetaObjDs relObjDs = new SbiMetaObjDs();
+						SbiMetaObjDsId relObjDsId = new SbiMetaObjDsId();
+						relObjDsId.setDsId(ds.getId());
+						relObjDsId.setOrganization(dsOrganization);
+						relObjDsId.setVersionNum(dsVersion);
+						relObjDsId.setObjId(obj.getId());
+						relObjDs.setId(relObjDsId);
 
-				// 2. delete all relations between document and datasets if exist
-				DAOFactory.getSbiObjDsDAO().deleteObjDsbyObjId(obj.getId());
-				// 3. insert the new relations between document and datasets
-				for (int i = 0; i < lstStoresJSON.length(); i++) {
-					JSONObject storeJSON = lstStoresJSON.getJSONObject(i);
-					String dsLabel = storeJSON.getString("storeId");
-					logger.debug("Insert relation for dataset with label [" + dsLabel + "]");
-					VersionedDataSet ds = ((VersionedDataSet) DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel));
-					// insert only relations with new ds
-					if (lstDsInsertedForObj.get(ds.getId()) != null) {
-						continue;
+						DAOFactory.getSbiObjDsDAO().insertObjDs(relObjDs);
+						lstDsInsertedForObj.put(ds.getId(), true);
 					}
-					String dsOrganization = ds.getOrganization();
-					logger.debug("Dataset organization used for insert relation is: " + dsOrganization);
-					Integer dsVersion = ds.getVersionNum();
-					logger.debug("Dataset version used for insert relation is: " + dsVersion);
-
-					// creating relation object
-					SbiMetaObjDs relObjDs = new SbiMetaObjDs();
-					SbiMetaObjDsId relObjDsId = new SbiMetaObjDsId();
-					relObjDsId.setDsId(ds.getId());
-					relObjDsId.setOrganization(dsOrganization);
-					relObjDsId.setVersionNum(dsVersion);
-					relObjDsId.setObjId(obj.getId());
-					relObjDs.setId(relObjDsId);
-
-					DAOFactory.getSbiObjDsDAO().insertObjDs(relObjDs);
-					lstDsInsertedForObj.put(ds.getId(), true);
-
 				}
 			} else {
 				logger.debug("The document doesn't use any dataset! ");
@@ -363,7 +356,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 	/**
 	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS
-	 *
+	 * 
 	 * @param biObj
 	 *            the document object
 	 */
@@ -441,7 +434,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 	/**
 	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS (Only objects with UNIQUE relation 1 to 1 with the dataset: NO
 	 * COCKPIT, CONSOLE, DOCUMENT COMPOSITION, ... )
-	 *
+	 * 
 	 * @param biObj
 	 *            the document object
 	 */
@@ -554,12 +547,12 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 	/**
 	 * Returns true if the engine uses standard dataset management (1:1 with the document)
-	 *
+	 * 
 	 * @param engineLabel
 	 *            : the engine label
-	 *
+	 * 
 	 * @return true if the engine use standard dataset (1:1), false otherwise
-	 *
+	 * 
 	 */
 	private boolean useUniqueDataset(String engineLabel) {
 		boolean toReturn = true;
