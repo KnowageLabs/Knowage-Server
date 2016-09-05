@@ -473,8 +473,8 @@ public class LayerCRUD {
 			List<InputPart> inputParts = formDataMap.get("layerFile");
 			for (InputPart inputPart : inputParts) {
 
-				byte[] data = inputPart.getBodyAsString().replace("data:;base64,", "").getBytes(Charset.forName("UTF-8"));
-				data = Base64.decodeBase64(data);
+				byte[] data = inputPart.getBodyAsString().getBytes(Charset.forName("UTF-8"));
+				// data = Base64.decodeBase64(data);
 
 				String path = SpagoBIUtilities.getResourcePath();
 				aLayer.setPathFile(path);

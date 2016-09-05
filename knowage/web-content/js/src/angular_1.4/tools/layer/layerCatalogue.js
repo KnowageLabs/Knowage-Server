@@ -156,7 +156,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				//modify layer with upload file
 				var fd = new FormData();
 				fd.append('data', angular.toJson($scope.selectedLayer));
-				fd.append('layerFile', $scope.selectedLayer.layerFile);
+				fd.append('layerFile', $scope.selectedLayer.layerFile.file);
 
 				sbiModule_restServices.put("layers", 'updateData', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}}).success(
 
