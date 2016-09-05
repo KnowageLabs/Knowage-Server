@@ -47,6 +47,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 @Path("/1.0/pages")
 @ManageAuthorization
 public class PageResource extends AbstractSvgViewerEngineResource {
@@ -102,17 +105,23 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 		String dispatchUrl = urls.get(pageName);
 
 		try {
-
+			Monitor getTemplateAsSourceBeanMonitor = MonitorFactory.start("GeoEngine.openPage.getTemplateAsSourceBean");
 			SourceBean savedTemplate = getIOManager().getTemplateAsSourceBean();
+			getTemplateAsSourceBeanMonitor.stop();
+
 			switch (pageName) {
 
 			case "execute":
+				Monitor getEngineEnvMonitor = MonitorFactory.start("GeoEngine.openPage.getEngineEnv");
 				Map env = getEngineEnv();
+				getEngineEnvMonitor.stop();
 
 				engineInstance = SvgViewerEngine.createInstance(savedTemplate, env);
 
 				// TODO put this not in session but in context
+				Monitor setAttributeMonitor = MonitorFactory.start("GeoEngine.openPage.setAttribute");
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				setAttributeMonitor.stop();
 				break;
 
 			default:
