@@ -126,22 +126,8 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  	$scope.hideTooltip();
 	  	var driversParameter = getDriverParameters();
 	  	
-	  	//pass the values element as output parameter
-
-//	  	var clickedElement = e.detail;
-//	  	var crossData=[];
-//	  	var object = new Object();
-//	  	object.ELEMENT_ID = clickedElement;
-//	  	crossData.push(object);
-	  	
-	  	var crossData = JSON.parse(e.detail);
-//	  	var crossData=[];
-//		if(Array.isArray(crossDataJson)){
-//			for(var key in crossDataJson){
-//				crossData.push(key, crossDataJson[key]);
-//			}
-//		}
-	  	
+	  	//pass the values element as output parameter  	
+	  	var crossData = JSON.parse(e.detail);  	
 		parent.execExternalCrossNavigation(crossData,driversParameter,undefined,driversParameter.DOCUMENT_LABEL);
 
 	});
@@ -351,6 +337,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  var svgwin = document.getElementById("svgContainer"); //iframe element
 	  var viewBox = svgobj.myMainMap.mapSVG.getAttributeNS(null,"viewBox");
 	  var viewBoxArray = viewBox.split(" ");
+	  
 //	  set new iframe dimensions
 	  var iframe =  document.getElementById("svgContainer"); 
 	  var container = document.getElementById("container");
@@ -368,20 +355,14 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 		  $scope.numZoom++;
 		  $scope.svgWidth =  100+(25*$scope.numZoom);
 		  $scope.svgHeight =  100+(25*$scope.numZoom);
-//		  svgobj.myMainMap.mapSVG.setAttributeNS(null,"width",  $scope.svgWidth + '%');
-//		  svgobj.myMainMap.mapSVG.setAttributeNS(null,"height", $scope.svgHeight + '%'); 
 	  }else if (type == 'zoomOut'){		  		  		 
 		  $scope.svgWidth =  100 + (25*$scope.numZoom)-25;
 		  $scope.svgHeight = 100 + (25*$scope.numZoom)-25;
-//		  svgobj.myMainMap.mapSVG.setAttributeNS(null,"width",  $scope.svgWidth + '%');
-//		  svgobj.myMainMap.mapSVG.setAttributeNS(null,"height", $scope.svgHeight + '%');
 		  $scope.numZoom--;	 
 	  }	  
 	  iframe.style.height = $scope.svgHeight + '%';   
 	  iframe.style.width = $scope.svgWidth + '%' ;
-	  
-//	  viewBox =  viewBoxArray[0]+" " +viewBoxArray[1] + " " + viewBoxArray[2] + " " + viewBoxArray[3];
-//	  svgobj.myMainMap.mapSVG.setAttributeNS(null,"viewBox", viewBox);
+
 	  //scale ONLY the svg
 //	  svgobj.zoomImageButtons(type, evt);
   }
