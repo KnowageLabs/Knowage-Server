@@ -44,7 +44,6 @@ public class Majority implements IScorecardCriterion {
 		} else {
 			ret = STATUS.GRAY;
 		}
-		System.out.println("Resulting status " + ret.toString());
 		return ret;
 	}
 
