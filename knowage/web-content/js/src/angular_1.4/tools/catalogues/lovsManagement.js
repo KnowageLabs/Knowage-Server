@@ -13,9 +13,14 @@ var app = angular.module
 	 	'angular_list',
 	 	'angular_table',	 	
 	 	'sbiModule',
-	 	'angular_2_col'
+	 	'angular-list-detail'
 	 ]
 );
+
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
+    $mdThemingProvider.theme('knowage')
+    $mdThemingProvider.setDefaultTheme('knowage');
+ }]);
 
 app.controller
 (
@@ -27,11 +32,13 @@ app.controller
 	 	"$scope",
 	 	"$mdDialog",
 	 	"$mdToast",
+	 	"sbiModule_messaging",
+	 	"sbiModule_config",
 	 	lovsManagementFunction
 	 ]
 );
 
-function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast)
+function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_config)
 {
 	/**
 	 * =====================
@@ -39,128 +46,78 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 * =====================
 	 */
 	$scope.showMe = false;
+	$scope.dirtyForm = false; // flag to check for modification
 	$scope.translate = sbiModule_translate;
 	$scope.listOfLovs = [];
 	$scope.listOfInputTypes = [];
 	$scope.listOfScriptTypes = [];
-	$scope.listOfScriptTypes = [];
 	$scope.listOfDatasources = [];
 	$scope.listOfDatasets = [];
 	$scope.listForFixLov = [];
+	$scope.listOfProfileAttributes = [];
 	$scope.selectedLov = {};
+	$scope.toolbarTitle ="";
+	$scope.infoTitle="";
+	$scope.selectedScriptType={};
+	$scope.selectedQuery = {};
+	$scope.selectedFIXLov = {};
+	$scope.selectedJavaClass = null;
+	$scope.selectedDataset = {};
 	
-//	$scope.lovsManagementSpeedMenu = 
-//	[
-//	     {
-//	    	 label:sbiModule_translate.load("sbi.generic.delete"),
-//	    	 icon:'fa fa-minus',
-//	    	 backgroundColor:'red',
-//	    	 color:'white',
-//	    	 
-//		     action:function(item,a)
-//		     {
-////		    	console.log("-- remove single LOV item from the list --");
-//		    	console.log(item);
-//		    	console.log(a);
-//		    	
-//		    	sbiModule_restServices
-//				.remove("LOV","")
-//				.success
-//				(
-//					function(data, status, headers, config) 
-//					{
-//						if (data.hasOwnProperty("errors")) 
-//						{
-//							//change sbi.glossary.load.error
-//							console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
-//						} 
-//						else 
-//						{
-//							console.log("remove LOV:");
-//							console.log(data);
-//							//$scope.listOfDatasets = data.root;					
-//						}
-//					}
-//				)
-//				.error
-//				(
-//					function(data, status, headers, config) 
-//					{
-//						console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-//					}
-//				);
-//		     }
-//	     }
-//    ];
+
 	
 	/**
 	 * Speed menu for handling the deleting action on one 
 	 * particular LOV item.
 	 */
-	$scope.lovsManagementSpeedMenu = 
-	[
-	 	{
-			label : "Delete",
-			
-			action : function(item) 
-			{
-				console.log(item);
-				console.log(JSON.stringify(item));
-//					sbiModule_restServices.remove("LOV", 'deleteSmth', "",JSON.stringify(item))
-//					.success(
-//
-//							function(data, status, headers, config) {
-//								console.log(data)
-//								if (data.hasOwnProperty("errors")) {
-//									console.log("layer non Ottenuti");
-//								} else {
-////									$scope.loadLayer();
-////									$scope.closeForm();
-////									$scope.showActionDelete();
-//									console.log("HERE I AM!!");
-//								}
-////
-//							}
-//	 	).error(function(data, status, headers, config) {
-//								console.log("layer non Ottenuti " + status);
-//
-//							});
-		    	
-		    	sbiModule_restServices
-					.delete("LOV","", "",'{"id":"5"}')
-					.success
-					(
-						function(data, status, headers, config) 
-						{
-							if (data.hasOwnProperty("errors")) 
-							{
-								//change sbi.glossary.load.error
-								console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
-							} 
-							else 
-							{
-								console.log("remove LOV:");
-								console.log(data);
-								//$scope.listOfDatasets = data.root;					
-							}
-						}
-					)
-					.error
-					(
-						function(data, status, headers, config) 
-						{
-							console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-						}
-					);
-			}
-		}
-	];
+	$scope.lovsManagementSpeedMenu= [
+                         {
+                            label:sbiModule_translate.load("sbi.generic.delete"),
+                            icon:'fa fa-trash-o fa-lg',
+                            color:'#153E7E',
+                            action:function(item,event){
+                                
+                            	$scope.confirmDelete(item,event);
+                            }
+                         }
+                        ];
+
 	
+	$scope.confirmDelete = function(item,ev) {
+	    var confirm = $mdDialog.confirm()
+	          .title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
+	          .content(sbiModule_translate.load("sbi.catalogues.toast.confirm.content"))
+	          .ariaLabel("confirm_delete")
+	          .targetEvent(ev)
+	          .ok(sbiModule_translate.load("sbi.general.continue"))
+	          .cancel(sbiModule_translate.load("sbi.general.cancel"));
+	    $mdDialog.show(confirm).then(function() {
+	    	$scope.deleteLov(item);
+	    }, function() {
+	
+	    });
+	  };
 	/**
 	 * =====================
 	 * ===== Functions =====
 	 * =====================
 	 */
+	
+	angular.element(document).ready(function () { // on page load function
+		$scope.getAllLovs();
+		$scope.getInputTypes();
+		$scope.getScriptTypes();
+		$scope.getDatasources();
+		$scope.getDatasets();
+		
+		
+		
+    });
+	
+	$scope.setDirty=function()
+	{ 
+		  $scope.dirtyForm=true;
+	}
 	
 	/**
 	 * When clicking on plus button on the left panel, this function 
@@ -171,9 +128,132 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 */
 	$scope.createLov = function()
 	{
-		$scope.showMe = true;
+		 if($scope.dirtyForm){
+			   $mdDialog.show($scope.confirm).then(function(){
+				$scope.dirtyForm=false;   
+				$scope.selectedLov = {};
+				$scope.showMe = true;
+			    $scope.label = "";
+			           
+			   },function(){
+			    
+				   $scope.showMe = true;
+			   });
+			   
+			  }else{
+			 
+			  $scope.selectedLov = {};
+			  $scope.showMe = true;
+			  }
 	}
+	/**
+	 * Function that add additional fields depending on selection
+	 * from combobox
+	 * @author: spetrovic (Stefan.Petrovic@mht.net)
+	 */
+	$scope.changeType = function(type,item) {
+		if(type == 'lov'){
+			
+			 switch (item) {
+				case "SCRIPT":
+					$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.scriptWizard");
+					$scope.infoTitle= "Show Sintax...";
+					cleanSelections();
+					
+					break;
+				case "QUERY":
+					$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.queryWizard");
+					$scope.infoTitle= "Show Sintax...";
+					cleanSelections();
+					
+					break;
+				case "FIX_LOV":
+					$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.fixedListWizard");
+					$scope.infoTitle= "Rules";
+					cleanSelections();
+					
+					break;	
+				case "JAVA_CLASS":
+					$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.javaClassWizard");
+					$scope.infoTitle= "Rules";
+					cleanSelections();
+					
+					break;
+				case "DATASET":
+					$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.datasetWizard");
+					cleanSelections();
+					
+					break;	
+				default:
+					break;
+				}
+			
+		}else if (type == 'script') {
+			
+		}else if (type == 'datasource') {
+			
+		}
+		
+		}
 	
+	var cleanSelections = function() {
+		$scope.selectedScriptType={};
+		$scope.selectedQuery = {};
+		$scope.selectedFIXLov = {};
+		$scope.selectedJavaClass = null;
+		$scope.selectedDataset = {};
+	}
+	/**
+	 * Function opens dialog with available
+	 * profile attributes when clicked
+	 * @author: spetrovic (Stefan.Petrovic@mht.net)
+	 */
+	$scope.openAttributesFromLOV = function() {
+		
+		sbiModule_restServices.promiseGet("2.0/attributes", '')
+		.then(function(response) {
+			$scope.listOfProfileAttributes = response.data;
+			console.log($scope.listOfProfileAttributes);
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});	
+		
+		$mdDialog
+		.show({
+			scope : $scope,
+			preserveScope : true,
+			parent : angular.element(document.body),
+			controllerAs : 'LOVSctrl',
+			templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/profileAttributes.html',
+			clickOutsideToClose : false,
+			hasBackdrop : false
+		});
+	}
+	/**
+	 * Function opens dialog with information
+	 * about selection
+	 * @author: spetrovic (Stefan.Petrovic@mht.net)
+	 */
+	$scope.openInfoFromLOV = function() {
+		if($scope.selectedLov.itypeCd !='DATASET'){
+			$mdDialog
+			.show({
+				scope : $scope,
+				preserveScope : true,
+				parent : angular.element(document.body),
+				controllerAs : 'LOVSctrl',
+				templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/Info.html',
+				clickOutsideToClose : false,
+				hasBackdrop : false
+			});
+			
+		}
+			
+	}
+	$scope.closeDialogFromLOV = function() {
+		$mdDialog.cancel();
+	}
 	/**
 	 * When clicking on Save button in the header of the right panel, 
 	 * this function will be called and the functionality for saving
@@ -193,6 +273,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.cancel = function()
 	{
 		$scope.showMe = false;
+		$scope.dirtyForm=false;
+		$scope.selectedLov = {};
 	}
 	
 	/**
@@ -213,13 +295,25 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 */
 	$scope.itemOnClick = function(item)
 	{
-		console.log("-- LOV item with ID: " + item.id + " is clicked --");
-		console.log(item);		
-		/**
-		 * 
-		 */
-		$scope.selectedLov = angular.copy(item);
-		$scope.showMe = true;
+		console.log(item);
+		$scope.changeType(item.itypeCd)
+		 if($scope.dirtyForm){
+			   $mdDialog.show($scope.confirm).then(function(){
+				$scope.dirtyForm=false;   
+				$scope.selectedLov=angular.copy(item);
+				$scope.showMe=true;
+				
+				
+			   },function(){
+			    
+				$scope.showMe = true;
+			   });
+			   
+			  }else{
+			 
+			  $scope.selectedLov=angular.copy(item);
+			  $scope.showMe=true;
+			  }
 	}
 	
 	/**
@@ -227,38 +321,21 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 * in the LOV catalog for our page).
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
-	$scope.getAllLovs = function()
-	{		
+
 		/**
 		 * Get all LOV items from the DB for the LOV catalog.
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		sbiModule_restServices
-			.get("2.0", "lovs")
-			.success
-			(
-				function(data, status, headers, config) 
-				{
-					if (data.hasOwnProperty("errors")) 
-					{
-						//change sbi.glossary.load.error
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
-					} 
-					else 
-					{		
-						console.log("all LOVs:");
-						console.log(data);
-						$scope.listOfLovs = data;						
-					}
-				}
-			)
-			.error
-			(
-				function(data, status, headers, config) 
-				{
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-				}
-			);	
+		$scope.getAllLovs = function(){ // service that gets list of drivers @GET
+			sbiModule_restServices.promiseGet("2.0", "lovs")
+			.then(function(response) {
+				console.log(response)
+				$scope.listOfLovs = response.data;
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});
+		}
 		
 		/**
 		 * Get all input types for populating the GUI item that
@@ -267,32 +344,17 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		 * to define.
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		sbiModule_restServices
-			.get("domains", "listValueDescriptionByType", "DOMAIN_TYPE=INPUT_TYPE")
-			.success
-			(
-				function(data, status, headers, config) 
-				{
-					if (data.hasOwnProperty("errors")) 
-					{
-						//change sbi.glossary.load.error
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
-					} 
-					else 
-					{
-						console.log("input types:");
-						console.log(data);
-						$scope.listOfInputTypes = data;					
-					}
-				}
-			)
-			.error
-			(
-				function(data, status, headers, config) 
-				{
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-				}
-			);
+		
+		$scope.getInputTypes = function() {
+			sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=INPUT_TYPE")
+			.then(function(response) {
+				console.log(response);
+				$scope.listOfInputTypes = response.data;
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});
+		}
 		
 		/**
 		 * Get all script types from the DB in order to populate
@@ -300,32 +362,18 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		 * wants for the Script input type.
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		sbiModule_restServices
-			.get("domains", "listValueDescriptionByType", "DOMAIN_TYPE=SCRIPT_TYPE")
-			.success
-			(
-				function(data, status, headers, config) 
-				{
-					if (data.hasOwnProperty("errors")) 
-					{
-						//change sbi.glossary.load.error
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
-					} 
-					else 
-					{	
-						console.log("script types:");
-						console.log(data);
-						$scope.listOfScriptTypes = data;					
-					}
-				}
-			)
-			.error
-			(
-				function(data, status, headers, config) 
-				{
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-				}
-			);
+		
+		$scope.getScriptTypes = function() {
+			sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=SCRIPT_TYPE")
+			.then(function(response) {
+				$scope.listOfScriptTypes = response.data;
+				console.log($scope.listOfScriptTypes);
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});
+		}
+		
 		
 		/**
 		 * Get datasources from the DB in order to populate the combo box
@@ -333,32 +381,16 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		 * LOV.
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		sbiModule_restServices
-			.get("datasources","")
-			.success
-			(
-				function(data, status, headers, config) 
-				{
-					if (data.hasOwnProperty("errors")) 
-					{
-						//change sbi.glossary.load.error
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
-					} 
-					else 
-					{
-						console.log("datasources:");
-						console.log(data);
-						$scope.listOfDatasources = data.root;					
-					}
-				}
-			)
-			.error
-			(
-				function(data, status, headers, config) 
-				{
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-				}
-			);	
+		$scope.getDatasources = function() {
+			sbiModule_restServices.promiseGet("2.0/datasources", "")
+			.then(function(response) {
+				$scope.listOfDatasources = response.data;
+				console.log($scope.listOfDatasources);
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});
+		}
 		
 		/**
 		 * Get datasets from the DB in order to populate the combo box
@@ -366,35 +398,18 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		 * LOV.
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		sbiModule_restServices
-			.get("1.0/datasets","")
-			.success
-			(
-				function(data, status, headers, config) 
-				{
-					if (data.hasOwnProperty("errors")) 
-					{
-						//change sbi.glossary.load.error
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
-					} 
-					else 
-					{
-						console.log("datasets:");
-						console.log(data);
-						$scope.listOfDatasets = data.root;					
-					}
-				}
-			)
-			.error
-			(
-				function(data, status, headers, config) 
-				{
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-				}
-			);	
-	}
-	
-	$scope.getAllLovs();
+		
+		$scope.getDatasets = function() {
+			sbiModule_restServices.promiseGet("1.0/datasets","")
+			.then(function(response) {
+				$scope.listOfDatasets = response.data.root;
+				console.log($scope.listOfDatasets);
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});
+		}
+		
 	
 	$scope.parseProviderXml = function(item)
 	{
