@@ -37,6 +37,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 /**
  * The Class AbstractDatasetProviderConfigurator.
  *
@@ -77,10 +80,18 @@ public class AbstractDataMartProviderConfigurator {
 			String selectedHierarchyName = null;
 			String selectedMemberName = null;
 
+			Monitor getSelectedHierarchyNameMonitor = MonitorFactory.start("GeoEngine.AbstractDataMartProviderConfigurator.getSelectedHierarchyName");
 			selectedHierarchyName = getSelectedHierarchyName(confSB);
+			getSelectedHierarchyNameMonitor.stop();
+			Monitor getHierarchyMembersMonitor = MonitorFactory.start("GeoEngine.AbstractDataMartProviderConfigurator.getHierarchyMembers");
 			hierarchyMembers = getHierarchyMembers(confSB, abstractDatasetProvider.getEnv());
+			getHierarchyMembersMonitor.stop();
+			Monitor getDefaultMemberNameMonitor = MonitorFactory.start("GeoEngine.AbstractDataMartProviderConfigurator.getDefaultMemberName");
 			selectedMemberName = getDefaultMemberName(hierarchyMembers);
-			List membersLst = getHierarchyMembersList(confSB);
+			getDefaultMemberNameMonitor.stop();
+			// Monitor getHierarchyMembersListMonitor = MonitorFactory.start("GeoEngine.AbstractDataMartProviderConfigurator.getHierarchyMembersList");
+			// List membersLst = getHierarchyMembersList(confSB);
+			// getHierarchyMembersListMonitor.stop();
 
 			abstractDatasetProvider.setHierarchyMembers(hierarchyMembers);
 			abstractDatasetProvider.setSelectedHierarchyName(selectedHierarchyName);
