@@ -46,13 +46,16 @@ public class CockpitDriver extends GenericDriver {
 		// get datasets from template
 		JSONArray stores = null;
 		String dsFieldName = null;
+		if (templateContent.has("templateContent")) {
+			templateContent = templateContent.getJSONObject("templateContent");
+		}
 		if (templateContent.has("configuration")) {
 			// new cockpit
 			stores = templateContent.getJSONObject("configuration").getJSONArray("datasets");
 			dsFieldName = "dsLabel";
 		} else {
 			// old cockpit
-			JSONObject storeConfJSON = templateContent.getJSONObject("templateContent").getJSONObject("storesConf");
+			JSONObject storeConfJSON = templateContent.getJSONObject("storesConf");
 			stores = storeConfJSON.getJSONArray("stores");
 			dsFieldName = "storeId";
 		}
