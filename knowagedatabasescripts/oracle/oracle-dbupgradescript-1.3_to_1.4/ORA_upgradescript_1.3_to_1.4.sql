@@ -22,3 +22,7 @@ ALTER TABLE SBI_META_DS_BC
 	DROP CONSTRAINT FK_SBI_META_DS_BC_2;
 ALTER TABLE SBI_META_DS_BC
 	ADD CONSTRAINT FK_SBI_META_DS_BC_2 FOREIGN KEY (BC_ID) REFERENCES SBI_META_BC (BC_ID) ON DELETE CASCADE;
+	
+	
+update SBI_ENGINES set MAIN_URL="/knowagewhatifengine/restful-services/olap/startolap" where LABEL = "knowageolapengine";
+update SBI_ENGINES set MAIN_URL="/knowagewhatifengine/restful-services/olap/startwhatif" where LABEL = "knowagewhatifengine";
