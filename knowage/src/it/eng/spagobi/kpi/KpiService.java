@@ -1074,6 +1074,19 @@ public class KpiService {
 		return ret;
 	}
 
+	@GET
+	@Path("/{name}/loadScorecardbyName")
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	public String loadScorecard(@PathParam("name") String name, @Context HttpServletRequest req) throws EMFUserError {
+		logger.debug("loadScorecard IN");
+		String ret;
+		IKpiDAO dao = getKpiDAO(req);
+		Scorecard scorecard = dao.loadScorecardByName(name);
+		ret = JsonConverter.objectToJson(scorecard, scorecard.getClass());
+		logger.debug("loadScorecard OUT");
+		return ret;
+	}
+
 	@POST
 	@Path("/saveScorecard")
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
