@@ -33,6 +33,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 
 /**
@@ -41,6 +42,9 @@ import org.json.JSONException;
  * Static class that build the Network from the Template
  */
 public class NetworkBuilder {
+	
+	
+	public static transient Logger logger = Logger.getLogger(NetworkBuilder.class);
 	
 	/**
 	 * Create the Network Object from the Template and the DataSet
@@ -145,6 +149,8 @@ public class NetworkBuilder {
 			}else{
 				dest.setProperty(destVal, columnValue);
 			}
+		} else {
+			logger.error("Can not find column "+columnName+" in the dataset");
 		}
 	}
 	
