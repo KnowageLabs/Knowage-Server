@@ -77,7 +77,7 @@ public class HMACFilterAuthenticationProvider {
 	}
 
 	private String getSignature(ClientRequest req, String token) throws IOException, Exception {
-		String res = HMACUtils.sign(getQueryPath(req), getParamsString(req), getBody(req), token, key, getHeaders(req));
+		String res = HMACUtils.sign(getBody(req),getQueryPath(req),  getParamsString(req), getHeaders(req), token, key);
 		return res;
 	}
 
