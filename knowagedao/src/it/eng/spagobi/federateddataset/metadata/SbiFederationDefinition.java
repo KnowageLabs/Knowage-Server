@@ -20,6 +20,8 @@ package it.eng.spagobi.federateddataset.metadata;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
@@ -102,6 +104,7 @@ public class SbiFederationDefinition extends SbiHibernateModel {
 		this.description = description;
 	}
 
+	@JsonIgnore
 	public Set<SbiDataSet> getSourceDatasets() {
 		return sourceDatasets;
 	}
