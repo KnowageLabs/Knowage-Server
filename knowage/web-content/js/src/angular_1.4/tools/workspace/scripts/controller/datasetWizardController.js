@@ -670,6 +670,34 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
     	
     }
 		
+	/**
+	 * Local function that is used for filtering rows (metadata) for all columns available in the file dataset.
+	 * It will pass only the 'type' and 'fieldType' rows, whilst others will be ignored (filtered). 
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	var filterMetadataRows = function() {
+		
+		/**
+		 * The final (filtered) array of all rows in the Step 2
+		 */
+		var finalFilteredRows = [];
+		var pname = "";
+		
+		for(i=0; i< $scope.dataset.meta.columns.length;i++) { 
+			
+			loc = $scope.dataset.meta.columns[i];			
+			pname = loc.pname;
+			
+			if (pname=="type" || pname=="fieldType") { 
+				finalFilteredRows.push(loc);
+			}
+			
+		}	
+		
+		return finalFilteredRows;
+		
+	}
+	
 	$scope.prepareMetaForView = function(item,index){				
 		
 		/**
@@ -682,7 +710,15 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		var initialization = !item && !index;
 		
 		$scope.prepareMetaValue($scope.dataset.meta.columns,item,index);
-				
+
+		/**
+		 * Overwrite the existing metadata (the array of all rows for the metadata on the Step 2 of the Dataset wizard)
+		 * with the filtered array - the one that passes only the 'type' and 'fieldType' rows for each column in the 
+		 * file dataset. Other will be filtered (they will not pass). 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		$scope.dataset.meta.columns = filterMetadataRows($scope.dataset.meta.columns);
+		
 		for(i=0; i< $scope.dataset.meta.columns.length;i++) {
 							
 			loc = $scope.dataset.meta.columns[i];
@@ -698,103 +734,108 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			 * Attribute column value is the Field type, just proceed with the filtering of metadata. 
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 			 */			
-			if (initialization) {	
-				
-				if (pname=="type") {
-					loc.dsMetaValue = $scope.filterMetaValue(pname,undefined,i,undefined,$scope.dataset.meta.columns[i+1].pvalue);
-				}					
-				else {
-					loc.dsMetaValue = $scope.filterMetaValue(pname,undefined,i,undefined);
-				}
-				
-			}				
-			// Click
-			else  {
-								
-				if (index-1==i) {
-					loc.dsMetaValue = $scope.filterMetaValue($scope.dataset.meta.columns[index-1].pname,item,i,index);	
-				}
-				else {
+			if (pname=="type" || pname=="fieldType") {
+				if (initialization) {	
 					
-					if (pname=="type")
+					if (pname=="type") {
 						loc.dsMetaValue = $scope.filterMetaValue(pname,undefined,i,undefined,$scope.dataset.meta.columns[i+1].pvalue);
-					else
+					}					
+					else {
 						loc.dsMetaValue = $scope.filterMetaValue(pname,undefined,i,undefined);
+					}
+					
+				}				
+				// Click
+				else  {
+									
+					if (index-1==i) {
+						loc.dsMetaValue = $scope.filterMetaValue($scope.dataset.meta.columns[index-1].pname,item,i,index);	
+					}
+					else {
+						
+						if (pname=="type")
+							loc.dsMetaValue = $scope.filterMetaValue(pname,undefined,i,undefined,$scope.dataset.meta.columns[i+1].pvalue);
+						else
+							loc.dsMetaValue = $scope.filterMetaValue(pname,undefined,i,undefined);
+						
+					}
+				}
+				
+				/**
+				 * danristo
+				 */
+				loc.indexOfRow = i;
+
+				/**
+				 * If user selects the MEASURE field type after having a field type of ATTRIBUTE and type String for a particular data column, the first
+				 * item in the type combobox for a MEASURE field type will be selected (e.g. the Integer will be selected). This is implemented instead of
+				 * having an empty combo for type when performing this scenario.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				if (i%2==0 && loc.dsMetaValue && item) {
+					
+					if (item.toUpperCase()=="MEASURE" && loc.pvalue.toLowerCase()=="string") {
+						loc.pvalue = loc.dsMetaValue[0].VALUE_CD;					
+					}				
 					
 				}
-			}
+				
+				/**
+				 * Change the GUI element type for first two columns of the Step 2 of the Dataset wizard, from combo box ('md-select') to the label (fixed value).
+				 * This is done as a temporary solution - besides this, these things are removed: 'Columns/Dataset' combo box, 'Add new row' button, 'Clear all' 
+				 * button, delete row item in each row. The only dynamic behavior has the 'Value' column, since we can choose between Integer and Double for MEASURES
+				 * and an additional String option for ATTRIBUTES, so for this reason we are keeping the combo box element.
+				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+//					loc.columnView='<md-select aria-label="column-view" ng-model=row.column class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumns" value="{{col.columnName}}">{{col.columnName}}</md-option></md-select>';
+//					loc.pnameView='<md-select aria-label="pname-view" ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsMetaProperty" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.filterMetaValues(col.VALUE_CD,row)">{{col.VALUE_NM}}</md-option></md-select>';
 			
-			/**
-			 * danristo
-			 */
-			loc.indexOfRow = i;
-
-			/**
-			 * If user selects the MEASURE field type after having a field type of ATTRIBUTE and type String for a particular data column, the first
-			 * item in the type combobox for a MEASURE field type will be selected (e.g. the Integer will be selected). This is implemented instead of
-			 * having an empty combo for type when performing this scenario.
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			if (i%2==0 && loc.dsMetaValue && item) {
+				loc.columnView='<label>{{row.column}}</label>';
+				loc.pnameView='<label>{{row.pname}}</label>';											
+				loc.pvalueView='<md-select aria-label="pvalue-view" ng-model=row.pvalue class="noMargin" style=styleString><md-option ng-repeat="col in row.dsMetaValue" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.valueChanged(col,row.indexOfRow)">{{col.VALUE_NM}}</md-option></md-select>';
 				
-				if (item.toUpperCase()=="MEASURE" && loc.pvalue.toLowerCase()=="string") {
-					loc.pvalue = loc.dsMetaValue[0].VALUE_CD;					
-				}				
-				
-			}
-			
-			/**
-			 * Change the GUI element type for first two columns of the Step 2 of the Dataset wizard, from combo box ('md-select') to the label (fixed value).
-			 * This is done as a temporary solution - besides this, these things are removed: 'Columns/Dataset' combo box, 'Add new row' button, 'Clear all' 
-			 * button, delete row item in each row. The only dynamic behavior has the 'Value' column, since we can choose between Integer and Double for MEASURES
-			 * and an additional String option for ATTRIBUTES, so for this reason we are keeping the combo box element.
-			 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-//				loc.columnView='<md-select aria-label="column-view" ng-model=row.column class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetColumns" value="{{col.columnName}}">{{col.columnName}}</md-option></md-select>';
-//				loc.pnameView='<md-select aria-label="pname-view" ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsMetaProperty" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.filterMetaValues(col.VALUE_CD,row)">{{col.VALUE_NM}}</md-option></md-select>';
-		
-			loc.columnView='<label>{{row.column}}</label>';
-			loc.pnameView='<label>{{row.pname}}</label>';											
-			loc.pvalueView='<md-select aria-label="pvalue-view" ng-model=row.pvalue class="noMargin" style=styleString><md-option ng-repeat="col in row.dsMetaValue" value="{{col.VALUE_CD}}" ng-click="scopeFunctions.valueChanged(col,row.indexOfRow)">{{col.VALUE_NM}}</md-option></md-select>';
-			
-			/**
-			 * Manage the Step 2 "Valid" column state according to the validation after submitting the Step 2.
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			if ($scope.step2ValidationFirstTime==false) {
-				
-				var invalidType = $scope.step2ValidationErrors!=null && $scope.step2ValidationErrors[0]['column_'+i] && $scope.step2ValidationErrors[0]['column_'+i]!="";
-				//{{translate.load('')}}
-				
-				// If type is invalid and there are validation errors in response.
-				var msg = invalidType && $scope.step2ValidationErrors[0]["column_"+i] ? $scope.step2ValidationErrors[0]["column_"+i] : "sbi.workspace.dataset.wizard.metadata.validation.success.title";
-				
-				var invalidColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-times fa-1x" class="invalidTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
-				var validColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-check fa-1x" class="validTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
-				
-				// Set the content of the "Valid" column for the current row to an appropriate state (passed/failed validation).
-				loc.metaValid = (invalidType) ? invalidColumnValidContent : validColumnValidContent;
-				
-			}
-			else {
-				
-				msg = "sbi.workspace.dataset.wizard.metadata.validation.pending.title";
-				
-				// Set the state of the Step 2 "Valid" column to the initial value - pending for the validation (default state).
-//				loc.metaValid = '<md-content><md-icon md-font-icon="fa fa-circle-o fa-1x" style="background-color: #e6e6e6; width: 55%; padding-left: 45%; height: 100%" title="Pending for validation check..."></md-icon></md-content>';
-				loc.metaValid = '<md-content><md-icon md-font-icon="fa fa-question fa-1x" class="defaultStateValidType" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
-				
+				/**
+				 * Manage the Step 2 "Valid" column state according to the validation after submitting the Step 2.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				if ($scope.step2ValidationFirstTime==false) {
+					
+					var invalidType = $scope.step2ValidationErrors!=null && $scope.step2ValidationErrors[0]['column_'+i] && $scope.step2ValidationErrors[0]['column_'+i]!="";
+					//{{translate.load('')}}
+					
+					// If type is invalid and there are validation errors in response.
+					var msg = invalidType && $scope.step2ValidationErrors[0]["column_"+i] ? $scope.step2ValidationErrors[0]["column_"+i] : "sbi.workspace.dataset.wizard.metadata.validation.success.title";
+					
+					var invalidColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-times fa-1x" class="invalidTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
+					var validColumnValidContent = '<md-content><md-icon md-font-icon="fa fa-check fa-1x" class="validTypeMetadata" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
+					
+					// Set the content of the "Valid" column for the current row to an appropriate state (passed/failed validation).
+					loc.metaValid = (invalidType) ? invalidColumnValidContent : validColumnValidContent;
+					
+				}
+				else {
+					
+					msg = "sbi.workspace.dataset.wizard.metadata.validation.pending.title";
+					
+					// Set the state of the Step 2 "Valid" column to the initial value - pending for the validation (default state).
+//					loc.metaValid = '<md-content><md-icon md-font-icon="fa fa-circle-o fa-1x" style="background-color: #e6e6e6; width: 55%; padding-left: 45%; height: 100%" title="Pending for validation check..."></md-icon></md-content>';
+					loc.metaValid = '<md-content><md-icon md-font-icon="fa fa-question fa-1x" class="defaultStateValidType" title="' + eval("sbiModule_translate.load(msg)") + '"></md-icon></md-content>';
+					
+				}
 			}
 				
 		}
 	}	
 	
 	$scope.prepareDatasetForView = function() {
-		var datasets = $scope.dataset.meta.dataset
+	
+		var datasets = $scope.dataset.meta.dataset;
+		
 		for (var i = 0; i < datasets.length; i++) {
 			datasets[i].pnameView = '<md-select aria-label="dspname-view" ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.dsGenMetaProperty" value="{{col.VALUE_CD}}">{{col.VALUE_NM}}</md-option></md-select>';
-			datasets[i].pvalueView = ' <input ng-model="row.pvalue"></input>';
+			datasets[i].pvalueView = '<input ng-model="row.pvalue"></input>';
 		}
+		
 	}
 	
 	$scope.filterMetaValue = function(pname,item,i,index,myFieldType){
@@ -847,7 +888,8 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
    			
    			}
 			
-		}else{			
+		}
+		else {			
 			angular.copy($scope.dsMetaValue,filteredMetaValues);			
 		}
 		
