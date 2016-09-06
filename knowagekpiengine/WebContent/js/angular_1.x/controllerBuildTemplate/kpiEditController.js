@@ -117,13 +117,13 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		var formData = new FormData();
 		formData.append("jsonTemplate",  JSON.stringify(obj));
 		formData.append("docLabel",sbiModule_config.docLabel);
-
+		console.log(JSON.stringify(obj));
 		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
 
 		sbiModule_restServices.promisePost("1.0/documents", 'saveKpiTemplate', 
 				$httpParamSerializer({jsonTemplate:JSON.stringify(obj), docLabel:sbiModule_config.docLabel}), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(
 						function(response) {
-//							console.log(response.data);
+							console.log(response.data);
 
 //							$scope.showAction("Template saved");
 							var saveSuccessMsg = sbiModule_translate.load("sbi.kpidocumentdesigner.save.success");
@@ -233,9 +233,9 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		if(template.chart.style!=undefined){
 			$scope.style = template.chart.style.font;
 		}
-		var idScorecard = template.chart.data.scorecard.id;
+		var nameScorecard = template.chart.data.scorecard.name;
 		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath );
-		sbiModule_restServices.promiseGet("1.0/kpi",idScorecard+"/loadScorecard")
+		sbiModule_restServices.promiseGet("1.0/kpi",nameScorecard+"/loadScorecardbyName")
 		.then(function(response){
 			var obj = {};
 			obj["name"]=response.data.name;
@@ -371,7 +371,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.indexInList = function(item, list) {
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
-			if(object.id==item.id){
+			if(object.name==item.name){
 				return i;
 			}
 		}
@@ -393,7 +393,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 				var selectedKpi = selectedKpis[i];
 				
 				var kpiObject = {};
-				kpiObject["id"] = selectedKpi.id;
+				kpiObject["name"] = selectedKpi.name;
 				//kpiObject["version"] =  selectedKpi.version;
 				kpiObject["vieweas"] = selectedKpi.vieweAs;
 				if(selectedKpi.rangeMinValue >= selectedKpi.rangeMaxValue 
@@ -413,7 +413,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 			obj.chart["options"] = $scope.options;
 		}else{
 			var scoreObject = {};
-			scoreObject["id"] = $scope.scorecardSelected[0].id;
+			scoreObject["name"] = $scope.scorecardSelected[0].name;
 			obj.chart.data["scorecard"]=scoreObject;
 		}
 		obj.chart["style"] ={};

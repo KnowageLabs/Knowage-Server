@@ -43,7 +43,6 @@ import it.eng.knowage.engine.util.KpiEngineDataUtil;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.kpi.bo.KpiValue;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
@@ -83,33 +82,36 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 
 			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 			JSONObject jsonTemplate = RestUtilities.readBodyAsJSONObject(req);
-			
+
 			Calendar startDate = Calendar.getInstance();
 
 			// LOading Scorecard or Target
 			Map<String, String> attributesValues = buildAttributeValuesMap(jsonTemplate, startDate);
 
 			result = KpiEngineDataUtil.loadJsonData(jsonTemplate, attributesValues);
-			
+			if (result == null) {
+				return null;
+			}
+			JSONArray resultarray = new JSONArray(result);
 			if (jsonTemplate.getJSONObject("chart").getString("type").equals("kpi")) {
 				JSONObject objTemp = new JSONObject();
 				List<KpiValue> kpiValues;
 
-				if (jsonTemplate.getJSONObject("chart").getJSONObject("data").get("kpi") instanceof JSONObject) {
-					objTemp = jsonTemplate.getJSONObject("chart").getJSONObject("data").getJSONObject("kpi");
+				// if (jsonTemplate.getJSONObject("chart").getJSONObject("data").get("kpi") instanceof JSONObject) {
+				// objTemp = jsonTemplate.getJSONObject("chart").getJSONObject("data").getJSONObject("kpi");
+				// kpiValues = DAOFactory.getKpiDAO().findKpiValues(objTemp.getInt("id"), null, startDate.getTime(), new Date(), attributesValues);
+				// String result2 = new ObjectMapper().writeValueAsString(kpiValues);
+				// array.put(result2);
+				// } else {
+				kpiValues = new ArrayList<>();
+				for (int i = 0; i < resultarray.length(); i++) {
+					objTemp = resultarray.getJSONObject(i).getJSONObject("kpi");
 					kpiValues = DAOFactory.getKpiDAO().findKpiValues(objTemp.getInt("id"), null, startDate.getTime(), new Date(), attributesValues);
 					String result2 = new ObjectMapper().writeValueAsString(kpiValues);
 					array.put(result2);
-				} else {
-					kpiValues = new ArrayList<>();
-					for (int i = 0; i < jsonTemplate.getJSONObject("chart").getJSONObject("data").getJSONArray("kpi").length(); i++) {
-						objTemp = jsonTemplate.getJSONObject("chart").getJSONObject("data").getJSONArray("kpi").getJSONObject(i);
-						kpiValues = DAOFactory.getKpiDAO().findKpiValues(objTemp.getInt("id"), null, startDate.getTime(), new Date(), attributesValues);
-						String result2 = new ObjectMapper().writeValueAsString(kpiValues);
-						array.put(result2);
-					}
 				}
 			}
+			// }
 
 			JSONObject objectResult = new JSONObject();
 			objectResult.put("loadKpiValue", array.toString());
@@ -152,7 +154,7 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 			if (keyvalue.length != 1) {
 				attributesValues.put(keyvalue[0].trim(), keyvalue[1].trim());
 			}
-			
+
 		}
 		return attributesValues;
 	}

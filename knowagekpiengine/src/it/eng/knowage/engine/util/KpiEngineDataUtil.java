@@ -17,7 +17,6 @@
  */
 package it.eng.knowage.engine.util;
 
-import java.util.Calendar;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -43,7 +42,8 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 			JSONObject chart = jo.getJSONObject("chart");
 			JSONArray array = new JSONArray();
 			if (chart.getString("type").equals("scorecard")) {
-				Scorecard card = DAOFactory.getKpiDAO().loadScorecard(chart.getJSONObject("data").getJSONObject("scorecard").getInt("id"), attributesValues);
+				Scorecard card = DAOFactory.getKpiDAO().loadScorecardByName(chart.getJSONObject("data").getJSONObject("scorecard").getString("name"),
+						attributesValues);
 				JSONObject object = new JSONObject(JsonConverter.objectToJson(card, card.getClass()));
 				JSONObject tempResult = new JSONObject();
 				tempResult.put("scorecard", object);
@@ -60,7 +60,10 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 					JSONObject temp = array.getJSONObject(i);
 					JSONObject tempResult = new JSONObject();
 
-					Kpi kpi = DAOFactory.getKpiDAO().loadLastActiveKpi(temp.getInt("id"));
+					Kpi kpi = DAOFactory.getKpiDAO().loadLastActiveKpiByName(temp.getString("name"));
+					if (kpi == null) {
+						return null;
+					}
 					if (DAOFactory.getKpiDAO().valueTargetbyKpi(kpi) != null) {
 						Double valueTarget = new Double(DAOFactory.getKpiDAO().valueTargetbyKpi(kpi));
 						tempResult.put("target", valueTarget);

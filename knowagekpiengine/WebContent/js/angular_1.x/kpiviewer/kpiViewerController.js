@@ -65,8 +65,13 @@
 			$scope.showKpiLoader = true;
 			sbiModule_restServices.promisePost("1.0/jsonKpiTemplate", "readKpiTemplate", $scope.documentData.template)
 			.then(function(response){ 
+				
 				var chart = $scope.documentData.template.chart;
-
+				if(response.data == ""){
+					sbiModule_restServices.errorHandler("Missing "+chart.type," Error");
+					$scope.showAction("Missing "+chart.type);
+					return;
+				}
 				$scope.gaugeValue = null;
 				$scope.gaugeTargetValue = null;
 				$scope.loadKpiValues = response.data.loadKpiValue;
@@ -93,7 +98,7 @@
 								var templateKpiItem = templateKpi[j];
 								responseItemKpi.targetValue = responseItem.target;
 
-								if(templateKpiItem.id == responseItemKpi.id) {
+								if(templateKpiItem.name == responseItemKpi.name) {
 									var conf = kpiViewerServices.createWidgetConfiguration(
 											templateKpiItem, responseItemKpi, chart);
 

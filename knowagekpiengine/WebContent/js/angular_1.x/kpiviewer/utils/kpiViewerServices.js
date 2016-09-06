@@ -15,7 +15,7 @@
 				
 				var conf = {};
 				
-				conf.id = templateKpi.id;
+				conf.id = kpiValue.id;
 				conf.name = kpiValue.name;
 				conf.version = templateKpi.version;
 				conf.viewAs = templateKpi.vieweas && templateKpi.vieweas != '' ?
