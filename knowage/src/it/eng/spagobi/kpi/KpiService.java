@@ -1101,7 +1101,15 @@ public class KpiService {
 			IKpiDAO dao = getKpiDAO(req);
 			Integer id = scorecard.getId();
 			if (id == null) {
-				id = dao.insertScorecard(scorecard);
+				if (dao.loadScorecardByName(scorecard.getName()) == null) {
+					id = dao.insertScorecard(scorecard);
+				} else {
+					out = Response.ok(new JSONObject()
+							.put("errors", new JSONArray().put(new JSONObject().put("message", "Error existing scorecard with this name"))).toString()).build();
+					logger.debug("Error existing scorecard with this name");
+					return out;
+				}
+
 			} else {
 				dao.updateScorecard(scorecard);
 			}
