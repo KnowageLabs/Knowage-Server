@@ -93,6 +93,43 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	}
 
 	/**
+	 * Get business models that have datamart
+	 *
+	 */
+
+	@GET
+	@Path("bmforfinaluser")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public List<MetaModel> getBusinessModelsWithVersions() {
+		logger.debug("IN");
+
+		List<MetaModel> businessModelList = null;
+		List<MetaModel> businessModelsWithDatamart = new ArrayList<>();
+		businessModelsDAO.setUserProfile(getUserProfile());
+
+		try {
+
+			businessModelList = businessModelsDAO.loadAllMetaModels();
+			for (MetaModel bm : businessModelList) {
+				List<Content> versions = businessModelsDAO.loadMetaModelVersions(bm.getId());
+				if (!versions.isEmpty()) {
+					businessModelsWithDatamart.add(bm);
+				}
+			}
+
+			return businessModelsWithDatamart;
+
+		} catch (Exception e) {
+			logger.error("An error occurred while getting all business models from databse!", e);
+			throw new SpagoBIRestServiceException("An error occurred while getting all business models from databse!", buildLocaleFromSession(), e);
+
+		} finally {
+			logger.debug("OUT");
+		}
+
+	}
+
+	/**
 	 * Get all versions of business model with specified id
 	 **/
 	@GET
@@ -130,9 +167,13 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 					togenerate = true;
 				}
 
-				// String fileModelName = lastFileModelContent.getFileName().replace(".sbimodel", "") + ".jar";
+				// String fileModelName =
+				// lastFileModelContent.getFileName().replace(".sbimodel", "") +
+				// ".jar";
 				// for (Content version : versions) {
-				// if (fileModelName.equals(version.getFileName()) && version.getProg().equals(lastFileModelContent.getProg() + 1)) {
+				// if (fileModelName.equals(version.getFileName()) &&
+				// version.getProg().equals(lastFileModelContent.getProg() + 1))
+				// {
 				// togenerate = false;
 				// break;
 				// }
@@ -181,7 +222,8 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * Get version of business model with {bmId} and with specified version id {vId}
+	 * Get version of business model with {bmId} and with specified version id
+	 * {vId}
 	 **/
 	@GET
 	@Path("{bmId}/versions/{vId}")

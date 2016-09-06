@@ -95,7 +95,7 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 	
 	//TODO move business models to separate controller
     $scope.handleBusinessModels= function(categoriesForUser){
-    	sbiModule_restServices.promiseGet("2.0/businessmodels", "")
+    	sbiModule_restServices.promiseGet("2.0/businessmodels", "bmforfinaluser")
 		.then(function(response) {
 			//angular.copy(response.data,$scope.businessModels);
 			for (var i = 0; i < response.data.length; i++) {
