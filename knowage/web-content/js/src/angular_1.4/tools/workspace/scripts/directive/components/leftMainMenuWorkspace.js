@@ -95,7 +95,7 @@ function leftMenuController($scope, sbiModule_translate, sbiModule_user){
 			"label":sbiModule_translate.load('sbi.workspace.menu.data'), 	
 			"icon": "fa fa-angle-down", 
 			"activeIcon":"fa fa-angle-up",
-			"visible":$scope.showMyData, 
+			"visible":$scope.showMyData || $scope.isUserAdmin, 
 			"active":false,
   	 		
 			"submenuOptions":
