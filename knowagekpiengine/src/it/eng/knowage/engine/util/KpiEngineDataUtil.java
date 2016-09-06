@@ -44,6 +44,9 @@ public class KpiEngineDataUtil extends AbstractHibernateDAO {
 			if (chart.getString("type").equals("scorecard")) {
 				Scorecard card = DAOFactory.getKpiDAO().loadScorecardByName(chart.getJSONObject("data").getJSONObject("scorecard").getString("name"),
 						attributesValues);
+				if (card == null) {
+					return null;
+				}
 				JSONObject object = new JSONObject(JsonConverter.objectToJson(card, card.getClass()));
 				JSONObject tempResult = new JSONObject();
 				tempResult.put("scorecard", object);
