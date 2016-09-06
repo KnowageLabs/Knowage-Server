@@ -462,8 +462,9 @@
 			restrict: 'A',
 			link: function(scope, element, attrs) {
 				element.on('load', function() {
-					var iFrameHeight = element[0].parentElement.scrollHeight + 'px';
-					element.css('height', iFrameHeight);				
+					// var iFrameHeight = element[0].parentElement.scrollHeight + 'px';
+					// changed to height 100% because of phantomjs rendering errors
+					element.css('height', '100%');				
 					element.css('width', '100%');
 					if(scope.iframeOnload)
 						scope.iframeOnload();
