@@ -60,7 +60,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SQLQuery query = aSession.createSQLQuery("select category_id from sbi_ext_roles_category where ext_role_id=" + roleId);
+			SQLQuery query = aSession.createSQLQuery("select category_id from SBI_EXT_ROLES_CATEGORY where ext_role_id=" + roleId);
 			List hibList = query.list();
 
 			Iterator it = hibList.iterator();
