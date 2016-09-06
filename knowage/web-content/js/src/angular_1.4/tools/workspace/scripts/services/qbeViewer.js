@@ -55,7 +55,7 @@ angular
 					
 					console.info("[RELOAD]: Reload all necessary datasets (its different categories)");
 					
-					$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyData() : $scope.reloadMyData = true;
+					$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyDataFn() : $scope.reloadMyData = true;
 					
 					if($scope.currentOptionMainMenu=="models"){
 						
