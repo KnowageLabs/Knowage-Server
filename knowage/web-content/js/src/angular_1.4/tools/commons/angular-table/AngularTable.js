@@ -540,7 +540,7 @@ function TableControllerFunction($scope, $timeout) {
     $scope.reverse_col_ord = false;
     $scope.internal_column_ordering;
     $scope.internal_reverse_col_ord = false;
-    
+
     if($scope.itemsPerPage==undefined){
     	$scope.itemsPerPage=3;
     }
@@ -683,7 +683,7 @@ $scope.loadTheadColumn=function(){
 //        	console.log(principalThDiv[i])
         	angular.element(fakeDiv[i]).css("width",angular.element(principalThDiv[i])[0].offsetWidth+"px");
         }
-        if(tableContentBox[0].offsetWidth!=width){
+        if(tableContentBox[0] && tableContentBox[0].offsetWidth!=width){
         	tableContentBox.css("width",width+"px");
         }
     },0)
