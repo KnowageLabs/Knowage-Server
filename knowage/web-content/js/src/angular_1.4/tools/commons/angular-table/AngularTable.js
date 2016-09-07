@@ -53,7 +53,9 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             initialSortingAsc:"=?",
                             visibleRowFunction:"&",
                             sortableColumn:"=?",
-                            changeDetector:"@?"
+                            changeDetector:"@?",
+                            fixedItemPerPage:"=?",
+                            itemsPerPage:"=?"
                         },
                         compile: function (tElement, tAttrs, transclude) {
                             return {
@@ -538,7 +540,10 @@ function TableControllerFunction($scope, $timeout) {
     $scope.reverse_col_ord = false;
     $scope.internal_column_ordering;
     $scope.internal_reverse_col_ord = false;
-    $scope.itemsPerPage=3; //initial value
+    
+    if($scope.itemsPerPage==undefined){
+    	$scope.itemsPerPage=3;
+    }
 
     $scope.getDynamicValue=function(item,row,column,index){
     	if(item==null || item==undefined) return ;
@@ -643,7 +648,7 @@ function TableControllerFunction($scope, $timeout) {
          
 //    	return {items:itemNumber,height:boxHeight};
     }, function(newValue,oldValue){
-    	if ($scope.noPagination != true &&( newValue.items != 0 ||  newValue.height != 0)) {
+    	if ($scope.noPagination != true &&( newValue.items != 0 ||  newValue.height != 0) && $scope.fixedItemPerPage!=true) {
 	    	if(newValue!=oldValue){
 	    		$timeout(function(){
 	    			$scope.changeWordItemPP();
