@@ -199,8 +199,8 @@
         <COLUMN label="CHECK_ID" name="CHECK_ID" hidden="true" />
         <COLUMN label="SBIDev.ListConfConst.columnLabel" name="LABEL"/>
         <COLUMN label="SBIDev.ListConfConst.columnName" name="NAME"/>
-        <COLUMN label="SBIDev.ListConfConst.columnDescr" name="DESCRIPTION"/>
-        <COLUMN label="SBIDev.ListConfConst.columnCheckType" name="CONTROLTYPE"/>
+        <COLUMN label="SBIDev.ListConfConst.columnDescr" name="DESCR"/>
+        <COLUMN label="SBIDev.ListConfConst.columnCheckType" name="VALUE_TYPE_CD"/>
       </COLUMNS>
       <CAPTIONS>
         <SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="SBIDev.ListConfConst.detailCaption">
@@ -247,8 +247,8 @@
         <COLUMN label="CHECK_ID" name="CHECK_ID" hidden="true" />
         <COLUMN label="SBIDev.ListConfConst.columnLabel" name="LABEL"/>
         <COLUMN label="SBIDev.ListPredConst.columnName" name="NAME"/>
-        <COLUMN label="SBIDev.ListPredConst.columnDescr" name="DESCRIPTION"/>
-        <COLUMN label="SBIDev.ListConfConst.columnCheckType" name="CONTROLTYPE"/>
+        <COLUMN label="SBIDev.ListPredConst.columnDescr" name="DESCR"/>
+        <COLUMN label="SBIDev.ListConfConst.columnCheckType" name="VALUE_TYPE_CD"/>
       </COLUMNS>
       <CAPTIONS>
       </CAPTIONS>
