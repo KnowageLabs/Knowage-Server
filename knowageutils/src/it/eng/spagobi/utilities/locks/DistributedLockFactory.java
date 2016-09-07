@@ -21,37 +21,50 @@ package it.eng.spagobi.utilities.locks;
 import org.apache.log4j.Logger;
 
 import com.hazelcast.config.ClasspathXmlConfig;
+import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
+ * @author Francesco Lucchi (francesco.lucchi@eng.it)
  *
  */
 
 public class DistributedLockFactory {
 
-	static private Logger logger = Logger.getLogger(DistributedLockFactory.class);
+	private static Logger logger = Logger.getLogger(DistributedLockFactory.class);
+	private static Config defaultConfig = null;
 
 	@SuppressWarnings("rawtypes")
 	public static IMap getDistributedMap(String instanceName, String mapName) {
+		logger.debug("Getting Hazelcast map with name [" + mapName + "]");
+		HazelcastInstance hz = getHazelcastInstance(instanceName);
+		return hz.getMap(mapName);
+	}
+
+	public static HazelcastInstance getHazelcastInstance(String instanceName) {
 		logger.debug("Getting Hazelcast instance with name [" + instanceName + "]");
 		HazelcastInstance hz = Hazelcast.getHazelcastInstanceByName(instanceName);
 		if (hz == null) {
 			logger.debug("No Hazelcast instance with name [" + instanceName + "] found");
 			logger.debug("Creating Hazelcast instance with name [" + instanceName + "]");
-			ClasspathXmlConfig cfg = new ClasspathXmlConfig("hazelcast.xml");
-			cfg.setInstanceName(instanceName);
-			hz = Hazelcast.newHazelcastInstance(cfg);
+			Config config = getDefaultConfig();
+			config.setInstanceName(instanceName);
+			hz = Hazelcast.newHazelcastInstance(config);
 		}
-		logger.debug("Getting Hazelcast map with name [" + mapName + "]");
-		return hz.getMap(mapName);
+		return hz;
 	}
 
-	public static HazelcastInstance getHazelcastInstance(String instanceName) {
-		ClasspathXmlConfig cfg = new ClasspathXmlConfig("hazelcast.xml");
-		cfg.setInstanceName(instanceName);
-		return Hazelcast.getOrCreateHazelcastInstance(cfg);
+	private static Config getDefaultConfig() {
+		if (defaultConfig == null) {
+			defaultConfig = new ClasspathXmlConfig("hazelcast.xml");
+		}
+		return defaultConfig;
+	}
+
+	public static void setDefaultConfig(Config config) {
+		defaultConfig = config;
 	}
 }

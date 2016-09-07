@@ -77,6 +77,7 @@ public class AssociativeLogicManager {
 	private final Map<String, IDataStore> datasetToDataStore;
 	private final Map<String, String> selections;
 	private final Set<String> realtimeDatasets;
+	private final Map<String, IDataSet> labelToDataset;
 
 	private UserProfile userProfile;
 
@@ -92,6 +93,8 @@ public class AssociativeLogicManager {
 		this.datasetToTableName = new HashMap<String, String>();
 		this.datasetToDataSource = new HashMap<String, IDataSource>();
 		this.datasetToDataStore = new HashMap<String, IDataStore>();
+		this.labelToDataset = new HashMap<String, IDataSet>();
+
 		this.cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 		this.cache = SpagoBICacheManager.getCache();
 
@@ -121,7 +124,7 @@ public class AssociativeLogicManager {
 		return edgeGroupValues;
 	}
 
-	private void initDatasetMappings() throws EMFUserError {
+	private void initDatasetMappings() throws EMFUserError, SpagoBIException {
 		IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
 		if (getUserProfile() != null) {
 			dataSetDao.setUserProfile(userProfile);
@@ -130,21 +133,28 @@ public class AssociativeLogicManager {
 		for (String v1 : graph.vertexSet()) {
 			// the vertex is the dataset label
 			IDataSet dataSet = dataSetDao.loadDataSetByLabel(v1);
-			if (realtimeDatasets.contains(v1)) {
-				dataSet.loadData();
-				datasetToDataStore.put(v1, dataSet.getDataStore());
-			} else if (dataSet.isPersisted()) {
+			labelToDataset.put(v1, dataSet);
+			if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
 				datasetToTableName.put(v1, dataSet.getPersistTableName());
 				datasetToDataSource.put(v1, dataSet.getDataSourceForWriting());
+				realtimeDatasets.remove(v1);
 			} else if (dataSet.isFlatDataset()) {
 				datasetToTableName.put(v1, dataSet.getFlatTableName());
 				datasetToDataSource.put(v1, dataSet.getDataSource());
+				realtimeDatasets.remove(v1);
+			} else if (realtimeDatasets.contains(v1)) {
+				dataSet.loadData();
+				datasetToDataStore.put(v1, dataSet.getDataStore());
 			} else {
 				String signature = dataSetDao.loadDataSetByLabel(v1).getSignature();
 				CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
-				String tableName = cacheItem.getTable();
-				datasetToTableName.put(v1, tableName);
-				datasetToDataSource.put(v1, cacheDataSource);
+				if (cacheItem != null) {
+					String tableName = cacheItem.getTable();
+					datasetToTableName.put(v1, tableName);
+					datasetToDataSource.put(v1, cacheDataSource);
+				} else {
+					throw new SpagoBIException("Unable to find dataset [" + v1 + "] in cache");
+				}
 			}
 		}
 	}
@@ -261,7 +271,11 @@ public class AssociativeLogicManager {
 		IDataSource dataSource = getDataSource(datasetName);
 		for (String associationName : associationNames) {
 			String columnName = AbstractJDBCDataset.encapsulateColumnName(datasetToAssociations.get(datasetName).get(associationName), dataSource);
-			columnNames.add(columnName);
+			if (realtimeDatasets.contains(datasetName)) {
+				columnNames.add(DataStore.DEFAULT_TABLE_NAME + "." + columnName);
+			} else {
+				columnNames.add(columnName);
+			}
 		}
 		return StringUtils.join(columnNames.iterator(), ",");
 	}
@@ -345,9 +359,9 @@ public class AssociativeLogicManager {
 		Set<String> tuples = new HashSet<String>();
 		while (rs.next()) {
 			tuple = "(";
-			for (int i = 1; i <= rs.getSelectItems().length; i++) {
+			for (int i = 0; i < rs.getSelectItems().length; i++) {
 				Row row = rs.getRow();
-				if (i != 1) {
+				if (i > 0) {
 					tuple += ",";
 				}
 				Object item = row.getValue(i);

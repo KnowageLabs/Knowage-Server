@@ -59,6 +59,8 @@ import org.safehaus.uuid.UUIDGenerator;
 
 public class PersistedTableManager implements IPersistedManager {
 
+	private static final int BATCH_SIZE = 1000;
+
 	private String dialect = new String();
 	private String tableName = new String();
 	private boolean rowCountColumIncluded = false;
@@ -218,10 +220,12 @@ public class PersistedTableManager implements IPersistedManager {
 			}
 			// Steps #1: define prepared statement (and max column size for
 			// strings type)
-			PreparedStatement statement = defineStatements(datastore, datasource, connection);
+			PreparedStatement[] statements = defineStatements(datastore, datasource, connection);
 			// Steps #2: set query timeout (if necessary)
 			if (queryTimeout > 0) {
-				statement.setQueryTimeout(queryTimeout);
+				for (int i = 0; i < statements.length; i++) {
+					statements[i].setQueryTimeout(queryTimeout);
+				}
 			}
 			// Steps #3: define create table statement
 			String createStmtQuery = getCreateTableQuery(datastore, datasource);
@@ -229,8 +233,11 @@ public class PersistedTableManager implements IPersistedManager {
 			// Step #4: execute create table statement
 			executeStatement(createStmtQuery, datasource);
 			// Step #5: execute batch with insert statements
-			statement.executeBatch();
-			statement.close();
+			for (int i = 0; i < statements.length; i++) {
+				PreparedStatement statement = statements[i];
+				statement.executeBatch();
+				statement.close();
+			}
 			if (!dialect.contains("VoltDB")) {
 				connection.commit();
 			}
@@ -250,8 +257,9 @@ public class PersistedTableManager implements IPersistedManager {
 		logger.debug("OUT");
 	}
 
-	private PreparedStatement defineStatements(IDataStore datastore, IDataSource datasource, Connection connection) {
-		PreparedStatement toReturn;
+	private PreparedStatement[] defineStatements(IDataStore datastore, IDataSource datasource, Connection connection) {
+		int batchCount = (int) ((datastore.getRecordsCount() + BATCH_SIZE - 1) / BATCH_SIZE);
+		PreparedStatement[] toReturn = new PreparedStatement[batchCount];
 
 		IMetaData storeMeta = datastore.getMetaData();
 		int fieldCount = storeMeta.getFieldCount();
@@ -299,14 +307,18 @@ public class PersistedTableManager implements IPersistedManager {
 				executeStatement(createQuery, datasource);
 			}
 
-			toReturn = connection.prepareStatement(totalQuery);
+			for (int i = 0; i < batchCount; i++) {
+				toReturn[i] = connection.prepareStatement(totalQuery);
+			}
 
 			logger.debug("Prepared statement for persist dataset as : " + totalQuery);
 
 			for (int i = 0; i < datastore.getRecordsCount(); i++) {
+				int currentBatch = i / BATCH_SIZE;
+				PreparedStatement statement = toReturn[currentBatch];
 
 				if (this.isRowCountColumIncluded()) {
-					toReturn.setLong(1, i + 1);
+					statement.setLong(1, i + 1);
 				}
 
 				IRecord record = datastore.getRecordAt(i);
@@ -319,17 +331,17 @@ public class PersistedTableManager implements IPersistedManager {
 						String fieldMetaTypeName = fieldMeta.getType().toString();
 						boolean isfieldMetaFieldTypeMeasure = fieldMeta.getFieldType().equals(FieldType.MEASURE);
 						if (this.isRowCountColumIncluded()) {
-							PersistedTableHelper.addField(toReturn, j + 1, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure,
+							PersistedTableHelper.addField(statement, j + 1, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure,
 									getColumnSize());
 						} else {
-							PersistedTableHelper.addField(toReturn, j, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure,
+							PersistedTableHelper.addField(statement, j, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure,
 									getColumnSize());
 						}
 					} catch (Throwable t) {
 						throw new RuntimeException("An unexpecetd error occured while preparing insert statemenet for record [" + i + "]", t);
 					}
 				}
-				toReturn.addBatch();
+				statement.addBatch();
 			}
 		} catch (Exception e) {
 			logger.error("Error persisting the dataset into table", e);

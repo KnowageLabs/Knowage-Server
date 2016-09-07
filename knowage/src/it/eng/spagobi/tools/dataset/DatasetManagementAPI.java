@@ -368,7 +368,7 @@ public class DatasetManagementAPI {
 			// checkQbeDataset(dataSet);
 			IDataStore dataStore = null;
 
-			if (dataSet.isPersisted()) {
+			if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
 				dataStore = queryPersistedDataset(groupCriteria, filterCriteria, projectionCriteria, dataSet, offset, fetchSize);
 			} else if (dataSet.isFlatDataset()) {
 				dataStore = queryFlatDataset(groupCriteria, filterCriteria, projectionCriteria, dataSet, offset, fetchSize);
@@ -404,7 +404,8 @@ public class DatasetManagementAPI {
 						dataStore = cache.refresh(dataSet, false);
 						// if result was not cached put refresh date as now
 						dataStore.setCacheDate(new Date());
-						dataStore = dataStore.aggregateAndFilterRecords(generateQuery(groupCriteria, filterCriteria, projectionCriteria, offset, fetchSize));
+						dataStore = dataStore.aggregateAndFilterRecords(generateQuery(groupCriteria, filterCriteria, projectionCriteria, -1, -1, false),
+								offset, fetchSize);
 					}
 				} else {
 					dataStore = cachedResultSet;
@@ -1138,8 +1139,10 @@ public class DatasetManagementAPI {
 		return toReturn;
 	}
 
-	private String generateQuery(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int offset, int fetchSize) {
+	private String generateQuery(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int offset, int fetchSize,
+			boolean isRealtime) {
 		SelectBuilder sqlBuilder = new SelectBuilder();
+		sqlBuilder.setWhereOrEnabled(isRealtime);
 		sqlBuilder.from(DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME);
 
 		// Columns to SELECT
@@ -1163,15 +1166,27 @@ public class DatasetManagementAPI {
 		// WHERE conditions
 		if (filters != null) {
 			for (FilterCriteria filter : filters) {
-				String leftOperand = null;
-				if (filter.getLeftOperand().isCostant()) {
-					// why? warning!
-					leftOperand = filter.getLeftOperand().getOperandValueAsString();
-				} else { // it's a column
-					leftOperand = filter.getLeftOperand().getOperandValueAsString();
-				}
-
 				String operator = filter.getOperator();
+
+				String leftOperand = null;
+				if ("IN".equalsIgnoreCase(operator)) {
+					String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
+					leftOperand = "(1,";
+					String separator = "";
+					for (String column : columns) {
+						leftOperand += separator + column;
+						separator = ",";
+					}
+					leftOperand += ")";
+				} else {
+					if (filter.getLeftOperand().isCostant()) {
+						// why? warning!
+						leftOperand = filter.getLeftOperand().getOperandValueAsString();
+					} else { // it's a column
+						String datasetLabel = filter.getLeftOperand().getOperandDataSet();
+						leftOperand = filter.getLeftOperand().getOperandValueAsString();
+					}
+				}
 
 				String rightOperand = null;
 				if (filter.getRightOperand().isCostant()) {
@@ -1181,7 +1196,17 @@ public class DatasetManagementAPI {
 						String stringDelimiter = "'";
 						List<String> values = filter.getRightOperand().getOperandValueAsList();
 						for (String value : values) {
-							rightOperand += separator + stringDelimiter + value + stringDelimiter;
+							if ("IN".equalsIgnoreCase(operator)) {
+								if (value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter)) {
+									rightOperand += separator + "(1," + value + ")";
+								} else if (value.startsWith("(") && value.endsWith(")")) {
+									rightOperand += separator + "(1," + value.substring(1, value.length() - 1) + ")";
+								} else {
+									rightOperand += separator + "(1," + stringDelimiter + value + stringDelimiter + ")";
+								}
+							} else {
+								rightOperand += separator + stringDelimiter + value + stringDelimiter;
+							}
 							separator = ",";
 						}
 						rightOperand += ")";
@@ -1192,7 +1217,7 @@ public class DatasetManagementAPI {
 					rightOperand = filter.getRightOperand().getOperandValueAsString();
 				}
 
-				sqlBuilder.where(leftOperand + " " + operator + " " + rightOperand);
+				sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperand + ")");
 			}
 		}
 
@@ -1305,14 +1330,16 @@ public class DatasetManagementAPI {
 
 	private IDataStore queryPersistedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, IDataSet dataSet,
 			int offset, int fetchSize) {
+		IDataSource dataSource = dataSet.getDataSourceForWriting();
 		String tableName = dataSet.getPersistTableName();
-		return queryDataset(tableName, groups, filters, projections, dataSet, offset, fetchSize);
+		return queryDataset(dataSource, tableName, groups, filters, projections, dataSet, offset, fetchSize);
 	}
 
 	private IDataStore queryFlatDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, IDataSet dataSet,
 			int offset, int fetchSize) {
+		IDataSource dataSource = dataSet.getDataSource();
 		String tableName = dataSet.getFlatTableName();
-		return queryDataset(tableName, groups, filters, projections, dataSet, offset, fetchSize);
+		return queryDataset(dataSource, tableName, groups, filters, projections, dataSet, offset, fetchSize);
 	}
 
 	private IDataStore queryRealtimeDataset(Map<String, String> parametersValues, List<GroupCriteria> groups, List<FilterCriteria> filters,
@@ -1328,7 +1355,7 @@ public class DatasetManagementAPI {
 		dataSet.loadData();
 		IDataStore dataStore = dataSet.getDataStore();
 		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
-			dataStore = dataStore.aggregateAndFilterRecords(generateQuery(groups, filters, projections, offset, fetchSize));
+			dataStore = dataStore.aggregateAndFilterRecords(generateQuery(groups, filters, projections, -1, -1, true), offset, fetchSize);
 			dataStore.setCacheDate(new Date());
 		} else {
 			throw new SpagoBIRuntimeException("Impossible to return data: the dataStore is [null], or it returns more than [" + METAMODEL_LIMIT
@@ -1338,14 +1365,14 @@ public class DatasetManagementAPI {
 		return dataStore;
 	}
 
-	private IDataStore queryDataset(String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
-			IDataSet dataSet, int offset, int fetchSize) {
+	private IDataStore queryDataset(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
+			List<ProjectionCriteria> projections, IDataSet dataSet, int offset, int fetchSize) {
 
 		logger.debug("IN");
 
 		DataStore toReturn = null;
 		String label = dataSet.getLabel();
-		IDataSource dataSource = dataSet.getDataSourceForWriting();
+
 		logger.debug("Loading data from [" + label + "] to gather its metadata...");
 		dataSet.loadData(0, 1, 1);
 		IDataStore limitedDataStore = dataSet.getDataStore();
@@ -1401,7 +1428,7 @@ public class DatasetManagementAPI {
 					String operator = filter.getOperator();
 
 					String leftOperand = null;
-					if (operator.equalsIgnoreCase("IN")) {
+					if ("IN".equalsIgnoreCase(operator)) {
 						String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
 						leftOperand = "(1,";
 						String separator = "";
@@ -1432,7 +1459,7 @@ public class DatasetManagementAPI {
 							String stringDelimiter = "'";
 							List<String> values = filter.getRightOperand().getOperandValueAsList();
 							for (String value : values) {
-								if (operator.equalsIgnoreCase("IN")) {
+								if ("IN".equalsIgnoreCase(operator)) {
 									if (value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter)) {
 										rightOperand += separator + "(1," + value + ")";
 									} else if (value.startsWith("(") && value.endsWith(")")) {

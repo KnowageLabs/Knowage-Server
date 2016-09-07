@@ -1,0 +1,256 @@
+{
+	"name": "SbiQueryDataSet",
+	"label": "SbiQueryDataSet",
+	"active": true,
+	"type": "SbiQueryDataSet",
+	"configuration": {
+		"Query": "select * from store",
+		"queryScript": "",
+		"queryScriptLanguage": "",
+		"dataSource": "Foodmart"
+	},
+	"numRows": false,
+	"persisted": false,
+	"persistedHDFS": false,
+	"persistTableName": "",
+	"scope": {
+		"valueId": 187,
+		"domainCd": "DS_SCOPE",
+		"domainNm": "Dataset scope",
+		"valueCd": "ENTERPRISE",
+		"valueNm": "Enterprise",
+		"valueDs": "Dataset scope"
+	},
+	"scopeId": 187,
+	"metadata": {
+		"fieldsMeta": [{
+			"name": "store_id",
+			"alias": "store_id",
+			"type": "java.lang.Integer",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "store_type",
+			"alias": "store_type",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "region_id",
+			"alias": "region_id",
+			"type": "java.lang.Integer",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "sales_region_id",
+			"alias": "sales_region_id",
+			"type": "java.lang.Integer",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "store_name",
+			"alias": "store_name",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "store_number",
+			"alias": "store_number",
+			"type": "java.lang.Integer",
+			"properties": {
+				
+			},
+			"fieldType": "MEASURE"
+		},
+		{
+			"name": "store_street_address",
+			"alias": "store_street_address",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "store_city",
+			"alias": "store_city",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "store_state",
+			"alias": "store_state",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "store_postal_code",
+			"alias": "store_postal_code",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "store_country",
+			"alias": "store_country",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "store_manager",
+			"alias": "store_manager",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "store_phone",
+			"alias": "store_phone",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "store_fax",
+			"alias": "store_fax",
+			"type": "java.lang.String",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "first_opened_date",
+			"alias": "first_opened_date",
+			"type": "java.sql.Timestamp",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "last_remodel_date",
+			"alias": "last_remodel_date",
+			"type": "java.sql.Timestamp",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "store_sqft",
+			"alias": "store_sqft",
+			"type": "java.lang.Integer",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "grocery_sqft",
+			"alias": "grocery_sqft",
+			"type": "java.lang.Integer",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "frozen_sqft",
+			"alias": "frozen_sqft",
+			"type": "java.lang.Integer",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "meat_sqft",
+			"alias": "meat_sqft",
+			"type": "java.lang.Integer",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "coffee_bar",
+			"alias": "coffee_bar",
+			"type": "java.lang.Boolean",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "video_store",
+			"alias": "video_store",
+			"type": "java.lang.Boolean",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "salad_bar",
+			"alias": "salad_bar",
+			"type": "java.lang.Boolean",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "prepared_food",
+			"alias": "prepared_food",
+			"type": "java.lang.Boolean",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		},
+		{
+			"name": "florist",
+			"alias": "florist",
+			"type": "java.lang.Boolean",
+			"properties": {
+				
+			},
+			"fieldType": "ATTRIBUTE"
+		}],
+		"properties": {
+			"resultNumber": "28"
+		}
+	},
+	"parameters": []
+}

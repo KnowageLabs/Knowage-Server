@@ -69,7 +69,7 @@ public interface IDataStore {
 
 	void insertRecord(int recordIndex, IRecord record);
 
-	IDataStore aggregateAndFilterRecords(String sqlQuery);
+	IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize);
 
 	IDataStore aggregateAndFilterRecords(IQuery query);
 

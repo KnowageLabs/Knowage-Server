@@ -137,14 +137,13 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
-	
-	
+
 	@GET
 	@Path("/id/{id}")
 	@Produces(MediaType.TEXT_HTML)
 	public String getDataSetLabelById(@PathParam("id") String id) {
 		logger.debug("IN");
-		
+
 		IDataSetDAO datasetDao = null;
 		try {
 			datasetDao = DAOFactory.getDataSetDAO();
@@ -153,7 +152,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Internal error", e);
 		}
 		IDataSet dataset = datasetDao.loadDataSetById(new Integer(id));
-		
+
 		return dataset.getLabel();
 	}
 
@@ -309,7 +308,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				JSONObject selectionsObject = new JSONObject(selections);
 				// in same case object is empty '{}'
 				if (selectionsObject.names() != null) {
-					filterCriteria = getFilterCriteria(label, selectionsObject);
+					filterCriteria = getFilterCriteria(label, selectionsObject, isRealtime);
 				}
 			}
 
@@ -488,7 +487,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return groupCriterias;
 	}
 
-	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject) throws JSONException {
+	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject, boolean isRealtime) throws JSONException {
 		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
 
 		JSONObject datasetSelectionObject = selectionsObject.getJSONObject(dataset);
@@ -646,7 +645,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	@GET
 	@Path("/mydatanoparams")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -660,12 +659,12 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			} else {
 				dataSets = getDatasetManagementAPI().getMyDataDataSet();
 			}
-			
-			if(dataSets!=null){
+
+			if (dataSets != null) {
 				for (Iterator iterator = dataSets.iterator(); iterator.hasNext();) {
 					IDataSet iDataSet = (IDataSet) iterator.next();
 					Map params = iDataSet.getParamsMap();
-					if(params ==null || params.isEmpty()){
+					if (params == null || params.isEmpty()) {
 						dataSetsNoParams.add(iDataSet);
 					}
 				}
@@ -678,7 +677,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
-
 
 	// ===================================================================
 	// UTILITY METHODS

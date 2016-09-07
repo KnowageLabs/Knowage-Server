@@ -404,11 +404,11 @@ public class DataStore implements IDataStore {
 
 	@Override
 	public IDataStore aggregateAndFilterRecords(IQuery query) {
-		return aggregateAndFilterRecords(query.toSql(DEFAULT_SCHEMA_NAME, DEFAULT_TABLE_NAME));
+		return aggregateAndFilterRecords(query.toSql(DEFAULT_SCHEMA_NAME, DEFAULT_TABLE_NAME), -1, -1);
 	}
 
 	@Override
-	public IDataStore aggregateAndFilterRecords(String sqlQuery) {
+	public IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize) {
 
 		// **************************************************************************************************************
 		// ***** This part build data structures used to convert a SpagoBI DataStore into an MetaModel DataContext ******
@@ -462,7 +462,6 @@ public class DataStore implements IDataStore {
 		Query query = dataContext.parseQuery(newSqlQuery);
 		CompiledQuery cQuery = dataContext.compileQuery(query);
 		DataSet dataSet = dataContext.executeQuery(cQuery);
-		// DataSet dataSet = dataContext.executeQuery(query);
 
 		// *************************************************************************************************
 		// **** This part generates a SpagoBI datastore starting from the Apache MetaModel dataset *********
@@ -470,11 +469,22 @@ public class DataStore implements IDataStore {
 		IDataStore dataStore = new DataStore();
 
 		int resultCount = 0;
-		while (dataSet.next()) {
-			Row row = dataSet.getRow();
-			IRecord record = getRecordFromRow(row, dataStore);
-			dataStore.appendRecord(record);
-			resultCount++;
+		if (offset == -1 || fetchSize == -1) {
+			while (dataSet.next()) {
+				Row row = dataSet.getRow();
+				IRecord record = getRecordFromRow(row, dataStore);
+				dataStore.appendRecord(record);
+				resultCount++;
+			}
+		} else {
+			while (dataSet.next()) {
+				if (offset <= resultCount && resultCount < offset + fetchSize) {
+					Row row = dataSet.getRow();
+					IRecord record = getRecordFromRow(row, dataStore);
+					dataStore.appendRecord(record);
+				}
+				resultCount++;
+			}
 		}
 
 		SelectItem[] selectItems = dataSet.getSelectItems();
@@ -482,6 +492,7 @@ public class DataStore implements IDataStore {
 			IFieldMetaData fieldMetaData = getFieldMetaDataFromSelectItem(selectItems[i], fieldTypes);
 			dataStore.getMetaData().addFiedMeta(fieldMetaData);
 		}
+
 		dataStore.getMetaData().setProperty("resultNumber", resultCount);
 
 		return dataStore;

@@ -33,6 +33,7 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.Operand;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
@@ -131,16 +132,17 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 
 		List<IDataSet> toBeReturned = dsDAO.loadNotDerivedDataSets(getUserProfile());
-		
+
 		try {
-		logger.debug("OUT");
-		if (callback == null || callback.isEmpty())
-			
+			logger.debug("OUT");
+			if (callback == null || callback.isEmpty())
+
 				return ((JSONArray) SerializerFactory.getSerializer("application/json").serialize(toBeReturned, buildLocaleFromSession())).toString();
 
 			else {
-				String jsonString = ((JSONArray) SerializerFactory.getSerializer("application/json").serialize(toBeReturned, buildLocaleFromSession())).toString();
-	
+				String jsonString = ((JSONArray) SerializerFactory.getSerializer("application/json").serialize(toBeReturned, buildLocaleFromSession()))
+						.toString();
+
 				return callback + "(" + jsonString + ")";
 			}
 		} catch (SerializationException e) {
@@ -265,7 +267,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/loadAssociativeSelections")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAssociativeSelections(@QueryParam("associationGroup") String associationGroupString, @QueryParam("selections") String selectionsString,
-			@QueryParam("datasets") String datasetsString, @QueryParam("realTime") String realTimeString) {
+			@QueryParam("datasets") String datasetsString, @QueryParam("realTime") String realtimeDatasetsString) {
 		logger.debug("IN");
 
 		try {
@@ -280,6 +282,14 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			}
 			AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
 			associationGroupObject = serializer.deserialize(new JSONObject(associationGroupString));
+
+			Set<String> realtimeDatasets = new HashSet<String>();
+			if (realtimeDatasetsString != null && !realtimeDatasetsString.isEmpty()) {
+				JSONArray jsonArray = new JSONArray(realtimeDatasetsString);
+				for (int i = 0; i < jsonArray.length(); i++) {
+					realtimeDatasets.add(jsonArray.getString(i));
+				}
+			}
 
 			AssociationAnalyzer analyzer = new AssociationAnalyzer(associationGroupObject.getAssociations());
 			analyzer.process();
@@ -325,9 +335,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				}
 			}
 
-			// TODO: Manage real time here!
-			Set<String> realtimeDatasets = new HashSet<String>();
-
 			AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociationToColumnMap, filtersMap, realtimeDatasets);
 			manager.setUserProfile(getUserProfile());
 
@@ -353,26 +360,48 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	}
 
 	@Override
-	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject) throws JSONException {
+	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject, boolean isRealtime) throws JSONException {
 		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
 
 		if (selectionsObject.has(dataset)) {
+			boolean onlyEmptySelections = true;
 			JSONObject datasetSelectionObject = selectionsObject.getJSONObject(dataset);
 			Iterator<String> it = datasetSelectionObject.keys();
-			boolean onlyEmptySelections = true;
 			while (it.hasNext()) {
 				String columns = it.next();
 				JSONArray values = datasetSelectionObject.getJSONArray(columns);
 				if (values.length() > 0) {
 					onlyEmptySelections = false;
-					List<String> valuesList = new ArrayList<String>();
-					for (int i = 0; i < values.length(); i++) {
-						valuesList.add(values.getString(i));
+					if (isRealtime) {
+						String defautTableName = DataStore.DEFAULT_TABLE_NAME + ".";
+						String[] columnsArray = columns.split(",");
+						Operand leftOperand = new Operand(defautTableName + columnsArray[0]);
+						for (int i = 0; i < values.length(); i++) {
+							String currentValues = values.getString(i);
+							String[] valuesArray = currentValues.substring(1, currentValues.length() - 1).split(",");
+							StringBuilder sb = new StringBuilder();
+							sb.append(valuesArray[0]);
+							for (int j = 1; j < valuesArray.length; j++) {
+								sb.append(" AND ");
+								sb.append(defautTableName);
+								sb.append(columnsArray[j]);
+								sb.append("=");
+								sb.append(valuesArray[j]);
+							}
+							Operand rightOperand = new Operand(sb.toString());
+							FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
+							filterCriterias.add(filterCriteria);
+						}
+					} else {
+						List<String> valuesList = new ArrayList<String>();
+						for (int i = 0; i < values.length(); i++) {
+							valuesList.add(values.getString(i));
+						}
+						Operand leftOperand = new Operand(columns);
+						Operand rightOperand = new Operand(valuesList);
+						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
+						filterCriterias.add(filterCriteria);
 					}
-					Operand leftOperand = new Operand(columns);
-					Operand rightOperand = new Operand(valuesList);
-					FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
-					filterCriterias.add(filterCriteria);
 				}
 			}
 			if (onlyEmptySelections) {
@@ -390,8 +419,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStorePost(@PathParam("label") String label, @QueryParam("parameters") String parameters,
-			@QueryParam("aggregations") String aggregations, @QueryParam("storeId") String storeId, String selections, @QueryParam("offset") Integer offset,
-			@QueryParam("size") Integer fetchSize, @QueryParam("realtime") boolean isRealtime) {
+			@QueryParam("aggregations") String aggregations, String selections, @QueryParam("offset") Integer offset, @QueryParam("size") Integer fetchSize,
+			@QueryParam("realtime") boolean isRealtime) {
 		logger.debug("IN");
 		try {
 			return getDataStore(label, parameters, selections, aggregations, offset, fetchSize, isRealtime);
