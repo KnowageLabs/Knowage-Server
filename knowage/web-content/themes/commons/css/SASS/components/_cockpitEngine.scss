@@ -101,6 +101,29 @@
    		width: 90%;
    		height: 90%;
    		margin: 2% 5%;
+		&.pivotTableWidget{
+			.pivotTableDesigner{
+				padding:0px;
+				.measureAttributeTab{
+					min-width:250px;
+				}
+				.contentElementTab{
+					.contentElementBox{
+						border: 1px solid lightgray;
+						
+						.dndDraggingSource{
+							display:none;
+						}
+					}
+				}
+				md-list[dnd-list]{
+					min-height:42px;
+				}
+				.dndPlaceholder{
+					background-color:rgba(59, 103, 140, 0.44);
+				}
+			}
+		}
 	}
     .md-button.md-knowage-theme.md-fab:not([disabled]):hover {
         background-color: darken($baseColor, 15%);
