@@ -80,7 +80,7 @@
 		mainUrl="/knowagechartengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.chart.ChartDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="CHART" useDataSet="true"
 		useDataSource="false" encrypt="0" />
-	<!-- start mobile engines -->
+	<!-- start mobile engines 
 	<ENGINE label="knowagetablemobileen" name="Mobile Report Engine"
 		descr="Report engine for mobile devices"
 		mainUrl="/knowagemobileengine/servlet/AdapterHTTP?ACTION_NAME=MOBILE_ENGINE_START_ACTION"
@@ -99,7 +99,7 @@
 		driverNm="it.eng.spagobi.engines.drivers.mobile.cockpit.MobileCockpitDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="MOBILE_COCKPIT" useDataSet="false"
 		useDataSource="false" encrypt="0" />
-	<!-- end mobile engines -->
+ end mobile engines -->
 	<ENGINE label="knowagenetworkengine" name="Network Analysis Engine"
 		descr="Network Analysis Engine" mainUrl="/knowagenetworkengine/servlet/AdapterHTTP"
 		driverNm="it.eng.spagobi.engines.drivers.network.NetworkDriver"
