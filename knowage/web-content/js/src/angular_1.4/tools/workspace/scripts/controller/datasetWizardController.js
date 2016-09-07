@@ -31,6 +31,13 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	$scope.changingFile = false;
 	$scope.categorySet = null;
 	
+	$scope.csvDelimiter = null;
+	$scope.csvQuoteChar = null;
+	$scope.csvEncoding = null;
+	
+	$scope.csvConfChanged = null;
+	$scope.restartValidStatusStep2 = false;
+	
 	/**
 	 * 'step2ValidationErrors' - contains the validation result. If there is not error after the validation, the property will
 	 * not be present in the retrieved JSON got after the validating process and this scope variable will be of a value NULL. 
@@ -71,7 +78,35 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		params.SBI_EXECUTION_ID = -1;
 		params.isTech = false;
 		params.showOnlyOwner = true;
-		params.showDerivedDataset = false;		
+		params.showDerivedDataset = false;
+				
+		/**
+		 * If the file that is uploaded is of type CSV, check if the parameters for parsing that kind
+		 * of file are changed (at least one of them). In that case, provide a signal to the dataset
+		 * wizard that the file should be re-parsed when going from the Step 1 to the Step 2. This is
+		 * necessary, since these parameters could potentially result in different result on the Step 2.
+		 * The configuration parameters for parsing CSV file are delimiter, quote sign and encoding.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		if ($scope.dataset.fileType.toUpperCase()=="CSV") {
+						
+			!$scope.csvDelimiter ? $scope.csvDelimiter = $scope.dataset.csvDelimiter : null; 
+			!$scope.csvQuoteChar ? $scope.csvQuoteChar = $scope.dataset.csvQuote : null; 
+			!$scope.csvEncoding ? $scope.csvEncoding = $scope.dataset.csvEncoding : null; 
+			
+			// If at least one of those parameters is changed, signal to re-parse the file and get new metadata.
+			if ($scope.csvDelimiter != $scope.dataset.csvDelimiter 
+					|| $scope.csvQuoteChar != $scope.dataset.csvQuote
+						|| $scope.csvEncoding != $scope.dataset.csvEncoding) {
+				
+				$scope.csvConfChanged = true;
+				
+			}
+			else {
+				$scope.csvConfChanged = false;
+			}
+			
+		}
 		
 		$scope.dataset.type = "File";
 		$scope.dataset.persist = false;
@@ -90,14 +125,16 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			$scope.dataset.limitRows = "";
 		
 		if ($scope.dataset.xslSheetNumber == null)
-			$scope.dataset.xslSheetNumber = 1;
-				
+			$scope.dataset.xslSheetNumber = 1;			
+		
 		/** 
 		 * Make a copy of a metadata of the dataset, so we can retrieve this data when moving back to the Step 1 
 		 * from the Step 2 and then again forward to the Step 2. Remember the metadata that user set last time.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		$scope.dataset.meta!="[]" ? $scope.metaDataCopy = angular.copy($scope.dataset.meta) : $scope.metaDataCopy = null;
+		if ($scope.dataset.meta!="[]" && !Array.isArray($scope.dataset.meta)){
+			$scope.metaDataCopy = angular.copy($scope.dataset.meta);
+		}
 		
 		/**
 		 * If we open the dataset wizard for the current dataset for the first time, set the dataset file name keeper
@@ -140,6 +177,16 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					
 					console.info("[SUCCESS]: The Step 1 form is submitted successfully.");
 					
+					/**
+					 * If the CSV file is parsed well, take new configuration parameters that user
+					 * set for the file (current or the new one) and persist them in scope variables
+					 * that will act as local memory for their state.
+					 *  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					$scope.csvDelimiter = $scope.dataset.csvDelimiter; 
+					$scope.csvQuoteChar = $scope.dataset.csvQuote; 
+					$scope.csvEncoding = $scope.dataset.csvEncoding; 
+					
 					$scope.datasetWizardView = $scope.datasetWizardView + 1;
 					
 					/**
@@ -155,21 +202,34 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					 * criteria2 - if the metaDataCopy (and at the same time current meta data) is an array (it is not an object) and
 					 * it is not of length of zero - it contains the current metadata (columns and dataset).
 					 * criteria3 - if the file is not changed (if the uploaded file is the same as before).
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
 					var criteria1 = !isMetaDataCopyArray && $scope.metaDataCopy != null;
 					var criteria2 = isMetaDataCopyArray && $scope.metaDataCopy.length>0;
 					var criteria3 = $scope.changedFileName == $scope.dataset.fileName;
-					
-					if ((criteria1 || criteria2) && criteria3) {
-						$scope.dataset.meta = angular.copy($scope.metaDataCopy);
+					var criteria4 = $scope.csvConfChanged==false;
+									
+					// OLD IMPLEMENTATION: Commented by danristo
+//					if ((criteria1 || criteria2) && criteria3) {
+					console.log($scope.step2ValidationFirstTime);
+					/**
+					 * Keep the metadata entirely if the CSV configuration parameters are still the same (none of them are changed) 
+					 * and if the file that is uploaded is not changed and the metadata that we keep in "memory" is valid (not empty).
+					 * Else, re-parse the file and extract the metadata in order to show the actual state to the user (when at least 
+					 * some of these 3 groups of criteria are not satisified).
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					if (criteria4 && criteria3 && (criteria1 || criteria2)) {					
+						$scope.dataset.meta = angular.copy($scope.metaDataCopy);												
 					}
 					else {
 						// Reset the metadata
 						$scope.dataset.meta = {};
 						$scope.dataset.meta = angular.copy(response.data.meta);
 						$scope.changedFileName = $scope.dataset.fileName;
+						$scope.csvConfChanged = false;						
 					}
-			
+					
 					angular.copy(response.data.datasetColumns,$scope.datasetColumns);
 					
 					$scope.prepareMetaForView();
@@ -210,7 +270,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		$scope.dataset.datasetMetadata.columns=[];
 		angular.copy($scope.dataset.meta.dataset,$scope.dataset.datasetMetadata.dataset);
 		angular.copy($scope.dataset.meta.columns,$scope.dataset.datasetMetadata.columns);
-  
+				
 		c=$scope.dataset.datasetMetadata.columns;
 		
 		for (var i = 0; i < c.length; i++) {
