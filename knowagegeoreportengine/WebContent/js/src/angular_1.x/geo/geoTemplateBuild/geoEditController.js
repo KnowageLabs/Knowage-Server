@@ -838,7 +838,7 @@
 			 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+sbiModule_config.adapterPath;
 			 url+= "?PAGE=detailBIObjectPage&MESSAGEDET=DETAIL_SELECT&LIGHT_NAVIGATOR_BACK_TO=1";
 			 
-			 window.location.href=url;
+			 window.parent.location.href=url;
 		}
 		
 		$scope.cancelBuildTemplate=function(){
