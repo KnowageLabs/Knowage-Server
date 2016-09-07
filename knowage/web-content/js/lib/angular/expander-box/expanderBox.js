@@ -16,7 +16,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 		"</span>" +
 		"<span id=\"customToolbarActionContent\" layout=\"row\"></span>"+
 		"<md-button   class=\"md-icon-button\" aria-label=\"More\"><md-icon class=\"fa fa-chevron-{{expanded?'up':'down'}}\"></md-icon></md-button>"+
-		"</md-toolbar><md-content class=\"animate-accordion\" layout-padding  ng-show=\"expanded\"><div ng-transclude style='padding: 0;' layout={{layout}}></div></md-content> "
+		"</md-toolbar><md-content class=\"animate-accordion md-block\" layout-padding  ng-show=\"expanded\"><div ng-transclude style='padding: 0;' layout={{layout}}></div></md-content> "
 		,
 		controller : boxExpanderControllerFunction,
 		scope : {

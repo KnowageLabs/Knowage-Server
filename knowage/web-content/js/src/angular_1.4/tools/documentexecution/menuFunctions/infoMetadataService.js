@@ -80,7 +80,7 @@
 		    			{	
 		    			
 							//Upload file to local directory
-							multipartForm.post("2.0/metadata/"+"upload",fileToSave).success(   
+							multipartForm.post("1.0/documentexecution/"+"uploadfilemetadata",fileToSave).success(   
 									
 									function(data,status,headers,config){
 										if(data.hasOwnProperty("errors")){						
@@ -138,8 +138,8 @@
 					    			var fileItem=JSON.parse(metadataDlgCtrl.file[i].savedFile);
 					    			metadataDlgCtrl.file[i].fileName=fileItem.fileName;
 					    			metadataDlgCtrl.file[i].saveDate=fileItem.saveDate;
-					    			metadataDlgCtrl.file[i].fileLabel=fileItem.fileLabel;
-				    			} else{	metadataDlgCtrl.file[i].fileLabel=""; }
+					    			//metadataDlgCtrl.file[i].fileLabel=fileItem.fileLabel;		//Label removed
+				    			} //else{	metadataDlgCtrl.file[i].fileLabel=""; }				//Label removed
 				    		}	
 				    		
 			    		},function(response){

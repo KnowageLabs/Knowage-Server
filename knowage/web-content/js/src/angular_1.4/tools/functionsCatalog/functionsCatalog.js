@@ -272,8 +272,22 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 						};
 					}
 					$scope.shownFunction = $scope.newFunction;
-
-				});
+					
+					$mdDialog.show($mdDialog.alert().parent(
+							angular.element(document.querySelector('#popupContainer')))
+							.clickOutsideToClose(true).title(
+									'Save operation successfull!!')
+							// .textContent('Fill missing informations to save
+							// function.')
+							.ariaLabel('Alert Dialog Demo').ok('OK')); 
+				}).error(function(data) { 
+						$mdDialog.show($mdDialog.alert().parent(
+						angular.element(document.querySelector('#popupContainer')))
+						.clickOutsideToClose(true).title(
+								'Errors during save operation!!')
+						// .textContent('Fill missing informations to save
+						// function.')
+						.ariaLabel('Alert Dialog Demo').ok('OK'));  });
 			} else if ($scope.saveOrUpdateFlag == "update") {
 				$log.info("Update operation");
 				body = $scope.shownFunction;
@@ -286,8 +300,22 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 							$log.info("Catalog Function Updated!");
 							$log.info("Message returned: ", data);
 							$scope.obtainCatalogFunctionsRESTcall();
-
-						});
+						
+							$mdDialog.show($mdDialog.alert().parent(
+									angular.element(document.querySelector('#popupContainer')))
+									.clickOutsideToClose(true).title(
+											'Save operation successfull!!')
+									// .textContent('Fill missing informations to save
+									// function.')
+									.ariaLabel('Alert Dialog Demo').ok('OK'));
+						}).error(function(data) { 
+							$mdDialog.show($mdDialog.alert().parent(
+									angular.element(document.querySelector('#popupContainer')))
+									.clickOutsideToClose(true).title(
+											'Errors during save operation!!')
+									// .textContent('Fill missing informations to save
+									// function.')
+									.ariaLabel('Alert Dialog Demo').ok('OK'));  });
 
 			}
 		}

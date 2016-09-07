@@ -770,7 +770,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 			if (is != null) {
 				while ((str = reader.readLine()) != null) {
-					if (!str.trim().startsWith("--")) {
+					if (!str.isEmpty() && !str.trim().startsWith("--")) {
 						PreparedStatement statement = jdbcConnection.prepareStatement(str);
 						logger.debug("\n" + str + "\n");
 						statement.setString(1, aTenant.getName());
@@ -803,6 +803,9 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 
 		} catch (Exception e) {
 			logger.error("Error while deleting the tenant with id " + ((aTenant == null) ? "" : String.valueOf(aTenant.getId())), e);
+
+			// Added
+			e.printStackTrace();
 
 			if (jdbcConnection != null) {
 				try {

@@ -81,11 +81,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
 <script type="text/javascript">
-	// var isAdminGlobal=<%=admin.toString()%>
-	var isAdminGlobal=<%=adminView%>
-	var isUserGlobal=<%=userView%>
-	var isDevGlobal=<%=devView%>
-	var ownerUserName=<%=userNameOwner.toString()%>
+	// var isAdminGlobal=<%=admin.toString()%>;
+	var isAdminGlobal=<%=adminView%>;
+	var isUserGlobal=<%=userView%>;
+	var isDevGlobal=<%=devView%>;
+	var ownerUserName="<%=userNameOwner.toString()%>";
 </script>
 
 

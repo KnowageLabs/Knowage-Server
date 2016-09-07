@@ -11,6 +11,25 @@ app.controller('Controller', ['$angularListDetail', 'sbiModule_messaging', '$tim
 
 function manageTenantFunction($angularListDetail,sbiModule_messaging, $timeout,sbiModule_logger,sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog) {
 	
+	
+    Array.prototype.find = function (predicate, thisValue) {  //IE11 does not support find method 
+        var arr = Object(this);
+        if (typeof predicate !== 'function') {
+            throw new TypeError();
+        }
+        for(var i=0; i < arr.length; i++) {
+            if (i in arr) {  // skip holes
+                var elem = arr[i];
+                if (predicate.call(thisValue, elem, i, arr)) {
+                    return elem;  
+                }
+            }
+        }
+        return undefined;  
+    }
+	
+	
+	
 	$scope.path = "multitenant";
 	$scope.log = sbiModule_logger;
 	$scope.message = sbiModule_messaging;

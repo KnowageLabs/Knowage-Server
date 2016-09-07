@@ -23,15 +23,25 @@
 		     	</md-list>
 			</expander-box>
 			<expander-box id="shortMetadata" color="white" background-color="rgb(63,81,181)" expanded="false" title="metadataDlgCtrl.lblShortMeta" toolbar-class="secondaryToolbar"> 
-				<md-list-item ng-repeat="item in metadataDlgCtrl.shortText">
-					<div flex>
-		     			<md-input-container>
-		     				<label>{{ ::item.name }}</label><input ng-model="item.value"  <%= canModify? "":"readonly" %> >
-		     			</md-input-container>
-					</div>
-	        	</md-list-item>
+<!--				<md-list>
+					<md-list-item ng-repeat="item in metadataDlgCtrl.shortText">
+						<div flex>
+		     				<md-input-container>
+		     					<label>{{ ::item.name }}</label><input ng-model="item.value"  <%= canModify? "":"readonly" %> >
+		     				</md-input-container>
+						</div>
+	        		</md-list-item>
+	        	</md-list>
+-->
+				<div layout=column layout-padding flex="100">
+						<div flex ng-repeat="item in metadataDlgCtrl.shortText" layout=row>
+		     				<md-input-container flex>
+		     					<label>{{ ::item.name }}</label><input ng-model="item.value"  <%= canModify? "":"readonly" %> >
+		     				</md-input-container>
+						</div>
+				</div>	        		
 			</expander-box>
-			<expander-box  id="longMetadata" color="white" background-color="rgb(63,81,181)" expanded="false" title="metadataDlgCtrl.lblLongMeta" toolbar-class="secondaryToolbar"> 
+			<expander-box  id="longMetadata" color="white" background-color="rgb(63,81,181)" expanded="true" title="metadataDlgCtrl.lblLongMeta" toolbar-class="secondaryToolbar"> 
 				<md-tabs class="removeTransition" layout="column" md-border-bottom md-dynamic-height >
 					<md-tab flex=200  ng-repeat="item in metadataDlgCtrl.longText" label="{{::item.name}}" md-on-select="metadataDlgCtrl.setTab($index)">
 					 <md-tab-body >
@@ -62,27 +72,50 @@
 				</table>	-->		
 				
 				
-					
+				 	
 				<table flex>
 					  <tr ng-repeat="fileMeta in metadataDlgCtrl.file">
-					  	<td> <md-input-container> <label>Label</label><input ng-model="fileMeta.fileLabel" <%= canModify? "":"readonly" %> ></md-input-container></td>
-					    <td>&nbsp;Saved&nbsp;file: </td>
+					  <!-- 	<td> <md-input-container><label>Label</label><input ng-model="fileMeta.fileLabel" <%= canModify? "":"readonly" %> ></md-input-container></td> -->
+					 <!-- <td>&nbsp;Saved&nbsp;file: </td>-->
 					    <td>{{fileMeta.fileName}}</td> 
-					    <td> &nbsp;Save&nbsp;date: </td>
+					 <!-- <td> &nbsp;Save&nbsp;date: </td>-->
 					    <td>{{fileMeta.saveDate}}</td>
 					    <td><file-upload id="id_file_upload-{{$index}}" ng-model="fileMeta.fileToSave" ng-disabled=false ng-if=<%= canModify %>></file-upload></td>
 						<td><md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.uploadFile(fileMeta.fileToSave)" ng-if=<%= canModify %>>Upload</md-button></td>		
 						<td><md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.download(fileMeta.id,fileMeta.savedFile)" ng-if="fileMeta.fileName" >Download</md-button></td>
 						<td><md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.cleanFile(fileMeta.id)" ng-if=<%= canModify %>>Clean</md-button></td>						 	
 					  </tr>
-				</table>
-					
+				</table> 
+				
+				<!-- 
+				
+				<div ng-repeat="fileMeta in metadataDlgCtrl.file" layout="column">
+					<div layout="row" >
+						<div flex="15">
+							<md-input-container> <label>Label</label><input ng-model="fileMeta.fileLabel" <%= canModify? "":"readonly" %> ></md-input-container>
+						</div>
+						<div flex="15">
+							{{fileMeta.fileName}}
+						</div>
+						<div flex="15">
+							{{fileMeta.saveDate}}
+						</div>
+						<div flex="15">
+							<file-upload id="id_file_upload-{{$index}}" ng-model="fileMeta.fileToSave" ng-disabled=false ng-if=<%= canModify %>></file-upload>
+						</div>
+						<div flex="10">
+							<md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.uploadFile(fileMeta.fileToSave)" ng-if=<%= canModify %>>Upload</md-button>
+						</div>
+						<div flex="10">
+							<md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.download(fileMeta.id,fileMeta.savedFile)" ng-if="fileMeta.fileName" >Download</md-button>
+						</div>
+						<div flex="10">
+							<md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.cleanFile(fileMeta.id)" ng-if=<%= canModify %>>Clean</md-button>
+						</div>
+					</div>
+				</div>	
 
-					
-					
-					
-				</md-list>		
-					
+				-->
 
 			</expander-box>
 			
@@ -94,16 +127,16 @@
 	
 	  	</md-dialog-content>
 	  	<div class="md-actions" layout="row">
-	  	<span flex></span>
-	  			<md-button class="md-raised" ng-click="metadataDlgCtrl.close()">
-		          CLOSE
-		        </md-button>
-    		  <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY)) { %>
-		      	<md-button aria-label="{{::metadataDlgCtrl.lblSave}}" class="md-primary md-raised" 
+		  	<span flex></span>
+		  	<md-button class="md-raised" ng-click="metadataDlgCtrl.close()">
+				CLOSE
+			</md-button>
+	    	<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY)) { %>
+			     <md-button aria-label="{{::metadataDlgCtrl.lblSave}}" class="md-primary md-raised" 
 					ng-click="metadataDlgCtrl.save()">
 					{{::metadataDlgCtrl.lblSave}}
-			 	</md-button>
-			 	<%} %>
-    </div>
+				 </md-button>
+			<%} %>
+    	</div>
 </md-dialog>
 			
