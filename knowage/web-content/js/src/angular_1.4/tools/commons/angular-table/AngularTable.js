@@ -577,7 +577,7 @@ function TableControllerFunction($scope, $timeout) {
     // pagination item
     $scope.changeWordItemPP = function () {
 
-    	if($scope.box==undefined){
+    	if($scope.box==undefined || $scope.box.$$NG_REMOVED==true){
     		var box = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox'))[0]
     		if (box == undefined) {
     			return;
@@ -585,21 +585,21 @@ function TableControllerFunction($scope, $timeout) {
     		$scope.box=box;
     	}
     	
-    	if($scope.tableContainer==undefined){
+    	if($scope.tableContainer==undefined || $scope.tableContainer.$$NG_REMOVED==true){
     		var tableContainer = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #angularFullTableContentBox'))[0];
     		if (tableContainer != undefined) {
     			$scope.tableContainer=tableContainer;
     		}
     	}
     	
-    	if($scope.headButton==undefined){
+    	if($scope.headButton==undefined || $scope.headButton.$$NG_REMOVED==true){
     		var headButton = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.fakeTable thead'))[0];
     		if (headButton != undefined) {
     			$scope.headButton=headButton;
     		}
     	}
     	
-    	if($scope.listItemTemplBox==undefined){
+    	if($scope.listItemTemplBox==undefined || $scope.listItemTemplBox.$$NG_REMOVED==true){
     		var listItemTemplBox = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.principalTable tbody tr'))[0];
     		if (listItemTemplBox != undefined) {
     			$scope.listItemTemplBox=listItemTemplBox;
