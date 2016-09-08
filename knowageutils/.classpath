@@ -23,9 +23,6 @@
 	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/jaxrs-api-3.0.9.Final.jar"/>
 	<classpathentry kind="lib" path="lib/resteasy-jaxrs-2.3.5.Final.jar"/>
-	<classpathentry kind="lib" path="lib/MetaModel-core-4.3.1.jar"/>
-	<classpathentry kind="lib" path="lib/MetaModel-full-4.3.1.jar"/>
-	<classpathentry kind="lib" path="lib/MetaModel-pojo-4.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/classmate-1.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-validator-5.2.0.CR1.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-validator-cdi-5.2.0.CR1.jar"/>
@@ -148,5 +145,8 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/MetaModel-core-4.5.4.jar"/>
+	<classpathentry kind="lib" path="lib/MetaModel-full-4.5.4.jar"/>
+	<classpathentry kind="lib" path="lib/MetaModel-pojo-4.5.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

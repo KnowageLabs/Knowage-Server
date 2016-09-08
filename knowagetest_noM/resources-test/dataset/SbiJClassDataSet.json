@@ -5,7 +5,7 @@
 	"active": true,
 	"type": "SbiJClassDataSet",
 	"configuration": {
-		"jClassName": "it.eng.spagobi.tools.dataset.bo.provaDataSet"
+		"jClassName": "it.eng.spagobi.tools.dataset.bo.JavaClassDataSetExample"
 	},
 	"pivotColumnName": null,
 	"pivotRowName": null,

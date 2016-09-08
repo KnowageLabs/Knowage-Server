@@ -42,6 +42,9 @@ import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
+import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
+import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
+import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -180,6 +183,16 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 		try {
 			DAOFactory.getDataSetDAO().insertDataSet(dataset);
+
+			if (dataset.isPersisted()) {
+				IPersistedManager ptm = null;
+				if (dataset.isPersistedHDFS()) {
+					ptm = new PersistedHDFSManager();
+				} else {
+					ptm = new PersistedTableManager(getUserProfile());
+				}
+				ptm.persistDataSet(dataset);
+			}
 		} catch (Exception e) {
 			logger.error("Error while creating the dataset: " + e.getMessage(), e);
 			throw new SpagoBIRuntimeException("Error while creating the dataset: " + e.getMessage(), e);
@@ -318,8 +331,13 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 							selectedDatasets.add(dataset);
 
 							value = selectionsObject.getJSONArray(datasetDotColumn).get(0).toString();
-							String filter = AbstractJDBCDataset.encapsulateColumnName(column, SpagoBICacheConfiguration.getInstance().getCacheDataSource())
-									+ " = ('" + value + "')";
+							String filter;
+							if (realtimeDatasets.contains(dataset)) {
+								filter = DataStore.DEFAULT_TABLE_NAME + "." + column + "='" + value + "'";
+							} else {
+								filter = AbstractJDBCDataset.encapsulateColumnName(column, SpagoBICacheConfiguration.getInstance().getCacheDataSource())
+										+ "=('" + value + "')";
+							}
 							filtersMap.put(dataset, filter);
 
 							if (!selectionsMap.containsKey(dataset)) {
@@ -360,33 +378,53 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	}
 
 	@Override
-	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject, boolean isRealtime) throws JSONException {
+	protected List<FilterCriteria> getFilterCriteria(String datasetLabel, JSONObject selectionsObject, boolean isRealtime) throws JSONException {
 		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
 
-		if (selectionsObject.has(dataset)) {
+		IDataSetDAO dsDAO;
+		try {
+			dsDAO = DAOFactory.getDataSetDAO();
+		} catch (EMFUserError e) {
+			logger.error("Error while looking for datasets", e);
+			throw new SpagoBIRuntimeException("Error while looking for datasets", e);
+		}
+
+		IDataSet dataSet = dsDAO.loadDataSetByLabel(datasetLabel);
+
+		if (selectionsObject.has(datasetLabel)) {
 			boolean onlyEmptySelections = true;
-			JSONObject datasetSelectionObject = selectionsObject.getJSONObject(dataset);
+			JSONObject datasetSelectionObject = selectionsObject.getJSONObject(datasetLabel);
 			Iterator<String> it = datasetSelectionObject.keys();
 			while (it.hasNext()) {
 				String columns = it.next();
 				JSONArray values = datasetSelectionObject.getJSONArray(columns);
 				if (values.length() > 0) {
 					onlyEmptySelections = false;
-					if (isRealtime) {
-						String defautTableName = DataStore.DEFAULT_TABLE_NAME + ".";
+					if (isRealtime && !dataSet.isFlatDataset() && !(dataSet.isPersisted() && !dataSet.isPersistedHDFS())) {
+						String defaultTableName = DataStore.DEFAULT_TABLE_NAME + ".";
 						String[] columnsArray = columns.split(",");
-						Operand leftOperand = new Operand(defautTableName + columnsArray[0]);
+						Operand leftOperand = new Operand(defaultTableName + columnsArray[0]);
 						for (int i = 0; i < values.length(); i++) {
 							String currentValues = values.getString(i);
-							String[] valuesArray = currentValues.substring(1, currentValues.length() - 1).split(",");
+							if (currentValues.startsWith("(") && currentValues.endsWith(")")) {
+								currentValues = currentValues.substring(1, currentValues.length() - 1);
+							}
+							String[] valuesArray = currentValues.split(",");
 							StringBuilder sb = new StringBuilder();
-							sb.append(valuesArray[0]);
-							for (int j = 1; j < valuesArray.length; j++) {
-								sb.append(" AND ");
-								sb.append(defautTableName);
-								sb.append(columnsArray[j]);
-								sb.append("=");
-								sb.append(valuesArray[j]);
+							if (valuesArray.length == 1) {
+								String delim = valuesArray[0].startsWith("'") && valuesArray[0].startsWith("'") ? "" : "'";
+								sb.append(delim);
+								sb.append(valuesArray[0]);
+								sb.append(delim);
+							} else {
+								sb.append(valuesArray[0]);
+								for (int j = 1; j < valuesArray.length; j++) {
+									sb.append(" AND ");
+									sb.append(defaultTableName);
+									sb.append(columnsArray[j]);
+									sb.append("=");
+									sb.append(valuesArray[j]);
+								}
 							}
 							Operand rightOperand = new Operand(sb.toString());
 							FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);

@@ -8,7 +8,9 @@
         <join>
             <multicast enabled="false"></multicast>
             <tcp-ip enabled="true">
+                <member-list>
                     <member>127.0.0.1</member>
+                </member-list>
             </tcp-ip>
         </join>
     </network>

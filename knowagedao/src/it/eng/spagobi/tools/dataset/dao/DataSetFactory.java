@@ -452,6 +452,9 @@ public class DataSetFactory {
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FLAT)) {
 				ds = new FlatDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
+				if (ds.isPersisted()) {
+					throw new Exception("A flat data set can't be persisted");
+				}
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
 				if (userProfile != null)
 					dataSourceDao.setUserProfile(userProfile);

@@ -1216,8 +1216,11 @@ public class DatasetManagementAPI {
 				} else { // it's a column
 					rightOperand = filter.getRightOperand().getOperandValueAsString();
 				}
-
-				sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperand + ")");
+				if (isRealtime && !rightOperand.contains(" AND ")) {
+					sqlBuilder.where(leftOperand + " " + operator + " " + rightOperand);
+				} else {
+					sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperand + ")");
+				}
 			}
 		}
 

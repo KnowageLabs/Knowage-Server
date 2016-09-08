@@ -41,6 +41,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -74,8 +76,8 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	private static void setHazelcastDefaultConfig() {
 		Config cfg = new Config();
 
-		cfg.getNetworkConfig().setPort(5701);
-		cfg.getNetworkConfig().setPortAutoIncrement(true);
+		cfg.getNetworkConfig().setPort(5702);
+		cfg.getNetworkConfig().setPortAutoIncrement(false);
 		cfg.getNetworkConfig().setPortCount(100);
 		MulticastConfig multicastConfig = new MulticastConfig();
 		multicastConfig.setEnabled(false);
@@ -114,12 +116,10 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 							encoding);
 			String realtimeDatasets = URLEncoder.encode("[\"SbiQueryDataSet\",\"SbiFileDataSet\"]", encoding);
 
-			String dataset1Description = getDatasetDescription(dataset1Label);
-			createDataset(dataset1Label, dataset1Description);
+			createDatasets(dataset1Label, false);
 			given().contentType(ContentType.JSON).when().get("/datasets/" + dataset1Label + "/data").then().contentType(ContentType.JSON).statusCode(200);
 
-			String dataset2Description = getDatasetDescription(dataset2Label);
-			createDataset(dataset2Label, dataset2Description);
+			createDatasets(dataset2Label, false);
 			given().contentType(ContentType.JSON).when().get("/datasets/" + dataset2Label + "/data").then().contentType(ContentType.JSON).statusCode(200);
 
 			// selections + realtime
@@ -146,8 +146,7 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 		String datasetLabel = "SbiQueryDataSet";
 		String selections = "{\"SbiQueryDataSet\":{\"store_type,region_id\":[\"('Deluxe Supermarket','26')\",\"('Deluxe Supermarket','25')\"]}}";
 		try {
-			String datasetDescription = getDatasetDescription(datasetLabel);
-			createDataset(datasetLabel, datasetDescription);
+			createDatasets(datasetLabel, false);
 
 			// selections + realtime
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/SbiQueryDataSet/data?realtime=true").then()
@@ -186,14 +185,19 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	@Test
 	public void SbiFlatDataSetTest() {
 		String datasetLabel = "SbiFlatDataSet";
+		testSbiFlatDataSet(datasetLabel, false);
+	}
+
+	private void testSbiFlatDataSet(String datasetLabel, boolean isPersisted) {
 		String selections = "{\"" + datasetLabel + "\":{\"product_name\":[\"Washington Cream Soda\"]}}";
 		try {
-			String datasetDescription = getDatasetDescription(datasetLabel);
-			createDataset(datasetLabel, datasetDescription);
-			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data").then().contentType(ContentType.JSON)
-					.statusCode(200).body("results", equalTo(1)).body("rows[0].column_4", equalTo("Washington Cream Soda"));
+			createDatasets(datasetLabel, isPersisted);
+
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data?offset=0&size=1000&realtime=true").then()
 					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(1)).body("rows[0].column_4", equalTo("Washington Cream Soda"));
+
+			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data").then().contentType(ContentType.JSON)
+					.statusCode(200).body("results", equalTo(1)).body("rows[0].column_4", equalTo("Washington Cream Soda"));
 		} catch (Exception e) {
 			fail(e.toString());
 		} finally {
@@ -204,12 +208,18 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	@Test
 	public void SbiQueryDataSetTest() {
 		String datasetLabel = "SbiQueryDataSet";
+		testSbiQueryDataSet(datasetLabel, false);
+		testSbiQueryDataSet(datasetLabel, true);
+	}
+
+	private void testSbiQueryDataSet(String datasetLabel, boolean isPersisted) {
 		String selections = "{\"" + datasetLabel + "\":{\"store_type,region_id\":[\"('Supermarket','28')\"]}}";
 		try {
-			String datasetDescription = getDatasetDescription(datasetLabel);
-			createDataset(datasetLabel, datasetDescription);
+			createDatasets(datasetLabel, isPersisted);
+
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data").then().contentType(ContentType.JSON)
 					.statusCode(200).body("results", equalTo(1)).body("rows[0].column_5", equalTo("Store 1"));
+
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data?offset=0&size=1000&realtime=true").then()
 					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(1)).body("rows[0].column_5", equalTo("Store 1"));
 		} catch (Exception e) {
@@ -222,12 +232,18 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	@Test
 	public void SbiFileDataSetTest() {
 		String datasetLabel = "SbiFileDataSet";
+		testSbiFileDataSet(datasetLabel, false);
+		testSbiFileDataSet(datasetLabel, true);
+	}
+
+	private void testSbiFileDataSet(String datasetLabel, boolean isPersisted) {
 		String selections = "{\"" + datasetLabel + "\":{\"product_id,store_id\":[\"(1,1)\"]}}";
 		try {
-			String datasetDescription = getDatasetDescription(datasetLabel);
-			createDataset(datasetLabel, datasetDescription);
+			createDatasets(datasetLabel, isPersisted);
+
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data").then().contentType(ContentType.JSON)
 					.statusCode(200).body("results", equalTo(2)).body("rows[0].column_3", equalTo("9685")).body("rows[1].column_3", equalTo("1894"));
+
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data?offset=0&size=1000&realtime=true").then()
 					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(2)).body("rows[0].column_3", equalTo("9685"))
 					.body("rows[1].column_3", equalTo("1894"));
@@ -241,12 +257,18 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	@Test
 	public void SbiJClassDataSetTest() {
 		String datasetLabel = "SbiJClassDataSet";
+		testSbiJClassDataSet(datasetLabel, false);
+		testSbiJClassDataSet(datasetLabel, true);
+	}
+
+	private void testSbiJClassDataSet(String datasetLabel, boolean isPersisted) {
 		String selections = "{\"" + datasetLabel + "\":{\"VALUE\":[\"(200)\"]}}";
 		try {
-			String datasetDescription = getDatasetDescription(datasetLabel);
-			createDataset(datasetLabel, datasetDescription);
+			createDatasets(datasetLabel, isPersisted);
+
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data").then().contentType(ContentType.JSON)
 					.statusCode(200).body("results", equalTo(1)).body("rows[0].column_1", equalTo("200"));
+
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data?offset=0&size=1000&realtime=true").then()
 					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(1)).body("rows[0].column_1", equalTo("200"));
 		} catch (Exception e) {
@@ -257,14 +279,20 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	}
 
 	@Test
-	public void SbiRESTDataSetTest() {
+	public void SbiRestDataSetTest() {
 		String datasetLabel = "SbiRESTDataSet";
+		testSbiRestDataSet(datasetLabel, false);
+		testSbiRestDataSet(datasetLabel, true);
+	}
+
+	private void testSbiRestDataSet(String datasetLabel, boolean isPersisted) {
 		String selections = "{\"" + datasetLabel + "\":{\"prosumerId\":[\"('pros3')\"]}}";
 		try {
-			String datasetDescription = getDatasetDescription(datasetLabel);
-			createDataset(datasetLabel, datasetDescription);
+			createDatasets(datasetLabel, isPersisted);
+
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data").then().contentType(ContentType.JSON)
 					.statusCode(200).body("results", equalTo(74)).body("rows[0].column_2", containsString("3.97"));
+
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data?offset=0&size=1000&realtime=true").then()
 					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(74)).body("rows[0].column_2", containsString("3.97"));
 		} catch (Exception e) {
@@ -277,12 +305,18 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	@Test
 	public void SbiCkanDataSetTest() {
 		String datasetLabel = "SbiCkanDataSet";
+		testSbiCkanDataSet(datasetLabel, false);
+		testSbiCkanDataSet(datasetLabel, true);
+	}
+
+	private void testSbiCkanDataSet(String datasetLabel, boolean isPersisted) {
 		String selections = "{\"" + datasetLabel + "\":{\"country\":[\"('Mexico')\"]}}";
 		try {
-			String datasetDescription = getDatasetDescription(datasetLabel);
-			createDataset(datasetLabel, datasetDescription);
+			createDatasets(datasetLabel, isPersisted);
+
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data").then().contentType(ContentType.JSON)
 					.statusCode(200).body("results", equalTo(13)).body("rows[0].column_3", equalTo("Mexico City"));
+
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data?offset=0&size=1000&realtime=true").then()
 					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(13)).body("rows[0].column_3", equalTo("Mexico City"));
 		} catch (Exception e) {
@@ -303,7 +337,7 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void createDataset(String datasetLabel, String datasetDescription) {
+	private void createDatasets(String datasetLabel, boolean isPersisted) throws UnsupportedEncodingException, IOException, JSONException {
 		// delete dataset if it exists
 		Response response = given().contentType(ContentType.JSON).when().get("/datasets/" + datasetLabel).then().contentType(ContentType.JSON).statusCode(200)
 				.extract().response();
@@ -318,7 +352,11 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 				.body("errors", hasSize(greaterThan(0)));
 
 		// create the dataset
-		given().contentType(ContentType.JSON).body(datasetDescription).when().post("/datasets").then().statusCode(201);
+		String description = getDatasetDescription(datasetLabel);
+		JSONObject jsonDescription = new JSONObject(description);
+		jsonDescription.put("persisted", isPersisted);
+		jsonDescription.put("persistTableName", datasetLabel);
+		given().contentType(ContentType.JSON).body(jsonDescription.toString()).when().post("/datasets").then().statusCode(201);
 
 		// check that the dataset exists
 		given().contentType(ContentType.JSON).when().get("/datasets/" + datasetLabel).then().contentType(ContentType.JSON).statusCode(200)
