@@ -1402,7 +1402,13 @@ public class DatasetManagementAPI {
 					if (datasetAlias != null) {
 						columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
 					}
-					columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+
+					if (aggregateFunction != null && aggregateFunction.equals(AggregationFunctions.FORMULA)) {
+						// this is a calculated field!
+						columnName = AbstractJDBCDataset.substituteStandardWithDatasourceDelimiter(columnName, dataSource);
+					} else {
+						columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+					}
 
 					if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
 						String aliasName = projection.getAliasName();

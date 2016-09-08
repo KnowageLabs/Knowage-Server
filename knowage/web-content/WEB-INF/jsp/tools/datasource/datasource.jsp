@@ -141,7 +141,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									</div>
 
 									<!-- WRITE DEFAULT -->
-									<div >
+									<div ng-show="isSuperAdminFunction()">
 										<label>{{translate.load("sbi.datasource.writedefault")}}:</label>
 										<md-input-container class="small counter">
 											<md-checkbox ng-disabled="readOnly" ng-change="setDirty()"
