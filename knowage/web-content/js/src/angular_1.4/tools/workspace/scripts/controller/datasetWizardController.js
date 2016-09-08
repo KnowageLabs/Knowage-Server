@@ -138,7 +138,17 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			// If at least one of those parameters is changed, signal to re-parse the file and get new metadata.
 			$scope.csvConfChanged = ($scope.csvDelimiter != $scope.dataset.csvDelimiter 
 										|| $scope.csvQuoteChar != $scope.dataset.csvQuote
-											|| $scope.csvEncoding != $scope.dataset.csvEncoding) ?  true : false;			
+											|| $scope.csvEncoding != $scope.dataset.csvEncoding) ?  true : false;	
+			
+			/**
+			 * If the CSV configuration is changed on the Step 1, set these indicators to false in order to reset the 
+			 * validation status on Step 2 (when coming from the Step 1).
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			if ($scope.csvConfChanged==true) {
+				$scope.validationPassed = false; 
+				$scope.validationError = false;
+			}
 			
 			$scope.csvDelimiter = $scope.dataset.csvDelimiter;
 			$scope.csvQuoteChar = $scope.dataset.csvQuote;
