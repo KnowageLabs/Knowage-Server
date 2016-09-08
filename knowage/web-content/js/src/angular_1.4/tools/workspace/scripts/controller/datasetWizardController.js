@@ -31,25 +31,19 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	$scope.changingFile = false;
 	$scope.categorySet = null;
 	
-	$scope.csvDelimiter = null;
-	$scope.csvQuoteChar = null;
-	$scope.csvEncoding = null;
-	
-	$scope.csvConfChanged = null;
-	$scope.restartValidStatusStep2 = false;
-	
 	/**
 	 * 'step2ValidationErrors' - contains the validation result. If there is not error after the validation, the property will
 	 * not be present in the retrieved JSON got after the validating process and this scope variable will be of a value NULL. 
 	 * Otherwise, the 'validationErrors' property appears as a part of the returning JSON (result of calling the validation).
 	 * 
-	 * 'step2ValidationFirstTime' - if the user tries at least once to validate the Step 2 (with or without a success), this 
-	 * property will contain the value of 'false'. This will indicate that the Step 2 "Valid" column can change its state (can
-	 * refresh the state of the validity of the particular type (for some metadata column).	 * 
-	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+//	 * 'step2ValidationFirstTime' - if the user tries at least once to validate the Step 2 (with or without a success), this 
+//	 * property will contain the value of 'false'. This will indicate that the Step 2 "Valid" column can change its state (can
+//	 * refresh the state of the validity of the particular type (for some metadata column).	 
+//	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.step2ValidationErrors = null;
-	$scope.step2ValidationFirstTime = true;
+	// TODO: Not used anymore. Remove in future development. (danristo)
+//	$scope.step2ValidationFirstTime = true;
 	
 	/**
 	 * The metadata of the already uploaded file. It will contain up-to-date state of the dataset metadata, namely it will keep
@@ -60,6 +54,8 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	 */
 	$scope.metaDataCopy = null;
 	
+	$scope.csvConfChanged = false;
+	
 	/**
 	 * The name of the newly uploaded file for the current dataset. It will server for comparing with the old file name in order
 	 * to keep or reset the metadata of the previous file that was uploaded. Namely, when the file is changed (a new one is uploaded
@@ -67,6 +63,48 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	$scope.changedFileName = null;
+	
+	/**
+	 * Set the flag if the dataset wizard is opened for the first time and if so, take these necessary configuration parameters 
+	 * for the dataset that is constructed on the base of the CSV file. These parameters are used for parsing the CSV file that
+	 * is uploaded and are of great importance for setting the state on the Step 2 (Definition data), that represents the metadata
+	 * of that CSV file, i.e. the file dataset that we are editing/creating.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.datasetInitial = true;
+
+	/**
+	 * Simple scope variables that will memorize the delimiter and quote sign, as well as encoding type for parsing the CSV file
+	 * that is uploaded and will serve for comparing if at least one of them is changed at any time of Dataset wizard dialog life.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */  
+	$scope.csvDelimiter = "";
+	$scope.csvQuoteChar = "";
+	$scope.csvEncoding= "";
+	
+	/**
+	 * If the type of the file that is uploaded for the file dataset is CSV and the dataset is opened in the wizard for the first 
+	 * time, collect those mentioned CSV configuration parameters that are needed for the managing of the Step 2 (the metadata).
+	 * At the same, time reset the state of "datasetInitial" scope variable (setting it to false), to avoid this if-statement, until
+	 * next opening of the dataset wizard (for the same dataset or for some other).
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	if ($scope.dataset.fileType.toUpperCase()=="CSV" && $scope.datasetInitial==true) {
+		$scope.datasetInitial = false;
+		$scope.csvDelimiter = $scope.dataset.csvDelimiter;
+		$scope.csvQuoteChar = $scope.dataset.csvQuote;
+		$scope.csvEncoding= $scope.dataset.csvEncoding;
+	}
+	
+	/**
+	 * These two scope variables represent the current state of the validation - if it is successful or not (passed or error, 
+	 * respectively). They will server as a flag for setting the validation status for respective metadata item (for particular
+	 * row in the metadata Step 2). If the validation is passed or it recorder an error (cannot move to the Step 3), provide
+	 * correct or invalid state on the Step 2.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.validationPassed = false;
+	$scope.validationError = false;
 	
 	/**
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -78,40 +116,34 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		params.SBI_EXECUTION_ID = -1;
 		params.isTech = false;
 		params.showOnlyOwner = true;
-		params.showDerivedDataset = false;
-				
-		/**
-		 * If the file that is uploaded is of type CSV, check if the parameters for parsing that kind
-		 * of file are changed (at least one of them). In that case, provide a signal to the dataset
-		 * wizard that the file should be re-parsed when going from the Step 1 to the Step 2. This is
-		 * necessary, since these parameters could potentially result in different result on the Step 2.
-		 * The configuration parameters for parsing CSV file are delimiter, quote sign and encoding.
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		 */
-		if ($scope.dataset.fileType.toUpperCase()=="CSV") {
-						
-			!$scope.csvDelimiter ? $scope.csvDelimiter = $scope.dataset.csvDelimiter : null; 
-			!$scope.csvQuoteChar ? $scope.csvQuoteChar = $scope.dataset.csvQuote : null; 
-			!$scope.csvEncoding ? $scope.csvEncoding = $scope.dataset.csvEncoding : null; 
-			
-			// If at least one of those parameters is changed, signal to re-parse the file and get new metadata.
-			if ($scope.csvDelimiter != $scope.dataset.csvDelimiter 
-					|| $scope.csvQuoteChar != $scope.dataset.csvQuote
-						|| $scope.csvEncoding != $scope.dataset.csvEncoding) {
-				
-				$scope.csvConfChanged = true;
-				
-			}
-			else {
-				$scope.csvConfChanged = false;
-			}
-			
-		}
+		params.showDerivedDataset = false;		
 		
 		$scope.dataset.type = "File";
 		$scope.dataset.persist = false;
 		$scope.dataset.tablePrefix = datasetParameters.TABLE_NAME_PREFIX+sbiModule_user.userId+"_";
 		$scope.dataset.tableName = "";
+		
+		/**
+		 * This if-statement is almost the same as the one before, except we use this one for later usage, not when the
+		 * dataset wizard is opened for the first time. According to the previous state of mentioned CSV configuration
+		 * parameters (three counted here) and the new one, if there is any (at least one) change, set the scope variable
+		 * "csvConfChanged" to boolean value of TRUE. This flag will be used for managing the metadata on the Step 2, i.e.
+		 * if the metadata is going to be updated (refreshed, reloaded) or kept (if there is no change among these 
+		 * parameters at all). Afterwards, set the new state for these CSV configuration parameters to those scope variables
+		 * so we can keep the current (actual) state.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		if ($scope.dataset.fileType.toUpperCase()=="CSV") {
+						
+			// If at least one of those parameters is changed, signal to re-parse the file and get new metadata.
+			$scope.csvConfChanged = ($scope.csvDelimiter != $scope.dataset.csvDelimiter 
+										|| $scope.csvQuoteChar != $scope.dataset.csvQuote
+											|| $scope.csvEncoding != $scope.dataset.csvEncoding) ?  true : false;			
+			
+			$scope.csvDelimiter = $scope.dataset.csvDelimiter;
+			$scope.csvQuoteChar = $scope.dataset.csvQuote;
+			$scope.csvEncoding= $scope.dataset.csvEncoding;
+		}
 		
 		/**
 		 * If those three numeric fields are not provided, they will be NULL. For that reason, we redefined their values as an empty string, so they can be processed
@@ -125,14 +157,14 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			$scope.dataset.limitRows = "";
 		
 		if ($scope.dataset.xslSheetNumber == null)
-			$scope.dataset.xslSheetNumber = 1;			
-		
+			$scope.dataset.xslSheetNumber = 1;
+				
 		/** 
 		 * Make a copy of a metadata of the dataset, so we can retrieve this data when moving back to the Step 1 
 		 * from the Step 2 and then again forward to the Step 2. Remember the metadata that user set last time.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		if ($scope.dataset.meta!="[]" && !Array.isArray($scope.dataset.meta)){
+		if ($scope.dataset.meta!="[]" && !Array.isArray($scope.dataset.meta)) { 
 			$scope.metaDataCopy = angular.copy($scope.dataset.meta);
 		}
 		
@@ -177,16 +209,6 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					
 					console.info("[SUCCESS]: The Step 1 form is submitted successfully.");
 					
-					/**
-					 * If the CSV file is parsed well, take new configuration parameters that user
-					 * set for the file (current or the new one) and persist them in scope variables
-					 * that will act as local memory for their state.
-					 *  @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					$scope.csvDelimiter = $scope.dataset.csvDelimiter; 
-					$scope.csvQuoteChar = $scope.dataset.csvQuote; 
-					$scope.csvEncoding = $scope.dataset.csvEncoding; 
-					
 					$scope.datasetWizardView = $scope.datasetWizardView + 1;
 					
 					/**
@@ -202,34 +224,26 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					 * criteria2 - if the metaDataCopy (and at the same time current meta data) is an array (it is not an object) and
 					 * it is not of length of zero - it contains the current metadata (columns and dataset).
 					 * criteria3 - if the file is not changed (if the uploaded file is the same as before).
-					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 * criteria4 - if the CSV configuration paramters on the Step 1 are not changed (still the same as when dataset
+					 * is loaded into the dataset wizard.
 					 */
 					var criteria1 = !isMetaDataCopyArray && $scope.metaDataCopy != null;
 					var criteria2 = isMetaDataCopyArray && $scope.metaDataCopy.length>0;
 					var criteria3 = $scope.changedFileName == $scope.dataset.fileName;
-					var criteria4 = $scope.csvConfChanged==false;
-									
-					// OLD IMPLEMENTATION: Commented by danristo
-//					if ((criteria1 || criteria2) && criteria3) {
-					console.log($scope.step2ValidationFirstTime);
-					/**
-					 * Keep the metadata entirely if the CSV configuration parameters are still the same (none of them are changed) 
-					 * and if the file that is uploaded is not changed and the metadata that we keep in "memory" is valid (not empty).
-					 * Else, re-parse the file and extract the metadata in order to show the actual state to the user (when at least 
-					 * some of these 3 groups of criteria are not satisified).
-					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					if (criteria4 && criteria3 && (criteria1 || criteria2)) {					
-						$scope.dataset.meta = angular.copy($scope.metaDataCopy);												
+					var criteria4 = $scope.csvConfChanged == false;
+					
+					if ((criteria1 || criteria2) && criteria3 && criteria4) {
+						$scope.dataset.meta = angular.copy($scope.metaDataCopy);
 					}
 					else {
 						// Reset the metadata
 						$scope.dataset.meta = {};
 						$scope.dataset.meta = angular.copy(response.data.meta);
 						$scope.changedFileName = $scope.dataset.fileName;
-						$scope.csvConfChanged = false;						
+						// Set the status to FALSE since the new metadata is collected and set. (danristo)
+						$scope.validationPassed = false;
 					}
-					
+			
 					angular.copy(response.data.datasetColumns,$scope.datasetColumns);
 					
 					$scope.prepareMetaForView();
@@ -237,6 +251,9 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					
 					// Set a flag to indicate that we are not changing uploaded file any more (the 'Change file' button will appear when returning back to the Step 1.
 					$scope.changingFile = false;
+					
+					// Reset the value for this flag, since Step 1 CSV paramters are not changed now (their previous change is applied). (danristo)
+					$scope.csvConfChanged = false;
 					
 				}
 				else {
@@ -270,7 +287,7 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		$scope.dataset.datasetMetadata.columns=[];
 		angular.copy($scope.dataset.meta.dataset,$scope.dataset.datasetMetadata.dataset);
 		angular.copy($scope.dataset.meta.columns,$scope.dataset.datasetMetadata.columns);
-				
+  
 		c=$scope.dataset.datasetMetadata.columns;
 		
 		for (var i = 0; i < c.length; i++) {
@@ -301,8 +318,6 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		if ($scope.editingDatasetFile==true && $scope.dataset.fileUploaded==true) {
 			$scope.dataset.label = "";
 		}
-		
-//		console.log($scope.dataset);
 			
 		var params = {};
 			
@@ -343,14 +358,14 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					
 					console.info("[SUCCESS]: The Step 2 form is validated and submitted successfully!");
 										
-					/**
-					 * As far as we reach the Step 2 and try to validate the metadata, change the state of the flag that indicates that we tried to validate the
-					 * Step 2. When the flag is false, we are able to change the state of the 'Valid' column in the grid (angular-table) on the Step 2. Else, we
-					 * will see the initial grey field with the icon inside of it that indicates that the validation is pending (waiting for user to move to the
-					 * Step 3).
-					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-					 */
-					($scope.step2ValidationFirstTime == true) ? $scope.step2ValidationFirstTime = false : null;
+//					/**
+//					 * As far as we reach the Step 2 and try to validate the metadata, change the state of the flag that indicates that we tried to validate the
+//					 * Step 2. When the flag is false, we are able to change the state of the 'Valid' column in the grid (angular-table) on the Step 2. Else, we
+//					 * will see the initial grey field with the icon inside of it that indicates that the validation is pending (waiting for user to move to the
+//					 * Step 3).
+//					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+//					 */
+//					($scope.step2ValidationFirstTime==true) ? $scope.step2ValidationFirstTime = false : null;
 					
 					// Take the meta data from resulting JSON object (needed for the table's header)
 					
@@ -375,6 +390,15 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					$scope.validationStatus = true;
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.workspace.dataset.wizard.metadata.validation.success.msg"),sbiModule_translate.load('sbi.generic.success'));
 					
+					/**
+					 * Since the validation of the Step 2 went well (successful), set flags that indicate that the validation
+					 * went successfully, that the CSV configration parameters are not changed (anymore) and that there were
+					 * not validation errors.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					$scope.validationPassed = true;
+					$scope.csvConfChanged = false;
+					$scope.validationError = false;
 				}
 				/**
 				 * If the response however contains the property that indicated that there are some validation problems
@@ -387,13 +411,23 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 
 					$scope.validationStatus = false;
 					
-					($scope.step2ValidationFirstTime == true) ? $scope.step2ValidationFirstTime = false : null;
+//					($scope.step2ValidationFirstTime == true) ? $scope.step2ValidationFirstTime = false : null;
 					
 					/**
 					 * Now, since we are having validation errors when submitting the Step 3, change the value of the
 					 * scope variable that contains these data.
 					 */
 					$scope.step2ValidationErrors = response.data.validationErrors;
+					
+					/**
+					 * Since the validation of the Step 2 went wrong (metadata are not valid), set flags that indicate that 
+					 * the validation did not passed, that the CSV configration parameters are not changed (anymore) and that 
+					 * there were validation errors.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					$scope.validationPassed = false;
+					$scope.csvConfChanged = false;
+					$scope.validationError = true;
 					
 					// "Refresh" the Step 2 table, in order to where the validation error appears.
 					$scope.prepareMetaForView();
@@ -408,6 +442,16 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					$scope.validationStatus = false;
 					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
 					$scope.step2ValidationErrors = null;
+					
+					/**
+					 * Since the validation of the Step 2 went wrong (some failure happened), set flags that indicate that 
+					 * the validation did not passed, that the CSV configration parameters are not changed (anymore) and that 
+					 * there were validation errors.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					$scope.validationError = true;
+					$scope.validationPassed = false;
+					$scope.csvConfChanged = false;
 				}
 			}, 
 			
@@ -578,6 +622,10 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		 */
 		$scope.metadataId = $scope.metadataType.value;
 		
+		if ($scope.datasetWizardView==3) {
+			$scope.validationPassed = true;
+		}
+		
 		if($scope.datasetWizardView>1&&$scope.datasetWizardView<5){ 
 			$scope.datasetWizardView = $scope.datasetWizardView -1;
 		}
@@ -643,12 +691,12 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		 */
 		$scope.ckanInWizard=false;
 		
-		/**
-		 * Reset the indicator, so the next time Dataset wizard is opened, the Step 2 "Valid" column items (icons) will be set to their 
-		 * initial values - pending for validation.
-		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
-		 */
-		$scope.step2ValidationFirstTime = true;
+//		/**
+//		 * Reset the indicator, so the next time Dataset wizard is opened, the Step 2 "Valid" column items (icons) will be set to their 
+//		 * initial values - pending for validation.
+//		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+//		 */
+//		$scope.step2ValidationFirstTime = true;
 	}
 	
 	loadDatasetValues = function(a,b) {
@@ -857,8 +905,8 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				/**
 				 * Manage the Step 2 "Valid" column state according to the validation after submitting the Step 2.
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				if ($scope.step2ValidationFirstTime==false) {
+				 */				
+				if (($scope.validationPassed==true || $scope.validationError==true) && $scope.csvConfChanged==false && $scope.changedFileName==$scope.dataset.fileName) {
 					
 					var invalidType = $scope.step2ValidationErrors!=null && $scope.step2ValidationErrors[0]['column_'+i] && $scope.step2ValidationErrors[0]['column_'+i]!="";
 					//{{translate.load('')}}

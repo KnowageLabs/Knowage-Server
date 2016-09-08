@@ -10,7 +10,19 @@
 			      
 					<div class="md-toolbar-tools">
 			      
-						<h2>{{translate.load('sbi.workspace.dataset.wizard')}}: {{dataset.name}}</h2>
+			      		<!-- 
+			      			Setting the title for the Dataset wizard according to the state of the dataset - 
+			      			whether it is already existing one (editing) or the one that is about to be 
+			      			created (adding).
+			      			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		      			-->
+						<h2 ng-if="dataset.name && dataset.name!=''">
+							{{translate.load('sbi.workspace.dataset.wizard')}}: {{dataset.name}}
+						</h2>
+						
+						<h2 ng-if="!(dataset.name && dataset.name!='')">
+							{{translate.load('sbi.workspace.dataset.wizard')}}: <i>({{translate.load('sbi.ds.wizard.newdataset.title')}})</i>
+						</h2>						
 				   
 						<span flex></span> 
 				         
