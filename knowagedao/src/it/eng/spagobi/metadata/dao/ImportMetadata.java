@@ -312,6 +312,18 @@ public class ImportMetadata extends AbstractHibernateDAO {
 						origBC.setDeleted(true);
 						origBC.getCommonInfo().setTimeDe(new Date());
 						saveBC(aSession, origBC);
+						// delete logical on attribute for the BC
+						Set<SbiMetaBcAttribute> origMetaAttrs = origBC.getSbiMetaBcAttributes();
+						for (SbiMetaBcAttribute origMetaAttr : origMetaAttrs) {
+
+							// set phisical table column id
+							// SbiMetaTableColumn tableColumn = columnsMap.get(metaAttr.getSbiMetaTableColumn().getSbiMetaTable().getName());
+							origMetaAttr.setSbiMetaBc(origBC);
+							origMetaAttr.setDeleted(true);
+							origMetaAttr.getCommonInfo().setTimeDe(new Date());
+							// SBI_META_BC_ATTRIBUTES
+							saveBCAttribute(aSession, origMetaAttr);
+						}
 					}
 				}
 			}
