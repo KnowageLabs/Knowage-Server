@@ -17,26 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Restrictions;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -57,6 +37,7 @@ import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaDsBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaDsBcId;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -70,6 +51,26 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Implement CRUD operations over spagobi datsets
@@ -222,8 +223,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	public List<IDataSet> loadNotDerivedUserDataSets(UserProfile user) {
 		return loadDataSets(user.getUserId().toString(), true, false, null, "USER", UserUtilities.getDataSetCategoriesByUser(user), null, false);
 	}
-	
-	public List<IDataSet> loadNotDerivedDataSets(UserProfile user){
+
+	@Override
+	public List<IDataSet> loadNotDerivedDataSets(UserProfile user) {
 		List<IDataSet> results = new ArrayList<IDataSet>();
 
 		List<IDataSet> owened = loadDataSetsOwnedByUser(user, false);
@@ -1634,8 +1636,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				DatasetException de = (DatasetException) t;
 				throw de;
 			} else {
-				String msg = (t.getMessage() != null) ? t.getMessage()
-						: "An unexpected error occured while deleting dataset " + "whose id is equal to [" + datasetId + "]";
+				String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting dataset " + "whose id is equal to ["
+						+ datasetId + "]";
 				throw new SpagoBIDOAException(msg, t);
 			}
 		} finally {
@@ -1694,8 +1696,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			String msg = (t.getMessage() != null) ? t.getMessage()
-					: "An unexpected error occured while deleting dataset " + "whose id is equal to [" + datasetId + "]";
+			String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting dataset " + "whose id is equal to ["
+					+ datasetId + "]";
 			throw new SpagoBIDOAException(msg, t);
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -1814,8 +1816,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException(
-					"An unexpected error occured while deleting dataset version" + "whose version num is equal to [" + datasetVersionNum + "]", t);
+			throw new SpagoBIDOAException("An unexpected error occured while deleting dataset version" + "whose version num is equal to [" + datasetVersionNum
+					+ "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1881,8 +1883,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException(
-					"An unexpected error occured while deleting inactive versions of dataset " + "whose id is equal to [" + datasetId + "]", t);
+			throw new SpagoBIDOAException("An unexpected error occured while deleting inactive versions of dataset " + "whose id is equal to [" + datasetId
+					+ "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -2085,12 +2087,16 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			String config = JSONUtils.escapeJsonString(ds.getConfiguration());
 			JSONObject configJSON = ObjectUtils.toJSONObject(config);
 
+			String qbeDataSource = configJSON.getString("qbeDataSource");
+			String qbeDataMart = configJSON.getString("qbeDatamarts");
 			JSONObject JSONQuery = ObjectUtils.toJSONObject(configJSON.getString("qbeJSONQuery"));
 			JSONObject JSONCatalogue = ObjectUtils.toJSONObject(JSONQuery.getString("catalogue"));
 			JSONArray queries = ObjectUtils.toJSONArray(JSONCatalogue.getString("queries"));
 			HashMap<String, Boolean> insertedMap = new HashMap<String, Boolean>();
 
-			// get the business class from the query fields
+			Integer sourceId = DAOFactory.getSbiMetaSourceDAO().loadSourceByNameAndType(qbeDataSource, "database").getSourceId();
+			// Integer modelId = DAOFactory.getMetaModelsDAO().loadMetaModelByName(qbeDataMart).getId();
+			// get the business class linked to the the query fields throught the meta models classes
 			for (int i = 0; i < queries.length(); i++) {
 				JSONObject query = (JSONObject) queries.get(i);
 				JSONArray fields = query.getJSONArray("fields");
@@ -2100,13 +2106,33 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						logger.debug("Object [entity] not found. The field is calculated. Skip the field.");
 						continue;
 					}
-					String uniqueName = field.getString("entity").toLowerCase();
+					String entityName = field.getString("entity").toLowerCase();
+
+					SbiMetaTable metaTable = DAOFactory.getSbiMetaTableDAO().loadTableByNameAndSource(entityName, sourceId);
+					Integer tableId = metaTable.getTableId();
+					List<SbiMetaBc> metaTableBCList = DAOFactory.getSbiTableBCDAO().loadBcByTableId(tableId);
+					SbiMetaBc metaBC = null;
+					for (SbiMetaBc bc : metaTableBCList) {
+						// get the correct bc linked to the used model
+						if (bc.getSbiMetaModel().getName().equalsIgnoreCase(qbeDataMart) && !bc.isDeleted()) {
+							metaBC = bc;
+							break;
+						}
+					}
+					if (metaBC == null) {
+						logger.error("There isn't a business class associated to the phisical table [" + metaTable.getName() + "] for the model ["
+								+ qbeDataMart + "]. Relation not inserted!");
+						continue;
+					}
+
+					// String uniqueName = metaBC.getUniqueName().toLowerCase();
+					String uniqueName = metaBC.getName().toLowerCase();
 					if (insertedMap.get(uniqueName) != null) {
 						logger.debug("Relation with [" + uniqueName + "]  already inserted. Skip the field.");
 						continue;
 					}
-					SbiMetaBc metaBC = DAOFactory.getSbiMetaBCDAO().loadBcByUniqueName(uniqueName);
-					if (metaBC == null) {
+					// SbiMetaBc metaBC = DAOFactory.getSbiMetaBCDAO().loadBcByUniqueName(uniqueName);
+					if (metaTableBCList == null || metaTableBCList.size() == 0) {
 						logger.error("The entity [" + uniqueName + "] doesn't exist into the SbiMetaBC tale. Relation not inserted!");
 						continue;
 					}

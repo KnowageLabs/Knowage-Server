@@ -108,10 +108,11 @@ public class SbiTableBcDAOHibImpl extends AbstractHibernateDAO implements ISbiTa
 			Iterator it = hibList.iterator();
 			while (it.hasNext()) {
 				SbiMetaTableBc tmpRel = (SbiMetaTableBc) it.next();
-				SbiMetaBc tmpTable = DAOFactory.getSbiMetaBCDAO().loadBcByID(new Integer(tmpRel.getId().getBcId()));
-
-				if (tmpTable != null)
-					toReturn.add(tmpTable);
+				if (tmpRel.getSbiMetaBc() != null)
+					toReturn.add(tmpRel.getSbiMetaBc());
+				// SbiMetaBc tmpTable = DAOFactory.getSbiMetaBCDAO().loadBcByID(new Integer(tmpRel.getId().getBcId()));
+				// if (tmpTable != null)
+				// toReturn.add(tmpTable);
 			}
 			tx.commit();
 		} catch (HibernateException he) {

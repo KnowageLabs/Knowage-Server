@@ -237,7 +237,8 @@ public class MetadataResource extends AbstractSpagoBIResource {
 				Set<SbiMetaBcAttribute> bcAttributeSet = new HashSet<SbiMetaBcAttribute>();
 
 				String businessTableName = businessTable.getName();
-				String businessTableUniqueName = businessTable.getUniqueName();
+				// String businessTableUniqueName = businessTable.getUniqueName();
+				String businessTableUniqueName = businessTable.getName();
 				String businessTablePhysicalTable = businessTable.getPhysicalTable().getName();
 
 				// For the business columns get Name and Type (attribute/measure)
