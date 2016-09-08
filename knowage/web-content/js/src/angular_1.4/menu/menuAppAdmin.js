@@ -39,9 +39,8 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         	
         	
         	$scope.testIe11 = function(){
-        		debugger;
         		$scope.browser = $window.navigator.userAgent;
-        		$scope.ie11 = /Trident.*rv[ :]*11\./;
+        		$scope.ie11 = /trident.*rv[ :]*11\./i;
         		var isIe11 = $scope.ie11.test($scope.browser);
         		return isIe11;
         	} 
