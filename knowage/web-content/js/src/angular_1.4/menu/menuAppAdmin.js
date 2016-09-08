@@ -29,13 +29,22 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
 	}
 ]);
 
-myApp.directive('menuAside', ['$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', function($http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download) {
+myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', function($window,$http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download) {
     return {
 
         restrict: 'E',
         templateUrl: Sbi.config.contextName+"/js/src/angular_1.4/menu/templates/menuBarAdmin.html",
         replace: true,
         link:function($scope, elem, attrs) {
+        	
+        	
+        	$scope.testIe11 = function(){
+        		debugger;
+        		$scope.browser = $window.navigator.userAgent;
+        		$scope.ie11 = /internet explorer/i;
+        		var isIe11 = $scope.ie11.test($scope.browser);
+        		return isIe11;
+        	} 
         	$http.get(Sbi.config.contextName+'/restful-services/1.0/menu/enduser',{
         	    params: { 
         	    		curr_country: Sbi.config.curr_country, 
@@ -349,7 +358,13 @@ myApp.directive('menuAside', ['$http','$mdDialog','$mdToast', 'sbiModule_messagi
 			
 			$scope.menuCall = function menuCall(url,type){
 				if (type == 'execDirectUrl'){
-					$scope.redirectIframe(url);
+					//custom fix to launch datasets in a new page. Please change after angular version is on
+					if(url=='/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_DATASETS_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE' && $scope.testIe11()){
+						$scope.externalUrl(url)
+					}else{
+						$scope.redirectIframe(url);
+					}
+					
 				}else if(type == "dialog"){
 					$scope.openDialog(url);
 				} else if (type == 'roleSelection'){
