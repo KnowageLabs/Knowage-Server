@@ -92,7 +92,7 @@ function documentBrowserFunction(
 		sbiModule_restServices.promiseGet("2.0/folders", "")
 		.then(function(response) {
 			if(response.data && response.data.length>0){
-				//check cookies configuration tree
+				//check cookies configuration tree					
 				var cookiesObj = 'breadCrumb_'+sbiModule_user.userId;
 				if($cookies.getObject(cookiesObj) && $cookies.getObject(cookiesObj).length>0){
 					$scope.hideProgressCircular=false;
@@ -118,7 +118,7 @@ function documentBrowserFunction(
 				}else{
 					response.data[0].expanded=true;					
 				}
-				response.data[0].name='Functionalities';
+				//response.data[0].name='Functionalities';
 			}
 			angular.copy(response.data,$scope.folders);
 		},function(response){
