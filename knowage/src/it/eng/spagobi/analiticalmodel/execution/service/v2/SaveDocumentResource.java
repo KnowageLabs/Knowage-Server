@@ -116,20 +116,25 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		JSError error = new JSError();
+		Integer id = null;
 		try {
 			JSONObject request = RestUtilities.readBodyAsJSONObject(req);
 			String action = request.optString("action");
 			logger.debug("Action type is equal to [" + action + "]");
-
 			if (DOC_SAVE.equalsIgnoreCase(action)) {
-				error = doInsertDocument(request);
+				id = doInsertDocument(request, error);
 			} else if (DOC_UPDATE.equalsIgnoreCase(action)) {
 				logger.error("DOC_UPDATE action is no more supported");
 				throw new SpagoBIServiceException(req.getPathInfo(), "sbi.document.unsupported.udpateaction");
 			} else if (MODIFY_GEOREPORT.equalsIgnoreCase(action) || MODIFY_COCKPIT.equalsIgnoreCase(action)) {
-				error = doModifyDocument(request, action);
+				id = doModifyDocument(request, action, error);
 			} else {
 				throw new SpagoBIServiceException(req.getPathInfo(), "sbi.document.unsupported.action");
+			}
+			if (error.hasErrors()) {
+				return Response.ok(error.toString()).build();
+			} else {
+				return Response.ok(new JSONObject().put("id", id).toString()).build();
 			}
 		} catch (SpagoBIServiceException e) {
 			throw e;
@@ -138,42 +143,40 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
-		return Response.ok(error.toString()).build();
 	}
 
-	private JSError doInsertDocument(JSONObject request) throws JSONException, EMFUserError {
-		JSError error = new JSError();
+	private Integer doInsertDocument(JSONObject request, JSError error) throws JSONException, EMFUserError {
 		JSONObject documentJSON = request.optJSONObject("document");
 		Assert.assertNotNull(StringUtilities.isNotEmpty(documentJSON.optString("name")), "Document's name cannot be null or empty");
 		Assert.assertNotNull(StringUtilities.isNotEmpty(documentJSON.optString("label")), "Document's label cannot be null or empty");
 		Assert.assertNotNull(StringUtilities.isNotEmpty(documentJSON.optString("type")), "Document's type cannot be null or empty");
-
+		Integer id = null;
 		AnalyticalModelDocumentManagementAPI documentManagementAPI = null;
 		try {
 			documentManagementAPI = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+			documentJSON.put("label", documentJSON.getString("name"));// TODO remove this
+			if (documentManagementAPI.getDocument(documentJSON.getString("label")) != null) {
+				logger.error("sbi.document.labelAlreadyExistent");
+				error.addErrorKey("sbi.document.labelAlreadyExistent");
+			} else {
+				String type = documentJSON.getString("type");
+				if ("MAP".equalsIgnoreCase(type)) {
+					insertGeoreportDocument(request, documentManagementAPI);
+				} else if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)) {
+					id = insertCockpitDocument(request, documentManagementAPI);
+				} else {
+					error.addErrorKey("Impossible to create a document of type [" + type + "]");
+				}
+			}
 		} catch (Throwable t) {
 			logger.error(t);
-			return new JSError().addErrorKey("sbi.document.dao.instatiation.error");
+			error.addErrorKey("sbi.document.dao.instatiation.error");
 		}
-		documentJSON.put("label", documentJSON.getString("name"));// TODO remove this
-		if (documentManagementAPI.getDocument(documentJSON.getString("label")) != null) {
-			logger.error("sbi.document.labelAlreadyExistent");
-			return new JSError().addErrorKey("sbi.document.labelAlreadyExistent");
-		}
-
-		String type = documentJSON.getString("type");
-		if ("MAP".equalsIgnoreCase(type)) {
-			insertGeoreportDocument(request, documentManagementAPI);
-		} else if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)) {
-			insertCockpitDocument(request, documentManagementAPI);
-		} else {
-			error.addErrorKey("Impossible to create a document of type [" + type + "]");
-		}
-		return error;
+		return id;
 	}
 
 	// private void modifyGeoreportDocument(JSONObject request){
-	private JSError doModifyDocument(JSONObject request, String action) throws EMFUserError, JSONException {
+	private Integer doModifyDocument(JSONObject request, String action, JSError error) throws EMFUserError, JSONException {
 		JSONObject documentJSON = request.optJSONObject("document");
 		JSONObject customDataJSON = request.optJSONObject("customData");
 
@@ -201,7 +204,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		}
 
 		// update document informations
-		document = syncronizeDocument(document, filteredFoldersJSON);
+		document = syncronizeDocument(document, filteredFoldersJSON, request.getJSONObject("document"));
 
 		String tempalteName = (MODIFY_GEOREPORT.equalsIgnoreCase(action)) ? "template.georeport" : "template.sbicockpit";
 		String templateContent = customDataJSON.optString("templateContent");
@@ -209,24 +212,20 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		AnalyticalModelDocumentManagementAPI documentManagementAPI = null;
 		try {
 			documentManagementAPI = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+			documentManagementAPI.saveDocument(document, template);
+			return document.getId();
 		} catch (Throwable t) {
 			logger.error(t);
-			return new JSError().addErrorKey("sbi.document.dao.instatiation.error");
+			error.addErrorKey("sbi.document.dao.instatiation.error");
 		}
-		documentManagementAPI.saveDocument(document, template);
-
-		// save relations between document and datasets (only for cockpit engine)
-		if (MODIFY_COCKPIT.equalsIgnoreCase(action)) {
-			insertCockpitRelationsWithDataset(templateContent, document);
-		}
-		return new JSError();
+		return null;
 	}
 
-	private BIObject syncronizeDocument(BIObject obj, JSONArray folders) throws JSONException {
+	private BIObject syncronizeDocument(BIObject obj, JSONArray folders, JSONObject document) throws JSONException {
 		BIObject toReturn = obj;
-		String name = getAttributeAsString("name");
-		String description = getAttributeAsString("description");
-		String previewFile = getAttributeAsString("previewFile");
+		String name = document.optString("name");
+		String description = document.optString("description");
+		String previewFile = document.optString("previewFile");
 
 		toReturn.setName(name);
 		toReturn.setDescription(description);
@@ -277,7 +276,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		return new JSError();
 	}
 
-	private void insertCockpitDocument(JSONObject request, AnalyticalModelDocumentManagementAPI documentManagementAPI) throws EMFUserError, JSONException {
+	private Integer insertCockpitDocument(JSONObject request, AnalyticalModelDocumentManagementAPI documentManagementAPI) throws EMFUserError, JSONException {
 
 		JSONObject documentJSON = request.optJSONObject("document");
 		JSONArray filteredFoldersJSON = new JSONArray();
@@ -302,7 +301,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		ObjTemplate template = buildDocumentTemplate("template.sbicockpit", customDataJSON, null);
 
 		documentManagementAPI.saveDocument(document, template);
-
+		return document.getId();
 	}
 
 	private JSError insertGeoReportDocumentCreatedOnDataset(JSONObject sourceDatasetJSON, JSONObject documentJSON, JSONObject customDataJSON,
@@ -810,6 +809,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 					}
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				throw new SpagoBIRuntimeException("Driver not found: " + driverName, e);
 			}
 
