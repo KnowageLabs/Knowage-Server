@@ -209,7 +209,7 @@ public class KpiService {
 					Kpi kpi = keyValue.getKey();
 					List<String> placeholders = keyValue.getValue();
 					JSONObject placeholderValues = new JSONObject();
-					if (!kpi.getPlaceholder().isEmpty()) {
+					if (kpi.getPlaceholder() != null && !kpi.getPlaceholder().isEmpty()) {
 						placeholderValues = new JSONObject(kpi.getPlaceholder());
 					}
 					for (String placeholder : placeholders) {
