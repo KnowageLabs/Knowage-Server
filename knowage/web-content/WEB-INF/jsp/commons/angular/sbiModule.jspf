@@ -27,7 +27,7 @@ sbiM.factory('sbiModule_config',function(){
     	host: '<%= GeneralUtilities.getSpagoBiHost() %>',
     	curr_country: '<%= curr_country %>',
     	curr_language: '<%= curr_language%>',
-    	<%-- 		loginUrl: '<%= GeneralUtilities.getSpagoBiContext() %>', // login url, used when session is expired --%>
+    	 
     	<%--     	currTheme: '<%= currTheme %>', --%>
 		<%-- 	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>, --%>
  		dateFormat: '<%= GeneralUtilities.getLocaleDateFormat(permanentSession) %>',  // the date format localized according to user language and country 
@@ -291,6 +291,8 @@ sbiM.service('sbiModule_translate', function() {
 
 sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, sbiModule_config, sbiModule_logger, $mdDialog, $sanitize) {
 	
+	var loginUrl = '<%= GeneralUtilities.getSpagoBiContext() %>'; // login url, used when session is expired
+	
 	var alteredContextPath=null;
 
 	this.alterContextPath=function(cpat){
@@ -344,8 +346,37 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 	*/
 	
 	var genericErrorHandling = function(data, status, headers, config, deferred) {
-  		deferred.reject(data, status, headers, config);
+		if(data.status==401){
+			console("request unauthorized");
+			redirectToLoginUrl();
+		}else{
+			deferred.reject(data, status, headers, config);	
+		}
+			
+		  		
 	};
+	
+	var redirectToLoginUrl = function() {
+    	var sessionExpiredSpagoBIJSFound = false;
+    	try {
+    		var currentWindow = window;
+    		var parentWindow = parent;
+    		while (parentWindow != currentWindow) {
+    			if (parentWindow.sessionExpiredSpagoBIJS) {
+    				parentWindow.location = loginUrl;
+    				sessionExpiredSpagoBIJSFound = true;
+    				break;
+    			} else {
+    				currentWindow = parentWindow;
+    				parentWindow = currentWindow.parent;
+    			}
+    		}
+    	} catch (err) {}
+    	
+    	if (!sessionExpiredSpagoBIJSFound) {
+    		window.location = loginUrl;
+    	}
+    };
 	
 	var handleResponse = function(data, status, headers, config, deferred) {
 		if(data.data != null){

@@ -68,7 +68,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 		 * browser will show a popup that requires the user credential.
 		 */
 		Headers<Object> header = new Headers<Object>();
-		header.add("WWW-Authenticate", "Basic realm='spagobi'");
+		//header.add("WWW-Authenticate", "Basic realm='spagobi'");
 		return new ServerResponse("", 401, header);
 	}
 
