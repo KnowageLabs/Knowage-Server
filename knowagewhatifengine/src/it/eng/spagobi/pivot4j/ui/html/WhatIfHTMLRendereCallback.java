@@ -436,7 +436,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					int rowId = context.getRowIndex();
 					int positionId = getOrdinalNoSubset(context.getCell().getOrdinal());
 					String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
-					attributes.put("src", "../img/cross-navigation.png");
+					attributes.put("src", "../../img/cross-navigation.png");
 					attributes.put("ng-click", "cellClickCreateCrossNavigationMenu('" + positionId + "');$event.stopPropagation();");
 					attributes.put("id", id);
 					startElement("img", attributes);
