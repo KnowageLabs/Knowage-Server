@@ -258,6 +258,8 @@ public class ImportMetadata extends AbstractHibernateDAO {
 				}
 			}
 			// Business Class informations
+			// load old BC for the model
+			HashMap<String, SbiMetaBc> originalBCsMap = getBCsAsMap(aSession, businessModelId);
 			for (SbiMetaBc aMetaBc : bcList) {
 				String bcName = null;
 				String tableName = null;
@@ -295,6 +297,23 @@ public class ImportMetadata extends AbstractHibernateDAO {
 				smTableBc.setSbiMetaBc(aMetaBc);
 				smTableBc.setSbiMetaTable(tablesMap.get(tableName));
 				saveTableBC(aSession, smTableBc);
+			}
+			HashMap<String, SbiMetaBc> convertListBCInMap = convertListBCInMap(bcList);
+			if (originalBCsMap.size() > 0) {
+				// if the BC already exists for the model,
+				// manage logical delete on BC that don't exist anymore
+
+				Iterator iter = originalBCsMap.keySet().iterator();
+				while (iter.hasNext()) {
+					String key = (String) iter.next();
+					SbiMetaBc origBC = originalBCsMap.get(key);
+					if (convertListBCInMap.get(key) == null) {
+						// delete logically the column that doesn't exist anymore
+						origBC.setDeleted(true);
+						origBC.getCommonInfo().setTimeDe(new Date());
+						saveBC(aSession, origBC);
+					}
+				}
 			}
 
 			tx.commit();
@@ -609,6 +628,46 @@ public class ImportMetadata extends AbstractHibernateDAO {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private HashMap<String, SbiMetaBc> getBCsAsMap(Session session, int modelId) throws Exception {
+		logger.debug("IN");
+
+		ISbiMetaBCDAO msDao = DAOFactory.getSbiMetaBCDAO();
+		// HashMap<String, SbiMetaBc> toReturn = new HashMap<String, SbiMetaBc>();
+
+		try {
+			List<SbiMetaBc> bcs = msDao.loadAllBCFromModel(modelId);
+
+			if (bcs == null) {
+				// no BC for the input model.
+				logger.debug("No BC found for the model with id [" + modelId + "] ");
+			}
+			// convert the list in map
+			// for (SbiMetaBc bc : bcs) {
+			// toReturn.put(bc.getName(), bc);
+			// }
+			// return toReturn;
+			return convertListBCInMap(bcs);
+
+		} catch (Exception e) {
+			logger.error("An error occurred while trying to get original BC for model with id [" + modelId + "]");
+			throw new Exception(e);
+
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	private HashMap convertListBCInMap(List<SbiMetaBc> lstBCs) {
+		// convert the BC list in map
+		HashMap<String, SbiMetaBc> toReturn = new HashMap<String, SbiMetaBc>();
+
+		for (SbiMetaBc bc : lstBCs) {
+			toReturn.put(bc.getName(), bc);
+		}
+
+		return toReturn;
 	}
 
 	/**

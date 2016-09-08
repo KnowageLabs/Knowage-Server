@@ -284,11 +284,16 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			Criterion labelCriterrion = Expression.eq("id", modelId);
-			Criteria criteria = tmpSession.createCriteria(SbiMetaModel.class);
-			criteria.add(labelCriterrion);
+			// Criterion labelCriterrion = Expression.eq("id", modelId);
+			// Criteria criteria = tmpSession.createCriteria(SbiMetaModel.class);
+			// criteria.add(labelCriterrion);
+			// toReturn = criteria.list();
 
-			toReturn = criteria.list();
+			String hql = " from SbiMetaBc c where  c.sbiMetaModel.id = ? ";
+			Query aQuery = tmpSession.createQuery(hql);
+			aQuery.setInteger(0, modelId);
+			toReturn = aQuery.list();
+
 			if (toReturn == null)
 				return null;
 			tx.commit();
