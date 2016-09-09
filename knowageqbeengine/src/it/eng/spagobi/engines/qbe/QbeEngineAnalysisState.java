@@ -29,6 +29,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -42,12 +43,19 @@ import org.json.JSONObject;
  */
 public class QbeEngineAnalysisState extends EngineAnalysisState {
 
+	private Locale locale;
 	/** Logger component. */
 	private static transient Logger logger = Logger.getLogger(QbeEngineAnalysisState.class);
 
 	public QbeEngineAnalysisState(IDataSource dataSource) {
 		super();
 		setDataSource(dataSource);
+	}
+
+	public QbeEngineAnalysisState(IDataSource dataSource, Locale locale) {
+		super();
+		setDataSource(dataSource);
+		setLocale(locale);
 	}
 
 	@Override
@@ -161,7 +169,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 			Iterator it = queries.iterator();
 			while (it.hasNext()) {
 				query = (Query) it.next();
-				queryJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(query, getDataSource(), null);
+				queryJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(query, getDataSource(), getLocale());
 
 				queriesJSON.put(queryJSON);
 			}
@@ -180,6 +188,14 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 
 	public void setDataSource(IDataSource dataSource) {
 		setProperty(QbeEngineStaticVariables.DATASOURCE, dataSource);
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 
 }

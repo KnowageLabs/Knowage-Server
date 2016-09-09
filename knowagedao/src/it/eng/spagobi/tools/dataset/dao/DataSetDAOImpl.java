@@ -1923,39 +1923,39 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 		/*
 		 * SbiDataSet hibNew = null;
-		 *
+		 * 
 		 * if(hibDataSet instanceof SbiFileDataSet){ hibNew = new SbiFileDataSet();
 		 * ((SbiFileDataSet)hibNew).setFileName(((SbiFileDataSet)hibDataSet).getFileName()); }
-		 *
+		 * 
 		 * if(hibDataSet instanceof SbiQueryDataSet){ hibNew = new SbiQueryDataSet();
 		 * ((SbiQueryDataSet)hibNew).setQuery(((SbiQueryDataSet)hibDataSet).getQuery());
 		 * ((SbiQueryDataSet)hibNew).setQueryScript(((SbiQueryDataSet)hibDataSet).getQueryScript());
 		 * ((SbiQueryDataSet)hibNew).setQueryScriptLanguage(((SbiQueryDataSet)hibDataSet).getQueryScriptLanguage()); }
-		 *
+		 * 
 		 * if(hibDataSet instanceof SbiWSDataSet){ hibNew = new SbiWSDataSet(); ((SbiWSDataSet)hibNew ).setAdress(((SbiWSDataSet)hibDataSet).getAdress());
 		 * ((SbiWSDataSet)hibNew ).setOperation(((SbiWSDataSet)hibDataSet).getOperation()); }
-		 *
+		 * 
 		 * if(hibDataSet instanceof SbiScriptDataSet){ hibNew =new SbiScriptDataSet(); ((SbiScriptDataSet) hibNew
 		 * ).setScript(((SbiScriptDataSet)hibDataSet).getScript()); ((SbiScriptDataSet) hibNew
 		 * ).setLanguageScript(((SbiScriptDataSet)hibDataSet).getLanguageScript());
-		 *
+		 * 
 		 * }
-		 *
+		 * 
 		 * if(hibDataSet instanceof SbiJClassDataSet){ hibNew =new SbiJClassDataSet(); ((SbiJClassDataSet) hibNew
 		 * ).setJavaClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName()); }
-		 *
+		 * 
 		 * if(hibDataSet instanceof SbiCustomDataSet){ hibNew =new SbiCustomDataSet(); ((SbiCustomDataSet) hibNew
 		 * ).setCustomData(((SbiCustomDataSet)hibDataSet).getCustomData()); ((SbiCustomDataSet) hibNew
 		 * ).setJavaClassName(((SbiCustomDataSet)hibDataSet).getJavaClassName()); }
-		 *
+		 * 
 		 * if(hibDataSet instanceof SbiQbeDataSet){ hibNew =new SbiQbeDataSet(); ((SbiQbeDataSet) hibNew
 		 * ).setSqlQuery(((SbiQbeDataSet)hibDataSet).getSqlQuery()); ((SbiQbeDataSet) hibNew ).setJsonQuery(((SbiQbeDataSet)hibDataSet).getJsonQuery());
 		 * ((SbiQbeDataSet) hibNew ).setDataSource(((SbiQbeDataSet)hibDataSet).getDataSource()); ((SbiQbeDataSet) hibNew
 		 * ).setDatamarts(((SbiQbeDataSet)hibDataSet).getDatamarts());
-		 *
-		 *
+		 * 
+		 * 
 		 * }
-		 *
+		 * 
 		 * hibNew.setCategory(hibDataSet.getCategory()); hibNew.setDsMetadata(hibDataSet.getDsMetadata()); hibNew.setMetaVersion(hibDataSet.getMetaVersion());
 		 * hibNew.setParameters(hibDataSet.getParameters()); hibNew.setPivotColumnName(hibDataSet.getPivotColumnName());
 		 * hibNew.setPivotColumnValue(hibDataSet.getPivotColumnValue()); hibNew.setPivotRowName(hibDataSet.getPivotRowName());
@@ -2094,8 +2094,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			JSONArray queries = ObjectUtils.toJSONArray(JSONCatalogue.getString("queries"));
 			HashMap<String, Boolean> insertedMap = new HashMap<String, Boolean>();
 
-			Integer sourceId = DAOFactory.getSbiMetaSourceDAO().loadSourceByNameAndType(qbeDataSource, "database").getSourceId();
-			// Integer modelId = DAOFactory.getMetaModelsDAO().loadMetaModelByName(qbeDataMart).getId();
+			Integer sourceId = DAOFactory.getSbiMetaSourceDAO().loadSourceByNameAndType(qbeDataSource.toLowerCase(), "database").getSourceId();
 			// get the business class linked to the the query fields throught the meta models classes
 			for (int i = 0; i < queries.length(); i++) {
 				JSONObject query = (JSONObject) queries.get(i);
@@ -2107,17 +2106,32 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						continue;
 					}
 					String entityName = field.getString("entity").toLowerCase();
+					if (insertedMap.get(entityName) != null) {
+						logger.debug("Relation with [" + entityName + "]  already inserted. Skip the field.");
+						continue;
+					}
 
 					SbiMetaTable metaTable = DAOFactory.getSbiMetaTableDAO().loadTableByNameAndSource(entityName, sourceId);
-					Integer tableId = metaTable.getTableId();
-					List<SbiMetaBc> metaTableBCList = DAOFactory.getSbiTableBCDAO().loadBcByTableId(tableId);
 					SbiMetaBc metaBC = null;
-					for (SbiMetaBc bc : metaTableBCList) {
-						// get the correct bc linked to the used model
-						if (bc.getSbiMetaModel().getName().equalsIgnoreCase(qbeDataMart) && !bc.isDeleted()) {
-							metaBC = bc;
-							break;
+					if (metaTable == null) {
+						metaBC = DAOFactory.getSbiMetaBCDAO().loadBcByUniqueName(entityName);
+					} else {
+						Integer tableId = metaTable.getTableId();
+						List<SbiMetaBc> metaTableBCList = DAOFactory.getSbiTableBCDAO().loadBcByTableId(tableId);
+
+						for (SbiMetaBc bc : metaTableBCList) {
+							// get the correct bc linked to the used model
+							if (bc.getSbiMetaModel().getName().equalsIgnoreCase(qbeDataMart) && !bc.isDeleted()) {
+								metaBC = bc;
+								break;
+							}
 						}
+
+						if (metaTableBCList == null || metaTableBCList.size() == 0) {
+							logger.error("The entity [" + entityName + "] doesn't exist into the SbiMetaBC tale. Relation not inserted!");
+							continue;
+						}
+
 					}
 					if (metaBC == null) {
 						logger.error("There isn't a business class associated to the phisical table [" + metaTable.getName() + "] for the model ["
@@ -2126,16 +2140,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					}
 
 					// String uniqueName = metaBC.getUniqueName().toLowerCase();
-					String uniqueName = metaBC.getName().toLowerCase();
-					if (insertedMap.get(uniqueName) != null) {
-						logger.debug("Relation with [" + uniqueName + "]  already inserted. Skip the field.");
-						continue;
-					}
-					// SbiMetaBc metaBC = DAOFactory.getSbiMetaBCDAO().loadBcByUniqueName(uniqueName);
-					if (metaTableBCList == null || metaTableBCList.size() == 0) {
-						logger.error("The entity [" + uniqueName + "] doesn't exist into the SbiMetaBC tale. Relation not inserted!");
-						continue;
-					}
+					// String uniqueName = metaBC.getName().toLowerCase();
+
 					// sets the new bcId
 					SbiMetaDsBcId metaDsBcId = new SbiMetaDsBcId();
 					metaDsBcId.setOrganization(ds.getId().getOrganization());
@@ -2152,7 +2158,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					SbiMetaDsBc metaDsBc = new SbiMetaDsBc();
 					metaDsBc.setId(metaDsBcId);
 					DAOFactory.getDsBcDAO().insertDsBc(metaDsBc);
-					insertedMap.put(uniqueName, true);
+					insertedMap.put(entityName, true);
 				}
 			}
 		} catch (Throwable t) {

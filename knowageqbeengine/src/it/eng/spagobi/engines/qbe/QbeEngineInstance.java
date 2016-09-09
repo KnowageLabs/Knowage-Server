@@ -39,6 +39,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -50,6 +51,7 @@ import org.json.JSONObject;
  */
 public class QbeEngineInstance extends AbstractEngineInstance {
 
+	Locale locale;
 	IDataSource dataSource;
 	QueryCatalogue queryCatalogue;
 	String activeQueryId;
@@ -76,6 +78,8 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		logger.debug("IN");
 
 		this.template = template;
+
+		this.locale = this.getLocale();
 
 		queryCatalogue = new QueryCatalogue();
 		queryCatalogue.addQuery(new Query());
@@ -246,13 +250,8 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	@Override
 	public IEngineAnalysisState getAnalysisState() {
 		QbeEngineAnalysisState analysisState = null;
-		analysisState = new QbeEngineAnalysisState(dataSource);
+		analysisState = new QbeEngineAnalysisState(dataSource, locale);
 		analysisState.setCatalogue(this.getQueryCatalogue());
-		// if (this.getWorkSheetDefinition() != null) {
-		// analysisState.setWorkSheetDefinition( this.getWorkSheetDefinition() );
-		// } else {
-		// analysisState.setWorkSheetDefinition( WorkSheetDefinition.EMPTY_WORKSHEET );
-		// }
 		return analysisState;
 	}
 
@@ -278,6 +277,10 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	}
 
 	public QueryCatalogue getQueryCatalogue() {
+		return queryCatalogue;
+	}
+
+	public QueryCatalogue getQueryCatalogue(Locale locale) {
 		return queryCatalogue;
 	}
 
@@ -390,6 +393,10 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 
 	public void setTechnicalUser(boolean isTechnicalUser) {
 		this.isTechnicalUser = isTechnicalUser;
+	}
+
+	public Locale getLocale() {
+		return (Locale) this.getEnv().get(EngineConstants.ENV_LOCALE);
 	}
 
 }

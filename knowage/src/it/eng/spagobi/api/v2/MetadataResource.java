@@ -187,7 +187,7 @@ public class MetadataResource extends AbstractSpagoBIResource {
 			smSource.setSourceCatalogue(physicalModelCatalog);
 			smSource.setUrl(url);
 			smSource.setType(sourceType);
-			smSource.setName(databaseName);
+			smSource.setName(databaseName.toLowerCase());
 
 			List<PhysicalTable> physicalTables = physicalModel.getTables();
 			HashMap<String, SbiMetaTableColumn> newTableColumns = new HashMap<String, SbiMetaTableColumn>();
