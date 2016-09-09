@@ -333,7 +333,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 							value = selectionsObject.getJSONArray(datasetDotColumn).get(0).toString();
 							String filter;
 							if (realtimeDatasets.contains(dataset)) {
-								filter = DataStore.DEFAULT_TABLE_NAME + "." + column + "='" + value + "'";
+								filter = DataStore.DEFAULT_TABLE_NAME + "." + AbstractJDBCDataset.encapsulateColumnName(column, null) + "='" + value + "'";
 							} else {
 								filter = AbstractJDBCDataset.encapsulateColumnName(column, SpagoBICacheConfiguration.getInstance().getCacheDataSource())
 										+ "=('" + value + "')";
@@ -401,9 +401,9 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				if (values.length() > 0) {
 					onlyEmptySelections = false;
 					if (isRealtime && !dataSet.isFlatDataset() && !(dataSet.isPersisted() && !dataSet.isPersistedHDFS())) {
-						String defaultTableName = DataStore.DEFAULT_TABLE_NAME + ".";
+						String defaultTableNameDot = DataStore.DEFAULT_TABLE_NAME + ".";
 						String[] columnsArray = columns.split(",");
-						Operand leftOperand = new Operand(defaultTableName + columnsArray[0]);
+						Operand leftOperand = new Operand(defaultTableNameDot + AbstractJDBCDataset.encapsulateColumnName(columnsArray[0], null));
 						for (int i = 0; i < values.length(); i++) {
 							String currentValues = values.getString(i);
 							if (currentValues.startsWith("(") && currentValues.endsWith(")")) {
@@ -420,7 +420,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 								sb.append(valuesArray[0]);
 								for (int j = 1; j < valuesArray.length; j++) {
 									sb.append(" AND ");
-									sb.append(defaultTableName);
+									sb.append(defaultTableNameDot);
 									sb.append(columnsArray[j]);
 									sb.append("=");
 									sb.append(valuesArray[j]);

@@ -272,7 +272,7 @@ public class AssociativeLogicManager {
 		for (String associationName : associationNames) {
 			if (realtimeDatasets.contains(datasetName)) {
 				String columnName = datasetToAssociations.get(datasetName).get(associationName);
-				columnNames.add(DataStore.DEFAULT_TABLE_NAME + "." + columnName);
+				columnNames.add(DataStore.DEFAULT_TABLE_NAME + "." + AbstractJDBCDataset.encapsulateColumnName(columnName, null));
 			} else {
 				String columnName = AbstractJDBCDataset.encapsulateColumnName(datasetToAssociations.get(datasetName).get(associationName), dataSource);
 				columnNames.add(columnName);
@@ -319,7 +319,7 @@ public class AssociativeLogicManager {
 										if (j > 0) {
 											sb.append(" AND ");
 										}
-										sb.append(columnsArray[j]);
+										sb.append(AbstractJDBCDataset.encapsulateColumnName(columnsArray[j], null));
 										sb.append("=");
 										sb.append(valuesArray[j]);
 									}
