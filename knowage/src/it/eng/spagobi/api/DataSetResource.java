@@ -304,11 +304,13 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			}
 
 			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>();
+			List<FilterCriteria> filterCriteriaForMetaModel = new ArrayList<FilterCriteria>();
 			if (selections != null && !selections.equals("")) {
 				JSONObject selectionsObject = new JSONObject(selections);
 				// in same case object is empty '{}'
 				if (selectionsObject.names() != null) {
 					filterCriteria = getFilterCriteria(label, selectionsObject, isRealtime);
+					filterCriteriaForMetaModel = getFilterCriteria(label, selectionsObject, true);
 				}
 			}
 
@@ -331,7 +333,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			}
 
 			dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, isRealtime, getParametersMap(parameters), groupCriteria,
-					filterCriteria, projectionCriteria);
+					filterCriteria, filterCriteriaForMetaModel, projectionCriteria);
 
 			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");

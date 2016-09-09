@@ -361,7 +361,8 @@ public class DatasetManagementAPI {
 	}
 
 	public IDataStore getDataStore(String label, int offset, int fetchSize, boolean isRealtime, Map<String, String> parametersValues,
-			List<GroupCriteria> groupCriteria, List<FilterCriteria> filterCriteria, List<ProjectionCriteria> projectionCriteria) {
+			List<GroupCriteria> groupCriteria, List<FilterCriteria> filterCriteria, List<FilterCriteria> filterCriteriaForMetaModel,
+			List<ProjectionCriteria> projectionCriteria) {
 
 		try {
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
@@ -404,8 +405,8 @@ public class DatasetManagementAPI {
 						dataStore = cache.refresh(dataSet, false);
 						// if result was not cached put refresh date as now
 						dataStore.setCacheDate(new Date());
-						dataStore = dataStore.aggregateAndFilterRecords(generateQuery(groupCriteria, filterCriteria, projectionCriteria, -1, -1, false),
-								offset, fetchSize);
+						dataStore = dataStore.aggregateAndFilterRecords(
+								generateQuery(groupCriteria, filterCriteriaForMetaModel, projectionCriteria, -1, -1, false), offset, fetchSize);
 					}
 				} else {
 					dataStore = cachedResultSet;
