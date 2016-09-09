@@ -159,6 +159,10 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 
 		Map env = getIOManager().getEnv();
 
+		getEnvMonitor.stop();
+
+		Monitor envVariablesMonitor = MonitorFactory.start("GeoEngine.pageResource.envVariablesMonitor");
+
 		// Add extra Environment variables specific for this engine
 		env.put(SvgViewerEngineConstants.ENV_MAPCATALOGUE_SERVICE_PROXY, mapCatalogueServiceProxy);
 
@@ -167,8 +171,7 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 		env.put(SvgViewerEngineConstants.ENV_CONTEXT_URL, getContextUrl());
 
 		env.put(SvgViewerEngineConstants.ENV_ABSOLUTE_CONTEXT_URL, getAbsoluteContextUrl());
-
-		getEnvMonitor.stop();
+		envVariablesMonitor.stop();
 
 		return env;
 	}
