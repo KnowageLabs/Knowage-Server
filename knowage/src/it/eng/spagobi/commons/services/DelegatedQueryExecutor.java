@@ -1,5 +1,5 @@
 /*
- * Knowage, Open Source Business Intelligence suite 
+ * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
  * 
  * Knowage is free software: you can redistribute it and/or modify
@@ -356,17 +356,37 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 			}
 			DialectResolver resolver = new StandardDialectResolver();
 			Dialect dialect = resolver.resolveDialect(dbMetadata);
-			String dialectName = dialect.toString();
-			if (dialectName.contains("PostgreSQL")) {
-				// inParameterValue = "true";
-				// add parameter value as SQL TYPE BOOLEAN
-				inputParameters.add(dataConnection.createDataField("", Types.BOOLEAN, true));
 
+			if (dialect != null) {
+
+				String dialectName = dialect.toString();
+				if (dialectName.contains("PostgreSQL")) {
+					// inParameterValue = "true";
+					// add parameter value as SQL TYPE BOOLEAN
+					inputParameters.add(dataConnection.createDataField("", Types.BOOLEAN, true));
+				} else {
+					inParameterValue = "1";
+					inputParameters.add(dataConnection.createDataField("", Types.VARCHAR, inParameterValue));
+
+				}
 			} else {
-				inParameterValue = "1";
-				inputParameters.add(dataConnection.createDataField("", Types.VARCHAR, inParameterValue));
-
+				try {
+					String productName = dbMetadata.getDatabaseProductName();
+					if (productName.equalsIgnoreCase("oracle")) {
+						inParameterValue = "1";
+						inputParameters.add(dataConnection.createDataField("", Types.VARCHAR, inParameterValue));
+					} else if (productName.contains("PostgreSQL")) {
+						inputParameters.add(dataConnection.createDataField("", Types.BOOLEAN, true));
+					} else {
+						inParameterValue = "1";
+						inputParameters.add(dataConnection.createDataField("", Types.VARCHAR, inParameterValue));
+					}
+				} catch (SQLException e) {
+					logger.error("Error in recovering product name");
+					throw new RuntimeException("Error in recovering both DB dialect product name database");
+				}
 			}
+			
 			skipParameterInsertion = true;
 			parameterUsed = true;
 
