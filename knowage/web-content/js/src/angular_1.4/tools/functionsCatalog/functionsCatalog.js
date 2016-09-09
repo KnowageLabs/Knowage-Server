@@ -416,13 +416,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 
 		$log.info("userId ", $scope.userId);
 
-		// sbiModule_restServices.get("executeFunction",functionId+"/?user_id=biadmin&DOCUMENT_LABEL=PythonDoc&DOCUMENT_COMMUNITIES=%5B%5D&DOCUMENT_IS_VISIBLE=true&SBI_EXECUTION_ROLE=admin&SBICONTEXT=%2Fknowage&DOCUMENT_FUNCTIONALITIES=%5B2%5D&SBI_COUNTRY=IT&DOCUMENT_AUTHOR=biadmin&DOCUMENT_DESCRIPTION=&document=1&IS_TECHNICAL_USER=true&SBI_SPAGO_CONTROLLER=%2Fservlet%2FAdapterHTTP&language=en&country=US&SBI_LANGUAGE=it&DOCUMENT_NAME=PythonDoc&NEW_SESSION=TRUE&DOCUMENT_IS_PUBLIC=true&DOCUMENT_VERSION=5&SBI_HOST=http%3A%2F%2Flocalhost%3A8080&SBI_ENVIRONMENT=DOCBROWSER&SBI_EXECUTION_ID=b9d02267227211e68ccb75d9d507deea&timereloadurl=1464178682338")
-		// sbiModule_restServices.get("executeFunction",functionId+"/?user_id="+$scope.userId)
-
-		// "http://localhost:8080/knowagedataminingengine/restful-services/executeFunction/9/?user_id=biadmin"
-
 		// sbiModule_restServices.post("1.0/functionexecution","url")
-		sbiModule_restServices.get("executeFunction",
+		sbiModule_restServices.get("execute-function",
 				functionId + "/?user_id=" + $scope.userId).success(
 				function(results) {
 					$log.info("Execution o function " + functionId
@@ -835,10 +830,10 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			// sbiModule_restServices.alterContextPath("/knowagedataminingengine");
 			sbiModule_restServices
 					.alterContextPath("/"+sbiModule_config.dataMiningContextName);
-			sbiModule_restServices.post("executeFunctionWithNewData",
+			sbiModule_restServices.post("execute-function",
 					$scope.functionId + "/?user_id=" + $scope.userId, body)
 					.success(function(executionResult) {
-						$log.info("Catalog Function executed with new data!!");
+						$log.info("Catalog Function executed with post data!!");
 						$log.info("Execution result ", executionResult);
 
 						$mdDialog.hide(executionResult);

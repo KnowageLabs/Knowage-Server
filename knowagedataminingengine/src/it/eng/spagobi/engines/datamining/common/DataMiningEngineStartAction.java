@@ -19,11 +19,13 @@ package it.eng.spagobi.engines.datamining.common;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.datamining.DataMiningEngine;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplate;
-import it.eng.spagobi.engines.datamining.template.DataMiningTemplateParseException;
+import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.ParametersDecoder;
@@ -32,7 +34,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -58,10 +59,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Path("/")
 public class DataMiningEngineStartAction extends AbstractDataMiningEngineService {
+
+	private static Set<String> functionIOFields = new HashSet<String>();
 
 	// http://localhost:8080/SpagoBIDataMiningEngine/restful-services/start
 
@@ -78,19 +82,25 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 	// Defaults
 	public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
+	private static final String SUCCESS_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/DataMining.jsp";
+	private static final String FAILURE_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/errors/startupError.jsp";
+
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(DataMiningEngineStartAction.class);
 
-	private static final String SUCCESS_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/DataMining.jsp";
-	private static final String FAILURE_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/errors/startupError.jsp";
+	static {
+		functionIOFields.add(DataMiningConstants.VARIABLES_IN);
+		functionIOFields.add(DataMiningConstants.DATASETS_IN);
+		functionIOFields.add(DataMiningConstants.DATASETS_OUT);
+		functionIOFields.add(DataMiningConstants.TEXT_OUT);
+		functionIOFields.add(DataMiningConstants.IMAGE_OUT);
+	}
 
 	@GET
 	@Path("/start")
 	@Produces("text/html")
 	public void startAction(@Context HttpServletResponse response) {
-
 		logger.debug("IN");
-
 		try {
 			SourceBean templateBean = getTemplateAsSourceBean();
 			logger.debug("User Id: " + getUserId());
@@ -108,36 +118,16 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 			DataMiningEngineInstance dataMiningEngineInstance = null;
 
 			logger.debug("Creating engine instance ...");
-
-			try {
-				dataMiningEngineInstance = DataMiningEngine.createInstance(templateBean, getEnv());
-			} catch (DataMiningTemplateParseException e) {
-				SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Template not valid", e);
-				engineException.setDescription(e.getCause().getMessage());
-				engineException.addHint("Check the document's template");
-				throw engineException;
-			} catch (SpagoBIEngineRuntimeException e) {
-				throw e;
-			} catch (Exception e) {
-				logger.error("Error starting the Data Mining engine: error while generating the engine instance.", e);
-				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while generating the engine instance.", e);
-			}
+			dataMiningEngineInstance = DataMiningEngine.createInstance(templateBean, getEnv());
 			logger.debug("Engine instance succesfully created");
 
 			getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, dataMiningEngineInstance);
-			// getExecutionSession().setAttributeInSession(EngineConstants.DOCUMENT_ID, getDocumentId());
 			getExecutionSession().setAttributeInSession(EngineConstants.ENV_DOCUMENT_LABEL, getDocumentLabel());
-			try {
-				// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
-				servletRequest = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-				response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
-				servletRequest.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(servletRequest, response);
 
-			} catch (Exception e) {
-				logger.error("Error starting the Data Mining engine: error while forwarding the execution to the jsp " + SUCCESS_REQUEST_DISPATCHER_URL, e);
-				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while forwarding the execution to the jsp "
-						+ SUCCESS_REQUEST_DISPATCHER_URL, e);
-			}
+			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
+			servletRequest = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+			response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+			servletRequest.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(servletRequest, response);
 
 			if (getAuditServiceProxy() != null) {
 				getAuditServiceProxy().notifyServiceEndEvent();
@@ -169,59 +159,19 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 	}
 
 	@GET
-	@Path("/executeFunction/{functionId}")
+	@Path("/execute-function/{id}")
 	@Produces("application/json")
-	public String executeCatalogFunction(@PathParam("functionId") int functionId, @Context HttpServletResponse response) {
+	public String executeSampleCatalogFunctionById(@PathParam("id") int id) {
 		logger.debug("IN");
-		SbiCatalogFunction function = null;
-		DataMiningEngineInstance dataMiningEngineInstance = null;
 		JSONArray serviceResponse = new JSONArray();
-
-		logger.debug("Creating engine instance ...");
-
 		try {
-
-			DataMiningTemplate template = FunctionExecutionUtils.initializeTemplateByFunctionId(functionId);
-
-			// -----------------
-
-			try {
-				Map env = getEnv();
-				dataMiningEngineInstance = DataMiningEngine.createInstance(template, env);
-			} catch (DataMiningTemplateParseException e) {
-				SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Template not valid", e);
-				engineException.setDescription(e.getCause().getMessage());
-				engineException.addHint("Check the document's template");
-				throw engineException;
-			} catch (SpagoBIEngineRuntimeException e) {
-				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while generating the engine instance.", e);
-			} catch (Exception e) {
-				logger.error("Error starting the Data Mining engine: error while generating the engine instance.", e);
-				throw new Exception("Error starting the Data Mining engine: error while generating the engine instance.", e);
-			}
+			logger.debug("Creating engine instance ...");
+			DataMiningTemplate template = FunctionExecutionUtils.initializeTemplateByFunctionId(id);
+			DataMiningEngineInstance dataMiningEngineInstance = DataMiningEngine.createInstance(template, getEnv());
 			logger.debug("Engine instance succesfully created");
 
-			try {
-				List<DataMiningResult> dataminingExecutionResults = FunctionExecutor.executeCatalogFunction(dataMiningEngineInstance, getUserProfile());
-				serviceResponse = new JSONArray();
-				for (DataMiningResult r : dataminingExecutionResults) {
-					JSONObject o = new JSONObject();
-					o.put("resultType", r.getOutputType());
-					o.put("result", r.getResult());
-					if (r.getOutputType().equalsIgnoreCase("Image")) {
-						o.put("resultName", r.getPlotName());
-					} else { // Dataset Output or Text Output
-						o.put("resultName", r.getVariablename());
-					}
-
-					serviceResponse.put(o);
-				}
-
-			} catch (Exception e) {
-
-				logger.error("Error getting datamining engine execution results!", e);
-				throw new SpagoBIEngineRuntimeException("Error getting datamining engine execution results!", e);
-			}
+			List<DataMiningResult> dataminingExecutionResults = FunctionExecutor.executeCatalogFunction(dataMiningEngineInstance, getUserProfile());
+			serviceResponse = buildDataminingResponse(dataminingExecutionResults);
 		} catch (Exception e) {
 			logger.error("Error creating or starting the Data Mining engine, or problems getting execution results!", e);
 			throw new SpagoBIEngineRuntimeException("Error creating or starting the Data Mining engine, or problems getting execution results!", e);
@@ -229,65 +179,24 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 			logger.debug("OUT");
 		}
 		return serviceResponse.toString();
-
 	}
 
 	@GET
-	@Path("/executeFunction/{organization}/{functionLabel}")
+	@Path("/execute-function/{label}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
-	public String executeCatalogFunctionByLabel(@PathParam("functionLabel") String functionLabel, @PathParam("organization") String organization,
-			@Context HttpServletResponse response) throws IOException {
-
+	public String executeSampleCatalogFunctionByLabel(@PathParam("label") String label) {
 		logger.debug("IN");
-		SbiCatalogFunction function = null;
-		DataMiningEngineInstance dataMiningEngineInstance = null;
-		JSONArray serviceResponse = new JSONArray();
-
-		logger.debug("Creating engine instance ...");
-
+		String response;
 		try {
+			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
+			fcDAO.setUserProfile(getUserProfile());
+			SbiCatalogFunction function = fcDAO.getCatalogFunctionByLabel(label);
 
-			DataMiningTemplate template = FunctionExecutionUtils.initializeTemplateByOrgAndLabel(organization, functionLabel);
-
-			// -----------------
-
-			try {
-				Map env = getEnv();
-				dataMiningEngineInstance = DataMiningEngine.createInstance(template, env);
-			} catch (DataMiningTemplateParseException e) {
-				SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Template not valid", e);
-				engineException.setDescription(e.getCause().getMessage());
-				engineException.addHint("Check the document's template");
-				throw engineException;
-			} catch (SpagoBIEngineRuntimeException e) {
-				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while generating the engine instance.", e);
-			} catch (Exception e) {
-				logger.error("Error starting the Data Mining engine: error while generating the engine instance.", e);
-				throw new Exception("Error starting the Data Mining engine: error while generating the engine instance.", e);
-			}
-			logger.debug("Engine instance succesfully created");
-
-			try {
-				List<DataMiningResult> dataminingExecutionResults = FunctionExecutor.executeCatalogFunction(dataMiningEngineInstance, getUserProfile());
-				serviceResponse = new JSONArray();
-				for (DataMiningResult r : dataminingExecutionResults) {
-					JSONObject o = new JSONObject();
-					o.put("resultType", r.getOutputType());
-					o.put("result", r.getResult());
-					if (r.getOutputType().equalsIgnoreCase("Image")) {
-						o.put("resultName", r.getPlotName());
-					} else { // Dataset Output or Text Output
-						o.put("resultName", r.getVariablename());
-					}
-
-					serviceResponse.put(o);
-				}
-
-			} catch (Exception e) {
-
-				logger.error("Error getting datamining engine execution results!", e);
-				throw new SpagoBIEngineRuntimeException("Error getting datamining engine execution results!", e);
+			if (function != null) {
+				response = executeSampleCatalogFunctionById(function.getFunctionId());
+			} else {
+				throw new SpagoBIEngineRuntimeException("Function with label [" + label + "] does not exist");
 			}
 		} catch (Exception e) {
 			logger.error("Error creating or starting the Data Mining engine, or problems getting execution results!", e);
@@ -295,207 +204,87 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 		} finally {
 			logger.debug("OUT");
 		}
-		return serviceResponse.toString();
-
+		return response;
 	}
 
 	@POST
-	@Path("/executeFunctionWithNewData/{functionId}")
+	@Path("/execute-function/{id}")
 	@Produces("application/json")
-	public String executeFunctionWithNewData(String body, @PathParam("functionId") int functionId, @Context HttpServletResponse response) {
-
+	public String executeCatalogFunctionById(String body, @PathParam("id") int id) {
 		logger.debug("IN");
-		SbiCatalogFunction function = null;
-		DataMiningEngineInstance dataMiningEngineInstance = null;
 		JSONArray serviceResponse = new JSONArray();
-		String replacementType = null;
-
-		Map<String, String> variablesInMap = null;
-		Map<String, String> datasetsInMap = null;
-		Map<String, String> datasetsOutMap = null;
-		Map<String, String> textOutMap = null;
-		Map<String, String> imageOutMap = null;
-
-		ObjectMapper objMap = new ObjectMapper();
-
-		// Example received JSON:
-		// [{"type":"variablesIn","items":{"b":"2","a":"1"}},{"type":"datasetsIn","items":{"df":..*..}},{"type":"datasetsOut","items":{"datasetOut":"datasetOut"}},{"type":"textOut","items":{}},{"type":"imageOut","items":{"res":"res"}}]
-		// *="{\"id\":{\"dsId\":6,\"versionNum\":2,\"organization\":\"DEFAULT_TENANT\"},\"name\":\"df\",\"description\":\"df\",\"label\":\"df\",\"active\":true,\"type\":\"SbiFileDataSet\",\"configuration\":{\"fileType\":\"CSV\",\"csvDelimiter\":\",\",\"csvQuote\":\"\\\"\",\"skipRows\":\"\",\"limitRows\":\"\",\"xslSheetNumber\":\"\",\"fileName\":\"df.csv\"},\"numRows\":false,\"persisted\":false,\"persistTableName\":\"\",\"owner\":\"biadmin\",\"publicDS\":true,\"scope\":{\"valueId\":191,\"domainCd\":\"DS_SCOPE\",\"domainNm\":\"Dataset scope\",\"valueCd\":\"USER\",\"valueNm\":\"User\",\"valueDs\":\"Dataset scope\"},\"scopeId\":191,\"metadata\":{\"fieldsMeta\":[{\"name\":\"ID\",\"alias\":\"ID\",\"type\":\"java.lang.String\",\"properties\":{},\"fieldType\":\"ATTRIBUTE\"},{\"name\":\"Hair\",\"alias\":\"Hair\",\"type\":\"java.lang.String\",\"properties\":{},\"fieldType\":\"ATTRIBUTE\"},{\"name\":\"Eye\",\"alias\":\"Eye\",\"type\":\"java.lang.String\",\"properties\":{},\"fieldType\":\"ATTRIBUTE\"},{\"name\":\"Sex\",\"alias\":\"Sex\",\"type\":\"java.lang.String\",\"properties\":{},\"fieldType\":\"ATTRIBUTE\"},{\"name\":\"Freq\",\"alias\":\"Freq\",\"type\":\"java.lang.String\",\"properties\":{},\"fieldType\":\"ATTRIBUTE\"}],\"properties\":{}},\"categoryId\":156,\"parameters\":[]}"}}
-		//
-		JSONArray replacements;
 		try {
-			replacements = new JSONArray(body);
+			ObjectMapper mapper = new ObjectMapper();
+			Map<String, Map<String, String>> functionIOMaps = new HashMap<String, Map<String, String>>(functionIOFields.size());
+
+			JSONArray replacements = new JSONArray(body);
 			for (int i = 0; i < replacements.length(); i++) {
 				JSONObject object = replacements.getJSONObject(i);
 				JSONObject items = object.getJSONObject("items");
 				String type = object.getString("type");
-				if (type.equalsIgnoreCase("variablesIn")) {
-					variablesInMap = objMap.readValue(items.toString(), HashMap.class);
-				} else if (type.equalsIgnoreCase("datasetsIn")) {
-					datasetsInMap = objMap.readValue(items.toString(), HashMap.class);
-				} else if (type.equalsIgnoreCase("datasetsOut")) {
-					datasetsOutMap = objMap.readValue(items.toString(), HashMap.class);
-				} else if (type.equalsIgnoreCase("textOut")) {
-					textOutMap = objMap.readValue(items.toString(), HashMap.class);
-				} else if (type.equalsIgnoreCase("imageOut")) {
-					imageOutMap = objMap.readValue(items.toString(), HashMap.class);
+				if (functionIOFields.contains(type)) {
+					Map<String, String> map = mapper.readValue(items.toString(), new TypeReference<Map<String, String>>() {
+					});
+					functionIOMaps.put(type, map);
 				}
-
 			}
-		} catch (Exception e) {
-			logger.error("Error parsing new execution data", e);
-			throw new SpagoBIEngineRuntimeException("Error parsing new execution data", e);
-		}
 
-		logger.debug("Creating engine instance ...");
-		try {
-
+			logger.debug("Creating engine instance ...");
 			// Every map is in the form <OldValue,NewValue>
-			DataMiningTemplate template = FunctionExecutionUtils.getTemplateWithReplacingValues(functionId, body, variablesInMap, datasetsInMap,
-					datasetsOutMap, textOutMap, imageOutMap);
-			// -----------------
-
-			try {
-				Map env = getEnv();
-				dataMiningEngineInstance = DataMiningEngine.createInstance(template, env);
-			} catch (DataMiningTemplateParseException e) {
-				SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Template not valid", e);
-				engineException.setDescription(e.getCause().getMessage());
-				engineException.addHint("Check the document's template");
-				throw engineException;
-			} catch (SpagoBIEngineRuntimeException e) {
-				throw e;
-			} catch (Exception e) {
-				logger.error("Error starting the Data Mining engine: error while generating the engine instance.", e);
-				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while generating the engine instance.", e);
-			}
+			DataMiningTemplate template = FunctionExecutionUtils.getTemplateWithReplacingValues(id, body, functionIOMaps);
+			DataMiningEngineInstance dataMiningEngineInstance = DataMiningEngine.createInstance(template, getEnv());
 			logger.debug("Engine instance succesfully created");
 
-			// getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, dataMiningEngineInstance);
-
 			List<DataMiningResult> dataminingExecutionResults = FunctionExecutor.executeCatalogFunction(dataMiningEngineInstance, getUserProfile());
-			serviceResponse = new JSONArray();
-			for (DataMiningResult r : dataminingExecutionResults) {
-				JSONObject o = new JSONObject();
-				o.put("resultType", r.getOutputType());
-				o.put("result", r.getResult());
-				if (r.getOutputType().equalsIgnoreCase("Image")) {
-					o.put("resultName", r.getPlotName());
-				} else { // Dataset Output o Text Output
-					o.put("resultName", r.getVariablename());
-				}
-				serviceResponse.put(o);
-			}
-
+			serviceResponse = buildDataminingResponse(dataminingExecutionResults);
 		} catch (Exception e) {
 			logger.error("Error starting the Data Mining engine or getting datamining engine execution results!", e);
-			throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine or getting datamining engine execution results!", e);
-
+			throw new SpagoBIRuntimeException("Error starting the Data Mining engine or getting datamining engine execution results!", e);
 		} finally {
 			logger.debug("OUT");
 		}
 		return serviceResponse.toString();
-
 	}
 
 	@POST
-	@Path("/executeFunctionWithNewData/{organization}/{functionLabel}")
+	@Path("/execute-function/{label}")
 	@Produces("application/json")
-	public String executeFunctionWithNewData(String body, @PathParam("functionLabel") String functionLabel, @PathParam("organization") String organization,
-			@Context HttpServletResponse response) {
-
+	public String executeCatalogFunctionByLabel(String body, @PathParam("label") String label) {
 		logger.debug("IN");
-		SbiCatalogFunction function = null;
-		DataMiningEngineInstance dataMiningEngineInstance = null;
-		JSONArray serviceResponse = new JSONArray();
-		String replacementType = null;
-
-		Map<String, String> variablesInMap = null;
-		Map<String, String> datasetsInMap = null;
-		Map<String, String> datasetsOutMap = null;
-		Map<String, String> textOutMap = null;
-		Map<String, String> imageOutMap = null;
-
-		ObjectMapper objMap = new ObjectMapper();
-
-		// Example received JSON:
-		// [{"type":"variablesIn","items":{"b":"2","a":"1"}},{"type":"datasetsIn","items":{"df":..*..}},{"type":"datasetsOut","items":{"datasetOut":"datasetOut"}},{"type":"textOut","items":{}},{"type":"imageOut","items":{"res":"res"}}]
-		// *="{\"id\":{\"dsId\":6,\"versionNum\":2,\"organization\":\"DEFAULT_TENANT\"},\"name\":\"df\",\"description\":\"df\",\"label\":\"df\",\"active\":true,\"type\":\"SbiFileDataSet\",\"configuration\":{\"fileType\":\"CSV\",\"csvDelimiter\":\",\",\"csvQuote\":\"\\\"\",\"skipRows\":\"\",\"limitRows\":\"\",\"xslSheetNumber\":\"\",\"fileName\":\"df.csv\"},\"numRows\":false,\"persisted\":false,\"persistTableName\":\"\",\"owner\":\"biadmin\",\"publicDS\":true,\"scope\":{\"valueId\":191,\"domainCd\":\"DS_SCOPE\",\"domainNm\":\"Dataset scope\",\"valueCd\":\"USER\",\"valueNm\":\"User\",\"valueDs\":\"Dataset scope\"},\"scopeId\":191,\"metadata\":{\"fieldsMeta\":[{\"name\":\"ID\",\"alias\":\"ID\",\"type\":\"java.lang.String\",\"properties\":{},\"fieldType\":\"ATTRIBUTE\"},{\"name\":\"Hair\",\"alias\":\"Hair\",\"type\":\"java.lang.String\",\"properties\":{},\"fieldType\":\"ATTRIBUTE\"},{\"name\":\"Eye\",\"alias\":\"Eye\",\"type\":\"java.lang.String\",\"properties\":{},\"fieldType\":\"ATTRIBUTE\"},{\"name\":\"Sex\",\"alias\":\"Sex\",\"type\":\"java.lang.String\",\"properties\":{},\"fieldType\":\"ATTRIBUTE\"},{\"name\":\"Freq\",\"alias\":\"Freq\",\"type\":\"java.lang.String\",\"properties\":{},\"fieldType\":\"ATTRIBUTE\"}],\"properties\":{}},\"categoryId\":156,\"parameters\":[]}"}}
-		//
-		JSONArray replacements;
+		String response;
 		try {
-			replacements = new JSONArray(body);
-			for (int i = 0; i < replacements.length(); i++) {
-				JSONObject object = replacements.getJSONObject(i);
-				JSONObject items = object.getJSONObject("items");
-				String type = object.getString("type");
-				if (type.equalsIgnoreCase("variablesIn")) {
-					variablesInMap = objMap.readValue(items.toString(), HashMap.class);
-				} else if (type.equalsIgnoreCase("datasetsIn")) {
-					datasetsInMap = objMap.readValue(items.toString(), HashMap.class);
-				} else if (type.equalsIgnoreCase("datasetsOut")) {
-					datasetsOutMap = objMap.readValue(items.toString(), HashMap.class);
-				} else if (type.equalsIgnoreCase("textOut")) {
-					textOutMap = objMap.readValue(items.toString(), HashMap.class);
-				} else if (type.equalsIgnoreCase("imageOut")) {
-					imageOutMap = objMap.readValue(items.toString(), HashMap.class);
-				}
+			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
+			fcDAO.setUserProfile(getUserProfile());
+			SbiCatalogFunction function = fcDAO.getCatalogFunctionByLabel(label);
 
+			if (function != null) {
+				response = executeCatalogFunctionById(body, function.getFunctionId());
+			} else {
+				throw new SpagoBIEngineRuntimeException("Function with label [" + label + "] does not exist");
 			}
 		} catch (Exception e) {
-			logger.error("Error parsing new execution data", e);
-			throw new SpagoBIEngineRuntimeException("Error parsing new execution data", e);
-		}
-
-		logger.debug("Creating engine instance ...");
-		try {
-
-			// Every map is in the form <OldValue,NewValue>
-			DataMiningTemplate template = FunctionExecutionUtils.getTemplateWithReplacingValuesByFuncLabel(functionLabel, organization, body, variablesInMap,
-					datasetsInMap, datasetsOutMap, textOutMap, imageOutMap);
-			// -----------------
-
-			try {
-				Map env = getEnv();
-				dataMiningEngineInstance = DataMiningEngine.createInstance(template, env);
-			} catch (DataMiningTemplateParseException e) {
-				SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Template not valid", e);
-				engineException.setDescription(e.getCause().getMessage());
-				engineException.addHint("Check the document's template");
-				throw engineException;
-			} catch (SpagoBIEngineRuntimeException e) {
-				throw e;
-			} catch (Exception e) {
-				logger.error("Error starting the Data Mining engine: error while generating the engine instance.", e);
-				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while generating the engine instance.", e);
-			}
-			logger.debug("Engine instance succesfully created");
-
-			// getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, dataMiningEngineInstance);
-
-			List<DataMiningResult> dataminingExecutionResults = FunctionExecutor.executeCatalogFunction(dataMiningEngineInstance, getUserProfile());
-			serviceResponse = new JSONArray();
-			for (DataMiningResult r : dataminingExecutionResults) {
-				JSONObject o = new JSONObject();
-				o.put("resultType", r.getOutputType());
-				o.put("result", r.getResult());
-				if (r.getOutputType().equalsIgnoreCase("Image")) {
-					o.put("resultName", r.getPlotName());
-				} else { // Dataset Output o Text Output
-					o.put("resultName", r.getVariablename());
-				}
-				serviceResponse.put(o);
-			}
-
-		} catch (Exception e) {
-			logger.error("Error starting the Data Mining engine or getting datamining engine execution results!", e);
-			throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine or getting datamining engine execution results!", e);
-
+			logger.error("Error creating or starting the Data Mining engine, or problems getting execution results!", e);
+			throw new SpagoBIEngineRuntimeException("Error creating or starting the Data Mining engine, or problems getting execution results!", e);
 		} finally {
 			logger.debug("OUT");
 		}
-		return serviceResponse.toString();
+		return response;
+	}
 
+	private JSONArray buildDataminingResponse(List<DataMiningResult> dataminingExecutionResults) throws JSONException {
+		JSONArray response = new JSONArray();
+		for (DataMiningResult r : dataminingExecutionResults) {
+			JSONObject o = new JSONObject();
+			o.put("resultType", r.getOutputType());
+			o.put("result", r.getResult());
+			if (r.getOutputType().equalsIgnoreCase("Image")) {
+				o.put("resultName", r.getPlotName());
+			} else { // Dataset Output o Text Output
+				o.put("resultName", r.getVariablename());
+			}
+			response.put(o);
+		}
+		return response;
 	}
 
 	@GET

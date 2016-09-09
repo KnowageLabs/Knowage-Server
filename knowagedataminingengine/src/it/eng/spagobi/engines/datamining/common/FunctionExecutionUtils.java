@@ -3,6 +3,7 @@ package it.eng.spagobi.engines.datamining.common;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
@@ -24,9 +25,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 public class FunctionExecutionUtils {
+
+	static protected Logger logger = Logger.getLogger(FunctionExecutionUtils.class);
 
 	public static DataMiningTemplate initializeTemplateByFunctionId(int functionId) {
 		SbiCatalogFunction function = null;
@@ -42,59 +46,23 @@ public class FunctionExecutionUtils {
 
 	}
 
-	public static DataMiningTemplate initializeTemplateByOrgAndLabel(String organization, String functionLabel) {
-
-		SbiCatalogFunction function = null;
-		ICatalogFunctionDAO fcDAO = null;
+	public static DataMiningTemplate getTemplateWithReplacingValues(int functionId, String body, Map<String, Map<String, String>> functionIOMaps) {
+		logger.debug("IN");
+		DataMiningTemplate template;
 		try {
-			fcDAO = DAOFactory.getCatalogFunctionDAO();
+			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
+			SbiCatalogFunction function = fcDAO.getCatalogFunctionById(functionId);
+			template = getTemplateWithReplacingValuesFromFunction(function, body, functionIOMaps);
 		} catch (EMFUserError e1) {
 			throw new SpagoBIRuntimeException("Error getting catalog function DAO", e1);
 		}
-		function = fcDAO.getCatalogFunctionByLabel(organization, functionLabel);
-
-		DataMiningTemplate template = getDataMiningTemplate(function);
-		return template;
-	}
-
-	public static DataMiningTemplate getTemplateWithReplacingValues(int functionId, String body, Map<String, String> variablesInMap,
-			Map<String, String> datasetsInMap, Map<String, String> datasetsOutMap, Map<String, String> textOutMap, Map<String, String> imageOutMap) {
-		SbiCatalogFunction function = null;
-		ICatalogFunctionDAO fcDAO = null;
-		try {
-			fcDAO = DAOFactory.getCatalogFunctionDAO();
-		} catch (EMFUserError e1) {
-			throw new SpagoBIRuntimeException("Error getting catalog function DAO", e1);
-		}
-		function = fcDAO.getCatalogFunctionById(functionId);
-		DataMiningTemplate template = getTemplateWithReplacingValuesFromFunction(function, body, variablesInMap, datasetsInMap, datasetsOutMap, textOutMap,
-				imageOutMap);
-
+		logger.debug("OUT");
 		return template;
 
 	}
 
-	public static DataMiningTemplate getTemplateWithReplacingValuesByFuncLabel(String functionLabel, String organization, String body,
-			Map<String, String> variablesInMap, Map<String, String> datasetsInMap, Map<String, String> datasetsOutMap, Map<String, String> textOutMap,
-			Map<String, String> imageOutMap) {
-
-		SbiCatalogFunction function = null;
-		ICatalogFunctionDAO fcDAO = null;
-		try {
-			fcDAO = DAOFactory.getCatalogFunctionDAO();
-		} catch (EMFUserError e1) {
-			throw new SpagoBIRuntimeException("Error getting catalog function DAO", e1);
-		}
-		function = fcDAO.getCatalogFunctionByLabel(organization, functionLabel);
-		DataMiningTemplate template = getTemplateWithReplacingValuesFromFunction(function, body, variablesInMap, datasetsInMap, datasetsOutMap, textOutMap,
-				imageOutMap);
-
-		return template;
-
-	}
-
-	private static DataMiningTemplate getTemplateWithReplacingValuesFromFunction(SbiCatalogFunction function, String body, Map<String, String> variablesInMap,
-			Map<String, String> datasetsInMap, Map<String, String> datasetsOutMap, Map<String, String> textOutMap, Map<String, String> imageOutMap) {
+	private static DataMiningTemplate getTemplateWithReplacingValuesFromFunction(SbiCatalogFunction function, String body,
+			Map<String, Map<String, String>> functionIOMaps) {
 		// Maps contain values to use instead of function values
 		DataMiningTemplate template = null;
 		try {
@@ -103,6 +71,12 @@ public class FunctionExecutionUtils {
 
 			Set<SbiFunctionInputDataset> datasets = function.getSbiFunctionInputDatasets();
 			List<DataMiningDataset> dataminingDatasets = new ArrayList<DataMiningDataset>();
+
+			Map<String, String> variablesInMap = functionIOMaps.get(DataMiningConstants.VARIABLES_IN);
+			Map<String, String> datasetsInMap = functionIOMaps.get(DataMiningConstants.DATASETS_IN);
+			Map<String, String> datasetsOutMap = functionIOMaps.get(DataMiningConstants.DATASETS_OUT);
+			Map<String, String> textOutMap = functionIOMaps.get(DataMiningConstants.TEXT_OUT);
+			Map<String, String> imageOutMap = functionIOMaps.get(DataMiningConstants.IMAGE_OUT);
 
 			for (SbiFunctionInputDataset dataset : datasets) {
 				DataMiningDataset d = new DataMiningDataset();
@@ -133,12 +107,11 @@ public class FunctionExecutionUtils {
 										// spagoBI datasets from file datasets created when executing a document
 				JSONObject confObj = new JSONObject(iDataset.getConfiguration());
 
-				d.setFileName(confObj.getString("fileName"));
-				// d.setFileName(iDataset.getName() + ".csv");
-				d.setOptions("sep='" + confObj.getString("csvDelimiter") + "'");
-				// d.setOptions("sep=','");
-				d.setReadType(confObj.getString("fileType").toLowerCase());
-				// d.setReadType("csv"); // Default dataset is CSV file
+				if (confObj.has("fileName")) {
+					d.setFileName(confObj.getString("fileName"));
+					d.setOptions("sep='" + confObj.getString("csvDelimiter") + "'");
+					d.setReadType(confObj.getString("fileType").toLowerCase());
+				}
 				dataminingDatasets.add(d);
 			}
 			template.setDatasets(dataminingDatasets);

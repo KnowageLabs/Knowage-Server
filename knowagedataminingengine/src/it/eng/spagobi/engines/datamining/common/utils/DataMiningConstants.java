@@ -40,4 +40,10 @@ public class DataMiningConstants {
 	public static final String DATA_MINING_EXTERNAL_CODE_PATH = "external/";
 	public static final String PARAM_LIBRARIES = "libraries";
 
+	public static final String VARIABLES_IN = "variablesIn";
+	public static final String DATASETS_IN = "datasetsInMap";
+	public static final String DATASETS_OUT = "datasetsOutMap";
+	public static final String TEXT_OUT = "textOutMap";
+	public static final String IMAGE_OUT = "imageOut";
+
 }

@@ -191,7 +191,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	}
 
 	@Override
-	public int updateCatalogFunction(CatalogFunction updatedCatalogFunction, int catalogFunctionId) {
+	public int updateCatalogFunction(CatalogFunction updatedCatalogFunction, int id) {
 
 		Session session;
 		Transaction transaction;
@@ -210,7 +210,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 
-			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, catalogFunctionId);
+			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, id);
 			hibCatFunction.getSbiFunctionInputDatasets().clear();
 			for (Object o : hibCatFunction.getSbiFunctionInputDatasets()) {
 				SbiFunctionInputDataset di = (SbiFunctionInputDataset) o;
@@ -273,12 +273,12 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			logger.debug("OUT");
 		}
 
-		return catalogFunctionId;
+		return id;
 
 	}
 
 	@Override
-	public void deleteCatalogFunction(int idFunctionToDelete) {
+	public void deleteCatalogFunction(int id) {
 
 		Session session;
 		Transaction transaction;
@@ -293,7 +293,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			transaction = session.beginTransaction();
 			Assert.assertNotNull(transaction, "transaction cannot be null");
 
-			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, idFunctionToDelete);
+			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, id);
 			session.delete(hibCatFunction);
 
 			transaction.commit();
@@ -314,7 +314,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	}
 
 	@Override
-	public SbiCatalogFunction getCatalogFunctionById(int functionId) {
+	public SbiCatalogFunction getCatalogFunctionById(int id) {
 
 		Session session;
 		Transaction transaction = null;
@@ -328,7 +328,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			session = getSession();
 			Assert.assertNotNull(session, "session cannot be null");
 			transaction = session.beginTransaction();
-			sbiCatalogFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, functionId);
+			sbiCatalogFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, id);
 			transaction.commit();
 
 		} catch (Throwable t) {
@@ -348,7 +348,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	}
 
 	@Override
-	public SbiCatalogFunction getCatalogFunctionByLabel(String organization, String functionLabel) {
+	public SbiCatalogFunction getCatalogFunctionByLabel(String label) {
 
 		Session session;
 		Transaction transaction = null;
@@ -362,15 +362,11 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			session = getSession();
 			Assert.assertNotNull(session, "session cannot be null");
 			transaction = session.beginTransaction();
-			// sbiCatalogFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, functionId);
-			// TODO mettere una hibernate Query
 
-			String hql = "FROM SbiCatalogFunction F WHERE F.commonInfo.organization = ? and F.label = ?";
+			String hql = "FROM SbiCatalogFunction F WHERE F.label = ?";
 			Query query = session.createQuery(hql);
-			query.setString(0, organization);
-			query.setString(1, functionLabel);
-			List<SbiCatalogFunction> results = query.list();
-			sbiCatalogFunction = results.get(0);
+			query.setString(0, label);
+			sbiCatalogFunction = (SbiCatalogFunction) query.uniqueResult();
 
 			transaction.commit();
 

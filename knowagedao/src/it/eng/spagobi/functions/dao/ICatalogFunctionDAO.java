@@ -15,12 +15,12 @@ public interface ICatalogFunctionDAO extends ISpagoBIDao {
 
 	public List<SbiCatalogFunction> loadAllCatalogFunctions();
 
-	public int updateCatalogFunction(CatalogFunction updatedCatalogFunction, int catalogFunctionId);
+	public int updateCatalogFunction(CatalogFunction updatedCatalogFunction, int id);
 
-	public void deleteCatalogFunction(int idFunctionToDelete);
+	public void deleteCatalogFunction(int id);
 
-	public SbiCatalogFunction getCatalogFunctionById(int functionId);
+	public SbiCatalogFunction getCatalogFunctionById(int id);
 
-	public SbiCatalogFunction getCatalogFunctionByLabel(String organization, String functionLabel);
+	public SbiCatalogFunction getCatalogFunctionByLabel(String label);
 
 }
