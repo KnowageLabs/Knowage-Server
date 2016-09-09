@@ -407,12 +407,13 @@
 						   .success(function(data, status, headers, config) {  
 							   if(data.status=="OK"){
 								   paramDialogCtrl.tableData = data.result.root;
+								   paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
 							   }
 						   });
 						   
 						paramDialogCtrl.initSelectedTableItems = function() {
 							var isMultivalue = paramDialogCtrl.tempParameter.multivalue;
-							var defaultValues = paramDialogCtrl.tempParameter.defaultValues;
+							var defaultValues = paramDialogCtrl.tableData;
 							
 							if(paramDialogCtrl.tempParameter.parameterValue 
 									&& paramDialogCtrl.tempParameter.parameterValue != null) {
@@ -448,7 +449,7 @@
 							}
 						};
 						
-						paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
+						//paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
 					}
 				}
 			});
