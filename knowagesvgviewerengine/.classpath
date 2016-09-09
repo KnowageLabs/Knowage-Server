@@ -83,9 +83,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-1.2.8.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mail-1.4.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/MetaModel-core-4.3.1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/MetaModel-full-4.3.1.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/MetaModel-pojo-4.3.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/pdf-transcoder.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/poi-3.7-20101029.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/poi-ooxml-3.7-20101029.jar"/>
@@ -114,5 +111,8 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xml-apis-ext.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xmlsec-1.4.2.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/MetaModel-core-4.5.4.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/MetaModel-full-4.5.4.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/MetaModel-pojo-4.5.4.jar"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>
