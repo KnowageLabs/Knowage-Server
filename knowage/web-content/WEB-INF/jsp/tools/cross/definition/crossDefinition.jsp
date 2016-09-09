@@ -108,7 +108,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<angular-table flex	id="docList" 
 			ng-model="listDoc" item-name="DOCUMENT_NAME"
 			show-item-tooltip="false" highlights-selected-item="true"
-			columns='[{"label":"Label","name":"DOCUMENT_NM"}, {"label":"Name","name":"DOCUMENT_NAME"}, {"label":"Description","name":"DOCUMENT_DESCR"}, {"label":"Author","name":"DOCUMENT_AUTH"}]'
+			columns='[{"label":"Label","name":"DOCUMENT_NM"}, {"label":"Name","name":"DOCUMENT_NAME"}]'
 			show-search-bar="true"
 			columns-search='["DOCUMENT_NM","DOCUMENT_NAME"]'
 			total-item-count = totalCount
