@@ -62,7 +62,10 @@
 										//old
 										//paramStrTree += parameter.parameterValue[z];
 										//modify description tree
-										paramStrTree += parameter.parameterDescription[parameter.parameterValue[z]];
+										if(typeof parameter.parameterDescription !== 'undefined'){
+											paramStrTree += parameter.parameterDescription[parameter.parameterValue[z]];
+										}
+										
 										
 									}
 									
