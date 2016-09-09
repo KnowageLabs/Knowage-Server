@@ -418,6 +418,18 @@ md-tabs .md-tab.md-active{
 	background-size:23px 23px;
 }
 
+.BUTTON_SCENARIO_WIZARD{
+	background-image: url(../img/olapDesignerScenario.png);
+	background-size:23px 23px;
+}
+.BUTTON_CROSSNAV_WIZARD{
+	background-image: url(../img/olapDesignerCross.png);
+	background-size:23px 23px;
+}
+.BUTTON_WIZARD{
+	background-image: url(../img/olapDesignerButtons.png);
+	background-size:23px 23px;
+}
 .BUTTON_CROSS_NAVIGATION{
 	background-image: url(../img/cross-navigation.png);
 	background-size:10px 10px;
