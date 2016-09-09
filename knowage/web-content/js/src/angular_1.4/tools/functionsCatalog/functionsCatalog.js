@@ -177,7 +177,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	// --
 
 	$scope.obtainCatalogFunctionsRESTcall = function() {
-		sbiModule_restServices.get("1.0/FunctionsCatalog", "").success(
+		sbiModule_restServices.get("1.0/function-catalog", "").success(
 				function(data) {
 					$log.info("Functions of the catalog returned", data);
 					$scope.functionsList = data.functions;
@@ -250,7 +250,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 
 				$log.info("Shown function to send with POST", body);
 
-				sbiModule_restServices.post("1.0/FunctionsCatalog",
+				sbiModule_restServices.post("1.0/functions-catalog",
 						"insertCatalogFunction", body).success(function(data) {
 					$log.info("Catalog Function Added!");
 					$log.info("Function added to db with id: ", data);
@@ -294,7 +294,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				functionId = $scope.shownFunction.id;
 				$log.info("Shown function to send with PUT", body);
 
-				sbiModule_restServices.put("1.0/FunctionsCatalog",
+				sbiModule_restServices.put("1.0/functions-catalog",
 						"updateCatalogFunction/" + functionId, body).success(
 						function(data) {
 							$log.info("Catalog Function Updated!");
@@ -394,7 +394,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$scope.shownFunction = angular.copy(item);
 		var functionId = $scope.shownFunction.id;
 
-		sbiModule_restServices.get("1.0/FunctionsCatalog",
+		sbiModule_restServices.get("1.0/functions-catalog",
 				"deleteFunction/" + functionId).success(function(data) {
 			$log.info("Catalog Function Deleted!");
 			$log.info("Message returned: ", data);
@@ -553,7 +553,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 //			}
 //			$scope.functionsList = $scope.functionsToDisplay;
 //			return $scope.functionsToDisplay;
-			sbiModule_restServices.get("1.0/FunctionsCatalog", type).success(
+			sbiModule_restServices.get("1.0/functions-catalog", type).success(
 					function(data) {
 						$log.info("Functions of the catalog returned", data);
 						$scope.functionsList = data.functions;

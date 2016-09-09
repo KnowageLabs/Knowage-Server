@@ -58,7 +58,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-@Path("/1.0/FunctionsCatalog")
+@Path("/1.0/functions-catalog")
 @ManageAuthorization
 public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	public static transient Logger logger = Logger.getLogger(FunctionsCatalogResource.class);
