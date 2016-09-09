@@ -517,14 +517,19 @@
 							if(parameter.selectionType.toLowerCase() == "tree" || parameter.selectionType.toLowerCase() == "lookup") {
 								//TREE DESC FOR LABEL
 								var ArrValue = JSON.parse(params[parameter.urlName]);
-								var ArrDesc = params[parameter.urlName+'_field_visible_description'].split(';');
+
 								if (typeof parameter.parameterDescription === 'undefined'){
 									parameter.parameterDescription = {};
 								}
-								for(var w=0; w<ArrValue.length; w++){
-									parameter.parameterDescription[ArrValue[w]] =ArrDesc[w];
+								
+								if(params[parameter.urlName+'_field_visible_description']!=undefined)
+								{	
+									var ArrDesc = params[parameter.urlName+'_field_visible_description'].split(';');
+									for(var w=0; w<ArrValue.length; w++){
+										parameter.parameterDescription[ArrValue[w]] =ArrDesc[w];
+									}
+									parameter.parameterValue = ArrValue;
 								}
-								parameter.parameterValue = ArrValue;
 							} else {
 								//FROM VIEWPOINT : the lov value saved (multivalue or single value) matched  with the parameter 
 								//parameter.parameterValue = parameter.multivalue ? JSON.parse(params[parameter.urlName])	: params[parameter.urlName];
