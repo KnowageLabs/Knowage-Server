@@ -39,11 +39,6 @@
     		}
     }
     
-    input.color-picker-input{
-    	border : none;
-    	width:	100%;
-    }
-    
     .overlayGray {
     	background:rgba(10, 10, 10, 0.58);
     }
@@ -110,19 +105,31 @@
 				.contentElementTab{
 					.contentElementBox{
 						border: 1px solid lightgray;
-						
-						.dndDraggingSource{
-							display:none;
+						margin: 5px;
 						}
-					}
 				}
 				md-list[dnd-list]{
 					min-height:42px;
 				}
+				
+				.dropZone{
+					border: 2px dashed lightslategray;
+				}
+				
+				.dndDraggingSource{
+					display:none;
+				}
+						
 				.dndPlaceholder{
 					background-color:rgba(59, 103, 140, 0.44);
 				}
+				
 			}
+			.dndDragging{
+					background-color: #eceff1 !important;
+					opacity: 1  !important;
+					box-shadow: 0 1px 8px 0 rgba(0,0,0,.2),0 3px 4px 0 rgba(0,0,0,.14),0 3px 3px -2px rgba(0,0,0,.12)  !important;
+				}
 		}
 	}
     .md-button.md-knowage-theme.md-fab:not([disabled]):hover {
