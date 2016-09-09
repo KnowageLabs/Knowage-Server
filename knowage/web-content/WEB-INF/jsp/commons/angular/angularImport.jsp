@@ -23,7 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
 
 <!-- angular reference-->
+<!-- START-DEBUG -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.js"></script>
+<!-- END-DEBUG -->
+<!-- START-PRODUCTION 
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.min.js"></script>
+END-PRODUCTION -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>

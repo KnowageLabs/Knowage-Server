@@ -417,6 +417,23 @@
 				<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
 				<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
 			</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/angular/angularImport.jsp">
+			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/angular/angularImport.jsp">
+			<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
+		</replace>
+
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/angular/angularImport.jsp">
+			<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/angular/angularImport.jsp">
+			<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
+		</replace>		
 
 	</target>
 
