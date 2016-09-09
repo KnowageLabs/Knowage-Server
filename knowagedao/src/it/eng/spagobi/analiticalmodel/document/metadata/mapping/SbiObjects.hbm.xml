@@ -145,9 +145,9 @@
    </key>
    <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar"/>
   </set>
-  <set name="sbiOutputParameters" lazy="true" cascade="all-delete-orphan">
+  <set name="sbiOutputParameters" lazy="true" inverse="true" >
    <key>
-    <column name="biobj_id" not-null="false"/>
+    <column name="biobj_id" not-null="true"/>
    </key>
    <one-to-many class="it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter"/>
   </set>

@@ -17,11 +17,6 @@
  */
 package it.eng.spagobi.tools.glossary.dao;
 
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONObject;
-
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessClsWlistId;
@@ -41,11 +36,17 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
+import java.util.List;
+import java.util.Map;
+
+import org.hibernate.Session;
+import org.json.JSONObject;
+
 /**
  * CRUD operations
- *
+ * 
  * @author salvo l.
- *
+ * 
  */
 public interface IGlossaryDAO extends ISpagoBIDao {
 	//
@@ -120,8 +121,8 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	// public Integer insertWordOld(SbiGlWord word,List<SbiGlWord> objLink,List<SbiGlAttribute> objAttr,Map<Integer, JSONObject> MapAttr,Map<Integer,
 	// JSONObject> MapLink,final boolean modify);
 
-	public Integer insertWord(SbiGlWord word, List<SbiGlWord> objLink, List<SbiUdp> objAttr, Map<Integer, JSONObject> MapAttr, Map<Integer, JSONObject> MapLink,
-			final boolean modify);
+	public Integer insertWord(SbiGlWord word, List<SbiGlWord> objLink, List<SbiUdp> objAttr, Map<Integer, JSONObject> MapAttr,
+			Map<Integer, JSONObject> MapLink, final boolean modify);
 
 	public void modifyWord(SbiGlWord word);
 
@@ -189,6 +190,8 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	public SbiGlDocWlist getDocWlistOrNull(SbiGlDocWlistId id);
 
 	public void deleteDocWlist(SbiGlDocWlistId id);
+
+	public void deleteDocWlistByBiobjId(Integer biobjId, Session session);
 
 	// datasetWlist
 	public List<SbiGlDataSetWlist> listDataSetWlist(Integer datasetId, String Organiz);

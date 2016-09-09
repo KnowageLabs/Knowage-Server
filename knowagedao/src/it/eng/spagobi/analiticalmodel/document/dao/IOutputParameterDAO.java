@@ -23,11 +23,13 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 public interface IOutputParameterDAO extends ISpagoBIDao {
 
 	/**
 	 * List SbiOutputParameter by SbiObject id
-	 *
+	 * 
 	 * @param id
 	 *            of SbiObject
 	 * @return list of OutputParameter
@@ -36,12 +38,16 @@ public interface IOutputParameterDAO extends ISpagoBIDao {
 
 	public void removeParameter(Integer id) throws EMFUserError;
 
+	public void removeParameter(Integer id, Session aSession) throws EMFUserError;
+
 	public Integer saveParameter(OutputParameter outputParameter);
 
 	public OutputParameter getOutputParameter(Integer id);
 
+	public void removeParametersByBiobjId(Integer biobjId, Session session) throws EMFUserError;
+
 	/**
-	 *
+	 * 
 	 * @param list
 	 *            of OutputParameter
 	 */

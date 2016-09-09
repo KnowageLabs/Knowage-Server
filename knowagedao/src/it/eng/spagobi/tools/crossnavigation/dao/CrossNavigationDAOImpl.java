@@ -293,13 +293,15 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		Disjunction disj = Restrictions.disjunction();
 		if (!inputParameters.isEmpty()) {
 			disj.add(Restrictions.conjunction().add(Restrictions.eq("_par.fromType", 1)).add(Restrictions.in("_par.fromKeyId", inputParameters)));
+			disj.add(Restrictions.in("_par.toKeyId", inputParameters));
 		}
 		if (!outputParameters.isEmpty()) {
 			disj.add(Restrictions.conjunction().add(Restrictions.eq("_par.fromType", 0)).add(Restrictions.in("_par.fromKeyId", outputParameters)));
 		}
 		disj.add(Restrictions.conjunction().add(Restrictions.eq("_par.fromType", 2)).add(Restrictions.eq("_par.fromKeyId", documentId)));
 
-		return session.createCriteria(SbiCrossNavigation.class).createAlias("sbiCrossNavigationPars", "_par").add(disj).list();
+		List ret = session.createCriteria(SbiCrossNavigation.class).createAlias("sbiCrossNavigationPars", "_par").add(disj).list();
+		return ret;
 	}
 
 	@Override

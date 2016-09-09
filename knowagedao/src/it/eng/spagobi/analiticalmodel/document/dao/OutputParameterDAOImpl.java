@@ -38,6 +38,7 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 
 public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOutputParameterDAO {
@@ -99,35 +100,39 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 	}
 
 	@Override
+	public void removeParameter(Integer id, Session aSession) throws EMFUserError {
+		ICrossNavigationDAO crossNavigationDao = DAOFactory.getCrossNavigationDAO();
+		List<SbiCrossNavigationPar> cnParToRemove = crossNavigationDao.listNavigationsByOutputParameters(id, aSession);
+		List<Integer> crossNavigation = new ArrayList<Integer>();
+		// Delete FROM CROSS_NAVIFATION_PAR
+		for (SbiCrossNavigationPar cn : cnParToRemove) {
+			aSession.delete(cn);
+			if (!crossNavigation.contains(cn.getSbiCrossNavigation().getId()))
+				crossNavigation.add(cn.getSbiCrossNavigation().getId());
+		}
+		// Delete FROM CROSS_NAVIGATION
+		for (Integer scnId : crossNavigation) {
+			List<SbiCrossNavigationPar> sbiCrossPar = crossNavigationDao.listNavigationsByCrossNavParId(scnId, aSession);
+			if (sbiCrossPar == null || sbiCrossPar.size() == 0) {
+				SbiCrossNavigation snc = crossNavigationDao.loadSbiCrossNavigationById(scnId, aSession);
+				aSession.delete(snc);
+			}
+		}
+
+		SbiOutputParameter sop = (SbiOutputParameter) aSession.load(SbiOutputParameter.class, id);
+		aSession.delete(sop);
+	}
+
+	@Override
 	public void removeParameter(Integer id) throws EMFUserError {
 
 		Session aSession = null;
 		Transaction tx = null;
-		ICrossNavigationDAO crossNavigationDao = DAOFactory.getCrossNavigationDAO();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiOutputParameter sop = load(SbiOutputParameter.class, id);
-			aSession.delete(sop);
-
-			List<SbiCrossNavigationPar> cnParToRemove = crossNavigationDao.listNavigationsByOutputParameters(id, aSession);
-			List<Integer> crossNavigation = new ArrayList<Integer>();
-			// Delete FROM CROSS_NAVIFATION_PAR
-			for (SbiCrossNavigationPar cn : cnParToRemove) {
-				aSession.delete(cn);
-				if (!crossNavigation.contains(cn.getSbiCrossNavigation().getId()))
-					crossNavigation.add(cn.getSbiCrossNavigation().getId());
-			}
-			// Delete FROM CROSS_NAVIGATION
-			for (Integer scnId : crossNavigation) {
-				List<SbiCrossNavigationPar> sbiCrossPar = crossNavigationDao.listNavigationsByCrossNavParId(scnId, aSession);
-				if (sbiCrossPar == null || sbiCrossPar.size() == 0) {
-					SbiCrossNavigation snc = crossNavigationDao.loadSbiCrossNavigationById(scnId, aSession);
-					aSession.delete(snc);
-				}
-
-			}
+			removeParameter(id, aSession);
 
 			// commit all changes
 			tx.commit();
@@ -166,6 +171,20 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 		type.setValueName(sbiType.getValueNm());
 		type.setValueId(sbiType.getValueId());
 		return type;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see it.eng.spagobi.analiticalmodel.document.dao.IOutputParameterDAO#removeParameters(java.lang.Integer, org.hibernate.Session)
+	 */
+	@Override
+	public void removeParametersByBiobjId(Integer biobjId, Session session) throws EMFUserError {
+		List<Integer> ids = session.createCriteria(SbiOutputParameter.class).add(Restrictions.eq("biobjId", biobjId)).setProjection(Property.forName("id"))
+				.list();
+		for (Integer id : ids) {
+			removeParameter(id, session);
+		}
 	}
 
 }
