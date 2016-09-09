@@ -366,7 +366,57 @@
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
 	<target name="production" depends="create-production">
-		<!-- non trova i files-->
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS.jspf">
+			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS.jspf">
+			<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
+		</replace>
+
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS.jspf">
+			<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS.jspf">
+			<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS311.jspf">
+			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS311.jspf">
+			<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
+		</replace>
+
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS311.jspf">
+			<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS311.jspf">
+			<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
+		</replace>
+			<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS410.jspf">
+				<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
+				<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
+			</replace>
+			<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS410.jspf">
+				<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
+				<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
+			</replace>
+
+			<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS410.jspf">
+				<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
+				<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
+			</replace>
+			<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS410.jspf">
+				<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
+				<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
+			</replace>
 
 	</target>
 
