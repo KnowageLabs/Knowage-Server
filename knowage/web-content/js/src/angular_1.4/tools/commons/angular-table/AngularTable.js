@@ -969,6 +969,7 @@ function TableHeaderControllerFunction($scope, $timeout) {
             $scope.searchFunction({
                 searchValue: $scope.prevSearch,
                 itemsPerPage: $scope.itemsPerPage,
+                currentPageNumber: 1,
                 columnsSearch: $scope.columnsSearch,
                 columnOrdering: $scope.column_ordering,
                 reverseOrdering: $scope.reverse_col_ord
