@@ -176,7 +176,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 				"EXPORT_SNAPSHOT":$scope.checkboxs.exportSnapshots,
 				"EXPORT_CROSSNAV":$scope.checkboxs.exportCrossNav,
 				"EXPORT_BIRT": $scope.checkboxs.exportBirt, 
-				"EXPORT_SCHEDULER": $scope.exportScheduler};
+				"EXPORT_SCHEDULER": $scope.checkboxs.exportScheduler};
 		
 		for (var i =0 ; i < $scope.selected.length;i++){
 			if ($scope.selected[i].type == "biObject"){
