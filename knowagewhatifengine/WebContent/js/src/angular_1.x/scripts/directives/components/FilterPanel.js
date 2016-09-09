@@ -120,7 +120,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		$scope.data.push(x);
 		
 		if(filter.axis > -1)
-			getVisibleService(filter.uniqueName,filter.axis);
+			getVisibleService(filter.selectedHierarchyUniqueName,filter.axis);
 		
 		$scope.filterDialogToolbarName = filter.caption;
 		$scope.filterAxisPosition = index;
