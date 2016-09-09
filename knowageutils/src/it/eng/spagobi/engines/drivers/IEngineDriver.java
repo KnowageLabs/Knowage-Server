@@ -29,15 +29,20 @@ import java.util.Map;
 import org.json.JSONException;
 
 /**
- * Defines the methods implements by the SpagoBI drivers that, starting from a SpagoBI BIOBject, produce the parameters for a specific engine to which they are
- * associated. The names anv values of the map parameters will be used by the system to produce a POST request to the engine application. Each driver can
- * extract and trasform the BIParameter of the BIObject in order to create a a right request based on the engine specificaion. The methods can be used also to
- * do some setting operation like for example handshake security requests.
+ * Defines the methods implements by the SpagoBI drivers that, starting from a
+ * SpagoBI BIOBject, produce the parameters for a specific engine to which they
+ * are associated. The names anv values of the map parameters will be used by
+ * the system to produce a POST request to the engine application. Each driver
+ * can extract and trasform the BIParameter of the BIObject in order to create a
+ * a right request based on the engine specificaion. The methods can be used
+ * also to do some setting operation like for example handshake security
+ * requests.
  */
 public interface IEngineDriver {
 
 	/**
-	 * Returns a map of parameters which will be send in the request to the engine application.
+	 * Returns a map of parameters which will be send in the request to the
+	 * engine application.
 	 *
 	 * @param profile
 	 *            Profile of the user
@@ -51,7 +56,8 @@ public interface IEngineDriver {
 	public Map getParameterMap(Object biobject, IEngUserProfile profile, String roleName);
 
 	/**
-	 * Returns a map of parameters which will be send in the request to the engine application.
+	 * Returns a map of parameters which will be send in the request to the
+	 * engine application.
 	 *
 	 * @param subObject
 	 *            SubObject to execute
@@ -67,7 +73,8 @@ public interface IEngineDriver {
 	public Map getParameterMap(Object object, Object subObject, IEngUserProfile profile, String roleName);
 
 	/**
-	 * Returns the EngineURL for the creation of a new template for the document.
+	 * Returns the EngineURL for the creation of a new template for the
+	 * document.
 	 *
 	 * @param biobject
 	 *            the biobject
@@ -129,14 +136,22 @@ public interface IEngineDriver {
 	public List<DefaultOutputParameter> getDefaultOutputParameters();
 
 	/**
-	 * Specially provided method for custom-made output category parameters for the SUNBURST chart.
+	 * Specially provided method for custom-made output category parameters for
+	 * the SUNBURST chart.
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 *
+	 *         Handles OLAP cross-navigation parameters in WhatIfDriver
+	 *         implementation.
+	 *
+	 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
+	 *
 	 */
 	public List<DefaultOutputParameter> getSpecificOutputParameters(List categories);
 
 	/**
-	 * Method used for special chart types, that need exclusion of some of default output parameters).
+	 * Method used for special chart types, that need exclusion of some of
+	 * default output parameters).
 	 *
 	 * Example: WORDCLOUD, PARALLEL and CHORD chart types.
 	 *

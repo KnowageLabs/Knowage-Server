@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.engines.drivers.whatif;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
@@ -34,6 +27,8 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.EngineUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
+import it.eng.spagobi.engines.drivers.DefaultOutputParameter.TYPE;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.engines.drivers.generic.GenericDriver;
@@ -45,6 +40,15 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 public class WhatIfDriver extends GenericDriver {
 
@@ -130,7 +134,7 @@ public class WhatIfDriver extends GenericDriver {
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while loading document's template", e);
 		}
-		addArtifactVersionId(template, parameters, profile, obj.getId(),engine);
+		addArtifactVersionId(template, parameters, profile, obj.getId(), engine);
 		EngineURL engineURL = new EngineURL(url, parameters);
 		logger.debug("OUT");
 		return engineURL;
@@ -177,8 +181,8 @@ public class WhatIfDriver extends GenericDriver {
 		SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
 		Assert.assertNotNull(cubeSb, "Template is missing \"" + SpagoBIConstants.MONDRIAN_CUBE + "\" definition");
 		String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
-		Assert.assertNotNull(reference,
-				"Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE + "\" property, that is the reference to the Mondrian schema");
+		Assert.assertNotNull(reference, "Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE
+				+ "\" property, that is the reference to the Mondrian schema");
 		IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
 		Artifact artifact = dao.loadArtifactByNameAndType(reference, SpagoBIConstants.MONDRIAN_SCHEMA);
 		Assert.assertNotNull(artifact, "Mondrian schema with name [" + reference + "] was not found");
@@ -187,11 +191,10 @@ public class WhatIfDriver extends GenericDriver {
 
 		pars.put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, content.getId());
 
-		if(EngineUtilities.isWhatIf(engine)){
+		if (EngineUtilities.isWhatIf(engine)) {
 			// add info if artifact is locked
 			addArtifactStausInfo(pars, artifact.getId(), profile, documentId);
 		}
-
 
 		return pars;
 
@@ -208,8 +211,8 @@ public class WhatIfDriver extends GenericDriver {
 		SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
 		Assert.assertNotNull(cubeSb, "Template is missing \"" + SpagoBIConstants.MONDRIAN_CUBE + "\" definition");
 		String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
-		Assert.assertNotNull(reference,
-				"Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE + "\" property, that is the reference to the Mondrian schema");
+		Assert.assertNotNull(reference, "Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE
+				+ "\" property, that is the reference to the Mondrian schema");
 		IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
 		Artifact artifact = dao.loadArtifactByNameAndType(reference, SpagoBIConstants.MONDRIAN_SCHEMA);
 		Assert.assertNotNull(artifact, "Mondrian schema with name [" + reference + "] was not found");
@@ -287,6 +290,17 @@ public class WhatIfDriver extends GenericDriver {
 			logger.debug("There is no default datasource for writing");
 		}
 		return parameters;
+	}
+
+	@Override
+	public List<DefaultOutputParameter> getSpecificOutputParameters(List categories) {
+		List<DefaultOutputParameter> ret = new ArrayList<>();
+
+		for (int i = 0; i < categories.size(); i++) {
+			ret.add(new DefaultOutputParameter(categories.get(i) + "", TYPE.String));
+		}
+
+		return ret;
 	}
 
 }

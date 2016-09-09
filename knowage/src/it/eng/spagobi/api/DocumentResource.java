@@ -138,7 +138,8 @@ public class DocumentResource extends AbstractSpagoBIResource {
 				try {
 					path = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(functionality, false).getPath();
 				} catch (EMFUserError e) {
-					// Do nothing, the correct SpagoBIRuntimeException will be throwed anyway. Only the path will be missing
+					// Do nothing, the correct SpagoBIRuntimeException will be
+					// throwed anyway. Only the path will be missing
 				}
 
 				throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to create a document inside [" + path + "]");
@@ -268,8 +269,9 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		// check if owner of document or administrator
-		
-		if (!document.getTenant().equals(getUserProfile().getOrganization()) || (!UserUtilities.isAdministrator(getUserProfile()) && !document.getCreationUser().equals(getUserProfile().getUserId()))) {
+
+		if (!document.getTenant().equals(getUserProfile().getOrganization())
+				|| (!UserUtilities.isAdministrator(getUserProfile()) && !document.getCreationUser().equals(getUserProfile().getUserId()))) {
 			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label
 					+ "]");
 		}
@@ -364,37 +366,31 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	@POST
 	@Path("/{docID}/saveOlapTemplate")
 	@Produces(MediaType.TEXT_XML)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String saveOlapTemplate(@PathParam("docID")String docId) {
+	public String saveOlapTemplate(@PathParam("docID") String docId) {
 		String xml = null;
 		JSONObject json;
-		
-			 try {
-				json = RestUtilities.readBodyAsJSONObject(getServletRequest());
-				xml = JSONTemplateUtilities.convertJsonToXML(json);
-				
 
-			} catch ( JSONException e) {
-				String errorMessage = e.getMessage().replace(": Couldn't read request body", "");
-				throw new SpagoBIRuntimeException(errorMessage);
-			} catch (IOException e) {
-				String errorMessage = e.getMessage().replace(": Couldn't read request body", "");
-				throw new SpagoBIRuntimeException(errorMessage);
-			} catch (ParserConfigurationException e) {
-				String errorMessage = e.getMessage().replace(": Error while parsing json to xml", "");
-				throw new SpagoBIRuntimeException(errorMessage);
-			}
+		try {
+			json = RestUtilities.readBodyAsJSONObject(getServletRequest());
+			xml = JSONTemplateUtilities.convertJsonToXML(json);
 
-			
+		} catch (JSONException e) {
+			String errorMessage = e.getMessage().replace(": Couldn't read request body", "");
+			throw new SpagoBIRuntimeException(errorMessage);
+		} catch (IOException e) {
+			String errorMessage = e.getMessage().replace(": Couldn't read request body", "");
+			throw new SpagoBIRuntimeException(errorMessage);
+		} catch (ParserConfigurationException e) {
+			String errorMessage = e.getMessage().replace(": Error while parsing json to xml", "");
+			throw new SpagoBIRuntimeException(errorMessage);
+		}
 
-		
-			 saveTemplate(docId, xml);
-
-		
+		saveTemplate(docId, xml);
 
 		return xml;
 	}
@@ -498,13 +494,18 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		ArrayList<String> categoriesNames = new ArrayList<String>();
 
 		/**
-		 * 'allSpecificChartTypes': Array of all chart types that need some default (generic) output parameters to be removed from the list of final output
-		 * parameters for the document of that chart type. For example, the WORDCLOUD chart type does not need a GROUPING_NAME and GROUPING_VALUE output
-		 * parameters, so these two will be removed from the predefined (standard) list of output parameters (it will have only SERIE_NAME, SERIE_VALUE,
-		 * CATEGORY_NAME, CATEGORY_VALUE parameters).
+		 * 'allSpecificChartTypes': Array of all chart types that need some
+		 * default (generic) output parameters to be removed from the list of
+		 * final output parameters for the document of that chart type. For
+		 * example, the WORDCLOUD chart type does not need a GROUPING_NAME and
+		 * GROUPING_VALUE output parameters, so these two will be removed from
+		 * the predefined (standard) list of output parameters (it will have
+		 * only SERIE_NAME, SERIE_VALUE, CATEGORY_NAME, CATEGORY_VALUE
+		 * parameters).
 		 *
-		 * 'specificChartType': If the type of the chart document that is saved is one of those in the following list, we will record it and manage further
-		 * functions accordingly.
+		 * 'specificChartType': If the type of the chart document that is saved
+		 * is one of those in the following list, we will record it and manage
+		 * further functions accordingly.
 		 *
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
@@ -515,10 +516,13 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		/**
 		 * Two exclusive scenarios:
 		 *
-		 * (1) Prepare categories that the SUNBURST chart document has in order to provide custom-made category output parameters for the cross-navigation.
+		 * (1) Prepare categories that the SUNBURST chart document has in order
+		 * to provide custom-made category output parameters for the
+		 * cross-navigation.
 		 *
-		 * (2) Get the type of the chart document that is about to be saved in order to manage its output parameters if its type is one of those listed in the
-		 * 'specificChartTypes'.
+		 * (2) Get the type of the chart document that is about to be saved in
+		 * order to manage its output parameters if its type is one of those
+		 * listed in the 'specificChartTypes'.
 		 *
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
@@ -539,12 +543,17 @@ public class DocumentResource extends AbstractSpagoBIResource {
 					obj = (JSONObject) obj.opt(key);
 					keys = obj.keys();
 
-					// Use this while loop only if the chart type of the document is SUNBURST or one of those special chart types. (danristo)
+					// Use this while loop only if the chart type of the
+					// document is SUNBURST or one of those special chart types.
+					// (danristo)
 					if (key.equals("CHART")) {
 
-						// If the type of the chart document that is about to be saved amongst those listed above (special cases). (danristo)
+						// If the type of the chart document that is about to be
+						// saved amongst those listed above (special cases).
+						// (danristo)
 						if (specificChartTypes.indexOf(obj.opt("type").toString()) >= 0) {
-							// Get that specific type of the chart document that is in process of saving. (danristo)
+							// Get that specific type of the chart document that
+							// is in process of saving. (danristo)
 							specificChartType = (String) specificChartTypes.get(specificChartTypes.indexOf(obj.opt("type").toString()));
 							break;
 						} else if (!obj.opt("type").toString().equals("SUNBURST")) {
@@ -564,11 +573,67 @@ public class DocumentResource extends AbstractSpagoBIResource {
 						categoriesNames.add((String) joT.opt("column"));
 					}
 
+					logger.info("Category names for the SUNBURST document are: " + categoriesNames);
+
+				}
+				/**
+				 * Handles OLAP template cross-navigation parameters.
+				 *
+				 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
+				 */
+				else if (key.equalsIgnoreCase("OLAP")) {
+
+					JSONObject olapJSONObject = new JSONObject();
+					olapJSONObject = obj.optJSONObject(key);
+
+					JSONObject crossNavFromCellSingle = new JSONObject();
+					JSONArray crossNavFromCellMulti = new JSONArray();
+
+					JSONObject crossNavFromMemberSingle = new JSONObject();
+					JSONArray crossNavFromMemberMulti = new JSONArray();
+
+					if (olapJSONObject.optJSONObject("CROSS_NAVIGATION") != null) {
+
+						crossNavFromCellSingle = olapJSONObject.optJSONObject("CROSS_NAVIGATION").optJSONObject("PARAMETERS").optJSONObject("PARAMETER");
+						crossNavFromCellMulti = olapJSONObject.optJSONObject("CROSS_NAVIGATION").optJSONObject("PARAMETERS").optJSONArray("PARAMETER");
+
+						if (crossNavFromCellMulti == null) {
+							if (crossNavFromCellSingle != null) {
+								jaCategories.put(crossNavFromCellSingle);
+							}
+						} else if (crossNavFromCellMulti != null) {
+							for (int i = 0; i < crossNavFromCellMulti.length(); i++) {
+								JSONObject joT = (JSONObject) crossNavFromCellMulti.get(i);
+								jaCategories.put(joT);
+							}
+						}
+					}
+
+					if (olapJSONObject.optJSONObject("MDXQUERY") != null) {
+
+						crossNavFromMemberSingle = olapJSONObject.optJSONObject("MDXQUERY").optJSONObject("clickable");
+						crossNavFromMemberMulti = olapJSONObject.optJSONObject("MDXQUERY").optJSONArray("clickable");
+
+						if (crossNavFromMemberMulti == null) {
+							if (crossNavFromMemberSingle != null) {
+								jaCategories.put(crossNavFromMemberSingle.opt("clickParameter"));
+							}
+						} else if (crossNavFromMemberMulti != null) {
+							for (int i = 0; i < crossNavFromMemberMulti.length(); i++) {
+								JSONObject joT = (JSONObject) crossNavFromMemberMulti.get(i);
+								jaCategories.put(joT.opt("clickParameter"));
+							}
+						}
+					}
+
+					for (int i = 0; i < jaCategories.length(); i++) {
+						JSONObject joT = (JSONObject) jaCategories.get(i);
+						categoriesNames.add((String) joT.opt("name"));
+					}
+					logger.info("Category names for the OLAP document are: " + categoriesNames);
 				}
 
 			}
-
-			logger.info("Category names for the SUNBURST document are: " + categoriesNames);
 
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
@@ -587,11 +652,13 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			biObjectDao = DAOFactory.getBIObjectDAO();
 			document = biObjectDao.loadBIObjectById(new Integer(docLabel));
 
-			// Only in the case of the SUNBURST document chart type, this variable will be not empty. (danristo)
+			// Only in the case of the SUNBURST document chart type, this
+			// variable will be not empty. (danristo)
 			if (!categoriesNames.isEmpty()) {
 				documentManager.saveDocument(document, template, categoriesNames);
 			}
-			// If the type of the chart document is amongst those listed on the beginning of the method. (danristo)
+			// If the type of the chart document is amongst those listed on the
+			// beginning of the method. (danristo)
 			else if (!specificChartType.equals("")) {
 				documentManager.saveDocument(document, template, specificChartType);
 			} else {
