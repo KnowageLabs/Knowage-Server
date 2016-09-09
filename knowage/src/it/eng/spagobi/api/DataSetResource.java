@@ -444,7 +444,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			String orderTypeFinal = (measureObject.opt("orderType") != null) ? orderTypeFinal = measureObject.opt("orderType").toString().toUpperCase() : null;
 
 			IAggregationFunction function = AggregationFunctions.get(measureObject.getString("funct"));
-			if (function != AggregationFunctions.NONE_FUNCTION && function != AggregationFunctions.FORMULA_FUNCTION) {
+			if (function != AggregationFunctions.NONE_FUNCTION) {
 				// ProjectionCriteria aProjectionCriteria = new
 				// ProjectionCriteria(dataset, columnName, function.getName(),
 				// columnName);

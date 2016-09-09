@@ -1155,7 +1155,13 @@ public class DatasetManagementAPI {
 				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
 					String aliasName = projection.getAliasName();
 					if (aliasName != null && !aliasName.isEmpty()) {
-						columnName = aggregateFunction + "(" + columnName + ") AS " + aliasName;
+
+						if (aggregateFunction.equals(AggregationFunctions.FORMULA)) {
+							columnName = columnName + " AS " + aliasName;
+						} else {
+							columnName = aggregateFunction + "(" + columnName + ") AS " + aliasName;
+						}
+
 					}
 				}
 				sqlBuilder.column(columnName);
@@ -1415,9 +1421,14 @@ public class DatasetManagementAPI {
 						aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 						if (aliasName != null && !aliasName.isEmpty()) {
 
+							String tmpColumn;
 							// https://production.eng.it/jira/browse/KNOWAGE-149
 							// This variable is used for the order clause
-							String tmpColumn = aggregateFunction + "(" + columnName + ") ";
+							if (aggregateFunction.equals(AggregationFunctions.FORMULA)) {
+								tmpColumn = columnName;
+							} else {
+								tmpColumn = aggregateFunction + "(" + columnName + ") ";
+							}
 							String orderType = projection.getOrderType();
 							if (orderType != null && !orderType.equals("")) {
 								orderColumns.add(tmpColumn + " " + orderType);
