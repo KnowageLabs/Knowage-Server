@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import static com.jayway.restassured.RestAssured.basic;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
@@ -52,7 +51,6 @@ import org.junit.runners.MethodSorters;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.TcpIpConfig;
-import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
@@ -76,7 +74,7 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	private static void setHazelcastDefaultConfig() {
 		Config cfg = new Config();
 
-		cfg.getNetworkConfig().setPort(5702);
+		cfg.getNetworkConfig().setPort(5701);
 		cfg.getNetworkConfig().setPortAutoIncrement(false);
 		cfg.getNetworkConfig().setPortCount(100);
 		MulticastConfig multicastConfig = new MulticastConfig();
@@ -99,8 +97,8 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	@Override
 	@Before
 	public void setup() {
-		RestAssured.basePath = "/knowage/restful-services/2.0";
-		RestAssured.authentication = basic("biadmin", "biadmin");
+		super.setup();
+
 		encoding = "UTF-8";
 		setHazelcastDefaultConfig();
 	}

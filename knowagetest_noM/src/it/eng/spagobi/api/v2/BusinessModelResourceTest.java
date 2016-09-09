@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,19 +11,20 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.api.v2;
 
-import static com.jayway.restassured.RestAssured.basic;
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.get;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertNotNull;
+import it.eng.spagobi.api.common.AbstractV2BasicAuthTestCase;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,15 +35,12 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class BusinessModelResourceTest {
+public class BusinessModelResourceTest extends AbstractV2BasicAuthTestCase {
 
 	List<Integer> bmIds;
 	List<Integer> vIds;
@@ -52,10 +50,10 @@ public class BusinessModelResourceTest {
 	MetaModel businessModel = new MetaModel();
 	static int id;
 
+	@Override
 	@Before
 	public void setup() {
-		RestAssured.basePath = "/knowage/restful-services/2.0";
-		RestAssured.authentication = basic("biadmin", "biadmin");
+		super.setup();
 
 		json = get("/businessmodels").asString();
 		bmIds = JsonPath.from(json).get("id");
