@@ -124,7 +124,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	}
 	
 	$scope.leftTableClick = function(item){
-		
+		console.log(item)
 		if(angular.equals($scope.savedBusinessModel,$scope.selectedBusinessModel)){
 			//no change	
 				angular.copy(item,$scope.selectedBusinessModel);
@@ -252,9 +252,10 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 //calling service for getting data sources @GET
 	 $scope.getDataSources = function(){
 		 
-		 sbiModule_restServices.promiseGet("datasources","")
+		 sbiModule_restServices.promiseGet("2.0/datasources", "")
 			.then(function(response) {
-				$scope.listOfDatasources = response.data.root;
+				console.log(response);
+				$scope.listOfDatasources = response.data;
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 				
@@ -264,8 +265,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 //Calling service for getting Categories  @GET
 	 $scope.getCategories = function(){
 		 
-		 sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=BM_CATEGORY")
+		 sbiModule_restServices.promiseGet("2.0/businessmodels/bmCategories","")
 			.then(function(response) {
+				console.log(response);
 				$scope.listOfCategories = response.data;
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -366,7 +368,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.isDirty = false;
 					$scope.selectedBusinessModel.modelLocker = response.data.modelLocker;
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'check');
-					$scope.$apply();
+					if(!$scope.$$phase) {
+						$scope.$apply();
+						}
 					
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');

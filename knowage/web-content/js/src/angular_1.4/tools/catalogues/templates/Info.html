@@ -12,7 +12,7 @@
 <md-dialog-content>
       <div class="md-dialog-content">
       	
-      	<div ng-if="selectedLov.itypeCd == 'SCRIPT'">
+      	<div ng-if="selectedLov.itypeCd == lovItemEnum.SCRIPT">
 	<p>
 	The script must be written using Groovy or Javascript languages. 
 	</p>
@@ -44,7 +44,7 @@
 	<p><b>getMultiValueProfileAttribute(String nameAttribute, String prefix, String newSplitter, String suffix)</b> : Return list f values of multi value attribute, preceded by the prefix, separated by the new splitter and followed by suffix (parameter must be enclosed between "")<br>
 	<b>Example:</b> select ... where <i> column ${multi_value_attribute( "in (" ; "," ; ") ") })</i></p>
 		</div>
-      	<div ng-if="selectedLov.itypeCd == 'QUERY'">
+      	<div ng-if="selectedLov.itypeCd == lovItemEnum.QUERY">
     <p>
         Column names with dots or aggregator functions are not allowed, if you need them use alias (as).<br>
         <b>Example:</b> select sum(column) as name_colum, select column.column as name_column
@@ -58,7 +58,7 @@
          <b>Example:</b> select ... where column ${name_profile_attribute( in (';',';') )})
     </p>
 		</div>
-		<div ng-if="selectedLov.itypeCd == 'FIX_LOV'">
+		<div ng-if="selectedLov.itypeCd == lovItemEnum.FIX_LOV">
 
 			<p>To insert a single value profile attribute into a fix lov value use <b>${name_profile_attribute}</b>.</p>
 			
@@ -68,7 +68,7 @@
  
 		</div>
 		
-		<div ng-if="selectedLov.itypeCd == 'JAVA_CLASS'">
+		<div ng-if="selectedLov.itypeCd == lovItemEnum.JAVA_CLASS">
 		 	
 	<p>
 	The java class must implement the interface it.eng.spagobi.bo.javaClassLovs.IJavaClassLov.
@@ -97,7 +97,7 @@
 	
 		<md-dialog-actions layout="row">
 			<md-button class="md-raised" ng-click="closeDialogFromLOV()">
-				Cancel
+				{{translate.load("sbi.generic.cancel");}}
 			</md-button>
 		</md-dialog-actions>
 	

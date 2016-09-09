@@ -169,6 +169,8 @@
 		userFunctionality="ObjMetadataManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ProfileManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ProfileManagement" roleType="DEV_ROLE" />
 <!--		
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="UserDefinedPropertyManagement" roleType="ADMIN" />
@@ -192,7 +194,11 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="MetaModelsCatalogueManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="MetaModelsCatalogueManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ArtifactCatalogueManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ArtifactCatalogueManagement" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="SelfServiceDatasetManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
@@ -226,6 +232,8 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="GeoLayersManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="GeoLayersManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="CreateCockpitFunctionality" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="CreateCockpitFunctionality" roleType="USER" />
@@ -237,6 +245,8 @@
 		userFunctionality="CreateCockpitFunctionality" roleType="MODEL_ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="HierarchiesManagement" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="HierarchiesManagement" roleType="DEV_ROLE" />	
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="CreateSocialAnalysis" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
@@ -427,4 +437,7 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="MODEL_ADMIN" />	
+	
+	
+	
 </ROLE_TYPE_USER_FUNCTIONALITIES>

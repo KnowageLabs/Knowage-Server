@@ -120,7 +120,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-input-container class="md-block"> 
 					<label>{{translate.load("sbi.ds.catType")}}</label>
 				   <md-select  aria-label="aria-label" ng-model="selectedBusinessModel.category" >
-				    <md-option  ng-repeat="c in listOfCategories" value="{{c.VALUE_ID}}">{{c.VALUE_NM}} </md-option>
+				    <md-option  ng-repeat="c in listOfCategories track by $index" value="{{c.valueId}}">{{c.valueName}} </md-option>
 				    <md-option value="{{null}}"></md-option>
 				   </md-select> 
 				</md-input-container>
@@ -129,7 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<label>{{translate.load("sbi.ds.dataSource")}}</label>
 				       <md-select  aria-label="aria-label" required name="ds"
 				        ng-model="selectedBusinessModel.dataSourceLabel"> <md-option
-				        ng-repeat="d in listOfDatasources" value="{{d.DATASOURCE_LABEL}}">{{d.DATASOURCE_LABEL}} </md-option>
+				        ng-repeat="d in listOfDatasources" value="{{d.label}}">{{d.label}} </md-option>
 				       </md-select>
 <!-- 				       <div ng-messages="businessModelForm.ds.$error"> -->
 <!-- 			        	  <div ng-message="required">Datasource is required.</div> -->

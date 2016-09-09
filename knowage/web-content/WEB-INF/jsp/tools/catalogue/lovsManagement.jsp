@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	The main JSP page for the management of the LOV catalog.
 	
 	Author: Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	Author: Stefan Petrovic (spetrovic, Stefan.Petrovic@mht.net)
 -->
 
 <%@ page language="java" pageEncoding="utf-8" session="true"%>
@@ -88,15 +89,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<detail label=' selectedLov.label==undefined? "" : selectedLov.label'  save-function="saveLov"
 		cancel-function="cancel"
 		disable-save-button="!attributeForm.$valid"
-		show-save-button="showMe" show-cancel-button="showMe">
-		<form name="attributeForm" ng-submit="attributeForm.$valid && saveLov()">
+		show-save-button="false" show-cancel-button="showMe">
+		<form name="attributeForm" ng-submit="attributeForm.$valid && testLov()">
 	
 			           <md-card layout-padding  ng-show="showMe">
 					<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.label")}}</label>
-							<input name="lbl" ng-model="selectedLov.label" ng-required="true"
+							<input name="lovLbl" ng-model="selectedLov.label" ng-required="true"
 							ng-maxlength="20" ng-change="setDirty()">
 							
 							<div  ng-messages="attributeForm.lbl.$error" ng-show="selectedLov.label== null">
@@ -111,7 +112,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div flex=100>
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.name")}}</label>
-							<input name="name" ng-model="selectedLov.name"  ng-required = "true"
+							<input name="lovName" ng-model="selectedLov.name"  ng-required = "true"
 						    ng-maxlength="40" ng-change="setDirty()">
 						    
 						    <div  ng-messages="attributeForm.name.$error" ng-show="selectedLov.name== null">
@@ -136,11 +137,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       				<div flex=100>
 				       <md-input-container class="md-block" > 
 				       <label>{{translate.load("sbi.modalities.check.details.check_type")}}</label>
-				       <md-select  aria-label="dropdown" placeholder ="Check Type"
-				       	name ="dropdown" 
+				       <md-select  aria-label="dropdown" placeholder ="{{translate.load('sbi.modalities.check.details.check_type')}}"
+				       	name ="typeLovDropdown" 
 				        ng-required = "true"
 				        ng-model="selectedLov.itypeCd"
-				        ng-change="changeType('lov',selectedLov.itypeCd)"
+				        ng-change="changeType(selectedLov.itypeCd)"
 				        > <md-option 
 				        ng-repeat="l in listOfInputTypes track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
 				       </md-select>
@@ -171,16 +172,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				   		
 				      </div>
 				    </md-toolbar>
-			<div ng-if="selectedLov.itypeCd == 'SCRIPT'">    
+			<div ng-if="selectedLov.itypeCd == lovItemEnum.SCRIPT">    
 				    <div layout="row" layout-wrap>
       				<div flex=100>
 				       <md-input-container class="md-block" > 
 				       <label>{{translate.load("sbi.functionscatalog.language")}}</label>
-				       <md-select  aria-label="dropdown" placeholder ="Script Type"
-				       	name ="dropdown" 
+				       <md-select  aria-label="dropdown" placeholder ="{{translate.load('sbi.behavioural.lov.placeholder.script')}}"
+				       	name ="scriptLanguageDropdown" 
 				        ng-required = "true"
 				        ng-model="selectedScriptType.language"
-				        ng-change="changeType('script',selectedScriptType.language)"
+				        ng-change="changeType(selectedScriptType.language,'script')"
 				        > <md-option 
 				        ng-repeat="l in listOfScriptTypes track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
 				       </md-select>
@@ -196,18 +197,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         	</md-input-container>
 		</div>
 		
-		<div ng-if="selectedLov.itypeCd == 'QUERY'">    
+		<div ng-if="selectedLov.itypeCd == lovItemEnum.QUERY">    
 				    <div layout="row" layout-wrap>
       				<div flex=100>
 				       <md-input-container class="md-block" > 
 				       <label>{{translate.load("sbi.datasource.label")}}</label>
-				       <md-select  aria-label="dropdown" placeholder ="Select Datasource"
-				       	name ="dropdown" 
+				       <md-select  aria-label="dropdown" placeholder ="{{translate.load('sbi.behavioural.lov.placeholder.datasource')}}"
+				       	name ="queryDsDropdown" 
 				        ng-required = "true"
 				        ng-model="selectedQuery.datasource"
-				        ng-change="changeType('datasource',selectedQuery.datasource)"
+				        ng-change="changeType(selectedQuery.datasource,'query')"
 				        > <md-option 
-				        ng-repeat="l in listOfDatasources track by $index" value="{{l.dsId}}">{{l.label}} </md-option>
+				        ng-repeat="l in listOfDatasources track by $index" value="{{l.label}}">{{l.label}} </md-option>
 				       </md-select>
 				       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedQuery.datasource == null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -217,22 +218,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 			 <md-input-container class="md-block">
 		          <label>{{translate.load("sbi.tools.dataset.qbedatasetswizard.query")}}</label>
-		          <textarea ng-model="selectedScriptType.query" md-maxlength="500" rows="12" md-select-on-focus></textarea>
+		          <textarea ng-model="selectedQuery.query" md-maxlength="500" rows="12" md-select-on-focus></textarea>
         	</md-input-container>
 		</div>
 		
-		<div ng-if="selectedLov.itypeCd == 'FIX_LOV'">    
+		<div ng-if="selectedLov.itypeCd == lovItemEnum.FIX_LOV">    
 			
 						<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.generic.value")}}</label>
-							<input name="lbl" ng-model="selectedFIXLov.value" ng-required="true"
+							<input name="fixLovValue" ng-model="selectedFIXLov._VALUE"
 							ng-maxlength="20" ng-change="setDirty()">
-							
-							<div  ng-messages="attributeForm.lbl.$error" ng-show="selectedFIXLov.value == null">
-				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-				      </div>
 							
 							 </md-input-container>
 						</div>
@@ -242,32 +239,46 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div flex=100>
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.generic.descr")}}</label>
-							<input name="name" ng-model="selectedFIXLov.description"  ng-required = "true"
-						    ng-maxlength="40" ng-change="setDirty()">
-						    
-						    <div  ng-messages="attributeForm.name.$error" ng-show="selectedFIXLov.description == null">
-				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-				      </div>
-						    
+							<input name="fixLovDescription" ng-model="selectedFIXLov._DESCRIPTION"
+						    ng-maxlength="160" ng-change="setDirty()">
 						    
 						     </md-input-container>
 						</div>
 					</div>
-					<md-button class="md-raised md-primary" ng-click="addNewFixValueParam()">{{translate.load("sbi.attributes.add");}}</md-button>
+					<md-button class="md-raised md-primary" ng-click="addNewFixLOV()">{{translate.load("sbi.generic.save");}}</md-button>
 					
+				   <div>
 				   
+			
+				    <angular-table
+				    	style="height:27%;"
+						flex
+						id="listForFixLov_id" 
+						ng-model="listForFixLov"
+						columns='[
+								  {"label":"Value","name":"_VALUE"},
+								  {"label":"Description","name":"_DESCRIPTION"}
+								]'
+						show-search-bar ="false"		
+						highlights-selected-item=true
+						speed-menu-option="fixLovSpeedMenu"
+						click-function="itemOnClickFixLov(item)">
+		     </angular-table>
+				   
+				   
+				   </div>
 		</div>
 		
-		<div ng-if="selectedLov.itypeCd == 'JAVA_CLASS'">    
+		<div ng-if="selectedLov.itypeCd == lovItemEnum.JAVA_CLASS">    
 			
 			<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.jclassName")}}</label>
-							<input name="lbl" ng-model="selectedJavaClass" ng-required="true"
-							ng-maxlength="20" ng-change="setDirty()">
+							<input name="javaClassName" ng-model="selectedJavaClass.name" ng-required="true"
+							ng-maxlength="160" ng-change="setDirty()">
 							
-							<div  ng-messages="attributeForm.lbl.$error" ng-show="selectedJavaClass == null">
+							<div  ng-messages="attributeForm.lbl.$error" ng-show="selectedJavaClass.name == null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 				      </div>
 							
@@ -277,21 +288,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				   
 		</div>
 		
-		<div ng-if="selectedLov.itypeCd == 'DATASET'">    
+		<div ng-if="selectedLov.itypeCd == lovItemEnum.DATASET">    
 			
 			<div layout="row" layout-wrap>
       				<div flex=100>
 				       <md-input-container class="md-block" > 
 				       <label>{{translate.load("sbi.datasource.label")}}</label>
-				       <md-select  aria-label="dropdown" placeholder ="Select Dataset"
-				       	name ="dropdown" 
+				       <md-select  aria-label="dropdown" placeholder ="{{translate.load('sbi.behavioural.lov.placeholder.dataset')}}"
+				       	name ="datasetDropdown" 
 				        ng-required = "true"
-				        ng-model="selectedDataset.name"
-				        ng-change="changeType('dataset',selectedDataset.name)"
+				        ng-model="selectedDataset.id"
+				        ng-change="changeType(selectedDataset.name,'dataset')"
 				        > <md-option 
-				        ng-repeat="l in listOfDatasets track by $index" value="{{l.name}}">{{l.label}} </md-option>
+				        ng-repeat="l in listOfDatasets track by $index" value="{{l.id}}">{{l.label}} </md-option>
 				       </md-select>
-				       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedDataset.name == null">
+				       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedDataset.id == null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 				      </div>   
 				        </md-input-container>

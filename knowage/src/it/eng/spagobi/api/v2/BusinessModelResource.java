@@ -17,21 +17,13 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.tools.catalogue.bo.Content;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +47,24 @@ import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/2.0/businessmodels")
 @ManageAuthorization
@@ -88,6 +98,45 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 		} finally {
 			logger.debug("OUT");
+		}
+
+	}
+
+	@GET
+	@Path("/bmCategories")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public List<Domain> getProfiledCats() {
+
+		IRoleDAO rolesDao = null;
+		Role role = new Role();
+		try {
+			UserProfile profile = this.getUserProfile();
+			rolesDao = DAOFactory.getRoleDAO();
+			rolesDao.setUserProfile(profile);
+			if (UserUtilities.hasDeveloperRole(profile) && !UserUtilities.hasAdministratorRole(profile)) {
+				List<Domain> categoriesDev = new ArrayList<>();
+				Collection<String> roles = profile.getRolesForUse();
+				Iterator<String> itRoles = roles.iterator();
+				while (itRoles.hasNext()) {
+					String roleName = itRoles.next();
+					role = rolesDao.loadByName(roleName);
+					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
+					List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+					for (RoleMetaModelCategory r : ds) {
+						for (Domain dom : array) {
+							if (r.getCategoryId().equals(dom.getValueId())) {
+								categoriesDev.add(dom);
+							}
+						}
+					}
+				}
+				return categoriesDev;
+			} else {
+				return DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+			}
+		} catch (Exception e) {
+			logger.error("Role with selected id: " + role.getId() + " doesn't exists", e);
+			throw new SpagoBIRuntimeException("Item with selected id: " + role.getId() + " doesn't exists", e);
 		}
 
 	}
@@ -426,8 +475,8 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			return businessModelsDAO.loadActiveMetaModelContentById(bmId);
 		} catch (Exception e) {
 			logger.error("An error occurred while updating active version of business model with id:" + bmId, e);
-			throw new SpagoBIRestServiceException("An error occurred while updating active version of business model with id:" + bmId,
-					buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("An error occurred while updating active version of business model with id:" + bmId, buildLocaleFromSession(),
+					e);
 
 		} finally {
 			logger.debug("OUT");
