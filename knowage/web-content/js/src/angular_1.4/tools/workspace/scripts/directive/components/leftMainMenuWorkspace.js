@@ -70,17 +70,8 @@ function leftMenuController($scope, sbiModule_translate, sbiModule_user){
   	 		"visible":true, 
   	 		"active":false, 
   	 		"selected":true
- 		}, 
-  	 	
- 		{
- 			"name": "Favorites", 
- 			"label":sbiModule_translate.load('sbi.workspace.menu.favorites'), 	
- 			"icon": "fa fa-star",	
- 			"visible":false, 
- 			"active":false, 
- 			"selected":false
-		}, 
-		
+ 		}, 	
+ 		
   	 	{
 			"name": "Documents", 
 			"label":sbiModule_translate.load('sbi.workspace.menu.documents'),	
