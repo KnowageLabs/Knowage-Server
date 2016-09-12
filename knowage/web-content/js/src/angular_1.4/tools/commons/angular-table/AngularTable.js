@@ -214,11 +214,17 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                     }else{
                                     	 if (!attrs.totalItemCount) {
                                     		 tbody.attr('pagination-type', "local");
-                                    		 tbody.attr('current-page-number', scope.currentPageNumber);
+                                    		 tbody.attr('current-page-number', scope.pagination.currentPageNumber);
                                     		 scope.totalItemCount = undefined;
                                              paginBox.removeAttr("on-page-change");
                                     	 }else{
                                     		 tbody.attr('pagination-type', "backend");
+//                                    		 scope.pagination.totalItemCount=scope.totalItemCount;
+//                                    		 scope.$watch(function(){return scope.totalItemCount;},function(newVal,oldVal){
+//                                    			 if(!angular.equals(newVal,oldVal)){
+//                                    			 scope.pagination.totalItemCount=newVal;
+//                                    			 }
+//                                    		 })
                                     	 }
                                     }
                                     
@@ -308,7 +314,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             
                             //check for pagination
                             if(angular.equals(tAttrs.paginationType,"none")){
-                            	var repeatAttr=tr.attr("dir-paginate").replace("| itemsPerPage:itemsPerPage","");
+                            	var repeatAttr=tr.attr("dir-paginate").replace("| itemsPerPage:pagination.itemsPerPage","");
                             	tr.attr("ng-repeat",repeatAttr);
                                 tr.removeAttr("dir-paginate")
                                 tr.removeAttr("total-items")
@@ -531,7 +537,12 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
 
 
 function TableControllerFunction($scope, $timeout) {
-    $scope.currentPageNumber = 1;
+	$scope.pagination = {currentPageNumber : 1};
+	if($scope.itemsPerPage==undefined){
+		$scope.pagination.itemsPerPage=3;
+	}else{
+		$scope.pagination.itemsPerPage=$scope.itemsPerPage;
+	}
     $scope.tmpWordSearch = "";
     $scope.prevSearch = "";
     $scope.localSearch = false;
@@ -540,10 +551,6 @@ function TableControllerFunction($scope, $timeout) {
     $scope.reverse_col_ord = false;
     $scope.internal_column_ordering;
     $scope.internal_reverse_col_ord = false;
-
-    if($scope.itemsPerPage==undefined){
-    	$scope.itemsPerPage=3;
-    }
 
     $scope.getDynamicValue=function(item,row,column,index){
     	if(item==null || item==undefined) return ;
@@ -563,8 +570,8 @@ function TableControllerFunction($scope, $timeout) {
                 $scope.prevSearch = searchVal;
                 $scope.searchFunction({
                     searchValue: searchVal,
-                    itemsPerPage: $scope.itemsPerPage,
-                    currentPageNumber: $scope.currentPageNumber,
+                    itemsPerPage: $scope.pagination.itemsPerPage,
+                    currentPageNumber: $scope.pagination.currentPageNumber,
                     columnsSearch: $scope.columnsSearch,
                     columnOrdering: $scope.column_ordering,
                     reverseOrdering: $scope.reverse_col_ord
@@ -607,6 +614,7 @@ function TableControllerFunction($scope, $timeout) {
     	}
 
 
+
     	var tableContainerHeight = $scope.tableContainer == undefined ? 32 : $scope.tableContainer.offsetHeight;
         var headButtonHeight = $scope.headButton == undefined ? 0 : $scope.headButton.offsetHeight;
         var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 32 : $scope.listItemTemplBox.offsetHeight;
@@ -614,12 +622,12 @@ function TableControllerFunction($scope, $timeout) {
 
         var nit = parseInt((tableContainerHeight - headButtonHeight) / listItemTemplBoxHeight);
 
-        $scope.itemsPerPage = (nit <= 0 || isNaN(nit)) ? 0 : nit;
+        $scope.pagination.itemsPerPage = (nit <= 0 || isNaN(nit)) ? 0 : nit;
         if (firstLoad) {
             $scope.pageChangedFunction({
                 searchValue: "",
-                itemsPerPage: $scope.itemsPerPage,
-                currentPageNumber: $scope.currentPageNumber,
+                itemsPerPage: $scope.pagination.itemsPerPage,
+                currentPageNumber: $scope.pagination.currentPageNumber,
                 columnsSearch: $scope.columnsSearch,
                 columnOrdering: $scope.column_ordering,
                 reverseOrdering: $scope.reverse_col_ord
@@ -966,10 +974,11 @@ function TableHeaderControllerFunction($scope, $timeout) {
             $scope.internal_column_ordering = $scope.column_ordering;
             $scope.internal_reverse_col_ord = $scope.reverse_col_ord;
         } else {
+        	$scope.pagination.currentPageNumber =1;
             $scope.searchFunction({
                 searchValue: $scope.prevSearch,
-                itemsPerPage: $scope.itemsPerPage,
-                currentPageNumber: 1,
+                itemsPerPage: $scope.pagination.itemsPerPage,
+                currentPageNumber: $scope.pagination.currentPageNumber,
                 columnsSearch: $scope.columnsSearch,
                 columnOrdering: $scope.column_ordering,
                 reverseOrdering: $scope.reverse_col_ord
