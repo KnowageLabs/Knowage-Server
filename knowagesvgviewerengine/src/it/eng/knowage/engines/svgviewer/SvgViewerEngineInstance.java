@@ -53,8 +53,8 @@ import com.jamonapi.MonitorFactory;
  */
 public class SvgViewerEngineInstance extends AbstractEngineInstance {
 	// ENVIRONMENT VARIABLES
-	private String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
-			"SBI_HOST", "DOCUMENT_ID", "country", "language", "user_id" };
+	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
+			"SBI_HOST", "DOCUMENT_ID", COUNTRY, LANGUAGE, "user_id" };
 	private JSONObject guiSettings;
 	private JSONObject docProperties;
 	private List<String> includes;
@@ -260,7 +260,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 
 	/**
 	 * Gets the map provider.
-	 *
+	 * 
 	 * @return the map provider
 	 */
 	public IMapProvider getMapProvider() {
@@ -269,7 +269,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 
 	/**
 	 * Sets the map provider.
-	 *
+	 * 
 	 * @param mapProvider
 	 *            the new map provider
 	 */
@@ -279,7 +279,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 
 	/**
 	 * Gets the map renderer.
-	 *
+	 * 
 	 * @return the map renderer
 	 */
 	public IMapRenderer getMapRenderer() {
@@ -288,7 +288,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 
 	/**
 	 * Sets the map renderer.
-	 *
+	 * 
 	 * @param mapRenderer
 	 *            the new map renderer
 	 */
