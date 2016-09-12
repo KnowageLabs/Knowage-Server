@@ -652,8 +652,8 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			biObjectDao = DAOFactory.getBIObjectDAO();
 			document = biObjectDao.loadBIObjectById(new Integer(docLabel));
 
-			// Only in the case of the SUNBURST document chart type, this
-			// variable will be not empty. (danristo)
+			// In the case of the SUNBURST and OLAP document type, this
+			// variable will be not empty. (danristo) (nsimovic)
 			if (!categoriesNames.isEmpty()) {
 				documentManager.saveDocument(document, template, categoriesNames);
 			}
