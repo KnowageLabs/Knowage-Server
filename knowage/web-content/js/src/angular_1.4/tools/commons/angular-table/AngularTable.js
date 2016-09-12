@@ -314,7 +314,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             
                             //check for pagination
                             if(angular.equals(tAttrs.paginationType,"none")){
-                            	var repeatAttr=tr.attr("dir-paginate").replace("| itemsPerPage:pagination.itemsPerPage","");
+                            	var repeatAttr=tr.attr("dir-paginate").replace("| itemsPerPage:itemsPerPage","");
                             	tr.attr("ng-repeat",repeatAttr);
                                 tr.removeAttr("dir-paginate")
                                 tr.removeAttr("total-items")
@@ -539,9 +539,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
 function TableControllerFunction($scope, $timeout) {
 	$scope.pagination = {currentPageNumber : 1};
 	if($scope.itemsPerPage==undefined){
-		$scope.pagination.itemsPerPage=3;
-	}else{
-		$scope.pagination.itemsPerPage=$scope.itemsPerPage;
+		$scope.itemsPerPage=3;
 	}
     $scope.tmpWordSearch = "";
     $scope.prevSearch = "";
@@ -570,7 +568,7 @@ function TableControllerFunction($scope, $timeout) {
                 $scope.prevSearch = searchVal;
                 $scope.searchFunction({
                     searchValue: searchVal,
-                    itemsPerPage: $scope.pagination.itemsPerPage,
+                    itemsPerPage: $scope.itemsPerPage,
                     currentPageNumber: $scope.pagination.currentPageNumber,
                     columnsSearch: $scope.columnsSearch,
                     columnOrdering: $scope.column_ordering,
@@ -622,11 +620,11 @@ function TableControllerFunction($scope, $timeout) {
 
         var nit = parseInt((tableContainerHeight - headButtonHeight) / listItemTemplBoxHeight);
 
-        $scope.pagination.itemsPerPage = (nit <= 0 || isNaN(nit)) ? 0 : nit;
+        $scope.itemsPerPage = (nit <= 0 || isNaN(nit)) ? 0 : nit;
         if (firstLoad) {
             $scope.pageChangedFunction({
                 searchValue: "",
-                itemsPerPage: $scope.pagination.itemsPerPage,
+                itemsPerPage: $scope.itemsPerPage,
                 currentPageNumber: $scope.pagination.currentPageNumber,
                 columnsSearch: $scope.columnsSearch,
                 columnOrdering: $scope.column_ordering,
@@ -977,7 +975,7 @@ function TableHeaderControllerFunction($scope, $timeout) {
         	$scope.pagination.currentPageNumber =1;
             $scope.searchFunction({
                 searchValue: $scope.prevSearch,
-                itemsPerPage: $scope.pagination.itemsPerPage,
+                itemsPerPage: $scope.itemsPerPage,
                 currentPageNumber: $scope.pagination.currentPageNumber,
                 columnsSearch: $scope.columnsSearch,
                 columnOrdering: $scope.column_ordering,

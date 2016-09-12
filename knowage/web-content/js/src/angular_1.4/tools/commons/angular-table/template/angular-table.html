@@ -81,7 +81,7 @@
 
 <script type="text/ng-template" id="bodyTemplate.html">
 
-<tr ui-tree-node dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| customOrdering:internal_column_ordering:internal_reverse_col_ord:tableColumns:initialSorting:initialSortingAsc | itemsPerPage:pagination.itemsPerPage track by $index" 
+<tr ui-tree-node dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| customOrdering:internal_column_ordering:internal_reverse_col_ord:tableColumns:initialSorting:initialSortingAsc | itemsPerPage:itemsPerPage track by $index" 
 	pagination-id='id+"PaginationTable"' total-items='totalItemCount' current-page='pagination.currentPageNumber'
 	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) )}"  class="animate-repeat-tablerow"
  	ng-if="isVisibleRowFunction(row)">
