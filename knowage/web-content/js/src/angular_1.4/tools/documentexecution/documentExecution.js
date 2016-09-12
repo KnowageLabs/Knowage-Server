@@ -77,6 +77,15 @@
 		$scope.isAdmin = isAdmin;
 		$scope.isSuperAdmin = isSuperAdmin;
 		$scope.isAbleToExecuteAction = isAbleToExecuteAction;
+		$scope.addToWorkspaceEnabled = (sbiModule_user.functionalities.indexOf("SaveIntoFolderFunctionality")>-1)? true:false;
+		
+		$scope.isOrganizerEnabled = function () {
+			if(!$scope.addToWorkspaceEnabled){
+				return false
+			} else {
+				return !($scope.executedFrom=='WORKSPACE_ORGANIZER'|| isAdmin || isSuperAdmin)
+			}
+		}
 		
 		if ($scope.executionInstance.SidenavOri === 'north'){
 			$scope.sidenavCenter = "center left";

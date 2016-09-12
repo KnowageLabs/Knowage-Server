@@ -307,7 +307,7 @@ if(executionRoleNames.size() > 0) {
 					     				Provided an ng-if criteria for this menu option for the executed document (whether it should be available).
 					     				@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				     				-->
-						            <md-menu-item class="md-indent" ng-if="!(isAdmin||isSuperAdmin||executedFrom=='WORKSPACE_ORGANIZER')">
+						            <md-menu-item class="md-indent" ng-if="isOrganizerEnabled()">
 						                <md-icon class="fa fa-suitcase"></md-icon>
 						            	<md-button ng-disabled="false" class="toolbar-button-custom" ng-click="urlViewPointService.addToWorkspace()"
 						            			aria-label="{{translate.load('sbi.execution.executionpage.toolbar.saveview')}}">
