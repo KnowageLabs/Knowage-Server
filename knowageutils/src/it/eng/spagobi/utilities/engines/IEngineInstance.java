@@ -17,19 +17,31 @@
  */
 package it.eng.spagobi.utilities.engines;
 
+import it.eng.spagobi.engines.drivers.IEngineDriver;
+
 import java.util.Map;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
-public interface IEngineInstance {	
+public interface IEngineInstance {
+	public static final String COUNTRY = IEngineDriver.COUNTRY;
+	public static final String LANGUAGE = IEngineDriver.LANGUAGE;
+
 	String getId();
+
 	Map getEnv();
+
 	void setEnv(Map env);
+
 	void validate() throws SpagoBIEngineException;
+
 	EngineAnalysisMetadata getAnalysisMetadata();
+
 	void setAnalysisMetadata(EngineAnalysisMetadata analysisMetadata);
+
 	IEngineAnalysisState getAnalysisState();
+
 	void setAnalysisState(IEngineAnalysisState analysisState);
 }

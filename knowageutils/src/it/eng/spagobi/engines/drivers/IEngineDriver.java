@@ -40,6 +40,9 @@ import org.json.JSONException;
  */
 public interface IEngineDriver {
 
+	public static final String COUNTRY = "knowage_sys_country";
+	public static final String LANGUAGE = "knowage_sys_language";
+
 	/**
 	 * Returns a map of parameters which will be send in the request to the
 	 * engine application.
