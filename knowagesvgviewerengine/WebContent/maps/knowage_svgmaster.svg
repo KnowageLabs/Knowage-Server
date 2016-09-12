@@ -174,8 +174,10 @@ onload="init(evt);">
       	if(myMapApp.Windows["thematic"]){ 
         	myMapApp.Windows["thematic"].addThemes();
       	} else {
-	      	var index = sbi.geo.conf.selected_measure_index >=0 ? sbi.geo.conf.selected_measure_index: 0;
-	        setKpi(sbi.geo.conf.measures[index].name,sbi.geo.conf.measures[index].name,sbi.geo.conf.measures[index].name);
+	     	if (sbi.geo.conf.measures && sbi.geo.conf.measures.length > 0){
+		      	var index = sbi.geo.conf.selected_measure_index >=0 ? sbi.geo.conf.selected_measure_index: 0;
+		        setKpi(sbi.geo.conf.measures[index].name,sbi.geo.conf.measures[index].name,sbi.geo.conf.measures[index].name);
+		   }
 	    }
 		
 			
@@ -230,9 +232,10 @@ onload="init(evt);">
         myMapApp.Windows["legend"] = new LegendWindow( windowConf );
       } 
       
+      
       windowConf = Utils.find(windows, 'name', 'colourpicker');
       windowConf = Utils.apply({visible:false}, windowConf || {}, guiSettings.windowDefaults || {});
-			if(windowConf && windowConf.visible) {
+	  if(windowConf && windowConf.visible) {
         myMapApp.Windows["colourpicker"] = new ColourPickerWindow( windowConf );
       } 
 			
@@ -652,18 +655,19 @@ onload="init(evt);">
            
            //determine class
            var colIndex = -1;   
-           
-           if(targetValue ==  myMapApp.threshArray[myMapApp.threshArray.length-1] ) {
-           		colIndex = myMapApp.threshArray.length-2;
-           } else {             
-	           for (var i = 0;i<myMapApp.threshArray.length-1;i++) {
-	               if (targetValue >= myMapApp.threshArray[i] && targetValue <  myMapApp.threshArray[i+1]) {
-	                   colIndex = i;
-	                   break;
-	               }
-	           }
-	       }
-           
+           if (myMapApp.threshArray){
+	           if(targetValue ==  myMapApp.threshArray[myMapApp.threshArray.length-1] ) {
+	           		colIndex = myMapApp.threshArray.length-2;
+	           } else {             
+		           for (var i = 0;i<myMapApp.threshArray.length-1;i++) {
+		               if (targetValue >= myMapApp.threshArray[i] && targetValue <  myMapApp.threshArray[i+1]) {
+		                   colIndex = i;
+		                   break;
+		               }
+		           }
+		       }
+		   }
+		              
            var curLegendRect;;
             if(myMapApp.Windows["legend"]) {
               curLegendRect = (colIndex != -1? eval("myMapApp.legRect[" + colIndex + "]") : null);
@@ -706,7 +710,7 @@ onload="init(evt);">
                 windowConf = Utils.find(sbi.geo.conf.gui_settings.windows, 'name', 'detail');
                 myMapApp.Windows["detail"].setTitleText(windowConf.title || "Detail");
                }
-               if (myMapApp.Windows["detail"] &&!myMapApp.Windows["detail"].closed) {
+               if (myMapApp.Windows["detail"] && !myMapApp.Windows["detail"].closed) {
                    for(i = 0; i < sbi.geo.conf.measures.length; i++) {
                        myMapApp.infoPanel[i].firstChild.nodeValue = sbi.geo.conf.measures[i].description + " ";
                    }

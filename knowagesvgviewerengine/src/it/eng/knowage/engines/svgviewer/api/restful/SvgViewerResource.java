@@ -177,9 +177,13 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			String hierarchy = dataMartProvider.getSelectedHierarchyName();
 
 			// 3. update internal objects (datamartProvider and mapProvider)
-			if (parent != null && parent.length() > 0) {
-				dataMartProvider.setSelectedParentName(parent);
-			}
+			// if (parent != null && parent.length() > 0) {
+			// dataMartProvider.setSelectedParentName(parent);
+			// } else {
+			// // clean for default
+			// dataMartProvider.setSelectedParentName(null);
+			// }
+			dataMartProvider.setSelectedParentName(parent);
 
 			dataMartProvider.setSelectedMemberName(getProperty("name", memberSB));
 			dataMartProvider.setSelectedLevel(level);
