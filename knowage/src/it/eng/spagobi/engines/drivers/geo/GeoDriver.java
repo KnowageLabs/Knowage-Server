@@ -54,19 +54,16 @@ public class GeoDriver extends AbstractDriver implements IEngineDriver {
 	public static final String DOCUMENT_ID = "document";
 	public static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
 
-	public static final String COUNTRY = "country";
-	public static final String LANGUAGE = "language";
-
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 *
+	 * 
 	 * @param profile
 	 *            Profile of the user
 	 * @param roleName
 	 *            the name of the execution role
 	 * @param biobject
 	 *            the biobject
-	 *
+	 * 
 	 * @return Map The map of the execution call parameters
 	 */
 	@Override
@@ -95,7 +92,7 @@ public class GeoDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 *
+	 * 
 	 * @param subObject
 	 *            SubObject to execute
 	 * @param profile
@@ -104,7 +101,7 @@ public class GeoDriver extends AbstractDriver implements IEngineDriver {
 	 *            the name of the execution role
 	 * @param object
 	 *            the object
-	 *
+	 * 
 	 * @return Map The map of the execution call parameters
 	 */
 	@Override
@@ -165,7 +162,7 @@ public class GeoDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Starting from a BIObject extracts from it the map of the paramaeters for the execution call
-	 *
+	 * 
 	 * @param biobj
 	 *            BIObject to execute
 	 * @return Map The map of the execution call parameters
@@ -212,7 +209,7 @@ public class GeoDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
-	 *
+	 * 
 	 * @param biobj
 	 *            BIOBject to execute
 	 * @param pars

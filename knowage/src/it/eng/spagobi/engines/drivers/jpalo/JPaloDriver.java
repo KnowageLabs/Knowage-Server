@@ -18,22 +18,21 @@
 
 package it.eng.spagobi.engines.drivers.jpalo;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.engines.drivers.generic.GenericDriver;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -42,19 +41,23 @@ import org.apache.log4j.Logger;
  */
 public class JPaloDriver extends GenericDriver implements IEngineDriver {
 
-    static private Logger logger = Logger.getLogger(JPaloDriver.class);
+	static private Logger logger = Logger.getLogger(JPaloDriver.class);
+
 	/**
 	 * Returns the url to be invoked for editing template document.
 	 * 
-	 * @param biobject The biobject
-	 * @param profile the profile
+	 * @param biobject
+	 *            The biobject
+	 * @param profile
+	 *            the profile
 	 * 
 	 * @return the url to be invoked for editing template document
 	 * 
-	 * @throws InvalidOperationRequest the invalid operation request
+	 * @throws InvalidOperationRequest
+	 *             the invalid operation request
 	 */
-	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
-	throws InvalidOperationRequest {
+	@Override
+	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 		logger.debug("IN");
 		BIObject obj = null;
 		try {
@@ -79,15 +82,18 @@ public class JPaloDriver extends GenericDriver implements IEngineDriver {
 	/**
 	 * Returns the url to be invoked for creating a new template document.
 	 * 
-	 * @param biobject The biobject
-	 * @param profile the profile
+	 * @param biobject
+	 *            The biobject
+	 * @param profile
+	 *            the profile
 	 * 
 	 * @return the url to be invoked for creating a new template document
 	 * 
-	 * @throws InvalidOperationRequest the invalid operation request
+	 * @throws InvalidOperationRequest
+	 *             the invalid operation request
 	 */
-	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
-	throws InvalidOperationRequest {
+	@Override
+	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 		logger.debug("IN");
 		BIObject obj = null;
 		try {
@@ -110,19 +116,19 @@ public class JPaloDriver extends GenericDriver implements IEngineDriver {
 		return engineURL;
 	}
 
-    private Map applyLocale(Map map) {
-    	logger.debug("IN");
+	private Map applyLocale(Map map) {
+		logger.debug("IN");
 
-    	
-    	Locale locale = getLocale();
-    	map.put("country", locale.getCountry());
-    	map.put("language", locale.getLanguage());
+		Locale locale = getLocale();
+		map.put(COUNTRY, locale.getCountry());
+		map.put(LANGUAGE, locale.getLanguage());
 
-    	logger.debug("OUT");
-    	return map;
-    }
-    private Locale getLocale() {
-    	logger.debug("IN");
+		logger.debug("OUT");
+		return map;
+	}
+
+	private Locale getLocale() {
+		logger.debug("IN");
 		try {
 			Locale locale = null;
 			RequestContainer requestContainer = RequestContainer.getRequestContainer();
@@ -133,10 +139,10 @@ public class JPaloDriver extends GenericDriver implements IEngineDriver {
 			locale = new Locale(language, country);
 			return locale;
 		} catch (Exception e) {
-		    logger.error("Error while getting locale; using default one", e);
-		    return GeneralUtilities.getDefaultLocale();
-		} finally  {
+			logger.error("Error while getting locale; using default one", e);
+			return GeneralUtilities.getDefaultLocale();
+		} finally {
 			logger.debug("OUT");
-		}	
+		}
 	}
 }

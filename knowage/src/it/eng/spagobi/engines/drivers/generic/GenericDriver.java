@@ -69,21 +69,18 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 	public static final String DOCUMENT_FUNCTIONALITIES = "DOCUMENT_FUNCTIONALITIES";
 	public static final String IS_TECHNICAL_USER = "IS_TECHNICAL_USER";
 
-	public static final String COUNTRY = "country";
-	public static final String LANGUAGE = "language";
-
 	static private Logger logger = Logger.getLogger(GenericDriver.class);
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 *
+	 * 
 	 * @param profile
 	 *            Profile of the user
 	 * @param roleName
 	 *            the name of the execution role
 	 * @param biobject
 	 *            the biobject
-	 *
+	 * 
 	 * @return Map The map of the execution call parameters
 	 */
 	@Override
@@ -108,7 +105,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 *
+	 * 
 	 * @param subObject
 	 *            SubObject to execute
 	 * @param profile
@@ -117,7 +114,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 	 *            the name of the execution role
 	 * @param object
 	 *            the object
-	 *
+	 * 
 	 * @return Map The map of the execution call parameters
 	 */
 	@Override
@@ -161,7 +158,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Starting from a BIObject extracts from it the map of the paramaeters for the execution call
-	 *
+	 * 
 	 * @param biobj
 	 *            BIObject to execute
 	 * @return Map The map of the execution call parameters
@@ -244,7 +241,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
-	 *
+	 * 
 	 * @param biobj
 	 *            BIOBject to execute
 	 * @param pars
@@ -284,14 +281,14 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 *
+	 * 
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 *
+	 * 
 	 * @return the edits the document template build url
-	 *
+	 * 
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -303,14 +300,14 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 *
+	 * 
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 *
+	 * 
 	 * @return the new document template build url
-	 *
+	 * 
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */

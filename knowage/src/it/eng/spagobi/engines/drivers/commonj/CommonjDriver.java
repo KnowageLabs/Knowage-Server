@@ -52,19 +52,16 @@ public class CommonjDriver extends AbstractDriver implements IEngineDriver {
 	public static final String DOCUMENT_ID = "document";
 	public static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
 
-	public static final String COUNTRY = "country";
-	public static final String LANGUAGE = "language";
-
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 *
+	 * 
 	 * @param profile
 	 *            Profile of the user
 	 * @param roleName
 	 *            the name of the execution role
 	 * @param biobject
 	 *            the biobject
-	 *
+	 * 
 	 * @return Map The map of the execution call parameters
 	 */
 	@Override
@@ -88,7 +85,7 @@ public class CommonjDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * SpagoBITalendEngine does not manage subobejcts, so this method is equivalent to <code>getParameterMap(object, profile, roleName)</code>.
-	 *
+	 * 
 	 * @param subObject
 	 *            SubObject to execute
 	 * @param profile
@@ -97,7 +94,7 @@ public class CommonjDriver extends AbstractDriver implements IEngineDriver {
 	 *            the name of the execution role
 	 * @param object
 	 *            the object
-	 *
+	 * 
 	 * @return Map The map of the execution call parameters
 	 */
 	@Override
@@ -107,7 +104,7 @@ public class CommonjDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Starting from a BIObject extracts from it the map of the paramaeters for the execution call
-	 *
+	 * 
 	 * @param biobj
 	 *            BIObject to execute
 	 * @return Map The map of the execution call parameters
@@ -126,7 +123,7 @@ public class CommonjDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
-	 *
+	 * 
 	 * @param biobj
 	 *            BIOBject to execute
 	 * @param pars
@@ -160,14 +157,14 @@ public class CommonjDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 *
+	 * 
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 *
+	 * 
 	 * @return the edits the document template build url
-	 *
+	 * 
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -179,14 +176,14 @@ public class CommonjDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 *
+	 * 
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 *
+	 * 
 	 * @return the new document template build url
-	 *
+	 * 
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -208,8 +205,8 @@ public class CommonjDriver extends AbstractDriver implements IEngineDriver {
 		logger.debug("IN");
 
 		Locale locale = getLocale();
-		map.put("COUNTRY", locale.getCountry());
-		map.put("LANGUAGE", locale.getLanguage());
+		map.put(COUNTRY, locale.getCountry());
+		map.put(LANGUAGE, locale.getLanguage());
 
 		logger.debug("OUT");
 		return map;
