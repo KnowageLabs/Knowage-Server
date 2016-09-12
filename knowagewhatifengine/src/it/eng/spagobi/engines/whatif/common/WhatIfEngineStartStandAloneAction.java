@@ -17,6 +17,13 @@
  */
 package it.eng.spagobi.engines.whatif.common;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.whatif.WhatIfEngine;
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -30,19 +37,8 @@ import javax.ws.rs.core.Context;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engines.whatif.WhatIfEngine;
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 @Path("/start-standalone")
 public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineService {
-
-	// INPUT PARAMETERS
-	public static final String LANGUAGE = "language";
-	public static final String COUNTRY = "country";
 
 	// OUTPUT PARAMETERS
 
@@ -85,8 +81,8 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 				servletRequest.getRequestDispatcher(REQUEST_DISPATCHER_URL).forward(servletRequest, response);
 			} catch (Exception e) {
 				logger.error("Error starting the What-If engine: error while forwarding the execution to the jsp " + REQUEST_DISPATCHER_URL, e);
-				throw new SpagoBIEngineRuntimeException(
-						"Error starting the What-If engine: error while forwarding the execution to the jsp " + REQUEST_DISPATCHER_URL, e);
+				throw new SpagoBIEngineRuntimeException("Error starting the What-If engine: error while forwarding the execution to the jsp "
+						+ REQUEST_DISPATCHER_URL, e);
 			}
 
 		} catch (Exception e) {
