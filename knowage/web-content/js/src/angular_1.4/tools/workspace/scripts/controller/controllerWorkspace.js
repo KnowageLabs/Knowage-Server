@@ -44,7 +44,7 @@ angular
 
 
 function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $documentViewer, sbiModule_translate, 
-			sbiModule_restServices, sbiModule_config, sbiModule_user, sbiModule_messaging, toastr) {
+			sbiModule_restServices, sbiModule_config, sbiModule_user, sbiModule_messaging, toastr) { 
 
 	$scope.allDocuments = [];
 	$scope.federationDefinitions=[];
@@ -841,6 +841,7 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 							$scope.loadRecentDocumentExecutionsForUser(); 
 							$scope.loadAllFolders(); 
 							$scope.loadAllMyAnalysisDocuments();
+							$scope.hideRightSidePanel();
 							
 						}
 					);

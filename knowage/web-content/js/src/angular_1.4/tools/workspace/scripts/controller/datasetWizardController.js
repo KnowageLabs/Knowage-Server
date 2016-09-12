@@ -575,7 +575,9 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 						toastr.success(sbiModule_translate.format(sbiModule_translate.load('sbi.workspace.dataset.wizard.submit.success.update.msg'), 
 								response.config.data.name), translate.load('sbi.generic.success'), $scope.toasterConfig);
 						
-					}					
+					}	
+					
+					$scope.hideRightSidePanel();
 					
 				}
 				else {
