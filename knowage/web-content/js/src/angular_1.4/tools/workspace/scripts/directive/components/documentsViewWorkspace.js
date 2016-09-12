@@ -35,7 +35,8 @@ angular
 		  };
 	})
 
-function documentsController($scope,sbiModule_restServices,sbiModule_translate,$window,$mdSidenav,$mdDialog,sbiModule_messaging,sbiModule_config, $documentViewer ){
+function documentsController($scope, sbiModule_restServices, sbiModule_translate, $window, $mdSidenav, $mdDialog,
+			sbiModule_config, $documentViewer, toastr){
 
 	$scope.selectedDocument = undefined;
 	$scope.showDocumentInfo = false;
@@ -46,7 +47,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	$scope.breadCrumbControl;
 	$scope.documentsOfSelectedFolder=[];
 	$scope.documentsOfSelectedFolderInitial=[];
-	
+		
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	$scope.documentsFromAllFolders=[];
 	
@@ -153,19 +154,23 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 							$mdDialog.show(confirm).then(function() {
 								sbiModule_restServices.promiseDelete("2.0/organizer/folders",folder.functId)
 								.then(function(response) {
+									
 									$scope.loadAllFolders();
-									sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.folder.delete.success'),sbiModule_translate.load('sbi.generic.success'));
-				
-								},function(response) {
 									
-									//sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+									// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+									toastr.success(sbiModule_translate.load('sbi.workspace.folder.delete.success'),
+											sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
 									
+								},function(response) {									
+								
 									/**
 									 * Provide a toast with an error message that informs user that he cannot delete a folder. The reason for that could be 
 									 * at least one subfolder or at least one document that the folder contains.
 									 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 									 */
-									sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.workspace.organizer.folder.error.delete'),"Error!");
+									// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+									toastr.error(sbiModule_translate.load('sbi.workspace.organizer.folder.error.delete'), 
+											sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
 									
 								});
 						});
@@ -181,7 +186,10 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 			$scope.loadDocumentsForFolder($scope.selectedFolder);
 			console.info("[LOAD END]: Loading of users folders is finished.");
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
+			
 		});
 	}
 	
@@ -200,11 +208,11 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 	
 		/**
 		 * Only for the need of the breadcrumb in the Organizer, rename the root folder that is originally name "root"
-		 * with the value of "HOME". This will not change the DB value (the persisted value) of the root folder name.
+		 * with the value of "Home". This will not change the DB value (the persisted value) of the root folder name.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		if (folder.name=="root") {
-			folder.name = "HOME";
+			folder.name = "Home";
 		}
 	
 		//$scope.breadModel.push(folder);
@@ -266,7 +274,11 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 				$mdDialog.cancel();
 				$scope.clearForm();
 		        $scope.loadAllFolders();
-				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.workspace.folder.add.success.msg"), sbiModule_translate.load('sbi.generic.success'));
+		        
+		        // Take the toaster duration set inside the main controller of the Workspace. (danristo)
+		        toastr.success(sbiModule_translate.load("sbi.workspace.folder.add.success.msg"), 
+		        		sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
+				
 			}, function(response) {	
 				
 				/**
@@ -274,7 +286,9 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 				 * new folder is not possible.
 				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
-				sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(sbiModule_translate.load(response.data.errors[0].message), 
+						sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 				
 			});
 			
@@ -378,7 +392,10 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 					console.info("[LOAD END]: Loading of documents.");
 					
 				},function(response){
-					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+					
+					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+					toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
+					
 				});
 		}
 	}
@@ -394,13 +411,17 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 					},
 					
 					function(response){
-						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+						
+						// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+						toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
+						
 					}
 				);
 		
 	}
 	
 	$scope.executeDocumentFromOrganizer=function(document){
+		
 		console.info("[EXECUTION]: Execution of document with the label '" + document.label + "' is started.");	
 
 		/**
@@ -408,13 +429,17 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		 * we are coming from the Organizer, so the page can hide the "Add to my workspace" option on the menu that is available 
 		 * on the page where document is executed. This option, when picked, creates a label to the executed document inside the
 		 * Organizer of the Workspace and since we (in this case) execute it from the Organizer, there is no need for this menu
-		 * option. For that reason, we send parameter with the "WORKSPACE_ORGANIZER" value to the 'openDocument' function.
-		 * 
-		 * NOTE: 'null' is the value for the parameter of the current scope (since we do not need this information).
-		 * 
+		 * option. For that reason, we send parameter with the "WORKSPACE_ORGANIZER" value to the 'openDocument' function. The
+		 * $scope variable is sent to the remote function, since we need it there to rise an "documentClosed" event that will cause 
+		 * the right-side detail panel to close, if previously opened. This operation is necessary, since user can potentially 
+		 * modify the document (e.g. a cockpit document) that is executed from the Organizer (e.g. document's label that is shown 
+		 * in the detail panel could be changed). For the same reason, reload all folders and their documents.
 		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		$documentViewer.openDocument(document.biObjId,document.documentLabel,document.documentName,null,"WORKSPACE_ORGANIZER");
+		$documentViewer.openDocument(document.biObjId,document.documentLabel,document.documentName,$scope,"WORKSPACE_ORGANIZER");
+		
+		$scope.$on("documentClosed", function() { $scope.hideRightSidePanel(); $scope.loadAllFolders(); })
+		
 	}
 	
 	$scope.deleteDocumentFromOrganizer = function(document) {
@@ -428,7 +453,9 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 				sbiModule_restServices.promiseDelete("2.0/organizer/documents/"+document.functId,document.biObjId)
 				.then(function(response) {
 					
-					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.organizer.document.remove.success'),sbiModule_translate.load('sbi.generic.success'));
+					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+					toastr.success(sbiModule_translate.load('sbi.workspace.organizer.document.remove.success'),
+							sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
 					
 					$scope.selectOrganizerDocument(undefined);
 					
@@ -462,7 +489,10 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 					
 					
 				},function(response) {
-					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+					
+					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+					toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
+					
 				});
 		});
 	}
@@ -471,7 +501,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		
 		/**
 		 * Only for the need of the tree structure of folders in the Organizer (when moving a document into some folder), 
-		 * rename the root folder that is originally name "root" with the value of "HOME". This will not change the DB value 
+		 * rename the root folder that is originally name "root" with the value of "Home". This will not change the DB value 
 		 * (the persisted value) of the root folder name.
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
@@ -479,7 +509,7 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		
 		for (i=0; i<$scope.folders.length; i++) {
 			if ($scope.folders[i].name=="root") {
-				$scope.folders[i].name = "HOME";
+				$scope.folders[i].name = "Home";
 				break;
 			}
 		}
@@ -520,24 +550,32 @@ function documentsController($scope,sbiModule_restServices,sbiModule_translate,$
 		$scope.executeMovingDocument=function(){
 			if($scope.destFolder!=undefined){
 				if($scope.selectedFolder.functId==$scope.destFolder.functId){
-					sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.workspace.organizer.move.to.same.destination.folder'),sbiModule_translate.load('sbi.generic.info'));
+					
+					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+					toastr.success(sbiModule_translate.load('sbi.workspace.organizer.move.to.same.destination.folder'),
+							sbiModule_translate.load('sbi.generic.info'), $scope.toasterConfig);
+					
 				}else{					
 					sbiModule_restServices.promisePut("2.0/organizer/documents/"+doc.biObjId+"/"+$scope.selectedFolder.functId,$scope.destFolder.functId)
 					.then(function(response) {
-						sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.organizer.folder.move.success'),sbiModule_translate.load('sbi.generic.success'));
+						
+						// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+						toastr.success(sbiModule_translate.load('sbi.workspace.organizer.folder.move.success'),
+								sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
+						
 						$scope.loadDocumentsForFolder($scope.selectedFolder);
 						$scope.selectOrganizerDocument(undefined);
 						$scope.closeFolderTree();
 					},function(response) {
-						
-//						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
-						
+												
 						/**
 						 * Provide a toast with an error message that informs user that he cannot delete a folder. The reason for that could be 
 						 * at least one subfolder or at least one document that the folder contains.
 						 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 						 */
-						sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message),"Error!");
+						// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+						toastr.error(sbiModule_translate.load(response.data.errors[0].message),
+								sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
 						
 					});
 				}				

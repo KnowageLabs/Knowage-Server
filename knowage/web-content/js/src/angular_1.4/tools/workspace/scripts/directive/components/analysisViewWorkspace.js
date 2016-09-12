@@ -48,7 +48,8 @@ angular
 	    
 	});
 
-function analysisController($scope,sbiModule_restServices,sbiModule_translate,sbiModule_config,sbiModule_user,sbiModule_messaging,$mdDialog,$mdSidenav,$documentViewer,$qbeViewer) {
+function analysisController($scope, sbiModule_restServices, sbiModule_translate, sbiModule_config, sbiModule_user, 
+			$mdDialog, $mdSidenav, $documentViewer, $qbeViewer, toastr) {
 	
 	$scope.cockpitAnalysisDocsInitial = [];	
 	$scope.activeTabAnalysis = null;	
@@ -89,12 +90,16 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 						}
 						
 						angular.copy($scope.cockpitAnalysisDocs,$scope.cockpitAnalysisDocsInitial);
-						console.log($scope.cockpitAnalysisDocs);
+						
 						console.info("[LOAD END]: Loading of Analysis Cockpit documents is finished.");
+						
 					},
 					
 					function(response) {
-						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+						
+						// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+						toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
+						
 					}
 				);
 	}
@@ -143,14 +148,18 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 									}
 									
 									console.info("[CLONE END]: The cloning of a selected '" + document.label + "' went successfully.");
+																		
+									// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+									toastr.success(sbiModule_translate.load('sbi.workspace.analysis.clone.document.success.msg'),
+											sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
 									
-									// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-									sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.analysis.clone.document.success.msg')
-																				,sbiModule_translate.load('sbi.generic.success'));
 								},
 								
 								function(response) {
-									sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.clone.error'));
+								
+									// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+									toastr.error(response.data, sbiModule_translate.load('sbi.browser.document.clone.error'), $scope.toasterConfig);
+									
 								}
 							);
 					}
@@ -212,14 +221,18 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 										$scope.loadRecentDocumentExecutionsForUser();
 										
 										console.info("[DELETE END]: Delete of Analysis Cockpit document with the label '" + document.label + "' is done successfully.");
+																				
+										// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+										toastr.success(sbiModule_translate.load('sbi.workspace.analysis.delete.document.success.msg')
+												,sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
 										
-										// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-										sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.analysis.delete.document.success.msg')
-												,sbiModule_translate.load('sbi.generic.success'));
 									},
 								
 									function(response) {
-										sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.delete.error'));
+										
+										// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+										toastr.error(response.data, sbiModule_translate.load('sbi.browser.document.delete.error'), $scope.toasterConfig);
+										
 									}
 								);
 					}
@@ -276,7 +289,10 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 			    //console.log(response);
 				$scope.openEditDialog(document.label,response.data);
 			},function(response){
-				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+				
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.load.error'), $scope.toasterConfig);
+				
 			});
 		}else{
 			
@@ -320,7 +336,7 @@ function analysisController($scope,sbiModule_restServices,sbiModule_translate,sb
 		$scope.iframeUrl = datasetParameters.cockpitServiceUrl + '&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";
 		$scope.cancelDialog = function() {
 			$scope.loadAllMyAnalysisDocuments();
-			 $mdDialog.cancel();
+			$mdDialog.cancel();
 		}
 	}
 	

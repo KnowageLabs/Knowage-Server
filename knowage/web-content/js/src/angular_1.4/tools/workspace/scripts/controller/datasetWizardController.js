@@ -16,7 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModule_user,sbiModule_config,multipartForm,$http,sbiModule_messaging,sbiModule_translate) {
+function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiModule_user, sbiModule_config, multipartForm, 
+			$http, sbiModule_translate, toastr) {
 
 	var translate = sbiModule_translate;
 	
@@ -271,7 +272,9 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
 					// Reset the meta after first unsuccessful try to go to Step 2 (danristo)
 					$scope.dataset.meta = [];
-					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
+					
+					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+					toastr.error(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 					
 				}
 			}, 
@@ -282,7 +285,9 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				// or server returns response with an error status.
 				console.info("[FAILURE]: The form cannot be submitted because of some failure.");
 				console.log(response);
-				sbiModule_messaging.showErrorMessage("Failure!", sbiModule_translate.load('sbi.generic.failure'));
+				
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(sbiModule_translate.load('sbi.ds.wizard.form.submit.failure.msg'), sbiModule_translate.load('sbi.generic.failure'), $scope.toasterConfig);
 				
 			}
 		);
@@ -398,7 +403,10 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					 */
 					$scope.step2ValidationErrors = null;
 					$scope.validationStatus = true;
-					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.workspace.dataset.wizard.metadata.validation.success.msg"),sbiModule_translate.load('sbi.generic.success'));
+					
+					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+					toastr.success(sbiModule_translate.load("sbi.workspace.dataset.wizard.metadata.validation.success.msg"),
+							sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
 					
 					/**
 					 * Since the validation of the Step 2 went well (successful), set flags that indicate that the validation
@@ -443,14 +451,18 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					$scope.prepareMetaForView();
 					$scope.prepareDatasetForView();
 					
-					// Inform the user about the validation error.
-					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.workspace.dataset.wizard.metadata.validation.error.msg"), sbiModule_translate.load('sbi.generic.error'));
+					// Inform the user about the validation error.					
+					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+					toastr.error(sbiModule_translate.load("sbi.workspace.dataset.wizard.metadata.validation.error.msg"), sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 					
 				}
 				else {
 					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
 					$scope.validationStatus = false;
-					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
+					
+					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+					toastr.error(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+					
 					$scope.step2ValidationErrors = null;
 					
 					/**
@@ -471,7 +483,9 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				console.info("[FAILURE]: The form cannot be submitted because of some failure.");
 				console.log(response);
 				$scope.validationStatus = false;
-				sbiModule_messaging.showErrorMessage("Failure!", sbiModule_translate.load('sbi.generic.failure'));
+				
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(sbiModule_translate.load("sbi.ds.wizard.form.submit.failure.msg"), sbiModule_translate.load('sbi.generic.failure'), $scope.toasterConfig);
 			}
 		);
 	}
@@ -497,23 +511,6 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 		params.SBI_EXECUTION_ID = -1;
 		params.isTech = false;
 		params.showOnlyOwner=true;
-		
-//		console.log($scope.dataset);
-			
-		/*sbiModule_restServices.promisePost("selfservicedataset","save?SBI_EXECUTION_ID=-1&isTech=false&showOnlyOwner=true&showDerivedDataset=false","",str)
-			.then(function(response) {
-				          console.log(response);
-				          // binds changed value to object
-//				          dataset.isPublic=response.data.isPublic;
-//				          if(response.data.isPublic){
-//				          sbiModule_messaging.showSuccessMessage(translate.load('sbi.workspace.dataset.share.success'),translate.load('sbi.workspace.dataset.success'));
-//				          }else{
-//				        	  
-//				            sbiModule_messaging.showSuccessMessage(translate.load('sbi.workspace.dataset.unshare.success'),translate.load('sbi.workspace.dataset.success'));	  
-//				          }
-			},function(response){
-				sbiModule_restServices.errorHandler(response.data,translate.load('sbi.workspace.dataset.fail'));
-			});*/
 		
 		$http
 		(
@@ -566,19 +563,27 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
 					if (response.data.id >= 0) {						
-						sbiModule_messaging.showSuccessMessage(sbiModule_translate.format(sbiModule_translate.load('sbi.workspace.dataset.wizard.submit.success.save.msg'), 
-								response.config.data.name), translate.load('sbi.generic.success'));						
+						
+						// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+						toastr.success(sbiModule_translate.format(sbiModule_translate.load('sbi.workspace.dataset.wizard.submit.success.save.msg'), 
+								response.config.data.name), translate.load('sbi.generic.success'), $scope.toasterConfig);
+						
 					}
-					else {
-						sbiModule_messaging.showSuccessMessage(sbiModule_translate.format(sbiModule_translate.load('sbi.workspace.dataset.wizard.submit.success.update.msg'), 
-								response.config.data.name), translate.load('sbi.generic.success'));
+					else {					
+						
+						// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+						toastr.success(sbiModule_translate.format(sbiModule_translate.load('sbi.workspace.dataset.wizard.submit.success.update.msg'), 
+								response.config.data.name), translate.load('sbi.generic.success'), $scope.toasterConfig);
+						
 					}					
 					
 				}
 				else {
 					
 					console.info("[ERROR]: ",translate.load(response.data.errors[0].message));
-					sbiModule_messaging.showErrorMessage(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
+					
+					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+					toastr.error(translate.load(response.data.errors[0].message), sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 					
 				}
 			}, 
@@ -587,9 +592,11 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 			// called asynchronously if an error occurs
 			// or server returns response with an error status.
 				console.info("[FAILURE]: The form cannot be submitted because of some failure.");			
+								
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(sbiModule_translate.load('sbi.workspace.dataset.wizard.submit.failure.msg'), 
+						sbiModule_translate.load('sbi.generic.failure'), $scope.toasterConfig);
 				
-				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.workspace.dataset.wizard.submit.failure.msg'), 
-						sbiModule_translate.load('sbi.generic.failure'));
 			}
 		);
 		
@@ -727,7 +734,10 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 				angular.copy(response.data,$scope.dsMetaValue)
 			}
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,"failed to load data for"+b);
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(response.data,"failed to load data for"+b, $scope.toasterConfig);
+			
 		});
 	}
 	
@@ -747,14 +757,18 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					
 					if(data.hasOwnProperty("errors")){						
 						console.info("[UPLOAD]: DATA HAS ERRORS PROPERTY!");
-						sbiModule_messaging.showErrorMessage(sbiModule_translate.load(data.errors[0].message), sbiModule_translate.load('sbi.generic.error'));
+						
+						// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+						toastr.error(sbiModule_translate.load(data.errors[0].message), sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+						
 					}
 					else {
 						
 						console.info("[UPLOAD]: SUCCESS!");
-						
-						sbiModule_messaging.showSuccessMessage(sbiModule_translate.format(sbiModule_translate.load('sbi.workspace.dataset.wizard.upload.success'), 
-								$scope.fileObj.fileName), translate.load('sbi.generic.success'));
+												
+						// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+						toastr.success(sbiModule_translate.format(sbiModule_translate.load('sbi.workspace.dataset.wizard.upload.success'), 
+								$scope.fileObj.fileName), translate.load('sbi.generic.success'), $scope.toasterConfig);
 					
 						$scope.file={};
 						$scope.dataset.fileType = data.fileType;
@@ -783,7 +797,10 @@ function DatasetCreateController($scope,$mdDialog,sbiModule_restServices,sbiModu
 					}
 				}).error(function(data, status, headers, config) {
 					console.info("[UPLOAD]: FAIL! Status: "+status);					
-					sbiModule_messaging.showErrorMessage($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, sbiModule_translate.load('sbi.generic.failure'));
+
+					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+					toastr.error($scope.fileObj.fileName+" could not be uploaded."+data.errors[0].message, sbiModule_translate.load('sbi.generic.failure'), $scope.toasterConfig);
+					
 				});
     	
     }

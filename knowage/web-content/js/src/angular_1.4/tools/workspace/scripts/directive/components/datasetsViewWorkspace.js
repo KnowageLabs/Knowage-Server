@@ -38,7 +38,8 @@ angular
 	  	};
 	})
 
-function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_user,sbiModule_helpOnLine,sbiModule_messaging,$qbeViewer){
+function datasetsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window, $mdSidenav,
+		sbiModule_user, sbiModule_helpOnLine, $qbeViewer, toastr){
 	
 	$scope.translate = sbiModule_translate;
 	
@@ -147,8 +148,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			 * further execution of REST services.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
-//			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));			
-			sbiModule_messaging.showErrorMessage("The All datasets could not be loaded", sbiModule_translate.load('sbi.generic.error'));
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(sbiModule_translate.load("sbi.ds.alldatasets.loading.error.msg"), 
+					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 			
 			/**
 			 * Even if the REST call of this one was unsuccessful, call the next one (the one with the index 
@@ -185,8 +188,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			 * further execution of REST services.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
-//			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));			
-			sbiModule_messaging.showErrorMessage("The My datasets could not be loaded", sbiModule_translate.load('sbi.generic.error'));
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(sbiModule_translate.load("sbi.ds.mydatasets.loading.error.msg"), 
+					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 			
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 			
@@ -213,9 +218,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
 			 * further execution of REST services.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-//			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));			
-			sbiModule_messaging.showErrorMessage("The Enterprise datasets could not be loaded", sbiModule_translate.load('sbi.generic.error'));
+			 */			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(sbiModule_translate.load("sbi.ds.enterprisedatasets.loading.error.msg"), 
+					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 			
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 			
@@ -242,10 +248,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			 * TEMPORARY SOLUTION: show toast instead of the popup, in order to prevent stopping of the potential
 			 * further execution of REST services.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-//			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));			
-			sbiModule_messaging.showErrorMessage("The Shared datasets could not be loaded", sbiModule_translate.load('sbi.generic.error'));
-			
+			 */			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(sbiModule_translate.load("sbi.ds.shareddatasets.loading.error.msg"), 
+					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+					
 			functionsToCall[indexForNextFn] ? $scope[functionsToCall[indexForNextFn]]([functionsToCall,indexForNextFn+1]) : null;
 			
 		});
@@ -279,8 +286,9 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			functionsToCall[0] ? $scope[functionsToCall[0]]([functionsToCall,1]) : null;
 			
 		},function(response){
-			
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.load.error'));
+						
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.load.error'), $scope.toasterConfig);			
 			
 			/**
 			 * Even if the REST call of this one was unsuccessful, call the next one (the one
@@ -317,8 +325,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			
 			sbiModule_restServices.promiseDelete("1.0/datasets",label)
 			.then(function(response) {
-				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.delete.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));
 
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.success(sbiModule_translate.load("sbi.workspace.dataset.delete.success"), 
+						sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
+				
 				$scope.reloadMyDataFn();				
 				$scope.selectDataset(undefined);
 				
@@ -328,7 +339,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 				 */
 				$scope.searchInput = "";
 			},function(response) {				
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message,sbiModule_translate.load('sbi.generic.error'));
+				
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(response.data.errors[0].message, 
+	        			  sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+				
 			});
 		});
 		
@@ -419,7 +434,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 				$scope.showCategoriesDialog();
 			}
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,"error");
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
+			
 		});
 	}
 	
@@ -465,14 +483,25 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			 dataset.catTypeCd=response.data.catTypeCd;
 			 
 	          if(response.data.catTypeId!=null){
-	        	  sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.share.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));
-	          }else{
+	        	
+	        	  // Take the toaster duration set inside the main controller of the Workspace. (danristo)
+	        	  toastr.success(sbiModule_translate.load("sbi.workspace.dataset.share.success"), 
+							sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
+					
+	          }
+	          else {
 	        	  
-	            sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.unshare.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));	  
+	        	  // Take the toaster duration set inside the main controller of the Workspace. (danristo)
+	        	  toastr.success(sbiModule_translate.load("sbi.workspace.dataset.unshare.success"), 
+							sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
+	        	  
 	          }
 			         
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.fail'));
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.fail'), $scope.toasterConfig);
+			
 		});
     	
     }
@@ -493,12 +522,22 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			 dataset.catTypeId=response.data.catTypeId;
 			 dataset.catTypeCd=response.data.catTypeCd;
 	          if(response.data.catTypeId==null){
-	        	  sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.workspace.dataset.unshare.success'),sbiModule_translate.load('sbi.workspace.dataset.success'));
+	        	  
+	        	  // Take the toaster duration set inside the main controller of the Workspace. (danristo)
+	        	  toastr.success(sbiModule_translate.load("sbi.workspace.dataset.unshare.success"), 
+							sbiModule_translate.load('sbi.workspace.dataset.success'), $scope.toasterConfig);
+	        	  
 	          }else{
-	        	  sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.fail'));          	  
+	        	  
+	        	// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.fail'), $scope.toasterConfig);
+	        	  
 	          }      
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.fail'));
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.dataset.fail'), $scope.toasterConfig);
+			
 		});
     	$mdDialog.cancel();
     }
@@ -698,15 +737,14 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 		},
 		
 		function(response){
-			
-			// COMMENTED BY: danristo
-//			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.preview.error'));
-			
+						
 			/**
 			 * Handling the error while trying to preview the dataset.
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message),sbiModule_translate.load('sbi.generic.error'));
+			 */			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(sbiModule_translate.load(response.data.errors[0].message), 
+					sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 			
 		});
     	
@@ -897,7 +935,11 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 //		var repo=$scope.selectedCkanRepo;
 		
 		if(repo.url==undefined){
-			sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.workspace.dataset.ckan.selectRepo'),sbiModule_translate.load('sbi.workspace.dataset.ckan.noRepository'));
+					
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.warning(sbiModule_translate.load('sbi.workspace.dataset.ckan.selectRepo'), 
+					sbiModule_translate.load('sbi.workspace.dataset.ckan.noRepository'), $scope.toasterConfig);
+			
 		}else{
 		params={};
 		params.isTech=false;
@@ -916,7 +958,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
             angular.copy(response.data.root,$scope.ckanDatasetsList);
             angular.copy($scope.ckanDatasetsList,$scope.ckanDatasetsListInitial);
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,"error");
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
+			
 		});
 		
 		
@@ -1006,7 +1051,10 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			
 			
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,"error");
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
+			
 		});
 	}
 	
@@ -1048,66 +1096,6 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
 			 $mdDialog.cancel();	 
 	    }
 		
-		// TODO: Remove this commented fucntion if not needed for sure.
-//		$scope.pageChanged = function(a,b,c,d,e) {
-//						
-//			console.log(b);
-//			console.log(c);
-//			params={};
-//	    	params.start=c*$scope.itemsPerPage;
-//	    	params.limit=$scope.itemsPerPage;
-//	    	params.page=c;
-//	    	params.dataSetParameters=null;
-//	    	params.sort=null;
-//	    	params.valueFilter=null;
-//	    	params.columnsFilter=null;
-//	    	params.columnsFilterDescription=null;
-//	    	params.typeValueFilter=null;
-//	    	params.typeFilter=null;
-//	    	
-//	    	//$scope.dataset.labelA = dataset.label;
-//	    	
-////	    	console.log(dataset.label);
-////	    	console.log($scope.itemsPerPage);
-////	    	console.log($scope.startPreviewIndex);
-//	    	
-//	    	config={};
-//	    	config.params=params;
-//			
-////			console.log(b);
-////			console.log(c);
-////			console.log(prevScope.dataset.labelA);
-////			
-////			config.params.start = (c-1)*b;
-////			config.params.limit = b;
-//			//config.params.page = c;
-//			
-//			sbiModule_restServices.promiseGet("selfservicedataset/values", prevScope.dataset.labelA,"",config)
-//			.then(function(response) {
-//				//console.log(response.data);
-//				console.log(response.data.rows);
-//			    angular.copy(response.data.rows,$scope.previewDatasetModel);
-//			    if( $scope.previewDatasetColumns.length==0){
-//				$scope.createColumnsForPreview(response.data.metaData.fields);
-//			    }
-//			
-//				
-//				//$scope.startPreviewIndex=$scope.startPreviewIndex=0+20;
-//				
-//			},function(response){
-//				
-//				// COMMENTED BY: danristo
-////				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.dataset.preview.error'));
-//				
-//				/**
-//				 * Handling the error while trying to preview the dataset.
-//				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-//				 */
-//				sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message),sbiModule_translate.load('sbi.generic.error'));
-//				
-//			});
-//		}
-		
 	}
 	
     function DialogCkanController($scope,$mdDialog,ckan){
@@ -1124,14 +1112,7 @@ function datasetsController($scope,sbiModule_restServices,sbiModule_translate,$m
     	  
     	  // Set the flag for editing the current dataaset (file)
     	  $scope.editingDatasetFile = true;
-    	 
-//    	  $scope.dataset=arg;
-//          $scope.dataset.xslSheetNumber=Number(arg.xslSheetNumber);
-//          $scope.dataset.skipRows=Number(arg.skipRows);
-//          $scope.dataset.limitRows=Number(arg.limitRows);
-          //$scope.fileObj={};
-         // $scope.fileObj.filename=arg.fileName;
-          
+    	           
           $mdDialog.show({
     		  scope:$scope,
     		  preserveScope: true,

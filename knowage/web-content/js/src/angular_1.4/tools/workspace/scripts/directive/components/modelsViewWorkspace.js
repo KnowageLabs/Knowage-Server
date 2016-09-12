@@ -38,7 +38,9 @@ angular
 		  };	  
 	});
 
-function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,sbiModule_config,$window,$mdSidenav,sbiModule_messaging,$qbeViewer, sbiModule_user){
+function modelsController($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, sbiModule_config, $window, 
+			$mdSidenav, $qbeViewer, sbiModule_user, toastr){
+	
 	$scope.businessModelsInitial=[];
 	$scope.federationDefinitionsInitial=[];
 	$scope.rolesIds = [];
@@ -89,7 +91,10 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 			angular.copy($scope.federationDefinitions,$scope.federationDefinitionsInitial);
 			console.info("[LOAD END]: Loading of Federation definitions is finished.");
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.federations.load.error'));
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.federations.load.error'), $scope.toasterConfig);
+			
 		});
 	}
 	
@@ -108,7 +113,10 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 			angular.copy($scope.businessModels,$scope.businessModelsInitial);
 			console.info("[LOAD END]: Loading of Business models is finished.");
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.categories.error'));
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.categories.error'), $scope.toasterConfig);
+			
 		});
 	}
         
@@ -118,7 +126,10 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		.then(function(response) {
 			$scope.handleBusinessModels(response.data);
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.bmmodels.load.error'));
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.bmmodels.load.error'), $scope.toasterConfig);
+			
 		});
     	
 	}
@@ -144,7 +155,10 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		.then(function(response) {
 			$scope.loadBusinessModelsCategories(response.data);
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.workspace.roles.error'));
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(response.data, sbiModule_translate.load('sbi.workspace.roles.error'), $scope.toasterConfig);
+			
 		});
 	}
 	
@@ -234,7 +248,11 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 					usedInDatasets.push($scope.allFederatedDatasets[i].label)
 				}
 			}
-			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.federationdefinition.models.delete")+"["+usedInDatasets+"]", sbiModule_translate.load("sbi.generic.error"));
+		
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(sbiModule_translate.load("sbi.federationdefinition.models.delete")+"["+usedInDatasets+"]", 
+					sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
+			
 		} else {
 			var confirm = $mdDialog.confirm()
 			.title(sbiModule_translate.load("sbi.workspace.delete.confirm.title"))
@@ -256,8 +274,15 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 					 */
 					$scope.searchInput = "";
 					
+					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+					toastr.success(sbiModule_translate.load("sbi.federationdefinition.models.delete.success.msg"), 
+							sbiModule_translate.load("sbi.generic.success"), $scope.toasterConfig);
+					
 				},function(response) {
-					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.document.delete.error'));
+					
+					// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+					toastr.error(response.data, sbiModule_translate.load('sbi.browser.document.delete.error'), $scope.toasterConfig);
+					
 				});
 			});
 		}
@@ -297,13 +322,34 @@ function modelsController($scope,sbiModule_restServices,sbiModule_translate,$mdD
 		 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		$scope.closeFederationDialog = function(){
-			 $mdDialog.cancel(); 
-			 $scope.loadFederations();			 
+			 
+			$mdDialog.cancel(); 
+			$scope.loadFederations();	
+			 
+			/**
+			  * If the user previously selected some already existing (created) federation definition (model), showing its details inside 
+			  * the right-side panel and now it creates a new one or updating an existing one, on its successful saving of this one, hide 
+			  * (close) the right-side panel, since the details are not consistent.
+			  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			  */
+			$scope.hideRightSidePanel();
+			 
 		}
 		
 		$scope.cancelDialog = function() {
-			 $mdDialog.cancel();	
-			 $scope.loadFederations();	// Refresh the federation models list in the workspace after closing the iframe manually. (danristo)
+			
+			$mdDialog.cancel();	
+			$scope.loadFederations();	// Refresh the federation models list in the workspace after closing the iframe manually. (danristo)
+			 
+			 /**
+			  * If the user previously selected some already existing (created) federation definition (model), showing its details inside 
+			  * the right-side panel and now it creates a new one or updating an existing one, on its successful saving of this one, hide 
+			  * (close) the right-side panel, since the details are not consistent. This is needed if the user after a saving manually
+			  * closes the iframe of the federation definition interface.
+			  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			  */
+			$scope.hideRightSidePanel();
+			
 		}
 		
 		if(federation!==undefined){

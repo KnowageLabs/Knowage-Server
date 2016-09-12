@@ -25,7 +25,7 @@
  */
 angular
 	.module('workspace.controller', ['workspace.directive','workspace.configuration'])
-	.controller('workspaceController', ["$scope","$http","$mdDialog","$timeout","$mdSidenav","$documentViewer","sbiModule_translate","sbiModule_restServices","sbiModule_config","sbiModule_user","sbiModule_messaging","$qbeViewer", workspaceFunction])
+	.controller('workspaceController', ["$scope","$http","$mdDialog","$timeout","$mdSidenav","$documentViewer","sbiModule_translate","sbiModule_restServices","sbiModule_config","sbiModule_user","sbiModule_messaging","$qbeViewer","toastr",workspaceFunction])
     .service('multipartForm',['$http',function($http){
 		
 		this.post = function(uploadUrl,data){
@@ -43,7 +43,8 @@ angular
 	}]);
 
 
-function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentViewer,sbiModule_translate,sbiModule_restServices,sbiModule_config,sbiModule_user,sbiModule_messaging) {
+function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $documentViewer, sbiModule_translate, 
+			sbiModule_restServices, sbiModule_config, sbiModule_user, sbiModule_messaging, toastr) {
 
 	$scope.allDocuments = [];
 	$scope.federationDefinitions=[];
@@ -167,6 +168,12 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 	$scope.skipRowsDefault = 0;
 	$scope.limitRowsDefault = null;
 	$scope.xslSheetNumberDefault = 1;
+	
+	// The configuration for the message displayed inside the toaster. (danristo)
+	$scope.toasterConfig = { 
+		timeOut: 1500,
+		closeButton: true
+	};
 	
 	/**
      * Initialize all the data needed for the 'dataset' object that we are sending towards the server when going to the Step 2 and ones that we are using
@@ -833,7 +840,7 @@ function workspaceFunction($scope,$http,$mdDialog,$timeout,$mdSidenav,$documentV
 							 */  
 							$scope.loadRecentDocumentExecutionsForUser(); 
 							$scope.loadAllFolders(); 
-							$scope.loadAllMyAnalysisDocuments();	
+							$scope.loadAllMyAnalysisDocuments();
 							
 						}
 					);

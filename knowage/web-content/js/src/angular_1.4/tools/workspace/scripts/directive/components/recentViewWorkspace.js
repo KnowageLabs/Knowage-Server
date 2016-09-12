@@ -34,7 +34,7 @@ angular
 		  };
 	});
 
-function recentController($scope,sbiModule_restServices,sbiModule_translate,$documentViewer){
+function recentController($scope, sbiModule_restServices, sbiModule_translate, $documentViewer, toastr){
 	
 	$scope.translate=sbiModule_translate;
 	
@@ -47,7 +47,10 @@ function recentController($scope,sbiModule_restServices,sbiModule_translate,$doc
 			$scope.convertTimestampToDate();
 			console.info("[LOAD END]: Loading of Recent documents is finished.");
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
+			
 		});
 	}
 	
@@ -67,7 +70,7 @@ function recentController($scope,sbiModule_restServices,sbiModule_translate,$doc
 		icon:'fa fa-play-circle' ,
 		backgroundColor:'transparent',	
 		action : function(item,event) {
-			$scope.executeRecent(item);
+			$scope.executeRecent(item);			
 		}
 	} ];
 	
@@ -82,9 +85,12 @@ function recentController($scope,sbiModule_restServices,sbiModule_translate,$doc
 		 * 
 		 * Also, load all folders and their content (document) for the DOCUMENTS (Organizer) view, because user could add an executed document to the Workspace.
 		 * 
+		 * This calling of the 'hideRightSidePanel' function is necessary, since user can potentially modify the document (e.g. a cockpit document) that is executed 
+		 * from the Recent (e.g. document's label that is shown in the detail panel could be changed).
+		 * 
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		$scope.$on("documentClosed", function() { $scope.loadRecentDocumentExecutionsForUser(); $scope.loadAllFolders(); });
+		$scope.$on("documentClosed", function() { $scope.loadRecentDocumentExecutionsForUser(); $scope.loadAllFolders(); $scope.hideRightSidePanel(); });
 		
 	}
 	

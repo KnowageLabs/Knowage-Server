@@ -379,7 +379,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.seeMyData")}}</label>
 			       </div> 
 			   </div>
-				<div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeFavourites')">
+			   
+			   <!-- 
+			   		"Add to favorites" option is not used, so it should not be visible in the Authorization tab
+			   		for the Role.
+			   		@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			    -->
+				<!-- <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeFavourites')">
 				 <md-input-container class="small counter"> 
 			        <md-checkbox
 			         ng-change="setDirty()"  ng-model="selectedRole.ableToSeeFavourites" aria-label="check" ng-disabled="disable" name="seeFavourites">
@@ -388,7 +394,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       <div >
 			        <label>{{translate.load("sbi.roles.seeFavourites")}}</label>
 			       </div> 
-			   </div>
+			   </div> -->
+			   
 				 <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeSubscriptions')">
 				  <md-input-container class="small counter"> 
 			        <md-checkbox
