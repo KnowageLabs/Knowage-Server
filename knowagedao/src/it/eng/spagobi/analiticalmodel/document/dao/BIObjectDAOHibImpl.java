@@ -2980,7 +2980,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	private List<SbiOutputParameter> loadDriverSpecificOutputParameters(SbiObjects sbiObject) {
 		List<SbiOutputParameter> ret = new ArrayList<>();
-		if (sbiObject.getSbiEngines() != null) {
+		if (sbiObject.getSbiEngines() != null && !sbiObject.getSbiEngines().equals("")) {
 			try {
 				IEngineDriver driver = (IEngineDriver) Class.forName(sbiObject.getSbiEngines().getDriverNm()).newInstance();
 				List<DefaultOutputParameter> params = driver.getDefaultOutputParameters();
