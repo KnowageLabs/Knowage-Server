@@ -249,8 +249,11 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				conf.put("layers", layers);
 
 				String infoText = datamartProvider.getSelectedMemberInfo();
-				conf.put("info_text", infoText);
-
+				if (measures.length() == 0) {
+					conf.put("info_text", "No data found");
+				} else {
+					conf.put("info_text", infoText);
+				}
 				JSONObject guiSettings = getGUIConfigurationScript();
 				guiSettings.put("includeChartLayer", getLayer("grafici") != null);
 				guiSettings.put("includeValuesLayer", getLayer("valori") != null);

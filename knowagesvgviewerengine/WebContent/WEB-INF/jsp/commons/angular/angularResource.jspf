@@ -48,7 +48,8 @@
 	List<String> includes;
 	boolean visibleDataSet;
 	String propertiesPanelPosition;
-
+	String propertiesPanelVisible;
+	
 	engineInstance = (SvgViewerEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
 	locale = engineInstance.getLocale();
@@ -74,7 +75,7 @@
 	
 	includes = engineInstance.getIncludes();
 	propertiesPanelPosition = (engineInstance.getPropertiesPanelPosition()==null)?"":engineInstance.getPropertiesPanelPosition();
-
+	propertiesPanelVisible = (engineInstance.getPropertiesPanelVisible()==null)?"":engineInstance.getPropertiesPanelVisible();
 	
     // gets analytical driver
     Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();

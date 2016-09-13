@@ -54,7 +54,9 @@ import com.jamonapi.MonitorFactory;
 public class SvgViewerEngineInstance extends AbstractEngineInstance {
 	// ENVIRONMENT VARIABLES
 	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
-			"SBI_HOST", "DOCUMENT_ID", COUNTRY, LANGUAGE, "user_id" };
+			"SBI_HOST", "DOCUMENT_ID", "country", "language", "user_id" };
+	// private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
+	// "SBI_HOST", "DOCUMENT_ID", COUNTRY, LANGUAGE, "user_id" };
 	private JSONObject guiSettings;
 	private JSONObject docProperties;
 	private List<String> includes;
@@ -73,6 +75,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 
 	/** The position of the properties Panel **/
 	String propertiesPanelPosition = "left";
+	String propertiesPanelVisibile = "true";
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(SvgViewerEngineInstance.class);
@@ -100,6 +103,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 			setMapRenderer(SvgViewerEngineComponentFactory.buildMapRenderer(template, env));
 			setMapRendererMonitor.stop();
 			propertiesPanelPosition = initPropertiesPanelPosition(template);
+			propertiesPanelVisibile = initPropertiesPanelVisible(template);
 			logger.info("MapProvider class: " + getMapProvider().getClass().getName());
 			logger.info("DatasetProvider class: " + getDataMartProvider().getClass().getName());
 			logger.info("MapRenderer class: " + getMapRenderer().getClass().getName());
@@ -260,7 +264,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 
 	/**
 	 * Gets the map provider.
-	 * 
+	 *
 	 * @return the map provider
 	 */
 	public IMapProvider getMapProvider() {
@@ -269,7 +273,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 
 	/**
 	 * Sets the map provider.
-	 * 
+	 *
 	 * @param mapProvider
 	 *            the new map provider
 	 */
@@ -279,7 +283,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 
 	/**
 	 * Gets the map renderer.
-	 * 
+	 *
 	 * @return the map renderer
 	 */
 	public IMapRenderer getMapRenderer() {
@@ -288,7 +292,7 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 
 	/**
 	 * Sets the map renderer.
-	 * 
+	 *
 	 * @param mapRenderer
 	 *            the new map renderer
 	 */
@@ -319,14 +323,43 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 			if (position == null) {
 				position = "left";
 				logger.warn("Cannot find Panel properties position attribute: " + "POSITION");
-				logger.warn("The default MapProvider implementation will be used: [" + position + "]");
+				logger.warn("The default implementation will use: [" + position + "]");
 			}
-
 		}
 
 		logger.debug("IN");
 
 		return position;
+	}
+
+	public String getPropertiesPanelVisible() {
+		return propertiesPanelVisibile;
+	}
+
+	public void setPropertiesPanelVisible(String propertiesPanelVisible) {
+		this.propertiesPanelVisibile = propertiesPanelVisible;
+	}
+
+	public String initPropertiesPanelVisible(SourceBean template) throws SvgViewerEngineException {
+		SourceBean confSB = null;
+		String visible = "true";
+
+		logger.debug("IN");
+		confSB = (SourceBean) template.getAttribute("PANEL_PROPERTIES");
+		if (confSB == null) {
+			logger.warn("Cannot find Panel properties configuration settings: tag name " + "PANEL_PROPERTIES");
+		} else {
+			visible = (String) confSB.getAttribute("VISIBLE");
+			if (visible == null) {
+				visible = "true";
+				logger.warn("Cannot find Panel properties visible attribute: " + "VISIBLE");
+				logger.warn("The default implementation will use: [" + visible + "]");
+			}
+		}
+
+		logger.debug("IN");
+
+		return visible;
 	}
 
 	// -- unimplemented methods ------------------------------------------------------------
