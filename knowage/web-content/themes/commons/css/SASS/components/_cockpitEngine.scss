@@ -345,6 +345,19 @@
             			    background-color: rgb(63, 102, 143);
             			    color: white;
             			}
+						span{
+							width : 100%;
+							p{
+								&.metatype{
+									font-weight: bold;
+								}
+								&.metaname{
+									overflow: hidden;
+									text-overflow: ellipsis;
+									white-space: nowrap;
+								}
+							}
+						}
 	            		min-height: 36px;
 	    				height: 36px;	
             		}

@@ -127,7 +127,6 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                         }  
                                         
                                         if(scope.internalTableConfiguration.rowDetail==true){
-                                        	debugger
                                         	scope.tableColumns.push({label: "", name: "--ROW_DETAIL--", size: "30px"});
                                         }
                                         
@@ -415,18 +414,21 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
             return {
                 template: '',
                 replace: true,
-                transclude: true,
-                link: function (scope, element, attrs, ctrl, transclude) {
-                    transclude(scope, function (clone, scope) {
-                    	scope.internalTableConfiguration.rowDetail=true;
-                    	scope.rowDetailTemplate=clone.html();
-                    	angular.element(element.parent())[0].querySelector("#angularTableContentBox").style.overflow="auto";
-                    	 scope.initializeColumns(false)
-//                                var contElem = angular.element(element.parent())[0].querySelector("table.principalTable tbody");
-//                                angular.element(contElem).append(clone);
-                    });
-                    
-                }
+//                transclude: true,
+                compile:function (tElement, tAttrs, transclude) {
+                	var notCompiledContent=tElement.html()
+                    return {
+                        pre: function preLink(scope, element, attrs, ctrl, transclud) {
+                        	debugger
+                        	scope.internalTableConfiguration.rowDetail=true;
+                        	scope.rowDetailTemplate=notCompiledContent;
+                        	angular.element(element.parent())[0].querySelector("#angularTableContentBox").style.overflow="auto";
+                        	scope.initializeColumns(false)
+                        	},
+                        	post: function preLink(scope, element, attrs, ctrl, transclud) {
+                        	}
+                        }
+                    },
             };
         })
         .directive('angularTableRowDetail',function ($compile) {
@@ -435,8 +437,11 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
         		restrict: 'A',
         		replace: false,
         		link: function (scope, element, attrs, ctrl, transclude) {
-        			var clon=scope.rowDetailTemplate;
-        			element.after("<tr/>").next().html(clon)
+        			var td=document.createElement("td");
+        			td.innerHTML=scope.rowDetailTemplate;
+        			td.setAttribute("colspan",element.scope().tableColumns.length);
+        			td.classList.add("expanderRowClass");
+        			element.after("<tr/>").next().append(td)
         			element.next().attr("ng-if","visible");
         			$compile(element.next())(element.scope());
         			
@@ -1019,4 +1024,3 @@ function TableHeaderControllerFunction($scope, $timeout) {
     		return columnTransformationText(toReturn,row,columnName);
     	}
     }
-}
