@@ -169,7 +169,9 @@ angular-table{
 		overflow: hidden;
 		line-height: 26px;
 		}
-	
+	#tdQueueTableContent div{
+		line-height : initial !important;
+	}
 	
 	angular-table-actions md-input-container.tableSearchBar {
 	    padding-bottom: 0px; 

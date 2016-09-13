@@ -611,14 +611,22 @@ function TableControllerFunction($scope, $timeout) {
     		}
     	}
 
-
-
+    	
+    		$scope.heightQueueTable = 0;
+    	
+	    //	var queueTableFixed = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #fixedAngularTableContentBox'))[0];
+	    	var queueTable = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #queueTableContent'))[0];
+	    	
+	    	if(queueTable!=undefined && queueTable.offsetHeight > 0){
+	    		$scope.heightQueueTable = queueTable.offsetHeight;
+	    	}
+    	
     	var tableContainerHeight = $scope.tableContainer == undefined ? 32 : $scope.tableContainer.offsetHeight;
         var headButtonHeight = $scope.headButton == undefined ? 0 : $scope.headButton.offsetHeight;
         var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 32 : $scope.listItemTemplBox.offsetHeight;
 
 
-        var nit = parseInt((tableContainerHeight - headButtonHeight) / listItemTemplBoxHeight);
+        var nit = parseInt((tableContainerHeight - headButtonHeight - $scope.heightQueueTable) / listItemTemplBoxHeight);
 
         $scope.itemsPerPage = (nit <= 0 || isNaN(nit)) ? 0 : nit;
         if (firstLoad) {
