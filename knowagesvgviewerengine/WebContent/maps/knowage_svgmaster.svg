@@ -319,14 +319,16 @@ onload="init(evt);">
       if(normalize) {
         maxValue = 100;
       } else {
-        maxValue = sbi.geo.conf.measures[0].ordered_values[ sbi.geo.conf.measures[0].ordered_values.length - 1];
-        for(i = 1; i < sbi.geo.conf.measures.length; i++) {
-          var measure =  sbi.geo.conf.measures[i];        
-          var n = measure.ordered_values[ measure.ordered_values.length - 1];
-          if(n > maxValue) {
-            maxValue = n;
-          }
-        }
+      	if (sbi.geo.conf.measures && sbi.geo.conf.measures.length > 0){
+	        maxValue = sbi.geo.conf.measures[0].ordered_values[ sbi.geo.conf.measures[0].ordered_values.length - 1];
+	        for(i = 1; i < sbi.geo.conf.measures.length; i++) {
+	          var measure =  sbi.geo.conf.measures[i];        
+	          var n = measure.ordered_values[ measure.ordered_values.length - 1];
+	          if(n > maxValue) {
+	            maxValue = n;
+	          }
+	        }
+	     }
       }
            
       var detailBarChartRenderer = new BarChart({
