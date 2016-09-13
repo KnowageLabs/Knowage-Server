@@ -122,7 +122,7 @@ function modelsController($scope, sbiModule_restServices, sbiModule_translate, $
         
     $scope.loadBusinessModelsCategories= function(roleIds){
     	
-    	sbiModule_restServices.promiseGet("2.0/domains", queryParamRolesIds(roleIds))
+    	sbiModule_restServices.promiseGet("2.0/domains/rolesCategories/", queryParamRolesIds(roleIds))
 		.then(function(response) {
 			$scope.handleBusinessModels(response.data);
 		},function(response){

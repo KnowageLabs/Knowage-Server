@@ -201,6 +201,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
+	@Path("/rolesCategories")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public List<Domain> getCategoriesOfRoles(@QueryParam("id") int[] ids) {
 		logger.debug("IN");
