@@ -129,22 +129,22 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			return -1;
 		};
 	 
-	$scope.showAction = function(text) {
-		var toast = $mdToast.simple()
-		.content(text)
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-
-
-			}
-		});
-	};
+//	$scope.showAction = function(text) {
+//		var toast = $mdToast.simple()
+//		.content(text)
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//
+//			if ( response == 'ok' ) {
+//
+//
+//			}
+//		});
+//	};
 	
 }
 
