@@ -104,14 +104,16 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  //check if the member name is specified in the dataset configuration o directly from the svg id
 	  if (e.detail.memberName != undefined && e.detail.memberName != null){
 		  $scope.currentMember = e.detail.memberName;
-		  $scope.currentParent = e.detail.idElement;
-		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+e.detail.memberName+"&level="+$scope.currentLevel+"&parent="+e.detail.idElement;
+//		  $scope.currentParent = e.detail.idElement;
+//		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+e.detail.memberName+"&level="+$scope.currentLevel+"&parent="+e.detail.idElement;
 	  } else {
 		  //get svg element's id 
 		  $scope.currentMember = e.detail.idElement;
-		  $scope.currentParent = null;
-		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+e.detail.idElement+"&level="+$scope.currentLevel;
+//		  $scope.currentParent = e.detail.idElement; // null;
+//		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+e.detail.idElement+"&level="+$scope.currentLevel;
 	  }
+	  $scope.currentParent = e.detail.idElement;
+	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+$scope.currentMember+"&level="+$scope.currentLevel+"&parent="+$scope.currentParent;
 	  
 	  
 	  if  ($scope.currentLevel > 1){
