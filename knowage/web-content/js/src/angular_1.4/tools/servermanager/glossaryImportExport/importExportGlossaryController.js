@@ -32,9 +32,11 @@ app.controller('glossaryImportController',
 		 'sbiModule_restServices',
 		 'sbiModule_config',
 		 '$mdToast',
+		 'sbiModule_messaging',
 		 glossaryImportControllerFunc]);
 
-function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope,$mdDialog,	$timeout,sbiModule_logger,sbiModule_translate,sbiModule_restServices,sbiModule_config,$mdToast) {
+function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope,$mdDialog,	$timeout,sbiModule_logger,sbiModule_translate,
+		sbiModule_restServices,sbiModule_config,$mdToast,sbiModule_messaging) {
 	$scope.translate = sbiModule_translate;
 	$scope.nameExport = "";
 	$scope.wait = false;
@@ -89,11 +91,12 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 	$scope.prepare = function(ev){
 		
 		if($scope.glossarySelected.length == 0){
-			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missingcheck"));
+			//$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missingcheck"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpusers.missingcheck"),"");
 			 
 		} else if($scope.nameExport==""){
-			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missingnamefile"));
-			 
+			//$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missingnamefile"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpusers.missingnamefile"),"");
 		}else{
 			// download zip	
 			$scope.wait = true;
@@ -121,7 +124,8 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 				$scope.download.getBlob(data,$scope.nameExport,'application/zip','zip');
 				$scope.viewDownload = false;
 				$scope.wait = false;
-				$scope.showAction(sbiModule_translate.load("sbi.importusers.downloadOK"));
+				//$scope.showAction(sbiModule_translate.load("sbi.importusers.downloadOK"));
+				sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importusers.downloadOK"),"");
 			}
 		}).error(function(data, status, headers, config) {
 			showToast("ERRORS "+status,4000);
@@ -190,7 +194,8 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 			$scope.glossaryImported = [];
 			$scope.glossaryPresentIdDB  =[];
 			if($scope.importFile.fileName == "" || $scope.importFile.fileName == undefined){
-				$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"));
+				//$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"));
+				sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"),"");
 			}else{
 				var fd = new FormData();
 			
@@ -305,27 +310,24 @@ function glossaryImportControllerFunc(sbiModule_download,sbiModule_device,$scope
 		$scope.save = function(ev){
 			
 			if($scope.importingGlossary.length==0){
-				$scope.showAction(sbiModule_translate.load("sbi.impexpglossary.nothingtoimport"))
+				//$scope.showAction(sbiModule_translate.load("sbi.impexpglossary.nothingtoimport"));
+				sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpglossary.nothingtoimport"),"");
 			}else{ 
 				var obj = {
 						"type": $scope.typeSaveMenu,
 						"glossaryList": $scope.importingGlossary
 				};
-				
-				
 				sbiModule_restServices.promisePost("1.0/serverManager/importExport/glossary", 'importGlossaryintoDB', obj)
-				
 				.then(function(response){ 
 					if(response.data.STATUS=="OK"){
 						$scope.showConfirm(sbiModule_translate.load("sbi.importusers.importuserok"));
-						
-					
 					}else{
-						$scope.showAction(response.data.ERROR)
+						//$scope.showAction(response.data.ERROR);
+						sbiModule_restServices.errorHandler(response.data.ERROR,"sbi.generic.toastr.title.error");
 					}
 
 				},function(response){
-					sbiModule_restServices.errorHandler(response.data,"");
+					sbiModule_restServices.errorHandler(response.data,"sbi.generic.toastr.title.error");
 				});
 				
 		};

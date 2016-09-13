@@ -73,7 +73,7 @@ app.controller('metadataImportExportController', [ "sbiModule_download",
 
 app.controller('metadataExportController', [ "sbiModule_download",
 		"sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog",
-		"$mdToast", metadataExportFuncController ]);
+		"$mdToast","sbiModule_messaging", metadataExportFuncController ]);
 
 app.controller('metadataImportController', [ 'sbiModule_download',
 		'sbiModule_device', "$scope", "$mdDialog", "$timeout",
@@ -143,22 +143,22 @@ function metadataImportExportFuncController(sbiModule_download, sbiModule_transl
 		return -1;
 	};
 
-	$scope.showAction = function(text) {
-		var toast = $mdToast.simple().content(text).action('OK')
-				.highlightAction(false).hideDelay(3000).position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if (response == 'ok') {
-
-			}
-		});
-	};
+//	$scope.showAction = function(text) {
+//		var toast = $mdToast.simple().content(text).action('OK')
+//				.highlightAction(false).hideDelay(3000).position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//
+//			if (response == 'ok') {
+//
+//			}
+//		});
+//	};
 
 }
 
 function metadataExportFuncController(sbiModule_download, sbiModule_translate,
-		sbiModule_restServices, $scope, $mdDialog, $mdToast) {
+		sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging) {
 	$scope.flagCheck = false;
 	$scope.nameExport = "";
 	$scope.conflictsAction = "keep";
@@ -180,8 +180,9 @@ function metadataExportFuncController(sbiModule_download, sbiModule_translate,
 
 	$scope.prepare = function(ev) {
 		if ($scope.nameExport == "") {
-			$scope.showAction(sbiModule_translate
-					.load("sbi.impexpmetadata.missingnamefile"));
+//			$scope.showAction(sbiModule_translate
+//					.load("sbi.impexpmetadata.missingnamefile"));			
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpmetadata.missingnamefile"),"");
 		} else {
 			// Download ZIP archive
 			var config = {
@@ -227,11 +228,12 @@ function metadataExportFuncController(sbiModule_download, sbiModule_translate,
 								'application/zip', 'zip');
 						$scope.viewDownload = false;
 						$scope.wait = false;
-						$scope.showAction(sbiModule_translate
-								.load("sbi.importmetadata.downloadOK"));
+//						$scope.showAction(sbiModule_translate
+//								.load("sbi.importmetadata.downloadOK"));
+						sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importmetadata.downloadOK"),"");
 					}
 				}).error(function(data, status, headers, config) {
-			showToast("ERRORS " + status, 4000);
+			sbiModule_restServices.errorHandler("ERRORS " + status,"sbi.generic.toastr.title.error");
 			$scope.wait = false;
 		});
 	}

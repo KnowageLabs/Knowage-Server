@@ -65,7 +65,7 @@ app.factory("importExportDocumentModule_importConf", function() {
 });
 
 app.controller('userImportExportController', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", funzione ]);
-app.controller('userExportController', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", userExportFuncController ]);
+app.controller('userExportController', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","sbiModule_messaging", userExportFuncController ]);
 app.controller('userImportController', ['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","$mdToast","importExportDocumentModule_importConf",userImportFuncController]);
 
 
@@ -149,7 +149,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 }
 
 
-function userExportFuncController(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast) {
+function userExportFuncController(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging) {
 	$scope.flagCheck=false;
 	$scope.nameExport="";
 	$scope.exportCheckboxs={};
@@ -195,11 +195,11 @@ function userExportFuncController(sbiModule_download,sbiModule_translate,sbiModu
 	$scope.prepare = function(ev){
 		
 		if($scope.usersSelected.length == 0){
-			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missingcheck"));
-			 
+			//$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missingcheck"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpusers.missingcheck"),"");
 		} else if($scope.nameExport==""){
-			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missingnamefile"));
-			 
+			//$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missingnamefile"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpusers.missingnamefile"),"");
 		}else{
 			// download zip
 			var config={"USERS_LIST":$scope.usersSelected ,
@@ -235,7 +235,8 @@ function userExportFuncController(sbiModule_download,sbiModule_translate,sbiModu
 					$scope.download.getBlob(response.data,$scope.nameExport,'application/zip','zip');
 					$scope.viewDownload = false;
 					$scope.wait = false;
-					$scope.showAction(sbiModule_translate.load("sbi.importusers.downloadOK"));
+					//$scope.showAction(sbiModule_translate.load("sbi.importusers.downloadOK"));
+					sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpusers.downloadOK"),"");
 				 
 			},function(response, status, headers, config) {
 				sbiModule_restServices.errorHandler(response.data,"");

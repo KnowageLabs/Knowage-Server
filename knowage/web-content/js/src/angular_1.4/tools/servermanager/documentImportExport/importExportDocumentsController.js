@@ -43,19 +43,19 @@ app.factory("importExportDocumentModule_importConf", function() {
 
 
 app.controller('importExportController', ["$scope","sbiModule_translate","$mdToast",impExpFuncController]);
-app.controller('exportController', ['$http','sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","$mdToast",exportFuncController]);
-app.controller('importController', ['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","$mdToast","importExportDocumentModule_importConf",importFuncController]);
+app.controller('exportController', ['$http','sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","$mdToast","sbiModule_messaging",exportFuncController]);
+app.controller('importController', ['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","$mdToast","importExportDocumentModule_importConf","sbiModule_messaging",importFuncController]);
 
 function impExpFuncController($scope,   sbiModule_translate ,$mdToast) {
 	sbiModule_translate.addMessageFile("component_impexp_messages");
 	$scope.translate = sbiModule_translate;
 	
-	$scope.showToast=function(text, time) {
-		var timer = time == undefined ? 6000 : time;
-		console.log(text)
-		$mdToast.show($mdToast.simple().content(text).position('top').action(
-		'OK').highlightAction(false).hideDelay(timer));
-	} 
+//	$scope.showToast=function(text, time) {
+//		var timer = time == undefined ? 6000 : time;
+//		console.log(text)
+//		$mdToast.show($mdToast.simple().content(text).position('top').action(
+//		'OK').highlightAction(false).hideDelay(timer));
+//	} 
 }
 
 
@@ -96,7 +96,8 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 	
 
 }
-function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,$mdToast) {
+function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, 
+		sbiModule_translate, sbiModule_restServices,sbiModule_config,$mdToast,sbiModule_messaging) {
 
 	$scope.restServices = sbiModule_restServices;
 	$scope.download = sbiModule_download;
@@ -185,19 +186,36 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 		}
 
 		$scope.flags.waitExport=true;
-		sbiModule_restServices.post("1.0/serverManager/importExport/document","export",config)
-		.success(function(data, status, headers, config) {
-			if (data.hasOwnProperty("errors")) {
-				$scope.showToast(data.errors[0].message,4000);
-			}else if(data.hasOwnProperty("STATUS") && data.STATUS=="OK"){
+//		sbiModule_restServices.post("1.0/serverManager/importExport/document","export",config)
+//		.success(function(data, status, headers, config) {
+//			if (data.hasOwnProperty("errors")) {
+//				$scope.showToast(data.errors[0].message,4000);
+//			}else if(data.hasOwnProperty("STATUS") && data.STATUS=="OK"){
+//				$scope.flags.viewDownload = true;
+//				$scope.downloadedFileName=$scope.exportName;
+//			}
+//			$scope.flags.waitExport=false;
+//		}).error(function(data, status, headers, config) {
+//			$scope.flags.waitExport=false;
+//			$scope.showToast("ERRORS "+status,4000);
+//		})
+		
+		
+		sbiModule_restServices.promisePost("1.0/serverManager/importExport/document","export",config)
+		.then(function(response) {
+			if (response.data.hasOwnProperty("errors")) {
+				sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
+			}else if(response.data.hasOwnProperty("STATUS") && response.data.STATUS=="OK"){
 				$scope.flags.viewDownload = true;
 				$scope.downloadedFileName=$scope.exportName;
 			}
 			$scope.flags.waitExport=false;
-		}).error(function(data, status, headers, config) {
+		}, function(response) {
 			$scope.flags.waitExport=false;
-			$scope.showToast("ERRORS "+status,4000);
-		})
+			sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
+		});
+		
+		
 	}
 
 	$scope.submitDownForm = function(form){
@@ -212,17 +230,34 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 	$scope.downloadFile= function(){
 		var data={"FILE_NAME":$scope.downloadedFileName};
 		var config={"responseType": "arraybuffer"};
-		sbiModule_restServices.post("1.0/serverManager/importExport/document","downloadExportFile",data,config)
-		.success(function(data, status, headers, config) {
-			if (data.hasOwnProperty("errors")) {
-				$scope.showToast(data.errors[0].message,4000);
-			}else if(status==200){
-				$scope.download.getBlob(data,$scope.exportName,'application/zip','zip');
-				$scope.flags.viewDownload = false
-			}
-		}).error(function(data, status, headers, config) {
-			$scope.showToast("ERRORS "+status,4000);
-		})
+//		sbiModule_restServices.post("1.0/serverManager/importExport/document","downloadExportFile",data,config)
+//		.success(function(data, status, headers, config) {
+//			if (data.hasOwnProperty("errors")) {
+//				$scope.showToast(data.errors[0].message,4000);
+//			}else if(status==200){
+//				$scope.download.getBlob(data,$scope.exportName,'application/zip','zip');
+//				$scope.flags.viewDownload = false
+//			}
+//		}).error(function(data, status, headers, config) {
+//			$scope.showToast("ERRORS "+status,4000);
+//		})
+		
+		
+		sbiModule_restServices.promisePost("1.0/serverManager/importExport/document","downloadExportFile",data,config)
+		.then(function(response) {
+			if (response.data.hasOwnProperty("errors")) {
+				sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
+			}else {
+				$scope.download.getBlob(response.data,$scope.exportName,'application/zip','zip');
+				$scope.flags.viewDownload = false;
+			}	
+		}, function(response) {
+			sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
+		});
+		
+		
+		
+		
 	}
 
 	$scope.showAlert = function (title, message){

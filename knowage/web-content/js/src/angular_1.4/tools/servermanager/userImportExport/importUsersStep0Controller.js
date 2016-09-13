@@ -1,9 +1,13 @@
-angular.module('impExpUsers').controller('importUserControllerStep0', ['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","importExportDocumentModule_importConf","$mdToast",importUserStep0FuncController]);
+angular.module('impExpUsers').controller('importUserControllerStep0',
+		['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger",
+		 "sbiModule_translate","sbiModule_restServices","sbiModule_config","importExportDocumentModule_importConf","$mdToast","sbiModule_messaging",importUserStep0FuncController]);
  
-function importUserStep0FuncController(sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,importExportDocumentModule_importConf,$mdToast) {
+function importUserStep0FuncController(sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger,
+		sbiModule_translate, sbiModule_restServices,sbiModule_config,importExportDocumentModule_importConf,$mdToast,sbiModule_messaging) {
 	$scope.upload = function(ev){
 		if($scope.IEDConf.fileImport.fileName == "" || $scope.IEDConf.fileImport.fileName == undefined){
-			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"));
+			//$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"),"");
 		}else{
 			var fd = new FormData();
 		
@@ -11,8 +15,7 @@ function importUserStep0FuncController(sbiModule_download,sbiModule_device,$scop
 			sbiModule_restServices.post("1.0/serverManager/importExport/users", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 			.success(function(data, status, headers, config) {
 				if(data.STATUS=="NON OK"){
-					$mdToast.show($mdToast.simple().content("data.ERROR").position('top').action(
-					'OK').highlightAction(false).hideDelay(5000));
+					sbiModule_restServices.errorHandler(data.ERROR,"sbi.generic.toastr.title.error");
 				}
 				else if(data.STATUS=="OK"){
 					//check role missing
@@ -32,8 +35,7 @@ function importUserStep0FuncController(sbiModule_download,sbiModule_device,$scop
 				
 			})
 			.error(function(data, status, headers, config) {
-				$mdToast.show($mdToast.simple().content("errore").position('top').action(
-				'OK').highlightAction(false).hideDelay(5000));
+				sbiModule_restServices.errorHandler("ERROR","sbi.generic.toastr.title.error");
 				
 			});
 		}

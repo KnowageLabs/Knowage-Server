@@ -1,6 +1,6 @@
-angular.module('importExportDocumentModule').controller('importControllerStep0', ['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","importExportDocumentModule_importConf","$mdToast",importStep0FuncController]);
+angular.module('importExportDocumentModule').controller('importControllerStep0', ['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","importExportDocumentModule_importConf","$mdToast","sbiModule_messaging",importStep0FuncController]);
 
-function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,importExportDocumentModule_importConf,$mdToast) {
+function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,importExportDocumentModule_importConf,$mdToast,sbiModule_messaging) {
 	
 	
 	
@@ -13,23 +13,45 @@ function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $
 					fd.append('hidAssId', importExportDocumentModule_importConf.fileAssociation.name);
 					}
 
-				sbiModule_restServices.post("1.0/serverManager/importExport/document", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
-				.success(function(data, status, headers, config) {
-				 	if(data.STATUS=="NON OK"){
-						$scope.showToast(data.ERROR,4000);
+//				sbiModule_restServices.post("1.0/serverManager/importExport/document", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
+//				.success(function(data, status, headers, config) {
+//				 	if(data.STATUS=="NON OK"){
+//						$scope.showToast(data.ERROR,4000);
+//					}
+//					else if(data.STATUS=="OK"){
+//						importExportDocumentModule_importConf.roles.currentRoles=data.currentRoles;
+//						importExportDocumentModule_importConf.roles.exportedRoles=data.exportedRoles;
+//						importExportDocumentModule_importConf.roles.associatedRoles=data.associatedRoles;
+//						
+//						$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+//					} 
+//				})
+//				.error(function(data, status, headers, config) {
+//					$scope.showToast(data,4000);
+//					
+//				});
+				
+				
+				
+				sbiModule_restServices.promisePost("1.0/serverManager/importExport/document", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
+				.then(function(response) {
+					if(response.data.STATUS=="NON OK"){
+						sbiModule_restServices.errorHandler("Error upload file" ,"sbi.generic.toastr.title.error");
+					}else if(response.data.STATUS=="OK"){
+							importExportDocumentModule_importConf.roles.currentRoles=response.data.currentRoles;
+							importExportDocumentModule_importConf.roles.exportedRoles=response.data.exportedRoles;
+							importExportDocumentModule_importConf.roles.associatedRoles=response.data.associatedRoles;				
+							$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
 					}
-					else if(data.STATUS=="OK"){
-						importExportDocumentModule_importConf.roles.currentRoles=data.currentRoles;
-						importExportDocumentModule_importConf.roles.exportedRoles=data.exportedRoles;
-						importExportDocumentModule_importConf.roles.associatedRoles=data.associatedRoles;
-						
-						$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
-					} 
-				})
-				.error(function(data, status, headers, config) {
-					$scope.showToast(data,4000);
-					
+				}, function(response) {
+					$scope.flags.waitExport=false;
+					sbiModule_restServices.errorHandler(response.data ,"sbi.generic.toastr.title.error");
 				});
+				
+				
+				
+				
+				
 	}
 	
 	
@@ -106,8 +128,7 @@ function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $
 			$scope.associations=data.associationsList;
 		})
 		.error(function(data, status, headers, config) {
-			$scope.showToast("Errore nel recuperare i file di associazione",4000);
-			console.log()
+			sbiModule_restServices.errorHandler("Errore nel recuperare i file di associazione","sbi.generic.toastr.title.error");
 		});
 		
 		
@@ -135,8 +156,7 @@ function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $
 			.success(function(data, status, headers, config) {
 				
 				if(data.STATUS=="NON OK"){
-					$scope.showToast(data.ERROR,4000);
-					
+					sbiModule_restServices.errorHandler(data.ERROR,"sbi.generic.toastr.title.error");
 				}
 				else if(data.STATUS=="OK"){
 					$scope.associations.push(data.associationsFile);
@@ -147,8 +167,7 @@ function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $
 				
 			})
 			.error(function(data, status, headers, config) {
-				$scope.showToast(data,4000);
-				
+				sbiModule_restServices.errorHandler(data,"sbi.generic.toastr.title.error");
 			});
 			
 			
@@ -159,16 +178,16 @@ function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $
 			sbiModule_restServices.post("1.0/serverManager/importExport/document", 'associationsList/download',{'id':item.name},{"responseType": "arraybuffer"})
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
-					$scope.showToast(data.errors[0].message,4000);
+					sbiModule_restServices.errorHandler(data.errors[0].message,"sbi.generic.toastr.title.error");
 				}else if (data.hasOwnProperty("NON OK")) {
-					$scope.showToast(data.ERROR,4000);
+					sbiModule_restServices.errorHandler(data.ERROR,"sbi.generic.toastr.title.error");
 				}else if(status==200){
 					sbiModule_download.getBlob(data,item.name,'application/xml','xml');
 				
 				}
 			})
 			.error(function(data, status, headers, config) {
-				$scope.showToast(data,4000);
+				sbiModule_restServices.errorHandler(data,"sbi.generic.toastr.title.error");
 				
 			});
 		}
@@ -180,7 +199,7 @@ $scope.deleteAssociationsFile=function(item){
 				$scope.associations.splice($scope.associations.indexOf(item),1);
 			})
 		.error(function(data, status, headers, config) {
-			$scope.showToast(data,4000);
+			sbiModule_restServices.errorHandler(data,"sbi.generic.toastr.title.error");
 			
 		});
 		}
@@ -198,13 +217,13 @@ $scope.deleteAssociationsFile=function(item){
 		sbiModule_restServices.post("1.0/serverManager/importExport/document","downloadAssociationsFile",data,config)
 		.success(function(data, status, headers, config) {
 			if (data.hasOwnProperty("errors")) {
-				$scope.showToast(data.errors[0].message,4000);
+				sbiModule_restServices.errorHandler(data.errors[0].message,"sbi.generic.toastr.title.error");
 			}else if(status==200){
 				sbiModule_download.getBlob(data,importExportDocumentModule_importConf.associationsFileName,'application/xml','xml');
 //				$scope.flags.viewDownload = false
 			}
 		}).error(function(data, status, headers, config) {
-			$scope.showToast("ERRORS "+status,4000);
+			sbiModule_restServices.errorHandler(data,"sbi.generic.toastr.title.error");
 		})
 	
 	};
@@ -216,13 +235,13 @@ $scope.deleteAssociationsFile=function(item){
 		sbiModule_restServices.post("1.0/serverManager/importExport/document","downloadLogFile",data,config)
 		.success(function(data, status, headers, config) {
 			if (data.hasOwnProperty("errors")) {
-				$scope.showToast(data.errors[0].message,4000);
+				sbiModule_restServices.errorHandler(data.errors[0].message,"sbi.generic.toastr.title.error");
 			}else if(status==200){
 				sbiModule_download.getBlob(data,importExportDocumentModule_importConf.logFileName,'application/log','log');
 //				$scope.flags.viewDownload = false
 			}
 		}).error(function(data, status, headers, config) {
-			$scope.showToast("ERRORS "+status,4000);
+			sbiModule_restServices.errorHandler("ERRORS","sbi.generic.toastr.title.error");
 		}) 
 	};
 	
@@ -242,12 +261,12 @@ $scope.deleteAssociationsFile=function(item){
 		      		sbiModule_restServices.post("1.0/serverManager/importExport/document","associationsList/save",data)
 		      		.success(function(data, status, headers, config) {
 		      			if (data.hasOwnProperty("errors")) {
-		      				$scope.showToast(data.errors[0].message,4000);
+		      				sbiModule_restServices.errorHandler(data.errors[0].message,"sbi.generic.toastr.title.error");
 		      			}else if(status==200){
 		      				$mdDialog.hide(); 
 		      			}
 		      		}).error(function(data, status, headers, config) {
-		      			$scope.showToast("ERRORS "+status,4000);
+		      			sbiModule_restServices.errorHandler("ERRORS","sbi.generic.toastr.title.error");
 		      		}) 
 		      	
 			          }

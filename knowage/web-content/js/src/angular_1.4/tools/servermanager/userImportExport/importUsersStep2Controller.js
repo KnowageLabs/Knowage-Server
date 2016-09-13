@@ -1,6 +1,6 @@
-angular.module('impExpUsers').controller('importUserControllerStep2', ['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","importExportDocumentModule_importConf","$mdToast",importUserStep2FuncController]);
+angular.module('impExpUsers').controller('importUserControllerStep2', ['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","importExportDocumentModule_importConf","$mdToast","sbiModule_messaging",importUserStep2FuncController]);
 
-function importUserStep2FuncController(sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,importExportDocumentModule_importConf,$mdToast) {
+function importUserStep2FuncController(sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,importExportDocumentModule_importConf,$mdToast,sbiModule_messaging) {
 
 
 	
@@ -100,7 +100,8 @@ function importUserStep2FuncController(sbiModule_download,sbiModule_device,$scop
 	$scope.save = function(ev){
 		if($scope.IEDConf.roles.currentRoles.length == 0){
 			//if not selected no one users
-			$scope.showAction(sbiModule_translate.load("sbi.importusers.anyuserchecked"));
+			//$scope.showAction(sbiModule_translate.load("sbi.importusers.anyuserchecked"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpusers.anyuserchecked"),"");
 		}else{
 			//import User
 			var data={

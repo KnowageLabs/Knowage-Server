@@ -233,31 +233,65 @@ sbiM.service('sbiModule_logger',function(){
 	
 });
 
-sbiM.service('sbiModule_messaging',function(toastr){
+sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,$mdToast){
+	
 	this.showErrorMessage = function(msg,title){
-		
-		toastr.error(msg,title, {
-			  closeButton: true
-		});
+// 		toastr.error(msg,title, {
+// 			  closeButton: true
+// 		});
+		sbiModule_restServices.errorHandler(msg,title);
 	};
+	
+	
+	
 	this.showWarningMessage = function(msg,title){
+// 		toastr.warning(msg,title, {
+// 			  closeButton: true
+// 		});
+		$mdToast.show(
+				$mdToast
+				.simple()
+				.content(msg)
+				.position('top')
+				.action('OK')
+				.highlightAction(false)
+				.hideDelay(60000)
+		);
 		
-		toastr.warning(msg,title, {
-			  closeButton: true
-		});
 	};
 	this.showInfoMessage = function(msg,title){
+// 		toastr.info(msg,title, {
+// 			  closeButton: true
+// 		});
+		$mdToast.show(
+				$mdToast
+				.simple()
+				.content(msg)
+				.position('top')
+				.action('OK')
+				.highlightAction(false)
+				.hideDelay(60000)
+		);
 		
-		toastr.info(msg,title, {
-			  closeButton: true
-		});
 	};
 	this.showSuccessMessage = function(msg,title){
+// 		toastr.success(msg,title, {
+// 			  closeButton: true
+// 			});
+		$mdToast.show(
+				$mdToast
+				.simple()
+				.content(msg)
+				.position('top')
+				.action('OK')
+				.highlightAction(false)
+				.hideDelay(60000)
+		);
 		
-		toastr.success(msg,title, {
-			  closeButton: true
-			});
 	};
+	
+	 
+	
 	
 });
 
@@ -289,7 +323,7 @@ sbiM.service('sbiModule_translate', function() {
 	
 });
 
-sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, sbiModule_config, sbiModule_logger, $mdDialog, $sanitize) {
+sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, sbiModule_config, sbiModule_logger, $mdDialog, $sanitize,$mdPanel) {
 	
 	var loginUrl = '<%= GeneralUtilities.getSpagoBiContext() %>'; // login url, used when session is expired
 	
@@ -493,6 +527,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 	};
 	
 	this.errorHandler=function(text,title){
+		var deferred = $q.defer();
 		var titleFin= title ? sbiModule_translate.load(title) : "";
 		var textFin=text;
 		
@@ -510,13 +545,46 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 			textFin=sbiModule_translate.load(text);
 		}
 		
-		var alert = $mdDialog.confirm()
-		.title(titleFin)
-		.htmlContent(textFin)
-		.ariaLabel('error') 
-		.ok(sbiModule_translate.load('sbi.general.ok'))
-		return $mdDialog.show(alert); //can use the finally function
-// 		.cancel(sbiModule_translate.load('sbi.general.cancel'))
+		
+		  var config = {
+				    attachTo: angular.element(document.body),
+				    locals :{title:titleFin,text:textFin},
+				    controller: function($scope,mdPanelRef,sbiModule_translate,title,text){
+				    	$scope.title=title;
+				    	$scope.text=text;
+				    	$scope.ok=sbiModule_translate.load("sbi.general.ok")
+				    	
+				    	$scope.closeDialog=function(){
+				    		mdPanelRef.close();
+				    	}
+				    },
+				    disableParentScroll: true,
+				    template: '<md-card>'+
+				    	 		'<md-card-title style="   min-width: 300px; max-height: 400px;max-width: 600px; overflow: auto;">'+
+			          			'	<md-card-title-text>'+
+			            		'		<span class="md-headline">{{title}}</span>'+
+			            		'		<span class="md-subhead"  ng-bind-html="text"> </span>'+
+			          			'	</md-card-title-text>'+
+			          			'</md-card-title>'+
+			          			'<md-card-actions layout="row" layout-align="end center">'+
+			                   	 '<md-button ng-click="closeDialog()">{{ok}}</md-button>'+
+			                  '</md-card-actions>'+
+			          		'</md-card>',
+				    hasBackdrop: true,
+				    position: $mdPanel.newPanelPosition().absolute().center(),
+				    trapFocus: true,
+				    zIndex: 150,
+				    clickOutsideToClose: true,
+				    escapeToClose: true,
+				    focusOnOpen: true,
+				    onRemoving :function(){
+				      deferred.resolve();
+				    }
+				  };
+		  
+		$mdPanel.open(config);
+		return deferred.promise;
+		
 	};
 });
 

@@ -78,7 +78,7 @@ app.controller('alertImportExportController', [ "sbiModule_download",
 
 app.controller('alertExportController', [ "sbiModule_download",
 		"sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog",
-		"$mdToast", alertExportFuncController ]);
+		"$mdToast","sbiModule_messaging", alertExportFuncController ]);
 
 app.controller('alertImportController', [ 'sbiModule_download',
 		'sbiModule_device', "$scope", "$mdDialog", "$timeout",
@@ -149,22 +149,22 @@ function alertImportExportFuncController(sbiModule_download, sbiModule_translate
 		return -1;
 	};
 
-	$scope.showAction = function(text) {
-		var toast = $mdToast.simple().content(text).action('OK')
-				.highlightAction(false).hideDelay(3000).position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if (response == 'ok') {
-
-			}
-		});
-	};
+//	$scope.showAction = function(text) {
+//		var toast = $mdToast.simple().content(text).action('OK')
+//				.highlightAction(false).hideDelay(3000).position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//
+//			if (response == 'ok') {
+//
+//			}
+//		});
+//	};
 
 }
 
 function alertExportFuncController(sbiModule_download, sbiModule_translate,
-		sbiModule_restServices, $scope, $mdDialog, $mdToast) {
+		sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging) {
 	$scope.flagCheck = false;
 	$scope.nameExport = "";
 	$scope.overwriteKpis = false;
@@ -189,11 +189,13 @@ function alertExportFuncController(sbiModule_download, sbiModule_translate,
 
 	$scope.prepare = function(ev) {
 		if ($scope.alertsSelected.length == 0) {
-			$scope.showAction(sbiModule_translate
-					.load("sbi.impexpkpis.missingcheck"));
+//			$scope.showAction(sbiModule_translate
+//					.load("sbi.impexpkpis.missingcheck"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpkpis.missingcheck"),"");
 		} else if ($scope.nameExport == "") {
-			$scope.showAction(sbiModule_translate
-					.load("sbi.impexpkpis.missingnamefile"));
+//			$scope.showAction(sbiModule_translate
+//					.load("sbi.impexpkpis.missingnamefile"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpkpis.missingnamefile"),"");
 		} else {
 			// Download ZIP archive
 			var alertsIdVersionPairs = [];
@@ -242,18 +244,19 @@ function alertExportFuncController(sbiModule_download, sbiModule_translate,
 				"downloadArchive", data, config).success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
-						showToast(data.errors[0].message, 4000);
+						sbiModule_restServices.errorHandler(data.errors[0].message,"sbi.generic.toastr.title.error");
 						$scope.wait = false;
 					} else if (status == 200) {
 						$scope.download.getBlob(data, $scope.nameExport,
 								'application/zip', 'zip');
 						$scope.viewDownload = false;
 						$scope.wait = false;
-						$scope.showAction(sbiModule_translate
-								.load("sbi.importkpis.downloadOK"));
+//						$scope.showAction(sbiModule_translate
+//								.load("sbi.importkpis.downloadOK"));
+						sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importkpis.downloadOK"),"");
 					}
 				}).error(function(data, status, headers, config) {
-			showToast("ERRORS " + status, 4000);
+					sbiModule_restServices.errorHandler("ERRORS " + status,"sbi.generic.toastr.title.error");
 			$scope.wait = false;
 		});
 	}

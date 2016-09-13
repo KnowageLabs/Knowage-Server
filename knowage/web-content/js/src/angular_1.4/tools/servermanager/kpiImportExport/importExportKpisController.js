@@ -77,7 +77,7 @@ app.controller('kpiImportExportController', [ "sbiModule_download",
 
 app.controller('kpiExportController', [ "sbiModule_download",
 		"sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog",
-		"$mdToast", kpiExportFuncController ]);
+		"$mdToast","sbiModule_messaging", kpiExportFuncController ]);
 
 app.controller('kpiImportController', [ 'sbiModule_download',
 		'sbiModule_device', "$scope", "$mdDialog", "$timeout",
@@ -164,7 +164,7 @@ function kpiImportExportFuncController(sbiModule_download, sbiModule_translate,
 }
 
 function kpiExportFuncController(sbiModule_download, sbiModule_translate,
-		sbiModule_restServices, $scope, $mdDialog, $mdToast) {
+		sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging) {
 	$scope.flagCheck = false;
 	$scope.nameExport = "";
 	$scope.targetsAndRelatedKpis = false;
@@ -188,11 +188,13 @@ function kpiExportFuncController(sbiModule_download, sbiModule_translate,
 
 	$scope.prepare = function(ev) {
 		if ($scope.kpisSelected.length == 0) {
-			$scope.showAction(sbiModule_translate
-					.load("sbi.impexpkpis.missingcheck"));
+//			$scope.showAction(sbiModule_translate
+//					.load("sbi.impexpkpis.missingcheck"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpkpis.missingcheck"),"");
 		} else if ($scope.nameExport == "") {
-			$scope.showAction(sbiModule_translate
-					.load("sbi.impexpkpis.missingnamefile"));
+//			$scope.showAction(sbiModule_translate
+//					.load("sbi.impexpkpis.missingnamefile"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpkpis.missingnamefile"),"");
 		} else {
 			// Download ZIP archive
 			var kpisIdVersionPairs = [];
@@ -248,11 +250,13 @@ function kpiExportFuncController(sbiModule_download, sbiModule_translate,
 								'application/zip', 'zip');
 						$scope.viewDownload = false;
 						$scope.wait = false;
-						$scope.showAction(sbiModule_translate
-								.load("sbi.importkpis.downloadOK"));
+//						$scope.showAction(sbiModule_translate
+//								.load("sbi.importkpis.downloadOK"));
+						sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importkpis.downloadOK"),"");
+						
 					}
 				}).error(function(data, status, headers, config) {
-			showToast("ERRORS " + status, 4000);
+			sbiModule_restServices.errorHandler("ERRORS " + status,"sbi.generic.toastr.title.error")
 			$scope.wait = false;
 		});
 	}

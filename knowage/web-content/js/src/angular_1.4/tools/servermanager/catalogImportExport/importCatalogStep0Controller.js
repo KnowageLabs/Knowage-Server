@@ -3,13 +3,13 @@ angular.module('impExpDataset').controller(
 		[ 'sbiModule_download', 'sbiModule_device', "$scope", "$mdDialog",
 				"$timeout", "sbiModule_logger", "sbiModule_translate",
 				"sbiModule_restServices", "sbiModule_config",
-				"importExportDocumentModule_importConf", "$mdToast",
+				"importExportDocumentModule_importConf", "$mdToast","sbiModule_messaging",
 				importCatalogStep0FuncController ]);
 
 function importCatalogStep0FuncController(sbiModule_download, sbiModule_device,
 		$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate,
 		sbiModule_restServices, sbiModule_config,
-		importExportDocumentModule_importConf, $mdToast)
+		importExportDocumentModule_importConf, $mdToast,sbiModule_messaging)
 {
 	
 	
@@ -17,9 +17,11 @@ function importCatalogStep0FuncController(sbiModule_download, sbiModule_device,
 	$scope.save = function(ev) {
 		if($scope.typeSaveMenu == ""){
 			//if not selected a mode
-			$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.selectmode"));
+			//$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.selectmode"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importexportcatalog.selectmode"),"");
 		}else if($scope.datasetSelected.length==0){
-			$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.selectds"));
+			//$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.selectds"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importexportcatalog.selectds"),"");
 		}else{
 			var config={
 					"ds": $scope.datasetSelected,
@@ -33,7 +35,7 @@ function importCatalogStep0FuncController(sbiModule_download, sbiModule_device,
 				$scope.stopImport($scope.translate.load("sbi.importkpis.importkpiok"));
 			},function(response, status, headers, config) {
 				sbiModule_restServices.errorHandler(response.data,"");
-				$scope.showAction("Error");
+				//$scope.showAction("Error");
 			})
 
 		}

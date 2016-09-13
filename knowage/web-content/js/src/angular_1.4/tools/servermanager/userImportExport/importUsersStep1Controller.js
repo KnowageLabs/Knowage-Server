@@ -1,6 +1,6 @@
-angular.module('impExpUsers').controller('importUserControllerStep1', ['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","importExportDocumentModule_importConf","$mdToast",importUserStep1FuncController]);
+angular.module('impExpUsers').controller('importUserControllerStep1', ['sbiModule_download','sbiModule_device',"$scope", "$mdDialog", "$timeout", "sbiModule_logger", "sbiModule_translate","sbiModule_restServices","sbiModule_config","importExportDocumentModule_importConf","$mdToast","sbiModule_messaging",importUserStep1FuncController]);
 
-function importUserStep1FuncController(sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,importExportDocumentModule_importConf,$mdToast) {
+function importUserStep1FuncController(sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,importExportDocumentModule_importConf,$mdToast,sbiModule_messaging) {
 
 
 
@@ -37,11 +37,8 @@ function importUserStep1FuncController(sbiModule_download,sbiModule_device,$scop
 				$scope.IEDConf.roles.exportedUser.splice(index,1);
 			}else{
 				//if not present add nothing action
-
 			}
 		}
-
-
 		$scope.IEDConf.roles.selectedUser=[];
 
 	}
@@ -64,11 +61,8 @@ function importUserStep1FuncController(sbiModule_download,sbiModule_device,$scop
 				$scope.IEDConf.roles.exportingUser.splice(index,1);
 			}else{
 				//if not present add nothing action
-
 			}
 		}
-
-
 		$scope.IEDConf.roles.selectedUser=[];
 
 	}
@@ -102,14 +96,10 @@ function importUserStep1FuncController(sbiModule_download,sbiModule_device,$scop
 	$scope.save = function(ev){
 		if($scope.IEDConf.roles.exportingUser.length == 0){
 			//if not selected no one users
-			$scope.showAction(sbiModule_translate.load("sbi.importusers.anyuserchecked"));
+			//$scope.showAction(sbiModule_translate.load("sbi.importusers.anyuserchecked"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importusers.anyuserchecked"),"");
 		}else{
-
-			$scope.stepControl.insertBread({name: $scope.translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')})
-						
-				
-					
-			
+			$scope.stepControl.insertBread({name: $scope.translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')})								
 		}
 	}
 	

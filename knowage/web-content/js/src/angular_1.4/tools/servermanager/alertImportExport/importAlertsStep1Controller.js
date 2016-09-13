@@ -3,19 +3,20 @@ angular.module('impExpAlerts').controller(
 		[ 'sbiModule_download', 'sbiModule_device', "$scope", "$mdDialog",
 				"$timeout", "sbiModule_logger", "sbiModule_translate",
 				"sbiModule_restServices", "sbiModule_config",
-				"importExportDocumentModule_importConf", "$mdToast",
+				"importExportDocumentModule_importConf", "$mdToast","sbiModule_messaging",
 				importAlertStep1FuncController ]);
 
 function importAlertStep1FuncController(sbiModule_download, sbiModule_device,
 		$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate,
 		sbiModule_restServices, sbiModule_config,
-		importExportDocumentModule_importConf, $mdToast)
+		importExportDocumentModule_importConf, $mdToast,sbiModule_messaging)
 {
 	$scope.save = function(ev) {
 		console.log('step ds');
 		if ($scope.IEDConf.roles.selectedKpis.length == 0) {
 			// No KPI selected
-			$scope.showAction(sbiModule_translate.load("sbi.importkpis.anykpichecked"));
+			//$scope.showAction(sbiModule_translate.load("sbi.importkpis.anykpichecked"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importkpis.anykpichecked"),"");
 		} else {
 			// Import data
 			var data = {

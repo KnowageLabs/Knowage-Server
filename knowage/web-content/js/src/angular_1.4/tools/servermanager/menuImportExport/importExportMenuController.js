@@ -32,9 +32,10 @@ app.controller('importExportMenuController',
 		 'sbiModule_restServices',
 		 'sbiModule_config',
 		 '$mdToast',
+		 'sbiModule_messaging',
 		 impExpFuncController]);
 
-function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDialog,	$timeout,sbiModule_logger,sbiModule_translate,sbiModule_restServices,sbiModule_config,$mdToast) {
+function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDialog,	$timeout,sbiModule_logger,sbiModule_translate,sbiModule_restServices,sbiModule_config,$mdToast,sbiModule_messaging) {
 	$scope.importFile = {};
 	sbiModule_translate.addMessageFile('component_impexp_messages');
 	$scope.translate = sbiModule_translate;
@@ -51,7 +52,8 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 
 	$scope.upload = function(ev){
 		if($scope.importFile.fileName == "" || $scope.importFile.fileName == undefined){
-			$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"));
+			//$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"),"");
 		}else{
 			var fd = new FormData();
 		
@@ -59,12 +61,10 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 			sbiModule_restServices.post("1.0/serverManager/importExport/menu", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("ERROR")){
-						$mdToast.show($mdToast.simple().content(data.ERROR).position('top').action(
-						'OK').highlightAction(false).hideDelay(5000));
+					sbiModule_restServices.errorHandler(data.ERROR,"sbi.generic.toastr.title.error");
 				}
 				if(data.STATUS=="NON OK"){
-					$mdToast.show($mdToast.simple().content(data.ERROR).position('top').action(
-					'OK').highlightAction(false).hideDelay(5000));
+					sbiModule_restServices.errorHandler(data.ERROR,"sbi.generic.toastr.title.error");
 				}
 				else if(data.STATUS=="OK"){
 					//check role missing
@@ -98,9 +98,7 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 				
 			})
 			.error(function(data, status, headers, config) {
-				$mdToast.show($mdToast.simple().content(data.ERROR).position('top').action(
-				'OK').highlightAction(false).hideDelay(5000));
-				
+				sbiModule_restServices.errorHandler(data.ERROR,"sbi.generic.toastr.title.error");
 			});
 		}
 	};
@@ -116,17 +114,14 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 				//controllo se il padre è presente
 				var par=null;
 				for(var i=0;i<dest.length;i++){
-					
 					var xx=getParentById(dest[i],tmpEle.parentId);
 					if(xx!=null){
 						par=xx;
 						break;
 					}
-					
 				}
 				if(par!=null){
-					tmpEle.children=[];
-					
+					tmpEle.children=[];	
 					par.children.push(tmpEle);
 					source.splice(source.indexOf(tmpEle),1);
 				}
@@ -200,7 +195,8 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 				if(index!=-1){
 					var index2 = $scope.indexObjectsInListByLabel($scope.exportedObjects[index],$scope.currentObjects );
 					if(index2 == -1){
-						$scope.showAction(sbiModule_translate.load("sbi.importmenu.errormissingobj"));
+						//$scope.showAction(sbiModule_translate.load("sbi.importmenu.errormissingobj"));
+						sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importmenu.errormissingobj"),"");
 						return false;
 					}
 
@@ -217,7 +213,8 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 			var index = $scope.indexInList($scope.exportedRoles[i],$scope.currentRoles );
 			if(index==-1){
 				var text = sbiModule_translate.load("sbi.importusers.importfailed")+$scope.exportedRoles[i].name+" "+sbiModule_translate.load("sbi.importusers.importfailed2");
-				$scope.showAction(text);
+				//$scope.showAction(text);
+				sbiModule_messaging.showInfoMessage(text,"");
 				return false;
 				
 			}
@@ -228,8 +225,8 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 	};
 	$scope.save = function(ev){
 		if($scope.tree.length==0){
-			$scope.showAction(sbiModule_translate.load("sbi.importusers.anyuserchecked"))
-
+			//$scope.showAction(sbiModule_translate.load("sbi.importusers.anyuserchecked"))
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importusers.anyuserchecked"),"");
 		}else if($scope.typeSaveMenu == 'Override' || $scope.typeSaveMenu == 'Missing'){
 			$scope.removeCircularDependences($scope.tree);
 			var conf = {
@@ -246,7 +243,8 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 					//reload tree
 					$scope.reload();
 				}else{
-					$scope.showAction(data.ERROR)
+					//$scope.showAction(data.ERROR)
+					sbiModule_restServices.errorHandler(data.ERROR,"sbi.generic.toastr.title.error");
 				}
 				
 				
@@ -254,7 +252,8 @@ function impExpFuncController(sbiModule_download,sbiModule_device,$scope,$mdDial
 				console.log("ERRORS "+status,4000);
 			})
 		}else if($scope.tree.length!=0){
-			$scope.showAction(sbiModule_translate.load("sbi.importmenu.selectmode"));
+			//$scope.showAction(sbiModule_translate.load("sbi.importmenu.selectmode"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importmenu.selectmode"),"");
 		}
 
 	};
@@ -423,19 +422,17 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope,$
 			)
 		.success(function(data, status, headers, config) {
 			if (data.hasOwnProperty('errors')) {
-				showToast(data.errors[0].message,4000);
-			
+				sbiModule_restServices.errorHandler(data.errors[0].message,"sbi.generic.toastr.title.error");
 			}else if(status==200){
 				$scope.flags.enableDownload = true;
 				$scope.downloadedFileName = $scope.exportName;
-				
 				$scope.download.getBlob(data, $scope.exportName, 'application/zip', 'zip');
 				$scope.flags.enableDownload = false
 			}
 			$scope.flags.waitExport = false;
 		}).error(function(data, status, headers, config) {
 			$scope.flags.waitExport = false;
-			showToast('ERRORS ' + status,4000);
+			sbiModule_restServices.errorHandler("Errors","sbi.generic.toastr.title.error");
 		})
 	};
 	
@@ -450,33 +447,33 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope,$
 	
 	
 	
-	$scope.showAlert = function (title, message){
-		$mdDialog.show( 
-				$mdDialog.alert()
-				.parent(document.body)
-				.clickOutsideToClose(true)
-				.title(title)
-				.textContent(message) //FROM angular material 1.0 
-				.ok('Ok')
-		);
-	};
+//	$scope.showAlert = function (title, message){
+//		$mdDialog.show( 
+//				$mdDialog.alert()
+//				.parent(document.body)
+//				.clickOutsideToClose(true)
+//				.title(title)
+//				.textContent(message) //FROM angular material 1.0 
+//				.ok('Ok')
+//		);
+//	};
 	
 	$scope.debug= function(){
 	};
 	
-	function showToast(text, time) {
-		var timer = time == undefined ? 6000 : time;
-		
-		$mdToast.show(
-				$mdToast
-				.simple()
-				.content(text)
-				.position('top')
-				.action('OK')
-				.highlightAction(false)
-				.hideDelay(timer)
-		);
-	};
+//	function showToast(text, time) {
+//		var timer = time == undefined ? 6000 : time;
+//		
+//		$mdToast.show(
+//				$mdToast
+//				.simple()
+//				.content(text)
+//				.position('top')
+//				.action('OK')
+//				.highlightAction(false)
+//				.hideDelay(timer)
+//		);
+//	};
 };
 
 app.controller('importController', 

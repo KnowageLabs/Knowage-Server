@@ -10,6 +10,7 @@ angular.module('importExportMenuModule').controller('importMenuStep0',
 		 'sbiModule_config',
 		 'importExportMenuModule_importConf',
 		 '$mdToast',
+		 'sbiModule_messaging',
 		 importStep0FuncController]);
 
 function importStep0FuncController(
@@ -23,7 +24,8 @@ function importStep0FuncController(
 		sbiModule_restServices,
 		sbiModule_config,
 		importExportMenuModule_importConf,
-		$mdToast) {
+		$mdToast,
+		sbiModule_messaging) {
 	
 	$scope.importFile = function(item){
 
@@ -43,13 +45,7 @@ function importStep0FuncController(
 		.success(function(data, status, headers, config) {
 //				console.log('role--->',data);
 			if(data.STATUS == 'NON OK'){
-				$mdToast.show(
-						$mdToast.simple()
-						.content('data.ERROR')
-						.position('top')
-						.action('OK')
-						.highlightAction(false)
-						.hideDelay(5000));
+				sbiModule_restServices.errorHandler(data.ERROR,"sbi.generic.toastr.title.error");
 			}
 			else if(data.STATUS=='OK'){
 				importExportMenuModule_importConf.roles.currentRoles = data.currentRoles;
@@ -58,13 +54,7 @@ function importStep0FuncController(
 			}
 		})
 		.error(function(data, status, headers, config) {
-			$mdToast.show(
-					$mdToast.simple()
-					.content('errore')
-					.position('top')
-					.action('OK')
-					.highlightAction(false)
-					.hideDelay(5000));
+			sbiModule_restServices.errorHandler("ERROR","sbi.generic.toastr.title.error");
 			
 		});
 	};
