@@ -34,16 +34,29 @@
 	var anaDrParams = [
 	                  
 	      			{
-	      					memberUniqeName:"[Customers].[Canada]",
+	      					memberUniqueName:"[Customers].[Canada]",
 	      					replaceName:"[Customers].[${state}]",
-	      					parameter:{alias:"twoUrl",name:"two"}
+	      					parameter:{as:"twoUrl",name:"two"}
 	      			},
 	      			{
-	      				memberUniqeName:"[Region].[Mexico West]",
+	      				memberUniqueName:"[Region].[Mexico West]",
 	      				replaceName:"[Region].[${name}]"
 	      			}
 	      			
 	      			]
+	var anaDrParamsInvalid = [
+		                  
+		      			{
+		      					memberUniquName:"[Customers].[Canada]",
+		      					replaceName:"[Customers].[${state}]",
+		      					parameter:{as:"twoUrl",name:"two"}
+		      			},
+		      			{
+		      				memberUniquName:"[Region].[Mexico West]",
+		      				replaceName:"[Region].[${name}]"
+		      			}
+		      			
+		      			]
 	var validClickables = [
 	                       {
         
@@ -245,7 +258,7 @@
 					
 					expect(success).toEqual(true);
 					expect(params.length).toEqual(1);
-					expect(params[0].alias).toEqual('twoUrl');
+					expect(params[0].as).toEqual('twoUrl');
 					expect(params[0].name).toEqual('two');
 					expect(localOlapTemplateService.getMdxQuery()).toEqual(expectedMdxQuery);
 					
@@ -253,8 +266,20 @@
 				
 					it('should reject parameters and return false: mdxQuery is not defined',function(){
 					
-						var expectedMdxQuery = 'SELECT Subset({[Measures].[${measure}]},0,50) ON COLUMNS,Subset({[Product]},24,50) ON ROWS FROM [Sales_V] WHERE [Customers].[${state}]'
+						var expectedMdxQuery = 'SELECT Subset({[Measures].[Unit Sales]},0,50) ON COLUMNS,Subset({[Product]},24,50) ON ROWS FROM [Sales_V] WHERE CrossJoin([Customers].[${state}], [Region].[${name}])';
 						var success = localOlapTemplateService.injectParametersToMdxQueryTag(anaDrParams);
+						expect(success).toBe(false);
+					
+					});
+					
+					it('should reject parameters and return false: mandatory properties:memberUniqueName,replaceName',function(){
+						localOlapTemplateService.setMdxQueryTag(validMdxQueryObj);
+						var expectedMdxQuery = 'SELECT Subset({[Measures].[Unit Sales]},0,50) ON COLUMNS,Subset({[Product]},24,50) ON ROWS FROM [Sales_V] WHERE CrossJoin([Customers].[${state}], [Region].[${name}])';
+						var success = localOlapTemplateService.injectParametersToMdxQueryTag(anaDrParamsInvalid);
+						var params = localOlapTemplateService.getAnaliticalDriverParams();
+						var expectedParams = [];
+						
+						expect(params).toEqual(expectedParams);
 						expect(success).toBe(false);
 					
 					});

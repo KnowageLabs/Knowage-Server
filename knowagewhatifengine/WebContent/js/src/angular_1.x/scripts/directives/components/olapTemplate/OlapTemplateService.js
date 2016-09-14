@@ -343,17 +343,27 @@ angular.module('olap_template')
 							for(var i = 0;i<anaDrParams.length;i++){
 								
 								var memberObj = anaDrParams[i];
-								mdxQuery = mdxQuery.replace(memberObj.memberUniqeName,memberObj.replaceName);
-								if(memberObj.parameter){
-									if(memberObj.parameter.name&&memberObj.parameter.alias){
-										this.getMdxQueryTag().parameter.push(memberObj.parameter);
-									}else{
-										console.log('Bad format of parameter.Mandatory properties name,alias');
-									}
+								if(memberObj.memberUniqueName&&memberObj.replaceName){
 									
+									mdxQuery = mdxQuery.replace(memberObj.memberUniqueName,memberObj.replaceName);
+									
+									if(memberObj.parameter){
+										if(memberObj.parameter.name&&memberObj.parameter.as){
+											this.getMdxQueryTag().parameter.push(memberObj.parameter);
+										}else{
+											console.log('Bad format of parameter.Mandatory properties name,as');
+											return false;
+										}
+										
+									}
+									mdxObject.mdxQuery = mdxQuery;
+									this.setMdxQueryTag(mdxObject);
+									
+								}else{
+									console.log('Bad format of memberObj.Mandatory properties memberUniqueName,replaceName');
+									return false;
 								}
-								mdxObject.mdxQuery = mdxQuery;
-								this.setMdxQueryTag(mdxObject);
+								
 							}
 							return true;
 						}	
