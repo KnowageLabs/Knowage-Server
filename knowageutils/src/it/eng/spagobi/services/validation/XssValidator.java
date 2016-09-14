@@ -32,7 +32,7 @@ public class XssValidator implements ConstraintValidator<Xss, String> {
 		String upperCaseString = toValidate.toUpperCase();
 		if (upperCaseString.contains("<A") || upperCaseString.contains("<LINK") || upperCaseString.contains("<IMG") || upperCaseString.contains("<SCRIPT")
 				|| upperCaseString.contains("&LT;A") || upperCaseString.contains("&LT;LINK") || upperCaseString.contains("&LT;IMG")
-				|| upperCaseString.contains("&LT;SCRIPT"))
+				|| upperCaseString.contains("&LT;SCRIPT")|| upperCaseString.contains("{{"))
 			return false;
 
 		return true;
