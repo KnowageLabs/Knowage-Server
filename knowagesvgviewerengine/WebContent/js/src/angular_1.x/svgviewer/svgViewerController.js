@@ -144,7 +144,8 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  	if (domEl){	 	
 	  		//get element position
 	  		var viewportOffset = domEl.getBoundingClientRect();
-		  	var top = viewportOffset.top + document.documentElement.scrollTop;
+	  		var top = viewportOffset.top + document.documentElement.scrollTop;
+		  	
 //		  	var left = viewportOffset.left  + viewportOffset.width + document.documentElement.scrollLeft;		  	
 		  	var left = viewportOffset.left  + document.documentElement.scrollLeft;
 		  	var tooltipText = "";
@@ -172,13 +173,17 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 			  	var domLeftPanel = document.getElementById("svgInfoSidenav");
 			  	var wLeftPanel =  0 + parseInt(domLeftPanel.offsetWidth);		
 			  	left = left + wLeftPanel; 
-//		  		domTooltip.style.left = left + wLeftPanel + (viewportOffset.width/3); //$scope.cursorX; 
+			  	 
 		  		domTooltip.style.left = left + (viewportOffset.width/2); //$scope.cursorX; 
-//			  	domTooltip.style.left = left+(left/2);
-		  		domTooltip.style.top = top+(viewportOffset.height/3); //$scope.cursorY; 
+//		  		domTooltip.style.top = top+(viewportOffset.height/3); //$scope.cursorY; 		  		
 		  		domTooltip.innerHTML = tooltipText;
 		  		domTooltip.style.display = "block";
-		  	
+		  		//At least sets the top position (linked to the top or bottom values depending from the height of the final tooltip )
+	            if(document.documentElement.scrollTop + viewportOffset.top + viewportOffset.height + 250 >= window.innerHeight){
+	            	domTooltip.style.top = top - domTooltip.offsetHeight;
+	            }else{
+	            	domTooltip.style.top = viewportOffset.bottom; //$scope.cursorY;
+	            }
 		  	}
 	  	}
 	});
