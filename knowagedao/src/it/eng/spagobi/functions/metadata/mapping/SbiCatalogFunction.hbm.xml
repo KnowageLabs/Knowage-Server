@@ -36,6 +36,12 @@
         <property name="type" type="string">
             <column name="TYPE" />
         </property>
+        <property name="remote" type="boolean">
+            <column name="REMOTE" />
+        </property>
+        <property name="url" type="string">
+            <column name="URL" />
+        </property>
         
 		<component name="commonInfo" insert="true" update="true" 
 		      class="it.eng.spagobi.commons.metadata.SbiCommonInfo">

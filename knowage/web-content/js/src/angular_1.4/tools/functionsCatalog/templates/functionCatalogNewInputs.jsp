@@ -1,4 +1,4 @@
-<md-dialog aria-label='{{translate.load("sbi.functionscatalog.newinputsdialog.demoexecutionresult")}}' flex style="margin:auto;">
+<md-dialog aria-label='{{translate.load("sbi.functionscatalog.newinputsdialog.demoexecutionresult")}}' style="margin:auto;">
   	
   	 <md-toolbar class="md-knowage-theme"> <div class="md-toolbar-tools"> <h2>{{translate.load("sbi.functionscatalog.newinputsdialog.insertnewinputsforfunction")}}</h2>	<div flex></div>	<md-button class="md-raised md-primary" ng-click="executeFunction()" ng-disabled="isExecuteDisabled()">{{translate.load("sbi.functionscatalog.newinputsdialog.execute")}}</md-button>		</div></md-toolbar>  	 
   	 <div layout="row">

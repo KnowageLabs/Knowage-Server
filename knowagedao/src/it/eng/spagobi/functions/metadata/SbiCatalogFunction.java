@@ -21,6 +21,8 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 	private String keywords;
 	private String label;
 	private String type;
+	private boolean remote;
+	private String url;
 	private Set sbiFunctionInputVariables = new HashSet(0);
 	private Set sbiFunctionOutputs = new HashSet(0);
 	private Set sbiFunctionInputDatasets = new HashSet(0);
@@ -29,7 +31,7 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 	}
 
 	public SbiCatalogFunction(int functionId, String name, String description, String language, String script, String owner, String keywords, String label,
-			String type) {
+			boolean remote, String url, String type) {
 		this.functionId = functionId;
 		this.name = name;
 		this.description = description;
@@ -39,6 +41,8 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 		this.keywords = keywords;
 		this.label = label;
 		this.type = type;
+		this.url = url;
+		this.remote = remote;
 	}
 
 	public int getFunctionId() {
@@ -79,6 +83,22 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 
 	public void setScript(String script) {
 		this.script = script;
+	}
+
+	public void setRemote(boolean remote) {
+		this.remote = remote;
+	}
+
+	public boolean getRemote() {
+		return remote;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getUrl() {
+		return url;
 	}
 
 	public Set getSbiFunctionInputVariables() {

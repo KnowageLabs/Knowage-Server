@@ -182,6 +182,8 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		hibFunctionCatalogItem.setOwner(functionItem.getOwner());
 		hibFunctionCatalogItem.setLabel(functionItem.getLabel());
 		hibFunctionCatalogItem.setType(functionItem.getType());
+		hibFunctionCatalogItem.setUrl(functionItem.getUrl());
+		hibFunctionCatalogItem.setRemote(functionItem.getRemote());
 
 		List<String> keywords = functionItem.getKeywords();
 		String keywordsString = StringUtils.join(keywords.iterator(), ",");
@@ -255,6 +257,8 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			hibCatFunction.setKeywords(StringUtils.join(updatedCatalogFunction.getKeywords().iterator(), ","));
 			hibCatFunction.setLabel(updatedCatalogFunction.getLabel());
 			hibCatFunction.setType(updatedCatalogFunction.getType());
+			hibCatFunction.setUrl(updatedCatalogFunction.getUrl());
+			hibCatFunction.setRemote(updatedCatalogFunction.getRemote());
 
 			updateSbiCommonInfo4Update(hibCatFunction);
 			session.saveOrUpdate(hibCatFunction);

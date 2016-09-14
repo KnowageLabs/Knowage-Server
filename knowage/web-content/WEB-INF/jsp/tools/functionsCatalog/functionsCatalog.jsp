@@ -233,7 +233,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 					{{functionType.valueCd}}
               					</md-option>
            					</md-select>
-      					</md-input-container> 
+      					</md-input-container>
+      					
+
 						
           				<label class="customLabel">{{translate.load("sbi.functionscatalog.description");}}</label>
 	          			<wysiwyg-edit ng-if="(isAdmin || (isDev && shownFunction.owner==ownerUserName))" content="shownFunction.description"  layout-fill config="editorConfig"></wysiwyg-edit>
@@ -329,10 +331,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
            					</md-select>
           				</md-input-container>
       						
-  						<md-input-container class="md-block md-input-has-value" >
+       					<md-radio-group ng-model="shownFunction.remote" >
+      						<md-radio-button ng-value=false class="md-primary" ng-click="radioButtonRemoteLocalPush('local')" style="outline: none; border: 0; ">{{translate.load("sbi.functionscatalog.local");}}</md-radio-button>
+      						<md-radio-button ng-value=true ng-click="radioButtonRemoteLocalPush('remote')" style="outline: none; border: 0; "> {{translate.load("sbi.functionscatalog.remote");}} </md-radio-button>
+    					</md-radio-group>	
+      						
+  						<md-input-container class="md-block md-input-has-value" ng-if="shownFunction.remote==false">
           					<label class="customCodeMirrorLabel">{{translate.load("sbi.functionscatalog.script");}}</label>
           					<textarea flex ui-refresh="true" ng-model="shownFunction.script" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
         				</md-input-container>
+									
+						<md-input-container class="md-block" flex ng-if="shownFunction.remote==true">
+	 						<label>{{translate.load("sbi.functionscatalog.url");}}</label>  
+	 						<input ng-model="shownFunction.url" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+						</md-input-container>			
+									
 									
         			</md-card-content>
         			</md-card>	

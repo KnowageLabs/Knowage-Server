@@ -24,7 +24,9 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.shownFunction = {
 		"language" : "Python",
 		"owner" : $scope.ownerUserName,
-		"keywords" : []
+		"keywords" : [],
+		"remote" : false,
+		"url"		:""	
 	};
 	$scope.datasetLabelList = [];
 	$scope.datasetNamesList = [];
@@ -43,6 +45,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.emptyStr = " ";
 	$scope.searchKeywords=[];
 	$scope.selectedType="All"
+		
 	
 	$scope.editorConfig = {
 		sanitize : false
@@ -61,7 +64,9 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		"keywords" : [],
 		"label" : "",
 		"keywords" : [], //keywords and type added
-		"type" : ""
+		"type" : "",
+		"remote" : false,
+		"url"		:""
 	};
 	$scope.cleanNewFunction = function() {
 		$scope.newFunction = {
@@ -77,7 +82,9 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			"keywords" : [],
 			"label" : "",
 			"keywords" : [], //keywords and type added
-			"type" : ""
+			"type" : "",
+			"remote" : false,
+			"url"		:""
 		};
 	}
 	$scope.datasetLabelsList = [];
@@ -174,10 +181,25 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		return true;
 	}
 
+	
+	$scope.radioButtonRemoteLocalPush=function(localOrRemoteStr)
+	{
+		if(localOrRemoteStr=="local")
+		{
+			$scope.shownFunction.url="";
+			
+		}	
+		else if(localOrRemoteStr=="remote")
+		{
+			$scope.shownFunction.script="";
+		}
+	}
+	
+	
 	// --
 
 	$scope.obtainCatalogFunctionsRESTcall = function() {
-		sbiModule_restServices.get("1.0/function-catalog", "").success(
+		sbiModule_restServices.get("1.0/functions-catalog", "").success(
 				function(data) {
 					$log.info("Functions of the catalog returned", data);
 					$scope.functionsList = data.functions;
@@ -268,7 +290,9 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 							"description" : "",
 							"owner" : $scope.ownerUserName,
 							"keywords" : [],
-							"label" : ""
+							"label" : "",
+							"remote" : false,
+							"url"		:""
 						};
 					}
 					$scope.shownFunction = $scope.newFunction;
@@ -417,7 +441,9 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$log.info("userId ", $scope.userId);
 
 		// sbiModule_restServices.post("1.0/functionexecution","url")
-		sbiModule_restServices.get("execute-function",
+//		sbiModule_restServices.get("execute-function",
+//				functionId + "/?user_id=" + $scope.userId).success(
+		sbiModule_restServices.get("1.0/function/execute-sample",
 				functionId + "/?user_id=" + $scope.userId).success(
 				function(results) {
 					$log.info("Execution o function " + functionId
@@ -564,6 +590,15 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			$scope.functionsList = $scope.functionsList_bck ;
 			$scope.searchKeywords=$scope.keywordsList_bck ;
 			return $scope.functionsList_bck // all functions
+			
+//			sbiModule_restServices.get("1.0/functions-catalog", "").success(
+//					function(data) {
+//						$log.info("Functions of the catalog returned", data);
+//						$scope.functionsList = data.functions;
+//						$scope.searchKeywords=data.keywords;
+//						return $scope.functionsToDisplay;
+//					});	
+			
 		}
 	}
 	
@@ -830,7 +865,9 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			// sbiModule_restServices.alterContextPath("/knowagedataminingengine");
 			sbiModule_restServices
 					.alterContextPath("/"+sbiModule_config.dataMiningContextName);
-			sbiModule_restServices.post("execute-function",
+//			sbiModule_restServices.post("execute-function",
+//					$scope.functionId + "/?user_id=" + $scope.userId, body)
+			sbiModule_restServices.post("1.0/function/execute",
 					$scope.functionId + "/?user_id=" + $scope.userId, body)
 					.success(function(executionResult) {
 						$log.info("Catalog Function executed with post data!!");
@@ -851,6 +888,11 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	}
 	
 
+
+	
+	
+	
+	
 	function datasetPreviewController($scope, $mdDialog, logger, dataset,
 			datasetLabel, translate) {
 		function isObject(obj) {

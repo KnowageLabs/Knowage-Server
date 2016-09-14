@@ -25,3 +25,7 @@ ALTER TABLE SBI_META_DS_BC
 	
 update SBI_ENGINES set MAIN_URL='/knowagewhatifengine/restful-services/olap/startolap' where LABEL = 'knowageolapengine';
 update SBI_ENGINES set MAIN_URL='/knowagewhatifengine/restful-services/olap/startwhatif' where LABEL = 'knowagewhatifengine';
+
+ALTER TABLE SBI_CATALOG_FUNCTION ADD COLUMN REMOTE TINYINT(1) DEFAULT 0;
+ALTER TABLE SBI_CATALOG_FUNCTION ADD COLUMN URL VARCHAR(100);
+ALTER TABLE KNOWAGE.SBI_CATALOG_FUNCTION CHANGE COLUMN `SCRIPT` `SCRIPT` TEXT NULL;

@@ -43,7 +43,7 @@
 			</expander-box>
 			<expander-box  id="longMetadata" color="white" background-color="rgb(63,81,181)" expanded="true" title="metadataDlgCtrl.lblLongMeta" toolbar-class="secondaryToolbar"> 
 				<md-tabs class="removeTransition" layout="column" md-border-bottom md-dynamic-height >
-					<md-tab flex=200  ng-repeat="item in metadataDlgCtrl.longText" label="{{::item.name}}" md-on-select="metadataDlgCtrl.setTab($index)">
+					<md-tab flex=100  ng-repeat="item in metadataDlgCtrl.longText" label="{{::item.name}}" md-on-select="metadataDlgCtrl.setTab($index)">
 					 <md-tab-body >
 					 <!-- workaround to disable wysiwyg if user haven't authorization -->
 					 <div  <%= canModify? "style='display:none'":"" %> style="position:absolute; z-index:1000;background:transparent;" layout-fill>

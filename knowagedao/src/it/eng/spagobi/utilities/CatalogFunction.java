@@ -15,6 +15,8 @@ public class CatalogFunction {
 	private String owner;
 	private String label;
 	private String type;
+	private String url;
+	private boolean remote;
 
 	private Map<String, String> inputVariables = new HashMap<String, String>();
 	private List<String> inputDatasets = new ArrayList<String>();
@@ -23,7 +25,7 @@ public class CatalogFunction {
 	private List<String> keywords = new ArrayList<String>();;
 
 	public CatalogFunction(int functionId, String name, String description, String language, String script, String owner, String label, String type,
-			Map<String, String> inputVariables, List<String> inputDatasets, Map<String, String> outputs, List<String> keywords) {
+			Map<String, String> inputVariables, List<String> inputDatasets, Map<String, String> outputs, List<String> keywords, String url, boolean remote) {
 		super();
 		this.functionId = functionId;
 		this.name = name;
@@ -37,6 +39,8 @@ public class CatalogFunction {
 		this.inputDatasets = inputDatasets;
 		this.outputs = outputs;
 		this.keywords = keywords;
+		this.url = url;
+		this.remote = remote;
 	}
 
 	public CatalogFunction() {
@@ -136,6 +140,22 @@ public class CatalogFunction {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public boolean getRemote() {
+		return remote;
+	}
+
+	public void setRemote(boolean remote) {
+		this.remote = remote;
 	}
 
 }

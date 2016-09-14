@@ -228,9 +228,11 @@ public class FunctionExecutionUtils {
 										// spagoBI datasets from file datasets created when executing a document
 				JSONObject confObj = new JSONObject(iDataset.getConfiguration());
 
-				d.setFileName(confObj.getString("fileName"));
-				d.setOptions("sep='" + confObj.getString("csvDelimiter") + "'");
-				d.setReadType(confObj.getString("fileType").toLowerCase());
+				if (confObj.has("fileName")) {
+					d.setFileName(confObj.getString("fileName"));
+					d.setOptions("sep='" + confObj.getString("csvDelimiter") + "'");
+					d.setReadType(confObj.getString("fileType").toLowerCase());
+				}
 				dataminingDatasets.add(d);
 			}
 			template.setDatasets(dataminingDatasets);

@@ -423,7 +423,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 		try {
 			int catalogFunctionId = -1;
-
+			String url = "";
 			JSONObject jsonObj = new JSONObject(body);
 			String name = jsonObj.getString("name");
 			String description = jsonObj.getString("description");
@@ -432,6 +432,10 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			String owner = (String) getUserProfile().getUserUniqueIdentifier();
 			String label = jsonObj.getString("label");
 			String type = jsonObj.getString("type");
+			if (jsonObj.has("url")) {
+				url = jsonObj.getString("url");
+			}
+			boolean remote = jsonObj.getBoolean("remote");
 
 			JSONArray jsonInputDatasets = jsonObj.getJSONArray("inputDatasets");
 			JSONArray jsonInputVariables = jsonObj.getJSONArray("inputVariables");
@@ -479,6 +483,8 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			itemToInsert.setKeywords(keywordsList);
 			itemToInsert.setLabel(label);
 			itemToInsert.setType(type);
+			itemToInsert.setUrl(url);
+			itemToInsert.setRemote(remote);
 
 			catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
 			catalogFunctionId = catalogFunctionDAO.insertCatalogFunction(itemToInsert, inputDatasets, inputVariables, outputs);
@@ -577,6 +583,8 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			String owner = (String) getUserProfile().getUserUniqueIdentifier();
 			String label = jsonObj.getString("label");
 			String type = jsonObj.getString("type");
+			String url = jsonObj.getString("url");
+			boolean remote = jsonObj.getBoolean("remote");
 
 			JSONArray jsonInputDatasets = jsonObj.getJSONArray("inputDatasets");
 			JSONArray jsonInputVariables = jsonObj.getJSONArray("inputVariables");
@@ -622,6 +630,11 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			itemToInsert.setKeywords(keyList);
 			itemToInsert.setLabel(label);
 			itemToInsert.setType(type);
+			if (url != null) {
+				itemToInsert.setUrl(url);
+			}
+
+			itemToInsert.setRemote(remote);
 
 			catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
 			catalogFunctionDAO.setUserProfile(getUserProfile());
@@ -690,6 +703,8 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			ret.put("owner", sbiFunction.getOwner());
 			ret.put("label", sbiFunction.getLabel());
 			ret.put("type", sbiFunction.getType());
+			ret.put("url", sbiFunction.getUrl());
+			ret.put("remote", sbiFunction.getRemote());
 
 			JSONArray inputVariables = new JSONArray();
 			JSONArray inputDatasets = new JSONArray();

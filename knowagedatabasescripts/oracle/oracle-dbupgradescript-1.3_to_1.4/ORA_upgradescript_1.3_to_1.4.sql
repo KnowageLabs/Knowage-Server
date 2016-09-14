@@ -26,3 +26,12 @@ ALTER TABLE SBI_META_DS_BC
 	
 update SBI_ENGINES set MAIN_URL='/knowagewhatifengine/restful-services/olap/startolap' where LABEL = 'knowageolapengine';
 update SBI_ENGINES set MAIN_URL='/knowagewhatifengine/restful-services/olap/startwhatif' where LABEL = 'knowagewhatifengine';
+
+-- 06.09.2016 Chiara Capobianco: add unique name in sbi_kpi_kpi
+ALTER TABLE  SBI_KPI_KPI ADD UNIQUE (NAME, VERSION, ORGANIZATION);
+
+--14.09.2016 Alessandro Piovani: add url, remote columns to SBI_CATALOG_FUNCTIONS and make SCRIPT field nullable
+
+ALTER TABLE SBI_CATALOG_FUNCTION ADD COLUMN REMOTE SMALLINT DEFAULT 0;
+ALTER TABLE SBI_CATALOG_FUNCTION ADD COLUMN URL VARCHAR(100);
+ALTER TABLE KNOWAGE.SBI_CATALOG_FUNCTION CHANGE COLUMN `SCRIPT` `SCRIPT` TEXT NULL;
