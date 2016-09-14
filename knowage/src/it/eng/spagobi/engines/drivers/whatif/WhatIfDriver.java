@@ -17,6 +17,15 @@
  */
 package it.eng.spagobi.engines.drivers.whatif;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
@@ -40,15 +49,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 public class WhatIfDriver extends GenericDriver {
 
@@ -117,24 +117,26 @@ public class WhatIfDriver extends GenericDriver {
 			return null;
 		}
 		Engine engine = obj.getEngine();
-		String url = engine.getUrl();
-		HashMap parameters = new HashMap();
+		String url = engine.getUrl() + "/edit";
+		Map parameters = new HashMap();
+
 		String documentId = obj.getId().toString();
+
+		byte[] template1 = this.getTemplateAsByteArray(biobject);
+		parameters = addArtifactVersionId(template1, parameters, profile, obj.getId(), engine);
+		parameters = addArtifactId(template1, parameters, profile);
 		parameters.put("document", documentId);
-		parameters.put("forward", "editQuery.jsp");
+		parameters.put("mode", "edit");
+		// CREATE EXECUTION ID
+		String sbiExecutionId = null;
+		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
+		UUID uuidObj = uuidGen.generateTimeBasedUUID();
+		sbiExecutionId = uuidObj.toString();
+		sbiExecutionId = sbiExecutionId.replaceAll("-", "");
+		parameters.put("SBI_EXECUTION_ID", sbiExecutionId);
 
 		applySecurity(parameters, profile);
-		byte[] template = null;
-		try {
-			ObjTemplate objTemplate = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(obj.getId());
-			if (objTemplate == null || objTemplate.getContent() == null || objTemplate.getContent().length == 0) {
-				throw new Exception("Document's template is empty");
-			}
-			template = objTemplate.getContent();
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while loading document's template", e);
-		}
-		addArtifactVersionId(template, parameters, profile, obj.getId(), engine);
+
 		EngineURL engineURL = new EngineURL(url, parameters);
 		logger.debug("OUT");
 		return engineURL;
@@ -181,8 +183,8 @@ public class WhatIfDriver extends GenericDriver {
 		SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
 		Assert.assertNotNull(cubeSb, "Template is missing \"" + SpagoBIConstants.MONDRIAN_CUBE + "\" definition");
 		String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
-		Assert.assertNotNull(reference, "Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE
-				+ "\" property, that is the reference to the Mondrian schema");
+		Assert.assertNotNull(reference,
+				"Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE + "\" property, that is the reference to the Mondrian schema");
 		IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
 		Artifact artifact = dao.loadArtifactByNameAndType(reference, SpagoBIConstants.MONDRIAN_SCHEMA);
 		Assert.assertNotNull(artifact, "Mondrian schema with name [" + reference + "] was not found");
@@ -211,8 +213,8 @@ public class WhatIfDriver extends GenericDriver {
 		SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
 		Assert.assertNotNull(cubeSb, "Template is missing \"" + SpagoBIConstants.MONDRIAN_CUBE + "\" definition");
 		String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
-		Assert.assertNotNull(reference, "Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE
-				+ "\" property, that is the reference to the Mondrian schema");
+		Assert.assertNotNull(reference,
+				"Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE + "\" property, that is the reference to the Mondrian schema");
 		IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
 		Artifact artifact = dao.loadArtifactByNameAndType(reference, SpagoBIConstants.MONDRIAN_SCHEMA);
 		Assert.assertNotNull(artifact, "Mondrian schema with name [" + reference + "] was not found");
