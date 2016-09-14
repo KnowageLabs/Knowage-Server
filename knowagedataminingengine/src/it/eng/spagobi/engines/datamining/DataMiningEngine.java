@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.engines.datamining;
 
-import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
+import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineResource;
 import it.eng.spagobi.engines.datamining.serializer.GenericSerializer;
 import it.eng.spagobi.engines.datamining.serializer.SerializationManager;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplate;
@@ -54,7 +54,7 @@ public class DataMiningEngine {
 			dataMiningEngineInstance = new DataMiningEngineInstance(template, env);
 		}
 
-		SerializationManager.registerSerializer(AbstractDataMiningEngineService.OUTPUTFORMAT_JSONHTML, new GenericSerializer());
+		SerializationManager.registerSerializer(AbstractDataMiningEngineResource.OUTPUTFORMAT_JSONHTML, new GenericSerializer());
 		logger.debug("OUT");
 		return dataMiningEngineInstance;
 	}

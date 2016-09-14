@@ -18,7 +18,7 @@
 package it.eng.spagobi.engines.datamining.api;
 
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
-import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
+import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineResource;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.Output;
@@ -41,7 +41,7 @@ import javax.ws.rs.core.Context;
 import org.apache.log4j.Logger;
 
 @Path("/1.0/command")
-public class CommandsResource extends AbstractDataMiningEngineService {
+public class CommandsResource extends AbstractDataMiningEngineResource {
 	public static transient Logger logger = Logger.getLogger(CommandsResource.class);
 
 	@GET

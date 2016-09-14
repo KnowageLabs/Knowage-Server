@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,7 +19,7 @@ package it.eng.spagobi.engines.datamining.api;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
-import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
+import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineResource;
 import it.eng.spagobi.engines.datamining.compute.DataMiningRExecutor;
 
 import java.util.HashMap;
@@ -38,7 +38,7 @@ import javax.ws.rs.core.Context;
 import org.apache.log4j.Logger;
 
 @Path("/1.0/execute")
-public class ExternalResource extends AbstractDataMiningEngineService {
+public class ExternalResource extends AbstractDataMiningEngineResource {
 	public static transient Logger logger = Logger.getLogger(ExternalResource.class);
 
 	/**
@@ -95,6 +95,6 @@ public class ExternalResource extends AbstractDataMiningEngineService {
 		}
 
 		logger.debug("OUT");
-		return getJsonOk();
+		return getJsonSuccess();
 	}
 }

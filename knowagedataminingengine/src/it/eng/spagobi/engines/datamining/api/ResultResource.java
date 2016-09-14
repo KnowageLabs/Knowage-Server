@@ -20,7 +20,7 @@ package it.eng.spagobi.engines.datamining.api;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
-import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
+import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineResource;
 import it.eng.spagobi.engines.datamining.compute.DataMiningPythonExecutor;
 import it.eng.spagobi.engines.datamining.compute.DataMiningRExecutor;
 import it.eng.spagobi.engines.datamining.compute.DataMiningUtils;
@@ -44,7 +44,7 @@ import javax.ws.rs.QueryParam;
 import org.apache.log4j.Logger;
 
 @Path("/1.0/result")
-public class ResultResource extends AbstractDataMiningEngineService {
+public class ResultResource extends AbstractDataMiningEngineResource {
 	public static transient Logger logger = Logger.getLogger(ResultResource.class);
 
 	/**
@@ -158,7 +158,7 @@ public class ResultResource extends AbstractDataMiningEngineService {
 			return getJsonKo();
 		}
 		logger.debug("OUT");
-		return getJsonOk();
+		return getJsonSuccess();
 
 	}
 

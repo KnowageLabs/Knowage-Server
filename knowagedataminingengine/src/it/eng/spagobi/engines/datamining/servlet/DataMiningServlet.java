@@ -9,7 +9,7 @@ import it.eng.spagobi.engines.datamining.api.CommandsResource;
 import it.eng.spagobi.engines.datamining.api.OutputsResource;
 import it.eng.spagobi.engines.datamining.api.ResultResource;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
-import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
+import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineResource;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplateParseException;
@@ -146,7 +146,7 @@ public class DataMiningServlet extends HttpServlet {
 	private void initDataMining(HttpServletRequest servletRequest, HttpServletResponse response) {
 		logger.debug("IN");
 		HttpSession session = servletRequest.getSession();
-		AbstractDataMiningEngineService abstractDataMiningEngineService = new AbstractDataMiningEngineService();
+		AbstractDataMiningEngineResource abstractDataMiningEngineService = new AbstractDataMiningEngineResource();
 		executeSession = new ExecutionSession(servletRequest, session);
 		documentLabel = (String) executeSession.getAttributeFromSession(EngineConstants.ENV_DOCUMENT_LABEL);
 		if (documentLabel == null || executeSession.requestContainsAttribute(EngineConstants.ENV_DOCUMENT_LABEL)) {

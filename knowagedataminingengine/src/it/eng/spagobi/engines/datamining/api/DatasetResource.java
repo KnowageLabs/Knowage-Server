@@ -18,7 +18,7 @@
 package it.eng.spagobi.engines.datamining.api;
 
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
-import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
+import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineResource;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.compute.DataMiningRExecutor;
 import it.eng.spagobi.engines.datamining.compute.DataMiningUtils;
@@ -54,7 +54,7 @@ import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 @Path("/1.0/dataset")
-public class DatasetResource extends AbstractDataMiningEngineService {
+public class DatasetResource extends AbstractDataMiningEngineResource {
 
 	public static transient Logger logger = Logger.getLogger(DatasetResource.class);
 

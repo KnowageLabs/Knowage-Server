@@ -18,7 +18,7 @@
 
 package it.eng.spagobi.engines.exceptions;
 
-import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
+import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineResource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
 import java.io.UnsupportedEncodingException;
@@ -38,7 +38,7 @@ import org.json.JSONObject;
  *
  */
 @Provider
-public class RestExceptionMapper extends AbstractDataMiningEngineService implements ExceptionMapper<Exception> {
+public class RestExceptionMapper extends AbstractDataMiningEngineResource implements ExceptionMapper<Exception> {
 
 	static private Logger logger = Logger.getLogger(RestExceptionMapper.class);
 	private static final String LOCALIZED_MESSAGE = "localizedMessage";

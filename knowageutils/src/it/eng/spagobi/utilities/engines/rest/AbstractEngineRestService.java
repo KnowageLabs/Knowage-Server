@@ -366,6 +366,44 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	}
 
 	/**
+	 * Builds a simple success json {success: true}
+	 *
+	 * @return
+	 */
+	public String getJsonSuccessTrue() {
+		if (successString == null) {
+			JSONObject obj = new JSONObject();
+			try {
+				obj.put("success", true);
+			} catch (JSONException e) {
+				logger.error("Error building the success string");
+				throw new SpagoBIRuntimeException("Error building the success string");
+			}
+			successString = obj.toString();
+		}
+		return successString;
+	}
+
+	/**
+	 * Builds a simple fail json {result: ko}
+	 *
+	 * @return
+	 */
+	public String getJsonKo() {
+		if (successString == null) {
+			JSONObject obj = new JSONObject();
+			try {
+				obj.put("result", "ko");
+			} catch (JSONException e) {
+				logger.error("Error building the success string");
+				throw new SpagoBIRuntimeException("Error building the success string");
+			}
+			successString = obj.toString();
+		}
+		return successString;
+	}
+
+	/**
 	 * Saves the analysis state
 	 *
 	 * @param name

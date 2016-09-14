@@ -63,6 +63,98 @@ import org.json.JSONObject;
 public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	public static transient Logger logger = Logger.getLogger(FunctionsCatalogResource.class);
 
+	// @formatter:off
+	/**
+	 * @api {get} /1.0/functions-catalog Request Functions
+	 * @apiName GET_getAllCatalogFunctions
+	 * @apiGroup Functions
+	 *
+	 * @apiSuccess {json} functions The list of functions and keywords.
+	 *
+	 * @apiSuccessExample {json} Response-example:
+		{
+		   "functions":[
+		      {
+		         "id":16,
+		         "name":"tst_average",
+		         "description":"tst_average",
+		         "language":"R",
+		         "script":"x <- c($P{firstvar}, $P{secondvar}, $P{thirdvar})\nav <- mean(x)",
+		         "owner":"test_admin",
+		         "label":"tst_average",
+		         "type":"Utilities",
+		         "keywords":[
+		            "average"
+		         ],
+		         "inputVariables":[
+		            {
+		               "type":"Simple Input",
+		               "name":"thirdvar",
+		               "functionId":16,
+		               "value":"-5"
+		            },
+		            {
+		               "type":"Simple Input",
+		               "name":"secondvar",
+		               "functionId":16,
+		               "value":"11"
+		            },
+		            {
+		               "type":"Simple Input",
+		               "name":"firstvar",
+		               "functionId":16,
+		               "value":"5"
+		            }
+		         ],
+		         "inputDatasets":[
+
+		         ],
+		         "outputItems":[
+		            {
+		               "type":"Text",
+		               "functionId":16,
+		               "label":"av"
+		            }
+		         ]
+		      },
+		      {
+		         "id":17,
+		         "name":"tst_average_ds",
+		         "description":"tst_average_ds",
+		         "language":"R",
+		         "script":"z<-TST_FUNC_CAT_LP\ndsoutput<-rbind(z,rowMeans(z, na.rm = TRUE))\ndsoutput",
+		         "owner":"test_admin",
+		         "label":"tst_average_ds",
+		         "type":"Utilities",
+		         "keywords":[
+
+		         ],
+		         "inputVariables":[
+
+		         ],
+		         "inputDatasets":[
+		            {
+		               "type":"Dataset Input",
+		               "functionId":17,
+		               "label":"TST_FUNC_CAT_LP"
+		            }
+		         ],
+		         "outputItems":[
+		            {
+		               "type":"Dataset",
+		               "functionId":17,
+		               "label":"dsoutput"
+		            }
+		         ]
+		      }
+		   ],
+		   "keywords":[
+		      "average"
+		   ]
+		}
+	 */
+	// @formatter:on
+
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -110,6 +202,100 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		return retObj.toString();
 
 	}
+
+	// @formatter:off
+		/**
+		 * @api {get} /1.0/functions-catalog/:type Request Functions by type
+		 * @apiName GET_getCatalogFunctionsByType
+		 * @apiGroup Functions
+		 *
+		 * @apiParam {String} type Function type.
+		 *
+		 * @apiSuccess {json} functions The list of functions and keywords with the specified type.
+		 *
+		 * @apiSuccessExample {json} Response-example:
+			{
+			   "functions":[
+			      {
+			         "id":16,
+			         "name":"tst_average",
+			         "description":"tst_average",
+			         "language":"R",
+			         "script":"x <- c($P{firstvar}, $P{secondvar}, $P{thirdvar})\nav <- mean(x)",
+			         "owner":"test_admin",
+			         "label":"tst_average",
+			         "type":"Utilities",
+			         "keywords":[
+			            "average"
+			         ],
+			         "inputVariables":[
+			            {
+			               "type":"Simple Input",
+			               "name":"thirdvar",
+			               "functionId":16,
+			               "value":"-5"
+			            },
+			            {
+			               "type":"Simple Input",
+			               "name":"secondvar",
+			               "functionId":16,
+			               "value":"11"
+			            },
+			            {
+			               "type":"Simple Input",
+			               "name":"firstvar",
+			               "functionId":16,
+			               "value":"5"
+			            }
+			         ],
+			         "inputDatasets":[
+
+			         ],
+			         "outputItems":[
+			            {
+			               "type":"Text",
+			               "functionId":16,
+			               "label":"av"
+			            }
+			         ]
+			      },
+			      {
+			         "id":17,
+			         "name":"tst_average_ds",
+			         "description":"tst_average_ds",
+			         "language":"R",
+			         "script":"z<-TST_FUNC_CAT_LP\ndsoutput<-rbind(z,rowMeans(z, na.rm = TRUE))\ndsoutput",
+			         "owner":"test_admin",
+			         "label":"tst_average_ds",
+			         "type":"Utilities",
+			         "keywords":[
+
+			         ],
+			         "inputVariables":[
+
+			         ],
+			         "inputDatasets":[
+			            {
+			               "type":"Dataset Input",
+			               "functionId":17,
+			               "label":"TST_FUNC_CAT_LP"
+			            }
+			         ],
+			         "outputItems":[
+			            {
+			               "type":"Dataset",
+			               "functionId":17,
+			               "label":"dsoutput"
+			            }
+			         ]
+			      }
+			   ],
+			   "keywords":[
+			      "average"
+			   ]
+			}
+	*/
+	// @formatter:on
 
 	@GET
 	@Path("/{type}")
@@ -164,6 +350,64 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		return retObj.toString();
 
 	}
+
+	// @formatter:off
+	/**
+	 * @api {post} /1.0/functions-catalog/insertCatalogFunction Insert Function
+	 * @apiName POST_insertCatalogFunction
+	 * @apiGroup Functions
+	 *
+	 * @apiParam {json} function Function detail.
+	 * @apiParamExample {json} Request-Example:
+	 *
+			{
+			   "id":"",
+			   "name":"tst_average_ds",
+			   "description":"tst_average_ds",
+			   "language":"R",
+			   "script":"z<-TST_FUNC_CAT_LP\ndsoutput<-rbind(z,rowMeans(z, na.rm = TRUE))\nfieldoutput<-${field}\ndsoutput",
+			   "owner":"test_admin",
+			   "label":"tst_average_ds",
+			   "type":"Utilities",
+			   "keywords":[
+			      "average",
+			      "cool",
+			      "math"
+			   ],
+			   "inputVariables":[
+			      {
+			         "name":"field",
+			         "value":"5"
+			      }
+			   ],
+			   "inputDatasets":[
+			      {
+			         "type":"Dataset Input",
+			         "functionId":17,
+			         "label":"TST_FUNC_CAT_LP"
+			      }
+			   ],
+			   "outputItems":[
+			      {
+			         "type":"Dataset",
+			         "functionId":17,
+			         "label":"dsoutput"
+			      },
+			      {
+			         "label":"fieldoutput",
+			         "type":"Text"
+			      }
+			   ]
+			}
+	 *
+	 * @apiSuccess {json} response The response of the update.
+	 *
+	 * @apiSuccessExample {json} Response-example:
+		{
+			"Response":"OK"
+		}
+	 */
+	// @formatter:on
 
 	@POST
 	@Path("/insertCatalogFunction")
@@ -248,16 +492,76 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		return response.toString();
 	}
 
+	// @formatter:off
+		/**
+		 * @api {put} /1.0/functions-catalog/updateCatalogFunction/:id Update Function
+		 * @apiName PUT_updateCatalogFunction
+		 * @apiGroup Functions
+		 *
+		 * @apiParam {String} id Function id.
+		 *
+		 * @apiParam {json} function Function detail.
+		 * @apiParamExample {json} Request-Example:
+		 *
+				{
+				   "id":17,
+				   "name":"tst_average_ds",
+				   "description":"tst_average_ds",
+				   "language":"R",
+				   "script":"z<-TST_FUNC_CAT_LP\ndsoutput<-rbind(z,rowMeans(z, na.rm = TRUE))\nfieldoutput<-${field}\ndsoutput",
+				   "owner":"test_admin",
+				   "label":"tst_average_ds",
+				   "type":"Utilities",
+				   "keywords":[
+				      "average",
+				      "cool",
+				      "math"
+				   ],
+				   "inputVariables":[
+				      {
+				         "name":"field",
+				         "value":"5"
+				      }
+				   ],
+				   "inputDatasets":[
+				      {
+				         "type":"Dataset Input",
+				         "functionId":17,
+				         "label":"TST_FUNC_CAT_LP"
+				      }
+				   ],
+				   "outputItems":[
+				      {
+				         "type":"Dataset",
+				         "functionId":17,
+				         "label":"dsoutput"
+				      },
+				      {
+				         "label":"fieldoutput",
+				         "type":"Text"
+				      }
+				   ]
+				}
+		 *
+		 * @apiSuccess {json} response The response of the update.
+		 *
+		 * @apiSuccessExample {json} Response-example:
+			{
+				"Response":"OK"
+			}
+		 */
+	// @formatter:on
+
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("updateCatalogFunction/{functionId}")
+	@Path("updateCatalogFunction/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
-	public String updateCatalogFunction(@PathParam("functionId") int functionId, String body) {
+	public String updateCatalogFunction(@PathParam("id") int id, String body) {
 		logger.debug("IN");
 		ICatalogFunctionDAO catalogFunctionDAO = null;
 
-		if (!hasPermission(functionId)) {
+		if (!hasPermission(id)) {
 			throw new SpagoBIRuntimeException("You are not owner or administrator. Permission denied.");
 		}
 
@@ -321,24 +625,41 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 			catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
 			catalogFunctionDAO.setUserProfile(getUserProfile());
-			catalogFunctionDAO.updateCatalogFunction(itemToInsert, functionId);
+			catalogFunctionDAO.updateCatalogFunction(itemToInsert, id);
 
 			response.put("Response", "OK");
 
 		} catch (EMFUserError | JSONException e) {
-			throw new SpagoBIServiceException("Error while update catalog function " + functionId, e);
+			throw new SpagoBIServiceException("Error while update catalog function " + id, e);
 		}
 		return response.toString();
 	}
 
+	// @formatter:off
+	/**
+	 * @api {get} /1.0/functions-catalog/deleteFunction/:id Delete Function by ID
+	 * @apiName GET_deleteCatalogFunction
+	 * @apiGroup Functions
+	 *
+	 * @apiParam {String} id Function id.
+	 *
+	 * @apiSuccess {json} response The response of the update.
+	 *
+	 * @apiSuccessExample {json} Response-example:
+		{
+			"Response":"OK"
+		}
+	 */
+	// @formatter:on
+
 	@GET
-	@Path("/deleteFunction/{functionId}")
+	@Path("/deleteFunction/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
-	public String deleteCatalogFunction(@PathParam("functionId") int functionId) {
+	public String deleteCatalogFunction(@PathParam("id") int id) {
 		logger.debug("IN");
 
-		if (!hasPermission(functionId)) {
+		if (!hasPermission(id)) {
 			throw new SpagoBIRuntimeException("You are not owner or administrator. Permission denied.");
 		}
 
@@ -347,10 +668,10 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		try {
 			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
 			fcDAO.setUserProfile(getUserProfile());
-			fcDAO.deleteCatalogFunction(functionId);
+			fcDAO.deleteCatalogFunction(id);
 			retObj.put("Response", "OK");
 		} catch (EMFUserError | JSONException e) {
-			throw new SpagoBIServiceException("Error returning function identified by id " + functionId, e);
+			throw new SpagoBIServiceException("Error returning function identified by id " + id, e);
 		}
 		logger.debug("OUT");
 		return retObj.toString();
