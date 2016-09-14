@@ -17,6 +17,15 @@
  */
 package it.eng.spagobi.engines.drivers.whatif;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
@@ -40,15 +49,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 public class WhatIfDriver extends GenericDriver {
 
@@ -124,8 +124,10 @@ public class WhatIfDriver extends GenericDriver {
 		String documentLabel = obj.getLabel();
 
 		byte[] template1 = this.getTemplateAsByteArray(biobject);
+		ObjTemplate template = this.getTemplate(biobject);
 		parameters = addArtifactVersionId(template1, parameters, profile, obj.getId(), engine);
 		parameters = addArtifactId(template1, parameters, profile);
+		parameters = addTemplateInformation(template1, parameters);
 		parameters.put("document", documentId);
 		parameters.put("DOCUMENT_LABEL", documentLabel);
 		parameters.put("mode", "edit");
@@ -187,8 +189,8 @@ public class WhatIfDriver extends GenericDriver {
 		SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
 		Assert.assertNotNull(cubeSb, "Template is missing \"" + SpagoBIConstants.MONDRIAN_CUBE + "\" definition");
 		String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
-		Assert.assertNotNull(reference, "Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE
-				+ "\" property, that is the reference to the Mondrian schema");
+		Assert.assertNotNull(reference,
+				"Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE + "\" property, that is the reference to the Mondrian schema");
 		IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
 		Artifact artifact = dao.loadArtifactByNameAndType(reference, SpagoBIConstants.MONDRIAN_SCHEMA);
 		Assert.assertNotNull(artifact, "Mondrian schema with name [" + reference + "] was not found");
@@ -206,6 +208,20 @@ public class WhatIfDriver extends GenericDriver {
 
 	}
 
+	protected Map addTemplateInformation(byte[] template, Map pars) {
+		SourceBean sb = null;
+		try {
+			sb = SourceBean.fromXMLString(new String(template));
+		} catch (SourceBeanException e) {
+			logger.error("Error while parsing document's template", e);
+			throw new SpagoBIRuntimeException("Template is not a valid XML file", e);
+		}
+		SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
+		String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
+		pars.put("schemaName", reference);
+		return pars;
+	}
+
 	protected Map addArtifactId(byte[] template, Map pars, IEngUserProfile profile) {
 		SourceBean sb = null;
 		try {
@@ -217,8 +233,8 @@ public class WhatIfDriver extends GenericDriver {
 		SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
 		Assert.assertNotNull(cubeSb, "Template is missing \"" + SpagoBIConstants.MONDRIAN_CUBE + "\" definition");
 		String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
-		Assert.assertNotNull(reference, "Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE
-				+ "\" property, that is the reference to the Mondrian schema");
+		Assert.assertNotNull(reference,
+				"Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE + "\" property, that is the reference to the Mondrian schema");
 		IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
 		Artifact artifact = dao.loadArtifactByNameAndType(reference, SpagoBIConstants.MONDRIAN_SCHEMA);
 		Assert.assertNotNull(artifact, "Mondrian schema with name [" + reference + "] was not found");
