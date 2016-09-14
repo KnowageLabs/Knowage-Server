@@ -353,7 +353,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	// @formatter:off
 	/**
-	 * @api {post} /1.0/functions-catalog/insertCatalogFunction Insert Function
+	 * @api {post} /1.0/functions-catalog/insert Insert Function
 	 * @apiName POST_insertCatalogFunction
 	 * @apiGroup Functions
 	 *
@@ -410,7 +410,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	// @formatter:on
 
 	@POST
-	@Path("/insertCatalogFunction")
+	@Path("/insert")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
@@ -494,7 +494,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	// @formatter:off
 		/**
-		 * @api {put} /1.0/functions-catalog/updateCatalogFunction/:id Update Function
+		 * @api {put} /1.0/functions-catalog/update/:id Update Function
 		 * @apiName PUT_updateCatalogFunction
 		 * @apiGroup Functions
 		 *
@@ -553,9 +553,9 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	// @formatter:on
 
 	@PUT
+	@Path("/update/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("updateCatalogFunction/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String updateCatalogFunction(@PathParam("id") int id, String body) {
 		logger.debug("IN");
@@ -637,7 +637,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	// @formatter:off
 	/**
-	 * @api {get} /1.0/functions-catalog/deleteFunction/:id Delete Function by ID
+	 * @api {get} /1.0/functions-catalog/delete/:id Delete Function by ID
 	 * @apiName GET_deleteCatalogFunction
 	 * @apiGroup Functions
 	 *
@@ -653,7 +653,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	// @formatter:on
 
 	@GET
-	@Path("/deleteFunction/{id}")
+	@Path("/delete/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String deleteCatalogFunction(@PathParam("id") int id) {
