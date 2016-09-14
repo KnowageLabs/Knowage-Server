@@ -18,6 +18,7 @@
 package it.eng.knowage.meta.service;
 
 import it.eng.knowage.meta.exception.KnowageMetaException;
+import it.eng.knowage.meta.generator.GenerationException;
 import it.eng.knowage.meta.generator.jpamapping.JpaMappingJarGenerator;
 import it.eng.knowage.meta.initializer.BusinessModelInitializer;
 import it.eng.knowage.meta.initializer.OlapModelInitializer;
@@ -56,14 +57,15 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.services.rest.JSError;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -76,6 +78,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -127,7 +130,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 *
+	 * 
 	 * @param dsId
 	 * @return
 	 */
@@ -227,7 +230,8 @@ public class MetaService extends AbstractSpagoBIResource {
 	@Path("/addBusinessModel")
 	public Response addBusinessModel(@Context HttpServletRequest req) {
 		try {
-			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);;
+			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+			;
 
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 			JSONObject oldJsonModel = createJson(model);
@@ -521,47 +525,65 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@Path("/buildModel/{name}/{modelid}")
-	public Response buildModel(@PathParam("name") String name, @PathParam("modelid") Integer modelid, @Context HttpServletRequest req) { // ,
-		Model model = getModelWeb(name);
+	@Path("/buildModel/{modelid}")
+	public Response buildModel(@PathParam("modelid") Integer modelid, @Context HttpServletRequest req) {
+		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
+		MetaModel metaModel = dao.loadMetaModelById(modelid);
+		Model model = getModelWeb(metaModel.getName());
 		// meta model version (content)
 
 		JpaMappingJarGenerator jpaMappingJarGenerator = new JpaMappingJarGenerator();
 
 		logger.debug(req.getServletContext().getRealPath(File.separator));
 
-		String libDir = req.getServletContext().getRealPath(File.separator) + File.separator + "WEB-INF" + File.separator + "lib" + File.separator;
+		String libDir = req.getServletContext().getRealPath("") + File.separator + "WEB-INF" + File.separator + "lib" + File.separator;
 
-		// jpaMappingJarGenerator.setLibs(new String[] { "hibernate-3.6.2.jar", "javax.persistence-2.0.1.jar" });
-		String filename = name + ".jar";
+		String filename = metaModel.getName() + ".jar";
 		jpaMappingJarGenerator.setJarFileName(filename);
-		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
+		ByteArrayOutputStream errorLog = new ByteArrayOutputStream();
+		jpaMappingJarGenerator.setErrorLog(new PrintWriter(errorLog));
 		Content content = dao.lastFileModelMeta(modelid);
+		JSError errors = new JSError();
 		try {
-			// java.nio.file.Path outFile = Files.createTempFile("model_", "_tmp");
 			java.nio.file.Path outDir = Files.createTempDirectory("model_");
 
-			jpaMappingJarGenerator.generate(model.getBusinessModels().get(0), outDir.toString(), false, new File(libDir), content.getFileModel());
+			try {
+				jpaMappingJarGenerator.generate(model.getBusinessModels().get(0), outDir.toString(), false, new File(libDir), content.getFileModel());
+			} catch (GenerationException e) {
+				logger.error(e);
+				errors.addErrorKey("metaWeb.generation.generic.error");
+			}
 
 			dao.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
-
-			String tmpDirJarFile = outDir + File.separator + model.getBusinessModels().get(0).getName() + File.separator + "dist";
-			InputStream inputStream = new FileInputStream(tmpDirJarFile + File.separator + filename);
-			byte[] bytes = IOUtils.toByteArray(inputStream);
-			// Content content = new Content();
-
 			content.setCreationDate(new Date());
 			content.setCreationUser(getUserProfile().getUserName().toString());
-			content.setContent(bytes);
-			content.setFileName(filename);
-			// dao.insertMetaModelContent(modelid, content);
-			dao.modifyMetaModelContent(modelid, content, content.getId());
+			if (!errors.hasErrors()) {
+				String tmpDirJarFile = outDir + File.separator + model.getBusinessModels().get(0).getName() + File.separator + "dist";
+				InputStream inputStream = new FileInputStream(tmpDirJarFile + File.separator + filename);
+				byte[] bytes = IOUtils.toByteArray(inputStream);
+
+				content.setContent(bytes);
+				content.setFileName(filename);
+
+				dao.modifyMetaModelContent(modelid, content, content.getId());
+			} else if (errorLog.size() > 0) {
+				content.setContent(errorLog.toByteArray());
+				content.setFileName(metaModel.getName() + ".log");
+				dao.modifyMetaModelContent(modelid, content, content.getId());
+				errors.addErrorKey("metaWeb.generation.error.log");
+			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
-			return Response.serverError().build();
+			logger.error(e);
+			errors.addErrorKey("metaWeb.generation.io.error", e.getMessage());
+		} catch (AssertionError e) {
+			logger.error(e);
+			errors.addError(e.getMessage());
+		} catch (Throwable t) {
+			logger.error(t);
+			errors.addErrorKey("common.generic.error");
 		}
-		return Response.ok().build();
+		return Response.ok(errors.toString()).build();
 	}
 
 	@POST
@@ -599,7 +621,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			}
 
 		} catch (KnowageMetaException t) {
-			return Response.ok(new JSError(buildLocaleFromSession()).addError(t.getMessage()).toString()).build();
+			return Response.ok(new JSError().addError(t.getMessage()).toString()).build();
 		}
 
 		JSONObject jsonModel = createJson(model);
@@ -1116,7 +1138,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	 * {businessModels:[tables:[...]],businessModels:[businessTables:[...]]} Furthermore jsonDiff is zero-based numbering but jxpath is 1-based numbering
 	 * Another difference is that jsonDiff's notation used to select a property of a nth element of a collection is "parent/n/property" but jxpath does same
 	 * selection in this way "parent[n]/property"
-	 *
+	 * 
 	 * @param path
 	 * @return path cleaned
 	 */

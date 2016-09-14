@@ -17,8 +17,8 @@
  */
 package it.eng.knowage.meta.generator.utils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
@@ -39,9 +39,9 @@ import com.google.common.io.Files;
 
 /**
  * This class is used by Knowage Meta to compile generated java class and to create JAR file.
- *
+ * 
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public class Compiler {
 
@@ -49,7 +49,7 @@ public class Compiler {
 	private File binDir;
 	private File libDir;
 
-	private final File logDir;
+	private final PrintWriter log;
 
 	/**
 	 * necessary libraries to compile Java Classes
@@ -60,7 +60,7 @@ public class Compiler {
 
 	/**
 	 * Costructor
-	 *
+	 * 
 	 * @param srcDir
 	 *            Source directory
 	 * @param binDir
@@ -70,8 +70,12 @@ public class Compiler {
 	 * @param srcPackage
 	 *            the package of the source code
 	 */
-	public Compiler(File srcDir, File binDir, File libDir, String srcPackage, File logDir) {
-		this.logDir = logDir.getAbsoluteFile();
+	public Compiler(File srcDir, File binDir, File libDir, String srcPackage, PrintWriter log) {
+		if (log == null) {
+			this.log = new PrintWriter(new ByteArrayOutputStream());
+		} else {
+			this.log = log;
+		}
 
 		this.srcDir = srcDir.getAbsoluteFile();
 		logger.debug("src dir set to [{}]", this.srcDir);
@@ -87,11 +91,11 @@ public class Compiler {
 
 	/**
 	 * Compile all the generated java classes
-	 *
+	 * 
 	 * @return boolean : true if the compiler has worked well.
+	 * @throws IOException
 	 */
 	public boolean compile() {
-
 		boolean result = false;
 
 		// File[] files1 = ... ; // input for first compilation task
@@ -113,49 +117,27 @@ public class Compiler {
 		// Iterable<? extends JavaFileObject> compilationUnits2 =
 		// fileManager.getJavaFileObjects(files2);
 		// compiler.getTask(null, fileManager, null, null, null, compilationUnits2).call();
-		FileWriter fw = null;
-		try {
-			if (!diagnostics.getDiagnostics().isEmpty()) {
-				fw = new FileWriter(logDir.getAbsolutePath() + File.separatorChar + "metacompiler_out.log", true);
-				for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-					fw.append(MessageFormat.format("Error on line {0} in {1}\n", diagnostic.getLineNumber(), diagnostic.getSource().toUri()));
-					diagnostic.getSource().getCharContent(true);
-					// System.out.format("Error on line %d in %s%n",
-					// diagnostic.getLineNumber(),
-					// diagnostic.getSource().toUri());
-				}
-				fw.close();
-			}
-		} catch (IOException e) {
-			// TODO
-			e.printStackTrace();
-		} finally {
-			if (fw != null)
+
+		if (!diagnostics.getDiagnostics().isEmpty()) {
+			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+				log.append(MessageFormat.format("Error on line {0} in {1}\n", diagnostic.getLineNumber(), diagnostic.getSource().toUri()));
 				try {
-					fw.close();
+					diagnostic.getSource().getCharContent(true);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.append("Error while reading java sources.\n");
 				}
+				// System.out.format("Error on line %d in %s%n",
+				// diagnostic.getLineNumber(),
+				// diagnostic.getSource().toUri());
+			}
 		}
-		;
 
 		logger.trace("IN");
 
 		String command = "\"" + srcDir + "\" -classpath \"" + getClasspath() + "\" -d \"" + binDir + "\" -source 1.5";
 		logger.info("Compile command is equal to [{}]", command);
 
-		PrintWriter error;
-		PrintWriter out;
-		try {
-			error = new PrintWriter(new FileWriter(logDir.getAbsolutePath() + File.separatorChar + "metacompiler_errors.log", true));
-			out = new PrintWriter(new FileWriter(logDir.getAbsolutePath() + File.separatorChar + "metacompiler_out.log", true));
-
-			result = org.eclipse.jdt.core.compiler.batch.BatchCompiler.compile(command, out, error, null);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		result = org.eclipse.jdt.core.compiler.batch.BatchCompiler.compile(command, log, log, null);
 
 		logger.info("Mapping files compiled succesfully: [{}]", result);
 

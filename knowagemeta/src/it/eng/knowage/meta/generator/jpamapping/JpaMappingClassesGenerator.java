@@ -24,6 +24,8 @@ import it.eng.knowage.meta.model.ModelObject;
 import it.eng.knowage.meta.model.business.BusinessModel;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -40,6 +42,8 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 	private File libDir;
 	private File binDir;
 	private File logDir;
+
+	private PrintWriter errorLog;
 
 	public static final String DEFAULT_BIN_DIR = "build";
 	public static final String DEFAULT_LIB_DIR = "libs";
@@ -66,61 +70,65 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
 		logger.trace("IN");
 
-		try {
-			BusinessModel model;
+		// try {
+		BusinessModel model;
 
-			super.generate(o, outputDir, isUpdatableMapping, libsDir, null);
+		super.generate(o, outputDir, isUpdatableMapping, libsDir, null);
 
-			binDir = (binDir == null) ? new File(outputDir, DEFAULT_BIN_DIR) : binDir;
-			logger.debug("src dir is equal to [{}]", getSrcDir());
-			// libDir = (libDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libDir;
-			libDir = (libsDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libsDir;
-			logger.debug("lib dir is equal to [{}]", libDir);
+		binDir = (binDir == null) ? new File(outputDir, DEFAULT_BIN_DIR) : binDir;
+		logger.debug("src dir is equal to [{}]", getSrcDir());
+		// libDir = (libDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libDir;
+		libDir = (libsDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libsDir;
+		logger.debug("lib dir is equal to [{}]", libDir);
 
-			logDir = logDir == null ? new File(outputDir, DEFAULT_LOG_DIR) : logDir;
+		logDir = logDir == null ? new File(outputDir, DEFAULT_LOG_DIR) : logDir;
 
-			model = (BusinessModel) o;
+		model = (BusinessModel) o;
 
-			// Get Package Name
-			String packageName = model.getProperties().get(JpaProperties.MODEL_PACKAGE).getValue();
+		// Get Package Name
+		String packageName = model.getProperties().get(JpaProperties.MODEL_PACKAGE).getValue();
 
-			// Call Java Compiler
-			Compiler compiler;
+		// Call Java Compiler
+		Compiler compiler;
 
-			compiler = new Compiler(getSrcDir(), binDir, libDir, packageName.replace(".", "/"), logDir);
-			compiler.addLibs(libs);
+		compiler = new Compiler(getSrcDir(), binDir, libDir, packageName.replace(".", "/"), errorLog);
+		compiler.addLibs(libs);
+		libs = new String[] {};
 
-			boolean compiled = compiler.compile();
+		boolean compiled = compiler.compile();
 
-			if (!compiled) {
-				throw new GenerationException("Impossible to compile mapping code. Please check compilation errors in file [" + logDir + File.separator
-						+ "metacompiler_errors.log]");
-			}
-
-			FileUtilities.copyFile(new File(srcDir, "views.json"), binDir);
-			FileUtilities.copyFile(new File(srcDir, "label.properties"), binDir);
-			FileUtilities.copyFile(new File(srcDir, "qbe.properties"), binDir);
-			FileUtilities.copyFile(new File(srcDir, "relationships.json"), binDir);
-			FileUtilities.copyFile(new File(srcDir, "cfields_meta.xml"), binDir);
-			if (new File(srcDir + "" + File.separator + "hierarchies.xml").exists()) {
-				FileUtilities.copyFile(new File(srcDir, "hierarchies.xml"), binDir);
-			}
-
-			if (fileModel != null) {
-				// model file is copied inside bin folder so that it will be included in jar
-				String sbimodelName = binDir + File.separator + o.getName() + "." + SBI_MODEL_FILE_NAME;
-				File sbimodel = new File(sbimodelName);
-				FileUtils.writeByteArrayToFile(sbimodel, fileModel);
-			}
-
-			FileUtilities.copyFile(new File(srcDir, "META-INF/persistence.xml"), new File(binDir, "META-INF"));
-
-		} catch (Throwable t) {
-			logger.error("An error occur while generating JPA jar", t);
-			throw new GenerationException("An error occur while generating JPA jar", t);
-		} finally {
-			logger.trace("OUT");
+		if (!compiled) {
+			throw new GenerationException("Impossible to compile mapping code. Please download errors log");
 		}
+
+		FileUtilities.copyFile(new File(srcDir, "views.json"), binDir);
+		FileUtilities.copyFile(new File(srcDir, "label.properties"), binDir);
+		FileUtilities.copyFile(new File(srcDir, "qbe.properties"), binDir);
+		FileUtilities.copyFile(new File(srcDir, "relationships.json"), binDir);
+		FileUtilities.copyFile(new File(srcDir, "cfields_meta.xml"), binDir);
+		if (new File(srcDir + "" + File.separator + "hierarchies.xml").exists()) {
+			FileUtilities.copyFile(new File(srcDir, "hierarchies.xml"), binDir);
+		}
+
+		if (fileModel != null) {
+			// model file is copied inside bin folder so that it will be included in jar
+			String sbimodelName = binDir + File.separator + o.getName() + "." + SBI_MODEL_FILE_NAME;
+			File sbimodel = new File(sbimodelName);
+			try {
+				FileUtils.writeByteArrayToFile(sbimodel, fileModel);
+			} catch (IOException e) {
+				throw new GenerationException("Error writing content to file [" + sbimodel + "]", e);
+			}
+		}
+
+		FileUtilities.copyFile(new File(srcDir, "META-INF/persistence.xml"), new File(binDir, "META-INF"));
+
+		// } catch (Throwable t) {
+		// logger.error("An error occur while generating JPA jar", t);
+		// throw new GenerationException("An error occur while generating JPA jar", t);
+		// } finally {
+		// logger.trace("OUT");
+		// }
 	}
 
 	// =======================================================================
@@ -145,5 +153,13 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
 	public void setLibs(String[] libs) {
 		this.libs = libs;
+	}
+
+	/**
+	 * @param errorLog
+	 *            the errorLog to set
+	 */
+	public void setErrorLog(PrintWriter errorLog) {
+		this.errorLog = errorLog;
 	}
 }

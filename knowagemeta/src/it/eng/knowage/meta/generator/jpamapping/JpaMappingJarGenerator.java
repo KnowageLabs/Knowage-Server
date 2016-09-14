@@ -22,6 +22,7 @@ import it.eng.knowage.meta.generator.utils.Zipper;
 import it.eng.knowage.meta.model.ModelObject;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +67,7 @@ public class JpaMappingJarGenerator extends JpaMappingClassesGenerator {
 			Zipper zipper = new Zipper();
 			zipper.compressToJar(getBinDir(), getJarFile());
 
-		} catch (Throwable t) {
+		} catch (IOException t) {
 			logger.error("An error occur while generating JPA jar", t);
 			throw new GenerationException("An error occur while generating JPA jar", t);
 		} finally {

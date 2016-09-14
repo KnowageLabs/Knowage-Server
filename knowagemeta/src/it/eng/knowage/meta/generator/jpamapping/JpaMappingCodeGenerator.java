@@ -60,8 +60,6 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	protected File distDir;
 
-	protected File logDir;
-
 	/**
 	 * The velocity template directory
 	 */
@@ -208,38 +206,31 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 		if (o instanceof BusinessModel) {
 			model = (BusinessModel) o;
-			try {
+			// try {
 
-				baseOutputDir = new File(outputDir);
-				deleteFile(baseOutputDir);
-				baseOutputDir = new File(outputDir);
+			baseOutputDir = new File(outputDir);
+			deleteFile(baseOutputDir);
+			baseOutputDir = new File(outputDir);
 
-				logger.debug("Output dir is equal to [{}]", baseOutputDir);
+			logger.debug("Output dir is equal to [{}]", baseOutputDir);
 
-				srcDir = (srcDir == null) ? new File(baseOutputDir, DEFAULT_SRC_DIR) : srcDir;
-				logger.debug("src dir is equal to [{}]", srcDir);
+			srcDir = (srcDir == null) ? new File(baseOutputDir, DEFAULT_SRC_DIR) : srcDir;
+			logger.debug("src dir is equal to [{}]", srcDir);
 
-				distDir = (distDir == null) ? new File(baseOutputDir, DEFAULT_DIST_DIR) : distDir;
-				logger.debug("dist dir is equal to [{}]", distDir);
+			distDir = (distDir == null) ? new File(baseOutputDir, DEFAULT_DIST_DIR) : distDir;
+			logger.debug("dist dir is equal to [{}]", distDir);
 
-				if (distDir.mkdirs()) {
-					logger.debug("Created directory [{}]", distDir);
-				}
-
-				logDir = (logDir == null) ? new File(baseOutputDir, DEFAULT_LOG_DIR) : logDir;
-				logger.debug("log dir is equal to [{}]", logDir);
-
-				if (logDir.mkdirs()) {
-					logger.debug("Created directory [{}]", logDir);
-				}
-
-				generateJpaMapping(model, isUpdatableMapping);
-
-				logger.info("Jpa mapping code generated succesfully");
-			} catch (Exception e) {
-				logger.error("An error occur while generating jpa mapping code", e);
-				throw new GenerationException("An error occur while generating JPA mapping", e);
+			if (distDir.mkdirs()) {
+				logger.debug("Created directory [{}]", distDir);
 			}
+
+			generateJpaMapping(model, isUpdatableMapping);
+
+			logger.info("Jpa mapping code generated succesfully");
+			// } catch (Exception e) {
+			// logger.error("An error occur while generating jpa mapping code", e);
+			// throw new GenerationException("An error occur while generating JPA mapping", e);
+			// }
 		} else {
 			throw new GenerationException("Impossible to generate JPA mapping from an object of type [" + o.getClass().getName() + "]");
 		}
@@ -249,7 +240,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	/**
 	 * Delete the file and all it's children
-	 *
+	 * 
 	 * @param file
 	 */
 	private void deleteFile(File file) {
@@ -274,13 +265,13 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	/**
 	 * Generate the JPA Mapping of one BusinessModel in one outputFile
-	 *
+	 * 
 	 * @param model
 	 *            BusinessModel
 	 * @param outputFile
 	 *            File
 	 */
-	public void generateJpaMapping(BusinessModel model, boolean isUpdatableMapping) throws Exception {
+	public void generateJpaMapping(BusinessModel model, boolean isUpdatableMapping) {
 
 		logger.trace("IN");
 
@@ -314,14 +305,22 @@ public class JpaMappingCodeGenerator implements IGenerator {
 		logger.trace("OUT");
 	}
 
-	public void generateBusinessTableMappings(List<IJpaTable> jpaTables, boolean isUpdatableMapping) throws Exception {
+	public void generateBusinessTableMappings(List<IJpaTable> jpaTables, boolean isUpdatableMapping) {
 		// logger.debug("Creating mapping for business class [{}]", table.getName());
 
 		for (IJpaTable jpaTable : jpaTables) {
-			createJavaFile(tableTemplate, jpaTable, jpaTable.getClassName(), isUpdatableMapping);
+			try {
+				createJavaFile(tableTemplate, jpaTable, jpaTable.getClassName(), isUpdatableMapping);
+			} catch (IOException e) {
+				throw new GenerationException("Impossible to create java file for " + jpaTable.getClassName());
+			}
 			logger.debug("Mapping for table [" + jpaTable.getName() + "] succesfully created");
 			if (jpaTable.hasCompositeKey()) {
-				createJavaFile(keyTemplate, jpaTable, jpaTable.getCompositeKeyClassName(), isUpdatableMapping);
+				try {
+					createJavaFile(keyTemplate, jpaTable, jpaTable.getCompositeKeyClassName(), isUpdatableMapping);
+				} catch (IOException e) {
+					throw new GenerationException("Impossible to create java file for " + jpaTable.getCompositeKeyClassName());
+				}
 				logger.debug("Mapping for composite PK of business table [{}] succesfully", jpaTable.getName());
 			}
 		}
@@ -329,26 +328,27 @@ public class JpaMappingCodeGenerator implements IGenerator {
 		// logger.debug("Mapping for business class [{}] created succesfully", table.getName());
 	}
 
-	public void generateBusinessViewMappings(List<IJpaView> jpaViews, boolean isUpdatableMapping) throws Exception {
+	public void generateBusinessViewMappings(List<IJpaView> jpaViews, boolean isUpdatableMapping) {
 		for (IJpaView jpaView : jpaViews) {
 			generateBusinessTableMappings(jpaView.getInnerTables(), isUpdatableMapping);
 		}
 		createViewsFile(jpaViews);
 	}
 
-	public void generatePersistenceUnitMapping(JpaModel model) throws Exception {
+	public void generatePersistenceUnitMapping(JpaModel model) {
 		model.setPersistenceUnitName(persistenceUnitName);
 		createPersistenceUnitFile(persistenceUnitTemplate, model);
 	}
 
 	/**
 	 * This method create a single java class file
-	 *
+	 * 
 	 * @param templateFile
 	 * @param businessTable
 	 * @param jpaTable
+	 * @throws IOException
 	 */
-	private void createJavaFile(File templateFile, IJpaTable jpaTable, String className, boolean isUpdatableMapping) {
+	private void createJavaFile(File templateFile, IJpaTable jpaTable, String className, boolean isUpdatableMapping) throws IOException {
 
 		VelocityContext velocityContext;
 
@@ -371,7 +371,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	/**
 	 * This method create a single java class file
-	 *
+	 * 
 	 * @param templateFile
 	 * @param businessTable
 	 * @param views
@@ -400,7 +400,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 	/**
 	 * This method create a single java class file
-	 *
+	 * 
 	 * @param templateFile
 	 * @param businessTable
 	 * @param jpaView
@@ -411,29 +411,28 @@ public class JpaMappingCodeGenerator implements IGenerator {
 
 		logger.trace("IN");
 
-		try {
-			context = new VelocityContext();
-			List<IJpaTable> jpaTables = new ArrayList<IJpaTable>();
-			jpaTables.addAll(model.getTables());
-			List<IJpaView> jpaViews = model.getViews();
-			for (IJpaView jpaView : jpaViews) {
-				jpaTables.addAll(jpaView.getInnerTables());
-			}
-
-			context.put("jpaTables", jpaTables); //$NON-NLS-1$
-			context.put("model", model);
-
-			File outputDir = new File(srcDir, "META-INF");
-			outputDir.mkdirs();
-
-			File outputFile = new File(outputDir, "persistence.xml");
-
-			createFile(templateFile, outputFile, context);
-		} catch (Throwable t) {
-			logger.error("Impossible to create persitance.xml", t);
-		} finally {
-			logger.trace("OUT");
+		context = new VelocityContext();
+		List<IJpaTable> jpaTables = new ArrayList<IJpaTable>();
+		jpaTables.addAll(model.getTables());
+		List<IJpaView> jpaViews = model.getViews();
+		for (IJpaView jpaView : jpaViews) {
+			jpaTables.addAll(jpaView.getInnerTables());
 		}
+
+		context.put("jpaTables", jpaTables); //$NON-NLS-1$
+		context.put("model", model);
+
+		File outputDir = new File(srcDir, "META-INF");
+		outputDir.mkdirs();
+
+		File outputFile = new File(outputDir, "persistence.xml");
+
+		try {
+			createFile(templateFile, outputFile, context);
+		} catch (IOException e) {
+			throw new GenerationException("Impossible to create persistence.xml");
+		}
+
 	}
 
 	private void createLabelsFile(File templateFile, JpaModel model) {
@@ -548,28 +547,23 @@ public class JpaMappingCodeGenerator implements IGenerator {
 		}
 	}
 
-	private void createFile(File templateFile, File outputFile, VelocityContext context) {
+	private void createFile(File templateFile, File outputFile, VelocityContext context) throws IOException {
 		Template template;
 
 		try {
 			template = Velocity.getTemplate(templateFile.getName());
 		} catch (Throwable t) {
-			throw new GenerationException("Impossible to load template file [" + templateFile + "]");
+			throw new GenerationException("Impossible to load template file [" + templateFile + "]", t);
 		}
 
 		FileWriter fileWriter = null;
-		try {
 
-			fileWriter = new FileWriter(outputFile);
+		fileWriter = new FileWriter(outputFile);
 
-			template.merge(context, fileWriter);
+		template.merge(context, fileWriter);
 
-			fileWriter.flush();
-			fileWriter.close();
-		} catch (IOException e) {
-			logger.error("Impossible to generate output file from template file [" + templateFile + "]", e);
-			throw new GenerationException("Impossible to generate output file from template file [" + templateFile + "]");
-		}
+		fileWriter.flush();
+		fileWriter.close();
 	}
 
 	private void generateHierarchiesFile(File templateFile, BusinessModel businessModel) {
