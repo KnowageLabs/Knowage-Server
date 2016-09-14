@@ -59,10 +59,14 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	// for designer parameters binding
 	$scope.adParams=[];
 	$scope.profileAttributes=[];
+	
 	$scope.lastSelectedFilter=undefined;
+	$scope.selectedAttribute= undefined;
 	$scope.bindMode=false;
+	$scope.isSlicer=true;
+	$scope.parametersLoaded= false;
 	
-	
+	$scope.parameterBindings=[];
 	
 	$scope.clearLoadedData = function(name){
 		for(var i=0; i< $scope.dataPointers.length; i++){
@@ -109,39 +113,78 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	 **/
 	//Function for opening dialogs for every axis
 	$scope.openFiltersDialogAsync = function(ev, filter, node, index) {
-		
+	
 		$scope.clearLoadedData(filter.uniqueName);
 		visibleSelected = [];//check it
 		visibleSelectedTracker = [];//check it
 		$scope.searchText = "";
 		$scope.loadingFilter = true;
-		var x = {name:'Waiting...'};
+		var x = {name:'Waiting...'};       
 		$scope.data = [];
 		$scope.data.push(x);
 		
-		if(filter.axis > -1)
-			getVisibleService(filter.selectedHierarchyUniqueName,filter.axis);
 		
+		if(filter.axis > -1){
+			getVisibleService(filter.selectedHierarchyUniqueName,filter.axis);
+			$scope.isSlicer=false;
+		}
 		$scope.filterDialogToolbarName = filter.caption;
 		$scope.filterAxisPosition = index;
 		$scope.activeaxis = filter.axis;
 		filterFather = filter.selectedHierarchyUniqueName;
 		h = filter.uniqueName;
-
+		
+		$scope.selectedAttribute= undefined;
+		
+		var loadHierarchy= true;
+		for (var i = 0; i < $scope.adParams.length; i++) {
+			if($scope.adParams[i].bindObj != null){
+			if( $scope.adParams[i].bindObj.filter.dimension === filter.uniqueName){
+				$scope.data=$scope.adParams[i].bindObj.tree;
+				$scope.selectedAttribute= $scope.adParams[i].bindObj.attribute;
+				$scope.bindMode=true;
+				loadHierarchy= false;
+				break;
+			}
+			}
+		}
+		
+		for (var i = 0; i < $scope.profileAttributes.length; i++) {
+			if($scope.profileAttributes[i].bindObj != null){
+			if( $scope.profileAttributes[i].bindObj.filter.dimension === filter.uniqueName){
+				$scope.data=$scope.profileAttributes[i].bindObj.tree;
+				$scope.selectedAttribute= $scope.profileAttributes[i].bindObj.attribute;
+				$scope.bindMode=true;
+				loadHierarchy= false;
+				break;
+			}
+			}
+		}
+		
+            if(loadHierarchy){
 			$scope.getHierarchyMembersAsynchronus(filterFather, filter.axis, null,filter.id);
 			$scope.dataPointers.push(filterFather);
-
-		
+            }
+			
+        
+	
 		$scope.showDialog(ev,$scope.filterDial);
 
 		$scope.loadingFilter = false;
+		
+
 	};
 	
 	/**
 	 *Tree functionalities 
 	 **/
 	$scope.expandTreeAsync = function(item){
+		
+		if($scope.bindMode){
+			sbiModule_messaging.showWarningMessage("attribute is binded", "Tree is disabled");
+		}else{
 		$scope.getHierarchyMembersAsynchronus(filterFather,$scope.activeaxis,item.uniqueName,item.id);	
+		}
 	};
 	
 	expandAsyncTree = function(d,dput,id){
@@ -278,62 +321,162 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	//selecting filter (old selected filter is saved in order to leave interface consistent if user decide to cancel selection)
 	$scope.selectFilter = function(item){
 		console.log(item);
-	     
-		if($scope.bindEnabled){
-			$scope.lastSelectedFilter=item; 
+	   
+		if( $scope.olapMode){
+			
+		   if(!$scope.bindMode && $scope.selectedAttribute){
 			$scope.bindMode=true;
-			toastr
-			.info(
-					'Select parameter you want to bind <br /><br /><md-button class="md-raised">OK</md-button>',
-					{
-						allowHtml : true,
-						timeOut : 0,
-						extendedTimeOut : 0,
-
-						onTap : function() {
-							$scope.bindMode=false;
-							toastr.clear();
-
-						}
-
-					});
-		}
+			//$scope.lastSelectedFilter=item; 
+			console.log($scope.selectedAttribute);
+			console.log($scope.data);
+			if($scope.selectedAttribute){
+		    $scope.selectedAttribute.bindObj= item;
+			var sliceArray= item.uniqueName.split(".");
+			$scope.selectedAttribute.replace =sliceArray[0];
+			$scope.filterSelected[$scope.filterAxisPosition].dimension= sliceArray[0];
+			$scope.filterSelected[$scope.filterAxisPosition].replaceItem= item.name;
+			
+			}
+			var index= item.uniqueName.indexOf("["+item.name+"]");
+			var fatherUniqueName=item.uniqueName.substring(0,index-1);
+			//console.log(fatherUniqueName);
+			if($scope.selectedAttribute){
+			replaceChildrenWithParameter($scope.data[0],item.uniqueName,$scope.selectedAttribute);
+			$scope.selectedAttribute.bindObj.tree=$scope.data;
+			}
+			
+			
+			
+		
 		
 		selectedFlag = true;
 		oldSelectedFilter = angular.copy($scope.filterSelected[$scope.filterAxisPosition]);//ex:$scope.filterAxisPosition
 		h = $scope.filterCardList[$scope.filterAxisPosition].uniqueName;
 		m = item.uniqueName;
-		$scope.filterSelected[$scope.filterAxisPosition].caption = item.name;
+	//	if($scope.selectedAttribute){
+			$scope.filterSelected[$scope.filterAxisPosition].caption = item.name+ " -> ${"+$scope.selectedAttribute.label+"}";
+	//	}else{
+    //		$scope.filterSelected[$scope.filterAxisPosition].caption = item.name;
+	//	}
 		$scope.filterSelected[$scope.filterAxisPosition].uniqueName = item.uniqueName;
+		
+		//$scope.filterSelected[$scope.filterAxisPosition].bindedAttribute= $scope.selectedAttribute;
+		//$scope.filterSelected[$scope.filterAxisPosition].bindedAttribute=angular.copy($scope.selectedAttribute);
+		//$scope.filterSelected[$scope.filterAxisPosition].dataTree=angular.copy($scope.data);
+		
+		console.log($scope.filterSelected[$scope.filterAxisPosition]);
+		   }else{
+			   if(!$scope.bindMode){
+			   selectedFlag = true;
+				oldSelectedFilter = angular.copy($scope.filterSelected[$scope.filterAxisPosition]);//ex:$scope.filterAxisPosition
+				h = $scope.filterCardList[$scope.filterAxisPosition].uniqueName;
+				m = item.uniqueName;
+				$scope.filterSelected[$scope.filterAxisPosition].caption = item.name;
+				$scope.filterSelected[$scope.filterAxisPosition].uniqueName = item.uniqueName;
+			   }else{
+				   sbiModule_messaging.showWarningMessage("attribute is binded", "Selecting is disabled");
+			   }
+		   }
+		
+		}else {
+		
+			selectedFlag = true;
+			oldSelectedFilter = angular.copy($scope.filterSelected[$scope.filterAxisPosition]);//ex:$scope.filterAxisPosition
+			h = $scope.filterCardList[$scope.filterAxisPosition].uniqueName;
+			m = item.uniqueName;
+			$scope.filterSelected[$scope.filterAxisPosition].caption = item.name;
+			$scope.filterSelected[$scope.filterAxisPosition].uniqueName = item.uniqueName;
+			
+		}
+	    
+		
 	};
+	
+	function replaceChildrenWithParameter(node,name, parameter){
+		if(node.children){
+			for (var i = 0; i < node.children.length; i++) {
+				if(node.children[i].uniqueName== name){
+					node.children=[];
+					var pNode={};
+					if(parameter.label){
+				    pNode.name="${"+parameter.label+"}";
+				    pNode.uniqueName = parameter.label;
+					}
+					if(parameter.attributeName){
+						 pNode.name="${"+parameter.attributeName+"}";
+						    pNode.uniqueName = parameter.attributeName;
+					}
+				    pNode.colapsed = true;
+				    pNode.id=parameter.label;
+				    pNode.leaf=true;
+				    node.children.push(pNode);
+				    break;
+				}else{
+					
+						for (var j = 0; j < node.children.length; j++) {
+							replaceChildrenWithParameter(node.children[j],name,parameter);
+						}
+				
+			}
+			}
+		
+		}
+	}
+	
+
 	
 	//Function for closing filter dialog (handling selected in order to leave interface in consistent state)
 	$scope.closeFiltersDialog = function() {
-		
+
 		if(selectedFlag){
 			if(oldSelectedFilter.caption != "..."){
 				$scope.filterSelected[$scope.filterAxisPosition].caption = oldSelectedFilter.caption;
 				$scope.filterSelected[$scope.filterAxisPosition].uniqueName = oldSelectedFilter.uniqueName;
+				$scope.filterSelected[$scope.filterAxisPosition].bindedAttribute= undefined;
 			}				
 			else{
 				$scope.filterSelected[$scope.filterAxisPosition].caption = "...";
 				$scope.filterSelected[$scope.filterAxisPosition].uniqueName = "";
+				$scope.filterSelected[$scope.filterAxisPosition].bindedAttribute= undefined;
 			}				
 			
 			selectedFlag = false;
+			//$scope.bindMode=false;
+			
 		}
+		
+		if($scope.selectedAttribute){
+			$scope.selectedAttribute.replace='';
+			$scope.selectedAttribute.bindObj=null;
+			$scope.selectedAttribute=undefined;
+			}
+			
+		$scope.bindMode=false;
 		$scope.searchText = "";
 		hlght = false;
+		$scope.isSlicer=true;
 		$mdDialog.hide();		
 	}
 	
 	$scope.filterDialogSave = function(){
-		if($scope.activeaxis == -1)
-			filterSlice();
+		if($scope.activeaxis == -1){
+			if($scope.selectedAttribute){
+				var bind= {};
+				bind.filter=angular.copy($scope.filterSelected[$scope.filterAxisPosition]);
+				bind.attribute= angular.copy($scope.selectedAttribute);
+				bind.tree= angular.copy($scope.data);
+				
+				$scope.selectedAttribute.bindObj=bind;
+				$scope.parameterBindings.push(bind);
+			}
+			
+			filterSlice();	
+		}
 		else
 			filterPlaceMemberOnAxis();
-		
+		$scope.bindMode=false;
 		selectedFlag = false;
+		$scope.isSlicer=true;
 		$mdDialog.hide();
 	}
 	
@@ -383,30 +526,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		
 		data.visible = !data.visible;
 		
-		console.log(data);
-		if(data.visible){
-			
-			if($scope.bindEnabled){
-				$scope.lastSelectedFilter=data; 
-				$scope.bindMode=true;
-				toastr
-				.info(
-						'Select parameter you want to bind <br /><br /><md-button class="md-raised">OK</md-button>',
-						{
-							allowHtml : true,
-							timeOut : 0,
-							extendedTimeOut : 0,
-
-							onTap : function() {
-								$scope.bindMode=false;
-								toastr.clear();
-
-							}
-
-						});
-			}
-			
-			
+		
+		if(data.visible){			
 			visibleSelected.push(data);
 		}
 		else{
@@ -451,7 +572,11 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	};
 	
 	$scope.hideAsyncTree = function(item){
+		if($scope.bindMode){
+			sbiModule_messaging.showWarningMessage("attribute is binded", "Tree is disabled");
+		}else{
 		item.collapsed = false;
+		}
 	};
 	
 	/**
@@ -667,9 +792,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	};
 	
 	$scope.loadAnalyticalDrivers= function(){
-		   
+		   console.log(sbiModule_docInfo);
 		   sbiModule_restServices
-			.alterContextPath(sbiModule_config.externalBasePath);
+			.alterContextPath("/knowage");
 		   sbiModule_restServices.promiseGet("1.0/documents/",
 					sbiModule_docInfo.label+"/parameters")
 					.then(
@@ -685,7 +810,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 							    
 							},
 							function(response) {
-								
+								sbiModule_messaging.showErrorMessage("An error occured while loading analytical drivers", 'Error');
 							});
 		   
 		   
@@ -698,7 +823,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	   $scope.loadProfileAttributes= function (){
 		   
 		   sbiModule_restServices
-			.alterContextPath(sbiModule_config.externalBasePath);
+			.alterContextPath("/knowage");
 		   sbiModule_restServices.promiseGet("2.0/attributes", "")
 					.then(
 							function(response) {
@@ -714,7 +839,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 							    
 							},
 							function(response) {
-								
+								sbiModule_messaging.showErrorMessage("An error occured while loading profile attributes", 'Error');
 							});
 		   
 	   }

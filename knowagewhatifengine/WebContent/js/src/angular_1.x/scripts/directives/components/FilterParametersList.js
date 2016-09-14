@@ -34,6 +34,7 @@ angular.module('filters_parameters_list',['sbiModule'])
 		      scope:{
 		    	  selectedFilter:"=",
 		    	  bindMode:"=",
+		    	  selectedAttribute: "=",
 		    	  driversList:"=?",
 		    	  attributeList:"=?",
 		    	  selectItemAction:"&"	  
@@ -43,14 +44,18 @@ angular.module('filters_parameters_list',['sbiModule'])
 
    function filterParametersController($scope){
 	   
+	$scope.removed=false;
 	   
 	   $scope.clickItem=function(item){
-		
-			if($scope.bindMode){
-				console.log("bindHere");
-				item.replace=$scope.selectedFilter.name;
-				item.bindObj=$scope.selectedFilter;
-			}
+		  if($scope.removed){
+		  $scope.bindMode=false;
+		  }
+		   //$scope.selectedAttribute= item;
+//			if($scope.bindMode){
+//				console.log("bindHere");
+//				item.replace=$scope.selectedFilter.name;
+//				item.bindObj=$scope.selectedFilter;
+//			}
 			  
 		}
 	   
@@ -58,9 +63,21 @@ angular.module('filters_parameters_list',['sbiModule'])
 			label : 'remove binding',
 			icon : 'fa fa-minus-circle',
 			action : function(item) {
+				if(item.bindObj){
+				//console.log(item.bindObj.tree);
+				if(item.bindObj.tree){	
+				item.bindObj.tree[0].children=[];
+				item.bindObj.tree[0].expanded=false;
+				item.bindObj.tree[0].collapsed= false;
+				$scope.data= angular.copy(item.bindObj.tree);
+				}
+				$scope.bindMode=false;
+				$scope.removed=true;
+				//$scope.filterSelected[$scope.filterAxisPosition].caption = " ... ";
+				}
 				item.replace='';
 				item.bindObj=null;
-			
+				//$scope.selectedAttribute=undefined;
 			}
 		} ];
    }

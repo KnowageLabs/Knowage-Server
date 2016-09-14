@@ -84,12 +84,16 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	
 	
 	$scope.initMDX = function() {
+		var attr= $scope.getBindedAttributes();
+		
 		 var mdxvar = $scope.showMdxVar;
 		 mdxvar = mdxvar.replaceAll('&nbsp;', ' ');
 		 mdxvar = mdxvar.replaceAll('<br>','')
 		 $scope.mdxQueryObj.mdxQuery = mdxvar
 		 OlapTemplateService.setMDXMondrianQueryTag(mdxvar);
 		 OlapTemplateService.setMdxQueryTag($scope.mdxQueryObj);
+		 var params= $scope.getBindedAttributes();
+		 OlapTemplateService.injectParametersToMdxQueryTag(params);
 	}
 	
 	/**
@@ -333,6 +337,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	  * Opens dialog with table of buttons to be selected as visible, and checked.
 	  */
 	 $scope.openButtonWizard = function() {
+		 
 		 
 		 $scope.toolbar = $scope.buttons;
 		 $mdDialog
@@ -662,6 +667,8 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 $scope.sendOlapJsonTemplate = function() {
 		
 		 $scope.initMDX();
+		 
+		 console.log(OlapTemplateService.getOlapTag());
 		 sbiModule_restServices.alterContextPath("/knowage");
 		 sbiModule_restServices.promisePost("1.0/documents/",sbiModule_docInfo.id+'/saveOlapTemplate', OlapTemplateService.getTempateJson())
 			.then(function(response) {
@@ -673,6 +680,47 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		 
 		 
 	 }
+	 
+	 
+		$scope.getBindedAttributes = function (){
+			
+			var bindedAttributes = [];
+			
+			for (var i = 0; i < $scope.adParams.length; i++) {
+				if($scope.adParams[i].bindObj != null){
+					var memberObj = {};
+					var uniqueName = $scope.adParams[i].bindObj.filter.uniqueName;
+					var paramName = '${'+ $scope.adParams[i].url +'}';
+					memberObj.memberUniqueName = $scope.adParams[i].bindObj.filter.uniqueName;
+					memberObj.replaceName = uniqueName.replace($scope.adParams[i].bindObj.filter.replaceItem,paramName); 
+					memberObj.parameter = {};
+					
+					memberObj.parameter.name= $scope.adParams[i].url;
+					memberObj.parameter.as = $scope.adParams[i].url;
+					
+					//memberObj.parameter.name= $scope.adParams[i].url;
+					//memberObj.parameter.as = $scope.adParams[i].label;
+					
+					bindedAttributes.push(memberObj);
+				}
+			}
+			
+			for (var i = 0; i < $scope.profileAttributes.length; i++) {
+				if($scope.profileAttributes[i].bindObj != null){
+					var memberObj = {};
+					var uniqueName = $scope.profileAttributes[i].bindObj.filter.uniqueName;
+					var paramName = '${'+ $scope.profileAttributes[i].attributeName +'}';
+					memberObj.memberUniqueName = $scope.profileAttributes[i].bindObj.filter.uniqueName;
+					memberObj.replaceName = uniqueName.replace($scope.profileAttributes[i].bindObj.filter.replaceItem,paramName); 
+				    
+					bindedAttributes.push(memberObj);
+				}
+			}
+			
+			console.log(bindedAttributes);
+			
+			return bindedAttributes;
+		};	
 	
 	
 };

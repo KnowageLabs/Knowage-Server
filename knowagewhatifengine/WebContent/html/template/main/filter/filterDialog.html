@@ -24,13 +24,7 @@
 				
 				<md-checkbox ng-show="true" ng-model="showSiblings" aria-label="Show bros" style="display:initial;">
 					<span style="font-size: 10px">{{showSiblings?'Show siblings':'Hide siblings'}}</span>
-				</md-checkbox>
-				
-				<md-checkbox ng-show="olapMode" ng-model="bindEnabled" aria-label="Show bros" style="display:initial;">
-					<span style="font-size: 10px">{{bindEnabled?'Disable binding':'Enable binding'}}</span>
-				</md-checkbox>
-				
-				
+				</md-checkbox>	
     	</div>
 		<div layout="row" flex>
 		<div ui-tree>
@@ -39,8 +33,8 @@
 			</ul>
 		</div ui-tree>
 		<span flex></span>
-		<!-- UNCOMENT AND PUT EDIT MODE  -->
-<!-- 		<filter-parameters-list drivers-list="adParams" attribute-list="profileAttributes" select-item-action="selectAd(ad)" selected-filter="lastSelectedFilter" bind-mode="bindMode"></filter-parameters-list> -->
+	
+		<filter-parameters-list ng-show="olapMode && isSlicer" drivers-list="adParams" selected-attribute="selectedAttribute" attribute-list="profileAttributes" select-item-action="selectAd(ad)" selected-filter="lastSelectedFilter" bind-mode="bindMode"></filter-parameters-list>
 		</div>
 		<md-progress-circular md-mode="indeterminate" ng-show="loadingFilter"></md-progress-circular>
 	</md-content>
