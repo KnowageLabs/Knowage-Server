@@ -127,7 +127,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	}
 	
 	$scope.leftTableClick = function(item){
-		console.log(item)
+		
 		if(angular.equals($scope.savedBusinessModel,$scope.selectedBusinessModel)){
 			//no change	
 				angular.copy(item,$scope.selectedBusinessModel);
@@ -192,8 +192,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		                      {
 		                    	  label:sbiModule_translate.load("sbi.generic.delete"),
 		                    	  icon:'fa fa-trash',
-		                    	  //icon:'fa fa-trash-o fa-lg',
-		                    	  //color:'#153E7E',
 		                    	  action:function(item,event){
 		                    		  $scope.deleteItem(item,event);
 		                    	  }
@@ -202,40 +200,43 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 
 	 $scope.bmSpeedMenu2= [
 	                       {
-	                    	   label:sbiModule_translate.load("sbi.generic.download"),
+	                    	   label:sbiModule_translate.load("sbi.bm.download.jar"),
 		                       icon:'fa fa-file-archive-o',
-		                       //color:'#153E7E',
 		                       visible : function (a,b){
-		                    	   if(a.hasContent){return true;}else{return false;}
+		                    	   return a.hasContent && !a.hasLog;
 		                       },
 		                       action:function(item,event){
-		                    	   $scope.downloadFile(item,event,'CONTENT');
+		                    	   $scope.downloadFile(item,event,'JAR');
 		                       }
 	                       },
-	                       
 	                       {
-	                    	   label:sbiModule_translate.load("sbi.generic.download"),
+	                    	   label:sbiModule_translate.load("sbi.bm.download.log"),
+		                       icon:'fa fa-file-text-o',
+		                       visible : function (a,b){
+		                    	   return a.hasLog;
+		                       },
+		                       action:function(item,event){
+		                    	   $scope.downloadFile(item,event,'LOG');
+		                       }
+	                       },
+	                       {
+	                    	   label:sbiModule_translate.load("sbi.bm.download.model"),
 		                       icon:'fa fa-file-code-o',
 		                       visible : function (a,b){
-		                    	   if(a.hasFileModel){return true;}else{return false;}
+		                    	   return a.hasFileModel;
 		                       },
-		                       //color:'#153E7E',
 		                       action:function(item,event){
 		                    	   $scope.downloadFile(item,event,'SBIMODULE');
 		                       }
 	                       },
-	                       
 	                       {
 	                    	   label:sbiModule_translate.load("sbi.generic.delete"),
 	                    	   icon:'fa fa-trash',
-	                    	   //icon:'fa fa-trash-o fa-lg',
-	                    	   //color:'#153E7E',
 	                    	   action:function(item,event){
 		                    		  $scope.deleteItemVersion(item,event);
 		                       }
 		                   }
-	                       
-	                       ];
+	                      ];
 	 
 	 
 	 //functions that use services
@@ -255,10 +256,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 //calling service for getting data sources @GET
 	 $scope.getDataSources = function(){
 		 
-		 sbiModule_restServices.promiseGet("2.0/datasources", "")
+		 sbiModule_restServices.promiseGet("datasources","")
 			.then(function(response) {
-				console.log(response);
-				$scope.listOfDatasources = response.data;
+				$scope.listOfDatasources = response.data.root;
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 				
@@ -268,9 +268,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 //Calling service for getting Categories  @GET
 	 $scope.getCategories = function(){
 		 
-		 sbiModule_restServices.promiseGet("2.0/businessmodels/bmCategories","")
+		 sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=BM_CATEGORY")
 			.then(function(response) {
-				console.log(response);
 				$scope.listOfCategories = response.data;
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -371,9 +370,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					$scope.isDirty = false;
 					$scope.selectedBusinessModel.modelLocker = response.data.modelLocker;
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'check');
-					if(!$scope.$$phase) {
-						$scope.$apply();
-						}
+					$scope.$apply();
 					
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -688,14 +685,15 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 $scope.buildBusinessModels=function(){
 //			 sbiModule_restServices.alterContextPath("/knowagemeta");
 			 sbiModule_restServices.alterContextPath(sbiModule_config.contextMetaName);
-			 sbiModule_restServices.promiseGet("1.0/metaWeb", "buildModel/"+$scope.selectedBusinessModel.name+"/"+$scope.selectedBusinessModel.id+"?user_id="+sbiModule_user.userId)  //TO CHANGE
+			 sbiModule_restServices.promiseGet("1.0/metaWeb", "buildModel/"+$scope.selectedBusinessModel.id+"?user_id="+sbiModule_user.userId)
 						.then(
 								function(response) {
 									sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'check');
 									$scope.getVersions($scope.selectedBusinessModel.id);
 								},
 								function(response) {
-									sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.rule.load.datasource.error"));
+									sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.catalogues.generation.error"));
+									$scope.getVersions($scope.selectedBusinessModel.id);
 								});
 
 			 //sbiModule_restServices.alterContextPath("/knowage");
