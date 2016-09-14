@@ -1024,3 +1024,4 @@ function TableHeaderControllerFunction($scope, $timeout) {
     		return columnTransformationText(toReturn,row,columnName);
     	}
     }
+}
