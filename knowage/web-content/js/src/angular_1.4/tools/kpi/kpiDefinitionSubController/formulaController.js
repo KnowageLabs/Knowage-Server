@@ -1,6 +1,8 @@
-var app = angular.module('kpiDefinitionManager').controller('formulaController', ['$scope','sbiModule_translate' ,"$mdDialog","sbiModule_restServices","$q","$mdToast",'$angularListDetail','$timeout',KPIDefinitionFormulaControllerFunction ]);
+var app = angular.module('kpiDefinitionManager').controller('formulaController', ['$scope','sbiModule_translate' ,"$mdDialog","sbiModule_restServices",
+                                                                                  "$q","$mdToast",'$angularListDetail','$timeout',"sbiModule_messaging",KPIDefinitionFormulaControllerFunction ]);
 
-function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_restServices,$q,$mdToast,$angularListDetail,$timeout){
+function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDialog,
+		sbiModule_restServices,$q,$mdToast,$angularListDetail,$timeout,sbiModule_messaging){
 	$scope.translate=sbiModule_translate;
 	$scope.measureFormula="";
 	$scope.currentKPI ={
@@ -525,20 +527,20 @@ function KPIDefinitionFormulaControllerFunction($scope,sbiModule_translate,$mdDi
 	}
 
 	$scope.showAction = function(text) {
-		var toast = $mdToast.simple()
-		.content(text)
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-
-
-			}
-		});
+//		var toast = $mdToast.simple()
+//		.content(text)
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		
+		sbiModule_messaging.showInfoMessage(text,"");
+		
 	};
 
 	$scope.reset = function(){

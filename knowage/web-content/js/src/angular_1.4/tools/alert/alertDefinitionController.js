@@ -16,7 +16,7 @@ app.factory("alertDefinition_listeners",function(){
 
 app.controller('alertDefinitionController', ['$scope', alertDefinitionControllerFunction ]);
 app.controller('alertDefinitionDetailController', ['$scope','$angularListDetail','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout','sbiModule_config','alertDefinition_actions','alertDefinition_listeners','$cronFrequency','$mdToast',alertDefinitionDetailControllerFunction ]);
-app.controller('alertDefinitionListController', ['$scope','$angularListDetail','sbiModule_translate','sbiModule_restServices','$mdToast','$mdDialog','$timeout',alertDefinitionListControllerFunction ]);
+app.controller('alertDefinitionListController', ['$scope','$angularListDetail','sbiModule_translate','sbiModule_restServices','$mdToast','$mdDialog','$timeout','sbiModule_messaging',alertDefinitionListControllerFunction ]);
 
 function alertDefinitionControllerFunction($scope){
 	$scope.listAlert=[];
@@ -39,7 +39,7 @@ function alertDefinitionControllerFunction($scope){
 }
 	
 	
-function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModule_translate,sbiModule_restServices,$mdToast,$mdDialog,$timeout){
+function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModule_translate,sbiModule_restServices,$mdToast,$mdDialog,$timeout,sbiModule_messaging){
 	$scope.alertColumnsList=[
 	                         {label:sbiModule_translate.load("sbi.generic.name"),name:"name"},
 	                         {label:sbiModule_translate.load("sbi.generic.state"),name:"jobStatus"}];
@@ -60,8 +60,7 @@ function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModu
 			   $mdDialog.show(confirm).then(function() { 		 
 			sbiModule_restServices.promiseDelete("1.0/alert",item.id+'/delete')
 			.then(function(response){  
-				$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.catalogues.toast.deleted")).position('top').action(
-				'OK').highlightAction(false).hideDelay(2000))
+				sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"),"");
 				 $scope.listAlert.splice($scope.listAlert.indexOf(item),1);
 			},function(response){sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.deletingItemError"))});
 			   });
@@ -185,7 +184,7 @@ function alertDefinitionDetailControllerFunction($scope,$angularListDetail,sbiMo
 			if($scope.alert.id==undefined){
 				$scope.alert.id=response.data.id;
 			}
-			$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.alert.save.success")).position('top').action($scope.translate.load("sbi.general.yes")).highlightAction(false).hideDelay(2000))
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.alert.save.success"),"");
 			$scope.loadBroadcastLoadListAlert();
 			angular.copy($scope.alert,$scope.temporaneyAlert);
 		}

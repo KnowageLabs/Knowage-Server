@@ -9,8 +9,8 @@ eventDefinitionApp.config(['$mdThemingProvider', function($mdThemingProvider) {
 var activityEventCtrl;
 
 eventDefinitionApp.controller('ActivityEventController', 
-		['sbiModule_translate', '$scope', '$mdDialog', '$mdToast', 'sbiModule_restServices', '$timeout', 
-		 	function(sbiModule_translate, $scope, $mdDialog, $mdToast, sbiModule_restServices, $timeout) {
+		['sbiModule_translate', '$scope', '$mdDialog', '$mdToast', 'sbiModule_restServices', '$timeout', 'sbiModule_messaging',
+		 	function(sbiModule_translate, $scope, $mdDialog, $mdToast, sbiModule_restServices, $timeout,sbiModule_messaging) {
 			
 	activityEventCtrl = this;
 	sbiModule_translate.addMessageFile("component_scheduler_messages");
@@ -333,10 +333,12 @@ eventDefinitionApp.controller('ActivityEventController',
 					console.error(sbiModule_translate.load("sbi.glossary.error.save"));
 				} else if (data.Status == "NON OK") {
 					console.error("errori salvataggio",data.Errors);
-					$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.glossary.error.save")+" "+data.Errors).position('top').action('OK').highlightAction(true));
-				 } else {
+					//$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.glossary.error.save")+" "+data.Errors).position('top').action('OK').highlightAction(true));
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.glossary.error.save")+" "+data.Errors,"");
+				} else {
 					 activityEventCtrl.disableName=true;
-					$mdToast.show($mdToast.simple().content("SALVATO").position('top').action('OK').highlightAction(false).hideDelay(3000));
+					//$mdToast.show($mdToast.simple().content("SALVATO").position('top').action('OK').highlightAction(false).hideDelay(3000));
+					sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.generic.result"),"");
 					if(saveAndReturn){
 						$timeout(function() {
 							parent.angularWindow.close();

@@ -248,7 +248,7 @@ sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,$mdToa
 // 		toastr.warning(msg,title, {
 // 			  closeButton: true
 // 		});
-		$mdToast.show(
+	return	$mdToast.show(
 				$mdToast
 				.simple()
 				.content(msg)
@@ -263,7 +263,7 @@ sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,$mdToa
 // 		toastr.info(msg,title, {
 // 			  closeButton: true
 // 		});
-		$mdToast.show(
+	return	$mdToast.show(
 				$mdToast
 				.simple()
 				.content(msg)
@@ -278,7 +278,7 @@ sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,$mdToa
 // 		toastr.success(msg,title, {
 // 			  closeButton: true
 // 			});
-		$mdToast.show(
+	return	$mdToast.show(
 				$mdToast
 				.simple()
 				.content(msg)

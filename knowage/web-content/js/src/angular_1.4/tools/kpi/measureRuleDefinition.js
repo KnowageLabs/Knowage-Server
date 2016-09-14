@@ -5,7 +5,7 @@ measureRuleApp.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 measureRuleApp.controller('measureRuleMasterController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_config','sbiModule_restServices','$q','$angularListDetail','$timeout',measureRuleMasterControllerFunction ]);
-measureRuleApp.controller('measureListController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_restServices','$angularListDetail','$timeout','$mdToast' ,measureListControllerFunction ]);
+measureRuleApp.controller('measureListController', [ '$scope','sbiModule_translate','$mdDialog','sbiModule_restServices','$angularListDetail','$timeout','$mdToast' ,'sbiModule_messaging',measureListControllerFunction ]);
 measureRuleApp.controller('measureDetailController', [ '$scope','sbiModule_translate' ,'$mdDialog' ,'sbiModule_restServices','sbiModule_config','$q','$angularListDetail',measureDetailControllerFunction ]); 
 
 function measureRuleMasterControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_config,sbiModule_restServices,$q,$angularListDetail,$timeout){
@@ -449,7 +449,7 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 
 }
 
-function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_restServices,$angularListDetail,$timeout,$mdToast ){
+function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiModule_restServices,$angularListDetail,$timeout,$mdToast,sbiModule_messaging ){
 	$scope.translate=sbiModule_translate;
 
 	$scope.newMeasureFunction=function(){
@@ -541,8 +541,9 @@ function measureListControllerFunction($scope,sbiModule_translate,$mdDialog,sbiM
 		$mdDialog.show(confirm).then(function() { 
 			sbiModule_restServices.promiseDelete("1.0/kpi", item.ruleId + "/" + item.ruleVersion + "/deleteRule").then(
 					function(response){
-						$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.catalogues.toast.deleted")).position('top').action(
-						'OK').highlightAction(false).hideDelay(2000))
+//						$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.catalogues.toast.deleted")).position('top').action(
+//						'OK').highlightAction(false).hideDelay(2000))
+						sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"),"");
 						$scope.loadmeasureRuleList();
 					},
 					function(response){

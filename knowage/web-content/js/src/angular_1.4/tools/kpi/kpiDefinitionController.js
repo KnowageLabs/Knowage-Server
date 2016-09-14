@@ -5,9 +5,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 
-app.controller('kpiDefinitionMasterController', ['$scope','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout',kpiDefinitionMasterControllerFunction ]);
+app.controller('kpiDefinitionMasterController', ['$scope','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout','sbiModule_messaging',kpiDefinitionMasterControllerFunction ]);
 
-function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast,$timeout){
+function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast,$timeout,sbiModule_messaging){
 	$scope.translate=sbiModule_translate;
 	//variables formula
 	$scope.checkFormula = false;
@@ -153,20 +153,21 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 
 	$scope.showAction = function(text) {
-		var toast = $mdToast.simple()
-		.content(text)
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-
-
-			}
-		});
+//		var toast = $mdToast.simple()
+//		.content(text)
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		
+		sbiModule_messaging.showInfoMessage(text,"");
+		
+		
 	}
 
 	$scope.errorHandler=function(text,title){

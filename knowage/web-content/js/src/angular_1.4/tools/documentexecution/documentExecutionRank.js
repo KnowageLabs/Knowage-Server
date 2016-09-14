@@ -1,11 +1,11 @@
 var app = angular.module('documentExecutionModule').controller('rankController', ['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
                                                                      			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
                                                                     			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService','infoMetadataService','sbiModule_download',
-                                                                    			 rankControllerFunction ]);
+                                                                    			 'sbiModule_messaging',rankControllerFunction ]);
 
 function rankControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
 		sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine,documentExecuteServices
-		,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download) {
+		,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download,sbiModule_messaging) {
 
 	
 	$scope.rateScore=function(value){
@@ -21,10 +21,12 @@ function rankControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 		sbiModule_restServices.promisePost("documentrating", 'vote',$scope.requestToRating)
 		.then(function(response) {
 				if (response.data.hasOwnProperty("errors")) {
-					$scope.showAction(response.data);
+					//$scope.showAction(response.data);
+					sbiModule_messaging.showErrorMessage(response.data,"");
 				} else {
 					$mdDialog.cancel();
-					$scope.showAction(sbiModule_translate.load('sbi.execution.executionpage.toolbar.rating.saved'));
+					//$scope.showAction(sbiModule_translate.load('sbi.execution.executionpage.toolbar.rating.saved'));
+					sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.execution.executionpage.toolbar.rating.saved"),"");
 					$scope.isClick=false;
 				}
 
@@ -80,19 +82,19 @@ function rankControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 		$scope.isClick=false;
 	};
 	
-	$scope.showAction = function(text) {
-		$scope.isClick=false;
-		var toast = $mdToast.simple()
-		.content(text)
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top');
-
-		$mdToast.show(toast).then(function(response) {
-			if ( response == 'ok' ) {
-
-			}
-		});
-	};
+//	$scope.showAction = function(text) {
+//		$scope.isClick=false;
+//		var toast = $mdToast.simple()
+//		.content(text)
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top');
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//
+//			}
+//		});
+//	};
 }

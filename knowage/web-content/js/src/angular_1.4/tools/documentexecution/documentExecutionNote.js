@@ -1,11 +1,11 @@
 var app = angular.module('documentExecutionModule').controller('noteController', ['$scope', '$http', '$mdSidenav', '$mdDialog','$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 
                                                                      			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
                                                                     			 'documentExecuteServices','docExecute_urlViewPointService','docExecute_paramRolePanelService','infoMetadataService','sbiModule_download',
-                                                                    			 noteControllerFunction ]);
+                                                                    			 'sbiModule_messaging',noteControllerFunction ]);
 
 function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices, sbiModule_config,
 		sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine,documentExecuteServices
-		,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download) {
+		,docExecute_urlViewPointService,docExecute_paramRolePanelService,infoMetadataService,sbiModule_download,sbiModule_messaging) {
 
 	
 	$scope.saveNote = function(){
@@ -17,9 +17,11 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 		sbiModule_restServices.promisePost("documentnotes", 'saveNote',obj).then(
 				function(response) {
 					if (response.data.hasOwnProperty("errors")) {
-						$scope.showAction(response.data);
+						//$scope.showAction(response.data);
+						sbiModule_messaging.showErrorMessage(response.data,"");
 					} else {
-						$scope.showAction("Saved");
+						//$scope.showAction("Saved");
+						sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.execution.notes.notedSaved"),"");
 						$scope.getList();
 					}
 
@@ -39,10 +41,10 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 		sbiModule_restServices.promisePost("documentnotes", 'getListNotes',obj).then(
 				function(response) {
 					if (response.data.hasOwnProperty("errors")) {
-						$scope.showAction(response.data);
+						//$scope.showAction(response.data);
+						sbiModule_messaging.showErrorMessage(response.data,"");
 					} else {
 						angular.copy(response.data,$scope.notesList)
-						
 					}
 
 				},function(response) {
@@ -65,9 +67,11 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 					sbiModule_restServices.promisePost("documentnotes", 'deleteNote',obj).then(
 							function(response) {
 								if (response.data.hasOwnProperty("errors")) {
-									$scope.showAction(response.data);
+									//$scope.showAction(response.data);
+									sbiModule_messaging.showErrorMessage(response.data,"");
 								} else {
-									$scope.showAction("Nota deleted");
+									//$scope.showAction("Nota deleted");
+									sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.execution.notes.noteDeleted"),"");
 									$scope.getList();
 								}
 
@@ -99,7 +103,8 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 		sbiModule_restServices.promisePost("documentnotes", 'getDownalNote',obj).then(
 				function(response) {
 					if (response.data.hasOwnProperty("errors")) {
-						$scope.showAction(response.data);
+						//$scope.showAction(response.data);
+						sbiModule_messaging.showErrorMessage(response.data,"");
 					} else {
 						console.log(response);
 						
@@ -128,21 +133,21 @@ function noteControllerFunction($scope, $http, $mdSidenav,$mdDialog,$mdToast, sb
 	$scope.apply = function(){
 		$mdDialog.cancel();
 	}
-	$scope.showAction = function(text) {
-		$scope.isClick=false;
-		var toast = $mdToast.simple()
-		.content(text)
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top');
-
-		$mdToast.show(toast).then(function(response) {
-			if ( response == 'ok' ) {
-
-			}
-		});
-	};
+//	$scope.showAction = function(text) {
+//		$scope.isClick=false;
+//		var toast = $mdToast.simple()
+//		.content(text)
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top');
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//
+//			}
+//		});
+//	};
 	
 }
 

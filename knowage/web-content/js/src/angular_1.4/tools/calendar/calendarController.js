@@ -8,9 +8,11 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
 	$mdThemingProvider.setDefaultTheme('knowage');
 }]);
-app.controller('Controller', [ "sbiModule_download","sbiModule_config", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$angularListDetail","$timeout","sbiModule_dateServices", controllerCalendar ]);
+app.controller('Controller', [ "sbiModule_download","sbiModule_config", "sbiModule_translate","sbiModule_restServices", 
+                               "$scope","$mdDialog","$mdToast","$angularListDetail","$timeout","sbiModule_dateServices","sbiModule_messaging", controllerCalendar ]);
 
-function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast, $angularListDetail,$timeout,sbiModule_dateServices) {
+function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast, 
+		$angularListDetail,$timeout,sbiModule_dateServices,sbiModule_messaging) {
 	$scope.translate = sbiModule_translate;
 	$scope.calendarList = [];
 	$scope.selectCalendar= {};
@@ -93,41 +95,40 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 			$scope.removeCalendar(item);
 		}		
 	}];
-	$scope.showAction = function(text) {
-		var toast = $mdToast.simple()
-		.content(text)
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-
-
-			}
-		});
-	}
+	
+//	$scope.showAction = function(text) {
+//		var toast = $mdToast.simple()
+//		.content(text)
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//
+//			if ( response == 'ok' ) {
+//
+//
+//			}
+//		});
+//	}
 
 	$scope.saveCalendar = function(){
 		if($scope.selectCalendar.calendar==undefined || $scope.selectCalendar.calendar.trim()==""){
-			$scope.showAction(sbiModule_translate.load("sbi.calendar.errormissingname"));
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.calendar.errormissingname"),"");
 		}else if($scope.selectCalendar.calStartDay==undefined){
-			$scope.showAction(sbiModule_translate.load("sbi.calendar.errormissingstartdate"));
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.calendar.errormissingstartdate"),"");
 		}else if($scope.selectCalendar.calEndDay==undefined){
-			$scope.showAction(sbiModule_translate.load("sbi.calendar.errormissingenddate"));
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.calendar.errormissingenddate"),"");
 		}else if(new Date($scope.selectCalendar.calStartDay).getTime()>new Date($scope.selectCalendar.calEndDay).getTime()){
-
-			$scope.showAction(sbiModule_translate.load("sbi.calendar.errorstartdayenddate"));
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.calendar.errorstartdayenddate"),"");
 		}else{
 			if($scope.selectCalendar.calendarId!=undefined){
 				sbiModule_restServices.promisePost("calendar",+$scope.selectCalendar.calendarId+"/updateDaysGenerated", $scope.selectCalendar.realDateGenerated)
 				.then(function(response){ 
-					$scope.showAction(sbiModule_translate.load("sbi.calendar.save"));
-
+					sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.calendar.save"),"");
 				},function(response){
-					$scope.showAction(response.data);
+					sbiModule_messaging.showErrorMessage(response.data,"");
 				});
 			}else{
 				$scope.saveNewCalendar();
@@ -145,9 +146,9 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 		.then(function(response){ 
 			$scope.selectCalendar.calendarId = response.data;
 			$scope.loadCalendarList();
-			$scope.showAction(sbiModule_translate.load("sbi.calendar.save"));
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.calendar.save"),"");
 		},function(response){
-			$scope.showAction(sbiModule_translate.load("sbi.generic.savingItemError"));
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.generic.savingItemError"),"");
 		});
 	}
 	$scope.loadCalendarList = function(){
@@ -174,7 +175,7 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 
 
 		},function(response){
-			$scope.showAction(response.data);
+			sbiModule_messaging.showErrorMessage(response.data,"");
 		});
 	}
 	$scope.loadCalendarList();
@@ -221,7 +222,7 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 	}
 	$scope.generate = function(){
 		if($scope.selectCalendar.realDateGenerated.length!=0){
-			$scope.showAction($scope.translate.load("sbi.calendar.errorgenerate"));
+			sbiModule_messaging.showErrorMessage($scope.translate.load("sbi.calendar.errorgenerate"),"");
 		}else{
 			$scope.generating = true;
 			var stringToShow = $scope.translate.load("sbi.calendar.confirmgenerate.description.first") + 
@@ -246,7 +247,8 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 					},function(response){
 					});
 				},function(response){
-					$scope.showAction(response.data);
+//					$scope.showAction(response.data);
+					sbiModule_messaging.showInfoMessage(response.data,"");
 				});
 			}, function() {
 			});
@@ -330,10 +332,10 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 			//TODO remove from db
 			sbiModule_restServices.promisePost("calendar",+item.calendarId+"/deleteCalendar")
 			.then(function(response){ 
-				$scope.showAction(sbiModule_translate.load("sbi.config.manageconfig.delete"));
+				sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.config.manageconfig.delete"),"");
 				$scope.loadCalendarList();
 			},function(response){
-				$scope.showAction(response.data);
+				sbiModule_messaging.showErrorMessage(response.data,"");
 			});
 
 
@@ -354,10 +356,10 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 				if(index!=-1){
 					$scope.selectCalendar.realDateGenerated.splice(index,1);
 				}
-				$scope.showAction(sbiModule_translate.load("sbi.config.manageconfig.delete"));
+				sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.config.manageconfig.delete"),"");
 
 			},function(response){
-				$scope.showAction(response.data);
+				sbiModule_messaging.showErrorMessage(response.data,"");
 			});
 
 

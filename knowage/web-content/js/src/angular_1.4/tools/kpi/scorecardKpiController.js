@@ -12,11 +12,11 @@ scorecardApp.service('scorecardManager_semaphoreUtility',function(){
 });
 
 
-scorecardApp.controller('scorecardMasterController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout','$mdToast',scorecardMasterControllerFunction ]);
+scorecardApp.controller('scorecardMasterController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout','$mdToast','sbiModule_messaging',scorecardMasterControllerFunction ]);
 scorecardApp.controller('scorecardListController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout','$mdDialog','scorecardManager_targetUtility','scorecardManager_perspectiveUtility','$filter',scorecardListControllerFunction ]);
 scorecardApp.controller('scorecardDetailController', [ '$scope','sbiModule_translate','sbiModule_restServices','$angularListDetail','$timeout','$mdDialog',scorecardDetailControllerFunction ]);
 
-function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout,$mdToast){
+function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_restServices,$angularListDetail,$timeout,$mdToast,sbiModule_messaging){
 	$scope.translate=sbiModule_translate;
 	$scope.scorecardList=[];
 	$scope.emptyScorecard={name:"",perspectives:[]};
@@ -33,13 +33,18 @@ function scorecardMasterControllerFunction($scope,sbiModule_translate,sbiModule_
 	}
 	
 	$scope.showToast=function(text,times){
-		var mills=times | 3000;
-		$mdToast.show(
-			      $mdToast.simple()
-			        .content(text)
-			        .position("TOP")
-			        .hideDelay(mills)
-			    );
+//		var mills=times | 3000;
+//		$mdToast.show(
+//			      $mdToast.simple()
+//			        .content(text)
+//			        .position("TOP")
+//			        .hideDelay(mills)
+//			    );
+		
+		
+		sbiModule_messaging.showInfoMessage(text,"");
+		
+		
 	}
 	
 	

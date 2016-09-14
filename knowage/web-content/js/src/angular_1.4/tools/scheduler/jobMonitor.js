@@ -3,9 +3,12 @@ var app = angular.module('jobMonitor', [ 'ngMaterial', 'ui.tree',
                                          'angular_list', 'angular_table' ,'sbiModule', 'angular-list-detail','document_tree',
                                          'angular_time_picker', 'ngMessages', 'ngSanitize']);
 
-app.controller('Controller', ["sbiModule_download", "sbiModule_translate","sbiModule_restServices", "sbiModule_logger", "sbiModule_config", "sbiModule_dateServices", "$scope", "$mdDialog", "$mdToast", "$timeout", "$location", "$window", mainFunction]);
+app.controller('Controller', ["sbiModule_download", "sbiModule_translate","sbiModule_restServices",
+                              "sbiModule_logger", "sbiModule_config", "sbiModule_dateServices", "$scope",
+                              "$mdDialog", "$mdToast", "$timeout", "$location", "$window","sbiModule_messaging", mainFunction]);
 
-function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger, sbiModule_config, sbiModule_dateServices, $scope, $mdDialog, $mdToast, $timeout, $location, $window) {
+function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger,
+		sbiModule_config, sbiModule_dateServices, $scope, $mdDialog, $mdToast, $timeout, $location, $window,sbiModule_messaging) {
 	
 	sbiModule_translate.addMessageFile("component_scheduler_messages");
 	$scope.translate = sbiModule_translate;
@@ -167,17 +170,20 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	}
 	
 	$scope.showToastError = function(message) {
-		var toast = $mdToast.simple()
-			.content(message)
-			.action('OK')
-			.highlightAction(true)
-			.position('top right')
-			.hideDelay(0);
-
-		$mdToast.show(toast).then(function(response) {
-			if ( response == 'ok' ) {
-			}
-		});
+//		var toast = $mdToast.simple()
+//			.content(message)
+//			.action('OK')
+//			.highlightAction(true)
+//			.position('top right')
+//			.hideDelay(0);
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		
+		sbiModule_messaging.showErrorMessage(message,"");
+		
 	};
 	
 	// init

@@ -4,9 +4,11 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller('targetDefinitionController', ['$scope', 'sbiModule_config', 'sbiModule_translate', 'sbiModule_restServices', '$mdDialog', '$filter', '$q', '$mdToast', '$angularListDetail', '$timeout', targetDefinitionControllerFunction]);
+app.controller('targetDefinitionController', ['$scope', 'sbiModule_config', 'sbiModule_translate', 'sbiModule_restServices', '$mdDialog',
+                                              '$filter', '$q', '$mdToast', '$angularListDetail', '$timeout','sbiModule_messaging', targetDefinitionControllerFunction]);
 
-function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_translate, sbiModule_restServices, $mdDialog, $filter, $q, $mdToast, $angularListDetail, $timeout) {
+function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_translate, sbiModule_restServices, $mdDialog,
+		$filter, $q, $mdToast, $angularListDetail, $timeout, sbiModule_messaging) {
 	$scope.translate = sbiModule_translate;
 	$scope.emptyCategory = {};
 	this.formatDate = function(dts) {
@@ -61,13 +63,11 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 								.success(
 									function(data, status, headers, config) {
 										$scope.targets.splice(i, 1);
-										$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.resultMsg')).position('top')
-												.action('OK').highlightAction(false).hideDelay(3000));
+										sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.generic.resultMsg"),"");
 									}
 								).error(
 									function(data, status, headers, config) {
-										$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.savingItemError')).position('top')
-												.action('OK').highlightAction(false).hideDelay(5000));
+										sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.generic.savingItemError"),"");
 									}
 								);
 							return;
@@ -240,8 +240,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 							}
 						).error(
 							function(data, status, headers, config) {
-								$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.errorLoading')).position('top')
-									.action('OK').highlightAction(false).hideDelay(3000));
+								sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.generic.errorLoading"),"");
 							}
 						);
 				};
@@ -258,8 +257,9 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					? $scope.kpis.length : kpiIdToIdx['' + selectedKpis[i].id];
 				$scope.kpis[idx] = selectedKpis[i];
 			}
-			$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.target.kpiAdded')).position('top')
-					.action('OK').highlightAction(false).hideDelay(5000));
+			
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.target.kpiAdded"),"");
+			
 		}, function() { });
 	};
 
@@ -300,8 +300,8 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 				}
 			).error(
 				function(data, status, headers, config) {
-					$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.errorLoading')).position('top')
-							.action('OK').highlightAction(false).hideDelay(3000));
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.generic.errorLoading"),"");
+					
 				}
 			);
 	};
@@ -336,8 +336,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 		if (newTarget.endValidity == null) errors += sbiModule_translate.load('sbi.target.errorMissingEndValidity') + ". ";
 		if (newTarget.values.length == 0) errors += sbiModule_translate.load('sbi.target.errorMissingKPI') + ". ";
 		if (errors != "") {
-			$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.savingItemError') + " - " + errors).position('top')
-					.action('OK').highlightAction(false).hideDelay(10000));
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.generic.savingItemError') + " - " + errors,"");
 			return;
 		}
 		sbiModule_restServices
@@ -360,8 +359,7 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 						return $filter('date')(date, dateFormat);
 					};
 					if (typeof data.errors != 'undefined' && data.errors.length > 0) {
-						$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.savingItemError')).position('top')
-								.action('OK').highlightAction(false).hideDelay(5000));
+						sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.generic.savingItemError'),"");
 						return;
 					}
 					var idx = $scope.targets.length;
@@ -384,8 +382,9 @@ function targetDefinitionControllerFunction($scope, sbiModule_config, sbiModule_
 					$scope.target = {};
 					$scope.kpis = [];
 					$scope.fetchTargetCategories(); // Reload target categories
-					$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.resultMsg')).position('top')
-							.action('OK').highlightAction(false).hideDelay(3000));
+										
+					sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.generic.resultMsg"),"");
+					
 					$angularListDetail.goToList();
 				},
 				function(response) {

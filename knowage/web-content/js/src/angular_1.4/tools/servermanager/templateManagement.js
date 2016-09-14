@@ -14,10 +14,10 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", funzione ]);
+app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","sbiModule_messaging", funzione ]);
 
 
-function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast) {
+function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging) {
 	//main Controller
 	
 	//variables
@@ -176,20 +176,20 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	}
 	
 	$scope.showActionOK = function(text) {
-		var toast = $mdToast.simple()
-		.content(text)
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-
-
-			}
-		});
+//		var toast = $mdToast.simple()
+//		.content(text)
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		
+		sbiModule_messaging.showInfoMessage(text,"");
+		
 	};
     // to prevent interaction outside of dialog
 	$scope.openDialog = function(ev, insTitle,conferm){
@@ -258,20 +258,19 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	}
 	
 	$scope.showAction = function(text) {
-		var toast = $mdToast.simple()
-		.content(text)
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-
-
-			}
-		});
+//		var toast = $mdToast.simple()
+//		.content(text)
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		
+		sbiModule_messaging.showInfoMessage(text,"");
 	};
 }
 

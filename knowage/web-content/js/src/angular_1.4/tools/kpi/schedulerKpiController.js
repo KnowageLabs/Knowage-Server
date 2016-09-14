@@ -5,9 +5,11 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 
-app.controller('schedulerKpiController', ['$scope','sbiModule_messaging','sbiModule_config','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout','$angularListDetail','$filter','$timeout','$cronFrequency','sbiModule_dateServices',kpiTargetControllerFunction ]);
+app.controller('schedulerKpiController', ['$scope','sbiModule_messaging','sbiModule_config','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout',
+                                          '$angularListDetail','$filter','$timeout','$cronFrequency','sbiModule_dateServices','sbiModule_messaging',kpiTargetControllerFunction ]);
 
-function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast,$timeout,$angularListDetail,$filter,$timeout,$cronFrequency,sbiModule_dateServices){
+function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast,
+		$timeout,$angularListDetail,$filter,$timeout,$cronFrequency,sbiModule_dateServices,sbiModule_messaging){
 	$scope.translate=sbiModule_translate;
 	$scope.selectedScheduler={"frequency":{"cron": {"type":"minute","parameter":{"numRepetition":"1"}}}};
 	$scope.frequency = {type: 'scheduler', value : {}};
@@ -359,36 +361,36 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 	}
 	
 	$scope.showAction = function(text) {
-		var toast = $mdToast.simple()
-		.content(text)
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-
-
-			}
-		});
+//		var toast = $mdToast.simple()
+//		.content(text)
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		
+		sbiModule_messaging.showInfoMessage(text,"");
+		
 	}
 
 	$scope.validateScheduler = function(){
 		if ($scope.selectedScheduler.delta == undefined){
-			$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.kbi.scheduler.error.missing.execute.value")).position('top').action('OK'));
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.kbi.scheduler.error.missing.execute.value"),"");
 			return false;
 		}
 		
 		
 		if ($scope.selectedScheduler.kpis == undefined || $scope.selectedScheduler.kpis.length == 0){
-			$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.kbi.scheduler.error.missing.kpi.list")).position('top').action('OK'));
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.kbi.scheduler.error.missing.kpi.list"),"");
 			return false;
 		}
 		
 		if($scope.isValidCronFrequency.status==false){
-			$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.kbi.scheduler.error.wrong.cron.interval")).position('top').action('OK'));
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.kbi.scheduler.error.wrong.cron.interval"),"");
 			return false;	
 		}
 		
@@ -455,22 +457,22 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		return true;
 	}
 	
-	$scope.showAction = function(text) {
-		var toast = $mdToast.simple()
-		.content(text)
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-
-
-			}
-		});
-	}
+//	$scope.showAction = function(text) {
+//		var toast = $mdToast.simple()
+//		.content(text)
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+//		
+//		sbiModule_messaging.showInfoMessage(text,"");
+//		
+//	}
 		$scope.getNameForBar = function(){
 		return $scope.selectedScheduler.name != undefined ? $scope.selectedScheduler.name : $scope.translate.load('sbi.kpi.skeduler.new');
 	}

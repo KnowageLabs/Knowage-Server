@@ -7,9 +7,12 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
-app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","multipartForm", "sbiModule_download","sbiModule_messaging","sbiModule_config","sbiModule_user",businessModelCatalogueFunction]);
+app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices",
+                                                   "$scope", "$mdDialog", "$mdToast","multipartForm", "sbiModule_download",
+                                                   "sbiModule_messaging","sbiModule_config","sbiModule_user","sbiModule_messaging",businessModelCatalogueFunction]);
 
-function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,multipartForm,sbiModule_download,sbiModule_messaging,sbiModule_config,sbiModule_user){
+function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog,
+		$mdToast,multipartForm,sbiModule_download,sbiModule_messaging,sbiModule_config,sbiModule_user,sbiModule_messaging){
 	
 	//variables
 	///////////////////////////////////////////////////////////
@@ -511,18 +514,21 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 
 		//toast
 		$scope.showActionOK = function(msg) {
-				    var toast = $mdToast.simple()
-				    .content(msg)
-				    .action('OK')
-				    .highlightAction(false)
-				    .hideDelay(3000)
-				    .position('top')
-		
-				    $mdToast.show(toast).then(
-				    		function(response) {
-				    			if ( response == 'ok' ) {
-				    			}
-				    		});
+//				    var toast = $mdToast.simple()
+//				    .content(msg)
+//				    .action('OK')
+//				    .highlightAction(false)
+//				    .hideDelay(3000)
+//				    .position('top')
+//		
+//				    $mdToast.show(toast).then(
+//				    		function(response) {
+//				    			if ( response == 'ok' ) {
+//				    			}
+//				    		});
+				    
+				    sbiModule_messaging.showInfoMessage(msg,"");	    
+				    
 		};
 		
 		$scope.fileChange = function(){

@@ -1,7 +1,7 @@
 (function() {
 	var documentExecutionModule = angular.module('documentExecutionModule');
 	
-	documentExecutionModule.service('documentExecuteServices', function($mdToast,execProperties,sbiModule_restServices,sbiModule_config,$filter,sbiModule_dateServices) {
+	documentExecutionModule.service('documentExecuteServices', function($mdToast,execProperties,sbiModule_restServices,sbiModule_config,$filter,sbiModule_dateServices,sbiModule_messaging) {
 		var documentExecuteServicesObj = {
 //			decodeRequestStringToJson: function (str) {
 //				var hash;
@@ -29,7 +29,8 @@
 			
 			showToast: function(text, time) {
 				var timer = time == undefined ? 6000 : time;
-				$mdToast.show($mdToast.simple().content(text).position('top').highlightAction(false).hideDelay(timer));
+				//$mdToast.show($mdToast.simple().content(text).position('top').highlightAction(false).hideDelay(timer));
+				sbiModule_messaging.showInfoMessage(text,"");
 			},
 
 			buildStringParameters : function (documentParameters) {
@@ -755,14 +756,16 @@
 								"addViewpoint", vpctl.newViewpoint)
 						.success(function(data, status, headers, config) {
 							if(data.errors && data.errors.length > 0 ) {
-								documentExecuteServices.showToast(data.errors[0].message);
+								//documentExecuteServices.showToast(data.errors[0].message);
+								sbiModule_restServices.errorHandler(data.errors[0].message,"sbi.generic.toastr.title.error");
 							}else{
 								$mdDialog.hide();
 								documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
 							}							
 						})
 						.error(function(data, status, headers, config) {
-							documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.error.save"),3000);	
+							//documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.error.save"),3000);
+							sbiModule_restServices.errorHandler("Errors : " + status,"sbi.execution.viewpoints.msg.error.save");
 						});
 					};
 

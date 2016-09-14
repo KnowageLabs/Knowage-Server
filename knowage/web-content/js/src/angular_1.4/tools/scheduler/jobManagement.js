@@ -17,9 +17,11 @@ var EmptyJob = {
 	triggers: []
 }
 
-app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "sbiModule_logger", "sbiModule_config", "$scope", "$mdDialog", "$mdToast", "$timeout", "$location", "$window", mainFunction ]);
+app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "sbiModule_logger",
+                               "sbiModule_config", "$scope", "$mdDialog", "$mdToast", "$timeout", "$location", "$window","sbiModule_messaging", mainFunction ]);
 
-function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger, sbiModule_config, $scope, $mdDialog, $mdToast, $timeout, $location, $window) {
+function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger,
+		sbiModule_config, $scope, $mdDialog, $mdToast, $timeout, $location, $window,sbiModule_messaging) {
 	var ctrl = this;
 	sbiModule_translate.addMessageFile("component_scheduler_messages");
 	
@@ -459,31 +461,37 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	}
 	
 	ctrl.showToastOk = function(message) {
-		var toast = $mdToast.simple()
-			.content(message)
-			.action('OK')
-			.highlightAction(false)
-			.hideDelay(3000)
-			.position('top right')
-
-		$mdToast.show(toast).then(function(response) {
-			if ( response == 'ok' ) {
-			}
-		});
+//		var toast = $mdToast.simple()
+//			.content(message)
+//			.action('OK')
+//			.highlightAction(false)
+//			.hideDelay(3000)
+//			.position('top right')
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		sbiModule_messaging.showInfoMessage(message,"");
+		
 	};
 
 	ctrl.showToastError = function(message) {
-		var toast = $mdToast.simple()
-			.content(message)
-			.action('OK')
-			.highlightAction(true)
-			.position('top right')
-			.hideDelay(0);
-
-		$mdToast.show(toast).then(function(response) {
-			if ( response == 'ok' ) {
-			}
-		});
+//		var toast = $mdToast.simple()
+//			.content(message)
+//			.action('OK')
+//			.highlightAction(true)
+//			.position('top right')
+//			.hideDelay(0);
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		
+		sbiModule_messaging.showErrorMessage(message,"");
+		
+		
 	};
 	
 	ctrl.selectDocument = function(documentIndex){

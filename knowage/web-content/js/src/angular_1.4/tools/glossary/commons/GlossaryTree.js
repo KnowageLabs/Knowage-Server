@@ -83,7 +83,7 @@ angular.module('glossary_tree', ['ng-context-menu','ngMaterial','ui.tree', 'sbiM
   	});
 
 
-function controllerFunction($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,$mdToast,$timeout){
+function controllerFunction($scope,sbiModule_restServices,sbiModule_translate,$mdDialog,$mdToast,$timeout,sbiModule_messaging){
 	$scope.functionality=[];
 	$scope.Allglossary=[];
 	$scope.translate=sbiModule_translate;
@@ -291,8 +291,10 @@ function controllerFunction($scope,sbiModule_restServices,sbiModule_translate,$m
 		var timer = time == undefined ? 6000 : time;
 
 		console.log(text)
-		$mdToast.show($mdToast.simple().content(text).position('top').action(
-				'OK').highlightAction(false).hideDelay(timer));
+//		$mdToast.show($mdToast.simple().content(text).position('top').action(
+//				'OK').highlightAction(false).hideDelay(timer));
+		
+		sbiModule_messaging.showInfoMessage(text,"");
 	}
 		
 }

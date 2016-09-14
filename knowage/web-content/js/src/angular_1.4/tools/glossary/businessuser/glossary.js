@@ -47,9 +47,9 @@ var EmptyGloss = {
 };
 
 app.controller('Controller', [ "sbiModule_translate", "sbiModule_restServices", "$q", "$scope",
-                               "$mdDialog", "$filter", "$timeout", "$mdToast", funzione ]);
+                               "$mdDialog", "$filter", "$timeout", "$mdToast","sbiModule_messaging", funzione ]);
 
-function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter, $timeout, $mdToast) {
+function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter, $timeout, $mdToast,sbiModule_messaging) {
 	ctr = this;
 	$scope.translate = sbiModule_translate;
 	ctr.showPreloader = false;
@@ -487,10 +487,10 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 							"addContents", elem)
 					.success(function(data) {
 						if (data.hasOwnProperty("errors")) {
-							showErrorToast(data.errors[0].message)
-							showToast(
-									sbiModule_translate.load("sbi.glossary.error.save"),
-									3000);
+							showErrorToast(data.errors[0].message,sbiModule_translate.load("sbi.glossary.error.save"))
+//							showToast(
+//									sbiModule_translate.load("sbi.glossary.error.save"),
+//									3000);
 						} else if (data.Status == "NON OK") {
 							showToast(
 									sbiModule_translate
@@ -548,9 +548,9 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 			hidePreloader();
 		})
 		.error(function(data, status, headers, config) {
-			showErrorToast("word non salvato " + status)
-			showToast(sbiModule_translate
-					.load("sbi.glossary.word.save.error"), 3000);
+			showErrorToast("word non salvato " + status, sbiModule_translate.load("sbi.glossary.word.save.error"))
+//			showToast(sbiModule_translate
+//					.load("sbi.glossary.word.save.error"), 3000);
 			hidePreloader();
 		});
 	};
@@ -620,11 +620,11 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					"WORD_ID=" + ev.WORD_ID)
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
-					showErrorToast(data.errors[0].message)
-					showToast(
-							sbiModule_translate
-							.load("sbi.glossary.word.delete.error"),
-							3000);
+					showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.word.delete.error"));
+//					showToast(
+//							sbiModule_translate
+//							.load("sbi.glossary.word.delete.error"),
+//							3000);
 				} else {
 					ctr.modyfyWordInSelectedGloss(
 							ctr.selectedGloss.SBI_GL_CONTENTS,
@@ -644,11 +644,11 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 			})
 			.error(function(data, status, headers, config) {
 				console.log("WORD NON ELMINIATO " + status);
-				showErrorToast("word non eliminato " + status);
-				showToast(
-						sbiModule_translate
-						.load("sbi.glossary.word.delete.error"),
-						3000);
+				showErrorToast("word non eliminato " + status, sbiModule_translate.load("sbi.glossary.word.delete.error"));
+//				showToast(
+//						sbiModule_translate
+//						.load("sbi.glossary.word.delete.error"),
+//						3000);
 				hidePreloader();
 			});
 
@@ -685,28 +685,28 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 							"GLOSSARY_ID=" + gl.GLOSSARY_ID)
 					.success(function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
-							showErrorToast(data.errors[0].message);
+							showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
 							$mdDialog.hide();
-							showToast(
-									sbiModule_translate
-									.load("sbi.glossary.load.error"),
-									3000);
+//							showToast(
+//									sbiModule_translate
+//									.load("sbi.glossary.load.error"),
+//									3000);
 						} else {
 							gctl.newGloss = data;
 						}
 						hidePreloader();
 					})
 					.error(function(data, status, headers, config) {
-						showErrorToast('Ci sono errori! \n status ' + status);
+						showErrorToast('Ci sono errori! \n status ' + status, sbiModule_translate.load("sbi.glossary.load.error"));
 						hidePreloader();
-						sbiModule_translate.load("sbi.glossary.load.error");
+						//sbiModule_translate.load("sbi.glossary.load.error");
 					});
 				} else {
-					showErrorToast("Errore! glossario non puo essere nullo")
+					showErrorToast("Errore! glossario non puo essere nullo", sbiModule_translate.load("sbi.glossary.load.error"));
 					$mdDialog.hide();
-					showToast(
-							sbiModule_translate.load("sbi.glossary.load.error"),
-							3000);
+//					showToast(
+//							sbiModule_translate.load("sbi.glossary.load.error"),
+//							3000);
 					return false;
 				}
 
@@ -720,11 +720,11 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					.post("1.0/glossary/business", "cloneGlossary", gctl.newGloss)
 					.success(function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
-							showErrorToast(data.errors[0].message);
+							showErrorToast(data.errors[0].message,sbiModule_translate.load("sbi.glossary.clone.error"));
 
-							showToast(
-									sbiModule_translate.load("sbi.glossary.clone.error"),
-									3000);
+//							showToast(
+//									sbiModule_translate.load("sbi.glossary.clone.error"),
+//									3000);
 						} else {
 							showToast(
 									sbiModule_translate
@@ -771,11 +771,11 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 			.success(function(data, status, headers, config) {
 				if (data
 						.hasOwnProperty("errors")) {
-					showErrorToast(data.errors[0].message)
-					showToast(
-							sbiModule_translate
-							.load("sbi.glossary.delete.error"),
-							3000);
+					showErrorToast(data.errors[0].message,sbiModule_translate.load("sbi.glossary.delete.error"))
+//					showToast(
+//							sbiModule_translate
+//							.load("sbi.glossary.delete.error"),
+//							3000);
 				} else {
 					var index = wds.indexOf(ev);
 					wds.splice(index, 1);
@@ -791,11 +791,11 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 			})
 			.error(function(data, status, headers, config) {
 				console.log("WORD NON ELMINIATO " + status);
-				showErrorToast("word non eliminato " + status);
-				showToast(
-						sbiModule_translate
-						.load("sbi.glossary.delete.error"),
-						3000);
+				showErrorToast("word non eliminato " + status, sbiModule_translate.load("sbi.glossary.delete.error"));
+//				showToast(
+//						sbiModule_translate
+//						.load("sbi.glossary.delete.error"),
+//						3000);
 
 				hidePreloader();
 			})
@@ -823,12 +823,12 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 							.success(function(data, status, headers, config) {
 								if (data
 										.hasOwnProperty("errors")) {
-									showErrorToast(data.errors[0].message)
+									showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
 									$mdDialog.hide();
-									showToast(
-											sbiModule_translate
-											.load("sbi.glossary.load.error"),
-											3000);
+//									showToast(
+//											sbiModule_translate
+//											.load("sbi.glossary.load.error"),
+//											3000);
 									return false;
 								} else {
 									gctl.newGloss = data;
@@ -838,12 +838,12 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 							})
 							.error(function(data, status, headers, config) {
 								console.log("Words non Ottenuti "+ status);
-								showErrorToast('Ci sono errori! \n status ' + status);
+								showErrorToast('Ci sono errori! \n status ' + status, sbiModule_translate.load("sbi.glossary.load.error"));
 								$mdDialog.hide();
-								showToast(
-										sbiModule_translate
-										.load("sbi.glossary.load.error"),
-										3000);
+//								showToast(
+//										sbiModule_translate
+//										.load("sbi.glossary.load.error"),
+//										3000);
 								hidePreloader();
 							});
 				} else {
@@ -863,8 +863,8 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 							"addGlossary", gctl.newGloss)
 					.success(function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
-							showErrorToast(data.errors[0].message)
-							showToast(sbiModule_translate.load("sbi.glossary.save.error"),3000);
+							showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.save.error"));
+//							showToast(sbiModule_translate.load("sbi.glossary.save.error"),3000);
 						} else if (data.Status == "NON OK") {
 							showToast(sbiModule_translate.load(data.Message),3000);
 						} else {
@@ -889,9 +889,9 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					})
 					.error(function(data, status, headers, config) {
 						$mdDialog.hide();
-						showErrorToast("glossary non salvato " + status);
+						showErrorToast("glossary non salvato " + status, sbiModule_translate.load("sbi.glossary.save.error"));
 						hidePreloader();
-						showToast(sbiModule_translate.load("sbi.glossary.save.error"), 3000);
+						//showToast(sbiModule_translate.load("sbi.glossary.save.error"), 3000);
 					})
 				};
 				
@@ -940,8 +940,8 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				.post("1.0/glossary/business", "addContents", elem)
 				.success(function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
-						showErrorToast(data.errors[0].message)
-						showToast(sbiModule_translate.load("sbi.glossary.error.save"), 3000);
+						showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.error.save"));
+						//showToast(sbiModule_translate.load("sbi.glossary.error.save"), 3000);
 					} else if (data.Status == "NON OK") {
 						showToast(sbiModule_translate.load(data.Message), 3000);
 					} else {
@@ -1144,11 +1144,11 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 							.success(
 									function(data, status, headers, config) {
 										if (data.hasOwnProperty("errors")) {
-											showErrorToast(data.errors[0].message);
-											showToast(
-													sbiModule_translate
-													.load("sbi.glossary.error.save"),
-													3000);
+											showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.error.save"));
+//											showToast(
+//													sbiModule_translate
+//													.load("sbi.glossary.error.save"),
+//													3000);
 											event.source.nodesScope.insertNode(
 													event.dest.index,
 													event.source.nodeScope.item);
@@ -1348,11 +1348,11 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					function(data, status, headers, config) {
 
 						if (data.hasOwnProperty("errors")) {
-							showErrorToast(data.errors[0].message)
-							showToast(
-									sbiModule_translate
-									.load("sbi.glossary.content.delete.error"),
-									3000);
+							showErrorToast(data.errors[0].message,sbiModule_translate.load("sbi.glossary.content.delete.error"));
+//							showToast(
+//									sbiModule_translate
+//									.load("sbi.glossary.content.delete.error"),
+//									3000);
 						} else {
 							if (ev.$parentNodeScope.$modelValue.CHILD.length == 1) {
 								console.log("ci sono figli")
@@ -1377,11 +1377,11 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					.error(
 							function(data, status, headers, config) {
 
-								showErrorToast("nodo non eliminato " + status);
-								showToast(
-										sbiModule_translate
-										.load("sbi.glossary.content.delete.error"),
-										3000);
+								showErrorToast("nodo non eliminato " + status, sbiModule_translate.load("sbi.glossary.content.delete.error"));
+//								showToast(
+//										sbiModule_translate
+//										.load("sbi.glossary.content.delete.error"),
+//										3000);
 								hidePreloader();
 							})
 		}
@@ -1463,12 +1463,12 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 										if (data
 												.hasOwnProperty("errors")) {
-											showErrorToast(data.errors[0].message)
+											showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.content.load.error"));
 											$mdDialog.hide();
-											showToast(
-													sbiModule_translate
-													.load("sbi.glossary.content.load.error"),
-													3000);
+//											showToast(
+//													sbiModule_translate
+//													.load("sbi.glossary.content.load.error"),
+//													3000);
 										} else {
 											rn.tmpNW = data;
 										}
@@ -1482,11 +1482,11 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 												.log("Contents non Ottenuto "
 														+ status);
 												showErrorToast('Ci sono errori! \n status '
-														+ status)
-														showToast(
-																sbiModule_translate
-																.load("sbi.glossary.content.load.error"),
-																3000);
+														+ status, sbiModule_translate.load("sbi.glossary.content.load.error"));
+//														showToast(
+//																sbiModule_translate
+//																.load("sbi.glossary.content.load.error"),
+//																3000);
 												hidePreloader();
 											})
 
@@ -1517,11 +1517,11 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 											config) {
 										if (data
 												.hasOwnProperty("errors")) {
-											showErrorToast(data.errors[0].message)
-											showToast(
-													sbiModule_translate
-													.load("sbi.glossary.error.save"),
-													3000);
+											showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.error.save"));
+//											showToast(
+//													sbiModule_translate
+//													.load("sbi.glossary.error.save"),
+//													3000);
 										} else if (data.Status == "NON OK") {
 											showToast(
 													sbiModule_translate
@@ -1647,9 +1647,9 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 		sbiModule_restServices.get("1.0/glossary", "listWords").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
-						showErrorToast(data.errors[0].message);
-						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
-								3000);
+						showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
+//						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
+//								3000);
 
 					} else {
 						ctr.words = data;
@@ -1657,8 +1657,8 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 					hidePreloader();
 				}).error(function(data, status, headers, config) {
-					showErrorToast('Ci sono errori! \n status ' + status);
-					showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+					showErrorToast('Ci sono errori! \n status ' + status, sbiModule_translate.load("sbi.glossary.load.error"));
+					//showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 					hidePreloader();
 				})
@@ -1670,9 +1670,9 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 		sbiModule_restServices.get("1.0/glossary", "listGlossary").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
-						showErrorToast(data.errors[0].message);
-						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
-								3000);
+						showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
+//						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
+//								3000);
 
 					} else {
 						ctr.glossary = data;
@@ -1680,8 +1680,8 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 					hidePreloader();
 				}).error(function(data, status, headers, config) {
-					showErrorToast('Ci sono errori! \n status ' + status);
-					showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+					showErrorToast('Ci sono errori! \n status ' + status, sbiModule_translate.load("sbi.glossary.load.error"));
+					//showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 					hidePreloader();
 				})
@@ -1696,9 +1696,9 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				function(data, status, headers, config) {
 
 					if (data.hasOwnProperty("errors")) {
-						showErrorToast(data.errors[0].message);
-						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
-								3000);
+						showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
+//						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
+//								3000);
 
 					} else {
 						ctr.words = data.item;
@@ -1719,9 +1719,9 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 		.success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
-						showErrorToast(data.errors[0].message);
-						showToast(sbiModule_translate
-								.load("sbi.glossary.load.error"), 3000);
+						showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
+//						showToast(sbiModule_translate
+//								.load("sbi.glossary.load.error"), 3000);
 						ctr.newWord = JSON.parse(JSON
 								.stringify(EmptyWord));
 					} else {
@@ -1734,8 +1734,8 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					hidePreloader();
 
 				}).error(function(data, status, headers, config) {
-					showErrorToast('Ci sono errori! \n status ' + status);
-					showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+					showErrorToast('Ci sono errori! \n status ' + status, sbiModule_translate.load("sbi.glossary.load.error"));
+					//showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 					hidePreloader();
 				})
 
@@ -1755,9 +1755,9 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 						function(data, status, headers, config) {
 
 							if (data.hasOwnProperty("errors")) {
-								showErrorToast(data.errors[0].message);
-								showToast(sbiModule_translate
-										.load("sbi.glossary.load.error"), 3000);
+								showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
+//								showToast(sbiModule_translate
+//										.load("sbi.glossary.load.error"), 3000);
 
 							} else {
 								if (togg == undefined || togg.collapsed) {
@@ -1792,22 +1792,26 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 						})
 	}
 
-	function showErrorToast(err, time) {
-		var timer = time == undefined ? 6000 : time
+	function showErrorToast(errLog, errShow) {
+		//var timer = time == undefined ? 6000 : time
 				console.log("ci sono errori")
-				console.log(err)
+				console.log(errLog)
 				hidePreloader();
 		// $mdToast.show($mdToast.simple().content('Ci sono errori! \n ' + err)
 		// .position('top').action('OK').highlightAction(false).hideDelay(
 		// timer));
+		
+		sbiModule_messaging.showErrorMessage(errShow,"");
 	}
 
 	function showToast(text, time) {
 		var timer = time == undefined ? 6000 : time;
 
 		console.log(text)
-		$mdToast.show($mdToast.simple().content(text).position('top').action(
-		'OK').highlightAction(false).hideDelay(timer));
+//		$mdToast.show($mdToast.simple().content(text).position('top').action(
+//		'OK').highlightAction(false).hideDelay(timer));
+		
+		sbiModule_messaging.showInfoMessage(text,"");
 	}
 
 	function showPreloader(pre) {

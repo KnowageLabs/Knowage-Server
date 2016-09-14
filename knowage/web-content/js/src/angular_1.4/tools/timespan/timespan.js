@@ -9,9 +9,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
 
 
-app.controller('Controller', [ "sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", behavior ]);
+app.controller('Controller', [ "sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","sbiModule_messaging", behavior ]);
 
-function behavior(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast) {
+function behavior(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging) {
 	ctrl = this; 
 	ctrl.isFunction=function(item){
 		return angular.isFunction(item)
@@ -323,12 +323,16 @@ function behavior(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog
 	}
 	
 	function showToast(msg) {
-		$mdToast.show(
-				$mdToast.simple()
-				.content(msg)
-				.position('top')
-				.action('OK')
-				.highlightAction(false).hideDelay(3000));
+//		$mdToast.show(
+//				$mdToast.simple()
+//				.content(msg)
+//				.position('top')
+//				.action('OK')
+//				.highlightAction(false).hideDelay(3000));
+		
+		sbiModule_messaging.showInfoMessage(msg,"");
+		
+		
 	}
 	
 	

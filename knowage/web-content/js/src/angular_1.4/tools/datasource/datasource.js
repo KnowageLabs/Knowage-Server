@@ -3,7 +3,8 @@
  */
 var app = angular.module('dataSourceModule', ['ngMaterial', 'angular_list', 'angular_table' ,'sbiModule', 'angular_2_col','angular-list-detail']);
 
-app.controller('dataSourceController', ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", "$timeout","sbiModule_messaging","sbiModule_user", dataSourceFunction]);
+app.controller('dataSourceController', ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast",
+                                        "$timeout","sbiModule_messaging","sbiModule_user","sbiModule_messaging", dataSourceFunction]);
 
 var emptyDataSource = {
 	label : "",
@@ -21,7 +22,7 @@ var emptyDataSource = {
 	writeDefault: false
 };
 
-function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging,sbiModule_user){
+function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging,sbiModule_user,sbiModule_messaging){
 
 	//DECLARING VARIABLES
 	$scope.showMe=false;
@@ -311,48 +312,54 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 	//CONFIRM DELETE
 	$scope.showActionDelete = function() {
-		var toast = $mdToast.simple()
-		.content('Successfully deleted data source!')
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-			if ( response == 'ok' ) {
-			}
-		});
+//		var toast = $mdToast.simple()
+//		.content('Successfully deleted data source!')
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		
+		sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.datasource.deleted"),"");
 	};
 
 	//CONFIRM MULTIPLE DELETE
 	$scope.showActionMultiDelete = function() {
-		var toast = $mdToast.simple()
-		.content('Successfully deleted multiple data sources!')
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-			if ( response == 'ok' ) {
-			}
-		});
+//		var toast = $mdToast.simple()
+//		.content('Successfully deleted multiple data sources!')
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		
+		sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.datasource.deleted"),"");
 	};
 
 	//CONFIRM OK
 	$scope.showActionOK = function() {
-		var toast = $mdToast.simple()
-		.content('Successfully saved data source!!')
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-			}
-		});
+//		var toast = $mdToast.simple()
+//		.content('Successfully saved data source!!')
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		
+		sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.datasource.saved"),"");
+		
 	};
 
 	//CREATING PATH FOR DELETING MULTIPLE DATA SOURCES

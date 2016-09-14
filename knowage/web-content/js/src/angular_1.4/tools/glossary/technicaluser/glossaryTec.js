@@ -11,7 +11,7 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 app.controller('ControllerDataSet', [ "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_dataset ]);
 app.controller('Controller', [ "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_documenti ]);
 app.controller('Controller_navigation', [ "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast","$window","sbiModule_config",'$documentViewer', funzione_navigazione ]);
-app.controller('Controller_tec', [ "$scope", "sbiModule_config", "sbiModule_translate","sbiModule_restServices","$mdToast","$timeout", funzione_tec ]);
+app.controller('Controller_tec', [ "$scope", "sbiModule_config", "sbiModule_translate","sbiModule_restServices","$mdToast","$timeout","sbiModule_messaging", funzione_tec ]);
 
 
 var global;
@@ -20,7 +20,7 @@ var docAss;
 var dsAss;
 
 //--------------------------------------------------------------------------globale------------------------------------------------------------
-function funzione_tec($scope, sbiModule_config, sbiModule_translate,sbiModule_restServices,$mdToast,$timeout) {
+function funzione_tec($scope, sbiModule_config, sbiModule_translate,sbiModule_restServices,$mdToast,$timeout,sbiModule_messaging) {
 	global=this;
 	$scope.translate=sbiModule_translate;
 	global.glossary;
@@ -53,8 +53,10 @@ function funzione_tec($scope, sbiModule_config, sbiModule_translate,sbiModule_re
 	global.showToast=function(text, time) {
 		var timer = time == undefined ? 6000 : time;
 
-		$mdToast.show($mdToast.simple().content(text).position('top').action(
-		'OK').highlightAction(false).hideDelay(timer));
+//		$mdToast.show($mdToast.simple().content(text).position('top').action(
+//		'OK').highlightAction(false).hideDelay(timer));
+		
+		sbiModule_messaging.showInfoMessage(text,"");
 	}
 
 	global.getAllGloss=function() {

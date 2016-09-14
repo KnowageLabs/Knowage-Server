@@ -20,7 +20,7 @@ var EmptyLayer = {
 
 
 
-app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", funzione ]);
+app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","sbiModule_messaging", funzione ]);
 
 
 
@@ -43,7 +43,7 @@ app.directive("fileread", [function () {
 	}
 }]);
 
-function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast) {
+function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging) {
 	//variables
 	$scope.showme=false;
 	$scope.pathFileCheck = false;
@@ -575,53 +575,58 @@ if(list==undefined)return false;
 
 
 	$scope.showActionOK = function() {
-		var toast = $mdToast.simple()
-		.content(sbiModule_translate.load("sbi.layercatalogue.save"))
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-
-
-			}
-		});
+//		var toast = $mdToast.simple()
+//		.content(sbiModule_translate.load("sbi.layercatalogue.save"))
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		
+		sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.layercatalogue.save"),"");
+		
+		
 	};
 
 	$scope.showActionError = function() {
-		var toast = $mdToast.simple()
-		.content(sbiModule_translate.load("sbi.layercatalogue.problem"))
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-
-
-			}
-		});
+//		var toast = $mdToast.simple()
+//		.content(sbiModule_translate.load("sbi.layercatalogue.problem"))
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		
+		
+		sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.layercatalogue.problem"),"");
+		
+		
 	};
 
 	$scope.showActionDelete = function() {
-		var toast = $mdToast.simple()
-		.content('Layer Deleted')
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(3000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-			if ( response == 'ok' ) {
-
-
-			}
-		});
+//		var toast = $mdToast.simple()
+//		.content('Layer Deleted')
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(3000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		
+		sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.layer.deleted"),"");
+		
+		
 	};
 	$scope.demo = {
 			showTooltip : false,
@@ -670,20 +675,18 @@ if(list==undefined)return false;
 
 	}
 	$scope.showAction = function(text) {
-		var toast = $mdToast.simple()
-		.content(text)
-		.action('OK')
-		.highlightAction(false)
-		.hideDelay(5000)
-		.position('top')
-
-		$mdToast.show(toast).then(function(response) {
-
-			if ( response == 'ok' ) {
-
-
-			}
-		});
+//		var toast = $mdToast.simple()
+//		.content(text)
+//		.action('OK')
+//		.highlightAction(false)
+//		.hideDelay(5000)
+//		.position('top')
+//
+//		$mdToast.show(toast).then(function(response) {
+//			if ( response == 'ok' ) {
+//			}
+//		});
+		sbiModule_messaging.showInfoMessage(text,"");
 	}
 	$scope.showDetails = function(item){
 		$scope.selectedLayer=item;	
