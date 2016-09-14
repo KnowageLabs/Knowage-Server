@@ -416,10 +416,11 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                 replace: true,
 //                transclude: true,
                 compile:function (tElement, tAttrs, transclude) {
-                	var notCompiledContent=tElement.html()
+                	var notCompiledContent=tElement.html();
+                	tElement.html("");
                     return {
                         pre: function preLink(scope, element, attrs, ctrl, transclud) {
-                        	debugger
+//                        	debugger
                         	scope.internalTableConfiguration.rowDetail=true;
                         	scope.rowDetailTemplate=notCompiledContent;
                         	angular.element(element.parent())[0].querySelector("#angularTableContentBox").style.overflow="auto";
@@ -626,13 +627,20 @@ function TableControllerFunction($scope, $timeout) {
 	    		$scope.heightQueueTable = queueTable.offsetHeight;
 	    	}
     	
-    	var tableContainerHeight = $scope.tableContainer == undefined ? 32 : $scope.tableContainer.offsetHeight;
+    	var tableContainerHeight = $scope.tableContainer == undefined ? 36 : $scope.tableContainer.offsetHeight;
         var headButtonHeight = $scope.headButton == undefined ? 0 : $scope.headButton.offsetHeight;
-        var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 32 : $scope.listItemTemplBox.offsetHeight;
+        var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 36 : $scope.listItemTemplBox.offsetHeight;
 
+        var avaiableHeight=tableContainerHeight - headButtonHeight - $scope.heightQueueTable;
+        if (firstLoad && $scope.noPagination != true) {
+        	avaiableHeight-=30;
+        }
 
-        var nit = parseInt((tableContainerHeight - headButtonHeight - $scope.heightQueueTable) / listItemTemplBoxHeight);
+        var nit = parseInt(avaiableHeight / listItemTemplBoxHeight);
 
+        if(angular.equals( $scope.itemsPerPage , nit)){
+        	return;
+        }
         $scope.itemsPerPage = (nit <= 0 || isNaN(nit)) ? 0 : nit;
         if (firstLoad) {
             $scope.pageChangedFunction({
