@@ -54,7 +54,6 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.indexing.IndexingConstants;
 import it.eng.spagobi.commons.utilities.indexing.LuceneSearcher;
-import it.eng.spagobi.kpi.utils.JSError;
 import it.eng.spagobi.sdk.documents.bo.SDKDocument;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
 import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
@@ -62,6 +61,7 @@ import it.eng.spagobi.sdk.documents.impl.DocumentsServiceImpl;
 import it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 

@@ -3,7 +3,6 @@ package it.eng.spagobi.tools.alert;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.kpi.utils.JSError;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.alert.bo.Alert;
@@ -12,6 +11,7 @@ import it.eng.spagobi.tools.alert.bo.AlertListener;
 import it.eng.spagobi.tools.alert.dao.IAlertDAO;
 import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
