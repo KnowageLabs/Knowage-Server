@@ -18,6 +18,7 @@
 package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.tools.glossary.util.Util.fromDocumentLight;
+import static it.eng.spagobi.tools.glossary.util.Util.fromObjectParameterListLight;
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dbaccess.sql.DataRow;
@@ -104,7 +105,7 @@ import com.jamonapi.MonitorFactory;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
- * 
+ *
  */
 @Path("/2.0/documents")
 public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
@@ -112,7 +113,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 
 	@Override
 	public String getDocumentParameters(String label) {
-		
+
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
@@ -419,8 +420,8 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDocumentSearchAndPaginate(@QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
 			@QueryParam("label") String label, @QueryParam("name") String name, @QueryParam("descr") String descr,
-			@QueryParam("excludeType") String excludeType, @QueryParam("includeType") String includeType, @QueryParam("scope") String scope)
-			throws EMFInternalError {
+			@QueryParam("excludeType") String excludeType, @QueryParam("includeType") String includeType, @QueryParam("scope") String scope,
+			@QueryParam("loadObjPar") Boolean loadObjPar) throws EMFInternalError {
 		logger.debug("IN");
 		UserProfile profile = getUserProfile();
 		IBIObjectDAO documentsDao = null;
@@ -468,8 +469,13 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			JSONArray jarr = new JSONArray();
 			if (filterObj != null) {
 				for (BIObject sbiob : filterObj) {
-					if (ObjectsAccessVerifier.canSee(sbiob, profile))
-						jarr.put(fromDocumentLight(sbiob));
+					if (ObjectsAccessVerifier.canSee(sbiob, profile)) {
+						JSONObject tmp = fromDocumentLight(sbiob);
+						if (loadObjPar != null && loadObjPar == true) {
+							tmp.put("objParameter", fromObjectParameterListLight(sbiob.getBiObjectParameters()));
+						}
+						jarr.put(tmp);
+					}
 				}
 			}
 			JSONObject jo = new JSONObject();

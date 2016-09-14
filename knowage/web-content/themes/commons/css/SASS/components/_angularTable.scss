@@ -8,6 +8,10 @@ angular-table{
 	    overflow: hidden;
 	  }
 	.expanderRowClass{
+		cursor: auto!important;
+	    background-color: transparent!important;
+	}  
+	.expanderRowClass>td{
 		padding: 10px!important;
 		border-top:0px!important
 	}

@@ -82,8 +82,8 @@
 								total-items="ctrl.pagination.document.total" current-page="ctrl.pagination.document.current" pagination-id="ctrl.pagination.document.id" 
 								ng-click="ctrl.toggleFilter(document)" ng-repeat="n in [1]" class="smallListItem " 
 								ng-class="{selected_item: ctrl.isSelected(document)}">
-									<p class="wrapText">{{ document.DOCUMENT_NM | uppercase}}</p>
-									 <md-icon class="md-secondary" ng-click="ctrl.showInfoDOC($event,document.DOCUMENT_NM,document.DOCUMENT_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
+									<p class="wrapText">{{ document.DOCUMENT_LABEL | uppercase}}</p>
+									 <md-icon class="md-secondary" ng-click="ctrl.showInfoDOC($event,document.DOCUMENT_LABEL,document.DOCUMENT_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
 						
 							</md-list-item> 
 							</md-list>

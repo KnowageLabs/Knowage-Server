@@ -18,7 +18,7 @@
 				<angular-list layout-fill 
 						id='document' 
                 		ng-model=ctrl.listDoc
-                		item-name='DOCUMENT_NM '
+                		item-name='DOCUMENT_LABEL '
                 		click-function="ctrl.loadDocumentInfo(item)"
                 		show-search-bar=true  
                 		search-function="ctrl.DocumentLike(searchValue,itemsPerPage)"

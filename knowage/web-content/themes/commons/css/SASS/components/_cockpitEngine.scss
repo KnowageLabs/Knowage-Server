@@ -454,79 +454,29 @@
 							background-color: rgba(59, 103, 140, 0.8);
 							color:white;
 						}
-					
-					/*
-						padding-top: 5px;
-						padding-bottom: 5px;
-						padding-left: 10px;
-						&.empty {
-							border: 0px solid;
-							background-color: transparent;
-						}
-						&.level{
-							    border: 1px solid;
-								border-left-color: #EEEEEE;
-								border-right-color: #D0D0D0;
-								border-top-color: #EEEEEE;
-								border-bottom-color: #D0D0D0;
-								text-align: center;
-								background: #ebf3fd;
-								filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ebf3fd', endColorstr='#d9e8fb');
-								background: -webkit-gradient(linear, left top, left bottom, from(#ebf3fd), to(#d9e8fb));
-								background: -moz-linear-gradient(top, #ebf3fd, #d9e8fb);
-								font: 11px tahoma,arial,verdana,sans-serif;
-								color: #3783E8;
-								padding-right: 10px;
-						}
-						&.member{
-							border: 1px solid;
-							border-left-color: #EEEEEE;
-							border-right-color: #D0D0D0;
-							border-top-color: #EEEEEE;
-							border-bottom-color: #D0D0D0;
-							text-align: center;
-							background: #f2f2f2;
-							filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2f2f2', endColorstr='#e6e6e6');
-							background: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#e6e6e6));
-							background: -moz-linear-gradient(top, #f2f2f2, #e6e6e6);
-							font: 11px tahoma,arial,verdana,sans-serif;
-							color: #3783E8;
-							padding-right: 10px;
-						}
-						&.data{
-							border: 1px solid;
-							border-left-color: #EEEEEE;
-							border-right-color: #D0D0D0;
-							border-top-color: #EEEEEE;
-							border-bottom-color: #D0D0D0;
-							text-align: right;
-							background-color: transparent;
-							font: 11px tahoma,arial,verdana,sans-serif;
-							padding-right: 0px;
-						}
-						&.partialsum {
-							border: 1px solid;
-							border-left-color: #EEEEEE;
-							border-right-color: #D0D0D0;
-							border-top-color: #EEEEEE;
-							border-bottom-color: #D0D0D0;
-							text-align: right;
-							font: 11px tahoma,arial,verdana,sans-serif;
-							background-color: #E1E1E1;
-							padding-right: 0px;
-						}
-						&.totals {
-							border: 1px solid;
-							border-left-color: #EEEEEE;
-							border-right-color: #D0D0D0;
-							border-top-color: #EEEEEE;
-							border-bottom-color: #D0D0D0;
-							text-align: right;
-							font: bold 11px tahoma,arial,verdana,sans-serif;
-							background-color: #D1D1D1;
-							padding-right: 0px;
-						}*/
 					}
+				}
+			}
+		}
+	}
+	
+	md-card#cockpitDataConfig{
+		angular-table#cockpit-dataset,angular-table#cockpit-document{
+			.datasetParameterDetail,.analiticalParameterDetail{
+				background-color: #eceff1;
+				md-card-content{
+					padding:0px;
+					md-toolbar{
+						background-color: transparent!important;
+						color: black!important;
+					}
+					&>div{
+						padding:0px 10px;
+						md-input-container{
+							padding:0px 5px;
+						}
+					}
+					
 				}
 			}
 		}

@@ -128,7 +128,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 					if(!ctr.detail.simpleNavigation)ctr.detail.simpleNavigation = {};
 					ctr.detail.simpleNavigation.fromDocId = item.DOCUMENT_ID;
 					ctr.detail.simpleNavigation.fromDoc = item.DOCUMENT_NAME;
-					loadInputParameters(item.DOCUMENT_NM,function(data){
+					loadInputParameters(item.DOCUMENT_LABEL,function(data){
 						ctr.detail.fromPars = data;
 						loadOutputParameters(item.DOCUMENT_ID,function(data){
 							ctr.detail.fromPars = ctr.detail.fromPars.concat(data);
@@ -142,7 +142,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 				ctr.listDocuments(function(item, listId, closeDialog){
 					if(!ctr.detail.simpleNavigation)ctr.detail.simpleNavigation = {};
 					ctr.detail.simpleNavigation.toDoc = item.DOCUMENT_NAME;
-					loadInputParameters(item.DOCUMENT_NM,function(data){
+					loadInputParameters(item.DOCUMENT_LABEL,function(data){
 						ctr.detail.toPars = data;
 						closeDialog();
 					});

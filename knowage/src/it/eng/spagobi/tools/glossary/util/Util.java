@@ -17,15 +17,10 @@
  */
 package it.eng.spagobi.tools.glossary.util;
 
-import java.util.Iterator;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
@@ -37,6 +32,13 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlReferences;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 import it.eng.spagobi.tools.udp.bo.Udp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
+
+import java.util.Iterator;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Util {
 
@@ -63,11 +65,25 @@ public class Util {
 	public static JSONObject fromDocumentLight(BIObject sbiob) throws JSONException {
 		JSONObject ret = new JSONObject();
 		ret.put("DOCUMENT_ID", sbiob.getId());
-		ret.put("DOCUMENT_NM", sbiob.getLabel());
+		ret.put("DOCUMENT_LABEL", sbiob.getLabel());
 		ret.put("DOCUMENT_NAME", sbiob.getName());
 		ret.put("DOCUMENT_DESCR", sbiob.getDescription());
 		ret.put("DOCUMENT_AUTH", sbiob.getCreationUser());
 		return ret;
+	}
+
+	public static JSONArray fromObjectParameterListLight(List<BIObjectParameter> objPar) throws JSONException {
+		JSONArray ja = new JSONArray();
+		for (BIObjectParameter par : objPar) {
+
+			JSONObject ret = new JSONObject();
+			ret.put("id", par.getId());
+			ret.put("label", par.getLabel());
+			ret.put("urlName", par.getParameterUrlName());
+			ret.put("type", par.getParameter().getType());
+			ja.put(ret);
+		}
+		return ja;
 	}
 
 	public static JSONObject fromDataSetLight(IDataSet datas) throws JSONException {
@@ -105,7 +121,7 @@ public class Util {
 	public static JSONObject fromDocumentLight(SbiObjects sbiob) throws JSONException {
 		JSONObject ret = new JSONObject();
 		ret.put("DOCUMENT_ID", sbiob.getBiobjId());
-		ret.put("DOCUMENT_NM", sbiob.getLabel());
+		ret.put("DOCUMENT_LABEL", sbiob.getLabel());
 		return ret;
 	}
 
@@ -164,7 +180,7 @@ public class Util {
 
 	public static JSONObject fromGlossaryLight(SbiGlGlossary sbiGlGlossary)
 
-			throws JSONException {
+	throws JSONException {
 		JSONObject ret = new JSONObject();
 		ret.put("GLOSSARY_ID", sbiGlGlossary.getGlossaryId());
 		ret.put("GLOSSARY_NM", sbiGlGlossary.getGlossaryNm());

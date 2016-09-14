@@ -441,8 +441,8 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
         			var td=document.createElement("td");
         			td.innerHTML=scope.rowDetailTemplate;
         			td.setAttribute("colspan",element.scope().tableColumns.length);
-        			td.classList.add("expanderRowClass");
         			element.after("<tr/>").next().append(td)
+        			element.next().addClass("expanderRowClass");
         			element.next().attr("ng-if","visible");
         			$compile(element.next())(element.scope());
         			
@@ -598,23 +598,17 @@ function TableControllerFunction($scope, $timeout) {
     	
     	if($scope.tableContainer==undefined || $scope.tableContainer.$$NG_REMOVED==true){
     		var tableContainer = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #angularFullTableContentBox'))[0];
-    		if (tableContainer != undefined) {
     			$scope.tableContainer=tableContainer;
-    		}
     	}
     	
     	if($scope.headButton==undefined || $scope.headButton.$$NG_REMOVED==true){
     		var headButton = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.fakeTable thead'))[0];
-    		if (headButton != undefined) {
     			$scope.headButton=headButton;
-    		}
     	}
     	
     	if($scope.listItemTemplBox==undefined || $scope.listItemTemplBox.$$NG_REMOVED==true){
     		var listItemTemplBox = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.principalTable tbody tr'))[0];
-    		if (listItemTemplBox != undefined) {
     			$scope.listItemTemplBox=listItemTemplBox;
-    		}
     	}
 
     	
