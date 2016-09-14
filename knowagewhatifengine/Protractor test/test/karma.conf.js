@@ -21,6 +21,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+		'../WebContent/js/lib/angular/angular_1.4/angular.js',
       // bower:js
       'bower_components/jquery/dist/jquery.js',
       'bower_components/angular/angular.js',
@@ -33,9 +34,15 @@ module.exports = function(config) {
       'bower_components/angular-touch/angular-touch.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
-      "app/scripts/**/*.js",
-      "test/mock/**/*.js",
-      "test/spec/**/*.js"
+      //"app/scripts/**/*.js",
+      //"test/mock/**/*.js",
+      //"test/spec/dragan.js",
+	  // "test/spec/nikola.js",
+	  //'../WebContent/WEB-INF/jsp/commons/angular/sbiModule.jspf',
+	   '../WebContent/js/src/angular_1.x/scripts/directives/components/olapTemplate/OlapTemplateModule.js',
+	   '../WebContent/js/src/angular_1.x/scripts/directives/components/olapTemplate/OlapTemplateService.js',
+	   '../WebContent/js/src/angular_1.x/scripts/directives/components/olapTemplate/OlapTemplateServiceTest.js'
+	   
     ],
 
     // list of files / patterns to exclude
@@ -43,7 +50,7 @@ module.exports = function(config) {
     ],
 
     // web server port
-    port: 8080,
+    port: 9876,
 
     // Start these browsers, currently available:
     // - Chrome
@@ -54,12 +61,15 @@ module.exports = function(config) {
     // - PhantomJS
     // - IE (only Windows)
     browsers: [
-      "PhantomJS"
+      "Chrome","Firefox","IE"
     ],
 
     // Which plugins to enable
     plugins: [
-      "karma-phantomjs-launcher",
+     // "karma-phantomjs-launcher",
+	 "karma-chrome-launcher",
+	 "karma-firefox-launcher",
+	 "karma-ie-launcher",
       "karma-jasmine"
     ],
 
@@ -71,7 +81,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_ERROR,
 
     // Uncomment the following lines if you are using grunt's server to run the tests
     // proxies: {

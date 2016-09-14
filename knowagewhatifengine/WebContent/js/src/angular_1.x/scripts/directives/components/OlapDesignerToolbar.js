@@ -21,7 +21,7 @@
  * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
  * @author Stefan Petrovic (spetrovic, stefan.petrovic@mht.net)
  */
-angular.module('olap_designer_toolbar', ['sbiModule'])
+angular.module('olap_designer_toolbar', ['sbiModule','olap_template'])
 		.directive(
 				'olapDesignerToolbar',
 				function(sbiModule_config) {
