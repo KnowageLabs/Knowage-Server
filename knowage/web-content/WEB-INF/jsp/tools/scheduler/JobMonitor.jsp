@@ -92,7 +92,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				page-changed-function = "pageChanged(searchValue, itemsPerPage, currentPageNumber, columnsSearch, columnOrdering, reverseOrdering)">
 		</angular-table>
 		
-		<div flex></div>
 	</list>
 </angular-list-detail>
 </body>
