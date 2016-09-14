@@ -53,10 +53,8 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 			    	scope.multiFolders 		= scope.keys !== undefined && scope.keys.multiFolders !==undefined && scope.keys.multiFolders.length > 0 ? scope.keys.multiFolders: 'fa fa-plus-square' ;
 			    	scope.multiFoldersOpen 	= scope.keys !== undefined && scope.keys.multiFoldersOpen !==undefined && scope.keys.multiFoldersOpen.length > 0 ? scope.keys.multiFoldersOpen: 'fa fa-minus-square' ;
 			    	
-			    	scope.seeTree = false;
-			    	
 			    	scope.createTreeStructure = function (folders){
-			    		if (attrs.createTree !==undefined  && (attrs.createTree ==true || attrs.createTree =="true")){
+			    		if (attrs.createTree !==undefined  && (attrs.createTree == true || attrs.createTree == "true")){
 				    		if (folders !== undefined && folders.length > 0 && folders[0][subfoldersId] === undefined){
 					    		var mapFolder = {};	
 								
@@ -85,6 +83,13 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 			    		return folders;
 			    	}
 			    	
+			    	scope.initializeFoldersAndCreateTreeStructure = function (folders, parent){
+			    		var newFolders = [];
+			    		angular.copy(folders, newFolders);
+			    		scope.initializeFolders(newFolders, parent);
+			    		return scope.createTreeStructure(newFolders);
+			    	}
+			    	
 			    	scope.initializeFolders = function (folders, parent){
 				    	if(folders){
 				    		for (var i = 0 ; i < folders.length; i ++ ){
@@ -110,12 +115,8 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 			    		}
 			    	}
 		
-			    	scope.initializeFolders(scope.ngModel, null);
-			    	scope.ngModel = scope.createTreeStructure(scope.ngModel);
+			    	scope.ngModel = scope.initializeFoldersAndCreateTreeStructure(scope.ngModel, null);
 					scope.folders=scope.ngModel;
-			    	
-			    
-			    	
 			    	
 					var id="dcTree";
 					if(attrs.id){
@@ -142,7 +143,8 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 							scope.selectedItem = [];
 						}
 					}
-					scope.seeTree=true;
+					
+					scope.seeTree = false;
 		        }
 			 }
 		},
@@ -177,7 +179,7 @@ function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
 	
 	$scope.openFolder = function (folder,doClickAction){
 		 if (folder[$scope.subfoldersId] && folder[$scope.subfoldersId].length >= 15){
-			//if many children (>=20), show the loading message for n_child*125 milliseconds
+			// if many children show the loading message for n_child * 100 milliseconds
 			$scope.seeTree = false;
 			
 			$timeout(function(){
@@ -195,8 +197,8 @@ function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
 			if(doClickAction){
 				$scope.setSelected(folder);
 			}
-			}
 		}
+	}
 	
 	$scope.setSelected = function (element){
 		if (!$scope.multiSelect){
@@ -211,18 +213,31 @@ function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
 	$scope.$watchCollection( 
 			'ngModel'
     	, function(){
-    		$scope.seeTree = false;
-    		$scope.initializeFolders($scope.ngModel, null);
-			$scope.ngModel = $scope.createTreeStructure($scope.ngModel);
-			$scope.folders= $scope.ngModel;
-			$timeout(function(){
-				$scope.seeTree = true;
-				},400,true);
+    		if(typeof $scope.ngModel != "undefined"
+					&& $scope.ngModel != null
+					&& $scope.ngModel.length != null
+					&& $scope.ngModel.length > 0){
+	    		$scope.seeTree = false;
+				var newModel = $scope.initializeFoldersAndCreateTreeStructure($scope.ngModel, null);
+				var replacer = function (key, value) {
+				  if (key == "subfolders" || key == "$$hashKey") {
+				    return undefined;
+				  }
+				  return value;
+				};
+				if(JSON.stringify($scope.ngModel,replacer) != JSON.stringify(newModel,replacer)){
+					$scope.ngModel = newModel;
+					$scope.folders= $scope.ngModel;
+				}
+				$timeout(function(){
+					$scope.seeTree = true;
+	    		});
+    		}
     	});
 	
 	$scope.toogleSort = function(element){
 		if(element.sortDirection && element[$scope.subfoldersId]){
-				element.sortDirection = element.sortDirection == 'asc' ? 'desc' : 'asc';
+			element.sortDirection = element.sortDirection == 'asc' ? 'desc' : 'asc';
 			var field = $scope.orderBy;
 			element[$scope.subfoldersId].sort($scope.orderFunction(field,element.sortDirection));
 		}
