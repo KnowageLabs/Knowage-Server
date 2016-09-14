@@ -932,7 +932,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 
 			toReturn.setHasContent((hibContent.getContent() != null) ? true : false);
 			toReturn.setHasFileModel((hibContent.getFileModel() != null) ? true : false);
-
+			toReturn.setHasLog((hibContent.getContent() != null && hibContent.getFileName().endsWith(".log")) ? true : false);
 		}
 		logger.debug("OUT");
 		return toReturn;

@@ -39,6 +39,10 @@ public class Content {
 
 	private Integer prog;
 
+	private Boolean hasFileModel = null;
+	private Boolean hasContent = null;
+	private Boolean hasLog = null;
+
 	public Content() {
 	}
 
@@ -118,8 +122,6 @@ public class Content {
 		this.prog = prog;
 	}
 
-	private Boolean hasFileModel = null;
-
 	public Boolean getHasFileModel() {
 		return hasFileModel;
 	}
@@ -136,7 +138,20 @@ public class Content {
 		this.hasContent = hasContent;
 	}
 
-	private Boolean hasContent = null;
+	/**
+	 * @return the hasLog
+	 */
+	public Boolean getHasLog() {
+		return hasLog;
+	}
+
+	/**
+	 * @param hasLog
+	 *            the hasLog to set
+	 */
+	public void setHasLog(Boolean hasLog) {
+		this.hasLog = hasLog;
+	}
 
 	@Override
 	public String toString() {
