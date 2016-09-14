@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.fail;
 import it.eng.spagobi.UtilitiesForTest;
 import it.eng.spagobi.api.common.AbstractV2BasicAuthTestCase;
+import it.eng.spagobi.api.common.TestConstants;
 import it.eng.spagobi.commons.utilities.UtilitiesDAOForTest;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
@@ -332,6 +333,7 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 
 	private void deleteDataset(String datasetLabel) {
 		given().contentType(ContentType.JSON).when().delete("/datasets/" + datasetLabel).then();
+		given().basePath(TestConstants.v1Path).contentType(ContentType.JSON).when().delete("/datasets/" + datasetLabel + "/cleanCache").then();
 	}
 
 	@SuppressWarnings("unchecked")

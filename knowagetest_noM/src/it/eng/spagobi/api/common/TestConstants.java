@@ -23,6 +23,6 @@ import com.jayway.restassured.authentication.AuthenticationScheme;
 
 public class TestConstants {
 	public static final String v2Path = "/knowage/restful-services/2.0";
-	public static final String v1Path = "/knowage/restful-services";
+	public static final String v1Path = "/knowage/restful-services/1.0";
 	public static final AuthenticationScheme basicAuthentication = preemptive().basic("biadmin", "biadmin");
 }
