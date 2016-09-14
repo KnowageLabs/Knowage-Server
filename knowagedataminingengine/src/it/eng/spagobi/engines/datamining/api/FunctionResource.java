@@ -28,6 +28,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
@@ -54,8 +55,102 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 		functionIOFields.add(DataMiningConstants.IMAGE_OUT);
 	}
 
+	// @formatter:off
+	/**
+	 * @api {get} /1.0/function/:id Execute function by ID
+	 * @apiName GET_getCatalogFunctionsByType
+	 * @apiGroup Functions
+	 *
+	 * @apiParam {String} type Function type.
+	 *
+	 * @apiSuccess {json} functions The list of functions and keywords with the specified type.
+	 *
+	 * @apiSuccessExample {json} Response-example:
+		{
+		   "functions":[
+		      {
+		         "id":16,
+		         "name":"tst_average",
+		         "description":"tst_average",
+		         "language":"R",
+		         "script":"x <- c($P{firstvar}, $P{secondvar}, $P{thirdvar})\nav <- mean(x)",
+		         "owner":"test_admin",
+		         "label":"tst_average",
+		         "type":"Utilities",
+		         "keywords":[
+		            "average"
+		         ],
+		         "inputVariables":[
+		            {
+		               "type":"Simple Input",
+		               "name":"thirdvar",
+		               "functionId":16,
+		               "value":"-5"
+		            },
+		            {
+		               "type":"Simple Input",
+		               "name":"secondvar",
+		               "functionId":16,
+		               "value":"11"
+		            },
+		            {
+		               "type":"Simple Input",
+		               "name":"firstvar",
+		               "functionId":16,
+		               "value":"5"
+		            }
+		         ],
+		         "inputDatasets":[
+
+		         ],
+		         "outputItems":[
+		            {
+		               "type":"Text",
+		               "functionId":16,
+		               "label":"av"
+		            }
+		         ]
+		      },
+		      {
+		         "id":17,
+		         "name":"tst_average_ds",
+		         "description":"tst_average_ds",
+		         "language":"R",
+		         "script":"z<-TST_FUNC_CAT_LP\ndsoutput<-rbind(z,rowMeans(z, na.rm = TRUE))\ndsoutput",
+		         "owner":"test_admin",
+		         "label":"tst_average_ds",
+		         "type":"Utilities",
+		         "keywords":[
+
+		         ],
+		         "inputVariables":[
+
+		         ],
+		         "inputDatasets":[
+		            {
+		               "type":"Dataset Input",
+		               "functionId":17,
+		               "label":"TST_FUNC_CAT_LP"
+		            }
+		         ],
+		         "outputItems":[
+		            {
+		               "type":"Dataset",
+		               "functionId":17,
+		               "label":"dsoutput"
+		            }
+		         ]
+		      }
+		   ],
+		   "keywords":[
+		      "average"
+		   ]
+		}
+	*/
+	// @formatter:on
+
 	@GET
-	@Path("/execute/{id}")
+	@Path("/execute-sample/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
 	public String executeSampleCatalogFunctionById(@PathParam("id") int id) {
@@ -79,10 +174,10 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 	}
 
 	@GET
-	@Path("/execute/{label}")
+	@Path("/execute-sample")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
-	public String executeSampleCatalogFunctionByLabel(@PathParam("label") String label) {
+	public String executeSampleCatalogFunctionByLabel(@QueryParam("label") String label) {
 		logger.debug("IN");
 		String response;
 		try {
@@ -145,7 +240,7 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 	}
 
 	@POST
-	@Path("/execute/{label}")
+	@Path("/execute")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
 	public String executeCatalogFunctionByLabel(String body, @PathParam("label") String label) {
