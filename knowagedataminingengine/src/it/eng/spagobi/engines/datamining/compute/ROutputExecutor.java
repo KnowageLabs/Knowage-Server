@@ -242,7 +242,7 @@ public class ROutputExecutor {
 				&& outVal != null && out.getOutputName() != null) {
 			logger.debug("Dataset output");
 			CreateDatasetResult creationResult = null;
-			REXP rexp = null; // pythonResult
+			REXP rexp = null;
 
 			if (function != null && function.length() > 0) {
 				if (outVal == null || outVal.equals("")) {
@@ -353,10 +353,10 @@ public class ROutputExecutor {
 		Object obj = rexp.asNativeJavaObject();
 		if (rexp.isVector()) {
 			if (obj instanceof double[]) {
-				int[] intArr = rexp.asIntegers();
+				double[] intArr = rexp.asDoubles();
 				result = Arrays.toString(intArr);
 			} else if (obj instanceof int[]) {
-				double[] doubleArr = rexp.asDoubles();
+				int[] doubleArr = rexp.asIntegers();
 				result = Arrays.toString(doubleArr);
 			} else if (obj instanceof String[]) {
 				String[] strArr = rexp.asStrings();

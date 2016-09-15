@@ -120,6 +120,9 @@ function uiCodemirrorDirective($timeout, uiCodemirrorConfig) {
       //Although the formatter have already done this, it can be possible that another formatter returns undefined (for example the required directive)
       var safeViewValue = ngModel.$viewValue || '';
       codemirror.setValue(safeViewValue);
+      setTimeout(function() {	//Added to refresh properly the codemirror
+          codemirror.refresh();
+      }, 100);      
     };
 
 

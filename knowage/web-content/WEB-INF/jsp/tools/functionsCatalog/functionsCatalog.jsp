@@ -255,65 +255,65 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tab label='{{translate.load("sbi.functionscatalog.input");}}' >
 				
 				<!--  Author: Davverna -- Changed structure to card one -->
-				<md-card class="noMdError smallInputs">
-					<md-toolbar class="md-toolbar-tools secondaryToolbar">
-								{{translate.load("sbi.functionscatalog.inputdatasets");}}
-								<div flex></div>
-								<md-button class="md-secondary" ng-click="input=addInputDataset()" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))">{{translate.load("sbi.functionscatalog.adddataset");}}</md-button> 	
-					</md-toolbar>	
-					<md-card-content>					
-						<md-list>
-							<md-list-item ng-if="shownFunction.inputDatasets.length==0" class="messageItem" layout-align="center center">
-								&emsp;&emsp;{{translate.load("sbi.functionscatalog.noinputdatasetsrequired");}}
-							</md-list-item>
-							<md-list-item class="secondary-button-padding" ng-repeat="d in shownFunction.inputDatasets">
-					    		<md-input-container class="md-block" flex>
-  									<label>{{translate.load("sbi.functionscatalog.datasetlabel");}}</label>
-  									<md-select ng-model="d.label" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
-	    								<md-option ng-repeat="datasetLabel in datasetLabelsList" value="{{datasetLabel}}">
-	      								{{datasetLabel}}
-	    								</md-option>
- 									</md-select>
-								</md-input-container>
-								<md-input-container class="md-block" flex ng-if="d.type=='Simple Input'">
-	 								<label>{{translate.load("sbi.functionscatalog.inputname");}}</label>  
-	 								<input ng-model="d.name" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
-								</md-input-container>
-								<md-input-container class="md-block" flex ng-if="d.type=='Simple Input'">
-	 								<label>{{translate.load("sbi.functionscatalog.inputvalue");}}</label>  
-	 								<input ng-model="d.value" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
-								</md-input-container>
-								<md-button class="md-secondary" ng-click="datasetPreview(d.label)">{{translate.load("sbi.functionscatalog.datasetpreview");}}</md-button>
-								<md-icon class="md-secondary" ng-click="output=removeInputDataset(i)" aria-label="Chat" md-font-icon="fa fa-trash" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
-					  		</md-list-item>
-					  	</md-list>
-					</md-card-content>
-				</md-card>
-				
-				<md-card class="noMdError smallInputs">
-					<md-toolbar class="md-toolbar-tools secondaryToolbar">
-								{{translate.load("sbi.functionscatalog.inputvariables");}}
-								<div flex></div>
-								<md-button class="md-secondary" ng-click="input=addInputVariable()" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))">{{translate.load("sbi.functionscatalog.addinputvariable");}}</md-button> 		
-					</md-toolbar>	
-					<md-card-content>
-						<md-list>
-							<md-list-item ng-if="shownFunction.inputVariables.length==0" class="messageItem" layout-align="center center">
-								&emsp;&emsp;{{translate.load("sbi.functionscatalog.noinputvariablesrequired");}}
-							</md-list-item>
-							<md-list-item ng-repeat="v in shownFunction.inputVariables">
-								<md-input-container class="md-block" flex>
-           							<label>{{translate.load("sbi.functionscatalog.variablename");}}</label>
-       								<input ng-model="v.name" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
-   								</md-input-container>
-   								<md-input-container class="md-block" flex>
-           							<label>{{translate.load("sbi.functionscatalog.variablevalue");}}</label>
-       								<input ng-model="v.value" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
-   								</md-input-container>
-  								<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="output=removeInputVariable(i)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
-							</md-list-item>
-						</md-list>
-					</md-card-content>
+					<md-card class="noMdError smallInputs">
+						<md-toolbar class="md-toolbar-tools secondaryToolbar">
+									{{translate.load("sbi.functionscatalog.inputdatasets");}}
+									<div flex></div>
+									<md-button class="md-secondary" ng-click="input=addInputDataset()" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))">{{translate.load("sbi.functionscatalog.adddataset");}}</md-button> 	
+						</md-toolbar>	
+						<md-card-content>					
+							<md-list>
+								<md-list-item ng-if="shownFunction.inputDatasets.length==0" class="messageItem" layout-align="center center">
+									&emsp;&emsp;{{translate.load("sbi.functionscatalog.noinputdatasetsrequired");}}
+								</md-list-item>
+								<md-list-item class="secondary-button-padding" ng-repeat="d in shownFunction.inputDatasets">
+						    		<md-input-container class="md-block" flex>
+	  									<label>{{translate.load("sbi.functionscatalog.datasetlabel");}}</label>
+	  									<md-select ng-model="d.label" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+		    								<md-option ng-repeat="datasetLabel in datasetLabelsList" value="{{datasetLabel}}">
+		      								{{datasetLabel}}
+		    								</md-option>
+	 									</md-select>
+									</md-input-container>
+									<md-input-container class="md-block" flex ng-if="d.type=='Simple Input'">
+		 								<label>{{translate.load("sbi.functionscatalog.inputname");}}</label>  
+		 								<input ng-model="d.name" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+									</md-input-container>
+									<md-input-container class="md-block" flex ng-if="d.type=='Simple Input'">
+		 								<label>{{translate.load("sbi.functionscatalog.inputvalue");}}</label>  
+		 								<input ng-model="d.value" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+									</md-input-container>
+									<md-button class="md-secondary" ng-click="datasetPreview(d.label)">{{translate.load("sbi.functionscatalog.datasetpreview");}}</md-button>
+									<md-icon class="md-secondary" ng-click="output=removeInputDataset(i)" aria-label="Chat" md-font-icon="fa fa-trash" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
+						  		</md-list-item>
+						  	</md-list>
+						</md-card-content>
+					</md-card>
+					
+					<md-card class="noMdError smallInputs">
+						<md-toolbar class="md-toolbar-tools secondaryToolbar">
+									{{translate.load("sbi.functionscatalog.inputvariables");}}
+									<div flex></div>
+									<md-button class="md-secondary" ng-click="input=addInputVariable()" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))">{{translate.load("sbi.functionscatalog.addinputvariable");}}</md-button> 		
+						</md-toolbar>	
+						<md-card-content>
+							<md-list>
+								<md-list-item ng-if="shownFunction.inputVariables.length==0" class="messageItem" layout-align="center center">
+									&emsp;&emsp;{{translate.load("sbi.functionscatalog.noinputvariablesrequired");}}
+								</md-list-item>
+								<md-list-item ng-repeat="v in shownFunction.inputVariables">
+									<md-input-container class="md-block" flex>
+	           							<label>{{translate.load("sbi.functionscatalog.variablename");}}</label>
+	       								<input ng-model="v.name" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+	   								</md-input-container>
+	   								<md-input-container class="md-block" flex>
+	           							<label>{{translate.load("sbi.functionscatalog.variablevalue");}}</label>
+	       								<input ng-model="v.value" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+	   								</md-input-container>
+	  								<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="output=removeInputVariable(i)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
+								</md-list-item>
+							</md-list>
+						</md-card-content>
 					</md-card>
 					
 				</md-tab>

@@ -44,7 +44,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.functionsList = [];
 	$scope.emptyStr = " ";
 	$scope.searchKeywords=[];
-	$scope.selectedType="All"
+	$scope.selectedType="All";
+	$scope.missingFields=[];
 		
 	
 	$scope.editorConfig = {
@@ -256,12 +257,16 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		var body = {};
 
 		if (!$scope.checkCorrectArguments()) {
+			var missingFieldsString='<h2>Some fields are not filled<br/></h2>';
+			for(var i=0; i<$scope.missingFields.length;i++)
+			{
+				missingFieldsString=missingFieldsString + $scope.missingFields[i]+"<br/>";
+			}	
 			$mdDialog.show($mdDialog.alert().parent(
 					angular.element(document.querySelector('#popupContainer')))
 					.clickOutsideToClose(true).title(
-							'Some fields are not filled!!')
-					// .textContent('Fill missing informations to save
-					// function.')
+							)
+					.htmlContent(missingFieldsString)
 					.ariaLabel('Alert Dialog Demo').ok('OK'));
 		} else {
 			if ($scope.saveOrUpdateFlag == "save") {
@@ -273,7 +278,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				$log.info("Shown function to send with POST", body);
 
 				sbiModule_restServices.post("1.0/functions-catalog",
-						"insertCatalogFunction", body).success(function(data) {
+						"insert", body).success(function(data) {
 					$log.info("Catalog Function Added!");
 					$log.info("Function added to db with id: ", data);
 					$scope.obtainCatalogFunctionsRESTcall();
@@ -319,7 +324,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				$log.info("Shown function to send with PUT", body);
 
 				sbiModule_restServices.put("1.0/functions-catalog",
-						"updateCatalogFunction/" + functionId, body).success(
+						"update/" + functionId, body).success(
 						function(data) {
 							$log.info("Catalog Function Updated!");
 							$log.info("Message returned: ", data);
@@ -350,29 +355,68 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		// $scope.newFunction={"id":"" ,"name":"","inputDatasets":[] ,
 		// "inputVariables":[] , "outputItems":[], "language":"Python",
 		// "script":"", "description":""};
-
+		var correctArguments=true;
+		$scope.missingFields=[];
+		
 		for (var i = 0; i < $scope.shownFunction.inputDatasets.length; i++) {
 			if ($scope.shownFunction.inputDatasets[i].label == undefined) {
-				return false;
+				correctArguments=false;
+				var index=i+1;
+				$scope.missingFields.push("Input dataset "+ index +" missing");
 			}
 		}
 		for (var i = 0; i < $scope.shownFunction.inputVariables.length; i++) {
 			if ($scope.shownFunction.inputVariables[i].name == undefined
 					|| $scope.shownFunction.inputVariables[i].value == undefined) {
-				return false;
+				correctArguments=false;
+				var index=i+1;
+
+				if($scope.shownFunction.inputVariables[i].name == undefined)
+				{	
+					$scope.missingFields.push("Input variable  "+ index +" name missing");
+				}
+				if($scope.shownFunction.inputVariables[i].value  == undefined)
+				{
+					$scope.missingFields.push("Input variable  "+ index +" value missing");
+
+				}	
 			}
 		}
 		for (var i = 0; i < $scope.shownFunction.outputItems.length; i++) {
 			if ($scope.shownFunction.outputItems[i].label == undefined
 					|| $scope.shownFunction.outputItems[i].type == undefined) {
-				return false;
+				correctArguments=false;
+				var index=i+1;
+
+				if($scope.shownFunction.outputItems[i].type == undefined)
+				{	
+					$scope.missingFields.push("Output "+ index +" type missing");
+				}
+				if($scope.shownFunction.outputItems[i].label == undefined)
+				{
+					$scope.missingFields.push("Output "+ index +" label missing");
+
+				}	
+				
 			}
 		}
 		if ($scope.shownFunction.description == ""
 				|| $scope.shownFunction.description == "") {
-			return false;
+			correctArguments=false;
+			$scope.missingFields.push("Function description missing");
+
 		}
-		return true;
+		if($scope.shownFunction.remote==true && ($scope.shownFunction.url==undefined  || $scope.shownFunction.url==""))
+		{
+			correctArguments=false;
+			$scope.missingFields.push("Function url missing");
+		}	
+		else if($scope.shownFunction.remote==false &&( $scope.shownFunction.script==undefined || $scope.shownFunction.script==""))
+		{
+			correctArguments=false;
+			$scope.missingFields.push("Function script missing");
+		}	
+		return correctArguments;
 	}
 
 	$scope.acSpeedMenu = [ {
