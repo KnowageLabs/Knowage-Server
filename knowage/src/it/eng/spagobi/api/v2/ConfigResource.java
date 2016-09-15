@@ -98,7 +98,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 			if (allObjects != null && !allObjects.isEmpty()) {
 				for (Config dm : allObjects) {
-					if (dm.getId() == id) {
+					if (dm.getId().equals(id)) {
 						return dm;
 					}
 				}
@@ -125,7 +125,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
 			dm = configsDao.loadConfigParametersByLabel(label);
-			if (dm.getName().equals(label)) {
+			if (dm.getLabel().equals(label)) {
 				return dm;
 			}
 		} catch (Exception e) {

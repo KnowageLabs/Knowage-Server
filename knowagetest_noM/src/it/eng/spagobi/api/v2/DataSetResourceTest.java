@@ -28,16 +28,21 @@ import static org.junit.Assert.fail;
 import it.eng.spagobi.UtilitiesForTest;
 import it.eng.spagobi.api.common.AbstractV2BasicAuthTestCase;
 import it.eng.spagobi.api.common.TestConstants;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.utilities.UtilitiesDAOForTest;
+import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +54,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import com.hazelcast.config.Config;
 import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.TcpIpConfig;
 import com.jayway.restassured.http.ContentType;
@@ -59,6 +63,8 @@ import com.jayway.restassured.response.Response;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 
+	private static final String CSV_FOLDER_PATH = "./resources-test/dataset";
+	private static final String CSV_FILE_NAME = "SbiFileDataSet.csv";
 	private String encoding;
 
 	@BeforeClass
@@ -73,7 +79,7 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	}
 
 	private static void setHazelcastDefaultConfig() {
-		Config cfg = new Config();
+		com.hazelcast.config.Config cfg = new com.hazelcast.config.Config();
 
 		cfg.getNetworkConfig().setPort(5701);
 		cfg.getNetworkConfig().setPortAutoIncrement(false);
@@ -213,6 +219,7 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 
 	private void testSbiQueryDataSet(String datasetLabel, boolean isPersisted) {
 		String selections = "{\"" + datasetLabel + "\":{\"store_type,region_id\":[\"('Supermarket','28')\"]}}";
+		String aggregations = "{\"measures\":[{\"id\":\"store_id\",\"columnName\":\"store_id\",\"funct\":\"NONE\",\"alias\":\"store_id\",\"orderType\":\"\"},{\"id\":\"store_sqft\",\"columnName\":\"store_sqft\",\"funct\":\"NONE\",\"alias\":\"store_sqft\",\"orderType\":\"\"},{\"id\":\"store_sqft_100\",\"columnName\":\"\\\"store_sqft\\\" + 100\",\"funct\":\"FORMULA\",\"alias\":\"store_sqft_100\",\"orderType\":\"\"}],\"categories\":[],\"dataset\":\"Store\"}";
 		try {
 			createDatasets(datasetLabel, isPersisted);
 
@@ -221,6 +228,7 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data?offset=0&size=1000&realtime=true").then()
 					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(1)).body("rows[0].column_5", equalTo("Store 1"));
+
 		} catch (Exception e) {
 			fail(e.toString());
 		} finally {
@@ -238,6 +246,8 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	private void testSbiFileDataSet(String datasetLabel, boolean isPersisted) {
 		String selections = "{\"" + datasetLabel + "\":{\"product_id,store_id\":[\"(1,1)\"]}}";
 		try {
+			copyCsvFile();
+
 			createDatasets(datasetLabel, isPersisted);
 
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data").then().contentType(ContentType.JSON)
@@ -246,6 +256,8 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data?offset=0&size=1000&realtime=true").then()
 					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(2)).body("rows[0].column_3", equalTo("9685"))
 					.body("rows[1].column_3", equalTo("1894"));
+
+			deleteCsvFile();
 		} catch (Exception e) {
 			fail(e.toString());
 		} finally {
@@ -361,5 +373,48 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 		// check that the dataset exists
 		given().contentType(ContentType.JSON).when().get("/datasets/" + datasetLabel).then().contentType(ContentType.JSON).statusCode(200)
 				.body("label", anyOf(equalTo(datasetLabel), hasItems(datasetLabel)));
+	}
+
+	private String getResourceDir() {
+		String responseJson = given().when().get("/configs/label/SPAGOBI.RESOURCE_PATH_JNDI_NAME").then().contentType(ContentType.JSON).statusCode(200)
+				.extract().body().asString();
+		Config config = (Config) JsonConverter.jsonToObject(responseJson, Config.class);
+		String jndiName = config.getValueCheck();
+
+		try {
+			String resourceDir = given().when().get("/utilities/jndi?label=java%3a%2f%2fcomp%2fenv%2fresource_path").then().extract().body().asString();
+			resourceDir = given().when().get("/utilities/jndi?label=" + URLEncoder.encode(jndiName, encoding)).then().extract().body().asString();
+			return resourceDir;
+		} catch (UnsupportedEncodingException e) {
+			throw new SpagoBIRuntimeException("Unable to get the resouce folder");
+		}
+	}
+
+	private String getTenantName() {
+		String responseJson = given().when().get("/utilities/tenant").then().contentType(ContentType.JSON).statusCode(200).extract().body().asString();
+		String tenantName = JsonPath.from(responseJson).get("name");
+		return tenantName;
+	}
+
+	private void copyCsvFile() throws IOException {
+		String folderPath = getDatasetFileFolderPath();
+		File destFolder = new File(folderPath);
+		destFolder.mkdirs();
+		File sourceFile = new File(CSV_FOLDER_PATH, CSV_FILE_NAME);
+		File destFile = new File(folderPath, CSV_FILE_NAME);
+		Files.copy(sourceFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+	}
+
+	private String getDatasetFileFolderPath() {
+		String resourceDir = getResourceDir();
+		String tenant = getTenantName();
+		String pathname = resourceDir + "/" + tenant + "/dataset/files";
+		return pathname;
+	}
+
+	private void deleteCsvFile() throws IOException {
+		String folderPath = getDatasetFileFolderPath();
+		File csvFile = new File(folderPath + "/" + CSV_FILE_NAME);
+		Files.delete(csvFile.toPath());
 	}
 }

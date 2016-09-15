@@ -262,7 +262,7 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 
 	public static String substituteStandardWithDatasourceDelimiter(String columnName, IDataSource dataSource) {
 		logger.debug("IN");
-		if (columnName != null && dataSource != null) {
+		if (columnName != null) {
 			logger.debug("Column name is [" + columnName + "]");
 			columnName = columnName.replaceAll(AbstractDataBase.STANDARD_ALIAS_DELIMITER, TemporaryTableManager.getAliasDelimiter(dataSource));
 			logger.debug("Column name after replacement is [" + columnName + "]");
