@@ -1704,7 +1704,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects ()
 	 */
 	@Override
@@ -1856,7 +1856,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects (java.lang.String)
 	 */
 	@Override
@@ -1900,7 +1900,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects ()
 	 */
 	@Override
@@ -1978,7 +1978,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO# loadAllBIObjectsFromInitialPath(java.lang.String)
 	 */
 	@Override
@@ -2031,7 +2031,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO# loadAllBIObjectsFromInitialPath(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -2083,7 +2083,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO# loadBIObjectForDetail(java.lang.String)
 	 */
 	@Override
