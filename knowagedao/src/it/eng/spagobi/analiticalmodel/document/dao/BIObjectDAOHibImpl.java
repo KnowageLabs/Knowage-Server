@@ -91,6 +91,7 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.safehaus.uuid.UUID;
@@ -140,8 +141,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * @return the BI object
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectForExecutionByIdAndRole(java.lang.Integer,
-	 *      java.lang.String)
+	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectForExecutionByIdAndRole(java.lang.Integer, java.lang.String)
 	 */
 	@Override
 	public BIObject loadBIObjectForExecutionByIdAndRole(Integer id, String role) throws EMFUserError {
@@ -439,8 +439,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Modify bi object (specially provided for custom-made output category
-	 * parameters for the SUNBURST chart).
+	 * Modify bi object (specially provided for custom-made output category parameters for the SUNBURST chart).
 	 *
 	 * @param obj
 	 *            the obj
@@ -457,8 +456,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Modify bi object (for special chart types, that need exclusion of some of
-	 * default output parameters).
+	 * Modify bi object (for special chart types, that need exclusion of some of default output parameters).
 	 *
 	 * Example: WORDCLOUD, PARALLEL and CHORD chart types.
 	 *
@@ -635,8 +633,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Updates the biobject data into database (specially provided for
-	 * custom-made output category parameters for the SUNBURST chart).
+	 * Updates the biobject data into database (specially provided for custom-made output category parameters for the SUNBURST chart).
 	 *
 	 * @param biObject
 	 *            The BI Object as input
@@ -781,8 +778,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Updates the biobject data into database (for special chart types, that
-	 * need exclusion of some of default output parameters).
+	 * Updates the biobject data into database (for special chart types, that need exclusion of some of default output parameters).
 	 *
 	 * Example: WORDCLOUD, PARALLEL and CHORD chart types.
 	 *
@@ -923,8 +919,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Implements the query to insert a BIObject and its template. All
-	 * information needed is stored into the input <code>BIObject</code> and
+	 * Implements the query to insert a BIObject and its template. All information needed is stored into the input <code>BIObject</code> and
 	 * <code>ObjTemplate</code> objects.
 	 *
 	 * @param obj
@@ -940,8 +935,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Implements the query to insert a BIObject. All information needed is
-	 * stored into the input <code>BIObject</code> object.
+	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
 	 *
 	 * @param obj
 	 *            The object containing all insert information
@@ -954,8 +948,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Implements the query to insert a BIObject. All information needed is
-	 * stored into the input <code>BIObject</code> object.
+	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
 	 *
 	 * @param obj
 	 *            The object containing all insert information
@@ -970,8 +963,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Implements the query to insert a BIObject. All information needed is
-	 * stored into the input <code>BIObject</code> object.
+	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
 	 *
 	 * @param obj
 	 *            The object containing all insert information
@@ -1140,8 +1132,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 *            the id funct
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#eraseBIObject(it.eng.spagobi.analiticalmodel.document.bo.BIObject,
-	 *      java.lang.Integer)
+	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#eraseBIObject(it.eng.spagobi.analiticalmodel.document.bo.BIObject, java.lang.Integer)
 	 */
 	@Override
 	public void eraseBIObject(BIObject obj, Integer idFunct) throws EMFUserError {
@@ -1322,8 +1313,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * @return the correct roles for execution
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#getCorrectRolesForExecution(java.lang.Integer,
-	 *      it.eng.spago.security.IEngUserProfile)
+	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#getCorrectRolesForExecution(java.lang.Integer, it.eng.spago.security.IEngUserProfile)
 	 */
 	@Override
 	public List getCorrectRolesForExecution(Integer id, IEngUserProfile profile) throws EMFUserError {
@@ -1365,8 +1355,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Gets a list of correct role according to the report at input, identified
-	 * by its id
+	 * Gets a list of correct role according to the report at input, identified by its id
 	 *
 	 * @param id
 	 *            The Integer representing report's id
@@ -1675,8 +1664,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * From the hibernate BI object parameter at input, gives the corrispondent
-	 * <code>BIObjectParameter</code> object.
+	 * From the hibernate BI object parameter at input, gives the corrispondent <code>BIObjectParameter</code> object.
 	 *
 	 * @param hiObjPar
 	 *            The hybernate BI object parameter
@@ -1717,9 +1705,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects
-	 * ()
+	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects ()
 	 */
 	@Override
 	public List loadAllBIObjects() throws EMFUserError {
@@ -1871,9 +1857,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects
-	 * (java.lang.String)
+	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects (java.lang.String)
 	 */
 	@Override
 	public List loadAllBIObjects(String filterOrder) throws EMFUserError {
@@ -1917,9 +1901,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects
-	 * ()
+	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects ()
 	 */
 	@Override
 	public List<BIObject> loadPaginatedSearchBIObjects(Integer page, Integer item_count, Collection<CriteriaParameter> disjunctions,
@@ -1944,14 +1926,20 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					hibQuery.add(cp.toHibernateCriterion());
 				}
 			}
+			hibQuery.setProjection(Property.forName("biobjId"));
 			hibQuery.addOrder(Order.asc("label"));
 
 			if (page != null && item_count != null) {
 				hibQuery.setFirstResult((page - 1) * item_count);
 				hibQuery.setMaxResults(item_count);
 			}
-			hibQuery.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-			List<SbiObjects> lso = hibQuery.list();
+			List ids = hibQuery.list();
+
+			Criteria mainC = aSession.createCriteria(SbiObjects.class);
+			mainC.add(Restrictions.in("biobjId", ids));
+			mainC.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+			List<SbiObjects> lso = mainC.list();
 			for (SbiObjects so : lso) {
 				realResult.add(toBIObject(so, aSession));
 			}
@@ -1991,8 +1979,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#
-	 * loadAllBIObjectsFromInitialPath(java.lang.String)
+	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO# loadAllBIObjectsFromInitialPath(java.lang.String)
 	 */
 	@Override
 	public List loadAllBIObjectsFromInitialPath(String initialPath) throws EMFUserError {
@@ -2004,14 +1991,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			/*
-			 * Query hibQuery = aSession.createQuery( "select " +
-			 * "	distinct(objects) " + "from " +
-			 * "	SbiObjects as objects, SbiObjFunc as objFuncs, SbiFunctions as functions "
-			 * + "where " + "	objects.biobjId = objFuncs.id.sbiObjects.biobjId "
-			 * + "	and objFuncs.id.sbiFunctions.functId = functions.functId " +
-			 * "	and " + "		(functions.path = '" + initialPath + "' " +
-			 * "		 or functions.path like '" + initialPath + "/%' ) " +
-			 * "order by " + "	objects.label");
+			 * Query hibQuery = aSession.createQuery( "select " + "	distinct(objects) " + "from " +
+			 * "	SbiObjects as objects, SbiObjFunc as objFuncs, SbiFunctions as functions " + "where " + "	objects.biobjId = objFuncs.id.sbiObjects.biobjId " +
+			 * "	and objFuncs.id.sbiFunctions.functId = functions.functId " + "	and " + "		(functions.path = '" + initialPath + "' " +
+			 * "		 or functions.path like '" + initialPath + "/%' ) " + "order by " + "	objects.label");
 			 */
 
 			Query hibQuery = aSession.createQuery("select " + "	distinct(objects) " + "from "
@@ -2049,8 +2032,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#
-	 * loadAllBIObjectsFromInitialPath(java.lang.String, java.lang.String)
+	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO# loadAllBIObjectsFromInitialPath(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public List loadAllBIObjectsFromInitialPath(String initialPath, String filterOrder) throws EMFUserError {
@@ -2062,14 +2044,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			/*
-			 * Query hibQuery = aSession.createQuery( "select " +
-			 * "	distinct(objects) " + "from " +
-			 * "	SbiObjects as objects, SbiObjFunc as objFuncs, SbiFunctions as functions "
-			 * + "where " + "	objects.biobjId = objFuncs.id.sbiObjects.biobjId "
-			 * + "	and objFuncs.id.sbiFunctions.functId = functions.functId " +
-			 * "	and " + "		(functions.path = '" + initialPath + "' " +
-			 * "		 or functions.path like '" + initialPath + "/%' ) " +
-			 * "order by " + "	objects." + filterOrder);
+			 * Query hibQuery = aSession.createQuery( "select " + "	distinct(objects) " + "from " +
+			 * "	SbiObjects as objects, SbiObjFunc as objFuncs, SbiFunctions as functions " + "where " + "	objects.biobjId = objFuncs.id.sbiObjects.biobjId " +
+			 * "	and objFuncs.id.sbiFunctions.functId = functions.functId " + "	and " + "		(functions.path = '" + initialPath + "' " +
+			 * "		 or functions.path like '" + initialPath + "/%' ) " + "order by " + "	objects." + filterOrder);
 			 */
 			Query hibQuery = aSession.createQuery("select " + "	distinct(objects) " + "from "
 					+ "	SbiObjects as objects, SbiObjFunc as objFuncs, SbiFunctions as functions " + "where "
@@ -2106,8 +2084,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#
-	 * loadBIObjectForDetail(java.lang.String)
+	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO# loadBIObjectForDetail(java.lang.String)
 	 */
 	@Override
 	public BIObject loadBIObjectForDetail(String path) throws EMFUserError {
@@ -2147,9 +2124,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Called only for document composition (update object modality). Puts
-	 * parameters into the document composition getting these from document's
-	 * children.
+	 * Called only for document composition (update object modality). Puts parameters into the document composition getting these from document's children.
 	 *
 	 * @param aSession
 	 *            the hibernate session
@@ -2158,8 +2133,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * @param template
 	 *            the BI last active template
 	 * @param flgDelete
-	 *            the flag that suggest if is necessary to delete parameters
-	 *            before the insertion
+	 *            the flag that suggest if is necessary to delete parameters before the insertion
 	 * @throws EMFUserError
 	 */
 	private void insertParametersDocComposition(BIObject biObject, ObjTemplate template, boolean flgDelete) throws EMFUserError {
@@ -2273,9 +2247,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Called only for document composition (insert object modality). Puts
-	 * parameters into the document composition getting these from document's
-	 * children.
+	 * Called only for document composition (insert object modality). Puts parameters into the document composition getting these from document's children.
 	 *
 	 * @param biobjectId
 	 *            the document composition biobject id
@@ -2651,13 +2623,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				} else if (EQUALS_OR_GREATER_THAN.equalsIgnoreCase(typeFilter)) {
 					operCondition = " >= :VALUE_FILTER";
 					/*
-					 * }else if (NOT_ENDS_WITH.equalsIgnoreCase( typeFilter )) {
-					 * operCondition = "NOT LIKE %:VALUE_FILTER"; } else if
-					 * (NOT_CONTAINS.equalsIgnoreCase( typeFilter )) {
-					 * operCondition = "NOT LIKE %:VALUE_FILTER%"; } else if
-					 * (IS_NULL.equalsIgnoreCase( typeFilter )) { operCondition
-					 * = "IS NULL"; } else if (NOT_NULL.equalsIgnoreCase(
-					 * typeFilter )) { operCondition = "IS NOT NULL";
+					 * }else if (NOT_ENDS_WITH.equalsIgnoreCase( typeFilter )) { operCondition = "NOT LIKE %:VALUE_FILTER"; } else if
+					 * (NOT_CONTAINS.equalsIgnoreCase( typeFilter )) { operCondition = "NOT LIKE %:VALUE_FILTER%"; } else if (IS_NULL.equalsIgnoreCase(
+					 * typeFilter )) { operCondition = "IS NULL"; } else if (NOT_NULL.equalsIgnoreCase( typeFilter )) { operCondition = "IS NOT NULL";
 					 */
 				} else {
 					logger.error("The query Operator " + typeFilter + " is invalid.");
@@ -2771,12 +2739,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					hql += " label like '%" + search + "%'";
 				}
 
-				if (search != null && user != null) {
-					hql += " and ";
-				}
-				if (user != null) {
-					hql += "  creationUser='" + user + "'";
-				}
+				// if (search != null && user != null) {
+				// hql += " and ";
+				// }
+				// if (user != null) {
+				// hql += "  creationUser='" + user + "'";
+				// }
 
 			}
 
@@ -3000,8 +2968,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Specially provided method for custom-made output category parameters for
-	 * the SUNBURST chart.
+	 * Specially provided method for custom-made output category parameters for the SUNBURST chart.
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
@@ -3027,8 +2994,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Method used for special chart types, that need exclusion of some of
-	 * default output parameters.
+	 * Method used for special chart types, that need exclusion of some of default output parameters.
 	 *
 	 * Example: WORDCLOUD, PARALLEL and CHORD chart types.
 	 *
