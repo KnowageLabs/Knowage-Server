@@ -476,6 +476,16 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 							continue;
 						}
 
+						// ONLY FOR DEBUG
+						String objName = null;
+						try {
+							IField fieldObjName = record.getFieldAt(dataStoreMeta.getFieldIndex("OBJ_NAME"));
+							objName = (String) fieldObjName.getValue();
+						} catch (ArrayIndexOutOfBoundsException e) {
+							// do nothing (simply the field doesn't exist into the dataset)
+						}
+						// END DEBUG
+
 						// defines base list of element to decorate
 						mapElements = new HashMap();
 						mapElements.put("column_id", column_id);
@@ -486,17 +496,24 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 						// 2. add CROSS link ONLY if it's required by the template (at the moment is mutual exclusive with the drill link)
 						boolean useCrossNav = false; // default
+						boolean disabledLink = false; // default (when the link is disabled from the dataset column with the null value)
 						String defaultUrl = "javascript:void(0)";
 						// check the dynamic cross type definition (throught the dataset)
 						if (listCrossType.size() > 0) {
 							IFieldMetaData fieldMetaCrossable = (IFieldMetaData) listCrossType.get(0);
-							IField fieldCrosstable = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMetaCrossable.getName()));
-							useCrossNav = (((String) fieldCrosstable.getValue()).equalsIgnoreCase("cross")) ? true : false;
+							IField fieldCrossable = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMetaCrossable.getName()));
+							String fieldCrossableValue = (String) fieldCrossable.getValue();
+							if (fieldCrossableValue != null) {
+								useCrossNav = (((String) fieldCrossable.getValue()).equalsIgnoreCase("cross")) ? true : false;
+							} else {
+								disabledLink = true;
+								logger.debug("[crosstype] property for the element is null. The link will be disabled.");
+							}
 						}
 						if (listCrossType.size() == 0 && datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName()).getEnableCross()) {
 							useCrossNav = true;
 						}
-						if (useCrossNav) {
+						if (!disabledLink && useCrossNav) {
 							logger.debug("Required cross navigation for member [" + datamartProvider.getSelectedHierarchyName() + "]. "
 									+ " Checking presence of cross navigation definition...");
 							boolean isCrossable = DAOFactory.getCrossNavigationDAO().documentIsCrossable((String) this.getEnv().get("DOCUMENT_LABEL"));
@@ -513,7 +530,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 						// 3. add DRILL links ONLY if it isn't the last level
 						int intSelectedLevel = (datamartProvider.getSelectedLevel() == null) ? 1 : Integer.parseInt(datamartProvider.getSelectedLevel());
 						int totalLevels = datamartProvider.getHierarchyMembersNames().size();
-						if (!useCrossNav && (intSelectedLevel < totalLevels)) {
+						if (!disabledLink && !useCrossNav && (intSelectedLevel < totalLevels)) {
 							String drillIdValue = addLinkDrillId(listDrillNav, record, dataStoreMeta);
 							mapElements.put("drill_id", drillIdValue);
 							mapElements.put("link_drill", defaultUrl);

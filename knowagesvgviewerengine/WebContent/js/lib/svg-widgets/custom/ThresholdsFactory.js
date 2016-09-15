@@ -41,7 +41,7 @@ ThresholdsFactory.getStaticThresholds = function( measure, params ) {
 		  
    results = {};
    results.thresholds = params.ranges;
-   debugger;
+   //debugger;
    results.descriptions =  params.descriptions;
    results.num_group = results.thresholds.length -1;
 	 
