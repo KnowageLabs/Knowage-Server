@@ -8,7 +8,6 @@
 	<classpathentry kind="lib" path="lib/axis.jar"/>
 	<classpathentry kind="lib" path="lib/jaxrpc.jar"/>
 	<classpathentry kind="lib" path="lib/portlet-api-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/groovy-all-1.5.6.jar"/>
 	<classpathentry kind="lib" path="lib/groovy.engine.jar"/>
 	<classpathentry kind="lib" path="lib/javascript.engine.jar"/>
 	<classpathentry kind="lib" path="lib/js.jar"/>
@@ -148,5 +147,6 @@
 	<classpathentry kind="lib" path="lib/MetaModel-core-4.5.4.jar"/>
 	<classpathentry kind="lib" path="lib/MetaModel-full-4.5.4.jar"/>
 	<classpathentry kind="lib" path="lib/MetaModel-pojo-4.5.4.jar"/>
+	<classpathentry kind="lib" path="lib/groovy-all-2.1.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
