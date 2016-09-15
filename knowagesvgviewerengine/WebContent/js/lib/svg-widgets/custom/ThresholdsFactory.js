@@ -11,8 +11,6 @@ ThresholdsFactory.getThresholds = function( measure ){
     var results;    
     var conf;
     
-    
-    
     if(measure === undefined || measure.threshold_calculator_conf  === undefined) return;
     
     conf = measure.threshold_calculator_conf;
@@ -35,25 +33,27 @@ ThresholdsFactory.getThresholds = function( measure ){
     
   	measure.thresholds = results.thresholds;
   	measure.num_group = results.num_group;  
+  	measure.descriptions = results.descriptions || [];
 };
 
 ThresholdsFactory.getStaticThresholds = function( measure, params ) { 
    var results;
 		  
-	 results = {};
+   results = {};
    results.thresholds = params.ranges;
-	 results.num_group = results.thresholds.length -1;
+   debugger;
+   results.descriptions =  params.descriptions;
+   results.num_group = results.thresholds.length -1;
 	 
-	 if(measure.upper_bound < results.thresholds[results.thresholds.length - 1]) {
-    measure.upper_bound = results.thresholds[results.thresholds.length - 1];
+   if(measure.upper_bound < results.thresholds[results.thresholds.length - 1]) {
+		measure.upper_bound = results.thresholds[results.thresholds.length - 1];
    }
    
    if(measure.lower_bound > results.thresholds[0]) {
-    measure.lower_bound = results.thresholds[0];
+	   measure.lower_bound = results.thresholds[0];
    }
 	 
-
-	 return results;
+   return results;
 };
 
 

@@ -512,7 +512,7 @@ onload="init(evt);">
 		}
 		
 		function setKpi(cbId,radioId,label) {
-			//debugger;
+		
 			if (document.documentElement.suspendRedraw) {
 				suspendProcess = document.documentElement.suspendRedraw(30000);
 			}
@@ -532,67 +532,69 @@ onload="init(evt);">
        		}
 			
 			myMapApp.colArray = measure.colours;
+			myMapApp.labelArray = measure.descriptions;
 			myMapApp.threshArray = measure.thresholds;
 			myMapApp.curLabel = label;
 			myMapApp.curDescription = measure.description;
+			
 			if(myMapApp.Windows["legend"]) {
 			
-  			var coulourBoxes = document.getElementById("coulourboxes");			
-  			for(i = 0; i < myMapApp.legRect.length; i++) {
-  				coulourBoxes.removeChild(myMapApp.legRect[i]);
-  				coulourBoxes.removeChild(myMapApp.legPanel[i]);
-  			}
-  			
-  			
-  			
-  			myMapApp.legPanel = new Array();	
-  			myMapApp.legRect = new Array();		
-  			for(i = 0; i < measure.num_group; i++) {
-  				// ...legendpanel
-  				var offset = 50 + (i*25);
-  				var panel = document.createElementNS(svgNS,"text");
-  				panel.setAttribute("id","legpanel" + (i+1));
-  				panel.setAttribute("x", "70");
-  				panel.setAttribute("y", "" + offset);
-  				panel.setAttribute("fill", "dimgray");
-  				panel.setAttribute("font-family", "Arial,Helvetica");
-  				panel.setAttribute("font-size", "14px");
-  				panel.setAttribute("startOffset", "0");
-  				var closingChar = (i!=measure.num_group-1?")":"]");
-  				var textString = "-   [" + Utils.numberToString(myMapApp.threshArray[i],2) + " - " + Utils.numberToString(myMapApp.threshArray[i+1],2) + closingChar;
-  				var text_node = document.createTextNode(textString);
-  				panel.appendChild(text_node);
-  				
-  				coulourBoxes.appendChild(panel);
-  				
-  				myMapApp.legPanel[i] = panel;
-  				
-  				// ...legendrect
-  				var offset = 35 + (i*25);
-  				var rect = document.createElementNS(svgNS,"rect");
-  				rect.setAttribute("id","rect" + (i+1));
-  				rect.setAttribute("stroke","dimgray");
-  				rect.setAttribute("x","30");
-  				rect.setAttribute("y",offset);
-  				rect.setAttribute("width","30");
-  				rect.setAttribute("height","20");
-  				rect.setAttribute("fill",myMapApp.colArray[i]);
-  				rect.setAttribute("onclick", "myMapApp.Windows['colourpicker'].openColourPiker(evt)");
-  				rect.setAttribute("cursor", "pointer");
-  				
-  				coulourBoxes.appendChild(rect);
-  				
-  				myMapApp.legRect[i] = rect;
-  			}	
-  		}
-			
-			
-			myMapApp.loadStatus.setAttributeNS(null,"display","inline");		
-			
-			window.setTimeout("colourMap()",200);
-			if (document.documentElement.suspendRedraw) {
-				document.documentElement.unsuspendRedraw(suspendProcess);
-			}
+	  			var coulourBoxes = document.getElementById("coulourboxes");			
+	  			for(i = 0; i < myMapApp.legRect.length; i++) {
+	  				coulourBoxes.removeChild(myMapApp.legRect[i]);
+	  				coulourBoxes.removeChild(myMapApp.legPanel[i]);
+	  			}
+	  			
+	  			
+	  			
+	  			myMapApp.legPanel = new Array();	
+	  			myMapApp.legRect = new Array();			  			
+	  			for(i = 0; i < measure.num_group; i++) {
+	  				// ...legendpanel
+	  				var offset = 50 + (i*25);
+	  				var panel = document.createElementNS(svgNS,"text");
+	  				panel.setAttribute("id","legpanel" + (i+1));
+	  				panel.setAttribute("x", "70");
+	  				panel.setAttribute("y", "" + offset);
+	  				panel.setAttribute("fill", "dimgray");
+	  				panel.setAttribute("font-family", "Arial,Helvetica");
+	  				panel.setAttribute("font-size", "14px");
+	  				panel.setAttribute("startOffset", "0");
+	  				var closingChar = (i!=measure.num_group-1?")":"]");
+	  				var textString = "-   [" + Utils.numberToString(myMapApp.threshArray[i],2) + " - " + Utils.numberToString(myMapApp.threshArray[i+1],2) + closingChar;
+	  				var text_node = document.createTextNode(textString);
+	  				panel.appendChild(text_node);
+	  				
+	  				coulourBoxes.appendChild(panel);
+	  				
+	  				myMapApp.legPanel[i] = panel;
+	  				
+	  				// ...legendrect
+	  				var offset = 35 + (i*25);
+	  				var rect = document.createElementNS(svgNS,"rect");
+	  				rect.setAttribute("id","rect" + (i+1));
+	  				rect.setAttribute("stroke","dimgray");
+	  				rect.setAttribute("x","30");
+	  				rect.setAttribute("y",offset);
+	  				rect.setAttribute("width","30");
+	  				rect.setAttribute("height","20");
+	  				rect.setAttribute("fill",myMapApp.colArray[i]);
+	  				rect.setAttribute("onclick", "myMapApp.Windows['colourpicker'].openColourPiker(evt)");
+	  				rect.setAttribute("cursor", "pointer");
+	  				
+	  				coulourBoxes.appendChild(rect);
+	  				
+	  				myMapApp.legRect[i] = rect;
+	  			}	
+	  		}
+				
+				
+				myMapApp.loadStatus.setAttributeNS(null,"display","inline");		
+				
+				window.setTimeout("colourMap()",200);
+				if (document.documentElement.suspendRedraw) {
+					document.documentElement.unsuspendRedraw(suspendProcess);
+				}
 		}
 			
 			

@@ -79,7 +79,12 @@
 						           		<span layout-padding>Legend </span>
 						        </div>	    
 						    </md-toolbar>
-						    <div ng-class="{dataContent:true, activeContent:expandedLegend}" layout="row" layout-wrap >
+						    <div ng-class="{dataContent:true, activeContent:expandedLegend}" layout="row" layout-wrap ng-show="showLabel">
+						    	  <md-card ng-repeat="color in legend.colors track by $index" ng-style="{'background-color':color}" layout-padding">
+							     	 [{{legend.labels[$index]}}] 
+							     </md-card>   	
+						    </div>
+						    <div ng-class="{dataContent:true, activeContent:expandedLegend}" layout="row" layout-wrap ng-show="!showLabel">
 						    	  <md-card ng-repeat="color in legend.colors track by $index" ng-style="{'background-color':color}" layout-padding">
 							     	 [{{legend.tresholds[$index] | number:2}} - {{legend.tresholds[$index+1] | number:2}}] 
 							     </md-card>   	

@@ -333,6 +333,8 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 		  $scope.legend = new Object();
 		  $scope.legend.colors = svgwin.myMapApp.colArray;
 		  $scope.legend.tresholds = svgwin.myMapApp.threshArray;
+		  $scope.legend.labels = svgwin.myMapApp.labelArray;
+		  $scope.showLabel = (svgwin.myMapApp.labelArray && svgwin.myMapApp.labelArray.length > 0 ) ? true : false;
 	  }
   }
   

@@ -129,6 +129,31 @@ public class AbstractMapRenderer extends AbstractSvgViewerEngineComponent implem
 	}
 
 	/**
+	 * Gets the tresholds description array.
+	 *
+	 * @param measureName
+	 *            the measure name
+	 *
+	 * @return the treshold labels array
+	 */
+	public String[] getTresholdsDescriptionArray(String measureName) {
+		Measure measure = getMeasure(measureName);
+		if (measure != null) {
+			Properties params = measure.getTresholdCalculatorParameters();
+			if (params == null)
+				return null;
+			String pLabel = params.getProperty("label");
+			String[] trasholdLabels = null;
+			if (pLabel != null) {
+				trasholdLabels = pLabel.split(",");
+				return trasholdLabels;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Gets the colours array.
 	 *
 	 * @param measureName

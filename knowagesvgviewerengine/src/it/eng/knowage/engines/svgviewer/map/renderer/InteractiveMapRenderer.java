@@ -1750,6 +1750,16 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 					ranges.put(values[j]);
 				}
 				thresholdCalculatorParams.put("ranges", ranges);
+
+				String[] labels = getTresholdsDescriptionArray(getMeasure(measureNames[i]).getColumnId());
+				JSONArray descriptions = new JSONArray();
+
+				if (labels != null) {
+					for (int j = 0; j < labels.length; j++) {
+						descriptions.put(labels[j]);
+					}
+					thresholdCalculatorParams.put("descriptions", descriptions);
+				}
 			} else {
 				String value = getMeasure(measureNames[i]).getTresholdCalculatorParameters().getProperty("GROUPS_NUMBER");
 				thresholdCalculatorParams.put("num_group", Integer.parseInt(value));
