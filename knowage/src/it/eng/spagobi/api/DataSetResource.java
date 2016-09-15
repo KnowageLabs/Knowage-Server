@@ -287,8 +287,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStore(@PathParam("label") String label, @QueryParam("parameters") String parameters, @QueryParam("selections") String selections,
-			@QueryParam("aggregations") String aggregations, @QueryParam("offset") Integer offset, @QueryParam("size") Integer fetchSize,
-			@QueryParam("realtime") boolean isRealtime) {
+			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, @QueryParam("offset") Integer offset,
+			@QueryParam("size") Integer fetchSize, @QueryParam("realtime") boolean isRealtime) {
 		logger.debug("IN");
 
 		try {
@@ -309,7 +309,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				JSONObject selectionsObject = new JSONObject(selections);
 				// in same case object is empty '{}'
 				if (selectionsObject.names() != null) {
-					filterCriteria = getFilterCriteria(label, selectionsObject, isRealtime);
+					filterCriteria = getFilterCriteria(label, selectionsObject, false);
 					filterCriteriaForMetaModel = getFilterCriteria(label, selectionsObject, true);
 				}
 			}

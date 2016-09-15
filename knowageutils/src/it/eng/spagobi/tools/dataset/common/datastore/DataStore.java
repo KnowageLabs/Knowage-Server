@@ -59,7 +59,7 @@ public class DataStore implements IDataStore {
 	private static transient Logger logger = Logger.getLogger(DataStore.class);
 
 	public static String DEFAULT_TABLE_NAME = "TemporaryTable";
-	public static String DEFAULT_SCHEMA_NAME = "SpagoBI";
+	public static String DEFAULT_SCHEMA_NAME = "KA";
 
 	IMetaData metaData;
 

@@ -48,6 +48,10 @@ public class SelectBuilder {
 
 	protected List<String> havings = new ArrayList<String>();
 
+	protected int limit = -1;
+
+	protected int offset = -1;
+
 	public SelectBuilder() {
 
 	}
@@ -139,6 +143,15 @@ public class SelectBuilder {
 		appendList(sql, havings, " having ", " and ");
 		appendList(sql, orderBys, " order by ", ", ");
 
+		if (limit > -1) {
+			sql.append(" LIMIT ");
+			sql.append(limit);
+			if (offset > -1) {
+				sql.append(" OFFSET ");
+				sql.append(offset);
+			}
+		}
+
 		return sql.toString();
 	}
 
@@ -161,5 +174,21 @@ public class SelectBuilder {
 
 	public void setWhereOrEnabled(boolean isWhereOrEnabled) {
 		this.isWhereOrEnabled = isWhereOrEnabled;
+	}
+
+	public int getLimit() {
+		return limit;
+	}
+
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+
+	public int getOffset() {
+		return offset;
+	}
+
+	public void setOffset(int offset) {
+		this.offset = offset;
 	}
 }

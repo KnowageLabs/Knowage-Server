@@ -374,7 +374,7 @@ public class DatasetManagementAPI {
 			} else if (dataSet.isFlatDataset()) {
 				dataStore = queryFlatDataset(groupCriteria, filterCriteria, projectionCriteria, dataSet, offset, fetchSize);
 			} else if (isRealtime) {
-				dataStore = queryRealtimeDataset(parametersValues, groupCriteria, filterCriteria, projectionCriteria, dataSet, offset, fetchSize);
+				dataStore = queryRealtimeDataset(parametersValues, groupCriteria, filterCriteriaForMetaModel, projectionCriteria, dataSet, offset, fetchSize);
 			} else {
 				dataSet.setParamsMap(parametersValues);
 				List<JSONObject> parameters = getDataSetParameters(label);
@@ -405,8 +405,9 @@ public class DatasetManagementAPI {
 						dataStore = cache.refresh(dataSet, false);
 						// if result was not cached put refresh date as now
 						dataStore.setCacheDate(new Date());
-						dataStore = dataStore.aggregateAndFilterRecords(
-								generateQuery(groupCriteria, filterCriteriaForMetaModel, projectionCriteria, -1, -1, false), offset, fetchSize);
+						String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
+						String queryText = getQueryText(null, tableName, groupCriteria, filterCriteriaForMetaModel, projectionCriteria, dataSet, -1, -1, true);
+						dataStore = dataStore.aggregateAndFilterRecords(queryText, offset, fetchSize);
 					}
 				} else {
 					dataStore = cachedResultSet;
@@ -1140,127 +1141,6 @@ public class DatasetManagementAPI {
 		return toReturn;
 	}
 
-	private String generateQuery(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int offset, int fetchSize,
-			boolean isRealtime) {
-		SelectBuilder sqlBuilder = new SelectBuilder();
-		sqlBuilder.setWhereOrEnabled(isRealtime);
-		sqlBuilder.from(DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME);
-
-		// Columns to SELECT
-		if (projections != null) {
-			for (ProjectionCriteria projection : projections) {
-				String aggregateFunction = projection.getAggregateFunction();
-
-				String columnName = projection.getColumnName();
-
-				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
-					String aliasName = projection.getAliasName();
-					if (aliasName != null && !aliasName.isEmpty()) {
-
-						if (aggregateFunction.equals(AggregationFunctions.FORMULA)) {
-							columnName = columnName + " AS " + aliasName;
-						} else {
-							columnName = aggregateFunction + "(" + columnName + ") AS " + aliasName;
-						}
-
-					}
-				}
-				sqlBuilder.column(columnName);
-
-			}
-		}
-
-		// WHERE conditions
-		if (filters != null) {
-			for (FilterCriteria filter : filters) {
-				String operator = filter.getOperator();
-
-				String leftOperand = null;
-				if ("IN".equalsIgnoreCase(operator)) {
-					String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
-					leftOperand = "(1,";
-					String separator = "";
-					for (String column : columns) {
-						leftOperand += separator + column;
-						separator = ",";
-					}
-					leftOperand += ")";
-				} else {
-					if (filter.getLeftOperand().isCostant()) {
-						// why? warning!
-						leftOperand = filter.getLeftOperand().getOperandValueAsString();
-					} else { // it's a column
-						String datasetLabel = filter.getLeftOperand().getOperandDataSet();
-						leftOperand = filter.getLeftOperand().getOperandValueAsString();
-					}
-				}
-
-				String rightOperand = null;
-				if (filter.getRightOperand().isCostant()) {
-					if (filter.getRightOperand().isMultivalue()) {
-						rightOperand = "(";
-						String separator = "";
-						String stringDelimiter = "'";
-						List<String> values = filter.getRightOperand().getOperandValueAsList();
-						for (String value : values) {
-							if ("IN".equalsIgnoreCase(operator)) {
-								if (value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter)) {
-									rightOperand += separator + "(1," + value + ")";
-								} else if (value.startsWith("(") && value.endsWith(")")) {
-									rightOperand += separator + "(1," + value.substring(1, value.length() - 1) + ")";
-								} else {
-									rightOperand += separator + "(1," + stringDelimiter + value + stringDelimiter + ")";
-								}
-							} else {
-								rightOperand += separator + stringDelimiter + value + stringDelimiter;
-							}
-							separator = ",";
-						}
-						rightOperand += ")";
-					} else {
-						rightOperand = filter.getRightOperand().getOperandValueAsString();
-					}
-				} else { // it's a column
-					rightOperand = filter.getRightOperand().getOperandValueAsString();
-				}
-				if (isRealtime && !rightOperand.contains(" AND ")) {
-					sqlBuilder.where(leftOperand + " " + operator + " " + rightOperand);
-				} else {
-					sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperand + ")");
-				}
-			}
-		}
-
-		// GROUP BY conditions
-		if (groups != null) {
-			for (GroupCriteria group : groups) {
-				String aggregateFunction = group.getAggregateFunction();
-
-				String columnName = group.getColumnName();
-
-				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
-					columnName = aggregateFunction + "(" + columnName + ")";
-				}
-				sqlBuilder.groupBy(columnName);
-			}
-		}
-
-		String queryText = sqlBuilder.toString();
-
-		// LIMIT condition
-		if (fetchSize > -1) {
-			queryText += " LIMIT " + fetchSize;
-
-			// OFFSET condition
-			if (offset > -1) {
-				queryText += " OFFSET " + offset;
-			}
-		}
-		logger.debug("Cached dataset access query is equal to [" + queryText + "]");
-
-		return queryText;
-	}
-
 	/*
 	 * Create indexes for the specified dataset and the specified columns
 	 */
@@ -1365,7 +1245,9 @@ public class DatasetManagementAPI {
 		dataSet.loadData();
 		IDataStore dataStore = dataSet.getDataStore();
 		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
-			dataStore = dataStore.aggregateAndFilterRecords(generateQuery(groups, filters, projections, -1, -1, true), offset, fetchSize);
+			String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
+			dataStore = dataStore.aggregateAndFilterRecords(getQueryText(null, tableName, groups, filters, projections, dataSet, offset, fetchSize, true),
+					offset, fetchSize);
 			dataStore.setCacheDate(new Date());
 		} else {
 			throw new SpagoBIRuntimeException("Impossible to return data: the dataStore is [null], or it returns more than [" + METAMODEL_LIMIT
@@ -1377,20 +1259,31 @@ public class DatasetManagementAPI {
 
 	private IDataStore queryDataset(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
 			List<ProjectionCriteria> projections, IDataSet dataSet, int offset, int fetchSize) {
-
 		logger.debug("IN");
 
-		DataStore toReturn = null;
-		String label = dataSet.getLabel();
+		String queryText = getQueryText(dataSource, tableName, groups, filters, projections, dataSet, offset, fetchSize, false);
+		IDataStore dataStore = dataSource.executeStatement(queryText, offset, fetchSize);
 
+		logger.debug("OUT");
+		return dataStore;
+	}
+
+	public String getQueryText(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
+			List<ProjectionCriteria> projections, IDataSet dataSet, int offset, int fetchSize, boolean isRealtime) {
+		String queryText = null;
+
+		if (tableName == null || tableName.isEmpty() || (!isRealtime && dataSource == null)) {
+			throw new IllegalArgumentException("Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource
+					+ "] are null or empty.");
+		}
+
+		String label = dataSet.getLabel();
+		logger.debug("Build query for persisted dataset [" + label + "] with table name [" + tableName + "]");
 		logger.debug("Loading data from [" + label + "] to gather its metadata...");
 		dataSet.loadData(0, 1, 1);
 		IDataStore limitedDataStore = dataSet.getDataStore();
 
-		if (tableName != null && !tableName.isEmpty() && dataSource != null && limitedDataStore != null) {
-			logger.debug("Build query for persisted dataset [" + label + "] with table name [" + tableName + "] stored in datasource [" + dataSource.getLabel()
-					+ "]");
-
+		if (limitedDataStore != null) {
 			Map<String, String> datasetAlias = (Map<String, String>) limitedDataStore.getMetaData().getProperty("DATASET_ALIAS");
 
 			// https://production.eng.it/jira/browse/KNOWAGE-149
@@ -1398,148 +1291,166 @@ public class DatasetManagementAPI {
 			List<String> orderColumns = new ArrayList<String>();
 
 			SelectBuilder sqlBuilder = new SelectBuilder();
+			sqlBuilder.setWhereOrEnabled(isRealtime);
 			sqlBuilder.from(tableName);
 
-			// Columns to SELECT
-			if (projections != null) {
-				for (ProjectionCriteria projection : projections) {
-					String aggregateFunction = projection.getAggregateFunction();
+			setColumnsToSelect(dataSource, projections, datasetAlias, sqlBuilder, orderColumns);
+			setWhereConditions(dataSource, filters, datasetAlias, sqlBuilder);
+			setGroupbyConditions(dataSource, groups, datasetAlias, sqlBuilder);
+			setOrderbyConditions(orderColumns, sqlBuilder);
+			// if (isRealtime) {
+			// logger.debug("Setting LIMIT to [" + fetchSize + "] and OFFSET to [" + offset + "] into the SQL query.");
+			// setPagingConditions(fetchSize, offset, sqlBuilder);
+			// }
 
-					String columnName = projection.getColumnName();
-					if (datasetAlias != null) {
-						columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
-					}
+			queryText = sqlBuilder.toString();
+			logger.debug("Persisted dataset access query is equal to [" + queryText + "]");
+		} else {
+			throw new SpagoBIRuntimeException("Impossible to retrieve datastore to get required metadata.");
+		}
+		return queryText;
+	}
 
-					if (aggregateFunction != null && aggregateFunction.equals(AggregationFunctions.FORMULA)) {
-						// this is a calculated field!
-						columnName = AbstractJDBCDataset.substituteStandardWithDatasourceDelimiter(columnName, dataSource);
-					} else {
-						columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-					}
+	private void setColumnsToSelect(IDataSource dataSource, List<ProjectionCriteria> projections, Map<String, String> datasetAlias, SelectBuilder sqlBuilder,
+			List<String> orderColumns) {
+		if (projections != null) {
+			for (ProjectionCriteria projection : projections) {
+				String aggregateFunction = projection.getAggregateFunction();
 
-					if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
-						String aliasName = projection.getAliasName();
-						aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
-						if (aliasName != null && !aliasName.isEmpty()) {
-
-							String tmpColumn;
-							// https://production.eng.it/jira/browse/KNOWAGE-149
-							// This variable is used for the order clause
-							if (aggregateFunction.equals(AggregationFunctions.FORMULA)) {
-								tmpColumn = columnName;
-							} else {
-								tmpColumn = aggregateFunction + "(" + columnName + ") ";
-							}
-							String orderType = projection.getOrderType();
-							if (orderType != null && !orderType.equals("")) {
-								orderColumns.add(tmpColumn + " " + orderType);
-							}
-
-							columnName = tmpColumn + " AS " + aliasName;
-						}
-					}
-					sqlBuilder.column(columnName);
-
+				String columnName = projection.getColumnName();
+				if (datasetAlias != null) {
+					columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
 				}
+
+				if (aggregateFunction != null && aggregateFunction.equals(AggregationFunctions.FORMULA)) {
+					// this is a calculated field!
+					columnName = AbstractJDBCDataset.substituteStandardWithDatasourceDelimiter(columnName, dataSource);
+				} else {
+					columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+				}
+
+				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
+					String aliasName = projection.getAliasName();
+					aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
+					if (aliasName != null && !aliasName.isEmpty()) {
+
+						String tmpColumn;
+						// https://production.eng.it/jira/browse/KNOWAGE-149
+						// This variable is used for the order clause
+						if (aggregateFunction.equals(AggregationFunctions.FORMULA)) {
+							tmpColumn = columnName;
+						} else {
+							tmpColumn = aggregateFunction + "(" + columnName + ") ";
+						}
+						String orderType = projection.getOrderType();
+						if (orderType != null && !orderType.equals("")) {
+							orderColumns.add(tmpColumn + " " + orderType);
+						}
+
+						columnName = tmpColumn + " AS " + aliasName;
+					}
+				}
+				sqlBuilder.column(columnName);
 			}
+		}
+	}
 
-			// WHERE conditions
-			if (filters != null) {
-				for (FilterCriteria filter : filters) {
-					String operator = filter.getOperator();
+	private void setWhereConditions(IDataSource dataSource, List<FilterCriteria> filters, Map<String, String> datasetAlias, SelectBuilder sqlBuilder) {
+		if (filters != null) {
+			for (FilterCriteria filter : filters) {
+				String operator = filter.getOperator();
 
-					String leftOperand = null;
-					if ("IN".equalsIgnoreCase(operator)) {
-						String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
-						leftOperand = "(1,";
+				String leftOperand = null;
+				if ("IN".equalsIgnoreCase(operator)) {
+					String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
+					leftOperand = "(1,";
+					String separator = "";
+					for (String value : columns) {
+						leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
+						separator = ",";
+					}
+					leftOperand += ")";
+				} else {
+					if (filter.getLeftOperand().isCostant()) {
+						// why? warning!
+						leftOperand = filter.getLeftOperand().getOperandValueAsString();
+					} else { // it's a column
+						String datasetLabel = filter.getLeftOperand().getOperandDataSet();
+						leftOperand = filter.getLeftOperand().getOperandValueAsString();
+						if (datasetAlias != null) {
+							leftOperand = datasetAlias.get(datasetLabel) + " - " + filter.getLeftOperand().getOperandValueAsString();
+						}
+						leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
+					}
+				}
+
+				String rightOperand = null;
+				if (filter.getRightOperand().isCostant()) {
+					if (filter.getRightOperand().isMultivalue()) {
+						rightOperand = "(";
 						String separator = "";
-						for (String value : columns) {
-							leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
+						String stringDelimiter = "'";
+						List<String> values = filter.getRightOperand().getOperandValueAsList();
+						for (String value : values) {
+							if ("IN".equalsIgnoreCase(operator)) {
+								if (value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter)) {
+									rightOperand += separator + "(1," + value + ")";
+								} else if (value.startsWith("(") && value.endsWith(")")) {
+									rightOperand += separator + "(1," + value.substring(1, value.length() - 1) + ")";
+								} else {
+									rightOperand += separator + "(1," + stringDelimiter + value + stringDelimiter + ")";
+								}
+							} else {
+								rightOperand += separator + stringDelimiter + value + stringDelimiter;
+							}
 							separator = ",";
 						}
-						leftOperand += ")";
+						rightOperand += ")";
 					} else {
-						if (filter.getLeftOperand().isCostant()) {
-							// why? warning!
-							leftOperand = filter.getLeftOperand().getOperandValueAsString();
-						} else { // it's a column
-							String datasetLabel = filter.getLeftOperand().getOperandDataSet();
-							leftOperand = filter.getLeftOperand().getOperandValueAsString();
-							if (datasetAlias != null) {
-								leftOperand = datasetAlias.get(datasetLabel) + " - " + filter.getLeftOperand().getOperandValueAsString();
-							}
-							leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
-						}
-					}
-
-					String rightOperand = null;
-					if (filter.getRightOperand().isCostant()) {
-						if (filter.getRightOperand().isMultivalue()) {
-							rightOperand = "(";
-							String separator = "";
-							String stringDelimiter = "'";
-							List<String> values = filter.getRightOperand().getOperandValueAsList();
-							for (String value : values) {
-								if ("IN".equalsIgnoreCase(operator)) {
-									if (value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter)) {
-										rightOperand += separator + "(1," + value + ")";
-									} else if (value.startsWith("(") && value.endsWith(")")) {
-										rightOperand += separator + "(1," + value.substring(1, value.length() - 1) + ")";
-									} else {
-										rightOperand += separator + "(1," + stringDelimiter + value + stringDelimiter + ")";
-									}
-								} else {
-									rightOperand += separator + stringDelimiter + value + stringDelimiter;
-								}
-								separator = ",";
-							}
-							rightOperand += ")";
-						} else {
-							rightOperand = filter.getRightOperand().getOperandValueAsString();
-						}
-					} else { // it's a column
 						rightOperand = filter.getRightOperand().getOperandValueAsString();
-						rightOperand = AbstractJDBCDataset.encapsulateColumnName(rightOperand, dataSource);
 					}
-
+				} else { // it's a column
+					rightOperand = filter.getRightOperand().getOperandValueAsString();
+					rightOperand = AbstractJDBCDataset.encapsulateColumnName(rightOperand, dataSource);
+				}
+				if (sqlBuilder.isWhereOrEnabled() && !rightOperand.contains(" AND ")) {
 					sqlBuilder.where(leftOperand + " " + operator + " " + rightOperand);
+				} else {
+					sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperand + ")");
 				}
 			}
-
-			// GROUP BY conditions
-			if (groups != null) {
-				for (GroupCriteria group : groups) {
-					String aggregateFunction = group.getAggregateFunction();
-
-					String columnName = group.getColumnName();
-					if (datasetAlias != null) {
-						columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
-					}
-					columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-					if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
-						columnName = aggregateFunction + "(" + columnName + ")";
-					}
-					sqlBuilder.groupBy(columnName);
-				}
-			}
-
-			// ORDER BY conditions
-			// https://production.eng.it/jira/browse/KNOWAGE-149
-			for (String orderColumn : orderColumns) {
-				sqlBuilder.orderBy(orderColumn);
-			}
-
-			String queryText = sqlBuilder.toString();
-			logger.debug("Persisted dataset access query is equal to [" + queryText + "]");
-
-			IDataStore dataStore = dataSource.executeStatement(queryText, offset, fetchSize);
-			toReturn = (DataStore) dataStore;
-
-		} else {
-			logger.debug("Impossible to build query for persisted dataset [" + label + "] with table name [" + tableName + "] stored in datasource ["
-					+ dataSource.getLabel() + "]");
 		}
-		return toReturn;
+	}
+
+	private void setGroupbyConditions(IDataSource dataSource, List<GroupCriteria> groups, Map<String, String> datasetAlias, SelectBuilder sqlBuilder) {
+		if (groups != null) {
+			for (GroupCriteria group : groups) {
+				String aggregateFunction = group.getAggregateFunction();
+
+				String columnName = group.getColumnName();
+				if (datasetAlias != null) {
+					columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
+				}
+				columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
+					columnName = aggregateFunction + "(" + columnName + ")";
+				}
+				sqlBuilder.groupBy(columnName);
+			}
+		}
+	}
+
+	private void setOrderbyConditions(List<String> orderColumns, SelectBuilder sqlBuilder) {
+		// ORDER BY conditions
+		// https://production.eng.it/jira/browse/KNOWAGE-149
+		for (String orderColumn : orderColumns) {
+			sqlBuilder.orderBy(orderColumn);
+		}
+	}
+
+	private void setPagingConditions(int limit, int offset, SelectBuilder sqlBuilder) {
+		sqlBuilder.setLimit(limit);
+		sqlBuilder.setOffset(offset);
 	}
 
 	protected List<Integer> getCategories(IEngUserProfile profile) {

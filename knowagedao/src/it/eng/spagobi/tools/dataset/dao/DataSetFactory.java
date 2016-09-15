@@ -465,7 +465,7 @@ public class DataSetFactory {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage(), e);
+			throw new SpagoBIRuntimeException("Error while defining dataset configuration.", e);
 		}
 
 		if (ds != null) {
