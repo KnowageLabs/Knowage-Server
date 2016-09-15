@@ -120,6 +120,9 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                             scope.tableColumns.push({label: "--MULTISELECT--", name: "--MULTISELECT--", size: "30px"});
                                             thead.attr('multi-select', true);
                                             tbody.attr('multi-select', true);
+                                            if (!scope.selectedItem) {
+                                                scope.selectedItem = [];
+                                            }
                                         }
 
                                         if (scope.DandDEnabled) {
@@ -244,15 +247,6 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                     if (!attrs.searchFunction) {
                                         scope.localSearch = true;
                                     }
-                                   
-
-                                    if (attrs.multiSelect) {
-                                        if (!attrs.selectedItem) {
-                                            scope.selectedItem = [];
-                                        }
-                                    }
-
-                                    
 									
                                     if(attrs.hasOwnProperty("fullWidth") || (attrs.hasOwnProperty("noPagination") && attrs.noPagination==true)){
 										scope.getPrincipalTableHeadWidth=function(){
