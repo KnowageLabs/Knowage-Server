@@ -421,7 +421,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 	public String getDocumentSearchAndPaginate(@QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
 			@QueryParam("label") String label, @QueryParam("name") String name, @QueryParam("descr") String descr,
 			@QueryParam("excludeType") String excludeType, @QueryParam("includeType") String includeType, @QueryParam("scope") String scope,
-			@QueryParam("loadObjPar") Boolean loadObjPar) throws EMFInternalError {
+			@QueryParam("loadObjPar") Boolean loadObjPar, @QueryParam("objLabelNotIn") String objLabelNotIn) throws EMFInternalError {
 		logger.debug("IN");
 		UserProfile profile = getUserProfile();
 		IBIObjectDAO documentsDao = null;
@@ -462,6 +462,9 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		if (includeType != null) {
 			restritions.add(new CriteriaParameter("objectTypeCode", includeType, Match.EQ));
 		}
+		if (objLabelNotIn != null) {
+			restritions.add(new CriteriaParameter("label", objLabelNotIn.split(","), Match.NOT_IN));
+		}
 		try {
 			documentsDao = DAOFactory.getBIObjectDAO();
 
@@ -484,6 +487,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 
 			return jo.toString();
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("Error while getting the list of documents", e);
 			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
 		} finally {
