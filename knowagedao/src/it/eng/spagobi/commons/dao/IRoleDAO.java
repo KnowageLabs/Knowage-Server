@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.commons.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -194,6 +195,8 @@ public interface IRoleDAO extends ISpagoBIDao {
 	public void removeRoleMetaModelCategory(Integer roleId, Integer categoryId) throws EMFUserError;
 
 	public List<RoleMetaModelCategory> getMetaModelCategoriesForRole(Integer roleId) throws EMFUserError;
+
+	public List<Integer> getMetaModelCategoriesForRoles(Collection<String> roles) throws EMFUserError;
 
 	/*
 	 * Methods for managing Role - DataSetCategory association

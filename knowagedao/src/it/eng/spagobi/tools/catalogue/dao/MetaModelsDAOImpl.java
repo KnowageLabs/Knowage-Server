@@ -17,17 +17,6 @@
  */
 package it.eng.spagobi.tools.catalogue.dao;
 
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.tools.catalogue.bo.Content;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
-import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
-import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
-import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,9 +31,21 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
 
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
+import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
+import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
+
 public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaModelsDAO {
 
 	static private Logger logger = Logger.getLogger(MetaModelsDAOImpl.class);
+	private static final String LOG_SUFFIX = ".log";
 
 	@Override
 	public MetaModel loadMetaModelById(Integer id) {
@@ -788,7 +789,9 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			SbiMetaModelContent hibContent = (SbiMetaModelContent) query.uniqueResult();
 			logger.debug("Content loaded");
 
-			toReturn = toContent(hibContent, true);
+			if (hibContent != null && !hibContent.getFileName().endsWith(LOG_SUFFIX)) {
+				toReturn = toContent(hibContent, true);
+			}
 
 			transaction.rollback();
 		} catch (Exception e) {
@@ -834,7 +837,9 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			SbiMetaModelContent hibContent = (SbiMetaModelContent) query.uniqueResult();
 			logger.debug("Content loaded");
 
-			toReturn = toContent(hibContent, true);
+			if (hibContent != null && !hibContent.getFileName().endsWith(LOG_SUFFIX)) {
+				toReturn = toContent(hibContent, true);
+			}
 
 			transaction.rollback();
 		} catch (Exception e) {

@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1328,6 +1330,25 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 		}
 		return categories;
+	}
+
+	/**
+	 * Get the Meta Model Categories associated to a role
+	 *
+	 * @see it.eng.spagobi.commons.dao.IRoleDAO#getMetaModelCategoryForRole(java.lang.Integer)
+	 */
+	@Override
+	public List<Integer> getMetaModelCategoriesForRoles(final Collection<String> roles) throws EMFUserError {
+		return executeOnTransaction(new IExecuteOnTransaction<List<Integer>>() {
+			@Override
+			public List<Integer> execute(Session session) throws Exception {
+				Criteria c = session.createCriteria(SbiExtRoles.class);
+				c.add(Restrictions.in("name", roles));
+				c.createAlias("sbiMetaModelCategories", "_sbiMetaModelCategories");
+				c.setProjection(Property.forName("_sbiMetaModelCategories.valueId"));
+				return c.list();
+			}
+		});
 	}
 
 	/**

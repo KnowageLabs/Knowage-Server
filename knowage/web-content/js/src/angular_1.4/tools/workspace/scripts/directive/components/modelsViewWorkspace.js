@@ -102,14 +102,16 @@ function modelsController($scope, sbiModule_restServices, sbiModule_translate, $
     $scope.handleBusinessModels= function(categoriesForUser){
     	sbiModule_restServices.promiseGet("2.0/businessmodels", "bmforfinaluser")
 		.then(function(response) {
-			//angular.copy(response.data,$scope.businessModels);
+			angular.copy(response.data,$scope.businessModels);
+			// S.Lupo - businessModels must be filtered by categories backend side
+			/*
 			for (var i = 0; i < response.data.length; i++) {
 				for (var j = 0; j < categoriesForUser.length; j++) {
 					if(categoriesForUser[j].valueId == response.data[i].category) {
 						$scope.businessModels.push(response.data[i]);
 					}
 				}
-			}
+			}*/
 			angular.copy($scope.businessModels,$scope.businessModelsInitial);
 			console.info("[LOAD END]: Loading of Business models is finished.");
 		},function(response){
