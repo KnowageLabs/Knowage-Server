@@ -57,95 +57,27 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 
 	// @formatter:off
 	/**
-	 * @api {get} /1.0/function/:id Execute function by ID
-	 * @apiName GET_getCatalogFunctionsByType
+	 * @api {get} /1.0/function/execute-sample/:id Execute function by ID with sample data
+	 * @apiName GET_executeSampleCatalogFunctionById
 	 * @apiGroup Functions
 	 *
-	 * @apiParam {String} type Function type.
+	 * @apiParam {Number} id Function ID.
 	 *
-	 * @apiSuccess {json} functions The list of functions and keywords with the specified type.
+	 * @apiSuccess {json} response The list of functions and keywords with the specified type.
 	 *
 	 * @apiSuccessExample {json} Response-example:
-		{
-		   "functions":[
-		      {
-		         "id":16,
-		         "name":"tst_average",
-		         "description":"tst_average",
-		         "language":"R",
-		         "script":"x <- c($P{firstvar}, $P{secondvar}, $P{thirdvar})\nav <- mean(x)",
-		         "owner":"test_admin",
-		         "label":"tst_average",
-		         "type":"Utilities",
-		         "keywords":[
-		            "average"
-		         ],
-		         "inputVariables":[
-		            {
-		               "type":"Simple Input",
-		               "name":"thirdvar",
-		               "functionId":16,
-		               "value":"-5"
-		            },
-		            {
-		               "type":"Simple Input",
-		               "name":"secondvar",
-		               "functionId":16,
-		               "value":"11"
-		            },
-		            {
-		               "type":"Simple Input",
-		               "name":"firstvar",
-		               "functionId":16,
-		               "value":"5"
-		            }
-		         ],
-		         "inputDatasets":[
-
-		         ],
-		         "outputItems":[
-		            {
-		               "type":"Text",
-		               "functionId":16,
-		               "label":"av"
-		            }
-		         ]
-		      },
-		      {
-		         "id":17,
-		         "name":"tst_average_ds",
-		         "description":"tst_average_ds",
-		         "language":"R",
-		         "script":"z<-TST_FUNC_CAT_LP\ndsoutput<-rbind(z,rowMeans(z, na.rm = TRUE))\ndsoutput",
-		         "owner":"test_admin",
-		         "label":"tst_average_ds",
-		         "type":"Utilities",
-		         "keywords":[
-
-		         ],
-		         "inputVariables":[
-
-		         ],
-		         "inputDatasets":[
-		            {
-		               "type":"Dataset Input",
-		               "functionId":17,
-		               "label":"TST_FUNC_CAT_LP"
-		            }
-		         ],
-		         "outputItems":[
-		            {
-		               "type":"Dataset",
-		               "functionId":17,
-		               "label":"dsoutput"
-		            }
-		         ]
-		      }
-		   ],
-		   "keywords":[
-		      "average"
-		   ]
-		}
+		[
+		   {
+		      "resultType":"Image",
+		      "result":"iVBORw0KGgoAAAANSUhEUgAAAyAA....BiJ1pQ89NBDakQohBASIEIIIYqG1CaKuIkY+OlY6623QmCC",
+		      "resultName":"valuesPlot"
+		   },
+		   {
+		      "resultType":"Text",
+		      "result":"120",
+		      "resultName":"maximimValue"
+		   }
+		]
 	*/
 	// @formatter:on
 
@@ -173,6 +105,32 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 		return serviceResponse.toString();
 	}
 
+	// @formatter:off
+		/**
+		 * @api {get} /1.0/function/execute-sample?label=:label Execute function by label with sample data
+		 * @apiName GET_executeSampleCatalogFunctionByLabel
+		 * @apiGroup Functions
+		 *
+		 * @apiParam {String} label Function label.
+		 *
+		 * @apiSuccess {json} response The list of functions and keywords with the specified type.
+		 *
+		 * @apiSuccessExample {json} Response-example:
+			[
+			   {
+			      "resultType":"Image",
+			      "result":"iVBORw0KGgoAAAANSUhEUgAAAyAA....BiJ1pQ89NBDakQohBASIEIIIYqG1CaKuIkY+OlY6623QmCC",
+			      "resultName":"valuesPlot"
+			   },
+			   {
+			      "resultType":"Text",
+			      "result":"120",
+			      "resultName":"maximimValue"
+			   }
+			]
+		*/
+	// @formatter:on
+
 	@GET
 	@Path("/execute-sample")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -198,6 +156,68 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 		}
 		return response;
 	}
+
+	// @formatter:off
+		/**
+		 * @api {POST} /1.0/function/execute/:id Execute function by ID with provided data
+		 * @apiName POST_executeCatalogFunctionById
+		 * @apiGroup Functions
+		 *
+		 * @apiParam {Number} id Function id.
+		 * @apiParam {json} function Function detail.
+		 * @apiParamExample {json} Request-Example:
+		 *
+				[
+				   {
+				      "type":"variablesIn",
+				      "items":{
+				         "a":"3",
+				         "b":"3"
+				      }
+				   },
+				   {
+				      "type":"datasetsIn",
+				      "items":{
+				         "df":"df2"
+				      }
+				   },
+				   {
+				      "type":"datasetsOut",
+				      "items":{
+				         "datasetOut":"datasetOutNEW"
+				      }
+				   },
+				   {
+				      "type":"textOut",
+				      "items":{
+
+				      }
+				   },
+				   {
+				      "type":"imageOut",
+				      "items":{
+
+				      }
+				   }
+				]
+			 *
+			 * @apiSuccess {json} response The results from the execute function.
+			 *
+			 * @apiSuccessExample {json} Response-example:
+				[
+				   {
+				      "resultType":"Image",
+				      "result":"iVBORw0KGgoAAAANSUhEUgAAA...==NSUhEUgtfgf",
+				      "resultName":"res"
+				   },
+				   {
+				      "resultType":"Dataset",
+				      "result":"biadmin_function_catalog_datasetOutNEW",
+				      "resultName":"datasetOut"
+				   }
+				]
+			*/
+	// @formatter:on
 
 	@POST
 	@Path("/execute/{id}")
@@ -238,6 +258,68 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 		}
 		return serviceResponse.toString();
 	}
+
+	// @formatter:off
+			/**
+			 * @api {POST} /1.0/function/execute?label=:label Execute function by label with provided data
+			 * @apiName POST_executeCatalogFunctionByLabel
+			 * @apiGroup Functions
+			 *
+			 * @apiParam {String} label Function label.
+			 * @apiParam {json} function Function detail.
+			 * @apiParamExample {json} Request-Example:
+			 *
+				[
+				   {
+				      "type":"variablesIn",
+				      "items":{
+				         "a":"3",
+				         "b":"3"
+				      }
+				   },
+				   {
+				      "type":"datasetsIn",
+				      "items":{
+				         "df":"df2"
+				      }
+				   },
+				   {
+				      "type":"datasetsOut",
+				      "items":{
+				         "datasetOut":"datasetOutNEW"
+				      }
+				   },
+				   {
+				      "type":"textOut",
+				      "items":{
+
+				      }
+				   },
+				   {
+				      "type":"imageOut",
+				      "items":{
+
+				      }
+				   }
+				]
+			 *
+			 * @apiSuccess {json} response The results from the execute function.
+			 *
+			 * @apiSuccessExample {json} Response-example:
+				[
+				   {
+				      "resultType":"Image",
+				      "result":"iVBORw0KGgoAAAANSUhEUgAAA...==NSUhEUgtfgf",
+				      "resultName":"res"
+				   },
+				   {
+				      "resultType":"Dataset",
+				      "result":"biadmin_function_catalog_datasetOutNEW",
+				      "resultName":"datasetOut"
+				   }
+				]
+			*/
+	// @formatter:on
 
 	@POST
 	@Path("/execute")
