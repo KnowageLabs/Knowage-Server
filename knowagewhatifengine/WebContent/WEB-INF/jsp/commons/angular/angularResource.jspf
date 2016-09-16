@@ -113,8 +113,6 @@ author:...
 		}
 	   if(request.getParameter("currentContentId") != null){
 		   currentContentId = request.getParameter("currentContentId");
-		} else {
-			System.out.println(currentContentId);
 		}
 	   
 	   
