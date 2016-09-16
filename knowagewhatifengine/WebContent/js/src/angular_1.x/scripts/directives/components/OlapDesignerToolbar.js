@@ -173,7 +173,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 * Loads all measures.
 	 */
 	$scope.getAllMeasures = function(){
-		sbiModule_restServices.promiseGet("1.0/designer/measures/"+schemaID + "/"+ cubeName,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
+		sbiModule_restServices.promiseGet("1.0/designer/measures/"+currentContentId + "/"+ cubeName,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
 		.then(function(response) {
 			$scope.measuresList = [];
 			

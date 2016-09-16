@@ -136,7 +136,7 @@ $scope.saveMDX = function(){
     	.then(function(response) {
     		
     		var url = sbiModule_config.contextName + "/restful-services/pages/execute?SBI_EXECUTION_ID="
-    		+ JSsbiExecutionID+"&mode="+mode+"&schemaID="+$scope.selectedSchema.id+"&cubeName="+$scope.selectedCube.name+"&schemaName="+$scope.selectedSchema.name;
+    		+ JSsbiExecutionID+"&mode="+mode+"&schemaID="+$scope.selectedSchema.id+"&cubeName="+$scope.selectedCube.name+"&schemaName="+$scope.selectedSchema.name+"&currentContentId="+$scope.selectedSchema.currentContentId;
    
     		$window.location = url;
 		

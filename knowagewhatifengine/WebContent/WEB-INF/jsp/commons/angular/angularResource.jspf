@@ -59,6 +59,7 @@ author:...
        String schemaID = null;
        String schemaName = null;
        String cubeName = null;
+       String currentContentId = null;
        ExecutionSession es = new ExecutionSession(request, request.getSession());
        
        
@@ -110,6 +111,12 @@ author:...
 	   if(request.getParameter("schemaName") != null){
 		   schemaName = request.getParameter("schemaName");
 		}
+	   if(request.getParameter("currentContentId") != null){
+		   currentContentId = request.getParameter("currentContentId");
+		} else {
+			System.out.println(currentContentId);
+		}
+	   
 	   
 	   
 %>
