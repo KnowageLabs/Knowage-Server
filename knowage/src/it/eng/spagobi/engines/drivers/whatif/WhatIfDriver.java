@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.engines.drivers.whatif;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
@@ -49,6 +40,15 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 public class WhatIfDriver extends GenericDriver {
 
@@ -158,7 +158,7 @@ public class WhatIfDriver extends GenericDriver {
 			return null;
 		}
 		Engine engine = obj.getEngine();
-		String url = engine.getUrl();
+		String url = engine.getUrl() + "/edit";
 		HashMap parameters = new HashMap();
 
 		String documentId = obj.getId().toString();
@@ -192,8 +192,8 @@ public class WhatIfDriver extends GenericDriver {
 		SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
 		Assert.assertNotNull(cubeSb, "Template is missing \"" + SpagoBIConstants.MONDRIAN_CUBE + "\" definition");
 		String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
-		Assert.assertNotNull(reference,
-				"Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE + "\" property, that is the reference to the Mondrian schema");
+		Assert.assertNotNull(reference, "Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE
+				+ "\" property, that is the reference to the Mondrian schema");
 		IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
 		Artifact artifact = dao.loadArtifactByNameAndType(reference, SpagoBIConstants.MONDRIAN_SCHEMA);
 		Assert.assertNotNull(artifact, "Mondrian schema with name [" + reference + "] was not found");
@@ -236,8 +236,8 @@ public class WhatIfDriver extends GenericDriver {
 		SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
 		Assert.assertNotNull(cubeSb, "Template is missing \"" + SpagoBIConstants.MONDRIAN_CUBE + "\" definition");
 		String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
-		Assert.assertNotNull(reference,
-				"Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE + "\" property, that is the reference to the Mondrian schema");
+		Assert.assertNotNull(reference, "Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE
+				+ "\" property, that is the reference to the Mondrian schema");
 		IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
 		Artifact artifact = dao.loadArtifactByNameAndType(reference, SpagoBIConstants.MONDRIAN_SCHEMA);
 		Assert.assertNotNull(artifact, "Mondrian schema with name [" + reference + "] was not found");
