@@ -4,33 +4,27 @@
    		<h2 flex="flex" class="md-title">Scenario Wizard</h2>
    </md-toolbar>
    
-   <md-content>
-   
-   	   <!-- SCENARIO DESCRIPTION -->
-	   <div style="padding: 5px;">
-	 		<p class="md-body-1">Selecting an edit cube and an editable measure is mandatory.</p>   
-	   </div>
-	   
-	   <!-- EDIT CUBE NAME -->
-	   <div flex=100>
-	       <md-input-container  layout="column" flex=100> 
+   <md-dialog-content>
+   		<p class="md-body-1" style="padding:10px">Selecting an edit cube and an editable measure is mandatory.</p>  
+   		<md-card
+   		>
+   			<md-input-container  layout="column" flex=100> 
 	       <label>Select Cube</label>
-	       <md-select
+	       <md-select class="designer-cube-dialog" ng-change="loadAllMeasures(scenario.editCube)"
 	        ng-model="scenario.editCube"
 	        > <md-option 
 	        ng-repeat="l in cubeList track by $index" value="{{l}}">{{l}} </md-option>
 	       </md-select>
 	        </md-input-container>
-	   </div>
-	   
-	   
-	   <!-- EDITABLE MEASURES -->
-	   <md-whiteframe class="md-whiteframe-4dp layout-padding " flex layout layout-margin style ="height: 40%;" >
-	   <fieldset flex>
-          <legend >Editable measures</legend>
+   		</md-card>
+   		
+   		<md-card>
+   			<md-toolbar class="scenario-secondary-toolbar" style="background-color: #A9C3DB !important;">
+	              Editable measures
+	        </md-toolbar>
           <div style="padding: 5px;">
           <div>
-            <md-checkbox aria-label="Select All" ng-checked="isChecked()" md-indeterminate="isIndeterminate()" ng-click="toggleAll()">
+            <md-checkbox ng-if="$scope.scenario.measures!=undefined" aria-label="Select All" ng-checked="isChecked()" md-indeterminate="isIndeterminate()" ng-click="toggleAll()">
               <span ng-if="isChecked()">Un-</span>Select All
             </md-checkbox>
           </div>
@@ -40,10 +34,12 @@
               </md-checkbox>
             </div>
           </div>
-        </fieldset>
-        </md-whiteframe>
-	   
-	   <div style="padding: 5px;">
+   		</md-card>
+   		
+   		
+   		<md-card>
+   		
+   			<div>
   							Variables
 			<i class="fa fa-plus-square" ng-click="addVariable()" aria-hidden="true" ></i>
 			
@@ -65,9 +61,9 @@
 						</div>	      						
 			</div>
 		</div>
-  
-	   
-   </md-content>
+   		
+   		</md-card>
+   </md-dialog-content>
 
     <md-dialog-actions layout="row">
      <md-button ng-click="saveScenario()" class="md-raised"  md-autofocus>

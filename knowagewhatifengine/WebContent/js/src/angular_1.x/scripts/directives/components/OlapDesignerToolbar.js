@@ -80,6 +80,16 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 * Loads cubes and opens a new what-if scenario dialog.
 	 */
 	$scope.runScenarioWizard = function(){
+		$mdDialog
+		.show({
+			scope : $scope,
+			preserveScope : true,
+			parent : angular.element(document.body),
+			controllerAs : 'olapDesignerCtrl',
+			templateUrl : sbiModule_config.contextName + '/html/template/right/edit/scenarioWizard.html',
+			clickOutsideToClose : false,
+			hasBackdrop : false
+		});
 		$scope.getCubes();
 	}
 	
@@ -164,8 +174,8 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		sbiModule_restServices.promiseGet("1.0/designer/cubes/"+schemaID,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
 		.then(function(response) {
 			$scope.cubeList = response.data;
-			$scope.showCubes = true;
-			$scope.getAllMeasures();
+			//$scope.showCubes = true;
+			//$scope.getAllMeasures();
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
 		});		
@@ -174,6 +184,22 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	/**
 	 * Loads all measures.
 	 */
+	
+	$scope.loadAllMeasures = function (editCube) {
+		sbiModule_restServices.promiseGet("1.0/designer/measures/"+currentContentId + "/"+ editCube,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
+		.then(function(response) {
+			$scope.measuresList = [];
+			
+			for (var i = 0; i < response.data.length; i++) {
+				var measuresListItem = { name: ""};
+				measuresListItem.name = response.data[i];
+				$scope.measuresList.push(measuresListItem);
+			}
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
+		});	
+	}
+	
 	$scope.getAllMeasures = function(){
 		sbiModule_restServices.promiseGet("1.0/designer/measures/"+currentContentId + "/"+ cubeName,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
 		.then(function(response) {
@@ -293,7 +319,9 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	  * Used for Select All check box to determine if all check boxes are checked.
 	  */
 	 $scope.isChecked = function() {
-	   return $scope.scenario.measures.length === $scope.measuresList.length;
+		 if($scope.scenario.measures!=undefined&&$scope.measuresList!=undefined){
+			 return $scope.scenario.measures.length === $scope.measuresList.length;
+		 }	   
      };
 
      /**
