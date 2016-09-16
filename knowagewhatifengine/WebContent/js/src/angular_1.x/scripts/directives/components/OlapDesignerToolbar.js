@@ -323,6 +323,14 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 			 return $scope.scenario.measures.length === $scope.measuresList.length;
 		 }	   
      };
+     
+     $scope.hasSelectedCube = function () {
+    	 if($scope.scenario.editCube!=""){
+			 return true;
+		 } else {
+			 return false;
+		 }
+     }
 
      /**
 	  * Selects or un-selects all measures check boxes.
@@ -340,7 +348,16 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	  */
 	 $scope.closeDialogOlapDesigner = function() {
 		 $mdDialog.hide();
-		 $scope.showCNType = false
+		 $scope.showCNType = false;
+	 }
+	 
+	 $scope.clearScenario = function () {
+		 $scope.scenario = {
+					name: "scenario",
+					editCube : "",
+					measures: []
+			};
+		 $scope.measuresList = [];
 	 }
 	 
 	 /**

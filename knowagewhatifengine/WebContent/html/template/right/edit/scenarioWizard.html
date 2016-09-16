@@ -23,8 +23,9 @@
 	              Editable measures
 	        </md-toolbar>
           <div style="padding: 5px;">
+          <div ng-if="!hasSelectedCube()">Select a cube in order to see its measures.</div>
           <div>
-            <md-checkbox ng-if="$scope.scenario.measures!=undefined" aria-label="Select All" ng-checked="isChecked()" md-indeterminate="isIndeterminate()" ng-click="toggleAll()">
+            <md-checkbox ng-if="hasSelectedCube()" aria-label="Select All" ng-checked="isChecked()" md-indeterminate="isIndeterminate()" ng-click="toggleAll()">
               <span ng-if="isChecked()">Un-</span>Select All
             </md-checkbox>
           </div>
@@ -66,8 +67,11 @@
    </md-dialog-content>
 
     <md-dialog-actions layout="row">
+    <md-button ng-click="clearScenario()" class="md-raised"  md-autofocus>
+        Clear data
+      </md-button>
      <md-button ng-click="saveScenario()" class="md-raised"  md-autofocus>
-        Save
+        Add to template
       </md-button>
       <md-button ng-click="closeDialogOlapDesigner()" class="md-raised" style="margin-right:20px;" >
        Cancel

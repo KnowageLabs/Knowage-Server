@@ -943,3 +943,16 @@ md-option[selected], md-select-menu md-option[selected]{
     height:60%;
 }
 
+.scenario-secondary-toolbar {
+	background-color: #A9C3DB !important;
+	min-height: 40px;
+	height: 40px;
+	padding-left: 10px;
+	padding-top: 6px;
+}
+
+.designer-cube-dialog {
+	min-height: 40px;
+	height: 40px;
+}
+
