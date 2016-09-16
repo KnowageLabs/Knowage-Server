@@ -17,17 +17,6 @@
  */
 package it.eng.spagobi.engines.whatif;
 
-import java.io.Serializable;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.olap4j.OlapConnection;
-import org.olap4j.OlapDataSource;
-import org.pivot4j.PivotModel;
-
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -54,6 +43,17 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeExcept
 import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 import it.eng.spagobi.writeback4j.WriteBackManager;
 import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
+
+import java.io.Serializable;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.olap4j.OlapConnection;
+import org.olap4j.OlapDataSource;
+import org.pivot4j.PivotModel;
 
 public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance implements Serializable {
 
@@ -93,7 +93,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 			throw new RuntimeException("Cannot load Mondrian Olap4j Driver", e);
 		}
 		String reference = initMondrianSchema(env);
-		
+
 		this.setMondrianSchemaFilePath(reference);
 
 		IDataSource ds = (IDataSource) env.get(EngineConstants.ENV_DATASOURCE);
@@ -161,18 +161,17 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		logger.debug("OUT");
 	}
 
-	
-	public WhatIfEngineInstance( Map env) {
+	public WhatIfEngineInstance(Map env) {
 		super(env);
 		logger.debug("OUT");
 	}
-	
+
 	public WhatIfEngineInstance(WhatIfTemplate template, boolean whatif, Map env) {
 		super(env);
 		updateWhatIfEngineInstance(template, whatif, env);
 		logger.debug("OUT");
 	}
-	
+
 	public void updateWhatIfEngineInstance(WhatIfTemplate template, boolean whatif, Map env) {
 
 		try {
@@ -297,32 +296,38 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		standalone = template.isStandAlone();
 
 		logger.debug("OUT");
-	}	
+	}
 
 	private String getInitialMDX(WhatIfTemplate template, Map env) {
 		String query = null;
 
 		logger.debug("IN");
+		String mode = (String) env.get("mode");
+		if (mode != null && mode.equals("edit")) {
 
-		query = template.getMdxQuery();
-		logger.debug("MDX query found in template is [" + query + "]");
+			query = template.getMondrianMdxQuery();
 
-		// substitute query parameters
-		query = MDXParametersUtilities.substituteParametersInMDXQuery(query, template.getParameters(), env);
-		logger.debug("MDX query after parameters substitution is [" + query + "]");
+		} else {
+			query = template.getMdxQuery();
 
-		// substitute user profile attributes
-		if (!template.isStandAlone()) {
-			IEngUserProfile profile = (IEngUserProfile) env.get(EngineConstants.ENV_USER_PROFILE);
-			try {
-				query = StringUtilities.substituteProfileAttributesInString(query, profile);
-			} catch (Exception e) {
-				throw new SpagoBIEngineRuntimeException("Error while substituting user profile attributes in MDX query", e);
+			logger.debug("MDX query found in template is [" + query + "]");
+
+			// substitute query parameters
+			query = MDXParametersUtilities.substituteParametersInMDXQuery(query, template.getParameters(), env);
+			logger.debug("MDX query after parameters substitution is [" + query + "]");
+
+			// substitute user profile attributes
+			if (!template.isStandAlone()) {
+				IEngUserProfile profile = (IEngUserProfile) env.get(EngineConstants.ENV_USER_PROFILE);
+				try {
+					query = StringUtilities.substituteProfileAttributesInString(query, profile);
+				} catch (Exception e) {
+					throw new SpagoBIEngineRuntimeException("Error while substituting user profile attributes in MDX query", e);
+				}
 			}
+
+			logger.debug("MDX query after user profile attributes substitution is [" + query + "]");
 		}
-
-		logger.debug("MDX query after user profile attributes substitution is [" + query + "]");
-
 		logger.debug("OUT");
 		return query;
 	}
@@ -520,6 +525,5 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 	public void setAlgorithmInUse(String algorithmInUse) {
 		this.algorithmInUse = algorithmInUse;
 	}
-
 
 }
